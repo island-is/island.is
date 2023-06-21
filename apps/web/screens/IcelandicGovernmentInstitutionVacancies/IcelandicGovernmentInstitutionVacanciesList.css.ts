@@ -17,7 +17,6 @@ export const filterInput = style({
 
 export const logo = style({
   objectFit: 'contain',
-
   ...themeUtils.responsiveStyle({
     xs: {
       width: 60,

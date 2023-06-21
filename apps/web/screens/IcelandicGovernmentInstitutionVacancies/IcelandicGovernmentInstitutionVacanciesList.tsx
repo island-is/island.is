@@ -43,9 +43,9 @@ import * as styles from './IcelandicGovernmentInstitutionVacanciesList.css'
 type Vacancy = IcelandicGovernmentInstitutionVacanciesResponse['vacancies'][number]
 
 const ITEMS_PER_PAGE = 8
-const VACANCY_INTRO_MAX_LENGTH = 80
+export const VACANCY_INTRO_MAX_LENGTH = 80
 
-const shortenText = (text: string, maxLength: number) => {
+export const shortenText = (text: string, maxLength: number) => {
   if (text.length <= maxLength) {
     return text
   }
@@ -330,12 +330,13 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<IcelandicGovernmentIns
 
   const selectedFilters = extractFilterTags(filterCategories)
 
-  const title = n('mainTitle', 'Starfatorg - laus störf hjá ríkinu')
+  const mainTitle = n('mainTitle', 'Starfatorg - laus störf hjá ríkinu')
+  const ogTitle = n('ogTitle', 'Starfatorg - laus störf hjá ríkinu | Ísland.is')
 
   return (
     <Box paddingTop={[0, 0, 8]}>
       <HeadWithSocialSharing
-        title={title}
+        title={ogTitle}
         description={n(
           'ogDescription',
           'Á Starfatorginu er að finna upplýsingar um laus störf hjá ríkinu.',
@@ -351,7 +352,7 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<IcelandicGovernmentIns
             <GridColumn span={['1/1', '1/1', '1/1', '1/2']}>
               <Breadcrumbs items={[{ title: 'Ísland.is', href: '/' }]} />
               <Text marginTop={2} variant="h1" as="h1">
-                {title}
+                {mainTitle}
               </Text>
             </GridColumn>
             <GridColumn span="1/2">
@@ -460,18 +461,22 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<IcelandicGovernmentIns
               .map((vacancy) => {
                 const logoUrl = organizationLogoMap[vacancy.institutionName]
                 return (
-                  <GridColumn key={vacancy.id} span={['1/1', '1/1', '1/2']}>
+                  <GridColumn
+                    key={vacancy.id}
+                    span={['1/1', '1/1', '1/1', '1/2']}
+                  >
                     <FocusableBox
                       height="full"
                       href={`${
                         linkResolver('vacancydetails', [vacancy.id?.toString()])
                           .href
                       }`}
-                      padding={[3, 3, 'containerGutter']}
                       background="white"
                       borderRadius="large"
                       borderColor="blue200"
                       borderWidth="standard"
+                      padding={[3, 3, 'containerGutter']}
+                      overflow="hidden"
                     >
                       <Inline
                         collapseBelow="lg"
@@ -513,32 +518,32 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<IcelandicGovernmentIns
                             </Tag>
                           )}
                         </Stack>
-                        {logoUrl && (
-                          <>
-                            <Hidden below="lg">
-                              <Box className={styles.logo}>
+                        <Box>
+                          {logoUrl && (
+                            <>
+                              <Hidden below="lg">
                                 <img
                                   className={styles.logo}
                                   src={logoUrl}
                                   alt=""
                                 />
-                              </Box>
-                            </Hidden>
-                            <Hidden above="md">
-                              <Box
-                                display="flex"
-                                justifyContent="center"
-                                width="full"
-                              >
-                                <img
-                                  className={styles.logo}
-                                  src={logoUrl}
-                                  alt=""
-                                />
-                              </Box>
-                            </Hidden>
-                          </>
-                        )}
+                              </Hidden>
+                              <Hidden above="md">
+                                <Box
+                                  display="flex"
+                                  justifyContent="center"
+                                  width="full"
+                                >
+                                  <img
+                                    className={styles.logo}
+                                    src={logoUrl}
+                                    alt=""
+                                  />
+                                </Box>
+                              </Hidden>
+                            </>
+                          )}
+                        </Box>
                       </Inline>
                     </FocusableBox>
                   </GridColumn>

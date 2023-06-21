@@ -23,7 +23,10 @@ import {
 import { useLinkResolver, useNamespace } from '@island.is/web/hooks'
 import { CustomNextError } from '@island.is/web/units/errors'
 import SidebarLayout from '../Layouts/SidebarLayout'
-import { InstitutionPanel } from '@island.is/web/components'
+import {
+  HeadWithSocialSharing,
+  InstitutionPanel,
+} from '@island.is/web/components'
 import { useI18n } from '@island.is/web/i18n'
 import {
   GET_NAMESPACE_QUERY,
@@ -31,6 +34,10 @@ import {
 } from '../queries'
 import { webRichText } from '@island.is/web/utils/richText'
 import { SliceType } from '@island.is/island-ui/contentful'
+import {
+  VACANCY_INTRO_MAX_LENGTH,
+  shortenText,
+} from './IcelandicGovernmentInstitutionVacanciesList'
 
 type Vacancy = IcelandicGovernmentInstitutionVacancyByIdResponse['vacancy']
 
@@ -119,159 +126,175 @@ const IcelandicGovernmentInstitutionVacancyDetails: Screen<IcelandicGovernmentIn
 
   const n = useNamespace(namespace)
 
+  const ogTitlePostfix = n('ogTitlePrefixForDetailsPage', ' | Ísland.is')
+
   return (
-    <SidebarLayout
-      sidebarContent={
-        <Stack space={3}>
-          <LinkV2 {...linkResolver('vacancies')} skipTab>
-            <Button
-              preTextIcon="arrowBack"
-              preTextIconType="filled"
-              size="small"
-              type="button"
-              variant="text"
-              truncate
-            >
-              {n('goBack', 'Til baka')}
-            </Button>
-          </LinkV2>
-          <InformationPanel
-            namespace={namespace}
-            organizationLogo={organizationLogo}
-            vacancy={vacancy}
-          />
-        </Stack>
-      }
-    >
-      <Stack space={3}>
-        <Breadcrumbs
-          items={[
-            { title: 'Ísland.is', href: '/' },
-            {
-              title: n('breadcrumbTitle', 'Starfatorg'),
-              href: linkResolver('vacancies').href,
-            },
-          ]}
-        />
-        <Hidden above="sm">
-          <LinkV2 {...linkResolver('vacancies')} skipTab>
-            <Button
-              preTextIcon="arrowBack"
-              preTextIconType="filled"
-              size="small"
-              type="button"
-              variant="text"
-              truncate
-            >
-              {n('goBack', 'Til baka')}
-            </Button>
-          </LinkV2>
-        </Hidden>
-        <Text variant="h1">{vacancy.title}</Text>
-        <Text as="div">{webRichText([vacancy.intro] as SliceType[])}</Text>
-
-        <Text variant="h3" as="h2">
-          {n('assignmentsAndResponibility', 'Helstu verkefni og ábyrgð')}
-        </Text>
-
-        <Text as="div">
-          {webRichText([vacancy.qualificationRequirements] as SliceType[])}
-        </Text>
-
-        {vacancy.tasksAndResponsibilities && (
-          <Text variant="h3" as="h2">
-            {n('qualificationRequirements', 'Hæfniskröfur')}
-          </Text>
+    <>
+      <HeadWithSocialSharing
+        title={`${vacancy.title ? vacancy.title : ''}${
+          vacancy.title ? ogTitlePostfix : ''
+        }`}
+        description={shortenText(
+          vacancy.plainTextIntro,
+          VACANCY_INTRO_MAX_LENGTH,
         )}
+        imageUrl={n('ogDetailsImageUrl', vacancy.logoUrl)}
+      />
 
-        {vacancy.tasksAndResponsibilities && (
-          <Text as="div">
-            {webRichText([vacancy.tasksAndResponsibilities] as SliceType[])}
-          </Text>
-        )}
-
-        {(vacancy.salaryTerms ||
-          vacancy.description ||
-          vacancy.jobPercentage ||
-          vacancy.applicationDeadlineTo) && (
-          <Text variant="h3" as="h2">
-            {n('moreInfoAboutTheJob', 'Frekari upplýsingar um starfið')}
-          </Text>
-        )}
-
-        {vacancy.salaryTerms &&
-          webRichText([vacancy.salaryTerms] as SliceType[])}
-
-        {vacancy.description &&
-          webRichText([vacancy.description] as SliceType[])}
-
-        {vacancy.jobPercentage && (
-          <Text>
-            {n('jobPercentageIs', 'Starfshlutfall er')} {vacancy.jobPercentage}
-          </Text>
-        )}
-
-        {vacancy.applicationDeadlineTo && (
-          <Text>
-            {n('applicationDeadlineIs', 'Umsóknarfrestur er til og með')}{' '}
-            {vacancy.applicationDeadlineTo}
-          </Text>
-        )}
-
-        {vacancy.contacts?.length && (
-          <Text variant="h3" as="h2">
-            {n('contacts', 'Nánari upplýsingar veitir')}
-          </Text>
-        )}
-
-        {vacancy.contacts?.length && (
-          <Stack space={2}>
-            {vacancy.contacts.map((contact, index) => (
-              <Box key={index}>
-                <Text>
-                  {contact.name && contact.email
-                    ? `${contact.name}, `
-                    : contact.name}
-                  {contact.email && (
-                    <LinkV2
-                      underlineVisibility="always"
-                      underline="normal"
-                      color="blue400"
-                      href={`mailto:${contact.email}`}
-                    >
-                      {contact.email}
-                    </LinkV2>
-                  )}
-                </Text>
-                {contact.phone && (
-                  <Text>
-                    {n('telephone', 'Sími:')} {contact.phone}
-                  </Text>
-                )}
-              </Box>
-            ))}
+      <SidebarLayout
+        sidebarContent={
+          <Stack space={3}>
+            <LinkV2 {...linkResolver('vacancies')} skipTab>
+              <Button
+                preTextIcon="arrowBack"
+                preTextIconType="filled"
+                size="small"
+                type="button"
+                variant="text"
+                truncate
+              >
+                {n('goBack', 'Til baka')}
+              </Button>
+            </LinkV2>
+            <InformationPanel
+              namespace={namespace}
+              organizationLogo={organizationLogo}
+              vacancy={vacancy}
+            />
           </Stack>
-        )}
+        }
+      >
+        <Stack space={3}>
+          <Breadcrumbs
+            items={[
+              { title: 'Ísland.is', href: '/' },
+              {
+                title: n('breadcrumbTitle', 'Starfatorg'),
+                href: linkResolver('vacancies').href,
+              },
+            ]}
+          />
+          <Hidden above="sm">
+            <LinkV2 {...linkResolver('vacancies')} skipTab>
+              <Button
+                preTextIcon="arrowBack"
+                preTextIconType="filled"
+                size="small"
+                type="button"
+                variant="text"
+                truncate
+              >
+                {n('goBack', 'Til baka')}
+              </Button>
+            </LinkV2>
+          </Hidden>
+          <Text variant="h1">{vacancy.title}</Text>
+          <Text as="div">{webRichText([vacancy.intro] as SliceType[])}</Text>
 
-        {vacancy.applicationHref && (
-          <Inline>
-            <Box marginBottom={[0, 0, 5]}>
-              <LinkV2 href={vacancy.applicationHref} pureChildren={true}>
-                <Button size="small" as="div">
-                  {n('applyForJob', 'Sækja um starf')}
-                </Button>
-              </LinkV2>
+          <Text variant="h3" as="h2">
+            {n('assignmentsAndResponibility', 'Helstu verkefni og ábyrgð')}
+          </Text>
+
+          <Text as="div">
+            {webRichText([vacancy.qualificationRequirements] as SliceType[])}
+          </Text>
+
+          {vacancy.tasksAndResponsibilities && (
+            <Text variant="h3" as="h2">
+              {n('qualificationRequirements', 'Hæfniskröfur')}
+            </Text>
+          )}
+
+          {vacancy.tasksAndResponsibilities && (
+            <Text as="div">
+              {webRichText([vacancy.tasksAndResponsibilities] as SliceType[])}
+            </Text>
+          )}
+
+          {(vacancy.salaryTerms ||
+            vacancy.description ||
+            vacancy.jobPercentage ||
+            vacancy.applicationDeadlineTo) && (
+            <Text variant="h3" as="h2">
+              {n('moreInfoAboutTheJob', 'Frekari upplýsingar um starfið')}
+            </Text>
+          )}
+
+          {vacancy.salaryTerms &&
+            webRichText([vacancy.salaryTerms] as SliceType[])}
+
+          {vacancy.description &&
+            webRichText([vacancy.description] as SliceType[])}
+
+          {vacancy.jobPercentage && (
+            <Text>
+              {n('jobPercentageIs', 'Starfshlutfall er')}{' '}
+              {vacancy.jobPercentage}
+            </Text>
+          )}
+
+          {vacancy.applicationDeadlineTo && (
+            <Text>
+              {n('applicationDeadlineIs', 'Umsóknarfrestur er til og með')}{' '}
+              {vacancy.applicationDeadlineTo}
+            </Text>
+          )}
+
+          {vacancy.contacts?.length && (
+            <Text variant="h3" as="h2">
+              {n('contacts', 'Nánari upplýsingar veitir')}
+            </Text>
+          )}
+
+          {vacancy.contacts?.length && (
+            <Stack space={2}>
+              {vacancy.contacts.map((contact, index) => (
+                <Box key={index}>
+                  <Text>
+                    {contact.name && contact.email
+                      ? `${contact.name}, `
+                      : contact.name}
+                    {contact.email && (
+                      <LinkV2
+                        underlineVisibility="always"
+                        underline="normal"
+                        color="blue400"
+                        href={`mailto:${contact.email}`}
+                      >
+                        {contact.email}
+                      </LinkV2>
+                    )}
+                  </Text>
+                  {contact.phone && (
+                    <Text>
+                      {n('telephone', 'Sími:')} {contact.phone}
+                    </Text>
+                  )}
+                </Box>
+              ))}
+            </Stack>
+          )}
+
+          {vacancy.applicationHref && (
+            <Inline>
+              <Box marginBottom={[0, 0, 5]}>
+                <LinkV2 href={vacancy.applicationHref} pureChildren={true}>
+                  <Button size="small" as="div">
+                    {n('applyForJob', 'Sækja um starf')}
+                  </Button>
+                </LinkV2>
+              </Box>
+            </Inline>
+          )}
+
+          <Hidden above="sm">
+            <Box marginTop={2}>
+              <InformationPanel namespace={namespace} vacancy={vacancy} />
             </Box>
-          </Inline>
-        )}
-
-        <Hidden above="sm">
-          <Box marginTop={2}>
-            <InformationPanel namespace={namespace} vacancy={vacancy} />
-          </Box>
-        </Hidden>
-      </Stack>
-    </SidebarLayout>
+          </Hidden>
+        </Stack>
+      </SidebarLayout>
+    </>
   )
 }
 

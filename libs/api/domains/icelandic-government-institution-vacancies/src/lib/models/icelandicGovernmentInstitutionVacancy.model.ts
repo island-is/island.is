@@ -93,4 +93,7 @@ export class IcelandicGovernmentInstitutionVacancy extends IcelandicGovernmentIn
 
   @Field(() => graphqlTypeJson, { nullable: true })
   salaryTerms?: Html
+
+  @Field({ nullable: true })
+  plainTextIntro?: string
 }

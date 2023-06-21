@@ -44,6 +44,7 @@ export const GET_ICELANDIC_GOVERNMENT_INSTITUTION_VACANCY_DETAILS = gql`
         jobPercentage
         applicationHref
         qualificationRequirements
+        plainTextIntro
         locations {
           title
           postalCode

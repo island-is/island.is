@@ -240,5 +240,6 @@ export const mapIcelandicGovernmentInstitutionVacancyByIdResponse = async (
     tasksAndResponsibilities,
     description,
     salaryTerms,
+    plainTextIntro: documentToPlainTextString(intro.document),
   }
 }
