@@ -15563,6 +15563,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/resolve@npm:^1.20.2":
+  version: 1.20.2
+  resolution: "@types/resolve@npm:1.20.2"
+  checksum: 61c2cad2499ffc8eab36e3b773945d337d848d3ac6b7b0a87c805ba814bc838ef2f262fc0f109bfd8d2e0898ff8bd80ad1025f9ff64f1f71d3d4294c9f14e5f6
+  languageName: node
+  linkType: hard
+
 "@types/responselike@npm:*, @types/responselike@npm:^1.0.0":
   version: 1.0.0
   resolution: "@types/responselike@npm:1.0.0"
@@ -31124,6 +31131,7 @@ __metadata:
     "@types/react-select": 3.0.19
     "@types/react-table": 7.0.24
     "@types/request": 2.48.5
+    "@types/resolve": ^1.20.2
     "@types/sanitize-html": 2.9.0
     "@types/showdown": 2.0.1
     "@types/smoothscroll-polyfill": 0.3.1
