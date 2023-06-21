@@ -45,7 +45,7 @@ container_build() {
 
 docker_build() {
   mkargs local-cache=true
-  builder_build docker
+  container_build docker
 }
 
 _set_publish() {
