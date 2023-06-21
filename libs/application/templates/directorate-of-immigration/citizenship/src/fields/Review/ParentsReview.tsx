@@ -7,7 +7,6 @@ import { Citizenship } from '../../lib/dataSchema'
 
 export const ParentsReview: FC<FieldBaseProps> = ({ application }) => {
   const answers = application.answers as Citizenship
-  const externalData = application.externalData as ExternalData
 
   return (
     <Box paddingBottom={4} paddingTop={4}>

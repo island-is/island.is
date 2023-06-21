@@ -2,11 +2,13 @@ import { FieldBaseProps } from '@island.is/application/types'
 import { Box, GridColumn, GridRow, Text } from '@island.is/island-ui/core'
 import React, { FC } from 'react'
 import DescriptionText from '../../components/DescriptionText'
-import { review } from '../../lib/messages'
+import { information, review } from '../../lib/messages'
 import { Citizenship } from '../../lib/dataSchema'
+import { useLocale } from '@island.is/localization'
 
 export const ResidencyReview: FC<FieldBaseProps> = ({ application }) => {
   const answers = application.answers as Citizenship
+  const { formatMessage } = useLocale()
 
   return (
     <Box paddingBottom={4} paddingTop={4}>
@@ -19,9 +21,25 @@ export const ResidencyReview: FC<FieldBaseProps> = ({ application }) => {
         }}
       />
       <GridRow>
-        <GridColumn span="1/1">
-          <Text></Text>
-        </GridColumn>
+        {answers?.countriesOfResidence?.hasLivedAbroad &&
+        answers?.countriesOfResidence?.selectedAbroadCountries &&
+        answers?.countriesOfResidence?.selectedAbroadCountries?.length > 0 ? (
+          answers?.countriesOfResidence?.selectedAbroadCountries?.map(
+            (country) => {
+              return (
+                <GridColumn span="1/2">
+                  <Text>{country.country}</Text>
+                </GridColumn>
+              )
+            },
+          )
+        ) : (
+          <GridColumn>
+            <Text>
+              {formatMessage(information.labels.radioButtons.radioOptionNo)}
+            </Text>
+          </GridColumn>
+        )}
       </GridRow>
     </Box>
   )
