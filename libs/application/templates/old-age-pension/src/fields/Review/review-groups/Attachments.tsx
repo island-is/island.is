@@ -15,7 +15,7 @@ import { oldAgePensionFormMessage } from '../../../lib/messages'
 export const Attachments = ({ application }: ReviewGroupProps) => {
   const { formatMessage } = useLocale()
 
-  const attachments = getAttachments(application.answers)
+  const attachments = getAttachments(application)
 
   return (
     <>

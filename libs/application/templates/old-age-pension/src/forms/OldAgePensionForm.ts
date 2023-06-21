@@ -28,17 +28,15 @@ import Logo from '../assets/Logo'
 import { oldAgePensionFormMessage } from '../lib/messages'
 import {
   ConnectedApplications,
-  earlyRetirementMaxAge,
-  earlyRetirementMinAge,
   FILE_SIZE_LIMIT,
   HomeAllowanceHousing,
   NO,
   YES,
 } from '../lib/constants'
 import {
-  getAgeBetweenTwoDates,
   getApplicationAnswers,
   getApplicationExternalData,
+  isEarlyRetirement,
   isExistsCohabitantOlderThan25,
 } from '../lib/oldAgePensionUtils'
 
@@ -347,29 +345,7 @@ export const OldAgePensionForm: Form = buildForm({
               uploadButtonLabel:
                 oldAgePensionFormMessage.fileUpload.attachmentButton,
               condition: (answers, externalData) => {
-                const { applicantNationalId } = getApplicationExternalData(
-                  externalData,
-                )
-                const {
-                  selectedMonth,
-                  selectedYear,
-                  isFishermen,
-                } = getApplicationAnswers(answers)
-
-                const dateOfBirth = kennitala.info(applicantNationalId).birthday
-                const dateOfBirth00 = new Date(
-                  dateOfBirth.getFullYear(),
-                  dateOfBirth.getMonth(),
-                )
-                const selectedDate = new Date(+selectedYear, +selectedMonth)
-
-                const age = getAgeBetweenTwoDates(selectedDate, dateOfBirth00)
-
-                return (
-                  age >= earlyRetirementMinAge &&
-                  age <= earlyRetirementMaxAge &&
-                  isFishermen !== YES
-                )
+                return isEarlyRetirement(answers, externalData)
               },
             }),
             buildFileUploadField({

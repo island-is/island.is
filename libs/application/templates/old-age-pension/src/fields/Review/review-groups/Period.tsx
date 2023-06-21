@@ -10,9 +10,7 @@ export const Period = ({
   editable,
   goToScreen,
 }: ReviewGroupProps) => {
-  const [{ selectedYear, selectedMonth }, setStateful] = useStatefulAnswers(
-    application,
-  )
+  const [{ selectedYear, selectedMonth }] = useStatefulAnswers(application)
 
   const { formatMessage } = useLocale()
 

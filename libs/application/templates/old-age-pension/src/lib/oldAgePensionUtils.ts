@@ -8,6 +8,7 @@ import {
   YES,
   fishermenMinAge,
   earlyRetirementMinAge,
+  earlyRetirementMaxAge,
 } from './constants'
 import { oldAgePensionFormMessage } from './messages'
 
@@ -18,6 +19,7 @@ import { residenceHistory, combinedResidenceHistory } from '../types'
 import React from 'react'
 import { useLocale } from '@island.is/localization'
 import { getCountryByCode } from '@island.is/shared/utils'
+import App from 'next/app'
 
 interface fileType {
   key: string
@@ -323,27 +325,69 @@ export function getAgeBetweenTwoDates(
   return age
 }
 
-export function getAttachments(answers: Application['answers']) {
-  const attachments: string[] = []
+export function isEarlyRetirement(
+  answers: Application['answers'],
+  externalData: Application['externalData'],
+) {
+  const { applicantNationalId } = getApplicationExternalData(externalData)
+  const { selectedMonth, selectedYear, isFishermen } = getApplicationAnswers(
+    answers,
+  )
 
-  const getAttachmentsName = (attachmentsArr: fileType[] | undefined) => {
+  const dateOfBirth = kennitala.info(applicantNationalId).birthday
+  const dateOfBirth00 = new Date(
+    dateOfBirth.getFullYear(),
+    dateOfBirth.getMonth(),
+  )
+  const selectedDate = new Date(+selectedYear, +selectedMonth)
+
+  const age = getAgeBetweenTwoDates(selectedDate, dateOfBirth00)
+
+  return (
+    age >= earlyRetirementMinAge &&
+    age <= earlyRetirementMaxAge &&
+    isFishermen !== YES
+  )
+}
+
+export function getAttachments(application: Application) {
+  const getAttachmentsName = (
+    attachmentsArr: fileType[] | undefined,
+    type: string,
+  ) => {
     if (attachmentsArr && attachmentsArr.length > 0) {
       attachmentsArr.map((attch) => {
-        attachments.push(attch.name)
+        attachments.push(`${type} - ${attch?.name}`)
       })
     }
   }
 
+  const { answers, externalData } = application
+  const {
+    isFishermen,
+    homeAllowanceChildren,
+    homeAllowanceHousing,
+  } = getApplicationAnswers(answers)
+  const earlyRetirement = isEarlyRetirement(answers, externalData)
+  const attachments: string[] = []
   // Early retirement, pension fund, fishermen
   const earlyPenFisher = answers.fileUploadEarlyPenFisher as earlyRetirementPensionfundFishermen
-  getAttachmentsName(earlyPenFisher.pension)
-  getAttachmentsName(earlyPenFisher.earlyRetirement)
-  getAttachmentsName(earlyPenFisher.fishermen)
+  getAttachmentsName(earlyPenFisher?.pension, 'lífeyrissjóðir')
+  if (earlyRetirement) {
+    getAttachmentsName(earlyPenFisher?.earlyRetirement, 'snemmtaka')
+  }
+  if (isFishermen === YES) {
+    getAttachmentsName(earlyPenFisher?.fishermen, 'sjómanna')
+  }
 
   // leaseAgreement, schoolAgreement
   const leaseAgrSchoolConf = answers.fileUploadHomeAllowance as leaseAgreementSchoolConfirmation
-  getAttachmentsName(leaseAgrSchoolConf.leaseAgreement)
-  getAttachmentsName(leaseAgrSchoolConf.schoolConfirmation)
+  if (homeAllowanceHousing === HomeAllowanceHousing.RENTER) {
+    getAttachmentsName(leaseAgrSchoolConf?.leaseAgreement, 'leigusamning')
+  }
+  if (homeAllowanceChildren === YES) {
+    getAttachmentsName(leaseAgrSchoolConf?.schoolConfirmation, 'skólavist')
+  }
 
   return attachments
 }
