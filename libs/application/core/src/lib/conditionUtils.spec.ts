@@ -38,7 +38,7 @@ describe('conditions', () => {
           buildTextField({
             id: 'asdf',
             title: 'asdf',
-            condition: (formValue: FormValue) => formValue.money > 0,
+            condition: (formValue: FormValue) => Number(formValue.money) > 0,
           }),
           { money: 100 },
         ),
@@ -71,7 +71,7 @@ describe('conditions', () => {
           buildTextField({
             id: 'asdf',
             title: 'asdf',
-            condition: (formValue: FormValue) => formValue.money > 0,
+            condition: (formValue: FormValue) => Number(formValue.money) > 0,
           }),
           { money: 0 },
         ),
