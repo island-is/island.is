@@ -59,6 +59,10 @@ describe('MessageHandlerService - Handle message', () => {
     }
   })
 
+  afterEach(() => {
+    jest.clearAllMocks()
+  })
+
   describe('deliver prosecutor to court', () => {
     let then: Then
 
@@ -534,7 +538,7 @@ describe('MessageHandlerService - Handle message', () => {
             authorization: `Bearer ${config.backendAccessToken}`,
           },
           body: JSON.stringify({
-            type: NotificationType.READY_FOR_COURT,
+            type: NotificationType.MODIFIED,
             user,
           }),
         },
