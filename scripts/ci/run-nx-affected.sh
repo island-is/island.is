@@ -15,6 +15,4 @@ shift # remove target from args
 source "$DIR"/_common.sh
 
 MAX_JOBS=${MAX_JOBS:-2}
-YARN_BIN=$(which yarn)
-echo "$YARN_BIN"
-$YARN_BIN dlx -p  @nrwl/nx-cloud@v13.3.1 -- "$YARN_BIN" run nx affected --base="$BASE" --head="$HEAD" --target="$target" --parallel="$MAX_JOBS" "$@"
+yarn run nx affected --base="$BASE" --head="$HEAD" --target="$target" --parallel="$MAX_JOBS" "$@"

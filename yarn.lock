@@ -9611,6 +9611,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@nrwl/cli@npm:13.10.2":
+  version: 13.10.2
+  resolution: "@nrwl/cli@npm:13.10.2"
+  dependencies:
+    nx: 13.10.2
+  checksum: 3e2f1232162a09e0b617603d83243b4ebd02c55bc732716d1c47ec5456b13f9bca60d0403197e6087ad689050e4039b482e583853f6a9a0e8f43a0a72100e515
+  languageName: node
+  linkType: hard
+
 "@nrwl/cli@npm:13.10.3":
   version: 13.10.3
   resolution: "@nrwl/cli@npm:13.10.3"
@@ -9666,6 +9675,20 @@ __metadata:
     semver: 7.3.4
     tslib: ^2.0.0
   checksum: 4c2b429cbac01db846a3af4539b6d512a5b08ce03858c8c788f812f8dec7ad75926cc52e76b29b9d75f6e49bf02b53476d269ee095403d90bcdd6a4127b34e7d
+  languageName: node
+  linkType: hard
+
+"@nrwl/devkit@npm:13.10.2":
+  version: 13.10.2
+  resolution: "@nrwl/devkit@npm:13.10.2"
+  dependencies:
+    ejs: ^3.1.5
+    ignore: ^5.0.4
+    nx: 13.10.2
+    rxjs: ^6.5.4
+    semver: 7.3.4
+    tslib: ^2.3.0
+  checksum: d30426e3046a98ebc56009796a9230f56c767fb49b1e2c4f57efc180667685a8563acf74b29659e7a06a5bd6ac847d3753203d1619a3c6c4c4fc37d962163c83
   languageName: node
   linkType: hard
 
@@ -9882,6 +9905,22 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@nrwl/nx-cloud@npm:v13.3.1":
+  version: 13.3.1
+  resolution: "@nrwl/nx-cloud@npm:13.3.1"
+  dependencies:
+    "@nrwl/devkit": 13.10.2
+    axios: ^0.21.1
+    chalk: 4.1.0
+    node-machine-id: ^1.1.12
+    strip-json-comments: ^3.1.1
+    tar: 6.1.11
+  bin:
+    nx-cloud: bin/nx-cloud.js
+  checksum: 353a84762311428c3f0e2bb78ff8bb272accb7c98f436898fca5e8d6245be603c5944329d07249c68cb717817c68008dab92dc0949ac3149fd1cee7dbc711c63
+  languageName: node
+  linkType: hard
+
 "@nrwl/react@npm:13.10.5":
   version: 13.10.5
   resolution: "@nrwl/react@npm:13.10.5"
@@ -9947,6 +9986,17 @@ __metadata:
   bin:
     tao: index.js
   checksum: 5bcd74ef3f73feb2fb06f97abbfb33b94746853ad07a1c10fc687a8a7b4d79469739f127588471038e625c6f7bf73d0d6c5cd6ab190c2ff29da2b5aaf6bc6f1c
+  languageName: node
+  linkType: hard
+
+"@nrwl/tao@npm:13.10.2":
+  version: 13.10.2
+  resolution: "@nrwl/tao@npm:13.10.2"
+  dependencies:
+    nx: 13.10.2
+  bin:
+    tao: index.js
+  checksum: 0bdd96c7c689cfd83f7bee1e8d33daa07df8188dfb7902d19121ab7ab505abf50cd3c4dcfb111fda73e1971cb1db3747e511cc51fd11ecda88dafff9818252ae
   languageName: node
   linkType: hard
 
@@ -30599,6 +30649,7 @@ __metadata:
     "@nrwl/nest": 13.10.5
     "@nrwl/next": 13.10.5
     "@nrwl/node": 13.10.5
+    "@nrwl/nx-cloud": v13.3.1
     "@nrwl/react": 13.10.5
     "@nrwl/storybook": 13.10.5
     "@nrwl/web": 13.10.5
@@ -37400,6 +37451,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"node-machine-id@npm:^1.1.12":
+  version: 1.1.12
+  resolution: "node-machine-id@npm:1.1.12"
+  checksum: e23088a0fb4a77a1d6484b7f09a22992fd3e0054d4f2e427692b4c7081e6cf30118ba07b6113b6c89f1ce46fd26ec5ab1d76dcaf6c10317717889124511283a5
+  languageName: node
+  linkType: hard
+
 "node-match-path@npm:^0.4.4":
   version: 0.4.4
   resolution: "node-match-path@npm:0.4.4"
@@ -37726,6 +37784,47 @@ __metadata:
   bin:
     nx: bin/nx.js
   checksum: df8480a2c2addd0ecb484b08d76b113b13bc04f38ea6100ed9de27c93aa1c6d9aaf6360f45770760f2b354ce7c33bfd2f11294c7d5e6aa839134331369ee0f29
+  languageName: node
+  linkType: hard
+
+"nx@npm:13.10.2":
+  version: 13.10.2
+  resolution: "nx@npm:13.10.2"
+  dependencies:
+    "@nrwl/cli": 13.10.2
+    "@nrwl/tao": 13.10.2
+    "@parcel/watcher": 2.0.4
+    "@swc-node/register": ^1.4.2
+    "@swc/core": ^1.2.152
+    chalk: 4.1.0
+    chokidar: ^3.5.1
+    cli-cursor: 3.1.0
+    cli-spinners: 2.6.1
+    dotenv: ~10.0.0
+    enquirer: ~2.3.6
+    fast-glob: 3.2.7
+    figures: 3.2.0
+    flat: ^5.0.2
+    fs-extra: ^9.1.0
+    glob: 7.1.4
+    ignore: ^5.0.4
+    jsonc-parser: 3.0.0
+    minimatch: 3.0.4
+    npm-run-path: ^4.0.1
+    open: ^8.4.0
+    rxjs: ^6.5.4
+    rxjs-for-await: 0.0.2
+    semver: 7.3.4
+    tar-stream: ~2.2.0
+    tmp: ~0.2.1
+    tsconfig-paths: ^3.9.0
+    tslib: ^2.3.0
+    v8-compile-cache: 2.3.0
+    yargs: ^17.4.0
+    yargs-parser: 21.0.1
+  bin:
+    nx: bin/nx.js
+  checksum: 862f8653403a3d6f1d048fbb6979c4d55d65b82e684892d5fba14fd4ebcfad88b61efbc644f55b68cdbda46ac3d1db67ca9906e6572c7b69ab3c49bee4bb672d
   languageName: node
   linkType: hard
 
