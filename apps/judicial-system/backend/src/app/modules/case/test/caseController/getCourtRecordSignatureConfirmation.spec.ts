@@ -144,7 +144,7 @@ describe('CaseController - Get court record signature confirmation', () => {
     it('should throw ForbiddenException', () => {
       expect(then.error).toBeInstanceOf(ForbiddenException)
       expect(then.error.message).toBe(
-        'A court record must be signed by the assigned judge or registrar',
+        'A court record must be signed by a judge or a registrar',
       )
     })
   })
