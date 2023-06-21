@@ -108,7 +108,11 @@ const PastCasesTable: React.FC<Props> = (props) => {
     >
       {sortedData.map((column) => {
         return (
-          <tr className={styles.row} onClick={() => onRowClick(column.id)}>
+          <tr
+            className={styles.row}
+            onClick={() => onRowClick(column.id)}
+            key={column.id}
+          >
             <td>
               <CourtCaseNumber
                 courtCaseNumber={column.courtCaseNumber}
