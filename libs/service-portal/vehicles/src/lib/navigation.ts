@@ -33,6 +33,10 @@ export const vehiclesNavigation: PortalNavigationItem = {
       name: m.vehiclesHistory,
       path: VehiclePaths.AssetsVehiclesHistory,
     },
+    {
+      name: m.intellectualProperty,
+      path: VehiclePaths.AssetsIntellectualPropertiesOverview,
+    },
   ],
   description: m.vehiclesDescription,
 }
