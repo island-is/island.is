@@ -146,7 +146,7 @@ export async function session({
   await page.close()
   const sessionValidationPage = await context.newPage()
   const sessionValidation = await sessionValidationPage.goto(homeUrl, {
-    waitUntil: 'networkidle',
+    waitUntil: 'domcontentloaded',
   })
   await expect(sessionValidation?.url()).toMatch(homeUrl)
   await sessionValidationPage.context().storageState({ path: storageStatePath })
