@@ -13,7 +13,6 @@ target=$1
 shift # remove target from args
 
 source "$DIR"/_common.sh
-source "$DIR"/patch-nx-json.sh
 
 MAX_JOBS=${MAX_JOBS:-2}
 YARN_BIN=$(which yarn)
