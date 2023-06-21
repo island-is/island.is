@@ -61,3 +61,4 @@ export const serviceSetup = (services: {
         paths: ['/minarsidur'],
       },
     })
+  .grantNamespaces('nginx-ingress-external')
