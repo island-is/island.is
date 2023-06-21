@@ -49,6 +49,10 @@ export const sectionFakeData = buildSubSection({
               value: NO,
               label: 'Nei',
             },
+            {
+              value: 'IgnoreQualityPhotoAndSignature',
+              label: 'Nei, nema sneiða framhjá QualityPhoto og undirskrift',
+            },
           ],
         }),
         buildRadioField({

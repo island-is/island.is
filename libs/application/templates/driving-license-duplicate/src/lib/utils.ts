@@ -1,7 +1,7 @@
 import { ExternalData } from '@island.is/application/types'
 import { getValueViaPath } from '@island.is/application/core'
 import { FormValue } from '@island.is/application/types'
-import { NO, YES } from './constants'
+import { IGNORE, NO, YES } from './constants'
 
 export const getCurrencyString = (n: number) =>
   n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ' kr.'
@@ -10,8 +10,9 @@ export const requirementsMet = (
   answers: FormValue,
   externalData: ExternalData,
 ): boolean => {
-  //TODO: obviously delete this after testing is over
-  return true
+  if (allowFakeCondition(IGNORE)(answers)) {
+    return true
+  }
   let photoPath = 'qualityPhoto.data.hasQualityPhoto'
   let signaturePath = 'qualitySignature.data.hasQualitySignature'
   if (allowFakeCondition(YES)(answers)) {

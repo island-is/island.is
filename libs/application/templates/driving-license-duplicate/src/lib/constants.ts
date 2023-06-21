@@ -24,6 +24,7 @@ export enum Roles {
 
 export const YES = 'yes'
 export const NO = 'no'
+export const IGNORE = 'IgnoreQualityPhotoAndSignature'
 
 type YesOrNo = 'yes' | 'no'
 
@@ -43,7 +44,7 @@ export type SubmitResponse = {
 }
 
 export type DrivingLicenseDuplicateFakeData = {
-  useFakeData: YesOrNo
+  useFakeData: YesOrNo | 'IgnoreQualityPhotoAndSignature'
   currentLicense: 'none' | 'B-full' | 'B-temp'
   licenseIssuedDate?: string
   hasQualityPhoto: YesOrNo
