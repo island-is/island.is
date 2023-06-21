@@ -56,10 +56,8 @@ const determineMessageFromApplicationAnswers = (application: Application) => {
 const reviewStatePendingAction = (
   application: Application,
   role: string,
+  nationalId: string,
 ): PendingAction => {
-  const { userInfo } = useAuth()
-  const nationalId = userInfo?.profile?.nationalId
-
   if (nationalId && !hasReviewerApproved(nationalId, application.answers)) {
     return {
       title: corePendingActionMessages.waitingForReviewTitle,

@@ -37,7 +37,7 @@ export const application = defineMessages({
   },
   historyLogApprovedByReviewer: {
     id: 'ta.cov.application:historyLogApprovedByReviewer',
-    defaultMessage: 'Samþykkt af aðila',
+    defaultMessage: 'Samþykkt af öllum aðilum',
     description: 'History log approved by reviewer',
   },
 })
