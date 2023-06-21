@@ -3,7 +3,7 @@ import { useRouter } from 'next/router'
 import { useGetPetitionLists } from './useGetPetitionLists'
 import format from 'date-fns/format'
 import { FC } from 'react'
-import { ConnectedComponent } from '@island.is/api/schema'
+import { ConnectedComponent, EndorsementList } from '@island.is/api/schema'
 import { useLocalization } from '../../../utils'
 
 interface GeneralPetitionProps {
@@ -16,6 +16,15 @@ const formatDate = (date: string) => {
   } catch {
     return date
   }
+}
+
+const getBaseUrl = () => {
+  const baseUrl =
+    window.location.origin === 'http://localhost:4200'
+      ? 'http://localhost:4242'
+      : window.location.origin
+
+  return `${baseUrl}/umsoknir/undirskriftalisti`
 }
 
 export const GeneralPetitionLists: FC<GeneralPetitionProps> = ({ slice }) => {
@@ -35,15 +44,15 @@ export const GeneralPetitionLists: FC<GeneralPetitionProps> = ({ slice }) => {
             icon: 'open',
             iconType: 'outline',
             size: 'small',
-            onClick: () => window.open('/umsoknir/undirskriftalisti', '_blank'),
+            onClick: () => window.open(getBaseUrl(), '_blank'),
           }}
         />
       </Box>
-      <Box marginBottom={3}>
+      <Box marginTop={10} marginBottom={3}>
         <Text variant="h4">{t('title', 'Virkir listar')}</Text>
       </Box>
       <Stack space={4}>
-        {petitionLists?.data?.map((petition: any) => {
+        {petitionLists?.data?.map((petition: EndorsementList) => {
           return (
             <ActionCard
               key={petition.title}

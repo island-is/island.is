@@ -57,7 +57,8 @@ export const OtherDocumentsSubSection = (index: number) =>
             title: supportingDocuments.labels.otherDocuments.birthCertificate,
             introduction: '',
             maxSize: FILE_SIZE_LIMIT,
-            uploadHeader: supportingDocuments.labels.otherDocuments.birthCertificate,
+            uploadHeader:
+              supportingDocuments.labels.otherDocuments.birthCertificate,
             condition: (formValue: FormValue) => {
               const answers = formValue as Citizenship
 
@@ -73,15 +74,18 @@ export const OtherDocumentsSubSection = (index: number) =>
             title: supportingDocuments.labels.otherDocuments.incomeConfirmation,
             introduction: '',
             maxSize: FILE_SIZE_LIMIT,
-            uploadHeader: supportingDocuments.labels.otherDocuments.incomeConfirmation,
+            uploadHeader:
+              supportingDocuments.labels.otherDocuments.incomeConfirmation,
           }),
 
           buildFileUploadField({
             id: `otherDocuments${index}.incomeConfirmationTown`,
-            title: supportingDocuments.labels.otherDocuments.incomeConfirmationTown,
+            title:
+              supportingDocuments.labels.otherDocuments.incomeConfirmationTown,
             introduction: '',
             maxSize: FILE_SIZE_LIMIT,
-            uploadHeader: supportingDocuments.labels.otherDocuments.incomeConfirmationTown,
+            uploadHeader:
+              supportingDocuments.labels.otherDocuments.incomeConfirmationTown,
           }),
 
           buildFileUploadField({
@@ -97,9 +101,10 @@ export const OtherDocumentsSubSection = (index: number) =>
             title: supportingDocuments.labels.otherDocuments.icelandicTest,
             introduction: '',
             maxSize: FILE_SIZE_LIMIT,
-            uploadHeader: supportingDocuments.labels.otherDocuments.icelandicTest,
+            uploadHeader:
+              supportingDocuments.labels.otherDocuments.icelandicTest,
           }),
-        
+
           buildCustomField({
             id: `otherDocuments${index}.criminalRecord`,
             title: '',
@@ -141,17 +146,23 @@ export const OtherDocumentsSubSection = (index: number) =>
           }),
           buildFileUploadField({
             id: `otherDocuments${index}.birthCertificate`,
-            title: supportingDocuments.labels.otherDocumentsChildren.birthCertificate,
+            title:
+              supportingDocuments.labels.otherDocumentsChildren
+                .birthCertificate,
             introduction: '',
             maxSize: FILE_SIZE_LIMIT,
-            uploadHeader: supportingDocuments.labels.otherDocumentsChildren.birthCertificate,
+            uploadHeader:
+              supportingDocuments.labels.otherDocumentsChildren
+                .birthCertificate,
           }),
           buildFileUploadField({
             id: `otherDocuments${index}.writtenConsent`,
-            title: supportingDocuments.labels.otherDocumentsChildren.writtenConsent,
+            title:
+              supportingDocuments.labels.otherDocumentsChildren.writtenConsent,
             introduction: '',
             maxSize: FILE_SIZE_LIMIT,
-            uploadHeader: supportingDocuments.labels.otherDocumentsChildren.writtenConsent,
+            uploadHeader:
+              supportingDocuments.labels.otherDocumentsChildren.writtenConsent,
             condition: (formValue: FormValue, externalData) => {
               const answers = formValue as Citizenship
               const selectedInCustody = getSelectedCustodyChildren(
@@ -171,10 +182,14 @@ export const OtherDocumentsSubSection = (index: number) =>
           }),
           buildFileUploadField({
             id: `otherDocuments${index}.otherParentConsent`,
-            title: supportingDocuments.labels.otherDocumentsChildren.otherParentConsent,
+            title:
+              supportingDocuments.labels.otherDocumentsChildren
+                .otherParentConsent,
             introduction: '',
             maxSize: FILE_SIZE_LIMIT,
-            uploadHeader: supportingDocuments.labels.otherDocumentsChildren.otherParentConsent,
+            uploadHeader:
+              supportingDocuments.labels.otherDocumentsChildren
+                .otherParentConsent,
             condition: (formValue: FormValue, externalData) => {
               const answers = formValue as Citizenship
               const selectedInCustody = getSelectedCustodyChildren(
@@ -192,10 +207,14 @@ export const OtherDocumentsSubSection = (index: number) =>
           }),
           buildFileUploadField({
             id: `otherDocuments${index}.custodyDocuments`,
-            title: supportingDocuments.labels.otherDocumentsChildren.custodyDocuments,
+            title:
+              supportingDocuments.labels.otherDocumentsChildren
+                .custodyDocuments,
             introduction: '',
             maxSize: FILE_SIZE_LIMIT,
-            uploadHeader: supportingDocuments.labels.otherDocumentsChildren.custodyDocuments,
+            uploadHeader:
+              supportingDocuments.labels.otherDocumentsChildren
+                .custodyDocuments,
           }),
         ],
       }),

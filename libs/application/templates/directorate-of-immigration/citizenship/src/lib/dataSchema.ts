@@ -143,7 +143,7 @@ const MaritalStatusSchema = z.object({
   birthCountry: z.string().min(1),
   name: z.string().min(1),
   citizenship: z.string().min(1),
-  dateOfMarritalStatus: z.string().min(1)
+  dateOfMarritalStatus: z.string().min(1),
 })
 
 export const CitizenshipSchema = z.object({
@@ -156,7 +156,7 @@ export const CitizenshipSchema = z.object({
   countriesOfResidence: CountriesOfResidenceSchema,
   staysAbroad: StaysAbroadSchema,
   passport: z.array(PassportSchema),
-  maritalStatus: MaritalStatusSchema
+  maritalStatus: MaritalStatusSchema,
 })
 
 export type Citizenship = z.TypeOf<typeof CitizenshipSchema>

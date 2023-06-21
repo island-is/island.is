@@ -9,7 +9,7 @@ import {
 
 import useMyApplication from '@island.is/financial-aid-web/osk/src/utils/hooks/useMyApplication'
 import useUser from '@island.is/financial-aid-web/osk/src/utils/hooks/useUser'
-import { ApolloError } from 'apollo-client'
+import { ApolloError } from '@apollo/client'
 import useNationalRegistry from '@island.is/financial-aid-web/osk/src/utils/hooks/useNationalRegistry'
 import { useMunicipality } from '@island.is/financial-aid-web/osk/src/utils/hooks/useMunicipality'
 

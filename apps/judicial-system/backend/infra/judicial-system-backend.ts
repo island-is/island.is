@@ -30,6 +30,11 @@ export const serviceSetup = (): ServiceBuilder<'judicial-system-backend'> =>
         staging: 'cdn.contentful.com',
         prod: 'cdn.contentful.com',
       },
+      CONTENTFUL_ENVIRONMENT: {
+        dev: 'test',
+        staging: 'test',
+        prod: 'master',
+      },
       CLIENT_URL: {
         dev: ref((h) => `https://judicial-system.${h.env.domain}`),
         staging: ref((h) => `https://judicial-system.${h.env.domain}`),
@@ -41,7 +46,7 @@ export const serviceSetup = (): ServiceBuilder<'judicial-system-backend'> =>
       BLOCKED_API_INTEGRATION: {
         dev: '',
         staging: 'COURT,COURT_LITIGANT,POLICE_CASE,POLICE_CASE_V2',
-        prod: 'COURT_LITIGANT,POLICE_CASE_V2',
+        prod: 'POLICE_CASE_V2',
       },
       NO_UPDATE_NOTIFIER: 'true',
     })
@@ -51,6 +56,7 @@ export const serviceSetup = (): ServiceBuilder<'judicial-system-backend'> =>
       NOVA_USERNAME: '/k8s/judicial-system/NOVA_USERNAME',
       NOVA_PASSWORD: '/k8s/judicial-system/NOVA_PASSWORD',
       COURTS_MOBILE_NUMBERS: '/k8s/judicial-system/COURTS_MOBILE_NUMBERS',
+      COURTS_EMAILS: '/k8s/judicial-system/COURTS_EMAILS',
       DOKOBIT_ACCESS_TOKEN: '/k8s/judicial-system/DOKOBIT_ACCESS_TOKEN',
       EMAIL_FROM: '/k8s/judicial-system/EMAIL_FROM',
       EMAIL_FROM_NAME: '/k8s/judicial-system/EMAIL_FROM_NAME',
@@ -77,8 +83,8 @@ export const serviceSetup = (): ServiceBuilder<'judicial-system-backend'> =>
     .readiness('/liveness')
     .postgres(postgresInfo)
     .resources({
-      requests: { cpu: '100m', memory: '256Mi' },
-      limits: { cpu: '400m', memory: '512Mi' },
+      requests: { cpu: '100m', memory: '512Mi' },
+      limits: { cpu: '400m', memory: '1024Mi' },
     })
     .replicaCount({
       min: 2,

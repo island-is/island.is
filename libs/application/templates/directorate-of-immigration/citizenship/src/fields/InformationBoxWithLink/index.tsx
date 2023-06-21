@@ -1,12 +1,8 @@
 import { FieldBaseProps } from '@island.is/application/types'
-import {
-  AlertMessage,
-  GridContainer,
-  LinkV2,
-} from '@island.is/island-ui/core'
+import { AlertMessage, GridContainer, LinkV2 } from '@island.is/island-ui/core'
 import { FC } from 'react'
 import * as styles from './InformationBoxWithLink.css'
-import { MessageDescriptor, } from 'react-intl'
+import { MessageDescriptor } from 'react-intl'
 import DescriptionText from '../../components/DescriptionText'
 import { useLocale } from '@island.is/localization'
 
@@ -31,7 +27,10 @@ export const InformationBoxWithLink: FC<
 
   const messageComponent = (
     <GridContainer>
-      <DescriptionText text={field?.props?.message} textProps={{ variant: 'small' }} />
+      <DescriptionText
+        text={field?.props?.message}
+        textProps={{ variant: 'small' }}
+      />
 
       <LinkV2
         href={linkUrl}

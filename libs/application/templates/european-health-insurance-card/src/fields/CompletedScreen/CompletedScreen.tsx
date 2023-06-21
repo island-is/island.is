@@ -1,4 +1,4 @@
-import { Address, NationalRegistry, TempData } from '../../lib/types'
+import { Address, Answer, NationalRegistry, TempData } from '../../lib/types'
 import {
   Box,
   Bullet,
@@ -19,6 +19,9 @@ const CompletedScreen: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
   const tempData = application.externalData.getTemporaryCard?.data as TempData[]
   const links: JSX.Element[] = []
+
+  const answers = (application.answers as unknown) as Answer
+  const plastic = answers.delimitations.applyForPlastic
 
   const nationalRegistryData = application.externalData.nationalRegistry
     ?.data as NationalRegistry
@@ -62,20 +65,22 @@ const CompletedScreen: FC<FieldBaseProps> = ({ application }) => {
               formatMessage,
             )}
           </Bullet>
-          <Bullet>
-            {formatText(
-              e.confirmation.sectionInfoBulletSecondOne,
-              application,
-              formatMessage,
-            )}{' '}
-            {residence.streetAddress}, {residence.postalCode}{' '}
-            {residence.locality}{' '}
-            {formatText(
-              e.confirmation.sectionInfoBulletSecondTwo,
-              application,
-              formatMessage,
-            )}
-          </Bullet>
+          {plastic?.length > 0 && (
+            <Bullet>
+              {formatText(
+                e.confirmation.sectionInfoBulletSecondOne,
+                application,
+                formatMessage,
+              )}{' '}
+              {residence.streetAddress}, {residence.postalCode}{' '}
+              {residence.locality}{' '}
+              {formatText(
+                e.confirmation.sectionInfoBulletSecondTwo,
+                application,
+                formatMessage,
+              )}
+            </Bullet>
+          )}
           {tempData.length > 0 && (
             <>
               <Bullet>

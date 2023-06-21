@@ -8,6 +8,7 @@ import {
   PageHeader,
   SectionHeading,
   Table,
+  TagAppealState,
 } from '@island.is/judicial-system-web/src/components'
 import { titles, tables, core } from '@island.is/judicial-system-web/messages'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -24,10 +25,12 @@ import {
 } from '@island.is/judicial-system/formatters'
 import {
   CaseAppealDecision,
+  CaseAppealRulingDecision,
   CaseDecision,
   CaseState,
+  isRestrictionCase,
 } from '@island.is/judicial-system/types'
-import { Box, Tag, TagVariant, Text } from '@island.is/island-ui/core'
+import { Box, Text } from '@island.is/island-ui/core'
 import BigTextSmallText from '@island.is/judicial-system-web/src/components/BigTextSmallText/BigTextSmallText'
 import { AppealedCasesQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 
@@ -42,6 +45,7 @@ export interface AppealedCasesQueryResponse {
   decision: CaseDecision
   state: CaseState
   appealState: CaseAppealState
+  appealRulingDecision: CaseAppealRulingDecision
   accusedAppealDecision: CaseAppealDecision
   prosecutorAppealDecision: CaseAppealDecision
   courtEndTime: string
@@ -61,18 +65,39 @@ const CourtOfAppealCases = () => {
 
   const { data: appealedCases } = useQuery<{
     cases: AppealedCasesQueryResponse[]
-  }>(AppealedCasesQuery, { variables: { input } })
+  }>(AppealedCasesQuery, { variables: { input }, fetchPolicy: 'no-cache' })
 
   const appealedCasesColumns = [
     {
       Header: formatMessage(tables.caseNumber),
       accessor: 'courtCaseNumber' as keyof AppealedCasesQueryResponse,
+      disableSortBy: true,
       Cell: (row: {
         row: {
-          original: { courtCaseNumber: string; policeCaseNumbers: string[] }
+          original: {
+            courtCaseNumber: string
+            policeCaseNumbers: string[]
+            appealCaseNumber?: string
+          }
         }
       }) => {
         const thisRow = row.row.original
+
+        if (thisRow.appealCaseNumber) {
+          return (
+            <Box display="flex" flexDirection="column">
+              <Text as="span" variant="small">
+                {thisRow.appealCaseNumber}
+              </Text>
+              <Text as="span" variant="small">
+                {thisRow.courtCaseNumber}
+              </Text>
+              <Text as="span" variant="small">
+                {displayFirstPlusRemaining(thisRow.policeCaseNumbers)}
+              </Text>
+            </Box>
+          )
+        }
 
         return (
           <BigTextSmallText
@@ -111,6 +136,7 @@ const CourtOfAppealCases = () => {
     {
       Header: formatMessage(tables.type),
       accessor: 'type' as keyof AppealedCasesQueryResponse,
+      disableSortBy: true,
       Cell: (row: {
         row: {
           original: {
@@ -139,29 +165,23 @@ const CourtOfAppealCases = () => {
     {
       Header: formatMessage(tables.state),
       accessor: 'state' as keyof AppealedCasesQueryResponse,
+      disableSortBy: true,
       Cell: (row: {
         row: {
           original: {
             state: CaseState
             appealState: CaseAppealState
+            appealRulingDecision: CaseAppealRulingDecision
           }
         }
       }) => {
         const thisRow = row.row.original
-        const tagVariant: { color: TagVariant; text: string } =
-          thisRow.appealState === CaseAppealState.APPEALED
-            ? {
-                color: 'purple',
-                text: formatMessage(tables.newTag),
-              }
-            : thisRow.appealState === CaseAppealState.RECEIVED
-            ? { color: 'darkerBlue', text: formatMessage(tables.receivedTag) }
-            : { color: 'darkerBlue', text: formatMessage(tables.completedTag) }
 
         return (
-          <Tag variant={tagVariant.color} outlined disabled>
-            {tagVariant.text}
-          </Tag>
+          <TagAppealState
+            appealState={thisRow.appealState}
+            appealRulingDecision={thisRow.appealRulingDecision}
+          />
         )
       },
     },
@@ -190,10 +210,18 @@ const CourtOfAppealCases = () => {
       accessor: 'duration' as keyof AppealedCasesQueryResponse,
       Cell: (row: {
         row: {
-          original: { courtEndTime: string; validToDate: string }
+          original: {
+            courtEndTime: string
+            validToDate: string
+            type: CaseType
+          }
         }
       }) => {
         const thisRow = row.row.original
+
+        if (!isRestrictionCase(thisRow.type)) {
+          return null
+        }
 
         return `${formatDate(thisRow.courtEndTime, 'd.M.y')} - ${formatDate(
           thisRow.validToDate,
@@ -225,7 +253,6 @@ const CourtOfAppealCases = () => {
               (a) => a.appealState !== CaseAppealState.COMPLETED,
             ) || []
           }
-          sortableColumnIds={['defendants', 'appealedDate']}
         />
       </Box>
       <SectionHeading title={formatMessage(tables.completedCasesTitle)} />
@@ -241,7 +268,6 @@ const CourtOfAppealCases = () => {
             (a) => a.appealState === CaseAppealState.COMPLETED,
           ) || []
         }
-        sortableColumnIds={['defendants', 'duration']}
       />
     </SharedPageLayout>
   )

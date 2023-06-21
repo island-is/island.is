@@ -58,21 +58,25 @@ export const StaysAbroadRepeaterItem: FC<Props & FieldBaseProps> = ({
       marginBottom={1}
       hidden={repeaterField.wasRemoved === 'true'}
     >
-      
-      <Box display="flex" flexDirection="row" justifyContent="spaceBetween" marginTop={showItemTitle || itemNumber > 0 ? 2 : 0}>
-        {showItemTitle && 
+      <Box
+        display="flex"
+        flexDirection="row"
+        justifyContent="spaceBetween"
+        marginTop={showItemTitle || itemNumber > 0 ? 2 : 0}
+      >
+        {showItemTitle && (
           <DescriptionText
             text={information.labels.staysAbroad.itemTitle}
-            format={{ index: itemNumber+1 }}
+            format={{ index: itemNumber + 1 }}
             textProps={{
               as: 'h5',
               fontWeight: 'semiBold',
-              marginBottom: 0
+              marginBottom: 0,
             }}
           />
-        }
+        )}
 
-        {itemNumber > 0 && (    
+        {itemNumber > 0 && (
           <Button
             variant="text"
             textSize="sm"
@@ -82,9 +86,8 @@ export const StaysAbroadRepeaterItem: FC<Props & FieldBaseProps> = ({
             {formatMessage(information.labels.staysAbroad.deleteButtonTitle)}
           </Button>
         )}
-
       </Box>
-      
+
       <SelectFormField
         application={application}
         field={{

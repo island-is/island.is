@@ -11,22 +11,22 @@ import {
   NationalRegistryUserApi,
   defineTemplateApi,
 } from '@island.is/application/types'
-import { DefaultStateLifeCycle } from '@island.is/application/core'
 import {
   EhicApplyForPhysicalAndTemporary,
   EhicCardResponseApi,
   EhicGetTemporaryCardApi,
 } from '../dataProviders'
-
-import { ApiActions } from '../dataProviders/apiActions.enum'
-import { States } from './types'
 import {
   someAreInsured,
   someCanApplyForPlasticOrPdf,
 } from './helpers/applicantHelper'
+
+import { ApiActions } from '../dataProviders/apiActions.enum'
+import { DefaultStateLifeCycle } from '@island.is/application/core'
+import { Features } from '@island.is/feature-flags'
+import { States } from './types'
 import { dataSchema } from './dataSchema'
 import { europeanHealthInsuranceCardApplicationMessages as e } from '../lib/messages'
-import { Features } from '@island.is/feature-flags'
 
 type Events = { type: DefaultEvents.SUBMIT } | { type: DefaultEvents.ABORT }
 
@@ -40,8 +40,8 @@ const template: ApplicationTemplate<
   Events
 > = {
   type: ApplicationTypes.EUROPEAN_HEALTH_INSURANCE_CARD,
-  name: e.application.applicationName,
-  institution: e.application.institutionName,
+  name: e.form.applicationName,
+  institution: e.form.institutionName,
   featureFlag: Features.europeanHealthInsuranceCard,
   dataSchema,
   stateMachineConfig: {

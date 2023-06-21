@@ -5,8 +5,10 @@ import {
   CaseAppealState,
   CaseState,
   completedCaseStates,
+  Feature,
   Gender,
   isCourtRole,
+  isExtendedCourtRole,
   isIndictmentCase,
   isInvestigationCase,
   isRestrictionCase,
@@ -15,6 +17,8 @@ import { core, sections } from '@island.is/judicial-system-web/messages'
 import { caseResult } from '@island.is/judicial-system-web/src/components/PageLayout/utils'
 import { capitalize } from '@island.is/judicial-system/formatters'
 import { RouteSection } from '@island.is/judicial-system-web/src/components/PageLayout/PageLayout'
+import { FeatureContext } from '@island.is/judicial-system-web/src/components/FeatureProvider/FeatureProvider'
+
 import {
   CaseType,
   InstitutionType,
@@ -35,6 +39,7 @@ import * as constants from '@island.is/judicial-system/consts'
 
 import { stepValidations, stepValidationsType } from '../../formHelper'
 import { isTrafficViolationCase } from '../../stepHelper'
+import { useContext } from 'react'
 
 const validateFormStepper = (
   isActiveSubSectionValid: boolean,
@@ -62,6 +67,7 @@ const useSections = (
 ) => {
   const { formatMessage } = useIntl()
   const router = useRouter()
+  const { features } = useContext(FeatureContext)
 
   const getRestrictionCaseProsecutorSection = (
     workingCase: Case,
@@ -387,7 +393,6 @@ const useSections = (
            */
           (route) => route === router.pathname.slice(0, -5),
         )
-
     return {
       name: formatMessage(sections.indictmentCaseProsecutorSection.title),
       isActive:
@@ -847,7 +852,7 @@ const useSections = (
     return {
       name: formatMessage(sections.indictmentsCourtSection.title),
       isActive:
-        isCourtRole(user?.role) &&
+        isExtendedCourtRole(user?.role) &&
         isIndictmentCase(type) &&
         !completedCaseStates.includes(workingCase.state),
       children: [
@@ -888,11 +893,9 @@ const useSections = (
               : undefined,
         },
         {
-          name: formatMessage(
-            sections.indictmentsCourtSection.prosecutorAndDefender,
-          ),
+          name: formatMessage(sections.indictmentsCourtSection.defender),
           isActive: routeIndex === 3,
-          href: `${constants.INDICTMENTS_PROSECUTOR_AND_DEFENDER_ROUTE}/${workingCase.id}`,
+          href: `${constants.INDICTMENTS_DEFENDER_ROUTE}/${workingCase.id}`,
           onClick:
             validateFormStepper(
               isValid,
@@ -904,9 +907,7 @@ const useSections = (
               workingCase,
             ) && onNavigationTo
               ? async () =>
-                  await onNavigationTo(
-                    constants.INDICTMENTS_PROSECUTOR_AND_DEFENDER_ROUTE,
-                  )
+                  await onNavigationTo(constants.INDICTMENTS_DEFENDER_ROUTE)
               : undefined,
         },
         {
@@ -920,7 +921,7 @@ const useSections = (
                 constants.INDICTMENTS_OVERVIEW_ROUTE,
                 constants.INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE,
                 constants.INDICTMENTS_SUBPOENA_ROUTE,
-                constants.INDICTMENTS_PROSECUTOR_AND_DEFENDER_ROUTE,
+                constants.INDICTMENTS_DEFENDER_ROUTE,
               ],
               workingCase,
             ) && onNavigationTo
@@ -1218,7 +1219,11 @@ const useSections = (
           workingCase.appealState !== CaseAppealState.COMPLETED,
         children: [],
       },
-      ...(isRestrictionCase(workingCase.type) && workingCase.appealState
+      ...(!features.includes(Feature.APPEAL_TO_COURT_OF_APPEALS)
+        ? []
+        : isRestrictionCase(workingCase.type) && workingCase.appealState
+        ? getCourtOfAppealSections(workingCase, user)
+        : isInvestigationCase(workingCase.type) && workingCase.appealState
         ? getCourtOfAppealSections(workingCase, user)
         : []),
       ...(workingCase.parentCase

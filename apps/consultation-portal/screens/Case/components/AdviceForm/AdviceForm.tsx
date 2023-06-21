@@ -14,10 +14,12 @@ import {
   UploadFile,
   fileToObject,
   toast,
+  Checkbox,
+  Stack,
 } from '@island.is/island-ui/core'
 
 import Link from 'next/link'
-import { useState } from 'react'
+import { useContext, useState } from 'react'
 import { useIsMobile, useLogIn, usePostAdvice } from '../../../../hooks'
 import { PresignedPost } from '@island.is/api/schema'
 import {
@@ -30,12 +32,10 @@ import { createUUIDString } from '../../../../utils/helpers'
 import { advicePublishTypeKeyHelper } from '../../../../types/enums'
 import localization from '../../Case.json'
 import sharedLocalization from '../../../../lib/shared.json'
+import { UserContext } from '../../../../context'
 
-type CardProps = {
-  card: Case
-  isLoggedIn: boolean
-  username: string
-  caseId: number
+interface Props {
+  case: Case
   refetchAdvices: any
 }
 
@@ -48,14 +48,9 @@ const fileExtensionWhitelist = {
 
 const date = getShortDate(new Date())
 
-export const AdviceForm = ({
-  card,
-  isLoggedIn,
-  username,
-  caseId,
-  refetchAdvices,
-}: CardProps) => {
+export const AdviceForm = ({ case: _case, refetchAdvices }: Props) => {
   const { isMobile } = useIsMobile()
+  const { isAuthenticated, user } = useContext(UserContext)
   const LogIn = useLogIn()
   const [review, setReview] = useState('')
   const [showInputError, setShowInputError] = useState(false)
@@ -67,6 +62,9 @@ export const AdviceForm = ({
   const loc = localization['adviceForm']
   const sloc = sharedLocalization['publishingRules']
   const { createUploadUrl, postAdviceMutation } = usePostAdvice()
+  const [privateAdvice, setPrivateAdvice] = useState(false)
+
+  const handlePrivateChange = () => setPrivateAdvice(!privateAdvice)
 
   const uploadFile = async (file: UploadFile, response: PresignedPost) => {
     return new Promise((resolve, reject) => {
@@ -156,10 +154,11 @@ export const AdviceForm = ({
           }),
         )
         const objToSend = {
-          caseId: caseId,
-          caseAdviceCommand: {
+          caseId: _case?.id,
+          postCaseAdviceCommand: {
             content: review,
             fileUrls: mappedFileList,
+            privateAdvice: privateAdvice,
           },
         }
 
@@ -196,7 +195,7 @@ export const AdviceForm = ({
     const newFileList = fileList.filter((file) => file.key !== fileToRemove.key)
     setFileList(newFileList)
   }
-  return isLoggedIn ? (
+  return isAuthenticated ? (
     <Box
       paddingY={3}
       paddingX={[2, 2, 4, 4, 4]}
@@ -213,7 +212,7 @@ export const AdviceForm = ({
       >
         <Inline alignY="center" collapseBelow="lg">
           <Text variant="eyebrow" color="purple400">
-            {`${loc.card.eyebrowText} S-${card.caseNumber}`}
+            {`${loc.card.eyebrowText} S-${_case.caseNumber}`}
           </Text>
           {!isMobile && (
             <Box style={{ transform: 'rotate(90deg)', width: 16 }}>
@@ -223,8 +222,8 @@ export const AdviceForm = ({
           <Box>
             <Text variant="eyebrow" color="purple400">
               {`${loc.card.forReviewText}: ${getDateBeginDateEnd(
-                card.processBegins,
-                card.processEnds,
+                _case.processBegins,
+                _case.processEnds,
               )}`}
             </Text>
           </Box>
@@ -238,7 +237,7 @@ export const AdviceForm = ({
       <Text marginBottom={2}>
         {loc.card.description.textBefore}
         {` ${
-          sloc[advicePublishTypeKeyHelper[card.advicePublishTypeId]].present
+          sloc[advicePublishTypeKeyHelper[_case.advicePublishTypeId]].present
         } 
         ${sloc.publishLaw.text} 
         `}
@@ -249,7 +248,7 @@ export const AdviceForm = ({
       </Text>
 
       <Text marginBottom={2}>
-        {loc.card.description.user}: {username}
+        {loc.card.description.user}: {user?.name}
       </Text>
 
       <Input
@@ -276,8 +275,8 @@ export const AdviceForm = ({
         }
       />
       <Box paddingTop={3}>
-        {showUpload && (
-          <Box marginBottom={3}>
+        <Stack space={3}>
+          {showUpload && (
             <InputFileUpload
               name="fileUpload"
               fileList={fileList}
@@ -291,27 +290,34 @@ export const AdviceForm = ({
               maxSize={10000000}
               errorMessage={showInputFileError && inputFileErrorText}
             />
-          </Box>
-        )}
-        <Inline space={2} justifyContent="spaceBetween" collapseBelow="md">
-          {!showUpload ? (
-            <Button
-              fluid
-              size="small"
-              icon="documents"
-              iconType="outline"
-              variant="ghost"
-              onClick={() => setShowUpload(true)}
-            >
-              {loc.showUploadButtonLabel}
-            </Button>
-          ) : (
-            <div />
           )}
-          <Button fluid size="small" onClick={onClick} loading={isSubmitting}>
-            {loc.submitAdviceButtonLabel}
-          </Button>
-        </Inline>
+          {_case.allowUsersToSendPrivateAdvices && (
+            <Checkbox
+              checked={privateAdvice}
+              onChange={() => handlePrivateChange()}
+              label={loc.privateLabel}
+            />
+          )}
+          <Inline space={2} justifyContent="spaceBetween" collapseBelow="md">
+            {!showUpload ? (
+              <Button
+                fluid
+                size="small"
+                icon="documents"
+                iconType="outline"
+                variant="ghost"
+                onClick={() => setShowUpload(true)}
+              >
+                {loc.showUploadButtonLabel}
+              </Button>
+            ) : (
+              <div />
+            )}
+            <Button fluid size="small" onClick={onClick} loading={isSubmitting}>
+              {loc.submitAdviceButtonLabel}
+            </Button>
+          </Inline>
+        </Stack>
       </Box>
       <Text marginTop={2} variant="small">
         {loc.allowedFilesText}

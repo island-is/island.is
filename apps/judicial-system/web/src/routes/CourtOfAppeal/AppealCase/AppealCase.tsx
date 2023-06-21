@@ -60,7 +60,7 @@ const AppealCase = () => {
   const assistants = (userData?.users ?? [])
     .filter(
       (user: User) =>
-        user.role === UserRole.REGISTRAR &&
+        user.role === UserRole.ASSISTANT &&
         user.institution?.type === InstitutionType.HIGH_COURT,
     )
     .map((assistant: User) => {
@@ -106,7 +106,9 @@ const AppealCase = () => {
             name="appealCaseNumber"
             label={formatMessage(strings.caseNumberLabel)}
             value={workingCase.appealCaseNumber ?? ''}
-            placeholder={formatMessage(strings.caseNumberPlaceholder)}
+            placeholder={formatMessage(strings.caseNumberPlaceholder, {
+              year: new Date().getFullYear(),
+            })}
             errorMessage={appealCaseNumberErrorMessage}
             onChange={(event) => {
               removeTabsValidateAndSet(

@@ -54,9 +54,11 @@ export const ResidenceCountries: FC<FieldBaseProps> = (props) => {
     ])
 
   const handleRemoveAll = () => {
-    setSelectedCountries(selectedCountries.map(x => {
-      return {...x, wasRemoved: 'true'}
-    }))
+    setSelectedCountries(
+      selectedCountries.map((x) => {
+        return { ...x, wasRemoved: 'true' }
+      }),
+    )
   }
 
   const handleRemove = (pos: number) => {
@@ -64,10 +66,10 @@ export const ResidenceCountries: FC<FieldBaseProps> = (props) => {
       setSelectedCountries(
         selectedCountries.map((country, index) => {
           if (index === pos) {
-            return {...country, wasRemoved: 'true'}
+            return { ...country, wasRemoved: 'true' }
           }
           return country
-        })
+        }),
       )
     }
   }
@@ -113,7 +115,9 @@ export const ResidenceCountries: FC<FieldBaseProps> = (props) => {
         options={[
           {
             value: 'Yes',
-            label: formatMessage(information.labels.radioButtons.radioOptionYes),
+            label: formatMessage(
+              information.labels.radioButtons.radioOptionYes,
+            ),
           },
           {
             value: 'No',

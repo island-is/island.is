@@ -1,10 +1,13 @@
 import React, { useContext, useMemo } from 'react'
 import { useIntl } from 'react-intl'
 import parseISO from 'date-fns/parseISO'
+import { Row } from 'react-table'
 
 import { theme } from '@island.is/island-ui/theme'
-import { Box, Text, Tag } from '@island.is/island-ui/core'
+import { Box, Text } from '@island.is/island-ui/core'
 import {
+  CaseAppealRulingDecision,
+  CaseAppealState,
   CaseDecision,
   CaseState,
   Defendant,
@@ -23,13 +26,15 @@ import {
 import { useViewport } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   Table,
+  TagAppealState,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import { core, tables } from '@island.is/judicial-system-web/messages'
 import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
+import TagCaseState from '@island.is/judicial-system-web/src/components/TagCaseState/TagCaseState'
 import BigTextSmallText from '@island.is/judicial-system-web/src/components/BigTextSmallText/BigTextSmallText'
 
-import { displayCaseType, mapCaseStateToTagVariant } from './utils'
+import { displayCaseType } from './utils'
 import * as styles from './Cases.css'
 import MobileCase from './MobileCase'
 import { cases as m } from './Cases.strings'
@@ -79,13 +84,20 @@ const DurationDate = ({ date }: { date: string | null }) => {
   )
 }
 
+const sortDefendants = (rowA: Row<Case>, rowB: Row<Case>) => {
+  const a =
+    (rowA.original.defendants && rowA.original.defendants[0]?.name) || ''
+  const b =
+    (rowB.original.defendants && rowB.original.defendants[0]?.name) || ''
+
+  return a.localeCompare(b, 'is', { ignorePunctuation: true })
+}
+
 const PastCases: React.FC<Props> = (props) => {
   const { cases, onRowClick } = props
 
   const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
-
-  const sortableColumnIds = ['courtCaseNumber', 'accusedName', 'type']
 
   const pastCasesColumns = useMemo(() => {
     return [
@@ -94,10 +106,31 @@ const PastCases: React.FC<Props> = (props) => {
         accessor: 'courtCaseNumber' as keyof CaseListEntry,
         Cell: (row: {
           row: {
-            original: { courtCaseNumber: string; policeCaseNumbers: string[] }
+            original: {
+              courtCaseNumber: string
+              policeCaseNumbers: string[]
+              appealCaseNumber?: string
+            }
           }
         }) => {
           const theRow = row.row.original
+
+          if (theRow.appealCaseNumber) {
+            return (
+              <Box display="flex" flexDirection="column">
+                <Text as="span" variant="small">
+                  {theRow.appealCaseNumber}
+                </Text>
+                <Text as="span" variant="small">
+                  {theRow.courtCaseNumber}
+                </Text>
+                <Text as="span" variant="small">
+                  {displayFirstPlusRemaining(theRow.policeCaseNumbers)}
+                </Text>
+              </Box>
+            )
+          }
+
           return (
             <BigTextSmallText
               bigText={theRow.courtCaseNumber}
@@ -109,6 +142,7 @@ const PastCases: React.FC<Props> = (props) => {
       {
         Header: capitalize(formatMessage(core.defendant, { suffix: 'i' })),
         accessor: 'accusedName' as keyof CaseListEntry,
+        sortType: sortDefendants,
         Cell: (row: { row: { original: { defendants: Defendant[] } } }) => {
           const theCase = row.row.original
 
@@ -163,27 +197,39 @@ const PastCases: React.FC<Props> = (props) => {
         Header: formatMessage(m.pastRequests.table.headers.state),
         accessor: 'state' as keyof CaseListEntry,
         disableSortBy: true,
+
         Cell: (row: {
           row: {
             original: {
               state: CaseState
               isValidToDateInThePast: boolean
               type: CaseType
+              appealState?: CaseAppealState
+              appealRulingDecision?: CaseAppealRulingDecision
             }
           }
         }) => {
-          const tagVariant = mapCaseStateToTagVariant(
-            formatMessage,
-            row.row.original.state,
-            user?.role ? isExtendedCourtRole(user.role) : false,
-            row.row.original.type,
-            row.row.original.isValidToDateInThePast,
-          )
-
           return (
-            <Tag variant={tagVariant.color} outlined disabled>
-              {tagVariant.text}
-            </Tag>
+            <>
+              <Box marginRight={1} marginBottom={1}>
+                <TagCaseState
+                  caseState={row.row.original.state}
+                  caseType={row.row.original.type}
+                  isCourtRole={
+                    user?.role ? isExtendedCourtRole(user.role) : false
+                  }
+                  isValidToDateInThePast={
+                    row.row.original.isValidToDateInThePast
+                  }
+                />
+              </Box>
+              {row.row.original.appealState && (
+                <TagAppealState
+                  appealState={row.row.original.appealState}
+                  appealRulingDecision={row.row.original.appealRulingDecision}
+                />
+              )}
+            </>
           )
         },
       },
@@ -221,7 +267,7 @@ const PastCases: React.FC<Props> = (props) => {
   const pastCasesData = useMemo(
     () =>
       cases.sort((a: CaseListEntry, b: CaseListEntry) =>
-        b['created'].localeCompare(a['created']),
+        a['created'].localeCompare(b['created']),
       ),
     [cases],
   )
@@ -257,7 +303,6 @@ const PastCases: React.FC<Props> = (props) => {
       data={pastCasesData ?? []}
       handleRowClick={onRowClick}
       className={styles.table}
-      sortableColumnIds={sortableColumnIds}
     />
   )
 }

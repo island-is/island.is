@@ -19,9 +19,7 @@ export const Parents = ({ field, application, error }: any) => {
     answers,
   } = application
 
-  const [parents, setParents] = useState<
-    NationalRegistryParent[]
-  >(
+  const [parents, setParents] = useState<NationalRegistryParent[]>(
     getValueViaPath(
       answers,
       'parents',
@@ -105,7 +103,7 @@ export const Parents = ({ field, application, error }: any) => {
             </GridColumn>
             <GridColumn span={['1/1', '1/1', '1/2']} paddingTop={2}>
               <InputController
-               id={`${field.id}[0].name`}
+                id={`${field.id}[0].name`}
                 defaultValue={parents[0].name}
                 label={formatMessage(personal.labels.userInformation.name)}
                 readOnly

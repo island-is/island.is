@@ -96,9 +96,7 @@ export const NationalIdWithName: FC<Props & FieldBaseProps> = ({
         <GridColumn span={['1/1', '1/1', '1/2']} paddingTop={2}>
           <InputController
             id={nationaIdField}
-            label={
-              formatMessage(personal.labels.userInformation.nationalId)
-            }
+            label={formatMessage(personal.labels.userInformation.nationalId)}
             defaultValue={defaultNationalId}
             format="######-####"
             required
@@ -117,9 +115,7 @@ export const NationalIdWithName: FC<Props & FieldBaseProps> = ({
           <InputController
             id={nameField}
             defaultValue={defaultName}
-            label={
-              formatMessage(personal.labels.userInformation.name)
-            }
+            label={formatMessage(personal.labels.userInformation.name)}
             error={
               queryError || data?.identity === null
                 ? formatMessage(error.nameByNationalId)

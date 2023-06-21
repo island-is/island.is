@@ -55,9 +55,11 @@ export const StaysAbroad: FC<FieldBaseProps> = (props) => {
   }
 
   const handleRemoveAll = () => {
-    setSelectedCountries(selectedCountries.map(x => {
-      return {...x, wasRemoved: 'true'}
-    }))
+    setSelectedCountries(
+      selectedCountries.map((x) => {
+        return { ...x, wasRemoved: 'true' }
+      }),
+    )
     setShowItemTitle(false)
   }
 
@@ -128,7 +130,9 @@ export const StaysAbroad: FC<FieldBaseProps> = (props) => {
         options={[
           {
             value: 'Yes',
-            label: formatMessage(information.labels.radioButtons.radioOptionYes),
+            label: formatMessage(
+              information.labels.radioButtons.radioOptionYes,
+            ),
           },
           {
             value: 'No',

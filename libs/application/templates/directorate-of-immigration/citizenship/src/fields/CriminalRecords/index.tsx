@@ -6,10 +6,8 @@ export const CriminalRecords = ({ field, application, error }: any) => {
   const answers = application.answers as Citizenship
   const countryList = answers?.countriesOfResidence?.selectedAbroadCountries
 
-  return (
-    countryList ?
-    (
-      countryList.map((x) => {
+  return countryList ? (
+    countryList.map((x) => {
       return (
         <FileUpload
           field={{
@@ -22,8 +20,7 @@ export const CriminalRecords = ({ field, application, error }: any) => {
         />
       )
     })
-    ) : (
-      <div></div>
-    )
+  ) : (
+    <div></div>
   )
 }

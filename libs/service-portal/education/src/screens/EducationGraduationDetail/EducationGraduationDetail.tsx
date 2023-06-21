@@ -15,6 +15,7 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   EmptyState,
   ErrorScreen,
+  formatDate,
   formSubmit,
   IntroHeader,
   m,
@@ -89,8 +90,10 @@ export const EducationGraduationDetail = () => {
     data?.universityOfIcelandStudentInfo.track.downloadServiceURL
 
   const graduationDate = studentInfo
-    ? format(new Date(studentInfo?.graduationDate), 'dd.MM.yy', { locale: is })
+    ? formatDate(studentInfo?.graduationDate)
     : undefined
+
+  const noFiles = files?.length === 0
 
   if (error && !loading) {
     return (
@@ -147,8 +150,21 @@ export const EducationGraduationDetail = () => {
                   </Box>
                 )
               })}
-            {files?.length === 0 ? (
-              <Text>{text?.unconfirmedData || ''}</Text>
+            {noFiles ? (
+              <Box marginTop={1}>
+                {text?.unconfirmedData && (
+                  <Button
+                    variant="utility"
+                    size="small"
+                    icon="document"
+                    iconType="outline"
+                    disabled
+                  >
+                    {formatMessage(m.educationCareer)}
+                  </Button>
+                )}
+                <Text marginTop={1}>{text?.unconfirmedData || ''}</Text>
+              </Box>
             ) : undefined}
           </Box>
         </GridColumn>
@@ -173,6 +189,7 @@ export const EducationGraduationDetail = () => {
             label={m.fullName}
             loading={loading}
             content={studentInfo?.name}
+            translate="no"
           />
           <Divider />
           <UserInfoLine

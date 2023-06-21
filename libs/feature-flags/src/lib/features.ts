@@ -6,7 +6,6 @@ export enum Features {
   // Application visibility flags
   exampleApplication = 'isExampleApplicationEnabled',
   accidentNotification = 'isAccidentNotificationEnabled',
-  announcementOfDeath = 'isAnnouncementOfDeathEnabled',
   drivingLearnersPermit = 'isDrivingLearnersPermitEnabled',
   drivingInstructorRegistrations = 'isDrivingInstructorRegistrationsEnabled',
   drivingSchoolConfirmations = 'isDrivingSchoolConfirmationsEnabled',
@@ -17,7 +16,6 @@ export enum Features {
   inheritanceReport = 'isInheritanceReportApplicationEnabled',
   operatingLicense = 'isApplicationOperatingLicenseEnabled',
   marriageConditions = 'isMarriageConditionsApplicationEnabled',
-  estateApplication = 'isEstateApplicationEnabled',
   drivingLicenseDuplicate = 'isDrivingLicenseDuplicateEnabled',
   transportAuthorityDigitalTachographCompanyCard = 'isTransportAuthorityDigitalTachographCompanyCardEnabled',
   transportAuthorityDigitalTachographDriversCard = 'isTransportAuthorityDigitalTachographDriversCardEnabled',
@@ -25,6 +23,7 @@ export enum Features {
   transportAuthorityLicensePlateRenewal = 'isTransportAuthorityLicensePlateRenewalEnabled',
   alcoholTaxRedemption = 'isAlcoholTaxRedemptionEnabled',
   consultationPortalApplication = 'isConsultationPortalEnabled',
+  childrenResidenceChangeV2 = 'isChildrenResidenceChangeV2Enabled',
   citizenship = 'isCitizenshipEnabled',
   residencePermitPermanent = 'isResidencePermitPermanentEnabled',
   residencePermitRenewal = 'isResidencePermitRenewalEnabled',
@@ -34,12 +33,14 @@ export enum Features {
 
   // Service portal modules
   servicePortalPetitionsModule = 'isServicePortalPetitionsModuleEnabled',
-  servicePortalDrivingLessonsBookModule = 'isServicePortalDrivingLessonsBookModuleEnabled',
   servicePortalAirDiscountModule = 'isServicePortalAirDiscountModuleEnabled',
   servicePortalEducationGraduation = 'isServicePortalEducationGratuationModuleEnabled',
   sessionHistory = 'sessionHistory',
   servicePortalConsentModule = 'isServicePortalConsentModuleEnabled',
   servicePortalHealthRightsModule = 'isServicePortalHealthRightsModuleEnabled',
+
+  //License service new drivers license client enabled
+  licenseServiceDrivingLicenseClient = 'isLicenseServiceDrivingLicenceClientV2Enabled',
 
   // Application delegation flags
   transportAuthorityLicensePlateRenewalDelegations = 'applicationTransportAuthorityLicensePlateRenewalDelegations',

@@ -6,7 +6,7 @@ export enum ApiActions {
   getSpouse = 'getSpouseWithDetails',
   initReview = 'initReview',
   addReview = 'addReview',
-  validateApplication = 'validateApplication'
+  validateApplication = 'validateApplication',
 }
 
 export const MAX_CNT_APPLICANTS = 10

@@ -168,11 +168,7 @@ export enum SessionArrangements {
   ALL_PRESENT = 'ALL_PRESENT',
   ALL_PRESENT_SPOKESPERSON = 'ALL_PRESENT_SPOKESPERSON',
   PROSECUTOR_PRESENT = 'PROSECUTOR_PRESENT',
-}
-
-export enum SubpoenaType {
-  ARREST_SUMMONS = 'ARREST_SUMMONS',
-  ABSENCE_SUMMONS = 'ABSENCE_SUMMONS',
+  NONE_PRESENT = 'NONE_PRESENT',
 }
 
 export interface Case {
@@ -257,8 +253,7 @@ export interface Case {
   caseModifiedExplanation?: string
   rulingModifiedHistory?: string
   caseResentExplanation?: string
-  seenByDefender?: string
-  subpoenaType?: SubpoenaType
+  openedByDefender?: string
   defendantWaivesRightToCounsel?: boolean
   crimeScenes?: CrimeSceneMap
   indictmentIntroduction?: string
@@ -310,6 +305,7 @@ export interface CaseListEntry
     | 'creatingProsecutor'
     | 'appealState'
     | 'appealedDate'
+    | 'appealCaseNumber'
   > {
   parentCaseId?: string
 }
@@ -388,8 +384,7 @@ export interface UpdateCase
     | 'caseModifiedExplanation'
     | 'rulingModifiedHistory'
     | 'caseResentExplanation'
-    | 'seenByDefender'
-    | 'subpoenaType'
+    | 'openedByDefender'
     | 'defendantWaivesRightToCounsel'
     | 'crimeScenes'
     | 'indictmentIntroduction'

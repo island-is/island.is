@@ -305,13 +305,13 @@ export const information = {
       radioOptionYes: {
         id: 'doi.cs.application:information.labels.radioButtons.radioYes',
         defaultMessage: 'Já',
-        description: 'Yes option on radio button'
+        description: 'Yes option on radio button',
       },
       radioOptionNo: {
         id: 'doi.cs.application:information.labels.radioButtons.radioNo',
         defaultMessage: 'Nei',
-        description: 'No option on radio button'
-      }
+        description: 'No option on radio button',
+      },
     }),
   },
 }
