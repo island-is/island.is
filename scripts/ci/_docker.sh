@@ -11,7 +11,7 @@ APP_HOME=$(jq ".projects[\"$APP\"]" -r <"$PROJECT_ROOT"/workspace.json)
 APP_DIST_HOME=$(jq ".targets.build.options.outputPath" -r <"$PROJECT_ROOT"/"$APP_HOME"/project.json)
 DOCKERFILE=${1:-Dockerfile}
 TARGET=${TARGET:-${2:-'<You need to set a target (e.g. output-local, output-jest)>'}}
-ACTION=${3:-container_build}
+ACTION=${3:-docker_build}
 PLAYWRIGHT_VERSION="$(yarn info --json @playwright/test | jq -r '.children.Version')"
 CONTAINER_BUILDER=${CONTAINER_BUILDER:-docker}
 
