@@ -20,15 +20,16 @@ import { messages } from '../../lib/messages'
 import add from 'date-fns/add'
 import { useState } from 'react'
 import BillsTable from './BillsTable'
+import addYears from 'date-fns/addYears'
 
 const Dentists = () => {
   useNamespaces('sp.health')
   const { formatMessage } = useLocale()
 
   const [selectedDateFrom, setSelectedDateFrom] = useState(
-    new Date('2010-11-03'),
+    addYears(new Date(), -5),
   )
-  const [selectedDateTo, setSelectedDateTo] = useState(new Date('2017-09-22'))
+  const [selectedDateTo, setSelectedDateTo] = useState(new Date())
   const [dentistName, setDentistName] = useState('')
 
   const { loading, error, data } = useGetDentistsQuery({
