@@ -88,10 +88,10 @@ export class CitizenshipService extends BaseTemplateApiService {
     return individual
   }
 
-  private async getBirthplace(nationalId: string): Promise<NationalRegistryBirthplace | null> {
-    const birthplace = await this.nationalRegistryApi.getBirthplace(
-      nationalId,
-    )
+  private async getBirthplace(
+    nationalId: string,
+  ): Promise<NationalRegistryBirthplace | null> {
+    const birthplace = await this.nationalRegistryApi.getBirthplace(nationalId)
 
     if (!birthplace?.locality) {
       throw new TemplateApiError(

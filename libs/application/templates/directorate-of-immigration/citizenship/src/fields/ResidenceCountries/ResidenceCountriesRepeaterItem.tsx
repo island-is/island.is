@@ -1,22 +1,17 @@
-import { getErrorViaPath, getValueViaPath } from '@island.is/application/core'
-import { FieldBaseProps, FieldComponents, FieldTypes, GenericFormField } from '@island.is/application/types'
 import {
-  Box,
-  Text,
-  Button,
-  GridRow,
-  GridColumn,
-  LinkV2,
-} from '@island.is/island-ui/core'
+  FieldBaseProps,
+  FieldComponents,
+  FieldTypes,
+  GenericFormField,
+} from '@island.is/application/types'
+import { Box, Button } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { InputController } from '@island.is/shared/form-fields'
 import { FC, useEffect } from 'react'
 import { useFormContext } from 'react-hook-form'
-import { NationalIdWithName } from '../NationalIdWithName'
-import { information } from '../../lib/messages'
 import { SelectFormField } from '@island.is/application/ui-fields'
 import { fetchCountries } from '../../utils/getCountries'
 import { CountryOfResidence } from '../../shared/types'
+import { information } from '../../lib/messages'
 
 interface Props {
   id: string
@@ -55,34 +50,34 @@ export const ResidenceCountriesRepeaterItem: FC<Props & FieldBaseProps> = ({
       marginBottom={1}
       hidden={repeaterField.wasRemoved === 'true'}
     >
-      {index > 0 && (
-        <Box 
-          display='flex'
-          flexDirection='row'
-          justifyContent='flexEnd'
-        >
-          <Button 
-            variant='text'
-            textSize='sm'
-            size='small'
+      {itemNumber > 0 && (
+        <Box display="flex" flexDirection="row" justifyContent="flexEnd">
+          <Button
+            variant="text"
+            textSize="sm"
+            size="small"
             onClick={() => handleRemove(index)}
           >
-            Eyða færslu
-            </Button>
+            {formatMessage(
+              information.labels.countriesOfResidence.deleteButtonTitle,
+            )}
+          </Button>
         </Box>
       )}
       <SelectFormField
         application={application}
         field={{
           id: countryField,
-          title: `Búsetuland ${itemNumber+1}`,
+          title: `Búsetuland ${itemNumber + 1}`,
           options: countryOptions,
           component: FieldComponents.SELECT,
           children: undefined,
           type: FieldTypes.SELECT,
-          onSelect: (value) => addCountryToList(value.value as string, index)
+          required: true,
+          onSelect: (value) => addCountryToList(value.value as string, index),
         }}
-        ></SelectFormField>
+        errors={errors}
+      ></SelectFormField>
     </Box>
   )
 }

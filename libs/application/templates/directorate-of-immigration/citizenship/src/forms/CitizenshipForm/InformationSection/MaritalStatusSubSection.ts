@@ -58,11 +58,12 @@ export const MaritalStatusSubSection = buildSubSection({
           width: 'half',
           readOnly: true,
           format: '######-####',
+          required: true,
           defaultValue: (application: Application) =>
             application.externalData?.spouseDetails?.data?.nationalId,
         }),
         buildTextField({
-          id: 'maritalStatus.spouseName',
+          id: 'maritalStatus.name',
           title: information.labels.maritalStatus.name,
           backgroundColor: 'white',
           width: 'half',
@@ -71,7 +72,7 @@ export const MaritalStatusSubSection = buildSubSection({
             application.externalData?.spouseDetails?.data?.name,
         }),
         buildTextField({
-          id: 'maritalStatus.spouseBirthCountry',
+          id: 'maritalStatus.birthCountry',
           title: information.labels.maritalStatus.spouseBirthCountry,
           backgroundColor: 'white',
           width: 'half',
@@ -80,7 +81,7 @@ export const MaritalStatusSubSection = buildSubSection({
             'Spouse Birth country here',
         }),
         buildTextField({
-          id: 'maritalStatus.spouseCitizenship',
+          id: 'maritalStatus.citizenship',
           title: information.labels.maritalStatus.spouseCitizenship,
           backgroundColor: 'white',
           width: 'half',
@@ -121,10 +122,10 @@ export const MaritalStatusSubSection = buildSubSection({
             return myAddressCombination !== mySpouseAddressCombination
           },
         }),
-         buildDescriptionField({
+        buildDescriptionField({
           id: 'maritalStatus.explanationTitle',
           title: information.labels.maritalStatus.explanationTitle,
-          titleVariant:'h5',
+          titleVariant: 'h5',
           space: 'gutter',
           condition: (_, externalData: any) => {
             const externalCustomData = externalData as ExternalData
@@ -138,7 +139,7 @@ export const MaritalStatusSubSection = buildSubSection({
           title: information.labels.maritalStatus.explanation,
           backgroundColor: 'blue',
           width: 'full',
-          variant:"textarea",
+          variant: 'textarea',
           condition: (_, externalData: any) => {
             const externalCustomData = externalData as ExternalData
             const myAddressCombination = `${externalCustomData.individual?.data?.address?.streetAddress}, ${externalCustomData.individual?.data?.address?.postalCode} ${externalCustomData.individual?.data?.address?.city}`

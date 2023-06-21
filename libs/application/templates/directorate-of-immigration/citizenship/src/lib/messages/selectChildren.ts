@@ -3,24 +3,27 @@ import { defineMessages } from 'react-intl'
 // Select children
 export const selectChildren = {
   general: defineMessages({
+    subSectionTitle: {
+      id: 'doi.cs.application:personal.labels.pickChildren.subSectionTitle',
+      defaultMessage: 'Börn í þinni forsjá',
+      description: 'Pick children sub section title',
+    },
+    pageTitle: {
+      id: 'doi.cs.application:personal.labels.pickChildren.pageTitle',
+      defaultMessage: 'Börn í þinni forsjá',
+      description: 'Pick children page title',
+    },
     sectionTitle: {
       id:
         'doi.cs.application:section.backgroundInformation.selectChildren.sectionTitle',
       defaultMessage: 'Velja barn/börn',
       description: 'Select children section title',
     },
-    pageTitle: {
-      id:
-        'doi.cs.application:section.backgroundInformation.selectChildren.pageTitle',
-      defaultMessage: 'Veldu barn/börn',
-      description: 'Select children page title',
-    },
     description: {
-      id:
-        'doi.cs.application:section.backgroundInformation.selectChildren.description#markdown',
+      id: 'doi.cs.application:personal.labels.pickChildren.description',
       defaultMessage:
-        'Hér sérðu lista yfir börn sem eru skráð í þinni forsjá. Þú getur valið fyrir hvaða barn/börn á að flytja lögheimili.\\n\\nAðeins er hægt að velja börn sem eru skráð með sama lögheimili og eiga sömu foreldra.',
-      description: 'Select children subtitle',
+        'Eftirfarandi börn eru í þinni forsjá og eru skráð með lögheimili á Íslandi. Hakaðu við þau börn sem þú vilt að hljóti íslenskan ríkisborgararétt samhliða því að þú fáir veitingu.',
+      description: 'Pick children description',
     },
   }),
   warningAgeChildren: defineMessages({

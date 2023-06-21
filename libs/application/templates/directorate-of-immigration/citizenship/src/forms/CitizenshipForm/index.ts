@@ -1,9 +1,10 @@
 import { buildForm, buildSection } from '@island.is/application/core'
 import { Form, FormModes, Section } from '@island.is/application/types'
-import { confirmation, externalData } from '../../lib/messages'
+import { confirmation, externalData, review } from '../../lib/messages'
 import { InformationSection } from './InformationSection'
 import { PaymentSection } from './PaymentSection'
 import { PersonalSection } from './PersonalSection'
+import { ReviewSection } from './ReviewSection'
 import { SupportingDocumentsSection } from './SupportingDocumentsSection'
 import { Logo } from '../../assets/Logo'
 import { MAX_CNT_APPLICANTS } from '../../shared'
@@ -30,6 +31,7 @@ export const CitizenshipForm: Form = buildForm({
     PersonalSection,
     InformationSection,
     ...buildSupportingDocumentsSections(),
+    ReviewSection,
     PaymentSection,
     buildSection({
       id: 'confirmation',

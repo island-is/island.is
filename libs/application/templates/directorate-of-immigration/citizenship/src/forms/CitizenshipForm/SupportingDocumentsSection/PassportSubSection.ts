@@ -2,24 +2,91 @@ import {
   buildMultiField,
   buildSubSection,
   buildDescriptionField,
+  buildTextField,
+  buildCustomField,
+  buildDateField,
+  buildFileUploadField,
 } from '@island.is/application/core'
 import { supportingDocuments } from '../../../lib/messages'
+import { Application } from '@island.is/application/types'
+import { Citizenship } from '../../../lib/dataSchema'
+import { ExternalData } from '../../../types'
+import { getSelectedCustodyChildren } from '../../../utils/childrenInfo'
 
-export const PassportSubSection = buildSubSection({
-  id: 'passport',
-  title: supportingDocuments.labels.passport.subSectionTitle,
-  children: [
-    buildMultiField({
-      id: 'passportMultiField',
-      title: supportingDocuments.labels.passport.pageTitle,
-      description: supportingDocuments.labels.passport.description,
-      children: [
-        buildDescriptionField({
-          id: 'passport.title',
-          title: supportingDocuments.labels.passport.title,
-          titleVariant: 'h5',
-        }),
-      ],
-    }),
-  ],
-})
+const FILE_SIZE_LIMIT = 10000000
+
+export const PassportSubSection = (index: number) =>
+  buildSubSection({
+    id: `passport${index}`,
+    title: supportingDocuments.labels.passport.subSectionTitle,
+    children: [
+      buildMultiField({
+        id: `passportMultiField${index}`,
+        title: supportingDocuments.labels.passport.pageTitle,
+        description: (application: Application) => {
+          const externalData = application.externalData as ExternalData
+          const answers = application.answers as Citizenship
+          const selectedInCustody = getSelectedCustodyChildren(
+            externalData,
+            answers,
+          )
+
+          const personName =
+            index === 0
+              ? answers.userInformation?.name
+              : !!selectedInCustody && selectedInCustody[index - 1]?.fullName
+
+          return {
+            ...supportingDocuments.general.description,
+            values: {
+              person: `${personName}`,
+            },
+          }
+        },
+        children: [
+          buildDescriptionField({
+            id: `passport${index}.title`,
+            title: supportingDocuments.labels.passport.title,
+            titleVariant: 'h5',
+          }),
+          buildDateField({
+            id: `passport[${index}].publishDate`,
+            title: supportingDocuments.labels.passport.publishDate,
+            placeholder: supportingDocuments.labels.passport.datePlaceholder,
+            width: 'half',
+          }),
+          buildDateField({
+            id: `passport[${index}].expirationDate`,
+            title: supportingDocuments.labels.passport.expirationDate,
+            placeholder: supportingDocuments.labels.passport.datePlaceholder,
+            width: 'half',
+          }),
+          buildTextField({
+            id: `passport[${index}].passportNumber`,
+            title: supportingDocuments.labels.passport.passportNumber,
+            placeholder: supportingDocuments.labels.passport.numberPlaceholder,
+
+            width: 'half',
+          }),
+          buildTextField({
+            id: `passport[${index}].passportType`,
+            title: supportingDocuments.labels.passport.passportType,
+            placeholder: supportingDocuments.labels.passport.typePlaceholder,
+            width: 'half',
+          }),
+          buildTextField({
+            id: `passport[${index}].publisher`,
+            title: supportingDocuments.labels.passport.publisher,
+            width: 'half',
+          }),
+          buildFileUploadField({
+            id: 'passport.attachment',
+            title: '',
+            introduction: '',
+            maxSize: FILE_SIZE_LIMIT,
+            uploadHeader: 'æljksadf',
+          }),
+        ],
+      }),
+    ],
+  })

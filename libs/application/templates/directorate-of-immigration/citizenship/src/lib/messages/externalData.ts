@@ -14,13 +14,12 @@ export const externalData = {
     },
     subTitle: {
       id: 'doi.cs.application:externalData.dataProvider.subTitle',
-      defaultMessage: 'Eftirfarandi gögn verða sótt rafrænt',
+      defaultMessage: 'Eftirfarandi gögn verða sótt rafrænt með þínu samþykki.',
       description: 'External data sub title',
     },
     description: {
       id: 'doi.cs.application:externalData.dataProvider.description',
-      defaultMessage:
-        'Integer id augue in erat ultrices pharetra a vel neque. Integer pellentesque, erat vel varius imperdiet, nisl turpis imperdiet augue, at vulputate lorem mauris in nibh. ',
+      defaultMessage: `Mér er kunnugt um að ég get misst núverandi ríkisborgararétt minn við töku íslensks ríkisborgararéttar.\n\n Jafnframt lýsi ég því yfir að ég hef kynnt mér persónuverndarskilmála Útlendingastofnunar vegna umsókna um íslenskan ríkisborgararétt og heimila þar með Útlendingastofnun og lögregluembættum að afla þeirra upplýsinga um mig sem þessir aðilar telja nauðsynlegar til að meta umsókn mína, þar á meðal sakavottorðs hérlendis sem erlendis og upplýsinga frá skattyfirvöldum.`,
       description: 'External data description',
     },
     checkboxLabel: {

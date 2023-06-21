@@ -1,13 +1,9 @@
 import {
   buildMultiField,
   buildSubSection,
-  buildDescriptionField,
-  buildRadioField,
-  buildSelectField,
   buildCustomField,
 } from '@island.is/application/core'
 import { information } from '../../../lib/messages'
-import { Answer } from '@island.is/application/types'
 
 export const CountriesOfResidenceSubSection = buildSubSection({
   id: 'countriesOfResidence',

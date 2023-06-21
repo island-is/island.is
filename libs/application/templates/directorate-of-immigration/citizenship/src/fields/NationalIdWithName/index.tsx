@@ -8,14 +8,12 @@ import { IdentityInput, Query } from '@island.is/api/schema'
 import { InputController } from '@island.is/shared/form-fields'
 import { useFormContext } from 'react-hook-form'
 import * as kennitala from 'kennitala'
-import { information, error } from '../../lib/messages'
+import { information, error, personal } from '../../lib/messages'
 import debounce from 'lodash/debounce'
 import { IDENTITY_QUERY } from '../../graphql/queries'
 
 interface Props {
   customId?: string
-  customNationalIdLabel?: string
-  customNameLabel?: string
   onNationalIdChange?: (s: string) => void
   onNameChange?: (s: string) => void
   nationalIdDefaultValue?: string
@@ -26,8 +24,6 @@ interface Props {
 
 export const NationalIdWithName: FC<Props & FieldBaseProps> = ({
   customId = '',
-  customNationalIdLabel = '',
-  customNameLabel = '',
   field,
   application,
   onNationalIdChange,
@@ -56,12 +52,6 @@ export const NationalIdWithName: FC<Props & FieldBaseProps> = ({
   let nationalIdFieldErrors: string | undefined
   if (errorMessage && nationalIdDefaultValue?.length === 0) {
     nationalIdFieldErrors = errorMessage
-  } else if (
-    kennitala.isValid(nationalIdInput) &&
-    !kennitala.isCompany(nationalIdInput) &&
-    kennitala.info(nationalIdInput).age < 18
-  ) {
-    nationalIdFieldErrors = 'blabla' //formatMessage(error.minAgeNotFulfilled)
   } else if (!errorMessage) {
     nationalIdFieldErrors = getErrorViaPath(errors, nationaIdField)
   }
@@ -107,7 +97,7 @@ export const NationalIdWithName: FC<Props & FieldBaseProps> = ({
           <InputController
             id={nationaIdField}
             label={
-              customNationalIdLabel.length > 0 ? customNationalIdLabel : '1' //formatMessage(information.labels.buyer.nationalId)
+              formatMessage(personal.labels.userInformation.nationalId)
             }
             defaultValue={defaultNationalId}
             format="######-####"
@@ -128,11 +118,11 @@ export const NationalIdWithName: FC<Props & FieldBaseProps> = ({
             id={nameField}
             defaultValue={defaultName}
             label={
-              customNameLabel.length > 0 ? customNameLabel : '2' //formatMessage(information.labels.buyer.name)
+              formatMessage(personal.labels.userInformation.name)
             }
             error={
               queryError || data?.identity === null
-                ? '3' //formatMessage(error.nameByNationalId)
+                ? formatMessage(error.nameByNationalId)
                 : nameFieldErrors && !data
                 ? nameFieldErrors
                 : undefined

@@ -15,7 +15,6 @@ export const UserInformationSubSection = buildSubSection({
     buildMultiField({
       id: 'userInformationMultiField',
       title: personal.labels.userInformation.pageTitle,
-      description: personal.labels.userInformation.description,
       children: [
         buildDescriptionField({
           id: 'userInformation.title',

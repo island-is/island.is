@@ -123,7 +123,8 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps & ButtonTypes>(
             [styles.fluid]: fluid,
             [styles.nowrap]: nowrap,
             [styles.size.utility]: variant === 'utility',
-            [styles.size.textSmall]: variant === 'text' && size === 'small' || textSize === 'sm',
+            [styles.size.textSmall]:
+              (variant === 'text' && size === 'small') || textSize === 'sm',
             [styles.size.textMedium]: textSize === 'md',
             [styles.circleSizes[size]]: circle,
             [styles.circle]: circle,
@@ -133,7 +134,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps & ButtonTypes>(
             [styles.padding.utility]: variant === 'utility',
             [styles.isEmpty]: !children,
             [styles.loading]: loading,
-          }
+          },
         )}
         display={variant === 'text' ? 'inline' : inline ? 'inlineFlex' : 'flex'}
         disabled={disabled || loading}

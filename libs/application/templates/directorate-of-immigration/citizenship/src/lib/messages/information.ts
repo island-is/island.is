@@ -117,15 +117,10 @@ export const information = {
         defaultMessage: 'Foreldrar með íslenskt ríkisfang',
         description: 'Parents page title',
       },
-      parentOneTitle: {
-        id: 'doi.cs.application:information.labels.parents.parentOnetitle',
-        defaultMessage: 'Foreldri 1',
-        description: 'Parent one title',
-      },
-      parentTwoTitle: {
-        id: 'doi.cs.application:information.labels.parents.parentTwotitle',
-        defaultMessage: 'Foreldri 2',
-        description: 'Parent two title',
+      parentTitle: {
+        id: 'doi.cs.application:information.labels.parents.parentTitle',
+        defaultMessage: 'Foreldri {index}',
+        description: 'Parent title',
       },
     }),
     maritalStatus: defineMessages({
@@ -195,8 +190,10 @@ export const information = {
         description: 'Applicant spouse address label',
       },
       explanationTitle: {
-        id: 'doi.cs.application:information.labels.maritalStatus.explanationTitle',
-        defaultMessage: 'Heimilisfang þitt og maka þíns er ekki sameiginlegt, vinsamlegast tilgreinið ástæðu þess.',
+        id:
+          'doi.cs.application:information.labels.maritalStatus.explanationTitle',
+        defaultMessage:
+          'Heimilisfang þitt og maka þíns er ekki sameiginlegt, vinsamlegast tilgreinið ástæðu þess.',
         description: 'Title of explanation field',
       },
       explanation: {
@@ -231,6 +228,18 @@ export const information = {
         defaultMessage: 'Vinsamlegast tilgreindu þau lönd sem við á',
         description: 'Countries of residence list countries title',
       },
+      buttonTitle: {
+        id:
+          'doi.cs.application:information.labels.countriesOfResidence.buttonTitle',
+        defaultMessage: 'Bæta við fleiri löndum',
+        description: 'Add more countries button title',
+      },
+      deleteButtonTitle: {
+        id:
+          'doi.cs.application:information.labels.countriesOfResidence.deleteButtonTitle',
+        defaultMessage: 'Eyða færslu',
+        description: 'Add more countries button title',
+      },
     }),
     staysAbroad: defineMessages({
       subSectionTitle: {
@@ -240,13 +249,19 @@ export const information = {
       },
       pageSubTitle: {
         id: 'doi.cs.application:information.labels.staysAbroad.subSectionTitle',
-        defaultMessage: 'Gefðu upplýsingar um dvöl erlendis lengur en 3 mánuði frá lögheimilisskráningu, til þess dags þegar þessi umsókn er lögð fram.',
+        defaultMessage:
+          'Gefðu upplýsingar um dvöl erlendis lengur en 3 mánuði frá lögheimilisskráningu, til þess dags þegar þessi umsókn er lögð fram.',
         description: 'Stays abroad sub section title',
       },
       pageTitle: {
         id: 'doi.cs.application:information.labels.staysAbroad.pageTitle',
         defaultMessage: 'Dvöl erlendis á tímabilinu',
         description: 'Stays abroad page title',
+      },
+      itemTitle: {
+        id: 'doi.cs.application:information.labels.staysAbroad.itemTitle',
+        defaultMessage: 'Dvalarland {index}',
+        description: 'Stay abroad item separator title',
       },
       questionTitle: {
         id: 'doi.cs.application:information.labels.staysAbroad.questionTitle',
@@ -256,29 +271,47 @@ export const information = {
       },
       selectLabel: {
         id: 'doi.cs.application:information.labels.staysAbroad.selectLabel',
-        defaultMessage:
-          'Land sem þú dvaldir í síðast',
+        defaultMessage: 'Land sem þú dvaldir í síðast',
         description: 'Country select label',
       },
       dateFromLabel: {
         id: 'doi.cs.application:information.labels.staysAbroad.dateFromLabel',
-        defaultMessage:
-          'Dagsetning frá',
+        defaultMessage: 'Dagsetning frá',
         description: 'From date label',
       },
       dateToLabel: {
         id: 'doi.cs.application:information.labels.staysAbroad.dateToLabel',
-        defaultMessage:
-          'Dagsetning til',
+        defaultMessage: 'Dagsetning til',
         description: 'To date label',
       },
       purposeLabel: {
         id: 'doi.cs.application:information.labels.staysAbroad.purposeLabel',
-        defaultMessage:
-          'Tilgangur dvalar',
+        defaultMessage: 'Tilgangur dvalar',
         description: 'purpose of stay label',
       },
-      
+      buttonTitle: {
+        id: 'doi.cs.application:information.labels.staysAbroad.buttonTitle',
+        defaultMessage: 'Bæta við fleiri dvalarupplýsingum',
+        description: 'Add more countries button title',
+      },
+      deleteButtonTitle: {
+        id:
+          'doi.cs.application:information.labels.staysAbroad.deleteButtonTitle',
+        defaultMessage: 'Eyða færslu',
+        description: 'Add more countries button title',
+      },
+    }),
+    radioButtons: defineMessages({
+      radioOptionYes: {
+        id: 'doi.cs.application:information.labels.radioButtons.radioYes',
+        defaultMessage: 'Já',
+        description: 'Yes option on radio button'
+      },
+      radioOptionNo: {
+        id: 'doi.cs.application:information.labels.radioButtons.radioNo',
+        defaultMessage: 'Nei',
+        description: 'No option on radio button'
+      }
     }),
   },
 }

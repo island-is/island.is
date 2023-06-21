@@ -7,14 +7,16 @@ import { getValueViaPath } from '@island.is/application/core'
 import { RadioController } from '@island.is/shared/form-fields'
 import { information } from '../../lib/messages'
 import DescriptionText from '../../components/DescriptionText'
+import { useLocale } from '@island.is/localization'
 
-
-export const ResidenceCountries: FC<FieldBaseProps>  = (props) => {
+export const ResidenceCountries: FC<FieldBaseProps> = (props) => {
   const { application, setBeforeSubmitCallback } = props
 
-  const [hasLivedAbroad, setHasLivedAbroad] = useState<
-    string
-  >(
+  const { formatMessage } = useLocale()
+
+  console.log('application', application)
+
+  const [hasLivedAbroad, setHasLivedAbroad] = useState<string>(
     getValueViaPath(
       application.answers,
       'countriesOfResidence.hasLivedAbroad',
@@ -27,91 +29,83 @@ export const ResidenceCountries: FC<FieldBaseProps>  = (props) => {
     getValueViaPath(
       application.answers,
       'countriesOfResidence.selectedAbroadCountries',
-      [{ country: '', wasRemoved: 'false'}],
+      [],
     ) as CountryOfResidence[],
-)
+  )
 
-const [filteredSelectedCountries, setFilteredSelectedCountries] = useState(
-  selectedCountries.filter(x => x.wasRemoved !== 'true')
-)
+  const [filteredSelectedCountries, setFilteredSelectedCountries] = useState(
+    selectedCountries.filter((x) => x.wasRemoved !== 'true'),
+  )
 
-useEffect(() => {
-  setFilteredSelectedCountries(selectedCountries.filter(x => x.wasRemoved !== 'true'))
-}, [selectedCountries])
+  useEffect(() => {
+    setFilteredSelectedCountries(
+      selectedCountries.filter((x) => x.wasRemoved !== 'true'),
+    )
+    console.log('selected', selectedCountries)
+  }, [selectedCountries])
 
   const handleAdd = () =>
     setSelectedCountries([
       ...selectedCountries,
       {
         country: '',
-        wasRemoved: 'false'
+        wasRemoved: 'false',
       },
     ])
 
   const handleRemoveAll = () => {
-    setSelectedCountries(
-      [{
-        country: '',
-        wasRemoved: 'false'
-      },
-    ])
+    setSelectedCountries(selectedCountries.map(x => {
+      return {...x, wasRemoved: 'true'}
+    }))
   }
-
-  /*selectedCountries.map((country, index) => {
-        return { ...country, wasRemoved: 'true' }
-      }), */
 
   const handleRemove = (pos: number) => {
     if (pos > -1) {
       setSelectedCountries(
         selectedCountries.map((country, index) => {
           if (index === pos) {
-            return { ...country, wasRemoved: 'true' }
+            return {...country, wasRemoved: 'true'}
           }
           return country
-        }),
+        })
       )
     }
   }
 
   const addCountryToList = (newCountry: string, newIndex: number) => {
-    console.log('adding to list', newCountry, newIndex)
     setSelectedCountries(
       selectedCountries.map((country, index) => {
-        if(newIndex === index){
-          return { ...country, country: newCountry}
+        if (newIndex === index) {
+          return { ...country, country: newCountry }
         }
         return country
-      })
+      }),
     )
   }
 
   const handleLiveAbroadChange = (value: string) => {
     setHasLivedAbroad(value)
 
-    if(value === 'No'){
-      console.log('removing all')
+    if (value === 'No') {
       handleRemoveAll()
+    } else {
+      handleAdd()
     }
   }
 
-  useEffect(() => {
-    console.log('selectedCountries', selectedCountries)
-  }, [selectedCountries])
-
   return (
     <Box>
-      <DescriptionText 
+      <DescriptionText
         text={information.labels.countriesOfResidence.questionTitle}
         textProps={{
           as: 'h5',
           fontWeight: 'semiBold',
-          marginBottom:3
+          marginBottom: 3,
         }}
       />
-      <RadioController 
+      <RadioController
         id={'countriesOfResidence.hasLivedAbroad'}
-        split='1/2'
+        split="1/2"
         onSelect={(value) => {
           handleLiveAbroadChange(value)
         }}
@@ -119,59 +113,61 @@ useEffect(() => {
         options={[
           {
             value: 'Yes',
-            label: 'Já',
+            label: formatMessage(information.labels.radioButtons.radioOptionYes),
           },
           {
             value: 'No',
-            label: 'Nei',
+            label: formatMessage(information.labels.radioButtons.radioOptionNo),
           },
         ]}
       />
 
-
-      { hasLivedAbroad === 'Yes' && (
-        <Box>
-          <DescriptionText 
+      <Box>
+        {hasLivedAbroad === 'Yes' && (
+          <DescriptionText
             text={information.labels.countriesOfResidence.countryListTitle}
             textProps={{
               as: 'h5',
               fontWeight: 'semiBold',
-              paddingTop:3,
-              marginBottom:1
+              paddingTop: 3,
+              marginBottom: 1,
             }}
           />
-          {selectedCountries.map((field, index) => {
-            const position = filteredSelectedCountries.indexOf(field)
-            return (
-              <ResidenceCountriesRepeaterItem
-                id={`${props.field.id}.selectedAbroadCountries`}
-                repeaterField={field}
-                index={index}
-                key={`countrySelect-${index}`}
-                handleRemove={handleRemove}
-                itemNumber={position}
-                addCountryToList={addCountryToList}
-                {...props}
-              />
-            )
-          })}
+        )}
+        {selectedCountries.map((field, index) => {
+          const position = filteredSelectedCountries.indexOf(field)
+          return (
+            <ResidenceCountriesRepeaterItem
+              id={`${props.field.id}.selectedAbroadCountries`}
+              repeaterField={field}
+              index={index}
+              key={`countrySelect-${index}`}
+              handleRemove={handleRemove}
+              itemNumber={position}
+              addCountryToList={addCountryToList}
+              {...props}
+            />
+          )
+        })}
 
+        {hasLivedAbroad === 'Yes' && (
           <Box paddingTop={4}>
             <Button
               variant="ghost"
               icon="add"
               iconType="outline"
               fluid
-              size='large'
+              size="large"
               onClick={handleAdd}
-              textSize='md'
-              
+              textSize="md"
             >
-              Bæta við fleiri löndum
+              {formatMessage(
+                information.labels.countriesOfResidence.buttonTitle,
+              )}
             </Button>
           </Box>
-        </Box>
-      )}
+        )}
+      </Box>
     </Box>
   )
 }

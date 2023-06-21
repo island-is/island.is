@@ -13,6 +13,11 @@ export const supportingDocuments = {
       defaultMessage: 'Fylgigögn - {person}',
       description: 'Supporting documents section title with person',
     },
+    description: {
+      id: 'doi.cs.application:supportingDocuments.general.description',
+      defaultMessage: 'Upplýsingar fyrir {person}',
+      description: 'general description',
+    },
   }),
   labels: {
     passport: defineMessages({
@@ -27,17 +32,62 @@ export const supportingDocuments = {
         defaultMessage: 'Fylgigögn - Vegabréf',
         description: 'Passport page title',
       },
-      description: {
-        id:
-          'doi.cs.application:supportingDocuments.labels.passport.description',
-        defaultMessage:
-          'Nam est arcu, pulvinar sed bibendum vel, volutpat id magna.',
-        description: 'Passport description',
-      },
       title: {
         id: 'doi.cs.application:supportingDocuments.labels.passport.title',
         defaultMessage: 'Upplýsingar um vegabréf',
         description: 'Passport title',
+      },
+      publishDate: {
+        id:
+          'doi.cs.application:supportingDocuments.labels.passport.publishDate',
+        defaultMessage: 'Útáfudagur',
+        description: 'Publish date label',
+      },
+      expirationDate: {
+        id:
+          'doi.cs.application:supportingDocuments.labels.passport.expirationDate',
+        defaultMessage: 'Gildistími',
+        description: 'Expiration Date label',
+      },
+      passportNumber: {
+        id:
+          'doi.cs.application:supportingDocuments.labels.passport.passportNumber',
+        defaultMessage: 'Númer vegabréfs',
+        description: 'Passport Number label',
+      },
+      passportType: {
+        id:
+          'doi.cs.application:supportingDocuments.labels.passport.passportType',
+        defaultMessage: 'Tegund vegabréfs',
+        description: 'Passport Type label',
+      },
+      publisher: {
+        id: 'doi.cs.application:supportingDocuments.labels.passport.publisher',
+        defaultMessage: 'Útgefandi',
+        description: 'Passport publisher label',
+      },
+      fileUpload: {
+        id: 'doi.cs.application:supportingDocuments.labels.passport.fileUpload',
+        defaultMessage: 'Afrit af vegabréfi',
+        description: 'passport file upload title',
+      },
+      datePlaceholder: {
+        id:
+          'doi.cs.application:supportingDocuments.labels.passport.publishDatePlaceholder',
+        defaultMessage: 'Veldu dagsetningu',
+        description: 'Date placeholder',
+      },
+      numberPlaceholder: {
+        id:
+          'doi.cs.application:supportingDocuments.labels.passport.numberPlaceholder',
+        defaultMessage: '0123456789',
+        description: 'Number placeholder',
+      },
+      typePlaceholder: {
+        id:
+          'doi.cs.application:supportingDocuments.labels.passport.typePlaceholder',
+        defaultMessage: 'Veldu tegund',
+        description: 'Type placeholder',
       },
     }),
     otherDocuments: defineMessages({
@@ -65,6 +115,75 @@ export const supportingDocuments = {
           'doi.cs.application:supportingDocuments.labels.otherDocuments.title',
         defaultMessage: 'Vinsamlegast hlaðið inn eftirfarandi fylgigögnum.',
         description: 'Other documents title',
+      },
+      birthCertificate: {
+        id:
+          'doi.cs.application:supportingDocuments.labels.otherDocuments.birthCertificate',
+        defaultMessage:
+          'Fæðingarvottorð (ef sótt um sem barn ísl. ríkisborgara)',
+        description: 'birthCertificate title',
+      },
+      incomeConfirmation: {
+        id:
+          'doi.cs.application:supportingDocuments.labels.otherDocuments.incomeConfirmation',
+        defaultMessage: 'Gögn sem staðfesta trygga framfærslu',
+        description: 'Income confirmation title',
+      },
+      incomeConfirmationTown: {
+        id:
+          'doi.cs.application:supportingDocuments.labels.otherDocuments.incomeConfirmationTown',
+        defaultMessage: 'Framfærsluvottorð frá sveitarfélaginu',
+        description: 'Income confirmation town title',
+      },
+      legalHome: {
+        id:
+          'doi.cs.application:supportingDocuments.labels.otherDocuments.legalHome',
+        defaultMessage: 'Lögheimilissöguvottorð',
+        description: 'Legal home title',
+      },
+      icelandicTest: {
+        id:
+          'doi.cs.application:supportingDocuments.labels.otherDocuments.icelandicTest',
+        defaultMessage: 'Staðfesting á íslenskuprófi eða gögn vegna undanþágu',
+        description: 'Icelandic test title',
+      },
+      criminalRecordItaly: {
+        id:
+          'doi.cs.application:supportingDocuments.labels.otherDocuments.criminalRecordItaly',
+        defaultMessage: 'Sakarvottorð - Ítalía',
+        description: 'Criminal record Italy title',
+      },
+      criminalRecordUS: {
+        id:
+          'doi.cs.application:supportingDocuments.labels.otherDocuments.criminalRecordUS',
+        defaultMessage: 'Sakarvottorð - Bandaríkin',
+        description: 'Criminal record USA title',
+      },
+    }),
+    otherDocumentsChildren: defineMessages({
+      birthCertificate: {
+        id:
+          'doi.cs.application:supportingDocuments.labels.otherDocumentsChildren.birthCertificate',
+        defaultMessage: 'Fæðingarvottorð',
+        description: 'birthCertificate title',
+      },
+      writtenConsent: {
+        id:
+          'doi.cs.application:supportingDocuments.labels.otherDocumentsChildren.writtenConsent',
+        defaultMessage: 'Skriflegt samþykki barns (12-17 ára)',
+        description: 'writtenConsent title',
+      },
+      otherParentConsent: {
+        id:
+          'doi.cs.application:supportingDocuments.labels.otherDocumentsChildren.otherParentConsent',
+        defaultMessage: 'Samþykki hins foreldrisins',
+        description: 'otherParentConsent title',
+      },
+      custodyDocuments: {
+        id:
+          'doi.cs.application:supportingDocuments.labels.otherDocumentsChildren.custodyDocuments',
+        defaultMessage: 'Forsjárgögn (ef aðili fer ekki einn með forsjá)',
+        description: 'custodyDocuments title',
       },
     }),
   },

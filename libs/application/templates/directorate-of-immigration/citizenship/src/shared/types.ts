@@ -2,7 +2,11 @@ import {
   NationalRegistryIndividual,
   SuccessfulDataProviderResult,
 } from '@island.is/application/types'
-import { RemoveableCountrySchema, ParentInformationSchema, RemoveableStayAbroadSchema } from '../lib/dataSchema'
+import {
+  RemoveableCountrySchema,
+  ParentInformationSchema,
+  RemoveableStayAbroadSchema,
+} from '../lib/dataSchema'
 import { z } from 'zod'
 
 interface IdentityResult extends SuccessfulDataProviderResult {

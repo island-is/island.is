@@ -31,6 +31,7 @@ export const SelectFormField: FC<Props> = ({ application, error, field }) => {
     backgroundColor,
     required = false,
   } = field
+  console.log('error', error)
   const { formatMessage } = useLocale()
 
   const finalOptions = useMemo(

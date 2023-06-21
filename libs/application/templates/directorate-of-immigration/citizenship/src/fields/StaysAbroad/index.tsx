@@ -7,50 +7,58 @@ import { getValueViaPath } from '@island.is/application/core'
 import { RadioController } from '@island.is/shared/form-fields'
 import { information } from '../../lib/messages'
 import DescriptionText from '../../components/DescriptionText'
+import { useLocale } from '@island.is/localization'
 
-
-export const StaysAbroad: FC<FieldBaseProps>  = (props) => {
+export const StaysAbroad: FC<FieldBaseProps> = (props) => {
   const { application, setBeforeSubmitCallback } = props
+  const [showItemTitle, setShowItemTitle] = useState(false)
 
-  const [hasStayedAbroad, setHasStayedAbroad] = useState<
-    string
-  >(
+  const { formatMessage } = useLocale()
+
+  const [hasStayedAbroad, setHasStayedAbroad] = useState<string>(
     getValueViaPath(
       application.answers,
       'staysAbroad.hasStayedAbroad',
     ) as string,
   )
 
-  const [selectedCountries, setSelectedCountries] = useState<
-  CountryOfVisit[]
-  >(
-        getValueViaPath(
-        application.answers,
-        'staysAbroad.selectedAbroadCountries',
-        [{ country: '', wasRemoved: 'false', dateTo: '', dateFrom: '', purposeOfStay: ''}],
-        ) as CountryOfVisit[],
-    )
+  const [selectedCountries, setSelectedCountries] = useState<CountryOfVisit[]>(
+    getValueViaPath(
+      application.answers,
+      'staysAbroad.selectedAbroadCountries',
+      [],
+    ) as CountryOfVisit[],
+  )
 
-    const [filteredSelectedCountries, setFilteredSelectedCountries] = useState(
-    selectedCountries.filter(x => x.wasRemoved !== 'true')
+  const [filteredSelectedCountries, setFilteredSelectedCountries] = useState(
+    selectedCountries.filter((x) => x.wasRemoved !== 'true'),
   )
 
   useEffect(() => {
-    setFilteredSelectedCountries(selectedCountries.filter(x => x.wasRemoved !== 'true'))
+    setFilteredSelectedCountries(
+      selectedCountries.filter((x) => x.wasRemoved !== 'true'),
+    )
   }, [selectedCountries])
 
-  const handleAdd = () =>
-  setSelectedCountries([
+  const handleAdd = () => {
+    setSelectedCountries([
       ...selectedCountries,
-      { country: '', wasRemoved: 'false', dateTo: '', dateFrom: '', purposeOfStay: ''}
+      {
+        country: '',
+        wasRemoved: 'false',
+        dateTo: '',
+        dateFrom: '',
+        purpose: '',
+      },
     ])
+    setShowItemTitle(filteredSelectedCountries.length > 0)
+  }
 
   const handleRemoveAll = () => {
-    setSelectedCountries(
-      selectedCountries.map((country, index) => {
-        return { ...country, wasRemoved: 'true' }
-      }),
-    )
+    setSelectedCountries(selectedCountries.map(x => {
+      return {...x, wasRemoved: 'true'}
+    }))
+    setShowItemTitle(false)
   }
 
   const handleRemove = (pos: number) => {
@@ -63,104 +71,105 @@ export const StaysAbroad: FC<FieldBaseProps>  = (props) => {
           return country
         }),
       )
+      setShowItemTitle(filteredSelectedCountries.length > 0)
     }
   }
 
-  const addCountryToList = (field: string, value: any, newIndex: number) => {
+  const addDataToCountryList = (
+    field: string,
+    value: any,
+    newIndex: number,
+  ) => {
     setSelectedCountries(
       selectedCountries.map((country, index) => {
-        if(newIndex === index){
-          return country
+        if (newIndex === index) {
+          return { ...country, [field]: value }
         }
         return country
-      })
+      }),
     )
   }
 
-  const handleLiveAbroadChange = (value: string) => {
+  const handleStayAbroadChange = (value: string) => {
     setHasStayedAbroad(value)
 
-    if(value === 'No'){
+    if (value === 'No') {
       handleRemoveAll()
+    } else {
+      handleAdd()
     }
   }
 
-  useEffect(() => {
-    console.log('selectedCountries', selectedCountries)
-  }, [selectedCountries])
-
   return (
     <Box>
-       <DescriptionText 
-            text={information.labels.staysAbroad.pageSubTitle}
-            textProps={{
-                as: 'p',
-                paddingTop:3,
-                marginBottom:1
-            }}
-          />
-            <DescriptionText 
-              text={information.labels.staysAbroad.questionTitle}
-              textProps={{
-                as: 'h5',
-                fontWeight: 'semiBold',
-                marginBottom:3
-              }}
-            />
-      <RadioController 
-        id={'staysAbroad.hasStayedAbroad'}
-        name={information.labels.staysAbroad.questionTitle.defaultMessage}
-        split='1/2'
-        onSelect={(value) => {
-          handleLiveAbroadChange(value)
+      <DescriptionText
+        text={information.labels.staysAbroad.pageSubTitle}
+        textProps={{
+          as: 'p',
+          paddingTop: 0,
+          marginBottom: 3,
         }}
-        
+      />
+      <DescriptionText
+        text={information.labels.staysAbroad.questionTitle}
+        textProps={{
+          as: 'h5',
+          fontWeight: 'semiBold',
+          marginBottom: 3,
+        }}
+      />
+      <RadioController
+        id={'staysAbroad.hasStayedAbroad'}
+        split="1/2"
+        onSelect={(value) => {
+          handleStayAbroadChange(value)
+        }}
+        defaultValue={hasStayedAbroad}
         options={[
           {
             value: 'Yes',
-            label: 'Já',
+            label: formatMessage(information.labels.radioButtons.radioOptionYes),
           },
           {
             value: 'No',
-            label: 'Nei',
+            label: formatMessage(information.labels.radioButtons.radioOptionNo),
           },
         ]}
       />
 
-
-      { hasStayedAbroad === 'Yes' && (
-        <Box>
-          {selectedCountries.map((field, index) => {
-            return (
-              <StaysAbroadRepeaterItem
-                id={`${props.field.id}.selectedAbroadCountries`}
-                repeaterField={field}
-                index={index}
-                key={`staysAbroad-${index}`}
-                handleRemove={handleRemove}
-                itemNumber={index}
-                addCountryToList={addCountryToList}
-                {...props}
-              />
-            )
-          })}
-
+      <Box>
+        {selectedCountries.map((field, index) => {
+          const position = filteredSelectedCountries.indexOf(field)
+          return (
+            <StaysAbroadRepeaterItem
+              id={`${props.field.id}.selectedAbroadCountries`}
+              repeaterField={field}
+              index={index}
+              key={`staysAbroad-${index}`}
+              handleRemove={handleRemove}
+              itemNumber={position}
+              addDataToCountryList={addDataToCountryList}
+              showItemTitle={showItemTitle}
+              {...props}
+            />
+          )
+        })}
+        {hasStayedAbroad === 'Yes' && (
           <Box paddingTop={2}>
             <Button
               variant="ghost"
               icon="add"
               iconType="outline"
               fluid
-              size='large'
-              onClick={handleAdd.bind(null, 'operator')}
-              textSize='md'
-              
+              size="large"
+              onClick={handleAdd}
+              textSize="md"
             >
-              Bæta við fleiri dvalarupplýsingum
+              {formatMessage(information.labels.staysAbroad.buttonTitle)}
             </Button>
           </Box>
-        </Box>
-      )}
+        )}
+      </Box>
     </Box>
   )
 }

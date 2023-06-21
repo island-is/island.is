@@ -19,6 +19,7 @@ import {
   information,
   payment,
   personal,
+  review,
   supportingDocuments,
 } from '../../lib/messages'
 import {
@@ -129,6 +130,11 @@ export const Prerequisites: Form = buildForm({
     buildSection({
       id: 'supportingDocuments',
       title: supportingDocuments.general.sectionTitle,
+      children: [],
+    }),
+    buildSection({
+      id: 'review',
+      title: review.general.sectionTitle,
       children: [],
     }),
     buildSection({

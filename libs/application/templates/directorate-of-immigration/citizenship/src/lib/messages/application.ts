@@ -34,5 +34,5 @@ export const application = defineMessages({
     defaultMessage: 'Afgreidd',
     description:
       'Description of application state/status when application is processed',
-  },
+  }
 })

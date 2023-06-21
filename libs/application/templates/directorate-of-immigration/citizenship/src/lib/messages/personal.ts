@@ -18,14 +18,8 @@ export const personal = {
       },
       pageTitle: {
         id: 'doi.cs.application:personal.labels.userInformation.pageTitle',
-        defaultMessage: 'Notendaupplýsingar',
+        defaultMessage: 'Persónuupplýsingar',
         description: 'User information page title',
-      },
-      description: {
-        id: 'doi.cs.application:personal.labels.userInformation.description',
-        defaultMessage:
-          'Et sed ut est aliquam proin elit sed. Nunc tellus lacus sed eu pulvinar.',
-        description: 'User information description',
       },
       title: {
         id: 'doi.cs.application:personal.labels.userInformation.title',
@@ -79,29 +73,6 @@ export const personal = {
         id: 'doi.cs.application:personal.labels.userInformation.phone',
         defaultMessage: 'Símanúmer',
         description: 'User information phone number label',
-      },
-    }),
-    pickChildren: defineMessages({
-      subSectionTitle: {
-        id: 'doi.cs.application:personal.labels.pickChildren.subSectionTitle',
-        defaultMessage: 'Börn í þinni forsjá',
-        description: 'Pick children sub section title',
-      },
-      pageTitle: {
-        id: 'doi.cs.application:personal.labels.pickChildren.pageTitle',
-        defaultMessage: 'Börn í þinni forsjá',
-        description: 'Pick children page title',
-      },
-      description: {
-        id: 'doi.cs.application:personal.labels.pickChildren.description',
-        defaultMessage:
-          'Eftirfarandi börn eru í þinni forsjá og eru skráð með lögheimili á Íslandi. Hakaðu við þau börn sem þú vilt að hljóti íslenskan ríkisborgararétt samhliða því að þú fáir veitingu.',
-        description: 'Pick children description',
-      },
-      title: {
-        id: 'doi.cs.application:personal.labels.pickChildren.title',
-        defaultMessage: 'Veldu börn',
-        description: 'Pick children sub section title',
       },
     }),
   },

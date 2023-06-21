@@ -3,22 +3,24 @@ import {
   buildSubSection,
   buildCustomField,
 } from '@island.is/application/core'
-import { personal, selectChildren } from '../../../lib/messages'
+import { selectChildren } from '../../../lib/messages'
 import { ExternalData } from '../../../types'
 import * as kennitala from 'kennitala'
 
 export const PickChildrenSubSection = buildSubSection({
   id: 'pickChildren',
-  title: personal.labels.pickChildren.subSectionTitle,
+  title: selectChildren.general.subSectionTitle,
   condition: (_, externalData) => {
     const convertedData = (externalData as unknown) as ExternalData
-    return convertedData.childrenCustodyInformation?.data ? convertedData.childrenCustodyInformation?.data?.length > 0 : false
+    return convertedData.childrenCustodyInformation?.data
+      ? convertedData.childrenCustodyInformation?.data?.length > 0
+      : false
   },
   children: [
     buildMultiField({
       id: 'pickChildrenMultiField',
-      title: personal.labels.pickChildren.pageTitle.defaultMessage,
-      description: personal.labels.pickChildren.description.defaultMessage,
+      title: selectChildren.general.pageTitle,
+      description: selectChildren.general.description,
       children: [
         buildCustomField(
           {
@@ -37,17 +39,15 @@ export const PickChildrenSubSection = buildSubSection({
             },
           },
           {
-            title: selectChildren.warningAgeChildren.title.defaultMessage,
-            message:
-              selectChildren.warningAgeChildren.information.defaultMessage,
-            linkTitle:
-              selectChildren.warningAgeChildren.linkTitle.defaultMessage,
-            linkUrl: selectChildren.warningAgeChildren.linkUrl.defaultMessage,
+            title: selectChildren.warningAgeChildren.title,
+            message: selectChildren.warningAgeChildren.information,
+            linkTitle: selectChildren.warningAgeChildren.linkTitle,
+            linkUrl: selectChildren.warningAgeChildren.linkUrl,
           },
         ),
         buildCustomField({
           id: 'selectedChildren',
-          title: personal.labels.pickChildren.pageTitle,
+          title: selectChildren.general.pageTitle,
           component: 'SelectChildren',
         }),
         buildCustomField(
@@ -67,14 +67,12 @@ export const PickChildrenSubSection = buildSubSection({
             },
           },
           {
-            title:
-              selectChildren.informationChildrenSection.title.defaultMessage,
+            title: selectChildren.informationChildrenSection.title,
             message: selectChildren.informationChildrenSection.information,
             linkTitle:
               selectChildren.informationChildrenSection.linkTitle
                 .defaultMessage,
-            linkUrl:
-              selectChildren.informationChildrenSection.linkUrl.defaultMessage,
+            linkUrl: selectChildren.informationChildrenSection.linkUrl,
           },
         ),
       ],

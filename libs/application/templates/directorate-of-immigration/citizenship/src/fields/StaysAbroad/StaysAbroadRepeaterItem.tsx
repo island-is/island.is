@@ -1,31 +1,29 @@
-import { getErrorViaPath, getValueViaPath } from '@island.is/application/core'
-import { FieldBaseProps, FieldComponents, FieldTypes, GenericFormField } from '@island.is/application/types'
 import {
-  Box,
-  Text,
-  Button,
-  GridRow,
-  GridColumn,
-  Columns,
-  Column,
-} from '@island.is/island-ui/core'
+  FieldBaseProps,
+  FieldComponents,
+  FieldTypes,
+} from '@island.is/application/types'
+import { Box, Columns, Column, Button } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { DatePickerController, InputController } from '@island.is/shared/form-fields'
+import {
+  DatePickerController,
+  InputController,
+} from '@island.is/shared/form-fields'
 import { FC, useEffect } from 'react'
 import { useFormContext } from 'react-hook-form'
-import { NationalIdWithName } from '../NationalIdWithName'
 import { information } from '../../lib/messages'
 import { SelectFormField } from '@island.is/application/ui-fields'
 import { fetchCountries } from '../../utils/getCountries'
-// import { CoOwnerAndOperator } from '../../shared'
+import DescriptionText from '../../components/DescriptionText'
 
 interface Props {
   id: string
   index: number
-  repeaterField: any//GenericFormField<CoOwnerAndOperator>
+  repeaterField: any //GenericFormField<CoOwnerAndOperator>
   handleRemove: (index: number) => void
   itemNumber: number
-  addCountryToList: (field: string, value: string, index: number) => void
+  addDataToCountryList: (field: string, value: string, index: number) => void
+  showItemTitle: boolean
 }
 
 export const StaysAbroadRepeaterItem: FC<Props & FieldBaseProps> = ({
@@ -34,7 +32,8 @@ export const StaysAbroadRepeaterItem: FC<Props & FieldBaseProps> = ({
   handleRemove,
   repeaterField,
   itemNumber,
-  addCountryToList,
+  showItemTitle,
+  addDataToCountryList,
   ...props
 }) => {
   const { setValue } = useFormContext()
@@ -59,40 +58,87 @@ export const StaysAbroadRepeaterItem: FC<Props & FieldBaseProps> = ({
       marginBottom={1}
       hidden={repeaterField.wasRemoved === 'true'}
     >
+      
+      <Box display="flex" flexDirection="row" justifyContent="spaceBetween" marginTop={showItemTitle || itemNumber > 0 ? 2 : 0}>
+        {showItemTitle && 
+          <DescriptionText
+            text={information.labels.staysAbroad.itemTitle}
+            format={{ index: itemNumber+1 }}
+            textProps={{
+              as: 'h5',
+              fontWeight: 'semiBold',
+              marginBottom: 0
+            }}
+          />
+        }
+
+        {itemNumber > 0 && (    
+          <Button
+            variant="text"
+            textSize="sm"
+            size="small"
+            onClick={() => handleRemove(index)}
+          >
+            {formatMessage(information.labels.staysAbroad.deleteButtonTitle)}
+          </Button>
+        )}
+
+      </Box>
+      
       <SelectFormField
         application={application}
         field={{
           id: countryField,
-          title: `Dvalarland ${itemNumber+1}`,
+          title: `Dvalarland`,
           options: countryOptions,
           component: FieldComponents.SELECT,
           children: undefined,
           type: FieldTypes.SELECT,
-          onSelect: (value) => addCountryToList(countryField, value.value as string, index)
+          required: true,
+          onSelect: (value) =>
+            addDataToCountryList('country', value.value as string, index),
         }}
-        ></SelectFormField>
-        <Box paddingBottom={2} paddingTop={2}>
-            <Columns space={3}>
-                <Column>
-                    <DatePickerController 
-                        id={dateFromField}
-                        label={information.labels.staysAbroad.dateFromLabel.defaultMessage}
-                    />
-                </Column>
-                <Column>
-                    <DatePickerController 
-                        id={dateToField}
-                        label={information.labels.staysAbroad.dateToLabel.defaultMessage}
-                    />
-                </Column>
-            </Columns>
-        </Box>
-        <InputController 
-            id={purposeField}
-            label={information.labels.staysAbroad.purposeLabel.defaultMessage}
-            rows={4}
-            textarea
-        />
+      ></SelectFormField>
+      <Box paddingBottom={2} paddingTop={2}>
+        <Columns space={3}>
+          <Column>
+            <DatePickerController
+              id={dateFromField}
+              label={
+                information.labels.staysAbroad.dateFromLabel.defaultMessage
+              }
+              onChange={(value) =>
+                addDataToCountryList('dateFrom', value as string, index)
+              }
+              required
+            />
+          </Column>
+          <Column>
+            <DatePickerController
+              id={dateToField}
+              label={information.labels.staysAbroad.dateToLabel.defaultMessage}
+              onChange={(value) =>
+                addDataToCountryList('dateTo', value as string, index)
+              }
+              required
+            />
+          </Column>
+        </Columns>
+      </Box>
+      <InputController
+        id={purposeField}
+        label={information.labels.staysAbroad.purposeLabel.defaultMessage}
+        rows={4}
+        textarea
+        onChange={(value) =>
+          addDataToCountryList(
+            'purposeOfStay',
+            value.target.value as string,
+            index,
+          )
+        }
+        required
+      />
     </Box>
   )
 }

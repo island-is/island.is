@@ -4,6 +4,9 @@ export enum ApiActions {
   getCitizenshipIndividual = 'getCitizenshipIndividual',
   getResidency = 'getResidency',
   getSpouse = 'getSpouseWithDetails',
+  initReview = 'initReview',
+  addReview = 'addReview',
+  validateApplication = 'validateApplication'
 }
 
 export const MAX_CNT_APPLICANTS = 10

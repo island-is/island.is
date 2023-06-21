@@ -4,12 +4,14 @@ import {
   NationalRegistryParent,
 } from '@island.is/application/types'
 import { TextFormField } from '@island.is/application/ui-fields'
-import React from 'react'
+import React, { useState } from 'react'
 import { personal, information } from '../../lib/messages'
 import DescriptionText from '../../components/DescriptionText'
 import { Box, GridColumn, GridRow, Input } from '@island.is/island-ui/core'
 import { NationalIdWithName } from '../NationalIdWithName'
 import { InputController } from '@island.is/shared/form-fields'
+import { useLocale } from '@island.is/localization'
+import { getValueViaPath } from '@island.is/application/core'
 
 export const Parents = ({ field, application, error }: any) => {
   const {
@@ -17,7 +19,17 @@ export const Parents = ({ field, application, error }: any) => {
     answers,
   } = application
 
-  const parents = nationalRegistryParents.data as NationalRegistryParent[]
+  const [parents, setParents] = useState<
+    NationalRegistryParent[]
+  >(
+    getValueViaPath(
+      answers,
+      'parents',
+      nationalRegistryParents.data as NationalRegistryParent[],
+    ) as NationalRegistryParent[],
+  )
+
+  const { formatMessage } = useLocale()
 
   const addParentToApplication = (nationalId: string) => {
     console.log('added parent with nationalID: ', nationalId)
@@ -28,48 +40,48 @@ export const Parents = ({ field, application, error }: any) => {
       {parents.length > 1 &&
         parents.map((p, index) => {
           return (
-            <GridRow marginTop={0}>
+            <Box key={`parentBox${index}`}>
               <DescriptionText
-                text={
-                  index === 1
-                    ? information.labels.parents.parentOneTitle
-                    : information.labels.parents.parentTwoTitle
-                }
+                text={information.labels.parents.parentTitle}
+                format={{ index: index + 1 }}
                 textProps={{
                   as: 'h5',
                   fontWeight: 'semiBold',
                   paddingBottom: 1,
-                  paddingTop: index === 1 ? 0 : 3,
+                  paddingTop: index === 0 ? 0 : 3,
                   marginBottom: 0,
                 }}
               />
-              <GridColumn span={['1/1', '1/1', '1/2']} paddingTop={2}>
-                <InputController
-                  id={`parent${index}NationalId`}
-                  defaultValue={parents[0].nationalId}
-                  label={
-                    personal.labels.userInformation.nationalId.defaultMessage
-                  }
-                  readOnly
-                  format="######-####"
-                  backgroundColor="blue"
-                />
-              </GridColumn>
-              <GridColumn span={['1/1', '1/1', '1/2']} paddingTop={2}>
-                <InputController
-                  id={`parent${index}Name`}
-                  defaultValue={parents[0].name}
-                  label={personal.labels.userInformation.name.defaultMessage}
-                  readOnly
-                />
-              </GridColumn>
-            </GridRow>
+              <GridRow marginTop={0}>
+                <GridColumn span={['1/1', '1/1', '1/2']} paddingTop={2}>
+                  <InputController
+                    id={`${field.id}[${index}].nationalId`}
+                    defaultValue={p.nationalId}
+                    label={formatMessage(
+                      personal.labels.userInformation.nationalId,
+                    )}
+                    readOnly
+                    format="######-####"
+                    backgroundColor="blue"
+                  />
+                </GridColumn>
+                <GridColumn span={['1/1', '1/1', '1/2']} paddingTop={2}>
+                  <InputController
+                    id={`${field.id}[${index}].name`}
+                    defaultValue={p.name}
+                    label={formatMessage(personal.labels.userInformation.name)}
+                    readOnly
+                  />
+                </GridColumn>
+              </GridRow>
+            </Box>
           )
         })}
       {parents.length === 1 && (
         <Box>
           <DescriptionText
-            text={information.labels.parents.parentOneTitle}
+            text={information.labels.parents.parentTitle}
+            format={{ index: 1 }}
             textProps={{
               as: 'h5',
               fontWeight: 'semiBold',
@@ -81,11 +93,11 @@ export const Parents = ({ field, application, error }: any) => {
           <GridRow>
             <GridColumn span={['1/1', '1/1', '1/2']} paddingTop={2}>
               <InputController
-                id="parent1NationalId"
+                id={`${field.id}[0].nationalId`}
                 defaultValue={parents[0].nationalId}
-                label={
-                  personal.labels.userInformation.nationalId.defaultMessage
-                }
+                label={formatMessage(
+                  personal.labels.userInformation.nationalId,
+                )}
                 readOnly
                 format="######-####"
                 backgroundColor="blue"
@@ -93,16 +105,17 @@ export const Parents = ({ field, application, error }: any) => {
             </GridColumn>
             <GridColumn span={['1/1', '1/1', '1/2']} paddingTop={2}>
               <InputController
-                id="parent1Name"
+               id={`${field.id}[0].name`}
                 defaultValue={parents[0].name}
-                label={personal.labels.userInformation.name.defaultMessage}
+                label={formatMessage(personal.labels.userInformation.name)}
                 readOnly
               />
             </GridColumn>
           </GridRow>
 
           <DescriptionText
-            text={information.labels.parents.parentTwoTitle}
+            text={information.labels.parents.parentTitle}
+            format={{ index: 2 }}
             textProps={{
               as: 'h5',
               fontWeight: 'semiBold',
@@ -114,13 +127,7 @@ export const Parents = ({ field, application, error }: any) => {
           <NationalIdWithName
             field={field}
             application={application}
-            customId="parent2Information"
-            customNameLabel={
-              personal.labels.userInformation.name.defaultMessage
-            }
-            customNationalIdLabel={
-              personal.labels.userInformation.nationalId.defaultMessage
-            }
+            customId={`${field.id}[1]`}
             onNationalIdChange={addParentToApplication}
           />
         </Box>
@@ -129,7 +136,8 @@ export const Parents = ({ field, application, error }: any) => {
       {parents.length === 0 && (
         <div>
           <DescriptionText
-            text={information.labels.parents.parentOneTitle}
+            text={information.labels.parents.parentTitle}
+            format={{ index: 1 }}
             textProps={{
               as: 'h5',
               fontWeight: 'semiBold',
@@ -141,18 +149,13 @@ export const Parents = ({ field, application, error }: any) => {
           <NationalIdWithName
             field={field}
             application={application}
-            customId="parent1Information"
-            customNameLabel={
-              personal.labels.userInformation.name.defaultMessage
-            }
-            customNationalIdLabel={
-              personal.labels.userInformation.nationalId.defaultMessage
-            }
+            customId={`${field.id}[0]`}
             onNationalIdChange={addParentToApplication}
           />
 
           <DescriptionText
-            text={information.labels.parents.parentTwoTitle}
+            text={information.labels.parents.parentTitle}
+            format={{ index: 2 }}
             textProps={{
               as: 'h5',
               fontWeight: 'semiBold',
@@ -164,13 +167,7 @@ export const Parents = ({ field, application, error }: any) => {
           <NationalIdWithName
             field={field}
             application={application}
-            customId="parent2Information"
-            customNameLabel={
-              personal.labels.userInformation.name.defaultMessage
-            }
-            customNationalIdLabel={
-              personal.labels.userInformation.nationalId.defaultMessage
-            }
+            customId={`${field.id}[1]`}
             onNationalIdChange={addParentToApplication}
           />
         </div>

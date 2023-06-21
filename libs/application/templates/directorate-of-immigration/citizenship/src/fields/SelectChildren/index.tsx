@@ -23,7 +23,9 @@ export const SelectChildren = ({ field, application, error }: any) => {
       return {
         value: child.nationalId,
         label: child.fullName,
-        subLabel: child.otherParent ? `${selectChildren.checkboxes.subLabel.defaultMessage} ${child.otherParent?.fullName}` : '',
+        subLabel: child.otherParent
+          ? `${selectChildren.checkboxes.subLabel.defaultMessage} ${child.otherParent?.fullName}`
+          : '',
         rightContent: (
           <div style={{ display: 'flex' }}>
             {showForeignDomicileTag && (
