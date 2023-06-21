@@ -28,7 +28,6 @@ test.describe('Admin portal (Endorsements)', () => {
   })
 
   test('Open old endorsement list and go back', async ({ page }) => {
-    test.slow()
     await page.goto(icelandicAndNoPopupUrl(homeUrl))
     await page.getByTestId('active-module-name').click()
     await page.getByRole('link', { name: 'Undirskriftalistar' }).click()
