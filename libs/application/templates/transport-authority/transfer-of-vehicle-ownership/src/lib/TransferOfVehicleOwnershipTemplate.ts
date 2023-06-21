@@ -21,7 +21,7 @@ import { Events, States, Roles } from './constants'
 import { ApiActions } from '../shared'
 import { AuthDelegationType } from '@island.is/shared/types'
 import { TransferOfVehicleOwnershipSchema } from './dataSchema'
-import { application, application as applicationMessage } from './messages'
+import { application as applicationMessage } from './messages'
 import { CoOwnerAndOperator, UserInformation } from '../shared'
 import { assign } from 'xstate'
 import set from 'lodash/set'
@@ -66,7 +66,7 @@ const reviewStatePendingAction = (
     return {
       title: corePendingActionMessages.waitingForReviewTitle,
       content: corePendingActionMessages.youNeedToReviewDescription,
-      displayStatus: 'info',
+      displayStatus: 'warning',
     }
   } else {
     return {
@@ -214,7 +214,7 @@ const template: ApplicationTemplate<
             historyLogs: [
               {
                 onEvent: DefaultEvents.APPROVE,
-                logMessage: application.historyLogApprovedByReviewer,
+                logMessage: applicationMessage.historyLogApprovedByReviewer,
               },
               {
                 onEvent: DefaultEvents.REJECT,

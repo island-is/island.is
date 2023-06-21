@@ -26,7 +26,7 @@ import {
   SamgongustofaPaymentCatalogApi,
   CurrentVehiclesApi,
 } from '../dataProviders'
-import { application, application as applicationMessage } from './messages'
+import { application as applicationMessage } from './messages'
 import { assign } from 'xstate'
 import set from 'lodash/set'
 import { hasReviewerApproved, isRemovingOperatorOnly } from '../utils'
@@ -64,7 +64,7 @@ const reviewStatePendingAction = (
     return {
       title: corePendingActionMessages.waitingForReviewTitle,
       content: corePendingActionMessages.youNeedToReviewDescription,
-      displayStatus: 'info',
+      displayStatus: 'warning',
     }
   } else {
     return {
@@ -217,7 +217,7 @@ const template: ApplicationTemplate<
             historyLogs: [
               {
                 onEvent: DefaultEvents.APPROVE,
-                logMessage: application.historyLogApprovedByReviewer,
+                logMessage: applicationMessage.historyLogApprovedByReviewer,
               },
               {
                 onEvent: DefaultEvents.REJECT,

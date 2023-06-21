@@ -17,7 +17,7 @@ import {
   pruneAfterDays,
 } from '@island.is/application/core'
 import { Events, States, Roles } from './constants'
-import { application, application as applicationMessage } from './messages'
+import { application as applicationMessage } from './messages'
 import { ApiActions } from '../shared'
 import { OrderVehicleLicensePlateSchema } from './dataSchema'
 import {
@@ -172,7 +172,7 @@ const template: ApplicationTemplate<
               variant: 'blueberry',
             },
             pendingAction: {
-              title: application.pendingActionOrderReceivedTitle,
+              title: applicationMessage.pendingActionOrderReceivedTitle,
               displayStatus: 'success',
             },
           },
