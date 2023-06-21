@@ -98,7 +98,10 @@ const GeneralPetitionTemplate: ApplicationTemplate<
           name: 'Done',
           status: 'completed',
           progress: 1,
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: {
+            shouldBeListed: true,
+            shouldBePruned: false,
+          },
           onEntry: defineTemplateApi({
             action: ApiModuleActions.CreateEndorsementList,
             shouldPersistToExternalData: true,
