@@ -110,43 +110,49 @@ const CourtRecord = () => {
     'prosecutorAppealAnnouncement',
     'endOfSessionBookings',
   ])
-
   const initialize = useCallback(() => {
     const autofillAttendees = []
 
-    if (workingCase.prosecutor) {
-      autofillAttendees.push(
-        `${workingCase.prosecutor.name} ${workingCase.prosecutor.title}`,
-      )
-    }
+    if (workingCase.sessionArrangements === SessionArrangements.NONE_PRESENT) {
+      autofillAttendees.push(formatMessage(core.sessionArrangementsNonePresent))
+    } else {
+      if (workingCase.prosecutor) {
+        autofillAttendees.push(
+          `${workingCase.prosecutor.name} ${workingCase.prosecutor.title}`,
+        )
+      }
 
-    if (
-      workingCase.defenderName &&
-      workingCase.sessionArrangements !== SessionArrangements.PROSECUTOR_PRESENT
-    ) {
-      autofillAttendees.push(
-        `\n${workingCase.defenderName} skipaður ${
-          workingCase.sessionArrangements ===
-          SessionArrangements.ALL_PRESENT_SPOKESPERSON
-            ? 'talsmaður'
-            : 'verjandi'
-        } ${formatMessage(core.defendant, { suffix: 'a' })}`,
-      )
-    }
+      if (
+        workingCase.defenderName &&
+        workingCase.sessionArrangements !==
+          SessionArrangements.PROSECUTOR_PRESENT
+      ) {
+        autofillAttendees.push(
+          `\n${workingCase.defenderName} skipaður ${
+            workingCase.sessionArrangements ===
+            SessionArrangements.ALL_PRESENT_SPOKESPERSON
+              ? 'talsmaður'
+              : 'verjandi'
+          } ${formatMessage(core.defendant, { suffix: 'a' })}`,
+        )
+      }
 
-    if (workingCase.translator) {
-      autofillAttendees.push(`\n${workingCase.translator} túlkur`)
-    }
+      if (workingCase.translator) {
+        autofillAttendees.push(`\n${workingCase.translator} túlkur`)
+      }
 
-    if (workingCase.defendants && workingCase.defendants.length > 0) {
-      if (workingCase.sessionArrangements === SessionArrangements.ALL_PRESENT) {
-        workingCase.defendants.forEach((defendant) => {
-          autofillAttendees.push(
-            `\n${defendant.name} ${formatMessage(core.defendant, {
-              suffix: 'i',
-            })}`,
-          )
-        })
+      if (workingCase.defendants && workingCase.defendants.length > 0) {
+        if (
+          workingCase.sessionArrangements === SessionArrangements.ALL_PRESENT
+        ) {
+          workingCase.defendants.forEach((defendant) => {
+            autofillAttendees.push(
+              `\n${defendant.name} ${formatMessage(core.defendant, {
+                suffix: 'i',
+              })}`,
+            )
+          })
+        }
       }
     }
 
