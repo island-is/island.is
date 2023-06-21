@@ -17,7 +17,6 @@ export function maskEndorsement(
     endorsement.meta.locality = ''
     if (!endorsement.meta.showName) {
       endorsement.meta.fullName = ''
-      
     }
   }
   return endorsement
