@@ -58,6 +58,10 @@ export const sectionFakeData = buildSubSection({
           condition: allowFakeCondition(YES),
           options: [
             {
+              value: 'B-temp',
+              label: 'Bráðabirgðaréttindi',
+            },
+            {
               value: 'B-full',
               label: 'B réttindi',
             },
@@ -76,7 +80,10 @@ export const sectionFakeData = buildSubSection({
               answers,
               'fakeData',
             )
-            return fakeData?.currentLicense === 'B-full'
+            return (
+              fakeData?.currentLicense === 'B-full' ||
+              fakeData?.currentLicense === 'B-temp'
+            )
           },
         }),
         buildRadioField({

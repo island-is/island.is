@@ -11,13 +11,13 @@ import { Application } from '@island.is/application/types'
 import { format as formatNationalId } from 'kennitala'
 import {
   DistrictCommissionerAgencies,
-  DrivingLicense,
   NationalRegistryUser,
 } from '@island.is/api/schema'
 import { m } from '../../lib/messages'
 import format from 'date-fns/format'
 import { allowFakeCondition } from '../../lib/utils'
-import { YES } from '../../lib/constants'
+import { NO, YES } from '../../lib/constants'
+import { DriversLicense } from '@island.is/clients/driving-license'
 
 export const sectionOverview = buildSection({
   id: 'overview',
@@ -49,28 +49,32 @@ export const sectionOverview = buildSection({
           value: (application: Application) =>
             formatNationalId(application.applicant),
         }),
-
-        buildKeyValueField({
-          label: m.rights,
-          width: 'half',
-          value: 'Almenn ökuréttindi',
+        buildDividerField({}),
+        buildDescriptionField({
+          id: 'overview.currentLicenseTitle',
+          title: m.rights,
         }),
-        buildKeyValueField({
-          label: m.overviewLicenseExpires,
-          width: 'half',
-          value: ({ externalData: { currentLicense }, answers }) => {
-            //check if fake data is being used using the utility function
-            let expiryDate = (currentLicense.data as DrivingLicense).expires
-
-            // Shouldn't get this far without B-license anyway so assuming date is set
-            if (getValueViaPath(answers, 'fakeData.useFakeData') === YES) {
-              expiryDate = new Date(
-                new Date().setFullYear(new Date().getFullYear() + 3),
-              )
-            }
-            return format(new Date(expiryDate), 'dd.MM.yyyy')
+        buildCustomField(
+          {
+            title: '',
+            id: 'currentLicenseCards',
+            component: 'Cards',
+            doesNotRequireAnswer: true,
           },
-        }),
+          {
+            cards: ({ externalData }: Application) =>
+              (externalData.currentLicense
+                .data as DriversLicense).categories.map((category) => ({
+                title: category.nr,
+                description: [
+                  category.name,
+                  category.expires
+                    ? format(new Date(category.expires), 'dd.MM.yyyy')
+                    : '',
+                ],
+              })) ?? [],
+          },
+        ),
         buildDividerField({}),
         buildDescriptionField({
           id: 'overview.signatureTitle',

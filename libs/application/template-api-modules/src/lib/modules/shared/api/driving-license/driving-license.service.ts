@@ -149,7 +149,7 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
     }
 
     const categoryB = (drivingLicense?.categories ?? []).find(
-      (cat) => cat.name === 'B',
+      (cat) => cat.name === 'B' || cat.nr === 'B',
     )
 
     // Validate that user has the necessary categories

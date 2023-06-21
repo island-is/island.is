@@ -44,7 +44,7 @@ export type SubmitResponse = {
 
 export type DrivingLicenseDuplicateFakeData = {
   useFakeData: YesOrNo
-  currentLicense: 'none' | 'B-full'
+  currentLicense: 'none' | 'B-full' | 'B-temp'
   licenseIssuedDate?: string
   hasQualityPhoto: YesOrNo
   hasQualitySignature: YesOrNo

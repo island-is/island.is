@@ -10,13 +10,24 @@ import { PaymentCatalogItem } from '@island.is/api/schema'
 import { useFormContext } from 'react-hook-form'
 import { YES } from '../../lib/constants'
 import { info } from 'kennitala'
+import { DriversLicense } from '@island.is/clients/driving-license'
 
 export const PaymentCharge: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
   const { setValue } = useFormContext()
 
-  // Change price based on age
   let chargeCode = 'AY110'
+  // Change price based on temporary license
+  const licenseData = getValueViaPath<DriversLicense>(
+    application.externalData,
+    'currentLicense.data',
+  )
+  if (licenseData?.categories.some((category) => category.validToCode === 8)) {
+    chargeCode = 'AY114'
+  }
+
+  // Change price based on age, takes precedence over temporary license
+  // and therefore comes after it for overriding purposes
   let age = info(application.applicant).age
   if (allowFakeCondition(YES)(application.answers)) {
     age = parseInt(

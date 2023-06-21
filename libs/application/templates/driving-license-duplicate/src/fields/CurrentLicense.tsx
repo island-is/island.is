@@ -4,6 +4,7 @@ import { useLocale } from '@island.is/localization'
 import { Box, Tag, Text } from '@island.is/island-ui/core'
 import { getValueViaPath, formatText } from '@island.is/application/core'
 import { FieldBaseProps } from '@island.is/application/types'
+import { DriversLicenseCategory } from '@island.is/clients/driving-license'
 import format from 'date-fns/format'
 import { m } from '../lib/messages'
 
@@ -26,8 +27,10 @@ export const CurrentLicense: FC<FieldBaseProps> = ({ application }) => {
     currentLicense = {
       categories: [
         {
-          name: fakeLicense,
+          name: 'Fólksbifreið / Sendibifreið',
+          nr: fakeLicense.split('-')[0],
           expires: '2065-04-04',
+          validToText: fakeLicense === 'B-temp' ? 'Bráðabirgðaskírteini' : '',
         },
       ],
     }
@@ -42,18 +45,12 @@ export const CurrentLicense: FC<FieldBaseProps> = ({ application }) => {
       </Box>
       <Box marginBottom={4}>
         {currentLicense.categories.map(
-          (
-            category: {
-              expires: string | number | Date
-              name: string
-              nr: string
-            },
-            index: number,
-          ) => {
-            const expires =
-              formatMessage(m.validTag) +
-              ' ' +
-              format(new Date(category.expires), 'dd.MM.yyyy')
+          (category: DriversLicenseCategory, index: number) => {
+            const expiresText = category.expires
+              ? format(new Date(category.expires), 'dd.MM.yyyy')
+              : formatMessage(m.noExpirationDate)
+            const expires = `${formatMessage(m.validTag)} ${expiresText}`
+            const isTemporary = category.validToCode === 8
             return (
               <Box
                 key={category.name + JSON.stringify(index)}
@@ -84,11 +81,11 @@ export const CurrentLicense: FC<FieldBaseProps> = ({ application }) => {
                         alignItems="center"
                       >
                         <Text variant="h3">
-                          {`${category.nr} - ${formatText(
-                            m.categorySectionTitle,
-                            application,
-                            formatMessage,
-                          )}`}
+                          {`${category.nr} - ${
+                            isTemporary
+                              ? formatMessage(m.temporaryLicense)
+                              : formatMessage(m.generalLicense)
+                          }`}
                         </Text>
                       </Box>
                     </Box>

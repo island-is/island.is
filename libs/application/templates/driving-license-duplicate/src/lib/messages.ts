@@ -373,6 +373,11 @@ export const m = defineMessages({
     defaultMessage: 'Gildistími ökuskírteinis',
     description: 'Some description',
   },
+  notFilledOut: {
+    id: 'es.application:notFilledOut',
+    defaultMessage: 'Ekki fyllt út',
+    description: '',
+  },
 
   /*Payment Section*/
   proceedToPayment: {
@@ -462,5 +467,20 @@ export const m = defineMessages({
     id: 'dld.application:categorySectionTitle',
     defaultMessage: 'Réttindi',
     description: 'text for category section after NR',
+  },
+  noExpirationDate: {
+    id: 'dld.application:noExpirationDate',
+    defaultMessage: 'Villa: Enginn gildistími skilgreindur',
+    description: 'text for when no expiration date is set on license',
+  },
+  generalLicense: {
+    id: 'dld.application:generalLicense',
+    defaultMessage: 'Almenn ökuréttindi',
+    description: 'text for general license',
+  },
+  temporaryLicense: {
+    id: 'dld.application:temporaryLicense',
+    defaultMessage: 'Bráðabirgðaskírteini',
+    description: 'text for temporary license',
   },
 })
