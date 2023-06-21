@@ -465,8 +465,14 @@ export const OldAgePensionForm: Form = buildForm({
             }),
           ],
         }),
+      ],
+    }),
+    buildSection({
+      id: 'connectedApplicationsSection',
+      title: oldAgePensionFormMessage.review.confirmSectionTitle,
+      children: [
         buildSubSection({
-          id: 'connectedApplicationsSection',
+          id: 'connectedApplicationsSubSection',
           title:
             oldAgePensionFormMessage.connectedApplications
               .relatedApplicationsSection,
@@ -611,6 +617,12 @@ export const OldAgePensionForm: Form = buildForm({
             }),
           ],
         }),
+      ],
+    }),
+    buildSection({
+      id: 'additionalInformation',
+      title: oldAgePensionFormMessage.review.confirmSectionTitle,
+      children: [
         buildSubSection({
           id: 'fileUploadAdditionalFiles',
           title: oldAgePensionFormMessage.fileUpload.additionalFileTitle,
