@@ -586,7 +586,7 @@ export class CaseController {
 
     if (!isCourtRole(user.role)) {
       throw new ForbiddenException(
-        'A court record must be signed by a judge or a registrar',
+        'A court record must be a judge or a registrar',
       )
     }
 
@@ -635,7 +635,7 @@ export class CaseController {
 
     if (!isCourtRole(user.role)) {
       throw new ForbiddenException(
-        'A court record must be signed by a judge or a registrar',
+        'A court record must be a judge or a registrar',
       )
     }
 
