@@ -35,7 +35,6 @@ import { assign } from 'xstate'
 import set from 'lodash/set'
 import { AuthDelegationType } from '@island.is/shared/types'
 import { hasReviewerApproved } from '../utils'
-import { useAuth } from '@island.is/auth/react'
 
 const pruneInDaysAtMidnight = (application: Application, days: number) => {
   const date = new Date(application.created)

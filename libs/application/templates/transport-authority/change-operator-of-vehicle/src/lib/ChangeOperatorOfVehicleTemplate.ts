@@ -31,7 +31,6 @@ import { assign } from 'xstate'
 import set from 'lodash/set'
 import { hasReviewerApproved, isRemovingOperatorOnly } from '../utils'
 import { AuthDelegationType } from '@island.is/shared/types'
-import { useAuth } from '@island.is/auth/react'
 
 const pruneInDaysAtMidnight = (application: Application, days: number) => {
   const date = new Date(application.created)

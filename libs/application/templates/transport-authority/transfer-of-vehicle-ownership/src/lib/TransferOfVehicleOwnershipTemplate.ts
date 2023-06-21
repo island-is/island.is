@@ -33,7 +33,6 @@ import {
   InsuranceCompaniesApi,
 } from '../dataProviders'
 import { hasReviewerApproved } from '../utils'
-import { useAuth } from '@island.is/auth/react'
 
 const pruneInDaysAtMidnight = (application: Application, days: number) => {
   const date = new Date(application.created)
