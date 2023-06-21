@@ -61,4 +61,4 @@ export const serviceSetup = (services: {
         paths: ['/minarsidur'],
       },
     })
-  .grantNamespaces('nginx-ingress-external')
+  .grantNamespaces('nginx-ingress-internal','nginx-ingress-external', 'islandis', 'user-notification', 'identity-server')

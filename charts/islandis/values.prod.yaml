@@ -1712,7 +1712,11 @@ service-portal:
     SI_PUBLIC_GRAPHQL_API: '/api/graphql'
     SI_PUBLIC_IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
   grantNamespaces:
+    - 'nginx-ingress-internal'
     - 'nginx-ingress-external'
+    - 'islandis'
+    - 'user-notification'
+    - 'identity-server'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
