@@ -34,7 +34,6 @@ import {
   indictmentCases,
   InstitutionType,
   investigationCases,
-  isCourtRole,
   restrictionCases,
   UserRole,
 } from '@island.is/judicial-system/types'
@@ -584,9 +583,9 @@ export class CaseController {
       `Requesting a signature for the court record of case ${caseId}`,
     )
 
-    if (!isCourtRole(user.role)) {
+    if (user.id !== theCase.judgeId && user.id !== theCase.registrarId) {
       throw new ForbiddenException(
-        'A court record must be signed by a judge or a registrar',
+        'A court record must be signed by the assigned judge or registrar',
       )
     }
 
