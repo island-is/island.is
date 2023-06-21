@@ -12,6 +12,8 @@ import { ClientAllowedScopesLoader } from './client/client-allowed-scopes.loader
 import { ClientSecretLoader } from './client/client-secret.loader'
 import { ScopeResolver } from './scope/scope.resolver'
 import { ScopeService } from './scope/scope.service'
+import { ProcureResolver } from './procure/procure.resolver'
+import { ProcureService } from './procure/procure.service'
 
 @Module({
   imports: [AuthAdminApiClientModule],
@@ -26,6 +28,8 @@ import { ScopeService } from './scope/scope.service'
     ClientSecretLoader,
     ScopeResolver,
     ScopeService,
+    ProcureResolver,
+    ProcureService,
   ],
 })
 export class AuthAdminModule {}

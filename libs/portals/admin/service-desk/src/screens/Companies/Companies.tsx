@@ -34,7 +34,7 @@ const Companies = () => {
         <Box display={['inline', 'inline', 'flex']}>
           <FilterInput
             placeholder={formatMessage(m.searchByNationalId)}
-            name={'companyId'}
+            name="searchQuery"
             value={searchInput}
             onChange={(e) => setSearchInput(e)}
             backgroundColor="blue"
@@ -73,7 +73,7 @@ const Companies = () => {
                             replaceParams({
                               href: ServiceDeskPaths.Procurers,
                               params: {
-                                companyId: company.id,
+                                nationalId: company.nationalId,
                               },
                             }),
                           )
