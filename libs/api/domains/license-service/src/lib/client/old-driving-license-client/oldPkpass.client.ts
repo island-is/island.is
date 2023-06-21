@@ -5,12 +5,14 @@ import { Cache as CacheManager } from 'cache-manager'
 import type { Logger } from '@island.is/logging'
 
 import {
-  PkPassServiceErrorResponse,
-  PkPassServiceTokenResponse,
-  PkPassServiceVerifyDriversLicenseResponse,
-  PkPassVerifyResult,
-} from './pkpass.type'
-import { GenericDrivingLicenseConfig } from './genericDrivingLicense.config'
+  OldPkPassPayload,
+  OldPkPassServiceDriversLicenseResponse,
+  OldPkPassServiceErrorResponse,
+  OldPkPassServiceTokenResponse,
+  OldPkPassServiceVerifyDriversLicenseResponse,
+  OldPkPassVerifyResult,
+} from './oldPkpass.type'
+import { OldGenericDrivingLicenseConfig } from './oldGenericDrivingLicense.config'
 import { ConfigType } from '@island.is/nest/config'
 /** Set TTL to less than given expiry from service */
 const DEFAULT_CACHE_TOKEN_EXPIRY_DELTA_IN_MS = 2000
@@ -39,7 +41,7 @@ function strToPositiveNum(s: string): number | undefined {
  *
  * TODO: Move this to an actual client. This will be done in drivers license V2 which is coming up soon.
  */
-export class PkPassClient {
+export class OldPkPassClient {
   private readonly pkpassApiKey: string
   private readonly pkpassSecretKey: string
   private readonly pkpassApiUrl: string
@@ -48,7 +50,7 @@ export class PkPassClient {
   private readonly pkpassAuthRetries: number
 
   constructor(
-    private config: ConfigType<typeof GenericDrivingLicenseConfig>,
+    private config: ConfigType<typeof OldGenericDrivingLicenseConfig>,
     private logger: Logger,
     private cacheManager?: CacheManager | null,
   ) {
@@ -110,6 +112,22 @@ export class PkPassClient {
     }
 
     return null
+  }
+
+  private urlFetch(
+    payload: OldPkPassPayload,
+  ): (accessToken: string) => Promise<Response> {
+    return (accessToken: string): Promise<Response> => {
+      return fetch(`${this.pkpassApiUrl}/v2/driversLicense`, {
+        method: 'POST',
+        headers: {
+          apiKey: this.pkpassApiKey,
+          accessToken: `smart ${accessToken}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      })
+    }
   }
 
   private async fetchRetried(
@@ -201,7 +219,7 @@ export class PkPassClient {
       return null
     }
 
-    const response = json as PkPassServiceTokenResponse
+    const response = json as OldPkPassServiceTokenResponse
 
     const token = response.data?.ACCESS_TOKEN
 
@@ -209,7 +227,7 @@ export class PkPassClient {
       const ttl = this.parseTtlFromTokenExpiry(response.data?.EXPIRED_ON)
       if (this.cacheManager && ttl) {
         try {
-          await this.cacheManager.set(this.pkpassCacheKey, token, { ttl })
+          await this.cacheManager.set(this.pkpassCacheKey, token, ttl)
         } catch (e) {
           this.logger.warn('Unable to cache token for pkpass service', {
             category: LOG_CATEGORY,
@@ -223,6 +241,111 @@ export class PkPassClient {
     this.logger.warn('pkpass service response does not include access token', {
       serviceStatus: response.status,
       serviceMessage: response.message,
+      category: LOG_CATEGORY,
+    })
+
+    return null
+  }
+
+  async getPkPass(
+    payload: OldPkPassPayload,
+  ): Promise<OldPkPassServiceDriversLicenseResponse | null> {
+    let res: Response | null = null
+
+    try {
+      res = await this.fetchRetried(
+        this.urlFetch(payload),
+        this.pkpassAuthRetries,
+      )
+    } catch (e) {
+      this.logger.warn('Unable to get pkpass drivers license', {
+        exception: e,
+        category: LOG_CATEGORY,
+      })
+      return null
+    }
+
+    if (!res) {
+      this.logger.warn(
+        'Unable to get pkpass drivers license, null from fetch',
+        {
+          category: LOG_CATEGORY,
+        },
+      )
+      return null
+    }
+
+    if (!res.ok) {
+      const responseErrors: OldPkPassServiceErrorResponse = {}
+      try {
+        const json = await res.json()
+        responseErrors.message = json?.message ?? undefined
+        responseErrors.status = json?.status ?? undefined
+        responseErrors.data = json?.data ?? undefined
+      } catch {
+        // noop
+      }
+
+      this.logger.warn(
+        'Expected 200 status for pkpass drivers license service',
+        {
+          status: res.status,
+          statusText: res.statusText,
+          category: LOG_CATEGORY,
+          ...responseErrors,
+        },
+      )
+      return null
+    }
+
+    let json: unknown
+    try {
+      json = await res.json()
+    } catch (e) {
+      this.logger.warn('Unable to parse JSON for pkpass service', {
+        exception: e,
+        category: LOG_CATEGORY,
+      })
+      return null
+    }
+
+    const response = json as OldPkPassServiceDriversLicenseResponse
+
+    if (response.status === 1 && response.data) {
+      return response as OldPkPassServiceDriversLicenseResponse
+    }
+
+    return null
+  }
+
+  async getPkPassUrl(payload: OldPkPassPayload): Promise<string | null> {
+    const response: OldPkPassServiceDriversLicenseResponse | null = await this.getPkPass(
+      payload,
+    )
+    if (response?.data?.pass_url) {
+      return response.data?.pass_url
+    }
+
+    this.logger.warn('pkpass service response does not include pass_url', {
+      serviceStatus: response?.status,
+      serviceMessage: response?.message,
+      category: LOG_CATEGORY,
+    })
+
+    return null
+  }
+
+  async getPkPassQRCode(payload: OldPkPassPayload): Promise<string | null> {
+    const response: OldPkPassServiceDriversLicenseResponse | null = await this.getPkPass(
+      payload,
+    )
+    if (response?.data?.pass_qrcode) {
+      return response.data?.pass_qrcode
+    }
+
+    this.logger.warn('pkpass service response does not include pass_qrcode', {
+      serviceStatus: response?.status,
+      serviceMessage: response?.message,
       category: LOG_CATEGORY,
     })
 
@@ -251,7 +374,7 @@ export class PkPassClient {
 
   async verifyPkpassByPdf417(
     pdf417Text: string,
-  ): Promise<PkPassVerifyResult | null> {
+  ): Promise<OldPkPassVerifyResult | null> {
     let res: Response | null = null
 
     try {
@@ -261,7 +384,7 @@ export class PkPassClient {
       )
     } catch (e) {
       this.logger.warn('Unable to verify pkpass drivers license', {
-        exception: e,
+        exception: e.message,
         category: LOG_CATEGORY,
       })
       return null
@@ -278,7 +401,7 @@ export class PkPassClient {
     }
 
     if (!res.ok) {
-      const responseErrors: PkPassServiceErrorResponse = {}
+      const responseErrors: OldPkPassServiceErrorResponse = {}
       try {
         // Service returns 400 for invalid data with details in the body
         const json = await res.json()
@@ -327,7 +450,7 @@ export class PkPassClient {
       return null
     }
 
-    const response = json as PkPassServiceVerifyDriversLicenseResponse
+    const response = json as OldPkPassServiceVerifyDriversLicenseResponse
 
     if (response.status !== 1) {
       this.logger.warn('verify pkpass service response status is not "1"', {
