@@ -30,7 +30,7 @@ export class PaginatedEndorsementInterceptor implements NestInterceptor {
     const listOwnerNationalId = await this.endorsementService.getListOwnerNationalId(
       listId,
     )
-    const isListOwner: boolean = user.nationalId === listOwnerNationalId
+    const isListOwner = user?.nationalId === listOwnerNationalId
     const isAdmin = this.endorsementListService.hasAdminScope(user as User)
 
     return next.handle().pipe(
