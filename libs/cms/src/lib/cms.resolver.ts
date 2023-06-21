@@ -93,6 +93,7 @@ import { GetGenericTagBySlugInput } from './dto/getGenericTagBySlug.input'
 import { FeaturedSupportQNAs } from './models/featuredSupportQNAs.model'
 import { PowerBiSlice } from './models/powerBiSlice.model'
 import { GetPowerBiEmbedPropsFromServerResponse } from './dto/getPowerBiEmbedPropsFromServer.response'
+import { GetOrganizationByTitleInput } from './dto/getOrganizationByTitle.input'
 
 const defaultCache: CacheControlOptions = { maxAge: CACHE_CONTROL_MAX_AGE }
 
@@ -197,6 +198,17 @@ export class CmsResolver {
   ): Promise<Organization | null> {
     return this.cmsContentfulService.getOrganization(
       input?.slug ?? '',
+      input?.lang ?? 'is-IS',
+    )
+  }
+
+  @CacheControl(defaultCache)
+  @Query(() => Organization, { nullable: true })
+  getOrganizationByTitle(
+    @Args('input') input: GetOrganizationByTitleInput,
+  ): Promise<Organization | null> {
+    return this.cmsContentfulService.getOrganizationByTitle(
+      input?.title ?? '',
       input?.lang ?? 'is-IS',
     )
   }

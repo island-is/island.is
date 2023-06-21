@@ -25,10 +25,12 @@ import {
   GetNamespaceQuery,
   GetNamespaceQueryVariables,
   IcelandicGovernmentInstitutionVacanciesResponse,
+  Query,
+  QueryGetOrganizationsArgs,
 } from '@island.is/web/graphql/schema'
 import { useLinkResolver, useNamespace } from '@island.is/web/hooks'
 import { GET_ICELANDIC_GOVERNMENT_INSTITUTION_VACANCIES } from '../queries/IcelandicGovernmentInstitutionVacancies'
-import { GET_NAMESPACE_QUERY } from '../queries'
+import { GET_NAMESPACE_QUERY, GET_ORGANIZATIONS_QUERY } from '../queries'
 import { useWindowSize } from '@island.is/web/hooks/useViewport'
 import { theme } from '@island.is/island-ui/theme'
 import { FilterTag, HeadWithSocialSharing } from '@island.is/web/components'
@@ -51,17 +53,17 @@ const shortenText = (text: string, maxLength: number) => {
   const shortenedText = text.slice(0, maxLength)
 
   if (text[maxLength] === ' ') {
-    return `${shortenedText}...`
+    return `${shortenedText} ...`
   }
 
   // Search for the nearest space before the maxLength
   const spaceIndex = shortenedText.lastIndexOf(' ')
 
   if (spaceIndex < 0) {
-    return `${shortenedText}...`
+    return `${shortenedText} ...`
   }
 
-  return `${text.slice(0, spaceIndex)}...`
+  return `${text.slice(0, spaceIndex)} ...`
 }
 
 const mapVacanciesField = (
@@ -108,10 +110,12 @@ const mapVacanciesField = (
 interface IcelandicGovernmentInstitutionVacanciesListProps {
   vacancies: Vacancy[]
   namespace: Record<string, string>
+  organizationLogoMap: Record<string, string>
 }
 
 const IcelandicGovernmentInstitutionVacanciesList: Screen<IcelandicGovernmentInstitutionVacanciesListProps> = ({
   vacancies,
+  organizationLogoMap,
   namespace,
 }) => {
   const { query, replace, isReady } = useRouter()
@@ -453,53 +457,93 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<IcelandicGovernmentIns
                 ITEMS_PER_PAGE * (selectedPage - 1),
                 ITEMS_PER_PAGE * selectedPage,
               )
-              .map((vacancy) => (
-                <GridColumn key={vacancy.id} span={['1/1', '1/1', '1/2']}>
-                  <FocusableBox
-                    height="full"
-                    href={`${
-                      linkResolver('vacancydetails', [vacancy.id?.toString()])
-                        .href
-                    }`}
-                    padding={[3, 3, 'containerGutter']}
-                    background="white"
-                    borderRadius="large"
-                    borderColor="blue200"
-                    borderWidth="standard"
-                  >
-                    <Stack space={2}>
-                      <Text variant="eyebrow">{vacancy.fieldOfWork}</Text>
-                      <Text color="blue400" variant="h3">
-                        {vacancy.title}
-                      </Text>
-                      <Text>
-                        {shortenText(vacancy.intro, VACANCY_INTRO_MAX_LENGTH)}
-                      </Text>
-                      <Inline space={1}>
-                        {vacancy.institutionName && (
-                          <Tag outlined={true} disabled={true}>
-                            {vacancy.institutionName}
-                          </Tag>
-                        )}
-                        {vacancy.locations &&
-                          vacancy.locations
-                            .filter((location) => location.title)
-                            .map((location, index) => (
-                              <Tag key={index} outlined={true} disabled>
-                                {location.title}
+              .map((vacancy) => {
+                const logoUrl = organizationLogoMap[vacancy.institutionName]
+                return (
+                  <GridColumn key={vacancy.id} span={['1/1', '1/1', '1/2']}>
+                    <FocusableBox
+                      height="full"
+                      href={`${
+                        linkResolver('vacancydetails', [vacancy.id?.toString()])
+                          .href
+                      }`}
+                      padding={[3, 3, 'containerGutter']}
+                      background="white"
+                      borderRadius="large"
+                      borderColor="blue200"
+                      borderWidth="standard"
+                    >
+                      <Inline
+                        collapseBelow="lg"
+                        space={[1, 1, 2, 5]}
+                        flexWrap="nowrap"
+                        alignY="center"
+                        justifyContent="spaceBetween"
+                      >
+                        <Stack space={2}>
+                          <Text variant="eyebrow">{vacancy.fieldOfWork}</Text>
+                          <Text color="blue400" variant="h3">
+                            {vacancy.title}
+                          </Text>
+                          <Text>
+                            {shortenText(
+                              vacancy.intro,
+                              VACANCY_INTRO_MAX_LENGTH,
+                            )}
+                          </Text>
+                          <Inline space={1}>
+                            {vacancy.institutionName && (
+                              <Tag outlined={true} disabled={true}>
+                                {vacancy.institutionName}
                               </Tag>
-                            ))}
+                            )}
+                            {vacancy.locations &&
+                              vacancy.locations
+                                .filter((location) => location.title)
+                                .map((location, index) => (
+                                  <Tag key={index} outlined={true} disabled>
+                                    {location.title}
+                                  </Tag>
+                                ))}
+                          </Inline>
+                          {vacancy.applicationDeadlineTo && (
+                            <Tag outlined={true} disabled variant="purple">
+                              {n('applicationDeadlineTo', 'Umsóknarfrestur')}{' '}
+                              {vacancy.applicationDeadlineTo}
+                            </Tag>
+                          )}
+                        </Stack>
+                        {logoUrl && (
+                          <>
+                            <Hidden below="lg">
+                              <Box className={styles.logo}>
+                                <img
+                                  className={styles.logo}
+                                  src={logoUrl}
+                                  alt=""
+                                />
+                              </Box>
+                            </Hidden>
+                            <Hidden above="md">
+                              <Box
+                                display="flex"
+                                justifyContent="center"
+                                width="full"
+                              >
+                                <img
+                                  className={styles.logo}
+                                  src={logoUrl}
+                                  alt=""
+                                />
+                              </Box>
+                            </Hidden>
+                          </>
+                        )}
                       </Inline>
-                      {vacancy.applicationDeadlineTo && (
-                        <Tag outlined={true} disabled variant="purple">
-                          {n('applicationDeadlineTo', 'Umsóknarfrestur')}{' '}
-                          {vacancy.applicationDeadlineTo}
-                        </Tag>
-                      )}
-                    </Stack>
-                  </FocusableBox>
-                </GridColumn>
-              ))}
+                    </FocusableBox>
+                  </GridColumn>
+                )
+              })}
           </GridRow>
           {filteredVacancies.length > 0 && (
             <Box paddingTop={8}>
@@ -565,9 +609,35 @@ IcelandicGovernmentInstitutionVacanciesList.getInitialProps = async ({
   const vacancies =
     vacanciesResponse.data.icelandicGovernmentInstitutionVacancies.vacancies
 
+  const institutionNames = mapVacanciesField(vacancies, 'institutionName').map(
+    ({ label }) => label,
+  )
+
+  const organizationsResponse = await apolloClient.query<
+    Query,
+    QueryGetOrganizationsArgs
+  >({
+    query: GET_ORGANIZATIONS_QUERY,
+    variables: {
+      input: {
+        lang: locale,
+        organizationTitles: institutionNames,
+      },
+    },
+  })
+
+  const organizationLogoMap = new Map<string, string>()
+
+  for (const organization of organizationsResponse?.data?.getOrganizations
+    ?.items ?? []) {
+    if (organization?.logo?.url)
+      organizationLogoMap.set(organization.title, organization.logo.url)
+  }
+
   return {
     vacancies,
     namespace,
+    organizationLogoMap: Object.fromEntries(organizationLogoMap),
   }
 }
 
