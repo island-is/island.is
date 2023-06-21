@@ -350,9 +350,11 @@ export const OldAgePensionForm: Form = buildForm({
                 const { applicantNationalId } = getApplicationExternalData(
                   externalData,
                 )
-                const { selectedMonth, selectedYear } = getApplicationAnswers(
-                  answers,
-                )
+                const {
+                  selectedMonth,
+                  selectedYear,
+                  isFishermen,
+                } = getApplicationAnswers(answers)
 
                 const dateOfBirth = kennitala.info(applicantNationalId).birthday
                 const dateOfBirth00 = new Date(
@@ -364,7 +366,9 @@ export const OldAgePensionForm: Form = buildForm({
                 const age = getAgeBetweenTwoDates(selectedDate, dateOfBirth00)
 
                 return (
-                  age >= earlyRetirementMinAge && age <= earlyRetirementMaxAge
+                  age >= earlyRetirementMinAge &&
+                  age <= earlyRetirementMaxAge &&
+                  isFishermen !== YES
                 )
               },
             }),

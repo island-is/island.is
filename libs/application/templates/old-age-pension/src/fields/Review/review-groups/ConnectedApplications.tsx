@@ -13,14 +13,22 @@ import { getApplicationAnswers } from '../../../lib/oldAgePensionUtils'
 import { oldAgePensionFormMessage } from '../../../lib/messages'
 import { ConnectedApplications as Apps } from '../../../lib/constants'
 
-export const ConnectedApplications = ({ application }: ReviewGroupProps) => {
+export const ConnectedApplications = ({
+  application,
+  editable,
+  goToScreen,
+}: ReviewGroupProps) => {
   const { formatMessage } = useLocale()
   const { connectedApplications } = getApplicationAnswers(application.answers)
 
   return (
     <>
       {connectedApplications.length > 0 && (
-        <ReviewGroup isLast={true}>
+        <ReviewGroup
+          isLast={true}
+          isEditable={editable}
+          editAction={() => goToScreen?.('connectedApplicationsSubSection')}
+        >
           <GridRow marginBottom={3}>
             <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
               <Label>

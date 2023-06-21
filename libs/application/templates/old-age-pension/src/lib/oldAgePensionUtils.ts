@@ -4,6 +4,10 @@ import {
   MONTHS,
   ConnectedApplications,
   HomeAllowanceHousing,
+  oldAgePensionAge,
+  YES,
+  fishermenMinAge,
+  earlyRetirementMinAge,
 } from './constants'
 import { oldAgePensionFormMessage } from './messages'
 
@@ -172,7 +176,10 @@ export function getApplicationExternalData(
   }
 }
 
-export function getStartDateAndEndDate(nationalId: string) {
+export function getStartDateAndEndDate(
+  nationalId: string,
+  isFishermen: YesOrNo,
+) {
   const today = new Date()
   const nationalIdInfo = kennitala.info(nationalId)
   const dateOfBirth = new Date(nationalIdInfo.birthday)
@@ -184,19 +191,41 @@ export function getStartDateAndEndDate(nationalId: string) {
   )
 
   const thisYearAge = dateOfBirthThisYear > today ? age + 1 : age
-
   let startDate = dateOfBirthThisYear
   let endDate = addMonths(today, 6)
-  if (thisYearAge >= 67) {
+
+  if (thisYearAge >= oldAgePensionAge) {
+    // >= 67 year old
     startDate = addYears(
       dateOfBirthThisYear > today ? dateOfBirthThisYear : today,
       -2,
     )
-  } else if (thisYearAge === 66) {
-    startDate = addYears(dateOfBirthThisYear, -1)
-  } else if (thisYearAge < 65) {
+  } else if (thisYearAge < fishermenMinAge) {
+    // < 62 year old
     return {}
+  } else if (isFishermen === YES) {
+    // Fishermen
+    if (thisYearAge === fishermenMinAge + 1) {
+      // = 63 year old
+      startDate = addYears(dateOfBirthThisYear, -1)
+    } else if (thisYearAge > fishermenMinAge + 1) {
+      // between 63 and 67
+      startDate = addYears(
+        dateOfBirthThisYear > today ? dateOfBirthThisYear : today,
+        -2,
+      )
+    }
+  } else {
+    // not fishermen
+    if (thisYearAge < earlyRetirementMinAge) {
+      // < 65 year old
+      return {}
+    } else if (thisYearAge === earlyRetirementMinAge + 1) {
+      // 66 year old
+      startDate = addYears(dateOfBirthThisYear, -1)
+    }
   }
+
   if (startDate > endDate) return {}
 
   return { startDate, endDate }
@@ -204,11 +233,16 @@ export function getStartDateAndEndDate(nationalId: string) {
 
 export function getAvailableYears(application: Application) {
   const { applicantNationalId } = getApplicationExternalData(
-    application['externalData'],
+    application.externalData,
   )
+  const { isFishermen } = getApplicationAnswers(application.answers)
+
   if (!applicantNationalId) return []
 
-  const { startDate, endDate } = getStartDateAndEndDate(applicantNationalId)
+  const { startDate, endDate } = getStartDateAndEndDate(
+    applicantNationalId,
+    isFishermen,
+  )
   if (!startDate || !endDate) return []
 
   const startDateYear = startDate.getFullYear()
@@ -225,11 +259,16 @@ export function getAvailableMonths(
   selectedYear: string,
 ) {
   const { applicantNationalId } = getApplicationExternalData(
-    application['externalData'],
+    application.externalData,
   )
+  const { isFishermen } = getApplicationAnswers(application.answers)
+
   if (!applicantNationalId) return []
 
-  const { startDate, endDate } = getStartDateAndEndDate(applicantNationalId)
+  const { startDate, endDate } = getStartDateAndEndDate(
+    applicantNationalId,
+    isFishermen,
+  )
   if (!startDate || !endDate || !selectedYear) return []
 
   let months = MONTHS
