@@ -135,6 +135,11 @@ export const m = defineMessages({
     defaultMessage: 'Nafn',
     description: '',
   },
+  locality: {
+    id: 'sp.petitions:locality',
+    defaultMessage: 'Sveitarfélag',
+    description: '',
+  },
   noName: {
     id: 'sp.petitions:noName',
     defaultMessage: 'Nafn ekki skráð',
