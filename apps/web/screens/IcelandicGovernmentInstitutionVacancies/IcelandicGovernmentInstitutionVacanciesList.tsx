@@ -498,7 +498,7 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<IcelandicGovernmentIns
                     >
                       <Inline
                         collapseBelow="lg"
-                        space={[1, 1, 2, 5]}
+                        space={[2, 2, 2, 5]}
                         flexWrap="nowrap"
                         alignY="center"
                         justifyContent="spaceBetween"
