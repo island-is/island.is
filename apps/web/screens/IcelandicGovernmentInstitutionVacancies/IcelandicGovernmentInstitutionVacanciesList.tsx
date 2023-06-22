@@ -370,6 +370,24 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<IcelandicGovernmentIns
             </GridColumn>
           </GridRow>
 
+          <Hidden above="sm">
+            <Box marginBottom={3}>
+              <FilterInput
+                placeholder={n(
+                  'filterSearchPlaceholder',
+                  'Leita í Starfatorgi',
+                )}
+                name="filterInput"
+                value={searchTerm}
+                onChange={(value) => {
+                  setSelectedPage(1)
+                  setSearchTerm(value)
+                  searchTermHasBeenInitialized.current = true
+                }}
+              />
+            </Box>
+          </Hidden>
+
           <Filter
             resultCount={filteredVacancies?.length ?? 0}
             variant={isMobile ? 'dialog' : 'popover'}
