@@ -16,7 +16,7 @@ import {
 import { m } from '../../lib/messages'
 import format from 'date-fns/format'
 import { allowFakeCondition } from '../../lib/utils'
-import { NO, YES } from '../../lib/constants'
+import { IGNORE, NO, YES } from '../../lib/constants'
 import { DriversLicense } from '@island.is/clients/driving-license'
 
 export const sectionOverview = buildSection({
@@ -52,7 +52,9 @@ export const sectionOverview = buildSection({
         buildDividerField({}),
         buildDescriptionField({
           id: 'overview.currentLicenseTitle',
+          titleVariant: 'h3',
           title: m.rights,
+          space: 'gutter',
         }),
         buildCustomField(
           {
@@ -60,20 +62,32 @@ export const sectionOverview = buildSection({
             id: 'currentLicenseCards',
             component: 'Cards',
             doesNotRequireAnswer: true,
-            condition: allowFakeCondition(NO),
+            condition: (answers) => {
+              return (
+                allowFakeCondition(NO)(answers) ||
+                allowFakeCondition(IGNORE)(answers)
+              )
+            },
           },
           {
             cards: ({ externalData }: Application) =>
               (externalData.currentLicense
-                .data as DriversLicense).categories.map((category) => ({
-                title: category.nr,
-                description: [
-                  category.name,
-                  category.expires
-                    ? format(new Date(category.expires), 'dd.MM.yyyy')
-                    : '',
-                ],
-              })) ?? [],
+                .data as DriversLicense).categories.map((category) => {
+                const isTemporary = category.validToCode === 8
+                return {
+                  title: `${category.nr} - ${
+                    isTemporary
+                      ? m.temporaryLicense.defaultMessage
+                      : m.generalLicense.defaultMessage
+                  }`,
+                  description: [
+                    category.name,
+                    category.expires
+                      ? format(new Date(category.expires), 'dd.MM.yyyy')
+                      : '',
+                  ],
+                }
+              }) ?? [],
           },
         ),
         buildCustomField(

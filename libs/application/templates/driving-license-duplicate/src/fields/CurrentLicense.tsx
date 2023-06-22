@@ -30,7 +30,7 @@ export const CurrentLicense: FC<FieldBaseProps> = ({ application }) => {
           name: 'Fólksbifreið / Sendibifreið',
           nr: fakeLicense.split('-')[0],
           expires: '2065-04-04',
-          validToText: fakeLicense === 'B-temp' ? 'Bráðabirgðaskírteini' : '',
+          validToCode: fakeLicense === 'B-temp' ? 8 : 1,
         },
       ],
     }
