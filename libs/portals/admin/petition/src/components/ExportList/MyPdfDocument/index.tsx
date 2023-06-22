@@ -14,6 +14,7 @@ import {
 } from '@island.is/api/schema'
 import { dark200 } from '@island.is/island-ui/theme'
 import { formatDate } from '../../../lib/utils/utils'
+import { format as formatNationalId } from 'kennitala'
 
 const MyPdfDocument = (data: {
   petition?: EndorsementList
@@ -54,8 +55,7 @@ const MyPdfDocument = (data: {
             </View>
             <View style={pdfStyles.widthHalf}>
               <Text style={pdfStyles.header}>Kennitala ábyrgðarmanns: </Text>
-              {/*todo: */}
-              <Text>{''}</Text>
+              <Text>{formatNationalId(petition?.owner as string)}</Text>
             </View>
           </View>
         </View>
