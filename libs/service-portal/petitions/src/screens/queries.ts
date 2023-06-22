@@ -91,6 +91,7 @@ export const GetEndorsements = gql`
         created
         meta {
           fullName
+          locality
         }
       }
     }
