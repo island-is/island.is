@@ -15,9 +15,7 @@ import { EndorsementListService } from '../endorsementList.service'
 
 @Injectable()
 export class EndorsementListInterceptor implements NestInterceptor {
-  constructor(
-    private endorsementListService: EndorsementListService,
-  ) {}
+  constructor(private endorsementListService: EndorsementListService) {}
   async intercept(
     context: ExecutionContext,
     next: CallHandler,

@@ -70,8 +70,6 @@ export class EndorsementService {
     })
   }
 
-  
-
   async findEndorsementsGeneralPetition(
     { listId }: FindEndorsementsInput,
     query: any,
