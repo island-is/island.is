@@ -4,6 +4,11 @@ import {
   MONTHS,
   ConnectedApplications,
   HomeAllowanceHousing,
+  oldAgePensionAge,
+  YES,
+  fishermenMinAge,
+  earlyRetirementMinAge,
+  earlyRetirementMaxAge,
 } from './constants'
 import { oldAgePensionFormMessage } from './messages'
 
@@ -14,6 +19,7 @@ import { residenceHistory, combinedResidenceHistory } from '../types'
 import React from 'react'
 import { useLocale } from '@island.is/localization'
 import { getCountryByCode } from '@island.is/shared/utils'
+import App from 'next/app'
 
 interface fileType {
   key: string
@@ -172,7 +178,10 @@ export function getApplicationExternalData(
   }
 }
 
-export function getStartDateAndEndDate(nationalId: string) {
+export function getStartDateAndEndDate(
+  nationalId: string,
+  isFishermen: YesOrNo,
+) {
   const today = new Date()
   const nationalIdInfo = kennitala.info(nationalId)
   const dateOfBirth = new Date(nationalIdInfo.birthday)
@@ -184,19 +193,41 @@ export function getStartDateAndEndDate(nationalId: string) {
   )
 
   const thisYearAge = dateOfBirthThisYear > today ? age + 1 : age
-
   let startDate = dateOfBirthThisYear
   let endDate = addMonths(today, 6)
-  if (thisYearAge >= 67) {
+
+  if (thisYearAge >= oldAgePensionAge) {
+    // >= 67 year old
     startDate = addYears(
       dateOfBirthThisYear > today ? dateOfBirthThisYear : today,
       -2,
     )
-  } else if (thisYearAge === 66) {
-    startDate = addYears(dateOfBirthThisYear, -1)
-  } else if (thisYearAge < 65) {
+  } else if (thisYearAge < fishermenMinAge) {
+    // < 62 year old
     return {}
+  } else if (isFishermen === YES) {
+    // Fishermen
+    if (thisYearAge === fishermenMinAge + 1) {
+      // = 63 year old
+      startDate = addYears(dateOfBirthThisYear, -1)
+    } else if (thisYearAge > fishermenMinAge + 1) {
+      // between 63 and 67
+      startDate = addYears(
+        dateOfBirthThisYear > today ? dateOfBirthThisYear : today,
+        -2,
+      )
+    }
+  } else {
+    // not fishermen
+    if (thisYearAge < earlyRetirementMinAge) {
+      // < 65 year old
+      return {}
+    } else if (thisYearAge === earlyRetirementMinAge + 1) {
+      // 66 year old
+      startDate = addYears(dateOfBirthThisYear, -1)
+    }
   }
+
   if (startDate > endDate) return {}
 
   return { startDate, endDate }
@@ -204,11 +235,16 @@ export function getStartDateAndEndDate(nationalId: string) {
 
 export function getAvailableYears(application: Application) {
   const { applicantNationalId } = getApplicationExternalData(
-    application['externalData'],
+    application.externalData,
   )
+  const { isFishermen } = getApplicationAnswers(application.answers)
+
   if (!applicantNationalId) return []
 
-  const { startDate, endDate } = getStartDateAndEndDate(applicantNationalId)
+  const { startDate, endDate } = getStartDateAndEndDate(
+    applicantNationalId,
+    isFishermen,
+  )
   if (!startDate || !endDate) return []
 
   const startDateYear = startDate.getFullYear()
@@ -225,11 +261,16 @@ export function getAvailableMonths(
   selectedYear: string,
 ) {
   const { applicantNationalId } = getApplicationExternalData(
-    application['externalData'],
+    application.externalData,
   )
+  const { isFishermen } = getApplicationAnswers(application.answers)
+
   if (!applicantNationalId) return []
 
-  const { startDate, endDate } = getStartDateAndEndDate(applicantNationalId)
+  const { startDate, endDate } = getStartDateAndEndDate(
+    applicantNationalId,
+    isFishermen,
+  )
   if (!startDate || !endDate || !selectedYear) return []
 
   let months = MONTHS
@@ -284,27 +325,74 @@ export function getAgeBetweenTwoDates(
   return age
 }
 
-export function getAttachments(answers: Application['answers']) {
-  const attachments: string[] = []
+export function isEarlyRetirement(
+  answers: Application['answers'],
+  externalData: Application['externalData'],
+) {
+  const { applicantNationalId } = getApplicationExternalData(externalData)
+  const { selectedMonth, selectedYear, isFishermen } = getApplicationAnswers(
+    answers,
+  )
 
-  const getAttachmentsName = (attachmentsArr: fileType[] | undefined) => {
+  const dateOfBirth = kennitala.info(applicantNationalId).birthday
+  const dateOfBirth00 = new Date(
+    dateOfBirth.getFullYear(),
+    dateOfBirth.getMonth(),
+  )
+  const selectedDate = new Date(+selectedYear, +selectedMonth)
+
+  const age = getAgeBetweenTwoDates(selectedDate, dateOfBirth00)
+
+  return (
+    age >= earlyRetirementMinAge &&
+    age <= earlyRetirementMaxAge &&
+    isFishermen !== YES
+  )
+}
+
+export function getAttachments(application: Application) {
+  const getAttachmentsName = (
+    attachmentsArr: fileType[] | undefined,
+    type: string,
+  ) => {
     if (attachmentsArr && attachmentsArr.length > 0) {
       attachmentsArr.map((attch) => {
-        attachments.push(attch.name)
+        attachments.push(`${type} - ${attch?.name}`)
       })
     }
   }
 
+  const { answers, externalData } = application
+  const {
+    isFishermen,
+    homeAllowanceChildren,
+    homeAllowanceHousing,
+    connectedApplications,
+  } = getApplicationAnswers(answers)
+  const earlyRetirement = isEarlyRetirement(answers, externalData)
+  const attachments: string[] = []
+
   // Early retirement, pension fund, fishermen
   const earlyPenFisher = answers.fileUploadEarlyPenFisher as earlyRetirementPensionfundFishermen
-  getAttachmentsName(earlyPenFisher.pension)
-  getAttachmentsName(earlyPenFisher.earlyRetirement)
-  getAttachmentsName(earlyPenFisher.fishermen)
+  getAttachmentsName(earlyPenFisher?.pension, 'lífeyrissjóðir')
+  if (earlyRetirement) {
+    getAttachmentsName(earlyPenFisher?.earlyRetirement, 'snemmtaka')
+  }
+  if (isFishermen === YES) {
+    getAttachmentsName(earlyPenFisher?.fishermen, 'sjómanna')
+  }
 
   // leaseAgreement, schoolAgreement
   const leaseAgrSchoolConf = answers.fileUploadHomeAllowance as leaseAgreementSchoolConfirmation
-  getAttachmentsName(leaseAgrSchoolConf.leaseAgreement)
-  getAttachmentsName(leaseAgrSchoolConf.schoolConfirmation)
+  const isHomeAllowance = connectedApplications?.includes(
+    ConnectedApplications.HOMEALLOWANCE,
+  )
+  if (homeAllowanceHousing === HomeAllowanceHousing.RENTER && isHomeAllowance) {
+    getAttachmentsName(leaseAgrSchoolConf?.leaseAgreement, 'leigusamning')
+  }
+  if (homeAllowanceChildren === YES && isHomeAllowance) {
+    getAttachmentsName(leaseAgrSchoolConf?.schoolConfirmation, 'skólavist')
+  }
 
   return attachments
 }

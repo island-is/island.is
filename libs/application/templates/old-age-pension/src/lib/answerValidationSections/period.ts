@@ -1,15 +1,22 @@
 import { Application, Answer } from '@island.is/application/types'
 
 import { validatorErrorMessages } from './../messages'
-import { getStartDateAndEndDate } from './../oldAgePensionUtils'
+import {
+  getApplicationAnswers,
+  getStartDateAndEndDate,
+} from './../oldAgePensionUtils'
 import { AnswerValidationConstants, MONTHS } from './../constants'
 import { buildError } from './utils'
 
 export const period = (newAnswer: unknown, application: Application) => {
   const obj = newAnswer as Record<string, Answer>
   const { PERIOD } = AnswerValidationConstants
+  const { isFishermen } = getApplicationAnswers(application.answers)
 
-  const { startDate, endDate } = getStartDateAndEndDate(application.applicant)
+  const { startDate, endDate } = getStartDateAndEndDate(
+    application.applicant,
+    isFishermen,
+  )
   const { year, month } = obj
 
   if (!startDate) {

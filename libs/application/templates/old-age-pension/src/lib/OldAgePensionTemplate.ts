@@ -1,3 +1,6 @@
+import { assign } from 'xstate'
+import unset from 'lodash/unset'
+
 import {
   ApplicationTemplate,
   ApplicationContext,
@@ -11,10 +14,16 @@ import {
   UserProfileApi,
   NationalRegistrySpouseApi,
 } from '@island.is/application/types'
-
 import { pruneAfterDays } from '@island.is/application/core'
 
-import { Events, Roles, States } from './constants'
+import {
+  ConnectedApplications,
+  Events,
+  HomeAllowanceHousing,
+  Roles,
+  States,
+  YES,
+} from './constants'
 import { dataSchema } from './dataSchema'
 import { oldAgePensionFormMessage } from './messages'
 import { answerValidators } from './answerValidators'
@@ -22,6 +31,7 @@ import {
   NationalRegistryResidenceHistoryApi,
   NationalRegistryCohabitantsApi,
 } from '../dataProviders'
+import { getApplicationAnswers } from './oldAgePensionUtils'
 
 const OldAgePensionTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -75,6 +85,7 @@ const OldAgePensionTemplate: ApplicationTemplate<
         },
       },
       [States.DRAFT]: {
+        exit: ['clearHomeAllowance'],
         meta: {
           name: States.DRAFT,
           status: 'draft',
@@ -103,6 +114,25 @@ const OldAgePensionTemplate: ApplicationTemplate<
         //   SUBMIT: [],
         // },
       },
+    },
+  },
+  stateMachineOptions: {
+    actions: {
+      clearHomeAllowance: assign((context) => {
+        const { application } = context
+        const { connectedApplications } = getApplicationAnswers(
+          application.answers,
+        )
+
+        if (
+          !connectedApplications?.includes(ConnectedApplications.HOMEALLOWANCE)
+        ) {
+          unset(application.answers, 'homeAllowance')
+          unset(application.answers, 'fileUploadHomeAllowance')
+        }
+
+        return context
+      }),
     },
   },
   mapUserToRole(

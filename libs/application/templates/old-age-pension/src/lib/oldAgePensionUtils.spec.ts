@@ -8,7 +8,11 @@ import {
   FormValue,
 } from '@island.is/application/types'
 
-import { getStartDateAndEndDate, getAvailableYears } from './oldAgePensionUtils'
+import {
+  getStartDateAndEndDate,
+  getAvailableYears,
+  getApplicationAnswers,
+} from './oldAgePensionUtils'
 
 function buildApplication(data?: {
   answers?: FormValue
@@ -44,10 +48,11 @@ function buildApplication(data?: {
 describe('getStartDateAndEndDate', () => {
   it('should return 2 years ago for startDate and 6 months ahead for endDate', () => {
     const application = buildApplication()
+    const { isFishermen } = getApplicationAnswers(application.answers)
     const today = new Date()
     const startDate = addYears(today, -2).toDateString()
     const endDate = addMonths(today, 6).toDateString()
-    const res = getStartDateAndEndDate(application.applicant)
+    const res = getStartDateAndEndDate(application.applicant, isFishermen)
 
     expect({
       startDate: res.startDate?.toDateString(),

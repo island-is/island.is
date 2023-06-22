@@ -28,17 +28,15 @@ import Logo from '../assets/Logo'
 import { oldAgePensionFormMessage } from '../lib/messages'
 import {
   ConnectedApplications,
-  earlyRetirementMaxAge,
-  earlyRetirementMinAge,
   FILE_SIZE_LIMIT,
   HomeAllowanceHousing,
   NO,
   YES,
 } from '../lib/constants'
 import {
-  getAgeBetweenTwoDates,
   getApplicationAnswers,
   getApplicationExternalData,
+  isEarlyRetirement,
   isExistsCohabitantOlderThan25,
 } from '../lib/oldAgePensionUtils'
 
@@ -207,7 +205,7 @@ export const OldAgePensionForm: Form = buildForm({
                       .data as NationalRegistrySpouse
                     return data.maritalStatus
                   },
-                  condition: (answers, externalData) => {
+                  condition: (_, externalData) => {
                     const { maritalStatus } = getApplicationExternalData(
                       externalData,
                     )
@@ -227,7 +225,7 @@ export const OldAgePensionForm: Form = buildForm({
                       .data as NationalRegistrySpouse
                     return data.name
                   },
-                  condition: (answers, externalData) => {
+                  condition: (_, externalData) => {
                     const { spouseName } = getApplicationExternalData(
                       externalData,
                     )
@@ -273,7 +271,7 @@ export const OldAgePensionForm: Form = buildForm({
                   doesNotRequireAnswer: true,
                   title: '',
                   component: 'ResidenceHistoryTable',
-                  condition: (answers, externalData) => {
+                  condition: (_, externalData) => {
                     const { residenceHistory } = getApplicationExternalData(
                       externalData,
                     )
@@ -347,25 +345,7 @@ export const OldAgePensionForm: Form = buildForm({
               uploadButtonLabel:
                 oldAgePensionFormMessage.fileUpload.attachmentButton,
               condition: (answers, externalData) => {
-                const { applicantNationalId } = getApplicationExternalData(
-                  externalData,
-                )
-                const { selectedMonth, selectedYear } = getApplicationAnswers(
-                  answers,
-                )
-
-                const dateOfBirth = kennitala.info(applicantNationalId).birthday
-                const dateOfBirth00 = new Date(
-                  dateOfBirth.getFullYear(),
-                  dateOfBirth.getMonth(),
-                )
-                const selectedDate = new Date(+selectedYear, +selectedMonth)
-
-                const age = getAgeBetweenTwoDates(selectedDate, dateOfBirth00)
-
-                return (
-                  age >= earlyRetirementMinAge && age <= earlyRetirementMaxAge
-                )
+                return isEarlyRetirement(answers, externalData)
               },
             }),
             buildFileUploadField({
@@ -547,6 +527,7 @@ export const OldAgePensionForm: Form = buildForm({
                     },
                   ],
                   width: 'half',
+                  required: true,
                 }),
                 buildRadioField({
                   id: 'homeAllowance.children',
@@ -564,6 +545,7 @@ export const OldAgePensionForm: Form = buildForm({
                     },
                   ],
                   width: 'half',
+                  required: true,
                 }),
               ],
             }),
@@ -585,9 +567,17 @@ export const OldAgePensionForm: Form = buildForm({
               uploadButtonLabel:
                 oldAgePensionFormMessage.fileUpload.attachmentButton,
               condition: (answers) => {
-                const { homeAllowanceHousing } = getApplicationAnswers(answers)
+                const {
+                  homeAllowanceHousing,
+                  connectedApplications,
+                } = getApplicationAnswers(answers)
 
-                return homeAllowanceHousing === HomeAllowanceHousing.RENTER
+                return (
+                  homeAllowanceHousing === HomeAllowanceHousing.RENTER &&
+                  connectedApplications?.includes(
+                    ConnectedApplications.HOMEALLOWANCE,
+                  )
+                )
               },
             }),
             buildFileUploadField({
@@ -610,9 +600,17 @@ export const OldAgePensionForm: Form = buildForm({
               uploadButtonLabel:
                 oldAgePensionFormMessage.fileUpload.attachmentButton,
               condition: (answers) => {
-                const { homeAllowanceChildren } = getApplicationAnswers(answers)
+                const {
+                  homeAllowanceChildren,
+                  connectedApplications,
+                } = getApplicationAnswers(answers)
 
-                return homeAllowanceChildren === YES
+                return (
+                  homeAllowanceChildren === YES &&
+                  connectedApplications?.includes(
+                    ConnectedApplications.HOMEALLOWANCE,
+                  )
+                )
               },
             }),
           ],
