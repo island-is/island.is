@@ -49,7 +49,7 @@ export const m = defineMessages({
     description: '',
   },
   externalDataSectionTermsAndConditions: {
-    id: 'gpl.application:externalDataSectionTermsAndConditions#markdown',
+    id: 'gpl.application:externalDataSectionTermsAndConditions',
     defaultMessage:
       'Vakin er athygli á lögum um persónuvernd og vinnslu persónuupplýsinga nr. 90/2018. Ábyrgðaraðili staðfestir hér með að listinn sé í samræmi við lög og reglur landsins og stjórnarskrá Íslands. Vinnsluaðila er heimilt að loka lista niður fari hann gegn ofangreindu.',
     description: '',

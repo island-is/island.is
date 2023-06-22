@@ -24,10 +24,8 @@ import format from 'date-fns/format'
 import is from 'date-fns/locale/is'
 import { Application } from '@island.is/application/types'
 import { UserProfile } from '@island.is/api/schema'
-import {
-  formatPhoneNumber,
-  removeCountryCode,
-} from '@island.is/application/ui-components'
+import { formatPhoneNumber } from '@island.is/application/ui-components'
+import { parse } from 'libphonenumber-js'
 
 export const form: Form = buildForm({
   id: 'GeneralPetitionForm',
@@ -130,7 +128,7 @@ export const form: Form = buildForm({
                     mobilePhoneNumber?: string
                   })?.mobilePhoneNumber ?? ''
 
-                return removeCountryCode(phone)
+                return phone
               },
             }),
             buildTextField({
@@ -173,8 +171,8 @@ export const form: Form = buildForm({
             buildKeyValueField({
               label: m.phone,
               value: ({ answers }) => {
-                const phone = removeCountryCode(answers.phone as string)
-                return formatPhoneNumber(phone)
+                const parsedPhoneNumber = parse(answers.phone as string)
+                return formatPhoneNumber(parsedPhoneNumber.phone as string)
               },
             }),
             buildKeyValueField({
