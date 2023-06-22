@@ -5,18 +5,8 @@ export function maskEndorsementList(
   isListOwner: boolean,
   isAdmin: boolean,
 ): EndorsementList {
-  // // Masks owner from EndorsementList
-  // endorsementList.owner = 'xxxxxx-xxxx'
-
-  // if (!isAdmin) {
-  //   endorsementList.meta = { ...endorsementList.meta, phone: '', email: '' }
-  // }
-
-  if (isListOwner) {
-    //nothing
-  } else if (isAdmin) {
-    //nothing
-  } else {
+  // mask list owner data for everyone except list owner and admins
+  if (!isListOwner && !isAdmin) {
     endorsementList.owner = 'xxxxxx-xxxx'
     endorsementList.meta = { ...endorsementList.meta, phone: '', email: '' }
   }
