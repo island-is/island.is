@@ -23,10 +23,6 @@ export class DrivingLicenseDuplicateService extends BaseTemplateApiService {
     super(ApplicationTypes.DRIVING_LICENSE_DUPLICATE)
   }
 
-  calculateNeedsHealthCert = (healthDeclaration = {}) => {
-    return !!Object.values(healthDeclaration).find((val) => val === 'yes')
-  }
-
   async createCharge({
     application: { id, answers },
     auth,
