@@ -54,3 +54,9 @@ export enum AnswerValidationConstants {
   FILEUPLOADPENEARLYFISHER = 'fileUploadEarlyPenFisher',
   FILEUPLOADHOMEALLOWANCE = 'fileUploadHomeAllowance',
 }
+
+export enum ApplicationType {
+  RETIREMENTPENSION = 'retirementPension',
+  HALFRETIREMENTPENSION = 'halfRetirementPension',
+  FISHERMEN = 'fishermen',
+}

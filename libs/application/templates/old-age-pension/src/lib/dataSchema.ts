@@ -1,13 +1,19 @@
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { z } from 'zod'
-import { HomeAllowanceHousing, NO, YES } from './constants'
+import { ApplicationType, HomeAllowanceHousing, NO, YES } from './constants'
 import { oldAgePensionFormMessage } from './messages'
 
 export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
+  applicationType: z.object({
+    option: z.enum([
+      ApplicationType.RETIREMENTPENSION,
+      ApplicationType.HALFRETIREMENTPENSION,
+      ApplicationType.FISHERMEN,
+    ]),
+  }),
   questions: z.object({
     pensionFund: z.enum([YES, NO]),
-    fishermen: z.enum([YES, NO]),
   }),
   applicantInfo: z.object({
     email: z.string().email(),

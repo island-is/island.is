@@ -27,6 +27,7 @@ import * as kennitala from 'kennitala'
 import Logo from '../assets/Logo'
 import { oldAgePensionFormMessage } from '../lib/messages'
 import {
+  ApplicationType,
   ConnectedApplications,
   FILE_SIZE_LIMIT,
   HomeAllowanceHousing,
@@ -36,6 +37,7 @@ import {
 import {
   getApplicationAnswers,
   getApplicationExternalData,
+  getYesNOOptions,
   isEarlyRetirement,
   isExistsCohabitantOlderThan25,
 } from '../lib/oldAgePensionUtils'
@@ -284,10 +286,7 @@ export const OldAgePensionForm: Form = buildForm({
                   id: 'residenceHistory.question',
                   title:
                     oldAgePensionFormMessage.residence.residenceHistoryQuestion,
-                  options: [
-                    { value: YES, label: oldAgePensionFormMessage.shared.yes },
-                    { value: NO, label: oldAgePensionFormMessage.shared.no },
-                  ],
+                  options: getYesNOOptions(),
                   width: 'half',
                   largeButtons: true,
                   // condition: (answers, externalData) => {
@@ -384,9 +383,9 @@ export const OldAgePensionForm: Form = buildForm({
               uploadButtonLabel:
                 oldAgePensionFormMessage.fileUpload.attachmentButton,
               condition: (answers) => {
-                const { isFishermen } = getApplicationAnswers(answers)
+                const { applicationType } = getApplicationAnswers(answers)
 
-                return isFishermen === YES
+                return applicationType === ApplicationType.FISHERMEN
               },
             }),
           ],
@@ -408,16 +407,7 @@ export const OldAgePensionForm: Form = buildForm({
                   description:
                     oldAgePensionFormMessage.onePaymentPerYear
                       .onePaymentPerYearDescription,
-                  options: [
-                    {
-                      value: YES,
-                      label: oldAgePensionFormMessage.shared.yes,
-                    },
-                    {
-                      value: NO,
-                      label: oldAgePensionFormMessage.shared.no,
-                    },
-                  ],
+                  options: getYesNOOptions(),
                   defaultValue: NO,
                   width: 'half',
                 }),
@@ -534,16 +524,7 @@ export const OldAgePensionForm: Form = buildForm({
                   title:
                     oldAgePensionFormMessage.homeAllowance
                       .childrenBetween18And25,
-                  options: [
-                    {
-                      value: YES,
-                      label: oldAgePensionFormMessage.shared.yes,
-                    },
-                    {
-                      value: NO,
-                      label: oldAgePensionFormMessage.shared.no,
-                    },
-                  ],
+                  options: getYesNOOptions(),
                   width: 'half',
                   required: true,
                 }),

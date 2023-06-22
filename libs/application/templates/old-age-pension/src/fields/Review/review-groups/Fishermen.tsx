@@ -4,9 +4,10 @@ import { useLocale } from '@island.is/localization'
 import { oldAgePensionFormMessage } from '../../../lib/messages'
 import { ReviewGroupProps } from './props'
 import { useStatefulAnswers } from '../../../hooks/useStatefulAnswers'
+import { ApplicationType, NO, YES } from '../../../lib/constants'
 
 export const Fishermen = ({ application }: ReviewGroupProps) => {
-  const [{ isFishermen }] = useStatefulAnswers(application)
+  const [{ applicationType }] = useStatefulAnswers(application)
 
   const { formatMessage } = useLocale()
 
@@ -16,7 +17,7 @@ export const Fishermen = ({ application }: ReviewGroupProps) => {
         <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
           <RadioValue
             label={formatMessage(oldAgePensionFormMessage.review.fishermen)}
-            value={isFishermen}
+            value={applicationType === ApplicationType.FISHERMEN ? YES : NO}
           />
         </GridColumn>
       </GridRow>

@@ -10,6 +10,7 @@ import {
 } from '../oldAgePensionUtils'
 import {
   AnswerValidationConstants,
+  ApplicationType,
   earlyRetirementMaxAge,
   earlyRetirementMinAge,
   YES,
@@ -23,9 +24,11 @@ export const fileUpploadPenEarlyFisher = (
   const obj = newAnswer as Record<string, Answer>
   const { FILEUPLOADPENEARLYFISHER } = AnswerValidationConstants
 
-  const { selectedMonth, selectedYear, isFishermen } = getApplicationAnswers(
-    application.answers,
-  )
+  const {
+    selectedMonth,
+    selectedYear,
+    applicationType,
+  } = getApplicationAnswers(application.answers)
   const dateOfBirth = kennitala.info(application.applicant).birthday
 
   const dateOfBirth00 = new Date(
@@ -57,7 +60,7 @@ export const fileUpploadPenEarlyFisher = (
     }
   }
 
-  if (isFishermen === YES && obj.fishermen) {
+  if (applicationType === ApplicationType.FISHERMEN && obj.fishermen) {
     if (isEmpty((obj as { fishermen: unknown[] }).fishermen)) {
       return buildError(
         validatorErrorMessages.requireAttachment,
