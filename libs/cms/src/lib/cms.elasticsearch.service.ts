@@ -26,6 +26,7 @@ import { SearchResponse } from 'elastic'
 import { MappedData } from '@island.is/content-search-indexer/types'
 import { SupportQNA } from './models/supportQNA.model'
 import { GetFeaturedSupportQNAsInput } from './dto/getFeaturedSupportQNAs.input'
+import { Vacancy } from './models/vacancy.model'
 
 @Injectable()
 export class CmsElasticsearchService {
@@ -238,6 +239,26 @@ export class CmsElasticsearchService {
     const menuResponse = await this.elasticService.findById(index, id)
     const response = menuResponse.body?._source?.response
     return response ? JSON.parse(response) : null
+  }
+
+  async getSingleVacancy(index: string, id: string) {
+    const vacancyResponse = await this.elasticService.findById(index, id)
+    const response = vacancyResponse.body?._source?.response
+    return response ? JSON.parse(response) : null
+  }
+
+  async getVacancies(index: string) {
+    const vacanciesResponse = await this.elasticService.getDocumentsByMetaData(
+      index,
+      {
+        types: ['webVacancy'],
+      },
+    )
+    return vacanciesResponse.hits.hits
+      .map<Vacancy>((response) =>
+        JSON.parse(response._source.response ?? 'null'),
+      )
+      .filter(Boolean)
   }
 
   async getPublishedMaterial(

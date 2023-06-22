@@ -39,8 +39,6 @@ export const GET_ICELANDIC_GOVERNMENT_INSTITUTION_VACANCY_DETAILS = gql`
         applicationDeadlineTo
         institutionName
         logoUrl
-        postalAddress
-        address
         jobPercentage
         applicationHref
         qualificationRequirements

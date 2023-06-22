@@ -303,7 +303,7 @@ IcelandicGovernmentInstitutionVacancyDetails.getInitialProps = async ({
   query,
   locale,
 }) => {
-  if (!query?.id || isNaN(Number(query?.id))) {
+  if (!query?.id) {
     throw new CustomNextError(404, 'Vacancy was not found')
   }
 
@@ -315,7 +315,7 @@ IcelandicGovernmentInstitutionVacancyDetails.getInitialProps = async ({
       query: GET_ICELANDIC_GOVERNMENT_INSTITUTION_VACANCY_DETAILS,
       variables: {
         input: {
-          id: Number(query.id),
+          id: query.id as string,
         },
       },
     }),
@@ -332,6 +332,8 @@ IcelandicGovernmentInstitutionVacancyDetails.getInitialProps = async ({
 
   const vacancy =
     vacancyResponse?.data?.icelandicGovernmentInstitutionVacancyById?.vacancy
+
+  console.log('HELLOOOO', vacancyResponse?.data)
 
   if (!vacancy) {
     throw new CustomNextError(404, 'Vacancy was not found')
