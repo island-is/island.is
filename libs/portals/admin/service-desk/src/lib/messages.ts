@@ -37,4 +37,8 @@ export const m = defineMessages({
     id: 'service.portal:view-procures',
     defaultMessage: 'Skoða nánar',
   },
+  noContent: {
+    id: 'service.portal:no-content',
+    defaultMessage: 'Ekkert fyrirtæki fannst fyrir þessi leitarskilyrði',
+  },
 })

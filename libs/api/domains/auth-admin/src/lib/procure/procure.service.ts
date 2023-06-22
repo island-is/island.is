@@ -9,8 +9,7 @@ export class ProcureService {
    * Search for procure companies by name or national id
    */
   async getCompanies(search: string): Promise<ProcureCompany[]> {
-    console.log('search', search)
-    return [
+    const mock = [
       {
         name: 'Fyrirtæki ehf.',
         nationalId: '5501690339',
@@ -24,6 +23,13 @@ export class ProcureService {
         nationalId: '1122446688',
       },
     ]
+
+    return mock.filter((company) => {
+      return (
+        company.name.toLowerCase().includes(search.toLowerCase()) ||
+        company.nationalId.includes(search)
+      )
+    })
   }
 
   async searchCompanyProcurers(nationalId: string): Promise<CompanyProcurers> {

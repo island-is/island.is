@@ -1,24 +1,18 @@
-import { useLoaderData, useNavigate } from 'react-router-dom'
-import { IntroHeader } from '@island.is/portals/core'
-import { useNationalId } from '../../hooks/useNationalId'
-import {
-  Box,
-  Button,
-  GridContainer,
-  GridRow,
-  Stack,
-  Text,
-} from '@island.is/island-ui/core'
-import { useLocale } from '@island.is/localization'
-import { m } from '../../lib/messages'
 import React from 'react'
+import { useLoaderData, useNavigate } from 'react-router-dom'
+
+import { formatNationalId, IntroHeader } from '@island.is/portals/core'
+import { Box, Button, Stack, Text } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
+
+import { m } from '../../lib/messages'
 import { ServiceDeskPaths } from '../../lib/paths'
 import { CompanyProcurerResult } from './Procurers.loader'
+import ContentCard from '../../components/ContentCard/ContentCard'
 
 const Procurers = () => {
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
-  const { formatNationalId } = useNationalId()
   const company = useLoaderData() as CompanyProcurerResult
 
   return (
@@ -44,33 +38,11 @@ const Procurers = () => {
           <Text marginBottom={2} variant="h4">
             {formatMessage(m.listProcurers)}
           </Text>
-          <GridContainer>
-            <Stack space={3}>
-              {company.procurers?.map(({ nationalId, name }) => (
-                <GridRow key={`procure-${nationalId}`}>
-                  <Box
-                    display={'flex'}
-                    borderRadius={'large'}
-                    border={'standard'}
-                    width={'full'}
-                    paddingX={4}
-                    paddingY={3}
-                    justifyContent={'spaceBetween'}
-                    alignItems={'center'}
-                  >
-                    <Box>
-                      <Stack space={1}>
-                        <Text variant="h3">{name}</Text>
-                        <Text variant={'default'}>
-                          {formatNationalId(nationalId)}
-                        </Text>
-                      </Stack>
-                    </Box>
-                  </Box>
-                </GridRow>
-              ))}
-            </Stack>
-          </GridContainer>
+          <Stack space={3}>
+            {company.procurers?.map(({ nationalId, name }) => (
+              <ContentCard name={name} nationalId={nationalId} />
+            ))}
+          </Stack>
         </Box>
       </div>
     </Stack>

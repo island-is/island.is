@@ -1,8 +1,10 @@
+import { lazy } from 'react'
+
 import { PortalModule } from '@island.is/portals/core'
+import { AdminPortalScope } from '@island.is/auth/scopes'
+
 import { m } from './lib/messages'
 import { ServiceDeskPaths } from './lib/paths'
-import { AdminPortalScope } from '@island.is/auth/scopes'
-import { lazy } from 'react'
 import { GetCompaniesAction } from './screens/Companies/GetCompanies.action'
 import { procurersLoader } from './screens/Procurers/Procurers.loader'
 

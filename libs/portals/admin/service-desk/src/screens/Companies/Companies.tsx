@@ -1,27 +1,19 @@
+import React, { useState } from 'react'
+import { Form, useActionData } from 'react-router-dom'
+
 import { useLocale } from '@island.is/localization'
-import { m } from '../../lib/messages'
 import { IntroHeader } from '@island.is/portals/core'
-import { replaceParams } from '@island.is/react-spa/shared'
-import React from 'react'
-import { Form, useActionData, useNavigate } from 'react-router-dom'
-import {
-  Box,
-  Button,
-  FilterInput,
-  GridContainer,
-  GridRow,
-  Stack,
-  Text,
-} from '@island.is/island-ui/core'
-import { ServiceDeskPaths } from '../../lib/paths'
+import { Box, FilterInput, Stack } from '@island.is/island-ui/core'
+
+import { m } from '../../lib/messages'
 import * as styles from './Companies.css'
-import { formatNationalId } from '../../utils/formatNationalid'
 import { GetCompaniesResult } from './GetCompanies.action'
+import ContentCard from '../../components/ContentCard/ContentCard'
+import NoContentCard from '../../components/NoContentCard/NoContentCard'
 
 const Companies = () => {
-  const [searchInput, setSearchInput] = React.useState('')
+  const [searchInput, setSearchInput] = useState('')
   const actionData = useActionData() as GetCompaniesResult
-  const navigate = useNavigate()
   const { formatMessage } = useLocale()
 
   return (
@@ -36,57 +28,26 @@ const Companies = () => {
             placeholder={formatMessage(m.searchByNationalId)}
             name="searchQuery"
             value={searchInput}
-            onChange={(e) => setSearchInput(e)}
+            onChange={setSearchInput}
             backgroundColor="blue"
           />
         </Box>
       </Form>
       <Box marginTop={[3, 3, 6]}>
-        <GridContainer className={styles.relative}>
+        <Box className={styles.relative}>
           <Stack space={3}>
             {actionData &&
               actionData.data?.map((company) => (
-                <GridRow key={`procure-${company.nationalId}`}>
-                  <Box
-                    display={'flex'}
-                    borderRadius={'large'}
-                    border={'standard'}
-                    width={'full'}
-                    paddingX={4}
-                    paddingY={3}
-                    justifyContent={'spaceBetween'}
-                    alignItems={'center'}
-                  >
-                    <Stack space={1}>
-                      <Text variant="h3">{company.name}</Text>
-                      <Text variant={'default'}>
-                        {formatNationalId(company.nationalId)}
-                      </Text>
-                    </Stack>
-                    <Box height="full" display="flex" alignItems="flexEnd">
-                      <Button
-                        variant="text"
-                        icon="arrowForward"
-                        size={'small'}
-                        onClick={() =>
-                          navigate(
-                            replaceParams({
-                              href: ServiceDeskPaths.Procurers,
-                              params: {
-                                nationalId: company.nationalId,
-                              },
-                            }),
-                          )
-                        }
-                      >
-                        {formatMessage(m.viewProcures)}
-                      </Button>
-                    </Box>
-                  </Box>
-                </GridRow>
+                <Box key={`procure-${company.nationalId}`}>
+                  <ContentCard
+                    name={company.name}
+                    nationalId={company.nationalId}
+                    withNavigation
+                  />
+                </Box>
               ))}
           </Stack>
-        </GridContainer>
+        </Box>
       </Box>
     </>
   )

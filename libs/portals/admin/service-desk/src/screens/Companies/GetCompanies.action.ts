@@ -1,8 +1,9 @@
+import { z } from 'zod'
+
 import {
   RawRouterActionResponse,
   WrappedActionFn,
 } from '@island.is/portals/core'
-import { z } from 'zod'
 import {
   validateFormData,
   ValidateFormDataResult,
