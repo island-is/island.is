@@ -37,6 +37,11 @@ export const form: Form = buildForm({
   renderLastScreenBackButton: true,
   children: [
     buildSection({
+      id: 'intro',
+      title: m.introTitle,
+      children: [],
+    }),
+    buildSection({
       id: 'termsAndConditions',
       title: m.externalDataSectionTitle,
       children: [
