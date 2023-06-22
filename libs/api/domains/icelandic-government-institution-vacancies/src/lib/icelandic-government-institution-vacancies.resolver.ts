@@ -1,9 +1,11 @@
+import { Args, Query, Resolver } from '@nestjs/graphql'
 import {
   DefaultApi,
   VacanciesGetAcceptEnum,
   VacanciesVacancyIdGetAcceptEnum,
 } from '@island.is/clients/icelandic-government-institution-vacancies'
-import { Args, Directive, Query, Resolver } from '@nestjs/graphql'
+import { CacheControl, CacheControlOptions } from '@island.is/nest/graphql'
+import { CACHE_CONTROL_MAX_AGE } from '@island.is/shared/constants'
 import { CmsElasticsearchService } from '@island.is/cms'
 import { IcelandicGovernmentInstitutionVacanciesInput } from './dto/icelandicGovernmentInstitutionVacancies.input'
 import { IcelandicGovernmentInstitutionVacanciesResponse } from './dto/icelandicGovernmentInstitutionVacanciesResponse'
@@ -20,8 +22,7 @@ import {
 } from './utils'
 import { getElasticsearchIndex } from '@island.is/content-search-index-manager'
 
-const cacheTime = process.env.CACHE_TIME || 300
-const cacheControlDirective = (ms = cacheTime) => `@cacheControl(maxAge: ${ms})`
+const defaultCache: CacheControlOptions = { maxAge: CACHE_CONTROL_MAX_AGE }
 
 @Resolver()
 export class IcelandicGovernmentInstitutionVacanciesResolver {
@@ -30,8 +31,8 @@ export class IcelandicGovernmentInstitutionVacanciesResolver {
     private readonly cmsElasticService: CmsElasticsearchService,
   ) {}
 
+  @CacheControl(defaultCache)
   @Query(() => IcelandicGovernmentInstitutionVacanciesResponse)
-  @Directive(cacheControlDirective())
   async icelandicGovernmentInstitutionVacancies(
     @Args('input') input: IcelandicGovernmentInstitutionVacanciesInput,
   ): Promise<IcelandicGovernmentInstitutionVacanciesResponse> {
@@ -60,8 +61,8 @@ export class IcelandicGovernmentInstitutionVacanciesResolver {
     }
   }
 
+  @CacheControl(defaultCache)
   @Query(() => IcelandicGovernmentInstitutionVacancyByIdResponse)
-  @Directive(cacheControlDirective())
   async icelandicGovernmentInstitutionVacancyById(
     @Args('input') input: IcelandicGovernmentInstitutionVacancyByIdInput,
   ): Promise<IcelandicGovernmentInstitutionVacancyByIdResponse | null> {

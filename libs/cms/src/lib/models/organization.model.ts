@@ -102,6 +102,6 @@ export const mapOrganization = ({
     showsUpOnTheOrganizationsPage: fields.showsUpOnTheOrganizationsPage ?? true,
     hasALandingPage: fields.hasALandingPage ?? true,
     trackingDomain: fields.trackingDomain ?? '',
-    name: fields.nameInVacancyList,
+    nameInVacancyList: fields.nameInVacancyList,
   }
 }
