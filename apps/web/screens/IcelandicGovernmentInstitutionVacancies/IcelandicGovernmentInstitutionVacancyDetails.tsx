@@ -56,13 +56,15 @@ const InformationPanel = ({
   const n = useNamespace(namespace)
   return (
     <Stack space={3}>
-      <InstitutionPanel
-        img={organizationLogo}
-        institutionTitle={n('institutionCardTitle', 'Þjónustuaðili')}
-        institution={vacancy.institutionName}
-        locale={activeLocale}
-        imgContainerDisplay={['block', 'block', 'none', 'block']}
-      />
+      {vacancy.institutionName && (
+        <InstitutionPanel
+          img={organizationLogo}
+          institutionTitle={n('institutionCardTitle', 'Þjónustuaðili')}
+          institution={vacancy.institutionName}
+          locale={activeLocale}
+          imgContainerDisplay={['block', 'block', 'none', 'block']}
+        />
+      )}
       <Box background="dark100" borderRadius="large" padding={[3, 3, 4]}>
         <Stack space={3}>
           <Text variant="h3">
@@ -73,7 +75,7 @@ const InformationPanel = ({
             <Text fontWeight="semiBold">{n('fieldOfWork', 'Starf')}</Text>
             <Text variant="small">{vacancy.title}</Text>
           </Box>
-          {vacancy.locations && (
+          {vacancy.locations?.length > 0 && (
             <Box>
               <Text fontWeight="semiBold">
                 {vacancy.locations.length === 1
@@ -87,24 +89,30 @@ const InformationPanel = ({
               ))}
             </Box>
           )}
-          <Box>
-            <Text fontWeight="semiBold">
-              {n('jobPercentage', 'Starfshlutfall')}
-            </Text>
-            <Text variant="small">{vacancy.jobPercentage}</Text>
-          </Box>
-          <Box>
-            <Text fontWeight="semiBold">
-              {n('applicationDeadlineFrom', 'Starf skráð')}
-            </Text>
-            <Text variant="small">{vacancy.applicationDeadlineFrom}</Text>
-          </Box>
-          <Box>
-            <Text fontWeight="semiBold">
-              {n('applicationDeadlineTo', 'Umsóknarfrestur')}
-            </Text>
-            <Text variant="small">{vacancy.applicationDeadlineTo}</Text>
-          </Box>
+          {vacancy.jobPercentage && (
+            <Box>
+              <Text fontWeight="semiBold">
+                {n('jobPercentage', 'Starfshlutfall')}
+              </Text>
+              <Text variant="small">{vacancy.jobPercentage}</Text>
+            </Box>
+          )}
+          {vacancy.applicationDeadlineFrom && (
+            <Box>
+              <Text fontWeight="semiBold">
+                {n('applicationDeadlineFrom', 'Starf skráð')}
+              </Text>
+              <Text variant="small">{vacancy.applicationDeadlineFrom}</Text>
+            </Box>
+          )}
+          {vacancy.applicationDeadlineTo && (
+            <Box>
+              <Text fontWeight="semiBold">
+                {n('applicationDeadlineTo', 'Umsóknarfrestur')}
+              </Text>
+              <Text variant="small">{vacancy.applicationDeadlineTo}</Text>
+            </Box>
+          )}
         </Stack>
       </Box>
     </Stack>
@@ -188,26 +196,34 @@ const IcelandicGovernmentInstitutionVacancyDetails: Screen<IcelandicGovernmentIn
               </Button>
             </LinkV2>
           </Hidden>
-          <Text variant="h1">{vacancy.title}</Text>
-          <Text as="div">{webRichText([vacancy.intro] as SliceType[])}</Text>
-
-          <Text variant="h3" as="h2">
-            {n('assignmentsAndResponibility', 'Helstu verkefni og ábyrgð')}
+          <Text variant="h1" as="h1">
+            {vacancy.title}
           </Text>
-
-          <Text as="div">
-            {webRichText([vacancy.qualificationRequirements] as SliceType[])}
-          </Text>
+          {vacancy.intro && (
+            <Text as="div">{webRichText([vacancy.intro] as SliceType[])}</Text>
+          )}
 
           {vacancy.tasksAndResponsibilities && (
             <Text variant="h3" as="h2">
-              {n('qualificationRequirements', 'Hæfniskröfur')}
+              {n('assignmentsAndResponsibility', 'Helstu verkefni og ábyrgð')}
             </Text>
           )}
 
           {vacancy.tasksAndResponsibilities && (
             <Text as="div">
               {webRichText([vacancy.tasksAndResponsibilities] as SliceType[])}
+            </Text>
+          )}
+
+          {vacancy.qualificationRequirements && (
+            <Text variant="h3" as="h2">
+              {n('qualificationRequirements', 'Hæfniskröfur')}
+            </Text>
+          )}
+
+          {vacancy.qualificationRequirements && (
+            <Text as="div">
+              {webRichText([vacancy.qualificationRequirements] as SliceType[])}
             </Text>
           )}
 
@@ -220,11 +236,17 @@ const IcelandicGovernmentInstitutionVacancyDetails: Screen<IcelandicGovernmentIn
             </Text>
           )}
 
-          {vacancy.salaryTerms &&
-            webRichText([vacancy.salaryTerms] as SliceType[])}
+          {vacancy.salaryTerms && (
+            <Text as="div">
+              {webRichText([vacancy.salaryTerms] as SliceType[])}
+            </Text>
+          )}
 
-          {vacancy.description &&
-            webRichText([vacancy.description] as SliceType[])}
+          {vacancy.description && (
+            <Text as="div">
+              {webRichText([vacancy.description] as SliceType[])}
+            </Text>
+          )}
 
           {vacancy.jobPercentage && (
             <Text>
@@ -240,13 +262,13 @@ const IcelandicGovernmentInstitutionVacancyDetails: Screen<IcelandicGovernmentIn
             </Text>
           )}
 
-          {vacancy.contacts?.length && (
+          {vacancy.contacts?.length > 0 && (
             <Text variant="h3" as="h2">
               {n('contacts', 'Nánari upplýsingar veitir')}
             </Text>
           )}
 
-          {vacancy.contacts?.length && (
+          {vacancy.contacts?.length > 0 && (
             <Stack space={2}>
               {vacancy.contacts.map((contact, index) => (
                 <Box key={index}>
@@ -277,7 +299,7 @@ const IcelandicGovernmentInstitutionVacancyDetails: Screen<IcelandicGovernmentIn
 
           {vacancy.applicationHref && (
             <Inline>
-              <Box marginBottom={[0, 0, 5]}>
+              <Box marginTop={3} marginBottom={[0, 0, 5]}>
                 <LinkV2 href={vacancy.applicationHref} pureChildren={true}>
                   <Button size="small" as="div">
                     {n('applyForJob', 'Sækja um starf')}
@@ -337,18 +359,20 @@ IcelandicGovernmentInstitutionVacancyDetails.getInitialProps = async ({
     throw new CustomNextError(404, 'Vacancy was not found')
   }
 
-  const organizationResponse = await apolloClient.query<
-    GetOrganizationByTitleQuery,
-    GetOrganizationByTitleQueryVariables
-  >({
-    query: GET_ORGANIZATION_BY_TITLE_QUERY,
-    variables: {
-      input: {
-        lang: locale,
-        title: vacancy.institutionName,
-      },
-    },
-  })
+  const organizationResponse = vacancy.institutionName
+    ? await apolloClient.query<
+        GetOrganizationByTitleQuery,
+        GetOrganizationByTitleQueryVariables
+      >({
+        query: GET_ORGANIZATION_BY_TITLE_QUERY,
+        variables: {
+          input: {
+            lang: locale,
+            title: vacancy.institutionName,
+          },
+        },
+      })
+    : null
 
   const organizationLogo =
     organizationResponse?.data?.getOrganizationByTitle?.logo?.url ??

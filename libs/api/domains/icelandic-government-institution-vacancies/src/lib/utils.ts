@@ -257,6 +257,11 @@ export const mapRichTextField = (field: Html | null | undefined) => {
   )
 }
 
+const mapDate = (date?: string) => {
+  const list = date?.split('-') ?? []
+  return list?.length === 3 ? `${list[2]}.${list[1]}.${list[0]}` : undefined
+}
+
 export const mapIcelandicGovernmentInstitutionVacancyByIdResponseFromCms = (
   vacancy: Vacancy,
 ): IcelandicGovernmentInstitutionVacancyByIdResponse['vacancy'] => {
@@ -270,8 +275,8 @@ export const mapIcelandicGovernmentInstitutionVacancyByIdResponseFromCms = (
   return {
     id: vacancy.id,
     title: vacancy.title,
-    applicationDeadlineFrom: vacancy.applicationDeadlineFrom,
-    applicationDeadlineTo: vacancy.applicationDeadlineTo,
+    applicationDeadlineFrom: mapDate(vacancy.applicationDeadlineFrom),
+    applicationDeadlineTo: mapDate(vacancy.applicationDeadlineTo),
     fieldOfWork: vacancy.fieldOfWork,
     institutionName: vacancy.organization?.nameInVacancyList,
     logoUrl: vacancy.organization?.logo?.url,
@@ -300,8 +305,8 @@ export const mapVacancyListItemFromCms = (
   return {
     id: vacancy.id,
     title: vacancy.title,
-    applicationDeadlineFrom: vacancy.applicationDeadlineFrom,
-    applicationDeadlineTo: vacancy.applicationDeadlineTo,
+    applicationDeadlineFrom: mapDate(vacancy.applicationDeadlineFrom),
+    applicationDeadlineTo: mapDate(vacancy.applicationDeadlineTo),
     fieldOfWork: vacancy.fieldOfWork,
     institutionName: vacancy.organization?.nameInVacancyList,
     intro: vacancy.intro?.document
