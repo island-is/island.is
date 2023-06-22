@@ -53,7 +53,7 @@ const MyPdfDocument = (data: {
               <Text>{petition?.ownerName}</Text>
             </View>
             <View style={pdfStyles.widthHalf}>
-              <Text style={pdfStyles.header}>Kennitala ábyrgðarmannsins: </Text>
+              <Text style={pdfStyles.header}>Kennitala ábyrgðarmanns: </Text>
               {/*todo: */}
               <Text>{''}</Text>
             </View>
