@@ -9,7 +9,7 @@ import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { handle404 } from '@island.is/clients/middlewares'
 import { HealthCenterHistory } from './models/getHealthCenter.model'
 import { Dentists, DentistBill } from './models/getDentists.model'
-import add from 'date-fns/add'
+import subYears from 'date-fns/subYears'
 
 /** Category to attach each log message to */
 const LOG_CATEGORY = 'rights-portal-service'
@@ -46,7 +46,7 @@ export class RightsPortalService {
         api.dentistsBills({
           dateFrom: dateFrom
             ? dateFrom.toDateString()
-            : add(new Date(), { days: -7 }).toDateString(),
+            : subYears(new Date(), 5).toDateString(),
           dateTo: dateTo ? dateTo.toDateString() : new Date().toDateString(),
         }),
       ])
@@ -69,13 +69,14 @@ export class RightsPortalService {
     const api = this.healthCenterApi.withMiddleware(
       new AuthMiddleware(user as Auth),
     )
+
     try {
       const res = await Promise.all([
         api.healthcentersCurrent(),
         api.healthcentersHistory({
           dateFrom: dateFrom
             ? dateFrom.toDateString()
-            : add(new Date(), { days: -7 }).toDateString(),
+            : subYears(new Date(), 5).toDateString(),
           dateTo: dateTo ? dateTo.toDateString() : new Date().toDateString(),
         }),
       ])

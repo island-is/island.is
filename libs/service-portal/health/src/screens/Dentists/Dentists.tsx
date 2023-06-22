@@ -17,17 +17,17 @@ import {
 } from '@island.is/island-ui/core'
 import { IntroHeader } from '@island.is/portals/core'
 import { messages } from '../../lib/messages'
-import add from 'date-fns/add'
 import { useState } from 'react'
 import BillsTable from './BillsTable'
-import addYears from 'date-fns/addYears'
+import add from 'date-fns/add'
+import sub from 'date-fns/sub'
 
 const Dentists = () => {
   useNamespaces('sp.health')
   const { formatMessage } = useLocale()
 
   const [selectedDateFrom, setSelectedDateFrom] = useState(
-    addYears(new Date(), -5),
+    sub(new Date(), { years: 5 }),
   )
   const [selectedDateTo, setSelectedDateTo] = useState(new Date())
   const [dentistName, setDentistName] = useState('')
@@ -96,7 +96,7 @@ const Dentists = () => {
               placeholderText={undefined}
               selected={selectedDateFrom}
               handleChange={(e) => setSelectedDateFrom(e)}
-              maxDate={add(selectedDateTo, { days: -1 })}
+              maxDate={sub(selectedDateTo, { days: 1 })}
             />
             <DatePicker
               size="sm"

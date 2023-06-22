@@ -11,7 +11,7 @@ import { IntroHeader } from '@island.is/portals/core'
 import { messages } from '../../lib/messages'
 import { useState } from 'react'
 import HistoryTable from './HistoryTable'
-import addYears from 'date-fns/addYears'
+import subYears from 'date-fns/subYears'
 
 interface CurrentInfo {
   healthCenter: string
@@ -19,7 +19,7 @@ interface CurrentInfo {
 }
 
 const DEFAULT_DATE_TO = new Date()
-const DEFAULT_DATE_FROM = addYears(DEFAULT_DATE_TO, -5)
+const DEFAULT_DATE_FROM = subYears(DEFAULT_DATE_TO, 10)
 
 const HealthCenter = () => {
   useNamespaces('sp.health')
