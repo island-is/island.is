@@ -1,6 +1,8 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
+import { CacheField } from '@island.is/nest/graphql'
+import { SystemMetadata } from '@island.is/shared/types'
+
 import { ISliceDropdown } from '../generated/contentfulTypes'
-import { SystemMetadata } from 'api-cms-domain'
 import { mapOneColumnText, OneColumnText } from './oneColumnText.model'
 
 @ObjectType()
@@ -11,7 +13,7 @@ export class SliceDropdown {
   @Field(() => String, { nullable: true })
   dropdownLabel?: string
 
-  @Field(() => [OneColumnText])
+  @CacheField(() => [OneColumnText])
   slices!: OneColumnText[]
 }
 

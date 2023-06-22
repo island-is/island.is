@@ -3,12 +3,10 @@ import { useActionData, useLoaderData } from 'react-router-dom'
 
 import { AuthAdminEnvironment } from '@island.is/api/schema'
 
+import { useEnvironmentQuery } from '../../hooks/useEnvironmentQuery'
 import { PermissionLoaderResult } from './Permission.loader'
-import {
-  PermissionFormTypes,
-  UpdatePermissionResult,
-} from './EditPermission.action'
-import { useEnvironment } from '../../hooks/useEnvironment'
+import { EditPermissionResult } from './EditPermission.action'
+import { PermissionFormTypes } from './EditPermission.schema'
 
 type PermissionContextProps = {
   /**
@@ -22,7 +20,7 @@ type PermissionContextProps = {
   /**
    * This is the result of the permission action
    */
-  actionData: UpdatePermissionResult | undefined
+  actionData: EditPermissionResult | undefined
   /**
    * This is the intent of the permission action, i.e. specific section of the form
    */
@@ -36,8 +34,8 @@ const PermissionContext = createContext<PermissionContextProps | undefined>(
 
 export const PermissionProvider: FC = ({ children }) => {
   const permissionResult = useLoaderData() as PermissionLoaderResult
-  const actionData = useActionData() as UpdatePermissionResult
-  const { environment, updateEnvironment } = useEnvironment(
+  const actionData = useActionData() as EditPermissionResult
+  const { environment, updateEnvironment } = useEnvironmentQuery(
     permissionResult.environments,
   )
 
@@ -48,7 +46,7 @@ export const PermissionProvider: FC = ({ children }) => {
         selectedPermission: environment,
         onEnvironmentChange: updateEnvironment,
         actionData,
-        intent: actionData?.intent ?? PermissionFormTypes.NONE,
+        intent: actionData?.intent,
       }}
     >
       {children}

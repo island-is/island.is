@@ -19,7 +19,12 @@ import {
 import { CasesQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { TempCaseListEntry as CaseListEntry } from '@island.is/judicial-system-web/src/types'
-import { core, tables, titles } from '@island.is/judicial-system-web/messages'
+import {
+  core,
+  tables,
+  titles,
+  errors,
+} from '@island.is/judicial-system-web/messages'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import { capitalize } from '@island.is/judicial-system/formatters'
 
@@ -30,13 +35,13 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import SharedPageLayout from '@island.is/judicial-system-web/src/components/SharedPageLayout/SharedPageLayout'
 import * as constants from '@island.is/judicial-system/consts'
+import PastCasesTable from '@island.is/judicial-system-web/src/components/Table/PastCasesTable/PastCasesTable'
 
 import ActiveCases from './ActiveCases'
-import PastCases from './PastCases'
-import TableSkeleton from './TableSkeleton'
 import { FilterOption, useFilter } from './useFilter'
 import { cases as m } from './Cases.strings'
 import * as styles from './Cases.css'
+import TableSkeleton from '@island.is/judicial-system-web/src/components/Table/TableSkeleton/TableSkeleton'
 
 const CreateCaseButton: React.FC<{
   user: User
@@ -206,8 +211,8 @@ export const Cases: React.FC = () => {
           data-testid="custody-requests-error"
         >
           <AlertMessage
-            title="Ekki tókst að sækja gögn úr gagnagrunni"
-            message="Ekki tókst að ná sambandi við gagnagrunn. Málið hefur verið skráð og viðeigandi aðilar látnir vita. Vinsamlega reynið aftur síðar."
+            title={formatMessage(errors.failedToFetchDataFromDbTitle)}
+            message={formatMessage(errors.failedToFetchDataFromDbMessage)}
             type="error"
           />
         </div>
@@ -227,7 +232,10 @@ export const Cases: React.FC = () => {
           <Box marginBottom={[5, 5, 12]}>
             {activeCases.length > 0 ? (
               isPrisonUser || isPrisonAdminUser ? (
-                <PastCases cases={activeCases} onRowClick={handleRowClick} />
+                <PastCasesTable
+                  cases={activeCases}
+                  onRowClick={handleRowClick}
+                />
               ) : (
                 <ActiveCases
                   cases={activeCases}
@@ -265,8 +273,14 @@ export const Cases: React.FC = () => {
             : tables.completedCasesTitle,
         )}
       />
-      {pastCases.length > 0 ? (
-        <PastCases cases={pastCases} onRowClick={handleRowClick} />
+
+      {loading || pastCases.length > 0 ? (
+        <PastCasesTable
+          cases={pastCases}
+          onRowClick={handleRowClick}
+          loading={loading}
+          testid="pastCasesTable"
+        />
       ) : (
         <div className={styles.infoContainer}>
           <AlertMessage

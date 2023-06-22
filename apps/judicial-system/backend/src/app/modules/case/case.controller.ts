@@ -1,4 +1,5 @@
 import { Response } from 'express'
+
 import {
   Body,
   Controller,
@@ -33,6 +34,7 @@ import {
   indictmentCases,
   InstitutionType,
   investigationCases,
+  isCourtRole,
   restrictionCases,
   UserRole,
 } from '@island.is/judicial-system/types'
@@ -52,6 +54,7 @@ import {
   representativeRule,
   staffRule,
   assistantRule,
+  defenderRule,
 } from '../../guards'
 import { nowFactory } from '../../factories'
 import { UserService } from '../user'
@@ -332,6 +335,7 @@ export class CaseController {
     registrarRule,
     assistantRule,
     staffRule,
+    defenderRule,
   )
   @Get('cases')
   @ApiOkResponse({
@@ -528,7 +532,7 @@ export class CaseController {
     JwtAuthGuard,
     RolesGuard,
     CaseExistsGuard,
-    new CaseTypeGuard([...indictmentCases]),
+    new CaseTypeGuard(indictmentCases),
     CaseReadGuard,
   )
   @RolesRules(
@@ -580,9 +584,9 @@ export class CaseController {
       `Requesting a signature for the court record of case ${caseId}`,
     )
 
-    if (user.id !== theCase.judgeId && user.id !== theCase.registrarId) {
+    if (!isCourtRole(user.role)) {
       throw new ForbiddenException(
-        'A court record must be signed by the assigned judge or registrar',
+        'A court record must be a judge or a registrar',
       )
     }
 
@@ -629,9 +633,9 @@ export class CaseController {
       `Confirming a signature for the court record of case ${caseId}`,
     )
 
-    if (user.id !== theCase.judgeId && user.id !== theCase.registrarId) {
+    if (!isCourtRole(user.role)) {
       throw new ForbiddenException(
-        'A court record must be signed by the assigned judge or registrar',
+        'A court record must be a judge or a registrar',
       )
     }
 

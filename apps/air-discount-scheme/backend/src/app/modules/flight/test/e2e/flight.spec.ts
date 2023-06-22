@@ -1,3 +1,4 @@
+import { Cache as CacheManager } from 'cache-manager'
 import request from 'supertest'
 import { CACHE_MANAGER, INestApplication } from '@nestjs/common'
 import {
@@ -35,7 +36,7 @@ beforeAll(async () => {
       builder.overrideGuard(IdsUserGuard).useValue(mockAuthGuard),
   })
   cacheManager = app.get<CacheManager>(CACHE_MANAGER)
-  cacheManager.ttl = () => Promise.resolve('')
+  cacheManager.store.ttl = () => Promise.resolve(0)
   nationalRegistryService = app.get<NationalRegistryService>(
     NationalRegistryService,
   )

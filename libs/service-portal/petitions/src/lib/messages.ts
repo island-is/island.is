@@ -48,7 +48,7 @@ export const m = defineMessages({
   },
   listPeriod: {
     id: 'sp.petitions:listPeriod',
-    defaultMessage: 'Tímabil lista: ',
+    defaultMessage: 'Gildistímabil lista: ',
     description: '',
   },
   toastErrorOnCloseList: {
@@ -75,7 +75,7 @@ export const m = defineMessages({
   // Info about the list
   listOpenTil: {
     id: 'sp.petitions:listOpenTil',
-    defaultMessage: 'Tímabil lista:',
+    defaultMessage: 'Gildistímabil lista:',
     description: '',
   },
   listHowManySigned: {
@@ -98,6 +98,16 @@ export const m = defineMessages({
   downloadPetitions: {
     id: 'sp.petitions:downloadPetitions',
     defaultMessage: 'Sækja lista',
+    description: '',
+  },
+  asPdf: {
+    id: 'sp.petitions:asPdf',
+    defaultMessage: 'Sem PDF',
+    description: '',
+  },
+  asCsv: {
+    id: 'sp.petitions:asCsv',
+    defaultMessage: 'Sem CSV',
     description: '',
   },
   copyLinkToList: {
@@ -123,6 +133,11 @@ export const m = defineMessages({
   name: {
     id: 'sp.petitions:name',
     defaultMessage: 'Nafn',
+    description: '',
+  },
+  locality: {
+    id: 'sp.petitions:locality',
+    defaultMessage: 'Sveitarfélag',
     description: '',
   },
   noName: {

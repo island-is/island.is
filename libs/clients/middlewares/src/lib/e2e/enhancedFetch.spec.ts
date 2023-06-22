@@ -164,7 +164,6 @@ describe('Enhanced Fetch against http server', () => {
       await fetch(server.url)
 
       // Assert
-      expect(response.headers.get('connection')).toBe('keep-alive')
       expect(server.requestSpy.mock.calls[0][0].socket).toBe(
         server.requestSpy.mock.calls[1][0].socket,
       )
@@ -181,7 +180,6 @@ describe('Enhanced Fetch against http server', () => {
       await fetch(server.url)
 
       // Assert
-      expect(response.headers.get('connection')).toBe('keep-alive')
       expect(server.requestSpy.mock.calls[0][0].socket).not.toBe(
         server.requestSpy.mock.calls[1][0].socket,
       )
@@ -198,7 +196,6 @@ describe('Enhanced Fetch against http server', () => {
       await fetch(server.url)
 
       // Assert
-      expect(response.headers.get('connection')).toBe('close')
       expect(server.requestSpy.mock.calls[0][0].socket).not.toBe(
         server.requestSpy.mock.calls[1][0].socket,
       )

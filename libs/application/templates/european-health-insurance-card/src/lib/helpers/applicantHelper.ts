@@ -56,6 +56,19 @@ export function getFullName(
   return null
 }
 
+export function getPlasticExpiryDate(resp: CardResponse): Date | undefined {
+  try {
+    const obj = resp.cards?.find((x) => x.isPlastic)
+    if (obj && obj.expiryDate) {
+      return new Date(obj.expiryDate as Date)
+    } else {
+      return undefined
+    }
+  } catch {
+    return undefined
+  }
+}
+
 export function getEhicApplicants(
   formValues: Application<FormValue>,
   cardType: string | null,
@@ -122,22 +135,7 @@ export function someCanApplyForPlasticOrPdf(
 ): boolean {
   if (externalData?.cardResponse?.data) {
     const cardResponse = externalData?.cardResponse?.data as CardResponse[]
-    for (let i = 0; i < cardResponse?.length; i++) {
-      if (cardResponse[i].isInsured && cardResponse[i].canApply) {
-        return true
-      }
-
-      if (cardResponse[i].isInsured && !cardResponse[i].canApply) {
-        const tempCard = cardResponse[i].cards?.find((x) => x.isTemp)
-        if (tempCard) {
-          continue
-        }
-        const plasticCard = cardResponse[i].cards?.find((x) => x.isPlastic)
-        if (plasticCard) {
-          return true
-        }
-      }
-    }
+    return cardResponse.some((x) => x.canApply || x.canApplyForPDF)
   }
   return false
 }
@@ -164,7 +162,7 @@ export function someHavePDF(externalData: ExternalData): boolean {
   if (externalData?.cardResponse?.data) {
     const cardResponse = externalData?.cardResponse?.data as CardResponse[]
     return cardResponse.some(
-      (x) => x.isInsured && !x.canApply && x.cards?.some((y) => y.isTemp),
+      (x) => x.isInsured && !x.canApplyForPDF && x.cards?.some((y) => y.isTemp),
     )
   }
   return false
@@ -173,18 +171,7 @@ export function someHavePDF(externalData: ExternalData): boolean {
 export function someHavePlasticButNotPdf(externalData: ExternalData): boolean {
   if (externalData?.cardResponse?.data) {
     const cardResponse = externalData?.cardResponse?.data as CardResponse[]
-
-    for (let i = 0; i < cardResponse?.length; i++) {
-      if (cardResponse[i].isInsured && !cardResponse[i].canApply) {
-        const card = cardResponse[i].cards?.find((x) => x.isPlastic === true)
-        if (card) {
-          const pdf = cardResponse[i].cards?.find((x) => x.isTemp === true)
-          if (!pdf) {
-            return true
-          }
-        }
-      }
-    }
+    return cardResponse.some((x) => x.canApplyForPDF)
   }
   return false
 }
@@ -193,6 +180,24 @@ export function someAreNotInsured(externalData: ExternalData): boolean {
   if (externalData?.cardResponse?.data) {
     const cardResponse = externalData?.cardResponse?.data as CardResponse[]
     return cardResponse.some((x) => !x.isInsured)
+  }
+  return false
+}
+
+// In some instances, users can be insured but cannot apply although a user doesn't have a valid card issued
+export function someAreInsuredButCannotApply(
+  externalData: ExternalData,
+): boolean {
+  if (externalData?.cardResponse?.data) {
+    const cardResponse = externalData?.cardResponse?.data as CardResponse[]
+    return cardResponse.some(
+      (x) =>
+        x.isInsured &&
+        !x.canApply &&
+        !x.canApplyForPDF &&
+        !hasAPDF(x) &&
+        !hasPlastic(x),
+    )
   }
   return false
 }
@@ -221,6 +226,13 @@ export function getDefaultValuesForPDFApplicants(
 export function hasAPDF(cardInfo: CardResponse) {
   if (cardInfo && cardInfo.cards && cardInfo.cards.length > 0) {
     return cardInfo.cards.some((x) => x.isTemp)
+  }
+  return false
+}
+
+export function hasPlastic(cardInfo: CardResponse) {
+  if (cardInfo && cardInfo.cards && cardInfo.cards.length > 0) {
+    return cardInfo.cards.some((x) => x.isPlastic)
   }
   return false
 }

@@ -232,3 +232,12 @@ export interface Subscription {
   institutions?: Array<InstitutionsSubscription>
   policyAreas?: Array<PolicyAreasSubscription>
 }
+
+export interface CaseExpressions {
+  isDocumentsNotEmpty: boolean
+  isAdditionalDocumentsNotEmpty: boolean
+  isStatusNameNotPublished: boolean
+  isStatusNameForReview: boolean
+  isStakeholdersNotEmpty: boolean
+  isRelatedCasesNotEmpty: boolean
+}

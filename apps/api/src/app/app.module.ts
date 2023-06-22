@@ -8,7 +8,6 @@ import { AirDiscountSchemeModule } from '@island.is/api/domains/air-discount-sch
 import { ApiCatalogueModule } from '@island.is/api/domains/api-catalogue'
 import { ApplicationModule } from '@island.is/api/domains/application'
 import { AssetsModule } from '@island.is/api/domains/assets'
-//import responseCachePlugin from 'apollo-server-plugin-response-cache'
 import { AuthModule as AuthDomainModule } from '@island.is/api/domains/auth'
 import { AuthAdminModule } from '@island.is/api/domains/auth-admin'
 import {
@@ -46,6 +45,7 @@ import {
   GenericDrivingLicenseConfig,
   GenericFirearmLicenseConfig,
   GenericMachineLicenseConfig,
+  OldGenericDrivingLicenseConfig,
   LicenseServiceModule,
 } from '@island.is/api/domains/license-service'
 import { MortgageCertificateModule } from '@island.is/api/domains/mortgage-certificate'
@@ -68,6 +68,7 @@ import {
   WatsonAssistantChatConfig,
   WatsonAssistantChatModule,
 } from '@island.is/api/domains/watson-assistant-chat'
+import { IcelandicGovernmentInstitutionVacanciesModule } from '@island.is/api/domains/icelandic-government-institution-vacancies'
 import { AuthConfig, AuthModule } from '@island.is/auth-nest-tools'
 import { AdrAndMachineLicenseClientConfig } from '@island.is/clients/adr-and-machine-license'
 import { AirDiscountSchemeClientConfig } from '@island.is/clients/air-discount-scheme'
@@ -87,6 +88,7 @@ import { FinancialStatementsInaoClientConfig } from '@island.is/clients/financia
 import { FirearmLicenseClientConfig } from '@island.is/clients/firearm-license'
 import { FishingLicenseClientConfig } from '@island.is/clients/fishing-license'
 import { FiskistofaClientConfig } from '@island.is/clients/fiskistofa'
+import { IcelandicGovernmentInstitutionVacanciesClientConfig } from '@island.is/clients/icelandic-government-institution-vacancies'
 import { JudicialAdministrationClientConfig } from '@island.is/clients/judicial-administration'
 import { MunicipalitiesFinancialAidConfig } from '@island.is/clients/municipalities-financial-aid'
 import { NationalRegistryClientConfig } from '@island.is/clients/national-registry-v2'
@@ -115,15 +117,11 @@ import { FeatureFlagConfig } from '@island.is/nest/feature-flags'
 import { ProblemModule } from '@island.is/nest/problem'
 
 import { getConfig } from './environments'
-import { maskOutFieldsMiddleware } from './graphql.middleware'
+import { GraphqlOptionsFactory } from './graphql-options.factory'
 import { HealthController } from './health.controller'
+import { GraphQLConfig } from './graphql.config'
 
-const debug = process.env.NODE_ENV === 'development'
-const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
 const environment = getConfig
-const autoSchemaFile = environment.production
-  ? true
-  : 'apps/api/src/api.graphql'
 
 @Module({
   controllers: [HealthController],
@@ -134,25 +132,9 @@ const autoSchemaFile = environment.production
     },
   ],
   imports: [
-    GraphQLModule.forRoot({
+    GraphQLModule.forRootAsync({
       driver: ApolloDriver,
-      debug,
-      playground,
-      autoSchemaFile,
-      path: '/api/graphql',
-      buildSchemaOptions: {
-        fieldMiddleware: [maskOutFieldsMiddleware],
-      },
-      plugins: [
-        // This was causing problems since graphql upgrade, gives us issues like:
-        // Error: overallCachePolicy.policyIfCacheable is not a function
-        // responseCachePlugin({
-        //   shouldReadFromCache: ({ request: { http } }) => {
-        //     const bypassCacheKey = http?.headers.get('bypass-cache-key')
-        //     return bypassCacheKey !== process.env.BYPASS_CACHE_KEY
-        //   },
-        // }),
-      ],
+      useClass: GraphqlOptionsFactory,
     }),
     AuthDomainModule,
     AuditModule.forRoot(environment.audit),
@@ -249,6 +231,7 @@ const autoSchemaFile = environment.production
     ElectronicRegistrationsModule,
     FiskistofaModule,
     WatsonAssistantChatModule,
+    IcelandicGovernmentInstitutionVacanciesModule,
     CompanyRegistryModule,
     IcelandicNamesModule.register({
       backendUrl: environment.icelandicNamesRegistry.backendUrl!,
@@ -296,7 +279,9 @@ const autoSchemaFile = environment.production
         GenericMachineLicenseConfig,
         GenericAdrLicenseConfig,
         GenericDrivingLicenseConfig,
+        OldGenericDrivingLicenseConfig,
         GenericDisabilityLicenseConfig,
+        GraphQLConfig,
         VehiclesClientConfig,
         RightsPortalClientConfig,
         AuthPublicApiClientConfig,
@@ -333,6 +318,7 @@ const autoSchemaFile = environment.production
         WatsonAssistantChatConfig,
         PowerBiConfig,
         AuthIdsApiClientConfig,
+        IcelandicGovernmentInstitutionVacanciesClientConfig,
       ],
     }),
   ],
