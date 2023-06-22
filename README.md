@@ -131,7 +131,7 @@ A dedicated documentation about fetching shared development secrets or creating 
 
 If you have AWS access to our development account, you can connect to development databases and services using a proxy. We've set up a proxy and connection helpers for our development Postgres, Elastic Search, Redis and X-Road Security Server.
 
-To do so, you can run the following script:
+To do so, you can run for example:
 
 ```bash
 ./scripts/run-db-proxy.sh
