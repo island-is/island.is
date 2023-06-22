@@ -1,5 +1,6 @@
 #!/bin/bash
-set -euxo pipefail
+set -euo pipefail
+if [[ -n "${DEBUG:-}" || -n "${CI:-}" ]]; then set -x; fi
 
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
 
@@ -8,10 +9,11 @@ source "$DIR"/_common.sh
 
 APP_HOME=$(jq ".projects[\"$APP\"]" -r <"$PROJECT_ROOT"/workspace.json)
 APP_DIST_HOME=$(jq ".targets.build.options.outputPath" -r <"$PROJECT_ROOT"/"$APP_HOME"/project.json)
-DOCKERFILE=${1:-DockerFile}
-TARGET=${2:-unset_target}
+DOCKERFILE=${1:-Dockerfile}
+TARGET=${TARGET:-${2:-'<You need to set a target (e.g. output-local, output-jest)>'}}
 ACTION=${3:-docker_build}
 PLAYWRIGHT_VERSION="$(yarn info --json @playwright/test | jq -r '.children.Version')"
+CONTAINER_BUILDER=${CONTAINER_BUILDER:-docker}
 
 BUILD_ARGS=()
 
@@ -37,14 +39,13 @@ mkargs() {
   fi
 }
 
-builder_build() {
-  local builder="${1:-docker}"
-  $builder buildx build "${BUILD_ARGS[@]}" "$PROJECT_ROOT"
+container_build() {
+  $CONTAINER_BUILDER buildx build "${BUILD_ARGS[@]}" "$PROJECT_ROOT"
 }
 
 docker_build() {
   mkargs local-cache=true
-  builder_build docker
+  container_build docker
 }
 
 _set_publish() {
