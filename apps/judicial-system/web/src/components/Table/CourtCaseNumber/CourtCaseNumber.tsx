@@ -8,12 +8,30 @@ import * as styles from './CourtCaseNumber.css'
 interface Props {
   courtCaseNumber?: string
   policeCaseNumbers: string[]
+  appealCaseNumber?: string
 }
 
 const CourtCaseNumber: React.FC<Props> = ({
   courtCaseNumber,
   policeCaseNumbers,
+  appealCaseNumber,
 }) => {
+  if (appealCaseNumber) {
+    return (
+      <Box display="flex" flexDirection="column">
+        <Text as="span" variant="small">
+          {appealCaseNumber}
+        </Text>
+        <Text as="span" variant="small">
+          {courtCaseNumber}
+        </Text>
+        <Text as="span" variant="small">
+          {displayFirstPlusRemaining(policeCaseNumbers)}
+        </Text>
+      </Box>
+    )
+  }
+
   return courtCaseNumber ? (
     <>
       <Box component="span" className={styles.blockColumn}>

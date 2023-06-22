@@ -26,7 +26,7 @@ import { OldGenericDrivingLicenseConfig } from './oldGenericDrivingLicense.confi
 import { ConfigType, XRoadConfig } from '@island.is/nest/config'
 
 /** Category to attach each log message to */
-const LOG_CATEGORY = 'drivinglicense-service'
+const LOG_CATEGORY = 'old-drivinglicense-service'
 
 /** Defined cut-off point for driving license images */
 const IMAGE_CUTOFF_DATE = '1997-08-15'
