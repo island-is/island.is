@@ -1,20 +1,22 @@
 import React, { useState } from 'react'
-import { Form, useActionData } from 'react-router-dom'
+import { Form, useActionData, useNavigate } from 'react-router-dom'
 
 import { useLocale } from '@island.is/localization'
-import { IntroHeader } from '@island.is/portals/core'
-import { Box, FilterInput, Stack } from '@island.is/island-ui/core'
+import { formatNationalId, IntroHeader } from '@island.is/portals/core'
+import { Box, Button, FilterInput, Stack } from '@island.is/island-ui/core'
 
 import { m } from '../../lib/messages'
 import * as styles from './Companies.css'
 import { GetCompaniesResult } from './GetCompanies.action'
-import ContentCard from '../../components/ContentCard/ContentCard'
-import NoContentCard from '../../components/NoContentCard/NoContentCard'
+import { Card } from '../../components/Card'
+import { replaceParams } from '@island.is/react-spa/shared'
+import { ServiceDeskPaths } from '../../lib/paths'
 
 const Companies = () => {
   const [searchInput, setSearchInput] = useState('')
   const actionData = useActionData() as GetCompaniesResult
   const { formatMessage } = useLocale()
+  const navigate = useNavigate()
 
   return (
     <>
@@ -36,16 +38,40 @@ const Companies = () => {
       <Box marginTop={[3, 3, 6]}>
         <Box className={styles.relative}>
           <Stack space={3}>
-            {actionData &&
-              actionData.data?.map((company) => (
-                <Box key={`procure-${company.nationalId}`}>
-                  <ContentCard
-                    name={company.name}
-                    nationalId={company.nationalId}
-                    withNavigation
+            {actionData.data && actionData.data.length > 0 ? (
+              actionData.data.map(({ nationalId, name }) => (
+                <Box key={`procure-${nationalId}`}>
+                  <Card
+                    title={name}
+                    description={formatNationalId(nationalId)}
+                    cta={
+                      <Button
+                        variant="text"
+                        icon="arrowForward"
+                        size="small"
+                        onClick={() =>
+                          navigate(
+                            replaceParams({
+                              href: ServiceDeskPaths.Procurers,
+                              params: {
+                                nationalId,
+                              },
+                            }),
+                          )
+                        }
+                      >
+                        {formatMessage(m.viewProcures)}
+                      </Button>
+                    }
                   />
                 </Box>
-              ))}
+              ))
+            ) : (
+              <Card
+                title={formatNationalId(searchInput)}
+                description={formatMessage(m.noContent)}
+              />
+            )}
           </Stack>
         </Box>
       </Box>

@@ -8,12 +8,16 @@ import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import { ServiceDeskPaths } from '../../lib/paths'
 import { CompanyProcurerResult } from './Procurers.loader'
-import ContentCard from '../../components/ContentCard/ContentCard'
+import { Card } from '../../components/Card'
 
 const Procurers = () => {
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
-  const company = useLoaderData() as CompanyProcurerResult
+  const {
+    name,
+    nationalId,
+    procurers,
+  } = useLoaderData() as CompanyProcurerResult
 
   return (
     <Stack space="containerGutter">
@@ -30,17 +34,14 @@ const Procurers = () => {
         {formatMessage(m.back)}
       </Button>
       <div>
-        <IntroHeader
-          title={company.name}
-          intro={formatNationalId(company.nationalId)}
-        />
+        <IntroHeader title={name} intro={formatNationalId(nationalId)} />
         <Box marginTop={[3, 3, 6]}>
           <Text marginBottom={2} variant="h4">
             {formatMessage(m.listProcurers)}
           </Text>
           <Stack space={3}>
-            {company.procurers?.map(({ nationalId, name }) => (
-              <ContentCard name={name} nationalId={nationalId} />
+            {procurers?.map(({ nationalId, name }) => (
+              <Card title={name} description={nationalId} />
             ))}
           </Stack>
         </Box>
