@@ -16,9 +16,7 @@ import { User } from '@island.is/auth-nest-tools'
 
 @Injectable()
 export class EndorsementListsInterceptor implements NestInterceptor {
-  constructor(
-    private endorsementListService: EndorsementListService,
-  ) {}
+  constructor(private endorsementListService: EndorsementListService) {}
 
   async intercept(
     context: ExecutionContext,

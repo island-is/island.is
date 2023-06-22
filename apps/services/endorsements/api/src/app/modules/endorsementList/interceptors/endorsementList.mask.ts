@@ -15,12 +15,11 @@ export function maskEndorsementList(
   if (isListOwner) {
     //nothing
   } else if (isAdmin) {
-     //nothing
+    //nothing
   } else {
     endorsementList.owner = 'xxxxxx-xxxx'
     endorsementList.meta = { ...endorsementList.meta, phone: '', email: '' }
   }
-
 
   return endorsementList
 }
