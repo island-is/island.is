@@ -1,12 +1,8 @@
 import { CanActivate } from '@nestjs/common'
 
 import { TokenGuard } from '@island.is/judicial-system/auth'
-import {
-  investigationCases,
-  restrictionCases,
-} from '@island.is/judicial-system/types'
 
-import { CaseExistsGuard, CaseTypeGuard } from '../../../case'
+import { CaseExistsGuard } from '../../../case'
 import { InternalDefendantController } from '../../internalDefendant.controller'
 import { DefendantExistsGuard } from '../../guards/defendantExists.guard'
 
@@ -18,8 +14,8 @@ describe('InternalDefendantController - guards', () => {
     guards = Reflect.getMetadata('__guards__', InternalDefendantController)
   })
 
-  it('should have four guards', () => {
-    expect(guards).toHaveLength(4)
+  it('should have three guards', () => {
+    expect(guards).toHaveLength(3)
   })
 
   describe('TokenGuard', () => {
@@ -46,29 +42,14 @@ describe('InternalDefendantController - guards', () => {
     })
   })
 
-  describe('CaseTypeGuard', () => {
-    let guard: CanActivate
-
-    beforeEach(() => {
-      guard = guards[2]
-    })
-
-    it('should have CaseTypeGuard as guard 3', () => {
-      expect(guard).toBeInstanceOf(CaseTypeGuard)
-      expect(guard).toEqual({
-        allowedCaseTypes: [...restrictionCases, ...investigationCases],
-      })
-    })
-  })
-
   describe('DefendantExistsGuard', () => {
     let guard: CanActivate
 
     beforeEach(() => {
-      guard = new guards[3]()
+      guard = new guards[2]()
     })
 
-    it('should have DefendantExistsGuard as guard 4', () => {
+    it('should have DefendantExistsGuard as guard 3', () => {
       expect(guard).toBeInstanceOf(DefendantExistsGuard)
     })
   })
