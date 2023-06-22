@@ -1,14 +1,26 @@
 import { EndorsementList } from '../endorsementList.model'
 
 export function maskEndorsementList(
-  theList: EndorsementList,
+  endorsementList: EndorsementList,
+  isListOwner: boolean,
   isAdmin: boolean,
 ): EndorsementList {
-  // Masks owner from EndorsementList
-  theList.owner = 'xxxxxx-xxxx'
+  // // Masks owner from EndorsementList
+  // endorsementList.owner = 'xxxxxx-xxxx'
 
-  if (!isAdmin) {
-    theList.meta = { ...theList.meta, phone: '', email: '' }
+  // if (!isAdmin) {
+  //   endorsementList.meta = { ...endorsementList.meta, phone: '', email: '' }
+  // }
+
+  if (isListOwner) {
+    //nothing
+  } else if (isAdmin) {
+     //nothing
+  } else {
+    endorsementList.owner = 'xxxxxx-xxxx'
+    endorsementList.meta = { ...endorsementList.meta, phone: '', email: '' }
   }
-  return theList
+
+
+  return endorsementList
 }

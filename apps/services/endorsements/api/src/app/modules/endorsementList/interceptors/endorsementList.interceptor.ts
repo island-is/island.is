@@ -15,17 +15,19 @@ import { EndorsementListService } from '../endorsementList.service'
 
 @Injectable()
 export class EndorsementListInterceptor implements NestInterceptor {
-  constructor(private endorsementListService: EndorsementListService) {}
-  intercept(
+  constructor(
+    private endorsementListService: EndorsementListService,
+  ) {}
+  async intercept(
     context: ExecutionContext,
     next: CallHandler,
-  ): Observable<EndorsementList> {
+  ): Promise<Observable<EndorsementList>> {
     const user = GqlExecutionContext.create(context).getContext().req?.user
     const isAdmin = this.endorsementListService.hasAdminScope(user as User)
-
     return next.handle().pipe(
       map((retEndorsementList: EndorsementList) => {
-        return maskEndorsementList(retEndorsementList, isAdmin)
+        const isListOwner = user?.nationalId === retEndorsementList.owner
+        return maskEndorsementList(retEndorsementList, isListOwner, isAdmin)
       }),
     )
   }

@@ -16,19 +16,22 @@ import { User } from '@island.is/auth-nest-tools'
 
 @Injectable()
 export class EndorsementListsInterceptor implements NestInterceptor {
-  constructor(private endorsementListService: EndorsementListService) {}
+  constructor(
+    private endorsementListService: EndorsementListService,
+  ) {}
 
-  intercept(
+  async intercept(
     context: ExecutionContext,
     next: CallHandler,
-  ): Observable<PaginatedEndorsementListDto> {
+  ): Promise<Observable<PaginatedEndorsementListDto>> {
     const user = GqlExecutionContext.create(context).getContext().req?.user
     const isAdmin = this.endorsementListService.hasAdminScope(user as User)
     return next.handle().pipe(
       map((retEndorsementLists: PaginatedEndorsementListDto) => {
         retEndorsementLists.data = retEndorsementLists.data.map(
           (retEndorsementList) => {
-            return maskEndorsementList(retEndorsementList, isAdmin)
+            const isListOwner = user?.nationalId === retEndorsementList.owner
+            return maskEndorsementList(retEndorsementList, isListOwner, isAdmin)
           },
         )
         return retEndorsementLists
