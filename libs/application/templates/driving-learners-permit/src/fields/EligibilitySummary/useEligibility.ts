@@ -1,21 +1,11 @@
 import { getValueViaPath } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
 import { ApplicationEligibility } from '../../types/schema'
-import { useQuery, gql } from '@apollo/client'
+import { useQuery } from '@apollo/client'
 import { LearnersPermitFakeData, YES } from '../../lib/constants'
 import { fakeEligibility } from './fakeEligibility'
+import { ELIGIBILITY_QUERY } from '../../graphql'
 
-const QUERY = gql`
-  query EligibilityQuery {
-    learnerMentorEligibility {
-      isEligible
-      requirements {
-        key
-        requirementMet
-      }
-    }
-  }
-`
 export interface UseEligibilityResult {
   error?: Error
   eligibility?: ApplicationEligibility
@@ -28,7 +18,7 @@ export const useEligibility = (
   const fakeData = getValueViaPath<LearnersPermitFakeData>(answers, 'fakeData')
   const usingFakeData = fakeData?.useFakeData === YES
 
-  const { data = {}, error, loading } = useQuery(QUERY, {
+  const { data = {}, error, loading } = useQuery(ELIGIBILITY_QUERY, {
     skip: usingFakeData,
   })
 
