@@ -1,5 +1,4 @@
 import { Field, ObjectType, PartialType } from '@nestjs/graphql'
-import { Type } from 'class-transformer'
 import { IRegulationPublishInput } from '../dto/saveRegulationPublish.input'
 
 @ObjectType()
@@ -33,10 +32,10 @@ export class UpdateError {
 
 @ObjectType()
 export class RegulationUpdateData {
-  @Field()
+  @Field(() => Number, { nullable: true })
   readonly id?: number
 
-  @Field()
+  @Field(() => Number, { nullable: true })
   readonly regulationId?: number
 
   @Field(() => PartialIRegulationPublishInput, { nullable: true })

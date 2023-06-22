@@ -6,7 +6,7 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { RegName } from '@island.is/regulations'
 import { RegulationsClientConfig } from './regulations.config'
-import { UiRegulation, UpdateResponse } from './types'
+import { IRegulation, PublishRegulationInput, UpdateResponse } from './types'
 const LOG_CATEGORY = 'clients-regulation'
 
 @Injectable()
@@ -23,19 +23,31 @@ export class RegulationsPublishService extends RESTDataSource {
   }
 
   willSendRequest(request: RequestOptions) {
-    // We need to clear the memoized cache for every request to make sure
-    // updates are live when editing and viewing
     this.memoizedResults.clear()
     request.headers.set('Content-Type', 'application/json')
-    request.headers.set('X-User', 'USER_NAME')
     request.headers.set('X-PublishKey', this.options.regulationPublishKey)
   }
 
-  async postRegulationSave(body: UiRegulation): Promise<UpdateResponse> {
-    const response = await this.post<UpdateResponse>(
-      'regulations/publish/save-regulation',
-      body,
-    )
-    return response
+  async postRegulationSave(
+    body: PublishRegulationInput,
+    userId: string,
+  ): Promise<UpdateResponse> {
+    try {
+      const response = await this.post<UpdateResponse>(
+        'publish/save-regulation',
+        body,
+        {
+          headers: { 'X-User': userId },
+        },
+      )
+
+      return response
+    } catch (e) {
+      return {
+        success: false,
+        message: JSON.stringify(e),
+        code: 500,
+      }
+    }
   }
 }

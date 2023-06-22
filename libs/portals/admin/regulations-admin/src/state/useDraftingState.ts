@@ -23,7 +23,7 @@ import { buttonsMsgs } from '../lib/messages'
 import {} from '@island.is/regulations/web'
 import { getEditUrl, getHomeUrl } from '../utils/routing'
 import { useEditDraftReducer, StateInputs } from './reducer'
-import { stepsBase } from './makeFields'
+import { makePublishImpact, stepsBase } from './makeFields'
 import {
   isDraftErrorFree,
   isDraftLocked,
@@ -31,11 +31,7 @@ import {
 } from './validations'
 import { toast } from 'react-toastify'
 import { findRegulationType } from '../utils/guessers'
-import {
-  Mutation,
-  MutationPostSaveRegulationArgs,
-  Query,
-} from '@island.is/api/schema'
+import { Mutation, MutationPostSaveRegulationArgs } from '@island.is/api/schema'
 
 // ---------------------------------------------------------------------------
 
@@ -198,9 +194,7 @@ const useMakeDraftingState = (inputs: StateInputs) => {
             title: draft.title.value,
             type: draft.type.value || '',
             name: draft.name.value || '',
-            status: 'shipped',
-            comments: '',
-            // ministryId: draft.ministry.value,
+            status: 'migrated',
             signatureDate: draft.signatureDate.value
               ? toISODate(draft.signatureDate.value)
               : '',
@@ -209,14 +203,10 @@ const useMakeDraftingState = (inputs: StateInputs) => {
               : '',
             publishedDate: draft.idealPublishDate.value
               ? toISODate(draft.idealPublishDate.value)
-              : '', // TODO: Is this the right draft value?
-            appendixes: draft.appendixes.map((apx) => ({
-              title: apx.title.value,
-              text: apx.text.value,
-            })),
-            // externalLink?: InputMaybe<Scalars['String']>
-            // repealedBeacuseReasons?: InputMaybe<Scalars['Boolean']>
-            // repealedDate?: InputMaybe<Scalars['String']>
+              : '',
+            lawChapters: draft.lawChapters.value,
+            ministryName: draft.ministry.value,
+            impacts: makePublishImpact(draft.impacts),
           },
         },
       })

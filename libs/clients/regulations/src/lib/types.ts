@@ -1,6 +1,7 @@
 import {
   ISODate,
   RegName,
+  RegulationEffect,
   RegulationType,
 } from '@island.is/regulations-tools/types'
 
@@ -57,4 +58,19 @@ export type UiRegulation = IRegulation & {
   }>
   comments: string
   repealedDate: ISODate | null
+}
+
+export type ImpactRegulation = Partial<
+  Pick<UiRegulation, 'title' | 'text' | 'appendixes' | 'comments' | 'name'>
+> & {
+  date?: ISODate
+  changingId?: string
+  regulationId?: string
+  type?: RegulationEffect['effect']
+}
+
+export type PublishRegulationInput = IRegulation & {
+  impacts?: ImpactRegulation[]
+  lawChapters?: string[]
+  ministryName?: string
 }

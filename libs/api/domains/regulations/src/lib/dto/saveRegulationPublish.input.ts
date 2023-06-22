@@ -1,11 +1,10 @@
 import {
   HTMLText,
   ISODate,
-  LawChapterSlug,
   PlainText,
   RegName,
+  RegulationEffect,
   RegulationType,
-  URLString,
 } from '@island.is/regulations'
 import { Field, ID, InputType, ObjectType } from '@nestjs/graphql'
 import { IsOptional } from 'class-validator'
@@ -62,12 +61,36 @@ export class IRegulationPublishInput {
 
 @InputType()
 export class UiRegulationPublishInput extends IRegulationPublishInput {
-  @Field(() => String)
-  comments!: string
+  @Field(() => [ImpactRegulationPublishInput], { nullable: true })
+  impacts?: Array<ImpactRegulationPublishInput>
+
+  @Field(() => [String], { nullable: true })
+  lawChapters?: string[]
 
   @Field(() => String, { nullable: true })
-  repealedDate!: ISODate
+  ministryName?: string
+}
 
-  @Field(() => [AppendixInput])
-  appendixes!: AppendixInput[]
+@InputType()
+export class ImpactRegulationPublishInput {
+  @Field(() => String, { nullable: true })
+  date?: ISODate
+
+  @Field(() => String, { nullable: true })
+  title?: PlainText
+
+  @Field(() => String, { nullable: true })
+  text?: string
+
+  @Field(() => [AppendixInput], { nullable: true })
+  appendixes?: AppendixInput[]
+
+  @Field(() => String, { nullable: true })
+  comments?: string
+
+  @Field(() => String, { nullable: true })
+  name?: RegName
+
+  @Field(() => String, { nullable: true })
+  type?: RegulationEffect['effect']
 }

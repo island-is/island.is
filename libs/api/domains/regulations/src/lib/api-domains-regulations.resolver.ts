@@ -1,15 +1,21 @@
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
 import graphqlTypeJson from 'graphql-type-json'
 
+import type { User } from '@island.is/auth-nest-tools'
+import {
+  IdsUserGuard,
+  ScopesGuard,
+  CurrentUser,
+} from '@island.is/auth-nest-tools'
+import { UseGuards } from '@nestjs/common'
+
 import {
   RegulationsService,
   RegulationsPublishService,
-  UpdateResponse,
 } from '@island.is/clients/regulations'
 import {
   RegulationSearchResults,
   RegulationYears,
-  RegulationListItem,
 } from '@island.is/regulations/web'
 import {
   Regulation,
@@ -31,6 +37,7 @@ import { UpdateRegulation } from './models/updateRegulation.model'
 
 const validPage = (page: number | undefined) => (page && page >= 1 ? page : 1)
 
+@UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
 export class RegulationsResolver {
   constructor(
@@ -127,7 +134,11 @@ export class RegulationsResolver {
   @Mutation(() => UpdateRegulation)
   postSaveRegulation(
     @Args('input') input: UiRegulationPublishInput,
+    @CurrentUser() user: User,
   ): Promise<UpdateRegulation | null> {
-    return this.regulationsPublishService.postRegulationSave(input)
+    return this.regulationsPublishService.postRegulationSave(
+      input,
+      user.nationalId,
+    )
   }
 }
