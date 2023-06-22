@@ -8,7 +8,7 @@ export enum MCEvents {
 export type Events =
   | { type: DefaultEvents.APPROVE }
   | { type: DefaultEvents.SUBMIT }
-  | { type: DefaultEvents.PAYMENT }
+  | { type: DefaultEvents.ABORT }
   | { type: DefaultEvents.REJECT }
   | { type: MCEvents.PENDING_REJECTED }
   | { type: MCEvents.PENDING_REJECTED_TRY_AGAIN }

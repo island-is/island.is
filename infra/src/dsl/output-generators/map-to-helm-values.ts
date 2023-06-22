@@ -38,9 +38,16 @@ const serializeService: SerializeMethod<HelmService> = async (
     service.name,
   )
   const serviceDef = service
-  const { namespace, securityContext } = serviceDef
+  const {
+    grantNamespaces,
+    grantNamespacesEnabled,
+    namespace,
+    securityContext,
+  } = serviceDef
   const result: HelmService = {
     enabled: true,
+    grantNamespaces: grantNamespaces,
+    grantNamespacesEnabled: grantNamespacesEnabled,
     namespace: namespace,
     image: {
       repository: `821090935708.dkr.ecr.eu-west-1.amazonaws.com/${
@@ -70,13 +77,6 @@ const serializeService: SerializeMethod<HelmService> = async (
     securityContext,
   }
 
-  // hack - fix root cause in calico on staging
-  if (serviceDef.grantNamespacesEnabled && env1.type == 'staging') {
-    ;(result.grantNamespaces = []), (result.grantNamespacesEnabled = false)
-  } else {
-    ;(result.grantNamespaces = serviceDef.grantNamespaces),
-      (result.grantNamespacesEnabled = serviceDef.grantNamespacesEnabled)
-  }
   // command and args
   if (serviceDef.cmds) {
     result.command = [serviceDef.cmds]

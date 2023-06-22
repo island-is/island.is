@@ -2,7 +2,7 @@ const {
   getGenericEndorsementList,
   getGenericEndorsement,
 } = require('../../../../../../test/seedHelpers')
-const authNationalId = '0101303369' // we use gervimaður national id here to pass national id checks
+const authNationalId = '0101302989' // we use gervimaður national id here to pass national id checks
 module.exports = {
   authNationalId,
   endorsementLists: [
