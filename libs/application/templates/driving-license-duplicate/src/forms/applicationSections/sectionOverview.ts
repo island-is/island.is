@@ -60,6 +60,7 @@ export const sectionOverview = buildSection({
             id: 'currentLicenseCards',
             component: 'Cards',
             doesNotRequireAnswer: true,
+            condition: allowFakeCondition(NO),
           },
           {
             cards: ({ externalData }: Application) =>
@@ -73,6 +74,38 @@ export const sectionOverview = buildSection({
                     : '',
                 ],
               })) ?? [],
+          },
+        ),
+        buildCustomField(
+          {
+            id: 'currentLicenseFake',
+            title: '',
+            component: 'Cards',
+            doesNotRequireAnswer: true,
+            condition: allowFakeCondition(YES),
+          },
+          {
+            cards: ({ answers }: Application) => {
+              const licenseCategory = getValueViaPath<string>(
+                answers,
+                'fakeData.currentLicense',
+              )
+              if (licenseCategory === 'B-full') {
+                return [
+                  {
+                    title: 'B - Almenn Ökuréttindi',
+                    description: ['Fólksbifreið / Sendibifreið', '04.04.2065'],
+                  },
+                ]
+              } else if (licenseCategory === 'B-temp') {
+                return [
+                  {
+                    title: 'B - Bráðabirgðaskírteini',
+                    description: ['Fólksbifreið / Sendibifreið', '04.04.2022'],
+                  },
+                ]
+              }
+            },
           },
         ),
         buildDividerField({}),

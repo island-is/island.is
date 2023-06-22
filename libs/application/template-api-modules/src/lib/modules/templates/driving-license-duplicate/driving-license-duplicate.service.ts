@@ -11,6 +11,7 @@ import {
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { BaseTemplateApiService } from '../../base-template-api.service'
+import { getValueViaPath } from '@island.is/application/core'
 
 @Injectable()
 export class DrivingLicenseDuplicateService extends BaseTemplateApiService {
@@ -31,7 +32,11 @@ export class DrivingLicenseDuplicateService extends BaseTemplateApiService {
     auth,
   }: TemplateApiModuleActionProps) {
     // TODO: Change to AY116 once its available on dev until then use the regular drivingLicnese code
-    const chargeItemCode = 'AY110'
+    const chargeItemCode = getValueViaPath<string>(answers, 'chargeItemCode')
+
+    if (!chargeItemCode) {
+      throw new Error('chargeItemCode missing in answers')
+    }
 
     const response = await this.sharedTemplateAPIService.createCharge(
       auth,
@@ -68,16 +73,19 @@ export class DrivingLicenseDuplicateService extends BaseTemplateApiService {
       }
     }
 
+    // TODO: add reason to dublicate submission?
+    // Currently we are tracking "stolen" vs "lost" in the application
+    // Does this need to be tracked in the license system?
     const orderId = await this.drivingLicenseService
       .drivingLicenseDuplicateSubmission({
         districtId: parseInt(answers.district.toString(), 10),
         ssn: nationalId,
       })
       .catch((e) => {
+        // TODO: stop logging this here
         console.log(JSON.stringify(e, null, 2))
         return {
           success: false,
-          orderId: 'oof',
         }
       })
     return {

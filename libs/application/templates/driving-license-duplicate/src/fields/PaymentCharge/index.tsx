@@ -22,7 +22,19 @@ export const PaymentCharge: FC<FieldBaseProps> = ({ application }) => {
     application.externalData,
     'currentLicense.data',
   )
-  if (licenseData?.categories.some((category) => category.validToCode === 8)) {
+
+  const fakeAllowed = allowFakeCondition(YES)(application.answers)
+  const hasFakeTemporary =
+    fakeAllowed &&
+    getValueViaPath<string>(application.answers, 'fakeData.currentLicense') ===
+      'B-temp'
+
+  // Of note: Lazy evaluation guards against undefined errors.
+  // Shouldn't break unless changes are made to how the fake data works.
+  if (
+    hasFakeTemporary ||
+    licenseData?.categories.some((category) => category.validToCode === 8)
+  ) {
     chargeCode = 'AY114'
   }
 

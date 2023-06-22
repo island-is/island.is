@@ -62,12 +62,12 @@ export const sectionFakeData = buildSubSection({
           condition: allowFakeCondition(YES),
           options: [
             {
-              value: 'B-temp',
-              label: 'Bráðabirgðaréttindi',
-            },
-            {
               value: 'B-full',
               label: 'B réttindi',
+            },
+            {
+              value: 'B-temp',
+              label: 'Bráðabirgðaréttindi',
             },
             {
               value: 'none',
