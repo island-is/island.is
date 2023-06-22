@@ -13,7 +13,7 @@ interface Options {
 const reverseStr = (string: string) => string.split('').reverse().join('')
 
 const isLeafNode = (node: BlockType | LeafType): node is LeafType => {
-  return typeof (node as LeafType).text === 'string'
+  return typeof (node as LeafType)?.text === 'string'
 }
 
 const retainWhitespaceAndFormat = (string: string, format: string) => {
@@ -95,7 +95,7 @@ export const serialize = (
           // }
           let childrenHasLink = false
 
-          if (!isLeafNode(chunk) && Array.isArray(chunk.children)) {
+          if (Array.isArray(chunk.children)) {
             childrenHasLink = chunk.children.some(
               (f) => !isLeafNode(f) && f.type === nodeTypes.link,
             )
