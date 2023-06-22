@@ -129,12 +129,12 @@ export const sectionFakeData = buildSubSection({
           condition: allowFakeCondition(YES),
           options: [
             {
-              value: '80',
-              label: '65 ára eða eldri',
-            },
-            {
               value: '25',
               label: 'Yngri en 65 ára',
+            },
+            {
+              value: '80',
+              label: '65 ára eða eldri',
             },
           ],
         }),

@@ -80,9 +80,7 @@ export class DrivingLicenseDuplicateService extends BaseTemplateApiService {
       .catch((e) => {
         // TODO: stop logging this here
         console.log(JSON.stringify(e, null, 2))
-        return {
-          success: false,
-        }
+        throw Error('Error submitting application to Samgöngustofa')
       })
     return {
       success: true,

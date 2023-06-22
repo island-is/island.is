@@ -33,7 +33,8 @@ export const PaymentCharge: FC<FieldBaseProps> = ({ application }) => {
   // Shouldn't break unless changes are made to how the fake data works.
   if (
     hasFakeTemporary ||
-    licenseData?.categories.some((category) => category.validToCode === 8)
+    (!fakeAllowed &&
+      licenseData?.categories.some((category) => category.validToCode === 8))
   ) {
     chargeCode = 'AY114'
   }
