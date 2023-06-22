@@ -70,19 +70,6 @@ export class EndorsementService {
     })
   }
 
-  async getListOwnerNationalId(listId: string): Promise<string | null> {
-    const endorsementList = await this.endorsementListModel.findOne({
-      where: {
-        id: listId,
-      },
-    })
-    if (endorsementList) {
-      return endorsementList.owner
-    } else {
-      return null
-    }
-  }
-
   async findEndorsementsGeneralPetition(
     { listId }: FindEndorsementsInput,
     query: any,

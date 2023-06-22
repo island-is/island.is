@@ -9,5 +9,6 @@ query endorsementSystemGetSingleEndorsementList(
     closedDate
     openedDate
     adminLock
+    owner
   }
 }
