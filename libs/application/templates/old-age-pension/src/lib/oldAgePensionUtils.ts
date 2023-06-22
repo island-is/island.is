@@ -367,9 +367,11 @@ export function getAttachments(application: Application) {
     isFishermen,
     homeAllowanceChildren,
     homeAllowanceHousing,
+    connectedApplications,
   } = getApplicationAnswers(answers)
   const earlyRetirement = isEarlyRetirement(answers, externalData)
   const attachments: string[] = []
+
   // Early retirement, pension fund, fishermen
   const earlyPenFisher = answers.fileUploadEarlyPenFisher as earlyRetirementPensionfundFishermen
   getAttachmentsName(earlyPenFisher?.pension, 'lífeyrissjóðir')
@@ -382,10 +384,13 @@ export function getAttachments(application: Application) {
 
   // leaseAgreement, schoolAgreement
   const leaseAgrSchoolConf = answers.fileUploadHomeAllowance as leaseAgreementSchoolConfirmation
-  if (homeAllowanceHousing === HomeAllowanceHousing.RENTER) {
+  const isHomeAllowance = connectedApplications?.includes(
+    ConnectedApplications.HOMEALLOWANCE,
+  )
+  if (homeAllowanceHousing === HomeAllowanceHousing.RENTER && isHomeAllowance) {
     getAttachmentsName(leaseAgrSchoolConf?.leaseAgreement, 'leigusamning')
   }
-  if (homeAllowanceChildren === YES) {
+  if (homeAllowanceChildren === YES && isHomeAllowance) {
     getAttachmentsName(leaseAgrSchoolConf?.schoolConfirmation, 'skólavist')
   }
 

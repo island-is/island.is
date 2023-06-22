@@ -27,7 +27,7 @@ export const ConnectedApplications = ({
         <ReviewGroup
           isLast={true}
           isEditable={editable}
-          editAction={() => goToScreen?.('connectedApplicationsSubSection')}
+          editAction={() => goToScreen?.('connectedApplications')}
         >
           <GridRow marginBottom={3}>
             <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
