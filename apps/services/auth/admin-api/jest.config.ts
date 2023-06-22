@@ -7,6 +7,7 @@ export default {
   globals: {},
   displayName: 'services-auth-admin-api',
   testEnvironment: 'node',
+  setupFiles: [`${__dirname}/test/environment.jest.ts`],
   transform: {
     '^.+\\.[tj]s$': [
       'ts-jest',
