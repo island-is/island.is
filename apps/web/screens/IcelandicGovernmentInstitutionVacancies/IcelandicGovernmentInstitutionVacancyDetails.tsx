@@ -333,8 +333,6 @@ IcelandicGovernmentInstitutionVacancyDetails.getInitialProps = async ({
   const vacancy =
     vacancyResponse?.data?.icelandicGovernmentInstitutionVacancyById?.vacancy
 
-  console.log('HELLOOOO', vacancyResponse?.data)
-
   if (!vacancy) {
     throw new CustomNextError(404, 'Vacancy was not found')
   }
