@@ -178,6 +178,13 @@ export class ApplicationController {
     description:
       'To filter applications by status. Comma-separated for multiple values.',
   })
+  @ApiQuery({
+    name: 'scopeCheck',
+    required: false,
+    type: 'boolean',
+    description:
+      'To check if the user has access to the application. Used for service portal not applications. Defaults to false.',
+  })
   @ApiOkResponse({ type: ApplicationResponseDto, isArray: true })
   @UseInterceptors(ApplicationSerializer)
   @Audit<ApplicationResponseDto[]>({
@@ -188,6 +195,7 @@ export class ApplicationController {
     @CurrentUser() user: User,
     @Query('typeId') typeId?: string,
     @Query('status') status?: string,
+    @Query('scopeCheck') scopeCheck?: boolean,
   ): Promise<ApplicationResponseDto[]> {
     if (nationalId !== user.nationalId) {
       this.logger.debug('User is not authorized to get applications')
@@ -226,6 +234,7 @@ export class ApplicationController {
         (await this.applicationAccessService.shouldShowApplicationOnOverview(
           application as BaseApplication,
           user,
+          scopeCheck,
           templates[typeId],
         ))
       ) {
@@ -253,6 +262,7 @@ export class ApplicationController {
             await this.applicationAccessService.shouldShowApplicationOnOverview(
               application as BaseApplication,
               user,
+              scopeCheck,
               applicationTemplate,
             )
           ) {

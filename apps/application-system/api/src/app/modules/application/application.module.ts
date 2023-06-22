@@ -24,6 +24,7 @@ import { ApplicationChargeModule } from './charge/application-charge.module'
 import { ApplicationFilesModule } from '@island.is/application/api/files'
 import { PaymentModule } from '@island.is/application/api/payment'
 import { HistoryModule } from '@island.is/application/api/history'
+import { ActorDelegationsApi } from '@island.is/clients/auth/public-api'
 @Module({
   imports: [
     PaymentModule,
@@ -49,6 +50,7 @@ import { HistoryModule } from '@island.is/application/api/history'
     ApplicationAccessService,
     ApplicationValidationService,
     TemplateApiActionRunner,
+    ActorDelegationsApi,
   ],
 })
 export class ApplicationModule {}

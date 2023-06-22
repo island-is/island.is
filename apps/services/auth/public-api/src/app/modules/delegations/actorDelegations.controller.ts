@@ -72,16 +72,26 @@ export class ActorDelegationsController {
             },
           },
         },
+        otherUser: {
+          required: false,
+          description:
+            'The ID of another user. We filter out all delegations not related to that national id.',
+          schema: {
+            type: 'string',
+          },
+        },
       },
     },
   })
   @Audit<MergedDelegationDTO[]>({
     resources: (delegations) => delegations.map((d) => `${d.fromNationalId}`),
   })
+  // this is the one we want to look at
   async findAll(
     @CurrentActor() actor: User,
     @Query('direction') direction: DelegationDirection.INCOMING,
     @Query('delegationTypes') delegationTypes?: Array<DelegationType>,
+    @Query('otherUser') otherUser?: string,
   ): Promise<MergedDelegationDTO[]> {
     if (direction !== DelegationDirection.INCOMING) {
       throw new BadRequestException(
@@ -92,6 +102,7 @@ export class ActorDelegationsController {
     return this.delegationsIncomingService.findAllAvailable({
       user: actor,
       delegationTypes,
+      otherUser,
     })
   }
 }

@@ -90,6 +90,7 @@ describe('ApplicationAccesService', () => {
     const results = await applicationAccessService.shouldShowApplicationOnOverview(
       applicationInDraft,
       procurationHolderUser,
+      false,
       template,
     )
 
@@ -101,9 +102,13 @@ describe('ApplicationAccesService', () => {
       type: AuthDelegationType.ProcurationHolder,
       featureFlag: Features.testing,
     }
-    const results = await applicationAccessService.isDelegatationAllowed(
+    const template = createApplicationTemplate({
+      allowedDelegations: [allowedDelegation],
+    })
+    const results = await applicationAccessService.isDelegationAllowed(
       allowedDelegation,
       procurationHolderUser,
+      template,
     )
     expect(results).toBe(true)
   })
@@ -112,9 +117,13 @@ describe('ApplicationAccesService', () => {
     const allowedDelegation: AllowedDelegation = {
       type: AuthDelegationType.LegalGuardian,
     }
-    const results = await applicationAccessService.isDelegatationAllowed(
+    const template = createApplicationTemplate({
+      allowedDelegations: [allowedDelegation],
+    })
+    const results = await applicationAccessService.isDelegationAllowed(
       allowedDelegation,
       legalGuardianUser,
+      template,
     )
     expect(results).toBe(true)
   })
@@ -124,9 +133,13 @@ describe('ApplicationAccesService', () => {
       type: AuthDelegationType.LegalGuardian,
       featureFlag: Features.testing,
     }
-    const results = await applicationAccessService.isDelegatationAllowed(
+    const template = createApplicationTemplate({
+      allowedDelegations: [allowedDelegation],
+    })
+    const results = await applicationAccessService.isDelegationAllowed(
       allowedDelegation,
       legalGuardianUser,
+      template,
     )
     expect(results).toBe(false)
   })
@@ -136,9 +149,13 @@ describe('ApplicationAccesService', () => {
       type: AuthDelegationType.PersonalRepresentative,
       featureFlag: Features.testing,
     }
-    const results = await applicationAccessService.isDelegatationAllowed(
+    const template = createApplicationTemplate({
+      allowedDelegations: [allowedDelegation],
+    })
+    const results = await applicationAccessService.isDelegationAllowed(
       allowedDelegation,
       procurationHolderUser,
+      template,
     )
     expect(results).toBe(false)
   })
@@ -161,6 +178,7 @@ describe('ApplicationAccesService', () => {
     const results = await applicationAccessService.shouldShowApplicationOnOverview(
       applicationInDraft,
       procurationHolderUser,
+      false,
       template,
     )
 
@@ -185,6 +203,7 @@ describe('ApplicationAccesService', () => {
     const results = await applicationAccessService.shouldShowApplicationOnOverview(
       applicationInDraft,
       procurationHolderUser,
+      false,
       template,
     )
 
@@ -224,6 +243,7 @@ describe('ApplicationAccesService', () => {
     const results = await applicationAccessService.shouldShowApplicationOnOverview(
       applicationInDraft,
       createMockUser(),
+      false,
       testApplicationTemplate,
     )
     expect(results).toBe(true)
@@ -238,6 +258,7 @@ describe('ApplicationAccesService', () => {
     const results = await applicationAccessService.shouldShowApplicationOnOverview(
       applicationInDraft,
       createMockUser(),
+      false,
       testApplicationTemplate,
     )
     expect(results).toBe(true)
@@ -251,6 +272,7 @@ describe('ApplicationAccesService', () => {
     const results = await applicationAccessService.shouldShowApplicationOnOverview(
       applicationInReview,
       createMockUser('111111-3001'),
+      false,
       testApplicationTemplate,
     )
     expect(results).toBe(false)
@@ -264,6 +286,7 @@ describe('ApplicationAccesService', () => {
     const results = await applicationAccessService.shouldShowApplicationOnOverview(
       applicationInReview,
       createMockUser(),
+      false,
       testApplicationTemplate,
     )
     expect(results).toBe(true)

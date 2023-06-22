@@ -52,7 +52,11 @@ const GeneralFishingLicenseTemplate: ApplicationTemplate<
     ApplicationConfigurations.GeneralFishingLicense.translation,
   ],
   dataSchema: GeneralFishingLicenseSchema,
-  allowedDelegations: [{ type: AuthDelegationType.ProcurationHolder }],
+  allowedDelegations: [
+    { type: AuthDelegationType.ProcurationHolder },
+    { type: AuthDelegationType.Custom },
+  ],
+  requiredScopes: ['@island.is/fishing-license'],
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {
