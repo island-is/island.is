@@ -662,7 +662,7 @@ application-system-api:
       cpu: '400m'
       memory: '1024Mi'
     requests:
-      cpu: '50m'
+      cpu: '75m'
       memory: '512Mi'
   secrets:
     ARK_BASE_URL: '/k8s/application-system-api/ARK_BASE_URL'
