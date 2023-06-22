@@ -29,7 +29,6 @@ import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader
 import { capitalize } from '@island.is/judicial-system/formatters'
 
 import {
-  InstitutionType,
   User,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -103,9 +102,6 @@ export const Cases: React.FC = () => {
 
   const isProsecutor = user?.role === UserRole.PROSECUTOR
   const isRepresentative = user?.role === UserRole.REPRESENTATIVE
-  const isPrisonAdminUser =
-    user?.institution?.type === InstitutionType.PRISON_ADMIN
-  const isPrisonUser = user?.institution?.type === InstitutionType.PRISON
 
   const {
     transitionCase,
@@ -148,13 +144,11 @@ export const Cases: React.FC = () => {
     return partition(casesWithoutDeleted, (c) => {
       if (isIndictmentCase(c.type)) {
         return !completedCaseStates.includes(c.state)
-      } else if (isPrisonAdminUser || isPrisonUser) {
-        return !c.isValidToDateInThePast
       } else {
         return !(completedCaseStates.includes(c.state) && c.rulingDate)
       }
     })
-  }, [resCases, isPrisonAdminUser, isPrisonUser])
+  }, [resCases])
 
   const {
     filter,
@@ -191,20 +185,20 @@ export const Cases: React.FC = () => {
           <CreateCaseButton user={user} />
         ) : null}
       </div>
-      {user?.role !== UserRole.STAFF && (
-        <Box marginBottom={[2, 5, 5]} className={styles.filterContainer}>
-          <Select
-            name="filter-cases"
-            options={filterOptions}
-            label={formatMessage(m.filter.label)}
-            onChange={(value) => {
-              setIsFiltering(true)
-              setFilter(value as FilterOption)
-            }}
-            value={filter}
-          />
-        </Box>
-      )}
+
+      <Box marginBottom={[2, 5, 5]} className={styles.filterContainer}>
+        <Select
+          name="filter-cases"
+          options={filterOptions}
+          label={formatMessage(m.filter.label)}
+          onChange={(value) => {
+            setIsFiltering(true)
+            setFilter(value as FilterOption)
+          }}
+          value={filter}
+        />
+      </Box>
+
       {error ? (
         <div
           className={styles.infoContainer}
@@ -220,59 +214,29 @@ export const Cases: React.FC = () => {
         <TableSkeleton />
       ) : (
         <>
-          <SectionHeading
-            title={formatMessage(
-              isPrisonUser
-                ? m.activeRequests.prisonStaffUsers.title
-                : isPrisonAdminUser
-                ? m.activeRequests.prisonStaffUsers.prisonAdminTitle
-                : m.activeRequests.title,
-            )}
-          />
+          <SectionHeading title={formatMessage(m.activeRequests.title)} />
           <Box marginBottom={[5, 5, 12]}>
             {activeCases.length > 0 ? (
-              isPrisonUser || isPrisonAdminUser ? (
-                <PastCasesTable
-                  cases={activeCases}
-                  onRowClick={handleRowClick}
-                />
-              ) : (
-                <ActiveCases
-                  cases={activeCases}
-                  onRowClick={handleRowClick}
-                  isDeletingCase={isTransitioningCase || isSendingNotification}
-                  onDeleteCase={deleteCase}
-                />
-              )
+              <ActiveCases
+                cases={activeCases}
+                onRowClick={handleRowClick}
+                isDeletingCase={isTransitioningCase || isSendingNotification}
+                onDeleteCase={deleteCase}
+              />
             ) : (
               <div className={styles.infoContainer}>
                 <AlertMessage
                   type="info"
-                  title={formatMessage(
-                    isPrisonUser || isPrisonAdminUser
-                      ? m.activeRequests.prisonStaffUsers.infoContainerTitle
-                      : m.activeRequests.infoContainerTitle,
-                  )}
-                  message={formatMessage(
-                    isPrisonUser || isPrisonAdminUser
-                      ? m.activeRequests.prisonStaffUsers.infoContainerText
-                      : m.activeRequests.infoContainerText,
-                  )}
+                  title={formatMessage(m.activeRequests.infoContainerTitle)}
+                  message={formatMessage(m.activeRequests.infoContainerText)}
                 />
               </div>
             )}
           </Box>
         </>
       )}
-      <SectionHeading
-        title={formatMessage(
-          isPrisonUser
-            ? m.pastRequests.prisonStaffUsers.title
-            : isPrisonAdminUser
-            ? m.pastRequests.prisonStaffUsers.prisonAdminTitle
-            : tables.completedCasesTitle,
-        )}
-      />
+
+      <SectionHeading title={formatMessage(tables.completedCasesTitle)} />
 
       {loading || pastCases.length > 0 ? (
         <PastCasesTable
@@ -285,16 +249,8 @@ export const Cases: React.FC = () => {
         <div className={styles.infoContainer}>
           <AlertMessage
             type="info"
-            title={formatMessage(
-              isPrisonAdminUser || isPrisonUser
-                ? m.activeRequests.prisonStaffUsers.infoContainerTitle
-                : m.pastRequests.infoContainerTitle,
-            )}
-            message={formatMessage(
-              isPrisonAdminUser || isPrisonUser
-                ? m.activeRequests.prisonStaffUsers.infoContainerText
-                : m.pastRequests.infoContainerText,
-            )}
+            title={formatMessage(m.pastRequests.infoContainerTitle)}
+            message={formatMessage(m.pastRequests.infoContainerText)}
           />
         </div>
       )}
