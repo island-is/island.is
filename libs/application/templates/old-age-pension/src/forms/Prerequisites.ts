@@ -20,9 +20,12 @@ import {
   UserProfileApi,
 } from '@island.is/application/types'
 import Logo from '../assets/Logo'
-import { NO, YES } from '../lib/constants'
+import { ApplicationType, NO, YES } from '../lib/constants'
 import { oldAgePensionFormMessage } from '../lib/messages'
-import { getApplicationAnswers } from '../lib/oldAgePensionUtils'
+import {
+  getApplicationAnswers,
+  getYesNOOptions,
+} from '../lib/oldAgePensionUtils'
 import {
   NationalRegistryResidenceHistoryApi,
   NationalRegistryCohabitantsApi,
@@ -81,6 +84,46 @@ export const PrerequisitesForm: Form = buildForm({
           ],
         }),
         buildSubSection({
+          id: 'applicationType',
+          title: oldAgePensionFormMessage.pre.applicationTypeTitle,
+          children: [
+            buildRadioField({
+              id: 'applicationType.option',
+              title: oldAgePensionFormMessage.pre.applicationTypeTitle,
+              description:
+                oldAgePensionFormMessage.pre.applicationTypeDescription,
+              options: [
+                {
+                  value: ApplicationType.RETIREMENTPENSION,
+                  label:
+                    oldAgePensionFormMessage.pre
+                      .retirementPensionApplicationTitle,
+                  subLabel:
+                    oldAgePensionFormMessage.pre
+                      .retirementPensionApplicationDescription,
+                },
+                {
+                  value: ApplicationType.HALFRETIREMENTPENSION,
+                  label:
+                    oldAgePensionFormMessage.pre
+                      .halfRetirementPensionApplicationTitle,
+                  subLabel:
+                    oldAgePensionFormMessage.pre
+                      .halfRetirementPensionApplicationDescription,
+                },
+                {
+                  value: ApplicationType.FISHERMEN,
+                  label: oldAgePensionFormMessage.pre.fishermenApplicationTitle,
+                  subLabel:
+                    oldAgePensionFormMessage.pre
+                      .fishermenApplicationDescription,
+                },
+              ],
+              required: true,
+            }),
+          ],
+        }),
+        buildSubSection({
           id: 'questions',
           title: oldAgePensionFormMessage.pre.questionTitle,
           children: [
@@ -92,10 +135,7 @@ export const PrerequisitesForm: Form = buildForm({
                   id: 'questions.pensionFund',
                   title: oldAgePensionFormMessage.pre.pensionFundQuestionTitle,
                   description: '',
-                  options: [
-                    { value: YES, label: oldAgePensionFormMessage.shared.yes },
-                    { value: NO, label: oldAgePensionFormMessage.shared.no },
-                  ],
+                  options: getYesNOOptions(),
                   width: 'half',
                 }),
                 buildCustomField(
@@ -116,16 +156,6 @@ export const PrerequisitesForm: Form = buildForm({
                   },
                   { type: 'warning' },
                 ),
-                buildRadioField({
-                  id: 'questions.fishermen',
-                  title: oldAgePensionFormMessage.pre.fishermenQuestionTitle,
-                  description: '',
-                  options: [
-                    { value: YES, label: oldAgePensionFormMessage.shared.yes },
-                    { value: NO, label: oldAgePensionFormMessage.shared.no },
-                  ],
-                  width: 'half',
-                }),
                 buildSubmitField({
                   id: 'toDraft',
                   title: oldAgePensionFormMessage.pre.confirmationTitle,

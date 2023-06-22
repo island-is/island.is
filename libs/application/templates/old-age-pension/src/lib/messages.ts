@@ -113,6 +113,52 @@ export const oldAgePensionFormMessage: MessageDir = {
       defaultMessage: 'Sækirðu um ellilífeyri sjómanna?',
       description: 'Are you applying for fishermen old-age pension?',
     },
+    applicationTypeTitle: {
+      id: 'pl.application:applicationType.title',
+      defaultMessage: 'Tegund umsóknar',
+      description: 'Type of application',
+    },
+    applicationTypeDescription: {
+      id: 'pl.application:applicationType.description',
+      defaultMessage: 'Vinsamlegast veldu tegund umsóknar',
+      description: 'Vinsamlegast veldu tegund umsóknar',
+    },
+    retirementPensionApplicationTitle: {
+      id: 'pl.application:retirementPension.application.title',
+      defaultMessage: 'Umsókn um ellilífeyri',
+      description: 'retirement pension application',
+    },
+    retirementPensionApplicationDescription: {
+      id: 'pl.application:retirementPension.application.description',
+      defaultMessage:
+        'Þeir sem eru 65 ára og eldri og hafa átt lögheimili á Íslandi í minnst þrjú ár gætu átt einhvern rétt á ellilífeyri. Sækja þarf um ellilífeyri en almennt myndast réttur við 67 ára aldur.',
+      description:
+        'Those who are 65 years of age or older and have had legal residence in Iceland for at least three years may have some right to a retirement pension. You have to apply for retirement pension, but in general you are entitled to it at the age of 67.',
+    },
+    halfRetirementPensionApplicationTitle: {
+      id: 'pl.application:halfRetirementPension.application.title',
+      defaultMessage: 'Umsókn um hálfan ellilífeyri',
+      description: 'Application for half retirement pension',
+    },
+    halfRetirementPensionApplicationDescription: {
+      id: 'pl.application:halfRetirementPension.application.description',
+      defaultMessage:
+        'Hægt er að sækja um hálfan ellilífeyri hjá TR samhliða greiðslu hálfs lífeyris frá skyldubundnum atvinnutengdum lífeyrissjóðum.',
+      description:
+        'You can apply for a half retirement pension from TR together with the payment of half a pension from compulsory employment-related pension funds.',
+    },
+    fishermenApplicationTitle: {
+      id: 'pl.application:fishermen.application.title',
+      defaultMessage: 'Umsókn um ellilífeyri sjómanna',
+      description: "Fishermen's retirement pension",
+    },
+    fishermenApplicationDescription: {
+      id: 'pl.application:fishermen.application.description',
+      defaultMessage:
+        'Sá sem hefur stundað sjómennsku á lögskráðu íslensku skipi eða skipi gert út af íslenskum aðilum í 25 ár eða lengur getur átt rétt á ellilífeyri frá 60 ára aldri. Fjöldi lögskráðra daga á sjó þarf að vera að lágmarki 180 dagar að meðaltali á ári á 25 árum.',
+      description:
+        'Anyone who has practiced seamanship on a registered Icelandic ship or a ship built by Icelandic entities for 25 years or more can be entitled to a retirement pension from the age of 60. The number of legally registered days at sea must be a minimum of 180 days on average per year over 25 years.',
+    },
   }),
 
   applicant: defineMessages({

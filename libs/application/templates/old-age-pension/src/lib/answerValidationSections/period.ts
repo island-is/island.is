@@ -11,11 +11,11 @@ import { buildError } from './utils'
 export const period = (newAnswer: unknown, application: Application) => {
   const obj = newAnswer as Record<string, Answer>
   const { PERIOD } = AnswerValidationConstants
-  const { isFishermen } = getApplicationAnswers(application.answers)
+  const { applicationType } = getApplicationAnswers(application.answers)
 
   const { startDate, endDate } = getStartDateAndEndDate(
     application.applicant,
-    isFishermen,
+    applicationType,
   )
   const { year, month } = obj
 

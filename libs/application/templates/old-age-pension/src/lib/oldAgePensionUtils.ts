@@ -1,5 +1,10 @@
 import { formatText, getValueViaPath } from '@island.is/application/core'
-import { Application, YesOrNo } from '@island.is/application/types'
+import {
+  Application,
+  MaybeWithApplicationAndField,
+  Option,
+  YesOrNo,
+} from '@island.is/application/types'
 import {
   MONTHS,
   ConnectedApplications,
@@ -9,6 +14,8 @@ import {
   fishermenMinAge,
   earlyRetirementMinAge,
   earlyRetirementMaxAge,
+  NO,
+  ApplicationType,
 } from './constants'
 import { oldAgePensionFormMessage } from './messages'
 
@@ -43,7 +50,10 @@ export function getApplicationAnswers(answers: Application['answers']) {
     'questions.pensionFund',
   ) as YesOrNo
 
-  const isFishermen = getValueViaPath(answers, 'questions.fishermen') as YesOrNo
+  const applicationType = getValueViaPath(
+    answers,
+    'applicationType.option',
+  ) as ApplicationType
 
   const selectedYear = getValueViaPath(answers, 'period.year') as string
 
@@ -88,7 +98,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
 
   return {
     pensionFundQuestion,
-    isFishermen,
+    applicationType,
     selectedYear,
     selectedMonth,
     applicantEmail,
@@ -180,7 +190,7 @@ export function getApplicationExternalData(
 
 export function getStartDateAndEndDate(
   nationalId: string,
-  isFishermen: YesOrNo,
+  applicationType: ApplicationType,
 ) {
   const today = new Date()
   const nationalIdInfo = kennitala.info(nationalId)
@@ -205,7 +215,7 @@ export function getStartDateAndEndDate(
   } else if (thisYearAge < fishermenMinAge) {
     // < 62 year old
     return {}
-  } else if (isFishermen === YES) {
+  } else if (applicationType === ApplicationType.FISHERMEN) {
     // Fishermen
     if (thisYearAge === fishermenMinAge + 1) {
       // = 63 year old
@@ -237,13 +247,13 @@ export function getAvailableYears(application: Application) {
   const { applicantNationalId } = getApplicationExternalData(
     application.externalData,
   )
-  const { isFishermen } = getApplicationAnswers(application.answers)
+  const { applicationType } = getApplicationAnswers(application.answers)
 
   if (!applicantNationalId) return []
 
   const { startDate, endDate } = getStartDateAndEndDate(
     applicantNationalId,
-    isFishermen,
+    applicationType,
   )
   if (!startDate || !endDate) return []
 
@@ -263,13 +273,13 @@ export function getAvailableMonths(
   const { applicantNationalId } = getApplicationExternalData(
     application.externalData,
   )
-  const { isFishermen } = getApplicationAnswers(application.answers)
+  const { applicationType } = getApplicationAnswers(application.answers)
 
   if (!applicantNationalId) return []
 
   const { startDate, endDate } = getStartDateAndEndDate(
     applicantNationalId,
-    isFishermen,
+    applicationType,
   )
   if (!startDate || !endDate || !selectedYear) return []
 
@@ -330,9 +340,11 @@ export function isEarlyRetirement(
   externalData: Application['externalData'],
 ) {
   const { applicantNationalId } = getApplicationExternalData(externalData)
-  const { selectedMonth, selectedYear, isFishermen } = getApplicationAnswers(
-    answers,
-  )
+  const {
+    selectedMonth,
+    selectedYear,
+    applicationType,
+  } = getApplicationAnswers(answers)
 
   const dateOfBirth = kennitala.info(applicantNationalId).birthday
   const dateOfBirth00 = new Date(
@@ -346,7 +358,7 @@ export function isEarlyRetirement(
   return (
     age >= earlyRetirementMinAge &&
     age <= earlyRetirementMaxAge &&
-    isFishermen !== YES
+    applicationType !== ApplicationType.FISHERMEN
   )
 }
 
@@ -364,7 +376,7 @@ export function getAttachments(application: Application) {
 
   const { answers, externalData } = application
   const {
-    isFishermen,
+    applicationType,
     homeAllowanceChildren,
     homeAllowanceHousing,
     connectedApplications,
@@ -378,7 +390,7 @@ export function getAttachments(application: Application) {
   if (earlyRetirement) {
     getAttachmentsName(earlyPenFisher?.earlyRetirement, 'snemmtaka')
   }
-  if (isFishermen === YES) {
+  if (applicationType === ApplicationType.FISHERMEN) {
     getAttachmentsName(earlyPenFisher?.fishermen, 'sjómanna')
   }
 
@@ -417,6 +429,20 @@ export function getCombinedResidenceHistory(
   })
 
   return [...combinedResidenceHistory].reverse()
+}
+
+export function getYesNOOptions() {
+  const options: Option[] = [
+    {
+      value: YES,
+      label: oldAgePensionFormMessage.shared.yes,
+    },
+    {
+      value: NO,
+      label: oldAgePensionFormMessage.shared.no,
+    },
+  ]
+  return options
 }
 
 export function isExistsCohabitantOlderThan25(
