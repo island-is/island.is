@@ -90,7 +90,7 @@ const mapVacanciesField = (
 
   vacanciesFieldArray.sort(sortAlpha('label'))
 
-  // Make sure the no location filter option is at the top
+  // Make sure the remote location filter option is at the top
   if (fieldName === 'locations' && remoteLocationText) {
     const index = vacanciesFieldArray.findIndex(
       (item) => item.label === remoteLocationText,
