@@ -60,6 +60,7 @@ export const GetAllEndorsementsLists = gql`
         closedDate
         openedDate
         adminLock
+        owner
       }
     }
   }
@@ -77,6 +78,7 @@ export const GetSinglePetitionList = gql`
       closedDate
       openedDate
       adminLock
+      owner
     }
   }
 `
