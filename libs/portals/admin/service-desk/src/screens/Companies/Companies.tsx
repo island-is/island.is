@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Form, useActionData, useNavigate } from 'react-router-dom'
 
 import { useLocale } from '@island.is/localization'
@@ -14,9 +14,17 @@ import { ServiceDeskPaths } from '../../lib/paths'
 
 const Companies = () => {
   const [searchInput, setSearchInput] = useState('')
+  const [prevSearchInput, setPrevSearchInput] = useState('')
   const actionData = useActionData() as GetCompaniesResult
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
+  const companies = actionData?.data
+
+  useEffect(() => {
+    if (actionData) {
+      setPrevSearchInput(searchInput)
+    }
+  }, [actionData])
 
   return (
     <>
@@ -35,11 +43,17 @@ const Companies = () => {
           />
         </Box>
       </Form>
-      <Box marginTop={[3, 3, 6]}>
+      <Box marginTop={4}>
         <Box className={styles.relative}>
           <Stack space={3}>
-            {actionData.data && actionData.data.length > 0 ? (
-              actionData.data.map(({ nationalId, name }) => (
+            {companies === null ? (
+              <Card
+                title={formatNationalId(prevSearchInput)}
+                description={formatMessage(m.noContent)}
+                bgGrey
+              />
+            ) : (
+              companies?.map(({ nationalId, name }) => (
                 <Box key={`procure-${nationalId}`}>
                   <Card
                     title={name}
@@ -66,11 +80,6 @@ const Companies = () => {
                   />
                 </Box>
               ))
-            ) : (
-              <Card
-                title={formatNationalId(searchInput)}
-                description={formatMessage(m.noContent)}
-              />
             )}
           </Stack>
         </Box>

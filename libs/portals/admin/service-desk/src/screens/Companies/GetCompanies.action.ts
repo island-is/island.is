@@ -57,7 +57,7 @@ export const GetCompaniesAction: WrappedActionFn = ({ client }) => async ({
   } catch (e) {
     return {
       errors: null,
-      data: [],
+      data: null,
       globalError: true,
     }
   }

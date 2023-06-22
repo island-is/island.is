@@ -18,13 +18,12 @@ export const Card = ({
   <Box
     display="flex"
     borderRadius="large"
-    border="standard"
     width="full"
     paddingX={4}
     paddingY={3}
     justifyContent="spaceBetween"
     alignItems="center"
-    {...(bgGrey && { background: 'dark100' })}
+    {...(bgGrey ? { background: 'dark100' } : { border: 'standard' })}
   >
     <Stack space={1}>
       <Text variant="h3">{title}</Text>
