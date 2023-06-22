@@ -35,7 +35,7 @@ export class ProcureService {
   async searchCompanyProcurers(nationalId: string): Promise<CompanyProcurers> {
     return {
       name: 'Fyrirtæki ehf.',
-      nationalId: '5501690339',
+      nationalId: nationalId,
       procurers: [
         {
           name: 'Guðmundur Guðmundsson',

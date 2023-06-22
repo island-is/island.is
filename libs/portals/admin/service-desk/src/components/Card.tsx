@@ -2,7 +2,7 @@ import React, { ReactNode } from 'react'
 
 import { Box, Stack, Text } from '@island.is/island-ui/core'
 
-interface ContentCardProps {
+interface CardProps {
   title: string
   description: string
   cta?: ReactNode
@@ -14,7 +14,7 @@ export const Card = ({
   description,
   cta,
   bgGrey = false,
-}: ContentCardProps) => (
+}: CardProps) => (
   <Box
     display="flex"
     borderRadius="large"

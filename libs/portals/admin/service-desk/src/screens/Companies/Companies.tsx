@@ -46,7 +46,7 @@ const Companies = () => {
       <Box marginTop={4}>
         <Box className={styles.relative}>
           <Stack space={3}>
-            {companies === null ? (
+            {companies?.length === 0 ? (
               <Card
                 title={formatNationalId(prevSearchInput)}
                 description={formatMessage(m.noContent)}
