@@ -22,7 +22,10 @@ import { AdminPortalScope } from '@island.is/auth/scopes'
 import { EmailService } from '@island.is/email-service'
 import PDFDocument from 'pdfkit'
 import getStream from 'get-stream'
-import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
+import {
+  IndividualDto,
+  NationalRegistryClientService,
+} from '@island.is/clients/national-registry-v2'
 
 interface CreateInput extends EndorsementListDto {
   owner: string
@@ -52,6 +55,19 @@ export class EndorsementListService {
     }
 
     return false
+  }
+
+  async getListOwnerNationalId(listId: string): Promise<string | null> {
+    const endorsementList = await this.endorsementListModel.findOne({
+      where: {
+        id: listId,
+      },
+    })
+    if (endorsementList) {
+      return endorsementList.owner
+    } else {
+      return null
+    }
   }
 
   // generic reusable query with pagination defaults
@@ -502,12 +518,12 @@ export class EndorsementListService {
             {
               component: 'Copy',
               context: {
-                copy: `Meðfylgjandi er undirskriftalisti "${endorsementList?.title}",
-                sem ${ownerName} er skráður ábyrgðarmaður fyrir, hefur verið læst af umsjónaraðilum kerfisins hjá Þjóðskrá.`,
+                copy: `Undirskriftalista "${endorsementList?.title}" sem, ${ownerName}
+                er skráður ábyrgðarmaður fyrir, hefur verið læst af þjónustuaðila kerfisins hjá Þjóðskrá Íslands
+                og er því ekki aðgengilegur inn á Ísland.is. Metið hefur verið að listinn uppfyllir ekki skilmála undirskriftalista.`,
                 small: true,
               },
             },
-
             {
               component: 'Copy',
               context: { copy: 'Kær kveðja,', small: true },
