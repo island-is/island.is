@@ -54,13 +54,14 @@ const MyPdfDocument = (data: {
             </View>
             <View style={pdfStyles.widthHalf}>
               <Text style={pdfStyles.header}>Kennitala ábyrgðarmannsins: </Text>
-              <Text>{petition?.ownerName}</Text>
+              {/*todo: */}
+              <Text>{''}</Text>
             </View>
           </View>
         </View>
         <View style={pdfStyles.tableView}>
           <View style={pdfStyles.tableRow}>
-            <Text style={pdfStyles.tableHeader}>Dags. skráð</Text>
+            <Text style={pdfStyles.tableHeaderDate}>Dags. skráð</Text>
             <Text style={pdfStyles.tableHeader}>Nafn</Text>
             <Text style={pdfStyles.tableHeader}>Sveitarfélag</Text>
           </View>
@@ -71,10 +72,10 @@ const MyPdfDocument = (data: {
                   <Text style={{ width: '20%' }}>
                     {formatDate(sign.created)}
                   </Text>
-                  <Text style={{ width: '20%' }}>
+                  <Text style={{ width: '30%' }}>
                     {sign.meta.fullName ? sign.meta.fullName : ''}
                   </Text>
-                  <Text style={{ width: '20%' }}>
+                  <Text style={{ width: '30%' }}>
                     {sign.meta.locality ? sign.meta.locality : ''}
                   </Text>
                 </View>
@@ -110,14 +111,18 @@ export const pdfStyles = StyleSheet.create({
     marginTop: 20,
     marginBottom: 5,
   },
-  tableHeader: {
+  tableHeaderDate: {
     fontWeight: 600,
     marginBottom: 5,
     width: '20%',
   },
+  tableHeader: {
+    fontWeight: 600,
+    marginBottom: 5,
+    width: '30%',
+  },
   row: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
   },
   widthHalf: {
     width: '50%',
