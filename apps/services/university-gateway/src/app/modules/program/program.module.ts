@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common'
-import { MajorController } from './major.controller'
-import { MajorService } from './major.service'
+import { ProgramController } from './program.controller'
+import { ProgramService } from './program.service'
 import {
   UgReykjavikUniversityClientModule,
   UgReykjavikUniversityClientConfig,
@@ -15,7 +15,7 @@ import { ConfigModule } from '@nestjs/config'
       load: [UgReykjavikUniversityClientConfig],
     }),
   ],
-  controllers: [MajorController],
-  providers: [MajorService],
+  controllers: [ProgramController],
+  providers: [ProgramService],
 })
-export class MajorModule {}
+export class ProgramModule {}

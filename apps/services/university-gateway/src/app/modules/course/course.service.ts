@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { CourseDetailsResponse, CourseResponse } from './model'
-import { PaginateInput } from '../major/types'
+import { PaginateInput } from '../program/types'
 
 //TODOx connect with new university DB
 
@@ -8,7 +8,7 @@ import { PaginateInput } from '../major/types'
 export class CourseService {
   async getCourses(
     { after, before, limit }: PaginateInput,
-    majorId: string,
+    programId: string,
     universityId: string,
   ): Promise<CourseResponse> {
     throw Error('Not ready')

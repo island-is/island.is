@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common'
 import { ApplicationModule } from './modules/application/application.module'
 import { CourseModule } from './modules/course/course.module'
-import { MajorModule } from './modules/major/major.module'
+import { ProgramModule } from './modules/program/program.module'
 import { UniversityModule } from './modules/university/university.module'
 import { ExampleModule } from './modules/example/example.module'
 
@@ -9,7 +9,7 @@ import { ExampleModule } from './modules/example/example.module'
   imports: [
     ApplicationModule,
     CourseModule,
-    MajorModule,
+    ProgramModule,
     UniversityModule,
     ExampleModule,
   ],

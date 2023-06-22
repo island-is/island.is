@@ -1,7 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { FieldType } from '../types'
 
-export class MajorOtherField {
+export class ProgramExtraApplicationField {
   @ApiProperty({
     description: 'Field name (Icelandic)',
     example: 'Ferilskrá',

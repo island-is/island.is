@@ -21,25 +21,11 @@ export class University {
   name!: string
 
   @ApiProperty({
-    description: 'Contentful key for university name',
-    example: 'UniversityOfIcelandName',
+    description: 'Contentful key for university',
+    example: 'UniversityOfIceland',
   })
   @ApiPropertyOptional()
-  contentfulKeyName?: string
-
-  @ApiProperty({
-    description: 'Contentful key for university description',
-    example: 'UniversityOfIcelandDescription',
-  })
-  @ApiPropertyOptional()
-  contentfulKeyLogoDescription?: string
-
-  @ApiProperty({
-    description: 'Contentful key for university logo',
-    example: 'UniversityOfIcelandLogo',
-  })
-  @ApiPropertyOptional()
-  contentfulKeyLogo?: string
+  contentfulKey?: string
 }
 
 export class UniversityResponse {
