@@ -1,3 +1,6 @@
+import { assign } from 'xstate'
+import unset from 'lodash/unset'
+
 import {
   ApplicationTemplate,
   ApplicationContext,
@@ -11,10 +14,16 @@ import {
   UserProfileApi,
   NationalRegistrySpouseApi,
 } from '@island.is/application/types'
-
 import { pruneAfterDays } from '@island.is/application/core'
 
-import { Events, Roles, States } from './constants'
+import {
+  ConnectedApplications,
+  Events,
+  HomeAllowanceHousing,
+  Roles,
+  States,
+  YES,
+} from './constants'
 import { dataSchema } from './dataSchema'
 import { oldAgePensionFormMessage } from './messages'
 import { answerValidators } from './answerValidators'
@@ -22,6 +31,7 @@ import {
   NationalRegistryResidenceHistoryApi,
   NationalRegistryCohabitantsApi,
 } from '../dataProviders'
+import { getApplicationAnswers } from './oldAgePensionUtils'
 
 const OldAgePensionTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -75,6 +85,11 @@ const OldAgePensionTemplate: ApplicationTemplate<
         },
       },
       [States.DRAFT]: {
+        exit: [
+          'clearConnectedApplications',
+          'clearLeaseAgreement',
+          'clearSchoolConfirmation',
+        ],
         meta: {
           name: States.DRAFT,
           status: 'draft',
@@ -103,6 +118,54 @@ const OldAgePensionTemplate: ApplicationTemplate<
         //   SUBMIT: [],
         // },
       },
+    },
+  },
+  stateMachineOptions: {
+    actions: {
+      clearConnectedApplications: assign((context) => {
+        const { application } = context
+        const { connectedApplications } = getApplicationAnswers(
+          application.answers,
+        )
+
+        if (!connectedApplications || connectedApplications?.length > 0) {
+          unset(application.answers, 'homeAllowance')
+          unset(application.answers, 'fileUploadHomeAllowance')
+          // TODO: Add unset for childSupport
+        } else if (
+          !connectedApplications.includes(ConnectedApplications.HOMEALLOWANCE)
+        ) {
+          unset(application.answers, 'homeAllowance')
+          unset(application.answers, 'fileUploadHomeAllowance')
+        }
+
+        return context
+      }),
+      clearLeaseAgreement: assign((context) => {
+        const { application } = context
+        const { homeAllowanceHousing } = getApplicationAnswers(
+          application.answers,
+        )
+        if (homeAllowanceHousing !== HomeAllowanceHousing.RENTER) {
+          unset(application.answers, 'fileUploadHomeAllowance.leaseAgreement')
+        }
+
+        return context
+      }),
+      clearSchoolConfirmation: assign((context) => {
+        const { application } = context
+        const { homeAllowanceChildren } = getApplicationAnswers(
+          application.answers,
+        )
+        if (homeAllowanceChildren !== YES) {
+          unset(
+            application.answers,
+            'fileUploadHomeAllowance.schoolConfirmation',
+          )
+        }
+
+        return context
+      }),
     },
   },
   mapUserToRole(
