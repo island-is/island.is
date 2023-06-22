@@ -15,6 +15,8 @@ import {
 import { dark200 } from '@island.is/island-ui/theme'
 import { formatDate } from '../../../lib/utils/utils'
 import { format as formatNationalId } from 'kennitala'
+import thjodskra from './thjodskra.png'
+import island from './island.png'
 
 const MyPdfDocument = (data: {
   petition?: EndorsementList
@@ -25,11 +27,7 @@ const MyPdfDocument = (data: {
     <Document>
       <Page style={pdfStyles.body}>
         {/* Header */}
-        <Image
-          src={'./assets/images/thjodskra.png'}
-          style={pdfStyles.image}
-          fixed
-        />
+        <Image src={thjodskra} style={pdfStyles.image} fixed />
 
         {/* Body */}
         <View style={pdfStyles.listInfo}>
@@ -85,11 +83,7 @@ const MyPdfDocument = (data: {
         </View>
 
         {/* Footer */}
-        <Image
-          src={'./assets/images/island.png'}
-          style={pdfStyles.footerImage}
-          fixed
-        />
+        <Image src={island} style={pdfStyles.footerImage} fixed />
       </Page>
     </Document>
   )
