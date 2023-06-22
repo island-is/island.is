@@ -151,7 +151,6 @@ export class ApplicationAccessService {
   ): Promise<boolean> {
     const userDelegations = user.delegationType
     const requiredScopes = template.requiredScopes
-    console.log('the neationalid is ', user.nationalId)
 
     // Must be a custom delegation
     if (
@@ -177,30 +176,21 @@ export class ApplicationAccessService {
         },
       )
 
-      console.log('we just check delegations', delegations)
-
       for (const delegation of delegations) {
-        console.log('we just check delegations', delegation)
         if (!delegation.scopes) continue
         for (const scopeObj of delegation.scopes) {
-          console.log('we just check scopeObj', scopeObj)
           if (template.requiredScopes.includes(scopeObj.scopeName)) {
-            console.log('the scope matches')
             return true
           }
         }
       }
-      console.log('false 4')
       return false
     } else {
       for (const scope of user.scope) {
-        console.log('we just check scope', scope)
         if (requiredScopes?.includes(scope)) {
-          console.log('the scope matches')
           return true
         }
       }
-      console.log('false 5')
       return false
     }
   }
@@ -303,7 +293,6 @@ export class ApplicationAccessService {
     // If the delegation type is "Custom", we need to verify if the user has the
     // required scope as per the template.
     if (delegation.type === AuthDelegationType.Custom) {
-      console.log('we are in custom delegation')
       // The user can proceed if the custom delegation is valid and the feature (if flagged) is enabled.
       return (
         (await this.hasValidCustomDelegation(user, template, false)) &&
