@@ -381,6 +381,18 @@ describe('CaseController - Update', () => {
             caseId,
           },
           {
+            type: MessageType.DELIVER_DEFENDANT_TO_COURT,
+            user,
+            caseId,
+            defendantId: defendantId1,
+          },
+          {
+            type: MessageType.DELIVER_DEFENDANT_TO_COURT,
+            user,
+            caseId,
+            defendantId: defendantId2,
+          },
+          {
             type: MessageType.DELIVER_CASE_FILES_RECORD_TO_COURT,
             user,
             caseId,

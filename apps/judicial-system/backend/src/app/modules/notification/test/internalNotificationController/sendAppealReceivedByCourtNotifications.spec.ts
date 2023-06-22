@@ -78,6 +78,13 @@ describe('InternalNotificationController - Send appeal received by court notific
     it('should send notification to prosecutor and defender', () => {
       expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
         expect.objectContaining({
+          to: [{ name: 'Landsréttur', address: '' }],
+          subject: `Upplýsingar vegna kæru í máli ${courtCaseNumber}`,
+          html: `Kæra í máli ${courtCaseNumber} hefur borist Landsrétti. Hægt er að nálgast gögn málsins í <a href="http://localhost:4200/landsrettur/yfirlit/${caseId}">Réttarvörslugátt</a> með rafrænum skilríkjum.`,
+        }),
+      )
+      expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
+        expect.objectContaining({
           to: [{ name: prosecutorName, address: prosecutorEmail }],
           subject: `Upplýsingar vegna kæru í máli ${courtCaseNumber}`,
           html: `Kæra í máli ${courtCaseNumber} hefur borist Landsrétti. Frestur til að skila greinargerð er til ${formatDate(

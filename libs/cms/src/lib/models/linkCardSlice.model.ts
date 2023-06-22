@@ -1,6 +1,7 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
-import { ICardSection } from '../generated/contentfulTypes'
+import { CacheField } from '@island.is/nest/graphql'
 import { SystemMetadata } from '@island.is/shared/types'
+import { ICardSection } from '../generated/contentfulTypes'
 import { LinkCard, mapLinkCard } from './linkCard.model'
 
 @ObjectType()
@@ -11,7 +12,7 @@ export class LinkCardSlice {
   @Field()
   title?: string
 
-  @Field(() => [LinkCard])
+  @CacheField(() => [LinkCard])
   cards!: LinkCard[]
 }
 

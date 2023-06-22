@@ -7,6 +7,7 @@ query endorsementSystemGetEndorsements($input: PaginatedEndorsementInput!) {
       created
       meta {
         fullName
+        locality
       }
     }
   }
