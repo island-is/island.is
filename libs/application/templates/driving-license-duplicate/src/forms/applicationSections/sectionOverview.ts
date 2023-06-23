@@ -6,6 +6,7 @@ import {
   buildKeyValueField,
   buildDescriptionField,
   getValueViaPath,
+  buildCheckboxField,
 } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
 import { format as formatNationalId } from 'kennitala'
@@ -154,7 +155,7 @@ export const sectionOverview = buildSection({
           space: 'gutter',
         }),
         buildKeyValueField({
-          label: m.deliveryMethodTitle,
+          label: '',
           value: ({ answers: { district }, externalData }) => {
             const districts = getValueViaPath(
               externalData,
@@ -165,6 +166,27 @@ export const sectionOverview = buildSection({
             const districtPlace = selectedDistrict?.place ?? ''
             return `${districtName}, ${districtPlace}`
           },
+        }),
+        buildDividerField({}),
+        buildDescriptionField({
+          id: 'spacer',
+          space: 'gutter',
+          title: m.confirmTitle,
+          description: m.confirmDescription,
+          titleVariant: 'h3',
+          marginBottom: 2,
+        }),
+        buildCheckboxField({
+          id: 'overview.confirmationCheckbox',
+          title: '',
+          defaultValue: [],
+          options: [
+            {
+              value: YES,
+              label: m.confirmSignatureAndPhoto,
+            },
+          ],
+          required: true,
         }),
       ],
     }),

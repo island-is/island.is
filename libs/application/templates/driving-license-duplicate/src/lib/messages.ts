@@ -227,7 +227,7 @@ export const m = defineMessages({
   /* Delivery method Section */
   deliveryMethodSectionTitle: {
     id: 'dld.application:deliveryMethodSectionTitle',
-    defaultMessage: 'Afhending',
+    defaultMessage: 'Afhendingarstaður',
     description: 'Title for delivery method section',
   },
   deliveryMethodTitle: {
@@ -275,11 +275,30 @@ export const m = defineMessages({
     description: 'Some description',
   },
   notFilledOut: {
-    id: 'es.application:notFilledOut',
+    id: 'dld.application:notFilledOut',
     defaultMessage: 'Ekki fyllt út',
     description: '',
   },
-
+  confirmTitle: {
+    id: 'dld.application:confirm.title',
+    defaultMessage: 'Staðfesta',
+    description: 'Title for confirm section',
+  },
+  confirmDescription: {
+    id: 'dld.application:confirm.description',
+    defaultMessage:
+      'Vinsamlegast farið yfir undirskrift og mynd. Ef nafn hefur breyst frá því að síðast var sótt um skírteini mun það stöðva umsókn. Fara þarf með nýja mynd eða veita nýja undirskrift hjá Sýslumanni ef svo ber undir.',
+  },
+  confirmSignatureAndPhoto: {
+    id: 'dld.application:confirmSignatureAndPhoto',
+    defaultMessage: 'Ég staðfesti að ofangreindar upplýsingar séu réttar.',
+    description: 'Text for confirmation of signature and photo',
+  },
+  requiredCheckmark: {
+    id: 'dld.application:requiredCheckmark',
+    defaultMessage: 'Skylda er að haka við þennan reit',
+    description: 'Text for required checkmark',
+  },
   /*Payment Section*/
   proceedToPayment: {
     id: 'dld.application:payment.proceedToPayment',

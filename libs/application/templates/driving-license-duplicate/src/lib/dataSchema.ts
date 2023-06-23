@@ -1,5 +1,6 @@
 import { z } from 'zod'
-import { ApplicationReasons } from './constants'
+import { ApplicationReasons, YES } from './constants'
+import { m } from './messages'
 
 export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
@@ -8,6 +9,11 @@ export const dataSchema = z.object({
   district: z.string(),
   reason: z.object({
     reasonGiven: z.enum([ApplicationReasons.STOLEN, ApplicationReasons.LOST]),
+  }),
+  overview: z.object({
+    confirmationCheckbox: z.array(z.string()).refine((v) => v.includes(YES), {
+      params: m.requiredCheckmark,
+    }),
   }),
 })
 

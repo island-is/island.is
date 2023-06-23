@@ -19,6 +19,7 @@ export const sectionDelivery = buildSection({
           id: 'deliveryDescription',
           titleVariant: 'h3',
           title: m.deliveryMethodTitle,
+          marginBottom: 2,
           description: m.deliveryMethodDescription,
         }),
         buildSelectField({
