@@ -1,10 +1,10 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "title": "Hugverskastofa",
     "description": "Hugverkastofan WebAPI v3",
     "contact": { "name": "Nói Steinn Einarsson", "email": "ut@hugverk.is" },
-    "version": "v3"
+    "version": "v3",
+    "title": "Hugverkastofa API"
   },
   "servers": [{ "url": "/apiv3" }],
   "paths": {
@@ -1380,6 +1380,11 @@
             "name": "patentName",
             "in": "query",
             "schema": { "type": "string", "default": "" }
+          },
+          {
+            "name": "patentNumber",
+            "in": "query",
+            "schema": { "type": "string", "default": "" }
           }
         ],
         "responses": {
@@ -2410,7 +2415,8 @@
         "type": "object",
         "properties": {
           "heiti": { "type": "string", "nullable": true },
-          "landakodi": { "type": "string", "nullable": true }
+          "landakodi": { "type": "string", "nullable": true },
+          "adiliAdParis": { "type": "boolean" }
         },
         "additionalProperties": false
       },
@@ -3304,6 +3310,7 @@
         "properties": {
           "code": { "type": "string", "nullable": true },
           "description": { "type": "string", "nullable": true },
+          "descriptionEN": { "type": "string", "nullable": true },
           "fee": { "type": "string", "nullable": true },
           "caseType": {
             "type": "array",

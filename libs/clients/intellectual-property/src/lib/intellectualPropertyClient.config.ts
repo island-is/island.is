@@ -18,7 +18,7 @@ export const IntellectualPropertyClientConfig = defineConfig<
       fetch: {
         scope: [''],
       },
-      apiKey: env.required('IP_API_KEY', ''),
+      apiKey: env.required('INTELLECTUAL_PROPERTY_API_KEY', ''),
     }
   },
 })
