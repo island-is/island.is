@@ -3,11 +3,10 @@ import {
   buildSubSection,
   buildDescriptionField,
   buildRadioField,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { information } from '../../../lib/messages'
-import { ResidenceTypes } from '../../../types'
-import { Answer } from '@island.is/application/types'
-import { Citizenship } from '../../../lib/dataSchema'
+import { ResidenceCondition } from '@island.is/clients/directorate-of-immigration/citizenship'
 
 export const ResidenceConditionsSubSection = buildSubSection({
   id: 'residenceConditions',
@@ -17,11 +16,6 @@ export const ResidenceConditionsSubSection = buildSubSection({
       id: 'residenceConditionsMultiField',
       title: information.labels.residenceConditions.pageTitle,
       description: information.labels.residenceConditions.description,
-      condition: (answer: Answer) => {
-        const answers = answer as Citizenship
-        //TODO: When legalDocile date change comes in, check duration since last change and show if shorter than 7 years
-        return true
-      },
       children: [
         buildDescriptionField({
           id: 'residenceConditions.title',
@@ -33,40 +27,18 @@ export const ResidenceConditionsSubSection = buildSubSection({
           title: '',
           description: '',
           backgroundColor: 'white',
-          options: [
-            {
-              value: ResidenceTypes.MARRIED,
-              label: information.labels.residenceTypes.married,
-              subLabel: information.labels.residenceTypes.marriedSubLabel,
-            },
-            {
-              value: ResidenceTypes.COHABIT,
-              label: information.labels.residenceTypes.coHabit,
-              subLabel: information.labels.residenceTypes.coHabitSubLabel,
-            },
-            {
-              value: ResidenceTypes.CHILDOFRESIDENT,
-              label: information.labels.residenceTypes.childOfResident,
-              subLabel:
-                information.labels.residenceTypes.childOfResidentSubLabel,
-            },
-            {
-              value: ResidenceTypes.NORDICRESIDENT,
-              label: information.labels.residenceTypes.nordicResident,
-            },
-            {
-              value: ResidenceTypes.REFUGEE,
-              label: information.labels.residenceTypes.refugee,
-            },
-            {
-              value: ResidenceTypes.NORESIDENCY,
-              label: information.labels.residenceTypes.noResidency,
-            },
-            {
-              value: ResidenceTypes.FORMER,
-              label: information.labels.residenceTypes.former,
-            },
-          ],
+          options: (application) => {
+            const residenceConditionOptions = getValueViaPath(
+              application.externalData,
+              'residenceConditions.data',
+              [],
+            ) as ResidenceCondition[]
+
+            return residenceConditionOptions.map(({ id, name }) => ({
+              value: id.toString(),
+              label: name,
+            }))
+          },
         }),
       ],
     }),

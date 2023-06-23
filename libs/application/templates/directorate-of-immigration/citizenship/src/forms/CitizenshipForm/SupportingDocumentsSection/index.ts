@@ -1,35 +1,34 @@
-import { buildSection } from '@island.is/application/core'
-import {
-  Application,
-  FormValue,
-  Section,
-  SubSection,
-} from '@island.is/application/types'
+import { buildSection, getValueViaPath } from '@island.is/application/core'
+import { Application, FormValue } from '@island.is/application/types'
 import { supportingDocuments } from '../../../lib/messages'
 import { PassportSubSection } from './PassportSubSection'
 import { OtherDocumentsSubSection } from './OtherDocumentsSubSection'
-import { CitizenshipExternalData } from '../../../shared/types'
-import { ExternalData } from '../../../types'
 import { Citizenship } from '../../../lib/dataSchema'
-import { getSelectedCustodyChildren } from '../../../utils/childrenInfo'
+import { getSelectedCustodyChildren } from '../../../utils'
+import { CitizenIndividual } from '../../../shared'
 
 export const SupportingDocumentsSection = (index: number) =>
   buildSection({
     id: `supportingDocuments${index}`,
     title: (application: Application) => {
-      const externalData = application.externalData as ExternalData
       const answers = application.answers as Citizenship
       const selectedInCustody = getSelectedCustodyChildren(
-        externalData,
+        application.externalData,
         answers,
       )
+
+      const individual = getValueViaPath(
+        application.externalData,
+        'individual.data',
+        undefined,
+      ) as CitizenIndividual | undefined
 
       return {
         ...supportingDocuments.general.sectionTitleWithPerson,
         values: {
           person:
             index === 0
-              ? `${externalData?.individual?.data?.fullName}`
+              ? `${individual?.fullName}`
               : `${
                   selectedInCustody && selectedInCustody.length > index - 1
                     ? selectedInCustody[index - 1]?.fullName
@@ -39,9 +38,11 @@ export const SupportingDocumentsSection = (index: number) =>
       }
     },
     condition: (formValue: FormValue, externalData) => {
-      const external = externalData as ExternalData
       const answers = formValue as Citizenship
-      const selectedInCustody = getSelectedCustodyChildren(external, answers)
+      const selectedInCustody = getSelectedCustodyChildren(
+        externalData,
+        answers,
+      )
 
       return (
         index === 0 ||

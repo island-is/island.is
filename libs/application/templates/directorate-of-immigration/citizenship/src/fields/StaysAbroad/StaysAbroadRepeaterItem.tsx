@@ -13,13 +13,14 @@ import { FC, useEffect } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { information } from '../../lib/messages'
 import { SelectFormField } from '@island.is/application/ui-fields'
-import { fetchCountries } from '../../utils/getCountries'
 import DescriptionText from '../../components/DescriptionText'
+import { getValueViaPath } from '@island.is/application/core'
+import { Country } from '@island.is/clients/directorate-of-immigration/citizenship'
 
 interface Props {
   id: string
   index: number
-  repeaterField: any //GenericFormField<CoOwnerAndOperator>
+  repeaterField: any
   handleRemove: (index: number) => void
   itemNumber: number
   addDataToCountryList: (field: string, value: string, index: number) => void
@@ -46,7 +47,14 @@ export const StaysAbroadRepeaterItem: FC<Props & FieldBaseProps> = ({
   const purposeField = `${fieldIndex}.purpose`
   const wasRemovedField = `${fieldIndex}.wasRemoved`
 
-  const countryOptions = fetchCountries()
+  const countryOptions = (getValueViaPath(
+    application.externalData,
+    'countries.data',
+    [],
+  ) as Country[]).map(({ id, name }) => ({
+    value: id.toString(),
+    label: name,
+  }))
 
   useEffect(() => {
     setValue(wasRemovedField, repeaterField.wasRemoved)

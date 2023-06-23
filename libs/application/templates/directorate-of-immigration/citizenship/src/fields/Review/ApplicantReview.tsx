@@ -1,5 +1,5 @@
 import { FieldBaseProps } from '@island.is/application/types'
-import React, { FC } from 'react'
+import { FC } from 'react'
 import DescriptionText from '../../components/DescriptionText'
 import { personal, review } from '../../lib/messages'
 import { Box, GridColumn, GridRow, Text } from '@island.is/island-ui/core'

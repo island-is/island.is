@@ -1,8 +1,8 @@
-import React, { FC, useEffect, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
 import { FieldBaseProps } from '@island.is/application/types'
 import { Box, Button } from '@island.is/island-ui/core'
 import { StaysAbroadRepeaterItem } from './StaysAbroadRepeaterItem'
-import { CountryOfVisit } from '../../shared/types'
+import { CountryOfVisit } from '../../shared'
 import { getValueViaPath } from '@island.is/application/core'
 import { RadioController } from '@island.is/shared/form-fields'
 import { information } from '../../lib/messages'
@@ -120,6 +120,7 @@ export const StaysAbroad: FC<FieldBaseProps> = (props) => {
           marginBottom: 3,
         }}
       />
+      {/* TODO vantar að gera kassa rauðan ef tómt */}
       <RadioController
         id={'staysAbroad.hasStayedAbroad'}
         split="1/2"

@@ -6,8 +6,6 @@ import {
 import { ApiActions } from '../shared'
 
 export {
-  // NationalRegistryUserApi,
-  IdentityApi,
   UserProfileApi,
   ChildrenCustodyInformationApi,
 } from '@island.is/application/types'
@@ -17,6 +15,31 @@ export const UtlendingastofnunPaymentCatalogApi = PaymentCatalogApi.configure({
     organizationId: InstitutionNationalIds.UTLENDINGASTOFNUN,
   },
   externalDataId: 'payment',
+})
+
+export const ResidenceConditionsApi = defineTemplateApi({
+  action: ApiActions.getResidenceConditions,
+  externalDataId: 'residenceConditions',
+})
+
+export const CountriesApi = defineTemplateApi({
+  action: ApiActions.getCountries,
+  externalDataId: 'countries',
+})
+
+export const TravelDocumentTypesApi = defineTemplateApi({
+  action: ApiActions.getTravelDocumentTypes,
+  externalDataId: 'travelDocumentTypes',
+})
+
+export const NationalRegistryIndividualApi = defineTemplateApi({
+  action: ApiActions.getNationalRegistryIndividual,
+  externalDataId: 'individual',
+})
+
+export const NationalRegistrySpouseDetailsApi = defineTemplateApi({
+  action: ApiActions.getNationalRegistrySpouseDetails,
+  externalDataId: 'spouseDetails',
 })
 
 export const NationalRegistryBirthplaceApi = defineTemplateApi({
@@ -29,14 +52,4 @@ export const NationalRegistryParentsApi = defineTemplateApi({
   action: 'getParents',
   externalDataId: 'nationalRegistryParents',
   namespace: 'NationalRegistry',
-})
-
-export const CitizenshipIndividualApi = defineTemplateApi({
-  action: ApiActions.getCitizenshipIndividual,
-  externalDataId: 'individual',
-})
-
-export const CitizenGetSpouseApi = defineTemplateApi({
-  action: 'getSpouseWithDetails',
-  externalDataId: 'spouseDetails',
 })

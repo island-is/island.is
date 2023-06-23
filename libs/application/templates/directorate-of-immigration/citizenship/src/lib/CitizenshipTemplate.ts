@@ -21,15 +21,16 @@ import { Features } from '@island.is/feature-flags'
 import { ApiActions } from '../shared'
 import { CitizenshipSchema } from './dataSchema'
 import {
-  // NationalRegistryUserApi,
   UserProfileApi,
   UtlendingastofnunPaymentCatalogApi,
   NationalRegistryBirthplaceApi,
   ChildrenCustodyInformationApi,
   NationalRegistryParentsApi,
-  CitizenshipIndividualApi,
-  IdentityApi,
-  CitizenGetSpouseApi,
+  NationalRegistrySpouseDetailsApi,
+  NationalRegistryIndividualApi,
+  ResidenceConditionsApi,
+  CountriesApi,
+  TravelDocumentTypesApi,
 } from '../dataProviders'
 
 const template: ApplicationTemplate<
@@ -81,14 +82,16 @@ const template: ApplicationTemplate<
               write: 'all',
               delete: true,
               api: [
-                IdentityApi,
-                UserProfileApi,
-                UtlendingastofnunPaymentCatalogApi,
+                NationalRegistryIndividualApi,
+                NationalRegistrySpouseDetailsApi,
                 NationalRegistryBirthplaceApi,
-                ChildrenCustodyInformationApi,
                 NationalRegistryParentsApi,
-                CitizenshipIndividualApi,
-                CitizenGetSpouseApi,
+                ChildrenCustodyInformationApi,
+                UserProfileApi,
+                ResidenceConditionsApi,
+                CountriesApi,
+                TravelDocumentTypesApi,
+                UtlendingastofnunPaymentCatalogApi,
               ],
             },
           ],

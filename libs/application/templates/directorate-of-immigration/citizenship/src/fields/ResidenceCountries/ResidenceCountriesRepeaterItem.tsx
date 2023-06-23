@@ -9,9 +9,10 @@ import { useLocale } from '@island.is/localization'
 import { FC, useEffect } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { SelectFormField } from '@island.is/application/ui-fields'
-import { fetchCountries } from '../../utils/getCountries'
-import { CountryOfResidence } from '../../shared/types'
+import { CountryOfResidence } from '../../shared'
 import { information } from '../../lib/messages'
+import { getValueViaPath } from '@island.is/application/core'
+import { Country } from '@island.is/clients/directorate-of-immigration/citizenship'
 
 interface Props {
   id: string
@@ -38,7 +39,14 @@ export const ResidenceCountriesRepeaterItem: FC<Props & FieldBaseProps> = ({
   const countryField = `${fieldIndex}.country`
   const wasRemovedField = `${fieldIndex}.wasRemoved`
 
-  const countryOptions = fetchCountries()
+  const countryOptions = (getValueViaPath(
+    application.externalData,
+    'countries.data',
+    [],
+  ) as Country[]).map(({ id, name }) => ({
+    value: id.toString(),
+    label: name,
+  }))
 
   useEffect(() => {
     setValue(wasRemovedField, repeaterField.wasRemoved)

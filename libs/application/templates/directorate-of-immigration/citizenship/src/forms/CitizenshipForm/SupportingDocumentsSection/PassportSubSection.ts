@@ -3,15 +3,16 @@ import {
   buildSubSection,
   buildDescriptionField,
   buildTextField,
-  buildCustomField,
   buildDateField,
   buildFileUploadField,
+  buildSelectField,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { supportingDocuments } from '../../../lib/messages'
 import { Application } from '@island.is/application/types'
 import { Citizenship } from '../../../lib/dataSchema'
-import { ExternalData } from '../../../types'
-import { getSelectedCustodyChildren } from '../../../utils/childrenInfo'
+import { getSelectedCustodyChildren } from '../../../utils'
+import { TravelDocumentType } from '@island.is/clients/directorate-of-immigration/citizenship'
 
 const FILE_SIZE_LIMIT = 10000000
 
@@ -24,10 +25,9 @@ export const PassportSubSection = (index: number) =>
         id: `passportMultiField${index}`,
         title: supportingDocuments.labels.passport.pageTitle,
         description: (application: Application) => {
-          const externalData = application.externalData as ExternalData
           const answers = application.answers as Citizenship
           const selectedInCustody = getSelectedCustodyChildren(
-            externalData,
+            application.externalData,
             answers,
           )
 
@@ -65,14 +65,25 @@ export const PassportSubSection = (index: number) =>
             id: `passport[${index}].passportNumber`,
             title: supportingDocuments.labels.passport.passportNumber,
             placeholder: supportingDocuments.labels.passport.numberPlaceholder,
-
             width: 'half',
           }),
-          buildTextField({
+          buildSelectField({
             id: `passport[${index}].passportType`,
             title: supportingDocuments.labels.passport.passportType,
             placeholder: supportingDocuments.labels.passport.typePlaceholder,
             width: 'half',
+            options: (application) => {
+              const travelDocumentTypes = getValueViaPath(
+                application.externalData,
+                'travelDocumentTypes.data',
+                [],
+              ) as TravelDocumentType[]
+
+              return travelDocumentTypes.map(({ id, name }) => ({
+                value: id.toString(),
+                label: name,
+              }))
+            },
           }),
           buildTextField({
             id: `passport[${index}].publisher`,
@@ -84,7 +95,7 @@ export const PassportSubSection = (index: number) =>
             title: '',
             introduction: '',
             maxSize: FILE_SIZE_LIMIT,
-            uploadHeader: 'æljksadf',
+            uploadHeader: 'æljksadf', //TODO
           }),
         ],
       }),

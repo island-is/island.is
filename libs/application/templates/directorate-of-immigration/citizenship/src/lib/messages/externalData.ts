@@ -22,6 +22,12 @@ export const externalData = {
       defaultMessage: `Mér er kunnugt um að ég get misst núverandi ríkisborgararétt minn við töku íslensks ríkisborgararéttar.\n\n Jafnframt lýsi ég því yfir að ég hef kynnt mér persónuverndarskilmála Útlendingastofnunar vegna umsókna um íslenskan ríkisborgararétt og heimila þar með Útlendingastofnun og lögregluembættum að afla þeirra upplýsinga um mig sem þessir aðilar telja nauðsynlegar til að meta umsókn mína, þar á meðal sakavottorðs hérlendis sem erlendis og upplýsinga frá skattyfirvöldum.`,
       description: 'External data description',
     },
+    subTitle2: {
+      id: 'doi.cs.application:externalData.dataProvider.subTitle2',
+      defaultMessage:
+        'Eftirfarandi gögn verða sótt rafrænt af Útlendingastofnun',
+      description: 'External data sub title 2',
+    },
     checkboxLabel: {
       id: 'doi.cs.application:externalData.dataProvider.checkboxLabel',
       defaultMessage: 'Ég skil að ofangreindra upplýsinga verður aflað',
@@ -41,19 +47,8 @@ export const externalData = {
     },
     subTitle: {
       id: 'doi.cs.application:externalData.nationalRegistry.subTitle',
-      defaultMessage: 'Hér sækjum við nafn, kennitölu og heimilisfang',
-      description: 'National Registry sub title',
-    },
-  }),
-  nationalRegistrySpuse: defineMessages({
-    title: {
-      id: 'doi.cs.application:externalData.nationalRegistrySpouse.title',
-      defaultMessage: 'Upplýsingar úr Þjóðskrá maka',
-      description: 'National Registry title',
-    },
-    subTitle: {
-      id: 'doi.cs.application:externalData.nationalRegistrySpouse.subTitle',
-      defaultMessage: 'Hér sækjum við nafn, kennitölu og heimilisfang maka',
+      defaultMessage:
+        'Persónuupplýsingar um þig, hjúskaparstöðu, maka og börn í þinni forsjá.',
       description: 'National Registry sub title',
     },
   }),
@@ -91,8 +86,36 @@ export const externalData = {
     },
     subTitle: {
       id: 'doi.cs.application:externalData.icelandRevenueAndCustoms.subTitle',
-      defaultMessage: 'Upplýsingar um framfærslu þína',
+      defaultMessage:
+        'Upplýsingar um skuldastöðu þína við ríkissjóð, staðgreiðsluyfirlit launa síðustu 12 mánaða ásamt skattframtöl síðust þriggja ára.',
       description: 'Iceland revenue and customs sub title',
+    },
+  }),
+  nationalRegistry2: defineMessages({
+    title: {
+      id: 'doi.cs.application:externalData.nationalRegistry2.title',
+      defaultMessage: 'Upplýsingar úr Þjóðskrá',
+      description: 'National Registry title',
+    },
+    subTitle: {
+      id: 'doi.cs.application:externalData.nationalRegistry2.subTitle',
+      defaultMessage:
+        'Upplýsingar um lögheimilissöguvottorð (Búsetutímavottorð).',
+      description: 'National Registry 2 sub title',
+    },
+  }),
+  nationalCommissionerOfPolice: defineMessages({
+    title: {
+      id: 'doi.cs.application:externalData.nationalCommissionerOfPolice.title',
+      defaultMessage: 'Upplýsingar frá Ríkislögreglustjóra',
+      description: 'National commissioner of police title',
+    },
+    subTitle: {
+      id:
+        'doi.cs.application:externalData.nationalCommissionerOfPolice.subTitle',
+      defaultMessage:
+        'Upplýsingar um sektir, fangelsisrefsingar eða ólokin mál í refsivörslukerfinu.',
+      description: 'National commissioner of police sub title',
     },
   }),
 }

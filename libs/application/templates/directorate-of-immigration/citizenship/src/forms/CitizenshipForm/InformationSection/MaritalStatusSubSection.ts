@@ -3,12 +3,14 @@ import {
   buildTextField,
   buildSubSection,
   buildDescriptionField,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { information } from '../../../lib/messages'
 import { Application } from '@island.is/api/schema'
 import { Answer } from '@island.is/application/types'
 import { Citizenship } from '../../../lib/dataSchema'
-import { ExternalData } from '../../../types'
+import { CitizenIndividual, SpouseIndividual } from '../../../shared'
+import { ResidenceCondition } from '@island.is/clients/directorate-of-immigration/citizenship'
 
 export const MaritalStatusSubSection = buildSubSection({
   id: 'maritalStatus',
@@ -17,12 +19,20 @@ export const MaritalStatusSubSection = buildSubSection({
     buildMultiField({
       id: 'maritalStatusMultiField',
       title: information.labels.maritalStatus.pageTitle,
-      condition: (answer: Answer) => {
+      condition: (answer: Answer, externalData) => {
         const answers = answer as Citizenship
-        if (
-          answers.residenceCondition?.radio === 'marriedToIcelander' ||
-          answers.residenceCondition?.radio === 'cohabitWithIcelander'
-        ) {
+
+        const residenceConditions = getValueViaPath(
+          externalData,
+          'residenceConditions.data',
+          [],
+        ) as ResidenceCondition[]
+
+        const selectedResidenceCondition = residenceConditions.filter(
+          (x) => x.id.toString() === answers.residenceCondition?.radio,
+        )[0]
+
+        if (selectedResidenceCondition?.isTypeMaritalStatus) {
           return true
         }
         return false
@@ -40,7 +50,7 @@ export const MaritalStatusSubSection = buildSubSection({
           width: 'half',
           readOnly: true,
           defaultValue: (application: Application) =>
-            application.externalData?.spouseDetails?.data?.maritalTitle
+            application.externalData?.individual?.data?.maritalTitle
               ?.description,
         }),
         buildTextField({
@@ -49,7 +59,7 @@ export const MaritalStatusSubSection = buildSubSection({
           backgroundColor: 'white',
           width: 'half',
           readOnly: true,
-          defaultValue: (application: Application) => 'date here',
+          defaultValue: (application: Application) => 'date here', //TODO
         }),
         buildTextField({
           id: 'maritalStatus.nationalId',
@@ -78,7 +88,8 @@ export const MaritalStatusSubSection = buildSubSection({
           width: 'half',
           readOnly: true,
           defaultValue: (application: Application) =>
-            'Spouse Birth country here',
+            application.externalData?.spouseDetails?.data?.spouseBirthplace
+              ?.location, //TODO vantar land en ekki borg
         }),
         buildTextField({
           id: 'maritalStatus.citizenship',
@@ -101,9 +112,20 @@ export const MaritalStatusSubSection = buildSubSection({
           defaultValue: (application: Application) =>
             `${application.externalData?.individual?.data?.address?.streetAddress}, ${application.externalData?.individual?.data?.address?.postalCode} ${application.externalData?.individual?.data?.address?.city}`,
           condition: (_, externalData: any) => {
-            const externalCustomData = externalData as ExternalData
-            const myAddressCombination = `${externalCustomData.individual?.data?.address?.streetAddress}, ${externalCustomData.individual?.data?.address?.postalCode} ${externalCustomData.individual?.data?.address?.city}`
-            const mySpouseAddressCombination = `${externalCustomData.spouseDetails?.data?.spouse?.address?.streetAddress}, ${externalCustomData.spouseDetails?.data?.spouse?.address?.postalCode} ${externalCustomData.spouseDetails?.data?.spouse?.address?.city}`
+            const individual = getValueViaPath(
+              externalData,
+              'individual.data',
+              undefined,
+            ) as CitizenIndividual | undefined
+
+            const spouseDetails = getValueViaPath(
+              externalData,
+              'spouseDetails.data',
+              undefined,
+            ) as SpouseIndividual | undefined
+
+            const myAddressCombination = `${individual?.address?.streetAddress}, ${individual?.address?.postalCode} ${individual?.address?.city}`
+            const mySpouseAddressCombination = `${spouseDetails?.spouse?.address?.streetAddress}, ${spouseDetails?.spouse?.address?.postalCode} ${spouseDetails?.spouse?.address?.city}`
             return myAddressCombination !== mySpouseAddressCombination
           },
         }),
@@ -116,9 +138,20 @@ export const MaritalStatusSubSection = buildSubSection({
           defaultValue: (application: Application) =>
             `${application.externalData?.spouseDetails?.data?.spouse?.address?.streetAddress}, ${application.externalData?.spouseDetails?.data?.spouse?.address?.postalCode} ${application.externalData?.spouseDetails?.data?.spouse?.address?.city}`,
           condition: (_, externalData: any) => {
-            const externalCustomData = externalData as ExternalData
-            const myAddressCombination = `${externalCustomData.individual?.data?.address?.streetAddress}, ${externalCustomData.individual?.data?.address?.postalCode} ${externalCustomData.individual?.data?.address?.city}`
-            const mySpouseAddressCombination = `${externalCustomData.spouseDetails?.data?.spouse?.address?.streetAddress}, ${externalCustomData.spouseDetails?.data?.spouse?.address?.postalCode} ${externalCustomData.spouseDetails?.data?.spouse?.address?.city}`
+            const individual = getValueViaPath(
+              externalData,
+              'individual.data',
+              undefined,
+            ) as CitizenIndividual | undefined
+
+            const spouseDetails = getValueViaPath(
+              externalData,
+              'spouseDetails.data',
+              undefined,
+            ) as SpouseIndividual | undefined
+
+            const myAddressCombination = `${individual?.address?.streetAddress}, ${individual?.address?.postalCode} ${individual?.address?.city}`
+            const mySpouseAddressCombination = `${spouseDetails?.spouse?.address?.streetAddress}, ${spouseDetails?.spouse?.address?.postalCode} ${spouseDetails?.spouse?.address?.city}`
             return myAddressCombination !== mySpouseAddressCombination
           },
         }),
@@ -128,9 +161,20 @@ export const MaritalStatusSubSection = buildSubSection({
           titleVariant: 'h5',
           space: 'gutter',
           condition: (_, externalData: any) => {
-            const externalCustomData = externalData as ExternalData
-            const myAddressCombination = `${externalCustomData.individual?.data?.address?.streetAddress}, ${externalCustomData.individual?.data?.address?.postalCode} ${externalCustomData.individual?.data?.address?.city}`
-            const mySpouseAddressCombination = `${externalCustomData.spouseDetails?.data?.spouse?.address?.streetAddress}, ${externalCustomData.spouseDetails?.data?.spouse?.address?.postalCode} ${externalCustomData.spouseDetails?.data?.spouse?.address?.city}`
+            const individual = getValueViaPath(
+              externalData,
+              'individual.data',
+              undefined,
+            ) as CitizenIndividual | undefined
+
+            const spouseDetails = getValueViaPath(
+              externalData,
+              'spouseDetails.data',
+              undefined,
+            ) as SpouseIndividual | undefined
+
+            const myAddressCombination = `${individual?.address?.streetAddress}, ${individual?.address?.postalCode} ${individual?.address?.city}`
+            const mySpouseAddressCombination = `${spouseDetails?.spouse?.address?.streetAddress}, ${spouseDetails?.spouse?.address?.postalCode} ${spouseDetails?.spouse?.address?.city}`
             return myAddressCombination !== mySpouseAddressCombination
           },
         }),
@@ -141,9 +185,20 @@ export const MaritalStatusSubSection = buildSubSection({
           width: 'full',
           variant: 'textarea',
           condition: (_, externalData: any) => {
-            const externalCustomData = externalData as ExternalData
-            const myAddressCombination = `${externalCustomData.individual?.data?.address?.streetAddress}, ${externalCustomData.individual?.data?.address?.postalCode} ${externalCustomData.individual?.data?.address?.city}`
-            const mySpouseAddressCombination = `${externalCustomData.spouseDetails?.data?.spouse?.address?.streetAddress}, ${externalCustomData.spouseDetails?.data?.spouse?.address?.postalCode} ${externalCustomData.spouseDetails?.data?.spouse?.address?.city}`
+            const individual = getValueViaPath(
+              externalData,
+              'individual.data',
+              undefined,
+            ) as CitizenIndividual | undefined
+
+            const spouseDetails = getValueViaPath(
+              externalData,
+              'spouseDetails.data',
+              undefined,
+            ) as SpouseIndividual | undefined
+
+            const myAddressCombination = `${individual?.address?.streetAddress}, ${individual?.address?.postalCode} ${individual?.address?.city}`
+            const mySpouseAddressCombination = `${spouseDetails?.spouse?.address?.streetAddress}, ${spouseDetails?.spouse?.address?.postalCode} ${spouseDetails?.spouse?.address?.city}`
             return myAddressCombination !== mySpouseAddressCombination
           },
         }),

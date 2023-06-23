@@ -2,7 +2,6 @@ import {
   buildDataProviderItem,
   buildExternalDataProvider,
   buildForm,
-  buildMultiField,
   buildSection,
   buildSubmitField,
 } from '@island.is/application/core'
@@ -11,7 +10,6 @@ import {
   DefaultEvents,
   Form,
   FormModes,
-  IdentityApi,
 } from '@island.is/application/types'
 import {
   confirmation,
@@ -23,11 +21,13 @@ import {
   supportingDocuments,
 } from '../../lib/messages'
 import {
-  CitizenGetSpouseApi,
-  CitizenshipIndividualApi,
+  CountriesApi,
   NationalRegistryBirthplaceApi,
+  NationalRegistryIndividualApi,
   NationalRegistryParentsApi,
-  // NationalRegistryUserApi,
+  NationalRegistrySpouseDetailsApi,
+  ResidenceConditionsApi,
+  TravelDocumentTypesApi,
   UserProfileApi,
   UtlendingastofnunPaymentCatalogApi,
 } from '../../dataProviders'
@@ -49,6 +49,62 @@ export const Prerequisites: Form = buildForm({
           subTitle: externalData.dataProvider.subTitle,
           description: externalData.dataProvider.description,
           checkboxLabel: externalData.dataProvider.checkboxLabel,
+          dataProviders: [
+            buildDataProviderItem({
+              provider: NationalRegistryIndividualApi,
+              title: externalData.nationalRegistry.title,
+              subTitle: externalData.nationalRegistry.subTitle,
+            }),
+            buildDataProviderItem({
+              provider: NationalRegistrySpouseDetailsApi,
+              title: '',
+              subTitle: '',
+            }),
+            buildDataProviderItem({
+              provider: NationalRegistryBirthplaceApi,
+              title: '',
+            }),
+            buildDataProviderItem({
+              provider: NationalRegistryParentsApi,
+              title: '',
+            }),
+            buildDataProviderItem({
+              provider: ChildrenCustodyInformationApi,
+              title: '',
+            }),
+            buildDataProviderItem({
+              provider: UserProfileApi,
+              title: externalData.userProfile.title,
+              subTitle: externalData.userProfile.subTitle,
+            }),
+            //TODOx fetch information about current permit
+            buildDataProviderItem({
+              title: externalData.directorateOfImmigration.title,
+              subTitle: externalData.directorateOfImmigration.subTitle,
+            }),
+            buildDataProviderItem({
+              provider: ResidenceConditionsApi,
+              title: '',
+            }),
+            buildDataProviderItem({
+              provider: CountriesApi,
+              title: '',
+            }),
+            buildDataProviderItem({
+              provider: TravelDocumentTypesApi,
+              title: '',
+            }),
+            buildDataProviderItem({
+              provider: UtlendingastofnunPaymentCatalogApi,
+              title: '',
+            }),
+          ],
+        }),
+        buildExternalDataProvider({
+          title: externalData.dataProvider.pageTitle,
+          id: 'approveExternalData2',
+          subTitle: externalData.dataProvider.subTitle2,
+          checkboxLabel: externalData.dataProvider.checkboxLabel,
           submitField: buildSubmitField({
             id: 'submit',
             placement: 'footer',
@@ -63,55 +119,22 @@ export const Prerequisites: Form = buildForm({
             ],
           }),
           dataProviders: [
-            // buildDataProviderItem({
-            //   provider: NationalRegistryUserApi,
-            //   title: externalData.nationalRegistry.title,
-            //   subTitle: externalData.nationalRegistry.subTitle,
-            // }),
-            buildDataProviderItem({
-              provider: IdentityApi,
-              title: externalData.nationalRegistry.title,
-              subTitle: externalData.nationalRegistry.subTitle,
-            }),
-            buildDataProviderItem({
-              provider: CitizenGetSpouseApi,
-              title: '',
-              subTitle: '',
-            }),
-            buildDataProviderItem({
-              provider: NationalRegistryBirthplaceApi,
-              title: '',
-            }),
-            buildDataProviderItem({
-              provider: ChildrenCustodyInformationApi,
-              title: '',
-            }),
-            buildDataProviderItem({
-              provider: NationalRegistryParentsApi,
-              title: '',
-            }),
-            buildDataProviderItem({
-              provider: UserProfileApi,
-              title: externalData.userProfile.title,
-              subTitle: externalData.userProfile.subTitle,
-            }),
-            buildDataProviderItem({
-              provider: UtlendingastofnunPaymentCatalogApi,
-              title: '',
-            }),
-            buildDataProviderItem({
-              provider: CitizenshipIndividualApi,
-              title: '',
-            }),
-            buildDataProviderItem({
-              id: 'currentResidencePermit',
-              title: externalData.directorateOfImmigration.title,
-              subTitle: externalData.directorateOfImmigration.subTitle,
-            }),
             buildDataProviderItem({
               id: 'meansOfSupport',
               title: externalData.icelandRevenueAndCustoms.title,
               subTitle: externalData.icelandRevenueAndCustoms.subTitle,
+            }),
+            buildDataProviderItem({
+              title: externalData.nationalRegistry2.title,
+              subTitle: externalData.nationalRegistry2.subTitle,
+            }),
+            buildDataProviderItem({
+              title: externalData.nationalRegistry2.title,
+              subTitle: externalData.nationalRegistry2.subTitle,
+            }),
+            buildDataProviderItem({
+              title: externalData.nationalCommissionerOfPolice.title,
+              subTitle: externalData.nationalCommissionerOfPolice.subTitle,
             }),
           ],
         }),

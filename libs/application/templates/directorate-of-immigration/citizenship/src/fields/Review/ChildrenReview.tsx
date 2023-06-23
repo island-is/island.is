@@ -1,15 +1,17 @@
-import { FieldBaseProps } from '@island.is/application/types'
-import React, { FC } from 'react'
+import {
+  ApplicantChildCustodyInformation,
+  FieldBaseProps,
+} from '@island.is/application/types'
+import { FC } from 'react'
 import { personal, review, selectChildren } from '../../lib/messages'
 import { Box, GridColumn, GridRow, Text } from '@island.is/island-ui/core'
 import DescriptionText from '../../components/DescriptionText'
 import { Citizenship } from '../../lib/dataSchema'
-import { ExternalData } from '../../types'
 import { useLocale } from '@island.is/localization'
+import { getValueViaPath } from '@island.is/application/core'
 
 export const ChildrenReview: FC<FieldBaseProps> = ({ application }) => {
   const answers = application.answers as Citizenship
-  const externalData = application.externalData as ExternalData
   const { formatMessage } = useLocale()
   return (
     <Box paddingBottom={4} paddingTop={4}>
@@ -24,7 +26,11 @@ export const ChildrenReview: FC<FieldBaseProps> = ({ application }) => {
       {answers?.selectedChildren &&
         answers?.selectedChildren?.length > 0 &&
         answers?.selectedChildren?.map((child) => {
-          const childWithInfo = externalData.childrenCustodyInformation?.data?.find(
+          const childWithInfo = (getValueViaPath(
+            application.externalData,
+            'childrenCustodyInformation.data',
+            [],
+          ) as ApplicantChildCustodyInformation[]).find(
             (x) => x.nationalId === child,
           )
           return (

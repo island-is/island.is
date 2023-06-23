@@ -1,6 +1,7 @@
 import {
+  NationalRegistryBirthplace,
   NationalRegistryIndividual,
-  SuccessfulDataProviderResult,
+  NationalRegistrySpouse,
 } from '@island.is/application/types'
 import {
   RemoveableCountrySchema,
@@ -9,15 +10,19 @@ import {
 } from '../lib/dataSchema'
 import { z } from 'zod'
 
-interface IdentityResult extends SuccessfulDataProviderResult {
-  data: NationalRegistryIndividual
-}
-
-export type CitizenshipExternalData = {
-  nationalRegistry?: IdentityResult
-}
-
 export type ParentsToApplicant = z.TypeOf<typeof ParentInformationSchema>
-
 export type CountryOfResidence = z.TypeOf<typeof RemoveableCountrySchema>
 export type CountryOfVisit = z.TypeOf<typeof RemoveableStayAbroadSchema>
+
+export interface CitizenIndividual extends NationalRegistryIndividual {
+  residenceLastChangeDate?: Date | null
+  maritalTitle?: {
+    code?: string | null
+    description?: string | null
+  } | null
+}
+
+export interface SpouseIndividual extends NationalRegistrySpouse {
+  spouse?: CitizenIndividual | null
+  spouseBirthplace?: NationalRegistryBirthplace | null
+}

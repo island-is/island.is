@@ -6,10 +6,9 @@ import {
   buildFileUploadField,
 } from '@island.is/application/core'
 import { supportingDocuments } from '../../../lib/messages'
-import { Application, FormValue } from '@island.is/application/types'
+import { Answer, Application, FormValue } from '@island.is/application/types'
 import { Citizenship } from '../../../lib/dataSchema'
-import { ExternalData } from '../../../types'
-import { getSelectedCustodyChildren } from '../../../utils/childrenInfo'
+import { getSelectedCustodyChildren } from '../../../utils'
 import * as kennitala from 'kennitala'
 
 const FILE_SIZE_LIMIT = 10000000
@@ -23,10 +22,9 @@ export const OtherDocumentsSubSection = (index: number) =>
         id: 'otherDocumentsMultiField',
         title: supportingDocuments.labels.otherDocuments.pageTitle,
         description: (application: Application) => {
-          const externalData = application.externalData as ExternalData
           const answers = application.answers as Citizenship
           const selectedInCustody = getSelectedCustodyChildren(
-            externalData,
+            application.externalData,
             answers,
           )
 
@@ -59,10 +57,11 @@ export const OtherDocumentsSubSection = (index: number) =>
             maxSize: FILE_SIZE_LIMIT,
             uploadHeader:
               supportingDocuments.labels.otherDocuments.birthCertificate,
-            condition: (formValue: FormValue) => {
-              const answers = formValue as Citizenship
+            condition: (answer: Answer) => {
+              const answers = answer as Citizenship
 
-              if (answers.residenceCondition?.radio === 'childOfIcelander') {
+              //TODO breyta mv uppfærða hönnun
+              if (answers.residenceCondition?.radio === '20092') {
                 return true
               }
               return false
@@ -116,10 +115,9 @@ export const OtherDocumentsSubSection = (index: number) =>
         id: 'otherDocumentsChildrenMultiField',
         title: supportingDocuments.labels.otherDocuments.pageTitle,
         description: (application: Application) => {
-          const externalData = application.externalData as ExternalData
           const answers = application.answers as Citizenship
           const selectedInCustody = getSelectedCustodyChildren(
-            externalData,
+            application.externalData,
             answers,
           )
 

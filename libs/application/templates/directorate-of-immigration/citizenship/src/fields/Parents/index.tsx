@@ -1,13 +1,8 @@
-import {
-  FieldComponents,
-  FieldTypes,
-  NationalRegistryParent,
-} from '@island.is/application/types'
-import { TextFormField } from '@island.is/application/ui-fields'
-import React, { useState } from 'react'
+import { NationalRegistryParent } from '@island.is/application/types'
+import { useState } from 'react'
 import { personal, information } from '../../lib/messages'
 import DescriptionText from '../../components/DescriptionText'
-import { Box, GridColumn, GridRow, Input } from '@island.is/island-ui/core'
+import { Box, GridColumn, GridRow } from '@island.is/island-ui/core'
 import { NationalIdWithName } from '../NationalIdWithName'
 import { InputController } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
@@ -122,6 +117,7 @@ export const Parents = ({ field, application, error }: any) => {
               marginBottom: 0,
             }}
           />
+          {/* TODO ekki gera required */}
           <NationalIdWithName
             field={field}
             application={application}
@@ -162,6 +158,7 @@ export const Parents = ({ field, application, error }: any) => {
               marginBottom: 0,
             }}
           />
+          {/* TODO ekki gera required */}
           <NationalIdWithName
             field={field}
             application={application}

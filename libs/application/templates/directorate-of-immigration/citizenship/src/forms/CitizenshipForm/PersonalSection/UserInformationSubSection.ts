@@ -5,7 +5,7 @@ import {
   buildDescriptionField,
 } from '@island.is/application/core'
 import { personal } from '../../../lib/messages'
-import { Application, NationalRegistryUser } from '@island.is/api/schema'
+import { Application } from '@island.is/api/schema'
 import { formatDate } from '../../../utils'
 
 export const UserInformationSubSection = buildSubSection({
@@ -96,6 +96,7 @@ export const UserInformationSubSection = buildSubSection({
           width: 'half',
           readOnly: true,
           defaultValue: (application: Application) => {
+            //TODO birta rétta dags?
             console.log('application', application)
             return formatDate(
               new Date('01.01.2022'),

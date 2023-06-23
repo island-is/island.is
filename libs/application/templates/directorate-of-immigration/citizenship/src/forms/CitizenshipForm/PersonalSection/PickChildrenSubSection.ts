@@ -2,19 +2,23 @@ import {
   buildMultiField,
   buildSubSection,
   buildCustomField,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { selectChildren } from '../../../lib/messages'
-import { ExternalData } from '../../../types'
 import * as kennitala from 'kennitala'
+import { ApplicantChildCustodyInformation } from '@island.is/application/types'
 
 export const PickChildrenSubSection = buildSubSection({
   id: 'pickChildren',
   title: selectChildren.general.subSectionTitle,
   condition: (_, externalData) => {
-    const convertedData = (externalData as unknown) as ExternalData
-    return convertedData.childrenCustodyInformation?.data
-      ? convertedData.childrenCustodyInformation?.data?.length > 0
-      : false
+    const childWithInfo = getValueViaPath(
+      externalData,
+      'childrenCustodyInformation.data',
+      [],
+    ) as ApplicantChildCustodyInformation[]
+
+    return childWithInfo ? childWithInfo.length > 0 : false
   },
   children: [
     buildMultiField({
@@ -28,13 +32,17 @@ export const PickChildrenSubSection = buildSubSection({
             title: selectChildren.warningAgeChildren.title,
             component: 'AlertWithLink',
             condition: (_, externalData) => {
-              const convertedData = (externalData as unknown) as ExternalData
-              const childrenInAgeRange = convertedData.childrenCustodyInformation?.data.filter(
-                (child) => {
-                  const childInfo = kennitala.info(child.nationalId)
-                  return childInfo.age >= 17
-                },
-              )
+              const childWithInfo = getValueViaPath(
+                externalData,
+                'childrenCustodyInformation.data',
+                [],
+              ) as ApplicantChildCustodyInformation[]
+
+              const childrenInAgeRange = childWithInfo.filter((child) => {
+                const childInfo = kennitala.info(child.nationalId)
+                return childInfo.age >= 17
+              })
+
               return childrenInAgeRange ? childrenInAgeRange.length > 0 : false
             },
           },
@@ -56,13 +64,17 @@ export const PickChildrenSubSection = buildSubSection({
             title: 'Upplýsingar',
             component: 'InformationBoxWithLink',
             condition: (_, externalData) => {
-              const convertedData = (externalData as unknown) as ExternalData
-              const childrenInAgeRange = convertedData.childrenCustodyInformation?.data.filter(
-                (child) => {
-                  const childInfo = kennitala.info(child.nationalId)
-                  return childInfo.age >= 11 || childInfo.age <= 18
-                },
-              )
+              const childWithInfo = getValueViaPath(
+                externalData,
+                'childrenCustodyInformation.data',
+                [],
+              ) as ApplicantChildCustodyInformation[]
+
+              const childrenInAgeRange = childWithInfo.filter((child) => {
+                const childInfo = kennitala.info(child.nationalId)
+                return childInfo.age >= 11 || childInfo.age <= 18
+              })
+
               return childrenInAgeRange ? childrenInAgeRange.length > 0 : false
             },
           },

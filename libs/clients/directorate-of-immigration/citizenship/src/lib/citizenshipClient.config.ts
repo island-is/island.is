@@ -1,21 +1,18 @@
 import { defineConfig } from '@island.is/nest/config'
-import * as z from 'zod'
+import { z } from 'zod'
 
 const schema = z.object({
-  xroadPath: z.string(),
+  url: z.string(),
   scope: z.array(z.string()),
 })
 
-export const CitizenshipClientConfig = defineConfig<z.infer<typeof schema>>({
-  name: 'CitizenshipClient',
+export const CitizenshipClientConfig = defineConfig({
+  name: 'CitizenshipApi',
   schema,
   load(env) {
     return {
-      xroadPath: env.required(
-        'XROAD_CITIZENSHIP_PATH',
-        'IS-DEV/GOV/10017/Utlendingastofnun-Protected/Citizenship-V1',
-      ),
-      scope: ['@utlendingastofnun/rikisborgararettur'],
+      url: 'https://utl-umsokn.azurewebsites.net/',
+      scope: ['@utl.is/umsoknir'],
     }
   },
 })

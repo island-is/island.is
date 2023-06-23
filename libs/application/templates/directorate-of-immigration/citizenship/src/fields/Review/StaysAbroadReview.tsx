@@ -1,6 +1,6 @@
 import { FieldBaseProps } from '@island.is/application/types'
 import { Box } from '@island.is/island-ui/core'
-import React, { FC } from 'react'
+import { FC } from 'react'
 import DescriptionText from '../../components/DescriptionText'
 import { review } from '../../lib/messages'
 

@@ -1,4 +1,4 @@
-import { string, z } from 'zod'
+import { z } from 'zod'
 import * as kennitala from 'kennitala'
 
 const UserSchemaBase = z.object({
@@ -155,7 +155,7 @@ export const CitizenshipSchema = z.object({
   spouse: z.string().min(1),
   countriesOfResidence: CountriesOfResidenceSchema,
   staysAbroad: StaysAbroadSchema,
-  passport: z.array(PassportSchema),
+  passport: z.array(PassportSchema), //TODO á þetta að vera array?
   maritalStatus: MaritalStatusSchema,
 })
 

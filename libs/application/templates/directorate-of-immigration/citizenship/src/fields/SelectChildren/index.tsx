@@ -1,4 +1,3 @@
-import React from 'react'
 import { Box, Tag } from '@island.is/island-ui/core'
 import { CheckboxFormField } from '@island.is/application/ui-fields'
 import { selectChildren } from '../../lib/messages'

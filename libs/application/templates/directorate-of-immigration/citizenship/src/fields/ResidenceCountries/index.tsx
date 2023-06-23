@@ -1,8 +1,8 @@
-import React, { FC, useEffect, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
 import { FieldBaseProps } from '@island.is/application/types'
 import { Box, Button } from '@island.is/island-ui/core'
 import { ResidenceCountriesRepeaterItem } from './ResidenceCountriesRepeaterItem'
-import { CountryOfResidence } from '../../shared/types'
+import { CountryOfResidence } from '../../shared'
 import { getValueViaPath } from '@island.is/application/core'
 import { RadioController } from '@island.is/shared/form-fields'
 import { information } from '../../lib/messages'
@@ -105,6 +105,7 @@ export const ResidenceCountries: FC<FieldBaseProps> = (props) => {
           marginBottom: 3,
         }}
       />
+      {/* TODO vantar að gera kassa rauðan ef tómt */}
       <RadioController
         id={'countriesOfResidence.hasLivedAbroad'}
         split="1/2"

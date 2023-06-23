@@ -8,7 +8,7 @@ import { IdentityInput, Query } from '@island.is/api/schema'
 import { InputController } from '@island.is/shared/form-fields'
 import { useFormContext } from 'react-hook-form'
 import * as kennitala from 'kennitala'
-import { information, error, personal } from '../../lib/messages'
+import { error, personal } from '../../lib/messages'
 import debounce from 'lodash/debounce'
 import { IDENTITY_QUERY } from '../../graphql/queries'
 
