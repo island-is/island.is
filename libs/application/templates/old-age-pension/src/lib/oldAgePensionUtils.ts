@@ -1,10 +1,5 @@
 import { formatText, getValueViaPath } from '@island.is/application/core'
-import {
-  Application,
-  MaybeWithApplicationAndField,
-  Option,
-  YesOrNo,
-} from '@island.is/application/types'
+import { Application, Option, YesOrNo } from '@island.is/application/types'
 import {
   MONTHS,
   ConnectedApplications,
@@ -22,11 +17,11 @@ import { oldAgePensionFormMessage } from './messages'
 import * as kennitala from 'kennitala'
 import addYears from 'date-fns/addYears'
 import addMonths from 'date-fns/addMonths'
+import addDays from 'date-fns/addDays'
 import { residenceHistory, combinedResidenceHistory } from '../types'
 import React from 'react'
 import { useLocale } from '@island.is/localization'
 import { getCountryByCode } from '@island.is/shared/utils'
-import App from 'next/app'
 
 interface fileType {
   key: string
@@ -192,24 +187,35 @@ export function getStartDateAndEndDate(
   nationalId: string,
   applicationType: ApplicationType,
 ) {
+  // Applicant could apply from the 1st of the month after his/her 65 birthday
+  // Until 6 month ahead
   const today = new Date()
   const nationalIdInfo = kennitala.info(nationalId)
   const dateOfBirth = new Date(nationalIdInfo.birthday)
   const age = nationalIdInfo.age
-  const dateOfBirthThisYear = new Date(
+  const thisYearBirthday = new Date(
     today.getFullYear(),
     dateOfBirth.getMonth(),
     dateOfBirth.getDay(),
   )
 
-  const thisYearAge = dateOfBirthThisYear > today ? age + 1 : age
-  let startDate = dateOfBirthThisYear
-  let endDate = addMonths(today, 6)
+  const thisYearAge = thisYearBirthday > today ? age + 1 : age
+  const thisYearBirthdayPlusOneMonth = addMonths(thisYearBirthday, 1)
+  const nextMonth = addMonths(today, 1)
+
+  // startDate is 1st day of the month after birhday this year
+  let startDate = addDays(
+    thisYearBirthdayPlusOneMonth,
+    thisYearBirthdayPlusOneMonth.getDay() + 1,
+  )
+  let endDate = addMonths(today, 6) // þarf að spyrja hvort það sé +6 eða +7
 
   if (thisYearAge >= oldAgePensionAge) {
     // >= 67 year old
     startDate = addYears(
-      dateOfBirthThisYear > today ? dateOfBirthThisYear : today,
+      thisYearBirthdayPlusOneMonth > nextMonth
+        ? thisYearBirthdayPlusOneMonth
+        : nextMonth,
       -2,
     )
   } else if (thisYearAge < fishermenMinAge) {
@@ -219,11 +225,13 @@ export function getStartDateAndEndDate(
     // Fishermen
     if (thisYearAge === fishermenMinAge + 1) {
       // = 63 year old
-      startDate = addYears(dateOfBirthThisYear, -1)
+      startDate = addYears(thisYearBirthdayPlusOneMonth, -1)
     } else if (thisYearAge > fishermenMinAge + 1) {
       // between 63 and 67
       startDate = addYears(
-        dateOfBirthThisYear > today ? dateOfBirthThisYear : today,
+        thisYearBirthdayPlusOneMonth > nextMonth
+          ? thisYearBirthdayPlusOneMonth
+          : nextMonth,
         -2,
       )
     }
@@ -234,7 +242,7 @@ export function getStartDateAndEndDate(
       return {}
     } else if (thisYearAge === earlyRetirementMinAge + 1) {
       // 66 year old
-      startDate = addYears(dateOfBirthThisYear, -1)
+      startDate = addYears(thisYearBirthdayPlusOneMonth, -1)
     }
   }
 
@@ -346,12 +354,14 @@ export function isEarlyRetirement(
     applicationType,
   } = getApplicationAnswers(answers)
 
+  if (!selectedMonth || !selectedYear) return false
+
   const dateOfBirth = kennitala.info(applicantNationalId).birthday
   const dateOfBirth00 = new Date(
     dateOfBirth.getFullYear(),
     dateOfBirth.getMonth(),
   )
-  const selectedDate = new Date(+selectedYear, +selectedMonth)
+  const selectedDate = new Date(+selectedYear, MONTHS.indexOf(selectedMonth))
 
   const age = getAgeBetweenTwoDates(selectedDate, dateOfBirth00)
 

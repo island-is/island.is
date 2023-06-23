@@ -481,6 +481,18 @@ export const oldAgePensionFormMessage: MessageDir = {
       defaultMessage: 'Desember',
       description: 'December',
     },
+    periodAlertTitle: {
+      id: 'oap.application:period.alert.title',
+      defaultMessage: 'Til athugunar!',
+      description: 'For consideration',
+    },
+    periodAlertMessage: {
+      id: 'oap.application:period.alert.message',
+      defaultMessage:
+        'Þú ert að sækja um snemmtöku miðað við valið tímabil. Nánar um snemmtöku má lesa hér. Réttur ellilífeyris myndast 1. næsta mánuð eftir fæðingardag.',
+      description:
+        'You are applying for early admission based on the selected period. You can read more about early birding here. The right to old-age pension is established on the 1st of the following month after birthday.',
+    },
   }),
 
   fileUpload: defineMessages({
