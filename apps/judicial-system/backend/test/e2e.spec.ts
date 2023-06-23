@@ -513,7 +513,7 @@ describe('Institution', () => {
       .send()
       .expect(200)
       .then((response) => {
-        expect(response.body.length).toBe(18)
+        expect(response.body.length).toBe(20)
       })
   })
 })

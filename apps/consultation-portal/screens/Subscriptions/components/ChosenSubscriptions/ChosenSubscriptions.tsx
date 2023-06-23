@@ -42,6 +42,14 @@ const ChosenSubscriptions = ({
     ? subscribedToAllChangesObj
     : undefined
 
+  const DescText = ({ children }) => {
+    return (
+      <Text variant="medium" fontWeight="light">
+        {children}
+      </Text>
+    )
+  }
+
   return (
     <Stack space={0}>
       {!(
@@ -62,12 +70,12 @@ const ChosenSubscriptions = ({
               subscriptionArray={subscriptionArray}
               setSubscriptionArray={setSubscriptionArray}
               titleColumn={
-                <Text lineHeight="sm" variant="h5" color={'dark400'}>
+                <Text variant="h5" color={'dark400'}>
                   {loc.cardTitle}
                 </Text>
               }
             >
-              <Text variant="medium">&emsp;{subscribeToAllChecked.name}</Text>
+              <DescText>{subscribeToAllChecked.name}</DescText>
             </SubscriptionCard>
           )}
 
@@ -86,7 +94,7 @@ const ChosenSubscriptions = ({
                     </Text>
                   }
                 >
-                  <Text variant="medium">&emsp;{item.name}</Text>
+                  <DescText>{item.name}</DescText>
                 </SubscriptionCard>
               )
             })}
@@ -106,12 +114,12 @@ const ChosenSubscriptions = ({
                     </Text>
                   }
                 >
-                  <Text variant="medium">
+                  <DescText>
                     <em>
-                      &emsp;&mdash;
+                      &mdash;
                       {SubscriptionDescriptionKey[item.subscriptionType]}
                     </em>
-                  </Text>
+                  </DescText>
                 </SubscriptionCard>
               )
             })}
@@ -131,12 +139,12 @@ const ChosenSubscriptions = ({
                     </Text>
                   }
                 >
-                  <Text variant="medium">
+                  <DescText>
                     <em>
-                      &emsp;&mdash;
+                      &mdash;
                       {SubscriptionDescriptionKey[item.subscriptionType]}
                     </em>
-                  </Text>
+                  </DescText>
                 </SubscriptionCard>
               )
             })}
