@@ -1,11 +1,10 @@
 import { useLazyQuery } from '@apollo/client'
 import { useState } from 'react'
 import {
+  AlertMessage,
+  AsyncSearchInput,
   Box,
-  Button,
-  Inline,
-  Input,
-  Stack,
+  Table,
   Text,
 } from '@island.is/island-ui/core'
 import { PUBLIC_VEHICLE_SEARCH_QUERY } from '@island.is/web/screens/queries/PublicVehicleSearch'
@@ -17,15 +16,38 @@ import {
 import { useNamespace } from '@island.is/web/hooks'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 
+const numberFormatter = new Intl.NumberFormat('de-DE')
+
+const getValueOrEmptyString = (value?: string) => {
+  return value ? value : ''
+}
+
+const formatVehicleType = (vehicleInformation?: {
+  vehicleCommercialName?: string
+  color?: string
+  make?: string
+}) => {
+  const bothCommercialNameAndMakeArePresent =
+    !!vehicleInformation?.make && !!vehicleInformation?.vehicleCommercialName
+  if (!bothCommercialNameAndMakeArePresent) return ''
+
+  return `${getValueOrEmptyString(vehicleInformation.make)}${
+    bothCommercialNameAndMakeArePresent ? ' - ' : ''
+  }${getValueOrEmptyString(vehicleInformation.vehicleCommercialName)}${
+    vehicleInformation.color ? ' (' + vehicleInformation.color + ')' : ''
+  }`
+}
+
 interface PublicVehicleSearchProps {
   slice: ConnectedComponent
 }
 
 const PublicVehicleSearch = ({ slice }: PublicVehicleSearchProps) => {
+  const [hasFocus, setHasFocus] = useState(false)
   const [searchValue, setSearchValue] = useState('')
   const { format } = useDateUtils()
 
-  const n = useNamespace(slice.configJson ?? {})
+  const n = useNamespace(slice?.json ?? {})
 
   const [search, { loading, data, error, called }] = useLazyQuery<
     GetPublicVehicleSearchQuery,
@@ -37,88 +59,260 @@ const PublicVehicleSearch = ({ slice }: PublicVehicleSearchProps) => {
   const vehicleWasNotFound =
     vehicleInformation === null || typeof vehicleInformation === undefined
 
+  const handleSearch = () => {
+    if (!searchValue) {
+      return
+    }
+    search({
+      variables: {
+        input: {
+          search: searchValue,
+        },
+      },
+    })
+  }
+
+  const formattedRegistrationDate = vehicleInformation?.newRegDate
+    ? format(new Date(vehicleInformation.newRegDate), 'do MMMM yyyy')
+    : ''
+  const formattedNextVehicleMainInspectionDate = vehicleInformation?.nextVehicleMainInspection
+    ? format(
+        new Date(vehicleInformation.nextVehicleMainInspection),
+        'do MMMM yyyy',
+      )
+    : ''
+
+  const formattedVehicleType = formatVehicleType(vehicleInformation)
+
   return (
     <Box>
-      <Input
-        name="vehicle-search"
-        onChange={(ev) => setSearchValue(ev.target.value.toUpperCase())}
-      />
-      <Button
-        loading={loading}
-        onClick={() => {
-          search({
-            variables: {
-              input: {
-                search: searchValue,
-              },
+      <Text>
+        {n(
+          'inputEyebrowText',
+          'Skráningarnúmer, fastanúmer eða verksmiðjunúmer:',
+        )}
+      </Text>
+      <Box marginTop={2} marginBottom={3}>
+        <AsyncSearchInput
+          buttonProps={{
+            onClick: handleSearch,
+            onFocus: () => setHasFocus(true),
+            onBlur: () => setHasFocus(false),
+          }}
+          inputProps={{
+            name: 'public-vehicle-search',
+            inputSize: 'large',
+            placeholder: n('inputPlaceholder', 'Leita í ökutækjaskrá'),
+            colored: true,
+            onChange: (ev) => setSearchValue(ev.target.value.toUpperCase()),
+            value: searchValue,
+            onKeyDown: (ev) => {
+              if (ev.key === 'Enter') {
+                handleSearch()
+              }
             },
-          })
-        }}
-      >
-        Leita
-      </Button>
+          }}
+          hasFocus={hasFocus}
+          rootProps={{}}
+          loading={loading}
+        />
+      </Box>
       {called && !loading && !error && vehicleWasNotFound && (
         <Box>
-          <Text>Ekkert ökutæki fannst</Text>
+          <Text fontWeight="semiBold">
+            {n('noVehicleFound', 'Ekkert ökutæki fannst')}
+          </Text>
         </Box>
+      )}
+      {called && !loading && error && (
+        <AlertMessage
+          type="error"
+          title={n('errorOccurredTitle', 'Villa kom upp')}
+          message={n('errorOccurredMessage', 'Ekki tókst að sækja ökutæki')}
+        />
       )}
       {vehicleInformation && (
-        <Box>
-          <Stack space={2}>
-            <Text>Eftirfarandi upplýsingar fundust um ökutækið</Text>
-            <Inline space={2}>
-              <Text fontWeight="semiBold">{n('permno', 'Fastanúmer')}</Text>
-              <Text>{vehicleInformation.permno}</Text>
-            </Inline>
-            <Inline space={2}>
-              <Text fontWeight="semiBold">{n('regno', 'Skráningarnúmer')}</Text>
-              <Text>{vehicleInformation.regno}</Text>
-            </Inline>
-            <Inline space={2}>
-              <Text fontWeight="semiBold">
-                {n('vehicleStatus', 'Skoðunarstaða ökutækis')}
-              </Text>
-              <Text>{vehicleInformation.vehicleStatus}</Text>
-            </Inline>
-            {vehicleInformation.nextVehicleMainInspection && (
-              <Inline space={2}>
-                <Text fontWeight="semiBold">
-                  {n('nextVehicleMainInspection', 'Næsta aðalskoðun')}
-                </Text>
-                <Text>
-                  {format(
-                    new Date(vehicleInformation.nextVehicleMainInspection),
-                    'do MMMM yyyy',
-                  )}
-                </Text>
-              </Inline>
-            )}
-            <Inline space={2}>
-              <Text fontWeight="semiBold">{n('co2', 'Co2')}</Text>
-              <Text>{vehicleInformation.co2}</Text>
-            </Inline>
-            <Inline space={2}>
-              <Text fontWeight="semiBold">
-                {n('vehicleCommercialName', 'Tegund')}
-              </Text>
-              <Text>{vehicleInformation.vehicleCommercialName}</Text>
-            </Inline>
-            {vehicleInformation.newRegDate && (
-              <Inline space={2}>
-                <Text fontWeight="semiBold">
-                  {n('newRegDate', 'Fyrst skráð')}
-                </Text>
-                <Text>
-                  {format(
-                    new Date(vehicleInformation.newRegDate),
-                    'do MMMM yyyy',
-                  )}
-                </Text>
-              </Inline>
-            )}
-          </Stack>
+        <Box marginBottom={3} marginTop={4}>
+          <Table.Table>
+            <Table.Head>
+              <Table.HeadData>
+                {n('vehicleInformationTableHeaderText', 'Niðurstaða leitar:')}
+              </Table.HeadData>
+              <Table.HeadData />
+            </Table.Head>
+            <Table.Body>
+              {formattedVehicleType && (
+                <Table.Row>
+                  <Table.Data>
+                    <Text fontWeight="semiBold">
+                      {n('vehicleCommercialName', 'Tegund:')}
+                    </Text>
+                  </Table.Data>
+                  <Table.Data>
+                    <Text>{formattedVehicleType}</Text>
+                  </Table.Data>
+                </Table.Row>
+              )}
+              {vehicleInformation.regno && (
+                <Table.Row>
+                  <Table.Data>
+                    <Text fontWeight="semiBold">
+                      {n('regno', 'Skráningarnúmer:')}
+                    </Text>
+                  </Table.Data>
+                  <Table.Data>
+                    <Text>{vehicleInformation.regno}</Text>
+                  </Table.Data>
+                </Table.Row>
+              )}
+              {vehicleInformation.permno && (
+                <Table.Row>
+                  <Table.Data>
+                    <Text fontWeight="semiBold">
+                      {n('permno', 'Fastanúmer:')}
+                    </Text>
+                  </Table.Data>
+                  <Table.Data>
+                    <Text>{vehicleInformation.permno}</Text>
+                  </Table.Data>
+                </Table.Row>
+              )}
+              {vehicleInformation.vin && (
+                <Table.Row>
+                  <Table.Data>
+                    <Text fontWeight="semiBold">
+                      {n('vin', 'Verksmiðjunúmer:')}
+                    </Text>
+                  </Table.Data>
+                  <Table.Data>
+                    <Text>{vehicleInformation.vin}</Text>
+                  </Table.Data>
+                </Table.Row>
+              )}
+              {formattedRegistrationDate && (
+                <Table.Row>
+                  <Table.Data>
+                    <Text fontWeight="semiBold">
+                      {n('newRegDate', 'Fyrst skráð:')}
+                    </Text>
+                  </Table.Data>
+                  <Table.Data>
+                    <Text>{formattedRegistrationDate}</Text>
+                  </Table.Data>
+                </Table.Row>
+              )}
+              {vehicleInformation.co2 && (
+                <Table.Row>
+                  <Table.Data>
+                    <Text fontWeight="semiBold">
+                      {n('co2NEDC', 'CO2-gildi (NEDC):')}
+                    </Text>
+                  </Table.Data>
+                  <Table.Data>
+                    <Text>{vehicleInformation.co2}</Text>
+                  </Table.Data>
+                </Table.Row>
+              )}
+              {vehicleInformation.weightedCo2 && (
+                <Table.Row>
+                  <Table.Data>
+                    <Text fontWeight="semiBold">
+                      {n('weightedCo2NEDC', 'Vegið CO2-gildi (NEDC):')}
+                    </Text>
+                  </Table.Data>
+                  <Table.Data>
+                    <Text>{vehicleInformation.weightedCo2}</Text>
+                  </Table.Data>
+                </Table.Row>
+              )}
+              {vehicleInformation.co2WLTP && (
+                <Table.Row>
+                  <Table.Data>
+                    <Text fontWeight="semiBold">
+                      {n('Co2WLTP', 'CO2-gildi (WLTP):')}
+                    </Text>
+                  </Table.Data>
+                  <Table.Data>
+                    <Text>{vehicleInformation.co2WLTP}</Text>
+                  </Table.Data>
+                </Table.Row>
+              )}
+              {vehicleInformation.weightedCo2WLTP && (
+                <Table.Row>
+                  <Table.Data>
+                    <Text fontWeight="semiBold">
+                      {n('weightedCo2WLTP', 'Vegið CO2-gildi (WLTP):')}
+                    </Text>
+                  </Table.Data>
+                  <Table.Data>
+                    <Text>{vehicleInformation.weightedCo2WLTP}</Text>
+                  </Table.Data>
+                </Table.Row>
+              )}
+              {vehicleInformation.mass && (
+                <Table.Row>
+                  <Table.Data>
+                    <Text fontWeight="semiBold">
+                      {n('mass', 'Eigin þyngd:')}
+                    </Text>
+                  </Table.Data>
+                  <Table.Data>
+                    <Text>
+                      {numberFormatter.format(vehicleInformation.mass)} kg
+                    </Text>
+                  </Table.Data>
+                </Table.Row>
+              )}
+              {vehicleInformation.massLaden && (
+                <Table.Row>
+                  <Table.Data>
+                    <Text fontWeight="semiBold">
+                      {n('massLaden', 'Leyfð heildarþyngd:')}
+                    </Text>
+                  </Table.Data>
+                  <Table.Data>
+                    <Text>
+                      {numberFormatter.format(vehicleInformation.massLaden)} kg
+                    </Text>
+                  </Table.Data>
+                </Table.Row>
+              )}
+              {vehicleInformation.vehicleStatus && (
+                <Table.Row>
+                  <Table.Data>
+                    <Text fontWeight="semiBold">
+                      {n('vehicleStatus', 'Staða:')}
+                    </Text>
+                  </Table.Data>
+                  <Table.Data>
+                    <Text>{vehicleInformation.vehicleStatus}</Text>
+                  </Table.Data>
+                </Table.Row>
+              )}
+              {formattedNextVehicleMainInspectionDate && (
+                <Table.Row>
+                  <Table.Data>
+                    <Text fontWeight="semiBold">
+                      {n('nextVehicleMainInspection', 'Næsta skoðun:')}
+                    </Text>
+                  </Table.Data>
+                  <Table.Data>
+                    <Text>{formattedNextVehicleMainInspectionDate}</Text>
+                  </Table.Data>
+                </Table.Row>
+              )}
+            </Table.Body>
+          </Table.Table>
         </Box>
       )}
+      <Box marginTop={2}>
+        <Text variant="small">
+          {n(
+            'moreInfoText',
+            'Hægt er að fletta upp bílnúmerum á Mínum síðum og fá þar ítarlegri upplýsingar',
+          )}
+        </Text>
+      </Box>
     </Box>
   )
 }
