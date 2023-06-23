@@ -135,6 +135,11 @@ export const m = defineMessages({
     defaultMessage: 'Nafn',
     description: '',
   },
+  locality: {
+    id: 'sp.petitions:locality',
+    defaultMessage: 'Sveitarfélag',
+    description: '',
+  },
   noName: {
     id: 'sp.petitions:noName',
     defaultMessage: 'Nafn ekki skráð',
@@ -150,6 +155,11 @@ export const m = defineMessages({
   unsignList: {
     id: 'sp.petitions:unsignList',
     defaultMessage: 'Taka nafn mitt af þessum lista',
+    description: '',
+  },
+  modalButtonUnsignListYes: {
+    id: 'sp.petitions:modalButtonUnsignListYes',
+    defaultMessage: 'Taka nafn mitt af lista',
     description: '',
   },
   signList: {

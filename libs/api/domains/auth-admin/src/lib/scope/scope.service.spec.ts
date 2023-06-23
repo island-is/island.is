@@ -18,7 +18,7 @@ import { TestApp, testServer, useAuth } from '@island.is/testing/nest'
 
 import { ScopeResolver } from './scope.resolver'
 import { ScopeService } from './scope.service'
-import { AdminScopeDTO, ClientCreateScopeDTO } from '@island.is/auth-api-lib'
+import { AdminScopeDTO, AdminCreateScopeDto } from '@island.is/auth-api-lib'
 import { ScopesPayload } from './dto/scopes.payload'
 import { Scope } from './models/scope.model'
 
@@ -28,8 +28,18 @@ const mockCreateScopes = {
   scope1: {
     tenantId: TENANT_ID,
     name: '@island.is/scope',
-    displayName: 'Scope display name',
-    description: 'Scope description',
+    displayName: [
+      {
+        locale: 'is',
+        value: 'Scope display name',
+      },
+    ],
+    description: [
+      {
+        locale: 'is',
+        value: 'Scope description',
+      },
+    ],
   },
 }
 
@@ -69,7 +79,7 @@ const createFindAllScopesMock = (environment: Environment, len = 3) =>
   }))
 
 const createMockAdminApi = (
-  createData: ClientCreateScopeDTO,
+  createData: AdminCreateScopeDto,
   findAllData: AdminScopeDTO[],
   findByNameData: AdminScopeDTO,
 ) => ({
@@ -158,6 +168,8 @@ describe('ScopeService', () => {
     it('should create scope for specific tenant for all environments', async () => {
       const scopeResponses = await scopeService.createScope(currentUser, {
         ...mockCreateScopes.scope1,
+        description: mockCreateScopes.scope1.description[0].value,
+        displayName: mockCreateScopes.scope1.displayName[0].value,
         environments: [
           Environment.Development,
           Environment.Staging,
@@ -187,6 +199,8 @@ describe('ScopeService', () => {
     it('should create scope for specific tenant for one environment', async () => {
       const scopeResponses = await scopeService.createScope(currentUser, {
         ...mockCreateScopes.scope1,
+        description: mockCreateScopes.scope1.description[0].value,
+        displayName: mockCreateScopes.scope1.displayName[0].value,
         environments: [Environment.Production],
       })
 

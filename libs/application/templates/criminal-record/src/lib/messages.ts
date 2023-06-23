@@ -217,4 +217,10 @@ export const m = defineMessages({
     defaultMessage: 'Reyna aftur',
     description: '',
   },
+  pendingActionApplicationCompletedTitle: {
+    id: 'cr.application:pendingActionApplicationCompletedTitle',
+    defaultMessage:
+      'Umsókn þín hefur verið móttekin og er vottorðið aðgengilegt í stafrænu pósthólfi á Ísland.is.',
+    description: 'Title of pending action',
+  },
 })

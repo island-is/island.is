@@ -3,7 +3,7 @@ import Grieving from './assets/Grieving'
 
 export const DoneImage = () => {
   return (
-    <Box height="full" marginTop={6} marginBottom={6}>
+    <Box display={'flex'} justifyContent={'center'} marginY={3}>
       <Grieving />
     </Box>
   )

@@ -65,6 +65,16 @@ export const m = defineMessages({
     defaultMessage: 'Sækja lista',
     description: '',
   },
+  asPdf: {
+    id: 'admin-portal.petition:asPdf',
+    defaultMessage: 'Sem PDF',
+    description: '',
+  },
+  asCsv: {
+    id: 'admin-portal.petition:asCsv',
+    defaultMessage: 'Sem CSV',
+    description: '',
+  },
   goBack: {
     id: 'admin-portal.petition:goBack',
     defaultMessage: 'Til baka',
@@ -114,6 +124,11 @@ export const m = defineMessages({
   name: {
     id: 'admin-portal.petition:name',
     defaultMessage: 'Nafn',
+    description: '',
+  },
+  locality: {
+    id: 'admin-portal.petition:locality',
+    defaultMessage: 'Sveitarfélag',
     description: '',
   },
   noName: {
