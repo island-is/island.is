@@ -31,6 +31,9 @@ import {
   ResidenceConditionsApi,
   CountriesApi,
   TravelDocumentTypesApi,
+  OldCountryOfResidenceListApi,
+  OldStayAbroadListApi,
+  OldPassportItemApi,
 } from '../dataProviders'
 
 const template: ApplicationTemplate<
@@ -91,6 +94,9 @@ const template: ApplicationTemplate<
                 ResidenceConditionsApi,
                 CountriesApi,
                 TravelDocumentTypesApi,
+                OldCountryOfResidenceListApi,
+                OldStayAbroadListApi,
+                OldPassportItemApi,
                 UtlendingastofnunPaymentCatalogApi,
               ],
             },

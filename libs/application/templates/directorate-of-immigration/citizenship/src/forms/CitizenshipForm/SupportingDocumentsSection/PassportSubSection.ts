@@ -89,6 +89,7 @@ export const PassportSubSection = (index: number) =>
             id: `passport[${index}].publisher`,
             title: supportingDocuments.labels.passport.publisher,
             width: 'half',
+            //TODO fellilisti velja land
           }),
           buildFileUploadField({
             id: 'passport.attachment',

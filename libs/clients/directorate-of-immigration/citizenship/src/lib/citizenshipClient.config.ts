@@ -11,7 +11,7 @@ export const CitizenshipClientConfig = defineConfig({
   schema,
   load(env) {
     return {
-      url: 'https://utl-umsokn.azurewebsites.net/',
+      url: 'https://utl-umsokn.azurewebsites.net',
       scope: ['@utl.is/umsoknir'],
     }
   },

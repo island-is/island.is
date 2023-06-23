@@ -18,7 +18,10 @@ import {
 import {
   CitizenshipClient,
   Country,
+  CountryOfResidence,
+  Passport,
   ResidenceCondition,
+  StayAbroad,
   TravelDocumentType,
 } from '@island.is/clients/directorate-of-immigration/citizenship'
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
@@ -64,6 +67,24 @@ export class CitizenshipService extends BaseTemplateApiService {
 
   async getTravelDocumentTypes(): Promise<TravelDocumentType[]> {
     return this.citizenshipClient.getTravelDocumentTypes()
+  }
+
+  async getOldCountryOfResidenceList({
+    auth,
+  }: TemplateApiModuleActionProps): Promise<CountryOfResidence[]> {
+    return this.citizenshipClient.getOldCountryOfResidenceList(auth)
+  }
+
+  async getOldStayAbroadList({
+    auth,
+  }: TemplateApiModuleActionProps): Promise<StayAbroad[]> {
+    return this.citizenshipClient.getOldStayAbroadList(auth)
+  }
+
+  async getOldPassportItem({
+    auth,
+  }: TemplateApiModuleActionProps): Promise<Passport | undefined> {
+    return this.citizenshipClient.getOldPassportItem(auth)
   }
 
   async getNationalRegistryIndividual({

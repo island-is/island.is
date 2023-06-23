@@ -23,7 +23,7 @@ export const InformationSection = (index: number) =>
       }
     },
     condition: (formValue: FormValue) => {
-      // TODOx look at answers to know if we should display this information section
+      // TODO look at answers to know if we should display this information section
       return index < 2
     },
     children: [

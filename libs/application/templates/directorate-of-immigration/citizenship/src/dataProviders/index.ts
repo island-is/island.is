@@ -32,6 +32,21 @@ export const TravelDocumentTypesApi = defineTemplateApi({
   externalDataId: 'travelDocumentTypes',
 })
 
+export const OldCountryOfResidenceListApi = defineTemplateApi({
+  action: ApiActions.getOldCountryOfResidenceList,
+  externalDataId: 'oldCountryOfResidenceList',
+})
+
+export const OldStayAbroadListApi = defineTemplateApi({
+  action: ApiActions.getOldStayAbroadList,
+  externalDataId: 'oldStayAbroadList',
+})
+
+export const OldPassportItemApi = defineTemplateApi({
+  action: ApiActions.getOldPassportItem,
+  externalDataId: 'oldPassportItem',
+})
+
 export const NationalRegistryIndividualApi = defineTemplateApi({
   action: ApiActions.getNationalRegistryIndividual,
   externalDataId: 'individual',

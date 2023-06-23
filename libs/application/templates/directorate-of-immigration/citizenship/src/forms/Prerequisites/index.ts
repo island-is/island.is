@@ -26,6 +26,9 @@ import {
   NationalRegistryIndividualApi,
   NationalRegistryParentsApi,
   NationalRegistrySpouseDetailsApi,
+  OldCountryOfResidenceListApi,
+  OldPassportItemApi,
+  OldStayAbroadListApi,
   ResidenceConditionsApi,
   TravelDocumentTypesApi,
   UserProfileApi,
@@ -92,6 +95,18 @@ export const Prerequisites: Form = buildForm({
             }),
             buildDataProviderItem({
               provider: TravelDocumentTypesApi,
+              title: '',
+            }),
+            buildDataProviderItem({
+              provider: OldCountryOfResidenceListApi,
+              title: '',
+            }),
+            buildDataProviderItem({
+              provider: OldStayAbroadListApi,
+              title: '',
+            }),
+            buildDataProviderItem({
+              provider: OldPassportItemApi,
               title: '',
             }),
             buildDataProviderItem({
