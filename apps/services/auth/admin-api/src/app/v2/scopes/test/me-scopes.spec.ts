@@ -12,6 +12,7 @@ import {
 } from '@island.is/auth-api-lib'
 import { FixtureFactory } from '@island.is/services/auth/testing'
 import { AuthDelegationType } from '@island.is/shared/types'
+import { isDefined } from '@island.is/shared/utils'
 import {
   createCurrentUser,
   createNationalId,
@@ -260,7 +261,7 @@ const createTestCases: Record<string, CreateTestCase> = {
       body: expectedCreateOutput,
     },
   },
-  'should publish scope and have access as current user': {
+  'should create scope with additional fields and have access as current user': {
     user: currentUser,
     tenantId: TENANT_ID,
     input: {
@@ -565,11 +566,14 @@ describe('MeScopesController', () => {
           // Assert response
           expect(response.body).toStrictEqual({
             ...testCase.expected.body,
-            grantToAuthenticatedUser: testCase.expected.body
-              .grantToAuthenticatedUser
+            grantToAuthenticatedUser: isDefined(
+              testCase.expected.body.grantToAuthenticatedUser,
+            )
               ? testCase.expected.body.grantToAuthenticatedUser
               : true,
-            grantToLegalGuardians: testCase.expected.body.grantToLegalGuardians
+            grantToLegalGuardians: isDefined(
+              testCase.expected.body.grantToLegalGuardians,
+            )
               ? testCase.expected.body.grantToLegalGuardians
               : false,
             allowExplicitDelegationGrant: false,

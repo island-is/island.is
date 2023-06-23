@@ -61,7 +61,7 @@ export const PublishClient = () => {
         setError(true)
       }
     },
-    [publishClient, tenantId],
+    [publishClient, tenantId, clientId],
   )
 
   const onChange = useCallback((env: AuthAdminEnvironment) => {

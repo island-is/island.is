@@ -113,7 +113,6 @@ export class AdminScopeService {
       throw new BadRequestException(`Scope name "${input.name}" already exists`)
     }
 
-    // We need to manually validate displayName and description, since we reuse the same dto for both create and publish
     const translatedValuesErrorMsg =
       'Scope displayName and description are required'
 
@@ -121,15 +120,16 @@ export class AdminScopeService {
       throw new BadRequestException(translatedValuesErrorMsg)
     }
 
-    const displayName = this.adminTranslationService.findTranslationByLocale(
+    const [displayName, description] = [
       input.displayName,
-      'is',
-    )?.value
-
-    const description = this.adminTranslationService.findTranslationByLocale(
       input.description,
-      'is',
-    )?.value
+    ].map(
+      (translatedValueDto) =>
+        this.adminTranslationService.findTranslationByLocale(
+          translatedValueDto,
+          'is',
+        )?.value,
+    )
 
     if (!displayName || !description) {
       throw new BadRequestException(translatedValuesErrorMsg)
