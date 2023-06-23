@@ -136,7 +136,9 @@ const PublicVehicleSearch = ({ slice }: PublicVehicleSearchProps) => {
           <Table.Table>
             <Table.Head>
               <Table.HeadData>
-                {n('vehicleInformationTableHeaderText', 'Niðurstaða leitar:')}
+                <Text fontWeight="semiBold">
+                  {n('vehicleInformationTableHeaderText', 'Niðurstaða leitar:')}
+                </Text>
               </Table.HeadData>
               <Table.HeadData />
             </Table.Head>
