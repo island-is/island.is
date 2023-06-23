@@ -16,6 +16,7 @@ export const PaymentCharge: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
   const { setValue } = useFormContext()
 
+  // AY110: Ökuskírteini / Driving License
   let chargeCode = 'AY110'
   // Change price based on temporary license
   const licenseData = getValueViaPath<DriversLicense>(
@@ -36,6 +37,7 @@ export const PaymentCharge: FC<FieldBaseProps> = ({ application }) => {
     (!fakeAllowed &&
       licenseData?.categories.some((category) => category.validToCode === 8))
   ) {
+    // AY114: Bráðabirgðaskirteini / Temporary Driving License
     chargeCode = 'AY114'
   }
 
@@ -49,6 +51,7 @@ export const PaymentCharge: FC<FieldBaseProps> = ({ application }) => {
     )
   }
   if (age >= 65) {
+    // AY113: Skírteini fyrir 65 ára og eldri / License for 65 years and over
     chargeCode = 'AY113'
   }
 
