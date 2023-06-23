@@ -4,11 +4,13 @@ import {
   GetCompanyProcurersDocument,
   GetCompanyProcurersQuery,
 } from './Procurers.generated'
+import { redirect } from 'react-router-dom'
+import { ServiceDeskPaths } from '../../lib/paths'
 
 export type CompanyProcurerResult = GetCompanyProcurersQuery['authAdminGetCompanyProcurers']
 
 export const procurersLoader: WrappedLoaderFn = ({ client }) => {
-  return async ({ params }): Promise<CompanyProcurerResult> => {
+  return async ({ params }): Promise<CompanyProcurerResult | Response> => {
     const nationalId = params['nationalId']
 
     if (!nationalId) throw new Error('Company not found')
@@ -26,7 +28,7 @@ export const procurersLoader: WrappedLoaderFn = ({ client }) => {
     }
 
     if (!res.data?.authAdminGetCompanyProcurers) {
-      throw new Error('Company procurers not found')
+      return redirect(ServiceDeskPaths.Root)
     }
 
     return res.data.authAdminGetCompanyProcurers

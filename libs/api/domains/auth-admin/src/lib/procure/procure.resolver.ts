@@ -17,7 +17,10 @@ export class ProcureResolver {
     return this.procureService.getCompanies(search)
   }
 
-  @Query(() => CompanyProcurers, { name: 'authAdminGetCompanyProcurers' })
+  @Query(() => CompanyProcurers, {
+    name: 'authAdminGetCompanyProcurers',
+    nullable: true,
+  })
   getCompanyProcurers(
     @Args('nationalId') nationalId: string,
   ): Promise<CompanyProcurers | null> {

@@ -5,11 +5,14 @@ import {
   WrappedActionFn,
 } from '@island.is/portals/core'
 import {
+  replaceParams,
   validateFormData,
   ValidateFormDataResult,
 } from '@island.is/react-spa/shared'
 
 import { GetCompaniesDocument, GetCompaniesQuery } from './Procures.generated'
+import { redirect } from 'react-router-dom'
+import { ServiceDeskPaths } from '../../lib/paths'
 
 const schema = z.object({
   searchQuery: z.string().nonempty(),
@@ -22,7 +25,7 @@ export type GetCompaniesResult = RawRouterActionResponse<
 
 export const GetCompaniesAction: WrappedActionFn = ({ client }) => async ({
   request,
-}): Promise<GetCompaniesResult> => {
+}): Promise<GetCompaniesResult | Response> => {
   const formData = await request.formData()
 
   const { data, errors } = await validateFormData({
@@ -48,6 +51,17 @@ export const GetCompaniesAction: WrappedActionFn = ({ client }) => async ({
 
     if (res.error) {
       throw res.error
+    }
+
+    if (res.data?.authAdminProcureGetCompanies?.length === 1) {
+      return redirect(
+        replaceParams({
+          href: ServiceDeskPaths.Procurers,
+          params: {
+            nationalId: res.data.authAdminProcureGetCompanies[0].nationalId,
+          },
+        }),
+      )
     }
 
     return {

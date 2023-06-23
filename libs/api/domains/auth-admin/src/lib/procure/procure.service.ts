@@ -32,7 +32,13 @@ export class ProcureService {
     })
   }
 
-  async searchCompanyProcurers(nationalId: string): Promise<CompanyProcurers> {
+  async searchCompanyProcurers(
+    nationalId: string,
+  ): Promise<CompanyProcurers | null> {
+    if (nationalId === '11111111111') {
+      return null
+    }
+
     return {
       name: 'Fyrirtæki ehf.',
       nationalId: nationalId,
