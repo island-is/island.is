@@ -57,6 +57,8 @@ interface SmsBody {
 
 @Injectable()
 export class SmsService extends RESTDataSource {
+  private readonly agent: Agent
+
   constructor(
     @Inject(SMS_OPTIONS)
     private readonly options: SmsServiceOptions,
@@ -67,15 +69,16 @@ export class SmsService extends RESTDataSource {
 
     this.baseURL = `${this.options.url}/NovaSmsService/`
 
+    this.agent = new Agent({
+      rejectUnauthorized: !this.options.acceptUnauthorized,
+    })
     this.initialize({} as DataSourceConfig<void>)
   }
 
   willSendRequest(request: RequestOptions) {
     this.memoizedResults.clear()
     request.headers.set('Content-Type', 'application/json')
-    request.agent = new Agent({
-      rejectUnauthorized: !this.options.acceptUnauthorized,
-    })
+    request.agent = this.agent
   }
 
   private async login(): Promise<string> {
