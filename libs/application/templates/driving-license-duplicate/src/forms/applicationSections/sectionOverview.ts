@@ -63,9 +63,7 @@ export const sectionOverview = buildSection({
             component: 'Cards',
             doesNotRequireAnswer: true,
             condition: (answers) => {
-              return (
-                !allowFakeCondition(YES)(answers)
-              )
+              return !allowFakeCondition(YES)(answers)
             },
           },
           {

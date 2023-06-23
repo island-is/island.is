@@ -10,6 +10,10 @@ export const requirementsMet = (
   answers: FormValue,
   externalData: ExternalData,
 ): boolean => {
+  // We have the ignore option because some Gervimenn actually do have
+  // license data but never do they have photo/signature data.
+  // This way we ignore this requirement in order to test data
+  // from the api when needed
   if (allowFakeCondition(IGNORE)(answers)) {
     return true
   }
