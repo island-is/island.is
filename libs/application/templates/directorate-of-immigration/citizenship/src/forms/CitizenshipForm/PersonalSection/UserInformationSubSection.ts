@@ -3,10 +3,13 @@ import {
   buildTextField,
   buildSubSection,
   buildDescriptionField,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { personal } from '../../../lib/messages'
-import { Application } from '@island.is/api/schema'
+import { Application, UserProfile } from '@island.is/api/schema'
 import { formatDate } from '../../../utils'
+import { NationalRegistryBirthplace } from '@island.is/application/types'
+import { CitizenIndividual } from '../../../shared'
 
 export const UserInformationSubSection = buildSubSection({
   id: 'userInformation',
@@ -28,8 +31,15 @@ export const UserInformationSubSection = buildSubSection({
           width: 'half',
           readOnly: true,
           format: '######-####',
-          defaultValue: (application: Application) =>
-            application.externalData?.individual?.data?.nationalId,
+          defaultValue: (application: Application) => {
+            const individual = getValueViaPath(
+              application.externalData,
+              'individual.data',
+              undefined,
+            ) as CitizenIndividual | undefined
+
+            return individual?.nationalId
+          },
         }),
         buildTextField({
           id: 'userInformation.name',
@@ -37,8 +47,15 @@ export const UserInformationSubSection = buildSubSection({
           backgroundColor: 'white',
           width: 'half',
           readOnly: true,
-          defaultValue: (application: Application) =>
-            application.externalData?.individual?.data?.fullName,
+          defaultValue: (application: Application) => {
+            const individual = getValueViaPath(
+              application.externalData,
+              'individual.data',
+              undefined,
+            ) as CitizenIndividual | undefined
+
+            return individual?.fullName
+          },
         }),
         buildTextField({
           id: 'userInformation.address',
@@ -46,8 +63,15 @@ export const UserInformationSubSection = buildSubSection({
           backgroundColor: 'white',
           width: 'half',
           readOnly: true,
-          defaultValue: (application: Application) =>
-            application.externalData?.individual?.data?.address?.streetAddress,
+          defaultValue: (application: Application) => {
+            const individual = getValueViaPath(
+              application.externalData,
+              'individual.data',
+              undefined,
+            ) as CitizenIndividual | undefined
+
+            return individual?.address?.streetAddress
+          },
         }),
         buildTextField({
           id: 'userInformation.postalCode',
@@ -55,10 +79,15 @@ export const UserInformationSubSection = buildSubSection({
           backgroundColor: 'white',
           width: 'half',
           readOnly: true,
-          defaultValue: (application: Application) =>
-            application.externalData?.individual?.data?.address?.postalCode +
-            ' ' +
-            application.externalData?.individual?.data?.address?.city,
+          defaultValue: (application: Application) => {
+            const individual = getValueViaPath(
+              application.externalData,
+              'individual.data',
+              undefined,
+            ) as CitizenIndividual | undefined
+
+            return `${individual?.address?.postalCode} ${individual?.address?.city}`
+          },
         }),
         buildTextField({
           id: 'userInformation.email',
@@ -66,8 +95,15 @@ export const UserInformationSubSection = buildSubSection({
           width: 'half',
           variant: 'email',
           required: true,
-          defaultValue: (application: Application) =>
-            application.externalData?.userProfile?.data?.email,
+          defaultValue: (application: Application) => {
+            const userProfile = getValueViaPath(
+              application.externalData,
+              'userProfile.data',
+              undefined,
+            ) as UserProfile | undefined
+
+            return userProfile?.email
+          },
         }),
         buildTextField({
           id: 'userInformation.phone',
@@ -76,8 +112,15 @@ export const UserInformationSubSection = buildSubSection({
           variant: 'tel',
           format: '###-####',
           required: true,
-          defaultValue: (application: Application) =>
-            application.externalData?.userProfile?.data?.mobilePhoneNumber,
+          defaultValue: (application: Application) => {
+            const userProfile = getValueViaPath(
+              application.externalData,
+              'userProfile.data',
+              undefined,
+            ) as UserProfile | undefined
+
+            return userProfile?.mobilePhoneNumber
+          },
         }),
         buildTextField({
           id: 'userInformation.citizenship',
@@ -85,8 +128,15 @@ export const UserInformationSubSection = buildSubSection({
           backgroundColor: 'white',
           width: 'half',
           readOnly: true,
-          defaultValue: (application: Application) =>
-            application.externalData?.individual?.data?.citizenship?.name,
+          defaultValue: (application: Application) => {
+            const individual = getValueViaPath(
+              application.externalData,
+              'individual.data',
+              undefined,
+            ) as CitizenIndividual | undefined
+
+            return individual?.citizenship?.name
+          },
         }),
         buildTextField({
           id: 'userInformation.residenceInIcelandLastChangeDate',
@@ -96,10 +146,15 @@ export const UserInformationSubSection = buildSubSection({
           width: 'half',
           readOnly: true,
           defaultValue: (application: Application) => {
-            return formatDate(
-              application.externalData?.individual?.data
-                ?.residenceInIcelandLastChangeDate,
-            )
+            const individual = getValueViaPath(
+              application.externalData,
+              'individual.data',
+              undefined,
+            ) as CitizenIndividual | undefined
+
+            const date = individual?.residenceInIcelandLastChangeDate
+
+            return date ? formatDate(date) : ''
           },
         }),
         buildTextField({
@@ -109,8 +164,13 @@ export const UserInformationSubSection = buildSubSection({
           width: 'half',
           readOnly: true,
           defaultValue: (application: Application) => {
-            return application.externalData?.nationalRegistryBirthplace?.data
-              ?.location
+            const nationalRegistryBirthplace = getValueViaPath(
+              application.externalData,
+              'nationalRegistryBirthplace.data',
+              undefined,
+            ) as NationalRegistryBirthplace | undefined
+
+            return nationalRegistryBirthplace?.location
           },
         }),
       ],

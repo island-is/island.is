@@ -72,7 +72,7 @@ export class CitizenshipService extends BaseTemplateApiService {
   }: TemplateApiModuleActionProps): Promise<CitizenIndividual | null> {
     const individual = await this.getIndividualDetails(auth.nationalId)
     if (individual)
-      individual.residenceLastChangeDate = await this.getResidenceInIcelandLastChangeDate(
+      individual.residenceInIcelandLastChangeDate = await this.getResidenceInIcelandLastChangeDate(
         auth.nationalId,
       )
     return individual
@@ -159,6 +159,9 @@ export class CitizenshipService extends BaseTemplateApiService {
         break
       }
     }
+
+    //TODOx remove, need to check if this is reliable information
+    if (!lastChangeDate) return new Date()
 
     return lastChangeDate
   }

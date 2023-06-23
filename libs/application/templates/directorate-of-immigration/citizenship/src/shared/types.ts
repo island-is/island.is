@@ -15,7 +15,7 @@ export type CountryOfResidence = z.TypeOf<typeof RemoveableCountrySchema>
 export type CountryOfVisit = z.TypeOf<typeof RemoveableStayAbroadSchema>
 
 export interface CitizenIndividual extends NationalRegistryIndividual {
-  residenceLastChangeDate?: Date | null
+  residenceInIcelandLastChangeDate?: Date | null
   maritalTitle?: {
     code?: string | null
     description?: string | null

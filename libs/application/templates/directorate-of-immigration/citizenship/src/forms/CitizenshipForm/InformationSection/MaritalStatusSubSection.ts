@@ -49,9 +49,15 @@ export const MaritalStatusSubSection = buildSubSection({
           backgroundColor: 'white',
           width: 'half',
           readOnly: true,
-          defaultValue: (application: Application) =>
-            application.externalData?.individual?.data?.maritalTitle
-              ?.description,
+          defaultValue: (application: Application) => {
+            const individual = getValueViaPath(
+              application.externalData,
+              'individual.data',
+              undefined,
+            ) as CitizenIndividual | undefined
+
+            return individual?.maritalTitle?.description
+          },
         }),
         buildTextField({
           id: 'maritalStatus.dateOfMarritalStatus',
@@ -69,8 +75,15 @@ export const MaritalStatusSubSection = buildSubSection({
           readOnly: true,
           format: '######-####',
           required: true,
-          defaultValue: (application: Application) =>
-            application.externalData?.spouseDetails?.data?.nationalId,
+          defaultValue: (application: Application) => {
+            const spouseDetails = getValueViaPath(
+              application.externalData,
+              'spouseDetails.data',
+              undefined,
+            ) as SpouseIndividual | undefined
+
+            return spouseDetails?.nationalId
+          },
         }),
         buildTextField({
           id: 'maritalStatus.name',
@@ -78,8 +91,15 @@ export const MaritalStatusSubSection = buildSubSection({
           backgroundColor: 'white',
           width: 'half',
           readOnly: true,
-          defaultValue: (application: Application) =>
-            application.externalData?.spouseDetails?.data?.name,
+          defaultValue: (application: Application) => {
+            const spouseDetails = getValueViaPath(
+              application.externalData,
+              'spouseDetails.data',
+              undefined,
+            ) as SpouseIndividual | undefined
+
+            return spouseDetails?.name
+          },
         }),
         buildTextField({
           id: 'maritalStatus.birthCountry',
@@ -87,9 +107,15 @@ export const MaritalStatusSubSection = buildSubSection({
           backgroundColor: 'white',
           width: 'half',
           readOnly: true,
-          defaultValue: (application: Application) =>
-            application.externalData?.spouseDetails?.data?.spouseBirthplace
-              ?.location, //TODO vantar land en ekki borg
+          defaultValue: (application: Application) => {
+            const spouseDetails = getValueViaPath(
+              application.externalData,
+              'spouseDetails.data',
+              undefined,
+            ) as SpouseIndividual | undefined
+
+            return spouseDetails?.spouseBirthplace?.location //TODO vantar land en ekki borg
+          },
         }),
         buildTextField({
           id: 'maritalStatus.citizenship',
@@ -98,9 +124,13 @@ export const MaritalStatusSubSection = buildSubSection({
           width: 'half',
           readOnly: true,
           defaultValue: (application: Application) => {
-            console.log('application', application)
-            return application.externalData?.spouseDetails?.data?.spouse
-              ?.citizenship?.name
+            const spouseDetails = getValueViaPath(
+              application.externalData,
+              'spouseDetails.data',
+              undefined,
+            ) as SpouseIndividual | undefined
+
+            return spouseDetails?.spouse?.citizenship?.name
           },
         }),
         buildTextField({
@@ -109,8 +139,15 @@ export const MaritalStatusSubSection = buildSubSection({
           backgroundColor: 'white',
           width: 'half',
           readOnly: true,
-          defaultValue: (application: Application) =>
-            `${application.externalData?.individual?.data?.address?.streetAddress}, ${application.externalData?.individual?.data?.address?.postalCode} ${application.externalData?.individual?.data?.address?.city}`,
+          defaultValue: (application: Application) => {
+            const individual = getValueViaPath(
+              application.externalData,
+              'individual.data',
+              undefined,
+            ) as CitizenIndividual | undefined
+
+            return `${individual?.address?.streetAddress}, ${individual?.address?.postalCode} ${individual?.address?.city}`
+          },
           condition: (_, externalData: any) => {
             const individual = getValueViaPath(
               externalData,
@@ -135,8 +172,15 @@ export const MaritalStatusSubSection = buildSubSection({
           backgroundColor: 'white',
           width: 'half',
           readOnly: true,
-          defaultValue: (application: Application) =>
-            `${application.externalData?.spouseDetails?.data?.spouse?.address?.streetAddress}, ${application.externalData?.spouseDetails?.data?.spouse?.address?.postalCode} ${application.externalData?.spouseDetails?.data?.spouse?.address?.city}`,
+          defaultValue: (application: Application) => {
+            const spouseDetails = getValueViaPath(
+              application.externalData,
+              'spouseDetails.data',
+              undefined,
+            ) as SpouseIndividual | undefined
+
+            return `${spouseDetails?.spouse?.address?.streetAddress}, ${spouseDetails?.spouse?.address?.postalCode} ${spouseDetails?.spouse?.address?.city}`
+          },
           condition: (_, externalData: any) => {
             const individual = getValueViaPath(
               externalData,

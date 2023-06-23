@@ -10,14 +10,15 @@ import { ResidencyReview } from './ResidencyReview'
 import { DocumentReview } from './DocumentReview'
 import { StaysAbroadReview } from './StaysAbroadReview'
 import { Citizenship } from '../../lib/dataSchema'
-import { ExternalData } from '../../types'
 import { getSelectedCustodyChildren } from '../../utils/childrenInfo'
 
 export const Review: FC<FieldBaseProps> = ({ application, field }) => {
   const answers = application.answers as Citizenship
-  const externalData = application.externalData as ExternalData
 
-  const selectedChildren = getSelectedCustodyChildren(externalData, answers)
+  const selectedChildren = getSelectedCustodyChildren(
+    application.externalData,
+    answers,
+  )
   const showParents =
     answers?.residenceCondition.radio === 'childOfIcelander' &&
     answers?.parents &&
