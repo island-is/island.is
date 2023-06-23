@@ -17,7 +17,7 @@ export const RskProcuringClientConfig = defineConfig({
   load: (env) => ({
     xRoadServicePath: env.required(
       'XROAD_RSK_PROCURING_PATH',
-      'IS-DEV/GOV/10006/Skatturinn/prokura-v1',
+      'IS-DEV/GOV/10006/Skatturinn/relationships-v1',
     ),
     tokenExchangeScope: env.optionalJSON('XROAD_RSK_PROCURING_SCOPE') ?? [
       '@rsk.is/prokura',

@@ -151,7 +151,7 @@ paths:
     get:
       description: |
         Returns individual based on a single ID
-      operationId: getIndividual
+      operationId: getIndividualRelationships
       parameters:
         - name: id
           in: path

@@ -442,15 +442,17 @@ export class DelegationsService {
    */
   private async findAllCompaniesIncoming(user: User): Promise<DelegationDTO[]> {
     try {
-      const person = await this.rskProcuringClient.getSimple(user)
+      const person = await this.rskProcuringClient.getIndividualRelationships(
+        user,
+      )
 
-      if (person && person.companies) {
-        return person.companies.map(
-          (p) =>
+      if (person && person.relationships) {
+        return person.relationships.map(
+          (relationship) =>
             <DelegationDTO>{
               toNationalId: user.nationalId,
-              fromNationalId: p.nationalId,
-              fromName: p.name,
+              fromNationalId: relationship.nationalId,
+              fromName: relationship.name,
               type: DelegationType.ProcurationHolder,
               provider: DelegationProvider.CompanyRegistry,
             },

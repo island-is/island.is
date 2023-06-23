@@ -2,8 +2,8 @@ import { Field, ObjectType } from '@nestjs/graphql'
 
 import { Procure } from './procure.model'
 
-@ObjectType('AuthAdminCompanyProcurers')
-export class CompanyProcurers {
+@ObjectType('AuthAdminProcureCompanyRelationships')
+export class CompanyRelationships {
   @Field(() => String)
   name!: string
 

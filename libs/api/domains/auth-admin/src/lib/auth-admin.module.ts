@@ -14,9 +14,21 @@ import { ScopeResolver } from './scope/scope.resolver'
 import { ScopeService } from './scope/scope.service'
 import { ProcureResolver } from './procure/procure.resolver'
 import { ProcureService } from './procure/procure.service'
+import {
+  RskProcuringClientConfig,
+  RskProcuringClientModule,
+} from '@island.is/clients/rsk/procuring'
+import { ConfigModule, XRoadConfig } from '@island.is/nest/config'
 
 @Module({
-  imports: [AuthAdminApiClientModule],
+  imports: [
+    AuthAdminApiClientModule,
+    RskProcuringClientModule,
+    ConfigModule.forRoot({
+      isGlobal: true,
+      load: [RskProcuringClientConfig, XRoadConfig],
+    }),
+  ],
   providers: [
     TenantResolver,
     TenantEnvironmentResolver,

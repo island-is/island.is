@@ -1,5 +1,5 @@
-query GetCompanyProcurers($nationalId: String!) {
-  authAdminGetCompanyProcurers(nationalId: $nationalId) {
+query GetCompanyRelationships($nationalId: String!) {
+  authAdminProcureGetCompanyRelationships(nationalId: $nationalId) {
     name
     nationalId
     procurers {

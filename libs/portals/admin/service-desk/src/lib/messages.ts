@@ -22,23 +22,27 @@ export const m = defineMessages({
     defaultMessage: 'Sláðu inn kennitölu til að byrja leit',
   },
   searchByNationalId: {
-    id: 'service.portal:search-by-national-id',
+    id: 'admin-portal.service-desk:search-by-national-id',
     defaultMessage: 'Leita eftir kennitölu',
   },
   listProcurers: {
-    id: 'service.portal:list-procurers',
+    id: 'admin-portal.service-desk:list-procurers',
     defaultMessage: 'Listi af prókúruhöfum:',
   },
   back: {
-    id: 'service.portal:back',
+    id: 'admin-portal.service-desk:back',
     defaultMessage: 'Til baka',
   },
   viewProcures: {
-    id: 'service.portal:view-procures',
+    id: 'admin-portal.service-desk:view-procures',
     defaultMessage: 'Skoða nánar',
   },
   noContent: {
-    id: 'service.portal:no-content',
+    id: 'admin-portal.service-desk:no-content',
     defaultMessage: 'Ekkert fyrirtæki fannst fyrir þessi leitarskilyrði',
+  },
+  errorDefault: {
+    id: 'admin-portal.service-desk:error-default',
+    defaultMessage: 'Oops, an unknown error has occurred.',
   },
 })

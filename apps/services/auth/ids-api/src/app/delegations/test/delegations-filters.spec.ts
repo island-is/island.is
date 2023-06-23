@@ -89,7 +89,7 @@ describe('DelegationsController', () => {
           .mockImplementation(async () => testCase.fromChildren)
 
         jest
-          .spyOn(rskApi, 'getSimple')
+          .spyOn(rskApi, 'getIndividualRelationships')
           .mockImplementation(async () => testCase.procuration)
       })
 

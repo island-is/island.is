@@ -7,7 +7,7 @@ import { useLocale } from '@island.is/localization'
 
 import { m } from '../../lib/messages'
 import { ServiceDeskPaths } from '../../lib/paths'
-import { CompanyProcurerResult } from './Procurers.loader'
+import { CompanyRelationshipResult } from './Procurers.loader'
 import { Card } from '../../components/Card'
 
 const Procurers = () => {
@@ -17,7 +17,7 @@ const Procurers = () => {
     name,
     nationalId,
     procurers,
-  } = useLoaderData() as CompanyProcurerResult
+  } = useLoaderData() as CompanyRelationshipResult
 
   return (
     <Stack space="containerGutter">

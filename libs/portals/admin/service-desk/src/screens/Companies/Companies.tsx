@@ -3,14 +3,20 @@ import { Form, useActionData, useNavigate } from 'react-router-dom'
 
 import { useLocale } from '@island.is/localization'
 import { formatNationalId, IntroHeader } from '@island.is/portals/core'
-import { Box, Button, FilterInput, Stack } from '@island.is/island-ui/core'
+import {
+  Box,
+  Button,
+  FilterInput,
+  Stack,
+  toast,
+} from '@island.is/island-ui/core'
+import { replaceParams } from '@island.is/react-spa/shared'
 
 import { m } from '../../lib/messages'
-import * as styles from './Companies.css'
 import { GetCompaniesResult } from './GetCompanies.action'
 import { Card } from '../../components/Card'
-import { replaceParams } from '@island.is/react-spa/shared'
 import { ServiceDeskPaths } from '../../lib/paths'
+import * as styles from './Companies.css'
 
 const Companies = () => {
   const [searchInput, setSearchInput] = useState('')
@@ -24,8 +30,11 @@ const Companies = () => {
     if (actionData) {
       setPrevSearchInput(searchInput)
     }
-  }, [actionData])
 
+    if (actionData?.globalError) {
+      toast.error(formatMessage(m.errorDefault))
+    }
+  }, [actionData])
   return (
     <>
       <IntroHeader
