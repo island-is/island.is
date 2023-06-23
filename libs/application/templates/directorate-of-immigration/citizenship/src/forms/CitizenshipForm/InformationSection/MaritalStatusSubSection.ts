@@ -29,7 +29,7 @@ export const MaritalStatusSubSection = buildSubSection({
         ) as ResidenceCondition[]
 
         const selectedResidenceCondition = residenceConditions.filter(
-          (x) => x.id.toString() === answers.residenceCondition?.radio,
+          (x) => x.conditionId.toString() === answers.residenceCondition?.radio,
         )[0]
 
         if (selectedResidenceCondition?.isTypeMaritalStatus) {

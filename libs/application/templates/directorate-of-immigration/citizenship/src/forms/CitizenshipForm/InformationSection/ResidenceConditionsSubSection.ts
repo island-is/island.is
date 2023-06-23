@@ -34,10 +34,12 @@ export const ResidenceConditionsSubSection = buildSubSection({
               [],
             ) as ResidenceCondition[]
 
-            return residenceConditionOptions.map(({ id, name }) => ({
-              value: id.toString(),
-              label: name,
-            }))
+            return residenceConditionOptions.map(
+              ({ conditionId, conditionName }) => ({
+                value: conditionId.toString(),
+                label: conditionName,
+              }),
+            )
           },
         }),
       ],

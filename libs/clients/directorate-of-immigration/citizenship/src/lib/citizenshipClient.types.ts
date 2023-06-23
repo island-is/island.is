@@ -1,6 +1,6 @@
 export interface ResidenceCondition {
-  id: number
-  name: string
+  conditionId: number
+  conditionName: string
   isTypeMaritalStatus: boolean
 }
 

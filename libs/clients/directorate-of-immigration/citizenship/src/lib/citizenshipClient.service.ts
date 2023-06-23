@@ -9,6 +9,7 @@ import {
 } from './citizenshipClient.types'
 import { Injectable } from '@nestjs/common'
 import {
+  ApplicantResidenceConditionApi,
   CountryOfResidenceApi,
   LookupType,
   OptionSetApi,
@@ -24,6 +25,7 @@ export class CitizenshipClient {
     private countryOfResidenceApi: CountryOfResidenceApi,
     private residenceAbroadApi: ResidenceAbroadApi,
     private travelDocumentApi: TravelDocumentApi,
+    private applicantResidenceConditionApi: ApplicantResidenceConditionApi,
   ) {}
 
   private countryOfResidenceApiWithAuth(auth: Auth) {
@@ -38,33 +40,21 @@ export class CitizenshipClient {
     return this.travelDocumentApi.withMiddleware(new AuthMiddleware(auth))
   }
 
-  async getResidenceConditions(auth: User): Promise<ResidenceCondition[]> {
-    const res = await this.optionSetApi.apiOptionSetLookupTypeGet({
-      lookupType: LookupType.ResidenceConditions,
-    })
+  private applicantResidenceConditionApiWithAuth(auth: Auth) {
+    return this.applicantResidenceConditionApi.withMiddleware(
+      new AuthMiddleware(auth),
+    )
+  }
 
-    // TODOx remove dummy filtering on residence conditions
-    let filteredRes: OptionSetItem[] = []
+  async getResidenceConditions(auth: Auth): Promise<ResidenceCondition[]> {
+    const res = await this.applicantResidenceConditionApiWithAuth(
+      auth,
+    ).apiApplicantResidenceConditionGetAllGet()
 
-    // Gervimaður Færeyjar
-    if (auth.nationalId === '0101302399') {
-      filteredRes = res.filter((x) => [20090, 20093].includes(x.id!))
-    }
-
-    // Gervimaður Bretland
-    if (auth.nationalId === '0101304929') {
-      filteredRes = res.filter((x) => [20097, 20092].includes(x.id!))
-    }
-
-    // Sandra Ósk Þí Torp
-    if (auth.nationalId === '1411851449') {
-      filteredRes = res.filter((x) => [20091].includes(x.id!))
-    }
-
-    return filteredRes.map((item) => ({
-      id: item.id!,
-      name: item.name!,
-      isTypeMaritalStatus: item.id === 20090 || item.id === 20091,
+    return res.map((item) => ({
+      conditionId: item.residenceConditionId!,
+      conditionName: item.residenceConditionName!,
+      isTypeMaritalStatus: item.isTypeMarried || false,
     }))
   }
 

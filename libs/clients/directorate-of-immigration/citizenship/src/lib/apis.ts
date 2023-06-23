@@ -1,4 +1,5 @@
 import {
+  ApplicantResidenceConditionApi,
   Configuration,
   CountryOfResidenceApi,
   OptionSetApi,
@@ -12,6 +13,7 @@ export const exportedApis = [
   CountryOfResidenceApi,
   ResidenceAbroadApi,
   TravelDocumentApi,
+  ApplicantResidenceConditionApi,
 ].map((Api) => ({
   provide: Api,
   useFactory: (configuration: Configuration) => {
