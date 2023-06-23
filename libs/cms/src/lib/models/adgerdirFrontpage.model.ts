@@ -1,5 +1,7 @@
 /* eslint-disable @typescript-eslint/no-inferrable-types */
 import { Field, ObjectType, ID } from '@nestjs/graphql'
+import { CacheField } from '@island.is/nest/graphql'
+import { SystemMetadata } from '@island.is/shared/types'
 import { IVidspyrnaFrontpage } from '../generated/contentfulTypes'
 import { Image, mapImage } from './image.model'
 import { mapDocument, SliceUnion } from '../unions/slice.union'
@@ -7,7 +9,6 @@ import {
   AdgerdirSliceUnion,
   mapAdgerdirSliceUnion,
 } from '../unions/adgerdirSlice.union'
-import { SystemMetadata } from '@island.is/shared/types'
 
 @ObjectType()
 export class AdgerdirFrontpage {
@@ -23,13 +24,13 @@ export class AdgerdirFrontpage {
   @Field({ nullable: true })
   description?: string
 
-  @Field(() => [SliceUnion])
+  @CacheField(() => [SliceUnion])
   content?: Array<typeof SliceUnion>
 
-  @Field(() => [AdgerdirSliceUnion])
+  @CacheField(() => [AdgerdirSliceUnion])
   slices!: Array<typeof AdgerdirSliceUnion>
 
-  @Field(() => Image, { nullable: true })
+  @CacheField(() => Image, { nullable: true })
   featuredImage?: Image | null
 }
 

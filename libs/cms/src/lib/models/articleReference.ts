@@ -9,8 +9,9 @@
   directly
 */
 import { Field, ObjectType, ID } from '@nestjs/graphql'
-import { IArticle } from '../generated/contentfulTypes'
+import { CacheField } from '@island.is/nest/graphql'
 import { SystemMetadata } from '@island.is/shared/types'
+import { IArticle } from '../generated/contentfulTypes'
 import { ArticleGroup, mapArticleGroup } from './articleGroup.model'
 import { mapOrganization, Organization } from './organization.model'
 import { ArticleCategory, mapArticleCategory } from './articleCategory.model'
@@ -30,16 +31,16 @@ export class ArticleReference {
   @Field()
   intro?: string
 
-  @Field(() => ArticleGroup, { nullable: true })
+  @CacheField(() => ArticleGroup, { nullable: true })
   group?: ArticleGroup | null
 
-  @Field(() => ArticleCategory, { nullable: true })
+  @CacheField(() => ArticleCategory, { nullable: true })
   category?: ArticleCategory | null
 
-  @Field(() => [Organization], { nullable: true })
+  @CacheField(() => [Organization], { nullable: true })
   organization?: Array<Organization>
 
-  @Field(() => ProcessEntry, { nullable: true })
+  @CacheField(() => ProcessEntry, { nullable: true })
   processEntry?: ProcessEntry | null
 
   @Field()

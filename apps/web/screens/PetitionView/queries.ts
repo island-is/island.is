@@ -22,6 +22,7 @@ const GetGeneralPetitionList = gql`
       meta
       created
       ownerName
+      owner
     }
   }
 `
@@ -38,6 +39,7 @@ const GetGeneralPetitionListEndorsements = gql`
         created
         meta {
           fullName
+          locality
         }
       }
     }

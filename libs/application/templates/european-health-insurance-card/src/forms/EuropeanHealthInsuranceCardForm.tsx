@@ -8,11 +8,13 @@ import {
   buildMultiField,
   buildSection,
   buildSubmitField,
+  formatText,
 } from '@island.is/application/core'
 import {
   getDefaultValuesForPDFApplicants,
   getEhicResponse,
   getFullName,
+  getPlasticExpiryDate,
   hasAPDF,
   hasPlastic,
   someAreInsuredButCannotApply,
@@ -27,6 +29,7 @@ import { CardResponse, Answer } from '../lib/types'
 import { Option } from '@island.is/application/types'
 import { Sjukra } from '../assets'
 import { europeanHealthInsuranceCardApplicationMessages as e } from '../lib/messages'
+import { useLocale } from '@island.is/localization'
 
 export const EuropeanHealthInsuranceCardForm: Form = buildForm({
   id: 'EuropeanHealthInsuranceCardForm',
@@ -58,6 +61,7 @@ export const EuropeanHealthInsuranceCardForm: Form = buildForm({
           condition: (_, externalData) =>
             someCanApplyForPlasticOrPdf(externalData),
           children: [
+            // Applying for a new Plastic card
             buildCheckboxField({
               id: 'delimitations.applyForPlastic',
               backgroundColor: 'white',
@@ -89,6 +93,7 @@ export const EuropeanHealthInsuranceCardForm: Form = buildForm({
                 someHavePlasticButNotPdf(externalData),
             }),
 
+            // Have plastic card but can apply for PDF - Adds to the PDF array in next step
             buildCheckboxField({
               id: 'delimitations.addForPDF',
               backgroundColor: 'white',
@@ -105,6 +110,15 @@ export const EuropeanHealthInsuranceCardForm: Form = buildForm({
                       value: x.applicantNationalId ?? '',
                       label:
                         getFullName(application, x.applicantNationalId) ?? '',
+                      subLabel: getPlasticExpiryDate(x)
+                        ? formatText(
+                            e.temp.sectionPlasticExpiryDate,
+                            application,
+                            useLocale().formatMessage,
+                          ) +
+                          ' ' +
+                          getPlasticExpiryDate(x)?.toLocaleDateString('is-IS')
+                        : '',
                     })
                   }
                 })
@@ -122,6 +136,7 @@ export const EuropeanHealthInsuranceCardForm: Form = buildForm({
               condition: (_, externalData) => someHavePDF(externalData),
             }),
 
+            // Have PDF and Plastic, show disabled checkboxes
             buildCheckboxField({
               id: 'havePdf',
               backgroundColor: 'white',
@@ -137,6 +152,15 @@ export const EuropeanHealthInsuranceCardForm: Form = buildForm({
                       label:
                         getFullName(application, x.applicantNationalId) ?? '',
                       disabled: true,
+                      subLabel: getPlasticExpiryDate(x)
+                        ? formatText(
+                            e.temp.sectionPlasticExpiryDate,
+                            application,
+                            useLocale().formatMessage,
+                          ) +
+                          ' ' +
+                          getPlasticExpiryDate(x)?.toLocaleDateString('is-IS')
+                        : '',
                     })
                   }
                 })
@@ -153,6 +177,7 @@ export const EuropeanHealthInsuranceCardForm: Form = buildForm({
               condition: (_, externalData) => someAreNotInsured(externalData),
             }),
 
+            // Are unable to apply for plastic or pdf. Uninsured or someother reason
             buildCheckboxField({
               id: 'notApplicable',
               backgroundColor: 'white',
@@ -202,13 +227,18 @@ export const EuropeanHealthInsuranceCardForm: Form = buildForm({
           title: e.temp.sectionTitle,
           description: e.temp.sectionDescription,
           children: [
+            // Applying for PDF
             buildCheckboxField({
               id: 'applyForPDF',
               backgroundColor: 'white',
               title: '',
 
               options: (application: Application) => {
-                const applying = []
+                const applying: {
+                  value: string
+                  label: string
+                  subLabel: string
+                }[] = []
                 // Are applying for a new plastic card
                 const answers = (application.answers as unknown) as Answer
                 const ans = answers.delimitations.applyForPlastic
@@ -216,6 +246,7 @@ export const EuropeanHealthInsuranceCardForm: Form = buildForm({
                   applying.push({
                     value: ans[i],
                     label: getFullName(application, ans[i]) ?? '',
+                    subLabel: '',
                   })
                 }
 
@@ -225,11 +256,25 @@ export const EuropeanHealthInsuranceCardForm: Form = buildForm({
 
                 cardResponse.forEach((x) => {
                   if (x.canApplyForPDF) {
-                    applying.push({
-                      value: x.applicantNationalId ?? '',
-                      label:
-                        getFullName(application, x.applicantNationalId) ?? '',
-                    })
+                    // If applying for new card then exlude the old card from the 'applying' array
+                    if (
+                      !applying.some((y) => y.value === x.applicantNationalId)
+                    ) {
+                      applying.push({
+                        value: x.applicantNationalId ?? '',
+                        label:
+                          getFullName(application, x.applicantNationalId) ?? '',
+                        subLabel: getPlasticExpiryDate(x)
+                          ? formatText(
+                              e.temp.sectionPlasticExpiryDate,
+                              application,
+                              useLocale().formatMessage,
+                            ) +
+                            ' ' +
+                            getPlasticExpiryDate(x)?.toLocaleDateString('is-IS')
+                          : '',
+                      })
+                    }
                   }
                 })
 

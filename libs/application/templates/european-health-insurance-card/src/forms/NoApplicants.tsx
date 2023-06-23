@@ -5,12 +5,14 @@ import {
   buildDescriptionField,
   buildForm,
   buildMultiField,
+  formatText,
 } from '@island.is/application/core'
 
 import { europeanHealthInsuranceCardApplicationMessages as e } from '../lib/messages'
 import {
   getEhicResponse,
   getFullName,
+  getPlasticExpiryDate,
   hasAPDF,
   hasPlastic,
   someAreInsuredButCannotApply,
@@ -18,6 +20,7 @@ import {
   someHavePDF,
 } from '../lib/helpers/applicantHelper'
 import { Option } from '@island.is/application/types'
+import { useLocale } from '@island.is/localization'
 
 export const NoApplicants: Form = buildForm({
   id: 'NoApplicants',
@@ -50,6 +53,15 @@ export const NoApplicants: Form = buildForm({
                   value: x.applicantNationalId ?? '',
                   label: getFullName(application, x.applicantNationalId) ?? '',
                   disabled: true,
+                  subLabel: getPlasticExpiryDate(x)
+                    ? formatText(
+                        e.temp.sectionPlasticExpiryDate,
+                        application,
+                        useLocale().formatMessage,
+                      ) +
+                      ' ' +
+                      getPlasticExpiryDate(x)?.toLocaleDateString('is-IS')
+                    : '',
                 })
               }
             })

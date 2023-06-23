@@ -1,4 +1,5 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
+import { CacheField } from '@island.is/nest/graphql'
 
 import { ILink, ISupportQna } from '../generated/contentfulTypes'
 import { mapDocument, SliceUnion } from '../unions/slice.union'
@@ -19,25 +20,25 @@ export class SupportQNA {
   @Field()
   title!: string
 
-  @Field(() => [SliceUnion])
+  @CacheField(() => [SliceUnion])
   answer: Array<typeof SliceUnion> = []
 
   @Field()
   slug!: string
 
-  @Field(() => Organization, { nullable: true })
+  @CacheField(() => Organization, { nullable: true })
   organization!: Organization | null
 
-  @Field(() => SupportCategory, { nullable: true })
+  @CacheField(() => SupportCategory, { nullable: true })
   category!: SupportCategory | null
 
-  @Field(() => SupportSubCategory, { nullable: true })
+  @CacheField(() => SupportSubCategory, { nullable: true })
   subCategory!: SupportSubCategory | null
 
   @Field()
   importance!: number
 
-  @Field(() => [Link])
+  @CacheField(() => [Link])
   relatedLinks?: Link[]
 
   @Field()
