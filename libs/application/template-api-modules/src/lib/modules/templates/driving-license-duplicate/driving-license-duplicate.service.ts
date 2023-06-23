@@ -77,8 +77,6 @@ export class DrivingLicenseDuplicateService extends BaseTemplateApiService {
         ssn: nationalId,
       })
       .catch((e) => {
-        // TODO: stop logging this here
-        console.log(JSON.stringify(e, null, 2))
         throw Error('Error submitting application to Samgöngustofa')
       })
     return {
