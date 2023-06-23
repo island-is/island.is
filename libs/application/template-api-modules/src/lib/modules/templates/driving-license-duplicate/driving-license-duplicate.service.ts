@@ -84,7 +84,6 @@ export class DrivingLicenseDuplicateService extends BaseTemplateApiService {
       })
     return {
       success: true,
-      orderId: `${orderId}`,
     }
   }
 }
