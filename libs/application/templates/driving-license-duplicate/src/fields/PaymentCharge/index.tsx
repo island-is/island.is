@@ -48,7 +48,7 @@ export const PaymentCharge: FC<FieldBaseProps> = ({ application }) => {
       10,
     )
   }
-  if (age > 65) {
+  if (age >= 65) {
     chargeCode = 'AY113'
   }
 
