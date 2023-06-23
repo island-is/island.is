@@ -318,6 +318,19 @@ export const OldAgePensionForm: Form = buildForm({
                   component: 'Period',
                   title: oldAgePensionFormMessage.period.periodTitle,
                 }),
+                buildCustomField(
+                  {
+                    id: 'period.alert',
+                    title: oldAgePensionFormMessage.period.periodAlertTitle,
+                    component: 'FieldAlertMessage',
+                    description:
+                      oldAgePensionFormMessage.period.periodAlertMessage,
+                    condition: (answers, externalData) => {
+                      return isEarlyRetirement(answers, externalData)
+                    },
+                  },
+                  { type: 'warning' },
+                ),
               ],
             }),
           ],

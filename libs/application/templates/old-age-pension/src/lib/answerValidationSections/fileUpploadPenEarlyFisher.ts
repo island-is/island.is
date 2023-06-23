@@ -13,6 +13,7 @@ import {
   ApplicationType,
   earlyRetirementMaxAge,
   earlyRetirementMinAge,
+  MONTHS,
   YES,
 } from '../constants'
 import { buildError } from './utils'
@@ -35,7 +36,7 @@ export const fileUpploadPenEarlyFisher = (
     dateOfBirth.getFullYear(),
     dateOfBirth.getMonth(),
   )
-  const selectedDate = new Date(+selectedYear, +selectedMonth)
+  const selectedDate = new Date(+selectedYear, MONTHS.indexOf(selectedMonth))
   const age = getAgeBetweenTwoDates(selectedDate, dateOfBirth00)
 
   if (obj.pension) {
