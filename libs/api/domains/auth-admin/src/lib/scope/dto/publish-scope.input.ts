@@ -3,7 +3,7 @@ import { Field, InputType } from '@nestjs/graphql'
 
 @InputType('AuthAdminPublishScopeInput')
 export class PublishScopeInput {
-  @Field(() => Environment, { nullable: false })
+  @Field(() => Environment)
   targetEnvironment!: Environment
 
   @Field(() => Environment, { nullable: false })
