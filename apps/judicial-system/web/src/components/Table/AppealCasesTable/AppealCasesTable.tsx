@@ -12,7 +12,8 @@ import {
   useViewport,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { theme } from '@island.is/island-ui/theme'
-import { AppealedCasesQueryResponse } from '@island.is/judicial-system-web/src/routes/CourtOfAppeal/Cases/Cases'
+import { CaseListEntry } from '@island.is/judicial-system-web/src/graphql/schema'
+
 import { TagAppealState } from '@island.is/judicial-system-web/src/components'
 import {
   ColumnCaseType,
@@ -22,13 +23,20 @@ import {
   TableContainer,
   TableHeaderText,
 } from '@island.is/judicial-system-web/src/components/Table'
+import {
+  Defendant,
+  isRestrictionCase,
+  CaseAppealRulingDecision as TAppealRulingDecision,
+  CaseType as TCaseType,
+  CaseDecision as TCaseDecision,
+  CaseAppealState as TAppealState,
+} from '@island.is/judicial-system/types'
 
 import * as styles from '../Table.css'
-import { Defendant, isRestrictionCase } from '@island.is/judicial-system/types'
 import MobileAppealCase from './MobileAppealCase'
 
 interface Props {
-  cases: AppealedCasesQueryResponse[]
+  cases: CaseListEntry[]
   onRowClick: (id: string) => void
   loading: boolean
   showingCompletedCases?: boolean
@@ -44,9 +52,8 @@ const AppealCasesTable: React.FC<Props> = (props) => {
   )
   const activeCasesData = useMemo(
     () =>
-      cases.sort(
-        (a: AppealedCasesQueryResponse, b: AppealedCasesQueryResponse) =>
-          a['appealedDate'].localeCompare(b['appealedDate']),
+      cases.sort((a: CaseListEntry, b: CaseListEntry) =>
+        (a['appealedDate'] ?? '').localeCompare(b['appealedDate'] ?? ''),
       ),
     [cases],
   )
@@ -64,8 +71,8 @@ const AppealCasesTable: React.FC<Props> = (props) => {
             {showingCompletedCases && (
               <Text fontWeight={'medium'} variant="small">
                 {isRestrictionCase(theCase.type)
-                  ? `${formatDate(theCase.courtEndTime, 'd.M.y')} -
-                      ${formatDate(theCase.validToDate, 'd.M.y')}`
+                  ? `${formatDate(theCase.courtEndTime ?? '', 'd.M.y')} -
+                      ${formatDate(theCase.validToDate ?? '', 'd.M.y')}`
                   : ''}
               </Text>
             )}
@@ -113,9 +120,9 @@ const AppealCasesTable: React.FC<Props> = (props) => {
           >
             <td>
               <CourtCaseNumber
-                courtCaseNumber={column.courtCaseNumber}
-                policeCaseNumbers={column.policeCaseNumbers}
-                appealCaseNumber={column.appealCaseNumber}
+                courtCaseNumber={column.courtCaseNumber ?? ''}
+                policeCaseNumbers={column.policeCaseNumbers ?? []}
+                appealCaseNumber={column.appealCaseNumber ?? ''}
               />
             </td>
             <td className={cn(styles.td, styles.largeColumn)}>
@@ -123,23 +130,25 @@ const AppealCasesTable: React.FC<Props> = (props) => {
             </td>
             <td>
               <ColumnCaseType
-                type={column.type}
-                decision={column.decision}
-                parentCaseId={column.parentCaseId}
+                type={column.type as TCaseType}
+                decision={column.decision as TCaseDecision}
+                parentCaseId={column.parentCaseId ?? ''}
               />
             </td>
             <td>
               <TagAppealState
-                appealState={column.appealState}
-                appealRulingDecision={column.appealRulingDecision}
+                appealState={column.appealState as TAppealState}
+                appealRulingDecision={
+                  column.appealRulingDecision as TAppealRulingDecision
+                }
               />
             </td>
             <td>
               {showingCompletedCases ? (
                 <Text>
                   {isRestrictionCase(column.type)
-                    ? `${formatDate(column.courtEndTime, 'd.M.y')} -
-                      ${formatDate(column.validToDate, 'd.M.y')}`
+                    ? `${formatDate(column.courtEndTime ?? '', 'd.M.y')} -
+                      ${formatDate(column.validToDate ?? '', 'd.M.y')}`
                     : ''}
                 </Text>
               ) : (
