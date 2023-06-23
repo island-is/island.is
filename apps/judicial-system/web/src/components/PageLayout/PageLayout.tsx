@@ -32,7 +32,7 @@ import Logo from '../Logo/Logo'
 import Skeleton from '../Skeleton/Skeleton'
 import useSections from '../../utils/hooks/useSections'
 import * as styles from './PageLayout.css'
-import { stepValidationsType } from '../../utils/formHelper'
+import { stepValidations, stepValidationsType } from '../../utils/formHelper'
 
 export interface RouteSection {
   name: string
@@ -65,46 +65,66 @@ const SubsectionChild: React.FC<{
 const DisplaySection: React.FC<SectionProps> = (props) => {
   const { section, index, activeSection, activeSubSection } = props
 
+  const validations = stepValidations()
+  const validationFunctions = Object.entries(validations)
+
+  const validate = (href?: string) => {
+    if (!href) return false
+    console.log('href ', href)
+    return validationFunctions.find(([el]) => {
+      return href.includes(el)
+    })
+  }
+
   return (
     <Section
       section={section.name}
       sectionIndex={index}
       isActive={section.isActive}
       isComplete={activeSection ? index < activeSection : false}
-      subSections={section.children.map((subSection, index) =>
-        subSection.href && activeSubSection && activeSubSection > index ? (
-          <LinkV2
-            href={subSection.href}
-            underline="small"
-            key={`${subSection.name}-${index}`}
-          >
-            <SubsectionChild isActive={subSection.isActive}>
-              {subSection.name}
-            </SubsectionChild>
-          </LinkV2>
-        ) : subSection.onClick ? (
-          <Box
-            key={`${subSection.name}-${index}`}
-            component="button"
-            onClick={subSection.onClick}
-            className={cn(
-              linkStyles.underlineVisibilities['hover'],
-              linkStyles.underlines['small'],
-            )}
-          >
-            <SubsectionChild isActive={subSection.isActive}>
-              {subSection.name}
-            </SubsectionChild>
-          </Box>
-        ) : (
+      subSections={section.children.map((subSection, index) => {
+        console.log('subSection', validate(subSection.href))
+        if (subSection.href && activeSubSection && activeSubSection > index) {
+          return (
+            <LinkV2
+              href={subSection.href}
+              underline="small"
+              key={`${subSection.name}-${index}`}
+            >
+              <SubsectionChild isActive={subSection.isActive}>
+                {subSection.name} bla
+              </SubsectionChild>
+            </LinkV2>
+          )
+        }
+
+        if (subSection.onClick) {
+          return (
+            <Box
+              key={`${subSection.name}-${index}`}
+              component="button"
+              onClick={subSection.onClick}
+              className={cn(
+                linkStyles.underlineVisibilities['hover'],
+                linkStyles.underlines['small'],
+              )}
+            >
+              <SubsectionChild isActive={subSection.isActive}>
+                {subSection.name} helu
+              </SubsectionChild>
+            </Box>
+          )
+        }
+
+        return (
           <SubsectionChild
             key={`${subSection.name}-${index}`}
             isActive={subSection.isActive}
           >
             {subSection.name}
           </SubsectionChild>
-        ),
-      )}
+        )
+      })}
     />
   )
 }
