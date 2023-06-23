@@ -77,7 +77,7 @@ export const UserInformationSubSection = buildSubSection({
           format: '###-####',
           required: true,
           defaultValue: (application: Application) =>
-            application.externalData?.userProfile?.data?.phone,
+            application.externalData?.userProfile?.data?.mobilePhoneNumber,
         }),
         buildTextField({
           id: 'userInformation.citizenship',
@@ -96,14 +96,10 @@ export const UserInformationSubSection = buildSubSection({
           width: 'half',
           readOnly: true,
           defaultValue: (application: Application) => {
-            //TODO birta rétta dags?
-            console.log('application', application)
             return formatDate(
-              new Date('01.01.2022'),
-            ) /*formatDate(
-                application.externalData?.individual?.data
-                  ?.residenceInIcelandLastChangeDate,
-              )*/
+              application.externalData?.individual?.data
+                ?.residenceInIcelandLastChangeDate,
+            )
           },
         }),
         buildTextField({

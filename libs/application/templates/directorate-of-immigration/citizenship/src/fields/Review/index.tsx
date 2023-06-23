@@ -9,32 +9,42 @@ import { MaritalStatusReview } from './MaritalStatusReview'
 import { ResidencyReview } from './ResidencyReview'
 import { DocumentReview } from './DocumentReview'
 import { StaysAbroadReview } from './StaysAbroadReview'
+import { Citizenship } from '../../lib/dataSchema'
+import { ExternalData } from '../../types'
+import { getSelectedCustodyChildren } from '../../utils/childrenInfo'
 
-export const Review: FC<FieldBaseProps> = (props) => {
+export const Review: FC<FieldBaseProps> = ({ application, field }) => {
+  const answers = application.answers as Citizenship
+  const externalData = application.externalData as ExternalData
+
+  const selectedChildren = getSelectedCustodyChildren(externalData, answers)
+  const showParents =
+    answers?.residenceCondition.radio === 'childOfIcelander' &&
+    answers?.parents &&
+    answers?.parents.length > 0
+
   return (
     <Box>
       <Divider></Divider>
-      <ApplicantReview field={props.field} application={props.application} />
+      <ApplicantReview field={field} application={application} />
       <Divider></Divider>
-      <ChildrenReview field={props.field} application={props.application} />
+      {selectedChildren && selectedChildren.length > 0 && (
+        <ChildrenReview selectedChildren={selectedChildren} />
+      )}
       <Divider></Divider>
-      <ResidencyConditionReview
-        field={props.field}
-        application={props.application}
-      />
+      <ResidencyConditionReview field={field} application={application} />
       <Divider></Divider>
-      <ParentsReview field={props.field} application={props.application} />
+      {showParents && <ParentsReview field={field} application={application} />}
       <Divider></Divider>
-      <MaritalStatusReview
-        field={props.field}
-        application={props.application}
-      />
+      {answers?.maritalStatus && (
+        <MaritalStatusReview field={field} application={application} />
+      )}
       <Divider></Divider>
-      <ResidencyReview field={props.field} application={props.application} />
+      <ResidencyReview field={field} application={application} />
       <Divider></Divider>
-      <StaysAbroadReview field={props.field} application={props.application} />
+      <StaysAbroadReview field={field} application={application} />
       <Divider></Divider>
-      <DocumentReview field={props.field} application={props.application} />
+      <DocumentReview field={field} application={application} />
     </Box>
   )
 }

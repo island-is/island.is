@@ -87,6 +87,20 @@ export const RemoveableStayAbroadSchema = z
       path: ['purpose'],
     },
   )
+  .refine(({ dateTo, dateFrom }) => {
+    const to = dateTo ? new Date(dateTo).getTime() : null
+    const from = dateFrom ? new Date(dateFrom).getTime() : null
+
+    const threeMonths = 7.884e9
+
+    if (from && to) {
+      const difference = from - to
+
+      return difference >= threeMonths
+    }
+
+    return false
+  })
 
 const StaysAbroadSchema = z
   .object({
