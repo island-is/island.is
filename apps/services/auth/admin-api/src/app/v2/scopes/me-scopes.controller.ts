@@ -13,9 +13,8 @@ import {
   AdminScopeService,
   AdminScopeDTO,
   MeTenantGuard,
-  ClientCreateScopeDTO,
+  AdminCreateScopeDto,
   AdminPatchScopeDto,
-  AdminClientDto,
 } from '@island.is/auth-api-lib'
 import {
   CurrentUser,
@@ -85,7 +84,7 @@ export class MeScopesController {
   })
   create(
     @Param('tenantId') tenantId: string,
-    @Body() input: ClientCreateScopeDTO,
+    @Body() input: AdminCreateScopeDto,
   ): Promise<AdminScopeDTO> {
     return this.adminScopeService.createScope(tenantId, input)
   }

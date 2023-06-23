@@ -8,6 +8,7 @@ import {
 import { m } from '../../lib/messages'
 import { format as formatNationalId } from 'kennitala'
 import { formatPhoneNumber } from '@island.is/application/ui-components'
+import { parse } from 'libphonenumber-js'
 
 export const representativeOverview = [
   buildDividerField({}),
@@ -45,10 +46,12 @@ export const representativeOverview = [
   buildKeyValueField({
     width: 'half',
     label: m.phone,
-    value: ({ answers }) =>
-      formatPhoneNumber(
+    value: ({ answers }) => {
+      const parsedPhoneNumber = parse(
         getValueViaPath<string>(answers, 'representative.phone') ?? '',
-      ),
+      )
+      return formatPhoneNumber(parsedPhoneNumber.phone as string)
+    },
     condition: (answers) =>
       !!getValueViaPath<string>(answers, 'representative.phone'),
   }),

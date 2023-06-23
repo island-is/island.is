@@ -664,7 +664,7 @@ application-system-api:
       cpu: '400m'
       memory: '1024Mi'
     requests:
-      cpu: '50m'
+      cpu: '75m'
       memory: '512Mi'
   secrets:
     ARK_BASE_URL: '/k8s/application-system-api/ARK_BASE_URL'
@@ -1966,6 +1966,7 @@ service-portal:
     SI_PUBLIC_IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
   grantNamespaces:
     - 'nginx-ingress-internal'
+    - 'nginx-ingress-external'
     - 'islandis'
     - 'user-notification'
     - 'identity-server'

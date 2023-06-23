@@ -112,7 +112,11 @@ export interface ApplicationStateMeta<
      */
     pendingAction?:
       | PendingAction
-      | ((application: Application, role: ApplicationRole) => PendingAction)
+      | ((
+          application: Application,
+          role: ApplicationRole,
+          nationalId: string,
+        ) => PendingAction)
     /** @deprecated is generated from status of current state */
     tag?: { label?: StaticText; variant?: ActionCardTag }
   }

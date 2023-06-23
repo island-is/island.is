@@ -22,6 +22,7 @@ const GetGeneralPetitionList = gql`
       meta
       created
       ownerName
+      owner
     }
   }
 `
