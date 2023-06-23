@@ -113,7 +113,7 @@ export class ScopeService extends MultiEnvironmentService {
         tenantId: input.tenantId,
         scopeName: input.scopeName,
       })
-      .catch((error) => this.handleError(error, input.sourceEnvironment))
+      ?.catch((error) => this.handleError(error, input.sourceEnvironment))
 
     if (!sourceInput) {
       throw new Error(`Scope ${input.scopeName} not found`)
