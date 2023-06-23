@@ -16,7 +16,7 @@ import {
 import { m } from '../../lib/messages'
 import format from 'date-fns/format'
 import { allowFakeCondition } from '../../lib/utils'
-import { IGNORE, NO, YES } from '../../lib/constants'
+import { IGNORE, YES } from '../../lib/constants'
 import { DriversLicense } from '@island.is/clients/driving-license'
 
 export const sectionOverview = buildSection({
@@ -64,8 +64,7 @@ export const sectionOverview = buildSection({
             doesNotRequireAnswer: true,
             condition: (answers) => {
               return (
-                allowFakeCondition(NO)(answers) ||
-                allowFakeCondition(IGNORE)(answers)
+                !allowFakeCondition(YES)(answers)
               )
             },
           },

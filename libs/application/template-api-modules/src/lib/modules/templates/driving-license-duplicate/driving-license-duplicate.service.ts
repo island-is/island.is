@@ -76,7 +76,7 @@ export class DrivingLicenseDuplicateService extends BaseTemplateApiService {
         districtId: parseInt(answers.district.toString(), 10),
         ssn: nationalId,
       })
-      .catch((e) => {
+      .catch(() => {
         throw Error('Error submitting application to Samgöngustofa')
       })
     return {
