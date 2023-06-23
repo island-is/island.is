@@ -13,6 +13,7 @@ import {
   EndorsementList,
   PaginatedEndorsementResponse,
 } from '@island.is/api/schema'
+import { formatDate } from '../../../lib/utils'
 
 interface Props {
   petition?: EndorsementList
@@ -34,11 +35,12 @@ interface Props {
 export const getCSV = async (data: any[], fileName: string) => {
   const name = `${fileName}`
   const dataArray = data.map((item: any) => [
-    item.created ?? '',
+    formatDate(item.created) ?? '',
     item.meta.fullName ?? '',
+    item.meta.locality ?? '',
   ])
 
-  await downloadCSV(name, ['Dagsetning', 'Nafn'], dataArray)
+  await downloadCSV(name, ['Dagsetning', 'Nafn', 'Sveitarfélag'], dataArray)
 }
 
 const baseUrl = `${document.location.origin}/undirskriftalistar/`

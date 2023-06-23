@@ -264,6 +264,7 @@ export class ApplicationTemplateHelper<
     application: Application,
     currentRole: ApplicationRole,
     formatMessage: FormatMessage,
+    nationalId: string,
     stateKey: string = this.application.state,
   ): PendingAction {
     const stateInfo = this.getApplicationStateInformation(stateKey)
@@ -277,7 +278,7 @@ export class ApplicationTemplateHelper<
     }
 
     if (typeof pendingAction === 'function') {
-      const action = pendingAction(application, currentRole)
+      const action = pendingAction(application, currentRole, nationalId)
       return {
         displayStatus: action.displayStatus,
         content: action.content ? formatMessage(action.content) : undefined,

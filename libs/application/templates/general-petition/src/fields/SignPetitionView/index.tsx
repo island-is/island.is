@@ -77,7 +77,9 @@ const SignPetitionView: FC<FieldBaseProps> = ({ application }) => {
           <Box position="absolute" bottom={0} right={0}>
             <Button
               icon="arrowForward"
-              onClick={() => navigate('/../minarsidur/min-gogn/listar')}
+              onClick={() =>
+                window.open('/minarsidur/min-gogn/listar', '_blank')
+              }
             >
               {formatMessage(m.backtoSP)}
             </Button>

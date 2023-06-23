@@ -6,7 +6,6 @@ export enum Features {
   // Application visibility flags
   exampleApplication = 'isExampleApplicationEnabled',
   accidentNotification = 'isAccidentNotificationEnabled',
-  drivingLearnersPermit = 'isDrivingLearnersPermitEnabled',
   drivingInstructorRegistrations = 'isDrivingInstructorRegistrationsEnabled',
   drivingSchoolConfirmations = 'isDrivingSchoolConfirmationsEnabled',
   europeanHealthInsuranceCard = 'isEuropeanHealthInsuranceCardApplicationEnabled',
