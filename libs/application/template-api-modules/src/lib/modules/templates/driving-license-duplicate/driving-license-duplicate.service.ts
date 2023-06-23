@@ -27,7 +27,6 @@ export class DrivingLicenseDuplicateService extends BaseTemplateApiService {
     application: { id, answers },
     auth,
   }: TemplateApiModuleActionProps) {
-    // TODO: Change to AY116 once its available on dev until then use the regular drivingLicnese code
     const chargeItemCode = getValueViaPath<string>(answers, 'chargeItemCode')
 
     if (!chargeItemCode) {
