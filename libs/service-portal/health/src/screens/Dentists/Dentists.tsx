@@ -77,18 +77,14 @@ const Dentists = () => {
       )}
 
       {dentistName && (
-        <Stack space={5}>
-          <Box>
-            <UserInfoLine
-              title={formatMessage(messages.yourInformation)}
-              label={formatMessage(messages.dentist)}
-              content={dentistName}
-              titlePadding={[2, 2, 4]}
-              paddingY={2}
-            />
-            <Divider />
-          </Box>
-          <Text variant="h5">{formatMessage(messages.yourDentistBills)}</Text>
+        <Stack space={2}>
+          <UserInfoLine
+            title={formatMessage(messages.yourInformation)}
+            label={formatMessage(messages.dentist)}
+            content={dentistName}
+          />
+          <Divider />
+          <UserInfoLine label={formatMessage(messages.yourDentistBills)} />
           <Inline space={4}>
             <DatePicker
               size="sm"

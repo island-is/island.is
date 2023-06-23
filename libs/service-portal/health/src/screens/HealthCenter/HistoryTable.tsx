@@ -14,62 +14,62 @@ const HistoryTable: FC<Props> = ({ history }: Props) => {
   const { formatMessage } = useLocale()
 
   return (
-    <Box width="full" marginTop={[2, 2, 6]}>
-      <Text variant="h5">{formatMessage(m.registrationHistory)}</Text>
-      <Box marginTop={2}>
-        <T.Table>
-          <T.Head>
-            <T.Row>
-              <T.HeadData>
-                <Text variant="medium" fontWeight="medium">
-                  {formatMessage(m.dateFromShort)}
+    <Box marginTop="containerGutter">
+      <Text variant="h5" fontWeight="semiBold" paddingBottom={2}>
+        {formatMessage(m.registrationHistory)}
+      </Text>
+      <T.Table>
+        <T.Head>
+          <T.Row>
+            <T.HeadData>
+              <Text variant="medium" fontWeight="medium">
+                {formatMessage(m.dateFromShort)}
+              </Text>
+            </T.HeadData>
+            <T.HeadData>
+              <Text variant="medium" fontWeight="medium">
+                {formatMessage(m.dateToShort)}
+              </Text>
+            </T.HeadData>
+            <T.HeadData>
+              <Text variant="medium" fontWeight="medium">
+                {formatMessage(m.healthCenter)}
+              </Text>
+            </T.HeadData>
+            <T.HeadData>
+              <Text variant="medium" fontWeight="medium">
+                {formatMessage(messages.doctor)}
+              </Text>
+            </T.HeadData>
+          </T.Row>
+        </T.Head>
+        <T.Body>
+          {history.map((rowItem, index) => (
+            <T.Row key={index}>
+              <T.Data>
+                <Text variant="medium">
+                  {rowItem.dateFrom ? formatDate(rowItem.dateFrom) : '-'}
                 </Text>
-              </T.HeadData>
-              <T.HeadData>
-                <Text variant="medium" fontWeight="medium">
-                  {formatMessage(m.dateToShort)}
+              </T.Data>
+              <T.Data>
+                <Text variant="medium">
+                  {rowItem.dateTo ? formatDate(rowItem.dateTo) : '-'}
                 </Text>
-              </T.HeadData>
-              <T.HeadData>
-                <Text variant="medium" fontWeight="medium">
-                  {formatMessage(m.healthCenter)}
+              </T.Data>
+              <T.Data>
+                <Text variant="medium">
+                  {rowItem.healthCenter?.name ?? '-'}
                 </Text>
-              </T.HeadData>
-              <T.HeadData>
-                <Text variant="medium" fontWeight="medium">
-                  {formatMessage(messages.doctor)}
+              </T.Data>
+              <T.Data>
+                <Text variant="medium">
+                  {rowItem.healthCenter?.doctor ?? '-'}
                 </Text>
-              </T.HeadData>
+              </T.Data>
             </T.Row>
-          </T.Head>
-          <T.Body>
-            {history.map((rowItem, index) => (
-              <T.Row key={index}>
-                <T.Data>
-                  <Text variant="medium">
-                    {rowItem.dateFrom ? formatDate(rowItem.dateFrom) : '-'}
-                  </Text>
-                </T.Data>
-                <T.Data>
-                  <Text variant="medium">
-                    {rowItem.dateTo ? formatDate(rowItem.dateTo) : '-'}
-                  </Text>
-                </T.Data>
-                <T.Data>
-                  <Text variant="medium">
-                    {rowItem.healthCenter?.name ?? '-'}
-                  </Text>
-                </T.Data>
-                <T.Data>
-                  <Text variant="medium">
-                    {rowItem.healthCenter?.doctor ?? '-'}
-                  </Text>
-                </T.Data>
-              </T.Row>
-            ))}
-          </T.Body>
-        </T.Table>
-      </Box>
+          ))}
+        </T.Body>
+      </T.Table>
     </Box>
   )
 }

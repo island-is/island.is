@@ -77,21 +77,17 @@ const HealthCenter = () => {
       {currentInfo && (
         <Box width="full" marginTop={[1, 1, 4]}>
           <Stack space={2}>
-            <Box>
-              <UserInfoLine
-                title={formatMessage(messages.yourInformation)}
-                label={formatMessage(messages.healthCenterTitle)}
-                content={currentInfo.healthCenter ?? ''}
-              />
-              <Divider />
-            </Box>
-            <Box>
-              <UserInfoLine
-                label={formatMessage(messages.personalDoctor)}
-                content={currentInfo.doctor ?? ''}
-              />
-              <Divider />
-            </Box>
+            <UserInfoLine
+              title={formatMessage(messages.yourInformation)}
+              label={formatMessage(messages.healthCenterTitle)}
+              content={currentInfo.healthCenter ?? ''}
+            />
+            <Divider />
+            <UserInfoLine
+              label={formatMessage(messages.personalDoctor)}
+              content={currentInfo.doctor ?? ''}
+            />
+            <Divider />
           </Stack>
         </Box>
       )}

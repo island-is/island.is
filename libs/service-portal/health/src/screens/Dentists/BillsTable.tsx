@@ -30,92 +30,92 @@ const BillsTable: FC<Props> = ({ bills }: Props) => {
   )
 
   return (
-    <Box width="full" marginTop={[1, 1, 4]}>
-      <Box marginTop={2}>
-        <T.Table>
-          <T.Head>
-            <T.Row>
-              <T.HeadData>
-                <Text variant="medium">{formatMessage(m.number)}</Text>
-              </T.HeadData>
-              <T.HeadData>
-                <Text variant="medium" fontWeight="medium">
-                  {formatMessage(m.date)}
-                </Text>
-              </T.HeadData>
-              <T.HeadData>
-                <Text variant="medium" fontWeight="medium">
-                  {formatMessage(m.refundDate)}
-                </Text>
-              </T.HeadData>
-              <T.HeadData>
-                <Text variant="medium" fontWeight="medium">
-                  {formatMessage(messages.dentistCharge)}
-                </Text>
-              </T.HeadData>
-              <T.HeadData>
-                <Text variant="medium" fontWeight="medium">
-                  {formatMessage(messages.amountRefundedByInsurance)}
-                </Text>
-              </T.HeadData>
-            </T.Row>
-          </T.Head>
-          <T.Body>
-            {bills.map((rowItem, index) => (
-              <T.Row key={index}>
-                <T.Data>
-                  <Text variant="medium">{rowItem.number}</Text>
-                </T.Data>
-                <T.Data>
-                  <Text variant="medium">
-                    {rowItem.date ? formatDate(rowItem.date) : ''}
-                  </Text>
-                </T.Data>
-                <T.Data>
-                  <Text variant="medium">
-                    {rowItem.refundDate ? formatDate(rowItem.refundDate) : ''}
-                  </Text>
-                </T.Data>
-                <T.Data>
-                  <Text variant="medium">
-                    {rowItem.amount ? amountFormat(rowItem.amount) : ''}
-                  </Text>
-                </T.Data>
-                <T.Data>
-                  <Text variant="medium">
-                    {rowItem.coveredAmount
-                      ? amountFormat(rowItem.coveredAmount)
-                      : ''}
-                  </Text>
-                </T.Data>
-              </T.Row>
-            ))}
-            <T.Row key={'total-row'}>
+    <Box marginTop="containerGutter">
+      <T.Table>
+        <T.Head>
+          <T.Row>
+            <T.HeadData>
+              <Text variant="medium" fontWeight="medium">
+                {formatMessage(m.number)}
+              </Text>
+            </T.HeadData>
+            <T.HeadData>
+              <Text variant="medium" fontWeight="medium">
+                {formatMessage(m.date)}
+              </Text>
+            </T.HeadData>
+            <T.HeadData>
+              <Text variant="medium" fontWeight="medium">
+                {formatMessage(m.refundDate)}
+              </Text>
+            </T.HeadData>
+            <T.HeadData>
+              <Text variant="medium" fontWeight="medium">
+                {formatMessage(messages.dentistCharge)}
+              </Text>
+            </T.HeadData>
+            <T.HeadData>
+              <Text variant="medium" fontWeight="medium">
+                {formatMessage(messages.amountRefundedByInsurance)}
+              </Text>
+            </T.HeadData>
+          </T.Row>
+        </T.Head>
+        <T.Body>
+          {bills.map((rowItem, index) => (
+            <T.Row key={index}>
               <T.Data>
-                <Text variant="medium" fontWeight="semiBold">
-                  {formatMessage(m.total)}
-                </Text>
-              </T.Data>
-              <T.Data></T.Data>
-              <T.Data></T.Data>
-              <T.Data>
-                <Text variant="medium" fontWeight="semiBold">
-                  {totalBills.totalCharge
-                    ? amountFormat(totalBills.totalCharge)
-                    : ''}
-                </Text>{' '}
+                <Text variant="medium">{rowItem.number}</Text>
               </T.Data>
               <T.Data>
-                <Text variant="medium" fontWeight="semiBold">
-                  {totalBills.totalCovered
-                    ? amountFormat(totalBills.totalCovered)
+                <Text variant="medium">
+                  {rowItem.date ? formatDate(rowItem.date) : ''}
+                </Text>
+              </T.Data>
+              <T.Data>
+                <Text variant="medium">
+                  {rowItem.refundDate ? formatDate(rowItem.refundDate) : ''}
+                </Text>
+              </T.Data>
+              <T.Data>
+                <Text variant="medium">
+                  {rowItem.amount ? amountFormat(rowItem.amount) : ''}
+                </Text>
+              </T.Data>
+              <T.Data>
+                <Text variant="medium">
+                  {rowItem.coveredAmount
+                    ? amountFormat(rowItem.coveredAmount)
                     : ''}
-                </Text>{' '}
+                </Text>
               </T.Data>
             </T.Row>
-          </T.Body>
-        </T.Table>
-      </Box>
+          ))}
+          <T.Row key={'total-row'}>
+            <T.Data>
+              <Text variant="medium" fontWeight="semiBold">
+                {formatMessage(m.total)}
+              </Text>
+            </T.Data>
+            <T.Data></T.Data>
+            <T.Data></T.Data>
+            <T.Data>
+              <Text variant="medium" fontWeight="semiBold">
+                {totalBills.totalCharge
+                  ? amountFormat(totalBills.totalCharge)
+                  : ''}
+              </Text>{' '}
+            </T.Data>
+            <T.Data>
+              <Text variant="medium" fontWeight="semiBold">
+                {totalBills.totalCovered
+                  ? amountFormat(totalBills.totalCovered)
+                  : ''}
+              </Text>{' '}
+            </T.Data>
+          </T.Row>
+        </T.Body>
+      </T.Table>
     </Box>
   )
 }
