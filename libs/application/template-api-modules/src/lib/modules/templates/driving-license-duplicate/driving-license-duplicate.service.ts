@@ -68,7 +68,7 @@ export class DrivingLicenseDuplicateService extends BaseTemplateApiService {
       }
     }
 
-    // TODO: add reason to dublicate submission?
+    // TODO: add reason to duplicate submission?
     // Currently we are tracking "stolen" vs "lost" in the application
     // Does this need to be tracked in the license system?
     const orderId = await this.drivingLicenseService
