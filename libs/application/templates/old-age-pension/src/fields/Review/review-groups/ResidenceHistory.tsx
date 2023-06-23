@@ -36,9 +36,11 @@ export const ResidenceHistory = ({
               oldAgePensionFormMessage.residence.residenceHistoryTitle,
             )}
           </Label>
-          <Box paddingTop={3}>
-            <Table columns={columns} data={data} />
-          </Box>
+          {data && (
+            <Box paddingTop={3}>
+              <Table columns={columns} data={data} />
+            </Box>
+          )}
         </GridColumn>
         <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
           <RadioValue

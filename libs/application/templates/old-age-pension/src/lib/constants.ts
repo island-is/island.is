@@ -41,7 +41,7 @@ export enum States {
 
 export enum ConnectedApplications {
   HOMEALLOWANCE = 'homeAllowance',
-  CHILDSUPPORT = 'childSupport',
+  CHILDPENSION = 'childPension',
 }
 
 export enum HomeAllowanceHousing {

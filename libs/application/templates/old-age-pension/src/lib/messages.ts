@@ -33,11 +33,6 @@ export const oldAgePensionFormMessage: MessageDir = {
       defaultMessage: 'Tilhögun',
       description: 'Arrangement',
     },
-    homeAllowance: {
-      id: 'oap.application:related.applications.homeAllowance',
-      defaultMessage: 'Heimilisuppbót',
-      description: 'Home allowance',
-    },
   }),
 
   pre: defineMessages({
@@ -257,48 +252,96 @@ export const oldAgePensionFormMessage: MessageDir = {
   }),
 
   connectedApplications: defineMessages({
-    relatedApplicationsSection: {
-      id: 'oap.application:related.applications.section',
+    connectedApplicationsSection: {
+      id: 'oap.application:connected.applications.section',
       defaultMessage: 'Tengdar umsóknir',
       description: 'Related applications',
     },
-    relatedApplicationsSectionDescription: {
-      id: 'oap.application:related.applications.section.description',
+    connectedpplicationsSectionDescription: {
+      id: 'oap.application:connected.applications.section.description',
       defaultMessage:
         'Hér eru tengdar umsóknir sem þú gætir átt rétt á. Hakaðu í þær umsóknir sem þú vilt sækja um.',
       description:
         'Here are related applications you may be eligible for. Check the applications you want to apply for.',
     },
     homeAllowance: {
-      id: 'oap.application:related.applications.homeAllowance',
+      id: 'oap.application:connected.applications.homeAllowance',
       defaultMessage: 'Heimilisuppbót',
       description: 'Home allowance',
     },
-    childSupport: {
-      id: 'oap.application:related.applications.childSupport',
+    childPension: {
+      id: 'oap.application:connected.applications.childPension',
       defaultMessage: 'Barnalífeyri vegna ellilífeyris',
-      description: 'Child support for old age pension',
+      description: 'Child pension for old age pension',
     },
-    childSupportDescription: {
-      id: 'oap.application:related.applications.childSupport.description',
-      defaultMessage: 'Barnalífeyri vegna ellilífeyris er greiddur með börnum yngri en 18 ára. Ath að lífeyrisþegar sem eru meðlagsskyldir og meðlagið greiðist af TR fá barnalífeyri ekki greiddan beint til sín heldur rennur hann upp í meðlagsgreiðslurnar.',
-      description: 'Child support due to old age pension is paid with children under 18 years of age. Please note that pensioners who are liable for child support and the child support is paid by TR, do not receive child pension directly but instead it is added to the child support payments.',
+    childPensionDescription: {
+      id: 'oap.application:connected.applications.childPension.description',
+      defaultMessage:
+        'Barnalífeyri vegna ellilífeyris er greiddur með börnum yngri en 18 ára. Ath að lífeyrisþegar sem eru meðlagsskyldir og meðlagið greiðist af TR fá barnalífeyri ekki greiddan beint til sín heldur rennur hann upp í meðlagsgreiðslurnar.',
+      description:
+        'Child pension due to old age pension is paid with children under 18 years of age. Please note that pensioners who are liable for child pension and the child pension is paid by TR, do not receive child pension directly but instead it is added to the child pension payments.',
     },
-    childSupportKidsTitle: {
-      id: 'oap.application:related.applications.childSupport.kids.title',
+    childPensionKidsTitle: {
+      id: 'oap.application:connected.applications.childPension.kids.title',
       defaultMessage: 'Börn í þinni forsjá',
       description: 'Children in your care',
     },
-    childSupportKidsDescription: {
-      id: 'oap.application:related.applications.childSupport.kids.description',
-      defaultMessage: 'Samkvæmt uppflettingu í þjóðskrá hefur þú forsjá með eftirfarandi barni/börnum. Ef barn er ekki með sama lögheimili og þú verður þú að skila inn skjali sem staðfestir að þú sért með barn/börn á framfærlsu. ATH ef eftirfarandi upplýsingar eru ekki réttar þá þarf að breyta þeim í Þjóðskrá og koma svo aftur til að klára umsóknina.',
+    childPensionKidsDescription: {
+      id:
+        'oap.application:connected.applications.childPension.kids.description',
+      defaultMessage:
+        'Samkvæmt uppflettingu í þjóðskrá hefur þú forsjá með eftirfarandi barni/börnum. Ef barn er ekki með sama lögheimili og þú verður þú að skila inn skjali sem staðfestir að þú sért með barn/börn á framfærlsu. ATH ef eftirfarandi upplýsingar eru ekki réttar þá þarf að breyta þeim í Þjóðskrá og koma svo aftur til að klára umsóknina.',
       description: 'translation..',
     },
     addChildButton: {
-      id: 'oap.application:add.child.button',
+      id: 'oap.application:connected.applications.add.child.button',
       defaultMessage: 'Bæta við barni',
       description: 'Add child',
-    }
+    },
+    homeAllowanceDescription: {
+      id: 'oap.application:connected.applications.home.allowance.description',
+      defaultMessage:
+        'Til að eiga rétt á heimilisuppbót verður umsækjandi að vera einhleypur og búa einn. Einnig er heimilt að greiða heimilisuppbót til lífeyrisþega ef maki dvelur á stofnun fyrir aldraða. Tvær undantekningar eru á þessu: býr með barni/börnum yngri en 18 ára eða 18-25 ára ungmenni/um  sem er í námi eða ef ungmenni yngra en 25 ára er með tímabundið aðsetur fjarri lögheimili vegna náms.',
+      description:
+        'To be eligible for housing allowance, the applicant must be single and live alone. It is also permitted to pay household allowance to the pensioner if the spouse stays in an institution for the elderly. There are two exceptions to this: lives with a child/children under the age of 18 or a young person aged 18-25 who is studying or if a young person under the age of 25 has a temporary residence away from their legal residence due to studies.',
+    },
+    homeAllowanceHousing: {
+      id: 'oap.application:connected.applications.home.allowance.housing',
+      defaultMessage: 'Hvar býrð þú?',
+      description: 'Where do you live?',
+    },
+    homeAllowanceHousingOwner: {
+      id: 'oap.application:connected.applications.home.allowance.housing.owner',
+      defaultMessage: 'Bý í eigin húsnæði',
+      description: 'Live in own place',
+    },
+    homeAllowanceHousingRenter: {
+      id:
+        'oap.application:connected.applications.home.allowance.housing.renter',
+      defaultMessage: 'Bý í leiguhúsnæði',
+      description: 'Live in a rented place',
+    },
+    homeAllowanceChildrenBetween18And25: {
+      id:
+        'oap.application:connected.applications.home.allowance.children.betweem18And25',
+      defaultMessage:
+        'Býr ungmenni á aldrinum 18-25 ára á heimilinu sem er í námi?',
+      description:
+        'Does a young person aged 18-25 live in the household who is studying?',
+    },
+    homeAllowanceAlertTitle: {
+      id: 'oap.application:connected.applications.home.allowance.alert.title',
+      defaultMessage: 'Athuga',
+      description: 'Attention',
+    },
+    homeAllowanceAlertDescription: {
+      id:
+        'oap.application:connected.applications.home.allowance.alert.description',
+      defaultMessage:
+        'Samkvæmt uppflettingu í Þjóðskrá býr einstaklingur eldri en 25 ára á sama lögheimili og þú. Ef þú telur þetta vera vitlaust skaltu hafa samband við Þjóðskrá til að laga þetta. Þegar þú ert búinn að gera viðeigandi breytingar hjá Þjóðskrá getur þú haldið áfram með umsóknina og skila inn skjali því til staðfestingar hér aftar í ferlinu.',
+      description:
+        'According National Register, a person older than 25 lives in the same legal address as yours. If you think this is wrong, contact the National Registry to fix it. When you have made the appropriate changes at the National Register, you can continue with the application and submit the document for confirmation later in the process.',
+    },
   }),
 
   residence: defineMessages({
@@ -613,19 +656,32 @@ export const oldAgePensionFormMessage: MessageDir = {
       description:
         "Here you can upload a certificate of a young person's school attendance. Note that the document must be in .pdf format.",
     },
-    childSupportNotLivesWithApplicantTitle: {
-      id: 'oap.application:fileUpload.child.support.not.lives.with.applicant.title',
-      defaultMessage: 'Samningur um meðlag',
-      description: 'Child support agreement',
+    childPensionTitle: {
+      id:
+        'oap.application:fileUpload.child.pension.not.lives.with.applicant.title',
+      defaultMessage: 'Fylgiskjöl barnalífeyris',
+      description: 'Child pension agreement',
     },
-    childSupportNotLivesWithApplicantDescription: {
-      id: 'oap.application:fileUpload.child.support.not.lives.with.applicant.description',
-      defaultMessage: 'Hér getur þú skilað meðlagssamingi vegna barns sem er ekki með lögheimili hjá þér. Athugaðu að skjalið þarf að vera á .pdf formi.',
+    childPensionNotLivesWithApplicantDescription: {
+      id:
+        'oap.application:fileUpload.child.pension.not.lives.with.applicant.description',
+      defaultMessage:
+        'Hér getur þú skilað meðlagssamingi vegna barns sem er ekki með lögheimili hjá þér. Athugaðu að skjalið þarf að vera á .pdf formi.',
+      description: 'english translation',
+    },
+    childPensionMaintenanceDescription: {
+      id: 'oap.application:fileUpload.child.pension.maintenance.description',
+      defaultMessage: 'Hér getur þú skilað staðfestingu á að þú sért með barn á framfærlsu. Vinsamlegast gerðu grein fyrir barninu og ykkar tenglsum í skjalinu. Athugaðu að skjalið þarf að vera á .pdf formi.',
       description: 'english translation',
     },
   }),
 
   comment: defineMessages({
+    additionalInfoTitle: {
+      id: 'oap.application:comment.additional.info.title',
+      defaultMessage: 'Viðbótarupplýsingar',
+      description: 'Additional Information',
+    },
     commentSection: {
       id: 'oap.application:comment.section',
       defaultMessage: 'Athugasemd',
@@ -640,50 +696,6 @@ export const oldAgePensionFormMessage: MessageDir = {
       id: 'oap.application:comment.placeholder',
       defaultMessage: 'Skrifaðu hér athugasemd',
       description: 'Your comment',
-    },
-  }),
-
-  homeAllowance: defineMessages({
-    description: {
-      id: 'oap.application:homeAllowance.description',
-      defaultMessage:
-        'Til að eiga rétt á heimilisuppbót verður umsækjandi að vera einhleypur og búa einn. Einnig er heimilt að greiða heimilisuppbót til lífeyrisþega ef maki dvelur á stofnun fyrir aldraða. Tvær undantekningar eru á þessu: býr með barni/börnum yngri en 18 ára eða 18-25 ára ungmenni/um  sem er í námi eða ef ungmenni yngra en 25 ára er með tímabundið aðsetur fjarri lögheimili vegna náms.',
-      description:
-        'To be eligible for housing allowance, the applicant must be single and live alone. It is also permitted to pay household allowance to the pensioner if the spouse stays in an institution for the elderly. There are two exceptions to this: lives with a child/children under the age of 18 or a young person aged 18-25 who is studying or if a young person under the age of 25 has a temporary residence away from their legal residence due to studies.',
-    },
-    housing: {
-      id: 'oap.application:homeAllowance.housing',
-      defaultMessage: 'Hvar býrð þú?',
-      description: 'Where do you live?',
-    },
-    housingOwner: {
-      id: 'oap.application:homeAllowance.housing.owner',
-      defaultMessage: 'Bý í eigin húsnæði',
-      description: 'Live in own place',
-    },
-    housingRenter: {
-      id: 'oap.application:homeAllowance.housing.renter',
-      defaultMessage: 'Bý í leiguhúsnæði',
-      description: 'Live in a rented place',
-    },
-    childrenBetween18And25: {
-      id: 'oap.application:homeAllowance.children.betweem18And25',
-      defaultMessage:
-        'Býr ungmenni á aldrinum 18-25 ára á heimilinu sem er í námi?',
-      description:
-        'Does a young person aged 18-25 live in the household who is studying?',
-    },
-    alertTitle: {
-      id: 'oap.application:homeAllowance.alert.title',
-      defaultMessage: 'Athuga',
-      description: 'Attention',
-    },
-    alertDescription: {
-      id: 'oap.application:homeAllowance.alert.description',
-      defaultMessage:
-        'Samkvæmt uppflettingu í Þjóðskrá býr einstaklingur eldri en 25 ára á sama lögheimili og þú. Ef þú telur þetta vera vitlaust skaltu hafa samband við Þjóðskrá til að laga þetta. Þegar þú ert búinn að gera viðeigandi breytingar hjá Þjóðskrá getur þú haldið áfram með umsóknina og skila inn skjali því til staðfestingar hér aftar í ferlinu.',
-      description:
-        'According National Register, a person older than 25 lives in the same legal address as yours. If you think this is wrong, contact the National Registry to fix it. When you have made the appropriate changes at the National Register, you can continue with the application and submit the document for confirmation later in the process.',
     },
   }),
 

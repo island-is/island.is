@@ -39,17 +39,19 @@ export const ConnectedApplications = ({
               </Label>
               <BulletList type="ul">
                 {connectedApplications.map((app, index) => {
-                  let showText = formatMessage(
-                    oldAgePensionFormMessage.connectedApplications.childSupport,
-                  )
-                  if (app === Apps.HOMEALLOWANCE) {
-                    showText = formatMessage(
-                      oldAgePensionFormMessage.shared.homeAllowance,
-                    )
-                  }
                   return (
                     <Bullet key={index}>
-                      <Text>{showText}</Text>
+                      <Text>
+                        {app === Apps.HOMEALLOWANCE
+                          ? formatMessage(
+                              oldAgePensionFormMessage.connectedApplications
+                                .homeAllowance,
+                            )
+                          : formatMessage(
+                              oldAgePensionFormMessage.connectedApplications
+                                .childPension,
+                            )}
+                      </Text>
                     </Bullet>
                   )
                 })}

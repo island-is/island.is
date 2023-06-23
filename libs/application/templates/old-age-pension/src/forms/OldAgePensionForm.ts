@@ -57,30 +57,6 @@ export const OldAgePensionForm: Form = buildForm({
       id: 'applicant',
       title: oldAgePensionFormMessage.applicant.applicantSection,
       children: [
-        // buildSubSection({
-        //   id: 'connectedApplications.childSupport',
-        //   title: oldAgePensionFormMessage.shared.relatedApplicationsSection,
-        //   children: [
-        //     buildCheckboxField({
-        //       id: 'connectedApplications',
-        //       title: oldAgePensionFormMessage.shared.relatedApplicationsSection,
-        //       description: oldAgePensionFormMessage.shared.relatedApplicationsSectionDescription,
-        //       large: true,
-        //       doesNotRequireAnswer: true,
-        //       defaultValue: '',
-        //       options: [
-        //         {
-        //           label: oldAgePensionFormMessage.shared.homeAllowance,
-        //           value: connectedApplications.HOMEALLOWANCE,
-        //         },
-        //         {
-        //           label: oldAgePensionFormMessage.shared.childSupport,
-        //           value: connectedApplications.CHILDSUPPORT,
-        //         },
-        //       ],
-        //     }),
-        //   ],
-        // }),
         buildSubSection({
           id: 'info',
           title:
@@ -452,34 +428,38 @@ export const OldAgePensionForm: Form = buildForm({
     }),
     buildSection({
       id: 'connectedApplicationsSection',
-      title: oldAgePensionFormMessage.review.confirmSectionTitle,
+      title:
+        oldAgePensionFormMessage.connectedApplications
+          .connectedApplicationsSection,
       children: [
         buildSubSection({
           id: 'connectedApplicationsSubSection',
           title:
             oldAgePensionFormMessage.connectedApplications
-              .relatedApplicationsSection,
+              .connectedApplicationsSection,
           children: [
             buildCheckboxField({
               id: 'connectedApplications',
               title:
                 oldAgePensionFormMessage.connectedApplications
-                  .relatedApplicationsSection,
+                  .connectedApplicationsSection,
               description:
                 oldAgePensionFormMessage.connectedApplications
-                  .relatedApplicationsSectionDescription,
+                  .connectedpplicationsSectionDescription,
               large: true,
               doesNotRequireAnswer: true,
               defaultValue: '',
               options: [
                 {
-                  label: oldAgePensionFormMessage.shared.homeAllowance,
+                  label:
+                    oldAgePensionFormMessage.connectedApplications
+                      .homeAllowance,
                   value: ConnectedApplications.HOMEALLOWANCE,
                 },
                 {
                   label:
-                    oldAgePensionFormMessage.connectedApplications.childSupport,
-                  value: ConnectedApplications.CHILDSUPPORT,
+                    oldAgePensionFormMessage.connectedApplications.childPension,
+                  value: ConnectedApplications.CHILDPENSION,
                 },
               ],
             }),
@@ -487,12 +467,15 @@ export const OldAgePensionForm: Form = buildForm({
         }),
         buildSubSection({
           id: 'homeAllowanceSection',
-          title: oldAgePensionFormMessage.shared.homeAllowance,
+          title: oldAgePensionFormMessage.connectedApplications.homeAllowance,
           children: [
             buildMultiField({
               id: 'homeAllowance',
-              title: oldAgePensionFormMessage.shared.homeAllowance,
-              description: oldAgePensionFormMessage.homeAllowance.description,
+              title:
+                oldAgePensionFormMessage.connectedApplications.homeAllowance,
+              description:
+                oldAgePensionFormMessage.connectedApplications
+                  .homeAllowanceDescription,
               condition: (answers) => {
                 const { connectedApplications } = getApplicationAnswers(answers)
 
@@ -504,10 +487,13 @@ export const OldAgePensionForm: Form = buildForm({
                 buildCustomField(
                   {
                     id: 'homeAllowance.alert',
-                    title: oldAgePensionFormMessage.homeAllowance.alertTitle,
+                    title:
+                      oldAgePensionFormMessage.connectedApplications
+                        .homeAllowanceAlertTitle,
                     component: 'FieldAlertMessage',
                     description:
-                      oldAgePensionFormMessage.homeAllowance.alertDescription,
+                      oldAgePensionFormMessage.connectedApplications
+                        .homeAllowanceAlertDescription,
                     condition: (_, externalData) => {
                       return isExistsCohabitantOlderThan25(externalData)
                     },
@@ -516,17 +502,21 @@ export const OldAgePensionForm: Form = buildForm({
                 ),
                 buildRadioField({
                   id: 'homeAllowance.housing',
-                  title: oldAgePensionFormMessage.homeAllowance.housing,
+                  title:
+                    oldAgePensionFormMessage.connectedApplications
+                      .homeAllowanceHousing,
                   options: [
                     {
                       value: HomeAllowanceHousing.HOUSEOWNER,
                       label:
-                        oldAgePensionFormMessage.homeAllowance.housingOwner,
+                        oldAgePensionFormMessage.connectedApplications
+                          .homeAllowanceHousingOwner,
                     },
                     {
                       value: HomeAllowanceHousing.RENTER,
                       label:
-                        oldAgePensionFormMessage.homeAllowance.housingRenter,
+                        oldAgePensionFormMessage.connectedApplications
+                          .homeAllowanceHousingRenter,
                     },
                   ],
                   width: 'half',
@@ -535,8 +525,8 @@ export const OldAgePensionForm: Form = buildForm({
                 buildRadioField({
                   id: 'homeAllowance.children',
                   title:
-                    oldAgePensionFormMessage.homeAllowance
-                      .childrenBetween18And25,
+                    oldAgePensionFormMessage.connectedApplications
+                      .homeAllowanceChildrenBetween18And25,
                   options: getYesNOOptions(),
                   width: 'half',
                   required: true,
@@ -609,11 +599,85 @@ export const OldAgePensionForm: Form = buildForm({
             }),
           ],
         }),
+        buildSubSection({
+          id: 'childPensionSection',
+          title: oldAgePensionFormMessage.connectedApplications.childPension,
+          // viljum við hafa condition-ið á þessu level-i eða neðar?
+          condition: (answers) => {
+            const { connectedApplications } = getApplicationAnswers(answers)
+
+            return connectedApplications?.includes(
+              ConnectedApplications.CHILDPENSION,
+            )
+          },
+          children: [
+            buildMultiField({
+              id: 'childPension',
+              title:
+                oldAgePensionFormMessage.connectedApplications.childPension,
+              description:
+                oldAgePensionFormMessage.connectedApplications
+                  .childPensionDescription,
+              children: [
+                buildCustomField({
+                  id: 'childPension.table',
+                  title:
+                    oldAgePensionFormMessage.connectedApplications
+                      .childPensionKidsTitle,
+                  description:
+                    oldAgePensionFormMessage.connectedApplications
+                      .childPensionKidsDescription,
+                  component: 'ChildCustodyTable',
+                }),
+              ],
+            }),
+            buildFileUploadField({
+              id: 'childPension.maintenanceFileupload',
+              title: oldAgePensionFormMessage.fileUpload.childPensionTitle,
+              description:
+                oldAgePensionFormMessage.fileUpload
+                  .childPensionMaintenanceDescription,
+              introduction:
+                oldAgePensionFormMessage.fileUpload
+                  .childPensionMaintenanceDescription,
+              maxSize: FILE_SIZE_LIMIT,
+              maxSizeErrorText:
+                oldAgePensionFormMessage.fileUpload.attachmentMaxSizeError,
+              uploadAccept: '.pdf',
+              uploadHeader:
+                oldAgePensionFormMessage.fileUpload.attachmentHeader,
+              uploadDescription:
+                oldAgePensionFormMessage.fileUpload.attachmentDescription,
+              uploadButtonLabel:
+                oldAgePensionFormMessage.fileUpload.attachmentButton,
+            }),
+            buildFileUploadField({
+              id: 'childPension.notLivesWithApplicantFileupload',
+              title: oldAgePensionFormMessage.fileUpload.childPensionTitle,
+              description:
+                oldAgePensionFormMessage.fileUpload
+                  .childPensiontNotLivesWithApplicantDescription,
+              introduction:
+                oldAgePensionFormMessage.fileUpload
+                  .childPensionNotLivesWithApplicantDescription,
+              maxSize: FILE_SIZE_LIMIT,
+              maxSizeErrorText:
+                oldAgePensionFormMessage.fileUpload.attachmentMaxSizeError,
+              uploadAccept: '.pdf',
+              uploadHeader:
+                oldAgePensionFormMessage.fileUpload.attachmentHeader,
+              uploadDescription:
+                oldAgePensionFormMessage.fileUpload.attachmentDescription,
+              uploadButtonLabel:
+                oldAgePensionFormMessage.fileUpload.attachmentButton,
+            }),
+          ],
+        }),
       ],
     }),
     buildSection({
       id: 'additionalInformation',
-      title: oldAgePensionFormMessage.review.confirmSectionTitle,
+      title: oldAgePensionFormMessage.comment.additionalInfoTitle,
       children: [
         buildSubSection({
           id: 'fileUploadAdditionalFiles',
