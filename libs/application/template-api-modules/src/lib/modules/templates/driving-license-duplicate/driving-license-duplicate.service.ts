@@ -27,7 +27,6 @@ export class DrivingLicenseDuplicateService extends BaseTemplateApiService {
     application: { id, answers },
     auth,
   }: TemplateApiModuleActionProps) {
-    // TODO: Change to AY116 once its available on dev until then use the regular drivingLicnese code
     const chargeItemCode = getValueViaPath<string>(answers, 'chargeItemCode')
 
     if (!chargeItemCode) {
@@ -69,7 +68,7 @@ export class DrivingLicenseDuplicateService extends BaseTemplateApiService {
       }
     }
 
-    // TODO: add reason to dublicate submission?
+    // TODO: add reason to duplicate submission?
     // Currently we are tracking "stolen" vs "lost" in the application
     // Does this need to be tracked in the license system?
     const orderId = await this.drivingLicenseService
@@ -78,8 +77,6 @@ export class DrivingLicenseDuplicateService extends BaseTemplateApiService {
         ssn: nationalId,
       })
       .catch((e) => {
-        // TODO: stop logging this here
-        console.log(JSON.stringify(e, null, 2))
         throw Error('Error submitting application to Samgöngustofa')
       })
     return {

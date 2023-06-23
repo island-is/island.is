@@ -1,4 +1,5 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
+import { CacheField } from '@island.is/nest/graphql'
 
 import { IFooterItem } from '../generated/contentfulTypes'
 import { Link, mapLink } from './link.model'
@@ -12,13 +13,13 @@ export class FooterItem {
   @Field()
   title!: string
 
-  @Field(() => Link, { nullable: true })
+  @CacheField(() => Link, { nullable: true })
   link?: Link | null
 
-  @Field(() => [SliceUnion], { nullable: true })
+  @CacheField(() => [SliceUnion], { nullable: true })
   content?: Array<typeof SliceUnion>
 
-  @Field(() => [SliceUnion], { nullable: true })
+  @CacheField(() => [SliceUnion], { nullable: true })
   serviceWebContent?: Array<typeof SliceUnion>
 }
 

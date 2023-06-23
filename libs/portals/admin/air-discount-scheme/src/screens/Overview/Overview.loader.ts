@@ -19,11 +19,15 @@ import {
 const TODAY = new Date()
 
 export const transformDate = (val: string) => {
+  if (isValidDate(new Date(val)) && val.indexOf('.') === 2) {
+    return parseDate(val, 'dd.MM.yyyy', endOfDay(new Date()))
+  }
+
   if (isValidDate(new Date(val))) {
     return val
   }
 
-  return parseDate(val, 'dd.mm.yyyy', endOfDay(new Date()))
+  return parseDate(val, 'dd.MM.yyyy', endOfDay(new Date()))
 }
 
 const schema = z.object({

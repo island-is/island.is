@@ -25,6 +25,11 @@ export interface DriversLicense {
   birthCountry?: string | null
 }
 
+export interface RemarkCode {
+  index: string
+  name: string
+}
+
 export interface Teacher {
   nationalId: string
   name: string

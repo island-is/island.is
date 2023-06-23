@@ -210,7 +210,7 @@ const PetitionView: Screen<PetitionViewProps> = ({ namespace }) => {
                       <T.Data text={{ variant: 'medium' }}>
                         {petition.meta.fullName
                           ? petition.meta.fullName
-                          : n('noName', 'Nafn ótilgreint')}
+                          : n('noName', 'Nafn ekki skráð')}
                       </T.Data>
                     </T.Row>
                   )
