@@ -8,23 +8,16 @@ import {
   Logo,
   SectionHeading,
   UserContext,
+  SharedPageLayout,
+  PastCasesTable,
+  PageHeader,
 } from '@island.is/judicial-system-web/src/components'
-import {
-  CaseState,
-  isIndictmentCase,
-  completedCaseStates,
-} from '@island.is/judicial-system/types'
 import { CasesQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { TempCaseListEntry as CaseListEntry } from '@island.is/judicial-system-web/src/types'
 import { titles, errors } from '@island.is/judicial-system-web/messages'
-import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-
 import { InstitutionType } from '@island.is/judicial-system-web/src/graphql/schema'
-import SharedPageLayout from '@island.is/judicial-system-web/src/components/SharedPageLayout/SharedPageLayout'
-import PastCasesTable from '@island.is/judicial-system-web/src/components/Table/PastCasesTable/PastCasesTable'
 
-import { useFilter } from './useFilter'
 import { cases as m } from './Cases.strings'
 import * as styles from './Cases.css'
 
@@ -45,7 +38,7 @@ export const PrisonCases: React.FC = () => {
 
   const resCases = data?.cases
 
-  const [allActiveCases, allPastCases]: [
+  const [activeCases, pastCases]: [
     CaseListEntry[],
     CaseListEntry[],
   ] = useMemo(() => {
@@ -53,24 +46,8 @@ export const PrisonCases: React.FC = () => {
       return [[], []]
     }
 
-    const casesWithoutDeleted = resCases.filter((c: CaseListEntry) => {
-      return c.state !== CaseState.DELETED
-    })
-
-    return partition(casesWithoutDeleted, (c) => {
-      if (isIndictmentCase(c.type)) {
-        return !completedCaseStates.includes(c.state)
-      } else {
-        return !c.isValidToDateInThePast
-      }
-    })
+    return partition(resCases, (c) => !c.isValidToDateInThePast)
   }, [resCases])
-
-  const { activeCases, pastCases } = useFilter(
-    allActiveCases,
-    allPastCases,
-    user,
-  )
 
   const handleRowClick = (id: string) => {
     getCaseToOpen({
@@ -136,7 +113,6 @@ export const PrisonCases: React.FC = () => {
             : m.pastRequests.prisonStaffUsers.prisonAdminTitle,
         )}
       />
-
       {loading || pastCases.length > 0 ? (
         <PastCasesTable
           cases={pastCases}

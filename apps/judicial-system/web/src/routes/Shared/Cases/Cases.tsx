@@ -5,17 +5,23 @@ import partition from 'lodash/partition'
 
 import { AlertMessage, Box, Select } from '@island.is/island-ui/core'
 import {
-  DropdownMenu,
-  Logo,
-  SectionHeading,
-  UserContext,
-} from '@island.is/judicial-system-web/src/components'
-import {
   CaseState,
   CaseTransition,
   isIndictmentCase,
   completedCaseStates,
 } from '@island.is/judicial-system/types'
+import { capitalize } from '@island.is/judicial-system/formatters'
+import * as constants from '@island.is/judicial-system/consts'
+import {
+  DropdownMenu,
+  Logo,
+  SectionHeading,
+  UserContext,
+  TableSkeleton,
+  PastCasesTable,
+  SharedPageLayout,
+  PageHeader,
+} from '@island.is/judicial-system-web/src/components'
 import { CasesQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { TempCaseListEntry as CaseListEntry } from '@island.is/judicial-system-web/src/types'
@@ -25,22 +31,16 @@ import {
   titles,
   errors,
 } from '@island.is/judicial-system-web/messages'
-import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import { capitalize } from '@island.is/judicial-system/formatters'
 
 import {
   User,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import SharedPageLayout from '@island.is/judicial-system-web/src/components/SharedPageLayout/SharedPageLayout'
-import * as constants from '@island.is/judicial-system/consts'
-import PastCasesTable from '@island.is/judicial-system-web/src/components/Table/PastCasesTable/PastCasesTable'
 
 import ActiveCases from './ActiveCases'
 import { FilterOption, useFilter } from './useFilter'
 import { cases as m } from './Cases.strings'
 import * as styles from './Cases.css'
-import TableSkeleton from '@island.is/judicial-system-web/src/components/Table/TableSkeleton/TableSkeleton'
 
 const CreateCaseButton: React.FC<{
   user: User
@@ -210,13 +210,13 @@ export const Cases: React.FC = () => {
             type="error"
           />
         </div>
-      ) : loading || isFiltering || !user ? (
-        <TableSkeleton />
       ) : (
         <>
           <SectionHeading title={formatMessage(m.activeRequests.title)} />
           <Box marginBottom={[5, 5, 12]}>
-            {activeCases.length > 0 ? (
+            {loading || isFiltering ? (
+              <TableSkeleton />
+            ) : activeCases.length > 0 ? (
               <ActiveCases
                 cases={activeCases}
                 onRowClick={handleRowClick}
@@ -237,12 +237,11 @@ export const Cases: React.FC = () => {
       )}
 
       <SectionHeading title={formatMessage(tables.completedCasesTitle)} />
-
       {loading || pastCases.length > 0 ? (
         <PastCasesTable
           cases={pastCases}
           onRowClick={handleRowClick}
-          loading={loading}
+          loading={loading || isFiltering}
           testid="pastCasesTable"
         />
       ) : (
