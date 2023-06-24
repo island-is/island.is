@@ -43,6 +43,12 @@ const asset = z
   .array()
   .optional()
 
+const FileSchema = z.object({
+  name: z.string(),
+  key: z.string(),
+  url: z.string().optional(),
+})
+
 export const estateSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
 
@@ -58,9 +64,9 @@ export const estateSchema = z.object({
   }),
 
   selectedEstate: z.enum([
-    EstateTypes.divisionOfEstate,
+    EstateTypes.officialDivision,
     EstateTypes.estateWithoutAssets,
-    EstateTypes.permitToPostponeEstateDivision,
+    EstateTypes.permitForUndividedEstate,
     EstateTypes.divisionOfEstateByHeirs,
   ]),
 
@@ -93,6 +99,7 @@ export const estateSchema = z.object({
     ships: asset,
     guns: asset,
     knowledgeOfOtherWills: z.enum([YES, NO]).optional(),
+    addressOfDeceased: z.string().optional(),
     caseNumber: z.string().min(1).optional(),
     dateOfDeath: z.date().optional(),
     nameOfDeceased: z.string().min(1).optional(),
@@ -107,6 +114,26 @@ export const estateSchema = z.object({
       })
       .optional(),
   }),
+
+  // is: Maki hins látna
+  deceasedWithUndividedEstate: z
+    .object({
+      selection: z.enum([YES, NO]),
+      spouse: z
+        .object({
+          name: z.string().optional(),
+          nationalId: z.string().optional(),
+        })
+        .optional(),
+    })
+    .refine(
+      ({ selection, spouse }) => {
+        return selection === YES ? !!spouse?.nationalId : true
+      },
+      {
+        path: ['spouse', 'nationalId'],
+      },
+    ),
 
   // is: Innbú
   inventory: z
@@ -233,16 +260,8 @@ export const estateSchema = z.object({
       creditorName: z.string().optional(),
       nationalId: z.string().optional(),
       balance: z.string().optional(),
+      loanIdentity: z.string().optional(),
     })
-    .refine(
-      ({ creditorName, nationalId, balance }) => {
-        return checkIfFilledOut([creditorName, nationalId, balance])
-      },
-      {
-        params: m.fillOutRates,
-        path: ['balance'],
-      },
-    )
     .refine(
       ({ nationalId }) => {
         return nationalId === ''
@@ -286,11 +305,28 @@ export const estateSchema = z.object({
     )
     .optional(),
 
-  // is: Heimild til setu í óskiptu búi skv. erfðaskrá
-  undividedEstateResidencePermission: z.enum([YES, NO]),
+  estateAttachments: z.object({
+    attached: z.object({
+      file: z.array(FileSchema),
+    }),
+  }),
 
-  // is: Hefur umsækjandi forræði á búi?
-  applicantHasLegalCustodyOverEstate: z.enum([YES, NO]),
+  // is: Eignalaust bú
+  estateWithoutAssets: z
+    .object({
+      estateAssetsExist: z.enum([YES, NO]),
+      estateDebtsExist: z.enum([YES, NO]).optional(),
+    })
+    .refine(
+      ({ estateAssetsExist, estateDebtsExist }) => {
+        return estateAssetsExist === YES
+          ? estateDebtsExist === YES || estateDebtsExist === NO
+          : true
+      },
+      {
+        path: ['estateDebtsExist'],
+      },
+    ),
 
-  readTerms: z.array(z.enum([YES])).length(1),
+  confirmAction: z.array(z.enum([YES])).length(1),
 })

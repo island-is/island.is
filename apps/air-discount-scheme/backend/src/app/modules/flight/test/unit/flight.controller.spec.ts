@@ -76,7 +76,9 @@ describe('PublicFlightController', () => {
             get: () => ({}),
             set: () => ({}),
             del: () => ({}),
-            ttl: () => ({}),
+            store: {
+              ttl: () => ({}),
+            },
           })),
         },
       ],

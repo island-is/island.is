@@ -29,7 +29,7 @@ export const EventSlice: React.FC<SliceProps> = ({ slice }) => {
       <Box
         className={styles.wrapper}
         style={{
-          background: `url(${slice.backgroundImage?.url}), rgb(130, 46, 166)`,
+          background: `url(${slice.backgroundImage?.url}), linear-gradient(135deg, rgba(0,3,65,1) 0%, rgba(0,84,235,1) 100%)`,
         }}
       >
         <GridContainer>

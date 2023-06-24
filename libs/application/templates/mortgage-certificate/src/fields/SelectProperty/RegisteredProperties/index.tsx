@@ -16,9 +16,11 @@ export const RegisteredProperties: FC<
 > = ({ application, field, selectHandler, selectedPropertyNumber }) => {
   const { externalData } = application
 
-  const { properties } = externalData.nationalRegistryRealEstate?.data as {
+  const nationalRegistryRealEstateData = externalData.nationalRegistryRealEstate
+    ?.data as {
     properties: [PropertyDetail]
-  }
+  } | null
+  const properties = nationalRegistryRealEstateData?.properties
 
   const { formatMessage } = useLocale()
 

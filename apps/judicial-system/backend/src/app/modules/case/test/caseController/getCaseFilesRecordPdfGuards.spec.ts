@@ -69,7 +69,7 @@ describe('CaseController - Get case files record pdf guards', () => {
     it('should have CaseTypeGuard as guard 4', () => {
       expect(guard).toBeInstanceOf(CaseTypeGuard)
       expect(guard).toEqual({
-        allowedCaseTypes: [...indictmentCases],
+        allowedCaseTypes: indictmentCases,
       })
     })
   })

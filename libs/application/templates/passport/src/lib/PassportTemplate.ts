@@ -8,7 +8,6 @@ import {
   ApplicationTypes,
   DefaultEvents,
   defineTemplateApi,
-  NationalRegistryUserApi,
 } from '@island.is/application/types'
 import { Features } from '@island.is/feature-flags'
 import { assign } from 'xstate'
@@ -17,6 +16,7 @@ import {
   SyslumadurPaymentCatalogApi,
   DeliveryAddressApi,
   UserInfoApi,
+  NationalRegistryUser,
 } from '../dataProviders'
 import { m } from '../lib/messages'
 import {
@@ -82,7 +82,7 @@ const PassportTemplate: ApplicationTemplate<
               write: 'all',
               delete: true,
               api: [
-                NationalRegistryUserApi,
+                NationalRegistryUser,
                 UserInfoApi,
                 SyslumadurPaymentCatalogApi,
                 IdentityDocumentApi,
@@ -162,7 +162,7 @@ const PassportTemplate: ApplicationTemplate<
               ],
               write: 'all',
               api: [
-                NationalRegistryUserApi,
+                NationalRegistryUser,
                 UserInfoApi,
                 SyslumadurPaymentCatalogApi,
                 IdentityDocumentApi,
