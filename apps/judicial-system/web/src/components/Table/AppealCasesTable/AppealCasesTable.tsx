@@ -26,10 +26,7 @@ import {
 import {
   Defendant,
   isRestrictionCase,
-  CaseAppealRulingDecision as TAppealRulingDecision,
-  CaseType as TCaseType,
   CaseDecision as TCaseDecision,
-  CaseAppealState as TAppealState,
 } from '@island.is/judicial-system/types'
 
 import * as styles from '../Table.css'
@@ -130,17 +127,15 @@ const AppealCasesTable: React.FC<Props> = (props) => {
             </td>
             <td>
               <ColumnCaseType
-                type={column.type as TCaseType}
+                type={column.type}
                 decision={column.decision as TCaseDecision}
                 parentCaseId={column.parentCaseId ?? ''}
               />
             </td>
             <td>
               <TagAppealState
-                appealState={column.appealState as TAppealState}
-                appealRulingDecision={
-                  column.appealRulingDecision as TAppealRulingDecision
-                }
+                appealState={column.appealState}
+                appealRulingDecision={column.appealRulingDecision}
               />
             </td>
             <td>
