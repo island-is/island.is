@@ -180,7 +180,6 @@ export class ApplicationAccessService {
             template.requiredScopes &&
             template.requiredScopes.includes(scopeObj.scopeName)
           ) {
-            console.log('found scope')
             return true
           }
         }

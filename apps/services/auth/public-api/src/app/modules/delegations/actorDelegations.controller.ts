@@ -86,7 +86,6 @@ export class ActorDelegationsController {
   @Audit<MergedDelegationDTO[]>({
     resources: (delegations) => delegations.map((d) => `${d.fromNationalId}`),
   })
-  // this is the one we want to look at
   async findAll(
     @CurrentActor() actor: User,
     @Query('direction') direction: DelegationDirection.INCOMING,
