@@ -32,6 +32,7 @@ import {
   ActorDelegationsApi,
   ActorDelegationsControllerFindAllDirectionEnum,
 } from '@island.is/clients/auth/public-api'
+import { AuthMiddleware } from '@island.is/auth-nest-tools'
 
 type config = {
   shouldThrowIfPruned?: boolean
@@ -110,8 +111,7 @@ export class ApplicationAccessService {
     const helper = new ApplicationTemplateHelper(application, template)
     const currentUserRole =
       template.mapUserToRole(nationalId, application) || ''
-    const role = helper.getRoleInState(currentUserRole)
-    return role
+    return helper.getRoleInState(currentUserRole)
   }
 
   async canDeleteApplication(
@@ -168,18 +168,22 @@ export class ApplicationAccessService {
     // If we dont have the scopes available like in service portal we need to fetch
     // them for the user logged in
     if (scopeCheck) {
-      const delegations = await this.actorDelegationsApi.actorDelegationsControllerFindAll(
-        {
+      const delegations = await this.actorDelegationsApi
+        .withMiddleware(new AuthMiddleware(user))
+        .actorDelegationsControllerFindAll({
           direction: ActorDelegationsControllerFindAllDirectionEnum.incoming,
           delegationTypes: [DelegationType.Custom],
           otherUser: user.nationalId,
-        },
-      )
+        })
 
       for (const delegation of delegations) {
         if (!delegation.scopes) continue
         for (const scopeObj of delegation.scopes) {
-          if (template.requiredScopes.includes(scopeObj.scopeName)) {
+          if (
+            template.requiredScopes &&
+            template.requiredScopes.includes(scopeObj.scopeName)
+          ) {
+            console.log('found scope')
             return true
           }
         }
@@ -198,12 +202,12 @@ export class ApplicationAccessService {
   async shouldShowApplicationOnOverview(
     application: Application,
     user: User,
-    scopeCheck?: boolean,
     template?: ApplicationTemplate<
       ApplicationContext,
       ApplicationStateSchema<EventObject>,
       EventObject
     >,
+    scopeCheck?: boolean,
   ): Promise<boolean> {
     if (template === undefined) {
       return false
@@ -224,13 +228,21 @@ export class ApplicationAccessService {
             template.allowedDelegations,
             user,
             template,
+            scopeCheck,
           ))
         ) {
           return false
         }
-        // Need to check this better, what if the user isnt in custom delegation?
-        if (await this.hasValidCustomDelegation(user, template, scopeCheck)) {
-          return true
+
+        if (userDelegations.includes(AuthDelegationType.Custom)) {
+          const isValidcustom = await this.hasValidCustomDelegation(
+            user,
+            template,
+            scopeCheck,
+          )
+          if (!isValidcustom) {
+            return false
+          }
         }
       }
       // application doesnt allow delegation and user is acting on behalf of applicant
@@ -252,10 +264,13 @@ export class ApplicationAccessService {
       ApplicationStateSchema<EventObject>,
       EventObject
     >,
+    scopeCheck?: boolean,
   ): Promise<boolean> {
     let matchesAtLeastOneDelegation = false
     for (const delegation of delegations) {
-      if (await this.isDelegationAllowed(delegation, user, template)) {
+      if (
+        await this.isDelegationAllowed(delegation, user, template, scopeCheck)
+      ) {
         matchesAtLeastOneDelegation = true
         break
       }
@@ -269,6 +284,7 @@ export class ApplicationAccessService {
    * @param delegation - The delegation to check against.
    * @param user - The user whose delegations are to be validated.
    * @param template - The application template context.
+   * @param scopeCheck - Whether to fetch the extra scopes for the current user.
    * @returns A Promise that resolves to a boolean indicating whether the user has the allowed delegation.
    */
   async isDelegationAllowed(
@@ -279,6 +295,7 @@ export class ApplicationAccessService {
       ApplicationStateSchema<EventObject>,
       EventObject
     >,
+    scopeCheck?: boolean,
   ): Promise<boolean | undefined> {
     // Check if feature flag is set for the delegation. If it is, we need to validate
     // if the feature is enabled for the user.
@@ -295,7 +312,7 @@ export class ApplicationAccessService {
     if (delegation.type === AuthDelegationType.Custom) {
       // The user can proceed if the custom delegation is valid and the feature (if flagged) is enabled.
       return (
-        (await this.hasValidCustomDelegation(user, template, false)) &&
+        (await this.hasValidCustomDelegation(user, template, scopeCheck)) &&
         featureAllowed
       )
     }

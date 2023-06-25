@@ -234,8 +234,8 @@ export class ApplicationController {
         (await this.applicationAccessService.shouldShowApplicationOnOverview(
           application as BaseApplication,
           user,
-          scopeCheck,
           templates[typeId],
+          scopeCheck,
         ))
       ) {
         filteredApplications.push(application)
@@ -262,8 +262,8 @@ export class ApplicationController {
             await this.applicationAccessService.shouldShowApplicationOnOverview(
               application as BaseApplication,
               user,
-              scopeCheck,
               applicationTemplate,
+              scopeCheck,
             )
           ) {
             filteredApplications.push(application)

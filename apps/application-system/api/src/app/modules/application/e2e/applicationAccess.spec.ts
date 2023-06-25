@@ -90,7 +90,6 @@ describe('ApplicationAccesService', () => {
     const results = await applicationAccessService.shouldShowApplicationOnOverview(
       applicationInDraft,
       procurationHolderUser,
-      false,
       template,
     )
 
@@ -178,7 +177,6 @@ describe('ApplicationAccesService', () => {
     const results = await applicationAccessService.shouldShowApplicationOnOverview(
       applicationInDraft,
       procurationHolderUser,
-      false,
       template,
     )
 
@@ -203,7 +201,6 @@ describe('ApplicationAccesService', () => {
     const results = await applicationAccessService.shouldShowApplicationOnOverview(
       applicationInDraft,
       procurationHolderUser,
-      false,
       template,
     )
 
@@ -243,7 +240,6 @@ describe('ApplicationAccesService', () => {
     const results = await applicationAccessService.shouldShowApplicationOnOverview(
       applicationInDraft,
       createMockUser(),
-      false,
       testApplicationTemplate,
     )
     expect(results).toBe(true)
@@ -258,7 +254,6 @@ describe('ApplicationAccesService', () => {
     const results = await applicationAccessService.shouldShowApplicationOnOverview(
       applicationInDraft,
       createMockUser(),
-      false,
       testApplicationTemplate,
     )
     expect(results).toBe(true)
@@ -272,7 +267,6 @@ describe('ApplicationAccesService', () => {
     const results = await applicationAccessService.shouldShowApplicationOnOverview(
       applicationInReview,
       createMockUser('111111-3001'),
-      false,
       testApplicationTemplate,
     )
     expect(results).toBe(false)
@@ -286,7 +280,6 @@ describe('ApplicationAccesService', () => {
     const results = await applicationAccessService.shouldShowApplicationOnOverview(
       applicationInReview,
       createMockUser(),
-      false,
       testApplicationTemplate,
     )
     expect(results).toBe(true)
