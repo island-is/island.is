@@ -26,6 +26,7 @@ import {
   DefaultStateLifeCycle,
 } from '@island.is/application/core'
 import { gflPendingActionMessages } from './messages/actionCards'
+import { Features } from '@island.is/feature-flags'
 
 const pruneAtMidnight = () => {
   const date = new Date()
@@ -54,7 +55,10 @@ const GeneralFishingLicenseTemplate: ApplicationTemplate<
   dataSchema: GeneralFishingLicenseSchema,
   allowedDelegations: [
     { type: AuthDelegationType.ProcurationHolder },
-    { type: AuthDelegationType.Custom },
+    {
+      type: AuthDelegationType.Custom,
+      featureFlag: Features.isFishingLicenceCustomDelegationEnabled,
+    },
   ],
   requiredScopes: ['@island.is/fishing-license'],
   stateMachineConfig: {

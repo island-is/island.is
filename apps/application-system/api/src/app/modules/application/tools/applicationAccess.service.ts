@@ -25,9 +25,6 @@ import { EventObject } from 'xstate'
 import { FeatureFlagService } from '@island.is/nest/feature-flags'
 import { ProblemType } from '@island.is/shared/problem'
 import { AuthDelegationType } from '@island.is/shared/types'
-// temp disable, todo fix
-// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
-import { DelegationType } from '@island.is/auth-api-lib'
 import {
   ActorDelegationsApi,
   ActorDelegationsControllerFindAllDirectionEnum,
@@ -102,7 +99,7 @@ export class ApplicationAccessService {
    * @param nationalId The national ID of the user.
    * @returns The role of the user in the application state, or undefined if the user has no role.
    */
-  async getRoleInState(
+  private async getRoleInState(
     application: Application,
     nationalId: string,
   ): Promise<RoleInState<EventObject> | undefined> {
@@ -140,7 +137,7 @@ export class ApplicationAccessService {
     return true
   }
 
-  async hasValidCustomDelegation(
+  private async hasValidCustomDelegation(
     user: User,
     template: ApplicationTemplate<
       ApplicationContext,
@@ -172,7 +169,7 @@ export class ApplicationAccessService {
         .withMiddleware(new AuthMiddleware(user))
         .actorDelegationsControllerFindAll({
           direction: ActorDelegationsControllerFindAllDirectionEnum.incoming,
-          delegationTypes: [DelegationType.Custom],
+          delegationTypes: [AuthDelegationType.Custom],
           otherUser: user.nationalId,
         })
 
