@@ -6,6 +6,9 @@ export const NO = 'No'
 export const JA = 'Já'
 export const NEI = 'Nei'
 
+export const UPLOAD_ACCEPT = '.pdf, .doc, .docx, .rtf'
+export const FILE_SIZE_LIMIT = 10000000 // 10MB
+
 export const States = {
   prerequisites: 'prerequisites',
   draft: 'draft',
@@ -21,15 +24,15 @@ export type EstateEvent =
 
 export enum Roles {
   APPLICANT = 'applicant',
-  APPLICANT_DIVISION_OF_ESTATE = 'applicant_division_of_estate',
+  APPLICANT_OFFICIAL_DIVISION = 'applicant_official_division',
   APPLICANT_NO_ASSETS = 'applicant_no_assets',
-  APPLICANT_POSTPONE_ESTATE_DIVISION = 'applicant_postpone_estate_division',
+  APPLICANT_PERMIT_FOR_UNDIVIDED_ESTATE = 'applicant_permit_for_undivided_estate',
   APPLICANT_DIVISION_OF_ESTATE_BY_HEIRS = 'applicant_division_of_estate_by_heirs',
 }
 
 export const EstateTypes = {
-  divisionOfEstate: 'Opinber skipti',
+  officialDivision: 'Opinber skipti',
   estateWithoutAssets: 'Eignalaust dánarbú',
-  permitToPostponeEstateDivision: 'Búsetuleyfi',
+  permitForUndividedEstate: 'Seta í óskiptu búi',
   divisionOfEstateByHeirs: 'Einkaskipti',
 }

@@ -11,10 +11,10 @@ import {
 } from '@island.is/application/types'
 import {
   EphemeralStateLifeCycle,
+  coreHistoryMessages,
   pruneAfterDays,
 } from '@island.is/application/core'
 import { Events, States, Roles } from './constants'
-import { Features } from '@island.is/feature-flags'
 import { ApiActions } from '../shared'
 import { DrivingLicenseBookUpdateInstructorSchema } from './dataSchema'
 import { application } from './messages'
@@ -37,7 +37,6 @@ const template: ApplicationTemplate<
     ApplicationConfigurations.DrivingLicenseBookUpdateInstructor.translation,
   ],
   dataSchema: DrivingLicenseBookUpdateInstructorSchema,
-  featureFlag: Features.drivingLicenseBookUpdateInstructor,
   stateMachineConfig: {
     initial: States.DRAFT,
     states: {
@@ -50,6 +49,12 @@ const template: ApplicationTemplate<
               label: application.actionCardDraft,
               variant: 'blue',
             },
+            historyLogs: [
+              {
+                logMessage: coreHistoryMessages.applicationStarted,
+                onEvent: DefaultEvents.SUBMIT,
+              },
+            ],
           },
           progress: 0.25,
           lifecycle: EphemeralStateLifeCycle,
@@ -99,6 +104,10 @@ const template: ApplicationTemplate<
             tag: {
               label: application.actionCardDone,
               variant: 'blueberry',
+            },
+            pendingAction: {
+              title: application.pendingActionApplicationCompletedTitle,
+              displayStatus: 'success',
             },
           },
           roles: [

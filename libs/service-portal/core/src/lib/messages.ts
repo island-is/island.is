@@ -33,6 +33,10 @@ export const m = defineMessages({
     id: 'service.portal:interest',
     defaultMessage: 'Vextir',
   },
+  refundDate: {
+    id: 'service.portal:refund-date',
+    defaultMessage: 'Dags. endurgreiðslu',
+  },
   finalDueDate: {
     id: 'service.portal:final-due-date',
     defaultMessage: 'Eindagi',
@@ -129,9 +133,17 @@ export const m = defineMessages({
     id: 'service.portal:date-from',
     defaultMessage: 'Dagsetning frá',
   },
+  dateFromShort: {
+    id: 'service.portal:date-from-short',
+    defaultMessage: 'Dags. frá',
+  },
   dateTo: {
     id: 'service.portal:date-to',
     defaultMessage: 'Dagsetning til',
+  },
+  dateToShort: {
+    id: 'service.portal:date-to-short',
+    defaultMessage: 'Dags. til',
   },
   selectForResults: {
     id: 'service.portal:select-for-results',
@@ -379,6 +391,10 @@ export const m = defineMessages({
   myRegistration: {
     id: 'service.portal:my-registration',
     defaultMessage: 'Mín skráning',
+  },
+  registrationHistory: {
+    id: 'service.portal:registration-history',
+    defaultMessage: 'Skráningarsaga',
   },
   baseInfo: {
     id: 'service.portal:base-info',
@@ -691,6 +707,10 @@ export const m = defineMessages({
     id: 'service.portal:code-confirmation',
     defaultMessage: 'Staðfesta',
   },
+  number: {
+    id: 'service.portal:number',
+    defaultMessage: 'Númer',
+  },
   telNumber: {
     id: 'service.portal:tel',
     defaultMessage: 'Símanúmer',
@@ -890,9 +910,38 @@ export const m = defineMessages({
     defaultMessage: 'Loftbrú',
     description: 'Airfare discount',
   },
+  airDiscountDescription: {
+    id: 'service.portal:air-discount-description',
+    defaultMessage: 'Lægri flug­fargjöld fyrir íbúa lands­byggð­arinnar',
+    description: 'Airfare discount',
+  },
   sessions: {
     id: 'service.portal:sessions',
     defaultMessage: 'Notkun',
+  },
+  health: {
+    id: 'service.portal:health',
+    defaultMessage: 'Heilsa',
+  },
+  healthDescription: {
+    id: 'service.portal:health-description',
+    defaultMessage: 'Hér eru heilsugögn um þig',
+  },
+  therapies: {
+    id: 'service.portal:therapies',
+    defaultMessage: 'Þjálfun',
+  },
+  aidsAndNutrition: {
+    id: 'service.portal:aids-and-nutrition',
+    defaultMessage: 'Hjálpartæki og næring',
+  },
+  dentists: {
+    id: 'service.portal:dentists',
+    defaultMessage: 'Tannlæknar',
+  },
+  healthCenter: {
+    id: 'service.portal:health-center',
+    defaultMessage: 'Heilsugæsla',
   },
   financeBreakdown: {
     id: 'service.portal:finance-detail-breakdown',

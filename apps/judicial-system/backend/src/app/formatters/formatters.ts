@@ -20,6 +20,10 @@ import {
   SessionArrangements,
 } from '@island.is/judicial-system/types'
 import type { Gender } from '@island.is/judicial-system/types'
+import {
+  DEFENDER_INDICTMENT_ROUTE,
+  DEFENDER_ROUTE,
+} from '@island.is/judicial-system/consts'
 
 import { core, notifications, custodyNotice } from '../messages'
 import { Case } from '../modules/case'
@@ -251,6 +255,7 @@ export function formatProsecutorCourtDateEmailNotification(
   const courtRoomText = formatMessage(notifications.courtRoom, {
     courtRoom: courtRoom || 'NONE',
   })
+
   const judgeText = formatMessage(notifications.judge, {
     judgeName: judgeName || 'NONE',
   })
@@ -654,4 +659,15 @@ export function formatCourtIndictmentReadyForCourtEmailNotification(
   })
 
   return { body, subject }
+}
+
+export const formatDefenderRoute = (
+  baseUrl: string,
+  type: string,
+  id: string,
+) => {
+  const caseType = type as CaseType
+  return `${baseUrl}${
+    isIndictmentCase(caseType) ? DEFENDER_INDICTMENT_ROUTE : DEFENDER_ROUTE
+  }/${id}`
 }

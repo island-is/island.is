@@ -68,14 +68,17 @@ const AppealToCourtOfAppeals = () => {
       ? constants.DEFENDER_ROUTE
       : constants.SIGNED_VERDICT_OVERVIEW_ROUTE
   }/${id}`
+
   const allFilesUploaded = useMemo(() => {
     return displayFiles.every(
       (file) => file.status === 'done' || file.status === 'error',
     )
   }, [displayFiles])
+
   const isStepValid =
-    displayFiles.some((file) => file.category === appealBriefType) &&
-    allFilesUploaded
+    displayFiles.some(
+      (file) => file.category === appealBriefType && file.status === 'done',
+    ) && allFilesUploaded
 
   const removeFileCB = useCallback((file: UploadFile) => {
     setDisplayFiles((previous) =>
@@ -147,7 +150,9 @@ const AppealToCourtOfAppeals = () => {
                   )
                 }
                 onRemove={(file) => handleRemove(file, removeFileCB)}
-                onRetry={(file) => handleRetry(file, handleUIUpdate)}
+                onRetry={(file) =>
+                  handleRetry(file, handleUIUpdate, appealBriefType)
+                }
               />
             </Box>
             <Box component="section" marginBottom={10}>
@@ -177,7 +182,9 @@ const AppealToCourtOfAppeals = () => {
                   )
                 }
                 onRemove={(file) => handleRemove(file, removeFileCB)}
-                onRetry={(file) => handleRetry(file, handleUIUpdate)}
+                onRetry={(file) =>
+                  handleRetry(file, handleUIUpdate, appealCaseFilesType)
+                }
               />
             </Box>
           </>

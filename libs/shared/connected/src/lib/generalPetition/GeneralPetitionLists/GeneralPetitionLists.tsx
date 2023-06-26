@@ -3,7 +3,7 @@ import { useRouter } from 'next/router'
 import { useGetPetitionLists } from './useGetPetitionLists'
 import format from 'date-fns/format'
 import { FC } from 'react'
-import { ConnectedComponent } from '@island.is/api/schema'
+import { ConnectedComponent, EndorsementList } from '@island.is/api/schema'
 import { useLocalization } from '../../../utils'
 
 interface GeneralPetitionProps {
@@ -18,6 +18,15 @@ const formatDate = (date: string) => {
   }
 }
 
+const getBaseUrl = () => {
+  const baseUrl =
+    window.location.origin === 'http://localhost:4200'
+      ? 'http://localhost:4242'
+      : window.location.origin
+
+  return `${baseUrl}/umsoknir/undirskriftalisti`
+}
+
 export const GeneralPetitionLists: FC<GeneralPetitionProps> = ({ slice }) => {
   const router = useRouter()
   const petitionLists = useGetPetitionLists()
@@ -25,11 +34,27 @@ export const GeneralPetitionLists: FC<GeneralPetitionProps> = ({ slice }) => {
 
   return (
     <>
-      <Box marginBottom={3}>
-        <Text variant="h4">{t('title', 'Virkir undirskriftalistar')}</Text>
+      <Box marginY={5}>
+        <ActionCard
+          heading={t('createList', 'Stofna undirskriftalista')}
+          backgroundColor="blue"
+          cta={{
+            label: t('logIn', 'Innskráning'),
+            variant: 'primary',
+            icon: 'open',
+            iconType: 'outline',
+            size: 'small',
+            onClick: () => window.open(getBaseUrl(), '_blank'),
+          }}
+        />
       </Box>
+      {petitionLists?.data?.length > 0 && (
+        <Box marginTop={10} marginBottom={3}>
+          <Text variant="h4">{t('title', 'Virkir listar')}</Text>
+        </Box>
+      )}
       <Stack space={4}>
-        {petitionLists?.data?.map((petition: any) => {
+        {petitionLists?.data?.map((petition: EndorsementList) => {
           return (
             <ActionCard
               key={petition.title}

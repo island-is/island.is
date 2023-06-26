@@ -2,6 +2,9 @@ import React, { useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
+import { AlertBanner, Box, Text } from '@island.is/island-ui/core'
+import * as constants from '@island.is/judicial-system/consts'
+import { capitalize } from '@island.is/judicial-system/formatters'
 import {
   CaseFilesAccordionItem,
   FormContentContainer,
@@ -11,19 +14,14 @@ import {
   PageHeader,
   PageLayout,
   UserContext,
+  Conclusion,
 } from '@island.is/judicial-system-web/src/components'
+import { useAppealAlertBanner } from '@island.is/judicial-system-web/src/utils/hooks'
+import { titleForCase } from '@island.is/judicial-system-web/src/utils/titleForCase/titleForCase'
+import { core } from '@island.is/judicial-system-web/messages'
+
 import CaseFilesOverview from '../components/CaseFilesOverview/CaseFilesOverview'
 import CourtOfAppealCaseOverviewHeader from '../components/CaseOverviewHeader/CaseOverviewHeader'
-
-import AppealConclusion from '@island.is/judicial-system-web/src/components/Conclusion/AppealConclusion'
-import Conclusion from '@island.is/judicial-system-web/src/components/Conclusion/Conclusion'
-import * as constants from '@island.is/judicial-system/consts'
-import { AlertBanner, Box, Text } from '@island.is/island-ui/core'
-import useAppealAlertBanner from '@island.is/judicial-system-web/src/utils/hooks/useAppealAlertBanner'
-
-import { core } from '@island.is/judicial-system-web/messages'
-import { capitalize } from '@island.is/judicial-system/formatters'
-import { titleForCase } from '@island.is/judicial-system-web/src/utils/formHelper'
 
 const CourtOfAppealOverview: React.FC = () => {
   const {
@@ -127,12 +125,6 @@ const CourtOfAppealOverview: React.FC = () => {
             <Conclusion
               conclusionText={workingCase.conclusion}
               judgeName={workingCase.judge?.name}
-            />
-          </Box>
-          <Box marginBottom={6}>
-            <AppealConclusion
-              conclusionText={workingCase.appealConclusion}
-              judgeName={workingCase.appealJudge1?.name}
             />
           </Box>
           <CaseFilesOverview />

@@ -12,8 +12,8 @@ export const appealCase = defineMessages({
     description: 'Lýsitexti á málsnúmeri á skráningarsíðu Landsréttar',
   },
   caseNumberPlaceholder: {
-    id: 'judicial.system.core:appeal_case.case_number_placeholder',
-    defaultMessage: 'Skráðu inn málsnúmer',
+    id: 'judicial.system.core:appeal_case.case_number_placeholder_v3',
+    defaultMessage: 'X/{year}',
     description: 'Gildistexti á málsnúmeri á skráningarsíðu Landsréttar',
   },
   nextButtonText: {

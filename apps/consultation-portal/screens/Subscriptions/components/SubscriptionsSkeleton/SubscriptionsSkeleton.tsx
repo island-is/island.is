@@ -7,13 +7,13 @@ import {
   Tabs,
   Text,
 } from '@island.is/island-ui/core'
-import Layout from '../../../../components/Layout/Layout'
-import { BreadcrumbsWithMobileDivider } from '../../../../components/BreadcrumbsWithMobileDivider'
+import { Breadcrumbs, Layout } from '../../../../components'
 import { ReactNode } from 'react'
 import EmailBox from '../EmailBox/EmailBox'
 import { Area } from '../../../../types/enums'
 import Link from 'next/link'
 import { useUser } from '../../../../hooks/useUser'
+import localization from '../../Subscriptions.json'
 
 interface Props {
   children: ReactNode
@@ -24,27 +24,29 @@ interface Props {
   getUserSubsLoading?: boolean
 }
 
+const loc = localization['subscriptionSkeleton']
+
 const BREADCRUMBS_LIST = [
-  { title: 'Samráðsgátt', href: '/samradsgatt' },
+  { title: loc.breadcrumbs[0].title, href: loc.breadcrumbs[0].href },
   {
-    title: 'Áskriftir ',
-    href: '/samradsgatt/askriftir',
+    title: loc.breadcrumbs[1].title,
+    href: loc.breadcrumbs[1].href,
   },
 ]
 
 const MY_BREADCRUMBS_LIST = [
   ...BREADCRUMBS_LIST,
-  { title: 'Mínar áskriftir ', href: '/samradsgatt/minaraskriftir' },
+  { title: loc.myBreadcrumbs[0].title, href: loc.myBreadcrumbs[0].href },
 ]
 
 const SUBSCRIPTIONS = {
-  title: 'Áskriftir',
-  url: 'askriftir',
+  title: loc.subscriptions.title,
+  url: loc.subscriptions.url,
 }
 
 const MY_SUBSCRIPTIONS = {
-  title: 'Mínar áskriftir',
-  url: 'minaraskriftir',
+  title: loc.mySubscriptions.title,
+  url: loc.mySubscriptions.url,
 }
 
 const SubscriptionsSkeleton = ({
@@ -64,7 +66,7 @@ const SubscriptionsSkeleton = ({
     >
       <Divider />
       <Box background="blue100">
-        <BreadcrumbsWithMobileDivider
+        <Breadcrumbs
           items={isMySubscriptions ? MY_BREADCRUMBS_LIST : BREADCRUMBS_LIST}
         />
 
@@ -73,17 +75,19 @@ const SubscriptionsSkeleton = ({
             <Stack space={[3, 3, 3, 5, 5]}>
               <Stack space={3}>
                 <Text variant="h1" color="dark400">
-                  {isMySubscriptions ? 'Mínar áskriftir' : 'Áskriftir'}
+                  {isMySubscriptions
+                    ? loc.mySubscriptions.title
+                    : loc.subscriptions.title}
                 </Text>
                 <Stack space={1}>
                   <Text variant="default">
                     {isMySubscriptions
-                      ? 'Hér er hægt að halda utan um áskriftir og skrá sig úr áskriftum. Aðeins birtast virk mál. Kerfið er uppfært einu sinni á sólarhring.'
-                      : 'Hér er hægt að skrá sig í áskrift að málum. Þú skráir þig inn á Ísland.is, hakar við einn eða fleiri flokka (mál/stofnanir/málefnasvið), velur hvort þú vilt tilkynningar um ný mál eða fleiri atriði og smellir á „Staðfesta“. Loks þarftu að staðfesta áskriftina í gegnum netfangið sem þú skráðir. Kerfið er uppfært einu sinni á sólarhring.'}
+                      ? loc.mySubscriptions.text
+                      : loc.subscriptions.text}
                   </Text>
-                  {!isMySubscriptions && isAuthenticated && (
-                    <Link href={'/minaraskriftir'}>
-                      <a> Hægt er að afskrá sig hér</a>
+                  {!isMySubscriptions && (
+                    <Link href={loc.unsubscribeLink.href}>
+                      <a>{loc.unsubscribeLink.text}</a>
                     </Link>
                   )}
                 </Stack>
@@ -106,7 +110,7 @@ const SubscriptionsSkeleton = ({
               <Tabs
                 selected={currentTab}
                 onlyRenderSelectedTab={true}
-                label="Veldu tegund áskrifta"
+                label={loc.tabsLabel}
                 tabs={tabs}
                 contentBackground="transparent"
                 onChange={(e: Area) => setCurrentTab(e)}

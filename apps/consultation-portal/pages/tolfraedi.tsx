@@ -1,4 +1,4 @@
-import Layout from '../components/Layout/Layout'
+import { Layout } from '../components'
 import { Box, GridColumn, GridRow } from '@island.is/island-ui/core'
 const Statistics = () => {
   return (

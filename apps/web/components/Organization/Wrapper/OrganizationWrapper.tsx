@@ -76,6 +76,19 @@ import { SAkFooter, SAkHeader } from './Themes/SAkTheme'
 import { GevFooter, GevHeader } from './Themes/GevTheme'
 import { HveHeader, HveFooter } from './Themes/HveTheme'
 import { ShhFooter, ShhHeader } from './Themes/SHHTheme'
+import {
+  HeilbrigdisstofnunAusturlandsFooter,
+  HeilbrigdisstofnunAusturlandsHeader,
+} from './Themes/HeilbrigdisstofnunAusturlandsTheme'
+import { UniversityStudiesHeader } from './Themes/UniversityStudiesTheme'
+import {
+  IcelandicNaturalDisasterInsuranceHeader,
+  IcelandicNaturalDisasterInsuranceFooter,
+} from './Themes/IcelandicNaturalDisasterInsuranceTheme'
+import {
+  TransportAuthorityFooter,
+  TransportAuthorityHeader,
+} from './Themes/TransportAuthorityTheme'
 
 import * as styles from './OrganizationWrapper.css'
 
@@ -113,6 +126,10 @@ export const lightThemes = [
   'landing_page',
   'tryggingastofnun',
   'hve',
+  'hsa',
+  'haskolanam',
+  'nti',
+  'samgongustofa',
 ]
 export const footerEnabled = [
   'syslumenn',
@@ -153,6 +170,13 @@ export const footerEnabled = [
   'gev',
 
   'shh',
+
+  'hsa',
+
+  'nti',
+
+  'samgongustofa',
+  'transport-authority',
 ]
 
 export const getThemeConfig = (
@@ -168,7 +192,8 @@ export const getThemeConfig = (
   if (
     theme === 'sjukratryggingar' ||
     theme === 'rikislogmadur' ||
-    theme === 'tryggingastofnun'
+    theme === 'tryggingastofnun' ||
+    theme === 'nti'
   )
     return {
       themeConfig: {
@@ -236,6 +261,22 @@ export const OrganizationHeader: React.FC<HeaderProps> = ({
       return <HveHeader organizationPage={organizationPage} />
     case 'shh':
       return <ShhHeader organizationPage={organizationPage} />
+    case 'hsa':
+      return (
+        <HeilbrigdisstofnunAusturlandsHeader
+          organizationPage={organizationPage}
+        />
+      )
+    case 'haskolanam':
+      return <UniversityStudiesHeader organizationPage={organizationPage} />
+    case 'nti':
+      return (
+        <IcelandicNaturalDisasterInsuranceHeader
+          organizationPage={organizationPage}
+        />
+      )
+    case 'samgongustofa':
+      return <TransportAuthorityHeader organizationPage={organizationPage} />
     default:
       return <DefaultHeader organizationPage={organizationPage} />
   }
@@ -478,6 +519,33 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
           title={organization.title}
           namespace={namespace}
           footerItems={organization.footerItems}
+        />
+      )
+      break
+    case 'hsa':
+      OrganizationFooterComponent = (
+        <HeilbrigdisstofnunAusturlandsFooter
+          title={organization.title}
+          namespace={namespace}
+          footerItems={organization.footerItems}
+        />
+      )
+      break
+    case 'nti':
+      OrganizationFooterComponent = (
+        <IcelandicNaturalDisasterInsuranceFooter
+          footerItems={organization.footerItems}
+          namespace={namespace}
+        />
+      )
+      break
+    case 'samgongustofa':
+    case 'transport-authority':
+      OrganizationFooterComponent = (
+        <TransportAuthorityFooter
+          title={organization.title}
+          footerItems={organization.footerItems}
+          logo={organization.logo?.url}
         />
       )
       break

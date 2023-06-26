@@ -1,5 +1,6 @@
 import { test, BrowserContext, expect } from '@playwright/test'
-import { urls } from '../../../../support/urls'
+import { sleep } from '../../../../support/utils'
+import { icelandicAndNoPopupUrl, urls } from '../../../../support/urls'
 import { session } from '../../../../support/session'
 import { label } from '../../../../support/i18n'
 import { messages } from '@island.is/service-portal/documents/messages'
@@ -32,49 +33,58 @@ test.describe('MS - Pósthólf overview', () => {
 
     await test.step('Filter by searchbox', async () => {
       // Arrange
-      await page.goto('/minarsidur/postholf')
+      await page.goto(icelandicAndNoPopupUrl('/minarsidur/postholf'))
 
       // Act
+      await expect(
+        page.getByRole('button', {
+          name: label(m.date),
+        }),
+      ).toBeVisible()
       const inputField = page.getByRole('textbox', {
         name: label(m.searchLabel),
       })
       await inputField.click()
       await inputField.type('greiðslukvittun', { delay: 100 })
-      await page.keyboard.press('Enter')
+      await inputField.press('Enter')
 
       const btnClearFilter = page.getByRole('button', {
         name: label(messages.clearFilters),
       })
 
+      await sleep(500)
+
+      const docFoundText = page.getByTestId('doc-found-text')
+
       // Assert
-      await expect(page.getByRole('main')).toContainText(label(messages.found))
+      await expect(docFoundText).toContainText(label(messages.found))
       await expect(btnClearFilter).toBeVisible()
     })
 
     await test.step('Filter by filter-button', async () => {
       // Arrange
-      await page.goto('/minarsidur/postholf')
+      await page.goto(icelandicAndNoPopupUrl('/minarsidur/postholf'))
 
       // Act
       await page
-        .locator(`role=button[name="${label(m.openFilter)}"]`)
+        .getByRole('button', { name: label(m.openFilter) })
         .first()
         .click()
       await page
-        .locator(`role=button[name="${label(messages.institutionLabel)}"]`)
+        .getByRole('button', { name: label(messages.institutionLabel) })
         .first()
         .click()
       await page.mouse.wheel(0, 50)
 
       // "institution" comes from the api - not translateable
-      const institution = 'Ísland.is'
-      await page.locator(`role=checkbox[name="${institution}"]`).click()
+      const institution = 'Ríkislögreglustjórinn'
+      await page.getByLabel(institution).click()
 
       // Assert
       await expect(page.getByRole('main')).toContainText(label(messages.found))
       await expect(
         page
-          .locator(`role=button[name="${institution}"]`)
+          .getByRole('button', { name: institution })
           .locator(`[data-testid="icon-close"]`),
       ).toBeVisible()
     })
