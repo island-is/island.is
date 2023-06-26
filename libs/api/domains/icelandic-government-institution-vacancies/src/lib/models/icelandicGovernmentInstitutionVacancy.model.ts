@@ -2,7 +2,7 @@ import { Field, ObjectType } from '@nestjs/graphql'
 import { Document } from '@contentful/rich-text-types'
 import graphqlTypeJson from 'graphql-type-json'
 
-type Html = { __typename: string; document: Document }
+type Html = { __typename: string; document?: Document }
 
 @ObjectType()
 class IcelandicGovernmentInstitutionVacancyLocation {
@@ -16,7 +16,7 @@ class IcelandicGovernmentInstitutionVacancyLocation {
 @ObjectType()
 class IcelandicGovernmentInstitutionVacancyListItemBase {
   @Field({ nullable: true })
-  id?: number
+  id?: string
 
   @Field({ nullable: true })
   fieldOfWork?: string
@@ -49,7 +49,7 @@ export class IcelandicGovernmentInstitutionVacancyListItem extends IcelandicGove
 }
 
 @ObjectType()
-class IcelandicGovernmentInstitutionVacancyContact {
+export class IcelandicGovernmentInstitutionVacancyContact {
   @Field({ nullable: true })
   name?: string
 
@@ -63,12 +63,6 @@ class IcelandicGovernmentInstitutionVacancyContact {
 @ObjectType()
 export class IcelandicGovernmentInstitutionVacancy extends IcelandicGovernmentInstitutionVacancyListItemBase {
   @Field({ nullable: true })
-  postalAddress?: string
-
-  @Field({ nullable: true })
-  address?: string
-
-  @Field({ nullable: true })
   jobPercentage?: string
 
   @Field(() => [IcelandicGovernmentInstitutionVacancyContact], {
@@ -80,17 +74,20 @@ export class IcelandicGovernmentInstitutionVacancy extends IcelandicGovernmentIn
   applicationHref?: string
 
   @Field(() => graphqlTypeJson, { nullable: true })
-  intro?: Html
+  intro?: Html | null
 
   @Field(() => graphqlTypeJson, { nullable: true })
-  qualificationRequirements?: Html
+  qualificationRequirements?: Html | null
 
   @Field(() => graphqlTypeJson, { nullable: true })
-  tasksAndResponsibilities?: Html
+  tasksAndResponsibilities?: Html | null
 
   @Field(() => graphqlTypeJson, { nullable: true })
-  description?: Html
+  description?: Html | null
 
   @Field(() => graphqlTypeJson, { nullable: true })
-  salaryTerms?: Html
+  salaryTerms?: Html | null
+
+  @Field({ nullable: true })
+  plainTextIntro?: string
 }
