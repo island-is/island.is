@@ -470,7 +470,7 @@ export const StandardForm = ({
           <BasicInput
             label={fn('starfsheiti', 'label', 'Starfsheiti')}
             name="starfsheiti"
-            requiredMessage="Starfsheiti vantar"
+            requiredMessage={n('jobTitleMissing', 'Starfsheiti vantar')}
           />
         </GridColumn>
       )
