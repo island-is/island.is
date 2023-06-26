@@ -199,7 +199,7 @@ export const mapIcelandicGovernmentInstitutionVacanciesFromExternalSystem = asyn
   return mappedData
 }
 
-export const mapIcelandicGovernmentInstitutionVacancyByIdResponse = async (
+export const mapIcelandicGovernmentInstitutionVacancyByIdResponseFromExternalSystem = async (
   vacancy: DefaultApiVacancyDetails,
 ): Promise<IcelandicGovernmentInstitutionVacancyByIdResponse['vacancy']> => {
   const item = vacancy.starfsauglysing
@@ -231,7 +231,7 @@ export const mapIcelandicGovernmentInstitutionVacancyByIdResponse = async (
   ])
 
   return {
-    id: String(item.id),
+    id: `${EXTERNAL_SYSTEM_ID_PREFIX}${item.id}`,
     title: item.fyrirsogn,
     applicationDeadlineFrom: item.umsoknarfrestur_fra,
     applicationDeadlineTo: item.umsoknarfrestur_til,

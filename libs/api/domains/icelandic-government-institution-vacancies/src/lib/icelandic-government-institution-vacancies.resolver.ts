@@ -18,7 +18,7 @@ import {
   DefaultApiVacancyDetails,
   EXTERNAL_SYSTEM_ID_PREFIX,
   mapIcelandicGovernmentInstitutionVacanciesFromExternalSystem,
-  mapIcelandicGovernmentInstitutionVacancyByIdResponse,
+  mapIcelandicGovernmentInstitutionVacancyByIdResponseFromExternalSystem,
   mapIcelandicGovernmentInstitutionVacancyByIdResponseFromCms,
   mapVacancyListItemFromCms,
   sortVacancyList,
@@ -92,7 +92,9 @@ export class IcelandicGovernmentInstitutionVacanciesResolver {
       return { vacancy: null }
     }
     return {
-      vacancy: await mapIcelandicGovernmentInstitutionVacancyByIdResponse(item),
+      vacancy: await mapIcelandicGovernmentInstitutionVacancyByIdResponseFromExternalSystem(
+        item,
+      ),
     }
   }
 
@@ -101,6 +103,7 @@ export class IcelandicGovernmentInstitutionVacanciesResolver {
   async icelandicGovernmentInstitutionVacancyById(
     @Args('input') input: IcelandicGovernmentInstitutionVacancyByIdInput,
   ): Promise<IcelandicGovernmentInstitutionVacancyByIdResponse | null> {
+    // The prefix of the id determines what service to call
     if (input.id.startsWith(CMS_ID_PREFIX)) {
       return this.getVacancyFromCms(input.id.slice(CMS_ID_PREFIX.length))
     } else if (input.id.startsWith(EXTERNAL_SYSTEM_ID_PREFIX)) {
@@ -109,6 +112,7 @@ export class IcelandicGovernmentInstitutionVacanciesResolver {
       return this.getVacancyFromExternalSystem(numericId, input.language)
     }
 
+    // If no prefix is present then we determine what service to call depending on if the id is numeric
     const numericId = Number(input.id)
 
     if (isNaN(numericId)) {
