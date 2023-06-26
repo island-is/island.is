@@ -47,48 +47,57 @@ export const oldAgePensionFormMessage: MessageDir = {
       description: 'External Data',
     },
     checkboxProvider: {
-      id: 'oap.application:checkbox.provider',
+      id: 'oap.application:prerequisites.checkbox.provider',
       defaultMessage:
         'Ég skil að ofangreindra gagna verður aflað í umsóknarferlinu',
       description: 'Checbox to confirm data provider',
     },
     skraInformationTitle: {
-      id: 'oap.application:userprofile.title',
+      id: 'oap.application:prerequisites.userprofile.title',
       defaultMessage: 'Upplýsingar frá Þjóðskrá',
       description: 'Information from Registers Iceland',
     },
     skraInformationSubTitle: {
-      id: 'oap.application:userprofile.subtitle',
+      id: 'oap.application:prerequisites.userprofile.subtitle',
       defaultMessage:
         'Sækir upplýsingar um þig, maka og börn frá Þjóðskrá. Einnig eru sóttar upplýsingar um búsetu.',
       description:
         'Information about you, spouse and children will be retrieved from Registers Iceland. Information about residence will also be retrieved.',
     },
     userProfileInformationTitle: {
-      id: 'oap.application:userprofile.title',
+      id: 'oap.application:prerequisites.userprofile.title',
       defaultMessage: 'Upplýsingar af mínum síðum á Ísland.is',
       description: 'Information from your account at Ísland.is',
     },
     userProfileInformationSubTitle: {
-      id: 'oap.application:userprofile.subtitle',
+      id: 'oap.application:prerequisites.userprofile.subtitle',
       defaultMessage:
         'Upplýsingar um netfang, símanúmer og bankareikning eru sóttar frá mínum síðum á Ísland.is.',
       description:
         'Information about email address, phone number and bank account will be retrieved from your account at Ísland.is.',
     },
     residenceHistoryTitle: {
-      id: 'oap.application:userprofile.title',
-      defaultMessage: 'Upplýsingar af mínum síðum á Ísland.is',
-      description: 'Information from your account at Ísland.is',
+      id: 'oap.application:prerequisites.residence.history.title',
+      defaultMessage: 'Búsetudaga frá Þjóðskrá',
+      description: 'english translation',
     },
-    residenceHistoryDescription: {},
+    childrenCustodyTitle: {
+      id: 'oap.application:prerequisites.children.custody.title',
+      defaultMessage: 'Forsjá frá Þjóðskrá',
+      description: 'english translation',
+    },
+    cohabitantsTitle: {
+      id: 'oap.application:prerequisites.cohabitants.title',
+      defaultMessage: 'Samíbúar frá Þjóðskrá',
+      description: 'english translation',
+    },
     startApplication: {
-      id: 'oal.application.start.application',
+      id: 'oal.application:prerequisites.start.application',
       defaultMessage: 'Hefja umsókn',
       description: 'Start application',
     },
     questionTitle: {
-      id: 'oap.application:question.title',
+      id: 'oap.application:prerequisites.question.title',
       defaultMessage: 'Spurningar',
       description: 'Questions',
     },
