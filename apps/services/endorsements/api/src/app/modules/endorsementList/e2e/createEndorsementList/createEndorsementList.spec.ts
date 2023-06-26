@@ -6,7 +6,7 @@ import { EndorsementTag } from '../../constants'
 import { authNationalId } from '../closeEndorsementList/seed'
 
 describe('createEndorsementList', () => {
-  it(`POST /endorsement-list should fail and return 200 OK if scope is ok`, async () => {
+  it(`POST /endorsement-list should return 200 OK if scope is ok`, async () => {
     const app = await getAuthenticatedApp({
       nationalId: authNationalId,
       scope: [EndorsementsScope.main],
@@ -33,10 +33,7 @@ describe('createEndorsementList', () => {
       .send(newEndorsementList)
       .expect(201)
 
-    // expect(response.body).toMatchObject({
-    //   ...errorExpectedStructure,
-    //   statusCode: 403,
-    // })
+
   })
   it(`POST /endorsement-list should fail and return 403 error if scope is missing`, async () => {
     const app = await getAuthenticatedApp({
