@@ -90,6 +90,20 @@ export const estateSchema = z.object({
           .string()
           .refine((v) => isValidEmail(v) || v === '')
           .optional(),
+        guardian: z
+          .object({
+            name: z.string(),
+            nationalId: z.string(),
+            phone: z
+              .string()
+              .refine((v) => isValidPhoneNumber(v) || v === '')
+              .optional(),
+            email: z
+              .string()
+              .refine((v) => isValidEmail(v) || v === '')
+              .optional(),
+          })
+          .optional(),
       })
       .array()
       .optional(),

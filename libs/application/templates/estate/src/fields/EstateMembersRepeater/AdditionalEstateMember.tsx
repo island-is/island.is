@@ -123,7 +123,10 @@ export const AdditionalEstateMember = ({
         </GridRow>
       ) : (
         <Box paddingY={2}>
-          <LookupPerson field={{ id: fieldIndex }} error={error} />
+          <LookupPerson
+            field={{ id: fieldIndex, props: { alertWhenUnder18: true } }}
+            error={error}
+          />
         </Box>
       )}
       <GridRow>

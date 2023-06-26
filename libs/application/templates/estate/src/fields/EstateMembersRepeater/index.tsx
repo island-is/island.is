@@ -3,6 +3,7 @@ import { useFieldArray } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
 import { FieldBaseProps, GenericFormField } from '@island.is/application/types'
 import {
+  AlertMessage,
   Box,
   Button,
   GridColumn,
@@ -16,6 +17,7 @@ import { AdditionalEstateMember } from './AdditionalEstateMember'
 import { getValueViaPath } from '@island.is/application/core'
 import { InputController } from '@island.is/shared/form-fields'
 import { format as formatNationalId } from 'kennitala'
+import * as kennitala from 'kennitala'
 
 export const EstateMembersRepeater: FC<FieldBaseProps<Answers>> = ({
   application,
@@ -55,7 +57,11 @@ export const EstateMembersRepeater: FC<FieldBaseProps<Answers>> = ({
 
   return (
     <Box>
-      {fields.reduce((acc, member: GenericFormField<EstateMember>, index) => {
+      {fields.reduce((
+        acc,
+        member: any /*</Box>GenericFormField<EstateMember>*/,
+        index,
+      ) => {
         if (member.nationalId === application.applicant) {
           const relation = getValueViaPath<string>(
             application.answers,
@@ -70,11 +76,9 @@ export const EstateMembersRepeater: FC<FieldBaseProps<Answers>> = ({
         }
         return [
           ...acc,
-          <Box marginTop={index > 0 ? 3 : 0} key={index}>
-            <Box display="flex" justifyContent="spaceBetween">
-              <Text variant="h4" paddingBottom={2}>
-                {formatMessage(m.estateMember)}
-              </Text>
+          <Box marginTop={index > 0 ? 5 : 0} key={index}>
+            <Box display="flex" justifyContent="spaceBetween" marginBottom={3}>
+              <Text variant="h4">{formatMessage(m.estateMember)}</Text>
               <Box>
                 <Button
                   variant="text"
@@ -94,8 +98,18 @@ export const EstateMembersRepeater: FC<FieldBaseProps<Answers>> = ({
                 </Button>
               </Box>
             </Box>
-
             <GridRow>
+              {!member.guardian &&
+                kennitala.info(member.nationalId as string).age < 18 && (
+                  <GridColumn span={['1/1']} paddingBottom={5}>
+                    <AlertMessage
+                      type="error"
+                      message={`${
+                        kennitala.info(member.nationalId as string).age
+                      }`}
+                    />
+                  </GridColumn>
+                )}
               <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
                 <InputController
                   id={`${id}[${index}].nationalId`}
@@ -154,6 +168,77 @@ export const EstateMembersRepeater: FC<FieldBaseProps<Answers>> = ({
                 />
               </GridColumn>
             </GridRow>
+
+            {/* GUARDIAN */}
+            {member.guardian && (
+              <Box
+                marginTop={2}
+                paddingY={5}
+                paddingX={7}
+                borderRadius="large"
+                border="standard"
+              >
+                <GridRow>
+                  <GridColumn span={['1/1']} paddingBottom={2}>
+                    <Text variant="h4">
+                      {formatMessage(m.inheritanceGuardianLabel)}
+                    </Text>
+                  </GridColumn>
+                  <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
+                    <InputController
+                      id={`${id}[${index}].guardian.nationalId`}
+                      name={`${id}[${index}].guardian.nationalId`}
+                      label={formatMessage(m.inheritanceKtLabel)}
+                      readOnly
+                      defaultValue={formatNationalId(
+                        member.guardian.nationalId || '',
+                      )}
+                      backgroundColor="white"
+                      disabled={!member.enabled}
+                      format={'######-####'}
+                    />
+                  </GridColumn>
+                  <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
+                    <InputController
+                      id={`${id}[${index}].guardian.name`}
+                      name={`${id}[${index}].guardian.name`}
+                      label={formatMessage(m.inheritanceNameLabel)}
+                      readOnly
+                      defaultValue={member.guardian.name || ''}
+                      backgroundColor="white"
+                      disabled={!member.enabled}
+                    />
+                  </GridColumn>
+                  <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
+                    <InputController
+                      id={`${id}[${index}].guardian.phone`}
+                      name={`${id}[${index}].guardian.phone`}
+                      label={m.phone.defaultMessage}
+                      backgroundColor="blue"
+                      disabled={!member.enabled}
+                      format="###-####"
+                      defaultValue={member.guardian.phone || ''}
+                      error={
+                        error && error[index] && error[index].guardian.phone
+                      }
+                    />
+                  </GridColumn>
+                  <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
+                    <InputController
+                      id={`${id}[${index}].guardian.email`}
+                      name={`${id}[${index}].guardian.email`}
+                      label={m.email.defaultMessage}
+                      backgroundColor="blue"
+                      disabled={!member.enabled}
+                      defaultValue={member.guardian.email || ''}
+                      error={
+                        error && error[index] && error[index].guardian.email
+                      }
+                    />
+                  </GridColumn>
+                </GridRow>
+              </Box>
+            )}
           </Box>,
         ]
       }, [] as JSX.Element[])}

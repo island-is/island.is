@@ -206,23 +206,6 @@ export const m = defineMessages({
     defaultMessage: 'Erfingi',
     description: '',
   },
-  estateMemberAdvocateWarningTitle: {
-    id: 'es.application:estateMemberAdvocateWarningTitle',
-    defaultMessage: 'Vinsamlegast athugið',
-    description: '',
-  },
-  estateMembersHaveIDCheckbox: {
-    id: 'es.application:estateMembersHaveIDCheckbox',
-    defaultMessage:
-      'Ég staðfesti að allir ofangreindir séu með rafræn skilríki og geti undirritað samkomulag þetta.',
-    description: '',
-  },
-  estateMemberAdvocateWarningDescription: {
-    id: 'es.application:estateMemberAdvocateWarningDescription',
-    defaultMessage:
-      'Þegar viðkomandi aðili nær ekki 18 ára aldri, þarf að skrá málsvara fyrir hans hönd.',
-    description: '',
-  },
   estateMembersHeaderDescription: {
     id: 'es.application:estateMembersHeaderDescription',
     defaultMessage: 'Vantar uppl hér',
@@ -747,6 +730,11 @@ export const m = defineMessages({
     defaultMessage: 'Tengsl virðast ekki vera rétt',
     description: 'Relation is invalid',
   },
+  errorEstateMemberUnder18: {
+    id: 'es.application:error.errorEstateMemberUnder18',
+    defaultMessage: ' ',
+    description: '',
+  },
   fillOutRates: {
     id: 'es.application:error.fillOutRates',
     defaultMessage: 'Vinsamlegast fylltu út í alla reiti',
@@ -806,11 +794,6 @@ export const m = defineMessages({
     defaultMessage: 'Nafn',
     description: 'Name label',
   },
-  inheritanceCustodyLabel: {
-    id: 'es.application:inheritanceCustodyLabel',
-    defaultMessage: 'Forsjáraðili',
-    description: 'Custody label',
-  },
   inheritanceForeignCitizenshipLabel: {
     id: 'es.application:inheritanceForeignCitizenshipLabel',
     defaultMessage: 'Aðili án íslenskrar kennitölu',
@@ -820,6 +803,11 @@ export const m = defineMessages({
     id: 'es.application:inheritanceDayOfBirthLabel',
     defaultMessage: 'Fæðingardagur',
     description: 'Day of birth label',
+  },
+  inheritanceGuardianLabel: {
+    id: 'es.application:inheritanceGuardianLabel',
+    defaultMessage: 'Forsjáraðili',
+    description: 'Custody label',
   },
 
   // Properties
