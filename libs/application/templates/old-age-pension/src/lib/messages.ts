@@ -81,9 +81,7 @@ export const oldAgePensionFormMessage: MessageDir = {
       defaultMessage: 'Upplýsingar af mínum síðum á Ísland.is',
       description: 'Information from your account at Ísland.is',
     },
-    residenceHistoryDescription: {
-
-    },
+    residenceHistoryDescription: {},
     startApplication: {
       id: 'oal.application.start.application',
       defaultMessage: 'Hefja umsókn',
