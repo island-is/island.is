@@ -28,7 +28,7 @@ const getDefaultStyle = (width: number): CSSProperties => {
     return {
       backgroundRepeat: 'no-repeat',
       backgroundSize: 'auto 280px, auto 280px, cover',
-      backgroundPosition: '5% bottom, 780px bottom, center',
+      backgroundPosition: '5% bottom, 820px bottom, center',
       backgroundImage: `url('${treeImageUrl}'), url('${townImageUrl}'), linear-gradient(0deg, #FFFFFF -40.18%, #FAFDFD -23.09%, #ECF8F9 -4.3%, #D6F0F1 16.21%, #B7E5E7 36.72%, #8ED6DA 57.23%, #5DC4CA 77.74%, #23AFB8 100.93%, #00A3AD 113.54%)`,
     }
   }
