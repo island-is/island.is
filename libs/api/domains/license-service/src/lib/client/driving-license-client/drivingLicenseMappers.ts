@@ -10,7 +10,6 @@ import {
   RemarkCode,
   DriverLicenseDto as DriversLicense,
   CategoryDto,
-  LicenseCommentsDto,
 } from '@island.is/clients/driving-license'
 import format from 'date-fns/format'
 import { info, format as formatSsn } from 'kennitala'
@@ -20,14 +19,15 @@ type ExcludesFalse = <T>(x: T | null | undefined | false | '') => x is T
 export const formatNationalId = (nationalId: string) => formatSsn(nationalId)
 
 const mapRemarks = (
-  comments?: Array<LicenseCommentsDto> | null,
+  license?: DriversLicense,
   remarks?: Array<RemarkCode> | null,
 ) => {
+  const comments = license?.comments
   if (!comments || !remarks) {
     return
   }
   const commentString = comments.reduce<string>(
-    (acc, curr) => `${acc} ${mapCommentToRemark(curr, remarks)}`,
+    (acc, curr) => `${acc} ${mapCommentToRemark(curr.nr ?? null, remarks)}`,
     '',
   )
 
@@ -35,11 +35,11 @@ const mapRemarks = (
 }
 
 const mapCommentToRemark = (
-  comment: LicenseCommentsDto,
+  commentId: string | null,
   remarks: Array<RemarkCode>,
 ) => {
-  const remark = remarks.find((r) => r.index === comment.nr)
-  return remark?.name ? `${comment.nr} - ${remark.name}\n` : undefined
+  const remark = remarks.find((r) => r.index === commentId)
+  return remark?.name ? `${commentId} - ${remark.name}\n` : undefined
 }
 
 const mapCategoryToRight = (
@@ -129,7 +129,7 @@ export const createPkPassDataInput = (
     },
     {
       identifier: 'athugasemdir',
-      value: license.comments ? mapRemarks(license.comments, remarks) : '',
+      value: license.comments ? mapRemarks(license, remarks) : '',
     },
   ]
 }
