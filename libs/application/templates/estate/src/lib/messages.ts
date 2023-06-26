@@ -801,7 +801,7 @@ export const m = defineMessages({
   },
   inheritanceAdvocateLabel: {
     id: 'es.application:inheritanceAdvocateLabel',
-    defaultMessage: 'Forsjáraðili',
+    defaultMessage: 'Málsvari',
     description: 'Custody label',
   },
   inheritanceUnder18Error: {
