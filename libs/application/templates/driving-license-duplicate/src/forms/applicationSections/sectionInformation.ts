@@ -23,7 +23,8 @@ export const sectionInformation = buildSection({
       id: 'list',
       title: m.informationTitle,
       description: m.informationSubtitle,
-      condition: (_, externalData) => requirementsMet(externalData),
+      condition: (answers, externalData) =>
+        requirementsMet(answers, externalData),
       children: [
         buildTextField({
           id: 'name',
@@ -103,7 +104,8 @@ export const sectionInformation = buildSection({
       ],
     }),
     buildCustomField({
-      condition: (_, externalData) => !requirementsMet(externalData),
+      condition: (answers, externalData) =>
+        !requirementsMet(answers, externalData),
       title: 'SubmitAndDecline',
       component: 'SubmitAndDecline',
       id: 'SubmitAndDecline',
