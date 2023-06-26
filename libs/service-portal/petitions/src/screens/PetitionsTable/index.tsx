@@ -60,7 +60,9 @@ const PetitionsTable = (data: {
             <T.Row>
               <T.HeadData>{formatMessage(m.date)}</T.HeadData>
               <T.HeadData>{formatMessage(m.name)}</T.HeadData>
-              <T.HeadData>{formatMessage(m.locality)}</T.HeadData>
+              {data.canEdit && (
+                <T.HeadData>{formatMessage(m.locality)}</T.HeadData>
+              )}
             </T.Row>
           </T.Head>
           <T.Body>
@@ -75,9 +77,11 @@ const PetitionsTable = (data: {
                       ? petition.meta.fullName
                       : formatMessage(m.noName)}
                   </T.Data>
-                  <T.Data>
-                    {petition.meta.fullName ? petition.meta.locality : ''}
-                  </T.Data>
+                  {data.canEdit && (
+                    <T.Data>
+                      {petition.meta.fullName ? petition.meta.locality : ''}
+                    </T.Data>
+                  )}
                 </T.Row>
               )
             })}
