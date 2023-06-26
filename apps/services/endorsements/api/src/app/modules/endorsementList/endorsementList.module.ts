@@ -4,33 +4,19 @@ import { EndorsementList } from './endorsementList.model'
 import { EndorsementListController } from './endorsementList.controller'
 import { EndorsementListService } from './endorsementList.service'
 import { Endorsement } from '../endorsement/models/endorsement.model'
-import {
-  NationalRegistryApi,
-  NationalRegistryConfig,
-} from '@island.is/clients/national-registry-v1'
+
 import { environment } from '../../../environments'
 import { EmailModule } from '@island.is/email-service'
-
-export interface Config {
-  nationalRegistry: NationalRegistryConfig
-}
+import { NationalRegistryClientModule } from '@island.is/clients/national-registry-v2'
 
 @Module({
   imports: [
+    NationalRegistryClientModule,
     SequelizeModule.forFeature([EndorsementList, Endorsement]),
     EmailModule.register(environment.emailOptions),
   ],
   controllers: [EndorsementListController],
-  providers: [
-    EndorsementListService,
-    {
-      provide: NationalRegistryApi,
-      // See method doc for disable reason.
-      // eslint-disable-next-line local-rules/no-async-module-init
-      useFactory: async () =>
-        NationalRegistryApi.instantiateClass(environment.nationalRegistry),
-    },
-  ],
+  providers: [EndorsementListService],
   exports: [EndorsementListService],
 })
 export class EndorsementListModule {}

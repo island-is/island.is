@@ -23,4 +23,9 @@ export const application = defineMessages({
     description:
       'Description of application state/status when application is processed',
   },
+  pendingActionApplicationCompletedTitle: {
+    id: 'ta.avr.application:pendingActionApplicationCompletedTitle',
+    defaultMessage: 'Búið er að uppfæra nafnleynd',
+    description: 'Pending action application completed',
+  },
 })

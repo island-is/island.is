@@ -10,7 +10,6 @@ import {
   Breadcrumbs,
   Stack,
   Pagination,
-  LinkV2,
   Hidden,
   Filter,
   FilterMultiChoice,
@@ -211,6 +210,12 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<IcelandicGovernmentIns
   useEffect(() => {
     const updatedQuery = { ...query }
 
+    if (!selectedPage) {
+      if ('page' in updatedQuery) delete updatedQuery['page']
+    } else {
+      updatedQuery.page = selectedPage.toString()
+    }
+
     if (!searchTerm) {
       if ('q' in updatedQuery) delete updatedQuery['q']
     } else {
@@ -244,7 +249,7 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<IcelandicGovernmentIns
       { shallow: true },
     )
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [parameters, searchTerm])
+  }, [parameters, searchTerm, selectedPage])
 
   const filterCategories = [
     {
@@ -315,6 +320,7 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<IcelandicGovernmentIns
                   name="filterInput"
                   value={searchTerm}
                   onChange={(value) => {
+                    setSelectedPage(1)
                     setSearchTerm(value)
                     searchTermHasBeenInitialized.current = true
                   }}
@@ -325,12 +331,14 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<IcelandicGovernmentIns
             <FilterMultiChoice
               labelClear={n('clearSelection', 'Hreinsa val')}
               onChange={({ categoryId, selected }) => {
+                setSelectedPage(1)
                 setParameters((prevParameters) => ({
                   ...prevParameters,
                   [categoryId]: selected,
                 }))
               }}
               onClear={(categoryId) => {
+                setSelectedPage(1)
                 setParameters((prevParameters) => ({
                   ...prevParameters,
                   [categoryId]: [],
@@ -368,7 +376,7 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<IcelandicGovernmentIns
           <Box marginBottom={6}>
             <Text>
               {filteredVacancies.length}{' '}
-              {filteredVacancies.length === 1
+              {filteredVacancies.length % 10 === 1
                 ? n('singleJobFound', 'starf fannst')
                 : n('jobsFound', 'störf fundust')}
             </Text>
@@ -434,14 +442,13 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<IcelandicGovernmentIns
                 totalItems={filteredVacancies.length}
                 totalPages={totalPages}
                 renderLink={(page, className, children) => (
-                  <LinkV2
-                    href={{
-                      pathname: pathname,
-                      query: { ...query, page },
+                  <button
+                    onClick={() => {
+                      setSelectedPage(page)
                     }}
                   >
                     <span className={className}>{children}</span>
-                  </LinkV2>
+                  </button>
                 )}
               />
             </Box>

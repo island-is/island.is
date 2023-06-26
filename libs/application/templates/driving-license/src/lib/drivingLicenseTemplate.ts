@@ -76,7 +76,11 @@ const template: ApplicationTemplate<
                 TeachersApi,
                 UserProfileApi,
                 SyslumadurPaymentCatalogApi,
-                CurrentLicenseApi,
+                CurrentLicenseApi.configure({
+                  params: {
+                    useLegacyVersion: true,
+                  },
+                }),
                 DrivingAssessmentApi,
                 JuristictionApi,
                 QualityPhotoApi,

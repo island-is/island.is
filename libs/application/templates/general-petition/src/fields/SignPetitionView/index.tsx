@@ -66,14 +66,20 @@ const SignPetitionView: FC<FieldBaseProps> = ({ application }) => {
           <Text marginBottom={2} variant="h2">
             {formatMessage(m.petitionSigned)}
           </Text>
-
-          <Box marginY={5} display="flex" justifyContent="center">
+          <Box
+            paddingY={10}
+            display="flex"
+            justifyContent="center"
+            height="full"
+          >
             <Illustration />
           </Box>
           <Box position="absolute" bottom={0} right={0}>
             <Button
               icon="arrowForward"
-              onClick={() => navigate('/../minarsidur/min-gogn/listar')}
+              onClick={() =>
+                window.open('/minarsidur/min-gogn/listar', '_blank')
+              }
             >
               {formatMessage(m.backtoSP)}
             </Button>
@@ -114,17 +120,20 @@ const SignPetitionView: FC<FieldBaseProps> = ({ application }) => {
                     readOnly
                   />
                 </Box>
-                <CheckboxController
-                  id="showName"
-                  large={false}
-                  onSelect={() => setShowName(!showName)}
-                  options={[
-                    {
-                      value: YES,
-                      label: formatMessage(m.hideNameLabel),
-                    },
-                  ]}
-                />
+                <Box marginTop={6} width="half">
+                  <CheckboxController
+                    id="showName"
+                    large={false}
+                    onSelect={() => setShowName(!showName)}
+                    options={[
+                      {
+                        value: YES,
+                        label: formatMessage(m.hideNameLabel),
+                      },
+                    ]}
+                  />
+                  <Text variant="eyebrow">{formatMessage(m.hideNameText)}</Text>
+                </Box>
               </Box>
 
               <Box marginTop={5}>

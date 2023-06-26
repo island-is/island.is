@@ -459,7 +459,7 @@ export class InternalCaseService {
           { transaction },
         )
         .then((theCase) =>
-          this.defendantService.create(
+          this.defendantService.createForNewCase(
             theCase.id,
             {
               nationalId: caseToCreate.accusedNationalId,
@@ -531,7 +531,7 @@ export class InternalCaseService {
         )
         defendantsArchive.push(defendantArchive)
 
-        await this.defendantService.update(
+        await this.defendantService.updateForArcive(
           theCase.id,
           defendant.id,
           clearedDefendantProperties,
@@ -657,7 +657,7 @@ export class InternalCaseService {
           .catch((reason) => {
             // Tolerate failure, but log what happened
             this.logger.error(
-              `Could not delete case files records for case ${theCase.id} and police case ${policeCaseNumber} from AWS S3`,
+              `Could not delete case files record for case ${theCase.id} and police case ${policeCaseNumber} from AWS S3`,
               { reason },
             )
           })
@@ -666,7 +666,7 @@ export class InternalCaseService {
       })
       .catch((reason) => {
         this.logger.error(
-          `Failed to archive case files records for case ${theCase.id} and police case ${policeCaseNumber}`,
+          `Failed to archive case files record for case ${theCase.id} and police case ${policeCaseNumber}`,
           { reason },
         )
 

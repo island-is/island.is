@@ -89,9 +89,9 @@ An example of an approve/reject state from an orginisation. Add your state with 
 To invoke a state change the machine client would for approving make a PUT request like so:
 
 ```bash
-curl --location -g --request PUT '{{baseUrl}}/applications/{applicationId}/submit' \
---header 'authorization: xxx' \
---header 'Content-Type: application/x-www-form-urlencoded' \
+curl --location --request PUT '{{baseUrl}}/applications/{{applicationId}}/submit' \
+--header 'Content-Type: application/json' \
+--header 'Authorization: Bearer xxx' \
 --data-raw '{
   "event": "APPROVE",
   "answers": {},

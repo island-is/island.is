@@ -1,5 +1,11 @@
 {
   "case": {
+    "documentsBox": {
+      "documents": { "title": "Skjöl til samráðs" },
+      "additional": { "title": "Fylgiskjöl" }
+    }
+  },
+  "caseSkeleton": {
     "seo": {
       "title": "Mál",
       "url": "/mal/"
@@ -7,12 +13,9 @@
     "breadcrumbs": {
       "parent": { "title": "Öll mál", "href": "/samradsgatt" },
       "current": { "title": "Mál nr." }
-    },
-
-    "documentsBox": {
-      "documents": { "title": "Skjöl til samráðs" },
-      "additional": { "title": "Fylgiskjöl" }
-    },
+    }
+  },
+  "renderAdvices": {
     "advices": {
       "title": "Innsendar umsagnir"
     }
@@ -45,7 +48,7 @@
       "show": "Birt",
       "advicesCount": "Fjöldi umsagna"
     },
-    "announcementTitle": "Málsefni",
+    "shortDescriptionTitle": "Málsefni",
     "detailedDescriptionTitle": "Nánari upplýsingar"
   },
   "caseEmailBox": {
@@ -67,7 +70,7 @@
       "button": "Skrá mig inn"
     },
     "setEmailCardSkeleton": {
-      "text": "Skráðu netfang hérna. Þú færð svo tölvupóst sem þú þarf að staðfesta.",
+      "text": "Skráðu netfang hérna. Þú færð svo tölvupóst sem þú þarft að staðfesta.",
       "input": {
         "label": "Netfang",
         "placeholder": "nonni@island.is"

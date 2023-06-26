@@ -96,6 +96,9 @@
     "clearSearchText": "Prófaðu að fjarlægja úr leit til að sjá fleiri mál."
   },
   "subscriptionTableItem": {
-    "allCases": "Öll mál"
+    "allCases": "Öll mál",
+    "caseHref": "/mal/",
+    "infoText": "Opna mál í nýjum glugga",
+    "linkText": "skoða"
   }
 }

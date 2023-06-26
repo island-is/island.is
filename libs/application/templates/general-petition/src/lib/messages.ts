@@ -12,16 +12,6 @@ export const m = defineMessages({
     defaultMessage: 'Netfang',
     description: '',
   },
-  phoneLabel: {
-    id: 'gpl.application:phoneLabel',
-    defaultMessage: 'Símanúmer ábyrgðarmanns',
-    description: '',
-  },
-  emailLabel: {
-    id: 'gpl.application:emailLabel',
-    defaultMessage: 'Netfang ábyrgðarmanns',
-    description: '',
-  },
 
   // Application Name
   applicationName: {
@@ -196,6 +186,12 @@ export const m = defineMessages({
     defaultMessage: 'Ekki birta nafn mitt á lista',
     description: '',
   },
+  hideNameText: {
+    id: 'gpl.application:hideNameText',
+    defaultMessage:
+      '* Athugið að nafn þitt er sýnilegt ábyrgðamanni listans en birtist ekki á vef eða hjá öðrum sem hafa skráð sig á lista.',
+    description: '',
+  },
   agreeToTermsLabel: {
     id: 'gpl.application:agreeToTermsLabel',
     defaultMessage:
@@ -219,7 +215,7 @@ export const m = defineMessages({
   },
   backtoSP: {
     id: 'gpl.application:backtoSP',
-    defaultMessage: 'Til baka á Mínar Síður',
+    defaultMessage: 'Mínar Síður',
     description: '',
   },
 
