@@ -104,7 +104,7 @@ const PdfViewer = React.memo(
         onLoadComplete={(_, filePath) => {
           onLoaded?.(filePath);
         }}
-        onError={(err) => {
+        onError={err => {
           onError?.(err as Error);
         }}
         trustAllCerts={Platform.select({android: false, ios: undefined})}
