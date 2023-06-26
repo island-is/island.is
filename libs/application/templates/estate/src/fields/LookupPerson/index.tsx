@@ -67,7 +67,7 @@ export const LookupPerson: FC<LookupProps> = ({ field, error }) => {
     <Box>
       <GridRow>
         {props?.alertWhenUnder18 && nationalId.info(personNationalId).age < 18 && (
-          <GridColumn span={['1/1']} paddingBottom={2}>
+          <GridColumn span={['1/1']} paddingBottom={3}>
             <AlertMessage
               type="error"
               message={nationalId.info(personNationalId).age}

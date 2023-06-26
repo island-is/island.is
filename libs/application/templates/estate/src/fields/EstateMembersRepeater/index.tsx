@@ -101,7 +101,7 @@ export const EstateMembersRepeater: FC<FieldBaseProps<Answers>> = ({
             <GridRow>
               {!member.guardian &&
                 kennitala.info(member.nationalId as string).age < 18 && (
-                  <GridColumn span={['1/1']} paddingBottom={5}>
+                  <GridColumn span={['1/1']} paddingBottom={3}>
                     <AlertMessage
                       type="error"
                       message={`${
@@ -120,6 +120,7 @@ export const EstateMembersRepeater: FC<FieldBaseProps<Answers>> = ({
                   backgroundColor="white"
                   disabled={!member.enabled}
                   format={'######-####'}
+                  error={error && error[index] && error[index].nationalId}
                 />
               </GridColumn>
               <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
