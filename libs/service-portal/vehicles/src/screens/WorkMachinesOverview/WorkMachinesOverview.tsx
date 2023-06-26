@@ -102,10 +102,8 @@ const WorkMachinesOverview = () => {
   )
 
   useEffect(() => {
-    if (fileData?.workMachinesWorkMachineCollectionDocument?.downloadUrl) {
-      formSubmit(
-        fileData.workMachinesWorkMachineCollectionDocument?.downloadUrl,
-      )
+    if (fileData?.workMachinesCollectionDocument?.downloadUrl) {
+      formSubmit(fileData.workMachinesCollectionDocument?.downloadUrl)
     }
   }, [fileData])
 
@@ -238,7 +236,7 @@ const WorkMachinesOverview = () => {
         </Box>
       )}
 
-      {!loading && !data?.workMachinesWorkMachineCollection?.value?.length && (
+      {!loading && !data?.workMachinesPaginatedCollection?.data?.length && (
         <Box width="full" marginTop={4} display="flex" justifyContent="center">
           <Box marginTop={8}>
             <EmptyState />
@@ -248,8 +246,8 @@ const WorkMachinesOverview = () => {
 
       {!loading &&
         !error &&
-        !!data?.workMachinesWorkMachineCollection?.value &&
-        data.workMachinesWorkMachineCollection.value.map((wm, index) => {
+        !!data?.workMachinesPaginatedCollection?.data &&
+        data.workMachinesPaginatedCollection.data.map((wm, index) => {
           return (
             <Box marginBottom={3} key={index}>
               <ActionCard
@@ -277,12 +275,13 @@ const WorkMachinesOverview = () => {
         })}
       {!loading &&
         !error &&
-        !!data?.workMachinesWorkMachineCollection?.pagination?.totalPages && (
+        !!data?.workMachinesPaginatedCollection?.totalCount && (
           <Box>
             <Pagination
               page={page}
               totalPages={
-                data.workMachinesWorkMachineCollection.pagination?.totalPages
+                data.workMachinesPaginatedCollection.totalCount /
+                DEFAULT_PAGE_SIZE
               }
               renderLink={(page, className, children) => (
                 <button className={className} onClick={() => setPage(page)}>

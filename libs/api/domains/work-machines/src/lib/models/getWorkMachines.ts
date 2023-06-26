@@ -1,27 +1,13 @@
 import { Field, ID, ObjectType, registerEnumType } from '@nestjs/graphql'
 import { Action, ExternalLink } from '../api-domains-work-machines.types'
+import { PaginatedResponse } from '@island.is/nest/pagination'
 
 registerEnumType(Action, { name: 'WorkMachinesAction' })
 registerEnumType(ExternalLink, {
   name: 'WorkMachinesExternalLink',
 })
 
-@ObjectType('WorkMachinesWorkMachineCollection')
-export class WorkMachineCollection {
-  @Field(() => [WorkMachine], { nullable: true })
-  value?: Array<WorkMachine> | null
-
-  @Field(() => [CollectionLink], { nullable: true })
-  links?: Array<CollectionLink> | null
-
-  @Field(() => [Label], { nullable: true })
-  labels?: Array<Label> | null
-
-  @Field(() => Pagination, { nullable: true })
-  pagination?: Pagination | null
-}
-
-@ObjectType('WorkMachinesWorkMachine')
+@ObjectType('WorkMachine')
 export class WorkMachine {
   @Field(() => ID, { nullable: true })
   id?: string
@@ -99,6 +85,17 @@ export class WorkMachine {
   labels?: Array<Label> | null
 }
 
+@ObjectType('WorkMachinesPaginatedCollection')
+export class PaginatedCollectionResponse extends PaginatedResponse(
+  WorkMachine,
+) {
+  @Field(() => [CollectionLink], { nullable: true })
+  links?: Array<CollectionLink> | null
+
+  @Field(() => [Label], { nullable: true })
+  labels?: Array<Label> | null
+}
+
 @ObjectType('WorkMachinesLink')
 export class Link {
   @Field(() => String, { nullable: true })
@@ -138,18 +135,4 @@ export class Label {
 
   @Field(() => String, { nullable: true })
   tooltip?: string | null
-}
-@ObjectType('WorkMachinesPagination')
-export class Pagination {
-  @Field(() => Number, { nullable: true })
-  totalCount?: number | null
-
-  @Field(() => Number, { nullable: true })
-  pageSize?: number | null
-
-  @Field(() => Number, { nullable: true })
-  currentPage?: number | null
-
-  @Field(() => Number, { nullable: true })
-  totalPages?: number | null
 }

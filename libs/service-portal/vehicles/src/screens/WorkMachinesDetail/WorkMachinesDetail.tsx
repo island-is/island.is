@@ -68,11 +68,11 @@ const WorkMachinesDetail = () => {
     )
   }
 
-  if (!data?.workMachinesWorkMachine && !loading) {
+  if (!data?.workMachine && !loading) {
     return <NotFound title={formatMessage(messages.notFound)} />
   }
 
-  const workMachine = data?.workMachinesWorkMachine
+  const workMachine = data?.workMachine
 
   const createLinks = (links: Array<WorkMachinesLink>) => {
     const generateButton = (

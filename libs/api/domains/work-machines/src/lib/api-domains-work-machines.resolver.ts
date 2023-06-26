@@ -9,7 +9,10 @@ import { Inject, UseGuards } from '@nestjs/common'
 import { ApiScope } from '@island.is/auth/scopes'
 import { Args, Query, Resolver } from '@nestjs/graphql'
 import { Audit } from '@island.is/nest/audit'
-import { WorkMachine, WorkMachineCollection } from './models/getWorkMachines'
+import {
+  PaginatedCollectionResponse,
+  WorkMachine,
+} from './models/getWorkMachines'
 import { WorkMachinesService } from './api-domains-work-machines.service'
 import { GetWorkMachineInput } from './dto/getWorkMachine.input'
 import { GetWorkMachineCollectionInput } from './dto/getWorkMachineCollection.input'
@@ -38,8 +41,8 @@ export class WorkMachinesResolver {
   ) {}
 
   @Scopes(ApiScope.workMachines)
-  @Query(() => WorkMachineCollection, {
-    name: 'workMachinesWorkMachineCollection',
+  @Query(() => PaginatedCollectionResponse, {
+    name: 'workMachinesPaginatedCollection',
     nullable: true,
   })
   @Audit()
@@ -56,7 +59,7 @@ export class WorkMachinesResolver {
 
   @Scopes(ApiScope.workMachines)
   @Query(() => Document, {
-    name: 'workMachinesWorkMachineCollectionDocument',
+    name: 'workMachinesCollectionDocument',
     nullable: true,
   })
   @Audit()
@@ -77,7 +80,7 @@ export class WorkMachinesResolver {
   }
 
   @Scopes(ApiScope.workMachines)
-  @Query(() => WorkMachine, { name: 'workMachinesWorkMachine', nullable: true })
+  @Query(() => WorkMachine, { name: 'workMachine', nullable: true })
   @Audit()
   async getWorkMachineById(
     @CurrentUser() user: User,

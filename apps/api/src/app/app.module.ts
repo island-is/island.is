@@ -247,7 +247,6 @@ const environment = getConfig
     FinancialStatementsInaoModule,
     VehiclesModule,
     RightsPortalModule,
-    RightsPortalModule,
     AssetsModule,
     PassportModule,
     AirDiscountSchemeModule,

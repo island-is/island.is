@@ -1,6 +1,6 @@
-query GetWorkMachines($input: WorkMachinesWorkMachineCollectionInput) {
-  workMachinesWorkMachineCollection(input: $input) {
-    value {
+query GetWorkMachines($input: WorkMachinesCollectionInput) {
+  workMachinesPaginatedCollection(input: $input) {
+    data {
       id
       registrationNumber
       type
@@ -9,16 +9,12 @@ query GetWorkMachines($input: WorkMachinesWorkMachineCollectionInput) {
     links {
       rel
     }
-    pagination {
-      totalPages
-    }
+    totalCount
   }
 }
 
-query GetWorkMachineDocument(
-  $input: WorkMachinesWorkMachineCollectionDocumentInput
-) {
-  workMachinesWorkMachineCollectionDocument(input: $input) {
+query GetWorkMachineDocument($input: WorkMachinesCollectionDocumentInput) {
+  workMachinesCollectionDocument(input: $input) {
     downloadUrl
   }
 }

@@ -1,5 +1,5 @@
-query GetWorkMachineById($input: WorkMachinesWorkMachineInput!) {
-  workMachinesWorkMachine(input: $input) {
+query GetWorkMachineById($input: WorkMachinesInput!) {
+  workMachine(input: $input) {
     type
     status
     category

@@ -1,7 +1,7 @@
 import { Field, InputType } from '@nestjs/graphql'
 import { IsBoolean, IsNumber, IsOptional, IsString } from 'class-validator'
 
-@InputType('WorkMachinesWorkMachineCollectionInput')
+@InputType('WorkMachinesCollectionInput')
 export class GetWorkMachineCollectionInput {
   @Field(() => String, { nullable: true })
   @IsString()

@@ -1,6 +1,9 @@
 import { WorkMachinesClientService } from '@island.is/clients/work-machines'
 import { User } from '@island.is/auth-nest-tools'
-import { WorkMachine, WorkMachineCollection } from './models/getWorkMachines'
+import {
+  WorkMachine,
+  PaginatedCollectionResponse,
+} from './models/getWorkMachines'
 import { Injectable } from '@nestjs/common'
 import { Action, ExternalLink } from './api-domains-work-machines.types'
 import { GetWorkMachineCollectionInput } from './dto/getWorkMachineCollection.input'
@@ -45,7 +48,7 @@ export class WorkMachinesService {
   async getWorkMachines(
     user: User,
     input: GetWorkMachineCollectionInput,
-  ): Promise<WorkMachineCollection> {
+  ): Promise<PaginatedCollectionResponse> {
     const data = await this.machineService.getWorkMachines(user, input)
 
     const value = data.value?.map(
@@ -67,9 +70,16 @@ export class WorkMachinesService {
       : null
 
     return {
-      ...data,
-      value,
+      data: value,
       links,
+      labels: data.labels,
+      totalCount: data.pagination?.totalCount ?? 0,
+      pageInfo: {
+        hasNextPage:
+          data.pagination?.currentPage && data.pagination.totalPages
+            ? data.pagination.currentPage < data.pagination.totalPages
+            : false,
+      },
     }
   }
 

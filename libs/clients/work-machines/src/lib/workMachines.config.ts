@@ -4,7 +4,6 @@ import { z } from 'zod'
 const schema = z.object({
   xRoadServicePath: z.string(),
   fetch: z.object({
-    timeout: z.number().int(),
     scope: z.array(z.string()),
   }),
 })
@@ -18,7 +17,6 @@ export const WorkMachinesClientConfig = defineConfig<z.infer<typeof schema>>({
       'IS-DEV/GOV/10013/Vinnueftirlitid-Protected/vinnuvelar-token',
     ),
     fetch: {
-      timeout: 10000,
       scope: ['@ver.is/umsyslavinnuvela'],
     },
   }),
