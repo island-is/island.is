@@ -45,6 +45,7 @@ const CaseDesktop = ({
     relatedCases,
     contactEmail,
     contactName,
+    shortDescription,
   } = chosenCase
   const {
     isDocumentsNotEmpty,
@@ -55,7 +56,11 @@ const CaseDesktop = ({
     isRelatedCasesNotEmpty,
   } = expressions
   return (
-    <CaseSkeleton caseNumber={caseNumber} caseId={id}>
+    <CaseSkeleton
+      caseNumber={caseNumber}
+      caseId={id}
+      caseDescription={shortDescription}
+    >
       <GridContainer>
         <GridRow rowGap={3}>
           <GridColumn span={'3/12'}>

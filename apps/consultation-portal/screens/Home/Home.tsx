@@ -37,6 +37,7 @@ interface HomeProps {
 export const Index = ({ types, statistics }: HomeProps) => {
   const { isMobile } = useIsMobile()
   const loc = localization['home']
+  const locSeo = loc['seo']
 
   const {
     cases,
@@ -123,9 +124,9 @@ export const Index = ({ types, statistics }: HomeProps) => {
     <Layout
       isFrontPage
       seo={{
-        title: loc.seo.title,
-        description: loc.seo.description,
-        keywords: loc.seo.keywords,
+        title: locSeo.title,
+        description: locSeo.description,
+        keywords: locSeo.keywords,
       }}
     >
       <HeroBanner statistics={statistics} />
