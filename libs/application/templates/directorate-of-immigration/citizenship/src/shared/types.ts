@@ -25,4 +25,5 @@ export interface CitizenIndividual extends NationalRegistryIndividual {
 export interface SpouseIndividual extends NationalRegistrySpouse {
   spouse?: CitizenIndividual | null
   spouseBirthplace?: NationalRegistryBirthplace | null
+  lastModified?: Date | null
 }

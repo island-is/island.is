@@ -3,7 +3,13 @@ import {
   FieldComponents,
   FieldTypes,
 } from '@island.is/application/types'
-import { Box, Columns, Column, Button } from '@island.is/island-ui/core'
+import {
+  Box,
+  Columns,
+  Column,
+  Button,
+  InputError,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
   DatePickerController,
@@ -16,6 +22,7 @@ import { SelectFormField } from '@island.is/application/ui-fields'
 import DescriptionText from '../../components/DescriptionText'
 import { getValueViaPath } from '@island.is/application/core'
 import { Country } from '@island.is/clients/directorate-of-immigration/citizenship'
+import { getErrorViaPath } from '@island.is/application/core'
 
 interface Props {
   id: string
@@ -46,6 +53,14 @@ export const StaysAbroadRepeaterItem: FC<Props & FieldBaseProps> = ({
   const dateFromField = `${fieldIndex}.dateFrom`
   const purposeField = `${fieldIndex}.purpose`
   const wasRemovedField = `${fieldIndex}.wasRemoved`
+  const dateRangeField = `${fieldIndex}.dateRange`
+
+  const dateRangeError =
+    errors &&
+    getErrorViaPath(errors, dateRangeField) &&
+    getErrorViaPath(errors, dateRangeField).length > 0
+      ? true
+      : false
 
   const countryOptions = (getValueViaPath(
     application.externalData,
@@ -98,6 +113,7 @@ export const StaysAbroadRepeaterItem: FC<Props & FieldBaseProps> = ({
 
       <SelectFormField
         application={application}
+        error={errors && getErrorViaPath(errors, countryField)}
         field={{
           id: countryField,
           title: `Dvalarland`,
@@ -111,6 +127,13 @@ export const StaysAbroadRepeaterItem: FC<Props & FieldBaseProps> = ({
         }}
       ></SelectFormField>
       <Box paddingBottom={2} paddingTop={2}>
+        {dateRangeError && (
+          <InputError
+            errorMessage={formatMessage(
+              information.labels.staysAbroad.dateRangeError,
+            )}
+          />
+        )}
         <Columns space={3}>
           <Column>
             <DatePickerController
@@ -118,6 +141,7 @@ export const StaysAbroadRepeaterItem: FC<Props & FieldBaseProps> = ({
               label={
                 information.labels.staysAbroad.dateFromLabel.defaultMessage
               }
+              error={errors && getErrorViaPath(errors, dateFromField)}
               onChange={(value) =>
                 addDataToCountryList('dateFrom', value as string, index)
               }
@@ -128,6 +152,7 @@ export const StaysAbroadRepeaterItem: FC<Props & FieldBaseProps> = ({
             <DatePickerController
               id={dateToField}
               label={information.labels.staysAbroad.dateToLabel.defaultMessage}
+              error={errors && getErrorViaPath(errors, dateToField)}
               onChange={(value) =>
                 addDataToCountryList('dateTo', value as string, index)
               }
@@ -141,12 +166,9 @@ export const StaysAbroadRepeaterItem: FC<Props & FieldBaseProps> = ({
         label={information.labels.staysAbroad.purposeLabel.defaultMessage}
         rows={4}
         textarea
+        error={errors && getErrorViaPath(errors, purposeField)}
         onChange={(value) =>
-          addDataToCountryList(
-            'purposeOfStay',
-            value.target.value as string,
-            index,
-          )
+          addDataToCountryList('purpose', value.target.value as string, index)
         }
         required
       />

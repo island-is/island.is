@@ -11,6 +11,7 @@ import { Answer } from '@island.is/application/types'
 import { Citizenship } from '../../../lib/dataSchema'
 import { CitizenIndividual, SpouseIndividual } from '../../../shared'
 import { ResidenceCondition } from '@island.is/clients/directorate-of-immigration/citizenship'
+import { formatDate } from '../../../utils'
 
 export const MaritalStatusSubSection = buildSubSection({
   id: 'maritalStatus',
@@ -65,7 +66,10 @@ export const MaritalStatusSubSection = buildSubSection({
           backgroundColor: 'white',
           width: 'half',
           readOnly: true,
-          defaultValue: (application: Application) => 'date here', //TODO
+          defaultValue: (application: Application) =>
+            formatDate(
+              application.externalData?.spouseDetails?.data?.lastModified,
+            ),
         }),
         buildTextField({
           id: 'maritalStatus.nationalId',

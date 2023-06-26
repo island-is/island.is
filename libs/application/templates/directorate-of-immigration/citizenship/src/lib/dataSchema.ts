@@ -53,11 +53,11 @@ export const RemoveableStayAbroadSchema = z
     dateTo: z.string().optional(),
     dateFrom: z.string().optional(),
     purpose: z.string().optional(),
-    wasRemoved: z.string().min(1).optional(),
+    wasRemoved: z.string().optional(),
   })
   .refine(
     ({ wasRemoved, country }) => {
-      return wasRemoved === 'true' || country !== ''
+      return wasRemoved === 'true' || (country && country.length > 0)
     },
     {
       path: ['country'],
@@ -65,7 +65,7 @@ export const RemoveableStayAbroadSchema = z
   )
   .refine(
     ({ wasRemoved, dateTo }) => {
-      return wasRemoved === 'true' || (dateTo && dateTo !== '')
+      return wasRemoved === 'true' || (dateTo && dateTo.length > 0)
     },
     {
       path: ['dateTo'],
@@ -73,7 +73,7 @@ export const RemoveableStayAbroadSchema = z
   )
   .refine(
     ({ wasRemoved, dateFrom }) => {
-      return wasRemoved === 'true' || (dateFrom && dateFrom !== '')
+      return wasRemoved === 'true' || (dateFrom && dateFrom.length > 0)
     },
     {
       path: ['dateFrom'],
@@ -81,67 +81,54 @@ export const RemoveableStayAbroadSchema = z
   )
   .refine(
     ({ wasRemoved, purpose }) => {
-      return wasRemoved === 'true' || (purpose && purpose !== '')
+      return wasRemoved === 'true' || (purpose && purpose.length > 0)
     },
     {
       path: ['purpose'],
     },
   )
-  .refine(({ dateTo, dateFrom }) => {
-    const to = dateTo ? new Date(dateTo).getTime() : null
-    const from = dateFrom ? new Date(dateFrom).getTime() : null
+  .refine(
+    ({ dateTo, dateFrom }) => {
+      const to = dateTo ? new Date(dateTo).getTime() : null
+      const from = dateFrom ? new Date(dateFrom).getTime() : null
 
-    const threeMonths = 7.884e9
+      const threeMonths = 7.884e9
 
-    if (from && to) {
-      const difference = from - to
+      if (from && to) {
+        const difference = to - from
+        return difference >= threeMonths
+      }
 
-      return difference >= threeMonths
-    }
+      return true
+    },
+    {
+      path: ['dateRange'],
+    },
+  )
 
-    return false
-  })
-
-const StaysAbroadSchema = z
-  .object({
-    hasStayedAbroad: z.string().min(1),
-    selectedAbroadCountries: z.array(RemoveableStayAbroadSchema).optional(),
-  })
-  .refine(({ hasStayedAbroad, selectedAbroadCountries }) => {
-    //if the answer to the question is Yes than the user needs to provide at least one valid country from select input
-    return (
-      (hasStayedAbroad === 'Yes' &&
-        selectedAbroadCountries &&
-        selectedAbroadCountries.filter((c) => c.wasRemoved === 'false').length >
-          0) ||
-      hasStayedAbroad === 'No'
-    )
-  })
+const StaysAbroadSchema = z.object({
+  hasStayedAbroad: z.string().min(1),
+  selectedAbroadCountries: z.array(RemoveableStayAbroadSchema).optional(),
+})
 
 export const RemoveableCountrySchema = z
   .object({
     country: z.string(),
     wasRemoved: z.string().min(1).optional(),
   })
-  .refine(({ wasRemoved, country }) => {
-    return wasRemoved === 'true' || country !== ''
-  })
+  .refine(
+    ({ wasRemoved, country }) => {
+      return wasRemoved === 'true' || (country && country.length > 0)
+    },
+    {
+      path: ['country'],
+    },
+  )
 
-const CountriesOfResidenceSchema = z
-  .object({
-    hasLivedAbroad: z.string().min(1),
-    selectedAbroadCountries: z.array(RemoveableCountrySchema).optional(),
-  })
-  .refine(({ hasLivedAbroad, selectedAbroadCountries }) => {
-    //if the answer to the question is Yes than the user needs to provide at least one valid country from select input
-    return (
-      (hasLivedAbroad === 'Yes' &&
-        selectedAbroadCountries &&
-        selectedAbroadCountries.filter((c) => c.wasRemoved === 'false').length >
-          0) ||
-      hasLivedAbroad === 'No'
-    )
-  })
+const CountriesOfResidenceSchema = z.object({
+  hasLivedAbroad: z.string().min(1),
+  selectedAbroadCountries: z.array(RemoveableCountrySchema).optional(),
+})
 
 const PassportSchema = z.object({
   publishDate: z.string().min(1),

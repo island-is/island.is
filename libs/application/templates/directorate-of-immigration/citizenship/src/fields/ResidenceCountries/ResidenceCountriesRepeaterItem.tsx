@@ -13,6 +13,7 @@ import { CountryOfResidence } from '../../shared'
 import { information } from '../../lib/messages'
 import { getValueViaPath } from '@island.is/application/core'
 import { Country } from '@island.is/clients/directorate-of-immigration/citizenship'
+import { getErrorViaPath } from '@island.is/application/core'
 
 interface Props {
   id: string
@@ -74,6 +75,7 @@ export const ResidenceCountriesRepeaterItem: FC<Props & FieldBaseProps> = ({
       )}
       <SelectFormField
         application={application}
+        error={errors && getErrorViaPath(errors, countryField)}
         field={{
           id: countryField,
           title: `Búsetuland ${itemNumber + 1}`,

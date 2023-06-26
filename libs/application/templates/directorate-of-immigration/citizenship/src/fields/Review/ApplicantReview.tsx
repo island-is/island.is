@@ -7,10 +7,17 @@ import { Citizenship } from '../../lib/dataSchema'
 import { useLocale } from '@island.is/localization'
 import * as kennitala from 'kennitala'
 
-export const ApplicantReview: FC<FieldBaseProps> = ({ application }) => {
+export const ApplicantReview: FC<FieldBaseProps> = ({
+  application,
+  goToScreen,
+}) => {
   console.log('application', application)
   const answers = application.answers as Citizenship
   const { formatMessage } = useLocale()
+
+  const changeScreen = (screen: string) => {
+    goToScreen && goToScreen(screen)
+  }
 
   return (
     <Box paddingBottom={4} paddingTop={4}>
@@ -41,13 +48,16 @@ export const ApplicantReview: FC<FieldBaseProps> = ({ application }) => {
         <GridColumn span="1/2">
           <Text>{answers?.userInformation?.address}</Text>
           <Text>{answers?.userInformation?.postalCode}</Text>
-          <Text>{answers?.userInformation?.phone}</Text>
+          <Text>
+            {answers?.userInformation?.phone.replace(/^(.{3})(.*)$/, '$1 $2')}
+          </Text>
           <Text>
             {`${formatMessage(
               personal.labels.userInformation.residenceInIcelandLastChangeDate,
             )}: ${answers?.userInformation?.residenceInIcelandLastChangeDate}`}
           </Text>
         </GridColumn>
+        <button onClick={() => changeScreen('userInformation')}>Takki</button>
       </GridRow>
     </Box>
   )

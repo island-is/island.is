@@ -300,6 +300,11 @@ export const information = {
         defaultMessage: 'Eyða færslu',
         description: 'Add more countries button title',
       },
+      dateRangeError: {
+        id: 'doi.cs.application:information.labels.staysAbroad.dateRangeError',
+        defaultMessage: 'Dvalartími þarf að vera lengur en 3 mánuðir',
+        description: 'Validation error for 3 month date range',
+      },
     }),
     radioButtons: defineMessages({
       radioOptionYes: {
