@@ -69,7 +69,7 @@ export const title = style({
       width: '50%',
     },
     xl: {
-      marginLeft: -180,
+      marginLeft: -150,
     },
   }),
 })
