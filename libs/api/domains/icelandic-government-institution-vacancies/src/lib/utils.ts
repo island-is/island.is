@@ -276,9 +276,7 @@ export const mapIcelandicGovernmentInstitutionVacancyByIdResponseFromCms = (
     })) ?? []
 
   return {
-    id: vacancy.id
-      ? `${mapIcelandicGovernmentInstitutionVacanciesFromExternalSystem}${vacancy.id}`
-      : vacancy.id,
+    id: vacancy.id ? `${CMS_ID_PREFIX}${vacancy.id}` : vacancy.id,
     title: vacancy.title,
     applicationDeadlineFrom: mapDate(vacancy.applicationDeadlineFrom),
     applicationDeadlineTo: mapDate(vacancy.applicationDeadlineTo),
@@ -308,9 +306,7 @@ export const mapVacancyListItemFromCms = (
   vacancy: Vacancy,
 ): IcelandicGovernmentInstitutionVacanciesResponse['vacancies'][number] => {
   return {
-    id: vacancy.id
-      ? `${mapIcelandicGovernmentInstitutionVacanciesFromExternalSystem}${vacancy.id}`
-      : vacancy.id,
+    id: vacancy.id ? `${CMS_ID_PREFIX}${vacancy.id}` : vacancy.id,
     title: vacancy.title,
     applicationDeadlineFrom: mapDate(vacancy.applicationDeadlineFrom),
     applicationDeadlineTo: mapDate(vacancy.applicationDeadlineTo),
