@@ -57,7 +57,13 @@ const DrivingLearnersPermitTemplate: ApplicationTemplate<
                   allowFakeData,
                 })
               },
-              api: [CurrentLicenseApi],
+              api: [
+                CurrentLicenseApi.configure({
+                  params: {
+                    useLegacyVersion: true,
+                  },
+                }),
+              ],
               actions: [
                 {
                   event: DefaultEvents.SUBMIT,

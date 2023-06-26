@@ -56,7 +56,7 @@ export const UserInfoLine: FC<Props> = ({
   loading,
   editLink,
   title,
-  titlePadding = 2,
+  titlePadding = 4,
   tooltip,
   paddingY = 2,
   paddingBottom,

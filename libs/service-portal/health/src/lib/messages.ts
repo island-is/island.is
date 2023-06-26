@@ -10,6 +10,24 @@ export const messages = defineMessages({
     defaultMessage:
       'Sjúkratryggingar greiða hluta af kostnaði við meðferð hjá þjálfara.',
   },
+  dentistsTitle: {
+    id: 'sp.health:dentists-title',
+    defaultMessage: 'Tannlæknar',
+  },
+  dentistsDescription: {
+    id: 'sp.health:dentists-intro',
+    defaultMessage:
+      'Gjaldskrá tannlækna er frjáls. Sjúkratryggingar Íslands(SÍ) greiða hinsvegar samkvæmt gjaldskrá sem Velferðarráðuneytið hefur sett.',
+  },
+  healthCenterTitle: {
+    id: 'sp.health:health-center-title',
+    defaultMessage: 'Heilsugæsla',
+  },
+  healthCenterDescription: {
+    id: 'sp.health:health-center-intro',
+    defaultMessage:
+      'Allir sjúkratryggðir á Íslandi eiga að vera skráðir á heilsugæslustöð. Hér fyrir neðan sérð þú á hvaða stöð eða hjá hvaða sjálfstætt starfandi heimilislækni þú ert skráð/ur.',
+  },
   aidsAndNutritionTitle: {
     id: 'sp.health:aids-and-nutrition-title',
     defaultMessage: 'Hjálpartæki og næring',
@@ -111,6 +129,14 @@ export const messages = defineMessages({
   status: {
     id: 'sp.health:status',
     defaultMessage: 'Staða',
+  },
+  yourInformation: {
+    id: 'sp.health:your-information',
+    defaultMessage: 'Þín skráning',
+  },
+  checkInHistory: {
+    id: 'sp.health:check-in-history',
+    defaultMessage: 'Skráningarsaga',
   },
   usedTherapySessions: {
     id: 'sp.health:used-therapy-sessions',
@@ -219,6 +245,10 @@ export const messages = defineMessages({
     id: 'sp.health:name',
     defaultMessage: 'Heiti',
   },
+  number: {
+    id: 'sp.health:number',
+    defaultMessage: 'Heiti',
+  },
   maxUnitRefund: {
     id: 'sp.health:max-unit-refund',
     defaultMessage: 'Hámarksgr. af stk.',
@@ -231,7 +261,6 @@ export const messages = defineMessages({
     id: 'sp.health:available-unit-refund',
     defaultMessage: 'Heimild nú til úttektar',
   },
-
   availableTo: {
     id: 'sp.health:available-to',
     defaultMessage: 'Heimild gildir til',
@@ -255,6 +284,30 @@ export const messages = defineMessages({
   insuranceRatio: {
     id: 'sp.health:insurance-ratio',
     defaultMessage: 'Hlutfall Sjúkratrygginga',
+  },
+  dentist: {
+    id: 'sp.health:dentist',
+    defaultMessage: 'Tannlæknir',
+  },
+  yourDentistBills: {
+    id: 'sp.health:your-dentist-bills',
+    defaultMessage: 'Þínir tannlæknareikningar',
+  },
+  dentistCharge: {
+    id: 'sp.health:dentist-charge',
+    defaultMessage: 'Gjaldskr. tannlæknis',
+  },
+  amountRefundedByInsurance: {
+    id: 'sp.health:amount-refunded-by-insurance',
+    defaultMessage: 'Hlutur SÍ í gr.þáttöku',
+  },
+  personalDoctor: {
+    id: 'sp.health:personal-doctor',
+    defaultMessage: 'Heimilslæknir',
+  },
+  doctor: {
+    id: 'sp.health:doctor',
+    defaultMessage: 'Læknir',
   },
   insuranceRatioOrInitialApplicantPayment: {
     id: 'sp.health:insurance-ratio-or-first-paid',
