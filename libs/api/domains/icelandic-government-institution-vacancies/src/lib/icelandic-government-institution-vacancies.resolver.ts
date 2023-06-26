@@ -12,9 +12,11 @@ import { IcelandicGovernmentInstitutionVacanciesResponse } from './dto/icelandic
 import { IcelandicGovernmentInstitutionVacancyByIdInput } from './dto/icelandicGovernmentInstitutionVacancyById.input'
 import { IcelandicGovernmentInstitutionVacancyByIdResponse } from './dto/icelandicGovernmentInstitutionVacancyByIdResponse'
 import {
+  CMS_ID_PREFIX,
   DefaultApiVacanciesListItem,
   DefaultApiVacancyDetails,
-  mapIcelandicGovernmentInstitutionVacanciesResponse,
+  EXTERNAL_SYSTEM_ID_PREFIX,
+  mapIcelandicGovernmentInstitutionVacanciesFromExternalSystem,
   mapIcelandicGovernmentInstitutionVacancyByIdResponse,
   mapIcelandicGovernmentInstitutionVacancyByIdResponseFromCms,
   mapVacancyListItemFromCms,
@@ -42,7 +44,7 @@ export class IcelandicGovernmentInstitutionVacanciesResolver {
       stofnun: input.institution,
     })) as DefaultApiVacanciesListItem[]
 
-    const mappedVacanciesFromExternalSystem = await mapIcelandicGovernmentInstitutionVacanciesResponse(
+    const mappedVacanciesFromExternalSystem = await mapIcelandicGovernmentInstitutionVacanciesFromExternalSystem(
       vacanciesFromExternalSystem,
     )
 
@@ -66,14 +68,14 @@ export class IcelandicGovernmentInstitutionVacanciesResolver {
   async icelandicGovernmentInstitutionVacancyById(
     @Args('input') input: IcelandicGovernmentInstitutionVacancyByIdInput,
   ): Promise<IcelandicGovernmentInstitutionVacancyByIdResponse | null> {
-    // If the id is not a number then we search for the vacancy in the cms
-    if (isNaN(Number(input.id))) {
+    if (input.id.startsWith(CMS_ID_PREFIX)) {
       const item = await this.cmsElasticService.getSingleVacancy(
         getElasticsearchIndex('is'),
-        input.id,
+        input.id.slice(CMS_ID_PREFIX.length),
       )
-      if (!item) return null
-
+      if (!item) {
+        return null
+      }
       return {
         vacancy: mapIcelandicGovernmentInstitutionVacancyByIdResponseFromCms(
           item,
@@ -81,9 +83,14 @@ export class IcelandicGovernmentInstitutionVacanciesResolver {
       }
     }
 
-    // Otherwise if the id is numeric then we look for the vacancy via an endpoint
+    const numericId = Number(
+      input.id.startsWith(EXTERNAL_SYSTEM_ID_PREFIX)
+        ? input.id.slice(EXTERNAL_SYSTEM_ID_PREFIX.length)
+        : input.id,
+    )
+
     const item = (await this.api.vacanciesVacancyIdGet({
-      vacancyId: Number(input.id),
+      vacancyId: numericId,
       accept: VacanciesVacancyIdGetAcceptEnum.Json,
       language: input.language,
     })) as DefaultApiVacancyDetails
@@ -91,7 +98,6 @@ export class IcelandicGovernmentInstitutionVacanciesResolver {
     if (!item?.starfsauglysing) {
       return null
     }
-
     return {
       vacancy: await mapIcelandicGovernmentInstitutionVacancyByIdResponse(item),
     }

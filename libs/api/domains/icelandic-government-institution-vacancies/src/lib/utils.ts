@@ -6,6 +6,9 @@ import { IcelandicGovernmentInstitutionVacanciesResponse } from './dto/icelandic
 import { IcelandicGovernmentInstitutionVacancyByIdResponse } from './dto/icelandicGovernmentInstitutionVacancyByIdResponse'
 import { Html, Vacancy } from '@island.is/cms'
 
+export const CMS_ID_PREFIX = 'c-'
+export const EXTERNAL_SYSTEM_ID_PREFIX = 'x-'
+
 interface DefaultApiVacancyContact {
   '@nr'?: number
   nafn?: string
@@ -160,7 +163,7 @@ export const sortVacancyList = (
   })
 }
 
-export const mapIcelandicGovernmentInstitutionVacanciesResponse = async (
+export const mapIcelandicGovernmentInstitutionVacanciesFromExternalSystem = async (
   data: DefaultApiVacanciesListItem[],
 ) => {
   const mappedData: IcelandicGovernmentInstitutionVacanciesResponse['vacancies'] = []
@@ -172,7 +175,7 @@ export const mapIcelandicGovernmentInstitutionVacanciesResponse = async (
     const introHtml = item.inngangur ?? ''
     introPromises.push(convertHtmlToPlainText(introHtml))
     mappedData.push({
-      id: String(item.id),
+      id: `${EXTERNAL_SYSTEM_ID_PREFIX}${item.id}`,
       title: item.fyrirsogn,
       applicationDeadlineFrom: item.umsoknarfrestur_fra,
       applicationDeadlineTo: item.umsoknarfrestur_til,
@@ -273,7 +276,9 @@ export const mapIcelandicGovernmentInstitutionVacancyByIdResponseFromCms = (
     })) ?? []
 
   return {
-    id: vacancy.id,
+    id: vacancy.id
+      ? `${mapIcelandicGovernmentInstitutionVacanciesFromExternalSystem}${vacancy.id}`
+      : vacancy.id,
     title: vacancy.title,
     applicationDeadlineFrom: mapDate(vacancy.applicationDeadlineFrom),
     applicationDeadlineTo: mapDate(vacancy.applicationDeadlineTo),
@@ -303,7 +308,9 @@ export const mapVacancyListItemFromCms = (
   vacancy: Vacancy,
 ): IcelandicGovernmentInstitutionVacanciesResponse['vacancies'][number] => {
   return {
-    id: vacancy.id,
+    id: vacancy.id
+      ? `${mapIcelandicGovernmentInstitutionVacanciesFromExternalSystem}${vacancy.id}`
+      : vacancy.id,
     title: vacancy.title,
     applicationDeadlineFrom: mapDate(vacancy.applicationDeadlineFrom),
     applicationDeadlineTo: mapDate(vacancy.applicationDeadlineTo),
