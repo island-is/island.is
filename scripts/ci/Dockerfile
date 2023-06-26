@@ -125,7 +125,7 @@ FROM mcr.microsoft.com/playwright:v${PLAYWRIGHT_VERSION}-focal as playwright-bas
 
 FROM playwright-base as output-playwright
 # TODO: remove awscli dependency (157 MB extra)
-RUN apt-get update && apt-get install -y zip awscli && apt-get purge
+RUN apt-get update -y && apt-get install -y zip awscli && apt-get purge
 
 ARG APP_HOME
 ARG APP_DIST_HOME

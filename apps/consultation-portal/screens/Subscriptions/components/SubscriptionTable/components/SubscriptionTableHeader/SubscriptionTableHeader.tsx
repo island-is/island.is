@@ -7,7 +7,7 @@ import {
 } from '@island.is/island-ui/core'
 import * as styles from '../../SubscriptionTable.css'
 import { Area } from '../../../../../../types/enums'
-import { useIsMobile } from '@island.is/consultation-portal/hooks'
+import { useIsMobile } from '../../../../../../hooks'
 
 interface TableHeaderProps {
   currentTab: Area
