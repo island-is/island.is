@@ -226,7 +226,7 @@ export const UpdateCaseMutation = gql`
       rulingModifiedHistory
       caseResentExplanation
       origin
-      seenByDefender
+      openedByDefender
       defendantWaivesRightToCounsel
       crimeScenes
       indictmentIntroduction

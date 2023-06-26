@@ -114,6 +114,7 @@ identity-server:
     NODE_OPTIONS: '--max-old-space-size=2000'
     NO_UPDATE_NOTIFIER: 'true'
     PersistenceSettings__BaseAddress: 'http://web-services-auth-ids-api'
+    PersistenceSettings__DelegationsCacheEnabled: 'false'
     PersistenceSettings__SessionsBaseAddress: 'http://web-services-sessions.services-sessions.svc.cluster.local'
     SERVERSIDE_FEATURES_ON: ''
   files:

@@ -211,7 +211,7 @@ export const CaseFiles: React.FC = () => {
             status: 'uploading',
             percent: 1,
             name: file.name,
-            id: id,
+            id,
             type: file.type,
           }),
         ),

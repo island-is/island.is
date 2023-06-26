@@ -71,7 +71,7 @@ export const UserButton = ({
           aria-label={formatMessage(userMessages.userButtonAria)}
           data-testid="user-menu"
         >
-          <div className={styles.resetButtonPadding}>
+          <div translate="no" className={styles.resetButtonPadding}>
             {isDelegation ? (
               <>
                 <div className={styles.delegationName}>{profile.name}</div>

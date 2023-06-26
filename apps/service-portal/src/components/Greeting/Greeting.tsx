@@ -26,7 +26,7 @@ const Greeting: FC<{}> = () => {
               ? formatMessage(m.eveningGreeting)
               : formatMessage(m.dayGreeting)}
           </Text>
-          <Text variant="h2" as="h1" marginBottom={1}>
+          <Text translate="no" variant="h2" as="h1" marginBottom={1}>
             {userInfo?.profile.name}
           </Text>
           <Text marginBottom={2}>{formatMessage(m.greetingIntro)}</Text>

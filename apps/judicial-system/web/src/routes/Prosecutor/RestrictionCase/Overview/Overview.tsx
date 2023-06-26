@@ -123,7 +123,7 @@ export const Overview: React.FC = () => {
       <FormContentContainer>
         {workingCase.state === CaseState.RECEIVED && (
           <Box
-            marginBottom={workingCase.seenByDefender ? 3 : 5}
+            marginBottom={workingCase.openedByDefender ? 3 : 5}
             data-testid="rc-overview-info-panel"
           >
             <AlertMessage
@@ -133,15 +133,15 @@ export const Overview: React.FC = () => {
             />
           </Box>
         )}
-        {workingCase.seenByDefender && (
+        {workingCase.openedByDefender && (
           <Box marginBottom={5}>
             <AlertMessage
-              title={formatMessage(m.seenByDefenderAlert.title)}
-              message={formatMessage(m.seenByDefenderAlert.text, {
-                when: formatDate(workingCase.seenByDefender, 'PPPp'),
+              title={formatMessage(m.openedByDefenderAlert.title)}
+              message={formatMessage(m.openedByDefenderAlert.text, {
+                when: formatDate(workingCase.openedByDefender, 'PPPp'),
               })}
               type="info"
-              testid="alertMessageSeenByDefender"
+              testid="alertMessageOpenedByDefender"
             />
           </Box>
         )}

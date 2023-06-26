@@ -26,7 +26,7 @@ const ListCreated = ({ application }: { application: Application }) => {
           buttonTitle={formatMessage(m.copyLinkButton)}
         />
       </Box>
-      <Box marginY={8} display="flex" justifyContent="center">
+      <Box marginTop={5} display="flex" justifyContent="center">
         <Illustration />
       </Box>
     </Stack>
