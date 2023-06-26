@@ -25,7 +25,7 @@
         "outputPath": "libs/clients/auth/public-api/gen",
         "commands": [
           "nx run services-auth-public-api:schemas/build-openapi-internal $NX_OPTIONS",
-          "yarn openapi-generator -o libs/clients/auth/public-api/gen/fetch -i apps/services/auth/public-api/src/openapi.yaml --additional-properties=enumPropertyNaming=original"
+          "yarn openapi-generator -o libs/clients/auth/public-api/gen/fetch -i apps/services/auth/public-api/src/openapi.yaml"
         ],
         "parallel": false
       }
