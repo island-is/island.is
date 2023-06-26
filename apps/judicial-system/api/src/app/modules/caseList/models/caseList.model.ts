@@ -1,4 +1,4 @@
-import { Field, ObjectType, ID } from '@nestjs/graphql'
+import { Field, ObjectType, ID, registerEnumType } from '@nestjs/graphql'
 
 import {
   CaseAppealDecision,
@@ -11,6 +11,11 @@ import {
 
 import { Defendant } from '../../defendant'
 import { User } from '../../user'
+
+registerEnumType(CaseDecision, { name: 'CaseDecision' })
+registerEnumType(CaseAppealDecision, {
+  name: 'CaseAppealDecision',
+})
 
 @ObjectType()
 export class CaseListEntry {
@@ -29,7 +34,7 @@ export class CaseListEntry {
   @Field(() => String)
   readonly state!: CaseState
 
-  @Field(() => String)
+  @Field(() => CaseType)
   readonly type!: CaseType
 
   @Field(() => [Defendant], { nullable: true })
@@ -38,7 +43,7 @@ export class CaseListEntry {
   @Field({ nullable: true })
   readonly courtCaseNumber?: string
 
-  @Field(() => String, { nullable: true })
+  @Field(() => CaseDecision, { nullable: true })
   readonly decision?: CaseDecision
 
   @Field({ nullable: true })
@@ -56,10 +61,10 @@ export class CaseListEntry {
   @Field({ nullable: true })
   readonly courtEndTime?: string
 
-  @Field(() => String, { nullable: true })
+  @Field(() => CaseAppealDecision, { nullable: true })
   readonly prosecutorAppealDecision?: CaseAppealDecision
 
-  @Field(() => String, { nullable: true })
+  @Field(() => CaseAppealDecision, { nullable: true })
   readonly accusedAppealDecision?: CaseAppealDecision
 
   @Field({ nullable: true })

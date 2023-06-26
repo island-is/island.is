@@ -1,0 +1,12 @@
+query getDentists($input: DentistBillsInput) {
+  rightsPortalDentists(input: $input) {
+    currentDentistName
+    billHistory {
+      number
+      amount
+      coveredAmount
+      date
+      refundDate
+    }
+  }
+}
