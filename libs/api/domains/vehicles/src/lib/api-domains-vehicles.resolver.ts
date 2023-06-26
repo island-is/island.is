@@ -8,7 +8,8 @@ import {
   CurrentUser,
 } from '@island.is/auth-nest-tools'
 import { CACHE_CONTROL_MAX_AGE } from '@island.is/shared/constants'
-import { BypassAuth, User } from '@island.is/auth-nest-tools'
+import { BypassAuth } from '@island.is/auth-nest-tools'
+import type { User } from '@island.is/auth-nest-tools'
 import { ApiScope } from '@island.is/auth/scopes'
 import { Audit } from '@island.is/nest/audit'
 import { DownloadServiceConfig } from '@island.is/nest/config'
