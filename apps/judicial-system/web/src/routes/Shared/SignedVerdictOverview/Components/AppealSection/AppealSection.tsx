@@ -5,25 +5,22 @@ import { useEffectOnce } from 'react-use'
 
 import { Box, Text } from '@island.is/island-ui/core'
 import { getAppealEndDate } from '@island.is/judicial-system-web/src/utils/stepHelper'
+import { CaseAppealDecision } from '@island.is/judicial-system/types'
 import {
-  CaseAppealDecision,
-  Gender,
-  InstitutionType,
-  isRestrictionCase,
-} from '@island.is/judicial-system/types'
-import { BlueBox } from '@island.is/judicial-system-web/src/components'
+  BlueBox,
+  UserContext,
+} from '@island.is/judicial-system-web/src/components'
 import InfoBox from '@island.is/judicial-system-web/src/components/InfoBox/InfoBox'
-import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
-import { signedVerdictOverview } from '@island.is/judicial-system-web/messages/Core/signedVerdictOverview'
-import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
-import type { Case } from '@island.is/judicial-system/types'
+import { formatDate } from '@island.is/judicial-system/formatters'
+import { signedVerdictOverview } from '@island.is/judicial-system-web/messages'
+import { InstitutionType } from '@island.is/judicial-system-web/src/graphql/schema'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 import AccusedAppealInfo from '../Accused/AccusedAppealInfo'
 import ProsecutorAppealInfo from '../Prosecutor/ProsecutorAppealInfo'
 import AccusedAppealDatePicker from '../Accused/AccusedAppealDatePicker'
 import ProsecutorAppealDatePicker from '../Prosecutor/ProsecutorAppealDatePicker'
 import * as styles from './AppealSection.css'
-import { core } from '@island.is/judicial-system-web/messages'
 
 interface Props {
   workingCase: Case
@@ -55,18 +52,19 @@ const AppealSection: React.FC<Props> = (props) => {
     <>
       <Box marginBottom={1}>
         <Text variant="h3" as="h3">
-          Ákvörðun um kæru
+          {formatMessage(signedVerdictOverview.sections.appeal.title)}
         </Text>
       </Box>
       {(workingCase.accusedAppealDecision === CaseAppealDecision.POSTPONE ||
         workingCase.prosecutorAppealDecision === CaseAppealDecision.POSTPONE) &&
-        workingCase.rulingDate &&
+        workingCase.courtEndTime &&
         !isHighCourt && (
           <Box marginBottom={3}>
             <Text>
-              {`Kærufrestur ${
-                workingCase.isAppealDeadlineExpired ? 'rann' : 'rennur'
-              } út ${getAppealEndDate(workingCase.rulingDate)}`}
+              {formatMessage(signedVerdictOverview.sections.appeal.deadline, {
+                isAppealDeadlineExpired: workingCase.isAppealDeadlineExpired,
+                appealDeadline: getAppealEndDate(workingCase.courtEndTime),
+              })}
             </Text>
           </Box>
         )}
@@ -74,30 +72,15 @@ const AppealSection: React.FC<Props> = (props) => {
         <div className={styles.appealContainer}>
           <BlueBox>
             <InfoBox
-              text={formatMessage(signedVerdictOverview.accusedAppealed, {
-                genderedAccused: capitalize(
-                  isRestrictionCase(workingCase.type)
-                    ? formatMessage(core.accused, {
-                        suffix:
-                          workingCase.defendants &&
-                          workingCase.defendants.length > 0 &&
-                          workingCase.defendants[0].gender === Gender.MALE
-                            ? 'i'
-                            : 'a',
-                      })
-                    : formatMessage(core.defendant, {
-                        suffix:
-                          workingCase.defendants &&
-                          workingCase.defendants?.length > 1
-                            ? 'ar'
-                            : 'i',
-                      }),
-                ),
-                courtEndTime: `${formatDate(
-                  workingCase.rulingDate,
-                  'PP',
-                )} kl. ${formatDate(workingCase.rulingDate, 'p')}`,
-              })}
+              text={formatMessage(
+                signedVerdictOverview.sections.appeal.defendantAppealed,
+                {
+                  courtEndTime: `${formatDate(
+                    workingCase.courtEndTime,
+                    'PP',
+                  )} kl. ${formatDate(workingCase.courtEndTime, 'p')}`,
+                },
+              )}
               fluid
               light
             />
@@ -108,12 +91,15 @@ const AppealSection: React.FC<Props> = (props) => {
         <div className={styles.appealContainer}>
           <BlueBox>
             <InfoBox
-              text={formatMessage(signedVerdictOverview.prosecutorAppealed, {
-                courtEndTime: `${formatDate(
-                  workingCase.courtEndTime,
-                  'PP',
-                )} kl. ${formatDate(workingCase.courtEndTime, 'p')}`,
-              })}
+              text={formatMessage(
+                signedVerdictOverview.sections.appeal.prosecutorAppealed,
+                {
+                  courtEndTime: `${formatDate(
+                    workingCase.courtEndTime,
+                    'PP',
+                  )} kl. ${formatDate(workingCase.courtEndTime, 'p')}`,
+                },
+              )}
               fluid
               light
             />

@@ -1,9 +1,5 @@
-import {
-  buildForm,
-  buildSection,
-  Form,
-  FormModes,
-} from '@island.is/application/core'
+import { buildForm, buildSection } from '@island.is/application/core'
+import { Form, FormModes } from '@island.is/application/types'
 import { LogreglanLogo } from '../../assets'
 import { m } from '../../lib/messages'
 import { subSectionTempInfo } from './subSectionTempInfo'
@@ -18,7 +14,7 @@ export const draft: Form = buildForm({
   id: 'DrivingLicenseApplicationDraftForm',
   title: m.applicationName,
   logo: LogreglanLogo,
-  mode: FormModes.APPLYING,
+  mode: FormModes.DRAFT,
   renderLastScreenButton: true,
   renderLastScreenBackButton: false,
   children: [

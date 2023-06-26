@@ -1,7 +1,7 @@
 import { DynamicModule } from '@nestjs/common'
-import { ZodType } from 'zod'
+import { ZodEffects, ZodType } from 'zod'
 
-import { ServerSideFeatureNames } from '@island.is/feature-flags'
+import { ServerSideFeature } from '@island.is/feature-flags'
 
 export interface EnvLoader {
   required(envVariable: string, devFallback?: string): string
@@ -30,8 +30,8 @@ export type ConfigType<T extends ConfigFactory> = ReturnType<T>
 
 export interface ConfigDefinition<T> {
   name: string
-  schema?: ZodType<T>
+  schema?: ZodType<T> | ZodEffects<any, any, any>
   optional?: boolean
-  serverSideFeature?: ServerSideFeatureNames
+  serverSideFeature?: ServerSideFeature
   load: (env: EnvLoader) => T
 }

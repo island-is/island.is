@@ -1,10 +1,9 @@
 import {
   buildForm,
   buildCustomField,
-  Form,
-  FormModes,
   buildSection,
 } from '@island.is/application/core'
+import { Form, FormModes } from '@island.is/application/types'
 import { m } from '../lib/messages'
 import Logo from '../assets/Logo'
 
@@ -12,7 +11,7 @@ export const Approved: Form = buildForm({
   id: 'ApprovedApplicationForm',
   title: '',
   logo: Logo,
-  mode: FormModes.APPLYING,
+  mode: FormModes.COMPLETED,
   children: [
     buildSection({
       id: 'externalData',

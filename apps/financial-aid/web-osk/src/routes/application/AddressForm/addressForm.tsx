@@ -89,7 +89,7 @@ const AddressForm = () => {
               name="address"
               placeholder="Sláðu inn götunafn og númer"
               value={form?.customHomeAddress}
-              hasError={error && !Boolean(form?.customHomeAddress)}
+              hasError={error && !form?.customHomeAddress}
               errorMessage="Þú þarft að fylla út"
               onChange={(event) =>
                 updateForm({ ...form, customHomeAddress: event.target.value })
@@ -104,7 +104,7 @@ const AddressForm = () => {
               name="zipcode"
               placeholder="T.d. 220"
               value={form?.customPostalCode}
-              hasError={error && !Boolean(form?.customPostalCode)}
+              hasError={error && !form?.customPostalCode}
               errorMessage="Þú þarft að fylla út"
               onChange={(event) =>
                 updateForm({ ...form, customPostalCode: event.target.value })
@@ -118,7 +118,7 @@ const AddressForm = () => {
         previousUrl={navigation?.prevUrl ?? '/'}
         onNextButtonClick={() => {
           if (form?.customAddress !== undefined) {
-            if (!Boolean(form?.customAddress)) {
+            if (!form?.customAddress) {
               //Validation
               updateForm({
                 ...form,

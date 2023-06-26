@@ -1,10 +1,5 @@
 import { GenericTag, GenericTagGroup } from '@island.is/web/graphql/schema'
 
-export interface Ordering {
-  field: 'title.sort' | 'releaseDate'
-  order: 'asc' | 'desc'
-}
-
 interface FilterCategory {
   id: string
   label: string
@@ -23,10 +18,11 @@ interface FilterTag {
 
 export const getAllGenericTagGroups = (genericTags: GenericTag[]) => {
   const genericTagGroupObject: Record<string, GenericTagGroup> = {}
-  genericTags.forEach(
-    (tag) =>
-      (genericTagGroupObject[tag.genericTagGroup.id] = tag.genericTagGroup),
-  )
+  genericTags.forEach((tag) => {
+    if (tag.genericTagGroup?.id) {
+      genericTagGroupObject[tag.genericTagGroup.id] = tag.genericTagGroup
+    }
+  })
   return Object.keys(genericTagGroupObject).map(
     (key) => genericTagGroupObject[key],
   )
@@ -54,7 +50,7 @@ export const getInitialParameters = (filterCategories: FilterCategory[]) => {
   return parameters
 }
 
-export const getFilterTags = (filterCategories: FilterCategory[]) => {
+export const extractFilterTags = (filterCategories: FilterCategory[]) => {
   const filterTags: FilterTag[] = []
 
   filterCategories.forEach((filterCategory) =>

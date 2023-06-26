@@ -1,15 +1,16 @@
 import React, { FC } from 'react'
 
 import { Box, GridColumn, GridRow } from '@island.is/island-ui/core'
+import { formatText } from '@island.is/application/core'
 import {
   Application,
-  formatText,
   FormValue,
   FieldTypes,
   RecordObject,
   SetBeforeSubmitCallback,
   SetFieldLoadingState,
-} from '@island.is/application/core'
+  SetSubmitButtonDisabled,
+} from '@island.is/application/types'
 import { FieldDescription } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
 
@@ -28,6 +29,7 @@ const FormMultiField: FC<{
   refetch: () => void
   setBeforeSubmitCallback?: SetBeforeSubmitCallback
   setFieldLoadingState?: SetFieldLoadingState
+  setSubmitButtonDisabled?: SetSubmitButtonDisabled
 }> = ({
   application,
   answerQuestions,
@@ -37,6 +39,7 @@ const FormMultiField: FC<{
   refetch,
   setBeforeSubmitCallback,
   setFieldLoadingState,
+  setSubmitButtonDisabled,
 }) => {
   const { description, children, space = 0 } = multiField
   const { formatMessage } = useLocale()
@@ -50,7 +53,7 @@ const FormMultiField: FC<{
       />
 
       {description && (
-        <GridColumn span={['1/1', '1/1', '1/1']}>
+        <GridColumn>
           <FieldDescription
             description={formatText(description, application, formatMessage)}
           />
@@ -65,7 +68,13 @@ const FormMultiField: FC<{
           FieldDescription already has a mb of 1 so set it to 3(+1) else 4.
       */}
       <Box width="full" marginTop={description ? 3 : 4} />
-
+      {/*
+        Todo:
+        The following "section" is for accessibility scoping of controls. Due to CSS configuration I am unable to make this work
+        with having the controls nested in the section so I am just interleaving the elements with section "separators" but would be great
+        if someone could jump in and fix this.
+      */}
+      <Box component="section" width="full" aria-labelledby={multiField.id} />
       {children.map((field, index) => {
         const isHalfColumn =
           !IGNORED_HALF_TYPES.includes(field.type) && field?.width === 'half'
@@ -74,7 +83,7 @@ const FormMultiField: FC<{
         return (
           <GridColumn
             key={field.id || index}
-            span={['1/1', '1/1', span]}
+            span={field?.colSpan ? field?.colSpan : ['1/1', '1/1', '1/1', span]}
             paddingBottom={index === children.length - 1 ? 0 : space}
           >
             <Box>
@@ -88,6 +97,7 @@ const FormMultiField: FC<{
                 refetch={refetch}
                 setBeforeSubmitCallback={setBeforeSubmitCallback}
                 setFieldLoadingState={setFieldLoadingState}
+                setSubmitButtonDisabled={setSubmitButtonDisabled}
               />
             </Box>
           </GridColumn>

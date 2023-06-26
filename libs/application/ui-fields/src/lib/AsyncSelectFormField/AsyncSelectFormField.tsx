@@ -1,10 +1,7 @@
 import React, { FC, useEffect, useState } from 'react'
 
-import {
-  AsyncSelectField,
-  FieldBaseProps,
-  formatText,
-} from '@island.is/application/core'
+import { formatText } from '@island.is/application/core'
+import { AsyncSelectField, FieldBaseProps } from '@island.is/application/types'
 import { Box } from '@island.is/island-ui/core'
 import {
   SelectController,
@@ -12,7 +9,7 @@ import {
 } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
 import { useApolloClient } from '@apollo/client/react'
-import { Option } from '@island.is/application/core'
+import { Option } from '@island.is/application/types'
 
 import { getDefaultValue } from '../../getDefaultValue'
 
@@ -68,6 +65,7 @@ export const AsyncSelectFormField: FC<Props> = ({
       <Box paddingTop={2}>
         <SelectController
           required={required}
+          dataTestId={field.dataTestId}
           defaultValue={getDefaultValue(field, application)}
           label={formatText(title, application, formatMessage)}
           name={id}

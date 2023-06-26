@@ -1,7 +1,5 @@
 import { defineMessages } from 'react-intl'
 
-const t = 'pdpp.application'
-
 // Global string for the application
 export const application = defineMessages({
   institutionName: {

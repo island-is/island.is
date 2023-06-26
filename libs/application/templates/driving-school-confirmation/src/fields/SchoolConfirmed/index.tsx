@@ -1,8 +1,10 @@
 import React, { FC } from 'react'
-import { FieldBaseProps } from '@island.is/application/core'
+import { useNavigate } from 'react-router-dom'
+import { FieldBaseProps } from '@island.is/application/types'
 import {
   AlertMessage,
   Box,
+  Button,
   GridColumn,
   GridContainer,
   GridRow,
@@ -18,6 +20,7 @@ const SchoolConfirmed: FC<FieldBaseProps> = ({ application }) => {
   const { answers } = application
   const nationalId = kennitala.format((answers.student as Student).nationalId)
   const { formatMessage } = useLocale()
+  const navigate = useNavigate()
 
   return (
     <GridContainer>
@@ -49,13 +52,18 @@ const SchoolConfirmed: FC<FieldBaseProps> = ({ application }) => {
           </Text>
         </GridColumn>
       </GridRow>
-      <GridRow>
-        <GridColumn>
-          <Box height="full" marginTop={6} marginBottom={10}>
-            <Jobs />
-          </Box>
-        </GridColumn>
-      </GridRow>
+      <Box height="full" marginTop={6} marginBottom={6}>
+        <Jobs />
+      </Box>
+      <Box marginBottom={10} display="flex" justifyContent="flexEnd">
+        <Button
+          onClick={() => navigate('/okuskoli')}
+          icon="arrowForward"
+          type="button"
+        >
+          {formatMessage(m.newConfirmSchoolButton)}
+        </Button>
+      </Box>
     </GridContainer>
   )
 }

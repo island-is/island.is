@@ -8,7 +8,7 @@ import {
   UpdatedAt,
 } from 'sequelize-typescript'
 
-import { ApiProperty } from '@nestjs/swagger'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
 import { InstitutionType } from '@island.is/judicial-system/types'
 
@@ -16,7 +16,7 @@ import { InstitutionType } from '@island.is/judicial-system/types'
   tableName: 'institution',
   timestamps: true,
 })
-export class Institution extends Model<Institution> {
+export class Institution extends Model {
   @Column({
     type: DataType.UUID,
     primaryKey: true,
@@ -39,6 +39,7 @@ export class Institution extends Model<Institution> {
     allowNull: false,
     values: Object.values(InstitutionType),
   })
+  @ApiProperty()
   type!: InstitutionType
 
   @Column({
@@ -61,13 +62,20 @@ export class Institution extends Model<Institution> {
     type: DataType.UUID,
     allowNull: true,
   })
-  @ApiProperty()
+  @ApiPropertyOptional()
   defaultCourtId?: string
 
   @Column({
     type: DataType.STRING,
     allowNull: true,
   })
-  @ApiProperty()
+  @ApiPropertyOptional()
   policeCaseNumberPrefix?: string
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiPropertyOptional()
+  nationalId?: string
 }

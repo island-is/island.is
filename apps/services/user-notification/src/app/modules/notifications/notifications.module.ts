@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common'
 import * as firebaseAdmin from 'firebase-admin'
+import { CacheModule } from '@island.is/cache'
 import { LoggingModule } from '@island.is/logging'
 import { CmsTranslationsModule } from '@island.is/cms-translations'
 import { environment } from '../../../environments/environment'
@@ -17,9 +18,14 @@ import {
 import { FIREBASE_PROVIDER } from '../../../constants'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
 import * as userProfile from '@island.is/clients/user-profile'
+import { NotificationsService } from './notifications.service'
 
 @Module({
   imports: [
+    CacheModule.register({
+      ttl: 60 * 10 * 1000, // 10 minutes
+      max: 100, // 100 items max
+    }),
     LoggingModule,
     CmsTranslationsModule,
     QueueModule.register({
@@ -35,6 +41,7 @@ import * as userProfile from '@island.is/clients/user-profile'
   ],
   controllers: [NotificationsController],
   providers: [
+    NotificationsService,
     NotificationDispatchService,
     NotificationsWorkerService,
     MessageProcessorService,
@@ -76,5 +83,6 @@ import * as userProfile from '@island.is/clients/user-profile'
       useValue: environment.appProtocol,
     },
   ],
+  exports: [NotificationsService],
 })
 export class NotificationsModule {}

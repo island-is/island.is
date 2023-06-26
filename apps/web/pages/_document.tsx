@@ -7,6 +7,7 @@ import Document, {
   DocumentContext,
 } from 'next/document'
 import { getLocaleFromPath } from '../i18n/withLocale'
+import { PLAUSIBLE_SCRIPT_SRC } from '../constants'
 
 interface Props {
   lang: Locale
@@ -30,10 +31,9 @@ class MyDocument extends Document<Props> {
         <Head>
           {Boolean(domain) && (
             <script
-              async
               defer
               data-domain={domain}
-              src="https://plausible.io/js/plausible.js"
+              src={PLAUSIBLE_SCRIPT_SRC}
             ></script>
           )}
         </Head>

@@ -4,21 +4,18 @@ import {
   buildMultiField,
   buildRadioField,
   buildSubmitField,
-  DefaultEvents,
-} from '@island.is/application/core'
-import {
   buildForm,
   buildSection,
-  Form,
-  FormModes,
 } from '@island.is/application/core'
+import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
 import * as m from '../lib/messages'
 import { chargeItemCodeRadioOptions } from '../lib/utils/chargeItemCodeRadioOptions'
+import { PaymentCatalogApi } from '@island.is/application/types'
 
 export const draft: Form = buildForm({
   id: 'ExamplePaymentDraftForm',
   title: m.m.applicationTitle,
-  mode: FormModes.APPLYING,
+  mode: FormModes.DRAFT,
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,
   children: [
@@ -33,8 +30,7 @@ export const draft: Form = buildForm({
           checkboxLabel: m.draft.externalDataTitle,
           dataProviders: [
             buildDataProviderItem({
-              id: 'feeInfo',
-              type: 'FeeInfoProvider',
+              provider: PaymentCatalogApi,
               title: m.draft.feeInfo,
             }),
           ],

@@ -1,115 +1,73 @@
-import React, { FC, useEffect, useState } from 'react'
-import { Box, Stack, Logo, Icon } from '@island.is/island-ui/core'
-import { ActionType } from '../../store/actions'
-import { ServicePortalPath } from '@island.is/service-portal/core'
+import { Box, Stack, Logo } from '@island.is/island-ui/core'
+import {
+  ServicePortalPath,
+  useDynamicRoutesWithNavigation,
+} from '@island.is/service-portal/core'
 import { Link } from 'react-router-dom'
-import { useStore } from '../../store/stateProvider'
-import ModuleNavigation from './ModuleNavigation'
-import useNavigation from '../../hooks/useNavigation/useNavigation'
-import * as styles from './Sidebar.css'
-import cn from 'classnames'
-import { useWindowSize } from 'react-use'
-import { theme } from '@island.is/island-ui/theme'
 import { useListDocuments } from '@island.is/service-portal/graphql'
+import { useAuth } from '@island.is/auth/react'
+import { useLocale } from '@island.is/localization'
+import { sharedMessages } from '@island.is/shared/translations'
+import ModuleNavigation from './ModuleNavigation'
+import NavItem from './NavItem/NavItem'
+import * as styles from './Sidebar.css'
+import { MAIN_NAVIGATION } from '../../lib/masterNavigation'
 
-export const Sidebar: FC<{}> = () => {
-  const navigation = useNavigation()
-  const [{ sidebarState }, dispatch] = useStore()
-  const [collapsed, setCollapsed] = useState(sidebarState === 'closed')
-  const { width } = useWindowSize()
-  const isTablet = width < theme.breakpoints.lg && width >= theme.breakpoints.md
-  const isMobile = width < theme.breakpoints.md
-  const { unreadCounter } = useListDocuments('')
+interface Props {
+  position: number
+}
 
-  useEffect(() => {
-    if (isTablet) {
-      dispatch({
-        type: ActionType.SetSidebarMenuState,
-        payload: 'closed',
-      })
-      setCollapsed(true)
-    }
-  }, [isTablet])
-
-  useEffect(() => {
-    if (isMobile) {
-      dispatch({
-        type: ActionType.SetSidebarMenuState,
-        payload: 'open',
-      })
-      setCollapsed(false)
-    }
-  }, [isMobile])
+export const Sidebar = ({ position }: Props) => {
+  const navigation = useDynamicRoutesWithNavigation(MAIN_NAVIGATION)
+  // const { width } = useWindowSize()
+  const { signOut } = useAuth()
+  // const isTablet = width < theme.breakpoints.lg && width >= theme.breakpoints.md
+  // const isMobile = width < theme.breakpoints.md
+  const { unreadCounter } = useListDocuments()
+  const { formatMessage } = useLocale()
 
   return (
-    <aside className={cn(styles.sidebar, collapsed && styles.collapsed)}>
+    <aside className={styles.sidebar} style={{ top: position }}>
+      {/*  Inline style to dynamicly change position of header because of alert banners */}
+      <Box paddingTop={6} paddingBottom={3} paddingLeft={4}>
+        <Link to={ServicePortalPath.MinarSidurRoot}>
+          <Logo width={136} height={22} id="sidebar" />
+        </Link>
+      </Box>
       <Box
         display="flex"
         flexDirection="column"
-        justifyContent="flexStart"
-        marginBottom={3}
-        paddingLeft={collapsed ? 6 : 0}
-        paddingBottom={collapsed ? 6 : 3}
-        paddingRight={collapsed ? 6 : 0}
-        paddingTop={3}
+        justifyContent="spaceBetween"
+        paddingLeft={0}
+        paddingRight={0}
+        paddingBottom={4}
+        paddingTop={5}
+        height="full"
       >
-        <Box
-          className={collapsed && styles.logoCollapsed}
-          paddingBottom={8}
-          paddingTop={3}
-          height="full"
-          paddingLeft={collapsed ? 0 : 4}
-        >
-          <Link to={ServicePortalPath.MinarSidurRoot}>
-            {collapsed ? (
-              <Logo width={24} height={22} iconOnly id="sidebar-collapsed" />
-            ) : (
-              <Logo width={136} height={22} id="sidebar" />
-            )}
-          </Link>
-        </Box>
-        <Box>
-          <Box
-            className={styles.navIcon}
-            borderRadius="circle"
-            display="flex"
-            alignItems="center"
-            marginRight={2}
-            padding="smallGutter"
-            background="blue200"
-            onClick={() => {
-              dispatch({
-                type: ActionType.SetSidebarMenuState,
-                payload: collapsed ? 'open' : 'closed',
-              })
-              setCollapsed(!collapsed)
-            }}
+        <Stack space={1}>
+          {navigation?.children?.map(
+            (rootItem, rootIndex) =>
+              !rootItem.navHide && (
+                <ModuleNavigation
+                  key={rootIndex}
+                  nav={rootItem}
+                  badge={
+                    rootItem.subscribesTo === 'documents' && unreadCounter > 0
+                  }
+                />
+              ),
+          )}
+        </Stack>
+
+        <Box marginTop={1} background="white" width="full">
+          <NavItem
+            onClick={() => signOut()}
+            active={false}
+            icon={{ icon: 'logOut', type: 'outline' }}
           >
-            <Icon
-              type="outline"
-              icon={collapsed ? 'chevronForward' : 'chevronBack'}
-              size="medium"
-              color="blue400"
-            />
-          </Box>
+            {formatMessage(sharedMessages.logout)}
+          </NavItem>
         </Box>
-        {navigation.map((rootItem, rootIndex) => (
-          <Stack space={1} key={rootIndex}>
-            {rootItem.children?.map(
-              (navRoot, index) =>
-                navRoot.path !== ServicePortalPath.MinarSidurRoot &&
-                !navRoot.navHide && (
-                  <ModuleNavigation
-                    key={index}
-                    nav={navRoot}
-                    badge={
-                      navRoot.subscribesTo === 'documents' && unreadCounter > 0
-                    }
-                  />
-                ),
-            )}
-          </Stack>
-        ))}
       </Box>
     </aside>
   )

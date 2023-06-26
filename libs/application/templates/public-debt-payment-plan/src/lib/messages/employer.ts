@@ -1,7 +1,5 @@
 import { defineMessages } from 'react-intl'
 
-const t = 'pdpp.application'
-
 export const employer = {
   general: defineMessages({
     pageTitle: {
@@ -31,6 +29,11 @@ export const employer = {
       defaultMessage:
         'Upplýsingar um ráðstöfunartekjur eru sóttar til Skattsins og er reiknuð með tilliti til launafjárhæðar, staðgreiðslu, lífeyrissjóðs- og meðlagsgreiðslna.',
       description: 'Disposable Income page description',
+    },
+    employerIsNotValid: {
+      id: `pdpp.application:application.employer.general.employerIsNotValid`,
+      defaultMessage: 'Ekki er hægt að velja þennan launagreiðanda',
+      description: 'Invalid employer message',
     },
   }),
   labels: defineMessages({
@@ -83,7 +86,7 @@ export const employer = {
     minimumMonthlyPaymentDescription: {
       id: `pdpp.application:application.employer.labels.minimumMonthlyPaymentDescription`,
       defaultMessage: `
-      Í sjálfsafgreiðsluferlinu er miðað við að lágmarksgreiðsla á skuld sé {percent} af ráðstöfunartekjum þínum. Ef þú telur þessa fjárhæð of háa miðað við framfærslukostnað þinn þá skaltu hafa samband við innheimtumann ríkissjóðs. 
+      Í sjálfsafgreiðsluferlinu er miðað við að lágmarksgreiðsla á skuld sé {percent} af ráðstöfunartekjum þínum. Ef þú telur þessa fjárhæð of háa miðað við framfærslukostnað þinn þá skaltu hafa samband við innheimtumann ríkissjóðs.
       `,
       description: 'Minimum monthly payment description',
     },

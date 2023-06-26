@@ -1,0 +1,15 @@
+query endorsementSystemGetSingleEndorsementList(
+  $input: FindEndorsementListInput!
+) {
+  endorsementSystemGetSingleEndorsementList(input: $input) {
+    meta
+    title
+    description
+    owner
+    ownerName
+    closedDate
+    openedDate
+    adminLock
+    owner
+  }
+}

@@ -6,7 +6,13 @@ import { Text } from '../Text/Text'
 import { FormStepperSection } from './FormStepperSection'
 import * as types from './types'
 import * as styles from './FormStepper.css'
+import { useDeprecatedComponent } from '../private/useDeprecatedComponent'
 
+/**
+ * @deprecated Use FormStepperV2 instead
+ * This component is depreacted because it violated the open-closed principle (https://en.wikipedia.org/wiki/Open%E2%80%93closed_principle)
+ * in such a way that it did not accept `Sections` and `SubSections` to be in as React elements.
+ */
 export const FormStepper: FC<{
   theme?: types.FormStepperThemes
   tag?: ReactNode
@@ -37,13 +43,14 @@ export const FormStepper: FC<{
   subSection = 'SUB_SECTION',
   showSubSectionIcons = false,
 }) => {
+  useDeprecatedComponent('FormStepper', 'FormStepperV2')
   const hasHead = formIcon || formName
 
   const sectionsWithNames = sections.filter((section) => section?.name !== '')
   const hasSectionsToShow = sectionsWithNames.length > 0
 
   return (
-    <Box paddingTop={[0, 0, 1]} paddingBottom={[1, 1, 0]} width="full">
+    <Box width="full">
       {tag && <Box className={styles.tag}>{tag}</Box>}
 
       {hasHead && (

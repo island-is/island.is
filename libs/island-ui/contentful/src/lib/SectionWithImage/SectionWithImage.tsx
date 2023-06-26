@@ -2,7 +2,8 @@ import React, { FC } from 'react'
 import { Document } from '@contentful/rich-text-types'
 import { Text, GridRow, GridColumn, Box } from '@island.is/island-ui/core'
 import slugify from '@sindresorhus/slugify'
-import { Slice as SliceType, richText } from '@island.is/island-ui/contentful'
+import { Slice as SliceType } from '../richTextRendering'
+import { richText } from '../RichTextRC/RichText'
 import * as styles from './SectionWithImage.css'
 
 export interface SectionWithImageProps {

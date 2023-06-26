@@ -1,0 +1,22 @@
+{
+  "extends": ["plugin:@nrwl/nx/react", "../../../.eslintrc.json"],
+  "rules": {
+    "no-restricted-imports": [
+      "error",
+      {
+        "paths": [
+          {
+            "name": "@island.is/island-ui/core",
+            "message": "Cannot self reference library. Please us a relative import within @island.is/island-ui/core"
+          }
+        ]
+      }
+    ]
+  },
+  "ignorePatterns": ["!**/*"],
+  "overrides": [
+    { "files": ["*.ts", "*.tsx", "*.js", "*.jsx"], "rules": {} },
+    { "files": ["*.ts", "*.tsx"], "rules": {} },
+    { "files": ["*.js", "*.jsx"], "rules": {} }
+  ]
+}

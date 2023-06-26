@@ -64,7 +64,7 @@ export class DocumentController {
     res.header('Content-length', buffer.length.toString())
     res.header(
       'Content-Disposition',
-      `inline; filename=${resource.documentId}.pdf`,
+      `inline; filename=${rawDocumentDTO.fileName}.pdf`,
     )
     res.header('Pragma: no-cache')
     res.header('Cache-Control: no-cache')

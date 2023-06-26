@@ -24,10 +24,7 @@ export const generateApplicationEmail: ApplicationEmail = (
   applicationRecipientEmail,
   attachments,
 ): SendMailOptions => {
-  const {
-    application,
-    options: { locale },
-  } = props
+  const { application } = props
   const institutionName = getValueViaPath(
     application.answers,
     'organizationOrInstitutionName',

@@ -36,7 +36,7 @@ const MultiSelectionAdmin = ({ admins, onUpdate }: Props) => {
       undefined,
       undefined,
       selected?.municipalityIds && newMuni
-        ? [...selected?.municipalityIds, newMuni]
+        ? [...(selected?.municipalityIds ?? []), newMuni]
         : undefined,
     ).then(() => {
       onUpdate()

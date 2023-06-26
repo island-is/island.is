@@ -1,5 +1,20 @@
 import { defineMessages } from 'react-intl'
 
+enum SubjectOfComplaint {
+  WITH_AUTHORITIES = 'withAuthorities',
+  LACK_OF_EDUCATION = 'lackOfEducation',
+  SOCIAL_MEDIA = 'socialMedia',
+  REQUEST_FOR_ACCESS = 'requestForAccess',
+  RIGHTS_OF_OBJECTION = 'rightOfObjection',
+  EMAIL = 'email',
+  NATIONAL_ID = 'nationalId',
+  EMAIL_IN_WORKPLACE = 'emailInWorkplace',
+  UNAUTHORIZED_PUBLICATION = 'unauthorizedPublication',
+  VANSKILASKRA = 'vanskilaskra',
+  VIDEO_RECORDINGS = 'videoRecordings',
+  OTHER = 'other',
+}
+
 export const complaint = {
   general: defineMessages({
     complaineePageTitle: {
@@ -97,28 +112,28 @@ export const complaint = {
       defaultMessage: 'Vinnsla persónuupplýsinga',
       description: 'The subject regards the processing of personal information',
     },
-    subjectAuthorities: {
+    [SubjectOfComplaint.WITH_AUTHORITIES]: {
       id: 'dpac.application:section.complaint.labels.subjectAuthorities',
       defaultMessage: 'Vinnsla persónuupplýsinga hjá stjórnvöldum',
       description: 'The subject of the complaint regards authorities',
     },
-    subjectLackOfEducation: {
+    [SubjectOfComplaint.LACK_OF_EDUCATION]: {
       id: 'dpac.application:section.complaint.labels.subjectLackOfEducation',
       defaultMessage: 'Skortur á fræðslu',
       description: 'The subject of the complaint regards lack of educatin',
     },
-    subjectSocialMedia: {
+    [SubjectOfComplaint.SOCIAL_MEDIA]: {
       id: 'dpac.application:section.complaint.labels.subjectSocialMedia',
       defaultMessage:
         'Vinnsla persónuupplýsinga á samfélagsmiðlum eða í smáforritum (öppum)',
       description: 'The subject of the complaint regards social media',
     },
-    subjectRequestForAccess: {
+    [SubjectOfComplaint.REQUEST_FOR_ACCESS]: {
       id: 'dpac.application:section.complaint.labels.subjectRequestForAccess',
       defaultMessage: 'Afgreiðsla á beiðni um aðgang eða eyðingu',
       description: 'The subject of the complaint regards request for access',
     },
-    subjectRightOfObjection: {
+    [SubjectOfComplaint.RIGHTS_OF_OBJECTION]: {
       id: 'dpac.application:section.complaint.labels.subjectRightOfObjection',
       defaultMessage: 'Andmælaréttur ekki virtur',
       description: 'The subject of the complaint regards right of objection',
@@ -130,24 +145,24 @@ export const complaint = {
       description:
         'The subject of the complaint regards use of personal information',
     },
-    subjectEmail: {
+    [SubjectOfComplaint.EMAIL]: {
       id: 'dpac.application:section.complaint.labels.subjectEmail',
       defaultMessage: 'Skráning eða notkun á netfangi',
       description:
         'The subject of the complaint regards use of personal information',
     },
-    subjectNationalId: {
+    [SubjectOfComplaint.NATIONAL_ID]: {
       id: 'dpac.application:section.complaint.labels.subjectNationalId',
       defaultMessage: 'Notkun kennitölu',
       description: 'The subject of the complaint regards use of national id',
     },
-    subjectEmailInWorkplace: {
+    [SubjectOfComplaint.EMAIL_IN_WORKPLACE]: {
       id: 'dpac.application:section.complaint.labels.subjectEmailInWorkplace',
       defaultMessage: 'Meðferð tölvupósts/pósthólfs á vinnustað eða í skóla',
       description:
         'The subject of the complaint regards use of email at workplace or school',
     },
-    subjectUnauthorizedPublication: {
+    [SubjectOfComplaint.UNAUTHORIZED_PUBLICATION]: {
       id:
         'dpac.application:section.complaint.labels.subjectUnauthorizedPublication',
       defaultMessage: 'Birting persónuupplýsinga án heimildar',
@@ -159,20 +174,20 @@ export const complaint = {
       defaultMessage: 'Annað',
       description: 'The subject of the complaint regards something else',
     },
-    subjectVanskilaskra: {
+    [SubjectOfComplaint.VANSKILASKRA]: {
       id: 'dpac.application:section.complaint.labels.subjectVanskilaskra',
       defaultMessage: 'Vanskilaskrá eða lánshæfismat',
       description:
         'The subject of the complaint regards vanskilaskra or lanshaefismat',
     },
-    subjectVideoRecording: {
+    [SubjectOfComplaint.VIDEO_RECORDINGS]: {
       id: 'dpac.application:section.complaint.labels.subjectVideoRecording',
       defaultMessage: 'Eftirlitsmyndavélar, upptökur eða önnur vöktun ',
       description: 'The subject of the complaint regards video recordings',
     },
-    subjectOtherOther: {
+    [SubjectOfComplaint.OTHER]: {
       id: 'dpac.application:section.complaint.labels.subjectOtherOther',
-      defaultMessage: 'Annað...',
+      defaultMessage: 'Annað',
       description: 'The subject of the complaint regards none of the above',
     },
     subjectSomethingElse: {
@@ -243,7 +258,7 @@ export const complaint = {
       id:
         'dpac.application:section.complaint.labels.complaintDocumentsInfoLabel',
       defaultMessage:
-        'Hafðu samband við Persónuvernd ef þú vilt senda inn myndbönd og/eða hljóðupptökur.',
+        'Hafðu samband við Persónuvernd símleiðis eða í tölvupósti ef þú vilt senda inn myndbönd og/eða hljóðupptökur.',
       description:
         'Notifies the user that he should contact DPA if they want to send in images or videos',
     },

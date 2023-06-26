@@ -11,6 +11,11 @@ export const error = defineMessages({
     defaultMessage: 'Kennitala þarf að vera gild',
     description: 'National ID error message',
   },
+  invalidEmployer: {
+    id: `pdpp.application:application.error.invalidEmployer`,
+    defaultMessage: 'Ekki er hægt að velja þennan launagreiðanda',
+    description: 'Invalid employer error message',
+  },
   nationalIdIsNotCompany: {
     id: `pdpp.application:application.error.nationalIdIsNotCompany`,
     defaultMessage: 'Ekkert fyrirtæki fannst á kennitölu',

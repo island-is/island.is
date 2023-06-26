@@ -1,6 +1,7 @@
 import { format, parseISO, isValid } from 'date-fns' // eslint-disable-line no-restricted-imports
 // Importing 'is' directly from date-fns/locale/is has caused unexpected problems
 import { is } from 'date-fns/locale' // eslint-disable-line no-restricted-imports
+import _uniq from 'lodash/uniq'
 
 import {
   CaseAppealDecision,
@@ -8,6 +9,8 @@ import {
   Gender,
   CaseType,
   isRestrictionCase,
+  IndictmentSubtype,
+  IndictmentSubtypeMap,
 } from '@island.is/judicial-system/types'
 
 const getAsDate = (date: Date | string | undefined | null): Date => {
@@ -41,7 +44,7 @@ export function formatDate(
 }
 
 // Credit: https://dzone.com/articles/capitalize-first-letter-string-javascript
-export const capitalize = (text: string): string => {
+export const capitalize = (text?: string): string => {
   if (!text) {
     return ''
   }
@@ -66,6 +69,21 @@ export const formatNationalId = (nationalId: string): string => {
   }
 }
 
+export const formatPhoneNumber = (phoneNumber?: string) => {
+  if (!phoneNumber) {
+    return
+  }
+
+  const value = phoneNumber.replace('-', '')
+
+  const splitAt = (index: number) => (x: string) => [
+    x.slice(0, index),
+    x.slice(index),
+  ]
+  if (value.length > 3) return splitAt(3)(value).join('-')
+  return value
+}
+
 export const laws = {
   _95_1_A: 'a-lið 1. mgr. 95. gr. sml.',
   _95_1_B: 'b-lið 1. mgr. 95. gr. sml.',
@@ -78,9 +96,13 @@ export const laws = {
 
 type CaseTypes = { [c in CaseType]: string }
 export const caseTypes: CaseTypes = {
+  // Indicitment cases
+  INDICTMENT: 'ákæra',
+  // Restriction cases
   CUSTODY: 'gæsluvarðhald',
   TRAVEL_BAN: 'farbann',
   ADMISSION_TO_FACILITY: 'vistun á viðeigandi stofnun',
+  // Investigation Cases
   SEARCH_WARRANT: 'húsleit',
   BANKING_SECRECY_WAIVER: 'rof bankaleyndar',
   PHONE_TAPPING: 'símhlustun',
@@ -92,9 +114,50 @@ export const caseTypes: CaseTypes = {
   BODY_SEARCH: 'leit og líkamsrannsókn',
   INTERNET_USAGE: 'upplýsingar um vefnotkun',
   RESTRAINING_ORDER: 'nálgunarbann',
+  RESTRAINING_ORDER_AND_EXPULSION_FROM_HOME:
+    'nálgunarbann og brottvísun af heimili',
+  EXPULSION_FROM_HOME: 'brottvísun af heimili',
   ELECTRONIC_DATA_DISCOVERY_INVESTIGATION: 'rannsókn á rafrænum gögnum',
   VIDEO_RECORDING_EQUIPMENT: 'myndupptökubúnaði komið fyrir',
   OTHER: 'annað',
+}
+
+type IndictmentSubtypes = { [c in IndictmentSubtype]: string }
+export const indictmentSubtypes: IndictmentSubtypes = {
+  ALCOHOL_LAWS: 'áfengislagabrot',
+  CHILD_PROTECTION_LAWS: 'barnaverndarlög',
+  INDECENT_EXPOSURE: 'blygðunarsemisbrot',
+  LEGAL_ENFORCEMENT_LAWS: 'brot gegn lögreglulögum',
+  POLICE_REGULATIONS: 'brot gegn lögreglusamþykkt',
+  INTIMATE_RELATIONS: 'brot í nánu sambandi',
+  PUBLIC_SERVICE_VIOLATION: 'brot í opinberu starfi',
+  PROPERTY_DAMAGE: 'eignaspjöll',
+  NARCOTICS_OFFENSE: 'fíkniefnalagabrot',
+  EMBEZZLEMENT: 'fjárdráttur',
+  FRAUD: 'fjársvik',
+  LOOTING: 'gripdeild',
+  OTHER_CRIMINAL_OFFENSES: 'hegningarlagabrot önnur',
+  DOMESTIC_VIOLENCE: 'heimilisofbeldi',
+  THREAT: 'hótun',
+  BREAKING_AND_ENTERING: 'húsbrot',
+  COVER_UP: 'hylming',
+  SEXUAL_OFFENSES_OTHER_THAN_RAPE: 'kynferðisbrot önnur en nauðgun',
+  MAJOR_ASSAULT: 'líkamsárás - meiriháttar',
+  MINOR_ASSAULT: 'líkamsárás - minniháttar',
+  AGGRAVATED_ASSAULT: 'líkamsárás - sérlega hættuleg',
+  ASSAULT_LEADING_TO_DEATH: 'líkamsárás sem leiðir til dauða',
+  MURDER: 'manndráp',
+  RAPE: 'nauðgun',
+  UTILITY_THEFT: 'nytjastuldur',
+  MONEY_LAUNDERING: 'peningaþvætti',
+  OTHER_OFFENSES: 'sérrefsilagabrot önnur',
+  NAVAL_LAW_VIOLATION: 'siglingalagabrot',
+  TAX_VIOLATION: 'skattalagabrot',
+  ATTEMPTED_MURDER: 'tilraun til manndráps',
+  CUSTOMS_VIOLATION: 'tollalagabrot',
+  TRAFFIC_VIOLATION: 'umferðarlagabrot',
+  WEPONS_VIOLATION: 'vopnalagabrot',
+  THEFT: 'þjófnaður',
 }
 
 export const getShortRestrictionByValue = (value: CaseCustodyRestrictions) => {
@@ -198,10 +261,78 @@ export function formatAppeal(
   }
 }
 
-export function formatRequestCaseType(type: CaseType): string {
-  return isRestrictionCase(type) ||
-    type === CaseType.RESTRAINING_ORDER ||
-    type === CaseType.PSYCHIATRIC_EXAMINATION
-    ? caseTypes[type]
+export function formatRequestCaseType(type: string): string {
+  const caseType = type as CaseType
+
+  return isRestrictionCase(caseType) ||
+    caseType === CaseType.RESTRAINING_ORDER ||
+    caseType === CaseType.RESTRAINING_ORDER_AND_EXPULSION_FROM_HOME ||
+    caseType === CaseType.EXPULSION_FROM_HOME ||
+    caseType === CaseType.PSYCHIATRIC_EXAMINATION
+    ? caseTypes[caseType]
     : 'rannsóknarheimild'
+}
+
+export const formatDOB = (
+  nationalId?: string | null,
+  noNationalId?: boolean | null,
+  fallback = '-',
+) => {
+  if (!nationalId) {
+    return fallback
+  }
+
+  return noNationalId
+    ? `fd. ${nationalId}`
+    : `kt. ${formatNationalId(nationalId)}`
+}
+
+/** Displays the first element in a list followed by a number indicating
+ *  how many elements are left
+ *  fx. displayFirstPlusRemaining(['apple', 'pear', 'orange']) => 'apple +2'
+ */
+export const displayFirstPlusRemaining = (
+  list: string[] | undefined | null,
+) => {
+  if (!list || list.length === 0) {
+    return ''
+  }
+
+  if (list.length === 1) {
+    return list[0]
+  }
+
+  return `${list[0]} +${list.length - 1}`
+}
+
+export const splitStringByComma = (str?: string): string[] => {
+  return str?.trim().split(/[, ]+/) || []
+}
+
+export const readableIndictmentSubtypes = (
+  policeCaseNumbers: string[],
+  rawIndictmentSubtypes?: IndictmentSubtypeMap,
+): string[] => {
+  if (!rawIndictmentSubtypes) {
+    return []
+  }
+
+  const returnValue: string[] = []
+
+  for (let i = 0; i < policeCaseNumbers.length; i++) {
+    const subtypesOfPoliceCaseNumber =
+      rawIndictmentSubtypes[policeCaseNumbers[i]]
+
+    if (!subtypesOfPoliceCaseNumber) {
+      break
+    }
+
+    returnValue.push(
+      ...subtypesOfPoliceCaseNumber.map(
+        (subtype) => indictmentSubtypes[subtype],
+      ),
+    )
+  }
+
+  return _uniq(returnValue)
 }

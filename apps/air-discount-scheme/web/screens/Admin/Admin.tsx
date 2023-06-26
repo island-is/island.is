@@ -55,10 +55,11 @@ const ConfirmInvoiceMutation = gql`
 
 const TODAY = new Date()
 
-const Admin: Screen = ({}) => {
+const Admin: Screen = () => {
   const { user } = useContext(UserContext)
   const [showModal, setModal] = useState(false)
   const [filters, setFilters] = useState<FilterInput>({
+    nationalId: '',
     state: [],
     period: {
       from: new Date(TODAY.getFullYear(), TODAY.getMonth(), 1, 0, 0, 0, 0),
@@ -85,6 +86,7 @@ const Admin: Screen = ({}) => {
     postalCode: filters.postalCode
       ? parseInt(filters.postalCode.toString())
       : undefined,
+    isExplicit: Boolean(filters.isExplicit?.length),
   }
   const [confirmInvoice, { loading: confirmInvoiceLoading }] = useMutation(
     ConfirmInvoiceMutation,
@@ -179,6 +181,15 @@ const Admin: Screen = ({}) => {
                     <Box>Gjaldfæra</Box>
                     <Box>Endurgreiða</Box>
                   </Box>
+                </Button>
+              </Box>
+              <Box paddingTop={3}>
+                <Button
+                  width="fluid"
+                  variant="redGhost"
+                  onClick={() => window.open('/admin/discount', '_blank')}
+                >
+                  Handvirkir kóðar
                 </Button>
               </Box>
             </Box>

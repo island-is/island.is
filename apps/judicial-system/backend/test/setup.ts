@@ -1,4 +1,6 @@
-jest.setTimeout(20000)
+import { uuid } from 'uuidv4'
+
+jest.setTimeout(60000)
 
 jest.mock('pdfkit', function () {
   class MockPDFDocument {
@@ -68,9 +70,8 @@ jest.mock('stream-buffers', function () {
     on(_: any, fn: () => void) {
       fn()
     }
-    getContentsAsString() {
-      return ''
-    }
+    getContentsAsString = jest.fn(() => uuid())
+    getContents = jest.fn(() => Buffer.from(uuid()))
   }
 
   return {

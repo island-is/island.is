@@ -3,8 +3,9 @@ export enum ApiModuleActions {
 }
 
 export enum States {
+  PREREQUISITES = 'prerequisites',
   DRAFT = 'draft',
-  APPROVED = 'approved',
+  DONE = 'done',
 }
 
 export enum Roles {

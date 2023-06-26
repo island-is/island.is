@@ -3,13 +3,28 @@ import format from 'date-fns/format'
 
 import { Message } from '@island.is/email-service'
 
-import type { Period } from '@island.is/application/templates/parental-leave'
-import { EmailTemplateGenerator } from '../../../../types'
+import {
+  getApplicationAnswers,
+  Period,
+  NO,
+} from '@island.is/application/templates/parental-leave'
+import { EmailTemplateGeneratorProps } from '../../../../types'
 import { pathToAsset } from '../parental-leave.utils'
 import { dateFormat } from '@island.is/shared/constants'
 
+export type EmployerRejectedToEmployerEmail = (
+  props: EmailTemplateGeneratorProps,
+  senderName?: string,
+  senderEmail?: string,
+) => Message
+
+type EmailToType = {
+  name: string
+  address: string
+}
+
 // TODO handle translations
-export const generateApplicationApprovedByEmployerToEmployerEmail: EmailTemplateGenerator = (
+export const generateApplicationApprovedByEmployerToEmployerEmail: EmployerRejectedToEmployerEmail = (
   props,
 ): Message => {
   const {
@@ -17,23 +32,37 @@ export const generateApplicationApprovedByEmployerToEmployerEmail: EmailTemplate
     options: { email },
   } = props
 
-  const employerEmail = get(application.answers, 'employer.email') as string
+  const { employers } = getApplicationAnswers(application.answers)
+  const employersArray: EmailToType[] = []
+
+  employers?.forEach((e) => {
+    if (e.stillEmployed === NO) {
+      return
+    }
+    employersArray.push({
+      name: '',
+      address: e.email,
+    })
+  })
+
   const periods = (get(application.answers, 'periods') as unknown) as Period[]
 
   const emailSubject = `Samþykkt umsókn um fæðingarorlof (kt. ${application.applicant}) - Vinsamlegast áframsendið til launadeildar`
   const subject = `Þú samþykktir umsókn um fæðingarorlof`
+
+  const periodStartFromDateOfBirth =
+    periods.length && periods[0]?.firstPeriodStart === 'actualDateOfBirth'
+
+  const actualDateOfBirthCopy = periodStartFromDateOfBirth
+    ? 'Athugið að þetta er áætlaður upphafsdagur fæðingarorlofstímabilsins. Þetta gæti breyst eftir raunverulegum fæðingardegi.'
+    : ''
 
   return {
     from: {
       name: email.sender,
       address: email.address,
     },
-    to: [
-      {
-        name: '',
-        address: employerEmail,
-      },
-    ],
+    to: employersArray,
     subject: emailSubject,
     template: {
       title: subject,
@@ -72,14 +101,31 @@ export const generateApplicationApprovedByEmployerToEmployerEmail: EmailTemplate
           component: 'Copy',
           context: {
             copy: periods
-              .map(
-                (period) =>
-                  `${format(
+              .map((period) => {
+                if (!period) return ''
+                if (period.firstPeriodStart === 'actualDateOfBirth') {
+                  return `${format(
                     new Date(period.startDate),
                     dateFormat.is,
-                  )} til ${format(new Date(period.endDate), dateFormat.is)}`,
-              )
+                  )} til ${format(new Date(period.endDate), dateFormat.is)}<br/>
+                  ( Fæðingadagur til ${format(
+                    new Date(period.endDate),
+                    dateFormat.is,
+                  )} )`
+                }
+
+                return `${format(
+                  new Date(period.startDate),
+                  dateFormat.is,
+                )} til ${format(new Date(period.endDate), dateFormat.is)}`
+              })
               .join('<br/>'),
+          },
+        },
+        {
+          component: 'Copy',
+          context: {
+            copy: actualDateOfBirthCopy,
           },
         },
         {

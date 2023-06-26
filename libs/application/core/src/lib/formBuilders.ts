@@ -1,5 +1,3 @@
-import { MessageDescriptor } from 'react-intl'
-
 import {
   Form,
   FormItemTypes,
@@ -10,7 +8,8 @@ import {
   SubSection,
   DataProviderItem,
   DataProviderPermissionItem,
-} from '../types/Form'
+  DataProviderBuilderItem,
+} from '@island.is/application/types'
 
 export function buildForm(data: Omit<Form, 'type'>): Form {
   return { ...data, type: FormItemTypes.FORM }
@@ -44,9 +43,16 @@ export function buildExternalDataProvider(
 }
 
 export function buildDataProviderItem(
-  data: DataProviderItem,
+  data: DataProviderBuilderItem,
 ): DataProviderItem {
-  return data
+  return {
+    id: data.provider?.externalDataId ?? data.provider?.action ?? '',
+    action: data.provider?.actionId,
+    order: data.provider?.order,
+    title: data.title,
+    subTitle: data.subTitle,
+    source: data.source,
+  }
 }
 
 export function buildDataProviderPermissionItem(

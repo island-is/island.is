@@ -81,11 +81,11 @@ export const FilterMultiChoice: FC<FilterMultiChoiceProps> = ({
   }
 
   const renderCategoryFilters = (category: FilterCategory) =>
-    category.filters.map((filter) =>
+    category.filters.map((filter, index) =>
       category.singleOption ? (
         <RadioButton
-          key={`${category.id}-${filter.value}`}
-          name={`${category.id}-${filter.value}`}
+          key={`${category.id}-${filter.value}-${index}`}
+          name={`${category.id}-${filter.value}-${index}`}
           label={filter.label}
           value={filter.value}
           checked={category.selected.includes(filter.value)}
@@ -93,8 +93,8 @@ export const FilterMultiChoice: FC<FilterMultiChoiceProps> = ({
         />
       ) : (
         <Checkbox
-          key={`${category.id}-${filter.value}`}
-          name={`${category.id}-${filter.value}`}
+          key={`${category.id}-${filter.value}-${index}`}
+          name={`${category.id}-${filter.value}-${index}`}
           label={filter.label}
           value={filter.value}
           checked={category.selected.includes(filter.value)}
@@ -140,9 +140,9 @@ export const FilterMultiChoice: FC<FilterMultiChoiceProps> = ({
         dividerOnTop={false}
         singleExpand={singleExpand}
       >
-        {categories.map((category) => (
+        {categories.map((category, index) => (
           <AccordionItem
-            key={category.id}
+            key={`${category.id}-${index}}`}
             id={category.id}
             label={category.label}
             labelUse="h5"

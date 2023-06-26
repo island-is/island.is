@@ -1,13 +1,13 @@
 import React, { FC } from 'react'
 import { complaint, info } from '../../lib/messages'
 import { DataProtectionComplaint } from '../../lib/dataSchema'
-import {
-  SectionHeading,
-  subjectOfComplaintValueLabelMapper,
-  ValueLine,
-} from './Shared'
+import { SectionHeading, ValueLine, ValueList } from './Shared'
 import { ComplaineeTable } from '../ComplaineeRepeater/ComplaineeTable'
-import { useLocale } from '@island.is/localization'
+import { FormatMessage, useLocale } from '@island.is/localization'
+import {
+  SubjectOfComplaint,
+  subjectOfComplaintValueLabelMapper,
+} from '../../shared'
 
 export const Applicant: FC<{ answers: DataProtectionComplaint }> = ({
   answers,
@@ -82,9 +82,9 @@ export const Commissions: FC<{ answers: DataProtectionComplaint }> = ({
 }) => (
   <>
     <SectionHeading title={info.general.commissionsPageTitle} />
-    <ValueLine
+    <ValueList
       label={info.labels.commissionDocuments}
-      value={answers.commissions.documents.map((x) => x.name).join(', ')}
+      list={answers.commissions.documents.map((x) => x.name)}
     />
     {answers.commissions.persons.map((person, index) => (
       <div key={index}>
@@ -108,6 +108,38 @@ export const Complainees: FC<{ answers: DataProtectionComplaint }> = ({
   </>
 )
 
+const GenerateComplaintList = (
+  answers: DataProtectionComplaint,
+  formatMessage: FormatMessage,
+) => {
+  if (
+    answers.subjectOfComplaint.values === undefined ||
+    answers.subjectOfComplaint?.values?.length === 0
+  ) {
+    return []
+  }
+  const complaintData = []
+  // Render it in the same order as shown on the application it self
+  for (const [key] of Object.entries(subjectOfComplaintValueLabelMapper)) {
+    // Check if the option was selected by the user
+    const selected = answers.subjectOfComplaint.values.find((x) => x === key)
+    if (!selected) continue
+
+    complaintData.push(
+      `${formatMessage(
+        subjectOfComplaintValueLabelMapper[
+          key as keyof typeof subjectOfComplaintValueLabelMapper
+        ],
+      )}${
+        key === SubjectOfComplaint.OTHER
+          ? `: ${answers.subjectOfComplaint.somethingElse}`
+          : ''
+      }`,
+    )
+  }
+  return complaintData
+}
+
 export const Complaint: FC<{ answers: DataProtectionComplaint }> = ({
   answers,
 }) => {
@@ -115,33 +147,20 @@ export const Complaint: FC<{ answers: DataProtectionComplaint }> = ({
   return (
     <>
       <SectionHeading title={complaint.general.complaintPageTitle} />
-      <ValueLine
-        label={complaint.general.subjectOfComplaintPageTitle}
-        value={
-          answers.subjectOfComplaint.values
-            ?.map((x) =>
-              formatMessage(
-                subjectOfComplaintValueLabelMapper[
-                  x as keyof typeof subjectOfComplaintValueLabelMapper
-                ],
-              ),
-            )
-            .join(', ') || ''
-        }
-      />
-      {answers.subjectOfComplaint.somethingElse && (
-        <ValueLine
-          label={complaint.labels.subjectOtherOther}
-          value={answers.subjectOfComplaint.somethingElse}
+      {answers.subjectOfComplaint.values &&
+      answers.subjectOfComplaint.values.length > 0 ? (
+        <ValueList
+          label={complaint.general.subjectOfComplaintPageTitle}
+          list={GenerateComplaintList(answers, formatMessage)}
         />
-      )}
+      ) : null}
       <ValueLine
         label={complaint.labels.complaintDescriptionLabel}
         value={answers.complaint.description}
       />
-      <ValueLine
+      <ValueList
         label={complaint.labels.complaintDocumentsTitle}
-        value={answers.complaint.documents.map((x) => x.name).join(', ')}
+        list={answers.complaint.documents.map((x) => x.name)}
       />
     </>
   )

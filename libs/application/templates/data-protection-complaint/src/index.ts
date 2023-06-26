@@ -1,9 +1,7 @@
 import DataProtectionComplaintTemplate from './lib/DataProtectionComplaintTemplate'
-
-export const getDataProviders = () => import('./dataProviders/')
+import { DataProtectionComplaint } from './lib/dataSchema'
+import * as appMessages from './lib/messages'
 export const getFields = () => import('./fields/')
-
-export default DataProtectionComplaintTemplate
 
 export {
   OnBehalf,
@@ -14,4 +12,9 @@ export {
   NO,
   yesNoValueLabelMapper,
 } from './shared'
-export { DataProtectionComplaint } from './lib/dataSchema'
+
+export const messages = appMessages
+
+export type DataProtectionComplaintAnswers = DataProtectionComplaint
+
+export default DataProtectionComplaintTemplate

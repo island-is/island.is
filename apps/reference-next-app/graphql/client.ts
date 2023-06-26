@@ -1,6 +1,4 @@
 import getConfig from 'next/config'
-import { BatchHttpLink } from 'apollo-link-batch-http'
-
 import fetch from 'cross-fetch'
 import {
   ApolloClient,
@@ -12,6 +10,7 @@ import { onError } from '@apollo/client/link/error'
 import { RetryLink } from '@apollo/client/link/retry'
 import { setContext } from '@apollo/client/link/context'
 
+const { publicRuntimeConfig, serverRuntimeConfig } = getConfig()
 const isBrowser: boolean = process.browser
 
 let apolloClient = null
@@ -23,8 +22,11 @@ if (!isBrowser) {
 }
 
 function create(initialState?: any) {
+  const { graphqlEndpoint: graphqlServerEndpoint } = serverRuntimeConfig
+  const { graphqlEndpoint: graphqlClientEndpoint } = publicRuntimeConfig
+  const graphqlEndpoint = graphqlServerEndpoint || graphqlClientEndpoint
   const httpLink = new HttpLink({
-    uri: 'http://localhost:4444/api/graphql',
+    uri: graphqlEndpoint,
     fetch,
   })
 

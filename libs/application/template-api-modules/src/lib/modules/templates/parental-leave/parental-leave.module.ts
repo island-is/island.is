@@ -12,6 +12,13 @@ import {
   ParentalLeaveService,
   APPLICATION_ATTACHMENT_BUCKET,
 } from './parental-leave.service'
+import { SmsModule } from '@island.is/nova-sms'
+import { ChildrenService } from './children/children.service'
+import { ApplicationApiCoreModule } from '@island.is/application/api/core'
+import {
+  NationalRegistryClientModule,
+  NationalRegistryClientService,
+} from '@island.is/clients/national-registry-v2'
 
 const XROAD_VMST_MEMBER_CODE = process.env.XROAD_VMST_MEMBER_CODE ?? ''
 const XROAD_VMST_API_PATH = process.env.XROAD_VMST_API_PATH ?? ''
@@ -34,9 +41,14 @@ export class ParentalLeaveModule {
           apiKey: XROAD_VMST_API_KEY,
         }),
         SharedTemplateAPIModule.register(config),
+        SmsModule.register(config.smsOptions),
+        ApplicationApiCoreModule,
+        NationalRegistryClientModule,
       ],
       providers: [
+        ChildrenService,
         ParentalLeaveService,
+        NationalRegistryClientService,
         {
           provide: APPLICATION_ATTACHMENT_BUCKET,
           useFactory: () => config.attachmentBucket,

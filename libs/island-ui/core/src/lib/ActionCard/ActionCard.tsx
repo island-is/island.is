@@ -1,14 +1,13 @@
 import * as React from 'react'
+
+import type { Colors } from '@island.is/island-ui/theme'
+
 import { Box } from '../Box/Box'
 import { Button, ButtonSizes, ButtonTypes } from '../Button/Button'
 import { Tag, TagVariant } from '../Tag/Tag'
 import { Text } from '../Text/Text'
 import { Tooltip } from '../Tooltip/Tooltip'
 import { Inline } from '../Inline/Inline'
-import {
-  ProgressMeter,
-  ProgressMeterVariant,
-} from '../ProgressMeter/ProgressMeter'
 import * as styles from './ActionCard.css'
 import { Hidden } from '../Hidden/Hidden'
 import { Icon as IconType } from '../IconRC/iconMap'
@@ -22,6 +21,7 @@ type ActionCardProps = {
   text?: string
   eyebrow?: string
   backgroundColor?: 'white' | 'blue' | 'red'
+  focused?: boolean
   tag?: {
     label: string
     variant?: TagVariant
@@ -29,9 +29,13 @@ type ActionCardProps = {
   }
   cta: {
     label: string
+    /** Allows for simple variant configuration of the button. If buttonType is defined it will supersede this property. */
     variant?: ButtonTypes['variant']
+    /** Allows for full buttonType control. Supersedes the variant property when both are defined. */
+    buttonType?: ButtonTypes
     size?: ButtonSizes
     icon?: IconType
+    iconType?: 'filled' | 'outline'
     onClick?: () => void
     disabled?: boolean
   }
@@ -42,11 +46,6 @@ type ActionCardProps = {
     icon?: IconType
     onClick?: () => void
     disabled?: boolean
-  }
-  progressMeter?: {
-    active?: boolean
-    variant?: ProgressMeterVariant
-    progress?: number
   }
   unavailable?: {
     active?: boolean
@@ -77,12 +76,6 @@ const defaultTag = {
   label: '',
 } as const
 
-const defaultProgressMeter = {
-  variant: 'blue',
-  active: false,
-  progress: 0,
-} as const
-
 const defaultUnavailable = {
   active: false,
   label: '',
@@ -111,21 +104,26 @@ export const ActionCard: React.FC<ActionCardProps> = ({
   secondaryCta,
   tag: _tag,
   unavailable: _unavailable,
-  progressMeter: _progressMeter,
   deleteButton: _delete,
   avatar,
+  focused = false,
 }) => {
   const cta = { ...defaultCta, ..._cta }
-  const progressMeter = { ...defaultProgressMeter, ..._progressMeter }
   const tag = { ...defaultTag, ..._tag }
   const unavailable = { ...defaultUnavailable, ..._unavailable }
   const deleteButton = { ...defaultDelete, ..._delete }
-  const bgr =
-    backgroundColor === 'white'
-      ? 'white'
-      : backgroundColor === 'red'
-      ? 'red100'
-      : 'blue100'
+  const backgroundMap: Record<typeof backgroundColor, Colors> = {
+    blue: 'blue100',
+    red: 'red100',
+    white: 'white',
+  }
+  const colorMap: Record<typeof backgroundColor, Colors> = {
+    blue: 'blue600',
+    red: 'red600',
+    white: 'currentColor',
+  }
+  const bgr = backgroundMap[backgroundColor]
+  const color = colorMap[backgroundColor]
 
   const renderAvatar = () => {
     if (!avatar) {
@@ -196,10 +194,19 @@ export const ActionCard: React.FC<ActionCardProps> = ({
         justifyContent={date ? 'spaceBetween' : 'flexEnd'}
         marginBottom={[0, 2]}
       >
-        <Box display="flex" flexDirection="row" alignItems="center">
-          <Text variant="small">{date}</Text>
+        <Box
+          display="flex"
+          flexDirection="row"
+          alignItems="center"
+          justifyContent="center"
+        >
+          <Box display="flex" marginRight={1} justifyContent="center">
+            <Icon icon="time" size="medium" type="outline" color="blue400" />
+          </Box>
+          <Box display="flex" justifyContent="center">
+            <Text variant="small">{date}</Text>
+          </Box>
         </Box>
-
         <Inline alignY="center" space={1}>
           {!eyebrow && renderTag()}
           {!eyebrow && renderDelete()}
@@ -231,6 +238,14 @@ export const ActionCard: React.FC<ActionCardProps> = ({
         title={deleteButton.dialogTitle}
         description={deleteButton.dialogDescription}
         ariaLabel="delete"
+        img={
+          <img
+            src={`assets/images/settings.svg`}
+            alt={'globe'}
+            style={{ float: 'right' }}
+            width="80%"
+          />
+        }
         disclosureElement={
           <Tag outlined={tag.outlined} variant={tag.variant}>
             <Box display="flex" flexDirection="row" alignItems="center">
@@ -246,15 +261,12 @@ export const ActionCard: React.FC<ActionCardProps> = ({
   }
 
   const renderDefault = () => {
-    const hasCTA = cta.label && !progressMeter.active
+    const hasCTA = !!cta.label
     const hasSecondaryCTA =
-      hasCTA &&
-      secondaryCta?.label &&
-      !progressMeter.active &&
-      secondaryCta?.visible
+      hasCTA && secondaryCta?.label && secondaryCta?.visible
 
     return (
-      !!hasCTA && (
+      hasCTA && (
         <Box
           paddingTop={tag.label ? 'gutter' : 0}
           display="flex"
@@ -275,13 +287,14 @@ export const ActionCard: React.FC<ActionCardProps> = ({
               </Button>
             </Box>
           )}
-          <Box>
+          <Box marginLeft={[0, 3]}>
             <Button
-              variant={cta.variant}
+              {...(cta.buttonType ?? { variant: cta.variant })}
               size="small"
               onClick={cta.onClick}
               disabled={cta.disabled}
               icon={cta.icon}
+              iconType={cta.iconType}
             >
               {cta.label}
             </Button>
@@ -291,45 +304,14 @@ export const ActionCard: React.FC<ActionCardProps> = ({
     )
   }
 
-  const renderProgressMeter = () => {
-    const { variant, progress } = progressMeter
-    const paddingWithDate = date ? 0 : 1
-    const alignWithDate = date ? 'flexEnd' : 'center'
-
-    return (
-      <Box
-        width="full"
-        paddingTop={[1, 1, 1, paddingWithDate]}
-        display="flex"
-        alignItems={['flexStart', 'flexStart', alignWithDate]}
-        flexDirection={['column', 'column', 'row']}
-      >
-        <ProgressMeter
-          variant={variant}
-          progress={progress}
-          className={styles.progressMeter}
-        />
-
-        <Box marginLeft={[0, 0, 'auto']} paddingTop={[2, 2, 0]}>
-          <Button
-            variant={cta.variant}
-            onClick={cta.onClick}
-            icon={cta.icon}
-            size={cta.size}
-          >
-            {cta.label}
-          </Button>
-        </Box>
-      </Box>
-    )
-  }
-
   return (
     <Box
       display="flex"
       flexDirection="column"
       borderColor={
-        backgroundColor === 'red'
+        focused
+          ? 'mint400'
+          : backgroundColor === 'red'
           ? 'red200'
           : backgroundColor === 'blue'
           ? 'blue100'
@@ -358,10 +340,7 @@ export const ActionCard: React.FC<ActionCardProps> = ({
               justifyContent="spaceBetween"
               alignItems={['flexStart', 'flexStart', 'flexEnd']}
             >
-              <Text
-                variant={headingVariant}
-                color={backgroundColor === 'blue' ? 'blue600' : 'currentColor'}
-              >
+              <Text variant={headingVariant} color={color}>
                 {heading}
               </Text>
               <Hidden above="xs">
@@ -370,24 +349,26 @@ export const ActionCard: React.FC<ActionCardProps> = ({
             </Box>
           )}
 
-          {text && <Text paddingTop={heading ? 1 : 0}>{text}</Text>}
+          {text && (
+            <Text color={color} paddingTop={heading ? 1 : 0}>
+              {text}
+            </Text>
+          )}
         </Box>
-
         <Box
           display="flex"
           alignItems={['flexStart', 'flexEnd']}
           flexDirection="column"
           flexShrink={0}
-          marginTop={[1, 0]}
+          marginTop={[1, 'auto']}
+          marginBottom={[0, 'auto']}
           marginLeft={[0, 'auto']}
-          className={progressMeter.active && tag ? styles.tag : styles.button}
+          className={styles.button}
         >
           <Hidden below="sm">{!date && !eyebrow && renderTag()}</Hidden>
           {unavailable.active ? renderDisabled() : renderDefault()}
         </Box>
       </Box>
-
-      {progressMeter.active && renderProgressMeter()}
     </Box>
   )
 }

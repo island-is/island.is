@@ -1,10 +1,8 @@
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import * as kennitala from 'kennitala'
-import {
-  ApplicationContext,
-  getValueViaPath,
-} from '@island.is/application/core'
-import { UploadFile } from '@island.is/island-ui/core'
+import { getValueViaPath } from '@island.is/application/core'
+import { ApplicationContext } from '@island.is/application/types'
+
 import {
   FamilyStatus,
   MartialStatusType,
@@ -19,6 +17,8 @@ import {
   OverrideAnswerSchema,
   UploadFileType,
 } from '..'
+import { UploadFile } from '@island.is/island-ui/core'
+import { ApplicationStates } from './constants'
 
 const emailRegex = /^[\w!#$%&'*+/=?`{|}~^-]+(?:\.[\w!#$%&'*+/=?`{|}~^-]+)*@(?:[A-Z0-9-]+\.)+[A-Z]{2,6}$/i
 export const isValidEmail = (value: string) => emailRegex.test(value)
@@ -40,8 +40,7 @@ export const hasSpouse = (
   answers: FAApplication['answers'],
   externalData: FAApplication['externalData'],
 ) => {
-  const nationalRegistrySpouse =
-    externalData.nationalRegistry?.data?.applicant?.spouse
+  const nationalRegistrySpouse = externalData.nationalRegistrySpouse.data
 
   const unregisteredCohabitation =
     answers?.relationshipStatus?.unregisteredCohabitation
@@ -57,9 +56,9 @@ export function isMuncipalityNotRegistered(context: ApplicationContext) {
 
   const municipality = getValueViaPath(
     externalData,
-    `nationalRegistry.data.municipality.`,
+    `municipality.data`,
   ) as Municipality | null
-  return municipality == null
+  return municipality == null || !municipality.active
 }
 
 export const encodeFilenames = (filename: string) =>
@@ -71,9 +70,11 @@ export function findFamilyStatus(
 ) {
   switch (true) {
     case martialStatusTypeFromMartialCode(
-      externalData.nationalRegistry?.data?.applicant?.spouse?.maritalStatus,
+      externalData.nationalRegistrySpouse.data?.maritalStatus,
     ) === MartialStatusType.MARRIED:
       return FamilyStatus.MARRIED
+    case externalData.nationalRegistrySpouse.data != null:
+      return FamilyStatus.COHABITATION
     case answers?.relationshipStatus?.unregisteredCohabitation ===
       ApproveOptions.Yes:
       return FamilyStatus.UNREGISTERED_COBAHITATION
@@ -84,11 +85,11 @@ export function findFamilyStatus(
 
 export function hasActiveCurrentApplication(context: ApplicationContext) {
   const { externalData } = context.application
-  const dataProvider = getValueViaPath(
+  const currentApplication = getValueViaPath(
     externalData,
-    'veita.data',
+    'currentApplication.data',
   ) as CurrentApplication
-  return !dataProvider.currentApplicationId
+  return currentApplication?.currentApplicationId != null
 }
 
 export const hasFiles = (
@@ -97,4 +98,11 @@ export const hasFiles = (
 ) => {
   const files = answers[fileType as keyof OverrideAnswerSchema] as UploadFile[]
   return files && files.length > 0
+}
+
+export const waitingForSpouse = (state: string) => {
+  return (
+    state === ApplicationStates.SPOUSE ||
+    state === ApplicationStates.PREREQUISITESSPOUSE
+  )
 }

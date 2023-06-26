@@ -6,6 +6,17 @@ export enum NotificationType {
   RULING = 'RULING',
   MODIFIED = 'MODIFIED',
   REVOKED = 'REVOKED',
+  DEFENDER_ASSIGNED = 'DEFENDER_ASSIGNED',
+  DEFENDANTS_NOT_UPDATED_AT_COURT = 'DEFENDANTS_NOT_UPDATED_AT_COURT',
+  APPEAL_TO_COURT_OF_APPEALS = 'APPEAL_TO_COURT_OF_APPEALS',
+  APPEAL_RECEIVED_BY_COURT = 'APPEAL_RECEIVED_BY_COURT',
+  APPEAL_STATEMENT = 'APPEAL_STATEMENT',
+  APPEAL_COMPLETED = 'APPEAL_COMPLETED',
+}
+
+export interface Recipient {
+  success: boolean
+  address?: string
 }
 
 export interface Notification {
@@ -13,7 +24,7 @@ export interface Notification {
   created: string
   caseId: string
   type: NotificationType
-  recipients?: string
+  recipients: Recipient[]
 }
 
 export interface SendNotification {

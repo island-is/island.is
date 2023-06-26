@@ -1,5 +1,6 @@
 import { style } from '@vanilla-extract/css'
 import { theme } from '@island.is/island-ui/theme'
+
 const { spacing, color, typography } = theme
 
 export const toggleSwitchLarge = style({})
@@ -63,11 +64,11 @@ export const knob = style({
   width: '5.5em',
   height: '3em',
   borderRadius: '1.5em',
-  color: color.blue400,
+  color: color.dark300,
 
   transition: 'all .1s linear',
-  border: `1px solid ${color.blue200}`,
-  backgroundColor: color.white,
+  border: `1px solid currentColor`,
+  backgroundColor: 'currentColor',
 
   order: 1,
   flexShrink: 0,
@@ -79,23 +80,39 @@ export const knob = style({
   alignItems: 'center',
 
   selectors: {
+    // Checked
+    [`${toggleSwitchChecked} > &`]: {
+      color: color.blue400,
+    },
+
+    // Large
     [`${toggleSwitchLarge} > &`]: {
       fontSize: spacing[2],
     },
-    [`${toggleSwitchChecked} > &`]: {
-      backgroundColor: 'currentColor',
+
+    // Hover
+    [`${toggleSwitch}:hover:not(${toggleSwitchDisabled}) > &`]: {
+      color: color.dark400,
     },
-    [`${toggleSwitch}:hover > &`]: {
+    [`${toggleSwitch}${toggleSwitchChecked}:hover:not(${toggleSwitchDisabled}) > &`]: {
       color: color.blueberry400,
-      borderColor: 'currentColor',
     },
+
+    // Focus
     [`${toggleSwitch}:focus > &, input[type="checkbox"]:focus + &`]: {
       outline: `3px solid ${color.mint400}`,
       borderColor: 'transparent',
     },
 
+    // Disabled
     [`${toggleSwitchDisabled} > &`]: {
-      color: color.blue200,
+      backgroundColor: color.white,
+      borderColor: color.dark200,
+    },
+    [`${toggleSwitchDisabled}${toggleSwitchChecked} > &`]: {
+      color: color.blue300,
+      backgroundColor: 'currentColor',
+      borderColor: 'currentColor',
     },
 
     '&::before': {
@@ -104,12 +121,20 @@ export const knob = style({
       height: '2em',
       flexShrink: 0,
       borderRadius: '1em',
-      backgroundColor: 'currentColor',
-      transition: 'margin-left 250ms ease-in-out',
+      backgroundColor: color.white,
+      transition:
+        'margin-left 250ms ease-in-out, background-color 250ms ease-in-out',
     },
     [`${toggleSwitchChecked} > &::before`]: {
       backgroundColor: color.white,
       marginLeft: 'calc(2.5em - 1px)',
+    },
+
+    [`${toggleSwitchDisabled} > &::before`]: {
+      backgroundColor: color.dark300,
+    },
+    [`${toggleSwitchDisabled}${toggleSwitchChecked} > &::before`]: {
+      backgroundColor: color.white,
     },
   },
 })

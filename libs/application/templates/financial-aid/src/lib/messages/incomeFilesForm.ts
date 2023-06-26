@@ -18,5 +18,13 @@ export const incomeFilesForm = {
         'Við þurfum að sjá gögn um tekjur í þessum og síðustu tvo mánuði. Þú getur smellt mynd af launaseðlum eða öðrum tekjugögnum, nálgast gögn í heimabankanum eða hjá þeirri stofnun sem þú fékkst tekjur frá.',
       description: 'Income files form description',
     },
+    descriptionTaxSuccess: {
+      id:
+        'fa.application:section.incomeFilesForm.general.descriptionTaxSuccess',
+      defaultMessage:
+        'Við þurfum að sjá gögn um tekjur í síðasta mánuði. Þú getur smellt mynd af launaseðlum eða öðrum tekjugögnum, nálgast gögn í heimabankanum eða hjá þeirri stofnun sem þú fékkst tekjur frá.',
+      description:
+        'Income files form description when fetching the direct tax payments was success',
+    },
   }),
 }

@@ -5,4 +5,8 @@ bootstrap({
   name: 'air-discount-scheme',
   appDir: 'apps/air-discount-scheme/web',
   proxyConfig,
+  externalEndpointDependencies: (nextConfig) => {
+    const { graphqlEndpoint, apiUrl } = nextConfig.serverRuntimeConfig
+    return [graphqlEndpoint, apiUrl]
+  },
 })

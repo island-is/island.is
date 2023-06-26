@@ -1,4 +1,4 @@
-import { ApplicationConfigurations } from '@island.is/application/core'
+import { ApplicationConfigurations } from '@island.is/application/types'
 import { AccidentNotificationAnswers } from '@island.is/application/templates/accident-notification'
 import { SendMailOptions } from 'nodemailer'
 import { EmailTemplateGeneratorProps } from '../../../../types'

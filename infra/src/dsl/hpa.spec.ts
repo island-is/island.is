@@ -1,12 +1,13 @@
 import { service } from './dsl'
-import { UberChart } from './uber-chart'
-import { MissingSetting } from './types/input-types'
-import { serializeService } from './map-to-values'
-import { SerializeErrors, SerializeSuccess } from './types/output-types'
+import { Kubernetes } from './kubernetes-runtime'
+import { SerializeSuccess, HelmService } from './types/output-types'
 import { EnvironmentConfig } from './types/charts'
+import { renderers } from './upstream-dependencies'
+import { generateOutputOne } from './processing/rendering-pipeline'
 
 const Staging: EnvironmentConfig = {
   auroraHost: 'a',
+  redisHost: 'b',
   domain: 'staging01.devland.is',
   type: 'staging',
   featuresOn: [],
@@ -19,46 +20,50 @@ const Staging: EnvironmentConfig = {
 }
 
 describe('HPA definitions', () => {
-  it('Support classic replicaCount definition', () => {
+  it('Support classic replicaCount definition', async () => {
     const sut = service('api')
-    const result = serializeService(
-      sut,
-      new UberChart(Staging),
-    ) as SerializeSuccess
+    const result = (await generateOutputOne({
+      outputFormat: renderers.helm,
+      service: sut,
+      runtime: new Kubernetes(Staging),
+      env: Staging,
+    })) as SerializeSuccess<HelmService>
 
-    expect(result.serviceDef.replicaCount).toEqual({
+    expect(result.serviceDef[0].replicaCount).toEqual({
       min: 2,
       max: 3,
       default: 2,
     })
-    expect(result.serviceDef.hpa).toEqual({
+    expect(result.serviceDef[0].hpa).toEqual({
       scaling: {
         replicas: {
           min: 2,
           max: 3,
         },
-        metric: { cpuAverageUtilization: 70, nginxRequestsIrate: 2 },
+        metric: { cpuAverageUtilization: 70, nginxRequestsIrate: 5 },
       },
     })
   })
-  it('Support explicit HPA definition', () => {
+  it('Support explicit HPA definition', async () => {
     const sut = service('api').replicaCount({
       min: 1,
       max: 2,
       default: 2,
       scalingMagicNumber: 5,
     })
-    const result = serializeService(
-      sut,
-      new UberChart(Staging),
-    ) as SerializeSuccess
+    const result = (await generateOutputOne({
+      outputFormat: renderers.helm,
+      service: sut,
+      runtime: new Kubernetes(Staging),
+      env: Staging,
+    })) as SerializeSuccess<HelmService>
 
-    expect(result.serviceDef.replicaCount).toEqual({
+    expect(result.serviceDef[0].replicaCount).toEqual({
       min: 1,
       max: 2,
       default: 2,
     })
-    expect(result.serviceDef.hpa).toEqual({
+    expect(result.serviceDef[0].hpa).toEqual({
       scaling: {
         replicas: {
           min: 1,

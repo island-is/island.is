@@ -2,6 +2,7 @@ import { Routes } from '../../types'
 
 export default {
   admin: '/admin',
+  adminCreateDiscount: '/admin/discount',
   auth: '/authorize',
   error: '/error',
   home: '/',

@@ -23,14 +23,20 @@ export class CreateRecyclingPartnerInput {
   @Field()
   city!: string
 
-  @Field()
-  website!: string
+  @Field({ nullable: true })
+  website?: string
 
   @Field()
   phone!: string
 
   @Field()
   active!: boolean
+
+  @Field()
+  nationalId!: string
+
+  @Field()
+  email?: string
 }
 
 @InputType()
@@ -50,12 +56,18 @@ export class UpdateRecyclingPartnerInput {
   @Field()
   city!: string
 
-  @Field()
-  website!: string
+  @Field({ nullable: true })
+  website?: string
 
   @Field()
   phone!: string
 
   @Field()
   active!: boolean
+
+  @Field()
+  nationalId!: string
+
+  @Field()
+  email?: string
 }

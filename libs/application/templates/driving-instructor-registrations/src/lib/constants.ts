@@ -1,4 +1,4 @@
-import { DefaultEvents } from '@island.is/application/core'
+import { DefaultEvents } from '@island.is/application/types'
 
 export type Events = { type: DefaultEvents.SUBMIT }
 
@@ -15,6 +15,8 @@ export const NO = 'no'
 export enum ApiActions {
   submitApplication = 'submitApplication',
 }
+
+export const minutesSelection = [30, 45, 60, 90]
 
 export const minutesOfDriving = [
   {

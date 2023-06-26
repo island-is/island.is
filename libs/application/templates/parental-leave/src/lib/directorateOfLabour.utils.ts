@@ -4,14 +4,13 @@ import differenceInDays from 'date-fns/differenceInDays'
 import isSameMonth from 'date-fns/isSameMonth'
 import getDaysInMonth from 'date-fns/getDaysInMonth'
 import addDays from 'date-fns/addDays'
-import addMonths from 'date-fns/addMonths'
 import isSameDay from 'date-fns/isSameDay'
+import { errorMessages } from './messages'
 import {
   ParentalLeave,
-  ParentalLeaveEntitlement,
-  ParentalLeavePeriod,
-} from '@island.is/api/domains/directorate-of-labour'
-import { errorMessages } from './messages'
+  Right as ParentalLeaveEntitlement,
+  Period as ParentalLeavePeriod,
+} from '@island.is/clients/vmst'
 
 // VMST rule for the number of days in each month of the year
 export const DAYS_IN_MONTH = 30
@@ -178,19 +177,7 @@ export const calculatePeriodLength = (
     let costOfMonth = 0
 
     if (dateAtEndOfIteration.getDate() === daysInMonth) {
-      /* Scenarios:
-          13.feb - 28 feb
-          13.mar - 31.mar
-          13.mar - 02.apr
-      */
-      if (
-        dayOfMonth !== 1 &&
-        addMonths(end, -1).getMonth() === start.getMonth()
-      ) {
-        costOfMonth = daysInMonth - dayOfMonth + 1
-      } else {
-        costOfMonth = 30 - dayOfMonth + 1
-      }
+      costOfMonth = 30 - dayOfMonth + 1
     } else {
       costOfMonth = end.getDate() - dayOfMonth + 1
     }

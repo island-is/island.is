@@ -67,13 +67,21 @@ To get started developing this project, go ahead and:
 1. Fetch the environment secrets:
 
 ```bash
-yarn get-secrets air-discount-scheme --reset
+yarn get-secrets air-discount-scheme-api
+yarn get-secrets air-discount-scheme-backend
+yarn get-secrets air-discount-scheme-web
 ```
 
-2. Start the resources with docker-compose:
+2. Start the resources with docker-compose and migrate/seed the database:
 
 ```bash
 docker-compose -f apps/air-discount-scheme/backend/docker-compose.yml up
+```
+
+```bash
+yarn nx run air-discount-scheme-backend:migrate
+
+yarn nx run air-discount-scheme-backend:seed
 ```
 
 3. Start the front end:

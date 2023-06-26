@@ -1,4 +1,9 @@
-import { CaseAppealDecision, Gender } from '@island.is/judicial-system/types'
+import {
+  CaseAppealDecision,
+  Gender,
+  IndictmentSubtype,
+  IndictmentSubtypeMap,
+} from '@island.is/judicial-system/types'
 
 import * as Constants from '@island.is/judicial-system/consts'
 
@@ -8,6 +13,12 @@ import {
   formatGender,
   formatAppeal,
   formatNationalId,
+  formatDOB,
+  formatPhoneNumber,
+  displayFirstPlusRemaining,
+  splitStringByComma,
+  readableIndictmentSubtypes,
+  indictmentSubtypes,
 } from './formatters'
 
 describe('formatDate', () => {
@@ -45,6 +56,30 @@ describe('formatDate', () => {
 
     // Assert
     expect(formattedDate).toEqual('fimmtud. 10. september 2020')
+  })
+})
+
+describe('formatPhoneNumber', () => {
+  test('should format a phonenumber that does not have a hyphen', () => {
+    // Arrange
+    const phoneNumber = '1234567'
+
+    // Act
+    const formattedPhoneNumber = formatPhoneNumber(phoneNumber)
+
+    // Assert
+    expect(formattedPhoneNumber).toEqual('123-4567')
+  })
+
+  test('should format a phonenumber that does have a hyphen', () => {
+    // Arrange
+    const phoneNumber = '123-4567'
+
+    // Act
+    const formattedPhoneNumber = formatPhoneNumber(phoneNumber)
+
+    // Assert
+    expect(formattedPhoneNumber).toEqual('123-4567')
   })
 })
 
@@ -181,5 +216,139 @@ describe('formatNationalId', () => {
 
     // Assert
     expect(res).toBe('ekki skráð')
+  })
+})
+
+describe('formatDOB', () => {
+  it('should format a national id string for a valid national id', () => {
+    // Arrange
+    const nationalId = '1234567890'
+    const noNationalId = false
+
+    // Act
+    const res = formatDOB(nationalId, noNationalId)
+
+    // Assert
+    expect(res).toBe('kt. 123456-7890')
+  })
+
+  it('should format a date of birth string when "does not have a national id" parameter is set', () => {
+    // Arrange
+    const nationalId = '12.12.2000'
+    const noNationalId = true
+
+    // Act
+    const res = formatDOB(nationalId, noNationalId)
+
+    // Assert
+    expect(res).toBe('fd. 12.12.2000')
+  })
+
+  it('should return a "-" character when nationalId is not set', () => {
+    // Arrange
+    const nationalId = undefined
+    const noNationalId = true
+
+    // Act
+    const res = formatDOB(nationalId, noNationalId)
+
+    // Assert
+    expect(res).toBe('-')
+  })
+})
+
+describe('displayFirstPlusRemaining', () => {
+  test('should handle undefined', () => {
+    expect(displayFirstPlusRemaining(undefined)).toBe('')
+  })
+
+  test('should handle empty list', () => {
+    expect(displayFirstPlusRemaining([])).toBe('')
+  })
+
+  test('should handle list with single entry', () => {
+    expect(displayFirstPlusRemaining(['apple'])).toBe('apple')
+  })
+
+  test('should return first element plus how many are left in the list', () => {
+    expect(displayFirstPlusRemaining(['apple', 'pear', 'orange'])).toBe(
+      'apple +2',
+    )
+  })
+})
+
+describe('splitStringByComma', () => {
+  test('should handle "apple" as input', () => {
+    expect(splitStringByComma('apple')).toEqual(['apple'])
+  })
+
+  test.each(['apple, pear', 'apple pear', 'apple,pear'])(
+    'should handle "%s" as input',
+    (input) => {
+      const result = splitStringByComma(input)
+
+      expect(result).toHaveLength(2)
+      expect(result).toEqual(['apple', 'pear'])
+    },
+  )
+  test.each(['apple, pear, orange', 'apple pear orange'])(
+    'should handle %s as input',
+    (input) => {
+      const result = splitStringByComma(input)
+
+      expect(result).toHaveLength(3)
+      expect(result).toEqual(['apple', 'pear', 'orange'])
+    },
+  )
+})
+
+describe('readableIndictmentSubtypes', () => {
+  test('should return an empty list if no policeCaseNumber is provided', () => {
+    const policeCaseNumbers: string[] = []
+    const rawIndictmentSubtypes: IndictmentSubtypeMap = {
+      '220-2020-202': [IndictmentSubtype.MAJOR_ASSAULT],
+    }
+
+    expect(
+      readableIndictmentSubtypes(policeCaseNumbers, rawIndictmentSubtypes),
+    ).toEqual([])
+  })
+
+  test('should return an empty list if rawIndictmentSubtype is not provided', () => {
+    const policeCaseNumbers: string[] = ['220-2020-202']
+    const rawIndictmentSubtypes = undefined
+
+    expect(
+      readableIndictmentSubtypes(policeCaseNumbers, rawIndictmentSubtypes),
+    ).toEqual([])
+  })
+
+  test('should return a array of readable indictment subtypes if policeCaseNumbers and rawIndictmentSubtypes are provided', () => {
+    const policeCaseNumbers: string[] = ['220-2020-202']
+    const rawIndictmentSubtypes: IndictmentSubtypeMap = {
+      '220-2020-202': [IndictmentSubtype.RAPE, IndictmentSubtype.THEFT],
+    }
+
+    expect(
+      readableIndictmentSubtypes(policeCaseNumbers, rawIndictmentSubtypes),
+    ).toEqual([
+      indictmentSubtypes[IndictmentSubtype.RAPE],
+      indictmentSubtypes[IndictmentSubtype.THEFT],
+    ])
+  })
+
+  test('should remove duplicates from indictment subtypes', () => {
+    const policeCaseNumbers: string[] = ['220-2020-202', '220-2020-203']
+    const rawIndictmentSubtypes: IndictmentSubtypeMap = {
+      '220-2020-202': [IndictmentSubtype.RAPE, IndictmentSubtype.THEFT],
+      '220-2020-203': [IndictmentSubtype.RAPE, IndictmentSubtype.THEFT],
+    }
+
+    expect(
+      readableIndictmentSubtypes(policeCaseNumbers, rawIndictmentSubtypes),
+    ).toEqual([
+      indictmentSubtypes[IndictmentSubtype.RAPE],
+      indictmentSubtypes[IndictmentSubtype.THEFT],
+    ])
   })
 })

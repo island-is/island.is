@@ -4,15 +4,32 @@
     "plugin:jsx-a11y/strict",
     "../../../.eslintrc.json"
   ],
-  "ignorePatterns": ["!**/*"],
-  "rules": {},
+  "ignorePatterns": ["!**/*", "/src/graphql/schema.tsx"],
+  "rules": {
+    "@nrwl/nx/enforce-module-boundaries": [
+      "error",
+      {
+        "enforceBuildableLibDependency": true,
+        "allowCircularSelfDependency": true,
+        "allow": [],
+        "depConstraints": [
+          { "sourceTag": "*", "onlyDependOnLibsWithTags": ["*"] }
+        ]
+      }
+    ],
+    "jsx-a11y/no-autofocus": [
+      2,
+      {
+        "ignoreNonDOM": true
+      }
+    ]
+  },
   "plugins": ["jsx-a11y"],
   "overrides": [
+    { "files": ["*.ts", "*.tsx", "*.js", "*.jsx"], "rules": {} },
     {
       "files": ["*.spec.ts", "*.spec.tsx"],
-      "rules": {
-        "@typescript-eslint/no-var-requires": "off"
-      }
+      "rules": { "@typescript-eslint/no-var-requires": "off" }
     }
   ]
 }

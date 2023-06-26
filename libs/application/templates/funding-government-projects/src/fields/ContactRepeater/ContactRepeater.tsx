@@ -1,4 +1,4 @@
-import { FieldBaseProps } from '@island.is/application/core'
+import { FieldBaseProps } from '@island.is/application/types'
 import { Box, Button, Text } from '@island.is/island-ui/core'
 import React, { FC, useEffect } from 'react'
 import { useLocale } from '@island.is/localization'
@@ -19,7 +19,7 @@ export const ContactRepeater: FC<FieldBaseProps> = ({
 }) => {
   const { formatMessage } = useLocale()
   const { id } = field
-  const { fields, append, remove } = useFieldArray<ContactField>({
+  const { fields, append, remove } = useFieldArray({
     name: id,
   })
 
@@ -63,21 +63,17 @@ export const ContactRepeater: FC<FieldBaseProps> = ({
         )
       })}
       {fields.length < 2 && (
-        <>
-          <Box marginY={3}>
-            <Button
-              variant="ghost"
-              icon="add"
-              iconType="outline"
-              size="small"
-              onClick={handleAddContact}
-            >
-              {formatMessage(
-                informationAboutInstitution.labels.contactAddPerson,
-              )}
-            </Button>
-          </Box>
-        </>
+        <Box marginY={3}>
+          <Button
+            variant="ghost"
+            icon="add"
+            iconType="outline"
+            size="small"
+            onClick={handleAddContact}
+          >
+            {formatMessage(informationAboutInstitution.labels.contactAddPerson)}
+          </Button>
+        </Box>
       )}
     </Box>
   )

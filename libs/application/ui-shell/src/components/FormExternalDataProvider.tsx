@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import { useMutation } from '@apollo/client'
 import { Controller, useFormContext } from 'react-hook-form'
 import Markdown from 'markdown-to-jsx'
@@ -8,101 +8,119 @@ import {
   Box,
   Checkbox,
   Icon,
-  InputError,
   Text,
 } from '@island.is/island-ui/core'
 import {
+  getValueViaPath,
+  coreMessages,
+  getErrorReasonIfPresent,
+  formatText,
+} from '@island.is/application/core'
+import {
+  Application,
   DataProviderItem,
   DataProviderPermissionItem,
   DataProviderResult,
   ExternalData,
+  FormText,
   FormValue,
-  getValueViaPath,
-  coreMessages,
   RecordObject,
   SetBeforeSubmitCallback,
-  coreErrorMessages,
-  StaticText,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 import { UPDATE_APPLICATION_EXTERNAL_DATA } from '@island.is/application/graphql'
 import { useLocale } from '@island.is/localization'
 
 import { ExternalDataProviderScreen } from '../types'
 import { verifyExternalData } from '../utils'
 
-const ItemHeader: React.FC<{ title: StaticText; subTitle?: StaticText }> = ({
-  title,
-  subTitle,
-}) => {
+import { handleServerError } from '@island.is/application/ui-components'
+import { ProviderErrorReason } from '@island.is/shared/problem'
+
+const ItemHeader: React.FC<{
+  title: FormText
+  subTitle?: FormText
+  application: Application
+}> = ({ title, subTitle, application }) => {
   const { formatMessage } = useLocale()
 
   return (
     <>
       <Text variant="h4" color="blue400">
-        {formatMessage(title)}
+        {formatText(title, application, formatMessage)}
       </Text>
 
       {subTitle && (
         <Text>
-          <Markdown>{formatMessage(subTitle)}</Markdown>
+          <Markdown>
+            {formatText(subTitle, application, formatMessage)}
+          </Markdown>
         </Text>
       )}
     </>
   )
 }
 
-const isTranslationObject = (reason?: StaticText) => {
-  if (typeof reason !== 'object') {
-    return false
-  }
-
-  return reason.id !== undefined
-}
-
 const ProviderItem: FC<{
   dataProviderResult: DataProviderResult
   provider: DataProviderItem
   suppressProviderError: boolean
-}> = ({ dataProviderResult = {}, provider, suppressProviderError }) => {
+  application: Application
+}> = ({ dataProviderResult, provider, suppressProviderError, application }) => {
+  const [reasons, setReasons] = useState<ProviderErrorReason[]>([])
   const { title, subTitle } = provider
   const { formatMessage } = useLocale()
-
   const showError =
-    provider.type &&
+    provider.id &&
     dataProviderResult?.status === 'failure' &&
     !suppressProviderError
 
+  const errorCode = dataProviderResult?.statusCode ?? 500
+  const errorType = errorCode < 500 ? 'warning' : 'error'
+
+  useEffect(() => {
+    if (dataProviderResult?.reason) {
+      if (Array.isArray(dataProviderResult.reason)) {
+        setReasons(dataProviderResult.reason)
+      } else {
+        setReasons([dataProviderResult.reason as ProviderErrorReason])
+      }
+    }
+  }, [dataProviderResult?.reason, setReasons])
+
+  const getAlertMessage = (reason: ProviderErrorReason) => {
+    const { title: errorTitle, summary } = getErrorReasonIfPresent(reason)
+    return (
+      <AlertMessage
+        type={errorType}
+        title={formatMessage(errorTitle)}
+        message={formatMessage(summary)}
+      />
+    )
+  }
+
   return (
     <Box marginBottom={3}>
-      <ItemHeader title={title} subTitle={subTitle} />
+      <ItemHeader application={application} title={title} subTitle={subTitle} />
 
-      {showError && (
-        <Box marginTop={2}>
-          <AlertMessage
-            type="error"
-            title={formatMessage(coreErrorMessages.errorDataProvider)}
-            message={
-              isTranslationObject(dataProviderResult?.reason)
-                ? formatMessage(dataProviderResult.reason!)
-                : typeof dataProviderResult?.reason === 'string'
-                ? dataProviderResult.reason
-                : formatMessage(coreErrorMessages.failedDataProvider)
-            }
-          />
-        </Box>
-      )}
+      {showError &&
+        reasons.map((reason, index) => (
+          <Box key={`dataprovider-error-${index}-${reason}`} marginTop={2}>
+            {getAlertMessage(reason)}
+          </Box>
+        ))}
     </Box>
   )
 }
 
 const PermissionItem: FC<{
   permission: DataProviderPermissionItem
-}> = ({ permission }) => {
+  application: Application
+}> = ({ permission, application }) => {
   const { title, subTitle } = permission
 
   return (
     <Box marginBottom={3}>
-      <ItemHeader title={title} subTitle={subTitle} />
+      <ItemHeader application={application} title={title} subTitle={subTitle} />
     </Box>
   )
 }
@@ -119,6 +137,7 @@ const getExternalDataFromResponse = (
 ) => responseData?.updateApplicationExternalData?.externalData
 
 const FormExternalDataProvider: FC<{
+  application: Application
   applicationId: string
   addExternalData(data: ExternalData): void
   setBeforeSubmitCallback: SetBeforeSubmitCallback
@@ -129,6 +148,7 @@ const FormExternalDataProvider: FC<{
 }> = ({
   addExternalData,
   setBeforeSubmitCallback,
+  application,
   applicationId,
   externalData,
   externalDataProvider,
@@ -141,6 +161,9 @@ const FormExternalDataProvider: FC<{
     onCompleted(responseData: UpdateApplicationExternalDataResponse) {
       addExternalData(getExternalDataFromResponse(responseData))
     },
+    onError: (e) => {
+      return handleServerError(e, formatMessage)
+    },
   })
 
   const {
@@ -151,7 +174,7 @@ const FormExternalDataProvider: FC<{
     description,
     checkboxLabel,
   } = externalDataProvider
-  const relevantDataProviders = dataProviders.filter((p) => p.type)
+  const relevantDataProviders = dataProviders.filter((p) => p.action)
 
   const [suppressProviderErrors, setSuppressProviderErrors] = useState(true)
 
@@ -167,17 +190,18 @@ const FormExternalDataProvider: FC<{
           variables: {
             input: {
               id: applicationId,
-              dataProviders: relevantDataProviders.map(({ id, type }) => ({
-                id,
-                type,
+              dataProviders: relevantDataProviders.map(({ action, order }) => ({
+                actionId: action,
+                order,
               })),
             },
             locale,
           },
         })
-        setSuppressProviderErrors(false)
 
+        setSuppressProviderErrors(false)
         if (
+          response &&
           response.data &&
           verifyExternalData(
             getExternalDataFromResponse(response.data),
@@ -187,7 +211,7 @@ const FormExternalDataProvider: FC<{
           return [true, null]
         }
 
-        return [false, formatMessage(coreErrorMessages.failedDataProvider)]
+        return [false, '']
       })
     } else {
       setBeforeSubmitCallback(null)
@@ -217,6 +241,7 @@ const FormExternalDataProvider: FC<{
       <Box marginBottom={5}>
         {dataProviders.map((provider) => (
           <ProviderItem
+            application={application}
             provider={provider}
             key={provider.id}
             suppressProviderError={suppressProviderErrors}
@@ -225,41 +250,42 @@ const FormExternalDataProvider: FC<{
         ))}
         {otherPermissions &&
           otherPermissions.map((permission) => (
-            <PermissionItem permission={permission} key={permission.id} />
+            <PermissionItem
+              application={application}
+              permission={permission}
+              key={permission.id}
+            />
           ))}
       </Box>
       <Controller
         name={`${id}`}
         defaultValue={getValueViaPath(formValue, id as string, false)}
         rules={{ required: true }}
-        render={({ value, onChange }) => {
+        render={({ field: { onChange, value } }) => {
           return (
-            <>
-              <Checkbox
-                large={true}
-                onChange={(e) => {
-                  const isChecked = e.target.checked
-                  clearErrors(id)
-                  setValue(id as string, isChecked)
-                  onChange(isChecked)
-                  activateBeforeSubmitCallback(isChecked)
-                }}
-                checked={value}
-                hasError={error !== undefined}
-                backgroundColor="blue"
-                name={`${id}`}
-                label={
-                  <Markdown>
-                    {checkboxLabel
-                      ? formatMessage(checkboxLabel)
-                      : formatMessage(coreMessages.externalDataAgreement)}
-                  </Markdown>
-                }
-                value={id}
-              />
-
-              {error !== undefined && <InputError errorMessage={error} />}
-            </>
+            <Checkbox
+              large={true}
+              onChange={(e) => {
+                const isChecked = e.target.checked
+                clearErrors(id)
+                setValue(id as string, isChecked)
+                onChange(isChecked)
+                activateBeforeSubmitCallback(isChecked)
+              }}
+              checked={value}
+              hasError={error !== undefined}
+              backgroundColor="blue"
+              dataTestId="agree-to-data-providers"
+              name={`${id}`}
+              label={
+                <Markdown>
+                  {checkboxLabel
+                    ? formatMessage(checkboxLabel)
+                    : formatMessage(coreMessages.externalDataAgreement)}
+                </Markdown>
+              }
+              value={id}
+            />
           )
         }}
       />

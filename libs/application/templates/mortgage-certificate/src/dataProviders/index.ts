@@ -1,4 +1,17 @@
-export { NationalRegistryProvider } from '@island.is/application/data-providers'
-export { UserProfileProvider } from '@island.is/application/data-providers'
-export { FeeInfoProvider } from './FeeInfoProvider'
-export { NationalRegistryRealEstateProvider } from './NationalRegistryRealEstateProvider'
+import {
+  InstitutionNationalIds,
+  PaymentCatalogApi,
+} from '@island.is/application/types'
+
+export {
+  IdentityApi,
+  UserProfileApi,
+  NationalRegistryRealEstateApi,
+} from '@island.is/application/types'
+
+export const SyslumadurPaymentCatalogApi = PaymentCatalogApi.configure({
+  params: {
+    organizationId: InstitutionNationalIds.SYSLUMENN,
+  },
+  externalDataId: 'payment',
+})

@@ -1,22 +1,25 @@
 import {
   buildForm,
-  buildDescriptionField,
   buildMultiField,
   buildSection,
   buildSubmitField,
-  Form,
-  FormModes,
   buildExternalDataProvider,
   buildDataProviderItem,
   buildCustomField,
-  DefaultEvents,
 } from '@island.is/application/core'
+import { Form, FormModes, DefaultEvents } from '@island.is/application/types'
 import { m } from '../lib/messages'
+import {
+  NationalRegistryUserApi,
+  UserProfileApi,
+  SyslumadurPaymentCatalogApi,
+  CriminalRecordApi,
+} from '../dataProviders'
 
 export const CriminalRecordForm: Form = buildForm({
   id: 'CriminalRecordFormDraft',
   title: '',
-  mode: FormModes.APPLYING,
+  mode: FormModes.DRAFT,
   renderLastScreenButton: true,
   children: [
     buildSection({
@@ -30,26 +33,22 @@ export const CriminalRecordForm: Form = buildForm({
           checkboxLabel: m.externalDataAgreement,
           dataProviders: [
             buildDataProviderItem({
-              id: 'nationalRegistry',
-              type: 'NationalRegistryProvider',
+              provider: NationalRegistryUserApi,
               title: m.nationalRegistryTitle,
               subTitle: m.nationalRegistrySubTitle,
             }),
             buildDataProviderItem({
-              id: 'userProfile',
-              type: 'UserProfileProvider',
+              provider: UserProfileApi,
               title: m.userProfileInformationTitle,
               subTitle: m.userProfileInformationSubTitle,
             }),
             buildDataProviderItem({
-              id: 'criminalRecord',
-              type: 'CriminalRecordProvider',
+              provider: CriminalRecordApi,
               title: m.criminalRecordInformationTitle,
               subTitle: m.criminalRecordInformationSubTitle,
             }),
             buildDataProviderItem({
-              id: 'payment',
-              type: 'FeeInfoProvider',
+              provider: SyslumadurPaymentCatalogApi,
               title: '',
             }),
           ],
@@ -68,7 +67,7 @@ export const CriminalRecordForm: Form = buildForm({
             buildCustomField({
               id: 'payment.over',
               title: '',
-              component: 'OverviewPaymentCharge',
+              component: 'PaymentChargeOverview',
             }),
             buildSubmitField({
               id: 'submit',

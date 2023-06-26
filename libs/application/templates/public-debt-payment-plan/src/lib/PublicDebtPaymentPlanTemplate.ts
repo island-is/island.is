@@ -1,16 +1,24 @@
 import {
+  coreHistoryMessages,
+  EphemeralStateLifeCycle,
+} from '@island.is/application/core'
+import {
   Application,
-  ApplicationConfigurations,
   ApplicationContext,
   ApplicationRole,
   ApplicationStateSchema,
   ApplicationTemplate,
   ApplicationTypes,
   DefaultEvents,
-  EphemeralStateLifeCycle,
-} from '@island.is/application/core'
+  ApplicationConfigurations,
+  defineTemplateApi,
+  UserProfileApi,
+  IdentityApi,
+} from '@island.is/application/types'
+import { PaymentPlanPrerequisitesApi } from '../dataProviders'
 import { PublicDebtPaymentPlanSchema } from './dataSchema'
-import { application } from './messages'
+import { application, conclusion } from './messages'
+import { AuthDelegationType } from 'delegation'
 
 const States = {
   draft: 'draft',
@@ -39,7 +47,7 @@ const PublicDebtPaymentPlanTemplate: ApplicationTemplate<
   type: ApplicationTypes.PUBLIC_DEBT_PAYMENT_PLAN,
   name: application.name,
   institution: application.institutionName,
-  readyForProduction: true,
+  allowedDelegations: [{ type: AuthDelegationType.ProcurationHolder }],
   translationNamespaces: [
     ApplicationConfigurations.PublicDebtPaymentPlan.translation,
   ],
@@ -49,13 +57,19 @@ const PublicDebtPaymentPlanTemplate: ApplicationTemplate<
     states: {
       [States.prerequisites]: {
         meta: {
+          status: 'draft',
           name: States.prerequisites,
           actionCard: {
             title: application.name,
             description: application.description,
+            historyLogs: {
+              logMessage: coreHistoryMessages.applicationStarted,
+              onEvent: DefaultEvents.SUBMIT,
+            },
           },
           progress: 0.5,
           lifecycle: EphemeralStateLifeCycle,
+
           roles: [
             {
               id: Roles.APPLICANT,
@@ -71,6 +85,8 @@ const PublicDebtPaymentPlanTemplate: ApplicationTemplate<
                 },
               ],
               write: 'all',
+              api: [IdentityApi, UserProfileApi, PaymentPlanPrerequisitesApi],
+              delete: true,
             },
           ],
         },
@@ -81,9 +97,20 @@ const PublicDebtPaymentPlanTemplate: ApplicationTemplate<
       [States.draft]: {
         meta: {
           name: States.draft,
+          status: 'draft',
           actionCard: {
             title: application.name,
             description: application.description,
+            historyLogs: [
+              {
+                logMessage: coreHistoryMessages.applicationSent,
+                onEvent: DefaultEvents.SUBMIT,
+              },
+              {
+                logMessage: coreHistoryMessages.applicationAborted,
+                onEvent: DefaultEvents.ABORT,
+              },
+            ],
           },
           progress: 0.5,
           // Application is only suppose to live for an hour
@@ -103,6 +130,7 @@ const PublicDebtPaymentPlanTemplate: ApplicationTemplate<
                 { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
               ],
               write: 'all',
+              delete: true,
             },
           ],
         },
@@ -118,13 +146,14 @@ const PublicDebtPaymentPlanTemplate: ApplicationTemplate<
       [States.closed]: {
         meta: {
           name: States.closed,
+          status: 'completed',
           actionCard: {
             title: application.name,
             description: application.description,
           },
           progress: 1,
           lifecycle: {
-            shouldBeListed: true,
+            shouldBeListed: false,
             shouldBePruned: true,
             whenToPrune: 0,
           },
@@ -133,13 +162,18 @@ const PublicDebtPaymentPlanTemplate: ApplicationTemplate<
       [States.submitted]: {
         meta: {
           name: States.submitted,
+          status: 'completed',
           actionCard: {
             title: application.name,
-            description: application.description,
+            pendingAction: {
+              title: conclusion.general.alertTitle,
+              content: conclusion.general.alertMessage,
+              displayStatus: 'success',
+            },
           },
-          onEntry: {
-            apiModuleAction: API_MODULE_ACTIONS.sendApplication,
-          },
+          onEntry: defineTemplateApi({
+            action: API_MODULE_ACTIONS.sendApplication,
+          }),
           progress: 1,
           lifecycle: {
             shouldBeListed: true,

@@ -1,12 +1,19 @@
 import { service } from './dsl'
-import { UberChart } from './uber-chart'
-import { serializeService } from './map-to-values'
-import { SerializeErrors, SerializeSuccess } from './types/output-types'
+import { Kubernetes } from './kubernetes-runtime'
+import {
+  SerializeErrors,
+  SerializeSuccess,
+  HelmService,
+} from './types/output-types'
 import { EnvironmentConfig } from './types/charts'
 import { MissingSetting } from './types/input-types'
+import { FeatureNames } from './features'
+import { renderers } from './upstream-dependencies'
+import { generateOutputOne } from './processing/rendering-pipeline'
 
 const Staging: EnvironmentConfig = {
   auroraHost: 'a',
+  redisHost: 'b',
   domain: 'staging01.devland.is',
   type: 'staging',
   featuresOn: [],
@@ -19,6 +26,7 @@ const Staging: EnvironmentConfig = {
 }
 const Prod: EnvironmentConfig = {
   auroraHost: 'a',
+  redisHost: 'b',
   domain: 'staging01.devland.is',
   type: 'prod',
   featuresOn: [],
@@ -38,7 +46,7 @@ describe('Server-side toggles', () => {
       B: 'A',
     })
     .features({
-      'do-not-remove-for-testing-only': {
+      [FeatureNames.testing]: {
         env: {
           A: {
             dev: 'B1',
@@ -52,7 +60,7 @@ describe('Server-side toggles', () => {
     .initContainer({
       containers: [{ command: 'go' }],
       features: {
-        'do-not-remove-for-testing-only': {
+        [FeatureNames.testing]: {
           env: {
             C: 'D',
           },
@@ -62,57 +70,69 @@ describe('Server-side toggles', () => {
         },
       },
     })
-  const stagingWithFeatures = serializeService(
-    sut,
-    new UberChart({
+  let stagingWithFeatures: SerializeSuccess<HelmService>
+  let stagingNoFeatures: SerializeSuccess<HelmService>
+  beforeEach(async () => {
+    const envWithFeature = {
       ...Staging,
-      featuresOn: ['do-not-remove-for-testing-only'],
-    }),
-  ) as SerializeSuccess
-  const stagingNoFeatures = serializeService(
-    sut,
-    new UberChart(Staging),
-  ) as SerializeSuccess
-
+      featuresOn: [FeatureNames.testing],
+    }
+    stagingWithFeatures = (await generateOutputOne({
+      outputFormat: renderers.helm,
+      service: sut,
+      runtime: new Kubernetes(envWithFeature),
+      env: envWithFeature,
+    })) as SerializeSuccess<HelmService>
+    stagingNoFeatures = (await generateOutputOne({
+      outputFormat: renderers.helm,
+      service: sut,
+      runtime: new Kubernetes(Staging),
+      env: Staging,
+    })) as SerializeSuccess<HelmService>
+  })
   it('env variables present when feature toggled', () => {
-    expect(stagingWithFeatures.serviceDef.env!['A']).toBe('B')
+    expect(stagingWithFeatures.serviceDef[0].env!['A']).toBe('B')
   })
 
   it('should be added to the ON list', () => {
-    expect(stagingWithFeatures.serviceDef.env!['SERVERSIDE_FEATURES_ON']).toBe(
-      'do-not-remove-for-testing-only',
-    )
+    expect(
+      stagingWithFeatures.serviceDef[0].env!['SERVERSIDE_FEATURES_ON'],
+    ).toBe('do-not-remove-for-testing-only')
   })
 
   it('should have ON list emtpy when nothing is toggled', () => {
-    expect(stagingNoFeatures.serviceDef.env!['SERVERSIDE_FEATURES_ON']).toBe('')
+    expect(stagingNoFeatures.serviceDef[0].env!['SERVERSIDE_FEATURES_ON']).toBe(
+      '',
+    )
   })
 
   it('env variables missing when feature not toggled', () => {
-    expect(stagingNoFeatures.serviceDef.env!['A']).toBeUndefined()
+    expect(stagingNoFeatures.serviceDef[0].env!['A']).toBeUndefined()
   })
 
   it('secret present when feature toggled', () => {
-    expect(stagingWithFeatures.serviceDef.secrets!['KEY']).toBe('/k8s/secret')
+    expect(stagingWithFeatures.serviceDef[0].secrets!['KEY']).toBe(
+      '/k8s/secret',
+    )
   })
 
   it('secret missing when feature not toggled', () => {
-    expect(stagingNoFeatures.serviceDef.secrets!['KEY']).toBeUndefined()
+    expect(stagingNoFeatures.serviceDef[0].secrets!['KEY']).toBeUndefined()
   })
 
   it('should have initcontainer env variables present when feature toggled', () => {
-    expect(stagingWithFeatures.serviceDef.initContainer!.env!['C']).toBe('D')
+    expect(stagingWithFeatures.serviceDef[0].initContainer!.env!['C']).toBe('D')
   })
 
   it('should have initcontainer secret present when feature toggled', () => {
-    expect(stagingWithFeatures.serviceDef.initContainer!.secrets!['INIT']).toBe(
-      '/a/b/c',
-    )
+    expect(
+      stagingWithFeatures.serviceDef[0].initContainer!.secrets!['INIT'],
+    ).toBe('/a/b/c')
   })
 
   it('should be added to the ON list for the init container', () => {
     expect(
-      stagingWithFeatures.serviceDef.initContainer!.env![
+      stagingWithFeatures.serviceDef[0].initContainer!.env![
         'SERVERSIDE_FEATURES_ON'
       ],
     ).toBe('do-not-remove-for-testing-only')
@@ -120,25 +140,33 @@ describe('Server-side toggles', () => {
 
   it('should have ON list for the init container emtpy when nothing is toggled', () => {
     expect(
-      stagingNoFeatures.serviceDef.initContainer!.env![
+      stagingNoFeatures.serviceDef[0].initContainer!.env![
         'SERVERSIDE_FEATURES_ON'
       ],
     ).toBe('')
   })
 
   describe('Missing envs variables for the target environment', () => {
-    const prod = serializeService(
-      sut,
-      new UberChart({
+    let prod: SerializeErrors
+    let prodNoFeature: SerializeSuccess<HelmService>
+    beforeEach(async () => {
+      const prodWithFeatureOn = {
         ...Prod,
-        featuresOn: ['do-not-remove-for-testing-only'],
-      }),
-    ) as SerializeErrors
-    const prodNoFeature = serializeService(
-      sut,
-      new UberChart(Prod),
-    ) as SerializeSuccess
-
+        featuresOn: [FeatureNames.testing],
+      }
+      prod = (await generateOutputOne({
+        outputFormat: renderers.helm,
+        service: sut,
+        runtime: new Kubernetes(prodWithFeatureOn),
+        env: prodWithFeatureOn,
+      })) as SerializeErrors
+      prodNoFeature = (await generateOutputOne({
+        outputFormat: renderers.helm,
+        service: sut,
+        runtime: new Kubernetes(Prod),
+        env: Prod,
+      })) as SerializeSuccess<HelmService>
+    })
     it('should result in serialization errors when feature is turned on', () => {
       expect(prod.errors).toStrictEqual([
         'Missing settings for service api in env prod. Keys of missing settings: A',
@@ -180,23 +208,31 @@ describe('Server-side toggles', () => {
           },
         },
       })
-    const prod = serializeService(
-      sut,
-      new UberChart({
+    let prod: SerializeErrors
+    let prodNoFeature: SerializeSuccess<HelmService>
+    beforeEach(async () => {
+      const prodWithFeatureOn = {
         ...Prod,
-        featuresOn: ['do-not-remove-for-testing-only'],
-      }),
-    ) as SerializeErrors
-    const prodNoFeature = serializeService(
-      sut,
-      new UberChart(Prod),
-    ) as SerializeSuccess
-
+        featuresOn: [FeatureNames.testing],
+      }
+      prod = (await generateOutputOne({
+        outputFormat: renderers.helm,
+        service: sut,
+        runtime: new Kubernetes(prodWithFeatureOn),
+        env: prodWithFeatureOn,
+      })) as SerializeErrors
+      prodNoFeature = (await generateOutputOne({
+        outputFormat: renderers.helm,
+        service: sut,
+        runtime: new Kubernetes(Prod),
+        env: Prod,
+      })) as SerializeSuccess<HelmService>
+    })
     it('should result in serialization errors when feature is turned on', () => {
       expect(prod.errors).toStrictEqual([
         'Missing settings for service api in env prod. Keys of missing settings: B',
-        'Collisions for environment or secrets for key C',
-        'Collisions for environment or secrets for key B',
+        'Collisions in api for environment or secrets for key C',
+        'Collisions in api for environment or secrets for key B',
       ])
     })
     it('should not affect serialization when feature is not turned on', () => {

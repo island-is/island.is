@@ -1,10 +1,10 @@
 import {
-  Application,
   buildCustomField,
   buildMultiField,
   buildSubSection,
   getValueViaPath,
 } from '@island.is/application/core'
+import { Application } from '@island.is/application/types'
 import { m } from '../../lib/messages'
 
 export const sectionExistingApplication = buildSubSection({

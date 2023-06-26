@@ -33,6 +33,7 @@ import { UploadPoliceCaseFileDto } from './dto/uploadPoliceCaseFile.dto'
 import { PoliceCaseFile } from './models/policeCaseFile.model'
 import { UploadPoliceCaseFileResponse } from './models/uploadPoliceCaseFile.response'
 import { PoliceService } from './police.service'
+import { PoliceCaseInfo } from './models/policeCaseInfo.model'
 
 @UseGuards(
   JwtAuthGuard,
@@ -68,6 +69,24 @@ export class PoliceController {
   }
 
   @RolesRules(prosecutorRule)
+  @UseInterceptors(CaseOriginalAncestorInterceptor)
+  @Get('policeCaseInfo')
+  @ApiOkResponse({
+    type: [PoliceCaseInfo],
+    isArray: true,
+    description: 'Gets info for a police case',
+  })
+  getPoliceCaseInfo(
+    @Param('caseId') caseId: string,
+    @CurrentHttpUser() user: User,
+    @CurrentCase() theCase: Case,
+  ): Promise<PoliceCaseInfo[]> {
+    this.logger.debug(`Getting info for police case ${caseId}`)
+
+    return this.policeService.getPoliceCaseInfo(theCase.id, user)
+  }
+
+  @RolesRules(prosecutorRule)
   @Post('policeFile')
   @ApiOkResponse({
     type: UploadPoliceCaseFileResponse,
@@ -77,6 +96,7 @@ export class PoliceController {
     @Param('caseId') caseId: string,
     @CurrentHttpUser() user: User,
     @Body() uploadPoliceCaseFile: UploadPoliceCaseFileDto,
+    @CurrentCase() theCase: Case,
   ): Promise<UploadPoliceCaseFileResponse> {
     this.logger.debug(
       `Uploading police file ${uploadPoliceCaseFile.id} of case ${caseId} to AWS S3`,
@@ -84,6 +104,7 @@ export class PoliceController {
 
     return this.policeService.uploadPoliceCaseFile(
       caseId,
+      theCase.type,
       uploadPoliceCaseFile,
       user,
     )

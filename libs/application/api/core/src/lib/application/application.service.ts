@@ -1,13 +1,14 @@
 import { Injectable, NotFoundException } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import { Op, WhereOptions, Sequelize } from 'sequelize'
+import { Op, WhereOptions } from 'sequelize'
+import { Sequelize } from 'sequelize-typescript'
 import {
   ExternalData,
   FormValue,
   ApplicationStatus,
-} from '@island.is/application/core'
+  ApplicationLifecycle,
+} from '@island.is/application/types'
 import { Application } from './application.model'
-import { ApplicationLifecycle } from '@island.is/application/core'
 
 const applicationIsNotSetToBePruned = () => ({
   [Op.or]: [
@@ -93,10 +94,30 @@ export class ApplicationService {
     })
   }
 
+  async findByApplicantActor(
+    id: string,
+    nationalId?: string,
+  ): Promise<Application | null> {
+    return this.applicationModel.findOne({
+      where: {
+        id,
+        ...(nationalId
+          ? {
+              [Op.or]: [
+                { applicant: nationalId },
+                { applicantActors: { [Op.contains]: [nationalId] } },
+              ],
+            }
+          : {}),
+      },
+    })
+  }
+
   async findAllByNationalIdAndFilters(
     nationalId: string,
     typeId?: string,
     status?: string,
+    actor?: string,
   ): Promise<Application[]> {
     const typeIds = typeId?.split(',')
     const statuses = status?.split(',')
@@ -108,8 +129,13 @@ export class ApplicationService {
         [Op.and]: [
           {
             [Op.or]: [
-              { applicant: nationalId },
-              { assignees: { [Op.contains]: [nationalId] } },
+              ...(actor
+                ? [
+                    { applicant: nationalId },
+                    { applicantActors: { [Op.contains]: [actor] } },
+                  ]
+                : [{ applicant: { [Op.eq]: nationalId } }]),
+              ...[{ assignees: { [Op.contains]: [nationalId] } }],
             ],
           },
           applicationIsNotSetToBePruned(),
@@ -123,10 +149,10 @@ export class ApplicationService {
   }
 
   async findAllDueToBePruned(): Promise<
-    Pick<Application, 'id' | 'attachments'>[]
+    Pick<Application, 'id' | 'attachments' | 'typeId' | 'state'>[]
   > {
     return this.applicationModel.findAll({
-      attributes: ['id', 'attachments'],
+      attributes: ['id', 'attachments', 'typeId', 'state'],
       where: {
         [Op.and]: {
           pruneAt: {
@@ -186,7 +212,16 @@ export class ApplicationService {
   async update(
     id: string,
     application: Partial<
-      Pick<Application, 'attachments' | 'answers' | 'externalData' | 'pruned'>
+      Pick<
+        Application,
+        | 'attachments'
+        | 'answers'
+        | 'externalData'
+        | 'pruned'
+        | 'applicantActors'
+        | 'draftTotalSteps'
+        | 'draftFinishedSteps'
+      >
     >,
   ) {
     const [

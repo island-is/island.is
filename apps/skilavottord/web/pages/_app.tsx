@@ -8,21 +8,31 @@ import getConfig from 'next/config'
 import { Provider } from 'next-auth/client'
 
 import { ApolloProvider } from '@apollo/client'
-import * as Sentry from '@sentry/node'
 import get from 'lodash/get'
 
-import { withHealthchecks } from '../units/Healthchecks/withHealthchecks'
 import { client as initApollo } from '../graphql'
 import { AppLayout } from '../components/Layouts'
 import { appWithTranslation } from '../i18n'
+import { userMonitoring } from '@island.is/user-monitoring'
 
 const {
-  publicRuntimeConfig: { SENTRY_DSN },
+  publicRuntimeConfig: {
+    ddRumApplicationId,
+    ddRumClientToken,
+    appVersion,
+    environment,
+  },
 } = getConfig()
 
-Sentry.init({
-  dsn: SENTRY_DSN,
-})
+if (ddRumApplicationId && ddRumClientToken && typeof window !== 'undefined') {
+  userMonitoring.initDdRum({
+    service: 'skilavottord',
+    applicationId: ddRumApplicationId,
+    clientToken: ddRumClientToken,
+    env: environment,
+    version: appVersion,
+  })
+}
 
 class Skilavottord extends App<AppProps> {
   static async getInitialProps(appContext: any) {
@@ -52,26 +62,6 @@ class Skilavottord extends App<AppProps> {
   render() {
     const { Component, pageProps, router } = this.props
 
-    Sentry.configureScope((scope) => {
-      scope.setExtra('lang', this.getLanguage(router.pathname))
-      scope.setContext('router', {
-        route: router.route,
-        pathname: router.pathname,
-        query: router.query,
-        asPath: router.asPath,
-      })
-    })
-
-    Sentry.addBreadcrumb({
-      category: 'pages/_app',
-      message: `Rendering app for Component "${get(
-        Component,
-        'name',
-        'unknown',
-      )}" (${process.browser ? 'browser' : 'server'})`,
-      level: Sentry.Severity.Debug,
-    })
-
     return (
       <Provider
         session={pageProps.session}
@@ -87,9 +77,4 @@ class Skilavottord extends App<AppProps> {
   }
 }
 
-const { serverRuntimeConfig } = getConfig()
-const { graphqlEndpoint } = serverRuntimeConfig
-
-export default appWithTranslation(
-  withHealthchecks([graphqlEndpoint])(Skilavottord),
-)
+export default appWithTranslation(Skilavottord)

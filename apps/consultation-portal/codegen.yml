@@ -1,0 +1,21 @@
+schema:
+  - apps/api/src/api.graphql
+documents: apps/consultation-portal/**/*.graphql.ts
+generates:
+  apps/consultation-portal/graphql/schema.ts:
+    preset: 'near-operation-file'
+    presetConfig:
+      baseTypesPath: '~@island.is/api/schema'
+    plugins:
+      - typescript-operations
+      - typescript-react-apollo
+    config:
+      exportFragmentSpreadSubTypes: true
+      scalars:
+        DateTime: Date
+        JSON: '{ [key: string]: any }'
+      namingConvention:
+        typeNames: change-case#pascalCase
+hooks:
+  afterAllFileWrite:
+    - prettier --write

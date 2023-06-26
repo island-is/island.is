@@ -1,3 +1,3 @@
-import { StepThree } from '@island.is/judicial-system-web/src/routes/Prosecutor/RestrictionCase/StepThree/StepThree'
+import { PoliceDemands } from '@island.is/judicial-system-web/src/routes/Prosecutor/RestrictionCase/PoliceDemands/PoliceDemands'
 
-export default StepThree
+export default PoliceDemands

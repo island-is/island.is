@@ -5,11 +5,11 @@ export class Eligibility {
   @Field(() => ID)
   name!: string
 
-  @Field(() => String)
-  issued!: string
+  @Field(() => Date)
+  issued!: Date
 
-  @Field(() => String)
-  expires!: string
+  @Field(() => Date)
+  expires!: Date
 
   @Field(() => String)
   comment!: string

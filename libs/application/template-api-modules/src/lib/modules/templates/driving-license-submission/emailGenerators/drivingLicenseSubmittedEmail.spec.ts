@@ -2,12 +2,10 @@ import type { User } from '@island.is/auth-nest-tools'
 import {
   ApplicationStatus,
   ApplicationTypes,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
+import { createApplication } from '@island.is/application/testing'
 import { Message } from '@island.is/email-service'
-import {
-  createApplication,
-  createCurrentUser,
-} from '@island.is/testing/fixtures'
+import { createCurrentUser } from '@island.is/testing/fixtures'
 import { faker } from '@island.is/shared/mocking'
 
 import { generateDrivingLicenseSubmittedEmail } from './drivingLicenseSubmittedEmail'
@@ -31,6 +29,7 @@ const application = createApplication({
   },
   applicant: user.nationalId,
   assignees: [],
+  applicantActors: [],
   attachments: {},
   created: new Date(),
   modified: new Date(),

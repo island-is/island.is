@@ -39,7 +39,7 @@ function reduceCustodyProvisions(custody_provisions) {
 }
 
 module.exports = {
-  up: async (queryInterface, Sequelize) => {
+  up: async (queryInterface) => {
     return queryInterface.sequelize.transaction((t) =>
       queryInterface.sequelize
         .query(
@@ -88,7 +88,7 @@ module.exports = {
     )
   },
 
-  down: async (queryInterface, Sequelize) => {
+  down: async () => {
     // There is no easy way back
     return
   },

@@ -19,6 +19,7 @@ import {
   UpdateApplicationTableResponse,
   SpouseResponse,
   FilterApplicationsResponse,
+  SpouseEmailResponse,
 } from './models'
 
 import {
@@ -31,6 +32,7 @@ import {
   UpdateApplicationDto,
   CreateApplicationEventDto,
   FilterApplicationsDto,
+  SpouseEmailDto,
 } from './dto'
 
 import {
@@ -85,14 +87,23 @@ export class ApplicationController {
   })
   async getCurrentApplication(@CurrentUser() user: User): Promise<string> {
     this.logger.debug('Application controller: Getting current application')
-    const currentApplicationId = await this.applicationService.getCurrentApplicationId(
-      user.nationalId,
-    )
+
+    let currentApplicationId
+    try {
+      currentApplicationId = await this.applicationService.getCurrentApplicationId(
+        user.nationalId,
+      )
+    } catch (e) {
+      this.logger.error(
+        'Application controller: Failed getting current application',
+        e,
+      )
+      throw e
+    }
 
     if (currentApplicationId === null) {
       throw new NotFoundException(404, 'Current application not found')
     }
-
     return currentApplicationId
   }
 
@@ -370,5 +381,22 @@ export class ApplicationController {
   ): Promise<FilterApplicationsResponse> {
     this.logger.debug('Application controller: Filter applications')
     return this.applicationService.filter(filters, staff.municipalityIds)
+  }
+
+  @Scopes(
+    MunicipalitiesFinancialAidScope.read,
+    MunicipalitiesFinancialAidScope.applicant,
+  )
+  @Post('sendSpouseEmail')
+  @ApiOkResponse({
+    type: SpouseEmailResponse,
+    description:
+      'Sends email to applicant and spouse to inform that the application is waiting for the spouse',
+  })
+  async sendSpouseEmail(
+    @Body() data: SpouseEmailDto,
+  ): Promise<SpouseEmailResponse> {
+    this.logger.debug('Application controller: sending spouse email')
+    return this.applicationService.sendSpouseEmail(data)
   }
 }

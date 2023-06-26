@@ -31,7 +31,8 @@ const SkilavottordRecyclingPartnerQuery = gql`
     skilavottordRecyclingPartner(input: $input) {
       companyId
       companyName
-      active
+      nationalId
+      email
       address
       postnumber
       city
@@ -49,7 +50,8 @@ const UpdateSkilavottordRecyclingPartnerMutation = gql`
     updateSkilavottordRecyclingPartner(input: $input) {
       companyId
       companyName
-      active
+      nationalId
+      email
       address
       postnumber
       city
@@ -90,7 +92,12 @@ const RecyclingCompanyUpdate: FC = () => {
     },
   )
 
-  const { control, errors, reset, handleSubmit } = useForm({
+  const {
+    control,
+    reset,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
     mode: 'onChange',
   })
   const {

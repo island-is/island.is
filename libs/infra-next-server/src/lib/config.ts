@@ -1,5 +1,7 @@
+import { resolve } from 'path'
+
 /* eslint @typescript-eslint/no-var-requires: "off" */
-export const getNextConfig = (appDir: string, dev: boolean) => {
+export const getNextConfig = async (appDir: string, dev: boolean) => {
   const config = { dev }
 
   if (dev || process.env.API_MOCKS) {
@@ -16,10 +18,12 @@ export const getNextConfig = (appDir: string, dev: boolean) => {
     // UPGRADE WARNING: Calling @nrwl/next internals. Be sure to test.
     // Only needs context.workspaceRoot in v10.
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const conf = prepareConfig(
+    const conf = await prepareConfig(
       'phase-development-server',
       options,
       context as any,
+      [],
+      resolve('libs'),
     )
     Object.assign(config, { conf, dir: appDir })
   }

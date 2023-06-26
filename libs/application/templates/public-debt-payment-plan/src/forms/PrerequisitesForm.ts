@@ -4,22 +4,27 @@ import {
   buildForm,
   buildMultiField,
   buildSection,
-  Form,
-  FormModes,
   buildSubmitField,
   buildTextField,
   buildDescriptionField,
   buildSubSection,
   buildRadioField,
+  buildPhoneField,
 } from '@island.is/application/core'
-import { betaTestSection } from './BetaTestSection'
+import {
+  Form,
+  FormModes,
+  IdentityApi,
+  UserProfileApi,
+} from '@island.is/application/types'
 import { Logo } from '../assets'
-
 import { application, info, section, externalData } from '../lib/messages'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 import { NO, YES } from '../shared/constants'
 import { PaymentPlanExternalData } from '../types'
 import { Application } from '@island.is/api/schema'
+import { isApplicantCompany, isApplicantPerson } from '../lib/paymentPlanUtils'
+import { PaymentPlanPrerequisitesApi } from '../dataProviders'
 
 const shouldRenderMockDataSubSection = !isRunningOnEnvironment('production')
 
@@ -27,9 +32,8 @@ export const PrerequisitesForm: Form = buildForm({
   id: 'PrerequisitesForm',
   title: application.name,
   logo: Logo,
-  mode: FormModes.APPLYING,
+  mode: FormModes.NOT_STARTED,
   children: [
-    betaTestSection,
     buildSection({
       id: 'externalData',
       title: section.externalData,
@@ -67,26 +71,40 @@ export const PrerequisitesForm: Form = buildForm({
           checkboxLabel: externalData.general.checkboxLabel,
           dataProviders: [
             buildDataProviderItem({
-              id: 'nationalRegistry',
-              type: 'NationalRegistryProvider',
-              title: externalData.labels.nationalRegistryTitle,
-              subTitle: externalData.labels.nationalRegistrySubTitle,
+              provider: IdentityApi,
+              title: (formValue) =>
+                isApplicantCompany(formValue)
+                  ? externalData.companyLabels.companyRegistryTitle
+                  : externalData.labels.nationalRegistryTitle,
+              subTitle: (formValue) =>
+                isApplicantCompany(formValue)
+                  ? externalData.companyLabels.companyRegistrySubTitle
+                  : externalData.labels.nationalRegistrySubTitle,
             }),
             buildDataProviderItem({
-              id: 'userProfile',
-              type: 'UserProfileProvider',
-              title: externalData.labels.userProfileTitle,
-              subTitle: externalData.labels.userProfileSubTitle,
+              provider: UserProfileApi,
+              title: (formValue) =>
+                isApplicantPerson(formValue)
+                  ? externalData.labels.paymentPlanTitle
+                  : '',
+
+              subTitle: (formValue) =>
+                isApplicantPerson(formValue)
+                  ? externalData.labels.paymentPlanSubtitle
+                  : '',
             }),
             buildDataProviderItem({
-              id: 'paymentPlanPrerequisites',
-              title: externalData.labels.paymentPlanTitle,
-              type: 'PaymentPlanPrerequisitesProvider',
-              subTitle: externalData.labels.paymentPlanSubtitle,
+              provider: PaymentPlanPrerequisitesApi,
+              title: (formValue) =>
+                isApplicantCompany(formValue)
+                  ? externalData.companyLabels.companyTaxTitle
+                  : externalData.labels.userProfileTitle,
+              subTitle: (formValue) =>
+                isApplicantCompany(formValue)
+                  ? externalData.companyLabels.companyTaxSubTitle
+                  : externalData.labels.userProfileSubTitle,
             }),
             buildDataProviderItem({
-              id: 'additionalDataProviderMessage',
-              type: '',
               title: externalData.labels.paymentEmployerTitle,
               subTitle: externalData.labels.paymentEmployerSubtitle,
             }),
@@ -100,18 +118,28 @@ export const PrerequisitesForm: Form = buildForm({
       children: [
         buildMultiField({
           id: 'applicantSection',
-          title: info.general.pageTitle,
-          description: info.general.pageDescription,
+          title: (formValue) =>
+            isApplicantCompany(formValue)
+              ? info.general.companyPageTitle
+              : info.general.pageTitle,
+          description: (formValue) =>
+            isApplicantCompany(formValue)
+              ? info.general.companyPageDescription
+              : info.general.pageDescription,
           children: [
             buildTextField({
               id: 'applicant.name',
-              title: info.labels.name,
+              title: (formValue) =>
+                isApplicantCompany(formValue)
+                  ? info.labels.companyName
+                  : info.labels.name,
               backgroundColor: 'white',
-              required: true,
               disabled: true,
               defaultValue: (application: Application) => {
-                return (application.externalData as PaymentPlanExternalData)
-                  ?.nationalRegistry?.data?.fullName
+                return (
+                  (application.externalData as PaymentPlanExternalData)
+                    ?.identity?.data?.name ?? ''
+                )
               },
             }),
             buildTextField({
@@ -120,44 +148,40 @@ export const PrerequisitesForm: Form = buildForm({
               format: '######-####',
               width: 'half',
               backgroundColor: 'white',
-              required: true,
               disabled: true,
               defaultValue: (application: Application) =>
-                (application.externalData as PaymentPlanExternalData)
-                  ?.nationalRegistry?.data?.nationalId,
+                (application.externalData as PaymentPlanExternalData)?.identity
+                  ?.data?.nationalId ?? '',
             }),
             buildTextField({
               id: 'applicant.address',
               title: info.labels.address,
               width: 'half',
               backgroundColor: 'white',
-              required: true,
               disabled: true,
               defaultValue: (application: Application) =>
-                (application.externalData as PaymentPlanExternalData)
-                  ?.nationalRegistry?.data?.address?.streetAddress,
+                (application.externalData as PaymentPlanExternalData)?.identity
+                  ?.data?.address?.streetAddress ?? '',
             }),
             buildTextField({
               id: 'applicant.postalCode',
               title: info.labels.postalCode,
               width: 'half',
               backgroundColor: 'white',
-              required: true,
               disabled: true,
               defaultValue: (application: Application) =>
-                (application.externalData as PaymentPlanExternalData)
-                  ?.nationalRegistry?.data?.address?.postalCode,
+                (application.externalData as PaymentPlanExternalData)?.identity
+                  ?.data?.address?.postalCode ?? '',
             }),
             buildTextField({
               id: 'applicant.city',
               title: info.labels.city,
               width: 'half',
               backgroundColor: 'white',
-              required: true,
               disabled: true,
               defaultValue: (application: Application) =>
-                (application.externalData as PaymentPlanExternalData)
-                  ?.nationalRegistry?.data?.address?.city,
+                (application.externalData as PaymentPlanExternalData)?.identity
+                  ?.data?.address?.city ?? '',
             }),
             buildTextField({
               id: 'applicant.email',
@@ -170,17 +194,14 @@ export const PrerequisitesForm: Form = buildForm({
                 (application.externalData as PaymentPlanExternalData)
                   ?.userProfile?.data?.email,
             }),
-            buildTextField({
+            buildPhoneField({
               id: 'applicant.phoneNumber',
               title: info.labels.tel,
-              format: '###-####',
               width: 'half',
-              variant: 'tel',
               backgroundColor: 'blue',
-              required: true,
               defaultValue: (application: Application) =>
                 (application.externalData as PaymentPlanExternalData)
-                  ?.userProfile?.data?.mobilePhoneNumber,
+                  ?.userProfile?.data?.mobilePhoneNumber ?? '',
             }),
             buildSubmitField({
               id: 'toDraft',
@@ -207,11 +228,13 @@ export const PrerequisitesForm: Form = buildForm({
     buildSection({
       id: 'employer',
       title: section.employer,
+      condition: isApplicantPerson,
       children: [],
     }),
     buildSection({
       id: 'disposableIncome',
       title: section.disposableIncome,
+      condition: isApplicantPerson,
       children: [],
     }),
     buildSection({

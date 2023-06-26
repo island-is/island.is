@@ -1,5 +1,5 @@
 import gql from 'graphql-tag'
-import { nestedOneColumnTextFields, slices } from './fragments'
+import { nestedFields, nestedOneColumnTextFields, slices } from './fragments'
 
 export const GET_PROJECT_PAGE_QUERY = gql`
   query GetProjectPage($input: GetProjectPageInput!) {
@@ -10,6 +10,10 @@ export const GET_PROJECT_PAGE_QUERY = gql`
       theme
       sidebar
       featuredDescription
+      contentIsFullWidth
+      namespace {
+        fields
+      }
       sidebarLinks {
         primaryLink {
           text
@@ -20,10 +24,25 @@ export const GET_PROJECT_PAGE_QUERY = gql`
           url
         }
       }
+      footerItems {
+        title
+        content {
+          ...HtmlFields
+        }
+        link {
+          text
+          url
+        }
+      }
+      backLink {
+        text
+        url
+      }   
       subtitle
       intro
       content {
         ...AllSlices
+        ${nestedFields}
       }
       stepper {
         id
@@ -36,17 +55,17 @@ export const GET_PROJECT_PAGE_QUERY = gql`
           subtitle {
             ...HtmlFields
           }
-          text {
-            ...HtmlFields
-          }
-          isAnswer
-          options
           config
         }
         config
       }
       slices {
         ...AllSlices
+        ${nestedFields}
+      }
+      bottomSlices {
+        ...AllSlices
+        ${nestedFields}
       }
       newsTag {
         id
@@ -54,6 +73,7 @@ export const GET_PROJECT_PAGE_QUERY = gql`
         slug
       }
       projectSubpages {
+        id
         title
         slug
         content {
@@ -63,6 +83,12 @@ export const GET_PROJECT_PAGE_QUERY = gql`
         slices {
           ...AllSlices
           ...NestedOneColumnTextFields
+          ${nestedFields}
+        }
+        bottomSlices {
+          ...AllSlices
+          ...NestedOneColumnTextFields
+          ${nestedFields}
         }
       }
       featuredImage {

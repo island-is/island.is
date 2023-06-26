@@ -3,12 +3,10 @@ import { useNamespace } from '@island.is/web/hooks'
 import {
   Box,
   Inline,
-  Tag,
   Text,
   GridColumn,
   GridContainer,
   GridRow,
-  DialogPrompt,
   Tooltip,
 } from '@island.is/island-ui/core'
 import {
@@ -22,7 +20,7 @@ interface TagListProps {
   data: Array<DataCategory>
   type: TypeCategory
   access: Array<AccessCategory>
-  namespace?: object
+  namespace?: Record<string, string>
 }
 
 export const TagList = ({ data, type, access, namespace }: TagListProps) => {

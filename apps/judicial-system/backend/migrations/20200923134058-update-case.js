@@ -3,7 +3,7 @@
 const replaceEnum = require('sequelize-replace-enum-postgres').default
 
 module.exports = {
-  up: async (queryInterface, Sequelize) => {
+  up: async (queryInterface) => {
     await queryInterface.sequelize.transaction((t) =>
       queryInterface.sequelize.query(
         `UPDATE "case" SET state = 'DRAFT' WHERE state = 'UNKNOWN' OR state = 'ACTIVE' OR state = 'COMPLETED';`,
@@ -21,7 +21,7 @@ module.exports = {
     })
   },
 
-  down: async (queryInterface, Sequelize) => {
+  down: async (queryInterface) => {
     await queryInterface.sequelize.transaction((t) =>
       queryInterface.sequelize.query(
         `UPDATE "case" SET state = 'DRAFT' WHERE state = 'ACCEPTED' OR state = 'REJECTED';`,

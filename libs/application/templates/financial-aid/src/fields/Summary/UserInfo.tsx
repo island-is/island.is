@@ -3,6 +3,7 @@ import { useIntl } from 'react-intl'
 
 import { Box, GridColumn, GridRow, Text } from '@island.is/island-ui/core'
 import { summaryForm } from '../../lib/messages'
+import { formatNationalId } from '@island.is/financial-aid/shared/lib'
 
 interface Props {
   name?: string
@@ -34,7 +35,7 @@ const UserInfo = ({ name, nationalId, address }: Props) => {
             <Text fontWeight="semiBold">
               {formatMessage(summaryForm.userInfo.nationalId)}
             </Text>
-            <Text>{nationalId}</Text>
+            <Text>{formatNationalId(nationalId ?? '')}</Text>
           </Box>
         </GridColumn>
         <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>

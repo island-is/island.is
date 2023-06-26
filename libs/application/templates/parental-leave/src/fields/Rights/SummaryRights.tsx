@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { Application } from '@island.is/application/core'
+import { Application } from '@island.is/application/types'
 import { DataValue } from '@island.is/application/ui-components'
 import { useLocale } from '@island.is/localization'
 import { Box, Text } from '@island.is/island-ui/core'
@@ -8,11 +8,12 @@ import { Box, Text } from '@island.is/island-ui/core'
 import { parentalLeaveFormMessages } from '../../lib/messages'
 import {
   getAvailablePersonalRightsInMonths,
+  getAvailablePersonalRightsSingleParentInMonths,
   getAvailableRightsInMonths,
-  getSelectedChild,
+  getMultipleBirthsDays,
 } from '../../lib/parentalLeaveUtils'
 import { daysToMonths } from '../../lib/directorateOfLabour.utils'
-import { YES } from '../../constants'
+import { SINGLE, YES, NO } from '../../constants'
 import { useApplicationAnswers } from '../../hooks/useApplicationAnswers'
 
 interface SummaryRightsProps {
@@ -25,14 +26,21 @@ export const SummaryRights = ({ application }: SummaryRightsProps) => {
   const { formatMessage } = useLocale()
   const {
     isRequestingRights,
+    isRequestingRightsSecondary,
     requestDays,
     isGivingRights,
     giveDays,
+    otherParent,
   } = useApplicationAnswers(application)
-  const personalMonths = getAvailablePersonalRightsInMonths(application)
+  const hasSelectedOtherParent = otherParent !== NO && otherParent !== SINGLE
+  const personalMonths =
+    otherParent !== SINGLE
+      ? getAvailablePersonalRightsInMonths(application)
+      : getAvailablePersonalRightsSingleParentInMonths(application)
   const total = round(getAvailableRightsInMonths(application))
   const requested = daysToMonths(requestDays)
   const given = daysToMonths(Math.abs(giveDays))
+  const common = daysToMonths(getMultipleBirthsDays(application))
 
   return (
     <DataValue
@@ -53,34 +61,68 @@ export const SummaryRights = ({ application }: SummaryRightsProps) => {
               )}
             </Text>
 
-            {isRequestingRights === YES && requestDays > 0 && (
+            {common > 0 && otherParent === SINGLE && (
               <>
                 {', '}
                 <Text as="span">
                   {formatMessage(
                     parentalLeaveFormMessages.reviewScreen
-                      .rightsAllowanceRequested,
+                      .rightsSingleParentMultipleBirths,
                     {
-                      requested: round(requested),
+                      common: round(common),
                     },
                   )}
                 </Text>
               </>
             )}
 
-            {isGivingRights === YES && giveDays !== 0 && (
+            {common > 0 && otherParent !== SINGLE && (
               <>
                 {', '}
                 <Text as="span">
                   {formatMessage(
-                    parentalLeaveFormMessages.reviewScreen.rightsAllowanceGiven,
+                    parentalLeaveFormMessages.reviewScreen.rightsMultipleBirths,
                     {
-                      given: round(given),
+                      common: round(common),
                     },
                   )}
                 </Text>
               </>
             )}
+
+            {hasSelectedOtherParent &&
+              (isRequestingRights === YES || isRequestingRightsSecondary) &&
+              requestDays > 0 && (
+                <>
+                  {', '}
+                  <Text as="span">
+                    {formatMessage(
+                      parentalLeaveFormMessages.reviewScreen
+                        .rightsAllowanceRequested,
+                      {
+                        requested: round(requested),
+                      },
+                    )}
+                  </Text>
+                </>
+              )}
+
+            {hasSelectedOtherParent &&
+              isGivingRights === YES &&
+              giveDays !== 0 && (
+                <>
+                  {', '}
+                  <Text as="span">
+                    {formatMessage(
+                      parentalLeaveFormMessages.reviewScreen
+                        .rightsAllowanceGiven,
+                      {
+                        given: round(given),
+                      },
+                    )}
+                  </Text>
+                </>
+              )}
           </Box>
         </Box>
       }

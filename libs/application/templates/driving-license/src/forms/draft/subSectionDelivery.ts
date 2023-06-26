@@ -42,13 +42,14 @@ export const subSectionDelivery = buildSubSection({
           id: 'juristiction',
           title: m.districtCommisionerPickup,
           disabled: false,
+          required: true,
           options: ({
             externalData: {
               juristictions: { data },
             },
           }) => {
             return (data as Juristiction[]).map(({ id, name, zip }) => ({
-              value: id,
+              value: `${id}`,
               label: name,
               tooltip: `Póstnúmer ${zip}`,
             }))

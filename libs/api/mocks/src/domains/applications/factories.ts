@@ -2,7 +2,7 @@ import { factory, faker } from '@island.is/shared/mocking'
 import {
   ApplicationStatus,
   DataProviderResult,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 
 import { Application } from '../../types'
 
@@ -12,6 +12,7 @@ export const application = factory<Application>({
   modified: () => faker.date.past().toISOString(),
   applicant: () => faker.random.alphaNumeric(10),
   assignees: [],
+  applicantActors: [],
   state: 'draft',
   typeId: 'ExampleForm',
   answers: [],

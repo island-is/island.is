@@ -4,6 +4,11 @@ import { TagQuery, tagQuery } from './tagQuery'
 import { typeAggregationQuery } from './typeAggregation'
 import { processAggregationQuery } from './processAggregation'
 
+const getBoostForType = (type: string, defaultBoost: string | number = 1) => {
+  // normalizing all types before boosting
+  return defaultBoost
+}
+
 export const searchQuery = (
   {
     queryString,
@@ -11,25 +16,76 @@ export const searchQuery = (
     page = 1,
     types = [],
     tags = [],
+    excludedTags = [],
     contentfulTags = [],
     countTag = [],
     countTypes = false,
     countProcessEntry = false,
+    useQuery,
   }: SearchInput,
   aggregate = true,
+  highlightSection = false,
 ) => {
   const should = []
   const must: TagQuery[] = []
+  const mustNot: TagQuery[] = []
   let minimumShouldMatch = 1
 
-  should.push({
-    simple_query_string: {
-      query: queryString,
-      fields: ['title.stemmed^15', 'title.compound', 'content.stemmed^5'],
-      analyze_wildcard: true,
-      default_operator: 'and',
-    },
-  })
+  // * wildcard support for internal clients - eg. used by island.is app
+  if (queryString.trim() === '*') {
+    should.push({
+      simple_query_string: {
+        query: queryString,
+        analyze_wildcard: true,
+        default_operator: 'and',
+      },
+    })
+  } else {
+    switch (useQuery) {
+      // the search logic used for search drop down suggestions
+      // term and prefix queries on content title
+      case 'suggestions':
+        if (queryString.split(' ').length > 1) {
+          should.push({
+            multi_match: {
+              query: queryString + '*',
+              fields: ['title'],
+
+              fuzziness: 1,
+              operator: 'and',
+              type: 'best_fields',
+            },
+          })
+        } else {
+          should.push({ prefix: { title: queryString } })
+          should.push({
+            fuzzy: {
+              title: { value: queryString, fuzziness: 1, prefix_length: 0 },
+            },
+          })
+        }
+
+        break
+
+      // the search logic used for general site search
+      // uses all analyzed fields
+      case 'default':
+      default:
+        should.push({
+          multi_match: {
+            fields: [
+              'title^100', // note boosting ..
+              'content',
+            ],
+            query: queryString,
+            fuzziness: 1,
+            operator: 'and',
+            type: 'best_fields',
+          },
+        })
+        break
+    }
+  }
 
   // if we have types restrict the query to those types
   if (types?.length) {
@@ -41,7 +97,7 @@ export const searchQuery = (
         term: {
           type: {
             value,
-            boost,
+            boost: getBoostForType(value, boost),
           },
         },
       })
@@ -51,6 +107,12 @@ export const searchQuery = (
   if (tags?.length) {
     tags.forEach((tag) => {
       must.push(tagQuery(tag))
+    })
+  }
+
+  if (excludedTags?.length) {
+    excludedTags.forEach((tag) => {
+      mustNot.push(tagQuery(tag))
     })
   }
 
@@ -83,15 +145,51 @@ export const searchQuery = (
     }
   }
 
+  const highlight = {
+    highlight: {
+      pre_tags: ['<b>'],
+      post_tags: ['</b>'],
+      number_of_fragments: 3,
+      fragment_size: 150,
+      fields: {
+        title: {},
+        content: {},
+      },
+    },
+  }
+
   return {
     query: {
-      bool: {
-        should,
-        must,
-        minimum_should_match: minimumShouldMatch,
+      function_score: {
+        query: {
+          bool: {
+            should,
+            must,
+            must_not: mustNot,
+            minimum_should_match: minimumShouldMatch,
+          },
+        },
+        functions: [
+          // content gets a natural boost based on visits/popularity
+          {
+            field_value_factor: {
+              field: 'popularityScore',
+              factor: 1.2,
+              modifier: 'log1p',
+              missing: 1,
+            },
+          },
+          // content that is an entrance to "umsoknir" gets a boost
+          { filter: { range: { processEntryCount: { gte: 1 } } }, weight: 2 },
+          // content that is a "forsíða stofnunar" gets a boost
+          { filter: { term: { type: 'webOrganizationPage' } }, weight: 3 },
+          // reduce news weight
+          { filter: { term: { type: 'webNews' } }, weight: 0.5 },
+        ],
       },
     },
     ...(Object.keys(aggregation.aggs).length ? aggregation : {}), // spread aggregations if we have any
+    ...(highlightSection ? highlight : {}),
     size,
     from: (page - 1) * size, // if we have a page number add it as offset for pagination
   }

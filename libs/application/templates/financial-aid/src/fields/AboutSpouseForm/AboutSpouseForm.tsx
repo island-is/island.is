@@ -1,16 +1,19 @@
 import React from 'react'
 import {
   currentMonth,
-  months,
-  nextMonth,
+  getNextPeriod,
 } from '@island.is/financial-aid/shared/lib'
 import { Box } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
+
 import { aboutSpouseForm } from '../../lib/messages'
 import { DescriptionText, PrivacyPolicyAccordion } from '..'
 import { FAFieldBaseProps } from '../../lib/types'
+import withLogo from '../Logo/Logo'
 
 const AboutSpouseForm = ({ application }: FAFieldBaseProps) => {
-  const { nationalRegistry } = application.externalData
+  const { lang } = useLocale()
+  const { nationalRegistry, municipality } = application.externalData
 
   return (
     <>
@@ -18,18 +21,18 @@ const AboutSpouseForm = ({ application }: FAFieldBaseProps) => {
         textProps={{ variant: 'h3', fontWeight: 'light', marginTop: 2 }}
         text={aboutSpouseForm.general.description}
         format={{
-          spouseName: nationalRegistry?.data?.applicant?.fullName,
-          currentMonth: currentMonth(),
-          nextMonth: months[nextMonth()],
+          spouseName: nationalRegistry.data.fullName,
+          currentMonth: currentMonth(lang),
+          nextMonth: getNextPeriod(lang).month,
         }}
       />
       <Box marginTop={5}>
         <PrivacyPolicyAccordion
-          municipalityPageUrl={nationalRegistry?.data?.municipality?.homepage}
+          municipalityPageUrl={municipality.data?.homepage}
         />
       </Box>
     </>
   )
 }
 
-export default AboutSpouseForm
+export default withLogo(AboutSpouseForm)

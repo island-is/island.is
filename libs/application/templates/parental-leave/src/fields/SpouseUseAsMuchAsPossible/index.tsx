@@ -2,13 +2,12 @@ import React, { FC } from 'react'
 import { useFormContext } from 'react-hook-form'
 
 import { Box, Text } from '@island.is/island-ui/core'
+import { getErrorViaPath, formatText } from '@island.is/application/core'
 import {
   FieldBaseProps,
   FieldComponents,
   FieldTypes,
-  getErrorViaPath,
-  formatText,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 import { RadioFormField } from '@island.is/application/ui-fields'
 import { useLocale } from '@island.is/localization'
 
@@ -19,7 +18,10 @@ export const SpouseUseAsMuchAsPossible: FC<FieldBaseProps> = ({
   application,
   field,
 }) => {
-  const { errors, setValue } = useFormContext()
+  const {
+    formState: { errors },
+    setValue,
+  } = useFormContext()
   const { formatMessage } = useLocale()
   const { id, title, description } = field
 
@@ -51,7 +53,10 @@ export const SpouseUseAsMuchAsPossible: FC<FieldBaseProps> = ({
           ],
           onSelect: (s: string) => {
             if (s === YES) {
-              setValue('personalAllowanceFromSpouse.usage', '0')
+              setValue('personalAllowanceFromSpouse.usage', '100')
+            }
+            if (s === NO) {
+              setValue('personalAllowanceFromSpouse.usage', '1')
             }
           },
         }}

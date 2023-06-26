@@ -14,10 +14,9 @@ import {
 
 import { createTestingCaseModule } from '../createTestingCaseModule'
 import { randomDate, randomEnum } from '../../../../test'
-import { DefendantService, Defendant } from '../../../defendant'
-import { User } from '../../../user'
-import { Institution } from '../../../institution'
+import { DefendantService } from '../../../defendant'
 import { Case } from '../../models/case.model'
+import { include, order } from '../../case.service'
 
 interface Then {
   result: Case
@@ -72,7 +71,7 @@ describe('CaseController - Extend', () => {
     const origin = randomEnum(CaseOrigin)
     const type = CaseType.CUSTODY
     const description = 'Some details'
-    const policeCaseNumber = '007-2021-777'
+    const policeCaseNumbers = ['007-2021-777']
     const defenderName = 'John Doe'
     const defenderNationalId = '0000000009'
     const defenderEmail = 'john@dummy.is'
@@ -94,7 +93,7 @@ describe('CaseController - Extend', () => {
       origin,
       type,
       description,
-      policeCaseNumber,
+      policeCaseNumbers,
       defenderName,
       defenderNationalId,
       defenderEmail,
@@ -123,7 +122,7 @@ describe('CaseController - Extend', () => {
           origin,
           type,
           description,
-          policeCaseNumber,
+          policeCaseNumbers,
           defenderName,
           defenderNationalId,
           defenderEmail,
@@ -156,7 +155,7 @@ describe('CaseController - Extend', () => {
     const origin = randomEnum(CaseOrigin)
     const type = CaseType.CUSTODY
     const description = 'Some details'
-    const policeCaseNumber = '007-2021-777'
+    const policeCaseNumbers = ['007-2021-777']
     const defenderName = 'John Doe'
     const defenderNationalId = '0000000009'
     const defenderEmail = 'john@dummy.is'
@@ -178,7 +177,7 @@ describe('CaseController - Extend', () => {
       origin,
       type,
       description,
-      policeCaseNumber,
+      policeCaseNumbers,
       defenderName,
       defenderNationalId,
       defenderEmail,
@@ -207,7 +206,7 @@ describe('CaseController - Extend', () => {
           origin,
           type,
           description,
-          policeCaseNumber,
+          policeCaseNumbers,
           defenderName,
           defenderNationalId,
           defenderEmail,
@@ -265,13 +264,13 @@ describe('CaseController - Extend', () => {
     })
 
     it('should copy defendants', () => {
-      expect(mockDefendantService.create).toHaveBeenCalledTimes(2)
-      expect(mockDefendantService.create).toHaveBeenCalledWith(
+      expect(mockDefendantService.createForNewCase).toHaveBeenCalledTimes(2)
+      expect(mockDefendantService.createForNewCase).toHaveBeenCalledWith(
         extendedCaseId,
         defendantOne,
         transaction,
       )
-      expect(mockDefendantService.create).toHaveBeenCalledWith(
+      expect(mockDefendantService.createForNewCase).toHaveBeenCalledWith(
         extendedCaseId,
         defendantTwo,
         transaction,
@@ -295,39 +294,8 @@ describe('CaseController - Extend', () => {
 
     it('should lookup the newly extended case', () => {
       expect(mockCaseModel.findOne).toHaveBeenCalledWith({
-        include: [
-          { model: Defendant, as: 'defendants' },
-          { model: Institution, as: 'court' },
-          {
-            model: User,
-            as: 'creatingProsecutor',
-            include: [{ model: Institution, as: 'institution' }],
-          },
-          {
-            model: User,
-            as: 'prosecutor',
-            include: [{ model: Institution, as: 'institution' }],
-          },
-          { model: Institution, as: 'sharedWithProsecutorsOffice' },
-          {
-            model: User,
-            as: 'judge',
-            include: [{ model: Institution, as: 'institution' }],
-          },
-          {
-            model: User,
-            as: 'registrar',
-            include: [{ model: Institution, as: 'institution' }],
-          },
-          {
-            model: User,
-            as: 'courtRecordSignatory',
-            include: [{ model: Institution, as: 'institution' }],
-          },
-          { model: Case, as: 'parentCase' },
-          { model: Case, as: 'childCase' },
-        ],
-        order: [[{ model: Defendant, as: 'defendants' }, 'created', 'ASC']],
+        include,
+        order,
         where: {
           id: extendedCaseId,
           isArchived: false,
@@ -390,7 +358,7 @@ describe('CaseController - Extend', () => {
     beforeEach(async () => {
       const mockCreate = mockCaseModel.create as jest.Mock
       mockCreate.mockResolvedValueOnce(extendedCase)
-      const mockDefendantCreate = mockDefendantService.create as jest.Mock
+      const mockDefendantCreate = mockDefendantService.createForNewCase as jest.Mock
       mockDefendantCreate.mockRejectedValueOnce(new Error('Some error'))
 
       then = await givenWhenThen(caseId, user, theCase)

@@ -6,6 +6,7 @@ import { serviceCenters } from '@island.is/financial-aid/shared/data'
 import { FAFieldBaseProps } from '../../lib/types'
 import { serviceCenter } from '../../lib/messages'
 import { DescriptionText } from '..'
+import withLogo from '../Logo/Logo'
 
 const ServiceCenter = ({ application }: FAFieldBaseProps) => {
   const { formatMessage } = useIntl()
@@ -15,11 +16,9 @@ const ServiceCenter = ({ application }: FAFieldBaseProps) => {
   const applicantsCenter = serviceCenters.find(
     (serviceCenter) =>
       serviceCenter.number ===
-      Number(
-        externalData.nationalRegistry?.data?.applicant?.address
-          ?.municipalityCode,
-      ),
+      Number(externalData.nationalRegistry.data.address?.municipalityCode),
   )
+
   return (
     <>
       <Box marginBottom={[1, 1, 2]} marginTop={2}>
@@ -53,4 +52,4 @@ const ServiceCenter = ({ application }: FAFieldBaseProps) => {
   )
 }
 
-export default ServiceCenter
+export default withLogo(ServiceCenter)

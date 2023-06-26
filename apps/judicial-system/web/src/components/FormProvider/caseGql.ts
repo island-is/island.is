@@ -1,15 +1,16 @@
 import { gql } from '@apollo/client'
 
-export const CaseQuery = gql`
-  query CaseQuery($input: CaseQueryInput!) {
+const CaseQuery = gql`
+  query Case($input: CaseQueryInput!) {
     case(input: $input) {
       id
       created
       modified
       type
+      indictmentSubtypes
       description
       state
-      policeCaseNumber
+      policeCaseNumbers
       defendants {
         id
         noNationalId
@@ -18,6 +19,11 @@ export const CaseQuery = gql`
         gender
         address
         citizenship
+        defenderName
+        defenderNationalId
+        defenderEmail
+        defenderPhoneNumber
+        defendantWaivesRightToCounsel
       }
       defenderName
       defenderNationalId
@@ -123,26 +129,96 @@ export const CaseQuery = gql`
         decision
         courtCaseNumber
         ruling
+        caseFiles {
+          id
+          name
+          size
+          created
+          state
+          key
+        }
       }
       childCase {
         id
       }
       notifications {
+        created
         type
+        recipients {
+          success
+        }
       }
       caseFiles {
         id
         name
         size
         created
+        modified
         state
         key
+        category
+        policeCaseNumber
+        chapter
+        orderWithinChapter
+        userGeneratedFilename
+        displayDate
       }
       isAppealDeadlineExpired
       isAppealGracePeriodExpired
       caseModifiedExplanation
+      rulingModifiedHistory
       caseResentExplanation
       origin
+      openedByDefender
+      defendantWaivesRightToCounsel
+      crimeScenes
+      indictmentIntroduction
+      indictmentCounts {
+        id
+        caseId
+        policeCaseNumber
+        created
+        modified
+        vehicleRegistrationNumber
+        offenses
+        substances
+        lawsBroken
+        incidentDescription
+        legalArguments
+      }
+      requestDriversLicenseSuspension
+      appealState
+      isStatementDeadlineExpired
+      statementDeadline
+      canBeAppealed
+      hasBeenAppealed
+      appealedByRole
+      appealedDate
+      appealDeadline
+      prosecutorStatementDate
+      defendantStatementDate
+      appealReceivedByCourtDate
+      appealConclusion
+      appealRulingDecision
+      appealCaseNumber
+      appealAssistant {
+        id
+        name
+      }
+      appealJudge1 {
+        id
+        name
+      }
+      appealJudge2 {
+        id
+        name
+      }
+      appealJudge3 {
+        id
+        name
+      }
     }
   }
 `
+
+export default CaseQuery

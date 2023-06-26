@@ -1,3 +1,1 @@
-export type FeatureNames =
-  | 'do-not-remove-for-testing-only'
-  | 'driving-license-use-v1-endpoint-for-v2-comms'
+export { ServerSideFeature as FeatureNames } from '../../../libs/feature-flags/src/lib/features'

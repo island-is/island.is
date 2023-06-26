@@ -1,48 +1,49 @@
-import { generateYamlForFeature } from './serialize-to-yaml'
-import { ref, service, ServiceBuilder } from './dsl'
-import { UberChart } from './uber-chart'
-import { serializeService } from './map-to-values'
-import { SerializeSuccess } from './types/output-types'
+import { ServiceBuilder, ref, service } from './dsl'
+import { Kubernetes } from './kubernetes-runtime'
 import { EnvironmentConfig } from './types/charts'
+import { getFeatureAffectedServices } from './feature-deployments'
+import { HelmValueFile } from './types/output-types'
+import { getHelmValueFile } from './value-files-generators/helm-value-file'
+import { renderers } from './upstream-dependencies'
+import { generateOutput } from './processing/rendering-pipeline'
 
-const Dev: EnvironmentConfig = {
-  auroraHost: 'a',
-  domain: 'staging01.devland.is',
-  type: 'dev',
-  featuresOn: [],
-  defaultMaxReplicas: 3,
-  defaultMinReplicas: 2,
-  releaseName: 'web',
-  awsAccountId: '111111',
-  awsAccountRegion: 'eu-west-1',
-  feature: 'feature-A',
-  global: {},
+const getEnvironment = (
+  options: EnvironmentConfig = {
+    auroraHost: 'a',
+    redisHost: 'b',
+    domain: 'staging01.devland.is',
+    type: 'dev',
+    featuresOn: [],
+    defaultMaxReplicas: 3,
+    defaultMinReplicas: 2,
+    releaseName: 'web',
+    awsAccountId: '111111',
+    awsAccountRegion: 'eu-west-1',
+    feature: 'feature-A',
+    global: {},
+  },
+) => {
+  return { ...options }
+}
+
+const getValues = async (
+  services: ServiceBuilder<any>[],
+  env: EnvironmentConfig,
+) => {
+  const chart = new Kubernetes(env)
+  const out = await generateOutput({
+    runtime: chart,
+    services: services,
+    outputFormat: renderers.helm,
+    env: env,
+  })
+  const values = getHelmValueFile(chart, out, 'no-mocks', env)
+  return values
 }
 
 describe('Feature-deployment support', () => {
-  const dependencyA = service('service-a').namespace('A')
-  const dependencyB = service('service-b')
-  const dependencyC = service('service-c')
-  const apiService: ServiceBuilder<'graphql'> = service('graphql')
-    .env({
-      A: ref((h) => `${h.svc(dependencyA)}`),
-      B: ref((h) => `${h.featureName ? 'feature-' : ''}${h.svc(dependencyB)}`),
-    })
-    .initContainer({
-      containers: [
-        {
-          command: 'node',
-        },
-      ],
-      postgres: {},
-    })
-    .ingress({
-      primary: {
-        host: { dev: 'a', staging: 'a', prod: 'a' },
-        paths: ['/'],
-      },
-    })
-    .postgres()
+  let values: HelmValueFile
+  let dev: EnvironmentConfig
 
   const chart = new UberChart(Dev)
   const values = generateYamlForFeature(
@@ -63,7 +64,15 @@ describe('Feature-deployment support', () => {
       DB_REPLICAS_HOST: 'a',
       NODE_OPTIONS: '--max-old-space-size=208',
       SERVERSIDE_FEATURES_ON: '',
+      DB_EXTENSIONS: 'foo',
     })
+  })
+  it('db extensions are set', () => {
+    expect(values.services.graphql.initContainer?.env).toEqual(
+      expect.objectContaining({
+        DB_EXTENSIONS: 'foo',
+      }),
+    )
   })
 
   it('dynamic secrets path', () => {
@@ -88,10 +97,10 @@ describe('Feature-deployment support', () => {
       'service-a',
     ])
     expect(values.services['graphql'].namespace).toEqual(
-      `feature-${Dev.feature}`,
+      `feature-${dev.feature}`,
     )
     expect(values.services['service-a'].namespace).toEqual(
-      `feature-${Dev.feature}`,
+      `feature-${dev.feature}`,
     )
   })
 

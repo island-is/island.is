@@ -29,7 +29,10 @@ import {
   ArticleCategory,
   mapArticleCategory,
 } from '../models/articleCategory.model'
-import { mapOrganizationSubpage, OrganizationSubpage } from '@island.is/cms'
+import {
+  mapOrganizationSubpage,
+  OrganizationSubpage,
+} from '../models/organizationSubpage.model'
 import { mapProjectPage, ProjectPage } from '../models/projectPage.model'
 
 export type PageTypes =

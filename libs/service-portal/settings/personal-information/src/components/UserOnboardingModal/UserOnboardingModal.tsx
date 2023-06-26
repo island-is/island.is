@@ -1,6 +1,9 @@
 import React, { useState } from 'react'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { ServicePortalModuleComponent } from '@island.is/service-portal/core'
+import {
+  formatPlausiblePathToParams,
+  ServicePortalModuleComponent,
+} from '@island.is/service-portal/core'
 import {
   ModalBase,
   GridRow,
@@ -17,18 +20,24 @@ import { useLocation } from 'react-router-dom'
 import { OnboardingHeader } from './components/Header'
 import ProfileForm from '../Forms/ProfileForm/ProfileForm'
 import * as styles from './UserOnboardingModal.css'
+import { onboardingModalStorage } from '../../utils/showUserOnboardingModal'
+import { useAuth } from '@island.is/auth/react'
 
-const UserOnboardingModal: ServicePortalModuleComponent = ({ userInfo }) => {
+export const UserOnboardingModal = () => {
   useNamespaces('sp.settings')
+  const { userInfo } = useAuth()
   const [toggleCloseModal, setToggleCloseModal] = useState(false)
   const [canDropOverlay, setCanDropOverlay] = useState(false)
   const [formLoading, setFormLoadingState] = useState(false)
   const { formatMessage } = useLocale()
-
   const { pathname } = useLocation()
 
   const dropOnboardingSideEffects = () => {
-    servicePortalCloseOnBoardingModal(pathname)
+    servicePortalCloseOnBoardingModal(formatPlausiblePathToParams(pathname))
+    sessionStorage.setItem(
+      onboardingModalStorage.key,
+      onboardingModalStorage.value,
+    )
   }
 
   const closeModal = () => {
@@ -90,5 +99,3 @@ const UserOnboardingModal: ServicePortalModuleComponent = ({ userInfo }) => {
     </ModalBase>
   )
 }
-
-export default UserOnboardingModal

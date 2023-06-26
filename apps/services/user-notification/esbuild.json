@@ -20,11 +20,13 @@
     "graphql",
     "pg",
     "winston",
+    "util-deprecate",
     "source-map-resolve",
     "atob",
     "logform",
     "pg-native",
     "form-data",
+    "swagger-ui-dist",
     "@protobufjs/aspromise",
     "@protobufjs/base64",
     "@protobufjs/codegen",
@@ -39,7 +41,9 @@
     "lru-cache",
     "pseudomap",
     "jsonwebtoken",
-    "buffer-equal-constant-time"
+    "buffer-equal-constant-time",
+    "safer-buffer",
+    "jwa"
   ],
   "keepNames": true
 }

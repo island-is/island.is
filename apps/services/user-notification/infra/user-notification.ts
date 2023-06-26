@@ -9,13 +9,14 @@ export const userNotificationServiceSetup = (): ServiceBuilder<'user-notificatio
     .namespace('user-notification')
     .serviceAccount('user-notification')
     .command('node')
-    .args('main.js')
+    .args('--no-experimental-fetch', 'main.js')
     .env({
       MAIN_QUEUE_NAME,
       DEAD_LETTER_QUEUE_NAME,
     })
     .secrets({
       FIREBASE_CREDENTIALS: '/k8s/user-notification/firestore-credentials',
+      CONTENTFUL_ACCESS_TOKEN: '/k8s/user-notification/CONTENTFUL_ACCESS_TOKEN',
     })
     .liveness('/liveness')
     .readiness('/liveness')
@@ -28,6 +29,30 @@ export const userNotificationServiceSetup = (): ServiceBuilder<'user-notificatio
         },
         paths: ['/'],
         public: false,
+        extraAnnotations: {
+          dev: {
+            'nginx.ingress.kubernetes.io/proxy-buffering': 'on',
+            'nginx.ingress.kubernetes.io/proxy-buffer-size': '8k',
+          },
+          staging: {
+            'nginx.ingress.kubernetes.io/proxy-buffering': 'on',
+            'nginx.ingress.kubernetes.io/proxy-buffer-size': '8k',
+          },
+          prod: {
+            'nginx.ingress.kubernetes.io/proxy-buffering': 'on',
+            'nginx.ingress.kubernetes.io/proxy-buffer-size': '8k',
+          },
+        },
+      },
+    })
+    .resources({
+      limits: {
+        cpu: '200m',
+        memory: '384Mi',
+      },
+      requests: {
+        cpu: '15m',
+        memory: '256Mi',
       },
     })
     .grantNamespaces('nginx-ingress-internal')
@@ -40,7 +65,7 @@ export const userNotificationWorkerSetup = (services: {
     .namespace('user-notification')
     .serviceAccount('user-notification-worker')
     .command('node')
-    .args('main.js', '--job=worker')
+    .args('--no-experimental-fetch', 'main.js', '--job=worker')
     .env({
       MAIN_QUEUE_NAME,
       DEAD_LETTER_QUEUE_NAME,
@@ -54,7 +79,7 @@ export const userNotificationWorkerSetup = (services: {
       ),
       USER_NOTIFICATION_APP_PROTOCOL: {
         dev: 'is.island.app.dev',
-        staging: 'is.island.app.staging',
+        staging: 'is.island.app.dev', // intentionally set to dev - see firebase setup
         prod: 'is.island.app',
       },
       CONTENTFUL_HOST: {

@@ -1,12 +1,13 @@
 import React, { FC } from 'react'
-import { FieldBaseProps, formatText } from '@island.is/application/core'
+import { formatText } from '@island.is/application/core'
+import { FieldBaseProps } from '@island.is/application/types'
 import { Box } from '@island.is/island-ui/core'
 import { FieldDescription } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
 
 import PaymentsTable from './PaymentsTable'
 import { useQuery } from '@apollo/client'
-import { getExpectedDateOfBirth } from '../../lib/parentalLeaveUtils'
+import { getExpectedDateOfBirthOrAdoptionDate } from '../../lib/parentalLeaveUtils'
 import { getEstimatedPayments } from './estimatedPaymentsQuery'
 
 import * as styles from './PaymentSchedule.css'
@@ -15,7 +16,7 @@ const PaymentSchedule: FC<FieldBaseProps> = ({ field, application }) => {
   const { description } = field
   const { formatMessage } = useLocale()
 
-  const dob = getExpectedDateOfBirth(application)
+  const dob = getExpectedDateOfBirthOrAdoptionDate(application)
 
   const { data, error, loading } = useQuery(getEstimatedPayments, {
     variables: {

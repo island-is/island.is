@@ -54,6 +54,7 @@ export enum RequirementKey {
   drivingSchoolMissing = 'DrivingSchoolMissing',
   deniedByService = 'DeniedByService',
   localResidency = 'LocalResidency',
+  currentLocalResidency = 'CurrentLocalResidency',
   noTempLicense = 'NoTempLicense',
   noLicenseFound = 'NoLicenseFound',
   personNot17YearsOld = 'PersonNot17YearsOld',
@@ -62,6 +63,8 @@ export enum RequirementKey {
   personNotFoundInNationalRegistry = 'PersonNotFoundInNationalRegistry',
   hasDeprivation = 'HasDeprivation',
   hasPoints = 'HasPoints',
+  personNotAtLeast24YearsOld = 'PersonNotAtLeast24YearsOld',
+  hasHadValidCategoryForFiveYearsOrMore = 'HasHadValidCategoryForFiveYearsOrMore',
 }
 
 export interface ApplicationEligibilityRequirement {
@@ -89,6 +92,10 @@ export enum NeedsQualityPhoto {
 }
 export interface QualityPhotoResult {
   hasQualityPhoto: boolean
+}
+
+export interface QualitySignatureResult {
+  hasQualitySignature: boolean
 }
 
 export interface StudentAssessment {

@@ -22,6 +22,7 @@
     "graphql",
     "pg",
     "winston",
+    "util-deprecate",
     "source-map-resolve",
     "atob",
     "logform",
@@ -30,6 +31,7 @@
     "swagger-ui-express",
     "swagger-ui-dist",
     "sequelize",
+    "lru-cache",
     "@protobufjs/aspromise",
     "@protobufjs/base64",
     "@protobufjs/codegen",
@@ -39,7 +41,11 @@
     "@protobufjs/inquire",
     "@protobufjs/path",
     "@protobufjs/pool",
-    "@protobufjs/utf8"
+    "@protobufjs/utf8",
+    "safer-buffer",
+    "pseudomap",
+    "safer-buffer",
+    "ioredis"
   ],
   "keepNames": true
 }

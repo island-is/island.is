@@ -285,7 +285,8 @@
   "deregisterSidenav": {
     "title": "Actions",
     "deregister": "Deregister car",
-    "companyInfo": "Company information"
+    "companyInfo": "Company information",
+    "accessControl": "Access Control"
   },
   "deregisterVehicle": {
     "select": {
@@ -358,6 +359,14 @@
     "subtitles": {
       "companies": "Recycling companies"
     },
+    "tableHeaders": {
+      "id": "ID",
+      "name": "Name",
+      "address": "Address",
+      "postnumber": "Post",
+      "email": "Email",
+      "status": "Status"
+    },
     "status": {
       "active": "Active",
       "inactive": "Inactive"
@@ -394,6 +403,22 @@
             "placeholder": "Company name",
             "rules": {
               "required": "Company name is required"
+            }
+          },
+          "nationalId": {
+            "label": "Company national ID",
+            "placeholder": "Company national ID",
+            "rules": {
+              "required": "Company national ID is required",
+              "validate": "National ID is incorrect"
+            }
+          },
+          "email": {
+            "label": "Company email",
+            "placeholder": "Company email",
+            "rules": {
+              "required": "Company email is required",
+              "validate": "Invalid email"
             }
           },
           "address": {
@@ -456,7 +481,10 @@
       "nationalId": "National Id",
       "name": "Name",
       "role": "Role",
-      "partner": "Partner"
+      "partner": "Partner",
+      "email": "Email",
+      "phone": "Phone",
+      "recyclingLocation": "Location"
     },
     "status": {
       "active": "Active",
@@ -466,7 +494,7 @@
       "add": "Give access",
       "edit": "Edit",
       "delete": "Delete",
-      "actions": "actions"
+      "actions": "Actions"
     },
     "modal": {
       "titles": {
@@ -493,6 +521,28 @@
           "placeholder": "Name",
           "rules": {
             "required": "Name is required"
+          }
+        },
+        "email": {
+          "label": "Email",
+          "placeholder": "Email",
+          "rules": {
+            "required": "Email is required",
+            "validate": "Invalid email"
+          }
+        },
+        "phone": {
+          "label": "Phone",
+          "placeholder": "Phone",
+          "rules": {
+            "required": "Phone is required"
+          }
+        },
+        "recyclingLocation": {
+          "label": "Recycling location",
+          "placeholder": "Recycling location",
+          "rules": {
+            "validate": "Recycling location could not extend 32 characters"
           }
         },
         "role": {
@@ -550,6 +600,7 @@
     },
     "recycledVehicles": "/en/recycled-vehicles",
     "accessControl": "/en/access-control",
+    "accessControlCompany": "/en/access-control-company",
     "recyclingCompanies": {
       "baseRoute": "/en/recycling-companies",
       "add": "/en/recycling-companies/add",

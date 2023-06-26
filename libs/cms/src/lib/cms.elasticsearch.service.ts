@@ -24,6 +24,8 @@ import { EnhancedAssetSearchResult } from './models/enhancedAssetSearchResult.mo
 import { ApiResponse } from '@elastic/elasticsearch'
 import { SearchResponse } from 'elastic'
 import { MappedData } from '@island.is/content-search-indexer/types'
+import { SupportQNA } from './models/supportQNA.model'
+import { GetFeaturedSupportQNAsInput } from './dto/getFeaturedSupportQNAs.input'
 
 @Injectable()
 export class CmsElasticsearchService {
@@ -70,6 +72,14 @@ export class CmsElasticsearchService {
       query.tags.push({ type: 'category', key: input.category })
     }
 
+    if (input.group) {
+      query.tags.push({ type: 'group', key: input.group })
+    }
+
+    if (input.subgroup) {
+      query.tags.push({ type: 'subgroup', key: input.subgroup })
+    }
+
     if (input.organization) {
       query.tags.push({ type: 'organization', key: input.organization })
     }
@@ -85,7 +95,7 @@ export class CmsElasticsearchService {
 
   async getNews(
     index: string,
-    { size, page, order, month, year, tag }: GetNewsInput,
+    { size, page, order, month, year, tags }: GetNewsInput,
   ): Promise<NewsList> {
     let dateQuery
     if (year) {
@@ -100,20 +110,18 @@ export class CmsElasticsearchService {
     }
 
     let tagQuery
-    if (tag) {
+    if (tags) {
       tagQuery = {
-        tags: [
-          {
-            key: tag,
-            type: 'genericTag',
-          },
-        ],
+        tags: tags.map((tag) => ({ key: tag, type: 'genericTag' })),
       }
     }
 
     const query = {
       types: ['webNews'],
-      sort: [{ dateCreated: { order } }] as sortRule[],
+      sort: [
+        { dateCreated: { order } },
+        { releaseDate: { order } },
+      ] as sortRule[],
       ...dateQuery,
       ...tagQuery,
       page,
@@ -319,6 +327,38 @@ export class CmsElasticsearchService {
         JSON.parse(item._source.response ?? '{}'),
       ),
     }
+  }
+
+  async getFeaturedSupportQNAs(
+    index: string,
+    input: GetFeaturedSupportQNAsInput,
+  ): Promise<SupportQNA[]> {
+    const query = {
+      types: ['webQNA'],
+      tags: [] as elasticTagField[],
+      sort: [{ popularityScore: { order: SortDirection.DESC } }] as sortRule[],
+      size: input.size,
+    }
+
+    if (input.organization) {
+      query.tags.push({ type: 'organization', key: input.organization })
+    }
+
+    if (input.category) {
+      query.tags.push({ type: 'category', key: input.category })
+    }
+
+    if (input.subCategory) {
+      query.tags.push({ type: 'subcategory', key: input.subCategory })
+    }
+
+    const supportqnasResponse = await this.elasticService.getDocumentsByMetaData(
+      index,
+      query,
+    )
+    return supportqnasResponse.hits.hits.map((response) =>
+      JSON.parse(response._source.response ?? '[]'),
+    )
   }
 }
 

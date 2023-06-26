@@ -1,6 +1,7 @@
 import { GenericContainer, StartedTestContainer, Wait } from 'testcontainers'
 
 let postgresContainer: StartedTestContainer
+let redisClusterContainer: StartedTestContainer
 
 export const startPostgres = async () => {
   const name = 'test_db'
@@ -28,4 +29,18 @@ export const startPostgres = async () => {
 
 export const stopPostgres = () => {
   postgresContainer.stop()
+}
+
+export const startRedisCluster = async () => {
+  const ports = [7000, 7001, 7002, 7003, 7004, 7005]
+  redisClusterContainer = await new GenericContainer(
+    'public.ecr.aws/bitnami/redis-cluster:5.0.14',
+  )
+    .withEnv('IP', '0.0.0.0')
+    .withExposedPorts(...ports)
+    .start()
+}
+
+export const stopRedis = () => {
+  redisClusterContainer.stop()
 }

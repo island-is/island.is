@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import React, { useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Text, Box } from '@island.is/island-ui/core'
@@ -6,9 +6,9 @@ import {
   getNextPeriod,
   estimatedBreakDown,
   aidCalculator,
-  martialStatusTypeFromMartialCode,
-  MartialStatusType,
+  FamilyStatus,
 } from '@island.is/financial-aid/shared/lib'
+import { useLocale } from '@island.is/localization'
 
 import * as m from '../../lib/messages'
 import {
@@ -19,28 +19,39 @@ import {
 import { Routes } from '../../lib/constants'
 import { DescriptionText, Breakdown } from '../index'
 import { formatAddress, formItems } from '../../lib/formatters'
-import { FormInfo, SummaryComment, UserInfo, ContactInfo, Files } from './index'
+import {
+  FormInfo,
+  SummaryComment,
+  UserInfo,
+  ContactInfo,
+  Files,
+  DirectTaxPaymentCell,
+} from './index'
+
+import { DirectTaxPaymentsModal } from '..'
+import { findFamilyStatus } from '../../lib/utils'
+import withLogo from '../Logo/Logo'
 
 const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
   const { formatMessage } = useIntl()
+  const { lang } = useLocale()
+
   const { id, answers, externalData } = application
   const summaryCommentType = SummaryCommentType.FORMCOMMENT
 
+  const [isModalOpen, setIsModalOpen] = useState(false)
+
   const aidAmount = useMemo(() => {
-    if (
-      externalData.nationalRegistry?.data?.municipality &&
-      answers.homeCircumstances
-    ) {
+    if (externalData.municipality.data && answers.homeCircumstances) {
       return aidCalculator(
         answers.homeCircumstances.type,
-        martialStatusTypeFromMartialCode(
-          externalData.nationalRegistry?.data?.applicant?.spouse?.maritalStatus,
-        ) === MartialStatusType.SINGLE
-          ? externalData.nationalRegistry?.data?.municipality?.individualAid
-          : externalData.nationalRegistry?.data?.municipality?.cohabitationAid,
+        findFamilyStatus(answers, externalData) ===
+          FamilyStatus.NOT_COHABITATION
+          ? externalData.municipality.data.individualAid
+          : externalData.municipality.data.cohabitationAid,
       )
     }
-  }, [externalData.nationalRegistry?.data?.municipality])
+  }, [externalData.municipality.data])
 
   return (
     <>
@@ -53,7 +64,7 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
 
         <Text variant="small">
           {formatMessage(m.summaryForm.general.descriptionSubtitle, {
-            nextMonth: getNextPeriod.month,
+            nextMonth: getNextPeriod(lang).month,
           })}
         </Text>
       </Box>
@@ -78,14 +89,25 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
       </Box>
 
       <UserInfo
-        name={externalData?.nationalRegistry?.data?.applicant?.fullName}
-        nationalId={externalData?.nationalRegistry?.data?.applicant?.nationalId}
-        address={formatAddress(externalData?.nationalRegistry?.data?.applicant)}
+        name={externalData.nationalRegistry.data.fullName}
+        nationalId={externalData.nationalRegistry.data.nationalId}
+        address={formatAddress(externalData.nationalRegistry.data)}
       />
 
       <FormInfo
         items={formItems(answers, externalData)}
         goToScreen={goToScreen}
+      />
+
+      <DirectTaxPaymentCell
+        setIsModalOpen={setIsModalOpen}
+        hasFetchedPayments={
+          externalData?.taxData?.data?.municipalitiesDirectTaxPayments?.success
+        }
+        directTaxPayments={
+          externalData?.taxData?.data?.municipalitiesDirectTaxPayments
+            ?.directTaxPayments
+        }
       />
 
       <ContactInfo
@@ -102,8 +124,12 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
             : Routes.TAXRETURNFILES
         }
         goToScreen={goToScreen}
-        taxFiles={answers.taxReturnFiles}
-        incomeFiles={answers.incomeFiles}
+        personalTaxReturn={
+          externalData.taxData?.data?.municipalitiesPersonalTaxReturn
+            ?.personalTaxReturn
+        }
+        taxFiles={answers.taxReturnFiles ?? []}
+        incomeFiles={answers.incomeFiles ?? []}
         applicationId={id}
       />
 
@@ -111,8 +137,20 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
         commentId={summaryCommentType}
         comment={answers?.formComment}
       />
+
+      <DirectTaxPaymentsModal
+        items={
+          externalData?.taxData?.data?.municipalitiesDirectTaxPayments
+            ?.directTaxPayments
+        }
+        dateDataWasFetched={externalData?.nationalRegistry?.date}
+        isVisible={isModalOpen}
+        onVisibilityChange={(isOpen: boolean) => {
+          setIsModalOpen(isOpen)
+        }}
+      />
     </>
   )
 }
 
-export default SummaryForm
+export default withLogo(SummaryForm)

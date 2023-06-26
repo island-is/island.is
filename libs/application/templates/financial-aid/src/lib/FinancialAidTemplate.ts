@@ -1,24 +1,18 @@
 import {
+  ApplicationConfigurations,
   ApplicationTemplate,
   ApplicationTypes,
   ApplicationContext,
   ApplicationStateSchema,
   DefaultEvents,
-  ApplicationConfigurations,
   Application,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 
 import { assign } from 'xstate'
 
-import {
-  Roles,
-  ApplicationStates,
-  ONE_DAY,
-  ONE_MONTH,
-  ApiActions,
-} from './constants'
+import { Roles, ApplicationStates, ONE_DAY, ONE_MONTH } from './constants'
 
-import { application } from './messages'
+import { application, stateDescriptions } from './messages'
 import { dataSchema } from './dataSchema'
 import {
   isMuncipalityNotRegistered,
@@ -26,8 +20,18 @@ import {
   hasSpouseCheck,
 } from './utils'
 import { FAApplication } from '..'
+import {
+  CreateApplicationApi,
+  CurrentApplicationApi,
+  NationalRegistryUserApi,
+  NationalRegistrySpouseApi,
+  MunicipalityApi,
+  TaxDataApi,
+  TaxDataSpouseApi,
+  SendSpouseEmailApi,
+} from '../dataProviders'
 
-type Events = { type: DefaultEvents.SUBMIT }
+type Events = { type: DefaultEvents.SUBMIT } | { type: DefaultEvents.EDIT }
 
 const oneMonthLifeCycle = {
   shouldBeListed: true,
@@ -40,7 +44,6 @@ const FinancialAidTemplate: ApplicationTemplate<
   ApplicationStateSchema<Events>,
   Events
 > = {
-  readyForProduction: false,
   type: ApplicationTypes.FINANCIAL_AID,
   name: application.name,
   dataSchema,
@@ -51,6 +54,7 @@ const FinancialAidTemplate: ApplicationTemplate<
       [ApplicationStates.PREREQUISITES]: {
         meta: {
           name: application.name.defaultMessage,
+          status: 'draft',
           lifecycle: {
             shouldBeListed: false,
             shouldBePruned: true,
@@ -63,35 +67,42 @@ const FinancialAidTemplate: ApplicationTemplate<
                 import('../forms/Prerequisites').then((module) =>
                   Promise.resolve(module.Prerequisites),
                 ),
-              write: {
-                answers: ['approveExternalData'],
-                externalData: ['nationalRegistry', 'veita'],
-              },
+              write: 'all',
+              delete: true,
+              api: [
+                CurrentApplicationApi,
+                NationalRegistryUserApi,
+                NationalRegistrySpouseApi,
+                MunicipalityApi,
+                TaxDataApi,
+              ],
             },
           ],
         },
         on: {
           SUBMIT: [
-            //TODO check if works when national registry works
             {
               target: ApplicationStates.MUNCIPALITYNOTREGISTERED,
               cond: isMuncipalityNotRegistered,
             },
             {
-              target: ApplicationStates.DRAFT,
+              target: ApplicationStates.SUBMITTED,
               cond: hasActiveCurrentApplication,
             },
             {
-              target: ApplicationStates.SUBMITTED,
+              target: ApplicationStates.DRAFT,
             },
           ],
-          // TODO: Add other states here depending on data received from Veita and þjóðskrá
         },
       },
       [ApplicationStates.DRAFT]: {
         meta: {
           name: application.name.defaultMessage,
+          status: 'draft',
           lifecycle: oneMonthLifeCycle,
+          actionCard: {
+            description: stateDescriptions.draft,
+          },
           roles: [
             {
               id: Roles.APPLICANT,
@@ -100,37 +111,71 @@ const FinancialAidTemplate: ApplicationTemplate<
                   Promise.resolve(module.Application),
                 ),
               read: 'all',
-              write: {
-                answers: [
-                  'spouse',
-                  'relationshipStatus',
-                  'homeCircumstances',
-                  'student',
-                  'employment',
-                  'income',
-                  'incomeFiles',
-                  'taxReturnFiles',
-                  'personalTaxCredit',
-                  'bankInfo',
-                  'contactInfo',
-                  'formComment',
-                ],
-              },
+              write: 'all',
+              delete: true,
             },
           ],
         },
         on: {
           SUBMIT: [
-            { target: ApplicationStates.SPOUSE, cond: hasSpouseCheck },
+            {
+              target: ApplicationStates.PREREQUISITESSPOUSE,
+              cond: hasSpouseCheck,
+            },
             { target: ApplicationStates.SUBMITTED },
           ],
         },
       },
-      [ApplicationStates.SPOUSE]: {
+      [ApplicationStates.PREREQUISITESSPOUSE]: {
         entry: 'assignToSpouse',
         meta: {
           name: application.name.defaultMessage,
+          status: 'inprogress',
           lifecycle: oneMonthLifeCycle,
+          actionCard: {
+            description: stateDescriptions.spouse,
+          },
+          onEntry: SendSpouseEmailApi,
+          roles: [
+            {
+              id: Roles.SPOUSE,
+              formLoader: () =>
+                import('../forms/PrerequisitesSpouse').then((module) =>
+                  Promise.resolve(module.PrerequisitesSpouse),
+                ),
+              read: 'all',
+              write: 'all',
+              api: [CurrentApplicationApi, TaxDataSpouseApi],
+            },
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/ApplicantSubmitted').then((module) =>
+                  Promise.resolve(module.ApplicantSubmitted),
+                ),
+              read: 'all',
+              delete: true,
+            },
+          ],
+        },
+        on: {
+          SUBMIT: [
+            {
+              target: ApplicationStates.SUBMITTED,
+              cond: hasActiveCurrentApplication,
+            },
+            { target: ApplicationStates.SPOUSE },
+          ],
+        },
+      },
+      [ApplicationStates.SPOUSE]: {
+        meta: {
+          name: application.name.defaultMessage,
+          status: 'inprogress',
+          lifecycle: oneMonthLifeCycle,
+          actionCard: {
+            description: stateDescriptions.spouse,
+          },
           roles: [
             {
               id: Roles.SPOUSE,
@@ -139,22 +184,16 @@ const FinancialAidTemplate: ApplicationTemplate<
                   Promise.resolve(module.Spouse),
                 ),
               read: 'all',
-              write: {
-                answers: [
-                  'spouseIncome',
-                  'spouseIncomeFiles',
-                  'spouseTaxReturnFiles',
-                  'spouseContactInfo',
-                  'spouseFormComment',
-                ],
-              },
+              write: 'all',
             },
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/WaitingForSpouse').then((module) =>
-                  Promise.resolve(module.WaitingForSpouse),
+                import('../forms/ApplicantSubmitted').then((module) =>
+                  Promise.resolve(module.ApplicantSubmitted),
                 ),
+              read: 'all',
+              delete: true,
             },
           ],
         },
@@ -165,35 +204,41 @@ const FinancialAidTemplate: ApplicationTemplate<
       [ApplicationStates.SUBMITTED]: {
         meta: {
           name: application.name.defaultMessage,
+          status: 'completed',
           lifecycle: oneMonthLifeCycle,
-          onEntry: {
-            apiModuleAction: ApiActions.CREATEAPPLICATION,
+          actionCard: {
+            description: stateDescriptions.submitted,
           },
+          onEntry: CreateApplicationApi,
           roles: [
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/Submitted').then((module) =>
-                  Promise.resolve(module.Submitted),
+                import('../forms/ApplicantSubmitted').then((module) =>
+                  Promise.resolve(module.ApplicantSubmitted),
                 ),
-              // TODO: Limit this
               read: 'all',
+              write: 'all',
             },
             {
               id: Roles.SPOUSE,
               formLoader: () =>
-                import('../forms/Submitted').then((module) =>
-                  Promise.resolve(module.Submitted),
+                import('../forms/SpouseSubmitted').then((module) =>
+                  Promise.resolve(module.SpouseSubmitted),
                 ),
-              // TODO: Limit this
               read: 'all',
+              write: 'all',
             },
           ],
+        },
+        on: {
+          EDIT: { target: ApplicationStates.SUBMITTED },
         },
       },
       [ApplicationStates.MUNCIPALITYNOTREGISTERED]: {
         meta: {
           name: application.name.defaultMessage,
+          status: 'rejected',
           lifecycle: {
             shouldBeListed: false,
             shouldBePruned: true,
@@ -206,12 +251,7 @@ const FinancialAidTemplate: ApplicationTemplate<
                 import('../forms/MuncipalityNotRegistered').then((module) =>
                   Promise.resolve(module.MuncipalityNotRegistered),
                 ),
-              write: {
-                externalData: ['nationalRegistry'],
-              },
-              read: {
-                externalData: ['nationalRegistry'],
-              },
+              read: 'all',
             },
           ],
         },
@@ -225,9 +265,8 @@ const FinancialAidTemplate: ApplicationTemplate<
           externalData,
           answers,
         } = (context.application as unknown) as FAApplication
-        const { applicant } = externalData.nationalRegistry.data
         const spouse =
-          applicant.spouse?.nationalId ||
+          externalData.nationalRegistrySpouse.data?.nationalId ||
           answers.relationshipStatus.spouseNationalId
 
         if (spouse) {

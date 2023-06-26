@@ -3,6 +3,7 @@ import { Response } from 'express'
 
 import { Logger } from '@island.is/logging'
 
+import { nowFactory } from '../../../../factories'
 import { getRulingPdfAsBuffer } from '../../../../formatters'
 import { createTestingCaseModule } from '../createTestingCaseModule'
 import { AwsS3Service } from '../../../aws-s3'
@@ -49,7 +50,7 @@ describe('CaseController - Get ruling pdf', () => {
 
   describe('AWS S3 lookup', () => {
     const caseId = uuid()
-    const theCase = { id: caseId } as Case
+    const theCase = { id: caseId, rulingDate: nowFactory() } as Case
     const res = {} as Response
 
     beforeEach(async () => {
@@ -65,7 +66,7 @@ describe('CaseController - Get ruling pdf', () => {
 
   describe('AWS S3 pdf returned', () => {
     const caseId = uuid()
-    const theCase = { id: caseId } as Case
+    const theCase = { id: caseId, rulingDate: nowFactory() } as Case
     const res = ({ end: jest.fn() } as unknown) as Response
     const pdf = {}
 
@@ -83,7 +84,7 @@ describe('CaseController - Get ruling pdf', () => {
 
   describe('AWS S3 lookup fails', () => {
     const caseId = uuid()
-    const theCase = { id: caseId } as Case
+    const theCase = { id: caseId, rulingDate: nowFactory() } as Case
     const res = {} as Response
     const error = new Error('Some ignored error')
 
@@ -106,7 +107,7 @@ describe('CaseController - Get ruling pdf', () => {
 
   describe('pdf generated', () => {
     const caseId = uuid()
-    const theCase = { id: caseId } as Case
+    const theCase = { id: caseId, rulingDate: nowFactory() } as Case
     const res = {} as Response
 
     beforeEach(async () => {
@@ -119,14 +120,51 @@ describe('CaseController - Get ruling pdf', () => {
     it('should generate pdf', () => {
       expect(getRulingPdfAsBuffer).toHaveBeenCalledWith(
         theCase,
-        undefined, // TODO Mock IntlService
+        expect.any(Function),
+      )
+    })
+  })
+
+  describe('pdf generated', () => {
+    const caseId = uuid()
+    const theCase = { id: caseId, rulingDate: nowFactory() } as Case
+    const res = {} as Response
+
+    beforeEach(async () => {
+      const mockGetObject = mockAwsS3Service.getObject as jest.Mock
+      mockGetObject.mockRejectedValueOnce(new Error('Some ignored error'))
+
+      await givenWhenThen(caseId, theCase, res)
+    })
+
+    it('should generate pdf', () => {
+      expect(getRulingPdfAsBuffer).toHaveBeenCalledWith(
+        theCase,
+        expect.any(Function),
+      )
+    })
+  })
+
+  describe('pdf generated when forced to do so', () => {
+    const caseId = uuid()
+    const theCase = { id: caseId } as Case
+    const res = {} as Response
+
+    beforeEach(async () => {
+      await givenWhenThen(caseId, theCase, res)
+    })
+
+    it('should generate pdf', () => {
+      expect(getRulingPdfAsBuffer).toHaveBeenCalledWith(
+        theCase,
+        expect.any(Function),
       )
     })
   })
 
   describe('generated pdf returned', () => {
     const caseId = uuid()
-    const theCase = { id: caseId } as Case
+    const theCase = { id: caseId, rulingDate: nowFactory() } as Case
     const res = ({ end: jest.fn() } as unknown) as Response
     const pdf = {}
 
@@ -146,7 +184,7 @@ describe('CaseController - Get ruling pdf', () => {
 
   describe('pdf generation fails', () => {
     const caseId = uuid()
-    const theCase = { id: caseId } as Case
+    const theCase = { id: caseId, rulingDate: nowFactory() } as Case
     let then: Then
     const res = {} as Response
 

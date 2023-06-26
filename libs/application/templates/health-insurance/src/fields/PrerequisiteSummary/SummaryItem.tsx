@@ -2,7 +2,7 @@ import React, { FC } from 'react'
 import { Box, Button, Icon, Tag, Text } from '@island.is/island-ui/core'
 
 import * as styles from './SummaryItem.css'
-import { Application } from '@island.is/application/core'
+import { Application } from '@island.is/application/types'
 import HtmlParser from 'react-html-parser'
 
 export enum SummaryItemState {

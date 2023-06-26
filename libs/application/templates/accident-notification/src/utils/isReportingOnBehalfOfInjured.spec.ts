@@ -1,4 +1,4 @@
-import { FormValue } from '@island.is/application/core'
+import { FormValue } from '@island.is/application/types'
 import { WhoIsTheNotificationForEnum } from '../types'
 import { isReportingOnBehalfOfInjured } from './isReportingOnBehalfOfInjured'
 

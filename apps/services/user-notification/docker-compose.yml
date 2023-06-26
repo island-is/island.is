@@ -2,7 +2,7 @@ version: '3.3'
 
 services:
   localstack:
-    image: localstack/localstack:0.13.1
+    image: docker.io/localstack/localstack:0.13.1
     networks:
       - local
     ports:

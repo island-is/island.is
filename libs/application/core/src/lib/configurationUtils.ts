@@ -1,7 +1,7 @@
 import {
   ApplicationConfigurations,
   ApplicationTypes,
-} from '../types/ApplicationTypes'
+} from '@island.is/application/types'
 
 export const getTypeFromSlug = (slug?: string) => {
   for (const [key, value] of Object.entries(ApplicationConfigurations)) {

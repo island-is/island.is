@@ -1,34 +1,21 @@
-import { IsEnum, IsNotEmpty, IsString } from 'class-validator'
+import { IsString } from 'class-validator'
 import { ApiProperty } from '@nestjs/swagger'
-import { IsNationalId } from '@island.is/nest/validators'
-import { MessageTypes } from '../types'
+import { IsNationalId } from '@island.is/nest/core'
 
-export class TypeValidator {
-  @IsEnum(MessageTypes)
-  @ApiProperty({ enum: MessageTypes })
-  type!: MessageTypes
-}
+export class CreateNotificationDto {
+  @IsString()
+  @ApiProperty({ example: 'newDocumentMessage' })
+  type!: string
 
-export class NewDocumentMessage {
-  @ApiProperty({ enum: [MessageTypes.NewDocumentMessage] })
-  type!: MessageTypes.NewDocumentMessage
+  @IsNationalId()
+  @ApiProperty({ example: '1234567890' })
+  recipient!: string
 
   @IsString()
   @ApiProperty()
   organization!: string
 
-  @IsNationalId()
-  @ApiProperty()
-  recipient!: string
-
   @IsString()
-  @IsNotEmpty()
   @ApiProperty()
   documentId!: string
-}
-
-export type Message = NewDocumentMessage
-
-export const ValidatorTypeMap = {
-  [MessageTypes.NewDocumentMessage]: NewDocumentMessage,
 }

@@ -34,6 +34,7 @@ export const Header: FC = () => {
                 }
               : undefined
           }
+          logoRender={(logo) => <a href="/minarsidur/umsoknir">{logo}</a>}
           headerItems={<UserMenu showDropdownLanguage small />}
         />
       </GridContainer>

@@ -2,7 +2,10 @@ import {
   judgeRule,
   prosecutorRule,
   registrarRule,
+  representativeRule,
+  assistantRule,
   staffRule,
+  defenderRule,
 } from '../../../../guards'
 import { CaseController } from '../../case.controller'
 
@@ -14,23 +17,17 @@ describe('CaseController - Get all rules', () => {
     rules = Reflect.getMetadata('roles-rules', CaseController.prototype.getAll)
   })
 
-  it('should give permission to four roles', () => {
-    expect(rules).toHaveLength(4)
+  it('should give permission to seven roles', () => {
+    expect(rules).toHaveLength(7)
   })
 
-  it('should give permission to prosecutors', () => {
+  it('should give permission to prosecutors, representatives, judges, registrars, assistants and staff', () => {
     expect(rules).toContain(prosecutorRule)
-  })
-
-  it('should give permission to judges', () => {
+    expect(rules).toContain(representativeRule)
     expect(rules).toContain(judgeRule)
-  })
-
-  it('should give permission to registrars', () => {
     expect(rules).toContain(registrarRule)
-  })
-
-  it('should give permission to staff', () => {
+    expect(rules).toContain(assistantRule)
     expect(rules).toContain(staffRule)
+    expect(rules).toContain(defenderRule)
   })
 })

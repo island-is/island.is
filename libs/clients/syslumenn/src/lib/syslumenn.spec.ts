@@ -12,17 +12,34 @@ import {
   OPERATING_LICENSE,
   OPERATING_LICENSE_PAGINATION_INFO_SERVICE_RES,
   DATA_UPLOAD,
+  REAL_ESTATE_ADDRESS,
   MORTGAGE_CERTIFICATE_CONTENT_NO_KMARKING,
+  ESTATE_REGISTRANT_RESPONSE,
+  OPERATING_LICENSES_CSV,
+  TEMPORARY_EVENT_LICENCES,
 } from './__mock-data__/responses'
 import {
   mapHomestay,
   mapSyslumennAuction,
   mapDataUploadResponse,
   mapPaginatedOperatingLicenses,
+  mapOperatingLicensesCSV,
+  mapEstateRegistrant,
+  mapRealEstateAgent,
+  mapLawyer,
+  mapBroker,
+  mapAlcoholLicence,
+  mapTemporaryEventLicence,
 } from './syslumennClient.utils'
-import { SYSLUMENN_AUCTION } from './__mock-data__/responses'
+import {
+  SYSLUMENN_AUCTION,
+  REAL_ESTATE_AGENTS,
+  LAWYERS,
+  BROKERS,
+  ALCOHOL_LICENCES,
+} from './__mock-data__/responses'
 import { PersonType } from './syslumennClient.types'
-import { SyslumennClientModule } from '@island.is/clients/syslumenn'
+import { SyslumennClientModule } from '../lib/syslumennClient.module'
 
 import { defineConfig, ConfigModule } from '@island.is/nest/config'
 
@@ -40,10 +57,15 @@ const PERSON = [
     type: PersonType.Plaintiff,
   },
 ]
-const ATTACHMENT = {
-  name: 'attachment',
-  content: 'content',
-}
+const ATTACHMENTS = [
+  {
+    name: 'attachment',
+    content: 'content',
+  },
+]
+
+const VALID_ESTATE_APPLICANT = '0101302399'
+const INVALID_ESTATE_APPLICANT = '0101303019'
 
 const config = defineConfig({
   name: 'SyslumennApi',
@@ -100,6 +122,29 @@ describe('SyslumennService', () => {
     })
   })
 
+  describe('getRealEstateAgents', () => {
+    it('should return real estate agents', async () => {
+      const response = await service.getRealEstateAgents()
+      expect(response).toStrictEqual(
+        (REAL_ESTATE_AGENTS ?? []).map(mapRealEstateAgent),
+      )
+    })
+  })
+
+  describe('getLawyers', () => {
+    it('should return lawyers', async () => {
+      const response = await service.getLawyers()
+      expect(response).toStrictEqual((LAWYERS ?? []).map(mapLawyer))
+    })
+  })
+
+  describe('getBrokers', () => {
+    it('should return brokers', async () => {
+      const response = await service.getBrokers()
+      expect(response).toStrictEqual((BROKERS ?? []).map(mapBroker))
+    })
+  })
+
   describe('getOperatingLicenses', () => {
     it('should return operating license', async () => {
       const response = await service.getOperatingLicenses()
@@ -113,17 +158,65 @@ describe('SyslumennService', () => {
     })
   })
 
+  describe('getOperatingLicensesCSV', () => {
+    it('should return operating licences CSV', async () => {
+      const response = await service.getOperatingLicensesCSV()
+      expect(response).toStrictEqual(
+        mapOperatingLicensesCSV(OPERATING_LICENSES_CSV),
+      )
+    })
+  })
+
+  describe('getAlcoholLicences', () => {
+    it('should return alcohol licences', async () => {
+      const response = await service.getAlcoholLicences()
+      expect(response).toStrictEqual(
+        (ALCOHOL_LICENCES ?? []).map(mapAlcoholLicence),
+      )
+    })
+  })
+
+  describe('getTemporaryEventLicences', () => {
+    it('should return temporary event licences', async () => {
+      const response = await service.getTemporaryEventLicences()
+      expect(response).toStrictEqual(
+        (TEMPORARY_EVENT_LICENCES ?? []).map(mapTemporaryEventLicence),
+      )
+    })
+  })
+
   describe('uploadData', () => {
     it('should return data upload response', async () => {
       const response = await service.uploadData(
         PERSON,
-        ATTACHMENT,
+        ATTACHMENTS,
         {
           key: 'string',
         },
         'Lögheimilisbreyting barns',
       )
       expect(response).toStrictEqual(mapDataUploadResponse(DATA_UPLOAD))
+    })
+  })
+
+  describe('getEstateRegistrant', () => {
+    it('should return estate registry for a valid nationalId', async () => {
+      const response = await service.getEstateRegistrant(VALID_ESTATE_APPLICANT)
+      expect(response).toStrictEqual(
+        ESTATE_REGISTRANT_RESPONSE.map(mapEstateRegistrant),
+      )
+    })
+  })
+
+  describe('getRealEstateAddress', () => {
+    it('should return address for valid realEstateId', async () => {
+      const response = await service.getRealEstateAddress('012345')
+      expect(response).toStrictEqual(REAL_ESTATE_ADDRESS)
+    })
+
+    it('should return error for invalid realEstateId', async () => {
+      const response = await service.getRealEstateAddress('abcdefg')
+      expect(response).toStrictEqual([])
     })
   })
 

@@ -1,11 +1,14 @@
-import { Okuskirteini } from '../v1'
-
 export interface DriversLicenseCategory {
   id: number
   name: string
   issued: Date | null
   expires: Date | null
   comments: string | null
+}
+
+export interface Disqualification {
+  to: Date
+  from: Date
 }
 
 export interface DriversLicense {
@@ -15,6 +18,13 @@ export interface DriversLicense {
   expires?: Date | null
   categories: DriversLicenseCategory[]
   healthRemarks?: string[]
+  disqualification?: Disqualification | null
+  birthCountry?: string | null
+}
+
+export interface RemarkCode {
+  index: string
+  name: string
 }
 
 export interface Teacher {
@@ -38,6 +48,10 @@ export interface QualityPhoto {
   data: string
 }
 
+export interface QualitySignature {
+  data: string
+}
+
 export type CanApplyErrorCodeBTemporary =
   | 'PERSON_NOT_FOUND_IN_NATIONAL_REGISTRY'
   | 'NO_LICENSE_FOUND'
@@ -45,6 +59,7 @@ export type CanApplyErrorCodeBTemporary =
   | 'HAS_DEPRIVATION'
   | 'HAS_NO_PHOTO'
   | 'HAS_NO_SIGNATURE'
+  | 'HAS_B_CATEGORY'
 
 export type CanApplyErrorCodeBFull =
   | 'HAS_POINTS'

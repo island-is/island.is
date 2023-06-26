@@ -2,9 +2,7 @@ import {
   buildMultiField,
   buildCustomField,
   buildSubSection,
-  getValueViaPath,
 } from '@island.is/application/core'
-import { CurrentLicenseProviderResult } from '../../dataProviders/CurrentLicenseProvider'
 import { m } from '../../lib/messages'
 import { hasNoDrivingLicenseInOtherCountry } from '../../lib/utils'
 import { hasHealthRemarks } from '../../lib/utils/formUtils'

@@ -4,6 +4,7 @@ import { Request, Response } from 'express'
 import { Inject, Injectable } from '@nestjs/common'
 
 import type { ConfigType } from '@island.is/nest/config'
+import { ProblemError } from '@island.is/nest/problem'
 import {
   AuditedAction,
   AuditTrailService,
@@ -11,7 +12,6 @@ import {
 
 import { FileExeption } from './file.exception'
 import { fileModuleConfig } from './file.config'
-import { ProblemError } from '@island.is/nest/problem'
 
 @Injectable()
 export class FileService {

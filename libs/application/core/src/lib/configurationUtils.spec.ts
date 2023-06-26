@@ -1,4 +1,4 @@
-import { ApplicationTypes } from '../types/ApplicationTypes'
+import { ApplicationTypes } from '@island.is/application/types'
 import { getSlugFromType, getTypeFromSlug } from './configurationUtils'
 
 describe('configuration utility functions', () => {

@@ -2,8 +2,8 @@ import React from 'react'
 import { useIntl } from 'react-intl'
 
 import { Text, Box, AccordionItem } from '@island.is/island-ui/core'
-import { rulingAccordion as m } from '@island.is/judicial-system-web/messages/Core/rulingAccordion'
-import type { Case } from '@island.is/judicial-system/types'
+import { rulingAccordion as m } from '@island.is/judicial-system-web/messages'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 import { AccordionListItem } from '../..'
 

@@ -4,6 +4,7 @@ import { FAFieldBaseProps, ApproveOptions } from '../../lib/types'
 import { useIntl } from 'react-intl'
 import { personalTaxCreditForm } from '../../lib/messages'
 import { RadioController } from '@island.is/shared/form-fields'
+import withLogo from '../Logo/Logo'
 
 const PersonalTaxCreditForm = ({
   field,
@@ -52,4 +53,4 @@ const PersonalTaxCreditForm = ({
   )
 }
 
-export default PersonalTaxCreditForm
+export default withLogo(PersonalTaxCreditForm)

@@ -16,13 +16,13 @@ import getConfig from 'next/config'
 import { NextComponentType, NextPageContext } from 'next'
 import { Screen, GetInitialPropsContext } from '../types'
 import Cookies from 'js-cookie'
-import * as Sentry from '@sentry/node'
-import { RewriteFrames } from '@sentry/integrations'
+import { CACHE_CONTROL_HEADER } from '@island.is/shared/constants'
 import { userMonitoring } from '@island.is/user-monitoring'
 import { useRouter } from 'next/router'
 import {
   Header,
   Main,
+  MobileAppBanner,
   PageLoader,
   SkipToMainContent,
 } from '@island.is/web/components'
@@ -39,17 +39,19 @@ import {
   QueryGetArticleCategoriesArgs,
   QueryGetGroupedMenuArgs,
   Menu,
+  GetOrganizationPageQuery,
+  GetSingleArticleQuery,
 } from '../graphql/schema'
 import { GlobalContextProvider } from '../context'
 import { MenuTabsContext } from '../context/MenuTabsContext/MenuTabsContext'
 import { useI18n } from '../i18n'
 import { GET_ALERT_BANNER_QUERY } from '../screens/queries/AlertBanner'
-import { environment } from '../environments'
 import { useNamespace } from '../hooks'
 import {
   formatMegaMenuCategoryLinks,
   formatMegaMenuLinks,
 } from '../utils/processMenuData'
+import { stringHash } from '@island.is/shared/utils'
 import { Locale } from '@island.is/shared/types'
 import {
   LinkType,
@@ -57,8 +59,7 @@ import {
   linkResolver as LinkResolver,
   pathIsRoute,
 } from '../hooks/useLinkResolver'
-import { stringHash } from '@island.is/web/utils/stringHash'
-
+import { OrganizationIslandFooter } from '../components/Organization/OrganizationIslandFooter'
 import Illustration from './Illustration'
 import * as styles from './main.css'
 
@@ -66,8 +67,6 @@ const { publicRuntimeConfig = {} } = getConfig() ?? {}
 
 const IS_MOCK =
   process.env.NODE_ENV !== 'production' && process.env.API_MOCKS === 'true'
-
-const SHOULD_LINK_TO_SERVICE_WEB = false
 
 const absoluteUrl = (req, setLocalhost) => {
   let protocol = 'https:'
@@ -103,23 +102,11 @@ export interface LayoutProps {
   namespace: Record<string, string | string[]>
   alertBannerContent?: GetAlertBannerQuery['getAlertBanner']
   organizationAlertBannerContent?: GetAlertBannerQuery['getAlertBanner']
+  articleAlertBannerContent?: GetAlertBannerQuery['getAlertBanner']
+  languageToggleQueryParams?: Record<Locale, Record<string, string>>
+  footerVersion?: 'default' | 'organization'
   respOrigin
   megaMenuData
-}
-
-if (environment.sentryDsn) {
-  Sentry.init({
-    dsn: environment.sentryDsn,
-    enabled: environment.production,
-    integrations: [
-      new RewriteFrames({
-        iteratee: (frame) => {
-          frame.filename = frame.filename.replace(`~/.next`, 'app:///_next')
-          return frame
-        },
-      }),
-    ],
-  })
 }
 
 if (
@@ -157,6 +144,9 @@ const Layout: NextComponentType<
   namespace,
   alertBannerContent,
   organizationAlertBannerContent,
+  articleAlertBannerContent,
+  languageToggleQueryParams,
+  footerVersion = 'default',
   respOrigin,
   children,
   megaMenuData,
@@ -164,25 +154,8 @@ const Layout: NextComponentType<
   const { activeLocale, t } = useI18n()
   const { linkResolver } = useLinkResolver()
   const n = useNamespace(namespace)
-  const { route, pathname, query, asPath } = useRouter()
+  const { asPath } = useRouter()
   const fullUrl = `${respOrigin}${asPath}`
-
-  Sentry.configureScope((scope) => {
-    scope.setExtra('lang', activeLocale)
-
-    scope.setContext('router', {
-      route,
-      pathname,
-      query,
-      asPath,
-    })
-  })
-
-  Sentry.addBreadcrumb({
-    category: 'pages/main',
-    message: `Rendering from ${process.browser ? 'browser' : 'server'}`,
-    level: Sentry.Severity.Debug,
-  })
 
   const menuTabs = [
     {
@@ -220,11 +193,21 @@ const Layout: NextComponentType<
           )}`,
           ...organizationAlertBannerContent,
         },
+        {
+          bannerId: `article-alert-${stringHash(
+            JSON.stringify(articleAlertBannerContent ?? {}),
+          )}`,
+          ...articleAlertBannerContent,
+        },
       ].filter(
         (banner) => !Cookies.get(banner.bannerId) && banner?.showAlertBanner,
       ),
     )
-  }, [alertBannerContent, organizationAlertBannerContent])
+  }, [
+    alertBannerContent,
+    articleAlertBannerContent,
+    organizationAlertBannerContent,
+  ])
 
   const preloadedFonts = [
     '/fonts/ibm-plex-sans-v7-latin-300.woff2',
@@ -234,14 +217,10 @@ const Layout: NextComponentType<
     '/fonts/ibm-plex-sans-v7-latin-600.woff2',
   ]
 
-  const isServiceWeb = pathIsRoute(asPath, 'serviceweb')
+  const isServiceWeb = pathIsRoute(asPath, 'serviceweb', activeLocale)
 
   return (
-    <GlobalContextProvider
-      namespace={namespace}
-      shouldLinkToServiceWeb={SHOULD_LINK_TO_SERVICE_WEB}
-      isServiceWeb={isServiceWeb}
-    >
+    <GlobalContextProvider namespace={namespace} isServiceWeb={isServiceWeb}>
       <Page component="div">
         <Head>
           {preloadedFonts.map((href, index) => {
@@ -323,7 +302,6 @@ const Layout: NextComponentType<
         <SkipToMainContent
           title={n('skipToMainContent', 'Fara beint í efnið')}
         />
-
         {alertBanners.map((banner) => (
           <AlertBanner
             key={banner.bannerId}
@@ -349,7 +327,9 @@ const Layout: NextComponentType<
             }}
           />
         ))}
-
+        <Hidden above="sm">
+          <MobileAppBanner namespace={namespace} />
+        </Hidden>
         <PageLoader />
         <MenuTabsContext.Provider
           value={{
@@ -364,6 +344,7 @@ const Layout: NextComponentType<
                 buttonColorScheme={headerButtonColorScheme}
                 showSearchInHeader={showSearchInHeader}
                 megaMenuData={megaMenuData}
+                languageToggleQueryParams={languageToggleQueryParams}
               />
             </ColorSchemeContext.Provider>
           )}
@@ -373,28 +354,38 @@ const Layout: NextComponentType<
         </MenuTabsContext.Provider>
         {showFooter && (
           <Hidden print={true}>
-            {showFooterIllustration && (
-              <Illustration className={styles.illustration} />
+            {footerVersion === 'default' && (
+              <>
+                {showFooterIllustration && (
+                  <Illustration className={styles.illustration} />
+                )}
+                <Footer
+                  topLinks={footerUpperInfo}
+                  topLinksContact={footerUpperContact}
+                  bottomLinks={footerLowerMenu}
+                  middleLinks={footerMiddleMenu}
+                  bottomLinksTitle={t.siteExternalTitle}
+                  middleLinksTitle={String(namespace.footerMiddleLabel)}
+                  languageSwitchLink={{
+                    title: activeLocale === 'en' ? 'Íslenska' : 'English',
+                    href: activeLocale === 'en' ? '/' : '/en',
+                  }}
+                  privacyPolicyLink={{
+                    title: n('privacyPolicyTitle', 'Persónuverndarstefna'),
+                    href: n(
+                      'privacyPolicyHref',
+                      '/personuverndarstefna-stafraent-islands',
+                    ),
+                  }}
+                  termsLink={{
+                    title: n('termsTitle', 'Skilmálar'),
+                    href: n('termsHref', '/skilmalar-island-is'),
+                  }}
+                  showMiddleLinks
+                />
+              </>
             )}
-            <Footer
-              topLinks={footerUpperInfo}
-              {...(activeLocale === 'is'
-                ? {
-                    linkToHelpWeb: SHOULD_LINK_TO_SERVICE_WEB
-                      ? linkResolver('serviceweb').href
-                      : '',
-                  }
-                : { topLinksContact: footerUpperContact })}
-              bottomLinks={footerLowerMenu}
-              middleLinks={footerMiddleMenu}
-              bottomLinksTitle={t.siteExternalTitle}
-              middleLinksTitle={String(namespace.footerMiddleLabel)}
-              languageSwitchLink={{
-                title: activeLocale === 'en' ? 'Íslenska' : 'English',
-                href: activeLocale === 'en' ? '/' : '/en',
-              }}
-              showMiddleLinks
-            />
+            {footerVersion === 'organization' && <OrganizationIslandFooter />}
           </Hidden>
         )}
         <style jsx global>{`
@@ -608,6 +599,13 @@ type LayoutWrapper<T> = NextComponentType<
   { layoutProps: LayoutProps; componentProps: T }
 >
 
+interface LayoutComponentProps {
+  themeConfig?: Partial<LayoutProps>
+  organizationPage?: GetOrganizationPageQuery['getOrganizationPage']
+  article?: GetSingleArticleQuery['getSingleArticle']
+  languageToggleQueryParams?: LayoutProps['languageToggleQueryParams']
+}
+
 export const withMainLayout = <T,>(
   Component: Screen<T>,
   layoutConfig: Partial<LayoutProps> = {},
@@ -624,6 +622,11 @@ export const withMainLayout = <T,>(
   }
 
   WithMainLayout.getInitialProps = async (ctx) => {
+    // Configure default full-page caching.
+    if (ctx.res) {
+      ctx.res.setHeader('Cache-Control', CACHE_CONTROL_HEADER)
+    }
+
     const getLayoutInitialProps = Layout.getInitialProps as Exclude<
       typeof Layout.getInitialProps,
       undefined
@@ -633,14 +636,14 @@ export const withMainLayout = <T,>(
       getLayoutInitialProps(ctx),
       Component.getInitialProps ? Component.getInitialProps(ctx) : ({} as T),
     ])
+    const layoutComponentProps = componentProps as LayoutComponentProps
 
-    const themeConfig: Partial<LayoutProps> =
-      'themeConfig' in componentProps ? componentProps['themeConfig'] : {}
-
-    const organizationAlertBannerContent: GetAlertBannerQuery['getAlertBanner'] =
-      'organizationPage' in componentProps
-        ? componentProps['organizationPage']['alertBanner']
-        : undefined
+    const themeConfig = layoutComponentProps.themeConfig ?? {}
+    const organizationAlertBannerContent =
+      layoutComponentProps.organizationPage?.alertBanner
+    const articleAlertBannerContent = layoutComponentProps.article?.alertBanner
+    const languageToggleQueryParams =
+      layoutComponentProps.languageToggleQueryParams
 
     return {
       layoutProps: {
@@ -648,6 +651,8 @@ export const withMainLayout = <T,>(
         ...layoutConfig,
         ...themeConfig,
         organizationAlertBannerContent,
+        articleAlertBannerContent,
+        languageToggleQueryParams,
       },
       componentProps,
     }

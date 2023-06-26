@@ -24,7 +24,6 @@ import {
 } from './dto'
 import { IdsUserGuard } from '@island.is/auth-nest-tools'
 import type { Municipality, Staff } from '@island.is/financial-aid/shared/lib'
-import { StaffModel } from '../staff/models'
 
 @UseGuards(IdsUserGuard)
 @Resolver(() => MunicipalityModel)

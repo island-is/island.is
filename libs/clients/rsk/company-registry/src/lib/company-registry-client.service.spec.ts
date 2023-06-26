@@ -2,14 +2,14 @@ import { Logger } from '@island.is/logging'
 import faker from 'faker'
 
 import { FetchError } from '@island.is/clients/middlewares'
+
 import {
   CompanyAddress,
   CompanyAddressType,
   CompanyExtendedInfo,
   CompanySearchResults,
   SearchRequest,
-} from '@island.is/clients/rsk/company-registry'
-
+} from './types'
 import { CompanyRegistryClientService } from './company-registry-client.service'
 import { DefaultApi } from './gen/fetch'
 

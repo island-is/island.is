@@ -7,8 +7,8 @@ export const serviceSetup = (services: {
     .namespace('judicial-system')
     .env({
       API_URL: {
-        dev: 'https://judicial-system.dev01.devland.is',
-        staging: 'https://judicial-system.staging01.devland.is',
+        dev: ref((h) => `https://judicial-system.${h.env.domain}`),
+        staging: ref((h) => `https://judicial-system.${h.env.domain}`),
         prod: 'https://rettarvorslugatt.island.is',
       },
       INTERNAL_API_URL: ref((h) => `http://${h.svc(services.api)}`),
@@ -17,9 +17,20 @@ export const serviceSetup = (services: {
       NATIONAL_REGISTRY_API_KEY:
         '/k8s/judicial-system/NATIONAL_REGISTRY_API_KEY',
       LAWYERS_ICELAND_API_KEY: '/k8s/judicial-system/LAWYERS_ICELAND_API_KEY',
+      SUPPORT_EMAIL: '/k8s/judicial-system/SUPPORT_EMAIL',
     })
     .liveness('/liveness')
     .readiness('/readiness')
+    .resources({
+      limits: {
+        cpu: '200m',
+        memory: '256Mi',
+      },
+      requests: {
+        cpu: '15m',
+        memory: '128Mi',
+      },
+    })
     .ingress({
       primary: {
         host: {
@@ -28,5 +39,19 @@ export const serviceSetup = (services: {
           prod: 'rettarvorslugatt.island.is',
         },
         paths: ['/'],
+        extraAnnotations: {
+          dev: {
+            'nginx.ingress.kubernetes.io/proxy-buffering': 'on',
+            'nginx.ingress.kubernetes.io/proxy-buffer-size': '8k',
+          },
+          staging: {
+            'nginx.ingress.kubernetes.io/proxy-buffering': 'on',
+            'nginx.ingress.kubernetes.io/proxy-buffer-size': '8k',
+          },
+          prod: {
+            'nginx.ingress.kubernetes.io/proxy-buffering': 'on',
+            'nginx.ingress.kubernetes.io/proxy-buffer-size': '8k',
+          },
+        },
       },
     })

@@ -30,30 +30,25 @@ export const serviceSetup = (): ServiceBuilder<'judicial-system-backend'> =>
         staging: 'cdn.contentful.com',
         prod: 'cdn.contentful.com',
       },
-      COMPLETED_CASE_OVERVIEW_URL: {
-        dev: 'https://judicial-system.dev01.devland.is/krafa/yfirlit/',
-        staging: 'https://judicial-system.staging01.devland.is/krafa/yfirlit/',
-        prod: 'https://rettarvorslugatt.island.is/krafa/yfirlit/',
+      CONTENTFUL_ENVIRONMENT: {
+        dev: 'test',
+        staging: 'test',
+        prod: 'master',
       },
-      PROSECUTOR_RESTRICTION_CASE_OVERVIEW_URL: {
-        dev: 'https://judicial-system.dev01.devland.is/krafa/stadfesta/',
-        staging:
-          'https://judicial-system.staging01.devland.is/krafa/stadfesta/',
-        prod: 'https://rettarvorslugatt.island.is/krafa/stadfesta/',
+      CLIENT_URL: {
+        dev: ref((h) => `https://judicial-system.${h.env.domain}`),
+        staging: ref((h) => `https://judicial-system.${h.env.domain}`),
+        prod: 'https://rettarvorslugatt.island.is',
       },
-      PROSECUTOR_INVESTIGATION_CASE_OVERVIEW_URL: {
-        dev:
-          'https://judicial-system.dev01.devland.is/krafa/rannsoknarheimild/stadfesta/',
-        staging:
-          'https://judicial-system.staging01.devland.is/krafa/rannsoknarheimild/stadfesta/',
-        prod:
-          'https://rettarvorslugatt.island.is/krafa/rannsoknarheimild/stadfesta/',
+      SQS_QUEUE_NAME: 'sqs-judicial-system',
+      SQS_DEAD_LETTER_QUEUE_NAME: 'sqs-judicial-system-dlq',
+      SQS_REGION: 'eu-west-1',
+      BLOCKED_API_INTEGRATION: {
+        dev: '',
+        staging: 'COURT,COURT_LITIGANT,POLICE_CASE,POLICE_CASE_V2',
+        prod: 'POLICE_CASE_V2',
       },
-      DEFENDER_COMPLETED_CASE_OVERVIEW_URL: {
-        dev: 'https://judicial-system.dev01.devland.is/verjandi/',
-        staging: 'https://judicial-system.staging01.devland.is/verjandi/',
-        prod: 'https://rettarvorslugatt.island.is/verjandi/',
-      },
+      NO_UPDATE_NOTIFIER: 'true',
     })
     .xroad(Base, JudicialSystem)
     .secrets({
@@ -61,6 +56,7 @@ export const serviceSetup = (): ServiceBuilder<'judicial-system-backend'> =>
       NOVA_USERNAME: '/k8s/judicial-system/NOVA_USERNAME',
       NOVA_PASSWORD: '/k8s/judicial-system/NOVA_PASSWORD',
       COURTS_MOBILE_NUMBERS: '/k8s/judicial-system/COURTS_MOBILE_NUMBERS',
+      COURTS_EMAILS: '/k8s/judicial-system/COURTS_EMAILS',
       DOKOBIT_ACCESS_TOKEN: '/k8s/judicial-system/DOKOBIT_ACCESS_TOKEN',
       EMAIL_FROM: '/k8s/judicial-system/EMAIL_FROM',
       EMAIL_FROM_NAME: '/k8s/judicial-system/EMAIL_FROM_NAME',
@@ -79,16 +75,19 @@ export const serviceSetup = (): ServiceBuilder<'judicial-system-backend'> =>
     .initContainer({
       containers: [{ command: 'npx', args: ['sequelize-cli', 'db:migrate'] }],
       postgres: postgresInfo,
+      envs: {
+        NO_UPDATE_NOTIFIER: 'true',
+      },
     })
     .liveness('/liveness')
     .readiness('/liveness')
     .postgres(postgresInfo)
     .resources({
-      requests: { cpu: '100m', memory: '256Mi' },
-      limits: { cpu: '400m', memory: '512Mi' },
+      requests: { cpu: '100m', memory: '512Mi' },
+      limits: { cpu: '400m', memory: '1024Mi' },
     })
     .replicaCount({
-      min: 4,
+      min: 2,
       max: 10,
-      default: 4,
+      default: 2,
     })

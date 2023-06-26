@@ -17,7 +17,7 @@ export class RecyclingPartnerResolver {
   constructor(private recyclingPartnerService: RecyclingPartnerService) {}
 
   @Authorize({
-    roles: [Role.developer, Role.recyclingFund, Role.recyclingCompany],
+    roles: [Role.developer, Role.recyclingFund],
   })
   @Query(() => [RecyclingPartnerModel])
   async skilavottordAllRecyclingPartners(): Promise<RecyclingPartnerModel[]> {

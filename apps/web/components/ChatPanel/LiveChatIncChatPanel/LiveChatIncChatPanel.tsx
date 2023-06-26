@@ -1,4 +1,5 @@
 import { useEffect } from 'react'
+import { LiveChatIncChatPanelProps } from '../types'
 
 const SCRIPT_SRC = 'https://cdn.livechatinc.com/tracking.js'
 
@@ -45,11 +46,6 @@ const activateWidget = (license: number, version: string) => {
   })(window, document, [].slice)
   return widget
   /* eslint-enable */
-}
-
-interface LiveChatIncChatPanelProps {
-  license: number
-  version: string
 }
 
 export const LiveChatIncChatPanel = ({

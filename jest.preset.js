@@ -18,6 +18,6 @@ module.exports = {
     '!**/*.config.*',
     '!**/infra/*',
     '!**/seeders/*',
-    '!**/migration/*',
+    '!**/migrations/*',
   ],
 }

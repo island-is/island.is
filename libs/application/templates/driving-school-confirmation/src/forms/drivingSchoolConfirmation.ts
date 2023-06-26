@@ -1,22 +1,26 @@
 import {
   buildForm,
   buildSection,
-  Form,
-  FormModes,
   buildExternalDataProvider,
   buildDataProviderItem,
   buildMultiField,
   buildCustomField,
   buildSubmitField,
-  DefaultEvents,
 } from '@island.is/application/core'
+import {
+  Form,
+  FormModes,
+  DefaultEvents,
+  EmployeeApi,
+  NationalRegistryUserApi,
+} from '@island.is/application/types'
 import { m } from '../lib/messages'
 
 export const getDrivingSchoolConfirmation = (): Form => {
   return buildForm({
     id: 'getDrivingSchoolConfirmation',
     title: '',
-    mode: FormModes.APPLYING,
+    mode: FormModes.DRAFT,
     renderLastScreenButton: true,
     renderLastScreenBackButton: true,
     children: [
@@ -31,14 +35,12 @@ export const getDrivingSchoolConfirmation = (): Form => {
             checkboxLabel: m.dataCollectionCheckboxLabel,
             dataProviders: [
               buildDataProviderItem({
-                id: 'nationalRegistry',
-                type: 'NationalRegistryProvider',
+                provider: NationalRegistryUserApi,
                 title: '',
                 subTitle: '',
               }),
               buildDataProviderItem({
-                id: 'employee',
-                type: 'EmployeeProvider',
+                provider: EmployeeApi,
                 title: m.dataCollectionConfirmationRightsTitle,
                 subTitle: m.dataCollectionConfirmationRightsSubtitle,
               }),
@@ -50,17 +52,10 @@ export const getDrivingSchoolConfirmation = (): Form => {
         id: 'studentsInfoSection',
         title: m.studentInfoTitle,
         children: [
-          buildMultiField({
-            id: 'studentsInfo',
+          buildCustomField({
+            id: 'student',
             title: m.studentInfoTitle,
-            description: m.studentInfoSubtitle,
-            children: [
-              buildCustomField({
-                id: 'student',
-                title: '',
-                component: 'NationalIdwithName',
-              }),
-            ],
+            component: 'NationalIdwithName',
           }),
         ],
       }),

@@ -4,12 +4,9 @@ import { render, screen } from '@testing-library/react'
 import { MockedProvider } from '@apollo/client/testing'
 
 import { LocaleProvider } from '@island.is/localization'
-import {
-  CaseDecision,
-  CaseState,
-  CaseType,
-} from '@island.is/judicial-system/types'
-import { makeCustodyCase } from '@island.is/judicial-system-web/src/utils/mocks'
+import { CaseDecision, CaseState } from '@island.is/judicial-system/types'
+import { mockCase } from '@island.is/judicial-system-web/src/utils/mocks'
+import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { caseResult } from './'
 
@@ -34,22 +31,11 @@ const renderMessage = (getMessage: Props['getMessage']) => {
 
 describe('Page layout utils', () => {
   describe('caseResult function', () => {
-    it('should return an empty string workingCase parameter is not set', async () => {
-      // Arrange
-      const workingCase = undefined
-
-      // Act
-      renderMessage((formatMessage) => caseResult(formatMessage, workingCase))
-
-      // Assert
-      expect(await screen.findByTestId('message')).toBeEmptyDOMElement()
-    })
-
     describe('isRejected', () => {
       it('should return the correct string if the case is an investigation case and the state is REJECTED', async () => {
         // Arrange
         const workingCase = {
-          ...makeCustodyCase(),
+          ...mockCase(CaseType.CUSTODY),
           type: CaseType.AUTOPSY,
           state: CaseState.REJECTED,
         }
@@ -66,7 +52,7 @@ describe('Page layout utils', () => {
       it('should return the correct string if the case is an restriction case and the state is REJECTED', async () => {
         // Arrange
         const workingCase = {
-          ...makeCustodyCase(),
+          ...mockCase(CaseType.CUSTODY),
           type: CaseType.TRAVEL_BAN,
           state: CaseState.REJECTED,
         }
@@ -86,7 +72,7 @@ describe('Page layout utils', () => {
     it('should return the correct string if the case is an investigation case and the state is ACCEPTED', async () => {
       // Arrange
       const workingCase = {
-        ...makeCustodyCase(),
+        ...mockCase(CaseType.CUSTODY),
         type: CaseType.AUTOPSY,
         state: CaseState.ACCEPTED,
       }
@@ -103,10 +89,10 @@ describe('Page layout utils', () => {
     it(`should return the correct string if the case is an investigation case and it's parent case state is ACCEPTED`, async () => {
       // Arrange
       const workingCase = {
-        ...makeCustodyCase(),
+        ...mockCase(CaseType.CUSTODY),
         type: CaseType.AUTOPSY,
         parentCase: {
-          ...makeCustodyCase(),
+          ...mockCase(CaseType.CUSTODY),
           state: CaseState.ACCEPTED,
         },
       }
@@ -123,7 +109,7 @@ describe('Page layout utils', () => {
     it('should return the correct string if the case is an restriction case and the state is ACCEPTED', async () => {
       // Arrange
       const workingCase = {
-        ...makeCustodyCase(),
+        ...mockCase(CaseType.CUSTODY),
         type: CaseType.TRAVEL_BAN,
         state: CaseState.ACCEPTED,
       }
@@ -140,10 +126,10 @@ describe('Page layout utils', () => {
     it(`should return the correct string if the case is an restriction case and it's parent case state is ACCEPTED`, async () => {
       // Arrange
       const workingCase = {
-        ...makeCustodyCase(),
+        ...mockCase(CaseType.CUSTODY),
         type: CaseType.CUSTODY,
         parentCase: {
-          ...makeCustodyCase(),
+          ...mockCase(CaseType.CUSTODY),
           state: CaseState.ACCEPTED,
         },
       }
@@ -160,7 +146,7 @@ describe('Page layout utils', () => {
     it('should return the correct string if the case is an restriction case and the state is ACCEPTED and the valid to date is in the past', async () => {
       // Arrange
       const workingCase = {
-        ...makeCustodyCase(),
+        ...mockCase(CaseType.CUSTODY),
         type: CaseType.TRAVEL_BAN,
         state: CaseState.ACCEPTED,
         isValidToDateInThePast: true,
@@ -180,7 +166,7 @@ describe('Page layout utils', () => {
     it('should return the correct string if the case state is DISMISSED', async () => {
       // Arrange
       const workingCase = {
-        ...makeCustodyCase(),
+        ...mockCase(CaseType.CUSTODY),
         type: CaseType.AUTOPSY,
         state: CaseState.DISMISSED,
       }
@@ -199,7 +185,7 @@ describe('Page layout utils', () => {
     it('should return the correct string if the case state is ACCEPTED and the case decision is ACCEPTING_ALTERNATIVE_TRAVEL_BAN', async () => {
       // Arrange
       const workingCase = {
-        ...makeCustodyCase(),
+        ...mockCase(CaseType.CUSTODY),
         type: CaseType.CUSTODY,
         state: CaseState.ACCEPTED,
         decision: CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN,
@@ -217,8 +203,7 @@ describe('Page layout utils', () => {
     it('should return the correct string if the case state is ACCEPTED, the case decision is ACCEPTING_ALTERNATIVE_TRAVEL_BAN and the valid to date is in the past', async () => {
       // Arrange
       const workingCase = {
-        ...makeCustodyCase(),
-        type: CaseType.CUSTODY,
+        ...mockCase(CaseType.CUSTODY),
         state: CaseState.ACCEPTED,
         decision: CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN,
         isValidToDateInThePast: true,

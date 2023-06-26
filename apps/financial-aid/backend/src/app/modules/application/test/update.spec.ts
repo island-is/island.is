@@ -180,6 +180,7 @@ describe('ApplicationController - Update', () => {
         comment: undefined,
         staffName: undefined,
         staffNationalId: undefined,
+        emailSent: null,
       })
     })
 
@@ -354,6 +355,7 @@ describe('ApplicationController - Update', () => {
       municipalityId: '',
       individualAid: undefined,
       cohabitationAid: undefined,
+      usingNav: false,
     }
 
     beforeEach(async () => {
@@ -465,6 +467,7 @@ describe('ApplicationController - Update', () => {
       municipalityId: '',
       individualAid: undefined,
       cohabitationAid: undefined,
+      usingNav: false,
     }
 
     beforeEach(async () => {

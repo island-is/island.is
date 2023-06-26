@@ -109,7 +109,7 @@ const embeddedNodes = () => ({
   link: {
     component: Box,
     children: (node) => {
-      const { text, url } = node.data?.target?.fields
+      const { text, url } = node.data?.target?.fields ?? {}
       return (
         <Link href={url}>
           <Button variant="text" icon="arrowRight">

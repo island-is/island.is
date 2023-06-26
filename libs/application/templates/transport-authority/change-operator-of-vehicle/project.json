@@ -1,0 +1,33 @@
+{
+  "root": "libs/application/templates/transport-authority/change-operator-of-vehicle",
+  "sourceRoot": "libs/application/templates/transport-authority/change-operator-of-vehicle/src",
+  "projectType": "library",
+  "tags": ["scope:application-system", "lib:application-system"],
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": [
+          "libs/application/templates/transport-authority/change-operator-of-vehicle/**/*.{ts,tsx,js,jsx}"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": [
+        "coverage/libs/application/templates/transport-authority/change-operator-of-vehicle"
+      ],
+      "options": {
+        "jestConfig": "libs/application/templates/transport-authority/change-operator-of-vehicle/jest.config.js",
+        "passWithNoTests": true
+      }
+    },
+    "extract-strings": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/transport-authority/change-operator-of-vehicle/src/**/*.{js,ts,tsx}'"
+      }
+    }
+  }
+}

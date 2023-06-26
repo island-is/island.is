@@ -1,4 +1,5 @@
 import {
+  ApplicationConfigurations,
   ApplicationTemplate,
   ApplicationTypes,
   ApplicationContext,
@@ -6,16 +7,29 @@ import {
   ApplicationStateSchema,
   Application,
   DefaultEvents,
-  ApplicationConfigurations,
+  defineTemplateApi,
+} from '@island.is/application/types'
+import {
+  EphemeralStateLifeCycle,
+  coreHistoryMessages,
+  corePendingActionMessages,
+  pruneAfterDays,
 } from '@island.is/application/core'
 import { Events, States, Roles, MCEvents } from './constants'
-import * as z from 'zod'
+import { z } from 'zod'
 import { ApiActions } from '../shared'
 import { m } from './messages'
 import {
   existsAndKMarking,
   exists,
 } from '../util/mortgageCertificateValidation'
+import {
+  IdentityApi,
+  NationalRegistryRealEstateApi,
+  UserProfileApi,
+  SyslumadurPaymentCatalogApi,
+} from '../dataProviders'
+import { AuthDelegationType } from '@island.is/shared/types'
 
 const MortgageCertificateSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
@@ -39,29 +53,35 @@ const template: ApplicationTemplate<
     ApplicationConfigurations.MortgageCertificate.translation,
   ],
   dataSchema: MortgageCertificateSchema,
-  readyForProduction: true,
+  allowedDelegations: [
+    {
+      type: AuthDelegationType.ProcurationHolder,
+    },
+  ],
   stateMachineConfig: {
     initial: States.DRAFT,
     states: {
       [States.DRAFT]: {
         meta: {
           name: 'Umsókn um veðbókarvottorð',
+          status: 'draft',
           actionCard: {
             tag: {
               label: m.actionCardDraft,
               variant: 'blue',
             },
+            historyLogs: [
+              {
+                logMessage: coreHistoryMessages.applicationStarted,
+                onEvent: DefaultEvents.SUBMIT,
+              },
+            ],
           },
           progress: 0.25,
-          lifecycle: {
-            shouldBeListed: false,
-            shouldBePruned: true,
-            // Applications that stay in this state for 24 hours will be pruned automatically
-            whenToPrune: 24 * 3600 * 1000,
-          },
-          onExit: {
-            apiModuleAction: ApiActions.validateMortgageCertificate,
-          },
+          lifecycle: EphemeralStateLifeCycle,
+          onExit: defineTemplateApi({
+            action: ApiActions.validateMortgageCertificate,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -77,6 +97,13 @@ const template: ApplicationTemplate<
                 },
               ],
               write: 'all',
+              api: [
+                IdentityApi,
+                NationalRegistryRealEstateApi,
+                UserProfileApi,
+                SyslumadurPaymentCatalogApi,
+              ],
+              delete: true,
             },
           ],
         },
@@ -98,23 +125,31 @@ const template: ApplicationTemplate<
       },
       [States.PENDING_REJECTED]: {
         meta: {
+          status: 'inprogress',
           name: 'Beiðni um vinnslu',
           actionCard: {
             tag: {
               label: m.actionCardDraft,
               variant: 'blue',
             },
+            pendingAction: {
+              title: m.pendingActionTryingToSubmitRequestToSyslumennTitle,
+              content:
+                m.pendingActionTryingToSubmitRequestToSyslumennDescription,
+              displayStatus: 'info',
+            },
+            historyLogs: [
+              {
+                logMessage: m.historyLogSubmittedRequestToSyslumenn,
+                onEvent: MCEvents.PENDING_REJECTED_TRY_AGAIN,
+              },
+            ],
           },
           progress: 0.25,
-          lifecycle: {
-            shouldBeListed: true,
-            shouldBePruned: true,
-            // Applications that stay in this state for 3x30 days (approx. 3 months) will be pruned automatically
-            whenToPrune: 3 * 30 * 24 * 3600 * 1000,
-          },
-          onEntry: {
-            apiModuleAction: ApiActions.submitRequestToSyslumenn,
-          },
+          lifecycle: pruneAfterDays(3 * 30),
+          onEntry: defineTemplateApi({
+            action: ApiActions.submitRequestToSyslumenn,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -124,6 +159,7 @@ const template: ApplicationTemplate<
                 ),
               actions: [],
               write: 'all',
+              delete: true,
             },
           ],
         },
@@ -137,22 +173,30 @@ const template: ApplicationTemplate<
       [States.PENDING_REJECTED_TRY_AGAIN]: {
         meta: {
           name: 'Beiðni um vinnslu',
+          status: 'inprogress',
           actionCard: {
             tag: {
               label: m.actionCardDraft,
               variant: 'blue',
             },
+            pendingAction: {
+              title: m.pendingActionCheckIfSyslumennHasFixedKMarkingTitle,
+              content:
+                m.pendingActionCheckIfSyslumennHasFixedKMarkingDescription,
+              displayStatus: 'warning',
+            },
+            historyLogs: [
+              {
+                logMessage: m.historyLogSyslumennHasFixedKMarking,
+                onEvent: DefaultEvents.SUBMIT,
+              },
+            ],
           },
           progress: 0.25,
-          lifecycle: {
-            shouldBeListed: true,
-            shouldBePruned: true,
-            // Applications that stay in this state for 3x30 days (approx. 3 months) will be pruned automatically
-            whenToPrune: 3 * 30 * 24 * 3600 * 1000,
-          },
-          onExit: {
-            apiModuleAction: ApiActions.validateMortgageCertificate,
-          },
+          lifecycle: pruneAfterDays(3 * 30),
+          onExit: defineTemplateApi({
+            action: ApiActions.validateMortgageCertificate,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -168,6 +212,7 @@ const template: ApplicationTemplate<
                 },
               ],
               write: 'all',
+              delete: true,
             },
           ],
         },
@@ -186,6 +231,7 @@ const template: ApplicationTemplate<
       [States.PAYMENT_INFO]: {
         meta: {
           name: 'Greiðsla',
+          status: 'inprogress',
           actionCard: {
             tag: {
               label: m.actionCardPayment,
@@ -193,12 +239,7 @@ const template: ApplicationTemplate<
             },
           },
           progress: 0.25,
-          lifecycle: {
-            shouldBeListed: false,
-            shouldBePruned: true,
-            // Applications that stay in this state for 24 hours will be pruned automatically
-            whenToPrune: 24 * 3600 * 1000,
-          },
+          lifecycle: EphemeralStateLifeCycle,
           roles: [
             {
               id: Roles.APPLICANT,
@@ -212,32 +253,42 @@ const template: ApplicationTemplate<
           ],
         },
         on: {
-          [DefaultEvents.PAYMENT]: { target: States.PAYMENT },
           [DefaultEvents.SUBMIT]: { target: States.PAYMENT },
         },
       },
       [States.PAYMENT]: {
         meta: {
           name: 'Greiðsla',
+          status: 'inprogress',
           actionCard: {
             tag: {
               label: m.actionCardPayment,
               variant: 'red',
             },
+            pendingAction: {
+              title: corePendingActionMessages.paymentPendingTitle,
+              content: corePendingActionMessages.paymentPendingDescription,
+              displayStatus: 'warning',
+            },
+            historyLogs: [
+              {
+                logMessage: coreHistoryMessages.paymentAccepted,
+                onEvent: DefaultEvents.SUBMIT,
+              },
+              {
+                logMessage: coreHistoryMessages.paymentCancelled,
+                onEvent: DefaultEvents.ABORT,
+              },
+            ],
           },
           progress: 0.8,
-          lifecycle: {
-            shouldBeListed: true,
-            shouldBePruned: true,
-            // Applications that stay in this state for 24 hours will be pruned automatically
-            whenToPrune: 24 * 3600 * 1000,
-          },
-          onEntry: {
-            apiModuleAction: ApiActions.createCharge,
-          },
-          onExit: {
-            apiModuleAction: ApiActions.submitApplication,
-          },
+          lifecycle: pruneAfterDays(1 / 24),
+          onEntry: defineTemplateApi({
+            action: ApiActions.createCharge,
+          }),
+          onExit: defineTemplateApi({
+            action: ApiActions.submitApplication,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -247,33 +298,34 @@ const template: ApplicationTemplate<
                 { event: DefaultEvents.SUBMIT, name: 'Áfram', type: 'primary' },
               ],
               write: 'all',
+              delete: true,
             },
           ],
         },
         on: {
-          [DefaultEvents.PAYMENT]: { target: States.DRAFT },
           [DefaultEvents.SUBMIT]: { target: States.COMPLETED },
+          [DefaultEvents.ABORT]: { target: States.DRAFT },
         },
       },
       [States.COMPLETED]: {
         meta: {
           name: 'Completed',
+          status: 'completed',
           progress: 1,
-          lifecycle: {
-            shouldBeListed: true,
-            shouldBePruned: true,
-            // Applications that stay in this state for 3x30 days (approx. 3 months) will be pruned automatically
-            whenToPrune: 3 * 30 * 24 * 3600 * 1000,
-          },
+          lifecycle: pruneAfterDays(3 * 30),
           actionCard: {
             tag: {
               label: m.actionCardDone,
               variant: 'blueberry',
             },
+            pendingAction: {
+              title: m.pendingActionApplicationCompletedTitle,
+              displayStatus: 'success',
+            },
           },
-          onEntry: {
-            apiModuleAction: ApiActions.getMortgageCertificate,
-          },
+          onEntry: defineTemplateApi({
+            action: ApiActions.getMortgageCertificate,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -285,7 +337,6 @@ const template: ApplicationTemplate<
             },
           ],
         },
-        type: 'final' as const,
       },
     },
   },

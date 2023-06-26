@@ -1,4 +1,9 @@
 import {
+  DefaultStateLifeCycle,
+  EphemeralStateLifeCycle,
+} from '@island.is/application/core'
+import {
+  ApplicationConfigurations,
   ApplicationTemplate,
   ApplicationTypes,
   ApplicationContext,
@@ -6,9 +11,8 @@ import {
   ApplicationStateSchema,
   Application,
   DefaultEvents,
-  DefaultStateLifeCycle,
-  ApplicationConfigurations,
-} from '@island.is/application/core'
+  defineTemplateApi,
+} from '@island.is/application/types'
 import { FundingGovernmentProjectsSchema } from './dataSchema'
 import { application } from './messages'
 
@@ -39,7 +43,6 @@ const FundingGovernmentProjectsTemplate: ApplicationTemplate<
   type: ApplicationTypes.FUNDING_GOVERNMENT_PROJECTS,
   name: application.name,
   institution: application.institutionName,
-  readyForProduction: true,
   translationNamespaces: [
     ApplicationConfigurations.FundingGovernmentProjects.translation,
   ],
@@ -50,12 +53,13 @@ const FundingGovernmentProjectsTemplate: ApplicationTemplate<
       [States.draft]: {
         meta: {
           name: States.draft,
+          status: 'draft',
           actionCard: {
             title: application.name,
             description: application.description,
           },
           progress: 0.5,
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: EphemeralStateLifeCycle,
           roles: [
             {
               id: Roles.APPLICANT,
@@ -68,6 +72,7 @@ const FundingGovernmentProjectsTemplate: ApplicationTemplate<
               actions: [
                 { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
               ],
+              delete: true,
               write: 'all',
             },
           ],
@@ -80,6 +85,7 @@ const FundingGovernmentProjectsTemplate: ApplicationTemplate<
       },
       [States.submitted]: {
         meta: {
+          status: 'completed',
           name: States.submitted,
           actionCard: {
             title: application.name,
@@ -87,9 +93,9 @@ const FundingGovernmentProjectsTemplate: ApplicationTemplate<
           },
           progress: 1,
           lifecycle: DefaultStateLifeCycle,
-          onEntry: {
-            apiModuleAction: TEMPLATE_API_ACTIONS.sendApplication,
-          },
+          onEntry: defineTemplateApi({
+            action: TEMPLATE_API_ACTIONS.sendApplication,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,

@@ -1,5 +1,3 @@
-import { logger } from '@island.is/logging'
-
 export enum XRoadMemberClass {
   GovernmentInstitution = 'GOV',
   EducationalInstitution = 'EDU',
@@ -15,21 +13,5 @@ export const createXRoadAPIPath = (
   xRoadMemberCode: string,
   xRoadMemberAPIPath: string,
 ) => {
-  if (!xRoadBasePath) {
-    logger.error('XRoad XROAD_BASE_PATH_WITH_ENV not provided.')
-  }
-
-  if (!xRoadMemberClass) {
-    logger.error('XRoad XROAD_VMST_MEMBER_CLASS not provided.')
-  }
-
-  if (!xRoadMemberCode) {
-    logger.error('XRoad XROAD_VMST_MEMBER_CODE not provided.')
-  }
-
-  if (!xRoadMemberAPIPath) {
-    logger.error('XRoad XROAD_VMST_API_PATH not provided.')
-  }
-
   return `${xRoadBasePath}/${xRoadMemberClass}/${xRoadMemberCode}${xRoadMemberAPIPath}`
 }

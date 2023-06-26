@@ -84,7 +84,7 @@ const Overview: FC = () => {
                 skilavottordAllDeregisteredVehicles: {
                   ...newResults,
                   items: [
-                    ...prevResults?.items,
+                    ...(prevResults?.items as Vehicle[]),
                     ...(newResults?.items as Vehicle[]),
                   ],
                 },

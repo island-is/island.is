@@ -8,19 +8,24 @@ import {
   buildSubmitField,
   buildSubSection,
   buildTextField,
+  buildFileUploadField,
+  buildRedirectToServicePortalField,
+  buildSelectField,
+  buildPhoneField,
+} from '@island.is/application/core'
+import {
   Comparators,
   Form,
   FormModes,
   FormValue,
-  buildFileUploadField,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 import { ApiActions } from '../shared'
 import { m } from '../lib/messages'
 
 export const ExampleForm: Form = buildForm({
   id: 'ExampleFormDraft',
   title: 'Atvinnuleysisbætur',
-  mode: FormModes.APPLYING,
+  mode: FormModes.DRAFT,
   children: [
     buildSection({
       id: 'conditions',
@@ -64,7 +69,7 @@ export const ExampleForm: Form = buildForm({
               title: m.email,
               width: 'half',
             }),
-            buildTextField({
+            buildPhoneField({
               id: 'person.phoneNumber',
               title: m.phoneNumber,
               width: 'half',
@@ -93,6 +98,18 @@ export const ExampleForm: Form = buildForm({
           id: 'history',
           title: m.history,
           children: [
+            buildSelectField({
+              id: 'careerIndustry',
+              title: m.careerIndustry,
+              description: m.careerIndustryDescription,
+              required: true,
+              options: [
+                { label: 'Hugbúnaður', value: 'software' },
+                { label: 'Fjármál', value: 'finance' },
+                { label: 'Efnahagsráðgjöf', value: 'consulting' },
+                { label: 'Önnur', value: 'other' },
+              ],
+            }),
             buildRadioField({
               id: 'careerHistory',
               title: m.careerHistory,
@@ -107,13 +124,24 @@ export const ExampleForm: Form = buildForm({
                 )
               },
             }),
-            buildCheckboxField({
-              id: 'careerHistoryCompanies',
-              title: m.careerHistoryCompanies,
-              options: [
-                { value: 'government', label: m.governmentOptionLabel },
-                { value: 'aranja', label: 'Aranja' },
-                { value: 'advania', label: 'Advania' },
+            buildMultiField({
+              id: 'careerHistoryDetails',
+              title: '',
+              children: [
+                buildCheckboxField({
+                  id: 'careerHistoryDetails.careerHistoryCompanies',
+                  title: m.careerHistoryCompanies,
+                  options: [
+                    { value: 'government', label: m.governmentOptionLabel },
+                    { value: 'aranja', label: 'Aranja' },
+                    { value: 'advania', label: 'Advania' },
+                    { value: 'other', label: 'Annað' },
+                  ],
+                }),
+                buildTextField({
+                  id: 'careerHistoryDetails.careerHistoryOther',
+                  title: m.careerHistoryOther,
+                }),
               ],
             }),
           ],
@@ -125,6 +153,16 @@ export const ExampleForm: Form = buildForm({
             buildTextField({
               id: 'dreamJob',
               title: m.dreamJob,
+            }),
+          ],
+        }),
+        buildSubSection({
+          id: 'assignee',
+          title: m.assigneeTitle,
+          children: [
+            buildTextField({
+              id: 'assigneeEmail',
+              title: m.assignee,
             }),
           ],
         }),
@@ -152,6 +190,10 @@ export const ExampleForm: Form = buildForm({
                 'Með því að smella á "Senda" hér að neðan, þá sendist umsóknin inn til úrvinnslu. Við látum þig vita þegar hún er samþykkt eða henni er hafnað.',
             }),
           ],
+        }),
+        buildRedirectToServicePortalField({
+          id: 'redirect',
+          title: '',
         }),
         buildDescriptionField({
           id: 'final',

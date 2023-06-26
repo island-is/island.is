@@ -10,9 +10,9 @@ When implementing a cursor pagination the response object should follow this int
 interface GetReponse {
   data: T[]
   pageInfo: {
-    hasPreviousPage: boolean
+    hasPreviousPage?: boolean
     hasNextPage: boolean
-    startCursor: string
+    startCursor?: string
     endCursor: string
   }
   totalCount: number
@@ -47,13 +47,14 @@ The `PageInfo` contains details about the pagination. It should follow the inter
 
 ```typescript
 interface PageInfo {
-  hasPreviousPage: boolean
+  hasPreviousPage?: boolean
   hasNextPage: boolean
-  startCursor: string
+  startCursor?: string
   endCursor: string
 }
 ```
 
+The `hasPreviousPage` and `startCursor` are optional but should be provided.
 The `hasPreviousPage` and `hasNextPage` are boolean flags to indicate if there exists more items before or after the current set of data received.
 The `startCursor` and `endCursor` are `Base64` encoded strings. The client uses these values in following request to get previous or next page, see [query paramters](#pagination-query-parameters).
 

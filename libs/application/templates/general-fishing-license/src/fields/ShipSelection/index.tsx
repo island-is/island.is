@@ -1,19 +1,12 @@
-import {
-  FieldBaseProps,
-  getErrorViaPath,
-  getValueViaPath,
-} from '@island.is/application/core'
-import { AlertMessage, Box, Text, Stack, Tag } from '@island.is/island-ui/core'
-import { useLocale } from '@island.is/localization'
-import React, { FC, useState } from 'react'
+import { getErrorViaPath, getValueViaPath } from '@island.is/application/core'
+import { FieldBaseProps } from '@island.is/application/types'
+import { Box, Stack, Tag } from '@island.is/island-ui/core'
+import React, { FC, useEffect, useState } from 'react'
 import { ShipInformation } from '../components'
 import { RadioController } from '@island.is/shared/form-fields'
-import format from 'date-fns/format'
-import { shipSelection } from '../../lib/messages'
-import is from 'date-fns/locale/is'
 import { FishingLicenseShip as Ship } from '@island.is/api/schema'
-import parseISO from 'date-fns/parseISO'
 import { useFormContext } from 'react-hook-form'
+import { FishingLicenseEnum } from '../../types'
 
 interface Option {
   value: string
@@ -26,9 +19,7 @@ export const ShipSelection: FC<FieldBaseProps> = ({
   field,
   errors,
 }) => {
-  const { formatMessage } = useLocale()
-  const { register } = useFormContext()
-  const [showTitle, setShowTitle] = useState<boolean>(false)
+  const { register, setValue } = useFormContext()
 
   const registrationNumberValue = getValueViaPath(
     application.answers,
@@ -39,6 +30,10 @@ export const ShipSelection: FC<FieldBaseProps> = ({
     registrationNumberValue || '',
   )
 
+  useEffect(() => {
+    setValue(`${field.id}.registrationNumber`, registrationNumber)
+  }, [registrationNumber])
+
   const ships = getValueViaPath(
     application.externalData,
     'directoryOfFisheries.data.ships',
@@ -47,72 +42,22 @@ export const ShipSelection: FC<FieldBaseProps> = ({
   const shipOptions = (ships: Ship[]) => {
     const options = [] as Option[]
     for (const [index, ship] of ships.entries()) {
-      if (ship.fishingLicenses.length !== 0) {
-        continue
-      }
-      const isExpired = new Date(ship.seaworthiness.validTo) < new Date()
-      const hasDeprivations = ship.deprivations.length > 0
-      const seaworthinessDate = format(
-        parseISO(ship.seaworthiness.validTo),
-        'dd.MM.yy',
-        {
-          locale: is,
-        },
-      )
       options.push({
         value: `${index}`,
         label: (
-          <>
-            <Box width="full" display="flex" justifyContent="spaceBetween">
-              <ShipInformation
-                ship={ship}
-                seaworthinessHasColor
-                isExpired={isExpired}
-              />
-              <Box>
-                <Tag
-                  variant={isExpired || hasDeprivations ? 'disabled' : 'purple'}
-                  disabled
-                >
-                  {formatMessage(shipSelection.tags.noFishingLicensesFound)}
-                </Tag>
-              </Box>
-            </Box>
-            {isExpired && (
-              <Box marginTop={2}>
-                <AlertMessage
-                  type="warning"
-                  title={formatMessage(shipSelection.labels.expired, {
-                    date: seaworthinessDate,
-                  })}
-                  message={formatMessage(shipSelection.labels.expiredMessage)}
-                />
-              </Box>
-            )}
-            {hasDeprivations && (
-              <Box marginTop={2}>
-                <AlertMessage
-                  type="warning"
-                  title={formatMessage(shipSelection.labels.deprivation)}
-                  message={ship.deprivations.map(
-                    ({ explanation, validFrom }, index) => {
-                      return (
-                        <span
-                          key={`${index}-${explanation}`}
-                        >{`${explanation} ${format(
-                          parseISO(validFrom),
-                          'dd.MM.yy',
-                          {
-                            locale: is,
-                          },
-                        )}`}</span>
-                      )
-                    },
-                  )}
-                />
-              </Box>
-            )}
-          </>
+          <Box width="full" display="flex" justifyContent="spaceBetween">
+            <ShipInformation ship={ship} seaworthinessHasColor />
+            <Stack space={1} align="right">
+              {ship.fishingLicenses?.map((license) => {
+                if (license.code === 'unknown') return null
+                return (
+                  <Tag variant="blue" disabled key={`${license}`}>
+                    {license.name}
+                  </Tag>
+                )
+              })}
+            </Stack>
+          </Box>
         ),
       })
     }
@@ -133,51 +78,17 @@ export const ShipSelection: FC<FieldBaseProps> = ({
         onSelect={(value) => {
           const ship = ships[parseInt(value)]
           setRegistrationNumber(ship.registrationNumber.toString())
+          // Set fishing license to null/unknown since we've now changed ships
+          // and the chosen license could be invalid for the new ship selection
+          // null/unknown signals error in front end on next screen
+          setValue('fishingLicense.license', FishingLicenseEnum.UNKNOWN)
+          setValue('fishingLicense.chargeType', FishingLicenseEnum.UNKNOWN)
         }}
         options={shipOptions(ships)}
       />
-
-      {showTitle && (
-        <Text variant="h4" paddingY={3}>
-          {formatMessage(shipSelection.labels.withFishingLicenseTitle)}
-        </Text>
-      )}
-
-      {ships?.map((ship: Ship, index: number) => {
-        if (ship.fishingLicenses.length === 0) {
-          return null
-        }
-        if (!showTitle) setShowTitle(true)
-        return (
-          <Box
-            border="standard"
-            borderRadius="large"
-            padding={3}
-            width="full"
-            display="flex"
-            justifyContent="spaceBetween"
-            marginBottom={2}
-            key={index}
-          >
-            <ShipInformation ship={ship} />
-            <Stack space={1} align="right">
-              {ship.fishingLicenses?.map((license) => {
-                if (license.code === 'unknown') return null
-                return (
-                  <Tag variant="blue" disabled key={`${license}`}>
-                    {formatMessage(shipSelection.tags[license.code])}
-                  </Tag>
-                )
-              })}
-            </Stack>
-          </Box>
-        )
-      })}
       <input
         type="hidden"
-        value={registrationNumber}
-        ref={register({ required: true })}
-        name={`${field.id}.registrationNumber`}
+        {...register(`${field.id}.registrationNumber`, { required: true })}
       />
     </Box>
   )

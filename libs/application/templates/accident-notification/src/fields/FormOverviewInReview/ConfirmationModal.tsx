@@ -1,9 +1,8 @@
 import { useMutation } from '@apollo/client'
-import { Application, DefaultEvents } from '@island.is/application/core'
+import { Application, DefaultEvents } from '@island.is/application/types'
 import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
 import { Box, Button, Icon, ModalBase, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import * as Sentry from '@sentry/react'
 import React, { FC } from 'react'
 import { inReview } from '../../lib/messages'
 import * as styles from './ConfirmationModal.css'
@@ -38,7 +37,8 @@ export const ConfirmationModal: FC<ConfirmationModalProps> = ({
     SUBMIT_APPLICATION,
     {
       onError: (e) => {
-        return Sentry.captureException(e.message)
+        console.error(e.message)
+        return
       },
     },
   )

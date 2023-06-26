@@ -1,6 +1,5 @@
-import { FeatureNames as ServerSideFeatureNames } from '../../../../infra/src/dsl/features'
-
-export { ServerSideFeatureNames }
+import type { SettingValue, SettingTypeOf } from 'configcat-common'
+import { ServerSideFeature } from './features'
 
 export interface FeatureFlagUser {
   id: string
@@ -8,11 +7,11 @@ export interface FeatureFlagUser {
 }
 
 export interface FeatureFlagClient {
-  getValue(
+  getValue<T extends SettingValue>(
     key: string,
-    defaultValue: boolean | string,
+    defaultValue: T,
     user?: FeatureFlagUser,
-  ): Promise<boolean | string>
+  ): Promise<SettingTypeOf<T>>
 
   dispose(): void
 }
@@ -22,6 +21,8 @@ export interface FeatureFlagClientProps {
 }
 
 /// This is an interface to query the status of feature flags specific to the server side
-export interface ServerSideFeature {
-  isOn(feature: ServerSideFeatureNames): boolean
+export interface ServerSideFeatureClientType {
+  isOn(feature: ServerSideFeature): boolean
 }
+
+export type { SettingTypeOf, SettingValue }

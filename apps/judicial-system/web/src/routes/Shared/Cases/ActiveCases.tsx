@@ -6,50 +6,52 @@ import format from 'date-fns/format'
 import parseISO from 'date-fns/parseISO'
 import {
   AnimatePresence,
-  AnimateSharedLayout,
+  LayoutGroup,
   motion,
   useAnimation,
 } from 'framer-motion'
 
-import { Box, Text, Tag, Icon, Button } from '@island.is/island-ui/core'
+import { theme } from '@island.is/island-ui/theme'
+import { Box, Text, Icon, Button } from '@island.is/island-ui/core'
 import {
   CaseState,
-  isInvestigationCase,
-  UserRole,
+  isExtendedCourtRole,
+  isProsecutionRole,
 } from '@island.is/judicial-system/types'
-import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
+import {
+  TagAppealState,
+  UserContext,
+} from '@island.is/judicial-system-web/src/components'
+
 import {
   directionType,
   sortableTableColumn,
   SortConfig,
+  TempCaseListEntry as CaseListEntry,
 } from '@island.is/judicial-system-web/src/types'
 import {
   capitalize,
-  caseTypes,
-  formatNationalId,
+  displayFirstPlusRemaining,
+  formatDOB,
 } from '@island.is/judicial-system/formatters'
-import { core, requests } from '@island.is/judicial-system-web/messages'
-import type { Case } from '@island.is/judicial-system/types'
+import { core, tables } from '@island.is/judicial-system-web/messages'
+import { useViewport } from '@island.is/judicial-system-web/src/utils/hooks'
+import TagCaseState from '@island.is/judicial-system-web/src/components/TagCaseState/TagCaseState'
 
-import { mapCaseStateToTagVariant } from './utils'
 import * as styles from './Cases.css'
+import MobileCase from './MobileCase'
+import { cases as m } from './Cases.strings'
+import ColumnCaseType from '@island.is/judicial-system-web/src/components/Table/ColumnCaseType/ColumnCaseType'
 
 interface Props {
-  cases: Case[]
+  cases: CaseListEntry[]
   onRowClick: (id: string) => void
   isDeletingCase: boolean
-  onDeleteCase?: (caseToDelete: Case) => Promise<void>
-  setActiveCases?: React.Dispatch<React.SetStateAction<Case[] | undefined>>
+  onDeleteCase?: (caseToDelete: CaseListEntry) => Promise<void>
 }
 
 const ActiveCases: React.FC<Props> = (props) => {
-  const {
-    cases,
-    onRowClick,
-    isDeletingCase,
-    onDeleteCase,
-    setActiveCases,
-  } = props
+  const { cases, onRowClick, isDeletingCase, onDeleteCase } = props
 
   const controls = useAnimation()
 
@@ -62,9 +64,8 @@ const ActiveCases: React.FC<Props> = (props) => {
 
   const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
-  const isProsecutor = user?.role === UserRole.PROSECUTOR
-  const isCourtRole =
-    user?.role === UserRole.JUDGE || user?.role === UserRole.REGISTRAR
+  const isProsecution = user?.role && isProsecutionRole(user.role)
+  const isCourt = (user?.role && isExtendedCourtRole(user.role)) || false
 
   const [sortConfig, setSortConfig] = useState<SortConfig>({
     column: 'createdAt',
@@ -76,7 +77,7 @@ const ActiveCases: React.FC<Props> = (props) => {
 
   useMemo(() => {
     if (cases && sortConfig) {
-      cases.sort((a: Case, b: Case) => {
+      cases.sort((a: CaseListEntry, b: CaseListEntry) => {
         // Credit: https://stackoverflow.com/a/51169
         return sortConfig.direction === 'ascending'
           ? (sortConfig.column === 'defendant' &&
@@ -127,15 +128,44 @@ const ActiveCases: React.FC<Props> = (props) => {
     return sortConfig.column === name ? sortConfig.direction : undefined
   }
 
-  return (
+  const { width } = useViewport()
+
+  return width < theme.breakpoints.md ? (
+    <>
+      {cases.map((theCase: CaseListEntry) => (
+        <Box marginTop={2} key={theCase.id}>
+          <MobileCase
+            onClick={() => onRowClick(theCase.id)}
+            theCase={theCase}
+            isCourtRole={isCourt}
+          >
+            {theCase.courtDate ? (
+              <Text fontWeight={'medium'} variant="small">
+                {`${formatMessage(
+                  m.activeRequests.table.headers.hearing,
+                )} ${format(parseISO(theCase.courtDate), 'd.M.y')} kl. ${format(
+                  parseISO(theCase.courtDate),
+                  'kk:mm',
+                )}`}
+              </Text>
+            ) : (
+              <Text variant="small" fontWeight={'medium'}>
+                {`${formatMessage(
+                  m.activeRequests.table.headers.created,
+                )} ${format(parseISO(theCase.created), 'd.M.y')}`}
+              </Text>
+            )}
+          </MobileCase>
+        </Box>
+      ))}
+    </>
+  ) : (
     <table className={styles.table} data-testid="activeCasesTable">
       <thead className={styles.thead}>
         <tr>
           <th className={styles.th}>
             <Text as="span" fontWeight="regular">
-              {formatMessage(
-                requests.sections.activeRequests.table.headers.caseNumber,
-              )}
+              {formatMessage(tables.caseNumber)}
             </Text>
           </th>
           <th className={cn(styles.th, styles.largeColumn)}>
@@ -168,16 +198,12 @@ const ActiveCases: React.FC<Props> = (props) => {
           </th>
           <th className={styles.th}>
             <Text as="span" fontWeight="regular">
-              {formatMessage(
-                requests.sections.activeRequests.table.headers.type,
-              )}
+              {formatMessage(m.activeRequests.table.headers.type)}
             </Text>
           </th>
           <th className={styles.th}>
             <Text as="span" fontWeight="regular">
-              {formatMessage(
-                requests.sections.activeRequests.table.headers.state,
-              )}
+              {formatMessage(tables.state)}
             </Text>
           </th>
           <th className={styles.th}>
@@ -189,9 +215,7 @@ const ActiveCases: React.FC<Props> = (props) => {
               onClick={() => requestSort('createdAt')}
             >
               <Text fontWeight="regular">
-                {formatMessage(
-                  requests.sections.activeRequests.table.headers.date,
-                )}
+                {formatMessage(m.activeRequests.table.headers.date)}
               </Text>
               <Box
                 className={cn(styles.sortIcon, {
@@ -212,7 +236,7 @@ const ActiveCases: React.FC<Props> = (props) => {
           <th></th>
         </tr>
       </thead>
-      <AnimateSharedLayout>
+      <LayoutGroup>
         <tbody>
           <AnimatePresence>
             {cases.map((c, i) => (
@@ -232,17 +256,36 @@ const ActiveCases: React.FC<Props> = (props) => {
                 }}
               >
                 <td className={styles.td}>
-                  {c.courtCaseNumber ? (
+                  {c.appealCaseNumber ? (
+                    <Box display="flex" flexDirection="column">
+                      <Text as="span" variant="small">
+                        {c.appealCaseNumber}
+                      </Text>
+                      <Text as="span" variant="small">
+                        {c.courtCaseNumber}
+                      </Text>
+                      <Text as="span" variant="small">
+                        {displayFirstPlusRemaining(c.policeCaseNumbers)}
+                      </Text>
+                    </Box>
+                  ) : c.courtCaseNumber ? (
                     <>
                       <Box component="span" className={styles.blockColumn}>
                         <Text as="span">{c.courtCaseNumber}</Text>
                       </Box>
-                      <Text as="span" variant="small" color="dark400">
-                        {c.policeCaseNumber}
+                      <Text
+                        as="span"
+                        variant="small"
+                        color="dark400"
+                        title={c.policeCaseNumbers.join(', ')}
+                      >
+                        {displayFirstPlusRemaining(c.policeCaseNumbers)}
                       </Text>
                     </>
                   ) : (
-                    <Text as="span">{c.policeCaseNumber || '-'}</Text>
+                    <Text as="span" title={c.policeCaseNumbers.join(', ')}>
+                      {displayFirstPlusRemaining(c.policeCaseNumbers) || '-'}
+                    </Text>
                   )}
                 </td>
                 <td className={cn(styles.td, styles.largeColumn)}>
@@ -258,17 +301,10 @@ const ActiveCases: React.FC<Props> = (props) => {
                           c.defendants[0].nationalId) && (
                           <Text>
                             <Text as="span" variant="small" color="dark400">
-                              {`${
-                                c.defendants[0].noNationalId ? 'fd.' : 'kt.'
-                              } ${
-                                c.defendants[0].nationalId
-                                  ? c.defendants[0].noNationalId
-                                    ? c.defendants[0].nationalId
-                                    : formatNationalId(
-                                        c.defendants[0].nationalId,
-                                      )
-                                  : '-'
-                              }`}
+                              {formatDOB(
+                                c.defendants[0].nationalId,
+                                c.defendants[0].noNationalId,
+                              )}
                             </Text>
                           </Text>
                         )
@@ -283,39 +319,29 @@ const ActiveCases: React.FC<Props> = (props) => {
                   )}
                 </td>
                 <td className={styles.td}>
-                  <Box component="span" display="flex" flexDirection="column">
-                    <Text as="span">{capitalize(caseTypes[c.type])}</Text>
-                    {c.parentCase && (
-                      <Text as="span" variant="small" color="dark400">
-                        Framlenging
-                      </Text>
-                    )}
-                  </Box>
+                  <ColumnCaseType
+                    type={c.type}
+                    decision={c?.decision}
+                    parentCaseId={c.parentCaseId}
+                  />
                 </td>
                 <td className={styles.td} data-testid="tdTag">
-                  <Tag
-                    variant={
-                      mapCaseStateToTagVariant(
-                        c.state,
-                        isCourtRole,
-                        isInvestigationCase(c.type),
-                        c.isValidToDateInThePast,
-                        c.courtDate,
-                      ).color
-                    }
-                    outlined
-                    disabled
-                  >
-                    {
-                      mapCaseStateToTagVariant(
-                        c.state,
-                        isCourtRole,
-                        isInvestigationCase(c.type),
-                        c.isValidToDateInThePast,
-                        c.courtDate,
-                      ).text
-                    }
-                  </Tag>
+                  <Box marginRight={1} marginBottom={1}>
+                    <TagCaseState
+                      caseState={c.state}
+                      caseType={c.type}
+                      isCourtRole={isCourt}
+                      isValidToDateInThePast={c.isValidToDateInThePast}
+                      courtDate={c.courtDate}
+                    />
+                  </Box>
+
+                  {c.appealState && (
+                    <TagAppealState
+                      appealState={c.appealState}
+                      appealRulingDecision={c.appealRulingDecision}
+                    />
+                  )}
                 </td>
                 <td className={styles.td}>
                   {c.courtDate ? (
@@ -342,7 +368,7 @@ const ActiveCases: React.FC<Props> = (props) => {
                   )}
                 </td>
                 <td className={cn(styles.td, 'secondLast')}>
-                  {isProsecutor &&
+                  {isProsecution &&
                     (c.state === CaseState.NEW ||
                       c.state === CaseState.DRAFT ||
                       c.state === CaseState.SUBMITTED ||
@@ -376,21 +402,14 @@ const ActiveCases: React.FC<Props> = (props) => {
                     size="small"
                     loading={isDeletingCase}
                     onClick={async (evt) => {
-                      if (onDeleteCase && setActiveCases) {
+                      if (onDeleteCase) {
                         evt.stopPropagation()
 
                         await onDeleteCase(cases[i])
 
-                        controls
-                          .start('isNotDeleting')
-                          .then(() => {
-                            setRequestToRemoveIndex(undefined)
-                          })
-                          .then(() => {
-                            setActiveCases(
-                              cases.filter((c: Case) => c !== cases[i]),
-                            )
-                          })
+                        controls.start('isNotDeleting').then(() => {
+                          setRequestToRemoveIndex(undefined)
+                        })
                       }
                     }}
                   >
@@ -403,7 +422,7 @@ const ActiveCases: React.FC<Props> = (props) => {
             ))}
           </AnimatePresence>
         </tbody>
-      </AnimateSharedLayout>
+      </LayoutGroup>
     </table>
   )
 }

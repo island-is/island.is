@@ -1,17 +1,12 @@
 import { Box } from '@island.is/island-ui/core'
 import React from 'react'
-import * as styles from './SubNavModal.css'
+import * as styles from './NavItem/NavItem.css'
 interface Props {
-  active: boolean
   children: React.ReactNode
 }
 
-const SubNavModal = ({ active, children }: Props) => (
-  <Box
-    display="none"
-    className={active ? styles.active : ''}
-    justifyContent="flexEnd"
-  >
+const SubNavModal = ({ children }: Props) => (
+  <Box display="none" justifyContent="flexEnd" id="sub-nav-model">
     <Box
       background="blue100"
       paddingY={2}

@@ -1,5 +1,8 @@
 import React from 'react'
 import cn from 'classnames'
+
+import { TestSupport } from '@island.is/island-ui/utils'
+
 import * as styles from './BlueBox.css'
 
 interface Props {
@@ -10,10 +13,11 @@ interface Props {
    * Set explicit height
    */
   height?: number
+  dataTestId?: string
 }
 
-const BlueBox: React.FC<Props> = (props) => {
-  const { children, size = 'large', justifyContent, height } = props
+const BlueBox: React.FC<Props & TestSupport> = (props) => {
+  const { children, size = 'large', justifyContent, height, dataTestId } = props
 
   return (
     <div
@@ -22,6 +26,7 @@ const BlueBox: React.FC<Props> = (props) => {
         [styles.center]: justifyContent === 'center',
       })}
       style={{ height: height }}
+      data-testid={dataTestId}
     >
       {children}
     </div>

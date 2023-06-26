@@ -7,6 +7,11 @@ export const userMessages = defineMessages({
     defaultMessage: 'Útskráning og aðgangsstillingar',
   },
 
+  personalInformation: {
+    id: 'global:personalInformation',
+    defaultMessage: 'Mínar stillingar',
+  },
+
   backToMyself: {
     id: 'global:backToMyself',
     description: 'Takki til að skipta frá umboði til baka á raun notanda.',
@@ -16,6 +21,11 @@ export const userMessages = defineMessages({
   delegationList: {
     id: 'global:userDelegationList',
     defaultMessage: `Aðgangar`,
+  },
+
+  switchUser: {
+    id: 'global:switchUser',
+    defaultMessage: `Skipta um notanda`,
   },
 
   delegationError: {

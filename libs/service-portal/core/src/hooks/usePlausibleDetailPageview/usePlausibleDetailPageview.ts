@@ -1,8 +1,9 @@
-import { ServicePortalPath } from '@island.is/service-portal/core'
+import { ServicePortalPath } from '../../lib/navigation/paths'
 
 // Custom location helper for dynamic paths in service portal: https://plausible.io/docs/custom-locations
 export const PlausiblePageviewDetail = (
-  page: ServicePortalPath | ServicePortalPath[],
+  page: string | string[],
+  entity: 'person' | 'company',
 ) => {
   const plausible = window && window.plausible
   const pagePath = typeof page === 'string' ? page : page[0]
@@ -12,7 +13,7 @@ export const PlausiblePageviewDetail = (
   const absoluteUrl = `${pageOrigin}${rootPath}${pagePath}`
 
   if (plausible) {
-    plausible('pageview', { u: absoluteUrl })
+    plausible('pageview', { u: absoluteUrl, props: { entity } })
   }
 }
 

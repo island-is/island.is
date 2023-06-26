@@ -1,5 +1,5 @@
 import { Field, InputType, Int } from '@nestjs/graphql'
-import { IsInt, IsOptional, IsString } from 'class-validator'
+import { IsArray, IsInt, IsOptional, IsString } from 'class-validator'
 
 @InputType()
 export class GetOrganizationsInput {
@@ -12,4 +12,9 @@ export class GetOrganizationsInput {
   @IsInt()
   @IsOptional()
   perPage?: number
+
+  @Field(() => [String], { nullable: true })
+  @IsArray()
+  @IsOptional()
+  organizationTitles?: string[]
 }

@@ -32,7 +32,8 @@ export const CreateSkilavottordRecyclingPartnerMutation = gql`
     createSkilavottordRecyclingPartner(input: $input) {
       companyId
       companyName
-      active
+      email
+      nationalId
       address
       postnumber
       city
@@ -56,7 +57,11 @@ const RecyclingCompanyCreate: FC = () => {
       ],
     },
   )
-  const { control, errors, handleSubmit } = useForm({
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
     mode: 'onChange',
   })
   const {

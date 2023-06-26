@@ -18,6 +18,16 @@ const envs = {
     staging: 'cdn.contentful.com',
     prod: 'cdn.contentful.com',
   },
+  CONTENTFUL_ENTRY_FETCH_CHUNK_SIZE: {
+    dev: '20',
+    staging: '40',
+    prod: '40',
+  },
+  AIR_DISCOUNT_SCHEME_FRONTEND_HOSTNAME: {
+    dev: 'loftbru.dev01.devland.is',
+    staging: 'loftbru.staging01.devland.is',
+    prod: 'loftbru.island.is',
+  },
 }
 export const serviceSetup = (): ServiceBuilder<'search-indexer-service'> =>
   service('search-indexer-service')
@@ -27,6 +37,7 @@ export const serviceSetup = (): ServiceBuilder<'search-indexer-service'> =>
     .secrets({
       CONTENTFUL_ACCESS_TOKEN: '/k8s/search-indexer/CONTENTFUL_ACCESS_TOKEN',
       API_CMS_SYNC_TOKEN: '/k8s/search-indexer/API_CMS_SYNC_TOKEN',
+      API_CMS_DELETION_TOKEN: '/k8s/search-indexer/API_CMS_DELETION_TOKEN',
     })
     .env(envs)
     .initContainer({
@@ -38,11 +49,11 @@ export const serviceSetup = (): ServiceBuilder<'search-indexer-service'> =>
           resources: {
             requests: {
               cpu: '100m',
-              memory: '256Mi',
+              memory: '512Mi',
             },
             limits: {
               cpu: '400m',
-              memory: '1024Mi',
+              memory: '2048Mi',
             },
           },
         },
@@ -53,11 +64,11 @@ export const serviceSetup = (): ServiceBuilder<'search-indexer-service'> =>
           resources: {
             requests: {
               cpu: '100m',
-              memory: '256Mi',
+              memory: '512Mi',
             },
             limits: {
               cpu: '400m',
-              memory: '1024Mi',
+              memory: '2048Mi',
             },
           },
         },
@@ -68,11 +79,11 @@ export const serviceSetup = (): ServiceBuilder<'search-indexer-service'> =>
           resources: {
             requests: {
               cpu: '100m',
-              memory: '256Mi',
+              memory: '512Mi',
             },
             limits: {
               cpu: '400m',
-              memory: '1024Mi',
+              memory: '2048Mi',
             },
           },
         },
@@ -84,6 +95,7 @@ export const serviceSetup = (): ServiceBuilder<'search-indexer-service'> =>
           prod: 'prod-es-custom-packages',
         },
         ELASTIC_DOMAIN: 'search',
+        NODE_OPTIONS: '--max-old-space-size=2048',
       }),
       secrets: {
         CONTENTFUL_ACCESS_TOKEN: '/k8s/search-indexer/CONTENTFUL_ACCESS_TOKEN',
@@ -92,11 +104,11 @@ export const serviceSetup = (): ServiceBuilder<'search-indexer-service'> =>
     .resources({
       requests: {
         cpu: '100m',
-        memory: '256Mi',
+        memory: '512Mi',
       },
       limits: {
         cpu: '400m',
-        memory: '1024Mi',
+        memory: '2048Mi',
       },
     })
     .ingress({
@@ -122,4 +134,9 @@ export const serviceSetup = (): ServiceBuilder<'search-indexer-service'> =>
       min: 1,
       max: 1,
       default: 1,
+    })
+    .extraAttributes({
+      dev: { progressDeadlineSeconds: 25 * 60 },
+      staging: { progressDeadlineSeconds: 25 * 60 },
+      prod: { progressDeadlineSeconds: 25 * 60 },
     })

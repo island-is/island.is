@@ -51,6 +51,11 @@ export class SearcherInput {
   @IsOptional()
   tags?: Tag[]
 
+  @Field(() => [Tag], { nullable: true })
+  @IsArray()
+  @IsOptional()
+  excludedTags?: Tag[]
+
   @Field(() => [String], { nullable: true })
   @IsArray()
   @IsOptional()
@@ -70,4 +75,13 @@ export class SearcherInput {
   @IsBoolean()
   @IsOptional()
   countProcessEntry?: boolean = false
+
+  @Field(() => Boolean, { nullable: true })
+  @IsBoolean()
+  @IsOptional()
+  highlightResults?: boolean = false
+
+  @Field(() => String, { nullable: true })
+  @IsOptional()
+  useQuery?: string = 'default'
 }

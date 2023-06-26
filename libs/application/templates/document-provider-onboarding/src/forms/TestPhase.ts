@@ -1,20 +1,17 @@
 import {
-  ApplicationTypes,
   buildForm,
-  buildDescriptionField,
   buildMultiField,
   buildSection,
   buildCustomField,
   buildSubmitField,
-  Form,
-  FormModes,
 } from '@island.is/application/core'
+import { ApplicationTypes, Form, FormModes } from '@island.is/application/types'
 import { m } from './messages'
 
 export const TestPhase: Form = buildForm({
   id: ApplicationTypes.DOCUMENT_PROVIDER_ONBOARDING,
   title: 'Útfærsla og prófanir',
-  mode: FormModes.APPLYING,
+  mode: FormModes.DRAFT,
   children: [
     buildSection({
       id: 'testIntroSection',

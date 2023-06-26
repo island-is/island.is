@@ -1,8 +1,5 @@
-import {
-  FieldBaseProps,
-  getErrorViaPath,
-  getValueViaPath,
-} from '@island.is/application/core'
+import { getErrorViaPath, getValueViaPath } from '@island.is/application/core'
+import { FieldBaseProps } from '@island.is/application/types'
 import { Box, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { InputController } from '@island.is/shared/form-fields'

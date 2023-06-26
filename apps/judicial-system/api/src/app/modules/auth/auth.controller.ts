@@ -20,8 +20,11 @@ import {
   CSRF_COOKIE_NAME,
   ACCESS_TOKEN_COOKIE_NAME,
   EXPIRES_IN_MILLISECONDS,
+  CASES_ROUTE,
+  USERS_ROUTE,
+  COURT_OF_APPEAL_CASES_ROUTE,
 } from '@island.is/judicial-system/consts'
-import { UserRole } from '@island.is/judicial-system/types'
+import { InstitutionType, UserRole } from '@island.is/judicial-system/types'
 import { SharedAuthService } from '@island.is/judicial-system/auth'
 import {
   AuditedAction,
@@ -175,14 +178,13 @@ export class AuthController {
         redirectRoute: requestedRedirectRoute
           ? requestedRedirectRoute
           : user.role === UserRole.ADMIN
-          ? '/notendur'
-          : '/krofur',
+          ? USERS_ROUTE
+          : user.institution?.type === InstitutionType.HIGH_COURT
+          ? COURT_OF_APPEAL_CASES_ROUTE
+          : CASES_ROUTE,
       }
-    } else if (requestedRedirectRoute?.startsWith('/verjandi/')) {
-      const defender = await this.authService.findDefender(
-        requestedRedirectRoute.substring(10),
-        authUser.nationalId,
-      )
+    } else {
+      const defender = await this.authService.findDefender(authUser.nationalId)
 
       if (defender && this.authService.validateUser(defender)) {
         return {

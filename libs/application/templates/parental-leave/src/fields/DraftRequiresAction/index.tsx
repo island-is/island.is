@@ -3,7 +3,7 @@ import { useMutation } from '@apollo/client'
 import { MessageDescriptor } from '@formatjs/intl'
 
 import { useLocale } from '@island.is/localization'
-import { FieldBaseProps } from '@island.is/application/core'
+import { FieldBaseProps } from '@island.is/application/types'
 import { Box, Button, Text } from '@island.is/island-ui/core'
 import { FieldDescription } from '@island.is/shared/form-fields'
 import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
@@ -29,6 +29,8 @@ const DraftRequireAction: FC<FieldBaseProps> = ({ application, refetch }) => {
       parentalLeaveFormMessages.draftFlow.draftNotApprovedEmployerDesc,
     [ApplicationStates.VINNUMALASTOFNUN_ACTION]:
       parentalLeaveFormMessages.draftFlow.draftNotApprovedVMLSTDesc,
+    [ApplicationStates.ADDITIONAL_DOCUMENTS_REQUIRED]:
+      parentalLeaveFormMessages.draftFlow.draftAdditionalDocumentRequiredDesc,
   }
 
   return (

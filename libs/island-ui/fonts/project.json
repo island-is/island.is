@@ -1,0 +1,6 @@
+{
+  "root": "libs/island-ui/fonts",
+  "projectType": "library",
+  "targets": {},
+  "tags": ["lib:dom", "scope:dom"]
+}

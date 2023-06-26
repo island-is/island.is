@@ -1,6 +1,7 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
-import { IMultipleStatistics } from '../generated/contentfulTypes'
+import { CacheField } from '@island.is/nest/graphql'
 import { SystemMetadata } from '@island.is/shared/types'
+import { IMultipleStatistics } from '../generated/contentfulTypes'
 import { Statistics, mapStatistics } from './statistics.model'
 import { Link, mapLink } from './link.model'
 
@@ -12,11 +13,14 @@ export class MultipleStatistics {
   @Field()
   title!: string
 
-  @Field(() => [Statistics])
+  @CacheField(() => [Statistics])
   statistics!: Statistics[]
 
-  @Field(() => Link, { nullable: true })
+  @CacheField(() => Link, { nullable: true })
   link!: Link | null
+
+  @Field(() => Boolean, { nullable: true })
+  hasBorderAbove?: boolean
 }
 
 export const mapMultipleStatistics = ({
@@ -28,4 +32,5 @@ export const mapMultipleStatistics = ({
   title: fields.title ?? '',
   statistics: (fields.statistics ?? []).map(mapStatistics),
   link: fields.link ? mapLink(fields.link) : null,
+  hasBorderAbove: fields.hasBorderAbove ?? true,
 })

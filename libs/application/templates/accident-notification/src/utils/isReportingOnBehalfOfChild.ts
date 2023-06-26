@@ -1,4 +1,5 @@
-import { FormValue, getValueViaPath } from '@island.is/application/core'
+import { getValueViaPath } from '@island.is/application/core'
+import { FormValue } from '@island.is/application/types'
 import { WhoIsTheNotificationForEnum } from '../types'
 
 export const isReportingOnBehalfOfChild = (formValue: FormValue) => {

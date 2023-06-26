@@ -10,9 +10,10 @@ First, make sure you have docker, then run:
 
 - `yarn dev-services financial-aid-backend`
 
-Run migrations:
+Run migrations and seed:
 
 - `yarn nx run financial-aid-backend:migrate`
+- `yarn nx run financial-aid-backend:seed`
 
 ### Running locally
 
@@ -29,11 +30,19 @@ Run Ósk or Veita client:
 - `yarn start financial-aid-web-osk`
 - `yarn start financial-aid-web-veita`
 
-Go to localhost:4200
+Go to localhost:4200.
 
 ## To test authentication locally
 
-Install <https://github.com/cameronhunter/local-ssl-proxy>:
+To sign in you'll need to configure these environment variables:
+
+- `NEXTAUTH_URL=http://localhost:4200`
+- `IDENTITY_SERVER_DOMAIN=identity-server.dev01.devland.is`
+- `IDENTITY_SERVER_SECRET=` - get a client secret for the `@samband.is/financial-aid` client.
+
+You can sign in to Veita using Gervimaður Færeyjar (0102399).
+
+If you need https, you can install <https://github.com/cameronhunter/local-ssl-proxy>:
 
 - `npm install -g local-ssl-proxy`
 

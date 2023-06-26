@@ -1,5 +1,5 @@
 import { error } from './messages/index'
-import * as z from 'zod'
+import { z } from 'zod'
 import {
   Employment,
   HomeCircumstances,
@@ -9,6 +9,9 @@ import { ApproveOptions } from './types'
 
 export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v, {
+    params: error.validation.dataGathering,
+  }),
+  approveExternalDataSpouse: z.boolean().refine((v) => v, {
     params: error.validation.dataGathering,
   }),
   spouse: z.object({
@@ -131,6 +134,7 @@ export const dataSchema = z.object({
     }),
   }),
   spouseFormComment: z.string().optional(),
+  spouseName: z.string().optional(),
 })
 
 export type answersSchema = z.infer<typeof dataSchema>

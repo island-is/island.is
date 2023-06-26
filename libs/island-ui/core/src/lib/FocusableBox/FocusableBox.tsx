@@ -29,6 +29,7 @@ interface Props
   component?: ElementType
   ref?: Ref<HTMLElement>
   color?: ColorSchemes
+  to?: string
 }
 
 type NoNullColorScheme = Exclude<ColorSchemes, null>

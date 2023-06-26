@@ -1,4 +1,4 @@
-import { ApplicationWithAttachments as Application } from '@island.is/application/core'
+import { ApplicationWithAttachments as Application } from '@island.is/application/types'
 import { Injectable } from '@nestjs/common'
 import path from 'path'
 import { ApplicationAttachmentService } from './applicationAttachment.service'

@@ -2,6 +2,11 @@ import { defineMessages } from '@formatjs/intl'
 import { defineMessage } from 'react-intl'
 
 export const core = {
+  and: defineMessage({
+    id: 'judicial.system.backend:pdf.core.and',
+    defaultMessage: 'og',
+    description: 'Notað fyrir orðið og.',
+  }),
   accused: defineMessage({
     id: 'judicial.system.backend:pdf.core.accused',
     defaultMessage: 'kærð{suffix}',

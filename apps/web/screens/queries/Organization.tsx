@@ -1,5 +1,5 @@
 import gql from 'graphql-tag'
-import { slices } from './fragments'
+import { slices, nestedFields } from './fragments'
 
 export const GET_ORGANIZATIONS_QUERY = gql`
   query GetOrganizations($input: GetOrganizationsInput!) {
@@ -9,6 +9,8 @@ export const GET_ORGANIZATIONS_QUERY = gql`
         slug
         title
         description
+        showsUpOnTheOrganizationsPage
+        hasALandingPage
         logo {
           title
           url
@@ -28,7 +30,11 @@ export const GET_ORGANIZATION_QUERY = gql`
     getOrganization(input: $input) {
       id
       slug
+      email
+      phone
       title
+      hasALandingPage
+      trackingDomain
       logo {
         title
         url
@@ -100,10 +106,27 @@ export const GET_ORGANIZATION_PAGE_QUERY = gql`
         }
       }
       organization {
+        id
         title
         slug
+        email
+        phone
+        trackingDomain
+        publishedMaterialSearchFilterGenericTags {
+          id
+          title
+          slug
+          genericTagGroup {
+            id
+            title
+            slug
+          }
+        }
         logo {
           url
+        }
+        namespace {
+          fields
         }
         footerItems {
           title
@@ -137,13 +160,8 @@ export const GET_ORGANIZATION_PAGE_QUERY = gql`
         height
       }
       sidebarCards {
-        title
-        content
-        type
-        link {
-          text
-          url
-        }
+        ...SidebarCardFields
+        ...ConnectedComponentFields
       }
       theme
       themeProperties {
@@ -169,6 +187,7 @@ export const GET_ORGANIZATION_SUBPAGE_QUERY = gql`
       slug
       description {
         ...AllSlices
+        ${nestedFields}
       }
       links {
         text
@@ -176,10 +195,11 @@ export const GET_ORGANIZATION_SUBPAGE_QUERY = gql`
       }
       slices {
         ...AllSlices
+        ${nestedFields}
       }
+      showTableOfContents
       sliceCustomRenderer
       sliceExtraText
-      parentSubpage
       featuredImage {
         url
         title
@@ -196,6 +216,7 @@ export const GET_ORGANIZATION_SERVICES_QUERY = gql`
     getArticles(input: $input) {
       title
       slug
+      processEntryButtonText
       processEntry {
         id
       }
@@ -252,6 +273,7 @@ export const GET_SYSLUMENN_AUCTIONS_QUERY = gql`
       auctionTime
       petitioners
       respondent
+      publishText
       auctionTakesPlaceAt
     }
   }
@@ -294,6 +316,22 @@ export const GET_OPERATING_LICENSES_QUERY = gql`
         maximumNumberOfGuests
         numberOfDiningGuests
       }
+    }
+  }
+`
+
+export const GET_OPERATING_LICENSES_CSV_QUERY = gql`
+  query GetOperatingLicensesCSV {
+    getOperatingLicensesCSV {
+      value
+    }
+  }
+`
+
+export const EMAIL_SIGNUP_MUTATION = gql`
+  mutation EmailSignupSubscription($input: EmailSignupInput!) {
+    emailSignupSubscription(input: $input) {
+      subscribed
     }
   }
 `

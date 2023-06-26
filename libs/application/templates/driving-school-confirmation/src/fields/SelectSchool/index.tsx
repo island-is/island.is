@@ -5,7 +5,7 @@ import {
   GridColumn,
   Text,
 } from '@island.is/island-ui/core'
-import { FieldBaseProps } from '@island.is/application/core'
+import { FieldBaseProps } from '@island.is/application/types'
 import { useFormContext } from 'react-hook-form'
 import { DrivingLicenseBookSchool, DrivingSchoolType } from '../../types/schema'
 import { RadioController } from '@island.is/shared/form-fields'
@@ -17,8 +17,9 @@ const SelectSchool: FC<FieldBaseProps> = ({ application, field, error }) => {
   const { setValue } = useFormContext()
   const { formatMessage } = useLocale()
 
-  const drivingSchools: DrivingSchoolType[] = (application.externalData.employee
-    .data as DrivingLicenseBookSchool).allowedDrivingSchoolTypes
+  const drivingSchools: DrivingSchoolType[] = (application.externalData
+    .drivingSchoolForEmployee.data as DrivingLicenseBookSchool)
+    .allowedDrivingSchoolTypes
 
   const options = drivingSchools.map((item) => {
     return {

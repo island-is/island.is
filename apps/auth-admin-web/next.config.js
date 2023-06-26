@@ -1,12 +1,12 @@
+const withNx = require('@nrwl/next/plugins/with-nx')
 const { createVanillaExtractPlugin } = require('@vanilla-extract/next-plugin')
 const withVanillaExtract = createVanillaExtractPlugin()
-const withHealthcheckConfig = require('./next-modules/withHealthcheckConfig')
 const { createSecureHeaders } = require('next-secure-headers')
 
 const { NEXT_PUBLIC_BACKEND_URL } = 'http://localhost:4200/backend'
 
-module.exports = withVanillaExtract(
-  withHealthcheckConfig({
+module.exports = withNx(
+  withVanillaExtract({
     basePath: '/admin',
     cssModules: false,
     serverRuntimeConfig: {

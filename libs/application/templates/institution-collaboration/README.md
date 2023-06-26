@@ -36,4 +36,5 @@ Fetch development secrets
 
 ## Code owners and maintainers
 
-- [Sendiráðið](https://github.com/orgs/island-is/teams/sendiradid)
+- [Fuglar](https://github.com/orgs/island-is/teams/fuglar)
+- [Norda](https://github.com/orgs/island-is/teams/norda)

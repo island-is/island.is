@@ -1,9 +1,10 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
+import { CacheField } from '@island.is/nest/graphql'
+import { SystemMetadata } from '@island.is/shared/types'
 
 import { IOneColumnText } from '../generated/contentfulTypes'
 
 import { Link, mapLink } from './link.model'
-import { SystemMetadata } from 'api-cms-domain'
 import { mapDocument, SliceUnion } from '../unions/slice.union'
 
 @ObjectType()
@@ -14,11 +15,17 @@ export class OneColumnText {
   @Field()
   title!: string
 
-  @Field(() => Link, { nullable: true })
+  @CacheField(() => Link, { nullable: true })
   link?: Link | null
 
-  @Field(() => [SliceUnion], { nullable: true })
+  @CacheField(() => [SliceUnion], { nullable: true })
   content?: Array<typeof SliceUnion>
+
+  @Field(() => Boolean, { nullable: true })
+  dividerOnTop?: boolean
+
+  @Field(() => Boolean, { nullable: true })
+  showTitle?: boolean
 }
 
 export const mapOneColumnText = ({
@@ -32,4 +39,6 @@ export const mapOneColumnText = ({
   content: fields.content
     ? mapDocument(fields.content, sys.id + ':content')
     : [],
+  dividerOnTop: fields.dividerOnTop ?? true,
+  showTitle: fields.showTitle ?? true,
 })

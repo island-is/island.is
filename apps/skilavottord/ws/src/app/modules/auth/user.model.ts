@@ -3,6 +3,7 @@ import { Field, ObjectType, ID, registerEnumType } from '@nestjs/graphql'
 export enum Role {
   developer = 'developer',
   recyclingCompany = 'recyclingCompany',
+  recyclingCompanyAdmin = 'recyclingCompanyAdmin',
   recyclingFund = 'recyclingFund',
   citizen = 'citizen',
 }

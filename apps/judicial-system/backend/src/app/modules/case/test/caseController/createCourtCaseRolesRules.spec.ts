@@ -1,4 +1,4 @@
-import { judgeRule, registrarRule } from '../../../../guards'
+import { assistantRule, judgeRule, registrarRule } from '../../../../guards'
 import { CaseController } from '../../case.controller'
 
 describe('CaseController - Create court case rules', () => {
@@ -12,15 +12,13 @@ describe('CaseController - Create court case rules', () => {
     )
   })
 
-  it('should give permission to one role', () => {
-    expect(rules).toHaveLength(2)
+  it('should give permission to three role', () => {
+    expect(rules).toHaveLength(3)
   })
 
-  it('should give permission to judges', () => {
+  it('should give permission to judges, registrars and assistants', () => {
     expect(rules).toContain(judgeRule)
-  })
-
-  it('should give permission to registrars', () => {
     expect(rules).toContain(registrarRule)
+    expect(rules).toContain(assistantRule)
   })
 })

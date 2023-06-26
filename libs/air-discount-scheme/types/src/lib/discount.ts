@@ -1,3 +1,5 @@
+import { User } from './user'
+
 export type ConnectionDiscountCode = {
   code: string
   flightId: string
@@ -6,8 +8,20 @@ export type ConnectionDiscountCode = {
 }
 
 export interface Discount {
-  discountCode: string
+  user: User
+  discountCode: string | null
   connectionDiscountCodes: ConnectionDiscountCode[]
   nationalId: string
   expiresIn: number
+}
+
+export interface ExplicitCode {
+  id: string
+  code: string
+  employeeId: string
+  customerId: string
+  flightId?: string
+  comment: string
+  created: Date
+  modified: Date
 }

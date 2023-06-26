@@ -1,4 +1,22 @@
-export { NationalRegistryProvider } from '@island.is/application/data-providers'
-export { UserProfileProvider } from '@island.is/application/data-providers'
-export { FeeInfoProvider } from './FeeInfoProvider'
-export { CriminalRecordProvider } from './CriminalRecordProvider'
+import {
+  defineTemplateApi,
+  InstitutionNationalIds,
+  PaymentCatalogApi,
+} from '@island.is/application/types'
+
+export {
+  NationalRegistryUserApi,
+  UserProfileApi,
+} from '@island.is/application/types'
+
+export const SyslumadurPaymentCatalogApi = PaymentCatalogApi.configure({
+  params: {
+    organizationId: InstitutionNationalIds.SYSLUMENN,
+  },
+  externalDataId: 'payment',
+})
+
+export const CriminalRecordApi = defineTemplateApi({
+  action: 'validateCriminalRecord',
+  externalDataId: 'validateCriminalRecord',
+})

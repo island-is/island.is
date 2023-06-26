@@ -6,7 +6,7 @@ The services that you are building need to be packaged as Docker container image
 
 ## What should I do then?
 
-You need to ask the [DevOps](technical-overview/devops/personas.md#devops) team to create a Docker repository for you, which has the same name your service has in NX. This is an important convention to make everyone's lives easier. Then you need to manually add to [workspace.json](https://github.com/island-is/island.is/blob/main/workspace.json) a target for your service that describes what kind of Docker packaging it needs. For example, adding this target
+You need to ask the [DevOps](technical-overview/devops/personas.md#devops) team to create a Docker repository for you, which has the same name your service has in NX. This is an important convention to make everyone's lives easier. Then you need to manually add to your project's `project.json` file a target that describes what kind of Docker packaging it needs. For example, adding this target
 
 ```json
   "docker-next": {}
@@ -18,6 +18,7 @@ means your service will be packaged as a NextJS Docker container image. We have 
 - `docker-express`, suitable for [ExpressJS](https://expressjs.com) as well as [NestJS](https://nestjs.com) services.
 - `docker-static`, suitable for serving all types of static content. Suitable for pure HTML or React SPAs.
 - `docker-cypress`, suitable for running cypress tests in docker.
+- `docker-native`, not implemented
 
 If you would like to see some examples, simply search for "docker" in that file and you should find plenty.
 

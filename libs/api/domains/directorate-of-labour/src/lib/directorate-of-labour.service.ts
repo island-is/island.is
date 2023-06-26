@@ -4,6 +4,7 @@ import { Inject, Injectable } from '@nestjs/common'
 import { ApolloError } from 'apollo-server-express'
 import { Union, PensionFund } from '@island.is/clients/vmst'
 
+import { ApplicationInformation } from '../models/applicationInformation.model'
 import { ParentalLeavePeriod } from '../models/parentalLeavePeriod.model'
 import { ParentalLeaveEntitlement } from '../models/parentalLeaveEntitlement.model'
 import { ParentalLeavePaymentPlan } from '../models/parentalLeavePaymentPlan.model'
@@ -25,6 +26,14 @@ export class DirectorateOfLabourService {
       'Failed to resolve request',
       error?.message ?? error?.response?.message,
     )
+  }
+
+  async getApplicationInfo(
+    applicationId: string,
+  ): Promise<ApplicationInformation | null> {
+    return await this.directorateOfLabourRepository
+      .getApplicationInfo(applicationId)
+      .catch(this.handleError.bind(this))
   }
 
   async getUnions(): Promise<Union[]> {

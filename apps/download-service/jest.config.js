@@ -1,13 +1,14 @@
 module.exports = {
-  preset: '../../jest.preset.js',
-  coverageDirectory: '../../coverage/apps/download-service',
+  preset: './jest.preset.js',
+  rootDir: '../..',
+  roots: [__dirname],
+  coverageDirectory: '<rootDir>/coverage/apps/download-service',
   setupFiles: [],
-  setupFilesAfterEnv: ['./test/setup.ts'],
+  setupFilesAfterEnv: [`${__dirname}/test/setup.ts`],
   moduleFileExtensions: ['ts', 'js', 'html', 'json'],
   globals: {
-    'ts-jest': {
-      tsConfig: '<rootDir>/tsconfig.spec.json',
-    },
+    'ts-jest': { tsconfig: `${__dirname}/tsconfig.spec.json` },
   },
   displayName: 'download-service',
+  testEnvironment: 'node',
 }

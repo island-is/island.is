@@ -5,6 +5,8 @@ import {
   IsUUID,
   IsBoolean,
   IsObject,
+  ArrayMinSize,
+  IsArray,
 } from 'class-validator'
 
 import { ApiPropertyOptional } from '@nestjs/swagger'
@@ -14,9 +16,14 @@ import {
   CaseCustodyRestrictions,
   CaseAppealDecision,
   CaseDecision,
-  CaseType,
+  CaseAppealRulingDecision,
   SessionArrangements,
   CourtDocument,
+  CaseType,
+} from '@island.is/judicial-system/types'
+import type {
+  IndictmentSubtypeMap,
+  CrimeSceneMap,
 } from '@island.is/judicial-system/types'
 
 export class UpdateCaseDto {
@@ -26,14 +33,21 @@ export class UpdateCaseDto {
   readonly type?: CaseType
 
   @IsOptional()
+  @IsObject()
+  @ApiPropertyOptional()
+  readonly indictmentSubtypes?: IndictmentSubtypeMap
+
+  @IsOptional()
   @IsString()
   @ApiPropertyOptional()
   readonly description?: string
 
   @IsOptional()
-  @IsString()
+  @IsArray()
+  @ArrayMinSize(1)
+  @IsString({ each: true })
   @ApiPropertyOptional()
-  readonly policeCaseNumber?: string
+  readonly policeCaseNumbers?: string[]
 
   @IsOptional()
   @IsString()
@@ -323,5 +337,75 @@ export class UpdateCaseDto {
   @IsOptional()
   @IsString()
   @ApiPropertyOptional()
+  readonly rulingModifiedHistory?: string
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
   readonly caseResentExplanation?: string
+
+  @IsOptional()
+  @IsBoolean()
+  @ApiPropertyOptional()
+  readonly defendantWaivesRightToCounsel?: boolean
+
+  @IsOptional()
+  @IsObject()
+  @ApiPropertyOptional()
+  readonly crimeScenes?: CrimeSceneMap
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly indictmentIntroduction?: string
+
+  @IsOptional()
+  @IsBoolean()
+  @ApiPropertyOptional()
+  readonly requestDriversLicenseSuspension?: boolean
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly prosecutorStatementDate?: Date
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly defendantStatementDate?: Date
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly appealCaseNumber?: string
+
+  @IsOptional()
+  @IsUUID()
+  @ApiPropertyOptional()
+  readonly appealAssistantId?: string
+
+  @IsOptional()
+  @IsUUID()
+  @ApiPropertyOptional()
+  readonly appealJudge1Id?: string
+
+  @IsOptional()
+  @IsUUID()
+  @ApiPropertyOptional()
+  readonly appealJudge2Id?: string
+
+  @IsOptional()
+  @IsUUID()
+  @ApiPropertyOptional()
+  readonly appealJudge3Id?: string
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly appealConclusion?: string
+
+  @IsOptional()
+  @IsEnum(CaseAppealRulingDecision)
+  @ApiPropertyOptional({ enum: CaseAppealRulingDecision })
+  readonly appealRulingDecision?: CaseAppealRulingDecision
 }

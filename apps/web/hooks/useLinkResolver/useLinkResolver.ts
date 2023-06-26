@@ -29,6 +29,10 @@ A locale can be ignored by setting it's value to an empty string
 Keys in routesTemplate should ideally match lowercased __typename of graphql api types to allow them to be passed directly to the link resolver
 */
 export const routesTemplate = {
+  organizationnewsoverview: {
+    is: '/s/[organization]/frett',
+    en: '/en/o/[organization]/news',
+  },
   aboutsubpage: {
     is: '/s/stafraent-island/[slug]',
     en: '',
@@ -41,6 +45,10 @@ export const routesTemplate = {
     is: '/leit',
     en: '/en/search',
   },
+  articlecategories: {
+    is: '/flokkur',
+    en: '/en/category',
+  },
   articlecategory: {
     is: '/flokkur/[slug]',
     en: '/en/category/[slug]',
@@ -52,6 +60,14 @@ export const routesTemplate = {
   newsoverview: {
     is: '/frett',
     en: '/en/news',
+  },
+  digitalicelandservices: {
+    is: '/s/stafraent-island/thjonustur',
+    en: '/en/o/digital-iceland/island-services',
+  },
+  digitalicelandservicesdetailpage: {
+    is: '/s/stafraent-island/thjonustur/[slug]',
+    en: '/en/o/digital-iceland/island-services/[slug]',
   },
   organizationservices: {
     is: '/s/[slug]/thjonusta',
@@ -67,19 +83,15 @@ export const routesTemplate = {
   },
   apicataloguedetailpage: {
     is: '/s/stafraent-island/vefthjonustur/[slug]',
-    en: '',
+    en: '/en/o/digital-iceland/webservices/[slug]',
   },
   apicataloguepage: {
     is: '/s/stafraent-island/vefthjonustur',
-    en: '',
+    en: '/en/o/digital-iceland/webservices',
   },
   organizationnews: {
     is: '/s/[organization]/frett/[slug]',
     en: '/en/o/[organization]/news/[slug]',
-  },
-  organizationnewsoverview: {
-    is: '/s/[organization]/frett',
-    en: '/en/o/[organization]/news',
   },
   organizationsubpage: {
     is: '/s/[slug]/[subSlug]',
@@ -100,6 +112,14 @@ export const routesTemplate = {
   opendatasubpage: {
     is: '/gagnatorg/[slug]',
     en: '/en/gagnatorg/[slug]',
+  },
+  projectnews: {
+    is: '/v/[slug]/frett/[subSlug]',
+    en: '/en/p/[slug]/news/[subSlug]',
+  },
+  projectnewsoverview: {
+    is: '/v/[slug]/frett',
+    en: '/en/p/[slug]/news',
   },
   projectsubpage: {
     is: '/v/[slug]/[subSlug]',
@@ -138,21 +158,33 @@ export const routesTemplate = {
     is: '/innskraning',
     en: '/en/login',
   },
-  webservicedetailpage: {
-    is: '/throun/vefthjonustur/[slug]',
-    en: '/en/developers/webservices/[slug]',
+  serviceweb: {
+    is: '/adstod',
+    en: '/en/help',
   },
-  webservicespage: {
-    is: '/throun/vefthjonustur',
-    en: '/en/developers/webservices',
+  servicewebsearch: {
+    is: '/adstod/leit',
+    en: '/en/help/search',
   },
-  handbookpage: {
-    is: '/throun/handbok',
-    en: '/en/developers/handbook',
+  serviceweborganization: {
+    is: '/adstod/[slug]',
+    en: '/en/help/[slug]',
   },
-  developerspage: {
-    is: '/throun',
-    en: '/en/developers',
+  servicewebcontact: {
+    is: '/adstod/[organizationSlug]/hafa-samband',
+    en: '/en/help/[organizationSlug]/contact-us',
+  },
+  serviceweborganizationsearch: {
+    is: '/adstod/[organizationSlug]/leit',
+    en: '/en/help/[organizationSlug]/search',
+  },
+  supportcategory: {
+    is: '/adstod/[organizationSlug]/[categorySlug]',
+    en: '/en/help/[organizationSlug]/[categorySlug]',
+  },
+  supportqna: {
+    is: '/adstod/[organizationSlug]/[categorySlug]/[questionSlug]',
+    en: '/en/help/[organizationSlug]/[categorySlug]/[questionSlug]',
   },
   subarticle: {
     is: '/[slug]/[subSlug]',
@@ -162,25 +194,21 @@ export const routesTemplate = {
     is: '/[slug]',
     en: '/en/[slug]',
   },
-  serviceweb: {
-    is: '/adstod',
-    en: '/en/help',
-  },
-  serviceweborganization: {
-    is: '/adstod/[slug]',
-    en: '/en/help/[slug]',
-  },
-  servicewebcategory: {
-    is: '/adstod/[organizationSlug]/[categorySlug]',
-    en: '/en/help/[organizationSlug]/[categorySlug]',
-  },
-  servicewebsearch: {
-    is: '/adstod/leit',
-    en: '/en/help/search',
-  },
   homepage: {
     is: '/',
     en: '/en',
+  },
+  undirskriftalistar: {
+    is: '/undirskriftalistar',
+    en: '/en/petitions',
+  },
+  vacancies: {
+    is: '/starfatorg',
+    en: '',
+  },
+  vacancydetails: {
+    is: '/starfatorg/[id]',
+    en: '',
   },
 }
 
@@ -214,7 +242,11 @@ export const extractSlugsByRouteTemplate = (
 }
 
 /** Check if path is of link type */
-export const pathIsRoute = (path: string, linkType: LinkType) => {
+export const pathIsRoute = (
+  path: string,
+  linkType: LinkType,
+  locale?: Locale,
+) => {
   const segments = path.split('/').filter((x) => x)
 
   const localeSegment = isLocale(segments[0]) ? segments[0] : ''
@@ -224,7 +256,7 @@ export const pathIsRoute = (path: string, linkType: LinkType) => {
     localeSegment ? localeSegment + '/' : ''
   }${firstSegment}`.replace(/\/$/, '')
 
-  return current === linkResolver(linkType).href
+  return current === linkResolver(linkType, [], locale).href
 }
 
 /*

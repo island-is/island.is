@@ -2,12 +2,12 @@ import { Test, TestingModule } from '@nestjs/testing'
 import { mock } from 'jest-mock-extended'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { AUDIT_OPTIONS } from '@island.is/nest/audit'
 import type { Logger } from '@island.is/logging'
 import type { Auth, User } from '@island.is/auth-nest-tools'
 
 import { AuditService } from './audit.service'
 import SpyInstance = jest.SpyInstance
+import { AUDIT_OPTIONS } from './audit.options'
 
 jest.mock('@island.is/logging', () => {
   return {
@@ -104,7 +104,7 @@ describe('AuditService against Cloudwatch', () => {
       meta,
       ip: auth.ip,
       userAgent: auth.userAgent,
-      appVersion: appVersion,
+      appVersion,
     })
   })
 
@@ -152,7 +152,7 @@ describe('AuditService against Cloudwatch', () => {
       action: `${defaultNamespace}#${action}`,
       ip: auth.ip,
       userAgent: auth.userAgent,
-      appVersion: appVersion,
+      appVersion,
     })
   })
 
@@ -192,7 +192,7 @@ describe('AuditService against Cloudwatch', () => {
       client: [auth.client],
       action: `${defaultNamespace}#${action}`,
       ip: auth.ip,
-      appVersion: appVersion,
+      appVersion,
     })
   })
 
@@ -226,7 +226,25 @@ describe('AuditService against Cloudwatch', () => {
       meta,
       ip: auth.ip,
       userAgent: auth.userAgent,
-      appVersion: appVersion,
+      appVersion,
+    })
+  })
+
+  it('should be a generic system logger', () => {
+    // Arrange
+    const action = 'systemAction'
+
+    // Act
+    service.audit({
+      action,
+      system: true,
+    })
+
+    // Assert
+    expect(spy).toHaveBeenCalledWith({
+      action: `${defaultNamespace}#${action}`,
+      appVersion,
+      system: true,
     })
   })
 })
@@ -283,7 +301,7 @@ describe('AuditService in development', () => {
       meta,
       ip: auth.ip,
       userAgent: auth.userAgent,
-      appVersion: appVersion,
+      appVersion,
     })
   })
 })

@@ -1,9 +1,10 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
+import { CacheField } from '@island.is/nest/graphql'
+import { SystemMetadata } from '@island.is/shared/types'
 
 import { IDistricts } from '../generated/contentfulTypes'
 import { Image, mapImage } from './image.model'
 import { Link, mapLink } from './link.model'
-import { SystemMetadata } from 'api-cms-domain'
 
 @ObjectType()
 export class Districts {
@@ -16,11 +17,14 @@ export class Districts {
   @Field({ nullable: true })
   description?: string
 
-  @Field(() => Image, { nullable: true })
+  @CacheField(() => Image, { nullable: true })
   image?: Image | null
 
-  @Field(() => [Link])
+  @CacheField(() => [Link])
   links?: Array<Link>
+
+  @Field(() => Boolean, { nullable: true })
+  hasBorderAbove?: boolean
 }
 
 export const mapDistricts = ({
@@ -33,4 +37,5 @@ export const mapDistricts = ({
   description: fields.description ?? '',
   image: fields.image ? mapImage(fields.image) : null,
   links: (fields.links ?? []).map(mapLink),
+  hasBorderAbove: fields.hasBorderAbove ?? true,
 })

@@ -7,6 +7,7 @@ import LocalizationUtils from '../../../utils/localization.utils'
 import { FormControl } from '../../../entities/common/Localization'
 import { ResourcesService } from '../../../services/ResourcesService'
 import { DomainDTO } from '../../../entities/dtos/domain.dto'
+import TranslationCreateFormDropdown from './TranslationCreateFormDropdown'
 
 interface Props {
   domain: DomainDTO
@@ -19,8 +20,8 @@ interface FormOutput {
 }
 
 const DomainCreateForm: React.FC<Props> = (props: Props) => {
-  const { register, handleSubmit, errors, formState } = useForm<FormOutput>()
-  const { isSubmitting } = formState
+  const { register, handleSubmit, formState } = useForm<FormOutput>()
+  const { isSubmitting, errors } = formState
   const [isEditing, setIsEditing] = useState<boolean>(false)
   const [localization] = useState<FormControl>(
     LocalizationUtils.getFormControl('DomainCreateForm'),
@@ -78,8 +79,7 @@ const DomainCreateForm: React.FC<Props> = (props: Props) => {
                   <input
                     id="nationalId"
                     type="text"
-                    name="domain.nationalId"
-                    ref={register({
+                    {...register('domain.nationalId', {
                       required: true,
                       maxLength: 10,
                       minLength: 10,
@@ -109,7 +109,7 @@ const DomainCreateForm: React.FC<Props> = (props: Props) => {
                   <input
                     id="name"
                     type="text"
-                    ref={register({
+                    {...register('domain.name', {
                       required: true,
                       validate: isEditing
                         ? () => {
@@ -117,7 +117,6 @@ const DomainCreateForm: React.FC<Props> = (props: Props) => {
                           }
                         : ValidationUtils.validateDomain,
                     })}
-                    name="domain.name"
                     readOnly={isEditing}
                     defaultValue={props.domain.name}
                     className="domain-create-form__input"
@@ -143,11 +142,10 @@ const DomainCreateForm: React.FC<Props> = (props: Props) => {
                   <input
                     id="description"
                     type="text"
-                    ref={register({
+                    {...register('domain.description', {
                       required: true,
                       validate: ValidationUtils.validateDescription,
                     })}
-                    name="domain.description"
                     defaultValue={props.domain.description}
                     className="domain-create-form__input"
                     title={localization.fields['description'].helpText}
@@ -161,6 +159,84 @@ const DomainCreateForm: React.FC<Props> = (props: Props) => {
                   />
                   <HelpBox
                     helpText={localization.fields['description'].helpText}
+                  />
+                  <TranslationCreateFormDropdown
+                    className="domain"
+                    property="description"
+                    isEditing={isEditing}
+                    id={props.domain.name}
+                  />
+                </div>
+
+                <div className="domain-create-form__container__field">
+                  <label
+                    className="domain-create-form__label"
+                    htmlFor="displayName"
+                  >
+                    {localization.fields['displayName'].label}
+                  </label>
+                  <input
+                    id="displayName"
+                    type="text"
+                    {...register('domain.displayName', {
+                      required: true,
+                      validate: ValidationUtils.validateDescription,
+                    })}
+                    defaultValue={props.domain.displayName}
+                    className="domain-create-form__input"
+                    title={localization.fields['displayName'].helpText}
+                    placeholder={localization.fields['displayName'].placeholder}
+                  />
+                  <ErrorMessage
+                    as="span"
+                    errors={errors}
+                    name="domain.displayName"
+                    message={localization.fields['displayName'].errorMessage}
+                  />
+                  <HelpBox
+                    helpText={localization.fields['displayName'].helpText}
+                  />
+                  <TranslationCreateFormDropdown
+                    className="domain"
+                    property="displayName"
+                    isEditing={isEditing}
+                    id={props.domain.name}
+                  />
+                </div>
+
+                <div className="domain-create-form__container__field">
+                  <label
+                    className="domain-create-form__label"
+                    htmlFor="organisationLogoKey"
+                  >
+                    {localization.fields['organisationLogoKey'].label}
+                  </label>
+                  <input
+                    id="organisationLogoKey"
+                    type="text"
+                    {...register('domain.organisationLogoKey', {
+                      required: true,
+                      validate: ValidationUtils.validateDescription,
+                    })}
+                    defaultValue={props.domain.organisationLogoKey}
+                    className="domain-create-form__input"
+                    title={localization.fields['organisationLogoKey'].helpText}
+                    placeholder={
+                      localization.fields['organisationLogoKey'].placeholder
+                    }
+                  />
+                  <ErrorMessage
+                    as="span"
+                    errors={errors}
+                    name="domain.organisationLogoKey"
+                    message={
+                      localization.fields['organisationLogoKey'].errorMessage
+                    }
+                  />
+                  <HelpBox
+                    helpText={
+                      localization.fields['organisationLogoKey'].helpText
+                    }
                   />
                 </div>
               </div>

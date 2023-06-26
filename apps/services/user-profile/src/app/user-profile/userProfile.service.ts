@@ -33,7 +33,7 @@ export class UserProfileService {
   }
 
   async create(userProfileDto: CreateUserProfileDto): Promise<UserProfile> {
-    return await this.userProfileModel.create(userProfileDto)
+    return this.userProfileModel.create({ ...userProfileDto })
   }
 
   async findByNationalId(nationalId: string): Promise<UserProfile | null> {
@@ -76,7 +76,7 @@ export class UserProfileService {
         ...body,
         nationalId: user.nationalId,
       })
-    } catch (e) {
+    } catch (e: any) {
       throw new BadRequestException(e.errors)
     }
   }

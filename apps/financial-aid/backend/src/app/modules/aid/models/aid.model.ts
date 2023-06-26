@@ -20,7 +20,7 @@ import { Aid, AidType } from '@island.is/financial-aid/shared/lib'
     },
   ],
 })
-export class AidModel extends Model<Aid> {
+export class AidModel extends Model<AidModel, Aid> {
   @Column({
     type: DataType.UUID,
     primaryKey: true,

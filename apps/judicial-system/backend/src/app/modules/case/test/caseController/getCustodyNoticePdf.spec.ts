@@ -54,7 +54,7 @@ describe('CaseController - Get custody pdf', () => {
     it('should generate pdf', () => {
       expect(getCustodyNoticePdfAsBuffer).toHaveBeenCalledWith(
         theCase,
-        undefined, // TODO Mock IntlService
+        expect.any(Function),
       )
     })
   })
@@ -123,28 +123,6 @@ describe('CaseController - Get custody pdf', () => {
     it('should throw Error', () => {
       expect(then.error).toBeInstanceOf(Error)
       expect(then.error.message).toBe('Some error')
-    })
-  })
-
-  describe('bad request because case has wrong type', () => {
-    const caseId = uuid()
-    const theCase = { id: caseId, type: CaseType.TRAVEL_BAN } as Case
-    let then: Then
-    const res = {} as Response
-    const pdf = {}
-
-    beforeEach(async () => {
-      const getMock = getCustodyNoticePdfAsBuffer as jest.Mock
-      getMock.mockResolvedValueOnce(pdf)
-
-      then = await givenWhenThen(caseId, theCase, res)
-    })
-
-    it('should throw Error', () => {
-      expect(then.error).toBeInstanceOf(BadRequestException)
-      expect(then.error.message).toBe(
-        `Cannot generate a custody notice for ${theCase.type} cases`,
-      )
     })
   })
 

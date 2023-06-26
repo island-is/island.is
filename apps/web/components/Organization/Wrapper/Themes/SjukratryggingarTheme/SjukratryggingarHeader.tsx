@@ -7,25 +7,25 @@ import {
   Link,
   Text,
 } from '@island.is/island-ui/core'
-import * as styles from './SjukratryggingarHeader.css'
 import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
+import * as styles from './SjukratryggingarHeader.css'
 
 interface HeaderProps {
   organizationPage: OrganizationPage
 }
 
-export const SjukratryggingarHeader: React.FC<HeaderProps> = ({
+const SjukratryggingarHeader: React.FC<HeaderProps> = ({
   organizationPage,
 }) => {
   const { linkResolver } = useLinkResolver()
 
   return (
-    <Box className={styles.headerBg}>
+    <div className={styles.headerBg}>
       <div className={styles.trianglesLeft}></div>
       <div className={styles.trianglesRight}></div>
       <GridContainer className={styles.headerContainer}>
-        <Box className={styles.headerWrapper}>
+        <div className={styles.headerWrapper}>
           <SidebarLayout
             sidebarContent={
               !!organizationPage.organization.logo && (
@@ -76,15 +76,17 @@ export const SjukratryggingarHeader: React.FC<HeaderProps> = ({
                   <div className={styles.titleImage}></div>
                 </Hidden>
                 <Hidden above="sm">
-                  <Text variant="h1" color="white">
+                  <Text variant="h1" color="blueberry600">
                     {organizationPage.title}
                   </Text>
                 </Hidden>
               </Link>
             </Box>
           </SidebarLayout>
-        </Box>
+        </div>
       </GridContainer>
-    </Box>
+    </div>
   )
 }
+
+export default SjukratryggingarHeader

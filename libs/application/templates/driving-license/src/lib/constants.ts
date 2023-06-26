@@ -1,4 +1,4 @@
-import { DefaultEvents, StateLifeCycle } from '@island.is/application/core'
+import { DefaultEvents } from '@island.is/application/types'
 
 export type Events =
   | { type: DefaultEvents.SUBMIT }
@@ -31,3 +31,5 @@ export interface DrivingLicenseFakeData {
   currentLicense?: FakeCurrentLicense
   healthRemarks?: YesOrNo
 }
+
+export const SYSLUMADUR_NATIONAL_ID = '6509142520'

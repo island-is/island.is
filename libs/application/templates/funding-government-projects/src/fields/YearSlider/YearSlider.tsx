@@ -1,8 +1,5 @@
-import {
-  FieldBaseProps,
-  formatText,
-  getValueViaPath,
-} from '@island.is/application/core'
+import { formatText, getValueViaPath } from '@island.is/application/core'
+import { FieldBaseProps } from '@island.is/application/types'
 import { Controller, useFormContext } from 'react-hook-form'
 import { Box, Text } from '@island.is/island-ui/core'
 import React, { useState } from 'react'
@@ -37,7 +34,7 @@ export const YearSlider = ({ field, application }: FieldBaseProps) => {
         <Controller
           defaultValue={chosenGivenYears}
           name={id}
-          render={({ onChange, value }) => (
+          render={({ field: { onChange, value } }) => (
             <Slider
               label={{
                 singular: formatMessage(shared.yearSingular),

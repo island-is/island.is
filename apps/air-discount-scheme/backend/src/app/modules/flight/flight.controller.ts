@@ -1,3 +1,4 @@
+import { Cache as CacheManager } from 'cache-manager'
 import {
   Get,
   HttpCode,
@@ -45,12 +46,18 @@ import {
   CheckFlightParams,
   CheckFlightBody,
 } from './dto'
-import { Discount, DiscountService } from '../discount'
+import { DiscountService } from '../discount'
+import { Discount } from '../discount/discount.model'
 import { AuthGuard } from '../common'
-import { NationalRegistryService } from '../nationalRegistry'
 import type { HttpRequest } from '../../app.types'
-import * as kennitala from 'kennitala'
-import { MAX_AGE_LIMIT } from '../nationalRegistry/nationalRegistry.service'
+import { AirDiscountSchemeScope } from '@island.is/auth/scopes'
+import {
+  CurrentUser,
+  IdsUserGuard,
+  Scopes,
+  ScopesGuard,
+} from '@island.is/auth-nest-tools'
+import type { User as AuthUser } from '@island.is/auth-nest-tools'
 
 @ApiTags('Flights')
 @Controller('api/public')
@@ -62,7 +69,6 @@ export class PublicFlightController {
     @Inject(CACHE_MANAGER) private readonly cacheManager: CacheManager,
     @Inject(forwardRef(() => DiscountService))
     private readonly discountService: DiscountService,
-    private readonly nationalRegistryService: NationalRegistryService,
   ) {}
 
   private async validateConnectionFlights(
@@ -71,7 +77,6 @@ export class PublicFlightController {
     flightLegs: FlightLeg[],
   ): Promise<string> {
     const flightLegCount = flightLegs.length
-
     const connectionDiscountCode = this.discountService.filterConnectionDiscountCodes(
       discount.connectionDiscountCodes,
       discountCode,
@@ -171,7 +176,6 @@ export class PublicFlightController {
   async checkFlightStatus(
     @Param() params: CheckFlightParams,
     @Body() body: CheckFlightBody,
-    @Req() request: HttpRequest,
   ): Promise<void> {
     const discount = await this.discountService.getDiscountByDiscountCode(
       params.discountCode,
@@ -198,14 +202,12 @@ export class PublicFlightController {
     const discount = await this.discountService.getDiscountByDiscountCode(
       params.discountCode,
     )
-
     if (!discount) {
       throw new BadRequestException('Discount code is invalid')
     }
 
-    const user = await this.nationalRegistryService.getUser(discount.nationalId)
-    if (!user) {
-      throw new NotFoundException(`User not found`)
+    if (!discount.user) {
+      throw new BadRequestException('No user associated with discount code')
     }
 
     if (
@@ -215,49 +217,6 @@ export class PublicFlightController {
       throw new BadRequestException(
         'Flight cannot be booked outside the current year',
       )
-    }
-
-    let meetsADSRequirements = this.flightService.isADSPostalCode(
-      user.postalcode,
-    )
-
-    // TODO: this is a quickly made temporary hotfix and should be rewritten
-    // along when the nationalregistry module is rewritten for the client V2 completely
-    if (
-      !meetsADSRequirements &&
-      kennitala.info(discount.nationalId).age < MAX_AGE_LIMIT
-    ) {
-      const userCustodiansCacheKey = `userService_${discount.nationalId}_custodians`
-      const cacheValue = await this.cacheManager.get(userCustodiansCacheKey)
-
-      if (cacheValue) {
-        const custodians = cacheValue.custodians
-
-        for (const custodian of custodians) {
-          const custodianInfo = await this.nationalRegistryService.getUser(
-            custodian,
-          )
-
-          if (
-            custodianInfo &&
-            this.flightService.isADSPostalCode(custodianInfo.postalcode)
-          ) {
-            // Overview breaks when postalcode is null
-            // On rare occasions the national registry has no
-            // info on children. This is a patch for the overview screen
-            // to function properly on those occasions
-            if (!user.postalcode) {
-              user.postalcode = custodianInfo.postalcode
-            }
-            meetsADSRequirements = true
-            break
-          }
-        }
-      }
-    }
-
-    if (!meetsADSRequirements) {
-      throw new ForbiddenException('User postalcode does not meet conditions')
     }
 
     let connectingFlight = false
@@ -312,7 +271,7 @@ export class PublicFlightController {
 
     const newFlight = await this.flightService.create(
       flight,
-      user,
+      discount.user,
       request.airline,
       isConnectable,
       connectingId,
@@ -375,7 +334,7 @@ export class PublicFlightController {
       throw new NotFoundException(`Flight<${params.flightId}> not found`)
     }
 
-    const flightLeg = await flight.flightLegs.find(
+    const flightLeg = await flight.flightLegs?.find(
       (flightLeg) => flightLeg.id === params.flightLegId,
     )
     if (!flightLeg) {
@@ -387,37 +346,61 @@ export class PublicFlightController {
   }
 }
 
+@UseGuards(IdsUserGuard, ScopesGuard)
+@Scopes(AirDiscountSchemeScope.admin)
 @Controller('api/private')
-export class PrivateFlightController {
+@ApiTags('Admin')
+@ApiBearerAuth()
+export class PrivateFlightAdminController {
   constructor(private readonly flightService: FlightService) {}
 
   @Get('flights')
-  @ApiExcludeEndpoint()
+  @ApiExcludeEndpoint(!process.env.ADS_PRIVATE_CLIENT)
+  @ApiOkResponse({ type: [Flight] })
   get(): Promise<Flight[]> {
     return this.flightService.findAll()
   }
 
   @Post('flightLegs')
-  @ApiExcludeEndpoint()
-  getFlightLegs(@Body() body: GetFlightLegsBody | {}): Promise<FlightLeg[]> {
+  @ApiExcludeEndpoint(!process.env.ADS_PRIVATE_CLIENT)
+  @ApiOkResponse({ type: [FlightLeg] })
+  getFlightLegs(@Body() body: GetFlightLegsBody): Promise<FlightLeg[]> {
     return this.flightService.findAllLegsByFilter(body)
   }
 
   @Post('flightLegs/confirmInvoice')
-  @ApiExcludeEndpoint()
-  async confirmInvoice(
-    @Body() body: ConfirmInvoiceBody | {},
-  ): Promise<FlightLeg[]> {
+  @ApiExcludeEndpoint(!process.env.ADS_PRIVATE_CLIENT)
+  @ApiOkResponse({ type: [FlightLeg] })
+  async confirmInvoice(@Body() body: ConfirmInvoiceBody): Promise<FlightLeg[]> {
     let flightLegs = await this.flightService.findAllLegsByFilter(body)
     flightLegs = await this.flightService.finalizeCreditsAndDebits(flightLegs)
     return flightLegs
   }
+}
+
+@UseGuards(IdsUserGuard, ScopesGuard)
+@Scopes(AirDiscountSchemeScope.default)
+@Controller('api/private')
+@ApiTags('Users')
+@ApiBearerAuth()
+export class PrivateFlightUserController {
+  constructor(private readonly flightService: FlightService) {}
 
   @Get('users/:nationalId/flights')
-  @ApiExcludeEndpoint()
+  @ApiExcludeEndpoint(!process.env.ADS_PRIVATE_CLIENT)
+  @ApiOkResponse({ type: [Flight] })
   getUserFlights(@Param() params: GetUserFlightsParams): Promise<Flight[]> {
     return this.flightService.findThisYearsFlightsByNationalId(
       params.nationalId,
     )
+  }
+
+  @Get('users/userAndRelationsFlights')
+  @ApiExcludeEndpoint(!process.env.ADS_PRIVATE_CLIENT)
+  @ApiOkResponse({ type: [Flight] })
+  async getUserAndRelationsFlights(
+    @CurrentUser() authUser: AuthUser,
+  ): Promise<Flight[]> {
+    return this.flightService.findThisYearsFlightsForUserAndRelations(authUser)
   }
 }

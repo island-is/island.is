@@ -1,6 +1,7 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
-import { ITimeline } from '../generated/contentfulTypes'
+import { CacheField } from '@island.is/nest/graphql'
 import { SystemMetadata } from '@island.is/shared/types'
+import { ITimeline } from '../generated/contentfulTypes'
 import { TimelineEvent, mapTimelineEvent } from './timelineEvent.model'
 
 @ObjectType()
@@ -14,8 +15,11 @@ export class TimelineSlice {
   @Field()
   intro?: string
 
-  @Field(() => [TimelineEvent])
+  @CacheField(() => [TimelineEvent])
   events!: TimelineEvent[]
+
+  @Field(() => Boolean, { nullable: true })
+  hasBorderAbove?: boolean
 }
 
 export const mapTimelineSlice = ({
@@ -27,4 +31,5 @@ export const mapTimelineSlice = ({
   title: fields.title ?? '',
   intro: fields.intro ?? '',
   events: (fields.events ?? []).map(mapTimelineEvent),
+  hasBorderAbove: fields.hasBorderAbove ?? true,
 })

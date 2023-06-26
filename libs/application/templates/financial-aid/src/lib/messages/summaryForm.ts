@@ -89,6 +89,24 @@ export const summaryForm = {
       description: 'Summary form label above the form comment section',
     },
   }),
+  directPayments: defineMessages({
+    title: {
+      id: 'fa.application:section.summaryForm.directPayments.title',
+      defaultMessage: 'Staðgreiðsluskrá',
+      description: 'Summary form direct payments title',
+    },
+    fetched: {
+      id: 'fa.application:section.summaryForm.directPayments.fetched',
+      defaultMessage: 'Staðgreiðsluskrá sótt',
+      description: 'Confirmation title that direct payments was fetched',
+    },
+    getBreakDown: {
+      id: 'fa.application:section.summaryForm.directPayments.getBreakDown',
+      defaultMessage: 'Opna sundurliðun',
+      description:
+        'Button text that opens the direct payments modal with tax break down',
+    },
+  }),
   block: defineMessages({
     buttonLabel: {
       id: 'fa.application:section.summaryForm.block.buttonLabel',

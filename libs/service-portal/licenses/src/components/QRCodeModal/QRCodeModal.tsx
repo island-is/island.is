@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
 import * as styles from './QRCodeModal.css'
-import { Box, ModalBase, Button, Tag, Text } from '@island.is/island-ui/core'
+import { Box, ModalBase, Button, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 
 import { m } from '../../lib/messages'
@@ -49,11 +49,6 @@ export const QRCodeModal: FC<Props> = ({
           {children}
         </Box>
         <Box marginRight={7} marginY={2}>
-          <Tag disabled>
-            {formatMessage(m.validUntil)}
-            {'\xa0'}
-            {expires}
-          </Tag>
           <Box marginY={1}>
             <Text variant="h3">{formatMessage(m.sendLicenseToPhone)}</Text>
           </Box>

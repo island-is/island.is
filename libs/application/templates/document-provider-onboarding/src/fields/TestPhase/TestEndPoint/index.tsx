@@ -1,11 +1,8 @@
 import React, { FC, useState } from 'react'
 import { gql, useMutation } from '@apollo/client'
 import { useFormContext, Controller } from 'react-hook-form'
-import {
-  FieldBaseProps,
-  formatText,
-  getValueViaPath,
-} from '@island.is/application/core'
+import { formatText, getValueViaPath } from '@island.is/application/core'
+import { FieldBaseProps } from '@island.is/application/types'
 import { Box, Button, Input, Text } from '@island.is/island-ui/core'
 import { FieldDescription } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
@@ -31,7 +28,13 @@ const TestEndPoint: FC<FieldBaseProps> = ({ application }) => {
     value: string
   }
 
-  const { clearErrors, register, errors, trigger, getValues } = useFormContext()
+  const {
+    clearErrors,
+    register,
+    formState: { errors },
+    trigger,
+    getValues,
+  } = useFormContext()
   const { answers: formValue } = application
   const [variables, setendPointVariables] = useState<Variable[]>([])
   const [testEndPointError, setTestEndPointError] = useState<string | null>(
@@ -129,16 +132,15 @@ const TestEndPoint: FC<FieldBaseProps> = ({ application }) => {
                   formatMessage,
                 )}
                 disabled={loading}
-                name={'endPointObject.endPoint'}
+                {...register('endPointObject.endPoint')}
                 id={'endPointObject.endPoint'}
-                ref={register}
                 defaultValue=""
                 placeholder={formatText(
                   m.testEndpointPlaceholder,
                   application,
                   formatMessage,
                 )}
-                hasError={errors.endPointObject?.endPoint !== undefined}
+                hasError={errors['endPointObject.endPoint'] !== undefined}
                 errorMessage={formatText(
                   m.testEndpointInputErrorMessage,
                   application,
@@ -170,8 +172,7 @@ const TestEndPoint: FC<FieldBaseProps> = ({ application }) => {
         <input
           type="hidden"
           value={endpointExists}
-          ref={register({ required: true })}
-          name={'endPointObject.endPointExists'}
+          {...register('endPointObject.endPointExists', { required: true })}
         />
         {errors['endPointObject.endPointExists'] && (
           <Box color="red600" paddingY={2} display="flex">

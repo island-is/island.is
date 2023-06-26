@@ -10,7 +10,7 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import {
   ApplicationTypes,
   ApplicationStatus,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 
 @Table({
   tableName: 'application',
@@ -21,7 +21,7 @@ import {
     },
   ],
 })
-export class Application extends Model<Application> {
+export class Application extends Model {
   @Column({
     type: DataType.UUID,
     primaryKey: true,
@@ -51,6 +51,12 @@ export class Application extends Model<Application> {
   })
   @ApiProperty()
   assignees!: string[]
+
+  @Column({
+    type: DataType.ARRAY(DataType.STRING),
+  })
+  @ApiProperty()
+  applicantActors!: string[]
 
   @Column({
     type: DataType.STRING,
@@ -127,4 +133,20 @@ export class Application extends Model<Application> {
   })
   @ApiProperty()
   assignNonces!: string[]
+
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: false,
+    defaultValue: 0,
+  })
+  @ApiProperty()
+  draftFinishedSteps!: number
+
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: false,
+    defaultValue: 0,
+  })
+  @ApiProperty()
+  draftTotalSteps!: number
 }

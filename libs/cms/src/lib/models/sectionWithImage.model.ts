@@ -3,6 +3,7 @@ import { ISectionWithImage } from '../generated/contentfulTypes'
 import { Image, mapImage } from './image.model'
 import { Html, mapHtml } from './html.model'
 import { SystemMetadata } from '@island.is/shared/types'
+import { CacheField } from '@island.is/nest/graphql'
 
 @ObjectType()
 export class SectionWithImage {
@@ -12,11 +13,11 @@ export class SectionWithImage {
   @Field()
   title?: string
 
-  @Field(() => Image, { nullable: true })
+  @CacheField(() => Image, { nullable: true })
   image?: Image | null
 
-  @Field(() => Html)
-  html!: Html //fields.body is required in the contentful validation on the content model
+  @CacheField(() => Html, { nullable: true })
+  html?: Html | null
 }
 
 export const mapSectionWithImage = ({
@@ -27,5 +28,5 @@ export const mapSectionWithImage = ({
   id: sys.id,
   title: fields.title ?? '',
   image: fields.image?.fields?.file ? mapImage(fields.image) : null,
-  html: fields.body && mapHtml(fields.body, sys.id + ':html'),
+  html: fields.body ? mapHtml(fields.body, sys.id + ':html') : null,
 })

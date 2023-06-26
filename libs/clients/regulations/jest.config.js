@@ -1,15 +1,15 @@
 module.exports = {
-  preset: '../../../jest.preset.js',
+  displayName: 'clients-regulations',
+  preset: './jest.preset.js',
+  rootDir: '../../..',
+  roots: [__dirname],
   globals: {
-    'ts-jest': {
-      tsConfig: '<rootDir>/tsconfig.spec.json',
-    },
+    'ts-jest': { tsconfig: `${__dirname}/tsconfig.spec.json` },
   },
+  testEnvironment: 'node',
   transform: {
     '^.+\\.[tj]sx?$': 'ts-jest',
   },
-  testEnvironment: 'jest-environment-node',
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
-  coverageDirectory: '../../../coverage/libs/regulations',
-  displayName: 'regulations',
+  coverageDirectory: '<rootDir>/coverage/libs/clients/regulations',
 }

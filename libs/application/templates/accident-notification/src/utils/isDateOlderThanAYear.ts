@@ -1,5 +1,5 @@
-import { FormValue, getValueViaPath } from '@island.is/application/core'
-import { AccidentNotificationAnswers } from '..'
+import { getValueViaPath } from '@island.is/application/core'
+import { FormValue } from '@island.is/application/types'
 
 const getDateAYearBack = () => {
   const d = new Date()

@@ -31,7 +31,7 @@ export class MainResolver {
   ) {}
 
   @Query(() => [EducationLicense])
-  @Scopes(ApiScope.internal)
+  @Scopes(ApiScope.internal, ApiScope.educationLicense)
   educationLicense(@CurrentUser() user: User): Promise<EducationLicense[]> {
     return this.auditService.auditPromise<EducationLicense[]>(
       {
@@ -45,7 +45,7 @@ export class MainResolver {
   }
 
   @Mutation(() => EducationSignedLicense, { nullable: true })
-  @Scopes(ApiScope.internal)
+  @Scopes(ApiScope.internal, ApiScope.educationLicense)
   async fetchEducationSignedLicenseUrl(
     @CurrentUser() user: User,
     @Args('input', { type: () => FetchEducationSignedLicenseUrlInput })

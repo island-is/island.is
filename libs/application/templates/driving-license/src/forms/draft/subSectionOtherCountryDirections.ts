@@ -1,6 +1,6 @@
 import { buildCustomField, buildSubSection } from '@island.is/application/core'
 import { m } from '../../lib/messages'
-import { hasYes } from '../../lib/utils'
+import { hasYes } from '@island.is/application/core'
 
 export const subSectionOtherCountryDirections = buildSubSection({
   id: 'otherCountrySelected',

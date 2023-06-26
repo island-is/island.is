@@ -58,7 +58,7 @@ export const jwt = async (
 export const session = (session: AuthSession, user: AuthUser) => {
   session.accessToken = user.accessToken
   session.idToken = user.idToken
-  const decoded = decode(session.accessToken)
+  const decoded = decode(user.accessToken)
 
   if (
     decoded &&

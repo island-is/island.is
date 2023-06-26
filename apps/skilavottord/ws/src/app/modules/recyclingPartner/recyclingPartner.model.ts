@@ -49,11 +49,28 @@ export class RecyclingPartnerModel extends Model<RecyclingPartnerModel> {
   })
   city!: string
 
-  @Field()
+  @Field({ nullable: true })
   @Column({
     type: DataType.STRING,
+    allowNull: true,
   })
-  website!: string
+  email!: string
+
+  @Field({ nullable: true })
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+    field: 'national_id',
+  })
+  nationalId!: string
+
+  //alow null
+  @Field({ nullable: true })
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  website?: string
 
   @Field()
   @Column({

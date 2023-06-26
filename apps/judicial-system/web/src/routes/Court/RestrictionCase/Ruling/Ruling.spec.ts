@@ -1,301 +1,252 @@
 import { createIntl } from 'react-intl'
 
-import {
-  Case,
-  CaseDecision,
-  CaseType,
-  Defendant,
-  Gender,
-} from '@island.is/judicial-system/types'
+import { CaseDecision, Defendant } from '@island.is/judicial-system/types'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
+import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
 
-import { getConclutionAutofill } from './Ruling'
+import { getConclusionAutofill } from './Ruling'
 
-describe('getConclutionAutofill', () => {
-  const intl = createIntl({ locale: 'is', onError: () => jest.fn() })
-  const autofill = (theCase: Case) =>
-    getConclutionAutofill(intl.formatMessage, theCase)
-
-  const defentantBase = {
+describe('getConclusionAutofill', () => {
+  const intl = createIntl({ locale: 'is', onError: jest.fn })
+  const defendantBase = {
     name: 'Blær',
-    gender: Gender.OTHER,
     noNationalId: true,
-  }
+  } as Defendant
 
-  describe('guards', () => {
-    it('should return undefined when there is no defentants array', () => {
-      const theCase = {
-        decision: CaseDecision.DISMISSING,
-        type: CaseType.CUSTODY,
-      } as Case
-
-      const result = autofill(theCase)
-
-      expect(result).toBeUndefined()
-    })
-
-    it('should return undefined when defentants array is empty', () => {
-      const theCase = {
-        decision: CaseDecision.DISMISSING,
-        defendants: [] as Defendant[],
-        type: CaseType.CUSTODY,
-      } as Case
-
-      const result = autofill(theCase)
-
-      expect(result).toBeUndefined()
-    })
-
-    it('should return undefined when decision is missing', () => {
-      const theCase = {
-        defendants: [{ ...defentantBase }],
-        type: CaseType.CUSTODY,
-      } as Case
-
-      const result = autofill(theCase)
-
-      expect(result).toBeUndefined()
-    })
-
-    it('should return undefined when conclusion is defined', () => {
-      const theCase = {
-        conclusion: 'some conclusion',
-        decision: CaseDecision.DISMISSING,
-        defendants: [{ ...defentantBase }],
-        type: CaseType.CUSTODY,
-      } as Case
-
-      const result = autofill(theCase)
-
-      expect(result).toBeUndefined()
-    })
-
-    it('should return undefined when conclusion is empty string', () => {
-      const theCase = {
-        conclusion: '',
-        decision: CaseDecision.DISMISSING,
-        defendants: [{ ...defentantBase }],
-        type: CaseType.CUSTODY,
-      } as Case
-
-      const result = autofill(theCase)
-
-      expect(result).toBeUndefined()
-    })
-  })
+  const fn = (
+    theCase: Case,
+    decision: CaseDecision,
+    defendant = defendantBase,
+    validToDate?: string,
+    isCustodyIsolation = false,
+    isolationToDate?: string,
+  ) =>
+    getConclusionAutofill(
+      intl.formatMessage,
+      theCase,
+      decision,
+      defendant,
+      validToDate,
+      isCustodyIsolation,
+      isolationToDate,
+    )
 
   describe('dismissing decision', () => {
-    const baseCase = { decision: CaseDecision.DISMISSING } as Case
+    const decision = CaseDecision.DISMISSING
 
-    it('should format custody case, non gender specific', () => {
+    it('should format custody case', () => {
       const theCase = {
-        ...baseCase,
-        defendants: [{ ...defentantBase }],
+        defendants: [{ ...defendantBase }],
         type: CaseType.CUSTODY,
       } as Case
 
-      const result = autofill(theCase)
+      const result = fn(theCase, decision)
 
       expect(result).toEqual(
-        'Kröfu um að kærða, Blær, sæti gæsluvarðhaldi er vísað frá.',
+        'Kröfu um að varnaraðili, Blær, sæti gæsluvarðhaldi er vísað frá.',
       )
     })
 
-    it('should format extended travel ban case, female gender', () => {
+    it('should format extended travel ban case', () => {
       const theCase = {
-        ...baseCase,
-        defendants: [{ ...defentantBase, gender: Gender.FEMALE }],
+        defendants: [{ ...defendantBase }],
         type: CaseType.TRAVEL_BAN,
         parentCase: { decision: CaseDecision.ACCEPTING },
       } as Case
 
-      const result = autofill(theCase)
+      const result = fn(theCase, decision)
 
       expect(result).toEqual(
-        'Kröfu um að kærða, Blær, sæti áframhaldandi farbanni er vísað frá.',
+        'Kröfu um að varnaraðili, Blær, sæti áframhaldandi farbanni er vísað frá.',
       )
     })
 
-    it('should format admission to facility case, male gender', () => {
+    it('should format admission to facility case', () => {
+      const defendant = {
+        ...defendantBase,
+        noNationalId: false,
+        nationalId: '000000000',
+      }
+
       const theCase = {
-        ...baseCase,
-        defendants: [
-          {
-            ...defentantBase,
-            gender: Gender.MALE,
-            noNationalId: false,
-            nationalId: '000000000',
-          },
-        ],
         type: CaseType.ADMISSION_TO_FACILITY,
       } as Case
 
-      const result = autofill(theCase)
+      const result = fn(theCase, decision, defendant)
 
       expect(result).toEqual(
-        'Kröfu um að kærði, Blær, sæti vistun á viðeigandi stofnun er vísað frá.',
+        'Kröfu um að varnaraðili, Blær, sæti vistun á viðeigandi stofnun er vísað frá.',
       )
     })
   })
 
   describe('rejecting decision', () => {
-    const baseCase = { decision: CaseDecision.REJECTING } as Case
+    const decision = CaseDecision.REJECTING
 
-    it('should format custody case, non gender specific', () => {
+    it('should format custody case', () => {
       const theCase = {
-        ...baseCase,
-        defendants: [{ ...defentantBase }],
+        defendants: [{ ...defendantBase }],
         type: CaseType.CUSTODY,
       } as Case
 
-      const result = autofill(theCase)
+      const result = fn(theCase, decision)
 
       expect(result).toEqual(
-        'Kröfu um að kærða, Blær, sæti gæsluvarðhaldi er hafnað.',
+        'Kröfu um að varnaraðili, Blær, sæti gæsluvarðhaldi er hafnað.',
       )
     })
 
-    it('should format travel ban case, male with national id', () => {
+    it('should format travel ban case, defendant with national id', () => {
+      const defendant = {
+        ...defendantBase,
+        noNationalId: false,
+        nationalId: '0000000000',
+      }
       const theCase = {
-        ...baseCase,
-        defendants: [
-          {
-            ...defentantBase,
-            gender: Gender.MALE,
-            noNationalId: false,
-            nationalId: '0000000000',
-          },
-        ],
         type: CaseType.CUSTODY,
       } as Case
 
-      const result = autofill(theCase)
+      const result = fn(theCase, decision, defendant)
 
       expect(result).toEqual(
-        'Kröfu um að kærði, Blær, kt. 000000-0000, sæti gæsluvarðhaldi er hafnað.',
+        'Kröfu um að varnaraðili, Blær, kt. 000000-0000, sæti gæsluvarðhaldi er hafnað.',
       )
     })
 
-    it('should format extended admission to facility case, male with national id', () => {
+    it('should format extended admission to facility case, defendant with date of birth', () => {
+      const defendant = {
+        ...defendantBase,
+        noNationalId: true,
+        nationalId: '1990-01-01',
+      }
       const theCase = {
-        ...baseCase,
-        defendants: [
-          { ...defentantBase, noNationalId: false, nationalId: '0000000000' },
-        ],
         type: CaseType.ADMISSION_TO_FACILITY,
         parentCase: { decision: CaseDecision.ACCEPTING },
       } as Case
 
-      const result = autofill(theCase)
+      const result = fn(theCase, decision, defendant)
 
       expect(result).toEqual(
-        'Kröfu um að kærða, Blær, kt. 000000-0000, sæti áframhaldandi vistun á viðeigandi stofnun er hafnað.',
+        'Kröfu um að varnaraðili, Blær, fd. 1990-01-01, sæti áframhaldandi vistun á viðeigandi stofnun er hafnað.',
       )
     })
   })
 
   describe('accepting decision', () => {
-    const baseCase = {
-      decision: CaseDecision.ACCEPTING,
-      validToDate: '2020-01-01T12:31:00Z',
-    } as Case
+    const decision = CaseDecision.ACCEPTING
+    const validToDate = '2020-01-01T12:31:00Z'
 
     it('should format custody case', () => {
       const theCase = {
-        ...baseCase,
-        defendants: [{ ...defentantBase }],
         type: CaseType.CUSTODY,
       } as Case
 
-      const result = autofill(theCase)
+      const result = fn(theCase, decision, defendantBase, validToDate)
 
       expect(result).toEqual(
-        'Kærða, Blær, skal sæta gæsluvarðhaldi, þó ekki lengur en til miðvikudagsins 1. janúar 2020, kl. 12:31.',
+        'Varnaraðili, Blær, skal sæta gæsluvarðhaldi, þó ekki lengur en til miðvikudagsins 1. janúar 2020, kl. 12:31.',
       )
     })
 
     it('should format custody case with isolation', () => {
+      const isCustodyIsolation = true
+      const isolationToDate = '2020-01-01T12:00:00Z'
       const theCase = {
-        ...baseCase,
-        defendants: [{ ...defentantBase }],
         type: CaseType.CUSTODY,
-        isCustodyIsolation: true,
-        isolationToDate: '2020-01-01T12:30:00Z',
       } as Case
 
-      const result = autofill(theCase)
+      const result = fn(
+        theCase,
+        decision,
+        defendantBase,
+        validToDate,
+        isCustodyIsolation,
+        isolationToDate,
+      )
 
       expect(result).toEqual(
-        'Kærða, Blær, skal sæta gæsluvarðhaldi, þó ekki lengur en til miðvikudagsins 1. janúar 2020, kl. 12:31. Kærða skal sæta einangrun ekki lengur en til miðvikudagsins 1. janúar 2020, kl. 12:30.',
+        'Varnaraðili, Blær, skal sæta gæsluvarðhaldi, þó ekki lengur en til miðvikudagsins 1. janúar 2020, kl. 12:31. Varnaraðili skal sæta einangrun ekki lengur en til miðvikudagsins 1. janúar 2020, kl. 12:00.',
+      )
+    })
+
+    it('should format admission to facility case with isolation', () => {
+      const defendant = {
+        ...defendantBase,
+      }
+      const isCustodyIsolation = true
+      const isolationToDate = '2020-01-01T12:31:00Z'
+      const theCase = {
+        type: CaseType.ADMISSION_TO_FACILITY,
+      } as Case
+
+      const result = fn(
+        theCase,
+        decision,
+        defendant,
+        validToDate,
+        isCustodyIsolation,
+        isolationToDate,
+      )
+
+      expect(result).toEqual(
+        'Varnaraðili, Blær, skal sæta vistun á viðeigandi stofnun, þó ekki lengur en til miðvikudagsins 1. janúar 2020, kl. 12:31. Varnaraðili skal sæta einangrun á meðan á vistunni stendur.',
+      )
+    })
+
+    it('should format travel ban case, defendant with national id', () => {
+      const defendant = {
+        ...defendantBase,
+        noNationalId: false,
+        nationalId: '0000000000',
+      }
+      const isCustodyIsolation = true
+      const isolationToDate = '2020-01-01T12:31:00Z'
+      const theCase = {
+        type: CaseType.ADMISSION_TO_FACILITY,
+      } as Case
+
+      const result = fn(
+        theCase,
+        decision,
+        defendant,
+        validToDate,
+        isCustodyIsolation,
+        isolationToDate,
+      )
+
+      expect(result).toEqual(
+        'Varnaraðili, Blær, kt. 000000-0000, skal sæta vistun á viðeigandi stofnun, þó ekki lengur en til miðvikudagsins 1. janúar 2020, kl. 12:31. Varnaraðili skal sæta einangrun á meðan á vistunni stendur.',
+      )
+    })
+  })
+
+  describe('accepting alternative travel ban', () => {
+    const decision = CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
+    const validToDate = '2020-01-01T12:31:00Z'
+
+    it('should format as non extended travel ban case', () => {
+      const defendant = { ...defendantBase }
+      const theCase = {
+        type: CaseType.CUSTODY,
+        parentCase: { decision: CaseDecision.ACCEPTING } as Case,
+      } as Case
+
+      const result = fn(theCase, decision, defendant, validToDate)
+
+      expect(result).toEqual(
+        'Varnaraðili, Blær, skal sæta farbanni, þó ekki lengur en til miðvikudagsins 1. janúar 2020, kl. 12:31.',
       )
     })
 
     it('should format custody case as travel ban case', () => {
       const theCase = {
-        ...baseCase,
-        decision: CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN,
-        defendants: [{ ...defentantBase }],
         type: CaseType.CUSTODY,
       } as Case
 
-      const result = autofill(theCase)
+      const result = fn(theCase, decision, defendantBase, validToDate)
 
       expect(result).toEqual(
-        'Kærða, Blær, skal sæta farbanni, þó ekki lengur en til miðvikudagsins 1. janúar 2020, kl. 12:31.',
-      )
-    })
-
-    it('should format admission to facility case with isolation, male gender', () => {
-      const theCase = {
-        ...baseCase,
-        defendants: [{ ...defentantBase, gender: Gender.MALE }],
-        type: CaseType.ADMISSION_TO_FACILITY,
-        isCustodyIsolation: true,
-        isolationToDate: '2020-01-01T12:31:00Z',
-      } as Case
-
-      const result = autofill(theCase)
-
-      expect(result).toEqual(
-        'Kærði, Blær, skal sæta vistun á viðeigandi stofnun, þó ekki lengur en til miðvikudagsins 1. janúar 2020, kl. 12:31. Kærði skal sæta einangrun á meðan á vistunni stendur.',
-      )
-    })
-
-    it('should format travel ban case, femail gender with national id', () => {
-      const theCase = {
-        ...baseCase,
-        defendants: [
-          {
-            ...defentantBase,
-            gender: Gender.FEMALE,
-            noNationalId: false,
-            nationalId: '0000000000',
-          },
-        ],
-        type: CaseType.ADMISSION_TO_FACILITY,
-        isCustodyIsolation: true,
-        isolationToDate: '2020-01-01T12:31:00Z',
-      } as Case
-
-      const result = autofill(theCase)
-
-      expect(result).toEqual(
-        'Kærða, Blær, kt. 000000-0000, skal sæta vistun á viðeigandi stofnun, þó ekki lengur en til miðvikudagsins 1. janúar 2020, kl. 12:31. Kærða skal sæta einangrun á meðan á vistunni stendur.',
-      )
-    })
-
-    it('should format as non extended travel ban case when case is an extended custody with accepcted alternative travel ban', () => {
-      const theCase = {
-        ...baseCase,
-        decision: CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN,
-        defendants: [{ ...defentantBase, gender: Gender.MALE }],
-        type: CaseType.CUSTODY,
-        parentCase: { decision: CaseDecision.ACCEPTING } as Case,
-      } as Case
-
-      const result = autofill(theCase)
-
-      expect(result).toEqual(
-        'Kærði, Blær, skal sæta farbanni, þó ekki lengur en til miðvikudagsins 1. janúar 2020, kl. 12:31.',
+        'Varnaraðili, Blær, skal sæta farbanni, þó ekki lengur en til miðvikudagsins 1. janúar 2020, kl. 12:31.',
       )
     })
   })

@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 
-import { Application } from '@island.is/application/core'
+import { Application } from '@island.is/application/types'
 
 import { useApplicationAnswers } from './useApplicationAnswers'
 import { calculateDaysUsedByPeriods } from '../lib/parentalLeaveUtils'

@@ -5,4 +5,8 @@ bootstrap({
   name: 'financial-aid',
   appDir: 'apps/financial-aid/web-veita',
   proxyConfig,
+  externalEndpointDependencies: (nextConfig) => {
+    const { graphqlEndpoint, apiUrl } = nextConfig.serverRuntimeConfig
+    return [graphqlEndpoint, apiUrl]
+  },
 })

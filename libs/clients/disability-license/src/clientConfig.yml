@@ -1,0 +1,103 @@
+openapi: 3.0.0
+info:
+  title: Öryrki V1
+  description: Upplýsingar um einstaklinga sem eru skilgreindir eru sem öryrkja frá Tryggingastofnun
+  version: 1.0.0
+  x-category: health
+  contact:
+    name: Tryggingastofnun
+    email: helpdesk@tr.is
+servers:
+  - url: https://xroad-dev.tr.is/r1/IS-DEV/GOV/10008/TR-Protected/oryrki-v1
+    description: Optional server description, XROAD-DEV
+  - url: https://xroad.tr.is/r1/IS-DEV/GOV/10008/TR-Protected/oryrki-v1
+    description: Optional server description, XROAD-PROD
+  - url: https://test-oryrki-rest.tr.is/api/v1/oryrki
+    description: test server innanhús hjá TR
+paths:
+  /erOryrki:
+    get:
+      summary:
+        Sækir hvort einstaklingur sé öryrki (disabled person), þ.e. hafi gilt 75% örorkumat (disability assessment).
+        Kennitala í JWT.
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/er_oryrki'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: string
+        '500':
+          description: internal Error
+          content:
+            application/json:
+              schema:
+                type: string
+  /faskirteini:
+    get:
+      summary:
+        Skilar upplýsingum um örorkuskíteini (disability card), ef einstaklingur er með gilt 75% örorkumat (disability assessment).
+        Kennitala í JWT.
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ororku_skirteini'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: string
+        '500':
+          description: internal Error
+          content:
+            application/json:
+              schema:
+                type: string
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+  schemas:
+    er_oryrki:
+      properties:
+        erOryrki:
+          type: boolean
+          example: true
+          description: true=Já eða false=Nei, Nei felur ekki í sér upplýsingar um hvort einstaklingurinn sé viðskiptavinur TR eöa ekki
+      required:
+        - erOryrki
+    ororku_skirteini:
+      properties:
+        nafn:
+          type: string
+          description: nafn greiðluþega
+        kennitala:
+          type: string
+          minLength: 12
+          maxLength: 12
+          pattern: '^\d{12}$'
+          description: kennitala greiðsluþega
+          example: 0101302479
+        gildirtil:
+          type: string
+          format: date
+          description: Gildistími örorkumats eða, ef um ótímabundið mat er að ræða, hvenær öryrki fer yfir á ellilífeyri.  Til birtingar á skírteini.
+          example: 2024-10-08T00:00:00Z
+        rennurut:
+          type: string
+          format: date-time
+          description: Dagsetning og tími þegar skilríki á að verða óvirkt í veski. Á miðnætti að morgni dags, daginn eftir "gildirtil"
+          example: 2024-10-09T00:00:00Z
+security:
+  - bearerAuth: []

@@ -1,4 +1,4 @@
-import { DefaultEvents } from '@island.is/application/core'
+import { DefaultEvents } from '@island.is/application/types'
 
 export type Events = { type: DefaultEvents.SUBMIT }
 
@@ -8,6 +8,7 @@ export enum States {
 }
 export enum Roles {
   APPLICANT = 'applicant',
+  ACTOR = 'actor',
 }
 
 export const YES = 'yes'

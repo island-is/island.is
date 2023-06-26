@@ -1,53 +1,27 @@
+import { getPostgresExtensions } from './output-generators/map-to-helm-values'
 import {
+  Context,
+  EnvironmentVariables,
+  ExtraValues,
+  Features,
+  HealthProbe,
   Ingress,
   InitContainers,
-  EnvironmentVariables,
-  Context,
-  Service,
-  ServiceDefinition,
-  ExtraValues,
-  Resources,
-  ReplicaCount,
+  MountedFile,
+  PersistentVolumeClaim,
   PostgresInfo,
-  HealthProbe,
-  Features,
+  RedisInfo,
+  ReplicaCount,
+  Resources,
   Secrets,
+  ServiceDefinition,
   ValueType,
   XroadConfig,
-  MountedFile,
 } from './types/input-types'
+type Optional<T, L extends keyof T> = Omit<T, L> & Partial<Pick<T, L>>
 
-export class ServiceBuilder<ServiceType> implements Service {
-  extraAttributes(attr: ExtraValues) {
-    this.serviceDef.extraAttributes = attr
-    return this
-  }
+export class ServiceBuilder<ServiceType> {
   serviceDef: ServiceDefinition
-  liveness(path: string | Partial<HealthProbe>) {
-    if (typeof path === 'string') {
-      this.serviceDef.liveness.path = path
-    } else {
-      this.serviceDef.liveness = { ...this.serviceDef.liveness, ...path }
-    }
-    return this
-  }
-  readiness(path: string | Partial<HealthProbe>) {
-    if (typeof path === 'string') {
-      this.serviceDef.readiness.path = path
-    } else {
-      this.serviceDef.readiness = { ...this.serviceDef.readiness, ...path }
-    }
-    return this
-  }
-  targetPort(port: number) {
-    this.serviceDef.port = port
-    return this
-  }
-
-  features(features: Partial<Features>) {
-    this.serviceDef.features = features
-    return this
-  }
 
   constructor(name: string) {
     this.serviceDef = {
@@ -78,7 +52,46 @@ export class ServiceBuilder<ServiceType> implements Service {
       },
       xroadConfig: [],
       files: [],
+      volumes: [],
     }
+  }
+
+  extraAttributes(attr: ExtraValues) {
+    this.serviceDef.extraAttributes = attr
+    return this
+  }
+
+  liveness(path: string | Partial<HealthProbe>) {
+    if (typeof path === 'string') {
+      this.serviceDef.liveness.path = path
+    } else {
+      this.serviceDef.liveness = { ...this.serviceDef.liveness, ...path }
+    }
+    return this
+  }
+
+  readiness(path: string | Partial<HealthProbe>) {
+    if (typeof path === 'string') {
+      this.serviceDef.readiness.path = path
+    } else {
+      this.serviceDef.readiness = { ...this.serviceDef.readiness, ...path }
+    }
+    return this
+  }
+
+  healthPort(port: number) {
+    this.serviceDef.healthPort = port
+    return this
+  }
+
+  targetPort(port: number) {
+    this.serviceDef.port = port
+    return this
+  }
+
+  features(features: Partial<Features>) {
+    this.serviceDef.features = features
+    return this
   }
 
   /**
@@ -104,23 +117,13 @@ export class ServiceBuilder<ServiceType> implements Service {
     this.serviceDef.image = name
     return this
   }
+
   setNamespace(name: string) {
     this.serviceDef.namespace = name
   }
 
   name() {
     return this.serviceDef.name
-  }
-
-  private assertUnset<T>(current: T, envs: T) {
-    const intersection = Object.keys({
-      ...current,
-    }).filter({}.hasOwnProperty.bind(envs))
-    if (intersection.length) {
-      throw new Error(
-        `Trying to set same environment variable multiple times: ${intersection}`,
-      )
-    }
   }
 
   /**
@@ -154,12 +157,25 @@ export class ServiceBuilder<ServiceType> implements Service {
   }
 
   /**
+   * Volumes to create and attach to containers
+   * @param ...volumes: volume configs
+   *
+   */
+  volumes(...volumes: PersistentVolumeClaim[]) {
+    this.serviceDef.volumes = [...this.serviceDef.volumes, ...volumes]
+    return this
+  }
+
+  /**
    * To perform maintenance before deploying the main service(database migrations, etc.), create an `initContainer` (optional). It maps to a Pod specification for an [initContainer](https://kubernetes.io/docs/concepts/workloads/pods/init-containers/).
    * @param ic initContainer definitions
    */
-  initContainer(ic: InitContainers) {
+  initContainer(ic: Optional<InitContainers, 'envs' | 'secrets' | 'features'>) {
     if (ic.postgres) {
-      ic.postgres = this.withDefaults(ic.postgres)
+      ic.postgres = {
+        ...this.withDefaults(ic.postgres),
+        extensions: ic.postgres.extensions,
+      }
     }
     const uniqueNames = new Set(ic.containers.map((c) => c.name))
     if (uniqueNames.size != ic.containers.length) {
@@ -167,7 +183,12 @@ export class ServiceBuilder<ServiceType> implements Service {
         'For multiple init containers, you must set a unique name for each container.',
       )
     }
-    this.serviceDef.initContainers = ic
+    this.serviceDef.initContainers = {
+      envs: {},
+      secrets: {},
+      features: {},
+      ...ic,
+    }
     return this
   }
 
@@ -194,6 +215,11 @@ export class ServiceBuilder<ServiceType> implements Service {
     return this
   }
 
+  redis(redis?: RedisInfo) {
+    this.serviceDef.redis = redis ?? {}
+    return this
+  }
+
   resources(res: Resources) {
     this.serviceDef.resources = res
     return this
@@ -204,25 +230,10 @@ export class ServiceBuilder<ServiceType> implements Service {
     return this
   }
 
-  private withDefaults = (pi: PostgresInfo): PostgresInfo => {
-    return {
-      host: pi.host,
-      username: pi.username ?? postgresIdentifier(this.serviceDef.name),
-      passwordSecret:
-        pi.passwordSecret ?? `/k8s/${this.serviceDef.name}/DB_PASSWORD`,
-      name: pi.name ?? postgresIdentifier(this.serviceDef.name),
-    }
-  }
-
   postgres(postgres?: PostgresInfo) {
     this.serviceDef.postgres = this.withDefaults(postgres ?? {})
     return this
   }
-
-  redis(host?: string) {
-    return this
-  }
-
   /**
    * You can allow ingress traffic (traffic from the internet) to your service by creating an ingress controller. Mapped to an [Ingress](https://kubernetes.io/docs/concepts/services-networking/ingress/#what-is-ingress)
    * @param ingress Ingress parameters
@@ -244,7 +255,30 @@ export class ServiceBuilder<ServiceType> implements Service {
     this.serviceDef.serviceAccountEnabled = true
     return this
   }
+
+  private assertUnset<T extends {}>(current: T, envs: T) {
+    const intersection = Object.keys({
+      ...current,
+    }).filter({}.hasOwnProperty.bind(envs))
+    if (intersection.length) {
+      throw new Error(
+        `Trying to set same environment variable multiple times: ${intersection}`,
+      )
+    }
+  }
+
+  private withDefaults = (pi: PostgresInfo): PostgresInfo => {
+    return {
+      host: pi.host,
+      username: pi.username ?? postgresIdentifier(this.serviceDef.name),
+      passwordSecret:
+        pi.passwordSecret ?? `/k8s/${this.serviceDef.name}/DB_PASSWORD`,
+      name: pi.name ?? postgresIdentifier(this.serviceDef.name),
+      extensions: this.serviceDef.initContainers?.postgres?.extensions,
+    }
+  }
 }
+
 const postgresIdentifier = (id: string) => id.replace(/[\W\s]/gi, '_')
 
 export const ref = (renderer: (env: Context) => string) => {
@@ -257,4 +291,4 @@ export const service = <Service extends string>(
   return new ServiceBuilder(name)
 }
 
-export const json = (value: unknown): ValueType => JSON.stringify(value)
+export const json = (value: unknown): string => JSON.stringify(value)

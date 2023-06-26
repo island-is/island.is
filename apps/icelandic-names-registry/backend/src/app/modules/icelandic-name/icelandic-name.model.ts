@@ -12,12 +12,16 @@ import {
   NameType,
   StatusType,
 } from '@island.is/icelandic-names-registry-types'
+import { Optional } from 'sequelize/types'
+
+interface IcelandicNameCreationAttributes
+  extends Optional<TIcelandicName, 'id' | 'created' | 'modified'> {}
 
 @Table({
   tableName: 'icelandic_names',
 })
 export class IcelandicName
-  extends Model<IcelandicName>
+  extends Model<TIcelandicName, IcelandicNameCreationAttributes>
   implements TIcelandicName {
   @Column({
     type: DataType.INTEGER,

@@ -1,9 +1,9 @@
 import {
   createEnhancedFetch,
-  EnhancedFetchAPI,
   EnhancedFetchOptions,
-  Request,
-} from '@island.is/clients/middlewares'
+} from '../src/lib/createEnhancedFetch'
+import type { EnhancedFetchAPI } from '../src/lib/types'
+import { Request } from '../src/lib/nodeFetch'
 import { Logger } from '@island.is/logging'
 import CircuitBreaker from 'opossum'
 import { SetOptional } from 'type-fest'

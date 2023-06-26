@@ -2,10 +2,10 @@ import { BadRequestException, Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { PersonalRepresentativeAccess } from '../entities/models/personal-representative-access.model'
-import { PersonalRepresentativeAccessDTO } from '../entities/dto/personal-representative-access.dto'
-import { PaginatedPersonalRepresentativeAccessDto } from '../entities/dto/paginated-personal-representative-access.dto'
-import { PaginationWithNationalIdsDto } from '../entities/dto/pagination-with-national-ids.dto'
+import { PersonalRepresentativeAccess } from '../models/personal-representative-access.model'
+import { PersonalRepresentativeAccessDTO } from '../dto/personal-representative-access.dto'
+import { PaginatedPersonalRepresentativeAccessDto } from '../dto/paginated-personal-representative-access.dto'
+import { PaginationWithNationalIdsDto } from '../dto/pagination-with-national-ids.dto'
 import { paginate } from '@island.is/nest/pagination'
 import { Op } from 'sequelize'
 
@@ -62,9 +62,9 @@ export class PersonalRepresentativeAccessService {
     // Create new personal representative connection
     try {
       this.logger.info('Creating personal representative access log')
-      return this.personalRepresentativeAccessModel.create(
-        personalRepresentativeAccess,
-      )
+      return this.personalRepresentativeAccessModel.create({
+        ...personalRepresentativeAccess,
+      })
     } catch (err) {
       this.logger.error(
         `Error creating personal representative access log: ${err}`,

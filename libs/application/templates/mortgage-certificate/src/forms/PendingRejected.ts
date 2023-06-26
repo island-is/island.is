@@ -1,17 +1,16 @@
 import {
   buildForm,
   buildCustomField,
-  Form,
-  FormModes,
   buildSubSection,
   buildSection,
 } from '@island.is/application/core'
+import { Form, FormModes } from '@island.is/application/types'
 import { m } from '../lib/messages'
 
 export const PendingRejected: Form = buildForm({
   id: 'PendingForm',
   title: 'Pending',
-  mode: FormModes.APPLYING,
+  mode: FormModes.IN_PROGRESS,
   children: [
     buildSection({
       id: 'externalData',

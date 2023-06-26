@@ -8,11 +8,38 @@ export const createWrappedFetchWithLogging = (
   return new Promise((resolve, reject) => {
     fetch(input, init)
       .then(async (response) => {
+        const body = init?.body ? JSON.parse(init?.body as string) : {}
+
+        const newInit = {
+          ...init,
+          body: {
+            ...body,
+            applicant: 'hidden',
+            otherParentId: '' ?? 'hidden',
+            email: 'hidden',
+            phoneNumber: 'hidden',
+            paymentInfo: {
+              ...body?.paymentInfo,
+              bankAccount: 'hidden',
+            },
+            attachments: body?.attachments?.length,
+          },
+        }
         if (response.ok) {
-          logger.info(`vmst-module.success: ${input}`)
+          logger.info(
+            `vmst-module.success: input - ${JSON.stringify(
+              input,
+            )}, init - ${JSON.stringify(init?.body ? newInit : init)}`,
+          )
         } else {
           const body = await response.json()
-          logger.error(`vmst-module.error: ${input}`, body)
+          logger.error(
+            `vmst-module.error: input - ${JSON.stringify(
+              input,
+            )}, init - ${JSON.stringify(newInit)}, response - ${JSON.stringify(
+              body,
+            )} status text: ${response.statusText}`,
+          )
           return reject(body)
         }
 

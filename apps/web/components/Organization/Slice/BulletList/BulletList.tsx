@@ -9,7 +9,11 @@ interface SliceProps {
 
 export const BulletListSlice: React.FC<SliceProps> = ({ slice }) => {
   return (
-    <section key={slice.id} aria-labelledby={'sliceTitle-' + slice.id}>
+    <section
+      key={slice.id}
+      id={slice.id}
+      aria-labelledby={'sliceTitle-' + slice.id}
+    >
       <Box paddingBottom={[8, 5, 10]}>
         <BulletList
           bullets={slice.bullets.map((bullet) => {

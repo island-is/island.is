@@ -22,4 +22,9 @@ export const error = defineMessages({
     defaultMessage: 'Skylda er að hlaða upp skjali áður en haldið er áfram',
     description: 'Error message when a required file field has not been filled',
   },
+  attachmentMaxSizeError: {
+    id: 'an.application:error.attachment.maxSizeError',
+    defaultMessage: 'Hámark 10 MB á skrá',
+    description: 'Max 10 MB per file',
+  },
 })

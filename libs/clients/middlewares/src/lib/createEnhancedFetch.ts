@@ -1,24 +1,29 @@
-import CircuitBreaker from 'opossum'
 import nodeFetch from 'node-fetch'
+import CircuitBreaker from 'opossum'
 import { Logger } from 'winston'
-import { logger as defaultLogger } from '@island.is/logging'
+
 import { DogStatsD } from '@island.is/infra-metrics'
-import { withTimeout } from './withTimeout'
-import { withMetrics } from './withMetrics'
+import { logger as defaultLogger } from '@island.is/logging'
+import {
+  AGENT_DEFAULT_FREE_SOCKET_TIMEOUT,
+  AGENT_DEFAULTS,
+} from '@island.is/shared/constants'
+
+import { buildFetch } from './buildFetch'
 import { FetchAPI as NodeFetchAPI } from './nodeFetch'
 import { EnhancedFetchAPI } from './types'
+import { AgentOptions, ClientCertificateOptions, withAgent } from './withAgent'
 import { withAuth } from './withAuth'
 import { AutoAuthOptions, withAutoAuth } from './withAutoAuth'
-import { withErrorLog } from './withErrorLog'
-import { withResponseErrors } from './withResponseErrors'
-import { withCircuitBreaker } from './withCircuitBreaker'
-import { AgentOptions, ClientCertificateOptions, withAgent } from './withAgent'
-import { withCache } from './withCache/withCache'
 import { CacheConfig } from './withCache/types'
-import { buildFetch } from './buildFetch'
+import { withCache } from './withCache/withCache'
+import { withCircuitBreaker } from './withCircuitBreaker'
+import { withErrorLog } from './withErrorLog'
+import { withMetrics } from './withMetrics'
+import { withResponseErrors } from './withResponseErrors'
+import { withTimeout } from './withTimeout'
 
-const DEFAULT_TIMEOUT = 1000 * 10 // seconds
-const DEFAULT_FREE_SOCKET_TIMEOUT = 1000 * 10 // 10 seconds
+const DEFAULT_TIMEOUT = 1000 * 20 // seconds
 
 export interface EnhancedFetchOptions {
   // The name of this fetch function, used in logs and opossum stats.
@@ -27,7 +32,7 @@ export interface EnhancedFetchOptions {
   // Configure caching.
   cache?: CacheConfig
 
-  // Timeout for requests. Defaults to 10000ms. Can be disabled by passing false.
+  // Timeout for requests. Defaults to 20000ms. Can be disabled by passing false.
   timeout?: number | false
 
   // Disable or configure circuit breaker.
@@ -47,8 +52,8 @@ export interface EnhancedFetchOptions {
   // Either way they will be logged and thrown.
   treat400ResponsesAsErrors?: boolean
 
-  // If true, will log error response body. Defaults to false.
-  // Should only be used if error objects do not have sensitive information or PII.
+  // If true (default), Enhanced Fetch will log error response bodies.
+  // Should be set to false if error objects may have sensitive information or PII.
   logErrorResponseBody?: boolean
 
   // Override logger.
@@ -87,7 +92,7 @@ export interface EnhancedFetchOptions {
  *   request.
  *
  * - Includes request timeout logic. By default, throws an error if there is no
- *   response in 10 seconds.
+ *   response in 20 seconds.
  *
  * - Throws an error for non-200 responses. The error object includes details
  *   from the response, including a `problem` property if the response implements
@@ -113,7 +118,7 @@ export const createEnhancedFetch = (
     logger = defaultLogger,
     fetch = nodeFetch,
     timeout = DEFAULT_TIMEOUT,
-    logErrorResponseBody = false,
+    logErrorResponseBody = true,
     autoAuth,
     forwardAuthUserAgent = true,
     clientCertificate,
@@ -124,14 +129,23 @@ export const createEnhancedFetch = (
   } = options
   const treat400ResponsesAsErrors = options.treat400ResponsesAsErrors === true
   const freeSocketTimeout =
-    typeof keepAlive === 'number' ? keepAlive : DEFAULT_FREE_SOCKET_TIMEOUT
+    typeof keepAlive === 'number'
+      ? keepAlive
+      : AGENT_DEFAULT_FREE_SOCKET_TIMEOUT
   const builder = buildFetch(fetch)
 
   builder.wrap(withAgent, {
     clientCertificate,
-    agentOptions,
-    keepAlive: !!keepAlive,
-    freeSocketTimeout,
+    agentOptions: {
+      ...AGENT_DEFAULTS,
+      keepAlive: !!keepAlive,
+      freeSocketTimeout,
+      ...agentOptions,
+
+      // We disable the timeout handling on the agent, as it is handled in withTimeout to allow for per request overwrite.
+      // https://github.com/node-modules/agentkeepalive#new-agentoptions
+      timeout: 0,
+    },
   })
 
   if (timeout !== false) {

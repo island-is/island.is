@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { ReactNode } from 'react'
 import { useMeasure } from 'react-use'
 import cn from 'classnames'
 import { Box, Text, Hyphen } from '@island.is/island-ui/core'
@@ -12,20 +12,12 @@ import { ExportCSVButton } from '@island.is/web/components'
 
 import * as styles from './ChartsCard.css'
 
-interface GraphDataProps {
-  title?: string
-  data: string
-  datakeys: string
-  type: string
-}
-
 interface ChartCardDataProps {
-  graphTitle?: string
+  graphTitle: string
   graphDescription?: string
   organization?: string
-  organizationLogo?: any
-  data?: string
-  datakeys?: string
+  data: string
+  datakeys: string
   type?: string
 }
 
@@ -42,9 +34,8 @@ export const ChartsCard: React.FC<ChartsCardsProps> = ({ chart, subPage }) => {
     type,
     data,
     datakeys,
-    organizationLogo,
   } = chart
-  const [ref, { width, height }] = useMeasure()
+  const [ref, { width }] = useMeasure()
   const graphData = { title: graphTitle, data: data, datakeys: datakeys }
 
   let children = null
@@ -136,7 +127,13 @@ export const ChartsCard: React.FC<ChartsCardsProps> = ({ chart, subPage }) => {
   return <FrameWrapper width={width}>{items}</FrameWrapper>
 }
 
-const FrameWrapper = ({ width, children }) => {
+const FrameWrapper = ({
+  width,
+  children,
+}: {
+  width: number
+  children: ReactNode
+}) => {
   return (
     <Box
       className={cn(styles.frameWrapper, {

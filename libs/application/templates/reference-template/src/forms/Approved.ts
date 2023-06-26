@@ -1,9 +1,5 @@
-import {
-  buildForm,
-  buildDescriptionField,
-  Form,
-  FormModes,
-} from '@island.is/application/core'
+import { buildForm, buildDescriptionField } from '@island.is/application/core'
+import { Form, FormModes } from '@island.is/application/types'
 
 export const Approved: Form = buildForm({
   id: 'ApprovedApplicationForm',

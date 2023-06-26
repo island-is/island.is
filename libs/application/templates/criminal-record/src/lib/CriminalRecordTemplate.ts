@@ -1,4 +1,5 @@
 import {
+  ApplicationConfigurations,
   ApplicationTemplate,
   ApplicationTypes,
   ApplicationContext,
@@ -6,12 +7,24 @@ import {
   ApplicationStateSchema,
   Application,
   DefaultEvents,
-  ApplicationConfigurations,
+  defineTemplateApi,
+} from '@island.is/application/types'
+import {
+  EphemeralStateLifeCycle,
+  coreHistoryMessages,
+  corePendingActionMessages,
+  pruneAfterDays,
 } from '@island.is/application/core'
 import { Events, States, Roles } from './constants'
-import * as z from 'zod'
+import { z } from 'zod'
 import { ApiActions } from '../shared'
 import { m } from './messages'
+import {
+  NationalRegistryUserApi,
+  UserProfileApi,
+  SyslumadurPaymentCatalogApi,
+  CriminalRecordApi,
+} from '../dataProviders'
 
 const CriminalRecordSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
@@ -27,26 +40,27 @@ const template: ApplicationTemplate<
   institution: m.institutionName,
   translationNamespaces: [ApplicationConfigurations.CriminalRecord.translation],
   dataSchema: CriminalRecordSchema,
-  readyForProduction: true,
   stateMachineConfig: {
     initial: States.DRAFT,
     states: {
       [States.DRAFT]: {
         meta: {
           name: 'Umsókn um sakavottorð',
+          status: 'draft',
           actionCard: {
             tag: {
               label: m.actionCardDraft,
               variant: 'blue',
             },
+            historyLogs: [
+              {
+                logMessage: coreHistoryMessages.paymentStarted,
+                onEvent: DefaultEvents.SUBMIT,
+              },
+            ],
           },
           progress: 0.25,
-          lifecycle: {
-            shouldBeListed: false,
-            shouldBePruned: true,
-            // Applications that stay in this state for 24 hours will be pruned automatically
-            whenToPrune: 24 * 3600 * 1000,
-          },
+          lifecycle: EphemeralStateLifeCycle,
           roles: [
             {
               id: Roles.APPLICANT,
@@ -56,44 +70,58 @@ const template: ApplicationTemplate<
                 ),
               actions: [
                 {
-                  event: DefaultEvents.PAYMENT,
+                  event: DefaultEvents.SUBMIT,
                   name: 'Staðfesta',
                   type: 'primary',
                 },
               ],
               write: 'all',
+              api: [
+                NationalRegistryUserApi,
+                UserProfileApi,
+                SyslumadurPaymentCatalogApi,
+                CriminalRecordApi,
+              ],
             },
           ],
         },
         on: {
-          [DefaultEvents.PAYMENT]: {
-            target: States.PAYMENT,
-          },
           [DefaultEvents.SUBMIT]: { target: States.PAYMENT },
         },
       },
       [States.PAYMENT]: {
         meta: {
           name: 'Greiðsla',
+          status: 'inprogress',
           actionCard: {
             tag: {
               label: m.actionCardPayment,
               variant: 'red',
             },
+            pendingAction: {
+              title: corePendingActionMessages.paymentPendingTitle,
+              content: corePendingActionMessages.paymentPendingDescription,
+              displayStatus: 'warning',
+            },
+            historyLogs: [
+              {
+                logMessage: coreHistoryMessages.paymentAccepted,
+                onEvent: DefaultEvents.SUBMIT,
+              },
+              {
+                logMessage: coreHistoryMessages.paymentCancelled,
+                onEvent: DefaultEvents.ABORT,
+              },
+            ],
           },
           progress: 0.8,
-          lifecycle: {
-            shouldBeListed: true,
-            shouldBePruned: true,
-            // Applications that stay in this state for 24 hours will be pruned automatically
-            whenToPrune: 24 * 3600 * 1000,
-          },
-          onEntry: {
-            apiModuleAction: ApiActions.createCharge,
-          },
-          onExit: {
-            apiModuleAction: ApiActions.submitApplication,
-          },
+          lifecycle: pruneAfterDays(1 / 24),
+          onEntry: defineTemplateApi({
+            action: ApiActions.createCharge,
+          }),
+          onExit: defineTemplateApi({
+            action: ApiActions.submitApplication,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -103,33 +131,34 @@ const template: ApplicationTemplate<
                 { event: DefaultEvents.SUBMIT, name: 'Áfram', type: 'primary' },
               ],
               write: 'all',
+              delete: true,
             },
           ],
         },
         on: {
           [DefaultEvents.SUBMIT]: { target: States.COMPLETED },
-          [DefaultEvents.PAYMENT]: { target: States.DRAFT },
+          [DefaultEvents.ABORT]: { target: States.DRAFT },
         },
       },
       [States.COMPLETED]: {
         meta: {
           name: 'Completed',
+          status: 'completed',
           progress: 1,
-          lifecycle: {
-            shouldBeListed: true,
-            shouldBePruned: true,
-            // Applications that stay in this state for 3x30 days (approx. 3 months) will be pruned automatically
-            whenToPrune: 3 * 30 * 24 * 3600 * 1000,
-          },
+          lifecycle: pruneAfterDays(3 * 30),
           actionCard: {
             tag: {
               label: m.actionCardDone,
               variant: 'blueberry',
             },
+            pendingAction: {
+              title: m.pendingActionApplicationCompletedTitle,
+              displayStatus: 'success',
+            },
           },
-          onEntry: {
-            apiModuleAction: ApiActions.getCriminalRecord,
-          },
+          onEntry: defineTemplateApi({
+            action: ApiActions.getCriminalRecord,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -141,7 +170,6 @@ const template: ApplicationTemplate<
             },
           ],
         },
-        type: 'final' as const,
       },
     },
   },

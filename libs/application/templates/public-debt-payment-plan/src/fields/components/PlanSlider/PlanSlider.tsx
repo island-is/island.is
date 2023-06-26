@@ -45,14 +45,14 @@ export const PlanSlider = ({
       paddingBottom={3}
       background="blue100"
     >
-      <Text marginBottom={5} variant="h4">
+      <Text marginBottom={6} variant="h4">
         {formatMessage(heading)}
       </Text>
       <Box marginBottom={12}>
         <Controller
           defaultValue={stateValue}
           name={id}
-          render={({ onChange, value }) => (
+          render={({ field: { onChange, value } }) => (
             <Slider
               label={label}
               min={minValue / multiplier}

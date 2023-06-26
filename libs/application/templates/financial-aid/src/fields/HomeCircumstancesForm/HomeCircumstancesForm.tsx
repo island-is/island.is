@@ -9,6 +9,7 @@ import { HomeCircumstances } from '@island.is/financial-aid/shared/lib'
 import * as styles from '../Shared.css'
 import cn from 'classnames'
 import { FAFieldBaseProps, InputTypes } from '../../lib/types'
+import withLogo from '../Logo/Logo'
 
 const HomeCircumstancesForm = ({ application, errors }: FAFieldBaseProps) => {
   const typeInput = {
@@ -86,7 +87,7 @@ const HomeCircumstancesForm = ({ application, errors }: FAFieldBaseProps) => {
         <Controller
           name={customInput.id}
           defaultValue={answers?.homeCircumstances?.custom}
-          render={({ value, onChange }) => {
+          render={({ field: { onChange, value } }) => {
             return (
               <Input
                 id={customInput.id}
@@ -112,4 +113,4 @@ const HomeCircumstancesForm = ({ application, errors }: FAFieldBaseProps) => {
   )
 }
 
-export default HomeCircumstancesForm
+export default withLogo(HomeCircumstancesForm)

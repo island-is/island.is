@@ -110,14 +110,6 @@ export const rcDemands = {
       },
     }),
     custodyRestrictions: defineMessages({
-      // TODO: remove heading and subheading and use headingV2 and subheadingV2
-      heading: {
-        id:
-          'judicial.system.restriction_cases:police_demands.custody_restrictions.heading',
-        defaultMessage: 'Takmarkanir og tilhögun {caseType}',
-        description:
-          'Notaður sem titill fyrir "takmarkanir og tilhögun gæslu/farbanns" hlutann á lagagrundvöllur og dómkröfur skrefi í gæsluvarðhalds- og farbannsmálum.',
-      },
       headingV2: {
         id:
           'judicial.system.restriction_cases:police_demands.custody_restrictions.heading_v2',
@@ -125,13 +117,6 @@ export const rcDemands = {
           'Takmarkanir og tilhögun {caseType, select, ADMISSION_TO_FACILITY {vistunar} TRAVEL_BAN {farbanns} other {gæslu}}',
         description:
           'Notaður sem titill fyrir "takmarkanir og tilhögun gæslu/farbanns/vistunar" hlutann á lagagrundvöllur og dómkröfur skrefi í gæsluvarðhalds-, vistunar- og farbannsmálum.',
-      },
-      subHeading: {
-        id:
-          'judicial.system.restriction_cases:police_demands.custody_restrictions.sub_heading',
-        defaultMessage: 'Ef ekkert er valið er {caseType} án takmarkana',
-        description:
-          'Notaður sem undirtitill fyrir "takmarkanir og tilhögun gæslu" hlutann á lagagrundvöllur og dómkröfur skrefi í gæsluvarðhalds- og farbannsmálum.',
       },
       subHeadingV2: {
         id:

@@ -7,6 +7,7 @@ import { FileUploadContainer } from '..'
 import { UploadFileType } from '../../lib/types'
 import { useFormContext } from 'react-hook-form'
 import { useFileUpload } from '../../lib/hooks/useFileUpload'
+import { FILE_SIZE_LIMIT, UPLOAD_ACCEPT } from '../../lib/constants'
 
 interface Props {
   uploadFiles: UploadFile[]
@@ -25,6 +26,7 @@ const Files = ({ uploadFiles, fileKey, folderId, hasError = false }: Props) => {
     onChange,
     onRemove,
     onRetry,
+    onUploadRejection,
   } = useFileUpload(uploadFiles, folderId)
 
   const fileToObject = (file: UploadFile) => {
@@ -47,7 +49,7 @@ const Files = ({ uploadFiles, fileKey, folderId, hasError = false }: Props) => {
   }, [files])
 
   return (
-    <FileUploadContainer>
+    <FileUploadContainer hasError={hasError}>
       <InputFileUpload
         fileList={files}
         header={formatMessage(filesText.header)}
@@ -58,6 +60,9 @@ const Files = ({ uploadFiles, fileKey, folderId, hasError = false }: Props) => {
         onChange={onChange}
         onRemove={onRemove}
         onRetry={onRetry}
+        onUploadRejection={onUploadRejection}
+        maxSize={FILE_SIZE_LIMIT}
+        accept={UPLOAD_ACCEPT}
       />
     </FileUploadContainer>
   )

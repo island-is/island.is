@@ -1,7 +1,7 @@
 import { AxiosResponse } from 'axios'
 import { of } from 'rxjs'
 import { Test } from '@nestjs/testing'
-import { HttpModule, HttpService } from '@nestjs/common'
+import { HttpModule, HttpService } from '@nestjs/axios'
 
 import { logger, LOGGER_PROVIDER } from '@island.is/logging'
 

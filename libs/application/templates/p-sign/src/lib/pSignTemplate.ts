@@ -1,17 +1,24 @@
+import { DefaultStateLifeCycle } from '@island.is/application/core'
 import {
   ApplicationTemplate,
   ApplicationContext,
   ApplicationStateSchema,
   ApplicationTypes,
   ApplicationRole,
-  DefaultStateLifeCycle,
   Application,
   DefaultEvents,
-} from '@island.is/application/core'
+  defineTemplateApi,
+  NationalRegistryUserApi,
+  UserProfileApi,
+  DistrictsApi,
+  QualityPhotoApi,
+} from '@island.is/application/types'
 import { Events, States, Roles } from './constants'
 import { dataSchema } from './dataSchema'
 import { m } from '../lib/messages'
 import { ApiActions } from './constants'
+import { AuthDelegationType } from '@island.is/shared/types'
+import { DoctorsNoteApi } from '../dataProviders'
 
 const PSignTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -21,27 +28,28 @@ const PSignTemplate: ApplicationTemplate<
   type: ApplicationTypes.P_SIGN,
   name: 'Stæðiskort',
   dataSchema: dataSchema,
-  readyForProduction: true,
+  allowedDelegations: [{ type: AuthDelegationType.LegalGuardian }],
   stateMachineConfig: {
     initial: States.DRAFT,
     states: {
       [States.DRAFT]: {
         meta: {
           name: 'Draft',
+          status: 'draft',
           actionCard: {
             title: m.applicationTitle,
           },
           progress: 0.33,
           lifecycle: {
-            shouldBeListed: false,
+            shouldBeListed: true,
             shouldBePruned: true,
             whenToPrune: 24 * 3600 * 1000,
           },
-          onExit: {
-            apiModuleAction: ApiActions.submitApplication,
+          onExit: defineTemplateApi({
+            action: ApiActions.submitApplication,
             shouldPersistToExternalData: true,
             throwOnError: true,
-          },
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -57,6 +65,37 @@ const PSignTemplate: ApplicationTemplate<
                 },
               ],
               write: 'all',
+              api: [
+                NationalRegistryUserApi,
+                UserProfileApi,
+                DistrictsApi,
+                QualityPhotoApi,
+                DoctorsNoteApi,
+              ],
+              delete: true,
+            },
+            {
+              id: Roles.ACTOR,
+              formLoader: () =>
+                import('../forms/applicationWithActor').then((val) =>
+                  Promise.resolve(val.getApplication()),
+                ),
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: 'Staðfesta',
+                  type: 'primary',
+                },
+              ],
+              write: 'all',
+              api: [
+                NationalRegistryUserApi,
+                UserProfileApi,
+                DistrictsApi,
+                QualityPhotoApi,
+                DoctorsNoteApi,
+              ],
+              delete: true,
             },
           ],
         },
@@ -67,6 +106,7 @@ const PSignTemplate: ApplicationTemplate<
       [States.DONE]: {
         meta: {
           name: 'Done',
+          status: 'completed',
           progress: 1,
           lifecycle: DefaultStateLifeCycle,
 
@@ -76,9 +116,13 @@ const PSignTemplate: ApplicationTemplate<
               formLoader: () => import('../forms/done').then((val) => val.done),
               read: 'all',
             },
+            {
+              id: Roles.ACTOR,
+              formLoader: () => import('../forms/done').then((val) => val.done),
+              read: 'all',
+            },
           ],
         },
-        type: 'final' as const,
       },
     },
   },
@@ -86,7 +130,12 @@ const PSignTemplate: ApplicationTemplate<
     nationalId: string,
     application: Application,
   ): ApplicationRole | undefined {
-    if (application.applicant === nationalId) {
+    if (
+      application.applicant === nationalId &&
+      application.applicantActors.length > 0
+    ) {
+      return Roles.ACTOR
+    } else if (application.applicant === nationalId) {
       return Roles.APPLICANT
     }
   },

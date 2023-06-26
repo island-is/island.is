@@ -7,11 +7,25 @@ import {
   ApplicationTemplate,
   ApplicationTypes,
   DefaultEvents,
-} from '@island.is/application/core'
+  defineTemplateApi,
+  NationalRegistryUserApi,
+} from '@island.is/application/types'
 import { Events, States, Roles } from '../constants'
 import { GeneralFishingLicenseSchema } from './dataSchema'
 import { application } from './messages'
 import { ApiActions } from '../shared'
+import { AuthDelegationType } from '@island.is/shared/types'
+import {
+  DepartmentOfFisheriesPaymentCatalogApi,
+  ShipRegistryApi,
+  IdentityApi,
+} from '../dataProviders'
+import {
+  coreHistoryMessages,
+  corePendingActionMessages,
+  DefaultStateLifeCycle,
+} from '@island.is/application/core'
+import { gflPendingActionMessages } from './messages/actionCards'
 
 const pruneAtMidnight = () => {
   const date = new Date()
@@ -34,17 +48,18 @@ const GeneralFishingLicenseTemplate: ApplicationTemplate<
   type: ApplicationTypes.GENERAL_FISHING_LICENSE,
   name: application.general.name,
   institution: application.general.institutionName,
-  readyForProduction: true,
   translationNamespaces: [
     ApplicationConfigurations.GeneralFishingLicense.translation,
   ],
   dataSchema: GeneralFishingLicenseSchema,
+  allowedDelegations: [{ type: AuthDelegationType.ProcurationHolder }],
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {
       [States.PREREQUISITES]: {
         meta: {
           name: application.general.name.defaultMessage,
+          status: 'draft',
           progress: 0.1,
           lifecycle: {
             shouldBeListed: false,
@@ -67,7 +82,14 @@ const GeneralFishingLicenseTemplate: ApplicationTemplate<
                   type: 'primary',
                 },
               ],
+              api: [
+                NationalRegistryUserApi,
+                DepartmentOfFisheriesPaymentCatalogApi,
+                ShipRegistryApi,
+                IdentityApi,
+              ],
               write: 'all',
+              delete: true,
             },
           ],
         },
@@ -78,8 +100,17 @@ const GeneralFishingLicenseTemplate: ApplicationTemplate<
       [States.DRAFT]: {
         meta: {
           name: application.general.name.defaultMessage,
+          status: 'draft',
           progress: 0.3,
           lifecycle: pruneAtMidnight(),
+          actionCard: {
+            historyLogs: [
+              {
+                logMessage: coreHistoryMessages.paymentStarted,
+                onEvent: DefaultEvents.PAYMENT,
+              },
+            ],
+          },
           roles: [
             {
               id: Roles.APPLICANT,
@@ -96,6 +127,7 @@ const GeneralFishingLicenseTemplate: ApplicationTemplate<
               ],
               write: 'all',
               read: 'all',
+              delete: true,
             },
           ],
         },
@@ -109,14 +141,34 @@ const GeneralFishingLicenseTemplate: ApplicationTemplate<
       [States.PAYMENT]: {
         meta: {
           name: 'Payment state',
+          status: 'inprogress',
           actionCard: {
-            description: application.labels.actionCardPayment,
+            pendingAction: {
+              title: corePendingActionMessages.paymentPendingTitle,
+              content: corePendingActionMessages.paymentPendingDescription,
+              displayStatus: 'warning',
+            },
+            historyLogs: [
+              {
+                logMessage: coreHistoryMessages.paymentAccepted,
+                onEvent: DefaultEvents.SUBMIT,
+              },
+              {
+                logMessage: coreHistoryMessages.paymentCancelled,
+                onEvent: DefaultEvents.ABORT,
+              },
+            ],
           },
           progress: 0.9,
-          lifecycle: pruneAtMidnight(),
-          onEntry: {
-            apiModuleAction: ApiActions.createCharge,
+          lifecycle: {
+            shouldBeListed: true,
+            shouldBePruned: true,
+            // Applications that stay in this state for 24 hours will be pruned automatically
+            whenToPrune: 24 * 3600 * 1000,
           },
+          onEntry: defineTemplateApi({
+            action: ApiActions.createCharge,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -133,6 +185,7 @@ const GeneralFishingLicenseTemplate: ApplicationTemplate<
                 },
               ],
               write: 'all',
+              delete: true,
             },
           ],
         },
@@ -144,11 +197,19 @@ const GeneralFishingLicenseTemplate: ApplicationTemplate<
       [States.SUBMITTED]: {
         meta: {
           name: application.general.name.defaultMessage,
+          status: 'completed',
           progress: 1,
-          lifecycle: pruneAtMidnight(),
-          onEntry: {
-            apiModuleAction: ApiActions.submitApplication,
+          lifecycle: DefaultStateLifeCycle,
+          actionCard: {
+            pendingAction: {
+              title: gflPendingActionMessages.applicationrReceivedTitle,
+              content: gflPendingActionMessages.applicationrReceivedContent,
+              displayStatus: 'success',
+            },
           },
+          onEntry: defineTemplateApi({
+            action: ApiActions.submitApplication,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -161,13 +222,13 @@ const GeneralFishingLicenseTemplate: ApplicationTemplate<
             },
           ],
         },
-        type: 'final' as const,
       },
       [States.DECLINED]: {
         meta: {
           name: 'Declined',
+          status: 'rejected',
           progress: 1,
-          lifecycle: pruneAtMidnight(),
+          lifecycle: DefaultStateLifeCycle,
           roles: [
             {
               id: Roles.APPLICANT,
@@ -178,7 +239,6 @@ const GeneralFishingLicenseTemplate: ApplicationTemplate<
             },
           ],
         },
-        type: 'final' as const,
       },
     },
   },

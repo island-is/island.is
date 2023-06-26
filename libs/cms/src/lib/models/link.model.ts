@@ -26,7 +26,7 @@ export const mapLink = ({ sys, fields }: ILink): Link => {
   return {
     id: sys.id,
     text: fields?.text ?? '',
-    url: fields?.url ?? '',
+    url: fields?.url?.trim() ?? '',
     intro: fields?.intro ?? '',
     labels: fields?.labels ?? [],
     date: fields?.date ?? '',

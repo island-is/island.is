@@ -26,14 +26,11 @@ import { ApplicationApplicationsInput } from './dto/applicationApplications.inpu
 import { RequestFileSignatureResponse } from './dto/requestFileSignature.response'
 import { PresignedUrlResponse } from './dto/presignedUrl.response'
 import { UploadSignedFileResponse } from './dto/uploadSignedFile.response'
-import { ApplicationPaymentChargeInput } from './dto/applicationPaymentCharge.input'
-import { ApplicationPaymentChargeResponse } from './dto/applicationPaymentCharge'
-import { CreatePaymentResponseDto } from '../../gen/fetch'
 import { AttachmentPresignedUrlInput } from './dto/AttachmentPresignedUrl.input'
 import { DeleteApplicationInput } from './dto/deleteApplication.input'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
-@Resolver()
+@Resolver(() => Application)
 export class ApplicationResolver {
   constructor(private applicationService: ApplicationService) {}
 
@@ -54,27 +51,18 @@ export class ApplicationResolver {
     locale: Locale = 'is',
     @Args('applicationId') applicationId: string,
   ): Promise<ApplicationPayment | null> {
-    const status = await this.applicationService.getPaymentStatus(
+    const {
+      fulfilled,
+      paymentUrl,
+    } = await this.applicationService.getPaymentStatus(
       applicationId,
       user,
       locale,
     )
     return {
-      fulfilled: status.fulfilled,
-      paymentUrl: status.paymentUrl,
+      fulfilled,
+      paymentUrl,
     }
-  }
-
-  @Mutation(() => ApplicationPaymentChargeResponse, { nullable: true })
-  async applicationPaymentCharge(
-    @Args('input') input: ApplicationPaymentChargeInput,
-    @CurrentUser() user: User,
-  ): Promise<CreatePaymentResponseDto> {
-    return this.applicationService.createCharge(
-      input.applicationId,
-      user,
-      input.chargeItemCode,
-    )
   }
 
   @Query(() => [Application], { nullable: true })
@@ -90,7 +78,7 @@ export class ApplicationResolver {
   @Mutation(() => Application, { nullable: true })
   async createApplication(
     @Args('locale', { type: () => String, nullable: true })
-    locale: Locale = 'is',
+    _locale: Locale = 'is',
     @Args('input') input: CreateApplicationInput,
     @CurrentUser() user: User,
   ): Promise<Application> {
@@ -108,13 +96,13 @@ export class ApplicationResolver {
   }
 
   @Mutation(() => Application, { nullable: true })
-  updateApplicationExternalData(
+  async updateApplicationExternalData(
     @Args('locale', { type: () => String, nullable: true })
     locale: Locale = 'is',
     @Args('input') input: UpdateApplicationExternalDataInput,
     @CurrentUser() user: User,
   ): Promise<Application | void> {
-    return this.applicationService.updateExternalData(input, user, locale)
+    return await this.applicationService.updateExternalData(input, user, locale)
   }
 
   @Mutation(() => Application, { nullable: true })

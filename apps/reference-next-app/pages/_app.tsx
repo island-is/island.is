@@ -1,9 +1,10 @@
-import React, { FC } from 'react'
 import Head from 'next/head'
-import { ApolloProvider } from 'react-apollo'
+import React, { FC } from 'react'
+import { ApolloProvider } from '@apollo/client/react'
+
+import { appWithLocale } from '@island.is/localization'
 
 import initApollo from '../graphql/client'
-import { appWithLocale } from '@island.is/localization'
 
 const Layout: FC = ({ children }) => {
   return (

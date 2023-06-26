@@ -14,7 +14,6 @@ export const containerDisabled = style({
 })
 
 export const uploadedFile = style({
-  border: `1px solid ${theme.color.blue200}`,
   transition: 'background .5s ease',
   lineHeight: 0,
 })

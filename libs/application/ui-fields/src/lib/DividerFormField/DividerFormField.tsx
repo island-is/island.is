@@ -1,10 +1,7 @@
 import React, { FC } from 'react'
 
-import {
-  DividerField,
-  formatText,
-  Application,
-} from '@island.is/application/core'
+import { formatText } from '@island.is/application/core'
+import { DividerField, Application } from '@island.is/application/types'
 import { Box, Text, Divider } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 

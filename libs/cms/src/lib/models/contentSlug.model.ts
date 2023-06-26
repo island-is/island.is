@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/no-inferrable-types */
-import { Field, ObjectType, ID } from '@nestjs/graphql'
 import { IsObject } from 'class-validator'
+import graphqlTypeJson from 'graphql-type-json'
+import { Field, ObjectType, ID } from '@nestjs/graphql'
+import { CacheField } from '@island.is/nest/graphql'
 
 @ObjectType()
 export class TextFieldLocales {
@@ -17,13 +19,20 @@ export class ContentSlug {
   id: string = ''
 
   @IsObject()
-  @Field(() => TextFieldLocales, { nullable: true })
+  @CacheField(() => TextFieldLocales, { nullable: true })
   slug: TextFieldLocales = {}
 
   @IsObject()
-  @Field(() => TextFieldLocales, { nullable: true })
+  @CacheField(() => TextFieldLocales, { nullable: true })
   title: TextFieldLocales = {}
+
+  @IsObject()
+  @CacheField(() => TextFieldLocales, { nullable: true })
+  url: TextFieldLocales = {}
 
   @Field()
   type: string = ''
+
+  @Field(() => graphqlTypeJson, { nullable: true })
+  activeTranslations?: Record<string, boolean>
 }

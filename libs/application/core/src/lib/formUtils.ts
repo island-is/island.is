@@ -8,10 +8,13 @@ import get from 'lodash/get'
 import HtmlParser from 'react-html-parser'
 
 import { shouldShowFormItem } from './conditionUtils'
-import { Field, RecordObject } from '../types/Fields'
-import { Application, ExternalData, FormValue } from '../types/Application'
 import {
+  Application,
+  ExternalData,
+  FormValue,
   Form,
+  Field,
+  RecordObject,
   FormItemTypes,
   FormLeaf,
   FormNode,
@@ -21,7 +24,7 @@ import {
   StaticText,
   StaticTextObject,
   SubSection,
-} from '../types/Form'
+} from '@island.is/application/types'
 
 const containsArray = (obj: RecordObject) => {
   let contains = false

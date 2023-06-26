@@ -116,6 +116,7 @@ export const LocaleProvider = ({
       await polyfill(lang)
     }
     setActiveLocale(lang)
+    document.documentElement.setAttribute('lang', lang)
 
     if (loadedNamespaces.length > 0) {
       const { data } = await apolloClient.query<Query>({

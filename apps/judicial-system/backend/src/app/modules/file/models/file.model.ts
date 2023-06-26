@@ -10,7 +10,10 @@ import {
 
 import { ApiProperty } from '@nestjs/swagger'
 
-import { CaseFileState } from '@island.is/judicial-system/types'
+import {
+  CaseFileState,
+  CaseFileCategory,
+} from '@island.is/judicial-system/types'
 
 // TODO Find a way to import from an index file
 import { Case } from '../../case/models/case.model'
@@ -19,7 +22,7 @@ import { Case } from '../../case/models/case.model'
   tableName: 'case_file',
   timestamps: true,
 })
-export class CaseFile extends Model<CaseFile> {
+export class CaseFile extends Model {
   @Column({
     type: DataType.UUID,
     primaryKey: true,
@@ -61,6 +64,14 @@ export class CaseFile extends Model<CaseFile> {
 
   @Column({
     type: DataType.ENUM,
+    allowNull: true,
+    values: Object.values(CaseFileCategory),
+  })
+  @ApiProperty({ enum: CaseFileCategory })
+  category?: CaseFileCategory
+
+  @Column({
+    type: DataType.ENUM,
     allowNull: false,
     values: Object.values(CaseFileState),
   })
@@ -80,4 +91,39 @@ export class CaseFile extends Model<CaseFile> {
   })
   @ApiProperty()
   size!: number
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
+  policeCaseNumber?: string
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
+  userGeneratedFilename?: string
+
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: true,
+  })
+  @ApiProperty()
+  chapter?: number
+
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: true,
+  })
+  @ApiProperty()
+  orderWithinChapter?: number
+
+  @Column({
+    type: DataType.DATE,
+    allowNull: true,
+  })
+  @ApiProperty()
+  displayDate?: Date
 }

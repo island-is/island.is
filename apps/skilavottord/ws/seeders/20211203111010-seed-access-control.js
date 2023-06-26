@@ -17,6 +17,13 @@ module.exports = {
           role: 'recyclingCompany',
           partner_id: '8888888888',
         },
+        {
+          national_id: '0301665909',
+          name: 'Sigurgeir Gudmundsson',
+          role: 'developer',
+          partner_id: '9999999999',
+          email: 'essgje@island.is',
+        },
       ],
       {},
     )

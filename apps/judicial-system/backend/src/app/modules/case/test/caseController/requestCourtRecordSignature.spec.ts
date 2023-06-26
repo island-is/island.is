@@ -1,20 +1,15 @@
 import { uuid } from 'uuidv4'
-import { Response } from 'express'
 
 import { ForbiddenException } from '@nestjs/common'
 
-import { User } from '@island.is/judicial-system/types'
+import { SigningServiceResponse } from '@island.is/dokobit-signing'
+import { User, UserRole } from '@island.is/judicial-system/types'
 
 import { Case } from '../../models/case.model'
 import { createTestingCaseModule } from '../createTestingCaseModule'
 
-interface MockResponse extends Response {
-  statusCode: number
-  message: string
-}
-
 interface Then {
-  result: MockResponse
+  result: SigningServiceResponse
   error: Error
 }
 
@@ -38,7 +33,7 @@ describe('CaseController - Request court record signature', () => {
           caseId,
           user,
           theCase,
-        )) as MockResponse
+        )) as SigningServiceResponse
       } catch (error) {
         then.error = error as Error
       }
@@ -49,7 +44,7 @@ describe('CaseController - Request court record signature', () => {
 
   describe('the user is the assigned judge', () => {
     const userId = uuid()
-    const user = { id: userId } as User
+    const user = { id: userId, role: UserRole.JUDGE } as User
     const caseId = uuid()
     const theCase = { id: caseId, judgeId: userId, registrarId: uuid() } as Case
     let then: Then
@@ -68,7 +63,7 @@ describe('CaseController - Request court record signature', () => {
 
   describe('the user is the assigned registrar', () => {
     const userId = uuid()
-    const user = { id: userId } as User
+    const user = { id: userId, role: UserRole.REGISTRAR } as User
     const caseId = uuid()
     const theCase = { id: caseId, judgeId: uuid(), registrarId: userId } as Case
     let then: Then
@@ -85,8 +80,8 @@ describe('CaseController - Request court record signature', () => {
     })
   })
 
-  describe('the user is not the assigned judge or registrar', () => {
-    const user = { id: uuid() } as User
+  describe('the user is not a judge nor registrar', () => {
+    const user = { id: uuid(), role: UserRole.DEFENDER } as User
     const caseId = uuid()
     const theCase = { id: caseId, judgeId: uuid(), registrarId: uuid() } as Case
     let then: Then
@@ -98,7 +93,7 @@ describe('CaseController - Request court record signature', () => {
     it('should throw ForbiddenException', () => {
       expect(then.error).toBeInstanceOf(ForbiddenException)
       expect(then.error.message).toBe(
-        'A court record must be signed by the assigned judge or registrar',
+        'A court record must be a judge or a registrar',
       )
     })
   })

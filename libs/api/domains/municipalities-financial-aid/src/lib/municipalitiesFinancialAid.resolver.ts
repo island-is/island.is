@@ -5,39 +5,27 @@ import {
   ScopesGuard,
   CurrentUser,
 } from '@island.is/auth-nest-tools'
-import { UseGuards } from '@nestjs/common'
+import { UseGuards, Inject } from '@nestjs/common'
 
 import { MunicipalitiesFinancialAidService } from './municipalitiesFinancialAid.service'
-import { MunicipalityModel, SignedUrlModel } from './models'
-import { CreateSignedUrlInput, MunicipalityInput } from './dto'
+import { ApplicationModel, CreateFilesModel, SignedUrlModel } from './models'
+import {
+  CreateSignedUrlInput,
+  ApplicationInput,
+  ApplicationFilesInput,
+  UpdateApplicationInput,
+  GetSignedUrlInput,
+} from './dto'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
 export class MunicipalitiesFinancialAidResolver {
   constructor(
+    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
     private municipalitiesFinancialAidService: MunicipalitiesFinancialAidService,
   ) {}
-
-  @Query(() => String, { nullable: true })
-  async municipalitiesFinancialAidCurrentApplication(
-    @CurrentUser() user: User,
-  ): Promise<string | null> {
-    return await this.municipalitiesFinancialAidService.municipalitiesFinancialAidCurrentApplication(
-      user,
-    )
-  }
-
-  @Query(() => MunicipalityModel, { nullable: true })
-  async municipalitiesFinancialAidMunicipality(
-    @Args('input', { type: () => MunicipalityInput })
-    input: MunicipalityInput,
-    @CurrentUser() user: User,
-  ): Promise<MunicipalityModel | null> {
-    return await this.municipalitiesFinancialAidService.municipalityInfoForFinancialAId(
-      user,
-      input,
-    )
-  }
 
   @Mutation(() => SignedUrlModel)
   createMunicipalitiesFinancialAidSignedUrl(
@@ -48,6 +36,54 @@ export class MunicipalitiesFinancialAidResolver {
     @CurrentUser() user: User,
   ): Promise<SignedUrlModel | null> {
     return this.municipalitiesFinancialAidService.municipalitiesFinancialAidCreateSignedUrl(
+      user,
+      input,
+    )
+  }
+
+  @Query(() => ApplicationModel, { nullable: true })
+  async municipalitiesFinancialAidApplication(
+    @Args('input', { type: () => ApplicationInput })
+    input: ApplicationInput,
+    @CurrentUser() user: User,
+  ): Promise<ApplicationModel | null> {
+    return await this.municipalitiesFinancialAidService.municipalitiesFinancialAidApplication(
+      user,
+      input,
+    )
+  }
+
+  @Mutation(() => CreateFilesModel)
+  async createMunicipalitiesFinancialAidApplicationFiles(
+    @Args('input', { type: () => ApplicationFilesInput })
+    input: ApplicationFilesInput,
+    @CurrentUser() user: User,
+  ): Promise<CreateFilesModel> {
+    return await this.municipalitiesFinancialAidService.municipalitiesFinancialAidCreateFiles(
+      user,
+      input,
+    )
+  }
+
+  @Mutation(() => ApplicationModel, { nullable: true })
+  async updateMunicipalitiesFinancialAidApplication(
+    @Args('input', { type: () => UpdateApplicationInput })
+    input: UpdateApplicationInput,
+    @CurrentUser() user: User,
+  ): Promise<ApplicationModel | null> {
+    return await this.municipalitiesFinancialAidService.municipalitiesFinancialAidUpdateApplication(
+      user,
+      input,
+    )
+  }
+
+  @Query(() => SignedUrlModel)
+  async municipalitiesFinancialAidApplicationSignedUrl(
+    @Args('input', { type: () => GetSignedUrlInput })
+    input: GetSignedUrlInput,
+    @CurrentUser() user: User,
+  ): Promise<SignedUrlModel> {
+    return await this.municipalitiesFinancialAidService.municipalitiesFinancialAidGetSignedUrl(
       user,
       input,
     )

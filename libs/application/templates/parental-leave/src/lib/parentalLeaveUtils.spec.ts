@@ -1,25 +1,58 @@
 import set from 'lodash/set'
 import addDays from 'date-fns/addDays'
 import {
-  Application,
+  ApplicationWithAttachments as Application,
   ApplicationStatus,
   ApplicationTypes,
   ExternalData,
+  Field,
+  FieldComponents,
+  FieldTypes,
   FormValue,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 
-import { NO, MANUAL, ParentalRelations } from '../constants'
+import {
+  NO,
+  YES,
+  MANUAL,
+  SINGLE,
+  SPOUSE,
+  ParentalRelations,
+  ADOPTION,
+} from '../constants'
 import { ChildInformation } from '../dataProviders/Children/types'
 import {
   formatIsk,
   getAvailableRightsInMonths,
-  getExpectedDateOfBirth,
+  getExpectedDateOfBirthOrAdoptionDate,
   getSelectedChild,
   getTransferredDays,
   getOtherParentId,
   calculateEndDateForPeriodWithStartAndLength,
   calculatePeriodLengthInMonths,
   applicantIsMale,
+  getOtherParentName,
+  getSpouse,
+  isEligibleForParentalLeave,
+  getPeriodIndex,
+  getApplicationExternalData,
+  requiresOtherParentApproval,
+  getMaxMultipleBirthsDays,
+  getMultipleBirthsDays,
+  getMultipleBirthRequestDays,
+  getMaxMultipleBirthsInMonths,
+  getMaxMultipleBirthsAndDefaultMonths,
+  getAvailablePersonalRightsInDays,
+  getAvailableRightsInDays,
+  getAvailablePersonalRightsInMonths,
+  getAdditionalSingleParentRightsInDays,
+  allowOtherParentToUsePersonalAllowance,
+  getAvailablePersonalRightsSingleParentInMonths,
+  isParentWithoutBirthParent,
+  isNotEligibleForParentWithoutBirthParent,
+  isFosterCareAndAdoption,
+  residentGrantIsOpenForApplication,
+  setTestBirthAndExpectedDate,
 } from './parentalLeaveUtils'
 import { PersonInformation } from '../types'
 
@@ -38,6 +71,7 @@ function buildApplication(data?: {
     created: new Date(),
     modified: new Date(),
     attachments: {},
+    applicantActors: [],
     answers,
     state,
     externalData,
@@ -45,10 +79,20 @@ function buildApplication(data?: {
   }
 }
 
-describe('getExpectedDateOfBirth', () => {
+function buildField(): Field {
+  return {
+    type: FieldTypes.TEXT,
+    component: FieldComponents.TEXT,
+    id: 'periods',
+    title: 'fieldTitle',
+    children: undefined,
+  }
+}
+
+describe('getExpectedDateOfBirthOrAdoptionDate', () => {
   it('should return undefined when no child is found', () => {
     const application = buildApplication()
-    const res = getExpectedDateOfBirth(application)
+    const res = getExpectedDateOfBirthOrAdoptionDate(application)
 
     expect(res).toBeUndefined()
   })
@@ -78,9 +122,73 @@ describe('getExpectedDateOfBirth', () => {
       },
     })
 
-    const res = getExpectedDateOfBirth(application)
+    const res = getExpectedDateOfBirthOrAdoptionDate(application)
 
     expect(res).toEqual('2021-05-17')
+  })
+})
+
+describe('isFosterCareAndAdoption', () => {
+  it('should return true if application is due to adoption for primary parent', () => {
+    const application = buildApplication({
+      answers: {
+        noChildrenFound: {
+          typeOfApplication: ADOPTION,
+        },
+        selectedChild: 0,
+      },
+      externalData: {
+        children: {
+          data: {
+            children: [
+              {
+                hasRights: true,
+                remainingDays: 180,
+                transferredDays: undefined,
+                parentalRelation: 'primary',
+                expectedDateOfBirth: '2022-12-20',
+              },
+            ],
+            existingApplications: [],
+          },
+          date: new Date('2022-11-07T20:05:46.422Z'),
+          status: 'success',
+        },
+      },
+    })
+
+    expect(isFosterCareAndAdoption(application)).toBe(true)
+  })
+
+  it('should return true if application is due to adoption for secondary parent', () => {
+    const application = buildApplication({
+      answers: {
+        selectedChild: 0,
+      },
+      externalData: {
+        children: {
+          data: {
+            children: [
+              {
+                hasRights: true,
+                remainingDays: 180,
+                transferredDays: 0,
+                parentalRelation: 'secondary',
+                expectedDateOfBirth: '2022-12-20',
+                primaryParentNationalRegistryId: '1111111119',
+                primaryParentGenderCode: '1',
+                primaryParentTypeOfApplication: ADOPTION,
+              },
+            ],
+            existingApplications: [],
+          },
+          date: new Date('2022-11-07T20:05:46.422Z'),
+          status: 'success',
+        },
+      },
+    })
+
+    expect(isFosterCareAndAdoption(application)).toBe(true)
   })
 })
 
@@ -156,6 +264,599 @@ describe('getTransferredDays', () => {
   })
 })
 
+describe('getMultipleBirthsDays', () => {
+  it('should return the number of multiple days of other parent', () => {
+    const application = buildApplication({
+      answers: {
+        multipleBirthsRequestDays: 80,
+        selectedChild: 0,
+      },
+      externalData: {
+        children: {
+          data: {
+            children: [
+              {
+                hasRights: true,
+                remainingDays: 235,
+                multipleBirthsDays: 55,
+                transferredDays: -14,
+                parentalRelation: 'secondary',
+                expectedDateOfBirth: '2022-12-20',
+              },
+            ],
+            existingApplications: [],
+          },
+          date: new Date('2022-11-07T20:05:46.422Z'),
+          status: 'success',
+        },
+      },
+    })
+
+    const res = getMultipleBirthsDays(application)
+
+    expect(res).toEqual(55)
+  })
+
+  it('should return the number of multiple days of primary parent', () => {
+    const application = buildApplication({
+      answers: {
+        multipleBirthsRequestDays: 80,
+        selectedChild: 0,
+        multipleBirths: {
+          hasMultipleBirths: YES,
+        },
+      },
+      externalData: {
+        children: {
+          data: {
+            children: [
+              {
+                hasRights: true,
+                transferredDays: -14,
+                parentalRelation: 'primary',
+                expectedDateOfBirth: '2022-12-20',
+              },
+            ],
+            existingApplications: [],
+          },
+          date: new Date('2022-11-07T20:05:46.422Z'),
+          status: 'success',
+        },
+      },
+    })
+
+    const res = getMultipleBirthsDays(application)
+
+    expect(res).toEqual(80)
+  })
+})
+
+describe('getMultipleBirthRequestDays', () => {
+  it('should return the number of multiple request days of primary parent', () => {
+    const application = buildApplication({
+      answers: {
+        multipleBirthsRequestDays: 80,
+        selectedChild: 0,
+        multipleBirths: {
+          hasMultipleBirths: YES,
+        },
+      },
+    })
+
+    const res = getMultipleBirthRequestDays(application.answers)
+
+    expect(res).toEqual(80)
+  })
+})
+
+describe('getMaxMultipleBirthsDays', () => {
+  it('should return the number of maximum multiple request days for 2 children', () => {
+    const application = buildApplication({
+      answers: {
+        multipleBirths: {
+          hasMultipleBirths: YES,
+          multipleBirths: 2,
+        },
+      },
+    })
+
+    const res = getMaxMultipleBirthsDays(application.answers)
+
+    expect(res).toEqual(90)
+  })
+
+  it('should return the number of maximum multiple request days for 3 children', () => {
+    const application = buildApplication({
+      answers: {
+        selectedChild: 0,
+        multipleBirths: {
+          hasMultipleBirths: YES,
+          multipleBirths: 3,
+        },
+      },
+    })
+
+    const res = getMaxMultipleBirthsDays(application.answers)
+
+    expect(res).toEqual(180)
+  })
+})
+
+describe('getMaxMultipleBirthsInMonths', () => {
+  it('should return the number of max multiple births days', () => {
+    const application = buildApplication({
+      answers: {
+        selectedChild: 0,
+        multipleBirths: {
+          hasMultipleBirths: YES,
+          multipleBirths: 2,
+        },
+      },
+    })
+
+    const res = getMaxMultipleBirthsInMonths(application.answers)
+
+    expect(res).toEqual(3)
+  })
+})
+
+describe('getMaxMultipleBirthsAndDefaultMonths', () => {
+  it('should return the number of months from max multiple births and default days', () => {
+    const application = buildApplication({
+      answers: {
+        selectedChild: 0,
+        multipleBirths: {
+          hasMultipleBirths: YES,
+          multipleBirths: 2,
+        },
+      },
+    })
+
+    const res = getMaxMultipleBirthsAndDefaultMonths(application.answers)
+
+    expect(res).toEqual(9)
+  })
+})
+
+describe('getAvailableRightsInDays', () => {
+  it('should return the number of available right with multiple births and request days for primary parent', () => {
+    const application = buildApplication({
+      answers: {
+        selectedChild: 0,
+        multipleBirthsRequestDays: 90,
+        multipleBirths: {
+          hasMultipleBirths: YES,
+          multipleBirths: 2,
+        },
+        requestRights: {
+          isRequestingRights: YES,
+          requestDays: 30,
+        },
+      },
+      externalData: {
+        children: {
+          data: {
+            children: [
+              {
+                hasRights: true,
+                remainingDays: 180,
+                transferredDays: 30,
+                parentalRelation: ParentalRelations.primary,
+                expectedDateOfBirth: '2021-05-17',
+              },
+            ],
+            existingApplications: [],
+          },
+          date: new Date(),
+          status: 'success',
+        },
+      },
+    })
+
+    const res = getAvailableRightsInDays(application)
+
+    expect(res).toBe(300)
+  })
+
+  it('should return the number of available right with multiple births and giving days for primary parent', () => {
+    const application = buildApplication({
+      answers: {
+        selectedChild: 0,
+        multipleBirthsRequestDays: 0,
+        multipleBirths: {
+          hasMultipleBirths: YES,
+          multipleBirths: 2,
+        },
+        giveRights: {
+          isGivingRights: YES,
+          giveDays: 30,
+        },
+      },
+      externalData: {
+        children: {
+          data: {
+            children: [
+              {
+                hasRights: true,
+                remainingDays: 180,
+                transferredDays: -30,
+                parentalRelation: ParentalRelations.primary,
+                expectedDateOfBirth: '2021-05-17',
+              },
+            ],
+            existingApplications: [],
+          },
+          date: new Date(),
+          status: 'success',
+        },
+      },
+    })
+
+    const res = getAvailableRightsInDays(application)
+
+    expect(res).toBe(150)
+  })
+
+  it('should return the number of available right with request days for primary parent', () => {
+    const application = buildApplication({
+      answers: {
+        selectedChild: 0,
+        requestRights: {
+          isRequestingRights: YES,
+          requestDays: 30,
+        },
+      },
+      externalData: {
+        children: {
+          data: {
+            children: [
+              {
+                hasRights: true,
+                remainingDays: 180,
+                transferredDays: 30,
+                parentalRelation: ParentalRelations.primary,
+                expectedDateOfBirth: '2021-05-17',
+              },
+            ],
+            existingApplications: [],
+          },
+          date: new Date(),
+          status: 'success',
+        },
+      },
+    })
+
+    const res = getAvailableRightsInDays(application)
+
+    expect(res).toBe(210)
+  })
+
+  it('should return the number of available right with request days for secondary parent', () => {
+    const application = buildApplication({
+      answers: {
+        selectedChild: 0,
+        requestRights: {
+          isRequestingRights: YES,
+          requestDays: 30,
+        },
+      },
+      externalData: {
+        children: {
+          data: {
+            children: [
+              {
+                hasRights: true,
+                remainingDays: 210,
+                transferredDays: 30,
+                parentalRelation: ParentalRelations.secondary,
+                expectedDateOfBirth: '2021-05-17',
+              },
+            ],
+            existingApplications: [],
+          },
+          date: new Date(),
+          status: 'success',
+        },
+      },
+    })
+
+    const res = getAvailableRightsInDays(application)
+
+    expect(res).toBe(210)
+  })
+
+  it('should return the number of available right with multiple births and giving days for secondary parent', () => {
+    const application = buildApplication({
+      answers: {
+        selectedChild: 0,
+        giveRights: {
+          isGivingRights: YES,
+          giveDays: 30,
+        },
+      },
+      externalData: {
+        children: {
+          data: {
+            children: [
+              {
+                hasRights: true,
+                remainingDays: 150,
+                transferredDays: -30,
+                parentalRelation: ParentalRelations.secondary,
+                expectedDateOfBirth: '2021-05-17',
+              },
+            ],
+            existingApplications: [],
+          },
+          date: new Date(),
+          status: 'success',
+        },
+      },
+    })
+
+    const res = getAvailableRightsInDays(application)
+
+    expect(res).toBe(150)
+  })
+})
+
+describe('getAvailablePersonalRightsInDays', () => {
+  it('should return the number of available right with multiple births and request days for primary parent', () => {
+    const application = buildApplication({
+      answers: {
+        selectedChild: 0,
+        multipleBirthsRequestDays: 90,
+        multipleBirths: {
+          hasMultipleBirths: YES,
+          multipleBirths: 2,
+        },
+        requestRights: {
+          isRequestingRights: YES,
+          requestDays: 30,
+        },
+      },
+      externalData: {
+        children: {
+          data: {
+            children: [
+              {
+                hasRights: true,
+                remainingDays: 180,
+                transferredDays: 30,
+                parentalRelation: ParentalRelations.primary,
+                expectedDateOfBirth: '2021-05-17',
+              },
+            ],
+            existingApplications: [],
+          },
+          date: new Date(),
+          status: 'success',
+        },
+      },
+    })
+
+    const res = getAvailablePersonalRightsInDays(application)
+
+    expect(res).toBe(180)
+  })
+
+  it('should return the number of available right with multiple births and giving days for primary parent', () => {
+    const application = buildApplication({
+      answers: {
+        selectedChild: 0,
+        multipleBirthsRequestDays: 0,
+        multipleBirths: {
+          hasMultipleBirths: YES,
+          multipleBirths: 2,
+        },
+        giveRights: {
+          isGivingRights: YES,
+          giveDays: 30,
+        },
+      },
+      externalData: {
+        children: {
+          data: {
+            children: [
+              {
+                hasRights: true,
+                remainingDays: 180,
+                transferredDays: -30,
+                parentalRelation: ParentalRelations.primary,
+                expectedDateOfBirth: '2021-05-17',
+              },
+            ],
+            existingApplications: [],
+          },
+          date: new Date(),
+          status: 'success',
+        },
+      },
+    })
+
+    const res = getAvailablePersonalRightsInDays(application)
+
+    expect(res).toBe(180)
+  })
+
+  it('should return the number of available right with request days for primary parent', () => {
+    const application = buildApplication({
+      answers: {
+        selectedChild: 0,
+        requestRights: {
+          isRequestingRights: YES,
+          requestDays: 30,
+        },
+      },
+      externalData: {
+        children: {
+          data: {
+            children: [
+              {
+                hasRights: true,
+                remainingDays: 180,
+                transferredDays: 30,
+                parentalRelation: ParentalRelations.primary,
+                expectedDateOfBirth: '2021-05-17',
+              },
+            ],
+            existingApplications: [],
+          },
+          date: new Date(),
+          status: 'success',
+        },
+      },
+    })
+
+    const res = getAvailablePersonalRightsInDays(application)
+
+    expect(res).toBe(180)
+  })
+
+  it('should return the number of available right with request days for secondary parent', () => {
+    const application = buildApplication({
+      answers: {
+        selectedChild: 0,
+        requestRights: {
+          isRequestingRights: YES,
+          requestDays: 30,
+        },
+      },
+      externalData: {
+        children: {
+          data: {
+            children: [
+              {
+                hasRights: true,
+                remainingDays: 210,
+                transferredDays: 30,
+                parentalRelation: ParentalRelations.secondary,
+                expectedDateOfBirth: '2021-05-17',
+              },
+            ],
+            existingApplications: [],
+          },
+          date: new Date(),
+          status: 'success',
+        },
+      },
+    })
+
+    const res = getAvailablePersonalRightsInDays(application)
+
+    expect(res).toBe(180)
+  })
+
+  it('should return the number of available right with multiple births and giving days for secondary parent', () => {
+    const application = buildApplication({
+      answers: {
+        selectedChild: 0,
+        giveRights: {
+          isGivingRights: YES,
+          giveDays: 30,
+        },
+      },
+      externalData: {
+        children: {
+          data: {
+            children: [
+              {
+                hasRights: true,
+                remainingDays: 150,
+                transferredDays: -30,
+                parentalRelation: ParentalRelations.secondary,
+                expectedDateOfBirth: '2021-05-17',
+              },
+            ],
+            existingApplications: [],
+          },
+          date: new Date(),
+          status: 'success',
+        },
+      },
+    })
+
+    const res = getAvailablePersonalRightsInDays(application)
+
+    expect(res).toBe(180)
+  })
+})
+
+describe('getAvailablePersonalRightsInMonths', () => {
+  it('should return the number of months with multiple births and request days for primary parent', () => {
+    const application = buildApplication({
+      answers: {
+        selectedChild: 0,
+        multipleBirthsRequestDays: 90,
+        multipleBirths: {
+          hasMultipleBirths: YES,
+          multipleBirths: 2,
+        },
+        requestRights: {
+          isRequestingRights: YES,
+          requestDays: 30,
+        },
+      },
+      externalData: {
+        children: {
+          data: {
+            children: [
+              {
+                hasRights: true,
+                remainingDays: 180,
+                transferredDays: 30,
+                parentalRelation: ParentalRelations.primary,
+                expectedDateOfBirth: '2021-05-17',
+              },
+            ],
+            existingApplications: [],
+          },
+          date: new Date(),
+          status: 'success',
+        },
+      },
+    })
+
+    const res = getAvailablePersonalRightsInMonths(application)
+
+    expect(res).toBe(6)
+  })
+
+  it('should return the number of months with multiple births and giving days for secondary parent', () => {
+    const application = buildApplication({
+      answers: {
+        selectedChild: 0,
+        giveRights: {
+          isGivingRights: YES,
+          giveDays: 30,
+        },
+      },
+      externalData: {
+        children: {
+          data: {
+            children: [
+              {
+                hasRights: true,
+                remainingDays: 150,
+                transferredDays: -30,
+                parentalRelation: ParentalRelations.secondary,
+                expectedDateOfBirth: '2021-05-17',
+              },
+            ],
+            existingApplications: [],
+          },
+          date: new Date(),
+          status: 'success',
+        },
+      },
+    })
+
+    const res = getAvailablePersonalRightsInMonths(application)
+
+    expect(res).toBe(6)
+  })
+})
+
 describe('getAvailableRightsInMonths', () => {
   it('should return an error when no child is selected', () => {
     const application = buildApplication()
@@ -192,6 +893,185 @@ describe('getAvailableRightsInMonths', () => {
     const res = getAvailableRightsInMonths(application)
 
     expect(res).toBe(6)
+  })
+
+  it('should return the number of months with multiple births and request days for primary parent', () => {
+    const application = buildApplication({
+      answers: {
+        selectedChild: 0,
+        multipleBirthsRequestDays: 90,
+        multipleBirths: {
+          hasMultipleBirths: YES,
+          multipleBirths: 2,
+        },
+        requestRights: {
+          isRequestingRights: YES,
+          requestDays: 30,
+        },
+      },
+      externalData: {
+        children: {
+          data: {
+            children: [
+              {
+                hasRights: true,
+                remainingDays: 180,
+                transferredDays: 30,
+                parentalRelation: ParentalRelations.primary,
+                expectedDateOfBirth: '2021-05-17',
+              },
+            ],
+            existingApplications: [],
+          },
+          date: new Date(),
+          status: 'success',
+        },
+      },
+    })
+
+    const res = getAvailableRightsInMonths(application)
+
+    expect(res).toBe(10)
+  })
+})
+
+describe('Single Parent', () => {
+  it('getAdditionalSingleParentRightsInDays - should return 0 additional days when not single parent', () => {
+    const application = buildApplication()
+
+    const res = getAdditionalSingleParentRightsInDays(application)
+
+    expect(res).toBe(0)
+  })
+
+  it('getAdditionalSingleParentRightsInDays - should return 180 days for additional right for single parent', () => {
+    const application = buildApplication({
+      answers: {
+        selectedChild: 0,
+        otherParent: SINGLE,
+      },
+      externalData: {
+        children: {
+          data: {
+            children: [
+              {
+                hasRights: true,
+                remainingDays: 180,
+                parentalRelation: ParentalRelations.primary,
+                expectedDateOfBirth: '2021-05-17',
+              },
+            ],
+            existingApplications: [],
+          },
+          date: new Date(),
+          status: 'success',
+        },
+      },
+    })
+
+    const res = getAdditionalSingleParentRightsInDays(application)
+
+    expect(res).toBe(180)
+  })
+
+  it('getAdditionalSingleParentRightsInDays - should return 450 for single parent personal right', () => {
+    const application = buildApplication({
+      answers: {
+        selectedChild: 0,
+        otherParent: SINGLE,
+        multipleBirths: {
+          multipleBirths: 2,
+          hasMultipleBirths: YES,
+        },
+      },
+      externalData: {
+        children: {
+          data: {
+            children: [
+              {
+                hasRights: true,
+                remainingDays: 180,
+                parentalRelation: ParentalRelations.primary,
+                expectedDateOfBirth: '2021-05-17',
+              },
+            ],
+            existingApplications: [],
+          },
+          date: new Date(),
+          status: 'success',
+        },
+      },
+    })
+
+    const res = getAvailableRightsInDays(application)
+
+    expect(res).toBe(450)
+  })
+
+  it('getAvailablePersonalRightsSingleParentInMonths - should return 12 months for single parents', () => {
+    const application = buildApplication({
+      answers: {
+        selectedChild: 0,
+        otherParent: SINGLE,
+      },
+      externalData: {
+        children: {
+          data: {
+            children: [
+              {
+                hasRights: true,
+                remainingDays: 180,
+                parentalRelation: ParentalRelations.primary,
+                expectedDateOfBirth: '2021-05-17',
+              },
+            ],
+            existingApplications: [],
+          },
+          date: new Date(),
+          status: 'success',
+        },
+      },
+    })
+
+    const res = getAvailablePersonalRightsSingleParentInMonths(application)
+
+    expect(res).toBe(12)
+  })
+})
+
+describe('getSpouse', () => {
+  it('should return null with no spouse', () => {
+    const application = buildApplication()
+    expect(getSpouse(application)).toEqual(null)
+  })
+  it('should return name and national ID of spouse', () => {
+    const application = buildApplication({
+      externalData: {
+        person: {
+          data: {
+            spouse: {
+              name: 'my spouse',
+              nationalId: 'spouse national ID',
+            },
+          },
+          date: new Date(),
+          status: 'success',
+        },
+      },
+    })
+    expect(getSpouse(application)).toEqual({
+      name: 'my spouse',
+      nationalId: 'spouse national ID',
+    })
+  })
+})
+
+describe('isEligableForParentalLeave', () => {
+  it('should return undefined without data', () => {
+    const application = buildApplication()
+    expect(isEligibleForParentalLeave(application.externalData)).toEqual(
+      undefined,
+    )
   })
 })
 
@@ -240,6 +1120,119 @@ describe('getSelectedChild', () => {
   })
 })
 
+describe('getPeriodIndex', () => {
+  it('should return -1 if field id is missing', () => {
+    expect(getPeriodIndex()).toEqual(-1)
+  })
+  it('should return 0 if field id === periods', () => {
+    const field = buildField()
+    expect(getPeriodIndex(field)).toEqual(0)
+  })
+})
+
+describe('getApplicationExternalData', () => {
+  it('should get external data from application with expected return values', () => {
+    const application = buildApplication({
+      externalData: {
+        children: {
+          data: {
+            children: 'Mock child',
+            existingApplications: 'Mock application',
+          },
+          date: new Date(),
+          status: 'success',
+        },
+        userProfile: {
+          data: {
+            email: 'mock@email.is',
+            mobilePhoneNumber: 'Mock number',
+          },
+          date: new Date(),
+          status: 'success',
+        },
+        person: {
+          data: {
+            genderCode: 'Mock gender code',
+            fullName: 'Mock name',
+          },
+          date: new Date(),
+          status: 'success',
+        },
+      },
+    })
+    expect(getApplicationExternalData(application.externalData)).toEqual({
+      applicantGenderCode: 'Mock gender code',
+      applicantName: 'Mock name',
+      applicationFundId: '',
+      children: 'Mock child',
+      dataProvider: {
+        children: 'Mock child',
+        existingApplications: 'Mock application',
+      },
+      existingApplications: 'Mock application',
+      navId: '',
+      userEmail: 'mock@email.is',
+      userPhoneNumber: 'Mock number',
+    })
+  })
+})
+
+describe('ParentWithOutBirthParent', () => {
+  it('should return true if question one and two are answeres YES and thrid question answered NO', () => {
+    const application = buildApplication({
+      answers: {
+        noPrimaryParent: {
+          birthDate: '2023-02-03',
+          questionOne: 'yes',
+          questionTwo: 'yes',
+          questionThree: 'no',
+        },
+      },
+    })
+    expect(isParentWithoutBirthParent(application.answers)).toBe(true)
+  })
+
+  it('should return true if either question one and two are answeres NO and/or thrid question answered YES', () => {
+    const application = buildApplication({
+      answers: {
+        noPrimaryParent: {
+          questionOne: 'no',
+          questionTwo: 'yes',
+          questionThree: 'no',
+        },
+      },
+    })
+    expect(isNotEligibleForParentWithoutBirthParent(application.answers)).toBe(
+      true,
+    )
+  })
+})
+
+describe('requiresOtherParentApproval', () => {
+  it('should return false when conditions not met', () => {
+    const application = buildApplication()
+    expect(
+      requiresOtherParentApproval(
+        application.answers,
+        application.externalData,
+      ),
+    ).toBe(false)
+  })
+  it('should return true when usePersonalAllowanceFromSpouse === YES ', () => {
+    const application = buildApplication({
+      answers: {
+        usePersonalAllowanceFromSpouse: YES,
+      },
+    })
+    expect(
+      requiresOtherParentApproval(
+        application.answers,
+        application.externalData,
+      ),
+    ).toBe(true)
+  })
+})
+
 describe('getOtherParentId', () => {
   let id = 0
   const createApplicationBase = (): Application => ({
@@ -249,6 +1242,7 @@ describe('getOtherParentId', () => {
     attachments: {},
     created: new Date(),
     modified: new Date(),
+    applicantActors: [],
     externalData: {},
     id: (id++).toString(),
     state: '',
@@ -262,18 +1256,21 @@ describe('getOtherParentId', () => {
     application = createApplicationBase()
   })
 
-  it('should return undefined if no parent is selected', () => {
-    application.answers.otherParent = NO
+  it('should return undefined if NO parent is selected', () => {
+    application.answers.otherParentObj = {
+      chooseOtherParent: NO,
+    }
 
     expect(getOtherParentId(application)).toBeUndefined()
   })
 
   it('should return answers.otherParentId if manual is selected', () => {
-    application.answers.otherParent = MANUAL
-
     const expectedId = '1234567899'
 
-    application.answers.otherParentId = expectedId
+    application.answers.otherParentObj = {
+      chooseOtherParent: MANUAL,
+      otherParentId: expectedId,
+    }
 
     expect(getOtherParentId(application)).toBe(expectedId)
   })
@@ -291,9 +1288,91 @@ describe('getOtherParentId', () => {
       date: new Date(),
       status: 'success',
     }
-    application.answers.otherParent = 'spouse'
+    application.answers.otherParentObj = {
+      chooseOtherParent: 'spouse',
+    }
 
     expect(getOtherParentId(application)).toBe(expectedSpouse.nationalId)
+  })
+
+  it('should not return other parent id if where is no primary parent birth date', () => {
+    const expectedId = ''
+
+    const application = buildApplication({
+      answers: {
+        noPrimaryParent: {
+          birthDate: '2023-02-03',
+          questionOne: 'no',
+          questionTwo: 'yes',
+          questionThree: 'yes',
+        },
+      },
+    })
+
+    expect(getOtherParentId(application)).toBe(expectedId)
+  })
+})
+
+describe('getOtherParentName', () => {
+  let id = 0
+  const createApplicationBase = (): Application => ({
+    answers: {},
+    applicant: '',
+    assignees: [],
+    attachments: {},
+    created: new Date(),
+    modified: new Date(),
+    applicantActors: [],
+    externalData: {},
+    id: (id++).toString(),
+    state: '',
+    typeId: ApplicationTypes.PARENTAL_LEAVE,
+    name: '',
+    status: ApplicationStatus.IN_PROGRESS,
+  })
+
+  let application: Application
+  beforeEach(() => {
+    application = createApplicationBase()
+  })
+
+  it('should return undefined if NO parent is selected', () => {
+    application.answers.otherParentObj = {
+      chooseOtherParent: NO,
+    }
+
+    expect(getOtherParentName(application)).toBeUndefined()
+  })
+
+  it('should return answers.otherParentName if manual is selected', () => {
+    const expectedName = '1234567899'
+
+    application.answers.otherParentObj = {
+      chooseOtherParent: MANUAL,
+      otherParentName: expectedName,
+    }
+
+    expect(getOtherParentName(application)).toBe(expectedName)
+  })
+
+  it('should return spouse if spouse is selected', () => {
+    const expectedSpouse: PersonInformation['spouse'] = {
+      name: 'Spouse Spouseson',
+      nationalId: '1234567890',
+    }
+
+    application.externalData.person = {
+      data: {
+        spouse: expectedSpouse,
+      },
+      date: new Date(),
+      status: 'success',
+    }
+    application.answers.otherParentObj = {
+      chooseOtherParent: 'spouse',
+    }
+
+    expect(getOtherParentName(application)).toBe(expectedSpouse.name)
   })
 })
 
@@ -430,3 +1509,37 @@ describe('applicantIsMale', () => {
     expect(applicantIsMale(application)).toBe(true)
   })
 })
+
+test.each([
+  { parentRelation: '', expected: false },
+  { parentRelation: SPOUSE, expected: true },
+  { parentRelation: SINGLE, expected: false },
+  { parentRelation: 'some bogus value', expected: false },
+])(
+  'it should return true if the otherParent is SPOUSE otherwise false',
+  ({ parentRelation, expected }) => {
+    const application = buildApplication({
+      answers: {
+        otherParentObj: {
+          chooseOtherParent: parentRelation,
+        },
+      },
+    })
+    expect(allowOtherParentToUsePersonalAllowance(application.answers)).toBe(
+      expected,
+    )
+  },
+)
+test.each([
+  { date: setTestBirthAndExpectedDate(6, 0, false, true), expected: true },
+  { date: setTestBirthAndExpectedDate(7, 0, false, true), expected: false },
+  { date: setTestBirthAndExpectedDate(1, 0, true, false), expected: false },
+  { date: setTestBirthAndExpectedDate(0, 0, true, false), expected: true },
+  { date: setTestBirthAndExpectedDate(0, 0, false, true), expected: true },
+  { date: setTestBirthAndExpectedDate(10), expected: true },
+])(
+  'should return true if today is after the date and within 6 months of the date',
+  ({ date, expected }) => {
+    expect(residentGrantIsOpenForApplication(date.birthDate)).toBe(expected)
+  },
+)

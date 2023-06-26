@@ -1,18 +1,24 @@
-import React, { createContext, ReactNode, useEffect, useState } from 'react'
+import React, {
+  createContext,
+  ReactNode,
+  useContext,
+  useEffect,
+  useState,
+} from 'react'
 import { useLazyQuery } from '@apollo/client'
 import { useRouter } from 'next/router'
 
+import { CaseState, Defendant } from '@island.is/judicial-system/types'
+import { USERS_ROUTE } from '@island.is/judicial-system/consts'
 import {
-  Case,
-  CaseOrigin,
-  CaseState,
   CaseType,
-  Defendant,
-} from '@island.is/judicial-system/types'
+  CaseOrigin,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 
-import { CaseData, RestrictedCaseData } from '../../types'
-import { CaseQuery } from './caseGql'
-import { RestrictedCaseQuery } from './restrictedCaseGql'
+import { CaseData, LimitedAccessCaseData, TempCase as Case } from '../../types'
+import { UserContext } from '../UserProvider/UserProvider'
+import LimitedAccessCaseQuery from './limitedAccessCaseGql'
+import CaseQuery from './caseGql'
 
 type ProviderState =
   | 'fetch'
@@ -42,8 +48,9 @@ const initialState: Case = {
   origin: CaseOrigin.UNKNOWN,
   type: CaseType.CUSTODY,
   state: CaseState.NEW,
-  policeCaseNumber: '',
-  defendants: [{ id: '' } as Defendant],
+  policeCaseNumbers: [],
+  defendants: [{ id: '', noNationalId: false } as Defendant],
+  defendantWaivesRightToCounsel: false,
 }
 
 export const FormContext = createContext<FormProvider>({
@@ -56,17 +63,29 @@ export const FormContext = createContext<FormProvider>({
   refreshCase: () => {},
 })
 
-const FormProvider = ({ children }: Props) => {
+const MaybeFormProvider = ({ children }: Props) => {
   const router = useRouter()
-  const restricted = router.pathname.includes('verjandi')
+  return router.pathname.includes(USERS_ROUTE) ? (
+    // eslint-disable-next-line react/jsx-no-useless-fragment
+    <>{children}</>
+  ) : (
+    <FormProvider>{children}</FormProvider>
+  )
+}
+
+const FormProvider = ({ children }: Props) => {
+  const { limitedAccess } = useContext(UserContext)
+  const router = useRouter()
   const id = router.query.id
 
   const caseType = router.pathname.includes('farbann')
     ? CaseType.TRAVEL_BAN
     : router.pathname.includes('gaesluvardhald')
     ? CaseType.CUSTODY
-    : // This is just a random investigation case type for the default value. This
-      // is updated when the case is created.
+    : router.pathname.includes('akaera')
+    ? CaseType.INDICTMENT
+    : // This is a random case type for the default value.
+      // It is updated when the case is created.
       CaseType.OTHER
 
   const [state, setState] = useState<ProviderState>()
@@ -75,6 +94,7 @@ const FormProvider = ({ children }: Props) => {
   const [workingCase, setWorkingCase] = useState<Case>({
     ...initialState,
     type: caseType,
+    policeCaseNumbers: caseType === CaseType.INDICTMENT ? [''] : [],
   })
 
   // Used in exported indicators
@@ -98,10 +118,10 @@ const FormProvider = ({ children }: Props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router.query.id, router.pathname])
 
-  const caseQuery = restricted ? RestrictedCaseQuery : CaseQuery
-  const resultProperty = restricted ? 'restrictedCase' : 'case'
+  const caseQuery = limitedAccess ? LimitedAccessCaseQuery : CaseQuery
+  const resultProperty = limitedAccess ? 'limitedAccessCase' : 'case'
 
-  const [getCase] = useLazyQuery<CaseData & RestrictedCaseData>(caseQuery, {
+  const [getCase] = useLazyQuery<CaseData & LimitedAccessCaseData>(caseQuery, {
     fetchPolicy: 'no-cache',
     onCompleted: (caseData) => {
       if (caseData && caseData[resultProperty]) {
@@ -153,4 +173,4 @@ const FormProvider = ({ children }: Props) => {
   )
 }
 
-export default FormProvider
+export { MaybeFormProvider as FormProvider }

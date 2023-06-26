@@ -1,3 +1,9 @@
+export type RegistryGender = 'kk' | 'kvk' | 'x' | 'hvk'
+
+export type UncategorizedGender = 'manneskja'
+
+export type Gender = RegistryGender | UncategorizedGender
+
 export interface Fund {
   credit: number
   used: number
@@ -9,7 +15,7 @@ export interface BaseUser {
   firstName: string
   middleName: string
   lastName: string
-  gender: 'kk' | 'kvk' | 'hvk'
+  gender: Gender
   fund: Fund
 }
 

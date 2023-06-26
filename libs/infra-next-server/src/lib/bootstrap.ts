@@ -1,11 +1,15 @@
 import '@island.is/infra-tracing'
-import next from 'next'
-import { logger, monkeyPatchServerLogging } from '@island.is/logging'
-import { startMetricServer } from '@island.is/infra-metrics'
+
 import createExpressApp, { Express } from 'express'
+
+import next from 'next'
+
+import { startMetricServer } from '@island.is/infra-metrics'
+import { logger, monkeyPatchServerLogging } from '@island.is/logging'
+
 import { getNextConfig } from './config'
+import { ExternalEndpointDependencies, setupHealthchecks } from './health'
 import { setupProxy } from './proxy'
-import type { Config } from 'http-proxy-middleware'
 
 type BootstrapOptions = {
   /**
@@ -26,7 +30,14 @@ type BootstrapOptions = {
   /**
    * Proxy configuration. Ignored in production (according to NODE_ENV).
    */
-  proxyConfig?: { [context: string]: Config }
+  proxyConfig?: { [context: string]: any }
+
+  /**
+   * External dependencies to do DNS lookup for the /readiness healthcheck
+   * If values needs to be read from the next config of the app you can provide
+   * a callback function, which is called when the next config has loaded.
+   */
+  externalEndpointDependencies?: ExternalEndpointDependencies
 }
 
 const startServer = (app: Express, port = 4200) => {
@@ -63,12 +74,27 @@ export const bootstrap = async (options: BootstrapOptions) => {
 
   await setupProxy(expressApp, options.proxyConfig, dev)
 
-  const nextConfig = getNextConfig(options.appDir, dev)
+  const nextConfig = await getNextConfig(options.appDir, dev)
   const nextApp = next(nextConfig)
   const handle = nextApp.getRequestHandler()
-  expressApp.all('*', (req, res) => handle(req, res))
+  const readyPromise = nextApp.prepare()
+
+  setupHealthchecks(
+    expressApp,
+    readyPromise,
+    options.externalEndpointDependencies,
+  )
+
+  expressApp.use((req, res) => {
+    // Configure long caching for web fonts (often in public folder).
+    if (req.url.match('.woff2?$')) {
+      res.setHeader('Cache-Control', 'public, max-age=31536000') // 365 days
+    }
+
+    handle(req, res as never)
+  })
 
   startServer(expressApp, options.port)
 
-  await nextApp.prepare()
+  await readyPromise
 }

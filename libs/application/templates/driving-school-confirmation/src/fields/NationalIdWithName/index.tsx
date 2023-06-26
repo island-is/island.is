@@ -1,8 +1,9 @@
 import React, { FC, useEffect, useState } from 'react'
-import { Box, GridRow, GridColumn } from '@island.is/island-ui/core'
+import { Box, GridRow, GridColumn, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
-import { FieldBaseProps, getErrorViaPath } from '@island.is/application/core'
+import { getErrorViaPath } from '@island.is/application/core'
+import { FieldBaseProps } from '@island.is/application/types'
 import { gql, useLazyQuery } from '@apollo/client'
 import { IdentityInput, Query } from '@island.is/api/schema'
 import { InputController } from '@island.is/shared/form-fields'
@@ -22,7 +23,10 @@ const IdentityQuery = gql`
 const NationalIdWithName: FC<FieldBaseProps> = ({ field, application }) => {
   const { id } = field
   const { formatMessage } = useLocale()
-  const { setValue, errors } = useFormContext()
+  const {
+    setValue,
+    formState: { errors },
+  } = useFormContext()
   const [nationalIdInput, setNationalIdInput] = useState('')
   const nameField = `${id}.name`
   const nationaIdField = `${id}.nationalId`
@@ -54,6 +58,12 @@ const NationalIdWithName: FC<FieldBaseProps> = ({ field, application }) => {
 
   return (
     <Box>
+      <Text marginBottom={3}>
+        {formatMessage(m.studentInfoSubtitle) +
+          (application.externalData.drivingSchoolForEmployee.data as any)
+            ?.name +
+          '.'}
+      </Text>
       <GridRow>
         <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
           <InputController

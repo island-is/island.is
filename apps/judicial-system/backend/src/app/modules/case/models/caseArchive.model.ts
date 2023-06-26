@@ -16,7 +16,7 @@ import { Case } from '../../case/models/case.model'
   tableName: 'case_archive',
   timestamps: false,
 })
-export class CaseArchive extends Model<CaseArchive> {
+export class CaseArchive extends Model {
   @Column({
     type: DataType.UUID,
     primaryKey: true,

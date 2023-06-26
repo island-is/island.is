@@ -1,5 +1,5 @@
 import React, { FC } from 'react'
-import { m } from '@island.is/service-portal/core'
+import { m } from '../../lib/messages'
 import { MessageDescriptor } from 'react-intl'
 import { useLocale } from '@island.is/localization'
 import { useLocation } from 'react-router-dom'

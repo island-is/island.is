@@ -1,6 +1,12 @@
-import { DynamicModule, HttpModule } from '@nestjs/common'
+import { DynamicModule } from '@nestjs/common'
+import { HttpModule } from '@nestjs/axios'
 
-import { FamilyMemberResolver, UserResolver, ChildResolver } from './graphql'
+import {
+  FamilyMemberResolver,
+  UserResolver,
+  ChildResolver,
+  CorrectionResolver,
+} from './graphql'
 import { NationalRegistryService } from './nationalRegistry.service'
 import {
   NationalRegistryApi,
@@ -25,8 +31,11 @@ export class NationalRegistryModule {
         UserResolver,
         FamilyMemberResolver,
         ChildResolver,
+        CorrectionResolver,
         {
           provide: NationalRegistryApi,
+          // See method doc for disable reason.
+          // eslint-disable-next-line local-rules/no-async-module-init
           useFactory: async () =>
             NationalRegistryApi.instantiateClass(config.nationalRegistry),
         },

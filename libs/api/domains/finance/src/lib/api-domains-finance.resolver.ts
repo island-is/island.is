@@ -167,6 +167,7 @@ export class FinanceResolver {
 
   @Query(() => CustomerTapsControlModel, { nullable: true })
   @Audit()
+  @Scopes(ApiScope.financeOverview, ApiScope.financeSalary)
   async getCustomerTapControl(@CurrentUser() user: User) {
     return this.financeService.getCustomerTapControl(user.nationalId, user)
   }
@@ -197,7 +198,7 @@ export class FinanceResolver {
     return null
   }
 
-  @Query(() => graphqlTypeJson)
+  @Query(() => DebtStatusModel)
   @Audit()
   @Scopes(ApiScope.financeOverview, ApiScope.financeSchedule)
   async getDebtStatus(@CurrentUser() user: User) {

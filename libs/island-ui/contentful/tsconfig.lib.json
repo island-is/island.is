@@ -6,7 +6,9 @@
   },
   "exclude": [
     "**/*.spec.ts",
+    "**/*.test.ts",
     "**/*.spec.tsx",
+    "**/*.test.tsx",
     "**/*.stories.ts",
     "**/*.stories.js"
   ],

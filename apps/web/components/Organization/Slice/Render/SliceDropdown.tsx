@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { Slice } from '@island.is/web/graphql/schema'
-import { OrganizationSlice } from '@island.is/web/components'
+import { SliceMachine } from '@island.is/web/components'
 import {
+  BoxProps,
   GridColumn,
   GridContainer,
   GridRow,
@@ -10,31 +11,47 @@ import {
 } from '@island.is/island-ui/core'
 import { useRouter } from 'next/router'
 import slugify from '@sindresorhus/slugify'
+import { SpanType } from '@island.is/island-ui/core/types'
 
 interface SliceProps {
   slices: Slice[]
   sliceExtraText: string
+  gridSpan?: SpanType
+  gridOffset?: SpanType
+  slicesAreFullWidth?: boolean
+  dropdownMarginBottom?: BoxProps['marginBottom']
 }
 
 export const SliceDropdown: React.FC<SliceProps> = ({
   slices,
   sliceExtraText,
+  gridSpan = ['9/9', '9/9', '7/9', '7/9', '4/9'],
+  gridOffset = ['0', '0', '1/9'],
+  slicesAreFullWidth = false,
+  dropdownMarginBottom = 0,
 }) => {
   const Router = useRouter()
   const [selectedId, setSelectedId] = useState<string>('')
-  const options = []
-  for (const slice of slices) {
-    if (slice.__typename === 'OneColumnText') {
-      options.push({
-        label: slice.title,
-        value: slice.id,
-        slug: slugify(slice.title),
-      })
+  const options = useMemo(() => {
+    const options = []
+    for (const slice of slices) {
+      if (slice.__typename === 'OneColumnText') {
+        options.push({
+          label: slice.title,
+          value: slice.id,
+          slug: slugify(slice.title),
+        })
+      }
     }
-  }
+    return options
+  }, [slices])
 
   useEffect(() => {
     const hashString = window.location.hash.replace('#', '')
+    if (!options.length) {
+      return
+    }
+
     setSelectedId(
       hashString
         ? options.find((x) => x.slug === hashString).value
@@ -47,12 +64,8 @@ export const SliceDropdown: React.FC<SliceProps> = ({
   return (
     <>
       <GridContainer>
-        <GridRow>
-          <GridColumn
-            paddingBottom={[4, 4, 6]}
-            span={['9/9', '9/9', '7/9', '7/9', '4/9']}
-            offset={['0', '0', '1/9']}
-          >
+        <GridRow marginBottom={dropdownMarginBottom}>
+          <GridColumn span={gridSpan} offset={gridOffset}>
             <Select
               backgroundColor="white"
               icon="chevronDown"
@@ -65,12 +78,13 @@ export const SliceDropdown: React.FC<SliceProps> = ({
               onChange={({ value }: Option) => {
                 const slug = options.find((x) => x.value === value).slug
                 setSelectedId(String(value))
-                Router.replace(
-                  window.location.protocol +
-                    '//' +
-                    window.location.host +
-                    window.location.pathname +
-                    `#${slug}`,
+                Router.push(
+                  {
+                    pathname: Router.asPath.split('#')[0],
+                    hash: slug,
+                  },
+                  undefined,
+                  { shallow: true },
                 )
               }}
             />
@@ -78,10 +92,11 @@ export const SliceDropdown: React.FC<SliceProps> = ({
         </GridRow>
       </GridContainer>
       {!!selectedSlice && (
-        <OrganizationSlice
+        <SliceMachine
           key={selectedSlice.id}
           slice={selectedSlice}
           namespace={null}
+          fullWidth={slicesAreFullWidth}
         />
       )}
     </>

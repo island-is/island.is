@@ -1,4 +1,3 @@
-import { Base, JudicialSystem } from '../../../../infra/src/dsl/xroad'
 import { ref, service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
 
 export const serviceSetup = (services: {
@@ -28,13 +27,17 @@ export const serviceSetup = (services: {
         staging: 'cdn.contentful.com',
         prod: 'cdn.contentful.com',
       },
+      CONTENTFUL_ENVIRONMENT: {
+        dev: 'test',
+        staging: 'test',
+        prod: 'master',
+      },
       HIDDEN_FEATURES: {
         dev: '',
-        staging: '',
-        prod: '',
+        staging: 'APPEAL_TO_COURT_OF_APPEALS',
+        prod: 'APPEAL_TO_COURT_OF_APPEALS',
       },
     })
-    .xroad(Base, JudicialSystem)
     .secrets({
       AUTH_JWT_SECRET: '/k8s/judicial-system/AUTH_JWT_SECRET',
       BACKEND_ACCESS_TOKEN: '/k8s/judicial-system/BACKEND_ACCESS_TOKEN',
@@ -50,6 +53,20 @@ export const serviceSetup = (services: {
           prod: 'rettarvorslugatt.island.is',
         },
         paths: ['/api/graphql', '/api/auth', '/api/case', '/api/feature'],
+        extraAnnotations: {
+          dev: {
+            'nginx.ingress.kubernetes.io/proxy-buffering': 'on',
+            'nginx.ingress.kubernetes.io/proxy-buffer-size': '8k',
+          },
+          staging: {
+            'nginx.ingress.kubernetes.io/proxy-buffering': 'on',
+            'nginx.ingress.kubernetes.io/proxy-buffer-size': '8k',
+          },
+          prod: {
+            'nginx.ingress.kubernetes.io/proxy-buffering': 'on',
+            'nginx.ingress.kubernetes.io/proxy-buffer-size': '8k',
+          },
+        },
       },
     })
     .grantNamespaces('nginx-ingress-external')

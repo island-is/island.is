@@ -10,7 +10,8 @@ import {
   CaseState,
   completedCaseStates,
   User,
-  UserRole,
+  isProsecutionRole,
+  isExtendedCourtRole,
 } from '@island.is/judicial-system/types'
 
 import { Case } from '../../case'
@@ -32,15 +33,16 @@ export class ViewCaseFileGuard implements CanActivate {
       throw new InternalServerErrorException('Missing case')
     }
 
-    // Prosecutors have permission to view all case files
-    if (user.role === UserRole.PROSECUTOR) {
+    // TODO: Limit access based on a combination of
+    // case type, case state, appeal case state and case file category
+    // to get accurate case file permissions
+
+    if (isProsecutionRole(user.role)) {
       return true
     }
 
-    // Judges and registrars have permission to view files of submitted and
-    // completed cases
     if (
-      [UserRole.JUDGE, UserRole.REGISTRAR].includes(user.role) &&
+      isExtendedCourtRole(user.role) &&
       [
         CaseState.SUBMITTED,
         CaseState.RECEIVED,
@@ -50,7 +52,6 @@ export class ViewCaseFileGuard implements CanActivate {
       return true
     }
 
-    // Other users do not have permission to view any case files
     throw new ForbiddenException(`Forbidden for ${user.role}`)
   }
 }

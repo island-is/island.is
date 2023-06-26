@@ -10,6 +10,7 @@ import {
   MunicipalitiesFinancialAidScope,
 } from '@island.is/auth/scopes'
 
+// Are users mocked?
 const userMocked = process.env.API_MOCKS === 'true'
 
 if (userMocked) {
@@ -35,7 +36,9 @@ if (userMocked) {
       NationalRegistryScope.individuals,
       EndorsementsScope.main,
       ApiScope.internal,
+      ApiScope.internalProcuring,
       ApiScope.meDetails,
+      ApiScope.fishingLicense,
       MunicipalitiesFinancialAidScope.read,
       MunicipalitiesFinancialAidScope.write,
       MunicipalitiesFinancialAidScope.applicant,

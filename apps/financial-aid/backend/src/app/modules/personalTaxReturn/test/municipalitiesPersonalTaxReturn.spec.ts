@@ -21,7 +21,7 @@ describe('PersonalTaxReturnController - Municipalities Personal Tax Return', () 
   let mockFileService: FileService
   let mockPersonalTaxReturnApi: PersonalTaxReturnApi
 
-  let folderId = uuid()
+  const folderId = uuid()
 
   beforeEach(async () => {
     const {
@@ -85,7 +85,7 @@ describe('PersonalTaxReturnController - Municipalities Personal Tax Return', () 
     })
 
     it('should return undefined', () => {
-      expect(then.result).toBeUndefined()
+      expect(then.result.personalTaxReturn).toBeUndefined()
     })
   })
 
@@ -223,7 +223,7 @@ describe('PersonalTaxReturnController - Municipalities Personal Tax Return', () 
     })
 
     it('should return undefined', () => {
-      expect(then.result).toBeUndefined()
+      expect(then.result.personalTaxReturn).toBeUndefined()
     })
   })
 })

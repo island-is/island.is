@@ -1,7 +1,7 @@
 import React, { FC } from 'react'
 
 import { Box, Text } from '@island.is/island-ui/core'
-import { Application } from '@island.is/application/core'
+import { Application } from '@island.is/application/types'
 import { useLocale } from '@island.is/localization'
 
 import BoxChart, { BoxChartKey } from '../components/BoxChart'

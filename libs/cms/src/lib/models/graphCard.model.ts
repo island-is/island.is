@@ -1,9 +1,15 @@
-import { Field, ObjectType } from '@nestjs/graphql'
+import { Field, ID, ObjectType } from '@nestjs/graphql'
+import { CacheField } from '@island.is/nest/graphql'
+import { SystemMetadata } from '@island.is/shared/types'
+
 import { IGraphCard } from '../generated/contentfulTypes'
 import { Image, mapImage } from './image.model'
 
 @ObjectType()
 export class GraphCard {
+  @Field(() => ID)
+  id!: string
+
   @Field()
   graphTitle!: string
 
@@ -25,12 +31,17 @@ export class GraphCard {
   @Field()
   displayAsCard!: boolean
 
-  @Field(() => Image, { nullable: true })
+  @CacheField(() => Image, { nullable: true })
   organizationLogo?: Image | null
 }
 
-export const mapGraphCard = ({ fields }: IGraphCard): GraphCard => {
+export const mapGraphCard = ({
+  sys,
+  fields,
+}: IGraphCard): SystemMetadata<GraphCard> => {
   return {
+    typename: 'GraphCard',
+    id: sys?.id ?? '',
     graphTitle: fields?.graphTitle ?? '',
     graphDescription: fields?.graphDescription ?? '',
     organization: fields?.organization ?? '',

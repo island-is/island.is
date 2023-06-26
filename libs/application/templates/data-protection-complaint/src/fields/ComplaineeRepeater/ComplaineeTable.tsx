@@ -26,8 +26,8 @@ export const ComplaineeTable: FC<Props> = ({
   const { formatMessage } = useLocale()
 
   return (
-    <Box border="standard" borderRadius="large" marginTop={3}>
-      <Box padding={4}>
+    <Box marginTop={3}>
+      <Box border="standard" borderRadius="large" marginBottom={3} padding={4}>
         <Text variant="h5">
           {formatMessage(complaint.labels.complaineeName)}
         </Text>
@@ -56,14 +56,16 @@ export const ComplaineeTable: FC<Props> = ({
             operatesWithinEurope === 'yes' ? sharedFields.yes : sharedFields.no,
           )}
         </Text>
-        {countryOfOperation && countryOfOperation.length > 0 && (
-          <>
-            <Text variant="h5">
-              {formatMessage(complaint.labels.complaineeCountryOfOperation)}
-            </Text>
-            <Text>{countryOfOperation}</Text>
-          </>
-        )}
+        {countryOfOperation !== 'temp' &&
+          countryOfOperation &&
+          countryOfOperation.length > 0 && (
+            <>
+              <Text variant="h5">
+                {formatMessage(complaint.labels.complaineeCountryOfOperation)}
+              </Text>
+              <Text>{countryOfOperation}</Text>
+            </>
+          )}
       </Box>
       <Divider />
       {onEdit || onRemove ? (

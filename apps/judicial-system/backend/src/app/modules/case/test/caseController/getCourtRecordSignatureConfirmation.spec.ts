@@ -1,10 +1,12 @@
 import { uuid } from 'uuidv4'
+import { Transaction } from 'sequelize/types'
 import each from 'jest-each'
 
 import { ForbiddenException } from '@nestjs/common'
 
 import { User } from '@island.is/judicial-system/types'
 
+import { AwsS3Service } from '../../../aws-s3'
 import { Case } from '../../models/case.model'
 import { SignatureConfirmationResponse } from '../../models/signatureConfirmation.response'
 import { createTestingCaseModule } from '../createTestingCaseModule'
@@ -22,13 +24,27 @@ type GivenWhenThen = (
 ) => Promise<Then>
 
 describe('CaseController - Get court record signature confirmation', () => {
+  let mockAwsS3Service: AwsS3Service
+  let transaction: Transaction
   let mockCaseModel: typeof Case
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { caseModel, caseController } = await createTestingCaseModule()
+    const {
+      awsS3Service,
+      sequelize,
+      caseModel,
+      caseController,
+    } = await createTestingCaseModule()
 
+    mockAwsS3Service = awsS3Service
     mockCaseModel = caseModel
+
+    const mockTransaction = sequelize.transaction as jest.Mock
+    transaction = {} as Transaction
+    mockTransaction.mockImplementationOnce(
+      (fn: (transaction: Transaction) => unknown) => fn(transaction),
+    )
 
     givenWhenThen = async (
       caseId: string,
@@ -59,26 +75,18 @@ describe('CaseController - Get court record signature confirmation', () => {
     ${'registrarId'}
   `.describe('given an assigned role', ({ assignedRole }) => {
     const userId = uuid()
-    const user = { id: userId } as User
+    const role = assignedRole === 'judgeId' ? 'JUDGE' : 'REGISTRAR'
+    const user = { id: userId, role: role } as User
     const caseId = uuid()
     const theCase = { id: caseId, judgeId: uuid(), registrarId: uuid() } as Case
     ;((theCase as unknown) as { [key: string]: string })[assignedRole] = userId
     const documentToken = uuid()
 
-    describe('database update', () => {
-      beforeEach(async () => {
-        await givenWhenThen(caseId, user, theCase, documentToken)
-      })
-
-      it('should set the court record signatory and signature date', () => {
-        expect(mockCaseModel.update).toHaveBeenCalledWith(
-          {
-            courtRecordSignatoryId: userId,
-            courtRecordSignatureDate: expect.any(Date),
-          },
-          { where: { id: caseId } },
-        )
-      })
+    beforeEach(() => {
+      const mockPutObject = mockAwsS3Service.putObject as jest.Mock
+      mockPutObject.mockResolvedValueOnce(Promise.resolve())
+      const mockFindOne = mockCaseModel.findOne as jest.Mock
+      mockFindOne.mockResolvedValueOnce(theCase)
     })
 
     describe('successful completion', () => {
@@ -89,6 +97,16 @@ describe('CaseController - Get court record signature confirmation', () => {
         mockUpdate.mockResolvedValueOnce([1, [theCase]])
 
         then = await givenWhenThen(caseId, user, theCase, documentToken)
+      })
+
+      it('should set the court record signatory and signature date', () => {
+        expect(mockCaseModel.update).toHaveBeenCalledWith(
+          {
+            courtRecordSignatoryId: userId,
+            courtRecordSignatureDate: expect.any(Date),
+          },
+          { where: { id: caseId }, transaction },
+        )
       })
 
       it('should return success', () => {
@@ -127,7 +145,7 @@ describe('CaseController - Get court record signature confirmation', () => {
     it('should throw ForbiddenException', () => {
       expect(then.error).toBeInstanceOf(ForbiddenException)
       expect(then.error.message).toBe(
-        'A court record must be signed by the assigned judge or registrar',
+        'A court record must be a judge or a registrar',
       )
     })
   })

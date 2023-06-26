@@ -1,4 +1,6 @@
 {
-  "extends": "../../tsconfig.app.json",
-  "compilerOptions": { "strict": true }
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "strict": true
+  }
 }

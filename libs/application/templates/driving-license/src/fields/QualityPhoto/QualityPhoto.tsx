@@ -6,11 +6,8 @@ import {
   ContentBlock,
   AlertMessage,
 } from '@island.is/island-ui/core'
-import {
-  Application,
-  FieldBaseProps,
-  formatText,
-} from '@island.is/application/core'
+import { formatText } from '@island.is/application/core'
+import { Application, FieldBaseProps } from '@island.is/application/types'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import { useQualityPhoto } from './hooks/useQualityPhoto'
@@ -40,7 +37,7 @@ const Photo: FC<QualityPhotoData> = ({
 }
 
 const QualityPhoto: FC<FieldBaseProps> = ({ application }) => {
-  const { qualityPhoto, loading, error } = useQualityPhoto(application)
+  const { qualityPhoto } = useQualityPhoto(application)
   // TODO: skeleton load when image is loading
   const { formatMessage } = useLocale()
   const img = Photo({ qualityPhoto, application })

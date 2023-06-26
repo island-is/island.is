@@ -18,11 +18,11 @@ export const searchQuery = ({
   access = [],
 }: SearchInput) => {
   const should = []
-  //minimum_should_match makes sure that we match all available categories in the should part
-  let minimum_should_match = 0
+  //minimumShouldMatch makes sure that we match all available categories in the should part
+  let minimumShouldMatch = 0
 
   if (pricing.length) {
-    minimum_should_match++
+    minimumShouldMatch++
     should.push({
       terms: {
         'pricing.keyword': pricing,
@@ -31,7 +31,7 @@ export const searchQuery = ({
   }
 
   if (data.length) {
-    minimum_should_match++
+    minimumShouldMatch++
     should.push({
       terms: {
         'data.keyword': data,
@@ -40,7 +40,7 @@ export const searchQuery = ({
   }
 
   if (type.length) {
-    minimum_should_match++
+    minimumShouldMatch++
     should.push({
       terms: {
         'type.keyword': type,
@@ -49,7 +49,7 @@ export const searchQuery = ({
   }
 
   if (access.length) {
-    minimum_should_match++
+    minimumShouldMatch++
     should.push({
       terms: {
         'access.keyword': access,
@@ -71,7 +71,7 @@ export const searchQuery = ({
           {
             bool: {
               should,
-              minimum_should_match,
+              minimum_should_match: minimumShouldMatch,
             },
           },
         ],

@@ -150,7 +150,7 @@ export function withCache({
       return
     }
 
-    const ttl = Math.round(cacheResponse.policy.timeToLive() / 1000)
+    const ttl = cacheResponse.policy.timeToLive()
     if (ttl <= 0) {
       cacheResponse.cacheStatus.stored = false
       debugLog('Not storing', cacheResponse)
@@ -165,9 +165,7 @@ export function withCache({
 
     cacheResponse.cacheStatus.stored = true
     debugLog('Storing', cacheResponse)
-    await cacheManager.set(cacheKey, entry, {
-      ttl,
-    })
+    await cacheManager.set(cacheKey, entry, ttl)
   }
 
   /**
@@ -188,12 +186,15 @@ export function withCache({
     try {
       revalidationResponse = await fetch(revalidationRequest)
     } catch (fetchError) {
-      if (cacheResponse.policy._useStaleIfError()) {
+      if (fetchError instanceof FetchError && fetchError.status === 304) {
+        revalidationResponse = fetchError.response
+      } else if (cacheResponse.policy._useStaleIfError()) {
         cacheResponse.cacheStatus.hit = true
         debugLog('Revalidate error, return stale', cacheResponse)
         return cacheResponse
+      } else {
+        throw fetchError
       }
-      throw fetchError
     }
 
     const {

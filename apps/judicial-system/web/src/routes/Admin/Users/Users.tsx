@@ -13,17 +13,20 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { Loading } from '@island.is/judicial-system-web/src/components'
-import { Institution, UserRole } from '@island.is/judicial-system/types'
 import {
   InstitutionsQuery,
   UsersQuery,
 } from '@island.is/judicial-system-web/src/utils/mutations'
 import { formatNationalId } from '@island.is/judicial-system/formatters'
 import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
-import { titles } from '@island.is/judicial-system-web/messages/Core/titles'
+import { titles, errors } from '@island.is/judicial-system-web/messages'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import type { User } from '@island.is/judicial-system/types'
-import * as Constants from '@island.is/judicial-system/consts'
+import {
+  Institution,
+  User,
+  UserRole,
+} from '@island.is/judicial-system-web/src/graphql/schema'
+import * as constants from '@island.is/judicial-system/consts'
 
 import * as styles from './Users.css'
 
@@ -58,17 +61,21 @@ export const Users: React.FC = () => {
   })
 
   const handleClick = (user: User): void => {
-    router.push(`${Constants.USER_CHANGE_ROUTE}/${user.id}`)
+    router.push(`${constants.CHANGE_USER_ROUTE}/${user.id}`)
   }
 
   const userRoleToString = (userRole: UserRole) => {
     switch (userRole) {
-      case UserRole.JUDGE:
-        return 'Dómari'
       case UserRole.PROSECUTOR:
         return 'Saksóknari'
+      case UserRole.REPRESENTATIVE:
+        return 'Fulltrúi'
+      case UserRole.JUDGE:
+        return 'Dómari'
       case UserRole.REGISTRAR:
         return 'Dómritari'
+      case UserRole.ASSISTANT:
+        return 'Aðstoðarmaður dómara'
       case UserRole.STAFF:
         return 'Starfsmaður'
     }
@@ -77,16 +84,16 @@ export const Users: React.FC = () => {
   return (
     <div className={styles.userControlContainer}>
       <PageHeader title={formatMessage(titles.admin.users)} />
-      <div className={styles.logoContainer}>
+      <Box display="flex" marginBottom={9}>
         <Button
           icon="add"
           onClick={() => {
-            router.push(Constants.USER_NEW_ROUTE)
+            router.push(constants.CREATE_USER_ROUTE)
           }}
         >
           Nýr notandi
         </Button>
-      </div>
+      </Box>
       <Box
         marginBottom={8}
         display="flex"
@@ -122,31 +129,31 @@ export const Users: React.FC = () => {
         >
           <thead className={styles.thead}>
             <tr>
-              <th className={styles.th}>
+              <Box component="th" paddingY={2} paddingX={3}>
                 <Text as="span" fontWeight="regular">
                   Nafn
                 </Text>
-              </th>
-              <th className={styles.th}>
+              </Box>
+              <Box component="th" paddingY={2} paddingX={3}>
                 <Text as="span" fontWeight="regular">
                   Kennitala
                 </Text>
-              </th>
-              <th className={styles.th}>
+              </Box>
+              <Box component="th" paddingY={2} paddingX={3}>
                 <Text as="span" fontWeight="regular">
                   Hlutverk
                 </Text>
-              </th>
-              <th className={styles.th}>
+              </Box>
+              <Box component="th" paddingY={2} paddingX={3}>
                 <Text as="span" fontWeight="regular">
                   Stofnun
                 </Text>
-              </th>
-              <th className={styles.th}>
+              </Box>
+              <Box component="th" paddingY={2} paddingX={3}>
                 <Text as="span" fontWeight="regular">
                   Virkur
                 </Text>
-              </th>
+              </Box>
             </tr>
           </thead>
           <tbody>
@@ -160,21 +167,21 @@ export const Users: React.FC = () => {
                   handleClick(user)
                 }}
               >
-                <td className={styles.td}>
+                <Box component="td" paddingX={3} paddingY={2}>
                   <Text as="span">{user.name}</Text>
-                </td>
-                <td className={styles.td}>
+                </Box>
+                <Box component="td" paddingX={3} paddingY={2}>
                   <Text as="span">{formatNationalId(user.nationalId)}</Text>
-                </td>
-                <td className={styles.td}>
+                </Box>
+                <Box component="td" paddingX={3} paddingY={2}>
                   <Text as="span">{userRoleToString(user.role)}</Text>
-                </td>
-                <td className={styles.td}>
+                </Box>
+                <Box component="td" paddingX={3} paddingY={2}>
                   <Text as="span">{user.institution?.name}</Text>
-                </td>
-                <td className={styles.td}>
+                </Box>
+                <Box component="td" paddingX={3} paddingY={2}>
                   <Text as="span">{user.active ? 'Já' : 'Nei'}</Text>
-                </td>
+                </Box>
               </tr>
             ))}
           </tbody>
@@ -189,15 +196,15 @@ export const Users: React.FC = () => {
         </Box>
       )}
       {loading && (
-        <Box className={styles.userTable}>
+        <Box width="full">
           <Loading />
         </Box>
       )}
       {error && (
         <div data-testid="users-error">
           <AlertMessage
-            title="Ekki tókst að sækja gögn úr gagnagrunni"
-            message="Ekki tókst að ná sambandi við gagnagrunn. Málið hefur verið skráð og viðeigandi aðilar látnir vita. Vinsamlega reynið aftur síðar."
+            title={formatMessage(errors.failedToFetchDataFromDbTitle)}
+            message={formatMessage(errors.failedToFetchDataFromDbMessage)}
             type="error"
           />
         </div>

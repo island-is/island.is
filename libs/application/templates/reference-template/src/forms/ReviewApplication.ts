@@ -8,15 +8,14 @@ import {
   buildSection,
   buildSubmitField,
   buildTextField,
-  Form,
-  FormModes,
 } from '@island.is/application/core'
+import { Form, FormModes } from '@island.is/application/types'
 import { m } from '../lib/messages'
 
 export const ReviewApplication: Form = buildForm({
   id: 'ExampleInReview',
   title: 'Úrvinnsla umsóknar um atvinnuleysisbætur',
-  mode: FormModes.REVIEW,
+  mode: FormModes.IN_PROGRESS,
   children: [
     buildSection({
       id: 'intro',
@@ -68,7 +67,7 @@ export const ReviewApplication: Form = buildForm({
               ],
             }),
             buildCheckboxField({
-              id: 'careerHistoryCompanies',
+              id: 'careerHistoryDetails.careerHistoryCompanies',
               title: m.careerHistoryCompanies,
               disabled: true,
               width: 'half',
@@ -76,7 +75,13 @@ export const ReviewApplication: Form = buildForm({
                 { value: 'government', label: m.governmentOptionLabel },
                 { value: 'aranja', label: 'Aranja' },
                 { value: 'advania', label: 'Advania' },
+                { value: 'other', label: 'Annað' },
               ],
+            }),
+            buildTextField({
+              id: 'careerHistoryDetails.careerHistoryOther',
+              disabled: true,
+              title: m.careerHistoryOther,
             }),
             buildTextField({
               id: 'dreamJob',

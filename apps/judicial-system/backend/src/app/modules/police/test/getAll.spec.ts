@@ -56,9 +56,7 @@ describe('PoliceController - Get all', () => {
     it('should request police files for the correct case', () => {
       expect(fetch).toHaveBeenCalledWith(
         expect.stringMatching(
-          new RegExp(
-            `.*/api/Rettarvarsla/GetDocumentListById/${originalAncestorCaseId}`,
-          ),
+          new RegExp(`.*/GetDocumentListById/${originalAncestorCaseId}`),
         ),
         expect.anything(),
       )
@@ -74,10 +72,12 @@ describe('PoliceController - Get all', () => {
       const mockFetch = fetch as jest.Mock
       mockFetch.mockResolvedValueOnce({
         ok: true,
-        json: () => [
-          { rvMalSkjolMals_ID: 'Id 1', heitiSkjals: 'Name 1.pdf' },
-          { rvMalSkjolMals_ID: 'Id 2', heitiSkjals: 'Name 2' },
-        ],
+        json: async () => ({
+          skjol: [
+            { rvMalSkjolMals_ID: 'Id 1', heitiSkjals: 'Name 1.pdf' },
+            { rvMalSkjolMals_ID: 'Id 2', heitiSkjals: 'Name 2' },
+          ],
+        }),
       })
 
       then = await givenWhenThen(uuid(), theUser, theCase)
@@ -107,7 +107,7 @@ describe('PoliceController - Get all', () => {
     it('should throw not found exception', () => {
       expect(then.error).toBeInstanceOf(NotFoundException)
       expect(then.error.message).toBe(
-        `No police case files found for case ${originalAncestorCaseId}`,
+        `Police case for case ${originalAncestorCaseId} does not exist`,
       )
     })
   })

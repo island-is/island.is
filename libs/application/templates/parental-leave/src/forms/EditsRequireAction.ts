@@ -2,9 +2,8 @@ import {
   buildCustomField,
   buildForm,
   buildSection,
-  Form,
-  FormModes,
 } from '@island.is/application/core'
+import { Form, FormModes } from '@island.is/application/types'
 
 import Logo from '../assets/Logo'
 import {

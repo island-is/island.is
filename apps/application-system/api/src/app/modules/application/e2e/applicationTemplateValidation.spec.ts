@@ -51,11 +51,11 @@ describe('ApplicationTemplateValidation', () => {
       client: faker.random.word(),
     }
     const results = await applicationValidationService.isTemplateReady(
-      mockUser,
       {
         readyForProduction: true,
         featureFlag: Features.accidentNotification,
       },
+      mockUser,
     )
     expect(results).toBe(false)
   })
@@ -69,11 +69,11 @@ describe('ApplicationTemplateValidation', () => {
     }
 
     const results = await applicationValidationService.isTemplateReady(
-      mockUser,
       {
         readyForProduction: false,
         featureFlag: Features.exampleApplication,
       },
+      mockUser,
     )
     expect(results).toBe(true)
   })
@@ -87,11 +87,11 @@ describe('ApplicationTemplateValidation', () => {
     }
 
     const results = await applicationValidationService.isTemplateReady(
-      mockUser,
       {
         readyForProduction: false,
         featureFlag: Features.accidentNotification,
       },
+      mockUser,
     )
     expect(results).toBe(true)
   })
@@ -110,10 +110,10 @@ describe('ApplicationTemplateValidation', () => {
     environment.name = 'production'
 
     const results = await applicationValidationService.isTemplateReady(
-      mockUser,
       {
         readyForProduction: true,
       },
+      mockUser,
     )
     expect(results).toBe(true)
     environment.production = envBefore
@@ -134,12 +134,34 @@ describe('ApplicationTemplateValidation', () => {
     environment.name = 'production'
 
     const results = await applicationValidationService.isTemplateReady(
-      mockUser,
       {
         readyForProduction: false,
       },
+      mockUser,
     )
     expect(results).toBe(false)
+    environment.production = envBefore
+    environment.name = envNameBefore
+  })
+
+  it('Should be ready when no featureFlag is supplied and readyForProduction is undefined on prod', async () => {
+    const mockUser = {
+      nationalId: '1234567890',
+      scope: [],
+      authorization: faker.random.word(),
+      client: faker.random.word(),
+    }
+
+    const envBefore = environment.production
+    environment.production = true
+    const envNameBefore = environment.name
+    environment.name = 'production'
+
+    const results = await applicationValidationService.isTemplateReady(
+      {},
+      mockUser,
+    )
+    expect(results).toBe(true)
     environment.production = envBefore
     environment.name = envNameBefore
   })
@@ -153,10 +175,10 @@ describe('ApplicationTemplateValidation', () => {
     }
 
     const results = await applicationValidationService.isTemplateReady(
-      mockUser,
       {
         readyForProduction: false,
       },
+      mockUser,
     )
     expect(results).toBe(true)
   })

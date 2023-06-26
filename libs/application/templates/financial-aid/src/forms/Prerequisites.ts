@@ -6,18 +6,23 @@ import {
   buildMultiField,
   buildSection,
   buildSubmitField,
-  DefaultEvents,
-  Form,
-  FormModes,
 } from '@island.is/application/core'
-import { DataProviderTypes } from '../lib/types'
+import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
 
 import * as m from '../lib/messages'
+import { Routes } from '../lib/constants'
+import {
+  CurrentApplicationApi,
+  NationalRegistryUserApi,
+  NationalRegistrySpouseApi,
+  MunicipalityApi,
+  TaxDataApi,
+} from '../dataProviders'
 
 export const Prerequisites: Form = buildForm({
   id: 'FinancialAidApplication',
   title: m.application.name,
-  mode: FormModes.APPLYING,
+  mode: FormModes.DRAFT,
   children: [
     buildSection({
       id: 'externalData',
@@ -31,31 +36,50 @@ export const Prerequisites: Form = buildForm({
           checkboxLabel: m.externalData.general.checkboxLabel,
           dataProviders: [
             buildDataProviderItem({
-              id: 'nationalRegistry',
-              type: DataProviderTypes.NationalRegistry,
+              provider: NationalRegistryUserApi,
               title: m.externalData.applicant.title,
               subTitle: m.externalData.applicant.subTitle,
             }),
             buildDataProviderItem({
-              id: 'veita',
-              type: DataProviderTypes.Veita,
+              provider: NationalRegistrySpouseApi,
               title: '',
-              subTitle: undefined,
+              subTitle: '',
+            }),
+            buildDataProviderItem({
+              provider: MunicipalityApi,
+              title: '',
+              subTitle: '',
+            }),
+            buildDataProviderItem({
+              provider: CurrentApplicationApi,
+              title: '',
+              subTitle: '',
+            }),
+            buildDataProviderItem({
+              provider: TaxDataApi,
+              title: m.externalData.taxData.title,
+              subTitle: m.externalData.taxData.dataInfo,
+            }),
+            buildDataProviderItem({
+              id: 'moreTaxInfo',
+              type: undefined,
+              title: '',
+              subTitle: m.externalData.taxData.process,
             }),
           ],
         }),
       ],
     }),
     buildSection({
-      id: 'aboutForm',
+      id: Routes.ACCECPTCONTRACT,
       title: m.aboutForm.general.sectionTitle,
       children: [
         buildMultiField({
-          id: 'acceptContract',
+          id: Routes.ACCECPTCONTRACT,
           title: m.aboutForm.general.pageTitle,
           children: [
             buildCustomField({
-              id: 'acceptContract',
+              id: Routes.ACCECPTCONTRACT,
               title: m.aboutForm.general.pageTitle,
               component: 'AboutForm',
             }),

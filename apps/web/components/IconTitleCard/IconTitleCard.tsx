@@ -8,6 +8,7 @@ type IconTitleCardProps = {
   imgSrc: string
   alt: string
   href: string
+  dataTestId?: string
 }
 
 export const IconTitleCard = ({
@@ -15,6 +16,7 @@ export const IconTitleCard = ({
   imgSrc,
   alt,
   href,
+  dataTestId,
 }: IconTitleCardProps) => (
   <FocusableBox
     href={href}
@@ -28,6 +30,7 @@ export const IconTitleCard = ({
     height="full"
     className={styles.container}
     color="purple"
+    data-testid={dataTestId}
   >
     <span className={styles.iconContainer}>
       <img src={imgSrc} alt={alt} className={styles.icon} />

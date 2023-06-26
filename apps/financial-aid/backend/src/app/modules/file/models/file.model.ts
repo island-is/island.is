@@ -1,3 +1,4 @@
+import { ApiProperty } from '@nestjs/swagger'
 import {
   Column,
   CreatedAt,
@@ -6,17 +7,23 @@ import {
   Model,
   Table,
 } from 'sequelize-typescript'
+import { Optional } from 'sequelize/types'
 
-import { ApiProperty } from '@nestjs/swagger'
+import { ApplicationFile, FileType } from '@island.is/financial-aid/shared/lib'
 
 import { ApplicationModel } from '../../application/models/application.model'
-import { FileType, ApplicationFile } from '@island.is/financial-aid/shared/lib'
+
+interface ApplicationFileCreationAttributes
+  extends Optional<ApplicationFile, 'id' | 'created'> {}
 
 @Table({
   tableName: 'application_files',
   timestamps: false,
 })
-export class ApplicationFileModel extends Model<ApplicationFile> {
+export class ApplicationFileModel extends Model<
+  ApplicationFile,
+  ApplicationFileCreationAttributes
+> {
   @Column({
     type: DataType.UUID,
     primaryKey: true,

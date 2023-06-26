@@ -1,4 +1,3 @@
-import { accidentLocation } from '../lib/messages'
 import {
   AgricultureAccidentLocationEnum,
   FishermanWorkplaceAccidentLocationEnum,

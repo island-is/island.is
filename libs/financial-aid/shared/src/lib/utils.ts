@@ -1,8 +1,9 @@
-import { months } from './const'
+import { months, monthsEnglish } from './const'
 
 import React from 'react'
-import { NationalRegistryData } from './interfaces'
-import { StaffRole } from './enums'
+import { DirectTaxPayment, NationalRegistryData } from './interfaces'
+import { StaffRole, UserType } from './enums'
+import { Locale } from '@island.is/shared/types'
 
 export const getFileType = (fileName: string) => {
   return fileName?.substring(fileName.lastIndexOf('.') + 1)
@@ -28,8 +29,11 @@ export const firstDateOfMonth = () => {
   return new Date(date.getFullYear(), date.getMonth(), 1)
 }
 
-export const currentMonth = () => {
-  return months[new Date().getMonth()].toLowerCase()
+export const currentMonth = (lang: Locale = 'is') => {
+  if (lang === 'is') {
+    return months[new Date().getMonth()].toLowerCase()
+  }
+  return monthsEnglish[new Date().getMonth()]
 }
 
 export const insertAt = (str: string, sub: string, pos: number) =>
@@ -105,4 +109,19 @@ export const scrollToId = (id: string) => {
 
 export const capitalizeFirstLetter = (text: string) => {
   return text.charAt(0).toUpperCase() + text.slice(1)
+}
+
+export const addUserTypeDirectPayments = (
+  userType: UserType,
+  directTaxPayments?: DirectTaxPayment[],
+) => {
+  if (!directTaxPayments) {
+    return []
+  }
+  return directTaxPayments.map((el) => {
+    return {
+      ...el,
+      userType,
+    }
+  })
 }

@@ -1,11 +1,7 @@
 import React, { FC, useEffect } from 'react'
 import { useLocale } from '@island.is/localization'
-import {
-  FieldBaseProps,
-  formatText,
-  getErrorViaPath,
-} from '@island.is/application/core'
-import get from 'lodash/get'
+import { formatText, getErrorViaPath } from '@island.is/application/core'
+import { FieldBaseProps } from '@island.is/application/types'
 import { InputController } from '@island.is/shared/form-fields'
 import {
   Box,
@@ -30,7 +26,7 @@ export const CommissionFieldRepeater: FC<FieldBaseProps> = ({
 }) => {
   const { id, title } = field
   const { formatMessage } = useLocale()
-  const { fields, append, remove } = useFieldArray<PersonField>({ name: id })
+  const { fields, append, remove } = useFieldArray({ name: id })
 
   useEffect(() => {
     // The repeater should include one line by default

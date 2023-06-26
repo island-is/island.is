@@ -3,19 +3,18 @@ import {
   HomeCircumstances,
   KeyMapping,
   FamilyStatus,
+  ApplicationState,
 } from '@island.is/financial-aid/shared/lib'
+import { Colors } from '@island.is/island-ui/theme'
 
 import { MessageDescriptor } from 'react-intl'
+import format from 'date-fns/format'
 
 import * as m from './messages'
 import { Routes } from './constants'
-import {
-  Applicant,
-  ApproveOptions,
-  ExternalData,
-  OverrideAnswerSchema,
-} from './types'
+import { ApproveOptions, ExternalData, OverrideAnswerSchema } from './types'
 import { findFamilyStatus } from './utils'
+import { NationalRegistryIndividual } from '@island.is/application/types'
 
 export const getMessageHomeCircumstances: KeyMapping<
   HomeCircumstances,
@@ -67,9 +66,9 @@ export const getMessageApproveOptionsForIncome: KeyMapping<
   No: m.incomeForm.summary.no,
 }
 
-export const formatAddress = (applicant?: Applicant) =>
-  applicant
-    ? `${applicant.address.streetName}, ${applicant.address.postalCode} ${applicant.address.city}`
+export const formatAddress = (applicant?: NationalRegistryIndividual) =>
+  applicant?.address
+    ? `${applicant.address.streetAddress}, ${applicant.address.postalCode} ${applicant.address.locality}`
     : undefined
 
 export const formatBankInfo = (bankInfo: {
@@ -143,3 +142,59 @@ export const spouseFormItems = (answers: OverrideAnswerSchema) => [
     info: getMessageApproveOptionsForIncome[answers?.spouseIncome],
   },
 ]
+
+export const getStateMessageAndColor: KeyMapping<
+  ApplicationState,
+  [MessageDescriptor, Colors]
+> = {
+  New: [m.header.new, 'blue400'],
+  Approved: [m.header.approved, 'mint600'],
+  Rejected: [m.header.rejected, 'red400'],
+  InProgress: [m.header.inProgress, 'blue400'],
+  DataNeeded: [m.header.inProgress, 'blue400'],
+}
+
+export const timelineSections = (
+  created?: Date,
+  modified?: Date,
+  showSpouseStep?: boolean,
+) => {
+  const createdFormatted = formatDate(created)
+  const modifiedFormatted = formatDate(modified)
+
+  const sections = [
+    {
+      name: m.timeline.receivedTitle,
+      text: m.timeline.receivedDescription,
+      state: [ApplicationState.NEW],
+      date: createdFormatted,
+    },
+    {
+      name: m.timeline.inProgressTitle,
+      text: m.timeline.inProgressDescription,
+      state: [ApplicationState.INPROGRESS, ApplicationState.DATANEEDED],
+      date: modifiedFormatted,
+    },
+    {
+      name: m.timeline.resultsTitle,
+      text: m.timeline.resultsDescription,
+      state: [ApplicationState.REJECTED, ApplicationState.APPROVED],
+      date: modifiedFormatted,
+    },
+  ]
+
+  if (showSpouseStep) {
+    sections.splice(1, 0, {
+      name: m.timeline.spouseTitle,
+      text: m.timeline.spouseDescription,
+      state: [ApplicationState.NEW],
+      date: createdFormatted,
+    })
+  }
+
+  return sections
+}
+
+export const formatDate = (date?: Date) => {
+  return date ? format(date, 'dd/MM/yyyy HH:mm') : null
+}

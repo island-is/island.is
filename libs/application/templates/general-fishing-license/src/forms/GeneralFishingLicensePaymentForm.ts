@@ -1,10 +1,10 @@
 import {
   buildForm,
   buildSection,
-  Form,
-  FormModes,
   buildCustomField,
 } from '@island.is/application/core'
+import { Form, FormModes } from '@island.is/application/types'
+import { buildFormConclusionSection } from '@island.is/application/ui-forms'
 import {
   applicantInformation,
   conclusion,
@@ -18,7 +18,7 @@ import {
 export const GeneralFishingLicensePaymentForm: Form = buildForm({
   id: 'GeneralFishingLicensePaymentForm',
   title: '',
-  mode: FormModes.APPLYING,
+  mode: FormModes.IN_PROGRESS,
   renderLastScreenButton: false,
   children: [
     buildSection({
@@ -57,10 +57,10 @@ export const GeneralFishingLicensePaymentForm: Form = buildForm({
         }),
       ],
     }),
-    buildSection({
-      id: 'conclusionSection',
-      title: conclusion.general.sectionTitle,
-      children: [],
+    buildFormConclusionSection({
+      alertTitle: conclusion.general.title,
+      expandableHeader: conclusion.information.title,
+      expandableDescription: conclusion.information.bulletList,
     }),
   ],
 })

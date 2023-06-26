@@ -7,3 +7,4 @@ export {
   ISLFjolskyldan,
 } from './getViewISLFjolskyldan.dto'
 export { GetViewISLBorninMinDto, ISLBorninMin } from './getViewISLBorninMin.dto'
+export { FamilyCorrection } from './familyCorrection.dto'

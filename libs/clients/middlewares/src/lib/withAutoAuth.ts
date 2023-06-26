@@ -63,6 +63,13 @@ export interface AutoAuthOptions {
    * Additional configuration for token exchange.
    */
   tokenExchange?: AutoAuthTokenExchangeOptions
+
+  /**
+   * Optional configuration for token request URL. Used when the token endpoint doesn't follow the '{issuer}/connect/token' pattern.
+   */
+  tokenEndpoint?: string
+
+  audience?: string
 }
 
 export interface AuthMiddlewareOptions {
@@ -110,8 +117,9 @@ export const withAutoAuth = ({
     requestActorToken = false,
     useCache = false,
   } = options.tokenExchange || {}
-  const tokenCacheManager = caching({ store: 'memory', ttl: 0 })
-  const tokenEndpoint = `${options.issuer}/connect/token`
+  const tokenCacheManagerPromise = caching('memory', { ttl: 0 })
+  const tokenEndpoint =
+    options.tokenEndpoint ?? `${options.issuer}/connect/token`
   if (useCache && !cache) {
     logger.warn(
       `Fetch (${name}): AutoAuth configured to use cache but no cache manager configured.`,
@@ -153,6 +161,7 @@ export const withAutoAuth = ({
     }
 
     if (!isTokenExchange) {
+      const tokenCacheManager = await tokenCacheManagerPromise
       const authorization = await tokenCacheManager.get<string>(TOKEN_CACHE_KEY)
       if (authorization) {
         return authorization
@@ -178,6 +187,7 @@ export const withAutoAuth = ({
       client_id: options.clientId,
       client_secret: options.clientSecret,
       scope: options.scope.join(' '),
+      ...(options.audience && { audience: options.audience }),
     })
 
     if (auth && isTokenExchange) {
@@ -222,9 +232,12 @@ export const withAutoAuth = ({
     const authorization = `Bearer ${result.access_token}`
 
     if (!isTokenExchange) {
-      await tokenCacheManager.set(TOKEN_CACHE_KEY, authorization, {
-        ttl: result.expires_in,
-      })
+      const tokenCacheManager = await tokenCacheManagerPromise
+      await tokenCacheManager.set(
+        TOKEN_CACHE_KEY,
+        authorization,
+        result.expires_in * 1000,
+      )
     }
 
     return authorization

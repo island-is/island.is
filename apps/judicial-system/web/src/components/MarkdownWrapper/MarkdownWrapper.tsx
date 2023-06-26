@@ -1,13 +1,15 @@
 import React, { ReactNode } from 'react'
 import Markdown from 'markdown-to-jsx'
+
 import {
   Box,
   Text,
   BulletList,
   Bullet,
-  Link,
+  LinkV2,
   TextProps,
 } from '@island.is/island-ui/core'
+
 import * as styles from './MarkdownWrapper.css'
 
 const BulletListBox = ({ children }: { children: ReactNode }) => {
@@ -34,9 +36,9 @@ const LinkComponent = ({
   href: string
 }) => {
   return (
-    <Link href={href} className={styles.link}>
+    <LinkV2 href={href} className={styles.link}>
       {children}
-    </Link>
+    </LinkV2>
   )
 }
 

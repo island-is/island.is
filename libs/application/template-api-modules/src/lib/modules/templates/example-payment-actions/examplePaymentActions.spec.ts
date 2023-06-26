@@ -1,14 +1,11 @@
 import { Test } from '@nestjs/testing'
 import { logger, LOGGER_PROVIDER } from '@island.is/logging'
-import {
-  createCurrentUser,
-  createApplication,
-} from '@island.is/testing/fixtures'
+import { createCurrentUser } from '@island.is/testing/fixtures'
 
 import {
   ApplicationStatus,
   ApplicationTypes,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 
 import { SharedTemplateApiService } from '../../shared'
 import { ExamplePaymentActionsService } from './examplePaymentActions.service'
@@ -18,6 +15,7 @@ import {
   EMAIL_OPTIONS,
 } from '@island.is/email-service'
 import { ConfigService } from '@nestjs/config'
+import { createApplication } from '@island.is/application/testing'
 
 describe('ExamplePaymentActionsService', () => {
   let service: ExamplePaymentActionsService
@@ -82,6 +80,7 @@ describe('ExamplePaymentActionsService', () => {
       const res = await service.createCharge({
         application,
         auth: user,
+        currentUserLocale: 'is',
       })
 
       expect(res).toEqual({

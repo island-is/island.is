@@ -20,7 +20,7 @@ export class CriminalRecordApi {
     return record
   }
 
-  public async validateCriminalRecord(ssn: string): Promise<Boolean> {
+  public async validateCriminalRecord(ssn: string): Promise<boolean> {
     // Note: this function will throw an error if something goes wrong
     const record = await this.getCriminalRecord(ssn)
 

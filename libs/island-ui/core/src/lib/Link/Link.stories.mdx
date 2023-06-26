@@ -2,21 +2,21 @@ import { Meta, Story, Canvas, ArgsTable } from '@storybook/addon-docs'
 
 import { DescriptionFigma } from '../../utils/withFigma'
 import { Box } from '../Box/Box'
-import { Link } from './Link'
+import { LinkV2 } from './LinkV2'
 import { ArrowLink } from './ArrowLink/ArrowLink'
 
-<Meta title="Core/Link" component={Link} />
+<Meta title="Core/LinkV2" component={LinkV2} />
 
-# Link
+# LinkV2
 
-<DescriptionFigma name="Link" />
+<DescriptionFigma name="LinkV2" />
 
 ### Default
 
 <Canvas>
   <Story name="Default">
     <Box padding={4}>
-      <Link href="/something">Default</Link>
+      <LinkV2 href="/something">Default</LinkV2>
     </Box>
   </Story>
 </Canvas>
@@ -26,14 +26,14 @@ import { ArrowLink } from './ArrowLink/ArrowLink'
 <Canvas>
   <Story name="UnderlineAlwaysVisible">
     <Box padding={4}>
-      <Link
+      <LinkV2
         href="/something"
         color="blue400"
         underline="normal"
         underlineVisibility="always"
       >
         With underline always visible
-      </Link>
+      </LinkV2>
     </Box>
   </Story>
 </Canvas>
@@ -43,9 +43,9 @@ import { ArrowLink } from './ArrowLink/ArrowLink'
 <Canvas>
   <Story name="SmallUnderline">
     <Box padding={4}>
-      <Link href="/something" color="blue400" underline="small">
+      <LinkV2 href="/something" color="blue400" underline="small">
         With small underline
-      </Link>
+      </LinkV2>
     </Box>
   </Story>
 </Canvas>
@@ -62,4 +62,4 @@ import { ArrowLink } from './ArrowLink/ArrowLink'
 
 # Props
 
-<ArgsTable of={Link} />
+<ArgsTable of={LinkV2} />

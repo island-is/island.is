@@ -1,9 +1,11 @@
 import {
-  Application,
   buildForm,
   buildRepeater,
   buildSection,
   buildTextField,
+} from '@island.is/application/core'
+import {
+  Application,
   ExternalData,
   Form,
   ApplicationTypes,
@@ -11,8 +13,8 @@ import {
   FormModes,
   FormItemTypes,
   ApplicationStatus,
-} from '@island.is/application/core'
-import * as z from 'zod'
+} from '@island.is/application/types'
+import { z } from 'zod'
 import { ApplicationReducer, initializeReducer } from './ApplicationFormReducer'
 import { ActionTypes, ApplicationUIState } from './ReducerTypes'
 
@@ -27,7 +29,7 @@ const dataSchema = z.object({
           }
           return asNumber > 15
         }),
-        name: z.string().nonempty().max(256), // unique in the repeater hmm?
+        name: z.string().min(1).max(256), // unique in the repeater hmm?
         pets: z
           .array(
             z.object({
@@ -40,7 +42,7 @@ const dataSchema = z.object({
     )
     .max(5)
     .nonempty(),
-  familyName: z.string().nonempty(),
+  familyName: z.string().min(1),
   house: z.string().optional(),
 })
 type SchemaFormValues = z.infer<typeof dataSchema>
@@ -169,7 +171,7 @@ describe('ApplicationFormReducer', () => {
       }
       const state = {
         ...initialState,
-        form: { ...form, mode: FormModes.REVIEW },
+        form: { ...form, mode: FormModes.IN_PROGRESS },
         application: {
           ...application,
           answers,

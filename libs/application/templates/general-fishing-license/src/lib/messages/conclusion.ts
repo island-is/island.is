@@ -7,34 +7,22 @@ export const conclusion = {
       defaultMessage: 'Umsókn móttekin',
       description: 'Title of conclusion screen',
     },
-    sectionTitle: {
-      id: 'gfl.application:conclusion.general.sectionTitle',
-      defaultMessage: 'Umsókn móttekin',
-      description: 'Title of conclusion screen',
-    },
   }),
   information: defineMessages({
-    bulletOne: {
-      id: 'gfl.application:conclusion.information.bulletOne',
-      defaultMessage:
-        'Veiðileyfi tekur gildi næsta virka dag eftir að það hefur verið greitt, óhað greiðslukorti / kröfu.',
-      description: 'Conclusion information box bulletOne',
+    title: {
+      id: 'gfl.application:conclusion.information.title',
+      defaultMessage: 'Hvað gerist næst?',
+      description: 'Title of conclusion information box',
     },
-    bulletTwo: {
-      id: 'gfl.application:conclusion.information.bulletTwo',
-      defaultMessage:
-        'Hægt er að nálgast leyfið í rafrænum skjölum á island.is',
-      description: 'Conclusion information box bulletTwo',
+    intro: {
+      id: 'gfl.application:conclusion.information.intro#markdown',
+      defaultMessage: 'Umsókn þín hefur verið móttekin',
+      description: 'Conclusion information box intro',
     },
-    electronicDocumentsText: {
-      id: 'gfl.application:conclusion.information.electronicDocumentsText',
-      defaultMessage: 'Rafræn skjöl',
-      description: 'Conclusion information box electronic documets text',
-    },
-    electronicDocumentsLink: {
-      id: 'gfl.application:conclusion.information.electronicDocumentsLink',
-      defaultMessage: 'https://island.is/minarsidur/postholf',
-      description: 'Conclusion information box electronic documets link',
+    bulletList: {
+      id: 'gfl.application:conclusion.information.bulletList#markdown',
+      defaultMessage: `* Veiðileyfi tekur gildi næsta virka dag eftir að það hefur verið greitt, óhað greiðslukorti / kröfu.\n* Hægt er að nálgast leyfið í rafrænum skjölum á island.is`,
+      description: 'BulletList for conclusion information box',
     },
   }),
 }

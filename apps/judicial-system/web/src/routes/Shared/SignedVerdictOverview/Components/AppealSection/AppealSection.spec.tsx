@@ -6,8 +6,12 @@ import { MockedProvider } from '@apollo/client/testing'
 import {
   CaseAppealDecision,
   CaseState,
-  CaseType,
+  Defendant,
 } from '@island.is/judicial-system/types'
+import {
+  CaseType,
+  CaseOrigin,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 
 import AppealSection from './AppealSection'
 
@@ -18,8 +22,10 @@ describe('Appeal section component', () => {
     modified: new Date().toString(),
     type: CaseType.CUSTODY,
     state: CaseState.ACCEPTED,
-    policeCaseNumber: '000',
-    defendants: [{ nationalId: '000000-0000' }],
+    policeCaseNumbers: ['000'],
+    defendants: [{ nationalId: '000000-0000' }] as Defendant[],
+    origin: CaseOrigin.UNKNOWN,
+    defendantWaivesRightToCounsel: false,
   }
 
   test('should say when a case is no longer appealable if either the prosecutors or judges appeal decision is to postpone', async () => {
@@ -30,7 +36,7 @@ describe('Appeal section component', () => {
             workingCase={{
               ...baseWorkingCase,
               isAppealDeadlineExpired: true,
-              rulingDate: '2020-09-16T19:50:00.000Z',
+              courtEndTime: '2020-09-16T19:50:00.000Z',
               accusedAppealDecision: CaseAppealDecision.POSTPONE,
             }}
             setAccusedAppealDate={() => null}
@@ -60,7 +66,7 @@ describe('Appeal section component', () => {
             workingCase={{
               ...baseWorkingCase,
               isAppealDeadlineExpired: false,
-              rulingDate: `${dd}T19:50:00.000Z`,
+              courtEndTime: `${dd}T19:50:00.000Z`,
               prosecutorAppealDecision: CaseAppealDecision.POSTPONE,
             }}
             setAccusedAppealDate={() => null}
@@ -94,7 +100,7 @@ describe('Appeal section component', () => {
             workingCase={{
               ...baseWorkingCase,
               isAppealDeadlineExpired: false,
-              rulingDate: `${dd}T19:50:00.000Z`,
+              courtEndTime: `${dd}T19:50:00.000Z`,
             }}
             setAccusedAppealDate={() => null}
             setProsecutorAppealDate={() => null}
@@ -128,7 +134,7 @@ describe('Appeal section component', () => {
     )
 
     expect(
-      screen.queryByRole('button', { name: 'Kærði kærir úrskurðinn' }),
+      screen.queryByRole('button', { name: 'Varnaraðili kærir úrskurðinn' }),
     ).not.toBeInTheDocument()
   })
 

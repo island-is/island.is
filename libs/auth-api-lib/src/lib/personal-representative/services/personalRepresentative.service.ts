@@ -5,13 +5,14 @@ import { BadRequestException, Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Op, WhereOptions } from 'sequelize'
 import { Sequelize } from 'sequelize-typescript'
-import { PaginatedPersonalRepresentativeDto } from '../entities/dto/paginated-personal-representative.dto'
-import { PaginationWithNationalIdsDto } from '../entities/dto/pagination-with-national-ids.dto'
-import { PersonalRepresentativeCreateDTO } from '../entities/dto/personal-representative-create.dto'
-import { PersonalRepresentativeDTO } from '../entities/dto/personal-representative.dto'
-import { PersonalRepresentativeRightType } from '../entities/models/personal-representative-right-type.model'
-import { PersonalRepresentativeRight } from '../entities/models/personal-representative-right.model'
-import { PersonalRepresentative } from '../entities/models/personal-representative.model'
+import { PaginatedPersonalRepresentativeDto } from '../dto/paginated-personal-representative.dto'
+import { PaginationWithNationalIdsDto } from '../dto/pagination-with-national-ids.dto'
+import { PersonalRepresentativeCreateDTO } from '../dto/personal-representative-create.dto'
+import { PersonalRepresentativeDTO } from '../dto/personal-representative.dto'
+import { PersonalRepresentativeRightType } from '../models/personal-representative-right-type.model'
+import { PersonalRepresentativeRight } from '../models/personal-representative-right.model'
+import { InactiveReason } from '../models/personal-representative.enum'
+import { PersonalRepresentative } from '../models/personal-representative.model'
 
 @Injectable()
 export class PersonalRepresentativeService {
@@ -20,6 +21,8 @@ export class PersonalRepresentativeService {
     private personalRepresentativeModel: typeof PersonalRepresentative,
     @InjectModel(PersonalRepresentativeRight)
     private personalRepresentativeRightModel: typeof PersonalRepresentativeRight,
+    @InjectModel(PersonalRepresentativeRightType)
+    private personalRepresentativeRightTypeModel: typeof PersonalRepresentativeRightType,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
     private sequelize: Sequelize,
@@ -83,10 +86,15 @@ export class PersonalRepresentativeService {
   }
 
   /** Get's all personal repreasentative connections for personal representative  */
-  async getByPersonalRepresentative(
-    nationalIdPersonalRepresentative: string,
-    includeInvalid: boolean,
-  ): Promise<PersonalRepresentativeDTO[]> {
+  async getByPersonalRepresentative({
+    nationalIdPersonalRepresentative,
+    includeInactive = false,
+    skipInactive = true,
+  }: {
+    nationalIdPersonalRepresentative: string
+    includeInactive?: boolean
+    skipInactive?: boolean
+  }): Promise<PersonalRepresentativeDTO[]> {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const validToClause: any = {
       [Op.or]: { [Op.eq]: null, [Op.gt]: new Date() },
@@ -97,13 +105,16 @@ export class PersonalRepresentativeService {
     }
     const whereClause: WhereOptions = {
       nationalIdPersonalRepresentative: nationalIdPersonalRepresentative,
+      ...(skipInactive && { inactive: false }),
     }
     const whereClauseRights: WhereOptions = {}
-    if (!includeInvalid) {
+
+    if (!includeInactive) {
       whereClause['validTo'] = validToClause
       whereClauseRights['validFrom'] = validFromClause
       whereClauseRights['validTo'] = validToClause
     }
+
     const personalRepresentatives = await this.personalRepresentativeModel.findAll(
       {
         where: whereClause,
@@ -122,6 +133,7 @@ export class PersonalRepresentativeService {
         ],
       },
     )
+
     return personalRepresentatives.map((pr) => pr.toDTO())
   }
 
@@ -206,11 +218,11 @@ export class PersonalRepresentativeService {
     personalRepresentative: PersonalRepresentativeCreateDTO,
   ): Promise<PersonalRepresentativeDTO | null> {
     // Create new personal representative connection
-    let prId = ''
+
     try {
-      await this.sequelize.transaction(async (t) => {
+      return await this.sequelize.transaction(async (t) => {
         const newPr = await this.personalRepresentativeModel.create(
-          personalRepresentative,
+          { ...personalRepresentative },
           { transaction: t },
         )
 
@@ -226,20 +238,17 @@ export class PersonalRepresentativeService {
         await this.personalRepresentativeRightModel.bulkCreate(rightCodes, {
           transaction: t,
         })
-        prId = newPr.id
-      })
 
-      const result = await this.personalRepresentativeModel.findByPk(prId, {
-        include: [
+        /** To tackle replication we need to generate new object without selecting it from database */
+        const result = newPr.toDTO()
+        const rightTypes = await this.personalRepresentativeRightTypeModel.findAll(
           {
-            model: PersonalRepresentativeRight,
-            required: true,
-            include: [PersonalRepresentativeRightType],
+            where: { code: rightCodes.map((rc) => rc.rightTypeCode) },
           },
-        ],
+        )
+        result.rights = rightTypes.map((rt) => rt.toDTO())
+        return result
       })
-
-      return result ? result.toDTO() : null
     } catch (err) {
       throw new BadRequestException(
         `Error creating personal representative: ${err}`,
@@ -257,5 +266,23 @@ export class PersonalRepresentativeService {
     return await this.personalRepresentativeModel.destroy({
       where: { id: id },
     })
+  }
+
+  async makeInactive(id: string) {
+    this.logger.debug('Making personal representative inactive for id: ', id)
+
+    const result = await this.personalRepresentativeModel.update(
+      {
+        inactive: true,
+        inactiveReason: InactiveReason.DECEASED_PARTY,
+      },
+      {
+        where: {
+          id,
+        },
+      },
+    )
+
+    return result
   }
 }

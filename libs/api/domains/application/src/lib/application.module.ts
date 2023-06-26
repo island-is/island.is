@@ -3,6 +3,7 @@ import { ApplicationResolver } from './application.resolver'
 import { ApplicationService } from './application.service'
 import { ApplicationsApi, PaymentsApi, Configuration } from '../../gen/fetch'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
+import { ApplicationAdminResolver } from './application-admin/application-admin.resolvers'
 
 export interface Config {
   baseApiUrl: string
@@ -15,31 +16,30 @@ export class ApplicationModule {
       module: ApplicationModule,
       providers: [
         ApplicationResolver,
+        ApplicationAdminResolver,
         ApplicationService,
         {
           provide: ApplicationsApi,
-          useFactory: async () =>
-            new ApplicationsApi(
-              new Configuration({
-                fetchApi: createEnhancedFetch({
-                  name: 'ApplicationModule.applicationsApi',
-                  timeout: 60000,
-                }),
-                basePath: config.baseApiUrl,
+          useValue: new ApplicationsApi(
+            new Configuration({
+              fetchApi: createEnhancedFetch({
+                name: 'ApplicationModule.applicationsApi',
+                timeout: 60000,
               }),
-            ),
+              basePath: config.baseApiUrl,
+            }),
+          ),
         },
         {
           provide: PaymentsApi,
-          useFactory: async () =>
-            new PaymentsApi(
-              new Configuration({
-                fetchApi: createEnhancedFetch({
-                  name: 'ApplicationModule.paymentsApi',
-                }),
-                basePath: config.baseApiUrl,
+          useValue: new PaymentsApi(
+            new Configuration({
+              fetchApi: createEnhancedFetch({
+                name: 'ApplicationModule.paymentsApi',
               }),
-            ),
+              basePath: config.baseApiUrl,
+            }),
+          ),
         },
       ],
       exports: [],

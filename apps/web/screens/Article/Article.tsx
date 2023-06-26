@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useMemo, useRef, useState } from 'react'
+import { FC, useEffect, useMemo, useRef, useState } from 'react'
 import { useRouter } from 'next/router'
 import NextLink from 'next/link'
 import { BLOCKS } from '@contentful/rich-text-types'
@@ -6,7 +6,6 @@ import slugify from '@sindresorhus/slugify'
 import {
   Slice as SliceType,
   ProcessEntry,
-  richText,
 } from '@island.is/island-ui/contentful'
 import {
   Box,
@@ -26,16 +25,18 @@ import {
   InstitutionPanel,
   InstitutionsPanel,
   OrganizationFooter,
-  OrganizationChatPanel,
   Sticky,
   Webreader,
   AppendedArticleComponents,
-  LiveChatIncChatPanel,
+  footerEnabled,
+  Stepper,
+  stepperUtils,
+  Form,
 } from '@island.is/web/components'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { GET_ARTICLE_QUERY, GET_NAMESPACE_QUERY } from '../queries'
 import { Screen } from '@island.is/web/types'
-import { useNamespace } from '@island.is/web/hooks'
+import { useNamespace, usePlausiblePageview } from '@island.is/web/hooks'
 import { useI18n } from '@island.is/web/i18n'
 import { CustomNextError } from '@island.is/web/units/errors'
 import {
@@ -45,6 +46,7 @@ import {
   GetSingleArticleQuery,
   QueryGetSingleArticleArgs,
   Organization,
+  Stepper as StepperSchema,
 } from '@island.is/web/graphql/schema'
 import { createNavigation } from '@island.is/web/utils/navigation'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
@@ -55,16 +57,26 @@ import {
   LinkType,
   useLinkResolver,
 } from '../../hooks/useLinkResolver'
+import { ArticleChatPanel } from './components/ArticleChatPanel'
+import { webRichText } from '@island.is/web/utils/richText'
 import { Locale } from '@island.is/shared/types'
 import { useScrollPosition } from '../../hooks/useScrollPosition'
 import { scrollTo } from '../../hooks/useScrollSpy'
-import StepperFSM from '../../components/StepperFSM/StepperFSM'
-import { getStepOptionsFromUIConfiguration } from '../../components/StepperFSM/StepperFSMUtils'
-import { liveChatIncConfig } from './config'
-import * as styles from './Article.css'
+import { getOrganizationLink } from '@island.is/web/utils/organization'
 
 type Article = GetSingleArticleQuery['getSingleArticle']
 type SubArticle = GetSingleArticleQuery['getSingleArticle']['subArticles'][0]
+
+const getThemeConfig = (article: Article) => {
+  const organizationFooterPresent = article?.organization?.some((o) =>
+    footerEnabled.includes(o.slug),
+  )
+  return {
+    themeConfig: {
+      footerVersion: organizationFooterPresent ? 'organization' : 'default',
+    },
+  }
+}
 
 const createSubArticleNavigation = (body: Slice[]) => {
   // on sub-article page the main article title is h1, sub-article title is h2
@@ -244,7 +256,7 @@ const ArticleSidebar: FC<ArticleSidebarProps> = ({
 
   return (
     <Stack space={3}>
-      {!!article.category && (
+      {!!article.category?.slug && (
         <Box display={['none', 'none', 'block']} printHidden>
           <Link
             {...linkResolver('articlecategory', [article.category.slug])}
@@ -269,7 +281,9 @@ const ArticleSidebar: FC<ArticleSidebarProps> = ({
           institutionTitle={n('organization')}
           institution={article.organization[0].title}
           locale={activeLocale}
-          linkProps={{ href: article.organization[0].link }}
+          linkProps={{
+            href: getOrganizationLink(article.organization[0], activeLocale),
+          }}
           imgContainerDisplay={['block', 'block', 'none', 'block']}
         />
       )}
@@ -310,7 +324,7 @@ const ArticleScreen: Screen<ArticleProps> = ({
     setMounted(true)
   }, [])
   const n = useNamespace(namespace)
-  const { query } = useRouter()
+  const { query, asPath } = useRouter()
   const { linkResolver } = useLinkResolver()
 
   const subArticle = article.subArticles.find((sub) => {
@@ -318,6 +332,8 @@ const ArticleScreen: Screen<ArticleProps> = ({
   })
 
   useContentfulId(article.id, subArticle?.id)
+
+  usePlausiblePageview(article.organization?.[0]?.trackingDomain)
 
   useScrollPosition(
     ({ currPos }) => {
@@ -367,10 +383,47 @@ const ArticleScreen: Screen<ArticleProps> = ({
 
   const metaTitle = `${article.title} | Ísland.is`
   const processEntry = article.processEntry
-  const categoryHref = linkResolver('articlecategory', [article.category.slug])
-    .href
+
+  // TODO: Revert https://github.com/island-is/island.is/pull/10575 when we have properly configured english article unpublish behaviour
+  const categoryHref = article.category.slug
+    ? linkResolver('articlecategory', [article.category.slug]).href
+    : ''
   const organizationTitle = article.organization[0]?.title
   const organizationShortTitle = article.organization[0]?.shortTitle
+
+  const inStepperView = useMemo(
+    () => query.stepper === 'true' && !!article.stepper,
+    [query.stepper, article.stepper],
+  )
+
+  const breadcrumbItems = useMemo(
+    () =>
+      inStepperView
+        ? []
+        : [
+            {
+              title: 'Ísland.is',
+              typename: 'homepage',
+              href: '/',
+            },
+            !!article.category?.slug && {
+              title: article.category.title,
+              typename: 'articlecategory',
+              slug: [article.category.slug],
+            },
+            !!article.category?.slug &&
+              !!article.group && {
+                isTag: true,
+                title: article.group.title,
+                typename: 'articlecategory',
+                slug: [
+                  article.category.slug +
+                    (article.group?.slug ? `#${article.group.slug}` : ''),
+                ],
+              },
+          ],
+    [article.category, article.group, inStepperView],
+  )
 
   return (
     <>
@@ -394,52 +447,42 @@ const ArticleScreen: Screen<ArticleProps> = ({
         }
       >
         <Box
-          paddingBottom={[2, 2, 4]}
+          paddingBottom={inStepperView ? undefined : [2, 2, 4]}
           display={['none', 'none', 'block']}
-          printHidden
+          printHidden={!inStepperView}
         >
-          <Breadcrumbs
-            items={[
-              {
-                title: 'Ísland.is',
-                typename: 'homepage',
-                href: '/',
-              },
-              !!article.category && {
-                title: article.category.title,
-                typename: 'articlecategory',
-                slug: [article.category.slug],
-              },
-              !!article.group && {
-                isTag: true,
-                title: article.group.title,
-                typename: 'articlecategory',
-                slug: [
-                  article.category.slug +
-                    (article.group?.slug ? `#${article.group.slug}` : ''),
-                ],
-              },
-            ]}
-            renderLink={(link, { typename, slug }) => {
-              return (
-                <NextLink
-                  {...linkResolver(typename as LinkType, slug)}
-                  passHref
-                >
-                  {link}
-                </NextLink>
-              )
-            }}
-          />
+          {inStepperView && (
+            <Text color="blueberry600" variant="eyebrow" as="h2">
+              <span id={slugify(article.title)} className="rs_read">
+                {article.title}
+              </span>
+            </Text>
+          )}
+
+          {!inStepperView && (
+            <Breadcrumbs
+              items={breadcrumbItems}
+              renderLink={(link, { typename, slug }) => {
+                return (
+                  <NextLink
+                    {...linkResolver(typename as LinkType, slug)}
+                    passHref
+                  >
+                    {link}
+                  </NextLink>
+                )
+              }}
+            />
+          )}
         </Box>
         <Box
-          paddingBottom={[2, 2, 4]}
+          paddingBottom={inStepperView ? undefined : [2, 2, 4]}
           display={['flex', 'flex', 'none']}
           justifyContent="spaceBetween"
           alignItems="center"
           printHidden
         >
-          {!!article.category && (
+          {!!article.category?.title && (
             <Box flexGrow={1} marginRight={6} overflow={'hidden'}>
               <Link href={categoryHref} skipTab>
                 <Button
@@ -472,12 +515,24 @@ const ArticleScreen: Screen<ArticleProps> = ({
           )}
         </Box>
         <Box>
-          <Text variant="h1" as="h1">
-            <span id={slugify(article.title)} className="rs_read">
-              {article.title}
-            </span>
-          </Text>
-          <Webreader readId={null} readClass="rs_read" />
+          {!inStepperView && (
+            <Text variant="h1" as="h1">
+              <span id={slugify(article.title)} className="rs_read">
+                {article.title}
+              </span>
+            </Text>
+          )}
+
+          {inStepperView && (
+            <Stepper
+              namespace={stepperNamespace}
+              optionsFromNamespace={stepOptionsFromNamespace}
+              stepper={article.stepper as StepperSchema}
+              showWebReader={true}
+              webReaderClassName="rs_read"
+            />
+          )}
+          {!inStepperView && <Webreader readId={null} readClass="rs_read" />}
           <Box marginTop={3} display={['block', 'block', 'none']} printHidden>
             <ArticleNavigation
               article={article}
@@ -486,7 +541,7 @@ const ArticleScreen: Screen<ArticleProps> = ({
               isMenuDialog
             />
           </Box>
-          {!!processEntry && (
+          {processEntry?.processLink && (
             <Box
               marginTop={3}
               display={['none', 'none', 'block']}
@@ -508,53 +563,52 @@ const ArticleScreen: Screen<ArticleProps> = ({
               </GridColumn>
             </GridRow>
           )}
-          {subArticle && !subArticle.stepper && (
+          {subArticle && (
             <Text variant="h2" as="h2" paddingTop={7}>
               <span id={slugify(subArticle.title)} className="rs_read">
                 {subArticle.title}
               </span>
             </Text>
           )}
-          {subArticle && subArticle.stepper && (
-            <Box className={styles.stepperSubArticleTitle}>
-              <Text
-                color="blueberry600"
-                variant="eyebrow"
-                as="h2"
-                paddingTop={3}
-              >
-                <span id={slugify(subArticle.title)} className="rs_read">
-                  {subArticle.title}
-                </span>
-              </Text>
+        </Box>
+        <Box paddingTop={subArticle ? 2 : 4}>
+          {!inStepperView && (
+            <Box className="rs_read">
+              {webRichText(
+                (subArticle ?? article).body as SliceType[],
+                {
+                  renderComponent: {
+                    Stepper: () => (
+                      <Box marginY={3} printHidden className="rs_read">
+                        <ProcessEntry
+                          buttonText={n(
+                            article.processEntryButtonText || 'application',
+                            '',
+                          )}
+                          processLink={asPath
+                            .split('?')[0]
+                            .concat('?stepper=true')}
+                          processTitle={article.stepper.title}
+                          newTab={false}
+                        />
+                      </Box>
+                    ),
+                    Form: (form) => <Form form={form} namespace={namespace} />,
+                  },
+                },
+                activeLocale,
+              )}
+              <AppendedArticleComponents article={article} />
             </Box>
           )}
-        </Box>
-        <Box
-          paddingTop={subArticle && subArticle.stepper ? 0 : subArticle ? 2 : 4}
-        >
-          <Box className="rs_read">
-            {richText(
-              (subArticle ?? article).body as SliceType[],
-              undefined,
-              activeLocale,
-            )}
-            {subArticle && subArticle.stepper && (
-              <StepperFSM
-                stepper={subArticle.stepper}
-                optionsFromNamespace={stepOptionsFromNamespace}
-                namespace={stepperNamespace}
-              />
-            )}
-            <AppendedArticleComponents article={article} />
-          </Box>
+
           <Box
             id="processRef"
             display={['block', 'block', 'none']}
             marginTop={7}
             printHidden
           >
-            {!!processEntry && <ProcessEntry {...processEntry} />}
+            {processEntry?.processLink && <ProcessEntry {...processEntry} />}
           </Box>
           {article.organization.length > 0 && (
             <Box
@@ -567,7 +621,10 @@ const ArticleScreen: Screen<ArticleProps> = ({
                 institution={{
                   title: article.organization[0].title,
                   label: n('organization'),
-                  href: article.organization[0].link,
+                  href: getOrganizationLink(
+                    article.organization[0],
+                    activeLocale,
+                  ),
                 }}
                 responsibleParty={article.responsibleParty.map(
                   (responsibleParty) => ({
@@ -580,7 +637,10 @@ const ArticleScreen: Screen<ArticleProps> = ({
                   (relatedOrganization) => ({
                     title: relatedOrganization.title,
                     label: n('relatedOrganization'),
-                    href: relatedOrganization.link,
+                    href: getOrganizationLink(
+                      relatedOrganization,
+                      activeLocale,
+                    ),
                   }),
                 )}
                 locale={activeLocale}
@@ -589,7 +649,8 @@ const ArticleScreen: Screen<ArticleProps> = ({
             </Box>
           )}
           <Box display={['block', 'block', 'none']} printHidden>
-            {article.relatedArticles.length > 0 && (
+            {(article.relatedArticles.length > 0 ||
+              article.relatedContent.length > 0) && (
               <RelatedContent
                 title={n('relatedMaterial')}
                 articles={article.relatedArticles}
@@ -598,7 +659,7 @@ const ArticleScreen: Screen<ArticleProps> = ({
             )}
           </Box>
         </Box>
-        {!!processEntry &&
+        {processEntry?.processLink &&
           mounted &&
           isVisible &&
           createPortal(
@@ -608,14 +669,10 @@ const ArticleScreen: Screen<ArticleProps> = ({
             portalRef.current,
           )}
       </SidebarLayout>
-      {article.id in liveChatIncConfig ? (
-        <LiveChatIncChatPanel {...liveChatIncConfig[article.id]} />
-      ) : (
-        <OrganizationChatPanel
-          slugs={article.organization.map((x) => x.slug)}
-          pushUp={isVisible}
-        />
-      )}
+      <ArticleChatPanel
+        article={article}
+        pushUp={isVisible && processEntry?.processLink && mounted}
+      />
       <OrganizationFooter
         organizations={article.organization as Organization[]}
       />
@@ -657,7 +714,7 @@ ArticleScreen.getInitialProps = async ({ apolloClient, query, locale }) => {
         query: GET_NAMESPACE_QUERY,
         variables: {
           input: {
-            namespace: 'StepperFSM',
+            namespace: 'Stepper',
             lang: locale,
           },
         },
@@ -679,9 +736,9 @@ ArticleScreen.getInitialProps = async ({ apolloClient, query, locale }) => {
   // The stepper in the subArticle can have steps that need data from a namespace (UI configuration)
   let stepOptionsFromNamespace = []
 
-  if (subArticle && subArticle.stepper)
-    stepOptionsFromNamespace = await getStepOptionsFromUIConfiguration(
-      subArticle.stepper,
+  if (article.stepper)
+    stepOptionsFromNamespace = await stepperUtils.getStepOptionsFromUIConfiguration(
+      article.stepper as StepperSchema,
       apolloClient,
     )
 
@@ -690,6 +747,7 @@ ArticleScreen.getInitialProps = async ({ apolloClient, query, locale }) => {
     namespace,
     stepOptionsFromNamespace,
     stepperNamespace,
+    ...getThemeConfig(article),
   }
 }
 

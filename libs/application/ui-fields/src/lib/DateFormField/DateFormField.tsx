@@ -1,13 +1,12 @@
 import React, { FC, useMemo } from 'react'
 
+import { formatText, getValueViaPath } from '@island.is/application/core'
 import {
   FieldBaseProps,
   DateField,
-  formatText,
   MaybeWithApplicationAndField,
   Application,
-  getValueViaPath,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 import { Box } from '@island.is/island-ui/core'
 import {
   DatePickerController,
@@ -27,18 +26,15 @@ export const DateFormField: FC<Props> = ({ application, error, field }) => {
     title,
     description,
     defaultValue,
+    required,
     placeholder,
     backgroundColor,
     excludeDates,
     minDate,
+    maxDate,
     onChange,
   } = field
   const { formatMessage, lang } = useLocale()
-
-  const computedDefaultValue =
-    typeof defaultValue === 'function'
-      ? defaultValue(application, field)
-      : defaultValue
 
   const computeMinDate = (
     maybeMinDate: MaybeWithApplicationAndField<Date>,
@@ -50,6 +46,18 @@ export const DateFormField: FC<Props> = ({ application, error, field }) => {
     }
 
     return maybeMinDate
+  }
+
+  const computeMaxDate = (
+    maybeMaxDate: MaybeWithApplicationAndField<Date>,
+    memoApplication: Application,
+    memoField: DateField,
+  ) => {
+    if (typeof maybeMaxDate === 'function') {
+      return maybeMaxDate(memoApplication, memoField)
+    }
+
+    return maybeMaxDate
   }
 
   const computeExcludeDates = (
@@ -72,6 +80,16 @@ export const DateFormField: FC<Props> = ({ application, error, field }) => {
         field,
       ),
     [minDate, application, field],
+  )
+
+  const finalMaxDate = useMemo(
+    () =>
+      computeMaxDate(
+        maxDate as MaybeWithApplicationAndField<Date>,
+        application,
+        field,
+      ),
+    [maxDate, application, field],
   )
 
   const finalExcludeDates = useMemo(
@@ -102,8 +120,10 @@ export const DateFormField: FC<Props> = ({ application, error, field }) => {
           id={id}
           name={id}
           locale={lang}
+          required={required}
           excludeDates={finalExcludeDates}
           minDate={finalMinDate}
+          maxDate={finalMaxDate}
           backgroundColor={backgroundColor}
           label={formatText(title, application, formatMessage)}
           placeholder={

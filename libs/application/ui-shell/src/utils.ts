@@ -1,13 +1,13 @@
+import { getValueViaPath } from '@island.is/application/core'
 import {
   DataProviderItem,
   ExternalData,
   FieldTypes,
   FormItemTypes,
   FormValue,
-  getValueViaPath,
   RecordObject,
   SubmitField,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 import { FormScreen } from './types'
 import pick from 'lodash/pick'
 import get from 'lodash/get'
@@ -23,6 +23,7 @@ export function verifyExternalData(
       return false
     }
   }
+
   return true
 }
 
@@ -70,6 +71,11 @@ export function findSubmitField(screen: FormScreen): SubmitField | undefined {
     )
     if (reviewScreen !== undefined) {
       return reviewScreen as SubmitField
+    }
+  }
+  if (screen.type === FormItemTypes.EXTERNAL_DATA_PROVIDER) {
+    if (screen.submitField !== undefined) {
+      return screen.submitField
     }
   }
   return undefined
