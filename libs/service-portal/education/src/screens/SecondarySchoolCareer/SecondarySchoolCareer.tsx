@@ -1,24 +1,36 @@
 import React from 'react'
 import {
-  CardLoader,
+  addArray,
   formatDate,
   IntroHeader,
   m,
+  NotFound,
   SortableTable,
 } from '@island.is/service-portal/core'
-import { Box } from '@island.is/island-ui/core'
+import { Box, Column, SkeletonLoader } from '@island.is/island-ui/core'
 
 import { useGetInnaPeriodsQuery } from './Periods.generated'
-import { addArray } from '../../utils/addArray'
 import { tagSelector } from '../../utils/tagSelector'
 import { useLocale } from '@island.is/localization'
 import { edMessage } from '../../lib/messages'
+import { defineMessage } from 'react-intl'
 
 export const EducationGraduationDetail = () => {
-  const { data: innaData, loading } = useGetInnaPeriodsQuery()
+  const { data: innaData, loading, error } = useGetInnaPeriodsQuery()
   const { formatMessage } = useLocale()
 
   const periodItems = innaData?.innaPeriods?.items || []
+
+  if ((!periodItems.length && !loading) || error) {
+    return (
+      <NotFound
+        title={defineMessage({
+          id: 'sp.education-secondary-school:not-found',
+          defaultMessage: 'Engin gögn fundust',
+        })}
+      />
+    )
+  }
   return (
     <Box marginBottom={[6, 6, 10]}>
       <IntroHeader
@@ -46,7 +58,13 @@ export const EducationGraduationDetail = () => {
           </Box>
         </GridColumn>
       </GridRow> */}
-      <Box marginTop={4}>{loading && <CardLoader />}</Box>
+      <Box marginTop={4}>
+        {loading && (
+          <Column width="content">
+            <SkeletonLoader repeat={3} space={2} />
+          </Column>
+        )}
+      </Box>
       {periodItems.length > 0 &&
         !loading &&
         periodItems.map((item, i) => (

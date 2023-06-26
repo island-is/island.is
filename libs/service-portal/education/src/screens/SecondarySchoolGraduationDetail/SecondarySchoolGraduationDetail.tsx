@@ -1,5 +1,6 @@
 import React from 'react'
 import {
+  addArray,
   formatDate,
   IntroHeader,
   m,
@@ -18,7 +19,6 @@ import { useParams } from 'react-router-dom'
 import { useGetInnaPeriodsQuery } from '../SecondarySchoolCareer/Periods.generated'
 import { useGetInnaDiplomasQuery } from '../SecondarySchoolCareer/Diplomas.generated'
 import { tagSelector } from '../../utils/tagSelector'
-import { addArray } from '../../utils/addArray'
 import { defineMessage } from 'react-intl'
 import { edMessage } from '../../lib/messages'
 
@@ -31,10 +31,11 @@ export const EducationGraduationDetail = () => {
   const { formatMessage } = useLocale()
   const { id } = useParams() as UseParams
 
-  const { data: innaData, loading } = useGetInnaPeriodsQuery()
+  const { data: innaData, loading, error } = useGetInnaPeriodsQuery()
   const {
     data: innaDiplomas,
     loading: loadingDiplomas,
+    error: errorDiplomas,
   } = useGetInnaDiplomasQuery()
 
   const periodItems = innaData?.innaPeriods?.items || []
@@ -48,6 +49,7 @@ export const EducationGraduationDetail = () => {
   )
 
   const queryLoading = loading || loadingDiplomas
+  const queryError = error || errorDiplomas
   if (queryLoading) {
     return (
       <Box marginBottom={6}>
@@ -60,7 +62,7 @@ export const EducationGraduationDetail = () => {
     )
   }
 
-  if (!periodArray.length && !queryLoading) {
+  if ((!periodArray.length && !queryLoading) || queryError) {
     return (
       <NotFound
         title={defineMessage({

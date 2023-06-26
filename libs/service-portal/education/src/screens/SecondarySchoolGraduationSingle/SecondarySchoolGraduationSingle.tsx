@@ -19,7 +19,7 @@ type UseParams = {
 
 export const EducationGraduationDetail = () => {
   useNamespaces('sp.education-secondary-school')
-  const { data: innaDiplomas, loading } = useGetInnaDiplomasQuery()
+  const { data: innaDiplomas, loading, error } = useGetInnaDiplomasQuery()
   const { formatMessage } = useLocale()
 
   const { id } = useParams() as UseParams
@@ -27,7 +27,7 @@ export const EducationGraduationDetail = () => {
 
   const singleGraduation = diplomaItems.filter((item) => item.diplomaId === id)
 
-  if (!singleGraduation.length && !loading) {
+  if ((!singleGraduation.length && !loading) || error) {
     return (
       <NotFound
         title={defineMessage({
