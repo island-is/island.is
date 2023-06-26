@@ -157,8 +157,8 @@ export const EstateMembersRepeater: FC<FieldBaseProps<Answers>> = ({
               </GridColumn>
             </GridRow>
 
-            {/* GUARDIAN */}
-            {member.guardian && (
+            {/* ADVOCATE */}
+            {member.advocate && (
               <Box
                 marginTop={2}
                 paddingY={5}
@@ -169,17 +169,17 @@ export const EstateMembersRepeater: FC<FieldBaseProps<Answers>> = ({
                 <GridRow>
                   <GridColumn span={['1/1']} paddingBottom={2}>
                     <Text variant="h4">
-                      {formatMessage(m.inheritanceGuardianLabel)}
+                      {formatMessage(m.inheritanceAdvocateLabel)}
                     </Text>
                   </GridColumn>
                   <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
                     <InputController
-                      id={`${id}[${index}].guardian.nationalId`}
-                      name={`${id}[${index}].guardian.nationalId`}
+                      id={`${id}[${index}].advocate.nationalId`}
+                      name={`${id}[${index}].advocate.nationalId`}
                       label={formatMessage(m.inheritanceKtLabel)}
                       readOnly
                       defaultValue={formatNationalId(
-                        member.guardian?.nationalId || '',
+                        member.advocate?.nationalId || '',
                       )}
                       backgroundColor="white"
                       disabled={!member.enabled}
@@ -189,11 +189,11 @@ export const EstateMembersRepeater: FC<FieldBaseProps<Answers>> = ({
                   </GridColumn>
                   <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
                     <InputController
-                      id={`${id}[${index}].guardian.name`}
-                      name={`${id}[${index}].guardian.name`}
+                      id={`${id}[${index}].advocate.name`}
+                      name={`${id}[${index}].advocate.name`}
                       label={formatMessage(m.inheritanceNameLabel)}
                       readOnly
-                      defaultValue={member.guardian?.name || ''}
+                      defaultValue={member.advocate?.name || ''}
                       backgroundColor="white"
                       disabled={!member.enabled}
                       size="sm"
@@ -201,29 +201,29 @@ export const EstateMembersRepeater: FC<FieldBaseProps<Answers>> = ({
                   </GridColumn>
                   <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
                     <InputController
-                      id={`${id}[${index}].guardian.phone`}
-                      name={`${id}[${index}].guardian.phone`}
+                      id={`${id}[${index}].advocate.phone`}
+                      name={`${id}[${index}].advocate.phone`}
                       label={m.phone.defaultMessage}
                       backgroundColor="blue"
                       disabled={!member.enabled}
                       format="###-####"
-                      defaultValue={member.guardian?.phone || ''}
+                      defaultValue={member.advocate?.phone || ''}
                       error={
-                        error && error[index] && error[index].guardian.phone
+                        error && error[index] && error[index].advocate.phone
                       }
                       size="sm"
                     />
                   </GridColumn>
                   <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
                     <InputController
-                      id={`${id}[${index}].guardian.email`}
-                      name={`${id}[${index}].guardian.email`}
+                      id={`${id}[${index}].advocate.email`}
+                      name={`${id}[${index}].advocate.email`}
                       label={m.email.defaultMessage}
                       backgroundColor="blue"
                       disabled={!member.enabled}
-                      defaultValue={member.guardian?.email || ''}
+                      defaultValue={member.advocate?.email || ''}
                       error={
-                        error && error[index] && error[index].guardian.email
+                        error && error[index] && error[index].advocate.email
                       }
                       size="sm"
                     />

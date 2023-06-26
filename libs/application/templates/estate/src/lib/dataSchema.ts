@@ -90,7 +90,8 @@ export const estateSchema = z.object({
           .string()
           .refine((v) => isValidEmail(v) || v === '')
           .optional(),
-        guardian: z
+        // Málsvari
+        advocate: z
           .object({
             name: z.string(),
             nationalId: z.string(),
@@ -106,8 +107,8 @@ export const estateSchema = z.object({
           .optional(),
       })
       .refine(
-        ({ nationalId, guardian }) => {
-          return kennitala.info(nationalId as string).age < 18 ? guardian : true
+        ({ nationalId, advocate }) => {
+          return kennitala.info(nationalId as string).age < 18 ? advocate : true
         },
         {
           path: ['nationalId'],

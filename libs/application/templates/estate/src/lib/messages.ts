@@ -730,11 +730,6 @@ export const m = defineMessages({
     defaultMessage: 'Tengsl virðast ekki vera rétt',
     description: 'Relation is invalid',
   },
-  errorEstateMemberUnder18: {
-    id: 'es.application:error.errorEstateMemberUnder18',
-    defaultMessage: ' ',
-    description: '',
-  },
   fillOutRates: {
     id: 'es.application:error.fillOutRates',
     defaultMessage: 'Vinsamlegast fylltu út í alla reiti',
@@ -804,8 +799,8 @@ export const m = defineMessages({
     defaultMessage: 'Fæðingardagur',
     description: 'Day of birth label',
   },
-  inheritanceGuardianLabel: {
-    id: 'es.application:inheritanceGuardianLabel',
+  inheritanceAdvocateLabel: {
+    id: 'es.application:inheritanceAdvocateLabel',
     defaultMessage: 'Forsjáraðili',
     description: 'Custody label',
   },
