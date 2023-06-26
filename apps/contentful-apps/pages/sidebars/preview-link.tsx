@@ -74,8 +74,17 @@ const PreviewLinkSidebar = () => {
               environmentId: CONTENTFUL_ENVIRONMENT,
               spaceId: CONTENTFUL_SPACE,
             })
+
+            const bypassCacheSecret =
+              sdk.parameters.instance['bypassCacheSecret']
+
+            const queryParams = bypassCacheSecret
+              ? `?bypass-cache=${bypassCacheSecret}`
+              : ''
+
             const url = await previewLinkHandler[contentTypeId](entry, cma)
-            window.open(url, '_blank')
+
+            window.open(`${url}${queryParams}`, '_blank')
           }
         }}
       >

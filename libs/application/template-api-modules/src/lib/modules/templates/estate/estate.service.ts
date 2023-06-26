@@ -252,12 +252,24 @@ export class EstateTemplateService extends BaseTemplateApiService {
         ? {
             representative: {
               email: answers.representative.email ?? '',
-              name: answers.representative.name ?? '',
+              name: answers.representative.name,
               phoneNumber: answers.representative.phone ?? '',
               ssn: answers.representative.nationalId ?? '',
             },
           }
         : { representative: undefined }),
+      ...(answers.deceasedWithUndividedEstate?.spouse?.nationalId
+        ? {
+            deceasedWithUndividedEstate: {
+              spouse: {
+                name: answers.deceasedWithUndividedEstate.spouse.name ?? '',
+                nationalId:
+                  answers.deceasedWithUndividedEstate.spouse.nationalId,
+              },
+              selection: answers.deceasedWithUndividedEstate.selection ?? '',
+            },
+          }
+        : { deceasedWithUndividedEstate: undefined }),
     }
 
     const attachments: Attachment[] = []

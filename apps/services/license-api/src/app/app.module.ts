@@ -14,6 +14,7 @@ import {
 import { OpenFirearmLicenseClientConfig } from '@island.is/clients/firearm-license'
 import { ProblemModule } from '@island.is/nest/problem'
 import { DrivingLicenseApiClientConfig } from './modules/license/clients/drivingLicense/drivingLicenseApiClient.config'
+import { DrivingLicenseApiConfig } from '@island.is/clients/driving-license'
 @Module({
   imports: [
     AuditModule.forRoot(environment.audit),
@@ -28,6 +29,7 @@ import { DrivingLicenseApiClientConfig } from './modules/license/clients/driving
         DisabilityLicenseApiClientConfig,
         DrivingLicenseApiClientConfig,
         OpenFirearmLicenseClientConfig,
+        DrivingLicenseApiConfig,
       ],
     }),
     LicenseModule,
