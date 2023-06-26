@@ -3,7 +3,6 @@ import { useFieldArray } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
 import { FieldBaseProps, GenericFormField } from '@island.is/application/types'
 import {
-  AlertMessage,
   Box,
   Button,
   GridColumn,
@@ -17,7 +16,6 @@ import { AdditionalEstateMember } from './AdditionalEstateMember'
 import { getValueViaPath } from '@island.is/application/core'
 import { InputController } from '@island.is/shared/form-fields'
 import { format as formatNationalId } from 'kennitala'
-import * as kennitala from 'kennitala'
 
 export const EstateMembersRepeater: FC<FieldBaseProps<Answers>> = ({
   application,
@@ -99,15 +97,6 @@ export const EstateMembersRepeater: FC<FieldBaseProps<Answers>> = ({
               </Box>
             </Box>
             <GridRow>
-              {!member.guardian &&
-                kennitala.info(member.nationalId as string).age < 18 && (
-                  <GridColumn span={['1/1']} paddingBottom={3}>
-                    <AlertMessage
-                      type="error"
-                      message={formatMessage(m.inheritanceUnder18Error)}
-                    />
-                  </GridColumn>
-                )}
               <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
                 <InputController
                   id={`${id}[${index}].nationalId`}
@@ -190,7 +179,7 @@ export const EstateMembersRepeater: FC<FieldBaseProps<Answers>> = ({
                       label={formatMessage(m.inheritanceKtLabel)}
                       readOnly
                       defaultValue={formatNationalId(
-                        '0101302399', //member.guardian?.nationalId || '',
+                        member.guardian?.nationalId || '',
                       )}
                       backgroundColor="white"
                       disabled={!member.enabled}
@@ -204,7 +193,7 @@ export const EstateMembersRepeater: FC<FieldBaseProps<Answers>> = ({
                       name={`${id}[${index}].guardian.name`}
                       label={formatMessage(m.inheritanceNameLabel)}
                       readOnly
-                      defaultValue={'Gervimaður Forsjáraðili'} //member.guardian?.name || ''}
+                      defaultValue={member.guardian?.name || ''}
                       backgroundColor="white"
                       disabled={!member.enabled}
                       size="sm"
