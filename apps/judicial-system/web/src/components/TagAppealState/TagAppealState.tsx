@@ -1,20 +1,21 @@
 import React, { useContext } from 'react'
 import { useIntl } from 'react-intl'
 
-import {
-  CaseAppealRulingDecision,
-  CaseAppealState,
-  Feature,
-} from '@island.is/judicial-system/types'
+import { Feature } from '@island.is/judicial-system/types'
 
 import { appealRuling } from '@island.is/judicial-system-web/messages/Core/appealRuling'
 import { Tag, TagVariant } from '@island.is/island-ui/core'
 import { tables } from '@island.is/judicial-system-web/messages'
+import {
+  CaseAppealRulingDecision,
+  CaseAppealState,
+} from '@island.is/judicial-system-web/src/graphql/schema'
+
 import { FeatureContext } from '../FeatureProvider/FeatureProvider'
 
 interface Props {
-  appealState?: CaseAppealState
-  appealRulingDecision?: CaseAppealRulingDecision
+  appealState?: CaseAppealState | null
+  appealRulingDecision?: CaseAppealRulingDecision | null
 }
 
 const TagAppealState: React.FC<Props> = ({
@@ -29,8 +30,8 @@ const TagAppealState: React.FC<Props> = ({
   }
 
   const getTagVariantForAppealState = (
-    state?: CaseAppealState,
-    ruling?: CaseAppealRulingDecision,
+    state?: CaseAppealState | null,
+    ruling?: CaseAppealRulingDecision | null,
   ):
     | {
         color: TagVariant
