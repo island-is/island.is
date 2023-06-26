@@ -34,6 +34,7 @@ export enum Features {
   sessionHistory = 'sessionHistory',
   servicePortalConsentModule = 'isServicePortalConsentModuleEnabled',
   servicePortalHealthRightsModule = 'isServicePortalHealthRightsModuleEnabled',
+  servicePortalHealthCenterDentistPage = 'isServicePortalHealthCenterPageEnabled',
   servicePortalWorkMachinesModule = 'isServicePortalWorkMachinesPageEnabled',
 
   //License service new drivers license client enabled

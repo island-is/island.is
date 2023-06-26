@@ -37,6 +37,10 @@ export const m = defineMessages({
     id: 'service.portal:interest',
     defaultMessage: 'Vextir',
   },
+  refundDate: {
+    id: 'service.portal:refund-date',
+    defaultMessage: 'Dags. endurgreiðslu',
+  },
   finalDueDate: {
     id: 'service.portal:final-due-date',
     defaultMessage: 'Eindagi',
@@ -133,9 +137,17 @@ export const m = defineMessages({
     id: 'service.portal:date-from',
     defaultMessage: 'Dagsetning frá',
   },
+  dateFromShort: {
+    id: 'service.portal:date-from-short',
+    defaultMessage: 'Dags. frá',
+  },
   dateTo: {
     id: 'service.portal:date-to',
     defaultMessage: 'Dagsetning til',
+  },
+  dateToShort: {
+    id: 'service.portal:date-to-short',
+    defaultMessage: 'Dags. til',
   },
   selectForResults: {
     id: 'service.portal:select-for-results',
@@ -387,6 +399,10 @@ export const m = defineMessages({
   myRegistration: {
     id: 'service.portal:my-registration',
     defaultMessage: 'Mín skráning',
+  },
+  registrationHistory: {
+    id: 'service.portal:registration-history',
+    defaultMessage: 'Skráningarsaga',
   },
   baseInfo: {
     id: 'service.portal:base-info',
@@ -699,6 +715,10 @@ export const m = defineMessages({
     id: 'service.portal:code-confirmation',
     defaultMessage: 'Staðfesta',
   },
+  number: {
+    id: 'service.portal:number',
+    defaultMessage: 'Númer',
+  },
   telNumber: {
     id: 'service.portal:tel',
     defaultMessage: 'Símanúmer',
@@ -919,6 +939,14 @@ export const m = defineMessages({
   aidsAndNutrition: {
     id: 'service.portal:aids-and-nutrition',
     defaultMessage: 'Hjálpartæki og næring',
+  },
+  dentists: {
+    id: 'service.portal:dentists',
+    defaultMessage: 'Tannlæknar',
+  },
+  healthCenter: {
+    id: 'service.portal:health-center',
+    defaultMessage: 'Heilsugæsla',
   },
   workMachines: {
     id: 'service.portal:work-machines',
