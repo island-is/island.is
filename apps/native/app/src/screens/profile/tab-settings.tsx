@@ -519,16 +519,50 @@ export function TabSettings() {
           title={intl.formatMessage({id: 'settings.about.versionLabel'})}
           subtitle={`${DeviceInfo.getVersion()} build ${DeviceInfo.getBuildNumber()}`}
         />
-        <TableViewCell
-          title={intl.formatMessage({id: 'settings.about.codePushLabel'})}
-          subtitle={
-            loadingCP
-              ? intl.formatMessage({id: 'settings.about.codePushLoading'})
-              : !localPackage
-              ? intl.formatMessage({id: 'settings.about.codePushUpToDate'})
-              : `${localPackage?.label}`
-          }
-        />
+        <PressableHighlight
+          onPress={() => {
+            setLoadingCP(true);
+            CodePush.sync(
+              {
+                installMode: CodePush.InstallMode.IMMEDIATE,
+              },
+              status => {
+                switch (status) {
+                  case CodePush.SyncStatus.UP_TO_DATE:
+                    return RNAlert.alert('Up to date', 'The app is up to date');
+                  case CodePush.SyncStatus.UPDATE_INSTALLED:
+                    return RNAlert.alert(
+                      'Update installed',
+                      'The app has been updated',
+                    );
+                  case CodePush.SyncStatus.UPDATE_IGNORED:
+                    return RNAlert.alert(
+                      'Update cancelled',
+                      'The update was cancelled',
+                    );
+                  case CodePush.SyncStatus.UNKNOWN_ERROR:
+                    return RNAlert.alert(
+                      'Unknown error',
+                      'An unknown error occurred',
+                    );
+                }
+              },
+            ).finally(() => {
+              setLoadingCP(false);
+            });
+          }}
+        >
+          <TableViewCell
+            title={intl.formatMessage({id: 'settings.about.codePushLabel'})}
+            subtitle={
+              loadingCP
+                ? intl.formatMessage({id: 'settings.about.codePushLoading'})
+                : !localPackage
+                ? intl.formatMessage({id: 'settings.about.codePushUpToDate'})
+                : `${localPackage?.label}`
+            }
+          />
+        </PressableHighlight>
         <PressableHighlight
           onPress={onLogoutPress}
           testID={testIDs.USER_SETTINGS_LOGOUT_BUTTON}
