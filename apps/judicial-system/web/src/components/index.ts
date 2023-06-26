@@ -62,13 +62,15 @@ export { default as SignedDocument } from './SignedDocument/SignedDocument'
 export { default as OverviewHeader } from './OverviewHeader/OverviewHeader'
 export { default as TagAppealState } from './TagAppealState/TagAppealState'
 export { default as TagCaseState } from './TagCaseState/TagCaseState'
-
+export { default as AppealCasesTable } from './Table/AppealCasesTable/AppealCasesTable'
+export { default as PastCasesTable } from './Table/PastCasesTable/PastCasesTable'
+export { default as TableSkeleton } from './Table/TableSkeleton/TableSkeleton'
 export {
   SigningModal,
   useRequestRulingSignature,
 } from './SigningModal/SigningModal'
 export { default as Skeleton } from './Skeleton/Skeleton'
-export { default as Table } from './Table/Table'
+export { default as Table } from './ReactTable/Table'
 export { default as TimeInputField } from './TimeInputField/TimeInputField'
 export { UserProvider, UserContext } from './UserProvider/UserProvider'
 export {
@@ -82,5 +84,6 @@ export { default as CaseResentExplanation } from './CaseResentExplanation/CaseRe
 export { default as AppealConclusion } from './Conclusion/AppealConclusion'
 export { AlertBanner } from './AlertBanner'
 export { default as RulingDateLabel } from './RulingDateLabel/RulingDateLabel'
+export { default as SharedPageLayout } from './SharedPageLayout/SharedPageLayout'
 
 export type { Rect } from './ViewportProvider/ViewportProvider'

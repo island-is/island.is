@@ -16,6 +16,7 @@ query endorsementSystemFindEndorsementLists(
       closedDate
       openedDate
       adminLock
+      owner
     }
   }
 }

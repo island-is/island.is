@@ -132,7 +132,7 @@ const ViewSignedList = () => {
                     </Button>
                   }
                   onConfirm={() => onUnsign()}
-                  buttonTextConfirm={formatMessage(m.modalButtonCloseListYes)}
+                  buttonTextConfirm={formatMessage(m.modalButtonUnsignListYes)}
                   buttonTextCancel={formatMessage(m.modalButtonNo)}
                 />
               </Box>
