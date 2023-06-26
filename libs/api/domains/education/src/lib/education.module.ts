@@ -1,5 +1,6 @@
 import { Module, DynamicModule } from '@nestjs/common'
 
+import { FeatureFlagModule } from '@island.is/nest/feature-flags'
 import { XRoadConfig, MMSApi } from '@island.is/clients/mms'
 import {
   NationalRegistryApi,
@@ -43,7 +44,7 @@ export class EducationModule {
             NationalRegistryApi.instantiateClass(config.nationalRegistry),
         },
       ],
-      imports: [InnaClientModule],
+      imports: [InnaClientModule, FeatureFlagModule],
       exports: [],
     }
   }

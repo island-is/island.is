@@ -17,6 +17,9 @@ export const ApiConfig = {
         timeout: config.fetch.timeout,
       }),
       basePath: `https://api-test.inna.is/namsferlaveita/`,
+      headers: {
+        Authorization: `Bearer QhmjDhTJwmwEIY1T1MDIig`,
+      },
     }),
   inject: [InnaClientConfig.KEY],
 }
