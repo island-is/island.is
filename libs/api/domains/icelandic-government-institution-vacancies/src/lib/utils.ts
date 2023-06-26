@@ -5,6 +5,7 @@ import { documentToPlainTextString } from '@contentful/rich-text-plain-text-rend
 import { IcelandicGovernmentInstitutionVacanciesResponse } from './dto/icelandicGovernmentInstitutionVacanciesResponse'
 import { IcelandicGovernmentInstitutionVacancyByIdResponse } from './dto/icelandicGovernmentInstitutionVacancyByIdResponse'
 import { Html, Vacancy } from '@island.is/cms'
+import { IcelandicGovernmentInstitutionVacancyContact } from './models/icelandicGovernmentInstitutionVacancy.model'
 
 export const CMS_ID_PREFIX = 'c-'
 export const EXTERNAL_SYSTEM_ID_PREFIX = 'x-'
@@ -109,7 +110,7 @@ const mapLocations = (item: DefaultApiVacanciesListItem) => {
 }
 
 const mapContacts = (item: DefaultApiVacanciesListItem) => {
-  const contacts: IcelandicGovernmentInstitutionVacancyByIdResponse['vacancy']['contacts'] = []
+  const contacts: IcelandicGovernmentInstitutionVacancyContact[] = []
   if ('tengilidur' in (item?.tengilidir ?? {})) {
     const contact = (item.tengilidir as {
       tengilidur?: DefaultApiVacancyContact

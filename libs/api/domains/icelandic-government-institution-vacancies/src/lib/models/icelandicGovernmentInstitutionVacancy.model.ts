@@ -49,7 +49,7 @@ export class IcelandicGovernmentInstitutionVacancyListItem extends IcelandicGove
 }
 
 @ObjectType()
-class IcelandicGovernmentInstitutionVacancyContact {
+export class IcelandicGovernmentInstitutionVacancyContact {
   @Field({ nullable: true })
   name?: string
 

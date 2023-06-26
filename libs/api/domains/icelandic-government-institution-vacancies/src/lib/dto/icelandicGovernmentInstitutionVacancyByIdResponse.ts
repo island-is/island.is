@@ -3,6 +3,6 @@ import { IcelandicGovernmentInstitutionVacancy } from '../models/icelandicGovern
 
 @ObjectType()
 export class IcelandicGovernmentInstitutionVacancyByIdResponse {
-  @Field(() => IcelandicGovernmentInstitutionVacancy)
-  vacancy!: IcelandicGovernmentInstitutionVacancy
+  @Field(() => IcelandicGovernmentInstitutionVacancy, { nullable: true })
+  vacancy?: IcelandicGovernmentInstitutionVacancy | null
 }

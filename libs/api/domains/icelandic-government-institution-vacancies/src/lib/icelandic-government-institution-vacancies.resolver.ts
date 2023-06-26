@@ -3,6 +3,7 @@ import {
   DefaultApi,
   VacanciesGetAcceptEnum,
   VacanciesVacancyIdGetAcceptEnum,
+  VacanciesVacancyIdGetLanguageEnum,
 } from '@island.is/clients/icelandic-government-institution-vacancies'
 import { CacheControl, CacheControlOptions } from '@island.is/nest/graphql'
 import { CACHE_CONTROL_MAX_AGE } from '@island.is/shared/constants'
@@ -63,43 +64,57 @@ export class IcelandicGovernmentInstitutionVacanciesResolver {
     }
   }
 
+  private async getVacancyFromCms(id: string) {
+    const item = await this.cmsElasticService.getSingleVacancy(
+      getElasticsearchIndex('is'),
+      id,
+    )
+    if (!item) {
+      return { vacancy: null }
+    }
+    return {
+      vacancy: mapIcelandicGovernmentInstitutionVacancyByIdResponseFromCms(
+        item,
+      ),
+    }
+  }
+
+  private async getVacancyFromExternalSystem(
+    id: number,
+    language?: VacanciesVacancyIdGetLanguageEnum,
+  ) {
+    const item = (await this.api.vacanciesVacancyIdGet({
+      vacancyId: id,
+      accept: VacanciesVacancyIdGetAcceptEnum.Json,
+      language: language,
+    })) as DefaultApiVacancyDetails
+    if (!item?.starfsauglysing) {
+      return { vacancy: null }
+    }
+    return {
+      vacancy: await mapIcelandicGovernmentInstitutionVacancyByIdResponse(item),
+    }
+  }
+
   @CacheControl(defaultCache)
   @Query(() => IcelandicGovernmentInstitutionVacancyByIdResponse)
   async icelandicGovernmentInstitutionVacancyById(
     @Args('input') input: IcelandicGovernmentInstitutionVacancyByIdInput,
   ): Promise<IcelandicGovernmentInstitutionVacancyByIdResponse | null> {
     if (input.id.startsWith(CMS_ID_PREFIX)) {
-      const item = await this.cmsElasticService.getSingleVacancy(
-        getElasticsearchIndex('is'),
-        input.id.slice(CMS_ID_PREFIX.length),
-      )
-      if (!item) {
-        return null
-      }
-      return {
-        vacancy: mapIcelandicGovernmentInstitutionVacancyByIdResponseFromCms(
-          item,
-        ),
-      }
+      return this.getVacancyFromCms(input.id.slice(CMS_ID_PREFIX.length))
+    } else if (input.id.startsWith(EXTERNAL_SYSTEM_ID_PREFIX)) {
+      const numericId = Number(input.id.slice(EXTERNAL_SYSTEM_ID_PREFIX.length))
+      if (isNaN(numericId)) return null
+      return this.getVacancyFromExternalSystem(numericId, input.language)
     }
 
-    const numericId = Number(
-      input.id.startsWith(EXTERNAL_SYSTEM_ID_PREFIX)
-        ? input.id.slice(EXTERNAL_SYSTEM_ID_PREFIX.length)
-        : input.id,
-    )
+    const numericId = Number(input.id)
 
-    const item = (await this.api.vacanciesVacancyIdGet({
-      vacancyId: numericId,
-      accept: VacanciesVacancyIdGetAcceptEnum.Json,
-      language: input.language,
-    })) as DefaultApiVacancyDetails
+    if (isNaN(numericId)) {
+      return this.getVacancyFromCms(input.id)
+    }
 
-    if (!item?.starfsauglysing) {
-      return null
-    }
-    return {
-      vacancy: await mapIcelandicGovernmentInstitutionVacancyByIdResponse(item),
-    }
+    return this.getVacancyFromExternalSystem(numericId)
   }
 }

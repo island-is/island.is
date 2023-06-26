@@ -27,6 +27,7 @@ import { MappedData } from '@island.is/content-search-indexer/types'
 import { SupportQNA } from './models/supportQNA.model'
 import { GetFeaturedSupportQNAsInput } from './dto/getFeaturedSupportQNAs.input'
 import { Vacancy } from './models/vacancy.model'
+import { ResponseError } from '@elastic/elasticsearch/lib/errors'
 
 @Injectable()
 export class CmsElasticsearchService {
@@ -242,9 +243,16 @@ export class CmsElasticsearchService {
   }
 
   async getSingleVacancy(index: string, id: string) {
-    const vacancyResponse = await this.elasticService.findById(index, id)
-    const response = vacancyResponse.body?._source?.response
-    return response ? JSON.parse(response) : null
+    try {
+      const vacancyResponse = await this.elasticService.findById(index, id)
+      const response = vacancyResponse.body?._source?.response
+      return response ? JSON.parse(response) : null
+    } catch (error) {
+      if (error instanceof ResponseError) {
+        if (error?.statusCode === 404) return null
+      }
+      throw error
+    }
   }
 
   async getVacancies(index: string) {
