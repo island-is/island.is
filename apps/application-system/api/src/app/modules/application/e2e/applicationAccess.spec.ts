@@ -27,6 +27,35 @@ const createMockUser = (nationalId?: string) => {
   }
 }
 
+const actorDelegationsApiMock = {
+  withMiddleware: jest.fn().mockReturnThis(),
+  actorDelegationsControllerFindAll: jest.fn().mockResolvedValue([
+    {
+      fromName: 'Mose b Lowe',
+      fromNationalId: '1111111111',
+      scopes: [
+        {
+          delegationId: 'c8804b66-f88e-4d07-a364-b6ea11f3b52c',
+          displayName: 'Intranet',
+          id: '09d06b03-c58b-46c8-8fc2-c6cf77bd26a4',
+          scopeName: 'correctScope',
+          validFrom: '2021-11-12T00:00:00.000Z',
+          validTo: '2021-11-13T00:00:00.000Z',
+        },
+      ],
+      toName: 'Account',
+      toNationalId: '2304769429',
+      types: ['Custom'],
+      validTo: '2021-11-13T00:00:00.000Z',
+    },
+  ]),
+}
+
+// const actorDelegationsApiMock = {
+//   withMiddleware: jest.fn().mockReturnThis(),
+//   actorDelegationsControllerFindAll: jest.fn(),
+// }
+
 const procurationHolderUser = createCurrentUser({
   delegationType: AuthDelegationType.ProcurationHolder,
 })
@@ -70,14 +99,7 @@ describe('ApplicationAccesService', () => {
             },
           })),
         },
-        {
-          provide: ActorDelegationsApi,
-          useValue: {
-            actorDelegationsControllerFindAll: jest.fn(() =>
-              Promise.resolve([]),
-            ),
-          },
-        },
+        { provide: ActorDelegationsApi, useValue: actorDelegationsApiMock }, // provide the mock
       ],
       imports: [AuthPublicApiClientModule],
     }).compile()
@@ -361,8 +383,6 @@ describe('ApplicationAccesService', () => {
       expect(results).toBe(true)
     })
 
-    //
-
     it('should return false for shouldShowOnOverview if no template provided', async () => {
       const application = createApplication()
       const user = createCurrentUser()
@@ -421,7 +441,7 @@ describe('ApplicationAccesService', () => {
       const template = createApplicationTemplate({
         allowedDelegations: [allowedDelegation],
         requiredScopes: ['correctScope'],
-      }) // requires Custom delegation with 'correctScope'
+      })
 
       const results = await applicationAccessService.shouldShowApplicationOnOverview(
         application,
@@ -471,6 +491,93 @@ describe('ApplicationAccesService', () => {
       )
 
       expect(results).toBe(true)
+    })
+
+    it('should return true if user has correct custom delegation, correct scope, and scopeCheck is true', async () => {
+      const application = createApplication()
+      const user = createCurrentUser({
+        actor: { nationalId: '111111111111' },
+        delegationType: AuthDelegationType.Custom,
+        scope: ['correctScope'],
+      })
+
+      const allowedDelegation: AllowedDelegation = {
+        type: AuthDelegationType.Custom,
+      }
+
+      const template = createApplicationTemplate({
+        allowedDelegations: [allowedDelegation],
+        requiredScopes: ['correctScope'],
+      })
+
+      const results = await applicationAccessService.shouldShowApplicationOnOverview(
+        application,
+        user,
+        template,
+        true,
+      )
+
+      expect(results).toBe(true)
+    })
+
+    it('should return false if user has correct custom delegation, incorrect scope, and scopeCheck is true', async () => {
+      const application = createApplication()
+      actorDelegationsApiMock.actorDelegationsControllerFindAll.mockRejectedValue(
+        new Error('Error'),
+      )
+      const user = createCurrentUser({
+        actor: { nationalId: '111111111111' },
+        delegationType: AuthDelegationType.Custom,
+        scope: ['incorrectScope'],
+      })
+
+      const allowedDelegation: AllowedDelegation = {
+        type: AuthDelegationType.Custom,
+      }
+
+      const template = createApplicationTemplate({
+        allowedDelegations: [allowedDelegation],
+        requiredScopes: ['correctScope'],
+      })
+
+      const results = await applicationAccessService.shouldShowApplicationOnOverview(
+        application,
+        user,
+        template,
+        true,
+      )
+
+      expect(results).toBe(false)
+    })
+
+    it('should return false if auth public service errors on scope fetch', async () => {
+      actorDelegationsApiMock.actorDelegationsControllerFindAll.mockRejectedValueOnce(
+        new Error('Error'),
+      )
+      const application = createApplication()
+      const user = createCurrentUser({
+        actor: { nationalId: '111111111111' },
+        delegationType: AuthDelegationType.Custom,
+        scope: ['incorrectScope'],
+      })
+
+      const allowedDelegation: AllowedDelegation = {
+        type: AuthDelegationType.Custom,
+      }
+
+      const template = createApplicationTemplate({
+        allowedDelegations: [allowedDelegation],
+        requiredScopes: ['correctScope'],
+      })
+
+      const results = await applicationAccessService.shouldShowApplicationOnOverview(
+        application,
+        user,
+        template,
+        true,
+      )
+
+      expect(results).toBe(false)
     })
   })
 

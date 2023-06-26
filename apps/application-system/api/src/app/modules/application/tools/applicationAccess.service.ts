@@ -165,24 +165,27 @@ export class ApplicationAccessService {
     // If we dont have the scopes available like in service portal we need to fetch
     // them for the user logged in
     if (scopeCheck) {
-      const delegations = await this.actorDelegationsApi
-        .withMiddleware(new AuthMiddleware(user))
-        .actorDelegationsControllerFindAll({
-          direction: ActorDelegationsControllerFindAllDirectionEnum.incoming,
-          delegationTypes: [AuthDelegationType.Custom],
-          otherUser: user.nationalId,
-        })
-
-      for (const delegation of delegations) {
-        if (!delegation.scopes) continue
-        for (const scopeObj of delegation.scopes) {
-          if (
-            template.requiredScopes &&
-            template.requiredScopes.includes(scopeObj.scopeName)
-          ) {
-            return true
+      try {
+        const delegations = await this.actorDelegationsApi
+          .withMiddleware(new AuthMiddleware(user))
+          .actorDelegationsControllerFindAll({
+            direction: ActorDelegationsControllerFindAllDirectionEnum.incoming,
+            delegationTypes: [AuthDelegationType.Custom],
+            otherUser: user.nationalId,
+          })
+        for (const delegation of delegations) {
+          if (!delegation.scopes) continue
+          for (const scopeObj of delegation.scopes) {
+            if (
+              template.requiredScopes &&
+              template.requiredScopes.includes(scopeObj.scopeName)
+            ) {
+              return true
+            }
           }
         }
+      } catch (e) {
+        return false
       }
       return false
     } else {
@@ -305,6 +308,8 @@ export class ApplicationAccessService {
     }
     // If the delegation type is "Custom", we need to verify if the user has the
     // required scope as per the template.
+    console.log('delegation.type', delegation.type)
+    console.log('template', template)
     if (delegation.type === AuthDelegationType.Custom) {
       // The user can proceed if the custom delegation is valid and the feature (if flagged) is enabled.
       return (
