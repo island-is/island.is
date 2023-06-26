@@ -5,6 +5,8 @@ import {
   GetIcelandicGovernmentInstitutionVacancyDetailsQueryVariables,
   GetNamespaceQuery,
   GetNamespaceQueryVariables,
+  GetOrganizationByTitleQuery,
+  GetOrganizationByTitleQueryVariables,
   IcelandicGovernmentInstitutionVacancyByIdResponse,
 } from '@island.is/web/graphql/schema'
 import { GET_ICELANDIC_GOVERNMENT_INSTITUTION_VACANCY_DETAILS } from '../queries/IcelandicGovernmentInstitutionVacancies'
@@ -13,7 +15,6 @@ import {
   Box,
   Stack,
   LinkV2,
-  Icon,
   Breadcrumbs,
   Button,
   Inline,
@@ -22,31 +23,48 @@ import {
 import { useLinkResolver, useNamespace } from '@island.is/web/hooks'
 import { CustomNextError } from '@island.is/web/units/errors'
 import SidebarLayout from '../Layouts/SidebarLayout'
-import { InstitutionPanel } from '@island.is/web/components'
+import {
+  HeadWithSocialSharing,
+  InstitutionPanel,
+} from '@island.is/web/components'
 import { useI18n } from '@island.is/web/i18n'
-import { GET_NAMESPACE_QUERY } from '../queries'
+import {
+  GET_NAMESPACE_QUERY,
+  GET_ORGANIZATION_BY_TITLE_QUERY,
+} from '../queries'
 import { webRichText } from '@island.is/web/utils/richText'
 import { SliceType } from '@island.is/island-ui/contentful'
+import {
+  VACANCY_INTRO_MAX_LENGTH,
+  shortenText,
+} from './IcelandicGovernmentInstitutionVacanciesList'
 
 type Vacancy = IcelandicGovernmentInstitutionVacancyByIdResponse['vacancy']
 
 interface InformationPanelProps {
   vacancy: Vacancy
+  organizationLogo?: string
   namespace: Record<string, string>
 }
 
-const InformationPanel = ({ vacancy, namespace }: InformationPanelProps) => {
+const InformationPanel = ({
+  vacancy,
+  organizationLogo,
+  namespace,
+}: InformationPanelProps) => {
   const { activeLocale } = useI18n()
   const n = useNamespace(namespace)
   return (
     <Stack space={3}>
-      <InstitutionPanel
-        img={vacancy.logoUrl}
-        institutionTitle={n('institutionCardTitle', 'Þjónustuaðili')}
-        institution={vacancy.institutionName}
-        locale={activeLocale}
-        imgContainerDisplay={['block', 'block', 'none', 'block']}
-      />
+      {vacancy.institutionName && (
+        <InstitutionPanel
+          img={organizationLogo}
+          institutionTitle={n('institutionCardTitle', 'Þjónustuaðili')}
+          institution={vacancy.institutionName}
+          locale={activeLocale}
+          imgContainerDisplay={['block', 'block', 'none', 'block']}
+        />
+      )}
       <Box background="dark100" borderRadius="large" padding={[3, 3, 4]}>
         <Stack space={3}>
           <Text variant="h3">
@@ -57,7 +75,7 @@ const InformationPanel = ({ vacancy, namespace }: InformationPanelProps) => {
             <Text fontWeight="semiBold">{n('fieldOfWork', 'Starf')}</Text>
             <Text variant="small">{vacancy.title}</Text>
           </Box>
-          {vacancy.locations && (
+          {vacancy.locations?.length > 0 && (
             <Box>
               <Text fontWeight="semiBold">
                 {vacancy.locations.length === 1
@@ -71,24 +89,30 @@ const InformationPanel = ({ vacancy, namespace }: InformationPanelProps) => {
               ))}
             </Box>
           )}
-          <Box>
-            <Text fontWeight="semiBold">
-              {n('jobPercentage', 'Starfshlutfall')}
-            </Text>
-            <Text variant="small">{vacancy.jobPercentage}</Text>
-          </Box>
-          <Box>
-            <Text fontWeight="semiBold">
-              {n('applicationDeadlineFrom', 'Starf skráð')}
-            </Text>
-            <Text variant="small">{vacancy.applicationDeadlineFrom}</Text>
-          </Box>
-          <Box>
-            <Text fontWeight="semiBold">
-              {n('applicationDeadlineTo', 'Umsóknarfrestur')}
-            </Text>
-            <Text variant="small">{vacancy.applicationDeadlineTo}</Text>
-          </Box>
+          {vacancy.jobPercentage && (
+            <Box>
+              <Text fontWeight="semiBold">
+                {n('jobPercentage', 'Starfshlutfall')}
+              </Text>
+              <Text variant="small">{vacancy.jobPercentage}</Text>
+            </Box>
+          )}
+          {vacancy.applicationDeadlineFrom && (
+            <Box>
+              <Text fontWeight="semiBold">
+                {n('applicationDeadlineFrom', 'Starf skráð')}
+              </Text>
+              <Text variant="small">{vacancy.applicationDeadlineFrom}</Text>
+            </Box>
+          )}
+          {vacancy.applicationDeadlineTo && (
+            <Box>
+              <Text fontWeight="semiBold">
+                {n('applicationDeadlineTo', 'Umsóknarfrestur')}
+              </Text>
+              <Text variant="small">{vacancy.applicationDeadlineTo}</Text>
+            </Box>
+          )}
         </Stack>
       </Box>
     </Stack>
@@ -97,158 +121,202 @@ const InformationPanel = ({ vacancy, namespace }: InformationPanelProps) => {
 
 interface IcelandicGovernmentInstitutionVacancyDetailsProps {
   vacancy: Vacancy
+  organizationLogo?: string
   namespace: Record<string, string>
 }
 
 const IcelandicGovernmentInstitutionVacancyDetails: Screen<IcelandicGovernmentInstitutionVacancyDetailsProps> = ({
   vacancy,
+  organizationLogo,
   namespace,
 }) => {
   const { linkResolver } = useLinkResolver()
 
   const n = useNamespace(namespace)
-  console.log(vacancy)
+
+  const ogTitlePostfix = n('ogTitlePrefixForDetailsPage', ' | Ísland.is')
+
   return (
-    <SidebarLayout
-      sidebarContent={
-        <Stack space={3}>
-          <LinkV2
-            href={linkResolver('vacancies').href}
-            underlineVisibility="always"
-            underline="normal"
-            color="blue400"
-          >
-            <Icon size="small" icon="arrowBack" />
-            {n('goBack', 'Til baka')}
-          </LinkV2>
-          <InformationPanel namespace={namespace} vacancy={vacancy} />
-        </Stack>
-      }
-    >
-      <Stack space={3}>
-        <Breadcrumbs
-          items={[
-            { title: 'Ísland.is', href: '/' },
-            {
-              title: n('breadcrumbTitle', 'Starfatorg'),
-              href: linkResolver('vacancies').href,
-            },
-          ]}
-        />
-        <Hidden above="sm">
-          <LinkV2
-            href={linkResolver('vacancies').href}
-            underlineVisibility="always"
-            underline="normal"
-            color="blue400"
-          >
-            <Icon size="small" icon="arrowBack" />
-            {n('goBack', 'Til baka')}
-          </LinkV2>
-        </Hidden>
-        <Text variant="h1">{vacancy.title}</Text>
-        <Text as="div">{webRichText([vacancy.intro] as SliceType[])}</Text>
-
-        <Text variant="h3" as="h2">
-          {n('assignmentsAndResponibility', 'Helstu verkefni og ábyrgð')}
-        </Text>
-
-        <Text as="div">
-          {webRichText([vacancy.qualificationRequirements] as SliceType[])}
-        </Text>
-
-        {vacancy.tasksAndResponsibilities && (
-          <Text variant="h3" as="h2">
-            {n('qualificationRequirements', 'Hæfniskröfur')}
-          </Text>
+    <>
+      <HeadWithSocialSharing
+        title={`${vacancy.title ? vacancy.title : ''}${
+          vacancy.title ? ogTitlePostfix : ''
+        }`}
+        description={shortenText(
+          vacancy.plainTextIntro,
+          VACANCY_INTRO_MAX_LENGTH,
         )}
+        imageUrl={n('ogDetailsImageUrl', vacancy.logoUrl)}
+      />
 
-        {vacancy.tasksAndResponsibilities && (
-          <Text as="div">
-            {webRichText([vacancy.tasksAndResponsibilities] as SliceType[])}
-          </Text>
-        )}
-
-        {(vacancy.salaryTerms ||
-          vacancy.description ||
-          vacancy.jobPercentage ||
-          vacancy.applicationDeadlineTo) && (
-          <Text variant="h3" as="h2">
-            {n('moreInfoAboutTheJob', 'Frekari upplýsingar um starfið')}
-          </Text>
-        )}
-
-        {vacancy.salaryTerms &&
-          webRichText([vacancy.salaryTerms] as SliceType[])}
-
-        {vacancy.description &&
-          webRichText([vacancy.description] as SliceType[])}
-
-        {vacancy.jobPercentage && (
-          <Text>
-            {n('jobPercentageIs', 'Starfshlutfall er')} {vacancy.jobPercentage}
-          </Text>
-        )}
-
-        {vacancy.applicationDeadlineTo && (
-          <Text>
-            {n('applicationDeadlineIs', 'Umsóknarfrestur er til og með')}{' '}
-            {vacancy.applicationDeadlineTo}
-          </Text>
-        )}
-
-        {vacancy.contacts?.length && (
-          <Text variant="h3" as="h2">
-            {n('contacts', 'Nánari upplýsingar veitir')}
-          </Text>
-        )}
-
-        {vacancy.contacts?.length && (
-          <Stack space={2}>
-            {vacancy.contacts.map((contact, index) => (
-              <Box key={index}>
-                <Text>
-                  {contact.name && contact.email
-                    ? `${contact.name}, `
-                    : contact.name}
-                  {contact.email && (
-                    <LinkV2
-                      underlineVisibility="always"
-                      underline="normal"
-                      color="blue400"
-                      href={`mailto:${contact.email}`}
-                    >
-                      {contact.email}
-                    </LinkV2>
-                  )}
-                </Text>
-                {contact.phone && (
-                  <Text>
-                    {n('telephone', 'Sími:')} {contact.phone}
-                  </Text>
-                )}
-              </Box>
-            ))}
-          </Stack>
-        )}
-
-        {vacancy.applicationHref && (
-          <Inline>
-            <LinkV2 href={vacancy.applicationHref} pureChildren={true}>
-              <Button size="small" as="div">
-                {n('applyForJob', 'Sækja um starf')}
+      <SidebarLayout
+        sidebarContent={
+          <Stack space={3}>
+            <LinkV2 {...linkResolver('vacancies')} skipTab>
+              <Button
+                preTextIcon="arrowBack"
+                preTextIconType="filled"
+                size="small"
+                type="button"
+                variant="text"
+                truncate
+              >
+                {n('goBack', 'Til baka')}
               </Button>
             </LinkV2>
-          </Inline>
-        )}
+            <InformationPanel
+              namespace={namespace}
+              organizationLogo={organizationLogo}
+              vacancy={vacancy}
+            />
+          </Stack>
+        }
+      >
+        <Stack space={3}>
+          <Breadcrumbs
+            items={[
+              { title: 'Ísland.is', href: '/' },
+              {
+                title: n('breadcrumbTitle', 'Starfatorg'),
+                href: linkResolver('vacancies').href,
+              },
+            ]}
+          />
+          <Hidden above="sm">
+            <LinkV2 {...linkResolver('vacancies')} skipTab>
+              <Button
+                preTextIcon="arrowBack"
+                preTextIconType="filled"
+                size="small"
+                type="button"
+                variant="text"
+                truncate
+              >
+                {n('goBack', 'Til baka')}
+              </Button>
+            </LinkV2>
+          </Hidden>
+          <Text variant="h1" as="h1">
+            {vacancy.title}
+          </Text>
+          {vacancy.intro && (
+            <Text as="div">{webRichText([vacancy.intro] as SliceType[])}</Text>
+          )}
 
-        <Hidden above="sm">
-          <Box marginTop={2}>
-            <InformationPanel namespace={namespace} vacancy={vacancy} />
-          </Box>
-        </Hidden>
-      </Stack>
-    </SidebarLayout>
+          {vacancy.tasksAndResponsibilities && (
+            <Text variant="h3" as="h2">
+              {n('assignmentsAndResponsibility', 'Helstu verkefni og ábyrgð')}
+            </Text>
+          )}
+
+          {vacancy.tasksAndResponsibilities && (
+            <Text as="div">
+              {webRichText([vacancy.tasksAndResponsibilities] as SliceType[])}
+            </Text>
+          )}
+
+          {vacancy.qualificationRequirements && (
+            <Text variant="h3" as="h2">
+              {n('qualificationRequirements', 'Hæfniskröfur')}
+            </Text>
+          )}
+
+          {vacancy.qualificationRequirements && (
+            <Text as="div">
+              {webRichText([vacancy.qualificationRequirements] as SliceType[])}
+            </Text>
+          )}
+
+          {(vacancy.salaryTerms ||
+            vacancy.description ||
+            vacancy.jobPercentage ||
+            vacancy.applicationDeadlineTo) && (
+            <Text variant="h3" as="h2">
+              {n('moreInfoAboutTheJob', 'Frekari upplýsingar um starfið')}
+            </Text>
+          )}
+
+          {vacancy.salaryTerms && (
+            <Text as="div">
+              {webRichText([vacancy.salaryTerms] as SliceType[])}
+            </Text>
+          )}
+
+          {vacancy.description && (
+            <Text as="div">
+              {webRichText([vacancy.description] as SliceType[])}
+            </Text>
+          )}
+
+          {vacancy.jobPercentage && (
+            <Text>
+              {n('jobPercentageIs', 'Starfshlutfall er')}{' '}
+              {vacancy.jobPercentage}
+            </Text>
+          )}
+
+          {vacancy.applicationDeadlineTo && (
+            <Text>
+              {n('applicationDeadlineIs', 'Umsóknarfrestur er til og með')}{' '}
+              {vacancy.applicationDeadlineTo}
+            </Text>
+          )}
+
+          {vacancy.contacts?.length > 0 && (
+            <Text variant="h3" as="h2">
+              {n('contacts', 'Nánari upplýsingar veitir')}
+            </Text>
+          )}
+
+          {vacancy.contacts?.length > 0 && (
+            <Stack space={2}>
+              {vacancy.contacts.map((contact, index) => (
+                <Box key={index}>
+                  <Text>
+                    {contact.name && contact.email
+                      ? `${contact.name}, `
+                      : contact.name}
+                    {contact.email && (
+                      <LinkV2
+                        underlineVisibility="always"
+                        underline="normal"
+                        color="blue400"
+                        href={`mailto:${contact.email}`}
+                      >
+                        {contact.email}
+                      </LinkV2>
+                    )}
+                  </Text>
+                  {contact.phone && (
+                    <Text>
+                      {n('telephone', 'Sími:')} {contact.phone}
+                    </Text>
+                  )}
+                </Box>
+              ))}
+            </Stack>
+          )}
+
+          {vacancy.applicationHref && (
+            <Inline>
+              <Box marginTop={3} marginBottom={[0, 0, 5]}>
+                <LinkV2 href={vacancy.applicationHref} pureChildren={true}>
+                  <Button size="small" as="div">
+                    {n('applyForJob', 'Sækja um starf')}
+                  </Button>
+                </LinkV2>
+              </Box>
+            </Inline>
+          )}
+
+          <Hidden above="sm">
+            <Box marginTop={2}>
+              <InformationPanel namespace={namespace} vacancy={vacancy} />
+            </Box>
+          </Hidden>
+        </Stack>
+      </SidebarLayout>
+    </>
   )
 }
 
@@ -257,7 +325,7 @@ IcelandicGovernmentInstitutionVacancyDetails.getInitialProps = async ({
   query,
   locale,
 }) => {
-  if (!query?.id || isNaN(Number(query?.id))) {
+  if (!query?.id) {
     throw new CustomNextError(404, 'Vacancy was not found')
   }
 
@@ -269,7 +337,7 @@ IcelandicGovernmentInstitutionVacancyDetails.getInitialProps = async ({
       query: GET_ICELANDIC_GOVERNMENT_INSTITUTION_VACANCY_DETAILS,
       variables: {
         input: {
-          id: Number(query.id),
+          id: query.id as string,
         },
       },
     }),
@@ -291,6 +359,25 @@ IcelandicGovernmentInstitutionVacancyDetails.getInitialProps = async ({
     throw new CustomNextError(404, 'Vacancy was not found')
   }
 
+  const organizationResponse = vacancy.institutionName
+    ? await apolloClient.query<
+        GetOrganizationByTitleQuery,
+        GetOrganizationByTitleQueryVariables
+      >({
+        query: GET_ORGANIZATION_BY_TITLE_QUERY,
+        variables: {
+          input: {
+            lang: locale,
+            title: vacancy.institutionName,
+          },
+        },
+      })
+    : null
+
+  const organizationLogo =
+    organizationResponse?.data?.getOrganizationByTitle?.logo?.url ??
+    vacancy.logoUrl
+
   const namespace = JSON.parse(
     namespaceResponse?.data?.getNamespace?.fields || '{}',
   ) as Record<string, string>
@@ -301,6 +388,7 @@ IcelandicGovernmentInstitutionVacancyDetails.getInitialProps = async ({
 
   return {
     vacancy,
+    organizationLogo,
     namespace,
   }
 }

@@ -17,6 +17,7 @@ export default {
     'link',
     'frontpage',
     'enhancedAsset',
+    'vacancy',
   ],
   nestedContentTypes: [
     'alertBanner',
