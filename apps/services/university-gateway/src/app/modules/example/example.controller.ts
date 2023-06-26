@@ -17,7 +17,7 @@ import { CreateApplicationDto } from './dto'
 import { UpdateApplicationDto } from './dto/updateApplicationDto'
 
 @ApiTags('Example endpoints for universities')
-@Controller()
+@Controller({ path: 'example' })
 export class ExampleController {
   constructor(private readonly exampleService: ExampleService) {}
 
