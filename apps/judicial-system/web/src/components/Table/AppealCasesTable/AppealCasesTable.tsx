@@ -5,6 +5,11 @@ import cn from 'classnames'
 import { Box, Text } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
+import {
+  Defendant,
+  isRestrictionCase,
+  CaseDecision as TCaseDecision,
+} from '@island.is/judicial-system/types'
 import { tables } from '@island.is/judicial-system-web/messages/Core/tables'
 import { core } from '@island.is/judicial-system-web/messages/Core'
 import {
@@ -12,7 +17,6 @@ import {
   useViewport,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { CaseListEntry } from '@island.is/judicial-system-web/src/graphql/schema'
-
 import { TagAppealState } from '@island.is/judicial-system-web/src/components'
 import {
   ColumnCaseType,
@@ -22,11 +26,6 @@ import {
   TableContainer,
   TableHeaderText,
 } from '@island.is/judicial-system-web/src/components/Table'
-import {
-  Defendant,
-  isRestrictionCase,
-  CaseDecision as TCaseDecision,
-} from '@island.is/judicial-system/types'
 
 import * as styles from '../Table.css'
 import MobileAppealCase from './MobileAppealCase'
