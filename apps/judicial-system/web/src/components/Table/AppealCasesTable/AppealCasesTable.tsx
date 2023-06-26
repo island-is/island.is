@@ -1,17 +1,16 @@
 import React, { useMemo } from 'react'
+import { useIntl } from 'react-intl'
 import cn from 'classnames'
 
 import { Box, Text } from '@island.is/island-ui/core'
-
-import { tables } from '@island.is/judicial-system-web/messages/Core/tables'
-import { useIntl } from 'react-intl'
+import { theme } from '@island.is/island-ui/theme'
 import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
+import { tables } from '@island.is/judicial-system-web/messages/Core/tables'
 import { core } from '@island.is/judicial-system-web/messages/Core'
 import {
   useSortAppealCases,
   useViewport,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { theme } from '@island.is/island-ui/theme'
 import { CaseListEntry } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { TagAppealState } from '@island.is/judicial-system-web/src/components'
