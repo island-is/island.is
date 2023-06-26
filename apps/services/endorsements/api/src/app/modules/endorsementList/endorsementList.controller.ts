@@ -53,8 +53,6 @@ export class FindTagPaginationComboDto extends IntersectionType(
   PaginationDto,
 ) {}
 
-
-
 @Audit({
   namespace: `${environment.audit.defaultNamespace}/endorsement-list`,
 })

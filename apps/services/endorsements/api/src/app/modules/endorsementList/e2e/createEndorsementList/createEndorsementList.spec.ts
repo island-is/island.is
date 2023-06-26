@@ -12,28 +12,24 @@ describe('createEndorsementList', () => {
       scope: [EndorsementsScope.main],
     })
     const newEndorsementList = {
-      "title": "string",
-      "description": "string",
-      "endorsementMetadata": [
+      title: 'string',
+      description: 'string',
+      endorsementMetadata: [
         {
-          "field": "fullName"
-        }
+          field: 'fullName',
+        },
       ],
-      "tags": [
-        "generalPetition"
-      ],
-      "meta": {"email":"asdf@asdf.is","phone":"5559999"},
-      "closedDate": "2029-06-12T15:31:00.254Z",
-      "openedDate": "2023-06-12T15:31:00.254Z",
-      "adminLock": false
+      tags: ['generalPetition'],
+      meta: { email: 'asdf@asdf.is', phone: '5559999' },
+      closedDate: '2029-06-12T15:31:00.254Z',
+      openedDate: '2023-06-12T15:31:00.254Z',
+      adminLock: false,
     }
-    
+
     const response = await request(app.getHttpServer())
       .post('/endorsement-list')
       .send(newEndorsementList)
       .expect(201)
-
-
   })
   it(`POST /endorsement-list should fail and return 403 error if scope is missing`, async () => {
     const app = await getAuthenticatedApp({
