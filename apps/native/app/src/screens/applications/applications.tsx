@@ -183,7 +183,7 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
         data={isSkeltonView ? skeletonItems : isEmptyView ? emptyItem : items}
         renderItem={renderItem}
         ListHeaderComponent={
-          <>
+          <View style={{flex: 1}}>
             <ApplicationsModule
               applications={applicationsRes.data?.applicationApplications ?? []}
               loading={applicationsRes.loading}
@@ -195,7 +195,7 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
                 {intl.formatMessage({id: 'home.allApplications'})}
               </Heading>
             </View>
-          </>
+          </View>
         }
         refreshControl={
           <RefreshControl
