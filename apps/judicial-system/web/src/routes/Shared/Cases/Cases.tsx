@@ -17,11 +17,11 @@ import {
   Logo,
   SectionHeading,
   UserContext,
-  TableSkeleton,
   PastCasesTable,
   SharedPageLayout,
   PageHeader,
 } from '@island.is/judicial-system-web/src/components'
+import { TableSkeleton } from '@island.is/judicial-system-web/src/components/Table'
 import { CasesQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { TempCaseListEntry as CaseListEntry } from '@island.is/judicial-system-web/src/types'
@@ -31,7 +31,6 @@ import {
   titles,
   errors,
 } from '@island.is/judicial-system-web/messages'
-
 import {
   User,
   UserRole,
