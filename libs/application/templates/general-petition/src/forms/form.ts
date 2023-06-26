@@ -119,9 +119,7 @@ export const form: Form = buildForm({
               id: 'phone',
               title: m.phone,
               width: 'half',
-              disableDropdown: true,
               backgroundColor: 'white',
-              allowedCountryCodes: ['IS'],
               defaultValue: (application: Application) => {
                 const phone =
                   (application.externalData.userProfile?.data as {
