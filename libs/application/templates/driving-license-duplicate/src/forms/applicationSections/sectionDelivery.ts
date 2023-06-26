@@ -19,6 +19,7 @@ export const sectionDelivery = buildSection({
           id: 'deliveryDescription',
           titleVariant: 'h3',
           title: m.deliveryMethodTitle,
+          marginBottom: 2,
           description: m.deliveryMethodDescription,
         }),
         buildSelectField({
@@ -27,12 +28,12 @@ export const sectionDelivery = buildSection({
           placeholder: m.deliveryMethodOfficeSelectPlaceholder,
           options: ({
             externalData: {
-              districts: { data },
+              districtCommissioners: { data },
             },
           }) => {
             return (data as DistrictCommissionerAgencies[]).map(
-              ({ name, place, address }) => ({
-                value: `${name}, ${place}`,
+              ({ id, name, place, address }) => ({
+                value: id,
                 label: `${name}, ${place}`,
                 tooltip: `${address}`,
               }),

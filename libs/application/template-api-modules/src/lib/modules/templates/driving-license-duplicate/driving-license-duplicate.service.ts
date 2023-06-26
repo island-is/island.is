@@ -3,37 +3,40 @@ import { DrivingLicenseService } from '@island.is/api/domains/driving-license'
 
 import { SharedTemplateApiService } from '../../shared'
 import { TemplateApiModuleActionProps } from '../../../types'
-import { getValueViaPath } from '@island.is/application/core'
-import { FormValue } from '@island.is/application/types'
+import {
+  ApplicationTypes,
+  InstitutionNationalIds,
+} from '@island.is/application/types'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-
-const calculateNeedsHealthCert = (healthDeclaration = {}) => {
-  return !!Object.values(healthDeclaration).find((val) => val === 'yes')
-}
+import { BaseTemplateApiService } from '../../base-template-api.service'
+import { getValueViaPath } from '@island.is/application/core'
 
 @Injectable()
-export class DrivingLicenseDuplicateService {
+export class DrivingLicenseDuplicateService extends BaseTemplateApiService {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly drivingLicenseService: DrivingLicenseService,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
-  ) {}
+  ) {
+    super(ApplicationTypes.DRIVING_LICENSE_DUPLICATE)
+  }
 
   async createCharge({
     application: { id, answers },
     auth,
   }: TemplateApiModuleActionProps) {
-    const SYSLUMADUR_NATIONAL_ID = '6509142520'
+    const chargeItemCode = getValueViaPath<string>(answers, 'chargeItemCode')
 
-    // TODO: Change to AY116 once its available on dev until then use the regular drivingLicnese code
-    const chargeItemCode = 'AY110'
+    if (!chargeItemCode) {
+      throw new Error('chargeItemCode missing in answers')
+    }
 
     const response = await this.sharedTemplateAPIService.createCharge(
       auth,
       id,
-      SYSLUMADUR_NATIONAL_ID,
+      InstitutionNationalIds.SYSLUMENN,
       [chargeItemCode],
     )
 
@@ -65,11 +68,19 @@ export class DrivingLicenseDuplicateService {
       }
     }
 
-    // TODO: SUBMIT functionality once the police update their api
-
+    // TODO: add reason to duplicate submission?
+    // Currently we are tracking "stolen" vs "lost" in the application
+    // Does this need to be tracked in the license system?
+    await this.drivingLicenseService
+      .drivingLicenseDuplicateSubmission({
+        districtId: parseInt(answers.district.toString(), 10),
+        ssn: nationalId,
+      })
+      .catch(() => {
+        throw Error('Error submitting application to Samgöngustofa')
+      })
     return {
       success: true,
-      orderId: '1234',
     }
   }
 }
