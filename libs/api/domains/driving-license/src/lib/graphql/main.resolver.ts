@@ -35,7 +35,6 @@ export class MainResolver {
     private readonly drivingLicenseService: DrivingLicenseService,
     private readonly auditService: AuditService,
   ) {}
-
   @Query(() => DrivingLicense, { nullable: true })
   drivingLicense(@CurrentUser() user: User) {
     return this.auditService.auditPromise(
@@ -45,7 +44,20 @@ export class MainResolver {
         action: 'drivingLicense',
         resources: user.nationalId,
       },
-      this.drivingLicenseService.getDrivingLicense(user.nationalId),
+      this.drivingLicenseService.getDrivingLicense(user.authorization),
+    )
+  }
+
+  @Query(() => DrivingLicense, { nullable: true })
+  legacyDrivingLicense(@CurrentUser() user: User) {
+    return this.auditService.auditPromise(
+      {
+        auth: user,
+        namespace,
+        action: 'legacyDrivingLicense',
+        resources: user.nationalId,
+      },
+      this.drivingLicenseService.legacyGetDrivingLicense(user.nationalId),
     )
   }
 
