@@ -307,8 +307,8 @@ export class NationalRegistryService extends BaseTemplateApiService {
     if (!cohabitants) {
       throw new TemplateApiError(
         {
-          title: coreErrorMessages.nationalRegistryResidenceHistoryMissing,
-          summary: coreErrorMessages.nationalRegistryResidenceHistoryMissing,
+          title: coreErrorMessages.nationalRegistryCohabitantsMissing,
+          summary: coreErrorMessages.nationalRegistryCohabitantsMissing,
         },
         404,
       )
