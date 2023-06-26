@@ -52,29 +52,37 @@ export const oldAgePensionFormMessage: MessageDir = {
         'Ég skil að ofangreindra gagna verður aflað í umsóknarferlinu',
       description: 'Checbox to confirm data provider',
     },
-    userProfileInformationTitle: {
+    skraInformationTitle: {
       id: 'oap.application:userprofile.title',
       defaultMessage: 'Upplýsingar frá Þjóðskrá',
       description: 'Information from Registers Iceland',
     },
-    userProfileInformationSubTitle: {
+    skraInformationSubTitle: {
       id: 'oap.application:userprofile.subtitle',
       defaultMessage:
         'Sækir upplýsingar um þig, maka og börn frá Þjóðskrá. Einnig eru sóttar upplýsingar um búsetu.',
       description:
         'Information about you, spouse and children will be retrieved from Registers Iceland. Information about residence will also be retrieved.',
     },
-    skraInformationTitle: {
+    userProfileInformationTitle: {
       id: 'oap.application:userprofile.title',
       defaultMessage: 'Upplýsingar af mínum síðum á Ísland.is',
       description: 'Information from your account at Ísland.is',
     },
-    skraInformationSubTitle: {
+    userProfileInformationSubTitle: {
       id: 'oap.application:userprofile.subtitle',
       defaultMessage:
         'Upplýsingar um netfang, símanúmer og bankareikning eru sóttar frá mínum síðum á Ísland.is.',
       description:
         'Information about email address, phone number and bank account will be retrieved from your account at Ísland.is.',
+    },
+    residenceHistoryTitle: {
+      id: 'oap.application:userprofile.title',
+      defaultMessage: 'Upplýsingar af mínum síðum á Ísland.is',
+      description: 'Information from your account at Ísland.is',
+    },
+    residenceHistoryDescription: {
+
     },
     startApplication: {
       id: 'oal.application.start.application',
