@@ -2,6 +2,11 @@ import { Query, Resolver } from '@nestjs/graphql'
 
 import { UseGuards } from '@nestjs/common'
 import { Audit } from '@island.is/nest/audit'
+import {
+  FeatureFlagGuard,
+  FeatureFlag,
+  Features,
+} from '@island.is/nest/feature-flags'
 
 import {
   CurrentUser,
@@ -16,9 +21,10 @@ import { ApiScope } from '@island.is/auth/scopes'
 import { PeriodsModel } from './inna/periods.model'
 import { DiplomaModel } from './inna/diplomas.model'
 
-@UseGuards(IdsUserGuard, ScopesGuard)
-@Scopes(ApiScope.internal)
 @Resolver()
+@UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
+@Scopes(ApiScope.internal)
+@FeatureFlag(Features.servicePortalSecondaryEducationPages)
 @Audit({ namespace: '@island.is/api/education-inna' })
 export class InnaResolver {
   constructor(private innaService: InnaService) {}
