@@ -208,7 +208,7 @@ export const PrerequisitesForm: Form = buildForm({
       id: 'relatedApplications',
       title:
         oldAgePensionFormMessage.connectedApplications
-          .relatedApplicationsSection,
+          .connectedApplicationsSection,
       children: [],
     }),
     buildSection({

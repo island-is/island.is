@@ -34,7 +34,7 @@ export const ConnectedApplications = ({
               <Label>
                 {formatMessage(
                   oldAgePensionFormMessage.connectedApplications
-                    .relatedApplicationsSection,
+                    .connectedApplicationsSection,
                 )}
               </Label>
               <BulletList type="ul">

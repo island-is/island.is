@@ -7,7 +7,10 @@ import { formatText } from '@island.is/application/core'
 import { useLocale } from '@island.is/localization'
 import { oldAgePensionFormMessage } from '../../lib/messages'
 
-export const ChildCustodyTable: FC<FieldBaseProps> = ({ application, field }) => {
+export const ChildCustodyTable: FC<FieldBaseProps> = ({
+  application,
+  field,
+}) => {
   const { title, description } = field
   const { formatMessage } = useLocale()
   const { data, columns } = childCustodyTableData(application)
@@ -25,8 +28,12 @@ export const ChildCustodyTable: FC<FieldBaseProps> = ({ application, field }) =>
       </Box>
       <Box alignItems="center">
         <Inline space={1} alignY="center">
-          <Button size="small" icon="add" > {/*onClick={expandRepeater}*/}
-            {formatMessage(oldAgePensionFormMessage.connectedApplications.addChildButton)}
+          <Button size="small" icon="add">
+            {' '}
+            {/*onClick={expandRepeater}*/}
+            {formatMessage(
+              oldAgePensionFormMessage.connectedApplications.addChildButton,
+            )}
           </Button>
         </Inline>
       </Box>

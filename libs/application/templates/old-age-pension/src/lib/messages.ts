@@ -671,7 +671,8 @@ export const oldAgePensionFormMessage: MessageDir = {
     },
     childPensionMaintenanceDescription: {
       id: 'oap.application:fileUpload.child.pension.maintenance.description',
-      defaultMessage: 'Hér getur þú skilað staðfestingu á að þú sért með barn á framfærlsu. Vinsamlegast gerðu grein fyrir barninu og ykkar tenglsum í skjalinu. Athugaðu að skjalið þarf að vera á .pdf formi.',
+      defaultMessage:
+        'Hér getur þú skilað staðfestingu á að þú sért með barn á framfærlsu. Vinsamlegast gerðu grein fyrir barninu og ykkar tenglsum í skjalinu. Athugaðu að skjalið þarf að vera á .pdf formi.',
       description: 'english translation',
     },
   }),
