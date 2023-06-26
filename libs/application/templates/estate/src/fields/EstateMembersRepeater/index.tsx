@@ -76,7 +76,7 @@ export const EstateMembersRepeater: FC<FieldBaseProps<Answers>> = ({
         }
         return [
           ...acc,
-          <Box marginTop={index > 0 ? 5 : 0} key={index}>
+          <Box marginTop={index > 0 ? 7 : 0} key={index}>
             <Box display="flex" justifyContent="spaceBetween" marginBottom={3}>
               <Text variant="h4">{formatMessage(m.estateMember)}</Text>
               <Box>
@@ -191,11 +191,12 @@ export const EstateMembersRepeater: FC<FieldBaseProps<Answers>> = ({
                       label={formatMessage(m.inheritanceKtLabel)}
                       readOnly
                       defaultValue={formatNationalId(
-                        member.guardian.nationalId || '',
+                        '0101302399', //member.guardian?.nationalId || '',
                       )}
                       backgroundColor="white"
                       disabled={!member.enabled}
                       format={'######-####'}
+                      size="sm"
                     />
                   </GridColumn>
                   <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
@@ -204,9 +205,10 @@ export const EstateMembersRepeater: FC<FieldBaseProps<Answers>> = ({
                       name={`${id}[${index}].guardian.name`}
                       label={formatMessage(m.inheritanceNameLabel)}
                       readOnly
-                      defaultValue={member.guardian.name || ''}
+                      defaultValue={'Gervimaður Forsjáraðili'} //member.guardian?.name || ''}
                       backgroundColor="white"
                       disabled={!member.enabled}
+                      size="sm"
                     />
                   </GridColumn>
                   <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
@@ -217,10 +219,11 @@ export const EstateMembersRepeater: FC<FieldBaseProps<Answers>> = ({
                       backgroundColor="blue"
                       disabled={!member.enabled}
                       format="###-####"
-                      defaultValue={member.guardian.phone || ''}
+                      defaultValue={member.guardian?.phone || ''}
                       error={
                         error && error[index] && error[index].guardian.phone
                       }
+                      size="sm"
                     />
                   </GridColumn>
                   <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
@@ -230,10 +233,11 @@ export const EstateMembersRepeater: FC<FieldBaseProps<Answers>> = ({
                       label={m.email.defaultMessage}
                       backgroundColor="blue"
                       disabled={!member.enabled}
-                      defaultValue={member.guardian.email || ''}
+                      defaultValue={member.guardian?.email || ''}
                       error={
                         error && error[index] && error[index].guardian.email
                       }
+                      size="sm"
                     />
                   </GridColumn>
                 </GridRow>
