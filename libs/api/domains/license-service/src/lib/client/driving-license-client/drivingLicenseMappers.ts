@@ -10,6 +10,7 @@ import {
   RemarkCode,
   DriverLicenseDto as DriversLicense,
   CategoryDto,
+  LicenseCommentsDto,
 } from '@island.is/clients/driving-license'
 import format from 'date-fns/format'
 import { info, format as formatSsn } from 'kennitala'
@@ -18,40 +19,56 @@ type ExcludesFalse = <T>(x: T | null | undefined | false | '') => x is T
 
 export const formatNationalId = (nationalId: string) => formatSsn(nationalId)
 
+const mapRemarks = (
+  comments?: Array<LicenseCommentsDto> | null,
+  remarks?: Array<RemarkCode> | null,
+) => {
+  if (!comments || !remarks) {
+    return
+  }
+  const commentString = comments.reduce<string>(
+    (acc, curr) => `${acc} ${mapCommentToRemark(curr, remarks)}`,
+    '',
+  )
+
+  return commentString
+}
+
+const mapCommentToRemark = (
+  comment: LicenseCommentsDto,
+  remarks: Array<RemarkCode>,
+) => {
+  const remark = remarks.find((r) => r.index === comment.nr)
+  return remark?.name ? `${comment.nr} - ${remark.name}\n` : undefined
+}
+
 const mapCategoryToRight = (
   category: CategoryDto,
   remarks?: Array<RemarkCode> | null,
 ) => {
-  let right = `
-  Réttindaflokkur ${category.nr}, ${category.categoryName}\n  - Gildir til ${
+  let right = `Réttindaflokkur ${category.nr}, ${
+    category.categoryName
+  }\n  - Gildir til ${
     category.dateTo ? format(category.dateTo, 'dd-MM-yyyy') : ''
   }\n`
 
   if (category.comment) {
-    right += `  - Tákntala: ${category.comment}`
-
-    if (remarks?.length) {
-      const commentName = remarks.find((r) => r.index === '78')?.name
-
-      right += commentName ? ` - ${commentName ?? ''}` : ''
-    }
-
-    right += '\n'
+    const mappedRemark = remarks?.find((r) => r.index === category.comment)
+    right +=
+      `  - Tákntala: ${category.comment}` +
+      `${mappedRemark ? ' - ' + mappedRemark : ''}\n`
   }
 
   return right
 }
 
-const formatRights = (
-  categories: Array<CategoryDto> | null,
-  remarks?: Array<RemarkCode> | null,
-) => {
+const formatRights = (categories: Array<CategoryDto> | null) => {
   if (!categories) {
     return
   }
 
   const rights = categories.reduce<string>(
-    (acc, curr) => `${acc} ${mapCategoryToRight(curr, remarks)}`,
+    (acc, curr) => `${acc} ${mapCategoryToRight(curr)}\n`,
     '',
   )
 
@@ -108,13 +125,11 @@ export const createPkPassDataInput = (
     },
     {
       identifier: 'rettindi',
-      value: formatRights(license.categories ?? null, remarks),
+      value: formatRights(license.categories ?? null),
     },
     {
       identifier: 'athugasemdir',
-      value: license.comments
-        ? license.comments.map((c) => c.comment).join(' ')
-        : '',
+      value: license.comments ? mapRemarks(license.comments, remarks) : '',
     },
   ]
 }
