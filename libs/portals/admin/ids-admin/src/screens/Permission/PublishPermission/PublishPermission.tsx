@@ -1,32 +1,32 @@
-import React, { FormEvent, useCallback, useEffect, useState } from 'react'
+import { FormEvent, useCallback, useEffect, useState } from 'react'
 import { useParams, useRevalidator } from 'react-router-dom'
 
-import { AuthAdminEnvironment } from '@island.is/api/schema'
 import { validateFormData } from '@island.is/react-spa/shared'
+import { AuthAdminEnvironment } from '@island.is/api/schema'
 
-import { m } from '../../../lib/messages'
-import { useClient } from '../ClientContext'
-import { PublishPermissionForm } from '../../../components/PublishPermissionForm'
+import { usePublishPermissionMutation } from './PublishPermission.generated'
 import { publishSchema } from '../../../utils/schemas'
-import { usePublishClientMutation } from './PublishClient.generated'
+import { PublishPermissionForm } from '../../../components/PublishPermissionForm'
+import { usePermission } from '../PermissionContext'
+import { m } from '../../../lib/messages'
 
-export const PublishClient = () => {
-  const { tenant: tenantId, client: clientId } = useParams() as {
+export const PublishPermission = () => {
+  const { tenant: tenantId, permission: permissionId } = useParams() as {
     tenant: string
-    client: string
+    permission: string
   }
   const { revalidate } = useRevalidator()
   const {
-    client: { availableEnvironments },
+    permission: { availableEnvironments },
     publishData,
-    selectedEnvironment,
+    selectedPermission,
     updatePublishData,
     changeEnvironment,
-  } = useClient()
+  } = usePermission()
   const [
-    publishClient,
+    publishPermission,
     { data, loading, error: publishError },
-  ] = usePublishClientMutation()
+  ] = usePublishPermissionMutation()
   const [error, setError] = useState(false)
   const [isVisible, setIsVisible] = useState(false)
 
@@ -47,10 +47,10 @@ export const PublishClient = () => {
       }
 
       try {
-        await publishClient({
+        await publishPermission({
           variables: {
             input: {
-              clientId,
+              scopeName: permissionId,
               tenantId,
               targetEnvironment: data.targetEnvironment,
               sourceEnvironment: data.sourceEnvironment,
@@ -61,14 +61,14 @@ export const PublishClient = () => {
         setError(true)
       }
     },
-    [publishClient, tenantId, clientId],
+    [publishPermission, tenantId],
   )
 
   const onChange = useCallback((env: AuthAdminEnvironment) => {
     updatePublishData({
       ...(publishData
         ? publishData
-        : { toEnvironment: selectedEnvironment.environment }),
+        : { toEnvironment: selectedPermission.environment }),
       fromEnvironment: env,
     })
   }, [])
@@ -84,10 +84,10 @@ export const PublishClient = () => {
   }, [publishData])
 
   useEffect(() => {
-    const env = data?.publishAuthAdminClient?.environment
+    const env = data?.publishAuthAdminScope?.environment
 
     if (env) {
-      changeEnvironment(data.publishAuthAdminClient.environment)
+      changeEnvironment(data.publishAuthAdminScope.environment)
       // Be sure to re-fetch the permission if permission was published
       revalidate()
       onClose()
@@ -110,7 +110,7 @@ export const PublishClient = () => {
       onChange={onChange}
       error={error}
       loading={loading}
-      description={m.publishClientEnvDesc}
+      description={m.publishPermissionEnvDesc}
     />
   )
 }

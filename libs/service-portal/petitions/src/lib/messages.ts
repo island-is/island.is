@@ -157,6 +157,11 @@ export const m = defineMessages({
     defaultMessage: 'Taka nafn mitt af þessum lista',
     description: '',
   },
+  modalButtonUnsignListYes: {
+    id: 'sp.petitions:modalButtonUnsignListYes',
+    defaultMessage: 'Taka nafn mitt af lista',
+    description: '',
+  },
   signList: {
     id: 'sp.petitions:signList',
     defaultMessage: 'Setja nafn mitt á þennan lista',
