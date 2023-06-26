@@ -174,7 +174,9 @@ const SubscriptionTableItem = ({
             </Data>
           </>
         )}
-        <Data isLastOrFirst><></></Data>
+        <Data isLastOrFirst>
+          <></>
+        </Data>
       </Row>
     </>
   )
