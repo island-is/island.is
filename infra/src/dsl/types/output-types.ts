@@ -112,8 +112,8 @@ export interface HelmService {
     }
   }
   pvcs?: OutputPersistentVolumeClaim[]
-  grantNamespaces?: string[]
-  grantNamespacesEnabled?: boolean
+  grantNamespaces: string[]
+  grantNamespacesEnabled: boolean
 
   env: ContainerEnvironmentVariables
   secrets: ContainerSecrets

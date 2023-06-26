@@ -3,6 +3,7 @@ import {
   buildMultiField,
   buildTextField,
   buildCustomField,
+  buildPhoneField,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 
@@ -25,11 +26,13 @@ export const representative = buildSection({
             requiredNationalId: false,
           },
         ),
-        buildTextField({
+        buildPhoneField({
           id: 'representative.phone',
           title: m.phone,
           width: 'half',
-          format: '###-####',
+          required: true,
+          disableDropdown: true,
+          allowedCountryCodes: ['IS'],
         }),
         buildTextField({
           id: 'representative.email',

@@ -4,8 +4,7 @@ import {
   buildMultiField,
   buildDescriptionField,
 } from '@island.is/application/core'
-import { Application, Form, FormModes } from '@island.is/application/types'
-import { SubmitResponse } from '../lib/constants'
+import { Form, FormModes } from '@island.is/application/types'
 import { m } from '../lib/messages'
 
 export const done: Form = buildForm({
@@ -29,15 +28,6 @@ export const done: Form = buildForm({
             message: m.congratulationsTitleSuccess,
           },
         ),
-        buildDescriptionField({
-          id: 'applicationNr',
-          title: m.congratulationsApplicationNumber,
-          titleVariant: 'h3',
-          description: (application: Application) =>
-            (application.externalData.submitApplication?.data as SubmitResponse)
-              ?.orderId,
-          space: 'gutter',
-        }),
         buildDescriptionField({
           id: 'nextStepsDescription',
           title: m.congratulationsNextStepsTitle,
