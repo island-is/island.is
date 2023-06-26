@@ -465,7 +465,7 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<IcelandicGovernmentIns
             <Text>
               {filteredVacancies.length}{' '}
               {filteredVacancies.length % 10 === 1 &&
-              filteredVacancies.length !== 11
+              filteredVacancies.length % 100 !== 11
                 ? n('singleJobFound', 'starf fannst')
                 : n('jobsFound', 'störf fundust')}
             </Text>
