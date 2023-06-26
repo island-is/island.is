@@ -50,6 +50,13 @@
         "command": "cross-env INIT_SCHEMA=true yarn ts-node -P apps/services/auth/public-api/tsconfig.app.json apps/services/auth/public-api/src/buildOpenApi.ts"
       }
     },
+    "schemas/build-openapi-internal": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "outputPath": "apps/services/auth/public-api/src/openapi.yaml",
+        "command": "cross-env INIT_SCHEMA=true yarn ts-node -P apps/services/auth/public-api/tsconfig.app.json apps/services/auth/public-api/src/buildOpenApi.ts"
+      }
+    },
     "docker-express": {}
   },
   "tags": ["scope:auth-api"]
