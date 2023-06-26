@@ -104,9 +104,7 @@ export const EstateMembersRepeater: FC<FieldBaseProps<Answers>> = ({
                   <GridColumn span={['1/1']} paddingBottom={3}>
                     <AlertMessage
                       type="error"
-                      message={`${
-                        kennitala.info(member.nationalId as string).age
-                      }`}
+                      message={formatMessage(m.inheritanceUnder18Error)}
                     />
                   </GridColumn>
                 )}

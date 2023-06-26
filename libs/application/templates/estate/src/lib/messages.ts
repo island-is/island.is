@@ -809,6 +809,12 @@ export const m = defineMessages({
     defaultMessage: 'Forsjáraðili',
     description: 'Custody label',
   },
+  inheritanceUnder18Error: {
+    id: 'es.application:inheritanceUnder18Error',
+    defaultMessage:
+      'Eftirfarandi erfingi er undir lögaldri og því er ekki hægt að halda áfram með umsókn. Vinsamlega hafðu samband við næsta sýslumannsembætti til að fá frekari upplýsingar.',
+    description: '',
+  },
 
   // Properties
   realEstatesTitle: {

@@ -70,7 +70,7 @@ export const LookupPerson: FC<LookupProps> = ({ field, error }) => {
           <GridColumn span={['1/1']} paddingBottom={3}>
             <AlertMessage
               type="error"
-              message={nationalId.info(personNationalId).age}
+              message={formatMessage(m.inheritanceUnder18Error)}
             />
           </GridColumn>
         )}
