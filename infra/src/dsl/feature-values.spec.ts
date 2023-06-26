@@ -45,14 +45,46 @@ describe('Feature-deployment support', () => {
   let values: HelmValueFile
   let dev: EnvironmentConfig
 
-  const chart = new UberChart(Dev)
-  const values = generateYamlForFeature(
-    'dev',
-    chart,
-    [apiService, dependencyA, dependencyB],
-    [dependencyA, dependencyC],
-    [dependencyC],
-  )
+  beforeEach(async () => {
+    const dependencyA = service('service-a').namespace('A')
+    const dependencyB = service('service-b')
+    const dependencyC = service('service-c')
+
+    const apiService = service('graphql')
+      .env({
+        A: ref((h) => `${h.svc(dependencyA)}`),
+        B: ref(
+          (h) =>
+            `${h.featureDeploymentName ? 'feature-' : ''}${h.svc(dependencyB)}`,
+        ),
+      })
+      .initContainer({
+        containers: [
+          {
+            command: 'node',
+          },
+        ],
+        postgres: {
+          extensions: ['foo'],
+        },
+      })
+      .ingress({
+        primary: {
+          host: { dev: 'a', staging: 'a', prod: 'a' },
+          paths: ['/'],
+        },
+      })
+      .postgres()
+
+    dev = getEnvironment()
+    const services1 = await getFeatureAffectedServices(
+      [apiService, dependencyA, dependencyB],
+      [dependencyA, dependencyC],
+      [dependencyC],
+      dev,
+    )
+    values = await getValues(services1.included, dev)
+  })
 
   it('dynamic service name generation', () => {
     expect(values.services.graphql.env).toEqual({
