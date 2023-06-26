@@ -298,14 +298,22 @@ export const OldAgePensionForm: Form = buildForm({
                   {
                     id: 'period.alert',
                     title: oldAgePensionFormMessage.period.periodAlertTitle,
-                    component: 'FieldAlertMessage',
-                    description:
-                      oldAgePensionFormMessage.period.periodAlertMessage,
+                    component: 'PeriodWarningWithLink',
                     condition: (answers, externalData) => {
                       return isEarlyRetirement(answers, externalData)
                     },
                   },
-                  { type: 'warning' },
+                  {
+                    descriptionFirstPart:
+                      oldAgePensionFormMessage.period
+                        .periodAlertDescriptionFirstPart,
+                    descriptionSecondPart:
+                      oldAgePensionFormMessage.period
+                        .periodAlertDescriptionSecondPart,
+                    linkName:
+                      oldAgePensionFormMessage.period.periodAlertLinkName,
+                    url: oldAgePensionFormMessage.period.periodAlertUrl,
+                  },
                 ),
               ],
             }),

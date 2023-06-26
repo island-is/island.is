@@ -81,9 +81,7 @@ export const oldAgePensionFormMessage: MessageDir = {
       defaultMessage: 'Upplýsingar af mínum síðum á Ísland.is',
       description: 'Information from your account at Ísland.is',
     },
-    residenceHistoryDescription: {
-
-    },
+    residenceHistoryDescription: {},
     startApplication: {
       id: 'oal.application.start.application',
       defaultMessage: 'Hefja umsókn',
@@ -561,6 +559,30 @@ export const oldAgePensionFormMessage: MessageDir = {
       id: 'oap.application:period.alert.title',
       defaultMessage: 'Til athugunar!',
       description: 'For consideration',
+    },
+    periodAlertDescriptionFirstPart: {
+      id: 'oap.application:period.alert.description.firstPart',
+      defaultMessage:
+        'Þú ert að sækja um snemmtöku miðað við valið tímabil. Nánar um snemmtöku má lesa ',
+      description:
+        'You are applying for early admission based on the selected period. You can read more about early birding ',
+    },
+    periodAlertDescriptionSecondPart: {
+      id: 'oap.application:period.alert.description.secondPart',
+      defaultMessage:
+        '. Réttur ellilífeyris myndast 1. næsta mánuð eftir fæðingardag.',
+      description:
+        '. The right to old-age pension is established on the 1st of the following month after birthday.',
+    },
+    periodAlertLinkName: {
+      id: 'oap.application:period.alert.linkName',
+      defaultMessage: 'hér',
+      description: 'here',
+    },
+    periodAlertUrl: {
+      id: 'oap.application:period.alert.url',
+      defaultMessage: 'https://www.tr.is/65/ad-flyta-toku-ellilifeyris',
+      description: 'The url the link text links to',
     },
     periodAlertMessage: {
       id: 'oap.application:period.alert.message',
