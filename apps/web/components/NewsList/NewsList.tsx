@@ -8,11 +8,13 @@ import {
   Option,
   Box,
   Link,
+  Inline,
+  Tag,
 } from '@island.is/island-ui/core'
 import { LinkType, useLinkResolver, useNamespace } from '@island.is/web/hooks'
 import { NewsCard, Webreader } from '@island.is/web/components'
 import { useRouter } from 'next/router'
-import { GetNewsQuery } from '@island.is/web/graphql/schema'
+import { GenericTag, GetNewsQuery } from '@island.is/web/graphql/schema'
 import { makeHref } from './utils'
 
 interface NewsListProps {
@@ -30,6 +32,7 @@ interface NewsListProps {
   yearOptions: { label: any; value: any }[]
   monthOptions: { label: any; value: any }[]
   newsPerPage?: number
+  newsTags?: GenericTag[]
 }
 
 export const NewsList = ({
@@ -47,6 +50,7 @@ export const NewsList = ({
   yearOptions,
   newsPerPage = 10,
   monthOptions,
+  newsTags,
 }: NewsListProps) => {
   const router = useRouter()
   const n = useNamespace(namespace)
@@ -56,6 +60,10 @@ export const NewsList = ({
   const allYearsString = n('allYears', 'Allar fréttir')
   const yearString = n('year', 'Ár')
   const monthString = n('month', 'Mánuður')
+
+  const filteredNewsTags = newsTags?.filter(
+    (tag) => !!tag?.title && !!tag?.slug,
+  )
 
   return (
     <Stack space={[3, 3, 4]}>
@@ -69,6 +77,35 @@ export const NewsList = ({
         readId={null}
         readClass="rs_read"
       />
+
+      {filteredNewsTags?.length > 0 && (
+        <Inline space={1}>
+          <Tag
+            variant="blue"
+            href={
+              linkResolver('organizationnewsoverview', [parentPageSlug]).href
+            }
+            active={!router?.query?.tag}
+          >
+            {n('showAllResults', 'Sjá allt')}
+          </Tag>
+          {filteredNewsTags?.map((tag, index) => (
+            <Tag
+              key={index}
+              variant="blue"
+              href={
+                linkResolver('organizationnewsoverview', [parentPageSlug])
+                  .href +
+                '?tag=' +
+                tag.slug
+              }
+              active={router?.query?.tag === tag.slug}
+            >
+              {tag.title}
+            </Tag>
+          ))}
+        </Inline>
+      )}
 
       {selectedYear && (
         <Hidden below="lg">
