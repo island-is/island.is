@@ -46,8 +46,7 @@
     "schemas/build-openapi": {
       "executor": "@nrwl/workspace:run-commands",
       "options": {
-        "outputPath": "apps/services/auth/public-api/src/openapi.yaml",
-        "command": "cross-env INIT_SCHEMA=true yarn ts-node -P apps/services/auth/public-api/tsconfig.app.json apps/services/auth/public-api/src/buildOpenApi.ts"
+        "command": "yarn nx run services-auth-public-api:schemas/build-openapi-internal $NX_OPTIONS"
       }
     },
     "schemas/build-openapi-internal": {
