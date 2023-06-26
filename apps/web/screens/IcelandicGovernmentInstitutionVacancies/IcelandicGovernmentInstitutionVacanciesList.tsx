@@ -143,12 +143,18 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<IcelandicGovernmentIns
   const searchTermHasBeenInitialized = useRef(false)
 
   const filteredVacancies = vacancies.filter((vacancy) => {
-    const searchTermMatches =
-      vacancy.title?.toLowerCase()?.includes(searchTerm.toLowerCase()) ||
-      vacancy.institutionName
-        ?.toLowerCase()
-        ?.includes(searchTerm.toLowerCase()) ||
-      vacancy.intro?.toLowerCase()?.includes(searchTerm.toLowerCase())
+    const searchKeywords = searchTerm
+      .replace('´', '')
+      .trim()
+      .toLowerCase()
+      .split(' ')
+
+    const searchTermMatches = searchKeywords.every(
+      (keyword) =>
+        vacancy.title?.toLowerCase()?.includes(keyword) ||
+        vacancy.institutionName?.toLowerCase()?.includes(keyword) ||
+        vacancy.intro?.toLowerCase()?.includes(keyword),
+    )
 
     let shouldBeShown = searchTermMatches
 
