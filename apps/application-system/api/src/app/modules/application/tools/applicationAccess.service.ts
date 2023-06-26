@@ -308,8 +308,6 @@ export class ApplicationAccessService {
     }
     // If the delegation type is "Custom", we need to verify if the user has the
     // required scope as per the template.
-    console.log('delegation.type', delegation.type)
-    console.log('template', template)
     if (delegation.type === AuthDelegationType.Custom) {
       // The user can proceed if the custom delegation is valid and the feature (if flagged) is enabled.
       return (
