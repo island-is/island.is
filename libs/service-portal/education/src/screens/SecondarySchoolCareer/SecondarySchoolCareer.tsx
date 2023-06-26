@@ -1,15 +1,31 @@
 import React from 'react'
-import { IntroHeader, m, SortableTable } from '@island.is/service-portal/core'
-import { Box, Button, GridColumn, GridRow } from '@island.is/island-ui/core'
+import {
+  CardLoader,
+  formatDate,
+  IntroHeader,
+  m,
+  SortableTable,
+} from '@island.is/service-portal/core'
+import { Box } from '@island.is/island-ui/core'
+
+import { useGetInnaPeriodsQuery } from './Periods.generated'
+import { addArray } from '../../utils/addArray'
+import { tagSelector } from '../../utils/tagSelector'
+import { useLocale } from '@island.is/localization'
+import { edMessage } from '../../lib/messages'
 
 export const EducationGraduationDetail = () => {
+  const { data: innaData, loading } = useGetInnaPeriodsQuery()
+  const { formatMessage } = useLocale()
+
+  const periodItems = innaData?.innaPeriods?.items || []
   return (
     <Box marginBottom={[6, 6, 10]}>
       <IntroHeader
         title={m.educationFramhskoliCareer}
-        intro="Hér getur þú séð yfirlit yfir námsferil þinn úr framhaldsskóla."
+        intro={edMessage.careerIntro}
       />
-      <GridRow marginTop={4}>
+      {/* <GridRow marginTop={4}>
         <GridColumn span="1/1">
           <Box
             display="flex"
@@ -29,81 +45,44 @@ export const EducationGraduationDetail = () => {
             </Button>
           </Box>
         </GridColumn>
-      </GridRow>
-      <SortableTable
-        title="Matsönn 2006 - Fjölbraut við Ármúla - Dagskóli"
-        labels={{
-          name: 'Námsgrein',
-          brautarheiti: 'Brautarheiti',
-          einingar: 'Einingar',
-          einkunn: 'Einkunn',
-          dags: 'Dags.',
-          threp: 'Þrep',
-          Staða: 'Staða',
-        }}
-        items={[
-          {
-            id: '123',
-            name: 'Bókfærsla',
-            brautarheiti: 'BÓK103',
-            einingar: '3',
-            einkunn: '9',
-            dags: '03.12.07',
-            threp: '3',
-            Staða: 'Lokið',
-          },
-        ]}
-        footer={{ name: 'Samtals:', brautarheiti: '', einingar: '3' }}
-      />
-      <Box marginTop={6} />
-      <SortableTable
-        title="Haustönn 2007 - Menntaskólinn við Hamrahlíð - Dagskóli"
-        labels={{
-          name: 'Námsgrein',
-          brautarheiti: 'Brautarheiti',
-          einingar: 'Einingar',
-          einkunn: 'Einkunn',
-          dags: 'Dags.',
-          threp: 'Þrep',
-          stada: 'Staða',
-        }}
-        items={[
-          {
-            id: '123',
-            name: 'Bókfærsla',
-            brautarheiti: 'BÓK103',
-            einingar: '3',
-            einkunn: '9',
-            dags: '03.12.07',
-            threp: '3',
-            stada: 'Lokið',
-            tag: 'mint',
-          },
-          {
-            id: '1234',
-            name: 'Lífsleikni',
-            brautarheiti: 'LIL1012',
-            einingar: '1',
-            einkunn: '8',
-            dags: '13.12.07',
-            threp: '2',
-            stada: 'Ólokið',
-            tag: 'purple',
-          },
-          {
-            id: '12346',
-            name: 'Stærðfræði',
-            brautarheiti: 'STÆ1036',
-            einingar: '3',
-            einkunn: '9',
-            dags: '23.12.07',
-            threp: '2',
-            stada: 'Lokið',
-            tag: 'mint',
-          },
-        ]}
-        footer={{ name: 'Samtals:', brautarheiti: '', einingar: '7' }}
-      />
+      </GridRow> */}
+      <Box marginTop={4}>{loading && <CardLoader />}</Box>
+      {periodItems.length > 0 &&
+        !loading &&
+        periodItems.map((item, i) => (
+          <Box key={i} marginTop={i > 0 ? 6 : 0}>
+            <SortableTable
+              title={`${item.organisation ?? ''} - ${item.periodName ?? ''}`}
+              labels={{
+                name: formatMessage(edMessage.courseName),
+                brautarheiti: formatMessage(edMessage.courseId),
+                einingar: formatMessage(edMessage.units),
+                einkunn: formatMessage(edMessage.grade),
+                dags: formatMessage(edMessage.dateShort),
+                Staða: formatMessage(edMessage.status),
+              }}
+              items={
+                item.courses?.map((course, i) => ({
+                  id: course?.courseId ?? `${i}`,
+                  name: course?.courseName ?? '',
+                  brautarheiti: course?.courseId ?? '',
+                  einingar: course?.units ?? '',
+                  einkunn: course?.finalgrade ?? '',
+                  dags: formatDate(course?.date ?? ''),
+                  Staða: course?.status ?? '',
+                  tag: tagSelector(course?.status ?? ''),
+                })) ?? []
+              }
+              footer={{
+                name: `${formatMessage(edMessage.total)}:`,
+                brautarheiti: '',
+                einingar: addArray(
+                  item.courses?.map((item) => item?.units || '') || [],
+                ),
+              }}
+            />
+          </Box>
+        ))}
     </Box>
   )
 }

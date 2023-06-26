@@ -22,7 +22,7 @@ type SortableTableProps = {
     [key: string]: string
   }
   footer?: {
-    [key: string]: string
+    [key: string]: string | number
   }
   title?: string
 }

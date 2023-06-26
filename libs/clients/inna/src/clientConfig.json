@@ -6,7 +6,7 @@
   },
   "servers": [
     {
-      "url": "http://apex-test.inna.is/ords/inna/api/namsferlaveita/",
+      "url": "https://api-test.inna.is/namsferlaveita/",
       "description": "Þjónustur fyrir Stafrænt Ísland"
     }
   ],
@@ -130,7 +130,12 @@
                       "items": {
                         "type": "object",
                         "properties": {
-                          "courses": { "$ref": "#/components/schemas/OTHER" },
+                          "courses": {
+                            "type": "array",
+                            "items": {
+                              "$ref": "#/components/schemas/CoursesDto"
+                            }
+                          },
                           "division": {
                             "$ref": "#/components/schemas/VARCHAR2"
                           },
@@ -208,7 +213,35 @@
     "schemas": {
       "NUMBER": { "type": "number" },
       "OTHER": { "type": "string" },
-      "VARCHAR2": { "type": "string" }
+      "VARCHAR2": { "type": "string" },
+      "CoursesDto": {
+        "type": "object",
+        "properties": {
+          "course_name": {
+            "type": "string"
+          },
+          "course_id": {
+            "type": "string"
+          },
+          "finalgrade": {
+            "type": "string"
+          },
+          "units": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "stage": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "date": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
     }
   }
 }

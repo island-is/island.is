@@ -15,35 +15,6 @@ export const educationNavigation: PortalNavigationItem = {
       path: EducationPaths.EducationAssessment,
     },
     {
-      name: m.educationFramhskoli,
-      path: EducationPaths.EducationFramhskoli,
-      children: [
-        {
-          name: m.educationFramhskoliCareer,
-          breadcrumbHide: true,
-          path: EducationPaths.EducationFramhskoliCareer,
-        },
-        {
-          // TODO: Move this.
-          name: m.educationFramhskoliGraduation,
-          breadcrumbHide: true,
-          path: EducationPaths.EducationFramhskoliGraduationOverview,
-          children: [
-            {
-              name: m.educationFramhskoliGraduation,
-              breadcrumbHide: true,
-              path: EducationPaths.EducationFramhskoliGraduationSingle,
-            },
-            {
-              name: m.educationFramhskoliGraduation,
-              breadcrumbHide: true,
-              path: EducationPaths.EducationFramhskoliGraduationDetail,
-            },
-          ],
-        },
-      ],
-    },
-    {
       name: m.educationGraduation,
       path: EducationPaths.EducationHaskoliGraduation,
       children: [
@@ -51,6 +22,28 @@ export const educationNavigation: PortalNavigationItem = {
           name: m.overview,
           navHide: true,
           path: EducationPaths.EducationHaskoliGraduationDetail,
+        },
+      ],
+    },
+    {
+      name: m.educationFramhskoliCareer,
+      breadcrumbHide: false,
+      path: EducationPaths.EducationFramhskoliCareer,
+    },
+    {
+      name: m.educationFramhskoliGraduation,
+      breadcrumbHide: false,
+      path: EducationPaths.EducationFramhskoliGraduationOverview,
+      children: [
+        {
+          name: m.educationFramhskoliGraduation,
+          breadcrumbHide: true,
+          path: EducationPaths.EducationFramhskoliGraduationSingle,
+        },
+        {
+          name: m.educationFramhskoliGraduation,
+          breadcrumbHide: true,
+          path: EducationPaths.EducationFramhskoliGraduationDetail,
         },
       ],
     },

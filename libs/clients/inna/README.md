@@ -1,6 +1,6 @@
 <!-- gitbook-navigation: "INNA" -->
 
-# clients-inna
+# Clients Inna
 
 This library was generated with [Nx](https://nx.dev).
 

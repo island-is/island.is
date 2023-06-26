@@ -16,7 +16,15 @@
         "jestConfig": "libs/clients/inna/jest.config.js",
         "passWithNoTests": true
       }
+    },
+    "schemas/external-openapi-generator": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": [
+          "yarn openapi-generator -o libs/clients/inna/gen/fetch -i libs/clients/inna/src/clientConfig.json"
+        ]
+      }
     }
   },
-  "tags": []
+  "tags": ["lib:client", "scope:client"]
 }

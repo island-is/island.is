@@ -442,12 +442,12 @@ export const m = defineMessages({
     defaultMessage: 'Framhaldsskóli',
   },
   educationFramhskoliGraduation: {
-    id: 'service.portal:education-framhskoli',
-    defaultMessage: 'Framhaldsskóli - útskriftir',
+    id: 'service.portal:education-framhskoli-graduation',
+    defaultMessage: 'Framhaldsskóli - Útskriftir',
   },
   educationFramhskoliCareer: {
     id: 'service.portal:education-framhskoli-career',
-    defaultMessage: 'Námsferill',
+    defaultMessage: 'Framhaldsskóli - Námsferill',
   },
   educationHaskoli: {
     id: 'service.portal:education-haskoli',

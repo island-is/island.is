@@ -1,30 +1,51 @@
 import React from 'react'
 import {
+  formatDate,
   IntroHeader,
-  m,
-  SortableTable,
+  NotFound,
   UserInfoLine,
 } from '@island.is/service-portal/core'
-import {
-  Box,
-  Divider,
-  Stack,
-  GridRow,
-  GridColumn,
-  Button,
-  Text,
-} from '@island.is/island-ui/core'
-import { defineMessages } from 'react-intl'
+import { useLocale, useNamespaces } from '@island.is/localization'
+import { Box, Divider, Stack, Text } from '@island.is/island-ui/core'
+import { defineMessage } from 'react-intl'
 import { EducationPaths } from '../../lib/paths'
+import { useGetInnaDiplomasQuery } from '../SecondarySchoolCareer/Diplomas.generated'
+import { useParams } from 'react-router-dom'
+import { edMessage } from '../../lib/messages'
+
+type UseParams = {
+  id: string
+}
 
 export const EducationGraduationDetail = () => {
+  useNamespaces('sp.education-secondary-school')
+  const { data: innaDiplomas, loading } = useGetInnaDiplomasQuery()
+  const { formatMessage } = useLocale()
+
+  const { id } = useParams() as UseParams
+  const diplomaItems = innaDiplomas?.innaDiplomas?.items || []
+
+  const singleGraduation = diplomaItems.filter((item) => item.diplomaId === id)
+
+  if (!singleGraduation.length && !loading) {
+    return (
+      <NotFound
+        title={defineMessage({
+          id: 'sp.education-secondary-school:not-found',
+          defaultMessage: 'Engin gögn fundust',
+        })}
+      />
+    )
+  }
+
+  const graduationItem = singleGraduation[0]
   return (
     <Box marginBottom={[6, 6, 10]}>
       <IntroHeader
-        title="Menntaskólinn við Hamrahlíð"
-        intro="Útskriftargögn nemanda."
+        title={graduationItem?.organisation ?? ''}
+        intro={formatMessage(edMessage.graduationData)}
       />
-      <GridRow marginTop={4}>
+      {/* <GridRow marginTop={4}>
         <GridColumn span="1/1">
           <Box
             display="flex"
@@ -44,14 +65,26 @@ export const EducationGraduationDetail = () => {
             </Button>
           </Box>
         </GridColumn>
-      </GridRow>
+      </GridRow> */}
       <Stack space={2}>
         <UserInfoLine
-          title="Yfirlit"
-          label="Dagsetning úskriftar"
-          content="24.11.2007"
+          title={formatMessage(edMessage.overview)}
+          label={formatMessage(edMessage.graduationDate)}
+          content={formatDate(graduationItem?.diplomaDate ?? '')}
+          loading={loading}
+          editLink={{
+            external: false,
+            title: {
+              id: 'sp.education:view-education-career',
+              defaultMessage: formatMessage(edMessage.viewCareer),
+            },
+            url: EducationPaths.EducationFramhskoliGraduationDetail.replace(
+              ':detail',
+              'nanar',
+            ).replace(':id', id),
+          }}
         />
-        <Divider />
+        {/* <Divider />
 
         <UserInfoLine
           label="Einingum lokið"
@@ -67,24 +100,29 @@ export const EducationGraduationDetail = () => {
               'nanar',
             ).replace(':id', 'menntaskolinn-vid-hamrahlid'),
           }}
+        /> */}
+        {/* <Divider />
+        <UserInfoLine
+          label="Gráða"
+          content={graduationItem.diplomaName ?? ''}
+        /> */}
+        <Divider />
+        <UserInfoLine
+          label={formatMessage(edMessage.graduationPath)}
+          content={graduationItem?.diplomaName ?? ''}
+          loading={loading}
         />
         <Divider />
         <UserInfoLine
-          label="Gráða"
-          content="Stúdentspróf, námlok 6 af 3ja þrepi."
+          label={formatMessage(edMessage.school)}
+          content={graduationItem?.organisation ?? ''}
+          loading={loading}
         />
-        <Divider />
-        <UserInfoLine label="Námsbraut" content="Náttúrufræðibraut" />
-        <Divider />
-        <UserInfoLine label="Skóli" content="Menntaskólinn við Hamrahlíð" />
         <Divider />
       </Stack>
 
       <Box paddingTop={4}>
-        <Text variant="small">
-          Ef upplýsingar hér eru ekki réttar er bent á að hafa samband við
-          þjónustuaðila, MMS.
-        </Text>
+        <Text variant="small">{formatMessage(edMessage.gradFooter)}</Text>
       </Box>
     </Box>
   )

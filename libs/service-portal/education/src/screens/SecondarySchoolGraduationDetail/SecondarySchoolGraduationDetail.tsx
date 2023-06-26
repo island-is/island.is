@@ -1,20 +1,86 @@
 import React from 'react'
-import { IntroHeader, m, SortableTable } from '@island.is/service-portal/core'
-import { Box, Button, GridColumn, GridRow } from '@island.is/island-ui/core'
+import {
+  formatDate,
+  IntroHeader,
+  m,
+  NotFound,
+  SortableTable,
+} from '@island.is/service-portal/core'
+import {
+  Box,
+  GridColumn,
+  GridRow,
+  LoadingDots,
+} from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
+import { useParams } from 'react-router-dom'
+
+import { useGetInnaPeriodsQuery } from '../SecondarySchoolCareer/Periods.generated'
+import { useGetInnaDiplomasQuery } from '../SecondarySchoolCareer/Diplomas.generated'
+import { tagSelector } from '../../utils/tagSelector'
+import { addArray } from '../../utils/addArray'
+import { defineMessage } from 'react-intl'
+import { edMessage } from '../../lib/messages'
+
+type UseParams = {
+  id: string
+}
 
 export const EducationGraduationDetail = () => {
-  useNamespaces('sp.education')
+  useNamespaces('sp.education-secondary-school')
   const { formatMessage } = useLocale()
+  const { id } = useParams() as UseParams
+
+  const { data: innaData, loading } = useGetInnaPeriodsQuery()
+  const {
+    data: innaDiplomas,
+    loading: loadingDiplomas,
+  } = useGetInnaDiplomasQuery()
+
+  const periodItems = innaData?.innaPeriods?.items || []
+  const diplomaItems = innaDiplomas?.innaDiplomas?.items || []
+
+  const singleGraduation = diplomaItems.filter((item) => item.diplomaId === id)
+  const graduationItem = singleGraduation[0]
+
+  const periodArray = periodItems.filter(
+    (item) => item?.organisation === graduationItem?.organisation,
+  )
+
+  const queryLoading = loading || loadingDiplomas
+  if (queryLoading) {
+    return (
+      <Box marginBottom={6}>
+        <GridRow>
+          <GridColumn span={['12/12', '12/12', '6/8', '6/8']}>
+            <LoadingDots />
+          </GridColumn>
+        </GridRow>
+      </Box>
+    )
+  }
+
+  if (!periodArray.length && !queryLoading) {
+    return (
+      <NotFound
+        title={defineMessage({
+          id: 'sp.education-secondary-school:not-found',
+          defaultMessage: 'Engin gögn fundust',
+        })}
+      />
+    )
+  }
+
   return (
     <Box marginBottom={[6, 6, 10]}>
       <IntroHeader
-        title={`${formatMessage(
-          m.educationFramhskoliCareer,
-        )}: Menntaskólinn við Hamrahlíð`}
-        intro="Hér getur þú séð yfirlit yfir námsferil þinn úr framhaldsskóla."
+        title={`${formatMessage(m.educationFramhskoliCareer)}: ${
+          graduationItem.organisation ?? ''
+        }`}
+        intro={formatMessage(edMessage.careerIntro)}
+        marginBottom={6}
       />
-      <GridRow marginTop={4}>
+      {/* <GridRow marginTop={4}>
         <GridColumn span="1/1">
           <Box
             display="flex"
@@ -34,79 +100,44 @@ export const EducationGraduationDetail = () => {
             </Button>
           </Box>
         </GridColumn>
-      </GridRow>
+      </GridRow> */}
 
-      <Box marginTop={1} />
-      <SortableTable
-        title="Haustönn 2007 - Menntaskólinn við Hamrahlíð - Dagskóli"
-        labels={{
-          name: 'Námsgrein',
-          brautarheiti: 'Brautarheiti',
-          einingar: 'Einingar',
-          einkunn: 'Einkunn',
-          dags: 'Dags.',
-          threp: 'Þrep',
-          stada: 'Staða',
-        }}
-        items={[
-          {
-            id: '1234',
-            name: 'Lífsleikni',
-            brautarheiti: 'LIL1012',
-            einingar: '1',
-            einkunn: '8',
-            dags: '13.12.07',
-            threp: '2',
-            stada: 'Ólokið',
-            tag: 'purple',
-          },
-          {
-            id: '123',
-            name: 'Bókfærsla',
-            brautarheiti: 'BÓK103',
-            einingar: '3',
-            einkunn: '9',
-            dags: '03.12.07',
-            threp: '3',
-            stada: 'Lokið',
-            tag: 'mint',
-          },
-          {
-            id: '12346',
-            name: 'Stærðfræði',
-            brautarheiti: 'STÆ1036',
-            einingar: '3',
-            einkunn: '9',
-            dags: '23.12.07',
-            threp: '2',
-            stada: 'Lokið',
-            tag: 'mint',
-          },
-          {
-            id: '123466454666',
-            name: 'Saga',
-            brautarheiti: 'SAG1036',
-            einingar: '3',
-            einkunn: '10',
-            dags: '23.12.07',
-            threp: '1',
-            stada: 'Lokið',
-            tag: 'mint',
-          },
-          {
-            id: '123466454666777',
-            name: 'Skólasókn',
-            brautarheiti: 'SKS1001',
-            einingar: '1',
-            einkunn: '10',
-            dags: '23.12.07',
-            threp: '1',
-            stada: 'Lokið',
-            tag: 'mint',
-          },
-        ]}
-        footer={{ name: 'Samtals:', brautarheiti: '', einingar: '11' }}
-      />
+      {periodArray.length > 0 &&
+        !loading &&
+        periodArray.map((item, i) => (
+          <Box key={i} marginTop={i > 0 ? 6 : 1}>
+            <SortableTable
+              title={`${item.organisation ?? ''} - ${item.periodName ?? ''}`}
+              labels={{
+                name: formatMessage(edMessage.courseName),
+                brautarheiti: formatMessage(edMessage.courseId),
+                einingar: formatMessage(edMessage.units),
+                einkunn: formatMessage(edMessage.grade),
+                dags: formatMessage(edMessage.dateShort),
+                Staða: formatMessage(edMessage.status),
+              }}
+              items={
+                item.courses?.map((course, i) => ({
+                  id: course?.courseId ?? `${i}`,
+                  name: course?.courseName ?? '',
+                  brautarheiti: course?.courseId ?? '',
+                  einingar: course?.units ?? '',
+                  einkunn: course?.finalgrade ?? '',
+                  dags: formatDate(course?.date ?? ''),
+                  Staða: course?.status ?? '',
+                  tag: tagSelector(course?.status ?? ''),
+                })) ?? []
+              }
+              footer={{
+                name: `${formatMessage(edMessage.total)}:`,
+                brautarheiti: '',
+                einingar: addArray(
+                  item.courses?.map((item) => item?.units || '') || [],
+                ),
+              }}
+            />
+          </Box>
+        ))}
     </Box>
   )
 }

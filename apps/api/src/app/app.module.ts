@@ -101,6 +101,7 @@ import { CompanyRegistryConfig } from '@island.is/clients/rsk/company-registry'
 import { SessionsApiClientConfig } from '@island.is/clients/sessions'
 import { SyslumennClientConfig } from '@island.is/clients/syslumenn'
 import { UniversityOfIcelandClientConfig } from '@island.is/clients/university-of-iceland'
+import { InnaClientConfig } from '@island.is/clients/inna'
 import { VehiclesClientConfig } from '@island.is/clients/vehicles'
 import { CmsModule, PowerBiConfig } from '@island.is/cms'
 import { CmsTranslationsModule } from '@island.is/cms-translations'
@@ -313,6 +314,7 @@ const environment = getConfig
         JudicialAdministrationClientConfig,
         CommunicationsConfig,
         UniversityOfIcelandClientConfig,
+        InnaClientConfig,
         SessionsApiClientConfig,
         AuthAdminApiClientConfig,
         WatsonAssistantChatConfig,
