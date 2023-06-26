@@ -1,5 +1,5 @@
 import {useQuery} from '@apollo/client';
-import {dynamicColor, Header, Loader} from '@ui';
+import {dynamicColor, Header, Loader, Typography} from '@ui';
 import React, {useEffect, useRef, useState} from 'react';
 import {FormattedDate, useIntl} from 'react-intl';
 import {Animated, Platform, StyleSheet, View} from 'react-native';
@@ -76,17 +76,19 @@ const {
 interface PdfViewerProps {
   url: string;
   body: string;
-  onLoaded: (numberOfPages: number, path: string) => void;
+  onLoaded: (path: string) => void;
+  onError: (err: Error) => void;
 }
 
 const PdfViewer = React.memo(
-  ({url, body, onLoaded}: PdfViewerProps) => {
+  ({url, body, onLoaded, onError}: PdfViewerProps) => {
     const extraProps = {
       activityIndicatorProps: {
         color: '#0061ff',
         progressTintColor: '#ccdfff',
       },
     };
+
     return (
       <Pdf
         source={
@@ -99,7 +101,13 @@ const PdfViewer = React.memo(
             method: 'POST',
           } as Source
         }
-        onLoadComplete={onLoaded}
+        onLoadComplete={(_, filePath) => {
+          onLoaded?.(filePath);
+        }}
+        onError={(err) => {
+          onError?.(err as Error);
+        }}
+        trustAllCerts={Platform.select({android: false, ios: undefined})}
         style={{
           flex: 1,
           backgroundColor: 'transparent',
@@ -123,6 +131,7 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
   const intl = useIntl();
   const {getOrganizationLogoUrl} = useOrganizationsStore();
   const [accessToken, setAccessToken] = useState<string>();
+  const [error, setError] = useState(false);
 
   const res = useQuery<Query>(LIST_DOCUMENTS_QUERY, {
     client,
@@ -247,9 +256,13 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
                 <PdfViewer
                   url={Document.url ?? ''}
                   body={`documentId=${Document.id}&__accessToken=${accessToken}`}
-                  onLoaded={(_: any, filePath: any) => {
+                  onLoaded={(filePath: any) => {
                     setPdfUrl(filePath);
                     setLoaded(true);
+                  }}
+                  onError={() => {
+                    setLoaded(true);
+                    setError(true);
                   }}
                 />
               )}
@@ -264,7 +277,7 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
           )}
         </Animated.View>
 
-        {(!loaded || !accessToken) && (
+        {(!loaded || !accessToken || error) && (
           <View
             style={[
               StyleSheet.absoluteFill,
@@ -275,9 +288,15 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
               },
             ]}
           >
-            <Loader
-              text={intl.formatMessage({id: 'documentDetail.loadingText'})}
-            />
+            {error ? (
+              <Typography>
+                {intl.formatMessage({id: 'licenseScanDetail.errorUnknown'})}
+              </Typography>
+            ) : (
+              <Loader
+                text={intl.formatMessage({id: 'documentDetail.loadingText'})}
+              />
+            )}
           </View>
         )}
       </View>

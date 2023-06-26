@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
+    "release:android": "cd android && ./gradlew bundleProdRelease bundleDevRelease",
     "android": "react-native run-android",
     "ios": "react-native run-ios",
     "typecheck": "tsc --noEmit",
