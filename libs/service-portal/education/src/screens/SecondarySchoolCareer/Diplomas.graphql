@@ -1,0 +1,11 @@
+query GetInnaDiplomas {
+  innaDiplomas {
+    items {
+      diplomaDate
+      diplomaId
+      diplomaName
+      organisation
+      organisationShort
+    }
+  }
+}
