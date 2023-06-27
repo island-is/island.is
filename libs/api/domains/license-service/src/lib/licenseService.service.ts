@@ -2,7 +2,7 @@ import { Inject, Injectable, CACHE_MANAGER } from '@nestjs/common'
 import { Cache as CacheManager } from 'cache-manager'
 import add from 'date-fns/add'
 import compareAsc from 'date-fns/compareAsc'
-import { logger, Logger } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { User } from '@island.is/auth-nest-tools'
 import { CmsContentfulService } from '@island.is/cms'
@@ -373,7 +373,7 @@ export class LicenseServiceService {
     data: string,
     nationalIdInput: string,
   ): Promise<PkPassVerification> {
-    logger.warn('Verifying any national ID', {
+    this.logger.warn('Verifying any national ID', {
       data,
       user,
       nationalIdInput,
