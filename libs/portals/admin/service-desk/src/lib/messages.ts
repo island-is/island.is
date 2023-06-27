@@ -22,7 +22,11 @@ export const m = defineMessages({
     defaultMessage: 'Sláðu inn nafn eða kt til að byrja leit',
   },
   searchByNationalId: {
+<<<<<<< HEAD
     id: 'admin-portal.service-desk:search-by-national-id',
+=======
+    id: 'service.portal:search-by-national-id',
+>>>>>>> dbbe3b8d8a (changed input size and text)
     defaultMessage: 'Leita eftir nafni eða kt.',
   },
   listProcurers: {

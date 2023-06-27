@@ -3,8 +3,12 @@ import { Form, useActionData, useNavigate } from 'react-router-dom'
 
 import { useLocale } from '@island.is/localization'
 import { formatNationalId, IntroHeader } from '@island.is/portals/core'
+<<<<<<< HEAD
 import { Box, Button, Input, Stack, toast } from '@island.is/island-ui/core'
 import { replaceParams } from '@island.is/react-spa/shared'
+=======
+import { Box, Button, Input, Stack } from '@island.is/island-ui/core'
+>>>>>>> dbbe3b8d8a (changed input size and text)
 
 import { m } from '../../lib/messages'
 import { GetCompaniesResult } from './GetCompanies.action'
