@@ -10,6 +10,7 @@ import {
 } from '@island.is/island-ui/core'
 import { FILTERS_FRONT_PAGE_KEY } from '../../../../../utils/consts/consts'
 import localization from '../../../Home.json'
+import shared from '../../../../../lib/shared.json'
 import { FilterTypes } from '../../../../../types/enums'
 
 interface FilterBoxProps {
@@ -28,6 +29,7 @@ export const FilterBox = ({
   loading,
 }: FilterBoxProps) => {
   const loc = localization.filter.filterBox
+  const sharedLoc = shared.mapInProcess
   const thisFilters = filters[type]
 
   const onChangeIsOpen = () => {
@@ -87,10 +89,8 @@ export const FilterBox = ({
 
     // checking if label is "Í vinnslu frá"
     // to render just "Í vinnslu"
-    if (label === loc.preInProgress) {
-      return hasItems
-        ? `${loc.postInProgress} (${count})`
-        : `${loc.postInProgress}`
+    if (label === sharedLoc.pre) {
+      return hasItems ? `${sharedLoc.post} (${count})` : `${sharedLoc.post}`
     }
 
     return hasItems ? `${label} (${count})` : `${label}`
