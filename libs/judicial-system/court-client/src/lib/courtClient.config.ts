@@ -17,5 +17,6 @@ export const courtClientModuleConfig = defineConfig({
     courtLitigantApiAvailable: !(env.optional('BLOCKED_API_INTEGRATION') ?? '')
       .split(',')
       .includes('COURT_LITIGANT'),
+    baseUrl: env.required('CLIENT_URL', 'http://localhost:4200'),
   }),
 })
