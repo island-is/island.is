@@ -10,6 +10,7 @@ import {
   buildKeyValueField,
   buildDividerField,
   buildDescriptionField,
+  buildPhoneField,
 } from '@island.is/application/core'
 import {
   DefaultEvents,
@@ -23,10 +24,8 @@ import format from 'date-fns/format'
 import is from 'date-fns/locale/is'
 import { Application } from '@island.is/application/types'
 import { UserProfile } from '@island.is/api/schema'
-import {
-  formatPhoneNumber,
-  removeCountryCode,
-} from '@island.is/application/ui-components'
+import { formatPhoneNumber } from '@island.is/application/ui-components'
+import { parse } from 'libphonenumber-js'
 
 export const form: Form = buildForm({
   id: 'GeneralPetitionForm',
@@ -112,14 +111,14 @@ export const form: Form = buildForm({
             }),
             buildDescriptionField({
               id: 'space',
-              title: '',
+              title: m.listOwner,
+              titleVariant: 'h3',
               space: 'containerGutter',
             }),
-            buildTextField({
+            buildPhoneField({
               id: 'phone',
-              title: m.phoneLabel,
+              title: m.phone,
               width: 'half',
-              format: '###-####',
               backgroundColor: 'white',
               defaultValue: (application: Application) => {
                 const phone =
@@ -127,12 +126,12 @@ export const form: Form = buildForm({
                     mobilePhoneNumber?: string
                   })?.mobilePhoneNumber ?? ''
 
-                return removeCountryCode(phone)
+                return phone
               },
             }),
             buildTextField({
               id: 'email',
-              title: m.emailLabel,
+              title: m.email,
               width: 'half',
               backgroundColor: 'white',
               defaultValue: ({ externalData }: Application) => {
@@ -169,8 +168,10 @@ export const form: Form = buildForm({
             }),
             buildKeyValueField({
               label: m.phone,
-              value: ({ answers }) =>
-                formatPhoneNumber(answers.phone as string),
+              value: ({ answers }) => {
+                const parsedPhoneNumber = parse(answers.phone as string)
+                return formatPhoneNumber(parsedPhoneNumber.phone as string)
+              },
             }),
             buildKeyValueField({
               label: m.email,

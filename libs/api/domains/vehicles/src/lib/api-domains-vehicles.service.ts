@@ -8,6 +8,7 @@ import {
   PdfApi,
   VehicleSearchDto,
   PersidnoLookupDto,
+  PublicVehicleSearchApi,
 } from '@island.is/clients/vehicles'
 import { VehiclesDetail } from '../models/getVehicleDetail.model'
 import { ApolloError } from 'apollo-server-express'
@@ -22,10 +23,10 @@ const LOG_CATEGORY = 'vehicles-service'
 export class VehiclesService {
   constructor(
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
-    @Inject(VehicleSearchApi)
-    @Inject(PdfApi)
-    private vehiclesApi: VehicleSearchApi,
-    private vehiclesPDFApi: PdfApi,
+    @Inject(VehicleSearchApi) private vehiclesApi: VehicleSearchApi,
+    @Inject(PdfApi) private vehiclesPDFApi: PdfApi,
+    @Inject(PublicVehicleSearchApi)
+    private publicVehiclesApi: PublicVehicleSearchApi,
   ) {}
 
   handleError(error: any, detail?: string): ApolloError | null {
@@ -82,6 +83,17 @@ export class VehiclesService {
       return data[0]
     } catch (e) {
       return this.handle4xx(e, 'Failed to get vehicle search')
+    }
+  }
+
+  async getPublicVehicleSearch(search: string) {
+    try {
+      const data = await this.publicVehiclesApi.publicVehicleSearchGet({
+        search,
+      })
+      return data
+    } catch (e) {
+      return this.handle4xx(e)
     }
   }
 

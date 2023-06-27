@@ -24,6 +24,9 @@ export type DrivingLicenseCategory = {
   issued: Date | null
   expires: Date | null
   comments: string | null
+  validToText?: string | null
+  validToCode?: number | null
+  nr?: string | null
 }
 
 export type DrivingLicense = {

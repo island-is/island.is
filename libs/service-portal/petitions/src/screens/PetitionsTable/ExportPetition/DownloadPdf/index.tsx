@@ -14,6 +14,7 @@ import {
   PaginatedEndorsementResponse,
 } from '@island.is/api/schema'
 import { dark200 } from '@island.is/island-ui/theme'
+import { format as formatNationalId } from 'kennitala'
 
 const MyPdfDocument = (data: {
   petition?: EndorsementList
@@ -53,9 +54,8 @@ const MyPdfDocument = (data: {
               <Text>{petition?.ownerName}</Text>
             </View>
             <View style={pdfStyles.widthHalf}>
-              <Text style={pdfStyles.header}>Kennitala ábyrgðarmannsins: </Text>
-              {/*todo: */}
-              <Text>{''}</Text>
+              <Text style={pdfStyles.header}>Kennitala ábyrgðarmanns: </Text>
+              <Text>{formatNationalId(petition?.owner as string)}</Text>
             </View>
           </View>
         </View>
