@@ -86,6 +86,7 @@ export const mapOrganizationPage = ({
     .map(safelyMapSliceUnion)
     .filter(Boolean),
   newsTag: fields.newsTag ? mapGenericTag(fields.newsTag) : null,
+  secondaryNewsTags: (fields.secondaryNewsTags ?? []).map(mapGenericTag),
   menuLinks: (fields.menuLinks ?? []).map(mapLinkGroup),
   secondaryMenu: fields.secondaryMenu
     ? mapLinkGroup(fields.secondaryMenu)

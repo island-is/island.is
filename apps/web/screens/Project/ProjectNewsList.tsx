@@ -163,6 +163,7 @@ const ProjectNewsList: Screen<ProjectNewsListProps> = ({
           monthOptions={monthOptions}
           title={newsTitle}
           newsPerPage={10}
+          newsTags={projectPage.secondaryNewsTags}
         />
       </ProjectWrapper>
       <HeadWithSocialSharing

@@ -2723,6 +2723,9 @@ export interface IProjectPageFields {
   /** Primary news tag */
   newsTag?: IGenericTag | undefined
 
+  /** Secondary news tags */
+  secondaryNewsTags?: IGenericTag[] | undefined
+
   /** Project Subpages */
   projectSubpages?: IProjectSubpage[] | undefined
 
