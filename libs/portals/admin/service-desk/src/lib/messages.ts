@@ -19,11 +19,11 @@ export const m = defineMessages({
   },
   pleaseEnterValueToBeingSearch: {
     id: 'admin-portal.service-desk:pleaseEnterValueToBeingSearch',
-    defaultMessage: 'Sláðu inn kennitölu til að byrja leit',
+    defaultMessage: 'Sláðu inn nafn eða kt til að byrja leit',
   },
   searchByNationalId: {
     id: 'admin-portal.service-desk:search-by-national-id',
-    defaultMessage: 'Leita eftir kennitölu',
+    defaultMessage: 'Leita eftir nafni eða kt.',
   },
   listProcurers: {
     id: 'admin-portal.service-desk:list-procurers',
