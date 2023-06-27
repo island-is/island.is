@@ -1,5 +1,6 @@
 import { uuid } from 'uuidv4'
 
+import { ConfigType } from '@island.is/nest/config'
 import { EmailService } from '@island.is/email-service'
 import {
   getStatementDeadline,
@@ -9,6 +10,7 @@ import {
 import { formatDate } from '@island.is/judicial-system/formatters'
 
 import { Case } from '../../../case'
+import { notificationModuleConfig } from '../../notification.config'
 import { DeliverResponse } from '../../models/deliver.response'
 import { createTestingNotificationModule } from '../createTestingNotificationModule'
 
@@ -30,16 +32,18 @@ describe('InternalNotificationController - Send appeal received by court notific
   const receivedDate = new Date()
 
   let mockEmailService: EmailService
-
+  let mockConfig: ConfigType<typeof notificationModuleConfig>
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
     const {
       emailService,
+      notificationConfig,
       internalNotificationController,
     } = await createTestingNotificationModule()
 
     mockEmailService = emailService
+    mockConfig = notificationConfig
 
     givenWhenThen = async (defenderNationalId?: string) => {
       const then = {} as Then
@@ -78,7 +82,13 @@ describe('InternalNotificationController - Send appeal received by court notific
     it('should send notification to prosecutor and defender', () => {
       expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
         expect.objectContaining({
-          to: [{ name: 'Landsréttur', address: '' }],
+          to: [
+            {
+              name: 'Landsréttur',
+              address:
+                mockConfig.email.courtsEmails[mockConfig.courtOfAppealsId],
+            },
+          ],
           subject: `Upplýsingar vegna kæru í máli ${courtCaseNumber}`,
           html: `Kæra í máli ${courtCaseNumber} hefur borist Landsrétti. Hægt er að nálgast gögn málsins í <a href="http://localhost:4200/landsrettur/yfirlit/${caseId}">Réttarvörslugátt</a> með rafrænum skilríkjum.`,
         }),
