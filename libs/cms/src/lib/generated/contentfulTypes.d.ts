@@ -2332,8 +2332,11 @@ export interface IOrganizationPageFields {
   /** Organization */
   organization: IOrganization
 
-  /** News tag */
+  /** Primary news tag */
   newsTag?: IGenericTag | undefined
+
+  /** Secondary news tags */
+  secondaryNewsTags?: IGenericTag[] | undefined
 
   /** Slug */
   slug: string
@@ -2711,8 +2714,11 @@ export interface IProjectPageFields {
       )[]
     | undefined
 
-  /** News Tag */
+  /** Primary news tag */
   newsTag?: IGenericTag | undefined
+
+  /** Secondary news tags */
+  secondaryNewsTags?: IGenericTag[] | undefined
 
   /** Project Subpages */
   projectSubpages?: IProjectSubpage[] | undefined
@@ -3893,20 +3899,20 @@ export interface IVacancyFields {
   /** Intro */
   intro?: Document | undefined
 
-  /** Application Deadline From */
+  /** Job Listed */
   applicationDeadlineFrom: string
 
-  /** Application Deadline To */
+  /** Application Deadline */
   applicationDeadlineTo: string
 
-  /** Field Of Work */
-  fieldOfWork?: string | undefined
+  /** Category */
+  fieldOfWork: string
 
   /** Organization */
-  organization?: IOrganization | undefined
+  organization: IOrganization
 
   /** Locations */
-  locations?: string[] | undefined
+  locations: string[]
 
   /** Job Percentage */
   jobPercentage?: string | undefined
@@ -3914,10 +3920,10 @@ export interface IVacancyFields {
   /** Application Link Url */
   applicationHref?: string | undefined
 
-  /** Qualification Requirements */
+  /** Requirements */
   qualificationRequirements?: Document | undefined
 
-  /** Tasks And Responsibilities */
+  /** Responsibilities */
   tasksAndResponsibilities?: Document | undefined
 
   /** Description */
