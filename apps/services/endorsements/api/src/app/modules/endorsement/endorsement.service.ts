@@ -109,23 +109,7 @@ export class EndorsementService {
     return { hasEndorsed: true }
   }
 
-  async findUserEndorsementsByTags({
-    nationalId,
-    tags,
-  }: FindUserEndorsementsByTagsInput) {
-    this.logger.info(
-      `Finding endorsements by tags "${tags.join(
-        ', ',
-      )}" for user "${nationalId}"`,
-    )
 
-    return await this.endorsementModel.findAll({
-      where: { endorser: nationalId },
-      include: [
-        { model: EndorsementList, where: { tags: { [Op.overlap]: tags } } },
-      ],
-    })
-  }
 
   // FIXME: Find a way to combine with create bulk endorsements
   async createEndorsementOnList({
