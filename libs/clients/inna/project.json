@@ -1,0 +1,30 @@
+{
+  "root": "libs/clients/inna",
+  "sourceRoot": "libs/clients/inna/src",
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["libs/clients/inna/**/*.ts"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/clients/inna"],
+      "options": {
+        "jestConfig": "libs/clients/inna/jest.config.js",
+        "passWithNoTests": true
+      }
+    },
+    "schemas/external-openapi-generator": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": [
+          "yarn openapi-generator -o libs/clients/inna/gen/fetch -i libs/clients/inna/src/clientConfig.json"
+        ]
+      }
+    }
+  },
+  "tags": ["lib:client", "scope:client"]
+}
