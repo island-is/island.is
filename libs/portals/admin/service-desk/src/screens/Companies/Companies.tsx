@@ -4,13 +4,7 @@ import * as kennitala from 'kennitala'
 
 import { useLocale } from '@island.is/localization'
 import { formatNationalId, IntroHeader } from '@island.is/portals/core'
-import {
-  Box,
-  Button,
-  FilterInput,
-  Stack,
-  toast,
-} from '@island.is/island-ui/core'
+import { Box, Button, Input, Stack, toast } from '@island.is/island-ui/core'
 import { replaceParams } from '@island.is/react-spa/shared'
 
 import { m } from '../../lib/messages'
@@ -44,12 +38,15 @@ const Companies = () => {
       />
       <Form method="post">
         <Box display={['inline', 'inline', 'flex']}>
-          <FilterInput
-            placeholder={formatMessage(m.searchByNationalId)}
+          <Input
+            id="search-procurer"
             name="searchQuery"
-            value={searchInput}
-            onChange={setSearchInput}
+            placeholder={formatMessage(m.searchByNationalId)}
             backgroundColor="blue"
+            size="md"
+            icon={{ name: 'search', type: 'outline' }}
+            value={searchInput}
+            onChange={(event) => setSearchInput(event.target.value)}
           />
         </Box>
       </Form>
