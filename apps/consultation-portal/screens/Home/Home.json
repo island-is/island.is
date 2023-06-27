@@ -60,7 +60,9 @@
     "filterBox": {
       "clearCategoryButtonLabel": "Hreinsa síu",
       "buttonOpen": "Opna",
-      "buttonClose": "Loka"
+      "buttonClose": "Loka",
+      "preInProgress": "Í vinnslu frá",
+      "postInProgress": "Í vinnslu"
     }
   },
   "searchAndFilter": {

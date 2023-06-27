@@ -85,6 +85,14 @@ export const FilterBox = ({
     const label = item?.label
     const hasItems = count && count !== 0
 
+    // checking if label is "Í vinnslu frá"
+    // to render just "Í vinnslu"
+    if (label === loc.preInProgress) {
+      return hasItems
+        ? `${loc.postInProgress} (${count})`
+        : `${loc.postInProgress}`
+    }
+
     return hasItems ? `${label} (${count})` : `${label}`
   }
 
