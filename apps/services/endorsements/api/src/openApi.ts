@@ -1,4 +1,4 @@
-import { AdminPortalScope, EndorsementsScope } from '@island.is/auth/scopes'
+import { EndorsementsScope } from '@island.is/auth/scopes'
 import { DocumentBuilder } from '@nestjs/swagger'
 import { environment } from './environments'
 
@@ -18,8 +18,7 @@ export const openApi = new DocumentBuilder()
           ['openid']: '',
           ['profile']: '',
           [EndorsementsScope.main]: '',
-          // [EndorsementsScope.admin]: '',
-          [AdminPortalScope.petitionsAdmin]: '',
+          [EndorsementsScope.admin]: '',
         },
       },
     },
