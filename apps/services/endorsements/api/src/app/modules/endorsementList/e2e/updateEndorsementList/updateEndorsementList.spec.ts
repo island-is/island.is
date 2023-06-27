@@ -1,7 +1,7 @@
 import request from 'supertest'
 import { EndorsementsScope } from '@island.is/auth/scopes'
 import { getAuthenticatedApp } from '../../../../../../test/setup'
-import { authNationalId } from './seed'
+const authNationalId = '0000000011'
 
 const newEndorsementList = {
   title: 'string',
@@ -19,7 +19,7 @@ const newEndorsementList = {
 }
 
 describe('updateEndorsementList admin scope', () => {
-  it(`PUT /endorsement-list should return 200 OK if scope is admin`, async () => {
+  it(`PUT /endorsement-list should return 200 OK on admin lock`, async () => {
     const app = await getAuthenticatedApp({
       nationalId: authNationalId,
       scope: [EndorsementsScope.admin],
@@ -32,13 +32,13 @@ describe('updateEndorsementList admin scope', () => {
       .expect(201)
 
     // to lock one ...
-    const updateResponse = await request(app.getHttpServer())
+    await request(app.getHttpServer())
       .put('/endorsement-list/' + createResponse.body.id + '/lock')
       .send()
       .expect(200)
   })
 
-  it(`PUT /endorsement-list should return 200 OK if scope is admin`, async () => {
+  it(`PUT /endorsement-list should return 200 OK on admin unlock`, async () => {
     const app = await getAuthenticatedApp({
       nationalId: authNationalId,
       scope: [EndorsementsScope.admin],
@@ -51,13 +51,13 @@ describe('updateEndorsementList admin scope', () => {
       .expect(201)
 
     // to unlock one ...
-    const updateResponse = await request(app.getHttpServer())
+    await request(app.getHttpServer())
       .put('/endorsement-list/' + createResponse.body.id + '/unlock')
       .send()
       .expect(200)
   })
 
-  it(`rafnarnason`, async () => {
+  it(`PUT /endorsement-list should return 200 OK on admin update`, async () => {
     const app = await getAuthenticatedApp({
       nationalId: authNationalId,
       scope: [EndorsementsScope.admin],
@@ -77,7 +77,7 @@ describe('updateEndorsementList admin scope', () => {
       .expect(201)
 
     // to update one ...
-    const updateResponse = await request(app.getHttpServer())
+    await request(app.getHttpServer())
       .put('/endorsement-list/' + createResponse.body.id + '/update')
       .send(payload)
       .expect(200)

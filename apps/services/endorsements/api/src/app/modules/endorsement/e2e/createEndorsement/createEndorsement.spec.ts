@@ -67,26 +67,4 @@ describe('createEndorsement', () => {
       statusCode: 405,
     })
   })
-  // // commented out due to nationalRegistryV2 service being called
-  // it(`POST /endorsement-list/:listId/endorsement should create a new endorsement and populate metadata`, async () => {
-  //   const app = await getAuthenticatedApp({
-  //     nationalId: authNationalId,
-  //     scope: [EndorsementsScope.main],
-  //   })
-  //   const endorsementBody = {
-  //     showName: true,
-  //   }
-  //   const listId = '9c0b4106-4213-43be-a6b2-ff324f4ba011'
-  //   const response = await request(app.getHttpServer())
-  //     .post(`/endorsement-list/${listId}/endorsement`)
-  //     .send(endorsementBody)
-  //     .expect(201)
-
-  //   // should return the created object
-  //   expect(response.body).toMatchObject({
-  //     endorsementListId: listId,
-  //     // lets make sure metadata got populated
-  //     meta: metaDataResponse,
-  //   })
-  // })
 })
