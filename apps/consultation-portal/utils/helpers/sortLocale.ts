@@ -49,6 +49,12 @@ export const sortLocale = ({ list, sortOption }: Props) => {
   if (list.length < 1) {
     return []
   }
+  
+  if (sortOption === 'caseNumber') {
+    return [...list].sort((a, b) =>
+      a[sortOption].localeCompare(b[sortOption], 'is'),
+    )
+  }
   return [...list].sort(
     (a, b) => {
       const lowerCaseA = a[sortOption].toLowerCase()
