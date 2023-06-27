@@ -8,7 +8,7 @@ registerEnumType(VacanciesVacancyIdGetLanguageEnum, {
 @InputType()
 export class IcelandicGovernmentInstitutionVacancyByIdInput {
   @Field()
-  id!: number
+  id!: string
 
   @Field(() => VacanciesVacancyIdGetLanguageEnum, { nullable: true })
   language?: VacanciesVacancyIdGetLanguageEnum
