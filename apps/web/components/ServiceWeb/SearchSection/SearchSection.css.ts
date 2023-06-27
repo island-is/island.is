@@ -15,9 +15,6 @@ export const container = style({
 export const responsiveContainer = style({
   ...themeUtils.responsiveStyle({
     xs: {
-      marginTop: -60,
-    },
-    md: {
       marginTop: -80,
     },
     lg: {
