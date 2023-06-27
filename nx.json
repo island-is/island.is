@@ -17,7 +17,7 @@
   "npmScope": "island.is",
   "tasksRunnerOptions": {
     "default": {
-      "runner": "nx/task-runners/default",
+      "runner": "@nrwl/nx-cloud",
       "options": {
         "cacheableOperations": [
           "build",
@@ -31,13 +31,6 @@
         ],
         "cacheDirectory": ".cache/nx",
         "parallel": 1
-      }
-    },
-    "docker-test": {
-      "runner": "@nrwl/workspace/tasks-runners/default",
-      "options": {
-        "cacheableOperations": [],
-        "cacheDirectory": ".cache/nx"
       }
     }
   },
