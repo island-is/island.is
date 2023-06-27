@@ -349,6 +349,7 @@ services-auth-ids-api:
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/auth-api'
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
     NODE_OPTIONS: '--max-old-space-size=464'
+    NOVA_ACCEPT_UNAUTHORIZED: 'false'
     PUBLIC_URL: 'https://innskra.island.is/api'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     USER_PROFILE_CLIENT_URL: 'https://service-portal-api.internal.island.is'
