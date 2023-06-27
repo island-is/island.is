@@ -78,6 +78,13 @@ export class AuthController {
     private readonly logger: Logger,
   ) {}
 
+  @Post('CreateEmail')
+  test(@Res() res: Response, @Req() req: Request) {
+    this.logger.info('Received test request', { email: req.body })
+
+    res.status(200)
+  }
+
   @Post('callback')
   async callback(
     @Body('token') token: string,
