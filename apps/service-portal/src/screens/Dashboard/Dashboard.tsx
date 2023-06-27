@@ -33,7 +33,10 @@ export const Dashboard: FC<{}> = () => {
   const navigation = useDynamicRoutesWithNavigation(MAIN_NAVIGATION)
   const isMobile = width < theme.breakpoints.md
   useEffect(() => {
-    PlausiblePageviewDetail(ServicePortalPath.MinarSidurRoot)
+    PlausiblePageviewDetail(
+      ServicePortalPath.MinarSidurRoot,
+      IS_COMPANY ? 'company' : 'person',
+    )
   }, [location])
 
   const badgeActive: keyof typeof styles.badge =

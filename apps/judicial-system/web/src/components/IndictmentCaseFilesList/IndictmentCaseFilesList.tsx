@@ -10,7 +10,6 @@ import {
 } from '@island.is/judicial-system/types'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import { Box, Text } from '@island.is/island-ui/core'
-import { UserRole } from '@island.is/judicial-system-web/src/graphql/schema'
 import { isTrafficViolationCase } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import {
   FileNotFoundModal,
@@ -49,6 +48,7 @@ const RenderFiles: React.FC<Props & RenderFilesProps> = (props) => {
             caseId={workingCase.id}
             title={file.name}
             renderAs="row"
+            disabled={!file.key}
             handleClick={() => onOpenFile(file.id)}
           />
         </Box>
@@ -60,7 +60,7 @@ const RenderFiles: React.FC<Props & RenderFilesProps> = (props) => {
 const IndictmentCaseFilesList: React.FC<Props> = (props) => {
   const { workingCase } = props
   const { formatMessage } = useIntl()
-  const { user } = useContext(UserContext)
+  const { user, limitedAccess } = useContext(UserContext)
   const { onOpen, fileNotFound, dismissFileNotFound } = useFileList({
     caseId: workingCase.id,
   })
@@ -120,7 +120,7 @@ const IndictmentCaseFilesList: React.FC<Props> = (props) => {
             />
           </Box>
         )}
-        {user?.role !== UserRole.DEFENDER && showTrafficViolationCaseFiles && (
+        {showTrafficViolationCaseFiles && (
           <Box marginBottom={5}>
             <Text variant="h4" as="h4" marginBottom={1}>
               {formatMessage(caseFiles.indictmentSection)}
@@ -133,7 +133,7 @@ const IndictmentCaseFilesList: React.FC<Props> = (props) => {
               <PdfButton
                 caseId={workingCase.id}
                 title={formatMessage(caseFiles.trafficViolationIndictmentTitle)}
-                pdfType="indictment"
+                pdfType={`${limitedAccess ? 'limitedAccess/' : ''}indictment`}
                 renderAs="row"
               />
             </Box>
@@ -175,30 +175,32 @@ const IndictmentCaseFilesList: React.FC<Props> = (props) => {
             />
           </Box>
         )}
-        {user?.role !== UserRole.DEFENDER && (
-          <Box marginBottom={5}>
-            <Text variant="h4" as="h4" marginBottom={1}>
-              {formatMessage(strings.caseFileTitle)}
-            </Text>
-            {workingCase.policeCaseNumbers.map((policeCaseNumber, index) => (
-              <Box
-                marginBottom={2}
-                key={`${policeCaseNumber}-${index}`}
-                className={styles.caseFileContainer}
-              >
-                <PdfButton
-                  caseId={workingCase.id}
-                  title={formatMessage(strings.caseFileButtonText, {
-                    policeCaseNumber,
-                  })}
-                  pdfType="caseFilesRecord"
-                  policeCaseNumber={policeCaseNumber}
-                  renderAs="row"
-                />
-              </Box>
-            ))}
-          </Box>
-        )}
+
+        <Box marginBottom={5}>
+          <Text variant="h4" as="h4" marginBottom={1}>
+            {formatMessage(strings.caseFileTitle)}
+          </Text>
+          {workingCase.policeCaseNumbers.map((policeCaseNumber, index) => (
+            <Box
+              marginBottom={2}
+              key={`${policeCaseNumber}-${index}`}
+              className={styles.caseFileContainer}
+            >
+              <PdfButton
+                caseId={workingCase.id}
+                title={formatMessage(strings.caseFileButtonText, {
+                  policeCaseNumber,
+                })}
+                pdfType={`${
+                  limitedAccess ? 'limitedAccess/' : ''
+                }caseFilesRecord`}
+                policeCaseNumber={policeCaseNumber}
+                renderAs="row"
+              />
+            </Box>
+          ))}
+        </Box>
+
         {(user && isExtendedCourtRole(user.role)) ||
         completedCaseStates.includes(workingCase.state) ? (
           <>

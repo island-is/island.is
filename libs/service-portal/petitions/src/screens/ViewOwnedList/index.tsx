@@ -14,10 +14,6 @@ import {
 import { useLocale, useNamespaces } from '@island.is/localization'
 
 import { m } from '../../lib/messages'
-import {
-  EndorsementList,
-  PaginatedEndorsementResponse,
-} from '../../types/schema'
 import PetitionsTable from '../PetitionsTable'
 import { CloseList, OpenList } from '../queries'
 
@@ -27,12 +23,16 @@ import {
   useGetSinglePetition,
   useGetSinglePetitionEndorsements,
 } from '../hooks'
+import {
+  PaginatedEndorsementResponse,
+  EndorsementList,
+} from '@island.is/api/schema'
 
 const ViewOwnedList = () => {
   useNamespaces('sp.petitions')
   const { formatMessage } = useLocale()
-  const location: any = useLocation()
-  const listId = location.pathname.replace('/min-gogn/listar/minn-listi/', '')
+  const { pathname } = useLocation()
+  const listId = pathname.replace('/min-gogn/listar/minn-listi/', '')
 
   const { petitionData, refetchSinglePetition } = useGetSinglePetition(listId)
 
@@ -153,6 +153,7 @@ const ViewOwnedList = () => {
 
                 <Box display="flex" marginBottom={8} alignItems="center">
                   <DatePicker
+                    appearInline
                     label={formatMessage(m.changeCloseDate)}
                     locale="is"
                     placeholderText={formatMessage(m.selectDate)}
@@ -249,6 +250,7 @@ const ViewOwnedList = () => {
                           {formatMessage(m.modalStartCollectionDescription)}
                         </Text>
                         <DatePicker
+                          appearInline
                           label={formatMessage(m.date)}
                           locale="is"
                           minDate={new Date()}
@@ -285,7 +287,10 @@ const ViewOwnedList = () => {
           </Box>
 
           <PetitionsTable
-            petitions={petitionEndorsements}
+            petition={petition}
+            petitionSigners={
+              petitionEndorsements as PaginatedEndorsementResponse
+            }
             listId={listId}
             canEdit={true}
           />

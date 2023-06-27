@@ -42,6 +42,18 @@ export const transportsNavigation: PortalNavigationItem = {
     {
       name: 'Loftbrú',
       path: TransportPaths.TransportAirDiscount,
+      description: m.airDiscountDescription,
+    },
+    {
+      name: m.workMachines,
+      path: TransportPaths.AssetsWorkMachines,
+      children: [
+        {
+          name: 'regNumber',
+          navHide: true,
+          path: TransportPaths.AssetsWorkMachinesDetail,
+        },
+      ],
     },
   ],
   description: m.vehiclesDescription,

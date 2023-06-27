@@ -119,6 +119,18 @@ export const m = defineMessages({
     description: '',
   },
 
+  // Spouse of the deceased
+  isDeceasedWithUndividedEstate: {
+    id: 'es.application:isDeceasedWithUndividedEstate',
+    defaultMessage: 'Sat hinn látni í óskiptu búi?',
+    description: '',
+  },
+  spouseOfTheDeceased: {
+    id: 'es.application:spouseOfTheDeceased',
+    defaultMessage: 'Maki hins látna',
+    description: '',
+  },
+
   // Applicant
   announcer: {
     id: 'es.application:announcer',
@@ -197,6 +209,12 @@ export const m = defineMessages({
   estateMemberAdvocateWarningTitle: {
     id: 'es.application:estateMemberAdvocateWarningTitle',
     defaultMessage: 'Vinsamlegast athugið',
+    description: '',
+  },
+  estateMembersHaveIDCheckbox: {
+    id: 'es.application:estateMembersHaveIDCheckbox',
+    defaultMessage:
+      'Ég staðfesti að allir ofangreindir séu með rafræn skilríki og geti undirritað samkomulag þetta.',
     description: '',
   },
   estateMemberAdvocateWarningDescription: {
@@ -492,14 +510,20 @@ export const m = defineMessages({
     defaultMessage: 'Fjárhæð á dánardegi',
     description: '',
   },
-
-  // Debts
-  acceptDebtsLabel: {
-    id: 'es.application:acceptDebtsLabel',
+  acceptAssets: {
+    id: 'es.application:acceptExistenceAssets',
     defaultMessage:
-      'Ég lýsi því yfir, að eftir minni bestu vitund nema eignir búsins ekki meira en kostnaði af útför og að eignirnar séu tæmandi taldar hér að ofan. Gegn því að fá eignirnar framseldar mér, mun ég kosta útför hins látna.',
+      'Ég lýsi því yfir, að eftir minni bestu vitund nema eignir búsins ekki meira en kostnaði af útför. Gegn því að fá eignirnar framseldar mér, mun ég kosta útför hins látna.',
     description: '',
   },
+  acceptNoAssets: {
+    id: 'es.application:acceptNoAssets',
+    defaultMessage:
+      'Ég lýsi því yfir að eftir minni bestu vitund eru engar eignir í búinu.',
+    description: '',
+  },
+
+  // Debts
   debtsTitle: {
     id: 'es.application:debtsTitle',
     defaultMessage: 'Skuldir',
@@ -530,6 +554,11 @@ export const m = defineMessages({
     defaultMessage: 'Eftirstöðvar á dánardegi',
     description: '',
   },
+  debtsLoanIdentity: {
+    id: 'es.application:debtsLoanIdentity',
+    defaultMessage: 'Auðkenni / Lánsnúmer',
+    description: '',
+  },
   debtsRepeaterButton: {
     id: 'es.application:debtsRepeaterButton',
     defaultMessage: 'Bæta við skuldum',
@@ -544,6 +573,46 @@ export const m = defineMessages({
   representativeDescription: {
     id: 'es.application:representativeDescription',
     defaultMessage: 'Vanalega er valinn umboðsmaður...',
+    description: '',
+  },
+
+  // Attachments
+  attachmentsTitle: {
+    id: 'es.application:attachmentsTitle',
+    defaultMessage: 'Skjöl með umsókn',
+    description: '',
+  },
+  attachmentsDescription: {
+    id: 'es.application:attachmentsDescription#markdown',
+    defaultMessage: 'Með umsókn skulu fylgja eftirfarandi skjöl:',
+    description: '',
+  },
+  attachmentsButton: {
+    id: 'es.application:attachmentsButton',
+    defaultMessage: 'Velja skjöl',
+    description: '',
+  },
+  uploadHeader: {
+    id: 'es.application:uploadHeader',
+    defaultMessage: 'Dragðu skjöl hingað til að hlaða upp',
+    description: '',
+  },
+  uploadDescription: {
+    id: 'es.application:uploadDescription',
+    defaultMessage:
+      'Tekið er við skjölum með endingunum: .pdf, .doc, .docx, .rtf',
+    description: '',
+  },
+
+  // No assets
+  doAssetsExist: {
+    id: 'es.application:doAssetsExist',
+    defaultMessage: 'Eru eignir til staðar?',
+    description: '',
+  },
+  doDebtsExist: {
+    id: 'es.application:doDebtsExist',
+    defaultMessage: 'Eru skuldir til staðar?',
     description: '',
   },
 
@@ -580,6 +649,12 @@ export const m = defineMessages({
     defaultMessage: 'Ég hef lesið skilmálana',
     description: '',
   },
+  divisionOfEstateConfirmActionCheckbox: {
+    id: 'es.application:divisionOfEstateConfirmActionCheckbox',
+    defaultMessage:
+      'Ég krefst þess að eftirfarandi dánarbú verði tekið til opinberra skipta.',
+    description: '',
+  },
   overviewSubtitlePermitToPostpone: {
     id: 'es.application:overviewSubtitlePermitToPostpone#markdown',
     defaultMessage:
@@ -610,6 +685,11 @@ export const m = defineMessages({
   divisionOfEstateByHeirsSubmissionCheckbox: {
     id: 'es.application:divisionOfEstateByHeirsSubmissionCheckbox',
     defaultMessage: 'Ég hef lesið skilmálana',
+    description: '',
+  },
+  notFilledOut: {
+    id: 'es.application:notFilledOut',
+    defaultMessage: 'Ekki fyllt út',
     description: '',
   },
 
@@ -846,6 +926,11 @@ export const m = defineMessages({
   marketValueTitle: {
     id: 'es.application:marketValueTitle',
     defaultMessage: 'Markaðsvirði á dánardegi',
-    description: 'Placeholder for vehicles type',
+    description: '',
+  },
+  realEstateValueTitle: {
+    id: 'es.application:realEstateValueTitle',
+    defaultMessage: 'Fasteignamat á dánardegi',
+    description: '',
   },
 })

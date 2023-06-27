@@ -98,6 +98,8 @@ export enum ServicePortalPath {
   TransportVehiclesHistory = '/samgongur/okutaeki/okutaekjaferill',
   TransportVehiclesDrivingLessons = '/samgongur/okutaeki/okunam',
   TransportLowerAirfare = '/samgongur/loftbru',
+  AssetsWorkMachines = '/samgongur/okutaeki/vinnuvelar',
+  AssetsWorkMachinesDetail = '/samgongur/okutaeki/vinnuvelar/:regNumber/:id',
   // Education
   EducationHaskoliGraduation = '/menntun/haskoli/brautskraning',
   EducationHaskoliGraduationDetail = '/menntun/haskoli/brautskraning/:id',

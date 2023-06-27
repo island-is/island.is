@@ -25,6 +25,12 @@ const DrivingLessonsBook = lazy(() =>
   import('./screens/DrivingLessonsBook/DrivingLessonsBook'),
 )
 const Lookup = lazy(() => import('./screens/Lookup/Lookup'))
+const WorkMachinesOverview = lazy(() =>
+  import('./screens/WorkMachinesOverview/WorkMachinesOverview'),
+)
+const WorkMachinesDetail = lazy(() =>
+  import('./screens/WorkMachinesDetail/WorkMachinesDetail'),
+)
 
 export const transportsModule: PortalModule = {
   name: 'Farartæki',
@@ -73,7 +79,6 @@ export const transportsModule: PortalModule = {
       enabled:
         userInfo.scopes.includes(ApiScope.internal) ||
         userInfo.scopes.includes(ApiScope.internalProcuring),
-      key: 'VehicleLookup',
       element: <Lookup />,
     },
     {
@@ -83,6 +88,20 @@ export const transportsModule: PortalModule = {
         userInfo.scopes.includes(ApiScope.internal) ||
         userInfo.scopes.includes(ApiScope.internalProcuring),
       element: <AirDiscountOverview />,
+    },
+    {
+      name: m.workMachines,
+      path: TransportPaths.AssetsWorkMachines,
+      enabled: userInfo.scopes.includes(ApiScope.workMachines),
+      key: 'WorkMachines',
+      element: <WorkMachinesOverview />,
+    },
+    {
+      name: m.workMachines,
+      path: TransportPaths.AssetsWorkMachinesDetail,
+      enabled: userInfo.scopes.includes(ApiScope.workMachines),
+      key: 'WorkMachines',
+      element: <WorkMachinesDetail />,
     },
   ],
 }

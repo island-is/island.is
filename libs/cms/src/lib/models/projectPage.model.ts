@@ -1,4 +1,5 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql'
+import { CacheField } from '@island.is/nest/graphql'
 
 import { IProjectPage } from '../generated/contentfulTypes'
 import {
@@ -32,7 +33,7 @@ export class ProjectPage {
   @Field()
   sidebar!: boolean
 
-  @Field(() => [LinkGroup])
+  @CacheField(() => [LinkGroup])
   sidebarLinks!: Array<LinkGroup>
 
   @Field()
@@ -41,28 +42,31 @@ export class ProjectPage {
   @Field()
   intro!: string
 
-  @Field(() => [SliceUnion], { nullable: true })
+  @CacheField(() => [SliceUnion], { nullable: true })
   content?: Array<typeof SliceUnion>
 
-  @Field(() => Stepper, { nullable: true })
+  @CacheField(() => Stepper, { nullable: true })
   stepper!: Stepper | null
 
-  @Field(() => [SliceUnion])
+  @CacheField(() => [SliceUnion])
   slices!: Array<typeof SliceUnion | null>
 
-  @Field(() => [SliceUnion])
+  @CacheField(() => [SliceUnion])
   bottomSlices!: Array<typeof SliceUnion | null>
 
-  @Field(() => GenericTag, { nullable: true })
+  @CacheField(() => GenericTag, { nullable: true })
   newsTag!: GenericTag | null
 
-  @Field(() => [ProjectSubpage])
+  @CacheField(() => [GenericTag], { nullable: true })
+  secondaryNewsTags?: GenericTag[] | null
+
+  @CacheField(() => [ProjectSubpage])
   projectSubpages!: Array<ProjectSubpage>
 
-  @Field(() => Image, { nullable: true })
+  @CacheField(() => Image, { nullable: true })
   featuredImage!: Image | null
 
-  @Field(() => Image, { nullable: true })
+  @CacheField(() => Image, { nullable: true })
   defaultHeaderImage!: Image | null
 
   @Field()
@@ -71,16 +75,16 @@ export class ProjectPage {
   @Field()
   featuredDescription!: string
 
-  @Field(() => [FooterItem], { nullable: true })
+  @CacheField(() => [FooterItem], { nullable: true })
   footerItems?: FooterItem[]
 
-  @Field(() => Link, { nullable: true })
+  @CacheField(() => Link, { nullable: true })
   backLink?: Link | null
 
   @Field(() => Boolean, { nullable: true })
   contentIsFullWidth?: boolean
 
-  @Field(() => Namespace, { nullable: true })
+  @CacheField(() => Namespace, { nullable: true })
   namespace?: Namespace | null
 }
 

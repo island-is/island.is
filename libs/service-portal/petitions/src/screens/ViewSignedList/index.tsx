@@ -15,10 +15,7 @@ import {
 import { useLocale, useNamespaces } from '@island.is/localization'
 
 import { m } from '../../lib/messages'
-import {
-  EndorsementList,
-  PaginatedEndorsementResponse,
-} from '../../types/schema'
+
 import PetitionsTable from '../PetitionsTable'
 import { UnendorseList } from '../queries'
 
@@ -28,12 +25,16 @@ import {
   useGetSinglePetition,
   useGetSinglePetitionEndorsements,
 } from '../hooks'
+import {
+  EndorsementList,
+  PaginatedEndorsementResponse,
+} from '@island.is/api/schema'
 
 const ViewSignedList = () => {
   useNamespaces('sp.petitions')
   const { formatMessage } = useLocale()
-  const location: any = useLocation()
-  const listId = location.pathname.replace('/min-gogn/listar/', '')
+  const { pathname } = useLocation()
+  const listId = pathname.replace('/min-gogn/listar/', '')
 
   const { petitionData } = useGetSinglePetition(listId)
   const petition = petitionData as EndorsementList
@@ -131,7 +132,7 @@ const ViewSignedList = () => {
                     </Button>
                   }
                   onConfirm={() => onUnsign()}
-                  buttonTextConfirm={formatMessage(m.modalButtonCloseListYes)}
+                  buttonTextConfirm={formatMessage(m.modalButtonUnsignListYes)}
                   buttonTextCancel={formatMessage(m.modalButtonNo)}
                 />
               </Box>
@@ -140,7 +141,7 @@ const ViewSignedList = () => {
               <Box width="half">
                 <Button
                   variant="ghost"
-                  icon="arrowForward"
+                  icon="open"
                   onClick={() =>
                     window.open(
                       `${document.location.origin}/umsoknir/undirskriftalisti/${petition?.meta.applicationId}`,
@@ -152,11 +153,16 @@ const ViewSignedList = () => {
               </Box>
             )}
           </Box>
-          <PetitionsTable
-            petitions={petitionEndorsements}
-            listId={listId}
-            canEdit={false}
-          />
+
+          {isListOpen && (
+            <PetitionsTable
+              petitionSigners={
+                petitionEndorsements as PaginatedEndorsementResponse
+              }
+              listId={listId}
+              canEdit={false}
+            />
+          )}
         </>
       ) : (
         <Skeleton />

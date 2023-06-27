@@ -7,4 +7,6 @@ export enum TransportPaths {
   AssetsVehiclesHistory = '/samgongur/okutaeki/okutaekjaferill',
   AssetsVehiclesDrivingLessons = '/samgongur/okutaeki/okunam',
   TransportAirDiscount = '/samgongur/loftbru',
+  AssetsWorkMachines = '/samgongur/okutaeki/vinnuvelar',
+  AssetsWorkMachinesDetail = '/samgongur/okutaeki/vinnuvelar/:regNumber/:id',
 }

@@ -61,7 +61,20 @@ export interface UserAdvice {
   created: string
   _case: Case
   adviceDocuments: Array<Document>
-  isPrivateAdvice?: boolean
+  isPrivate?: boolean
+  isHidden?: boolean
+}
+
+export interface AdviceResult {
+  id: string
+  number: number
+  participantName?: string
+  participantEmail?: string
+  content?: string
+  isPrivate?: boolean
+  isHidden?: boolean
+  created?: Date
+  adviceDocuments?: Array<Document>
 }
 
 export interface CaseForSubscriptions {
@@ -218,4 +231,13 @@ export interface Subscription {
   cases?: Array<CasesSubscription>
   institutions?: Array<InstitutionsSubscription>
   policyAreas?: Array<PolicyAreasSubscription>
+}
+
+export interface CaseExpressions {
+  isDocumentsNotEmpty: boolean
+  isAdditionalDocumentsNotEmpty: boolean
+  isStatusNameNotPublished: boolean
+  isStatusNameForReview: boolean
+  isStakeholdersNotEmpty: boolean
+  isRelatedCasesNotEmpty: boolean
 }
