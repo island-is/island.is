@@ -41,6 +41,10 @@ export const m = defineMessages({
     id: 'admin-portal.service-desk:no-content',
     defaultMessage: 'Ekkert fyrirtæki fannst fyrir þessi leitarskilyrði',
   },
+  noContentRelationsProcurers: {
+    id: 'admin-portal.service-desk:no-content-relations-procurers',
+    defaultMessage: 'Engin prókúruhafa tengsl fundust fyrir þessa kennitölu',
+  },
   errorDefault: {
     id: 'admin-portal.service-desk:error-default',
     defaultMessage: 'Oops, an unknown error has occurred.',

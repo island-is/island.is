@@ -11,3 +11,7 @@ globalStyle(`${relative} a`, {
 export const fill = style({
   width: '100%',
 })
+
+export const search = style({
+  maxWidth: 550,
+})

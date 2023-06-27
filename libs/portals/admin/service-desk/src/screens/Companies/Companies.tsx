@@ -4,7 +4,14 @@ import * as kennitala from 'kennitala'
 
 import { useLocale } from '@island.is/localization'
 import { formatNationalId, IntroHeader } from '@island.is/portals/core'
-import { Box, Button, Input, Stack, toast } from '@island.is/island-ui/core'
+import {
+  AsyncSearchInput,
+  Box,
+  Button,
+  Stack,
+  toast,
+  useBreakpoint,
+} from '@island.is/island-ui/core'
 import { replaceParams } from '@island.is/react-spa/shared'
 
 import { m } from '../../lib/messages'
@@ -14,12 +21,17 @@ import { ServiceDeskPaths } from '../../lib/paths'
 import * as styles from './Companies.css'
 
 const Companies = () => {
+  const { sm } = useBreakpoint()
+  const [focused, setFocused] = useState(false)
   const [searchInput, setSearchInput] = useState('')
   const [prevSearchInput, setPrevSearchInput] = useState('')
   const actionData = useActionData() as GetCompaniesResult
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
   const companies = actionData?.data?.data
+
+  const onFocus = () => setFocused(true)
+  const onBlur = () => setFocused(false)
 
   useEffect(() => {
     if (actionData) {
@@ -37,16 +49,22 @@ const Companies = () => {
         intro={formatMessage(m.procuresDescription)}
       />
       <Form method="post">
-        <Box display={['inline', 'inline', 'flex']}>
-          <Input
-            id="search-procurer"
-            name="searchQuery"
-            placeholder={formatMessage(m.searchByNationalId)}
-            backgroundColor="blue"
-            size="md"
-            icon={{ name: 'search', type: 'outline' }}
-            value={searchInput}
-            onChange={(event) => setSearchInput(event.target.value)}
+        <Box display={['inline', 'inline', 'flex']} className={styles.search}>
+          <AsyncSearchInput
+            hasFocus={focused}
+            rootProps={{}}
+            inputProps={{
+              name: 'searchQuery',
+              value: searchInput,
+              inputSize: sm ? 'large' : 'medium',
+              onChange: (event) => setSearchInput(event.target.value),
+              onBlur,
+              onFocus,
+              placeholder: formatMessage(m.searchByNationalId),
+            }}
+            buttonProps={{
+              type: 'submit',
+            }}
           />
         </Box>
       </Form>

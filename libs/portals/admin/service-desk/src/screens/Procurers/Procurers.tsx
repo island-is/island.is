@@ -14,6 +14,7 @@ const Procurers = () => {
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
   const company = useLoaderData() as CompanyRelationshipResult
+  const formattedNationalId = formatNationalId(company.nationalId)
 
   return (
     <Stack space="containerGutter">
@@ -30,19 +31,31 @@ const Procurers = () => {
         {formatMessage(m.back)}
       </Button>
       <div>
-        <IntroHeader
-          title={company.name}
-          intro={formatNationalId(company.nationalId)}
-        />
+        <IntroHeader title={company.name} intro={formattedNationalId} />
         <Box marginTop={[3, 3, 6]}>
-          <Text marginBottom={2} variant="h4">
-            {formatMessage(m.listProcurers)}
-          </Text>
-          <Stack space={3}>
-            {company.companyInfo?.relationships?.map(({ nationalId, name }) => (
-              <Card title={name} description={nationalId} />
-            ))}
-          </Stack>
+          {company.companyInfo?.relationships?.length === 0 ? (
+            <Card
+              description={formatMessage(m.noContentRelationsProcurers)}
+              bgGrey
+            />
+          ) : (
+            <>
+              <Text marginBottom={2} variant="h4">
+                {formatMessage(m.listProcurers)}
+              </Text>
+              <Stack space={3}>
+                {company.companyInfo?.relationships?.map(
+                  ({ nationalId, name }) => (
+                    <Card
+                      key={nationalId}
+                      title={name}
+                      description={formatNationalId(nationalId)}
+                    />
+                  ),
+                )}
+              </Stack>
+            </>
+          )}
         </Box>
       </div>
     </Stack>
