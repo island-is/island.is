@@ -1,6 +1,5 @@
 import { uuid } from 'uuidv4'
 
-import { ConfigType } from '@island.is/nest/config'
 import { EmailService } from '@island.is/email-service'
 import {
   getStatementDeadline,
@@ -10,7 +9,6 @@ import {
 import { formatDate } from '@island.is/judicial-system/formatters'
 
 import { Case } from '../../../case'
-import { notificationModuleConfig } from '../../notification.config'
 import { DeliverResponse } from '../../models/deliver.response'
 import { createTestingNotificationModule } from '../createTestingNotificationModule'
 
@@ -22,6 +20,7 @@ interface Then {
 type GivenWhenThen = (defenderNationalId?: string) => Promise<Then>
 
 describe('InternalNotificationController - Send appeal received by court notifications', () => {
+  const courtOfAppealsEmail = uuid()
   const userId = uuid()
   const caseId = uuid()
   const prosecutorName = uuid()
@@ -32,18 +31,17 @@ describe('InternalNotificationController - Send appeal received by court notific
   const receivedDate = new Date()
 
   let mockEmailService: EmailService
-  let mockConfig: ConfigType<typeof notificationModuleConfig>
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
+    process.env.COURTS_EMAILS = `{"4676f08b-aab4-4b4f-a366-697540788088":"${courtOfAppealsEmail}"}`
+
     const {
       emailService,
-      notificationConfig,
       internalNotificationController,
     } = await createTestingNotificationModule()
 
     mockEmailService = emailService
-    mockConfig = notificationConfig
 
     givenWhenThen = async (defenderNationalId?: string) => {
       const then = {} as Then
@@ -85,8 +83,7 @@ describe('InternalNotificationController - Send appeal received by court notific
           to: [
             {
               name: 'Landsréttur',
-              address:
-                mockConfig.email.courtsEmails[mockConfig.courtOfAppealsId],
+              address: courtOfAppealsEmail,
             },
           ],
           subject: `Upplýsingar vegna kæru í máli ${courtCaseNumber}`,
