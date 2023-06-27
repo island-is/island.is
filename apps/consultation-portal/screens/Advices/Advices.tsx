@@ -74,7 +74,7 @@ export const AdvicesScreen = () => {
                 processEnds: item._case?.processEnds,
                 processBegins: item._case?.processBegins,
                 eyebrows: [item._case?.typeName, item._case?.institutionName],
-                caseNumber: item._case?.caseNumber
+                caseNumber: item._case?.caseNumber,
               }
               const dropdown =
                 item.adviceDocuments?.length !== 0 ? (
