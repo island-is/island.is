@@ -60,3 +60,8 @@ export enum ApplicationType {
   HALFRETIREMENTPENSION = 'halfRetirementPension',
   FISHERMEN = 'fishermen',
 }
+
+export enum Employment {
+  SELFEMPLOYED = 'selfEmployed',
+  EMPLOYEE = 'employee'
+}

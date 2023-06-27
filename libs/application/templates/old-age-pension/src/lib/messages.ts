@@ -719,6 +719,21 @@ export const oldAgePensionFormMessage: MessageDir = {
         'Hér getur þú skilað staðfestingu á að þú sért með barn á framfærlsu. Vinsamlegast gerðu grein fyrir barninu og ykkar tenglsum í skjalinu. Athugaðu að skjalið þarf að vera á .pdf formi.',
       description: 'english translation',
     },
+    selfEmployedTitle: {
+      id: 'pl.application:fileUpload.selfEmployed.title',
+      defaultMessage: 'Fylgiskjöl reiknað endurgjald',
+      description: "Self-employed's attachment",
+    },
+    selfEmployedSubTitle: {
+      id: 'pl.application:fileUpload.selfEmployed.title',
+      defaultMessage: 'Fylgiskjöl endurgjald',
+      description: 'Self-employed attachment',
+    },
+    selfEmployedDescription: {
+      id: 'pl.application:fileUpload.selfEmployed.description',
+      defaultMessage: 'Hér getur þú skilað staðfestingu á lækkun á reiknuðu endurgjaldi (fæst hjá RSK). Athugaðu að skjalið þarf að vera á .pdf formi.',
+      description: 'Here you can submit confirmation of a reduction in the calculated remuneration (available from RSK). Note that the document must be in .pdf format.',
+    },
   }),
 
   comment: defineMessages({
@@ -741,6 +756,34 @@ export const oldAgePensionFormMessage: MessageDir = {
       id: 'oap.application:comment.placeholder',
       defaultMessage: 'Skrifaðu hér athugasemd',
       description: 'Your comment',
+    },
+  }),
+
+  employer: defineMessages({
+    employerTitle: {
+      id: 'oap.application:employer.employerTitle',
+      defaultMessage: 'Vinnuveitendur',
+      description: 'Employers',
+    },
+    selfEmployedOrEmployeeTitle: {
+      id: 'oap.application:employer.selfEmployedOrEmployeeTitle',
+      defaultMessage: 'Sjálfstætt starfandi eða launþegi?',
+      description: 'Self-employed or employee?',
+    },
+    selfEmployedOrEmployeeDescription: {
+      id: 'oap.application:employer.selfEmployedOrEmployee.description',
+      defaultMessage: 'Ef þú ert sjálfstætt starfandi þarft þú að skila inn staðfestingu frá Skattinum á lækkun á reiknuðu endurgjaldi. Ef þú ert launþegi þarft þú að skrá þinn vinnuveitanda svo hann geti samþykkt starfshlutfallið þitt.',
+      description: 'If you are self-employed, you must submit confirmation from the Tax Office of a reduction in the calculated remuneration. If you are an employee, you need to register your employer so that they can approve your employment rate.',
+    },
+    selfEmployed: {
+      id: 'oap.application:employer.selfEmployed',
+      defaultMessage: 'Sjálfstætt starfandi',
+      description: 'Self-employed',
+    },
+    employee: {
+      id: 'oap.application:employer.employee',
+      defaultMessage: 'Launþegi',
+      description: 'Employee',
     },
   }),
 

@@ -1,6 +1,6 @@
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { z } from 'zod'
-import { ApplicationType, HomeAllowanceHousing, NO, YES } from './constants'
+import { ApplicationType, Employment, HomeAllowanceHousing, NO, YES } from './constants'
 import { oldAgePensionFormMessage } from './messages'
 
 export const dataSchema = z.object({
@@ -34,6 +34,9 @@ export const dataSchema = z.object({
   }),
   residenceHistory: z.object({
     question: z.enum([YES, NO]),
+  }),
+  employer: z.object({
+    employment: z.enum([Employment.EMPLOYEE, Employment.SELFEMPLOYED]),
   }),
   period: z.object({
     year: z.string(),

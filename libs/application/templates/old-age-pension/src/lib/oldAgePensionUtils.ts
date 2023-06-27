@@ -10,6 +10,7 @@ import {
   earlyRetirementMaxAge,
   NO,
   ApplicationType,
+  Employment,
 } from './constants'
 import {
   ApplicantChildCustodyInformation,
@@ -92,6 +93,11 @@ export function getApplicationAnswers(answers: Application['answers']) {
     'homeAllowance.housing',
   ) as HomeAllowanceHousing
 
+  const employment = getValueViaPath(
+    answers,
+    'employer.employment',
+  ) as Employment
+
   const homeAllowanceChildren = getValueViaPath(
     answers,
     'homeAllowance.children',
@@ -110,6 +116,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
     connectedApplications,
     homeAllowanceHousing,
     homeAllowanceChildren,
+    employment,
   }
 }
 

@@ -29,6 +29,7 @@ import { oldAgePensionFormMessage } from '../lib/messages'
 import {
   ApplicationType,
   ConnectedApplications,
+  Employment,
   FILE_SIZE_LIMIT,
   HomeAllowanceHousing,
   NO,
@@ -276,6 +277,83 @@ export const OldAgePensionForm: Form = buildForm({
                 }),
               ],
             }),
+          ],
+        }),
+        buildSubSection({
+          id: 'employer',
+          title: oldAgePensionFormMessage.employer.employerTitle,
+          children: [
+            buildRadioField({
+              id: 'employer.employment',
+              title:
+                oldAgePensionFormMessage.employer.selfEmployedOrEmployeeTitle,
+              description: oldAgePensionFormMessage.employer.selfEmployedOrEmployeeDescription,
+              options: [
+                {
+                  value: Employment.SELFEMPLOYED,
+                  label: oldAgePensionFormMessage.employer.selfEmployed,
+                },
+                {
+                  value: Employment.EMPLOYEE,
+                  label: oldAgePensionFormMessage.employer.employee
+                }
+              ],
+              width: 'half',
+              largeButtons: true,
+            }),
+            buildFileUploadField({
+              id: 'employer.selfEmployedAttachment',
+              title: oldAgePensionFormMessage.fileUpload.selfEmployedTitle,
+              description:
+                oldAgePensionFormMessage.fileUpload.selfEmployedDescription,
+              introduction:
+                oldAgePensionFormMessage.fileUpload.selfEmployedDescription,
+              maxSize: FILE_SIZE_LIMIT,
+              maxSizeErrorText:
+                oldAgePensionFormMessage.fileUpload.attachmentMaxSizeError,
+              uploadAccept: '.pdf',
+              uploadHeader:
+                oldAgePensionFormMessage.fileUpload.attachmentHeader,
+              uploadDescription:
+                oldAgePensionFormMessage.fileUpload.attachmentDescription,
+              uploadButtonLabel:
+                oldAgePensionFormMessage.fileUpload.attachmentButton,
+              condition: (answers) => {
+                const { employment } = getApplicationAnswers(answers)
+                
+                return employment === Employment.SELFEMPLOYED
+              },
+            }),
+            // buildMultiField({
+            //   id: 'residenceHistory',
+            //   title: oldAgePensionFormMessage.residence.residenceHistoryTitle,
+            //   description:
+            //     oldAgePensionFormMessage.residence.residenceHistoryDescription,
+            //   children: [
+            //     buildCustomField({
+            //       id: 'residenceHistory.table',
+            //       doesNotRequireAnswer: true,
+            //       title: '',
+            //       component: 'ResidenceHistoryTable',
+            //       condition: (_, externalData) => {
+            //         const { residenceHistory } = getApplicationExternalData(
+            //           externalData,
+            //         )
+            //         // if no residence history returned, dont show the table
+            //         if (residenceHistory.length === 0) return false
+            //         return true
+            //       },
+            //     }),
+            //     buildRadioField({
+            //       id: 'residenceHistory.question',
+            //       title:
+            //         oldAgePensionFormMessage.residence.residenceHistoryQuestion,
+            //       options: getYesNOOptions(),
+            //       width: 'half',
+            //       largeButtons: true,
+            //     }),
+            //   ],
+            // }),
           ],
         }),
         buildSubSection({
