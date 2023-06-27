@@ -105,7 +105,6 @@ export class DelegationsIncomingService {
       )
   }
 
-  // here ill add other user
   async findAllAvailable({
     user,
     delegationTypes,
