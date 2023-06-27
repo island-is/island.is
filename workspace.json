@@ -159,6 +159,7 @@
     "clients-health-insurance": "libs/clients/icelandic-health-insurance/health-insurance",
     "clients-icelandic-government-institution-vacancies": "libs/clients/icelandic-government-institution-vacancies",
     "clients-identity": "libs/clients/identity",
+    "clients-inna": "libs/clients/inna",
     "clients-islykill": "libs/clients/islykill",
     "clients-judicial-administration": "libs/clients/judicial-administration",
     "clients-middlewares": "libs/clients/middlewares",
