@@ -23,10 +23,6 @@ export const responsiveContainer = style({
   }),
 })
 
-export const mobileContainer = style({
-  marginTop: -60,
-})
-
 export const logoWrapper = style({
   display: 'flex',
   flexDirection: 'row',
