@@ -49,9 +49,9 @@ export const MAIN_NAVIGATION: PortalNavigationItem = {
     assetsNavigation,
     transportsNavigation,
     financeNavigation,
+    healthNavigation,
     educationNavigation,
     licenseNavigation,
     educationLicenseNavigation,
-    healthNavigation,
   ],
 }

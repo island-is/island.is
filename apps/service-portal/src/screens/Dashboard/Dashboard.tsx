@@ -1,5 +1,6 @@
 import React, { FC, useEffect } from 'react'
 import { Link, useLocation } from 'react-router-dom'
+import { useAuth } from '@island.is/auth/react'
 import {
   Box,
   CategoryCard,
@@ -26,12 +27,15 @@ import * as styles from './Dashboard.css'
 import cn from 'classnames'
 
 export const Dashboard: FC<{}> = () => {
+  const { userInfo } = useAuth()
   const { unreadCounter } = useListDocuments()
   const { formatMessage } = useLocale()
   const { width } = useWindowSize()
   const location = useLocation()
   const navigation = useDynamicRoutesWithNavigation(MAIN_NAVIGATION)
   const isMobile = width < theme.breakpoints.md
+  const IS_COMPANY = userInfo?.profile?.subjectType === 'legalEntity'
+
   useEffect(() => {
     PlausiblePageviewDetail(
       ServicePortalPath.MinarSidurRoot,
