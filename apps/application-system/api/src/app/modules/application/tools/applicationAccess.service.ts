@@ -169,7 +169,7 @@ export class ApplicationAccessService {
         const delegations = await this.actorDelegationsApi
           .withMiddleware(new AuthMiddleware(user))
           .actorDelegationsControllerFindAll({
-            direction: ActorDelegationsControllerFindAllDirectionEnum.Incoming,
+            direction: ActorDelegationsControllerFindAllDirectionEnum.incoming,
             delegationTypes: [AuthDelegationType.Custom],
             otherUser: user.nationalId,
           })
