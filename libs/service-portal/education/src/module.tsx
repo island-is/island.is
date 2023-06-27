@@ -2,6 +2,7 @@ import { lazy } from 'react'
 import { ApiScope } from '@island.is/auth/scopes'
 import { PortalModule } from '@island.is/portals/core'
 import { EducationPaths } from './lib/paths'
+import { Navigate } from 'react-router-dom'
 
 const EducationOverview = lazy(() =>
   import('./screens/EducationOverview/EducationOverview'),
@@ -17,6 +18,28 @@ const EducationGraduation = lazy(() =>
 
 const EducationGraduationDetail = lazy(() =>
   import('./screens/EducationGraduationDetail/EducationGraduationDetail'),
+)
+
+const SecondarySchoolCareer = lazy(() =>
+  import('./screens/SecondarySchoolCareer/SecondarySchoolCareer'),
+)
+
+const SecondarySchoolGraduationOverview = lazy(() =>
+  import(
+    './screens/SecondarySchoolGraduationOverview/SecondarySchoolGraduationOverview'
+  ),
+)
+
+const SecondarySchoolGraduationSingle = lazy(() =>
+  import(
+    './screens/SecondarySchoolGraduationSingle/SecondarySchoolGraduationSingle'
+  ),
+)
+
+const SecondarySchoolGraduationDetail = lazy(() =>
+  import(
+    './screens/SecondarySchoolGraduationDetail/SecondarySchoolGraduationDetail'
+  ),
 )
 
 export const educationModule: PortalModule = {
@@ -48,6 +71,43 @@ export const educationModule: PortalModule = {
       enabled: userInfo.scopes.includes(ApiScope.education),
       dynamic: true, // dynamic to check feature flag
       element: <EducationGraduationDetail />,
+    },
+    {
+      name: 'Framhaldsskóli',
+      path: EducationPaths.EducationFramhskoli,
+      enabled: userInfo.scopes.includes(ApiScope.education),
+      key: 'SecondaryEducation',
+      element: (
+        <Navigate to={EducationPaths.EducationFramhskoliCareer} replace />
+      ),
+    },
+    {
+      name: 'Framhaldsskóli - Námsferill',
+      path: EducationPaths.EducationFramhskoliCareer,
+      enabled: userInfo.scopes.includes(ApiScope.education),
+      key: 'SecondaryEducation',
+      element: <SecondarySchoolCareer />,
+    },
+    {
+      name: 'Útskriftaryfirlit',
+      path: EducationPaths.EducationFramhskoliGraduationOverview,
+      key: 'SecondaryEducation',
+      enabled: userInfo.scopes.includes(ApiScope.education),
+      element: <SecondarySchoolGraduationOverview />,
+    },
+    {
+      name: 'Útskriftarferill',
+      path: EducationPaths.EducationFramhskoliGraduationSingle,
+      key: 'SecondaryEducation',
+      enabled: userInfo.scopes.includes(ApiScope.education),
+      element: <SecondarySchoolGraduationSingle />,
+    },
+    {
+      name: 'Útskriftarferill nánar',
+      path: EducationPaths.EducationFramhskoliGraduationDetail,
+      key: 'SecondaryEducation',
+      enabled: userInfo.scopes.includes(ApiScope.education),
+      element: <SecondarySchoolGraduationDetail />,
     },
   ],
 }

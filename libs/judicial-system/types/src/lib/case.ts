@@ -306,6 +306,7 @@ export interface CaseListEntry
     | 'appealState'
     | 'appealedDate'
     | 'appealCaseNumber'
+    | 'appealRulingDecision'
   > {
   parentCaseId?: string
 }
