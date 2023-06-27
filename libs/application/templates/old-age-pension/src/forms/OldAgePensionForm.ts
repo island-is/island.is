@@ -298,7 +298,7 @@ export const OldAgePensionForm: Form = buildForm({
                   {
                     id: 'period.alert',
                     title: oldAgePensionFormMessage.period.periodAlertTitle,
-                    component: 'PeriodWarningWithLink',
+                    component: 'EarlyRetirementWarning',
                     condition: (answers, externalData) => {
                       return isEarlyRetirement(answers, externalData)
                     },
@@ -457,30 +457,53 @@ export const OldAgePensionForm: Form = buildForm({
               large: true,
               doesNotRequireAnswer: true,
               defaultValue: '',
-              options: [
-                {
-                  label:
-                    oldAgePensionFormMessage.connectedApplications
-                      .homeAllowance,
-                  value: ConnectedApplications.HOMEALLOWANCE,
-                },
-                {
-                  label:
-                    oldAgePensionFormMessage.connectedApplications.childPension,
-                  value: ConnectedApplications.CHILDPENSION,
-                },
-              ],
+              options: (application) => {
+                const { applicationType } = getApplicationAnswers(
+                  application.answers,
+                )
+                return [
+                  {
+                    label:
+                      applicationType === ApplicationType.HALFRETIREMENTPENSION
+                        ? oldAgePensionFormMessage.connectedApplications
+                            .halfHomeAllowance
+                        : oldAgePensionFormMessage.connectedApplications
+                            .homeAllowance,
+                    value: ConnectedApplications.HOMEALLOWANCE,
+                  },
+                  {
+                    label:
+                      oldAgePensionFormMessage.connectedApplications
+                        .childPension,
+                    value: ConnectedApplications.CHILDPENSION,
+                  },
+                ]
+              },
             }),
           ],
         }),
         buildSubSection({
           id: 'homeAllowanceSection',
-          title: oldAgePensionFormMessage.connectedApplications.homeAllowance,
+          title: (application) => {
+            const { applicationType } = getApplicationAnswers(
+              application.answers,
+            )
+            return applicationType === ApplicationType.HALFRETIREMENTPENSION
+              ? oldAgePensionFormMessage.connectedApplications.halfHomeAllowance
+              : oldAgePensionFormMessage.connectedApplications.homeAllowance
+          },
           children: [
             buildMultiField({
               id: 'homeAllowance',
-              title:
-                oldAgePensionFormMessage.connectedApplications.homeAllowance,
+              title: (application) => {
+                const { applicationType } = getApplicationAnswers(
+                  application.answers,
+                )
+                return applicationType === ApplicationType.HALFRETIREMENTPENSION
+                  ? oldAgePensionFormMessage.connectedApplications
+                      .halfHomeAllowance
+                  : oldAgePensionFormMessage.connectedApplications.homeAllowance
+              },
               description:
                 oldAgePensionFormMessage.connectedApplications
                   .homeAllowanceDescription,

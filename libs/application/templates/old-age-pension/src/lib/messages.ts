@@ -284,6 +284,11 @@ export const oldAgePensionFormMessage: MessageDir = {
       defaultMessage: 'Heimilisuppbót',
       description: 'Home allowance',
     },
+    halfHomeAllowance: {
+      id: 'oap.application:connected.applications.half.homeAllowance',
+      defaultMessage: 'Hálfan heimilisuppbót',
+      description: 'Half home allowance',
+    },
     childPension: {
       id: 'oap.application:connected.applications.childPension',
       defaultMessage: 'Barnalífeyri vegna ellilífeyris',

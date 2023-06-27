@@ -1,4 +1,4 @@
-export { FieldAlertMessage, PeriodWarningWithLink } from './AlertMessage'
+export { FieldAlertMessage, EarlyRetirementWarning } from './AlertMessage'
 export { Period } from './Period'
 export { ResidenceHistoryTable } from './ResidenceHistory'
 export { ChildCustodyTable } from './ChildCustody'
