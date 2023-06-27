@@ -505,12 +505,15 @@ NewsListNew.getInitialProps = async ({ apolloClient, locale, query }) => {
   return {
     newsList: newsList.map((item) => ({
       ...item,
-      genericTags: item.genericTags.filter(filterOutFrontpageTag),
+      genericTags: item?.genericTags?.filter(filterOutFrontpageTag) ?? [],
     })),
-    newsItem: {
-      ...newsItem,
-      genericTags: newsItem.genericTags.filter(filterOutFrontpageTag),
-    },
+    newsItem: newsItem
+      ? {
+          ...newsItem,
+          genericTags:
+            newsItem?.genericTags?.filter(filterOutFrontpageTag) ?? [],
+        }
+      : newsItem,
     total,
     selectedYear,
     selectedMonth,

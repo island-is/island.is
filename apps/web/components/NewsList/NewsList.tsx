@@ -68,7 +68,9 @@ export const NewsList = ({
   return (
     <Stack space={[3, 3, 4]}>
       <Text variant="h1" as="h1" marginBottom={0}>
-        {title}
+        {newsTags?.find(
+          (tag) => !!tag?.slug && tag?.slug === router?.query?.tag,
+        )?.title || title}
       </Text>
 
       <Webreader
@@ -87,7 +89,7 @@ export const NewsList = ({
             }
             active={!router?.query?.tag}
           >
-            {n('showAllResults', 'Sjá allt')}
+            {n('showAllResults', 'Fréttir')}
           </Tag>
           {filteredNewsTags?.map((tag, index) => (
             <Tag
