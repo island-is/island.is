@@ -156,24 +156,25 @@ export const AdvicesScreen = () => {
         />
         <GridContainer>
           <Box paddingBottom={[3, 3, 3, 5, 5]}>
-          <Stack space={[3, 3, 3, 5, 5]}>
-            <Stack space={3}>
-              <Text variant="h1">{loc.intro.title}</Text>
-              <Text variant="default">{loc.intro.text}</Text>
+            <Stack space={[3, 3, 3, 5, 5]}>
+              <Stack space={3}>
+                <Text variant="h1">{loc.intro.title}</Text>
+                <Text variant="default">{loc.intro.text}</Text>
+              </Stack>
+              {!userLoading && !isAuthenticated && (
+                <ActionCard
+                  heading={loc.subscriptionActionCard.heading}
+                  text={loc.subscriptionActionCard.text}
+                  button={[
+                    {
+                      label: loc.subscriptionActionCard.buttonLabel,
+                      onClick: LogIn,
+                    },
+                  ]}
+                />
+              )}
             </Stack>
-            {!userLoading && !isAuthenticated && (
-              <ActionCard
-                heading={loc.subscriptionActionCard.heading}
-                text={loc.subscriptionActionCard.text}
-                button={[
-                  {
-                    label: loc.subscriptionActionCard.buttonLabel,
-                    onClick: LogIn,
-                  },
-                ]}
-              />
-            )}
-          </Stack></Box>
+          </Box>
         </GridContainer>
       </Box>
       <Divider />
