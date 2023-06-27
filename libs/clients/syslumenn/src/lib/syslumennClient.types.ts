@@ -200,6 +200,14 @@ export type AssetName = {
   name: string
 }
 
+export type Advocate = {
+  nationalId: string
+  name: string
+  address?: string
+  phone?: string
+  email?: string
+}
+
 export type EstateMember = {
   name: string
   nationalId: string
@@ -208,6 +216,7 @@ export type EstateMember = {
   enabled?: boolean
   phone?: string
   email?: string
+  advocate?: Advocate
 }
 
 export type EstateAsset = {
