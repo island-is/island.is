@@ -76,7 +76,7 @@ const SubscriptionsSkeleton = ({
         />
 
         <GridContainer>
-          <Box paddingBottom={3}>
+          <Box paddingBottom={[3, 3, 3, 5, 5]}>
             <Stack space={[3, 3, 3, 5, 5]}>
               <Stack space={3}>
                 <Text variant="h1" color="dark400">
