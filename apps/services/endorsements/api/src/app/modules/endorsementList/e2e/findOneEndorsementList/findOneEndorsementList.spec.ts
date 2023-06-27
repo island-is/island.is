@@ -94,4 +94,16 @@ describe('EndorsementList', () => {
       .send()
       .expect(404)
   })
+
+  // /endorsement-list/endorsementLists
+  it(`GET /endorsement-list/endorsementLists should return 200 array of lists`, async () => {
+    const app = await getAuthenticatedApp({
+      nationalId: authNationalId,
+      scope: [EndorsementsScope.main],
+    })
+    const response = await request(app.getHttpServer())
+      .get(`/endorsement-list/endorsementLists`)
+      .send()
+      .expect(200)
+  })
 })
