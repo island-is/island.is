@@ -137,7 +137,13 @@ export const AdvicesScreen = () => {
   }
 
   return (
-    <Layout seo={{ title: loc.seo.title, url: loc.seo.url }}>
+    <Layout
+      seo={{
+        title: loc.seo.title,
+        url: loc.seo.url,
+        description: loc.seo.description,
+      }}
+    >
       <Breadcrumbs
         items={[
           { title: loc.breadcrumbs[0].title, href: loc.breadcrumbs[0].href },
