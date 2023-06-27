@@ -10,6 +10,7 @@ import {
   Link,
   Inline,
   Tag,
+  LinkV2,
 } from '@island.is/island-ui/core'
 import { LinkType, useLinkResolver, useNamespace } from '@island.is/web/hooks'
 import { NewsCard, Webreader } from '@island.is/web/components'
@@ -68,9 +69,8 @@ export const NewsList = ({
   return (
     <Stack space={[3, 3, 4]}>
       <Text variant="h1" as="h1" marginBottom={0}>
-        {newsTags?.find(
-          (tag) => !!tag?.slug && tag?.slug === router?.query?.tag,
-        )?.title || title}
+        {filteredNewsTags?.find((tag) => tag.slug === router?.query?.tag)
+          ?.title || title}
       </Text>
 
       <Webreader
@@ -82,29 +82,32 @@ export const NewsList = ({
 
       {filteredNewsTags?.length > 0 && (
         <Inline space={1}>
-          <Tag
-            variant="blue"
+          <LinkV2
             href={
               linkResolver('organizationnewsoverview', [parentPageSlug]).href
             }
-            active={!router?.query?.tag}
           >
-            {n('showAllResults', 'Fréttir')}
-          </Tag>
+            <Tag variant="blue" active={!router?.query?.tag}>
+              {n('showAllResults', 'Fréttir')}
+            </Tag>
+          </LinkV2>
           {filteredNewsTags?.map((tag, index) => (
-            <Tag
-              key={index}
-              variant="blue"
+            <LinkV2
               href={
                 linkResolver('organizationnewsoverview', [parentPageSlug])
                   .href +
                 '?tag=' +
                 tag.slug
               }
-              active={router?.query?.tag === tag.slug}
             >
-              {tag.title}
-            </Tag>
+              <Tag
+                key={index}
+                variant="blue"
+                active={router?.query?.tag === tag.slug}
+              >
+                {tag.title}
+              </Tag>
+            </LinkV2>
           ))}
         </Inline>
       )}
