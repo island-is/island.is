@@ -25,7 +25,6 @@ const GeneralPetitionTemplate: ApplicationTemplate<
   type: ApplicationTypes.GENERAL_PETITION,
   name: m.applicationName,
   dataSchema: GeneralPetitionSchema,
-  readyForProduction: false,
   featureFlag: Features.generalPetition,
   stateMachineConfig: {
     initial: States.PREREQUISITES,
