@@ -24,7 +24,6 @@ const InstructorRegistrationsTemplate: ApplicationTemplate<
   type: ApplicationTypes.DRIVING_INSTRUCTOR_REGISTRATIONS,
   name: m.applicationTitle,
   dataSchema: dataSchema,
-  readyForProduction: false,
   featureFlag: Features.drivingInstructorRegistrations,
   stateMachineConfig: {
     initial: States.REGISTRY,
