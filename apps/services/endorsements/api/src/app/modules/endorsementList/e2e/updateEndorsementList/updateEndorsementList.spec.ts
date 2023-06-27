@@ -18,7 +18,7 @@ const newEndorsementList = {
   adminLock: false,
 }
 
-describe('updateEndorsementList', () => {
+describe('updateEndorsementList admin scope', () => {
   it(`PUT /endorsement-list should return 200 OK if scope is admin`, async () => {
     const app = await getAuthenticatedApp({
       nationalId: authNationalId,
