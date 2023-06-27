@@ -25,6 +25,7 @@ type CardInfo = {
   processBegins?: string
   processEnds?: string
   eyebrows: Array<string>
+  caseNumber: string
 }
 type CardProps = {
   card: CardInfo
@@ -57,7 +58,7 @@ const Card = ({
         >
           <Tag variant={getTagVariants(card.tag)}>{card.tag}</Tag>
           <Text as="p" variant="eyebrow" color="purple400">
-            {`${loc.tagText} S-${card.id}`}
+            {`${loc.tagText} ${card.caseNumber}`}
           </Text>
         </Box>
         <Eyebrows
