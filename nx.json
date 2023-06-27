@@ -17,7 +17,7 @@
   "npmScope": "island.is",
   "tasksRunnerOptions": {
     "default": {
-      "runner": "@nrwl/nx-cloud",
+      "runner": "nx/task-runners/default",
       "options": {
         "cacheableOperations": [
           "build",
