@@ -50,6 +50,7 @@ describe('InternalNotificationController - Send ruling notifications', () => {
 
   beforeEach(async () => {
     process.env.PRISON_EMAIL = 'prisonEmail@email.com,prisonEmail2@email.com'
+
     const {
       emailService,
       notificationConfig,
