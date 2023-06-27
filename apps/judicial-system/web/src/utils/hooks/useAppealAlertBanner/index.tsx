@@ -98,14 +98,22 @@ const useAppealAlertBanner = (
     appealReceivedByCourtDate,
     isStatementDeadlineExpired,
     appealRulingDecision,
+    sharedWithProsecutorsOffice,
   } = workingCase
+
+  const isSharedWithProsecutor =
+    isProsecutionRoleUser &&
+    user?.institution?.id === sharedWithProsecutorsOffice?.id
 
   const hasCurrentUserSentStatement =
     (isProsecutionRoleUser && prosecutorStatementDate) ||
     (isDefenderRoleUser && defendantStatementDate)
 
-  // HIGH COURT BANNER INFO IS HANDLED HERE
-  if (user?.institution?.type === InstitutionType.HIGH_COURT) {
+  // HIGH COURT AND SHARED WITH PROSECUTOR BANNER INFO IS HANDLED HERE
+  if (
+    user?.institution?.type === InstitutionType.HIGH_COURT ||
+    isSharedWithProsecutor
+  ) {
     if (appealState === CaseAppealState.COMPLETED) {
       title = formatMessage(strings.appealCompletedTitle, {
         appealedDate: formatDate(appealReceivedByCourtDate, 'PPP'),

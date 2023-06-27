@@ -62,13 +62,16 @@ const mapCategoryToRight = (
   return right
 }
 
-const formatRights = (categories: Array<CategoryDto> | null) => {
+const formatRights = (
+  categories: Array<CategoryDto> | null,
+  remarks?: Array<RemarkCode> | null,
+) => {
   if (!categories) {
     return
   }
 
   const rights = categories.reduce<string>(
-    (acc, curr) => `${acc} ${mapCategoryToRight(curr)}\n`,
+    (acc, curr) => `${acc} ${mapCategoryToRight(curr, remarks)}\n`,
     '',
   )
 
@@ -125,7 +128,7 @@ export const createPkPassDataInput = (
     },
     {
       identifier: 'rettindi',
-      value: formatRights(license.categories ?? null),
+      value: formatRights(license.categories ?? null, remarks),
     },
     {
       identifier: 'athugasemdir',

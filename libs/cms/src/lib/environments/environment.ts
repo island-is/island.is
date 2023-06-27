@@ -77,6 +77,8 @@ export default {
     'teamMember',
     'sliceDropdown',
     'sidebarCard',
+    'genericTag',
+    'latestNewsSlice',
   ],
   // Content types that have the 'activeTranslations' JSON field
   localizedContentTypes: ['article'],

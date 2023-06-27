@@ -8,11 +8,14 @@ import {
   Option,
   Box,
   Link,
+  Inline,
+  Tag,
+  LinkV2,
 } from '@island.is/island-ui/core'
 import { LinkType, useLinkResolver, useNamespace } from '@island.is/web/hooks'
 import { NewsCard, Webreader } from '@island.is/web/components'
 import { useRouter } from 'next/router'
-import { GetNewsQuery } from '@island.is/web/graphql/schema'
+import { GenericTag, GetNewsQuery } from '@island.is/web/graphql/schema'
 import { makeHref } from './utils'
 
 interface NewsListProps {
@@ -30,6 +33,7 @@ interface NewsListProps {
   yearOptions: { label: any; value: any }[]
   monthOptions: { label: any; value: any }[]
   newsPerPage?: number
+  newsTags?: GenericTag[]
 }
 
 export const NewsList = ({
@@ -47,6 +51,7 @@ export const NewsList = ({
   yearOptions,
   newsPerPage = 10,
   monthOptions,
+  newsTags,
 }: NewsListProps) => {
   const router = useRouter()
   const n = useNamespace(namespace)
@@ -57,10 +62,15 @@ export const NewsList = ({
   const yearString = n('year', 'Ár')
   const monthString = n('month', 'Mánuður')
 
+  const filteredNewsTags = newsTags?.filter(
+    (tag) => !!tag?.title && !!tag?.slug,
+  )
+
   return (
     <Stack space={[3, 3, 4]}>
       <Text variant="h1" as="h1" marginBottom={0}>
-        {title}
+        {filteredNewsTags?.find((tag) => tag.slug === router?.query?.tag)
+          ?.title || title}
       </Text>
 
       <Webreader
@@ -69,6 +79,38 @@ export const NewsList = ({
         readId={null}
         readClass="rs_read"
       />
+
+      {filteredNewsTags?.length > 0 && (
+        <Inline space={1}>
+          <LinkV2
+            href={
+              linkResolver('organizationnewsoverview', [parentPageSlug]).href
+            }
+          >
+            <Tag variant="blue" active={!router?.query?.tag}>
+              {n('showAllResults', 'Fréttir')}
+            </Tag>
+          </LinkV2>
+          {filteredNewsTags?.map((tag, index) => (
+            <LinkV2
+              href={
+                linkResolver('organizationnewsoverview', [parentPageSlug])
+                  .href +
+                '?tag=' +
+                tag.slug
+              }
+            >
+              <Tag
+                key={index}
+                variant="blue"
+                active={router?.query?.tag === tag.slug}
+              >
+                {tag.title}
+              </Tag>
+            </LinkV2>
+          ))}
+        </Inline>
+      )}
 
       {selectedYear && (
         <Hidden below="lg">

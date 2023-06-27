@@ -39,6 +39,7 @@ const CaseMobile = ({
     relatedCases,
     contactEmail,
     contactName,
+    shortDescription,
   } = chosenCase
   const {
     isDocumentsNotEmpty,
@@ -49,7 +50,11 @@ const CaseMobile = ({
     isRelatedCasesNotEmpty,
   } = expressions
   return (
-    <CaseSkeleton caseNumber={caseNumber} caseId={id}>
+    <CaseSkeleton
+      caseNumber={caseNumber}
+      caseId={id}
+      caseDescription={shortDescription}
+    >
       <GridContainer>
         <Stack space={3}>
           <CaseTimeline chosenCase={chosenCase} />

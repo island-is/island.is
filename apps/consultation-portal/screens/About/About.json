@@ -1,8 +1,10 @@
 {
   "about": {
     "seo": {
-      "title": "Um samráðsgátt",
-      "url": "/um"
+      "title": "Um Samráðsgátt",
+      "url": "/um",
+      "description": "Um Samráðsgátt",
+      "keywords": ""
     },
     "breadcrumbs": [
       {
