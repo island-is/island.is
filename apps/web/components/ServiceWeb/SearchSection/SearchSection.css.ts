@@ -1,5 +1,5 @@
 import { style } from '@vanilla-extract/css'
-import { theme } from '@island.is/island-ui/theme'
+import { theme, themeUtils } from '@island.is/island-ui/theme'
 
 export const container = style({
   display: 'flex',
@@ -10,6 +10,24 @@ export const container = style({
   flexDirection: 'column',
   justifyContent: 'center',
   alignItems: 'center',
+})
+
+export const responsiveContainer = style({
+  ...themeUtils.responsiveStyle({
+    xs: {
+      marginTop: -60,
+    },
+    md: {
+      marginTop: -80,
+    },
+    lg: {
+      margin: '0 auto',
+    },
+  }),
+})
+
+export const mobileContainer = style({
+  marginTop: -60,
 })
 
 export const logoWrapper = style({
@@ -26,6 +44,22 @@ export const logoWrapper = style({
 export const logo = style({
   width: 80,
   height: 80,
+})
+
+export const mobileLogoWrapper = style({
+  display: 'flex',
+  flexDirection: 'row',
+  width: 100,
+  height: 100,
+  borderRadius: '50%',
+  alignItems: 'center',
+  justifyContent: 'center',
+  backgroundColor: theme.color.white,
+})
+
+export const mobilelogo = style({
+  width: 60,
+  height: 60,
 })
 
 export const logoImg = style({
