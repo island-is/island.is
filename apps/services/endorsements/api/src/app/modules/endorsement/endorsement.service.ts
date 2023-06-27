@@ -109,8 +109,6 @@ export class EndorsementService {
     return { hasEndorsed: true }
   }
 
-
-
   // FIXME: Find a way to combine with create bulk endorsements
   async createEndorsementOnList({
     endorsementList,
