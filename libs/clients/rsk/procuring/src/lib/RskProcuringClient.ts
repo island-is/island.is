@@ -5,8 +5,7 @@ import { AuthMiddleware } from '@island.is/auth-nest-tools'
 import { FetchError } from '@island.is/clients/middlewares'
 
 import { Configuration, DefaultApi } from '../../gen/fetch'
-import { GetLegalEntities } from '../types/GetLegalEntities'
-import { GetLegalEntity } from '../types/GetLegalEntity'
+import { GetLegalEntityRelationshipsResult } from '../types/GetLegalEntityRelationshipsResult'
 import { GetIndividualRelationships } from '../types/GetIndividualRelationships'
 
 @Injectable()
@@ -50,46 +49,21 @@ export class RskProcuringClient {
     return {
       ...individual,
       relationships:
-        individual?.relationships?.map(({ name, nationalId }) => ({
+        individual?.relationships?.map(({ name, nationalId, type }) => ({
           name,
           nationalId,
+          type,
         })) ?? [],
     }
   }
 
   /**
-   * Get legal entities by search query, i.e. name or national id applies here
+   * Get legal entity relationships by national id
    */
-  async getLegalEntities(
-    user: User,
-    search: string,
-  ): Promise<GetLegalEntities> {
-    const res = await this.defaultApiWithAuth(user)
-      .legalEntitySearch({
-        ...this.getDefaultRequestHeaders(user),
-        xQuerySearch: search,
-      })
-      .catch(this.handle404)
-
-    if (!res?.legalEntities) {
-      return []
-    }
-
-    return res.legalEntities
-      .filter(({ name, nationalId }) => name && nationalId)
-      .map(({ name, nationalId }) => ({
-        name: name,
-        nationalId: nationalId,
-      })) as GetLegalEntities
-  }
-
-  /**
-   * Get legal entity by national id
-   */
-  async getLegalEntity(
+  async getLegalEntityRelationships(
     user: User,
     nationalId: string,
-  ): Promise<GetLegalEntity | null> {
+  ): Promise<GetLegalEntityRelationshipsResult | null> {
     const legalEntity = await this.defaultApiWithAuth(user)
       .legalEntityLookup({
         ...this.getDefaultRequestHeaders(user),
@@ -105,9 +79,10 @@ export class RskProcuringClient {
       name: legalEntity.name,
       nationalId: legalEntity.nationalId,
       relationships:
-        legalEntity.relationships?.map(({ name, nationalId }) => ({
+        legalEntity.relationships?.map(({ name, nationalId, type }) => ({
           name,
           nationalId,
+          type,
         })) ?? [],
     }
   }

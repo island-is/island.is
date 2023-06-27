@@ -6,6 +6,7 @@ import {
   ScopesGuard,
   Scopes,
   CurrentUser,
+  User,
 } from '@island.is/auth-nest-tools'
 import { Audit } from '@island.is/nest/audit'
 
@@ -16,17 +17,16 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { RskCompanySearchItems } from './models/rskCompanySearchItems.model'
 import { RskCompanyInfoSearchInput } from './dto/RskCompanyInfoSearch.input'
-import type { User as AuthUser } from '@island.is/auth-nest-tools'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
-@Scopes(ApiScope.internal, ApiScope.company)
+@Scopes(ApiScope.internal, ApiScope.company, ApiScope.serviceDesk)
 @Resolver(() => RskCompany)
 @Audit({ namespace: '@island.is/api/company-registry' })
 export class CompanyRegistryResolver {
   constructor(
     @Inject(LOGGER_PROVIDER)
-    private logger: Logger,
-    private rskCompanyInfoService: RskCompanyInfoService,
+    private readonly logger: Logger,
+    private readonly rskCompanyInfoService: RskCompanyInfoService,
   ) {}
 
   @Query(() => RskCompany, {
@@ -37,7 +37,7 @@ export class CompanyRegistryResolver {
     @Args('input', { nullable: true, type: () => RskCompanyInfoInput })
     input: RskCompanyInfoInput,
     @CurrentUser()
-    user: AuthUser,
+    user: User,
   ): Promise<RskCompany | null> {
     this.logger.debug(`Getting company information`)
     const company = await this.rskCompanyInfoService.getCompanyInformationWithExtra(

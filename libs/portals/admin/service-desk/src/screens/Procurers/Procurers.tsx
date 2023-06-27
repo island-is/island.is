@@ -13,11 +13,7 @@ import { Card } from '../../components/Card'
 const Procurers = () => {
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
-  const {
-    name,
-    nationalId,
-    procurers,
-  } = useLoaderData() as CompanyRelationshipResult
+  const company = useLoaderData() as CompanyRelationshipResult
 
   return (
     <Stack space="containerGutter">
@@ -34,13 +30,16 @@ const Procurers = () => {
         {formatMessage(m.back)}
       </Button>
       <div>
-        <IntroHeader title={name} intro={formatNationalId(nationalId)} />
+        <IntroHeader
+          title={company.name}
+          intro={formatNationalId(company.nationalId)}
+        />
         <Box marginTop={[3, 3, 6]}>
           <Text marginBottom={2} variant="h4">
             {formatMessage(m.listProcurers)}
           </Text>
           <Stack space={3}>
-            {procurers?.map(({ nationalId, name }) => (
+            {company.companyInfo?.relationships?.map(({ nationalId, name }) => (
               <Card title={name} description={nationalId} />
             ))}
           </Stack>

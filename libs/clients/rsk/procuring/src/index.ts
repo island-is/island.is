@@ -5,5 +5,4 @@ export { Individual } from '../gen/fetch'
 
 // Types
 export { GetIndividualRelationships } from './types/GetIndividualRelationships'
-export { GetLegalEntities } from './types/GetLegalEntities'
-export { GetLegalEntity } from './types/GetLegalEntity'
+export { GetLegalEntityRelationshipsResult } from './types/GetLegalEntityRelationshipsResult'

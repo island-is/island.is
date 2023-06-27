@@ -1,29 +1,24 @@
 {
   "openapi": "3.0.1",
-  "info":
-  {
+  "info": {
     "title": "Relationships - API 1.0.0",
     "description": "API offers information about relationships between legal entities and individuals.",
-    "contact":
-    {
+    "contact": {
       "name": "XROAD Services - Skatturinn",
       "url": "https://www.rsk.is",
       "email": "xroad@skattur.is"
     },
     "version": "1.0.0",
-    "license":
-    {
+    "license": {
       "name": "Skatturinn",
       "url": "https://www.rsk.is/api/license"
     },
-    "x-category":
-    [
+    "x-category": [
       "personal",
       "official"
     ],
     "x-hide-api-catalogue": true,
-    "x-links":
-    [
+    "x-links": [
       [
         "documentation",
         "https://www.rsk.isrelationships/xroad/docs"
@@ -42,77 +37,55 @@
       ]
     ]
   },
-  "servers":
-  [
+  "servers": [
     {
       "url": "/IS-DEV/GOV/10006/Skatturinn/relationships-v1",
       "description": "XROAD - Dev server (uses development data)"
     }
   ],
-  "paths":
-  {
-    "/":
-    {
-      "get":
-      {
+  "paths": {
+    "/": {
+      "get": {
         "operationId": "serviceInfo",
         "summary": "Service Information",
         "description": "Basic information about this API",
-        "security":
-        [],
-        "responses":
-        {
-          "200":
-          {
+        "security": [],
+        "responses": {
+          "200": {
             "description": "OK",
-            "content":
-            {
-              "application/json":
-              {
-                "schema":
-                {
+            "content": {
+              "application/json": {
+                "schema": {
                   "$ref": "#/components/schemas/serviceInfo"
                 }
               }
             }
           },
-          "4XX":
-          {
+          "4XX": {
             "description": "Bad request",
-            "content":
-            {
-              "application/problem+json":
-              {
-                "schema":
-                {
+            "content": {
+              "application/problem+json": {
+                "schema": {
                   "$ref": "#/components/schemas/error"
                 }
               }
             }
           },
-          "5XX":
-          {
+          "5XX": {
             "description": "Internal Server Error",
-            "content":
-            {
-              "application/problem+json":
-              {
-                "schema":
-                {
+            "content": {
+              "application/problem+json": {
+                "schema": {
                   "$ref": "#/components/schemas/error"
                 }
               }
             }
           },
-          "default":
-          {
+          "default": {
             "description": "Unexpected Error",
-            "content":
-            {
-              "application/problem+json":
-              {
-                "schema":
-                {
+            "content": {
+              "application/problem+json": {
+                "schema": {
                   "$ref": "#/components/schemas/error"
                 }
               }
@@ -121,31 +94,25 @@
         }
       }
     },
-    "/me":
-    {
-      "get":
-      {
+    "/me": {
+      "get": {
         "operationId": "meLookup",
         "summary": "Get your relationships",
         "description": "Information about your own relationships with legal entities.",
-        "security":
-        [
+        "security": [
           {
-            "island.is-auth":
-            [
+            "island.is-auth": [
               "@rsk.is/prokura"
             ]
           }
         ],
-        "parameters":
-        [
+        "parameters": [
           {
             "name": "Authorization",
             "in": "header",
             "required": true,
             "description": "Bearer #TOKEN#",
-            "schema":
-            {
+            "schema": {
               "type": "string"
             }
           },
@@ -154,120 +121,87 @@
             "in": "header",
             "required": true,
             "description": "X-Road Service information",
-            "schema":
-            {
+            "schema": {
               "type": "string",
               "example": "/IS-DEV/GOV/10006"
             }
           }
         ],
-        "responses":
-        {
-          "200":
-          {
+        "responses": {
+          "200": {
             "description": "OK",
-            "headers":
-            {
-              "guaranteed":
-              {
+            "headers": {
+              "guaranteed": {
                 "description": "Header indicates if the result is cached or a guaranteed answer from service.  Use 0 for the cached reply and 1 for guaranteed reply.  Guaranteed replies are rate limited to 60 calls pr. min pr. IP.",
-                "schema":
-                {
+                "schema": {
                   "type": "integer",
                   "example": 0
                 }
               }
             },
-            "content":
-            {
-              "application/json":
-              {
-                "schema":
-                {
+            "content": {
+              "application/json": {
+                "schema": {
                   "$ref": "#/components/schemas/individual"
                 }
               }
             }
           },
-          "400":
-          {
+          "400": {
             "description": "Bad request",
-            "content":
-            {
-              "application/problem+json":
-              {
-                "schema":
-                {
+            "content": {
+              "application/problem+json": {
+                "schema": {
                   "$ref": "#/components/schemas/400"
                 }
               }
             }
           },
-          "401":
-          {
+          "401": {
             "description": "Unauthorized",
-            "content":
-            {
-              "application/problem+json":
-              {
-                "schema":
-                {
+            "content": {
+              "application/problem+json": {
+                "schema": {
                   "$ref": "#/components/schemas/401"
                 }
               }
             }
           },
-          "404":
-          {
+          "404": {
             "description": "Not found",
-            "content":
-            {
-              "application/problem+json":
-              {
-                "schema":
-                {
+            "content": {
+              "application/problem+json": {
+                "schema": {
                   "$ref": "#/components/schemas/404"
                 }
               }
             }
           },
-          "4XX":
-          {
+          "4XX": {
             "description": "Client Errors",
-            "content":
-            {
-              "application/problem+json":
-              {
-                "schema":
-                {
+            "content": {
+              "application/problem+json": {
+                "schema": {
                   "$ref": "#/components/schemas/4XX"
                 }
               }
             }
           },
-          "5XX":
-          {
+          "5XX": {
             "description": "Server Errors",
-            "content":
-            {
-              "application/problem+json":
-              {
-                "schema":
-                {
+            "content": {
+              "application/problem+json": {
+                "schema": {
                   "$ref": "#/components/schemas/5XX"
                 }
               }
             }
           },
-          "default":
-          {
+          "default": {
             "description": "Unexpected Error",
-            "content":
-            {
-              "application/problem+json":
-              {
-                "schema":
-                {
+            "content": {
+              "application/problem+json": {
+                "schema": {
                   "$ref": "#/components/schemas/error"
                 }
               }
@@ -276,31 +210,25 @@
         }
       }
     },
-    "/legalentities":
-    {
-      "get":
-      {
+    "/legalentities": {
+      "get": {
         "operationId": "legalEntitySearch",
         "summary": "Search Legal Entities",
         "description": "Search for relationships between an Legal Entities and Individuals",
-        "security":
-        [
+        "security": [
           {
-            "island.is-auth":
-            [
+            "island.is-auth": [
               "@rsk.is/prokura:admin"
             ]
           }
         ],
-        "parameters":
-        [
+        "parameters": [
           {
             "name": "X-Query-Search",
             "in": "header",
             "description": "Search String for Service",
             "required": false,
-            "schema":
-            {
+            "schema": {
               "type": "string",
               "minimum": 1,
               "default": "",
@@ -312,8 +240,7 @@
             "in": "header",
             "description": "Collection result size",
             "required": false,
-            "schema":
-            {
+            "schema": {
               "type": "integer",
               "minimum": 1,
               "default": 10,
@@ -322,11 +249,10 @@
           },
           {
             "name": "X-Query-Offset",
-            "in": "query",
+            "in": "header",
             "description": "Collection result offset",
             "required": false,
-            "schema":
-            {
+            "schema": {
               "type": "integer",
               "minimum": 0,
               "default": 1,
@@ -338,8 +264,7 @@
             "in": "header",
             "required": true,
             "description": "Bearer #TOKEN#",
-            "schema":
-            {
+            "schema": {
               "type": "string"
             }
           },
@@ -348,120 +273,87 @@
             "in": "header",
             "required": true,
             "description": "X-Road Service information",
-            "schema":
-            {
+            "schema": {
               "type": "string",
               "example": "/IS-DEV/GOV/10006"
             }
           }
         ],
-        "responses":
-        {
-          "200":
-          {
+        "responses": {
+          "200": {
             "description": "OK",
-            "headers":
-            {
-              "guaranteed":
-              {
+            "headers": {
+              "guaranteed": {
                 "description": "Header indicates if the result is cached or a guaranteed answer from service.  Use 0 for the cached reply and 1 for guaranteed reply.  Guaranteed replies are rate limited to 60 calls pr. min pr. IP.",
-                "schema":
-                {
+                "schema": {
                   "type": "integer",
                   "example": 0
                 }
               }
             },
-            "content":
-            {
-              "application/json":
-              {
-                "schema":
-                {
+            "content": {
+              "application/json": {
+                "schema": {
                   "$ref": "#/components/schemas/legalEntitySearchResults"
                 }
               }
             }
           },
-          "400":
-          {
+          "400": {
             "description": "Bad request",
-            "content":
-            {
-              "application/problem+json":
-              {
-                "schema":
-                {
+            "content": {
+              "application/problem+json": {
+                "schema": {
                   "$ref": "#/components/schemas/error"
                 }
               }
             }
           },
-          "401":
-          {
+          "401": {
             "description": "Unauthorized",
-            "content":
-            {
-              "application/problem+json":
-              {
-                "schema":
-                {
+            "content": {
+              "application/problem+json": {
+                "schema": {
                   "$ref": "#/components/schemas/error"
                 }
               }
             }
           },
-          "404":
-          {
+          "404": {
             "description": "Not found",
-            "content":
-            {
-              "application/problem+json":
-              {
-                "schema":
-                {
+            "content": {
+              "application/problem+json": {
+                "schema": {
                   "$ref": "#/components/schemas/error"
                 }
               }
             }
           },
-          "4XX":
-          {
+          "4XX": {
             "description": "Client Errors",
-            "content":
-            {
-              "application/problem+json":
-              {
-                "schema":
-                {
+            "content": {
+              "application/problem+json": {
+                "schema": {
                   "$ref": "#/components/schemas/4XX"
                 }
               }
             }
           },
-          "5XX":
-          {
+          "5XX": {
             "description": "Server Errors",
-            "content":
-            {
-              "application/problem+json":
-              {
-                "schema":
-                {
+            "content": {
+              "application/problem+json": {
+                "schema": {
                   "$ref": "#/components/schemas/5XX"
                 }
               }
             }
           },
-          "default":
-          {
+          "default": {
             "description": "Unexpected Error",
-            "content":
-            {
-              "application/problem+json":
-              {
-                "schema":
-                {
+            "content": {
+              "application/problem+json": {
+                "schema": {
                   "$ref": "#/components/schemas/error"
                 }
               }
@@ -470,31 +362,25 @@
         }
       }
     },
-    "/legalentities/.national-id":
-    {
-      "get":
-      {
+    "/legalentities/.national-id": {
+      "get": {
         "operationId": "legalEntityLookup",
         "summary": "Legal Entities Lookup",
         "description": "Information about a single Leagal Entity relationships",
-        "security":
-        [
+        "security": [
           {
-            "island.is-auth":
-            [
+            "island.is-auth": [
               "@rsk.is/prokura:admin"
             ]
           }
         ],
-        "parameters":
-        [
+        "parameters": [
           {
             "name": "X-Param-National-Id",
             "in": "header",
             "description": "National ID in legalentity",
             "required": true,
-            "schema":
-            {
+            "schema": {
               "type": "string",
               "default": "",
               "example": "0101303019"
@@ -506,8 +392,7 @@
             "in": "header",
             "required": true,
             "description": "Bearer #TOKEN#",
-            "schema":
-            {
+            "schema": {
               "type": "string"
             }
           },
@@ -516,120 +401,87 @@
             "in": "header",
             "required": true,
             "description": "X-Road Service information",
-            "schema":
-            {
+            "schema": {
               "type": "string",
               "example": "/IS-DEV/GOV/10006"
             }
           }
         ],
-        "responses":
-        {
-          "200":
-          {
+        "responses": {
+          "200": {
             "description": "OK",
-            "headers":
-            {
-              "guaranteed":
-              {
+            "headers": {
+              "guaranteed": {
                 "description": "Header indicates if the result is cached or a guaranteed answer from service.  Use 0 for the cached reply and 1 for guaranteed reply.  Guaranteed replies are rate limited to 60 calls pr. min pr. IP.",
-                "schema":
-                {
+                "schema": {
                   "type": "integer",
                   "example": 0
                 }
               }
             },
-            "content":
-            {
-              "application/json":
-              {
-                "schema":
-                {
+            "content": {
+              "application/json": {
+                "schema": {
                   "$ref": "#/components/schemas/legalentity"
                 }
               }
             }
           },
-          "400":
-          {
+          "400": {
             "description": "Bad request",
-            "content":
-            {
-              "application/problem+json":
-              {
-                "schema":
-                {
+            "content": {
+              "application/problem+json": {
+                "schema": {
                   "$ref": "#/components/schemas/400"
                 }
               }
             }
           },
-          "401":
-          {
+          "401": {
             "description": "Unauthorized",
-            "content":
-            {
-              "application/problem+json":
-              {
-                "schema":
-                {
+            "content": {
+              "application/problem+json": {
+                "schema": {
                   "$ref": "#/components/schemas/401"
                 }
               }
             }
           },
-          "404":
-          {
+          "404": {
             "description": "Not found",
-            "content":
-            {
-              "application/problem+json":
-              {
-                "schema":
-                {
+            "content": {
+              "application/problem+json": {
+                "schema": {
                   "$ref": "#/components/schemas/404"
                 }
               }
             }
           },
-          "4XX":
-          {
+          "4XX": {
             "description": "Client Errors",
-            "content":
-            {
-              "application/problem+json":
-              {
-                "schema":
-                {
+            "content": {
+              "application/problem+json": {
+                "schema": {
                   "$ref": "#/components/schemas/4XX"
                 }
               }
             }
           },
-          "5XX":
-          {
+          "5XX": {
             "description": "Server Errors",
-            "content":
-            {
-              "application/problem+json":
-              {
-                "schema":
-                {
+            "content": {
+              "application/problem+json": {
+                "schema": {
                   "$ref": "#/components/schemas/5XX"
                 }
               }
             }
           },
-          "default":
-          {
+          "default": {
             "description": "Unexpected Error",
-            "content":
-            {
-              "application/problem+json":
-              {
-                "schema":
-                {
+            "content": {
+              "application/problem+json": {
+                "schema": {
                   "$ref": "#/components/schemas/error"
                 }
               }
@@ -638,31 +490,25 @@
         }
       }
     },
-    "/individuals":
-    {
-      "get":
-      {
+    "/individuals": {
+      "get": {
         "operationId": "individualSearch",
         "summary": "Search Individuals",
         "description": "Search for relationships between an Individuals and Legal Entities",
-        "security":
-        [
+        "security": [
           {
-            "island.is-auth":
-            [
+            "island.is-auth": [
               "@rsk.is/prokura:admin"
             ]
           }
         ],
-        "parameters":
-        [
+        "parameters": [
           {
             "name": "X-Query-Search",
             "in": "header",
             "description": "Search String for Service",
             "required": false,
-            "schema":
-            {
+            "schema": {
               "type": "string",
               "minimum": 1,
               "default": "",
@@ -674,8 +520,7 @@
             "in": "header",
             "description": "Collection result size",
             "required": false,
-            "schema":
-            {
+            "schema": {
               "type": "integer",
               "minimum": 1,
               "default": 10,
@@ -684,11 +529,10 @@
           },
           {
             "name": "X-Query-Offset",
-            "in": "query",
+            "in": "header",
             "description": "Collection result offset",
             "required": false,
-            "schema":
-            {
+            "schema": {
               "type": "integer",
               "minimum": 0,
               "default": 1,
@@ -700,8 +544,7 @@
             "in": "header",
             "required": true,
             "description": "Bearer #TOKEN#",
-            "schema":
-            {
+            "schema": {
               "type": "string"
             }
           },
@@ -710,120 +553,87 @@
             "in": "header",
             "required": true,
             "description": "X-Road Service information",
-            "schema":
-            {
+            "schema": {
               "type": "string",
               "example": "/IS-DEV/GOV/10006"
             }
           }
         ],
-        "responses":
-        {
-          "200":
-          {
+        "responses": {
+          "200": {
             "description": "OK",
-            "headers":
-            {
-              "guaranteed":
-              {
+            "headers": {
+              "guaranteed": {
                 "description": "Header indicates if the result is cached or a guaranteed answer from service.  Use 0 for the cached reply and 1 for guaranteed reply.  Guaranteed replies are rate limited to 60 calls pr. min pr. IP.",
-                "schema":
-                {
+                "schema": {
                   "type": "integer",
                   "example": 0
                 }
               }
             },
-            "content":
-            {
-              "application/json":
-              {
-                "schema":
-                {
+            "content": {
+              "application/json": {
+                "schema": {
                   "$ref": "#/components/schemas/individualSearchResults"
                 }
               }
             }
           },
-          "400":
-          {
+          "400": {
             "description": "Bad request",
-            "content":
-            {
-              "application/problem+json":
-              {
-                "schema":
-                {
+            "content": {
+              "application/problem+json": {
+                "schema": {
                   "$ref": "#/components/schemas/400"
                 }
               }
             }
           },
-          "401":
-          {
+          "401": {
             "description": "Unauthorized",
-            "content":
-            {
-              "application/problem+json":
-              {
-                "schema":
-                {
+            "content": {
+              "application/problem+json": {
+                "schema": {
                   "$ref": "#/components/schemas/401"
                 }
               }
             }
           },
-          "404":
-          {
+          "404": {
             "description": "Not found",
-            "content":
-            {
-              "application/problem+json":
-              {
-                "schema":
-                {
+            "content": {
+              "application/problem+json": {
+                "schema": {
                   "$ref": "#/components/schemas/404"
                 }
               }
             }
           },
-          "4XX":
-          {
+          "4XX": {
             "description": "Client Errors",
-            "content":
-            {
-              "application/problem+json":
-              {
-                "schema":
-                {
+            "content": {
+              "application/problem+json": {
+                "schema": {
                   "$ref": "#/components/schemas/4XX"
                 }
               }
             }
           },
-          "5XX":
-          {
+          "5XX": {
             "description": "Server Errors",
-            "content":
-            {
-              "application/problem+json":
-              {
-                "schema":
-                {
+            "content": {
+              "application/problem+json": {
+                "schema": {
                   "$ref": "#/components/schemas/5XX"
                 }
               }
             }
           },
-          "default":
-          {
+          "default": {
             "description": "Unexpected Error",
-            "content":
-            {
-              "application/problem+json":
-              {
-                "schema":
-                {
+            "content": {
+              "application/problem+json": {
+                "schema": {
                   "$ref": "#/components/schemas/error"
                 }
               }
@@ -832,31 +642,25 @@
         }
       }
     },
-    "/individuals/.national-id":
-    {
-      "get":
-      {
+    "/individuals/.national-id": {
+      "get": {
         "operationId": "individualLookup",
         "summary": "Individual Lookup",
         "description": "Information about a single Indivduals relationships",
-        "security":
-        [
+        "security": [
           {
-            "island.is-auth":
-            [
+            "island.is-auth": [
               "@rsk.is/prokura:admin"
             ]
           }
         ],
-        "parameters":
-        [
+        "parameters": [
           {
             "name": "X-Param-National-Id",
             "in": "header",
             "description": "National ID in Iceland for person",
             "required": true,
-            "schema":
-            {
+            "schema": {
               "type": "string",
               "default": "",
               "example": "0101302129"
@@ -868,8 +672,7 @@
             "in": "header",
             "required": true,
             "description": "Bearer #TOKEN#",
-            "schema":
-            {
+            "schema": {
               "type": "string"
             }
           },
@@ -878,120 +681,87 @@
             "in": "header",
             "required": true,
             "description": "X-Road Service information",
-            "schema":
-            {
+            "schema": {
               "type": "string",
               "example": "/IS-DEV/GOV/10006"
             }
           }
         ],
-        "responses":
-        {
-          "200":
-          {
+        "responses": {
+          "200": {
             "description": "OK",
-            "headers":
-            {
-              "guaranteed":
-              {
+            "headers": {
+              "guaranteed": {
                 "description": "Header indicates if the result is cached or a guaranteed answer from service.  Use 0 for the cached reply and 1 for guaranteed reply.  Guaranteed replies are rate limited to 60 calls pr. min pr. IP.",
-                "schema":
-                {
+                "schema": {
                   "type": "integer",
                   "example": 0
                 }
               }
             },
-            "content":
-            {
-              "application/json":
-              {
-                "schema":
-                {
+            "content": {
+              "application/json": {
+                "schema": {
                   "$ref": "#/components/schemas/individual"
                 }
               }
             }
           },
-          "400":
-          {
+          "400": {
             "description": "Bad request",
-            "content":
-            {
-              "application/problem+json":
-              {
-                "schema":
-                {
+            "content": {
+              "application/problem+json": {
+                "schema": {
                   "$ref": "#/components/schemas/400"
                 }
               }
             }
           },
-          "401":
-          {
+          "401": {
             "description": "Unauthorized",
-            "content":
-            {
-              "application/problem+json":
-              {
-                "schema":
-                {
+            "content": {
+              "application/problem+json": {
+                "schema": {
                   "$ref": "#/components/schemas/401"
                 }
               }
             }
           },
-          "404":
-          {
+          "404": {
             "description": "Not found",
-            "content":
-            {
-              "application/problem+json":
-              {
-                "schema":
-                {
+            "content": {
+              "application/problem+json": {
+                "schema": {
                   "$ref": "#/components/schemas/404"
                 }
               }
             }
           },
-          "4XX":
-          {
+          "4XX": {
             "description": "Client Errors",
-            "content":
-            {
-              "application/problem+json":
-              {
-                "schema":
-                {
+            "content": {
+              "application/problem+json": {
+                "schema": {
                   "$ref": "#/components/schemas/4XX"
                 }
               }
             }
           },
-          "5XX":
-          {
+          "5XX": {
             "description": "Server Errors",
-            "content":
-            {
-              "application/problem+json":
-              {
-                "schema":
-                {
+            "content": {
+              "application/problem+json": {
+                "schema": {
                   "$ref": "#/components/schemas/5XX"
                 }
               }
             }
           },
-          "default":
-          {
+          "default": {
             "description": "Unexpected Error",
-            "content":
-            {
-              "application/problem+json":
-              {
-                "schema":
-                {
+            "content": {
+              "application/problem+json": {
+                "schema": {
                   "$ref": "#/components/schemas/error"
                 }
               }
@@ -1001,133 +771,99 @@
       }
     }
   },
-  "components":
-  {
-    "schemas":
-    {
-      "linkItem":
-      {
+  "components": {
+    "schemas": {
+      "linkItem": {
         "type": "object",
-        "required":
-        [
+        "required": [
           "rel",
           "href"
         ],
-        "properties":
-        {
-          "rel":
-          {
+        "properties": {
+          "rel": {
             "type": "string"
           },
-          "href":
-          {
+          "href": {
             "type": "string"
           }
         }
       },
-      "searchPageInfo":
-      {
+      "searchPageInfo": {
         "type": "object",
-        "properties":
-        {
-          "hasPreviousPage":
-          {
+        "properties": {
+          "hasPreviousPage": {
             "type": "string"
           },
-          "hasNextPage":
-          {
+          "hasNextPage": {
             "type": "string"
           },
-          "startCursor":
-          {
+          "startCursor": {
             "type": "integer"
           },
-          "endCursor":
-          {
+          "endCursor": {
             "type": "integer"
           },
-          "totalPages":
-          {
+          "totalPages": {
             "type": "integer"
           }
         }
       },
-      "relationshipItem":
-      {
+      "relationshipItem": {
         "type": "object",
-        "properties":
-        {
-          "type":
-          {
+        "properties": {
+          "type": {
             "type": "string"
           },
-          "nationalId":
-          {
+          "nationalId": {
             "type": "string"
           },
-          "name":
-          {
+          "name": {
             "type": "string"
           },
-          "links":
-          {
+          "links": {
             "type": "array",
-            "items":
-            {
+            "items": {
               "$ref": "#/components/schemas/linkItem"
             }
           }
         }
       },
-      "legalEntitySearchItem":
-      {
+      "legalEntitySearchItem": {
         "type": "object",
-        "properties":
-        {
-          "nationalId":
-          {
+        "properties": {
+          "nationalId": {
             "type": "string"
           },
-          "name":
-          {
+          "name": {
             "type": "string"
           },
-          "relationships":
-          {
+          "relationships": {
             "type": "array",
-            "items":
-            {
+            "items": {
               "$ref": "#/components/schemas/relationshipItem"
             }
           },
-          "links":
-          {
+          "links": {
             "type": "array",
-            "items":
-            {
+            "items": {
               "$ref": "#/components/schemas/linkItem"
             }
           }
         }
       },
-      "legalEntitySearchResults":
-      {
+      "legalEntitySearchResults": {
         "type": "object",
-        "example":
-        {
-          "legalEntities":
-          [
+        "example": {
+          "legalEntities": [
             {
               "nationalId": "4202092820",
               "name": "Icelandic Offshore ehf",
-              "relationships":
-              [
+              "relationships": [
                 {
                   "type": "Prókúruhafi",
                   "nationalId": "0101302129",
                   "name": "Gervimaður Noregur",
-                  "links":
-                  [
+                  "links": [
                     {
                       "rel": "_self",
                       "href": "./../individuals/0101302129"
@@ -1135,8 +871,7 @@
                   ]
                 }
               ],
-              "links":
-              [
+              "links": [
                 {
                   "rel": "_self",
                   "href": "./../legalentities/4202092820"
@@ -1144,8 +879,7 @@
               ]
             }
           ],
-          "pageInfo":
-          {
+          "pageInfo": {
             "hasPreviousPage": "false",
             "hasNextPage": "true",
             "startCursor": 0,
@@ -1154,79 +888,60 @@
           },
           "totalCount": 1
         },
-        "properties":
-        {
-          "legalEntities":
-          {
+        "properties": {
+          "legalEntities": {
             "type": "array",
-            "items":
-            {
+            "items": {
               "$ref": "#/components/schemas/legalEntitySearchItem"
             }
           },
-          "pageInfo":
-          {
+          "pageInfo": {
             "type": "object",
-            "items":
-            {
+            "items": {
               "$ref": "#/components/schemas/searchPageInfo"
             }
           },
-          "totalCount":
-          {
+          "totalCount": {
             "type": "integer"
           }
         }
       },
-      "individualSearchItem":
-      {
+      "individualSearchItem": {
         "type": "object",
-        "properties":
-        {
-          "nationalId":
-          {
+        "properties": {
+          "nationalId": {
             "type": "string"
           },
-          "name":
-          {
+          "name": {
             "type": "string"
           },
-          "relationships":
-          {
+          "relationships": {
             "type": "array",
-            "items":
-            {
+            "items": {
               "$ref": "#/components/schemas/relationshipItem"
             }
           },
-          "links":
-          {
+          "links": {
             "type": "array",
-            "items":
-            {
+            "items": {
               "$ref": "#/components/schemas/linkItem"
             }
           }
         }
       },
-      "individualSearchResults":
-      {
+      "individualSearchResults": {
         "type": "object",
-        "example":
-        {
-          "individuals":
-          [
+        "example": {
+          "individuals": [
             {
               "nationalId": "0101302399",
               "name": "Gervimaður Færeyjar",
-              "relationships":
-              [
+              "relationships": [
                 {
                   "type": "Prókúruhafi",
                   "nationalId": "5005101370",
                   "name": "65° ARTIC ehf.",
-                  "links":
-                  [
+                  "links": [
                     {
                       "rel": "_self",
                       "href": "./../legalentities/5005101370"
@@ -1234,8 +949,7 @@
                   ]
                 }
               ],
-              "links":
-              [
+              "links": [
                 {
                   "rel": "_self",
                   "href": "./../individuals/0101302399"
@@ -1243,8 +957,7 @@
               ]
             }
           ],
-          "pageInfo":
-          {
+          "pageInfo": {
             "hasPreviousPage": "false",
             "hasNextPage": "true",
             "startCursor": 0,
@@ -1253,218 +966,165 @@
           },
           "totalCount": 1
         },
-        "properties":
-        {
-          "individuals":
-          {
+        "properties": {
+          "individuals": {
             "type": "array",
-            "items":
-            {
+            "items": {
               "$ref": "#/components/schemas/individualSearchItem"
             }
           },
-          "pageInfo":
-          {
+          "pageInfo": {
             "type": "object",
-            "items":
-            {
+            "items": {
               "$ref": "#/components/schemas/searchPageInfo"
             }
           },
-          "totalCount":
-          {
+          "totalCount": {
             "type": "integer"
           }
         }
       },
-      "categoriesItem":
-      {
+      "categoriesItem": {
         "type": "object",
-        "required":
-        [
+        "required": [
           "type",
           "system",
           "id",
           "name"
         ],
-        "properties":
-        {
-          "type":
-          {
+        "properties": {
+          "type": {
             "type": "string"
           },
-          "system":
-          {
+          "system": {
             "type": "string"
           },
-          "id":
-          {
+          "id": {
             "type": "string"
           },
-          "name":
-          {
+          "name": {
             "type": "string"
           }
         }
       },
-      "vatItem":
-      {
+      "vatItem": {
         "type": "object",
-        "required":
-        [
+        "required": [
           "vatId",
           "created"
         ],
-        "properties":
-        {
-          "vatId":
-          {
+        "properties": {
+          "vatId": {
             "type": "string"
           },
-          "created":
-          {
+          "created": {
             "type": "string"
           },
-          "closed":
-          {
+          "closed": {
             "type": "string"
           },
-          "categories":
-          {
+          "categories": {
             "type": "array",
-            "items":
-            {
+            "items": {
               "$ref": "#/components/schemas/categoriesItem"
             }
           }
         }
       },
-      "addressItem":
-      {
+      "addressItem": {
         "type": "object",
-        "properties":
-        {
-          "type":
-          {
+        "properties": {
+          "type": {
             "type": "string"
           },
-          "address":
-          {
+          "address": {
             "type": "string"
           },
-          "isPostbox":
-          {
+          "isPostbox": {
             "type": "string"
           },
-          "postCode":
-          {
+          "postCode": {
             "type": "string"
           },
-          "city":
-          {
+          "city": {
             "type": "string"
           },
-          "municipalityId":
-          {
+          "municipalityId": {
             "type": "string"
           },
-          "municipality":
-          {
+          "municipality": {
             "type": "string"
           },
-          "country":
-          {
+          "country": {
             "type": "string"
           }
         }
       },
-      "legalentity":
-      {
+      "legalentity": {
         "type": "object",
-        "required":
-        [
+        "required": [
           "nationalId",
           "name",
           "created",
           "stada"
         ],
-        "properties":
-        {
-          "$.id":
-          {
+        "properties": {
+          "$.id": {
             "type": "string"
           },
-          "nationalId":
-          {
+          "nationalId": {
             "type": "string"
           },
-          "name":
-          {
+          "name": {
             "type": "string"
           },
-          "created":
-          {
+          "created": {
             "type": "string"
           },
-          "status":
-          {
+          "status": {
             "type": "string"
           },
-          "closed":
-          {
+          "closed": {
             "type": "string"
           },
-          "type":
-          {
+          "type": {
             "type": "string"
           },
-          "vat":
-          {
+          "vat": {
             "type": "array",
-            "items":
-            {
+            "items": {
               "$ref": "#/components/schemas/vatItem"
             }
           },
-          "addresses":
-          {
+          "addresses": {
             "type": "array",
-            "items":
-            {
+            "items": {
               "$ref": "#/components/schemas/addressItem"
             }
           },
-          "relationships":
-          {
+          "relationships": {
             "type": "array",
-            "items":
-            {
+            "items": {
               "$ref": "#/components/schemas/relationshipItem"
             }
           },
-          "lastUpdated":
-          {
+          "lastUpdated": {
             "type": "string"
           },
-          "links":
-          {
+          "links": {
             "type": "array",
-            "items":
-            {
+            "items": {
               "$ref": "#/components/schemas/linkItem"
             }
           }
         }
       },
-      "individual":
-      {
+      "individual": {
         "type": "object",
-        "example":
-        {
+        "example": {
           "nationalId": "0101302129",
           "name": "Gervimaður Noregur",
-          "legalEntities":
-          [
+          "relationships": [
             {
               "nationalId": "4208160570",
               "name": "ZZZ2 ehf."
@@ -1475,37 +1135,29 @@
             }
           ]
         },
-        "required":
-        [
+        "required": [
           "nationalId",
           "name"
         ],
-        "properties":
-        {
-          "nationalId":
-          {
+        "properties": {
+          "nationalId": {
             "type": "string",
             "pattern": "^\\d{10}$"
           },
-          "name":
-          {
+          "name": {
             "type": "string"
           },
-          "relationships":
-          {
+          "relationships": {
             "type": "array",
-            "items":
-            {
+            "items": {
               "$ref": "#/components/schemas/relationshipItem"
             }
           }
         }
       },
-      "serviceInfo":
-      {
+      "serviceInfo": {
         "type": "object",
-        "example":
-        {
+        "example": {
           "version": "1.0.0",
           "service": "Service Name - API 1.0.0",
           "environment": "Environment",
@@ -1513,201 +1165,157 @@
           "publisherWebsite": "https://www.rsk.is",
           "publisherEmail": "api@rsk.is"
         },
-        "required":
-        [
+        "required": [
           "service",
           "version",
           "environment"
         ],
-        "properties":
-        {
-          "service":
-          {
+        "properties": {
+          "service": {
             "type": "string"
           },
-          "version":
-          {
+          "version": {
             "type": "string"
           },
-          "environment":
-          {
+          "environment": {
             "type": "string"
           },
-          "publisher":
-          {
+          "publisher": {
             "type": "string"
           },
-          "publisherWebsite":
-          {
+          "publisherWebsite": {
             "type": "string"
           },
-          "publisherEmail":
-          {
+          "publisherEmail": {
             "type": "string"
           }
         }
       },
-      "400":
-      {
+      "400": {
         "type": "object",
-        "example":
-        {
+        "example": {
           "type": "/error",
           "title": "Bad Request",
           "status": 400,
           "detail": "Request response status code indicates that the server cannot or will not process the request due to something that is perceived to be a client error (for example, malformed request syntax, invalid request message framing, or deceptive request routing).",
           "instance": "/:nationalId"
         },
-        "properties":
-        {
-          "error":
-          {
+        "properties": {
+          "error": {
             "type": "object",
-            "items":
-            {
+            "items": {
               "$ref": "#/components/schemas/error"
             }
           }
         }
       },
-      "401":
-      {
+      "401": {
         "type": "object",
-        "example":
-        {
+        "example": {
           "type": "/error",
           "title": "Unauthorized",
           "status": 401,
           "detail": "Unauthorized response status code indicates that the client request has not been completed because it lacks valid authentication credentials for the requested resource.",
           "instance": "/"
         },
-        "properties":
-        {
-          "error":
-          {
+        "properties": {
+          "error": {
             "type": "object",
-            "items":
-            {
+            "items": {
               "$ref": "#/components/schemas/error"
             }
           }
         }
       },
-      "404":
-      {
+      "404": {
         "type": "object",
-        "example":
-        {
+        "example": {
           "type": "/error",
           "title": "Not found",
           "status": 404,
           "detail": "Information requested was not found.",
           "instance": "/"
         },
-        "properties":
-        {
-          "error":
-          {
+        "properties": {
+          "error": {
             "type": "object",
-            "items":
-            {
+            "items": {
               "$ref": "#/components/schemas/error"
             }
           }
         }
       },
-      "4XX":
-      {
+      "4XX": {
         "type": "object",
-        "example":
-        {
+        "example": {
           "type": "/error",
           "title": "Client Errors",
           "status": "4XX",
           "detail": "The 4XX group errors relate to the client or browser.",
           "instance": "/"
         },
-        "properties":
-        {
-          "error":
-          {
+        "properties": {
+          "error": {
             "type": "object",
-            "items":
-            {
+            "items": {
               "$ref": "#/components/schemas/error"
             }
           }
         }
       },
-      "5XX":
-      {
+      "5XX": {
         "type": "object",
-        "example":
-        {
+        "example": {
           "type": "/error",
           "title": "Server Errors",
           "status": "5XX",
           "detail": "The 5XX group is for server errors.",
           "instance": "/"
         },
-        "properties":
-        {
-          "error":
-          {
+        "properties": {
+          "error": {
             "type": "object",
-            "items":
-            {
+            "items": {
               "$ref": "#/components/schemas/error"
             }
           }
         }
       },
-      "error":
-      {
+      "error": {
         "type": "object",
-        "example":
-        {
+        "example": {
           "type": "/error",
           "title": "Error title",
           "status": "###",
           "detail": "Description of error",
           "instance": "/uri"
         },
-        "required":
-        [
+        "required": [
           "type",
           "title",
           "status"
         ],
-        "properties":
-        {
-          "type":
-          {
+        "properties": {
+          "type": {
             "type": "string"
           },
-          "title":
-          {
+          "title": {
             "type": "string"
           },
-          "status":
-          {
+          "status": {
             "type": "integer"
           },
-          "detail":
-          {
+          "detail": {
             "type": "string"
           },
-          "instance":
-          {
+          "instance": {
             "type": "string"
           }
         }
       }
     },
-    "securitySchemes":
-    {
-      "island.is-auth":
-      {
+    "securitySchemes": {
+      "island.is-auth": {
         "type": "http",
         "scheme": "bearer",
         "bearerFormat": "JWT"

@@ -1,4 +1,6 @@
 import { z } from 'zod'
+import { redirect } from 'react-router-dom'
+import * as kennitala from 'kennitala'
 
 import {
   RawRouterActionResponse,
@@ -10,20 +12,23 @@ import {
   ValidateFormDataResult,
 } from '@island.is/react-spa/shared'
 
-import { GetCompaniesDocument, GetCompaniesQuery } from './Procures.generated'
-import { redirect } from 'react-router-dom'
 import { ServiceDeskPaths } from '../../lib/paths'
+import {
+  SearchCompaniesQuery,
+  SearchCompaniesDocument,
+  SearchCompaniesQueryVariables,
+} from './Companies.generated'
 
 const schema = z.object({
   searchQuery: z.string().nonempty(),
 })
 
 export type GetCompaniesResult = RawRouterActionResponse<
-  GetCompaniesQuery['authAdminProcureGetCompanies'],
+  SearchCompaniesQuery['companyRegistryCompanies'],
   ValidateFormDataResult<typeof schema>['errors']
 >
 
-export const GetCompaniesAction: WrappedActionFn = ({ client }) => async ({
+export const CompaniesAction: WrappedActionFn = ({ client }) => async ({
   request,
 }): Promise<GetCompaniesResult | Response> => {
   const formData = await request.formData()
@@ -40,12 +45,22 @@ export const GetCompaniesAction: WrappedActionFn = ({ client }) => async ({
     }
   }
 
+  const searchTerm = kennitala.isValid(data.searchQuery)
+    ? kennitala.sanitize(data.searchQuery)
+    : data.searchQuery
+
   try {
-    const res = await client.query<GetCompaniesQuery>({
-      query: GetCompaniesDocument,
+    const res = await client.query<
+      SearchCompaniesQuery,
+      SearchCompaniesQueryVariables
+    >({
+      query: SearchCompaniesDocument,
       fetchPolicy: 'network-only',
       variables: {
-        search: data.searchQuery,
+        input: {
+          searchTerm,
+          first: 40,
+        },
       },
     })
 
@@ -53,12 +68,15 @@ export const GetCompaniesAction: WrappedActionFn = ({ client }) => async ({
       throw res.error
     }
 
-    if (res.data?.authAdminProcureGetCompanies?.length === 1) {
+    const companies = res.data?.companyRegistryCompanies?.data
+
+    // Redirect to Procurers screen if only one company is found
+    if (companies?.length === 1) {
       return redirect(
         replaceParams({
           href: ServiceDeskPaths.Procurers,
           params: {
-            nationalId: res.data.authAdminProcureGetCompanies[0].nationalId,
+            nationalId: companies[0].nationalId,
           },
         }),
       )
@@ -66,7 +84,7 @@ export const GetCompaniesAction: WrappedActionFn = ({ client }) => async ({
 
     return {
       errors: null,
-      data: res.data.authAdminProcureGetCompanies,
+      data: res.data.companyRegistryCompanies,
     }
   } catch (e) {
     return {

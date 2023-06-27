@@ -1,10 +1,12 @@
-query GetCompanyRelationships($nationalId: String!) {
-  authAdminProcureGetCompanyRelationships(nationalId: $nationalId) {
+query CompanyRelationships($input: RskCompanyInfoInput!) {
+  companyRegistryCompany(input: $input) {
     name
     nationalId
-    procurers {
-      name
-      nationalId
+    companyInfo {
+      relationships {
+        name
+        nationalId
+      }
     }
   }
 }

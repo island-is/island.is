@@ -3,12 +3,15 @@ import { redirect } from 'react-router-dom'
 import { WrappedLoaderFn } from '@island.is/portals/core'
 
 import {
-  GetCompanyRelationshipsDocument,
-  GetCompanyRelationshipsQuery,
+  CompanyRelationshipsDocument,
+  CompanyRelationshipsQuery,
+  CompanyRelationshipsQueryVariables,
 } from './Procurers.generated'
 import { ServiceDeskPaths } from '../../lib/paths'
 
-export type CompanyRelationshipResult = GetCompanyRelationshipsQuery['authAdminProcureGetCompanyRelationships']
+export type CompanyRelationshipResult = NonNullable<
+  CompanyRelationshipsQuery['companyRegistryCompany']
+>
 
 export const procurersLoader: WrappedLoaderFn = ({ client }) => {
   return async ({ params }): Promise<CompanyRelationshipResult | Response> => {
@@ -16,11 +19,16 @@ export const procurersLoader: WrappedLoaderFn = ({ client }) => {
 
     if (!nationalId) throw new Error('Company not found')
 
-    const res = await client.query<GetCompanyRelationshipsQuery>({
-      query: GetCompanyRelationshipsDocument,
+    const res = await client.query<
+      CompanyRelationshipsQuery,
+      CompanyRelationshipsQueryVariables
+    >({
+      query: CompanyRelationshipsDocument,
       fetchPolicy: 'network-only',
       variables: {
-        nationalId,
+        input: {
+          nationalId,
+        },
       },
     })
 
@@ -28,10 +36,10 @@ export const procurersLoader: WrappedLoaderFn = ({ client }) => {
       throw res.error
     }
 
-    if (!res.data?.authAdminProcureGetCompanyRelationships) {
+    if (!res.data?.companyRegistryCompany) {
       return redirect(ServiceDeskPaths.Root)
     }
 
-    return res.data.authAdminProcureGetCompanyRelationships
+    return res.data.companyRegistryCompany
   }
 }

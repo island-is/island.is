@@ -120,6 +120,7 @@ import { getConfig } from './environments'
 import { GraphqlOptionsFactory } from './graphql-options.factory'
 import { HealthController } from './health.controller'
 import { GraphQLConfig } from './graphql.config'
+import { RskProcuringClientConfig } from '@island.is/clients/rsk/procuring'
 
 const environment = getConfig
 
@@ -319,6 +320,7 @@ const environment = getConfig
         PowerBiConfig,
         AuthIdsApiClientConfig,
         IcelandicGovernmentInstitutionVacanciesClientConfig,
+        RskProcuringClientConfig,
       ],
     }),
   ],

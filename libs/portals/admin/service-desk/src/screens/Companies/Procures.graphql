@@ -1,6 +1,0 @@
-query GetCompanies($search: String!) {
-  authAdminProcureGetCompanies(search: $search) {
-    name
-    nationalId
-  }
-}

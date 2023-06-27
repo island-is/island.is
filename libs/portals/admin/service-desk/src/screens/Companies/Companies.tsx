@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Form, useActionData, useNavigate } from 'react-router-dom'
+import * as kennitala from 'kennitala'
 
 import { useLocale } from '@island.is/localization'
 import { formatNationalId, IntroHeader } from '@island.is/portals/core'
@@ -13,7 +14,7 @@ import {
 import { replaceParams } from '@island.is/react-spa/shared'
 
 import { m } from '../../lib/messages'
-import { GetCompaniesResult } from './GetCompanies.action'
+import { GetCompaniesResult } from './Companies.action'
 import { Card } from '../../components/Card'
 import { ServiceDeskPaths } from '../../lib/paths'
 import * as styles from './Companies.css'
@@ -24,7 +25,7 @@ const Companies = () => {
   const actionData = useActionData() as GetCompaniesResult
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
-  const companies = actionData?.data
+  const companies = actionData?.data?.data
 
   useEffect(() => {
     if (actionData) {
@@ -57,7 +58,11 @@ const Companies = () => {
           <Stack space={3}>
             {companies?.length === 0 ? (
               <Card
-                title={formatNationalId(prevSearchInput)}
+                title={
+                  kennitala.isValid(prevSearchInput)
+                    ? formatNationalId(prevSearchInput)
+                    : prevSearchInput
+                }
                 description={formatMessage(m.noContent)}
                 bgGrey
               />
