@@ -72,7 +72,7 @@ export class DrivingLicenseDuplicateService extends BaseTemplateApiService {
       .drivingLicenseDuplicateSubmission({
         districtId: parseInt(answers.district.toString(), 10),
         ssn: nationalId,
-        // Always true since submission doesn't happen until
+        // Always true since submission doesn't happen before
         // user checks the required field which states
         // that the license is lost or stolen
         stolenOrLost: true,
