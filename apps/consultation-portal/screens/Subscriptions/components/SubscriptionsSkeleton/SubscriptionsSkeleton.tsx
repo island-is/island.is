@@ -79,7 +79,11 @@ const SubscriptionsSkeleton = ({
           <Box paddingBottom={[3, 3, 3, 5, 5]}>
             <Stack space={[3, 3, 3, 5, 5]}>
               <Stack space={3}>
-                <Text variant="h1" color="dark400" dataTestId="subscriptions_title">
+                <Text
+                  variant="h1"
+                  color="dark400"
+                  dataTestId="subscriptions_title"
+                >
                   {isMySubscriptions ? locMySubs.title : locSubs.title}
                 </Text>
                 <Stack space={1}>
