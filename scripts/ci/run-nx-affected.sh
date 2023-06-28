@@ -16,4 +16,4 @@ source "$DIR"/_common.sh
 
 MAX_JOBS=${MAX_JOBS:-2}
 
-yarn run nx affected --base="$BASE" --head="$HEAD" --target="$target" --parallel="$MAX_JOBS" "$@" --verbose
+yarn run nx affected --base="$BASE" --head="$HEAD" --target="$target" --parallel="$MAX_JOBS" "$@"
