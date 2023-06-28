@@ -14,6 +14,7 @@ export const TeachersApi = defineTemplateApi({
 
 export interface CurrentLicenseParameters {
   validCategories?: string[]
+  useLegacyVersion: boolean
 }
 
 export const CurrentLicenseApi = defineTemplateApi<CurrentLicenseParameters>({
@@ -23,6 +24,11 @@ export const CurrentLicenseApi = defineTemplateApi<CurrentLicenseParameters>({
 
 export const QualityPhotoApi = defineTemplateApi({
   action: 'qualityPhoto',
+  namespace,
+})
+
+export const QualitySignatureApi = defineTemplateApi({
+  action: 'qualitySignature',
   namespace,
 })
 

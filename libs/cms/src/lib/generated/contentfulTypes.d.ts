@@ -2233,6 +2233,9 @@ export interface IOrganizationFields {
 
   /** Plausible Tracking Domain */
   trackingDomain?: string | undefined
+
+  /** Name In Vacancy List */
+  nameInVacancyList?: string | undefined
 }
 
 export interface IOrganization extends Entry<IOrganizationFields> {
@@ -2329,8 +2332,11 @@ export interface IOrganizationPageFields {
   /** Organization */
   organization: IOrganization
 
-  /** News tag */
+  /** Primary news tag */
   newsTag?: IGenericTag | undefined
+
+  /** Secondary news tags */
+  secondaryNewsTags?: IGenericTag[] | undefined
 
   /** Slug */
   slug: string
@@ -2357,6 +2363,10 @@ export interface IOrganizationPageFields {
     | 'gev'
     | 'hve'
     | 'shh'
+    | 'hsa'
+    | 'haskolanam'
+    | 'nti'
+    | 'samgongustofa'
 
   /** Theme Properties */
   themeProperties?: Record<string, any> | undefined
@@ -2704,8 +2714,11 @@ export interface IProjectPageFields {
       )[]
     | undefined
 
-  /** News Tag */
+  /** Primary news tag */
   newsTag?: IGenericTag | undefined
+
+  /** Secondary news tags */
+  secondaryNewsTags?: IGenericTag[] | undefined
 
   /** Project Subpages */
   projectSubpages?: IProjectSubpage[] | undefined
@@ -2801,7 +2814,7 @@ export interface IProjectSubpageFields {
     | undefined
 
   /** Bottom Slices */
-  bottomSlices?: IPowerBiSlice[] | undefined
+  bottomSlices?: (IPowerBiSlice | IOneColumnText)[] | undefined
 }
 
 export interface IProjectSubpage extends Entry<IProjectSubpageFields> {
@@ -3879,6 +3892,69 @@ export interface IUrl extends Entry<IUrlFields> {
   }
 }
 
+export interface IVacancyFields {
+  /** Title */
+  title: string
+
+  /** Intro */
+  intro?: Document | undefined
+
+  /** Job Listed */
+  applicationDeadlineFrom: string
+
+  /** Application Deadline */
+  applicationDeadlineTo: string
+
+  /** Category */
+  fieldOfWork: string
+
+  /** Organization */
+  organization: IOrganization
+
+  /** Locations */
+  locations: string[]
+
+  /** Job Percentage */
+  jobPercentage?: string | undefined
+
+  /** Application Link Url */
+  applicationHref?: string | undefined
+
+  /** Requirements */
+  qualificationRequirements?: Document | undefined
+
+  /** Responsibilities */
+  tasksAndResponsibilities?: Document | undefined
+
+  /** Description */
+  description?: Document | undefined
+
+  /** Salary Terms */
+  salaryTerms?: Document | undefined
+
+  /** Contacts */
+  contacts?: Record<string, any> | undefined
+}
+
+/** Icelandic Government Institution Vacancy that appears on island.is/starfatorg */
+
+export interface IVacancy extends Entry<IVacancyFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'vacancy'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface IVidspyrnaFrontpageFields {
   /** Title */
   title: string
@@ -4159,6 +4235,7 @@ export type CONTENT_TYPE =
   | 'twoColumnText'
   | 'uiConfiguration'
   | 'url'
+  | 'vacancy'
   | 'vidspyrna-frontpage'
   | 'vidspyrnaFeaturedNews'
   | 'vidspyrnaFlokkur'

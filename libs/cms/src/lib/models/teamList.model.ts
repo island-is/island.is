@@ -1,4 +1,5 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql'
+import { CacheField } from '@island.is/nest/graphql'
 import { ITeamList } from '../generated/contentfulTypes'
 import { SystemMetadata } from '@island.is/shared/types'
 import { TeamMember, mapTeamMember } from './teamMember.model'
@@ -8,7 +9,7 @@ export class TeamList {
   @Field(() => ID)
   id!: string
 
-  @Field(() => [TeamMember])
+  @CacheField(() => [TeamMember])
   teamMembers?: Array<TeamMember>
 }
 

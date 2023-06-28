@@ -142,6 +142,8 @@ export interface SEOProps {
   title: string
   url?: string
   image?: string
+  description?: string
+  keywords?: string
 }
 
 export interface FilterGroups {
@@ -231,4 +233,13 @@ export interface Subscription {
   cases?: Array<CasesSubscription>
   institutions?: Array<InstitutionsSubscription>
   policyAreas?: Array<PolicyAreasSubscription>
+}
+
+export interface CaseExpressions {
+  isDocumentsNotEmpty: boolean
+  isAdditionalDocumentsNotEmpty: boolean
+  isStatusNameNotPublished: boolean
+  isStatusNameForReview: boolean
+  isStakeholdersNotEmpty: boolean
+  isRelatedCasesNotEmpty: boolean
 }

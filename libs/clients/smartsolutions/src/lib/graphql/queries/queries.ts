@@ -14,7 +14,8 @@ export const LIST_PASS_STATUSES = `
     passes(
       search: { query: $queryId },
       passTemplateId: $passTemplateId,
-      order: { column: WHEN_MODIFIED, dir: DESC }
+      order: { column: WHEN_MODIFIED, dir: DESC },
+      hideByStatus: {deleted: true },
       ) {
       data {
         id
@@ -30,6 +31,7 @@ export const LIST_PASSES = `
   query ListPasses($queryId: String!, $passTemplateId: String!) {
     passes(search: { query: $queryId },
       passTemplateId: $passTemplateId,
+      hideByStatus: {deleted: true },
       order: { column: WHEN_MODIFIED, dir: DESC }
       ) {
       data {

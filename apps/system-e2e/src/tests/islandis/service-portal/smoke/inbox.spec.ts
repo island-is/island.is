@@ -1,4 +1,5 @@
 import { test, BrowserContext, expect } from '@playwright/test'
+import { sleep } from '../../../../support/utils'
 import { icelandicAndNoPopupUrl, urls } from '../../../../support/urls'
 import { session } from '../../../../support/session'
 import { label } from '../../../../support/i18n'
@@ -51,8 +52,12 @@ test.describe('MS - Pósthólf overview', () => {
         name: label(messages.clearFilters),
       })
 
+      await sleep(500)
+
+      const docFoundText = page.getByTestId('doc-found-text')
+
       // Assert
-      await expect(page.getByRole('main')).toContainText(label(messages.found))
+      await expect(docFoundText).toContainText(label(messages.found))
       await expect(btnClearFilter).toBeVisible()
     })
 
@@ -62,24 +67,24 @@ test.describe('MS - Pósthólf overview', () => {
 
       // Act
       await page
-        .locator(`role=button[name="${label(m.openFilter)}"]`)
+        .getByRole('button', { name: label(m.openFilter) })
         .first()
         .click()
       await page
-        .locator(`role=button[name="${label(messages.institutionLabel)}"]`)
+        .getByRole('button', { name: label(messages.institutionLabel) })
         .first()
         .click()
       await page.mouse.wheel(0, 50)
 
       // "institution" comes from the api - not translateable
-      const institution = 'Ísland.is'
-      await page.locator(`role=checkbox[name="${institution}"]`).click()
+      const institution = 'Ríkislögreglustjórinn'
+      await page.getByLabel(institution).click()
 
       // Assert
       await expect(page.getByRole('main')).toContainText(label(messages.found))
       await expect(
         page
-          .locator(`role=button[name="${institution}"]`)
+          .getByRole('button', { name: institution })
           .locator(`[data-testid="icon-close"]`),
       ).toBeVisible()
     })

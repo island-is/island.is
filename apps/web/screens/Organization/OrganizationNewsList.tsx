@@ -188,6 +188,7 @@ const OrganizationNewsList: Screen<OrganizationNewsListProps> = ({
         monthOptions={monthOptions}
         title={newsTitle}
         newsPerPage={PERPAGE}
+        newsTags={organizationPage.secondaryNewsTags}
       />
     </OrganizationWrapper>
   )

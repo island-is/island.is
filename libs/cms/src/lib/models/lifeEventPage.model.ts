@@ -1,4 +1,5 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql'
+import { CacheField } from '@island.is/nest/graphql'
 import { ILifeEventPage } from '../generated/contentfulTypes'
 import { Image, mapImage } from './image.model'
 import { ArticleCategory, mapArticleCategory } from './articleCategory.model'
@@ -24,19 +25,19 @@ export class LifeEventPage {
   @Field({ nullable: true })
   shortIntro?: string
 
-  @Field(() => Image, { nullable: true })
+  @CacheField(() => Image, { nullable: true })
   image?: Image | null
 
-  @Field(() => Image, { nullable: true })
+  @CacheField(() => Image, { nullable: true })
   thumbnail?: Image | null
 
-  @Field(() => Image, { nullable: true })
+  @CacheField(() => Image, { nullable: true })
   tinyThumbnail?: Image | null
 
-  @Field(() => [SliceUnion])
+  @CacheField(() => [SliceUnion])
   content!: Array<typeof SliceUnion>
 
-  @Field(() => ArticleCategory, { nullable: true })
+  @CacheField(() => ArticleCategory, { nullable: true })
   category?: ArticleCategory | null
 
   @Field({ nullable: true })
@@ -45,7 +46,7 @@ export class LifeEventPage {
   @Field({ nullable: true })
   pageType?: 'Life Event' | 'Digital Iceland Service'
 
-  @Field(() => Image, { nullable: true })
+  @CacheField(() => Image, { nullable: true })
   featuredImage?: Image | null
 }
 

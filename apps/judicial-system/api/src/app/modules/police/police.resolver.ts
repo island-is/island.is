@@ -18,6 +18,8 @@ import { PoliceCaseFilesQueryInput } from './dto/policeCaseFiles.input'
 import { UploadPoliceCaseFileInput } from './dto/uploadPoliceCaseFile.input'
 import { PoliceCaseFile } from './models/policeCaseFile.model'
 import { UploadPoliceCaseFileResponse } from './models/uploadPoliceCaseFile.response'
+import { PoliceCaseInfo } from './models/policeCaseInfo.model'
+import { PoliceCaseInfoQueryInput } from './dto/policeCaseInfo.input'
 
 @UseGuards(JwtGraphQlAuthGuard)
 @Resolver()
@@ -41,6 +43,23 @@ export class PoliceResolver {
       user.id,
       AuditedAction.GET_POLICE_CASE_FILES,
       backendApi.getPoliceCaseFiles(input.caseId),
+      input.caseId,
+    )
+  }
+
+  @Query(() => [PoliceCaseInfo], { nullable: true })
+  policeCaseInfo(
+    @Args('input', { type: () => PoliceCaseInfoQueryInput })
+    input: PoliceCaseInfoQueryInput,
+    @CurrentGraphQlUser() user: User,
+    @Context('dataSources') { backendApi }: { backendApi: BackendApi },
+  ): Promise<PoliceCaseInfo[]> {
+    this.logger.debug(`Getting all police case info for case ${input.caseId}`)
+
+    return this.auditTrailService.audit(
+      user.id,
+      AuditedAction.GET_POLICE_CASE_INFO,
+      backendApi.getPoliceCaseInfo(input.caseId),
       input.caseId,
     )
   }

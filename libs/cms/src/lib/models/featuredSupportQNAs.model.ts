@@ -1,9 +1,10 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
+import { ElasticsearchIndexLocale } from '@island.is/content-search-index-manager'
+import { CacheField } from '@island.is/nest/graphql'
 import { Link, mapLink } from './link.model'
 import { mapSupportQNA, SupportQNA } from './supportQNA.model'
 import { IFeaturedSupportQnAs } from '../generated/contentfulTypes'
 import { GetFeaturedSupportQNAsInput } from '../dto/getFeaturedSupportQNAs.input'
-import { ElasticsearchIndexLocale } from '@island.is/content-search-index-manager'
 
 @ObjectType()
 export class FeaturedSupportQNAs {
@@ -13,13 +14,13 @@ export class FeaturedSupportQNAs {
   @Field(() => String, { nullable: true })
   renderedTitle?: string
 
-  @Field(() => Link, { nullable: true })
+  @CacheField(() => Link, { nullable: true })
   link?: Link | null
 
-  @Field(() => [SupportQNA], { nullable: true })
+  @CacheField(() => [SupportQNA], { nullable: true })
   supportQNAs?: SupportQNA[]
 
-  @Field(() => [SupportQNA])
+  @CacheField(() => [SupportQNA])
   resolvedSupportQNAs!: GetFeaturedSupportQNAsInput
 
   @Field(() => Boolean, { nullable: true })
