@@ -187,7 +187,7 @@ export class EstateTemplateService extends BaseTemplateApiService {
         name: 'Gervimaður Undir 18 án málsvara',
         relation: 'Barn',
         // This kennitala is for Gervimaður Ísak Miri ÞÍ Jarrah
-        // This test will break in on the 24th of September 2034
+        // This test will stop serving its purpose on the 24th of September 2034
         // eslint-disable-next-line local-rules/disallow-kennitalas
         nationalId: '2409151460',
       }
