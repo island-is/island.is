@@ -89,6 +89,8 @@ export const FilterBox = ({
 
     // checking if label is "Í vinnslu frá"
     // to render just "Í vinnslu"
+    // pre: Í vinnslu frá
+    // post: Í vinnslu
     if (label === sharedLoc.pre) {
       return hasItems ? `${sharedLoc.post} (${count})` : `${sharedLoc.post}`
     }
