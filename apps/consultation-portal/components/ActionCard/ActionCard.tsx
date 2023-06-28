@@ -56,6 +56,7 @@ const ActionCard = ({ heading, text, button, input }: Props) => {
       paddingY={3}
       columnGap={3}
       rowGap={2}
+      dataTestId="actionCard"
     >
       <Box display="flex" flexDirection="column">
         {!!heading && <Text variant="h3">{heading}</Text>}
