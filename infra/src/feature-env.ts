@@ -9,8 +9,16 @@ import {
 } from './uber-charts/islandis'
 import { Services as IDSServices } from './uber-charts/identity-server'
 import { EnvironmentServices } from './dsl/types/charts'
-import { ServiceHelm } from './dsl/types/output-types'
-import { OpsEnv } from './dsl/types/input-types'
+import { HelmService, Services } from './dsl/types/output-types'
+import { Deployments } from './uber-charts/all-charts'
+import { getFeatureAffectedServices } from './dsl/feature-deployments'
+import { dumpJobYaml } from './dsl/file-formats/yaml'
+import {
+  renderHelmJobForFeature,
+  renderHelmServices,
+  renderHelmValueFileContent,
+} from './dsl/exports/helm'
+import { ServiceBuilder } from './dsl/dsl'
 
 type ChartName = 'islandis' | 'identity-server'
 
@@ -22,7 +30,6 @@ const charts: { [name in ChartName]: EnvironmentServices } = {
 interface Arguments {
   feature: string
   images: string
-  env: OpsEnv
   chart: ChartName
   output?: string
   jobImage?: string
@@ -59,7 +66,7 @@ const writeToOutput = async (data: string, output?: string) => {
 const parseArguments = (argv: Arguments) => {
   const feature = argv.feature
   const images = argv.images.split(',') // Docker images that have changed
-  const env = argv.env
+  const envName = 'dev'
   const chart = argv.chart as ChartName
 
   const env = {
@@ -71,8 +78,12 @@ const parseArguments = (argv: Arguments) => {
 
   const affectedServices = habitat
     .concat(FeatureDeploymentServices)
-    .filter((h) => images?.includes(h.serviceDef.image ?? h.serviceDef.name))
-  return { ch, habitat, affectedServices, env }
+    .filter(
+      (h) =>
+        (images.length === 1 && images[0] === '*') ||
+        images?.includes(h.serviceDef.image ?? h.serviceDef.name),
+    )
+  return { habitat, affectedServices, env }
 }
 
 const buildIngressComment = (data: HelmService[]): string =>
@@ -108,10 +119,8 @@ yargs(process.argv.slice(2))
     'get helm values file',
     () => {},
     async (argv: Arguments) => {
-      const { ch, habitat, affectedServices, env } = parseArguments(argv)
-      const featureYaml = generateYamlForFeature(
-        env,
-        ch,
+      const { habitat, affectedServices, env } = parseArguments(argv)
+      const { included: featureYaml } = await getFeatureAffectedServices(
         habitat,
         affectedServices.slice(),
         ExcludedFeatureDeploymentServices,
@@ -134,10 +143,11 @@ yargs(process.argv.slice(2))
     'get helm values file',
     () => {},
     async (argv: Arguments) => {
-      const { ch, habitat, affectedServices, env } = parseArguments(argv)
-      const featureYaml = generateYamlForFeature(
-        env,
-        ch,
+      const { habitat, affectedServices, env } = parseArguments(argv)
+      const {
+        included: featureYaml,
+        excluded,
+      } = await getFeatureAffectedServices(
         habitat,
         affectedServices.slice(),
         ExcludedFeatureDeploymentServices,
@@ -183,13 +193,6 @@ yargs(process.argv.slice(2))
     images: {
       type: 'string',
       demandOption: true,
-      description:
-        'List of comma separated Docker image names that have changed',
-    },
-    env: {
-      type: 'string',
-      choices: ['dev', 'staging', 'prod'],
-      default: 'dev',
       description:
         'List of comma separated Docker image names that have changed',
     },
