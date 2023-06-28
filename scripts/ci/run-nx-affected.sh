@@ -16,4 +16,6 @@ source "$DIR"/_common.sh
 
 MAX_JOBS=${MAX_JOBS:-2}
 echo "[DEBUG]: NX version is $(yarn run nx --version)"
+echo "[DEBUG]: yarn version is $(yarn --version)"
+
 yarn run nx affected --base="$BASE" --head="$HEAD" --target="$target" --parallel="$MAX_JOBS" "$@"

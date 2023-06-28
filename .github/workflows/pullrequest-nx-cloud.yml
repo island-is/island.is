@@ -161,7 +161,7 @@ jobs:
   # TODO: trying to dynamically get the the matrix result output, unfinished
   # success:
   #   if: always()
-  #   name: "Success ${{ matrix.includes.nx-target }}"
+  #   name: 'Success ${{ matrix.includes.nx-target }}'
   #   runs-on: ec2-runners
   #   needs:
   #     - check-matrix
