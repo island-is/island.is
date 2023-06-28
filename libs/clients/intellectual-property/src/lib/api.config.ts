@@ -12,6 +12,7 @@ export const ApiConfig = {
         logErrorResponseBody: true,
         name: 'clients-intellectual-property',
       }),
+      basePath: `https://webapi.hugverk.is/apiv3`,
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json',
