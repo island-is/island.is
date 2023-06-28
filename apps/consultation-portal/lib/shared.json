@@ -19,5 +19,9 @@
         "href": "/um"
       }
     }
+  },
+  "mapInProcess": {
+    "pre": "Í vinnslu frá",
+    "post": "Í vinnslu"
   }
 }
