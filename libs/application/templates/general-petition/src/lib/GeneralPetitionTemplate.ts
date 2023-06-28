@@ -25,7 +25,6 @@ const GeneralPetitionTemplate: ApplicationTemplate<
   type: ApplicationTypes.GENERAL_PETITION,
   name: m.applicationName,
   dataSchema: GeneralPetitionSchema,
-  readyForProduction: false,
   featureFlag: Features.generalPetition,
   stateMachineConfig: {
     initial: States.PREREQUISITES,
@@ -98,7 +97,10 @@ const GeneralPetitionTemplate: ApplicationTemplate<
           name: 'Done',
           status: 'completed',
           progress: 1,
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: {
+            shouldBeListed: true,
+            shouldBePruned: false,
+          },
           onEntry: defineTemplateApi({
             action: ApiModuleActions.CreateEndorsementList,
             shouldPersistToExternalData: true,

@@ -15,7 +15,7 @@ import StackedTitleAndDescription from '../Stacked/Stacked'
 import { CardSkeleton } from '../../../../components'
 import { RelatedCase, Stakeholder } from '../../../../types/interfaces'
 import localization from '../../Case.json'
-import { useRouter } from 'next/router'
+import { sortLocale } from '../../../../utils/helpers'
 
 interface Props {
   list: Array<Stakeholder> | Array<RelatedCase>
@@ -23,15 +23,12 @@ interface Props {
 }
 
 export const BlowoutList = ({ list, isStakeholder }: Props) => {
+  const sortOption = isStakeholder ? 'name' : 'caseNumber'
+  const sortedList = sortLocale({ list: list, sortOption: sortOption })
   const [showList, setShowList] = useState(false)
-  const router = useRouter()
   const loc = isStakeholder
     ? localization['stakeholders']
     : localization['relatedCases']
-
-  const handleOnClick = (id: number) => {
-    router.push(`/mal/${id}`)
-  }
 
   return (
     <Box display="block">
@@ -52,20 +49,21 @@ export const BlowoutList = ({ list, isStakeholder }: Props) => {
           {showList && (
             <>
               {isStakeholder && <Text>{loc.description}</Text>}
-              {list?.length < 1 && <Text>{loc.noList}</Text>}
+              {sortedList?.length < 1 && <Text>{loc.noList}</Text>}
               <Box padding="smallGutter">
                 <BulletList type="ul">
                   {isStakeholder
-                    ? list.map((item: Stakeholder, index: number) => {
+                    ? sortedList.map((item: Stakeholder, index: number) => {
                         return <Bullet key={index}>{item.name}</Bullet>
                       })
-                    : list.map((item: RelatedCase, index: number) => {
+                    : sortedList.map((item: RelatedCase, index: number) => {
                         return (
                           <Bullet key={index}>
                             <Inline flexWrap="nowrap" alignY="bottom" space={1}>
                               <LinkV2
                                 href={`/mal/${item.id}`}
                                 color="blue400"
+                                underline="small"
                                 underlineVisibility="hover"
                               >
                                 {item.caseNumber}

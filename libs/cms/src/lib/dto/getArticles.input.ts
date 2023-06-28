@@ -1,7 +1,8 @@
-import { Field, InputType, Int } from '@nestjs/graphql'
 import { IsInt, IsOptional, IsString, Max, Min } from 'class-validator'
+import { Field, InputType, Int } from '@nestjs/graphql'
 import { ElasticsearchIndexLocale } from '@island.is/content-search-index-manager'
 import { SortField } from '@island.is/content-search-toolkit'
+import { CacheField } from '@island.is/nest/graphql'
 
 @InputType()
 export class GetArticlesInput {
@@ -36,7 +37,7 @@ export class GetArticlesInput {
   @IsOptional()
   size?: number = 100
 
-  @Field(() => SortField, { nullable: true })
+  @CacheField(() => SortField, { nullable: true })
   @IsOptional()
   sort?: SortField = SortField.TITLE
 }

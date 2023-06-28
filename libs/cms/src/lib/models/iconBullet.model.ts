@@ -1,7 +1,8 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
+import { CacheField } from '@island.is/nest/graphql'
 import { IIconBullet } from '../generated/contentfulTypes'
 import { Image, mapImage } from './image.model'
-import { SystemMetadata } from 'api-cms-domain'
+import { SystemMetadata } from '@island.is/shared/types'
 
 @ObjectType()
 export class IconBullet {
@@ -14,7 +15,7 @@ export class IconBullet {
   @Field()
   body!: string
 
-  @Field(() => Image)
+  @CacheField(() => Image)
   icon!: Image
 
   @Field({ nullable: true })

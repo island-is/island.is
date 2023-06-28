@@ -1,4 +1,5 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql'
+import { CacheField } from '@island.is/nest/graphql'
 
 import { IOrganizationPage } from '../generated/contentfulTypes'
 import { mapOrganization, Organization } from './organization.model'
@@ -33,37 +34,40 @@ export class OrganizationPage {
   @Field()
   themeProperties!: OrganizationTheme
 
-  @Field(() => [SliceUnion])
+  @CacheField(() => [SliceUnion])
   slices!: Array<typeof SliceUnion | null>
 
-  @Field(() => [SliceUnion])
+  @CacheField(() => [SliceUnion])
   bottomSlices!: Array<typeof SliceUnion | null>
 
-  @Field(() => GenericTag, { nullable: true })
+  @CacheField(() => GenericTag, { nullable: true })
   newsTag!: GenericTag | null
 
-  @Field(() => [LinkGroup])
+  @CacheField(() => [GenericTag], { nullable: true })
+  secondaryNewsTags?: GenericTag[] | null
+
+  @CacheField(() => [LinkGroup])
   menuLinks!: Array<LinkGroup>
 
-  @Field(() => LinkGroup, { nullable: true })
+  @CacheField(() => LinkGroup, { nullable: true })
   secondaryMenu!: LinkGroup | null
 
-  @Field(() => Organization, { nullable: true })
+  @CacheField(() => Organization, { nullable: true })
   organization!: Organization | null
 
-  @Field(() => Image, { nullable: true })
+  @CacheField(() => Image, { nullable: true })
   featuredImage!: Image | null
 
-  @Field(() => [SliceUnion], { nullable: true })
+  @CacheField(() => [SliceUnion], { nullable: true })
   sidebarCards?: Array<typeof SliceUnion | null>
 
-  @Field(() => [Link], { nullable: true })
+  @CacheField(() => [Link], { nullable: true })
   externalLinks?: Array<Link>
 
-  @Field(() => AlertBanner, { nullable: true })
+  @CacheField(() => AlertBanner, { nullable: true })
   alertBanner?: AlertBanner
 
-  @Field(() => Image, { nullable: true })
+  @CacheField(() => Image, { nullable: true })
   defaultHeaderImage?: Image
 }
 
@@ -82,6 +86,7 @@ export const mapOrganizationPage = ({
     .map(safelyMapSliceUnion)
     .filter(Boolean),
   newsTag: fields.newsTag ? mapGenericTag(fields.newsTag) : null,
+  secondaryNewsTags: (fields.secondaryNewsTags ?? []).map(mapGenericTag),
   menuLinks: (fields.menuLinks ?? []).map(mapLinkGroup),
   secondaryMenu: fields.secondaryMenu
     ? mapLinkGroup(fields.secondaryMenu)

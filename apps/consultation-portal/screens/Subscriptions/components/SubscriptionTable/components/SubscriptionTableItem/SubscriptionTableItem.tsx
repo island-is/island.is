@@ -7,7 +7,7 @@ import {
   LinkV2,
 } from '@island.is/island-ui/core'
 import { mapIsToEn } from '../../../../../../utils/helpers'
-import * as styles from './SubscriptionTableItem.css'
+import * as styles from '../../SubscriptionTable.css'
 import { Area } from '../../../../../../types/enums'
 import {
   SubscriptionArray,
@@ -15,6 +15,7 @@ import {
 } from '../../../../../../types/interfaces'
 import localization from '../../../../Subscriptions.json'
 import { tableRowBackgroundColor } from '../../../../utils'
+import cn from 'classnames'
 
 interface Props {
   item: SubscriptionTableItem
@@ -36,8 +37,6 @@ const SubscriptionTableItem = ({
   setSubscriptionArray,
 }: Props) => {
   const loc = localization.subscriptionTableItem
-  const areaIsCaseAndIsNotGeneralSubscription =
-    currentTab === Area.case && !isGeneralSubscription
   const borderColor = 'transparent'
 
   const checkboxHandler = () => {
@@ -77,98 +76,113 @@ const SubscriptionTableItem = ({
 
   const { Row, Data: TData } = T
 
-  const Data = ({ width = '', children }) => {
+  const Data = ({
+    width = '',
+    children,
+    isLastOrFirst = false,
+    isLeft = false,
+  }) => {
+    const className = isLeft ? styles.tableRowLeft : styles.tableRowRight
     return (
       <TData
         width={width}
         borderColor={borderColor}
-        box={{ background: tableRowBackgroundColor(idx) }}
+        box={{
+          background: tableRowBackgroundColor(idx),
+          className: cn(
+            styles.paddingRightZero,
+            isLastOrFirst ? className : '',
+          ),
+        }}
       >
         {children}
       </TData>
     )
   }
 
+  const LinkBox = ({ children }) => {
+    return (
+      <FocusableBox
+        component={LinkV2}
+        href={`${loc.caseHref}${item.id}`}
+        target="_blank"
+        title={loc.infoText}
+        textAlign="left"
+      >
+        {children}
+      </FocusableBox>
+    )
+  }
+
+  const Stacked = () => {
+    return (
+      <Stack space={1}>
+        <Text variant="h5">
+          {isGeneralSubscription ? loc.allCases : item.caseNumber}
+        </Text>
+        <Text variant="medium" fontWeight="light">
+          {item.name}
+        </Text>
+      </Stack>
+    )
+  }
+
   return (
     <>
       <Row key={item.key}>
-        <Data width="10">
+        <Data isLastOrFirst isLeft>
           <Checkbox checked={item.checked} onChange={checkboxHandler} />
         </Data>
         {currentTab !== Area.case ? (
           isGeneralSubscription ? (
             <Data>
-              <FocusableBox component="button" onClick={checkboxHandler}>
-                <Text variant="h5">{loc.allCases}</Text>
-              </FocusableBox>
-              <FocusableBox component="button" onClick={checkboxHandler}>
-                <Text variant="medium" fontWeight="light">
-                  {item.name}
-                </Text>
-              </FocusableBox>
+              <Text variant="h5">{loc.allCases}</Text>
+              <Text variant="medium" fontWeight="light">
+                {item.name}
+              </Text>
             </Data>
           ) : (
             <Data>
-              <FocusableBox component="button" onClick={checkboxHandler}>
-                <Text variant="h5">{item.name}</Text>
-              </FocusableBox>
+              <Text variant="h5">{item.name}</Text>
             </Data>
           )
         ) : mdBreakpoint ? (
           <>
             <Data>
-              <FocusableBox component="button" onClick={checkboxHandler}>
-                <Text variant="h5">
-                  {isGeneralSubscription ? loc.allCases : item.caseNumber}
-                </Text>
-              </FocusableBox>
+              <Text variant="h5">
+                {isGeneralSubscription ? loc.allCases : item.caseNumber}
+              </Text>
             </Data>
             <Data>
-              <FocusableBox component="button" onClick={checkboxHandler}>
+              {isGeneralSubscription ? (
                 <Text variant="medium" fontWeight="light">
                   {item.name}
                 </Text>
-              </FocusableBox>
+              ) : (
+                <LinkBox>
+                  <Text variant="medium" fontWeight="light">
+                    {item.name}
+                  </Text>
+                </LinkBox>
+              )}
             </Data>
           </>
         ) : (
           <>
             <Data>
-              <FocusableBox component="button" onClick={checkboxHandler}>
-                <Stack space={1}>
-                  <Text variant="h5">
-                    {isGeneralSubscription ? loc.allCases : item.caseNumber}
-                  </Text>
-                  <Text variant="medium" fontWeight="light">
-                    {item.name}
-                  </Text>
-                </Stack>
-              </FocusableBox>
+              {isGeneralSubscription ? (
+                <Stacked />
+              ) : (
+                <LinkBox>
+                  <Stacked />
+                </LinkBox>
+              )}
             </Data>
           </>
         )}
-
-        <TData
-          borderColor={borderColor}
-          box={{
-            className: styles.tableRowRight,
-            background: tableRowBackgroundColor(idx),
-          }}
-          align="right"
-        >
-          {areaIsCaseAndIsNotGeneralSubscription && (
-            <FocusableBox
-              component={LinkV2}
-              href={`${loc.caseHref}${item.id}`}
-              target="_blank"
-              title={loc.infoText}
-            >
-              <Text variant="small" color="dark200" fontWeight="light">
-                {loc.linkText}
-              </Text>
-            </FocusableBox>
-          )}
-        </TData>
+        <Data isLastOrFirst>
+          <></>
+        </Data>
       </Row>
     </>
   )

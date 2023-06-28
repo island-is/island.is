@@ -34,6 +34,17 @@ export const vehiclesNavigation: PortalNavigationItem = {
       path: VehiclePaths.AssetsVehiclesHistory,
     },
     {
+      name: m.workMachines,
+      path: VehiclePaths.AssetsWorkMachines,
+      children: [
+        {
+          name: 'regNumber',
+          navHide: true,
+          path: VehiclePaths.AssetsWorkMachinesDetail,
+        },
+      ],
+    },
+    {
       name: m.intellectualProperty,
       path: VehiclePaths.AssetsIntellectualPropertiesOverview,
     },
