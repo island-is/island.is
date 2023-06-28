@@ -177,6 +177,24 @@ export const serviceSetup = (services: {
         staging: 'https://samradapi-test.devland.is',
         prod: 'https://samradapi.island.is',
       },
+      NATIONAL_REGISTRY_B2C_CLIENT_ID: {
+        dev: 'b464afdd-056b-406d-b650-6d41733cfeb7',
+        staging: 'ca128c23-b43c-443d-bade-ec5a146a933f',
+        prod: '2304d7ca-7ed3-4188-8b6d-e1b7e0e3df7f',
+      },
+      NATIONAL_REGISTRY_B2C_ENDPOINT: {
+        dev:
+          'https://skraidentitydev.b2clogin.com/skraidentitydev.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token',
+        staging:
+          'https://skraidentitydev.b2clogin.com/skraidentitystaging.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token',
+        prod:
+          'https://skraidentity.b2clogin.com/skraidentity.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token',
+      },
+      NATIONAL_REGISTRY_B2C_SCOPE: {
+        dev: 'https://skraidentitydev.onmicrosoft.com/midlun/.default',
+        staging: 'https://skraidentitystaging.onmicrosoft.com/midlun/.default',
+        prod: 'https://skraidentity.onmicrosoft.com/midlun/.default',
+      },
       NO_UPDATE_NOTIFIER: 'true',
       FISKISTOFA_ZENTER_CLIENT_ID: '1114',
       SOFFIA_SOAP_URL: {
@@ -290,12 +308,8 @@ export const serviceSetup = (services: {
       FISKISTOFA_POWERBI_CLIENT_SECRET:
         '/k8s/api/FISKISTOFA_POWERBI_CLIENT_SECRET',
       FISKISTOFA_POWERBI_TENANT_ID: '/k8s/api/FISKISTOFA_POWERBI_TENANT_ID',
-      NATIONAL_REGISTRY_B2C_CLIENT_ID:
-        '/k8s/api/NATIONAL_REGISTRY_B2C_CLIENT_ID',
       NATIONAL_REGISTRY_B2C_CLIENT_SECRET:
         '/k8s/api/NATIONAL_REGISTRY_B2C_CLIENT_SECRET',
-      NATIONAL_REGISTRY_B2C_SCOPE: '/k8s/api/NATIONAL_REGISTRY_B2C_SCOPE',
-      NATIONAL_REGISTRY_B2C_ENDPOINT: '/k8s/api/NATIONAL_REGISTRY_B2C_ENDPOINT',
       HSN_WEB_FORM_RESPONSE_URL: '/k8s/api/HSN_WEB_FORM_RESPONSE_URL',
       HSN_WEB_FORM_RESPONSE_SECRET: '/k8s/api/HSN_WEB_FORM_RESPONSE_SECRET',
       DIRECTORATE_OF_IMMIGRATION_WATSON_ASSISTANT_CHAT_PUBLIC_RSA_KEY:
