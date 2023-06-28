@@ -10,8 +10,8 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
-import { EstateRegistrant } from '@island.is/clients/syslumenn'
-import { Answers, EstateMember } from '../../types'
+import { EstateRegistrant, EstateMember } from '@island.is/clients/syslumenn'
+import { Answers } from '../../types'
 import { AdditionalEstateMember } from './AdditionalEstateMember'
 import { getValueViaPath } from '@island.is/application/core'
 import { InputController } from '@island.is/shared/form-fields'
@@ -55,11 +55,7 @@ export const EstateMembersRepeater: FC<FieldBaseProps<Answers>> = ({
 
   return (
     <Box>
-      {fields.reduce((
-        acc,
-        member: any /*</Box>GenericFormField<EstateMember>*/,
-        index,
-      ) => {
+      {fields.reduce((acc, member: GenericFormField<EstateMember>, index) => {
         if (member.nationalId === application.applicant) {
           const relation = getValueViaPath<string>(
             application.answers,
