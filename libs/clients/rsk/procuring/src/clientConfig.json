@@ -13,28 +13,13 @@
       "name": "Skatturinn",
       "url": "https://www.rsk.is/api/license"
     },
-    "x-category": [
-      "personal",
-      "official"
-    ],
+    "x-category": ["personal", "official"],
     "x-hide-api-catalogue": true,
     "x-links": [
-      [
-        "documentation",
-        "https://www.rsk.isrelationships/xroad/docs"
-      ],
-      [
-        "responsibleParty",
-        "mailto:xroad@skattur.is"
-      ],
-      [
-        "bugReport",
-        "https://www.rsk.isrelationships/bugs"
-      ],
-      [
-        "featureRequest",
-        "https://www.rsk.isrelationships/features"
-      ]
+      ["documentation", "https://www.rsk.isrelationships/xroad/docs"],
+      ["responsibleParty", "mailto:xroad@skattur.is"],
+      ["bugReport", "https://www.rsk.isrelationships/bugs"],
+      ["featureRequest", "https://www.rsk.isrelationships/features"]
     ]
   },
   "servers": [
@@ -101,9 +86,7 @@
         "description": "Information about your own relationships with legal entities.",
         "security": [
           {
-            "island.is-auth": [
-              "@rsk.is/prokura"
-            ]
+            "island.is-auth": ["@rsk.is/prokura"]
           }
         ],
         "parameters": [
@@ -217,9 +200,7 @@
         "description": "Search for relationships between an Legal Entities and Individuals",
         "security": [
           {
-            "island.is-auth": [
-              "@rsk.is/prokura:admin"
-            ]
+            "island.is-auth": ["@rsk.is/prokura:admin"]
           }
         ],
         "parameters": [
@@ -369,9 +350,7 @@
         "description": "Information about a single Leagal Entity relationships",
         "security": [
           {
-            "island.is-auth": [
-              "@rsk.is/prokura:admin"
-            ]
+            "island.is-auth": ["@rsk.is/prokura:admin"]
           }
         ],
         "parameters": [
@@ -497,9 +476,7 @@
         "description": "Search for relationships between an Individuals and Legal Entities",
         "security": [
           {
-            "island.is-auth": [
-              "@rsk.is/prokura:admin"
-            ]
+            "island.is-auth": ["@rsk.is/prokura:admin"]
           }
         ],
         "parameters": [
@@ -649,9 +626,7 @@
         "description": "Information about a single Indivduals relationships",
         "security": [
           {
-            "island.is-auth": [
-              "@rsk.is/prokura:admin"
-            ]
+            "island.is-auth": ["@rsk.is/prokura:admin"]
           }
         ],
         "parameters": [
@@ -775,10 +750,7 @@
     "schemas": {
       "linkItem": {
         "type": "object",
-        "required": [
-          "rel",
-          "href"
-        ],
+        "required": ["rel", "href"],
         "properties": {
           "rel": {
             "type": "string"
@@ -986,12 +958,7 @@
       },
       "categoriesItem": {
         "type": "object",
-        "required": [
-          "type",
-          "system",
-          "id",
-          "name"
-        ],
+        "required": ["type", "system", "id", "name"],
         "properties": {
           "type": {
             "type": "string"
@@ -1009,10 +976,7 @@
       },
       "vatItem": {
         "type": "object",
-        "required": [
-          "vatId",
-          "created"
-        ],
+        "required": ["vatId", "created"],
         "properties": {
           "vatId": {
             "type": "string"
@@ -1062,12 +1026,7 @@
       },
       "legalentity": {
         "type": "object",
-        "required": [
-          "nationalId",
-          "name",
-          "created",
-          "stada"
-        ],
+        "required": ["nationalId", "name", "created", "stada"],
         "properties": {
           "$.id": {
             "type": "string"
@@ -1135,10 +1094,7 @@
             }
           ]
         },
-        "required": [
-          "nationalId",
-          "name"
-        ],
+        "required": ["nationalId", "name"],
         "properties": {
           "nationalId": {
             "type": "string",
@@ -1165,11 +1121,7 @@
           "publisherWebsite": "https://www.rsk.is",
           "publisherEmail": "api@rsk.is"
         },
-        "required": [
-          "service",
-          "version",
-          "environment"
-        ],
+        "required": ["service", "version", "environment"],
         "properties": {
           "service": {
             "type": "string"
@@ -1290,11 +1242,7 @@
           "detail": "Description of error",
           "instance": "/uri"
         },
-        "required": [
-          "type",
-          "title",
-          "status"
-        ],
+        "required": ["type", "title", "status"],
         "properties": {
           "type": {
             "type": "string"
