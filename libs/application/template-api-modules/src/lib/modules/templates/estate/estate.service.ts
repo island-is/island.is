@@ -28,6 +28,8 @@ import {
 } from './types/attachments'
 import AmazonS3Uri from 'amazon-s3-uri'
 import { S3 } from 'aws-sdk'
+import kennitala from 'kennitala'
+import { EstateTypes } from './consts'
 
 type EstateSchema = zinfer<typeof estateSchema>
 
@@ -42,11 +44,13 @@ export class EstateTemplateService extends BaseTemplateApiService {
   async estateProvider({
     application,
   }: TemplateApiModuleActionProps): Promise<boolean> {
-    const applicationData: any =
-      application.externalData?.syslumennOnEntry?.data
+    const applicationData = (application.externalData?.syslumennOnEntry
+      ?.data as { estate: EstateInfo }).estate
+
+    const applicationAnswers = (application.answers as unknown) as EstateSchema
     if (
-      !applicationData?.estate?.caseNumber?.length ||
-      applicationData.estate?.caseNumber.length === 0
+      !applicationData?.caseNumber?.length ||
+      applicationData?.caseNumber.length === 0
     ) {
       throw new TemplateApiError(
         {
@@ -56,6 +60,31 @@ export class EstateTemplateService extends BaseTemplateApiService {
         400,
       )
     }
+
+    const youngheirs = applicationData.estateMembers.filter(
+      (heir) => kennitala.info(heir.nationalId).age < 18,
+    )
+    // Requirements:
+    //   Flag if any heir is under 18 years old without an advocate/defender
+    //   Unless official division of estate is taking place, then the incoming data need not be validated
+    if (youngheirs.length > 0) {
+      if (youngheirs.some((heir) => !heir.advocate)) {
+        if (
+          applicationAnswers.selectedEstate === EstateTypes.officialDivision
+        ) {
+          return true
+        }
+        throw new TemplateApiError(
+          {
+            title:
+              coreErrorMessages.errorDataProviderEstateHeirsWithoutAdvocate,
+            summary: coreErrorMessages.drivingLicenseNoTeachingRightsSummary,
+          },
+          400,
+        )
+      }
+    }
+
     return true
   }
 
@@ -77,7 +106,8 @@ export class EstateTemplateService extends BaseTemplateApiService {
     let estateResponse: EstateInfo
     if (
       application.applicant.startsWith('010130') &&
-      application.applicant.endsWith('2399')
+      (application.applicant.endsWith('2399') ||
+        application.applicant.endsWith('7789'))
     ) {
       estateResponse = {
         addressOfDeceased: 'Gerviheimili 123, 600 Feneyjar',
@@ -144,6 +174,31 @@ export class EstateTemplateService extends BaseTemplateApiService {
         nameOfDeceased: 'Lizzy B. Gone',
         nationalIdOfDeceased: '0101301234',
         districtCommissionerHasWill: true,
+      }
+
+      const fakeAdvocate = {
+        name: 'Gervimaður Evrópa',
+        address: 'Gerviheimili 123, 600 Feneyjar',
+        nationalId: '0101302719',
+        email: 'evropa@gervi.com',
+      }
+
+      const fakeChild = {
+        name: 'Gervimaður Undir 18 án málsvara',
+        relation: 'Barn',
+        // This kennitala is for Gervimaður Ísak Miri ÞÍ Jarrah
+        // This test will stop serving its purpose on the 24th of September 2034
+        // eslint-disable-next-line local-rules/disallow-kennitalas
+        nationalId: '2409151460',
+      }
+
+      if (application.applicant.endsWith('7789')) {
+        estateResponse.estateMembers.push(fakeChild)
+      } else {
+        estateResponse.estateMembers.push({
+          ...fakeChild,
+          advocate: fakeAdvocate,
+        })
       }
     } else {
       estateResponse = (
