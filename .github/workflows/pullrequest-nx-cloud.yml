@@ -75,6 +75,8 @@ jobs:
           echo "BASE=$NX_BASE" >> $GITHUB_ENV
           echo "HEAD=$NX_HEAD" >> $GITHUB_ENV
           echo "NX_BRANCH=${GITHUB_REF##*/}" >> $GITHUB_ENV
+          echo "[DEBUG] NX_BRANCH_THEM: ${GITHUB_REF##*/}"
+          echo "[DEBUG] NX_BRANCH_US: $(git rev-parse --abbrev-ref HEAD)"
       - uses: actions/setup-node@v3
         with:
           node-version: '18'
