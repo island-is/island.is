@@ -23,6 +23,13 @@
       "options": {
         "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/service-portal/assets/src/{lib,components,screens}/**/*.{js,ts,tsx}'"
       }
+    },
+    "schemas/codegen": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "output": "libs/service-portal/assets/src/**/*.generated.ts",
+        "command": "graphql-codegen --config libs/service-portal/assets/codegen.yml"
+      }
     }
   },
   "tags": ["lib:portals-mypages", "scope:portals-mypages"]

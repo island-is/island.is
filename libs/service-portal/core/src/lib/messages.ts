@@ -218,6 +218,10 @@ export const m = defineMessages({
     id: 'service.portal:fetching',
     defaultMessage: 'Sæki',
   },
+  assets: {
+    id: 'service.portal:assets',
+    defaultMessage: 'Eignir',
+  },
   realEstate: {
     id: 'service.portal:real-estate',
     defaultMessage: 'Fasteignir',

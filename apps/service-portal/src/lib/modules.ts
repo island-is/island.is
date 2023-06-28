@@ -12,7 +12,7 @@ import { petitionsModule } from '@island.is/service-portal/petitions'
 import { informationModule } from '@island.is/service-portal/information'
 import { licensesModule } from '@island.is/service-portal/licenses'
 import { personalInformationModule } from '@island.is/service-portal/settings/personal-information'
-import { transportsModule } from '@island.is/service-portal/transports'
+import { airDiscountModule } from '@island.is/service-portal/air-discount'
 import { delegationsModule } from '@island.is/portals/shared-modules/delegations'
 import { healthModule } from '@island.is/service-portal/health'
 import { indexModule } from '../screens/Dashboard/module'
@@ -36,7 +36,7 @@ export const modules: PortalModule[] = [
   informationModule,
   personalInformationModule,
   petitionsModule,
-  transportsModule,
+  airDiscountModule,
   licensesModule,
   sessionsModule,
   healthModule,
