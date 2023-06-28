@@ -190,6 +190,11 @@ export const GET_ORGANIZATION_PAGE_QUERY = gql`
         title
         slug
       }
+      secondaryNewsTags {
+        id
+        title
+        slug
+      }
       featuredImage {
         url
         title

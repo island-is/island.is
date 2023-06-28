@@ -219,6 +219,7 @@
   - [User Profile](libs/clients/user-profile/README.md)
   - [Driving License](libs/clients/vehicles/README.md)
   - [VMST](libs/clients/vmst/README.md)
+  - [Work Machines](libs/clients/work-machines/README.md)
   - [Zendesk](libs/clients/zendesk/README.md)
 - [CMS](libs/cms/README.md)
 - [CMS Translations](libs/cms-translations/README.md)

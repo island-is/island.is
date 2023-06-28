@@ -49,7 +49,7 @@ export const m = defineMessages({
     description: 'Info from drivers license subtitle',
   },
   dataCollectionUserProfileTitle: {
-    id: 'cr.application:dataCollectionUserProfileTitle',
+    id: 'dld.application:dataCollectionUserProfileTitle',
     defaultMessage: 'Mínar síður á Ísland.is/stillingar',
     description: 'Your user profile information',
   },

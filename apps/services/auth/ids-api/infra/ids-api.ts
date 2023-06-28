@@ -68,6 +68,11 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-ids-api'> => {
         dev: '10001',
         staging: '6503760649',
       },
+      NOVA_ACCEPT_UNAUTHORIZED: {
+        dev: 'true',
+        staging: 'false',
+        prod: 'false',
+      },
     })
     .secrets({
       IDENTITY_SERVER_CLIENT_SECRET:
