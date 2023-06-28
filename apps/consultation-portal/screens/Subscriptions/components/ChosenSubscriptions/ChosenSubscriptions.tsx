@@ -65,7 +65,6 @@ const ChosenSubscriptions = ({
           {subscribeToAllChecked && (
             <SubscriptionCard
               isGeneralSubscription
-              idx={0}
               item={subscribeToAllChecked}
               subscriptionArray={subscriptionArray}
               setSubscriptionArray={setSubscriptionArray}
