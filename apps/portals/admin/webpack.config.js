@@ -4,12 +4,8 @@ const { composePlugins, withNx } = require('@nx/webpack')
 const { withReact } = require('@nx/react')
 
 module.exports = composePlugins(
-  withNx({
-    nx: {
-      svgr: true,
-    },
-  }),
-  withReact({ svgr: true }),
+  withNx(),
+  withReact(),
   nrwlConfig,
   (config, { options, context }) => {
     // App specific config

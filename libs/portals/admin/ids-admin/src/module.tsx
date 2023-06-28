@@ -29,15 +29,15 @@ const ClientScreen = lazy(() => import('./screens/Client/Client'))
 const CreateClient = lazy(() =>
   import('./screens/Client/CreateClient/CreateClient'),
 )
+const PublishClient = lazy(() =>
+  import('./screens/Client/PublishClient/PublishClient'),
+)
 
 // Permissions
 const Permissions = lazy(() => import('./screens/Permissions/Permissions'))
 const Permission = lazy(() => import('./screens/Permission/Permission'))
 const CreatePermission = lazy(() =>
   import('./screens/Permission/CreatePermission/CreatePermission'),
-)
-const PublishClient = lazy(() =>
-  import('./screens/Client/PublishClient/PublishClient'),
 )
 
 const allowedScopes: string[] = [
