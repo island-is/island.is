@@ -64,9 +64,9 @@ export class EstateTemplateService extends BaseTemplateApiService {
     const youngheirs = applicationData.estateMembers.filter(
       (heir) => kennitala.info(heir.nationalId).age < 18,
     )
-// Requirements:
-//   Flag if any heir is under 18 years old without an advocate/defender
-//   Unless official division of estate is taking place, then the incoming data need not be validated
+    // Requirements:
+    //   Flag if any heir is under 18 years old without an advocate/defender
+    //   Unless official division of estate is taking place, then the incoming data need not be validated
     if (youngheirs.length > 0) {
       if (youngheirs.some((heir) => !heir.advocate)) {
         if (
