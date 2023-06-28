@@ -68,6 +68,9 @@ export class Organization {
 
   @Field({ nullable: true })
   trackingDomain?: string
+
+  @Field({ nullable: true })
+  nameInVacancyList?: string
 }
 
 export const mapOrganization = ({
@@ -99,5 +102,6 @@ export const mapOrganization = ({
     showsUpOnTheOrganizationsPage: fields.showsUpOnTheOrganizationsPage ?? true,
     hasALandingPage: fields.hasALandingPage ?? true,
     trackingDomain: fields.trackingDomain ?? '',
+    nameInVacancyList: fields.nameInVacancyList,
   }
 }

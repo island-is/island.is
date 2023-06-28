@@ -1,7 +1,9 @@
 {
   "home": {
     "seo": {
-      "title": "Öll mál"
+      "title": "Öll mál",
+      "description": "Samráðsgátt greiðir leið hagsmunaaðila, almennings og félagasamtaka að opinberum samráðsferlum sem mögulegt er að taka þátt í.",
+      "keywords": "Opinbert samráð, lagasetning, frumvarp, reglugerð, stefna, umsögn, umsagnir"
     },
     "card": {
       "eyebrowText": "Umsagnir"

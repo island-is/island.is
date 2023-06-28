@@ -1,8 +1,9 @@
 {
   "advices": {
     "seo": {
-      "title": "umsagnir",
-      "url": "/umsagnir"
+      "title": "Mínar umsagnir",
+      "url": "/umsagnir",
+      "description": "Mínar umsagnir í Samráðsgátt"
     },
     "breadcrumbs": [
       {

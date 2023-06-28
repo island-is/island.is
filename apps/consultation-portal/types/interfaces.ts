@@ -142,6 +142,8 @@ export interface SEOProps {
   title: string
   url?: string
   image?: string
+  description?: string
+  keywords?: string
 }
 
 export interface FilterGroups {

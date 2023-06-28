@@ -3,6 +3,8 @@ import {
   buildCustomField,
   buildMultiField,
   getValueViaPath,
+  buildMessageWithLinkButtonField,
+  coreMessages,
 } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
 import { m } from '../lib/messages'
@@ -35,6 +37,13 @@ export const done: Form = buildForm({
           id: 'doneImage',
           component: 'DoneImage',
           title: '',
+        }),
+        buildMessageWithLinkButtonField({
+          id: 'goToServicePortal',
+          title: '',
+          url: '/minarsidur/umsoknir',
+          buttonTitle: coreMessages.openServicePortalButtonTitle,
+          message: coreMessages.openServicePortalMessageText,
         }),
       ],
     }),

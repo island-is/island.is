@@ -10,12 +10,17 @@ import {
   defineTemplateApi,
   DefaultEvents,
 } from '@island.is/application/types'
-import { FeatureFlagClient, Features } from '@island.is/feature-flags'
-import { DrivingLearnersPermitTemplateEvent, Roles, States } from './constants'
-import { ApiActions, FakeDataFeature } from '../shared/constants'
+import { FeatureFlagClient } from '@island.is/feature-flags'
+import {
+  ApiActions,
+  DrivingLearnersPermitTemplateEvent,
+  FakeDataFeature,
+  Roles,
+  States,
+} from './constants'
 import { m } from './messages'
 import { dataSchema } from './dataSchema'
-import { truthyFeatureFromClient } from '../shared/utils'
+import { truthyFeatureFromClient } from './utils'
 
 const DrivingLearnersPermitTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -26,7 +31,6 @@ const DrivingLearnersPermitTemplate: ApplicationTemplate<
   name: m.name,
   institution: m.institutionName,
   dataSchema: dataSchema,
-  featureFlag: Features.drivingLearnersPermit,
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {
@@ -53,7 +57,13 @@ const DrivingLearnersPermitTemplate: ApplicationTemplate<
                   allowFakeData,
                 })
               },
-              api: [CurrentLicenseApi],
+              api: [
+                CurrentLicenseApi.configure({
+                  params: {
+                    useLegacyVersion: true,
+                  },
+                }),
+              ],
               actions: [
                 {
                   event: DefaultEvents.SUBMIT,

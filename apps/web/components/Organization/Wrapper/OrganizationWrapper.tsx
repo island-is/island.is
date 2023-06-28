@@ -85,6 +85,10 @@ import {
   IcelandicNaturalDisasterInsuranceHeader,
   IcelandicNaturalDisasterInsuranceFooter,
 } from './Themes/IcelandicNaturalDisasterInsuranceTheme'
+import {
+  TransportAuthorityFooter,
+  TransportAuthorityHeader,
+} from './Themes/TransportAuthorityTheme'
 
 import * as styles from './OrganizationWrapper.css'
 
@@ -125,6 +129,7 @@ export const lightThemes = [
   'hsa',
   'haskolanam',
   'nti',
+  'samgongustofa',
 ]
 export const footerEnabled = [
   'syslumenn',
@@ -169,6 +174,9 @@ export const footerEnabled = [
   'hsa',
 
   'nti',
+
+  'samgongustofa',
+  'transport-authority',
 ]
 
 export const getThemeConfig = (
@@ -267,6 +275,8 @@ export const OrganizationHeader: React.FC<HeaderProps> = ({
           organizationPage={organizationPage}
         />
       )
+    case 'samgongustofa':
+      return <TransportAuthorityHeader organizationPage={organizationPage} />
     default:
       return <DefaultHeader organizationPage={organizationPage} />
   }
@@ -526,6 +536,16 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
         <IcelandicNaturalDisasterInsuranceFooter
           footerItems={organization.footerItems}
           namespace={namespace}
+        />
+      )
+      break
+    case 'samgongustofa':
+    case 'transport-authority':
+      OrganizationFooterComponent = (
+        <TransportAuthorityFooter
+          title={organization.title}
+          footerItems={organization.footerItems}
+          logo={organization.logo?.url}
         />
       )
       break

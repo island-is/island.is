@@ -27,6 +27,7 @@ import {
   TemporaryEventLicencesList,
   BrokersList,
   SliceDropdown,
+  PublicVehicleSearch,
 } from '@island.is/web/components'
 import {
   PowerBiSlice as PowerBiSliceSchema,
@@ -63,6 +64,8 @@ export const webRenderConnectedComponent = (slice) => {
       return <TemporaryEventLicencesList slice={slice} />
     case 'Verðbréfamiðlarar/Brokers':
       return <BrokersList slice={slice} />
+    case 'PublicVehicleSearch':
+      return <PublicVehicleSearch slice={slice} />
     default:
       break
   }
