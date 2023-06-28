@@ -10,4 +10,7 @@ export class CreateExplicitDiscountCodeInput {
 
   @Field((_) => String)
   comment!: string
+
+  @Field((_) => Int)
+  numberOfDaysUntilExpiration!: number
 }

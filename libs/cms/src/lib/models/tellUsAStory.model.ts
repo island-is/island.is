@@ -1,6 +1,7 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
-import { ITellUsAStory } from '../generated/contentfulTypes'
+import { CacheField } from '@island.is/nest/graphql'
 import { SystemMetadata } from '@island.is/shared/types'
+import { ITellUsAStory } from '../generated/contentfulTypes'
 import { Html, mapHtml } from './html.model'
 import { Image, mapImage } from './image.model'
 
@@ -12,10 +13,10 @@ export class TellUsAStory {
   @Field()
   introTitle!: string
 
-  @Field(() => Html, { nullable: true })
+  @CacheField(() => Html, { nullable: true })
   introDescription!: Html
 
-  @Field(() => Image, { nullable: true })
+  @CacheField(() => Image, { nullable: true })
   introImage?: Image | null
 
   @Field()
@@ -63,7 +64,7 @@ export class TellUsAStory {
   @Field()
   thirdSectionTitle!: string
 
-  @Field(() => Html, { nullable: true })
+  @CacheField(() => Html, { nullable: true })
   instructionsDescription!: Html
 
   @Field()
@@ -99,13 +100,13 @@ export class TellUsAStory {
   @Field()
   SuccessMessageTitle!: string
 
-  @Field(() => Html, { nullable: true })
+  @CacheField(() => Html, { nullable: true })
   successMessage!: Html
 
   @Field()
   errorMessageTitle!: string
 
-  @Field(() => Html, { nullable: true })
+  @CacheField(() => Html, { nullable: true })
   errorMessage!: Html
 }
 

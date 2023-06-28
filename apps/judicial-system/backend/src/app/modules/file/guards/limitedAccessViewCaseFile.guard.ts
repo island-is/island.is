@@ -7,13 +7,13 @@ import {
 } from '@nestjs/common'
 
 import {
-  completedCaseStates,
+  CaseFileCategory,
   User,
   UserRole,
-  CaseFileCategory,
-  restrictionCases,
-  investigationCases,
+  completedCaseStates,
   indictmentCases,
+  investigationCases,
+  restrictionCases,
 } from '@island.is/judicial-system/types'
 
 import { Case } from '../../case'
@@ -35,7 +35,6 @@ export class LimitedAccessViewCaseFileGuard implements CanActivate {
     if (!theCase) {
       throw new InternalServerErrorException('Missing case')
     }
-
     const caseFile: CaseFile = request.caseFile
 
     if (!caseFile) {
@@ -56,6 +55,7 @@ export class LimitedAccessViewCaseFileGuard implements CanActivate {
           CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE,
           CaseFileCategory.DEFENDANT_APPEAL_STATEMENT,
           CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE,
+          CaseFileCategory.APPEAL_RULING,
         ].includes(caseFile.category)
       ) {
         return true
@@ -63,7 +63,15 @@ export class LimitedAccessViewCaseFileGuard implements CanActivate {
 
       if (
         indictmentCases.includes(theCase.type) &&
-        caseFile.category === CaseFileCategory.RULING
+        [
+          CaseFileCategory.COURT_RECORD,
+          CaseFileCategory.RULING,
+          CaseFileCategory.COVER_LETTER,
+          CaseFileCategory.INDICTMENT,
+          CaseFileCategory.CRIMINAL_RECORD,
+          CaseFileCategory.COST_BREAKDOWN,
+          CaseFileCategory.CASE_FILE,
+        ].includes(caseFile.category)
       ) {
         return true
       }

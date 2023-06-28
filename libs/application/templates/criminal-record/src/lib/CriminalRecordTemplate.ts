@@ -11,6 +11,8 @@ import {
 } from '@island.is/application/types'
 import {
   EphemeralStateLifeCycle,
+  coreHistoryMessages,
+  corePendingActionMessages,
   pruneAfterDays,
 } from '@island.is/application/core'
 import { Events, States, Roles } from './constants'
@@ -50,6 +52,12 @@ const template: ApplicationTemplate<
               label: m.actionCardDraft,
               variant: 'blue',
             },
+            historyLogs: [
+              {
+                logMessage: coreHistoryMessages.paymentStarted,
+                onEvent: DefaultEvents.SUBMIT,
+              },
+            ],
           },
           progress: 0.25,
           lifecycle: EphemeralStateLifeCycle,
@@ -62,7 +70,7 @@ const template: ApplicationTemplate<
                 ),
               actions: [
                 {
-                  event: DefaultEvents.PAYMENT,
+                  event: DefaultEvents.SUBMIT,
                   name: 'Staðfesta',
                   type: 'primary',
                 },
@@ -78,9 +86,6 @@ const template: ApplicationTemplate<
           ],
         },
         on: {
-          [DefaultEvents.PAYMENT]: {
-            target: States.PAYMENT,
-          },
           [DefaultEvents.SUBMIT]: { target: States.PAYMENT },
         },
       },
@@ -93,6 +98,21 @@ const template: ApplicationTemplate<
               label: m.actionCardPayment,
               variant: 'red',
             },
+            pendingAction: {
+              title: corePendingActionMessages.paymentPendingTitle,
+              content: corePendingActionMessages.paymentPendingDescription,
+              displayStatus: 'warning',
+            },
+            historyLogs: [
+              {
+                logMessage: coreHistoryMessages.paymentAccepted,
+                onEvent: DefaultEvents.SUBMIT,
+              },
+              {
+                logMessage: coreHistoryMessages.paymentCancelled,
+                onEvent: DefaultEvents.ABORT,
+              },
+            ],
           },
           progress: 0.8,
           lifecycle: pruneAfterDays(1 / 24),
@@ -117,7 +137,7 @@ const template: ApplicationTemplate<
         },
         on: {
           [DefaultEvents.SUBMIT]: { target: States.COMPLETED },
-          [DefaultEvents.PAYMENT]: { target: States.DRAFT },
+          [DefaultEvents.ABORT]: { target: States.DRAFT },
         },
       },
       [States.COMPLETED]: {
@@ -130,6 +150,10 @@ const template: ApplicationTemplate<
             tag: {
               label: m.actionCardDone,
               variant: 'blueberry',
+            },
+            pendingAction: {
+              title: m.pendingActionApplicationCompletedTitle,
+              displayStatus: 'success',
             },
           },
           onEntry: defineTemplateApi({

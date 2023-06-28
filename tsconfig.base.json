@@ -122,6 +122,9 @@
       "@island.is/api/domains/hello-world": [
         "libs/api/domains/hello-world/src/index.ts"
       ],
+      "@island.is/api/domains/icelandic-government-institution-vacancies": [
+        "libs/api/domains/icelandic-government-institution-vacancies/src/index.ts"
+      ],
       "@island.is/api/domains/icelandic-names-registry": [
         "libs/api/domains/icelandic-names-registry/src/index.ts"
       ],
@@ -163,6 +166,9 @@
       ],
       "@island.is/api/domains/regulations-admin": [
         "libs/api/domains/regulations-admin/src/index.ts"
+      ],
+      "@island.is/api/domains/rights-portal": [
+        "libs/api/domains/rights-portal/src/index.ts"
       ],
       "@island.is/api/domains/sessions": [
         "libs/api/domains/sessions/src/index.ts"
@@ -233,6 +239,9 @@
       ],
       "@island.is/application/templates/children-residence-change": [
         "libs/application/templates/family-matters/children-residence-change/src/index.ts"
+      ],
+      "@island.is/application/templates/children-residence-change-v2": [
+        "libs/application/templates/family-matters/children-residence-change-v2/src/index.ts"
       ],
       "@island.is/application/templates/complaints-to-althingi-ombudsman": [
         "libs/application/templates/complaints-to-althingi-ombudsman/src/index.ts"
@@ -473,8 +482,14 @@
         "libs/clients/fishing-license/src/index.ts"
       ],
       "@island.is/clients/fiskistofa": ["libs/clients/fiskistofa/src/index.ts"],
-      "@island.is/clients/health-insurance-v2": [
-        "libs/clients/health-insurance-v2/src/index.ts"
+      "@island.is/clients/icelandic-government-institution-vacancies": [
+        "libs/clients/icelandic-government-institution-vacancies/src/index.ts"
+      ],
+      "@island.is/clients/icelandic-health-insurance/health-insurance": [
+        "libs/clients/icelandic-health-insurance/health-insurance/src/index.ts"
+      ],
+      "@island.is/clients/icelandic-health-insurance/rights-portal": [
+        "libs/clients/icelandic-health-insurance/rights-portal/src/index.ts"
       ],
       "@island.is/clients/identity": ["libs/clients/identity/src/index.ts"],
       "@island.is/clients/islykill": ["libs/clients/islykill/src/index.ts"],
@@ -651,6 +666,7 @@
       "@island.is/nest/core": ["libs/nest/core/src/index.ts"],
       "@island.is/nest/dataloader": ["libs/nest/dataloader/src/index.ts"],
       "@island.is/nest/feature-flags": ["libs/nest/feature-flags/src/index.ts"],
+      "@island.is/nest/graphql": ["libs/nest/graphql/src/index.ts"],
       "@island.is/nest/pagination": ["libs/nest/pagination/src/index.ts"],
       "@island.is/nest/problem": ["libs/nest/problem/src/index.ts"],
       "@island.is/nest/sequelize": ["libs/nest/sequelize/src/index.ts"],
@@ -674,8 +690,14 @@
       "@island.is/portals/admin/ids-admin": [
         "libs/portals/admin/ids-admin/src/index.ts"
       ],
+      "@island.is/portals/admin/petition": [
+        "libs/portals/admin/petition/src/index.ts"
+      ],
       "@island.is/portals/admin/regulations-admin": [
         "libs/portals/admin/regulations-admin/src/index.ts"
+      ],
+      "@island.is/portals/admin/service-desk": [
+        "libs/portals/admin/service-desk/src/index.ts"
       ],
       "@island.is/portals/core": ["libs/portals/core/src/index.ts"],
       "@island.is/portals/shared-modules/delegations": [

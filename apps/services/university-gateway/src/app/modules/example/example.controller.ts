@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post } from '@nestjs/common'
+import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common'
 import { ExampleService } from './example.service'
 import {
   ApiBody,
@@ -14,9 +14,10 @@ import {
   ExampleApplicationResponse,
 } from './model/exampleApplicationStatus'
 import { CreateApplicationDto } from './dto'
+import { UpdateApplicationDto } from './dto/updateApplicationDto'
 
 @ApiTags('Example endpoints for universities')
-@Controller()
+@Controller({ path: 'example' })
 export class ExampleController {
   constructor(private readonly exampleService: ExampleService) {}
 
@@ -67,5 +68,28 @@ export class ExampleController {
     throw Error('Dummy endpoint')
   }
 
-  // TODOx vantar PATCH status
+  @Patch('applications/:id')
+  @ApiParam({
+    name: 'id',
+    required: true,
+    allowEmptyValue: false,
+    description: 'Application ID',
+  })
+  @ApiBody({
+    type: UpdateApplicationDto,
+  })
+  @ApiOkResponse({
+    type: String,
+    description: 'TBD',
+  })
+  @ApiOperation({
+    summary:
+      'Update application status. Used when student accepts/rejects/cancels.',
+  })
+  async updateApplication(
+    @Param('id') id: string,
+    @Body() applicationDto: UpdateApplicationDto,
+  ): Promise<string> {
+    throw Error('Dummy endpoint')
+  }
 }

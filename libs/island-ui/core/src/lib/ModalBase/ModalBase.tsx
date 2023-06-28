@@ -8,6 +8,7 @@ import React, {
   useEffect,
 } from 'react'
 import cn from 'classnames'
+import { useUpdateEffect } from 'react-use'
 import {
   useDialogState,
   Dialog as BaseDialog,
@@ -141,7 +142,7 @@ export const ModalBase: FC<ModalBaseProps> = ({
     }
   }, [isVisible])
 
-  useEffect(() => {
+  useUpdateEffect(() => {
     onVisibilityChange && onVisibilityChange(modal.visible)
   }, [modal.visible])
 

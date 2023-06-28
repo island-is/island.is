@@ -1,5 +1,5 @@
 import { BrowserContext, expect, test } from '@playwright/test'
-import { urls } from '../../../../support/urls'
+import { icelandicAndNoPopupUrl, urls } from '../../../../support/urls'
 import { session } from '../../../../support/session'
 import { helpers } from '../../../../support/locator-helpers'
 
@@ -19,29 +19,30 @@ test.describe('Service portal', () => {
   test.afterAll(async () => {
     await context.close()
   })
+  const servicePortalHome = icelandicAndNoPopupUrl('/minarsidur')
   test('should have clickable navigation bar', async () => {
     const page = await context.newPage()
     const { findByRole } = helpers(page)
-    await page.goto('/minarsidur')
+    await page.goto(icelandicAndNoPopupUrl(servicePortalHome))
     await expect(findByRole('link', 'Pósthólf')).toBeVisible()
   })
   test('should have user Gervimaður Afríka logged in', async () => {
     const page = await context.newPage()
     const { findByRole } = helpers(page)
-    await page.goto('/minarsidur')
+    await page.goto(icelandicAndNoPopupUrl(servicePortalHome))
     await expect(findByRole('heading', 'Gervimaður Afríka')).toBeVisible()
   })
   test('should have Pósthólf', async () => {
     const page = await context.newPage()
     const { findByRole } = helpers(page)
-    await page.goto('/minarsidur')
+    await page.goto(icelandicAndNoPopupUrl(servicePortalHome))
     await findByRole('link', 'Pósthólf').click()
     await expect(page.locator('text=Hér getur þú fundið skjöl')).toBeVisible()
   })
   test('should change language', async () => {
     const page = await context.newPage()
     const { findByTestId } = helpers(page)
-    await page.goto('/minarsidur')
+    await page.goto(icelandicAndNoPopupUrl(servicePortalHome))
 
     const languageButton = findByTestId('language-switcher-button')
     await languageButton.click()

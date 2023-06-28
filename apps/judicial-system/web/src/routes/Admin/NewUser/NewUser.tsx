@@ -36,7 +36,6 @@ export const NewUser: React.FC = () => {
   const router = useRouter()
 
   const {
-    courts,
     allCourts,
     prosecutorsOffices,
     prisonInstitutions,
@@ -78,7 +77,6 @@ export const NewUser: React.FC = () => {
         <PageHeader title={formatMessage(titles.admin.newUser)} />
         <UserForm
           user={user}
-          courts={courts}
           allCourts={allCourts}
           prosecutorsOffices={prosecutorsOffices}
           prisonInstitutions={prisonInstitutions}

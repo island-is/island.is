@@ -1,6 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 import { DocumentInfoResult } from './documentInfoResult.model'
 import { CaseStakeholderResult } from './caseStakeholderResult.model'
+import { RelatedCaseResult } from './relatedCaseResult.model'
 
 @ObjectType('ConsultationPortalCaseResult')
 export class CaseResult {
@@ -67,6 +68,9 @@ export class CaseResult {
   @Field(() => String, { nullable: true })
   advicePublishTypeName?: string | null
 
+  @Field(() => Boolean, { nullable: true })
+  allowUsersToSendPrivateAdvices?: boolean
+
   @Field(() => Date, { nullable: true })
   created?: Date
 
@@ -84,4 +88,7 @@ export class CaseResult {
 
   @Field(() => [DocumentInfoResult], { nullable: true })
   additionalDocuments?: DocumentInfoResult[] | null
+
+  @Field(() => [RelatedCaseResult], { nullable: true })
+  relatedCases?: RelatedCaseResult[] | null
 }

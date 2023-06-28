@@ -76,6 +76,7 @@ function Consent() {
                   id={client.clientId}
                   key={client.clientId}
                   labelUse="h2"
+                  dataTestId="consent-accordion-card"
                   label={
                     <Box
                       display="flex"
@@ -99,11 +100,19 @@ function Consent() {
                       </Box>
                       <Box component="span">
                         {client.domain?.displayName ? (
-                          <Text variant="eyebrow" color="purple400">
+                          <Text
+                            variant="eyebrow"
+                            color="purple400"
+                            dataTestId="consent-accordion-display-name"
+                          >
                             {client.domain.displayName}
                           </Text>
                         ) : null}
-                        <Text as="span" variant="h4">
+                        <Text
+                          as="span"
+                          variant="h4"
+                          dataTestId="consent-accordion-title"
+                        >
                           {title}
                         </Text>
                       </Box>
@@ -271,7 +280,7 @@ function ConsentLine({
 
   return (
     <li>
-      <Box display="flex" paddingY={3}>
+      <Box display="flex" paddingY={3} dataTestId="consent-scope">
         <Box flexGrow={1}>
           <Text as="h4">{displayName}</Text>
           <Text variant="small">{description}</Text>

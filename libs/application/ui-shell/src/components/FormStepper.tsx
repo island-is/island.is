@@ -40,15 +40,6 @@ const FormStepper: FC<FormStepperProps> = ({
 }) => {
   const { formatMessage } = useLocale()
 
-  const progressTheme: Record<FormModes, FormStepperThemes> = {
-    [FormModes.NOT_STARTED]: FormStepperThemes.PURPLE,
-    [FormModes.DRAFT]: FormStepperThemes.PURPLE,
-    [FormModes.APPROVED]: FormStepperThemes.GREEN,
-    [FormModes.IN_PROGRESS]: FormStepperThemes.BLUE,
-    [FormModes.REJECTED]: FormStepperThemes.RED,
-    [FormModes.COMPLETED]: FormStepperThemes.GREEN,
-  }
-
   // Cannot infers type because of circular loop
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const formattedChildren = (child: SectionChildren): any => ({
@@ -107,7 +98,6 @@ const FormStepper: FC<FormStepperProps> = ({
 
   return (
     <CoreFormStepper
-      theme={progressTheme[mode]}
       formName={formatMessage(form.title)}
       formIcon={form.icon}
       sections={formattedSections}

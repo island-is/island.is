@@ -1,0 +1,25 @@
+{
+  "root": "libs/portals/admin/service-desk",
+  "sourceRoot": "libs/portals/admin/service-desk/src",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": [
+          "libs/portals/admin/service-desk/**/*.{ts,tsx,js,jsx}"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/portals/admin/service-desk"],
+      "options": {
+        "jestConfig": "libs/portals/admin/service-desk/jest.config.js",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": ["scope:portals-admin", "lib:portals-admin"]
+}

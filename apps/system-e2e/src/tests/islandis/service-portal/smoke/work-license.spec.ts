@@ -1,5 +1,5 @@
-import { test, BrowserContext, expect } from '@playwright/test'
-import { urls } from '../../../../support/urls'
+import { BrowserContext, expect, test } from '@playwright/test'
+import { icelandicAndNoPopupUrl, urls } from '../../../../support/urls'
 import { session } from '../../../../support/session'
 import { label } from '../../../../support/i18n'
 import { m } from '@island.is/service-portal/core/messages'
@@ -31,7 +31,7 @@ test.describe('Work licenses', () => {
 
     await test.step('Renders the page', async () => {
       // Arrange
-      await page.goto('/minarsidur/leyfisbref')
+      await page.goto(icelandicAndNoPopupUrl('/minarsidur/leyfisbref'))
       await page.waitForLoadState('networkidle')
 
       // Act

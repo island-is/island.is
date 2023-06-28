@@ -7,9 +7,16 @@ export const statement = defineMessages({
     description: 'Titill á greinargerðarskjá',
   },
   appealActorAndDate: {
-    id: 'judicial.system.core:appeal_actor_and_date',
-    defaultMessage: 'Kært af {actor} {date}',
+    id: 'judicial.system.core:appeal_actor_and_date_v2',
+    defaultMessage:
+      'Kært af {appealedByProsecutor, select, true {sækjanda} other {verjanda}} {date}',
     description: 'Texti sem sýnir hver kærði og hvenær',
+  },
+  appealActorInCourt: {
+    id: 'judicial.system.core:appeal_actor_in_court',
+    defaultMessage:
+      '{appealedByProsecutor, select, true {Sækjandi} other {Varnaraðili}} kærði í þinghaldi',
+    description: 'Texti sem sýnir hver kærði í þinghaldi',
   },
   uploadStatementTitle: {
     id: 'judicial.system.core:upload_statement_title',

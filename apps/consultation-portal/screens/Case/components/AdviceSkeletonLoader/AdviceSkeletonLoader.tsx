@@ -1,11 +1,11 @@
-import { SimpleCardSkeleton } from '../../../../components/Card'
+import { CardSkeleton } from '../../../../components'
 import { SkeletonLoader } from '@island.is/island-ui/core'
 
 export const CardSkeletonLoader = () => {
   return (
-    <SimpleCardSkeleton>
+    <CardSkeleton>
       <SkeletonLoader repeat={4} space={1} />
-    </SimpleCardSkeleton>
+    </CardSkeleton>
   )
 }
 export default CardSkeletonLoader

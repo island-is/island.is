@@ -1,0 +1,23 @@
+{
+  "about": {
+    "seo": {
+      "title": "Um samráðsgátt",
+      "url": "/um"
+    },
+    "breadcrumbs": [
+      {
+        "title": "Samráðsgátt",
+        "href": "/samradsgatt"
+      },
+      {
+        "title": "Um samráðsgátt"
+      }
+    ]
+  },
+  "aboutContent": {
+    "text": "Um samráðsgátt"
+  },
+  "tableOfContents": {
+    "title": "Efnisyfirlit"
+  }
+}

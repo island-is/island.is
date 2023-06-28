@@ -10,7 +10,6 @@ import {
   SessionArrangements,
   CourtDocument,
   CaseOrigin,
-  SubpoenaType,
   CaseType,
   CaseAppealState,
   UserRole,
@@ -282,10 +281,7 @@ export class Case implements TCase {
   readonly caseResentExplanation?: string
 
   @Field({ nullable: true })
-  readonly seenByDefender?: string
-
-  @Field(() => String, { nullable: true })
-  readonly subpoenaType?: SubpoenaType
+  readonly openedByDefender?: string
 
   @Field(() => Boolean, { nullable: true })
   readonly defendantWaivesRightToCounsel?: boolean

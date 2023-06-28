@@ -1,4 +1,5 @@
 const path = require('path')
+const { IgnorePlugin } = require('webpack')
 const withNx = require('@nrwl/next/plugins/with-nx')
 const { createVanillaExtractPlugin } = require('@vanilla-extract/next-plugin')
 const withVanillaExtract = createVanillaExtractPlugin()
@@ -58,6 +59,14 @@ module.exports = withNx(
             reportFilename: isServer
               ? '../analyze/server.html'
               : './analyze/client.html',
+          }),
+        )
+      }
+
+      if (!isServer) {
+        config.plugins.push(
+          new IgnorePlugin({
+            resourceRegExp: /^@island.is\/clients\/middlewares$/,
           }),
         )
       }

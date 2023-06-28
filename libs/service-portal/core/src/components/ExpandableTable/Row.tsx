@@ -22,7 +22,8 @@ interface Props {
   last?: boolean
   loading?: boolean
   error?: ApolloError
-  backgroundColor?: 'white' | 'default'
+  backgroundColor?: 'white' | 'default' | 'yellow'
+  forceBackgroundColor?: boolean
   extraChildrenPadding?: boolean
   showLine?: boolean
   onExpandCallback?: () => void
@@ -32,6 +33,7 @@ const ExpandableLine: FC<Props> = ({
   data,
   onExpandCallback,
   backgroundColor = 'default',
+  forceBackgroundColor = false,
   children,
   last,
   loading,
@@ -58,13 +60,18 @@ const ExpandableLine: FC<Props> = ({
     toggleExpand(!expanded)
   }
 
-  const fullClose = closed && !expanded
-  const color =
-    fullClose || loading
-      ? 'transparent'
-      : backgroundColor === 'default'
+  const getColor =
+    backgroundColor === 'default'
       ? 'blue100'
+      : backgroundColor === 'yellow'
+      ? 'yellow300'
       : 'transparent'
+  const fullClose = closed && !expanded
+  const color = forceBackgroundColor
+    ? getColor
+    : fullClose || loading
+    ? 'transparent'
+    : getColor
 
   const borderColor =
     fullClose || loading

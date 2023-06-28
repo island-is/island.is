@@ -1,16 +1,18 @@
 import { GridColumn, GridContainer, GridRow } from '@island.is/island-ui/core'
 import React from 'react'
-import Layout from '../../components/Layout/Layout'
-import BreadcrumbsWithMobileDivider from '../../components/BreadcrumbsWithMobileDivider/BreadcrumbsWithMobileDivider'
+import { Breadcrumbs, Layout } from '../../components'
 import { AboutContent, TableOfContents } from './components'
+import localization from './About.json'
 
 const AboutScreen: React.FC = () => {
+  const loc = localization['about']
+
   return (
-    <Layout seo={{ title: 'Um samráðsgátt', url: 'um' }}>
-      <BreadcrumbsWithMobileDivider
+    <Layout seo={{ title: loc.seo.title, url: loc.seo.url }}>
+      <Breadcrumbs
         items={[
-          { title: 'Samráðsgátt', href: '/samradsgatt' },
-          { title: 'Um samráðsgátt' },
+          { title: loc.breadcrumbs[0].title, href: loc.breadcrumbs[0].href },
+          { title: loc.breadcrumbs[1].title },
         ]}
       />
       <GridContainer>

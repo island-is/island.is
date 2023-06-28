@@ -1,5 +1,5 @@
 import { BrowserContext, expect, test } from '@playwright/test'
-import { urls } from '../../../../support/urls'
+import { icelandicAndNoPopupUrl, urls } from '../../../../support/urls'
 import { session } from '../../../../support/session'
 import { helpers } from '../../../../support/locator-helpers'
 import { label } from '../../../../support/i18n'
@@ -35,7 +35,7 @@ test.describe('Service portal', () => {
     // Arrange
     const page = await context.newPage()
     const { findByRole } = helpers(page)
-    await page.goto('/minarsidur?locale=is&hide_onboarding_modal=true')
+    await page.goto(icelandicAndNoPopupUrl('/minarsidur'))
 
     // Act
     const companyName = await switchDelegation(page, 'Prókúra')
@@ -51,7 +51,7 @@ test.describe('Service portal', () => {
     // Arrange
     const page = await context.newPage()
     await disableI18n(page)
-    await page.goto('/minarsidur?locale=is&hide_onboarding_modal=true')
+    await page.goto(icelandicAndNoPopupUrl('/minarsidur'))
 
     // Act
     await page.locator('data-testid=user-menu >> visible=true').click()

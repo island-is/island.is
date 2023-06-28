@@ -1,6 +1,6 @@
 import { toast } from '@island.is/island-ui/core'
 import { useEffect, useState } from 'react'
-import { Area } from '../../types/enums'
+import { Area, SubscriptionTypes } from '../../types/enums'
 import {
   ArrOfTypesForSubscriptions,
   CaseForSubscriptions,
@@ -16,6 +16,7 @@ import {
 } from '../../hooks/'
 import { SubscriptionsSkeleton, ChosenSubscriptions } from './components'
 import { filterSubscriptions as F } from '../../utils/helpers/subscriptions'
+import localization from './Subscriptions.json'
 
 interface SubProps {
   allcases: CaseForSubscriptions[]
@@ -24,6 +25,7 @@ interface SubProps {
 }
 
 export const UserSubscriptions = ({ allcases, types }: SubProps) => {
+  const loc = localization['userSubscriptions']
   const { isAuthenticated, userLoading } = useUser()
   const [submitSubsIsLoading, setSubmitSubsIsLoading] = useState(false)
   const [currentTab, setCurrentTab] = useState<Area>(Area.case)
@@ -73,10 +75,10 @@ export const UserSubscriptions = ({ allcases, types }: SubProps) => {
         subscribedToAllType,
       } = userSubscriptions
       if (subscribedToAll) {
-        if (subscribedToAllType === 'OnlyNew') {
+        if (subscribedToAllType === SubscriptionTypes.OnlyNew) {
           setDontShowNew(false)
           setDontShowChanges(true)
-        } else if (subscribedToAllType === 'AllChanges') {
+        } else if (subscribedToAllType === SubscriptionTypes.AllChanges) {
           setDontShowChanges(false)
           setDontShowNew(true)
         }
@@ -156,12 +158,12 @@ export const UserSubscriptions = ({ allcases, types }: SubProps) => {
         onClear()
         setSubmitSubsIsLoading(false)
         refetchUserSubs()
-        toast.success('Skráð úr áskrift')
+        toast.success(loc.postSubsMutationToasts.success)
       })
       .catch((e) => {
         setSubmitSubsIsLoading(false)
         console.error(e)
-        toast.error('Ekki tókst að skrá úr áskrift')
+        toast.error(loc.postSubsMutationToasts.failure)
       })
     setSubmitSubsIsLoading(false)
   }
@@ -226,7 +228,7 @@ export const UserSubscriptions = ({ allcases, types }: SubProps) => {
         setSubscriptionArray={setSubscriptionArray}
         onSubmit={onSubmit}
         onClear={onClear}
-        buttonText="Skrá úr áskrift"
+        buttonText={loc.chosenSubscriptions.buttonText}
         toggleAble={false}
         submitSubsIsLoading={submitSubsIsLoading}
       />

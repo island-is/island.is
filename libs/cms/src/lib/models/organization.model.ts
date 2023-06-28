@@ -1,4 +1,5 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql'
+import { CacheField } from '@island.is/nest/graphql'
 import { IOrganization } from '../generated/contentfulTypes'
 import { Image, mapImage } from './image.model'
 import { OrganizationTag, mapOrganizationTag } from './organizationTag.model'
@@ -23,16 +24,16 @@ export class Organization {
   @Field()
   slug!: string
 
-  @Field(() => [OrganizationTag])
+  @CacheField(() => [OrganizationTag])
   tag?: Array<OrganizationTag>
 
-  @Field(() => Image, { nullable: true })
+  @CacheField(() => Image, { nullable: true })
   logo?: Image | null
 
   @Field({ nullable: true })
   link?: string
 
-  @Field(() => [FooterItem])
+  @CacheField(() => [FooterItem])
   footerItems?: Array<FooterItem>
 
   @Field()
@@ -50,13 +51,13 @@ export class Organization {
   @Field(() => Number, { nullable: true })
   serviceWebPopularQuestionCount?: number
 
-  @Field(() => Namespace, { nullable: true })
+  @CacheField(() => Namespace, { nullable: true })
   namespace!: Namespace | null
 
-  @Field(() => Image, { nullable: true })
+  @CacheField(() => Image, { nullable: true })
   serviceWebFeaturedImage!: Image | null
 
-  @Field(() => [GenericTag])
+  @CacheField(() => [GenericTag])
   publishedMaterialSearchFilterGenericTags!: GenericTag[]
 
   @Field(() => Boolean, { nullable: true })

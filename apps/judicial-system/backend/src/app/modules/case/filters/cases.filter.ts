@@ -14,6 +14,8 @@ import {
   isDistrictCourtUser,
   isAppealsCourtUser,
   isPrisonSystemUser,
+  isDefenceUser,
+  completedCaseStates,
 } from '@island.is/judicial-system/types'
 import type { User } from '@island.is/judicial-system/types'
 
@@ -167,6 +169,46 @@ function getStaffUserCasesQueryFilter(user: User): WhereOptions {
   return { [Op.and]: options }
 }
 
+function getDefenceUserCasesQueryFilter(user: User): WhereOptions {
+  const options: WhereOptions = [
+    { isArchived: false },
+    {
+      [Op.or]: [
+        {
+          [Op.and]: [
+            { type: [...restrictionCases, ...investigationCases] },
+            {
+              [Op.or]: [
+                {
+                  [Op.and]: [
+                    { state: CaseState.RECEIVED },
+                    { court_date: { [Op.not]: null } },
+                  ],
+                },
+                { state: completedCaseStates },
+              ],
+            },
+            { defender_national_id: user.nationalId },
+          ],
+        },
+        {
+          [Op.and]: [
+            { type: indictmentCases },
+            { state: [CaseState.RECEIVED, ...completedCaseStates] },
+            {
+              '$defendants.defender_national_id$': user.nationalId,
+            },
+          ],
+        },
+      ],
+    },
+  ]
+
+  return {
+    [Op.and]: options,
+  }
+}
+
 export function getCasesQueryFilter(user: User): WhereOptions {
   // TODO: Convert to switch
   if (isProsecutionUser(user)) {
@@ -183,6 +225,10 @@ export function getCasesQueryFilter(user: User): WhereOptions {
 
   if (isPrisonSystemUser(user)) {
     return getStaffUserCasesQueryFilter(user)
+  }
+
+  if (isDefenceUser(user)) {
+    return getDefenceUserCasesQueryFilter(user)
   }
 
   throw new ForbiddenException(`User ${user.id} does not have access to cases`)

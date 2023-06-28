@@ -7,4 +7,7 @@ export class ClientInput {
 
   @Field(() => String, { nullable: false })
   clientId!: string
+
+  @Field(() => Boolean, { nullable: true })
+  includeArchived?: boolean
 }

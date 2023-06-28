@@ -3,13 +3,204 @@
   "info": {
     "title": "RLS driver licence Rest API",
     "description": "RESTFul services for driver licences. Programmed in ASP.NET Core 3 API ",
-    "contact": {
-      "name": "TMD",
-      "email": "tmd@tmd.is"
-    },
+    "contact": { "name": "TMD", "email": "tmd@tmd.is" },
     "version": "5.0"
   },
   "paths": {
+    "/api/codetables/deprivations": {
+      "get": {
+        "tags": ["Codetables"],
+        "summary": "Get for types of driver licence deprivations",
+        "parameters": [
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "required": true,
+            "schema": { "type": "string", "default": "5.0" }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "The requested API version",
+            "required": true,
+            "schema": { "type": "string", "default": "5.0" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/TegSviptingaDto" }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/TegSviptingaDto" }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/TegSviptingaDto" }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/codetables/categories": {
+      "get": {
+        "tags": ["Codetables"],
+        "summary": "Get types of categories",
+        "parameters": [
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "required": true,
+            "schema": { "type": "string", "default": "5.0" }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "The requested API version",
+            "required": true,
+            "schema": { "type": "string", "default": "5.0" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/TegundRettindaDto" }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/TegundRettindaDto" }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/TegundRettindaDto" }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/codetables/remarks": {
+      "get": {
+        "tags": ["Codetables"],
+        "summary": "Get types of remarks",
+        "parameters": [
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "required": true,
+            "schema": { "type": "string", "default": "5.0" }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "The requested API version",
+            "required": true,
+            "schema": { "type": "string", "default": "5.0" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TegundAthugasemdaDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TegundAthugasemdaDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TegundAthugasemdaDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/codetables/districts": {
+      "get": {
+        "tags": ["Codetables"],
+        "summary": "Get for all districts",
+        "parameters": [
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "required": true,
+            "schema": { "type": "string", "default": "5.0" }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "The requested API version",
+            "required": true,
+            "schema": { "type": "string", "default": "5.0" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/EmbaettiDto" }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/EmbaettiDto" }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/EmbaettiDto" }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/drivinglicense/v5": {
       "get": {
         "tags": ["Okuskirteini"],
@@ -20,29 +211,21 @@
             "name": "jwttoken",
             "in": "header",
             "description": "Token with national id",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           },
           {
             "name": "api-version",
             "in": "header",
             "description": "The requested API version",
             "required": true,
-            "schema": {
-              "type": "string",
-              "default": "5.0"
-            }
+            "schema": { "type": "string", "default": "5.0" }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
             "required": true,
-            "schema": {
-              "type": "string",
-              "default": "5.0"
-            }
+            "schema": { "type": "string", "default": "5.0" }
           }
         ],
         "responses": {
@@ -50,19 +233,13 @@
             "description": "Success",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/DriverLicenseDto"
-                }
+                "schema": { "$ref": "#/components/schemas/DriverLicenseDto" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DriverLicenseDto"
-                }
+                "schema": { "$ref": "#/components/schemas/DriverLicenseDto" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DriverLicenseDto"
-                }
+                "schema": { "$ref": "#/components/schemas/DriverLicenseDto" }
               }
             }
           },
@@ -70,19 +247,13 @@
             "description": "Bad Request",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           }
@@ -98,52 +269,36 @@
             "name": "jwttoken",
             "in": "header",
             "description": "Token with national id",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           },
           {
             "name": "api-version",
             "in": "header",
             "description": "The requested API version",
             "required": true,
-            "schema": {
-              "type": "string",
-              "default": "5.0"
-            }
+            "schema": { "type": "string", "default": "5.0" }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
             "required": true,
-            "schema": {
-              "type": "string",
-              "default": "5.0"
-            }
+            "schema": { "type": "string", "default": "5.0" }
           }
         ],
         "responses": {
-          "204": {
-            "description": "No Content"
-          },
+          "204": { "description": "No Content" },
           "400": {
             "description": "Bad Request",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           }
@@ -160,37 +315,27 @@
             "in": "path",
             "description": "Category to check for (B, C, and so on)",
             "required": true,
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           },
           {
             "name": "jwttoken",
             "in": "header",
             "description": "Token with national id",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           },
           {
             "name": "api-version",
             "in": "header",
             "description": "The requested API version",
             "required": true,
-            "schema": {
-              "type": "string",
-              "default": "5.0"
-            }
+            "schema": { "type": "string", "default": "5.0" }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
             "required": true,
-            "schema": {
-              "type": "string",
-              "default": "5.0"
-            }
+            "schema": { "type": "string", "default": "5.0" }
           }
         ],
         "responses": {
@@ -227,38 +372,28 @@
             "in": "path",
             "description": "Category in license",
             "required": true,
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           },
           {
             "name": "api-version",
             "in": "header",
             "description": "The requested API version",
             "required": true,
-            "schema": {
-              "type": "string",
-              "default": "5.0"
-            }
+            "schema": { "type": "string", "default": "5.0" }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
             "required": true,
-            "schema": {
-              "type": "string",
-              "default": "5.0"
-            }
+            "schema": { "type": "string", "default": "5.0" }
           }
         ],
         "requestBody": {
           "description": "Model of application",
           "content": {
             "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/PostNewFinalLicense"
-              }
+              "schema": { "$ref": "#/components/schemas/PostNewFinalLicense" }
             }
           }
         },
@@ -267,22 +402,13 @@
             "description": "Success",
             "content": {
               "text/plain": {
-                "schema": {
-                  "type": "integer",
-                  "format": "int32"
-                }
+                "schema": { "type": "integer", "format": "int32" }
               },
               "application/json": {
-                "schema": {
-                  "type": "integer",
-                  "format": "int32"
-                }
+                "schema": { "type": "integer", "format": "int32" }
               },
               "text/json": {
-                "schema": {
-                  "type": "integer",
-                  "format": "int32"
-                }
+                "schema": { "type": "integer", "format": "int32" }
               }
             }
           },
@@ -290,19 +416,13 @@
             "description": "Bad Request",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           }
@@ -319,29 +439,21 @@
             "in": "header",
             "description": "The requested API version",
             "required": true,
-            "schema": {
-              "type": "string",
-              "default": "5.0"
-            }
+            "schema": { "type": "string", "default": "5.0" }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
             "required": true,
-            "schema": {
-              "type": "string",
-              "default": "5.0"
-            }
+            "schema": { "type": "string", "default": "5.0" }
           }
         ],
         "requestBody": {
           "description": "Model of application",
           "content": {
             "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/PostNewCollaborative"
-              }
+              "schema": { "$ref": "#/components/schemas/PostNewCollaborative" }
             }
           }
         },
@@ -350,22 +462,13 @@
             "description": "Created",
             "content": {
               "text/plain": {
-                "schema": {
-                  "type": "integer",
-                  "format": "int32"
-                }
+                "schema": { "type": "integer", "format": "int32" }
               },
               "application/json": {
-                "schema": {
-                  "type": "integer",
-                  "format": "int32"
-                }
+                "schema": { "type": "integer", "format": "int32" }
               },
               "text/json": {
-                "schema": {
-                  "type": "integer",
-                  "format": "int32"
-                }
+                "schema": { "type": "integer", "format": "int32" }
               }
             }
           },
@@ -373,19 +476,13 @@
             "description": "Bad Request",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           }
@@ -401,29 +498,21 @@
             "name": "jwttoken",
             "in": "header",
             "description": "Token with national id",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           },
           {
             "name": "api-version",
             "in": "header",
             "description": "The requested API version",
             "required": true,
-            "schema": {
-              "type": "string",
-              "default": "5.0"
-            }
+            "schema": { "type": "string", "default": "5.0" }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
             "required": true,
-            "schema": {
-              "type": "string",
-              "default": "5.0"
-            }
+            "schema": { "type": "string", "default": "5.0" }
           }
         ],
         "responses": {
@@ -431,19 +520,13 @@
             "description": "Success",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/DeprivationDto"
-                }
+                "schema": { "$ref": "#/components/schemas/DeprivationDto" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DeprivationDto"
-                }
+                "schema": { "$ref": "#/components/schemas/DeprivationDto" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DeprivationDto"
-                }
+                "schema": { "$ref": "#/components/schemas/DeprivationDto" }
               }
             }
           }
@@ -460,29 +543,21 @@
             "in": "header",
             "description": "The requested API version",
             "required": true,
-            "schema": {
-              "type": "string",
-              "default": "5.0"
-            }
+            "schema": { "type": "string", "default": "5.0" }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
             "required": true,
-            "schema": {
-              "type": "string",
-              "default": "5.0"
-            }
+            "schema": { "type": "string", "default": "5.0" }
           }
         ],
         "requestBody": {
           "description": "Model of application",
           "content": {
             "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/PostTemporaryLicense"
-              }
+              "schema": { "$ref": "#/components/schemas/PostTemporaryLicense" }
             }
           }
         },
@@ -541,20 +616,14 @@
             "in": "header",
             "description": "The requested API version",
             "required": true,
-            "schema": {
-              "type": "string",
-              "default": "5.0"
-            }
+            "schema": { "type": "string", "default": "5.0" }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
             "required": true,
-            "schema": {
-              "type": "string",
-              "default": "5.0"
-            }
+            "schema": { "type": "string", "default": "5.0" }
           }
         ],
         "requestBody": {
@@ -620,29 +689,21 @@
             "name": "jwttoken",
             "in": "header",
             "description": "Token with national id",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           },
           {
             "name": "api-version",
             "in": "header",
             "description": "The requested API version",
             "required": true,
-            "schema": {
-              "type": "string",
-              "default": "5.0"
-            }
+            "schema": { "type": "string", "default": "5.0" }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
             "required": true,
-            "schema": {
-              "type": "string",
-              "default": "5.0"
-            }
+            "schema": { "type": "string", "default": "5.0" }
           }
         ],
         "responses": {
@@ -650,19 +711,13 @@
             "description": "Success",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/PenaltyPointsDto"
-                }
+                "schema": { "$ref": "#/components/schemas/PenaltyPointsDto" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/PenaltyPointsDto"
-                }
+                "schema": { "$ref": "#/components/schemas/PenaltyPointsDto" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/PenaltyPointsDto"
-                }
+                "schema": { "$ref": "#/components/schemas/PenaltyPointsDto" }
               }
             }
           }
@@ -677,29 +732,21 @@
           {
             "name": "jwttoken",
             "in": "header",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           },
           {
             "name": "api-version",
             "in": "header",
             "description": "The requested API version",
             "required": true,
-            "schema": {
-              "type": "string",
-              "default": "5.0"
-            }
+            "schema": { "type": "string", "default": "5.0" }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
             "required": true,
-            "schema": {
-              "type": "string",
-              "default": "5.0"
-            }
+            "schema": { "type": "string", "default": "5.0" }
           }
         ],
         "responses": {
@@ -736,19 +783,13 @@
             "description": "Bad Request",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           }
@@ -764,29 +805,21 @@
             "name": "jwttoken",
             "in": "header",
             "description": "Token with national id",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           },
           {
             "name": "api-version",
             "in": "header",
             "description": "The requested API version",
             "required": true,
-            "schema": {
-              "type": "string",
-              "default": "5.0"
-            }
+            "schema": { "type": "string", "default": "5.0" }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
             "required": true,
-            "schema": {
-              "type": "string",
-              "default": "5.0"
-            }
+            "schema": { "type": "string", "default": "5.0" }
           }
         ],
         "responses": {
@@ -794,22 +827,13 @@
             "description": "Success",
             "content": {
               "text/plain": {
-                "schema": {
-                  "type": "integer",
-                  "format": "int32"
-                }
+                "schema": { "type": "integer", "format": "int32" }
               },
               "application/json": {
-                "schema": {
-                  "type": "integer",
-                  "format": "int32"
-                }
+                "schema": { "type": "integer", "format": "int32" }
               },
               "text/json": {
-                "schema": {
-                  "type": "integer",
-                  "format": "int32"
-                }
+                "schema": { "type": "integer", "format": "int32" }
               }
             }
           }
@@ -826,29 +850,21 @@
             "name": "jwttoken",
             "in": "header",
             "description": "Token with national id",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           },
           {
             "name": "api-version",
             "in": "header",
             "description": "The requested API version",
             "required": true,
-            "schema": {
-              "type": "string",
-              "default": "5.0"
-            }
+            "schema": { "type": "string", "default": "5.0" }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
             "required": true,
-            "schema": {
-              "type": "string",
-              "default": "5.0"
-            }
+            "schema": { "type": "string", "default": "5.0" }
           }
         ],
         "responses": {
@@ -884,29 +900,21 @@
             "name": "jwttoken",
             "in": "header",
             "description": "Token with national id",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           },
           {
             "name": "api-version",
             "in": "header",
             "description": "The requested API version",
             "required": true,
-            "schema": {
-              "type": "string",
-              "default": "5.0"
-            }
+            "schema": { "type": "string", "default": "5.0" }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
             "required": true,
-            "schema": {
-              "type": "string",
-              "default": "5.0"
-            }
+            "schema": { "type": "string", "default": "5.0" }
           }
         ],
         "responses": {
@@ -914,22 +922,13 @@
             "description": "Success",
             "content": {
               "text/plain": {
-                "schema": {
-                  "type": "integer",
-                  "format": "int32"
-                }
+                "schema": { "type": "integer", "format": "int32" }
               },
               "application/json": {
-                "schema": {
-                  "type": "integer",
-                  "format": "int32"
-                }
+                "schema": { "type": "integer", "format": "int32" }
               },
               "text/json": {
-                "schema": {
-                  "type": "integer",
-                  "format": "int32"
-                }
+                "schema": { "type": "integer", "format": "int32" }
               }
             }
           }
@@ -945,29 +944,21 @@
             "name": "jwttoken",
             "in": "header",
             "description": "Token with national id",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           },
           {
             "name": "api-version",
             "in": "header",
             "description": "The requested API version",
             "required": true,
-            "schema": {
-              "type": "string",
-              "default": "5.0"
-            }
+            "schema": { "type": "string", "default": "5.0" }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
             "required": true,
-            "schema": {
-              "type": "string",
-              "default": "5.0"
-            }
+            "schema": { "type": "string", "default": "5.0" }
           }
         ],
         "responses": {
@@ -975,22 +966,13 @@
             "description": "Success",
             "content": {
               "text/plain": {
-                "schema": {
-                  "type": "integer",
-                  "format": "int32"
-                }
+                "schema": { "type": "integer", "format": "int32" }
               },
               "application/json": {
-                "schema": {
-                  "type": "integer",
-                  "format": "int32"
-                }
+                "schema": { "type": "integer", "format": "int32" }
               },
               "text/json": {
-                "schema": {
-                  "type": "integer",
-                  "format": "int32"
-                }
+                "schema": { "type": "integer", "format": "int32" }
               }
             }
           }
@@ -1006,29 +988,21 @@
             "name": "jwttoken",
             "in": "header",
             "description": "Token with national id",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           },
           {
             "name": "api-version",
             "in": "header",
             "description": "The requested API version",
             "required": true,
-            "schema": {
-              "type": "string",
-              "default": "5.0"
-            }
+            "schema": { "type": "string", "default": "5.0" }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
             "required": true,
-            "schema": {
-              "type": "string",
-              "default": "5.0"
-            }
+            "schema": { "type": "string", "default": "5.0" }
           }
         ],
         "responses": {
@@ -1036,28 +1010,15 @@
             "description": "Success",
             "content": {
               "text/plain": {
-                "schema": {
-                  "type": "string",
-                  "format": "byte"
-                }
+                "schema": { "type": "string", "format": "byte" }
               },
               "application/json": {
-                "schema": {
-                  "type": "string",
-                  "format": "byte"
-                }
+                "schema": { "type": "string", "format": "byte" }
               },
-              "text/json": {
-                "schema": {
-                  "type": "string",
-                  "format": "byte"
-                }
-              }
+              "text/json": { "schema": { "type": "string", "format": "byte" } }
             }
           },
-          "204": {
-            "description": "No Content"
-          }
+          "204": { "description": "No Content" }
         }
       }
     },
@@ -1070,29 +1031,21 @@
             "name": "jwttoken",
             "in": "header",
             "description": "Token with national id",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           },
           {
             "name": "api-version",
             "in": "header",
             "description": "The requested API version",
             "required": true,
-            "schema": {
-              "type": "string",
-              "default": "5.0"
-            }
+            "schema": { "type": "string", "default": "5.0" }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
             "required": true,
-            "schema": {
-              "type": "string",
-              "default": "5.0"
-            }
+            "schema": { "type": "string", "default": "5.0" }
           }
         ],
         "responses": {
@@ -1100,28 +1053,15 @@
             "description": "Success",
             "content": {
               "text/plain": {
-                "schema": {
-                  "type": "string",
-                  "format": "byte"
-                }
+                "schema": { "type": "string", "format": "byte" }
               },
               "application/json": {
-                "schema": {
-                  "type": "string",
-                  "format": "byte"
-                }
+                "schema": { "type": "string", "format": "byte" }
               },
-              "text/json": {
-                "schema": {
-                  "type": "string",
-                  "format": "byte"
-                }
-              }
+              "text/json": { "schema": { "type": "string", "format": "byte" } }
             }
           },
-          "204": {
-            "description": "No Content"
-          }
+          "204": { "description": "No Content" }
         }
       }
     },
@@ -1133,29 +1073,21 @@
           {
             "name": "jwttoken",
             "in": "header",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           },
           {
             "name": "api-version",
             "in": "header",
             "description": "The requested API version",
             "required": true,
-            "schema": {
-              "type": "string",
-              "default": "5.0"
-            }
+            "schema": { "type": "string", "default": "5.0" }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
             "required": true,
-            "schema": {
-              "type": "string",
-              "default": "5.0"
-            }
+            "schema": { "type": "string", "default": "5.0" }
           }
         ],
         "responses": {
@@ -1192,20 +1124,14 @@
             "in": "header",
             "description": "The requested API version",
             "required": true,
-            "schema": {
-              "type": "string",
-              "default": "5.0"
-            }
+            "schema": { "type": "string", "default": "5.0" }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
             "required": true,
-            "schema": {
-              "type": "string",
-              "default": "5.0"
-            }
+            "schema": { "type": "string", "default": "5.0" }
           }
         ],
         "requestBody": {
@@ -1219,26 +1145,18 @@
           }
         },
         "responses": {
-          "204": {
-            "description": "No Content"
-          },
+          "204": { "description": "No Content" },
           "400": {
             "description": "Bad Request",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           }
@@ -1252,29 +1170,21 @@
             "name": "jwttoken",
             "in": "header",
             "description": "Token with national id",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           },
           {
             "name": "api-version",
             "in": "header",
             "description": "The requested API version",
             "required": true,
-            "schema": {
-              "type": "string",
-              "default": "5.0"
-            }
+            "schema": { "type": "string", "default": "5.0" }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
             "required": true,
-            "schema": {
-              "type": "string",
-              "default": "5.0"
-            }
+            "schema": { "type": "string", "default": "5.0" }
           }
         ],
         "responses": {
@@ -1302,19 +1212,13 @@
             "description": "Not Found",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           }
@@ -1331,20 +1235,14 @@
             "in": "header",
             "description": "The requested API version",
             "required": true,
-            "schema": {
-              "type": "string",
-              "default": "5.0"
-            }
+            "schema": { "type": "string", "default": "5.0" }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
             "required": true,
-            "schema": {
-              "type": "string",
-              "default": "5.0"
-            }
+            "schema": { "type": "string", "default": "5.0" }
           }
         ],
         "responses": {
@@ -1354,25 +1252,19 @@
               "text/plain": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/InstructorDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/InstructorDto" }
                 }
               },
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/InstructorDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/InstructorDto" }
                 }
               },
               "text/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/InstructorDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/InstructorDto" }
                 }
               }
             }
@@ -1391,29 +1283,21 @@
             "in": "path",
             "description": "Driver license number",
             "required": true,
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           },
           {
             "name": "api-version",
             "in": "header",
             "description": "The requested API version",
             "required": true,
-            "schema": {
-              "type": "string",
-              "default": "5.0"
-            }
+            "schema": { "type": "string", "default": "5.0" }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
             "required": true,
-            "schema": {
-              "type": "string",
-              "default": "5.0"
-            }
+            "schema": { "type": "string", "default": "5.0" }
           }
         ],
         "responses": {
@@ -1421,19 +1305,13 @@
             "description": "Success",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/LicenseStatusDto"
-                }
+                "schema": { "$ref": "#/components/schemas/LicenseStatusDto" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/LicenseStatusDto"
-                }
+                "schema": { "$ref": "#/components/schemas/LicenseStatusDto" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/LicenseStatusDto"
-                }
+                "schema": { "$ref": "#/components/schemas/LicenseStatusDto" }
               }
             }
           }
@@ -1450,47 +1328,34 @@
             "in": "path",
             "description": "Category to check, optional, default B",
             "required": true,
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           },
           {
             "name": "drivinglicenseid",
             "in": "path",
             "description": "License id, optional, default persons newest license",
             "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
+            "schema": { "type": "integer", "format": "int32" }
           },
           {
             "name": "jwttoken",
             "in": "header",
             "description": "Token with national id",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           },
           {
             "name": "api-version",
             "in": "header",
             "description": "The requested API version",
             "required": true,
-            "schema": {
-              "type": "string",
-              "default": "5.0"
-            }
+            "schema": { "type": "string", "default": "5.0" }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
             "required": true,
-            "schema": {
-              "type": "string",
-              "default": "5.0"
-            }
+            "schema": { "type": "string", "default": "5.0" }
           }
         ],
         "responses": {
@@ -1498,19 +1363,13 @@
             "description": "Success",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/CategoryValidDto"
-                }
+                "schema": { "$ref": "#/components/schemas/CategoryValidDto" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/CategoryValidDto"
-                }
+                "schema": { "$ref": "#/components/schemas/CategoryValidDto" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/CategoryValidDto"
-                }
+                "schema": { "$ref": "#/components/schemas/CategoryValidDto" }
               }
             }
           }
@@ -1527,37 +1386,27 @@
             "in": "path",
             "description": "License category",
             "required": true,
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           },
           {
             "name": "jwttoken",
             "in": "header",
             "description": "Token with national id",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           },
           {
             "name": "api-version",
             "in": "header",
             "description": "The requested API version",
             "required": true,
-            "schema": {
-              "type": "string",
-              "default": "5.0"
-            }
+            "schema": { "type": "string", "default": "5.0" }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
             "required": true,
-            "schema": {
-              "type": "string",
-              "default": "5.0"
-            }
+            "schema": { "type": "string", "default": "5.0" }
           }
         ],
         "responses": {
@@ -1593,38 +1442,28 @@
             "name": "jwttoken",
             "in": "header",
             "description": "Token with national id",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           },
           {
             "name": "api-version",
             "in": "header",
             "description": "The requested API version",
             "required": true,
-            "schema": {
-              "type": "string",
-              "default": "5.0"
-            }
+            "schema": { "type": "string", "default": "5.0" }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
             "required": true,
-            "schema": {
-              "type": "string",
-              "default": "5.0"
-            }
+            "schema": { "type": "string", "default": "5.0" }
           }
         ],
         "requestBody": {
           "description": "Model with information about the practice permit",
           "content": {
             "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/PostPracticePermit"
-              }
+              "schema": { "$ref": "#/components/schemas/PostPracticePermit" }
             }
           }
         },
@@ -1633,19 +1472,13 @@
             "description": "Success",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/PracticePermitDto"
-                }
+                "schema": { "$ref": "#/components/schemas/PracticePermitDto" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/PracticePermitDto"
-                }
+                "schema": { "$ref": "#/components/schemas/PracticePermitDto" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/PracticePermitDto"
-                }
+                "schema": { "$ref": "#/components/schemas/PracticePermitDto" }
               }
             }
           },
@@ -1653,19 +1486,13 @@
             "description": "Bad Request",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/PracticePermitDto"
-                }
+                "schema": { "$ref": "#/components/schemas/PracticePermitDto" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/PracticePermitDto"
-                }
+                "schema": { "$ref": "#/components/schemas/PracticePermitDto" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/PracticePermitDto"
-                }
+                "schema": { "$ref": "#/components/schemas/PracticePermitDto" }
               }
             }
           }
@@ -1681,38 +1508,28 @@
             "name": "jwttoken",
             "in": "header",
             "description": "Token with national id",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           },
           {
             "name": "api-version",
             "in": "header",
             "description": "The requested API version",
             "required": true,
-            "schema": {
-              "type": "string",
-              "default": "5.0"
-            }
+            "schema": { "type": "string", "default": "5.0" }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
             "required": true,
-            "schema": {
-              "type": "string",
-              "default": "5.0"
-            }
+            "schema": { "type": "string", "default": "5.0" }
           }
         ],
         "requestBody": {
           "description": "Model with information about the practice permit",
           "content": {
             "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/PostPracticePermit"
-              }
+              "schema": { "$ref": "#/components/schemas/PostPracticePermit" }
             }
           }
         },
@@ -1721,19 +1538,13 @@
             "description": "Success",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/PracticePermitDto"
-                }
+                "schema": { "$ref": "#/components/schemas/PracticePermitDto" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/PracticePermitDto"
-                }
+                "schema": { "$ref": "#/components/schemas/PracticePermitDto" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/PracticePermitDto"
-                }
+                "schema": { "$ref": "#/components/schemas/PracticePermitDto" }
               }
             }
           },
@@ -1741,19 +1552,13 @@
             "description": "Bad Request",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/PracticePermitDto"
-                }
+                "schema": { "$ref": "#/components/schemas/PracticePermitDto" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/PracticePermitDto"
-                }
+                "schema": { "$ref": "#/components/schemas/PracticePermitDto" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/PracticePermitDto"
-                }
+                "schema": { "$ref": "#/components/schemas/PracticePermitDto" }
               }
             }
           }
@@ -1769,46 +1574,34 @@
             "name": "jwttoken",
             "in": "header",
             "description": "Token with person social security number",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           },
           {
             "name": "SSN",
             "in": "path",
             "required": true,
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           },
           {
             "name": "api-version",
             "in": "header",
             "description": "The requested API version",
             "required": true,
-            "schema": {
-              "type": "string",
-              "default": "5.0"
-            }
+            "schema": { "type": "string", "default": "5.0" }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
             "required": true,
-            "schema": {
-              "type": "string",
-              "default": "5.0"
-            }
+            "schema": { "type": "string", "default": "5.0" }
           }
         ],
         "requestBody": {
           "description": "Model with information about the person",
           "content": {
             "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/PostRenewal65AndOver"
-              }
+              "schema": { "$ref": "#/components/schemas/PostRenewal65AndOver" }
             }
           }
         },
@@ -1817,19 +1610,13 @@
             "description": "Success",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/Renewal65AndOver"
-                }
+                "schema": { "$ref": "#/components/schemas/Renewal65AndOver" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Renewal65AndOver"
-                }
+                "schema": { "$ref": "#/components/schemas/Renewal65AndOver" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Renewal65AndOver"
-                }
+                "schema": { "$ref": "#/components/schemas/Renewal65AndOver" }
               }
             }
           },
@@ -1837,19 +1624,13 @@
             "description": "Bad Request",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/Renewal65AndOver"
-                }
+                "schema": { "$ref": "#/components/schemas/Renewal65AndOver" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Renewal65AndOver"
-                }
+                "schema": { "$ref": "#/components/schemas/Renewal65AndOver" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Renewal65AndOver"
-                }
+                "schema": { "$ref": "#/components/schemas/Renewal65AndOver" }
               }
             }
           }
@@ -1866,42 +1647,28 @@
             "in": "path",
             "description": "Year from",
             "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "default": 2022
-            }
+            "schema": { "type": "integer", "format": "int32", "default": 2022 }
           },
           {
             "name": "monthfrom",
             "in": "path",
             "description": "Month from",
             "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "default": 1
-            }
+            "schema": { "type": "integer", "format": "int32", "default": 1 }
           },
           {
             "name": "api-version",
             "in": "header",
             "description": "The requested API version",
             "required": true,
-            "schema": {
-              "type": "string",
-              "default": "5.0"
-            }
+            "schema": { "type": "string", "default": "5.0" }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
             "required": true,
-            "schema": {
-              "type": "string",
-              "default": "5.0"
-            }
+            "schema": { "type": "string", "default": "5.0" }
           }
         ],
         "responses": {
@@ -1947,42 +1714,28 @@
             "in": "path",
             "description": "Year from",
             "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "default": 2022
-            }
+            "schema": { "type": "integer", "format": "int32", "default": 2022 }
           },
           {
             "name": "monthfrom",
             "in": "path",
             "description": "Month from",
             "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "default": 1
-            }
+            "schema": { "type": "integer", "format": "int32", "default": 1 }
           },
           {
             "name": "api-version",
             "in": "header",
             "description": "The requested API version",
             "required": true,
-            "schema": {
-              "type": "string",
-              "default": "5.0"
-            }
+            "schema": { "type": "string", "default": "5.0" }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
             "required": true,
-            "schema": {
-              "type": "string",
-              "default": "5.0"
-            }
+            "schema": { "type": "string", "default": "5.0" }
           }
         ],
         "responses": {
@@ -2028,42 +1781,28 @@
             "in": "path",
             "description": "Year from",
             "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "default": 2022
-            }
+            "schema": { "type": "integer", "format": "int32", "default": 2022 }
           },
           {
             "name": "monthfrom",
             "in": "path",
             "description": "Month from",
             "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "default": 1
-            }
+            "schema": { "type": "integer", "format": "int32", "default": 1 }
           },
           {
             "name": "api-version",
             "in": "header",
             "description": "The requested API version",
             "required": true,
-            "schema": {
-              "type": "string",
-              "default": "5.0"
-            }
+            "schema": { "type": "string", "default": "5.0" }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
             "required": true,
-            "schema": {
-              "type": "string",
-              "default": "5.0"
-            }
+            "schema": { "type": "string", "default": "5.0" }
           }
         ],
         "responses": {
@@ -2109,42 +1848,28 @@
             "in": "path",
             "description": "Year from",
             "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "default": 2022
-            }
+            "schema": { "type": "integer", "format": "int32", "default": 2022 }
           },
           {
             "name": "monthfrom",
             "in": "path",
             "description": "Month from",
             "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "default": 1
-            }
+            "schema": { "type": "integer", "format": "int32", "default": 1 }
           },
           {
             "name": "api-version",
             "in": "header",
             "description": "The requested API version",
             "required": true,
-            "schema": {
-              "type": "string",
-              "default": "5.0"
-            }
+            "schema": { "type": "string", "default": "5.0" }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
             "required": true,
-            "schema": {
-              "type": "string",
-              "default": "5.0"
-            }
+            "schema": { "type": "string", "default": "5.0" }
           }
         ],
         "responses": {
@@ -2190,42 +1915,28 @@
             "in": "path",
             "description": "Year from",
             "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "default": 2022
-            }
+            "schema": { "type": "integer", "format": "int32", "default": 2022 }
           },
           {
             "name": "monthfrom",
             "in": "path",
             "description": "Month from",
             "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "default": 1
-            }
+            "schema": { "type": "integer", "format": "int32", "default": 1 }
           },
           {
             "name": "api-version",
             "in": "header",
             "description": "The requested API version",
             "required": true,
-            "schema": {
-              "type": "string",
-              "default": "5.0"
-            }
+            "schema": { "type": "string", "default": "5.0" }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
             "required": true,
-            "schema": {
-              "type": "string",
-              "default": "5.0"
-            }
+            "schema": { "type": "string", "default": "5.0" }
           }
         ],
         "responses": {
@@ -2271,42 +1982,28 @@
             "in": "path",
             "description": "Year from",
             "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "default": 2022
-            }
+            "schema": { "type": "integer", "format": "int32", "default": 2022 }
           },
           {
             "name": "monthfrom",
             "in": "path",
             "description": "Month from",
             "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "default": 1
-            }
+            "schema": { "type": "integer", "format": "int32", "default": 1 }
           },
           {
             "name": "api-version",
             "in": "header",
             "description": "The requested API version",
             "required": true,
-            "schema": {
-              "type": "string",
-              "default": "5.0"
-            }
+            "schema": { "type": "string", "default": "5.0" }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
             "required": true,
-            "schema": {
-              "type": "string",
-              "default": "5.0"
-            }
+            "schema": { "type": "string", "default": "5.0" }
           }
         ],
         "responses": {
@@ -2336,6 +2033,80 @@
                     "$ref": "#/components/schemas/DrivingAssessmentStatisticsGroupedDto"
                   }
                 }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/drivinglicense/v5/licenseactions/{licenseid}": {
+      "get": {
+        "tags": ["Okuskirteini"],
+        "summary": "Get all license actions",
+        "parameters": [
+          {
+            "name": "jwttoken",
+            "in": "header",
+            "description": "jwt token",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "licenseid",
+            "in": "path",
+            "description": "License id",
+            "required": true,
+            "schema": { "type": "integer", "format": "int32" }
+          },
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "required": true,
+            "schema": { "type": "string", "default": "5.0" }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "The requested API version",
+            "required": true,
+            "schema": { "type": "string", "default": "5.0" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/MedferdDto" }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/MedferdDto" }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/MedferdDto" }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           }
@@ -2464,20 +2235,12 @@
       "DriverLicenseDto": {
         "type": "object",
         "properties": {
-          "id": {
-            "type": "integer",
-            "description": "Id",
-            "format": "int32"
-          },
+          "id": { "type": "integer", "description": "Id", "format": "int32" },
           "temporaryLicense": {
             "type": "boolean",
             "description": "Is this license marked as temporary"
           },
-          "name": {
-            "type": "string",
-            "description": "Name",
-            "nullable": true
-          },
+          "name": { "type": "string", "description": "Name", "nullable": true },
           "socialSecurityNumber": {
             "type": "string",
             "description": "Persond id number",
@@ -2516,17 +2279,13 @@
           },
           "categories": {
             "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/CategoryDto"
-            },
+            "items": { "$ref": "#/components/schemas/CategoryDto" },
             "description": "Category list",
             "nullable": true
           },
           "comments": {
             "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/LicenseCommentsDto"
-            },
+            "items": { "$ref": "#/components/schemas/LicenseCommentsDto" },
             "description": "Remark list",
             "nullable": true
           },
@@ -2542,15 +2301,9 @@
             "format": "int32",
             "nullable": true
           },
-          "photo": {
-            "$ref": "#/components/schemas/ImageDto"
-          },
-          "signature": {
-            "$ref": "#/components/schemas/ImageDto"
-          },
-          "deprivation": {
-            "$ref": "#/components/schemas/DeprivationDto"
-          }
+          "photo": { "$ref": "#/components/schemas/ImageDto" },
+          "signature": { "$ref": "#/components/schemas/ImageDto" },
+          "deprivation": { "$ref": "#/components/schemas/DeprivationDto" }
         },
         "additionalProperties": false,
         "description": "Licence entity"
@@ -2558,16 +2311,8 @@
       "DriverLicenseWithoutImagesDto": {
         "type": "object",
         "properties": {
-          "id": {
-            "type": "integer",
-            "description": "Id",
-            "format": "int32"
-          },
-          "name": {
-            "type": "string",
-            "description": "Name",
-            "nullable": true
-          },
+          "id": { "type": "integer", "description": "Id", "format": "int32" },
+          "name": { "type": "string", "description": "Name", "nullable": true },
           "socialSecurityNumber": {
             "type": "string",
             "description": "Persond id number",
@@ -2606,9 +2351,7 @@
           },
           "categories": {
             "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/CategoryDto"
-            },
+            "items": { "$ref": "#/components/schemas/CategoryDto" },
             "description": "Category list",
             "nullable": true
           },
@@ -2619,15 +2362,11 @@
           },
           "comments": {
             "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/LicenseCommentsDto"
-            },
+            "items": { "$ref": "#/components/schemas/LicenseCommentsDto" },
             "description": "Remark list",
             "nullable": true
           },
-          "deprivation": {
-            "$ref": "#/components/schemas/DeprivationDto"
-          }
+          "deprivation": { "$ref": "#/components/schemas/DeprivationDto" }
         },
         "additionalProperties": false,
         "description": "Licence entity"
@@ -2698,6 +2437,33 @@
         },
         "additionalProperties": false,
         "description": "Data transfer class for driving assessment statistics"
+      },
+      "EmbaettiDto": {
+        "type": "object",
+        "properties": {
+          "nr": {
+            "type": "integer",
+            "description": "Distric number",
+            "format": "int32"
+          },
+          "nafn": {
+            "type": "string",
+            "description": "District name",
+            "nullable": true
+          },
+          "heimilisfang": {
+            "type": "string",
+            "description": "District address",
+            "nullable": true
+          },
+          "postnumer": {
+            "type": "integer",
+            "description": "District postal code",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Data transfer object for district"
       },
       "FullLicenseStatisticsDetailedDto": {
         "type": "object",
@@ -2822,11 +2588,7 @@
             "description": "Public identity number",
             "nullable": true
           },
-          "name": {
-            "type": "string",
-            "description": "Name",
-            "nullable": true
-          },
+          "name": { "type": "string", "description": "Name", "nullable": true },
           "driverLicenseId": {
             "type": "integer",
             "description": "Númer ökuskírteinis ökukennara",
@@ -2942,6 +2704,48 @@
         },
         "additionalProperties": false,
         "description": "Data transfer object for results for person applying for\r\ntemporary license"
+      },
+      "MedferdDto": {
+        "type": "object",
+        "properties": {
+          "dagsMedferdar": {
+            "type": "string",
+            "description": "Date",
+            "format": "date-time"
+          },
+          "tegundKodi": {
+            "type": "integer",
+            "description": "Code",
+            "format": "int32"
+          },
+          "nrEmbaetti": {
+            "type": "integer",
+            "description": "Where it was done",
+            "format": "int32"
+          },
+          "okuskirteiniId": {
+            "type": "integer",
+            "description": "Id of licence",
+            "format": "int32"
+          },
+          "stStarfsmadur": {
+            "type": "string",
+            "description": "Employee",
+            "nullable": true
+          },
+          "stDags": {
+            "type": "string",
+            "description": "Date",
+            "format": "date-time"
+          },
+          "medferdId": {
+            "type": "integer",
+            "description": "Id of action",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Entity for licence actions"
       },
       "NewTemporaryLicsenseDto": {
         "type": "object",
@@ -3244,10 +3048,7 @@
             "description": "The instructor",
             "nullable": true
           },
-          "isOk": {
-            "type": "boolean",
-            "description": "Is the record OK"
-          },
+          "isOk": { "type": "boolean", "description": "Is the record OK" },
           "errorCode": {
             "type": "string",
             "description": "Error code, if any",
@@ -3260,27 +3061,11 @@
       "ProblemDetails": {
         "type": "object",
         "properties": {
-          "type": {
-            "type": "string",
-            "nullable": true
-          },
-          "title": {
-            "type": "string",
-            "nullable": true
-          },
-          "status": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
-          "detail": {
-            "type": "string",
-            "nullable": true
-          },
-          "instance": {
-            "type": "string",
-            "nullable": true
-          }
+          "type": { "type": "string", "nullable": true },
+          "title": { "type": "string", "nullable": true },
+          "status": { "type": "integer", "format": "int32", "nullable": true },
+          "detail": { "type": "string", "nullable": true },
+          "instance": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
@@ -3305,6 +3090,63 @@
         },
         "additionalProperties": false,
         "description": "DTO for renewal for people 65 and older"
+      },
+      "TegSviptingaDto": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer", "description": "Id", "format": "int32" },
+          "heiti": { "type": "string", "description": "Name", "nullable": true }
+        },
+        "additionalProperties": false,
+        "description": "Dto for Tegund sviptinga"
+      },
+      "TegundAthugasemdaDto": {
+        "type": "object",
+        "properties": {
+          "nr": {
+            "type": "string",
+            "description": "Code for remark",
+            "nullable": true
+          },
+          "heiti": {
+            "type": "string",
+            "description": "Name for remark",
+            "nullable": true
+          },
+          "giltFyrir": {
+            "type": "string",
+            "description": "It this for a licence or category",
+            "nullable": true
+          },
+          "athugasemd": {
+            "type": "boolean",
+            "description": "Is there a comment on the remark"
+          },
+          "lysing": {
+            "type": "string",
+            "description": "Type of comment",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Types of remarks"
+      },
+      "TegundRettindaDto": {
+        "type": "object",
+        "properties": {
+          "nr": {
+            "type": "string",
+            "description": "Type code",
+            "nullable": true
+          },
+          "heiti": {
+            "type": "string",
+            "description": "Type name",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Data transfer object for type of categories"
       },
       "TemporaryLicenseStatisticsDetailedDto": {
         "type": "object",

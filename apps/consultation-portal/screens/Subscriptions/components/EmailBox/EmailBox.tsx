@@ -1,4 +1,3 @@
-import SubscriptionActionCard from '../../../../components/Card/SubscriptionActionCard'
 import { useMutation } from '@apollo/client'
 import initApollo from '../../../../graphql/client'
 import { SUB_POST_EMAIL } from '../../../../graphql/queries.graphql'
@@ -7,12 +6,15 @@ import { BaseSyntheticEvent, useEffect, useState } from 'react'
 import { useFetchEmail } from '../../../../hooks/api/useFetchEmail'
 import { LoadingDots, toast } from '@island.is/island-ui/core'
 import { useRouter } from 'next/router'
+import localization from '../../Subscriptions.json'
+import { ActionCard } from '../../../../components'
 
 const emailIsValid = (email: string) => {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
 }
 
 export const EmailBox = () => {
+  const loc = localization['emailBox']
   const { isAuthenticated, userLoading } = useUser()
   const [isVerified, setIsVerified] = useState<boolean>(false)
   const LogIn = useLogIn()
@@ -51,12 +53,12 @@ export const EmailBox = () => {
       },
     })
       .then(() => {
-        toast.success(`Netfang hefur verið breytt í ${nextEmail}`)
+        toast.success(`${loc.postEmailMutationToasts.success} ${nextEmail}`)
         setUserEmail(nextEmail)
       })
       .catch((e) => {
         console.error(e)
-        toast.error('Ekki tókst að breyta netfangi')
+        toast.error(loc.postEmailMutationToasts.failure)
       })
   }
 
@@ -73,12 +75,12 @@ export const EmailBox = () => {
 
   if (!userLoading && !isAuthenticated) {
     return (
-      <SubscriptionActionCard
-        heading="Skrá áskrift"
-        text="Þú verður að vera skráð(ur) inn á island.is til þess að geta skráð þig í eða úr áskrift."
+      <ActionCard
+        heading={loc.loginActionCard.heading}
+        text={loc.loginActionCard.text}
         button={[
           {
-            label: 'Skrá mig inn',
+            label: loc.loginActionCard.buttonLabel,
             onClick: LogIn,
           },
         ]}
@@ -88,19 +90,18 @@ export const EmailBox = () => {
 
   if (!userLoading && isAuthenticated && !userEmail) {
     return (
-      <SubscriptionActionCard
-        heading="Skrá netfang"
-        text="Skráðu netfang hérna. Þú færð svo tölvupóst sem þú þarf að staðfesta til að hægt sé að skrá áskrift á það."
+      <ActionCard
+        heading={loc.setEmailActionCard.heading}
         input={{
           name: 'subscriptionEmail',
-          label: 'Netfang',
-          placeholder: 'nonni@island.is',
+          label: loc.setEmailActionCard.input.label,
+          placeholder: loc.setEmailActionCard.input.placeholder,
           value: inputVal,
           onChange: onChangeEmail,
         }}
         button={[
           {
-            label: 'Skrá netfang',
+            label: loc.setEmailActionCard.buttonLabel,
             onClick: onSetEmail,
             disabled: !emailIsValid(inputVal),
             isLoading: postEmailLoading,
@@ -111,25 +112,26 @@ export const EmailBox = () => {
   }
 
   return isVerified ? (
-    <SubscriptionActionCard
-      text={`Núverandi skráð netfang: ${userEmail}`}
+    <ActionCard
+      text={`${loc.verifiedActionCard.text}: ${userEmail}`}
       button={[
         {
-          label: 'Breyta netfangi',
+          label: loc.verifiedActionCard.resetButtonLabel,
           onClick: resetEmail,
         },
         {
-          label: 'Sjá áskriftir',
-          onClick: () => router.push('/minaraskriftir'),
+          label: loc.verifiedActionCard.mySubscriptionsButton.label,
+          onClick: () =>
+            router.push(loc.verifiedActionCard.mySubscriptionsButton.href),
         },
       ]}
     />
   ) : (
-    <SubscriptionActionCard
-      text={`Beðið er eftir staðfestingu fyrir netfangið ${userEmail}`}
+    <ActionCard
+      text={`${loc.notVerifiedActionCard.text} ${userEmail}`}
       button={[
         {
-          label: 'Breyta netfangi',
+          label: loc.notVerifiedActionCard.buttonLabel,
           onClick: resetEmail,
         },
       ]}

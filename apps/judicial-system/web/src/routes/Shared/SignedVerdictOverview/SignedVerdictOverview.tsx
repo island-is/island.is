@@ -6,6 +6,15 @@ import { IntlShape, useIntl } from 'react-intl'
 import formatISO from 'date-fns/formatISO'
 
 import {
+  Box,
+  Text,
+  Accordion,
+  Button,
+  AlertMessage,
+  toast,
+} from '@island.is/island-ui/core'
+import { capitalize, caseTypes } from '@island.is/judicial-system/formatters'
+import {
   CaseDecision,
   CaseState,
   isInvestigationCase,
@@ -19,6 +28,7 @@ import {
   CaseTransition,
   CaseAppealState,
 } from '@island.is/judicial-system/types'
+import * as constants from '@island.is/judicial-system/consts'
 import {
   FormFooter,
   PageLayout,
@@ -37,49 +47,40 @@ import {
   useRequestRulingSignature,
   SigningModal,
   UserContext,
+  Conclusion,
+  FeatureContext,
+  AppealConclusion,
+  AlertBanner,
+  AppealCaseFilesOverview,
+  PageHeader,
+  RulingDateLabel,
+  OverviewHeader,
 } from '@island.is/judicial-system-web/src/components'
-import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
+import {
+  useCase,
+  useAppealAlertBanner,
+} from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   ReactSelectOption,
   TempCase as Case,
   TempUpdateCase as UpdateCase,
 } from '@island.is/judicial-system-web/src/types'
 import {
-  Box,
-  Text,
-  Accordion,
-  Button,
-  AlertMessage,
-  toast,
-} from '@island.is/island-ui/core'
-import { capitalize, caseTypes } from '@island.is/judicial-system/formatters'
-import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import {
   core,
   signedVerdictOverview as m,
   titles,
+  errors,
 } from '@island.is/judicial-system-web/messages'
 import {
   InstitutionType,
   User,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { errors } from '@island.is/judicial-system-web/messages'
-
-import { FeatureContext } from '@island.is/judicial-system-web/src/components/FeatureProvider/FeatureProvider'
-import RulingDateLabel from '@island.is/judicial-system-web/src/components/RulingDateLabel/RulingDateLabel'
-import Conclusion from '@island.is/judicial-system-web/src/components/Conclusion/Conclusion'
-import * as constants from '@island.is/judicial-system/consts'
-import { AlertBanner } from '@island.is/judicial-system-web/src/components/AlertBanner'
-import useAppealAlertBanner from '@island.is/judicial-system-web/src/utils/hooks/useAppealAlertBanner'
-import { titleForCase } from '@island.is/judicial-system-web/src/utils/formHelper'
-import AppealConclusion from '@island.is/judicial-system-web/src/components/Conclusion/AppealConclusion'
 
 import AppealSection from './Components/AppealSection/AppealSection'
 import ModifyDatesModal from './Components/ModifyDatesModal/ModifyDatesModal'
 import ReopenModal from './Components/ReopenModal/ReopenModal'
 import CaseDocuments from './Components/CaseDocuments/CaseDocuments'
-import CaseFilesOverview from '../../CourtOfAppeal/components/CaseFilesOverview/CaseFilesOverview'
 import ShareCase from './Components/ShareCase/ShareCase'
 
 import {
@@ -247,10 +248,9 @@ export const SignedVerdictOverview: React.FC = () => {
   const canModifyCaseDates = useCallback(() => {
     return (
       user &&
-      ([UserRole.JUDGE, UserRole.REGISTRAR, UserRole.PROSECUTOR].includes(
+      [UserRole.JUDGE, UserRole.REGISTRAR, UserRole.PROSECUTOR].includes(
         user.role,
-      ) ||
-        user.institution?.type === InstitutionType.PRISON_ADMIN) &&
+      ) &&
       isRestrictionCase(workingCase.type)
     )
   }, [workingCase.type, user])
@@ -520,11 +520,7 @@ export const SignedVerdictOverview: React.FC = () => {
             </Box>
             <Box display="flex" justifyContent="spaceBetween" marginBottom={3}>
               <Box>
-                <Box marginBottom={1}>
-                  <Text as="h1" variant="h1">
-                    {titleForCase(formatMessage, workingCase)}
-                  </Text>
-                </Box>
+                <OverviewHeader />
                 {workingCase.courtEndTime && (
                   <Box>
                     <RulingDateLabel courtEndTime={workingCase.courtEndTime} />
@@ -732,20 +728,15 @@ export const SignedVerdictOverview: React.FC = () => {
             </Box>
           )}
 
-          {workingCase.appealState ? (
-            <CaseFilesOverview />
-          ) : (
-            <CaseDocuments
-              isRequestingCourtRecordSignature={
-                isRequestingCourtRecordSignature
-              }
-              handleRequestCourtRecordSignature={
-                handleRequestCourtRecordSignature
-              }
-              isRequestingRulingSignature={isRequestingRulingSignature}
-              requestRulingSignature={requestRulingSignature}
-            />
-          )}
+          <AppealCaseFilesOverview />
+          <CaseDocuments
+            isRequestingCourtRecordSignature={isRequestingCourtRecordSignature}
+            handleRequestCourtRecordSignature={
+              handleRequestCourtRecordSignature
+            }
+            isRequestingRulingSignature={isRequestingRulingSignature}
+            requestRulingSignature={requestRulingSignature}
+          />
 
           {user?.role === UserRole.PROSECUTOR &&
             user.institution?.id ===

@@ -1,5 +1,5 @@
 import { test, BrowserContext, expect } from '@playwright/test'
-import { urls } from '../../../../support/urls'
+import { icelandicAndNoPopupUrl, urls } from '../../../../support/urls'
 import { session } from '../../../../support/session'
 import { label } from '../../../../support/i18n'
 import { m } from '@island.is/service-portal/core/messages'
@@ -29,7 +29,7 @@ test.describe('MS - Fjármál overview', () => {
 
     await test.step('Filter returns any data', async () => {
       // Arrange
-      await page.goto('/minarsidur/fjarmal/stada')
+      await page.goto(icelandicAndNoPopupUrl('/minarsidur/fjarmal/stada'))
 
       // Assert
       await expect(
@@ -46,7 +46,7 @@ test.describe('MS - Fjármál overview', () => {
 
     await test.step('Data is returned', async () => {
       // Arrange
-      await page.goto('/minarsidur/fjarmal/faerslur')
+      await page.goto(icelandicAndNoPopupUrl('/minarsidur/fjarmal/faerslur'))
 
       // Assert
       await expect(
@@ -58,7 +58,7 @@ test.describe('MS - Fjármál overview', () => {
 
     await test.step('Data is filtered', async () => {
       // Arrange
-      await page.goto('/minarsidur/fjarmal/faerslur')
+      await page.goto(icelandicAndNoPopupUrl('/minarsidur/fjarmal/faerslur'))
 
       // Act
       const inputField = page.getByRole('textbox', {
@@ -81,7 +81,11 @@ test.describe('MS - Fjármál overview', () => {
 
     await test.step('Data is filtered', async () => {
       // Arrange
-      await page.goto('/minarsidur/fjarmal/greidslusedlar-og-greidslukvittanir')
+      await page.goto(
+        icelandicAndNoPopupUrl(
+          '/minarsidur/fjarmal/greidslusedlar-og-greidslukvittanir',
+        ),
+      )
 
       // Act
       const filterButton = page
@@ -112,7 +116,9 @@ test.describe('MS - Fjármál overview', () => {
 
     await test.step('Can filter table and find a claim', async () => {
       // Arrange
-      await page.goto('/minarsidur/fjarmal/laungreidendakrofur')
+      await page.goto(
+        icelandicAndNoPopupUrl('/minarsidur/fjarmal/laungreidendakrofur'),
+      )
 
       // Act
       const filterButton = page

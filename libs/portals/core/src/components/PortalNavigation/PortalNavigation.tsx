@@ -1,7 +1,11 @@
 import { Link, useParams } from 'react-router-dom'
-import { useMemo } from 'react'
+import { cloneElement, useMemo } from 'react'
 
-import { Navigation, useBreakpoint } from '@island.is/island-ui/core'
+import {
+  FocusableBox,
+  Navigation,
+  useBreakpoint,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { replaceParams } from '@island.is/react-spa/shared'
 import { isDefined } from '@island.is/shared/utils'
@@ -58,7 +62,12 @@ export function PortalNavigation({
     return !item.navHide
       ? {
           ...item,
-          href: item.path,
+          href:
+            item.path &&
+            replaceParams({
+              href: item.path,
+              params,
+            }),
           title: formatMessage(item.name),
           active:
             item.active || item.children?.some(({ active }) => active) || false,
@@ -74,13 +83,17 @@ export function PortalNavigation({
       isMenuDialog={!lg}
       activeItemTitle={activeNav ? formatMessage(activeNav.name) : undefined}
       renderLink={(link, item) => {
-        let href = item?.href ?? ''
-        href = replaceParams({
-          href,
-          params,
-        })
-
-        return href ? <Link to={href}>{link}</Link> : link
+        const href = item?.href ?? ''
+        if (href && link.type === FocusableBox) {
+          return cloneElement(link, {
+            component: Link,
+            href: undefined,
+            to: href,
+          })
+        } else if (link.type !== FocusableBox) {
+          console.warn('Unexpected Navigation link element', link)
+        }
+        return link
       }}
       items={nav.children?.map(renderNavChildren).filter(isDefined) ?? []}
     />

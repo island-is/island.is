@@ -14,6 +14,19 @@ export const europeanHealthInsuranceCardApplicationMessages = {
     },
   }),
 
+  form: defineMessages({
+    applicationName: {
+      id: 'ehic.application:form.name',
+      defaultMessage: 'Umsókn um Evrópska sjúkratryggingakortið',
+      description: 'Application for European Health Insurance Card',
+    },
+    institutionName: {
+      id: 'ehic.application:form.institutionName',
+      defaultMessage: 'Sjúkratryggingar',
+      description: 'Application for collaboration institution name',
+    },
+  }),
+
   introScreen: defineMessages({
     formName: {
       id: 'ehic.application:introScreen.form.name',
@@ -119,7 +132,6 @@ export const europeanHealthInsuranceCardApplicationMessages = {
       id: 'ehic.application:no.description#markdown',
       defaultMessage:
         'Ástæður fyrir því gætu verið eftirfarandi.\n* Einstaklingur er ekki sjúkratryggð/ur á Íslandi. \n* Einstaklingur er ekki með lögheimili á Íslandi. \n* Einstaklingur er ekki með ríkisborgararétt frá EES landi.\n\nEf þú telur þessi atriði ekki eiga við, vinsamlegast hafið samband við [ehic@sjukra.is](mailto:ehic@sjukra.is)',
-
       description:
         'Description of why user or users can not apply for the card',
     },
@@ -200,6 +212,11 @@ export const europeanHealthInsuranceCardApplicationMessages = {
         'Einstaklingar sem eiga bráðabirgðaskírteini í gildi í stafrænu pósthólfi',
       description: 'Label that indicates a user already has a PDF',
     },
+    sectionPlasticExpiryDate: {
+      id: 'ehic.application:temp.plasticExpiryDate',
+      defaultMessage: 'Rennur út',
+      description: 'Sublabel that states the expiry date of a plastic card',
+    },
   }),
 
   // Review Screen
@@ -229,6 +246,11 @@ export const europeanHealthInsuranceCardApplicationMessages = {
       id: 'ehic.application:review.name.label',
       defaultMessage: 'Einstaklingar',
       description: 'Form label for persons name formfield',
+    },
+    sectionPersonsWhoWantPDFLabel: {
+      id: 'ehic.application:review.sectionPersonsWhoWantPDFLabel.label',
+      defaultMessage: 'Einstaklingar sem vilja fá tímabundið bráðabirgðakort',
+      description: 'Form label for persons who want a temporary card',
     },
     sectionPDFDeliveryTitle: {
       id: 'ehic.application:review.sectionPDFDeliveryTitle',

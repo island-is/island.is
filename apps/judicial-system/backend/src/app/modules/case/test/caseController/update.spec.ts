@@ -8,6 +8,7 @@ import {
   CaseOrigin,
   CaseState,
   indictmentCases,
+  InstitutionType,
   investigationCases,
   restrictionCases,
   User,
@@ -289,6 +290,7 @@ describe('CaseController - Update', () => {
       mockFindById.mockResolvedValueOnce({
         id: prosecutorId,
         role: UserRole.PROSECUTOR,
+        institution: { type: InstitutionType.PROSECUTORS_OFFICE },
       })
       const mockFindOne = mockCaseModel.findOne as jest.Mock
       mockFindOne.mockResolvedValueOnce(updatedCase)
@@ -377,6 +379,18 @@ describe('CaseController - Update', () => {
             type: MessageType.DELIVER_PROSECUTOR_TO_COURT,
             user,
             caseId,
+          },
+          {
+            type: MessageType.DELIVER_DEFENDANT_TO_COURT,
+            user,
+            caseId,
+            defendantId: defendantId1,
+          },
+          {
+            type: MessageType.DELIVER_DEFENDANT_TO_COURT,
+            user,
+            caseId,
+            defendantId: defendantId2,
           },
           {
             type: MessageType.DELIVER_CASE_FILES_RECORD_TO_COURT,

@@ -13,9 +13,8 @@ import {
   AdminScopeService,
   AdminScopeDTO,
   MeTenantGuard,
-  ClientCreateScopeDTO,
+  AdminCreateScopeDto,
   AdminPatchScopeDto,
-  AdminClientDto,
 } from '@island.is/auth-api-lib'
 import {
   CurrentUser,
@@ -85,7 +84,7 @@ export class MeScopesController {
   })
   create(
     @Param('tenantId') tenantId: string,
-    @Body() input: ClientCreateScopeDTO,
+    @Body() input: AdminCreateScopeDto,
   ): Promise<AdminScopeDTO> {
     return this.adminScopeService.createScope(tenantId, input)
   }
@@ -94,9 +93,6 @@ export class MeScopesController {
   @Documentation({
     description: 'Update a scope with partial set of properties.',
     response: { status: 200, type: AdminScopeDTO },
-  })
-  @Audit<AdminScopeDTO>({
-    resources: (scope) => scope.name,
   })
   update(
     @CurrentUser() user: User,

@@ -145,8 +145,8 @@ export const m = defineMessages({
   studentIsNotMentorableDescription: {
     id: 'dlp.application:studentIsNotMentorableDescription',
     defaultMessage:
-      'Nemandi uppfyllir ekki þær kröfur sem gerðar eru til þess að mega byrja æfingaakstur',
-    description: 'Description text for a student who is not mentorable',
+      'Kröfur sem gerðar eru til þess að mega byrja æfingaakstur ekki uppfylltar',
+    description: 'Description text for a who is not mentorable',
   },
   studentIsMentorableLoadingHeader: {
     id: 'dlp.application:studentIsMentorableLoadingHeader',
@@ -157,6 +157,11 @@ export const m = defineMessages({
     id: 'dlp.application:studentIsMentorableLoadingDescription',
     defaultMessage: 'Vinsamlegast bíðið á meðan upplýsingar eru sóttar...',
     description: 'Informing user that we are loading data',
+  },
+  studentNoLicenseBookDescription: {
+    id: 'dlp.application:studentNoLicenseBookDescription',
+    defaultMessage: 'Ökubók finnst ekki fyrir nemanda',
+    description: 'Informing user that no license book was found for student',
   },
 
   /* Overview Section */
@@ -235,6 +240,11 @@ export const requirementsMessages = defineMessages({
     defaultMessage:
       'Leiðbeinandi þarf að hafa náð 24 ára aldri a.m.k til að gerast leiðbeinandi',
     description: 'Learner age requirement description',
+  },
+  notFulfilled: {
+    id: 'dlp.application:requirementunmet.notFulfilled',
+    defaultMessage: 'Kröfur ekki uppfylltar',
+    description: 'Requirements not fulfilled',
   },
   rlsAcceptedDescription: {
     id: 'dlp.application:requirementunmet.accepted',

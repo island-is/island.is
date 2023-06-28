@@ -24,13 +24,15 @@ export const strings = defineMessages({
   },
   statementDescription: {
     id: 'judicial.system.core:appeal_alert_banner.statement_description_v1',
-    defaultMessage: '{actor} kærði úrskurðinn {appealDate}',
+    defaultMessage:
+      '{appealedByProsecutor, select, true {Sækjandi} other {Verjandi}} kærði úrskurðinn {appealDate}',
     description: 'Texti í viðvörunarglugga um að úrskurður hafi verið kærður',
   },
   appealedInCourtStatementDescription: {
     id:
       'judicial.system.core:appeal_alert_banner.appealed_in_court_statement_description',
-    defaultMessage: '{actor} kærði úrskurðinn í þinghaldi',
+    defaultMessage:
+      '{appealedByProsecutor, select, true {Sækjandi} other {Varnaraðili}} kærði úrskurðinn í þinghaldi',
     description:
       'Texti í viðvörunarglugga um að úrskurður hafi verið kærður í þinghaldi',
   },

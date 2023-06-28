@@ -1,0 +1,5 @@
+mutation unlockList($input: FindEndorsementListInput!) {
+  endorsementSystemUnlockEndorsementList(input: $input) {
+    id
+  }
+}

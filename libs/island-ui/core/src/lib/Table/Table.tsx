@@ -5,6 +5,7 @@ import { theme } from '@island.is/island-ui/theme'
 import { useBoxStyles, UseBoxStylesProps } from '../Box/useBoxStyles'
 import { getTextStyles, TextProps } from '../Text/Text'
 import * as styles from './Table.css'
+import { TestSupport } from '@island.is/island-ui/utils'
 
 type DataField = {
   children?: ReactNode
@@ -61,7 +62,9 @@ export const Body: FC = ({ children }) => <tbody>{children}</tbody>
 
 export const Foot: FC = ({ children }) => <tfoot>{children}</tfoot>
 
-export const Row: FC = ({ children }) => <tr>{children}</tr>
+export const Row: FC<TestSupport> = ({ children, dataTestId }) => (
+  <tr data-testid={dataTestId}>{children}</tr>
+)
 
 export const Data = ({
   children,

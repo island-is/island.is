@@ -1,15 +1,17 @@
-import getDefaultFilters from '../utils/helpers/frontPageFilters/getDefaultFilters'
-import getInitFilterValues from '../utils/helpers/frontPageFilters/getInitFilterValues'
 import { ArrOfTypes, CaseFilter, FilterInputItem } from '../types/interfaces'
 import { useEffect, useState } from 'react'
 import { CaseSortOptions } from '../types/enums'
 import useFetchCases from './api/useFetchCases'
-import mapListToValueCountObject from '../utils/helpers/frontPageFilters/mapObjectToValueCountObject'
 import isObjectEmpty from '../utils/helpers/isObjectEmpty'
-import getFilteredItemsOrAll from '../utils/helpers/frontPageFilters/getFilteredItemsOrAll'
 import { setItem } from '../utils/helpers/localStorage'
 import { FILTERS_FRONT_PAGE_KEY } from '../utils/consts/consts'
-import { getInitialFilters } from '../utils/helpers/frontPageFilters/getInitialFilters'
+import {
+  getInitialFilters,
+  getFilteredItemsOrAll,
+  mapObjectToValueCountObject,
+  getInitFilterValues,
+  getFiltersFromLocalStorage,
+} from '../utils/helpers/frontPageFilters'
 
 interface Props {
   types: ArrOfTypes
@@ -36,10 +38,8 @@ export const useFrontPageFilters = ({ types }: Props) => {
     period: period,
   })
 
-  const defaultValues = getDefaultFilters({ initialValues: initialValues })
-
   const [filters, setFilters] = useState<CaseFilter>({
-    ...defaultValues,
+    ...initialValues,
   })
 
   const _caseStatuses = getFilteredItemsOrAll({
@@ -76,7 +76,7 @@ export const useFrontPageFilters = ({ types }: Props) => {
 
   useEffect(() => {
     if (!isObjectEmpty(filterGroups) && !getCasesLoading) {
-      const caseTypesList = mapListToValueCountObject(filterGroups.CaseTypes)
+      const caseTypesList = mapObjectToValueCountObject(filterGroups.CaseTypes)
       const caseTypesMerged = filters.caseTypes.items.map((item) => ({
         ...item,
         ...(caseTypesList.find((val) => val.value === item.value) || {
@@ -84,7 +84,9 @@ export const useFrontPageFilters = ({ types }: Props) => {
         }),
       }))
 
-      const caseStatusesList = mapListToValueCountObject(filterGroups.Statuses)
+      const caseStatusesList = mapObjectToValueCountObject(
+        filterGroups.Statuses,
+      )
       const caseStatusesMerged = filters.caseStatuses.items.map((item) => ({
         ...item,
         ...(caseStatusesList.find((val) => val.value === item.value) || {
@@ -100,6 +102,11 @@ export const useFrontPageFilters = ({ types }: Props) => {
       setFilters(filtersCopy)
     }
   }, [filterGroups])
+
+  useEffect(() => {
+    const nextFilters = getFiltersFromLocalStorage({ filters: filters })
+    setFilters(nextFilters)
+  }, [])
 
   return {
     cases: cases,

@@ -85,7 +85,6 @@ const courtFields: (keyof UpdateCaseDto)[] = [
   'registrarId',
   'caseModifiedExplanation',
   'rulingModifiedHistory',
-  'subpoenaType',
   'defendantWaivesRightToCounsel',
   'prosecutorId',
   'appealCaseNumber',
@@ -213,6 +212,7 @@ export const defenderTransitionRule: RolesRule = {
 }
 
 // Allows judges to receive, accept, reject and dismiss cases,
+// to receive and complete appeals,
 // and to reopen non indictment cases
 export const judgeTransitionRule: RolesRule = {
   role: UserRole.JUDGE,
@@ -255,7 +255,8 @@ export const judgeTransitionRule: RolesRule = {
 
 // Allows registrars to receive cases,
 // to accept indictment cases,
-// and to reopen non indictment cases
+// to receive and complete appeals,
+// and to reopen non indictment cases.
 export const registrarTransitionRule: RolesRule = {
   role: UserRole.REGISTRAR,
   type: RulesType.FIELD_VALUES,
@@ -299,8 +300,8 @@ export const registrarTransitionRule: RolesRule = {
   },
 }
 
-// Allows assistants to receive, accept, reject and dismiss cases
-// Note that assistants can only access indictment cases
+// Allows assistants to receive and accept indictment cases,
+// and to receive and complete appeals.
 export const assistantTransitionRule: RolesRule = {
   role: UserRole.ASSISTANT,
   type: RulesType.FIELD_VALUES,
@@ -308,7 +309,37 @@ export const assistantTransitionRule: RolesRule = {
   dtoFieldValues: [
     CaseTransition.RECEIVE,
     CaseTransition.ACCEPT,
-    CaseTransition.REJECT,
-    CaseTransition.DISMISS,
+    CaseTransition.RECEIVE_APPEAL,
+    CaseTransition.COMPLETE_APPEAL,
   ],
+  canActivate: (request) => {
+    const theCase = request.case
+
+    // Deny if the case is missing - shuould never happen
+    if (!theCase) {
+      return false
+    }
+
+    // Deny certain transactions on non indictment cases
+    if (
+      !isIndictmentCase(theCase.type) &&
+      [CaseTransition.RECEIVE, CaseTransition.ACCEPT].includes(
+        request.body.transition,
+      )
+    ) {
+      return false
+    }
+
+    // Deny certain transitions on indictment cases
+    if (
+      isIndictmentCase(theCase.type) &&
+      [CaseTransition.RECEIVE_APPEAL, CaseTransition.COMPLETE_APPEAL].includes(
+        request.body.transition,
+      )
+    ) {
+      return false
+    }
+
+    return true
+  },
 }

@@ -1,4 +1,5 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
+import { CacheField } from '@island.is/nest/graphql'
 import { IMenu } from '../generated/contentfulTypes'
 import { Link, mapLink } from './link.model'
 import {
@@ -14,10 +15,10 @@ export class Menu {
   @Field(() => String)
   title = ''
 
-  @Field(() => [Link])
+  @CacheField(() => [Link])
   links?: Link[]
 
-  @Field(() => [MenuLinkWithChildren])
+  @CacheField(() => [MenuLinkWithChildren])
   menuLinks?: MenuLinkWithChildren[]
 }
 

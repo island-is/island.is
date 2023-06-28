@@ -13,6 +13,10 @@ export const m = defineMessages({
     id: 'ap.ids-admin:tenants',
     defaultMessage: 'Tenants',
   },
+  tenant: {
+    id: 'ap.ids-admin:tenant',
+    defaultMessage: 'Tenant',
+  },
   errorLoadingData: {
     id: 'ap.ids-admin:error-loading-data',
     defaultMessage: 'Error loading data. Please try again later.',
@@ -544,6 +548,10 @@ export const m = defineMessages({
     defaultMessage:
       'Here you can add permissions from your own tenant. Permissions from other tenants can be granted to the application from the other tenant.',
   },
+  permissionsModalNoScopes: {
+    id: 'ap.ids-admin:permission-modal-no-scopes',
+    defaultMessage: 'No scopes available',
+  },
   successfullySaved: {
     id: 'ap.ids-admin:successfully-saved',
     defaultMessage: 'Successfully saved',
@@ -580,10 +588,15 @@ export const m = defineMessages({
     id: 'ap.ids-admin:publish-environment',
     defaultMessage: 'Publish to {environment}',
   },
-  publishEnvironmentDescription: {
-    id: 'ap.ids-admin:publish-environment-description',
+  publishClientEnvDesc: {
+    id: 'ap.ids-admin:publish-client-env-description',
     defaultMessage:
       'The application will inherit settings from the selected environment excluding URLs and client secrets.',
+  },
+  publishPermissionEnvDesc: {
+    id: 'ap.ids-admin:publish-permission-env-description',
+    defaultMessage:
+      'The permission will inherit settings from the selected environment.',
   },
   chooseEnvironmentToCopyFrom: {
     id: 'ap.ids-admin:choose-environment-to-copy-from',
@@ -718,6 +731,10 @@ export const m = defineMessages({
     id: 'ap.ids-admin:content',
     defaultMessage: 'Content',
   },
+  accessControl: {
+    id: 'ap.ids-admin:access-control',
+    defaultMessage: 'Access control',
+  },
   icelandic: {
     id: 'ap.ids-admin:icelandic',
     defaultMessage: 'Icelandic',
@@ -777,5 +794,34 @@ export const m = defineMessages({
     id: 'ap.ids-admin:grant-to-personal-representatives-description',
     defaultMessage:
       'Should personal representatives automatically get this scope for their clients',
+  },
+  clientIdAlreadyExists: {
+    id: 'ap.ids-admin:client-id-already-exists',
+    defaultMessage: 'Client ID already exists',
+  },
+  successDeletingClient: {
+    id: 'ap.ids-admin:success-deleting-client',
+    defaultMessage: 'Successfully deleted application',
+  },
+  delete: {
+    id: 'ap.ids-admin:delete',
+    defaultMessage: 'Delete',
+  },
+  closeDeleteModal: {
+    id: 'ap.ids-admin:close-delete-modal',
+    defaultMessage: 'Close',
+  },
+  deleteClientDescription: {
+    id: 'ap.ids-admin:delete-client-action-card-label',
+    defaultMessage: 'Authentications will stop working for your application.',
+  },
+  deleteClient: {
+    id: 'ap.ids-admin:delete-client-all-env',
+    defaultMessage: 'Delete application',
+  },
+  deleteClientAlertMessage: {
+    id: 'ap.ids-admin:delete-client-alert-message',
+    defaultMessage:
+      'The client ID will be deleted from all available environments and cannot be reused. Authentications will stop working immediately for your application.',
   },
 })

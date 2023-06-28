@@ -8,6 +8,9 @@ import React, {
 import cn from 'classnames'
 import AnimateHeight from 'react-animate-height'
 
+import { TestSupport } from '@island.is/island-ui/utils'
+import { Colors } from '@island.is/island-ui/theme'
+
 import { Box } from '../../Box/Box'
 import { Column } from '../../Column/Column'
 import { Columns } from '../../Columns/Columns'
@@ -19,7 +22,6 @@ import { TextVariants } from '../../Text/Text.css'
 import { AccordionContext } from '../Accordion'
 import { Icon } from '../../IconRC/Icon'
 import * as styles from './AccordionItem.css'
-import { Colors } from '@island.is/island-ui/theme'
 
 type IconVariantTypes = 'default' | 'small' | 'sidebar'
 type ColorVariants = 'blue' | 'red'
@@ -219,9 +221,9 @@ export const AccordionItem = forwardRef<HTMLButtonElement, AccordionItemProps>(
 
 // ---------------------------------------------------------------------------
 
-export type AccordionCardProps = AccordionItemProps
+export type AccordionCardProps = AccordionItemProps & TestSupport
 
-export const AccordionCard = (props: AccordionCardProps) => {
+export const AccordionCard = ({ dataTestId, ...props }: AccordionCardProps) => {
   const [isFocused, setIsFocused] = useState<boolean>(false)
 
   const handleFocus = () => setIsFocused(true)
@@ -236,6 +238,7 @@ export const AccordionCard = (props: AccordionCardProps) => {
         [styles.focused]: isFocused,
       })}
       padding={[2, 2, 4]}
+      dataTestId={dataTestId}
     >
       <AccordionItem {...props} onFocus={handleFocus} onBlur={handleBlur}>
         {props.children}

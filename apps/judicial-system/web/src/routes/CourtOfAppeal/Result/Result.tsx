@@ -1,6 +1,9 @@
 import React, { useContext } from 'react'
 import { useIntl } from 'react-intl'
 
+import { AlertBanner, Box, Text } from '@island.is/island-ui/core'
+import * as constants from '@island.is/judicial-system/consts'
+import { capitalize } from '@island.is/judicial-system/formatters'
 import {
   CaseFilesAccordionItem,
   FormContentContainer,
@@ -10,20 +13,15 @@ import {
   PageHeader,
   PageLayout,
   UserContext,
+  Conclusion,
+  AppealConclusion,
 } from '@island.is/judicial-system-web/src/components'
-import { AlertBanner, Box, Text } from '@island.is/island-ui/core'
 import { core } from '@island.is/judicial-system-web/messages'
-import * as constants from '@island.is/judicial-system/consts'
-import { capitalize } from '@island.is/judicial-system/formatters'
-
-import Conclusion from '@island.is/judicial-system-web/src/components/Conclusion/Conclusion'
-
-import useAppealAlertBanner from '@island.is/judicial-system-web/src/utils/hooks/useAppealAlertBanner'
-import AppealConclusion from '@island.is/judicial-system-web/src/components/Conclusion/AppealConclusion'
+import { titleForCase } from '@island.is/judicial-system-web/src/utils/titleForCase/titleForCase'
+import { useAppealAlertBanner } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import CaseFilesOverview from '../components/CaseFilesOverview/CaseFilesOverview'
 import CourtOfAppealCaseOverviewHeader from '../components/CaseOverviewHeader/CaseOverviewHeader'
-import { titleForCase } from '@island.is/judicial-system-web/src/utils/formHelper'
 
 const CourtOfAppealResult: React.FC = () => {
   const {

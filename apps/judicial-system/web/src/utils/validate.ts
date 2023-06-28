@@ -20,6 +20,7 @@ export type Validation =
   | 'R-case-number'
   | 'S-case-number'
   | 'vehicle-registration-number'
+  | 'appeal-case-number-format'
 
 type ValidateItem = 'valid' | [string | undefined, Validation[]]
 type IsValid = { isValid: boolean; errorMessage: string }
@@ -86,6 +87,12 @@ const getRegexByValidation = (validation: Validation) => {
       return {
         regex: new RegExp(/^[A-Z]{2}-[A-Z]{1}[0-9]{2}|[0-9]{3}$/),
         errorMessage: 'Dæmi: AB-123',
+      }
+    }
+    case 'appeal-case-number-format': {
+      return {
+        regex: new RegExp(/^[0-9]{1,4}\/[0-9]{4}$/),
+        errorMessage: `Dæmi: 1234/${new Date().getFullYear()}`,
       }
     }
   }
@@ -387,16 +394,10 @@ export const isSubpoenaStepValid = (
 ): boolean => {
   const date = courtDate || workingCase.courtDate
 
-  return (
-    (workingCase.subpoenaType &&
-      validate([[date, ['empty', 'date-format']]]).isValid) ||
-    false
-  )
+  return validate([[date, ['empty', 'date-format']]]).isValid || false
 }
 
-export const isProsecutorAndDefenderStepValid = (
-  workingCase: Case,
-): boolean => {
+export const isDefenderStepValid = (workingCase: Case): boolean => {
   const defendantsAreValid = () =>
     workingCase.defendants?.every((defendant) => {
       return (
@@ -432,7 +433,9 @@ export const isCourtOfAppealCaseStepValid = (workingCase: Case): boolean => {
       workingCase.appealJudge2 &&
       workingCase.appealJudge3 &&
       workingCase.appealAssistant &&
-      validate([[workingCase.appealCaseNumber, ['empty']]]).isValid) ||
+      validate([
+        [workingCase.appealCaseNumber, ['empty', 'appeal-case-number-format']],
+      ]).isValid) ||
     false
   )
 }

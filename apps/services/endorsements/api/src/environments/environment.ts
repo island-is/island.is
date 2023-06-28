@@ -16,7 +16,7 @@ const devConfig = {
   },
   auth: {
     issuer: 'https://identity-server.dev01.devland.is',
-    audience: '@island.is',
+    audience: ['@island.is', '@admin.island.is'],
   },
   apiMock: process.env.API_MOCKS === 'true',
   audit: {
@@ -45,7 +45,7 @@ const prodConfig = {
   },
   auth: {
     issuer: process.env.IDENTITY_SERVER_ISSUER_URL,
-    audience: '@island.is',
+    audience: ['@island.is', '@admin.island.is'],
   },
   apiMock: false,
   audit: {

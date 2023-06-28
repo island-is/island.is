@@ -55,7 +55,7 @@ export interface CatchQuotaCategory {
   /** onotad - Magn fisktegundar sem er ónotuð eftir útreikninga á tímabilinu */
   unused?: number
 
-  /** heildarAflaMark - Magn heildaraflamarks tiltekinnar fisktegundar á tímabilinu */
+  /** heildarAflamark - Magn heildaraflamarks tiltekinnar fisktegundar á tímabilinu */
   totalCatchQuota?: number
 
   /** hlutdeild - Hlutfall hlutdeildar sem skip á í fisktegund á tímabilinu. (0,5 => 0,5%) */

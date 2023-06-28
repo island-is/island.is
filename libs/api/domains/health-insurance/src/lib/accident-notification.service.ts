@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
-import { DocumentApi } from '@island.is/clients/health-insurance-v2'
+import { DocumentApi } from '@island.is/clients/icelandic-health-insurance/health-insurance'
 import {
   HealthInsuranceAccidentNotificationAttachmentTypes as AttachmentTypes,
   HealthInsuranceAccidentNotificationConfirmationTypes as ConfirmationTypes,

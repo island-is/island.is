@@ -13,7 +13,7 @@ import { Op, UniqueConstraintError } from 'sequelize'
 import { EndorsementTag } from '../endorsementList/constants'
 import { paginate } from '@island.is/nest/pagination'
 import { ENDORSEMENT_SYSTEM_GENERAL_PETITION_TAGS } from '../../../environments/environment'
-import { NationalRegistryApi } from '@island.is/clients/national-registry-v1'
+import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
 
 interface FindEndorsementInput {
   listId: string
@@ -53,7 +53,7 @@ export class EndorsementService {
     private endorsementModel: typeof Endorsement,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
-    private readonly nationalRegistryApi: NationalRegistryApi,
+    private readonly nationalRegistryApiV2: NationalRegistryClientService,
   ) {}
 
   async findEndorsements({ listId }: FindEndorsementsInput, query: any) {
@@ -139,13 +139,14 @@ export class EndorsementService {
     if (new Date() >= endorsementList.closedDate) {
       throw new MethodNotAllowedException(['Unable to endorse closed list'])
     }
-    const fullName = showName ? await this.getEndorserInfo(nationalId) : ''
+    const person = await this.nationalRegistryApiV2.getIndividual(nationalId)
     const endorsement = {
       endorser: nationalId,
       endorsementListId: endorsementList.id,
       meta: {
-        fullName: fullName,
-        showName: showName,
+        fullName: person?.fullName,
+        locality: person?.legalDomicile?.locality,
+        showName,
       },
     }
 
@@ -194,23 +195,6 @@ export class EndorsementService {
         { listId: endorsementList.id },
       )
       throw new NotFoundException(["This endorsement doesn't exist"])
-    }
-  }
-
-  private async getEndorserInfo(nationalId: string) {
-    this.logger.info(`Finding fullName of Endorser "${nationalId}" by id`)
-
-    try {
-      return (await this.nationalRegistryApi.getUser(nationalId)).Fulltnafn
-    } catch (e) {
-      if (e instanceof Error) {
-        this.logger.warn(
-          `Occured when fetching endorser name from NationalRegistryApi v1 ${e.message} \n${e.stack}`,
-        )
-        return ''
-      } else {
-        throw e
-      }
     }
   }
 }

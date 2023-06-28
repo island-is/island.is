@@ -6,7 +6,10 @@ import {
   insuranceToXML,
   transformApplicationToHealthInsuranceDTO,
 } from './health-insurance.utils'
-import { DocumentApi, PersonApi } from '@island.is/clients/health-insurance-v2'
+import {
+  DocumentApi,
+  PersonApi,
+} from '@island.is/clients/icelandic-health-insurance/health-insurance'
 import { BucketService } from './bucket/bucket.service'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { ApplicationTypes } from '@island.is/application/types'

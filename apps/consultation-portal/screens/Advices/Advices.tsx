@@ -8,46 +8,27 @@ import {
   DropdownMenu,
   FocusableBox,
 } from '@island.is/island-ui/core'
-import Layout from '../../components/Layout/Layout'
-import BreadcrumbsWithMobileDivider from '../../components/BreadcrumbsWithMobileDivider/BreadcrumbsWithMobileDivider'
+import {
+  Breadcrumbs,
+  ActionCard,
+  Card,
+  EmptyState,
+  Pagination,
+  Layout,
+  SearchAndSortPartial,
+} from '../../components'
 import { useLogIn, useUser, useAdviceFilters } from '../../hooks'
-import { Card, SubscriptionActionCard } from '../../components/Card'
 import { useState } from 'react'
-import EmptyState from '../../components/EmptyState/EmptyState'
 import { AdviceFilter, UserAdvice } from '../../types/interfaces'
-import Pagination from '../../components/Pagination/Pagination'
-import SearchAndSortPartialData from '../../components/SearchAndSort/SearchAndSortPartialData'
 import env from '../../lib/environment'
 import { CARDS_PER_PAGE, FILTERS_ADVICE_KEY } from '../../utils/consts/consts'
-
-const AdvicesLayout = ({ children }) => {
-  return (
-    <Layout seo={{ title: 'umsagnir', url: 'umsagnir' }}>
-      <BreadcrumbsWithMobileDivider
-        items={[
-          { title: 'Samráðsgátt', href: '/samradsgatt' },
-          { title: 'Mínar umsagnir' },
-        ]}
-      />
-      <GridContainer>
-        <Stack space={[3, 3, 3, 5, 5]}>
-          <Stack space={3}>
-            <Text variant="h1">Mínar umsagnir</Text>
-            <Text variant="default">
-              Hér geturðu skoðað allar umsagnir sem þú hefur sent inn.
-            </Text>
-          </Stack>
-          {children}
-        </Stack>
-      </GridContainer>
-    </Layout>
-  )
-}
+import localization from './Advices.json'
 
 export const AdvicesScreen = () => {
   const LogIn = useLogIn()
   const { isAuthenticated, userLoading } = useUser()
   const [dropdownState, setDropdownState] = useState('')
+  const loc = localization['advices']
 
   const handleDropdown = (id: string) => {
     setDropdownState((prev) => {
@@ -62,18 +43,6 @@ export const AdvicesScreen = () => {
     filters,
     setFilters,
   } = useAdviceFilters({ isAuthenticated: isAuthenticated })
-
-  if (!userLoading && !isAuthenticated) {
-    return (
-      <AdvicesLayout>
-        <SubscriptionActionCard
-          heading="Mínar umsagnir"
-          text="Þú verður að vera skráð(ur) inn til þess að geta séð þínar umsagnir."
-          button={[{ label: 'Skrá mig inn', onClick: LogIn }]}
-        />
-      </AdvicesLayout>
-    )
-  }
 
   const renderCards = () => {
     if (userLoading || getAdvicesLoading) {
@@ -110,10 +79,10 @@ export const AdvicesScreen = () => {
                 item.adviceDocuments?.length !== 0 ? (
                   <FocusableBox
                     onClick={() => handleDropdown(item.id)}
-                    component="div"
+                    component="button"
                   >
                     <DropdownMenu
-                      title="Viðhengi"
+                      title={loc.card.dropdownMenuTitle}
                       icon={
                         dropdownState === item.id ? 'chevronUp' : 'chevronDown'
                       }
@@ -138,7 +107,7 @@ export const AdvicesScreen = () => {
                 >
                   <Stack space={2}>
                     <Text variant="eyebrow" color="dark400">
-                      Þín umsögn
+                      {loc.card.eyebrowText}
                     </Text>
                     <Box
                       style={{
@@ -168,10 +137,40 @@ export const AdvicesScreen = () => {
   }
 
   return (
-    <AdvicesLayout>
-      <SearchAndSortPartialData filters={filters} setFilters={setFilters} />
-      {renderCards()}
-    </AdvicesLayout>
+    <Layout seo={{ title: loc.seo.title, url: loc.seo.url }}>
+      <Breadcrumbs
+        items={[
+          { title: loc.breadcrumbs[0].title, href: loc.breadcrumbs[0].href },
+          { title: loc.breadcrumbs[1].title },
+        ]}
+      />
+      <GridContainer>
+        <Stack space={[3, 3, 3, 5, 5]}>
+          <Stack space={3}>
+            <Text variant="h1">{loc.intro.title}</Text>
+            <Text variant="default">{loc.intro.text}</Text>
+          </Stack>
+          {!userLoading && !isAuthenticated && (
+            <ActionCard
+              heading={loc.subscriptionActionCard.heading}
+              text={loc.subscriptionActionCard.text}
+              button={[
+                {
+                  label: loc.subscriptionActionCard.buttonLabel,
+                  onClick: LogIn,
+                },
+              ]}
+            />
+          )}
+          {!userLoading && isAuthenticated && (
+            <>
+              <SearchAndSortPartial filters={filters} setFilters={setFilters} />
+              {renderCards()}
+            </>
+          )}
+        </Stack>
+      </GridContainer>
+    </Layout>
   )
 }
 

@@ -22,6 +22,7 @@ const GetGeneralPetitionList = gql`
       meta
       created
       ownerName
+      owner
     }
   }
 `
@@ -38,6 +39,7 @@ const GetGeneralPetitionListEndorsements = gql`
         created
         meta {
           fullName
+          locality
         }
       }
     }
@@ -47,6 +49,7 @@ const GetGeneralPetitionListEndorsements = gql`
 export const useGetPetitionList = (listId: string) => {
   const {
     data: endorsementListsResponse,
+    loading,
     error,
   } = useQuery<PetitionListResponse>(GetGeneralPetitionList, {
     variables: {
@@ -58,7 +61,7 @@ export const useGetPetitionList = (listId: string) => {
 
   const list =
     endorsementListsResponse?.endorsementSystemGetGeneralPetitionList ?? []
-  return { list, error }
+  return { list, loading, error }
 }
 
 export const useGetPetitionListEndorsements = (listId: string) => {

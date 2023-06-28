@@ -114,6 +114,7 @@ identity-server:
     NODE_OPTIONS: '--max-old-space-size=2000'
     NO_UPDATE_NOTIFIER: 'true'
     PersistenceSettings__BaseAddress: 'http://web-services-auth-ids-api'
+    PersistenceSettings__DelegationsCacheEnabled: 'false'
     PersistenceSettings__SessionsBaseAddress: 'http://web-services-sessions.services-sessions.svc.cluster.local'
     SERVERSIDE_FEATURES_ON: ''
   files:
@@ -440,6 +441,9 @@ services-auth-ids-api:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     DB_PASS: '/k8s/services-auth/api/DB_PASSWORD'
     IDENTITY_SERVER_CLIENT_SECRET: '/k8s/services-auth/IDENTITY_SERVER_CLIENT_SECRET'
+    NOVA_PASSWORD: '/k8s/services-auth/NOVA_PASSWORD'
+    NOVA_URL: '/k8s/services-auth/NOVA_URL'
+    NOVA_USERNAME: '/k8s/services-auth/NOVA_USERNAME'
     RSK_PASSWORD: '/k8s/xroad/client/RSK/PASSWORD'
     RSK_USERNAME: '/k8s/xroad/client/RSK/USERNAME'
   securityContext:

@@ -1,4 +1,5 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql'
+import { CacheField } from '@island.is/nest/graphql'
 import type { SystemMetadata } from '@island.is/shared/types'
 import type { ILifeEventPageListSlice } from '../generated/contentfulTypes'
 import { LifeEventPage, mapLifeEventPage } from './lifeEventPage.model'
@@ -11,7 +12,7 @@ export class LifeEventPageListSlice {
   @Field()
   title!: string
 
-  @Field(() => [LifeEventPage])
+  @CacheField(() => [LifeEventPage])
   lifeEventPageList!: LifeEventPage[]
 }
 

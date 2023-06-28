@@ -1,26 +1,24 @@
-import { Outlet, useRouteLoaderData } from 'react-router-dom'
-import { idsAdminNav } from '../../lib/navigation'
-import Layout from '../../components/Layout/Layout'
+import { Outlet, useLoaderData } from 'react-router-dom'
+
 import { useLocale } from '@island.is/localization'
+
+import { Layout } from '../../components/Layout/Layout'
 import { m } from '../../lib/messages'
-import { useEffect, useState } from 'react'
-import { tenantLoaderId } from './Tenant.loader'
-import { AuthAdminTenant } from '@island.is/api/schema'
+import { idsAdminNav } from '../../lib/navigation'
+import { TenantLoaderResult } from './Tenant.loader'
 
 const Tenant = () => {
-  const { formatMessage } = useLocale()
-  const [title, setTitle] = useState<string>(formatMessage(m.idsAdmin))
-  const tenantInfo = useRouteLoaderData(tenantLoaderId) as AuthAdminTenant
+  const { formatMessage, locale } = useLocale()
+  const {
+    defaultEnvironment: { displayName },
+  } = useLoaderData() as TenantLoaderResult
 
-  useEffect(() => {
-    setTitle(tenantInfo.defaultEnvironment.displayName[0].value)
-  }, [tenantInfo])
+  const tenantTitle =
+    displayName.find((d) => d.locale === locale)?.value ??
+    formatMessage(m.idsAdmin)
 
   return (
-    <Layout
-      navTitle={title ?? formatMessage(m.idsAdmin)}
-      navItems={idsAdminNav}
-    >
+    <Layout navTitle={tenantTitle} navItems={idsAdminNav}>
       <Outlet />
     </Layout>
   )

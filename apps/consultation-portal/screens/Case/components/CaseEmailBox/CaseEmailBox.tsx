@@ -7,19 +7,21 @@ import {
   usePostCaseSubscription,
   useDeleteCaseSubscription,
 } from '../../../../hooks'
-import { IsEmailValid } from '../../../../utils/helpers'
-import { ReactNode, useEffect, useState } from 'react'
-import { SimpleCardSkeleton } from '../../../../components/Card'
-import StackedTitleAndDescription from '../../../../components/StackedTitleAndDescription/StackedTitleAndDescription'
+import { isEmailValid } from '../../utils'
+import { BaseSyntheticEvent, ReactNode, useEffect, useState } from 'react'
+import { CardSkeleton as CardSkeletonComponent } from '../../../../components'
 import {
-  Box,
   Text,
   Button,
   LoadingDots,
   toast,
+  Stack,
 } from '@island.is/island-ui/core'
-import CaseEmailActionBox from './CaseEmailActionBox'
-import { CaseSubscriptionType } from '../../../../types/enums'
+import { Stacked, CaseEmailActionBox } from '../../components'
+import { SubscriptionTypes } from '../../../../types/enums'
+import localization from '../../Case.json'
+
+const loc = localization['caseEmailBox']
 
 interface CardSkeletonProps {
   text?: string
@@ -28,12 +30,12 @@ interface CardSkeletonProps {
 
 const CardSkeleton = ({ text, children }: CardSkeletonProps) => {
   return (
-    <SimpleCardSkeleton>
-      <StackedTitleAndDescription title="Skrá áskrift">
-        {text && <Text>{text}</Text>}
-      </StackedTitleAndDescription>
-      <Box paddingTop={2}>{children}</Box>
-    </SimpleCardSkeleton>
+    <CardSkeletonComponent>
+      <Stack space={2}>
+        <Stacked title={loc.buttonLabel}>{text && <Text>{text}</Text>}</Stacked>
+        {children}
+      </Stack>
+    </CardSkeletonComponent>
   )
 }
 
@@ -46,10 +48,8 @@ export const CaseEmailBox = ({ caseId, caseNumber }: Props) => {
   const { isAuthenticated, userLoading } = useUser()
   const [isVerified, setIsVerified] = useState(false)
   const LogIn = useLogIn()
-  const [userEmail, setUserEmail] = useState<string>('')
+  const [userEmail, setUserEmail] = useState('')
   const [inputValue, setInputValue] = useState('')
-  const [allChecked, setAllChecked] = useState(true)
-  const [userClickedChange, setUserClickedChange] = useState(false)
 
   const { postEmailMutation, postEmailLoading } = usePostEmail()
   const {
@@ -90,15 +90,16 @@ export const CaseEmailBox = ({ caseId, caseNumber }: Props) => {
       .then(() => {
         setInputValue('')
         setUserEmail(nextEmail)
-        toast.success('Nýtt netfang skráð')
+        toast.success(loc.postEmailMutationToasts.success)
       })
-      .catch(() => toast.error('Ekki tókst að skrá inn nýtt netfang'))
+      .catch(() => toast.error(loc.postEmailMutationToasts.failure))
   }
 
   const onPostCaseSubscription = async () => {
     const postCaseSubscriptionCommand = {
-      subscriptionType: allChecked ? 'AllChanges' : 'StatusChanges',
+      subscriptionType: SubscriptionTypes.AllChanges,
     }
+
     await postCaseSubscriptionMutation({
       variables: {
         input: {
@@ -109,11 +110,14 @@ export const CaseEmailBox = ({ caseId, caseNumber }: Props) => {
     })
       .then(() => {
         refetchCaseSubscription()
-        setUserClickedChange(false)
-        toast.success(`Áskrift tókst fyrir mál S-${caseNumber}.`)
+        toast.success(
+          `${loc.postSubscriptionMutationToasts.success} S-${caseNumber}.`,
+        )
       })
       .catch(() =>
-        toast.error(`Ekki tókst að skrá áskrift fyrir mál S-${caseNumber}.`),
+        toast.error(
+          `${loc.postSubscriptionMutationToasts.failure} S-${caseNumber}.`,
+        ),
       )
   }
 
@@ -127,14 +131,18 @@ export const CaseEmailBox = ({ caseId, caseNumber }: Props) => {
     })
       .then(() => {
         refetchCaseSubscription()
-        toast.success(`Afskráning á áskrift fyrir mál S-${caseNumber} tókst.`)
+        toast.success(
+          `${loc.deleteCaseSubscriptionMutation.successBegin} S-${caseNumber} ${loc.deleteCaseSubscriptionMutation.successEnd}`,
+        )
       })
       .catch(() =>
-        toast.error(`Ekki tókst á afskrá áskrift fyrir mál S-${caseNumber}`),
+        toast.error(
+          `${loc.deleteCaseSubscriptionMutation.failure} S-${caseNumber}`,
+        ),
       )
   }
 
-  const onChangeEmail = (e) => {
+  const onChangeEmail = (e: BaseSyntheticEvent) => {
     const nextInputVal = e.target.value
     setInputValue(nextInputVal)
   }
@@ -146,17 +154,11 @@ export const CaseEmailBox = ({ caseId, caseNumber }: Props) => {
     setIsVerified(false)
   }
 
-  const handleUserClickedChange = () => {
-    const checkBool = caseSubscription?.type === 'AllChanges' ? true : false
-    setAllChecked(checkBool)
-    setUserClickedChange(true)
-  }
-
   if (!userLoading && !isAuthenticated) {
     return (
-      <CardSkeleton text="Þú verður að vera skráð(ur) inn á island.is til þess að geta skráð þig í eða úr áskrift.">
+      <CardSkeleton text={loc.loginCardSkeleton.text}>
         <Button fluid iconType="outline" nowrap onClick={LogIn}>
-          Skrá mig inn
+          {loc.loginCardSkeleton.button}
         </Button>
       </CardSkeleton>
     )
@@ -172,24 +174,22 @@ export const CaseEmailBox = ({ caseId, caseNumber }: Props) => {
 
   if (!userEmail) {
     return (
-      <CardSkeleton text="Skráðu netfang hérna. Þú færð svo tölvupóst sem þú þarf að staðfesta til að hægt sé að skrá áskrift á það.">
+      <CardSkeleton text={loc.setEmailCardSkeleton.text}>
         <CaseEmailActionBox
           input={{
             name: 'userEmailInput',
-            label: 'Netfang',
-            placeholder: 'nonni@island.is',
+            label: loc.setEmailCardSkeleton.input.label,
+            placeholder: loc.setEmailCardSkeleton.input.placeholder,
             value: inputValue,
             onChange: onChangeEmail,
             isDisabled: postEmailLoading,
           }}
-          button={[
-            {
-              label: 'Skrá netfang',
-              onClick: onSetEmail,
-              isDisabled: !IsEmailValid(inputValue),
-              isLoading: postEmailLoading,
-            },
-          ]}
+          button={{
+            label: loc.setEmailCardSkeleton.button,
+            onClick: onSetEmail,
+            isDisabled: !isEmailValid(inputValue),
+            isLoading: postEmailLoading,
+          }}
         />
       </CardSkeleton>
     )
@@ -197,103 +197,38 @@ export const CaseEmailBox = ({ caseId, caseNumber }: Props) => {
 
   if (!isVerified) {
     return (
-      <CardSkeleton
-        text={`Beðið er eftir staðfestingu fyrir netfangið ${userEmail}`}
-      >
+      <CardSkeleton text={`${loc.notVerifiedCardSkeleton.text} ${userEmail}`}>
         <CaseEmailActionBox
-          button={[
-            {
-              label: 'Breyta netfangi',
-              onClick: resetEmail,
-            },
-          ]}
+          button={{
+            label: loc.notVerifiedCardSkeleton.button,
+            onClick: resetEmail,
+          }}
         />
       </CardSkeleton>
     )
   }
 
-  {
-    return caseSubscription?.type ? (
-      <CardSkeleton
-        text={
-          userClickedChange
-            ? 'Veldu hvernig tilkynningar þú vilt af þessu máli.'
-            : 'Þú ert þegar með áskrift af þessu máli. Þú getur valið um að breyta tegund áskriftar eða fjarlægja áskrift.'
-        }
-      >
-        {userClickedChange ? (
-          <Box paddingTop={1}>
-            <CaseEmailActionBox
-              selection={[
-                {
-                  label: CaseSubscriptionType['AllChanges'],
-                  checked: allChecked,
-                  onChange: () => setAllChecked(true),
-                  isDisabled: postCaseSubscriptionLoading,
-                },
-                {
-                  label: CaseSubscriptionType['StatusChanges'],
-                  checked: !allChecked,
-                  onChange: () => setAllChecked(false),
-                  isDisabled: postCaseSubscriptionLoading,
-                },
-              ]}
-              button={[
-                {
-                  label: 'Staðfesta breytingu',
-                  onClick: () => onPostCaseSubscription(),
-                  isLoading: postCaseSubscriptionLoading,
-                },
-              ]}
-            />
-          </Box>
-        ) : (
-          <CaseEmailActionBox
-            button={[
-              {
-                label: 'Breyta áskrift',
-                onClick: () => handleUserClickedChange(),
-                isDisabled: deleteCaseSubscriptionLoading,
-              },
-              {
-                label: 'Fjarlægja áskrift',
-                onClick: () => onDeleteCaseSubscription(),
-                isLoading: deleteCaseSubscriptionLoading,
-              },
-            ]}
-          />
-        )}
-      </CardSkeleton>
-    ) : (
-      <CardSkeleton text="Veldu hvernig tilkynningar þú vilt af þessu máli.">
-        <Box paddingTop={1}>
-          <CaseEmailActionBox
-            selection={[
-              {
-                label: CaseSubscriptionType['AllChanges'],
-                checked: allChecked,
-                onChange: () => setAllChecked(true),
-                isDisabled: caseSubscriptionLoading,
-              },
-              {
-                label: CaseSubscriptionType['StatusChanges'],
-                checked: !allChecked,
-                onChange: () => setAllChecked(false),
-                isDisabled: caseSubscriptionLoading,
-              },
-            ]}
-            button={[
-              {
-                label: 'Skrá í áskrift',
-                onClick: () => onPostCaseSubscription(),
-                isLoading: caseSubscriptionLoading,
-              },
-            ]}
-          />
-        </Box>
-      </CardSkeleton>
-    )
-  }
+  return caseSubscription?.type ? (
+    <CardSkeleton text={loc.subbedCardSkeleton.initial.text}>
+      <CaseEmailActionBox
+        button={{
+          label: loc.subbedCardSkeleton.initial.buttonRemove,
+          onClick: () => onDeleteCaseSubscription(),
+          isLoading: deleteCaseSubscriptionLoading || caseSubscriptionLoading,
+        }}
+      />
+    </CardSkeleton>
+  ) : (
+    <CardSkeleton text={loc.notSubbedCardSkeleton.text}>
+      <CaseEmailActionBox
+        button={{
+          label: loc.notSubbedCardSkeleton.button,
+          onClick: () => onPostCaseSubscription(),
+          isLoading: postCaseSubscriptionLoading || caseSubscriptionLoading,
+        }}
+      />
+    </CardSkeleton>
+  )
 }
 
 export default CaseEmailBox

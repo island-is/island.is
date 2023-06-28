@@ -4,6 +4,7 @@ import { getModelToken } from '@nestjs/sequelize'
 import { faker } from '@island.is/shared/mocking'
 import { AdminPortalScope } from '@island.is/auth/scopes'
 import {
+  AdminCreateScopeDto,
   AdminScopeDTO,
   ApiScopeUserClaim,
   SequelizeConfigService,
@@ -11,6 +12,7 @@ import {
 } from '@island.is/auth-api-lib'
 import { FixtureFactory } from '@island.is/services/auth/testing'
 import { AuthDelegationType } from '@island.is/shared/types'
+import { isDefined } from '@island.is/shared/utils'
 import {
   createCurrentUser,
   createNationalId,
@@ -210,11 +212,7 @@ const getSingleTestCases: Record<string, GetSingleTestCase> = {
 interface CreateTestCase {
   user: User
   tenantId: string
-  input: {
-    name: string
-    displayName: string
-    description: string
-  }
+  input: AdminCreateScopeDto
   expected: {
     status: number
     body: AdminScopeDTO | Record<string, unknown>
@@ -225,25 +223,23 @@ const mockedCreateApiScope = createMockedApiScopes(1)[0]
 
 const createInput = {
   name: `${TENANT_ID}/${faker.random.word()}`,
-  displayName: faker.random.word(),
-  description: faker.random.words(),
-}
-
-const expectedCreateOutput = {
-  ...mockedCreateApiScope,
-  name: createInput.name,
   displayName: [
     {
       locale: 'is',
-      value: createInput.displayName,
+      value: faker.random.word(),
     },
   ],
   description: [
     {
       locale: 'is',
-      value: createInput.description,
+      value: faker.random.words(),
     },
   ],
+}
+
+const expectedCreateOutput = {
+  ...mockedCreateApiScope,
+  ...createInput,
 }
 
 const createTestCases: Record<string, CreateTestCase> = {
@@ -265,6 +261,23 @@ const createTestCases: Record<string, CreateTestCase> = {
       body: expectedCreateOutput,
     },
   },
+  'should create scope with additional fields and have access as current user': {
+    user: currentUser,
+    tenantId: TENANT_ID,
+    input: {
+      ...createInput,
+      grantToAuthenticatedUser: true,
+      grantToLegalGuardians: true,
+    },
+    expected: {
+      status: 200,
+      body: {
+        ...expectedCreateOutput,
+        grantToAuthenticatedUser: true,
+        grantToLegalGuardians: true,
+      },
+    },
+  },
   'should return a bad request because of invalid input': {
     user: superUser,
     tenantId: TENANT_ID,
@@ -272,14 +285,18 @@ const createTestCases: Record<string, CreateTestCase> = {
     expected: {
       status: 400,
       body: {
-        detail: [
-          'name should not be empty',
-          'name must be a string',
-          'displayName should not be empty',
-          'displayName must be a string',
-          'description should not be empty',
-          'description must be a string',
-        ],
+        detail: ['name should not be empty', 'name must be a string'],
+      },
+    },
+  },
+  'should return a bad request because of missing displayName and description': {
+    user: superUser,
+    tenantId: TENANT_ID,
+    input: { name: createInput.name } as typeof createInput,
+    expected: {
+      status: 400,
+      body: {
+        detail: 'Scope displayName and description are required',
       },
     },
   },
@@ -545,19 +562,26 @@ describe('MeScopesController', () => {
 
         // Assert response
         expect(response.status).toEqual(testCase.expected.status)
-
         if (response.status === 200) {
           // Assert response
           expect(response.body).toStrictEqual({
             ...testCase.expected.body,
+            grantToAuthenticatedUser: isDefined(
+              testCase.expected.body.grantToAuthenticatedUser,
+            )
+              ? testCase.expected.body.grantToAuthenticatedUser
+              : true,
+            grantToLegalGuardians: isDefined(
+              testCase.expected.body.grantToLegalGuardians,
+            )
+              ? testCase.expected.body.grantToLegalGuardians
+              : false,
             allowExplicitDelegationGrant: false,
             alsoForDelegatedUser: false,
             automaticDelegationGrant: false,
             domainName: TENANT_ID,
             emphasize: false,
             enabled: true,
-            grantToAuthenticatedUser: true,
-            grantToLegalGuardians: false,
             grantToPersonalRepresentatives: false,
             grantToProcuringHolders: false,
             isAccessControlled: false,

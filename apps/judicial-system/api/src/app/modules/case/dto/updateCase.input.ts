@@ -11,7 +11,6 @@ import type {
   UpdateCase,
   SessionArrangements,
   CourtDocument,
-  SubpoenaType,
   CaseType,
   IndictmentSubtypeMap,
   CrimeSceneMap,
@@ -275,10 +274,6 @@ export class UpdateCaseInput implements UpdateCase {
   @Allow()
   @Field({ nullable: true })
   readonly caseResentExplanation?: string
-
-  @Allow()
-  @Field(() => String, { nullable: true })
-  readonly subpoenaType?: SubpoenaType
 
   @Allow()
   @Field({ nullable: true })

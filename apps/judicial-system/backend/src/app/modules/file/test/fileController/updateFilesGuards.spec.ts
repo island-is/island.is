@@ -60,7 +60,7 @@ describe('FileController - Upload case file to court guards', () => {
     it('should have CaseTypeGuard as guard 3', () => {
       expect(guard).toBeInstanceOf(CaseTypeGuard)
       expect(guard).toEqual({
-        allowedCaseTypes: [...indictmentCases],
+        allowedCaseTypes: indictmentCases,
       })
     })
   })

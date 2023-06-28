@@ -15,6 +15,8 @@ const LimitedAccessCaseQuery = gql`
         name
         category
         created
+        key
+        policeCaseNumber
       }
       defendants {
         id
@@ -34,6 +36,7 @@ const LimitedAccessCaseQuery = gql`
       defenderNationalId
       defenderEmail
       defenderPhoneNumber
+      sendRequestToDefender
       court {
         id
         name
@@ -67,6 +70,8 @@ const LimitedAccessCaseQuery = gql`
       isCustodyIsolation
       isolationToDate
       conclusion
+      accusedPostponedAppealDate
+      prosecutorPostponedAppealDate
       rulingDate
       registrar {
         id

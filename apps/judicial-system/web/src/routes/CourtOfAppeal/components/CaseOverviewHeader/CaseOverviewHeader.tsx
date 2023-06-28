@@ -5,13 +5,14 @@ import {
   CaseDates,
   FormContext,
   MarkdownWrapper,
+  OverviewHeader,
   RestrictionTags,
 } from '@island.is/judicial-system-web/src/components'
 import { AlertMessage, Box, Button, Text } from '@island.is/island-ui/core'
 import { core } from '@island.is/judicial-system-web/messages'
 import { formatDate } from '@island.is/judicial-system/formatters'
-import { titleForCase } from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
+  CaseAppealDecision,
   CaseDecision,
   CaseState,
   isRestrictionCase,
@@ -43,11 +44,8 @@ const CourtOfAppealCaseOverviewHeader: React.FC = () => {
       </Box>
       <Box display="flex" justifyContent="spaceBetween" marginBottom={3}>
         <Box>
-          <Box marginBottom={1}>
-            <Text as="h1" variant="h1">
-              {titleForCase(formatMessage, workingCase)}
-            </Text>
-          </Box>
+          <OverviewHeader />
+
           {workingCase.courtEndTime && (
             <Box>
               <RulingDateLabel courtEndTime={workingCase.courtEndTime} />
@@ -56,17 +54,21 @@ const CourtOfAppealCaseOverviewHeader: React.FC = () => {
           {workingCase.appealedDate && (
             <Box marginTop={1}>
               <Text as="h5" variant="h5">
-                {formatMessage(strings.appealedInfo, {
-                  appealedByProsecutor:
-                    workingCase.appealedByRole === UserRole.PROSECUTOR,
-                  appealedDate: `${formatDate(
-                    workingCase.appealedDate,
-                    'PPP',
-                  )} kl. ${formatDate(
-                    workingCase.appealedDate,
-                    constants.TIME_FORMAT,
-                  )}`,
-                })}
+                {workingCase.prosecutorAppealDecision ===
+                  CaseAppealDecision.APPEAL ||
+                workingCase.accusedAppealDecision === CaseAppealDecision.APPEAL
+                  ? formatMessage(strings.appealedByInCourt, {
+                      appealedByProsecutor:
+                        workingCase.appealedByRole === UserRole.PROSECUTOR,
+                    })
+                  : formatMessage(strings.appealedBy, {
+                      appealedByProsecutor:
+                        workingCase.appealedByRole === UserRole.PROSECUTOR,
+                      appealedDate: `${formatDate(
+                        workingCase.appealedDate,
+                        'PPPp',
+                      )}`,
+                    })}
               </Text>
             </Box>
           )}

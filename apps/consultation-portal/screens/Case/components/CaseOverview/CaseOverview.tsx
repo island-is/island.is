@@ -1,12 +1,13 @@
 import { Box, Stack, Text } from '@island.is/island-ui/core'
-import EyebrowsWithSeperator from '../../../../components/EyebrowsWithSeperator/EyebrowsWithSeperator'
+import { Eyebrows } from '../../../../components'
 import * as styles from './CaseOverview.css'
 import CaseStatusCard from '../CaseStatusCard/CaseStatusCard'
 import {
   getShortDate,
   hasDatePassed,
-} from '../../../../utils/helpers/dateFormatter'
+} from '../../../../utils/helpers/dateFunctions'
 import { Case, UserAdvice } from '../../../../types/interfaces'
+import localization from '../../Case.json'
 
 interface CaseOverviewProps {
   chosenCase: Case
@@ -14,10 +15,12 @@ interface CaseOverviewProps {
 }
 
 export const CaseOverview = ({ chosenCase }: CaseOverviewProps) => {
+  const loc = localization['caseOverview']
+
   const upperInstances = [
-    `Mál nr. S-${chosenCase?.caseNumber}`,
-    `Birt: ${getShortDate(chosenCase.created)}`,
-    `Fjöldi umsagna: ${chosenCase?.adviceCount}`,
+    `${loc.upperInstances.case} S-${chosenCase?.caseNumber}`,
+    `${loc.upperInstances.show}: ${getShortDate(chosenCase.created)}`,
+    `${loc.upperInstances.advicesCount}: ${chosenCase?.adviceCount}`,
   ]
 
   const lowerInstances = [
@@ -29,7 +32,7 @@ export const CaseOverview = ({ chosenCase }: CaseOverviewProps) => {
     <Stack space={[4, 4, 4, 6, 6]}>
       <Stack space={3}>
         <Box display={'flex'} justifyContent={'spaceBetween'}>
-          <EyebrowsWithSeperator
+          <Eyebrows
             instances={upperInstances}
             color="purple400"
             style={styles.upperSeperator}
@@ -37,7 +40,7 @@ export const CaseOverview = ({ chosenCase }: CaseOverviewProps) => {
             truncate={false}
           />
         </Box>
-        <EyebrowsWithSeperator
+        <Eyebrows
           instances={lowerInstances}
           color="blue600"
           style={styles.lowerSeperator}
@@ -54,12 +57,14 @@ export const CaseOverview = ({ chosenCase }: CaseOverviewProps) => {
         )}
       <Stack space={[3, 3, 3, 4, 4]}>
         <Box>
-          <Text variant="h4">Málsefni</Text>
-          <Text variant="default">{chosenCase?.announcementText}</Text>
+          <Text variant="h4">{loc.shortDescriptionTitle}</Text>
+          <Text variant="default">{chosenCase?.shortDescription}</Text>
         </Box>
         <Box>
-          <Text variant="h4">Nánari upplýsingar</Text>
-          <Text variant="default">{chosenCase.detailedDescription}</Text>
+          <Text variant="h4">{loc.detailedDescriptionTitle}</Text>
+          <Text variant="default" whiteSpace="preWrap">
+            {chosenCase.detailedDescription}
+          </Text>
         </Box>
       </Stack>
     </Stack>

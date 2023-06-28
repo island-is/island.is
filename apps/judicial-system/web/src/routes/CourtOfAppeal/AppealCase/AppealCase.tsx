@@ -60,7 +60,7 @@ const AppealCase = () => {
   const assistants = (userData?.users ?? [])
     .filter(
       (user: User) =>
-        user.role === UserRole.REGISTRAR &&
+        user.role === UserRole.ASSISTANT &&
         user.institution?.type === InstitutionType.HIGH_COURT,
     )
     .map((assistant: User) => {
@@ -71,7 +71,10 @@ const AppealCase = () => {
     .filter(
       (user: User) =>
         user.role === UserRole.JUDGE &&
-        user.institution?.type === InstitutionType.HIGH_COURT,
+        user.institution?.type === InstitutionType.HIGH_COURT &&
+        workingCase.appealJudge1?.id !== user.id &&
+        workingCase.appealJudge2?.id !== user.id &&
+        workingCase.appealJudge3?.id !== user.id,
     )
     .map((judge: User) => {
       return { label: judge.name, value: judge.id, judge }
@@ -103,13 +106,15 @@ const AppealCase = () => {
             name="appealCaseNumber"
             label={formatMessage(strings.caseNumberLabel)}
             value={workingCase.appealCaseNumber ?? ''}
-            placeholder={formatMessage(strings.caseNumberPlaceholder)}
+            placeholder={formatMessage(strings.caseNumberPlaceholder, {
+              year: new Date().getFullYear(),
+            })}
             errorMessage={appealCaseNumberErrorMessage}
             onChange={(event) => {
               removeTabsValidateAndSet(
                 'appealCaseNumber',
                 event.target.value,
-                ['empty'],
+                ['empty', 'appeal-case-number-format'],
                 workingCase,
                 setWorkingCase,
                 appealCaseNumberErrorMessage,
@@ -120,7 +125,7 @@ const AppealCase = () => {
               validateAndSendToServer(
                 'appealCaseNumber',
                 event.target.value,
-                ['empty'],
+                ['empty', 'appeal-case-number-format'],
                 workingCase,
                 updateCase,
                 setAppealCaseNumberErrorMessage,

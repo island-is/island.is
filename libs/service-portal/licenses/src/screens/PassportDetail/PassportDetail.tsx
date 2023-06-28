@@ -172,6 +172,7 @@ const PassportDetail = () => {
             paddingBottom={1}
             labelColumnSpan={['1/1', '6/12']}
             valueColumnSpan={['1/1', '6/12']}
+            translate="no"
           />
           <Divider />
           <UserInfoLine
@@ -181,6 +182,7 @@ const PassportDetail = () => {
             paddingBottom={1}
             labelColumnSpan={['1/1', '6/12']}
             valueColumnSpan={['1/1', '6/12']}
+            translate="no"
           />
           <Divider />
           <UserInfoLine
@@ -190,6 +192,7 @@ const PassportDetail = () => {
             paddingBottom={1}
             labelColumnSpan={['1/1', '6/12']}
             valueColumnSpan={['1/1', '6/12']}
+            translate="no"
           />
           <Divider />
           <UserInfoLine
@@ -239,6 +242,7 @@ const PassportDetail = () => {
             paddingBottom={1}
             labelColumnSpan={['1/1', '6/12']}
             valueColumnSpan={['1/1', '6/12']}
+            translate="no"
           />
           <Divider />
           <UserInfoLine
@@ -248,6 +252,7 @@ const PassportDetail = () => {
             paddingBottom={1}
             labelColumnSpan={['1/1', '6/12']}
             valueColumnSpan={['1/1', '6/12']}
+            translate="no"
           />
           <Divider />
           <UserInfoLine

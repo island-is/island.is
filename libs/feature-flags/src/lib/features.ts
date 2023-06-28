@@ -6,9 +6,6 @@ export enum Features {
   // Application visibility flags
   exampleApplication = 'isExampleApplicationEnabled',
   accidentNotification = 'isAccidentNotificationEnabled',
-  announcementOfDeath = 'isAnnouncementOfDeathEnabled',
-  noDebtCertificate = 'applicationTemplateNoDebtCertificateEnabled',
-  drivingLearnersPermit = 'isDrivingLearnersPermitEnabled',
   drivingInstructorRegistrations = 'isDrivingInstructorRegistrationsEnabled',
   drivingSchoolConfirmations = 'isDrivingSchoolConfirmationsEnabled',
   europeanHealthInsuranceCard = 'isEuropeanHealthInsuranceCardApplicationEnabled',
@@ -18,41 +15,32 @@ export enum Features {
   inheritanceReport = 'isInheritanceReportApplicationEnabled',
   operatingLicense = 'isApplicationOperatingLicenseEnabled',
   marriageConditions = 'isMarriageConditionsApplicationEnabled',
-  estateApplication = 'isEstateApplicationEnabled',
   drivingLicenseDuplicate = 'isDrivingLicenseDuplicateEnabled',
-  transportAuthorityAnonymityInVehicleRegistry = 'isTransportAuthorityAnonymityInVehicleRegistryEnabled',
-  transportAuthorityChangeCoOwnerOfVehicle = 'isTransportAuthorityChangeCoOwnerOfVehicleEnabled',
-  transportAuthorityChangeOperatorOfVehicle = 'isTransportAuthorityChangeOperatorOfVehicleEnabled',
   transportAuthorityDigitalTachographCompanyCard = 'isTransportAuthorityDigitalTachographCompanyCardEnabled',
   transportAuthorityDigitalTachographDriversCard = 'isTransportAuthorityDigitalTachographDriversCardEnabled',
   transportAuthorityDigitalTachographWorkshopCard = 'isTransportAuthorityDigitalTachographWorkshopCardEnabled',
-  transportAuthorityOrderVehicleLicensePlate = 'isTransportAuthorityOrderVehicleLicensePlateEnabled',
-  transportAuthorityOrderVehicleRegistrationCertificate = 'isTransportAuthorityOrderVehicleRegistrationCertificateEnabled',
-  transportAuthorityTransferOfVehicleOwnership = 'isTransportAuthorityTransferOfVehicleOwnershipEnabled',
   transportAuthorityLicensePlateRenewal = 'isTransportAuthorityLicensePlateRenewalEnabled',
-  drivingLicenseBookUpdateInstructor = 'isDrivingLicenseBookUpdateInstructorEnabled',
   alcoholTaxRedemption = 'isAlcoholTaxRedemptionEnabled',
   consultationPortalApplication = 'isConsultationPortalEnabled',
+  childrenResidenceChangeV2 = 'isChildrenResidenceChangeV2Enabled',
 
   // Application System Delegations active
   applicationSystemDelegations = 'applicationSystemDelegations',
 
   // Service portal modules
   servicePortalPetitionsModule = 'isServicePortalPetitionsModuleEnabled',
-  servicePortalDrivingLessonsBookModule = 'isServicePortalDrivingLessonsBookModuleEnabled',
   servicePortalAirDiscountModule = 'isServicePortalAirDiscountModuleEnabled',
   servicePortalEducationGraduation = 'isServicePortalEducationGratuationModuleEnabled',
   sessionHistory = 'sessionHistory',
   servicePortalConsentModule = 'isServicePortalConsentModuleEnabled',
+  servicePortalHealthRightsModule = 'isServicePortalHealthRightsModuleEnabled',
+  servicePortalHealthCenterDentistPage = 'isServicePortalHealthCenterPageEnabled',
+
+  //License service new drivers license client enabled
+  licenseServiceDrivingLicenseClient = 'isLicenseServiceDrivingLicenceClientV2Enabled',
 
   // Application delegation flags
-  transportAuthorityTransferOfVehicleOwnershipDelegations = 'applicationTransportAuthorityTransferOfVehicleOwnershipDelegations',
-  transportAuthorityChangeCoOwnerOfVehicleDelegations = 'applicationTransportAuthorityChangeCoOwnerOfVehicleDelegations',
-  transportAuthorityChangeOperatorOfVehicleDelegations = 'applicationTransportAuthorityChangeOperatorOfVehicleDelegations',
-  transportAuthorityOrderVehicleLicensePlateDelegations = 'applicationTransportAuthorityOrderVehicleLicensePlateDelegations',
-  transportAuthorityOrderVehicleRegistrationCertificateDelegations = 'applicationTransportAuthorityOrderVehicleRegistrationCertificateDelegations',
   transportAuthorityLicensePlateRenewalDelegations = 'applicationTransportAuthorityLicensePlateRenewalDelegations',
-  mortgageCertificateDelegations = 'applicationMortgageCertificateDelegations',
 
   //Application system
   applicationSystemHistory = 'applicationSystemHistory',

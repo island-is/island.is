@@ -35,6 +35,7 @@ type ActionCardProps = {
     buttonType?: ButtonTypes
     size?: ButtonSizes
     icon?: IconType
+    iconType?: 'filled' | 'outline'
     onClick?: () => void
     disabled?: boolean
   }
@@ -293,6 +294,7 @@ export const ActionCard: React.FC<ActionCardProps> = ({
               onClick={cta.onClick}
               disabled={cta.disabled}
               icon={cta.icon}
+              iconType={cta.iconType}
             >
               {cta.label}
             </Button>

@@ -1,5 +1,5 @@
 import { BrowserContext, expect, Page, test } from '@playwright/test'
-import { urls } from '../../../../support/urls'
+import { icelandicAndNoPopupUrl, urls } from '../../../../support/urls'
 import { session } from '../../../../support/session'
 
 const homeUrl = `${urls.islandisBaseUrl}/minarsidur/`
@@ -55,7 +55,7 @@ test.describe('Service portal, in access control', () => {
     // Arrange
     const granterPage = await contextGranter.newPage()
     await granterPage.goto(
-      '/minarsidur/adgangsstyring/umbod?locale=is&hide_onboarding_modal=true',
+      icelandicAndNoPopupUrl('/minarsidur/adgangsstyring/umbod'),
     )
     await expect(
       granterPage.locator(
@@ -64,7 +64,7 @@ test.describe('Service portal, in access control', () => {
     ).not.toHaveCount(0, { timeout: 20000 })
 
     const receiverPage = await contextReceiver.newPage()
-    await receiverPage.goto('/minarsidur/?locale=is&hide_onboarding_modal=true')
+    await receiverPage.goto(icelandicAndNoPopupUrl('/minarsidur/'))
 
     await test.step('Remove delegations', async () => {
       // Act

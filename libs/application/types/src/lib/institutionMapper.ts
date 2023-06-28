@@ -15,6 +15,7 @@ export const institutionMapper = {
   [ApplicationTypes.HEALTH_INSURANCE]:
     InstitutionTypes.SJUKRATRYGGINGAR_ISLANDS,
   [ApplicationTypes.CHILDREN_RESIDENCE_CHANGE]: InstitutionTypes.SYSLUMENN,
+  [ApplicationTypes.CHILDREN_RESIDENCE_CHANGE_V2]: InstitutionTypes.SYSLUMENN,
   [ApplicationTypes.DATA_PROTECTION_AUTHORITY_COMPLAINT]:
     InstitutionTypes.PERSONUVERND,
   [ApplicationTypes.LOGIN_SERVICE]: InstitutionTypes.STAFRAENT_ISLAND,

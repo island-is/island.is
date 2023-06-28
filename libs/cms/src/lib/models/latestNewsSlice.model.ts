@@ -1,9 +1,10 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
+import { ElasticsearchIndexLocale } from '@island.is/content-search-index-manager'
+import { CacheField } from '@island.is/nest/graphql'
+import { SystemMetadata } from '@island.is/shared/types'
 import { GetNewsInput } from '../dto/getNews.input'
 import { ILatestNewsSlice } from '../generated/contentfulTypes'
 import { News } from './news.model'
-import { SystemMetadata } from '@island.is/shared/types'
-import { ElasticsearchIndexLocale } from '@island.is/content-search-index-manager'
 import { mapGenericTag } from './genericTag.model'
 import { Link, mapLink } from './link.model'
 
@@ -21,10 +22,10 @@ export class LatestNewsSlice {
   @Field()
   readMoreText?: string
 
-  @Field(() => [News])
+  @CacheField(() => [News])
   news!: GetNewsInput
 
-  @Field(() => Link, { nullable: true })
+  @CacheField(() => Link, { nullable: true })
   readMoreLink?: Link | null
 }
 

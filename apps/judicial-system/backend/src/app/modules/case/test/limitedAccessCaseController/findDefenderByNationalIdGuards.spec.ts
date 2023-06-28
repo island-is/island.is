@@ -2,7 +2,6 @@ import { CanActivate } from '@nestjs/common'
 
 import { TokenGuard } from '@island.is/judicial-system/auth'
 
-import { LimitedAccessCaseExistsGuard } from '../../guards/limitedAccessCaseExists.guard'
 import { LimitedAccessCaseController } from '../../limitedAccessCase.controller'
 
 describe('LimitedAccessCaseController - Find defender by national id guards', () => {
@@ -16,8 +15,8 @@ describe('LimitedAccessCaseController - Find defender by national id guards', ()
     )
   })
 
-  it('should have two guards', () => {
-    expect(guards).toHaveLength(2)
+  it('should have one guard', () => {
+    expect(guards).toHaveLength(1)
   })
 
   describe('TokenGuard', () => {
@@ -29,18 +28,6 @@ describe('LimitedAccessCaseController - Find defender by national id guards', ()
 
     it('should have TokenGuard as guard 1', () => {
       expect(guard).toBeInstanceOf(TokenGuard)
-    })
-  })
-
-  describe('LimitedAccessCaseExistsGuard', () => {
-    let guard: CanActivate
-
-    beforeEach(() => {
-      guard = new guards[1]()
-    })
-
-    it('should have LimitedAccessCaseExistsGuard as guard 2', () => {
-      expect(guard).toBeInstanceOf(LimitedAccessCaseExistsGuard)
     })
   })
 })
