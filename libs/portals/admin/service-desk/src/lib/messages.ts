@@ -2,11 +2,11 @@ import { defineMessages } from 'react-intl'
 
 export const m = defineMessages({
   serviceDesk: {
-    id: 'admin-portal.service-desk:serviceDesk',
+    id: 'admin-portal.service-desk:service-desk',
     defaultMessage: 'Þjónustuborð',
   },
   serviceDeskDescription: {
-    id: 'admin-portal.service-desk:serviceDeskDescription',
+    id: 'admin-portal.service-desk:service-desk-description',
     defaultMessage: 'Þjónustuborð fyrir notendur',
   },
   procures: {
@@ -14,12 +14,8 @@ export const m = defineMessages({
     defaultMessage: 'Prókúruhafar',
   },
   procuresDescription: {
-    id: 'admin-portal.service-desk:procuresDescription',
+    id: 'admin-portal.service-desk:procures-description',
     defaultMessage: 'Flettu upp fyrirtæki til að birta prókúruhafa',
-  },
-  pleaseEnterValueToBeingSearch: {
-    id: 'admin-portal.service-desk:please-enter-value-to-begin-search',
-    defaultMessage: 'Sláðu inn nafn eða kt til að byrja leit',
   },
   searchByNationalId: {
     id: 'admin-portal.service-desk:search-by-national-id',
@@ -28,10 +24,6 @@ export const m = defineMessages({
   listProcurers: {
     id: 'admin-portal.service-desk:list-procurers',
     defaultMessage: 'Listi af prókúruhöfum:',
-  },
-  back: {
-    id: 'admin-portal.service-desk:back',
-    defaultMessage: 'Til baka',
   },
   viewProcures: {
     id: 'admin-portal.service-desk:view-procures',

@@ -10,13 +10,11 @@ interface BaseCardProps {
 interface TitleOnlyProps extends BaseCardProps {
   title: string
   description?: never
-  loading?: never
 }
 
 interface DescOnlyProps extends BaseCardProps {
   title?: never
   description: string
-  loading?: never
 }
 
 interface TitleAndDescProps extends BaseCardProps {

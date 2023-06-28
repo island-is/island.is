@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Form, useActionData, useNavigate } from 'react-router-dom'
 import * as kennitala from 'kennitala'
 
@@ -41,6 +41,7 @@ const Companies = () => {
       toast.error(formatMessage(m.errorDefault))
     }
   }, [actionData])
+
   return (
     <>
       <IntroHeader

@@ -1,9 +1,9 @@
-import React from 'react'
 import { useLoaderData, useNavigate } from 'react-router-dom'
 
 import { formatNationalId, IntroHeader } from '@island.is/portals/core'
-import { Box, Button, Stack, Text } from '@island.is/island-ui/core'
+import { Box, Stack, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+import { BackButton } from '@island.is/portals/admin/core'
 
 import { m } from '../../lib/messages'
 import { ServiceDeskPaths } from '../../lib/paths'
@@ -18,18 +18,7 @@ const Procurers = () => {
 
   return (
     <Stack space="containerGutter">
-      <Button
-        colorScheme="default"
-        iconType="filled"
-        onClick={() => navigate(ServiceDeskPaths.Root)}
-        preTextIcon="arrowBack"
-        preTextIconType="filled"
-        size="small"
-        type="button"
-        variant="text"
-      >
-        {formatMessage(m.back)}
-      </Button>
+      <BackButton onClick={() => navigate(ServiceDeskPaths.Root)} />
       <div>
         <IntroHeader title={company.name} intro={formattedNationalId} />
         <Box marginTop={[3, 3, 6]}>
