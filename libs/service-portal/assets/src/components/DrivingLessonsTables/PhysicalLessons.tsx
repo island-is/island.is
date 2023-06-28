@@ -11,7 +11,7 @@ interface PropTypes {
 }
 
 const PhysicalLessons = ({ data, title }: PropTypes) => {
-  useNamespaces('sp.transports')
+  useNamespaces('sp.vehicles')
   const { formatMessage } = useLocale()
   return (
     <Box marginBottom={4} marginTop="containerGutter">

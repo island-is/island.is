@@ -11,7 +11,7 @@ interface Props {
 }
 
 export const TabContent: FC<Props> = ({ data }) => {
-  useNamespaces('sp.transports')
+  useNamespaces('sp.vehicles')
   const { formatMessage } = useLocale()
   const [page, setPage] = useState(1)
 

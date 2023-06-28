@@ -167,7 +167,7 @@ type UseParams = {
 }
 
 const VehicleDetail = () => {
-  useNamespaces('sp.transports')
+  useNamespaces('sp.vehicles')
   const { formatMessage } = useLocale()
   const { id } = useParams() as UseParams
 
