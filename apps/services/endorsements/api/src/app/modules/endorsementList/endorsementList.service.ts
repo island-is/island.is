@@ -189,9 +189,9 @@ export class EndorsementListService {
 
   async lock(endorsementList: EndorsementList): Promise<EndorsementList> {
     this.logger.info(`Locking endorsement list: ${endorsementList.id}`)
-
-    await this.emailLock(endorsementList)
-
+    if (process.env.NODE_ENV === 'production') {
+      await this.emailLock(endorsementList)
+    }
     return await endorsementList.update({ adminLock: true })
   }
 
@@ -231,7 +231,12 @@ export class EndorsementListService {
     }
     this.logger.info(`Creating endorsement list: ${list.title}`)
     const endorsementList = await this.endorsementListModel.create({ ...list })
-    await this.emailCreated(endorsementList)
+
+    console.log('process.env.NODE_ENV', process.env.NODE_ENV)
+    if (process.env.NODE_ENV === 'production') {
+      await this.emailCreated(endorsementList)
+    }
+
     return endorsementList
   }
 

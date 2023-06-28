@@ -41,6 +41,7 @@ interface WrapperProps {
   showLogoTitle?: boolean
   pageDescription?: string
   indexableBySearchEngine?: boolean
+  showLogoOnMobileDisplays?: boolean
 }
 
 export const Wrapper: FC<WrapperProps> = ({
@@ -56,6 +57,7 @@ export const Wrapper: FC<WrapperProps> = ({
   showLogoTitle,
   pageDescription,
   indexableBySearchEngine = false,
+  showLogoOnMobileDisplays,
   children,
 }) => {
   const { activeLocale } = useI18n()
@@ -123,6 +125,7 @@ export const Wrapper: FC<WrapperProps> = ({
               textMode={textMode}
               searchPlaceholder={searchPlaceholder}
               namespace={namespace}
+              showLogoOnMobileDisplays={showLogoOnMobileDisplays}
             />
           </Box>
         )}
