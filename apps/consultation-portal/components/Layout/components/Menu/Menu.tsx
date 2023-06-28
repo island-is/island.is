@@ -123,7 +123,7 @@ const Menu = ({ isFrontPage = false }: MenuProps) => {
                           <UserMenu
                             username={user?.name}
                             authenticated={isAuthenticated}
-                            language={'IS'}
+                            language={'is'}
                             onLogout={LogOut}
                             dropdownItems={<Divider />}
                           />

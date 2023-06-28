@@ -57,6 +57,9 @@ export class ProjectPage {
   @CacheField(() => GenericTag, { nullable: true })
   newsTag!: GenericTag | null
 
+  @CacheField(() => [GenericTag], { nullable: true })
+  secondaryNewsTags?: GenericTag[] | null
+
   @CacheField(() => [ProjectSubpage])
   projectSubpages!: Array<ProjectSubpage>
 
