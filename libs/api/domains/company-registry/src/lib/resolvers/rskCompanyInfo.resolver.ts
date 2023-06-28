@@ -6,8 +6,8 @@ import {
   IdsUserGuard,
   Scopes,
   ScopesGuard,
-  User as AuthUser,
 } from '@island.is/auth-nest-tools'
+import type { User } from '@island.is/auth-nest-tools'
 import { ApiScope } from '@island.is/auth/scopes'
 
 import { RskCompanyRelatedParty } from '../models/rskCompanyRelatedParty.model'
@@ -25,7 +25,7 @@ export class RskCompanyInfoResolver {
     nullable: true,
   })
   async legalEntityRelationships(
-    @CurrentUser() user: AuthUser,
+    @CurrentUser() user: User,
     @Parent() { nationalId }: RskCompany,
   ): Promise<RskCompanyRelatedParty[] | null> {
     return this.rskCompanyInfoService.getLegalEntityRelationships(
