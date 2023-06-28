@@ -11,9 +11,10 @@ import {
 import { ApiScope } from '@island.is/auth/scopes'
 import { IntellectualPropertyService } from './intellectualProperty.service'
 import { Trademark } from './models/getTrademark.model'
-import { Patent } from './models/getPatents.model'
+import { PatentCollectionEntry } from './models/getPatentCollection.model'
 import { Design } from './models/getDesign.model'
 import { GetPatentInput } from './dto/getPatent.input'
+import { Patent } from './models/getPatent.model'
 
 @Resolver()
 @UseGuards(IdsUserGuard, ScopesGuard)
@@ -32,7 +33,7 @@ export class IntellectualPropertyResolver {
   }
 
   @Scopes(ApiScope.internal)
-  @Query(() => [Patent], {
+  @Query(() => [PatentCollectionEntry], {
     name: 'intellectualPropertyPatentCollection',
     nullable: true,
   })

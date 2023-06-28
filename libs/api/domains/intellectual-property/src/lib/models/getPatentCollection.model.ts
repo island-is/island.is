@@ -1,7 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 
-@ObjectType('IntellectualPropertyPatent')
-export class Patent {
+@ObjectType('IntellectualPropertyPatentCollectionEntry')
+export class PatentCollectionEntry {
   @Field(() => String, { nullable: true })
   applicationNumber?: string | null
 
@@ -19,4 +19,10 @@ export class Patent {
 
   @Field(() => String, { nullable: true })
   statusText?: string | null
+}
+
+@ObjectType('IntellectualPropertyPatentCollection')
+export class PatentCollection {
+  @Field(() => [PatentCollectionEntry], { nullable: true })
+  patentEntries?: Array<PatentCollectionEntry> | null
 }

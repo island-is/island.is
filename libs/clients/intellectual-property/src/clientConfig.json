@@ -4,7 +4,7 @@
     "description": "Hugverkastofan WebAPI v3",
     "contact": { "name": "Nói Steinn Einarsson", "email": "ut@hugverk.is" },
     "version": "v3",
-    "title": "Hugverkastofa API"
+    "title": "Hugverkastofa"
   },
   "servers": [{ "url": "/apiv3" }],
   "paths": {
