@@ -606,15 +606,15 @@ describe('ActorDelegationsController', () => {
       })
 
       describe('with procuring delegations', () => {
-        let getSimple: jest.SpyInstance
+        let getIndividualRelationships: jest.SpyInstance
         beforeAll(() => {
           const client = app.get(RskProcuringClient)
-          getSimple = jest
+          getIndividualRelationships = jest
             .spyOn(client, 'getIndividualRelationships')
             .mockResolvedValue({
               name: nationalRegistryUser.name,
               nationalId: nationalRegistryUser.nationalId,
-              companies: [
+              relationships: [
                 {
                   nationalId: nationalRegistryUser.nationalId,
                   name: nationalRegistryUser.name,
@@ -624,7 +624,7 @@ describe('ActorDelegationsController', () => {
         })
 
         afterAll(() => {
-          getSimple.mockRestore()
+          getIndividualRelationships.mockRestore()
         })
 
         it('should return delegations', async () => {

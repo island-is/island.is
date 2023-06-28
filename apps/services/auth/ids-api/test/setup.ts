@@ -90,7 +90,7 @@ export const setupWithAuth = async ({
         })
         .overrideProvider(RskProcuringClient)
         .useValue({
-          getSimple: jest.fn().mockResolvedValue(null),
+          getIndividualRelationships: jest.fn().mockResolvedValue(null),
         })
         .overrideProvider(FeatureFlagService)
         .useValue({ getValue: () => true }),
