@@ -16,19 +16,26 @@ import {
   useNavigation,
   useRevalidator,
 } from 'react-router-dom'
-
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import Skeleton from '../../components/ListSkeleton'
-import { EndorsementList } from '../../lib/utils/types'
-import PetitionsTable from '../../components/ListSignersTable'
+import ListSignersTable from '../../components/ListSignersTable'
 import { UpdateListMutation } from '../../components/ListActions/UpdateList/updateList.generated'
 import { LockList } from '../../components/ListActions/LockList'
 import { UnlockList } from '../../components/ListActions/UnlockList'
 import { useSubmitting } from '@island.is/react-spa/shared'
+import {
+  PaginatedEndorsementResponse,
+  EndorsementList,
+} from '@island.is/api/schema'
+import { EndorsementList as EndorsementListLoaderType } from '../../lib/utils/types'
 
 const PetitionList = () => {
-  const { listId, petition, endorsements } = useLoaderData() as EndorsementList
+  const {
+    listId,
+    petition,
+    endorsements,
+  } = useLoaderData() as EndorsementListLoaderType
   const { formatMessage } = useLocale()
   const navigation = useNavigation()
   const navigate = useNavigate()
@@ -182,10 +189,10 @@ const PetitionList = () => {
               </Box>
             </Stack>
           </Form>
-          <PetitionsTable
-            petitions={endorsements}
+          <ListSignersTable
+            petitionSigners={endorsements as PaginatedEndorsementResponse}
+            petition={petition as EndorsementList}
             listId={listId}
-            isViewTypeEdit={true}
           />
         </>
       ) : (

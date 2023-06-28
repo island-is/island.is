@@ -61,7 +61,7 @@ describe('DrivingLicenseService', () => {
 
   describe('getDrivingLicense', () => {
     it('should return a license', async () => {
-      const response = await service.getDrivingLicense(MOCK_NATIONAL_ID)
+      const response = await service.legacyGetDrivingLicense(MOCK_NATIONAL_ID)
       expect(response).toMatchObject({
         name: 'Valid Jónsson',
         issued: new Date('2021-05-25T06:43:15.327Z'),
@@ -70,7 +70,9 @@ describe('DrivingLicenseService', () => {
     })
 
     it('should not return an expired license', async () => {
-      const response = await service.getDrivingLicense(MOCK_NATIONAL_ID_EXPIRED)
+      const response = await service.legacyGetDrivingLicense(
+        MOCK_NATIONAL_ID_EXPIRED,
+      )
 
       expect(response).toBeNull()
     })

@@ -499,9 +499,21 @@ NewsListNew.getInitialProps = async ({ apolloClient, locale, query }) => {
     throw new CustomNextError(404, 'News not found')
   }
 
+  const filterOutFrontpageTag = (tag: GenericTag) =>
+    tag?.slug !== FRONTPAGE_NEWS_TAG_ID
+
   return {
-    newsList,
-    newsItem,
+    newsList: newsList.map((item) => ({
+      ...item,
+      genericTags: item?.genericTags?.filter(filterOutFrontpageTag) ?? [],
+    })),
+    newsItem: newsItem
+      ? {
+          ...newsItem,
+          genericTags:
+            newsItem?.genericTags?.filter(filterOutFrontpageTag) ?? [],
+        }
+      : newsItem,
     total,
     selectedYear,
     selectedMonth,
