@@ -86,6 +86,7 @@ export const Index = ({ types, statistics }: HomeProps) => {
                 processEnds: item.processEnds,
                 processBegins: item.processBegins,
                 eyebrows: [item.typeName, item.institutionName],
+                caseNumber: item.caseNumber,
               }
               return (
                 <Card key={index} card={card} frontPage showPublished>

@@ -76,14 +76,18 @@ const SubscriptionsSkeleton = ({
         />
 
         <GridContainer>
-          <Box paddingX={[0, 0, 0, 8, 15]} paddingBottom={3}>
+          <Box paddingBottom={[3, 3, 3, 5, 5]}>
             <Stack space={[3, 3, 3, 5, 5]}>
               <Stack space={3}>
-                <Text variant="h1" color="dark400">
+                <Text
+                  variant="h1"
+                  color="dark400"
+                  dataTestId="subscriptions_title"
+                >
                   {isMySubscriptions ? locMySubs.title : locSubs.title}
                 </Text>
                 <Stack space={1}>
-                  <Text variant="default">
+                  <Text variant="default" dataTestId="subscriptions_text">
                     {isMySubscriptions ? locMySubs.text : locSubs.text}
                   </Text>
                   {!isMySubscriptions && (
@@ -102,7 +106,7 @@ const SubscriptionsSkeleton = ({
       <Divider />
       {isAuthenticated && !userLoading && (
         <GridContainer>
-          <Box paddingX={[0, 0, 0, 8, 15]} paddingTop={[3, 3, 3, 5, 5]}>
+          <Box paddingTop={[3, 3, 3, 5, 5]}>
             {isMySubscriptions && getUserSubsLoading ? (
               <>
                 <LoadingDots />

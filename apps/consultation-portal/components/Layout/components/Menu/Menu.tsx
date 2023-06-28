@@ -111,7 +111,11 @@ const Menu = ({ isFrontPage = false }: MenuProps) => {
                                 borderRadius: '8px',
                               }}
                             >
-                              <Button variant="utility" size="small">
+                              <Button
+                                variant="utility"
+                                size="small"
+                                dataTestId={item.testId}
+                              >
                                 {item.label}
                               </Button>
                             </div>
@@ -123,12 +127,16 @@ const Menu = ({ isFrontPage = false }: MenuProps) => {
                           <UserMenu
                             username={user?.name}
                             authenticated={isAuthenticated}
-                            language={'IS'}
+                            language={'is'}
                             onLogout={LogOut}
                             dropdownItems={<Divider />}
                           />
                         ) : (
-                          <Button size="small" onClick={LogIn}>
+                          <Button
+                            size="small"
+                            onClick={LogIn}
+                            dataTestId="menu_loginBtn"
+                          >
                             {loc.buttonLabel}
                           </Button>
                         )}

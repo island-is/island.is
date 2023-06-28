@@ -90,7 +90,30 @@ export const estateSchema = z.object({
           .string()
           .refine((v) => isValidEmail(v) || v === '')
           .optional(),
+        // Málsvari
+        advocate: z
+          .object({
+            name: z.string(),
+            nationalId: z.string(),
+            phone: z
+              .string()
+              .refine((v) => isValidPhoneNumber(v) || v === '')
+              .optional(),
+            email: z
+              .string()
+              .refine((v) => isValidEmail(v) || v === '')
+              .optional(),
+          })
+          .optional(),
       })
+      .refine(
+        ({ nationalId, advocate }) => {
+          return kennitala.info(nationalId as string).age < 18 ? advocate : true
+        },
+        {
+          path: ['nationalId'],
+        },
+      )
       .array()
       .optional(),
     assets: asset,

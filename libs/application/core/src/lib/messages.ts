@@ -288,6 +288,11 @@ export const coreErrorMessages = defineMessages({
       'Ekki tókst að sækja upplýsingar til Sjúkratrygginga. Vinsamlegast reynið aftur síðar.',
     description: 'Oops! Something went wrong when fetching your data',
   },
+  errorDataProviderEstateHeirsWithoutAdvocate: {
+    id: 'application.system:core.error.dataProviderEstateHeirsWithoutAdvocate',
+    defaultMessage: 'Erfingi undir 18 ára án málsvara',
+    description: 'Young estate heirs without advocate error',
+  },
   fileUpload: {
     id: 'application.system:core.error.file.upload',
     defaultMessage: 'Villa kom upp við að hlaða inn einni eða fleiri skrám.',
