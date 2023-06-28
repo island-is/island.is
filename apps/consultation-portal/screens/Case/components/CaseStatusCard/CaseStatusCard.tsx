@@ -17,14 +17,14 @@ export const CaseStatusCard = ({
       <StackedTitleAndDescription headingColor="blue400" title={loc.title}>
         {summaryText}
       </StackedTitleAndDescription>
-      {summaryLink && (
-        <LinkCard link={summaryLink} text={loc.summaryLinkText} />
-      )}
       {summaryDocumentId && (
         <LinkCard
           link={`${env.backendDownloadUrl}${summaryDocumentId}`}
           text={loc.summaryDocumentIdText}
         />
+      )}
+      {summaryLink && (
+        <LinkCard link={summaryLink} text={loc.summaryLinkText} />
       )}
     </CardSkeleton>
   )
