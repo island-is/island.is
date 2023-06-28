@@ -62,59 +62,57 @@ const CaseDesktop = ({
       caseId={id}
       caseDescription={shortDescription}
     >
-      <Box dataTestId="caseDesktop">
-        <GridContainer>
-          <GridRow rowGap={3}>
-            <GridColumn span={'3/12'}>
-              <Stack space={3}>
-                <Divider />
-                <CaseTimeline chosenCase={chosenCase} />
-                <Divider />
-                {isDocumentsNotEmpty && (
-                  <CaseDocuments
-                    title={loc.documentsBox.documents.title}
-                    documents={documents}
-                  />
-                )}
-                {isAdditionalDocumentsNotEmpty && (
-                  <CaseDocuments
-                    title={loc.documentsBox.additional.title}
-                    documents={additionalDocuments}
-                  />
-                )}
-                {isStatusNameNotPublished && (
-                  <CaseEmailBox caseId={id} caseNumber={caseNumber} />
-                )}
-              </Stack>
-            </GridColumn>
-            <GridColumn span={'6/12'}>
-              <Stack space={9}>
-                <CaseOverview chosenCase={chosenCase} />
-                <RenderAdvices
-                  advicesLoading={advicesLoading}
-                  isStatusNameForReview={isStatusNameForReview}
-                  advices={advices}
-                  chosenCase={chosenCase}
-                  refetchAdvices={refetchAdvices}
+      <GridContainer>
+        <GridRow rowGap={3}>
+          <GridColumn span={'3/12'}>
+            <Stack space={3}>
+              <Divider />
+              <CaseTimeline chosenCase={chosenCase} />
+              <Divider />
+              {isDocumentsNotEmpty && (
+                <CaseDocuments
+                  title={loc.documentsBox.documents.title}
+                  documents={documents}
                 />
-              </Stack>
-            </GridColumn>
-            <GridColumn span={'3/12'}>
-              <Stack space={3}>
-                <CaseStatusBox status={statusName} />
-                {isStakeholdersNotEmpty && (
-                  <BlowoutList list={stakeholders} isStakeholder />
-                )}
-                {isRelatedCasesNotEmpty && <BlowoutList list={relatedCases} />}
-                <Coordinator
-                  contactEmail={contactEmail}
-                  contactName={contactName}
+              )}
+              {isAdditionalDocumentsNotEmpty && (
+                <CaseDocuments
+                  title={loc.documentsBox.additional.title}
+                  documents={additionalDocuments}
                 />
-              </Stack>
-            </GridColumn>
-          </GridRow>
-        </GridContainer>
-      </Box>
+              )}
+              {isStatusNameNotPublished && (
+                <CaseEmailBox caseId={id} caseNumber={caseNumber} />
+              )}
+            </Stack>
+          </GridColumn>
+          <GridColumn span={'6/12'}>
+            <Stack space={9}>
+              <CaseOverview chosenCase={chosenCase} />
+              <RenderAdvices
+                advicesLoading={advicesLoading}
+                isStatusNameForReview={isStatusNameForReview}
+                advices={advices}
+                chosenCase={chosenCase}
+                refetchAdvices={refetchAdvices}
+              />
+            </Stack>
+          </GridColumn>
+          <GridColumn span={'3/12'}>
+            <Stack space={3}>
+              <CaseStatusBox status={statusName} />
+              {isStakeholdersNotEmpty && (
+                <BlowoutList list={stakeholders} isStakeholder />
+              )}
+              {isRelatedCasesNotEmpty && <BlowoutList list={relatedCases} />}
+              <Coordinator
+                contactEmail={contactEmail}
+                contactName={contactName}
+              />
+            </Stack>
+          </GridColumn>
+        </GridRow>
+      </GridContainer>
     </CaseSkeleton>
   )
 }
