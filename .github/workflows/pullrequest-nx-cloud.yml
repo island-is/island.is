@@ -31,6 +31,7 @@ env:
   NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
   USE_NX_CLOUD: ${{ contains(github.event.pull_request.labels.*.name, 'nx-cloud') }}
   MAX_JOBS: 30
+  BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
 
 jobs:
   nx:
@@ -74,9 +75,8 @@ jobs:
       - run: |
           echo "BASE=$NX_BASE" >> $GITHUB_ENV
           echo "HEAD=$NX_HEAD" >> $GITHUB_ENV
-          echo "NX_BRANCH=${GITHUB_REF##*/}" >> $GITHUB_ENV
-          echo "[DEBUG] NX_BRANCH_THEM: ${GITHUB_REF##*/}"
-          echo "[DEBUG] NX_BRANCH_US: $(git rev-parse --abbrev-ref HEAD)"
+          echo "NX_BRANCH=$BRANCH_NAME" >> $GITHUB_ENV
+          echo "[DEBUG] BRANCH_NAME: $BRANCH_NAME"
       - uses: actions/setup-node@v3
         with:
           node-version: '18'
