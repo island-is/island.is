@@ -7,52 +7,49 @@ interface BaseCardProps {
   bgGrey?: boolean
 }
 
-interface WithTitleProps extends BaseCardProps {
+interface TitleOnlyProps extends BaseCardProps {
   title: string
   description?: never
+  loading?: never
 }
 
-interface WithDescProps extends BaseCardProps {
+interface DescOnlyProps extends BaseCardProps {
   title?: never
   description: string
+  loading?: never
 }
 
-interface WithTitleAndDescProps extends BaseCardProps {
+interface TitleAndDescProps extends BaseCardProps {
   title: string
   description: string
 }
 
-type CardProps = WithTitleProps | WithDescProps | WithTitleAndDescProps
+type CardProps = TitleOnlyProps | DescOnlyProps | TitleAndDescProps
 
 export const Card = ({
   title,
   description,
   cta,
   bgGrey = false,
-}: CardProps) => {
-  if (!title && !description)
-    throw new Error('Card must have title or description')
-
-  return (
-    <Box
-      display="flex"
-      borderRadius="large"
-      width="full"
-      paddingX={4}
-      paddingY={3}
-      justifyContent="spaceBetween"
-      alignItems="center"
-      {...(bgGrey ? { background: 'dark100' } : { border: 'standard' })}
-    >
-      <Stack space={1}>
-        {title && <Text variant="h3">{title}</Text>}
-        {description && <Text variant="default">{description}</Text>}
-      </Stack>
-      {cta && (
-        <Box height="full" display="flex" style={{ alignSelf: 'flex-end' }}>
-          {cta}
-        </Box>
-      )}
-    </Box>
-  )
-}
+}: CardProps) => (
+  <Box
+    display="flex"
+    borderRadius="large"
+    width="full"
+    paddingX={4}
+    paddingY={3}
+    justifyContent="spaceBetween"
+    alignItems="center"
+    {...(bgGrey ? { background: 'dark100' } : { border: 'standard' })}
+  >
+    <Stack space={1}>
+      {title && <Text variant="h3">{title}</Text>}
+      {description && <Text variant="default">{description}</Text>}
+    </Stack>
+    {cta && (
+      <Box height="full" display="flex" style={{ alignSelf: 'flex-end' }}>
+        {cta}
+      </Box>
+    )}
+  </Box>
+)

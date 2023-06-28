@@ -268,7 +268,7 @@ const getIconColor = (
 
 export interface AsyncSearchInputProps {
   hasFocus: boolean
-  rootProps: HTMLProps<HTMLDivElement>
+  rootProps?: HTMLProps<HTMLDivElement>
   inputProps: InputProps
   buttonProps: ButtonHTMLAttributes<HTMLButtonElement>
   menuProps?: Partial<MenuProps>

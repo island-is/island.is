@@ -10,9 +10,8 @@ import {
   Button,
   Stack,
   toast,
-  useBreakpoint,
 } from '@island.is/island-ui/core'
-import { replaceParams } from '@island.is/react-spa/shared'
+import { replaceParams, useSubmitting } from '@island.is/react-spa/shared'
 
 import { m } from '../../lib/messages'
 import { GetCompaniesResult } from './Companies.action'
@@ -21,13 +20,13 @@ import { ServiceDeskPaths } from '../../lib/paths'
 import * as styles from './Companies.css'
 
 const Companies = () => {
-  const { sm } = useBreakpoint()
   const [focused, setFocused] = useState(false)
   const [searchInput, setSearchInput] = useState('')
   const [prevSearchInput, setPrevSearchInput] = useState('')
   const actionData = useActionData() as GetCompaniesResult
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
+  const { isSubmitting, isLoading } = useSubmitting()
   const companies = actionData?.data?.data
 
   const onFocus = () => setFocused(true)
@@ -52,18 +51,20 @@ const Companies = () => {
         <Box display={['inline', 'inline', 'flex']} className={styles.search}>
           <AsyncSearchInput
             hasFocus={focused}
-            rootProps={{}}
+            loading={isSubmitting || isLoading}
             inputProps={{
               name: 'searchQuery',
               value: searchInput,
-              inputSize: sm ? 'large' : 'medium',
+              inputSize: 'medium',
               onChange: (event) => setSearchInput(event.target.value),
               onBlur,
               onFocus,
               placeholder: formatMessage(m.searchByNationalId),
+              colored: true,
             }}
             buttonProps={{
               type: 'submit',
+              disabled: searchInput.length === 0,
             }}
           />
         </Box>

@@ -18,9 +18,7 @@ export type UseIsSubmitting = {
  */
 export const useSubmitting = (): UseIsSubmitting => {
   const navigation = useNavigation()
-
   const isSubmitting = navigation.state === 'submitting'
-
   const isLoading = navigation.state === 'loading'
 
   return {
