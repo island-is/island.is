@@ -68,10 +68,14 @@ const config: PlaywrightTestConfig = {
 
   /* Configure our test targets */
   projects: [
-    { name: 'judicial-system', testMatch: 'judicial-system/**/*.spec.[tj]s' },
-    { name: 'islandis', testMatch: 'islandis/**/*.spec.[tj]s' },
-    { name: 'smoke', testMatch: 'smoke/**/*.spec.[tj]s' },
-    { name: 'acceptance', testMatch: 'acceptance/**/*.spec.[tj]s' },
+    {
+      name: 'judicial-system',
+      testMatch: 'tests/judicial-system/**/*.spec.[tj]s',
+    },
+    { name: 'islandis', testMatch: 'tests/islandis/**/*.spec.[tj]s' },
+    { name: 'smoke', testMatch: 'tests/smoke/**/*.spec.[tj]s' },
+    { name: 'acceptance', testMatch: 'tests/acceptance/**/*.spec.[tj]s' },
+    { name: 'everything', testMatch: 'tests/*/**/*.spec.[tj]s' },
   ],
 
   /* Configure projects for major browsers */
