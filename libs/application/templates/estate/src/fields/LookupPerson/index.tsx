@@ -69,7 +69,7 @@ export const LookupPerson: FC<LookupProps> = ({ field, error }) => {
         {props?.alertWhenUnder18 && nationalId.info(personNationalId).age < 18 && (
           <GridColumn span={['1/1']} paddingBottom={3}>
             <AlertMessage
-              type="error"
+              type="warning"
               message={formatMessage(m.inheritanceUnder18Error)}
             />
           </GridColumn>
