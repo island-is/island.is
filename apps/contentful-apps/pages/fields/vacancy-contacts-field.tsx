@@ -51,7 +51,7 @@ const VacancyContactsField = () => {
         {contacts.map((contact, index) => (
           <Box
             style={{
-              padding: '8px',
+              padding: '16px',
               border: '1px solid #cfd9e0',
               borderRadius: '4px',
             }}
