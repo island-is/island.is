@@ -12,7 +12,7 @@ import {
   QualityPhotoApi,
   NationalRegistryUserApi,
   UserProfileApi,
-  DistrictsApi,
+  JuristictionApi,
 } from '@island.is/application/types'
 import { Events, States, Roles } from './constants'
 import { dataSchema } from './dataSchema'
@@ -85,7 +85,7 @@ const DrivingLicenseDuplicateTemplate: ApplicationTemplate<
               ],
               api: [
                 CurrentLicenseApi,
-                DistrictsApi,
+                JuristictionApi,
                 NationalRegistryUserApi,
                 SyslumadurPaymentCatalogApi,
                 QualitySignatureApi,
