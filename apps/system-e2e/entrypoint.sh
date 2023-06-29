@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 
 set -euo pipefail
-set -x
 
 : "${TEST_ENVIRONMENT:=local}"
 : "${TEST_TYPE:=smoke}"
