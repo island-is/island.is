@@ -8,7 +8,7 @@ if [[ -z "$USE_NX_CLOUD" ]]; then
   exit 0
 fi
 
-target=$1
+# target=$1
 
 shift # remove target from args
 
@@ -18,20 +18,20 @@ MAX_JOBS=${MAX_JOBS:-2}
 echo "[DEBUG]: NX version is $(yarn run nx --version)"
 echo "[DEBUG]: yarn version is $(yarn --version)"
 
-npx nx-cloud start-ci-run
+# npx nx-cloud start-ci-run
 
-pids=()
+# pids=()
 
-# list of commands to be run on agents
-npx nx affected --base="$BASE" --head="$HEAD" --target "$target" --parallel="$MAX_JOBS" "$@" &
-pids+=($!)
+# # list of commands to be run on agents
+# npx nx affected --base="$BASE" --head="$HEAD" --target "$target" --parallel="$MAX_JOBS" "$@" &
+# pids+=($!)
 
-# run all commands in parallel and bail if one of them fails
-for pid in \${pids[*]}; do
-  if ! wait $pid; then
-    exit 1
-  fi
-done
+# # run all commands in parallel and bail if one of them fails
+# for pid in \${pids[*]}; do
+#   if ! wait $pid; then
+#     exit 1
+#   fi
+# done
 
-exit 0
+# exit 0
 
