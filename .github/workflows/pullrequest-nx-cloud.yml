@@ -82,8 +82,6 @@ jobs:
       - run: |
           echo "BASE=$NX_BASE" >> $GITHUB_ENV
           echo "HEAD=$NX_HEAD" >> $GITHUB_ENV
-          echo "NX_BRANCH=$BRANCH_NAME" >> $GITHUB_ENV
-          echo "[DEBUG] BRANCH_NAME: $BRANCH_NAME"
       - uses: actions/setup-node@v3
         with:
           node-version: '18.8.0'
@@ -144,11 +142,6 @@ jobs:
         env:
           NX_AGENT_NAME: ${{matrix.agent}}
 
-      - name: Stop all running agents for this CI run
-        # It's important that we always run this step, otherwise in the case of any failures in preceding non-Nx steps, the agents will keep running and waste billable minutes
-        if: ${{ always() }}
-        run: npx nx-cloud stop-all-agents
-
       - name: fix hanging post job
         run: git config --local --get remote.origin.url
 
@@ -171,8 +164,6 @@ jobs:
       - run: |
           echo "BASE=$NX_BASE" >> $GITHUB_ENV
           echo "HEAD=$NX_HEAD" >> $GITHUB_ENV
-          echo "NX_BRANCH=$BRANCH_NAME" >> $GITHUB_ENV
-          echo "[DEBUG] BRANCH_NAME: $BRANCH_NAME"
       - uses: actions/setup-node@v3
         with:
           node-version: '18.8.0'
@@ -230,12 +221,13 @@ jobs:
 
       - name: Run NX targets
         run: |
-          ./scripts/ci/run-nx-affected.sh ${{ env.NX_TARGETS }}
+          ./scripts/ci/run-nx-affected.sh lint build
 
-      # - name: Stop all running agents for this CI run
-      #   # It's important that we always run this step, otherwise in the case of any failures in preceding non-Nx steps, the agents will keep running and waste billable minutes
-      #   if: ${{ always() }}
-      #   run: npx nx-cloud stop-all-agents
+      - name: Stop all running agents for this CI run
+        # It's important that we always run this step, otherwise in the case of any failures in preceding non-Nx steps, the agents will keep running and waste billable minutes
+        if: ${{ always() }}
+        run: npx nx-cloud stop-all-agents
+
       - name: fix hanging post job
         run: git config --local --get remote.origin.url
   # check-matrix:

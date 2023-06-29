@@ -1,5 +1,5 @@
 #!/bin/bash
-set -euox pipefail
+set -euo pipefail
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
@@ -13,11 +13,9 @@ shift # remove target from args
 source "$DIR"/_common.sh
 
 MAX_JOBS=${MAX_JOBS:-2}
-echo "[DEBUG]: NX version is $(yarn run nx --version)"
-echo "[DEBUG]: yarn version is $(yarn --version)"
 
 npx nx connect-to-nx-cloud
-npx nx-cloud start-ci-run --stop-agents-after="build"
+npx nx-cloud start-ci-run
 
 pids=()
 
