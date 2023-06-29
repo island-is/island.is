@@ -1,16 +1,16 @@
 import React from 'react'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { Box, Table as T, Text } from '@island.is/island-ui/core'
-import { DrivingBookLesson } from '@island.is/api/schema'
-import { vehicleMessage as messages } from '../../lib/messages'
+import { DrivingLicenceTestResult } from '@island.is/api/schema'
+import { vehicleMessage as messages } from '@island.is/service-portal/assets/messages'
 import { formatDate } from '@island.is/service-portal/core'
 
 interface PropTypes {
-  data: DrivingBookLesson[]
+  data: DrivingLicenceTestResult[]
   title: string
 }
 
-const PhysicalLessons = ({ data, title }: PropTypes) => {
+const Exams = ({ data, title }: PropTypes) => {
   useNamespaces('sp.vehicles')
   const { formatMessage } = useLocale()
   return (
@@ -28,30 +28,34 @@ const PhysicalLessons = ({ data, title }: PropTypes) => {
             </T.HeadData>
             <T.HeadData>
               <Text variant="medium" fontWeight="semiBold">
-                {formatMessage(messages.vehicleDrivingLessonsMinuteCount)}
+                {formatMessage(messages.vehicleDrivingLessonsExam)}
               </Text>
             </T.HeadData>
             <T.HeadData>
               <Text variant="medium" fontWeight="semiBold">
-                {formatMessage(messages.vehicleDrivingLessonsTeacher)}
+                {formatMessage(messages.vehicleDrivingLessonsHasPassed)}
               </Text>
             </T.HeadData>
           </T.Row>
         </T.Head>
         <T.Body>
-          {data?.map((lesson: DrivingBookLesson | null, index: number) => {
+          {data?.map((exam: DrivingLicenceTestResult | null, index: number) => {
             return (
-              <T.Row key={index + 'driving lessons physical table'}>
+              <T.Row key={index + 'driving lessons exams result table'}>
                 <T.Data>
                   <Text variant="medium">
-                    {lesson?.registerDate && formatDate(lesson.registerDate)}
+                    {exam?.examDate && formatDate(exam.examDate)}
                   </Text>
                 </T.Data>
                 <T.Data>
-                  <Text variant="medium">{lesson?.lessonTime}</Text>
+                  <Text variant="medium">{exam?.testTypeName}</Text>
                 </T.Data>
                 <T.Data>
-                  <Text variant="medium">{lesson?.teacherName}</Text>
+                  <Text variant="medium">
+                    {exam?.hasPassed
+                      ? formatMessage(messages.yes)
+                      : formatMessage(messages.no)}
+                  </Text>
                 </T.Data>
               </T.Row>
             )
@@ -62,4 +66,4 @@ const PhysicalLessons = ({ data, title }: PropTypes) => {
   )
 }
 
-export default PhysicalLessons
+export default Exams

@@ -84,7 +84,7 @@ export const useDynamicRoutes = () => {
      */
     const licenseBookData = licenseBook?.drivingLicenseBookUserBook
     if (licenseBookData?.book?.id) {
-      dynamicPathArray.push(ServicePortalPath.TransportVehiclesDrivingLessons)
+      dynamicPathArray.push(ServicePortalPath.EducationDrivingLessons)
     }
 
     /**
@@ -93,6 +93,7 @@ export const useDynamicRoutes = () => {
      */
 
     if (educationGraduationFlagEnabled) {
+      dynamicPathArray.push(ServicePortalPath.EducationHaskoli)
       dynamicPathArray.push(ServicePortalPath.EducationHaskoliGraduation)
       dynamicPathArray.push(ServicePortalPath.EducationHaskoliGraduationDetail)
     }

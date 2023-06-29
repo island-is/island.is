@@ -4,6 +4,7 @@ import { m } from '@island.is/service-portal/core'
 import { PortalModule, PortalRoute } from '@island.is/portals/core'
 import { AssetsPaths } from './lib/paths'
 import { translationLoader } from './screens/Translation.loader'
+import { Navigate } from 'react-router-dom'
 
 const AssetsOverview = lazy(() =>
   import('./screens/AssetsOverview/AssetsOverview'),
@@ -20,9 +21,6 @@ const VehicleDetail = lazy(() =>
 const VehicleHistory = lazy(() =>
   import('./screens/VehicleHistory/VehicleHistory'),
 )
-const DrivingLessonsBook = lazy(() =>
-  import('./screens/DrivingLessonsBook/DrivingLessonsBook'),
-)
 const Lookup = lazy(() => import('./screens/Lookup/Lookup'))
 const WorkMachinesOverview = lazy(() =>
   import('./screens/WorkMachinesOverview/WorkMachinesOverview'),
@@ -36,8 +34,14 @@ export const assetsModule: PortalModule = {
   routes: ({ userInfo, client }) => {
     const routes: PortalRoute[] = [
       {
-        name: m.realEstate,
+        name: m.assets,
         path: AssetsPaths.AssetsRoot,
+        enabled: userInfo.scopes.includes(ApiScope.assets),
+        element: <Navigate to={AssetsPaths.AssetsRealEstate} replace />,
+      },
+      {
+        name: m.realEstate,
+        path: AssetsPaths.AssetsRealEstate,
         enabled: userInfo.scopes.includes(ApiScope.assets),
         element: <AssetsOverview />,
       },
@@ -85,13 +89,6 @@ export const assetsModule: PortalModule = {
         path: AssetsPaths.AssetsVehiclesHistory,
         enabled: userInfo.scopes.includes(ApiScope.vehicles),
         element: <VehicleHistory />,
-      },
-      {
-        name: m.vehiclesDrivingLessons,
-        path: AssetsPaths.AssetsVehiclesDrivingLessons,
-        enabled: userInfo.scopes.includes(ApiScope.vehicles),
-        dynamic: true,
-        element: <DrivingLessonsBook />,
       },
       {
         name: m.vehiclesLookup,

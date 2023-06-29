@@ -22,7 +22,10 @@ import {
   LinkResolver,
 } from '@island.is/service-portal/core'
 
-import { vehicleMessage as messages, urls } from '../../lib/messages'
+import {
+  vehicleMessage as messages,
+  urls,
+} from '@island.is/service-portal/assets/messages'
 import PhysicalLessons from '../../components/DrivingLessonsTables/PhysicalLessons'
 import DrivingLessonsSchools from '../../components/DrivingLessonsTables/DrivingLessonsSchools'
 import Exams from '../../components/DrivingLessonsTables/Exams'

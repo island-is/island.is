@@ -2,7 +2,7 @@ import React from 'react'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { Box, Table as T, Text } from '@island.is/island-ui/core'
 import { DrivingSchoolExam } from '@island.is/api/schema'
-import { vehicleMessage as messages } from '../../lib/messages'
+import { vehicleMessage as messages } from '@island.is/service-portal/assets/messages'
 import { formatDate } from '@island.is/service-portal/core'
 
 interface PropTypes {

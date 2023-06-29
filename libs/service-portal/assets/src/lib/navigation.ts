@@ -10,8 +10,8 @@ export const assetsNavigation: PortalNavigationItem = {
   },
   children: [
     {
-      name: m.myRealEstate,
-      path: AssetsPaths.AssetsRoot,
+      name: m.realEstate,
+      path: AssetsPaths.AssetsRealEstate,
       children: [
         {
           name: 'id',
@@ -39,10 +39,6 @@ export const assetsNavigation: PortalNavigationItem = {
         {
           name: m.vehiclesLookup,
           path: AssetsPaths.AssetsVehiclesLookup,
-        },
-        {
-          name: m.vehiclesDrivingLessons,
-          path: AssetsPaths.AssetsVehiclesDrivingLessons,
         },
         {
           name: m.vehiclesHistory,

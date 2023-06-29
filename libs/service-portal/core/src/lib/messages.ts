@@ -222,6 +222,10 @@ export const m = defineMessages({
     id: 'service.portal:assets',
     defaultMessage: 'Eignir',
   },
+  assetsDescription: {
+    id: 'service.portal:assets-description',
+    defaultMessage: 'Þínar fasteignir, ökutæki, hugverk og fleira.',
+  },
   realEstate: {
     id: 'service.portal:real-estate',
     defaultMessage: 'Fasteignir',
@@ -487,11 +491,11 @@ export const m = defineMessages({
   },
   educationFramhskoliGraduation: {
     id: 'service.portal:education-framhskoli-graduation',
-    defaultMessage: 'Framhaldsskóli - Útskriftir',
+    defaultMessage: 'Útskriftir',
   },
   educationFramhskoliCareer: {
     id: 'service.portal:education-framhskoli-career',
-    defaultMessage: 'Framhaldsskóli - Námsferill',
+    defaultMessage: 'Námsferill',
   },
   educationHaskoli: {
     id: 'service.portal:education-haskoli',

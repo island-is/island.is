@@ -277,7 +277,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
               },
               {
                 name: m.vehiclesDrivingLessons,
-                path: ServicePortalPath.TransportVehiclesDrivingLessons,
+                path: ServicePortalPath.EducationDrivingLessons,
               },
               {
                 name: m.vehiclesHistory,
