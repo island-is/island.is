@@ -221,17 +221,19 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
       )
       if (hasQualitySignature === 'yes') {
         return {
-          hasQualitySignature: true
+          hasQualitySignature: true,
         }
       } else {
         return null
       }
     }
-    const hasQualitySignature = await this.drivingLicenseService.getHasQualitySignature({
-      nationalId: auth.nationalId,
-    })
+    const hasQualitySignature = await this.drivingLicenseService.getHasQualitySignature(
+      {
+        nationalId: auth.nationalId,
+      },
+    )
     return {
-      hasQualitySignature
+      hasQualitySignature,
     }
   }
 
