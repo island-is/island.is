@@ -19,6 +19,7 @@ import {
   BackgroundImage,
   HeadWithSocialSharing,
   Sticky,
+  WatsonChatPanel,
 } from '@island.is/web/components'
 import {
   GET_LIFE_EVENT_QUERY,
@@ -40,6 +41,7 @@ import { useLocalLinkTypeResolver } from '@island.is/web/hooks/useLocalLinkTypeR
 import { webRichText } from '@island.is/web/utils/richText'
 import { Webreader } from '@island.is/web/components'
 import { DIGITAL_ICELAND_PLAUSIBLE_TRACKING_DOMAIN } from '@island.is/web/constants'
+import { watsonConfig } from './config'
 
 interface LifeEventProps {
   lifeEvent: GetLifeEventQuery['getLifeEventPage']
@@ -194,6 +196,7 @@ export const LifeEvent: Screen<LifeEventProps> = ({
           </GridColumn>
         </GridRow>
       </GridContainer>
+      {watsonConfig[locale] && <WatsonChatPanel {...watsonConfig[locale]} />}
     </Box>
   )
 }
