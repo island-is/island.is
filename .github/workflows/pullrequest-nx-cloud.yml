@@ -229,19 +229,10 @@ jobs:
       - name: Untar generated files
         run: tar zxvf generated_files.tar.gz
 
-      - name: nx-affected
+      - name: Run NX targets
         run: |
-          pids=()
-          npx nx affected --base="$BASE" --head="$HEAD" --target lint --parallel="$MAX_JOBS" "$@" &
-          pids+=($!)
-          npx nx affected --base="$BASE" --head="$HEAD" --target build --parallel="$MAX_JOBS" "$@" &
-          pids+=($!)
-          for pid in \${pids[*]}; do
-            if ! wait $pid; then
-              exit 1
-            fi
-          done
-          exit 0
+          ./scripts/ci/run-nx-affected.sh ${{ env.NX_TARGETS }}
+
       - name: Stop all running agents for this CI run
         # It's important that we always run this step, otherwise in the case of any failures in preceding non-Nx steps, the agents will keep running and waste billable minutes
         if: ${{ always() }}
