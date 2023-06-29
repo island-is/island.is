@@ -418,14 +418,19 @@ export const m = defineMessages({
   },
 
   // History logs
-  waitingForConfirmationFromParentB: {
-    id: 'pa.application:history.waitingForConfirmationFromParentB',
+  waitingForConfirmationFromParentBTitle: {
+    id: 'pa.application:history.waitingForConfirmationFromParentBTitle',
+    defaultMessage: 'Staðfesting forsjáraðila',
+    description: '',
+  },
+  waitingForConfirmationFromParentBDescription: {
+    id: 'pa.application:history.waitingForConfirmationFromParentBDescription',
     defaultMessage: 'Beðið eftir staðfestingu forsjáraðila',
     description: '',
   },
   confirmedByParentB: {
     id: 'pa.application:history.confirmedByParentB',
-    defaultMessage: 'Forsjáraðili hefur samþykkt umsóknina',
+    defaultMessage: 'Forsjáraðili hefur staðfest umsókn',
     description: '',
   },
 })

@@ -133,7 +133,7 @@ const PassportTemplate: ApplicationTemplate<
           actionCard: {
             historyLogs: [
               {
-                logMessage: coreHistoryMessages.applicationSent,
+                logMessage: coreHistoryMessages.paymentAccepted,
                 onEvent: DefaultEvents.SUBMIT,
               },
               {
@@ -196,17 +196,13 @@ const PassportTemplate: ApplicationTemplate<
           actionCard: {
             historyLogs: [
               {
-                logMessage: coreHistoryMessages.applicationApproved,
+                logMessage: m.confirmedByParentB,
                 onEvent: DefaultEvents.SUBMIT,
-              },
-              {
-                logMessage: coreHistoryMessages.paymentAccepted,
-                onEvent: DefaultEvents.ASSIGN,
               },
             ],
             pendingAction: {
-              title: corePendingActionMessages.waitingForAssigneeTitle,
-              content: m.waitingForConfirmationFromParentB,
+              title: m.waitingForConfirmationFromParentBTitle,
+              content: m.waitingForConfirmationFromParentBDescription,
               displayStatus: 'warning',
             },
           },
@@ -254,8 +250,8 @@ const PassportTemplate: ApplicationTemplate<
           ],
           actionCard: {
             pendingAction: {
-              title: coreHistoryMessages.applicationSent,
-              content: m.confirmedByParentB,
+              title: coreHistoryMessages.applicationReceived,
+              content: '',
               displayStatus: 'success',
             },
           },
