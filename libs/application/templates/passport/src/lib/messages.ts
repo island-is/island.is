@@ -417,7 +417,7 @@ export const m = defineMessages({
     description: 'Some description',
   },
 
-  // History logs
+  /* History logs */
   waitingForConfirmationFromParentBTitle: {
     id: 'pa.application:history.waitingForConfirmationFromParentBTitle',
     defaultMessage: 'Staðfesting forsjáraðila',
