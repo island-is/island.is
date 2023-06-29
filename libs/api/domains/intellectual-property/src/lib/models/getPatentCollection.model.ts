@@ -20,9 +20,3 @@ export class PatentCollectionEntry {
   @Field(() => String, { nullable: true })
   statusText?: string | null
 }
-
-@ObjectType('IntellectualPropertyPatentCollection')
-export class PatentCollection {
-  @Field(() => [PatentCollectionEntry], { nullable: true })
-  patentEntries?: Array<PatentCollectionEntry> | null
-}

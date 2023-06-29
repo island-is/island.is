@@ -6,8 +6,9 @@ import {
 } from '@island.is/clients/intellectual-property'
 import { Trademark } from './models/getTrademark.model'
 import { User } from '@island.is/auth-nest-tools'
-import { Patent } from './models/getPatents.model'
 import { Design } from './models/getDesign.model'
+import { PatentCollectionEntry } from './models/getPatentCollection.model'
+import { Patent } from './models/getPatent.model'
 
 @Injectable()
 export class IntellectualPropertyService {
@@ -30,13 +31,24 @@ export class IntellectualPropertyService {
     }))
   }
 
-  getPatents = (user: User): Promise<Patent[] | null> =>
-    this.patentSearchApi.apiPatentSearchPatentsBySSNGet({
+  async getPatents(user: User): Promise<Array<PatentCollectionEntry> | null> {
+    const patents = await this.patentSearchApi.apiPatentSearchPatentsBySSNGet({
       ssn: user.nationalId,
     })
 
-  getPatentByApplicationNumber = (appId: string) =>
-    this.patentSearchApi.apiPatentSearchSearchGet({ applicationNr: appId })
+    return patents as Array<PatentCollectionEntry>
+  }
+  async getPatentByApplicationNumber(appId: string): Promise<Patent | null> {
+    const response = await this.patentSearchApi.apiPatentSearchSearchGet({
+      applicationNr: appId,
+    })
+
+    const patent = response[0]
+
+    return {
+      ...patent,
+    }
+  }
 
   getDesigns = (user: User): Promise<Design[] | null> =>
     this.designSearchApi.designSearchGetDesignBySSNGet({ ssn: user.nationalId })

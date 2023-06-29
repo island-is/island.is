@@ -1,0 +1,12 @@
+query getIntellectualPropertyById($input: IntellectualPropertyPatentInput!) {
+  intellectualPropertyPatent(input: $input) {
+    patentName
+    classificationType
+    internalClassifications {
+      category
+      type
+    }
+    status
+    statusText
+  }
+}

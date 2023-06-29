@@ -671,6 +671,26 @@ export const ipMessages = defineMessages({
     defaultMessage:
       'Lorem ipsum dolor sit amet consectetur. Arcu quam quis consequat tellus. Netus tristique molestie id cursus non sed. ',
   },
+  baseInfo: {
+    id: 'sp.intellectual-property:base-info',
+    defaultMessage: 'Grunnupplýsingar',
+  },
+  name: {
+    id: 'sp.intellectual-property:name',
+    defaultMessage: 'Nafn',
+  },
+  type: {
+    id: 'sp.intellectual-property:type',
+    defaultMessage: 'Tegund',
+  },
+  make: {
+    id: 'sp.intellectual-property:make',
+    defaultMessage: 'Gerð',
+  },
+  status: {
+    id: 'sp.intellectual-property:status',
+    defaultMessage: 'Staða',
+  },
 })
 
 export const urls = defineMessages({

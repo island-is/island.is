@@ -60,8 +60,8 @@ const IntellectualPropertiesOverview = () => {
           return (
             <Box marginBottom={3} key={index}>
               <ActionCard
-                text={ip.applicationNumber ?? ''}
-                heading={ip.patentName ?? ''}
+                text={`${ip.applicationNumber ?? ''} - SOME CATEGORY`}
+                heading={ip.patentName || 'TEMP HEADING'}
                 cta={{
                   label: formatMessage(m.view),
                   variant: 'text',
