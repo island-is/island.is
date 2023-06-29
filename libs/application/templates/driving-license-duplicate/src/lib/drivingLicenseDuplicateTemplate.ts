@@ -24,6 +24,7 @@ import {
   getApplicationFeatureFlags,
 } from './getApplicationFeatureFlags'
 import { SyslumadurPaymentCatalogApi } from '../dataProviders'
+import { coreHistoryMessages } from '@island.is/application/core'
 
 const oneDay = 24 * 3600 * 1000
 const thirtyDays = 24 * 3600 * 1000 * 30
@@ -52,11 +53,20 @@ const DrivingLicenseDuplicateTemplate: ApplicationTemplate<
         meta: {
           name: 'Draft',
           status: 'draft',
-          actionCard: {
-            title: m.applicationTitle,
-          },
           progress: 0.33,
           lifecycle: pruneAfter(oneDay),
+          actionCard: {
+            historyLogs: [
+              {
+                logMessage: coreHistoryMessages.applicationStarted,
+                onEvent: DefaultEvents.PAYMENT,
+              },
+              {
+                onEvent: DefaultEvents.REJECT,
+                logMessage: m.declinedLogMessage,
+              },
+            ],
+          },
           roles: [
             {
               id: Roles.APPLICANT,
@@ -107,7 +117,11 @@ const DrivingLicenseDuplicateTemplate: ApplicationTemplate<
           name: 'Payment state',
           status: 'inprogress',
           actionCard: {
-            description: m.payment,
+            pendingAction: {
+              title: m.paymentPendingTitle,
+              content: m.paymentPendingMessage,
+              displayStatus: 'info',
+            },
           },
           progress: 0.9,
           lifecycle: pruneAfter(thirtyDays),
@@ -136,6 +150,12 @@ const DrivingLicenseDuplicateTemplate: ApplicationTemplate<
         meta: {
           name: 'Done',
           status: 'completed',
+          actionCard: {
+            historyLogs: {
+              onEvent: DefaultEvents.SUBMIT,
+              logMessage: m.submittedLogMessage,
+            },
+          },
           progress: 1,
           lifecycle: pruneAfter(thirtyDays),
           onEntry: defineTemplateApi({

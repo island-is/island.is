@@ -408,4 +408,27 @@ export const m = defineMessages({
     defaultMessage: 'Bráðabirgðaskírteini',
     description: 'text for temporary license',
   },
+
+  /* Application log */
+  paymentPendingTitle: {
+    id: 'dld.application:paymentPendingTitle',
+    defaultMessage: 'Beðið eftir greiðslu',
+    description: 'text for payment pending title in application log',
+  },
+  paymentPendingMessage: {
+    id: 'dld.application:paymentPendingMessage',
+    defaultMessage:
+      'Til að halda áfram með umsókn þarf að klára greiðslu.',
+    description: 'text for payment pending message in application log',
+  },
+  declinedLogMessage: {
+    id: 'dld.application:declinedLogMessage',
+    defaultMessage: 'Umsókn hafnað.',
+    description: 'text for declined log message in application log',
+  },
+  submittedLogMessage: {
+    id: 'dld.application:submittedLogMessage',
+    defaultMessage: 'Umsókn móttekin.',
+    description: 'text for submitted log message in application log',
+  }
 })
