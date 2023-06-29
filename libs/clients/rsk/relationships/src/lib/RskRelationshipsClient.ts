@@ -9,7 +9,7 @@ import { GetLegalEntityRelationshipsResult } from '../types/GetLegalEntityRelati
 import { GetIndividualRelationships } from '../types/GetIndividualRelationships'
 
 @Injectable()
-export class RskProcuringClient {
+export class RskRelationshipsClient {
   private defaultApi: DefaultApi
   private configuration: Configuration
 

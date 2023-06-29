@@ -1,5 +1,5 @@
 import { User } from '@island.is/auth-nest-tools'
-import { RskProcuringClient } from '@island.is/clients/rsk/procuring'
+import { RskRelationshipsClient } from '@island.is/clients-rsk-relationships'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Inject, Injectable, Logger } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
@@ -12,7 +12,7 @@ import { DelegationType } from './types/delegationType'
 @Injectable()
 export class IncomingDelegationsCompanyService {
   constructor(
-    private rskProcuringClient: RskProcuringClient,
+    private rskProcuringClient: RskRelationshipsClient,
     @InjectModel(ApiScopeUserAccess)
     private apiScopeUserAccessModel: typeof ApiScopeUserAccess,
     @Inject(LOGGER_PROVIDER)

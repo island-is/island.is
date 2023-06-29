@@ -5,7 +5,7 @@ import { RskCompanySearchItems } from './models/rskCompanySearchItems.model'
 import { decodeBase64, toBase64 } from './rsk-company-info.utils'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
-import { RskProcuringClient } from '@island.is/clients/rsk/procuring'
+import { RskRelationshipsClient } from '@island.is/clients-rsk-relationships'
 import { User } from '@island.is/auth-nest-tools'
 import { RskCompanyRelatedParty } from './models/rskCompanyRelatedParty.model'
 
@@ -15,7 +15,7 @@ export class RskCompanyInfoService {
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
     private readonly companyRegistryClient: CompanyRegistryClientService,
-    private readonly rskProcuringClient: RskProcuringClient,
+    private readonly rskRelationshipsClient: RskRelationshipsClient,
   ) {}
 
   async getCompanyInformationWithExtra(
@@ -66,7 +66,7 @@ export class RskCompanyInfoService {
     user: User,
     nationalId: string,
   ): Promise<RskCompanyRelatedParty[] | null> {
-    const legalEntityRelationships = await this.rskProcuringClient.getLegalEntityRelationships(
+    const legalEntityRelationships = await this.rskRelationshipsClient.getLegalEntityRelationships(
       user,
       nationalId,
     )

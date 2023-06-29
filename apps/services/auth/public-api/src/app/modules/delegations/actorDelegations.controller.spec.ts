@@ -17,7 +17,7 @@ import {
 } from '@island.is/auth-api-lib'
 import { AuthScope } from '@island.is/auth/scopes'
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
-import { RskProcuringClient } from '@island.is/clients/rsk/procuring'
+import { RskRelationshipsClient } from '@island.is/clients-rsk-relationships'
 import {
   createCurrentUser,
   createNationalId,
@@ -608,7 +608,7 @@ describe('ActorDelegationsController', () => {
       describe('with procuring delegations', () => {
         let getIndividualRelationships: jest.SpyInstance
         beforeAll(() => {
-          const client = app.get(RskProcuringClient)
+          const client = app.get(RskRelationshipsClient)
           getIndividualRelationships = jest
             .spyOn(client, 'getIndividualRelationships')
             .mockResolvedValue({

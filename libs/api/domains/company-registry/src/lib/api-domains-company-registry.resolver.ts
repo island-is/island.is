@@ -1,6 +1,6 @@
 import { Args, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
 import { Inject, UseGuards } from '@nestjs/common'
-import { ApiScope } from '@island.is/auth/scopes'
+import { AdminPortalScope, ApiScope } from '@island.is/auth/scopes'
 import {
   IdsUserGuard,
   ScopesGuard,
@@ -19,7 +19,7 @@ import { RskCompanySearchItems } from './models/rskCompanySearchItems.model'
 import { RskCompanyInfoSearchInput } from './dto/RskCompanyInfoSearch.input'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
-@Scopes(ApiScope.internal, ApiScope.company, ApiScope.serviceDesk)
+@Scopes(ApiScope.internal, ApiScope.company, AdminPortalScope.serviceDesk)
 @Resolver(() => RskCompany)
 @Audit({ namespace: '@island.is/api/company-registry' })
 export class CompanyRegistryResolver {

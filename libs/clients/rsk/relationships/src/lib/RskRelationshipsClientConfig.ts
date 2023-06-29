@@ -11,8 +11,8 @@ const schema = z.object({
   }),
 })
 
-export const RskProcuringClientConfig = defineConfig({
-  name: 'RskProcuringClientConfig',
+export const RskRelationshipsClientConfig = defineConfig({
+  name: 'RskRelationshipsClientConfig',
   schema,
   load: (env) => ({
     xRoadServicePath: env.required(

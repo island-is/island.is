@@ -8,7 +8,7 @@ import {
   CreateDomain,
 } from '@island.is/services/auth/testing'
 import { createCurrentUser } from '@island.is/testing/fixtures'
-import { GetIndividualRelationships } from '@island.is/clients/rsk/procuring'
+import { GetIndividualRelationships } from '@island.is/clients-rsk-relationships'
 
 export const clientId = '@island.is/webapp'
 

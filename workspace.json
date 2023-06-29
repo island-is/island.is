@@ -174,7 +174,7 @@
     "clients-rights-portal": "libs/clients/icelandic-health-insurance/rights-portal",
     "clients-rsk-company-registry": "libs/clients/rsk/company-registry",
     "clients-rsk-personal-tax-return": "libs/clients/rsk/personal-tax-return",
-    "clients-rsk-procuring": "libs/clients/rsk/procuring",
+    "clients-rsk-relationships": "libs/clients/rsk/relationships",
     "clients-sessions": "libs/clients/sessions",
     "clients-smartsolutions": "libs/clients/smartsolutions",
     "clients-syslumenn": "libs/clients/syslumenn",
