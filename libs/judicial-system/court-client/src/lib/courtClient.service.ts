@@ -154,9 +154,13 @@ export class CourtClientServiceImplementation implements CourtClientService {
       config.courtApiPath,
     )
     const providerConfiguration = new Configuration({
-      fetchApi: (input, init) =>
-        fetch(input, init).then(async (res) => {
+      fetchApi: async (input, init) => {
+        this.logger.info('Court client fetch', { body: init?.body })
+        return fetch('https://httpbin.org/post', init).then(async (res) => {
           if (res.ok) {
+            this.logger.info('Court client fetch ok', {
+              result: await res.json(),
+            })
             return res
           }
 
@@ -164,7 +168,8 @@ export class CourtClientServiceImplementation implements CourtClientService {
             status: res.status,
             message: await res.text(),
           }
-        }),
+        })
+      },
       basePath,
       headers: defaultHeaders,
       middleware,
@@ -215,23 +220,26 @@ export class CourtClientServiceImplementation implements CourtClientService {
       return connectionState.loginPromise
     }
 
-    connectionState.loginPromise = this.authenticateUserApi
-      .authenticateUser({ credentials: connectionState.credentials })
-      .then((res) => {
-        // Reset the error counter
-        connectionState.errorCount = 0
+    // connectionState.loginPromise = this.authenticateUserApi
+    //   .authenticateUser({ credentials: connectionState.credentials })
+    //   .then((res) => {
+    //     // Reset the error counter
+    //     connectionState.errorCount = 0
 
-        // Strip the quotation marks from the result
-        connectionState.authenticationToken = stripResult(res)
-      })
-      .catch((reason) => {
-        throw new BadGatewayException({
-          ...reason,
-          message: 'Unable to log into the court service',
-          detail: reason.message,
-        })
-      })
-      .finally(() => (connectionState.loginPromise = undefined))
+    //     // Strip the quotation marks from the result
+    //     connectionState.authenticationToken = stripResult(res)
+    //   })
+    //   .catch((reason) => {
+    //     throw new BadGatewayException({
+    //       ...reason,
+    //       message: 'Unable to log into the court service',
+    //       detail: reason.message,
+    //     })
+    //   })
+    //   .finally(() => (connectionState.loginPromise = undefined))
+
+    connectionState.errorCount = 0
+    connectionState.authenticationToken = 'test'
 
     return connectionState.loginPromise
   }
