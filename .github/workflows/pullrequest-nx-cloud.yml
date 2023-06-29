@@ -148,7 +148,7 @@ jobs:
         run: git config --local --get remote.origin.url
 
   agents:
-    name: Agent ${{ fromJSON(matrix.agent) }}
+    name: Agent
     runs-on: ec2-runners
     container:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
