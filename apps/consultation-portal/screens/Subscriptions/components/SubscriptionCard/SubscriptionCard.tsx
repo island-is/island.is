@@ -1,4 +1,4 @@
-import { Box, Inline } from '@island.is/island-ui/core'
+import { Box } from '@island.is/island-ui/core'
 import { mapIsToEn } from '../../../../utils/helpers'
 import { ReactNode, useState } from 'react'
 import { Area } from '../../../../types/enums'
@@ -13,7 +13,6 @@ interface Props {
   isGeneralSubscription?: boolean
   isCase?: boolean
   item: SubscriptionTableItem
-  idx?: number
   area?: Area
   subscriptionArray: SubscriptionArray
   setSubscriptionArray: (_: SubscriptionArray) => void
@@ -26,7 +25,6 @@ export const SubscriptionCard = ({
   isGeneralSubscription,
   item,
   area,
-  idx,
   subscriptionArray,
   setSubscriptionArray,
   titleColumn,
@@ -36,17 +34,17 @@ export const SubscriptionCard = ({
   const [isOpen, setIsOpen] = useState(false)
   const onCheckboxChange = () => {
     if (isGeneralSubscription) {
-      const subscriptionArrayCopy = { ...subscriptionArray }
-      if (idx === 0) {
-        const thisData = subscriptionArray.subscribedToAllNewObj
-        thisData.checked = false
-        subscriptionArrayCopy.subscribedToAllNewObj = thisData
-      } else if (idx === 1) {
-        const thisData = subscriptionArray.subscribedToAllChangesObj
-        thisData.checked = false
-        subscriptionArrayCopy.subscribedToAllChangesObj = thisData
+      const arrCopy = { ...subscriptionArray }
+      const subscribedToAllNewObj = arrCopy.subscribedToAllNewObj
+      const subscribedToAllChangesObj = arrCopy.subscribedToAllChangesObj
+      if (subscribedToAllNewObj.checked) {
+        subscribedToAllNewObj.checked = false
+        arrCopy.subscribedToAllNewObj = subscribedToAllNewObj
+      } else {
+        subscribedToAllChangesObj.checked = false
+        arrCopy.subscribedToAllChangesObj = subscribedToAllChangesObj
       }
-      setSubscriptionArray(subscriptionArrayCopy)
+      setSubscriptionArray(arrCopy)
     } else {
       const subscriptionArrayCopy = { ...subscriptionArray }
       const thisData = subscriptionArrayCopy[mapIsToEn[area]]

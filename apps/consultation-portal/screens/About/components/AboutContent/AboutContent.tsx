@@ -7,11 +7,16 @@ import localization from '../../About.json'
 const AboutContent = () => {
   const loc = localization['aboutContent']
   return (
-    <Box>
+    <Box dataTestId="aboutTitle">
       <Text variant="h1" color="blue400">
         {loc.text}
       </Text>
-      <Box className={styles.spanStyle} marginBottom={6} marginTop={4}>
+      <Box
+        dataTestId="aboutContent"
+        className={styles.spanStyle}
+        marginBottom={6}
+        marginTop={4}
+      >
         <div dangerouslySetInnerHTML={{ __html: RichTextAbout }} />
       </Box>
     </Box>
