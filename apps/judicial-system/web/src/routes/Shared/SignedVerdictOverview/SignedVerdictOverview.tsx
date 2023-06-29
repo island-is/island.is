@@ -741,8 +741,7 @@ export const SignedVerdictOverview: React.FC = () => {
           {user?.role === UserRole.PROSECUTOR &&
             user.institution?.id ===
               workingCase.creatingProsecutor?.institution?.id &&
-            isRestrictionCase(workingCase.type) &&
-            !workingCase.appealState && (
+            isRestrictionCase(workingCase.type) && (
               <ShareCase
                 selectedSharingInstitutionId={selectedSharingInstitutionId}
                 setSelectedSharingInstitutionId={

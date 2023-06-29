@@ -49,7 +49,7 @@ export const m = defineMessages({
     description: 'Info from drivers license subtitle',
   },
   dataCollectionUserProfileTitle: {
-    id: 'cr.application:dataCollectionUserProfileTitle',
+    id: 'dld.application:dataCollectionUserProfileTitle',
     defaultMessage: 'Mínar síður á Ísland.is/stillingar',
     description: 'Your user profile information',
   },
@@ -178,6 +178,11 @@ export const m = defineMessages({
     defaultMessage:
       '**Vinsamlegast tilgreinið ástæðu umsóknarinnar.**\n\nAthugið: Saknæmt er að gefa rangar eða ósannar upplýsingar um að ökuskírteini hafi skemmst eða glatast. Finnist glataða skírteinið skal skila því inn til sýslumanns eða lögreglu. Afhenda skal lögreglu eða sýslumanni ökuskírteini sem eru skemmd, af eldri gerð eða EES gerð þegar óskað er eftir samriti.',
     description: 'Description for reason section',
+  },
+  confirmReason: {
+    id: 'dld.application:confirmReason',
+    defaultMessage: 'Ég staðfesti að ökuskírteinið hafi skemmst eða glatast',
+    description: 'Confirm reason text',
   },
   reasonLostOption: {
     id: 'dld.application:reasonLostOption',

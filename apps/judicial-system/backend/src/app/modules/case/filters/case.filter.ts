@@ -55,8 +55,8 @@ function canProsecutionUserAccessCase(
   if (
     theCase.creatingProsecutor?.institutionId &&
     user.institution?.id !== theCase.creatingProsecutor?.institutionId &&
-    (forUpdate || user.institution?.id) !==
-      theCase.sharedWithProsecutorsOfficeId
+    (forUpdate ||
+      user.institution?.id !== theCase.sharedWithProsecutorsOfficeId)
   ) {
     return false
   }
