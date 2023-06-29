@@ -34,8 +34,10 @@ env:
   BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
   NX_BRANCH: ${{ github.head_ref || github.ref_name }}
   NX_TARGETS: 'lint build'
+  NX_VERBOSE_LOGGING: true
   NX_CLOUD_DISTRIBUTED_EXECUTION: true
-  NX_CLOUD_DISTRIBUTED_EXECUTION_AGENT_COUNT: 3
+  NX_CLOUD_DISTRIBUTED_EXECUTION_STOP_AGENTS_ON_FAILURE: true
+  NX_CLOUD_DISTRIBUTED_EXECUTION_AGENT_COUNT: 8
 jobs:
   set-agents:
     runs-on: ec2-runners
@@ -52,11 +54,11 @@ jobs:
         shell: bash
         # Turn the number-of-agents input into a JSON structure which is compatible with a Github job matrix strategy
         run: |
-          AGENTS_JSON_ARRAY=$(node -e "console.log(JSON.stringify(Array.from(new Array(3)).map((_, i) => i + 1)));")
+          AGENTS_JSON_ARRAY=$(node -e "console.log(JSON.stringify(Array.from(new Array(${{ env.NX_CLOUD_DISTRIBUTED_EXECUTION_AGENT_COUNT }})).map((_, i) => i + 1)));")
           echo $AGENTS_JSON_ARRAY
           echo "matrix=$AGENTS_JSON_ARRAY" >> $GITHUB_OUTPUT
 
-  nx-cloud-agents:
+  nx-cloud-agent:
     needs: set-agents
     runs-on: ec2-runners
     container:
@@ -142,17 +144,14 @@ jobs:
         env:
           NX_AGENT_NAME: ${{matrix.agent}}
 
-      # - name: Building
-      #   run: |
-      #     ./scripts/ci/run-nx-affected.sh ${{ env.NX_TARGETS }}
+      - name: Stop all running agents for this CI run
+        # It's important that we always run this step, otherwise in the case of any failures in preceding non-Nx steps, the agents will keep running and waste billable minutes
+        if: ${{ always() }}
+        run: npx nx-cloud stop-all-agents
 
-      # - name: Stop all running agents for this CI run
-      #   # It's important that we always run this step, otherwise in the case of any failures in preceding non-Nx steps, the agents will keep running and waste billable minutes
-      #   if: ${{ always() }}
-      #   run: npx nx-cloud stop-all-agents
+      - name: fix hanging post job
+        run: git config --local --get remote.origin.url
 
-      # - name: fix hanging post job
-      #   run: git config --local --get remote.origin.url
   nx-cloud-main:
     runs-on: ec2-runners
     container:
@@ -168,7 +167,7 @@ jobs:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
-      - uses: nrwl/nx-set-shas@v3
+      # - uses: nrwl/nx-set-shas@v3
       - run: |
           echo "BASE=$NX_BASE" >> $GITHUB_ENV
           echo "HEAD=$NX_HEAD" >> $GITHUB_ENV
@@ -233,10 +232,10 @@ jobs:
         run: |
           ./scripts/ci/run-nx-affected.sh ${{ env.NX_TARGETS }}
 
-      - name: Stop all running agents for this CI run
-        # It's important that we always run this step, otherwise in the case of any failures in preceding non-Nx steps, the agents will keep running and waste billable minutes
-        if: ${{ always() }}
-        run: npx nx-cloud stop-all-agents
+      # - name: Stop all running agents for this CI run
+      #   # It's important that we always run this step, otherwise in the case of any failures in preceding non-Nx steps, the agents will keep running and waste billable minutes
+      #   if: ${{ always() }}
+      #   run: npx nx-cloud stop-all-agents
       - name: fix hanging post job
         run: git config --local --get remote.origin.url
   # check-matrix:

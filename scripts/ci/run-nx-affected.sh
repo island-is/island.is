@@ -16,7 +16,8 @@ MAX_JOBS=${MAX_JOBS:-2}
 echo "[DEBUG]: NX version is $(yarn run nx --version)"
 echo "[DEBUG]: yarn version is $(yarn --version)"
 
-npx nx-cloud start-ci-run
+npx nx connect-to-nx-cloud
+npx nx-cloud start-ci-run --stop-agents-after="build"
 
 pids=()
 
@@ -24,7 +25,6 @@ for target in "$@"
 do
   npx nx affected --base="$BASE" --head="$HEAD" --target="$target" --parallel="$MAX_JOBS" &
   pids+=($!)
-  echo "${pids[@]}"
 done
 
 # run all commands in parallel and bail if one of them fails
