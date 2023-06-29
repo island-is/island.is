@@ -23,7 +23,7 @@ npx nx-cloud start-ci-run
 pids=()
 
 # list of commands to be run on agents
-npx nx affected --base="$BASE" --head="$HEAD" --target "$target" --parallel="$MAX_JOBS" "$@"
+npx nx affected --base="$BASE" --head="$HEAD" --target "$target" --parallel="$MAX_JOBS" "$@" &
 pids+=($!)
 
 # run all commands in parallel and bail if one of them fails
