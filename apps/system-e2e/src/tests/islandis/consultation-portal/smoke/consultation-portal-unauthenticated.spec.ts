@@ -2,15 +2,12 @@ import { BrowserContext, expect, test } from '@playwright/test'
 import { icelandicAndNoPopupUrl, urls } from '../../../../support/urls'
 import { session } from '../../../../support/session'
 import {
-  //   HERO as hero,
+  HERO as hero,
   NOT_LOGGED_IN_NAV as nav,
-  //   FILTERS as filters,
-  //   FOOTER as footer,
-  //   LOGGED_OUT_STATES as los,
-  //   LOGIN_BUTTONS as lb,
-  //   PagesInterface,
+  FILTERS as filters,
+  FOOTER as footer,
+  STATES as los,
   URL,
-  MENU_USERMENU as menuUserMenu,
 } from './consts'
 
 test.use({ baseURL: urls.islandisBaseUrl })
@@ -21,9 +18,10 @@ test.describe('Consultation portal unathenticated', () => {
   test.beforeAll(async ({ browser }) => {
     context = await session({
       browser: browser,
-      storageState: 'consultation-no-authafasfasfsaf.json',
+      storageState:
+        'consultation-no-auth.json',
       idsLoginOn: false,
-      // homeUrl: URL,
+      homeUrl: URL,
       phoneNumber: 'not appplicable',
     })
   })
@@ -31,74 +29,139 @@ test.describe('Consultation portal unathenticated', () => {
     await context.close()
   })
 
-  // console.log("NAV_LINKS", nav)
-
-  test('front page should render', async () => {
+  test('nav links on front page should be visible', async () => {
     const page = await context.newPage()
     await page.goto(icelandicAndNoPopupUrl(URL))
-    for (const item of nav) {
-      const thisPage = await page.getByTestId(item)
-      await expect(thisPage).toBeVisible()
-    }
-    await expect(page.getByTestId(menuUserMenu)).toHaveCount(0)
+
+    await expect(page.getByTestId(nav.allCases)).toBeVisible()
+    await expect(page.getByTestId(nav.subscriptions)).toBeVisible()
+    await expect(page.getByTestId(nav.advices)).toBeVisible()
+    await expect(page.getByTestId(nav.loginBtn)).toBeVisible()
+
+    await page.close()
   })
-  // await expect(page.getByTestId("menuItem_0")).toBeDefined()
-  // test('front page should have expected static content', async () => {
-  //   const page = await context.newPage()
-  //   await page.goto(icelandicAndNoPopupUrl(URL))
-  //   for (const { label } of nav) {
-  //     await expect(page.getByRole('button', { name: label })).toBeVisible()
-  //   }
-  //   await expect(page.getByText(hero.text)).toBeVisible()
-  //   for (const { label } of hero.links) {
-  //     await expect(page.getByRole('link', { name: label })).toBeVisible()
-  //   }
-  //   for (const text of filters) {
-  //     await expect(page.getByText(text)).toBeVisible()
-  //   }
-  //   await expect(page.getByText(footer.text)).toBeVisible()
-  //   await expect(
-  //     page.getByRole('link', { name: footer.link.label }),
-  //   ).toBeVisible()
-  // })
 
-  // for (const item in los) {
-  //   const instance = los[item as keyof PagesInterface]
-  //   test(`${item} should show logged out state`, async () => {
-  //     if (item.toLowerCase() == 'subscriptions') test.skip()
-  //     const page = await context.newPage()
-  //     await page.goto(URL)
-  //     await page.getByRole('button', { name: instance.label }).click()
-  //     await page.waitForURL(`**${instance.href}`)
-  //     for (const { text } of instance.breadcrumbs) {
-  //       expect(page.locator('nav', { has: page.getByText(text) }))
-  //     }
-  //     expect(page.locator(`text=${instance.title}`)).toBeTruthy()
-  //     await expect(page.getByText(instance.text)).toBeVisible()
-  //     await page.waitForLoadState()
-  //     if (instance.CTA) {
-  //       expect(page.locator(`text=${instance.CTA.title}`)).toBeTruthy()
-  //       await expect(page.getByText(instance.CTA.text)).toBeVisible()
-  //       await expect(
-  //         page.getByRole('button', { name: instance.CTA.button.label }),
-  //       ).toBeVisible()
-  //     }
-  //   })
-  // }
+  test('hero section should have text and correct links', async () => {
+    const page = await context.newPage()
+    await page.goto(icelandicAndNoPopupUrl(URL))
 
-  // test('minaraskriftir should redirect to island.is login', async () => {
-  //   const page = await context.newPage()
-  //   await page.goto(`${URL}/minaraskriftir`)
-  //   await page.waitForURL(authLink)
-  // })
+    await expect(page.getByTestId('heroIntro')).toBeVisible()
+    for (const { label } of hero.links) {
+      await expect(page.getByRole('link', { name: label })).toBeVisible()
+    }
 
-  // for (const item in lb) {
-  //   const instance = lb[item as keyof typeof lb]
-  //   test(`login button on ${item} should redirect to island.is login`, async () => {
-  //     const page = await context.newPage()
-  //     await page.goto(icelandicAndNoPopupUrl(`${URL}${instance.location}`))
-  //     await page.getByRole('button', { name: instance.label }).click()
-  //     await page.waitForURL(authLink)
-  //   })
-  // }
+    await page.close()
+  })
+
+  test('filters should be visible on front page', async () => {
+    const page = await context.newPage()
+    await page.goto(icelandicAndNoPopupUrl(URL))
+
+    await expect(page.getByTestId('select-policyAreas')).toBeVisible()
+    await expect(page.getByTestId('select-institutions')).toBeVisible()
+    for (const text of filters) {
+      await expect(page.getByText(text)).toBeVisible()
+    }
+
+    await page.close()
+  })
+
+  test('footer should render expected content', async () => {
+    const page = await context.newPage()
+    await page.goto(icelandicAndNoPopupUrl(URL))
+
+    await expect(page.getByText(footer.text)).toBeVisible()
+    await expect(
+      page.getByRole('link', { name: footer.linkLabel }),
+    ).toBeVisible()
+
+    await page.close()
+  })
+
+  test('subscriptions page should show logged out state', async () => {
+    const page = await context.newPage()
+    await page.goto(icelandicAndNoPopupUrl(URL))
+
+    await page.getByTestId(nav.subscriptions).click()
+    await expect(page.getByTestId('subscriptions_title')).toBeVisible()
+    await expect(page.getByTestId('subscriptions_text')).toBeVisible()
+    await expect(page.getByRole('tab')).toHaveCount(0)
+    await page.waitForLoadState()
+    await expect(page.getByTestId('actionCard')).toBeVisible()
+    await expect(page.getByText(los.subscriptions.CTA.title)).toBeVisible()
+    await expect(page.getByText(los.subscriptions.CTA.text)).toBeVisible()
+    const loginLink = page.getByRole('button', {
+      name: los.subscriptions.CTA.button.label,
+    })
+    await expect(loginLink).toBeVisible()
+    loginLink.click()
+    await page.waitForURL(authLink)
+
+    await page.close()
+  })
+
+  test('my subscriptions page should be empty and redirect user to login', async () => {
+    const page = await context.newPage()
+    await page.goto(icelandicAndNoPopupUrl(URL))
+
+    await page.getByTestId(nav.subscriptions).click()
+    await expect(page.getByRole('tab')).toHaveCount(0)
+    const unsubscribeLink = page.getByText(
+      los.subscriptions.unsubscribeLink.text,
+    )
+    await expect(unsubscribeLink).toBeVisible()
+    await unsubscribeLink.click()
+    await page.waitForURL(`**${los.subscriptions.unsubscribeLink.href}`)
+    await page.waitForURL(authLink)
+
+    await page.close()
+  })
+
+  test('advices page should show logged out state', async () => {
+    const page = await context.newPage()
+    await page.goto(icelandicAndNoPopupUrl(URL))
+
+    await page.getByTestId(nav.advices).click()
+    expect(page.getByText(los.advices.intro.title)).toBeTruthy()
+    await expect(page.getByText(los.advices.intro.text)).toBeVisible()
+    await page.waitForLoadState()
+    await expect(page.getByTestId('actionCard')).toBeVisible()
+    expect(page.getByText(los.advices.CTA.title)).toBeTruthy()
+    await expect(page.getByText(los.advices.CTA.text)).toBeVisible()
+    const loginLink = page.getByRole('button', {
+      name: los.advices.CTA.button.label,
+    })
+    await expect(loginLink).toBeVisible()
+    loginLink.click()
+    await page.waitForURL(authLink)
+
+    await page.close()
+  })
+
+  test('about page should render', async () => {
+    const page = await context.newPage()
+    await page.goto(icelandicAndNoPopupUrl(URL))
+
+    const aboutLink = page.getByText(hero.aboutLink.label)
+    expect(aboutLink).toBeVisible()
+    aboutLink.click()
+    await page.waitForURL(`**${hero.aboutLink.href}`)
+    await expect(page.getByTestId('aboutTitle')).toBeVisible()
+    await expect(page.getByTestId('aboutContent')).toBeVisible()
+    await expect(page.getByTestId('aboutTOC')).toBeVisible()
+
+    await page.close()
+  })
+
+  test('login button should redirect to login', async () => {
+    const page = await context.newPage()
+    await page.goto(icelandicAndNoPopupUrl(URL))
+
+    const loginBtn = page.getByTestId(nav.loginBtn)
+    await expect(loginBtn).toBeVisible()
+    loginBtn.click()
+    await page.waitForURL(authLink)
+
+    await page.close()
+  })
 })
