@@ -137,7 +137,7 @@ jobs:
 
       - name: Building
         run: |
-          ./scripts/ci/run-nx-affected.sh ${{ matrix.nx-target }}
+          MAX_JOBS=2 ./scripts/ci/run-nx-affected.sh ${{ matrix.nx-target }}
       - name: fix hanging post job
         run: git config --local --get remote.origin.url
 
