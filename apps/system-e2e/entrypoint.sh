@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 set -euo pipefail
+set -x
 
 : "${TEST_ENVIRONMENT:=local}"
 : "${TEST_TYPE:=smoke}"
@@ -15,10 +16,11 @@ DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
 
 echo "Current test environment: ${TEST_ENVIRONMENT}"
 echo "Playwright args: $*"
+echo "Playwright project: $TEST_PROJECT"
 echo "Playwright version: $(yarn playwright --version)"
 
 TEST_EXIT_CODE=0
-yarn playwright test -c src --project "$TEST_PROJECT" "$@" || TEST_EXIT_CODE=$?
+yarn playwright test -c src --project="$TEST_PROJECT" "$@" || TEST_EXIT_CODE=$?
 
 # Upload results
 if [[ -n "$TEST_RESULTS_S3" ]]; then
