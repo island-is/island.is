@@ -18,8 +18,7 @@ test.describe('Consultation portal authenticated', () => {
   test.beforeAll(async ({ browser }) => {
     context = await session({
       browser: browser,
-      storageState:
-        'consultation-auth.json',
+      storageState: 'consultation-auth.json',
       idsLoginOn: false,
       homeUrl: URL,
       phoneNumber: login.phoneNumber,

@@ -18,8 +18,7 @@ test.describe('Consultation portal unathenticated', () => {
   test.beforeAll(async ({ browser }) => {
     context = await session({
       browser: browser,
-      storageState:
-        'consultation-no-auth.json',
+      storageState: 'consultation-no-auth.json',
       idsLoginOn: false,
       homeUrl: URL,
       phoneNumber: 'not appplicable',
