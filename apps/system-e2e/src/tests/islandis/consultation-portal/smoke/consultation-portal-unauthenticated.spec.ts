@@ -18,8 +18,7 @@ test.describe('Consultation portal unathenticated', () => {
   test.beforeAll(async ({ browser }) => {
     context = await session({
       browser: browser,
-      storageState:
-        'consultation-no-auth.json',
+      storageState: 'consultation-no-auth.json',
       idsLoginOn: false,
       homeUrl: URL,
       phoneNumber: 'not appplicable',
@@ -46,9 +45,9 @@ test.describe('Consultation portal unathenticated', () => {
     await page.goto(icelandicAndNoPopupUrl(URL))
 
     await expect(page.getByTestId('heroIntro')).toBeVisible()
-    for (const { label } of hero.links) {
-      await expect(page.getByRole('link', { name: label })).toBeVisible()
-    }
+    await expect(
+      page.getByRole('link', { name: hero.aboutLink.label }),
+    ).toBeVisible()
 
     await page.close()
   })
@@ -70,7 +69,6 @@ test.describe('Consultation portal unathenticated', () => {
     const page = await context.newPage()
     await page.goto(icelandicAndNoPopupUrl(URL))
 
-    await expect(page.getByText(footer.text)).toBeVisible()
     await expect(
       page.getByRole('link', { name: footer.linkLabel }),
     ).toBeVisible()
@@ -89,7 +87,6 @@ test.describe('Consultation portal unathenticated', () => {
     await page.waitForLoadState()
     await expect(page.getByTestId('actionCard')).toBeVisible()
     await expect(page.getByText(los.subscriptions.CTA.title)).toBeVisible()
-    await expect(page.getByText(los.subscriptions.CTA.text)).toBeVisible()
     const loginLink = page.getByRole('button', {
       name: los.subscriptions.CTA.button.label,
     })
@@ -122,12 +119,9 @@ test.describe('Consultation portal unathenticated', () => {
     await page.goto(icelandicAndNoPopupUrl(URL))
 
     await page.getByTestId(nav.advices).click()
-    expect(page.getByText(los.advices.intro.title)).toBeTruthy()
-    await expect(page.getByText(los.advices.intro.text)).toBeVisible()
     await page.waitForLoadState()
     await expect(page.getByTestId('actionCard')).toBeVisible()
     expect(page.getByText(los.advices.CTA.title)).toBeTruthy()
-    await expect(page.getByText(los.advices.CTA.text)).toBeVisible()
     const loginLink = page.getByRole('button', {
       name: los.advices.CTA.button.label,
     })

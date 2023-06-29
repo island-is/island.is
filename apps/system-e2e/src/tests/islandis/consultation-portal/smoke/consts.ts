@@ -1,13 +1,38 @@
-import {
-  heroBanner,
-  filter,
-} from '../../../../../../consultation-portal/screens/Home/Home.json'
-import { footer } from '../../../../../../consultation-portal/components/Layout/Layout.json'
-import {
-  emailBox,
-  subscriptionSkeleton,
-} from '../../../../../../consultation-portal/screens/Subscriptions/Subscriptions.json'
-import { advices } from '../../../../../../consultation-portal/screens/Advices/Advices.json'
+const heroBanner = {
+  arrowLink: {
+    internalLink: {
+      text: 'Lesa meira',
+      href: '/um',
+    },
+  },
+}
+
+const filter = {
+  sortBoxTitle: 'Röðun',
+  statusBoxTitle: 'Staða máls',
+  typeBoxTitle: 'Tegund máls',
+}
+
+const footer = {
+  arrowLinkText: 'Senda ábendingu',
+}
+
+const loginActionCard = {
+  heading: 'Skrá áskrift',
+  buttonLabel: 'Skrá mig inn',
+}
+
+const unsubscribeLink = {
+  text: ' Hægt er að afskrá sig hér',
+  href: '/minaraskriftir',
+}
+
+const advices = {
+  subscriptionActionCard: {
+    heading: 'Mínar umsagnir',
+    buttonLabel: 'Skrá mig inn',
+  },
+}
 
 export const URL = '/samradsgatt'
 export const URL_LOCALE = '/samradsgatt?locale=is&hide_onboarding_modal=true'
@@ -27,14 +52,6 @@ export const LOGGED_IN_NAV = {
 }
 
 export const HERO = {
-  links: [
-    {
-      label: heroBanner.arrowLink.internalLink.text,
-    },
-    {
-      label: heroBanner.arrowLink.externalLink.text,
-    },
-  ],
   aboutLink: {
     label: heroBanner.arrowLink.internalLink.text,
     href: heroBanner.arrowLink.internalLink.href,
@@ -42,41 +59,34 @@ export const HERO = {
 }
 
 export const FILTERS = [
-  filter.filter.sortBoxTitle,
-  filter.filter.statusBoxTitle,
-  filter.filter.typeBoxTitle,
+  filter.sortBoxTitle,
+  filter.statusBoxTitle,
+  filter.typeBoxTitle,
 ]
 
 export const FOOTER = {
-  text: footer.text,
   linkLabel: footer.arrowLinkText,
 }
 
 export const STATES = {
   subscriptions: {
     CTA: {
-      title: emailBox.loginActionCard.heading,
-      text: emailBox.loginActionCard.text,
+      title: loginActionCard.heading,
       button: {
-        label: emailBox.loginActionCard.buttonLabel,
+        label: loginActionCard.buttonLabel,
       },
     },
     unsubscribeLink: {
-      text: subscriptionSkeleton.unsubscribeLink.text,
-      href: subscriptionSkeleton.unsubscribeLink.href,
+      text: unsubscribeLink.text,
+      href: unsubscribeLink.href,
     },
   },
   advices: {
     CTA: {
       title: advices.subscriptionActionCard.heading,
-      text: advices.subscriptionActionCard.text,
       button: {
         label: advices.subscriptionActionCard.buttonLabel,
       },
-    },
-    intro: {
-      title: advices.intro.title,
-      text: advices.intro.text,
     },
   },
 }

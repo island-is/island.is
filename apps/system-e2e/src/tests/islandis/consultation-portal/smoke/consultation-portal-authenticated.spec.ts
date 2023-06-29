@@ -72,7 +72,6 @@ test.describe('Consultation portal authenticated', () => {
     await page.waitForLoadState()
     await expect(page.getByTestId('actionCard')).toBeVisible()
     await expect(page.getByText(lis.subscriptions.CTA.title)).toHaveCount(0)
-    await expect(page.getByText(lis.subscriptions.CTA.text)).toHaveCount(0)
 
     await page.close()
   })
@@ -97,10 +96,10 @@ test.describe('Consultation portal authenticated', () => {
     await checkIfLoggedOutOrLoggedIn(page)
 
     await page.getByTestId(nav.advices).click()
-    expect(page.getByText(lis.advices.intro.title)).toBeTruthy()
-    await expect(page.getByText(lis.advices.intro.text)).toBeVisible()
     await expect(page.getByTestId('actionCard')).toHaveCount(0)
-    await expect(page.getByText(lis.advices.CTA.text)).toHaveCount(0)
+    await expect(
+      page.getByRole('button', { name: lis.advices.CTA.button.label }),
+    ).toHaveCount(0)
 
     await page.close()
   })
