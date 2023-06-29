@@ -156,7 +156,10 @@ parse_run_args() {
   # If volumes array is not empty
   if [[ "${#volumes[@]}" -gt 0 ]]; then
     for volume in "${volumes[@]}"; do
-      run_cmd+=" --volume $volume:/data:z"
+      if ! [[ "$volume" =~ : ]]; then
+        volume+=":/data/${volume}:z"
+      fi
+      run_cmd+=" --volume $volume"
     done
   fi
 
