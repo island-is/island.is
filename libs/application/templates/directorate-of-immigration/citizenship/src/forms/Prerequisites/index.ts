@@ -5,12 +5,7 @@ import {
   buildSection,
   buildSubmitField,
 } from '@island.is/application/core'
-import {
-  ChildrenCustodyInformationApi,
-  DefaultEvents,
-  Form,
-  FormModes,
-} from '@island.is/application/types'
+import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
 import {
   confirmation,
   externalData,
@@ -21,12 +16,14 @@ import {
   supportingDocuments,
 } from '../../lib/messages'
 import {
+  ChildrenCustodyInformationApi,
   CountriesApi,
   NationalRegistryBirthplaceApi,
   NationalRegistryIndividualApi,
   NationalRegistryParentsApi,
   NationalRegistrySpouseDetailsApi,
   OldCountryOfResidenceListApi,
+  OldForeignCriminalRecordFileListApi,
   OldPassportItemApi,
   OldStayAbroadListApi,
   ResidenceConditionsApi,
@@ -80,7 +77,6 @@ export const Prerequisites: Form = buildForm({
               title: externalData.userProfile.title,
               subTitle: externalData.userProfile.subTitle,
             }),
-            //TODOx fetch information about current permit
             buildDataProviderItem({
               title: externalData.directorateOfImmigration.title,
               subTitle: externalData.directorateOfImmigration.subTitle,
@@ -107,6 +103,10 @@ export const Prerequisites: Form = buildForm({
             }),
             buildDataProviderItem({
               provider: OldPassportItemApi,
+              title: '',
+            }),
+            buildDataProviderItem({
+              provider: OldForeignCriminalRecordFileListApi,
               title: '',
             }),
             buildDataProviderItem({
@@ -138,10 +138,6 @@ export const Prerequisites: Form = buildForm({
               id: 'meansOfSupport',
               title: externalData.icelandRevenueAndCustoms.title,
               subTitle: externalData.icelandRevenueAndCustoms.subTitle,
-            }),
-            buildDataProviderItem({
-              title: externalData.nationalRegistry2.title,
-              subTitle: externalData.nationalRegistry2.subTitle,
             }),
             buildDataProviderItem({
               title: externalData.nationalRegistry2.title,

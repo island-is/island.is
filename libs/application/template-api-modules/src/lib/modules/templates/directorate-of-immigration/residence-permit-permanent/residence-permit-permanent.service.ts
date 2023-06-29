@@ -68,6 +68,6 @@ export class ResidencePermitPermanentService extends BaseTemplateApiService {
     const answers = application.answers as ResidencePermitPermanentAnswers
 
     // Submit the application
-    await this.vesidencePermitClient.applyForPermanentResidencePermit(auth)
+    await this.vesidencePermitClient.submitApplicationForPermanent(auth)
   }
 }

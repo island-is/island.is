@@ -10,6 +10,7 @@ import {
   NationalRegistryBirthplace,
   ChildrenCustodyInformationParameters,
   NationalRegistryParent,
+  NationalRegistryMaritalTitle,
 } from '@island.is/application/types'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
@@ -290,6 +291,33 @@ export class NationalRegistryService extends BaseTemplateApiService {
         nationalId: spouse.spouseNationalId,
         name: spouse.spouseName,
         maritalStatus: spouse.cohabitationCode,
+      }
+    )
+  }
+
+  async getMaritalTitle({
+    auth,
+  }: TemplateApiModuleActionProps): Promise<NationalRegistryMaritalTitle | null> {
+    const { nationalId } = auth
+
+    const cohabitationInfo = await this.nationalRegistryApi.getCohabitationInfo(
+      nationalId,
+    )
+
+    const individual = await this.nationalRegistryApi.getIndividual(nationalId)
+
+    const cohabitionCodeValue =
+      cohabitationInfo && individual
+        ? await this.nationalRegistryApi.getCohabitionCodeValue(
+            cohabitationInfo.cohabitationCode,
+            individual.genderCode,
+          )
+        : null
+
+    return (
+      cohabitionCodeValue && {
+        code: cohabitionCodeValue?.code,
+        description: cohabitionCodeValue?.description,
       }
     )
   }

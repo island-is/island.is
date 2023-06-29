@@ -27,7 +27,9 @@ export const MaritalStatusSubSection = buildSubSection({
           backgroundColor: 'white',
           width: 'half',
           readOnly: true,
-          defaultValue: (application: Application) => 'Giftur',
+          defaultValue: (application: Application) =>
+            application.externalData?.nationalRegistryMaritalTitle?.data
+              ?.description,
         }),
         buildDescriptionField({
           id: 'maritalStatus.title',
@@ -42,7 +44,8 @@ export const MaritalStatusSubSection = buildSubSection({
           width: 'half',
           readOnly: true,
           format: '######-####',
-          defaultValue: (application: Application) => '0123456789',
+          defaultValue: (application: Application) =>
+            application.externalData?.nationalRegistrySpouse?.data?.nationalId,
         }),
         buildTextField({
           id: 'maritalStatus.name',
@@ -50,7 +53,8 @@ export const MaritalStatusSubSection = buildSubSection({
           backgroundColor: 'white',
           width: 'half',
           readOnly: true,
-          defaultValue: (application: Application) => 'Jane Smith',
+          defaultValue: (application: Application) =>
+            application.externalData?.nationalRegistrySpouse?.data?.name,
         }),
       ],
     }),

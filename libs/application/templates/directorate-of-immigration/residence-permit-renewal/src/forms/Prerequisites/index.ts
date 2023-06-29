@@ -18,8 +18,19 @@ import {
 } from '../../lib/messages'
 import {
   NationalRegistryUserApi,
+  NationalRegistrySpouseApi,
+  NationalRegistryMaritalTitleApi,
+  ChildrenCustodyInformationApi,
   UserProfileApi,
   UtlendingastofnunPaymentCatalogApi,
+  CountriesApi,
+  TravelDocumentTypesApi,
+  OldStayAbroadListApi,
+  OldPassportItemApi,
+  CurrentResidencePermitApi,
+  OldCriminalRecordListApi,
+  OldStudyItemApi,
+  OldAgentItemApi,
 } from '../../dataProviders'
 
 export const Prerequisites: Form = buildForm({
@@ -39,6 +50,76 @@ export const Prerequisites: Form = buildForm({
           subTitle: externalData.dataProvider.subTitle,
           description: externalData.dataProvider.description,
           checkboxLabel: externalData.dataProvider.checkboxLabel,
+          dataProviders: [
+            buildDataProviderItem({
+              provider: NationalRegistryUserApi,
+              title: externalData.nationalRegistry.title,
+              subTitle: externalData.nationalRegistry.subTitle,
+            }),
+            buildDataProviderItem({
+              provider: NationalRegistrySpouseApi,
+              title: '',
+            }),
+            buildDataProviderItem({
+              provider: NationalRegistryMaritalTitleApi,
+              title: '',
+            }),
+            buildDataProviderItem({
+              provider: ChildrenCustodyInformationApi,
+              title: '',
+            }),
+            buildDataProviderItem({
+              provider: UserProfileApi,
+              title: externalData.userProfile.title,
+              subTitle: externalData.userProfile.subTitle,
+            }),
+            buildDataProviderItem({
+              title: externalData.directorateOfImmigration.title,
+              subTitle: externalData.directorateOfImmigration.subTitle,
+            }),
+            buildDataProviderItem({
+              provider: CountriesApi,
+              title: '',
+            }),
+            buildDataProviderItem({
+              provider: TravelDocumentTypesApi,
+              title: '',
+            }),
+            buildDataProviderItem({
+              provider: CurrentResidencePermitApi,
+              title: '',
+            }),
+            buildDataProviderItem({
+              provider: OldStayAbroadListApi,
+              title: '',
+            }),
+            buildDataProviderItem({
+              provider: OldCriminalRecordListApi,
+              title: '',
+            }),
+            buildDataProviderItem({
+              provider: OldStudyItemApi,
+              title: '',
+            }),
+            buildDataProviderItem({
+              provider: OldPassportItemApi,
+              title: '',
+            }),
+            buildDataProviderItem({
+              provider: OldAgentItemApi,
+              title: '',
+            }),
+            buildDataProviderItem({
+              provider: UtlendingastofnunPaymentCatalogApi,
+              title: '',
+            }),
+          ],
+        }),
+        buildExternalDataProvider({
+          title: externalData.dataProvider.pageTitle,
+          id: 'approveExternalData2',
+          subTitle: externalData.dataProvider.subTitle2,
+          checkboxLabel: externalData.dataProvider.checkboxLabel,
           submitField: buildSubmitField({
             id: 'submit',
             placement: 'footer',
@@ -53,25 +134,6 @@ export const Prerequisites: Form = buildForm({
             ],
           }),
           dataProviders: [
-            buildDataProviderItem({
-              provider: NationalRegistryUserApi,
-              title: externalData.nationalRegistry.title,
-              subTitle: externalData.nationalRegistry.subTitle,
-            }),
-            buildDataProviderItem({
-              provider: UserProfileApi,
-              title: externalData.userProfile.title,
-              subTitle: externalData.userProfile.subTitle,
-            }),
-            buildDataProviderItem({
-              provider: UtlendingastofnunPaymentCatalogApi,
-              title: '',
-            }),
-            buildDataProviderItem({
-              id: 'currentResidencePermit',
-              title: externalData.directorateOfImmigration.title,
-              subTitle: externalData.directorateOfImmigration.subTitle,
-            }),
             buildDataProviderItem({
               id: 'meansOfSupport',
               title: externalData.icelandRevenueAndCustoms.title,

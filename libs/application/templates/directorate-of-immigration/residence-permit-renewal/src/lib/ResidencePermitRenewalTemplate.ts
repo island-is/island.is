@@ -20,8 +20,19 @@ import { ApiActions } from '../shared'
 import { ResidencePermitRenewalSchema } from './dataSchema'
 import {
   NationalRegistryUserApi,
+  NationalRegistrySpouseApi,
+  NationalRegistryMaritalTitleApi,
+  ChildrenCustodyInformationApi,
   UserProfileApi,
   UtlendingastofnunPaymentCatalogApi,
+  CountriesApi,
+  TravelDocumentTypesApi,
+  CurrentResidencePermitApi,
+  OldStayAbroadListApi,
+  OldCriminalRecordListApi,
+  OldStudyItemApi,
+  OldPassportItemApi,
+  OldAgentItemApi,
 } from '../dataProviders'
 
 const template: ApplicationTemplate<
@@ -70,8 +81,19 @@ const template: ApplicationTemplate<
               delete: true,
               api: [
                 NationalRegistryUserApi,
+                NationalRegistrySpouseApi,
+                NationalRegistryMaritalTitleApi,
+                ChildrenCustodyInformationApi,
                 UserProfileApi,
                 UtlendingastofnunPaymentCatalogApi,
+                CountriesApi,
+                TravelDocumentTypesApi,
+                CurrentResidencePermitApi,
+                OldStayAbroadListApi,
+                OldCriminalRecordListApi,
+                OldStudyItemApi,
+                OldPassportItemApi,
+                OldAgentItemApi,
               ],
             },
           ],

@@ -10,13 +10,23 @@ import {
   getChargeItemCodes,
   ResidencePermitRenewalAnswers,
 } from '@island.is/application/templates/directorate-of-immigration/residence-permit-renewal'
-import { ResidencePermitClient } from '@island.is/clients/directorate-of-immigration/residence-permit'
+import {
+  Agent,
+  Country,
+  CriminalRecord,
+  CurrentResidencePermit,
+  Passport,
+  ResidencePermitClient,
+  StayAbroad,
+  Study,
+  TravelDocumentType,
+} from '@island.is/clients/directorate-of-immigration/residence-permit'
 
 @Injectable()
 export class ResidencePermitRenewalService extends BaseTemplateApiService {
   constructor(
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
-    private readonly vesidencePermitClient: ResidencePermitClient,
+    private readonly residencePermitClient: ResidencePermitClient,
   ) {
     super(ApplicationTypes.RESIDENCE_PERMIT_RENEWAL)
   }
@@ -37,6 +47,50 @@ export class ResidencePermitRenewalService extends BaseTemplateApiService {
     } catch (exeption) {
       return { id: '', paymentUrl: '' }
     }
+  }
+
+  async getCountries(): Promise<Country[]> {
+    return this.residencePermitClient.getCountries()
+  }
+
+  async getTravelDocumentTypes(): Promise<TravelDocumentType[]> {
+    return this.residencePermitClient.getTravelDocumentTypes()
+  }
+
+  async getCurrentResidencePermit({
+    auth,
+  }: TemplateApiModuleActionProps): Promise<CurrentResidencePermit> {
+    return this.residencePermitClient.getCurrentResidencePermit(auth)
+  }
+
+  async getOldStayAbroadList({
+    auth,
+  }: TemplateApiModuleActionProps): Promise<StayAbroad[]> {
+    return this.residencePermitClient.getOldStayAbroadList(auth)
+  }
+
+  async getOldCriminalRecordList({
+    auth,
+  }: TemplateApiModuleActionProps): Promise<CriminalRecord[]> {
+    return this.residencePermitClient.getOldCriminalRecordList(auth)
+  }
+
+  async getOldStudyItem({
+    auth,
+  }: TemplateApiModuleActionProps): Promise<Study | undefined> {
+    return this.residencePermitClient.getOldStudyItem(auth)
+  }
+
+  async getOldPassportItem({
+    auth,
+  }: TemplateApiModuleActionProps): Promise<Passport | undefined> {
+    return this.residencePermitClient.getOldPassportItem(auth)
+  }
+
+  async getOldAgentItem({
+    auth,
+  }: TemplateApiModuleActionProps): Promise<Agent | undefined> {
+    return this.residencePermitClient.getOldAgentItem(auth)
   }
 
   async submitApplication({
@@ -68,6 +122,6 @@ export class ResidencePermitRenewalService extends BaseTemplateApiService {
     const answers = application.answers as ResidencePermitRenewalAnswers
 
     // Submit the application
-    await this.vesidencePermitClient.renewResidencePermit(auth)
+    await this.residencePermitClient.submitApplicationForRenewal(auth)
   }
 }

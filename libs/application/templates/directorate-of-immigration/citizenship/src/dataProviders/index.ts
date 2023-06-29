@@ -47,6 +47,11 @@ export const OldPassportItemApi = defineTemplateApi({
   externalDataId: 'oldPassportItem',
 })
 
+export const OldForeignCriminalRecordFileListApi = defineTemplateApi({
+  action: ApiActions.getOldForeignCriminalRecordFileList,
+  externalDataId: 'oldForeignCriminalRecordFileList',
+})
+
 export const NationalRegistryIndividualApi = defineTemplateApi({
   action: ApiActions.getNationalRegistryIndividual,
   externalDataId: 'individual',

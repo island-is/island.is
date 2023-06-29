@@ -19,6 +19,7 @@ import {
   CitizenshipClient,
   Country,
   CountryOfResidence,
+  ForeignCriminalRecordFile,
   Passport,
   ResidenceCondition,
   StayAbroad,
@@ -85,6 +86,12 @@ export class CitizenshipService extends BaseTemplateApiService {
     auth,
   }: TemplateApiModuleActionProps): Promise<Passport | undefined> {
     return this.citizenshipClient.getOldPassportItem(auth)
+  }
+
+  async getOldForeignCriminalRecordFileList({
+    auth,
+  }: TemplateApiModuleActionProps): Promise<ForeignCriminalRecordFile[]> {
+    return this.citizenshipClient.getOldForeignCriminalRecordFileList(auth)
   }
 
   async getNationalRegistryIndividual({
@@ -271,6 +278,6 @@ export class CitizenshipService extends BaseTemplateApiService {
     const answers = application.answers as CitizenshipAnswers
 
     // Submit the application
-    await this.citizenshipClient.applyForCitizenship(auth)
+    await this.citizenshipClient.submitApplicationForCitizenship(auth)
   }
 }

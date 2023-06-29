@@ -34,6 +34,7 @@ import {
   OldCountryOfResidenceListApi,
   OldStayAbroadListApi,
   OldPassportItemApi,
+  OldForeignCriminalRecordFileListApi,
 } from '../dataProviders'
 
 const template: ApplicationTemplate<
@@ -97,6 +98,7 @@ const template: ApplicationTemplate<
                 OldCountryOfResidenceListApi,
                 OldStayAbroadListApi,
                 OldPassportItemApi,
+                OldForeignCriminalRecordFileListApi,
                 UtlendingastofnunPaymentCatalogApi,
               ],
             },

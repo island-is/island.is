@@ -1,9 +1,10 @@
 import { Module } from '@nestjs/common'
 import { ResidencePermitClient } from './residencePermitClient.service'
-import { exportedApis } from './apiConfiguration'
+import { ApiConfiguration } from './apiConfiguration'
+import { exportedApis } from './apis'
 
 @Module({
-  providers: [...exportedApis, ResidencePermitClient],
+  providers: [ApiConfiguration, ResidencePermitClient, ...exportedApis],
   exports: [ResidencePermitClient],
 })
 export class ResidencePermitClientModule {}

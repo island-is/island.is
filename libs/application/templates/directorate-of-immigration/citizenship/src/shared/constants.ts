@@ -6,6 +6,7 @@ export enum ApiActions {
   getOldCountryOfResidenceList = 'getOldCountryOfResidenceList',
   getOldStayAbroadList = 'getOldStayAbroadList',
   getOldPassportItem = 'getOldPassportItem',
+  getOldForeignCriminalRecordFileList = 'getOldForeignCriminalRecordFileList',
   getNationalRegistryIndividual = 'getNationalRegistryIndividual',
   getNationalRegistrySpouseDetails = 'getNationalRegistrySpouseDetails',
   submitApplication = 'submitApplication',

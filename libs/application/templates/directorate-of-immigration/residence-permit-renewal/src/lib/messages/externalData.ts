@@ -14,14 +14,20 @@ export const externalData = {
     },
     subTitle: {
       id: 'doi.rpr.application:externalData.dataProvider.subTitle',
-      defaultMessage: 'Eftirfarandi gögn verða sótt rafrænt',
+      defaultMessage: 'Eftirfarandi gögn verða sótt rafrænt með þínu samþykki.',
       description: 'External data sub title',
     },
     description: {
       id: 'doi.rpr.application:externalData.dataProvider.description',
       defaultMessage:
-        'Integer id augue in erat ultrices pharetra a vel neque. Integer pellentesque, erat vel varius imperdiet, nisl turpis imperdiet augue, at vulputate lorem mauris in nibh. ',
+        'Upplýsingar um þig kunna að vera notaðar við vinnslu seinni umsókna og/eða umsókna fjölskyldumeðlima til að tryggja að upplýsingar séu réttar. Á gildistíma dvalarleyfis kann Útlendingastofnun að taka gögn þín til skoðunar berist upplýsingar um breyttar aðstæður eða gildi gagna.',
       description: 'External data description',
+    },
+    subTitle2: {
+      id: 'doi.rpr.application:externalData.dataProvider.subTitle2',
+      defaultMessage:
+        'Eftirfarandi gögn verða sótt rafrænt af Útlendingastofnun',
+      description: 'External data sub title 2',
     },
     checkboxLabel: {
       id: 'doi.rpr.application:externalData.dataProvider.checkboxLabel',
@@ -80,7 +86,7 @@ export const externalData = {
     },
     subTitle: {
       id: 'doi.rpr.application:externalData.icelandRevenueAndCustoms.subTitle',
-      defaultMessage: 'Upplýsingar um framfærslu þína',
+      defaultMessage: 'Upplýsingar um framfærslu þína, ef við á.',
       description: 'Iceland revenue and customs sub title',
     },
   }),
