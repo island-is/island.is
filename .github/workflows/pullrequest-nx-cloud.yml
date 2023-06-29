@@ -148,7 +148,7 @@ jobs:
         run: git config --local --get remote.origin.url
 
   agents:
-    name: Agent ${{ matrix.agent }}
+    name: Agent ${{ fromJSON(matrix.agent) }}
     runs-on: ec2-runners
     container:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
@@ -159,6 +159,15 @@ jobs:
         agent:
           - [1, 2, 3]
     steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - uses: nrwl/nx-set-shas@v3
+      - run: |
+          echo "BASE=$NX_BASE" >> $GITHUB_ENV
+          echo "HEAD=$NX_HEAD" >> $GITHUB_ENV
+          echo "NX_BRANCH=$BRANCH_NAME" >> $GITHUB_ENV
+          echo "[DEBUG] BRANCH_NAME: $BRANCH_NAME"
       - name: Setup Node
         uses: actions/setup-node@v3
         with:
