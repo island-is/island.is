@@ -1445,6 +1445,9 @@ export interface ILatestNewsSliceFields {
 
   /** Read more link */
   readMoreLink?: ILink | undefined
+
+  /** Organization */
+  organization?: IOrganization | undefined
 }
 
 /** Slice to show latest news entries */
@@ -1970,6 +1973,9 @@ export interface INewsFields {
 
   /** og:image */
   featuredImage?: Asset | undefined
+
+  /** Organization */
+  organization?: IOrganization | undefined
 }
 
 export interface INews extends Entry<INewsFields> {
@@ -3906,13 +3912,31 @@ export interface IVacancyFields {
   applicationDeadlineTo: string
 
   /** Category */
-  fieldOfWork: string
+  fieldOfWork:
+    | 'Stjórnunarstörf'
+    | 'Sérfræðistörf'
+    | 'Kennsla og rannsóknir'
+    | 'Heilbrigðisþjónusta'
+    | 'Löggæslustörf'
+    | 'Tæknistörf'
+    | 'Önnur störf'
+    | 'Skrifstofustörf'
+    | 'Sumarstörf'
 
   /** Organization */
   organization: IOrganization
 
   /** Locations */
-  locations: string[]
+  locations: (
+    | 'Án staðsetningar'
+    | 'Höfuðborgarsvæðið'
+    | 'Norðurland'
+    | 'Vesturland'
+    | 'Austurland'
+    | 'Suðurland'
+    | 'Vestfirðir'
+    | 'Suðurnes'
+  )[]
 
   /** Job Percentage */
   jobPercentage?: string | undefined
