@@ -21,7 +21,7 @@
       "executor": "@nrwl/workspace:run-commands",
       "options": {
         "commands": [
-          "curl -H \"Accept: application/json\" -H \"X-Road-Client: IS-DEV/GOV/10000/island-is-client\" \"http://localhost:8081/r1/IS-DEV/GOV/10006/Skatturinn/relationships-v1/openapi.json\" | jq > src/clientConfig.json"
+          "curl -H \"Accept: application/json\" -H \"X-Road-Client: IS-DEV/GOV/10000/island-is-client\" \"http://localhost:8081/r1/IS-DEV/GOV/10006/Skatturinn/getOpenAPI?serviceCode=relationships-v1\" | jq > src/clientConfig.json"
         ],
         "parallel": false,
         "cwd": "libs/clients/rsk/procuring"
