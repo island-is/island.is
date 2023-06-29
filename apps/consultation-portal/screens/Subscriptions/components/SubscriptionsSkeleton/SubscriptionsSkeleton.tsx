@@ -25,6 +25,8 @@ interface Props {
 }
 
 const loc = localization['subscriptionSkeleton']
+const locSubs = loc['subscriptions']
+const locMySubs = loc['mySubscriptions']
 
 const BREADCRUMBS_LIST = [
   { title: loc.breadcrumbs[0].title, href: loc.breadcrumbs[0].href },
@@ -40,13 +42,16 @@ const MY_BREADCRUMBS_LIST = [
 ]
 
 const SUBSCRIPTIONS = {
-  title: loc.subscriptions.title,
-  url: loc.subscriptions.url,
+  title: locSubs.title,
+  url: locSubs.url,
+  description: locSubs.description,
+  keywords: locSubs.keywords,
 }
 
 const MY_SUBSCRIPTIONS = {
-  title: loc.mySubscriptions.title,
-  url: loc.mySubscriptions.url,
+  title: locMySubs.title,
+  url: locMySubs.url,
+  description: locMySubs.description,
 }
 
 const SubscriptionsSkeleton = ({
@@ -71,19 +76,19 @@ const SubscriptionsSkeleton = ({
         />
 
         <GridContainer>
-          <Box paddingX={[0, 0, 0, 8, 15]} paddingBottom={3}>
+          <Box paddingBottom={[3, 3, 3, 5, 5]}>
             <Stack space={[3, 3, 3, 5, 5]}>
               <Stack space={3}>
-                <Text variant="h1" color="dark400">
-                  {isMySubscriptions
-                    ? loc.mySubscriptions.title
-                    : loc.subscriptions.title}
+                <Text
+                  variant="h1"
+                  color="dark400"
+                  dataTestId="subscriptions_title"
+                >
+                  {isMySubscriptions ? locMySubs.title : locSubs.title}
                 </Text>
                 <Stack space={1}>
-                  <Text variant="default">
-                    {isMySubscriptions
-                      ? loc.mySubscriptions.text
-                      : loc.subscriptions.text}
+                  <Text variant="default" dataTestId="subscriptions_text">
+                    {isMySubscriptions ? locMySubs.text : locSubs.text}
                   </Text>
                   {!isMySubscriptions && (
                     <Link href={loc.unsubscribeLink.href}>
@@ -101,7 +106,7 @@ const SubscriptionsSkeleton = ({
       <Divider />
       {isAuthenticated && !userLoading && (
         <GridContainer>
-          <Box paddingX={[0, 0, 0, 8, 15]} paddingTop={[3, 3, 3, 5, 5]}>
+          <Box paddingTop={[3, 3, 3, 5, 5]}>
             {isMySubscriptions && getUserSubsLoading ? (
               <>
                 <LoadingDots />

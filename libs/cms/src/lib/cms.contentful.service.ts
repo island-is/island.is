@@ -261,6 +261,25 @@ export class CmsContentfulService {
     )
   }
 
+  async getOrganizationByTitle(
+    title: string,
+    lang: string,
+  ): Promise<Organization> {
+    const params = {
+      ['content_type']: 'organization',
+      include: 10,
+      'fields.title[match]': title,
+    }
+
+    const result = await this.contentfulRepository
+      .getLocalizedEntries<types.IOrganizationFields>(lang, params)
+      .catch(errorHandler('getOrganization'))
+
+    return (
+      (result.items as types.IOrganization[]).map(mapOrganization)[0] ?? null
+    )
+  }
+
   async getOrganizationPage(
     slug: string,
     lang: string,

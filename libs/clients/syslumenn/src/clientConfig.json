@@ -1088,6 +1088,43 @@
         ]
       }
     },
+    "/api/v1/SyslMottakaVilluprofaGogn": {
+      "post": {
+        "tags": ["Syslumenn"],
+        "operationId": "SyslMottakaVilluprofaGogn_Post",
+        "consumes": [
+          "application/json-patch+json",
+          "application/json",
+          "text/json",
+          "application/*+json"
+        ],
+        "parameters": [
+          {
+            "name": "payload",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/SyslSkeyti"
+            },
+            "x-nullable": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "x-nullable": false,
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/Skilabod"
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT Token": []
+          }
+        ]
+      }
+    },
     "/v1/Danarbu/UpplysingarUrDanarbui": {
       "post": {
         "tags": ["Syslumenn"],
@@ -3102,16 +3139,129 @@
     },
     "TegundAndlags": {
       "type": "integer",
-      "description": "0 = Fasteign\n1 = Okutaeki\n2 = Skip\n3 = Lausafe\n4 = Loftfar\n5 = Oskrad",
+      "description": "0 = Fasteign\n1 = Okutaeki\n2 = Skip\n3 = Lausafe\n4 = Loftfar\n5 = Oskrad\n6 = AdrarEignir\n7 = Hlutabref\n8 = InnistaedaIBanka\n9 = PeningarOgBankaholf\n10 = Skotvopn\n11 = VerdbrefOgKrofur",
       "x-enumNames": [
         "Fasteign",
         "Okutaeki",
         "Skip",
         "Lausafe",
         "Loftfar",
-        "Oskrad"
+        "Oskrad",
+        "AdrarEignir",
+        "Hlutabref",
+        "InnistaedaIBanka",
+        "PeningarOgBankaholf",
+        "Skotvopn",
+        "VerdbrefOgKrofur"
       ],
-      "enum": [0, 1, 2, 3, 4, 5]
+      "enum": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+    },
+    "Skilabod": {
+      "type": "object",
+      "properties": {
+        "skilabod": {
+          "type": "string"
+        },
+        "audkenni": {
+          "type": "string"
+        },
+        "malsnumer": {
+          "type": "string"
+        }
+      }
+    },
+    "SyslSkeyti": {
+      "type": "object",
+      "properties": {
+        "audkenni": {
+          "type": "string"
+        },
+        "gognSkeytis": {
+          "$ref": "#/definitions/SyslGagnaSkeyti"
+        }
+      }
+    },
+    "SyslGagnaSkeyti": {
+      "type": "object",
+      "properties": {
+        "audkenni": {
+          "type": "string"
+        },
+        "skeytaHeiti": {
+          "type": "string"
+        },
+        "adilar": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Adili"
+          }
+        },
+        "attachments": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/VidhengiSkra"
+          }
+        },
+        "gagnaMengi": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "Adili": {
+      "type": "object",
+      "required": ["undirritad", "tegund"],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "nafn": {
+          "type": "string"
+        },
+        "kennitala": {
+          "type": "string"
+        },
+        "simi": {
+          "type": "string"
+        },
+        "tolvupostur": {
+          "type": "string"
+        },
+        "heimilisfang": {
+          "type": "string"
+        },
+        "postaritun": {
+          "type": "string"
+        },
+        "sveitafelag": {
+          "type": "string"
+        },
+        "undirritad": {
+          "type": "boolean"
+        },
+        "tegund": {
+          "$ref": "#/definitions/AdiliTegund"
+        }
+      }
+    },
+    "AdiliTegund": {
+      "type": "integer",
+      "description": "0 = Malshefjandi\n1 = Gagnadili\n2 = Barn",
+      "x-enumNames": ["Malshefjandi", "Gagnadili", "Barn"],
+      "enum": [0, 1, 2]
+    },
+    "VidhengiSkra": {
+      "type": "object",
+      "properties": {
+        "nafnSkraar": {
+          "type": "string"
+        },
+        "innihaldSkraar": {
+          "type": "string"
+        }
+      }
     },
     "UpplysingarUrDanarbuiSkeyti": {
       "type": "object",
@@ -3186,6 +3336,35 @@
           "type": "string"
         },
         "tengsl": {
+          "type": "string"
+        },
+        "simi": {
+          "type": "string"
+        },
+        "netfang": {
+          "type": "string"
+        },
+        "malsvari": {
+          "$ref": "#/definitions/Malsvari"
+        }
+      }
+    },
+    "Malsvari": {
+      "type": "object",
+      "properties": {
+        "kennitala": {
+          "type": "string"
+        },
+        "nafn": {
+          "type": "string"
+        },
+        "heimilisfang": {
+          "type": "string"
+        },
+        "simi": {
+          "type": "string"
+        },
+        "netfang": {
           "type": "string"
         }
       }
@@ -3408,113 +3587,6 @@
         }
       }
     },
-    "Skilabod": {
-      "type": "object",
-      "properties": {
-        "skilabod": {
-          "type": "string"
-        },
-        "audkenni": {
-          "type": "string"
-        },
-        "malsnumer": {
-          "type": "string"
-        }
-      }
-    },
-    "SyslSkeyti": {
-      "type": "object",
-      "properties": {
-        "audkenni": {
-          "type": "string"
-        },
-        "gognSkeytis": {
-          "$ref": "#/definitions/SyslGagnaSkeyti"
-        }
-      }
-    },
-    "SyslGagnaSkeyti": {
-      "type": "object",
-      "properties": {
-        "audkenni": {
-          "type": "string"
-        },
-        "skeytaHeiti": {
-          "type": "string"
-        },
-        "adilar": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/Adili"
-          }
-        },
-        "attachments": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/VidhengiSkra"
-          }
-        },
-        "gagnaMengi": {
-          "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
-        }
-      }
-    },
-    "Adili": {
-      "type": "object",
-      "required": ["undirritad", "tegund"],
-      "properties": {
-        "id": {
-          "type": "string"
-        },
-        "nafn": {
-          "type": "string"
-        },
-        "kennitala": {
-          "type": "string"
-        },
-        "simi": {
-          "type": "string"
-        },
-        "tolvupostur": {
-          "type": "string"
-        },
-        "heimilisfang": {
-          "type": "string"
-        },
-        "postaritun": {
-          "type": "string"
-        },
-        "sveitafelag": {
-          "type": "string"
-        },
-        "undirritad": {
-          "type": "boolean"
-        },
-        "tegund": {
-          "$ref": "#/definitions/AdiliTegund"
-        }
-      }
-    },
-    "AdiliTegund": {
-      "type": "integer",
-      "description": "0 = Malshefjandi\n1 = Gagnadili\n2 = Barn",
-      "x-enumNames": ["Malshefjandi", "Gagnadili", "Barn"],
-      "enum": [0, 1, 2]
-    },
-    "VidhengiSkra": {
-      "type": "object",
-      "properties": {
-        "nafnSkraar": {
-          "type": "string"
-        },
-        "innihaldSkraar": {
-          "type": "string"
-        }
-      }
-    },
     "StadaUndirritunarSkjalsSvarSkeyti": {
       "type": "object",
       "required": ["stadaUndirritunar"],
@@ -3637,9 +3709,22 @@
           "type": "string"
         },
         "tegundAndlags": {
-          "$ref": "#/definitions/TegundAndlags"
+          "$ref": "#/definitions/VedbondTegundAndlags"
         }
       }
+    },
+    "VedbondTegundAndlags": {
+      "type": "integer",
+      "description": "0 = Fasteign\n1 = Okutaeki\n2 = Skip\n3 = Lausafe\n4 = Loftfar\n5 = Oskrad",
+      "x-enumNames": [
+        "Fasteign",
+        "Okutaeki",
+        "Skip",
+        "Lausafe",
+        "Loftfar",
+        "Oskrad"
+      ],
+      "enum": [0, 1, 2, 3, 4, 5]
     },
     "VedbandayfirlitReguverkiSvarSkeyti": {
       "type": "object",

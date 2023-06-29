@@ -8,7 +8,14 @@ const AboutScreen: React.FC = () => {
   const loc = localization['about']
 
   return (
-    <Layout seo={{ title: loc.seo.title, url: loc.seo.url }}>
+    <Layout
+      seo={{
+        title: loc.seo.title,
+        url: loc.seo.url,
+        description: loc.seo.description,
+        keywords: loc.seo.keywords,
+      }}
+    >
       <Breadcrumbs
         items={[
           { title: loc.breadcrumbs[0].title, href: loc.breadcrumbs[0].href },

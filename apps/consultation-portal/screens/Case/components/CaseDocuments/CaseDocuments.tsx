@@ -1,7 +1,6 @@
 import { CardSkeleton } from '../../../../components'
 import { Document } from '../../../../types/interfaces'
-import { Stacked } from '../../components'
-import CaseDocumentsSkeleton from './CaseDocumentsSkeleton'
+import { DocFileName, Stacked } from '../../components'
 
 interface Props {
   title: string
@@ -12,8 +11,8 @@ export const CaseDocuments = ({ title, documents }: Props) => {
   return (
     <CardSkeleton>
       <Stacked title={title}>
-        {documents.map((document, index) => {
-          return <CaseDocumentsSkeleton document={document} key={index} />
+        {documents.map((doc, index) => {
+          return <DocFileName doc={doc} key={index} />
         })}
       </Stacked>
     </CardSkeleton>

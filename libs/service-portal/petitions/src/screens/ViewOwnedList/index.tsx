@@ -153,6 +153,7 @@ const ViewOwnedList = () => {
 
                 <Box display="flex" marginBottom={8} alignItems="center">
                   <DatePicker
+                    appearInline
                     label={formatMessage(m.changeCloseDate)}
                     locale="is"
                     placeholderText={formatMessage(m.selectDate)}
@@ -249,6 +250,7 @@ const ViewOwnedList = () => {
                           {formatMessage(m.modalStartCollectionDescription)}
                         </Text>
                         <DatePicker
+                          appearInline
                           label={formatMessage(m.date)}
                           locale="is"
                           minDate={new Date()}

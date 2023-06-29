@@ -75,7 +75,10 @@ export const extendedCourtRoles: string[] = [
   UserRole.ASSISTANT,
 ]
 
-export function isExtendedCourtRole(role: string): boolean {
+export function isExtendedCourtRole(role?: string): boolean {
+  if (!role) {
+    return false
+  }
   return extendedCourtRoles.includes(role)
 }
 

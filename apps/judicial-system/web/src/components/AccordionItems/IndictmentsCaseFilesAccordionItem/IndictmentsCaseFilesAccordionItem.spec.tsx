@@ -141,6 +141,7 @@ describe('sortedFilesInChapter', () => {
         id: caseFiles[1].id,
         created: caseFiles[1].created,
         orderWithinChapter: caseFiles[1].orderWithinChapter,
+        canOpen: false,
       },
       {
         displayText: caseFiles[0].name,
@@ -148,6 +149,7 @@ describe('sortedFilesInChapter', () => {
         id: caseFiles[0].id,
         created: caseFiles[0].created,
         orderWithinChapter: caseFiles[0].orderWithinChapter,
+        canOpen: false,
       },
       {
         displayText: caseFiles[2].name,
@@ -155,6 +157,7 @@ describe('sortedFilesInChapter', () => {
         id: caseFiles[2].id,
         created: caseFiles[2].created,
         orderWithinChapter: caseFiles[2].orderWithinChapter,
+        canOpen: false,
       },
     ] as ReorderableItem[])
   })

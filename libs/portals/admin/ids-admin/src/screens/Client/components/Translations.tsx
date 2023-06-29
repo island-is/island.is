@@ -9,7 +9,7 @@ import { ClientFormTypes } from '../EditClient.schema'
 import { AuthAdminClientTranslation } from '../Client.loader'
 import { checkEnvironmentsSync } from '../../../utils/checkEnvironmentsSync'
 import { useClient } from '../ClientContext'
-import { FormCard } from '../../../components/FormCard'
+import { FormCard } from '../../../components/FormCard/FormCard'
 
 interface TranslationsProps {
   translations: AuthAdminClientTranslation[]

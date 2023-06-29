@@ -17,7 +17,6 @@ import { Events, States, Roles } from './constants'
 import { dataSchema } from './dataSchema'
 import { m } from '../lib/messages'
 import { ApiActions } from './constants'
-import { Features } from '@island.is/feature-flags'
 import { DeathNoticeApi } from '../dataProviders'
 import { determineMessageFromApplicationAnswers } from './utils'
 
@@ -42,7 +41,6 @@ const AnnouncementOfDeathTemplate: ApplicationTemplate<
   name: determineMessageFromApplicationAnswers,
   institution: m.applicationInstitution,
   dataSchema: dataSchema,
-  readyForProduction: false,
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {

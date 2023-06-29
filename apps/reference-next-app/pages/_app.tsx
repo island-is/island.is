@@ -1,6 +1,6 @@
 import Head from 'next/head'
 import React, { FC } from 'react'
-import { ApolloProvider } from 'react-apollo'
+import { ApolloProvider } from '@apollo/client/react'
 
 import { appWithLocale } from '@island.is/localization'
 

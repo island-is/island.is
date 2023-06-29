@@ -82,6 +82,7 @@ const FamilyMember = () => {
           label={defineMessage(m.fullName)}
           content={person?.spouse?.fullName || '...'}
           loading={loading}
+          translate="no"
         />
         <Divider />
         <UserInfoLine

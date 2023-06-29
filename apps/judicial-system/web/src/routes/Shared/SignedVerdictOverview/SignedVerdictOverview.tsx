@@ -54,6 +54,7 @@ import {
   AppealCaseFilesOverview,
   PageHeader,
   RulingDateLabel,
+  OverviewHeader,
 } from '@island.is/judicial-system-web/src/components'
 import {
   useCase,
@@ -75,7 +76,6 @@ import {
   User,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { titleForCase } from '@island.is/judicial-system-web/src/utils/formHelper'
 
 import AppealSection from './Components/AppealSection/AppealSection'
 import ModifyDatesModal from './Components/ModifyDatesModal/ModifyDatesModal'
@@ -520,11 +520,7 @@ export const SignedVerdictOverview: React.FC = () => {
             </Box>
             <Box display="flex" justifyContent="spaceBetween" marginBottom={3}>
               <Box>
-                <Box marginBottom={1}>
-                  <Text as="h1" variant="h1">
-                    {titleForCase(formatMessage, workingCase)}
-                  </Text>
-                </Box>
+                <OverviewHeader />
                 {workingCase.courtEndTime && (
                   <Box>
                     <RulingDateLabel courtEndTime={workingCase.courtEndTime} />
@@ -745,8 +741,7 @@ export const SignedVerdictOverview: React.FC = () => {
           {user?.role === UserRole.PROSECUTOR &&
             user.institution?.id ===
               workingCase.creatingProsecutor?.institution?.id &&
-            isRestrictionCase(workingCase.type) &&
-            !workingCase.appealState && (
+            isRestrictionCase(workingCase.type) && (
               <ShareCase
                 selectedSharingInstitutionId={selectedSharingInstitutionId}
                 setSelectedSharingInstitutionId={

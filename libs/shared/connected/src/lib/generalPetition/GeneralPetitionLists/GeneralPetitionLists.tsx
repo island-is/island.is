@@ -3,7 +3,7 @@ import { useRouter } from 'next/router'
 import { useGetPetitionLists } from './useGetPetitionLists'
 import format from 'date-fns/format'
 import { FC } from 'react'
-import { ConnectedComponent } from '@island.is/api/schema'
+import { ConnectedComponent, EndorsementList } from '@island.is/api/schema'
 import { useLocalization } from '../../../utils'
 
 interface GeneralPetitionProps {
@@ -48,11 +48,13 @@ export const GeneralPetitionLists: FC<GeneralPetitionProps> = ({ slice }) => {
           }}
         />
       </Box>
-      <Box marginBottom={3}>
-        <Text variant="h4">{t('title', 'Virkir listar')}</Text>
-      </Box>
+      {petitionLists?.data?.length > 0 && (
+        <Box marginTop={10} marginBottom={3}>
+          <Text variant="h4">{t('title', 'Virkir listar')}</Text>
+        </Box>
+      )}
       <Stack space={4}>
-        {petitionLists?.data?.map((petition: any) => {
+        {petitionLists?.data?.map((petition: EndorsementList) => {
           return (
             <ActionCard
               key={petition.title}

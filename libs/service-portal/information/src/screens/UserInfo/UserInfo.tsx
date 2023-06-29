@@ -44,6 +44,7 @@ const SubjectInfo = () => {
           label={m.fullName}
           loading={loading}
           content={nationalRegistryUser?.fullName ?? ''}
+          translate="no"
           tooltip={formatNameBreaks(nationalRegistryUser?.name ?? undefined, {
             givenName: formatMessage(spmm.givenName),
             middleName: formatMessage(spmm.middleName),
@@ -199,6 +200,7 @@ const SubjectInfo = () => {
             <UserInfoLine
               title={formatMessage(spmm.userFamilyMembersOnNumber)}
               label={userInfo.profile.name}
+              translateLabel="no"
               content={formatNationalId(userInfo.profile.nationalId)}
               loading={loading}
             />
@@ -208,6 +210,7 @@ const SubjectInfo = () => {
                   (item, index) => (
                     <React.Fragment key={index}>
                       <UserInfoLine
+                        translateLabel="no"
                         label={item.fullName ?? ''}
                         content={formatNationalId(item.nationalId)}
                         loading={loading}

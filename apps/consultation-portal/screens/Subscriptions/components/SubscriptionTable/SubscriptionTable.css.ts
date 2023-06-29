@@ -14,3 +14,7 @@ export const tableRowRight = style({
   borderTopRightRadius: theme.spacing[1],
   borderBottomRightRadius: theme.spacing[1],
 })
+
+export const paddingRightZero = style({
+  paddingRight: 'unset',
+})

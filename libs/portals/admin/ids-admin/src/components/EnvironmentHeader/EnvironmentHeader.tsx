@@ -19,10 +19,6 @@ interface EnvironmentHeaderProps {
   availableEnvironments: AuthAdminEnvironment[]
   onChange(value: AuthAdminEnvironment): void
   preHeader?: ReactNode
-  /**
-   * TODO - Remove this prop when publishing is enabled in permissions
-   */
-  allowPublishing?: boolean
 }
 
 const formatOption = (
@@ -39,7 +35,6 @@ export const EnvironmentHeader = ({
   availableEnvironments,
   onChange,
   preHeader,
-  allowPublishing = true,
 }: EnvironmentHeaderProps) => {
   const { formatMessage } = useLocale()
   const tenant = useRouteLoaderData(tenantLoaderId) as TenantLoaderResult
@@ -47,8 +42,6 @@ export const EnvironmentHeader = ({
   const options = tenant.availableEnvironments
     .map((env) => {
       const isAvailable = availableEnvironments.includes(env)
-
-      if (!isAvailable && !allowPublishing) return undefined
 
       const label = isAvailable
         ? env

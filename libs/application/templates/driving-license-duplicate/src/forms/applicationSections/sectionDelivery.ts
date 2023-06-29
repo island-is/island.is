@@ -5,7 +5,10 @@ import {
   buildSelectField,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
-import { DistrictCommissionerAgencies } from '@island.is/api/schema'
+import {
+  DistrictCommissionerAgencies,
+  Juristiction,
+} from '@island.is/api/schema'
 
 export const sectionDelivery = buildSection({
   id: 'delivery',
@@ -19,6 +22,7 @@ export const sectionDelivery = buildSection({
           id: 'deliveryDescription',
           titleVariant: 'h3',
           title: m.deliveryMethodTitle,
+          marginBottom: 2,
           description: m.deliveryMethodDescription,
         }),
         buildSelectField({
@@ -27,16 +31,15 @@ export const sectionDelivery = buildSection({
           placeholder: m.deliveryMethodOfficeSelectPlaceholder,
           options: ({
             externalData: {
-              districts: { data },
+              juristictions: { data },
             },
           }) => {
-            return (data as DistrictCommissionerAgencies[]).map(
-              ({ name, place, address }) => ({
-                value: `${name}, ${place}`,
-                label: `${name}, ${place}`,
-                tooltip: `${address}`,
-              }),
-            )
+            return (data as Juristiction[])
+              .map(({ id, zip, name }) => ({
+                value: id.toString(),
+                label: `${zip} ${name}`,
+              }))
+              .sort((a, b) => parseInt(a.label, 10) - parseInt(b.label, 10))
           },
         }),
       ],

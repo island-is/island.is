@@ -28,6 +28,8 @@ import {
 import ChildRegistrationModal from './ChildRegistrationModal'
 import * as styles from './Child.css'
 import { TwoColumnUserInfoLine } from '../../components/TwoColumnUserInfoLine/TwoColumnUserInfoLine'
+import { formatNameBreaks } from '../../helpers/formatting'
+import { spmm } from '../../lib/messages'
 
 type UseParams = {
   nationalId: string
@@ -155,16 +157,16 @@ const Child = () => {
           <UserInfoLine
             title={formatMessage(m.myRegistration)}
             label={formatMessage(m.fullName)}
+            translate="no"
             content={person?.fullName || '...'}
             tooltip={
-              /*showTooltip
-                ? formatNameBreaks(person ?? undefined, {
+              showTooltip
+                ? formatNameBreaks(person?.name ?? undefined, {
                     givenName: formatMessage(spmm.givenName),
                     middleName: formatMessage(spmm.middleName),
                     lastName: formatMessage(spmm.lastName),
                   })
-                : undefined*/
-              undefined
+                : undefined
             }
             loading={loading}
             editLink={
@@ -172,6 +174,7 @@ const Child = () => {
                 ? {
                     title: editLink,
                     external: true,
+                    skipOutboundTrack: true,
                     url:
                       'https://www.skra.is/umsoknir/eydublod-umsoknir-og-vottord/stok-vara/?productid=703760ac-686f-11e6-943e-005056851dd2',
                   }
@@ -201,6 +204,7 @@ const Child = () => {
                 ? {
                     title: editLink,
                     external: true,
+                    skipOutboundTrack: true,
                     url: 'https://skra.is/folk/flutningur/flutningur-barna/',
                   }
                 : undefined
@@ -241,6 +245,7 @@ const Child = () => {
                 ? {
                     title: editLink,
                     external: true,
+                    skipOutboundTrack: true,
                     url:
                       'https://www.skra.is/umsoknir/rafraen-skil/tru-eda-lifsskodunarfelag-barna-15-ara-og-yngri/',
                   }
@@ -367,6 +372,30 @@ const Child = () => {
               loading={loading}
               className={styles.printable}
             />
+            <Box printHidden>
+              <Divider />
+            </Box>
+            {/*!loading &&
+              guardianship.residenceParent &&
+              guardianship.residenceParent.length > 0 && (
+                <>
+                  <TwoColumnUserInfoLine
+                    label={formatMessage({
+                      id: 'sp.family:residence-parent',
+                      defaultMessage: 'Búsetuforeldri',
+                    })}
+                    firstValue={livingArrangment(
+                      guardianship?.residenceParent ?? [],
+                      person?.parent1 ?? '',
+                    )}
+                    secondValue={livingArrangment(
+                      guardianship?.residenceParent ?? [],
+                      person?.parent2 ?? '',
+                    )}
+                  />
+                  <Divider />
+                </>
+                    )*/}
           </Stack>
         )}
       </Stack>

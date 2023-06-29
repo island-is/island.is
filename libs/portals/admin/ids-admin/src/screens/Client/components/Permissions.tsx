@@ -12,7 +12,7 @@ import { ShadowBox } from '../../../components/ShadowBox/ShadowBox'
 import { AddPermissions } from './AddPermissions/AddPermissions'
 import { useEnvironmentState } from '../../../hooks/useEnvironmentState'
 import { useClient } from '../ClientContext'
-import { FormCard } from '../../../components/FormCard'
+import { FormCard } from '../../../components/FormCard/FormCard'
 
 interface PermissionsProps {
   allowedScopes?: AuthAdminClientAllowedScope[]
@@ -112,6 +112,7 @@ function Permissions({ allowedScopes }: PermissionsProps) {
       customValidation={customValidation}
       intent={hasData ? ClientFormTypes.permissions : undefined}
       shouldSupportMultiEnvironment={false}
+      headerMarginBottom={3}
     >
       <Box
         marginBottom={hasData ? 5 : 0}

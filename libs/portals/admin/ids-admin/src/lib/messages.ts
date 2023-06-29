@@ -588,10 +588,15 @@ export const m = defineMessages({
     id: 'ap.ids-admin:publish-environment',
     defaultMessage: 'Publish to {environment}',
   },
-  publishEnvironmentDescription: {
-    id: 'ap.ids-admin:publish-environment-description',
+  publishClientEnvDesc: {
+    id: 'ap.ids-admin:publish-client-env-description',
     defaultMessage:
       'The application will inherit settings from the selected environment excluding URLs and client secrets.',
+  },
+  publishPermissionEnvDesc: {
+    id: 'ap.ids-admin:publish-permission-env-description',
+    defaultMessage:
+      'The permission will inherit settings from the selected environment.',
   },
   chooseEnvironmentToCopyFrom: {
     id: 'ap.ids-admin:choose-environment-to-copy-from',

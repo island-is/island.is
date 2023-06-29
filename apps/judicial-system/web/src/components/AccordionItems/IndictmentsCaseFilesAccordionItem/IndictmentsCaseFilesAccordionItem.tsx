@@ -72,6 +72,7 @@ export interface ReorderableItem {
   orderWithinChapter?: number
   userGeneratedFilename?: string
   displayDate?: string
+  canOpen?: boolean
 }
 
 interface UpdateFilesMutationResponse {
@@ -169,6 +170,7 @@ export const sortedFilesInChapter = (
         orderWithinChapter: file.orderWithinChapter,
         userGeneratedFilename: file.userGeneratedFilename,
         displayDate: file.displayDate,
+        canOpen: Boolean(file.key),
       }
     })
     .sort((a, b) => {
@@ -348,9 +350,9 @@ const CaseFile: React.FC<CaseFileProps> = (props) => {
                   <Box
                     display="flex"
                     alignItems="center"
-                    component="button"
+                    component={caseFile.canOpen ? 'button' : undefined}
                     onClick={() => {
-                      if (caseFile.id) {
+                      if (caseFile.canOpen && caseFile.id) {
                         onOpen(caseFile.id)
                       }
                     }}
@@ -368,9 +370,11 @@ const CaseFile: React.FC<CaseFileProps> = (props) => {
                         {displayName}
                       </span>
                     </Text>
-                    <Box marginLeft={2}>
-                      <Icon icon="open" type="outline" size="small" />
-                    </Box>
+                    {caseFile.canOpen && (
+                      <Box marginLeft={2}>
+                        <Icon icon="open" type="outline" size="small" />
+                      </Box>
+                    )}
                   </Box>
                   <Box display="flex" alignItems="center">
                     <Box marginRight={1}>
@@ -471,6 +475,7 @@ const IndictmentsCaseFilesAccordionItem: React.FC<Props> = (props) => {
             displayText: caseFile.name,
             userGeneratedFilename: caseFile.userGeneratedFilename,
             isDivider: false,
+            canOpen: Boolean(caseFile.key),
           }
         }),
     ])

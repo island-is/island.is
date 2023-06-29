@@ -226,7 +226,7 @@ export const UpdateCaseMutation = gql`
       rulingModifiedHistory
       caseResentExplanation
       origin
-      seenByDefender
+      openedByDefender
       defendantWaivesRightToCounsel
       crimeScenes
       indictmentIntroduction
@@ -292,6 +292,9 @@ export const LimitedAccessUpdateCaseMutation = gql`
         id
         name
         category
+        created
+        key
+        policeCaseNumber
       }
       defendants {
         id

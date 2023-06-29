@@ -1,0 +1,7 @@
+query GetPoliceCaseInfo($input: PoliceCaseInfoQueryInput!) {
+  policeCaseInfo(input: $input) {
+    policeCaseNumber
+    place
+    date
+  }
+}

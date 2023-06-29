@@ -50,7 +50,7 @@ const caseEvent = {
   REOPEN: ':construction: Opnað aftur',
   APPEAL: ':judge: Kæra',
   RECEIVE_APPEAL: ':eyes: Kæra móttekin',
-  COMPLETE_APPEAL: ':white_check_mark: Kæra lokin',
+  COMPLETE_APPEAL: ':white_check_mark: Kæru lokið',
 }
 
 export enum CaseEvent {

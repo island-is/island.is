@@ -8,6 +8,8 @@ interface FormatPlausiblePathToParams {
   fileName?: string
 }
 
+export type UserEntity = 'company' | 'person'
+
 /**
  * Constructing the plausible tracking object.
  * Portals must de-construct all identifiable user data before passing info on-to plausible.
@@ -38,9 +40,11 @@ export const formatPlausiblePathToParams = ({
 export const plausiblePageviewDetail = ({
   path,
   basePath,
+  entity,
 }: {
   basePath: string
   path: string
+  entity: UserEntity
 }) => {
   const plausible = window && window.plausible
   const pagePath = path
@@ -48,6 +52,6 @@ export const plausiblePageviewDetail = ({
   const absoluteUrl = `${pageOrigin}${basePath}${pagePath}`
 
   if (plausible) {
-    plausible('pageview', { u: absoluteUrl })
+    plausible('pageview', { u: absoluteUrl, props: { entity } })
   }
 }

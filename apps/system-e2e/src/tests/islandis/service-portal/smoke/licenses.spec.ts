@@ -9,24 +9,34 @@ const homeUrl = `${urls.islandisBaseUrl}/minarsidur`
 test.use({ baseURL: urls.islandisBaseUrl })
 
 test.describe('MS - Skírteini', () => {
-  let context: BrowserContext
+  let contextFaereyjar: BrowserContext
+  let contextAmerika: BrowserContext
+  const contexts: BrowserContext[] = []
 
   test.beforeAll(async ({ browser }) => {
-    context = await session({
+    contextAmerika = await session({
       browser: browser,
       storageState: 'service-portal-amerika.json',
       homeUrl,
       phoneNumber: '0102989',
       idsLoginOn: true,
     })
+    contextFaereyjar = await session({
+      browser: browser,
+      storageState: 'service-portal-faereyjar.json',
+      homeUrl,
+      phoneNumber: '0102399',
+      idsLoginOn: true,
+    })
+    contexts.push(contextAmerika, contextFaereyjar)
   })
 
   test.afterAll(async () => {
-    await context.close()
+    for (const context of contexts) await context.close()
   })
 
   test('License overview', async () => {
-    const page = await context.newPage()
+    const page = await contextFaereyjar.newPage()
     await disableI18n(page)
 
     await test.step('Renders the page', async () => {
@@ -40,7 +50,7 @@ test.describe('MS - Skírteini', () => {
   })
 
   test('should display passport in overview', async () => {
-    const page = await context.newPage()
+    const page = await contextFaereyjar.newPage()
     await disableI18n(page)
     await page.goto(icelandicAndNoPopupUrl('/minarsidur/skirteini'))
     await page.waitForLoadState('networkidle')
@@ -60,7 +70,7 @@ test.describe('MS - Skírteini', () => {
   })
 
   test('should display child passports', async () => {
-    const page = await context.newPage()
+    const page = await contextAmerika.newPage()
     await disableI18n(page)
     await page.goto(icelandicAndNoPopupUrl('/minarsidur/skirteini'))
     await page.waitForLoadState('networkidle')

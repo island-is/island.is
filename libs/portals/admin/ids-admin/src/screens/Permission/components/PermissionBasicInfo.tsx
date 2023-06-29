@@ -4,7 +4,7 @@ import { Input } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 
 import { usePermission } from '../PermissionContext'
-import { FormCard } from '../../../components/FormCard'
+import { FormCard } from '../../../components/FormCard/FormCard'
 import { m } from '../../../lib/messages'
 import { useCopyToClipboard } from '../../../hooks/useCopyToClipboard'
 

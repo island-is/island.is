@@ -6,7 +6,6 @@ export enum Features {
   // Application visibility flags
   exampleApplication = 'isExampleApplicationEnabled',
   accidentNotification = 'isAccidentNotificationEnabled',
-  drivingLearnersPermit = 'isDrivingLearnersPermitEnabled',
   drivingInstructorRegistrations = 'isDrivingInstructorRegistrationsEnabled',
   drivingSchoolConfirmations = 'isDrivingSchoolConfirmationsEnabled',
   europeanHealthInsuranceCard = 'isEuropeanHealthInsuranceCardApplicationEnabled',
@@ -23,6 +22,7 @@ export enum Features {
   transportAuthorityLicensePlateRenewal = 'isTransportAuthorityLicensePlateRenewalEnabled',
   alcoholTaxRedemption = 'isAlcoholTaxRedemptionEnabled',
   consultationPortalApplication = 'isConsultationPortalEnabled',
+  childrenResidenceChangeV2 = 'isChildrenResidenceChangeV2Enabled',
 
   // Application System Delegations active
   applicationSystemDelegations = 'applicationSystemDelegations',
@@ -34,6 +34,12 @@ export enum Features {
   sessionHistory = 'sessionHistory',
   servicePortalConsentModule = 'isServicePortalConsentModuleEnabled',
   servicePortalHealthRightsModule = 'isServicePortalHealthRightsModuleEnabled',
+  servicePortalSecondaryEducationPages = 'isServicePortalSecondaryEducationPageEnabled',
+  servicePortalHealthCenterDentistPage = 'isServicePortalHealthCenterPageEnabled',
+  servicePortalWorkMachinesModule = 'isServicePortalWorkMachinesPageEnabled',
+
+  //License service new drivers license client enabled
+  licenseServiceDrivingLicenseClient = 'isLicenseServiceDrivingLicenceClientV2Enabled',
 
   // Application delegation flags
   transportAuthorityLicensePlateRenewalDelegations = 'applicationTransportAuthorityLicensePlateRenewalDelegations',

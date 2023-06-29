@@ -25,7 +25,7 @@ export const m = defineMessages({
   },
   intro: {
     id: 'admin-portal.petition:overview',
-    defaultMessage: 'Lorem ipsum dolor sit amet.',
+    defaultMessage: 'Yfirlit yfir virka, liðna og læsta undirskriftalista.',
     description: '',
   },
   openLists: {
@@ -50,7 +50,7 @@ export const m = defineMessages({
   },
   listPeriod: {
     id: 'admin-portal.petition:listPeriod',
-    defaultMessage: 'Tímabil lista: ',
+    defaultMessage: 'Gildistímabil lista: ',
     description: '',
   },
   listOwner: {
@@ -63,6 +63,16 @@ export const m = defineMessages({
   downloadPetitions: {
     id: 'admin-portal.petition:downloadPetitions',
     defaultMessage: 'Sækja lista',
+    description: '',
+  },
+  asPdf: {
+    id: 'admin-portal.petition:asPdf',
+    defaultMessage: 'Sem PDF',
+    description: '',
+  },
+  asCsv: {
+    id: 'admin-portal.petition:asCsv',
+    defaultMessage: 'Sem CSV',
     description: '',
   },
   goBack: {
@@ -100,6 +110,12 @@ export const m = defineMessages({
     defaultMessage: 'Listi er læstur',
     description: '',
   },
+  listIsLockedMessage: {
+    id: 'admin-portal.petition:listIsLockedMessage',
+    defaultMessage:
+      'Læstur listi er ekki sýnilegur og ekki er hægt að bæta við undirskriftum.',
+    description: '',
+  },
   date: {
     id: 'admin-portal.petition:date',
     defaultMessage: 'Dagsetning',
@@ -108,6 +124,11 @@ export const m = defineMessages({
   name: {
     id: 'admin-portal.petition:name',
     defaultMessage: 'Nafn',
+    description: '',
+  },
+  locality: {
+    id: 'admin-portal.petition:locality',
+    defaultMessage: 'Sveitarfélag',
     description: '',
   },
   noName: {
@@ -130,7 +151,7 @@ export const m = defineMessages({
   lockListMessage: {
     id: 'admin-portal.petition:lockListMessage',
     defaultMessage:
-      'Pellentesque tempor eros ut erat lacinia, eget tincidunt nibh viverra. Aenean scelerisque nulla purus, in gravida ipsum gravida vel.',
+      'Við að læsa lista þá verður hann ekki sýnilegur og ekki hægt að skrá sig á hann. Einnig fær ábyrgðamaður tilkynningu með pósti um að lista hafi verið læst.',
     description: '',
   },
   lockListQuestion: {
@@ -148,7 +169,7 @@ export const m = defineMessages({
   unlockListMessage: {
     id: 'admin-portal.petition:unlockListMessage',
     defaultMessage:
-      'Pellentesque tempor eros ut erat lacinia, eget tincidunt nibh viverra. Aenean scelerisque nulla purus, in gravida ipsum gravida vel.',
+      'Við að aflæsa lista verður hann aftur sýnilegur og hægt verður að setja nafn sitt á lista.',
     description: '',
   },
   unlockListQuestion: {

@@ -48,6 +48,7 @@ const RenderFiles: React.FC<Props & RenderFilesProps> = (props) => {
             caseId={workingCase.id}
             title={file.name}
             renderAs="row"
+            disabled={!file.key}
             handleClick={() => onOpenFile(file.id)}
           />
         </Box>
@@ -59,7 +60,7 @@ const RenderFiles: React.FC<Props & RenderFilesProps> = (props) => {
 const IndictmentCaseFilesList: React.FC<Props> = (props) => {
   const { workingCase } = props
   const { formatMessage } = useIntl()
-  const { user } = useContext(UserContext)
+  const { user, limitedAccess } = useContext(UserContext)
   const { onOpen, fileNotFound, dismissFileNotFound } = useFileList({
     caseId: workingCase.id,
   })
@@ -132,7 +133,7 @@ const IndictmentCaseFilesList: React.FC<Props> = (props) => {
               <PdfButton
                 caseId={workingCase.id}
                 title={formatMessage(caseFiles.trafficViolationIndictmentTitle)}
-                pdfType="indictment"
+                pdfType={`${limitedAccess ? 'limitedAccess/' : ''}indictment`}
                 renderAs="row"
               />
             </Box>
@@ -190,7 +191,9 @@ const IndictmentCaseFilesList: React.FC<Props> = (props) => {
                 title={formatMessage(strings.caseFileButtonText, {
                   policeCaseNumber,
                 })}
-                pdfType="caseFilesRecord"
+                pdfType={`${
+                  limitedAccess ? 'limitedAccess/' : ''
+                }caseFilesRecord`}
                 policeCaseNumber={policeCaseNumber}
                 renderAs="row"
               />

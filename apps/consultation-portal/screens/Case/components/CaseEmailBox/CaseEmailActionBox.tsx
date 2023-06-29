@@ -24,7 +24,7 @@ interface Props {
 
 const CaseEmailActionBox = ({ button, input }: Props) => {
   return (
-    <Box>
+    <Box dataTestId="caseEmailActionBox">
       <div>
         <Stack space={2}>
           {input && (
@@ -42,7 +42,6 @@ const CaseEmailActionBox = ({ button, input }: Props) => {
             <Button
               fluid
               nowrap
-              size="small"
               onClick={button.onClick}
               disabled={button.isDisabled}
               loading={button.isLoading}

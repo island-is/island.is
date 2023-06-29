@@ -6,7 +6,7 @@ import { Box, Input, Stack, Tabs, Text } from '@island.is/island-ui/core'
 import { AuthAdminTranslatedValue } from '@island.is/api/schema'
 
 import { m } from '../../../lib/messages'
-import { FormCard } from '../../../components/FormCard'
+import { FormCard } from '../../../components/FormCard/FormCard'
 import { usePermission } from '../PermissionContext'
 import { PermissionFormTypes } from '../EditPermission.schema'
 import { Languages } from '../../../utils/languages'

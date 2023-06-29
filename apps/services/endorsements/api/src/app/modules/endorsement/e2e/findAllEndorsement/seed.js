@@ -17,7 +17,7 @@ module.exports = {
       ...getGenericEndorsementList(),
       id: 'aa042d38-9ff8-45b7-b0b2-9ca1d9cec543',
       owner: authNationalId,
-      tags: ['generalPetition'], // import ??
+      tags: ['generalPetition'],
     },
   ],
   endorsements: [

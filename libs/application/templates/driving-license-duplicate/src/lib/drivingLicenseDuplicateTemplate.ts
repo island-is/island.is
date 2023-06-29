@@ -7,12 +7,23 @@ import {
   Application,
   DefaultEvents,
   defineTemplateApi,
+  CurrentLicenseApi,
+  QualitySignatureApi,
+  QualityPhotoApi,
+  NationalRegistryUserApi,
+  UserProfileApi,
+  JuristictionApi,
 } from '@island.is/application/types'
 import { Events, States, Roles } from './constants'
 import { dataSchema } from './dataSchema'
 import { m } from './messages'
 import { ApiActions } from './constants'
-import { Features } from '@island.is/feature-flags'
+import { FeatureFlagClient, Features } from '@island.is/feature-flags'
+import {
+  DrivingLicenseDuplicateFeatureFlags,
+  getApplicationFeatureFlags,
+} from './getApplicationFeatureFlags'
+import { SyslumadurPaymentCatalogApi } from '../dataProviders'
 
 const oneDay = 24 * 3600 * 1000
 const thirtyDays = 24 * 3600 * 1000 * 30
@@ -49,16 +60,37 @@ const DrivingLicenseDuplicateTemplate: ApplicationTemplate<
           roles: [
             {
               id: Roles.APPLICANT,
-              formLoader: () =>
-                import('../forms/application').then((val) =>
-                  Promise.resolve(val.getApplication()),
-                ),
+              formLoader: async ({ featureFlagClient }) => {
+                const featureFlags = await getApplicationFeatureFlags(
+                  featureFlagClient as FeatureFlagClient,
+                )
+
+                const getForm = await import('../forms/application').then(
+                  (val) => val.getApplication,
+                )
+
+                return getForm({
+                  allowFakeData:
+                    featureFlags[
+                      DrivingLicenseDuplicateFeatureFlags.ALLOW_FAKE
+                    ],
+                })
+              },
               actions: [
                 {
                   event: DefaultEvents.PAYMENT,
                   name: m.proceedToPayment,
                   type: 'primary',
                 },
+              ],
+              api: [
+                CurrentLicenseApi,
+                JuristictionApi,
+                NationalRegistryUserApi,
+                SyslumadurPaymentCatalogApi,
+                QualitySignatureApi,
+                QualityPhotoApi,
+                UserProfileApi,
               ],
               write: 'all',
               delete: true,

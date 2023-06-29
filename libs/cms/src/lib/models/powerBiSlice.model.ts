@@ -1,3 +1,4 @@
+import { CacheField } from '@island.is/nest/graphql'
 import { Field, ID, ObjectType } from '@nestjs/graphql'
 import graphqlTypeJson from 'graphql-type-json'
 import { SystemMetadata } from '@island.is/shared/types'
@@ -24,7 +25,7 @@ export class PowerBiSlice {
   @Field({ nullable: true })
   owner?: 'Fiskistofa'
 
-  @Field(() => GetPowerBiEmbedPropsFromServerResponse, { nullable: true })
+  @CacheField(() => GetPowerBiEmbedPropsFromServerResponse, { nullable: true })
   powerBiEmbedPropsFromServer?: GetPowerBiEmbedPropsFromServerResponse | null
 }
 
