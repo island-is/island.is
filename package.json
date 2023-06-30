@@ -331,7 +331,6 @@
     "@nrwl/linter": "13.10.5",
     "@nrwl/nest": "13.10.5",
     "@nrwl/node": "13.10.5",
-    "@nrwl/nx-cloud": "14.3.0",
     "@nrwl/react": "13.10.5",
     "@nrwl/storybook": "13.10.5",
     "@nrwl/web": "13.10.5",
@@ -479,8 +478,7 @@
     "cache-manager-ioredis-yet@1.1.0": "patch:cache-manager-ioredis-yet@npm%3A1.1.0#./.yarn/patches/cache-manager-ioredis-yet-npm-1.1.0-da7d1a9865.patch"
   },
   "volta": {
-    "node": "18.8.0",
-    "yarn": "3.2.3"
+    "node": "18.8.0"
   },
   "packageManager": "yarn@3.2.3"
 }
