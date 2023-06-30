@@ -287,7 +287,9 @@ export const OldAgePensionForm: Form = buildForm({
               id: 'employer.employment',
               title:
                 oldAgePensionFormMessage.employer.selfEmployedOrEmployeeTitle,
-              description: oldAgePensionFormMessage.employer.selfEmployedOrEmployeeDescription,
+              description:
+                oldAgePensionFormMessage.employer
+                  .selfEmployedOrEmployeeDescription,
               options: [
                 {
                   value: Employment.SELFEMPLOYED,
@@ -295,8 +297,8 @@ export const OldAgePensionForm: Form = buildForm({
                 },
                 {
                   value: Employment.EMPLOYEE,
-                  label: oldAgePensionFormMessage.employer.employee
-                }
+                  label: oldAgePensionFormMessage.employer.employee,
+                },
               ],
               width: 'half',
               largeButtons: true,
@@ -320,7 +322,7 @@ export const OldAgePensionForm: Form = buildForm({
                 oldAgePensionFormMessage.fileUpload.attachmentButton,
               condition: (answers) => {
                 const { employment } = getApplicationAnswers(answers)
-                
+
                 return employment === Employment.SELFEMPLOYED
               },
             }),

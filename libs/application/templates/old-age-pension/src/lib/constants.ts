@@ -53,6 +53,7 @@ export enum AnswerValidationConstants {
   PERIOD = 'period',
   FILEUPLOADPENEARLYFISHER = 'fileUploadEarlyPenFisher',
   FILEUPLOADHOMEALLOWANCE = 'fileUploadHomeAllowance',
+  EMPLOYER = 'employer',
 }
 
 export enum ApplicationType {
@@ -63,5 +64,5 @@ export enum ApplicationType {
 
 export enum Employment {
   SELFEMPLOYED = 'selfEmployed',
-  EMPLOYEE = 'employee'
+  EMPLOYEE = 'employee',
 }

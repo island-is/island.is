@@ -46,6 +46,10 @@ interface leaseAgreementSchoolConfirmation {
   schoolConfirmation?: fileType[]
 }
 
+interface selfEmployed {
+  selfEmployedAttachment?: fileType[]
+}
+
 export function getApplicationAnswers(answers: Application['answers']) {
   const pensionFundQuestion = getValueViaPath(
     answers,
@@ -410,6 +414,7 @@ export function getAttachments(application: Application) {
     homeAllowanceChildren,
     homeAllowanceHousing,
     connectedApplications,
+    employment,
   } = getApplicationAnswers(answers)
   const earlyRetirement = isEarlyRetirement(answers, externalData)
   const attachments: string[] = []
@@ -434,6 +439,15 @@ export function getAttachments(application: Application) {
   }
   if (homeAllowanceChildren === YES && isHomeAllowance) {
     getAttachmentsName(leaseAgrSchoolConf?.schoolConfirmation, 'skólavist')
+  }
+
+  // self-employed
+  if (employment === Employment.SELFEMPLOYED) {
+    const selfEmpoyed = answers.employer as selfEmployed
+    getAttachmentsName(
+      selfEmpoyed.selfEmployedAttachment,
+      'sjálfstætt starfandi',
+    )
   }
 
   return attachments

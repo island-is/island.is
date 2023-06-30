@@ -731,8 +731,10 @@ export const oldAgePensionFormMessage: MessageDir = {
     },
     selfEmployedDescription: {
       id: 'pl.application:fileUpload.selfEmployed.description',
-      defaultMessage: 'Hér getur þú skilað staðfestingu á lækkun á reiknuðu endurgjaldi (fæst hjá RSK). Athugaðu að skjalið þarf að vera á .pdf formi.',
-      description: 'Here you can submit confirmation of a reduction in the calculated remuneration (available from RSK). Note that the document must be in .pdf format.',
+      defaultMessage:
+        'Hér getur þú skilað staðfestingu á lækkun á reiknuðu endurgjaldi (fæst hjá RSK). Athugaðu að skjalið þarf að vera á .pdf formi.',
+      description:
+        'Here you can submit confirmation of a reduction in the calculated remuneration (available from RSK). Note that the document must be in .pdf format.',
     },
   }),
 
@@ -772,8 +774,10 @@ export const oldAgePensionFormMessage: MessageDir = {
     },
     selfEmployedOrEmployeeDescription: {
       id: 'oap.application:employer.selfEmployedOrEmployee.description',
-      defaultMessage: 'Ef þú ert sjálfstætt starfandi þarft þú að skila inn staðfestingu frá Skattinum á lækkun á reiknuðu endurgjaldi. Ef þú ert launþegi þarft þú að skrá þinn vinnuveitanda svo hann geti samþykkt starfshlutfallið þitt.',
-      description: 'If you are self-employed, you must submit confirmation from the Tax Office of a reduction in the calculated remuneration. If you are an employee, you need to register your employer so that they can approve your employment rate.',
+      defaultMessage:
+        'Ef þú ert sjálfstætt starfandi þarft þú að skila inn staðfestingu frá Skattinum á lækkun á reiknuðu endurgjaldi. Ef þú ert launþegi þarft þú að skrá þinn vinnuveitanda svo hann geti samþykkt starfshlutfallið þitt.',
+      description:
+        'If you are self-employed, you must submit confirmation from the Tax Office of a reduction in the calculated remuneration. If you are an employee, you need to register your employer so that they can approve your employment rate.',
     },
     selfEmployed: {
       id: 'oap.application:employer.selfEmployed',
@@ -797,6 +801,11 @@ export const oldAgePensionFormMessage: MessageDir = {
 }
 
 export const validatorErrorMessages = defineMessages({
+  requireAnswer: {
+    id: 'pl.application:fileUpload.required.answer',
+    defaultMessage: 'Ógilt gildi',
+    description: 'Invalid value',
+  },
   periodStartDateNeeded: {
     id: 'pl.application:period.startDate.Needed',
     defaultMessage: 'Finn ekki byrjunardagsetning.',
