@@ -217,6 +217,18 @@
             "skipTemplates": true
           }
         ],
+        "no-restricted-syntax": [
+          "error",
+          {
+            "// See https://github.com/eslint/eslint/issues/12868#issuecomment-581515841": "",
+            "selector": "CallExpression[arguments.length=1] > MemberExpression.callee > Identifier.property[name='reduce']",
+            "message": "Provide initialValue to .reduce()."
+          },
+          "// Basic rules we might want to include in the future",
+          "_FunctionExpression",
+          "_WithStatement",
+          "_BinaryExpression[operator='in']"
+        ],
         "local-rules/disallow-kennitalas": "warn",
         "local-rules/no-async-module-init": "error"
       }
