@@ -7,6 +7,7 @@ import {
   Tiles,
   DropdownMenu,
   FocusableBox,
+  Divider,
 } from '@island.is/island-ui/core'
 import {
   Breadcrumbs,
@@ -74,6 +75,7 @@ export const AdvicesScreen = () => {
                 processEnds: item._case?.processEnds,
                 processBegins: item._case?.processBegins,
                 eyebrows: [item._case?.typeName, item._case?.institutionName],
+                caseNumber: item._case?.caseNumber,
               }
               const dropdown =
                 item.adviceDocuments?.length !== 0 ? (
@@ -144,38 +146,52 @@ export const AdvicesScreen = () => {
         description: loc.seo.description,
       }}
     >
-      <Breadcrumbs
-        items={[
-          { title: loc.breadcrumbs[0].title, href: loc.breadcrumbs[0].href },
-          { title: loc.breadcrumbs[1].title },
-        ]}
-      />
-      <GridContainer>
-        <Stack space={[3, 3, 3, 5, 5]}>
-          <Stack space={3}>
-            <Text variant="h1">{loc.intro.title}</Text>
-            <Text variant="default">{loc.intro.text}</Text>
-          </Stack>
-          {!userLoading && !isAuthenticated && (
-            <ActionCard
-              heading={loc.subscriptionActionCard.heading}
-              text={loc.subscriptionActionCard.text}
-              button={[
-                {
-                  label: loc.subscriptionActionCard.buttonLabel,
-                  onClick: LogIn,
-                },
-              ]}
-            />
-          )}
-          {!userLoading && isAuthenticated && (
-            <>
+      <Divider />
+      <Box background="blue100">
+        <Breadcrumbs
+          items={[
+            { title: loc.breadcrumbs[0].title, href: loc.breadcrumbs[0].href },
+            { title: loc.breadcrumbs[1].title },
+          ]}
+        />
+        <GridContainer>
+          <Box paddingBottom={[3, 3, 3, 5, 5]}>
+            <Stack space={[3, 3, 3, 5, 5]}>
+              <Stack space={3}>
+                <Text variant="h1" dataTestId="advices_title">
+                  {loc.intro.title}
+                </Text>
+                <Text variant="default" dataTestId="advices_text">
+                  {loc.intro.text}
+                </Text>
+              </Stack>
+              {!userLoading && !isAuthenticated && (
+                <ActionCard
+                  heading={loc.subscriptionActionCard.heading}
+                  text={loc.subscriptionActionCard.text}
+                  button={[
+                    {
+                      label: loc.subscriptionActionCard.buttonLabel,
+                      onClick: LogIn,
+                    },
+                  ]}
+                />
+              )}
+            </Stack>
+          </Box>
+        </GridContainer>
+      </Box>
+      <Divider />
+      {!userLoading && isAuthenticated && (
+        <GridContainer>
+          <Box paddingTop={[3, 3, 3, 5, 5]}>
+            <Stack space={[3, 3, 3, 5, 5]}>
               <SearchAndSortPartial filters={filters} setFilters={setFilters} />
               {renderCards()}
-            </>
-          )}
-        </Stack>
-      </GridContainer>
+            </Stack>
+          </Box>
+        </GridContainer>
+      )}
     </Layout>
   )
 }

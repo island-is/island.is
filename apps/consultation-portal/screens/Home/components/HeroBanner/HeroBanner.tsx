@@ -62,7 +62,7 @@ export const HeroBanner = ({ statistics }: HeroBannerProps) => {
               <Stack space={4}>
                 <HeroLogo />
                 <Stack space={3}>
-                  <Text>{loc.introText}</Text>
+                  <Text dataTestId="heroIntro">{loc.introText}</Text>
                   <Inline justifyContent="spaceBetween">
                     <ArrowLink href={loc.arrowLink.internalLink.href}>
                       {loc.arrowLink.internalLink.text}
