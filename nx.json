@@ -17,7 +17,7 @@
   "npmScope": "island.is",
   "tasksRunnerOptions": {
     "default": {
-      "runner": "@nrwl/nx-cloud",
+      "runner": "nx/tasks-runners/default",
       "options": {
         "cacheableOperations": [
           "build",
@@ -27,11 +27,17 @@
           "schemas/build-openapi",
           "schemas/openapi-generator",
           "schemas/build-graphql-schema",
-          "schemas/codegen",
-          "generateDevIndexHTML"
+          "schemas/codegen"
         ],
         "cacheDirectory": ".cache/nx",
         "parallel": 1
+      }
+    },
+    "docker-test": {
+      "runner": "@nrwl/workspace/tasks-runners/default",
+      "options": {
+        "cacheableOperations": [],
+        "cacheDirectory": ".cache/nx"
       }
     }
   },
