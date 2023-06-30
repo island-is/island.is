@@ -551,6 +551,14 @@
         "summary": "Apply for new collaborative of old license (Samrit)",
         "parameters": [
           {
+            "name": "jwttoken",
+            "in": "header",
+            "description": "JWT token",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
             "name": "api-version",
             "in": "header",
             "description": "The requested API version",
@@ -3404,11 +3412,6 @@
       "PostNewCollaborative": {
         "type": "object",
         "properties": {
-          "ssn": {
-            "type": "string",
-            "description": "Person social security number",
-            "nullable": true
-          },
           "districtId": {
             "type": "integer",
             "description": "District applying for licsense",

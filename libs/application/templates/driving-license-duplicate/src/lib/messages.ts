@@ -382,7 +382,7 @@ export const m = defineMessages({
     description: 'Validation error for attachment',
   },
   missingDistrictValidationError: {
-    id: 'dld.application:error.missingAttachment',
+    id: 'dld.application:error.missingAttachmentDistrict',
     defaultMessage: 'Vinsamlegast veldu embætti',
     description: 'Validation error for district',
   },
