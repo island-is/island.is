@@ -16,7 +16,7 @@ MAX_JOBS=${MAX_JOBS:-2}
 
 for target in "$@"
 do
-  npx nx affected --base="$BASE" --head="$HEAD" --target="$target" --parallel="$MAX_JOBS" &
+  yarn dlx nx affected --base="$BASE" --head="$HEAD" --target="$target" --parallel="$MAX_JOBS"
 done
 
 wait
