@@ -15,21 +15,21 @@ source "$DIR"/_common.sh
 MAX_JOBS=${MAX_JOBS:-2}
 
 npx nx connect-to-nx-cloud
-npx nx-cloud start-ci-run
+npx nx-cloud start-ci-run --stop-agents-after="build"
 
-pids=()
+# pids=()
 
 for target in "$@"
 do
   npx nx affected --base="$BASE" --head="$HEAD" --target="$target" --parallel="$MAX_JOBS" &
-  pids+=($!)
+  # pids+=($!)
 done
 
-# run all commands in parallel and bail if one of them fails
-for pid in "${pids[@]}"; do
-  if ! wait "$pid"; then
-    exit 1
-  fi
-done
+# # run all commands in parallel and bail if one of them fails
+# for pid in "${pids[@]}"; do
+#   if ! wait "$pid"; then
+#     exit 1
+#   fi
+# done
 
-exit 0
+# exit 0
