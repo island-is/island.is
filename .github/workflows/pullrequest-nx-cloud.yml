@@ -57,7 +57,8 @@ jobs:
         with:
           fetch-depth: 0
       - uses: nrwl/nx-set-shas@v3
-      - run: |
+      - name: Set NX sha variables
+        run: |
           echo "BASE=$NX_BASE" >> $GITHUB_ENV
           echo "HEAD=$NX_HEAD" >> $GITHUB_ENV
       - uses: actions/setup-node@v3
@@ -147,7 +148,8 @@ jobs:
         with:
           fetch-depth: 0
       - uses: nrwl/nx-set-shas@v3
-      - run: |
+      - name: Set NX sha variables
+        run: |
           echo "BASE=$NX_BASE" >> $GITHUB_ENV
           echo "HEAD=$NX_HEAD" >> $GITHUB_ENV
       - name: Setup yarn
