@@ -6,9 +6,7 @@ This library was generated with [Nx](https://nx.dev).
 
 ## Methods access
 
-Following table describes methods and what scopes are needed to access them.
-The machine clients that will be accessing these methods should have the following
-scopes in their access token or token exchange: `@rsk.is/prokura`, `@rsk.is/prokura:admin`
+Following table describes methods and which scopes are needed to access them, e.g. by the IDS machine client configured in the service using this client.
 
 | Method                          | Scope                                                                       | Description                                                                                                                                  |
 | ------------------------------- | --------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
