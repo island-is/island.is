@@ -158,6 +158,10 @@ jobs:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
+      # NOTE: NX_TASK_RUNNER env is not working in NX v13, we need to set 'nx-cloud' as the task runner by patching nx.json
+      - name: Patch nx.json to set nx-cloud
+        run: ./scripts/ci/patch-nx-json.sh
+
       - uses: nrwl/nx-set-shas@v3
       - name: Set NX sha variables
         run: |
@@ -193,10 +197,6 @@ jobs:
       - name: Untar generated files
         run: tar zxvf generated_files.tar.gz
 
-      # NOTE: NX_TASK_RUNNER env is not working in NX v13, we need to set 'nx-cloud' as the task runner by patching nx.json
-      - name: Patch nx.json to set nx-cloud
-        run: ./scripts/ci/patch-nx-json.sh
-
       - name: Start Nx Agent ${{ matrix.agent }}
         run: ./scripts/ci/_nx-cloud.sh start-agent
         env:
@@ -221,6 +221,10 @@ jobs:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
+      # NOTE: NX_TASK_RUNNER env is not working in NX v13, we need to set 'nx-cloud' as the task runner by patching nx.json
+      - name: Patch nx.json to set nx-cloud
+        run: ./scripts/ci/patch-nx-json.sh
+
       - uses: nrwl/nx-set-shas@v3
       - run: |
           echo "BASE=$NX_BASE" >> $GITHUB_ENV
@@ -254,10 +258,6 @@ jobs:
 
       - name: Untar generated files
         run: tar zxvf generated_files.tar.gz
-
-      # NOTE: NX_TASK_RUNNER env is not working in NX v13, we need to set 'nx-cloud' as the task runner by patching nx.json
-      - name: Patch nx.json to set nx-cloud
-        run: ./scripts/ci/patch-nx-json.sh
 
       - name: Run NX targets
         run: |
