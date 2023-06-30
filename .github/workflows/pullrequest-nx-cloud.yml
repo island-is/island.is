@@ -41,7 +41,7 @@ env:
   NX_VERBOSE_LOGGING: true
   NX_CLOUD_DISTRIBUTED_EXECUTION: true
   NX_CLOUD_DISTRIBUTED_EXECUTION_STOP_AGENTS_ON_FAILURE: true
-  NX_CLOUD_VERSION: 14.3.0
+  NX_CLOUD_VERSION: 14.7.0
 jobs:
   prepare:
     runs-on: ec2-runners
@@ -257,6 +257,7 @@ jobs:
 
       - name: Run NX targets
         run: |
+          ./_nx-cloud.sh start-ci-run --stop-agents-after="build"
           ./scripts/ci/run-nx-affected.sh lint build
 
       - name: Stop all running agents for this CI run

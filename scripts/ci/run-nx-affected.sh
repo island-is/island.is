@@ -14,10 +14,6 @@ source "$DIR"/_common.sh
 
 MAX_JOBS=${MAX_JOBS:-2}
 
-npx nx connect-to-nx-cloud
-source "${DIR}"/_nx-cloud.sh start-ci-run --stop-agents-after="build"
-
-
 for target in "$@"
 do
   npx nx affected --base="$BASE" --head="$HEAD" --target="$target" --parallel="$MAX_JOBS" &
