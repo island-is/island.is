@@ -5,9 +5,7 @@ import {
   buildSelectField,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
-import {
-  Juristiction,
-} from '@island.is/api/schema'
+import { Juristiction } from '@island.is/api/schema'
 
 export const sectionDelivery = buildSection({
   id: 'delivery',
