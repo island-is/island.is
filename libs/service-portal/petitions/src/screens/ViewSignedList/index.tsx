@@ -123,7 +123,7 @@ const ViewSignedList = () => {
             </Column>
           </Columns>
 
-          <Box marginTop={5} marginBottom={10}>
+          <Box marginTop={5} marginBottom={[5, 10]}>
             {hasSigned && isListOpen && (
               <Box>
                 <DialogPrompt

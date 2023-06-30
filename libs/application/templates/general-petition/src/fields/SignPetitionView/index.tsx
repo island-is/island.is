@@ -7,6 +7,8 @@ import {
   Input,
   toast,
   Stack,
+  GridRow,
+  GridColumn,
 } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
@@ -109,30 +111,36 @@ const SignPetitionView: FC<FieldBaseProps> = ({ application }) => {
                 </Box>
               </Box>
 
-              <Box marginTop={4}>
-                <Box marginBottom={2}>
-                  <Input
-                    label={formatMessage(m.name)}
-                    name={formatMessage(m.name)}
-                    value={userData?.nationalRegistryUser?.fullName}
-                    readOnly
-                  />
-                </Box>
-                <Box marginTop={[0, 6]}>
-                  <CheckboxController
-                    id="showName"
-                    large={false}
-                    onSelect={() => setShowName(!showName)}
-                    options={[
-                      {
-                        value: YES,
-                        label: formatMessage(m.hideNameLabel),
-                      },
-                    ]}
-                  />
-                  <Text variant="eyebrow">{formatMessage(m.hideNameText)}</Text>
-                </Box>
-              </Box>
+              <GridRow>
+                <GridColumn span={['12/12', '6/12']}>
+                  <Box marginTop={[0, 4]}>
+                    <Box marginBottom={2}>
+                      <Input
+                        label={formatMessage(m.name)}
+                        name={formatMessage(m.name)}
+                        value={userData?.nationalRegistryUser?.fullName}
+                        readOnly
+                      />
+                    </Box>
+                    <Box marginTop={[0, 6]}>
+                      <CheckboxController
+                        id="showName"
+                        large={false}
+                        onSelect={() => setShowName(!showName)}
+                        options={[
+                          {
+                            value: YES,
+                            label: formatMessage(m.hideNameLabel),
+                          },
+                        ]}
+                      />
+                      <Text variant="eyebrow">
+                        {formatMessage(m.hideNameText)}
+                      </Text>
+                    </Box>
+                  </Box>
+                </GridColumn>
+              </GridRow>
 
               <Box marginTop={5}>
                 <CheckboxController

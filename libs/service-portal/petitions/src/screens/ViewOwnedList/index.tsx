@@ -197,7 +197,7 @@ const ViewOwnedList = () => {
                         </Button>
                       }
                     >
-                      <Text variant="h1" paddingBottom={3}>
+                      <Text variant="h1" paddingTop={5}>
                         {formatMessage(m.modalStopCollection)}
                       </Text>
                       <Box
@@ -251,7 +251,7 @@ const ViewOwnedList = () => {
                       }
                     >
                       <Box>
-                        <Text variant="h1" paddingBottom={3}>
+                        <Text variant="h1" paddingTop={5}>
                           {formatMessage(m.modalStartCollection)}
                         </Text>
                         <Text paddingBottom={3}>
