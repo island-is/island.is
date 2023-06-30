@@ -42,7 +42,7 @@ test.describe('Consultation portal authenticated', () => {
     await context.close()
   })
 
-  test('logged in user should be show up instead of login', async () => {
+  test('logged in user should be shown instead of login', async () => {
     const page = await context.newPage()
     await page.goto(icelandicAndNoPopupUrl(URL))
 
