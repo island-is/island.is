@@ -1,4 +1,4 @@
-<!-- gitbook-navigation: "Procuring" -->
+<!-- gitbook-navigation: "Relationships" -->
 
 # RSK Relationships (Prókúra) Client
 
