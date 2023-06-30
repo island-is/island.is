@@ -144,7 +144,7 @@ export const Cases: React.FC = () => {
       if (isIndictmentCase(c.type)) {
         return !completedCaseStates.includes(c.state)
       } else {
-        return !(completedCaseStates.includes(c.state) && c.rulingDate)
+        return !(completedCaseStates.includes(c.state) && c.rulingSignatureDate)
       }
     })
   }, [resCases])
