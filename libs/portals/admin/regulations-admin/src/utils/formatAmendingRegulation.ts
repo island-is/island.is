@@ -275,14 +275,15 @@ export const formatAmendingRegBody = (
       } else if (isAddition) {
         if (isMalsgrein) {
           // Paragraph was added
-          pushHtml = `<p>Á eftir ${
-            malsgrein - 1
-          }. mgr. ${grein}. gr. ${regNameDisplay} kemur ný málsgrein sem orðast svo:</p><p>${newText}</p>` as HTMLText
+          pushHtml =
+            malsgrein > 1
+              ? (`<p>Á eftir ${
+                  malsgrein - 1
+                }. mgr. ${grein}. gr. ${regNameDisplay} kemur ný málsgrein sem orðast svo:</p><p>${newText}</p>` as HTMLText)
+              : (`<p>1. mgr. ${grein}. gr. ${regNameDisplay} orðast svo:</p><p>${newText}</p>` as HTMLText)
         } else if (isGreinTitle) {
           // Title was added
-          pushHtml = `<p>Á eftir ${
-            malsgrein - 1
-          }. mgr. ${grein}. gr. ${regNameDisplay} kemur ný fyrirsögn sem orðast svo:</p><p>${newText}</p>` as HTMLText
+          pushHtml = `<p>Fyrirsögn ${grein}. gr. ${regNameDisplay} orðast svo:</p><p>${newText}</p>` as HTMLText
         } else if (isStaflidur || isTolulidur) {
           // List was added
 
