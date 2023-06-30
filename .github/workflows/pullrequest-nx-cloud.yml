@@ -118,7 +118,8 @@ jobs:
           node --version
           tar zcvf generated_files.tar.gz $(./scripts/ci/get-files-touched-by.sh yarn schemas --skip-cache | xargs realpath --relative-to $(pwd))
 
-      - id: set-matrix
+      - name: Calculate NX agent count
+        id: set-matrix
         shell: bash
         # Turn the number-of-agents input into a JSON structure which is compatible with a Github job matrix strategy
         run: |
@@ -152,11 +153,11 @@ jobs:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 1
-      # - uses: nrwl/nx-set-shas@v3
-      # - name: Set NX sha variables
-      #   run: |
-      #     echo "BASE=$NX_BASE" >> $GITHUB_ENV
-      #     echo "HEAD=$NX_HEAD" >> $GITHUB_ENV
+      - uses: nrwl/nx-set-shas@v3
+      - name: Set NX sha variables
+        run: |
+          echo "BASE=$NX_BASE" >> $GITHUB_ENV
+          echo "HEAD=$NX_HEAD" >> $GITHUB_ENV
       - name: Setup yarn
         run: npm install -g yarn @nrwl/nx-cloud@14.3.0 dotenv
 
@@ -213,10 +214,10 @@ jobs:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 1
-      # - uses: nrwl/nx-set-shas@v3
-      # - run: |
-      #     echo "BASE=$NX_BASE" >> $GITHUB_ENV
-      #     echo "HEAD=$NX_HEAD" >> $GITHUB_ENV
+      - uses: nrwl/nx-set-shas@v3
+      - run: |
+          echo "BASE=$NX_BASE" >> $GITHUB_ENV
+          echo "HEAD=$NX_HEAD" >> $GITHUB_ENV
       - name: Setup yarn
         run: npm install -g yarn @nrwl/nx-cloud@14.3.0 dotenv
 
