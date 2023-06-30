@@ -49,6 +49,19 @@ export const Prerequisites: Form = buildForm({
           subTitle: externalData.dataProvider.subTitle,
           description: externalData.dataProvider.description,
           checkboxLabel: externalData.dataProvider.checkboxLabel,
+          submitField: buildSubmitField({
+            id: 'submit',
+            placement: 'footer',
+            title: '',
+            refetchApplicationAfterSubmit: true,
+            actions: [
+              {
+                event: DefaultEvents.SUBMIT,
+                name: externalData.dataProvider.submitButton,
+                type: 'primary',
+              },
+            ],
+          }),
           dataProviders: [
             buildDataProviderItem({
               provider: NationalRegistryIndividualApi,
@@ -113,27 +126,10 @@ export const Prerequisites: Form = buildForm({
               provider: UtlendingastofnunPaymentCatalogApi,
               title: '',
             }),
-          ],
-        }),
-        buildExternalDataProvider({
-          title: externalData.dataProvider.pageTitle,
-          id: 'approveExternalData2',
-          subTitle: externalData.dataProvider.subTitle2,
-          checkboxLabel: externalData.dataProvider.checkboxLabel,
-          submitField: buildSubmitField({
-            id: 'submit',
-            placement: 'footer',
-            title: '',
-            refetchApplicationAfterSubmit: true,
-            actions: [
-              {
-                event: DefaultEvents.SUBMIT,
-                name: externalData.dataProvider.submitButton,
-                type: 'primary',
-              },
-            ],
-          }),
-          dataProviders: [
+            buildDataProviderItem({
+              pageTitle: externalData.dataProvider.subTitle2,
+              title: '',
+            }),
             buildDataProviderItem({
               id: 'meansOfSupport',
               title: externalData.icelandRevenueAndCustoms.title,
