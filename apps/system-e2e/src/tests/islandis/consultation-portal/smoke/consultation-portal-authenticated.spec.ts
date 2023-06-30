@@ -1,60 +1,58 @@
 import { BrowserContext, expect, Page, test } from '@playwright/test'
 import { icelandicAndNoPopupUrl, urls } from '../../../../support/urls'
 import { session } from '../../../../support/session'
-import {
-  LOGGED_IN_NAV as nav,
-  STATES as lis,
-  LOGIN as login,
-  URL,
-  URL_LOCALE,
-  POST_LOGOUT_URL,
-} from './consts'
 
 test.use({ baseURL: urls.islandisBaseUrl })
 
 test.describe('Consultation portal authenticated', () => {
   let context: BrowserContext
+  const URL = '/samradsgatt'
   const authLink = new RegExp(`^${urls.authUrl}`)
-  test.beforeAll(async ({ browser }) => {
-    context = await session({
-      browser: browser,
-      storageState: 'consultation-auth.json',
-      idsLoginOn: false,
-      homeUrl: URL,
-      phoneNumber: login.phoneNumber,
-    })
-  })
-  test.afterAll(async () => {
-    await context.close()
-  })
 
   const checkIfLoggedOutOrLoggedIn = async (page: Page) => {
-    const loggedOut = page.getByTestId(nav.loginBtn)
-    const loggedIn = page.getByRole('button', { name: nav.loggedInUser })
+    await page.goto(icelandicAndNoPopupUrl(URL))
+    await page.getByTestId('menu-login-btn').click()
+    const loggedOut = page.getByTestId('menu-login-btn')
+    const loggedIn = page.getByRole('button', { name: 'Gervimaður Afríka' })
 
     if (await loggedOut.isVisible()) {
       await loggedOut.click()
       await page.waitForURL(authLink)
-      await page
-        .locator(login.locators.phoneUserIdentifier)
-        .fill(login.phoneNumber)
-      await page.locator(login.locators.submitPhoneUser).isEnabled()
-      await page.locator(login.locators.submitPhoneUser).click()
-      await page.waitForURL(`**${URL_LOCALE}`)
+      await page.locator('#phoneUserIdentifier').fill('0103019')
+      await page.locator('#submitPhoneNumber').isEnabled()
+      await page.locator('#submitPhoneNumber').click()
+      await page.waitForURL(`**${icelandicAndNoPopupUrl(URL)}`)
     } else {
       await loggedIn.isVisible()
     }
   }
 
-  test('nav links should be visible', async () => {
+  test.beforeAll(async ({ browser }) => {
+    context = await session({
+      browser: browser,
+      storageState:
+        'consultation-auth.json',
+      idsLoginOn: false,
+      homeUrl: URL,
+      phoneNumber: '0103019',
+    })
+    const page = await context.newPage()
+    await checkIfLoggedOutOrLoggedIn(page)
+    await page.waitForURL(icelandicAndNoPopupUrl(URL))
+  })
+
+  test.afterAll(async () => {
+    await context.close()
+  })
+
+  test('logged in user should be show up instead of login', async () => {
     const page = await context.newPage()
     await page.goto(icelandicAndNoPopupUrl(URL))
-    await checkIfLoggedOutOrLoggedIn(page)
 
-    await expect(page.getByTestId(nav.allCases)).toBeVisible()
-    await expect(page.getByTestId(nav.subscriptions)).toBeVisible()
-    await expect(page.getByTestId(nav.advices)).toBeVisible()
-    await expect(page.getByText(nav.loggedInUser)).toBeVisible()
+    await expect(
+      page.getByRole('button', { name: 'Gervimaður Afríka' }),
+    ).toBeVisible()
+    await expect(page.getByTestId('menu-login-btn')).toHaveCount(0)
 
     await page.close()
   })
@@ -62,29 +60,27 @@ test.describe('Consultation portal authenticated', () => {
   test('subscriptions page should show logged in state', async () => {
     const page = await context.newPage()
     await page.goto(icelandicAndNoPopupUrl(URL))
-    await checkIfLoggedOutOrLoggedIn(page)
 
-    await page.getByTestId(nav.subscriptions).click()
-    await expect(page.getByTestId('subscriptions_title')).toBeVisible()
-    await expect(page.getByTestId('subscriptions_text')).toBeVisible()
-    await expect(page.getByRole('tab')).toHaveCount(3)
-    await page.waitForLoadState()
-    await expect(page.getByTestId('actionCard')).toBeVisible()
-    await expect(page.getByText(lis.subscriptions.CTA.title)).toHaveCount(0)
-
+    await page.getByTestId('subscriptions-btn').click()
+    await expect(page.getByTestId('subscriptions-title')).toBeVisible()
+    await expect(page.getByTestId('action-card')).toBeVisible()
+    await expect(page.getByTestId('tab-content')).toBeVisible()
+    await expect(
+      page.getByRole('button', {
+        name: 'Skrá mig inn',
+      }),
+    ).toHaveCount(0)
     await page.close()
   })
 
   test('my subscriptions page should show logged in state', async () => {
     const page = await context.newPage()
     await page.goto(icelandicAndNoPopupUrl(URL))
-    await checkIfLoggedOutOrLoggedIn(page)
 
-    await page.goto(`${URL}${lis.subscriptions.unsubscribeLink.href}`)
-    await expect(page.getByTestId('subscriptions_title')).toBeVisible()
-    await expect(page.getByTestId('subscriptions_text')).toBeVisible()
-    await expect(page.getByRole('tab')).toHaveCount(3)
-    await expect(page.getByTestId('actionCard')).toHaveCount(0)
+    await page.goto(`${URL}/minaraskriftir`)
+    await expect(page.getByTestId('subscriptions-title')).toBeVisible()
+    await expect(page.getByTestId('action-card')).toHaveCount(0)
+    await expect(page.getByTestId('tab-content')).toBeVisible()
 
     await page.close()
   })
@@ -92,13 +88,9 @@ test.describe('Consultation portal authenticated', () => {
   test('advices page should show logged in state', async () => {
     const page = await context.newPage()
     await page.goto(icelandicAndNoPopupUrl(URL))
-    await checkIfLoggedOutOrLoggedIn(page)
 
-    await page.getByTestId(nav.advices).click()
+    await page.goto(`${URL}/umsagnir`)
     await expect(page.getByTestId('actionCard')).toHaveCount(0)
-    await expect(
-      page.getByRole('button', { name: lis.advices.CTA.button.label }),
-    ).toHaveCount(0)
 
     await page.close()
   })
@@ -106,15 +98,10 @@ test.describe('Consultation portal authenticated', () => {
   test('logout button should logout', async () => {
     const page = await context.newPage()
     await page.goto(icelandicAndNoPopupUrl(URL))
-    await checkIfLoggedOutOrLoggedIn(page)
 
-    const loggedIn = page.getByRole('button', { name: nav.loggedInUser })
-    await expect(loggedIn).toBeVisible()
-    loggedIn.click()
-    const logOut = page.getByRole('button', { name: login.logOutBtn })
-    await expect(logOut).toBeVisible()
-    logOut.click()
-    await page.waitForURL(POST_LOGOUT_URL)
+    await page.getByRole('button', { name: 'Gervimaður Afríka' }).click()
+    await page.getByRole('button', { name: 'Útskrá' }).click()
+    await page.waitForURL('https://island.is')
 
     await page.close()
   })

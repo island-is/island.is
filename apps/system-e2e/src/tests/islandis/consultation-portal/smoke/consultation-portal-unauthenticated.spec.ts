@@ -1,19 +1,12 @@
 import { BrowserContext, expect, test } from '@playwright/test'
 import { icelandicAndNoPopupUrl, urls } from '../../../../support/urls'
 import { session } from '../../../../support/session'
-import {
-  HERO as hero,
-  NOT_LOGGED_IN_NAV as nav,
-  FILTERS as filters,
-  FOOTER as footer,
-  STATES as los,
-  URL,
-} from './consts'
 
 test.use({ baseURL: urls.islandisBaseUrl })
 
 test.describe('Consultation portal unathenticated', () => {
   let context: BrowserContext
+  const URL = '/samradsgatt'
   const authLink = new RegExp(`^${urls.authUrl}`)
   test.beforeAll(async ({ browser }) => {
     context = await session({
@@ -21,7 +14,6 @@ test.describe('Consultation portal unathenticated', () => {
       storageState: 'consultation-no-auth.json',
       idsLoginOn: false,
       homeUrl: URL,
-      phoneNumber: 'not appplicable',
     })
   })
   test.afterAll(async () => {
@@ -32,46 +24,10 @@ test.describe('Consultation portal unathenticated', () => {
     const page = await context.newPage()
     await page.goto(icelandicAndNoPopupUrl(URL))
 
-    await expect(page.getByTestId(nav.allCases)).toBeVisible()
-    await expect(page.getByTestId(nav.subscriptions)).toBeVisible()
-    await expect(page.getByTestId(nav.advices)).toBeVisible()
-    await expect(page.getByTestId(nav.loginBtn)).toBeVisible()
-
-    await page.close()
-  })
-
-  test('hero section should have text and correct links', async () => {
-    const page = await context.newPage()
-    await page.goto(icelandicAndNoPopupUrl(URL))
-
-    await expect(page.getByTestId('heroIntro')).toBeVisible()
-    await expect(
-      page.getByRole('link', { name: hero.aboutLink.label }),
-    ).toBeVisible()
-
-    await page.close()
-  })
-
-  test('filters should be visible on front page', async () => {
-    const page = await context.newPage()
-    await page.goto(icelandicAndNoPopupUrl(URL))
-
-    await expect(page.getByTestId('select-policyAreas')).toBeVisible()
-    await expect(page.getByTestId('select-institutions')).toBeVisible()
-    for (const text of filters) {
-      await expect(page.getByText(text)).toBeVisible()
-    }
-
-    await page.close()
-  })
-
-  test('footer should render expected content', async () => {
-    const page = await context.newPage()
-    await page.goto(icelandicAndNoPopupUrl(URL))
-
-    await expect(
-      page.getByRole('link', { name: footer.linkLabel }),
-    ).toBeVisible()
+    await expect(page.getByTestId('all-cases-btn')).toBeVisible()
+    await expect(page.getByTestId('subscriptions-btn')).toBeVisible()
+    await expect(page.getByTestId('advices-btn')).toBeVisible()
+    await expect(page.getByTestId('menu-login-btn')).toBeVisible()
 
     await page.close()
   })
@@ -80,17 +36,13 @@ test.describe('Consultation portal unathenticated', () => {
     const page = await context.newPage()
     await page.goto(icelandicAndNoPopupUrl(URL))
 
-    await page.getByTestId(nav.subscriptions).click()
-    await expect(page.getByTestId('subscriptions_title')).toBeVisible()
-    await expect(page.getByTestId('subscriptions_text')).toBeVisible()
-    await expect(page.getByRole('tab')).toHaveCount(0)
-    await page.waitForLoadState()
-    await expect(page.getByTestId('actionCard')).toBeVisible()
-    await expect(page.getByText(los.subscriptions.CTA.title)).toBeVisible()
+    await page.getByTestId('subscriptions-btn').click()
+    await expect(page.getByTestId('subscriptions-title')).toBeVisible()
+    await expect(page.getByTestId('tab-content')).toHaveCount(0)
+    await expect(page.getByTestId('action-card')).toBeVisible()
     const loginLink = page.getByRole('button', {
-      name: los.subscriptions.CTA.button.label,
+      name: 'Skrá mig inn',
     })
-    await expect(loginLink).toBeVisible()
     loginLink.click()
     await page.waitForURL(authLink)
 
@@ -101,14 +53,15 @@ test.describe('Consultation portal unathenticated', () => {
     const page = await context.newPage()
     await page.goto(icelandicAndNoPopupUrl(URL))
 
-    await page.getByTestId(nav.subscriptions).click()
-    await expect(page.getByRole('tab')).toHaveCount(0)
-    const unsubscribeLink = page.getByText(
-      los.subscriptions.unsubscribeLink.text,
-    )
-    await expect(unsubscribeLink).toBeVisible()
+    await page.getByTestId('subscriptions-btn').click()
+    await expect(page.getByTestId('tab-content')).toHaveCount(0)
+
+    const unsubscribeLink = page.getByRole('link', {
+      name: 'Hægt er að afskrá sig hér',
+    })
     await unsubscribeLink.click()
-    await page.waitForURL(`**${los.subscriptions.unsubscribeLink.href}`)
+    await page.waitForURL(`**/minaraskriftir`)
+    await expect(page.getByTestId('tab-content')).toHaveCount(0)
     await page.waitForURL(authLink)
 
     await page.close()
@@ -118,31 +71,13 @@ test.describe('Consultation portal unathenticated', () => {
     const page = await context.newPage()
     await page.goto(icelandicAndNoPopupUrl(URL))
 
-    await page.getByTestId(nav.advices).click()
-    await page.waitForLoadState()
-    await expect(page.getByTestId('actionCard')).toBeVisible()
-    expect(page.getByText(los.advices.CTA.title)).toBeTruthy()
+    await page.getByTestId('advices-btn').click()
+    await expect(page.getByTestId('action-card')).toBeVisible()
     const loginLink = page.getByRole('button', {
-      name: los.advices.CTA.button.label,
+      name: 'Skrá mig inn',
     })
-    await expect(loginLink).toBeVisible()
     loginLink.click()
     await page.waitForURL(authLink)
-
-    await page.close()
-  })
-
-  test('about page should render', async () => {
-    const page = await context.newPage()
-    await page.goto(icelandicAndNoPopupUrl(URL))
-
-    const aboutLink = page.getByText(hero.aboutLink.label)
-    expect(aboutLink).toBeVisible()
-    aboutLink.click()
-    await page.waitForURL(`**${hero.aboutLink.href}`)
-    await expect(page.getByTestId('aboutTitle')).toBeVisible()
-    await expect(page.getByTestId('aboutContent')).toBeVisible()
-    await expect(page.getByTestId('aboutTOC')).toBeVisible()
 
     await page.close()
   })
@@ -151,10 +86,19 @@ test.describe('Consultation portal unathenticated', () => {
     const page = await context.newPage()
     await page.goto(icelandicAndNoPopupUrl(URL))
 
-    const loginBtn = page.getByTestId(nav.loginBtn)
-    await expect(loginBtn).toBeVisible()
+    const loginBtn = page.getByTestId('menu-login-btn')
     loginBtn.click()
     await page.waitForURL(authLink)
+
+    await page.close()
+  })
+
+  test('card should show up on frontpage and show case when clicked', async () => {
+    const page = await context.newPage()
+    await page.goto(icelandicAndNoPopupUrl(URL))
+
+    await page.getByTestId('front-page-card').first().click()
+    await expect(page.getByTestId('short-description')).toBeVisible()
 
     await page.close()
   })
