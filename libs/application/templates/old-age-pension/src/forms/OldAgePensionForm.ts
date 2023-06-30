@@ -7,6 +7,7 @@ import {
   buildMultiField,
   buildPhoneField,
   buildRadioField,
+  buildRepeater,
   buildSection,
   buildSubmitField,
   buildSubSection,
@@ -33,6 +34,7 @@ import {
   FILE_SIZE_LIMIT,
   HomeAllowanceHousing,
   NO,
+  RatioType,
   YES,
 } from '../lib/constants'
 import {
@@ -280,11 +282,11 @@ export const OldAgePensionForm: Form = buildForm({
           ],
         }),
         buildSubSection({
-          id: 'employer',
+          id: 'employment',
           title: oldAgePensionFormMessage.employer.employerTitle,
           children: [
             buildRadioField({
-              id: 'employer.employment',
+              id: 'employment.status',
               title:
                 oldAgePensionFormMessage.employer.selfEmployedOrEmployeeTitle,
               description:
@@ -300,11 +302,12 @@ export const OldAgePensionForm: Form = buildForm({
                   label: oldAgePensionFormMessage.employer.employee,
                 },
               ],
+              defaultValue: Employment.EMPLOYEE,
               width: 'half',
               largeButtons: true,
             }),
             buildFileUploadField({
-              id: 'employer.selfEmployedAttachment',
+              id: 'employment.selfEmployedAttachment',
               title: oldAgePensionFormMessage.fileUpload.selfEmployedTitle,
               description:
                 oldAgePensionFormMessage.fileUpload.selfEmployedDescription,
@@ -321,41 +324,90 @@ export const OldAgePensionForm: Form = buildForm({
               uploadButtonLabel:
                 oldAgePensionFormMessage.fileUpload.attachmentButton,
               condition: (answers) => {
-                const { employment } = getApplicationAnswers(answers)
+                const { employmentStatus } = getApplicationAnswers(answers)
 
-                return employment === Employment.SELFEMPLOYED
+                return employmentStatus === Employment.SELFEMPLOYED
               },
             }),
-            // buildMultiField({
-            //   id: 'residenceHistory',
-            //   title: oldAgePensionFormMessage.residence.residenceHistoryTitle,
-            //   description:
-            //     oldAgePensionFormMessage.residence.residenceHistoryDescription,
-            //   children: [
-            //     buildCustomField({
-            //       id: 'residenceHistory.table',
-            //       doesNotRequireAnswer: true,
-            //       title: '',
-            //       component: 'ResidenceHistoryTable',
-            //       condition: (_, externalData) => {
-            //         const { residenceHistory } = getApplicationExternalData(
-            //           externalData,
-            //         )
-            //         // if no residence history returned, dont show the table
-            //         if (residenceHistory.length === 0) return false
-            //         return true
-            //       },
-            //     }),
-            //     buildRadioField({
-            //       id: 'residenceHistory.question',
-            //       title:
-            //         oldAgePensionFormMessage.residence.residenceHistoryQuestion,
-            //       options: getYesNOOptions(),
-            //       width: 'half',
-            //       largeButtons: true,
-            //     }),
-            //   ],
-            // }),
+            buildRepeater({
+              id: 'employment.employers',
+              title: oldAgePensionFormMessage.employer.employerTitle,
+              component: 'EmployersOverview',
+              condition: (answers) => {
+                const { employmentStatus } = getApplicationAnswers(answers)
+
+                return employmentStatus === Employment.EMPLOYEE
+              },
+              children: [
+                buildMultiField({
+                  id: 'addEmployers',
+                  title: oldAgePensionFormMessage.employer.registrationTitle,
+                  description:
+                    oldAgePensionFormMessage.employer.employerDescription,
+                  isPartOfRepeater: true,
+                  children: [
+                    buildTextField({
+                      id: 'email',
+                      variant: 'email',
+                      title: oldAgePensionFormMessage.employer.email,
+                    }),
+                    buildTextField({
+                      id: 'phoneNumber',
+                      variant: 'tel',
+                      format: '###-####',
+                      placeholder: '000-0000',
+                      title: oldAgePensionFormMessage.employer.phoneNumber,
+                    }),
+                    buildRadioField({
+                      id: 'ratioType',
+                      title: '',
+                      width: 'half',
+                      space: 3,
+                      options: [
+                        {
+                          value: RatioType.YEARLY,
+                          label: oldAgePensionFormMessage.employer.ratioYearly,
+                        },
+                        {
+                          value: RatioType.MONTHLY,
+                          label: oldAgePensionFormMessage.employer.ratioMonthly,
+                        },
+                      ],
+                    }),
+                    buildTextField({
+                      id: 'ratioYearly',
+                      description: '',
+                      title: oldAgePensionFormMessage.employer.ratio,
+                      suffix: '%',
+                      condition: (answers) => {
+                        const { rawEmployers } = getApplicationAnswers(answers)
+                        const currentEmployer =
+                          rawEmployers[rawEmployers.length - 1]
+
+                        return currentEmployer.ratioType === RatioType.YEARLY
+                      },
+                      placeholder: '1%',
+                      variant: 'number',
+                      width: 'half',
+                    }),
+
+                    // buildSelectField({
+                    //   id: 'ratio',
+                    //   dataTestId: 'employment-ratio',
+                    //   title: parentalLeaveFormMessages.employer.ratio,
+                    //   placeholder:
+                    //     parentalLeaveFormMessages.employer.ratioPlaceholder,
+                    //   options: Array(100)
+                    //     .fill(undefined)
+                    //     .map((_, idx, array) => ({
+                    //       value: `${array.length - idx}`,
+                    //       label: `${array.length - idx}%`,
+                    //     })),
+                    // }),
+                  ],
+                }),
+              ],
+            }),
           ],
         }),
         buildSubSection({

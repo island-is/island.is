@@ -11,6 +11,7 @@ import {
   NO,
   ApplicationType,
   Employment,
+  RatioType,
 } from './constants'
 import {
   ApplicantChildCustodyInformation,
@@ -25,7 +26,7 @@ import * as kennitala from 'kennitala'
 import addYears from 'date-fns/addYears'
 import addMonths from 'date-fns/addMonths'
 import addDays from 'date-fns/addDays'
-import { combinedResidenceHistory } from '../types'
+import { combinedResidenceHistory, Employer } from '../types'
 import React from 'react'
 import { useLocale } from '@island.is/localization'
 import { getCountryByCode } from '@island.is/shared/utils'
@@ -97,15 +98,22 @@ export function getApplicationAnswers(answers: Application['answers']) {
     'homeAllowance.housing',
   ) as HomeAllowanceHousing
 
-  const employment = getValueViaPath(
+  const employmentStatus = getValueViaPath(
     answers,
-    'employer.employment',
+    'employment.status',
   ) as Employment
 
   const homeAllowanceChildren = getValueViaPath(
     answers,
     'homeAllowance.children',
   ) as YesOrNo
+
+  const rawEmployers = getValueViaPath(
+    answers,
+    'employment.employers',
+    [],
+  ) as Employer[]
+  const employers = filterValidEmployers(rawEmployers)
 
   return {
     pensionFundQuestion,
@@ -120,7 +128,9 @@ export function getApplicationAnswers(answers: Application['answers']) {
     connectedApplications,
     homeAllowanceHousing,
     homeAllowanceChildren,
-    employment,
+    employmentStatus,
+    employers,
+    rawEmployers,
   }
 }
 
@@ -414,7 +424,7 @@ export function getAttachments(application: Application) {
     homeAllowanceChildren,
     homeAllowanceHousing,
     connectedApplications,
-    employment,
+    employmentStatus,
   } = getApplicationAnswers(answers)
   const earlyRetirement = isEarlyRetirement(answers, externalData)
   const attachments: string[] = []
@@ -442,8 +452,8 @@ export function getAttachments(application: Application) {
   }
 
   // self-employed
-  if (employment === Employment.SELFEMPLOYED) {
-    const selfEmpoyed = answers.employer as selfEmployed
+  if (employmentStatus === Employment.SELFEMPLOYED) {
+    const selfEmpoyed = answers.employment as selfEmployed
     getAttachmentsName(
       selfEmpoyed.selfEmployedAttachment,
       'sjálfstætt starfandi',
@@ -617,4 +627,29 @@ export function childCustodyTableData(application: Application) {
   )
 
   return { data, columns }
+}
+
+interface IncompleteEmployer {
+  email?: string
+  phoneNumber?: string
+  ratioType: RatioType
+}
+
+export const filterValidEmployers = (
+  employers: (IncompleteEmployer | Employer)[],
+): Employer[] => {
+  const filtered = employers
+    .map((employer, index) => ({
+      ...employer,
+      rawIndex: index,
+    }))
+    .filter((employer) => {
+      const hasEmail = !!employer?.email
+      const hasPhoneNumber = !!employer?.phoneNumber
+      const hasRatioType = !!employer.ratioType
+
+      return hasPhoneNumber && hasEmail && hasRatioType
+    })
+
+  return filtered as Employer[]
 }

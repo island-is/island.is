@@ -4,18 +4,18 @@ import { AnswerValidationConstants } from './constants'
 import { fileUpploadPenEarlyFisher } from './answerValidationSections/fileUpploadPenEarlyFisher'
 import { period } from './answerValidationSections/period'
 import { fileUploadHomeAllowance } from './answerValidationSections/fileUploadHomeAllowance'
-import { employer } from './answerValidationSections/employer'
+import { employment } from './answerValidationSections/employment'
 
 const {
   PERIOD,
   FILEUPLOADPENEARLYFISHER,
   FILEUPLOADHOMEALLOWANCE,
-  EMPLOYER,
+  EMPLOYMENT,
 } = AnswerValidationConstants
 
 export const answerValidators: Record<string, AnswerValidator> = {
   [PERIOD]: period,
-  [EMPLOYER]: employer,
+  [EMPLOYMENT]: employment,
   [FILEUPLOADPENEARLYFISHER]: fileUpploadPenEarlyFisher,
   [FILEUPLOADHOMEALLOWANCE]: fileUploadHomeAllowance,
 }

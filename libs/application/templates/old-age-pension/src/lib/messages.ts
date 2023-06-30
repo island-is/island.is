@@ -767,6 +767,13 @@ export const oldAgePensionFormMessage: MessageDir = {
       defaultMessage: 'Vinnuveitendur',
       description: 'Employers',
     },
+    employerDescription: {
+      id: 'oap.application:employer.employerDescription',
+      defaultMessage:
+        'Hver og einn skráður vinnuveitandi þarf að staðfesta starfshlutfall þitt. Þegar þú hefur sent umsóknina verður sendur tölvupóstur og sms til vinnuveitenda. Viðtakendur fá aðgang að umsókninni, en getur einungis séð upplýsingar sem varða starfshlutfall þitt. Ef einhver skráðra vinnuveitenda hafna þarft þú að gera viðeigandi breytingar á umsókninni.',
+      description:
+        'Each registered employer must verify your employment rate. Once you have submitted the application, an email and SMS will be sent to the employers. Recipients get access to the application, but can only see information related to your employment rate. If any of the registered employers reject you, you need to make the appropriate changes to the application.',
+    },
     selfEmployedOrEmployeeTitle: {
       id: 'oap.application:employer.selfEmployedOrEmployeeTitle',
       defaultMessage: 'Sjálfstætt starfandi eða launþegi?',
@@ -788,6 +795,61 @@ export const oldAgePensionFormMessage: MessageDir = {
       id: 'oap.application:employer.employee',
       defaultMessage: 'Launþegi',
       description: 'Employee',
+    },
+    registrationTitle: {
+      id: 'pl.application:employer.registration.title',
+      defaultMessage: 'Skráning vinnuveitanda',
+      description: 'Register an employer',
+    },
+    email: {
+      id: 'pl.application:employer.email',
+      defaultMessage: 'Netfang vinnuveitanda (aðeins eitt netfang leyfilegt)',
+      description: 'Employer email (only one email address allowed)',
+    },
+    emailHeader: {
+      id: 'pl.application:employer.email.header',
+      defaultMessage: 'Netfang',
+      description: 'Email',
+    },
+    phoneNumber: {
+      id: 'pl.application:employer.phone.number',
+      defaultMessage: 'Símanúmer vinnuveitanda ( valfrjálst )',
+      description: "Employer's phone number ( optional )",
+    },
+    phoneNumberHeader: {
+      id: 'pl.application:employer.phone.number.header',
+      defaultMessage: 'Símanúmer',
+      description: 'Phone number',
+    },
+    ratio: {
+      id: 'pl.application:employer.ratio',
+      defaultMessage: 'Starfshlutfall',
+      description: 'Employment ratio',
+    },
+    ratioMonthly: {
+      id: 'pl.application:employer.ratio.monthly',
+      defaultMessage: 'Starfshlutfall á mánuði',
+      description: 'Employment ratio per month',
+    },
+    ratioYearly: {
+      id: 'pl.application:employer.ratio.yearly',
+      defaultMessage: 'Starfshlutfall á ári',
+      description: 'Employment ratio per year',
+    },
+    ratioHeader: {
+      id: 'pl.application:employer.ratio.header',
+      defaultMessage: 'Starfshlutfall',
+      description: 'Ratio',
+    },
+    addEmployerError: {
+      id: 'pl.application:employer.add.error',
+      defaultMessage: 'Nauðsynlegt er að bæta við amk einum vinnuveitanda',
+      description: 'It is required to add at least one employer',
+    },
+    addEmployer: {
+      id: 'pl.application:employer.add',
+      defaultMessage: 'Bæta við vinnuveitanda',
+      description: 'Add an employer',
     },
   }),
 

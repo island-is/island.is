@@ -7,25 +7,29 @@ import { buildError } from './utils'
 
 import isEmpty from 'lodash/isEmpty'
 
-export const employer = (newAnswer: unknown, application: Application) => {
+export const employment = (newAnswer: unknown, application: Application) => {
   const obj = newAnswer as Record<string, Answer>
-  const { EMPLOYER } = AnswerValidationConstants
+  const { EMPLOYMENT } = AnswerValidationConstants
 
-  const { employment } = getApplicationAnswers(application.answers)
+  const { employmentStatus } = getApplicationAnswers(application.answers)
 
   if (
     !(
-      obj.employment === Employment.SELFEMPLOYED ||
-      obj.employment === Employment.EMPLOYEE
-    )
+      obj.status === Employment.SELFEMPLOYED ||
+      obj.status === Employment.EMPLOYEE
+    ) &&
+    !employmentStatus
   ) {
     return buildError(
       validatorErrorMessages.requireAnswer,
-      `${EMPLOYER}.employment`,
+      `${EMPLOYMENT}.status`,
     )
   }
 
-  if (obj.selfEmployedAttachment && employment === Employment.SELFEMPLOYED) {
+  if (
+    obj.selfEmployedAttachment &&
+    employmentStatus === Employment.SELFEMPLOYED
+  ) {
     if (
       isEmpty(
         (obj as { selfEmployedAttachment: unknown[] }).selfEmployedAttachment,
@@ -33,7 +37,7 @@ export const employer = (newAnswer: unknown, application: Application) => {
     ) {
       return buildError(
         validatorErrorMessages.requireAttachment,
-        `${EMPLOYER}.selfEmployedAttachment`,
+        `${EMPLOYMENT}.selfEmployedAttachment`,
       )
     }
   }
