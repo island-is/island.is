@@ -24,7 +24,7 @@ interface Props {
 
 const CaseEmailActionBox = ({ button, input }: Props) => {
   return (
-    <Box dataTestId="caseEmailActionBox">
+    <Box>
       <div>
         <Stack space={2}>
           {input && (
