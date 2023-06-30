@@ -196,7 +196,7 @@ jobs:
         run: ./scripts/ci/patch-nx-json.sh
 
       - name: Start Nx Agent ${{ matrix.agent }}
-        run: npx "@nrwl/nx-cloud@${NX_CLOUD_VERSION}" start-agent
+        run: ./scripts/ci/_nx-cloud.sh start-agent
         env:
           NX_AGENT_NAME: ${{matrix.agent}}
 
@@ -262,7 +262,7 @@ jobs:
       - name: Stop all running agents for this CI run
         # It's important that we always run this step, otherwise in the case of any failures in preceding non-Nx steps, the agents will keep running and waste billable minutes
         if: ${{ always() }}
-        run: npx "@nrwl/nx-cloud@${NX_CLOUD_VERSION}" stop-all-agents
+        run: ./scripts/ci/_nx-cloud.sh stop-all-agents
 
       - name: fix hanging post job
         run: git config --local --get remote.origin.url
