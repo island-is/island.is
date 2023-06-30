@@ -146,7 +146,7 @@ jobs:
     strategy:
       matrix:
         agent:
-          - ${{fromJson(needs.set-agents.outputs.matrix)}}
+          - ${{fromJson(needs.prepare.outputs.matrix)}}
     defaults:
       run:
         working-directory: ${{ github.workspace }}
