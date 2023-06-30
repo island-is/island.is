@@ -251,7 +251,7 @@ const ViewOwnedList = () => {
                       }
                     >
                       <Box>
-                        <Text variant="h1" paddingTop={5}>
+                        <Text variant="h1" paddingTop={5} paddingBottom={2}>
                           {formatMessage(m.modalStartCollection)}
                         </Text>
                         <Text paddingBottom={3}>
