@@ -5,7 +5,6 @@ import * as mixins from '../Input/Input.mixins'
 export const root = style({
   position: 'relative',
   minWidth: '250px',
-  zIndex: 3,
 })
 
 export const backgroundBlue = style({
@@ -308,6 +307,7 @@ globalStyle(
   `${root}.island-ui-datepicker .react-datepicker-popper[data-placement^="bottom"]`,
   {
     top: '-7px !important',
+    zIndex: 3,
   },
 )
 
