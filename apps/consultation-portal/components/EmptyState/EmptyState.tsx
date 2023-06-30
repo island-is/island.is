@@ -3,11 +3,7 @@ import localization from './EmptyState.json'
 
 const EmptyState = () => {
   const loc = localization.emptyState
-  return (
-    <Text variant="h4">
-      {loc.text}
-    </Text>
-  )
+  return <Text variant="h4">{loc.text}</Text>
 }
 
 export default EmptyState
