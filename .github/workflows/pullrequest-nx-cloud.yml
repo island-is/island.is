@@ -32,6 +32,9 @@ env:
   NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
   USE_NX_CLOUD: ${{ contains(github.event.pull_request.labels.*.name, 'nx-cloud') }}
   MAX_JOBS: 3
+  MAX_TASKS_PER_AGENT: 5
+  PARALLEL_TASKS: 3
+  MAX_AGENTS: 10
   BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
   NX_BRANCH: ${{ github.head_ref || github.ref_name }}
   NX_TARGETS: 'lint build'
@@ -114,7 +117,7 @@ jobs:
         # Turn the number-of-agents input into a JSON structure which is compatible with a Github job matrix strategy
         run: |
           NX_AFFECTED_PROJECTS_COUNT=$(npx nx print-affected --base=$BASE --head=$HEAD --select=projects | tr ',' ' ' | wc -w)
-          AGENTS_COUNT=$(node -e "console.log(Math.ceil($NX_AFFECTED_PROJECTS_COUNT / $MAX_JOBS))
+          AGENTS_COUNT=$(node ./scripts/ci/_num_agents.js $NX_AFFECTED_PROJECTS_COUNT $MAX_AGENTS $MAX_TASKS_PER_AGENT | jq -r '.chunksCount')
           AGENTS_JSON_ARRAY=$(node -e "console.log(JSON.stringify(Array.from(new Array($AGENTS_COUNT)).map((_, i) => i + 1)));")
 
           echo "affected projects count: $NX_AFFECTED_PROJECTS_COUNT"
@@ -175,6 +178,10 @@ jobs:
       - name: Untar generated files
         run: tar zxvf generated_files.tar.gz
 
+      # NOTE: NX_TASK_RUNNER env is not working in NX v13, we need to set 'nx-cloud' as the task runner by patching nx.json
+      - name: Patch nx.json to set nx-cloud
+        run: ./scripts/ci/patch-nx-json.sh
+
       - name: Start Nx Agent ${{ matrix.agent }}
         run: npx nx-cloud start-agent
         env:
@@ -229,6 +236,10 @@ jobs:
 
       - name: Untar generated files
         run: tar zxvf generated_files.tar.gz
+
+      # NOTE: NX_TASK_RUNNER env is not working in NX v13, we need to set 'nx-cloud' as the task runner by patching nx.json
+      - name: Patch nx.json to set nx-cloud
+        run: ./scripts/ci/patch-nx-json.sh
 
       - name: Run NX targets
         run: |

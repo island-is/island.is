@@ -1,5 +1,5 @@
 #!/bin/bash
-set -euo pipefail
+set -euox pipefail
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
@@ -17,14 +17,13 @@ MAX_JOBS=${MAX_JOBS:-2}
 npx nx connect-to-nx-cloud
 npx nx-cloud start-ci-run --stop-agents-after="build"
 
-# pids=()
 
 for target in "$@"
 do
   npx nx affected --base="$BASE" --head="$HEAD" --target="$target" --parallel="$MAX_JOBS" &
-  # pids+=($!)
 done
 
+wait
 # # run all commands in parallel and bail if one of them fails
 # for pid in "${pids[@]}"; do
 #   if ! wait "$pid"; then
