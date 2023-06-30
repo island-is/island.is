@@ -3,7 +3,7 @@
 set -eou pipefail
 
 node_version=$(node --version)
-nx_version=$(nx --version)
+nx_version=$(yarn nx --version)
 yarn_version=$(yarn --version)
 npm_version=$(npm --version)
 npx_version=$(npx --version)
