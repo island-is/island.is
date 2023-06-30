@@ -9891,6 +9891,21 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@nrwl/nx-cloud@npm:14.3.0":
+  version: 14.3.0
+  resolution: "@nrwl/nx-cloud@npm:14.3.0"
+  dependencies:
+    axios: ^0.21.1
+    chalk: 4.1.0
+    node-machine-id: ^1.1.12
+    strip-json-comments: ^3.1.1
+    tar: 6.1.11
+  bin:
+    nx-cloud: bin/nx-cloud.js
+  checksum: 290e7ff832cd436c73f46e49367e88491c219a015c7eab7f81fe03ce7acecd3fb1c64c94bb3e53e85beba152f542f82852be29cdbfe5b0675386f299a47194f0
+  languageName: node
+  linkType: hard
+
 "@nrwl/react@npm:13.10.5":
   version: 13.10.5
   resolution: "@nrwl/react@npm:13.10.5"
@@ -30588,6 +30603,7 @@ __metadata:
     "@nrwl/nest": 13.10.5
     "@nrwl/next": 13.10.5
     "@nrwl/node": 13.10.5
+    "@nrwl/nx-cloud": 14.3.0
     "@nrwl/react": 13.10.5
     "@nrwl/storybook": 13.10.5
     "@nrwl/web": 13.10.5
@@ -37367,6 +37383,13 @@ __metadata:
     util: ^0.11.0
     vm-browserify: ^1.0.1
   checksum: 41fa7927378edc0cb98a8cc784d3f4a47e43378d3b42ec57a23f81125baa7287c4b54d6d26d062072226160a3ce4d8b7a62e873d2fb637aceaddf71f5a26eca0
+  languageName: node
+  linkType: hard
+
+"node-machine-id@npm:^1.1.12":
+  version: 1.1.12
+  resolution: "node-machine-id@npm:1.1.12"
+  checksum: e23088a0fb4a77a1d6484b7f09a22992fd3e0054d4f2e427692b4c7081e6cf30118ba07b6113b6c89f1ce46fd26ec5ab1d76dcaf6c10317717889124511283a5
   languageName: node
   linkType: hard
 

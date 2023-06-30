@@ -30,7 +30,7 @@
           "schemas/codegen"
         ],
         "cacheDirectory": ".cache/nx",
-        "parallel": 1
+        "parallel": 3
       }
     },
     "docker-test": {

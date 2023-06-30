@@ -32,9 +32,9 @@ env:
   NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
   USE_NX_CLOUD: ${{ contains(github.event.pull_request.labels.*.name, 'nx-cloud') }}
   MAX_JOBS: 3
-  MAX_TASKS_PER_AGENT: 5
+  MAX_TASKS_PER_AGENT: 3
   PARALLEL_TASKS: 3
-  MAX_AGENTS: 10
+  MAX_AGENTS: 15
   BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
   NX_BRANCH: ${{ github.head_ref || github.ref_name }}
   NX_TARGETS: 'lint build'
@@ -169,9 +169,7 @@ jobs:
           echo "HEAD=$NX_HEAD" >> $GITHUB_ENV
 
       - name: Setup yarn
-        run: |
-          echo @nrwl/nx-cloud@"${NX_CLOUD_VERSION}"
-          npm install -g yarn
+        run: npm install -g yarn
 
       - name: Cache for NodeJS dependencies - host OS
         id: node-modules
@@ -197,9 +195,6 @@ jobs:
 
       - name: Untar generated files
         run: tar zxvf generated_files.tar.gz
-
-      - name: Setup @nrwl/nx-cloud
-        run: yarn add -D @nrwl/nx-cloud@"${NX_CLOUD_VERSION}"
 
       - name: Start Nx Agent ${{ matrix.agent }}
         run: npx nx-cloud start-agent
@@ -233,6 +228,7 @@ jobs:
       - run: |
           echo "BASE=$NX_BASE" >> $GITHUB_ENV
           echo "HEAD=$NX_HEAD" >> $GITHUB_ENV
+
       - name: Setup yarn
         run: npm install -g yarn
 
@@ -260,9 +256,6 @@ jobs:
 
       - name: Untar generated files
         run: tar zxvf generated_files.tar.gz
-
-      - name: Setup @nrwl/nx-cloud
-        run: yarn add -D @nrwl/nx-cloud@"${NX_CLOUD_VERSION}"
 
       - name: Run NX targets
         run: |

@@ -18,7 +18,7 @@ pids=()
 
 for target in "$@"
 do
-  npx nx affected --base="$BASE" --head="$HEAD" --target="$target" --parallel="$MAX_JOBS"
+  npx nx affected --base="$BASE" --head="$HEAD" --target="$target" --parallel="$MAX_JOBS" &
   pids+=($!)
 done
 
