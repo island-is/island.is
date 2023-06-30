@@ -41,7 +41,7 @@ env:
   NX_VERBOSE_LOGGING: true
   NX_CLOUD_DISTRIBUTED_EXECUTION: true
   NX_CLOUD_DISTRIBUTED_EXECUTION_STOP_AGENTS_ON_FAILURE: true
-  NX_CLOUD_VERSION: 14.7.0
+  NX_CLOUD_VERSION: 14.3.0
 jobs:
   prepare:
     runs-on: ec2-runners
@@ -164,7 +164,9 @@ jobs:
           echo "BASE=$NX_BASE" >> $GITHUB_ENV
           echo "HEAD=$NX_HEAD" >> $GITHUB_ENV
       - name: Setup yarn
-        run: npm install -g yarn @nrwl/nx-cloud@"${NX_CLOUD_VERSION}"
+        run: |
+          echo @nrwl/nx-cloud@"${NX_CLOUD_VERSION}"
+          npm install -g yarn @nrwl/nx-cloud@"${NX_CLOUD_VERSION}"
 
       - name: Cache for NodeJS dependencies - host OS
         id: node-modules
@@ -224,7 +226,9 @@ jobs:
           echo "BASE=$NX_BASE" >> $GITHUB_ENV
           echo "HEAD=$NX_HEAD" >> $GITHUB_ENV
       - name: Setup yarn
-        run: npm install -g yarn @nrwl/nx-cloud@"${NX_CLOUD_VERSION}"
+        run: |
+          echo @nrwl/nx-cloud@"${NX_CLOUD_VERSION}"
+          npm install -g yarn @nrwl/nx-cloud@"${NX_CLOUD_VERSION}"
 
       - name: Cache for NodeJS dependencies - host OS
         id: node-modules
