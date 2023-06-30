@@ -42,7 +42,7 @@ env:
   NX_CLOUD_DISTRIBUTED_EXECUTION: true
   NX_CLOUD_DISTRIBUTED_EXECUTION_STOP_AGENTS_ON_FAILURE: true
 jobs:
-  nx-prepare:
+  prepare:
     runs-on: ec2-runners
     container:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
@@ -138,7 +138,7 @@ jobs:
           echo "affected=$NX_AFFECTED_PROJECTS_COUNT" >> $GITHUB_OUTPUT
 
   nx-cloud-agent:
-    needs: nx-prepare
+    needs: prepare
     runs-on: ec2-runners
     container:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
@@ -152,7 +152,7 @@ jobs:
         working-directory: ${{ github.workspace }}
         # Specify shell to help normalize across different operating systems
         shell: bash
-    if: needs.nx-prepare.outputs.affected > 0 && contains(github.event.pull_request.labels.*.name, 'nx-cloud')
+    if: needs.prepare.outputs.affected > 0 && contains(github.event.pull_request.labels.*.name, 'nx-cloud')
     steps:
       - uses: actions/checkout@v3
         with:
@@ -203,7 +203,7 @@ jobs:
         run: git config --local --get remote.origin.url
 
   nx-cloud-main:
-    needs: nx-prepare
+    needs: prepare
     runs-on: ec2-runners
     container:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
@@ -213,7 +213,7 @@ jobs:
         working-directory: ${{ github.workspace }}
         # Specify shell to help normalize across different operating systems
         shell: bash
-    if: needs.nx-prepare.outputs.affected > 0 && contains(github.event.pull_request.labels.*.name, 'nx-cloud')
+    if: needs.prepare.outputs.affected > 0 && contains(github.event.pull_request.labels.*.name, 'nx-cloud')
     steps:
       - uses: actions/checkout@v3
         with:
