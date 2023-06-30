@@ -95,7 +95,7 @@ jobs:
         uses: ./.github/actions/cache
         with:
           path: node_modules
-          key: ${{ env.NODE_MODULES_HASH }}-yarn
+          key: ${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}-yarn
 
       - name: Check cache success
         run: '[[ "${{ steps.node-modules.outputs.success }}" != "false" ]] || exit 1'
@@ -106,7 +106,7 @@ jobs:
         uses: ./.github/actions/cache
         with:
           path: generated_files.tar.gz
-          key: ${{ env.GENERATED_FILES_KEY }}
+          key: ${{ steps.calculate_generated_files_cache_key.outputs.generated-files-cache-key }}
 
       - name: Check cache success
         run: '[[ "${{ steps.generated-files-cache.outputs.success }}" != "false" ]] || exit 1'
