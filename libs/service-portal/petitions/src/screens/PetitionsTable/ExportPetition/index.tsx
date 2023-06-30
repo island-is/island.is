@@ -1,13 +1,12 @@
 import { FC, ReactElement } from 'react'
 import { Box, DropdownMenu, Button } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import * as styles from './styles.css'
+import * as styles from '../styles.css'
 import { m } from '../../../lib/messages'
 import { downloadCSV } from './downloadCSV'
 import copyToClipboard from 'copy-to-clipboard'
 import { toast } from 'react-toastify'
 import { usePDF } from '@react-pdf/renderer'
-import { menuItem } from './styles.css'
 import MyPdfDocument from './DownloadPdf'
 import {
   EndorsementList,
@@ -93,7 +92,7 @@ const DropdownExport: FC<Props> = ({
                 key={petitionId}
                 href={document.url ?? ''}
                 download={'Undirskriftalisti.pdf'}
-                className={menuItem}
+                className={styles.menuItem}
               >
                 {formatMessage(m.asPdf)}
               </a>

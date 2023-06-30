@@ -15,6 +15,7 @@ import {
   EndorsementList,
   PaginatedEndorsementResponse,
 } from '@island.is/api/schema'
+import { hideInMobile } from './styles.css'
 
 const PetitionsTable = (data: {
   canEdit: boolean
@@ -43,16 +44,22 @@ const PetitionsTable = (data: {
 
   return (
     <Box>
-      <Box display="flex" justifyContent="spaceBetween" marginBottom={2}>
+      <Box
+        display={['block', 'flex']}
+        justifyContent="spaceBetween"
+        marginBottom={2}
+      >
         <Text variant="h3">{formatMessage(m.petitionsOverview)}</Text>
-        {data.canEdit && (
-          <DropdownExport
-            petition={data.petition}
-            petitionSigners={data.petitionSigners}
-            petitionId={data.listId}
-            onGetCSV={() => getCSV(petitionSigners, 'Undirskriftalisti')}
-          />
-        )}
+        <Box className={hideInMobile}>
+          {data.canEdit && (
+            <DropdownExport
+              petition={data.petition}
+              petitionSigners={data.petitionSigners}
+              petitionId={data.listId}
+              onGetCSV={() => getCSV(petitionSigners, 'Undirskriftalisti')}
+            />
+          )}
+        </Box>
       </Box>
       <Stack space={3}>
         <T.Table>
@@ -78,8 +85,8 @@ const PetitionsTable = (data: {
                       : formatMessage(m.noName)}
                   </T.Data>
                   {data.canEdit && (
-                    <T.Data>
-                      {petition.meta.fullName ? petition.meta.locality : ''}
+                    <T.Data text={{ variant: 'medium' }}>
+                      {petition.meta.locality ? petition.meta.locality : ''}
                     </T.Data>
                   )}
                 </T.Row>
