@@ -207,7 +207,7 @@ const PetitionView: Screen<PetitionViewProps> = ({ namespace }) => {
                   return (
                     <T.Row key={petition.id}>
                       <T.Data text={{ variant: 'medium' }}>
-                        {formatDate(list.created)}
+                        {formatDate(petition.created)}
                       </T.Data>
                       <T.Data text={{ variant: 'medium' }}>
                         {petition.meta.fullName
