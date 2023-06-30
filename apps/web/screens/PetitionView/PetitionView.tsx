@@ -160,7 +160,7 @@ const PetitionView: Screen<PetitionViewProps> = ({ namespace }) => {
               </Text>
             </Stack>
             <GridRow>
-              <GridColumn span="4/12">
+              <GridColumn span={['12/12', '4/12']}>
                 <Text variant="h4" marginBottom={0}>
                   {n('listOpenFromTil', 'Gildistímabil lista:')}
                 </Text>
@@ -170,12 +170,14 @@ const PetitionView: Screen<PetitionViewProps> = ({ namespace }) => {
                     formatDate(list.closedDate)}
                 </Text>
               </GridColumn>
-              <GridColumn span="4/12">
-                <Text variant="h4">{n('listOwner', 'Ábyrgðarmaður:')}</Text>
+              <GridColumn span={['12/12', '4/12']}>
+                <Text variant="h4" marginTop={[2, 0]}>
+                  {n('listOwner', 'Ábyrgðarmaður:')}
+                </Text>
                 <Text variant="default">{list.ownerName}</Text>
               </GridColumn>
-              <GridColumn span="4/12">
-                <Text variant="h4">
+              <GridColumn span={['12/12', '4/12']}>
+                <Text variant="h4" marginTop={[2, 0]}>
                   {n('signedPetitions', 'Fjöldi undirskrifta:')}
                 </Text>
                 <Text variant="default">{listEndorsements.totalCount}</Text>

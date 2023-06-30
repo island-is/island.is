@@ -18,11 +18,9 @@ import format from 'date-fns/format'
 import { EndorsementList } from '../../types/schema'
 import Skeleton from './Skeleton'
 import Illustration from '../../assets/Illustration'
-import { useNavigate } from 'react-router-dom'
 
 const SignPetitionView: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
-  const navigate = useNavigate()
 
   const listId = (application.externalData?.createEndorsementList.data as any)
     .id
@@ -96,7 +94,7 @@ const SignPetitionView: FC<FieldBaseProps> = ({ application }) => {
                 <Text>{petitionList?.description}</Text>
               </Box>
 
-              <Box display={'flex'}>
+              <Box display={['block', 'flex']}>
                 <Box width="half">
                   <Text variant="h4">{formatMessage(m.listOpenTil)}</Text>
                   {petitionList && petitionList.closedDate && (
@@ -105,14 +103,14 @@ const SignPetitionView: FC<FieldBaseProps> = ({ application }) => {
                     </Text>
                   )}
                 </Box>
-                <Box width="half">
+                <Box width="half" marginTop={[2, 0]}>
                   <Text variant="h4">{formatMessage(m.listOwner)}</Text>
                   <Text>{petitionList.ownerName}</Text>
                 </Box>
               </Box>
 
               <Box marginTop={4}>
-                <Box width="half" marginBottom={2}>
+                <Box marginBottom={2}>
                   <Input
                     label={formatMessage(m.name)}
                     name={formatMessage(m.name)}
@@ -120,7 +118,7 @@ const SignPetitionView: FC<FieldBaseProps> = ({ application }) => {
                     readOnly
                   />
                 </Box>
-                <Box marginTop={6} width="half">
+                <Box marginTop={[0, 6]}>
                   <CheckboxController
                     id="showName"
                     large={false}
