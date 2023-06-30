@@ -56,11 +56,11 @@ export const CaseOverview = ({ chosenCase }: CaseOverviewProps) => {
           <CaseStatusCard {...chosenCase} />
         )}
       <Stack space={[3, 3, 3, 4, 4]}>
-        <Box dataTestId="shortDescription">
+        <Box dataTestId="short-description">
           <Text variant="h4">{loc.shortDescriptionTitle}</Text>
           <Text variant="default">{chosenCase?.shortDescription}</Text>
         </Box>
-        <Box dataTestId="detailedDescription">
+        <Box>
           <Text variant="h4">{loc.detailedDescriptionTitle}</Text>
           <Text variant="default" whiteSpace="preWrap">
             {chosenCase.detailedDescription}
