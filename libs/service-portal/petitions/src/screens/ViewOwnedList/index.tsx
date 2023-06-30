@@ -126,7 +126,7 @@ const ViewOwnedList = () => {
                     <Text variant="h4">{formatMessage(m.listOwner)}</Text>
                     <Text variant="default">{petition?.ownerName}</Text>
                   </Box>
-                  <Box>
+                  <Box marginTop={[2, 0]}>
                     <Text variant="h4">
                       {formatMessage(m.listHowManySigned)}
                     </Text>
@@ -151,7 +151,11 @@ const ViewOwnedList = () => {
                   </Text>
                 </Box>
 
-                <Box display="flex" marginBottom={8} alignItems="center">
+                <Box
+                  display={['block', 'flex']}
+                  marginBottom={8}
+                  alignItems="center"
+                >
                   <DatePicker
                     appearInline
                     label={formatMessage(m.changeCloseDate)}
@@ -161,8 +165,12 @@ const ViewOwnedList = () => {
                     handleChange={(date) => setSelectedDateToOpenList(date)}
                     minDate={new Date()}
                   />
-                  <Box display={'flex'}>
-                    <Box marginX={3}>
+                  <Box
+                    display={'flex'}
+                    marginTop={[3, 0]}
+                    justifyContent={['spaceBetween']}
+                  >
+                    <Box marginX={[0, 3]}>
                       <Button
                         iconType="outline"
                         onClick={() => {
