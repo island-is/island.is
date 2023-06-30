@@ -31,10 +31,10 @@ while [[ $# -gt 0 ]]; do
       search_dirs=("$apps_dir" "$libs_dir")
       shift
       ;;
-    --num-dirs)
+    --num)
       # Specify the number of src directories to search
       if [[ $# -lt 2 || ! $2 =~ ^[0-9]+$ ]]; then
-        echo "Please provide a valid number with the --num-dirs flag."
+        echo "Please provide a valid number with the --num flag."
         exit 1
       fi
       num_dirs=$2
