@@ -85,8 +85,8 @@ const PetitionsTable = (data: {
                       : formatMessage(m.noName)}
                   </T.Data>
                   {data.canEdit && (
-                    <T.Data>
-                      {petition.meta.fullName ? petition.meta.locality : ''}
+                    <T.Data text={{ variant: 'medium' }}>
+                      {petition.meta.locality ? petition.meta.locality : ''}
                     </T.Data>
                   )}
                 </T.Row>
