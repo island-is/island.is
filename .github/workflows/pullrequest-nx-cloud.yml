@@ -49,7 +49,10 @@ jobs:
     # GitHub's default timeout is 360 minutes
     timeout-minutes: 360
     outputs:
+      node-modules-hash: ${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}
+      generated-files-cache-key: ${{ steps.calculate_generated_files_cache_key.outputs.generated-files-cache-key }}
       matrix: ${{ steps.set-matrix.outputs.matrix }}
+      affected: ${{ steps.set-matrix.outputs.affected }}
     if: contains(github.event.pull_request.labels.*.name, 'nx-cloud')
     steps:
       - uses: actions/checkout@v3
@@ -132,6 +135,7 @@ jobs:
           echo "agents json: $AGENTS_JSON_ARRAY"
 
           echo "matrix=$AGENTS_JSON_ARRAY" >> $GITHUB_OUTPUT
+          echo "affected=$NX_AFFECTED_PROJECTS_COUNT" >> $GITHUB_OUTPUT
 
   nx-cloud-agent:
     needs: nx-prepare
@@ -148,7 +152,7 @@ jobs:
         working-directory: ${{ github.workspace }}
         # Specify shell to help normalize across different operating systems
         shell: bash
-    if: contains(github.event.pull_request.labels.*.name, 'nx-cloud')
+    if: needs.nx-prepare.outputs.affected > 0 && contains(github.event.pull_request.labels.*.name, 'nx-cloud')
     steps:
       - uses: actions/checkout@v3
         with:
@@ -209,7 +213,7 @@ jobs:
         working-directory: ${{ github.workspace }}
         # Specify shell to help normalize across different operating systems
         shell: bash
-    if: contains(github.event.pull_request.labels.*.name, 'nx-cloud')
+    if: needs.nx-prepare.outputs.affected > 0 && contains(github.event.pull_request.labels.*.name, 'nx-cloud')
     steps:
       - uses: actions/checkout@v3
         with:
