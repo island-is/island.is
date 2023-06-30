@@ -11,7 +11,6 @@ test.describe('Consultation portal authenticated', () => {
 
   const checkIfLoggedOutOrLoggedIn = async (page: Page) => {
     await page.goto(icelandicAndNoPopupUrl(URL))
-    await page.getByTestId('menu-login-btn').click()
     const loggedOut = page.getByTestId('menu-login-btn')
     const loggedIn = page.getByRole('button', { name: 'Gervimaður Afríka' })
 
@@ -30,15 +29,13 @@ test.describe('Consultation portal authenticated', () => {
   test.beforeAll(async ({ browser }) => {
     context = await session({
       browser: browser,
-      storageState:
-        'consultation-auth.json',
+      storageState: 'consultation-auth.json',
       idsLoginOn: false,
       homeUrl: URL,
       phoneNumber: '0103019',
     })
     const page = await context.newPage()
     await checkIfLoggedOutOrLoggedIn(page)
-    await page.waitForURL(icelandicAndNoPopupUrl(URL))
   })
 
   test.afterAll(async () => {
@@ -70,6 +67,7 @@ test.describe('Consultation portal authenticated', () => {
         name: 'Skrá mig inn',
       }),
     ).toHaveCount(0)
+
     await page.close()
   })
 

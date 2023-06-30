@@ -40,10 +40,11 @@ test.describe('Consultation portal unathenticated', () => {
     await expect(page.getByTestId('subscriptions-title')).toBeVisible()
     await expect(page.getByTestId('tab-content')).toHaveCount(0)
     await expect(page.getByTestId('action-card')).toBeVisible()
-    const loginLink = page.getByRole('button', {
-      name: 'Skrá mig inn',
-    })
-    loginLink.click()
+    page
+      .getByRole('button', {
+        name: 'Skrá mig inn',
+      })
+      .click()
     await page.waitForURL(authLink)
 
     await page.close()
@@ -56,10 +57,11 @@ test.describe('Consultation portal unathenticated', () => {
     await page.getByTestId('subscriptions-btn').click()
     await expect(page.getByTestId('tab-content')).toHaveCount(0)
 
-    const unsubscribeLink = page.getByRole('link', {
-      name: 'Hægt er að afskrá sig hér',
-    })
-    await unsubscribeLink.click()
+    page
+      .getByRole('link', {
+        name: 'Hægt er að afskrá sig hér',
+      })
+      .click()
     await page.waitForURL(`**/minaraskriftir`)
     await expect(page.getByTestId('tab-content')).toHaveCount(0)
     await page.waitForURL(authLink)
@@ -73,10 +75,11 @@ test.describe('Consultation portal unathenticated', () => {
 
     await page.getByTestId('advices-btn').click()
     await expect(page.getByTestId('action-card')).toBeVisible()
-    const loginLink = page.getByRole('button', {
-      name: 'Skrá mig inn',
-    })
-    loginLink.click()
+    page
+      .getByRole('button', {
+        name: 'Skrá mig inn',
+      })
+      .click()
     await page.waitForURL(authLink)
 
     await page.close()
@@ -86,8 +89,7 @@ test.describe('Consultation portal unathenticated', () => {
     const page = await context.newPage()
     await page.goto(icelandicAndNoPopupUrl(URL))
 
-    const loginBtn = page.getByTestId('menu-login-btn')
-    loginBtn.click()
+    page.getByTestId('menu-login-btn').click()
     await page.waitForURL(authLink)
 
     await page.close()
