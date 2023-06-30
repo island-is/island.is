@@ -56,7 +56,6 @@ export class DrivingLicenseDuplicateService extends BaseTemplateApiService {
     orderId?: string
   }> {
     const { answers } = application
-    const nationalId = application.applicant
     const isPayment = await this.sharedTemplateAPIService.getPaymentStatus(
       auth,
       application.id,
@@ -68,13 +67,14 @@ export class DrivingLicenseDuplicateService extends BaseTemplateApiService {
       }
     }
 
-    // TODO: add reason to duplicate submission?
-    // Currently we are tracking "stolen" vs "lost" in the application
-    // Does this need to be tracked in the license system?
     await this.drivingLicenseService
       .drivingLicenseDuplicateSubmission({
         districtId: parseInt(answers.district.toString(), 10),
-        ssn: nationalId,
+        token: auth.authorization,
+        // Always true since submission doesn't happen before
+        // user checks the required field which states
+        // that the license is lost or stolen
+        stolenOrLost: true,
       })
       .catch(() => {
         throw Error('Error submitting application to Samgöngustofa')
