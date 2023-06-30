@@ -218,6 +218,10 @@ export const serviceSetup = (services: {
           'clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379',
         ]),
       },
+      XROAD_RSK_PROCURING_SCOPE: json([
+        '@rsk.is/prokura',
+        '@rsk.is/prokura:admin',
+      ]),
     })
 
     .secrets({

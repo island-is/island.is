@@ -1,0 +1,42 @@
+{
+  "root": "libs/clients/rsk/relationships",
+  "sourceRoot": "libs/clients/rsk/relationships/src",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "libs/clients/rsk/relationships/**/*.{ts,tsx,js,jsx}"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/clients/rsk/relationships"],
+      "options": {
+        "jestConfig": "libs/clients/rsk/relationships/jest.config.js",
+        "passWithNoTests": true
+      }
+    },
+    "update-openapi-document": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": [
+          "curl -H \"Accept: application/json\" -H \"X-Road-Client: IS-DEV/GOV/10000/island-is-client\" \"http://localhost:8081/r1/IS-DEV/GOV/10006/Skatturinn/getOpenAPI?serviceCode=relationships-v1\" | jq > src/clientConfig.json"
+        ],
+        "parallel": false,
+        "cwd": "libs/clients/rsk/relationships"
+      }
+    },
+    "schemas/external-openapi-generator": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": [
+          "yarn openapi-generator -o libs/clients/rsk/relationships/gen/fetch -i libs/clients/rsk/relationships/src/clientConfig.json"
+        ]
+      }
+    }
+  },
+  "tags": ["lib:client", "scope:client"]
+}

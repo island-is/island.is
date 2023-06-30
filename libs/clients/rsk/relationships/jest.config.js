@@ -1,5 +1,5 @@
 module.exports = {
-  displayName: 'clients-rsk-procuring',
+  displayName: 'clients-rsk-relationships',
   preset: './jest.preset.js',
   rootDir: '../../../..',
   roots: [__dirname],
@@ -11,5 +11,5 @@ module.exports = {
     '^.+\\.[tj]sx?$': 'ts-jest',
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
-  coverageDirectory: '<rootDir>/coverage/libs/clients/rsk/procuring',
+  coverageDirectory: '<rootDir>/coverage/libs/clients/rsk/relationships',
 }

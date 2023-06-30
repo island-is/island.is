@@ -8,28 +8,28 @@ import {
   XRoadConfig,
 } from '@island.is/nest/config'
 import { Configuration } from '../../gen/fetch'
-import { RskProcuringClientConfig } from './RskProcuringClientConfig'
+import { RskRelationshipsClientConfig } from './RskRelationshipsClientConfig'
 
 import { createRedisCacheManager } from '@island.is/cache'
 
-export const RskProcuringConfigurationProvider = {
+export const RskRelationshipsConfigurationProvider = {
   provide: Configuration,
   // Necessary because of cache-manager.
   // eslint-disable-next-line local-rules/no-async-module-init
   useFactory: async (
-    config: ConfigType<typeof RskProcuringClientConfig>,
+    config: ConfigType<typeof RskRelationshipsClientConfig>,
     xRoadConfig: ConfigType<typeof XRoadConfig>,
     idsClientConfig: ConfigType<typeof IdsClientConfig>,
   ) => {
     return new Configuration({
       fetchApi: createEnhancedFetch({
-        name: 'clients-rsk-procuring',
+        name: 'clients-rsk-relationships',
         cache:
           config.redis.nodes.length === 0
             ? undefined
             : {
                 cacheManager: await createRedisCacheManager({
-                  name: 'clients-rsk-procuring',
+                  name: 'clients-rsk-relationships',
                   nodes: config.redis.nodes,
                   ssl: config.redis.ssl,
                   noPrefix: true,
@@ -54,5 +54,9 @@ export const RskProcuringConfigurationProvider = {
       },
     })
   },
-  inject: [RskProcuringClientConfig.KEY, XRoadConfig.KEY, IdsClientConfig.KEY],
+  inject: [
+    RskRelationshipsClientConfig.KEY,
+    XRoadConfig.KEY,
+    IdsClientConfig.KEY,
+  ],
 }
