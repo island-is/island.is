@@ -41,6 +41,7 @@ env:
   NX_VERBOSE_LOGGING: true
   NX_CLOUD_DISTRIBUTED_EXECUTION: true
   NX_CLOUD_DISTRIBUTED_EXECUTION_STOP_AGENTS_ON_FAILURE: true
+  NX_CLOUD_VERSION: 14.3.0
 jobs:
   prepare:
     runs-on: ec2-runners
@@ -195,7 +196,7 @@ jobs:
         run: ./scripts/ci/patch-nx-json.sh
 
       - name: Start Nx Agent ${{ matrix.agent }}
-        run: npx nx-cloud start-agent
+        run: npx "@nrwl/nx-cloud@${NX_CLOUD_VERSION}" start-agent
         env:
           NX_AGENT_NAME: ${{matrix.agent}}
 

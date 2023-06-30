@@ -15,7 +15,7 @@ source "$DIR"/_common.sh
 MAX_JOBS=${MAX_JOBS:-2}
 
 npx nx connect-to-nx-cloud
-npx nx-cloud start-ci-run --stop-agents-after="build"
+npx "@nrwl/nx-cloud@${NX_CLOUD_VERSION}" start-ci-run --stop-agents-after="build"
 
 
 for target in "$@"
