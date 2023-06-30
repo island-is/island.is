@@ -300,7 +300,7 @@ export const mapDocument = (
         slices.push(safelyMapSliceUnion(block.data.target))
         break
       case BLOCKS.EMBEDDED_ASSET:
-        if (block.data.target.fields?.file) {
+        if (block.data.target?.fields?.file) {
           block.data.target.fields.file.details?.image
             ? slices.push(mapImage(block.data.target))
             : slices.push(mapAsset(block.data.target))
