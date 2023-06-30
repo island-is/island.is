@@ -46,7 +46,6 @@ jobs:
     runs-on: ec2-runners
     container:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
-    name: Set agents
     # GitHub's default timeout is 360 minutes
     timeout-minutes: 360
     outputs:
@@ -152,12 +151,12 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          fetch-depth: 0
-      - uses: nrwl/nx-set-shas@v3
-      - name: Set NX sha variables
-        run: |
-          echo "BASE=$NX_BASE" >> $GITHUB_ENV
-          echo "HEAD=$NX_HEAD" >> $GITHUB_ENV
+          fetch-depth: 1
+      # - uses: nrwl/nx-set-shas@v3
+      # - name: Set NX sha variables
+      #   run: |
+      #     echo "BASE=$NX_BASE" >> $GITHUB_ENV
+      #     echo "HEAD=$NX_HEAD" >> $GITHUB_ENV
       - name: Setup yarn
         run: npm install -g yarn @nrwl/nx-cloud@14.3.0 dotenv
 
@@ -213,11 +212,11 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          fetch-depth: 0
-      - uses: nrwl/nx-set-shas@v3
-      - run: |
-          echo "BASE=$NX_BASE" >> $GITHUB_ENV
-          echo "HEAD=$NX_HEAD" >> $GITHUB_ENV
+          fetch-depth: 1
+      # - uses: nrwl/nx-set-shas@v3
+      # - run: |
+      #     echo "BASE=$NX_BASE" >> $GITHUB_ENV
+      #     echo "HEAD=$NX_HEAD" >> $GITHUB_ENV
       - name: Setup yarn
         run: npm install -g yarn @nrwl/nx-cloud@14.3.0 dotenv
 
