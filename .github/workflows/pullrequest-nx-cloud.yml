@@ -167,10 +167,11 @@ jobs:
         run: |
           echo "BASE=$NX_BASE" >> $GITHUB_ENV
           echo "HEAD=$NX_HEAD" >> $GITHUB_ENV
+
       - name: Setup yarn
         run: |
           echo @nrwl/nx-cloud@"${NX_CLOUD_VERSION}"
-          npm install -g yarn @nrwl/nx-cloud@"${NX_CLOUD_VERSION}"
+          npm install -g yarn
 
       - name: Cache for NodeJS dependencies - host OS
         id: node-modules
@@ -197,8 +198,11 @@ jobs:
       - name: Untar generated files
         run: tar zxvf generated_files.tar.gz
 
+      - name: Setup @nrwl/nx-cloud
+        run: yarn add -D @nrwl/nx-cloud@"${NX_CLOUD_VERSION}"
+
       - name: Start Nx Agent ${{ matrix.agent }}
-        run: ./scripts/ci/_nx-cloud.sh start-agent
+        run: npx nx-cloud start-agent
         env:
           NX_AGENT_NAME: ${{matrix.agent}}
 
@@ -230,9 +234,7 @@ jobs:
           echo "BASE=$NX_BASE" >> $GITHUB_ENV
           echo "HEAD=$NX_HEAD" >> $GITHUB_ENV
       - name: Setup yarn
-        run: |
-          echo @nrwl/nx-cloud@"${NX_CLOUD_VERSION}"
-          npm install -g yarn @nrwl/nx-cloud@"${NX_CLOUD_VERSION}"
+        run: npm install -g yarn
 
       - name: Cache for NodeJS dependencies - host OS
         id: node-modules
@@ -259,14 +261,17 @@ jobs:
       - name: Untar generated files
         run: tar zxvf generated_files.tar.gz
 
+      - name: Setup @nrwl/nx-cloud
+        run: yarn add -D @nrwl/nx-cloud@"${NX_CLOUD_VERSION}"
+
       - name: Run NX targets
         run: |
-          ./scripts/ci/_nx-cloud.sh start-ci-run
+          npx nx-cloud start-ci-run
           ./scripts/ci/run-nx-affected.sh lint build
 
       - name: Stop all running agents for this CI run
         if: ${{ always() }}
-        run: ./scripts/ci/_nx-cloud.sh stop-all-agents
+        run: npx nx-cloud stop-all-agents
 
       - name: fix hanging post job
         run: git config --local --get remote.origin.url
