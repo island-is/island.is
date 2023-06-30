@@ -94,17 +94,21 @@ const ViewSignedList = () => {
                   width={'full'}
                 >
                   <Box>
-                    <Text variant="h4">{formatMessage(m.listOpenTil)}</Text>
+                    <Text variant="h4" marginTop={[2, 0]}>
+                      {formatMessage(m.listOpenTil)}
+                    </Text>
                     <Text variant="default">
                       {format(new Date(petition?.closedDate), 'dd.MM.yyyy')}
                     </Text>
                   </Box>
                   <Box>
-                    <Text variant="h4">{formatMessage(m.listOwner)}</Text>
+                    <Text variant="h4" marginTop={[2, 0]}>
+                      {formatMessage(m.listOwner)}
+                    </Text>
                     <Text variant="default">{petition?.ownerName}</Text>
                   </Box>
                   <Box>
-                    <Text variant="h4">
+                    <Text variant="h4" marginTop={[2, 0]}>
                       {formatMessage(m.listHowManySigned)}
                     </Text>
                     <Text variant="default">
@@ -121,7 +125,7 @@ const ViewSignedList = () => {
 
           <Box marginTop={5} marginBottom={10}>
             {hasSigned && isListOpen && (
-              <Box width="half">
+              <Box>
                 <DialogPrompt
                   baseId="dialog"
                   title={formatMessage(m.modalUnsign)}
