@@ -19,3 +19,11 @@ export const menuItem = style({
     },
   },
 })
+
+export const hideInMobile = style({
+  '@media': {
+    [`screen and (max-width: ${theme.breakpoints.sm}px)`]: {
+      display: 'none',
+    },
+  },
+})

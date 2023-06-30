@@ -91,7 +91,6 @@ const SearchAndFilter = ({
                   (item) => parseInt(item.value) === filters?.policyAreas[0],
                 )
               }
-              dataTestId="policyAreasFilter"
             />
           </GridColumn>
           <GridColumn span={['2/12', '2/12', '3/12', '3/12', '3/12']}>
@@ -112,7 +111,6 @@ const SearchAndFilter = ({
                 )
               }
               isClearable
-              dataTestId="institutionsFilter"
             />
           </GridColumn>
         </GridRow>
