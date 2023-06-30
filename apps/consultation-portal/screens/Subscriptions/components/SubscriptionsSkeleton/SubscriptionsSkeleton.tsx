@@ -82,12 +82,12 @@ const SubscriptionsSkeleton = ({
                 <Text
                   variant="h1"
                   color="dark400"
-                  dataTestId="subscriptions_title"
+                  dataTestId="subscriptions-title"
                 >
                   {isMySubscriptions ? locMySubs.title : locSubs.title}
                 </Text>
                 <Stack space={1}>
-                  <Text variant="default" dataTestId="subscriptions_text">
+                  <Text variant="default">
                     {isMySubscriptions ? locMySubs.text : locSubs.text}
                   </Text>
                   {!isMySubscriptions && (
