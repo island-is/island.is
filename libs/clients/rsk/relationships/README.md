@@ -12,8 +12,8 @@ scopes in their access token or token exchange: `@rsk.is/prokura`, `@rsk.is/prok
 
 | Method                          | Scope                                                                       | Description                                                                                                                                  |
 | ------------------------------- | --------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
-| `getLegalEntityRelationships()` | `@rsk.is/prokura`, `@rsk.is/prokura:admin`, `@admin.island.is/service-desk` | Gets legal entity for and individual relationships, e.g. companies. The data is sensitive and should only be accessed by service desk admins |
-| `getIndividualRelationships()`  | `@identityserver.api/authentication`, `@island.is/auth/actor-delegations`   | Gets individual and his relationships                                                                                                        |
+| `getLegalEntityRelationships()` | `@rsk.is/prokura:admin` | Returns relationships for individuals related to a specific legal entity. The data is sensitive and should only be accessible to Ísland.is service desk admins |
+| `getIndividualRelationships()`  | `@rsk.is/prokura` | Returns relationships for companies related to a specific individual                                                                                                        |
 
 ## Running unit tests
 
