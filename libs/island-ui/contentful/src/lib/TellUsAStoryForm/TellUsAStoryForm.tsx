@@ -224,31 +224,6 @@ export const TellUsAStoryForm: React.FC<TellUsAStoryFormProps> = ({
                 </GridColumn>
                 <GridColumn span="12/12" paddingBottom={3}>
                   <Controller
-                    name="dateOfStory"
-                    defaultValue={false}
-                    control={control}
-                    rules={{ required: true }}
-                    render={({ field: { onChange, value } }) => (
-                      <DatePicker
-                        label={dateOfStoryLabel}
-                        placeholderText={dateOfStoryPlaceholder}
-                        locale={locale as Locale}
-                        selected={value}
-                        required
-                        errorMessage={
-                          errors.dateOfStory
-                            ? dateOfStoryInputErrorMessage
-                            : null
-                        }
-                        hasError={errors?.dateOfStory !== undefined}
-                        disabled={state === 'submitting'}
-                        handleChange={onChange}
-                      />
-                    )}
-                  />
-                </GridColumn>
-                <GridColumn span="12/12" paddingBottom={3}>
-                  <Controller
                     name="organization"
                     defaultValue={''}
                     control={control}
@@ -272,6 +247,31 @@ export const TellUsAStoryForm: React.FC<TellUsAStoryFormProps> = ({
                         onChange={({ value }: Option) => {
                           onChange(value)
                         }}
+                      />
+                    )}
+                  />
+                </GridColumn>
+                <GridColumn span="12/12" paddingBottom={3}>
+                  <Controller
+                    name="dateOfStory"
+                    defaultValue={false}
+                    control={control}
+                    rules={{ required: true }}
+                    render={({ field: { onChange, value } }) => (
+                      <DatePicker
+                        label={dateOfStoryLabel}
+                        placeholderText={dateOfStoryPlaceholder}
+                        locale={locale as Locale}
+                        selected={value}
+                        required
+                        errorMessage={
+                          errors.dateOfStory
+                            ? dateOfStoryInputErrorMessage
+                            : null
+                        }
+                        hasError={errors?.dateOfStory !== undefined}
+                        disabled={state === 'submitting'}
+                        handleChange={onChange}
                       />
                     )}
                   />
