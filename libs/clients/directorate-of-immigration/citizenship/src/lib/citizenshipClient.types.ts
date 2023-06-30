@@ -39,5 +39,7 @@ export interface Passport {
 }
 
 export interface ForeignCriminalRecordFile {
+  countryId: number
+  countryName: string
   base64: string
 }
