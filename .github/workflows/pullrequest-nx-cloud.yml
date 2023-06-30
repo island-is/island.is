@@ -163,7 +163,7 @@ jobs:
           echo "BASE=$NX_BASE" >> $GITHUB_ENV
           echo "HEAD=$NX_HEAD" >> $GITHUB_ENV
       - name: Setup yarn
-        run: npm install -g yarn @nrwl/nx-cloud@14.3.0 dotenv
+        run: npm install -g yarn
 
       - name: Cache for NodeJS dependencies - host OS
         id: node-modules
@@ -223,7 +223,7 @@ jobs:
           echo "BASE=$NX_BASE" >> $GITHUB_ENV
           echo "HEAD=$NX_HEAD" >> $GITHUB_ENV
       - name: Setup yarn
-        run: npm install -g yarn @nrwl/nx-cloud@14.3.0 dotenv
+        run: npm install -g yarn
 
       - name: Cache for NodeJS dependencies - host OS
         id: node-modules
