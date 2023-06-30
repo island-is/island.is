@@ -1,5 +1,5 @@
 #!/bin/bash
-set -euox pipefail
+set -euo pipefail
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
@@ -18,7 +18,7 @@ pids=()
 
 for target in "$@"
 do
-  yarn dlx nx affected --base="$BASE" --head="$HEAD" --target="$target" --parallel="$MAX_JOBS"
+  npx nx affected --base="$BASE" --head="$HEAD" --target="$target" --parallel="$MAX_JOBS"
   pids+=($!)
 done
 
