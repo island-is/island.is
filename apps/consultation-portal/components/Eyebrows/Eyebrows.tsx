@@ -18,7 +18,6 @@ const Eyebrows = ({ instances, color, style, wrap, truncate }: Props) => {
           color={color}
           truncate={truncate}
           key={index}
-          dataTestId="eyebrows"
         >
           {item}
         </Text>

@@ -4,7 +4,7 @@ import localization from './EmptyState.json'
 const EmptyState = () => {
   const loc = localization.emptyState
   return (
-    <Text dataTestId="emptyState" variant="h4">
+    <Text variant="h4">
       {loc.text}
     </Text>
   )
