@@ -33,9 +33,9 @@ interface HeaderProps {
   organizationPage: OrganizationPage
 }
 
-const HeilbrigdisstofnunSudurlandsHeader: React.FC<React.PropsWithChildren<HeaderProps>> = ({
-  organizationPage,
-}) => {
+const HeilbrigdisstofnunSudurlandsHeader: React.FC<
+  React.PropsWithChildren<HeaderProps>
+> = ({ organizationPage }) => {
   const { linkResolver } = useLinkResolver()
 
   const namespace = useMemo(

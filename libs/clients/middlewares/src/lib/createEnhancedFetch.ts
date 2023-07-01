@@ -4,6 +4,10 @@ import { Logger } from 'winston'
 
 import { DogStatsD } from '@island.is/infra-metrics'
 import { logger as defaultLogger } from '@island.is/logging'
+import {
+  AGENT_DEFAULT_FREE_SOCKET_TIMEOUT,
+  AGENT_DEFAULTS,
+} from '@island.is/shared/constants'
 
 import { buildFetch } from './buildFetch'
 import { FetchAPI as NodeFetchAPI } from './nodeFetch'
@@ -19,8 +23,7 @@ import { withMetrics } from './withMetrics'
 import { withResponseErrors } from './withResponseErrors'
 import { withTimeout } from './withTimeout'
 
-const DEFAULT_TIMEOUT = 1000 * 10 // seconds
-const DEFAULT_FREE_SOCKET_TIMEOUT = 1000 * 10 // 10 seconds
+const DEFAULT_TIMEOUT = 1000 * 20 // seconds
 
 export interface EnhancedFetchOptions {
   // The name of this fetch function, used in logs and opossum stats.
@@ -29,7 +32,7 @@ export interface EnhancedFetchOptions {
   // Configure caching.
   cache?: CacheConfig
 
-  // Timeout for requests. Defaults to 10000ms. Can be disabled by passing false.
+  // Timeout for requests. Defaults to 20000ms. Can be disabled by passing false.
   timeout?: number | false
 
   // Disable or configure circuit breaker.
@@ -89,7 +92,7 @@ export interface EnhancedFetchOptions {
  *   request.
  *
  * - Includes request timeout logic. By default, throws an error if there is no
- *   response in 10 seconds.
+ *   response in 20 seconds.
  *
  * - Throws an error for non-200 responses. The error object includes details
  *   from the response, including a `problem` property if the response implements
@@ -126,19 +129,23 @@ export const createEnhancedFetch = (
   } = options
   const treat400ResponsesAsErrors = options.treat400ResponsesAsErrors === true
   const freeSocketTimeout =
-    typeof keepAlive === 'number' ? keepAlive : DEFAULT_FREE_SOCKET_TIMEOUT
+    typeof keepAlive === 'number'
+      ? keepAlive
+      : AGENT_DEFAULT_FREE_SOCKET_TIMEOUT
   const builder = buildFetch(fetch)
 
   builder.wrap(withAgent, {
     clientCertificate,
     agentOptions: {
+      ...AGENT_DEFAULTS,
+      keepAlive: !!keepAlive,
+      freeSocketTimeout,
       ...agentOptions,
+
       // We disable the timeout handling on the agent, as it is handled in withTimeout to allow for per request overwrite.
       // https://github.com/node-modules/agentkeepalive#new-agentoptions
       timeout: 0,
     },
-    keepAlive: !!keepAlive,
-    freeSocketTimeout,
   })
 
   if (timeout !== false) {

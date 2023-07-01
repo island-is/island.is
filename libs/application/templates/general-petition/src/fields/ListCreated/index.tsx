@@ -16,9 +16,9 @@ const ListCreated = ({ application }: { application: Application }) => {
   const baseUrlForm = `${baseUrl}/undirskriftalistar/`
 
   return (
-    <Stack space={3}>
+    <Stack space={5}>
       <Box>
-        <Text marginBottom={2} variant="h3">
+        <Text marginY={2} variant="h3">
           {formatMessage(m.linkToList)}
         </Text>
         <CopyLink
@@ -26,7 +26,7 @@ const ListCreated = ({ application }: { application: Application }) => {
           buttonTitle={formatMessage(m.copyLinkButton)}
         />
       </Box>
-      <Box marginY={8} display="flex" justifyContent="center">
+      <Box marginTop={5} display="flex" justifyContent="center">
         <Illustration />
       </Box>
     </Stack>

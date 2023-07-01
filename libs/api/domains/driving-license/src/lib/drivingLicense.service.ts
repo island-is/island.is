@@ -50,12 +50,22 @@ export class DrivingLicenseService {
     private nationalRegistryXRoadService: NationalRegistryXRoadService,
   ) {}
 
-  async getDrivingLicense(
+  async getDrivingLicense(token: string): Promise<DriversLicense | null> {
+    try {
+      return await this.drivingLicenseApi.getCurrentLicense({
+        token,
+      })
+    } catch (e) {
+      return this.handleGetLicenseError(e)
+    }
+  }
+
+  async legacyGetDrivingLicense(
     nationalId: User['nationalId'],
     token?: string,
   ): Promise<DriversLicense | null> {
     try {
-      return await this.drivingLicenseApi.getCurrentLicense({
+      return await this.drivingLicenseApi.legacyGetCurrentLicense({
         nationalId,
         token,
       })
@@ -172,7 +182,7 @@ export class DrivingLicenseService {
     user: User,
     nationalId: string,
   ): Promise<ApplicationEligibility> {
-    const license = await this.getDrivingLicense(
+    const license = await this.legacyGetDrivingLicense(
       nationalId,
       user.authorization.split(' ')[1] ?? '', // removes the Bearer prefix,
     )
@@ -342,6 +352,19 @@ export class DrivingLicenseService {
     })
   }
 
+  async drivingLicenseDuplicateSubmission(params: {
+    districtId: number
+    token: string
+    stolenOrLost: boolean
+  }): Promise<number> {
+    const { districtId, token, stolenOrLost } = params
+    return await this.drivingLicenseApi.postApplicationNewCollaborative({
+      districtId,
+      stolenOrLost,
+      token,
+    })
+  }
+
   async newDrivingAssessment(
     nationalIdStudent: string,
     nationalIdTeacher: User['nationalId'],
@@ -464,7 +487,7 @@ export class DrivingLicenseService {
 
     let teacherName: string | null
     if (assessment.nationalIdTeacher) {
-      const teacherLicense = await this.getDrivingLicense(
+      const teacherLicense = await this.legacyGetDrivingLicense(
         assessment.nationalIdTeacher,
       )
       teacherName = teacherLicense?.name || null

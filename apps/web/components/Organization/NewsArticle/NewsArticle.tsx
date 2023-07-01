@@ -13,7 +13,9 @@ interface NewsArticleProps {
   newsItem: GetSingleNewsItemQuery['getSingleNews']
 }
 
-export const NewsArticle: React.FC<React.PropsWithChildren<NewsArticleProps>> = ({ newsItem }) => {
+export const NewsArticle: React.FC<
+  React.PropsWithChildren<NewsArticleProps>
+> = ({ newsItem }) => {
   const { format } = useDateUtils()
 
   const formattedDate = newsItem.date

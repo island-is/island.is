@@ -132,7 +132,7 @@ export const AddPermissions = ({
           ),
       )
     }
-  }, [authAdminScopes?.data, addedScopes])
+  }, [authAdminScopes?.data, addedScopes, allowedScopes])
 
   const handleClose = () => {
     // Reset the selected scopes

@@ -17,7 +17,9 @@ interface ArrowIconProps {
   placement: string
 }
 
-const ArrowIcon: FC<React.PropsWithChildren<ArrowIconProps>> = ({ placement }) => {
+const ArrowIcon: FC<React.PropsWithChildren<ArrowIconProps>> = ({
+  placement,
+}) => {
   let deg = 0
 
   if (placement.startsWith('left')) {

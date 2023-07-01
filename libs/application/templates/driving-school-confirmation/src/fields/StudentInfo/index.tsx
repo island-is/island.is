@@ -17,7 +17,9 @@ import kennitala from 'kennitala'
 import { Student } from '../../types'
 import format from 'date-fns/format'
 
-const ViewStudent: FC<React.PropsWithChildren<FieldBaseProps>> = ({ application }) => {
+const ViewStudent: FC<React.PropsWithChildren<FieldBaseProps>> = ({
+  application,
+}) => {
   const { formatMessage } = useLocale()
   const { setValue } = useFormContext()
 

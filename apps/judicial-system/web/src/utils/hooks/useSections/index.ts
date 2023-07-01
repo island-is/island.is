@@ -8,6 +8,7 @@ import {
   Feature,
   Gender,
   isCourtRole,
+  isExtendedCourtRole,
   isIndictmentCase,
   isInvestigationCase,
   isRestrictionCase,
@@ -392,7 +393,6 @@ const useSections = (
            */
           (route) => route === router.pathname.slice(0, -5),
         )
-
     return {
       name: formatMessage(sections.indictmentCaseProsecutorSection.title),
       isActive:
@@ -852,7 +852,7 @@ const useSections = (
     return {
       name: formatMessage(sections.indictmentsCourtSection.title),
       isActive:
-        isCourtRole(user?.role) &&
+        isExtendedCourtRole(user?.role) &&
         isIndictmentCase(type) &&
         !completedCaseStates.includes(workingCase.state),
       children: [

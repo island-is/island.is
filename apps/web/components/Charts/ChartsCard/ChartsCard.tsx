@@ -26,7 +26,9 @@ export interface ChartsCardsProps {
   subPage?: boolean
 }
 
-export const ChartsCard: React.FC<React.PropsWithChildren<ChartsCardsProps>> = ({ chart, subPage }) => {
+export const ChartsCard: React.FC<
+  React.PropsWithChildren<ChartsCardsProps>
+> = ({ chart, subPage }) => {
   const { graphTitle, graphDescription, organization, type, data, datakeys } =
     chart
   const [ref, { width }] = useMeasure()

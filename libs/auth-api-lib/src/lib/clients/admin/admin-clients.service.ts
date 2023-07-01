@@ -216,6 +216,34 @@ export class AdminClientsService {
     return this.findByTenantIdAndClientId(tenantId, clientId)
   }
 
+  async delete(clientId: string, tenantId: string) {
+    const client = await this.clientModel.findOne({
+      where: {
+        clientId,
+        domainName: tenantId,
+      },
+    })
+
+    if (!client || client.archived) {
+      return
+    }
+
+    await this.clientModel.update(
+      {
+        archived: Date.now(),
+        enabled: false,
+      },
+      {
+        where: {
+          clientId,
+          domainName: tenantId,
+        },
+      },
+    )
+
+    return
+  }
+
   async update(
     user: User,
     tenantId: string,

@@ -1,7 +1,10 @@
 import { ServicePortalPath } from '../../lib/navigation/paths'
 
 // Custom location helper for dynamic paths in service portal: https://plausible.io/docs/custom-locations
-export const PlausiblePageviewDetail = (page: string | string[]) => {
+export const PlausiblePageviewDetail = (
+  page: string | string[],
+  entity: 'person' | 'company',
+) => {
   const plausible = window && window.plausible
   const pagePath = typeof page === 'string' ? page : page[0]
 
@@ -10,7 +13,7 @@ export const PlausiblePageviewDetail = (page: string | string[]) => {
   const absoluteUrl = `${pageOrigin}${rootPath}${pagePath}`
 
   if (plausible) {
-    plausible('pageview', { u: absoluteUrl })
+    plausible('pageview', { u: absoluteUrl, props: { entity } })
   }
 }
 

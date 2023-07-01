@@ -16,10 +16,9 @@ interface Props {
   setOrganisationName: (name: string) => void
 }
 
-export const DocumentProviderOrganisationForm: FC<React.PropsWithChildren<Props>> = ({
-  organisation,
-  setOrganisationName,
-}) => {
+export const DocumentProviderOrganisationForm: FC<
+  React.PropsWithChildren<Props>
+> = ({ organisation, setOrganisationName }) => {
   const { formatMessage } = useLocale()
   const {
     handleSubmit,
@@ -45,7 +44,7 @@ export const DocumentProviderOrganisationForm: FC<React.PropsWithChildren<Props>
   }
 
   return (
-    (<Box marginY={3}>
+    <Box marginY={3}>
       <form onSubmit={handleSubmit(onSubmit)}>
         <Box marginBottom={4}>
           <Box marginBottom={2}>
@@ -190,6 +189,6 @@ export const DocumentProviderOrganisationForm: FC<React.PropsWithChildren<Props>
           </Box>
         </Box>
       </form>
-    </Box>)
-  );
+    </Box>
+  )
 }

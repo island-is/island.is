@@ -46,7 +46,9 @@ const LogoIcon: React.FC<React.PropsWithChildren<unknown>> = () => (
   </>
 )
 
-const Container: React.FC<React.PropsWithChildren<unknown>> = ({ children }) => {
+const Container: React.FC<React.PropsWithChildren<unknown>> = ({
+  children,
+}) => {
   return (
     <Box paddingX={[3, 3, 4]}>
       <GridContainer className={styles.gridContainer}>

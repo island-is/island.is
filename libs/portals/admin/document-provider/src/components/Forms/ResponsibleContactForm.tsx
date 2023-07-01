@@ -35,7 +35,7 @@ export const ResponsibleContactForm: FC<React.PropsWithChildren<Props>> = ({
     }
   }
   return (
-    (<form onSubmit={handleSubmit(onSubmit)}>
+    <form onSubmit={handleSubmit(onSubmit)}>
       <Stack space={2}>
         <Controller
           control={control}
@@ -148,6 +148,6 @@ export const ResponsibleContactForm: FC<React.PropsWithChildren<Props>> = ({
           {formatMessage(m.SettingsEditResponsibleContactSaveButton)}
         </Button>
       </Box>
-    </form>)
-  );
+    </form>
+  )
 }

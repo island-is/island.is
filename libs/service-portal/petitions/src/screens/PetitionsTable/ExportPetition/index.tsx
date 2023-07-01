@@ -1,18 +1,18 @@
 import { FC, ReactElement } from 'react'
 import { Box, DropdownMenu, Button } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import * as styles from './styles.css'
+import * as styles from '../styles.css'
 import { m } from '../../../lib/messages'
 import { downloadCSV } from './downloadCSV'
 import copyToClipboard from 'copy-to-clipboard'
 import { toast } from 'react-toastify'
-import { PDFDownloadLink } from '@react-pdf/renderer'
-import { menuItem } from './styles.css'
+import { usePDF } from '@react-pdf/renderer'
 import MyPdfDocument from './DownloadPdf'
 import {
   EndorsementList,
   PaginatedEndorsementResponse,
 } from '@island.is/api/schema'
+import { formatDate } from '../../../lib/utils'
 
 interface Props {
   petition?: EndorsementList
@@ -34,11 +34,12 @@ interface Props {
 export const getCSV = async (data: any[], fileName: string) => {
   const name = `${fileName}`
   const dataArray = data.map((item: any) => [
-    item.created ?? '',
+    formatDate(item.created) ?? '',
     item.meta.fullName ?? '',
+    item.meta.locality ?? '',
   ])
 
-  await downloadCSV(name, ['Dagsetning', 'Nafn'], dataArray)
+  await downloadCSV(name, ['Dagsetning', 'Nafn', 'Sveitarfélag'], dataArray)
 }
 
 const baseUrl = `${document.location.origin}/undirskriftalistar/`
@@ -52,6 +53,16 @@ const DropdownExport: FC<React.PropsWithChildren<Props>> = ({
 }) => {
   useNamespaces('sp.petitions')
   const { formatMessage } = useLocale()
+
+  const [document] = usePDF({
+    document: (
+      <MyPdfDocument petition={petition} petitionSigners={petitionSigners} />
+    ),
+  })
+  if (document.error) {
+    console.warn(document.error)
+  }
+
   return (
     <Box className={styles.buttonWrapper} display="flex">
       <Box marginRight={2}>
@@ -77,19 +88,14 @@ const DropdownExport: FC<React.PropsWithChildren<Props>> = ({
           {
             title: formatMessage(m.asPdf),
             render: () => (
-              <PDFDownloadLink
-                className={menuItem}
+              <a
                 key={petitionId}
-                document={
-                  <MyPdfDocument
-                    petition={petition}
-                    petitionSigners={petitionSigners}
-                  />
-                }
-                fileName="Undirskriftalisti.pdf"
+                href={document.url ?? ''}
+                download={'Undirskriftalisti.pdf'}
+                className={styles.menuItem}
               >
-                {() => <Box>{formatMessage(m.asPdf)}</Box>}
-              </PDFDownloadLink>
+                {formatMessage(m.asPdf)}
+              </a>
             ),
           },
           {

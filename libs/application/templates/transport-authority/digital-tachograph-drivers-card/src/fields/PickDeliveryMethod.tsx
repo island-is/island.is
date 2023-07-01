@@ -20,7 +20,9 @@ import {
 import { applicant } from '../lib/messages'
 import { info } from 'kennitala'
 
-export const PickDeliveryMethod: FC<React.PropsWithChildren<FieldBaseProps>> = (props) => {
+export const PickDeliveryMethod: FC<React.PropsWithChildren<FieldBaseProps>> = (
+  props,
+) => {
   const { formatMessage } = useLocale()
   const { application, errors, setFieldLoadingState } = props
   const { setValue } = useFormContext()

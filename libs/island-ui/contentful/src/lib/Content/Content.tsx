@@ -37,7 +37,9 @@ const ContentWrap: FC<React.PropsWithChildren<unknown>> = ({ children }) => (
   </GridRow>
 )
 
-const ProcessEntryWrap: FC<React.PropsWithChildren<unknown>> = ({ children }) => (
+const ProcessEntryWrap: FC<React.PropsWithChildren<unknown>> = ({
+  children,
+}) => (
   <GridRow>
     <GridColumn span={['8/8', '8/8', '6/8']} offset={['0', '0', '1/8']}>
       {children}
@@ -81,7 +83,11 @@ const processTypes = {
 } as { [key: string]: ProcessType }
 
 interface EmbeddedNode {
-  component: FC<React.PropsWithChildren<EmbeddedVideoProps | BoxProps | BorderedContentProps>>
+  component: FC<
+    React.PropsWithChildren<
+      EmbeddedVideoProps | BoxProps | BorderedContentProps
+    >
+  >
   wrapper?: ({ children }: { children: ReactNode }) => ReactElement
   children?: (node: Node) => ReactNode
   processedProps?: (node: Node) => { [key: string]: ReactNode }

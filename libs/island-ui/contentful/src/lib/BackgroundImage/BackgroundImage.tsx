@@ -27,7 +27,9 @@ const useImageLoader = (url: string): boolean => {
   return loaded
 }
 
-export const BackgroundImage: FC<React.PropsWithChildren<BackgroundImageProps>> = ({
+export const BackgroundImage: FC<
+  React.PropsWithChildren<BackgroundImageProps>
+> = ({
   image = null,
   ratio = '',
   width = 1000,

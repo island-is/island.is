@@ -8,7 +8,14 @@ import { useEffect, useRef } from 'react'
 
 import useLocale from './useLocale'
 
-export const useLocalizedQuery = <TData = any, TVariables = OperationVariables>(
+interface LocalizedOperationVariables {
+  locale: string
+}
+
+export const useLocalizedQuery = <
+  TData = any,
+  TVariables extends OperationVariables = OperationVariables,
+>(
   query: DocumentNode,
   options?: QueryHookOptions<TData, TVariables>,
 ) => {
@@ -19,7 +26,7 @@ export const useLocalizedQuery = <TData = any, TVariables = OperationVariables>(
     variables: {
       ...options?.variables,
       locale,
-    },
+    } as TVariables & LocalizedOperationVariables,
   })
 
   useEffect(() => {

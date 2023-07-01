@@ -191,7 +191,7 @@ export const InputPhone: FC<React.PropsWithChildren<Props>> = ({
   }
 
   return (
-    (<Box>
+    <Box>
       <form
         onSubmit={handleSubmit(
           telInternal ? handleSendTelVerification : saveEmptyChange,
@@ -369,6 +369,6 @@ export const InputPhone: FC<React.PropsWithChildren<Props>> = ({
           </form>
         </Box>
       )}
-    </Box>)
-  );
+    </Box>
+  )
 }

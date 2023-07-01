@@ -24,7 +24,13 @@ const Layout: FC<React.PropsWithChildren<LayoutProps>> = ({
       className={styles.processContainer}
     >
       <Box>
-        <SEO title={seo.title} url={seo.url} image={seo.image} />
+        <SEO
+          title={seo.title}
+          url={seo.url}
+          image={seo.image}
+          description={seo.description}
+          keywords={seo.keywords}
+        />
         <Menu isFrontPage={isFrontPage} />
         <Divider />
         <ToastContainer />

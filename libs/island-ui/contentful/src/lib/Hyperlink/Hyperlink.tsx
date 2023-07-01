@@ -10,7 +10,10 @@ interface HyperlinkProps {
   as?: TextProps['as']
 }
 
-export const Hyperlink: FC<React.PropsWithChildren<HyperlinkProps>> = ({ href, children }) => (
+export const Hyperlink: FC<React.PropsWithChildren<HyperlinkProps>> = ({
+  href,
+  children,
+}) => (
   <Link
     href={href}
     color="blue400"

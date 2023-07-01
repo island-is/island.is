@@ -7,7 +7,7 @@ import { ClientFormTypes } from '../EditClient.schema'
 import { useSuperAdmin } from '../../../hooks/useSuperAdmin'
 import { checkEnvironmentsSync } from '../../../utils/checkEnvironmentsSync'
 import { useClient } from '../ClientContext'
-import { FormCard } from '../../../components/FormCard'
+import { FormCard } from '../../../components/FormCard/FormCard'
 
 interface DelegationProps {
   supportsProcuringHolders: boolean
@@ -45,6 +45,7 @@ const Delegation = ({
       description={formatMessage(m.delegationsDescription)}
       intent={ClientFormTypes.delegations}
       accordionLabel={formatMessage(m.settings)}
+      headerMarginBottom={3}
       inSync={checkEnvironmentsSync(client.environments, [
         'supportsProcuringHolders',
         'supportsLegalGuardians',

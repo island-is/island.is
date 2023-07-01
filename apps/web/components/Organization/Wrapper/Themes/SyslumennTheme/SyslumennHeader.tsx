@@ -33,7 +33,9 @@ interface HeaderProps {
   organizationPage: OrganizationPage
 }
 
-const SyslumennHeader: React.FC<React.PropsWithChildren<HeaderProps>> = ({ organizationPage }) => {
+const SyslumennHeader: React.FC<React.PropsWithChildren<HeaderProps>> = ({
+  organizationPage,
+}) => {
   const { linkResolver } = useLinkResolver()
   const namespace = useMemo(
     () => JSON.parse(organizationPage.organization.namespace?.fields ?? '{}'),

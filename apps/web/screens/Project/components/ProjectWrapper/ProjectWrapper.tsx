@@ -27,7 +27,9 @@ interface ProjectWrapperProps {
   sidebarNavigationTitle: string
 }
 
-export const ProjectWrapper: React.FC<React.PropsWithChildren<ProjectWrapperProps>> = ({
+export const ProjectWrapper: React.FC<
+  React.PropsWithChildren<ProjectWrapperProps>
+> = ({
   withSidebar = false,
   sidebarContent,
   projectPage,

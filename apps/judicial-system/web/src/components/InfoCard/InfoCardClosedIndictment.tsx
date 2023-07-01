@@ -14,7 +14,9 @@ import InfoCard from './InfoCard'
 import { infoCardActiveIndictment as m } from './InfoCard.strings'
 import { FormContext } from '../FormProvider/FormProvider'
 
-const InfoCardClosedIndictment: React.FC<React.PropsWithChildren<unknown>> = () => {
+const InfoCardClosedIndictment: React.FC<
+  React.PropsWithChildren<unknown>
+> = () => {
   const { workingCase } = useContext(FormContext)
   const { formatMessage } = useIntl()
   const defenders = workingCase.defendants?.map((defendant) => {

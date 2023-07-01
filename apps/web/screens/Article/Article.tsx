@@ -135,11 +135,13 @@ const createArticleNavigation = (
   return nav
 }
 
-const RelatedContent: FC<React.PropsWithChildren<{
-  title: string
-  articles: Array<{ title: string; slug: string }>
-  otherContent: Array<{ text: string; url: string }>
-}>> = ({ title, articles, otherContent }) => {
+const RelatedContent: FC<
+  React.PropsWithChildren<{
+    title: string
+    articles: Array<{ title: string; slug: string }>
+    otherContent: Array<{ text: string; url: string }>
+  }>
+> = ({ title, articles, otherContent }) => {
   const { linkResolver } = useLinkResolver()
 
   if (articles.length < 1 && otherContent.length < 1) return null
@@ -174,10 +176,12 @@ const RelatedContent: FC<React.PropsWithChildren<{
   )
 }
 
-const TOC: FC<React.PropsWithChildren<{
-  body: SubArticle['body']
-  title: string
-}>> = ({ body, title }) => {
+const TOC: FC<
+  React.PropsWithChildren<{
+    body: SubArticle['body']
+    title: string
+  }>
+> = ({ body, title }) => {
   const navigation = useMemo(() => {
     return createSubArticleNavigation(body ?? [])
   }, [body])
@@ -198,7 +202,9 @@ const TOC: FC<React.PropsWithChildren<{
   )
 }
 
-const ArticleNavigation: FC<React.PropsWithChildren<ArticleSidebarProps & { isMenuDialog?: boolean }>> = ({ article, activeSlug, n, isMenuDialog }) => {
+const ArticleNavigation: FC<
+  React.PropsWithChildren<ArticleSidebarProps & { isMenuDialog?: boolean }>
+> = ({ article, activeSlug, n, isMenuDialog }) => {
   const { linkResolver } = useLinkResolver()
   return (
     article.subArticles.length > 0 && (

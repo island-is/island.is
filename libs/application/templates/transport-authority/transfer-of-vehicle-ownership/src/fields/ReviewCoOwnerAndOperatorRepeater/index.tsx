@@ -16,7 +16,9 @@ import { useMutation } from '@apollo/client'
 import { UPDATE_APPLICATION } from '@island.is/application/graphql'
 import { getValueViaPath } from '@island.is/application/core'
 
-export const ReviewCoOwnerAndOperatorRepeater: FC<React.PropsWithChildren<FieldBaseProps & ReviewScreenProps>> = ({
+export const ReviewCoOwnerAndOperatorRepeater: FC<
+  React.PropsWithChildren<FieldBaseProps & ReviewScreenProps>
+> = ({
   setStep,
   setCoOwnersAndOperators,
   coOwnersAndOperators = [],

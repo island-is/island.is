@@ -319,7 +319,9 @@ const CourtOfAppealRuling: React.FC<React.PropsWithChildren<unknown>> = () => {
               )
             }}
             onRemove={(file) => handleRemove(file, removeFileCB)}
-            onRetry={(file) => handleRetry(file, handleUIUpdate)}
+            onRetry={(file) =>
+              handleRetry(file, handleUIUpdate, CaseFileCategory.APPEAL_RULING)
+            }
           />
         </Box>
       </FormContentContainer>

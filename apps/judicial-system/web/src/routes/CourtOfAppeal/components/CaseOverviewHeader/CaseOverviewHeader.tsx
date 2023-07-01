@@ -5,12 +5,12 @@ import {
   CaseDates,
   FormContext,
   MarkdownWrapper,
+  OverviewHeader,
   RestrictionTags,
 } from '@island.is/judicial-system-web/src/components'
 import { AlertMessage, Box, Button, Text } from '@island.is/island-ui/core'
 import { core } from '@island.is/judicial-system-web/messages'
 import { formatDate } from '@island.is/judicial-system/formatters'
-import { titleForCase } from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
   CaseAppealDecision,
   CaseDecision,
@@ -23,7 +23,9 @@ import { signedVerdictOverview as m } from '@island.is/judicial-system-web/messa
 import RulingDateLabel from '@island.is/judicial-system-web/src/components/RulingDateLabel/RulingDateLabel'
 import { courtOfAppealCaseOverviewHeader as strings } from './CaseOverviewHeader.strings'
 
-const CourtOfAppealCaseOverviewHeader: React.FC<React.PropsWithChildren<unknown>> = () => {
+const CourtOfAppealCaseOverviewHeader: React.FC<
+  React.PropsWithChildren<unknown>
+> = () => {
   const { workingCase } = useContext(FormContext)
 
   const { formatMessage } = useIntl()
@@ -44,11 +46,8 @@ const CourtOfAppealCaseOverviewHeader: React.FC<React.PropsWithChildren<unknown>
       </Box>
       <Box display="flex" justifyContent="spaceBetween" marginBottom={3}>
         <Box>
-          <Box marginBottom={1}>
-            <Text as="h1" variant="h1">
-              {titleForCase(formatMessage, workingCase)}
-            </Text>
-          </Box>
+          <OverviewHeader />
+
           {workingCase.courtEndTime && (
             <Box>
               <RulingDateLabel courtEndTime={workingCase.courtEndTime} />

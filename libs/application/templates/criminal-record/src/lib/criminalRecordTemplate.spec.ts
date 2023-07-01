@@ -40,7 +40,7 @@ describe('Criminal Record Application Template', () => {
         CriminalRecordTemplate,
       )
       const [hasChanged, newState] = helper.changeState({
-        type: DefaultEvents.PAYMENT,
+        type: DefaultEvents.SUBMIT,
       })
       expect(hasChanged).toBe(true)
       expect(newState).toBe(States.PAYMENT)

@@ -146,7 +146,9 @@ const AppealToCourtOfAppeals = () => {
                   )
                 }
                 onRemove={(file) => handleRemove(file, removeFileCB)}
-                onRetry={(file) => handleRetry(file, handleUIUpdate)}
+                onRetry={(file) =>
+                  handleRetry(file, handleUIUpdate, appealBriefType)
+                }
               />
             </Box>
             <Box component="section" marginBottom={10}>
@@ -176,7 +178,9 @@ const AppealToCourtOfAppeals = () => {
                   )
                 }
                 onRemove={(file) => handleRemove(file, removeFileCB)}
-                onRetry={(file) => handleRetry(file, handleUIUpdate)}
+                onRetry={(file) =>
+                  handleRetry(file, handleUIUpdate, appealCaseFilesType)
+                }
               />
             </Box>
           </>

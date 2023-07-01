@@ -23,8 +23,8 @@ import {
   QueryGetNamespaceArgs,
   ContentLanguage,
   QueryGetOrganizationTagsArgs,
-  QueryGetOrganizationArgs,
-} from '@island.is/api/schema'
+  QueryGetOrganizationsArgs,
+} from '@island.is/web/graphql/schema'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { HeadWithSocialSharing } from '@island.is/web/components'
 import { useNamespace } from '@island.is/web/hooks'
@@ -311,7 +311,7 @@ OrganizationPage.getInitialProps = async ({ apolloClient, locale }) => {
     },
     namespace,
   ] = await Promise.all([
-    apolloClient.query<Query, QueryGetOrganizationArgs>({
+    apolloClient.query<Query, QueryGetOrganizationsArgs>({
       query: GET_ORGANIZATIONS_QUERY,
       variables: {
         input: {

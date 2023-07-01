@@ -31,7 +31,9 @@ interface HeaderProps {
   organizationPage: OrganizationPage
 }
 
-const ShhHeader: React.FC<React.PropsWithChildren<HeaderProps>> = ({ organizationPage }) => {
+const ShhHeader: React.FC<React.PropsWithChildren<HeaderProps>> = ({
+  organizationPage,
+}) => {
   const { linkResolver } = useLinkResolver()
 
   const namespace = useMemo(

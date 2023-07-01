@@ -29,6 +29,7 @@ const GetGeneralPetitionLists = gql`
         openedDate
         adminLock
         meta
+        owner
       }
     }
   }

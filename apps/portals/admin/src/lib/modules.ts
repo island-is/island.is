@@ -7,6 +7,7 @@ import { documentProviderModule } from '@island.is/portals/admin/document-provid
 import { applicationSystemAdminModule } from '@island.is/portals/admin/application-system'
 import { idsAdminModule } from '@island.is/portals/admin/ids-admin'
 import { petitionModule } from '@island.is/portals/admin/petition'
+import { serviceDeskModule } from '@island.is/portals/admin/service-desk'
 
 /**
  * NOTE:
@@ -24,4 +25,5 @@ export const modules: PortalModule[] = [
   applicationSystemAdminModule,
   idsAdminModule,
   petitionModule,
+  serviceDeskModule,
 ]

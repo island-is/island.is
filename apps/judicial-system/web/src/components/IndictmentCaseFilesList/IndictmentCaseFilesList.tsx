@@ -33,7 +33,9 @@ interface RenderFilesProps {
   onOpenFile: (fileId: string) => void
 }
 
-const RenderFiles: React.FC<React.PropsWithChildren<Props & RenderFilesProps>> = (props) => {
+const RenderFiles: React.FC<
+  React.PropsWithChildren<Props & RenderFilesProps>
+> = (props) => {
   const { caseFiles, onOpenFile, workingCase } = props
 
   return (
@@ -48,6 +50,7 @@ const RenderFiles: React.FC<React.PropsWithChildren<Props & RenderFilesProps>> =
             caseId={workingCase.id}
             title={file.name}
             renderAs="row"
+            disabled={!file.key}
             handleClick={() => onOpenFile(file.id)}
           />
         </Box>
@@ -56,10 +59,12 @@ const RenderFiles: React.FC<React.PropsWithChildren<Props & RenderFilesProps>> =
   )
 }
 
-const IndictmentCaseFilesList: React.FC<React.PropsWithChildren<Props>> = (props) => {
+const IndictmentCaseFilesList: React.FC<React.PropsWithChildren<Props>> = (
+  props,
+) => {
   const { workingCase } = props
   const { formatMessage } = useIntl()
-  const { user } = useContext(UserContext)
+  const { user, limitedAccess } = useContext(UserContext)
   const { onOpen, fileNotFound, dismissFileNotFound } = useFileList({
     caseId: workingCase.id,
   })
@@ -132,7 +137,7 @@ const IndictmentCaseFilesList: React.FC<React.PropsWithChildren<Props>> = (props
               <PdfButton
                 caseId={workingCase.id}
                 title={formatMessage(caseFiles.trafficViolationIndictmentTitle)}
-                pdfType="indictment"
+                pdfType={`${limitedAccess ? 'limitedAccess/' : ''}indictment`}
                 renderAs="row"
               />
             </Box>
@@ -190,7 +195,9 @@ const IndictmentCaseFilesList: React.FC<React.PropsWithChildren<Props>> = (props
                 title={formatMessage(strings.caseFileButtonText, {
                   policeCaseNumber,
                 })}
-                pdfType="caseFilesRecord"
+                pdfType={`${
+                  limitedAccess ? 'limitedAccess/' : ''
+                }caseFilesRecord`}
                 policeCaseNumber={policeCaseNumber}
                 renderAs="row"
               />

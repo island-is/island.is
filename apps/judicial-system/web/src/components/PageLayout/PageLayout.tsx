@@ -52,9 +52,11 @@ interface SectionProps {
   activeSubSection?: number
 }
 
-const SubsectionChild: React.FC<React.PropsWithChildren<{
-  isActive: boolean
-}>> = ({ isActive, children }) => (
+const SubsectionChild: React.FC<
+  React.PropsWithChildren<{
+    isActive: boolean
+  }>
+> = ({ isActive, children }) => (
   <Box className={styles.name}>
     <Text as="div" lineHeight="lg" fontWeight={isActive ? 'semiBold' : 'light'}>
       {children}
@@ -62,7 +64,9 @@ const SubsectionChild: React.FC<React.PropsWithChildren<{
   </Box>
 )
 
-const DisplaySection: React.FC<React.PropsWithChildren<SectionProps>> = (props) => {
+const DisplaySection: React.FC<React.PropsWithChildren<SectionProps>> = (
+  props,
+) => {
   const { section, index, activeSection, activeSubSection } = props
 
   return (

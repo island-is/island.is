@@ -32,7 +32,9 @@ const Photo: FC<React.PropsWithChildren<QualityPhotoData>> = ({
   )
 }
 
-const QualityPhoto: FC<React.PropsWithChildren<FieldBaseProps>> = ({ application }) => {
+const QualityPhoto: FC<React.PropsWithChildren<FieldBaseProps>> = ({
+  application,
+}) => {
   const { qualityPhoto } = useQualityPhoto(application)
   const img = Photo({ qualityPhoto, application })
   return (

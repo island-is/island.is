@@ -61,7 +61,7 @@ describe('Case Defender Guard', () => {
     },
   )
 
-  describe.each([...indictmentCases])('user is defender in %s case', (type) => {
+  describe.each(indictmentCases)('user is defender in %s case', (type) => {
     let then: Then
 
     beforeEach(() => {

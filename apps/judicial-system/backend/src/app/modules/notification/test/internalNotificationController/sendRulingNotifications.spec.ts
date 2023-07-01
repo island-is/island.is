@@ -50,6 +50,7 @@ describe('InternalNotificationController - Send ruling notifications', () => {
 
   beforeEach(async () => {
     process.env.PRISON_EMAIL = 'prisonEmail@email.com,prisonEmail2@email.com'
+
     const {
       emailService,
       notificationConfig,
@@ -205,7 +206,7 @@ describe('InternalNotificationController - Send ruling notifications', () => {
             ],
             cc: mockConfig.email.prisonEmail.split(',').slice(1),
 
-            subject: 'Úrskurður um gæsluvarðhald',
+            subject: `Úrskurður í máli ${theCase.courtCaseNumber}`,
             html: `Héraðsdómur Reykjavíkur hefur úrskurðað aðila í gæsluvarðhald í þinghaldi sem lauk rétt í þessu. Hægt er að nálgast þingbók og vistunarseðil í ${expectedLink}Réttarvörslugátt</a>.`,
           }),
         )
@@ -304,7 +305,7 @@ describe('InternalNotificationController - Send ruling notifications', () => {
             },
           ],
           cc: mockConfig.email.prisonEmail.split(',').slice(1),
-          subject: 'Úrskurður um vistun á viðeigandi stofnun',
+          subject: `Úrskurður í máli ${theCase.courtCaseNumber}`,
           html: `Héraðsdómur Reykjavíkur hefur úrskurðað aðila í vistun á viðeigandi stofnun í þinghaldi sem lauk rétt í þessu. Hægt er að nálgast þingbók og vistunarseðil í ${expectedLink}Réttarvörslugátt</a>.`,
         }),
       )
@@ -346,7 +347,7 @@ describe('InternalNotificationController - Send ruling notifications', () => {
             },
           ],
           cc: mockConfig.email.prisonEmail.split(',').slice(1),
-          subject: 'Úrskurður um vistun á viðeigandi stofnun',
+          subject: `Úrskurður í máli ${theCase.courtCaseNumber}`,
           html: `Héraðsdómur Reykjavíkur hefur úrskurðað aðila í vistun á viðeigandi stofnun í þinghaldi sem lauk rétt í þessu. Hægt er að nálgast þingbók og vistunarseðil í ${expectedLink}Réttarvörslugátt</a>.`,
         }),
       )

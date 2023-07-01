@@ -15,9 +15,9 @@ interface HeaderProps {
   organizationPage: OrganizationPage
 }
 
-const SjukratryggingarHeader: React.FC<React.PropsWithChildren<HeaderProps>> = ({
-  organizationPage,
-}) => {
+const SjukratryggingarHeader: React.FC<
+  React.PropsWithChildren<HeaderProps>
+> = ({ organizationPage }) => {
   const { linkResolver } = useLinkResolver()
 
   return (

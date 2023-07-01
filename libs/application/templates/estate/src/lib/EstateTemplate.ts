@@ -102,18 +102,14 @@ const EstateTemplate: ApplicationTemplate<
         meta: {
           name: '',
           status: 'draft',
-          actionCard: {
-            title: '', //TBD
-            description: '', //TBD
-          },
           progress: 0.25,
           lifecycle: DefaultStateLifeCycle,
           roles: [
             {
               id: Roles.APPLICANT_NO_ASSETS,
               formLoader: () =>
-                import('../forms/EstateWithoutAssets/form').then((module) =>
-                  Promise.resolve(module.form),
+                import('../forms/Forms').then((module) =>
+                  Promise.resolve(module.estateWithoutAssetsForm),
                 ),
               actions: [{ event: 'SUBMIT', name: '', type: 'primary' }],
               write: 'all',
@@ -121,10 +117,10 @@ const EstateTemplate: ApplicationTemplate<
               api: [NationalRegistryUserApi, UserProfileApi, EstateApi],
             },
             {
-              id: Roles.APPLICANT_DIVISION_OF_ESTATE,
+              id: Roles.APPLICANT_OFFICIAL_DIVISION,
               formLoader: () =>
-                import('../forms/DivisionOfEstate/form').then((module) =>
-                  Promise.resolve(module.form),
+                import('../forms/Forms').then((module) =>
+                  Promise.resolve(module.officialDivisionForm),
                 ),
               actions: [{ event: 'SUBMIT', name: '', type: 'primary' }],
               write: 'all',
@@ -132,10 +128,10 @@ const EstateTemplate: ApplicationTemplate<
               api: [NationalRegistryUserApi, UserProfileApi, EstateApi],
             },
             {
-              id: Roles.APPLICANT_POSTPONE_ESTATE_DIVISION,
+              id: Roles.APPLICANT_PERMIT_FOR_UNDIVIDED_ESTATE,
               formLoader: () =>
-                import('../forms/PermitToPostponeEstateDivision/form').then(
-                  (module) => Promise.resolve(module.form),
+                import('../forms/Forms').then((module) =>
+                  Promise.resolve(module.undividedEstateForm),
                 ),
               actions: [{ event: 'SUBMIT', name: '', type: 'primary' }],
               write: 'all',
@@ -145,8 +141,8 @@ const EstateTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT_DIVISION_OF_ESTATE_BY_HEIRS,
               formLoader: () =>
-                import('../forms/DivisionOfEstateByHeirs/form').then((module) =>
-                  Promise.resolve(module.form),
+                import('../forms/Forms').then((module) =>
+                  Promise.resolve(module.privateDivisionForm),
                 ),
               actions: [{ event: 'SUBMIT', name: '', type: 'primary' }],
               write: 'all',
@@ -177,31 +173,31 @@ const EstateTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT_NO_ASSETS,
               formLoader: () =>
-                import('../forms/EstateWithoutAssets/done').then((val) =>
+                import('../forms/Done').then((val) =>
                   Promise.resolve(val.done),
                 ),
               read: 'all',
             },
             {
-              id: Roles.APPLICANT_DIVISION_OF_ESTATE,
+              id: Roles.APPLICANT_OFFICIAL_DIVISION,
               formLoader: () =>
-                import('../forms/DivisionOfEstate/done').then((val) =>
+                import('../forms/Done').then((val) =>
                   Promise.resolve(val.done),
                 ),
               read: 'all',
             },
             {
-              id: Roles.APPLICANT_POSTPONE_ESTATE_DIVISION,
+              id: Roles.APPLICANT_PERMIT_FOR_UNDIVIDED_ESTATE,
               formLoader: () =>
-                import('../forms/PermitToPostponeEstateDivision/done').then(
-                  (val) => Promise.resolve(val.done),
+                import('../forms/Done').then((val) =>
+                  Promise.resolve(val.done),
                 ),
               read: 'all',
             },
             {
               id: Roles.APPLICANT_DIVISION_OF_ESTATE_BY_HEIRS,
               formLoader: () =>
-                import('../forms/DivisionOfEstateByHeirs/done').then((val) =>
+                import('../forms/Done').then((val) =>
                   Promise.resolve(val.done),
                 ),
               read: 'all',
@@ -220,14 +216,12 @@ const EstateTemplate: ApplicationTemplate<
         application.answers,
         'selectedEstate',
       )
-      if (selectedEstate === EstateTypes.divisionOfEstate) {
-        return Roles.APPLICANT_DIVISION_OF_ESTATE
+      if (selectedEstate === EstateTypes.officialDivision) {
+        return Roles.APPLICANT_OFFICIAL_DIVISION
       } else if (selectedEstate === EstateTypes.estateWithoutAssets) {
         return Roles.APPLICANT_NO_ASSETS
-      } else if (
-        selectedEstate === EstateTypes.permitToPostponeEstateDivision
-      ) {
-        return Roles.APPLICANT_POSTPONE_ESTATE_DIVISION
+      } else if (selectedEstate === EstateTypes.permitForUndividedEstate) {
+        return Roles.APPLICANT_PERMIT_FOR_UNDIVIDED_ESTATE
       } else if (selectedEstate === EstateTypes.divisionOfEstateByHeirs) {
         return Roles.APPLICANT_DIVISION_OF_ESTATE_BY_HEIRS
       } else return Roles.APPLICANT

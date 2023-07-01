@@ -5,7 +5,7 @@ import {
 } from '@island.is/auth-api-lib'
 import { IdsUserGuard, MockAuthGuard, User } from '@island.is/auth-nest-tools'
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
-import { RskProcuringClient } from '@island.is/clients/rsk/procuring'
+import { RskRelationshipsClient } from '@island.is/clients-rsk-relationships'
 import { CompanyRegistryClientService } from '@island.is/clients/rsk/company-registry'
 import { UserProfileApi } from '@island.is/clients/user-profile'
 import { FeatureFlagService } from '@island.is/nest/feature-flags'
@@ -89,9 +89,9 @@ export const setupWithAuth = async ({
         .useValue({
           getCompany: jest.fn().mockResolvedValue({}),
         })
-        .overrideProvider(RskProcuringClient)
+        .overrideProvider(RskRelationshipsClient)
         .useValue({
-          getSimple: jest.fn().mockResolvedValue(null),
+          getIndividualRelationships: jest.fn().mockResolvedValue(null),
         })
         .overrideProvider(FeatureFlagService)
         .useValue({ getValue: () => true }),

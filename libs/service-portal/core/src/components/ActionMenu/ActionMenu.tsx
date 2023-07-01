@@ -7,10 +7,9 @@ interface ActionMenuItemProps {
   onClick?: () => void
 }
 
-export const ActionMenuItem: FC<React.PropsWithChildren<ActionMenuItemProps>> = ({
-  onClick,
-  children,
-}) => (
+export const ActionMenuItem: FC<
+  React.PropsWithChildren<ActionMenuItemProps>
+> = ({ onClick, children }) => (
   <button className={styles.menuItem} onClick={onClick}>
     {children}
   </button>

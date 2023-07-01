@@ -10,7 +10,12 @@ interface Props {
   active?: boolean
 }
 
-const ButtonContent: FC<React.PropsWithChildren<Props>> = ({ icon, active, onClick, children }) => (
+const ButtonContent: FC<React.PropsWithChildren<Props>> = ({
+  icon,
+  active,
+  onClick,
+  children,
+}) => (
   <Box display="flex" alignItems="center" cursor="pointer" onClick={onClick}>
     <Box marginRight={2}>
       {icon ? (

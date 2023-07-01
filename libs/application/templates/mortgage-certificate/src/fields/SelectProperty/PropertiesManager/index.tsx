@@ -14,9 +14,11 @@ export const PropertiesManager: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   const { id } = field
   const { setValue } = useFormContext()
 
-  const { properties } = externalData.nationalRegistryRealEstate?.data as {
+  const nationalRegistryRealEstateData = externalData.nationalRegistryRealEstate
+    ?.data as {
     properties: [PropertyDetail]
-  }
+  } | null
+  const properties = nationalRegistryRealEstateData?.properties
 
   let selectedPropertyNumber = getValueViaPath(
     application.answers,

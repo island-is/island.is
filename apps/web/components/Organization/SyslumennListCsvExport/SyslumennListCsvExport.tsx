@@ -31,7 +31,9 @@ const downloadCSV = (csvString: string, csvFilename: string) => {
   document.body.removeChild(a)
 }
 
-export const SyslumennListCsvExport: React.FC<React.PropsWithChildren<SyslumennListCsvExportProps>> = ({
+export const SyslumennListCsvExport: React.FC<
+  React.PropsWithChildren<SyslumennListCsvExportProps>
+> = ({
   defaultLabel,
   loadingLabel,
   errorLabel,

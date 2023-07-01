@@ -106,24 +106,24 @@ export const JudgeOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
       />
       <FormContentContainer>
         {workingCase.caseResentExplanation && (
-          <Box marginBottom={workingCase.seenByDefender ? 3 : 5}>
+          <Box marginBottom={workingCase.openedByDefender ? 3 : 5}>
             <CaseResentExplanation
               explanation={workingCase.caseResentExplanation}
             />
           </Box>
         )}
-        {workingCase.seenByDefender && (
+        {workingCase.openedByDefender && (
           <Box marginBottom={5}>
             <AlertMessage
               title={formatMessage(
-                rcCourtOverview.sections.seenByDefenderAlert.title,
+                rcCourtOverview.sections.openedByDefenderAlert.title,
               )}
               message={formatMessage(
-                rcCourtOverview.sections.seenByDefenderAlert.text,
-                { when: formatDate(workingCase.seenByDefender, 'PPPp') },
+                rcCourtOverview.sections.openedByDefenderAlert.text,
+                { when: formatDate(workingCase.openedByDefender, 'PPPp') },
               )}
               type="info"
-              testid="alertMessageSeenByDefender"
+              testid="alertMessageOpenedByDefender"
             />
           </Box>
         )}

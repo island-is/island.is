@@ -41,7 +41,9 @@ import {
 import { VALIDATE_VEHICLE_OWNER_CHANGE } from '../../graphql/queries'
 import { TransferOfVehicleOwnershipAnswers } from '../..'
 
-export const Overview: FC<React.PropsWithChildren<FieldBaseProps & ReviewScreenProps>> = ({
+export const Overview: FC<
+  React.PropsWithChildren<FieldBaseProps & ReviewScreenProps>
+> = ({
   setStep,
   reviewerNationalId = '',
   coOwnersAndOperators = [],

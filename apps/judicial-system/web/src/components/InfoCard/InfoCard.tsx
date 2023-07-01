@@ -26,7 +26,9 @@ interface Props {
   defenders?: Defender[]
 }
 
-const UniqueDefenders: React.FC<React.PropsWithChildren<UniqueDefendersProps>> = (props) => {
+const UniqueDefenders: React.FC<
+  React.PropsWithChildren<UniqueDefendersProps>
+> = (props) => {
   const { defenders } = props
   const uniqueDefenders = defenders?.filter(
     (defender, index, self) =>

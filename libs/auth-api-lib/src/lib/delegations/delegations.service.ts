@@ -19,7 +19,7 @@ import {
   IndividualDto,
   NationalRegistryClientService,
 } from '@island.is/clients/national-registry-v2'
-import { RskProcuringClient } from '@island.is/clients/rsk/procuring'
+import { RskRelationshipsClient } from '@island.is/clients-rsk-relationships'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { NoContentException } from '@island.is/nest/problem'
@@ -68,7 +68,7 @@ export class DelegationsService {
     private logger: Logger,
     @Inject(DelegationConfig.KEY)
     private delegationConfig: ConfigType<typeof DelegationConfig>,
-    private rskProcuringClient: RskProcuringClient,
+    private rskProcuringClient: RskRelationshipsClient,
     private nationalRegistryClient: NationalRegistryClientService,
     private delegationScopeService: DelegationScopeService,
     private prService: PersonalRepresentativeService,
@@ -441,15 +441,17 @@ export class DelegationsService {
    */
   private async findAllCompaniesIncoming(user: User): Promise<DelegationDTO[]> {
     try {
-      const person = await this.rskProcuringClient.getSimple(user)
+      const person = await this.rskProcuringClient.getIndividualRelationships(
+        user,
+      )
 
-      if (person && person.companies) {
-        return person.companies.map(
-          (p) =>
+      if (person && person.relationships) {
+        return person.relationships.map(
+          (relationship) =>
             <DelegationDTO>{
               toNationalId: user.nationalId,
-              fromNationalId: p.nationalId,
-              fromName: p.name,
+              fromNationalId: relationship.nationalId,
+              fromName: relationship.name,
               type: DelegationType.ProcurationHolder,
               provider: DelegationProvider.CompanyRegistry,
             },

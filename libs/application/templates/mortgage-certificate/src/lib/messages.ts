@@ -7,7 +7,7 @@ export const m = defineMessages({
     description: "Application's name",
   },
   continue: {
-    id: 'cr.application:continue',
+    id: 'mc.application:continue',
     defaultMessage: 'Áfram',
     description: 'Continue',
   },
@@ -266,125 +266,169 @@ export const m = defineMessages({
       'Here is information from the Property Registry about your real estate, lands and plots that you are a registered owner of. Please check the property for which you are applying for a mortgage certificate.',
   },
   errorSheriffApiTitle: {
-    id: 'mc.application.errorSherrifApi.title',
+    id: 'mc.application:errorSherrifApi.title',
     defaultMessage: 'Villa hefur komið upp á milli Ísland.is og sýslumanna',
     description:
       "An error has occurred between Ísland.is and the sheriff's office",
   },
   errorSheriffApiMessage: {
-    id: 'mc.application.errorSherrifApi.message',
+    id: 'mc.application:errorSherrifApi.message',
     defaultMessage: 'Vinsamlega reyndu aftur síðar',
     description: 'Please try again later',
   },
   propertyNumber: {
-    id: 'property.number',
+    id: 'mc.application:property.number',
     defaultMessage: 'Fasteignarnúmer',
     description: 'Property number',
   },
   propertyMarking: {
-    id: 'property.marking',
+    id: 'mc.application:property.marking',
     defaultMessage: 'Merking',
     description: 'Marking',
   },
   propertyDescription: {
-    id: 'property.description',
+    id: 'mc.application:property.description',
     defaultMessage: 'Lýsing',
     description: 'Description',
   },
   propertyConstructionYear: {
-    id: 'property.constructionYear',
+    id: 'mc.application:property.constructionYear',
     defaultMessage: 'Byggingarár',
     description: 'Construction year',
   },
   propertyShownSize: {
-    id: 'property.shownSize',
+    id: 'mc.application:property.shownSize',
     defaultMessage: 'Birt stærð',
     description: 'Shown size',
   },
   propertyAddress: {
-    id: 'property.address',
+    id: 'mc.application:property.address',
     defaultMessage: 'Heimilisfang',
     description: 'Address',
   },
   propertySearch: {
-    id: 'property.search',
+    id: 'mc.application:property.search',
     defaultMessage: 'Leita að eign',
     description: 'Search properties',
   },
   propertyNotFoundTitle: {
-    id: 'property.notFoundTitle',
+    id: 'mc.application:property.notFoundTitle',
     defaultMessage: 'Eign fannst ekki',
     description: 'Property not found',
   },
   propertyNotFoundMessage: {
-    id: 'property.notFoundMessage',
+    id: 'mc.application:property.notFoundMessage',
     defaultMessage: 'Ekki fannst nein eign með þessu fasteignanúmeri',
     description: 'No property was found with this property number',
   },
   propertyErrorCertificateTitle: {
-    id: 'property.certificateErrorTitle',
+    id: 'mc.application:property.certificateErrorTitle',
     defaultMessage: 'Ekki tókst að sækja veðbókavottorð fyrir þessa eign',
     description: 'Failed to retrieve mortgage certificate for this property',
   },
   propertyErrorCertificateMessage: {
-    id: 'property.certificateErrorMessage',
+    id: 'mc.application:property.certificateErrorMessage',
     defaultMessage:
       'Því miður getum við ekki sótt rafrænt veðbókarvottorð fyrir valda eign þar sem skráning á viðkomandi eign þarnast uppfærslu. Sýslumanni í því umdæmi sem eignin er í verður send beiðni um lagfæringu, þú munt fá tilkynningu (á netfang) að yfirferð lokinni og getur þá reynt aftur.',
     description:
       'Sorry, we are unable to download an electronic mortgage certificate for the selected property as the listing of the property in question needs updating. The district commissioner of the property in which the property is located will be sent a request for repairs, you will be notified (by email) after the inspection and can then try again.',
   },
   propertyErrorCertificateSheriffTitle: {
-    id: 'property.certificateErrorMessage',
+    id: 'mc.application:property.certificateErrorMessage',
     defaultMessage:
       'Beiðni um lagfæringu á veðbókarvottorði hefur verið send sýslumanni',
     description:
       'A request for correction of the mortgage certificate has been sent to the district commissioner',
   },
   propertyErrorCertificateSheriffMessage: {
-    id: 'property.certificateErrorMessage',
+    id: 'mc.application:property.certificateErrorMessage',
     defaultMessage:
       'Þú munt fá tilkynningu á netfangið [netfang] að yfirferð lokinni og getur þá reynt aftur og klárað umsóknina þína.',
     description:
       'You will be notified by email [email address] after the review and can then try again and complete your application.',
   },
   propertySearchInfoMessage: {
-    id: 'property.searchInfoMessage',
+    id: 'mc.application:property.searchInfoMessage',
     defaultMessage:
       'Hér að neðan getur þú einnig leitað í fasteignanúmerum annarra eigna',
     description:
       'Below you can also search the real estate numbers of other properties',
   },
   propertySearchInfoLink: {
-    id: 'property.searchInfoLink',
+    id: 'mc.application:property.searchInfoLink',
     defaultMessage: 'Hér getur þú nálgast nánari uppýsingar um eignina á skrá',
     description: 'Here you can get more information about the property on file',
   },
 
   propertyCertificateError: {
-    id: 'property.searchInfoLink',
+    id: 'mc.application:property.searchInfoLink',
     defaultMessage: 'Ekki gekk að sækja vottorð fyrir þessa eign',
     description: 'Failed to fetch certificate for this property',
   },
   propertyCertificateErrorContactSheriff: {
-    id: 'property.searchInfoLink',
+    id: 'mc.application:property.searchInfoLink',
     defaultMessage:
       'Vinsamlega hafðu samband við sýslumann, það er búið að senda inn beiðni um leiðréttingu',
     description:
       'Please contact the sheriff, a request for correction has been submitted',
   },
   mysites: {
-    id: 'mc.mysites',
+    id: 'mc.application:mysites',
     defaultMessage: 'Mínar síður',
     description: 'My sites',
   },
   property: {
-    id: 'mc.property',
+    id: 'mc.application:property',
     defaultMessage: 'Eign',
     description: 'Property',
   },
   requestForProcessing: {
-    id: 'mc.requestForProcessing',
+    id: 'mc.application:requestForProcessing',
     defaultMessage: 'Beiðni um vinnslu',
     description: 'Request for processing',
+  },
+  selectedProperty: {
+    id: 'mc.application:selectedProperty',
+    defaultMessage: 'Valin fasteign',
+    description: 'Selected property',
+  },
+  pendingActionTryingToSubmitRequestToSyslumennTitle: {
+    id: 'mc.application:pendingActionTryingToSubmitRequestToSyslumennTitle',
+    defaultMessage: 'Senda sýslumanni beiðni',
+    description: 'Trying to submit request to syslumenn title',
+  },
+  pendingActionTryingToSubmitRequestToSyslumennDescription: {
+    id: 'mc.application:pendingActionTryingToSubmitRequestToSyslumennDescription',
+    defaultMessage:
+      'Það er verið að reyna að senda sýslumanni beiðni um lagfæringu á veðbókarvottorði',
+    description: 'Trying to submit request to syslumenn description',
+  },
+  historyLogSubmittedRequestToSyslumenn: {
+    id: 'mc.application:historyLogSubmittedRequestToSyslumenn',
+    defaultMessage:
+      'Beiðni um lagfæringu á veðbókarvottorði hefur verið send sýslumanni',
+    description: 'Submitted request to syslumenn',
+  },
+  pendingActionCheckIfSyslumennHasFixedKMarkingTitle: {
+    id: 'mc.application:pendingActionCheckIfSyslumennHasFixedKMarkingTitle',
+    defaultMessage: 'Lagfæring á veðbókarvottorði í vinnslu',
+    description: 'Check if syslumenn has fixed k marking title',
+  },
+  pendingActionCheckIfSyslumennHasFixedKMarkingDescription: {
+    id: 'mc.application:pendingActionCheckIfSyslumennHasFixedKMarkingDescription',
+    defaultMessage:
+      'Ef þú hefur fengið póst um að búið sé að lagfæra veðbókarvottorð, þarf að opna umsókn aftur og klára ferlið',
+    description: 'Check if syslumenn has fixed k marking description',
+  },
+  historyLogSyslumennHasFixedKMarking: {
+    id: 'mc.application:historyLogSyslumennHasFixedKMarking',
+    defaultMessage: 'Sýslumaður er búin að lagfæra veðbókarvottorðið',
+    description: 'Syslumenn has fixed k marking',
+  },
+  pendingActionApplicationCompletedTitle: {
+    id: 'mc.application:pendingActionApplicationCompletedTitle',
+    defaultMessage:
+      'Umsókn þín hefur verið móttekin og er vottorðið aðgengilegt í stafrænu pósthólfi á Ísland.is.',
+    description: 'Title of pending action',
   },
 })

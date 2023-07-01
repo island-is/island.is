@@ -16,7 +16,9 @@ interface SidebarCardProps {
   sidebarCard: Card
 }
 
-export const SidebarCard: React.FC<React.PropsWithChildren<SidebarCardProps>> = ({ sidebarCard }) => (
+export const SidebarCard: React.FC<
+  React.PropsWithChildren<SidebarCardProps>
+> = ({ sidebarCard }) => (
   <Box marginTop={4} border="standard" borderRadius="large" padding={4}>
     <GridContainer>
       <GridRow>

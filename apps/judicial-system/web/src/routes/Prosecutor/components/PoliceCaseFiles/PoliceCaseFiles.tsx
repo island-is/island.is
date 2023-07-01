@@ -26,7 +26,9 @@ export interface PoliceCaseFileCheck extends PoliceCaseFile {
   checked: boolean
 }
 
-const CheckboxListItem: React.FC<React.PropsWithChildren<unknown>> = ({ children }) => (
+const CheckboxListItem: React.FC<React.PropsWithChildren<unknown>> = ({
+  children,
+}) => (
   <motion.li
     layout
     className={styles.policeCaseFile}

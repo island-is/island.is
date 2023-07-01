@@ -1,9 +1,14 @@
-import showdown from 'showdown'
-import { JSDOM } from 'jsdom'
+import { NodeHtmlMarkdown } from 'node-html-markdown'
 import sanitizeHtml from 'sanitize-html'
 import { richTextFromMarkdown } from '@contentful/rich-text-from-markdown'
+import { documentToPlainTextString } from '@contentful/rich-text-plain-text-renderer'
 import { IcelandicGovernmentInstitutionVacanciesResponse } from './dto/icelandicGovernmentInstitutionVacanciesResponse'
 import { IcelandicGovernmentInstitutionVacancyByIdResponse } from './dto/icelandicGovernmentInstitutionVacancyByIdResponse'
+import { Html, Vacancy } from '@island.is/cms'
+import { IcelandicGovernmentInstitutionVacancyContact } from './models/icelandicGovernmentInstitutionVacancy.model'
+
+export const CMS_ID_PREFIX = 'c-'
+export const EXTERNAL_SYSTEM_ID_PREFIX = 'x-'
 
 interface DefaultApiVacancyContact {
   '@nr'?: number
@@ -59,34 +64,20 @@ export interface DefaultApiVacancyDetails {
   starfsauglysing: DefaultApiVacanciesListItem
 }
 
-const convertHtmlToPlainText = (html: string) => {
+const convertHtmlToPlainText = async (html: string) => {
   if (!html) return ''
-  return html.replace(/<[^>]+>/g, ' ')
+  const contentfulRichText = await convertHtmlToContentfulRichText(html)
+  return documentToPlainTextString(contentfulRichText.document)
 }
 
-const shortenText = (text: string, maxLength: number) => {
-  if (!text) return ''
-  if (text.length > maxLength) {
-    if (text[text.length - 1] === ' ') {
-      maxLength -= 1
-    }
-    return text.slice(0, maxLength).concat('...')
-  }
-  return text
-}
-
-const convertHtmlToContentfulRichText = async (html: string) => {
+const convertHtmlToContentfulRichText = async (html: string, id?: string) => {
   const sanitizedHtml = sanitizeHtml(html)
-  const virtualDom = new JSDOM(sanitizedHtml)
-  const converter = new showdown.Converter()
-  const markdown = converter.makeMarkdown(
-    sanitizedHtml,
-    virtualDom.window.document,
-  )
+  const markdown = NodeHtmlMarkdown.translate(sanitizedHtml)
   const richText = await richTextFromMarkdown(markdown)
   return {
     __typename: 'Html',
     document: richText,
+    id,
   }
 }
 
@@ -122,8 +113,7 @@ const mapLocations = (item: DefaultApiVacanciesListItem) => {
 }
 
 const mapContacts = (item: DefaultApiVacanciesListItem) => {
-  const contacts: IcelandicGovernmentInstitutionVacancyByIdResponse['vacancy']['contacts'] =
-    []
+  const contacts: IcelandicGovernmentInstitutionVacancyContact[] = []
   if ('tengilidur' in (item?.tengilidir ?? {})) {
     const contact = (
       item.tengilidir as {
@@ -153,60 +143,189 @@ const mapContacts = (item: DefaultApiVacanciesListItem) => {
   return contacts
 }
 
-export const mapIcelandicGovernmentInstitutionVacanciesResponse = (
-  data: DefaultApiVacanciesListItem[],
+export const sortVacancyList = (
+  vacancyList: IcelandicGovernmentInstitutionVacanciesResponse['vacancies'],
 ) => {
-  const mappedData: IcelandicGovernmentInstitutionVacanciesResponse['vacancies'] =
-    []
+  vacancyList.sort((a, b) => {
+    if (!a?.applicationDeadlineFrom || !b?.applicationDeadlineFrom) return 0
 
-  for (const item of data) {
+    const [dayA, monthA, yearA] = a.applicationDeadlineFrom.split('.')
+    if (!dayA || !monthA || !yearA) return 0
+
+    const [dayB, monthB, yearB] = b.applicationDeadlineFrom.split('.')
+    if (!dayB || !monthB || !yearB) return 0
+
+    const dateA = new Date(Number(yearA), Number(monthA), Number(dayA))
+    const dateB = new Date(Number(yearB), Number(monthB), Number(dayB))
+
+    if (dateA < dateB) {
+      return 1
+    }
+    if (dateA > dateB) {
+      return -1
+    }
+
+    return 0
+  })
+}
+
+export const mapIcelandicGovernmentInstitutionVacanciesFromExternalSystem =
+  async (data: DefaultApiVacanciesListItem[]) => {
+    const mappedData: IcelandicGovernmentInstitutionVacanciesResponse['vacancies'] =
+      []
+
+    const introPromises: Promise<string>[] = []
+
+    for (const item of data) {
+      const locations = mapLocations(item)
+      const introHtml = item.inngangur ?? ''
+      introPromises.push(convertHtmlToPlainText(introHtml))
+      mappedData.push({
+        id: `${EXTERNAL_SYSTEM_ID_PREFIX}${item.id}`,
+        title: item.fyrirsogn,
+        applicationDeadlineFrom: item.umsoknarfrestur_fra,
+        applicationDeadlineTo: item.umsoknarfrestur_til,
+        intro: '',
+        fieldOfWork: item.starfssvid,
+        institutionName: item.stofnunHeiti,
+        logoUrl: item.logoURL,
+        locations,
+      })
+    }
+
+    const intros = await Promise.all(introPromises)
+
+    for (let i = 0; i < mappedData.length; i += 1) {
+      if (intros[i]) {
+        mappedData[i].intro = intros[i]
+      }
+    }
+
+    return mappedData
+  }
+
+export const mapIcelandicGovernmentInstitutionVacancyByIdResponseFromExternalSystem =
+  async (
+    vacancy: DefaultApiVacancyDetails,
+  ): Promise<IcelandicGovernmentInstitutionVacancyByIdResponse['vacancy']> => {
+    const item = vacancy.starfsauglysing
+
+    const contacts = mapContacts(item)
     const locations = mapLocations(item)
-    mappedData.push({
-      id: item.id,
+
+    const [
+      intro,
+      qualificationRequirements,
+      tasksAndResponsibilities,
+      description,
+      salaryTerms,
+    ] = await Promise.all([
+      convertHtmlToContentfulRichText(item.inngangur ?? '', 'intro'),
+      convertHtmlToContentfulRichText(
+        item.haefnikrofur ?? '',
+        'qualificationRequirements',
+      ),
+      convertHtmlToContentfulRichText(
+        item.verkefni ?? '',
+        'tasksAndResponsibilities',
+      ),
+      convertHtmlToContentfulRichText(item.undirtexti ?? '', 'description'),
+      convertHtmlToContentfulRichText(
+        item.launaskilmaliFull ?? '',
+        'salaryTerms',
+      ),
+    ])
+
+    return {
+      id: `${EXTERNAL_SYSTEM_ID_PREFIX}${item.id}`,
       title: item.fyrirsogn,
       applicationDeadlineFrom: item.umsoknarfrestur_fra,
       applicationDeadlineTo: item.umsoknarfrestur_til,
-      intro: shortenText(convertHtmlToPlainText(item.inngangur ?? ''), 80),
+      intro,
       fieldOfWork: item.starfssvid,
       institutionName: item.stofnunHeiti,
       logoUrl: item.logoURL,
       locations,
-    })
+      contacts,
+      jobPercentage: item.starfshlutfall,
+      applicationHref: item.weblink?.url,
+      qualificationRequirements,
+      tasksAndResponsibilities,
+      description,
+      salaryTerms,
+      plainTextIntro: documentToPlainTextString(intro.document),
+    }
   }
-  return mappedData
+
+export const mapRichTextField = (field: Html | null | undefined) => {
+  return (
+    (field && {
+      ...field,
+      __typename: field.typename,
+    }) ??
+    null
+  )
 }
 
-export const mapIcelandicGovernmentInstitutionVacancyByIdResponse = async (
-  vacancy: DefaultApiVacancyDetails,
-): Promise<IcelandicGovernmentInstitutionVacancyByIdResponse['vacancy']> => {
-  const item = vacancy.starfsauglysing
+const mapDate = (date?: string) => {
+  const list = date?.split('-') ?? []
+  return list?.length === 3 ? `${list[2]}.${list[1]}.${list[0]}` : undefined
+}
 
-  const contacts = mapContacts(item)
-  const locations = mapLocations(item)
-
-  const [intro, qualificationRequirements, tasksAndResponsibilities] =
-    await Promise.all([
-      convertHtmlToContentfulRichText(item.inngangur ?? ''),
-      convertHtmlToContentfulRichText(item.haefnikrofur ?? ''),
-      convertHtmlToContentfulRichText(item.verkefni ?? ''),
-    ])
+export const mapIcelandicGovernmentInstitutionVacancyByIdResponseFromCms = (
+  vacancy: Vacancy,
+): IcelandicGovernmentInstitutionVacancyByIdResponse['vacancy'] => {
+  const contacts = vacancy.contacts ?? []
+  const locations =
+    vacancy.locations?.map((location) => ({
+      postalCode: undefined,
+      title: location,
+    })) ?? []
 
   return {
-    id: item.id,
-    title: item.fyrirsogn,
-    applicationDeadlineFrom: item.umsoknarfrestur_fra,
-    applicationDeadlineTo: item.umsoknarfrestur_til,
-    intro,
-    fieldOfWork: item.starfssvid,
-    institutionName: item.stofnunHeiti,
-    logoUrl: item.logoURL,
+    id: vacancy.id ? `${CMS_ID_PREFIX}${vacancy.id}` : vacancy.id,
+    title: vacancy.title,
+    applicationDeadlineFrom: mapDate(vacancy.applicationDeadlineFrom),
+    applicationDeadlineTo: mapDate(vacancy.applicationDeadlineTo),
+    fieldOfWork: vacancy.fieldOfWork,
+    institutionName: vacancy.organization?.nameInVacancyList,
+    logoUrl: vacancy.organization?.logo?.url,
     locations,
-    address: item.heimilisfang,
     contacts,
-    jobPercentage: item.starfshlutfall,
-    postalAddress: item.postfang,
-    applicationHref: item.weblink?.url,
-    qualificationRequirements,
-    tasksAndResponsibilities,
+    jobPercentage: vacancy.jobPercentage,
+    applicationHref: vacancy.applicationHref,
+    intro: mapRichTextField(vacancy.intro),
+    qualificationRequirements: mapRichTextField(
+      vacancy.qualificationRequirements,
+    ),
+    tasksAndResponsibilities: mapRichTextField(
+      vacancy.tasksAndResponsibilities,
+    ),
+    description: mapRichTextField(vacancy.description),
+    salaryTerms: mapRichTextField(vacancy.salaryTerms),
+    plainTextIntro: vacancy.intro?.document
+      ? documentToPlainTextString(vacancy.intro.document)
+      : undefined,
+  }
+}
+
+export const mapVacancyListItemFromCms = (
+  vacancy: Vacancy,
+): IcelandicGovernmentInstitutionVacanciesResponse['vacancies'][number] => {
+  return {
+    id: vacancy.id ? `${CMS_ID_PREFIX}${vacancy.id}` : vacancy.id,
+    title: vacancy.title,
+    applicationDeadlineFrom: mapDate(vacancy.applicationDeadlineFrom),
+    applicationDeadlineTo: mapDate(vacancy.applicationDeadlineTo),
+    fieldOfWork: vacancy.fieldOfWork,
+    institutionName: vacancy.organization?.nameInVacancyList,
+    intro: vacancy.intro?.document
+      ? documentToPlainTextString(vacancy.intro?.document)
+      : undefined,
+    locations: (vacancy.locations ?? []).map((location) => ({
+      postalCode: undefined,
+      title: location,
+    })),
+    logoUrl: vacancy.organization?.logo?.url,
   }
 }

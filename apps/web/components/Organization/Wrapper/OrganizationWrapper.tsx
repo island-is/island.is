@@ -81,6 +81,14 @@ import {
   HeilbrigdisstofnunAusturlandsHeader,
 } from './Themes/HeilbrigdisstofnunAusturlandsTheme'
 import { UniversityStudiesHeader } from './Themes/UniversityStudiesTheme'
+import {
+  IcelandicNaturalDisasterInsuranceHeader,
+  IcelandicNaturalDisasterInsuranceFooter,
+} from './Themes/IcelandicNaturalDisasterInsuranceTheme'
+import {
+  TransportAuthorityFooter,
+  TransportAuthorityHeader,
+} from './Themes/TransportAuthorityTheme'
 
 import * as styles from './OrganizationWrapper.css'
 
@@ -120,6 +128,8 @@ export const lightThemes = [
   'hve',
   'hsa',
   'haskolanam',
+  'nti',
+  'samgongustofa',
 ]
 export const footerEnabled = [
   'syslumenn',
@@ -162,6 +172,11 @@ export const footerEnabled = [
   'shh',
 
   'hsa',
+
+  'nti',
+
+  'samgongustofa',
+  'transport-authority',
 ]
 
 export const getThemeConfig = (
@@ -177,7 +192,8 @@ export const getThemeConfig = (
   if (
     theme === 'sjukratryggingar' ||
     theme === 'rikislogmadur' ||
-    theme === 'tryggingastofnun'
+    theme === 'tryggingastofnun' ||
+    theme === 'nti'
   )
     return {
       themeConfig: {
@@ -199,9 +215,9 @@ export const getThemeConfig = (
     : { themeConfig: { footerVersion } }
 }
 
-export const OrganizationHeader: React.FC<React.PropsWithChildren<HeaderProps>> = ({
-  organizationPage,
-}) => {
+export const OrganizationHeader: React.FC<
+  React.PropsWithChildren<HeaderProps>
+> = ({ organizationPage }) => {
   switch (organizationPage.theme) {
     case 'syslumenn':
       return <SyslumennHeader organizationPage={organizationPage} />
@@ -253,6 +269,14 @@ export const OrganizationHeader: React.FC<React.PropsWithChildren<HeaderProps>> 
       )
     case 'haskolanam':
       return <UniversityStudiesHeader organizationPage={organizationPage} />
+    case 'nti':
+      return (
+        <IcelandicNaturalDisasterInsuranceHeader
+          organizationPage={organizationPage}
+        />
+      )
+    case 'samgongustofa':
+      return <TransportAuthorityHeader organizationPage={organizationPage} />
     default:
       return <DefaultHeader organizationPage={organizationPage} />
   }
@@ -263,10 +287,9 @@ interface ExternalLinksProps {
   showOnMobile?: boolean
 }
 
-export const OrganizationExternalLinks: React.FC<React.PropsWithChildren<ExternalLinksProps>> = ({
-  organizationPage,
-  showOnMobile = true,
-}) => {
+export const OrganizationExternalLinks: React.FC<
+  React.PropsWithChildren<ExternalLinksProps>
+> = ({ organizationPage, showOnMobile = true }) => {
   if (organizationPage.externalLinks?.length) {
     const mobileDisplay = showOnMobile ? 'flex' : 'none'
     return (
@@ -331,10 +354,9 @@ interface FooterProps {
   force?: boolean
 }
 
-export const OrganizationFooter: React.FC<React.PropsWithChildren<FooterProps>> = ({
-  organizations,
-  force = false,
-}) => {
+export const OrganizationFooter: React.FC<
+  React.PropsWithChildren<FooterProps>
+> = ({ organizations, force = false }) => {
   const organization = force
     ? organizations[0]
     : organizations.find((x) => footerEnabled.includes(x.slug))
@@ -507,6 +529,24 @@ export const OrganizationFooter: React.FC<React.PropsWithChildren<FooterProps>> 
         />
       )
       break
+    case 'nti':
+      OrganizationFooterComponent = (
+        <IcelandicNaturalDisasterInsuranceFooter
+          footerItems={organization.footerItems}
+          namespace={namespace}
+        />
+      )
+      break
+    case 'samgongustofa':
+    case 'transport-authority':
+      OrganizationFooterComponent = (
+        <TransportAuthorityFooter
+          title={organization.title}
+          footerItems={organization.footerItems}
+          logo={organization.logo?.url}
+        />
+      )
+      break
   }
 
   return OrganizationFooterComponent
@@ -614,7 +654,9 @@ const renderConnectedComponent = (slice) => {
   }
 }
 
-export const OrganizationWrapper: React.FC<React.PropsWithChildren<WrapperProps>> = ({
+export const OrganizationWrapper: React.FC<
+  React.PropsWithChildren<WrapperProps>
+> = ({
   pageTitle,
   pageDescription,
   pageFeaturedImage,

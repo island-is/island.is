@@ -22,7 +22,9 @@ interface Props {
   users?: User[]
 }
 
-const SelectCourtOfficials: React.FC<React.PropsWithChildren<Props>> = (props) => {
+const SelectCourtOfficials: React.FC<React.PropsWithChildren<Props>> = (
+  props,
+) => {
   const { workingCase, handleJudgeChange, handleRegistrarChange, users } = props
   const { formatMessage } = useIntl()
 

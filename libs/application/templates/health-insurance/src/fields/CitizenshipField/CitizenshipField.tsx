@@ -5,7 +5,10 @@ import { FieldBaseProps } from '@island.is/application/types'
 import { Box, Input } from '@island.is/island-ui/core'
 import { ExternalDataNationalRegistry } from '../../types'
 
-const CitizenshipField: FC<React.PropsWithChildren<FieldBaseProps>> = ({ field, application }) => {
+const CitizenshipField: FC<React.PropsWithChildren<FieldBaseProps>> = ({
+  field,
+  application,
+}) => {
   const { id } = field
   const citizenship = (
     getValueViaPath(

@@ -12,11 +12,9 @@ import {
 } from '../../utils/licenses'
 import { RAILNET_FIELD_ID, ROENET_FIELD_ID } from '../../utils/fields'
 
-export const RailNetAndRoeNetCalculations: FC<React.PropsWithChildren<FieldBaseProps>> = ({
-  application,
-  field,
-  errors,
-}) => {
+export const RailNetAndRoeNetCalculations: FC<
+  React.PropsWithChildren<FieldBaseProps>
+> = ({ application, field, errors }) => {
   const { formatMessage } = useLocale()
   const initialRoeNet = getValueViaPath(
     application.answers,
@@ -31,7 +29,7 @@ export const RailNetAndRoeNetCalculations: FC<React.PropsWithChildren<FieldBaseP
   const [numRoeNets, setNumRoeNets] = useState(initialRoeNet || '0')
   const [lengthRailNet, setLengthRailNet] = useState(initialRailNet || '0')
   return (
-    (<Box marginTop={6}>
+    <Box marginTop={6}>
       <Box>
         <Text fontWeight="semiBold" marginBottom={2}>
           {formatMessage(fishingLicenseFurtherInformation.labels.railAndRoenet)}
@@ -107,6 +105,6 @@ export const RailNetAndRoeNetCalculations: FC<React.PropsWithChildren<FieldBaseP
           />
         </motion.div>
       </Box>
-    </Box>)
-  );
+    </Box>
+  )
 }

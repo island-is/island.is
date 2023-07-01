@@ -12,10 +12,9 @@ declare global {
   }
 }
 
-export const BoostChatPanel: React.FC<React.PropsWithChildren<BoostChatPanelProps>> = ({
-  endpoint,
-  pushUp = false,
-}) => {
+export const BoostChatPanel: React.FC<
+  React.PropsWithChildren<BoostChatPanelProps>
+> = ({ endpoint, pushUp = false }) => {
   const [showButton, setShowButton] = useState(Boolean(window.boost)) // we show button when chat already loaded
 
   useEffect(() => {

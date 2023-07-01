@@ -1,6 +1,7 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql'
-import { ITabSection } from '../generated/contentfulTypes'
+import { CacheField } from '@island.is/nest/graphql'
 import { SystemMetadata } from '@island.is/shared/types'
+import { ITabSection } from '../generated/contentfulTypes'
 import { TabContent, mapTabContent } from './tabContent.model'
 
 @ObjectType()
@@ -11,7 +12,7 @@ export class TabSection {
   @Field()
   title?: string
 
-  @Field(() => [TabContent])
+  @CacheField(() => [TabContent])
   tabs?: Array<TabContent>
 }
 

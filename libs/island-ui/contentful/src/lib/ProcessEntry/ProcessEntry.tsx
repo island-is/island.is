@@ -24,7 +24,11 @@ export interface ProcessEntryProps {
   newTab?: boolean
 }
 
-export const ProcessEntryLinkButton: FC<React.PropsWithChildren<Omit<ProcessEntryProps, 'type'> & ButtonProps & ButtonTypes>> = ({
+export const ProcessEntryLinkButton: FC<
+  React.PropsWithChildren<
+    Omit<ProcessEntryProps, 'type'> & ButtonProps & ButtonTypes
+  >
+> = ({
   processTitle,
   buttonText,
   processLink,

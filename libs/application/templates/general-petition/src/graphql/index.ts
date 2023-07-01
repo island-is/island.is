@@ -20,6 +20,7 @@ export const GetSingleEndorsementList = gql`
       closedDate
       openedDate
       adminLock
+      owner
     }
   }
 `

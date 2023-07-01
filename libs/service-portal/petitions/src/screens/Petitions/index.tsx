@@ -67,6 +67,8 @@ const Petitions = () => {
             paddingTop={[2]}
           >
             <Button
+              icon="open"
+              iconType="outline"
               onClick={() =>
                 window.open(
                   `${document.location.origin}/umsoknir/undirskriftalisti/`,

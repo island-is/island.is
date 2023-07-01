@@ -22,7 +22,9 @@ interface Props {
   workingCase: Case
 }
 
-const CourtRecordAccordionItem: React.FC<React.PropsWithChildren<Props>> = ({ workingCase }: Props) => {
+const CourtRecordAccordionItem: React.FC<React.PropsWithChildren<Props>> = ({
+  workingCase,
+}: Props) => {
   const { formatMessage } = useIntl()
 
   const prosecutorAppeal = formatAppeal(

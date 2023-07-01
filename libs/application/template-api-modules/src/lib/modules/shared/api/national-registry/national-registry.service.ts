@@ -8,6 +8,7 @@ import {
   NationalRegistrySpouse,
   NationalRegistryParameters,
   NationalRegistryBirthplace,
+  ChildrenCustodyInformationParameters,
 } from '@island.is/application/types'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
@@ -29,7 +30,6 @@ export class NationalRegistryService extends BaseTemplateApiService {
     params,
   }: TemplateApiModuleActionProps<NationalRegistryParameters>): Promise<NationalRegistryIndividual | null> {
     const result = await this.getIndividual(auth.nationalId)
-
     // Make sure user has domicile country as Iceland
     if (params?.legalDomicileIceland) {
       const domicileCode = result?.address?.municipalityCode
@@ -44,18 +44,35 @@ export class NationalRegistryService extends BaseTemplateApiService {
       }
     }
 
+    if (params?.icelandicCitizenship) {
+      const citizenship = result?.citizenship
+      if (!citizenship || citizenship.code !== 'IS') {
+        throw new TemplateApiError(
+          {
+            title: coreErrorMessages.nationalRegistryCitizenshipNotIcelandic,
+            summary: coreErrorMessages.nationalRegistryCitizenshipNotIcelandic,
+          },
+          400,
+        )
+      }
+    }
+
     if (
       params?.ageToValidate &&
       result?.age &&
       result?.age < params.ageToValidate
     ) {
-      throw new TemplateApiError(
-        {
-          title: coreErrorMessages.nationalRegistryAgeLimitNotMetTitle,
-          summary: coreErrorMessages.nationalRegistryAgeLimitNotMetSummary,
-        },
-        400,
-      )
+      if (params?.ageToValidateError) {
+        throw new TemplateApiError(params?.ageToValidateError, 400)
+      } else {
+        throw new TemplateApiError(
+          {
+            title: coreErrorMessages.nationalRegistryAgeNotValid,
+            summary: coreErrorMessages.nationalRegistryAgeNotValid,
+          },
+          400,
+        )
+      }
     }
 
     if (!result) {
@@ -72,6 +89,20 @@ export class NationalRegistryService extends BaseTemplateApiService {
     return result
   }
 
+  private getAgeFromDateOfBirth(dateOfBirth: Date): number {
+    const today: Date = new Date()
+    const birthDate: Date = dateOfBirth
+    let age: number = today.getFullYear() - birthDate.getFullYear()
+    const monthDiff: number = today.getMonth() - birthDate.getMonth()
+    const dayDiff: number = today.getDate() - birthDate.getDate()
+
+    if (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)) {
+      age--
+    }
+
+    return age
+  }
+
   private async getIndividual(
     nationalId: string,
   ): Promise<NationalRegistryIndividual | null> {
@@ -83,7 +114,7 @@ export class NationalRegistryService extends BaseTemplateApiService {
       person && {
         nationalId: person.nationalId,
         fullName: person.name,
-        age: kennitala.info(person.nationalId).age,
+        age: this.getAgeFromDateOfBirth(person.birthdate),
         citizenship: citizenship && {
           code: citizenship.countryCode,
           name: citizenship.countryName,
@@ -102,12 +133,25 @@ export class NationalRegistryService extends BaseTemplateApiService {
 
   async childrenCustodyInformation({
     auth,
-  }: TemplateApiModuleActionProps): Promise<
+    params,
+  }: TemplateApiModuleActionProps<ChildrenCustodyInformationParameters>): Promise<
     ApplicantChildCustodyInformation[]
   > {
     const parentUser = auth
     const childrenNationalIds =
       await this.nationalRegistryApi.getCustodyChildren(parentUser)
+
+    if (params?.validateHasChildren) {
+      if (!childrenNationalIds || childrenNationalIds.length === 0) {
+        throw new TemplateApiError(
+          {
+            title: coreErrorMessages.nationalRegistryHasNoChildrenTitle,
+            summary: coreErrorMessages.nationalRegistryHasNoChildrenSummary,
+          },
+          400,
+        )
+      }
+    }
 
     if (childrenNationalIds.length === 0) {
       return []
@@ -159,9 +203,27 @@ export class NationalRegistryService extends BaseTemplateApiService {
         }),
       )
 
-    return children.filter(
+    const filteredChildren = children.filter(
       (child): child is ApplicantChildCustodyInformation => child != null,
     )
+
+    if (params?.validateHasJointCustody) {
+      const hasNoJointCustody = filteredChildren.every(
+        (child) => !child.otherParent,
+      )
+
+      if (hasNoJointCustody) {
+        throw new TemplateApiError(
+          {
+            title: coreErrorMessages.nationalRegistryHasNoJointCustodyTitle,
+            summary: coreErrorMessages.nationalRegistryHasNoJointCustodySummary,
+          },
+          400,
+        )
+      }
+    }
+
+    return filteredChildren
   }
 
   async getMyRealEstates({ auth }: TemplateApiModuleActionProps) {

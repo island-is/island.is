@@ -72,7 +72,7 @@ export const DocumentProviderBasicInfo: FC<React.PropsWithChildren<Props>> = ({
   } = useForm<UseFormProps>()
 
   return (
-    (<Box marginY={3}>
+    <Box marginY={3}>
       <form onSubmit={handleSubmit(onSubmit)}>
         <Box marginBottom={4}>
           <Box marginBottom={4}>
@@ -651,6 +651,6 @@ export const DocumentProviderBasicInfo: FC<React.PropsWithChildren<Props>> = ({
           </Button>
         </Box>
       </form>
-    </Box>)
-  );
+    </Box>
+  )
 }

@@ -51,13 +51,15 @@ import {
 } from '../../components/CaseFiles/CaseFiles'
 import { policeCaseFiles as m } from './PoliceCaseFilesRoute.strings'
 
-const UploadFilesToPoliceCase: React.FC<React.PropsWithChildren<{
-  caseId: string
-  policeCaseNumber: string
-  setAllUploaded: (allUploaded: boolean) => void
-  caseFiles: CaseFile[]
-  caseOrigin: CaseOrigin
-}>> = ({ caseId, policeCaseNumber, setAllUploaded, caseFiles, caseOrigin }) => {
+const UploadFilesToPoliceCase: React.FC<
+  React.PropsWithChildren<{
+    caseId: string
+    policeCaseNumber: string
+    setAllUploaded: (allUploaded: boolean) => void
+    caseFiles: CaseFile[]
+    caseOrigin: CaseOrigin
+  }>
+> = ({ caseId, policeCaseNumber, setAllUploaded, caseFiles, caseOrigin }) => {
   const { formatMessage } = useIntl()
   const {
     handleChange,
@@ -253,7 +255,14 @@ const UploadFilesToPoliceCase: React.FC<React.PropsWithChildren<{
           )
         }
         onRemove={(file) => handleRemove(file, removeFileCB)}
-        onRetry={(file) => handleRetry(file, handleUIUpdate)}
+        onRetry={(file) =>
+          handleRetry(
+            file,
+            handleUIUpdate,
+            CaseFileCategory.CASE_FILE,
+            policeCaseNumber,
+          )
+        }
         errorMessage={errorMessage}
         disabled={isUploading}
         showFileSize
@@ -270,15 +279,17 @@ type AllUploadedState = {
  * Since we passing `setAllUploaded` to the children and they are calling it within a useEffect
  * causing a endless rendering loop.
  */
-const PoliceUploadListMemo: React.FC<React.PropsWithChildren<{
-  caseId: string
-  policeCaseNumbers: string[]
-  subtypes?: IndictmentSubtypeMap
-  crimeScenes?: CrimeSceneMap
-  caseFiles?: CaseFile[]
-  setAllUploaded: (policeCaseNumber: string) => (value: boolean) => void
-  caseOrigin: CaseOrigin
-}>> = memo(
+const PoliceUploadListMemo: React.FC<
+  React.PropsWithChildren<{
+    caseId: string
+    policeCaseNumbers: string[]
+    subtypes?: IndictmentSubtypeMap
+    crimeScenes?: CrimeSceneMap
+    caseFiles?: CaseFile[]
+    setAllUploaded: (policeCaseNumber: string) => (value: boolean) => void
+    caseOrigin: CaseOrigin
+  }>
+> = memo(
   ({
     caseId,
     policeCaseNumbers,

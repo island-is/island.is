@@ -28,7 +28,9 @@ export const runEndpointTestsMutation = gql`
   }
 `
 
-const AutomatedTests: FC<React.PropsWithChildren<FieldBaseProps>> = ({ application }) => {
+const AutomatedTests: FC<React.PropsWithChildren<FieldBaseProps>> = ({
+  application,
+}) => {
   const { formatMessage } = useLocale()
 
   interface Response {
@@ -81,7 +83,7 @@ const AutomatedTests: FC<React.PropsWithChildren<FieldBaseProps>> = ({ applicati
   }
   //TODO finish loading state
   return (
-    (<Box>
+    <Box>
       <Box marginBottom={3}>
         <FieldDescription
           description={formatText(
@@ -199,8 +201,8 @@ const AutomatedTests: FC<React.PropsWithChildren<FieldBaseProps>> = ({ applicati
           ))}
         </Box>
       </Box>
-    </Box>)
-  );
+    </Box>
+  )
 }
 
 export default AutomatedTests

@@ -27,7 +27,9 @@ interface UseFormProps {
   account: string
 }
 
-export const BankInfoForm: FC<React.PropsWithChildren<Props>> = ({ bankInfo }) => {
+export const BankInfoForm: FC<React.PropsWithChildren<Props>> = ({
+  bankInfo,
+}) => {
   useNamespaces('sp.settings')
   const { formatMessage } = useLocale()
   const {
@@ -89,7 +91,7 @@ export const BankInfoForm: FC<React.PropsWithChildren<Props>> = ({ bankInfo }) =
     submitError
 
   return (
-    (<form onSubmit={handleSubmit(submitFormData)}>
+    <form onSubmit={handleSubmit(submitFormData)}>
       <Box display="flex" flexWrap="wrap" alignItems="center">
         <Box marginRight={3} className={styles.formContainer}>
           <Columns collapseBelow="sm" alignY="center">
@@ -220,6 +222,6 @@ export const BankInfoForm: FC<React.PropsWithChildren<Props>> = ({ bankInfo }) =
           {loading && <LoadingDots />}
         </Box>
       </Box>
-    </form>)
-  );
+    </form>
+  )
 }

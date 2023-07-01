@@ -14,7 +14,9 @@ import {
   NotificationType,
   CaseState,
   CaseTransition,
+  CaseLegalProvisions,
 } from '@island.is/judicial-system/types'
+import * as constants from '@island.is/judicial-system/consts'
 import { formatDate, capitalize } from '@island.is/judicial-system/formatters'
 import {
   FormFooter,
@@ -29,6 +31,8 @@ import {
   CaseResubmitModal,
   FormContext,
   UserContext,
+  CommentsAccordionItem,
+  PageHeader,
 } from '@island.is/judicial-system-web/src/components'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
@@ -40,12 +44,8 @@ import {
   titles,
   errors,
 } from '@island.is/judicial-system-web/messages'
-import CommentsAccordionItem from '@island.is/judicial-system-web/src/components/AccordionItems/CommentsAccordionItem/CommentsAccordionItem'
 import { createCaseResentExplanation } from '@island.is/judicial-system-web/src/utils/stepHelper'
-import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import { formatRequestedCustodyRestrictions } from '@island.is/judicial-system-web/src/utils/restrictions'
-import type { CaseLegalProvisions } from '@island.is/judicial-system/types'
-import * as constants from '@island.is/judicial-system/consts'
 
 import * as styles from './Overview.css'
 
@@ -119,7 +119,7 @@ export const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
       <FormContentContainer>
         {workingCase.state === CaseState.RECEIVED && (
           <Box
-            marginBottom={workingCase.seenByDefender ? 3 : 5}
+            marginBottom={workingCase.openedByDefender ? 3 : 5}
             data-testid="rc-overview-info-panel"
           >
             <AlertMessage
@@ -129,15 +129,15 @@ export const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
             />
           </Box>
         )}
-        {workingCase.seenByDefender && (
+        {workingCase.openedByDefender && (
           <Box marginBottom={5}>
             <AlertMessage
-              title={formatMessage(m.seenByDefenderAlert.title)}
-              message={formatMessage(m.seenByDefenderAlert.text, {
-                when: formatDate(workingCase.seenByDefender, 'PPPp'),
+              title={formatMessage(m.openedByDefenderAlert.title)}
+              message={formatMessage(m.openedByDefenderAlert.text, {
+                when: formatDate(workingCase.openedByDefender, 'PPPp'),
               })}
               type="info"
-              testid="alertMessageSeenByDefender"
+              testid="alertMessageOpenedByDefender"
             />
           </Box>
         )}

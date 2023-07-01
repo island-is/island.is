@@ -9,6 +9,7 @@ import {
 } from '@island.is/island-ui/core'
 import localization from '../../Case.json'
 import { MapCaseStatuses } from '../../../../types/enums'
+import { useIsMobile } from '../../../../hooks'
 
 interface CaseTimelineProps {
   chosenCase: Case
@@ -18,6 +19,7 @@ const Sections = ['Til umsagnar', 'Niðurstöður í vinnslu', 'Niðurstöður b
 
 export const CaseTimeline = ({ chosenCase }: CaseTimelineProps) => {
   const loc = localization['timeline']
+  const { isMobile } = useIsMobile()
 
   const sectionItems = Sections.map((item, index) => (
     <Section
@@ -46,9 +48,11 @@ export const CaseTimeline = ({ chosenCase }: CaseTimelineProps) => {
 
   return (
     <Stack space={[2, 2, 2, 1, 1]}>
-      <Text variant="h3" color="blue400">
-        {loc.title}
-      </Text>
+      {!isMobile && (
+        <Text variant="h3" color="blue400">
+          {loc.title}
+        </Text>
+      )}
       <FormStepperV2 sections={sectionItems} />
     </Stack>
   )

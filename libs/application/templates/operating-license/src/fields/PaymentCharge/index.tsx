@@ -10,7 +10,9 @@ import { getChargeItemCode, getCurrencyString } from '../../lib/utils'
 import { PaymentCatalogItem } from '@island.is/api/schema'
 import { useFormContext } from 'react-hook-form'
 
-export const PaymentCharge: FC<React.PropsWithChildren<FieldBaseProps>> = ({ application }) => {
+export const PaymentCharge: FC<React.PropsWithChildren<FieldBaseProps>> = ({
+  application,
+}) => {
   const { formatMessage } = useLocale()
   const { setValue } = useFormContext()
   const chargeCode = getChargeItemCode(application.answers)

@@ -92,7 +92,9 @@ export interface TellUsAStoryFormProps {
   onSubmit: (formState: TellUsAStoryFormState) => Promise<void>
 }
 
-export const TellUsAStoryForm: React.FC<React.PropsWithChildren<TellUsAStoryFormProps>> = ({
+export const TellUsAStoryForm: React.FC<
+  React.PropsWithChildren<TellUsAStoryFormProps>
+> = ({
   introTitle,
   introImage,
   introDescription,
@@ -169,270 +171,272 @@ export const TellUsAStoryForm: React.FC<React.PropsWithChildren<TellUsAStoryForm
         }))
       : []
 
-  return (<>
-    {!!showIntro && (
-      <Box paddingX={[3, 3, 8]} paddingBottom={8}>
-        <GridRow>
-          <GridColumn span={'12/12'} paddingBottom={[2, 2, 4]}>
-            <Text as="h1" variant="h1" lineHeight={'lg'}>
-              {introTitle}
-            </Text>
-            {introDescription && (
-              <Box>{richText([introDescription] as SliceType[])}</Box>
-            )}
-          </GridColumn>
-          {!!introImage && (
-            <GridColumn
-              hiddenBelow="lg"
-              span={['0', '0', '0', '3/12']}
-              className={styles.infoImageWrapper}
-            >
-              <Box
-                className={styles.infoImage}
-                display="flex"
-                alignItems="center"
-                justifyContent="center"
-                height="full"
-                width="full"
-              >
-                <BackgroundImage
-                  ratio="1:1"
-                  background="transparent"
-                  image={introImage}
-                />
-              </Box>
-            </GridColumn>
-          )}
-        </GridRow>
-      </Box>
-    )}
-    <Box
-      paddingY={[3, 3, 8]}
-      paddingX={showIntro ? [3, 3, 8] : [3, 3, 3, 3, 15]}
-      borderRadius="large"
-      background="blue100"
-    >
-      {state !== 'success' ? (
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <Stack space={5}>
-            <GridRow>
-              <GridColumn span={'12/12'} paddingBottom={3}>
-                <Text as="h3" variant="h3" color="blue600">
-                  {firstSectionTitle}
-                </Text>
-              </GridColumn>
-              <GridColumn span="12/12" paddingBottom={3}>
-                <Controller
-                  name="organization"
-                  defaultValue={''}
-                  control={control}
-                  rules={{ required: true }}
-                  render={({ field: { onChange } }) => (
-                    <Select
-                      name="organization"
-                      label={organizationLabel}
-                      placeholder={organizationPlaceholder}
-                      options={options}
-                      errorMessage={
-                        errors?.organization
-                          ? organizationInputErrorMessage
-                          : null
-                      }
-                      required
-                      hasError={errors?.organization !== undefined}
-                      disabled={
-                        Boolean(error || loading) || state === 'submitting'
-                      }
-                      onChange={({ value }: Option) => {
-                        onChange(value)
-                      }}
-                    />
-                  )}
-                />
-              </GridColumn>
-              <GridColumn span="12/12" paddingBottom={3}>
-                <Controller
-                  name="dateOfStory"
-                  defaultValue={false}
-                  control={control}
-                  rules={{ required: true }}
-                  render={({ field: { onChange, value } }) => (
-                    <DatePicker
-                      label={dateOfStoryLabel}
-                      placeholderText={dateOfStoryPlaceholder}
-                      locale={locale as Locale}
-                      selected={value}
-                      required
-                      errorMessage={
-                        errors.dateOfStory
-                          ? dateOfStoryInputErrorMessage
-                          : null
-                      }
-                      hasError={errors?.dateOfStory !== undefined}
-                      disabled={state === 'submitting'}
-                      handleChange={onChange}
-                    />
-                  )}
-                />
-              </GridColumn>
-            </GridRow>
-            <GridRow>
-              <GridColumn span={'12/12'} paddingBottom={3}>
-                <Text as="h3" variant="h3" color="blue600">
-                  {secondSectionTitle}
-                </Text>
-              </GridColumn>
-              <GridColumn span="12/12" paddingBottom={3}>
-                <GridRow>
-                  {!!instructionsImage && (
-                    <GridColumn
-                      span={['0', '3/12', '4/12']}
-                      className={styles.alignSelfCenter}
-                      hiddenBelow="sm"
-                    >
-                      <Box className={styles.contentImage}>
-                        <BackgroundImage
-                          ratio="1:1"
-                          background="transparent"
-                          image={instructionsImage}
-                        />
-                      </Box>
-                    </GridColumn>
-                  )}
-                  <GridColumn
-                    span={['12/12', '7/12', '8/12']}
-                    className={styles.alignSelfCenter}
-                  >
-                    <Text
-                      as="h4"
-                      variant="h4"
-                      color="blue600"
-                      paddingBottom={1}
-                    >
-                      {instructionsTitle}
-                    </Text>
-                    {instructionsDescription && (
-                      <Box>
-                        {richText([instructionsDescription] as SliceType[])}
-                      </Box>
-                    )}
-                  </GridColumn>
-                </GridRow>
-              </GridColumn>
-              <GridColumn span="12/12">
-                <Stack space={3}>
-                  <Input
-                    name="subject"
-                    label={subjectLabel}
-                    placeholder={subjectPlaceholder}
-                    defaultValue=""
-                    disabled={state === 'submitting'}
-                    {...register('subject', {
-                      required: false,
-                    })}
-                  />
-                  <Input
-                    name="message"
-                    label={messageLabel}
-                    placeholder={messagePlaceholder}
-                    defaultValue=""
-                    textarea
-                    rows={isTablet ? 8 : showIntro ? 14 : 18}
-                    required
-                    errorMessage={errors?.message?.message as string}
-                    disabled={state === 'submitting'}
-                    {...register('message', {
-                      required: messageInputErrorMessage,
-                    })}
-                  />
-                </Stack>
-              </GridColumn>
-            </GridRow>
-            <GridRow>
-              <GridColumn span={'12/12'} paddingBottom={3}>
-                <Text as="h3" variant="h3" color="blue600">
-                  {thirdSectionTitle}
-                </Text>
-              </GridColumn>
-              <GridColumn span="12/12" paddingBottom={3}>
-                <Input
-                  name="name"
-                  label={nameLabel}
-                  placeholder={namePlaceholder}
-                  defaultValue=""
-                  required
-                  errorMessage={errors?.name?.message as string}
-                  disabled={state === 'submitting'}
-                  {...register('name', {
-                    required: nameInputErrorMessage,
-                  })}
-                />
-              </GridColumn>
-
-              <GridColumn span="12/12">
-                <Input
-                  name="email"
-                  label={emailLabel}
-                  placeholder={emailPlaceholder}
-                  defaultValue=""
-                  required
-                  errorMessage={errors?.email?.message as string}
-                  disabled={state === 'submitting'}
-                  {...register('email', {
-                    required: emailInputErrorMessage,
-                    pattern: {
-                      value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                      message: emailInputErrorMessage,
-                    },
-                  })}
-                />
-              </GridColumn>
-            </GridRow>
-
-            <Controller
-              name="publicationAllowed"
-              defaultValue={false}
-              control={control}
-              rules={{ required: false }}
-              render={({ field: { onChange, value } }) => (
-                <Checkbox
-                  label={publicationAllowedLabel}
-                  checked={value}
-                  disabled={state === 'submitting'}
-                  onChange={(e) => onChange(e.target.checked)}
-                />
+  return (
+    <>
+      {!!showIntro && (
+        <Box paddingX={[3, 3, 8]} paddingBottom={8}>
+          <GridRow>
+            <GridColumn span={'12/12'} paddingBottom={[2, 2, 4]}>
+              <Text as="h1" variant="h1" lineHeight={'lg'}>
+                {introTitle}
+              </Text>
+              {introDescription && (
+                <Box>{richText([introDescription] as SliceType[])}</Box>
               )}
-            />
-            <GridRow>
-              <GridColumn span={'12/12'}>
-                <Box className={styles.justifyContentFlexEnd}>
-                  <Button htmlType="submit" loading={state === 'submitting'}>
-                    {submitButtonTitle}
-                  </Button>
+            </GridColumn>
+            {!!introImage && (
+              <GridColumn
+                hiddenBelow="lg"
+                span={['0', '0', '0', '3/12']}
+                className={styles.infoImageWrapper}
+              >
+                <Box
+                  className={styles.infoImage}
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="center"
+                  height="full"
+                  width="full"
+                >
+                  <BackgroundImage
+                    ratio="1:1"
+                    background="transparent"
+                    image={introImage}
+                  />
                 </Box>
               </GridColumn>
-            </GridRow>
-          </Stack>
-        </form>
-      ) : (
-        <Box paddingTop={[2, 4, 6, 12]} paddingBottom={[3, 6, 8, 20]}>
-          <Text variant="h2" as="h2" paddingBottom={2}>
-            {SuccessMessageTitle}
-          </Text>
-          {tellUsAStorySuccessMessage && (
-            <Box paddingBottom={3}>
-              {richText([tellUsAStorySuccessMessage] as SliceType[])}
-            </Box>
-          )}
+            )}
+          </GridRow>
         </Box>
       )}
-    </Box>
-    <ToastContainer
-      hideProgressBar={true}
-      closeButton={true}
-      useKeyframeStyles={false}
-    />
-  </>);
+      <Box
+        paddingY={[3, 3, 8]}
+        paddingX={showIntro ? [3, 3, 8] : [3, 3, 3, 3, 15]}
+        borderRadius="large"
+        background="blue100"
+      >
+        {state !== 'success' ? (
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <Stack space={5}>
+              <GridRow>
+                <GridColumn span={'12/12'} paddingBottom={3}>
+                  <Text as="h3" variant="h3" color="blue600">
+                    {firstSectionTitle}
+                  </Text>
+                </GridColumn>
+                <GridColumn span="12/12" paddingBottom={3}>
+                  <Controller
+                    name="organization"
+                    defaultValue={''}
+                    control={control}
+                    rules={{ required: true }}
+                    render={({ field: { onChange } }) => (
+                      <Select
+                        name="organization"
+                        label={organizationLabel}
+                        placeholder={organizationPlaceholder}
+                        options={options}
+                        errorMessage={
+                          errors?.organization
+                            ? organizationInputErrorMessage
+                            : null
+                        }
+                        required
+                        hasError={errors?.organization !== undefined}
+                        disabled={
+                          Boolean(error || loading) || state === 'submitting'
+                        }
+                        onChange={({ value }: Option) => {
+                          onChange(value)
+                        }}
+                      />
+                    )}
+                  />
+                </GridColumn>
+                <GridColumn span="12/12" paddingBottom={3}>
+                  <Controller
+                    name="dateOfStory"
+                    defaultValue={false}
+                    control={control}
+                    rules={{ required: true }}
+                    render={({ field: { onChange, value } }) => (
+                      <DatePicker
+                        label={dateOfStoryLabel}
+                        placeholderText={dateOfStoryPlaceholder}
+                        locale={locale as Locale}
+                        selected={value}
+                        required
+                        errorMessage={
+                          errors.dateOfStory
+                            ? dateOfStoryInputErrorMessage
+                            : null
+                        }
+                        hasError={errors?.dateOfStory !== undefined}
+                        disabled={state === 'submitting'}
+                        handleChange={onChange}
+                      />
+                    )}
+                  />
+                </GridColumn>
+              </GridRow>
+              <GridRow>
+                <GridColumn span={'12/12'} paddingBottom={3}>
+                  <Text as="h3" variant="h3" color="blue600">
+                    {secondSectionTitle}
+                  </Text>
+                </GridColumn>
+                <GridColumn span="12/12" paddingBottom={3}>
+                  <GridRow>
+                    {!!instructionsImage && (
+                      <GridColumn
+                        span={['0', '3/12', '4/12']}
+                        className={styles.alignSelfCenter}
+                        hiddenBelow="sm"
+                      >
+                        <Box className={styles.contentImage}>
+                          <BackgroundImage
+                            ratio="1:1"
+                            background="transparent"
+                            image={instructionsImage}
+                          />
+                        </Box>
+                      </GridColumn>
+                    )}
+                    <GridColumn
+                      span={['12/12', '7/12', '8/12']}
+                      className={styles.alignSelfCenter}
+                    >
+                      <Text
+                        as="h4"
+                        variant="h4"
+                        color="blue600"
+                        paddingBottom={1}
+                      >
+                        {instructionsTitle}
+                      </Text>
+                      {instructionsDescription && (
+                        <Box>
+                          {richText([instructionsDescription] as SliceType[])}
+                        </Box>
+                      )}
+                    </GridColumn>
+                  </GridRow>
+                </GridColumn>
+                <GridColumn span="12/12">
+                  <Stack space={3}>
+                    <Input
+                      name="subject"
+                      label={subjectLabel}
+                      placeholder={subjectPlaceholder}
+                      defaultValue=""
+                      disabled={state === 'submitting'}
+                      {...register('subject', {
+                        required: false,
+                      })}
+                    />
+                    <Input
+                      name="message"
+                      label={messageLabel}
+                      placeholder={messagePlaceholder}
+                      defaultValue=""
+                      textarea
+                      rows={isTablet ? 8 : showIntro ? 14 : 18}
+                      required
+                      errorMessage={errors?.message?.message as string}
+                      disabled={state === 'submitting'}
+                      {...register('message', {
+                        required: messageInputErrorMessage,
+                      })}
+                    />
+                  </Stack>
+                </GridColumn>
+              </GridRow>
+              <GridRow>
+                <GridColumn span={'12/12'} paddingBottom={3}>
+                  <Text as="h3" variant="h3" color="blue600">
+                    {thirdSectionTitle}
+                  </Text>
+                </GridColumn>
+                <GridColumn span="12/12" paddingBottom={3}>
+                  <Input
+                    name="name"
+                    label={nameLabel}
+                    placeholder={namePlaceholder}
+                    defaultValue=""
+                    required
+                    errorMessage={errors?.name?.message as string}
+                    disabled={state === 'submitting'}
+                    {...register('name', {
+                      required: nameInputErrorMessage,
+                    })}
+                  />
+                </GridColumn>
+
+                <GridColumn span="12/12">
+                  <Input
+                    name="email"
+                    label={emailLabel}
+                    placeholder={emailPlaceholder}
+                    defaultValue=""
+                    required
+                    errorMessage={errors?.email?.message as string}
+                    disabled={state === 'submitting'}
+                    {...register('email', {
+                      required: emailInputErrorMessage,
+                      pattern: {
+                        value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                        message: emailInputErrorMessage,
+                      },
+                    })}
+                  />
+                </GridColumn>
+              </GridRow>
+
+              <Controller
+                name="publicationAllowed"
+                defaultValue={false}
+                control={control}
+                rules={{ required: false }}
+                render={({ field: { onChange, value } }) => (
+                  <Checkbox
+                    label={publicationAllowedLabel}
+                    checked={value}
+                    disabled={state === 'submitting'}
+                    onChange={(e) => onChange(e.target.checked)}
+                  />
+                )}
+              />
+              <GridRow>
+                <GridColumn span={'12/12'}>
+                  <Box className={styles.justifyContentFlexEnd}>
+                    <Button htmlType="submit" loading={state === 'submitting'}>
+                      {submitButtonTitle}
+                    </Button>
+                  </Box>
+                </GridColumn>
+              </GridRow>
+            </Stack>
+          </form>
+        ) : (
+          <Box paddingTop={[2, 4, 6, 12]} paddingBottom={[3, 6, 8, 20]}>
+            <Text variant="h2" as="h2" paddingBottom={2}>
+              {SuccessMessageTitle}
+            </Text>
+            {tellUsAStorySuccessMessage && (
+              <Box paddingBottom={3}>
+                {richText([tellUsAStorySuccessMessage] as SliceType[])}
+              </Box>
+            )}
+          </Box>
+        )}
+      </Box>
+      <ToastContainer
+        hideProgressBar={true}
+        closeButton={true}
+        useKeyframeStyles={false}
+      />
+    </>
+  )
 }
 
 export default TellUsAStoryForm

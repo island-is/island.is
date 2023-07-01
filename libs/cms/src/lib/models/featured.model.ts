@@ -1,4 +1,5 @@
 import { Field, ObjectType } from '@nestjs/graphql'
+import { CacheField } from '@island.is/nest/graphql'
 import { IFeatured } from '../generated/contentfulTypes'
 import { mapReferenceLink, ReferenceLink } from './referenceLink.model'
 
@@ -10,7 +11,7 @@ export class Featured {
   @Field(() => Boolean)
   attention?: boolean
 
-  @Field(() => ReferenceLink, { nullable: true })
+  @CacheField(() => ReferenceLink, { nullable: true })
   thing?: ReferenceLink | null
 }
 

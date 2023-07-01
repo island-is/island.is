@@ -103,7 +103,7 @@ const OperatingLicenseTemplate: ApplicationTemplate<
             description: m.payment,
           },
           progress: 0.9,
-          lifecycle: pruneAfter(thirtyDays),
+          lifecycle: { shouldBeListed: true, shouldBePruned: false },
           onEntry: defineTemplateApi({
             action: ApiActions.createCharge,
           }),

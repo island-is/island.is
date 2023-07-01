@@ -16,9 +16,9 @@ interface OpinberNyskopunFooterProps {
   footerItems: FooterItem[]
 }
 
-export const OpinberNyskopunFooter: React.FC<React.PropsWithChildren<OpinberNyskopunFooterProps>> = ({
-  footerItems,
-}) => {
+export const OpinberNyskopunFooter: React.FC<
+  React.PropsWithChildren<OpinberNyskopunFooterProps>
+> = ({ footerItems }) => {
   return (
     <footer className={styles.container}>
       <GridContainer>

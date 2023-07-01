@@ -1,4 +1,5 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql'
+import { CacheField } from '@island.is/nest/graphql'
 import { IUrl } from '../generated/contentfulTypes'
 import { mapReferenceLink, ReferenceLink } from './referenceLink.model'
 
@@ -10,7 +11,7 @@ export class Url {
   @Field({ nullable: true })
   title?: string
 
-  @Field(() => ReferenceLink, { nullable: true })
+  @CacheField(() => ReferenceLink, { nullable: true })
   page!: ReferenceLink | null
 
   @Field(() => [String])

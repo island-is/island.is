@@ -8,13 +8,9 @@ import { AirDiscountSchemeModule } from '@island.is/api/domains/air-discount-sch
 import { ApiCatalogueModule } from '@island.is/api/domains/api-catalogue'
 import { ApplicationModule } from '@island.is/api/domains/application'
 import { AssetsModule } from '@island.is/api/domains/assets'
-//import responseCachePlugin from 'apollo-server-plugin-response-cache'
-import { AuthModule as AuthDomainModule } from '@island.is/api/domains/auth'
 import { AuthAdminModule } from '@island.is/api/domains/auth-admin'
-import {
-  CommunicationsConfig,
-  CommunicationsModule,
-} from '@island.is/api/domains/communications'
+import { SessionsModule } from '@island.is/api/domains/sessions'
+import { AuthModule as AuthDomainModule } from '@island.is/api/domains/auth'
 import { CompanyRegistryModule } from '@island.is/api/domains/company-registry'
 import { ConsultationPortalModule } from '@island.is/api/domains/consultation-portal'
 import { ContentSearchModule } from '@island.is/api/domains/content-search'
@@ -34,11 +30,13 @@ import {
 import { EndorsementSystemModule } from '@island.is/api/domains/endorsement-system'
 import { FileUploadModule } from '@island.is/api/domains/file-upload'
 import { FinanceModule } from '@island.is/api/domains/finance'
-import { FinancialStatementsInaoModule } from '@island.is/api/domains/financial-statements-inao'
-import { FishingLicenseModule } from '@island.is/api/domains/fishing-license'
 import { FiskistofaModule } from '@island.is/api/domains/fiskistofa'
 import { HealthInsuranceModule } from '@island.is/api/domains/health-insurance'
 import { IcelandicNamesModule } from '@island.is/api/domains/icelandic-names-registry'
+import {
+  CommunicationsConfig,
+  CommunicationsModule,
+} from '@island.is/api/domains/communications'
 import { IdentityModule } from '@island.is/api/domains/identity'
 import {
   GenericAdrLicenseConfig,
@@ -46,6 +44,7 @@ import {
   GenericDrivingLicenseConfig,
   GenericFirearmLicenseConfig,
   GenericMachineLicenseConfig,
+  OldGenericDrivingLicenseConfig,
   LicenseServiceModule,
 } from '@island.is/api/domains/license-service'
 import { MortgageCertificateModule } from '@island.is/api/domains/mortgage-certificate'
@@ -53,12 +52,12 @@ import { MunicipalitiesFinancialAidModule } from '@island.is/api/domains/municip
 import { NationalRegistryModule } from '@island.is/api/domains/national-registry'
 import { NationalRegistryXRoadModule } from '@island.is/api/domains/national-registry-x-road'
 import { PassportModule } from '@island.is/api/domains/passport'
+import { FishingLicenseModule } from '@island.is/api/domains/fishing-license'
 import { ApiDomainsPaymentModule } from '@island.is/api/domains/payment'
 import { PaymentScheduleModule } from '@island.is/api/domains/payment-schedule'
 import { RegulationsModule } from '@island.is/api/domains/regulations'
 import { RegulationsAdminModule } from '@island.is/api/domains/regulations-admin'
 import { RightsPortalModule } from '@island.is/api/domains/rights-portal'
-import { SessionsModule } from '@island.is/api/domains/sessions'
 import { SyslumennModule } from '@island.is/api/domains/syslumenn'
 import { TransportAuthorityApiModule } from '@island.is/api/domains/transport-authority'
 import { UniversityOfIcelandModule } from '@island.is/api/domains/university-of-iceland'
@@ -84,6 +83,7 @@ import { DrivingLicenseApiConfig } from '@island.is/clients/driving-license'
 import { DrivingLicenseBookClientConfig } from '@island.is/clients/driving-license-book'
 import { ElectronicRegistrationsClientConfig } from '@island.is/clients/electronic-registration-statistics'
 import { FinanceClientConfig } from '@island.is/clients/finance'
+import { FinancialStatementsInaoModule } from '@island.is/api/domains/financial-statements-inao'
 import { FinancialStatementsInaoClientConfig } from '@island.is/clients/financial-statements-inao'
 import { FirearmLicenseClientConfig } from '@island.is/clients/firearm-license'
 import { FishingLicenseClientConfig } from '@island.is/clients/fishing-license'
@@ -101,10 +101,13 @@ import { CompanyRegistryConfig } from '@island.is/clients/rsk/company-registry'
 import { SessionsApiClientConfig } from '@island.is/clients/sessions'
 import { SyslumennClientConfig } from '@island.is/clients/syslumenn'
 import { UniversityOfIcelandClientConfig } from '@island.is/clients/university-of-iceland'
+import { InnaClientConfig } from '@island.is/clients/inna'
 import { VehiclesClientConfig } from '@island.is/clients/vehicles'
 import { CmsModule, PowerBiConfig } from '@island.is/cms'
 import { CmsTranslationsModule } from '@island.is/cms-translations'
 import { FileStorageConfig } from '@island.is/file-storage'
+import { WorkMachinesClientConfig } from '@island.is/clients/work-machines'
+import { WorkMachinesModule } from '@island.is/api/domains/work-machines'
 import { AuditModule } from '@island.is/nest/audit'
 import {
   ConfigModule,
@@ -117,15 +120,12 @@ import { FeatureFlagConfig } from '@island.is/nest/feature-flags'
 import { ProblemModule } from '@island.is/nest/problem'
 
 import { getConfig } from './environments'
-import { maskOutFieldsMiddleware } from './graphql.middleware'
+import { GraphqlOptionsFactory } from './graphql-options.factory'
 import { HealthController } from './health.controller'
+import { GraphQLConfig } from './graphql.config'
+import { RskRelationshipsClientConfig } from '@island.is/clients-rsk-relationships'
 
-const debug = process.env.NODE_ENV === 'development'
-const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
 const environment = getConfig
-const autoSchemaFile = environment.production
-  ? true
-  : 'apps/api/src/api.graphql'
 
 @Module({
   controllers: [HealthController],
@@ -136,25 +136,9 @@ const autoSchemaFile = environment.production
     },
   ],
   imports: [
-    GraphQLModule.forRoot({
+    GraphQLModule.forRootAsync({
       driver: ApolloDriver,
-      debug,
-      playground,
-      autoSchemaFile,
-      path: '/api/graphql',
-      buildSchemaOptions: {
-        fieldMiddleware: [maskOutFieldsMiddleware],
-      },
-      plugins: [
-        // This was causing problems since graphql upgrade, gives us issues like:
-        // Error: overallCachePolicy.policyIfCacheable is not a function
-        // responseCachePlugin({
-        //   shouldReadFromCache: ({ request: { http } }) => {
-        //     const bypassCacheKey = http?.headers.get('bypass-cache-key')
-        //     return bypassCacheKey !== process.env.BYPASS_CACHE_KEY
-        //   },
-        // }),
-      ],
+      useClass: GraphqlOptionsFactory,
     }),
     AuthDomainModule,
     AuditModule.forRoot(environment.audit),
@@ -284,12 +268,14 @@ const autoSchemaFile = environment.production
     MortgageCertificateModule,
     TransportAuthorityApiModule,
     UniversityOfIcelandModule,
+    WorkMachinesModule,
     SessionsModule,
     AuthAdminModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [
         AdrAndMachineLicenseClientConfig,
+        WorkMachinesClientConfig,
         AirDiscountSchemeClientConfig,
         ConsultationPortalClientConfig,
         AssetsClientConfig,
@@ -299,7 +285,9 @@ const autoSchemaFile = environment.production
         GenericMachineLicenseConfig,
         GenericAdrLicenseConfig,
         GenericDrivingLicenseConfig,
+        OldGenericDrivingLicenseConfig,
         GenericDisabilityLicenseConfig,
+        GraphQLConfig,
         VehiclesClientConfig,
         RightsPortalClientConfig,
         AuthPublicApiClientConfig,
@@ -331,12 +319,14 @@ const autoSchemaFile = environment.production
         JudicialAdministrationClientConfig,
         CommunicationsConfig,
         UniversityOfIcelandClientConfig,
+        InnaClientConfig,
         SessionsApiClientConfig,
         AuthAdminApiClientConfig,
         WatsonAssistantChatConfig,
         PowerBiConfig,
         AuthIdsApiClientConfig,
         IcelandicGovernmentInstitutionVacanciesClientConfig,
+        RskRelationshipsClientConfig,
       ],
     }),
   ],

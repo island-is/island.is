@@ -70,7 +70,7 @@ export const ContactUs: FC<React.PropsWithChildren<ContactUsProps>> = ({
   const isNotSent = state !== 'success'
 
   return (
-    (<Box position="relative">
+    <Box position="relative">
       <Box background="blue100" borderRadius="large" paddingY={6}>
         <GridRow>
           <GridColumn span="7/9" offset="1/9">
@@ -158,6 +158,6 @@ export const ContactUs: FC<React.PropsWithChildren<ContactUsProps>> = ({
         closeButton={true}
         useKeyframeStyles={false}
       />
-    </Box>)
-  );
+    </Box>
+  )
 }

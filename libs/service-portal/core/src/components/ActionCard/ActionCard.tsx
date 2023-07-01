@@ -55,6 +55,7 @@ type ActionCardProps = {
     type: 'avatar' | 'image' | 'logo'
     url?: string
   }
+  translateLabel?: 'yes' | 'no'
 }
 
 const defaultCta = {
@@ -82,6 +83,7 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
   secondaryCta,
   tag: _tag,
   image,
+  translateLabel = 'yes',
 }) => {
   const cta = { ...defaultCta, ..._cta }
   const tag = { ...defaultTag, ..._tag }
@@ -317,6 +319,7 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
                 {image?.type === 'logo' && renderImage()}
                 <Text
                   variant="h4"
+                  translate={translateLabel}
                   color={
                     backgroundColor === 'blue' ? 'blue600' : 'currentColor'
                   }

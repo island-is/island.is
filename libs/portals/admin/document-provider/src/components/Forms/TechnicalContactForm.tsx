@@ -42,7 +42,7 @@ export const TechnicalContactForm: FC<React.PropsWithChildren<Props>> = ({
     }
   }
   return (
-    (<form onSubmit={handleSubmit(onSubmit)}>
+    <form onSubmit={handleSubmit(onSubmit)}>
       <Stack space={2}>
         <Controller
           control={control}
@@ -155,6 +155,6 @@ export const TechnicalContactForm: FC<React.PropsWithChildren<Props>> = ({
           {formatMessage(m.SettingsEditTechnicalContactSaveButton)}
         </Button>
       </Box>
-    </form>)
-  );
+    </form>
+  )
 }

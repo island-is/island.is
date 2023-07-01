@@ -9,6 +9,7 @@ import {
 } from '@island.is/island-ui/core'
 import { FormatMessage, useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
+import NotFilledOut from '../NotFilledOut'
 
 type Props = {
   field: {
@@ -24,37 +25,38 @@ type Props = {
   }
 }
 
-export const Cards: FC<React.PropsWithChildren<FieldBaseProps & Props>> = ({ application, field }) => {
+export const Cards: FC<React.PropsWithChildren<FieldBaseProps & Props>> = ({
+  application,
+  field,
+}) => {
   const { formatMessage } = useLocale()
   return (
-    <GridRow marginBottom={3}>
+    <GridRow>
       {field.props.cards(application).length ? (
         field.props.cards(application).map(({ title, description }, idx) => {
           return (
-            <GridColumn
-              span={['12/12', '12/12', '6/12']}
-              paddingTop={3}
-              key={idx}
-            >
+            <GridColumn span={['12/12', '12/12', '6/12']} key={idx}>
               {title && title !== '' ? (
-                <ProfileCard
-                  heightFull
-                  title={title}
-                  description={
-                    typeof description === 'function'
-                      ? description(formatMessage)
-                      : description
-                  }
-                />
+                <Box paddingY={'gutter'}>
+                  <ProfileCard
+                    heightFull
+                    title={title}
+                    description={
+                      typeof description === 'function'
+                        ? description(formatMessage)
+                        : description
+                    }
+                  />
+                </Box>
               ) : (
-                <Text>{formatMessage(m.notFilledOut)}</Text>
+                <NotFilledOut />
               )}
             </GridColumn>
           )
         })
       ) : (
-        <GridColumn paddingTop={3}>
-          <Text>{formatMessage(m.notFilledOut)}</Text>
+        <GridColumn>
+          <NotFilledOut />
         </GridColumn>
       )}
     </GridRow>

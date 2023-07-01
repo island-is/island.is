@@ -104,12 +104,12 @@ export const CaseEmailBox = ({ caseId, caseNumber }: Props) => {
       .then(() => {
         refetchCaseSubscription()
         toast.success(
-          `${loc.postSubscriptionMutationToasts.success} S-${caseNumber}.`,
+          `${loc.postSubscriptionMutationToasts.success} ${caseNumber}.`,
         )
       })
       .catch(() =>
         toast.error(
-          `${loc.postSubscriptionMutationToasts.failure} S-${caseNumber}.`,
+          `${loc.postSubscriptionMutationToasts.failure} ${caseNumber}.`,
         ),
       )
   }
@@ -125,12 +125,12 @@ export const CaseEmailBox = ({ caseId, caseNumber }: Props) => {
       .then(() => {
         refetchCaseSubscription()
         toast.success(
-          `${loc.deleteCaseSubscriptionMutation.successBegin} S-${caseNumber} ${loc.deleteCaseSubscriptionMutation.successEnd}`,
+          `${loc.deleteCaseSubscriptionMutation.successBegin} ${caseNumber} ${loc.deleteCaseSubscriptionMutation.successEnd}`,
         )
       })
       .catch(() =>
         toast.error(
-          `${loc.deleteCaseSubscriptionMutation.failure} S-${caseNumber}`,
+          `${loc.deleteCaseSubscriptionMutation.failure} ${caseNumber}`,
         ),
       )
   }

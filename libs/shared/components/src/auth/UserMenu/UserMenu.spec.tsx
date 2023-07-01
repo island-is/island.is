@@ -65,7 +65,7 @@ async function openMenu() {
   await act(async () => {
     fireEvent.click(screen.getAllByRole('button', { name: /útskráning/i })[0])
   })
-  return screen.getByRole('dialog', { name: /útskráning/i });
+  return screen.getByRole('dialog', { name: /útskráning/i })
 }
 
 describe('UserMenu', () => {

@@ -14,7 +14,9 @@ type InfoProps = {
   side: Individual
 }
 
-export const ApplicationOverview: FC<React.PropsWithChildren<FieldBaseProps>> = ({ application }) => {
+export const ApplicationOverview: FC<
+  React.PropsWithChildren<FieldBaseProps>
+> = ({ application }) => {
   const { formatMessage } = useLocale()
   const { answers } = application
   const applicant = answers.applicant as Individual

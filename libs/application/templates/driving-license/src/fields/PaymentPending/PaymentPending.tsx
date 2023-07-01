@@ -57,10 +57,9 @@ export const PaymentPending: FC<React.PropsWithChildren<Props>> = (props) => {
   }
 }
 
-const ForwardToPaymentFlow: FC<React.PropsWithChildren<{ url: string; message: string }>> = ({
-  url,
-  message,
-}) => {
+const ForwardToPaymentFlow: FC<
+  React.PropsWithChildren<{ url: string; message: string }>
+> = ({ url, message }) => {
   useEffect(() => {
     window.document.location.href = url
   }, [url])
@@ -68,7 +67,11 @@ const ForwardToPaymentFlow: FC<React.PropsWithChildren<{ url: string; message: s
   return <Text>{message}</Text>
 }
 
-const PollingForPayment: FC<React.PropsWithChildren<Props>> = ({ error, application, refetch }) => {
+const PollingForPayment: FC<React.PropsWithChildren<Props>> = ({
+  error,
+  application,
+  refetch,
+}) => {
   const msg = useMsg(application)
 
   const { paymentStatus, stopPolling, pollingError } = usePaymentStatus(
@@ -120,12 +123,14 @@ const PollingForPayment: FC<React.PropsWithChildren<Props>> = ({ error, applicat
   )
 }
 
-const PaymentError: FC<React.PropsWithChildren<{
-  title: string | string[]
-  errorMessage: string | string[]
-  buttonCaption: string | string[]
-  onClick?: () => unknown
-}>> = ({ title, errorMessage, buttonCaption, onClick }) => (
+const PaymentError: FC<
+  React.PropsWithChildren<{
+    title: string | string[]
+    errorMessage: string | string[]
+    buttonCaption: string | string[]
+    onClick?: () => unknown
+  }>
+> = ({ title, errorMessage, buttonCaption, onClick }) => (
   <Box>
     <Text variant="h3">{title}</Text>
     <Text marginBottom="p2">{errorMessage}</Text>

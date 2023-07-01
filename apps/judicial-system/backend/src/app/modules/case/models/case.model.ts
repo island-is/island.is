@@ -911,7 +911,7 @@ export class Case extends Model {
     allowNull: true,
   })
   @ApiPropertyOptional()
-  seenByDefender?: Date
+  openedByDefender?: Date
 
   /**********
    * Indicates whether the defendant waives her right to counsel

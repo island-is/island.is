@@ -9,7 +9,11 @@ interface PropertyTableRowProps {
   selectedPropertyNumber: string | undefined
 }
 
-export const PropertyTableRow: FC<React.PropsWithChildren<FieldBaseProps & PropertyTableRowProps & PropertyDetail>> = ({ selectHandler, propertyInfo, selectedPropertyNumber }) => {
+export const PropertyTableRow: FC<
+  React.PropsWithChildren<
+    FieldBaseProps & PropertyTableRowProps & PropertyDetail
+  >
+> = ({ selectHandler, propertyInfo, selectedPropertyNumber }) => {
   const unitOfUse = (propertyInfo?.unitsOfUse?.unitsOfUse || [])[0]
 
   const propertyNumber = propertyInfo?.propertyNumber || ''

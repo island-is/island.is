@@ -11,9 +11,9 @@ interface LandingPageFooterProps {
   footerItems?: FooterItem[]
 }
 
-const LandingPageFooter: React.FC<React.PropsWithChildren<LandingPageFooterProps>> = ({
-  footerItems,
-}) => {
+const LandingPageFooter: React.FC<
+  React.PropsWithChildren<LandingPageFooterProps>
+> = ({ footerItems }) => {
   if (!footerItems?.length) return null
 
   return (

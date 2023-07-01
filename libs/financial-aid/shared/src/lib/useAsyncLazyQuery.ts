@@ -5,7 +5,10 @@ import {
 } from '@apollo/client'
 import { useCallback } from 'react'
 
-export const useAsyncLazyQuery = <TData, TVariables = OperationVariables>(
+export const useAsyncLazyQuery = <
+  TData,
+  TVariables extends OperationVariables = OperationVariables,
+>(
   query: DocumentNode,
 ) => {
   const client = useApolloClient()

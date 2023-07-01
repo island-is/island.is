@@ -1,4 +1,5 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
+import { CacheField } from '@island.is/nest/graphql'
 import { IQuestionAndAnswer } from '../generated/contentfulTypes'
 import { mapDocument, SliceUnion } from '../unions/slice.union'
 
@@ -10,7 +11,7 @@ export class QuestionAndAnswer {
   @Field()
   question!: string
 
-  @Field(() => [SliceUnion])
+  @CacheField(() => [SliceUnion])
   answer: Array<typeof SliceUnion> = []
 
   @Field({ nullable: true })

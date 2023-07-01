@@ -11,7 +11,9 @@ interface Props {
   workingCase: Case
 }
 
-const CommentsAccordionItem: React.FC<React.PropsWithChildren<Props>> = (props) => {
+const CommentsAccordionItem: React.FC<React.PropsWithChildren<Props>> = (
+  props,
+) => {
   const { workingCase } = props
   const { formatMessage } = useIntl()
 

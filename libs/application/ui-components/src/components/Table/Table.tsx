@@ -55,11 +55,13 @@ export const Table = <T extends object>(
     )
   }
 
-  const ButtonRow: FC<React.PropsWithChildren<{
-    label: string
-    onClick: () => void
-    style?: React.CSSProperties
-  }>> = ({ label, onClick, style }) => {
+  const ButtonRow: FC<
+    React.PropsWithChildren<{
+      label: string
+      onClick: () => void
+      style?: React.CSSProperties
+    }>
+  > = ({ label, onClick, style }) => {
     return (
       <T.Row>
         <T.Data colSpan={columns.length} style={{ textAlign: 'left' }}>

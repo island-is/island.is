@@ -12,7 +12,11 @@ import { RadioController } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 
-const SelectSchool: FC<React.PropsWithChildren<FieldBaseProps>> = ({ application, field, error }) => {
+const SelectSchool: FC<React.PropsWithChildren<FieldBaseProps>> = ({
+  application,
+  field,
+  error,
+}) => {
   const { id } = field
   const { setValue } = useFormContext()
   const { formatMessage } = useLocale()

@@ -20,7 +20,9 @@ type ConfirmationModalProps = {
   refetch?: () => void
 }
 
-export const ConfirmationModal: FC<React.PropsWithChildren<ConfirmationModalProps>> = ({
+export const ConfirmationModal: FC<
+  React.PropsWithChildren<ConfirmationModalProps>
+> = ({
   visibility,
   setVisibility,
   title,

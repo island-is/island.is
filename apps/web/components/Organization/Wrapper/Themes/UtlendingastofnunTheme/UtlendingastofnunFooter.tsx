@@ -18,11 +18,9 @@ interface FooterProps {
   footerItems: Array<FooterItem>
 }
 
-const UtlendingastofnunFooter: React.FC<React.PropsWithChildren<FooterProps>> = ({
-  title,
-  logo,
-  footerItems,
-}) => {
+const UtlendingastofnunFooter: React.FC<
+  React.PropsWithChildren<FooterProps>
+> = ({ title, logo, footerItems }) => {
   return (
     <footer aria-labelledby="organizationFooterTitle">
       <Box className={styles.footerBg} color="white" paddingTop={5}>

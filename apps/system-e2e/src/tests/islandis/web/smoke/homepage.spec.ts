@@ -116,4 +116,27 @@ test.describe('Front page', () => {
       page.locator('[data-testid="mega-menu-link"] > a'),
     ).toHaveCountGreaterThan(18)
   })
+
+  test('burger menu should open and close', async () => {
+    // Arrange
+    const page = await context.newPage()
+    page.goto('/')
+    await page.getByRole('button', { name: 'Valmynd' }).click()
+
+    // Act
+    await expect(page.getByRole('dialog', { name: 'Menu' })).toBeVisible()
+    await expect(
+      page.getByRole('paragraph').filter({ hasText: 'Þjónustuflokkar' }),
+    ).toBeVisible()
+    await expect(page.getByRole('dialog', { name: 'Menu' })).toBeVisible()
+    // Heading is "visible" behind menu
+    // await expect(page.getByTestId('home-heading')).not.toBeVisible()
+    await page
+      .getByRole('dialog', { name: 'Menu' })
+      .getByRole('button')
+      .getByTestId('icon-close')
+      .click()
+    await expect(page.getByTestId('home-heading')).toBeVisible()
+    await expect(page.getByRole('dialog', { name: 'Menu' })).not.toBeVisible()
+  })
 })

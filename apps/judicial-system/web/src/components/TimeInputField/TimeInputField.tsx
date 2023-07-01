@@ -9,9 +9,11 @@ interface Props {
   onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void
 }
 
-const TimeInputField: React.FC<React.PropsWithChildren<Props>> = (props: PropsWithChildren<Props>) => {
+const TimeInputField: React.FC<React.PropsWithChildren<Props>> = (
+  props: PropsWithChildren<Props>,
+) => {
   return (
-    (<InputMask
+    <InputMask
       mask={[/([0-9]|1[0-9]|2[0-3])/, /([0-9])?/, ':', /[0-9]/, /[0-9]/]}
       maskPlaceholder={null}
       beforeMaskedStateChange={({ nextState }) => {
@@ -30,8 +32,8 @@ const TimeInputField: React.FC<React.PropsWithChildren<Props>> = (props: PropsWi
       value={props.value}
     >
       {props.children}
-    </InputMask>)
-  );
+    </InputMask>
+  )
 }
 
 export default TimeInputField

@@ -9,7 +9,9 @@ interface Props {
   message: string
 }
 
-const PoliceCaseFilesMessageBox: React.FC<React.PropsWithChildren<Props>> = (props) => {
+const PoliceCaseFilesMessageBox: React.FC<React.PropsWithChildren<Props>> = (
+  props,
+) => {
   const { icon, iconColor, message } = props
 
   return (

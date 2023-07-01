@@ -44,7 +44,9 @@ type LayoutModuleContainerProps = {
   layout: PortalModule['layout']
 }
 
-const LayoutModuleContainer: FC<React.PropsWithChildren<LayoutModuleContainerProps>> = React.memo(
+const LayoutModuleContainer: FC<
+  React.PropsWithChildren<LayoutModuleContainerProps>
+> = React.memo(
   ({ children, layout }) => {
     const hasNoneLayout = layout === 'none'
 
@@ -74,7 +76,9 @@ const LayoutModuleContainer: FC<React.PropsWithChildren<LayoutModuleContainerPro
   (prevProps, nextProps) => prevProps.layout === nextProps.layout,
 )
 
-const LayoutOuterContainer: FC<React.PropsWithChildren<unknown>> = ({ children }) => (
+const LayoutOuterContainer: FC<React.PropsWithChildren<unknown>> = ({
+  children,
+}) => (
   <>
     <ToastContainer useKeyframeStyles={false} />
     <Header />

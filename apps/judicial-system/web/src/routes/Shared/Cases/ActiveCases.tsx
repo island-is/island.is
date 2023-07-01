@@ -38,10 +38,10 @@ import { core, tables } from '@island.is/judicial-system-web/messages'
 import { useViewport } from '@island.is/judicial-system-web/src/utils/hooks'
 import TagCaseState from '@island.is/judicial-system-web/src/components/TagCaseState/TagCaseState'
 
-import { displayCaseType } from './utils'
 import * as styles from './Cases.css'
 import MobileCase from './MobileCase'
 import { cases as m } from './Cases.strings'
+import ColumnCaseType from '@island.is/judicial-system-web/src/components/Table/ColumnCaseType/ColumnCaseType'
 
 interface Props {
   cases: CaseListEntry[]
@@ -319,16 +319,11 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
                   )}
                 </td>
                 <td className={styles.td}>
-                  <Box component="span" display="flex" flexDirection="column">
-                    <Text as="span">
-                      {displayCaseType(formatMessage, c.type, c.decision)}
-                    </Text>
-                    {c.parentCaseId && (
-                      <Text as="span" variant="small" color="dark400">
-                        Framlenging
-                      </Text>
-                    )}
-                  </Box>
+                  <ColumnCaseType
+                    type={c.type}
+                    decision={c?.decision}
+                    parentCaseId={c.parentCaseId}
+                  />
                 </td>
                 <td className={styles.td} data-testid="tdTag">
                   <Box marginRight={1} marginBottom={1}>

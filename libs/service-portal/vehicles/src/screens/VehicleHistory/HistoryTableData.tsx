@@ -7,7 +7,9 @@ interface Props {
   vehicle: VehiclesVehicle
 }
 
-export const HistoryTableData: FC<React.PropsWithChildren<Props>> = ({ vehicle }) => {
+export const HistoryTableData: FC<React.PropsWithChildren<Props>> = ({
+  vehicle,
+}) => {
   return (
     <T.Body>
       <T.Row>

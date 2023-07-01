@@ -44,7 +44,9 @@ export interface ExportCSVButtonProps {
   title: string
 }
 
-export const ExportCSVButton: FC<React.PropsWithChildren<ExportCSVButtonProps>> = ({ data, title }) => {
+export const ExportCSVButton: FC<
+  React.PropsWithChildren<ExportCSVButtonProps>
+> = ({ data, title }) => {
   function useCsvExport() {
     const newdata = JSON.parse(data)
     if (data) {

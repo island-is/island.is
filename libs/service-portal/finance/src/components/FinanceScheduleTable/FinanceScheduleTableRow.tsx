@@ -31,7 +31,9 @@ interface Props {
   paymentSchedule: PaymentSchedule
 }
 
-const FinanceScheduleTableRow: FC<React.PropsWithChildren<Props>> = ({ paymentSchedule }) => {
+const FinanceScheduleTableRow: FC<React.PropsWithChildren<Props>> = ({
+  paymentSchedule,
+}) => {
   const [getPaymentScheduleById, { loading, error, ...detailsQuery }] =
     useLazyQuery(GET_FINANCE_PAYMENT_SCHEDULE_BY_ID)
   useNamespaces('sp.finance-schedule')

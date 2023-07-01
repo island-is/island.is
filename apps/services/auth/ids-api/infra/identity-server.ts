@@ -76,6 +76,11 @@ export const serviceSetup = (services: {
           'http://web-services-sessions.services-sessions.svc.cluster.local',
         prod: 'https://sessions-api.internal.island.is',
       },
+      PersistenceSettings__DelegationsCacheEnabled: {
+        dev: 'false',
+        staging: 'false',
+        prod: 'true',
+      },
       Application__MinCompletionPortThreads: '10',
       NO_UPDATE_NOTIFIER: 'true',
       ContentfulSettings__BaseAddress: {

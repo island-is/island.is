@@ -81,7 +81,7 @@ const CareTakerRepeaterItem = ({
   }, [nationalIdInput, getIdentity, clearErrors])
 
   return (
-    (<GridContainer>
+    <GridContainer>
       <GridRow align="spaceBetween">
         <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
           <Box position="relative" paddingTop={3} paddingRight={1}>
@@ -156,16 +156,13 @@ const CareTakerRepeaterItem = ({
           </Box>
         </GridColumn>
       </GridRow>
-    </GridContainer>)
-  );
+    </GridContainer>
+  )
 }
 
-export const CemetryCaretaker: FC<React.PropsWithChildren<FieldBaseProps<FinancialStatementsInao>>> = ({
-  application,
-  field,
-  errors,
-  setBeforeSubmitCallback,
-}) => {
+export const CemetryCaretaker: FC<
+  React.PropsWithChildren<FieldBaseProps<FinancialStatementsInao>>
+> = ({ application, field, errors, setBeforeSubmitCallback }) => {
   const { formatMessage } = useLocale()
   const { id } = field
 

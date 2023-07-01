@@ -76,7 +76,10 @@ type WrapperProps = {
   children: JSX.Element
 }
 
-const Wrapper: FC<React.PropsWithChildren<WrapperProps>> = ({ show = false, children }) =>
+const Wrapper: FC<React.PropsWithChildren<WrapperProps>> = ({
+  show = false,
+  children,
+}) =>
   show ? (
     <GridContainer className={styles.gridContainer}>{children}</GridContainer>
   ) : (

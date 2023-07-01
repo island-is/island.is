@@ -10,6 +10,242 @@
     "version": "5.0"
   },
   "paths": {
+    "/api/codetables/deprivations": {
+      "get": {
+        "tags": ["Codetables"],
+        "summary": "Get for types of driver licence deprivations",
+        "parameters": [
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "5.0"
+            }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "The requested API version",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "5.0"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TegSviptingaDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TegSviptingaDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TegSviptingaDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/codetables/categories": {
+      "get": {
+        "tags": ["Codetables"],
+        "summary": "Get types of categories",
+        "parameters": [
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "5.0"
+            }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "The requested API version",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "5.0"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TegundRettindaDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TegundRettindaDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TegundRettindaDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/codetables/remarks": {
+      "get": {
+        "tags": ["Codetables"],
+        "summary": "Get types of remarks",
+        "parameters": [
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "5.0"
+            }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "The requested API version",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "5.0"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TegundAthugasemdaDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TegundAthugasemdaDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TegundAthugasemdaDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/codetables/districts": {
+      "get": {
+        "tags": ["Codetables"],
+        "summary": "Get for all districts",
+        "parameters": [
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "5.0"
+            }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "The requested API version",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "5.0"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/EmbaettiDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/EmbaettiDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/EmbaettiDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/drivinglicense/v5": {
       "get": {
         "tags": ["Okuskirteini"],
@@ -314,6 +550,14 @@
         "tags": ["Okuskirteini"],
         "summary": "Apply for new collaborative of old license (Samrit)",
         "parameters": [
+          {
+            "name": "jwttoken",
+            "in": "header",
+            "description": "JWT token",
+            "schema": {
+              "type": "string"
+            }
+          },
           {
             "name": "api-version",
             "in": "header",
@@ -2341,6 +2585,103 @@
           }
         }
       }
+    },
+    "/api/drivinglicense/v5/licenseactions/{licenseid}": {
+      "get": {
+        "tags": ["Okuskirteini"],
+        "summary": "Get all license actions",
+        "parameters": [
+          {
+            "name": "jwttoken",
+            "in": "header",
+            "description": "jwt token",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "licenseid",
+            "in": "path",
+            "description": "License id",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "5.0"
+            }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "The requested API version",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "5.0"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MedferdDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MedferdDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MedferdDto"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -2699,6 +3040,33 @@
         "additionalProperties": false,
         "description": "Data transfer class for driving assessment statistics"
       },
+      "EmbaettiDto": {
+        "type": "object",
+        "properties": {
+          "nr": {
+            "type": "integer",
+            "description": "Distric number",
+            "format": "int32"
+          },
+          "nafn": {
+            "type": "string",
+            "description": "District name",
+            "nullable": true
+          },
+          "heimilisfang": {
+            "type": "string",
+            "description": "District address",
+            "nullable": true
+          },
+          "postnumer": {
+            "type": "integer",
+            "description": "District postal code",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Data transfer object for district"
+      },
       "FullLicenseStatisticsDetailedDto": {
         "type": "object",
         "properties": {
@@ -2943,6 +3311,48 @@
         "additionalProperties": false,
         "description": "Data transfer object for results for person applying for\r\ntemporary license"
       },
+      "MedferdDto": {
+        "type": "object",
+        "properties": {
+          "dagsMedferdar": {
+            "type": "string",
+            "description": "Date",
+            "format": "date-time"
+          },
+          "tegundKodi": {
+            "type": "integer",
+            "description": "Code",
+            "format": "int32"
+          },
+          "nrEmbaetti": {
+            "type": "integer",
+            "description": "Where it was done",
+            "format": "int32"
+          },
+          "okuskirteiniId": {
+            "type": "integer",
+            "description": "Id of licence",
+            "format": "int32"
+          },
+          "stStarfsmadur": {
+            "type": "string",
+            "description": "Employee",
+            "nullable": true
+          },
+          "stDags": {
+            "type": "string",
+            "description": "Date",
+            "format": "date-time"
+          },
+          "medferdId": {
+            "type": "integer",
+            "description": "Id of action",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Entity for licence actions"
+      },
       "NewTemporaryLicsenseDto": {
         "type": "object",
         "properties": {
@@ -3002,11 +3412,6 @@
       "PostNewCollaborative": {
         "type": "object",
         "properties": {
-          "ssn": {
-            "type": "string",
-            "description": "Person social security number",
-            "nullable": true
-          },
           "districtId": {
             "type": "integer",
             "description": "District applying for licsense",
@@ -3015,6 +3420,11 @@
           "userId": {
             "type": "string",
             "description": "User id",
+            "nullable": true
+          },
+          "licenseStolenOrLost": {
+            "type": "boolean",
+            "description": "Has last license been lost or stolen",
             "nullable": true
           }
         },
@@ -3305,6 +3715,71 @@
         },
         "additionalProperties": false,
         "description": "DTO for renewal for people 65 and older"
+      },
+      "TegSviptingaDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Id",
+            "format": "int32"
+          },
+          "heiti": {
+            "type": "string",
+            "description": "Name",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Dto for Tegund sviptinga"
+      },
+      "TegundAthugasemdaDto": {
+        "type": "object",
+        "properties": {
+          "nr": {
+            "type": "string",
+            "description": "Code for remark",
+            "nullable": true
+          },
+          "heiti": {
+            "type": "string",
+            "description": "Name for remark",
+            "nullable": true
+          },
+          "giltFyrir": {
+            "type": "string",
+            "description": "It this for a licence or category",
+            "nullable": true
+          },
+          "athugasemd": {
+            "type": "boolean",
+            "description": "Is there a comment on the remark"
+          },
+          "lysing": {
+            "type": "string",
+            "description": "Type of comment",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Types of remarks"
+      },
+      "TegundRettindaDto": {
+        "type": "object",
+        "properties": {
+          "nr": {
+            "type": "string",
+            "description": "Type code",
+            "nullable": true
+          },
+          "heiti": {
+            "type": "string",
+            "description": "Type name",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Data transfer object for type of categories"
       },
       "TemporaryLicenseStatisticsDetailedDto": {
         "type": "object",

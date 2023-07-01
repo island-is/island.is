@@ -12,7 +12,11 @@ interface Props {
   external?: boolean
 }
 
-const ButtonContent: FC<React.PropsWithChildren<Props>> = ({ onClick, active, children }) => (
+const ButtonContent: FC<React.PropsWithChildren<Props>> = ({
+  onClick,
+  active,
+  children,
+}) => (
   <Box
     display="flex"
     alignItems="center"

@@ -45,19 +45,19 @@ const AccessControl = () => {
     <>
       <IntroHeader
         title={formatMessage(m.accessControl)}
-        intro={formatMessage(
+        intro={
           onlyOutgoingDelegations
-            ? {
+            ? formatMessage({
                 id: 'sp.access-control-delegations:header-intro-company',
                 defaultMessage:
                   'Hérna kemur listi yfir þau umboð sem þú hefur gefið öðrum. Þú getur eytt umboðum eða bætt við nýjum.',
-              }
-            : {
+              })
+            : formatMessage({
                 id: 'sp.access-control-delegations:header-intro-individual',
                 defaultMessage:
                   'Hérna getur þú veitt öðrum umboð og skoðað umboð sem aðrir hafa veitt þér. Þú getur eytt umboðum eða bætt við nýjum.',
-              },
-        )}
+              })
+        }
         marginBottom={0}
       >
         <GridColumn span={['8/8', '3/8']}>

@@ -16,6 +16,8 @@ import {
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import { NotificationType } from '@island.is/judicial-system/types'
+import { SessionArrangements } from '@island.is/judicial-system-web/src/graphql/schema'
+
 import {
   useCase,
   useOnceOn,
@@ -27,7 +29,6 @@ import { isCourtHearingArrangementsStepValidIC } from '@island.is/judicial-syste
 import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 import { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { hasSentNotification } from '@island.is/judicial-system-web/src/utils/stepHelper'
-import { SessionArrangements } from '@island.is/judicial-system-web/src/graphql/schema'
 import * as constants from '@island.is/judicial-system/consts'
 
 import { icHearingArrangements as m } from './HearingArrangements.strings'
@@ -237,25 +238,55 @@ const HearingArrangements = () => {
                     backgroundColor="white"
                   />
                 </Box>
+                <Box marginBottom={2}>
+                  <RadioButton
+                    name="session-arrangements-prosecutor-present"
+                    id="session-arrangements-prosecutor-present"
+                    label={formatMessage(
+                      m.sections.sessionArrangements.options.prosecutorPresent,
+                    )}
+                    checked={
+                      checkedRadio === SessionArrangements.PROSECUTOR_PRESENT ||
+                      (!checkedRadio &&
+                        workingCase.sessionArrangements ===
+                          SessionArrangements.PROSECUTOR_PRESENT)
+                    }
+                    onChange={() => {
+                      setCheckedRadio(SessionArrangements.PROSECUTOR_PRESENT)
+                      setAndSendCaseToServer(
+                        [
+                          {
+                            sessionArrangements:
+                              SessionArrangements.PROSECUTOR_PRESENT,
+                            force: true,
+                          },
+                        ],
+                        workingCase,
+                        setWorkingCase,
+                      )
+                    }}
+                    large
+                    backgroundColor="white"
+                  />
+                </Box>
                 <RadioButton
-                  name="session-arrangements-prosecutor-present"
-                  id="session-arrangements-prosecutor-present"
+                  name="session-arrangements-none-present"
+                  id="session-arrangements-none-present"
                   label={formatMessage(
-                    m.sections.sessionArrangements.options.prosecutorPresent,
+                    m.sections.sessionArrangements.options.nonePresent,
                   )}
                   checked={
-                    checkedRadio === SessionArrangements.PROSECUTOR_PRESENT ||
+                    checkedRadio === SessionArrangements.NONE_PRESENT ||
                     (!checkedRadio &&
                       workingCase.sessionArrangements ===
-                        SessionArrangements.PROSECUTOR_PRESENT)
+                        SessionArrangements.NONE_PRESENT)
                   }
                   onChange={() => {
-                    setCheckedRadio(SessionArrangements.PROSECUTOR_PRESENT)
+                    setCheckedRadio(SessionArrangements.NONE_PRESENT)
                     setAndSendCaseToServer(
                       [
                         {
-                          sessionArrangements:
-                            SessionArrangements.PROSECUTOR_PRESENT,
+                          sessionArrangements: SessionArrangements.NONE_PRESENT,
                           force: true,
                         },
                       ],

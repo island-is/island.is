@@ -36,7 +36,9 @@ const Photo: FC<React.PropsWithChildren<QualityPhotoData>> = ({
   )
 }
 
-const QualityPhoto: FC<React.PropsWithChildren<FieldBaseProps>> = ({ application }) => {
+const QualityPhoto: FC<React.PropsWithChildren<FieldBaseProps>> = ({
+  application,
+}) => {
   const { qualityPhoto } = useQualityPhoto(application)
   // TODO: skeleton load when image is loading
   const { formatMessage } = useLocale()

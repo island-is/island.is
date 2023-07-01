@@ -9,7 +9,10 @@ interface Props {
   helpDesk: Helpdesk
   organisationId: string
 }
-export const UserHelpForm: FC<React.PropsWithChildren<Props>> = ({ helpDesk, organisationId }) => {
+export const UserHelpForm: FC<React.PropsWithChildren<Props>> = ({
+  helpDesk,
+  organisationId,
+}) => {
   const {
     handleSubmit,
     control,
@@ -26,7 +29,7 @@ export const UserHelpForm: FC<React.PropsWithChildren<Props>> = ({ helpDesk, org
     }
   }
   return (
-    (<form onSubmit={handleSubmit(onSubmit)}>
+    <form onSubmit={handleSubmit(onSubmit)}>
       <Stack space={2}>
         <Controller
           control={control}
@@ -114,6 +117,6 @@ export const UserHelpForm: FC<React.PropsWithChildren<Props>> = ({ helpDesk, org
           {formatMessage(m.SettingsEditHelpContactSaveButton)}
         </Button>
       </Box>
-    </form>)
-  );
+    </form>
+  )
 }

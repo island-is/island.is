@@ -15,7 +15,9 @@ interface SliceProps {
   slice: OneColumnText
 }
 
-export const OneColumnTextSlice: React.FC<React.PropsWithChildren<SliceProps>> = ({ slice }) => {
+export const OneColumnTextSlice: React.FC<
+  React.PropsWithChildren<SliceProps>
+> = ({ slice }) => {
   const boxProps: BoxProps = slice.dividerOnTop
     ? {
         borderTopWidth: 'standard',

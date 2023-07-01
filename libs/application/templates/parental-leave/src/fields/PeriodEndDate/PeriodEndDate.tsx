@@ -29,7 +29,11 @@ type FieldPeriodEndDateProps = {
   }
 }
 
-export const PeriodEndDate: FC<React.PropsWithChildren<FieldBaseProps & CustomField & FieldPeriodEndDateProps>> = ({ field, application, errors }) => {
+export const PeriodEndDate: FC<
+  React.PropsWithChildren<
+    FieldBaseProps & CustomField & FieldPeriodEndDateProps
+  >
+> = ({ field, application, errors }) => {
   const { formatMessage } = useLocale()
   const { title, props } = field
   const currentIndex = extractRepeaterIndexFromField(field)

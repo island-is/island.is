@@ -14,7 +14,9 @@ interface Props {
   onSubmit: (data: EndpointsFormData) => void
 }
 
-export const EndpointsForm: FC<React.PropsWithChildren<Props>> = ({ onSubmit }) => {
+export const EndpointsForm: FC<React.PropsWithChildren<Props>> = ({
+  onSubmit,
+}) => {
   const { formatMessage } = useLocale()
   const {
     handleSubmit,
@@ -23,7 +25,7 @@ export const EndpointsForm: FC<React.PropsWithChildren<Props>> = ({ onSubmit }) 
   } = useForm()
 
   return (
-    (<form onSubmit={handleSubmit(onSubmit)}>
+    <form onSubmit={handleSubmit(onSubmit)}>
       <Stack space={2}>
         <Controller
           control={control}
@@ -79,6 +81,6 @@ export const EndpointsForm: FC<React.PropsWithChildren<Props>> = ({ onSubmit }) 
           {formatMessage(m.SettingsEditEndPointsSaveButton)}
         </Button>
       </Box>
-    </form>)
-  );
+    </form>
+  )
 }

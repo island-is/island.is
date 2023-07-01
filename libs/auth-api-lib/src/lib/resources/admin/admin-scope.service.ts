@@ -9,7 +9,7 @@ import { isDefined } from '@island.is/shared/utils'
 
 import { ApiScope } from '../models/api-scope.model'
 import { Client } from '../../clients/models/client.model'
-import { ClientCreateScopeDTO } from './dto/client-create-scope.dto'
+import { AdminCreateScopeDto } from './dto/admin-create-scope.dto'
 import { ApiScopeUserClaim } from '../models/api-scope-user-claim.model'
 import { AdminScopeDTO } from './dto/admin-scope.dto'
 import { AdminTranslationService } from './services/admin-translation.service'
@@ -94,7 +94,7 @@ export class AdminScopeService {
    */
   async createScope(
     tenantId: string,
-    input: ClientCreateScopeDTO,
+    input: AdminCreateScopeDto,
   ): Promise<AdminScopeDTO> {
     if (
       !validateClientId({
@@ -115,10 +115,34 @@ export class AdminScopeService {
       throw new BadRequestException(`Scope name "${input.name}" already exists`)
     }
 
+    const translatedValuesErrorMsg =
+      'Scope displayName and description are required'
+
+    if (!input.displayName || !input.description) {
+      throw new BadRequestException(translatedValuesErrorMsg)
+    }
+
+    const [displayName, description] = [
+      input.displayName,
+      input.description,
+    ].map(
+      (translatedValueDto) =>
+        this.adminTranslationService.findTranslationByLocale(
+          translatedValueDto,
+          'is',
+        )?.value,
+    )
+
+    if (!displayName || !description) {
+      throw new BadRequestException(translatedValuesErrorMsg)
+    }
+
     const apiScope = await this.sequelize.transaction(async (transaction) => {
       const scope = await this.apiScope.create(
         {
           ...input,
+          displayName,
+          description,
           domainName: tenantId,
         },
         { transaction },
@@ -133,6 +157,12 @@ export class AdminScopeService {
         {
           transaction,
         },
+      )
+
+      await this.updateScopeTranslatedValueFields(
+        input.name,
+        input,
+        transaction,
       )
 
       return scope
@@ -165,7 +195,7 @@ export class AdminScopeService {
    */
   private async updateScopeTranslatedValueFields(
     scopeName: string,
-    input: AdminPatchScopeDto,
+    input: Pick<AdminPatchScopeDto, 'displayName' | 'description'>,
     transaction: Transaction,
   ) {
     // Find all translations that are not Icelandic for displayName and description

@@ -23,10 +23,9 @@ type FieldAlertMessageProps = {
   }
 }
 
-export const FieldAlertMessage: FC<React.PropsWithChildren<FieldBaseProps & FieldAlertMessageProps>> = ({
-  application,
-  field,
-}) => {
+export const FieldAlertMessage: FC<
+  React.PropsWithChildren<FieldBaseProps & FieldAlertMessageProps>
+> = ({ application, field }) => {
   const { title, description, props } = field
   const { formatMessage } = useLocale()
 

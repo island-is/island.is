@@ -40,6 +40,7 @@ import { PowerBiConfig } from './powerbi.config'
     CmsHealthIndicator,
     CmsContentfulService,
     OrganizationLogoLoader,
+    CmsElasticsearchService,
   ],
 })
 export class CmsModule {}

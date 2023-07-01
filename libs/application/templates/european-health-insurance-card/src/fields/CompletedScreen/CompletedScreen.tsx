@@ -15,7 +15,9 @@ import { europeanHealthInsuranceCardApplicationMessages as e } from '../../lib/m
 import { formatText } from '@island.is/application/core'
 import { useLocale } from '@island.is/localization'
 
-const CompletedScreen: FC<React.PropsWithChildren<FieldBaseProps>> = ({ application }) => {
+const CompletedScreen: FC<React.PropsWithChildren<FieldBaseProps>> = ({
+  application,
+}) => {
   const { formatMessage } = useLocale()
   const tempData = application.externalData.getTemporaryCard?.data as TempData[]
   const links: JSX.Element[] = []

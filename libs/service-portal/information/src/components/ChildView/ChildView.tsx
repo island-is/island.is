@@ -160,6 +160,7 @@ const ChildView: FC<React.PropsWithChildren<Props>> = ({
           <UserInfoLine
             title={formatMessage(m.myRegistration)}
             label={formatMessage(m.fullName)}
+            translate="no"
             content={person?.fullName || '...'}
             tooltip={formatNameBreaks(person ?? undefined, {
               givenName: formatMessage(spmm.givenName),
@@ -173,6 +174,7 @@ const ChildView: FC<React.PropsWithChildren<Props>> = ({
                     title: editLink,
                     external: true,
                     url: formatMessage(urls.editChild),
+                    skipOutboundTrack: true,
                   }
                 : undefined
             }
@@ -201,6 +203,7 @@ const ChildView: FC<React.PropsWithChildren<Props>> = ({
                     title: editLink,
                     external: true,
                     url: formatMessage(urls.editResidenceChild),
+                    skipOutboundTrack: true,
                   }
                 : undefined
             }
@@ -241,6 +244,7 @@ const ChildView: FC<React.PropsWithChildren<Props>> = ({
                     title: editLink,
                     external: true,
                     url: formatMessage(urls.editChildReligion),
+                    skipOutboundTrack: true,
                   }
                 : undefined
             }

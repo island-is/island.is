@@ -118,7 +118,9 @@ const CaseFiles: React.FC<React.PropsWithChildren<unknown>> = () => {
               )
             }
             onRemove={(file) => handleRemove(file, removeFileCB)}
-            onRetry={(file) => handleRetry(file, handleUIUpdate)}
+            onRetry={(file) =>
+              handleRetry(file, handleUIUpdate, CaseFileCategory.COVER_LETTER)
+            }
           />
         </Box>
         {!isTrafficViolationCaseCheck && (
@@ -142,7 +144,9 @@ const CaseFiles: React.FC<React.PropsWithChildren<unknown>> = () => {
                 )
               }
               onRemove={(file) => handleRemove(file, removeFileCB)}
-              onRetry={(file) => handleRetry(file, handleUIUpdate)}
+              onRetry={(file) =>
+                handleRetry(file, handleUIUpdate, CaseFileCategory.INDICTMENT)
+              }
             />
           </Box>
         )}
@@ -166,7 +170,13 @@ const CaseFiles: React.FC<React.PropsWithChildren<unknown>> = () => {
               )
             }
             onRemove={(file) => handleRemove(file, removeFileCB)}
-            onRetry={(file) => handleRetry(file, handleUIUpdate)}
+            onRetry={(file) =>
+              handleRetry(
+                file,
+                handleUIUpdate,
+                CaseFileCategory.CRIMINAL_RECORD,
+              )
+            }
           />
         </Box>
         <Box component="section" marginBottom={5}>
@@ -189,7 +199,9 @@ const CaseFiles: React.FC<React.PropsWithChildren<unknown>> = () => {
               )
             }
             onRemove={(file) => handleRemove(file, removeFileCB)}
-            onRetry={(file) => handleRetry(file, handleUIUpdate)}
+            onRetry={(file) =>
+              handleRetry(file, handleUIUpdate, CaseFileCategory.COST_BREAKDOWN)
+            }
           />
         </Box>
         <Box component="section" marginBottom={10}>
@@ -214,7 +226,9 @@ const CaseFiles: React.FC<React.PropsWithChildren<unknown>> = () => {
               )
             }
             onRemove={(file) => handleRemove(file, removeFileCB)}
-            onRetry={(file) => handleRetry(file, handleUIUpdate)}
+            onRetry={(file) =>
+              handleRetry(file, handleUIUpdate, CaseFileCategory.CASE_FILE)
+            }
           />
         </Box>
         {isTrafficViolationCaseCheck && (

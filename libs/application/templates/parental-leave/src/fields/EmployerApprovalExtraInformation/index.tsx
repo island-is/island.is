@@ -17,7 +17,9 @@ interface ScreenProps {
   errors?: RecordObject
 }
 
-const EmployerApprovalExtraInformation: FC<React.PropsWithChildren<ScreenProps>> = ({ application }) => {
+const EmployerApprovalExtraInformation: FC<
+  React.PropsWithChildren<ScreenProps>
+> = ({ application }) => {
   const pensionFundOptions = usePensionFundOptions()
   const unionOptions = useUnionOptions()
   const { formatMessage } = useLocale()

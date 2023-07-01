@@ -43,9 +43,9 @@ type ConfirmationFieldProps = {
   }
 }
 
-export const ConfirmationField: FC<React.PropsWithChildren<FieldBaseProps & ConfirmationFieldProps>> = ({
-  application,
-}) => {
+export const ConfirmationField: FC<
+  React.PropsWithChildren<FieldBaseProps & ConfirmationFieldProps>
+> = ({ application }) => {
   const { externalData } = application
   const { formatMessage } = useLocale()
   const [viewNoDebtCertificate, setViewNoDebtCertificate] = useState(false)

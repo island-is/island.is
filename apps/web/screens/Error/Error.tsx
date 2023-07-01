@@ -42,7 +42,10 @@ interface ErrorProps {
   statusCode: number
 }
 
-export const ErrorPage: React.FC<React.PropsWithChildren<ErrorProps>> = ({ errPage, statusCode }) => {
+export const ErrorPage: React.FC<React.PropsWithChildren<ErrorProps>> = ({
+  errPage,
+  statusCode,
+}) => {
   const { asPath } = useRouter()
 
   const errorMessages: MessageType = errPage

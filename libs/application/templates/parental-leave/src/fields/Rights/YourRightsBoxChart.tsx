@@ -20,10 +20,9 @@ interface YourRightsBoxChartProps {
   showDisclaimer?: boolean
 }
 
-const YourRightsBoxChart: FC<React.PropsWithChildren<YourRightsBoxChartProps>> = ({
-  application,
-  showDisclaimer = false,
-}) => {
+const YourRightsBoxChart: FC<
+  React.PropsWithChildren<YourRightsBoxChartProps>
+> = ({ application, showDisclaimer = false }) => {
   const { formatMessage } = useLocale()
   const { isRequestingRights, requestDays, isGivingRights, giveDays } =
     useApplicationAnswers(application)

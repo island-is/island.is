@@ -16,18 +16,18 @@ export const rcOverview = {
         'Notaður sem skilaboð í upplýsingarboxi á yfirlits skrefi í gæsluvarðhalds- og farbannsmálum.',
     },
   }),
-  seenByDefenderAlert: defineMessages({
+  openedByDefenderAlert: defineMessages({
     title: {
-      id: 'judicial.system.restriction_cases:overview.seen_by_defender_alert.title',
-      defaultMessage: 'Krafa sótt af verjanda',
+      id: 'judicial.system.restriction_cases:overview.opened_by_defender_alert.title',
+      defaultMessage: 'Mál opnað af verjanda',
       description:
-        'Notaður sem titill fyrir "Krafa sótt af verjanda" hluta á yfirlitssíðu í gæsluvarðhalds- og farbannsmálum.',
+        'Notaður sem titill fyrir "Mál opnað af verjanda" hluta á yfirlitssíðu í gæsluvarðhalds- og farbannsmálum.',
     },
     text: {
-      id: 'judicial.system.restriction_cases:overview.seen_by_defender_alert.text',
-      defaultMessage: 'Verjandi skráði sig inn til að sækja kröfuskjal {when}.',
+      id: 'judicial.system.restriction_cases:overview.opened_by_defender_alert.text',
+      defaultMessage: 'Verjandi hefur opnað málið í Réttarvörslugátt {when}.',
       description:
-        'Notaður sem titill fyrir "Krafa sótt af verjanda" hluta á yfirlitssíðu í gæsluvarðhalds- og farbannsmálum.',
+        'Notaður sem titill fyrir "Mál opnað af verjanda" hluta á yfirlitssíðu í gæsluvarðhalds- og farbannsmálum.',
     },
   }),
   headingV3: defineMessage({

@@ -180,7 +180,9 @@ interface StepperHelperProps {
   optionsFromNamespace: { slug: string; data: Record<string, any>[] }[]
 }
 
-export const StepperHelper: React.FC<React.PropsWithChildren<StepperHelperProps>> = ({
+export const StepperHelper: React.FC<
+  React.PropsWithChildren<StepperHelperProps>
+> = ({
   stepper,
   currentState,
   stepperMachine,

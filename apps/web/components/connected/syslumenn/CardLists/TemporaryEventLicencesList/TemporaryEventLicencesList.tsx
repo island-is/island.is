@@ -38,9 +38,9 @@ interface TemporaryEventLicencesListProps {
 
 type ListState = 'loading' | 'loaded' | 'error'
 
-const TemporaryEventLicencesList: FC<React.PropsWithChildren<TemporaryEventLicencesListProps>> = ({
-  slice,
-}) => {
+const TemporaryEventLicencesList: FC<
+  React.PropsWithChildren<TemporaryEventLicencesListProps>
+> = ({ slice }) => {
   const n = useNamespace(slice.json ?? {})
   const { format } = useDateUtils()
   const PAGE_SIZE = slice?.configJson?.pageSize ?? DEFAULT_PAGE_SIZE

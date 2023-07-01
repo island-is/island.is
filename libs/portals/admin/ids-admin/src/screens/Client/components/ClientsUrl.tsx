@@ -8,7 +8,7 @@ import { useEnvironmentState } from '../../../hooks/useEnvironmentState'
 import { ClientFormTypes } from '../EditClient.schema'
 import { useErrorFormatMessage } from '../../../hooks/useFormatErrorMessage'
 import { useClient } from '../ClientContext'
-import { FormCard } from '../../../components/FormCard'
+import { FormCard } from '../../../components/FormCard/FormCard'
 
 interface ClientsUrlProps {
   redirectUris: string[]

@@ -25,11 +25,9 @@ interface UseFormProps {
   organisationNationalId: string
 }
 
-export const DocumentProviderHelpDeskForm: FC<React.PropsWithChildren<Props>> = ({
-  helpDesk,
-  organisationId,
-  organisationNationalId,
-}) => {
+export const DocumentProviderHelpDeskForm: FC<
+  React.PropsWithChildren<Props>
+> = ({ helpDesk, organisationId, organisationNationalId }) => {
   const { formatMessage } = useLocale()
   const {
     handleSubmit,
@@ -54,7 +52,7 @@ export const DocumentProviderHelpDeskForm: FC<React.PropsWithChildren<Props>> = 
   }
 
   return (
-    (<Box marginY={3}>
+    <Box marginY={3}>
       <form onSubmit={handleSubmit(onSubmit)}>
         <Box marginBottom={4}>
           <Box marginBottom={2}>
@@ -150,6 +148,6 @@ export const DocumentProviderHelpDeskForm: FC<React.PropsWithChildren<Props>> = 
           </Box>
         </Box>
       </form>
-    </Box>)
-  );
+    </Box>
+  )
 }

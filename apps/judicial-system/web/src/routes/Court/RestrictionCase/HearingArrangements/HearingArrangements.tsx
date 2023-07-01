@@ -33,7 +33,9 @@ import * as constants from '@island.is/judicial-system/consts'
 
 import { rcHearingArrangements as m } from './HearingArrangements.strings'
 
-export const HearingArrangements: React.FC<React.PropsWithChildren<unknown>> = () => {
+export const HearingArrangements: React.FC<
+  React.PropsWithChildren<unknown>
+> = () => {
   const {
     workingCase,
     setWorkingCase,

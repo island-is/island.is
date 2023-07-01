@@ -18,7 +18,11 @@ type Country = { name: string; region: string }
 // This component is a pure example of how flexible the application system engine truly is
 // It shows how to update multiple schema values, async, hidden, and shows how to access
 // already answered questions and other fields even
-const ExampleCountryField: FC<React.PropsWithChildren<Props>> = ({ error, field, application }) => {
+const ExampleCountryField: FC<React.PropsWithChildren<Props>> = ({
+  error,
+  field,
+  application,
+}) => {
   const { answers: formValue } = application
   const { clearErrors, register, setValue } = useFormContext()
   const { id } = field

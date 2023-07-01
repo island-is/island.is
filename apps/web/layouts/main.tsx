@@ -16,6 +16,7 @@ import getConfig from 'next/config'
 import { NextComponentType, NextPageContext } from 'next'
 import { Screen, GetInitialPropsContext } from '../types'
 import Cookies from 'js-cookie'
+import { CACHE_CONTROL_HEADER } from '@island.is/shared/constants'
 import { userMonitoring } from '@island.is/user-monitoring'
 import { useRouter } from 'next/router'
 import {
@@ -617,6 +618,11 @@ export const withMainLayout = <T,>(
   }
 
   WithMainLayout.getInitialProps = async (ctx) => {
+    // Configure default full-page caching.
+    if (ctx.res) {
+      ctx.res.setHeader('Cache-Control', CACHE_CONTROL_HEADER)
+    }
+
     const getLayoutInitialProps = Layout.getInitialProps as Exclude<
       typeof Layout.getInitialProps,
       undefined

@@ -1,130 +1,114 @@
-import React, { useEffect } from 'react'
-import { Form, useActionData, useNavigate, useParams } from 'react-router-dom'
+import React, { FormEvent, useCallback, useEffect, useState } from 'react'
+import { useParams, useRevalidator } from 'react-router-dom'
 
-import {
-  Box,
-  Button,
-  RadioButton,
-  Text,
-  toast,
-} from '@island.is/island-ui/core'
-import { Modal } from '@island.is/react/components'
-import { useLocale } from '@island.is/localization'
 import { AuthAdminEnvironment } from '@island.is/api/schema'
-import { replaceParams, useSubmitting } from '@island.is/react-spa/shared'
+import { validateFormData } from '@island.is/react-spa/shared'
 
 import { m } from '../../../lib/messages'
-import { IDSAdminPaths } from '../../../lib/paths'
-import { PublishEnvironmentResult } from './PublishClient.action'
 import { useClient } from '../ClientContext'
+import { PublishPermissionForm } from '../../../components/PublishPermissionForm'
+import { publishSchema } from '../../../utils/schemas'
+import { usePublishClientMutation } from './PublishClient.generated'
 
-export default function PublishClient() {
-  const navigate = useNavigate()
-  const { formatMessage } = useLocale()
-  const params = useParams()
-  const { publishData, availableEnvironments, setPublishData } = useClient()
-  const actionData = useActionData() as PublishEnvironmentResult
-  const { isLoading, isSubmitting } = useSubmitting()
-
-  useEffect(() => {
-    if (actionData?.globalError && !isLoading && !isSubmitting)
-      toast.error(formatMessage(m.errorPublishingEnvironment))
-  }, [actionData?.globalError, isSubmitting, isLoading])
-
-  const cancel = () => {
-    navigate(
-      replaceParams({
-        href: IDSAdminPaths.IDSAdminClient,
-        params: { tenant: params['tenant'], client: params['client'] },
-      }),
-      { preventScrollReset: true },
-    )
+export const PublishClient = () => {
+  const { tenant: tenantId, client: clientId } = useParams() as {
+    tenant: string
+    client: string
   }
+  const { revalidate } = useRevalidator()
+  const {
+    client: { availableEnvironments },
+    publishData,
+    selectedEnvironment,
+    updatePublishData,
+    changeEnvironment,
+  } = useClient()
+  const [publishClient, { data, loading, error: publishError }] =
+    usePublishClientMutation()
+  const [error, setError] = useState(false)
+  const [isVisible, setIsVisible] = useState(false)
 
-  const onChange = (env: AuthAdminEnvironment) => {
-    setPublishData?.((prev) => ({
-      ...prev,
+  const onSubmit = useCallback(
+    async (e: FormEvent<HTMLFormElement>) => {
+      e.preventDefault()
+      setError(false)
+
+      const formData = new FormData(e.target as HTMLFormElement)
+      const { data, errors } = await validateFormData({
+        formData,
+        schema: publishSchema,
+      })
+
+      if (errors || !data) {
+        setError(true)
+        return
+      }
+
+      try {
+        await publishClient({
+          variables: {
+            input: {
+              clientId,
+              tenantId,
+              targetEnvironment: data.targetEnvironment,
+              sourceEnvironment: data.sourceEnvironment,
+            },
+          },
+        })
+      } catch (e) {
+        setError(true)
+      }
+    },
+    [publishClient, tenantId, clientId],
+  )
+
+  const onChange = useCallback((env: AuthAdminEnvironment) => {
+    updatePublishData({
+      ...(publishData
+        ? publishData
+        : { toEnvironment: selectedEnvironment.environment }),
       fromEnvironment: env,
-    }))
-  }
+    })
+  }, [])
 
-  // If there is no publishData, we should close the modal since we can't publish
+  const onClose = useCallback(() => {
+    setIsVisible(false)
+  }, [])
+
   useEffect(() => {
-    if (!publishData?.toEnvironment) {
-      cancel()
+    if (publishData) {
+      setIsVisible(true)
     }
-  }, [publishData?.toEnvironment])
+  }, [publishData])
+
+  useEffect(() => {
+    const env = data?.publishAuthAdminClient?.environment
+
+    if (env) {
+      changeEnvironment(data.publishAuthAdminClient.environment)
+      // Be sure to re-fetch the permission if permission was published
+      revalidate()
+      onClose()
+    }
+  }, [data, revalidate])
+
+  useEffect(() => {
+    if (publishError) {
+      setError(true)
+    }
+  }, [publishError])
 
   return (
-    <Modal
-      id="publish-client"
-      isVisible
-      title={formatMessage(m.publishEnvironment, {
-        environment: publishData?.toEnvironment,
-      })}
-      label={formatMessage(m.publishEnvironment, {
-        environment: publishData?.toEnvironment,
-      })}
-      onClose={cancel}
-      closeButtonLabel={formatMessage(m.closeModal)}
-    >
-      <Form method="post">
-        <Box paddingTop={3}>
-          <Text>{formatMessage(m.publishEnvironmentDescription)}</Text>
-          <Text paddingTop={4} variant="h4">
-            {formatMessage(m.chooseEnvironmentToCopyFrom)}
-          </Text>
-          <Box
-            width="full"
-            display="flex"
-            flexDirection={['column', 'column', 'row']}
-            justifyContent="spaceBetween"
-            columnGap={3}
-            rowGap={3}
-            paddingTop={3}
-          >
-            {availableEnvironments?.map((env) => (
-              <Box key={env} width={'full'}>
-                <RadioButton
-                  backgroundColor="blue"
-                  label={env}
-                  id={`publish-environment-${env}`}
-                  large
-                  name="publish-environment"
-                  value={env}
-                  checked={publishData?.fromEnvironment === env}
-                  onChange={() => {
-                    onChange(env as AuthAdminEnvironment)
-                  }}
-                />
-              </Box>
-            ))}
-          </Box>
-          <input
-            type="hidden"
-            name="sourceEnvironment"
-            value={publishData?.fromEnvironment ?? ''}
-          />
-          <input
-            type="hidden"
-            name="targetEnvironment"
-            value={publishData?.toEnvironment ?? ''}
-          />
-          <Box
-            display="flex"
-            flexDirection="row"
-            justifyContent="spaceBetween"
-            paddingTop={7}
-          >
-            <Button onClick={cancel} variant="ghost">
-              {formatMessage(m.cancel)}
-            </Button>
-            <Button loading={isSubmitting || isLoading} type="submit">
-              {formatMessage(m.publish)}
-            </Button>
-          </Box>
-        </Box>
-      </Form>
-    </Modal>
+    <PublishPermissionForm
+      isVisible={isVisible}
+      onSubmit={onSubmit}
+      onClose={onClose}
+      publishData={publishData}
+      availableEnvironments={availableEnvironments}
+      onChange={onChange}
+      error={error}
+      loading={loading}
+      description={m.publishClientEnvDesc}
+    />
   )
 }

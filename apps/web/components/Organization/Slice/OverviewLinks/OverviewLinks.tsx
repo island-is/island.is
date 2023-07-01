@@ -19,7 +19,9 @@ interface SliceProps {
   slice: OverviewLinks
 }
 
-export const OverviewLinksSlice: React.FC<React.PropsWithChildren<SliceProps>> = ({ slice }) => {
+export const OverviewLinksSlice: React.FC<
+  React.PropsWithChildren<SliceProps>
+> = ({ slice }) => {
   const { linkResolver } = useLinkResolver()
 
   const boxProps: BoxProps = slice.hasBorderAbove

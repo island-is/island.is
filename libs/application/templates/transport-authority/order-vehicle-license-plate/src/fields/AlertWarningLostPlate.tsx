@@ -4,7 +4,9 @@ import { FC } from 'react'
 import { useLocale } from '@island.is/localization'
 import { information } from '../lib/messages'
 
-export const AlertWarningLostPlate: FC<React.PropsWithChildren<FieldBaseProps>> = () => {
+export const AlertWarningLostPlate: FC<
+  React.PropsWithChildren<FieldBaseProps>
+> = () => {
   const { formatMessage } = useLocale()
 
   return (

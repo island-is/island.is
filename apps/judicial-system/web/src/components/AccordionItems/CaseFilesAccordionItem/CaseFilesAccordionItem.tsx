@@ -28,7 +28,9 @@ interface Props {
   user: User
 }
 
-const CaseFilesAccordionItem: React.FC<React.PropsWithChildren<Props>> = (props) => {
+const CaseFilesAccordionItem: React.FC<React.PropsWithChildren<Props>> = (
+  props,
+) => {
   const { workingCase, setWorkingCase, user } = props
 
   const { formatMessage } = useIntl()

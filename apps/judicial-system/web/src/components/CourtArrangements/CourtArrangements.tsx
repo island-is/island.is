@@ -57,7 +57,9 @@ export const useCourtArrangements = (workingCase: Case) => {
   }
 }
 
-export const CourtArrangements: React.FC<React.PropsWithChildren<Props>> = (props) => {
+export const CourtArrangements: React.FC<React.PropsWithChildren<Props>> = (
+  props,
+) => {
   const {
     workingCase,
     setWorkingCase,

@@ -44,7 +44,9 @@ function setIfValueIsNotNan(
   setValue(fieldId, value)
 }
 
-export const ReportFieldsRepeater: FC<React.PropsWithChildren<FieldBaseProps<Answers> & RepeaterProps>> = ({ application, field, errors }) => {
+export const ReportFieldsRepeater: FC<
+  React.PropsWithChildren<FieldBaseProps<Answers> & RepeaterProps>
+> = ({ application, field, errors }) => {
   const { answers, externalData } = application
   const { id, props } = field
   const splitId = id.split('.')
@@ -223,11 +225,11 @@ export const ReportFieldsRepeater: FC<React.PropsWithChildren<FieldBaseProps<Ans
   }
 
   return (
-    (<Box>
+    <Box>
       {fields.map((repeaterField: any, index) => {
         const fieldIndex = `${id}[${index}]`
         return (
-          (<Box position="relative" key={repeaterField.id} marginTop={4}>
+          <Box position="relative" key={repeaterField.id} marginTop={4}>
             <Box>
               <Text variant="h4" marginBottom={2}>
                 {props.repeaterHeaderText}
@@ -255,7 +257,7 @@ export const ReportFieldsRepeater: FC<React.PropsWithChildren<FieldBaseProps<Ans
             <GridRow>
               {props.fields.map((field: any) => {
                 return (
-                  (<GridColumn
+                  <GridColumn
                     span={
                       field.width === 'full' ? ['1/1', '1/1'] : ['1/1', '1/2']
                     }
@@ -318,12 +320,12 @@ export const ReportFieldsRepeater: FC<React.PropsWithChildren<FieldBaseProps<Ans
                         }}
                       />
                     )}
-                  </GridColumn>)
-                );
+                  </GridColumn>
+                )
               })}
             </GridRow>
-          </Box>)
-        );
+          </Box>
+        )
       })}
       <Box marginTop={3}>
         <Button
@@ -367,8 +369,8 @@ export const ReportFieldsRepeater: FC<React.PropsWithChildren<FieldBaseProps<Ans
           </GridRow>
         </Box>
       )}
-    </Box>)
-  );
+    </Box>
+  )
 }
 
 export default ReportFieldsRepeater

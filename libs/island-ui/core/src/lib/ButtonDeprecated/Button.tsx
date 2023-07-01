@@ -298,7 +298,9 @@ const IconContainer: FC<React.PropsWithChildren<unknown>> = ({ children }) => (
   </Box>
 )
 
-const LeftContentContainer: FC<React.PropsWithChildren<unknown>> = ({ children }) => {
+const LeftContentContainer: FC<React.PropsWithChildren<unknown>> = ({
+  children,
+}) => {
   return (
     <>
       <Box display="inlineBlock" className={styles.leftSpacer} />

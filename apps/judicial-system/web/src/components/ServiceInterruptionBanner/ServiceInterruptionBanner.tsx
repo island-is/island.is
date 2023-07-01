@@ -10,7 +10,9 @@ import {
 
 import { UserContext } from '../UserProvider/UserProvider'
 
-const ServiceInterruptionBanner: React.FC<React.PropsWithChildren<unknown>> = () => {
+const ServiceInterruptionBanner: React.FC<
+  React.PropsWithChildren<unknown>
+> = () => {
   const { formatMessage } = useIntl()
   const { user } = useContext(UserContext)
 

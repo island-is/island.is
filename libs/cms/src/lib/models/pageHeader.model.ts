@@ -1,4 +1,5 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
+import { CacheField } from '@island.is/nest/graphql'
 import { IPageHeader, ITimeline } from '../generated/contentfulTypes'
 import { Link, mapLink } from './link.model'
 import { TimelineSlice, mapTimelineSlice } from './timelineSlice.model'
@@ -20,10 +21,10 @@ export class PageHeader {
   @Field()
   navigationText!: string
 
-  @Field(() => [Link])
+  @CacheField(() => [Link])
   links?: Link[]
 
-  @Field(() => [TimelineSlice])
+  @CacheField(() => [TimelineSlice])
   slices!: Array<TimelineSlice>
 }
 

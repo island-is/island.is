@@ -186,7 +186,7 @@ export const InputEmail: FC<React.PropsWithChildren<Props>> = ({
   }
 
   return (
-    (<Box>
+    <Box>
       <form
         onSubmit={handleSubmit(
           emailInternal ? handleSendEmailVerification : saveEmptyChange,
@@ -341,6 +341,6 @@ export const InputEmail: FC<React.PropsWithChildren<Props>> = ({
           </form>
         </Box>
       )}
-    </Box>)
-  );
+    </Box>
+  )
 }

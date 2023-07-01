@@ -26,7 +26,7 @@ export const Location: FC<React.PropsWithChildren<LocationProps>> = ({
   background,
 }) => {
   return (
-    (<div className={styles.container}>
+    <div className={styles.container}>
       <Box
         className={styles.background}
         style={{ backgroundImage: `url(${background.url})` }}
@@ -86,6 +86,6 @@ export const Location: FC<React.PropsWithChildren<LocationProps>> = ({
           </GridRow>
         </GridContainer>
       </Box>
-    </div>)
-  );
+    </div>
+  )
 }

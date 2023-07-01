@@ -11,7 +11,6 @@ import { tenantLoader, tenantLoaderId } from './screens/Tenant/Tenant.loader'
 import { clientsLoader } from './screens/Clients/Clients.loader'
 import { clientLoader } from './screens/Client/Client.loader'
 import { editClientAction } from './screens/Client/EditClient.action'
-import { publishClientAction } from './screens/Client/PublishClient/PublishClient.action'
 import { createPermissionAction } from './screens/Permission/CreatePermission/CreatePermission.action'
 import { permissionsLoader } from './screens/Permissions/Permissions.loader'
 import { permissionLoader } from './screens/Permission/Permission.loader'
@@ -109,15 +108,6 @@ export const idsAdminModule: PortalModule = {
                 handle: {
                   backPath: IDSAdminPaths.IDSAdminClients,
                 },
-                children: [
-                  {
-                    name: m.publishEnvironment,
-                    navHide: true,
-                    path: IDSAdminPaths.IDSAdminClientPublish,
-                    action: publishClientAction(props),
-                    element: <PublishClient />,
-                  },
-                ],
               },
               {
                 name: m.permissions,

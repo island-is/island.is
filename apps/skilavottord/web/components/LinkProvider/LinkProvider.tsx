@@ -6,7 +6,9 @@ interface LinkProviderProps {
   children: ReactNode
 }
 
-export const LinkProvider: FC<React.PropsWithChildren<LinkProviderProps>> = ({ children }) => {
+export const LinkProvider: FC<React.PropsWithChildren<LinkProviderProps>> = ({
+  children,
+}) => {
   return (
     <LinkContext.Provider
       value={{

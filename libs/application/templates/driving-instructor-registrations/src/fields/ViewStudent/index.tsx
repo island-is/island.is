@@ -121,7 +121,7 @@ const ViewStudent = ({
     // Returns most recently confirmed school types
     const schools = [
       ...new Map(
-        student?.book?.drivingSchoolExams.map((item: any) => [
+        student?.book?.drivingSchoolExams.map((item: DrivingSchoolExam) => [
           item.schoolTypeName,
           item,
         ]),
@@ -371,21 +371,20 @@ const ViewStudent = ({
                 </GridColumn>
               </GridRow>
               {/* Allow practice driving button */}
-              {isAllowPracticeDrivingVisible(student) &&
-                student.book.totalLessonCount >= 10 && (
-                  <GridRow marginBottom={[7, 3]}>
-                    <GridColumn span={['12/12', '4/12']}>
-                      <Button
-                        fluid
-                        size="medium"
-                        loading={loadingAllow}
-                        onClick={() => allowPracticeDriving(student.nationalId)}
-                      >
-                        {formatMessage(m.viewStudentPracticeDrivingButton)}
-                      </Button>
-                    </GridColumn>
-                  </GridRow>
-                )}
+              {isAllowPracticeDrivingVisible(student) && (
+                <GridRow marginBottom={[7, 3]}>
+                  <GridColumn span={['12/12', '4/12']}>
+                    <Button
+                      fluid
+                      size="medium"
+                      loading={loadingAllow}
+                      onClick={() => allowPracticeDriving(student.nationalId)}
+                    >
+                      {formatMessage(m.viewStudentPracticeDrivingButton)}
+                    </Button>
+                  </GridColumn>
+                </GridRow>
+              )}
             </>
           )}
 

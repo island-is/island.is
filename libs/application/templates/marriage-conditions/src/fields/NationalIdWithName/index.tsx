@@ -19,10 +19,9 @@ const IdentityQuery = gql`
   }
 `
 
-export const NationalIdWithName: FC<React.PropsWithChildren<FieldBaseProps>> = ({
-  field,
-  application,
-}) => {
+export const NationalIdWithName: FC<
+  React.PropsWithChildren<FieldBaseProps>
+> = ({ field, application }) => {
   const { id } = field
   const { formatMessage } = useLocale()
   const {
@@ -64,7 +63,7 @@ export const NationalIdWithName: FC<React.PropsWithChildren<FieldBaseProps>> = (
   }, [nationalIdInput])
 
   return (
-    (<Box>
+    <Box>
       <GridRow>
         <GridColumn span={['1/1', '1/2']} paddingTop={2} paddingBottom={2}>
           <InputController
@@ -107,6 +106,6 @@ export const NationalIdWithName: FC<React.PropsWithChildren<FieldBaseProps>> = (
           />
         </GridColumn>
       </GridRow>
-    </Box>)
-  );
+    </Box>
+  )
 }

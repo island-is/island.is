@@ -19,7 +19,11 @@ type OptionType = {
   label: string
   value: string
 }
-export const TherapiesTabContent: FC<React.PropsWithChildren<Props>> = ({ data, link, linkText }) => {
+export const TherapiesTabContent: FC<React.PropsWithChildren<Props>> = ({
+  data,
+  link,
+  linkText,
+}) => {
   useNamespaces('sp.health')
   const { formatMessage } = useLocale()
   const [dropDownValue, setDropDownValue] = useState<OptionType>()
