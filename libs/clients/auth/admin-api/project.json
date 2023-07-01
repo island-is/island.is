@@ -23,9 +23,9 @@
     "schemas/openapi-generator": {
       "executor": "nx:run-commands",
       "options": {
-        "outputPath": "libs/clients/auth/admin-api/gen",
         "command": "yarn openapi-generator -o libs/clients/auth/admin-api/gen/fetch -i apps/services/auth/admin-api/src/openapi.yaml --additional-properties=enumPropertyNaming=original"
-      }
+      },
+      "outputs": ["{workspaceRoot}/libs/clients/auth/admin-api/gen"]
     }
   }
 }

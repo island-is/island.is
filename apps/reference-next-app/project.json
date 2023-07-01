@@ -8,7 +8,6 @@
     "build": {
       "executor": "nx:run-commands",
       "options": {
-        "outputPath": "dist/apps/reference-next-app",
         "commands": [
           "yarn nx build-next reference-next-app",
           "yarn nx build-server reference-next-app"
@@ -18,7 +17,8 @@
         "production": {
           "args": "--prod"
         }
-      }
+      },
+      "outputs": ["{workspaceRoot}/dist/apps/reference-next-app"]
     },
     "build-next": {
       "executor": "@nx/next:build",

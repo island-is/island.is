@@ -8,7 +8,6 @@
     "build": {
       "executor": "nx:run-commands",
       "options": {
-        "outputPath": "dist/apps/judicial-system/web",
         "commands": [
           "yarn nx build-next judicial-system-web",
           "yarn nx build-server judicial-system-web"
@@ -18,7 +17,8 @@
         "production": {
           "args": "--prod"
         }
-      }
+      },
+      "outputs": ["{workspaceRoot}/dist/apps/judicial-system/web"]
     },
     "build-next": {
       "executor": "@nx/next:build",

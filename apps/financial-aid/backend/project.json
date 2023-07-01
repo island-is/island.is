@@ -77,9 +77,9 @@
     "schemas/build-openapi-internal": {
       "executor": "nx:run-commands",
       "options": {
-        "outputPath": "apps/financial-aid/backend/src/openapi.yaml",
         "command": "cross-env INIT_SCHEMA=true yarn ts-node -P apps/financial-aid/backend/tsconfig.app.json apps/financial-aid/backend/src/buildOpenApi.ts"
-      }
+      },
+      "outputs": ["{workspaceRoot}/apps/financial-aid/backend/src/openapi.yaml"]
     },
     "migrate": {
       "executor": "nx:run-commands",

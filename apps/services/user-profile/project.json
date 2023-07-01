@@ -82,9 +82,9 @@
     "schemas/build-openapi-internal": {
       "executor": "nx:run-commands",
       "options": {
-        "outputPath": "apps/services/user-profile/src/openapi.yaml",
         "command": "cross-env INIT_SCHEMA=true yarn ts-node -P apps/services/user-profile/tsconfig.app.json apps/services/user-profile/src/buildOpenApi.ts"
-      }
+      },
+      "outputs": ["{workspaceRoot}/apps/services/user-profile/src/openapi.yaml"]
     },
     "migrate": {
       "executor": "nx:run-commands",

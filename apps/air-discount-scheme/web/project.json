@@ -8,7 +8,6 @@
     "build": {
       "executor": "nx:run-commands",
       "options": {
-        "outputPath": "dist/apps/air-discount-scheme/web",
         "commands": [
           "yarn nx build-next air-discount-scheme-web",
           "yarn nx build-server air-discount-scheme-web"
@@ -18,7 +17,8 @@
         "production": {
           "args": "--prod"
         }
-      }
+      },
+      "outputs": ["{workspaceRoot}/dist/apps/air-discount-scheme/web"]
     },
     "build-next": {
       "executor": "@nx/next:build",

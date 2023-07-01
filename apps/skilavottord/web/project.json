@@ -8,7 +8,6 @@
     "build": {
       "executor": "nx:run-commands",
       "options": {
-        "outputPath": "dist/apps/skilavottord/web",
         "commands": [
           "yarn nx build-next skilavottord-web",
           "yarn nx build-server skilavottord-web"
@@ -18,7 +17,8 @@
         "production": {
           "args": "--prod"
         }
-      }
+      },
+      "outputs": ["{workspaceRoot}/dist/apps/skilavottord/web"]
     },
     "build-next": {
       "executor": "@nx/next:build",

@@ -24,12 +24,12 @@
     "build": {
       "executor": "nx:run-commands",
       "options": {
-        "outputPath": "dist/contentful-translation-extension",
         "command": "contentful-extension-scripts build --input libs/contentful-extensions/translation --output dist/contentful-translation-extension"
       },
       "configurations": {
         "production": {}
-      }
+      },
+      "outputs": ["{workspaceRoot}/dist/contentful-translation-extension"]
     },
     "docker-static": {}
   },

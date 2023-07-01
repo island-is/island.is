@@ -9,7 +9,6 @@
     "build": {
       "executor": "nx:run-commands",
       "options": {
-        "outputPath": "dist/apps/consultation-portal",
         "assets": ["apps/consultation-portal/public/favicon.ico"],
         "commands": [
           "yarn nx build-next consultation-portal",
@@ -20,7 +19,8 @@
         "production": {
           "args": "--prod"
         }
-      }
+      },
+      "outputs": ["{workspaceRoot}/dist/apps/consultation-portal"]
     },
     "schemas/codegen": {
       "executor": "nx:run-commands",

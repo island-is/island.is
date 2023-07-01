@@ -47,9 +47,11 @@
     "schemas/openapi-generator": {
       "executor": "nx:run-commands",
       "options": {
-        "outputPath": "libs/api/domains/endorsement-system/gen/fetch",
         "command": "yarn openapi-generator -o libs/api/domains/endorsement-system/gen/fetch -i apps/services/endorsements/api/src/openapi.yaml --additional-properties=enumPropertyNaming=original"
-      }
+      },
+      "outputs": [
+        "{workspaceRoot}/libs/api/domains/endorsement-system/gen/fetch"
+      ]
     }
   },
   "tags": ["lib:api", "scope:api"]

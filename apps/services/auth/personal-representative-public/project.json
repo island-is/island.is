@@ -51,9 +51,11 @@
     "schemas/build-openapi": {
       "executor": "nx:run-commands",
       "options": {
-        "outputPath": "apps/services/auth/personal-representative-public/src/openapi.yaml",
         "command": "cross-env INIT_SCHEMA=true yarn ts-node -P apps/services/auth/personal-representative-public/tsconfig.app.json apps/services/auth/personal-representative-public/src/buildOpenApi.ts"
-      }
+      },
+      "outputs": [
+        "{workspaceRoot}/apps/services/auth/personal-representative-public/src/openapi.yaml"
+      ]
     },
     "docker-express": {}
   },

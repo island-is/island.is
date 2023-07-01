@@ -24,9 +24,11 @@
     "schemas/openapi-generator": {
       "executor": "nx:run-commands",
       "options": {
-        "outputPath": "libs/api/domains/document-provider/gen/fetch",
         "command": "yarn openapi-generator -o libs/api/domains/document-provider/gen/fetch -i apps/services/documents/src/openapi.yaml"
-      }
+      },
+      "outputs": [
+        "{workspaceRoot}/libs/api/domains/document-provider/gen/fetch"
+      ]
     }
   },
   "tags": ["lib:api", "scope:api"]

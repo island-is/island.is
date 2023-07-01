@@ -9,7 +9,6 @@
     "build": {
       "executor": "nx:run-commands",
       "options": {
-        "outputPath": "dist/apps/services/auth/ids-api",
         "commands": [
           "nx esbuild services-auth-ids-api",
           "tsc --build libs/auth-api-lib/seeders/data/tsconfig.json"
@@ -23,7 +22,8 @@
             "tsc --build libs/auth-api-lib/seeders/data/tsconfig.json"
           ]
         }
-      }
+      },
+      "outputs": ["{workspaceRoot}/dist/apps/services/auth/ids-api"]
     },
     "esbuild": {
       "executor": "./tools/executors/node:build",
@@ -96,9 +96,9 @@
     "schemas/build-openapi": {
       "executor": "nx:run-commands",
       "options": {
-        "outputPath": "apps/services/auth/ids-api/src/openapi.yaml",
         "command": "cross-env INIT_SCHEMA=true yarn ts-node -P apps/services/auth/ids-api/tsconfig.app.json apps/services/auth/ids-api/src/buildOpenApi.ts"
-      }
+      },
+      "outputs": ["{workspaceRoot}/apps/services/auth/ids-api/src/openapi.yaml"]
     },
     "migrate": {
       "executor": "nx:run-commands",

@@ -7,7 +7,6 @@
     "build": {
       "executor": "nx:run-commands",
       "options": {
-        "outputPath": "dist/apps/contentful-apps",
         "commands": [
           "yarn nx build-next contentful-apps",
           "yarn nx build-server contentful-apps"
@@ -17,7 +16,8 @@
         "production": {
           "args": "--prod"
         }
-      }
+      },
+      "outputs": ["{workspaceRoot}/dist/apps/contentful-apps"]
     },
     "build-next": {
       "executor": "@nx/next:build",

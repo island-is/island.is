@@ -22,13 +22,13 @@
     "schemas/openapi-generator": {
       "executor": "nx:run-commands",
       "options": {
-        "outputPath": "libs/clients/regulations-admin/gen",
         "commands": [
           "nx run regulations-admin-backend:schemas/build-openapi $NX_OPTIONS",
           "yarn openapi-generator -o libs/clients/regulations-admin/gen/fetch -i apps/services/regulations-admin-backend/src/openapi.yaml"
         ],
         "parallel": false
-      }
+      },
+      "outputs": ["{workspaceRoot}/libs/clients/regulations-admin/gen"]
     }
   },
   "tags": ["lib:client", "scope:client"]

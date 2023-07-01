@@ -7,7 +7,6 @@
     "build": {
       "executor": "nx:run-commands",
       "options": {
-        "outputPath": "dist/apps/services/sessions",
         "commands": ["nx esbuild services-sessions"],
         "parallel": false
       },
@@ -18,7 +17,8 @@
             "nx esbuild services-sessions --prod"
           ]
         }
-      }
+      },
+      "outputs": ["{workspaceRoot}/dist/apps/services/sessions"]
     },
     "esbuild": {
       "executor": "./tools/executors/node:build",
@@ -108,9 +108,9 @@
     "schemas/build-openapi": {
       "executor": "nx:run-commands",
       "options": {
-        "outputPath": "apps/services/sessions/src/openapi.yaml",
         "command": "cross-env INIT_SCHEMA=true yarn ts-node -P apps/services/sessions/tsconfig.app.json apps/services/sessions/src/buildOpenApi.ts"
-      }
+      },
+      "outputs": ["{workspaceRoot}/apps/services/sessions/src/openapi.yaml"]
     },
     "migrate": {
       "executor": "nx:run-commands",

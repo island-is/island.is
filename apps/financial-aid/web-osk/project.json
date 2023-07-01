@@ -8,7 +8,6 @@
     "build": {
       "executor": "nx:run-commands",
       "options": {
-        "outputPath": "dist/apps/financial-aid/web-osk",
         "commands": [
           "yarn nx build-next financial-aid-web-osk",
           "yarn nx build-server financial-aid-web-osk"
@@ -18,7 +17,8 @@
         "production": {
           "args": "--prod"
         }
-      }
+      },
+      "outputs": ["{workspaceRoot}/dist/apps/financial-aid/web-osk"]
     },
     "build-next": {
       "executor": "@nx/next:build",

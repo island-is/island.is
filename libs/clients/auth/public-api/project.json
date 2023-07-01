@@ -23,9 +23,9 @@
     "schemas/openapi-generator": {
       "executor": "nx:run-commands",
       "options": {
-        "outputPath": "libs/clients/auth/public-api/gen",
         "command": "yarn openapi-generator -o libs/clients/auth/public-api/gen/fetch -i apps/services/auth/public-api/src/openapi.yaml --additional-properties=enumPropertyNaming=original"
-      }
+      },
+      "outputs": ["{workspaceRoot}/libs/clients/auth/public-api/gen"]
     }
   },
   "tags": ["lib:client", "scope:client"],

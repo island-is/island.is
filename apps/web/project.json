@@ -8,14 +8,14 @@
     "build": {
       "executor": "nx:run-commands",
       "options": {
-        "outputPath": "dist/apps/web",
         "commands": ["yarn nx build-next web", "yarn nx build-server web"]
       },
       "configurations": {
         "production": {
           "args": "--prod"
         }
-      }
+      },
+      "outputs": ["{workspaceRoot}/dist/apps/web"]
     },
     "build-next": {
       "executor": "@nx/next:build",
