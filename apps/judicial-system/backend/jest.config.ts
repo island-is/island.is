@@ -11,4 +11,12 @@ export default {
   globals: {},
   displayName: 'judicial-system-backend',
   testEnvironment: 'node',
+  transform: {
+    '^.+\\.[tj]s$': [
+      'ts-jest',
+      {
+        tsconfig: `${__dirname}/tsconfig.spec.json`,
+      },
+    ],
+  },
 }

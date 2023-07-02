@@ -8,4 +8,12 @@ export default {
   globals: {},
   displayName: 'air-discount-scheme-api',
   testEnvironment: 'node',
+  transform: {
+    '^.+\\.[tj]s$': [
+      'ts-jest',
+      {
+        tsconfig: `${__dirname}/tsconfig.spec.json`,
+      },
+    ],
+  },
 }
