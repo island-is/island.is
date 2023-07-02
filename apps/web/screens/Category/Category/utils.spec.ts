@@ -1,9 +1,9 @@
 import {
   getActiveCategory,
+  getHashArr,
   getHashString,
   updateHashArray,
-  getHashArr,
-} from './Category'
+} from './utils'
 
 describe('Update hash array', () => {
   const categoryId = 'kisa'

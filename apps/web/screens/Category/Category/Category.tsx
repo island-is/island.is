@@ -45,51 +45,15 @@ import {
 import { CustomNextError } from '@island.is/web/units/errors'
 import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import { scrollTo } from '@island.is/web/hooks/useScrollSpy'
+import {
+  getActiveCategory,
+  getHashArr,
+  getHashString,
+  updateHashArray,
+} from './utils'
 
 type Articles = GetArticlesQuery['getArticles']
 type LifeEvents = GetLifeEventsInCategoryQuery['getLifeEventsInCategory']
-
-// adds or removes selected category in hash array
-export const updateHashArray = (
-  hashArray: string[],
-  categoryId: string,
-): string[] => {
-  let tempArr = hashArray ?? []
-  if (!!categoryId && categoryId.length > 0) {
-    if (tempArr.includes(categoryId)) {
-      tempArr = hashArray.filter((x) => x !== categoryId)
-    } else {
-      tempArr = tempArr.concat([categoryId])
-    }
-  }
-  return tempArr
-}
-
-// gets "active" category that we use to scroll to on inital render
-export const getActiveCategory = (hashArr: string[]): string | null => {
-  if (!!hashArr && hashArr.length > 0) {
-    const activeCategory = hashArr[hashArr.length - 1].replace('#', '')
-    return activeCategory.length > 0 ? activeCategory : null
-  }
-  return null
-}
-
-// creates hash string from array
-export const getHashString = (hashArray: string[]): string => {
-  if (!!hashArray && hashArray.length > 0) {
-    return hashArray.length > 1 ? hashArray.join(',') : hashArray[0]
-  }
-  return ''
-}
-
-// creates hash array from string
-export const getHashArr = (hashString: string): string[] => {
-  if (!!hashString && hashString.length > 0) {
-    hashString = hashString.replace('#', '')
-    return hashString.length > 0 ? hashString.split(',') : null
-  }
-  return null
-}
 
 interface CategoryProps {
   articles: Articles
@@ -288,11 +252,12 @@ const Category: Screen<CategoryProps> = ({
       return a.localeCompare(b)
     })
 
-  const sortedGroups = Object.values(groups).sort(
-    (a: ArticleGroup, b: ArticleGroup) =>
-      a.importance > b.importance
-        ? -1
-        : a.importance === b.importance && sortAlpha('title')(a, b),
+  const sortedGroups = Object.values(
+    groups,
+  ).sort((a: ArticleGroup, b: ArticleGroup) =>
+    a.importance > b.importance
+      ? -1
+      : a.importance === b.importance && sortAlpha('title')(a, b),
   )
 
   const ArticleGroupComponent = ({

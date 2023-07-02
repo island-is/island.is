@@ -22,8 +22,5 @@ module.exports = withNx(
     env: {
       API_MOCKS: process.env.API_MOCKS || '',
     },
-    devIndicators: {
-      autoPrerender: false,
-    },
   }),
 )
