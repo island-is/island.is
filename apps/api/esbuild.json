@@ -33,6 +33,7 @@
     "configcat-node",
     "mock-aws-s3",
     "nock",
+    "@mikro-orm/core",
     "@protobufjs/aspromise",
     "@protobufjs/base64",
     "@protobufjs/codegen",

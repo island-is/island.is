@@ -36,6 +36,7 @@
     "sequelize",
     "configcat-node",
     "swagger-ui-dist",
+    "@mikro-orm/core",
     "@protobufjs/aspromise",
     "@protobufjs/base64",
     "@protobufjs/codegen",
