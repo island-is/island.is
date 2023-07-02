@@ -16,6 +16,7 @@ interface Props {
   theCase: CaseListEntry
   onClick: () => void
   isCourtRole: boolean
+  children: React.ReactNode
 }
 
 const MobilePastCase: React.FC<Props> = ({
