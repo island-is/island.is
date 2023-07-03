@@ -11,12 +11,14 @@ import {testIDs} from '../../utils/test-ids';
 import familyIcon from '../../assets/icons/family.png';
 import vehicleIcon from '../../assets/icons/vehicle.png';
 import assetsIcon from '../../assets/icons/assets.png';
+import financeIcon from '../../assets/icons/finance.png';
 import {useIntl} from 'react-intl';
 import {formatNationalId} from './tab-personal-info';
 import {getRightButtons} from '../../utils/get-main-root';
 
 const Row = styled.View`
-  flex-direction: row;
+  margin-top: 16px;
+  flex-direction: column;
 `;
 
 const {
@@ -52,8 +54,8 @@ const {
       iconInsets: {
         bottom: -4,
       },
-      icon: require('../../assets/icons/tabbar-profile.png'),
-      selectedIcon: require('../../assets/icons/tabbar-profile-selected.png'),
+      icon: require('../../assets/icons/tabbar-more.png'),
+      selectedIcon: require('../../assets/icons/tabbar-more.png'),
     },
   },
 );
@@ -77,7 +79,6 @@ export const ProfileScreen: NavigationFunctionComponent = ({componentId}) => {
             ]}
           />
 
-          <Heading>{intl.formatMessage({id: 'profile.infoHeading'})}</Heading>
           <Row>
             <IconButton
               title={intl.formatMessage({id: 'profile.family'})}
@@ -85,11 +86,10 @@ export const ProfileScreen: NavigationFunctionComponent = ({componentId}) => {
               image={
                 <Image
                   source={familyIcon as any}
-                  style={{width: 28, height: 20}}
+                  style={{width: 24, height: 24}}
                   resizeMode="contain"
                 />
               }
-              style={{marginRight: 8}}
             />
             <IconButton
               title={intl.formatMessage({id: 'profile.vehicles'})}
@@ -97,11 +97,10 @@ export const ProfileScreen: NavigationFunctionComponent = ({componentId}) => {
               image={
                 <Image
                   source={vehicleIcon as any}
-                  style={{width: 24, height: 20}}
+                  style={{width: 24, height: 24}}
                   resizeMode="contain"
                 />
               }
-              style={{marginRight: 8}}
             />
             <IconButton
               title={intl.formatMessage({id: 'profile.assets'})}
@@ -109,7 +108,18 @@ export const ProfileScreen: NavigationFunctionComponent = ({componentId}) => {
               image={
                 <Image
                   source={assetsIcon as any}
-                  style={{width: 30, height: 28}}
+                  style={{width: 24, height: 24}}
+                  resizeMode="contain"
+                />
+              }
+            />
+            <IconButton
+              title={intl.formatMessage({id: 'profile.finance'})}
+              onPress={() => navigateTo(`/finance`)}
+              image={
+                <Image
+                  source={financeIcon as any}
+                  style={{width: 24, height: 24}}
                   resizeMode="contain"
                 />
               }

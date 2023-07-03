@@ -164,13 +164,13 @@ export const is = {
   'documentDetail.loadingText': 'Sæki skjal',
 
   // profile
-  'profile.screenTitle': 'Mínar upplýsingar',
-  'profile.bottomTabText': 'Ég',
+  'profile.screenTitle': 'Meira',
+  'profile.bottomTabText': 'Meira',
   'profile.seeInfo': 'Nánar',
-  'profile.infoHeading': 'Eignir og fjölskylda',
   'profile.family': 'Fjölskylda',
   'profile.vehicles': 'Ökutæki',
   'profile.assets': 'Fasteignir',
+  'profile.finance': 'Fjármál',
 
   // vehicles
   'vehicles.screenTitle': 'Ökutæki',
