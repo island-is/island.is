@@ -8,5 +8,6 @@ export type ResidencePermitRenewalAnswers = ResidencePermitRenewal
 
 export * from './utils'
 export * from './lib/messages/externalData'
+export * from './lib/messages/error'
 
 export default template

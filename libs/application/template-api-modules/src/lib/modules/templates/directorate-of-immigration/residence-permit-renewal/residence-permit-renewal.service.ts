@@ -7,6 +7,7 @@ import {
   InstitutionNationalIds,
 } from '@island.is/application/types'
 import {
+  error,
   getChargeItemCodes,
   ResidencePermitRenewalAnswers,
 } from '@island.is/application/templates/directorate-of-immigration/residence-permit-renewal'
@@ -21,6 +22,7 @@ import {
   Study,
   TravelDocumentType,
 } from '@island.is/clients/directorate-of-immigration/residence-permit'
+import { TemplateApiError } from '@island.is/nest/problem'
 
 @Injectable()
 export class ResidencePermitRenewalService extends BaseTemplateApiService {
@@ -60,7 +62,20 @@ export class ResidencePermitRenewalService extends BaseTemplateApiService {
   async getCurrentResidencePermit({
     auth,
   }: TemplateApiModuleActionProps): Promise<CurrentResidencePermit> {
-    return this.residencePermitClient.getCurrentResidencePermit(auth)
+    const res = await this.residencePermitClient.getCurrentResidencePermit(auth)
+
+    //TODOx should check kids as well
+    if (!res.canApplyRenewal) {
+      throw new TemplateApiError(
+        {
+          title: error.notAllowedToRenew,
+          summary: error.notAllowedToRenew,
+        },
+        400,
+      )
+    }
+
+    return res
   }
 
   async getOldStayAbroadList({
