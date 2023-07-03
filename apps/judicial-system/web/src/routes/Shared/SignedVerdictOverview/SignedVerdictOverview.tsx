@@ -259,6 +259,7 @@ export const SignedVerdictOverview: React.FC = () => {
     getCourtRecordSignatureConfirmation,
   ] = useCourtRecordSignatureConfirmationLazyQuery({
     fetchPolicy: 'no-cache',
+    errorPolicy: 'all',
     onCompleted: (courtRecordSignatureConfirmationData) => {
       if (
         courtRecordSignatureConfirmationData?.courtRecordSignatureConfirmation

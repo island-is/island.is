@@ -288,6 +288,7 @@ const useCase = () => {
 
   const [getCaseToOpen] = useCaseLazyQuery({
     fetchPolicy: 'no-cache',
+    errorPolicy: 'all',
     onCompleted: (caseData) => {
       if (user && caseData?.case) {
         openCase(caseData.case as Case, user)
