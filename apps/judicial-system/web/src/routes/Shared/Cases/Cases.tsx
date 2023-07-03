@@ -143,7 +143,7 @@ export const Cases: React.FC = () => {
     })
 
     return partition(casesWithoutDeleted, (c) => {
-      if (isIndictmentCase(c.type || !isDistrictCourtUser)) {
+      if (isIndictmentCase(c.type) || !isDistrictCourtUser) {
         return !completedCaseStates.includes(c.state)
       } else {
         return !(completedCaseStates.includes(c.state) && c.rulingSignatureDate)
