@@ -19,7 +19,7 @@ const Host = styled.TouchableHighlight<HostProps>`
   padding-left: ${({theme}) => theme.spacing[2]}px;
   padding-right: ${({theme}) => theme.spacing[2]}px;
 
-  border-bottom-width: 1px;
+  border-bottom-width: ${({theme}) => theme.border.width.standard}px;
   border-color: ${dynamicColor(
     props => ({
       dark: 'shade500',

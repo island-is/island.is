@@ -245,13 +245,13 @@ export const en: TranslatedMessages = {
   'documentDetail.loadingText': 'Loading document',
 
   // profile
-  'profile.screenTitle': 'My info',
-  'profile.bottomTabText': 'Me',
+  'profile.screenTitle': 'More',
+  'profile.bottomTabText': 'More',
   'profile.seeInfo': 'See info',
-  'profile.infoHeading': 'Assets and Family',
   'profile.family': 'Family',
   'profile.vehicles': 'Vehicles',
   'profile.assets': 'Assets',
+  'profile.finance': 'Finance',
 
   // vehicles
   'vehicles.screenTitle': 'Vehicles',
