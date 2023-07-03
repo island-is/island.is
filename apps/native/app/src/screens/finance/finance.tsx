@@ -125,7 +125,7 @@ function FinanceStatusCardContainer(props: any) {
         <LightButton
           title="2203030560"
           icon={chevronDown}
-          textStyle={{ flex: 1 }}
+          textStyle={{flex: 1}}
           onPress={() => {
             // void
           }}
@@ -310,16 +310,16 @@ export const FinanceScreen: NavigationFunctionComponent = ({componentId}) => {
           Hér sérð þú sundurliðun skulda og/eða inneigna hjá ríkissjóði og
           stofnunum.
         </Typography>
-      {financeStatusData.organizations?.length > 0 || financeStatusZero ? (
-        <View style={{ alignItems: 'flex-start' }}>
-          {scheduleButtonVisible && <LightButton title="Gera greiðsluáætlun" icon={
-            externalOpen
-          } />}
-          {/* {financeStatusData?.message && (
+        {financeStatusData.organizations?.length > 0 || financeStatusZero ? (
+          <View style={{alignItems: 'flex-start'}}>
+            {scheduleButtonVisible && (
+              <LightButton title="Gera greiðsluáætlun" icon={externalOpen} />
+            )}
+            {/* {financeStatusData?.message && (
             <Text>{financeStatusData?.message}</Text>
           )} */}
-        </View>
-      ) : null}
+          </View>
+        ) : null}
       </SafeAreaView>
       <TableViewCell
         title="Samtals"
