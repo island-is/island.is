@@ -51,8 +51,8 @@ const OrganizationNewsArticle: Screen<OrganizationNewsArticleProps> = ({
 
   // We only display breadcrumbs and highlighted nav item if the news has the
   // primary news tag of the organization
-  const newsHavePrimaryNewsTagOfOrganization = newsItem.genericTags.some(
-    (x) => x.slug === organizationPage.newsTag.slug,
+  const newsBelongToOrganization = newsItem.genericTags.some(
+    (x) => x?.organization?.slug === organizationPage?.organization?.slug,
   )
 
   const overviewPath: string = router.asPath.substring(
@@ -88,7 +88,7 @@ const OrganizationNewsArticle: Screen<OrganizationNewsArticleProps> = ({
         .href,
       typename: 'organizationpage',
     },
-    ...(newsHavePrimaryNewsTagOfOrganization
+    ...(newsBelongToOrganization && !isNewsletter
       ? [
           {
             isTag: true,
@@ -118,9 +118,7 @@ const OrganizationNewsArticle: Screen<OrganizationNewsArticleProps> = ({
     ({ primaryLink, childrenLinks }) => ({
       title: primaryLink?.text,
       href: primaryLink?.url,
-      active:
-        newsHavePrimaryNewsTagOfOrganization &&
-        primaryLink?.url === overviewPath,
+      active: newsBelongToOrganization && primaryLink?.url === overviewPath,
       items: childrenLinks.map(({ text, url }) => ({
         title: text,
         href: url,

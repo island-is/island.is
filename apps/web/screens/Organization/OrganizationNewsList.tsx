@@ -241,7 +241,12 @@ OrganizationNewsList.getInitialProps = async ({
     )
   }
 
-  const tag = (query.tag as string) ?? organizationPage?.newsTag?.slug ?? ''
+  const newsTags = query.tag
+    ? Array.isArray(query.tag)
+      ? query.tag
+      : [query.tag]
+    : []
+  const organizationSlug = organizationPage.organization?.slug
 
   const [
     {
@@ -260,7 +265,8 @@ OrganizationNewsList.getInitialProps = async ({
       variables: {
         input: {
           lang: locale as Locale,
-          tag,
+          tags: newsTags,
+          organization: organizationSlug,
         },
       },
     }),
@@ -273,7 +279,8 @@ OrganizationNewsList.getInitialProps = async ({
           page: selectedPage,
           year,
           month,
-          tags: [tag],
+          tags: newsTags,
+          organization: organizationSlug,
         },
       },
     }),
@@ -344,7 +351,7 @@ OrganizationNewsList.getInitialProps = async ({
     total,
     selectedYear: year,
     selectedMonth: month,
-    selectedTag: tag,
+    selectedTag: '', // TODO: fix
     datesMap: createDatesMap(newsDatesList),
     selectedPage,
     namespace,

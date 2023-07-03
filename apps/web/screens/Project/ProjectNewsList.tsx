@@ -221,6 +221,12 @@ ProjectNewsList.getInitialProps = async ({ apolloClient, query, locale }) => {
     )
   }
 
+  const newsTags = query.tag
+    ? Array.isArray(query.tag)
+      ? query.tag
+      : [query.tag]
+    : []
+
   const tag = (query.tag as string) ?? projectPage?.newsTag?.slug ?? ''
 
   const [
@@ -240,7 +246,7 @@ ProjectNewsList.getInitialProps = async ({ apolloClient, query, locale }) => {
       variables: {
         input: {
           lang: locale as Locale,
-          tag,
+          tags: newsTags,
         },
       },
     }),
@@ -253,7 +259,7 @@ ProjectNewsList.getInitialProps = async ({ apolloClient, query, locale }) => {
           page: selectedPage,
           year,
           month,
-          tags: [tag],
+          tags: newsTags,
         },
       },
     }),
