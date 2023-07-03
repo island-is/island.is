@@ -3,6 +3,7 @@ import {
   buildTextField,
   buildSubSection,
   buildDescriptionField,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { personal } from '../../../lib/messages'
 import { Application } from '@island.is/api/schema'
@@ -10,6 +11,21 @@ import { Application } from '@island.is/api/schema'
 export const MaritalStatusSubSection = buildSubSection({
   id: 'maritalStatus',
   title: personal.labels.maritalStatus.subSectionTitle,
+  condition: (_, externalData) => {
+    const isPermitTypeFamily = getValueViaPath(
+      externalData,
+      'currentResidencePermit.data.isPermitTypeFamily',
+      false,
+    ) as boolean
+
+    const spouseNationalId = getValueViaPath(
+      externalData,
+      'nationalRegistrySpouse.data.nationalId',
+      '',
+    ) as string
+
+    return isPermitTypeFamily && !!spouseNationalId
+  },
   children: [
     buildMultiField({
       id: 'maritalStatusMultiField',

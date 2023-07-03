@@ -5,6 +5,7 @@ export const ResidencePermitRenewalSchema = z.object({
   userInformation: z.object({
     email: z.string().min(1),
     phone: z.string().min(1),
+    securityPin: z.string().min(4),
   }),
 })
 

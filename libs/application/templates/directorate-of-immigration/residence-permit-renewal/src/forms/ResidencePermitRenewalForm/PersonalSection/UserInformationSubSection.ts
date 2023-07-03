@@ -81,6 +81,20 @@ export const UserInformationSubSection = buildSubSection({
           defaultValue: (application: Application) =>
             application.externalData?.userProfile?.data?.phone,
         }),
+        buildDescriptionField({
+          id: 'userInformation.securityPinTitle',
+          title: personal.labels.userInformation.securityPinTitle,
+          titleVariant: 'h5',
+          space: 3,
+        }),
+        buildTextField({
+          id: 'userInformation.securityPin',
+          title: personal.labels.userInformation.securityPin,
+          placeholder: personal.labels.userInformation.securityPinPlaceholder,
+          width: 'half',
+          format: '####',
+          required: true,
+        }),
       ],
     }),
   ],

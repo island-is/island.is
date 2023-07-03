@@ -23,8 +23,7 @@ export const personal = {
       },
       description: {
         id: 'doi.rpr.application:personal.labels.userInformation.description',
-        defaultMessage:
-          'Et sed ut est aliquam proin elit sed. Nunc tellus lacus sed eu pulvinar.',
+        defaultMessage: ' ',
         description: 'User information description',
       },
       title: {
@@ -62,6 +61,24 @@ export const personal = {
         id: 'doi.rpr.application:personal.labels.userInformation.phone',
         defaultMessage: 'Símanúmer',
         description: 'User information phone number label',
+      },
+      securityPinTitle: {
+        id:
+          'doi.rpr.application:personal.labels.userInformation.securityPinTitle',
+        defaultMessage:
+          'Vinsamlegast veldu öryggistölu fyrir umsóknina (gildir um alla umsækjendur sem verið er að sækja um fyrir)',
+        description: 'User information security pin title',
+      },
+      securityPin: {
+        id: 'doi.rpr.application:personal.labels.userInformation.securityPin',
+        defaultMessage: 'Öryggisnúmer',
+        description: 'User information security pin label',
+      },
+      securityPinPlaceholder: {
+        id:
+          'doi.rpr.application:personal.labels.userInformation.securityPinPlaceholder',
+        defaultMessage: '(4 tölustafir)',
+        description: 'User information security pin placeholder',
       },
     }),
     maritalStatus: defineMessages({
