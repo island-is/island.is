@@ -18,7 +18,7 @@ export function TabPersonalInfo() {
   const {dismiss, dismissed} = usePreferencesStore();
   const natRegRes = useQuery(NATION_REGISTRY_USER_QUERY, {
     client,
-    fetchPolicy: 'cache-first',
+    fetchPolicy: 'cache-and-network',
   });
   const natRegData = natRegRes?.data?.nationalRegistryUser || {};
   const errorNatReg = !!natRegRes.error;
