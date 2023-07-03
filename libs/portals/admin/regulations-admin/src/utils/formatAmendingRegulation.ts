@@ -257,7 +257,6 @@ export const formatAmendingRegBody = (
 
           // Retrieve the modified text content from the temporary element
           const modifiedTextContent = tempElement?.textContent?.trim()
-          console.log('modifiedTextContent', modifiedTextContent)
           newText = modifiedTextContent ?? ''
         } else {
           newText = newTextElement.textContent || ''
