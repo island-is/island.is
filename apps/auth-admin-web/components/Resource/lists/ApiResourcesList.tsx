@@ -115,14 +115,13 @@ const ApiResourcesList: React.FC<React.PropsWithChildren<unknown>> = () => {
             <h1>{localization.title}</h1>
             <div className="api-resources-list__container__options">
               <div className="api-resources-list__container__options__button">
-                <Link href={'/resource/api-resource'}>
-                  <a
-                    className="api-resources-list__button__new"
-                    title={localization.buttons['new'].helpText}
-                  >
-                    <i className="icon__new"></i>
-                    {localization.buttons['new'].text}
-                  </a>
+                <Link
+                  href={'/resource/api-resource'}
+                  className="api-resources-list__button__new"
+                  title={localization.buttons['new'].helpText}
+                >
+                  <i className="icon__new"></i>
+                  {localization.buttons['new'].text}
                 </Link>
               </div>
               <form onSubmit={search}>

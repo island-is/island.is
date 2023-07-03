@@ -124,7 +124,11 @@ const OpenDataSubPage: Screen<OpenDataSubpageProps> = ({ page }) => {
                 ]}
                 renderLink={(link) => {
                   return (
-                    <NextLink {...linkResolver('opendatapage')} passHref>
+                    <NextLink
+                      {...linkResolver('opendatapage')}
+                      passHref
+                      legacyBehavior
+                    >
                       {link}
                     </NextLink>
                   )

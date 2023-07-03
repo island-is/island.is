@@ -75,6 +75,7 @@ export const Link: React.FC<React.PropsWithChildren<LinkProps>> = ({
         passHref
         prefetch={prefetch}
         data-testid={dataTestId}
+        legacyBehavior
       >
         {pureChildren ? (
           children

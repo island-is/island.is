@@ -252,12 +252,11 @@ const Category: Screen<CategoryProps> = ({
       return a.localeCompare(b)
     })
 
-  const sortedGroups = Object.values(
-    groups,
-  ).sort((a: ArticleGroup, b: ArticleGroup) =>
-    a.importance > b.importance
-      ? -1
-      : a.importance === b.importance && sortAlpha('title')(a, b),
+  const sortedGroups = Object.values(groups).sort(
+    (a: ArticleGroup, b: ArticleGroup) =>
+      a.importance > b.importance
+        ? -1
+        : a.importance === b.importance && sortAlpha('title')(a, b),
   )
 
   const ArticleGroupComponent = ({
@@ -404,7 +403,7 @@ const Category: Screen<CategoryProps> = ({
             ]}
             renderLink={(link) => {
               return (
-                <NextLink {...linkResolver('homepage')} passHref>
+                <NextLink {...linkResolver('homepage')} passHref legacyBehavior>
                   {link}
                 </NextLink>
               )

@@ -221,7 +221,11 @@ const ArticleNavigation: FC<
         isMenuDialog={isMenuDialog}
         renderLink={(link, { typename, slug }) => {
           return (
-            <NextLink {...linkResolver(typename as LinkType, slug)} passHref>
+            <NextLink
+              {...linkResolver(typename as LinkType, slug)}
+              passHref
+              legacyBehavior
+            >
               {link}
             </NextLink>
           )
@@ -471,6 +475,7 @@ const ArticleScreen: Screen<ArticleProps> = ({
                   <NextLink
                     {...linkResolver(typename as LinkType, slug)}
                     passHref
+                    legacyBehavior
                   >
                     {link}
                   </NextLink>

@@ -47,7 +47,7 @@ export const OneColumnTextSlice: React.FC<
           )}
           {webRichText(slice.content as SliceType[])}
           {slice.link && slice.link.url && (
-            <Link href={slice.link.url}>
+            <Link href={slice.link.url} legacyBehavior>
               <Button
                 icon="arrowForward"
                 iconType="filled"

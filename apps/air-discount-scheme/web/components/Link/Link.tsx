@@ -49,7 +49,7 @@ export const Link: FC<React.PropsWithChildren<LinkProps>> = ({
           </span>
         </a>
       ) : (
-        <NextLink href={href}>
+        <NextLink href={href} legacyBehavior>
           {childIsString ? <a>{children}</a> : children}
         </NextLink>
       )}

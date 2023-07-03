@@ -131,7 +131,9 @@ const RecyclingCompanyCreate: FC<React.PropsWithChildren<unknown>> = () => {
           ]}
           renderLink={(link, item) => {
             return item?.href ? (
-              <NextLink href={item?.href}>{link}</NextLink>
+              <NextLink href={item?.href} legacyBehavior>
+                {link}
+              </NextLink>
             ) : (
               link
             )

@@ -724,7 +724,9 @@ export const OrganizationWrapper: React.FC<
                 activeItemTitle={activeNavigationItemTitle}
                 renderLink={(link, item) => {
                   return item?.href ? (
-                    <NextLink href={item?.href}>{link}</NextLink>
+                    <NextLink href={item?.href} legacyBehavior>
+                      {link}
+                    </NextLink>
                   ) : (
                     link
                   )
@@ -795,7 +797,9 @@ export const OrganizationWrapper: React.FC<
                   activeItemTitle={activeNavigationItemTitle}
                   renderLink={(link, item) => {
                     return item?.href ? (
-                      <NextLink href={item?.href}>{link}</NextLink>
+                      <NextLink href={item?.href} legacyBehavior>
+                        {link}
+                      </NextLink>
                     ) : (
                       link
                     )
@@ -812,7 +816,9 @@ export const OrganizationWrapper: React.FC<
                     items={secondaryNavList}
                     renderLink={(link, item) => {
                       return item?.href ? (
-                        <NextLink href={item?.href}>{link}</NextLink>
+                        <NextLink href={item?.href} legacyBehavior>
+                          {link}
+                        </NextLink>
                       ) : (
                         link
                       )
@@ -840,7 +846,9 @@ export const OrganizationWrapper: React.FC<
                     items={breadcrumbItems ?? []}
                     renderLink={(link, item) => {
                       return item?.href ? (
-                        <NextLink href={item?.href}>{link}</NextLink>
+                        <NextLink href={item?.href} legacyBehavior>
+                          {link}
+                        </NextLink>
                       ) : (
                         link
                       )

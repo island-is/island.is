@@ -132,6 +132,7 @@ const Home: Screen<HomeProps> = ({
                                       slug,
                                     )}
                                     passHref
+                                    legacyBehavior
                                   >
                                     {link}
                                   </NextLink>

@@ -42,14 +42,13 @@ const ResourceListDisplay: React.FC<React.PropsWithChildren<Props>> = ({
             <div className="identity-resources__container__options">
               <div className="identity-resources__container__button">
                 {/* Change href link */}
-                <Link href={createUri}>
-                  <a
-                    className="identity-resources__button__new"
-                    title={linkHeaderHelp}
-                  >
-                    <i className="icon__new"></i>
-                    {linkHeader}
-                  </a>
+                <Link
+                  href={createUri}
+                  className="identity-resources__button__new"
+                  title={linkHeaderHelp}
+                >
+                  <i className="icon__new"></i>
+                  {linkHeader}
                 </Link>
               </div>
             </div>

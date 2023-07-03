@@ -100,7 +100,7 @@ export const Card: FC<React.PropsWithChildren<CardProps>> = ({
                   }
 
                   return href ? (
-                    <Link key={index} href={href} as={as}>
+                    <Link key={index} href={href} as={as} legacyBehavior>
                       <Tag {...tagProps}>{title}</Tag>
                     </Link>
                   ) : (

@@ -41,27 +41,24 @@ test.describe('Admin portal tenant permissions', () => {
       ).toBeVisible()
     })
 
-    await test.step(
-      'Filter tenant permissions list by name or id',
-      async () => {
-        // Act
-        await page
-          .getByPlaceholder('Search')
-          // filter by id
-          .fill(permissionId)
+    await test.step('Filter tenant permissions list by name or id', async () => {
+      // Act
+      await page
+        .getByPlaceholder('Search')
+        // filter by id
+        .fill(permissionId)
 
-        // Assert
-        await expect(
-          page.getByRole('heading', { name: 'Aðgangsstýring' }),
-        ).toBeVisible()
-        await expect(
-          page.getByTestId('tenant-permissions-list-item'),
-        ).toBeVisible()
-        await expect(
-          page.getByTestId('tenant-permissions-list-item'),
-        ).toHaveCount(1)
-      },
-    )
+      // Assert
+      await expect(
+        page.getByRole('heading', { name: 'Aðgangsstýring' }),
+      ).toBeVisible()
+      await expect(
+        page.getByTestId('tenant-permissions-list-item'),
+      ).toBeVisible()
+      await expect(
+        page.getByTestId('tenant-permissions-list-item'),
+      ).toHaveCount(1)
+    })
 
     await test.step('To link to tenant permission page', async () => {
       // Act
@@ -74,23 +71,20 @@ test.describe('Admin portal tenant permissions', () => {
       )
     })
 
-    await test.step(
-      'To link to tenant permission page with env as query param',
-      async () => {
-        const env = 'Development'
+    await test.step('To link to tenant permission page with env as query param', async () => {
+      const env = 'Development'
 
-        // Arrange
-        await page.goto(homeUrl)
+      // Arrange
+      await page.goto(homeUrl)
 
-        // Act
-        await page.getByPlaceholder('Search').fill(permissionId)
-        await page.getByRole('button', { name: 'Development' }).click()
+      // Act
+      await page.getByPlaceholder('Search').fill(permissionId)
+      await page.getByRole('button', { name: 'Development' }).click()
 
-        // Assert
-        await expect(page).toHaveURL(
-          `${homeUrl}/${encodeURIComponent(permissionId)}?env=${env}`,
-        )
-      },
-    )
+      // Assert
+      await expect(page).toHaveURL(
+        `${homeUrl}/${encodeURIComponent(permissionId)}?env=${env}`,
+      )
+    })
   })
 })

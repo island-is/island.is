@@ -94,34 +94,32 @@ const HeaderContainer: React.FC<React.PropsWithChildren<unknown>> = () => {
 
   return (
     <Container>
-      <Link href={logoHref}>
-        <a href={logoHref} tabIndex={0}>
-          <Inline alignY="center">
-            <LogoIcon />
-            <Box
-              display="flex"
-              className={styles.infoContainer}
-              alignItems="center"
-              height="full"
-              marginLeft={[1, 1, 2, 4]}
-              marginRight="auto"
-            >
-              <Box marginLeft={[1, 1, 2, 4]}>
-                <Text variant="eyebrow">{'Dómsmálaráðuneytið'}</Text>
-                <Hidden above="sm">
-                  <Text fontWeight="light" variant={'eyebrow'}>
-                    {'Réttarvörslugátt'}
-                  </Text>
-                </Hidden>
-                <Hidden below="md">
-                  <Text fontWeight="light" variant={'default'}>
-                    {'Réttarvörslugátt'}
-                  </Text>
-                </Hidden>
-              </Box>
+      <Link href={logoHref} tabIndex={0}>
+        <Inline alignY="center">
+          <LogoIcon />
+          <Box
+            display="flex"
+            className={styles.infoContainer}
+            alignItems="center"
+            height="full"
+            marginLeft={[1, 1, 2, 4]}
+            marginRight="auto"
+          >
+            <Box marginLeft={[1, 1, 2, 4]}>
+              <Text variant="eyebrow">{'Dómsmálaráðuneytið'}</Text>
+              <Hidden above="sm">
+                <Text fontWeight="light" variant={'eyebrow'}>
+                  {'Réttarvörslugátt'}
+                </Text>
+              </Hidden>
+              <Hidden below="md">
+                <Text fontWeight="light" variant={'default'}>
+                  {'Réttarvörslugátt'}
+                </Text>
+              </Hidden>
             </Box>
-          </Inline>
-        </a>
+          </Box>
+        </Inline>
       </Link>
       <Inline alignY="center" space={2}>
         {user && (

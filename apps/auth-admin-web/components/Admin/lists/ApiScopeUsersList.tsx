@@ -88,14 +88,13 @@ const ApiScopeUsersList: React.FC<React.PropsWithChildren<unknown>> = () => {
             <h1>{localization.title}</h1>
             <div className="api-scope-users-list__container__options">
               <div className="api-scope-users-list__container__options__button">
-                <Link href={'/admin/api-scope-user'}>
-                  <a
-                    className="api-scope-users-list__button__new"
-                    title={localization.buttons['new'].helpText}
-                  >
-                    <i className="icon__new"></i>
-                    {localization.buttons['new'].text}
-                  </a>
+                <Link
+                  href={'/admin/api-scope-user'}
+                  className="api-scope-users-list__button__new"
+                  title={localization.buttons['new'].helpText}
+                >
+                  <i className="icon__new"></i>
+                  {localization.buttons['new'].text}
                 </Link>
               </div>
               <form onSubmit={search}>
@@ -139,6 +138,7 @@ const ApiScopeUsersList: React.FC<React.PropsWithChildren<unknown>> = () => {
                             href={`/admin/api-scope-user/${encodeURIComponent(
                               apiScopeUser.nationalId,
                             )}`}
+                            legacyBehavior
                           >
                             <button
                               type="button"

@@ -34,10 +34,11 @@ const Nav: React.FC<React.PropsWithChildren<unknown>> = () => {
     if (isAdmin) {
       return (
         <li className={`nav__container ${isAdmin ? 'hide' : 'show'}`}>
-          <Link href="/admin">
-            <a className={router?.pathname.includes('admin') ? 'active' : ''}>
-              {localization.navigations['navigation'].items['admin'].text}
-            </a>
+          <Link
+            href="/admin"
+            className={router?.pathname.includes('admin') ? 'active' : ''}
+          >
+            {localization.navigations['navigation'].items['admin'].text}
           </Link>
         </li>
       )
@@ -48,33 +49,29 @@ const Nav: React.FC<React.PropsWithChildren<unknown>> = () => {
     <nav className="nav">
       <ul>
         <li className="nav__container">
-          <Link href="/">
-            <a className={router?.pathname === '/' ? 'active' : ''}>
-              {localization.navigations['navigation'].items['home'].text}
-            </a>
+          <Link href="/" className={router?.pathname === '/' ? 'active' : ''}>
+            {localization.navigations['navigation'].items['home'].text}
           </Link>
         </li>
         <li className="nav__container">
-          <Link href="/clients">
-            <a
-              className={
-                router?.pathname.includes('client') ||
-                router?.pathname === '/client'
-                  ? 'active'
-                  : ''
-              }
-            >
-              {localization.navigations['navigation'].items['clients'].text}
-            </a>
+          <Link
+            href="/clients"
+            className={
+              router?.pathname.includes('client') ||
+              router?.pathname === '/client'
+                ? 'active'
+                : ''
+            }
+          >
+            {localization.navigations['navigation'].items['clients'].text}
           </Link>
         </li>
         <li className="nav__container">
-          <Link href="/resources/api-resources">
-            <a
-              className={router?.pathname.includes('resource') ? 'active' : ''}
-            >
-              {localization.navigations['navigation'].items['resources'].text}
-            </a>
+          <Link
+            href="/resources/api-resources"
+            className={router?.pathname.includes('resource') ? 'active' : ''}
+          >
+            {localization.navigations['navigation'].items['resources'].text}
           </Link>
         </li>
 

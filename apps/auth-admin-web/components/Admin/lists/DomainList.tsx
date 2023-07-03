@@ -89,14 +89,13 @@ const DomainList: React.FC<React.PropsWithChildren<unknown>> = () => {
             <h1>{localization.title}</h1>
             <div className="domain-list__container__options">
               <div className="domain-list__container__options__button">
-                <Link href={'/admin/domain'}>
-                  <a
-                    className="domain-list__button__new"
-                    title={localization.buttons['new'].helpText}
-                  >
-                    <i className="icon__new"></i>
-                    {localization.buttons['new'].text}
-                  </a>
+                <Link
+                  href={'/admin/domain'}
+                  className="domain-list__button__new"
+                  title={localization.buttons['new'].helpText}
+                >
+                  <i className="icon__new"></i>
+                  {localization.buttons['new'].text}
                 </Link>
               </div>
               <form onSubmit={search}>
@@ -143,6 +142,7 @@ const DomainList: React.FC<React.PropsWithChildren<unknown>> = () => {
                               href={`/admin/domain/${encodeURIComponent(
                                 domain.name,
                               )}`}
+                              legacyBehavior
                             >
                               <button
                                 type="button"

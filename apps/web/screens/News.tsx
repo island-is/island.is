@@ -195,7 +195,11 @@ const NewsListNew: Screen<NewsListProps> = ({
         title={navTitle}
         items={navItems}
         renderLink={(link, { href }) => {
-          return <NextLink href={href}>{link}</NextLink>
+          return (
+            <NextLink href={href} legacyBehavior>
+              {link}
+            </NextLink>
+          )
         }}
       />
     </Stack>
@@ -297,7 +301,7 @@ const NewsListNew: Screen<NewsListProps> = ({
                 : linkResolver(typename as LinkType, slug)
 
               return (
-                <NextLink {...linkProps} passHref>
+                <NextLink {...linkProps} passHref legacyBehavior>
                   {link}
                 </NextLink>
               )
@@ -341,7 +345,11 @@ const NewsListNew: Screen<NewsListProps> = ({
             title={navTitleMobile}
             items={navItems}
             renderLink={(link, { href }) => {
-              return <NextLink href={href}>{link}</NextLink>
+              return (
+                <NextLink href={href} legacyBehavior>
+                  {link}
+                </NextLink>
+              )
             }}
             isMenuDialog
           />

@@ -98,14 +98,13 @@ const ClientsList: React.FC<React.PropsWithChildren<unknown>> = () => {
             <h1>{localization.title}</h1>
             <div className="clients__container__options">
               <div className="clients__container__options__button">
-                <Link href={'/client'}>
-                  <a
-                    className="clients__button__new"
-                    title={localization.buttons['new'].helpText}
-                  >
-                    <i className="icon__new"></i>
-                    {localization.buttons['new'].text}
-                  </a>
+                <Link
+                  href={'/client'}
+                  className="clients__button__new"
+                  title={localization.buttons['new'].helpText}
+                >
+                  <i className="icon__new"></i>
+                  {localization.buttons['new'].text}
                 </Link>
               </div>
               <form onSubmit={search}>
@@ -156,6 +155,7 @@ const ClientsList: React.FC<React.PropsWithChildren<unknown>> = () => {
                             href={`client/${encodeURIComponent(
                               client.clientId,
                             )}`}
+                            legacyBehavior
                           >
                             <button
                               type="button"

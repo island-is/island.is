@@ -242,7 +242,7 @@ export const AdviceForm = ({ case: _case, refetchAdvices }: Props) => {
         ${sloc.publishLaw.text} 
         `}
 
-        <Link href={sloc.publishLaw.link.href}>
+        <Link href={sloc.publishLaw.link.href} legacyBehavior>
           {sloc.publishLaw.link.label}
         </Link>
       </Text>

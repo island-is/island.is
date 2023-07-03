@@ -189,7 +189,7 @@ const ServiceWebFormsPage: Screen<ServiceWebFormsPageProps> = ({
                         items={breadcrumbItems}
                         renderLink={(link, { href }) => {
                           return (
-                            <NextLink href={href} passHref>
+                            <NextLink href={href} passHref legacyBehavior>
                               {link}
                             </NextLink>
                           )

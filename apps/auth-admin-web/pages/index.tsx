@@ -66,9 +66,7 @@ const Home: React.FC<React.PropsWithChildren<unknown>> = () => {
               Shortcut to create a client
             </div>
             <div className="home__shortcuts__item__link">
-              <Link href="/client">
-                <a>Create a new client</a>
-              </Link>
+              <Link href="/client">Create a new client</Link>
             </div>
           </div>
           <div className="home__shortcuts__item">
@@ -76,9 +74,7 @@ const Home: React.FC<React.PropsWithChildren<unknown>> = () => {
               Simplified new Client form
             </div>
             <div className="home__shortcuts__item__link">
-              <Link href="/client-basic">
-                <a>Create a new client</a>
-              </Link>
+              <Link href="/client-basic">Create a new client</Link>
             </div>
           </div>
 
@@ -88,7 +84,7 @@ const Home: React.FC<React.PropsWithChildren<unknown>> = () => {
             </div>
             <div className="home__shortcuts__item__link">
               <Link href="/resource/api-resource">
-                <a>Create a new API Resource</a>
+                Create a new API Resource
               </Link>
             </div>
           </div>

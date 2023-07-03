@@ -119,37 +119,34 @@ test.describe('Admin portal permission', () => {
     /**
      * Delegations card
      */
-    await test.step(
-      'See access control card and interact with it',
-      async () => {
-        // Arrange
-        const title = 'Access control'
-        const checkboxes = [
-          'isAccessControlled',
-          'grantToAuthenticatedUser',
-          'grantToProcuringHolders',
-          'grantToLegalGuardians',
-          'allowExplicitDelegationGrant',
-          'grantToPersonalRepresentatives',
-        ].map((name) => page.locator(getInputByName(name)))
+    await test.step('See access control card and interact with it', async () => {
+      // Arrange
+      const title = 'Access control'
+      const checkboxes = [
+        'isAccessControlled',
+        'grantToAuthenticatedUser',
+        'grantToProcuringHolders',
+        'grantToLegalGuardians',
+        'allowExplicitDelegationGrant',
+        'grantToPersonalRepresentatives',
+      ].map((name) => page.locator(getInputByName(name)))
 
-        // Assert - Heading
-        await expect(page.getByRole('heading', { name: title })).toBeVisible()
+      // Assert - Heading
+      await expect(page.getByRole('heading', { name: title })).toBeVisible()
 
-        // Assert - All inputs are not visible
-        await Promise.all(
-          checkboxes.map((checkbox) => expect(checkbox).toBeVisible()),
-        )
+      // Assert - All inputs are not visible
+      await Promise.all(
+        checkboxes.map((checkbox) => expect(checkbox).toBeVisible()),
+      )
 
-        // Assert - save button is disabled
-        await buttonSaveTest(title)
+      // Assert - save button is disabled
+      await buttonSaveTest(title)
 
-        // Act - Click on one checkbox
-        await page.locator(getInputByName('isAccessControlled')).click()
+      // Act - Click on one checkbox
+      await page.locator(getInputByName('isAccessControlled')).click()
 
-        // Assert - save button is disabled
-        await buttonSaveTest(title, false)
-      },
-    )
+      // Assert - save button is disabled
+      await buttonSaveTest(title, false)
+    })
   })
 })
