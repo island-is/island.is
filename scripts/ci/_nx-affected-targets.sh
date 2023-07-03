@@ -14,12 +14,7 @@ BRANCH=${BRANCH:-$GITHUB_HEAD_REF}
 if [[ -n "$BRANCH" && -n "$AFFECTED_ALL" && "$AFFECTED_ALL" == "7913-$BRANCH" ]]; then
   EXTRA_ARGS="--all"
 else
-  AFFECTED_FILES=$(git diff --name-only "$HEAD" "$BASE")
-  export AFFECTED_FILES
-  EXTRA_ARGS=$(
-    node <<EOM
-        const affectedFiles = (process.env.AFFECTED_FILES || "").split("\n").map(e => e.trim()).filter(e => e.length > 0);
-        console.log(affectedFiles.map(file => '--files='+ file).join(' '));
+  EXTRA_ARGS='--base="'$BASE'" --head="'$HEAD'"'
 EOM
   )
 fi
