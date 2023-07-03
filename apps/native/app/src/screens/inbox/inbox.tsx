@@ -31,10 +31,7 @@ import {BottomTabsIndicator} from '../../components/bottom-tabs-indicator/bottom
 import {PressableHighlight} from '../../components/pressable-highlight/pressable-highlight';
 import {client} from '../../graphql/client';
 import {IDocument} from '../../graphql/fragments/document.fragment';
-import {
-  ListDocumentsResponse,
-  LIST_DOCUMENTS_QUERY,
-} from '../../graphql/queries/list-documents.query';
+import {LIST_DOCUMENTS_QUERY} from '../../graphql/queries/list-documents.query';
 import {useActiveTabItemPress} from '../../hooks/use-active-tab-item-press';
 import {createNavigationOptionHooks} from '../../hooks/create-navigation-option-hooks';
 import {navigateTo} from '../../lib/deep-linking';
@@ -45,12 +42,14 @@ import {useUiStore} from '../../stores/ui-store';
 import {ComponentRegistry} from '../../utils/component-registry';
 import {getRightButtons} from '../../utils/get-main-root';
 import {testIDs} from '../../utils/test-ids';
+import {Query} from 'src/graphql/types/schema';
+import {Document} from 'src/graphql/types/schema';
 
 type ListItem =
   | {id: string; type: 'skeleton' | 'empty'}
-  | (IDocument & {type: undefined});
+  | (Document & {type: undefined});
 
-interface IndexedDocument extends IDocument {
+interface IndexedDocument extends Document {
   fulltext: string;
 }
 
@@ -115,39 +114,27 @@ const {useNavigationOptions, getNavigationOptions} =
     },
   );
 
-const PressableListItem = React.memo(
-  ({item, unread}: {item: IDocument; unread: boolean}) => {
-    const {getOrganizationLogoUrl} = useOrganizationsStore();
-    return (
-      <PressableHighlight
-        onPress={() =>
-          navigateTo(`/inbox/${item.id}`, {title: item.senderName})
-        }>
-        <ListItem
-          title={item.senderName}
-          subtitle={item.subject}
-          date={new Date(item.date)}
-          swipable
-          unread={unread}
-          onToggleUnread={() => {
-            if (unread) {
-              inboxStore.getState().actions.setRead(item.id);
-            } else {
-              inboxStore.getState().actions.setUnread(item.id);
-            }
-          }}
-          icon={
-            <Image
-              source={getOrganizationLogoUrl(item.senderName, 75)}
-              resizeMode="contain"
-              style={{width: 25, height: 25}}
-            />
-          }
-        />
-      </PressableHighlight>
-    );
-  },
-);
+const PressableListItem = React.memo(({item}: {item: Document}) => {
+  const {getOrganizationLogoUrl} = useOrganizationsStore();
+  return (
+    <PressableHighlight
+      onPress={() => navigateTo(`/inbox/${item.id}`, {title: item.senderName})}>
+      <ListItem
+        title={item.senderName}
+        subtitle={item.subject}
+        date={new Date(item.date)}
+        unread={!item.opened}
+        icon={
+          <Image
+            source={getOrganizationLogoUrl(item.senderName, 75)}
+            resizeMode="contain"
+            style={{width: 25, height: 25}}
+          />
+        }
+      />
+    </PressableHighlight>
+  );
+});
 
 export const InboxScreen: NavigationFunctionComponent = ({componentId}) => {
   useNavigationOptions(componentId);
@@ -163,7 +150,7 @@ export const InboxScreen: NavigationFunctionComponent = ({componentId}) => {
   const [searchLoading, setSearchLoading] = useState(false);
   const [indexedItems, setIndexedItems] = useState<IndexedDocument[]>([]);
   const [inboxItems, setInboxItems] = useState<IDocument[]>([]);
-  const res = useQuery<ListDocumentsResponse>(LIST_DOCUMENTS_QUERY, {
+  const res = useQuery<Query>(LIST_DOCUMENTS_QUERY, {
     client,
     fetchPolicy: 'cache-and-network',
   });
@@ -172,7 +159,7 @@ export const InboxScreen: NavigationFunctionComponent = ({componentId}) => {
   const isSearch = ui.inboxQuery.length > 0;
   const isLoading = res.loading;
   const isError = !!res.error;
-  const isEmpty = (res?.data?.listDocuments ?? []).length === 0;
+  const isEmpty = (res?.data?.listDocumentsV2?.data ?? []).length === 0;
 
   const isSkeltonView = isLoading && isFirstLoad && !isError;
   const isEmptyView = !isLoading && isEmpty;
@@ -239,8 +226,7 @@ export const InboxScreen: NavigationFunctionComponent = ({componentId}) => {
   // when res data is loaded
   useEffect(() => {
     if (res.data && !res.loading) {
-      const items = res?.data?.listDocuments ?? [];
-
+      const items = res?.data?.listDocumentsV2?.data ?? [];
       if (!initialized) {
         // mark all as read on first app start
         actions.setInitialized(true);
@@ -328,19 +314,15 @@ export const InboxScreen: NavigationFunctionComponent = ({componentId}) => {
               image={
                 <Image
                   source={illustrationSrc}
-                  style={{width: 176, height: 134, resizeMode: 'contain'}}
+                  style={{width: 134, height: 176}}
+                  resizeMode="contain"
                 />
               }
             />
           </View>
         );
       }
-      return (
-        <PressableListItem
-          item={item as IDocument}
-          unread={!readItems.includes(item.id)}
-        />
-      );
+      return <PressableListItem item={item as Document} />;
     },
     [readItems],
   );

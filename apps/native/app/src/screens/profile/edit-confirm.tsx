@@ -31,7 +31,7 @@ export const EditConfirmScreen: NavigationFunctionComponent<any> = ({
   const intl = useIntl();
   const [text, onChangeText] = React.useState('');
   const {updateUserProfile} = useUpdateUserProfile();
-  const disabled = text.trim().length < 6;
+  const disabled = text?.trim().length < 6;
   const [loading, setLoading] = React.useState(false);
 
   const handleConfirm = async () => {

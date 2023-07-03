@@ -261,7 +261,7 @@ export class ApplicationController {
           templateTypeToIsReady[typeId] = false
         }
       } catch (e) {
-        this.logger.error(
+        this.logger.info(
           `Could not get application template for type ${typeId}`,
           e,
         )

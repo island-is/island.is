@@ -83,7 +83,8 @@ export const ProfileScreen: NavigationFunctionComponent = ({componentId}) => {
               image={
                 <Image
                   source={familyIcon as any}
-                  style={{width: 28, height: 20, resizeMode: 'contain'}}
+                  style={{width: 28, height: 20}}
+                  resizeMode="contain"
                 />
               }
               style={{marginRight: 8}}
@@ -94,7 +95,8 @@ export const ProfileScreen: NavigationFunctionComponent = ({componentId}) => {
               image={
                 <Image
                   source={vehicleIcon as any}
-                  style={{width: 24, height: 20, resizeMode: 'contain'}}
+                  style={{width: 24, height: 20}}
+                  resizeMode="contain"
                 />
               }
               style={{marginRight: 8}}
@@ -105,7 +107,8 @@ export const ProfileScreen: NavigationFunctionComponent = ({componentId}) => {
               image={
                 <Image
                   source={assetsIcon as any}
-                  style={{width: 30, height: 28, resizeMode: 'contain'}}
+                  style={{width: 30, height: 28}}
+                  resizeMode="contain"
                 />
               }
             />

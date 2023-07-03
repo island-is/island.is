@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common'
-import { WorkMachinesResolver } from './api-domains-work-machines.resolver'
-import { WorkMachinesService } from './api-domains-work-machines.service'
+import { WorkMachinesResolver } from './workMachines.resolver'
+import { WorkMachinesService } from './workMachines.service'
 import { WorkMachinesClientModule } from '@island.is/clients/work-machines'
 import { FeatureFlagModule } from '@island.is/nest/feature-flags'
 

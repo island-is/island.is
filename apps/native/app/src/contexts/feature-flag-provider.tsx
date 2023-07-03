@@ -8,9 +8,9 @@ import React, {
   ReactNode,
 } from 'react';
 import {useAuthStore} from '../stores/auth-store';
-import {config} from '../utils/config';
 import * as configcat from 'configcat-js';
 import AsyncStorage from '@react-native-community/async-storage';
+import {getConfig} from '../config';
 
 interface FeatureFlagUser {
   identifier: string;
@@ -57,7 +57,7 @@ class ConfigCatAsyncStorageCache {
 
 // const logger = configcat.createConsoleLogger(configcat.LogLevel.Info);
 const featureFlagClient = configcat.getClient(
-  config.configCat,
+  getConfig().configCat ?? '',
   configcat.PollingMode.AutoPoll,
   {
     dataGovernance: configcat.DataGovernance.EuOnly,

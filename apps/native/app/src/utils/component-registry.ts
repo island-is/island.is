@@ -1,6 +1,6 @@
-import {config} from './config';
+import {bundleId, isTestingApp} from '../config';
 
-const prefix = config.bundleId;
+const prefix = bundleId;
 
 export const ComponentRegistry = {
   // dev screens
@@ -8,7 +8,7 @@ export const ComponentRegistry = {
   DevtoolsCognitoAuthScreen: `${prefix}.screens.DevCognitoAuth`,
 
   // screens
-  LoginScreen: `${prefix}.screens.Login`,
+  LoginScreen: `${prefix}.screens.${isTestingApp ? `TestingLogin` : `Login`}`,
   CognitoAuthScreen: `${prefix}.screens.CognitoAuth`,
   AppLockScreen: `${prefix}.screens.AppLock`,
   OnboardingPinCodeScreen: `${prefix}.screens.OnboardingPinCode`,

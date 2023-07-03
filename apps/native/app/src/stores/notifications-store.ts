@@ -53,7 +53,7 @@ export const notificationCategories = [
     actions: [
       {
         identifier: 'ACTION_OPEN_DOCUMENT',
-        buttonTitle: 'Opna skjal',
+        buttonTitle: 'Opna',
         onPress: ({id, data}: Notification, componentId?: string) => {
           return navigateToNotification({id, link: data.url}, componentId);
         },

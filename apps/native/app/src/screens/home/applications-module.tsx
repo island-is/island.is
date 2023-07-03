@@ -14,7 +14,7 @@ import leJobss4 from '../../assets/illustrations/le-jobs-s4.png';
 import {IApplication} from '../../graphql/fragments/application.fragment';
 import {navigateTo} from '../../lib/deep-linking';
 import {openBrowser} from '../../lib/rn-island';
-import {config} from '../../utils/config';
+import {getConfig} from '../../config';
 
 interface ApplicationsModuleProps {
   applications: IApplication[];
@@ -54,7 +54,7 @@ export const ApplicationsModule = React.memo(
             }),
             onPress() {
               openBrowser(
-                `${config.apiEndpoint.replace(
+                `${getConfig().apiUrl.replace(
                   /api$/,
                   'umsoknir',
                 )}/sjukratryggingar/${application.id}`,

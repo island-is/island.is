@@ -15,8 +15,6 @@ if [[ -n "$BRANCH" && -n "$AFFECTED_ALL" && "$AFFECTED_ALL" == "7913-$BRANCH" ]]
   EXTRA_ARGS="--all"
 else
   EXTRA_ARGS='--base="'$BASE'" --head="'$HEAD'"'
-EOM
-  )
 fi
 if [[ "${EXTRA_ARGS}" != "" ]]; then
   # shellcheck disable=SC2086
