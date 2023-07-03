@@ -25,18 +25,6 @@
         "lintFilePatterns": ["apps/system-e2e/**/*.{ts,tsx,js,jsx}"]
       }
     },
-    "smoke": {
-      "executor": "@nrwl/workspace:run-commands",
-      "options": {
-        "command": "yarn playwright test apps/system-e2e/src/tests/*/smoke -c apps/system-e2e/src"
-      }
-    },
-    "acceptance": {
-      "executor": "@nrwl/workspace:run-commands",
-      "options": {
-        "command": "yarn playwright test apps/system-e2e/src/tests -c apps/system-e2e/src"
-      }
-    },
     "docker-playwright": {}
   },
   "tags": ["scope:e2e"]
