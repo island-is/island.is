@@ -223,9 +223,9 @@ export const serviceSetup = (services: {
         '@rsk.is/prokura:admin',
       ]),
       XROAD_RSK_PROCURING_PATH: {
-        dev: json(['IS-DEV/GOV/10006/Skatturinn/relationships-v1']),
-        staging: json(['IS-STG/GOV/10006/Skatturinn/relationships-v1']),
-        prod: json(['IS-PROD/GOV/10006/Skatturinn/relationships-v1']),
+        dev: 'IS-DEV/GOV/10006/Skatturinn/relationships-v1',
+        staging: 'IS-TEST/GOV/10006/Skatturinn/relationships-v1',
+        prod: 'IS/GOV/10006/Skatturinn/relationships-v1',
       },
     })
 

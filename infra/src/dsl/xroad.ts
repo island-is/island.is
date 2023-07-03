@@ -173,8 +173,8 @@ export const RskProcuring = new XroadConf({
     },
     XROAD_RSK_PROCURING_PATH: {
       dev: 'IS-DEV/GOV/10006/Skatturinn/relationships-v1',
-      staging: 'IS-STG/GOV/10006/Skatturinn/relationships-v1',
-      prod: 'IS-PROD/GOV/10006/Skatturinn/relationships-v1',
+      staging: 'IS-TEST/GOV/10006/Skatturinn/relationships-v1',
+      prod: 'IS/GOV/10006/Skatturinn/relationships-v1',
     },
   },
   secrets: {
