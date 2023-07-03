@@ -110,7 +110,7 @@ parse_run_args() {
       env+=("$2")
       shift 2
       ;;
-    --secrets-file)
+    --secrets-file | --env-file)
       secrets_files+=("$2")
       shift 2
       ;;
@@ -182,9 +182,12 @@ parse_run_args() {
       local value="${secret#*=}"
       export "${key}"="${value}" || error "Failed setting secret $secret"
       debug "Loaded secret $key=${value//?/*}"
-      echo "${secret%=*}=${secret##*=}" >>"$secrets_out_file"
+      echo "${secret%=*}=${secret##*=}" >>"$secrets_out_file.part"
     done <"$secrets_file"
   done
+  debug "Overwriting the secrets file"
+  mv -f "$secrets_out_file" "$secrets_out_file.bak"
+  mv -f "$secrets_out_file.part" "$secrets_out_file"
   run_cmd+=" --env-file $secrets_out_file"
 
   # Image to use
