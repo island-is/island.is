@@ -25,6 +25,43 @@ export const GET_ORGANIZATIONS_QUERY = gql`
   }
 `
 
+export const GET_ORGANIZATION_BY_TITLE_QUERY = gql`
+  query GetOrganizationByTitle($input: GetOrganizationByTitleInput!) {
+    getOrganizationByTitle(input: $input) {
+      id
+      slug
+      email
+      phone
+      title
+      hasALandingPage
+      trackingDomain
+      logo {
+        title
+        url
+      }
+      publishedMaterialSearchFilterGenericTags {
+        id
+        title
+        slug
+        genericTagGroup {
+          id
+          title
+          slug
+        }
+      }
+      link
+      tag {
+        id
+        title
+      }
+      description
+      namespace {
+        fields
+      }
+    }
+  }
+`
+
 export const GET_ORGANIZATION_QUERY = gql`
   query GetOrganization($input: GetOrganizationInput!) {
     getOrganization(input: $input) {
@@ -149,6 +186,11 @@ export const GET_ORGANIZATION_PAGE_QUERY = gql`
         ...AllSlices
       }
       newsTag {
+        id
+        title
+        slug
+      }
+      secondaryNewsTags {
         id
         title
         slug

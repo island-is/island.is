@@ -12,16 +12,6 @@ export const m = defineMessages({
     defaultMessage: 'Netfang',
     description: '',
   },
-  phoneLabel: {
-    id: 'gpl.application:phoneLabel',
-    defaultMessage: 'Símanúmer ábyrgðarmanns',
-    description: '',
-  },
-  emailLabel: {
-    id: 'gpl.application:emailLabel',
-    defaultMessage: 'Netfang ábyrgðarmanns',
-    description: '',
-  },
 
   // Application Name
   applicationName: {

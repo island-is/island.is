@@ -70,19 +70,6 @@ export class EndorsementService {
     })
   }
 
-  async getListOwnerNationalId(listId: string): Promise<string | null> {
-    const endorsementList = await this.endorsementListModel.findOne({
-      where: {
-        id: listId,
-      },
-    })
-    if (endorsementList) {
-      return endorsementList.owner
-    } else {
-      return null
-    }
-  }
-
   async findEndorsementsGeneralPetition(
     { listId }: FindEndorsementsInput,
     query: any,
@@ -120,24 +107,6 @@ export class EndorsementService {
     }
 
     return { hasEndorsed: true }
-  }
-
-  async findUserEndorsementsByTags({
-    nationalId,
-    tags,
-  }: FindUserEndorsementsByTagsInput) {
-    this.logger.info(
-      `Finding endorsements by tags "${tags.join(
-        ', ',
-      )}" for user "${nationalId}"`,
-    )
-
-    return await this.endorsementModel.findAll({
-      where: { endorser: nationalId },
-      include: [
-        { model: EndorsementList, where: { tags: { [Op.overlap]: tags } } },
-      ],
-    })
   }
 
   // FIXME: Find a way to combine with create bulk endorsements

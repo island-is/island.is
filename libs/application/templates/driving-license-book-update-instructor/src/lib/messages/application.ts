@@ -23,4 +23,9 @@ export const application = defineMessages({
     description:
       'Description of application state/status when application is processed',
   },
+  pendingActionApplicationCompletedTitle: {
+    id: 'dlbui.application:pendingActionApplicationCompletedTitle',
+    defaultMessage: 'Búið er að breyta um ökukennara',
+    description: 'Pending action application completed',
+  },
 })

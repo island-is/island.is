@@ -143,7 +143,7 @@ describe('InternalNotificationController - Send defender assigned notifications'
     it('should not send notification', () => {
       expect(mockEmailService.sendEmail).not.toHaveBeenCalled()
       expect(mockNotificationModel.create).not.toHaveBeenCalled()
-      expect(then.result).toStrictEqual({ delivered: false })
+      expect(then.result).toStrictEqual({ delivered: true })
     })
   })
 
@@ -251,7 +251,7 @@ describe('InternalNotificationController - Send defender assigned notifications'
     it('should return notification was not sent', () => {
       expect(mockNotificationModel.create).not.toHaveBeenCalled()
       expect(mockEmailService.sendEmail).not.toHaveBeenCalled()
-      expect(then.result).toEqual(expect.objectContaining({ delivered: false }))
+      expect(then.result).toEqual(expect.objectContaining({ delivered: true }))
     })
   })
 

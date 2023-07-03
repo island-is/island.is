@@ -48,8 +48,9 @@ parse_build_args() {
       exit 0
       ;;
     *)
-      error "Unknown option: $1"
-      exit 1
+      warning "Unknown $0 build option: $1"
+      info "Ending argument parsing for $0"
+      break
       ;;
     esac
   done
@@ -121,19 +122,19 @@ parse_run_args() {
       dryrun=true
       shift
       ;;
-    -*)
-      error "Unknown option: $1"
-      exit 1
-      ;;
     run | yarn)
       shift
       ;;
     *)
+      warning "Unknown $0 run option: $1"
+      info "Ending argument parsing for $0"
       yarn_args="$*"
       break
       ;;
     esac
   done
+
+  debug "Set yarn_args: $yarn_args"
 
   local container_name=${image##*/}
 
@@ -156,7 +157,10 @@ parse_run_args() {
   # If volumes array is not empty
   if [[ "${#volumes[@]}" -gt 0 ]]; then
     for volume in "${volumes[@]}"; do
-      run_cmd+=" --volume $volume:/data:z"
+      if ! [[ "$volume" =~ : ]]; then
+        volume+=":/data/${volume}:z"
+      fi
+      run_cmd+=" --volume $volume"
     done
   fi
 
@@ -188,7 +192,8 @@ parse_run_args() {
 
   # Image/program arguments
   if [[ -n "$yarn_args" ]]; then
-    run_cmd+=" yarn $yarn_args"
+    # yarn_args=" yarn $yarn_args"
+    run_cmd+=" $yarn_args"
   fi
 
   if [[ -n "$run_args" ]]; then

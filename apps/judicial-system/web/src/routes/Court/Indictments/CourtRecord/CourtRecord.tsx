@@ -143,7 +143,9 @@ const CourtRecord: React.FC = () => {
               )
             }}
             onRemove={(file) => handleRemove(file, removeFileCB)}
-            onRetry={(file) => handleRetry(file, handleUIUpdate)}
+            onRetry={(file) =>
+              handleRetry(file, handleUIUpdate, CaseFileCategory.COURT_RECORD)
+            }
           />
         </Box>
         <Box component="section" marginBottom={10}>
@@ -167,7 +169,9 @@ const CourtRecord: React.FC = () => {
               )
             }
             onRemove={(file) => handleRemove(file, removeFileCB)}
-            onRetry={(file) => handleRetry(file, handleUIUpdate)}
+            onRetry={(file) =>
+              handleRetry(file, handleUIUpdate, CaseFileCategory.RULING)
+            }
           />
         </Box>
       </FormContentContainer>

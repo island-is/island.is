@@ -14,21 +14,22 @@ import { CaseType, isIndictmentCase } from '@island.is/judicial-system/types'
 import { TempCaseListEntry as CaseListEntry } from '@island.is/judicial-system-web/src/types'
 import { core, tables } from '@island.is/judicial-system-web/messages'
 import { displayCaseType } from '@island.is/judicial-system-web/src/routes/Shared/Cases/utils'
-import TableSkeleton from '@island.is/judicial-system-web/src/routes/Shared/Cases/TableSkeleton'
 import {
   DEFENDER_INDICTMENT_ROUTE,
   DEFENDER_ROUTE,
 } from '@island.is/judicial-system/consts'
-
 import {
-  TagAppealState,
   TagCaseState,
-  DefendantInfo,
-  CourtCaseNumber,
+  TagAppealState,
 } from '@island.is/judicial-system-web/src/components'
+import { useSortCases } from '@island.is/judicial-system-web/src/utils/hooks'
+import {
+  TableSkeleton,
+  CourtCaseNumber,
+  DefendantInfo,
+} from '@island.is/judicial-system-web/src/components/Table'
 
 import * as styles from './DefenderCasesTable.css'
-import useSortCases from '../hooks/useSortCases'
 
 interface Props {
   cases: CaseListEntry[]
@@ -156,6 +157,7 @@ export const DefenderCasesTable: React.FC<Props> = (props) => {
                   <CourtCaseNumber
                     courtCaseNumber={c.courtCaseNumber}
                     policeCaseNumbers={c.policeCaseNumbers}
+                    appealCaseNumber={c.appealCaseNumber}
                   />
                 </td>
                 <td className={cn(styles.td)}>

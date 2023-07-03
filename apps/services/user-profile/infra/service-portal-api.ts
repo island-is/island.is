@@ -19,6 +19,11 @@ export const serviceSetup = (): ServiceBuilder<'service-portal-api'> =>
         prod: 'https://innskra.island.is',
       },
       NO_UPDATE_NOTIFIER: 'true',
+      NOVA_ACCEPT_UNAUTHORIZED: {
+        dev: 'true',
+        staging: 'false',
+        prod: 'false',
+      },
     })
     .secrets({
       NOVA_URL: '/k8s/service-portal-api/NOVA_URL',

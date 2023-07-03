@@ -93,8 +93,8 @@ import { ResidencePermitPermanentService } from './directorate-of-immigration/re
 import { ResidencePermitRenewalModule } from './directorate-of-immigration/residence-permit-renewal/residence-permit-renewal.module'
 import { ResidencePermitRenewalService } from './directorate-of-immigration/residence-permit-renewal/residence-permit-renewal.service'
 
-//TODO: ADD These templates.
 import { DrivingLicenseDuplicateModule } from './driving-license-duplicate/driving-license-duplicate.module'
+import { DrivingLicenseDuplicateService } from './driving-license-duplicate/driving-license-duplicate.service'
 
 export const modules = [
   ReferenceTemplateModule,
@@ -142,6 +142,7 @@ export const modules = [
   EuropeanHealthInsuranceCardModule,
   DrivingLicenseBookUpdateInstructorModule,
   DrivingLearnersPermitModule,
+  DrivingLicenseDuplicateModule,
   CitizenshipModule,
   ResidencePermitPermanentModule,
   ResidencePermitRenewalModule,
@@ -193,6 +194,7 @@ export const services = [
   EuropeanHealthInsuranceCardService,
   DrivingLicenseBookUpdateInstructorService,
   DrivingLearnersPermitService,
+  DrivingLicenseDuplicateService,
   CitizenshipService,
   ResidencePermitPermanentService,
   ResidencePermitRenewalService,

@@ -27,6 +27,7 @@ import {
   UniversityOfIceland,
   Vehicles,
   VehicleServiceFjsV1,
+  WorkMachines,
   IcelandicGovernmentInstitutionVacancies,
   DirectorateOfImmigration,
 } from '../../../infra/src/dsl/xroad'
@@ -218,6 +219,10 @@ export const serviceSetup = (services: {
           'clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379',
         ]),
       },
+      XROAD_RSK_PROCURING_SCOPE: json([
+        '@rsk.is/prokura',
+        '@rsk.is/prokura:admin',
+      ]),
     })
 
     .secrets({
@@ -341,6 +346,7 @@ export const serviceSetup = (services: {
       TransportAuthority,
       ChargeFjsV2,
       UniversityOfIceland,
+      WorkMachines,
       IcelandicGovernmentInstitutionVacancies,
       DirectorateOfImmigration,
     )

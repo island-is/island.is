@@ -57,6 +57,19 @@ export class EndorsementListService {
     return false
   }
 
+  async getListOwnerNationalId(listId: string): Promise<string | null> {
+    const endorsementList = await this.endorsementListModel.findOne({
+      where: {
+        id: listId,
+      },
+    })
+    if (endorsementList) {
+      return endorsementList.owner
+    } else {
+      return null
+    }
+  }
+
   // generic reusable query with pagination defaults
   async findListsGenericQuery(query: any, where: any = {}) {
     this.logger.info(`Finding endorsement lists`)
@@ -176,9 +189,9 @@ export class EndorsementListService {
 
   async lock(endorsementList: EndorsementList): Promise<EndorsementList> {
     this.logger.info(`Locking endorsement list: ${endorsementList.id}`)
-
-    await this.emailLock(endorsementList)
-
+    if (process.env.NODE_ENV === 'production') {
+      await this.emailLock(endorsementList)
+    }
     return await endorsementList.update({ adminLock: true })
   }
 
@@ -218,7 +231,12 @@ export class EndorsementListService {
     }
     this.logger.info(`Creating endorsement list: ${list.title}`)
     const endorsementList = await this.endorsementListModel.create({ ...list })
-    await this.emailCreated(endorsementList)
+
+    console.log('process.env.NODE_ENV', process.env.NODE_ENV)
+    if (process.env.NODE_ENV === 'production') {
+      await this.emailCreated(endorsementList)
+    }
+
     return endorsementList
   }
 
@@ -505,12 +523,12 @@ export class EndorsementListService {
             {
               component: 'Copy',
               context: {
-                copy: `Meðfylgjandi er undirskriftalisti "${endorsementList?.title}",
-                sem ${ownerName} er skráður ábyrgðarmaður fyrir, hefur verið læst af umsjónaraðilum kerfisins hjá Þjóðskrá.`,
+                copy: `Undirskriftalista "${endorsementList?.title}" sem, ${ownerName}
+                er skráður ábyrgðarmaður fyrir, hefur verið læst af þjónustuaðila kerfisins hjá Þjóðskrá Íslands
+                og er því ekki aðgengilegur inn á Ísland.is. Metið hefur verið að listinn uppfyllir ekki skilmála undirskriftalista.`,
                 small: true,
               },
             },
-
             {
               component: 'Copy',
               context: { copy: 'Kær kveðja,', small: true },
