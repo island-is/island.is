@@ -217,6 +217,9 @@ export const is = {
   'assetsDetail.postNumber': 'Póstnúmer',
   'assetsDetail.buildYearDisplay': 'Byggingarár',
 
+  // finance
+  'finance.screenTitle': 'Fjármál',
+
   // family
   'family.screenTitle': 'Fjölskylda',
   'family.emptyListTitle': 'Fjölskyldu upplýsingar',

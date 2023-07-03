@@ -39,6 +39,8 @@ export const ComponentRegistry = {
   EditEmailScreen: `${prefix}.screens.EditEmailScreen`,
   EditBankInfoScreen: `${prefix}.screens.EditBankInfoScreen`,
   EditConfirmScreen: `${prefix}.screens.EditConfirmScreen`,
+  FinanceScreen: `${prefix}.screens.FinanceScreen`,
+  FinanceStatusDetailScreen: `${prefix}.screens.FinanceStatusDetailScreen`,
 
   // ui components
   AndroidSearchBar: `${prefix}.ui.AndroidSearchBar`,

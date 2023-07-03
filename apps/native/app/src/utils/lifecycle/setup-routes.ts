@@ -211,6 +211,36 @@ export function setupRoutes() {
     });
   });
 
+  addRoute('/finance', async (passProps: any) => {
+    Navigation.showModal({
+      stack: {
+        children: [
+          {
+            component: {
+              name: ComponentRegistry.FinanceScreen,
+              passProps,
+            },
+          },
+        ],
+      },
+    })
+  });
+
+  addRoute('/finance/status/:id', async (passProps: any) => {
+    Navigation.showModal({
+      stack: {
+        children: [
+          {
+            component: {
+              name: ComponentRegistry.FinanceStatusDetailScreen,
+              passProps,
+            },
+          },
+        ],
+      },
+    })
+  });
+
   addRoute('/family/:type/:nationalId', (passProps: any) => {
     Navigation.showModal({
       stack: {

@@ -38,6 +38,8 @@ import {WalletPassportScreen} from '../../screens/wallet-passport/wallet-passpor
 import {CognitoAuthScreen} from '../../screens/cognito-auth/cognito-auth';
 import {isTestingApp} from '../../config';
 import {TestingLoginScreen} from '../../screens/login/testing-login';
+import {FinanceScreen} from '../../screens/finance/finance';
+import {FinanceStatusDetailScreen} from '../../screens/finance/finance-status-detail';
 
 export function registerAllComponents() {
   // dev only
@@ -84,6 +86,8 @@ export function registerAllComponents() {
   registerComponent(CR.EditBankInfoScreen, EditBankInfoScreen);
   registerComponent(CR.EditConfirmScreen, EditConfirmScreen);
   registerComponent(CR.CognitoAuthScreen, CognitoAuthScreen);
+  registerComponent(CR.FinanceScreen, FinanceScreen);
+  registerComponent(CR.FinanceStatusDetailScreen, FinanceStatusDetailScreen);
 
   // ui components
   // if (Platform.OS === 'android') {

@@ -300,6 +300,9 @@ export const en: TranslatedMessages = {
   'assetsDetail.postNumber': 'Post number',
   'assetsDetail.buildYearDisplay': 'Build Year Display',
 
+  // finance
+  'finance.screenTitle': 'Finance',
+
   // family
   'family.screenTitle': 'Family',
   'family.emptyListTitle': 'Family information',
