@@ -30,7 +30,7 @@ import {
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @FeatureFlag(Features.servicePortalWorkMachinesModule)
 @Resolver()
-@Audit({ namespace: '@island.is/api/workMachines' })
+@Audit({ namespace: '@island.is/api/work-machines' })
 export class WorkMachinesResolver {
   constructor(
     private readonly workMachinesService: WorkMachinesService,
