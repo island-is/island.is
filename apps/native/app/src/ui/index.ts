@@ -15,6 +15,7 @@ export * from './lib/card/asset-card';
 export * from './lib/card/family-member-card';
 export * from './lib/card/licence-card';
 export * from './lib/card/notification-card';
+export * from './lib/card/finance-status-card';
 export * from './lib/card/status-card';
 export * from './lib/card/welcome-card';
 export * from './lib/card/link-card';

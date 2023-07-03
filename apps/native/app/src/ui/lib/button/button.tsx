@@ -1,5 +1,5 @@
 import React from 'react';
-import {TextStyle, TouchableHighlightProps} from 'react-native';
+import {ImageStyle, TextProps, TextStyle, TouchableHighlightProps} from 'react-native';
 import styled, {useTheme} from 'styled-components/native';
 import {dynamicColor} from '../../utils';
 import {font} from '../../utils/font';
@@ -10,6 +10,8 @@ interface ButtonProps extends TouchableHighlightProps {
   isTransparent?: boolean;
   isOutlined?: boolean;
   textStyle?: TextStyle;
+  textProps?: TextProps;
+  iconStyle?: ImageStyle;
 }
 
 type HostProps = Omit<ButtonProps, 'title'>;
@@ -80,6 +82,8 @@ export function Button({
   isOutlined,
   icon,
   textStyle,
+  textProps,
+  iconStyle,
   ...rest
 }: ButtonProps) {
   const theme = useTheme();
@@ -94,6 +98,7 @@ export function Button({
     >
       <>
         <Text
+          {...textProps}
           isTransparent={isTransparent}
           isOutlined={isOutlined}
           disabled={rest.disabled}
@@ -101,7 +106,7 @@ export function Button({
         >
           {title}
         </Text>
-        {icon && <Icon source={icon as any} resizeMode="center" />}
+        {icon && <Icon source={icon as any} resizeMode="center" {...iconStyle} />}
       </>
     </Host>
   );
