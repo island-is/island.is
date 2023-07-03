@@ -242,7 +242,26 @@ export const formatAmendingRegBody = (
         oldText = oldTextElement.textContent || ''
 
         newTextElement.querySelectorAll('del').forEach((e) => e.remove())
-        newText = newTextElement.textContent || ''
+
+        if (isGreinTitle) {
+          const tempElement = newTextElement
+
+          // Select all <ins> elements within the temporary element
+          const insElements = tempElement.querySelectorAll('ins')
+
+          // Iterate through each <ins> element and insert a space before and after its content
+          insElements.forEach((insElement) => {
+            const content = insElement.textContent
+            insElement.textContent = ` ${content}<br />`
+          })
+
+          // Retrieve the modified text content from the temporary element
+          const modifiedTextContent = tempElement?.textContent?.trim()
+          console.log('modifiedTextContent', modifiedTextContent)
+          newText = modifiedTextContent ?? ''
+        } else {
+          newText = newTextElement.textContent || ''
+        }
       }
 
       const isDeleted = newText === '' || newText === null
