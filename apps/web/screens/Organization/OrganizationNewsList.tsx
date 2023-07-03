@@ -347,7 +347,7 @@ OrganizationNewsList.getInitialProps = async ({
 
   return {
     organizationPage,
-    newsList: organizationPage?.newsTag ? newsList : [],
+    newsList: newsList ?? [],
     total,
     selectedYear: year,
     selectedMonth: month,
