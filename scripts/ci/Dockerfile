@@ -133,7 +133,6 @@ ARG APP_DIST_HOME
 WORKDIR ${APP_DIST_HOME}
 
 COPY --from=builder /build/${APP_DIST_HOME} .
-COPY ${APP_HOME}/package.json .
 RUN chown -R pwuser:pwuser .
 
 USER pwuser
