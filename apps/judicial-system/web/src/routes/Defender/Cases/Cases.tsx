@@ -54,13 +54,7 @@ export const Cases: React.FC = () => {
       return [[], []]
     }
 
-    return partition(cases, (c) => {
-      if (isIndictmentCase(c.type)) {
-        return !completedCaseStates.includes(c.state)
-      } else {
-        return !(completedCaseStates.includes(c.state) && c.rulingSignatureDate)
-      }
-    })
+    return partition(cases, (c) => !completedCaseStates.includes(c.state))
   }, [cases])
 
   const {
