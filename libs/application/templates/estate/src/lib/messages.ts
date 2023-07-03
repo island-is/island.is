@@ -206,23 +206,6 @@ export const m = defineMessages({
     defaultMessage: 'Erfingi',
     description: '',
   },
-  estateMemberAdvocateWarningTitle: {
-    id: 'es.application:estateMemberAdvocateWarningTitle',
-    defaultMessage: 'Vinsamlegast athugið',
-    description: '',
-  },
-  estateMembersHaveIDCheckbox: {
-    id: 'es.application:estateMembersHaveIDCheckbox',
-    defaultMessage:
-      'Ég staðfesti að allir ofangreindir séu með rafræn skilríki og geti undirritað samkomulag þetta.',
-    description: '',
-  },
-  estateMemberAdvocateWarningDescription: {
-    id: 'es.application:estateMemberAdvocateWarningDescription',
-    defaultMessage:
-      'Þegar viðkomandi aðili nær ekki 18 ára aldri, þarf að skrá málsvara fyrir hans hönd.',
-    description: '',
-  },
   estateMembersHeaderDescription: {
     id: 'es.application:estateMembersHeaderDescription',
     defaultMessage: 'Vantar uppl hér',
@@ -806,11 +789,6 @@ export const m = defineMessages({
     defaultMessage: 'Nafn',
     description: 'Name label',
   },
-  inheritanceCustodyLabel: {
-    id: 'es.application:inheritanceCustodyLabel',
-    defaultMessage: 'Forsjáraðili',
-    description: 'Custody label',
-  },
   inheritanceForeignCitizenshipLabel: {
     id: 'es.application:inheritanceForeignCitizenshipLabel',
     defaultMessage: 'Aðili án íslenskrar kennitölu',
@@ -820,6 +798,17 @@ export const m = defineMessages({
     id: 'es.application:inheritanceDayOfBirthLabel',
     defaultMessage: 'Fæðingardagur',
     description: 'Day of birth label',
+  },
+  inheritanceAdvocateLabel: {
+    id: 'es.application:inheritanceAdvocateLabel',
+    defaultMessage: 'Málsvari',
+    description: 'Custody label',
+  },
+  inheritanceUnder18Error: {
+    id: 'es.application:inheritanceUnder18Error',
+    defaultMessage:
+      'Eftirfarandi erfingi er undir lögaldri og því er ekki hægt að halda áfram með umsókn. Vinsamlegast hafið samband við næsta sýslumannsembætti til að fá frekari upplýsingar.',
+    description: '',
   },
 
   // Properties

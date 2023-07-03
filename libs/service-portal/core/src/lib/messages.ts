@@ -13,6 +13,10 @@ export const m = defineMessages({
     id: 'service.portal:more',
     defaultMessage: 'Meira',
   },
+  seeDetails: {
+    id: 'service.portal:see-details',
+    defaultMessage: 'Skoða nánar',
+  },
   cost: {
     id: 'service.portal:cost',
     defaultMessage: 'Kostnaður',
@@ -160,6 +164,10 @@ export const m = defineMessages({
   moreOptions: {
     id: 'service.portal:more-options',
     defaultMessage: 'Fleiri möguleikar',
+  },
+  get: {
+    id: 'service.portal:get',
+    defaultMessage: 'Sækja',
   },
   getAsCsv: {
     id: 'service.portal:get-as-csv',
@@ -456,6 +464,14 @@ export const m = defineMessages({
   educationFramhskoli: {
     id: 'service.portal:education-framhskoli',
     defaultMessage: 'Framhaldsskóli',
+  },
+  educationFramhskoliGraduation: {
+    id: 'service.portal:education-framhskoli-graduation',
+    defaultMessage: 'Framhaldsskóli - Útskriftir',
+  },
+  educationFramhskoliCareer: {
+    id: 'service.portal:education-framhskoli-career',
+    defaultMessage: 'Framhaldsskóli - Námsferill',
   },
   educationHaskoli: {
     id: 'service.portal:education-haskoli',
@@ -865,6 +881,10 @@ export const m = defineMessages({
     id: 'service.portal:close-filter',
     defaultMessage: 'Loka síu',
   },
+  filterBy: {
+    id: 'service.portal:filter-by',
+    defaultMessage: 'Sía eftir',
+  },
   clearSelected: {
     id: 'service.portal:clear-selected',
     defaultMessage: 'Hreinsa val',
@@ -919,14 +939,7 @@ export const m = defineMessages({
     id: 'service.portal:sessions',
     defaultMessage: 'Notkun',
   },
-  health: {
-    id: 'service.portal:health',
-    defaultMessage: 'Heilsa',
-  },
-  healthDescription: {
-    id: 'service.portal:health-description',
-    defaultMessage: 'Hér eru heilsugögn um þig',
-  },
+
   therapies: {
     id: 'service.portal:therapies',
     defaultMessage: 'Þjálfun',
@@ -942,6 +955,22 @@ export const m = defineMessages({
   healthCenter: {
     id: 'service.portal:health-center',
     defaultMessage: 'Heilsugæsla',
+  },
+  workMachines: {
+    id: 'service.portal:work-machines',
+    defaultMessage: 'Vinnuvélar',
+  },
+  workMachineDetail: {
+    id: 'service.portal:work-machine-detail',
+    defaultMessage: 'Nánar um vinnuvél',
+  },
+  health: {
+    id: 'service.portal:health',
+    defaultMessage: 'Heilsa',
+  },
+  healthDescription: {
+    id: 'service.portal:health-description',
+    defaultMessage: 'Hér eru heilsugögn um þig',
   },
   financeBreakdown: {
     id: 'service.portal:finance-detail-breakdown',

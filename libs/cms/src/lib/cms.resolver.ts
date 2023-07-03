@@ -32,7 +32,6 @@ import { GetMenuInput } from './dto/getMenu.input'
 import { AdgerdirTags } from './models/adgerdirTags.model'
 import { GetAdgerdirTagsInput } from './dto/getAdgerdirTags.input'
 import { LifeEventPage } from './models/lifeEventPage.model'
-import { environment } from './environments'
 import { OrganizationTags } from './models/organizationTags.model'
 import { CmsContentfulService } from './cms.contentful.service'
 import { CmsElasticsearchService } from './cms.elasticsearch.service'
@@ -93,6 +92,7 @@ import { GetGenericTagBySlugInput } from './dto/getGenericTagBySlug.input'
 import { FeaturedSupportQNAs } from './models/featuredSupportQNAs.model'
 import { PowerBiSlice } from './models/powerBiSlice.model'
 import { GetPowerBiEmbedPropsFromServerResponse } from './dto/getPowerBiEmbedPropsFromServer.response'
+import { GetOrganizationByTitleInput } from './dto/getOrganizationByTitle.input'
 
 const defaultCache: CacheControlOptions = { maxAge: CACHE_CONTROL_MAX_AGE }
 
@@ -197,6 +197,17 @@ export class CmsResolver {
   ): Promise<Organization | null> {
     return this.cmsContentfulService.getOrganization(
       input?.slug ?? '',
+      input?.lang ?? 'is-IS',
+    )
+  }
+
+  @CacheControl(defaultCache)
+  @Query(() => Organization, { nullable: true })
+  getOrganizationByTitle(
+    @Args('input') input: GetOrganizationByTitleInput,
+  ): Promise<Organization | null> {
+    return this.cmsContentfulService.getOrganizationByTitle(
+      input?.title ?? '',
       input?.lang ?? 'is-IS',
     )
   }
@@ -326,14 +337,6 @@ export class CmsResolver {
       input?.slug ?? '',
       input?.lang ?? 'is-IS',
     )
-  }
-
-  @CacheControl(defaultCache)
-  @Query(() => TellUsAStory)
-  getTellUsAStory(
-    @Args('input') input: GetTellUsAStoryInput,
-  ): Promise<TellUsAStory> {
-    return this.cmsContentfulService.getTellUsAStory(input)
   }
 
   @CacheControl(defaultCache)

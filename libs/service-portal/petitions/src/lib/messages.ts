@@ -121,7 +121,7 @@ export const m = defineMessages({
     description: '',
   },
   copyLinkError: {
-    id: 'sp.petitions:copyLinkSuccess',
+    id: 'sp.petitions:copyLinkError',
     defaultMessage: 'Ekki tókst að afrita hlekk',
     description: '',
   },
