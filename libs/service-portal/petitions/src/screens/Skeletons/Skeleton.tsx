@@ -1,4 +1,3 @@
-import React from 'react'
 import { Box, SkeletonLoader } from '@island.is/island-ui/core'
 
 const Skeleton = () => {

@@ -47,7 +47,7 @@ export const HeroBanner = ({ statistics }: HeroBannerProps) => {
               <StatisticBox
                 statistic={statistics?.casesInReview?.toLocaleString('de-DE')}
               />
-              <Text dataTestId="heroIntro">{loc.introText}</Text>
+              <Text>{loc.introText}</Text>
               <ArrowLink href={loc.arrowLink.internalLink.href}>
                 {loc.arrowLink.internalLink.text}
               </ArrowLink>

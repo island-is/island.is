@@ -212,7 +212,7 @@
   - [RSK](libs/clients/rsk/README.md)
     - [Clients Company Registry](libs/clients/rsk/company-registry/README.md)
     - [Clients RSK Personal Tax Return](libs/clients/rsk/personal-tax-return/README.md)
-    - [Procuring](libs/clients/rsk/procuring/README.md)
+    - [Relationships](libs/clients/rsk/relationships/README.md)
   - [Smart Solutions](libs/clients/smartsolutions/README.md)
   - [Syslumenn](libs/clients/syslumenn/README.md)
   - [University of Iceland](libs/clients/university-of-iceland/README.md)
