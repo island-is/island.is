@@ -410,25 +410,9 @@ export const m = defineMessages({
   },
 
   /* Application log */
-  paymentPendingTitle: {
-    id: 'dld.application:paymentPendingTitle',
-    defaultMessage: 'Beðið eftir greiðslu',
-    description: 'text for payment pending title in application log',
+  pendingActionApplicationCompletedTitle: {
+    id: 'dld.application:pendingActionApplicationCompletedTitle',
+    defaultMessage: 'Umsókn þín hefur verið móttekin og skírteini pantað',
+    description: 'text for pending action application completed title',
   },
-  paymentPendingMessage: {
-    id: 'dld.application:paymentPendingMessage',
-    defaultMessage:
-      'Til að halda áfram með umsókn þarf að klára greiðslu.',
-    description: 'text for payment pending message in application log',
-  },
-  declinedLogMessage: {
-    id: 'dld.application:declinedLogMessage',
-    defaultMessage: 'Umsókn hafnað.',
-    description: 'text for declined log message in application log',
-  },
-  submittedLogMessage: {
-    id: 'dld.application:submittedLogMessage',
-    defaultMessage: 'Umsókn móttekin.',
-    description: 'text for submitted log message in application log',
-  }
 })

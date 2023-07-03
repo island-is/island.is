@@ -63,7 +63,7 @@ const DrivingLicenseDuplicateTemplate: ApplicationTemplate<
               },
               {
                 onEvent: DefaultEvents.REJECT,
-                logMessage: m.declinedLogMessage,
+                logMessage: coreHistoryMessages.applicationRejected,
               },
             ],
           },
@@ -118,9 +118,12 @@ const DrivingLicenseDuplicateTemplate: ApplicationTemplate<
           status: 'inprogress',
           actionCard: {
             pendingAction: {
-              title: m.paymentPendingTitle,
-              content: m.paymentPendingMessage,
+              title: coreHistoryMessages.paymentStarted,
               displayStatus: 'info',
+            },
+            historyLogs: {
+              onEvent: DefaultEvents.SUBMIT,
+              logMessage: coreHistoryMessages.paymentAccepted,
             },
           },
           progress: 0.9,
@@ -151,9 +154,9 @@ const DrivingLicenseDuplicateTemplate: ApplicationTemplate<
           name: 'Done',
           status: 'completed',
           actionCard: {
-            historyLogs: {
-              onEvent: DefaultEvents.SUBMIT,
-              logMessage: m.submittedLogMessage,
+            pendingAction: {
+              title: m.pendingActionApplicationCompletedTitle,
+              displayStatus: 'success',
             },
           },
           progress: 1,
