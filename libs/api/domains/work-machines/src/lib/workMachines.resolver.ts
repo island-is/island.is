@@ -13,14 +13,14 @@ import {
   PaginatedCollectionResponse,
   WorkMachine,
 } from './models/getWorkMachines'
-import { WorkMachinesService } from './api-domains-work-machines.service'
+import { WorkMachinesService } from './workMachines.service'
 import { GetWorkMachineInput } from './dto/getWorkMachine.input'
 import { GetWorkMachineCollectionInput } from './dto/getWorkMachineCollection.input'
 import { GetDocumentsInput } from './dto/getDocuments.input'
 import { Document } from './models/getDocuments'
 import { DownloadServiceConfig } from '@island.is/nest/config'
 import type { ConfigType } from '@island.is/nest/config'
-import { FileType } from './api-domains-work-machines.types'
+import { FileType } from './workMachines.types'
 import {
   FeatureFlagGuard,
   FeatureFlag,

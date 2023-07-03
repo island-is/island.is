@@ -5,7 +5,7 @@ import {
   PaginatedCollectionResponse,
 } from './models/getWorkMachines'
 import { Inject, Injectable } from '@nestjs/common'
-import { Action, ExternalLink } from './api-domains-work-machines.types'
+import { Action, ExternalLink } from './workMachines.types'
 import { GetWorkMachineCollectionInput } from './dto/getWorkMachineCollection.input'
 import { GetWorkMachineInput } from './dto/getWorkMachine.input'
 import { GetDocumentsInput } from './dto/getDocuments.input'
