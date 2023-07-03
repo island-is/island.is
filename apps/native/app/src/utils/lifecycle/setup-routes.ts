@@ -223,7 +223,7 @@ export function setupRoutes() {
           },
         ],
       },
-    })
+    });
   });
 
   addRoute('/finance/status/:id', async (passProps: any) => {
@@ -238,7 +238,7 @@ export function setupRoutes() {
           },
         ],
       },
-    })
+    });
   });
 
   addRoute('/family/:type/:nationalId', (passProps: any) => {

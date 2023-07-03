@@ -31,7 +31,7 @@ import {testIDs} from '../../utils/test-ids';
 import {ApplicationsModule} from './applications-module';
 import {NotificationsModule} from './notifications-module';
 import {OnboardingModule} from './onboarding-module';
-import { navigateTo } from '../../lib/deep-linking';
+import {navigateTo} from '../../lib/deep-linking';
 
 interface ListItem {
   id: string;
@@ -144,7 +144,9 @@ export const MainHomeScreen: NavigationFunctionComponent = ({componentId}) => {
     },
     {
       id: 'debug',
-      component: (<Button title="Finance" onPress={() => navigateTo('/finance')} />)
+      component: (
+        <Button title="Finance" onPress={() => navigateTo('/finance')} />
+      ),
     },
     {
       id: 'applications',
