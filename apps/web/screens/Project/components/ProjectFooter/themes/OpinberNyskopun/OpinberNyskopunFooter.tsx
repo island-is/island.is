@@ -5,6 +5,7 @@ import {
   GridColumn,
   GridContainer,
   GridRow,
+  Hidden,
   Hyphen,
   Inline,
   Text,
@@ -63,29 +64,58 @@ export const OpinberNyskopunFooter: React.FC<OpinberNyskopunFooterProps> = ({
                   })}
                 </Box>
               ))}
-              <Box marginLeft="auto">
-                <Inline space={[1, 1, 1, 3]} alignY="center">
-                  <img
-                    width={420}
-                    src={n(
-                      'opinbernyskopun-logo1',
-                      'https://images.ctfassets.net/8k0h54kbe6bj/1i6yzfj8HFtKGx2n2mKKzE/0b9715a5f13ea8cf0727c97ccdaca870/FJR__IS_1L_utlinad_hvitt_0219.svg',
-                    )}
-                    alt=""
-                  />
-                  <img
-                    width={420}
-                    src={n(
-                      'opinbernyskopun-logo2',
-                      'https://images.ctfassets.net/8k0h54kbe6bj/1j0LduNFs0zmTfuBKDaEM1/8723d91686558b2f90e359aa47cd6446/HVIN_IS_2L_utlindad_hvitt_2022.svg',
-                    )}
-                    alt=""
-                  />
-                </Inline>
+              <Box marginLeft="auto" marginTop="auto">
+                <Hidden below="lg">
+                  <Inline space={8} alignY="center">
+                    <img
+                      width={280}
+                      src={n(
+                        'opinbernyskopun-logo1',
+                        'https://images.ctfassets.net/8k0h54kbe6bj/4WxSQeuQVmVwbnTGhb6pYX/287fd34f88ba41eac7b8424de183849f/StjornarradIslands_fjs.svg',
+                      )}
+                      alt=""
+                    />
+                    <img
+                      width={320}
+                      src={n(
+                        'opinbernyskopun-logo2',
+                        'https://images.ctfassets.net/8k0h54kbe6bj/5p96a8GGHgJrS5udRjT044/cf40d9d800374f64ad307c6b96e45f19/Hvin_stjornmalaraduneytid.svg',
+                      )}
+                      alt=""
+                    />
+                  </Inline>
+                </Hidden>
               </Box>
             </Box>
           </GridColumn>
         </GridRow>
+
+        <Hidden above="md">
+          <Box marginTop={3}>
+            <Inline
+              space={[3, 3, 5]}
+              alignY="center"
+              align={['left', 'left', 'right']}
+            >
+              <img
+                width={280}
+                src={n(
+                  'opinbernyskopun-logo1',
+                  'https://images.ctfassets.net/8k0h54kbe6bj/4WxSQeuQVmVwbnTGhb6pYX/287fd34f88ba41eac7b8424de183849f/StjornarradIslands_fjs.svg',
+                )}
+                alt=""
+              />
+              <img
+                width={320}
+                src={n(
+                  'opinbernyskopun-logo2',
+                  'https://images.ctfassets.net/8k0h54kbe6bj/5p96a8GGHgJrS5udRjT044/cf40d9d800374f64ad307c6b96e45f19/Hvin_stjornmalaraduneytid.svg',
+                )}
+                alt=""
+              />
+            </Inline>
+          </Box>
+        </Hidden>
       </GridContainer>
     </footer>
   )
