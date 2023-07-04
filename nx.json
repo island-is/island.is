@@ -52,19 +52,11 @@
       {
         "target": "schemas/build-openapi",
         "projects": "dependencies"
-      },
-      {
-        "target": "schemas/external-openapi-generator",
-        "projects": "dependencies"
       }
     ],
     "schemas/openapi-generator": [
       {
         "target": "schemas/openapi-generator",
-        "projects": "dependencies"
-      },
-      {
-        "target": "schemas/build-openapi",
         "projects": "dependencies"
       }
     ],
@@ -72,19 +64,11 @@
       {
         "target": "schemas/build-graphql-schema",
         "projects": "dependencies"
-      },
-      {
-        "target": "schemas/openapi-generator",
-        "projects": "dependencies"
       }
     ],
     "schemas/codegen": [
       {
         "target": "schemas/build-graphql-schema",
-        "projects": "dependencies"
-      },
-      {
-        "target": "schemas/openapi-generator",
         "projects": "dependencies"
       }
     ],
