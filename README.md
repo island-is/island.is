@@ -28,7 +28,6 @@ If you want to contribute to the repository, please make sure to follow [this gu
 - You have [Docker](https://docs.docker.com/desktop/) installed.
 - You have [direnv](https://direnv.net/) installed.
 - You have [Java](https://www.java.com/en/download/manual.jsp) `>= 1.8` installed (for schema generation).
-- Run `yarn` to install the dependencies.
 
 {% hint style="info" %}
 If you are running on Windows we recommend using [Docker and WSL2](https://docs.docker.com/desktop/windows/wsl/)
@@ -44,6 +43,15 @@ If you are running on Windows we recommend using [Docker and WSL2](https://docs.
 ## Usage
 
 There are many projects that can be built and run. [Click here to see the full list](https://github.com/island-is/island.is/blob/main/nx.json).
+
+### Fresh start
+
+Install dependencies and generate some library files:
+
+```bash
+yarn install
+yarn schemas
+```
 
 ### Development server
 
