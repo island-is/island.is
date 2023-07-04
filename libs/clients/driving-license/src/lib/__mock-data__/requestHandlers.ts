@@ -1,5 +1,6 @@
 import type { User } from '@island.is/auth-nest-tools'
 import { rest } from 'msw'
+import { DriverLicenseDto } from '../../v5'
 
 export enum MOCK_NATIONAL_IDS {
   'STUDENT' = '1',
@@ -38,15 +39,6 @@ const MOCK_HAS_SIGNATURE = {
   [MOCK_NATIONAL_IDS.MANY_CATEGORIES]: true,
   [MOCK_NATIONAL_IDS.LICENSE_NO_PHOTO_NOR_SIGNATURE]: false,
   [MOCK_NATIONAL_IDS.LICENSE_B_CATEGORY]: true,
-}
-
-const generateMockUser = (nationalId: string, validAuth = true): User => {
-  return {
-    nationalId,
-    authorization: validAuth ? VALID_AUTH : INVALID_AUTH,
-    client: '',
-    scope: ['test-scope-1'],
-  }
 }
 
 const url = (path: string) => {
