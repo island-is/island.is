@@ -21,6 +21,7 @@ export const RskRelationshipsClientConfig = defineConfig({
     ),
     tokenExchangeScope: env.optionalJSON('XROAD_RSK_PROCURING_SCOPE') ?? [
       '@rsk.is/prokura',
+      '@rsk.is/prokura:admin',
     ],
     redis: {
       nodes: env.optionalJSON('XROAD_RSK_PROCURING_REDIS_NODES') ?? [],
