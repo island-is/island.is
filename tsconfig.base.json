@@ -424,9 +424,6 @@
       "@island.is/auth/scopes": ["libs/auth/scopes/src/index.ts"],
       "@island.is/auth/shared": ["libs/auth/shared/src/index.ts"],
       "@island.is/cache": ["libs/cache/src/index.ts"],
-      "@island.is/clients-rsk-relationships": [
-        "libs/clients/rsk/relationships/src/index.ts"
-      ],
       "@island.is/clients/adr-and-machine-license": [
         "libs/clients/adr-and-machine-license/src/index.ts"
       ],
@@ -531,6 +528,9 @@
       ],
       "@island.is/clients/rsk/personal-tax-return": [
         "libs/clients/rsk/personal-tax-return/src/index.ts"
+      ],
+      "@island.is/clients/rsk/procuring": [
+        "libs/clients/rsk/procuring/src/index.ts"
       ],
       "@island.is/clients/sessions": ["libs/clients/sessions/src/index.ts"],
       "@island.is/clients/smartsolutions": [
