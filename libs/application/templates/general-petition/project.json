@@ -2,6 +2,10 @@
   "root": "libs/application/templates/general-petition",
   "sourceRoot": "libs/application/templates/general-petition/src",
   "projectType": "library",
+  "implicitDependencies": [
+    "services-endorsements-api",
+    "application-template-api-modules"
+  ],
   "generators": {},
   "targets": {
     "lint": {
