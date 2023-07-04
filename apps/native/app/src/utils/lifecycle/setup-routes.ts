@@ -212,21 +212,18 @@ export function setupRoutes() {
   });
 
   addRoute('/finance', async (passProps: any) => {
-    Navigation.showModal({
-      stack: {
-        children: [
-          {
-            component: {
-              name: ComponentRegistry.FinanceScreen,
-              passProps,
-            },
-          },
-        ],
+    await Navigation.dismissAllModals();
+    await Navigation.popToRoot(StackRegistry.ProfileStack);
+    selectTab(4);
+    await Navigation.push(ComponentRegistry.ProfileScreen, {
+      component: {
+        name: ComponentRegistry.FinanceScreen,
+        passProps,
       },
     });
   });
 
-  addRoute('/finance/status/:id', async (passProps: any) => {
+  addRoute('/finance/status/:orgId/:chargeTypeId', async (passProps: any) => {
     Navigation.showModal({
       stack: {
         children: [

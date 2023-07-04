@@ -103,11 +103,6 @@ export function FinanceStatusCard({
   onPress,
 }: CardProps) {
   const theme = useTheme();
-
-  useEffect(() => {
-    LayoutAnimation.configureNext(toggleAnimation);
-  }, [open]);
-
   return (
     <Host style={{
       shadowOffset: {
@@ -120,7 +115,10 @@ export function FinanceStatusCard({
       shadowColor: 'rgb(0, 32, 128)',
     }}>
       <Card
-        onPress={onPress}
+        onPress={() => {
+          LayoutAnimation.configureNext(toggleAnimation);
+          onPress?.();
+        }}
         underlayColor={theme.isDark ? theme.shade.shade200 : '#EBEBFA'}
         open={open}
       >
