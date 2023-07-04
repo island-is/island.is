@@ -296,22 +296,67 @@ export const oldAgePensionFormMessage: MessageDir = {
       description:
         'Child pension due to old age pension is paid with children under 18 years of age. Please note that pensioners who are liable for child pension and the child pension is paid by TR, do not receive child pension directly but instead it is added to the child pension payments.',
     },
-    childPensionKidsTitle: {
-      id: 'oap.application:connected.applications.childPension.kids.title',
+    childPensionTableTitle: {
+      id: 'oap.application:connected.applications.childPension.table.title',
       defaultMessage: 'Börn í þinni forsjá',
       description: 'Children in your care',
     },
-    childPensionKidsDescription: {
+    childPensionTableDescription: {
       id:
-        'oap.application:connected.applications.childPension.kids.description',
+        'oap.application:connected.applications.childPension.table.description',
       defaultMessage:
-        'Samkvæmt uppflettingu í þjóðskrá hefur þú forsjá með eftirfarandi barni/börnum. Ef barn er ekki með sama lögheimili og þú verður þú að skila inn skjali sem staðfestir að þú sért með barn/börn á framfærlsu. ATH ef eftirfarandi upplýsingar eru ekki réttar þá þarf að breyta þeim í Þjóðskrá og koma svo aftur til að klára umsóknina.',
+        'Samkvæmt uppflettingu í þjóðskrá hefur þú forsjá með eftirfarandi barni/börnum. Ef barn er ekki með sama lögheimili og þú verður þú að skila inn meðlagssamningi. ATH ef eftirfarandi upplýsingar eru ekki réttar þá þarf að breyta þeim í Þjóðskrá og koma svo aftur til að klára umsóknina.',
+      description: 'translation..',
+    },
+    noChildPensionFoundTableTitle: {
+      id: 'oap.application:connected.applications.no.childPension.table.title',
+      defaultMessage: 'Börn',
+      description: 'Children',
+    },
+    noChildPensionFoundTableDescription: {
+      id:
+        'oap.application:connected.applications.no.childPension.table.description',
+      defaultMessage:
+        'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
       description: 'translation..',
     },
     addChildButton: {
       id: 'oap.application:connected.applications.add.child.button',
       defaultMessage: 'Bæta við barni',
       description: 'Add child',
+    },
+    childPensionTableHeaderName: {
+      id:
+        'oap.application:connected.applications.child.pension.table.header.name',
+      defaultMessage: 'Nafn',
+      description: 'Name',
+    },
+    childPensionTableHeaderId: {
+      id:
+        'oap.application:connected.applications.child.pension.table.header.id',
+      defaultMessage: 'Kennitala / fæðingardagur',
+      description: 'National ID',
+    },
+    childPensionFullName: {
+      id: 'oap.application:connected.applications.child.pension.full.name',
+      defaultMessage: 'Fullt nafn',
+      description: 'Full name',
+    },
+    noChildFoundTitle: {
+      id: 'oap.application:connected.applications.no.child.found.title',
+      defaultMessage: 'Engin börn fundust í þinni forsjá',
+      description: 'english translation',
+    },
+    noChildFoundDescription: {
+      id: 'oap.application:connected.applications.no.child.found.description',
+      defaultMessage:
+        'Samkvæmt uppflettingu í þjóðskrá hefur þú ekki forsjá með neinu barni/börnum. Þú getur bætt við barni ef þú ert með barn á framfærslu og þarft að skila inn staðfestingu á því. ATH ef eftirfarandi upplýsingar eru ekki réttar þá þarf að breyta þeim í Þjóðskrá og koma svo aftur til að klára umsóknina.',
+      description: 'english translation',
+    },
+    registerChildTitle: {
+      id: 'oap.application:connected.applications.register.child.title',
+      defaultMessage: 'Skráning barns',
+      description: 'Registration of a child',
     },
     homeAllowanceDescription: {
       id: 'oap.application:connected.applications.home.allowance.description',
@@ -705,7 +750,7 @@ export const oldAgePensionFormMessage: MessageDir = {
       id:
         'oap.application:fileUpload.child.pension.not.lives.with.applicant.description',
       defaultMessage:
-        'Hér getur þú skilað meðlagssamingi vegna barns sem er ekki með lögheimili hjá þér. Athugaðu að skjalið þarf að vera á .pdf formi.',
+        'Hér getur þú skilað meðlagsúrskurði eða samningi frá sýslumanni vegna barns/barna sem er ekki með lögheimili hjá þér. Athugaðu að skjalið þarf að vera á .pdf formi.',
       description: 'english translation',
     },
     childPensionMaintenanceDescription: {

@@ -54,12 +54,13 @@ export enum AnswerValidationConstants {
   PERIOD = 'period',
   FILEUPLOADPENEARLYFISHER = 'fileUploadEarlyPenFisher',
   FILEUPLOADHOMEALLOWANCE = 'fileUploadHomeAllowance',
+  FILEUPLOADCHILDPENSION = 'fileUploadChildPension',
 }
 
 export enum ApplicationType {
-  RETIREMENTPENSION = 'retirementPension',
-  HALFRETIREMENTPENSION = 'halfRetirementPension',
-  FISHERMEN = 'fishermen',
+  OLD_AGE_PENSION = 'oldAgePension',
+  HALF_OLD_AGE_PENSION = 'halfOldAgePension',
+  SAILOR_PENSION = 'sailorPension',
 }
 
 const married = 'Gift/ur'

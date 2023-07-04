@@ -24,7 +24,7 @@ import * as kennitala from 'kennitala'
 import addYears from 'date-fns/addYears'
 import addMonths from 'date-fns/addMonths'
 import addDays from 'date-fns/addDays'
-import { combinedResidenceHistory } from '../types'
+import { ChildPensionRow, combinedResidenceHistory } from '../types'
 import React from 'react'
 import { useLocale } from '@island.is/localization'
 import { getCountryByCode } from '@island.is/shared/utils'
@@ -43,6 +43,11 @@ interface earlyRetirementPensionfundFishermen {
 interface leaseAgreementSchoolConfirmation {
   leaseAgreement?: fileType[]
   schoolConfirmation?: fileType[]
+}
+
+interface childPensionAttachments {
+  maintenance?: fileType[]
+  notLivesWithApplicant?: fileType[]
 }
 
 export function getApplicationAnswers(answers: Application['answers']) {
@@ -97,6 +102,12 @@ export function getApplicationAnswers(answers: Application['answers']) {
     'homeAllowance.children',
   ) as YesOrNo
 
+  const childPension = getValueViaPath(
+    answers,
+    'childPensionRepeater',
+    [],
+  ) as ChildPensionRow[]
+
   return {
     pensionFundQuestion,
     applicationType,
@@ -110,6 +121,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
     connectedApplications,
     homeAllowanceHousing,
     homeAllowanceChildren,
+    childPension,
   }
 }
 
@@ -234,7 +246,7 @@ export function getStartDateAndEndDate(
   } else if (thisYearAge < fishermenMinAge) {
     // < 62 year old
     return {}
-  } else if (applicationType === ApplicationType.FISHERMEN) {
+  } else if (applicationType === ApplicationType.SAILOR_PENSION) {
     // Fishermen
     if (thisYearAge === fishermenMinAge + 1) {
       // = 63 year old
@@ -381,7 +393,7 @@ export function isEarlyRetirement(
   return (
     age >= earlyRetirementMinAge &&
     age <= earlyRetirementMaxAge &&
-    applicationType !== ApplicationType.FISHERMEN
+    applicationType !== ApplicationType.SAILOR_PENSION
   )
 }
 
@@ -413,7 +425,7 @@ export function getAttachments(application: Application) {
   if (earlyRetirement) {
     getAttachmentsName(earlyPenFisher?.earlyRetirement, 'snemmtaka')
   }
-  if (applicationType === ApplicationType.FISHERMEN) {
+  if (applicationType === ApplicationType.SAILOR_PENSION) {
     getAttachmentsName(earlyPenFisher?.fishermen, 'sjómanna')
   }
 
@@ -423,10 +435,25 @@ export function getAttachments(application: Application) {
     ConnectedApplications.HOMEALLOWANCE,
   )
   if (homeAllowanceHousing === HomeAllowanceHousing.RENTER && isHomeAllowance) {
-    getAttachmentsName(leaseAgrSchoolConf?.leaseAgreement, 'leigusamning')
+    getAttachmentsName(leaseAgrSchoolConf?.leaseAgreement, 'leigusamningur')
   }
   if (homeAllowanceChildren === YES && isHomeAllowance) {
     getAttachmentsName(leaseAgrSchoolConf?.schoolConfirmation, 'skólavist')
+  }
+
+  // child pension attachments
+  const childPensionAttachments = answers.fileUploadChildPension as childPensionAttachments
+  const { childPension } = getApplicationAnswers(application.answers)
+  const isChildPension = connectedApplications?.includes(
+    ConnectedApplications.CHILDPENSION,
+  )
+
+  if (childPension.length > 0 && isChildPension) {
+    getAttachmentsName(childPensionAttachments?.maintenance, 'framfærsla')
+  }
+
+  if (childCustody_LivesWithApplicant(externalData) && isChildPension) {
+    getAttachmentsName(childPensionAttachments?.notLivesWithApplicant, 'meðlag')
   }
 
   return attachments
@@ -565,35 +592,16 @@ export function residenceHistoryTableData(application: Application) {
   return { data, columns }
 }
 
-export function childCustodyTableData(application: Application) {
-  const { formatMessage } = useLocale()
-  const { custodyInformation } = getApplicationExternalData(
-    application.externalData,
-  )
+// returns true if some of applicant children DOES NOT live with him.
+export function childCustody_LivesWithApplicant(
+  externalData: Application['externalData'],
+) {
+  let returnStatus = false
+  const { custodyInformation } = getApplicationExternalData(externalData)
 
-  const formattedData =
-    custodyInformation.map((info) => {
-      return {
-        name: info.fullName,
-        nationalId: kennitala.format(info.nationalId),
-      }
-    }) ?? []
+  custodyInformation.map((child) => {
+    !child.livesWithApplicant ? (returnStatus = true) : (returnStatus = false)
+  })
 
-  const data = React.useMemo(() => [...formattedData], [formattedData])
-
-  const columns = React.useMemo(
-    () => [
-      {
-        Header: formatText('Nafn', application, formatMessage),
-        accessor: 'name',
-      } as const,
-      {
-        Header: formatText('Kennitala', application, formatMessage),
-        accessor: 'nationalId',
-      } as const,
-    ],
-    [application, formatMessage],
-  )
-
-  return { data, columns }
+  return returnStatus
 }

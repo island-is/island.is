@@ -1,5 +1,6 @@
 export { FieldAlertMessage, PeriodWarningWithLink } from './AlertMessage'
 export { Period } from './Period'
 export { ResidenceHistoryTable } from './ResidenceHistory'
-export { ChildCustodyTable } from './ChildCustody'
+export { default as ChildPensionTable } from './ChildPension'
 export { Review } from './Review'
+export { ChildCustodyRepeater } from './ChildPension'

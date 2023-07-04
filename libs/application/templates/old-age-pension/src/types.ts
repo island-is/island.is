@@ -3,3 +3,9 @@ export interface combinedResidenceHistory {
   periodFrom: Date
   periodTo: Date | string
 }
+
+export interface ChildPensionRow {
+  nationalIdOrBirthDate: string
+  name: string
+  editable?: boolean
+}
