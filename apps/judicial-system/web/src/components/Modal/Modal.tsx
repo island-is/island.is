@@ -49,7 +49,7 @@ const Modal: React.FC<ModalProps> = ({
   }
 
   return (
-    <FocusLock>
+    <FocusLock autoFocus={false}>
       <motion.div
         key="modal"
         className={styles.container}

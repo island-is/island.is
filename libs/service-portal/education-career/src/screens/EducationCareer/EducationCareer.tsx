@@ -6,7 +6,7 @@ import { useNamespaces } from '@island.is/localization'
 import { IntroHeader, m } from '@island.is/service-portal/core'
 import { CareerCards } from './components/CareerCards'
 
-function EducationCareer(): JSX.Element {
+const EducationCareer = () => {
   useNamespaces('sp.education-career')
 
   return (

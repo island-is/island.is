@@ -1,6 +1,6 @@
 import React, { BaseSyntheticEvent, FC } from 'react'
 import { Control, Controller } from 'react-hook-form'
-import { FieldError, FieldValues } from 'react-hook-form/dist/types/form'
+import { FieldError, FieldValues } from 'react-hook-form/dist/types'
 import { DeepMap } from 'react-hook-form/dist/types/utils'
 import * as kennitala from 'kennitala'
 
@@ -142,7 +142,7 @@ export const AccessControlModal: FC<AccessControlModalProps> = ({
             rules={{
               validate: {
                 value: (value: string) => {
-                  if (value.toString().length > 32) {
+                  if (value?.toString().length > 32) {
                     return t.modal.inputs.recyclingLocation.rules?.validate
                   }
                 },
@@ -160,7 +160,7 @@ export const AccessControlModal: FC<AccessControlModalProps> = ({
                 message: t.modal.inputs.role.rules?.required,
               },
             }}
-            render={({ onChange, value, name }) => {
+            render={({ field: { onChange, value, name } }) => {
               return (
                 <Select
                   required
@@ -191,7 +191,7 @@ export const AccessControlModal: FC<AccessControlModalProps> = ({
                   }
                 : {}
             }
-            render={({ onChange, value, name }) => {
+            render={({ field: { onChange, value, name } }) => {
               return (
                 <Select
                   name={name}

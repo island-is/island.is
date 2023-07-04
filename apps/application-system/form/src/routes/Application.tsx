@@ -18,12 +18,13 @@ export const Application = () => {
   const nationalRegistryId = userInfo?.profile?.nationalId
 
   if (!id || !slug) {
-    return <ErrorShell />
+    return <ErrorShell errorType="notFound" />
   }
 
   if (!nationalRegistryId) {
     return (
       <ErrorShell
+        errorType="notFound"
         title={formatMessage(coreMessages.notLoggedIn)}
         subTitle={formatMessage(coreMessages.notLoggedInDescription)}
       />

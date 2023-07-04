@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { LoadingScreen } from '../../../components/common/LoadingScreen'
 import IdentityResourceCreateForm from '../../../components/Resource/forms/IdentityResourceCreateForm'
 import IdentityResourceDTO from '../../../entities/dtos/identity-resource.dto'
 import ContentWrapper from '../../../components/Layout/ContentWrapper'
@@ -17,9 +18,7 @@ const Index: React.FC = () => {
   const stepQuery = query.step
   const resourceId = query.edit
   const [step, setStep] = useState(1)
-  const [identityResource, setIdentityResource] = useState<IdentityResource>(
-    new IdentityResource(),
-  )
+  const [identityResource, setIdentityResource] = useState<IdentityResource>()
   const router = useRouter()
 
   /** Load the resource from query if there is one */
@@ -79,6 +78,20 @@ const Index: React.FC = () => {
   const refreshClaims = async () => {
     const decode = decodeURIComponent(resourceId as string)
     await getResource(decode)
+  }
+
+  if (!identityResource) {
+    return (
+      <ContentWrapper>
+        <ResourcesTabsNav />
+        <IdentityResourceStepNav
+          activeStep={step}
+          handleStepChange={handleStepChange}
+        >
+          <LoadingScreen />
+        </IdentityResourceStepNav>
+      </ContentWrapper>
+    )
   }
 
   switch (step) {

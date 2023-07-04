@@ -4,15 +4,15 @@ import {
 } from '@island.is/clients/syslumenn'
 
 export interface Address {
-  streetAddress: string
-  postalCode: string
-  city: string
+  streetAddress?: string
+  city?: string
+  postalCode?: string
 }
 
-export interface NationalRegistry {
+export interface Identity {
   nationalId: string
-  fullName: string
-  address: Address
+  name: string
+  address?: Address
 }
 
 export interface UserProfile {

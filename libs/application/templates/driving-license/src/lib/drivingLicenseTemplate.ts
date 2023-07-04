@@ -39,7 +39,6 @@ const template: ApplicationTemplate<
   name: m.applicationForDrivingLicense,
   institution: m.nationalCommissionerOfPolice,
   dataSchema,
-  readyForProduction: true,
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {
@@ -77,7 +76,11 @@ const template: ApplicationTemplate<
                 TeachersApi,
                 UserProfileApi,
                 SyslumadurPaymentCatalogApi,
-                CurrentLicenseApi,
+                CurrentLicenseApi.configure({
+                  params: {
+                    useLegacyVersion: true,
+                  },
+                }),
                 DrivingAssessmentApi,
                 JuristictionApi,
                 QualityPhotoApi,

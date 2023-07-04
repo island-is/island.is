@@ -1,6 +1,6 @@
 import React, { FC, useState } from 'react'
 import { FieldBaseProps } from '@island.is/application/types'
-import { useFormContext } from 'react-hook-form'
+import { Controller, useFormContext } from 'react-hook-form'
 import { Box } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { useLocale } from '@island.is/localization'
@@ -14,16 +14,21 @@ import {
   daysInMonth,
 } from '../../config'
 import { YES } from '../../constants'
+import { useEffectOnce } from 'react-use'
 
 const GiveDaysSlider: FC<FieldBaseProps> = ({ field, application }) => {
   const { id } = field
   const { formatMessage } = useLocale()
-  const { register } = useFormContext()
+  const { setValue } = useFormContext()
   const { giveDays } = getApplicationAnswers(application.answers)
 
   const [chosenGiveDays, setChosenGiveDays] = useState<number>(
     giveDays === 0 ? 1 : giveDays,
   )
+
+  useEffectOnce(() => {
+    setValue('giveRights.isGivingRights', YES)
+  })
 
   const daysStringKey =
     chosenGiveDays > 1
@@ -58,56 +63,49 @@ const GiveDaysSlider: FC<FieldBaseProps> = ({ field, application }) => {
   ]
 
   return (
-    <>
-      <Box marginBottom={6} marginTop={3}>
-        <Box marginBottom={12}>
-          <Slider
-            label={{
-              singular: formatMessage(parentalLeaveFormMessages.shared.day),
-              plural: formatMessage(parentalLeaveFormMessages.shared.days),
-            }}
-            min={1}
-            max={maxDaysToGiveOrReceive}
-            step={1}
-            currentIndex={chosenGiveDays}
-            showMinMaxLabels
-            showToolTip
-            trackStyle={{ gridTemplateRows: 8 }}
-            calculateCellStyle={() => {
-              return {
-                background: theme.color.dark200,
-              }
-            }}
-            onChange={(newValue: number) => {
-              setChosenGiveDays(newValue)
-            }}
-          />
-        </Box>
-        <BoxChart
-          application={application}
-          boxes={defaultMonths}
-          calculateBoxStyle={(index) => {
-            if (index >= remainingMonths) {
-              return 'greenWithLines'
-            }
-            return 'blue'
-          }}
-          keys={boxChartKeys as BoxChartKey[]}
+    <Box marginBottom={6} marginTop={3}>
+      <Box marginBottom={12}>
+        <Controller
+          defaultValue={chosenGiveDays}
+          name={id}
+          render={({ field: { onChange, value } }) => (
+            <Slider
+              label={{
+                singular: formatMessage(parentalLeaveFormMessages.shared.day),
+                plural: formatMessage(parentalLeaveFormMessages.shared.days),
+              }}
+              min={1}
+              max={maxDaysToGiveOrReceive}
+              step={1}
+              currentIndex={value}
+              showMinMaxLabels
+              showToolTip
+              trackStyle={{ gridTemplateRows: 8 }}
+              calculateCellStyle={() => {
+                return {
+                  background: theme.color.dark200,
+                }
+              }}
+              onChange={(newValue: number) => {
+                onChange(newValue.toString())
+                setChosenGiveDays(newValue)
+              }}
+            />
+          )}
         />
       </Box>
-      <input
-        type="hidden"
-        name={id}
-        ref={register}
-        value={chosenGiveDays.toString()}
+      <BoxChart
+        application={application}
+        boxes={defaultMonths}
+        calculateBoxStyle={(index) => {
+          if (index >= remainingMonths) {
+            return 'greenWithLines'
+          }
+          return 'blue'
+        }}
+        keys={boxChartKeys as BoxChartKey[]}
       />
-      <input
-        type="hidden"
-        name="giveRights.isGivingRights"
-        ref={register}
-        value={YES}
-      />
-    </>
+    </Box>
   )
 }
 

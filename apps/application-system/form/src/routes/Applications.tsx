@@ -78,6 +78,7 @@ export const Applications: FC = () => {
       input: { typeId: type },
     },
     skip: !type && !delegationsChecked,
+    fetchPolicy: 'cache-and-network',
   })
 
   const [createApplicationMutation, { error: createError }] = useMutation(
@@ -129,9 +130,7 @@ export const Applications: FC = () => {
   }
 
   if (!template) {
-    return (
-      <ErrorShell title={formatMessage(coreMessages.notFoundApplicationType)} />
-    )
+    return <ErrorShell errorType="notExist" />
   }
 
   if (!type || applicationsError) {
@@ -153,14 +152,7 @@ export const Applications: FC = () => {
         />
       )
     }
-    return (
-      <ErrorShell
-        title={formatMessage(coreMessages.notFoundApplicationType)}
-        subTitle={formatMessage(coreMessages.notFoundApplicationTypeMessage, {
-          type,
-        })}
-      />
-    )
+    return <ErrorShell errorType="notExist" />
   }
 
   if (createError) {
@@ -170,6 +162,7 @@ export const Applications: FC = () => {
         subTitle={formatMessage(coreMessages.createErrorApplicationMessage, {
           type,
         })}
+        description=""
       />
     )
   }
@@ -192,7 +185,7 @@ export const Applications: FC = () => {
     <Page>
       <GridContainer>
         {!loading && !isEmpty(data?.applicationApplications) && (
-          <Box>
+          <Box marginBottom={5}>
             <Box
               marginTop={5}
               marginBottom={5}

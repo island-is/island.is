@@ -79,3 +79,8 @@ export enum DelegationType {
   PersonalRepresentative = 'PersonalRepresentative',
   Custom = 'Custom',
 }
+
+export interface ClientsInput {
+  lang: string
+  clientIds: string[]
+}

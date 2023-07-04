@@ -10,18 +10,26 @@ export interface AuthSettings
   baseUrl?: string
 
   /*
-   * Used to bind React Router callback route and to build a default value for `redirect_uri` with baseUrl. Should be
+   * Used to handle login callback and to build a default value for `redirect_uri` with baseUrl. Should be
    * relative from baseUrl and start with a "/".
    * Default: "/auth/callback"
    */
   redirectPath?: string
 
   /**
-   * Used to bind React Router callback route and to build a default value for `silent_redirect_uri` with baseUrl.
+   * Used to handle login callback and to build a default value for `silent_redirect_uri` with baseUrl.
    * Should be relative from baseUrl and start with a "/".
    * Default: "/auth/callback-silent"
    */
   redirectPathSilent?: string
+
+  /**
+   * Used to support login flow triggered by the authorisation server or another party. Should be relative from baseUrl
+   * and start with a "/".
+   * More information: https://openid.net/specs/openid-connect-standard-1_0-21.html#client_Initiate_login
+   * Default: undefined
+   */
+  initiateLoginPath?: string
 
   /**
    * Prefix for storing user access tokens in session storage.
@@ -39,7 +47,7 @@ export interface AuthSettings
   switchUserRedirectUrl?: string
 
   /**
-   * Wich PATH on the AUTHORITY to use for checking the session expiry.
+   * Which PATH on the AUTHORITY to use for checking the session expiry.
    */
   checkSessionPath?: string
 }

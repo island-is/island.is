@@ -24,7 +24,7 @@ describe('InternalNotificationController - guards', () => {
       guard = new guards[0]()
     })
 
-    it('should have TokenGuard as guard 0', () => {
+    it('should have TokenGuard as guard 1', () => {
       expect(guard).toBeInstanceOf(TokenGuard)
     })
   })
@@ -36,7 +36,7 @@ describe('InternalNotificationController - guards', () => {
       guard = new guards[1]()
     })
 
-    it('should have CaseHasExistedGuard as guard 1', () => {
+    it('should have CaseHasExistedGuard as guard 2', () => {
       expect(guard).toBeInstanceOf(CaseHasExistedGuard)
     })
   })

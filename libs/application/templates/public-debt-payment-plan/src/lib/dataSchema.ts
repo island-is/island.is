@@ -9,7 +9,7 @@ export const PaymentPlanSchema = z
     id: z.string().min(1),
     amountPerMonth: z.number().optional(),
     numberOfMonths: z.number().optional(),
-    distribution: z.string().min(1),
+    distribution: z.array(z.any()).min(1),
     totalAmount: z.string().min(1),
     paymentMode: z.enum([AMOUNT, MONTHS]).refine((x) => x !== null, {
       params: error.paymentMode,
@@ -55,7 +55,7 @@ export const PaymentPlansSchema = z.object({
 
 export const PublicDebtPaymentPlanSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
-  applicant: applicantInformationSchema,
+  applicant: applicantInformationSchema(),
   employer: z.object({
     isCorrectInfo: z.enum([YES, NO]),
   }),

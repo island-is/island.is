@@ -51,7 +51,11 @@ export const NATIONAL_REGISTRY_CHILDREN_CORRECTION = gql`
 export const ChildRegistrationModal: FC<Props> = ({ data }) => {
   useNamespaces('sp.family')
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const { handleSubmit, control, errors } = useForm()
+  const {
+    handleSubmit,
+    control,
+    formState: { errors },
+  } = useForm<FormDataType>()
   const { formatMessage } = useLocale()
   const { data: userProfile } = useUserProfile()
 

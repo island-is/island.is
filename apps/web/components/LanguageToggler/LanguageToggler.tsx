@@ -89,6 +89,7 @@ export const LanguageToggler = ({
     const slugs = []
     let title: TextFieldLocales = { is: '', en: '' }
     let type: LinkType | '' = ''
+    let activeTranslations = {}
 
     for (const res of responses) {
       const slug = res.data?.getContentSlug?.slug
@@ -98,6 +99,7 @@ export const LanguageToggler = ({
       slugs.push(slug)
       title = res.data?.getContentSlug?.title
       type = res.data?.getContentSlug?.type as LinkType
+      activeTranslations = res.data?.getContentSlug?.activeTranslations
     }
 
     if (resolveLinkTypeLocally) {
@@ -113,7 +115,8 @@ export const LanguageToggler = ({
     if (
       type &&
       slugs.every((s) => s?.[otherLanguage]) &&
-      title?.[otherLanguage]
+      title?.[otherLanguage] &&
+      (otherLanguage === 'is' || (activeTranslations?.[otherLanguage] ?? true))
     ) {
       const queryParamsString = new URLSearchParams(
         queryParams?.[otherLanguage],

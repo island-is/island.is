@@ -178,12 +178,17 @@ const RegulationsHome: Screen<RegulationsHomeProps> = (props) => {
                           heading={prettyName(reg.name)}
                           text={reg.title}
                           tags={
-                            reg.ministry && [
-                              {
-                                label: reg.ministry.name ?? reg.ministry,
-                                disabled: true,
-                              },
-                            ]
+                            reg.ministry
+                              ? [
+                                  {
+                                    label:
+                                      typeof reg.ministry === 'string'
+                                        ? reg.ministry
+                                        : reg.ministry.name,
+                                    disabled: true,
+                                  },
+                                ]
+                              : undefined
                           }
                         />
                       </GridColumn>
@@ -312,6 +317,11 @@ RegulationsHome.getInitialProps = async (ctx) => {
     apolloClient
       .query<GetRegulationsMinistriesQuery>({
         query: GET_REGULATIONS_MINISTRIES_QUERY,
+        variables: {
+          input: {
+            slugs: undefined,
+          },
+        },
       })
       .then((res) => res.data?.getRegulationsMinistries as MinistryList),
 

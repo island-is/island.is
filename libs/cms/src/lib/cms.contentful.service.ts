@@ -261,6 +261,25 @@ export class CmsContentfulService {
     )
   }
 
+  async getOrganizationByTitle(
+    title: string,
+    lang: string,
+  ): Promise<Organization> {
+    const params = {
+      ['content_type']: 'organization',
+      include: 10,
+      'fields.title[match]': title,
+    }
+
+    const result = await this.contentfulRepository
+      .getLocalizedEntries<types.IOrganizationFields>(lang, params)
+      .catch(errorHandler('getOrganization'))
+
+    return (
+      (result.items as types.IOrganization[]).map(mapOrganization)[0] ?? null
+    )
+  }
+
   async getOrganizationPage(
     slug: string,
     lang: string,
@@ -452,6 +471,8 @@ export class CmsContentfulService {
         title: Record<string, string>
         url: Record<string, string>
         question?: Record<string, string>
+        activeTranslations?: { 'is-IS': Record<string, boolean> }
+        parent?: { 'is-IS': { fields: { slug: Record<string, string> } } }
       }>(id, {
         locale: '*',
         include: 1,
@@ -461,6 +482,8 @@ export class CmsContentfulService {
     let slugs: TextFieldLocales = { is: '', en: '' }
     let titles: TextFieldLocales = { is: '', en: '' }
     let urls: TextFieldLocales = { is: '', en: '' }
+
+    const type = result?.sys?.contentType?.sys?.id ?? ''
 
     if (
       (result?.fields?.title || result?.fields?.question) &&
@@ -473,7 +496,21 @@ export class CmsContentfulService {
             (result?.fields?.title ?? result?.fields?.question)?.[
               localeMap[k]
             ] ?? ''
-          obj.urls[k] = result?.fields?.url?.[localeMap[k]] ?? ''
+
+          if (type === 'subArticle') {
+            const parentSlug =
+              result?.fields?.parent?.['is-IS']?.fields?.slug?.[localeMap[k]] ??
+              ''
+
+            const url = result?.fields?.url?.[localeMap[k]] ?? ''
+
+            obj.urls[k] = parentSlug
+              ? `${parentSlug}/${url?.split('/')?.pop() ?? ''}`
+              : ''
+          } else {
+            obj.urls[k] = result?.fields?.url?.[localeMap[k]] ?? ''
+          }
+
           return obj
         },
         {
@@ -489,7 +526,10 @@ export class CmsContentfulService {
       slug: slugs,
       title: titles,
       url: urls,
-      type: result?.sys?.contentType?.sys?.id ?? '',
+      type,
+      activeTranslations: result?.fields?.activeTranslations?.['is-IS'] ?? {
+        en: true,
+      },
     }
   }
 
@@ -681,20 +721,6 @@ export class CmsContentfulService {
     return (result.items as types.IFrontpage[]).map(mapFrontpage)[0]
   }
 
-  async getTellUsAStory({ lang }: { lang: string }): Promise<TellUsAStory> {
-    const params = {
-      ['content_type']: 'tellUsAStory',
-      include: 10,
-      order: '-sys.createdAt',
-    }
-
-    const result = await this.contentfulRepository
-      .getLocalizedEntries<types.ITellUsAStoryFields>(lang, params)
-      .catch(errorHandler('getTellUsAStory'))
-
-    return (result.items as types.ITellUsAStory[]).map(mapTellUsAStory)[0]
-  }
-
   async getSubpageHeader({
     lang,
     id,
@@ -731,6 +757,7 @@ export class CmsContentfulService {
       ['content_type']: 'supportQNA',
       'fields.category.sys.contentType.sys.id': 'supportCategory',
       'fields.category.fields.slug': slug,
+      limit: 1000,
     }
 
     const result = await this.contentfulRepository

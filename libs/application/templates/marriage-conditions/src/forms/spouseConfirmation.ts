@@ -158,10 +158,28 @@ export const spouseConfirmation = ({ allowFakeData = false }): Form =>
                     titleVariant: 'h4',
                     space: 'gutter',
                   }),
-                  buildCustomField({
-                    id: 'spouse.person',
-                    title: '',
-                    component: 'NationalIdWithName',
+                  buildTextField({
+                    id: 'spouse.person.nationalId',
+                    title: m.nationalId,
+                    width: 'half',
+                    backgroundColor: 'white',
+                    format: '######-####',
+                    readOnly: true,
+                    defaultValue: (application: Application) => {
+                      const info = application.answers.spouse as Individual
+                      return formatNationalId(info?.person.nationalId) ?? ''
+                    },
+                  }),
+                  buildTextField({
+                    id: 'spouse.person.name',
+                    title: m.name,
+                    width: 'half',
+                    backgroundColor: 'white',
+                    readOnly: true,
+                    defaultValue: (application: Application) => {
+                      const info = application.answers.spouse as Individual
+                      return info?.person.name ?? ''
+                    },
                   }),
                   buildTextField({
                     id: 'spouse.phone',

@@ -1,5 +1,8 @@
 import { getValueViaPath } from '@island.is/application/core'
-import { FieldBaseProps } from '@island.is/application/types'
+import {
+  ApplicationConfigurations,
+  FieldBaseProps,
+} from '@island.is/application/types'
 import {
   Box,
   AlertMessage,
@@ -10,9 +13,11 @@ import {
 import { useLocale } from '@island.is/localization'
 import { FC } from 'react'
 import { conclusion } from '../../lib/messages'
-import { Rejecter } from '../../types'
+import { Rejecter } from '../../shared'
+import kennitala from 'kennitala'
 
-export const RejectedConclusion: FC<FieldBaseProps> = ({ application }) => {
+export const RejectedConclusion: FC<FieldBaseProps> = (props) => {
+  const { application } = props
   const { formatMessage } = useLocale()
 
   const rejecter = getValueViaPath(application.answers, 'rejecter') as Rejecter
@@ -37,7 +42,8 @@ export const RejectedConclusion: FC<FieldBaseProps> = ({ application }) => {
           })}
         </Text>
         <Text variant="h5" marginY={2}>
-          {rejecter.name || ''}, kt. {rejecter.nationalId || ''} (
+          {rejecter.name || ''}, kt.{' '}
+          {kennitala.format(rejecter.nationalId || '', '-')} (
           {formatMessage(conclusion.rejected[rejecter.type])})
         </Text>
         <Text marginBottom={2}>
@@ -45,19 +51,15 @@ export const RejectedConclusion: FC<FieldBaseProps> = ({ application }) => {
         </Text>
         <Text>{formatMessage(conclusion.rejected.thirdText)}</Text>
       </Box>
+
       <Box display="flex" justifyContent="flexEnd" marginTop={8}>
         <Link
-          href={`${document.location.origin}/umsoknir/eigendaskipti-okutaekis/`}
+          href={`${document.location.origin}/umsoknir/${ApplicationConfigurations.TransferOfVehicleOwnership.slug}/`}
         >
           <Button>
             {formatMessage(conclusion.rejected.startNewApplication)}
           </Button>
         </Link>
-        <Box marginLeft={3}>
-          <Link href={`${document.location.origin}/minarsidur/`}>
-            <Button>{formatMessage(conclusion.rejected.myPages)}</Button>
-          </Link>
-        </Box>
       </Box>
     </Box>
   )

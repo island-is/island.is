@@ -6,9 +6,10 @@ import { Overview } from '../Overview'
 import { ReviewConclusion } from '../ReviewConclusion'
 import { Insurance } from '../Insurance'
 import { ReviewCoOwnerAndOperatorRepeater } from '../ReviewCoOwnerAndOperatorRepeater'
-import { ReviewCoOwnerAndOperatorField, ReviewState } from '../../types'
+import { CoOwnerAndOperator, ReviewState } from '../../shared'
 import { getValueViaPath } from '@island.is/application/core'
 import { useAuth } from '@island.is/auth/react'
+import { ReviewMainOperator } from '../ReviewMainOperator'
 
 export const Review: FC<FieldBaseProps> = (props) => {
   const { application } = props
@@ -18,15 +19,26 @@ export const Review: FC<FieldBaseProps> = (props) => {
     getValueViaPath(application.answers, 'insurance.value', undefined),
   )
   const [coOwnersAndOperators, setCoOwnersAndOperators] = useState<
-    ReviewCoOwnerAndOperatorField[]
+    CoOwnerAndOperator[]
   >(
     getValueViaPath(
       application.answers,
       'buyerCoOwnerAndOperator',
       [],
-    ) as ReviewCoOwnerAndOperatorField[],
+    ) as CoOwnerAndOperator[],
+  )
+  const [mainOperator, setMainOperator] = useState<string>(
+    getValueViaPath(
+      application.answers,
+      'buyerMainOperator.nationalId',
+      '',
+    ) as string,
   )
   const reviewerNationalId = userInfo?.profile.nationalId || null
+
+  const filteredCoOwnersAndOperators = coOwnersAndOperators.filter(
+    ({ wasRemoved }) => wasRemoved !== 'true',
+  )
 
   const displayScreen = (
     displayStep: ReviewState,
@@ -38,7 +50,7 @@ export const Review: FC<FieldBaseProps> = (props) => {
           <ApplicationStatus
             setStep={setStep}
             reviewerNationalId={reviewerNationalId}
-            coOwnersAndOperators={coOwnersAndOperators}
+            coOwnersAndOperators={filteredCoOwnersAndOperators}
             {...props}
           />
         )
@@ -48,7 +60,8 @@ export const Review: FC<FieldBaseProps> = (props) => {
             setStep={setStep}
             reviewerNationalId={reviewerNationalId}
             insurance={insurance}
-            coOwnersAndOperators={coOwnersAndOperators}
+            coOwnersAndOperators={filteredCoOwnersAndOperators}
+            mainOperator={mainOperator}
             {...props}
           />
         )
@@ -57,7 +70,7 @@ export const Review: FC<FieldBaseProps> = (props) => {
           <ReviewConclusion
             setStep={setStep}
             reviewerNationalId={reviewerNationalId}
-            coOwnersAndOperators={coOwnersAndOperators}
+            coOwnersAndOperators={filteredCoOwnersAndOperators}
             {...props}
           />
         )
@@ -68,6 +81,16 @@ export const Review: FC<FieldBaseProps> = (props) => {
             reviewerNationalId={reviewerNationalId}
             setCoOwnersAndOperators={setCoOwnersAndOperators}
             coOwnersAndOperators={coOwnersAndOperators}
+            {...props}
+          />
+        )
+      case 'mainOperator':
+        return (
+          <ReviewMainOperator
+            setStep={setStep}
+            coOwnersAndOperators={coOwnersAndOperators}
+            setMainOperator={setMainOperator}
+            mainOperator={mainOperator}
             {...props}
           />
         )

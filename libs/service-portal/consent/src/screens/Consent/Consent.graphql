@@ -1,0 +1,52 @@
+fragment AuthConsentScopeNode on AuthConsentScopeNode {
+  displayName
+  name
+  description
+  hasConsent
+}
+
+query GetConsentList {
+  consentsList {
+    data {
+      client {
+        clientId
+        clientName
+        domainName
+        domain {
+          name
+          displayName
+          description
+          nationalId
+          organisationLogoUrl
+        }
+      }
+      tenants {
+        tenant {
+          name
+          displayName
+          description
+          nationalId
+          organisationLogoUrl
+        }
+        scopes {
+          ... on AuthConsentScopeNode {
+            ...AuthConsentScopeNode
+          }
+
+          ... on AuthConsentScopeNode {
+            name
+            displayName
+            description
+            children {
+              ...AuthConsentScopeNode
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+mutation PatchConsent($input: PatchAuthConsentInput!) {
+  patchAuthConsent(input: $input)
+}

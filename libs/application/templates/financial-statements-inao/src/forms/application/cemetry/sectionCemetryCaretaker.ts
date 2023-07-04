@@ -13,7 +13,7 @@ import {
 import { FSIUSERTYPE } from '../../../types'
 
 export const sectionCemetryCaretaker = buildSection({
-  id: 'cemetryCaretaker',
+  id: 'cemetryCaretakerSection',
   title: m.cemeteryCaretakers,
   condition: (answers, externalData) => {
     const userType = getCurrentUserType(answers, externalData)

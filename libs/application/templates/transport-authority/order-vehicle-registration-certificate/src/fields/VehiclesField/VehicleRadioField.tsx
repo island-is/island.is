@@ -1,9 +1,8 @@
 import { Box, Text } from '@island.is/island-ui/core'
-import { FC, useState } from 'react'
-import { VehiclesCurrentVehicle } from '../../types'
+import { FC } from 'react'
+import { VehiclesCurrentVehicle } from '../../shared'
 import { RadioController } from '@island.is/shared/form-fields'
 import { useFormContext } from 'react-hook-form'
-import { getValueViaPath } from '@island.is/application/core'
 import { FieldBaseProps } from '@island.is/application/types'
 
 interface Option {
@@ -18,16 +17,12 @@ interface VehicleSearchFieldProps {
 
 export const VehicleRadioField: FC<
   VehicleSearchFieldProps & FieldBaseProps
-> = ({ currentVehicleList, application }) => {
-  const { register } = useFormContext()
-
-  const [plate, setPlate] = useState<string>(
-    getValueViaPath(application.answers, 'pickVehicle.plate', '') as string,
-  )
+> = ({ currentVehicleList }) => {
+  const { setValue } = useFormContext()
 
   const onRadioControllerSelect = (s: string) => {
     const currentVehicle = currentVehicleList[parseInt(s, 10)]
-    setPlate(currentVehicle.permno || '')
+    setValue('pickVehicle.plate', currentVehicle.permno || '')
   }
 
   const vehicleOptions = (vehicles: VehiclesCurrentVehicle[]) => {
@@ -61,12 +56,6 @@ export const VehicleRadioField: FC<
         backgroundColor="blue"
         onSelect={onRadioControllerSelect}
         options={vehicleOptions(currentVehicleList)}
-      />
-      <input
-        type="hidden"
-        value={plate}
-        ref={register({ required: true })}
-        name="pickVehicle.plate"
       />
     </div>
   )

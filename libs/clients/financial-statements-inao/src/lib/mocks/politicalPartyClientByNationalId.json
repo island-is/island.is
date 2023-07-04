@@ -1,0 +1,12 @@
+{
+  "@odata.context": "https://dev-re.crm4.dynamics.com/api/data/v9.1/$metadata#star_clients(star_nationalid,star_name,star_type)",
+  "value": [
+    {
+      "@odata.etag": "W/\"3092821\"",
+      "star_nationalid": "1234567890",
+      "star_name": "Stjórnmálaflokkurinn",
+      "star_type": 150000001,
+      "star_clientid": "95a368bf-8245-ed11-bba3-000d3adb5677"
+    }
+  ]
+}

@@ -1,0 +1,37 @@
+query GetAidsAndNutrition {
+  rightsPortalAidsAndNutrition {
+    aids {
+      name
+      id
+      iso
+      available
+      explanation
+      validUntil
+      nextAllowedMonth
+      expiring
+      location
+      maxUnitRefund
+      allowed12MonthPeriod
+      refund {
+        type
+        value
+      }
+    }
+    nutrition {
+      name
+      id
+      iso
+      available
+      expiring
+      explanation
+      validUntil
+      nextAllowedMonth
+      location
+      maxUnitRefund
+      refund {
+        type
+        value
+      }
+    }
+  }
+}

@@ -15,7 +15,7 @@ import {
   Table,
   UpdatedAt,
 } from 'sequelize-typescript'
-import { DEFAULT_DOMAIN } from '../../types/defaultDomain'
+import { DEFAULT_DOMAIN } from '../../types'
 import { DelegationDTO, DelegationProvider } from '../dto/delegation.dto'
 import { DelegationScope } from './delegation-scope.model'
 import { Domain } from '../../resources/models/domain.model'

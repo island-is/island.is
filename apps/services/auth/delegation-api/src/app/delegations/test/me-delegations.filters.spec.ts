@@ -39,8 +39,8 @@ describe('MeDelegationsController filters', () => {
     server = request(app.getHttpServer())
     factory = new FixtureFactory(app)
 
-    await Object.values(testDomains).map((domain) =>
-      factory.createDomain(domain),
+    await Promise.all(
+      Object.values(testDomains).map((domain) => factory.createDomain(domain)),
     )
 
     delegations = Object.fromEntries(

@@ -9,10 +9,7 @@ import {
   formatNationalId,
 } from '@island.is/judicial-system/formatters'
 import { isRestrictionCase } from '@island.is/judicial-system/types'
-import type {
-  Case,
-  CaseLegalProvisions,
-} from '@island.is/judicial-system/types'
+import type { CaseLegalProvisions } from '@island.is/judicial-system/types'
 import {
   requestCourtDate,
   core,
@@ -21,6 +18,7 @@ import {
 } from '@island.is/judicial-system-web/messages'
 import { TIME_FORMAT } from '@island.is/judicial-system/consts'
 import { formatRequestedCustodyRestrictions } from '@island.is/judicial-system-web/src/utils/restrictions'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 import AccordionListItem from '../../AccordionListItem/AccordionListItem'
 import * as styles from './PoliceRequestAccordionItem.css'

@@ -72,7 +72,7 @@ export class MarriageConditionsSubmissionService extends BaseTemplateApiService 
       throw new TemplateApiError(
         {
           title: coreErrorMessages.failedDataProvider,
-          summary: coreErrorMessages.errorDataProvider,
+          summary: coreErrorMessages.errorDataProviderMaritalStatus,
         },
         400,
       )

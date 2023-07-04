@@ -41,4 +41,5 @@ yarn start services-auth-admin-api
 
 ## Code owners and maintainers
 
+- [Aranja](https://github.com/orgs/island-is/teams/aranja/members)
 - [Fuglar](https://github.com/orgs/island-is/teams/fuglar/members)

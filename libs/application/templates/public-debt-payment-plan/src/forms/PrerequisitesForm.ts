@@ -9,6 +9,7 @@ import {
   buildDescriptionField,
   buildSubSection,
   buildRadioField,
+  buildPhoneField,
 } from '@island.is/application/core'
 import {
   Form,
@@ -16,9 +17,7 @@ import {
   IdentityApi,
   UserProfileApi,
 } from '@island.is/application/types'
-import { betaTestSection } from './BetaTestSection'
 import { Logo } from '../assets'
-
 import { application, info, section, externalData } from '../lib/messages'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 import { NO, YES } from '../shared/constants'
@@ -26,7 +25,6 @@ import { PaymentPlanExternalData } from '../types'
 import { Application } from '@island.is/api/schema'
 import { isApplicantCompany, isApplicantPerson } from '../lib/paymentPlanUtils'
 import { PaymentPlanPrerequisitesApi } from '../dataProviders'
-import { removeCountryCode } from '@island.is/application/ui-components'
 
 const shouldRenderMockDataSubSection = !isRunningOnEnvironment('production')
 
@@ -34,9 +32,8 @@ export const PrerequisitesForm: Form = buildForm({
   id: 'PrerequisitesForm',
   title: application.name,
   logo: Logo,
-  mode: FormModes.DRAFT,
+  mode: FormModes.NOT_STARTED,
   children: [
-    betaTestSection,
     buildSection({
       id: 'externalData',
       title: section.externalData,
@@ -87,17 +84,6 @@ export const PrerequisitesForm: Form = buildForm({
             buildDataProviderItem({
               provider: UserProfileApi,
               title: (formValue) =>
-                isApplicantCompany(formValue)
-                  ? externalData.companyLabels.companyTaxTitle
-                  : externalData.labels.userProfileTitle,
-              subTitle: (formValue) =>
-                isApplicantCompany(formValue)
-                  ? externalData.companyLabels.companyTaxSubTitle
-                  : externalData.labels.userProfileSubTitle,
-            }),
-            buildDataProviderItem({
-              provider: PaymentPlanPrerequisitesApi,
-              title: (formValue) =>
                 isApplicantPerson(formValue)
                   ? externalData.labels.paymentPlanTitle
                   : '',
@@ -106,6 +92,17 @@ export const PrerequisitesForm: Form = buildForm({
                 isApplicantPerson(formValue)
                   ? externalData.labels.paymentPlanSubtitle
                   : '',
+            }),
+            buildDataProviderItem({
+              provider: PaymentPlanPrerequisitesApi,
+              title: (formValue) =>
+                isApplicantCompany(formValue)
+                  ? externalData.companyLabels.companyTaxTitle
+                  : externalData.labels.userProfileTitle,
+              subTitle: (formValue) =>
+                isApplicantCompany(formValue)
+                  ? externalData.companyLabels.companyTaxSubTitle
+                  : externalData.labels.userProfileSubTitle,
             }),
             buildDataProviderItem({
               title: externalData.labels.paymentEmployerTitle,
@@ -197,20 +194,14 @@ export const PrerequisitesForm: Form = buildForm({
                 (application.externalData as PaymentPlanExternalData)
                   ?.userProfile?.data?.email,
             }),
-            buildTextField({
+            buildPhoneField({
               id: 'applicant.phoneNumber',
               title: info.labels.tel,
-              format: '###-####',
               width: 'half',
-              variant: 'tel',
               backgroundColor: 'blue',
-              defaultValue: (application: Application) => {
-                const number = removeCountryCode(
-                  application.externalData?.userProfile?.data
-                    ?.mobilePhoneNumber ?? '',
-                )
-                return number
-              },
+              defaultValue: (application: Application) =>
+                (application.externalData as PaymentPlanExternalData)
+                  ?.userProfile?.data?.mobilePhoneNumber ?? '',
             }),
             buildSubmitField({
               id: 'toDraft',

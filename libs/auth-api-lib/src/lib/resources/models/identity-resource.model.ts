@@ -1,17 +1,17 @@
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import {
   Column,
   CreatedAt,
   DataType,
+  HasMany,
   Model,
+  PrimaryKey,
   Table,
   UpdatedAt,
-  HasMany,
-  PrimaryKey,
 } from 'sequelize-typescript'
-import { ApiProperty } from '@nestjs/swagger'
+
+import { Domain } from './domain.model'
 import { IdentityResourceUserClaim } from './identity-resource-user-claim.model'
-import { DelegationScope } from '../../delegations/models/delegation-scope.model'
-import { IdentityResourcesDTO } from '../dto/identity-resources.dto'
 
 @Table({
   tableName: 'identity_resource',
@@ -155,20 +155,6 @@ export class IdentityResource extends Model {
   @ApiProperty()
   readonly modified?: Date
 
-  toDTO(): IdentityResourcesDTO {
-    return {
-      name: this.name,
-      enabled: this.enabled,
-      displayName: this.displayName,
-      description: this.description,
-      showInDiscoveryDocument: this.showInDiscoveryDocument,
-      grantToLegalGuardians: this.grantToLegalGuardians,
-      grantToProcuringHolders: this.grantToProcuringHolders,
-      allowExplicitDelegationGrant: this.allowExplicitDelegationGrant,
-      automaticDelegationGrant: this.automaticDelegationGrant,
-      alsoForDelegatedUser: this.alsoForDelegatedUser,
-      required: this.required,
-      emphasize: this.emphasize,
-    }
-  }
+  @ApiPropertyOptional({ type: () => Domain })
+  domain?: Domain
 }

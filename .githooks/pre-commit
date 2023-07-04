@@ -1,0 +1,35 @@
+#!/usr/bin/bash
+set -euo pipefail
+
+: "${GIT_ROOT:="$(git rev-parse --show-toplevel)"}"
+: "${GIT_AGAINST:=HEAD}"
+
+if ! git rev-parse --verify HEAD >/dev/null 2>&1; then
+	# Initial commit: diff against an empty tree object
+	GIT_AGAINST="$(git hash-object -t tree /dev/null)"
+fi
+
+whitespaces() {
+  # If there are whitespace errors, print the offending file names
+  git diff-index --check --cached "$GIT_AGAINST" -- \
+    || echo "You have some trailing whitespaces 🙈"
+}
+
+charts() {
+  local ecode
+  if git diff --cached --name-only | grep -q infra; then
+    yarn charts &>/dev/null
+    ecode=$?
+    echo "🤖 Generated charts for you 💖"
+    echo "    So you don't have to 😘"
+    echo "       Just remember to commit them ✅"
+    echo "          (check git status)"
+    echo ""
+    return $ecode
+  fi
+  return 0
+}
+
+whitespaces
+charts
+exec "$GIT_ROOT/.githooks/defaulthook"

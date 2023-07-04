@@ -31,7 +31,7 @@ import { DeathNoticeApi } from '../../dataProviders'
 export const prerequisite = (): Form => {
   return buildForm({
     id: 'AnnouncementOfDeathApplicationDraftForm',
-    title: '', // m.applicationTitle,
+    title: m.applicationTitle,
     logo: CoatOfArms,
     mode: FormModes.DRAFT,
     renderLastScreenButton: true,
@@ -122,13 +122,14 @@ export const prerequisite = (): Form => {
               }),
               buildDescriptionField({
                 title: '',
-                space: 2,
+                space: 'containerGutter',
                 description: m.roleConfirmationDescription,
                 id: 'roleConfirmationDescription',
               }),
               buildDescriptionField({
                 title: '',
                 space: 2,
+                marginBottom: 'gutter',
                 description: m.roleConfirmationNotice,
                 id: 'roleConfirmationNotice',
               }),

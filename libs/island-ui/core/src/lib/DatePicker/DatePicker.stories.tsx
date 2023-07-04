@@ -10,7 +10,11 @@ export default {
   parameters: withFigma('DatePicker'),
 }
 
-const Template = (args) => <DatePicker {...args} />
+const Template = (args) => (
+  <Wrap>
+    <DatePicker {...args} />
+  </Wrap>
+)
 
 export const Default = Template.bind({})
 Default.args = {
@@ -18,11 +22,12 @@ Default.args = {
   placeholderText: 'Veldu dagsetningu',
   locale: 'is',
   required: true,
+  appearInline: false,
   handleChange: (date: Date) => console.log(date),
 }
 
 const Wrap: React.FC = ({ children }) => (
-  <div style={{ height: 600 }}>{children}</div>
+  <div style={{ height: 400 }}>{children}</div>
 )
 
 export const Basic = () => {
@@ -143,6 +148,7 @@ export const WithErrors = () => (
   <>
     <Wrap>
       <DatePicker
+        id="TestError"
         label="Date"
         placeholderText="Pick a date"
         selected={new Date()}
@@ -188,5 +194,17 @@ export const SmallWithoutLabel = () => (
       selected={new Date()}
       handleChange={(date: Date) => console.log(date)}
     />
+  </Wrap>
+)
+
+export const AppearInline = () => (
+  <Wrap>
+    <DatePicker
+      label="Date"
+      placeholderText="Pick a date"
+      handleChange={(date: Date) => console.log(date)}
+      appearInline
+    />
+    <Text variant="intro">This stays below the date picker.</Text>
   </Wrap>
 )

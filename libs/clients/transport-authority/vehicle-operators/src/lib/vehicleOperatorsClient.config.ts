@@ -16,7 +16,7 @@ export const VehicleOperatorsClientConfig = defineConfig<
     return {
       xroadPath: env.required(
         'XROAD_VEHICLE_OPERATORS_PATH',
-        'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Operators-V2',
+        'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Operators-V3',
       ),
       scope: [VehiclesScope.vehicle], // TODO: Change to new scope when it has been created
     }

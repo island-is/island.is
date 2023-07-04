@@ -47,6 +47,10 @@ const caseEvent = {
   SCHEDULE_COURT_DATE: ':timer_clock: Fyrirtökutíma úthlutað',
   DISMISS: ':woman-shrugging: Vísað frá',
   ARCHIVE: ':file_cabinet: Sett í geymslu',
+  REOPEN: ':construction: Opnað aftur',
+  APPEAL: ':judge: Kæra',
+  RECEIVE_APPEAL: ':eyes: Kæra móttekin',
+  COMPLETE_APPEAL: ':white_check_mark: Kæru lokið',
 }
 
 export enum CaseEvent {
@@ -64,6 +68,10 @@ export enum CaseEvent {
   SCHEDULE_COURT_DATE = 'SCHEDULE_COURT_DATE',
   DISMISS = 'DISMISS',
   ARCHIVE = 'ARCHIVE',
+  REOPEN = 'REOPEN',
+  APPEAL = 'APPEAL',
+  RECEIVE_APPEAL = 'RECEIVE_APPEAL',
+  COMPLETE_APPEAL = 'COMPLETE_APPEAL',
 }
 
 @Injectable()
@@ -83,14 +91,14 @@ export class EventService {
         event === CaseEvent.ACCEPT && isIndictmentCase(theCase.type)
           ? caseEvent[CaseEvent.ACCEPT_INDICTMENT]
           : `${caseEvent[event]}${eventOnly ? ' - aðgerð ekki framkvæmd' : ''}`
-      const typeText = `${capitalize(
+      const typeText = `${capitalize(caseTypes[theCase.type])}${
         isIndictmentCase(theCase.type)
-          ? readableIndictmentSubtypes(
+          ? `:(${readableIndictmentSubtypes(
               theCase.policeCaseNumbers,
               theCase.indictmentSubtypes,
-            ).join(', ')
-          : caseTypes[theCase.type],
-      )} *${theCase.id}*`
+            ).join(', ')})`
+          : ''
+      } *${theCase.id}*`
       const prosecutionText = `${
         theCase.creatingProsecutor?.institution
           ? `${theCase.creatingProsecutor?.institution?.name} `

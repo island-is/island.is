@@ -5,10 +5,12 @@ import {
 } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
 import { information, externalData, payment, review } from '../lib/messages'
+import { Logo } from '../assets/Logo'
 
 export const ReviewForm: Form = buildForm({
   id: 'ReviewForm',
   title: '',
+  logo: Logo,
   mode: FormModes.IN_PROGRESS,
   children: [
     buildSection({

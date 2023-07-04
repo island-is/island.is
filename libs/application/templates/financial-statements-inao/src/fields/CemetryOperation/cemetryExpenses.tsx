@@ -2,7 +2,7 @@ import React, { Fragment, useEffect } from 'react'
 import { useLocale } from '@island.is/localization'
 import { Box } from '@island.is/island-ui/core'
 import { InputController } from '@island.is/shared/form-fields'
-import { getErrorViaPath } from '@island.is/application/core'
+import { getErrorViaPath, getValueViaPath } from '@island.is/application/core'
 import { RecordObject } from '@island.is/application/types'
 import debounce from 'lodash/debounce'
 import { useFormContext } from 'react-hook-form'
@@ -25,14 +25,24 @@ export const CemetryExpenses = ({
   getSum,
 }: PropTypes): JSX.Element => {
   const { formatMessage } = useLocale()
-  const { clearErrors, setValue } = useFormContext()
+  const { clearErrors, setValue, getValues } = useFormContext()
+  const values = getValues()
+
+  const donationsToCemeteryFund = getValueViaPath(
+    values,
+    CEMETRYOPERATIONIDS.donationsToCemeteryFund,
+  )
 
   useEffect(() => {
     if (data?.financialStatementsInaoTaxInfo) {
-      setValue(
-        CEMETRYOPERATIONIDS.donationsToCemeteryFund,
-        data.financialStatementsInaoTaxInfo?.[3]?.value?.toString() ?? '',
-      )
+      if (!donationsToCemeteryFund) {
+        setValue(
+          CEMETRYOPERATIONIDS.donationsToCemeteryFund,
+          data.financialStatementsInaoTaxInfo
+            ?.find((x) => x.key === 334)
+            ?.value?.toString() ?? '',
+        )
+      }
     }
     getSum()
   }, [data, getSum, setValue])

@@ -6,7 +6,7 @@ import { Logo } from '../Logo/Logo'
 import { Tiles } from '../Tiles/Tiles'
 import { Text } from '../Text/Text'
 import { Inline } from '../Inline/Inline'
-import { Icon } from '../Icon/Icon'
+import { Icon } from '../IconRC/Icon'
 import { GridContainer } from '../Grid/GridContainer/GridContainer'
 import { GridRow } from '../Grid/GridRow/GridRow'
 import { GridColumn } from '../Grid/GridColumn/GridColumn'
@@ -36,6 +36,7 @@ interface FooterProps {
   bottomLinksTitle?: string
   languageSwitchLink?: FooterLinkProps
   privacyPolicyLink?: FooterLinkProps
+  termsLink?: FooterLinkProps
   hideLanguageSwitch?: boolean
   showMiddleLinks?: boolean
   /**
@@ -56,6 +57,7 @@ export const Footer = ({
   showMiddleLinks = false,
   languageSwitchLink = defaultLanguageSwitchLink,
   privacyPolicyLink = defaultPrivacyPolicyLink,
+  termsLink = defaultTermsLink,
   hideLanguageSwitch = false,
   languageSwitchOnClick,
 }: FooterProps) => {
@@ -126,10 +128,10 @@ export const Footer = ({
                   <Stack space={1}>
                     <Inline space={1} alignY="center">
                       <Icon
-                        type="info"
-                        height="15"
-                        width="15"
+                        icon="informationCircle"
+                        size="small"
                         color="blue400"
+                        type="outline"
                       />
                       <Text variant="h5" color="blue600" fontWeight="light">
                         <Link href={privacyPolicyLink.href}>
@@ -137,12 +139,23 @@ export const Footer = ({
                         </Link>
                       </Text>
                     </Inline>
+                    <Inline space={1} alignY="center">
+                      <Icon
+                        type="outline"
+                        icon="document"
+                        size={'small'}
+                        color="blue400"
+                      />
+                      <Text variant="h5" color="blue600" fontWeight="light">
+                        <Link href={termsLink.href}>{termsLink.title}</Link>
+                      </Text>
+                    </Inline>
                     {!hideLanguageSwitch && (
                       <Inline space={1} alignY="center">
                         <Icon
-                          height="15"
-                          width="15"
-                          type="globe"
+                          size="small"
+                          icon="globe"
+                          type="outline"
                           color="blue400"
                         />
                         <Text variant="h5" color="blue600" fontWeight="light">
@@ -157,12 +170,7 @@ export const Footer = ({
                     )}
 
                     <Inline space={1} alignY="center">
-                      <Icon
-                        height="15"
-                        width="15"
-                        type="facebook"
-                        color="blue400"
-                      />
+                      <Icon size="small" icon="facebook" color="blue400" />
                       <Text variant="h5" color="blue600" fontWeight="light">
                         <Link href="https://www.facebook.com/islandid">
                           Facebook
@@ -286,6 +294,11 @@ const defaultLanguageSwitchLink = {
 const defaultPrivacyPolicyLink = {
   title: 'Persónuverndarstefna',
   href: '/personuverndarstefna-stafraent-islands',
+}
+
+const defaultTermsLink = {
+  title: 'Skilmálar',
+  href: '/skilmalar-island-is',
 }
 
 const defaultBottomLinks = [

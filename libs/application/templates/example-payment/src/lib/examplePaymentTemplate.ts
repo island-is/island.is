@@ -1,6 +1,8 @@
 import {
   DefaultStateLifeCycle,
   EphemeralStateLifeCycle,
+  getValueViaPath,
+  pruneAfterDays,
 } from '@island.is/application/core'
 import {
   ApplicationTemplate,
@@ -9,12 +11,31 @@ import {
   ApplicationStateSchema,
   DefaultEvents,
   defineTemplateApi,
+  CreateChargeApi,
+  Application,
+  VerifyPaymentApi,
 } from '@island.is/application/types'
 import { ApiActions } from '../shared'
 import { Events, States, Roles } from './constants'
 import { dataSchema } from './dataSchema'
 import { m } from './messages'
 import { PaymentCatalogApi } from '@island.is/application/types'
+import { PaymentForm } from '@island.is/application/ui-forms'
+import { CatalogItem } from '@island.is/clients/charge-fjs-v2'
+
+const getCodes = (application: Application) => {
+  // This is where you'd pick and validate that you are going to create a charge for a
+  // particular charge item code. Note that creating these charges creates an actual "krafa"
+  // with FJS
+  const chargeItemCode = getValueViaPath<CatalogItem['chargeItemCode']>(
+    application.answers,
+    'userSelectedChargeItemCode',
+  )
+  if (!chargeItemCode) {
+    throw new Error('No selected charge item code')
+  }
+  return [chargeItemCode]
+}
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -65,20 +86,19 @@ const template: ApplicationTemplate<
           status: 'inprogress',
           progress: 0.9,
           // Note: should be pruned at some time, so we can delete the FJS charge with it
-          lifecycle: {
-            shouldBeListed: true,
-            shouldBePruned: true,
-            // Applications that stay in this state for 1 hour will be pruned automatically
-            whenToPrune: 1 * 3600 * 1000,
-          },
-          onEntry: defineTemplateApi({
-            action: ApiActions.createCharge,
+          lifecycle: pruneAfterDays(1),
+          onEntry: CreateChargeApi.configure({
+            params: {
+              organizationId: '6509142520',
+              chargeItemCodes: getCodes,
+            },
           }),
           roles: [
             {
               id: Roles.APPLICANT,
-              formLoader: () =>
-                import('../forms/payment').then((val) => val.payment),
+              formLoader: async () => {
+                return PaymentForm
+              },
               actions: [
                 { event: DefaultEvents.SUBMIT, name: 'Panta', type: 'primary' },
               ],
@@ -88,7 +108,7 @@ const template: ApplicationTemplate<
           ],
         },
         on: {
-          [DefaultEvents.SUBMIT]: { target: States.DONE },
+          [DefaultEvents.SUBMIT]: { target: 'done' },
         },
       },
       [States.DONE]: {
@@ -97,9 +117,15 @@ const template: ApplicationTemplate<
           name: 'Done',
           progress: 1,
           lifecycle: DefaultStateLifeCycle,
-          onEntry: defineTemplateApi({
-            action: ApiActions.submitApplication,
-          }),
+          onEntry: [
+            VerifyPaymentApi.configure({
+              order: 0,
+            }),
+            defineTemplateApi({
+              action: ApiActions.submitApplication,
+              order: 1,
+            }),
+          ],
           roles: [
             {
               id: Roles.APPLICANT,

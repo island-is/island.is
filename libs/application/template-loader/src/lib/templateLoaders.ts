@@ -7,6 +7,8 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     import('@island.is/application/templates/estate'),
   [ApplicationTypes.PARENTAL_LEAVE]: () =>
     import('@island.is/application/templates/parental-leave'),
+  [ApplicationTypes.DRIVING_LEARNERS_PERMIT]: () =>
+    import('@island.is/application/templates/driving-learners-permit'),
   [ApplicationTypes.DRIVING_LICENSE]: () =>
     import('@island.is/application/templates/driving-license'),
   [ApplicationTypes.DRIVING_ASSESSMENT_APPROVAL]: () =>
@@ -19,6 +21,8 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     import('@island.is/application/templates/health-insurance'),
   [ApplicationTypes.CHILDREN_RESIDENCE_CHANGE]: () =>
     import('@island.is/application/templates/children-residence-change'),
+  [ApplicationTypes.CHILDREN_RESIDENCE_CHANGE_V2]: () =>
+    import('@island.is/application/templates/children-residence-change-v2'),
   [ApplicationTypes.DATA_PROTECTION_AUTHORITY_COMPLAINT]: () =>
     import('@island.is/application/templates/data-protection-complaint'),
   [ApplicationTypes.LOGIN_SERVICE]: () =>
@@ -89,6 +93,10 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     import(
       '@island.is/application/templates/transport-authority/digital-tachograph-workshop-card'
     ),
+  [ApplicationTypes.LICENSE_PLATE_RENEWAL]: () =>
+    import(
+      '@island.is/application/templates/transport-authority/license-plate-renewal'
+    ),
   [ApplicationTypes.ORDER_VEHICLE_LICENSE_PLATE]: () =>
     import(
       '@island.is/application/templates/transport-authority/order-vehicle-license-plate'
@@ -101,6 +109,14 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     import(
       '@island.is/application/templates/transport-authority/transfer-of-vehicle-ownership'
     ),
+  [ApplicationTypes.DRIVING_LICENSE_BOOK_UPDATE_INSTRUCTOR]: () =>
+    import(
+      '@island.is/application/templates/driving-license-book-update-instructor'
+    ),
+  [ApplicationTypes.ALCOHOL_TAX_REDEMPTION]: () =>
+    import('@island.is/application/templates/alcohol-tax-redemption'),
+  [ApplicationTypes.EUROPEAN_HEALTH_INSURANCE_CARD]: () =>
+    import('@island.is/application/templates/european-health-insurance-card'),
 }
 
 export default templates

@@ -1,6 +1,7 @@
+import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useLocation } from 'react-use'
-import { Box, Tabs } from '@island.is/island-ui/core'
+import { Box, Button, GridColumn, Tabs } from '@island.is/island-ui/core'
 import { IntroHeader } from '@island.is/portals/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { useAuth } from '@island.is/auth/react'
@@ -15,7 +16,7 @@ const TAB_DELEGATION_OUTGOING_ID = 'outgoing'
 const TAB_DELEGATION_INCOMING_ID = 'incoming'
 
 const AccessControl = () => {
-  useNamespaces(['sp.settings-access-control', 'sp.access-control-delegations'])
+  useNamespaces(['sp.access-control-delegations'])
 
   const { formatMessage } = useLocale()
   const { userInfo } = useAuth()
@@ -44,22 +45,37 @@ const AccessControl = () => {
     <>
       <IntroHeader
         title={formatMessage(m.accessControl)}
-        intro={formatMessage(
+        intro={
           onlyOutgoingDelegations
-            ? {
+            ? formatMessage({
                 id: 'sp.access-control-delegations:header-intro-company',
                 defaultMessage:
                   'Hérna kemur listi yfir þau umboð sem þú hefur gefið öðrum. Þú getur eytt umboðum eða bætt við nýjum.',
-              }
-            : {
+              })
+            : formatMessage({
                 id: 'sp.access-control-delegations:header-intro-individual',
                 defaultMessage:
                   'Hérna getur þú veitt öðrum umboð og skoðað umboð sem aðrir hafa veitt þér. Þú getur eytt umboðum eða bætt við nýjum.',
-              },
-        )}
+              })
+        }
         marginBottom={0}
-      />
-      <Box marginTop={[0, 0, 5]}>
+      >
+        <GridColumn span={['8/8', '3/8']}>
+          <Box
+            display={'flex'}
+            justifyContent={['flexStart', 'flexEnd']}
+            paddingTop={[3, 6]}
+          >
+            <Button
+              onClick={() => navigate(DelegationPaths.DelegationsGrant)}
+              size="small"
+            >
+              {formatMessage(m.newAccess)}
+            </Button>
+          </Box>
+        </GridColumn>
+      </IntroHeader>
+      <Box marginTop={[4, 4, 6]}>
         {onlyOutgoingDelegations ? (
           <DelegationsOutgoing />
         ) : (

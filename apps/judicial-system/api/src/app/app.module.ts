@@ -18,6 +18,7 @@ import {
   FeatureModule,
   PoliceModule,
   DefendantModule,
+  IndictmentCountModule,
   fileModuleConfig,
 } from './modules'
 import { ConfigModule } from '@nestjs/config'
@@ -51,6 +52,7 @@ const autoSchemaFile = environment.production
     CaseModule,
     CaseListModule,
     DefendantModule,
+    IndictmentCountModule,
     FileModule,
     InstitutionModule,
     FeatureModule,

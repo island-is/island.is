@@ -79,10 +79,9 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
             navHide: true,
             path: ServicePortalPath.Child,
           },
-
           {
             // Petitions
-            name: m.endorsements,
+            name: m.petitions,
             path: ServicePortalPath.Petitions,
           },
           {
@@ -147,51 +146,14 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         },
         description: m.educationDescription,
       },
+      // Heilsa
       {
-        name: m.documentProvider,
-        path: ServicePortalPath.DocumentProviderRoot,
+        name: m.health,
+        path: ServicePortalPath.HealthRoot,
         icon: {
-          icon: 'receipt',
+          icon: 'heart',
         },
-        // The first release will only contain "Skjalaveitur" and only for the project owners.
-        // Therefore 'children' are temporarily disabled to enhance the UX of the owners.
-        // children: [
-        //   {
-        //     name: defineMessage({
-        //       id: 'service.portal:document-provider-document-providers',
-        //       defaultMessage: 'Skjalaveitendur',
-        //     }),
-        //     path: ServicePortalPath.DocumentProviderDocumentProviders,
-        //   },
-        //   {
-        //     name: defineMessage({
-        //       id: 'service.portal:document-provider-my-categories',
-        //       defaultMessage: 'Mínar flokkar',
-        //     }),
-        //     path: ServicePortalPath.DocumentProviderMyCategories,
-        //   },
-        //   {
-        //     name: defineMessage({
-        //       id: 'service.portal:document-provider-settings',
-        //       defaultMessage: 'Stillingar',
-        //     }),
-        //     path: ServicePortalPath.DocumentProviderSettingsRoot,
-        //   },
-        //   {
-        //     name: defineMessage({
-        //       id: 'service.portal:document-provider-technical-info',
-        //       defaultMessage: 'Tæknilegar upplýsingar',
-        //     }),
-        //     path: ServicePortalPath.DocumentProviderTechnicalInfo,
-        //   },
-        //   {
-        //     name: defineMessage({
-        //       id: 'service.portal:document-provider-statistics',
-        //       defaultMessage: 'Tölfræði',
-        //     }),
-        //     path: ServicePortalPath.DocumentProviderStatistics,
-        //   },
-        // ],
+        description: m.healthDescription,
       },
 
       // Fasteignir
@@ -281,6 +243,17 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
           },
         ],
         description: m.vehiclesDescription,
+      },
+
+      // Loftbrú
+      {
+        name: m.airDiscount,
+        path: ServicePortalPath.AirDiscountRoot,
+
+        icon: {
+          icon: 'globe',
+          type: 'outline',
+        },
       },
 
       // Stillingar - hidden from nav

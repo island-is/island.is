@@ -1,16 +1,25 @@
-import React from 'react'
-
 import * as styles from './Label.css'
 
-export const Label: React.FC<
-  React.DetailedHTMLProps<
-    React.LabelHTMLAttributes<HTMLLabelElement>,
-    HTMLLabelElement
-  >
-> = ({ children, ...props }) => {
-  return (
-    <label {...props} className={styles.label}>
-      {children}
-    </label>
-  )
+import { LabelHTMLAttributes, forwardRef } from 'react'
+
+import cn from 'classnames'
+
+export interface LableProps extends LabelHTMLAttributes<HTMLLabelElement> {
+  hasError?: boolean
 }
+
+export const Label = forwardRef<HTMLLabelElement, LableProps>(
+  ({ hasError, color, children, ...props }, ref) => {
+    return (
+      <label
+        {...props}
+        ref={ref}
+        className={cn(styles.label, {
+          [styles.hasError]: hasError,
+        })}
+      >
+        {children}
+      </label>
+    )
+  },
+)

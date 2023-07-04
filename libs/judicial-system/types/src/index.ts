@@ -10,7 +10,6 @@ export type {
 
 export { InstitutionType } from './lib/institution'
 export type { Institution } from './lib/institution'
-
 export { NotificationType } from './lib/notification'
 export type {
   Recipient,
@@ -39,10 +38,16 @@ export {
   UserRole,
   prosecutionRoles,
   isProsecutionRole,
+  isProsecutionUser,
   courtRoles,
   isCourtRole,
   extendedCourtRoles,
   isExtendedCourtRole,
+  isDistrictCourtUser,
+  appealsCourtRoles,
+  isAppealsCourtUser,
+  isPrisonSystemUser,
+  isDefenceUser,
 } from './lib/user'
 export type { User, CreateUser, UpdateUser } from './lib/user'
 
@@ -56,6 +61,7 @@ export {
   CaseCustodyRestrictions,
   CaseAppealDecision,
   CaseDecision,
+  CaseAppealRulingDecision,
   SessionArrangements,
   restrictionCases,
   investigationCases,
@@ -66,7 +72,10 @@ export {
   isAcceptingCaseDecision,
   completedCaseStates,
   hasCaseBeenAppealed,
-  SubpoenaType,
+  CaseAppealState,
+  getAppealInfo,
+  getStatementDeadline,
+  getAppealedDate,
 } from './lib/case'
 export type {
   Case,
@@ -86,5 +95,12 @@ export type {
   UploadPoliceCaseFile,
   UploadPoliceCaseFileResponse,
 } from './lib/policeFile'
+
+export {
+  IndictmentCountOffense,
+  Substance,
+  offenseSubstances,
+} from './lib/indictmentCount'
+export type { SubstanceMap } from './lib/indictmentCount'
 
 export type { CourtDocument } from './lib/courtDocument'

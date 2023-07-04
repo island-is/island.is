@@ -1,10 +1,8 @@
 import React, { FC, useState, useEffect } from 'react'
 import {
   Box,
-  Button,
   Columns,
   Column,
-  Icon,
   LoadingDots,
   InputError,
 } from '@island.is/island-ui/core'
@@ -15,7 +13,7 @@ import { msg } from '../../../../../lib/messages'
 import { InputController } from '@island.is/shared/form-fields'
 import { useForm } from 'react-hook-form'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { BankInfoTypes } from '../../../ProfileForm/types/form'
+import { BankInfoTypes } from '../../types/form'
 import { FormButton } from '../FormButton'
 import * as styles from './ProfileForms.css'
 
@@ -23,10 +21,21 @@ interface Props {
   bankInfo?: BankInfoTypes
 }
 
+interface UseFormProps {
+  bank: string
+  l: string
+  account: string
+}
+
 export const BankInfoForm: FC<Props> = ({ bankInfo }) => {
   useNamespaces('sp.settings')
   const { formatMessage } = useLocale()
-  const { control, handleSubmit, errors, getValues } = useForm()
+  const {
+    control,
+    handleSubmit,
+    getValues,
+    formState: { errors },
+  } = useForm<UseFormProps>()
   const [inputPristine, setInputPristine] = useState<boolean>(false)
   const [submitError, setSubmitError] = useState<string>()
 

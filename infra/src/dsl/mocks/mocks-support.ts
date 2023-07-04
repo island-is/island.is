@@ -15,6 +15,8 @@ export function hostPortNumber(name: string) {
 }
 
 export function getMockName(to: string) {
+  // URL constructer requires a protocol
+  if (!to.match(/\w+:\/\//)) to = `proto://${to}`
   const parsed = new URL(to)
   parsed.pathname = ''
   return {

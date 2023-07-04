@@ -16,6 +16,12 @@ export class MockFeatureFlagService {
       }
       return false
     }
+    if (feature === Features.applicationSystemHistory) {
+      if (user?.nationalId === '1234564321') {
+        return true
+      }
+      return false
+    }
     return defaultValue
   }
 }

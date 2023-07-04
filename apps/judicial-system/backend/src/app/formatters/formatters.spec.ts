@@ -23,7 +23,6 @@ import {
   formatPrisonCourtDateEmailNotification,
   stripHtmlTags,
   formatDefenderCourtDateEmailNotification,
-  formatPrisonRulingEmailNotification,
   formatCourtRevokedSmsNotification,
   formatPrisonRevokedEmailNotification,
   formatDefenderRevokedEmailNotification,
@@ -31,8 +30,6 @@ import {
   formatCourtResubmittedToCourtSmsNotification,
   formatProsecutorReadyForCourtEmailNotification,
   formatCustodyRestrictions,
-  formatRulingModifiedHistory,
-  formatCourtUploadRulingTitle,
   formatPrisonAdministrationRulingNotification,
   formatDefenderCourtDateLinkEmailNotification,
   formatDefenderResubmittedToCourtEmailNotification,
@@ -944,7 +941,6 @@ describe('formatPrisonCourtDateEmailNotification', () => {
     const prosecutorOffice = 'Lögreglustjórinn á höfuðborgarsvæðinu'
     const court = 'Héraðsdómur Austurlands'
     const courtDate = new Date('2021-02-04T02:02')
-    const accusedName = 'Maggi Murder'
     const accusedGender = Gender.FEMALE
     const requestedValidToDate = new Date('2030-08-12T08:25')
     const isolation = true
@@ -960,7 +956,6 @@ describe('formatPrisonCourtDateEmailNotification', () => {
       prosecutorOffice,
       court,
       courtDate,
-      accusedName,
       accusedGender,
       requestedValidToDate,
       isolation,
@@ -982,7 +977,6 @@ describe('formatPrisonCourtDateEmailNotification', () => {
     const prosecutorOffice = 'Lögreglustjórinn á höfuðborgarsvæðinu'
     const court = 'Héraðsdómur Austurlands'
     const courtDate = new Date('2021-02-04T02:02')
-    const accusedName = 'Maggi Murder'
     const accusedGender = Gender.OTHER
     const requestedValidToDate = new Date('2030-08-12T08:25')
     const isolation = true
@@ -998,7 +992,6 @@ describe('formatPrisonCourtDateEmailNotification', () => {
       prosecutorOffice,
       court,
       courtDate,
-      accusedName,
       accusedGender,
       requestedValidToDate,
       isolation,
@@ -1020,7 +1013,6 @@ describe('formatPrisonCourtDateEmailNotification', () => {
     const prosecutorOffice = 'Lögreglustjórinn á höfuðborgarsvæðinu'
     const court = 'Héraðsdómur Austurlands'
     const courtDate = new Date('2021-02-04T02:02')
-    const accusedName = 'Maggi Murder'
     const accusedGender = Gender.MALE
     const requestedValidToDate = new Date('2030-08-12T08:25')
     const isolation = false
@@ -1036,7 +1028,6 @@ describe('formatPrisonCourtDateEmailNotification', () => {
       prosecutorOffice,
       court,
       courtDate,
-      accusedName,
       accusedGender,
       requestedValidToDate,
       isolation,
@@ -1058,7 +1049,6 @@ describe('formatPrisonCourtDateEmailNotification', () => {
     const prosecutorOffice = 'Lögreglustjórinn á höfuðborgarsvæðinu'
     const court = 'Héraðsdómur Austurlands'
     const courtDate = new Date('2021-02-04T02:02')
-    const accusedName = 'Maggi Murder'
     const accusedGender = Gender.MALE
     const requestedValidToDate = new Date('2030-08-12T08:25')
     const isolation = undefined
@@ -1074,7 +1064,6 @@ describe('formatPrisonCourtDateEmailNotification', () => {
       prosecutorOffice,
       court,
       courtDate,
-      accusedName,
       accusedGender,
       requestedValidToDate,
       isolation,
@@ -1096,7 +1085,6 @@ describe('formatPrisonCourtDateEmailNotification', () => {
     const prosecutorOffice = 'Lögreglustjórinn á höfuðborgarsvæðinu'
     const court = 'Héraðsdómur Austurlands'
     const courtDate = new Date('2021-02-04T02:02')
-    const accusedName = 'Maggi Murder'
     const accusedGender = Gender.MALE
     const requestedValidToDate = new Date('2030-08-12T08:25')
     const isolation = false
@@ -1112,7 +1100,6 @@ describe('formatPrisonCourtDateEmailNotification', () => {
       prosecutorOffice,
       court,
       courtDate,
-      accusedName,
       accusedGender,
       requestedValidToDate,
       isolation,
@@ -1134,7 +1121,6 @@ describe('formatPrisonCourtDateEmailNotification', () => {
     const prosecutorOffice = 'Lögreglustjórinn á höfuðborgarsvæðinu'
     const court = 'Héraðsdómur Austurlands'
     const courtDate = new Date('2021-02-11T12:02')
-    const accusedName = 'Maggi Murder'
     const accusedGender = Gender.MALE
     const requestedValidToDate = new Date('2030-08-12T08:25')
     const isolation = false
@@ -1150,7 +1136,6 @@ describe('formatPrisonCourtDateEmailNotification', () => {
       prosecutorOffice,
       court,
       courtDate,
-      accusedName,
       accusedGender,
       requestedValidToDate,
       isolation,
@@ -1172,7 +1157,6 @@ describe('formatPrisonCourtDateEmailNotification', () => {
     const prosecutorOffice = 'Lögreglustjórinn á höfuðborgarsvæðinu'
     const court = 'Héraðsdómur Austurlands'
     const courtDate = new Date('2021-02-11T12:02')
-    const accusedName = 'Maggi Murder'
     const accusedGender = Gender.MALE
     const requestedValidToDate = new Date('2030-08-12T08:25')
     const isolation = false
@@ -1188,7 +1172,6 @@ describe('formatPrisonCourtDateEmailNotification', () => {
       prosecutorOffice,
       court,
       courtDate,
-      accusedName,
       accusedGender,
       requestedValidToDate,
       isolation,
@@ -1395,68 +1378,6 @@ describe('formatDefenderCourtDateLinkEmailNotification', () => {
   })
 })
 
-describe('formatPrisonRulingEmailNotification', () => {
-  let formatMessage: FormatMessage
-  beforeAll(() => {
-    formatMessage = createTestIntl({ locale: 'is', onError: jest.fn() })
-      .formatMessage
-  })
-
-  test('should format prison ruling notification for custody', () => {
-    // Arrange
-    const courtEndTime = new Date('2020-12-20T13:32')
-    const caseType = CaseType.CUSTODY
-
-    // Act
-    const res = formatPrisonRulingEmailNotification(
-      formatMessage,
-      caseType,
-      courtEndTime,
-    )
-
-    // Assert
-    expect(res).toBe(
-      'Meðfylgjandi er vistunarseðill aðila sem var úrskurðaður í gæsluvarðhald í héraðsdómi 20. desember 2020, auk þingbókar þar sem úrskurðarorðin koma fram.',
-    )
-  })
-
-  test('should format prison ruling notification when date is missing', () => {
-    // Arrange
-    const courtEndTime = undefined
-    const caseType = CaseType.ADMISSION_TO_FACILITY
-
-    // Act
-    const res = formatPrisonRulingEmailNotification(
-      formatMessage,
-      caseType,
-      courtEndTime,
-    )
-
-    // Assert
-    expect(res).toBe(
-      'Meðfylgjandi er vistunarseðill aðila sem var úrskurðaður í vistun á viðeigandi stofnun í héraðsdómi á ótilgreindum tíma, auk þingbókar þar sem úrskurðarorðin koma fram.',
-    )
-  })
-
-  test('should format prison ruling notification for admission to facility', () => {
-    // Arrange
-    const courtEndTime = new Date('2020-12-20T13:32')
-    const caseType = CaseType.ADMISSION_TO_FACILITY
-
-    // Act
-    const res = formatPrisonRulingEmailNotification(
-      formatMessage,
-      caseType,
-      courtEndTime,
-    )
-
-    // Assert
-    expect(res).toBe(
-      'Meðfylgjandi er vistunarseðill aðila sem var úrskurðaður í vistun á viðeigandi stofnun í héraðsdómi 20. desember 2020, auk þingbókar þar sem úrskurðarorðin koma fram.',
-    )
-  })
-})
-
 describe('formatCourtRevokedSmsNotification', () => {
   let formatMessage: FormatMessage
   beforeAll(() => {
@@ -1582,9 +1503,9 @@ describe('formatPrisonRevokedEmailNotification', () => {
     const prosecutorOffice = 'Aðalsaksóknari'
     const court = 'Héraðsdómur Þingvalla'
     const courtDate = new Date('2021-01-24T08:15')
-    const accusedName = 'Gaui Glæpon'
     const defenderName = 'Dóri'
     const isExtension = false
+    const courtCaseNumber = 'R-2023-11'
 
     // Act
     const res = formatPrisonRevokedEmailNotification(
@@ -1593,14 +1514,14 @@ describe('formatPrisonRevokedEmailNotification', () => {
       prosecutorOffice,
       court,
       courtDate,
-      accusedName,
       defenderName,
       isExtension,
+      courtCaseNumber,
     )
 
     // Assert
     expect(res).toBe(
-      'Aðalsaksóknari hefur afturkallað kröfu um gæsluvarðhald sem send var til Héraðsdóms Þingvalla og taka átti fyrir sunnudaginn 24. janúar 2021, kl. 08:15.<br /><br />Nafn sakbornings: Gaui Glæpon.<br /><br />Verjandi sakbornings: Dóri.',
+      'Aðalsaksóknari hefur afturkallað kröfu um gæsluvarðhald sem send var til Héraðsdóms Þingvalla og taka átti fyrir sunnudaginn 24. janúar 2021, kl. 08:15.<br /><br />Verjandi sakbornings: Dóri.<br /><br />Málsnúmer héraðsdóms er R-2023-11.',
     )
   })
 
@@ -1610,9 +1531,9 @@ describe('formatPrisonRevokedEmailNotification', () => {
     const prosecutorOffice = 'Aðalsaksóknari'
     const court = 'Héraðsdómur Þingvalla'
     const courtDate = new Date('2021-01-24T08:15')
-    const accusedName = 'Gaui Glæpon'
     const defenderName = 'Dóri'
     const isExtension = true
+    const courtCaseNumber = 'R-2023-13'
 
     // Act
     const res = formatPrisonRevokedEmailNotification(
@@ -1621,14 +1542,14 @@ describe('formatPrisonRevokedEmailNotification', () => {
       prosecutorOffice,
       court,
       courtDate,
-      accusedName,
       defenderName,
       isExtension,
+      courtCaseNumber,
     )
 
     // Assert
     expect(res).toBe(
-      'Aðalsaksóknari hefur afturkallað kröfu um áframhaldandi vistun sem send var til Héraðsdóms Þingvalla og taka átti fyrir sunnudaginn 24. janúar 2021, kl. 08:15.<br /><br />Nafn sakbornings: Gaui Glæpon.<br /><br />Verjandi sakbornings: Dóri.',
+      'Aðalsaksóknari hefur afturkallað kröfu um áframhaldandi vistun sem send var til Héraðsdóms Þingvalla og taka átti fyrir sunnudaginn 24. janúar 2021, kl. 08:15.<br /><br />Verjandi sakbornings: Dóri.<br /><br />Málsnúmer héraðsdóms er R-2023-13.',
     )
   })
 })
@@ -1932,69 +1853,6 @@ describe('formatCustodyRestrictions', () => {
     expect(res).toBe(
       'Sækjandi tekur fram að gæsluvarðhaldið verði með banni við útvegun persónulegra nauðsynja, bréfaskoðun og símabanni og vinnubanni skv. 99. gr. laga nr. 88/2008.',
     )
-  })
-})
-
-describe('formatRulingModifiedHistory', () => {
-  const fn = formatRulingModifiedHistory
-
-  test('should format ruling modified history', () => {
-    const rulingModifiedHistory = undefined
-    const newRulingDate = new Date('2020-01-01')
-    const judgeName = 'Test Judge'
-    const judgeTitle = 'Title'
-
-    const r = fn(rulingModifiedHistory, newRulingDate, judgeName, judgeTitle)
-
-    expect(r).toEqual(
-      'Miðvikudagur, 1. janúar 2020 kl. 00:00 - Test Judge Title',
-    )
-  })
-
-  test('should append to existing history', () => {
-    const rulingModifiedHistory = 'Some history'
-    const newRulingDate = new Date('2020-01-01')
-    const judgeName = 'Test Judge'
-    const judgeTitle = 'Title'
-
-    const r = fn(rulingModifiedHistory, newRulingDate, judgeName, judgeTitle)
-
-    expect(r).toEqual(
-      'Some history\n\nMiðvikudagur, 1. janúar 2020 kl. 00:00 - Test Judge Title',
-    )
-  })
-})
-
-describe('formatCourtUploadRulingTitle', () => {
-  const formatMessage = createTestIntl({ locale: 'is', onError: jest.fn() })
-    .formatMessage
-
-  const fn = (
-    courtCaseNumber: string | undefined,
-    isModifyingRuling: boolean,
-  ) =>
-    formatCourtUploadRulingTitle(
-      formatMessage,
-      courtCaseNumber,
-      isModifyingRuling,
-    )
-
-  test('should format court upload ruling', () => {
-    const courtCaseNumber = '12345'
-    const isModifyingRuling = false
-
-    const r = fn(courtCaseNumber, isModifyingRuling)
-
-    expect(r).toEqual('Úrskurður 12345')
-  })
-
-  test('should format court upload ruling when modifying ruling', () => {
-    const courtCaseNumber = '12345'
-    const isModifyingRuling = true
-
-    const r = fn(courtCaseNumber, isModifyingRuling)
-
-    expect(r).toEqual('Úrskurður 12345 leiðrétt')
   })
 })
 

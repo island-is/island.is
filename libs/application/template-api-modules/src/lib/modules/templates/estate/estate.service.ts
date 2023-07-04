@@ -1,8 +1,10 @@
-import { Inject, Injectable } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 
 import { TemplateApiModuleActionProps } from '../../../types'
 import { NationalRegistry, UploadData } from './types'
 import {
+  Attachment,
+  DataUploadResponse,
   EstateInfo,
   Person,
   PersonType,
@@ -10,44 +12,102 @@ import {
 } from '@island.is/clients/syslumenn'
 import { infer as zinfer } from 'zod'
 import { estateSchema } from '@island.is/application/templates/estate'
-import cloneDeep from 'lodash/cloneDeep'
-import { estateTransformer } from './utils'
+import {
+  estateTransformer,
+  filterAndRemoveRepeaterMetadata,
+  transformUploadDataToPDFStream,
+} from './utils'
 import { BaseTemplateApiService } from '../../base-template-api.service'
-import { LOGGER_PROVIDER } from '@island.is/logging'
 import { ApplicationTypes } from '@island.is/application/types'
+import { TemplateApiError } from '@island.is/nest/problem'
+import { coreErrorMessages, getValueViaPath } from '@island.is/application/core'
+import {
+  ApplicationAttachments,
+  AttachmentPaths,
+  ApplicationFile,
+} from './types/attachments'
+import AmazonS3Uri from 'amazon-s3-uri'
+import { S3 } from 'aws-sdk'
+import kennitala from 'kennitala'
+import { EstateTypes } from './consts'
 
 type EstateSchema = zinfer<typeof estateSchema>
-type EstateData = EstateSchema['estate']
 
 @Injectable()
 export class EstateTemplateService extends BaseTemplateApiService {
-  constructor(
-    @Inject(LOGGER_PROVIDER) private logger: Logger,
-    private readonly syslumennService: SyslumennService,
-  ) {
+  s3: S3
+  constructor(private readonly syslumennService: SyslumennService) {
     super(ApplicationTypes.ESTATE)
+    this.s3 = new S3()
   }
 
-  stringifyObject(obj: Record<string, unknown>): Record<string, string> {
-    const stringer = cloneDeep(obj)
+  async estateProvider({
+    application,
+  }: TemplateApiModuleActionProps): Promise<boolean> {
+    const applicationData = (application.externalData?.syslumennOnEntry
+      ?.data as { estate: EstateInfo }).estate
 
-    Object.keys(stringer).forEach((key) => {
-      if (typeof stringer[key] !== 'object') {
-        stringer[key] = `${stringer[key]}`
-      } else if (typeof stringer[key] === 'object') {
-        this.stringifyObject(stringer[key] as Record<string, unknown>)
+    const applicationAnswers = (application.answers as unknown) as EstateSchema
+    if (
+      !applicationData?.caseNumber?.length ||
+      applicationData?.caseNumber.length === 0
+    ) {
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.failedDataProviderSubmit,
+          summary: coreErrorMessages.drivingLicenseNoTeachingRightsSummary,
+        },
+        400,
+      )
+    }
+
+    const youngheirs = applicationData.estateMembers.filter(
+      (heir) => kennitala.info(heir.nationalId).age < 18,
+    )
+    // Requirements:
+    //   Flag if any heir is under 18 years old without an advocate/defender
+    //   Unless official division of estate is taking place, then the incoming data need not be validated
+    if (youngheirs.length > 0) {
+      if (youngheirs.some((heir) => !heir.advocate)) {
+        if (
+          applicationAnswers.selectedEstate === EstateTypes.officialDivision
+        ) {
+          return true
+        }
+        throw new TemplateApiError(
+          {
+            title:
+              coreErrorMessages.errorDataProviderEstateHeirsWithoutAdvocate,
+            summary: coreErrorMessages.drivingLicenseNoTeachingRightsSummary,
+          },
+          400,
+        )
       }
-    })
+    }
 
-    // Assert from object traversal
-    return stringer as Record<string, string>
+    return true
   }
 
-  async syslumennOnEntry({ application, auth }: TemplateApiModuleActionProps) {
+  stringifyObject(obj: UploadData): Record<string, string> {
+    const result: Record<string, string> = {}
+    // Curiously: https://github.com/Microsoft/TypeScript/issues/12870
+    for (const key of Object.keys(obj) as Array<keyof typeof obj>) {
+      if (typeof obj[key] === 'string') {
+        result[key] = obj[key] as string
+      } else {
+        result[key] = JSON.stringify(obj[key])
+      }
+    }
+
+    return result
+  }
+
+  async syslumennOnEntry({ application }: TemplateApiModuleActionProps) {
     let estateResponse: EstateInfo
     if (
       application.applicant.startsWith('010130') &&
-      application.applicant.endsWith('2399')
+      (application.applicant.endsWith('2399') ||
+        application.applicant.endsWith('7789'))
     ) {
       estateResponse = {
         addressOfDeceased: 'Gerviheimili 123, 600 Feneyjar',
@@ -80,11 +140,23 @@ export class EstateTemplateService extends BaseTemplateApiService {
         knowledgeOfOtherWills: 'Yes',
         ships: [],
         flyers: [],
+        guns: [
+          {
+            assetNumber: '009-2018-0505',
+            description: 'Framhlaðningur (púður)',
+            share: 1,
+          },
+          {
+            assetNumber: '007-2018-1380',
+            description: 'Mauser P38',
+            share: 1,
+          },
+        ],
         estateMembers: [
           {
-            name: 'Stúfur Mack',
+            name: 'Gervimaður Afríka',
             relation: 'Sonur',
-            nationalId: '2222222229',
+            nationalId: '0101303019',
           },
           {
             name: 'Gervimaður Færeyja',
@@ -97,11 +169,36 @@ export class EstateTemplateService extends BaseTemplateApiService {
             nationalId: '0101304929',
           },
         ],
-        caseNumber: '011515',
+        caseNumber: '2020-000123',
         dateOfDeath: new Date(Date.now() - 1000 * 3600 * 24 * 100),
         nameOfDeceased: 'Lizzy B. Gone',
         nationalIdOfDeceased: '0101301234',
         districtCommissionerHasWill: true,
+      }
+
+      const fakeAdvocate = {
+        name: 'Gervimaður Evrópa',
+        address: 'Gerviheimili 123, 600 Feneyjar',
+        nationalId: '0101302719',
+        email: 'evropa@gervi.com',
+      }
+
+      const fakeChild = {
+        name: 'Gervimaður Undir 18 án málsvara',
+        relation: 'Barn',
+        // This kennitala is for Gervimaður Ísak Miri ÞÍ Jarrah
+        // This test will stop serving its purpose on the 24th of September 2034
+        // eslint-disable-next-line local-rules/disallow-kennitalas
+        nationalId: '2409151460',
+      }
+
+      if (application.applicant.endsWith('7789')) {
+        estateResponse.estateMembers.push(fakeChild)
+      } else {
+        estateResponse.estateMembers.push({
+          ...fakeChild,
+          advocate: fakeAdvocate,
+        })
       }
     } else {
       estateResponse = (
@@ -121,9 +218,12 @@ export class EstateTemplateService extends BaseTemplateApiService {
     }
   }
 
-  async submitApplication({ application, auth }: TemplateApiModuleActionProps) {
+  async completeApplication({ application }: TemplateApiModuleActionProps) {
     const nationalRegistryData = application.externalData.nationalRegistry
       ?.data as NationalRegistry
+
+    const externalData = application.externalData.syslumennOnEntry
+      ?.data as EstateSchema
 
     const person: Person = {
       name: nationalRegistryData?.fullName,
@@ -140,41 +240,129 @@ export class EstateTemplateService extends BaseTemplateApiService {
     const uploadDataName = 'danarbusskipti1.0'
     const uploadDataId = 'danarbusskipti1.0'
 
-    const estateData = ((application.externalData
-      ?.syslumennOnEntry as unknown) as { data: EstateSchema }).data.estate
+    const answers = (application.answers as unknown) as EstateSchema
 
-    // TODO: hook up fields to answers when ready
+    const relation =
+      externalData?.estate.estateMembers?.find(
+        (member) => member.nationalId === application.applicant,
+      )?.relation ?? 'Óþekkt'
+
+    const processedAssets = filterAndRemoveRepeaterMetadata<
+      EstateSchema['estate']['assets']
+    >(answers?.estate?.assets ?? externalData?.estate?.assets ?? [])
+
+    const processedVehicles = filterAndRemoveRepeaterMetadata<
+      EstateSchema['estate']['vehicles']
+    >(answers?.estate?.vehicles ?? externalData?.estate?.vehicles ?? [])
+
+    const processedEstateMembers = filterAndRemoveRepeaterMetadata<
+      EstateSchema['estate']['estateMembers']
+    >(
+      answers?.estate?.estateMembers ??
+        externalData?.estate?.estateMembers ??
+        [],
+    )
+
     const uploadData: UploadData = {
-      //caseNumber: estateData.caseNumber,
-      applicantHasLegalCustodyOverEstate: 'no',
-      assets: [],
-      bankAccounts: [],
-      debts: [],
-      estateMembers: [],
-      inventory: '',
-      inventoryValue: '',
-      moneyAndDepositBoxesInfo: '',
-      moneyAndDepositBoxesValue: '',
-      notifier: {
-        email: '',
-        name: '',
-        phoneNumber: '',
-        relation: '',
-        ssn: '',
+      deceased: {
+        name: externalData.estate.nameOfDeceased ?? '',
+        ssn: externalData.estate.nationalIdOfDeceased ?? '',
+        dateOfDeath: externalData.estate.dateOfDeath?.toString() ?? '',
+        address: externalData.estate.addressOfDeceased ?? '',
       },
-      otherAssets: '',
-      otherAssetsValue: '',
-      stocks: [],
-      undividedEstateResidencePermission: 'no',
-      vehicles: [],
+      districtCommissionerHasWill: answers.estate?.testament?.wills ?? '',
+      settlement: answers.estate?.testament?.agreement ?? '',
+      dividedEstate: answers.estate?.testament?.dividedEstate ?? '',
+      remarksOnTestament: answers.estate?.testament?.additionalInfo ?? '',
+      guns: answers.estate?.guns ?? [],
+      applicationType: answers.selectedEstate,
+      caseNumber: externalData?.estate?.caseNumber ?? '',
+      assets: processedAssets,
+      claims: answers.claims ?? [],
+      bankAccounts: answers.bankAccounts ?? [],
+      debts: answers.debts ?? [],
+      estateMembers: processedEstateMembers,
+      inventory: {
+        info: answers.inventory?.info ?? '',
+        value: answers.inventory?.value ?? '',
+      },
+      moneyAndDeposit: {
+        info: answers.moneyAndDeposit?.info ?? '',
+        value: answers.moneyAndDeposit?.value ?? '',
+      },
+      notifier: {
+        email: answers.applicant.email ?? '',
+        name: answers.applicant.name,
+        phoneNumber: answers.applicant.phone,
+        relation: relation ?? '',
+        ssn: answers.applicant.nationalId,
+      },
+      otherAssets: {
+        info: answers.otherAssets?.info ?? '',
+        value: answers.otherAssets?.value ?? '',
+      },
+      stocks: answers.stocks ?? [],
+      vehicles: processedVehicles,
+      ...(answers.representative?.name
+        ? {
+            representative: {
+              email: answers.representative.email ?? '',
+              name: answers.representative.name,
+              phoneNumber: answers.representative.phone ?? '',
+              ssn: answers.representative.nationalId ?? '',
+            },
+          }
+        : { representative: undefined }),
+      ...(answers.deceasedWithUndividedEstate?.spouse?.nationalId
+        ? {
+            deceasedWithUndividedEstate: {
+              spouse: {
+                name: answers.deceasedWithUndividedEstate.spouse.name ?? '',
+                nationalId:
+                  answers.deceasedWithUndividedEstate.spouse.nationalId,
+              },
+              selection: answers.deceasedWithUndividedEstate.selection ?? '',
+            },
+          }
+        : { deceasedWithUndividedEstate: undefined }),
     }
 
-    // TODO: uncomment once data is ready to be uploaded
-    /*
+    const attachments: Attachment[] = []
+
+    // Convert form data to a PDF backup for syslumenn
+    const pdfBuffer = await transformUploadDataToPDFStream(
+      uploadData,
+      application.id,
+    )
+    attachments.push({
+      name: `Form_data_${uploadData.caseNumber}.pdf`,
+      content: pdfBuffer.toString('base64'),
+    })
+
+    // Retrieve attachments from the application and attach them to the upload data
+    const dateStr = new Date(Date.now()).toISOString().substring(0, 10)
+    for (let i = 0; i < AttachmentPaths.length; i++) {
+      const { path, prefix } = AttachmentPaths[i]
+      const attachmentAnswerData =
+        getValueViaPath<ApplicationFile[]>(application.answers, path) ?? []
+
+      for (let index = 0; index < attachmentAnswerData.length; index++) {
+        if (attachmentAnswerData[index]) {
+          const fileType = attachmentAnswerData[index].name?.split('.').pop()
+          const name = `${prefix}_${index}.${dateStr}.${fileType}`
+          const fileName = (application.attachments as ApplicationAttachments)[
+            attachmentAnswerData[index]?.key
+          ]
+          const content = await this.getFileContentBase64(fileName)
+          attachments.push({ name, content })
+        }
+      }
+    }
+
     const result: DataUploadResponse = await this.syslumennService
       .uploadData(
         [person],
-        undefined,
+        attachments,
         this.stringifyObject(uploadData),
         uploadDataName,
         uploadDataId,
@@ -182,17 +370,30 @@ export class EstateTemplateService extends BaseTemplateApiService {
       .catch((e) => {
         return {
           success: false,
-          errorMessage: e.message
+          errorMessage: e.message,
         }
       })
-    
+
     if (!result.success) {
-      throw new Error(
-        'Application submission failed on syslumadur upload data'
-      )
+      throw new Error('Application submission failed on syslumadur upload data')
     }
     return { sucess: result.success, id: result.caseNumber }
-    */
-    return { success: 'false', id: '1234' }
+  }
+  private async getFileContentBase64(fileName: string): Promise<string> {
+    const { bucket, key } = AmazonS3Uri(fileName)
+
+    const uploadBucket = bucket
+    try {
+      const file = await this.s3
+        .getObject({
+          Bucket: uploadBucket,
+          Key: key,
+        })
+        .promise()
+      const fileContent = file.Body as Buffer
+      return fileContent?.toString('base64') || ''
+    } catch (e) {
+      return 'err'
+    }
   }
 }

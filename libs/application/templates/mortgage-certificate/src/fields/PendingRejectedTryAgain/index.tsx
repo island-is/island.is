@@ -10,7 +10,7 @@ import {
 } from '@island.is/island-ui/core'
 import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
 import { useMutation, useQuery } from '@apollo/client'
-import { PropertyDetail } from '../../types/schema'
+import { PropertyDetail } from '@island.is/api/schema'
 import { gql } from '@apollo/client'
 import { VALIDATE_MORTGAGE_CERTIFICATE_QUERY } from '../../graphql/queries'
 import { m } from '../../lib/messages'
@@ -115,7 +115,7 @@ export const PendingRejectedTryAgain: FC<FieldBaseProps> = ({
         paddingY={1}
         marginBottom={5}
       >
-        <Text fontWeight="semiBold">Valin fasteign</Text>
+        <Text fontWeight="semiBold">{formatMessage(m.selectedProperty)}</Text>
         <Text>
           {propertyDetails?.propertyNumber}
           {' - '}

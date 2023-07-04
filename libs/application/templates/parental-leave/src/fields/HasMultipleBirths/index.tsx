@@ -18,7 +18,10 @@ export const HasMultipleBirths: FC<FieldBaseProps> = ({
   application,
   field,
 }) => {
-  const { errors, setValue } = useFormContext()
+  const {
+    setValue,
+    formState: { errors },
+  } = useFormContext()
   const { formatMessage } = useLocale()
   const { id, title, description } = field
 

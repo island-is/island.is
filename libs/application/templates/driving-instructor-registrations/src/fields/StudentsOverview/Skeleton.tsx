@@ -4,14 +4,14 @@ import { SkeletonLoader, Table as T } from '@island.is/island-ui/core'
 const Skeleton = () => {
   const skeleton = Array(10).fill(
     <>
-      <T.Data box={{ textAlign: 'center' }}>
-        <SkeletonLoader height={30} width="100%" borderRadius="large" />
+      <T.Data box={{ textAlign: 'left' }}>
+        <SkeletonLoader height={40} width="100%" borderRadius="large" />
       </T.Data>
-      <T.Data box={{ textAlign: 'center' }}>
-        <SkeletonLoader height={30} width="100%" borderRadius="large" />
+      <T.Data>
+        <SkeletonLoader height={40} width="100%" borderRadius="large" />
       </T.Data>
-      <T.Data box={{ textAlign: 'center' }}>
-        <SkeletonLoader height={30} width="100%" borderRadius="large" />
+      <T.Data>
+        <SkeletonLoader height={40} width="100%" borderRadius="large" />
       </T.Data>
       <T.Data></T.Data>
     </>,

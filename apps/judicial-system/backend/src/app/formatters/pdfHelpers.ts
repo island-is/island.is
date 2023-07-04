@@ -3,10 +3,12 @@ import { policeStar } from './policeStar'
 
 export const smallFontSize = 9
 export const baseFontSize = 11
+export const basePlusFontSize = 12
 export const mediumFontSize = 14
 export const mediumPlusFontSize = 16
 export const largeFontSize = 18
 export const hugeFontSize = 26
+export const giganticFontSize = 33
 
 function setFont(doc: PDFKit.PDFDocument, font?: string) {
   if (font) {
@@ -105,6 +107,14 @@ export function addEmptyLines(doc: PDFKit.PDFDocument, lines = 1) {
   }
 }
 
+export function addGiganticHeading(
+  doc: PDFKit.PDFDocument,
+  heading: string,
+  font?: string,
+) {
+  addCenteredText(doc, giganticFontSize, heading, font)
+}
+
 export function addHugeHeading(
   doc: PDFKit.PDFDocument,
   heading: string,
@@ -153,6 +163,23 @@ export function addMediumText(
   addText(doc, mediumFontSize, text, font)
 }
 
+export function addNormalPlusText(
+  doc: PDFKit.PDFDocument,
+  text: string,
+  font?: string,
+  continued?: boolean,
+) {
+  addText(doc, basePlusFontSize, text, font, continued)
+}
+
+export function addNormalPlusCenteredText(
+  doc: PDFKit.PDFDocument,
+  text: string,
+  font?: string,
+) {
+  addCenteredText(doc, basePlusFontSize, text, font)
+}
+
 export function addNormalText(
   doc: PDFKit.PDFDocument,
   text: string,
@@ -168,6 +195,14 @@ export function addNormalJustifiedText(
   font?: string,
 ) {
   addJustifiedText(doc, baseFontSize, text, font)
+}
+
+export function addNormalPlusJustifiedText(
+  doc: PDFKit.PDFDocument,
+  text: string,
+  font?: string,
+) {
+  addJustifiedText(doc, basePlusFontSize, text, font)
 }
 
 export function addNormalCenteredText(

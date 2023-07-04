@@ -252,8 +252,7 @@ export const RegulationsSearchSection = (
                   placeholder={txt('searchQueryLabel')}
                   backgroundColor={['blue', 'blue', 'white']}
                   size="md"
-                  icon="search"
-                  iconType="outline"
+                  icon={{ name: 'search', type: 'outline' }}
                   value={filterValue}
                   onChange={(event) => setFilterValue(event.target.value)}
                   onKeyDown={(event) => {

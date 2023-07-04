@@ -1,15 +1,18 @@
 import request from 'supertest'
 
 import { User } from '@island.is/auth-nest-tools'
+import { FixtureFactory } from '@island.is/services/auth/testing'
 import { createCurrentUser } from '@island.is/testing/fixtures'
-import { getRequestMethod, TestApp } from '@island.is/testing/nest'
+import {
+  getRequestMethod,
+  TestApp,
+  TestEndpointOptions,
+} from '@island.is/testing/nest'
 
-import { TestEndpointOptions } from '../../../../test/types'
 import {
   setupWithoutAuth,
   setupWithoutPermission,
 } from '../../../../test/setup'
-import { FixtureFactory } from '@island.is/services/auth/testing'
 
 describe('withoutAuth and permissions', () => {
   async function formatUrl(app: TestApp, endpoint: string, user?: User) {

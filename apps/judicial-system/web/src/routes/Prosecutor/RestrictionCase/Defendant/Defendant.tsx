@@ -10,10 +10,6 @@ import {
   PageLayout,
 } from '@island.is/judicial-system-web/src/components'
 import {
-  RestrictionCaseProsecutorSubsections,
-  Sections,
-} from '@island.is/judicial-system-web/src/types'
-import {
   useCase,
   useInstitution,
 } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -29,11 +25,13 @@ import {
   validateAndSendToServer,
   validateAndSet,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
+import { UpdateDefendant } from '@island.is/judicial-system/types'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
+import { isDefendantStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
 import {
-  Case,
   CaseType,
-  UpdateDefendant,
-} from '@island.is/judicial-system/types'
+  CaseOrigin,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import * as constants from '@island.is/judicial-system/consts'
 
 import {
@@ -41,9 +39,8 @@ import {
   PoliceCaseNumbers,
   usePoliceCaseNumbers,
 } from '../../components'
-import { isDefendantStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
 
-export const StepOne: React.FC = () => {
+export const Defendant: React.FC = () => {
   const {
     workingCase,
     setWorkingCase,
@@ -132,13 +129,9 @@ export const StepOne: React.FC = () => {
   return (
     <PageLayout
       workingCase={workingCase}
-      activeSection={
-        workingCase?.parentCase ? Sections.EXTENSION : Sections.PROSECUTOR
-      }
-      activeSubSection={RestrictionCaseProsecutorSubsections.DEFENDANT}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
-      isExtension={workingCase?.parentCase && true}
+      isExtension={!!workingCase.parentCase}
       onNavigationTo={handleNavigationTo}
       isValid={stepIsValid}
     >
@@ -174,6 +167,7 @@ export const StepOne: React.FC = () => {
                   setWorkingCase={setWorkingCase}
                   onChange={handleUpdateDefendant}
                   updateDefendantState={updateDefendantState}
+                  nationalIdImmutable={workingCase.origin === CaseOrigin.LOKE}
                 />
               </Box>
             )}
@@ -239,6 +233,7 @@ export const StepOne: React.FC = () => {
           </FormContentContainer>
           <FormContentContainer isFooter>
             <FormFooter
+              nextButtonIcon="arrowForward"
               previousUrl={constants.CASES_ROUTE}
               nextIsLoading={isCreatingCase}
               nextIsDisabled={!stepIsValid}
@@ -258,4 +253,4 @@ export const StepOne: React.FC = () => {
   )
 }
 
-export default StepOne
+export default Defendant

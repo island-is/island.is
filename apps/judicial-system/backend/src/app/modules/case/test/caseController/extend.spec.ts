@@ -4,7 +4,6 @@ import { Transaction } from 'sequelize/types'
 
 import {
   CaseCustodyRestrictions,
-  CaseFileState,
   CaseLegalProvisions,
   CaseOrigin,
   CaseState,
@@ -15,11 +14,9 @@ import {
 
 import { createTestingCaseModule } from '../createTestingCaseModule'
 import { randomDate, randomEnum } from '../../../../test'
-import { DefendantService, Defendant } from '../../../defendant'
-import { User } from '../../../user'
-import { Institution } from '../../../institution'
+import { DefendantService } from '../../../defendant'
 import { Case } from '../../models/case.model'
-import { CaseFile } from '../../../file'
+import { include, order } from '../../case.service'
 
 interface Then {
   result: Case
@@ -267,13 +264,13 @@ describe('CaseController - Extend', () => {
     })
 
     it('should copy defendants', () => {
-      expect(mockDefendantService.create).toHaveBeenCalledTimes(2)
-      expect(mockDefendantService.create).toHaveBeenCalledWith(
+      expect(mockDefendantService.createForNewCase).toHaveBeenCalledTimes(2)
+      expect(mockDefendantService.createForNewCase).toHaveBeenCalledWith(
         extendedCaseId,
         defendantOne,
         transaction,
       )
-      expect(mockDefendantService.create).toHaveBeenCalledWith(
+      expect(mockDefendantService.createForNewCase).toHaveBeenCalledWith(
         extendedCaseId,
         defendantTwo,
         transaction,
@@ -297,47 +294,8 @@ describe('CaseController - Extend', () => {
 
     it('should lookup the newly extended case', () => {
       expect(mockCaseModel.findOne).toHaveBeenCalledWith({
-        include: [
-          { model: Defendant, as: 'defendants' },
-          { model: Institution, as: 'court' },
-          {
-            model: User,
-            as: 'creatingProsecutor',
-            include: [{ model: Institution, as: 'institution' }],
-          },
-          {
-            model: User,
-            as: 'prosecutor',
-            include: [{ model: Institution, as: 'institution' }],
-          },
-          { model: Institution, as: 'sharedWithProsecutorsOffice' },
-          {
-            model: User,
-            as: 'judge',
-            include: [{ model: Institution, as: 'institution' }],
-          },
-          {
-            model: User,
-            as: 'registrar',
-            include: [{ model: Institution, as: 'institution' }],
-          },
-          {
-            model: User,
-            as: 'courtRecordSignatory',
-            include: [{ model: Institution, as: 'institution' }],
-          },
-          { model: Case, as: 'parentCase' },
-          { model: Case, as: 'childCase' },
-          {
-            model: CaseFile,
-            as: 'caseFiles',
-            required: false,
-            where: {
-              state: { [Op.not]: CaseFileState.DELETED },
-            },
-          },
-        ],
-        order: [[{ model: Defendant, as: 'defendants' }, 'created', 'ASC']],
+        include,
+        order,
         where: {
           id: extendedCaseId,
           isArchived: false,
@@ -400,7 +358,7 @@ describe('CaseController - Extend', () => {
     beforeEach(async () => {
       const mockCreate = mockCaseModel.create as jest.Mock
       mockCreate.mockResolvedValueOnce(extendedCase)
-      const mockDefendantCreate = mockDefendantService.create as jest.Mock
+      const mockDefendantCreate = mockDefendantService.createForNewCase as jest.Mock
       mockDefendantCreate.mockRejectedValueOnce(new Error('Some error'))
 
       then = await givenWhenThen(caseId, user, theCase)

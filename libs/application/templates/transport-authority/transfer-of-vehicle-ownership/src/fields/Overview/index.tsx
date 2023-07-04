@@ -8,7 +8,7 @@ import {
   AlertMessage,
   InputError,
 } from '@island.is/island-ui/core'
-import { ReviewScreenProps } from '../../types'
+import { ReviewScreenProps } from '../../shared'
 import { useLocale } from '@island.is/localization'
 import {
   applicationCheck,
@@ -45,6 +45,7 @@ export const Overview: FC<FieldBaseProps & ReviewScreenProps> = ({
   setStep,
   reviewerNationalId = '',
   coOwnersAndOperators = [],
+  mainOperator = '',
   ...props
 }) => {
   const { application, refetch, insurance = undefined } = props
@@ -55,6 +56,7 @@ export const Overview: FC<FieldBaseProps & ReviewScreenProps> = ({
     false,
   )
   const [noInsuranceError, setNoInsuranceError] = useState<boolean>(false)
+
   const [submitApplication, { error }] = useMutation(SUBMIT_APPLICATION, {
     onError: (e) => {
       console.error(e, e.message)
@@ -66,7 +68,29 @@ export const Overview: FC<FieldBaseProps & ReviewScreenProps> = ({
     (getValueViaPath(answers, 'buyer.nationalId', '') as string) ===
     reviewerNationalId
 
-  const [validateVehicle, { data, loading }] = useLazyQuery<
+  const doSubmitApplication = async () => {
+    const res = await submitApplication({
+      variables: {
+        input: {
+          id: application.id,
+          event: isLastReviewer(
+            reviewerNationalId,
+            application.answers,
+            coOwnersAndOperators,
+          )
+            ? DefaultEvents.SUBMIT
+            : DefaultEvents.APPROVE,
+          answers: getApproveAnswers(reviewerNationalId, application.answers),
+        },
+      },
+    })
+
+    if (res?.data) {
+      setStep && setStep('conclusion')
+    }
+  }
+
+  const [validateVehicleThenSubmit, { data, loading }] = useLazyQuery<
     any,
     { answers: OwnerChangeAnswers }
   >(
@@ -76,28 +100,7 @@ export const Overview: FC<FieldBaseProps & ReviewScreenProps> = ({
     {
       onCompleted: async (data) => {
         if (!data?.vehicleOwnerChangeValidation?.hasError) {
-          const res = await submitApplication({
-            variables: {
-              input: {
-                id: application.id,
-                event: isLastReviewer(
-                  reviewerNationalId,
-                  application.answers,
-                  coOwnersAndOperators,
-                )
-                  ? DefaultEvents.SUBMIT
-                  : DefaultEvents.APPROVE,
-                answers: getApproveAnswers(
-                  reviewerNationalId,
-                  application.answers,
-                ),
-              },
-            },
-          })
-
-          if (res?.data) {
-            setStep && setStep('conclusion')
-          }
+          await doSubmitApplication()
         }
       },
     },
@@ -106,6 +109,7 @@ export const Overview: FC<FieldBaseProps & ReviewScreenProps> = ({
   const onBackButtonClick = () => {
     setStep && setStep('states')
   }
+
   const onRejectButtonClick = () => {
     setRejectModalVisibility(true)
   }
@@ -116,7 +120,7 @@ export const Overview: FC<FieldBaseProps & ReviewScreenProps> = ({
     } else {
       setNoInsuranceError(false)
       if (isBuyer) {
-        validateVehicle({
+        validateVehicleThenSubmit({
           variables: {
             answers: {
               pickVehicle: {
@@ -136,9 +140,10 @@ export const Overview: FC<FieldBaseProps & ReviewScreenProps> = ({
               },
               buyerCoOwnerAndOperator: answers?.buyerCoOwnerAndOperator?.map(
                 (x) => ({
-                  email: x.email,
-                  nationalId: x.nationalId,
+                  nationalId: x.nationalId!,
+                  email: x.email!,
                   type: x.type,
+                  wasRemoved: x.wasRemoved,
                 }),
               ),
               buyerMainOperator: answers?.buyerMainOperator
@@ -151,28 +156,7 @@ export const Overview: FC<FieldBaseProps & ReviewScreenProps> = ({
           },
         })
       } else {
-        const res = await submitApplication({
-          variables: {
-            input: {
-              id: application.id,
-              event: isLastReviewer(
-                reviewerNationalId,
-                application.answers,
-                coOwnersAndOperators,
-              )
-                ? DefaultEvents.SUBMIT
-                : DefaultEvents.APPROVE,
-              answers: getApproveAnswers(
-                reviewerNationalId,
-                application.answers,
-              ),
-            },
-          },
-        })
-
-        if (res?.data) {
-          setStep && setStep('conclusion')
-        }
+        await doSubmitApplication()
       }
     }
   }
@@ -187,18 +171,21 @@ export const Overview: FC<FieldBaseProps & ReviewScreenProps> = ({
           {formatMessage(overview.general.description)}
         </Text>
         <VehicleSection {...props} reviewerNationalId={reviewerNationalId} />
-        <SellerSection {...props} />
+        <SellerSection {...props} reviewerNationalId={reviewerNationalId} />
         <BuyerSection
           setStep={setStep}
           {...props}
           reviewerNationalId={reviewerNationalId}
         />
         <CoOwnersSection
+          reviewerNationalId={reviewerNationalId}
           coOwnersAndOperators={coOwnersAndOperators}
           {...props}
         />
         <OperatorSection
+          reviewerNationalId={reviewerNationalId}
           coOwnersAndOperators={coOwnersAndOperators}
+          mainOperator={mainOperator}
           {...props}
         />
         <InsuranceSection
@@ -207,11 +194,13 @@ export const Overview: FC<FieldBaseProps & ReviewScreenProps> = ({
           reviewerNationalId={reviewerNationalId}
           noInsuranceError={noInsuranceError}
         />
+
         {error && (
           <InputError
             errorMessage={errorMsg.submitApplicationError.defaultMessage}
           />
         )}
+
         {data?.vehicleOwnerChangeValidation?.hasError &&
         data.vehicleOwnerChangeValidation.errorMessages.length > 0 ? (
           <Box>
@@ -252,6 +241,7 @@ export const Overview: FC<FieldBaseProps & ReviewScreenProps> = ({
             />
           </Box>
         ) : null}
+
         <Box marginTop={14}>
           <Divider />
           <Box display="flex" justifyContent="spaceBetween" paddingY={5}>

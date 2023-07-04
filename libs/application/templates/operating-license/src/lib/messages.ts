@@ -3,22 +3,27 @@ import { defineMessages } from 'react-intl'
 export const attachmentNames = defineMessages({
   one: {
     id: 'ol.application:attachemnt.one',
-    defaultMessage: 'Starfsleyfi heilbrigðisnefndar (valkvætt)',
+    defaultMessage: 'Starfsleyfi heilbrigðisnefndar (ef við á)',
     description: 'Some description',
   },
   two: {
-    id: 'ol.application:attachemnt.one',
-    defaultMessage: 'Staðsetning fyrri leyfishafa (valkvætt)',
+    id: 'ol.application:attachemnt.two',
+    defaultMessage: 'Staðsetning fyrri leyfishafa (ef við á)',
     description: 'Some description',
   },
   three: {
-    id: 'ol.application:attachemnt.one',
+    id: 'ol.application:attachemnt.three',
     defaultMessage: 'Nákvæm teikning af húsnæði (Staðfest)',
     description: 'Some description',
   },
   four: {
-    id: 'ol.application:attachemnt.one',
-    defaultMessage: 'Teikning af útisvæði (valkvætt)',
+    id: 'ol.application:attachemnt.four',
+    defaultMessage: 'Teikning af útisvæði (ef við á)',
+    description: 'Some description',
+  },
+  five: {
+    id: 'ol.application:attachemnt.five',
+    defaultMessage: 'Önnur gögn (ef við á)',
     description: 'Some description',
   },
 })
@@ -50,7 +55,7 @@ export const m = defineMessages({
     description: 'Some description',
   },
   dataCollectionUserProfileTitle: {
-    id: 'cr.application:dataCollection.userProfileTitle',
+    id: 'ol.application:dataCollection.userProfileTitle',
     defaultMessage: 'Netfang og símanúmer úr þínum stillingum',
     description: 'Some description',
   },
@@ -61,7 +66,7 @@ export const m = defineMessages({
     description: 'Some description',
   },
   dataCollectionDebtStatusTitle: {
-    id: 'cr.application:dataCollection.debtStatusTitle',
+    id: 'ol.application:dataCollection.debtStatusTitle',
     defaultMessage: 'Skuldastaða hjá ríkissjóði',
     description: 'Some description',
   },
@@ -83,7 +88,7 @@ export const m = defineMessages({
     description: '',
   },
   dataCollectionNonBankruptcyDisclosureTitle: {
-    id: 'cr.application:dataCollection.nonBankruptcyDisclosureTitle',
+    id: 'ol.application:dataCollection.nonBankruptcyDisclosureTitle',
     defaultMessage: 'Búsforræðisvottorð',
     description: 'Some description',
   },
@@ -135,12 +140,12 @@ export const m = defineMessages({
     description: 'Some description',
   },
   operationCategoryHotelTitle: {
-    id: 'ol.application:applicationInfo.operationCategoryHotel:Title',
+    id: 'ol.application:applicationInfo.operationCategoryHotel.Title',
     defaultMessage: 'Vinsamlegast hakaðu við þá þjónustu sem er í boði',
     description: 'Some description',
   },
   operationCategoryResturantTitle: {
-    id: 'ol.application:applicationInfo.operationCategoryResturant:Title',
+    id: 'ol.application:applicationInfo.operationCategoryResturant.Title',
     defaultMessage: 'Veldu flokk veitingastaðar',
     description: 'Some description',
   },
@@ -151,65 +156,65 @@ export const m = defineMessages({
     description: 'Some description',
   },
   operationCategoryTwo: {
-    id: 'ol.application:applicationInfo.operationCategory:two',
+    id: 'ol.application:applicationInfo.operationCategory.two',
     defaultMessage: 'Flokkur II',
     description: 'Some description',
   },
   operationCategoryThree: {
-    id: 'ol.application:applicationInfo.operationCategory:three',
+    id: 'ol.application:applicationInfo.operationCategory.three',
     defaultMessage: 'Flokkur III',
     description: 'Some description',
   },
   operationCategoryFour: {
-    id: 'ol.application:applicationInfo.operationCategory:four',
+    id: 'ol.application:applicationInfo.operationCategory.four',
     defaultMessage: 'Flokkur IV',
     description: 'Some description',
   },
   operationCategoryResturantTwo: {
-    id: 'ol.application:applicationInfo.operationCategoryResturant:Two',
+    id: 'ol.application:applicationInfo.operationCategoryResturant.Two',
     defaultMessage:
       'Umfangslitlir áfengisveitingastaðir þar sem starfsemin er ekki til þess fallin að valda ónæði í nágrenninu , svo sem með háværri tónlist, og staðir sem kalla ekki á mikið eftirlit og/eða löggæslu.',
     description: 'Some description',
   },
   operationCategoryResturantThree: {
-    id: 'ol.application:applicationInfo.operationCategoryResturant:Three',
+    id: 'ol.application:applicationInfo.operationCategoryResturant.Three',
     defaultMessage:
       'Umfangsmiklir áfengisveitingastaðir, svo sem þar sem leikin er hávær tónlist, og staðir sem kalla á meira eftirlit og/eða löggæslu.',
     description: 'Some description',
   },
   operationCategoryHotelTwo: {
-    id: 'ol.application:applicationInfo.operationCategoryHotel:Two',
+    id: 'ol.application:applicationInfo.operationCategoryHotel.Two',
     defaultMessage: 'Gististaður án veitinga',
     description: 'Some description',
   },
   operationCategoryHotelThree: {
-    id: 'ol.application:applicationInfo.operationCategoryHotel:Three',
+    id: 'ol.application:applicationInfo.operationCategoryHotel.Three',
     defaultMessage: 'Gististaður með veitingum en þó ekki áfengisveitingum',
     description: 'Some description',
   },
   operationCategoryHotelFour: {
-    id: 'ol.application:applicationInfo.operationCategoryHotel:Three',
+    id: 'ol.application:applicationInfo.operationCategoryHotel.Four',
     defaultMessage: 'Gististaðir með áfengisveitingum',
     description: 'Some description',
   },
 
   operationTypeHotelTitle: {
-    id: 'ol.application:applicationInfo.operationTypeHotel:Title',
+    id: 'ol.application:applicationInfo.operationTypeHotel.Title',
     defaultMessage: 'Veldu tegund gististaðar',
     description: 'Some description',
   },
   operationTypeResturantTitle: {
-    id: 'ol.application:applicationInfo.operationTypeResturant:Title',
+    id: 'ol.application:applicationInfo.operationTypeResturant.Title',
     defaultMessage: 'Tegund veitingastaðar',
     description: 'Some description',
   },
   operationTypeHotelDescription: {
-    id: 'ol.application:applicationInfo.operationTypeHotel:Description',
+    id: 'ol.application:applicationInfo.operationTypeHotel.Description',
     defaultMessage: 'Veldu tegund gististaðar',
     description: 'Some description',
   },
   operationTypeResturantDescription: {
-    id: 'ol.application:applicationInfo.operationTypeResturant:Description',
+    id: 'ol.application:applicationInfo.operationTypeResturant.Description',
     defaultMessage: 'Veldu tegund veitingastaðar',
     description: 'Some description',
   },
@@ -264,6 +269,12 @@ export const m = defineMessages({
     defaultMessage: 'Virðisaukaskattsnúmer',
     description: 'Some description',
   },
+  vskNrInvalid: {
+    id: 'ol.application:info.vskNrInvalid',
+    defaultMessage:
+      'Ef númer inniheldur færri en 6 stafi skaltu bæta við 0 fyrir framan.',
+    description: 'Some description',
+  },
   // Property screen
   propertyInfoTitle: {
     id: 'ol.application:propertyInfo.title',
@@ -298,6 +309,11 @@ export const m = defineMessages({
   propertyNumber: {
     id: 'ol.application:propertyInfo.propertyNumber',
     defaultMessage: 'Fasteignanúmer',
+    description: 'Some description',
+  },
+  propertyNameNotFound: {
+    id: 'ol.application:propertyInfo.propertyNameNotFound',
+    defaultMessage: 'Heimilisfang fannst ekki',
     description: 'Some description',
   },
   space: {
@@ -440,7 +456,7 @@ export const m = defineMessages({
   },
   attachmentsBulletFour: {
     id: 'ol.application:attachments.bulletFour',
-    defaultMessage: 'Teikning af útisvæði (valkvætt)',
+    defaultMessage: 'Teikning af útisvæði (ef við á)',
     description: 'Some description',
   },
   uploadHeader: {
@@ -477,7 +493,7 @@ export const m = defineMessages({
   },
   typeHotel: {
     id: 'ol.application:overview.typeHotel',
-    defaultMessage: 'Tegund gististaðar',
+    defaultMessage: 'Tegund staðar',
     description: 'Some description',
   },
   typeResturant: {
@@ -531,7 +547,7 @@ export const m = defineMessages({
     description: 'Oops! Something went wrong when fetching your data',
   },
   applicationPaymentTitle: {
-    id: 'ol.application:complete.title',
+    id: 'ol.application:complete.PaymentTitle',
     defaultMessage: 'Til greiðslu',
     description: 'Some description',
   },
@@ -566,7 +582,7 @@ export const m = defineMessages({
     description: 'Some description',
   },
   no: {
-    id: 'ol.application:yes',
+    id: 'ol.application:no',
     defaultMessage: 'Nei',
     description: 'Some description',
   },

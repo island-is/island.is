@@ -12,16 +12,6 @@ export const payment = {
       defaultMessage: 'Greiðsla',
       description: 'Title of for payment page',
     },
-    tryAgain: {
-      id: 'ta.tvo.application:payment.general.tryAgain',
-      defaultMessage: 'Reyna aftur',
-      description: '',
-    },
-    forwardingToPayment: {
-      id: 'ta.tvo.application:payment.general.forwardingToPayment',
-      defaultMessage: 'Sendi þig áfram á greiðsluveitu...',
-      description: 'Forwarding you to payment handler...',
-    },
   }),
   paymentChargeOverview: defineMessages({
     forPayment: {
@@ -44,46 +34,6 @@ export const payment = {
       defaultMessage:
         'Ef ekki verður komið samþykki frá nýjum eiganda innan 7 daga verður greiðslan endurgreidd og salan gerð óvirk.',
       description: 'Alert message',
-    },
-  }),
-  paymentPending: defineMessages({
-    examplePaymentPendingFieldError: {
-      id:
-        'ta.tvo.application:payment.paymentPending.examplePaymentPendingFieldError',
-      defaultMessage: 'Villa kom upp við að sækja upplýsingar um greiðslu',
-      description: 'An error came up while getting payment information',
-    },
-    submitErrorTitle: {
-      id: 'ta.tvo.application:payment.paymentPending.submitErrorTitle',
-      defaultMessage: 'Móttaka umsóknar tókst ekki',
-      description:
-        'title that shows up when an error occurs while submitting the application',
-    },
-    submitErrorMessage: {
-      id: 'ta.tvo.application:payment.paymentPending.submitErrorMessage',
-      defaultMessage:
-        'Eitthvað fór úrskeiðis við að senda inn umsókn. Reyndu aftur síðar.',
-      description:
-        'Text that shows up when an error occurs while submitting the application',
-    },
-    submitErrorButtonCaption: {
-      id: 'ta.tvo.application:payment.paymentPending.submitErrorButtonCaption',
-      defaultMessage: 'Reyna aftur',
-      description:
-        'Button that shows up when submitting the application fails, allowing you to retry',
-    },
-    paymentPendingDescription: {
-      id: 'ta.tvo.application:payment.paymentPending.paymentPendingDescription',
-      defaultMessage: 'Augnablik meðan beðið er eftir staðfestingu',
-      description: 'Please wait until the payment is confirmed',
-    },
-  }),
-  paymentUrlNotFound: defineMessages({
-    examplePaymentPendingFieldError: {
-      id:
-        'ta.tvo.application:payment.paymentUrlNotFound.examplePaymentPendingFieldError',
-      defaultMessage: 'Villa kom upp við að sækja upplýsingar um greiðslu',
-      description: 'An error came up while getting payment information',
     },
   }),
   confirmation: defineMessages({

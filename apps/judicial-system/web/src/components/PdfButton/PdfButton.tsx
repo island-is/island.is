@@ -10,18 +10,20 @@ interface Props {
   title: string
   pdfType?:
     | 'ruling'
-    | 'caseFiles'
+    | 'caseFilesRecord'
     | 'courtRecord'
     | 'request'
     | 'custodyNotice'
-    | 'ruling/limitedAccess'
-    | 'courtRecord/limitedAccess'
-    | 'request/limitedAccess'
+    | 'indictment'
+    | 'limitedAccess/ruling'
+    | 'limitedAccess/caseFilesRecord'
+    | 'limitedAccess/courtRecord'
+    | 'limitedAccess/request'
+    | 'limitedAccess/indictment'
   disabled?: boolean
-  useSigned?: boolean
   renderAs?: 'button' | 'row'
   handleClick?: () => void
-  policeCaseNumber?: string // Only used if pdfType is caseFiles
+  policeCaseNumber?: string // Only used if pdfType ends with caseFilesRecord
 }
 
 const PdfButton: React.FC<Props> = ({
@@ -29,17 +31,16 @@ const PdfButton: React.FC<Props> = ({
   title,
   pdfType,
   disabled,
-  useSigned = true,
   renderAs = 'button',
   children,
-  // Overwrites the default onClick handler
-  handleClick,
+  handleClick, // Overwrites the default onClick handler
   policeCaseNumber,
 }) => {
   const handlePdfClick = async () => {
-    const newPdfType =
-      pdfType === 'caseFiles' ? `${pdfType}/${policeCaseNumber}` : pdfType
-    const url = `${api.apiUrl}/api/case/${caseId}/${newPdfType}?useSigned=${useSigned}`
+    const newPdfType = pdfType?.endsWith('caseFilesRecord')
+      ? `${pdfType}/${policeCaseNumber}`
+      : pdfType
+    const url = `${api.apiUrl}/api/case/${caseId}/${newPdfType}`
 
     window.open(url, '_blank')
   }
@@ -59,8 +60,20 @@ const PdfButton: React.FC<Props> = ({
   ) : (
     <Box
       data-testid={`${pdfType || ''}PDFButton`}
-      className={styles.pdfRow}
-      onClick={handleClick ? handleClick : pdfType ? handlePdfClick : undefined}
+      className={`${styles.pdfRow} ${disabled ? '' : styles.cursor}`}
+      onClick={() => {
+        if (disabled) {
+          return
+        }
+
+        if (handleClick) {
+          return handleClick()
+        }
+
+        if (pdfType) {
+          return handlePdfClick()
+        }
+      }}
     >
       <Text color="blue400" variant="h4">
         {title}

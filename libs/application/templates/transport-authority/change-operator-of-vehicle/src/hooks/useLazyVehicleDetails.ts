@@ -1,19 +1,19 @@
 import { gql } from '@apollo/client'
-import { VehicleOwnerchangeChecksByPermno } from '@island.is/api/schema'
-import { GET_VEHICLE_OWNERCHANGE_CHECKS_BY_PERMNO } from '../graphql/queries'
+import { VehicleOperatorChangeChecksByPermno } from '@island.is/api/schema'
+import { GET_VEHICLE_OPERATOR_CHANGE_CHECKS_BY_PERMNO } from '../graphql/queries'
 import { useLazyQuery } from './useLazyQuery'
 
 export const useLazyVehicleDetails = () => {
   return useLazyQuery<
     {
-      vehicleOwnerchangeChecksByPermno: VehicleOwnerchangeChecksByPermno
+      vehicleOperatorChangeChecksByPermno: VehicleOperatorChangeChecksByPermno
     },
     {
       permno: string
     }
   >(
     gql`
-      ${GET_VEHICLE_OWNERCHANGE_CHECKS_BY_PERMNO}
+      ${GET_VEHICLE_OPERATOR_CHANGE_CHECKS_BY_PERMNO}
     `,
   )
 }

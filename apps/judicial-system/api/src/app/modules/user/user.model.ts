@@ -1,11 +1,13 @@
-import { Field, ID, ObjectType } from '@nestjs/graphql'
+import { Field, ID, ObjectType, registerEnumType } from '@nestjs/graphql'
 
-import type { UserRole, User as TUser } from '@island.is/judicial-system/types'
+import { UserRole } from '@island.is/judicial-system/types'
 
 import { Institution } from '../institution'
 
+registerEnumType(UserRole, { name: 'UserRole' })
+
 @ObjectType()
-export class User implements TUser {
+export class User {
   @Field(() => ID)
   readonly id!: string
 
@@ -30,7 +32,7 @@ export class User implements TUser {
   @Field()
   readonly email!: string
 
-  @Field(() => String)
+  @Field(() => UserRole)
   readonly role!: UserRole
 
   @Field(() => Institution, { nullable: true })

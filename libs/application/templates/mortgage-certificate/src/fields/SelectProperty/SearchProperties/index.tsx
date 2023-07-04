@@ -10,7 +10,7 @@ import {
   ArrowLink,
 } from '@island.is/island-ui/core'
 import { PropertyTable } from './PropertyTable'
-import { PropertyDetail } from '../../../types/schema'
+import { PropertyDetail } from '@island.is/api/schema'
 import { gql, useLazyQuery } from '@apollo/client'
 import { SEARCH_PROPERTIES_QUERY } from '../../../graphql/queries'
 import { m } from '../../../lib/messages'

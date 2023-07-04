@@ -70,8 +70,8 @@ export class PrerequisitesService {
     }
 
     if (this.companyConditionsAreNotMetForApplicaiton(conditions, debts)) {
-      const reason = this.getCompanyErrorReason(conditions)
-      throw new TemplateApiError(reason, 404)
+      const reasons = this.getCompanyErrorReason(conditions)
+      throw new TemplateApiError(reasons, 404)
     }
 
     return {
@@ -101,8 +101,8 @@ export class PrerequisitesService {
     }
 
     if (this.conditionsAreNotMetForApplicaiton(conditions, debts)) {
-      const reason = this.getErrorReason(conditions)
-      throw new TemplateApiError(reason, 404)
+      const reasons = this.getErrorReason(conditions)
+      throw new TemplateApiError(reasons, 404)
     }
 
     return {
@@ -270,26 +270,27 @@ export class PrerequisitesService {
     }
   }
 
-  private getErrorReason(conditions: ConditionsDT): ProviderErrorReason {
+  private getErrorReason(conditions: ConditionsDT): ProviderErrorReason[] {
+    const errors: ProviderErrorReason[] = []
     if (conditions.maxDebt) {
-      return {
+      errors.push({
         title: errorModal.maxDebtModal.title,
         summary: errorModal.maxDebtModal.summary,
-      }
+      })
     }
 
     if (conditions.collectionActions) {
-      return {
+      errors.push({
         title: errorModal.defaultPaymentCollection.title,
         summary: errorModal.defaultPaymentCollection.summary,
-      }
+      })
     }
 
     if (!conditions.doNotOwe) {
-      return {
+      errors.push({
         title: errorModal.doNotOwe.title,
         summary: errorModal.doNotOwe.summary,
-      }
+      })
     }
 
     if (
@@ -300,40 +301,42 @@ export class PrerequisitesService {
       !conditions.withholdingTaxReturns ||
       !conditions.wageReturns
     ) {
-      return {
+      errors.push({
         title: errorModal.estimationOfReturns.title,
         summary: errorModal.estimationOfReturns.summary,
-      }
+      })
     }
-
-    return {
+    errors.push({
       title: errorModal.noDebts.title,
       summary: errorModal.noDebts.summary,
-    }
+    })
+    return errors
   }
 
   private getCompanyErrorReason(
     conditions: CompanyConditionsDT,
-  ): ProviderErrorReason {
+  ): ProviderErrorReason[] {
+    const errors: ProviderErrorReason[] = []
+
     if (conditions.maxDebt) {
-      return {
+      errors.push({
         title: errorModal.maxDebtModal.title,
         summary: errorModal.maxDebtModal.summary,
-      }
+      })
     }
 
     if (conditions.collectionActions) {
-      return {
+      errors.push({
         title: errorModal.defaultPaymentCollection.title,
         summary: errorModal.defaultPaymentCollection.summary,
-      }
+      })
     }
 
     if (!conditions.doNotOwe) {
-      return {
+      errors.push({
         title: errorModal.doNotOwe.title,
         summary: errorModal.doNotOwe.summary,
-      }
+      })
     }
 
     if (
@@ -343,16 +346,17 @@ export class PrerequisitesService {
       !conditions.accommodationTaxReturns ||
       !conditions.withholdingTaxReturns
     ) {
-      return {
+      errors.push({
         title: errorModal.estimationOfReturns.title,
         summary: errorModal.estimationOfReturns.summary,
-      }
+      })
     }
 
-    return {
+    errors.push({
       title: errorModal.noDebts.title,
       summary: errorModal.noDebts.summary,
-    }
+    })
+    return errors
   }
 
   private getMockData() {

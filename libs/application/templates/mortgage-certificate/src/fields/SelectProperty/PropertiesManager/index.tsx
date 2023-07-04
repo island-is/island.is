@@ -4,7 +4,7 @@ import { getValueViaPath } from '@island.is/application/core'
 import { FieldBaseProps } from '@island.is/application/types'
 import { RegisteredProperties } from '../RegisteredProperties'
 import { SearchProperties } from '../SearchProperties'
-import { PropertyDetail } from '../../../types/schema'
+import { PropertyDetail } from '@island.is/api/schema'
 
 export const PropertiesManager: FC<FieldBaseProps> = ({
   application,
@@ -14,9 +14,11 @@ export const PropertiesManager: FC<FieldBaseProps> = ({
   const { id } = field
   const { setValue } = useFormContext()
 
-  const { properties } = externalData.nationalRegistryRealEstate?.data as {
+  const nationalRegistryRealEstateData = externalData.nationalRegistryRealEstate
+    ?.data as {
     properties: [PropertyDetail]
-  }
+  } | null
+  const properties = nationalRegistryRealEstateData?.properties
 
   let selectedPropertyNumber = getValueViaPath(
     application.answers,
@@ -60,7 +62,7 @@ export const PropertiesManager: FC<FieldBaseProps> = ({
     <Controller
       name="selectProperty.propertyNumber"
       defaultValue={selectedPropertyNumber || defaultProperty?.propertyNumber}
-      render={({ value, onChange }) => {
+      render={({ field: { onChange, value } }) => {
         return (
           <>
             <RegisteredProperties

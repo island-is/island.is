@@ -55,33 +55,5 @@ export class IdentityResourcesDTO {
   @ApiProperty({
     example: false,
   })
-  readonly grantToLegalGuardians!: boolean
-
-  @IsBoolean()
-  @IsNotEmpty()
-  @ApiProperty({
-    example: false,
-  })
-  readonly grantToProcuringHolders!: boolean
-
-  @IsBoolean()
-  @IsNotEmpty()
-  @ApiProperty({
-    example: false,
-  })
-  readonly allowExplicitDelegationGrant!: boolean
-
-  @IsBoolean()
-  @IsNotEmpty()
-  @ApiProperty({
-    example: false,
-  })
   readonly automaticDelegationGrant!: boolean
-
-  @IsBoolean()
-  @IsNotEmpty()
-  @ApiProperty({
-    example: false,
-  })
-  readonly alsoForDelegatedUser!: boolean
 }

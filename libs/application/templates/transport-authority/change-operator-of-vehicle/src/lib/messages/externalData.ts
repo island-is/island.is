@@ -42,15 +42,13 @@ export const externalData = {
   nationalRegistry: defineMessages({
     title: {
       id: 'ta.cov.application:externalData.nationalRegistry.title',
-      defaultMessage: 'Persónuupplýsingar úr Þjóðskrá',
-      description: 'Personal information from the National Registry',
+      defaultMessage: 'Upplýsingar úr Þjóðskrá/Fyrirtækjaskrá',
+      description: 'Information from the National Registry/Company Registry',
     },
     subTitle: {
       id: 'ta.cov.application:externalData.nationalRegistry.subTitle',
-      defaultMessage:
-        'Til þess að auðvelda fyrir sækjum við persónuupplýsingar úr Þjóðskrá til þess að fylla út umsóknina',
-      description:
-        'Information from the National Registry will be used to prefill the data in the application',
+      defaultMessage: 'Hér sækjum við nafn, kennitölu og heimilisfang',
+      description: 'We will fetch name, national id and address',
     },
   }),
   userProfile: defineMessages({

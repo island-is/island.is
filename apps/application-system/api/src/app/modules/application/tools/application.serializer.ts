@@ -23,12 +23,23 @@ import { getCurrentUser } from '@island.is/auth-nest-tools'
 import { Application } from '@island.is/application/api/core'
 import { ApplicationResponseDto } from '../dto/application.response.dto'
 import { getCurrentLocale } from '../utils/currentLocale'
-import isObject from 'lodash/isObject'
+import {
+  HistoryService,
+  History,
+  HistoryBuilder,
+} from '@island.is/application/api/history'
+import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
+import { getApplicationNameTranslationString } from '../utils/application'
 
 @Injectable()
 export class ApplicationSerializer
   implements NestInterceptor<Application, Promise<unknown>> {
-  constructor(private intlService: IntlService) {}
+  constructor(
+    private intlService: IntlService,
+    private historyService: HistoryService,
+    private historyBuilder: HistoryBuilder,
+    private featureFlagService: FeatureFlagService,
+  ) {}
 
   intercept(
     context: ExecutionContext,
@@ -42,9 +53,29 @@ export class ApplicationSerializer
         const isArray = Array.isArray(res)
 
         if (isArray) {
+          const applications = res as Application[]
+          const showHistory = await this.featureFlagService.getValue(
+            Features.applicationSystemHistory,
+            false,
+            user,
+          )
+
+          let histories: History[] = []
+          if (showHistory) {
+            histories = await this.historyService.getStateHistory(
+              applications.map((item) => item.id),
+            )
+          }
+
           return Promise.all(
-            (res as Application[]).map((item) =>
-              this.serialize(item, user.nationalId, locale),
+            applications.map((item) =>
+              this.serialize(
+                item,
+                user.nationalId,
+                locale,
+                histories.filter((x) => x.application_id === item.id),
+                showHistory,
+              ),
             ),
           )
         }
@@ -54,7 +85,13 @@ export class ApplicationSerializer
     )
   }
 
-  async serialize(model: Application, nationalId: string, locale: Locale) {
+  async serialize(
+    model: Application,
+    nationalId: string,
+    locale: Locale,
+    historyModel: History[] = [],
+    showHistory = true,
+  ) {
     const application = model.toJSON() as BaseApplication
     const template = await getApplicationTemplateByTypeId(
       application.typeId as ApplicationTypes,
@@ -70,22 +107,22 @@ export class ApplicationSerializer
     const actors =
       application.applicant === nationalId ? application.applicantActors : []
 
-    const getApplicationName = () => {
-      if (typeof template.name === 'function') {
-        const returnValue = template.name(application)
-        if (
-          isObject(returnValue) &&
-          'value' in returnValue &&
-          'name' in returnValue
-        ) {
-          return intl.formatMessage(returnValue.name, {
-            value: returnValue.value,
-          })
-        }
-        return intl.formatMessage(returnValue)
-      }
-      return intl.formatMessage(template.name)
-    }
+    const pendingAction = showHistory
+      ? helper.getCurrentStatePendingAction(
+          application,
+          userRole,
+          intl.formatMessage,
+          nationalId,
+        )
+      : undefined
+
+    const history = showHistory
+      ? await this.historyBuilder.buildApplicationHistory(
+          historyModel,
+          intl.formatMessage,
+          helper,
+        )
+      : undefined
 
     const dto = plainToInstance(ApplicationResponseDto, {
       ...application,
@@ -105,8 +142,16 @@ export class ApplicationSerializer
             : null,
         },
         deleteButton: roleInState?.delete,
+        pendingAction,
+        history,
+        draftFinishedSteps: application.draftFinishedSteps,
+        draftTotalSteps: application.draftTotalSteps,
       },
-      name: getApplicationName(),
+      name: getApplicationNameTranslationString(
+        template,
+        application,
+        intl.formatMessage,
+      ),
       institution: template.institution
         ? intl.formatMessage(template.institution)
         : null,

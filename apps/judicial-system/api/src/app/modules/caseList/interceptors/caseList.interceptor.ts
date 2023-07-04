@@ -9,6 +9,7 @@ import {
 } from '@nestjs/common'
 
 import { CaseListEntry } from '../models/caseList.model'
+import { getAppealedDate } from '@island.is/judicial-system/types'
 
 @Injectable()
 export class CaseListInterceptor implements NestInterceptor {
@@ -24,6 +25,10 @@ export class CaseListInterceptor implements NestInterceptor {
             isValidToDateInThePast: theCase.validToDate
               ? Date.now() > new Date(theCase.validToDate).getTime()
               : theCase.isValidToDateInThePast,
+            appealedDate: getAppealedDate(
+              theCase.prosecutorPostponedAppealDate,
+              theCase.accusedPostponedAppealDate,
+            ),
           }
         })
       }),

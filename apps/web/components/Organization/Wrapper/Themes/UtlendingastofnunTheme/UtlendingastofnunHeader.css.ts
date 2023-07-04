@@ -4,10 +4,6 @@ import { themeUtils } from '@island.is/island-ui/theme'
 export const headerBg = style({
   height: 385,
   marginTop: -130,
-  background:
-    'url(https://images.ctfassets.net/8k0h54kbe6bj/70WAintbuEXuwg8M3ab2A2/de41b5695a2c527180771048537890a5/Utlendingastofnun-Header.png)',
-  backgroundSize: 'cover',
-  backgroundPosition: 'center',
 })
 
 export const headerContainer = style({

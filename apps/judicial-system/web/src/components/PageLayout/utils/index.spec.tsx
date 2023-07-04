@@ -4,12 +4,9 @@ import { render, screen } from '@testing-library/react'
 import { MockedProvider } from '@apollo/client/testing'
 
 import { LocaleProvider } from '@island.is/localization'
-import {
-  CaseDecision,
-  CaseState,
-  CaseType,
-} from '@island.is/judicial-system/types'
+import { CaseDecision, CaseState } from '@island.is/judicial-system/types'
 import { mockCase } from '@island.is/judicial-system-web/src/utils/mocks'
+import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { caseResult } from './'
 
@@ -34,17 +31,6 @@ const renderMessage = (getMessage: Props['getMessage']) => {
 
 describe('Page layout utils', () => {
   describe('caseResult function', () => {
-    it('should return an empty string workingCase parameter is not set', async () => {
-      // Arrange
-      const workingCase = undefined
-
-      // Act
-      renderMessage((formatMessage) => caseResult(formatMessage, workingCase))
-
-      // Assert
-      expect(await screen.findByTestId('message')).toBeEmptyDOMElement()
-    })
-
     describe('isRejected', () => {
       it('should return the correct string if the case is an investigation case and the state is REJECTED', async () => {
         // Arrange
@@ -218,7 +204,6 @@ describe('Page layout utils', () => {
       // Arrange
       const workingCase = {
         ...mockCase(CaseType.CUSTODY),
-        type: CaseType.CUSTODY,
         state: CaseState.ACCEPTED,
         decision: CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN,
         isValidToDateInThePast: true,

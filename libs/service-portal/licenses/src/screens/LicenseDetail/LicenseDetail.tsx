@@ -15,7 +15,6 @@ import {
   Pagination,
 } from '@island.is/island-ui/core'
 import {
-  ServicePortalModuleComponent,
   UserInfoLine,
   CardLoader,
   ErrorScreen,
@@ -139,7 +138,8 @@ const DataFields = ({
                   renderContent={
                     field.value &&
                     (field.label?.toLowerCase().includes('gildir til') ||
-                      field.label?.toLowerCase().includes('gildistími')) &&
+                      field.label?.toLowerCase().includes('gildistími') ||
+                      field.label?.toLowerCase().includes('valid to')) &&
                     isValid(new Date(field.value))
                       ? () => (
                           <Box display="flex" alignItems="center">
@@ -318,7 +318,7 @@ type UseParams = {
   provider: string
 }
 
-const LicenseDetail: ServicePortalModuleComponent = () => {
+const LicenseDetail = () => {
   useNamespaces('sp.license')
   const { formatMessage } = useLocale()
   const { data: userProfile } = useUserProfile()

@@ -67,10 +67,6 @@ export const WithProgressMeter = () => (
     }}
     text="Toyota CHR"
     cta={{ label: 'Continue process', variant: 'text' }}
-    progressMeter={{
-      active: true,
-      progress: 0.7,
-    }}
   />
 )
 
@@ -83,11 +79,6 @@ export const RoseColoredProgressMeter = () => (
     }}
     text="Toyota CHR"
     cta={{ label: 'Continue process', variant: 'text' }}
-    progressMeter={{
-      active: true,
-      progress: 0.7,
-      variant: 'rose',
-    }}
   />
 )
 
@@ -106,10 +97,6 @@ export const ApplicationCardInProgressVariant = () => (
       variant: 'ghost',
       size: 'small',
       icon: undefined,
-    }}
-    progressMeter={{
-      active: true,
-      progress: 0.7,
     }}
   />
 )
@@ -130,11 +117,6 @@ export const ApplicationCardCompletedVariant = () => (
       size: 'small',
       icon: undefined,
     }}
-    progressMeter={{
-      active: true,
-      progress: 1,
-      variant: 'blue',
-    }}
   />
 )
 
@@ -147,6 +129,23 @@ export const Avatar = () => (
       label: 'Skoða upplýsingar',
       variant: 'text',
       size: 'small',
+    }}
+  />
+)
+
+export const Destructive = () => (
+  <ActionCard
+    heading="Delete application in staging environment"
+    headingVariant="h4"
+    text="Delete application in staging environment"
+    backgroundColor="red"
+    cta={{
+      label: 'Delete',
+      buttonType: {
+        variant: 'primary',
+        colorScheme: 'destructive',
+      },
+      icon: undefined,
     }}
   />
 )

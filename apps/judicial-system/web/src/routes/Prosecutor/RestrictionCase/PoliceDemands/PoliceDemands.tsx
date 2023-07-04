@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useCallback, useContext, useState } from 'react'
 import { IntlShape, useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
@@ -13,10 +13,10 @@ import {
   ProsecutorCaseInfo,
 } from '@island.is/judicial-system-web/src/components'
 import {
-  RestrictionCaseProsecutorSubsections,
-  Sections,
-} from '@island.is/judicial-system-web/src/types'
-import { useCase, useDeb } from '@island.is/judicial-system-web/src/utils/hooks'
+  useCase,
+  useDeb,
+  useOnceOn,
+} from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   core,
   rcDemands,
@@ -27,7 +27,6 @@ import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader
 import {
   CaseCustodyRestrictions,
   CaseDecision,
-  CaseType,
   Defendant,
   Gender,
   isAcceptingCaseDecision,
@@ -53,6 +52,7 @@ import {
   legalProvisions,
   travelBanProvisions,
 } from '@island.is/judicial-system-web/src/utils/laws'
+import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
 import * as constants from '@island.is/judicial-system/consts'
 
 import * as styles from './PoliceDemands.css'
@@ -98,6 +98,7 @@ export const PoliceDemands: React.FC = () => {
     setWorkingCase,
     isLoadingWorkingCase,
     caseNotFound,
+    isCaseUpToDate,
   } = useContext(FormContext)
   const router = useRouter()
   const { formatMessage } = useIntl()
@@ -111,14 +112,15 @@ export const PoliceDemands: React.FC = () => {
     'requestedOtherRestrictions',
   ])
 
-  useEffect(() => {
+  const initialize = useCallback(() => {
     if (
       !workingCase.requestedOtherRestrictions &&
       workingCase.requestedCustodyRestrictions &&
       workingCase.requestedCustodyRestrictions.indexOf(
         CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_REQUIRE_NOTIFICATION,
       ) > -1 &&
-      workingCase.defendants
+      workingCase.defendants &&
+      workingCase.defendants.length > 0
     ) {
       setAndSendCaseToServer(
         [
@@ -135,6 +137,8 @@ export const PoliceDemands: React.FC = () => {
       )
     }
   }, [setAndSendCaseToServer, formatMessage, setWorkingCase, workingCase])
+
+  useOnceOn(isCaseUpToDate, initialize)
 
   const onDemandsChange = React.useCallback(
     (
@@ -175,10 +179,6 @@ export const PoliceDemands: React.FC = () => {
   return (
     <PageLayout
       workingCase={workingCase}
-      activeSection={
-        workingCase?.parentCase ? Sections.EXTENSION : Sections.PROSECUTOR
-      }
-      activeSubSection={RestrictionCaseProsecutorSubsections.POLICE_DEMANDS}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
       isValid={stepIsValid}
@@ -546,6 +546,7 @@ export const PoliceDemands: React.FC = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
+          nextButtonIcon="arrowForward"
           previousUrl={`${constants.RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`}
           onNextButtonClick={() =>
             handleNavigationTo(constants.RESTRICTION_CASE_POLICE_REPORT_ROUTE)

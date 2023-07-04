@@ -182,7 +182,11 @@ export const ConfirmationField: FC<FieldBaseProps & ConfirmationFieldProps> = ({
         iconType="outline"
         onClick={() => {
           window.open(
-            formatText(m.criminalRecordInboxLink, application, formatMessage),
+            formatText(
+              `${window.location.origin}/minarsidur/postholf`,
+              application,
+              formatMessage,
+            ),
             '_blank',
           )
         }}

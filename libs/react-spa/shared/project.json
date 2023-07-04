@@ -1,0 +1,23 @@
+{
+  "root": "libs/react-spa/shared",
+  "sourceRoot": "libs/react-spa/shared/src",
+  "projectType": "library",
+  "tags": ["lib:react-spa", "scope:react-spa"],
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["libs/react-spa/shared/**/*.{ts,tsx,js,jsx}"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/react-spa/shared"],
+      "options": {
+        "jestConfig": "libs/react-spa/shared/jest.config.js",
+        "passWithNoTests": true
+      }
+    }
+  }
+}

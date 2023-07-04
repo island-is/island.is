@@ -1,0 +1,12 @@
+{
+  "@odata.context": "https://dev-re.crm4.dynamics.com/api/data/v9.1/$metadata#star_clients(star_nationalid,star_name,star_type)",
+  "value": [
+    {
+      "@odata.etag": "W/\"1812014\"",
+      "star_nationalid": "1234567890",
+      "star_name": "Kirkjugarður Íslands",
+      "star_type": 150000002,
+      "star_clientid": "f3afcc90-c3fb-ec11-82e5-000d3adf2064"
+    }
+  ]
+}

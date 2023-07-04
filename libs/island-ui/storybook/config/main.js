@@ -12,6 +12,7 @@ module.exports = {
     '../../core/src/**/*.stories.@(tsx|mdx)',
     '../../../application/ui-fields/src/lib/AsGuide.stories.mdx',
     '../../../application/ui-fields/**/*.stories.@(tsx|mdx)',
+    '../../../application/ui-components/**/*.stories.@(tsx|mdx)',
   ],
   addons: [
     '@storybook/addon-a11y',
@@ -79,6 +80,11 @@ module.exports = {
           '../../../shared/components/src',
         ),
         '@island.is/localization': rootDir('../../../localization/src'),
+        '@island.is/react/components': rootDir('../../../react/components/src'),
+        '@island.is/react/feature-flags': rootDir(
+          '../../../react/feature-flags/src',
+        ),
+        '@island.is/feature-flags': rootDir('../../../feature-flags/src'),
       },
     }
 

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { EventHandler, PowerBIEmbed } from 'powerbi-client-react'
 import { Embed, models, Report, VisualDescriptor } from 'powerbi-client'
 import { useApolloClient, useQuery } from '@apollo/client'
@@ -6,18 +6,13 @@ import { useRouter } from 'next/router'
 import {
   GetNamespaceQuery,
   GetNamespaceQueryVariables,
-  PowerBiEmbedTokenQuery,
-  PowerBiEmbedTokenQueryVariables,
   PowerBiSlice as PowerBiSliceSchema,
 } from '@island.is/web/graphql/schema'
-import { POWERBI_EMBED_TOKEN_QUERY } from '@island.is/web/screens/queries/PowerBi'
-import { AlertMessage, Box } from '@island.is/island-ui/core'
-import { GET_SINGLE_SHIP } from '@island.is/web/screens/queries/Fiskistofa'
 import { GET_NAMESPACE_QUERY } from '@island.is/web/screens/queries'
 import { useI18n } from '@island.is/web/i18n'
 import { useNamespace } from '@island.is/web/hooks'
-
-import * as styles from './PowerBiSlice.css'
+import { GET_SINGLE_SHIP } from '@island.is/web/screens/queries/Fiskistofa'
+import { theme } from '@island.is/island-ui/theme'
 
 type EventType =
   | 'loaded'
@@ -40,13 +35,16 @@ type EventType =
   | 'selectionChanged'
   | 'renderingStarted'
 
-const slicerStateContainsShipNameAndNumberTarget = (
+const slicerStateContainsExpectedTarget = (
   slicerState: models.ISlicerState,
+  expectedTarget = {
+    column: 'Skip',
+    table: 'Skipaskra',
+  },
 ) => {
-  const value = 'Skip nafn og númer'
   return (
-    slicerState?.filters?.[0]?.target?.['column'] === value ||
-    slicerState?.targets?.[0]?.['column'] === value
+    slicerState?.filters?.[0]?.target?.['column'] === expectedTarget?.column ||
+    slicerState?.targets?.[0]?.['column'] === expectedTarget?.column
   )
 }
 
@@ -55,7 +53,7 @@ const convertShipNameToSlicerDropdownValue = (
   shipNumber: string | number,
 ) => {
   const nameSplit = shipName.split(' ')
-  return `${nameSplit.slice(0, nameSplit.length - 1).join(' ')}-${
+  return `${nameSplit.slice(0, nameSplit.length - 1).join(' ')} ${
     nameSplit[nameSplit.length - 1]
   } (${shipNumber})`
 }
@@ -65,16 +63,21 @@ interface PowerBiSliceProps {
 }
 
 export const PowerBiSlice = ({ slice }: PowerBiSliceProps) => {
-  const [embedPropsFromServer, setEmbedPropsFromServer] = useState<{
-    accessToken: string
-    embedUrl: string
-    tokenType: models.TokenType
-  } | null>(null)
-  const [shouldRender, setShouldRender] = useState(false)
   const router = useRouter()
   const [embeddedReport, setEmbeddedReport] = useState<Report | null>(null)
-  const [errorOccurred, setErrorOccurred] = useState(false)
   const { activeLocale } = useI18n()
+  const width = useMemo(() => {
+    return (
+      window.innerWidth ||
+      document.documentElement.clientWidth ||
+      document.body.clientWidth
+    )
+  }, [])
+  const embedRef = useRef<Embed | null>(null)
+
+  const layoutShouldBeMobilePortrait =
+    slice?.powerBiEmbedProps?.displayMobilePortraitLayoutOnSmallScreens &&
+    width < theme.breakpoints.lg
 
   const namespaceResponse = useQuery<
     GetNamespaceQuery,
@@ -93,6 +96,68 @@ export const PowerBiSlice = ({ slice }: PowerBiSliceProps) => {
   }, [namespaceResponse?.data?.getNamespace?.fields])
 
   const n = useNamespace(namespace)
+
+  const fiskistofaShipSearchTarget = n('fiskistofaShipSearchTarget', {
+    column: 'Skip',
+    table: 'Skipaskra',
+  })
+
+  const updateReportStateFromQueryParams = async (report?: Report) => {
+    if (!report) {
+      report = embeddedReport
+    }
+
+    const nr = Number(router.query.nr)
+
+    if (!report || isNaN(nr)) return
+
+    const page = await report.getActivePage()
+
+    const slicers = await page.getSlicers()
+
+    for (const visual of slicers) {
+      if (visual.type !== 'slicer') continue
+
+      const slicer = visual as VisualDescriptor
+
+      const slicerState = await slicer.getSlicerState()
+
+      if (
+        !slicerStateContainsExpectedTarget(
+          slicerState,
+          fiskistofaShipSearchTarget,
+        )
+      )
+        return
+
+      const response = await apolloClient.query({
+        query: GET_SINGLE_SHIP,
+        variables: {
+          input: {
+            shipNumber: nr,
+          },
+        },
+      })
+
+      const ship = response?.data?.fiskistofaGetSingleShip?.fiskistofaSingleShip
+
+      if (!ship?.name) return
+      slicer.setSlicerState({
+        ...slicerState,
+        filters: [
+          {
+            $schema: 'http://powerbi.com/product/schema#basic',
+            filterType: 1,
+            operator: 'In',
+            requireSingleSelection: false,
+            target: fiskistofaShipSearchTarget,
+            ...slicerState.filters?.[0],
+            values: [convertShipNameToSlicerDropdownValue(ship.name, nr)],
+          },
+        ],
+      })
+    }
+  }
 
   const eventHandlers = new Map<EventType, EventHandler>([
     [
@@ -120,6 +185,57 @@ export const PowerBiSlice = ({ slice }: PowerBiSliceProps) => {
       },
     ],
     [
+      'pageChanged',
+      async (event) => {
+        const pageName = event.detail?.newPage?.name
+
+        if (pageName) {
+          if (layoutShouldBeMobilePortrait && embedRef.current) {
+            embedRef.current.element.style.height = '100%'
+
+            const pageElementStyle =
+              slice?.powerBiEmbedProps?.style?.pages?.[pageName]?.element ?? {}
+            for (const key of Object.keys(pageElementStyle)) {
+              const value = pageElementStyle?.[key]
+              if (value) {
+                embedRef.current.element.style[key] = value
+              }
+            }
+            const pageIframeStyle =
+              slice?.powerBiEmbedProps?.style?.pages?.[pageName]?.iframe ?? {}
+            for (const key of Object.keys(pageIframeStyle)) {
+              const value = pageIframeStyle?.[key]
+              if (value) {
+                embedRef.current.iframe.style[key] = value
+              }
+            }
+          }
+
+          const params = new URLSearchParams(window.location.search)
+
+          const query = {}
+
+          for (const [key, value] of params.entries()) {
+            query[key] = value
+          }
+
+          router.query = query
+
+          router.push(
+            {
+              pathname: router.asPath.split('?')[0].split('#')[0],
+              query: {
+                ...query,
+                pageName,
+              },
+            },
+            undefined,
+            { shallow: true },
+          )
+        }
+      },
+    ],
+    [
       'dataSelected',
       async (event) => {
         const visualName = event.detail?.visual?.name as string
@@ -142,7 +258,10 @@ export const PowerBiSlice = ({ slice }: PowerBiSliceProps) => {
         // and the data that got changed relates to a ship number
         if (
           slice?.owner === 'Fiskistofa' &&
-          slicerStateContainsShipNameAndNumberTarget(slicerState)
+          slicerStateContainsExpectedTarget(
+            slicerState,
+            fiskistofaShipSearchTarget,
+          )
         ) {
           const value: string = slicerState.filters?.[0]?.['values']?.[0] ?? ''
           const firstParenthesis = value.indexOf('(')
@@ -168,50 +287,6 @@ export const PowerBiSlice = ({ slice }: PowerBiSliceProps) => {
 
   const apolloClient = useApolloClient()
 
-  useEffect(() => {
-    const sliceNeedsEmbedParams =
-      !!slice.owner && !!slice.reportId && !!slice.workspaceId
-
-    if (!sliceNeedsEmbedParams) {
-      setShouldRender(true)
-      return
-    }
-
-    const getEmbedPropsFromServer = async () => {
-      setShouldRender(false)
-      const response = await apolloClient.query<
-        PowerBiEmbedTokenQuery,
-        PowerBiEmbedTokenQueryVariables
-      >({
-        query: POWERBI_EMBED_TOKEN_QUERY,
-        variables: {
-          input: {
-            reportId: slice.reportId,
-            owner: slice.owner,
-            workspaceId: slice.workspaceId,
-          },
-        },
-      })
-      if (
-        response?.data?.powerbiEmbedToken?.token &&
-        response?.data?.powerbiEmbedToken?.embedUrl
-      ) {
-        setEmbedPropsFromServer({
-          accessToken: response.data.powerbiEmbedToken.token,
-          embedUrl: response.data.powerbiEmbedToken.embedUrl,
-          tokenType: models.TokenType.Embed,
-        })
-        setShouldRender(true)
-        setErrorOccurred(false)
-      } else {
-        setErrorOccurred(true)
-      }
-    }
-
-    getEmbedPropsFromServer()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [slice.owner, slice.reportId, slice.workspaceId])
-
   // If the report is owned by Fiskistofa then make sure to update the report if the 'nr' query param is set
   useEffect(() => {
     if (
@@ -220,51 +295,6 @@ export const PowerBiSlice = ({ slice }: PowerBiSliceProps) => {
       slice?.owner !== 'Fiskistofa'
     ) {
       return
-    }
-
-    const updateReportStateFromQueryParams = async () => {
-      const nr = Number(router.query.nr)
-      const page = await embeddedReport.getActivePage()
-
-      const slicers = await page.getSlicers()
-
-      for (const visual of slicers) {
-        if (visual.type !== 'slicer') continue
-
-        const slicer = visual as VisualDescriptor
-
-        const slicerState = await slicer.getSlicerState()
-
-        if (!slicerStateContainsShipNameAndNumberTarget(slicerState)) return
-
-        const response = await apolloClient.query({
-          query: GET_SINGLE_SHIP,
-          variables: {
-            input: {
-              shipNumber: nr,
-            },
-          },
-        })
-
-        const ship =
-          response?.data?.fiskistofaGetSingleShip?.fiskistofaSingleShip
-
-        if (!ship?.name) return
-        slicer.setSlicerState({
-          ...slicerState,
-          filters: [
-            {
-              $schema: 'http://powerbi.com/product/schema#basic',
-              filterType: 1,
-              operator: 'In',
-              requireSingleSelection: false,
-              target: { table: 'Skipasaga', column: 'Skip nafn og númer' },
-              ...slicerState.filters?.[0],
-              values: [convertShipNameToSlicerDropdownValue(ship.name, nr)],
-            },
-          ],
-        })
-      }
     }
 
     updateReportStateFromQueryParams()
@@ -276,6 +306,8 @@ export const PowerBiSlice = ({ slice }: PowerBiSliceProps) => {
     // Default styles
     embed.element.style.height = '600px'
     embed.iframe.style.border = 'none'
+
+    embedRef.current = embed
 
     // Apply styles to containing element from CMS
     const elementStyle = slice?.powerBiEmbedProps?.style?.element
@@ -300,18 +332,6 @@ export const PowerBiSlice = ({ slice }: PowerBiSliceProps) => {
     }
   }
 
-  if (!shouldRender) return <Box className={styles.blankContainer} />
-
-  if (errorOccurred) {
-    return (
-      <AlertMessage
-        title={n('errorTitle', 'Villa kom upp')}
-        message={n('errorMessage', 'Ekki tókst að hlaða upp Power Bi skýrslu')}
-        type="error"
-      />
-    )
-  }
-
   const embedProps = slice?.powerBiEmbedProps?.embedProps ?? {}
 
   return (
@@ -319,7 +339,16 @@ export const PowerBiSlice = ({ slice }: PowerBiSliceProps) => {
       embedConfig={{
         type: 'report',
         ...embedProps,
-        ...embedPropsFromServer,
+        ...(layoutShouldBeMobilePortrait && {
+          settings: {
+            ...embedProps?.settings,
+            layoutType: models.LayoutType.MobilePortrait,
+          },
+        }),
+        ...(slice?.powerBiEmbedPropsFromServer && {
+          ...slice.powerBiEmbedPropsFromServer,
+          tokenType: models.TokenType.Embed,
+        }),
       }}
       getEmbeddedComponent={getEmbeddedComponent}
       eventHandlers={eventHandlers}

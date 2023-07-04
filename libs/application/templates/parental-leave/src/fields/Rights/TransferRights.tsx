@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 
 import { RadioFormField } from '@island.is/application/ui-fields'
@@ -12,6 +12,7 @@ import { useLocale } from '@island.is/localization'
 
 import { parentalLeaveFormMessages } from '../../lib/messages'
 import {
+  allowOtherParent,
   getApplicationAnswers,
   getMaxMultipleBirthsDays,
   getMultipleBirthRequestDays,
@@ -97,6 +98,8 @@ export const TransferRights: FC<FieldBaseProps & CustomField> = ({
     hasMultipleBirths,
   } = getApplicationAnswers(application.answers)
 
+  const canTransferRights = allowOtherParent(application.answers)
+
   const multipleBirthsRequestDays = getMultipleBirthRequestDays(
     application.answers,
   )
@@ -107,85 +110,66 @@ export const TransferRights: FC<FieldBaseProps & CustomField> = ({
       ? transferRights
       : getDefaultValue(isRequestingRights, isGivingRights)
 
-  const { register } = useFormContext()
+  const { setValue } = useFormContext()
   const { formatMessage } = useLocale()
   const [hiddenValues, setHiddenValues] = useState(
     calculateHiddenValues(defaultValue, requestDays, giveDays),
   )
-
   const onSelect = (selected: string) => {
     const option = selected as TransferRightsOption
 
     setHiddenValues(calculateHiddenValues(option, requestDays, giveDays))
   }
 
+  useEffect(() => {
+    setValue(
+      'requestRights.isRequestingRights',
+      hiddenValues.isRequestingRights,
+    )
+    setValue('requestRights.requestDays', hiddenValues.requestDays.toString())
+    setValue('giveRights.isGivingRights', hiddenValues.isGivingRights)
+    setValue('giveRights.giveDays', hiddenValues.giveDays.toString())
+  }, [hiddenValues, setValue])
+
   return (
-    <>
-      <RadioFormField
-        application={application}
-        error={error}
-        field={{
-          ...field,
-          type: FieldTypes.RADIO,
-          component: FieldComponents.RADIO,
-          children: undefined,
-          onSelect,
-          options: [
-            {
-              label: formatMessage(
-                parentalLeaveFormMessages.shared.transferRightsNone,
-              ),
-              value: TransferRightsOption.NONE,
-            },
-            {
-              label: formatMessage(
-                parentalLeaveFormMessages.shared.transferRightsRequest,
-              ),
-              value: TransferRightsOption.REQUEST,
-              disabled:
-                hasMultipleBirths === YES && multipleBirthsRequestDays === 0,
-            },
-            {
-              label: formatMessage(
-                parentalLeaveFormMessages.shared.transferRightsGive,
-              ),
-              value: TransferRightsOption.GIVE,
-              disabled:
-                hasMultipleBirths === YES &&
-                multipleBirthsRequestDays === maxMultipleBirthsDays,
-            },
-          ],
-          backgroundColor: 'blue',
-          defaultValue,
-        }}
-      />
-      <input
-        type="hidden"
-        ref={register}
-        name="requestRights.isRequestingRights"
-        value={hiddenValues.isRequestingRights}
-      />
-
-      <input
-        type="hidden"
-        ref={register}
-        name="requestRights.requestDays"
-        value={hiddenValues.requestDays}
-      />
-
-      <input
-        type="hidden"
-        ref={register}
-        name="giveRights.isGivingRights"
-        value={hiddenValues.isGivingRights}
-      />
-
-      <input
-        type="hidden"
-        ref={register}
-        name="giveRights.giveDays"
-        value={hiddenValues.giveDays}
-      />
-    </>
+    <RadioFormField
+      application={application}
+      error={error}
+      field={{
+        ...field,
+        type: FieldTypes.RADIO,
+        component: FieldComponents.RADIO,
+        children: undefined,
+        onSelect,
+        options: [
+          {
+            label: formatMessage(
+              parentalLeaveFormMessages.shared.transferRightsNone,
+            ),
+            value: TransferRightsOption.NONE,
+          },
+          {
+            label: formatMessage(
+              parentalLeaveFormMessages.shared.transferRightsRequest,
+            ),
+            value: TransferRightsOption.REQUEST,
+            disabled:
+              hasMultipleBirths === YES && multipleBirthsRequestDays === 0,
+          },
+          {
+            label: formatMessage(
+              parentalLeaveFormMessages.shared.transferRightsGive,
+            ),
+            value: TransferRightsOption.GIVE,
+            disabled:
+              (hasMultipleBirths === YES &&
+                multipleBirthsRequestDays === maxMultipleBirthsDays) ||
+              !canTransferRights,
+          },
+        ],
+        backgroundColor: 'blue',
+        defaultValue,
+      }}
+    />
   )
 }

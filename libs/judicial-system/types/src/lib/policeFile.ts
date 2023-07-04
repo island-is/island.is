@@ -1,6 +1,7 @@
 export interface PoliceCaseFile {
   id: string
   name: string
+  policeCaseNumber: string
 }
 
 export interface UploadPoliceCaseFile {

@@ -21,13 +21,16 @@ import {
   capitalize,
   formatPhoneNumber,
 } from '@island.is/judicial-system/formatters'
-import { header } from './Header.strings'
-import { UserRole } from '@island.is/judicial-system/types'
+import {
+  InstitutionType,
+  UserRole,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import * as constants from '@island.is/judicial-system/consts'
 
 import { UserContext } from '../UserProvider/UserProvider'
 import MarkdownWrapper from '../MarkdownWrapper/MarkdownWrapper'
 import { useGetLawyer } from '../../utils/hooks'
+import { header } from './Header.strings'
 import * as styles from './Header.css'
 
 const supportEmail = getConfig()?.publicRuntimeConfig?.supportEmail ?? ''
@@ -72,9 +75,11 @@ const HeaderContainer: React.FC = () => {
     !user || !isAuthenticated
       ? '/'
       : user.role === UserRole.DEFENDER
-      ? '#' // Defenders should never be able to navigate anywhere from the logo
+      ? constants.DEFENDER_CASES_ROUTE
       : user.role === UserRole.ADMIN
       ? constants.USERS_ROUTE
+      : user.institution?.type === InstitutionType.HIGH_COURT
+      ? constants.COURT_OF_APPEAL_CASES_ROUTE
       : constants.CASES_ROUTE
 
   const handleLogout = async () => {
@@ -127,7 +132,7 @@ const HeaderContainer: React.FC = () => {
                   window.open(constants.FEEDBACK_FORM_URL, '_blank')
                 }
               >
-                {formatMessage(header.headerFeedbackButtonLabel)}
+                {formatMessage(header.feedbackButtonLabel)}
               </Button>
             </Hidden>
             <UserMenu
@@ -186,11 +191,11 @@ const HeaderContainer: React.FC = () => {
                     <Box>
                       {user.role === UserRole.DEFENDER ? (
                         <Text>
-                          {formatMessage(header.headerTipDisclaimerDefenders)}
+                          {formatMessage(header.tipDisclaimerDefenders)}
                         </Text>
                       ) : (
                         <MarkdownWrapper
-                          markdown={formatMessage(header.headerTipDisclaimer, {
+                          markdown={formatMessage(header.tipDisclaimer, {
                             linkStart: `<a href="mailto:${supportEmail}" rel="noopener noreferrer nofollow" target="_blank">${supportEmail}`,
                             linkEnd: '</a>',
                           })}

@@ -15,26 +15,21 @@ import {
   DefaultEvents,
   Form,
   FormModes,
-  NationalRegistryUserApi,
-  UserProfileApi,
-  DistrictsApi,
-  YES,
 } from '@island.is/application/types'
 import {
+  DeliveryAddressApi,
   IdentityDocumentApi,
   SyslumadurPaymentCatalogApi,
+  UserInfoApi,
+  NationalRegistryUser,
 } from '../dataProviders'
-import {
-  DistrictCommissionerAgencies,
-  Passport,
-  PersonalInfo,
-  Services,
-} from '../lib/constants'
+import { DistrictCommissionerAgencies, Services } from '../lib/constants'
 import { m } from '../lib/messages'
 import { childsPersonalInfo } from './infoSection/childsPersonalInfo'
 import { personalInfo } from './infoSection/personalInfo'
 import { childsOverview } from './overviewSection/childsOverview'
 import { personalOverview } from './overviewSection/personalOverview'
+import { getChargeCode, getPrice } from '../lib/utils'
 
 export const Draft: Form = buildForm({
   id: 'PassportApplicationDraftForm',
@@ -43,6 +38,25 @@ export const Draft: Form = buildForm({
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,
   children: [
+    buildSection({
+      id: 'introSection',
+      title: m.introTitle,
+      children: [
+        buildMultiField({
+          id: 'introApplicant',
+          title: m.passport,
+          description: m.introDescription,
+          children: [
+            buildDescriptionField({
+              id: 'introDescription',
+              title: '',
+              description: '',
+            }),
+          ],
+        }),
+      ],
+    }),
+
     buildSection({
       id: 'externalDataSection',
       title: m.dataCollectionTitle,
@@ -54,12 +68,12 @@ export const Draft: Form = buildForm({
           checkboxLabel: m.dataCollectionCheckboxLabel,
           dataProviders: [
             buildDataProviderItem({
-              provider: NationalRegistryUserApi,
+              provider: NationalRegistryUser,
               title: m.dataCollectionNationalRegistryTitle,
               subTitle: m.dataCollectionNationalRegistrySubtitle,
             }),
             buildDataProviderItem({
-              provider: UserProfileApi,
+              provider: UserInfoApi,
               title: m.dataCollectionUserProfileTitle,
               subTitle: m.dataCollectionUserProfileSubtitle,
             }),
@@ -73,7 +87,7 @@ export const Draft: Form = buildForm({
               title: '',
             }),
             buildDataProviderItem({
-              provider: DistrictsApi,
+              provider: DeliveryAddressApi,
               title: '',
             }),
           ],
@@ -122,25 +136,26 @@ export const Draft: Form = buildForm({
               title: '',
               width: 'half',
               space: 'none',
-              options: (application: Application) => {
-                const withDiscount =
-                  ((application.answers.passport as Passport)?.userPassport !==
-                    '' &&
-                    (application.answers
-                      .personalInfo as PersonalInfo)?.hasDisabilityDiscount.includes(
-                      YES,
-                    )) ||
-                  (application.answers.passport as Passport)?.childPassport !==
-                    ''
+              options: ({ answers, externalData }: Application) => {
+                const regularCode = getChargeCode(
+                  answers,
+                  externalData,
+                  Services.REGULAR,
+                )
+                const regularPrices = getPrice(externalData, regularCode)
+                const expressCode = getChargeCode(
+                  answers,
+                  externalData,
+                  Services.EXPRESS,
+                )
+                const expressPrices = getPrice(externalData, expressCode)
                 return [
                   {
                     value: Services.REGULAR,
                     label:
                       m.serviceTypeRegular.defaultMessage +
                       ' - ' +
-                      (withDiscount === true
-                        ? m.serviceTypeRegularPriceWithDiscount.defaultMessage
-                        : m.serviceTypeRegularPrice.defaultMessage),
+                      regularPrices,
                     subLabel: m.serviceTypeRegularSublabel.defaultMessage,
                   },
                   {
@@ -148,9 +163,7 @@ export const Draft: Form = buildForm({
                     label:
                       m.serviceTypeExpress.defaultMessage +
                       ' - ' +
-                      (withDiscount === true
-                        ? m.serviceTypeExpressPriceWithDiscount.defaultMessage
-                        : m.serviceTypeExpressPrice.defaultMessage),
+                      expressPrices,
                     subLabel: m.serviceTypeExpressSublabel.defaultMessage,
                   },
                 ]
@@ -170,14 +183,13 @@ export const Draft: Form = buildForm({
               placeholder: m.dropLocationPlaceholder.defaultMessage,
               options: ({
                 externalData: {
-                  districtCommissioners: { data },
+                  deliveryAddress: { data },
                 },
               }) => {
                 return (data as DistrictCommissionerAgencies[])?.map(
-                  ({ id, name, place, address }) => ({
-                    value: id,
-                    label: `${name}, ${place}`,
-                    tooltip: `${address}`,
+                  ({ key, name }) => ({
+                    value: key,
+                    label: name,
                   }),
                 )
               },

@@ -1,5 +1,6 @@
 import { useRouter } from 'next/router'
 import React, { useState, useEffect } from 'react'
+import { LoadingScreen } from '../../../components/common/LoadingScreen'
 import ContentWrapper from '../../../components/Layout/ContentWrapper'
 import { AdminTab } from './../../../entities/common/AdminTab'
 import LocalizationUtils from '../../../utils/localization.utils'
@@ -11,9 +12,7 @@ const Index: React.FC = () => {
   const { query } = useRouter()
   const groupId = query.groupId
   const router = useRouter()
-  const [apiScopeGroup, setApiScopeGroup] = useState<ApiScopeGroup>(
-    new ApiScopeGroup(),
-  )
+  const [apiScopeGroup, setApiScopeGroup] = useState<ApiScopeGroup>()
 
   /** Load the user */
   useEffect(() => {
@@ -42,6 +41,14 @@ const Index: React.FC = () => {
 
   const handleGroupSaved = () => {
     router.push(`/admin/?tab=${AdminTab.ApiScopeGroups}`)
+  }
+
+  if (!apiScopeGroup) {
+    return (
+      <ContentWrapper>
+        <LoadingScreen />
+      </ContentWrapper>
+    )
   }
 
   return (

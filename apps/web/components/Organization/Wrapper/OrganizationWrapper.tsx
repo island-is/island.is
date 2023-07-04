@@ -31,9 +31,10 @@ import {
   Sticky,
   SidebarShipSearchInput,
   Webreader,
+  SearchBox,
 } from '@island.is/web/components'
 import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
-import { useFeatureFlag, useNamespace } from '@island.is/web/hooks'
+import { usePlausiblePageview } from '@island.is/web/hooks'
 import { useI18n } from '@island.is/web/i18n'
 import { WatsonChatPanel } from '@island.is/web/components'
 
@@ -44,29 +45,50 @@ import {
 } from './Themes/SjukratryggingarTheme'
 import { DigitalIcelandHeader } from './Themes/DigitalIcelandTheme'
 import { DefaultHeader } from './Themes/DefaultTheme'
-import MannaudstorgFooter from './Themes/MannaudstorgTheme/MannaudstorgFooter'
+import { MannaudstorgFooter } from './Themes/MannaudstorgTheme'
 import { liveChatIncConfig, watsonConfig } from './config'
-import LandlaeknirFooter from './Themes/LandlaeknirTheme/LandlaeknirFooter'
-import { HeilbrigdisstofnunNordurlandsHeader } from './Themes/HeilbrigdisstofnunNordurlandsTheme/HeilbrigdisstofnunNordurlandsHeader'
-import { LandlaeknirHeader } from './Themes/LandlaeknirTheme/LandlaeknirHeader'
-import HeilbrigdisstofnunNordurlandsFooter from './Themes/HeilbrigdisstofnunNordurlandsTheme/HeilbrigdisstofnunNordurlandsFooter'
+import { LandlaeknirFooter } from './Themes/LandlaeknirTheme'
+import { HeilbrigdisstofnunNordurlandsHeader } from './Themes/HeilbrigdisstofnunNordurlandsTheme'
+import { LandlaeknirHeader } from './Themes/LandlaeknirTheme'
+import { HeilbrigdisstofnunNordurlandsFooter } from './Themes/HeilbrigdisstofnunNordurlandsTheme'
 import {
   UtlendingastofnunFooter,
   UtlendingastofnunHeader,
 } from './Themes/UtlendingastofnunTheme'
-import { FiskistofaHeader } from './Themes/FiskistofaTheme/FiskistofaHeader'
-import FiskistofaFooter from './Themes/FiskistofaTheme/FiskistofaFooter'
-import { LandskjorstjornFooter } from './Themes/LandkjorstjornTheme/LandkjorstjornFooter'
+import { FiskistofaHeader } from './Themes/FiskistofaTheme'
+import { FiskistofaFooter } from './Themes/FiskistofaTheme'
+import { LandskjorstjornFooter } from './Themes/LandkjorstjornTheme'
 import { LatestNewsCardConnectedComponent } from '../LatestNewsCardConnectedComponent'
-import { RikislogmadurHeader } from './Themes/RikislogmadurTheme/RikislogmadurHeader'
-import { RikislogmadurFooter } from './Themes/RikislogmadurTheme/RikislogmadurFooter'
-import { LandskjorstjornHeader } from './Themes/LandkjorstjornTheme/LandskjorstjornHeader'
+import { RikislogmadurHeader } from './Themes/RikislogmadurTheme'
+import { RikislogmadurFooter } from './Themes/RikislogmadurTheme'
+import { LandskjorstjornHeader } from './Themes/LandkjorstjornTheme'
 import {
   FjarsyslaRikisinsHeader,
   FjarsyslaRikisinsFooter,
 } from './Themes/FjarsyslaRikisinsTheme'
-import HeilbrigdisstofnunSudurlandsFooter from './Themes/HeilbrigdisstofnunSudurlandsTheme/HeilbrigdisstofnunSudurlandsFooter'
-import { HeilbrigdisstofnunSudurlandsHeader } from './Themes/HeilbrigdisstofnunSudurlandsTheme/HeilbrigdisstofnunSudurlandsHeader'
+import { HeilbrigdisstofnunSudurlandsFooter } from './Themes/HeilbrigdisstofnunSudurlandsTheme'
+import { HeilbrigdisstofnunSudurlandsHeader } from './Themes/HeilbrigdisstofnunSudurlandsTheme'
+import {
+  TryggingastofnunFooter,
+  TryggingastofnunHeader,
+} from './Themes/TryggingastofnunTheme'
+import { SAkFooter, SAkHeader } from './Themes/SAkTheme'
+import { GevFooter, GevHeader } from './Themes/GevTheme'
+import { HveHeader, HveFooter } from './Themes/HveTheme'
+import { ShhFooter, ShhHeader } from './Themes/SHHTheme'
+import {
+  HeilbrigdisstofnunAusturlandsFooter,
+  HeilbrigdisstofnunAusturlandsHeader,
+} from './Themes/HeilbrigdisstofnunAusturlandsTheme'
+import { UniversityStudiesHeader } from './Themes/UniversityStudiesTheme'
+import {
+  IcelandicNaturalDisasterInsuranceHeader,
+  IcelandicNaturalDisasterInsuranceFooter,
+} from './Themes/IcelandicNaturalDisasterInsuranceTheme'
+import {
+  TransportAuthorityFooter,
+  TransportAuthorityHeader,
+} from './Themes/TransportAuthorityTheme'
 
 import * as styles from './OrganizationWrapper.css'
 
@@ -102,6 +124,12 @@ export const lightThemes = [
   'default',
   'fiskistofa',
   'landing_page',
+  'tryggingastofnun',
+  'hve',
+  'hsa',
+  'haskolanam',
+  'nti',
+  'samgongustofa',
 ]
 export const footerEnabled = [
   'syslumenn',
@@ -131,6 +159,24 @@ export const footerEnabled = [
 
   'fjarsyslan',
   'the-financial-management-authority',
+
+  'sak',
+
+  'hve',
+
+  'tryggingastofnun',
+  'insurance-administration',
+
+  'gev',
+
+  'shh',
+
+  'hsa',
+
+  'nti',
+
+  'samgongustofa',
+  'transport-authority',
 ]
 
 export const getThemeConfig = (
@@ -143,7 +189,12 @@ export const getThemeConfig = (
     footerVersion = 'organization'
   }
 
-  if (theme === 'sjukratryggingar' || theme === 'rikislogmadur')
+  if (
+    theme === 'sjukratryggingar' ||
+    theme === 'rikislogmadur' ||
+    theme === 'tryggingastofnun' ||
+    theme === 'nti'
+  )
     return {
       themeConfig: {
         headerButtonColorScheme: 'blueberry',
@@ -200,6 +251,32 @@ export const OrganizationHeader: React.FC<HeaderProps> = ({
       return null
     case 'fjarsysla-rikisins':
       return <FjarsyslaRikisinsHeader organizationPage={organizationPage} />
+    case 'tryggingastofnun':
+      return <TryggingastofnunHeader organizationPage={organizationPage} />
+    case 'sak':
+      return <SAkHeader organizationPage={organizationPage} />
+    case 'gev':
+      return <GevHeader organizationPage={organizationPage} />
+    case 'hve':
+      return <HveHeader organizationPage={organizationPage} />
+    case 'shh':
+      return <ShhHeader organizationPage={organizationPage} />
+    case 'hsa':
+      return (
+        <HeilbrigdisstofnunAusturlandsHeader
+          organizationPage={organizationPage}
+        />
+      )
+    case 'haskolanam':
+      return <UniversityStudiesHeader organizationPage={organizationPage} />
+    case 'nti':
+      return (
+        <IcelandicNaturalDisasterInsuranceHeader
+          organizationPage={organizationPage}
+        />
+      )
+    case 'samgongustofa':
+      return <TransportAuthorityHeader organizationPage={organizationPage} />
     default:
       return <DefaultHeader organizationPage={organizationPage} />
   }
@@ -207,19 +284,31 @@ export const OrganizationHeader: React.FC<HeaderProps> = ({
 
 interface ExternalLinksProps {
   organizationPage: OrganizationPage
+  showOnMobile?: boolean
 }
 
 export const OrganizationExternalLinks: React.FC<ExternalLinksProps> = ({
   organizationPage,
+  showOnMobile = true,
 }) => {
   if (organizationPage.externalLinks?.length) {
+    const mobileDisplay = showOnMobile ? 'flex' : 'none'
     return (
       <Box
-        display={['none', 'none', 'flex', 'flex']}
-        justifyContent="flexEnd"
+        display={[mobileDisplay, mobileDisplay, 'flex', 'flex']}
+        justifyContent={[
+          'center',
+          showOnMobile ? 'flexEnd' : 'center',
+          'flexEnd',
+        ]}
         marginBottom={4}
       >
-        <Inline space={2}>
+        <Inline
+          flexWrap={
+            organizationPage.externalLinks?.length === 2 ? 'nowrap' : 'wrap'
+          }
+          space={2}
+        >
           {organizationPage.externalLinks.map((link, index) => {
             // Sjukratryggingar's external links have custom styled buttons
             const isSjukratryggingar =
@@ -235,14 +324,19 @@ export const OrganizationExternalLinks: React.FC<ExternalLinksProps> = ({
             }
 
             return (
-              <Link href={link.url} key={'organization-external-link-' + index}>
+              <Link
+                href={link.url}
+                key={'organization-external-link-' + index}
+                pureChildren={true}
+              >
                 <Button
+                  as="a"
                   variant={variant}
                   icon={isSjukratryggingar ? 'lockClosed' : 'open'}
                   iconType="outline"
                   size="medium"
                 >
-                  <Box paddingY={2} paddingLeft={2}>
+                  <Box paddingY={[0, 2]} paddingLeft={[0, 2]}>
                     {link.text}
                   </Box>
                 </Button>
@@ -273,7 +367,6 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
     () => JSON.parse(organization?.namespace?.fields ?? '{}'),
     [],
   )
-  const n = useNamespace(namespace)
 
   let OrganizationFooterComponent = null
 
@@ -285,18 +378,18 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
           title={organization.title}
           logo={organization.logo?.url}
           footerItems={organization.footerItems}
-          questionsAndAnswersText={n(
-            'questionsAndAnswers',
-            'Spurningar og svör',
-          )}
-          canWeHelpText={n('canWeHelp', 'Getum við aðstoðað?')}
+          namespace={namespace}
         />
       )
       break
     case 'sjukratryggingar':
     case 'icelandic-health-insurance':
       OrganizationFooterComponent = (
-        <SjukratryggingarFooter footerItems={organization.footerItems} />
+        <SjukratryggingarFooter
+          footerItems={organization.footerItems}
+          namespace={namespace}
+          organizationSlug={organization.slug}
+        />
       )
       break
     case 'utlendingastofnun':
@@ -321,13 +414,17 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
     case 'landlaeknir':
     case 'directorate-of-health':
       OrganizationFooterComponent = (
-        <LandlaeknirFooter footerItems={organization.footerItems} />
+        <LandlaeknirFooter
+          footerItems={organization.footerItems}
+          namespace={namespace}
+        />
       )
       break
     case 'hsn':
       OrganizationFooterComponent = (
         <HeilbrigdisstofnunNordurlandsFooter
           footerItems={organization.footerItems}
+          namespace={namespace}
         />
       )
       break
@@ -335,18 +432,25 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
       OrganizationFooterComponent = (
         <HeilbrigdisstofnunSudurlandsFooter
           footerItems={organization.footerItems}
+          namespace={namespace}
         />
       )
       break
     case 'fiskistofa':
     case 'directorate-of-fisheries':
       OrganizationFooterComponent = (
-        <FiskistofaFooter footerItems={organization.footerItems} />
+        <FiskistofaFooter
+          footerItems={organization.footerItems}
+          namespace={namespace}
+        />
       )
       break
     case 'landskjorstjorn':
       OrganizationFooterComponent = (
-        <LandskjorstjornFooter footerItems={organization.footerItems} />
+        <LandskjorstjornFooter
+          footerItems={organization.footerItems}
+          namespace={namespace}
+        />
       )
       break
     case 'rikislogmadur':
@@ -359,14 +463,92 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
         />
       )
       break
-    case 'fjarsysla-rikisins':
-    case 'the-financial-management-authority':
+    case 'sak':
+    case 'sjukrahusid-akureyri':
+    case 'akureyri-hospital':
       OrganizationFooterComponent = (
-        <FjarsyslaRikisinsFooter
+        <SAkFooter
+          title={organization.title}
           footerItems={organization.footerItems}
           logo={organization.logo?.url}
         />
       )
+      break
+    case 'fjarsysla-rikisins':
+    case 'the-financial-management-authority':
+      OrganizationFooterComponent = (
+        <FjarsyslaRikisinsFooter
+          namespace={namespace}
+          title={organization.title}
+        />
+      )
+      break
+    case 'hve':
+      OrganizationFooterComponent = (
+        <HveFooter
+          footerItems={organization.footerItems}
+          namespace={namespace}
+          logo={organization.logo?.url}
+          title={organization.title}
+        />
+      )
+      break
+    case 'tryggingastofnun':
+    case 'insurance-administration':
+      OrganizationFooterComponent = (
+        <TryggingastofnunFooter
+          footerItems={organization.footerItems}
+          namespace={namespace}
+        />
+      )
+      break
+    case 'gev':
+      OrganizationFooterComponent = (
+        <GevFooter
+          title={organization.title}
+          namespace={namespace}
+          footerItems={organization.footerItems}
+        />
+      )
+      break
+    case 'shh':
+    case 'samskiptamidstoed-heyrnarlausra-og-heyrnarskertra':
+    case 'the-communication-center-for-the-deaf-and-hearing-impaired':
+      OrganizationFooterComponent = (
+        <ShhFooter
+          title={organization.title}
+          namespace={namespace}
+          footerItems={organization.footerItems}
+        />
+      )
+      break
+    case 'hsa':
+      OrganizationFooterComponent = (
+        <HeilbrigdisstofnunAusturlandsFooter
+          title={organization.title}
+          namespace={namespace}
+          footerItems={organization.footerItems}
+        />
+      )
+      break
+    case 'nti':
+      OrganizationFooterComponent = (
+        <IcelandicNaturalDisasterInsuranceFooter
+          footerItems={organization.footerItems}
+          namespace={namespace}
+        />
+      )
+      break
+    case 'samgongustofa':
+    case 'transport-authority':
+      OrganizationFooterComponent = (
+        <TransportAuthorityFooter
+          title={organization.title}
+          footerItems={organization.footerItems}
+          logo={organization.logo?.url}
+        />
+      )
+      break
   }
 
   return OrganizationFooterComponent
@@ -467,6 +649,8 @@ const renderConnectedComponent = (slice) => {
       return (
         <SidebarShipSearchInput key={slice?.id} namespace={slice?.json ?? {}} />
       )
+    case 'OrganizationSearchBox':
+      return <SearchBox key={slice?.id} {...slice?.json} />
     default:
       return null
   }
@@ -493,10 +677,7 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
   const { width } = useWindowSize()
   const [isMobile, setIsMobile] = useState<boolean | undefined>()
 
-  const { value: isWebReaderEnabledForOrganizationPages } = useFeatureFlag(
-    'isWebReaderEnabledForOrganizationPages',
-    false,
-  )
+  usePlausiblePageview(organizationPage.organization?.trackingDomain)
 
   useEffect(() => setIsMobile(width < theme.breakpoints.md), [width])
 
@@ -599,6 +780,12 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
         >
           {isMobile && (
             <Box className={styles.menuStyle}>
+              {showExternalLinks && (
+                <OrganizationExternalLinks
+                  organizationPage={organizationPage}
+                  showOnMobile={true}
+                />
+              )}
               <Box marginY={2}>
                 <Navigation
                   baseId="pageNavMobile"
@@ -645,6 +832,7 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
                 {showExternalLinks && (
                   <OrganizationExternalLinks
                     organizationPage={organizationPage}
+                    showOnMobile={false}
                   />
                 )}
                 {breadcrumbItems && (
@@ -660,7 +848,7 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
                   />
                 )}
 
-                {showReadSpeaker && isWebReaderEnabledForOrganizationPages && (
+                {showReadSpeaker && (
                   <Webreader
                     marginTop={breadcrumbItems?.length ? 3 : 0}
                     marginBottom={breadcrumbItems?.length ? 0 : 3}

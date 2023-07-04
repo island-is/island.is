@@ -8,13 +8,13 @@ export const serviceSetup = (services: {
     .liveness('/liveness')
     .readiness('/readiness')
     .replicaCount({
-      default: 5,
+      default: 2,
       max: 30,
-      min: 5,
+      min: 2,
     })
     .resources({
-      limits: { cpu: '400m', memory: '512Mi' },
-      requests: { cpu: '200m', memory: '256Mi' },
+      limits: { cpu: '300m', memory: '256Mi' },
+      requests: { cpu: '5m', memory: '32Mi' },
     })
     .env({
       BASEPATH: '/minarsidur',
@@ -61,3 +61,10 @@ export const serviceSetup = (services: {
         paths: ['/minarsidur'],
       },
     })
+    .grantNamespaces(
+      'nginx-ingress-internal',
+      'nginx-ingress-external',
+      'islandis',
+      'user-notification',
+      'identity-server',
+    )

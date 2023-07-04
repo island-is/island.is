@@ -2,21 +2,44 @@ import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
 import {
-  Case,
-  CaseType,
+  CaseAppealState,
+  CaseState,
+  completedCaseStates,
+  Feature,
   Gender,
-  InstitutionType,
+  isCourtRole,
+  isExtendedCourtRole,
+  isIndictmentCase,
   isInvestigationCase,
   isRestrictionCase,
-  User,
 } from '@island.is/judicial-system/types'
 import { core, sections } from '@island.is/judicial-system-web/messages'
 import { caseResult } from '@island.is/judicial-system-web/src/components/PageLayout/utils'
 import { capitalize } from '@island.is/judicial-system/formatters'
+import { RouteSection } from '@island.is/judicial-system-web/src/components/PageLayout/PageLayout'
+import { FeatureContext } from '@island.is/judicial-system-web/src/components/FeatureProvider/FeatureProvider'
+
+import {
+  CaseType,
+  InstitutionType,
+  User,
+  UserRole,
+} from '@island.is/judicial-system-web/src/graphql/schema'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
+import {
+  courtIndictmentRoutes,
+  courtInvestigationCasesRoutes,
+  courtOfAppealRoutes,
+  courtRestrictionCasesRoutes,
+  prosecutorIndictmentRoutes,
+  prosecutorInvestigationCasesRoutes,
+  prosecutorRestrictionCasesRoutes,
+} from '@island.is/judicial-system/consts'
 import * as constants from '@island.is/judicial-system/consts'
 
 import { stepValidations, stepValidationsType } from '../../formHelper'
-import { RouteSection } from '@island.is/judicial-system-web/src/components/PageLayout/PageLayout'
+import { isTrafficViolationCase } from '../../stepHelper'
+import { useContext } from 'react'
 
 const validateFormStepper = (
   isActiveSubSectionValid: boolean,
@@ -44,17 +67,34 @@ const useSections = (
 ) => {
   const { formatMessage } = useIntl()
   const router = useRouter()
+  const { features } = useContext(FeatureContext)
 
   const getRestrictionCaseProsecutorSection = (
     workingCase: Case,
     user?: User,
   ): RouteSection => {
-    const { type, id } = workingCase
+    const { type, id, parentCase } = workingCase
+    const routeIndex =
+      router.pathname.includes(constants.CREATE_RESTRICTION_CASE_ROUTE) ||
+      router.pathname.includes(constants.CREATE_TRAVEL_BAN_ROUTE)
+        ? 0
+        : prosecutorRestrictionCasesRoutes.findIndex(
+            /**
+             * We do .slice here because router.pathname is /something/[:id]
+             * and we want to remove the /[:id] part
+             */
+            (route) => route === router.pathname.slice(0, -5),
+          )
 
     return {
       name: formatMessage(sections.restrictionCaseProsecutorSection.caseTitle, {
         caseType: type,
       }),
+      isActive:
+        user?.role === UserRole.PROSECUTOR &&
+        isRestrictionCase(type) &&
+        !completedCaseStates.includes(workingCase.state) &&
+        !parentCase,
       children:
         user?.institution?.type !== InstitutionType.PROSECUTORS_OFFICE
           ? []
@@ -65,6 +105,7 @@ const useSections = (
                     suffix: 'i',
                   }),
                 ),
+                isActive: routeIndex === 0,
                 href: `${constants.RESTRICTION_CASE_DEFENDANT_ROUTE}/${id}`,
               },
               {
@@ -72,6 +113,7 @@ const useSections = (
                   sections.restrictionCaseProsecutorSection.hearingArrangements,
                 ),
                 href: `${constants.RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE}/${id}`,
+                isActive: routeIndex === 1,
                 onClick:
                   validateFormStepper(
                     isValid,
@@ -93,6 +135,7 @@ const useSections = (
                   sections.restrictionCaseProsecutorSection.policeDemands,
                 ),
                 href: `${constants.RESTRICTION_CASE_POLICE_DEMANDS_ROUTE}/${id}`,
+                isActive: routeIndex === 2,
                 onClick:
                   validateFormStepper(
                     isValid,
@@ -113,6 +156,7 @@ const useSections = (
                   sections.restrictionCaseProsecutorSection.policeReport,
                 ),
                 href: `${constants.RESTRICTION_CASE_POLICE_REPORT_ROUTE}/${id}`,
+                isActive: routeIndex === 3,
                 onClick:
                   validateFormStepper(
                     isValid,
@@ -134,6 +178,7 @@ const useSections = (
                   sections.restrictionCaseProsecutorSection.caseFiles,
                 ),
                 href: `${constants.RESTRICTION_CASE_CASE_FILES_ROUTE}/${id}`,
+                isActive: routeIndex === 4,
                 onClick:
                   validateFormStepper(
                     isValid,
@@ -156,6 +201,7 @@ const useSections = (
                   sections.restrictionCaseProsecutorSection.overview,
                 ),
                 href: `${constants.RESTRICTION_CASE_OVERVIEW_ROUTE}/${id}`,
+                isActive: routeIndex === 5,
                 onClick:
                   validateFormStepper(
                     isValid,
@@ -182,10 +228,26 @@ const useSections = (
     workingCase: Case,
     user?: User,
   ): RouteSection => {
-    const { id } = workingCase
+    const { id, type, parentCase } = workingCase
+    const routeIndex = router.pathname.includes(
+      constants.CREATE_INVESTIGATION_CASE_ROUTE,
+    )
+      ? 0
+      : prosecutorInvestigationCasesRoutes.findIndex(
+          /**
+           * We do .slice here because router.pathname is /something/[:id]
+           * and we want to remove the /[:id] part
+           */
+          (route) => route === router.pathname.slice(0, -5),
+        )
 
     return {
       name: formatMessage(sections.investigationCaseProsecutorSection.title),
+      isActive:
+        user?.role === UserRole.PROSECUTOR &&
+        isInvestigationCase(type) &&
+        !completedCaseStates.includes(workingCase.state) &&
+        !parentCase,
       children:
         user?.institution?.type !== InstitutionType.PROSECUTORS_OFFICE
           ? []
@@ -194,6 +256,7 @@ const useSections = (
                 name: capitalize(
                   formatMessage(core.defendant, { suffix: 'i' }),
                 ),
+                isActive: routeIndex === 0,
                 href: `${constants.INVESTIGATION_CASE_DEFENDANT_ROUTE}/${id}`,
               },
               {
@@ -201,6 +264,7 @@ const useSections = (
                   sections.investigationCaseProsecutorSection
                     .hearingArrangements,
                 ),
+                isActive: routeIndex === 1,
                 href: `${constants.INVESTIGATION_CASE_HEARING_ARRANGEMENTS_ROUTE}/${id}`,
                 onClick:
                   validateFormStepper(
@@ -218,6 +282,7 @@ const useSections = (
                 name: formatMessage(
                   sections.investigationCaseProsecutorSection.policeDemands,
                 ),
+                isActive: routeIndex === 2,
                 href: `${constants.INVESTIGATION_CASE_POLICE_DEMANDS_ROUTE}/${id}`,
                 onClick:
                   validateFormStepper(
@@ -239,6 +304,7 @@ const useSections = (
                   sections.investigationCaseProsecutorSection.policeReport,
                 ),
                 href: `${constants.INVESTIGATION_CASE_POLICE_REPORT_ROUTE}/${id}`,
+                isActive: routeIndex === 3,
                 onClick:
                   validateFormStepper(
                     isValid,
@@ -260,6 +326,7 @@ const useSections = (
                   sections.investigationCaseProsecutorSection.caseFiles,
                 ),
                 href: `${constants.INVESTIGATION_CASE_CASE_FILES_ROUTE}/${id}`,
+                isActive: routeIndex === 4,
                 onClick:
                   validateFormStepper(
                     isValid,
@@ -281,6 +348,7 @@ const useSections = (
                 name: formatMessage(
                   sections.investigationCaseProsecutorSection.overview,
                 ),
+                isActive: routeIndex === 5,
                 href: `${constants.INVESTIGATION_CASE_POLICE_CONFIRMATION_ROUTE}/${id}`,
                 onClick:
                   validateFormStepper(
@@ -306,15 +374,32 @@ const useSections = (
 
   const getIndictmentCaseProsecutorSection = (
     workingCase: Case,
+    user?: User,
   ): RouteSection => {
-    const { id } = workingCase
+    const { id, type } = workingCase
+    const caseHasBeenReceivedByCourt = workingCase.state === CaseState.RECEIVED
+    const isTrafficViolation = isTrafficViolationCase(workingCase)
 
-    const caseHasBeenReceivedByCourt =
-      workingCase.courtCaseNumber !== undefined &&
-      workingCase.courtCaseNumber !== null
+    const routes = prosecutorIndictmentRoutes(isTrafficViolation)
+
+    const routeIndex = router.pathname.includes(
+      constants.CREATE_INDICTMENT_ROUTE,
+    )
+      ? 0
+      : routes.findIndex(
+          /**
+           * We do .slice here because router.pathname is /something/[:id]
+           * and we want to remove the /[:id] part
+           */
+          (route) => route === router.pathname.slice(0, -5),
+        )
     return {
       name: formatMessage(sections.indictmentCaseProsecutorSection.title),
-      // Prosecutor can only view the overview when case has been submitted to court
+      isActive:
+        user?.role === UserRole.PROSECUTOR &&
+        isIndictmentCase(type) &&
+        !completedCaseStates.includes(workingCase.state),
+      // Prosecutor can only view the overview when case has been received by court
       children: caseHasBeenReceivedByCourt
         ? []
         : [
@@ -324,6 +409,7 @@ const useSections = (
                   gender: Gender.MALE,
                 }),
               ),
+              isActive: routeIndex === 0,
               href: `${constants.INDICTMENTS_DEFENDANT_ROUTE}/${id}`,
             },
             {
@@ -332,6 +418,7 @@ const useSections = (
                   sections.indictmentCaseProsecutorSection.policeCaseFiles,
                 ),
               ),
+              isActive: routeIndex === 1,
               href: `${constants.INDICTMENTS_POLICE_CASE_FILES_ROUTE}/${id}`,
               onClick:
                 validateFormStepper(
@@ -351,6 +438,7 @@ const useSections = (
                   sections.indictmentCaseProsecutorSection.caseFile,
                 ),
               ),
+              isActive: routeIndex === 2,
               href: `${constants.INDICTMENTS_CASE_FILE_ROUTE}/${id}`,
               onClick:
                 validateFormStepper(
@@ -373,6 +461,7 @@ const useSections = (
                   sections.indictmentCaseProsecutorSection.processing,
                 ),
               ),
+              isActive: routeIndex === 3,
               href: `${constants.INDICTMENTS_PROCESSING_ROUTE}/${id}`,
               onClick:
                 validateFormStepper(
@@ -390,6 +479,33 @@ const useSections = (
                       )
                   : undefined,
             },
+            ...(isTrafficViolation
+              ? [
+                  {
+                    name: formatMessage(
+                      sections.indictmentCaseProsecutorSection.indictment,
+                    ),
+                    href: `${constants.INDICTMENTS_TRAFFIC_VIOLATION_ROUTE}/${id}`,
+                    isActive: routeIndex === 4,
+                    onClick:
+                      validateFormStepper(
+                        isValid,
+                        [
+                          constants.INDICTMENTS_DEFENDANT_ROUTE,
+                          constants.INDICTMENTS_POLICE_CASE_FILES_ROUTE,
+                          constants.INDICTMENTS_CASE_FILE_ROUTE,
+                          constants.INDICTMENTS_PROCESSING_ROUTE,
+                        ],
+                        workingCase,
+                      ) && onNavigationTo
+                        ? async () =>
+                            await onNavigationTo(
+                              constants.INDICTMENTS_TRAFFIC_VIOLATION_ROUTE,
+                            )
+                        : undefined,
+                  },
+                ]
+              : []),
             {
               name: capitalize(
                 formatMessage(
@@ -397,7 +513,10 @@ const useSections = (
                 ),
               ),
               href: `${constants.INDICTMENTS_CASE_FILES_ROUTE}/${id}`,
-
+              isActive:
+                workingCase.state === CaseState.RECEIVED
+                  ? false
+                  : routeIndex === (isTrafficViolation ? 5 : 4),
               onClick:
                 validateFormStepper(
                   isValid,
@@ -422,6 +541,7 @@ const useSections = (
                 ),
               ),
               href: `${constants.INDICTMENTS_OVERVIEW_ROUTE}/${id}`,
+              isActive: routeIndex === (isTrafficViolation ? 6 : 5),
               onClick:
                 validateFormStepper(
                   isValid,
@@ -446,13 +566,21 @@ const useSections = (
     workingCase: Case,
     user?: User,
   ): RouteSection => {
-    const { id } = workingCase
-    const isModifyingRuling = router.pathname.includes(
-      constants.RESTRICTION_CASE_MODIFY_RULING_ROUTE,
+    const { id, type, parentCase } = workingCase
+    const routeIndex = courtRestrictionCasesRoutes.findIndex(
+      /**
+       * We do .slice here because router.pathname is /something/[:id]
+       * and we want to remove the /[:id] part
+       */
+      (route) => route === router.pathname.slice(0, -5),
     )
-
     return {
       name: formatMessage(sections.courtSection.title),
+      isActive:
+        isCourtRole(user?.role) &&
+        isRestrictionCase(type) &&
+        !completedCaseStates.includes(workingCase.state) &&
+        !parentCase,
       children:
         user?.institution?.type !== InstitutionType.COURT
           ? []
@@ -461,15 +589,13 @@ const useSections = (
                 name: formatMessage(
                   sections.courtSection.receptionAndAssignment,
                 ),
-                href: !isModifyingRuling
-                  ? `${constants.RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE}/${id}`
-                  : undefined,
+                isActive: routeIndex === 0,
+                href: `${constants.RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE}/${id}`,
               },
               {
                 name: formatMessage(sections.courtSection.overview),
-                href: !isModifyingRuling
-                  ? `${constants.RESTRICTION_CASE_COURT_OVERVIEW_ROUTE}/${id}`
-                  : undefined,
+                href: `${constants.RESTRICTION_CASE_COURT_OVERVIEW_ROUTE}/${id}`,
+                isActive: routeIndex === 1,
                 onClick:
                   validateFormStepper(
                     isValid,
@@ -484,9 +610,8 @@ const useSections = (
               },
               {
                 name: formatMessage(sections.courtSection.hearingArrangements),
-                href: !isModifyingRuling
-                  ? `${constants.RESTRICTION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE}/${id}`
-                  : undefined,
+                isActive: routeIndex === 2,
+                href: `${constants.RESTRICTION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE}/${id}`,
                 onClick:
                   validateFormStepper(
                     isValid,
@@ -504,9 +629,8 @@ const useSections = (
               },
               {
                 name: formatMessage(sections.courtSection.ruling),
-                href: !isModifyingRuling
-                  ? `${constants.RESTRICTION_CASE_RULING_ROUTE}/${id}`
-                  : undefined,
+                isActive: routeIndex === 3,
+                href: `${constants.RESTRICTION_CASE_RULING_ROUTE}/${id}`,
                 onClick:
                   validateFormStepper(
                     isValid,
@@ -525,9 +649,8 @@ const useSections = (
               },
               {
                 name: formatMessage(sections.courtSection.courtRecord),
-                href: !isModifyingRuling
-                  ? `${constants.RESTRICTION_CASE_COURT_RECORD_ROUTE}/${id}`
-                  : undefined,
+                isActive: routeIndex === 4,
+                href: `${constants.RESTRICTION_CASE_COURT_RECORD_ROUTE}/${id}`,
                 onClick:
                   validateFormStepper(
                     isValid,
@@ -547,9 +670,8 @@ const useSections = (
               },
               {
                 name: formatMessage(sections.courtSection.conclusion),
-                href: !isModifyingRuling
-                  ? `${constants.RESTRICTION_CASE_CONFIRMATION_ROUTE}/${id}`
-                  : undefined,
+                isActive: routeIndex === 5,
+                href: `${constants.RESTRICTION_CASE_CONFIRMATION_ROUTE}/${id}`,
                 onClick:
                   validateFormStepper(
                     isValid,
@@ -576,13 +698,22 @@ const useSections = (
     workingCase: Case,
     user?: User,
   ): RouteSection => {
-    const { id } = workingCase
-    const isModifyingRuling = router.pathname.includes(
-      constants.INVESTIGATION_CASE_MODIFY_RULING_ROUTE,
+    const { id, type, parentCase } = workingCase
+    const routeIndex = courtInvestigationCasesRoutes.findIndex(
+      /**
+       * We do .slice here because router.pathname is /something/[:id]
+       * and we want to remove the /[:id] part
+       */
+      (route) => route === router.pathname.slice(0, -5),
     )
 
     return {
       name: formatMessage(sections.investigationCaseCourtSection.title),
+      isActive:
+        isCourtRole(user?.role) &&
+        isInvestigationCase(type) &&
+        !completedCaseStates.includes(workingCase.state) &&
+        !parentCase,
       children:
         user?.institution?.type !== InstitutionType.COURT
           ? []
@@ -591,17 +722,15 @@ const useSections = (
                 name: formatMessage(
                   sections.courtSection.receptionAndAssignment,
                 ),
-                href: isModifyingRuling
-                  ? undefined
-                  : `${constants.INVESTIGATION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE}/${id}`,
+                isActive: routeIndex === 0,
+                href: `${constants.INVESTIGATION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE}/${id}`,
               },
               {
                 name: formatMessage(
                   sections.investigationCaseCourtSection.overview,
                 ),
-                href: !isModifyingRuling
-                  ? `${constants.INVESTIGATION_CASE_OVERVIEW_ROUTE}/${id}`
-                  : undefined,
+                isActive: routeIndex === 1,
+                href: `${constants.INVESTIGATION_CASE_OVERVIEW_ROUTE}/${id}`,
                 onClick:
                   validateFormStepper(
                     isValid,
@@ -620,9 +749,8 @@ const useSections = (
                 name: formatMessage(
                   sections.investigationCaseCourtSection.hearingArrangements,
                 ),
-                href: !isModifyingRuling
-                  ? `${constants.INVESTIGATION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE}/${id}`
-                  : undefined,
+                isActive: routeIndex === 2,
+                href: `${constants.INVESTIGATION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE}/${id}`,
                 onClick:
                   validateFormStepper(
                     isValid,
@@ -642,9 +770,8 @@ const useSections = (
                 name: formatMessage(
                   sections.investigationCaseCourtSection.ruling,
                 ),
-                href: !isModifyingRuling
-                  ? `${constants.INVESTIGATION_CASE_RULING_ROUTE}/${id}`
-                  : undefined,
+                isActive: routeIndex === 3,
+                href: `${constants.INVESTIGATION_CASE_RULING_ROUTE}/${id}`,
                 onClick:
                   validateFormStepper(
                     isValid,
@@ -665,9 +792,8 @@ const useSections = (
                 name: formatMessage(
                   sections.investigationCaseCourtSection.courtRecord,
                 ),
-                href: !isModifyingRuling
-                  ? `${constants.INVESTIGATION_CASE_COURT_RECORD_ROUTE}/${id}`
-                  : undefined,
+                isActive: routeIndex === 4,
+                href: `${constants.INVESTIGATION_CASE_COURT_RECORD_ROUTE}/${id}`,
                 onClick:
                   validateFormStepper(
                     isValid,
@@ -689,9 +815,8 @@ const useSections = (
                 name: formatMessage(
                   sections.investigationCaseCourtSection.conclusion,
                 ),
-                href: !isModifyingRuling
-                  ? `${constants.INVESTIGATION_CASE_CONFIRMATION_ROUTE}/${id}`
-                  : undefined,
+                isActive: routeIndex === 5,
+                href: `${constants.INVESTIGATION_CASE_CONFIRMATION_ROUTE}/${id}`,
                 onClick:
                   validateFormStepper(
                     isValid,
@@ -714,20 +839,33 @@ const useSections = (
     }
   }
 
-  const getIndictmentsCourtSections = (workingCase: Case) => {
-    const { id } = workingCase
+  const getIndictmentsCourtSections = (workingCase: Case, user?: User) => {
+    const { id, type } = workingCase
+    const routeIndex = courtIndictmentRoutes.findIndex(
+      /**
+       * We do .slice here because router.pathname is /something/[:id]
+       * and we want to remove the /[:id] part
+       */
+      (route) => route === router.pathname.slice(0, -5),
+    )
 
     return {
       name: formatMessage(sections.indictmentsCourtSection.title),
+      isActive:
+        isExtendedCourtRole(user?.role) &&
+        isIndictmentCase(type) &&
+        !completedCaseStates.includes(workingCase.state),
       children: [
         {
           name: formatMessage(sections.indictmentsCourtSection.overview),
+          isActive: user?.role === UserRole.DEFENDER ? false : routeIndex === 0,
           href: `${constants.INDICTMENTS_COURT_OVERVIEW_ROUTE}/${id}`,
         },
         {
           name: formatMessage(
             sections.indictmentsCourtSection.receptionAndAssignment,
           ),
+          isActive: routeIndex === 1,
           href: `${constants.INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE}/${workingCase.id}`,
           onClick:
             validateFormStepper(isValid, [], workingCase) && onNavigationTo
@@ -739,6 +877,7 @@ const useSections = (
         },
         {
           name: formatMessage(sections.indictmentsCourtSection.subpoena),
+          isActive: routeIndex === 2,
           href: `${constants.INDICTMENTS_SUBPOENA_ROUTE}/${workingCase.id}`,
           onClick:
             validateFormStepper(
@@ -754,10 +893,9 @@ const useSections = (
               : undefined,
         },
         {
-          name: formatMessage(
-            sections.indictmentsCourtSection.prosecutorAndDefender,
-          ),
-          href: `${constants.INDICTMENTS_PROSECUTOR_AND_DEFENDER_ROUTE}/${workingCase.id}`,
+          name: formatMessage(sections.indictmentsCourtSection.defender),
+          isActive: routeIndex === 3,
+          href: `${constants.INDICTMENTS_DEFENDER_ROUTE}/${workingCase.id}`,
           onClick:
             validateFormStepper(
               isValid,
@@ -769,13 +907,12 @@ const useSections = (
               workingCase,
             ) && onNavigationTo
               ? async () =>
-                  await onNavigationTo(
-                    constants.INDICTMENTS_PROSECUTOR_AND_DEFENDER_ROUTE,
-                  )
+                  await onNavigationTo(constants.INDICTMENTS_DEFENDER_ROUTE)
               : undefined,
         },
         {
           name: formatMessage(sections.indictmentsCourtSection.courtRecord),
+          isActive: routeIndex === 4,
           href: `${constants.INDICTMENTS_COURT_RECORD_ROUTE}/${workingCase.id}`,
           onClick:
             validateFormStepper(
@@ -784,7 +921,7 @@ const useSections = (
                 constants.INDICTMENTS_OVERVIEW_ROUTE,
                 constants.INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE,
                 constants.INDICTMENTS_SUBPOENA_ROUTE,
-                constants.INDICTMENTS_PROSECUTOR_AND_DEFENDER_ROUTE,
+                constants.INDICTMENTS_DEFENDER_ROUTE,
               ],
               workingCase,
             ) && onNavigationTo
@@ -801,9 +938,21 @@ const useSections = (
     user?: User,
   ): RouteSection => {
     const section = getRestrictionCaseProsecutorSection(workingCase, user)
+    const { type, parentCase } = workingCase
+    const routeIndex = prosecutorRestrictionCasesRoutes.findIndex(
+      /**
+       * We do .slice here because router.pathname is /something/[:id]
+       * and we want to remove the /[:id] part
+       */
+      (route) => route === router.pathname.slice(0, -5),
+    )
 
     return {
       name: formatMessage(sections.extensionSection.title),
+      isActive:
+        user?.role === UserRole.PROSECUTOR &&
+        isRestrictionCase(type) &&
+        parentCase !== undefined,
       children:
         user?.institution?.type !== InstitutionType.PROSECUTORS_OFFICE
           ? []
@@ -812,6 +961,7 @@ const useSections = (
                 name: capitalize(
                   formatMessage(core.defendant, { suffix: 'i' }),
                 ),
+                isActive: routeIndex === 0,
                 href:
                   (section.children.length > 0 && section.children[0].href) ||
                   undefined,
@@ -820,6 +970,7 @@ const useSections = (
                 name: formatMessage(
                   sections.extensionSection.hearingArrangements,
                 ),
+                isActive: routeIndex === 1,
                 href:
                   (section.children.length > 0 && section.children[1].href) ||
                   undefined,
@@ -830,6 +981,7 @@ const useSections = (
               },
               {
                 name: formatMessage(sections.extensionSection.policeDemands),
+                isActive: routeIndex === 2,
                 href:
                   (section.children.length > 0 && section.children[2].href) ||
                   undefined,
@@ -840,6 +992,7 @@ const useSections = (
               },
               {
                 name: formatMessage(sections.extensionSection.policeReport),
+                isActive: routeIndex === 3,
                 href:
                   (section.children.length > 0 && section.children[3].href) ||
                   undefined,
@@ -850,6 +1003,7 @@ const useSections = (
               },
               {
                 name: formatMessage(sections.extensionSection.caseFiles),
+                isActive: routeIndex === 4,
                 href:
                   (section.children.length > 0 && section.children[4].href) ||
                   undefined,
@@ -860,6 +1014,7 @@ const useSections = (
               },
               {
                 name: formatMessage(sections.extensionSection.overview),
+                isActive: routeIndex === 5,
                 href:
                   (section.children.length > 0 && section.children[5].href) ||
                   undefined,
@@ -877,9 +1032,21 @@ const useSections = (
     user?: User,
   ): RouteSection => {
     const section = getInvestigationCaseProsecutorSection(workingCase, user)
+    const { type, parentCase } = workingCase
+    const routeIndex = prosecutorInvestigationCasesRoutes.findIndex(
+      /**
+       * We do .slice here because router.pathname is /something/[:id]
+       * and we want to remove the /[:id] part
+       */
+      (route) => route === router.pathname.slice(0, -5),
+    )
 
     return {
       name: formatMessage(sections.investigationCaseExtensionSection.title),
+      isActive:
+        user?.role === UserRole.PROSECUTOR &&
+        isInvestigationCase(type) &&
+        parentCase !== undefined,
       children:
         user?.institution?.type !== InstitutionType.PROSECUTORS_OFFICE
           ? []
@@ -888,6 +1055,7 @@ const useSections = (
                 name: capitalize(
                   formatMessage(core.defendant, { suffix: 'i' }),
                 ),
+                isActive: routeIndex === 0,
                 href:
                   (section.children.length > 0 && section.children[5].href) ||
                   undefined,
@@ -897,6 +1065,7 @@ const useSections = (
                   sections.investigationCaseExtensionSection
                     .hearingArrangements,
                 ),
+                isActive: routeIndex === 1,
                 href:
                   (section.children.length > 0 && section.children[1].href) ||
                   undefined,
@@ -906,6 +1075,7 @@ const useSections = (
                 name: formatMessage(
                   sections.investigationCaseExtensionSection.policeDemands,
                 ),
+                isActive: routeIndex === 2,
                 href:
                   (section.children.length > 0 && section.children[2].href) ||
                   undefined,
@@ -915,6 +1085,7 @@ const useSections = (
                 name: formatMessage(
                   sections.investigationCaseExtensionSection.policeReport,
                 ),
+                isActive: routeIndex === 3,
                 href:
                   (section.children.length > 0 && section.children[3].href) ||
                   undefined,
@@ -924,6 +1095,7 @@ const useSections = (
                 name: formatMessage(
                   sections.investigationCaseExtensionSection.caseFiles,
                 ),
+                isActive: routeIndex === 4,
                 href:
                   (section.children.length > 0 && section.children[4].href) ||
                   undefined,
@@ -933,6 +1105,7 @@ const useSections = (
                 name: formatMessage(
                   sections.investigationCaseExtensionSection.overview,
                 ),
+                isActive: routeIndex === 5,
                 href:
                   (section.children.length > 0 && section.children[5].href) ||
                   undefined,
@@ -942,37 +1115,127 @@ const useSections = (
     }
   }
 
-  const getSections = (workingCase?: Case, user?: User): RouteSection[] => {
+  const getCourtOfAppealSections = (workingCase: Case, user?: User) => {
+    const { id } = workingCase
+    const routeIndex = courtOfAppealRoutes.findIndex(
+      /**
+       * We do .slice here because router.pathname is /something/[:id]
+       * and we want to remove the /[:id] part
+       */
+      (route) => route === router.pathname.slice(0, -5),
+    )
     return [
-      isRestrictionCase(workingCase?.type)
-        ? getRestrictionCaseProsecutorSection(workingCase || ({} as Case), user)
-        : isInvestigationCase(workingCase?.type)
-        ? getInvestigationCaseProsecutorSection(
-            workingCase || ({} as Case),
-            user,
-          )
-        : getIndictmentCaseProsecutorSection(workingCase || ({} as Case)),
-      isRestrictionCase(workingCase?.type)
-        ? getRestrictionCaseCourtSections(workingCase || ({} as Case), user)
-        : isInvestigationCase(workingCase?.type)
-        ? getInvestigationCaseCourtSections(workingCase || ({} as Case), user)
-        : getIndictmentsCourtSections(workingCase || ({} as Case)),
       {
-        name: caseResult(formatMessage, workingCase),
+        name: formatMessage(sections.courtOfAppealSection.appealed),
+        isActive:
+          user?.institution?.type !== InstitutionType.HIGH_COURT &&
+          workingCase.appealState === CaseAppealState.RECEIVED,
         children: [],
       },
-      isRestrictionCase(workingCase?.type)
-        ? getRestrictionCaseExtenstionSections(
-            workingCase || ({} as Case),
-            user,
-          )
-        : getInvestigationCaseExtenstionSections(
-            workingCase || ({} as Case),
-            user,
-          ),
-      isRestrictionCase(workingCase?.type)
-        ? getRestrictionCaseCourtSections(workingCase || ({} as Case), user)
-        : getInvestigationCaseCourtSections(workingCase || ({} as Case), user),
+      {
+        name: formatMessage(sections.courtOfAppealSection.result),
+        isActive:
+          user?.institution?.type === InstitutionType.HIGH_COURT &&
+          routeIndex !== 3,
+        children: [
+          {
+            name: formatMessage(sections.courtOfAppealSection.overview),
+            isActive: routeIndex === 0,
+            href: `${constants.COURT_OF_APPEAL_OVERVIEW_ROUTE}/${id}`,
+          },
+          {
+            name: formatMessage(sections.courtOfAppealSection.reception),
+            isActive: routeIndex === 1,
+            href: `${constants.COURT_OF_APPEAL_CASE_ROUTE}/${id}`,
+            onClick:
+              validateFormStepper(
+                isValid,
+                [constants.COURT_OF_APPEAL_OVERVIEW_ROUTE],
+                workingCase,
+              ) && onNavigationTo
+                ? async () =>
+                    await onNavigationTo(constants.COURT_OF_APPEAL_CASE_ROUTE)
+                : undefined,
+          },
+          {
+            name: formatMessage(sections.courtOfAppealSection.ruling),
+            isActive: routeIndex === 2,
+            href: `${constants.COURT_OF_APPEAL_RULING_ROUTE}/${workingCase.id}`,
+          },
+        ],
+      },
+      {
+        name: formatMessage(sections.caseResults.result),
+        isActive:
+          routeIndex === 3 ||
+          workingCase.appealState === CaseAppealState.COMPLETED,
+        children: [],
+      },
+    ]
+  }
+
+  const getRestrictionCaseExtensionCourtSections = (
+    workingCase: Case,
+    user?: User,
+  ) => {
+    const { type } = workingCase
+
+    return {
+      ...getRestrictionCaseCourtSections(workingCase, user),
+      isActive: isRestrictionCase(type) && isCourtRole(user?.role),
+    }
+  }
+
+  const getInvestigationCaseExtensionCourtSections = (
+    workingCase: Case,
+    user?: User,
+  ) => {
+    const { type } = workingCase
+
+    return {
+      ...getInvestigationCaseCourtSections(workingCase, user),
+      isActive: isInvestigationCase(type) && isCourtRole(user?.role),
+    }
+  }
+
+  const getSections = (workingCase: Case, user?: User): RouteSection[] => {
+    return [
+      isRestrictionCase(workingCase.type)
+        ? getRestrictionCaseProsecutorSection(workingCase, user)
+        : isInvestigationCase(workingCase.type)
+        ? getInvestigationCaseProsecutorSection(workingCase, user)
+        : getIndictmentCaseProsecutorSection(workingCase, user),
+      isRestrictionCase(workingCase.type)
+        ? getRestrictionCaseCourtSections(workingCase, user)
+        : isInvestigationCase(workingCase.type)
+        ? getInvestigationCaseCourtSections(workingCase, user)
+        : getIndictmentsCourtSections(workingCase, user),
+      {
+        name: caseResult(formatMessage, workingCase),
+        isActive:
+          completedCaseStates.includes(workingCase.state) &&
+          !workingCase.prosecutorPostponedAppealDate &&
+          !workingCase.accusedPostponedAppealDate &&
+          workingCase.appealState !== CaseAppealState.COMPLETED,
+        children: [],
+      },
+      ...(!features.includes(Feature.APPEAL_TO_COURT_OF_APPEALS)
+        ? []
+        : isRestrictionCase(workingCase.type) && workingCase.appealState
+        ? getCourtOfAppealSections(workingCase, user)
+        : isInvestigationCase(workingCase.type) && workingCase.appealState
+        ? getCourtOfAppealSections(workingCase, user)
+        : []),
+      ...(workingCase.parentCase
+        ? [
+            isRestrictionCase(workingCase.type)
+              ? getRestrictionCaseExtenstionSections(workingCase, user)
+              : getInvestigationCaseExtenstionSections(workingCase, user),
+            isRestrictionCase(workingCase.type)
+              ? getRestrictionCaseExtensionCourtSections(workingCase, user)
+              : getInvestigationCaseExtensionCourtSections(workingCase, user),
+          ]
+        : []),
     ]
   }
 

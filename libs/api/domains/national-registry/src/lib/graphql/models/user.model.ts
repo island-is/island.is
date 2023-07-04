@@ -25,6 +25,15 @@ export class NationalRegistryUser {
   @Field(() => String)
   fullName!: string
 
+  @Field(() => String, { nullable: true })
+  firstName?: string
+
+  @Field(() => String, { nullable: true })
+  lastName?: string
+
+  @Field(() => String, { nullable: true })
+  middleName?: string
+
   @Field(() => Gender, { nullable: true })
   gender?: Gender
 

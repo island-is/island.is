@@ -4,12 +4,13 @@ import { Base64 } from 'js-base64'
 
 import { BadGatewayException, NotFoundException } from '@nestjs/common'
 
-import { User } from '@island.is/judicial-system/types'
+import { CaseType, User } from '@island.is/judicial-system/types'
 
 import { AwsS3Service } from '../../aws-s3'
 import { UploadPoliceCaseFileResponse } from '../models/uploadPoliceCaseFile.response'
 import { createTestingPoliceModule } from './createTestingPoliceModule'
 import { UploadPoliceCaseFileDto } from '../dto/uploadPoliceCaseFile.dto'
+import { Case } from '../../case'
 
 jest.mock('isomorphic-fetch')
 
@@ -41,7 +42,9 @@ describe('PoliceController - Upload police case file', () => {
       const then = {} as Then
 
       await policeController
-        .uploadPoliceCaseFile(caseId, user, uploadPoliceCaseFile)
+        .uploadPoliceCaseFile(caseId, user, uploadPoliceCaseFile, {
+          type: CaseType.CUSTODY,
+        } as Case)
         .then((result) => (then.result = result))
         .catch((error) => (then.error = error))
 

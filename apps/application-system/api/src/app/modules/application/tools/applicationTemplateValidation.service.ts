@@ -54,43 +54,41 @@ export class ApplicationValidationService {
       )
     }
 
-    await this.validateThatTemplateIsReady(user, applicationTemplate)
+    await this.validateThatTemplateIsReady(applicationTemplate, user)
   }
 
-  async isTemplateFeatureFlaggedReady(featureFlag: Features, user: User) {
+  async isTemplateFeatureFlaggedReady(featureFlag: Features, user?: User) {
     return await this.featureFlagService.getValue(featureFlag, false, user)
   }
 
-  // If configcat flag is present use that flag to determine if the template is ready
-  // If configcat flag is not present, use the readyForProduction flag
-  // TODO: Remove the readyForProduction flag and assume that applications that have no featureFlag are ready for production
+  // Determines if a template is ready based on the presence of a configcat flag or the readyForProduction flag.
   async isTemplateReady(
-    user: User,
     template: Pick<
       Unwrap<typeof getApplicationTemplateByTypeId>,
       'readyForProduction' | 'featureFlag'
     >,
+    user?: User,
   ): Promise<boolean> {
+    // If the featureFlag is present, use the isTemplateFeatureFlaggedReady function.
     if (template.featureFlag) {
       return await this.isTemplateFeatureFlaggedReady(
         template.featureFlag,
         user,
       )
     }
-    // TODO: Remove this when readyForProduction is removed
-    if (isRunningOnProductionEnvironment() && !template.readyForProduction) {
-      {
-        return false
-      }
+    // If the code is running in a production environment and the readyForProduction flag is undefined or true, consider the template ready.
+    if (isRunningOnProductionEnvironment()) {
+      return template.readyForProduction ?? true
     }
+    // If the code is not running in a production environment, consider the template ready.
     return true
   }
 
   async validateThatTemplateIsReady(
-    user: User,
     template: Unwrap<typeof getApplicationTemplateByTypeId>,
+    user?: User,
   ): Promise<void> {
-    const results = await this.isTemplateReady(user, template)
+    const results = await this.isTemplateReady(template, user)
     if (!results) {
       throw new BadRequestException(
         `Template ${template.type} is not ready for production`,
@@ -114,7 +112,7 @@ export class ApplicationValidationService {
       )
     }
 
-    await this.validateThatTemplateIsReady(user, applicationTemplate)
+    await this.validateThatTemplateIsReady(applicationTemplate, user)
 
     const schemaFormValidationError = validateAnswers({
       dataSchema: applicationTemplate.dataSchema,

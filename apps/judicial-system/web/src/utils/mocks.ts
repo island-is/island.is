@@ -1,14 +1,13 @@
+import { Gender, CaseState } from '@island.is/judicial-system/types'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import {
-  Gender,
-  CaseState,
-  CaseType,
   InstitutionType,
+  User,
   UserRole,
-  Case,
+  CaseType,
   CaseOrigin,
-} from '@island.is/judicial-system/types'
-import type { User } from '@island.is/judicial-system/types'
-import { CurrentUserQuery } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
+  CurrentUserDocument,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 
 export const mockCourt = {
   id: 'court_id',
@@ -65,7 +64,7 @@ export const mockPrisonUser = {
 export const mockJudgeQuery = [
   {
     request: {
-      query: CurrentUserQuery,
+      query: CurrentUserDocument,
     },
     result: {
       data: {
@@ -78,7 +77,7 @@ export const mockJudgeQuery = [
 export const mockHighCourtQuery = [
   {
     request: {
-      query: CurrentUserQuery,
+      query: CurrentUserDocument,
     },
     result: {
       data: {
@@ -91,7 +90,7 @@ export const mockHighCourtQuery = [
 export const mockPrisonUserQuery = [
   {
     request: {
-      query: CurrentUserQuery,
+      query: CurrentUserDocument,
     },
     result: {
       data: {
@@ -104,7 +103,7 @@ export const mockPrisonUserQuery = [
 export const mockProsecutorQuery = [
   {
     request: {
-      query: CurrentUserQuery,
+      query: CurrentUserDocument,
     },
     result: {
       data: {

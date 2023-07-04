@@ -31,61 +31,51 @@ export class DataProtectionComplaintService extends BaseTemplateApiService {
   }
 
   async sendApplication({ application }: TemplateApiModuleActionProps) {
-    try {
-      const complaintAttachedFiles = await this.applicationAttachmentProvider.getFiles(
-        ['complaint.documents'],
-        application,
-      )
+    const complaintAttachedFiles = await this.applicationAttachmentProvider.getFiles(
+      ['complaint.documents'],
+      application,
+    )
 
-      const commissionsAttachedFiles = await this.applicationAttachmentProvider.getFiles(
-        ['commissions.documents'],
-        application,
-      )
+    const commissionsAttachedFiles = await this.applicationAttachmentProvider.getFiles(
+      ['commissions.documents'],
+      application,
+    )
 
-      const attachedFiles = complaintAttachedFiles.concat(
-        commissionsAttachedFiles,
-      )
+    const attachedFiles = complaintAttachedFiles.concat(
+      commissionsAttachedFiles,
+    )
 
-      const complaintPdf = await this.pdfFileProvider.getApplicationPdf(
-        application,
-        'kvörtun',
-        attachedFiles,
-      )
+    const complaintPdf = await this.pdfFileProvider.getApplicationPdf(
+      application,
+      'kvörtun',
+      attachedFiles,
+    )
 
-      if (!complaintPdf?.content) throw new Error('No pdf content')
+    if (!complaintPdf?.content) throw new Error('No pdf content')
 
-      const now = new Date()
-      const nowString = now.toISOString().replace(/:/g, '-')
-      const complaintPdfFileName = `kvörtun-${nowString}.pdf`
+    const now = new Date()
+    const nowString = now.toISOString().replace(/:/g, '-')
+    const complaintPdfFileName = `kvörtun-${nowString}.pdf`
 
-      const key = await this.sharedService.addAttachment(
-        application,
-        complaintPdfFileName,
-        complaintPdf.fileBuffer,
-        {
-          ContentType: 'application/pdf',
-        },
-      )
+    const key = await this.sharedService.addAttachment(
+      application,
+      complaintPdfFileName,
+      complaintPdf.fileBuffer,
+      {
+        ContentType: 'application/pdf',
+      },
+    )
 
-      const attachments = [complaintPdf, ...attachedFiles]
+    const attachments = [complaintPdf, ...attachedFiles]
 
-      const caseRequest = await applicationToCaseRequest(
-        application,
-        attachments,
-      )
+    const caseRequest = await applicationToCaseRequest(application, attachments)
 
-      await this.caseApiWithAuth.createCase({
-        requestData: caseRequest,
-      })
+    await this.caseApiWithAuth.createCase({
+      requestData: caseRequest,
+    })
 
-      return {
-        applicationPdfKey: key,
-      }
-    } catch (error) {
-      console.log('error here ', error)
-      this.logger.error('Error submitting', error)
-
-      throw error
+    return {
+      applicationPdfKey: key,
     }
   }
 }

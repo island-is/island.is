@@ -1,4 +1,5 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
+import { CacheField } from '@island.is/nest/graphql'
 import { IGroupedMenu } from '../generated/contentfulTypes'
 import { Menu, mapMenu } from './menu.model'
 
@@ -10,7 +11,7 @@ export class GroupedMenu {
   @Field()
   title!: string
 
-  @Field(() => [Menu])
+  @CacheField(() => [Menu])
   menus?: Menu[]
 }
 

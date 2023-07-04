@@ -30,9 +30,8 @@ export const FilterInput: React.FC<FilterInputProps> = ({
       name={name}
       placeholder={placeholder}
       backgroundColor={backgroundColor}
-      size="sm"
-      icon="search"
-      iconType="outline"
+      size="xs"
+      icon={{ name: 'search', type: 'outline' }}
       value={value}
       onChange={(event) => onChange(event.target.value)}
       onKeyDown={onKeyDown}

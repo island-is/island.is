@@ -22,7 +22,7 @@ export const mainOperatorSubSection = buildSubSection({
       [],
     ) as OldOperatorInformation[]
     return (
-      operators.length +
+      operators.filter(({ wasRemoved }) => wasRemoved !== 'true').length +
         oldOperators?.filter((x) => x.wasRemoved === 'false').length >
       1
     )
@@ -47,9 +47,12 @@ export const mainOperatorSubSection = buildSubSection({
               'oldOperators',
               [],
             ) as OldOperatorInformation[]
-            return [...operators, ...oldOperators].map((operator) => {
+            return [
+              ...operators.filter(({ wasRemoved }) => wasRemoved !== 'true'),
+              ...oldOperators.filter(({ wasRemoved }) => wasRemoved !== 'true'),
+            ].map((operator) => {
               return {
-                value: operator.nationalId,
+                value: operator.nationalId!,
                 label: `${operator.name} - ${operator.nationalId}`,
               }
             })

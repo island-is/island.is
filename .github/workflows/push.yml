@@ -161,7 +161,7 @@ jobs:
           fetch-depth: 0
       - uses: actions/setup-node@v3
         with:
-          node-version: '18'
+          node-version: '18.8.0'
 
       - name: Setup yarn
         run: npm install -g yarn
@@ -237,7 +237,7 @@ jobs:
             echo "SHA='$SHA', retrived from action environment"
           fi
           echo "Using SHA='$SHA' as docker tag sha"
-          export DOCKER_TAG=${GITHUB_RUN_NUMBER}_${DOCKER_BRANCH_TAG}_${SHA:0:7}
+          export DOCKER_TAG=${DOCKER_BRANCH_TAG}_${SHA:0:7}_${GITHUB_RUN_NUMBER}
           echo "Docker tag will be ${DOCKER_TAG}"
           echo "::set-output name=DOCKER_TAG::${DOCKER_TAG}"
           echo "DOCKER_TAG=$DOCKER_TAG" >> $GITHUB_ENV
@@ -314,7 +314,7 @@ jobs:
           fi
           export WORKFLOW_ID=push
           export SHELL=/usr/bin/bash
-          source ./scripts/ci/00_prepare-base-tags.sh
+          source ./scripts/ci/00_prepare-base-tags.sh $(git merge-base HEAD $GITHUB_BASE_REF)
           git checkout $GITHUB_SHA
           echo "BASE=$BASE" >> $GITHUB_ENV
           echo "::set-output name=LAST_GOOD_BUILD_DOCKER_TAG::${LAST_GOOD_BUILD_DOCKER_TAG}"
@@ -491,6 +491,7 @@ jobs:
       GIT_BRANCH: ${{ needs.pre-checks.outputs.GIT_BRANCH}}
       DOCKER_TAG: ${{ needs.prepare.outputs.DOCKER_TAG}}
       PUBLISH: true
+      GEOIP_LICENSE_KEY: ${{ secrets.GEOIP_LICENSE_KEY }}
     strategy:
       fail-fast: false
       matrix:
@@ -580,13 +581,13 @@ jobs:
         if: steps.gather.outcome == 'success'
         run: ./scripts/ci/run-in-parallel.sh 90_$DOCKER_TYPE
         env:
-          EXTRA_DOCKER_BUILD_ARGS: '--build-arg DOCKER_IMAGE_REGISTRY=${{ env.DOCKER_BASE_IMAGE_REGISTRY }}'
+          EXTRA_DOCKER_BUILD_ARGS: '--build-arg DOCKER_IMAGE_REGISTRY=${{ env.DOCKER_BASE_IMAGE_REGISTRY }} --build-arg GEOIP_LICENSE_KEY=${{ env.GEOIP_LICENSE_KEY }}'
 
       - name: Building Docker images Retry #This only exists until GHA starts supporting this
         if: steps.gather.outcome == 'success' && steps.dockerbuild.outcome == 'failure'
         run: ./scripts/ci/run-in-parallel.sh 90_$DOCKER_TYPE
         env:
-          EXTRA_DOCKER_BUILD_ARGS: '--build-arg DOCKER_IMAGE_REGISTRY=${{ env.DOCKER_BASE_IMAGE_REGISTRY }}'
+          EXTRA_DOCKER_BUILD_ARGS: '--build-arg DOCKER_IMAGE_REGISTRY=${{ env.DOCKER_BASE_IMAGE_REGISTRY }} --build-arg GEOIP_LICENSE_KEY=${{ env.GEOIP_LICENSE_KEY }}'
 
   helm-docker-build:
     needs:
@@ -622,7 +623,7 @@ jobs:
         run: |
           ./scripts/build-docker-container.sh $DOCKER_TAG
           echo "COMMENT<<EOF" >> $GITHUB_ENV
-          printf "Affected services are: ${{needs.prepare.outputs.IMAGES}}\n" >> $GITHUB_ENV
+          echo "Affected services are: ${{needs.prepare.outputs.IMAGES}}" >> $GITHUB_ENV
           docker run --rm ${DOCKER_REGISTRY}helm-config:$DOCKER_TAG ingress-comment --images=${{needs.prepare.outputs.IMAGES}} --chart=islandis --feature=$FEATURE_NAME >> $GITHUB_ENV
           echo 'EOF' >> $GITHUB_ENV
         env:
@@ -720,7 +721,7 @@ jobs:
           GH_PRIVATE_REPO_TOKEN: ${{secrets.GH_PRIVATE_REPO_TOKEN}}
         run: |
           if read -d "\n" IDENTITY_SERVER_HEAD_SHA IDENTITY_SERVER_RUN_NUMBER; then :; fi <<<$(curl -H "Authorization: token $GH_PRIVATE_REPO_TOKEN" -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/island-is/identity-server.web/actions/workflows/build.yml/runs\?branch\=main\&status\=success\&per_page\=1\&event\=push | jq '.workflow_runs[] | .head_sha, .run_number' | tr -d \")
-          export IDENTITY_SERVER_DOCKER_TAG=${IDENTITY_SERVER_RUN_NUMBER}_main_${IDENTITY_SERVER_HEAD_SHA:0:7}
+          export IDENTITY_SERVER_DOCKER_TAG=main_${IDENTITY_SERVER_HEAD_SHA:0:7}_${IDENTITY_SERVER_RUN_NUMBER}
           echo "Deploying with identity-server docker tag: '$IDENTITY_SERVER_DOCKER_TAG'"
           echo "Sending webhook with branch: '$GIT_BRANCH_DEPLOY'"
           curl $SPINNAKER_URL/webhooks/webhook/ids-dev -H "content-type: application/json" --data-binary @- <<BODY

@@ -10,7 +10,7 @@ const devConfig = {
   },
   auth: {
     issuer: 'https://identity-server.dev01.devland.is',
-    audience: '@island.is',
+    audience: ['@island.is', '@admin.island.is'],
     allowClientNationalId: true,
   },
   templateApi: {
@@ -35,6 +35,7 @@ const devConfig = {
       url: 'https://smsapi.devnova.is',
       username: 'IslandIs_User_Development',
       password: process.env.NOVA_PASSWORD,
+      acceptUnauthorized: true,
     },
     criminalRecord: {
       clientConfig: {
@@ -101,7 +102,8 @@ const prodConfig = {
   },
   auth: {
     issuer: process.env.IDENTITY_SERVER_ISSUER_URL,
-    audience: '@island.is',
+    audience: ['@island.is', '@admin.island.is'],
+    allowClientNationalId: true,
   },
   templateApi: {
     clientLocationOrigin: process.env.CLIENT_LOCATION_ORIGIN,
@@ -123,6 +125,7 @@ const prodConfig = {
       url: process.env.NOVA_URL,
       username: process.env.NOVA_USERNAME,
       password: process.env.NOVA_PASSWORD,
+      acceptUnauthorized: process.env.NOVA_ACCEPT_UNAUTHORIZED === 'true',
     },
     presignBucket: process.env.FILE_SERVICE_PRESIGN_BUCKET,
     attachmentBucket: process.env.APPLICATION_ATTACHMENT_BUCKET,

@@ -1,4 +1,5 @@
 import { BrowserContext, expect, test } from '@playwright/test'
+
 import { urls } from '../../../../support/urls'
 import { session } from '../../../../support/session'
 import { helpers } from '../../../../support/locator-helpers'
@@ -9,9 +10,9 @@ test.describe('Admin portal', () => {
   let context: BrowserContext
   test.beforeAll(async ({ browser }) => {
     context = await session({
-      browser: browser,
+      browser,
       homeUrl: `/stjornbord`,
-      phoneNumber: '0103019',
+      phoneNumber: '0102399',
       idsLoginOn: true,
     })
   })
@@ -20,8 +21,8 @@ test.describe('Admin portal', () => {
   })
   test('should see welcome title', async () => {
     const page = await context.newPage()
-    const { findByRole } = helpers(page)
+    const { findByTestId } = helpers(page)
     await page.goto('/stjornbord')
-    await expect(findByRole('heading', 'Yfirlit')).toBeVisible()
+    await expect(findByTestId('active-module-name')).toBeVisible()
   })
 })

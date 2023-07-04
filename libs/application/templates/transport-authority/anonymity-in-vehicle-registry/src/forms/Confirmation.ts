@@ -1,11 +1,8 @@
-import {
-  buildForm,
-  buildCustomField,
-  buildSection,
-} from '@island.is/application/core'
+import { buildForm, buildSection } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
-import Logo from '../assets/Logo'
 import { information, externalData, confirmation } from '../lib/messages'
+import { Logo } from '../assets/Logo'
+import { buildFormConclusionSection } from '@island.is/application/ui-forms'
 
 export const Confirmation: Form = buildForm({
   id: 'ConfirmationForm',
@@ -23,17 +20,11 @@ export const Confirmation: Form = buildForm({
       title: information.general.sectionTitle,
       children: [],
     }),
-    buildSection({
-      id: 'confirmation',
-      title: confirmation.general.sectionTitle,
-      children: [
-        buildCustomField({
-          component: 'Confirmation',
-          id: 'confirmation',
-          title: '',
-          description: '',
-        }),
-      ],
+    buildFormConclusionSection({
+      alertTitle: confirmation.general.alertTitle,
+      alertMessage: confirmation.general.alertMessage,
+      expandableHeader: confirmation.general.accordionTitle,
+      expandableDescription: confirmation.general.accordionText,
     }),
   ],
 })

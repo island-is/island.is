@@ -96,4 +96,28 @@ export const m = defineMessages({
     defaultMessage: 'Skoða',
     id: 'portals:view',
   },
+  accessControl: {
+    id: 'portals:accessControl',
+    defaultMessage: 'Aðgangsstýring',
+  },
+  accessControlDelegations: {
+    id: 'portals:accessControlDelegations',
+    defaultMessage: 'Umboð',
+  },
+  accessControlDescription: {
+    id: 'portals:accessControlDescription',
+    defaultMessage: 'Umboðsveiting og yfirlit yfir umboð sem þú hefur gefið',
+  },
+  accessControlDelegationsIncoming: {
+    id: 'portals:accessControlToMe',
+    defaultMessage: 'Til mín',
+  },
+  accessControlGrant: {
+    id: 'portals:accessControlGrant',
+    defaultMessage: 'Veita aðgang',
+  },
+  accessControlAccess: {
+    id: 'portals:accessControlAccess',
+    defaultMessage: 'Aðgangur',
+  },
 })

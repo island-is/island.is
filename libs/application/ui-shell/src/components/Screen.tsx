@@ -18,6 +18,7 @@ import {
   FormValue,
   Schema,
   BeforeSubmitCallback,
+  Section,
 } from '@island.is/application/types'
 import {
   Box,
@@ -52,6 +53,7 @@ import RefetchContext from '../context/RefetchContext'
 
 type ScreenProps = {
   activeScreenIndex: number
+  sections: Section[]
   addExternalData(data: ExternalData): void
   application: Application
   answerAndGoToNextScreen(answers: FormValue): void
@@ -60,11 +62,14 @@ type ScreenProps = {
   expandRepeater(): void
   mode?: FormModes
   numberOfScreens: number
+  totalDraftScreens?: number
+  currentDraftScreen?: number
   prevScreen(): void
   screen: FormScreen
   renderLastScreenButton?: boolean
   renderLastScreenBackButton?: boolean
   goToScreen: (id: string) => void
+  setUpdateForbidden: (value: boolean) => void
 }
 
 const getServerValidationErrors = (error: ApolloError | undefined) => {
@@ -78,6 +83,7 @@ const getServerValidationErrors = (error: ApolloError | undefined) => {
 }
 
 const Screen: FC<ScreenProps> = ({
+  setUpdateForbidden,
   activeScreenIndex,
   addExternalData,
   answerQuestions,
@@ -89,9 +95,12 @@ const Screen: FC<ScreenProps> = ({
   mode,
   numberOfScreens,
   prevScreen,
+  totalDraftScreens,
+  currentDraftScreen,
   renderLastScreenButton,
   renderLastScreenBackButton,
   screen,
+  sections,
 }) => {
   const { answers: formValue, externalData, id: applicationId } = application
   const { lang: locale, formatMessage } = useLocale()
@@ -115,6 +124,9 @@ const Screen: FC<ScreenProps> = ({
     onError: (e) => {
       // We handle validation problems separately.
       const problem = findProblemInApolloError(e)
+      if (problem?.type === ProblemType.HTTP_NOT_FOUND) {
+        setUpdateForbidden(true)
+      }
       if (problem?.type === ProblemType.VALIDATION_FAILED) {
         return
       }
@@ -128,7 +140,11 @@ const Screen: FC<ScreenProps> = ({
       onError: (e) => handleServerError(e, formatMessage),
     },
   )
-  const { handleSubmit, errors: formErrors, reset } = hookFormData
+  const {
+    handleSubmit,
+    formState: { errors: formErrors },
+    reset,
+  } = hookFormData
 
   const submitField = useMemo(() => findSubmitField(screen), [screen])
 
@@ -153,6 +169,7 @@ const Screen: FC<ScreenProps> = ({
   }
 
   const goBack = useCallback(() => {
+    setSubmitButtonDisabled(false)
     // using deepmerge to prevent some weird react-hook-form read-only bugs
     reset(deepmerge({}, formValue))
     prevScreen()
@@ -173,7 +190,6 @@ const Screen: FC<ScreenProps> = ({
         if (typeof possibleError === 'string' && screen && screen.id) {
           setBeforeSubmitError({ [screen.id]: possibleError })
         }
-
         return
       }
     }
@@ -222,6 +238,10 @@ const Screen: FC<ScreenProps> = ({
           input: {
             id: applicationId,
             answers: extractedAnswers,
+            draftProgress: {
+              stepsFinished: currentDraftScreen ?? screen.sectionIndex,
+              totalSteps: totalDraftScreens ?? sections.length - 1,
+            },
           },
           locale,
         },
@@ -236,6 +256,7 @@ const Screen: FC<ScreenProps> = ({
   }
 
   const [isMobile, setIsMobile] = useState(false)
+  const [submitButtonDisabled, setSubmitButtonDisabled] = useState(false)
   const { width } = useWindowSize()
   const headerHeight = 85
 
@@ -277,7 +298,7 @@ const Screen: FC<ScreenProps> = ({
           {},
           {
             ...formValue,
-            [screen.id]: newRepeaterItems as Answer[],
+            [screen.id]: newRepeaterItems as FormValue[],
           },
         ),
       )
@@ -338,6 +359,7 @@ const Screen: FC<ScreenProps> = ({
                 application={application}
                 goToScreen={goToScreen}
                 refetch={refetch}
+                setSubmitButtonDisabled={setSubmitButtonDisabled}
               />
             ) : screen.type === FormItemTypes.EXTERNAL_DATA_PROVIDER ? (
               <FormExternalDataProvider
@@ -361,6 +383,7 @@ const Screen: FC<ScreenProps> = ({
                   application={application}
                   goToScreen={goToScreen}
                   refetch={refetch}
+                  setSubmitButtonDisabled={setSubmitButtonDisabled}
                 />
               </Box>
             )}
@@ -370,6 +393,7 @@ const Screen: FC<ScreenProps> = ({
         <ToastContainer hideProgressBar closeButton useKeyframeStyles={false} />
 
         <ScreenFooter
+          submitButtonDisabled={submitButtonDisabled}
           application={application}
           renderLastScreenButton={renderLastScreenButton}
           renderLastScreenBackButton={renderLastScreenBackButton}

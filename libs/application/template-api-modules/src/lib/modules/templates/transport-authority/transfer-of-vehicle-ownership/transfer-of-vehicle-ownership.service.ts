@@ -1,8 +1,11 @@
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import { SharedTemplateApiService } from '../../../shared'
 import { TemplateApiModuleActionProps } from '../../../../types'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
-import { ApplicationTypes } from '@island.is/application/types'
+import {
+  ApplicationTypes,
+  InstitutionNationalIds,
+} from '@island.is/application/types'
 import {
   getChargeItemCodes,
   TransferOfVehicleOwnershipAnswers,
@@ -25,26 +28,100 @@ import {
 } from './transfer-of-vehicle-ownership.utils'
 import {
   ChargeFjsV2ClientService,
-  getChargeId,
+  getPaymentIdFromExternalData,
 } from '@island.is/clients/charge-fjs-v2'
-import { VehicleOwnerChangeClient } from '@island.is/clients/transport-authority/vehicle-owner-change'
+import {
+  OwnerChangeValidation,
+  VehicleOwnerChangeClient,
+} from '@island.is/clients/transport-authority/vehicle-owner-change'
 import { VehicleCodetablesClient } from '@island.is/clients/transport-authority/vehicle-codetables'
+import {
+  VehicleDebtStatus,
+  VehicleServiceFjsV1Client,
+} from '@island.is/clients/vehicle-service-fjs-v1'
+import { VehicleSearchApi } from '@island.is/clients/vehicles'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { applicationCheck } from '@island.is/application/templates/transport-authority/transfer-of-vehicle-ownership'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
+import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
+import { coreErrorMessages } from '@island.is/application/core'
 
 @Injectable()
 export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
   constructor(
+    @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private readonly chargeFjsV2ClientService: ChargeFjsV2ClientService,
     private readonly vehicleOwnerChangeClient: VehicleOwnerChangeClient,
     private readonly vehicleCodetablesClient: VehicleCodetablesClient,
+    private readonly vehicleServiceFjsV1Client: VehicleServiceFjsV1Client,
+    private readonly vehiclesApi: VehicleSearchApi,
   ) {
     super(ApplicationTypes.TRANSFER_OF_VEHICLE_OWNERSHIP)
   }
 
+  private vehiclesApiWithAuth(auth: Auth) {
+    return this.vehiclesApi.withMiddleware(new AuthMiddleware(auth))
+  }
+
   async getInsuranceCompanyList() {
     return await this.vehicleCodetablesClient.getInsuranceCompanies()
+  }
+
+  async getCurrentVehiclesWithOwnerchangeChecks({
+    auth,
+  }: TemplateApiModuleActionProps) {
+    const result = await this.vehiclesApiWithAuth(auth).currentVehiclesGet({
+      persidNo: auth.nationalId,
+      showOwned: true,
+      showCoowned: false,
+      showOperated: false,
+    })
+
+    // Validate that user has at least 1 vehicle
+    if (!result || !result.length) {
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.vehiclesEmptyListOwner,
+          summary: coreErrorMessages.vehiclesEmptyListOwner,
+        },
+        400,
+      )
+    }
+
+    return await Promise.all(
+      result?.map(async (vehicle) => {
+        let validation: OwnerChangeValidation | undefined
+        let debtStatus: VehicleDebtStatus | undefined
+
+        // Only validate if fewer than 5 items
+        if (result.length <= 5) {
+          // Get debt status
+          debtStatus = await this.vehicleServiceFjsV1Client.getVehicleDebtStatus(
+            auth,
+            vehicle.permno || '',
+          )
+
+          // Get validation
+          validation = await this.vehicleOwnerChangeClient.validateVehicleForOwnerChange(
+            auth,
+            vehicle.permno || '',
+          )
+        }
+
+        return {
+          permno: vehicle.permno || undefined,
+          make: vehicle.make || undefined,
+          color: vehicle.color || undefined,
+          role: vehicle.role || undefined,
+          isDebtLess: debtStatus?.isDebtLess,
+          validationErrorMessages: validation?.hasError
+            ? validation.errorMessages
+            : null,
+        }
+      }),
+    )
   }
 
   async validateApplication({
@@ -53,18 +130,26 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
   }: TemplateApiModuleActionProps) {
     const answers = application.answers as TransferOfVehicleOwnershipAnswers
 
+    const sellerSsn = answers?.seller?.nationalId
+    const sellerEmail = answers?.seller?.email
+    const buyerSsn = answers?.buyer?.nationalId
+    const buyerEmail = answers?.buyer?.email
+
+    const createdStr = application.created.toISOString()
+
     // No need to continue with this validation in user is neither seller nor buyer
     // (only time application data changes is on state change from these roles)
-    const sellerSsn = answers?.seller?.nationalId
-    const buyerSsn = answers?.buyer?.nationalId
     if (auth.nationalId !== sellerSsn && auth.nationalId !== buyerSsn) {
       return
     }
 
-    const buyerCoOwners = answers?.buyerCoOwnerAndOperator?.filter(
+    const filteredBuyerCoOwnerAndOperator = answers?.buyerCoOwnerAndOperator?.filter(
+      ({ wasRemoved }) => wasRemoved !== 'true',
+    )
+    const buyerCoOwners = filteredBuyerCoOwnerAndOperator?.filter(
       (x) => x.type === 'coOwner',
     )
-    const buyerOperators = answers?.buyerCoOwnerAndOperator?.filter(
+    const buyerOperators = filteredBuyerCoOwnerAndOperator?.filter(
       (x) => x.type === 'operator',
     )
 
@@ -74,22 +159,23 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
         permno: answers?.pickVehicle?.plate,
         seller: {
           ssn: sellerSsn,
-          email: answers?.seller?.email,
+          email: sellerEmail,
         },
         buyer: {
           ssn: buyerSsn,
-          email: answers?.buyer?.email,
+          email: buyerEmail,
         },
         dateOfPurchase: new Date(answers?.vehicle?.date),
+        dateOfPurchaseTimestamp: createdStr.substring(11, createdStr.length),
         saleAmount: Number(answers?.vehicle?.salePrice || '0') || 0,
         insuranceCompanyCode: answers?.insurance?.value,
         coOwners: buyerCoOwners?.map((coOwner) => ({
-          ssn: coOwner.nationalId,
-          email: coOwner.email,
+          ssn: coOwner.nationalId!,
+          email: coOwner.email!,
         })),
         operators: buyerOperators?.map((operator) => ({
-          ssn: operator.nationalId,
-          email: operator.email,
+          ssn: operator.nationalId!,
+          email: operator.email!,
           isMainOperator:
             buyerOperators.length > 1
               ? operator.nationalId === answers?.buyerMainOperator?.nationalId
@@ -123,8 +209,6 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
     | undefined
   > {
     try {
-      const SAMGONGUSTOFA_NATIONAL_ID = '5405131040'
-
       const answers = application.answers as TransferOfVehicleOwnershipAnswers
 
       const chargeItemCodes = getChargeItemCodes()
@@ -132,7 +216,7 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
       const result = this.sharedTemplateAPIService.createCharge(
         auth,
         application.id,
-        SAMGONGUSTOFA_NATIONAL_ID,
+        InstitutionNationalIds.SAMGONGUSTOFA,
         chargeItemCodes,
         [{ name: 'vehicle', value: answers?.pickVehicle?.plate }],
       )
@@ -186,18 +270,30 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
     // 2b. Send email/sms individually to each recipient
     for (let i = 0; i < recipientList.length; i++) {
       if (recipientList[i].email) {
-        await this.sharedTemplateAPIService.sendEmail(
-          (props) => generateRequestReviewEmail(props, recipientList[i]),
-          application,
-        )
+        await this.sharedTemplateAPIService
+          .sendEmail(
+            (props) => generateRequestReviewEmail(props, recipientList[i]),
+            application,
+          )
+          .catch(() => {
+            this.logger.error(
+              `Error sending email about initReview to ${recipientList[i].email}`,
+            )
+          })
       }
 
       if (recipientList[i].phone) {
-        await this.sharedTemplateAPIService.sendSms(
-          (_, options) =>
-            generateRequestReviewSms(application, options, recipientList[i]),
-          application,
-        )
+        await this.sharedTemplateAPIService
+          .sendSms(
+            (_, options) =>
+              generateRequestReviewSms(application, options, recipientList[i]),
+            application,
+          )
+          .catch(() => {
+            this.logger.error(
+              `Error sending sms about initReview to ${recipientList[i].phone}`,
+            )
+          })
       }
     }
 
@@ -230,8 +326,12 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
 
     const newlyAddedRecipientList: Array<EmailRecipient> = []
 
+    const filteredBuyerCoOwnerAndOperator = answers?.buyerCoOwnerAndOperator?.filter(
+      ({ wasRemoved }) => wasRemoved !== 'true',
+    )
+
     // Buyer's co-owners
-    const buyerCoOwners = answers.buyerCoOwnerAndOperator?.filter(
+    const buyerCoOwners = filteredBuyerCoOwnerAndOperator?.filter(
       (x) => x.type === 'coOwner',
     )
     if (buyerCoOwners) {
@@ -248,8 +348,8 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
           : false
         if (!oldEntry || emailChanged || phoneChanged) {
           newlyAddedRecipientList.push({
-            ssn: buyerCoOwners[i].nationalId,
-            name: buyerCoOwners[i].name,
+            ssn: buyerCoOwners[i].nationalId!,
+            name: buyerCoOwners[i].name!,
             email: emailChanged ? buyerCoOwners[i].email : undefined,
             phone: phoneChanged ? buyerCoOwners[i].phone : undefined,
             role: EmailRole.buyerCoOwner,
@@ -259,7 +359,7 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
     }
 
     // Buyer's operators
-    const buyerOperators = answers.buyerCoOwnerAndOperator?.filter(
+    const buyerOperators = filteredBuyerCoOwnerAndOperator?.filter(
       (x) => x.type === 'operator',
     )
     if (buyerOperators) {
@@ -276,8 +376,8 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
           : false
         if (!oldEntry || emailChanged || phoneChanged) {
           newlyAddedRecipientList.push({
-            ssn: buyerOperators[i].nationalId,
-            name: buyerOperators[i].name,
+            ssn: buyerOperators[i].nationalId!,
+            name: buyerOperators[i].name!,
             email: emailChanged ? buyerOperators[i].email : undefined,
             phone: phoneChanged ? buyerOperators[i].phone : undefined,
             role: EmailRole.buyerOperator,
@@ -289,22 +389,34 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
     // Send email/sms individually to each recipient
     for (let i = 0; i < newlyAddedRecipientList.length; i++) {
       if (newlyAddedRecipientList[i].email) {
-        await this.sharedTemplateAPIService.sendEmail(
-          (props) =>
-            generateRequestReviewEmail(props, newlyAddedRecipientList[i]),
-          application,
-        )
+        await this.sharedTemplateAPIService
+          .sendEmail(
+            (props) =>
+              generateRequestReviewEmail(props, newlyAddedRecipientList[i]),
+            application,
+          )
+          .catch(() => {
+            this.logger.error(
+              `Error sending email about addReview to ${newlyAddedRecipientList[i].email}`,
+            )
+          })
       }
       if (newlyAddedRecipientList[i].phone) {
-        await this.sharedTemplateAPIService.sendSms(
-          (_, options) =>
-            generateRequestReviewSms(
-              application,
-              options,
-              newlyAddedRecipientList[i],
-            ),
-          application,
-        )
+        await this.sharedTemplateAPIService
+          .sendSms(
+            (_, options) =>
+              generateRequestReviewSms(
+                application,
+                options,
+                newlyAddedRecipientList[i],
+              ),
+            application,
+          )
+          .catch(() => {
+            this.logger.error(
+              `Error sending sms about addReview to ${newlyAddedRecipientList[i].phone}`,
+            )
+          })
       }
     }
   }
@@ -314,16 +426,9 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
     auth,
   }: TemplateApiModuleActionProps): Promise<void> {
     // 1. Delete charge so that the seller gets reimburshed
-    const chargeId = getChargeId(application)
+    const chargeId = getPaymentIdFromExternalData(application)
     if (chargeId) {
-      const status = await this.chargeFjsV2ClientService.getChargeStatus(
-        chargeId,
-      )
-
-      // Make sure charge has not been deleted yet (will otherwise end in error here and wont continue)
-      if (status !== 'cancelled') {
-        await this.chargeFjsV2ClientService.deleteCharge(chargeId)
-      }
+      await this.chargeFjsV2ClientService.deleteCharge(chargeId)
     }
 
     // 2. Notify everyone in the process that the application has been withdrawn
@@ -336,27 +441,39 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
     const rejectedByRecipient = getRecipientBySsn(answers, auth.nationalId)
     for (let i = 0; i < recipientList.length; i++) {
       if (recipientList[i].email) {
-        await this.sharedTemplateAPIService.sendEmail(
-          (props) =>
-            generateApplicationRejectedEmail(
-              props,
-              recipientList[i],
-              rejectedByRecipient,
-            ),
-          application,
-        )
+        await this.sharedTemplateAPIService
+          .sendEmail(
+            (props) =>
+              generateApplicationRejectedEmail(
+                props,
+                recipientList[i],
+                rejectedByRecipient,
+              ),
+            application,
+          )
+          .catch(() => {
+            this.logger.error(
+              `Error sending email about rejectApplication to ${recipientList[i].email}`,
+            )
+          })
       }
 
       if (recipientList[i].phone) {
-        await this.sharedTemplateAPIService.sendSms(
-          () =>
-            generateApplicationRejectedSms(
-              application,
-              recipientList[i],
-              rejectedByRecipient,
-            ),
-          application,
-        )
+        await this.sharedTemplateAPIService
+          .sendSms(
+            () =>
+              generateApplicationRejectedSms(
+                application,
+                recipientList[i],
+                rejectedByRecipient,
+              ),
+            application,
+          )
+          .catch(() => {
+            this.logger.error(
+              `Error sending sms about rejectApplication to ${recipientList[i].phone}`,
+            )
+          })
       }
     }
   }
@@ -394,6 +511,8 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
     // 2. Submit the application
 
     const answers = application.answers as TransferOfVehicleOwnershipAnswers
+    const createdStr = application.created.toISOString()
+
     // Note: Need to be sure that the user that created the application is the seller when submitting application to SGS
     if (answers?.seller?.nationalId !== application.applicant) {
       throw new TemplateApiError(
@@ -404,11 +523,13 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
         400,
       )
     }
-
-    const buyerCoOwners = answers.buyerCoOwnerAndOperator?.filter(
+    const filteredBuyerCoOwnerAndOperator = answers?.buyerCoOwnerAndOperator?.filter(
+      ({ wasRemoved }) => wasRemoved !== 'true',
+    )
+    const buyerCoOwners = filteredBuyerCoOwnerAndOperator?.filter(
       (x) => x.type === 'coOwner',
     )
-    const buyerOperators = answers.buyerCoOwnerAndOperator?.filter(
+    const buyerOperators = filteredBuyerCoOwnerAndOperator?.filter(
       (x) => x.type === 'operator',
     )
 
@@ -423,15 +544,16 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
         email: answers?.buyer?.email,
       },
       dateOfPurchase: new Date(answers?.vehicle?.date),
+      dateOfPurchaseTimestamp: createdStr.substring(11, createdStr.length),
       saleAmount: Number(answers?.vehicle?.salePrice || '0') || 0,
       insuranceCompanyCode: answers?.insurance?.value,
       coOwners: buyerCoOwners?.map((coOwner) => ({
-        ssn: coOwner.nationalId,
-        email: coOwner.email,
+        ssn: coOwner.nationalId!,
+        email: coOwner.email!,
       })),
       operators: buyerOperators?.map((operator) => ({
-        ssn: operator.nationalId,
-        email: operator.email,
+        ssn: operator.nationalId!,
+        email: operator.email!,
         isMainOperator:
           buyerOperators.length > 1
             ? operator.nationalId === answers.buyerMainOperator?.nationalId
@@ -447,17 +569,31 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
     // 3b. Send email/sms individually to each recipient about success of submitting application
     for (let i = 0; i < recipientList.length; i++) {
       if (recipientList[i].email) {
-        await this.sharedTemplateAPIService.sendEmail(
-          (props) => generateApplicationSubmittedEmail(props, recipientList[i]),
-          application,
-        )
+        await this.sharedTemplateAPIService
+          .sendEmail(
+            (props) =>
+              generateApplicationSubmittedEmail(props, recipientList[i]),
+            application,
+          )
+          .catch(() => {
+            this.logger.error(
+              `Error sending email about submitApplication to ${recipientList[i].email}`,
+            )
+          })
       }
 
       if (recipientList[i].phone) {
-        await this.sharedTemplateAPIService.sendSms(
-          () => generateApplicationSubmittedSms(application, recipientList[i]),
-          application,
-        )
+        await this.sharedTemplateAPIService
+          .sendSms(
+            () =>
+              generateApplicationSubmittedSms(application, recipientList[i]),
+            application,
+          )
+          .catch(() => {
+            this.logger.error(
+              `Error sending sms about submitApplication to ${recipientList[i].phone}`,
+            )
+          })
       }
     }
   }

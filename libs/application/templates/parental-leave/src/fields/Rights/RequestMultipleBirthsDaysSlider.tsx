@@ -1,6 +1,6 @@
 import React, { FC, useState } from 'react'
 import { FieldBaseProps } from '@island.is/application/types'
-import { useFormContext } from 'react-hook-form'
+import { Controller, useFormContext } from 'react-hook-form'
 import { Box } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { useLocale } from '@island.is/localization'
@@ -15,6 +15,7 @@ import BoxChart, { BoxChartKey } from '../components/BoxChart'
 import { defaultMonths, daysInMonth } from '../../config'
 import { formatText } from '@island.is/application/core'
 import { NO } from '../../constants'
+import { useEffectOnce } from 'react-use'
 
 const RequestMultipleBirthsDaysSlider: FC<FieldBaseProps> = ({
   field,
@@ -22,7 +23,7 @@ const RequestMultipleBirthsDaysSlider: FC<FieldBaseProps> = ({
 }) => {
   const { id, description } = field
   const { formatMessage } = useLocale()
-  const { register } = useFormContext()
+  const { setValue } = useFormContext()
   const multipleBirthsRequestDays = getMultipleBirthRequestDays(
     application.answers,
   )
@@ -33,6 +34,12 @@ const RequestMultipleBirthsDaysSlider: FC<FieldBaseProps> = ({
   const [chosenRequestDays, setChosenRequestDays] = useState<number>(
     multipleBirthsRequestDays,
   )
+  useEffectOnce(() => {
+    setValue('requestRights.isRequestingRights', NO)
+    setValue('requestRights.requestDays', '0')
+    setValue('giveRights.isGivingRights', NO)
+    setValue('giveRights.giveDays', '0')
+  })
 
   const requestedMonths = defaultMonths + chosenRequestDays / daysInMonth
 
@@ -60,26 +67,33 @@ const RequestMultipleBirthsDaysSlider: FC<FieldBaseProps> = ({
       <p>{formatText(description!, application, formatMessage)}</p>
       <Box marginBottom={6} marginTop={5}>
         <Box marginBottom={12}>
-          <Slider
-            label={{
-              singular: formatMessage(parentalLeaveFormMessages.shared.day),
-              plural: formatMessage(parentalLeaveFormMessages.shared.days),
-            }}
-            min={0}
-            max={maxDays}
-            step={1}
-            currentIndex={chosenRequestDays}
-            showMinMaxLabels
-            showToolTip
-            trackStyle={{ gridTemplateRows: 8 }}
-            calculateCellStyle={() => {
-              return {
-                background: theme.color.dark200,
-              }
-            }}
-            onChange={(newValue: number) => {
-              setChosenRequestDays(newValue)
-            }}
+          <Controller
+            defaultValue={chosenRequestDays}
+            name={id}
+            render={({ field: { onChange, value } }) => (
+              <Slider
+                label={{
+                  singular: formatMessage(parentalLeaveFormMessages.shared.day),
+                  plural: formatMessage(parentalLeaveFormMessages.shared.days),
+                }}
+                min={0}
+                max={maxDays}
+                step={1}
+                currentIndex={value}
+                showMinMaxLabels
+                showToolTip
+                trackStyle={{ gridTemplateRows: 8 }}
+                calculateCellStyle={() => {
+                  return {
+                    background: theme.color.dark200,
+                  }
+                }}
+                onChange={(newValue: number) => {
+                  onChange(newValue.toString())
+                  setChosenRequestDays(newValue)
+                }}
+              />
+            )}
           />
         </Box>
         <BoxChart
@@ -99,41 +113,6 @@ const RequestMultipleBirthsDaysSlider: FC<FieldBaseProps> = ({
           keys={boxChartKeys as BoxChartKey[]}
         />
       </Box>
-
-      <input
-        type="hidden"
-        ref={register}
-        name={id}
-        value={chosenRequestDays.toString()}
-      />
-
-      <input
-        type="hidden"
-        ref={register}
-        name="requestRights.isRequestingRights"
-        value={NO}
-      />
-
-      <input
-        type="hidden"
-        ref={register}
-        name="requestRights.requestDays"
-        value={0}
-      />
-
-      <input
-        type="hidden"
-        ref={register}
-        name="giveRights.isGivingRights"
-        value={NO}
-      />
-
-      <input
-        type="hidden"
-        ref={register}
-        name="giveRights.giveDays"
-        value={0}
-      />
     </>
   )
 }

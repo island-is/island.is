@@ -164,13 +164,13 @@ export const m = defineMessages({
   /* Testament step */
   testamentTitle: {
     id: 'aod.application:testamentTitle',
-    defaultMessage: 'Erfðaskrá og kaupmáli',
+    defaultMessage: 'Erfðaskrá',
     description: 'Testament step title',
   },
   testamentDescription: {
     id: 'aod.application:testamentDescription',
     defaultMessage:
-      'Upplýsingar um erfðaskrá og kaupmála eru sóttar til Sýslumanns. Ef fleiri en ein erfðaskrá er til staðar er mikilvægt að koma frumriti eða upplýsingum um þær til sýslumanns eins fljótt og kostur er.',
+      'Upplýsingar um erfðaskrá eru sóttar til Sýslumanns. Ef fleiri en ein erfðaskrá er til staðar er mikilvægt að koma frumriti eða upplýsingum um þær til sýslumanns eins fljótt og kostur er.',
     description: 'Testament step description',
   },
   testamentTestamentAvailable: {
@@ -349,7 +349,7 @@ Ef ekkert á við sem hér að ofan er talið rennur arfur í ríkissjóð. Nán
   },
   addProperty: {
     id: 'aod.application:addProperty',
-    defaultMessage: 'Bæta við fasteign eða lóð',
+    defaultMessage: 'Bæta við fasteign',
     description: 'Add property',
   },
   addVehicle: {
@@ -621,8 +621,7 @@ Ef ekkert á við sem hér að ofan er talið rennur arfur í ríkissjóð. Nán
   },
   nextStepsText: {
     id: 'aod.application:nextStepsText#markdown',
-    defaultMessage: `Takk fyrir að gefa þér tíma til þess að sinna þessu ferli. Þegar tilkynningin hefur verið afgreidd færðu senda staðfestingu og heimildir í þitt pósthólf á Mínar síður á Ísland.is.
-    * Þegar búið er að staðfesta tilkynninguna og móttöku dánarvottorðs getur útför farið fram. 
+    defaultMessage: `* Þegar búið er að staðfesta tilkynninguna og móttöku dánarvottorðs getur útför farið fram. 
     * Heimildir verða sendar í pósthólf á Mínar síður á Ísland.is hjá þeim aðilum sem óskað var eftir.
     * Erfingjar þurfa að taka ákvörðun um frágang dánarbúsins innan fjögurra mánaða frá dánardegi. Nánari upplýsingar má finna á vefsíðu sýslumanns.
     * Mikilvægt er að koma frumriti af erfðaskrám til sýslumanns sem fyrst þar sem innihald hennar getur haft áhrif á dánarbú hins látna.
@@ -633,6 +632,22 @@ Ef ekkert á við sem hér að ofan er talið rennur arfur í ríkissjóð. Nán
     id: 'aod.application:announcementComplete',
     defaultMessage: 'Tilkynning móttekin',
     description: 'announcement complete text',
+  },
+  announcementCompleteDescription: {
+    id: 'aod.application:announcementCompleteDescription',
+    defaultMessage:
+      'Takk fyrir að gefa þér tíma til þess að sinna þessu ferli. Þegar tilkynningin hefur verið afgreidd færðu senda staðfestingu og heimildir í þitt pósthólf á Mínar síður á Ísland.is.',
+    description: '',
+  },
+  viewNextStepsButton: {
+    id: 'aod.application:viewNextStepsButton',
+    defaultMessage: 'Sjá næstu skréf',
+    description: '',
+  },
+  viewOverviewButton: {
+    id: 'aod.application:viewOverviewButton',
+    defaultMessage: 'Sjá yfirlit',
+    description: '',
   },
 
   /* Error */
@@ -666,7 +681,7 @@ Ef ekkert á við sem hér að ofan er talið rennur arfur í ríkissjóð. Nán
   },
   submitApplication: {
     id: 'aod.application:submitApplication',
-    defaultMessage: 'Staðfesta andlátstilkynnningu',
+    defaultMessage: 'Staðfesta andlátstilkynningu',
     description: 'Submit announcement of death',
   },
 })

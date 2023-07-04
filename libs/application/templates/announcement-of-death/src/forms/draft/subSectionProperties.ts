@@ -16,18 +16,18 @@ export const subSectionProperties = buildSubSection({
       id: 'propertiesTitle',
       title: m.propertiesTitle,
       description: m.propertiesDescription,
-      space: 1,
+      space: 2,
       children: [
         buildDescriptionField({
-          id: 'realEstatesAndLandsTitle',
+          id: 'realEstatesTitle',
           title: m.realEstatesTitle,
           titleVariant: 'h3',
           description: m.realEstatesDescription,
         }),
         buildCustomField({
-          title: 'realEstateAndLandsRepeater',
+          title: 'realEstateRepeater',
           id: 'assets',
-          component: 'RealEstateAndLandsRepeater',
+          component: 'RealEstateRepeater',
           childInputIds: ['assets.assets', 'assets.encountered'],
         }),
         buildDescriptionField({

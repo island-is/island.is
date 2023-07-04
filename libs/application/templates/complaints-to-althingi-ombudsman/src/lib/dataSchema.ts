@@ -17,7 +17,7 @@ const FileSchema = z.object({
 
 export const ComplaintsToAlthingiOmbudsmanSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v, { params: error.required }),
-  applicant: applicantInformationSchema,
+  applicant: applicantInformationSchema(),
   complainedFor: z.object({
     decision: z.enum([
       ComplainedForTypes.MYSELF,

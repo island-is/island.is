@@ -9,7 +9,7 @@ export const formatIsk = (value: number): string =>
 export const getChargeItemCodes = (
   answers: DigitalTachographDriversCard,
 ): Array<string> => {
-  const result = []
+  const result: Array<string> = []
 
   const deliveryMethodIsSend =
     answers.cardDelivery?.deliveryMethodIsSend === YES

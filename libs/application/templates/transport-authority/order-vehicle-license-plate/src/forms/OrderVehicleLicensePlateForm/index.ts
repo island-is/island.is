@@ -4,10 +4,12 @@ import { confirmation } from '../../lib/messages'
 import { informationSection } from './InformationSection'
 import { paymentSection } from './paymentSection'
 import { prerequisitesSection } from './prerequisitesSection'
+import { Logo } from '../../assets/Logo'
 
 export const OrderVehicleLicensePlateForm: Form = buildForm({
   id: 'OrderVehicleLicensePlateFormDraft',
   title: '',
+  logo: Logo,
   mode: FormModes.DRAFT,
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,

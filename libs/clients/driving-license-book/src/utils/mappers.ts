@@ -18,7 +18,6 @@ import {
 export const getStudentAndBookMapper = (
   data: StudentOverView,
   book: BookOverview,
-  practiceDriving?: boolean,
 ): DrivingLicenseBookStudentOverview => {
   return {
     nationalId: data.ssn ?? '',
@@ -86,7 +85,7 @@ export const getStudentAndBookMapper = (
             teacherName: lesson.teacherName ?? '',
             comments: lesson.comments ?? '',
           })),
-      practiceDriving,
+      practiceDriving: book.practiceDriving || false,
     },
   }
 }

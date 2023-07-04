@@ -1,4 +1,5 @@
 import { PortalNavigationItem, PortalRoute } from '../../types/portalCore'
+import { matchPath } from 'react-router-dom'
 
 type FilterNavigationTree = {
   item: PortalNavigationItem
@@ -10,13 +11,26 @@ type FilterNavigationTree = {
   currentLocationPath: string
 }
 
+const findRoute = (route: PortalRoute, item: PortalNavigationItem) => {
+  let children: PortalRoute | undefined
+  if (route.children?.length) {
+    children = route.children.find((child) => {
+      return findRoute(child, item)
+    })
+  }
+  if (route.path === item.path || children) {
+    return route
+  }
+  return undefined
+}
+
 export const filterNavigationTree = ({
   item,
   routes,
   dynamicRouteArray,
   currentLocationPath,
 }: FilterNavigationTree): boolean => {
-  const routeItem = routes.find((route) => route.path === item.path)
+  const routeItem = routes.find((route) => findRoute(route, item))
 
   const included = routeItem !== undefined || item.systemRoute === true
 
@@ -54,14 +68,13 @@ export const filterNavigationTree = ({
   // Hides item from navigation
 
   item.navHide = routeItem?.navHide || !!item.navHide
-
   if (currentLocationPath) {
     if (item.path) {
       // Set item active if
       // - the item path is an exact match
       // - the item path is a prefix of the current location path
       item.active = item.activeIfExact
-        ? currentLocationPath === item.path
+        ? !!matchPath(item.path, currentLocationPath)
         : currentLocationPath.startsWith(item.path)
     } else if (!item.path && item?.children) {
       // Set item active if one of it's children is active and the item has no path.

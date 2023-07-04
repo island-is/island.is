@@ -19,7 +19,7 @@ interface HeaderProps {
   organizationPage: OrganizationPage
 }
 
-export const DefaultHeader: React.FC<HeaderProps> = ({ organizationPage }) => {
+const DefaultHeader: React.FC<HeaderProps> = ({ organizationPage }) => {
   const { linkResolver } = useLinkResolver()
 
   const imageProvided = !!organizationPage.defaultHeaderImage?.url
@@ -103,3 +103,5 @@ export const DefaultHeader: React.FC<HeaderProps> = ({ organizationPage }) => {
     </>
   )
 }
+
+export default DefaultHeader

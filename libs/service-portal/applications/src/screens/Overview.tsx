@@ -3,7 +3,6 @@ import {
   ActionCardLoader,
   EmptyState,
   IntroHeader,
-  ServicePortalModuleComponent,
 } from '@island.is/service-portal/core'
 import {
   Box,
@@ -37,7 +36,7 @@ const defaultFilterValues: FilterValues = {
   searchQuery: '',
 }
 
-const Overview: ServicePortalModuleComponent = () => {
+const Overview = () => {
   useNamespaces('sp.applications')
   useNamespaces('application.system')
   const { formatMessage } = useLocale()
@@ -159,7 +158,7 @@ const Overview: ServicePortalModuleComponent = () => {
                 <GridColumn span={['1/1', '1/2']}>
                   <Box height="full">
                     <Input
-                      icon="search"
+                      icon={{ name: 'search' }}
                       backgroundColor="blue"
                       size="xs"
                       value={filterValue.searchQuery}

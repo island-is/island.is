@@ -5,10 +5,10 @@ import {
   Button,
   GridRow,
   GridColumn,
-  LoadingDots,
   GridColumnProps,
   Tooltip,
   ResponsiveSpace,
+  SkeletonLoader,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { MessageDescriptor } from 'react-intl'
@@ -23,6 +23,7 @@ export type EditLink = {
   external?: boolean
   url: string
   title?: MessageDescriptor
+  skipOutboundTrack?: boolean
 }
 
 interface Props {
@@ -41,6 +42,8 @@ interface Props {
   paddingY?: ResponsiveSpace
   paddingBottom?: ResponsiveSpace
   className?: string
+  translate?: 'yes' | 'no'
+  translateLabel?: 'yes' | 'no'
 }
 
 export const UserInfoLine: FC<Props> = ({
@@ -53,12 +56,14 @@ export const UserInfoLine: FC<Props> = ({
   loading,
   editLink,
   title,
-  titlePadding = 2,
+  titlePadding = 4,
   tooltip,
   paddingY = 2,
   paddingBottom,
   warning,
   className,
+  translate = 'yes',
+  translateLabel = 'yes',
 }) => {
   const { pathname } = useLocation()
   const { formatMessage } = useLocale()
@@ -89,8 +94,16 @@ export const UserInfoLine: FC<Props> = ({
             height="full"
             overflow="hidden"
           >
-            <Text variant="h5" as="span" lineHeight="lg">
-              {formatMessage(label)} {tooltip && <Tooltip text={tooltip} />}
+            <Text
+              translate={translateLabel}
+              variant="h5"
+              as="span"
+              lineHeight="lg"
+            >
+              {formatMessage(label)}{' '}
+              {tooltip && (
+                <Tooltip placement="right" fullWidth text={tooltip} />
+              )}
             </Text>
           </Box>
         </GridColumn>
@@ -104,11 +117,15 @@ export const UserInfoLine: FC<Props> = ({
             overflow="hidden"
           >
             {loading ? (
-              <LoadingDots />
+              <SkeletonLoader width="70%" height={27} />
             ) : renderContent ? (
               renderContent()
             ) : (
-              <Text color={warning ? 'red600' : undefined} variant="default">
+              <Text
+                translate={translate}
+                color={warning ? 'red600' : undefined}
+                variant="default"
+              >
                 {content}
               </Text>
             )}
@@ -127,7 +144,11 @@ export const UserInfoLine: FC<Props> = ({
                 <a
                   href={editLink.url}
                   rel="noopener noreferrer"
-                  onClick={trackExternalLinkClick}
+                  onClick={
+                    editLink.skipOutboundTrack
+                      ? undefined
+                      : trackExternalLinkClick
+                  }
                   target="_blank"
                 >
                   <Button

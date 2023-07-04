@@ -1,47 +1,150 @@
-import React, { FC } from 'react'
+import { FC } from 'react'
 
-import { Box, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  Bullet,
+  BulletList,
+  Button,
+  Text,
+  Column,
+  Columns,
+  Hidden,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { coreMessages } from '@island.is/application/core'
-import { StaticText } from '@island.is/application/types'
+import { coreErrorScreenMessages } from '@island.is/application/core'
+import {
+  ApplicationConfigurations,
+  ApplicationTypes,
+  StaticText,
+} from '@island.is/application/types'
 
 import * as styles from '../lib/FormShell.css'
+import Markdown from 'markdown-to-jsx'
+import { NotebookIllustration } from '../assets/NotebookIllustration'
 
-interface Props {
-  status?: number
-  title?: StaticText
-  subTitle?: StaticText
+const messageTypes = {
+  notFound: {
+    title: coreErrorScreenMessages.notFoundTitle,
+    subTitle: coreErrorScreenMessages.notFoundSubTitle,
+    description: coreErrorScreenMessages.notFoundDescription,
+  },
+  forbidden: {
+    title: coreErrorScreenMessages.forbiddenTitle,
+    subTitle: coreErrorScreenMessages.forbiddenSubTitle,
+    description: coreErrorScreenMessages.forbiddenDescription,
+  },
+  lost: {
+    title: coreErrorScreenMessages.lostTitle,
+    subTitle: coreErrorScreenMessages.lostSubTitle,
+    description: coreErrorScreenMessages.lostDescription,
+  },
+  notExist: {
+    title: coreErrorScreenMessages.notExistTitle,
+    subTitle: coreErrorScreenMessages.notExistSubTitle,
+    description: coreErrorScreenMessages.notExistDescription,
+  },
 }
 
-export const ErrorShell: FC<Props> = ({ status, title, subTitle }) => {
+interface Props {
+  title?: StaticText
+  subTitle?: StaticText
+  description?: StaticText
+  errorType?: 'notFound' | 'forbidden' | 'lost' | 'notExist'
+  applicationType?: ApplicationTypes
+}
+
+export const ErrorShell: FC<Props> = ({
+  errorType,
+  applicationType,
+  title,
+  subTitle,
+  description,
+}) => {
   const { formatMessage } = useLocale()
 
   return (
-    <Box
-      display="flex"
-      alignItems="center"
-      justifyContent="center"
-      width="full"
-      paddingBottom={20}
-      className={styles.root}
-    >
-      <Text
-        variant="eyebrow"
-        as="div"
-        marginBottom={2}
-        color="purple400"
-        fontWeight="semiBold"
+    <Box className={styles.root}>
+      <Box
+        display="flex"
+        alignItems="center"
+        justifyContent="center"
+        paddingBottom={20}
+        paddingTop={[5, 5, 0]}
+        paddingX={[3, 3, 0]}
+        marginX="auto"
       >
-        {status ?? 404}
-      </Text>
+        <Columns collapseBelow="lg">
+          <Column width="2/3">
+            <Box>
+              <Text variant="eyebrow" color="red600" marginBottom={3}>
+                {formatMessage(coreErrorScreenMessages.application)}
+              </Text>
+              <Text variant="h1" as="h1" marginBottom={3}>
+                {formatMessage(
+                  title ?? messageTypes[errorType ?? 'notFound'].title,
+                )}
+              </Text>
 
-      <Text variant="h1" as="h1" marginBottom={3}>
-        {formatMessage(title ?? coreMessages.notFoundTitle)}
-      </Text>
+              <Text as="p" marginBottom={3}>
+                {formatMessage(
+                  subTitle ?? messageTypes[errorType ?? 'notFound'].subTitle,
+                )}
+              </Text>
+              <Box marginBottom={8}>
+                <BulletList>
+                  <Markdown
+                    options={{
+                      forceBlock: true,
+                      overrides: {
+                        li: {
+                          component: Bullet,
+                        },
+                      },
+                    }}
+                  >
+                    {formatMessage(
+                      description ??
+                        messageTypes[errorType ?? 'notFound'].description,
+                    )}
+                  </Markdown>
+                </BulletList>
+              </Box>
 
-      <Text variant="intro" as="p">
-        {formatMessage(subTitle ?? coreMessages.notFoundSubTitle)}
-      </Text>
+              <Box display="flex" columnGap="p4">
+                {applicationType && (
+                  <a
+                    tabIndex={-1}
+                    className={styles.link}
+                    href={`/umsoknir/${ApplicationConfigurations[applicationType].slug}`}
+                  >
+                    <Button>
+                      {formatMessage(
+                        coreErrorScreenMessages.buttonNewApplication,
+                      )}
+                    </Button>
+                  </a>
+                )}
+                <a
+                  tabIndex={-1}
+                  className={styles.link}
+                  href={`/minarsidur/umsoknir`}
+                >
+                  <Button>
+                    {formatMessage(
+                      coreErrorScreenMessages.buttonMyApplications,
+                    )}
+                  </Button>
+                </a>
+              </Box>
+            </Box>
+          </Column>
+          <Column width="1/3">
+            <Hidden below="lg">
+              <NotebookIllustration />
+            </Hidden>
+          </Column>
+        </Columns>
+      </Box>
     </Box>
   )
 }

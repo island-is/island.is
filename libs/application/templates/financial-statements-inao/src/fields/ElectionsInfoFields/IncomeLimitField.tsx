@@ -39,7 +39,19 @@ export const IncomeLimitFields = ({ clientType, year }: IncomeLimitProps) => {
   }
   const limit = data?.financialStatementsInaoClientFinancialLimit
 
-  if (error || !limit) {
+  if (!limit) {
+    return (
+      <ContentBlock>
+        <AlertMessage
+          type="error"
+          title={formatMessage(m.fetchErrorTitle)}
+          message={formatMessage(m.financialLimitErrorMessage)}
+        />
+      </ContentBlock>
+    )
+  }
+
+  if (error) {
     return (
       <ContentBlock>
         <AlertMessage
@@ -60,12 +72,14 @@ export const IncomeLimitFields = ({ clientType, year }: IncomeLimitProps) => {
             limit,
           )} ${formatMessage(m.crowns)}`,
           value: LESS,
+          dataTestId: 'radio-incomeLimit-lessThan',
         },
         {
           label: `${formatMessage(m.moreThanLimit)} ${formatNumber(
             limit,
           )} ${formatMessage(m.crowns)}`,
           value: GREATER,
+          dataTestId: 'radio-incomeLimit-moreThan',
         },
       ]}
     />

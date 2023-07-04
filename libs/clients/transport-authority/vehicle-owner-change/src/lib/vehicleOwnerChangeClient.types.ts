@@ -3,6 +3,7 @@ export interface OwnerChange {
   seller: OwnerChangeSeller
   buyer: OwnerChangeByuer
   dateOfPurchase: Date
+  dateOfPurchaseTimestamp: string
   saleAmount: number
   insuranceCompanyCode?: string | null
   operators?: Array<OwnerChangeOperator> | null
@@ -21,7 +22,7 @@ export interface OwnerChangeByuer {
 
 export interface OwnerChangeOperator {
   ssn: string
-  email: string
+  email: string | null
   isMainOperator: boolean
 }
 

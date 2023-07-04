@@ -1,7 +1,9 @@
-import { ApiProperty } from '@nestjs/swagger'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
 import {
   CaseAppealDecision,
+  CaseAppealRulingDecision,
+  CaseAppealState,
   CaseDecision,
   CaseState,
   CaseType,
@@ -17,7 +19,7 @@ export class CaseListEntry {
   @ApiProperty()
   created!: Date
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   courtDate?: Date
 
   @ApiProperty()
@@ -29,66 +31,75 @@ export class CaseListEntry {
   @ApiProperty({ enum: CaseType })
   type!: CaseType
 
-  @ApiProperty({ type: Defendant, isArray: true })
+  @ApiPropertyOptional({ type: Defendant, isArray: true })
   defendants?: Defendant[]
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   courtCaseNumber?: string
 
-  @ApiProperty({ enum: CaseDecision })
+  @ApiPropertyOptional({ enum: CaseDecision })
   decision?: CaseDecision
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   validToDate?: Date
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   requestedCourtDate?: Date
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   initialRulingDate?: Date
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   rulingDate?: Date
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   courtEndTime?: Date
 
-  @ApiProperty({ enum: CaseAppealDecision })
+  @ApiPropertyOptional({ enum: CaseAppealDecision })
   prosecutorAppealDecision?: CaseAppealDecision
 
-  @ApiProperty({ enum: CaseAppealDecision })
+  @ApiPropertyOptional({ enum: CaseAppealDecision })
   accusedAppealDecision?: CaseAppealDecision
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   prosecutorPostponedAppealDate?: Date
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   accusedPostponedAppealDate?: Date
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   judgeId?: string
 
-  @ApiProperty({ type: User })
+  @ApiPropertyOptional({ type: User })
   judge?: User
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   prosecutorId?: string
 
-  @ApiProperty({ type: User })
+  @ApiPropertyOptional({ type: User })
   prosecutor?: User
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   registrarId?: string
 
-  @ApiProperty({ type: User })
+  @ApiPropertyOptional({ type: User })
   registrar?: User
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   creatingProsecutorId?: string
 
-  @ApiProperty({ type: User })
+  @ApiPropertyOptional({ type: User })
   creatingProsecutor?: User
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   parentCaseId?: string
+
+  @ApiPropertyOptional()
+  appealState?: CaseAppealState
+
+  @ApiPropertyOptional()
+  appealCaseNumber?: string
+
+  @ApiPropertyOptional()
+  appealRulingDecision?: CaseAppealRulingDecision
 }

@@ -120,8 +120,10 @@ const RealEstateAgentsList: FC<RealEstateAgentsListProps> = ({ slice }) => {
             placeholder={t('searchPlaceholder', 'Leita')}
             backgroundColor={['blue', 'blue', 'white']}
             size="sm"
-            icon="search"
-            iconType="outline"
+            icon={{
+              name: 'search',
+              type: 'outline',
+            }}
             onChange={(event) => onSearch(event.target.value)}
           />
         </Box>

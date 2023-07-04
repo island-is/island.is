@@ -220,7 +220,7 @@ const mockPrisonUserCasesQuery = [
 
 describe('Cases', () => {
   describe('Prosecutor users', () => {
-    test('should not display a button to delete a case that do not have a NEW or DRAFT or SUBMITTED or RECEIVED state', async () => {
+    test('should not display a button to delete a case that does not have a NEW or DRAFT or SUBMITTED or RECEIVED state', async () => {
       render(
         <MockedProvider
           mocks={[...mockCasesQuery, ...mockProsecutorQuery]}

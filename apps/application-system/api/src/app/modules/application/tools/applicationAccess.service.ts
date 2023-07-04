@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common'
 
-import { BadSubject } from '@island.is/nest/problem'
+import { BadSubject, ProblemError } from '@island.is/nest/problem'
 import { User } from '@island.is/auth-nest-tools'
 
 import {
@@ -20,6 +20,12 @@ import {
 import { getApplicationTemplateByTypeId } from '@island.is/application/template-loader'
 import { EventObject } from 'xstate'
 import { FeatureFlagService } from '@island.is/nest/feature-flags'
+import { ProblemType } from '@island.is/shared/problem'
+import { coreErrorMessages } from '@island.is/application/core'
+
+type config = {
+  shouldThrowIfPruned?: boolean
+}
 
 @Injectable()
 export class ApplicationAccessService {
@@ -28,11 +34,19 @@ export class ApplicationAccessService {
     private readonly featureFlagService: FeatureFlagService,
   ) {}
 
-  async findOneByIdAndNationalId(id: string, user: User) {
+  async findOneByIdAndNationalId(id: string, user: User, config?: config) {
     const existingApplication = await this.applicationService.findOneById(
       id,
       user.nationalId,
     )
+
+    if (config?.shouldThrowIfPruned && existingApplication?.pruned) {
+      throw new ProblemError({
+        type: ProblemType.HTTP_NOT_FOUND,
+        title: coreErrorMessages.applicationIsPrunedAndReadOnly.description,
+        detail: coreErrorMessages.applicationIsPrunedAndReadOnly.defaultMessage,
+      })
+    }
 
     if (!existingApplication) {
       // Throws bad subject error if user is actor on application

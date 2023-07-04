@@ -2,9 +2,9 @@
 
 ## Skjalatilkynning OpenApi
 
-Test http://test-skjalatilkynning-island-is.azurewebsites.net/swagger/ui/index
+[Skjalatilkynning Test](http://test-skjalatilkynning-island-is.azurewebsites.net/swagger/ui/index)
 
-Production: https://skjalatilkynning-island-is.azurewebsites.net/swagger/ui/index
+[Skjalatilkynning Production](https://skjalatilkynning-island-is.azurewebsites.net/swagger/ui/index)
 
 ## Skjalaveita OpenApi
 

@@ -6,9 +6,9 @@ import {
   GridColumn,
   ResponsiveSpace,
 } from '@island.is/island-ui/core'
+import cn from 'classnames'
 
 import * as styles from './SidebarLayout.css'
-import cn from 'classnames'
 
 interface SidebarLayoutProps {
   sidebarContent: ReactNode
@@ -43,15 +43,42 @@ export const SidebarLayout: FC<SidebarLayoutProps> = ({
         position={isSticky ? 'relative' : undefined}
       >
         <Box
-          printHidden
-          className={cn(styles.sidebarWrapper, { [styles.sticky]: isSticky })}
-          display={
-            hiddenOnTablet
-              ? ['none', 'none', 'none', 'block']
-              : ['none', 'none', 'block']
-          }
+          {...(contentId && { id: contentId })}
+          display="flex"
+          flexDirection="row"
+          height="full"
+          paddingBottom={paddingBottom}
+          position={isSticky ? 'relative' : undefined}
         >
-          {sidebarContent}
+          <Box
+            printHidden
+            className={cn(styles.sidebarWrapper, { [styles.sticky]: isSticky })}
+            display={
+              hiddenOnTablet
+                ? ['none', 'none', 'none', 'block']
+                : ['none', 'none', 'block']
+            }
+          >
+            {sidebarContent}
+          </Box>
+          <GridContainer>
+            <GridRow>
+              <GridColumn
+                offset={fullWidthContent ? '0' : ['0', '0', '0', '0', '1/9']}
+                span={[
+                  '9/9',
+                  '9/9',
+                  '9/9',
+                  '9/9',
+                  fullWidthContent ? '9/9' : '7/9',
+                ]}
+              >
+                <Box paddingLeft={[0, 0, hiddenOnTablet ? 0 : 6, 6, 0]}>
+                  {children}
+                </Box>
+              </GridColumn>
+            </GridRow>
+          </GridContainer>
         </Box>
         <GridContainer>
           <GridRow>

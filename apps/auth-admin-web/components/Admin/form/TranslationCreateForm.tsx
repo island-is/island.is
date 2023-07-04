@@ -21,8 +21,8 @@ interface FormOutput {
 }
 
 const TranslationCreateForm: React.FC<Props> = (props: Props) => {
-  const { register, handleSubmit, errors, formState } = useForm<FormOutput>()
-  const { isSubmitting } = formState
+  const { register, handleSubmit, formState } = useForm<FormOutput>()
+  const { isSubmitting, errors } = formState
   const [isEditing, setIsEditing] = useState<boolean>(false)
   const translation = props.translation
   const [languages, setLanguages] = useState<Language[]>([])
@@ -93,13 +93,12 @@ const TranslationCreateForm: React.FC<Props> = (props: Props) => {
                   <select
                     id="language"
                     className="translation-create-form__select"
-                    name="translation.language"
-                    disabled={isEditing}
-                    ref={register({
+                    {...register('translation.language', {
                       required: true,
+                      onChange: (e) => setSelectedLanguage(e.target.value),
                     })}
+                    disabled={isEditing}
                     defaultValue={translation.language}
-                    onChange={(e) => setSelectedLanguage(e.target.value)}
                     title={localization.fields['language'].helpText}
                   >
                     {languages.map((language: Language) => {
@@ -131,7 +130,8 @@ const TranslationCreateForm: React.FC<Props> = (props: Props) => {
                   <input
                     id="className"
                     type="text"
-                    ref={register({
+                    disabled={isEditing}
+                    {...register('translation.className', {
                       required: true,
                       validate: isEditing
                         ? () => {
@@ -139,8 +139,6 @@ const TranslationCreateForm: React.FC<Props> = (props: Props) => {
                           }
                         : ValidationUtils.validateIdentifier,
                     })}
-                    disabled={isEditing}
-                    name="translation.className"
                     defaultValue={translation.className ?? ''}
                     className="translation-create-form__input"
                     title={localization.fields['className'].helpText}
@@ -167,7 +165,7 @@ const TranslationCreateForm: React.FC<Props> = (props: Props) => {
                   <input
                     id="property"
                     type="text"
-                    ref={register({
+                    {...register('translation.property', {
                       required: true,
                       validate: isEditing
                         ? () => {
@@ -175,7 +173,6 @@ const TranslationCreateForm: React.FC<Props> = (props: Props) => {
                           }
                         : ValidationUtils.validateIdentifier,
                     })}
-                    name="translation.property"
                     defaultValue={translation.property ?? ''}
                     className="translation-create-form__input"
                     title={localization.fields['property'].helpText}
@@ -201,7 +198,7 @@ const TranslationCreateForm: React.FC<Props> = (props: Props) => {
                 <input
                   id="key"
                   type="text"
-                  ref={register({
+                  {...register('translation.key', {
                     required: true,
                     validate: isEditing
                       ? () => {
@@ -209,7 +206,6 @@ const TranslationCreateForm: React.FC<Props> = (props: Props) => {
                         }
                       : ValidationUtils.validateIdentifier,
                   })}
-                  name="translation.key"
                   defaultValue={translation.key ?? ''}
                   className="translation-create-form__input"
                   title={localization.fields['key'].helpText}
@@ -235,11 +231,10 @@ const TranslationCreateForm: React.FC<Props> = (props: Props) => {
                 <input
                   id="value"
                   type="text"
-                  ref={register({
+                  {...register('translation.value', {
                     required: true,
                     validate: ValidationUtils.validateDescription,
                   })}
-                  name="translation.value"
                   defaultValue={translation.value ?? ''}
                   className="translation-create-form__input"
                   title={localization.fields['value'].helpText}

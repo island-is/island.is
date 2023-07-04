@@ -17,9 +17,9 @@ export class PageInfoDto {
   })
   startCursor?: string
 
-  @Field()
+  @Field({ nullable: true })
   @ApiProperty({
     example: 'WyJmODY1MDAzMS03YTFkLTRhOTAtOWI2OC00ODg1YjlkZDZjZDgiXQ==',
   })
-  endCursor!: string
+  endCursor?: string
 }

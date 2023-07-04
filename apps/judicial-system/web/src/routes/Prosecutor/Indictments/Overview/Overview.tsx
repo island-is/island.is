@@ -12,10 +12,6 @@ import {
   PageLayout,
   ProsecutorCaseInfo,
 } from '@island.is/judicial-system-web/src/components'
-import {
-  IndictmentsProsecutorSubsections,
-  Sections,
-} from '@island.is/judicial-system-web/src/types'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import { Box, Text } from '@island.is/island-ui/core'
@@ -43,9 +39,7 @@ const Overview: React.FC = () => {
   const isNewIndictment =
     workingCase.state === CaseState.NEW || workingCase.state === CaseState.DRAFT
 
-  const caseHasBeenReceivedByCourt =
-    workingCase.courtCaseNumber !== undefined &&
-    workingCase.courtCaseNumber !== null
+  const caseHasBeenReceivedByCourt = workingCase.state === CaseState.RECEIVED
 
   const handleNextButtonClick = async () => {
     if (isNewIndictment) {
@@ -62,12 +56,6 @@ const Overview: React.FC = () => {
   return (
     <PageLayout
       workingCase={workingCase}
-      activeSection={Sections.PROSECUTOR}
-      activeSubSection={
-        caseHasBeenReceivedByCourt
-          ? undefined
-          : IndictmentsProsecutorSubsections.OVERVIEW
-      }
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
@@ -88,6 +76,7 @@ const Overview: React.FC = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
+          nextButtonIcon="arrowForward"
           previousUrl={
             caseHasBeenReceivedByCourt
               ? constants.CASES_ROUTE

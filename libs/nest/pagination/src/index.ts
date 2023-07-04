@@ -1,3 +1,6 @@
 export * from './lib/paginate'
 export * from './lib/dto/pageinfo.dto'
 export * from './lib/dto/pagination.dto'
+export { PaginatedResponse } from './lib/graphql/paginated.response'
+export * from './lib/graphql/pagination.input'
+export * from './lib/types/order'

@@ -9,11 +9,12 @@ import {
   Button,
   ProfileCard,
 } from '@island.is/island-ui/core'
-import { Answers, Asset } from '../../types'
+import { Answers, AssetFormField } from '../../types'
 
 import { m } from '../../lib/messages'
 import { EstateAsset } from '@island.is/clients/syslumenn'
 import { AdditionalRealEstate } from './AdditionalRealEstate'
+import { InputController } from '@island.is/shared/form-fields'
 
 export const RealEstateRepeater: FC<FieldBaseProps<Answers>> = ({
   application,
@@ -23,11 +24,11 @@ export const RealEstateRepeater: FC<FieldBaseProps<Answers>> = ({
   const error = (errors as any)?.estate?.assets
   const { id } = field
   const { formatMessage } = useLocale()
-  const { fields, append, remove } = useFieldArray<Asset>({
+  const { fields, append, remove, update } = useFieldArray({
     name: id,
   })
 
-  const { setValue } = useFormContext()
+  const { clearErrors } = useFormContext()
 
   const externalData = application.externalData.syslumennOnEntry?.data as {
     estate: { assets: EstateAsset[] }
@@ -42,8 +43,9 @@ export const RealEstateRepeater: FC<FieldBaseProps<Answers>> = ({
   const handleAddProperty = () =>
     append({
       share: 1,
-      assetNumber: '',
-      description: '',
+      assetNumber: undefined,
+      description: undefined,
+      marketValue: undefined,
       initial: false,
       enabled: true,
     })
@@ -52,7 +54,9 @@ export const RealEstateRepeater: FC<FieldBaseProps<Answers>> = ({
   return (
     <Box marginTop={2}>
       <GridRow>
-        {fields.reduce((acc, asset, index) => {
+        {fields.reduce((acc, asset: AssetFormField, index) => {
+          const fieldError = error && error[index] ? error[index] : null
+
           if (!asset.initial) {
             return acc
           }
@@ -77,9 +81,14 @@ export const RealEstateRepeater: FC<FieldBaseProps<Answers>> = ({
                       icon={asset.enabled ? 'remove' : 'add'}
                       size="small"
                       iconType="outline"
-                      onClick={() =>
-                        setValue(`${id}[${index}].enabled`, !asset.enabled)
-                      }
+                      onClick={() => {
+                        const updatedAsset = {
+                          ...asset,
+                          enabled: !asset.enabled,
+                        }
+                        update(index, updatedAsset)
+                        clearErrors(`${id}[${index}].marketValue`)
+                      }}
                     >
                       {asset.enabled
                         ? formatMessage(m.inheritanceDisableMember)
@@ -87,14 +96,28 @@ export const RealEstateRepeater: FC<FieldBaseProps<Answers>> = ({
                     </Button>
                   </Box>,
                 ]}
-                heightFull
               />
+              <Box marginTop={2}>
+                <InputController
+                  id={`${id}[${index}].marketValue`}
+                  name={`${id}[${index}].marketValue`}
+                  label={formatMessage(m.realEstateValueTitle)}
+                  disabled={!asset.enabled}
+                  backgroundColor="blue"
+                  placeholder="0 kr."
+                  defaultValue={asset.marketValue}
+                  error={fieldError?.marketValue}
+                  currency
+                  size="sm"
+                  required
+                />
+              </Box>
             </GridColumn>,
           ]
         }, [] as JSX.Element[])}
       </GridRow>
-      {fields.map((field, index) => (
-        <Box key={field.id} hidden={field.initial || field?.dummy}>
+      {fields.map((field: AssetFormField, index) => (
+        <Box key={field.id} hidden={field.initial}>
           <AdditionalRealEstate
             field={field}
             fieldName={id}

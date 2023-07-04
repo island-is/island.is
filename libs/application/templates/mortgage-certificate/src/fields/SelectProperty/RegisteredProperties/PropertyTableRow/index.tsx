@@ -1,7 +1,7 @@
 import React, { FC } from 'react'
 import { Table as T, RadioButton } from '@island.is/island-ui/core'
 import { FieldBaseProps } from '@island.is/application/types'
-import { PropertyDetail } from '../../../../types/schema'
+import { PropertyDetail } from '@island.is/api/schema'
 
 interface PropertyTableRowProps {
   selectHandler: (property: PropertyDetail | undefined) => void

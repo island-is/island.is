@@ -12,31 +12,36 @@ import {
 } from 'framer-motion'
 
 import { theme } from '@island.is/island-ui/theme'
-import { Box, Text, Tag, Icon, Button } from '@island.is/island-ui/core'
+import { Box, Text, Icon, Button } from '@island.is/island-ui/core'
 import {
-  CaseListEntry,
   CaseState,
   isExtendedCourtRole,
   isProsecutionRole,
 } from '@island.is/judicial-system/types'
-import { UserContext } from '@island.is/judicial-system-web/src/components'
+import {
+  TagAppealState,
+  UserContext,
+} from '@island.is/judicial-system-web/src/components'
+
 import {
   directionType,
   sortableTableColumn,
   SortConfig,
+  TempCaseListEntry as CaseListEntry,
 } from '@island.is/judicial-system-web/src/types'
 import {
   capitalize,
   displayFirstPlusRemaining,
   formatDOB,
 } from '@island.is/judicial-system/formatters'
-import { core } from '@island.is/judicial-system-web/messages'
+import { core, tables } from '@island.is/judicial-system-web/messages'
 import { useViewport } from '@island.is/judicial-system-web/src/utils/hooks'
+import TagCaseState from '@island.is/judicial-system-web/src/components/TagCaseState/TagCaseState'
 
-import { displayCaseType, mapCaseStateToTagVariant } from './utils'
 import * as styles from './Cases.css'
 import MobileCase from './MobileCase'
 import { cases as m } from './Cases.strings'
+import ColumnCaseType from '@island.is/judicial-system-web/src/components/Table/ColumnCaseType/ColumnCaseType'
 
 interface Props {
   cases: CaseListEntry[]
@@ -160,7 +165,7 @@ const ActiveCases: React.FC<Props> = (props) => {
         <tr>
           <th className={styles.th}>
             <Text as="span" fontWeight="regular">
-              {formatMessage(m.activeRequests.table.headers.caseNumber)}
+              {formatMessage(tables.caseNumber)}
             </Text>
           </th>
           <th className={cn(styles.th, styles.largeColumn)}>
@@ -198,7 +203,7 @@ const ActiveCases: React.FC<Props> = (props) => {
           </th>
           <th className={styles.th}>
             <Text as="span" fontWeight="regular">
-              {formatMessage(m.activeRequests.table.headers.state)}
+              {formatMessage(tables.state)}
             </Text>
           </th>
           <th className={styles.th}>
@@ -251,7 +256,19 @@ const ActiveCases: React.FC<Props> = (props) => {
                 }}
               >
                 <td className={styles.td}>
-                  {c.courtCaseNumber ? (
+                  {c.appealCaseNumber ? (
+                    <Box display="flex" flexDirection="column">
+                      <Text as="span" variant="small">
+                        {c.appealCaseNumber}
+                      </Text>
+                      <Text as="span" variant="small">
+                        {c.courtCaseNumber}
+                      </Text>
+                      <Text as="span" variant="small">
+                        {displayFirstPlusRemaining(c.policeCaseNumbers)}
+                      </Text>
+                    </Box>
+                  ) : c.courtCaseNumber ? (
                     <>
                       <Box component="span" className={styles.blockColumn}>
                         <Text as="span">{c.courtCaseNumber}</Text>
@@ -302,43 +319,29 @@ const ActiveCases: React.FC<Props> = (props) => {
                   )}
                 </td>
                 <td className={styles.td}>
-                  <Box component="span" display="flex" flexDirection="column">
-                    <Text as="span">
-                      {displayCaseType(formatMessage, c.type, c.decision)}
-                    </Text>
-                    {c.parentCaseId && (
-                      <Text as="span" variant="small" color="dark400">
-                        Framlenging
-                      </Text>
-                    )}
-                  </Box>
+                  <ColumnCaseType
+                    type={c.type}
+                    decision={c?.decision}
+                    parentCaseId={c.parentCaseId}
+                  />
                 </td>
                 <td className={styles.td} data-testid="tdTag">
-                  <Tag
-                    variant={
-                      mapCaseStateToTagVariant(
-                        formatMessage,
-                        c.state,
-                        isCourt,
-                        c.type,
-                        c.isValidToDateInThePast,
-                        c.courtDate,
-                      ).color
-                    }
-                    outlined
-                    disabled
-                  >
-                    {
-                      mapCaseStateToTagVariant(
-                        formatMessage,
-                        c.state,
-                        isCourt,
-                        c.type,
-                        c.isValidToDateInThePast,
-                        c.courtDate,
-                      ).text
-                    }
-                  </Tag>
+                  <Box marginRight={1} marginBottom={1}>
+                    <TagCaseState
+                      caseState={c.state}
+                      caseType={c.type}
+                      isCourtRole={isCourt}
+                      isValidToDateInThePast={c.isValidToDateInThePast}
+                      courtDate={c.courtDate}
+                    />
+                  </Box>
+
+                  {c.appealState && (
+                    <TagAppealState
+                      appealState={c.appealState}
+                      appealRulingDecision={c.appealRulingDecision}
+                    />
+                  )}
                 </td>
                 <td className={styles.td}>
                   {c.courtDate ? (

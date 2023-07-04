@@ -1,12 +1,12 @@
 // TODO: Add tests
+import { isIndictmentCase } from '@island.is/judicial-system/types'
 import {
-  Case,
-  CaseType,
-  isIndictmentCase,
   User,
-} from '@island.is/judicial-system/types'
+  CaseType,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { isBusiness } from './stepHelper'
+import { TempCase as Case } from '../types'
 
 export type Validation =
   | 'empty'
@@ -19,6 +19,8 @@ export type Validation =
   | 'date-format'
   | 'R-case-number'
   | 'S-case-number'
+  | 'vehicle-registration-number'
+  | 'appeal-case-number-format'
 
 type ValidateItem = 'valid' | [string | undefined, Validation[]]
 type IsValid = { isValid: boolean; errorMessage: string }
@@ -79,6 +81,18 @@ const getRegexByValidation = (validation: Validation) => {
       return {
         regex: new RegExp(/^S-[0-9]{1,5}\/[0-9]{4}$/),
         errorMessage: `Dæmi: S-1234/${new Date().getFullYear()}`,
+      }
+    }
+    case 'vehicle-registration-number': {
+      return {
+        regex: new RegExp(/^[A-Z]{2}-[A-Z]{1}[0-9]{2}|[0-9]{3}$/),
+        errorMessage: 'Dæmi: AB-123',
+      }
+    }
+    case 'appeal-case-number-format': {
+      return {
+        regex: new RegExp(/^[0-9]{1,4}\/[0-9]{4}$/),
+        errorMessage: `Dæmi: 1234/${new Date().getFullYear()}`,
       }
     }
   }
@@ -235,6 +249,12 @@ export const isProcessingStepValidIndictments = (
   return workingCase.prosecutor && workingCase.court ? true : false
 }
 
+export const isTrafficViolationStepValidIndictments = (
+  workingCase: Case,
+): boolean => {
+  return workingCase.demands ? true : false
+}
+
 export const isPoliceDemandsStepValidRC = (workingCase: Case): boolean => {
   return validate([
     [workingCase.lawsBroken, ['empty']],
@@ -374,16 +394,10 @@ export const isSubpoenaStepValid = (
 ): boolean => {
   const date = courtDate || workingCase.courtDate
 
-  return (
-    (workingCase.subpoenaType &&
-      validate([[date, ['empty', 'date-format']]]).isValid) ||
-    false
-  )
+  return validate([[date, ['empty', 'date-format']]]).isValid || false
 }
 
-export const isProsecutorAndDefenderStepValid = (
-  workingCase: Case,
-): boolean => {
+export const isDefenderStepValid = (workingCase: Case): boolean => {
   const defendantsAreValid = () =>
     workingCase.defendants?.every((defendant) => {
       return (
@@ -409,6 +423,29 @@ export const isAdminUserFormValid = (user: User): boolean => {
         [user.mobileNumber, ['empty']],
         [user.email, ['empty', 'email-format']],
       ]).isValid) ||
+    false
+  )
+}
+
+export const isCourtOfAppealCaseStepValid = (workingCase: Case): boolean => {
+  return (
+    (workingCase.appealJudge1 &&
+      workingCase.appealJudge2 &&
+      workingCase.appealJudge3 &&
+      workingCase.appealAssistant &&
+      validate([
+        [workingCase.appealCaseNumber, ['empty', 'appeal-case-number-format']],
+      ]).isValid) ||
+    false
+  )
+}
+
+export const isCourtOfAppealRulingStepValid = (workingCase: Case): boolean => {
+  const { appealRulingDecision, appealConclusion } = workingCase
+
+  return (
+    (appealRulingDecision !== null &&
+      validate([[appealConclusion, ['empty']]]).isValid) ||
     false
   )
 }

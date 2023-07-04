@@ -9,7 +9,7 @@ import ReviewSection, { ReviewSectionState } from './ReviewSection'
 
 import { parentalLeaveFormMessages } from '../../lib/messages'
 
-import { getExpectedDateOfBirth } from '../../lib/parentalLeaveUtils'
+import { getExpectedDateOfBirthOrAdoptionDate } from '../../lib/parentalLeaveUtils'
 import { dateFormat } from '@island.is/shared/constants'
 
 import { States as ApplicationStates } from '../../constants'
@@ -32,8 +32,9 @@ const statesMap: StatesMap = {
   },
 }
 
-const EditInReviewSteps: FC<FieldBaseProps> = ({ application }) => {
-  const dob = getExpectedDateOfBirth(application)
+const EditInReviewSteps: FC<FieldBaseProps> = (props) => {
+  const { application } = props
+  const dob = getExpectedDateOfBirthOrAdoptionDate(application)
   const dobDate = dob ? new Date(dob) : null
 
   const { formatMessage } = useLocale()
@@ -77,12 +78,7 @@ const EditInReviewSteps: FC<FieldBaseProps> = ({ application }) => {
       <Box marginTop={7} marginBottom={8}>
         {steps.map((step, index) => {
           return (
-            <ReviewSection
-              key={index}
-              application={application}
-              index={index + 1}
-              {...step}
-            />
+            <ReviewSection key={index} index={index + 1} {...props} {...step} />
           )
         })}
       </Box>

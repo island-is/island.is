@@ -8,6 +8,7 @@ import { Box } from '../Box/Box'
 import * as styles from './Button.css'
 import { Icon } from '../IconRC/Icon'
 import { Icon as IconType, Type } from '../IconRC/iconMap'
+import { TestSupport } from '@island.is/island-ui/utils'
 
 // TODO: refine types, ex. if circle is true there should be no children. and filter variants with conditional types
 
@@ -68,11 +69,16 @@ export interface ButtonProps {
   nowrap?: boolean
   title?: string
   inline?: boolean
+  name?: string
+  value?: string
   as?: As
   truncate?: boolean
 }
 
-export const Button = forwardRef<HTMLButtonElement, ButtonProps & ButtonTypes>(
+export const Button = forwardRef<
+  HTMLButtonElement,
+  ButtonProps & ButtonTypes & TestSupport
+>(
   (
     {
       variant = 'primary',
@@ -93,6 +99,8 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps & ButtonTypes>(
       as,
       truncate,
       unfocusable,
+      value,
+      name,
       ...buttonProps
     },
     ref,
@@ -100,8 +108,10 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps & ButtonTypes>(
     return (
       <Box
         component={ReaButton}
-        as={as || variant === 'text' ? 'span' : 'button'}
+        as={as ? (as as string) : variant === 'text' ? 'span' : 'button'}
         ref={ref}
+        value={value}
+        name={name}
         type={as === 'span' ? undefined : type}
         className={cn(
           styles.variants[variant],

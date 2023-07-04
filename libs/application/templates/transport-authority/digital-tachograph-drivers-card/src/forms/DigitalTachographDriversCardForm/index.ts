@@ -5,10 +5,12 @@ import { cardTypeSection } from './CardTypeSection'
 import { applicantSection } from './ApplicantSection'
 import { paymentSection } from './paymentSection'
 import { prerequisitesSection } from './prerequisitesSection'
+import { Logo } from '../../assets/Logo'
 
 export const DigitalTachographDriversCardForm: Form = buildForm({
   id: 'DigitalTachographDriversCardFormDraft',
   title: '',
+  logo: Logo,
   mode: FormModes.DRAFT,
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,

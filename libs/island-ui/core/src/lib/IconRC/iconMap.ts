@@ -2,6 +2,7 @@ export type Type = 'filled' | 'outline'
 export type Icon =
   | 'accessibility'
   | 'add'
+  | 'airplane'
   | 'arrowForward'
   | 'arrowBack'
   | 'arrowUp'
@@ -32,6 +33,7 @@ export type Icon =
   | 'ellipsisVertical'
   | 'eye'
   | 'eyeOff'
+  | 'facebook'
   | 'fileTrayFull'
   | 'filter'
   | 'heart'
@@ -61,6 +63,9 @@ export type Icon =
   | 'warning'
   | 'reload'
   | 'remove'
+  | 'save'
+  | 'bookmark'
+  | 'share'
   | 'QRCode'
   | 'globe'
 
@@ -68,6 +73,7 @@ export default {
   filled: {
     accessibility: 'Accessibility',
     add: 'Add',
+    airplane: 'Airplane',
     arrowForward: 'ArrowForward',
     arrowBack: 'ArrowBack',
     arrowDown: 'ArrowDown',
@@ -98,6 +104,7 @@ export default {
     ellipsisVertical: 'EllipsisVertical',
     eye: 'Eye',
     eyeOff: 'EyeOff',
+    facebook: 'Facebook',
     fileTrayFull: 'FileTrayFull',
     filter: 'Filter',
     heart: 'Heart',
@@ -127,12 +134,16 @@ export default {
     reload: 'Reload',
     remove: 'Remove',
     time: 'Time',
+    save: 'Save',
+    bookmark: 'Bookmark',
+    share: 'Share',
     QRCode: 'QRCodeOutline',
     globe: 'Globe',
   },
   outline: {
     accessibility: 'AccessibilityOutline',
     add: 'AddOutline',
+    airplane: 'Airplane',
     arrowForward: 'ArrowForward',
     arrowBack: 'ArrowBack',
     arrowDown: 'ArrowDown',
@@ -163,6 +174,7 @@ export default {
     ellipsisVertical: 'EllipsisVerticalOutline',
     eye: 'EyeOutline',
     eyeOff: 'EyeOffOutline',
+    facebook: 'Facebook',
     fileTrayFull: 'FileTrayFullOutline',
     filter: 'FilterOutline',
     heart: 'HeartOutline',
@@ -192,6 +204,9 @@ export default {
     reload: 'ReloadOutline',
     remove: 'Remove',
     time: 'TimeOutline',
+    save: 'SaveOutline',
+    bookmark: 'BookmarkOutline',
+    share: 'ShareOutline',
     QRCode: 'QRCodeOutline',
     globe: 'Globe',
   },

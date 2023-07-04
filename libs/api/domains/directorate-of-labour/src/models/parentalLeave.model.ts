@@ -30,6 +30,10 @@ export class ParentalLeave {
   @IsOptional()
   dateOfBirth?: string
 
+  @Field(() => String, { nullable: true })
+  @IsOptional()
+  adoptionDate?: string
+
   @Field(() => String)
   email!: string
 
@@ -59,6 +63,10 @@ export class ParentalLeave {
   @Field(() => String, { nullable: true })
   @IsOptional()
   testData?: string
+
+  @Field(() => String, { nullable: true })
+  @IsOptional()
+  type?: 'period' | 'documentPeriod' | 'document' | undefined
 
   @Field(() => String, { nullable: true })
   @IsOptional()

@@ -1,3 +1,4 @@
+import { NoContentException } from '@island.is/nest/problem'
 import { BadRequestException, Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import type { Logger } from '@island.is/logging'
@@ -15,7 +16,7 @@ export class GrantTypeService {
   ) {}
 
   /** Get's all Grant Types  */
-  async findAll(): Promise<GrantType[] | null> {
+  async findAll(): Promise<GrantType[]> {
     return this.grantTypeModel.findAll({ where: { archived: null } })
   }
 
@@ -27,7 +28,7 @@ export class GrantTypeService {
   ): Promise<{
     rows: GrantType[]
     count: number
-  } | null> {
+  }> {
     page--
     const offset = page * count
     return this.grantTypeModel.findAndCountAll({
@@ -47,7 +48,7 @@ export class GrantTypeService {
   ): Promise<{
     rows: GrantType[]
     count: number
-  } | null> {
+  }> {
     page--
     const offset = page * count
     return this.grantTypeModel.findAndCountAll({
@@ -72,31 +73,26 @@ export class GrantTypeService {
   }
 
   /** Creat a new grant type */
-  async create(grantType: GrantTypeDTO): Promise<GrantType | null> {
+  async create(grantType: GrantTypeDTO): Promise<GrantType> {
     this.logger.debug(`Creating grant type with name - "${grantType.name}"`)
 
     return this.grantTypeModel.create({ ...grantType })
   }
 
   /** Updates an existing grant */
-  async update(
-    grantType: GrantTypeDTO,
-    name: string,
-  ): Promise<GrantType | null> {
+  async update(grantTypeData: GrantTypeDTO, name: string): Promise<GrantType> {
     this.logger.debug('Updating grantType with name ', name)
 
     if (!name) {
       throw new BadRequestException('name must be provided')
     }
 
-    await this.grantTypeModel.update(
-      { ...grantType },
-      {
-        where: { name: name },
-      },
-    )
+    const grantType = await this.grantTypeModel.findByPk(name)
+    if (!grantType) {
+      throw new NoContentException()
+    }
 
-    return await this.grantTypeModel.findByPk(grantType.name)
+    return grantType.update({ ...grantTypeData })
   }
 
   /** Soft delete on a grant type by name */

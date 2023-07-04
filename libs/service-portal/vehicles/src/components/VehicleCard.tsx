@@ -44,10 +44,7 @@ export const VehicleCard: FC<Props> = ({ vehicle }) => {
           : undefined
       }
       cta={{
-        label: formatMessage({
-          id: 'sp.vehicles:see-info',
-          defaultMessage: 'Skoða nánar',
-        }),
+        label: formatMessage(messages.seeInfo),
         variant: 'text',
         url: vehicle.permno
           ? ServicePortalPath.AssetsVehiclesDetail.replace(

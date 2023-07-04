@@ -1,19 +1,10 @@
 import { m } from '../lib/messages'
 import {
   buildForm,
-  buildDescriptionField,
   buildSection,
   buildCustomField,
-  buildMultiField,
-  buildSubmitField,
 } from '@island.is/application/core'
-import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
-
-type CreateChargeData = {
-  data: {
-    paymentUrl: string
-  }
-}
+import { Form, FormModes } from '@island.is/application/types'
 
 export const Payment: Form = buildForm({
   id: 'MortgageCertificateApplicationPaymentForm',
@@ -28,73 +19,13 @@ export const Payment: Form = buildForm({
       children: [],
     }),
     buildSection({
-      id: 'awaitingPayment',
+      id: 'payment',
       title: m.payment,
       children: [
-        buildMultiField({
-          id: 'infoPaymentUrlNotFound',
-          title: m.payment,
-          condition: (_, externalData) => {
-            return (
-              !window.document.location.href.match(/\?done$/) &&
-              !(externalData.createCharge as CreateChargeData).data.paymentUrl
-            )
-          },
-          space: 1,
-          description: '',
-          children: [
-            buildCustomField({
-              id: 'paymentUrlNotFound',
-              component: 'PaymentUrlNotFoundField',
-              disabled: true,
-              title: m.payment,
-            }),
-            buildSubmitField({
-              id: 'goBack',
-              placement: 'footer',
-              title: m.tryAgain,
-              refetchApplicationAfterSubmit: true,
-              actions: [
-                {
-                  event: DefaultEvents.PAYMENT,
-                  name: m.tryAgain,
-                  type: 'subtle',
-                },
-              ],
-            }),
-          ],
-        }),
-
-        buildDescriptionField({
-          id: 'infoAwaitingPayment',
-          title: m.payment,
-          condition: (_, externalData) => {
-            return (
-              !window.document.location.href.match(/\?done$/) &&
-              (externalData.createCharge as CreateChargeData).data.paymentUrl
-                .length > 0
-            )
-          },
-          description: (application) => {
-            const { paymentUrl } = application.externalData.createCharge
-              .data as { paymentUrl: string }
-
-            const returnUrl = window.document.location.href
-            const redirectUrl = `${paymentUrl}&returnURL=${encodeURIComponent(
-              returnUrl + '?done',
-            )}`
-            window.document.location.href = redirectUrl
-
-            return m.forwardingToPayment
-          },
-        }),
         buildCustomField({
-          id: 'paymentPending',
-          component: 'PaymentPending',
+          id: 'paymentPendingField',
+          component: 'PaymentPendingField',
           title: m.confirmation,
-          condition: () => {
-            return !!window.document.location.href.match(/\?done$/)
-          },
         }),
       ],
     }),

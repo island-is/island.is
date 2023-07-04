@@ -1,8 +1,9 @@
-import React, { forwardRef, InputHTMLAttributes } from 'react'
-import cn from 'classnames'
 import * as styles from './Input.css'
 
+import React, { InputHTMLAttributes, forwardRef } from 'react'
+
 import { AsyncSearchSizes } from '../../AsyncSearch'
+import cn from 'classnames'
 
 export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   isOpen?: boolean
@@ -10,15 +11,20 @@ export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   hasLabel?: boolean
   color?: 'white' | 'blueberry'
   inputSize: AsyncSearchSizes
+  hasError?: boolean
 }
 
 export const Input = forwardRef<HTMLInputElement, InputProps>(
-  ({ isOpen, colored, hasLabel, inputSize, color, ...props }, ref) => {
+  (
+    { isOpen, colored, hasLabel, inputSize, hasError, color, ...props },
+    ref,
+  ) => {
     return (
       <input
         spellCheck={false}
         {...props}
         className={cn(styles.input, styles.sizes[inputSize], {
+          [styles.hasError]: hasError,
           [styles.open]: isOpen,
           [styles.colored]: colored,
           [styles.hasLabel]: hasLabel,

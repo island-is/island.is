@@ -16,7 +16,7 @@ export const ValueLine: FC<ValueLineProps> = ({
   const { formatMessage } = useLocale()
 
   return (
-    <Box paddingY={1}>
+    <Box paddingY={1} style={isTotal ? { borderTop: '1px solid black' } : {}}>
       <Text variant="medium" fontWeight="semiBold" as="label">
         {formatMessage(label)}
       </Text>

@@ -1,9 +1,11 @@
 module.exports = {
-  preset: '../../../jest.preset.js',
+  preset: './jest.preset.js',
+  rootDir: '../../..',
+  roots: [__dirname],
   transform: {
     '^.+\\.[tj]sx?$': 'ts-jest',
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'html'],
-  coverageDirectory: '../../../coverage/libs/api-catalogue/elastic',
+  coverageDirectory: '<rootDir>/coverage/libs/api-catalogue/elastic',
   displayName: 'api-catalogue-elastic',
 }

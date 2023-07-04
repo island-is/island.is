@@ -14,6 +14,7 @@ import {
   DatePickerController,
 } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
+import { m } from '../../../lib/messages'
 import * as styles from './AccessItem.css'
 import format from 'date-fns/format'
 import { isDefined } from '@island.is/shared/utils'
@@ -39,10 +40,7 @@ export const AccessItem = ({
   const { lang, formatMessage } = useLocale()
   const { setValue, getValues } = useFormContext()
   const { md, lg } = useBreakpoint()
-  const grantTranslation = formatMessage({
-    id: 'sp.access-control-delegations:grant',
-    defaultMessage: 'Heimild',
-  })
+  const grantTranslation = formatMessage(m.permission)
 
   const [datePickerVisibleGroup, setDatePickerVisibleGroup] = useState<
     boolean[]
@@ -176,10 +174,7 @@ export const AccessItem = ({
                     label: (
                       <>
                         <VisuallyHidden>
-                          {formatMessage({
-                            id: 'sp.settings-access-control:access-access',
-                            defaultMessage: 'Aðgangur',
-                          })}
+                          {formatMessage(m.accessControlAccess)}
                         </VisuallyHidden>
                         {item.displayName}
                       </>

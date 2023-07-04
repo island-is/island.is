@@ -16,20 +16,20 @@ export const rcOverview = {
         'Notaður sem skilaboð í upplýsingarboxi á yfirlits skrefi í gæsluvarðhalds- og farbannsmálum.',
     },
   }),
-  seenByDefenderAlert: defineMessages({
+  openedByDefenderAlert: defineMessages({
     title: {
       id:
-        'judicial.system.restriction_cases:overview.seen_by_defender_alert.title',
-      defaultMessage: 'Krafa sótt af verjanda',
+        'judicial.system.restriction_cases:overview.opened_by_defender_alert.title',
+      defaultMessage: 'Mál opnað af verjanda',
       description:
-        'Notaður sem titill fyrir "Krafa sótt af verjanda" hluta á yfirlitssíðu í gæsluvarðhalds- og farbannsmálum.',
+        'Notaður sem titill fyrir "Mál opnað af verjanda" hluta á yfirlitssíðu í gæsluvarðhalds- og farbannsmálum.',
     },
     text: {
       id:
-        'judicial.system.restriction_cases:overview.seen_by_defender_alert.text',
-      defaultMessage: 'Verjandi skráði sig inn til að sækja kröfuskjal {when}.',
+        'judicial.system.restriction_cases:overview.opened_by_defender_alert.text',
+      defaultMessage: 'Verjandi hefur opnað málið í Réttarvörslugátt {when}.',
       description:
-        'Notaður sem titill fyrir "Krafa sótt af verjanda" hluta á yfirlitssíðu í gæsluvarðhalds- og farbannsmálum.',
+        'Notaður sem titill fyrir "Mál opnað af verjanda" hluta á yfirlitssíðu í gæsluvarðhalds- og farbannsmálum.',
     },
   }),
   headingV3: defineMessage({
@@ -39,13 +39,6 @@ export const rcOverview = {
     description: 'Notaður sem titill á yfirlits skrefi í rannsóknarheimildum.',
   }),
   sections: {
-    copyLinkForDefenderButton: defineMessage({
-      id:
-        'judicial.system.restriction_cases:overview.copy_link_for_defender_button',
-      defaultMessage: 'Afrita hlekk fyrir verjanda',
-      description:
-        'Notaður sem texti á takka til þessa að afrita hlekk á mál fyrir verjanda.',
-    }),
     modal: defineMessages({
       heading: {
         id: 'judicial.system.restriction_cases:overview.modal.heading',

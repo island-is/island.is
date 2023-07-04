@@ -1,13 +1,16 @@
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import { IntlShape, useIntl } from 'react-intl'
+
 import {
-  CaseListEntry,
   isIndictmentCase,
   isInvestigationCase,
   isRestrictionCase,
+} from '@island.is/judicial-system/types'
+import { TempCaseListEntry as CaseListEntry } from '@island.is/judicial-system-web/src/types'
+import {
   User,
   UserRole,
-} from '@island.is/judicial-system/types'
-import { useCallback, useEffect, useMemo, useState } from 'react'
-import { IntlShape, useIntl } from 'react-intl'
+} from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { useFilter as m } from './useFilter.strings'
 
@@ -77,7 +80,7 @@ export function filterOptionsForUser(
 ) {
   return options.filter((option) => {
     if (
-      user?.role === UserRole.REGISTRAR ||
+      user?.role === UserRole.REPRESENTATIVE ||
       user?.role === UserRole.ASSISTANT
     ) {
       return option.value !== 'INVESTIGATION'
@@ -98,7 +101,7 @@ export type UserFilter = {
 export const useFilter = (
   allActiveCases: CaseListEntry[],
   allPastCases: CaseListEntry[],
-  user?: User | undefined,
+  user?: User,
 ): UserFilter => {
   const { formatMessage } = useIntl()
   const optionsMemo = useMemo(

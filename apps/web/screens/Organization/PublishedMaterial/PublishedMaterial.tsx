@@ -20,6 +20,7 @@ import {
   getThemeConfig,
   OrganizationWrapper,
   Webreader,
+  FilterTag,
 } from '@island.is/web/components'
 import {
   ContentLanguage,
@@ -31,11 +32,7 @@ import {
   QueryGetOrganizationPageArgs,
   QueryGetPublishedMaterialArgs,
 } from '@island.is/web/graphql/schema'
-import {
-  linkResolver,
-  useFeatureFlag,
-  useNamespace,
-} from '@island.is/web/hooks'
+import { linkResolver, useNamespace } from '@island.is/web/hooks'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import useLocalLinkTypeResolver from '@island.is/web/hooks/useLocalLinkTypeResolver'
 import { useWindowSize } from '@island.is/web/hooks/useViewport'
@@ -52,11 +49,10 @@ import {
   GET_ORGANIZATION_QUERY,
 } from '../../queries'
 import { GET_PUBLISHED_MATERIAL_QUERY } from '../../queries/PublishedMaterial'
-import FilterTag from './components/FilterTag/FilterTag'
 import { PublishedMaterialItem } from './components/PublishedMaterialItem'
 import {
   getFilterCategories,
-  getFilterTags,
+  extractFilterTags,
   getGenericTagGroupHierarchy,
   getInitialParameters,
 } from './utils'
@@ -77,10 +73,6 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
   genericTagFilters,
   namespace,
 }) => {
-  const { value: isWebReaderEnabledForOrganizationPages } = useFeatureFlag(
-    'isWebReaderEnabledForOrganizationPages',
-    false,
-  )
   const router = useRouter()
   const { width } = useWindowSize()
   const [searchValue, setSearchValue] = useState('')
@@ -258,7 +250,7 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
     (publishedMaterial?.total ?? page * ASSETS_PER_PAGE) -
     page * ASSETS_PER_PAGE
 
-  const selectedFilters = getFilterTags(filterCategories)
+  const selectedFilters = extractFilterTags(filterCategories)
 
   return (
     <OrganizationWrapper
@@ -284,17 +276,10 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
         <GridColumn span="12/12">
           <GridRow>
             <GridColumn span={['12/12', '12/12', '6/12', '6/12', '8/12']}>
-              <Text
-                variant="h1"
-                as="h1"
-                marginBottom={isWebReaderEnabledForOrganizationPages ? 0 : 4}
-                marginTop={1}
-              >
+              <Text variant="h1" as="h1" marginBottom={0} marginTop={1}>
                 {pageTitle}
               </Text>
-              {isWebReaderEnabledForOrganizationPages && (
-                <Webreader readId={null} readClass="rs_read" />
-              )}
+              <Webreader readId={null} readClass="rs_read" />
             </GridColumn>
           </GridRow>
           <GridRow>

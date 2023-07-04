@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import React from 'react'
 import {
   getContainerClass,
   getInteractiveProps,
@@ -21,6 +21,7 @@ export const ToggleSwitchCheckbox = (props: ToggleSwitchCheckboxProps) => {
       <input
         className="visually-hidden"
         type="checkbox"
+        name={props.name}
         checked={checked}
         disabled={props.disabled}
         onChange={() => props.onChange(!checked)}

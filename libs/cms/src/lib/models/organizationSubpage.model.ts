@@ -1,4 +1,5 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
+import { CacheField } from '@island.is/nest/graphql'
 
 import { IOrganizationSubpage } from '../generated/contentfulTypes'
 import { Link, mapLink } from './link.model'
@@ -27,13 +28,13 @@ export class OrganizationSubpage {
   @Field({ nullable: true })
   intro!: string
 
-  @Field(() => [SliceUnion], { nullable: true })
+  @CacheField(() => [SliceUnion], { nullable: true })
   description?: Array<typeof SliceUnion>
 
-  @Field(() => [Link], { nullable: true })
+  @CacheField(() => [Link], { nullable: true })
   links?: Array<Link>
 
-  @Field(() => [SliceUnion], { nullable: true })
+  @CacheField(() => [SliceUnion], { nullable: true })
   slices?: Array<typeof SliceUnion | null>
 
   @Field(() => Boolean)
@@ -45,10 +46,10 @@ export class OrganizationSubpage {
   @Field({ nullable: true })
   sliceExtraText?: string
 
-  @Field(() => OrganizationPage)
+  @CacheField(() => OrganizationPage)
   organizationPage!: OrganizationPage | null
 
-  @Field(() => Image, { nullable: true })
+  @CacheField(() => Image, { nullable: true })
   featuredImage?: Image | null
 }
 

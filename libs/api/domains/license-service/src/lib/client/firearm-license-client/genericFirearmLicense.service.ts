@@ -38,10 +38,17 @@ export class GenericFirearmLicenseService
 
   async fetchLicenseData(user: User) {
     const licenseInfo = await this.firearmApi.getLicenseInfo(user)
-    if (!licenseInfo) return null
+    if (!licenseInfo) {
+      return null
+    }
 
     const categories = await this.firearmApi.getCategories(user)
-    if (!categories) return null
+    if (!categories) {
+      this.logger.warn('No category info found for user', {
+        category: LOG_CATEGORY,
+      })
+      return null
+    }
 
     const properties = await this.firearmApi.getPropertyInfo(user)
 
@@ -109,13 +116,25 @@ export class GenericFirearmLicenseService
   async getPkPassUrl(user: User): Promise<string | null> {
     const data = await this.fetchLicenseData(user)
 
-    if (!data) return null
+    if (!data) {
+      this.logger.warn('Missing pkpass distribution url', {
+        category: LOG_CATEGORY,
+      })
+      return null
+    }
 
     const inputValues = createPkPassDataInput(
       data.licenseInfo,
       data.properties,
       user.nationalId,
     )
+
+    if (!inputValues) {
+      this.logger.warn('PkPassDataInput creation failed', {
+        category: LOG_CATEGORY,
+      })
+      return null
+    }
 
     //slice out headers from base64 image string
     const image = data.licenseInfo?.licenseImgBase64
@@ -131,19 +150,31 @@ export class GenericFirearmLicenseService
         : null,
     }
 
-    const pass = await this.smartApi.generatePkPassUrl(
+    const pass = await this.smartApi.generatePkPass(
       payload,
       format(user.nationalId),
     )
 
     if (pass.ok) {
-      return pass.data
+      if (!pass.data.distributionUrl) {
+        this.logger.warn('Missing pkpass distribution url', {
+          category: LOG_CATEGORY,
+        })
+        return null
+      }
+      return pass.data.distributionUrl
     }
 
     /**
      * TODO: Leverage the extra error data SmartApi now returns in a future branch!
      * For now we return null, just to keep existing behavior unchanged
      */
+    if (pass.error) {
+      this.logger.warn('Pkpass url generation failed', {
+        ...pass.error,
+        category: LOG_CATEGORY,
+      })
+    }
 
     return null
   }
@@ -173,19 +204,32 @@ export class GenericFirearmLicenseService
         : null,
     }
 
-    const pass = await this.smartApi.generatePkPassQrCode(
+    const pass = await this.smartApi.generatePkPass(
       payload,
       format(user.nationalId),
     )
 
     if (pass.ok) {
-      return pass.data
+      if (!pass.data.distributionQRCode) {
+        this.logger.warn('Missing pkpass distribution QR Code', {
+          category: LOG_CATEGORY,
+        })
+        return null
+      }
+      return pass.data.distributionQRCode
     }
 
     /**
      * TODO: Leverage the extra error data SmartApi now returns in a future branch!
      * For now we return null, just to keep existing behavior unchanged
      */
+
+    if (pass.error) {
+      this.logger.warn('Pkpass qr code generation failed', {
+        ...pass.error,
+        category: LOG_CATEGORY,
+      })
+    }
 
     return null
   }
@@ -201,6 +245,11 @@ export class GenericFirearmLicenseService
     }
 
     if (!result.ok) {
+      this.logger.warn('Pkpass verification failed', {
+        ...result.error,
+        category: LOG_CATEGORY,
+      })
+
       return {
         valid: false,
         data: undefined,

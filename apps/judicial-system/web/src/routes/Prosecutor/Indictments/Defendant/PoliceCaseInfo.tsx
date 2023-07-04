@@ -51,6 +51,7 @@ interface Props {
       crimeScene?: CrimeScene
     },
   ) => void
+  policeCaseNumberImmutable: boolean
 }
 
 export const PoliceCaseInfo: React.FC<Props> = (props) => {
@@ -62,6 +63,7 @@ export const PoliceCaseInfo: React.FC<Props> = (props) => {
     setPoliceCase,
     deletePoliceCase,
     updatePoliceCases,
+    policeCaseNumberImmutable = false,
   } = props
 
   const { formatMessage } = useIntl()
@@ -162,6 +164,7 @@ export const PoliceCaseInfo: React.FC<Props> = (props) => {
               updatePoliceCases()
             }
           }}
+          disabled={policeCaseNumberImmutable}
         >
           <Input
             data-testid={`policeCaseNumber${index}`}

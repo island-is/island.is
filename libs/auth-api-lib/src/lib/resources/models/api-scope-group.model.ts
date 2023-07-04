@@ -3,19 +3,20 @@ import type {
   InferAttributes,
   InferCreationAttributes,
 } from 'sequelize'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import {
+  BelongsTo,
   Column,
   CreatedAt,
   DataType,
+  ForeignKey,
+  HasMany,
   Model,
+  PrimaryKey,
   Table,
   UpdatedAt,
-  PrimaryKey,
-  HasMany,
-  BelongsTo,
-  ForeignKey,
 } from 'sequelize-typescript'
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
+
 import { ApiScope } from './api-scope.model'
 import { Domain } from './domain.model'
 
@@ -95,10 +96,10 @@ export class ApiScopeGroup extends Model<
   readonly modified?: Date
 
   @HasMany(() => ApiScope)
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: () => [ApiScope] })
   scopes?: ApiScope[]
 
   @BelongsTo(() => Domain)
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: () => Domain })
   domain?: Domain
 }

@@ -23,10 +23,16 @@ export const getReviewSteps = (application: Application) => {
     [],
   ) as OperatorInformation[]
 
+  const filteredOperators = operators.filter(
+    ({ wasRemoved }) => wasRemoved !== 'true',
+  )
+
   const ownerCoOwnerNotApproved = ownerCoOwner.find(
     (coOwner) => !coOwner.approved,
   )
-  const operatorNotApproved = operators.find((operator) => !operator.approved)
+  const operatorNotApproved = filteredOperators.find(
+    (operator) => !operator.approved,
+  )
 
   const steps = [
     // Transfer of vehicle: Always approved
@@ -69,8 +75,8 @@ export const getReviewSteps = (application: Application) => {
       tagVariant: !operatorNotApproved ? 'mint' : 'purple',
       title: review.step.title.operator,
       description: review.step.description.operator,
-      visible: operators.length > 0,
-      reviewer: operators.map((reviewer) => {
+      visible: filteredOperators.length > 0,
+      reviewer: filteredOperators.map((reviewer) => {
         return {
           nationalId: reviewer.nationalId,
           name: reviewer.name,

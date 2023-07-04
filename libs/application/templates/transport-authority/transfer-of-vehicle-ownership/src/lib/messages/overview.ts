@@ -27,7 +27,7 @@ export const overview = {
     },
     addCoOwnerAndOperatorButton: {
       id: 'ta.tvo.application:overview.labels.addCoOwnerAndOperatorButton',
-      defaultMessage: 'Bæta við meðeiganda/umráðamanni',
+      defaultMessage: 'Bæta við meðeiganda /umráðamanni',
       description: 'Add co owner and operator button',
     },
     insuranceTitle: {

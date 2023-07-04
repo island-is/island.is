@@ -1,10 +1,10 @@
-export const GET_CURRENT_VEHICLES = `
-  query GetCurrentVehicles($input: GetCurrentVehiclesInput!) {
-    currentVehicles(input: $input) {
-      permno
-      make
-      color
-      role
+export const GET_VEHICLE_PLATE_ORDER_CHECKS_BY_PERMNO = `
+  query GetVehiclePlateOrderChecksByPermno($permno: String!) {
+    vehiclePlateOrderChecksByPermno(permno: $permno) {
+      validationErrorMessages {
+        errorNo
+        defaultMessage
+      }
     }
   } 
 `

@@ -1,24 +1,22 @@
-import React, { useEffect, useState } from 'react'
-import * as styles from './QRCodeModal.css'
-import {
-  Box,
-  Button,
-  LoadingDots,
-  SkeletonLoader,
-} from '@island.is/island-ui/core'
+import { useEffect, useState } from 'react'
+import { Box, Button, toast } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { Locale } from '@island.is/shared/types'
 import { useMutation } from '@apollo/client'
 import {
-  CREATE_PK_PASS_QR_CODE,
   CREATE_PK_PASS,
-  useUserProfile,
   GenericLicenseType,
+  useUserProfile,
 } from '@island.is/service-portal/graphql'
 import { m } from '../../lib/messages'
-import QRCodeModal from './QRCodeModal'
 import { theme } from '@island.is/island-ui/theme'
+import { hasPassedTimeout } from '../../utils/dateUtils'
+import {
+  FeatureFlagClient,
+  useFeatureFlagClient,
+} from '@island.is/react/feature-flags'
 import { useWindowSize } from 'react-use'
+import { DriversLicensePkPass } from './DriversLicensePkPass'
 
 type PkPassProps = {
   licenseType: string
@@ -30,27 +28,34 @@ export const PkPass = ({
   expireDate,
   textButton = false,
 }: PkPassProps) => {
-  const [pkpassQRCode, setPkpassQRCode] = useState<string | null>(null)
   const [pkpassUrl, setPkpassUrl] = useState<string | null>(null)
   const [generatePkPass] = useMutation(CREATE_PK_PASS)
-  const [generatePkPassQrCode, { loading: QRCodeLoading }] = useMutation(
-    CREATE_PK_PASS_QR_CODE,
-  )
   const { data: userProfile } = useUserProfile()
   const [displayLoader, setDisplayLoader] = useState<boolean>(false)
-  const [modalOpen, setModalOpen] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
   const [fetched, setFetched] = useState(false)
+  const [linkError, setLinkError] = useState(false)
+  const [linkTimestamp, setLinkTimestamp] = useState<Date>()
+  const [useNewDriversLicense, setUseNewDriversLicense] = useState(false)
+
   const locale = (userProfile?.locale as Locale) ?? 'is'
   const { formatMessage } = useLocale()
   const { width } = useWindowSize()
-  const timeFetched = new Date() // Used to compare if license is expired
+  const featureFlagClient: FeatureFlagClient = useFeatureFlagClient()
 
-  const isDriversLicense = licenseType === GenericLicenseType.DriversLicense
-
-  const toggleModal = () => {
-    setModalOpen(!modalOpen)
-  }
+  /* Should use the new drivers license? */
+  useEffect(() => {
+    const isFlagEnabled = async () => {
+      const ffEnabled = await featureFlagClient.getValue(
+        `isLicenseServiceDrivingLicenceClientV2Enabled`,
+        false,
+      )
+      if (ffEnabled) {
+        setUseNewDriversLicense(ffEnabled as boolean)
+      }
+    }
+    isFlagEnabled()
+  }, [])
 
   useEffect(() => {
     if (width < theme.breakpoints.md) {
@@ -59,102 +64,71 @@ export const PkPass = ({
     setIsMobile(false)
   }, [width])
 
-  const getCode = async () => {
-    if (pkpassQRCode && !isTimeMoreThen30Minutes()) {
-      return
-    }
-    const response = await generatePkPassQrCode({
-      variables: { locale, input: { licenseType } },
-    })
-    if (!response.errors) {
-      setPkpassQRCode(response?.data?.generatePkPassQrCode?.pkpassQRCode)
-    }
+  const isOldDriversLicense =
+    licenseType === GenericLicenseType.DriversLicense && !useNewDriversLicense
+
+  const handleError = (message: string) => {
+    setDisplayLoader(false)
+    setLinkError(true)
+    toast.error(message)
+    setTimeout(() => setLinkError(false), 5000)
   }
 
   const getLink = async () => {
-    if (pkpassUrl && !isTimeMoreThen30Minutes()) {
+    if (pkpassUrl && !hasPassedTimeout(linkTimestamp, 10)) {
       window.open(pkpassUrl)
       setDisplayLoader(false)
       return
     }
-    const response = await generatePkPass({
+    await generatePkPass({
       variables: { locale, input: { licenseType } },
     })
-    if (!response.errors && window && typeof window !== 'undefined') {
-      setPkpassUrl(response?.data?.generatePkPass?.pkpassUrl)
-      window.open(response?.data?.generatePkPass?.pkpassUrl)
-      setFetched(true)
-      setDisplayLoader(false)
-    }
-  }
-
-  /* License is expired if 30 minutes has passed -> fetch pkpass again */
-  const isTimeMoreThen30Minutes = () => {
-    const now = new Date()
-    const timeDiff = Math.abs(now.getTime() - timeFetched?.getTime())
-    const diffMinutes = Math.ceil(timeDiff / (1000 * 60))
-    return diffMinutes > 30
+      .then((response) => {
+        if (!response.errors && window && typeof window !== 'undefined') {
+          setPkpassUrl(response?.data?.generatePkPass?.pkpassUrl)
+          window.open(response?.data?.generatePkPass?.pkpassUrl)
+          setFetched(true)
+          setDisplayLoader(false)
+          setLinkTimestamp(new Date())
+        } else {
+          handleError(formatMessage(m.licenseFetchError))
+        }
+      })
+      .catch(() => {
+        handleError(formatMessage(m.licenseFetchError))
+        return
+      })
   }
 
   return (
     <>
-      {!isMobile && isDriversLicense && (
-        <>
-          <Button
-            colorScheme="default"
-            preTextIconType="filled"
-            size={textButton ? 'small' : 'default'}
-            type="button"
-            variant={textButton ? 'text' : 'utility'}
-            icon="QRCode"
-            iconType="outline"
-            onClick={() => {
-              getCode()
-              toggleModal()
-            }}
-          >
-            {formatMessage(m.sendToPhone)}
-          </Button>
-          {modalOpen && (
-            <QRCodeModal
-              id="qrcode-modal"
-              toggleClose={modalOpen}
-              onCloseModal={toggleModal}
-              expires={expireDate}
-            >
-              {QRCodeLoading && <SkeletonLoader height={180} width={180} />}
-              {pkpassQRCode && !QRCodeLoading && (
-                <Box>
-                  <img
-                    src={pkpassQRCode}
-                    alt={formatMessage(m.qrCodeAltText)}
-                    className={styles.code}
-                  />
-                </Box>
-              )}
-            </QRCodeModal>
-          )}
-        </>
+      {!isMobile && isOldDriversLicense && (
+        <DriversLicensePkPass textButton={textButton} expireDate={expireDate} />
       )}
 
-      {(isMobile || !isDriversLicense) && (
+      {(isMobile || !isOldDriversLicense) && (
         <Box>
           <Button
             variant="utility"
+            disabled={linkError}
             size="small"
-            icon={fetched ? 'checkmark' : displayLoader ? undefined : 'QRCode'}
+            loading={displayLoader}
+            icon={
+              fetched && !linkError
+                ? 'checkmark'
+                : displayLoader
+                ? undefined
+                : linkError
+                ? 'warning'
+                : 'QRCode'
+            }
             iconType="outline"
             onClick={() => {
               setDisplayLoader(true)
               getLink()
             }}
           >
-            {formatMessage(m.sendToPhone)}{' '}
-            {displayLoader && (
-              <span className={styles.loader}>
-                <LoadingDots single />
-              </span>
-            )}
+            {formatMessage(m.sendToPhone)}
           </Button>
         </Box>
       )}

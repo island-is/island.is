@@ -1,0 +1,6 @@
+mutation CreateAuthAdminScope($input: CreateScopeInput!) {
+  createAuthAdminScope(input: $input) {
+    scopeName
+    environment
+  }
+}

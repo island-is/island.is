@@ -11,7 +11,7 @@ This application template allows applicants to apply for parental leave. For fur
 
 Below you'll find a flow chart for the application:
 
-![](./assets/parental-leave-flow-chart.png)
+![](./assets/parental-leave-flow-chart-2.png)
 
 ### Glossary
 
@@ -29,7 +29,7 @@ This section assumes that you are familiar with [states](../../core/README.md#st
 
 This state is a temporary state that all new applications will be created in. It has a short lifespan and is unlisted.
 
-The purpose of this state is to be a guard into the actual application. To advance to the next state, an applicant will need to be expecting a child. To verify this, there is an external data step which fetches data from VMST and Þjóðskrá.
+The purpose of this state is to be a guard into the actual application. There is an external data step which fetches data from VMST and Þjóðskrá to check if the applicant is expecting a child. If no child is found we ask the applicant if they are applying for parental-leave / parental-grant due to adoption, foster care or father-without-mother. If they are not they cannot advance to the next step and make an application.
 
 Applicants choose which application type ( parental-leave, parental-grant or parental-grant-students ) they are applying for. How many children will give birth.
 
@@ -43,37 +43,49 @@ When the primary parent requests transferal of rights, then the other secondary 
 
 #### Employer waiting to assign
 
-If the applicant is employed by an employer (not self employed, student, getting benefits or apply for parental-leave grant), then they are asked to provide an email address which a confirmation email will be sent to. When the employer receives the email they can click a link which automatically assigns them to the application and advances it to the next state
+If the applicant is employed by an employer(s) (not self employed, getting benefits or applying for a parental-leave grant), then they are asked to provide an email address which a confirmation email will be sent to. When the employer receives the email they can click a link which automatically assigns them to the application and advances it to the next state. If the applicant has multiple employers we go back to this state after an employer has approved the request until there are no more employers.
 
 #### Employer approval
 
 Here the employer will have a chance to review the periods selected by the applicant as well as pension fund and union.
 
-The employer can then approve or request changes
+The employer(s) can then approve or request changes, one employer at a time since just one assignee can be at one state at a time.
 
-#### Vinnumalastofnun approval
+#### VMST approval
 
-Applications that have been sent to VMST
+Applications that have been sent to VMST.
 
 #### Edit or add periods
 
-Applicants make changes in periods or/and add more periods in their application
+Applicants make changes in periods or/and add more periods in their application.
+
+#### Residence grant no birthdate
+
+Applicant tries to apply for residence grant but havn't given birth to the child, so they cannot apply.
+
+#### Residence grant
+
+If the applicant has given birth and it has been less than 6 months they can apply for residence grant.
 
 #### Employer approval edits
 
-Employers review new periods selected/added by applicants then approve or request changes
+Employers review new periods selected/added by applicants then approve or request changes.
+
+#### VMST approve edits
+
+Application that has been edited (edit perios or applied for residence grant) have been sent to VMST again.
 
 #### Additional document required
 
-VMST asks for additional documents while processing the application
+VMST asks for additional documents while processing the application.
 
-#### Approval
+#### Approve
 
-Applicantions have been approved by VMST
+Applicantions have been approved by VMST.
 
 #### Close
 
-Applicants finished all his/her rights or parental-leave time is expired
+Applicants finished all his/her rights or parental-leave time is expired.
 
 ### Parental leave template API module
 
@@ -147,12 +159,16 @@ When investigating errors on our enviornments we have two logging services. `Dat
 
 ### Screens for users that are no longer assignees
 
-When the application is opened/refreshed by a user that was an assignee but no longer is, we might want to show them something - we get their national registry id so we could see if it is the other parent visting or the employer, even though they are not an assignee anymore and show them something relevant like "The application is no longer in a state you can interact with". This is too specific for the application system to know and handle, although the application system should show some message to a user visiting an application that is not an assignee, currently they just see a loader (they could be anyone).
-
-### Rights code
-
-Currently other parents have the rights code `FO` (`FOreldri` -> parent). The API we use from Þjóðskrá does not provide gender but we'll need to include this for statistics on other parents.
+When the application is opened/refreshed by a user that was an assignee but no longer is, we might want to show them something - we get their national registry id so we could see if it is the other parent visting or the employer, even though they are not an assignee anymore and show them something relevant like "The application is no longer in a state you can interact with". This is too specific for the application system to know and handle, although the application system should show some message to a user visiting an application that is not an assignee.
 
 ### Localisation in emails
 
 Emails are currently hardcoded, need to pass in localisation functions to be able to use translation strings. Also need to sync with service-portal to know what locale the user prefers.
+
+### Other parent asks for personal allowance
+
+Other parent should be able to ask the primary parent for personal allowance. Now only primary parent can ask the other parent for personal allowance.
+
+### Non-custodial parent
+
+If primary parent doesn't give non-custodial parent consent that they is allowed right of access during the parental leave (grant) they should not be able to apply for parental leave (grant).

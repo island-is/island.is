@@ -8,10 +8,20 @@ export const dateParse = (startDate: string) => {
   return new Date(year, month - 1, day)
 }
 
-// Takes in date string
-export const formatDate = (date: string) => {
+// Takes in date string or date
+export const formatDate = (date: string | Date) => {
+  const arg = date instanceof Date ? date : new Date(date)
   try {
-    return format(new Date(date), 'dd.MM.yyyy')
+    return format(arg, 'dd.MM.yyyy')
+  } catch {
+    return date instanceof Date ? date.toDateString() : date
+  }
+}
+
+// Takes in date string
+export const formatDateWithTime = (date: string) => {
+  try {
+    return format(new Date(date), 'dd.MM.yyyy - HH:mm')
   } catch {
     return date
   }

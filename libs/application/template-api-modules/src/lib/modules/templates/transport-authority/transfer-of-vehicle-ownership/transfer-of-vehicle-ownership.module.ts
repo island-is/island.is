@@ -15,6 +15,14 @@ import {
   VehicleCodetablesClientModule,
   VehicleCodetablesClientConfig,
 } from '@island.is/clients/transport-authority/vehicle-codetables'
+import {
+  VehicleServiceFjsV1ClientModule,
+  VehicleServiceFjsV1ClientConfig,
+} from '@island.is/clients/vehicle-service-fjs-v1'
+import {
+  VehiclesClientModule,
+  VehiclesClientConfig,
+} from '@island.is/clients/vehicles'
 
 export class TransferOfVehicleOwnershipModule {
   static register(baseConfig: BaseTemplateAPIModuleConfig): DynamicModule {
@@ -25,12 +33,16 @@ export class TransferOfVehicleOwnershipModule {
         ChargeFjsV2ClientModule,
         VehicleOwnerChangeClientModule,
         VehicleCodetablesClientModule,
+        VehicleServiceFjsV1ClientModule,
+        VehiclesClientModule,
         ConfigModule.forRoot({
           isGlobal: true,
           load: [
             ChargeFjsV2ClientConfig,
             VehicleOwnerChangeClientConfig,
             VehicleCodetablesClientConfig,
+            VehicleServiceFjsV1ClientConfig,
+            VehiclesClientConfig,
           ],
         }),
       ],

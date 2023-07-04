@@ -5,7 +5,7 @@ import { useIntl } from 'react-intl'
 import InfoBox from '@island.is/judicial-system-web/src/components/InfoBox/InfoBox'
 import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
 import { core } from '@island.is/judicial-system-web/messages'
-import type { Case } from '@island.is/judicial-system/types'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 interface Props {
   workingCase: Case

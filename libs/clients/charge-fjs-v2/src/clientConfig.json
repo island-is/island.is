@@ -6,12 +6,8 @@
     "version": "2.0"
   },
   "servers": [
-    {
-      "url": "http://wmdev05.Dev.local:5000/rad/TbrLeyfisgatt.api.v2:FJSCharge_v2"
-    },
-    {
-      "url": "https://wmdev05.Dev.local:5000/rad/TbrLeyfisgatt.api.v2:FJSCharge_v2"
-    }
+    { "url": "/rad/TbrLeyfisgatt.api.v2:FJSCharge_v2" },
+    { "url": "/rad/TbrLeyfisgatt.api.v2:FJSCharge_v2" }
   ],
   "paths": {
     "/charge": {
@@ -20,9 +16,7 @@
         "requestBody": {
           "content": {
             "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/input"
-              }
+              "schema": { "$ref": "#/components/schemas/input" }
             }
           },
           "required": true
@@ -48,18 +42,9 @@
               }
             }
           },
-          "400": {
-            "description": "Bad request",
-            "content": {}
-          },
-          "401": {
-            "description": "Access Denied",
-            "content": {}
-          },
-          "500": {
-            "description": "Internal Server Error",
-            "content": {}
-          }
+          "400": { "description": "Bad request", "content": {} },
+          "401": { "description": "Access Denied", "content": {} },
+          "500": { "description": "Internal Server Error", "content": {} }
         },
         "x-codegen-request-body-name": "input"
       }
@@ -73,9 +58,7 @@
             "in": "path",
             "description": "from system 3 letter",
             "required": true,
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "responses": {
@@ -89,10 +72,7 @@
               }
             }
           },
-          "401": {
-            "description": "Access Denied",
-            "content": {}
-          }
+          "401": { "description": "Access Denied", "content": {} }
         }
       }
     },
@@ -104,9 +84,7 @@
             "name": "performingOrgID",
             "in": "path",
             "required": true,
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "responses": {
@@ -120,10 +98,7 @@
               }
             }
           },
-          "401": {
-            "description": "Access Denied",
-            "content": {}
-          }
+          "401": { "description": "Access Denied", "content": {} }
         }
       }
     },
@@ -136,9 +111,7 @@
             "in": "path",
             "description": "guid for Reqeust from sender",
             "required": true,
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "responses": {
@@ -152,10 +125,7 @@
               }
             }
           },
-          "401": {
-            "description": "Access Denied",
-            "content": {}
-          }
+          "401": { "description": "Access Denied", "content": {} }
         }
       }
     }
@@ -169,21 +139,15 @@
           "chargeResult": {
             "$ref": "#/components/schemas/PostchargeResult_DT"
           },
-          "error": {
-            "$ref": "#/components/schemas/error"
-          }
+          "error": { "$ref": "#/components/schemas/error" }
         }
       },
       "extraData_DT": {
         "required": ["name", "value"],
         "type": "object",
         "properties": {
-          "name": {
-            "type": "string"
-          },
-          "value": {
-            "type": "string"
-          }
+          "name": { "type": "string" },
+          "value": { "type": "string" }
         }
       },
       "catalogperformingOrgperformingOrgID_GET_response": {
@@ -192,13 +156,9 @@
         "properties": {
           "item": {
             "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/catalogItem"
-            }
+            "items": { "$ref": "#/components/schemas/catalogItem" }
           },
-          "error": {
-            "$ref": "#/components/schemas/error"
-          }
+          "error": { "$ref": "#/components/schemas/error" }
         }
       },
       "PostchargeResult_DT": {
@@ -209,27 +169,18 @@
             "type": "string",
             "description": "Document number /Ark"
           },
-          "receptionID": {
-            "type": "string"
-          }
+          "receptionID": { "type": "string" }
         }
       },
       "error": {
         "required": ["code", "errors", "message"],
         "type": "object",
         "properties": {
-          "code": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "message": {
-            "type": "string"
-          },
+          "code": { "type": "integer", "format": "int32" },
+          "message": { "type": "string" },
           "errors": {
             "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/error_details"
-            }
+            "items": { "$ref": "#/components/schemas/error_details" }
           }
         }
       },
@@ -237,24 +188,16 @@
         "required": ["error", "statusResult"],
         "type": "object",
         "properties": {
-          "error": {
-            "$ref": "#/components/schemas/error"
-          },
-          "statusResult": {
-            "$ref": "#/components/schemas/chargeStatusResult"
-          }
+          "error": { "$ref": "#/components/schemas/error" },
+          "statusResult": { "$ref": "#/components/schemas/chargeStatusResult" }
         }
       },
       "chargerequestID_DELETE_response": {
         "required": ["error", "receptionID"],
         "type": "object",
         "properties": {
-          "receptionID": {
-            "type": "string"
-          },
-          "error": {
-            "$ref": "#/components/schemas/error"
-          }
+          "receptionID": { "type": "string" },
+          "error": { "$ref": "#/components/schemas/error" }
         }
       },
       "catalogItem": {
@@ -271,19 +214,10 @@
             "type": "string",
             "description": "performingorgID og national ID"
           },
-          "chargeType": {
-            "type": "string"
-          },
-          "chargeItemCode": {
-            "type": "string"
-          },
-          "chargeItemName": {
-            "type": "string"
-          },
-          "priceAmount": {
-            "type": "number",
-            "format": "float"
-          }
+          "chargeType": { "type": "string" },
+          "chargeItemCode": { "type": "string" },
+          "chargeItemName": { "type": "string" },
+          "priceAmount": { "type": "number", "format": "float" }
         }
       },
       "input": {
@@ -328,13 +262,8 @@
             "type": "boolean",
             "description": "process immediately and return user4"
           },
-          "returnUrl": {
-            "type": "string",
-            "description": "Callback url"
-          },
-          "returnType": {
-            "type": "string"
-          },
+          "returnUrl": { "type": "string", "description": "Callback url" },
+          "returnType": { "type": "string" },
           "requestID": {
             "type": "string",
             "description": "guid for Reqeust from sender"
@@ -343,24 +272,15 @@
             "type": "string",
             "description": "Effictive data format yyyy-mm-dd"
           },
-          "comment": {
-            "type": "string",
-            "description": "comment"
-          },
+          "comment": { "type": "string", "description": "comment" },
           "charges": {
             "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/charge"
-            }
+            "items": { "$ref": "#/components/schemas/charge" }
           },
-          "payInfo": {
-            "$ref": "#/components/schemas/payInfo"
-          },
+          "payInfo": { "$ref": "#/components/schemas/payInfo" },
           "extraData": {
             "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/extraData_DT"
-            }
+            "items": { "$ref": "#/components/schemas/extraData_DT" }
           }
         }
       },
@@ -375,29 +295,16 @@
         ],
         "type": "object",
         "properties": {
-          "RRN": {
-            "type": "string"
-          },
-          "cardType": {
-            "type": "string"
-          },
+          "RRN": { "type": "string" },
+          "cardType": { "type": "string" },
           "paymentMeans": {
             "type": "string",
             "description": "Greiðslumáti  debet/Kredit kort",
             "enum": ["Kreditkort", "Debetkort"]
           },
-          "authCode": {
-            "type": "string",
-            "description": "Heimildarnúmer"
-          },
-          "PAN": {
-            "type": "string",
-            "description": "Síðustu stafir korts"
-          },
-          "payableAmount": {
-            "type": "integer",
-            "format": "int64"
-          }
+          "authCode": { "type": "string", "description": "Heimildarnúmer" },
+          "PAN": { "type": "string", "description": "Síðustu stafir korts" },
+          "payableAmount": { "type": "integer", "format": "int64" }
         }
       },
       "charge": {
@@ -410,46 +317,22 @@
         ],
         "type": "object",
         "properties": {
-          "chargeItemCode": {
-            "type": "string"
-          },
-          "quantity": {
-            "type": "number",
-            "format": "float"
-          },
-          "priceAmount": {
-            "type": "number",
-            "format": "float"
-          },
-          "amount": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "reference": {
-            "type": "string"
-          }
+          "chargeItemCode": { "type": "string" },
+          "quantity": { "type": "number", "format": "float" },
+          "priceAmount": { "type": "number", "format": "float" },
+          "amount": { "type": "integer", "format": "int64" },
+          "reference": { "type": "string" }
         }
       },
       "error_details": {
         "required": ["code", "help", "message", "param", "trackingId"],
         "type": "object",
         "properties": {
-          "code": {
-            "type": "string",
-            "format": "binary"
-          },
-          "message": {
-            "type": "string"
-          },
-          "help": {
-            "type": "string"
-          },
-          "trackingId": {
-            "type": "string"
-          },
-          "param": {
-            "type": "string"
-          }
+          "code": { "type": "string", "format": "binary" },
+          "message": { "type": "string" },
+          "help": { "type": "string" },
+          "trackingId": { "type": "string" },
+          "param": { "type": "string" }
         }
       },
       "chargeStatusResult": {
@@ -462,7 +345,8 @@
           },
           "status": {
             "type": "string",
-            "description": "UUID for reception"
+            "description": "charge status",
+            "enum": ["In progress", "paid", "cancelled", "unpaid"]
           }
         }
       }

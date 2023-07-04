@@ -22,7 +22,8 @@ export const isRemovingOperatorOnly = (context: ApplicationContext) => {
     'operators',
     [],
   ) as OperatorInformation[]
-  if (operators.length > 0) return false
+  if (operators.filter(({ wasRemoved }) => wasRemoved !== 'true').length > 0)
+    return false
 
   const oldOperators = getValueViaPath(
     answers,

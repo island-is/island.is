@@ -15,6 +15,10 @@ export const NoDebtCertificateApi = defineTemplateApi({
   action: 'debtLessCertificate',
   externalDataId: 'debtStatus',
 })
+export const JudicialAdministrationApi = defineTemplateApi({
+  action: 'courtBankruptcyCert',
+  externalDataId: 'courtBankruptcyCert',
+})
 
 export const SyslumadurPaymentCatalogApi = PaymentCatalogApi.configure({
   params: {

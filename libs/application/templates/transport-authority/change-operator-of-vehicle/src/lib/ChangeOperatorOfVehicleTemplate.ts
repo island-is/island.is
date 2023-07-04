@@ -8,18 +8,20 @@ import {
   Application,
   DefaultEvents,
   defineTemplateApi,
+  PendingAction,
 } from '@island.is/application/types'
 import {
   getValueViaPath,
   pruneAfterDays,
   EphemeralStateLifeCycle,
+  coreHistoryMessages,
+  corePendingActionMessages,
 } from '@island.is/application/core'
 import { Events, States, Roles } from './constants'
-import { Features } from '@island.is/feature-flags'
 import { ApiActions, OperatorInformation, UserInformation } from '../shared'
 import { ChangeOperatorOfVehicleSchema } from './dataSchema'
 import {
-  NationalRegistryUserApi,
+  IdentityApi,
   UserProfileApi,
   SamgongustofaPaymentCatalogApi,
   CurrentVehiclesApi,
@@ -27,7 +29,7 @@ import {
 import { application as applicationMessage } from './messages'
 import { assign } from 'xstate'
 import set from 'lodash/set'
-import { isRemovingOperatorOnly } from '../utils'
+import { hasReviewerApproved, isRemovingOperatorOnly } from '../utils'
 import { AuthDelegationType } from '@island.is/shared/types'
 
 const pruneInDaysAtMidnight = (application: Application, days: number) => {
@@ -50,6 +52,26 @@ const determineMessageFromApplicationAnswers = (application: Application) => {
   }
 }
 
+const reviewStatePendingAction = (
+  application: Application,
+  role: string,
+  nationalId: string,
+): PendingAction => {
+  if (nationalId && !hasReviewerApproved(nationalId, application.answers)) {
+    return {
+      title: corePendingActionMessages.waitingForReviewTitle,
+      content: corePendingActionMessages.youNeedToReviewDescription,
+      displayStatus: 'warning',
+    }
+  } else {
+    return {
+      title: corePendingActionMessages.waitingForReviewTitle,
+      content: corePendingActionMessages.waitingForReviewDescription,
+      displayStatus: 'info',
+    }
+  }
+}
+
 const template: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<Events>,
@@ -65,11 +87,8 @@ const template: ApplicationTemplate<
   allowedDelegations: [
     {
       type: AuthDelegationType.ProcurationHolder,
-      featureFlag:
-        Features.transportAuthorityChangeOperatorOfVehicleDelegations,
     },
   ],
-  featureFlag: Features.transportAuthorityChangeOperatorOfVehicle,
   stateMachineConfig: {
     initial: States.DRAFT,
     states: {
@@ -82,9 +101,18 @@ const template: ApplicationTemplate<
               label: applicationMessage.actionCardDraft,
               variant: 'blue',
             },
+            historyLogs: [
+              {
+                logMessage: coreHistoryMessages.paymentStarted,
+                onEvent: DefaultEvents.SUBMIT,
+              },
+            ],
           },
           progress: 0.25,
           lifecycle: EphemeralStateLifeCycle,
+          onExit: defineTemplateApi({
+            action: ApiActions.validateApplication,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -104,7 +132,7 @@ const template: ApplicationTemplate<
               write: 'all',
               delete: true,
               api: [
-                NationalRegistryUserApi,
+                IdentityApi,
                 UserProfileApi,
                 SamgongustofaPaymentCatalogApi,
                 CurrentVehiclesApi,
@@ -124,6 +152,21 @@ const template: ApplicationTemplate<
             tag: {
               label: applicationMessage.actionCardPayment,
               variant: 'red',
+            },
+            historyLogs: [
+              {
+                logMessage: coreHistoryMessages.paymentAccepted,
+                onEvent: DefaultEvents.SUBMIT,
+              },
+              {
+                logMessage: coreHistoryMessages.paymentCancelled,
+                onEvent: DefaultEvents.ABORT,
+              },
+            ],
+            pendingAction: {
+              title: corePendingActionMessages.paymentPendingTitle,
+              content: corePendingActionMessages.paymentPendingDescription,
+              displayStatus: 'warning',
             },
           },
           progress: 0.8,
@@ -168,6 +211,21 @@ const template: ApplicationTemplate<
               label: applicationMessage.actionCardDraft,
               variant: 'blue',
             },
+            historyLogs: [
+              {
+                onEvent: DefaultEvents.APPROVE,
+                logMessage: applicationMessage.historyLogApprovedByReviewer,
+              },
+              {
+                onEvent: DefaultEvents.REJECT,
+                logMessage: coreHistoryMessages.applicationRejected,
+              },
+              {
+                onEvent: DefaultEvents.SUBMIT,
+                logMessage: coreHistoryMessages.applicationApproved,
+              },
+            ],
+            pendingAction: reviewStatePendingAction,
           },
           progress: 0.65,
           lifecycle: {
@@ -177,9 +235,6 @@ const template: ApplicationTemplate<
               pruneInDaysAtMidnight(application, 7),
             shouldDeleteChargeIfPaymentFulfilled: true,
           },
-          /* onExit: defineTemplateApi({
-            action: ApiActions.validateApplication,
-          }), */
           roles: [
             {
               id: Roles.APPLICANT,
@@ -261,6 +316,10 @@ const template: ApplicationTemplate<
               label: applicationMessage.actionCardDone,
               variant: 'blueberry',
             },
+            pendingAction: {
+              title: corePendingActionMessages.applicationReceivedTitle,
+              displayStatus: 'success',
+            },
           },
           roles: [
             {
@@ -335,7 +394,7 @@ const getNationalIdListOfReviewers = (application: Application) => {
       return nationalId
     })
     operators?.map(({ nationalId }) => {
-      reviewerNationalIdList.push(nationalId)
+      reviewerNationalIdList.push(nationalId!)
       return nationalId
     })
     return reviewerNationalIdList

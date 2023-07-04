@@ -1,8 +1,9 @@
-import { theme } from '@island.is/island-ui/theme'
+import { theme, zIndex } from '@island.is/island-ui/theme'
 import { style, globalStyle } from '@vanilla-extract/css'
 
 export const menu = style({
   width: 150,
+  zIndex: zIndex.above,
   boxShadow: '0px 4px 30px rgba(0, 97, 255, 0.16)',
   ':focus': {
     outline: 'none',

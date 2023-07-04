@@ -60,8 +60,13 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+        if: ${{ github.ref == 'ref/heads/main' }}
         with:
           fetch-depth: 0
+      - uses: actions/checkout@v3
+        if: ${{ github.event_name == 'pull_request' }}
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
       - uses: actions/setup-node@v3
         with:
           node-version: '18'
@@ -70,9 +75,18 @@ jobs:
         run: npm install -g yarn
 
       - name: Run gitbook format
+        if: ${{ github.ref == 'ref/heads/main' }}
         run: node ./scripts/gitbook.js
+
+      - name: Run gitbook format and commit changes
+        if: ${{ github.event_name == 'pull_request' }}
+        run: |
+          node ./scripts/gitbook.js
+          ./infra/scripts/ci/git-check-dirty.sh "SUMMARY.md" "Gitbook"
+
       - name: Check if the git repo is dirty
         id: changes
+        if: ${{ github.ref == 'ref/heads/main' }}
         run: |
           set -e
 

@@ -1,41 +1,101 @@
 import { keyframes, style, styleVariants } from '@vanilla-extract/css'
+import { recipe } from '@vanilla-extract/recipes'
 import { Theme, theme, themeUtils } from '@island.is/island-ui/theme'
 import * as mixins from './Input.mixins'
-import omit from 'lodash/omit'
 import mapValues from 'lodash/mapValues'
 
-export const containerDisabled = style({
-  opacity: 0.5,
-  backgroundColor: 'transparent',
-})
-
-export const rightAlign = style({
-  textAlign: 'right',
-})
-
-export const readOnly = style({
-  backgroundColor: 'transparent',
-})
-
-export const noLabel = style({})
-
-export const container = style({
-  ...omit(mixins.container, 'backgroundColor'),
-  boxSizing: 'border-box',
-  selectors: {
-    [`&:hover:not(${containerDisabled})`]: mixins.containerHover,
+export const container = recipe({
+  base: {
+    ...mixins.containerWithBefore,
+    boxSizing: 'border-box',
+    display: 'flex',
+    alignContent: 'center',
+    position: 'relative',
+    zIndex: 0,
+    overflow: 'hidden',
   },
+  variants: {
+    disabled: {
+      true: {
+        backgroundColor: 'transparent',
+      },
+      false: {},
+    },
+    readOnly: {
+      true: {
+        backgroundColor: 'transparent',
+      },
+    },
+    hasError: {
+      true: {
+        ...mixins.inputErrorStateWithBefore,
+      },
+      false: {},
+    },
+    hasFocus: {
+      true: {
+        ...mixins.containerFocusWithBefore,
+      },
+      false: {},
+    },
+  },
+
+  compoundVariants: [
+    {
+      variants: {
+        disabled: false,
+        hasFocus: false,
+      },
+      style: {
+        selectors: {
+          '&:hover::before': {
+            boxShadow: `inset 0 0 0 1px ${theme.color.blue400}`,
+          },
+        },
+      },
+    },
+  ],
 })
 
 export const containerSizes = styleVariants(mixins.containerSizes)
 
-export const input = style({
-  ...mixins.input,
-  '::placeholder': mixins.inputPlaceholder,
-  ':focus': mixins.inputFocus,
-  selectors: {
-    [`${noLabel} &::placeholder`]: {
-      color: theme.color.dark400,
+export const input = recipe({
+  base: {
+    ...mixins.input,
+    '::placeholder': mixins.inputPlaceholder,
+    ':focus': mixins.inputFocus,
+    selectors: {
+      '&::-webkit-outer-spin-button, &::-webkit-inner-spin-button': {
+        margin: 0,
+        WebkitAppearance: 'none',
+      },
+      '&[type=number]': {
+        MozAppearance: 'textfield',
+      },
+    },
+  },
+
+  variants: {
+    disabled: {
+      true: {
+        color: theme.color.dark300,
+      },
+    },
+    hasLabel: {
+      false: {
+        color: theme.color.dark400,
+      },
+    },
+    rightAlign: {
+      true: {
+        textAlign: 'right',
+      },
+    },
+    textarea: {
+      true: {
+        ...mixins.textarea,
+        resize: 'vertical',
+      },
     },
   },
 })
@@ -69,41 +129,128 @@ export const inputBackgroundMd = makeInputBackground('md')
 export const inputBackgroundLg = makeInputBackground('lg')
 export const inputBackgroundXl = makeInputBackground('xl')
 
-export const textarea = style({
-  ...mixins.textarea,
-  resize: 'vertical',
-})
-
 export const errorMessage = style(mixins.errorMessage)
 
-export const hasError = style({
-  ...mixins.inputErrorState,
-})
-
-export const label = style({
-  ...mixins.label,
-  selectors: {
-    [`${hasError} &`]: mixins.labelErrorState,
-    [`${readOnly} &`]: mixins.labelReadOnly,
+export const label = recipe({
+  base: {
+    ...mixins.label,
+  },
+  variants: {
+    readOnly: {
+      true: mixins.labelReadOnly,
+    },
+    hasError: {
+      true: mixins.labelErrorState,
+    },
+    disabled: {
+      true: mixins.labelDisabledEmptyInput,
+    },
   },
 })
 
 export const labelSizes = styleVariants(mixins.labelSizes)
 
-export const labelDisabledEmptyInput = style(mixins.labelDisabledEmptyInput)
-
 export const isRequiredStar = style({
   color: theme.color.red600,
 })
 
-export const hasFocus = style({
-  selectors: {
-    [`&${container}`]: mixins.containerFocus,
+export const aside = style({
+  display: 'flex',
+  alignSelf: 'stretch',
+  justifyContent: 'flex-end',
+})
+
+export const inputButton = recipe({
+  base: {
+    backgroundColor: 'transparent',
+    borderLeft: `1px solid ${theme.color.blue200}`,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    transition: 'background-color .25s',
+    borderTop: `1px solid transparent`,
+    position: 'relative',
+
+    ':hover': {
+      backgroundColor: theme.color.blue200,
+    },
+    ':active': {
+      backgroundColor: theme.color.blue200,
+    },
+
+    ':focus-visible': {
+      outline: 'none',
+      backgroundColor: theme.color.mint200,
+    },
+
+    ':disabled': {
+      cursor: 'default',
+      backgroundColor: theme.color.blue100,
+    },
+  },
+  variants: {
+    size: {
+      xs: {
+        ...themeUtils.responsiveStyle({
+          xs: {
+            width: 40,
+          },
+          md: {
+            width: 48,
+          },
+        }),
+      },
+      sm: {
+        ...themeUtils.responsiveStyle({
+          xs: {
+            width: 60,
+          },
+          md: {
+            width: 64,
+          },
+        }),
+      },
+      md: {
+        ...themeUtils.responsiveStyle({
+          xs: {
+            width: 72,
+          },
+          md: {
+            width: 78,
+          },
+        }),
+      },
+    },
+    hasError: {
+      true: {
+        borderLeftColor: theme.color.red600,
+
+        ':disabled': {
+          backgroundColor: theme.color.red100,
+        },
+      },
+    },
   },
 })
-export const fixedFocusState = style({
-  selectors: {
-    [`&${container}${container}`]: mixins.containerFocus,
+
+export const iconWrapper = recipe({
+  base: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+  },
+  variants: {
+    size: {
+      xs: {
+        width: 36,
+      },
+      sm: {
+        width: 44,
+      },
+      md: {
+        width: 52,
+      },
+    },
   },
 })
 
@@ -126,40 +273,55 @@ export const spinner = style({
   animationTimingFunction: 'linear',
 })
 
-export const icon = style({
-  width: 24,
-  height: 24,
-  flexShrink: 0,
-  marginBottom: -3,
-  color: theme.color.blue400,
-  ...themeUtils.responsiveStyle({
-    md: {
-      selectors: {
-        [`${container}:not(${noLabel}) &`]: {
-          width: 32,
-          height: 32,
-        },
-        [`${container}${noLabel} &`]: {
-          marginBottom: 0,
+export const icon = recipe({
+  base: {
+    flexShrink: 0,
+    color: theme.color.blue400,
+    zIndex: 1,
+
+    selectors: {
+      [`${inputButton()}:focus-visible &`]: {
+        color: theme.color.dark400,
+      },
+      [`${inputButton()}:disabled &`]: {
+        color: theme.color.blue200,
+      },
+    },
+  },
+
+  variants: {
+    hasError: {
+      true: {
+        color: theme.color.red600,
+        selectors: {
+          [`${inputButton()}:disabled &`]: {
+            color: theme.color.red200,
+          },
         },
       },
     },
-  }),
-})
-
-export const iconError = style({
-  color: theme.color.red600,
-})
-
-export const iconExtraSmall = style({
-  ...themeUtils.responsiveStyle({
-    md: {
-      selectors: {
-        [`${container}:not(${noLabel}) &`]: {
-          width: 21,
-          height: 21,
-        },
+    size: {
+      xs: {
+        width: 21,
+        height: 21,
+      },
+      sm: {
+        width: 21,
+        height: 21,
+      },
+      md: {
+        width: 28,
+        height: 28,
       },
     },
-  }),
+    hasLabel: {
+      false: {
+        ...themeUtils.responsiveStyle({
+          md: {
+            marginBottom: 0,
+          },
+        }),
+      },
+    },
+  },
 })

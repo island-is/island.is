@@ -6,7 +6,7 @@ interface FeatureProvider {
   features: Feature[]
 }
 
-const availableFeatures: Feature[] = [Feature.INDICTMENTS]
+const availableFeatures = Object.values(Feature)
 
 export const FeatureContext = createContext<FeatureProvider>({ features: [] })
 

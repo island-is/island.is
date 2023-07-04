@@ -9,6 +9,7 @@ import {
   HasQualityPhoto,
   YES,
   DrivingLicense,
+  HasQualitySignature,
 } from './types'
 import {
   DrivingLicenseBookService,
@@ -17,6 +18,7 @@ import {
 import {
   DrivingLicenseApi,
   Juristiction,
+  QualitySignature,
   Teacher,
 } from '@island.is/clients/driving-license'
 import sortTeachers from './sortTeachers'
@@ -73,18 +75,30 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
   async drivingSchoolForEmployee({
     auth,
   }: TemplateApiModuleActionProps): Promise<DrivingLicenseBookSchool> {
-    const school = await this.hasTeachingRights(auth.nationalId)
-    if (school) {
-      return this.drivingLicenseBookService.getSchoolForSchoolStaff(auth)
-    } else {
-      throw new TemplateApiError(
-        {
-          title: coreErrorMessages.drivingLicenseNotEmployeeTitle,
-          summary: coreErrorMessages.drivingLicenseNotEmployeeSummary,
-        },
-        400,
-      )
-    }
+    return this.drivingLicenseBookService
+      .isSchoolStaff(auth)
+      .then((isEmployee) => {
+        if (isEmployee) {
+          return this.drivingLicenseBookService.getSchoolForSchoolStaff(auth)
+        } else {
+          throw new TemplateApiError(
+            {
+              title: coreErrorMessages.drivingLicenseNotEmployeeTitle,
+              summary: coreErrorMessages.drivingLicenseNotEmployeeSummary,
+            },
+            400,
+          )
+        }
+      })
+      .catch(() => {
+        throw new TemplateApiError(
+          {
+            title: coreErrorMessages.drivingLicenseNotEmployeeTitle,
+            summary: coreErrorMessages.drivingLicenseNotEmployeeSummary,
+          },
+          400,
+        )
+      })
   }
 
   async teachers(): Promise<Teacher[]> {
@@ -121,12 +135,22 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
       }
     }
 
-    const drivingLicense = await this.drivingLicenseService.getCurrentLicense({
-      nationalId: auth.nationalId,
-    })
+    let drivingLicense
+    if (params?.useLegacyVersion) {
+      drivingLicense = await this.drivingLicenseService.legacyGetCurrentLicense(
+        {
+          nationalId: auth.nationalId,
+          token: auth.authorization,
+        },
+      )
+    } else {
+      drivingLicense = await this.drivingLicenseService.getCurrentLicense({
+        token: auth.authorization,
+      })
+    }
 
     const categoryB = (drivingLicense?.categories ?? []).find(
-      (cat) => cat.name === 'B',
+      (cat) => cat.name === 'B' || cat.nr === 'B',
     )
 
     // Validate that user has the necessary categories
@@ -180,6 +204,39 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
     }
   }
 
+  async qualitySignature({
+    auth,
+    application,
+  }: TemplateApiModuleActionProps): Promise<HasQualitySignature | null> {
+    // If running locally or on dev allow for fake data
+    const useFakeData = getValueViaPath<'yes' | 'no'>(
+      application.answers,
+      'fakeData.useFakeData',
+    )
+
+    if (useFakeData === 'yes') {
+      const hasQualitySignature = getValueViaPath<'yes' | 'no'>(
+        application.answers,
+        'fakeData.qualitySignature',
+      )
+      if (hasQualitySignature === 'yes') {
+        return {
+          hasQualitySignature: true,
+        }
+      } else {
+        return null
+      }
+    }
+    const hasQualitySignature = await this.drivingLicenseService.getHasQualitySignature(
+      {
+        nationalId: auth.nationalId,
+      },
+    )
+    return {
+      hasQualitySignature,
+    }
+  }
+
   async juristictions(): Promise<Juristiction[]> {
     return await this.drivingLicenseService.getListOfJuristictions()
   }
@@ -197,7 +254,7 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
 
     let teacherName: string | null
     if (assessment.nationalIdTeacher) {
-      const teacherLicense = await this.drivingLicenseService.getCurrentLicense(
+      const teacherLicense = await this.drivingLicenseService.legacyGetCurrentLicense(
         {
           nationalId: assessment.nationalIdTeacher,
         },

@@ -15,16 +15,18 @@ import {
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import { Box, Input, Text } from '@island.is/island-ui/core'
-import {
-  Case,
-  CaseType,
-  UpdateCase,
-  UserRole,
-} from '@island.is/judicial-system/types'
 import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
 import * as constants from '@island.is/judicial-system/consts'
 import { validate } from '@island.is/judicial-system-web/src/utils/validate'
 import { hasDateChanged } from '@island.is/judicial-system-web/src/utils/formHelper'
+import {
+  TempCase as Case,
+  TempUpdateCase as UpdateCase,
+} from '@island.is/judicial-system-web/src/types'
+import {
+  UserRole,
+  CaseType,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 
 interface DateTime {
   value?: Date

@@ -1,4 +1,7 @@
-import React, { useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
+import InputMask from 'react-input-mask'
+import { ValueType } from 'react-select/src/types'
+
 import {
   Box,
   Checkbox,
@@ -7,19 +10,18 @@ import {
   Select,
   Text,
 } from '@island.is/island-ui/core'
-import InputMask from 'react-input-mask'
-import { ValueType } from 'react-select/src/types'
 import {
   FormContentContainer,
   FormFooter,
 } from '@island.is/judicial-system-web/src/components'
 import {
+  Institution,
   InstitutionType,
-  isCourtRole,
-  isProsecutionRole,
+  User,
   UserRole,
-} from '@island.is/judicial-system/types'
-import type { Institution, User } from '@island.is/judicial-system/types'
+} from '@island.is/judicial-system-web/src/graphql/schema'
+import * as constants from '@island.is/judicial-system/consts'
+
 import { ReactSelectOption } from '../../../types'
 import {
   isAdminUserFormValid,
@@ -27,12 +29,16 @@ import {
   Validation,
 } from '../../../utils/validate'
 import * as styles from './UserForm.css'
-import * as constants from '@island.is/judicial-system/consts'
+import {
+  isExtendedCourtRole,
+  isProsecutionRole,
+} from '@island.is/judicial-system/types'
+import useNationalRegistry from '@island.is/judicial-system-web/src/utils/hooks/useNationalRegistry'
+
 type ExtendedOption = ReactSelectOption & { institution: Institution }
 
 interface Props {
   user: User
-  courts: Institution[]
   allCourts: Institution[]
   prosecutorsOffices: Institution[]
   prisonInstitutions: Institution[]
@@ -43,8 +49,11 @@ interface Props {
 export const UserForm: React.FC<Props> = (props) => {
   const [user, setUser] = useState<User>(props.user)
 
+  const { personData, personError } = useNationalRegistry(user.nationalId)
+
   const [nameErrorMessage, setNameErrorMessage] = useState<string>()
   const [nationalIdErrorMessage, setNationalIdErrorMessage] = useState<string>()
+
   const [titleErrorMessage, setTitleErrorMessage] = useState<string>()
   const [
     mobileNumberErrorMessage,
@@ -52,12 +61,34 @@ export const UserForm: React.FC<Props> = (props) => {
   ] = useState<string>()
   const [emailErrorMessage, setEmailErrorMessage] = useState<string>()
 
+  const setName = useCallback(
+    (name: string) => {
+      if (name !== user.name) {
+        setUser({
+          ...user,
+          name: name,
+        })
+      }
+    },
+    [user],
+  )
+
+  useEffect(() => {
+    if (personError || (personData && personData.items?.length === 0)) {
+      setNationalIdErrorMessage('Kennitala fannst ekki í þjóðskrá')
+      return
+    }
+
+    if (personData && personData.items && personData.items.length > 0) {
+      setNationalIdErrorMessage(undefined)
+      setName(personData.items[0].name)
+    }
+  }, [personData, personError, setName])
+
   const selectInstitutions = (isProsecutionRole(user.role)
     ? props.prosecutorsOffices
-    : isCourtRole(user.role)
+    : isExtendedCourtRole(user.role)
     ? props.allCourts
-    : user.role === UserRole.ASSISTANT
-    ? props.courts
     : user.role === UserRole.STAFF
     ? props.prisonInstitutions
     : []
@@ -79,11 +110,9 @@ export const UserForm: React.FC<Props> = (props) => {
 
     return isProsecutionRole(user.role)
       ? user.institution?.type === InstitutionType.PROSECUTORS_OFFICE
-      : isCourtRole(user.role)
+      : isExtendedCourtRole(user.role)
       ? user.institution?.type === InstitutionType.COURT ||
         user.institution?.type === InstitutionType.HIGH_COURT
-      : user.role === UserRole.ASSISTANT
-      ? user.institution?.type === InstitutionType.COURT
       : user.role === UserRole.STAFF
       ? user.institution?.type === InstitutionType.PRISON ||
         user.institution?.type === InstitutionType.PRISON_ADMIN
@@ -119,39 +148,12 @@ export const UserForm: React.FC<Props> = (props) => {
   }
 
   return (
-    <div>
+    <div className={styles.userFormContainer}>
       <FormContentContainer>
         <Box marginBottom={7}>
           <Text as="h1" variant="h1">
             Notandi
           </Text>
-        </Box>
-        <Box marginBottom={2}>
-          <Input
-            name="name"
-            label="Nafn"
-            placeholder="Fullt nafn"
-            autoComplete="off"
-            value={user.name || ''}
-            onChange={(event) =>
-              storeAndRemoveErrorIfValid(
-                'name',
-                event.target.value,
-                ['empty'],
-                setNameErrorMessage,
-              )
-            }
-            onBlur={(event) =>
-              validateAndSetError(
-                event.target.value,
-                ['empty'],
-                setNameErrorMessage,
-              )
-            }
-            hasError={nameErrorMessage !== undefined}
-            errorMessage={nameErrorMessage}
-            required
-          />
         </Box>
         <Box marginBottom={2}>
           <InputMask
@@ -188,8 +190,36 @@ export const UserForm: React.FC<Props> = (props) => {
             />
           </InputMask>
         </Box>
+        <Box marginBottom={2}>
+          <Input
+            name="name"
+            label="Nafn"
+            placeholder="Fullt nafn"
+            autoComplete="off"
+            value={user.name || ''}
+            onChange={(event) =>
+              storeAndRemoveErrorIfValid(
+                'name',
+                event.target.value,
+                ['empty'],
+                setNameErrorMessage,
+              )
+            }
+            onBlur={(event) =>
+              validateAndSetError(
+                event.target.value,
+                ['empty'],
+                setNameErrorMessage,
+              )
+            }
+            hasError={nameErrorMessage !== undefined}
+            errorMessage={nameErrorMessage}
+            required
+          />
+        </Box>
+
         <Box>
-          <Box marginBottom={2} className={styles.roleContainer}>
+          <Box display="flex" marginBottom={2}>
             <Box className={styles.roleColumn}>
               <RadioButton
                 name="role"
@@ -213,7 +243,7 @@ export const UserForm: React.FC<Props> = (props) => {
               />
             </Box>
           </Box>
-          <Box marginBottom={2} className={styles.roleContainer}>
+          <Box display="flex" marginBottom={2}>
             <Box className={styles.roleColumn}>
               <RadioButton
                 name="role"
@@ -235,7 +265,7 @@ export const UserForm: React.FC<Props> = (props) => {
               />
             </Box>
           </Box>
-          <Box marginBottom={2} className={styles.roleContainer}>
+          <Box display="flex" marginBottom={2}>
             <Box className={styles.roleColumn}>
               <RadioButton
                 name="role"
@@ -374,6 +404,7 @@ export const UserForm: React.FC<Props> = (props) => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
+          nextButtonIcon="arrowForward"
           onNextButtonClick={() => props.onSave(user)}
           nextIsDisabled={!isValid()}
           nextIsLoading={props.loading}

@@ -40,7 +40,7 @@ export const RegulationStatus = (props: RegulationStatusProps) => {
 
   const today = toISODate(new Date())
 
-  const hasPending = history[0]?.status === 'pending'
+  const hasPending = history.some((item) => item.status === 'pending')
 
   const color: BallColor = repealed
     ? 'red'

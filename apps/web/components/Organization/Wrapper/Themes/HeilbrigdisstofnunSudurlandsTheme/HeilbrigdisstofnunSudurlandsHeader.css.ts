@@ -2,26 +2,10 @@ import { style } from '@vanilla-extract/css'
 import { themeUtils } from '@island.is/island-ui/theme'
 
 export const headerBg = style({
-  position: 'relative',
   zIndex: -1,
   height: 385,
   marginTop: -130,
   paddingTop: 130,
-  backgroundColor: '#122771',
-  backgroundRepeat: 'no-repeat',
-})
-
-export const headerImage = style({
-  position: 'absolute',
-  width: 733,
-  top: 0,
-  left: 0,
-  height: 385,
-  backgroundRepeat: 'no-repeat',
-  opacity: 0.5,
-  backgroundSize: 'contain',
-  backgroundImage:
-    'linear-gradient(270.1deg, rgba(18, 39, 113, 0.2) 0.08%, rgba(18, 39, 113, 0) 103.56%), url(https://images.ctfassets.net/8k0h54kbe6bj/5VPkYND5fDBou7G0jCPCtD/2019274c76468def75fd5f340d2b3031/Mynd_-_header.png)',
 })
 
 export const iconCircle = style({
@@ -77,6 +61,14 @@ export const navigation = style({
       paddingLeft: 24,
       paddingRight: 24,
       paddingTop: 32,
+    },
+  }),
+})
+
+export const title = style({
+  ...themeUtils.responsiveStyle({
+    xl: {
+      marginLeft: -185,
     },
   }),
 })

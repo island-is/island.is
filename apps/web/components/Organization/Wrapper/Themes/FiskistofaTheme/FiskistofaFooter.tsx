@@ -14,14 +14,20 @@ import { useWindowSize } from '@island.is/web/hooks/useViewport'
 import { theme } from '@island.is/island-ui/theme'
 import { SliceType } from '@island.is/island-ui/contentful'
 import { webRichText } from '@island.is/web/utils/richText'
+import { useNamespace } from '@island.is/web/hooks'
 
 import * as styles from './FiskistofaFooter.css'
 
 interface FiskistofaFooterProps {
   footerItems: FooterItem[]
+  namespace: Record<string, string>
 }
 
-export const FiskistofaFooter = ({ footerItems }: FiskistofaFooterProps) => {
+const FiskistofaFooter = ({
+  footerItems,
+  namespace,
+}: FiskistofaFooterProps) => {
+  const n = useNamespace(namespace)
   const { width } = useWindowSize()
 
   const isMobile = width < theme.breakpoints.md
@@ -34,7 +40,10 @@ export const FiskistofaFooter = ({ footerItems }: FiskistofaFooterProps) => {
             <GridRow>
               <Box marginLeft={2}>
                 <img
-                  src="https://images.ctfassets.net/8k0h54kbe6bj/2JSIJ4WbQ4Up84KQlMnIBb/34c1a74806884e456e3ab809a54d41f6/fiskistofa-footer-logo.png"
+                  src={n(
+                    'fiskistofaFooterLogo',
+                    'https://images.ctfassets.net/8k0h54kbe6bj/2JSIJ4WbQ4Up84KQlMnIBb/34c1a74806884e456e3ab809a54d41f6/fiskistofa-footer-logo.png',
+                  )}
                   alt="fiskistofa-logo"
                 />
               </Box>
@@ -77,19 +86,28 @@ export const FiskistofaFooter = ({ footerItems }: FiskistofaFooterProps) => {
                   })}
                   <Box className={styles.iconContainer}>
                     <img
-                      src="https://images.ctfassets.net/8k0h54kbe6bj/2w9jCgdlKvT1gG5Vyk2arB/e3043e0ae9331ebad4e6e6bca684b87a/grSkref1080x680_BW.png"
+                      src={n(
+                        'fiskistofaGraenSkrefLogo',
+                        'https://images.ctfassets.net/8k0h54kbe6bj/2w9jCgdlKvT1gG5Vyk2arB/e3043e0ae9331ebad4e6e6bca684b87a/grSkref1080x680_BW.png',
+                      )}
                       alt="graen-skref"
                       width={isMobile ? 62 : 109}
                       height={isMobile ? 39 : 69}
                     />
                     <img
-                      src="https://images.ctfassets.net/8k0h54kbe6bj/7076IkepUKnI8eKHbo69Ys/40d84cf75b177a8bef7beb1f6d45f6cd/fiskistofa-jafnlaunavottun.png"
+                      src={n(
+                        'fiskistofaJafnlaunavottunLogo',
+                        'https://images.ctfassets.net/8k0h54kbe6bj/7076IkepUKnI8eKHbo69Ys/40d84cf75b177a8bef7beb1f6d45f6cd/fiskistofa-jafnlaunavottun.png',
+                      )}
                       alt="fiskistofa-jafnlaunavottun"
                       width={isMobile ? 45 : 80}
                       height={isMobile ? 45 : 80}
                     />
                     <img
-                      src="https://images.ctfassets.net/8k0h54kbe6bj/71f5kkbe52Y21n62JfdxlQ/bd5c7f87d582ab1cd74b6e6ca61d6890/fiskistofa-bsi.png"
+                      src={n(
+                        'fiskistofaBsiLogo',
+                        'https://images.ctfassets.net/8k0h54kbe6bj/71f5kkbe52Y21n62JfdxlQ/bd5c7f87d582ab1cd74b6e6ca61d6890/fiskistofa-bsi.png',
+                      )}
                       alt="fiskistofa-bsi"
                       className={cn({
                         [styles.bsiLogo]: !isMobile,

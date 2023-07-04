@@ -5,6 +5,7 @@ import {
   Text,
   Button,
   AsyncSearchOption,
+  ResponsiveSpace,
 } from '@island.is/island-ui/core'
 import { useLazyQuery } from '@apollo/client'
 import {
@@ -16,6 +17,7 @@ import { GET_ORGANIZATION_SERVICES_QUERY } from '@island.is/web/screens/queries'
 import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import { useRouter } from 'next/router'
 import { useDebounce } from 'react-use'
+import { trackSearchQuery } from '@island.is/plausible'
 
 interface AsyncSearchOptionWithIsArticleField extends AsyncSearchOption {
   isArticle: boolean
@@ -23,18 +25,20 @@ interface AsyncSearchOptionWithIsArticleField extends AsyncSearchOption {
 
 interface SearchBoxProps {
   id?: string
-  organizationPage: Query['getOrganizationPage']
+  organizationSlug: string
   placeholder: string
   noResultsText: string
   searchAllText: string
+  marginTop?: ResponsiveSpace
 }
 
 export const SearchBox = ({
   id = 'id',
-  organizationPage,
+  organizationSlug,
   placeholder,
   noResultsText,
   searchAllText,
+  marginTop = 0,
 }: SearchBoxProps) => {
   const { linkResolver } = useLinkResolver()
   const router = useRouter()
@@ -57,7 +61,7 @@ export const SearchBox = ({
           variables: {
             input: {
               lang: router.asPath.includes('/en/') ? 'en' : 'is',
-              organization: organizationPage.slug,
+              organization: organizationSlug,
               size: 500,
               sort: SortField.Popular,
             },
@@ -85,6 +89,7 @@ export const SearchBox = ({
           role="button"
           background={active ? 'blue100' : 'white'}
           onClick={() => {
+            trackSearchQuery(value, 'Organization Sidebar Suggestion')
             setOptions([])
           }}
         >
@@ -209,7 +214,7 @@ export const SearchBox = ({
   const busy = loading || isLoading || waitingForNextPageToLoad
 
   return (
-    <Box marginTop={3}>
+    <Box marginTop={marginTop}>
       <AsyncSearch
         id={`organization-search-box-${id}`}
         size={'medium'}

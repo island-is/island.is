@@ -55,6 +55,25 @@ export class FileResolver {
     )
   }
 
+  @Mutation(() => CaseFile)
+  createFile(
+    @Args('input', { type: () => CreateFileInput })
+    input: CreateFileInput,
+    @CurrentGraphQlUser() user: User,
+    @Context('dataSources') { backendApi }: { backendApi: BackendApi },
+  ): Promise<CaseFile> {
+    const { caseId, ...createFile } = input
+
+    this.logger.debug(`Creating a file for case ${caseId}`)
+
+    return this.auditTrailService.audit(
+      user.id,
+      AuditedAction.CREATE_FILE,
+      backendApi.createCaseFile(caseId, createFile),
+      (file) => file.id,
+    )
+  }
+
   @Query(() => SignedUrl, { nullable: true })
   getSignedUrl(
     @Args('input', { type: () => GetSignedUrlInput })
@@ -90,25 +109,6 @@ export class FileResolver {
       AuditedAction.DELETE_FILE,
       backendApi.deleteCaseFile(caseId, id),
       id,
-    )
-  }
-
-  @Mutation(() => CaseFile)
-  createFile(
-    @Args('input', { type: () => CreateFileInput })
-    input: CreateFileInput,
-    @CurrentGraphQlUser() user: User,
-    @Context('dataSources') { backendApi }: { backendApi: BackendApi },
-  ): Promise<CaseFile> {
-    const { caseId, ...createFile } = input
-
-    this.logger.debug(`Creating a file for case ${caseId}`)
-
-    return this.auditTrailService.audit(
-      user.id,
-      AuditedAction.CREATE_FILE,
-      backendApi.createCaseFile(caseId, createFile),
-      (file) => file.id,
     )
   }
 

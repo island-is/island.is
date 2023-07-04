@@ -31,6 +31,11 @@ export const icon = style({
   position: 'relative',
 })
 
+export const fullWidth = style({
+  maxWidth: '100%',
+  whiteSpace: 'pre-line',
+})
+
 globalStyle(`${icon}:hover path`, {
   fill: theme.color.blue400,
 })

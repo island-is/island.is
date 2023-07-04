@@ -224,7 +224,7 @@ describe('getChildrenAndExistingApplications', () => {
     )
 
     expect(result.children.length).toBe(1)
-    expect(result).toStrictEqual(expected)
+    expect(result).toEqual(expected)
   })
 
   it('should include child in list of children with primary relation when pregnancyStatus is defined', () => {
@@ -292,7 +292,7 @@ describe('getChildrenAndExistingApplications', () => {
 
     expect(result.existingApplications.length).toBe(1)
     expect(result.children.length).toBe(0)
-    expect(result).toStrictEqual(expected)
+    expect(result).toEqual(expected)
   })
 
   it('should return the number of days requested by the primary parent', () => {

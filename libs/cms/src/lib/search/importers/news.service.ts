@@ -58,6 +58,7 @@ export class NewsSyncService implements CmsSyncProvider<INews> {
             ],
             dateCreated: mapped.date,
             dateUpdated: new Date().getTime().toString(),
+            releaseDate: mapped.initialPublishDate,
           }
         } catch (error) {
           logger.warn('Failed to import news', {

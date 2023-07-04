@@ -1,6 +1,31 @@
-import { PortalNavigationItem } from '@island.is/portals/core'
+import { PortalNavigationItem, m } from '@island.is/portals/core'
 import { DelegationPaths } from './paths'
-import { m } from './messages'
+
+export const delegationsNavigationChildren: PortalNavigationItem[] = [
+  {
+    name: m.accessControlDelegations,
+    path: DelegationPaths.Delegations,
+    breadcrumbHide: true,
+    children: [
+      {
+        name: m.accessControlGrant,
+        path: DelegationPaths.DelegationsGrant,
+        navHide: true,
+      },
+    ],
+  },
+  {
+    name: m.accessControlDelegationsIncoming,
+    path: DelegationPaths.DelegationsIncoming,
+    navHide: true,
+    breadcrumbHide: true,
+  },
+  {
+    name: m.accessControlAccess,
+    path: DelegationPaths.DelegationAccess,
+    navHide: true,
+  },
+]
 
 export const delegationsNavigation: PortalNavigationItem = {
   name: m.accessControl,
@@ -9,29 +34,5 @@ export const delegationsNavigation: PortalNavigationItem = {
     icon: 'people',
   },
   description: m.accessControlDescription,
-  children: [
-    {
-      name: m.accessControlDelegations,
-      path: DelegationPaths.Delegations,
-      navHide: true,
-      children: [
-        {
-          name: m.accessControlGrant,
-          path: DelegationPaths.DelegationsGrant,
-          navHide: true,
-        },
-      ],
-    },
-    {
-      name: m.accessControlDelegationsIncoming,
-      path: DelegationPaths.DelegationsIncoming,
-      navHide: true,
-      breadcrumbHide: true,
-    },
-    {
-      name: m.accessControlAccess,
-      path: DelegationPaths.DelegationAccess,
-      navHide: true,
-    },
-  ],
+  children: delegationsNavigationChildren,
 }

@@ -6,12 +6,15 @@ import {
   RadioButton,
   Input,
   DatePicker,
-  Icon,
   toast,
   GridContainer,
   GridRow,
   GridColumn,
   AlertMessage,
+  BulletList,
+  Bullet,
+  Stack,
+  Icon,
 } from '@island.is/island-ui/core'
 import { Table as T } from '@island.is/island-ui/core'
 import { minutesOfDriving, minutesSelection } from '../../lib/constants'
@@ -35,7 +38,7 @@ import {
 } from '../../graphql/mutations'
 import { Application } from '@island.is/application/types'
 import Skeleton from './Skeleton'
-import { format as formatKennitala } from 'kennitala'
+import { format as formatNationalId } from 'kennitala'
 
 interface Props {
   application: Application
@@ -74,7 +77,7 @@ const ViewStudent = ({
     EditDrivingLesson,
   )
 
-  const [allowPracticeDriving, { loading: loadingAllow }] = useMutation(
+  const [allowDriving, { loading: loadingAllow }] = useMutation(
     AllowPracticeDriving,
   )
 
@@ -104,6 +107,9 @@ const ViewStudent = ({
   const studentRegistrations = student?.book
     ?.teachersAndLessons as Array<DrivingBookLesson>
 
+  const doesStudentBelongToUser =
+    userNationalId === student?.book?.teacherNationalId
+
   useEffect(() => {
     setStudent(
       studentDataResponse
@@ -116,7 +122,7 @@ const ViewStudent = ({
     // Returns most recently confirmed school types
     const schools = [
       ...new Map(
-        student?.book?.drivingSchoolExams.map((item: any) => [
+        student?.book?.drivingSchoolExams.map((item: DrivingSchoolExam) => [
           item.schoolTypeName,
           item,
         ]),
@@ -218,8 +224,8 @@ const ViewStudent = ({
     }
   }
 
-  const clickAllowPracticeDriving = async (studentNationalId: string) => {
-    const res = await allowPracticeDriving({
+  const allowPracticeDriving = async (studentNationalId: string) => {
+    const res = await allowDriving({
       variables: {
         input: {
           nationalId: studentNationalId,
@@ -231,10 +237,12 @@ const ViewStudent = ({
 
     if (res && res.data.drivingLicenseBookAllowPracticeDriving.success) {
       resetFields('allow')
+    } else {
+      toast.error(formatMessage(m.errorOnAllowPracticeDriving))
     }
   }
 
-  const allowPracticeDrivingVisable = (
+  const isAllowPracticeDrivingVisible = (
     student: DrivingLicenseBookStudentOverview,
   ): boolean =>
     !student.book.practiceDriving &&
@@ -249,7 +257,7 @@ const ViewStudent = ({
     name: string
     examDate?: string
   }) =>
-    `${name}${examDate ? `- ${format(new Date(examDate), 'dd.MM.yyyy')}` : ''}`
+    `${name}${examDate ? ` - ${format(new Date(examDate), 'dd.MM.yyyy')}` : ''}`
 
   return (
     <GridContainer>
@@ -257,111 +265,132 @@ const ViewStudent = ({
       !loadingStudentsBook &&
       student &&
       Object.entries(student).length > 0 ? (
-        <>
-          <GridRow marginBottom={3}>
-            {/* name */}
-            <GridColumn span={['12/12', '6/12']} paddingBottom={[3, 0]}>
+        <Stack space={[0, 5]}>
+          <GridRow marginBottom={[2, 0]}>
+            {/* Name */}
+            <GridColumn span={['12/12', '6/12']} paddingBottom={[2, 0]}>
               <Text variant="h4">{formatMessage(m.viewStudentName)}</Text>
               <Text variant="default">{student.name}</Text>
             </GridColumn>
-            {/* nationalId */}
-            <GridColumn span={['12/12', '6/12']} paddingBottom={[3, 0]}>
+            {/* NationalId */}
+            <GridColumn span={['12/12', '6/12']}>
               <Text variant="h4">{formatMessage(m.viewStudentNationalId)}</Text>
               <Text variant="default">
-                {formatKennitala(student.nationalId)}
+                {formatNationalId(student.nationalId)}
               </Text>
             </GridColumn>
           </GridRow>
-          <GridRow marginBottom={3}>
-            {/* Completed */}
-            <GridColumn span={['12/12', '6/12']} paddingBottom={[3, 0]}>
-              <Text variant="h4">
-                {formatMessage(m.viewStudentCompleteHours)}
-              </Text>
-              <Text variant="default">
-                {student.book?.totalLessonCount ?? 0}
-              </Text>
-            </GridColumn>
-            {/* Practice driving */}
-            <GridColumn span={['12/12', '6/12']} paddingBottom={[3, 0]}>
-              <Text variant="h4">
-                {formatMessage(m.viewStudentPracticeDrivingTitle)}
-              </Text>
-              <Text variant="default">
-                {student.book?.practiceDriving
-                  ? formatMessage(m.viewStudentYes)
-                  : formatMessage(m.viewStudentNo)}
-              </Text>
-            </GridColumn>
-          </GridRow>
-          <GridRow marginBottom={5} className={styles.hideRow}>
-            {/* Completed schools */}
-            <GridColumn span={['12/12', '6/12']}>
-              <Text variant="h4">
-                {formatMessage(m.viewStudentCompleteSchools)}
-              </Text>
-              {completedSchools.length > 0 ? (
-                completedSchools?.map((school, key) => {
-                  const textStr = getExamString({
-                    name: school.schoolTypeName,
-                    examDate: school.examDate,
-                  })
-                  return (
-                    <Text key={key} variant="default">
-                      {textStr}
-                    </Text>
-                  )
-                })
-              ) : (
-                <Text variant="default">
-                  {formatMessage(m.viewStudentNoCompleteSchools)}
-                </Text>
-              )}
-            </GridColumn>
-            {/* Exams */}
-            <GridColumn span={['12/12', '6/12']}>
-              <Text variant="h4">
-                {formatMessage(m.viewStudentExamsComplete)}
-              </Text>
-              {student.book?.testResults.length > 0 ? (
-                student.book?.testResults.map((test, key) => {
-                  const textStr = getExamString({
-                    name: test.testTypeName,
-                    examDate: test.examDate,
-                  })
-                  return (
-                    <Text key={key} variant="default">
-                      {textStr}
-                    </Text>
-                  )
-                })
-              ) : (
-                <Text variant="default">
-                  {formatMessage(m.viewStudentNoExamsComplete)}
-                </Text>
-              )}
-            </GridColumn>
-          </GridRow>
-          {/* Practice driving button */}
-          {allowPracticeDrivingVisable(student) &&
-            student.book.totalLessonCount >= 10 && (
-              <GridRow marginBottom={5}>
-                <GridColumn span={['12/12', '6/12']}>
-                  <Button
-                    fluid
-                    loading={loadingAllow}
-                    onClick={() =>
-                      clickAllowPracticeDriving(student.nationalId)
-                    }
-                  >
-                    {formatMessage(m.viewStudentPracticeDrivingButton)}
-                  </Button>
+
+          {doesStudentBelongToUser && (
+            <>
+              <GridRow>
+                {/* Completed hours */}
+                <GridColumn span={['12/12', '6/12']} paddingBottom={[2, 0]}>
+                  <Text variant="h4">
+                    {formatMessage(m.viewStudentCompleteHours)}
+                  </Text>
+                  <Text variant="default">
+                    {student.book?.totalLessonCount % 2 === 0
+                      ? student.book?.totalLessonCount
+                      : student.book?.totalLessonCount.toFixed(2) ?? 0}
+                  </Text>
+                </GridColumn>
+                {/* Has permission for practice driving */}
+                <GridColumn span={['12/12', '6/12']} paddingBottom={[2, 0]}>
+                  <Text variant="h4">
+                    {formatMessage(m.viewStudentPracticeDrivingTitle)}
+                  </Text>
+                  <Text variant="default">
+                    {student.book?.practiceDriving
+                      ? formatMessage(m.viewStudentYes)
+                      : formatMessage(m.viewStudentNo)}
+                  </Text>
                 </GridColumn>
               </GridRow>
-            )}
+              <GridRow className={styles.hideRow}>
+                {/* Completed schools */}
+                <GridColumn span={['12/12', '6/12']}>
+                  <Text variant="h4">
+                    {formatMessage(m.viewStudentCompleteSchools)}
+                  </Text>
+                  {completedSchools.length > 0 ? (
+                    completedSchools?.map((school, key) => {
+                      const textStr = getExamString({
+                        name: school.schoolTypeName,
+                        examDate: school.examDate,
+                      })
+                      return (
+                        <BulletList type="ul" color="dark300">
+                          <Bullet>
+                            <Text key={key} variant="default">
+                              {textStr}
+                            </Text>
+                          </Bullet>
+                        </BulletList>
+                      )
+                    })
+                  ) : (
+                    <BulletList type="ul" color="dark300">
+                      <Bullet>
+                        <Text variant="default">
+                          {formatMessage(m.viewStudentNoCompleteSchools)}
+                        </Text>
+                      </Bullet>
+                    </BulletList>
+                  )}
+                </GridColumn>
+                {/* Completed exams */}
+                <GridColumn span={['12/12', '6/12']}>
+                  <Text variant="h4">
+                    {formatMessage(m.viewStudentExamsComplete)}
+                  </Text>
+                  {student.book?.testResults.length > 0 ? (
+                    student.book?.testResults.map((test, key) => {
+                      const textStr = getExamString({
+                        name: test.testTypeName,
+                        examDate: test.examDate,
+                      })
+                      return (
+                        <BulletList type="ul" color="dark300">
+                          <Bullet>
+                            <Text key={key} variant="default">
+                              {textStr}
+                            </Text>
+                          </Bullet>
+                        </BulletList>
+                      )
+                    })
+                  ) : (
+                    <BulletList type="ul" color="dark300">
+                      <Bullet>
+                        <Text variant="default">
+                          {formatMessage(m.viewStudentNoExamsComplete)}
+                        </Text>
+                      </Bullet>
+                    </BulletList>
+                  )}
+                </GridColumn>
+              </GridRow>
+              {/* Allow practice driving button */}
+              {isAllowPracticeDrivingVisible(student) && (
+                <GridRow marginBottom={[7, 3]}>
+                  <GridColumn span={['12/12', '4/12']}>
+                    <Button
+                      fluid
+                      size="medium"
+                      loading={loadingAllow}
+                      onClick={() => allowPracticeDriving(student.nationalId)}
+                    >
+                      {formatMessage(m.viewStudentPracticeDrivingButton)}
+                    </Button>
+                  </GridColumn>
+                </GridRow>
+              )}
+            </>
+          )}
 
-          {/* Minutes sections */}
-          <GridRow marginBottom={5}>
+          {/* Minutes section */}
+          <GridRow>
             <GridColumn span={'12/12'} paddingBottom={2}>
               <Text variant="h3">
                 {formatMessage(m.viewStudentRegisterDrivingLesson)}
@@ -415,22 +444,26 @@ const ViewStudent = ({
               />
             </GridColumn>
           </GridRow>
-          {/* Table */}
-          <GridRow marginBottom={5}>
+
+          {/* Date of the driving lesson */}
+          <GridRow marginBottom={[7, 3]}>
             <GridColumn
               span={['12/12', '5/12']}
               paddingBottom={[3, 0]}
               paddingTop={[3, 0]}
             >
+              <Text variant="h4" marginBottom={2}>
+                {formatMessage(m.viewStudentSelectDateLabel)}
+              </Text>
               <DatePicker
-                size="sm"
+                size="xs"
                 hasError={dateError}
                 errorMessage={formatMessage(m.errorOnMissingDate)}
                 handleChange={(date) => {
                   setDate(format(date, 'yyyy-MM-dd'))
                   setDateError(false)
                 }}
-                label={formatMessage(m.viewStudentSelectDateLabel)}
+                label=""
                 locale="is"
                 placeholderText={formatMessage(
                   m.viewStudentSelectDatePlaceholder,
@@ -440,37 +473,45 @@ const ViewStudent = ({
                 selected={date ? new Date(date) : null}
               />
             </GridColumn>
-            <GridColumn span={['12/12', '2/12']} paddingBottom={[3, 0]}>
-              <Button
-                fluid
-                loading={
-                  loadingRegistration || loadingEdition || loadingStudentsBook
-                }
-                onClick={() =>
-                  date !== ''
-                    ? !editingRegistration
-                      ? saveChanges()
-                      : editChanges()
-                    : setDateError(true)
-                }
-              >
-                {!editingRegistration
-                  ? formatMessage(m.viewStudentRegisterButton)
-                  : formatMessage(m.viewStudentEditButton)}
-              </Button>
-            </GridColumn>
-            <GridColumn>
-              {editingRegistration && (
+            <GridColumn
+              span={editingRegistration ? ['6/12', '2/12'] : ['12/12', '2/12']}
+            >
+              <Box display="flex" alignItems="flexEnd" height="full">
                 <Button
-                  loading={loadingDeletion || loadingStudentsBook}
-                  colorScheme="destructive"
-                  variant="text"
-                  icon="trash"
-                  onClick={() => deleteRegistration(editingRegistration.id)}
+                  size="medium"
+                  fluid
+                  loading={
+                    loadingRegistration || loadingEdition || loadingStudentsBook
+                  }
+                  onClick={() =>
+                    date !== ''
+                      ? !editingRegistration
+                        ? saveChanges()
+                        : editChanges()
+                      : setDateError(true)
+                  }
                 >
-                  {formatMessage(m.viewStudentDeleteRegistration)}
+                  {!editingRegistration
+                    ? formatMessage(m.viewStudentRegisterButton)
+                    : formatMessage(m.viewStudentEditButton)}
                 </Button>
-              )}
+              </Box>
+            </GridColumn>
+            <GridColumn span={['6/12', '3/12']}>
+              <Box display="flex" alignItems="flexEnd" height="full">
+                {editingRegistration && (
+                  <Button
+                    size="medium"
+                    loading={loadingDeletion || loadingStudentsBook}
+                    colorScheme="destructive"
+                    variant="ghost"
+                    icon="trash"
+                    onClick={() => deleteRegistration(editingRegistration.id)}
+                  >
+                    {formatMessage(m.viewStudentDeleteRegistration)}
+                  </Button>
+                )}
+              </Box>
             </GridColumn>
           </GridRow>
 
@@ -516,79 +557,84 @@ const ViewStudent = ({
                         })
 
                         return (
-                          <T.Row key={key}>
-                            <T.Data
-                              style={styles.tableStyles}
-                              box={{ className: bgr }}
-                            >
-                              {format(
-                                new Date(entry.registerDate),
-                                'dd.MM.yyyy',
-                              )}
-                            </T.Data>
-                            <T.Data
-                              style={styles.tableStyles}
-                              box={{ className: bgr }}
-                            >
-                              {entry.teacherName}
-                            </T.Data>
-                            <T.Data
-                              style={styles.tableStyles}
-                              box={{
-                                className: bgr,
-                                textAlign: ['center', 'left'],
-                              }}
-                            >
-                              {entry.lessonTime}
-                            </T.Data>
-                            <T.Data
-                              style={styles.tableStyles}
-                              box={{ className: bgr, textAlign: 'center' }}
-                            >
-                              {entry.teacherNationalId === userNationalId && (
-                                <Box>
-                                  <Button
-                                    variant="text"
-                                    size="small"
-                                    icon={
-                                      editingRegistration &&
+                          (doesStudentBelongToUser ||
+                            entry.teacherNationalId === userNationalId) && (
+                            <T.Row key={key}>
+                              <T.Data
+                                style={styles.tableStyles}
+                                box={{ className: bgr }}
+                              >
+                                {format(
+                                  new Date(entry.registerDate),
+                                  'dd.MM.yyyy',
+                                )}
+                              </T.Data>
+                              <T.Data
+                                style={styles.tableStyles}
+                                box={{ className: bgr }}
+                              >
+                                {entry.teacherName}
+                              </T.Data>
+                              <T.Data
+                                style={styles.tableStyles}
+                                box={{
+                                  className: bgr,
+                                  textAlign: ['center', 'left'],
+                                }}
+                              >
+                                {entry.lessonTime}
+                              </T.Data>
+                              <T.Data
+                                style={styles.tableStyles}
+                                box={{ className: bgr, textAlign: 'center' }}
+                              >
+                                {entry.teacherNationalId === userNationalId && (
+                                  <Box display="flex" alignItems="center">
+                                    <Button
+                                      variant="text"
+                                      size="small"
+                                      icon={
+                                        editingRegistration &&
+                                        editingRegistration.id === entry.id
+                                          ? 'close'
+                                          : undefined
+                                      }
+                                      onClick={() => {
+                                        setEditingRegistration(
+                                          editingRegistration
+                                            ? undefined
+                                            : entry,
+                                        )
+                                        setNewRegId(undefined)
+                                        setMinutes(entry.lessonTime)
+                                        setDate(entry.registerDate)
+                                      }}
+                                    >
+                                      {editingRegistration &&
                                       editingRegistration.id === entry.id
-                                        ? 'checkmark'
-                                        : undefined
-                                    }
-                                    onClick={() => {
-                                      setEditingRegistration(
-                                        editingRegistration ? undefined : entry,
-                                      )
-                                      setNewRegId(undefined)
-                                      setMinutes(entry.lessonTime)
-                                      setDate(entry.registerDate)
-                                    }}
-                                  >
-                                    {editingRegistration &&
-                                    editingRegistration.id === entry.id
-                                      ? ''
-                                      : formatMessage(
-                                          m.viewStudentEditRegistration,
-                                        )}
-                                  </Button>
-                                  {newRegId &&
-                                    entry.id === newRegId &&
-                                    !loadingStudentsBook && (
-                                      <Box
-                                        paddingLeft={3}
-                                        className={styles.showSuccessIcon}
-                                      >
-                                        <Icon
-                                          icon="checkmarkCircle"
-                                          color="mint400"
-                                        />
-                                      </Box>
-                                    )}
-                                </Box>
-                              )}
-                            </T.Data>
-                          </T.Row>
+                                        ? ''
+                                        : formatMessage(
+                                            m.viewStudentEditRegistration,
+                                          )}
+                                    </Button>
+                                    {newRegId &&
+                                      entry.id === newRegId &&
+                                      !loadingStudentsBook && (
+                                        <Box
+                                          paddingLeft={3}
+                                          className={styles.showSuccessIcon}
+                                        >
+                                          <Icon
+                                            icon="checkmarkCircle"
+                                            color="mint400"
+                                          />
+                                        </Box>
+                                      )}
+                                  </Box>
+                                )}
+                              </T.Data>
+                            </T.Row>
+                          )
                         )
                       })
                       .reverse()}
@@ -604,7 +650,7 @@ const ViewStudent = ({
               </Button>
             </GridColumn>
           </GridRow>
-        </>
+        </Stack>
       ) : error ? (
         <>
           <GridRow marginBottom={8}>

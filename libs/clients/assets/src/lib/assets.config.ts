@@ -17,7 +17,7 @@ export const AssetsClientConfig = defineConfig<z.infer<typeof schema>>({
         'XROAD_PROPERTIES_SERVICE_V2_PATH',
         'IS-DEV/GOV/10033/HMS-Protected/Fasteignir-v1',
       ),
-      fetchTimeout: env.optionalJSON('XROAD_PROPERTIES_TIMEOUT') ?? 20000,
+      fetchTimeout: env.optionalJSON('XROAD_PROPERTIES_TIMEOUT') ?? 35000,
       tokenExchangeScope: env.optionalJSON('XROAD_PROPERTIES_SCOPE') ?? [
         NationalRegistryScope.properties,
         'api_resource.scope',

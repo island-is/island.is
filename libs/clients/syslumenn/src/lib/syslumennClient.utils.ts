@@ -15,9 +15,15 @@ import {
   EignirDanarbus,
   Fasteignasalar,
   Logmenn,
+  Afengisleyfi,
+  Taekifaerisleyfi,
+  Verdbrefamidlari,
+  Erfingar,
+  Malsvari,
 } from '../../gen/fetch'
 import { uuid } from 'uuidv4'
 import {
+  AlcoholLicence,
   SyslumennAuction,
   DataUploadResponse,
   Homestay,
@@ -38,6 +44,9 @@ import {
   RealEstateAgent,
   Lawyer,
   OperatingLicensesCSV,
+  TemporaryEventLicence,
+  Broker,
+  Advocate,
 } from './syslumennClient.types'
 const UPLOAD_DATA_SUCCESS = 'Gögn móttekin'
 
@@ -84,7 +93,7 @@ export const mapHomestay = (homestay: VirkarHeimagistingar): Homestay => {
     name: homestay.heitiHeimagistingar ?? '',
     address: homestay.heimilisfang ?? '',
     manager: homestay.abyrgdarmadur ?? '',
-    year: homestay.umsoknarAr ? parseFloat(homestay.umsoknarAr) : undefined,
+    year: homestay.umsoknarAr ? parseInt(homestay.umsoknarAr) : undefined,
     city: homestay.sveitarfelag ?? '',
     guests: homestay.gestafjoldi,
     rooms: homestay.fjoldiHerbergja,
@@ -117,6 +126,11 @@ export const mapRealEstateAgent = (agent: Fasteignasalar): RealEstateAgent => ({
 export const mapLawyer = (lawyer: Logmenn): Lawyer => ({
   name: lawyer.nafn?.trim() ?? '',
   licenceType: lawyer.tegundRettinda?.trim() ?? '',
+})
+
+export const mapBroker = (broker: Verdbrefamidlari): Broker => ({
+  name: broker.nafn?.trim() ?? '',
+  nationalId: broker.kennitala?.trim() ?? '',
 })
 
 export const mapOperatingLicense = (
@@ -181,6 +195,46 @@ export const mapOperatingLicensesCSV = (
   value: responseStringCSV,
 })
 
+export const mapAlcoholLicence = (
+  alcoholLicence: Afengisleyfi,
+): AlcoholLicence => ({
+  licenceType: alcoholLicence.tegund?.trim() ?? '',
+  licenceSubType: alcoholLicence.tegundLeyfis?.trim() ?? '',
+  licenseNumber: alcoholLicence.leyfisnumer?.trim() ?? '',
+  issuedBy: alcoholLicence.utgefidAf?.trim() ?? '',
+  year: alcoholLicence.skraningarAr
+    ? parseInt(alcoholLicence.skraningarAr)
+    : undefined,
+  validFrom: alcoholLicence.gildirFra ? alcoholLicence.gildirFra : undefined,
+  validTo: alcoholLicence.gildirTil ? alcoholLicence.gildirTil : undefined,
+  licenseHolder: alcoholLicence.leyfishafi?.trim() ?? '',
+  licenseResponsible: alcoholLicence.abyrgdarmadur?.trim() ?? '',
+  office: alcoholLicence.embaetti?.trim() ?? '',
+  location: alcoholLicence.starfsstodEmbaettis?.trim() ?? '',
+})
+
+export const mapTemporaryEventLicence = (
+  temporaryEventLicence: Taekifaerisleyfi,
+): TemporaryEventLicence => ({
+  licenceType: temporaryEventLicence.tegund?.trim() ?? '',
+  licenceSubType: temporaryEventLicence.tegundLeyfis?.trim() ?? '',
+  licenseNumber: temporaryEventLicence.leyfisnumer?.trim() ?? '',
+  issuedBy: temporaryEventLicence.utgefidAf?.trim() ?? '',
+  year: temporaryEventLicence.skraningarAr
+    ? parseInt(temporaryEventLicence.skraningarAr)
+    : undefined,
+  validFrom: temporaryEventLicence.gildirFra
+    ? temporaryEventLicence.gildirFra
+    : undefined,
+  validTo: temporaryEventLicence.gildirTil
+    ? temporaryEventLicence.gildirTil
+    : undefined,
+  licenseHolder: temporaryEventLicence.leyfishafi?.trim() ?? '',
+  licenseResponsible: temporaryEventLicence.abyrgdarmadur?.trim() ?? '',
+  maximumNumberOfGuests: temporaryEventLicence.hamarksfjoldi,
+  estimatedNumberOfGuests: temporaryEventLicence.aaetladurFjoldi,
+})
+
 export function constructUploadDataObject(
   id: string,
   persons: Person[],
@@ -220,6 +274,16 @@ export function constructUploadDataObject(
   }
 }
 
+function mapAdvocate(advocateRaw: Malsvari): Advocate {
+  return {
+    address: advocateRaw.heimilisfang ?? '',
+    email: advocateRaw.netfang ?? '',
+    name: advocateRaw.nafn ?? '',
+    nationalId: advocateRaw.kennitala ?? '',
+    phone: advocateRaw.simi ?? '',
+  }
+}
+
 function mapPersonEnum(e: PersonType) {
   switch (e) {
     case PersonType.Plaintiff:
@@ -243,11 +307,12 @@ export const mapAssetName = (
   return { name: response.heiti ?? '' }
 }
 
-export const estateMemberMapper = (estateRaw: AdiliDanarbus): EstateMember => {
+export const estateMemberMapper = (estateRaw: Erfingar): EstateMember => {
   return {
     name: estateRaw.nafn ?? '',
     nationalId: estateRaw.kennitala ?? '',
-    relation: estateRaw.tegundTengsla ?? 'Annað',
+    relation: estateRaw.tengsl ?? 'Annað',
+    advocate: estateRaw.malsvari ? mapAdvocate(estateRaw.malsvari) : undefined,
   }
 }
 
@@ -295,6 +360,11 @@ export const mapEstateRegistrant = (
     flyers: syslaData.eignir
       ? syslaData.eignir
           .filter((a) => a.tegundAngalgs === TegundAndlags.NUMBER_4)
+          .map(assetMapper)
+      : [],
+    guns: syslaData.eignir
+      ? syslaData.eignir
+          .filter((a) => a.tegundAngalgs === TegundAndlags.NUMBER_10)
           .map(assetMapper)
       : [],
     estateMembers: syslaData.adilarDanarbus
@@ -347,6 +417,8 @@ export const mapEstateInfo = (syslaData: DanarbuUppl): EstateInfo => {
           .filter((a) => a.tegundAngalgs === TegundAndlags.NUMBER_4)
           .map(assetMapper)
       : [],
+    // TODO: update once implemented in District Commissioner's backend
+    guns: [],
     estateMembers: syslaData.erfingar
       ? syslaData.erfingar.map(estateMemberMapper)
       : [],

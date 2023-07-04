@@ -1,21 +1,76 @@
 import { z } from 'zod'
+import * as kennitala from 'kennitala'
 
-export const UserInformationSchema = z.object({
-  nationalId: z.string().min(1),
+const UserSchemaBase = z.object({
+  nationalId: z
+    .string()
+    .refine(
+      (nationalId) =>
+        nationalId &&
+        nationalId.length !== 0 &&
+        kennitala.isValid(nationalId) &&
+        (kennitala.isCompany(nationalId) ||
+          kennitala.info(nationalId).age >= 18),
+    ),
   name: z.string().min(1),
   email: z.string().min(1),
-  phone: z.string().min(7),
-  approved: z.boolean().optional(),
+  phone: z.string().min(1),
 })
 
-export const CoOwnerAndOperatorSchema = z.object({
-  nationalId: z.string().min(1),
-  name: z.string().min(1),
-  email: z.string().min(1),
-  phone: z.string().min(7),
-  approved: z.boolean().optional(),
-  type: z.enum(['operator', 'coOwner']),
-})
+const RemovableUserSchemaBase = z
+  .object({
+    nationalId: z.string().optional(),
+    name: z.string().optional(),
+    email: z.string().optional(),
+    phone: z.string().optional(),
+    wasRemoved: z.string().optional(),
+  })
+  .refine(
+    ({ nationalId, wasRemoved }) => {
+      return (
+        wasRemoved === 'true' ||
+        (nationalId &&
+          nationalId.length !== 0 &&
+          kennitala.isValid(nationalId) &&
+          (kennitala.isCompany(nationalId) ||
+            kennitala.info(nationalId).age >= 18))
+      )
+    },
+    { path: ['nationalId'] },
+  )
+  .refine(
+    ({ name, wasRemoved }) => {
+      return wasRemoved === 'true' || (name && name.length > 0)
+    },
+    { path: ['name'] },
+  )
+  .refine(
+    ({ email, wasRemoved }) => {
+      return wasRemoved === 'true' || (email && email.length > 0)
+    },
+    { path: ['email'] },
+  )
+  .refine(
+    ({ phone, wasRemoved }) => {
+      return wasRemoved === 'true' || (phone && phone.length > 0)
+    },
+    { path: ['phone'] },
+  )
+
+export const UserInformationSchema = z.intersection(
+  UserSchemaBase,
+  z.object({
+    approved: z.boolean().optional(),
+  }),
+)
+
+export const CoOwnerAndOperatorSchema = z.intersection(
+  RemovableUserSchemaBase,
+  z.object({
+    approved: z.boolean().optional(),
+    type: z.enum(['operator', 'coOwner']),
+  }),
+)
 
 export const RejecterSchema = z.object({
   plate: z.string(),
@@ -34,7 +89,12 @@ export const TransferOfVehicleOwnershipSchema = z.object({
   vehicle: z.object({
     plate: z.string().min(1),
     type: z.string().min(1),
-    salePrice: z.string().optional(),
+    salePrice: z
+      .string()
+      .optional()
+      .refine(
+        (p) => p === undefined || p === '' || parseInt(p?.split(' ')[0]) >= 0,
+      ),
     date: z.string().min(1),
   }),
   seller: UserInformationSchema,

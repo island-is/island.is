@@ -1,5 +1,13 @@
 import { service, ServiceBuilder } from '../../../infra/src/dsl/dsl'
 
+const extraAnnotations = {
+  'nginx.ingress.kubernetes.io/proxy-buffer-size': '16k',
+  'nginx.ingress.kubernetes.io/proxy-buffering': 'on',
+  'nginx.ingress.kubernetes.io/proxy-buffers-number': '4',
+  'nginx.ingress.kubernetes.io/server-snippet':
+    'client_header_buffer_size 16k; large_client_header_buffers 4 16k;',
+}
+
 export const serviceSetup = (): ServiceBuilder<'auth-admin-web'> => {
   return service('auth-admin-web')
     .namespace('identity-server-admin')
@@ -35,14 +43,8 @@ export const serviceSetup = (): ServiceBuilder<'auth-admin-web'> => {
         paths: ['/admin'],
         public: true,
         extraAnnotations: {
-          dev: {
-            'nginx.ingress.kubernetes.io/proxy-buffering': 'on',
-            'nginx.ingress.kubernetes.io/proxy-buffer-size': '8k',
-          },
-          staging: {
-            'nginx.ingress.kubernetes.io/proxy-buffering': 'on',
-            'nginx.ingress.kubernetes.io/proxy-buffer-size': '8k',
-          },
+          dev: { ...extraAnnotations },
+          staging: { ...extraAnnotations },
           prod: {
             'nginx.ingress.kubernetes.io/proxy-buffering': 'on',
             'nginx.ingress.kubernetes.io/proxy-buffer-size': '8k',

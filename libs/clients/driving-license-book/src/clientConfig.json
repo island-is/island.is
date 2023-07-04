@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "Digital DrivingLicenceBook API",
-    "description": "Vefþjónusta fyrir rafræna ökunámsbók",
+    "description": "Vefþjónusta fyrir rafræna ökunámsbók - ed2741fc19ef6d8d47c90b8ca0306dda27644190-20230307.2",
     "contact": {
       "name": "Samgöngustofa",
       "url": "https://www.samgongustofa.is/",
@@ -594,6 +594,56 @@
         }
       }
     },
+    "/api/Student/GetStudentDrivingSchoolProgress/{ssn}": {
+      "get": {
+        "tags": ["DrivingLicenseBook"],
+        "parameters": [
+          {
+            "name": "ssn",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StudentDrivingSchoolProgress"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "500": { "description": "Server Error" }
+        }
+      }
+    },
     "/api/Student/GetLicenseBookList/{ssn}": {
       "get": {
         "tags": ["DrivingLicenseBook"],
@@ -666,6 +716,47 @@
               }
             }
           },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "500": { "description": "Server Error" }
+        }
+      }
+    },
+    "/api/Student/GetStudentActiveLicenseBookBySsn/{ssn}": {
+      "get": {
+        "tags": ["DrivingLicenseBook"],
+        "parameters": [
+          {
+            "name": "ssn",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Success" },
           "401": {
             "description": "Unauthorized",
             "content": {
@@ -2178,16 +2269,20 @@
             "nullable": true,
             "example": "Nýtt"
           },
+          "practiceDriving": {
+            "type": "boolean",
+            "description": "Whether the student can do practice driving"
+          },
           "totalLessonTime": {
-            "type": "integer",
+            "type": "number",
             "description": "Sum of all practical lessons in minuetes",
-            "format": "int32",
+            "format": "double",
             "readOnly": true
           },
           "totalLessonCount": {
-            "type": "integer",
+            "type": "number",
             "description": "Count of all practical lessons (each lesson is 45 minutes)",
-            "format": "int32",
+            "format": "double",
             "readOnly": true
           },
           "teachersAndLessons": {
@@ -2345,8 +2440,7 @@
           },
           "practiceDriving": {
             "type": "boolean",
-            "description": "Whether the student can do practice driving",
-            "nullable": true
+            "description": "Whether the student can do practice driving"
           }
         },
         "additionalProperties": false,
@@ -3261,6 +3355,54 @@
         "properties": { "bookId": { "type": "string", "nullable": true } },
         "additionalProperties": false
       },
+      "StudentDrivingSchoolProgress": {
+        "type": "object",
+        "properties": {
+          "ssn": {
+            "type": "string",
+            "description": "Ssn of student",
+            "nullable": true
+          },
+          "bookId": {
+            "type": "string",
+            "description": "Students active bookid",
+            "nullable": true
+          },
+          "drivingLessonMinutes": {
+            "type": "number",
+            "description": "Students driving lesson minutes",
+            "format": "double",
+            "nullable": true
+          },
+          "drivingLessonCount": {
+            "type": "integer",
+            "description": "Students driving lesson count",
+            "format": "int32"
+          },
+          "isExemptedFromDrivingLessons": {
+            "type": "boolean",
+            "description": "If student is exempted from min driving lesson count"
+          },
+          "finishedDrivingSchool1": {
+            "type": "boolean",
+            "description": "Does the student have driving school 1 progress"
+          },
+          "finishedDrivingSchool2": {
+            "type": "boolean",
+            "description": "Does the student have driving school 2 progress"
+          },
+          "finishedDrivingSchool3": {
+            "type": "boolean",
+            "description": "Does the student have driving school 3 progress"
+          },
+          "canStartDrivingSchool3": {
+            "type": "boolean",
+            "description": "Can the student start driving school 3 based on progress and exemption"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Contains info on students driving school progress and if he is allowed\r\nto enter driving school 3"
+      },
       "StudentListGetResponse": {
         "type": "object",
         "properties": {
@@ -3359,7 +3501,7 @@
           "studentId": { "type": "string", "nullable": true },
           "ssn": { "type": "string", "nullable": true },
           "name": { "type": "string", "nullable": true },
-          "totalLessonCount": { "type": "integer", "format": "int32" }
+          "totalLessonCount": { "type": "number", "format": "double" }
         },
         "additionalProperties": false
       },

@@ -28,20 +28,8 @@ describe('CaseController - Transition guards', () => {
       guard = new guards[0]()
     })
 
-    it('should have JwtAuthGuard as quard 1', () => {
+    it('should have JwtAuthGuard as guard 1', () => {
       expect(guard).toBeInstanceOf(JwtAuthGuard)
-    })
-  })
-
-  describe('RolesGuard', () => {
-    let guard: CanActivate
-
-    beforeEach(() => {
-      guard = new guards[1]()
-    })
-
-    it('should have RolesGuard as quard 2', () => {
-      expect(guard).toBeInstanceOf(RolesGuard)
     })
   })
 
@@ -49,11 +37,23 @@ describe('CaseController - Transition guards', () => {
     let guard: CanActivate
 
     beforeEach(() => {
+      guard = new guards[1]()
+    })
+
+    it('should have CaseExistsGuard as guard 2', () => {
+      expect(guard).toBeInstanceOf(CaseExistsGuard)
+    })
+  })
+
+  describe('RolesGuard', () => {
+    let guard: CanActivate
+
+    beforeEach(() => {
       guard = new guards[2]()
     })
 
-    it('should have CaseExistsGuard as quard 3', () => {
-      expect(guard).toBeInstanceOf(CaseExistsGuard)
+    it('should have RolesGuard as guard 3', () => {
+      expect(guard).toBeInstanceOf(RolesGuard)
     })
   })
 
@@ -64,7 +64,7 @@ describe('CaseController - Transition guards', () => {
       guard = new guards[3]()
     })
 
-    it('should have CaseWriteGuard as quard 4', () => {
+    it('should have CaseWriteGuard as guard 4', () => {
       expect(guard).toBeInstanceOf(CaseWriteGuard)
     })
   })

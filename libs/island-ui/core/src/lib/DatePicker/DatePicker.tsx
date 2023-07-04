@@ -14,6 +14,7 @@ import { VisuallyHidden } from 'reakit'
 import range from 'lodash/range'
 
 import { Icon } from '../IconRC/Icon'
+import { ErrorMessage } from '../Input/ErrorMessage'
 import { Text } from '../Text/Text'
 
 import * as styles from './DatePicker.css'
@@ -34,7 +35,8 @@ const languageConfig = {
 }
 
 export const DatePicker: React.FC<DatePickerProps> = ({
-  id,
+  name,
+  id = name,
   label,
   placeholderText,
   locale = 'en',
@@ -43,8 +45,8 @@ export const DatePicker: React.FC<DatePickerProps> = ({
   excludeDates,
   selected,
   disabled = false,
-  hasError = false,
   errorMessage,
+  hasError = Boolean(errorMessage),
   handleChange,
   onInputClick,
   handleCloseCalendar,
@@ -52,9 +54,9 @@ export const DatePicker: React.FC<DatePickerProps> = ({
   required,
   inputName = '',
   backgroundColor = 'white',
+  appearInline = false,
   size = 'md',
-  icon = 'calendar',
-  iconType = 'outline',
+  icon = { name: 'calendar', type: 'outline' },
   minYear,
   maxYear,
 }) => {
@@ -63,6 +65,13 @@ export const DatePicker: React.FC<DatePickerProps> = ({
     'closed',
   )
   const currentLanguage = languageConfig[locale]
+  const errorId = `${id}-error`
+  const ariaError = hasError
+    ? {
+        'aria-invalid': true,
+        'aria-describedby': errorId,
+      }
+    : {}
 
   useEffect(() => {
     if (locale === 'en') {
@@ -86,14 +95,16 @@ export const DatePicker: React.FC<DatePickerProps> = ({
       >
         <ReactDatePicker
           popperClassName={cn(styles.popper, {
+            [styles.popperInline]: appearInline,
             [styles.popperXsmall]: size === 'xs',
             [styles.popperSmall]: size === 'sm',
             [styles.popperSmallWithoutLabel]: size === 'sm' && !label,
             [styles.popperWithoutLabel]: size === 'md' && !label,
           })}
           id={id}
+          name={name}
           disabled={disabled}
-          selected={selected ?? startDate}
+          selected={startDate ?? selected}
           locale={currentLanguage.locale}
           minDate={minDate}
           maxDate={maxDate}
@@ -101,19 +112,6 @@ export const DatePicker: React.FC<DatePickerProps> = ({
           dateFormat={currentLanguage.format}
           showPopperArrow={false}
           popperPlacement="bottom-start"
-          popperModifiers={{
-            flip: {
-              enabled: true,
-              behavior: 'flip',
-            },
-            offset: {
-              enabled: true,
-            },
-            preventOverflow: {
-              enabled: true,
-              escapeWithReference: false,
-            },
-          }}
           onCalendarOpen={() => {
             setDatePickerState('open')
             handleOpenCalendar && handleOpenCalendar()
@@ -138,12 +136,10 @@ export const DatePicker: React.FC<DatePickerProps> = ({
               label={label}
               fixedFocusState={datePickerState === 'open'}
               hasError={hasError}
-              errorMessage={errorMessage}
               placeholderText={placeholderText}
               onInputClick={onInputClick}
               backgroundColor={backgroundColor}
               icon={icon}
-              iconType={iconType}
               size={size}
             />
           }
@@ -155,7 +151,11 @@ export const DatePicker: React.FC<DatePickerProps> = ({
               {...props}
             />
           )}
+          {...ariaError}
         />
+        {hasError && errorMessage && (
+          <ErrorMessage id={errorId}>{errorMessage}</ErrorMessage>
+        )}
       </div>
     </div>
   )
@@ -175,7 +175,6 @@ const CustomInput = forwardRef<
       onInputClick,
       fixedFocusState,
       icon,
-      iconType,
       ...props
     },
     ref,
@@ -183,7 +182,6 @@ const CustomInput = forwardRef<
     <Input
       {...props}
       icon={icon}
-      iconType={iconType}
       ref={ref}
       fixedFocusState={fixedFocusState}
       placeholder={placeholderText}
@@ -239,7 +237,8 @@ const CustomHeader = ({
             changeMonth(months.indexOf(value))
           }
           style={{
-            width: monthRef?.current?.offsetWidth ?? 'auto',
+            textAlign: 'center',
+            width: 'auto',
             marginRight: 8,
           }}
         >

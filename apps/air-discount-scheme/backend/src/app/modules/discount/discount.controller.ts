@@ -153,6 +153,7 @@ export class PrivateDiscountAdminController {
       body.postalcode,
       auth.nationalId,
       body.comment,
+      body.numberOfDaysUntilExpiration,
       unConnectedFlights,
     )
 

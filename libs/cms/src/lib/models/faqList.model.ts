@@ -1,6 +1,7 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
-import { IFaqList } from '../generated/contentfulTypes'
+import { CacheField } from '@island.is/nest/graphql'
 import { SystemMetadata } from '@island.is/shared/types'
+import { IFaqList } from '../generated/contentfulTypes'
 import {
   QuestionAndAnswer,
   mapQuestionAndAnswer,
@@ -14,7 +15,7 @@ export class FaqList {
   @Field()
   title!: string
 
-  @Field(() => [QuestionAndAnswer])
+  @CacheField(() => [QuestionAndAnswer])
   questions?: QuestionAndAnswer[]
 
   @Field(() => Boolean, { nullable: true })

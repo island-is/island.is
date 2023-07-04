@@ -23,6 +23,6 @@ export class CreateFileDto {
 
   @IsOptional()
   @IsString()
-  @ApiProperty()
+  @ApiPropertyOptional()
   readonly policeCaseNumber?: string
 }

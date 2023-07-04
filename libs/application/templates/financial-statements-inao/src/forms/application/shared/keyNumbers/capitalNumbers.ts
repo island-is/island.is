@@ -7,7 +7,7 @@ import { CAPITALNUMBERS } from '../../../../lib/constants'
 import { m } from '../../../../lib/messages'
 
 export const capitalNumberSection = buildSubSection({
-  id: 'capitalNumbers',
+  id: 'keynumbers.capitalNumbers',
   title: m.capitalNumbers,
   children: [
     buildMultiField({

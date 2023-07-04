@@ -26,7 +26,7 @@ describe(`${RESTRICTION_CASE_OVERVIEW_ROUTE}/:id`, () => {
   const defenderPhoneNumber = faker.phone.phoneNumber()
   const caseDataAddition: Case = {
     ...caseData,
-    seenByDefender: '2020-09-16T19:50:08.033Z',
+    openedByDefender: '2020-09-16T19:50:08.033Z',
     defendants: [
       {
         name: 'Donald Duck',
@@ -35,6 +35,7 @@ describe(`${RESTRICTION_CASE_OVERVIEW_ROUTE}/:id`, () => {
       } as Defendant,
     ],
     requestedCourtDate: '2020-09-16T19:50:08.033Z',
+    courtDate: '2020-09-16T19:50:08.033Z',
     arrestDate: '2020-09-16T19:50:08.033Z',
     demands:
       'Þess er krafist að Donald Duck, kt. 000000-0000, sæti gæsluvarðhaldi með úrskurði Héraðsdóms Reykjavíkur, til miðvikudagsins 16. september 2020, kl. 19:50, og verði gert að sæta einangrun á meðan á varðhaldi stendur.',
@@ -70,7 +71,7 @@ describe(`${RESTRICTION_CASE_OVERVIEW_ROUTE}/:id`, () => {
       })
 
       it('should let the user know if the assigned defender has viewed the case', () => {
-        cy.getByTestid('alertMessageSeenByDefender').should(
+        cy.getByTestid('alertMessageOpenedByDefender').should(
           'not.match',
           ':empty',
         )
@@ -103,18 +104,6 @@ describe(`${RESTRICTION_CASE_OVERVIEW_ROUTE}/:id`, () => {
 
       it('should have a button that links to a pdf of the case', () => {
         cy.contains('button', 'Krafa - PDF')
-      })
-
-      it('should have a button that copies link to case for defender', () => {
-        cy.getByTestid('copyLinkToCase').click()
-        cy.window()
-          .its('navigator.clipboard')
-          .invoke('readText')
-          .then((data) => data)
-          .should(
-            'equal',
-            `${window.location.origin}${DEFENDER_ROUTE}/${caseData.id}`,
-          )
       })
 
       it('should navigate to /krofur on successful confirmation', () => {

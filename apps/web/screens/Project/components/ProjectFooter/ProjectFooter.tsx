@@ -19,7 +19,7 @@ export const ProjectFooter = ({ projectPage }: ProjectFooterProps) => {
     case 'opinbernyskopun':
       return <OpinberNyskopunFooter footerItems={footerItems} />
     case 'gagnasidur-fiskistofu':
-      return <FiskistofaFooter footerItems={footerItems} />
+      return <FiskistofaFooter footerItems={footerItems} namespace={{}} />
     default:
       return null
   }

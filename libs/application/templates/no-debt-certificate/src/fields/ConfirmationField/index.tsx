@@ -193,7 +193,7 @@ export const ConfirmationField: FC<FieldBaseProps & ConfirmationFieldProps> = ({
         onClick={() => {
           window.open(
             formatText(
-              m.noDebtCertificateInboxLink,
+              `${window.location.origin}/minarsidur/postholf`,
               application,
               formatMessage,
             ),

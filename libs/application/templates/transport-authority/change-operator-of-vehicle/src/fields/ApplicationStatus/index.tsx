@@ -1,20 +1,30 @@
-import { FieldBaseProps } from '@island.is/application/types'
+import {
+  FieldBaseProps,
+  FieldComponents,
+  FieldTypes,
+} from '@island.is/application/types'
 import { Box, Button, Text, Divider } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { FC } from 'react'
 import { review } from '../../lib/messages'
 import { ReviewScreenProps } from '../../shared'
 import { getReviewSteps, hasReviewerApproved } from '../../utils'
+import { MessageWithLinkButtonFormField } from '@island.is/application/ui-fields'
 import { StatusStep } from './StatusStep'
+import { coreMessages } from '@island.is/application/core'
 
-export const ApplicationStatus: FC<FieldBaseProps & ReviewScreenProps> = ({
-  application,
-  setStep,
-  reviewerNationalId = '',
-}) => {
+export const ApplicationStatus: FC<FieldBaseProps & ReviewScreenProps> = (
+  props,
+) => {
+  const { application, setStep, reviewerNationalId = '' } = props
   const { formatMessage } = useLocale()
 
   const steps = getReviewSteps(application)
+
+  const showReviewButton = !hasReviewerApproved(
+    reviewerNationalId,
+    application.answers,
+  )
 
   return (
     <Box marginBottom={10}>
@@ -49,7 +59,7 @@ export const ApplicationStatus: FC<FieldBaseProps & ReviewScreenProps> = ({
           />
         ))}
       </Box>
-      {!hasReviewerApproved(reviewerNationalId, application.answers) && (
+      {showReviewButton && (
         <>
           <Divider />
           <Box display="flex" justifyContent="flexEnd" paddingY={5}>
@@ -58,6 +68,20 @@ export const ApplicationStatus: FC<FieldBaseProps & ReviewScreenProps> = ({
             </Button>
           </Box>
         </>
+      )}
+
+      {!showReviewButton && (
+        <MessageWithLinkButtonFormField
+          application={application}
+          field={{
+            ...props.field,
+            type: FieldTypes.MESSAGE_WITH_LINK_BUTTON_FIELD,
+            component: FieldComponents.MESSAGE_WITH_LINK_BUTTON_FIELD,
+            url: '/minarsidur/umsoknir',
+            buttonTitle: coreMessages.openServicePortalButtonTitle,
+            message: coreMessages.openServicePortalMessageText,
+          }}
+        />
       )}
     </Box>
   )

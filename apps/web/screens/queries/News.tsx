@@ -85,6 +85,12 @@ export const GET_SINGLE_NEWS_ITEM_QUERY = gql`
         width
         height
       }
+      featuredImage {
+        url
+        title
+        width
+        height
+      }
       genericTags {
         id
         title

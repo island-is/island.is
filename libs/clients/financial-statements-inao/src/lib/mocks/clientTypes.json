@@ -1,0 +1,181 @@
+{
+  "@odata.context": "https://dev-re.crm4.dynamics.com/api/data/v9.1/$metadata#GlobalOptionSetDefinitions/Microsoft.Dynamics.CRM.OptionSetMetadata/$entity",
+  "@odata.type": "#Microsoft.Dynamics.CRM.OptionSetMetadata",
+  "ParentOptionSetName": null,
+  "IsCustomOptionSet": true,
+  "IsGlobal": true,
+  "IsManaged": false,
+  "Name": "star_clienttypechoice",
+  "ExternalTypeName": "",
+  "OptionSetType": "Picklist",
+  "IntroducedVersion": "1.0.0.0",
+  "MetadataId": "16271461-dbeb-ec11-bb3d-000d3adb0650",
+  "HasChanged": null,
+  "Options": [
+    {
+      "Value": 150000000,
+      "Color": null,
+      "IsManaged": false,
+      "ExternalValue": "",
+      "ParentValues": [],
+      "Tag": null,
+      "MetadataId": null,
+      "HasChanged": null,
+      "Label": {
+        "LocalizedLabels": [
+          {
+            "Label": "Einstaklingur",
+            "LanguageCode": 1033,
+            "IsManaged": false,
+            "MetadataId": "a1a51ba0-2878-4d17-a99a-8e8b5a64eccf",
+            "HasChanged": null
+          }
+        ],
+        "UserLocalizedLabel": {
+          "Label": "Einstaklingur",
+          "LanguageCode": 1033,
+          "IsManaged": false,
+          "MetadataId": "a1a51ba0-2878-4d17-a99a-8e8b5a64eccf",
+          "HasChanged": null
+        }
+      },
+      "Description": {
+        "LocalizedLabels": [
+          {
+            "Label": "",
+            "LanguageCode": 1033,
+            "IsManaged": false,
+            "MetadataId": "01c54ec2-c73c-4e34-8115-f6769e3c1444",
+            "HasChanged": null
+          }
+        ],
+        "UserLocalizedLabel": {
+          "Label": "",
+          "LanguageCode": 1033,
+          "IsManaged": false,
+          "MetadataId": "01c54ec2-c73c-4e34-8115-f6769e3c1444",
+          "HasChanged": null
+        }
+      }
+    },
+    {
+      "Value": 150000001,
+      "Color": null,
+      "IsManaged": false,
+      "ExternalValue": "",
+      "ParentValues": [],
+      "Tag": null,
+      "MetadataId": null,
+      "HasChanged": null,
+      "Label": {
+        "LocalizedLabels": [
+          {
+            "Label": "Stjórnmálasamtök",
+            "LanguageCode": 1033,
+            "IsManaged": false,
+            "MetadataId": "fade71ff-a239-4ef3-b0ba-2a6fff1b66fd",
+            "HasChanged": null
+          }
+        ],
+        "UserLocalizedLabel": {
+          "Label": "Stjórnmálasamtök",
+          "LanguageCode": 1033,
+          "IsManaged": false,
+          "MetadataId": "fade71ff-a239-4ef3-b0ba-2a6fff1b66fd",
+          "HasChanged": null
+        }
+      },
+      "Description": {
+        "LocalizedLabels": [
+          {
+            "Label": "",
+            "LanguageCode": 1033,
+            "IsManaged": false,
+            "MetadataId": "48781c57-a048-4c4b-a59f-21ad98e2528c",
+            "HasChanged": null
+          }
+        ],
+        "UserLocalizedLabel": {
+          "Label": "",
+          "LanguageCode": 1033,
+          "IsManaged": false,
+          "MetadataId": "48781c57-a048-4c4b-a59f-21ad98e2528c",
+          "HasChanged": null
+        }
+      }
+    },
+    {
+      "Value": 150000002,
+      "Color": null,
+      "IsManaged": false,
+      "ExternalValue": "",
+      "ParentValues": [],
+      "Tag": null,
+      "MetadataId": null,
+      "HasChanged": null,
+      "Label": {
+        "LocalizedLabels": [
+          {
+            "Label": "Kirkjugarður",
+            "LanguageCode": 1033,
+            "IsManaged": false,
+            "MetadataId": "c93ea384-5ed1-42fa-8a67-8de880073da9",
+            "HasChanged": null
+          }
+        ],
+        "UserLocalizedLabel": {
+          "Label": "Kirkjugarður",
+          "LanguageCode": 1033,
+          "IsManaged": false,
+          "MetadataId": "c93ea384-5ed1-42fa-8a67-8de880073da9",
+          "HasChanged": null
+        }
+      },
+      "Description": {
+        "LocalizedLabels": [
+          {
+            "Label": "",
+            "LanguageCode": 1033,
+            "IsManaged": false,
+            "MetadataId": "457adf43-577b-42d7-b27a-34640f073bea",
+            "HasChanged": null
+          }
+        ],
+        "UserLocalizedLabel": {
+          "Label": "",
+          "LanguageCode": 1033,
+          "IsManaged": false,
+          "MetadataId": "457adf43-577b-42d7-b27a-34640f073bea",
+          "HasChanged": null
+        }
+      }
+    }
+  ],
+  "Description": {
+    "LocalizedLabels": [],
+    "UserLocalizedLabel": null
+  },
+  "DisplayName": {
+    "LocalizedLabels": [
+      {
+        "Label": "ClientType",
+        "LanguageCode": 1033,
+        "IsManaged": false,
+        "MetadataId": "17271461-dbeb-ec11-bb3d-000d3adb0650",
+        "HasChanged": null
+      }
+    ],
+    "UserLocalizedLabel": {
+      "Label": "ClientType",
+      "LanguageCode": 1033,
+      "IsManaged": false,
+      "MetadataId": "17271461-dbeb-ec11-bb3d-000d3adb0650",
+      "HasChanged": null
+    }
+  },
+  "IsCustomizable": {
+    "Value": true,
+    "CanBeChanged": true,
+    "ManagedPropertyLogicalName": "iscustomizable"
+  }
+}

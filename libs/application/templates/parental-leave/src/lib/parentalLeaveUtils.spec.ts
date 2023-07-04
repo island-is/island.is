@@ -18,12 +18,13 @@ import {
   SINGLE,
   SPOUSE,
   ParentalRelations,
+  ADOPTION,
 } from '../constants'
 import { ChildInformation } from '../dataProviders/Children/types'
 import {
   formatIsk,
   getAvailableRightsInMonths,
-  getExpectedDateOfBirth,
+  getExpectedDateOfBirthOrAdoptionDate,
   getSelectedChild,
   getTransferredDays,
   getOtherParentId,
@@ -31,7 +32,6 @@ import {
   calculatePeriodLengthInMonths,
   applicantIsMale,
   getOtherParentName,
-  removeCountryCode,
   getSpouse,
   isEligibleForParentalLeave,
   getPeriodIndex,
@@ -50,6 +50,9 @@ import {
   getAvailablePersonalRightsSingleParentInMonths,
   isParentWithoutBirthParent,
   isNotEligibleForParentWithoutBirthParent,
+  isFosterCareAndAdoption,
+  residentGrantIsOpenForApplication,
+  setTestBirthAndExpectedDate,
 } from './parentalLeaveUtils'
 import { PersonInformation } from '../types'
 
@@ -86,10 +89,10 @@ function buildField(): Field {
   }
 }
 
-describe('getExpectedDateOfBirth', () => {
+describe('getExpectedDateOfBirthOrAdoptionDate', () => {
   it('should return undefined when no child is found', () => {
     const application = buildApplication()
-    const res = getExpectedDateOfBirth(application)
+    const res = getExpectedDateOfBirthOrAdoptionDate(application)
 
     expect(res).toBeUndefined()
   })
@@ -119,12 +122,45 @@ describe('getExpectedDateOfBirth', () => {
       },
     })
 
-    const res = getExpectedDateOfBirth(application)
+    const res = getExpectedDateOfBirthOrAdoptionDate(application)
 
     expect(res).toEqual('2021-05-17')
   })
+})
 
-  it('should return the selected child expected DOB when the child is as noPrimaryChildren', () => {
+describe('isFosterCareAndAdoption', () => {
+  it('should return true if application is due to adoption for primary parent', () => {
+    const application = buildApplication({
+      answers: {
+        noChildrenFound: {
+          typeOfApplication: ADOPTION,
+        },
+        selectedChild: 0,
+      },
+      externalData: {
+        children: {
+          data: {
+            children: [
+              {
+                hasRights: true,
+                remainingDays: 180,
+                transferredDays: undefined,
+                parentalRelation: 'primary',
+                expectedDateOfBirth: '2022-12-20',
+              },
+            ],
+            existingApplications: [],
+          },
+          date: new Date('2022-11-07T20:05:46.422Z'),
+          status: 'success',
+        },
+      },
+    })
+
+    expect(isFosterCareAndAdoption(application)).toBe(true)
+  })
+
+  it('should return true if application is due to adoption for secondary parent', () => {
     const application = buildApplication({
       answers: {
         selectedChild: 0,
@@ -132,31 +168,27 @@ describe('getExpectedDateOfBirth', () => {
       externalData: {
         children: {
           data: {
-            children: [],
+            children: [
+              {
+                hasRights: true,
+                remainingDays: 180,
+                transferredDays: 0,
+                parentalRelation: 'secondary',
+                expectedDateOfBirth: '2022-12-20',
+                primaryParentNationalRegistryId: '1111111119',
+                primaryParentGenderCode: '1',
+                primaryParentTypeOfApplication: ADOPTION,
+              },
+            ],
             existingApplications: [],
           },
-          date: new Date(),
-          status: 'success',
-        },
-        noPrimaryChildren: {
-          data: {
-            children: {
-              hasRights: true,
-              remainingDays: 180,
-              parentalRelation: ParentalRelations.secondary,
-              expectedDateOfBirth: '2021-05-17',
-              primaryParentNationalRegistryId: '',
-            },
-          },
-          date: new Date(),
+          date: new Date('2022-11-07T20:05:46.422Z'),
           status: 'success',
         },
       },
     })
 
-    const res = getExpectedDateOfBirth(application)
-
-    expect(res).toEqual('2021-05-17')
+    expect(isFosterCareAndAdoption(application)).toBe(true)
   })
 })
 
@@ -1478,32 +1510,6 @@ describe('applicantIsMale', () => {
   })
 })
 
-describe('removeCountryCode', () => {
-  it('should return the last 7 digits of the phone number', () => {
-    const application = buildApplication()
-    set(
-      application.externalData,
-      'userProfile.data.mobilePhoneNumber',
-      '+3541234567',
-    )
-    expect(removeCountryCode(application)).toEqual('1234567')
-  })
-  it('should return the last 7 digits of the phone number', () => {
-    const application = buildApplication()
-    set(
-      application.externalData,
-      'userProfile.data.mobilePhoneNumber',
-      '003541234567',
-    )
-    expect(removeCountryCode(application)).toEqual('1234567')
-  })
-  it("should return null if phone number wouldn't exist", () => {
-    const application = buildApplication()
-    set(application.externalData, 'userProfile', null)
-    expect(removeCountryCode(application)).toEqual(undefined)
-  })
-})
-
 test.each([
   { parentRelation: '', expected: false },
   { parentRelation: SPOUSE, expected: true },
@@ -1522,5 +1528,18 @@ test.each([
     expect(allowOtherParentToUsePersonalAllowance(application.answers)).toBe(
       expected,
     )
+  },
+)
+test.each([
+  { date: setTestBirthAndExpectedDate(6, 0, false, true), expected: true },
+  { date: setTestBirthAndExpectedDate(7, 0, false, true), expected: false },
+  { date: setTestBirthAndExpectedDate(1, 0, true, false), expected: false },
+  { date: setTestBirthAndExpectedDate(0, 0, true, false), expected: true },
+  { date: setTestBirthAndExpectedDate(0, 0, false, true), expected: true },
+  { date: setTestBirthAndExpectedDate(10), expected: true },
+])(
+  'should return true if today is after the date and within 6 months of the date',
+  ({ date, expected }) => {
+    expect(residentGrantIsOpenForApplication(date.birthDate)).toBe(expected)
   },
 )

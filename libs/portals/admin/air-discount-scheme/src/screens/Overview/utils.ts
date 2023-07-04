@@ -3,11 +3,12 @@ import CSVStringify from 'csv-stringify'
 import { Airlines } from '@island.is/air-discount-scheme/consts'
 
 import { financialStateOptions } from './consts'
-import { FlightLeg, FlightLegsFilters } from './types'
+import { FlightLeg } from './types'
+import type { FlightLegsFilters } from './Overview.loader'
 
 const getAirlinesAvailableForCSVDownload = (filters: FlightLegsFilters) =>
   Object.keys(Airlines).filter(
-    (airline) => !filters.airline?.value || filters.airline?.value === airline,
+    (airline) => !filters.airline || filters.airline === airline,
   )
 
 export const downloadCSV = (

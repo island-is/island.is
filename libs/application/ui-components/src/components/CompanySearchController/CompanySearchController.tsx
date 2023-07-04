@@ -1,15 +1,16 @@
-import React, { FC, useEffect, useMemo, useState } from 'react'
+import { AlertMessage, AsyncSearch, Box, Icon } from '@island.is/island-ui/core'
 import { Controller, useFormContext } from 'react-hook-form'
-import { AsyncSearch, Box, AlertMessage } from '@island.is/island-ui/core'
-import { useLocale } from '@island.is/localization'
-import { coreErrorMessages } from '@island.is/application/core'
-import debounce from 'lodash/debounce'
-import { CompanySearchItem } from './CompanySearchItem'
-import { debounceTime } from '@island.is/shared/constants'
+import React, { FC, useEffect, useMemo, useState } from 'react'
 import {
-  useSearchCompaniesLazyQuery,
   useIsEmployerValidLazyQuery,
+  useSearchCompaniesLazyQuery,
 } from '../../../gen/graphql'
+
+import { CompanySearchItem } from './CompanySearchItem'
+import { coreErrorMessages, getErrorViaPath } from '@island.is/application/core'
+import debounce from 'lodash/debounce'
+import { debounceTime } from '@island.is/shared/constants'
+import { useLocale } from '@island.is/localization'
 
 interface Props {
   id: string
@@ -22,8 +23,10 @@ interface Props {
   colored?: boolean
   setLabelToDataSchema?: boolean
   shouldIncludeIsatNumber?: boolean
+  error?: string
   setNationalId?: (s: string) => void
   checkIfEmployerIsOnForbiddenList?: boolean
+  required?: boolean
 }
 
 export const CompanySearchController: FC<Props> = ({
@@ -39,8 +42,14 @@ export const CompanySearchController: FC<Props> = ({
   setLabelToDataSchema = true,
   setNationalId,
   checkIfEmployerIsOnForbiddenList,
+  required,
 }) => {
-  const { clearErrors, setValue, getValues } = useFormContext()
+  const {
+    clearErrors,
+    setValue,
+    getValues,
+    formState: { errors },
+  } = useFormContext()
   const { formatMessage } = useLocale()
   const [searchQuery, setSearchQuery] = useState('')
   const [search, { loading, data }] = useSearchCompaniesLazyQuery()
@@ -49,13 +58,14 @@ export const CompanySearchController: FC<Props> = ({
     { loading: employerValidLoading, data: employerValidData },
   ] = useIsEmployerValidLazyQuery()
   const [companyIsValid, setCompanyIsValid] = useState<boolean>(false)
-
   useEffect(() => {
     const isValid = employerValidData?.isEmployerValid ?? true
     const currForm = getValues(id)
-    currForm.validEmployer = isValid
     setCompanyIsValid(isValid)
-    setValue(id, currForm)
+    setValue(id, {
+      ...currForm,
+      validEmployer: isValid,
+    })
   }, [employerValidData?.isEmployerValid, getValues, id, setValue])
 
   const debouncer = useMemo(() => {
@@ -153,10 +163,14 @@ export const CompanySearchController: FC<Props> = ({
             <AsyncSearch
               label={label}
               loading={loading || employerValidLoading}
+              required={required}
               options={getSearchOptions(
                 searchQuery,
                 data?.companyRegistryCompanies,
               )}
+              errorMessage={
+                errors && getErrorViaPath(errors, `${id}.nationalId`)
+              }
               size="large"
               placeholder={placeholder}
               initialInputValue={initialInputValue}

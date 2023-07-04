@@ -1,10 +1,14 @@
 import { Field, ObjectType, ID, registerEnumType } from '@nestjs/graphql'
 import graphqlTypeJson from 'graphql-type-json'
+import {
+  ApplicationListAdminResponseDtoStatusEnum,
+  ApplicationListAdminResponseDtoTypeIdEnum,
+} from '../../gen/fetch'
 
 import {
   ApplicationResponseDtoStatusEnum,
   ApplicationResponseDtoTypeIdEnum,
-} from '../../gen/fetch/models/ApplicationResponseDto'
+} from '../../gen/fetch'
 
 registerEnumType(ApplicationResponseDtoTypeIdEnum, {
   name: 'ApplicationResponseDtoTypeIdEnum',
@@ -12,6 +16,14 @@ registerEnumType(ApplicationResponseDtoTypeIdEnum, {
 
 registerEnumType(ApplicationResponseDtoStatusEnum, {
   name: 'ApplicationResponseDtoStatusEnum',
+})
+
+registerEnumType(ApplicationListAdminResponseDtoTypeIdEnum, {
+  name: 'ApplicationListAdminResponseDtoTypeIdEnum',
+})
+
+registerEnumType(ApplicationListAdminResponseDtoStatusEnum, {
+  name: 'ApplicationListAdminResponseDtoStatusEnum',
 })
 
 @ObjectType()
@@ -22,6 +34,28 @@ class ActionCardTag {
   @Field(() => String, { nullable: true })
   variant?: string
 }
+
+@ObjectType()
+class PendingAction {
+  @Field(() => String, { nullable: true })
+  displayStatus?: string
+
+  @Field(() => String, { nullable: true })
+  title?: string
+
+  @Field(() => String, { nullable: true })
+  content?: string
+}
+
+@ObjectType()
+export class ApplicationHistory {
+  @Field(() => Date)
+  date!: Date
+
+  @Field(() => String, { nullable: true })
+  log?: string
+}
+
 @ObjectType()
 class ActionCardMetaData {
   @Field(() => String, { nullable: true })
@@ -35,6 +69,17 @@ class ActionCardMetaData {
 
   @Field(() => Boolean, { nullable: true })
   deleteButton?: boolean
+
+  @Field(() => PendingAction, { nullable: true })
+  pendingAction?: PendingAction
+
+  @Field(() => [ApplicationHistory], { nullable: true })
+  history?: ApplicationHistory[]
+  @Field(() => Number, { nullable: true })
+  draftFinishedSteps?: number
+
+  @Field(() => Number, { nullable: true })
+  draftTotalSteps?: number
 }
 
 @ObjectType()
@@ -83,6 +128,54 @@ export class Application {
 
   @Field(() => ApplicationResponseDtoStatusEnum)
   status!: ApplicationResponseDtoStatusEnum
+}
+
+@ObjectType()
+export class ApplicationAdmin {
+  @Field(() => ID)
+  id!: string
+
+  @Field(() => Date)
+  created!: Date
+
+  @Field(() => Date)
+  modified!: Date
+
+  @Field(() => String)
+  applicant!: string
+
+  @Field(() => [String])
+  assignees!: string[]
+
+  @Field(() => [String])
+  applicantActors!: string[]
+
+  @Field(() => String)
+  state!: string
+
+  @Field(() => ActionCardMetaData, { nullable: true })
+  actionCard?: ActionCardMetaData
+
+  @Field(() => ApplicationListAdminResponseDtoTypeIdEnum)
+  typeId!: ApplicationListAdminResponseDtoTypeIdEnum
+
+  @Field(() => String, { nullable: true })
+  name?: string
+
+  @Field(() => String, { nullable: true })
+  institution?: string
+
+  @Field(() => Number, { nullable: true })
+  progress?: number
+
+  @Field(() => ApplicationListAdminResponseDtoStatusEnum)
+  status!: ApplicationListAdminResponseDtoStatusEnum
+
+  @Field(() => String, { nullable: true })
+  applicantName?: string
+
+  @Field(() => String, { nullable: true })
+  paymentStatus?: string
 }
 
 @ObjectType()

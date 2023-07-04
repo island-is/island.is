@@ -14,11 +14,7 @@ import {
   PageLayout,
 } from '@island.is/judicial-system-web/src/components'
 import useDefendants from '@island.is/judicial-system-web/src/utils/hooks/useDefendants'
-import {
-  RestrictionCaseProsecutorSubsections,
-  ReactSelectOption,
-  Sections,
-} from '@island.is/judicial-system-web/src/types'
+import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import {
@@ -28,11 +24,10 @@ import {
   errors,
 } from '@island.is/judicial-system-web/messages'
 import {
-  Case,
-  CaseType,
   Defendant as TDefendant,
   UpdateDefendant,
 } from '@island.is/judicial-system/types'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import {
   Box,
   Button,
@@ -45,6 +40,10 @@ import { isDefendantStepValidIC } from '@island.is/judicial-system-web/src/utils
 import { capitalize, caseTypes } from '@island.is/judicial-system/formatters'
 import { theme } from '@island.is/island-ui/theme'
 import { isBusiness } from '@island.is/judicial-system-web/src/utils/stepHelper'
+import {
+  CaseType,
+  CaseOrigin,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import * as constants from '@island.is/judicial-system/consts'
 
 import {
@@ -243,13 +242,9 @@ const Defendant = () => {
   return (
     <PageLayout
       workingCase={workingCase}
-      activeSection={
-        workingCase?.parentCase ? Sections.EXTENSION : Sections.PROSECUTOR
-      }
-      activeSubSection={RestrictionCaseProsecutorSubsections.DEFENDANT}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
-      isExtension={workingCase?.parentCase && true}
+      isExtension={!!workingCase.parentCase}
       isValid={stepIsValid}
       onNavigationTo={handleNavigationTo}
     >
@@ -308,7 +303,9 @@ const Defendant = () => {
                   value={
                     workingCase.id
                       ? {
-                          value: CaseType[workingCase.type],
+                          value: Object.keys(CaseType).indexOf(
+                            workingCase.type,
+                          ),
                           label: capitalize(caseTypes[workingCase.type]),
                         }
                       : undefined
@@ -384,12 +381,19 @@ const Defendant = () => {
                         setWorkingCase={setWorkingCase}
                         onDelete={
                           workingCase.defendants &&
-                          workingCase.defendants.length > 1
+                          workingCase.defendants.length > 1 &&
+                          !(
+                            workingCase.origin === CaseOrigin.LOKE &&
+                            index === 0
+                          )
                             ? handleDeleteDefendant
                             : undefined
                         }
                         onChange={handleUpdateDefendant}
                         updateDefendantState={updateDefendantState}
+                        nationalIdImmutable={
+                          workingCase.origin === CaseOrigin.LOKE && index === 0
+                        }
                       />
                     </Box>
                   </motion.div>
@@ -438,6 +442,7 @@ const Defendant = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
+          nextButtonIcon="arrowForward"
           previousUrl={`${constants.CASES_ROUTE}`}
           onNextButtonClick={() =>
             handleNavigationTo(

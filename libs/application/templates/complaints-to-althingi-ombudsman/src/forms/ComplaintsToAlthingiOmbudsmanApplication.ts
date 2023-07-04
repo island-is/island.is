@@ -19,7 +19,10 @@ import {
   FormModes,
   FormValue,
 } from '@island.is/application/types'
-import { applicantInformationMultiField } from '@island.is/application/ui-forms'
+import {
+  applicantInformationMultiField,
+  buildFormConclusionSection,
+} from '@island.is/application/ui-forms'
 
 import Logo from '../assets/Logo'
 import {
@@ -89,7 +92,7 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
     buildSection({
       id: 'information',
       title: section.information,
-      children: [applicantInformationMultiField],
+      children: [applicantInformationMultiField()],
     }),
     buildSection({
       id: 'section.complainedFor',
@@ -477,17 +480,11 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
         }),
       ],
     }),
-    buildSection({
-      id: 'successfulSubmissionSection',
-      title: confirmation.general.sectionTitle,
-      children: [
-        buildCustomField({
-          id: 'successfulSubmission',
-          title: confirmation.general.sectionTitle,
-          component: 'ConfirmationScreen',
-          doesNotRequireAnswer: true,
-        }),
-      ],
+    buildFormConclusionSection({
+      alertTitle: confirmation.general.alertTitle,
+      expandableHeader: confirmation.information.title,
+      expandableIntro: confirmation.information.intro,
+      expandableDescription: confirmation.information.bulletList,
     }),
   ],
 })

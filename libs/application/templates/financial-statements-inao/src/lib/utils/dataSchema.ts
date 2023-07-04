@@ -76,10 +76,7 @@ const asset = z.object({
 })
 
 const equity = z.object({
-  totalEquity: z
-    .string()
-    .refine((x) => !!x, { params: m.required })
-    .refine((x) => checkIfNegative(x), { params: m.negativeNumberError }),
+  totalEquity: z.string().refine((x) => !!x, { params: m.required }),
 })
 
 const liability = z.object({
@@ -159,8 +156,7 @@ const cemetryExpense = z.object({
 const cemetryEquity = z.object({
   equityAtTheBeginningOfTheYear: z
     .string()
-    .refine((x) => !!x, { params: m.required })
-    .refine((x) => checkIfNegative(x), { params: m.negativeNumberError }),
+    .refine((x) => !!x, { params: m.required }),
   operationResult: z.string(),
   revaluationDueToPriceChanges: z
     .string()

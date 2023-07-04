@@ -1,43 +1,23 @@
 import { ApolloProvider } from '@apollo/client'
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
 
 import { initializeClient } from '@island.is/application/graphql'
 import { LocaleProvider } from '@island.is/localization'
-import { ErrorShell, HeaderInfoProvider } from '@island.is/application/ui-shell'
 import { defaultLanguage } from '@island.is/shared/constants'
-import { Authenticator } from '@island.is/auth/react'
-
-import { Application } from '../routes/Application'
-import { Applications } from '../routes/Applications'
-import { AssignApplication } from '../routes/AssignApplication'
-import { Layout } from '../components/Layout/Layout'
-import { environment } from '../environments'
+import { AuthProvider } from '@island.is/auth/react'
 import { FeatureFlagProvider } from '@island.is/react/feature-flags'
-import { UserProfileLocale } from '@island.is/shared/components'
+
+import { environment } from '../environments'
+import { BASE_PATH } from '../lib/routes'
+import { Router } from '../components/Router'
 
 export const App = () => (
   <ApolloProvider client={initializeClient(environment.baseApiUrl)}>
     <LocaleProvider locale={defaultLanguage} messages={{}}>
-      <BrowserRouter basename="/umsoknir">
-        <Authenticator>
-          <FeatureFlagProvider sdkKey={environment.featureFlagSdkKey}>
-            <HeaderInfoProvider>
-              <UserProfileLocale />
-              <Layout>
-                <Routes>
-                  <Route
-                    path="/tengjast-umsokn"
-                    element={<AssignApplication />}
-                  />
-                  <Route path="/:slug" element={<Applications />} />
-                  <Route path="/:slug/:id" element={<Application />} />
-                  <Route path="*" element={<ErrorShell />} />
-                </Routes>
-              </Layout>
-            </HeaderInfoProvider>
-          </FeatureFlagProvider>
-        </Authenticator>
-      </BrowserRouter>
+      <AuthProvider basePath={BASE_PATH}>
+        <FeatureFlagProvider sdkKey={environment.featureFlagSdkKey}>
+          <Router />
+        </FeatureFlagProvider>
+      </AuthProvider>
     </LocaleProvider>
   </ApolloProvider>
 )

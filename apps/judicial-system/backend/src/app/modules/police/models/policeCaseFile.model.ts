@@ -8,4 +8,7 @@ export class PoliceCaseFile implements TPoliceCaseFile {
 
   @ApiProperty()
   name!: string
+
+  @ApiProperty()
+  policeCaseNumber!: string
 }

@@ -1,9 +1,6 @@
-import {
-  buildCustomField,
-  buildForm,
-  buildSection,
-} from '@island.is/application/core'
+import { buildForm } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
+import { buildFormConclusionSection } from '@island.is/application/ui-forms'
 import { confirmation } from '../lib/messages'
 
 export const ComplaintsToAlthingiOmbudsmanSubmitted: Form = buildForm({
@@ -11,16 +8,11 @@ export const ComplaintsToAlthingiOmbudsmanSubmitted: Form = buildForm({
   title: 'Kvörtun til umboðsmanns Alþingis',
   mode: FormModes.APPROVED,
   children: [
-    buildSection({
-      id: 'successfulSubmissionSection',
-      title: confirmation.general.sectionTitle,
-      children: [
-        buildCustomField({
-          id: 'successfulSubmission',
-          title: confirmation.general.sectionTitle,
-          component: 'ConfirmationScreen',
-        }),
-      ],
+    buildFormConclusionSection({
+      alertTitle: confirmation.general.alertTitle,
+      expandableHeader: confirmation.information.title,
+      expandableIntro: confirmation.information.intro,
+      expandableDescription: confirmation.information.bulletList,
     }),
   ],
 })

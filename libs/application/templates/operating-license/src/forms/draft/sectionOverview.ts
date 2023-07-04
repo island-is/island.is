@@ -64,7 +64,11 @@ export const sectionOverview = buildMultiField({
       space: 'gutter',
     }),
     buildKeyValueField({
-      label: m.typeHotel,
+      label: ({ answers }: Application) =>
+        (answers.applicationInfo as Operation)?.operation ===
+        APPLICATION_TYPES.HOTEL
+          ? m.typeHotel
+          : m.typeResturant,
       width: 'half',
       value: ({ answers }: Application) =>
         (answers.applicationInfo as Operation)?.operation ===

@@ -5,7 +5,6 @@ import {
 } from '@island.is/clients/national-registry-v2'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { AuditService } from '@island.is/nest/audit'
-import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 import { Inject, Logger } from '@nestjs/common'
 import { isDefined } from '@island.is/shared/utils'
 import { PersonalRepresentativeDTO } from '../personal-representative/dto/personal-representative.dto'
@@ -19,7 +18,6 @@ export const UNKNOWN_NAME = 'Óþekkt nafn'
 
 export class DelegationsIncomingRepresentativeService {
   constructor(
-    private featureFlagService: FeatureFlagService,
     private prService: PersonalRepresentativeService,
     private nationalRegistryClient: NationalRegistryClientService,
     @Inject(LOGGER_PROVIDER)
@@ -43,15 +41,6 @@ export class DelegationsIncomingRepresentativeService {
     }
 
     try {
-      const feature = await this.featureFlagService.getValue(
-        Features.personalRepresentativeDelegations,
-        false,
-        user,
-      )
-      if (!feature) {
-        return []
-      }
-
       const toDelegationDTO = (
         name: string,
         representative: PersonalRepresentativeDTO,

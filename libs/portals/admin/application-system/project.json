@@ -1,0 +1,36 @@
+{
+  "root": "libs/portals/admin/application-system",
+  "sourceRoot": "libs/portals/admin/application-system/src",
+  "projectType": "library",
+  "tags": [
+    "scope:portals-admin",
+    "lib:portals-admin",
+    "lib:application-system"
+  ],
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": [
+          "libs/portals/admin/application-system//*.{ts,tsx,js,jsx}"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/portals/admin/application-system"],
+      "options": {
+        "jestConfig": "libs/portals/admin/application-system/jest.config.js",
+        "passWithNoTests": true
+      }
+    },
+    "schemas/codegen": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "output": "libs/portals/admin/application-system/src/**/*.codegen.ts",
+        "command": "graphql-codegen --config libs/portals/admin/application-system/codegen.yml"
+      }
+    }
+  }
+}

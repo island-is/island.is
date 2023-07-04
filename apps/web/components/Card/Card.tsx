@@ -1,4 +1,5 @@
-import React, { useContext } from 'react'
+import { Colors } from '@island.is/island-ui/theme'
+import React, { ReactNode, useContext } from 'react'
 import { useMeasure } from 'react-use'
 import cn from 'classnames'
 import { LinkProps } from 'next/link'
@@ -56,10 +57,10 @@ export const Card = ({
   const [ref, { width }] = useMeasure()
 
   const shouldStack = width < 360
-  const hasImage = image?.title.length > 0
+  const hasImage = image && image.title.length > 0
 
-  let borderColor = null
-  let titleColor = null
+  let borderColor: Colors
+  let titleColor: Colors
   let tagVariant = 'purple' as TagVariant
 
   switch (colorScheme) {
@@ -202,7 +203,7 @@ export const Card = ({
   return <Frame>{items}</Frame>
 }
 
-export const Frame = ({ children }) => {
+export const Frame = ({ children }: { children: ReactNode }) => {
   return (
     <Box
       className={cn(styles.card)}

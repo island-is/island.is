@@ -6,6 +6,7 @@ import {
   Query,
   QueryGetNamespaceArgs,
   QueryGetProjectPageArgs,
+  Stepper as StepperSchema,
 } from '@island.is/web/graphql/schema'
 import { GET_NAMESPACE_QUERY } from '../queries'
 import { Screen } from '../../types'
@@ -25,6 +26,7 @@ import {
   Form,
   TabSectionSlice,
   Webreader,
+  OneColumnTextSlice,
 } from '@island.is/web/components'
 import {
   Box,
@@ -44,6 +46,7 @@ import { webRichText } from '@island.is/web/utils/richText'
 interface PageProps {
   projectPage: Query['getProjectPage']
   namespace: Record<string, string>
+  projectNamespace: Record<string, string>
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   stepOptionsFromNamespace: { data: Record<string, any>[]; slug: string }[]
   stepperNamespace: Record<string, string>
@@ -53,6 +56,7 @@ interface PageProps {
 const ProjectPage: Screen<PageProps> = ({
   projectPage,
   namespace,
+  projectNamespace,
   stepperNamespace,
   stepOptionsFromNamespace,
   locale,
@@ -62,6 +66,8 @@ const ProjectPage: Screen<PageProps> = ({
     false,
   )
   const n = useNamespace(namespace)
+  const p = useNamespace(projectNamespace)
+
   const router = useRouter()
 
   const subpage = useMemo(
@@ -76,7 +82,10 @@ const ProjectPage: Screen<PageProps> = ({
 
   const baseRouterPath = router.asPath.split('?')[0].split('#')[0]
 
-  const navigationTitle = n('navigationTitle', 'Efnisyfirlit')
+  const navigationTitle = p(
+    'navigationTitle',
+    n('navigationTitle', 'Efnisyfirlit'),
+  )
 
   const renderSlicesAsTabs = subpage?.renderSlicesAsTabs ?? false
 
@@ -122,6 +131,9 @@ const ProjectPage: Screen<PageProps> = ({
           typename: 'projectpage',
         },
       ]
+
+  const bottomSlices =
+    (!subpage ? projectPage.bottomSlices : subpage.bottomSlices) ?? []
 
   return (
     <>
@@ -232,22 +244,41 @@ const ProjectPage: Screen<PageProps> = ({
             ),
           )}
       </ProjectWrapper>
-      {!subpage &&
-        projectPage.bottomSlices.map((slice) => {
+
+      {bottomSlices.map((slice, index) => {
+        if (
+          slice.__typename === 'OneColumnText' &&
+          index === bottomSlices.length - 1
+        ) {
           return (
-            <SliceMachine
-              key={slice.id}
-              slice={slice}
-              namespace={namespace}
-              slug={projectPage.slug}
-              fullWidth={true}
-              params={{
-                linkType: 'projectnews',
-                overview: 'projectnewsoverview',
-              }}
-            />
+            <Box paddingBottom={6} paddingTop={2}>
+              <OneColumnTextSlice slice={slice} />
+            </Box>
           )
-        })}
+        }
+        return (
+          <SliceMachine
+            key={slice.id}
+            slice={slice}
+            namespace={namespace}
+            slug={projectPage.slug}
+            fullWidth={true}
+            params={{
+              linkType: 'projectnews',
+              overview: 'projectnewsoverview',
+              containerPaddingBottom: 0,
+              containerPaddingTop: 0,
+              contentPaddingTop: 0,
+              contentPaddingBottom: 0,
+            }}
+            wrapWithGridContainer={
+              slice.__typename === 'ConnectedComponent' ||
+              slice.__typename === 'TabSection' ||
+              slice.__typename === 'PowerBiSlice'
+            }
+          />
+        )
+      })}
       <ProjectFooter projectPage={projectPage} />
     </>
   )
@@ -314,15 +345,18 @@ ProjectPage.getInitialProps = async ({ apolloClient, locale, query }) => {
 
   if (getProjectPage.stepper) {
     stepOptionsFromNamespace = await stepperUtils.getStepOptionsFromUIConfiguration(
-      getProjectPage.stepper,
+      getProjectPage.stepper as StepperSchema,
       apolloClient,
     )
   }
+
+  const projectNamespace = JSON.parse(getProjectPage.namespace?.fields ?? '{}')
 
   return {
     projectPage: getProjectPage,
     stepOptionsFromNamespace,
     namespace,
+    projectNamespace,
     stepperNamespace,
     showSearchInHeader: false,
     locale: locale as Locale,

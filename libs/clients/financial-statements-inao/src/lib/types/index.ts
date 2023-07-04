@@ -8,6 +8,7 @@ export type Election = {
   name: string
   electionDate: Date
   genitiveName?: string
+  minimumAge: number
 }
 
 export type ElectionInfo = {

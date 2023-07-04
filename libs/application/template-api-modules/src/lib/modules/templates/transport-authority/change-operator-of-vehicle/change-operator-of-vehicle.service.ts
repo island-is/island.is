@@ -1,8 +1,11 @@
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import { SharedTemplateApiService } from '../../../shared'
 import { TemplateApiModuleActionProps } from '../../../../types'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
-import { ApplicationTypes } from '@island.is/application/types'
+import {
+  ApplicationTypes,
+  InstitutionNationalIds,
+} from '@island.is/application/types'
 import { EmailRecipient, EmailRole } from './types'
 import {
   getAllRoles,
@@ -11,14 +14,22 @@ import {
 } from './change-operator-of-vehicle.utils'
 import {
   ChargeFjsV2ClientService,
-  getChargeId,
+  getPaymentIdFromExternalData,
 } from '@island.is/clients/charge-fjs-v2'
 import {
   ChangeOperatorOfVehicleAnswers,
   getChargeItemCodes,
 } from '@island.is/application/templates/transport-authority/change-operator-of-vehicle'
-import { VehicleOperatorsClient } from '@island.is/clients/transport-authority/vehicle-operators'
+import {
+  OperatorChangeValidation,
+  VehicleOperatorsClient,
+} from '@island.is/clients/transport-authority/vehicle-operators'
 import { VehicleOwnerChangeClient } from '@island.is/clients/transport-authority/vehicle-owner-change'
+import {
+  VehicleDebtStatus,
+  VehicleServiceFjsV1Client,
+} from '@island.is/clients/vehicle-service-fjs-v1'
+import { VehicleSearchApi } from '@island.is/clients/vehicles'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { applicationCheck } from '@island.is/application/templates/transport-authority/change-operator-of-vehicle'
 import {
@@ -31,22 +42,133 @@ import {
   generateApplicationSubmittedSms,
   generateApplicationRejectedSms,
 } from './smsGenerators'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
+import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
+import { coreErrorMessages } from '@island.is/application/core'
 
 @Injectable()
 export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
   constructor(
+    @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private readonly vehicleOperatorsClient: VehicleOperatorsClient,
     private readonly chargeFjsV2ClientService: ChargeFjsV2ClientService,
     private readonly vehicleOwnerChangeClient: VehicleOwnerChangeClient,
+    private readonly vehicleServiceFjsV1Client: VehicleServiceFjsV1Client,
+    private readonly vehiclesApi: VehicleSearchApi,
   ) {
     super(ApplicationTypes.CHANGE_OPERATOR_OF_VEHICLE)
   }
 
+  private vehiclesApiWithAuth(auth: Auth) {
+    return this.vehiclesApi.withMiddleware(new AuthMiddleware(auth))
+  }
+
+  async getCurrentVehiclesWithOperatorChangeChecks({
+    auth,
+  }: TemplateApiModuleActionProps) {
+    const result = await this.vehiclesApiWithAuth(auth).currentVehiclesGet({
+      persidNo: auth.nationalId,
+      showOwned: true,
+      showCoowned: false,
+      showOperated: false,
+    })
+
+    // Validate that user has at least 1 vehicle
+    if (!result || !result.length) {
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.vehiclesEmptyListOwner,
+          summary: coreErrorMessages.vehiclesEmptyListOwner,
+        },
+        400,
+      )
+    }
+
+    return await Promise.all(
+      result?.map(async (vehicle) => {
+        let validation: OperatorChangeValidation | undefined
+        let debtStatus: VehicleDebtStatus | undefined
+
+        // Only validate if fewer than 5 items
+        if (result.length <= 5) {
+          // Get debt status
+          debtStatus = await this.vehicleServiceFjsV1Client.getVehicleDebtStatus(
+            auth,
+            vehicle.permno || '',
+          )
+
+          // Get validation
+          validation = await this.vehicleOperatorsClient.validateVehicleForOperatorChange(
+            auth,
+            vehicle.permno || '',
+          )
+        }
+
+        return {
+          permno: vehicle.permno || undefined,
+          make: vehicle.make || undefined,
+          color: vehicle.color || undefined,
+          role: vehicle.role || undefined,
+          isDebtLess: debtStatus?.isDebtLess,
+          validationErrorMessages: validation?.hasError
+            ? validation.errorMessages
+            : null,
+        }
+      }),
+    )
+  }
+
+  async validateApplication({
+    application,
+    auth,
+  }: TemplateApiModuleActionProps) {
+    const answers = application.answers as ChangeOperatorOfVehicleAnswers
+
+    const permno = answers?.pickVehicle?.plate
+
+    const filteredOldOperators = answers?.oldOperators.filter(
+      ({ wasRemoved }) => wasRemoved !== 'true',
+    )
+    const filteredNewOperators = answers?.operators.filter(
+      ({ wasRemoved }) => wasRemoved !== 'true',
+    )
+    const filteredOperators = [
+      ...(filteredOldOperators ? filteredOldOperators : []),
+      ...(filteredNewOperators ? filteredNewOperators : []),
+    ]
+
+    const operators = filteredOperators.map((operator) => ({
+      ssn: operator.nationalId,
+      isMainOperator:
+        filteredOperators.length > 1
+          ? operator.nationalId === answers?.mainOperator?.nationalId
+          : true,
+    }))
+
+    const result = await this.vehicleOperatorsClient.validateAllForOperatorChange(
+      auth,
+      permno,
+      operators,
+    )
+
+    // If we get any error messages, we will just throw an error with a default title
+    // We will fetch these error messages again through graphql in the template, to be able
+    // to translate the error message
+    if (result.hasError && result.errorMessages?.length) {
+      throw new TemplateApiError(
+        {
+          title: applicationCheck.validation.alertTitle,
+          summary: applicationCheck.validation.alertTitle,
+        },
+        400,
+      )
+    }
+  }
+
   async createCharge({ application, auth }: TemplateApiModuleActionProps) {
     try {
-      const SAMGONGUSTOFA_NATIONAL_ID = '5405131040'
-
       const answers = application.answers as ChangeOperatorOfVehicleAnswers
 
       const chargeItemCodes = getChargeItemCodes(answers)
@@ -58,7 +180,7 @@ export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
       const result = this.sharedTemplateAPIService.createCharge(
         auth,
         application.id,
-        SAMGONGUSTOFA_NATIONAL_ID,
+        InstitutionNationalIds.SAMGONGUSTOFA,
         chargeItemCodes,
         [{ name: 'vehicle', value: answers?.pickVehicle?.plate }],
       )
@@ -110,18 +232,30 @@ export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
     // 2b. Send email/sms individually to each recipient
     for (let i = 0; i < recipientList.length; i++) {
       if (recipientList[i].email) {
-        await this.sharedTemplateAPIService.sendEmail(
-          (props) => generateRequestReviewEmail(props, recipientList[i]),
-          application,
-        )
+        await this.sharedTemplateAPIService
+          .sendEmail(
+            (props) => generateRequestReviewEmail(props, recipientList[i]),
+            application,
+          )
+          .catch(() => {
+            this.logger.error(
+              `Error sending email about initReview to ${recipientList[i].email}`,
+            )
+          })
       }
 
       if (recipientList[i].phone) {
-        await this.sharedTemplateAPIService.sendSms(
-          (_, options) =>
-            generateRequestReviewSms(application, options, recipientList[i]),
-          application,
-        )
+        await this.sharedTemplateAPIService
+          .sendSms(
+            (_, options) =>
+              generateRequestReviewSms(application, options, recipientList[i]),
+            application,
+          )
+          .catch(() => {
+            this.logger.error(
+              `Error sending sms about initReview to ${recipientList[i].phone}`,
+            )
+          })
       }
     }
 
@@ -133,16 +267,9 @@ export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
     auth,
   }: TemplateApiModuleActionProps): Promise<void> {
     // 1. Delete charge so that the seller gets reimburshed
-    const chargeId = getChargeId(application)
+    const chargeId = getPaymentIdFromExternalData(application)
     if (chargeId) {
-      const status = await this.chargeFjsV2ClientService.getChargeStatus(
-        chargeId,
-      )
-
-      // Make sure charge has not been deleted yet (will otherwise end in error here and wont continue)
-      if (status !== 'cancelled') {
-        await this.chargeFjsV2ClientService.deleteCharge(chargeId)
-      }
+      this.chargeFjsV2ClientService.deleteCharge(chargeId)
     }
 
     // 2. Notify everyone in the process that the application has been withdrawn
@@ -155,27 +282,39 @@ export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
     const rejectedByRecipient = getRecipientBySsn(answers, auth.nationalId)
     for (let i = 0; i < recipientList.length; i++) {
       if (recipientList[i].email) {
-        await this.sharedTemplateAPIService.sendEmail(
-          (props) =>
-            generateApplicationRejectedEmail(
-              props,
-              recipientList[i],
-              rejectedByRecipient,
-            ),
-          application,
-        )
+        await this.sharedTemplateAPIService
+          .sendEmail(
+            (props) =>
+              generateApplicationRejectedEmail(
+                props,
+                recipientList[i],
+                rejectedByRecipient,
+              ),
+            application,
+          )
+          .catch(() => {
+            this.logger.error(
+              `Error sending email about rejectApplication to ${recipientList[i].email}`,
+            )
+          })
       }
 
       if (recipientList[i].phone) {
-        await this.sharedTemplateAPIService.sendSms(
-          () =>
-            generateApplicationRejectedSms(
-              application,
-              recipientList[i],
-              rejectedByRecipient,
-            ),
-          application,
-        )
+        await this.sharedTemplateAPIService
+          .sendSms(
+            () =>
+              generateApplicationRejectedSms(
+                application,
+                recipientList[i],
+                rejectedByRecipient,
+              ),
+            application,
+          )
+          .catch(() => {
+            this.logger.error(
+              `Error sending sms about rejectApplication to ${recipientList[i].phone}`,
+            )
+          })
       }
     }
   }
@@ -214,6 +353,7 @@ export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
     // 2. Submit the application
 
     const answers = application.answers as ChangeOperatorOfVehicleAnswers
+
     const permno = answers?.pickVehicle?.plate
 
     // Note: Need to be sure that the user that created the application is the seller when submitting application to SGS
@@ -231,42 +371,26 @@ export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
       )
     }
 
-    const mainOperatorNationalId = answers?.mainOperator?.nationalId
-    const newOperators = answers?.operators.map((operator) => ({
-      startDate: new Date(),
-      endDate: null,
+    const filteredOldOperators = answers?.oldOperators.filter(
+      ({ wasRemoved }) => wasRemoved !== 'true',
+    )
+    const filteredNewOperators = answers?.operators.filter(
+      ({ wasRemoved }) => wasRemoved !== 'true',
+    )
+    const filteredOperators = [
+      ...(filteredOldOperators ? filteredOldOperators : []),
+      ...(filteredNewOperators ? filteredNewOperators : []),
+    ]
+
+    const operators = filteredOperators.map((operator) => ({
       ssn: operator.nationalId,
       isMainOperator:
-        answers.operators.length > 1
-          ? operator.nationalId === mainOperatorNationalId
+        filteredOperators.length > 1
+          ? operator.nationalId === answers?.mainOperator?.nationalId
           : true,
     }))
 
-    // Add a second to the time because the api rejects the date with time 00:00:00:00
-    const newOldOperators = answers?.oldOperators?.map((oldOperator) => ({
-      startDate: oldOperator.startDate
-        ? new Date(new Date(oldOperator.startDate).getTime() + 60000)
-        : new Date(),
-      endDate: oldOperator.wasRemoved === 'false' ? null : new Date(),
-      ssn: oldOperator.nationalId,
-      isMainOperator:
-        answers.operators.length > 1
-          ? oldOperator.nationalId === mainOperatorNationalId
-          : true,
-    }))
-
-    if (newOperators.length === 0) {
-      await this.vehicleOperatorsClient.updateOperators(
-        auth,
-        permno,
-        newOldOperators,
-      )
-    } else {
-      await this.vehicleOperatorsClient.saveOperators(auth, permno, [
-        ...newOperators,
-        ...newOldOperators,
-      ])
-    }
+    await this.vehicleOperatorsClient.saveOperators(auth, permno, operators)
 
     // 3. Notify everyone in the process that the application has successfully been submitted
 
@@ -276,17 +400,31 @@ export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
     // 3b. Send email/sms individually to each recipient about success of submitting application
     for (let i = 0; i < recipientList.length; i++) {
       if (recipientList[i].email) {
-        await this.sharedTemplateAPIService.sendEmail(
-          (props) => generateApplicationSubmittedEmail(props, recipientList[i]),
-          application,
-        )
+        await this.sharedTemplateAPIService
+          .sendEmail(
+            (props) =>
+              generateApplicationSubmittedEmail(props, recipientList[i]),
+            application,
+          )
+          .catch(() => {
+            this.logger.error(
+              `Error sending email about submitApplication to ${recipientList[i].email}`,
+            )
+          })
       }
 
       if (recipientList[i].phone) {
-        await this.sharedTemplateAPIService.sendSms(
-          () => generateApplicationSubmittedSms(application, recipientList[i]),
-          application,
-        )
+        await this.sharedTemplateAPIService
+          .sendSms(
+            () =>
+              generateApplicationSubmittedSms(application, recipientList[i]),
+            application,
+          )
+          .catch(() => {
+            this.logger.error(
+              `Error sending sms about submitApplication to ${recipientList[i].phone}`,
+            )
+          })
       }
     }
   }

@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect, useState } from 'react'
+import React, { useCallback, useContext, useState } from 'react'
 import { MessageDescriptor, useIntl } from 'react-intl'
 import router from 'next/router'
 
@@ -9,10 +9,6 @@ import {
   PageLayout,
   ProsecutorCaseInfo,
 } from '@island.is/judicial-system-web/src/components'
-import {
-  RestrictionCaseProsecutorSubsections,
-  Sections,
-} from '@island.is/judicial-system-web/src/types'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import {
   core,
@@ -24,7 +20,11 @@ import {
   removeTabsValidateAndSet,
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
-import { useCase, useDeb } from '@island.is/judicial-system-web/src/utils/hooks'
+import {
+  useCase,
+  useDeb,
+  useOnceOn,
+} from '@island.is/judicial-system-web/src/utils/hooks'
 import { CaseType } from '@island.is/judicial-system/types'
 import { enumerate, formatDOB } from '@island.is/judicial-system/formatters'
 import { isPoliceDemandsStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
@@ -57,11 +57,10 @@ const PoliceDemands: React.FC = () => {
   const [demandsEM, setDemandsEM] = useState<string>('')
   const [lawsBrokenEM, setLawsBrokenEM] = useState<string>('')
   const [legalBasisEM, setLegalBasisEM] = useState<string>('')
-  const [initialAutoFillDone, setInitialAutoFillDone] = useState(false)
 
   useDeb(workingCase, ['demands', 'lawsBroken', 'legalBasis'])
 
-  useEffect(() => {
+  const initialize = useCallback(() => {
     const courtClaimPrefill: Partial<
       Record<
         CaseType,
@@ -118,61 +117,52 @@ const PoliceDemands: React.FC = () => {
       },
     }
 
-    if (isCaseUpToDate && !initialAutoFillDone) {
-      if (workingCase.defendants && workingCase.defendants.length > 0) {
-        const courtClaim = courtClaimPrefill[workingCase.type]
-        const courtClaimText = courtClaim
-          ? formatMessage(courtClaim.text, {
-              ...(courtClaim.format?.accused && {
-                accused: enumerate(
-                  workingCase.defendants.map(
-                    (defendant) =>
-                      `${defendant.name} ${`${formatDOB(
-                        defendant.nationalId,
-                        defendant.noNationalId,
-                        '',
-                      )}`.trim()}`,
-                  ),
-                  formatMessage(core.and),
+    if (workingCase.defendants && workingCase.defendants.length > 0) {
+      const courtClaim = courtClaimPrefill[workingCase.type]
+      const courtClaimText = courtClaim
+        ? formatMessage(courtClaim.text, {
+            ...(courtClaim.format?.accused && {
+              accused: enumerate(
+                workingCase.defendants.map(
+                  (defendant) =>
+                    `${defendant.name} ${`${formatDOB(
+                      defendant.nationalId,
+                      defendant.noNationalId,
+                      '',
+                    )}`.trim()}`,
                 ),
-              }),
-              ...(courtClaim.format?.address && {
-                address: workingCase.defendants.find((x) => x.address)?.address,
-              }),
-              ...(courtClaim.format?.court && {
-                court: workingCase.court?.name,
-              }),
-              ...(courtClaim.format?.institution && {
-                institution: formatInstitutionName(
-                  workingCase.creatingProsecutor?.institution?.name,
-                ),
-              }),
-              ...(courtClaim.format?.live && {
-                live: workingCase.defendants.length,
-              }),
-              ...(courtClaim.format?.year && {
-                year: new Date().getFullYear(),
-              }),
-            })
-          : undefined
+                formatMessage(core.and),
+              ),
+            }),
+            ...(courtClaim.format?.address && {
+              address: workingCase.defendants.find((x) => x.address)?.address,
+            }),
+            ...(courtClaim.format?.court && {
+              court: workingCase.court?.name,
+            }),
+            ...(courtClaim.format?.institution && {
+              institution: formatInstitutionName(
+                workingCase.creatingProsecutor?.institution?.name,
+              ),
+            }),
+            ...(courtClaim.format?.live && {
+              live: workingCase.defendants.length,
+            }),
+            ...(courtClaim.format?.year && {
+              year: new Date().getFullYear(),
+            }),
+          })
+        : undefined
 
-        setAndSendCaseToServer(
-          [{ demands: courtClaimText }],
-          workingCase,
-          setWorkingCase,
-        )
-      }
-
-      setInitialAutoFillDone(true)
+      setAndSendCaseToServer(
+        [{ demands: courtClaimText }],
+        workingCase,
+        setWorkingCase,
+      )
     }
-  }, [
-    setAndSendCaseToServer,
-    formatMessage,
-    initialAutoFillDone,
-    isCaseUpToDate,
-    setWorkingCase,
-    workingCase,
-  ])
+  }, [setAndSendCaseToServer, formatMessage, setWorkingCase, workingCase])
+
+  useOnceOn(isCaseUpToDate, initialize)
 
   const handleNavigationTo = useCallback(
     (destination: string) => router.push(`${destination}/${workingCase.id}`),
@@ -184,13 +174,9 @@ const PoliceDemands: React.FC = () => {
   return (
     <PageLayout
       workingCase={workingCase}
-      activeSection={
-        workingCase?.parentCase ? Sections.EXTENSION : Sections.PROSECUTOR
-      }
-      activeSubSection={RestrictionCaseProsecutorSubsections.POLICE_DEMANDS}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
-      isExtension={workingCase?.parentCase && true}
+      isExtension={!!workingCase.parentCase}
       isValid={stepIsValid}
       onNavigationTo={handleNavigationTo}
     >
@@ -338,6 +324,7 @@ const PoliceDemands: React.FC = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
+          nextButtonIcon="arrowForward"
           previousUrl={`${constants.INVESTIGATION_CASE_HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`}
           onNextButtonClick={() =>
             handleNavigationTo(constants.INVESTIGATION_CASE_POLICE_REPORT_ROUTE)

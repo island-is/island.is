@@ -1,4 +1,7 @@
+import graphqlTypeJson from 'graphql-type-json'
 import { Field, ObjectType, ID } from '@nestjs/graphql'
+import { CacheField } from '@island.is/nest/graphql'
+import { SystemMetadata } from '@island.is/shared/types'
 import { IArticle } from '../generated/contentfulTypes'
 import { Image, mapImage } from './image.model'
 import { Link, mapLink } from './link.model'
@@ -9,7 +12,6 @@ import { Organization, mapOrganization } from './organization.model'
 import { SubArticle, mapSubArticle } from './subArticle.model'
 import { mapDocument, SliceUnion } from '../unions/slice.union'
 import { mapProcessEntry, ProcessEntry } from './processEntry.model'
-import { SystemMetadata } from '@island.is/shared/types'
 import { mapStepper, Stepper } from './stepper.model'
 import { AlertBanner, mapAlertBanner } from './alertBanner.model'
 
@@ -33,62 +35,65 @@ export class Article {
   @Field({ nullable: true })
   importance?: number
 
-  @Field(() => [SliceUnion])
+  @CacheField(() => [SliceUnion])
   body: Array<typeof SliceUnion> = []
 
-  @Field(() => ProcessEntry, { nullable: true })
+  @CacheField(() => ProcessEntry, { nullable: true })
   processEntry?: ProcessEntry | null
 
-  @Field(() => ArticleCategory, { nullable: true })
+  @CacheField(() => ArticleCategory, { nullable: true })
   category?: ArticleCategory | null
 
-  @Field(() => [ArticleCategory], { nullable: true })
+  @CacheField(() => [ArticleCategory], { nullable: true })
   otherCategories?: Array<ArticleCategory>
 
-  @Field(() => ArticleGroup, { nullable: true })
+  @CacheField(() => ArticleGroup, { nullable: true })
   group?: ArticleGroup | null
 
-  @Field(() => [ArticleGroup], { nullable: true })
+  @CacheField(() => [ArticleGroup], { nullable: true })
   otherGroups?: Array<ArticleGroup>
 
-  @Field(() => ArticleSubgroup, { nullable: true })
+  @CacheField(() => ArticleSubgroup, { nullable: true })
   subgroup?: ArticleSubgroup | null
 
-  @Field(() => [ArticleSubgroup], { nullable: true })
+  @CacheField(() => [ArticleSubgroup], { nullable: true })
   otherSubgroups?: Array<ArticleSubgroup>
 
-  @Field(() => [Organization], { nullable: true })
+  @CacheField(() => [Organization], { nullable: true })
   organization?: Array<Organization>
 
-  @Field(() => [Organization], { nullable: true })
+  @CacheField(() => [Organization], { nullable: true })
   relatedOrganization?: Array<Organization>
 
-  @Field(() => [Organization], { nullable: true })
+  @CacheField(() => [Organization], { nullable: true })
   responsibleParty?: Array<Organization>
 
-  @Field(() => [SubArticle])
+  @CacheField(() => [SubArticle])
   subArticles: Array<SubArticle> = []
 
-  @Field(() => [Article], { nullable: true })
+  @CacheField(() => [Article], { nullable: true })
   relatedArticles?: Array<Article>
 
-  @Field(() => [Link], { nullable: true })
+  @CacheField(() => [Link], { nullable: true })
   relatedContent?: Array<Link>
 
-  @Field(() => Image, { nullable: true })
+  @CacheField(() => Image, { nullable: true })
   featuredImage?: Image | null
 
   @Field({ nullable: true })
   showTableOfContents?: boolean
 
-  @Field(() => Stepper, { nullable: true })
+  @CacheField(() => Stepper, { nullable: true })
   stepper?: Stepper | null
 
   @Field({ nullable: true })
   processEntryButtonText?: string
 
-  @Field(() => AlertBanner, { nullable: true })
+  @CacheField(() => AlertBanner, { nullable: true })
   alertBanner?: AlertBanner | null
+
+  @Field(() => graphqlTypeJson, { nullable: true })
+  activeTranslations?: Record<string, boolean>
 }
 
 export const mapArticle = ({
@@ -130,7 +135,7 @@ export const mapArticle = ({
     )
     .map(mapOrganization),
   subArticles: (fields.subArticles ?? [])
-    .filter((subArticle) => subArticle.fields?.title && subArticle.fields?.slug)
+    .filter((subArticle) => subArticle.fields?.title && subArticle.fields?.url)
     .map(mapSubArticle),
   relatedArticles: [], // populated by resolver
   relatedContent: (fields.relatedContent ?? []).map(mapLink),
@@ -139,4 +144,5 @@ export const mapArticle = ({
   stepper: fields.stepper ? mapStepper(fields.stepper) : null,
   processEntryButtonText: fields.processEntryButtonText ?? '',
   alertBanner: fields.alertBanner ? mapAlertBanner(fields.alertBanner) : null,
+  activeTranslations: fields.activeTranslations ?? { en: true },
 })

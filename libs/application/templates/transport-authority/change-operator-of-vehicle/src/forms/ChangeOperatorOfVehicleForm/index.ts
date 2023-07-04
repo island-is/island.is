@@ -12,10 +12,12 @@ import { conclusion, payment } from '../../lib/messages'
 import { getChargeItemCodes } from '../../utils'
 import { externalDataSection } from './externalDataSection'
 import { informationSection } from './InformationSection'
+import { Logo } from '../../assets/Logo'
 
 export const ChangeOperatorOfVehicleForm: Form = buildForm({
   id: 'ChangeOperatorOfVehicleFormDraft',
   title: '',
+  logo: Logo,
   mode: FormModes.DRAFT,
   children: [
     externalDataSection,
@@ -33,6 +35,11 @@ export const ChangeOperatorOfVehicleForm: Form = buildForm({
               id: 'PaymentChargeOverview',
               title: '',
               component: 'PaymentChargeOverview',
+            }),
+            buildCustomField({
+              id: 'ValidationErrorMessages',
+              title: '',
+              component: 'ValidationErrorMessages',
             }),
             buildSubmitField({
               id: 'submit',
@@ -55,9 +62,11 @@ export const ChangeOperatorOfVehicleForm: Form = buildForm({
                         chargeItemCode: string
                       },
                     ]
-                    const items = allItems.filter(({ chargeItemCode }) =>
-                      chargeItemCodes.includes(chargeItemCode),
-                    )
+                    const items = chargeItemCodes.map((chargeItemCode) => {
+                      return allItems.find(
+                        (item) => item.chargeItemCode === chargeItemCode,
+                      )
+                    })
                     return items.length > 0
                   },
                 },

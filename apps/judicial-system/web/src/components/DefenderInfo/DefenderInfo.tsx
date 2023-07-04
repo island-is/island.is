@@ -2,18 +2,18 @@ import React, { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box, Checkbox, Tooltip } from '@island.is/island-ui/core'
-
 import {
-  Case,
   isCourtRole,
   isInvestigationCase,
   isRestrictionCase,
+} from '@island.is/judicial-system/types'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
+import {
   SessionArrangements,
   UserRole,
-} from '@island.is/judicial-system/types'
+} from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { defenderInfo } from './DefenderInfo.strings'
-
 import { BlueBox, SectionHeading } from '..'
 import { useCase } from '../../utils/hooks'
 import { UserContext } from '../UserProvider/UserProvider'
@@ -105,21 +105,23 @@ const DefenderInfo: React.FC<Props> = (props) => {
               name="sendRequestToDefender"
               label={formatMessage(
                 isRestrictionCase(workingCase.type)
-                  ? defenderInfo.restrictionCases.sections.sendRequest.label
-                  : defenderInfo.investigationCases.sections.sendRequest.label,
+                  ? defenderInfo.restrictionCases.sections.defenderRequestAccess
+                      .label
+                  : defenderInfo.investigationCases.sections
+                      .defenderRequestAccess.label,
               )}
               tooltip={
                 isRestrictionCase(workingCase.type)
                   ? formatMessage(
-                      defenderInfo.restrictionCases.sections.sendRequest
-                        .tooltip,
+                      defenderInfo.restrictionCases.sections
+                        .defenderRequestAccess.tooltip,
                       {
                         caseType: workingCase.type,
                       },
                     )
                   : formatMessage(
-                      defenderInfo.restrictionCases.sections.sendRequest
-                        .tooltip,
+                      defenderInfo.investigationCases.sections
+                        .defenderRequestAccess.tooltip,
                     )
               }
               checked={workingCase.sendRequestToDefender}

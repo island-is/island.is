@@ -4,6 +4,7 @@
 // May need an update whenever @nrwl/jest changes.
 
 const path_1 = require('path')
+const fs = require('fs')
 const ts = require('typescript')
 const defaultResolver_1 = require('jest-resolve/build/defaultResolver')
 
@@ -44,7 +45,16 @@ module.exports = function (path, options) {
     return defaultResolver_1.default(path, options)
   } catch (e) {
     // Fallback to using typescript
-    compilerSetup = compilerSetup || getCompilerSetup(options.rootDir)
+    const workspace = JSON.parse(
+      fs.readFileSync(
+        path_1.join(process.env.NX_WORKSPACE_ROOT, 'workspace.json'),
+        { encoding: 'utf-8' },
+      ),
+    )
+    const projectRoot = workspace.projects[process.env.NX_TASK_TARGET_PROJECT]
+    compilerSetup =
+      compilerSetup ||
+      getCompilerSetup((options.rootDir ?? options.basedir) + `/${projectRoot}`)
     const { compilerOptions, host } = compilerSetup
     return ts.resolveModuleName(path, options.basedir, compilerOptions, host)
       .resolvedModule.resolvedFileName

@@ -5,6 +5,7 @@ import { NationalRegistryXRoadModule } from '@island.is/api/domains/national-reg
 import { IdentityClientModule } from '@island.is/clients/identity'
 
 import { IdentityResolver } from './identity.resolver'
+import { IdentityLoader } from './identity.loader'
 
 @Module({
   imports: [
@@ -12,7 +13,7 @@ import { IdentityResolver } from './identity.resolver'
     CompanyRegistryModule,
     IdentityClientModule,
   ],
-  providers: [IdentityResolver],
-  exports: [],
+  providers: [IdentityResolver, IdentityLoader],
+  exports: [IdentityLoader],
 })
 export class IdentityModule {}

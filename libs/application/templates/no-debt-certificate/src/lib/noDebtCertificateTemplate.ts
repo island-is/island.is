@@ -10,16 +10,13 @@ import {
 } from '@island.is/application/types'
 import {
   EphemeralStateLifeCycle,
+  coreHistoryMessages,
   pruneAfterDays,
 } from '@island.is/application/core'
 import { Events, States, Roles } from './constants'
 import { z } from 'zod'
 import { m } from './messages'
-import {
-  NationalRegistryUserApi,
-  UserProfileApi,
-  NoDebtCertificateApi,
-} from '../dataProviders'
+import { NoDebtCertificateApi } from '../dataProviders'
 import { AuthDelegationType } from '@island.is/shared/types'
 
 const NoDebtCertificateSchema = z.object({
@@ -38,7 +35,6 @@ const template: ApplicationTemplate<
     ApplicationConfigurations.NoDebtCertificate.translation,
   ],
   dataSchema: NoDebtCertificateSchema,
-  readyForProduction: true,
   allowedDelegations: [
     {
       type: AuthDelegationType.ProcurationHolder,
@@ -56,6 +52,12 @@ const template: ApplicationTemplate<
               label: m.actionCardDraft,
               variant: 'blue',
             },
+            historyLogs: [
+              {
+                logMessage: coreHistoryMessages.applicationStarted,
+                onEvent: DefaultEvents.SUBMIT,
+              },
+            ],
           },
           progress: 0.25,
           lifecycle: EphemeralStateLifeCycle,
@@ -74,11 +76,7 @@ const template: ApplicationTemplate<
                 },
               ],
               write: 'all',
-              api: [
-                NationalRegistryUserApi,
-                UserProfileApi,
-                NoDebtCertificateApi,
-              ],
+              api: [NoDebtCertificateApi],
             },
           ],
         },
@@ -96,6 +94,10 @@ const template: ApplicationTemplate<
             tag: {
               label: m.actionCardDone,
               variant: 'blueberry',
+            },
+            pendingAction: {
+              title: m.pendingActionApplicationCompletedTitle,
+              displayStatus: 'success',
             },
           },
           roles: [

@@ -1,15 +1,17 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
 
-import { CaseListEntry } from '@island.is/judicial-system/types'
+import { Box, Text, FocusableBox } from '@island.is/island-ui/core'
+
 import {
   displayFirstPlusRemaining,
   formatDOB,
 } from '@island.is/judicial-system/formatters'
-import { Box, Text, FocusableBox, Tag } from '@island.is/island-ui/core'
+import { TempCaseListEntry as CaseListEntry } from '@island.is/judicial-system-web/src/types'
+import TagCaseState from '@island.is/judicial-system-web/src/components/TagCaseState/TagCaseState'
 
+import { displayCaseType } from './utils'
 import * as styles from './MobileCase.css'
-import { displayCaseType, mapCaseStateToTagVariant } from './utils'
 
 interface CategoryCardProps {
   heading: string | React.ReactNode
@@ -55,22 +57,19 @@ const MobileCase: React.FC<Props> = ({
   children,
 }) => {
   const { formatMessage } = useIntl()
-  const tag = mapCaseStateToTagVariant(
-    formatMessage,
-    theCase.state,
-    isCourtRole,
-    theCase.type,
-    theCase.isValidToDateInThePast,
-    theCase.courtDate,
-  )
+
   return (
     <CategoryCard
       heading={displayCaseType(formatMessage, theCase.type, theCase.decision)}
       onClick={onClick}
       tags={[
-        <Tag variant={tag.color} outlined disabled key={tag.text}>
-          {tag.text}
-        </Tag>,
+        <TagCaseState
+          caseState={theCase.state}
+          caseType={theCase.type}
+          isCourtRole={isCourtRole}
+          isValidToDateInThePast={theCase.isValidToDateInThePast}
+          courtDate={theCase.courtDate}
+        />,
       ]}
     >
       <Text title={theCase.policeCaseNumbers.join(', ')}>

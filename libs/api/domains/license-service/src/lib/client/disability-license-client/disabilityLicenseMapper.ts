@@ -7,31 +7,31 @@ import {
   GenericUserLicensePayload,
 } from '../../licenceService.type'
 import { Locale } from '@island.is/shared/types'
-import { i18n } from '../../utils/translations'
+import { getLabel } from '../../utils/translations'
 import { OrorkuSkirteini } from '@island.is/clients/disability-license'
 
 export const parseDisabilityLicensePayload = (
   license: OrorkuSkirteini,
   locale: Locale = 'is',
-  labels?: GenericLicenseLabels,
+  labels: GenericLicenseLabels,
 ): GenericUserLicensePayload | null => {
   if (!license) return null
-  const label = labels?.labels
+  const label = labels.labels
   const data: Array<GenericLicenseDataField> = [
     {
+      name: getLabel('basicInfoLicense', locale, label),
       type: GenericLicenseDataFieldType.Value,
-      name: 'Grunnupplýsingar örorkuskírteinis',
-      label: label ? label['fullName'] : i18n.fullName[locale],
+      label: getLabel('fullName', locale, label),
       value: license.nafn ?? '',
     },
     {
       type: GenericLicenseDataFieldType.Value,
-      label: label ? label['publisher'] : i18n.publisher[locale],
-      value: 'Tryggingastofnun ríkisins',
+      label: getLabel('publisher', locale, label),
+      value: 'Tryggingastofnun',
     },
     {
       type: GenericLicenseDataFieldType.Value,
-      label: label ? label['validTo'] : i18n.validTo[locale],
+      label: getLabel('validTo', locale, label),
       value: license.gildirtil?.toISOString() ?? '',
     },
   ]
@@ -57,7 +57,7 @@ export const createPkPassDataInput = (license: OrorkuSkirteini) => {
 
   return [
     {
-      identifier: 'name',
+      identifier: 'nafn',
       value: license.nafn ?? '',
     },
     {

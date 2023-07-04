@@ -76,12 +76,17 @@ export const getRecipients = (
   }
 
   // Operator
-  const operators = answers.operators
+  // Note: Since old operators that were removed have no role, it is okay
+  // to just filter them out
+  // (this also means they will not get any emails about this change)
+  const operators = answers.operators?.filter(
+    ({ wasRemoved }) => wasRemoved !== 'true',
+  )
   if (roles.includes(EmailRole.operator) && operators) {
     for (let i = 0; i < operators.length; i++) {
       recipientList.push({
-        ssn: operators[i].nationalId,
-        name: operators[i].name,
+        ssn: operators[i].nationalId!,
+        name: operators[i].name!,
         email: operators[i].email,
         phone: operators[i].phone,
         role: EmailRole.operator,
@@ -127,13 +132,17 @@ export const getRecipientBySsn = (
   }
 
   // Operator
-  const operators = answers.operators
+  // Note: Since old operators that were removed have no role, it is okay
+  // to just filter them out
+  const operators = answers.operators?.filter(
+    ({ wasRemoved }) => wasRemoved !== 'true',
+  )
   if (operators) {
     for (let i = 0; i < operators.length; i++) {
       if (operators[i].nationalId === ssn) {
         return {
-          ssn: operators[i].nationalId,
-          name: operators[i].name,
+          ssn: operators[i].nationalId!,
+          name: operators[i].name!,
           email: operators[i].email,
           phone: operators[i].phone,
           role: EmailRole.operator,

@@ -30,5 +30,8 @@
   },
   "resolutions": {
     "hosted-git-info": "^2.8.9"
+  },
+  "volta": {
+    "node": "18.8.0"
   }
 }

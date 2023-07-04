@@ -71,6 +71,19 @@ export type StateLifeCycle =
       shouldDeleteChargeIfPaymentFulfilled?: boolean | null
     }
 
+export type PendingActionDisplayType = 'warning' | 'success' | 'info' | 'error'
+
+export type PendingAction = {
+  displayStatus: PendingActionDisplayType
+  title?: StaticText
+  content?: StaticText
+}
+
+export type HistoryEventMessage<T extends EventObject = AnyEventObject> = {
+  onEvent: Event<T> | string
+  logMessage: StaticText
+}
+
 export interface ApplicationStateMeta<
   T extends EventObject = AnyEventObject,
   R = unknown
@@ -78,10 +91,36 @@ export interface ApplicationStateMeta<
   name: string
   lifecycle: StateLifeCycle
   actionCard?: {
+    /** @deprecated use pendingAction field instead */
     title?: StaticText
+    /** @deprecated use pendingAction field instead */
     description?: StaticText
+    /**
+     * Configures which messages should be displayed to the user when presenting the
+     * application's history.
+     * Each `HistoryEventMessage` object maps an event to its corresponding user-friendly log message.
+     * The `historyLogs` field can either be an array of `HistoryEventMessage` objects
+     * or a single `HistoryEventMessage` object.
+     */
+
+    historyLogs?: HistoryEventMessage[] | HistoryEventMessage
+    /**
+     * Represents an action that is pending or required to be performed
+     * in the current state of the application by a user in a role. The `pendingAction` field
+     * can be either a `PendingAction` object or a function that returns
+     * a `PendingAction` object based on the application and role.
+     */
+    pendingAction?:
+      | PendingAction
+      | ((
+          application: Application,
+          role: ApplicationRole,
+          nationalId: string,
+        ) => PendingAction)
+    /** @deprecated is generated from status of current state */
     tag?: { label?: StaticText; variant?: ActionCardTag }
   }
+
   progress?: number
   /**
    * Represents the current status of the application in the state, defaults to draft
@@ -131,6 +170,7 @@ export function createApplicationMachine<
   return Machine(
     { ...config, initial: initialState },
     options ?? {},
+
     context as TContext,
   )
 }

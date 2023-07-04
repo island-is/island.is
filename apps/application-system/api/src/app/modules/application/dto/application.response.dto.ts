@@ -3,7 +3,7 @@ import {
   ApplicationTypes,
 } from '@island.is/application/types'
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
-import { Expose } from 'class-transformer'
+import { Expose, Type } from 'class-transformer'
 import {
   IsDate,
   IsEnum,
@@ -26,6 +26,35 @@ class ActionCardTag {
   variant?: string
 }
 
+class PendingAction {
+  @ApiPropertyOptional()
+  @Expose()
+  @IsString()
+  displayStatus?: string
+
+  @ApiPropertyOptional()
+  @Expose()
+  @IsString()
+  title?: string
+
+  @ApiPropertyOptional()
+  @Expose()
+  @IsString()
+  content?: string
+}
+
+class History {
+  @ApiProperty()
+  @Expose()
+  @IsDate()
+  date!: Date
+
+  @ApiProperty()
+  @Expose()
+  @IsString()
+  log?: string
+}
+
 class ActionCardMetaData {
   @ApiPropertyOptional()
   @Expose()
@@ -46,9 +75,30 @@ class ActionCardMetaData {
   @Expose()
   @IsBoolean()
   deleteButton?: boolean
+
+  @ApiPropertyOptional()
+  @Expose()
+  @IsObject()
+  pendingAction?: PendingAction
+
+  @IsArray()
+  @Expose()
+  @Type(() => History)
+  @ApiPropertyOptional({ type: [History], default: [] })
+  history?: History[]
+
+  @ApiProperty()
+  @Expose()
+  @IsNumber()
+  draftFinishedSteps?: number
+
+  @ApiProperty()
+  @Expose()
+  @IsNumber()
+  draftTotalSteps?: number
 }
 
-export class ApplicationResponseDto {
+export class BaseApplicationResponseDto {
   @ApiProperty()
   @Expose()
   @IsString()
@@ -129,7 +179,9 @@ export class ApplicationResponseDto {
   @IsEnum(ApplicationStatus)
   status!: ApplicationStatus
 
-  constructor(partial: Partial<ApplicationResponseDto>) {
+  constructor(partial: Partial<BaseApplicationResponseDto>) {
     Object.assign(this, partial)
   }
 }
+
+export class ApplicationResponseDto extends BaseApplicationResponseDto {}

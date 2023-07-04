@@ -1,18 +1,23 @@
-import { formatText, getValueViaPath } from '@island.is/application/core'
 import {
   CompanySearchField,
   FieldBaseProps,
 } from '@island.is/application/types'
-import { Box } from '@island.is/island-ui/core'
-import { useLocale } from '@island.is/localization'
 import React, { FC } from 'react'
+import { formatText, getValueViaPath } from '@island.is/application/core'
+
+import { Box } from '@island.is/island-ui/core'
 import { CompanySearchController } from '@island.is/application/ui-components'
+import { useLocale } from '@island.is/localization'
 
 interface Props extends FieldBaseProps {
   field: CompanySearchField
 }
 
-export const CompanySearchFormField: FC<Props> = ({ application, field }) => {
+export const CompanySearchFormField: FC<Props> = ({
+  application,
+  field,
+  error,
+}) => {
   const {
     id,
     title,
@@ -20,6 +25,7 @@ export const CompanySearchFormField: FC<Props> = ({ application, field }) => {
     setLabelToDataSchema = true,
     shouldIncludeIsatNumber,
     checkIfEmployerIsOnForbiddenList,
+    required,
   } = field
   const { formatMessage } = useLocale()
 
@@ -39,9 +45,11 @@ export const CompanySearchFormField: FC<Props> = ({ application, field }) => {
   return (
     <Box marginTop={[2, 4]}>
       <CompanySearchController
+        required={required}
         checkIfEmployerIsOnForbiddenList={checkIfEmployerIsOnForbiddenList}
         shouldIncludeIsatNumber={shouldIncludeIsatNumber}
         id={id}
+        error={error}
         defaultValue={initialValue}
         name={id}
         label={formatText(title, application, formatMessage)}

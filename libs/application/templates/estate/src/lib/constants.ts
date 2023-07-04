@@ -3,6 +3,12 @@ import { DefaultEvents } from '@island.is/application/types'
 export const YES = 'Yes'
 export const NO = 'No'
 
+export const JA = 'Já'
+export const NEI = 'Nei'
+
+export const UPLOAD_ACCEPT = '.pdf, .doc, .docx, .rtf'
+export const FILE_SIZE_LIMIT = 10000000 // 10MB
+
 export const States = {
   prerequisites: 'prerequisites',
   draft: 'draft',
@@ -18,13 +24,15 @@ export type EstateEvent =
 
 export enum Roles {
   APPLICANT = 'applicant',
-  APPLICANT_OFFICIAL_ESTATE = 'applicant_official_estate',
-  APPLICANT_NO_PROPERTY = 'applicant_no_property',
-  APPLICANT_RESIDENCE_PERMIT = 'applicant_residence_permit',
+  APPLICANT_OFFICIAL_DIVISION = 'applicant_official_division',
+  APPLICANT_NO_ASSETS = 'applicant_no_assets',
+  APPLICANT_PERMIT_FOR_UNDIVIDED_ESTATE = 'applicant_permit_for_undivided_estate',
+  APPLICANT_DIVISION_OF_ESTATE_BY_HEIRS = 'applicant_division_of_estate_by_heirs',
 }
 
 export const EstateTypes = {
-  officialEstate: 'Opinber skipti',
-  noPropertyEstate: 'Eignalaust dánarbú',
-  residencePermit: 'Búsetuleyfi',
+  officialDivision: 'Opinber skipti',
+  estateWithoutAssets: 'Eignalaust dánarbú',
+  permitForUndividedEstate: 'Seta í óskiptu búi',
+  divisionOfEstateByHeirs: 'Einkaskipti',
 }

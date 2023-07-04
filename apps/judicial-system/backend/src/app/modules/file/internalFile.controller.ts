@@ -26,7 +26,6 @@ import { DeliverResponse } from './models/deliver.response'
 import { CaseFile } from './models/file.model'
 import { FileService } from './file.service'
 import { DeliverDto } from './dto/deliver.dto'
-import { User, CurrentUser } from '../user'
 
 @UseGuards(TokenGuard)
 @Controller('api/internal/case/:caseId/file/:fileId')
@@ -46,17 +45,16 @@ export class InternalFileController {
   async deliverCaseFileToCourt(
     @Param('caseId') caseId: string,
     @Param('fileId') fileId: string,
-    @CurrentUser() user: User,
     @CurrentCase() theCase: Case,
     @CurrentCaseFile() caseFile: CaseFile,
-    @Body() _: DeliverDto,
+    @Body() deliverDto: DeliverDto,
   ): Promise<DeliverResponse> {
     this.logger.debug(`Delivering file ${fileId} of case ${caseId} to court`)
 
     const { success } = await this.fileService.uploadCaseFileToCourt(
       caseFile,
       theCase,
-      user,
+      deliverDto.user,
     )
 
     return { delivered: success }

@@ -1,13 +1,20 @@
 import { FieldBaseProps } from '@island.is/application/types'
-import { Box, Button, Divider, Text } from '@island.is/island-ui/core'
+import {
+  AlertMessage,
+  Box,
+  Button,
+  Divider,
+  Text,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { FC, useState } from 'react'
 import { error, information, review } from '../../lib/messages'
-import { ReviewCoOwnerAndOperatorField, ReviewScreenProps } from '../../types'
+import { CoOwnerAndOperator, ReviewScreenProps } from '../../shared'
 import { ReviewCoOwnerAndOperatorRepeaterItem } from './ReviewCoOwnerAndOperatorRepeaterItem'
 import { repeaterButtons } from './ReviewCoOwnerAndOperatorRepeater.css'
 import { useMutation } from '@apollo/client'
 import { UPDATE_APPLICATION } from '@island.is/application/graphql'
+import { getValueViaPath } from '@island.is/application/core'
 
 export const ReviewCoOwnerAndOperatorRepeater: FC<
   FieldBaseProps & ReviewScreenProps
@@ -26,9 +33,42 @@ export const ReviewCoOwnerAndOperatorRepeater: FC<
   const [genericErrorMessage, setGenericErrorMessage] = useState<
     string | undefined
   >(undefined)
+  const [identicalError, setIdenticalError] = useState<boolean>(false)
   const [tempCoOwnersAndOperators, setTempCoOwnersAndOperators] = useState<
-    ReviewCoOwnerAndOperatorField[]
+    CoOwnerAndOperator[]
   >(coOwnersAndOperators)
+
+  const filteredCoOwnersAndOperators = tempCoOwnersAndOperators.filter(
+    ({ wasRemoved }) => wasRemoved !== 'true',
+  )
+  const allOperators = filteredCoOwnersAndOperators.filter(
+    (field) => field.type === 'operator',
+  )
+  const allCoOwners = filteredCoOwnersAndOperators.filter(
+    (field) => field.type === 'coOwner',
+  )
+
+  const checkDuplicate = () => {
+    const existingCoOwnersAndOperators = filteredCoOwnersAndOperators.map(
+      ({ nationalId }) => {
+        return nationalId
+      },
+    )
+
+    const buyerNationalId = getValueViaPath(
+      application.answers,
+      'buyer.nationalId',
+    ) as string
+
+    const jointOperators = [...existingCoOwnersAndOperators, buyerNationalId]
+    return !!jointOperators.some((nationalId, index) => {
+      return (
+        nationalId &&
+        nationalId.length > 0 &&
+        jointOperators.indexOf(nationalId) !== index
+      )
+    })
+  }
 
   const handleAdd = (type: 'operator' | 'coOwner') =>
     setTempCoOwnersAndOperators([
@@ -42,20 +82,18 @@ export const ReviewCoOwnerAndOperatorRepeater: FC<
       },
     ])
 
-  const handleRemove = (index: number) => {
-    if (index > -1) {
-      const temp = [...tempCoOwnersAndOperators]
-      temp.splice(index, 1)
-      setTempCoOwnersAndOperators(temp)
+  const handleRemove = (position: number) => {
+    if (position > -1) {
+      setTempCoOwnersAndOperators(
+        tempCoOwnersAndOperators.map((coOwnerAndOperator, index) => {
+          if (index === position) {
+            return { ...coOwnerAndOperator, wasRemoved: 'true' }
+          }
+          return coOwnerAndOperator
+        }),
+      )
     }
   }
-
-  const allOperators = tempCoOwnersAndOperators.filter(
-    (field) => field.type === 'operator',
-  )
-  const allCoOwners = tempCoOwnersAndOperators.filter(
-    (field) => field.type === 'coOwner',
-  )
 
   const onBackButtonClick = () => {
     setErrorMessage(undefined)
@@ -63,41 +101,57 @@ export const ReviewCoOwnerAndOperatorRepeater: FC<
     setStep && setStep('overview')
   }
 
+  const shouldUpdateMainOperator = () => {
+    const availableOperators = tempCoOwnersAndOperators.filter(
+      ({ type, wasRemoved }) => {
+        return type === 'operator' && wasRemoved !== 'true'
+      },
+    )
+    return availableOperators.length > 1
+  }
+
   const onForwardButtonClick = async () => {
-    if (tempCoOwnersAndOperators && setCoOwnersAndOperators) {
-      const notValid = tempCoOwnersAndOperators.find((field) => {
-        if (
-          field.email.length === 0 ||
-          field.name.length === 0 ||
-          field.nationalId.length === 0 ||
-          field.phone.length === 0
-        ) {
-          return true
-        }
-        return false
-      })
-      if (notValid) {
-        setGenericErrorMessage(undefined)
-        setErrorMessage(formatMessage(error.fillInValidInput))
-      } else {
-        const res = await updateApplication({
-          variables: {
-            input: {
-              id: application.id,
-              answers: {
-                buyerCoOwnerAndOperator: tempCoOwnersAndOperators,
-              },
-            },
-            locale,
-          },
+    setIdenticalError(checkDuplicate())
+    if (!checkDuplicate()) {
+      setIdenticalError(false)
+      if (tempCoOwnersAndOperators && setCoOwnersAndOperators) {
+        const notValid = filteredCoOwnersAndOperators.find((field) => {
+          if (
+            !(field.email && field.email.length > 0) ||
+            !(field.name && field.name.length > 0) ||
+            !(field.nationalId && field.nationalId.length > 0) ||
+            !(field.phone && field.phone.length > 0)
+          ) {
+            return true
+          }
+          return false
         })
-        if (!res.data) {
-          setGenericErrorMessage(formatMessage(error.couldNotUpdateApplication))
-        } else {
-          setCoOwnersAndOperators(tempCoOwnersAndOperators)
+        if (notValid) {
           setGenericErrorMessage(undefined)
-          setErrorMessage(undefined)
-          setStep && setStep('overview')
+          setErrorMessage(formatMessage(error.fillInValidInput))
+        } else {
+          const res = await updateApplication({
+            variables: {
+              input: {
+                id: application.id,
+                answers: {
+                  buyerCoOwnerAndOperator: tempCoOwnersAndOperators,
+                },
+              },
+              locale,
+            },
+          })
+          if (!res.data) {
+            setGenericErrorMessage(
+              formatMessage(error.couldNotUpdateApplication),
+            )
+          } else {
+            setCoOwnersAndOperators(tempCoOwnersAndOperators)
+            setGenericErrorMessage(undefined)
+            setErrorMessage(undefined)
+            setStep &&
+              setStep(shouldUpdateMainOperator() ? 'mainOperator' : 'overview')
+          }
         }
       }
     }
@@ -161,6 +215,14 @@ export const ReviewCoOwnerAndOperatorRepeater: FC<
         <Text variant="eyebrow" color="red600">
           {genericErrorMessage}
         </Text>
+      )}
+      {identicalError && (
+        <Box marginTop={4}>
+          <AlertMessage
+            type="error"
+            title={formatMessage(information.labels.operator.identicalError)}
+          />
+        </Box>
       )}
       <Box style={{ marginTop: '40vh' }}>
         <Divider />

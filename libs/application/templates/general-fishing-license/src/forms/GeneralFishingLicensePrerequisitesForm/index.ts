@@ -1,5 +1,6 @@
 import { buildForm, buildSection } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
+import { buildFormConclusionSection } from '@island.is/application/ui-forms'
 import {
   applicantInformation,
   conclusion,
@@ -48,10 +49,10 @@ export const GeneralFishingLicensePrerequisitesForm: Form = buildForm({
       title: payment.general.sectionTitle,
       children: [],
     }),
-    buildSection({
-      id: 'conclusionSection',
-      title: conclusion.general.sectionTitle,
-      children: [],
+    buildFormConclusionSection({
+      alertTitle: conclusion.general.title,
+      expandableHeader: conclusion.information.title,
+      expandableDescription: conclusion.information.bulletList,
     }),
   ],
 })

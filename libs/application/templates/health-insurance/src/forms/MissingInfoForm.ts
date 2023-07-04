@@ -8,6 +8,7 @@ import {
   buildSubmitField,
 } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
+import { buildFormConclusionSection } from '@island.is/application/ui-forms'
 import { m } from './messages'
 
 export const MissingInfoForm: Form = buildForm({
@@ -73,12 +74,13 @@ export const MissingInfoForm: Form = buildForm({
             }),
           ],
         }),
-        buildCustomField({
-          id: 'successfulSubmissionMissingInfo',
-          title: '',
-          component: 'ConfirmationScreen',
-        }),
       ],
+    }),
+    buildFormConclusionSection({
+      alertTitle: m.successfulSubmissionTitle,
+      alertMessage: m.successfulSubmissionMessage,
+      expandableHeader: m.successfulExpendableHeader,
+      expandableDescription: m.nextStepReviewTime,
     }),
   ],
 })

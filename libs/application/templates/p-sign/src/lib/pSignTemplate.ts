@@ -28,7 +28,6 @@ const PSignTemplate: ApplicationTemplate<
   type: ApplicationTypes.P_SIGN,
   name: 'Stæðiskort',
   dataSchema: dataSchema,
-  readyForProduction: true,
   allowedDelegations: [{ type: AuthDelegationType.LegalGuardian }],
   stateMachineConfig: {
     initial: States.DRAFT,

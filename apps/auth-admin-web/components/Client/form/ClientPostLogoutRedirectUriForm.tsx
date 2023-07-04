@@ -22,10 +22,9 @@ const ClientPostLogoutRedirectUriForm: React.FC<Props> = (props: Props) => {
   const {
     register,
     handleSubmit,
-    errors,
     formState,
   } = useForm<ClientPostLogoutRedirectUriDTO>()
-  const { isSubmitting } = formState
+  const { isSubmitting, errors } = formState
   const [defaultUrl, setDefaultUrl] = useState(
     !props.uris || props.uris.length === 0 ? props.defaultUrl : '',
   )
@@ -108,8 +107,7 @@ const ClientPostLogoutRedirectUriForm: React.FC<Props> = (props: Props) => {
                     <input
                       id="redirectUri"
                       type="text"
-                      name="redirectUri"
-                      ref={register({
+                      {...register('redirectUri', {
                         required: true,
                         validate: ValidationUtils.validateUrl,
                       })}

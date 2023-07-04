@@ -1,4 +1,7 @@
-import { DefaultStateLifeCycle } from '@island.is/application/core'
+import {
+  DefaultStateLifeCycle,
+  pruneAfterDays,
+} from '@island.is/application/core'
 
 import {
   ApplicationTemplate,
@@ -24,7 +27,7 @@ import {
   CurrentUserTypeProvider,
   IndentityApiProvider,
   NationalRegistryUserApi,
-  UserProfileApi,
+  UserInfoApi,
 } from '../dataProviders'
 
 const FinancialStatementInaoApplication: ApplicationTemplate<
@@ -71,7 +74,7 @@ const FinancialStatementInaoApplication: ApplicationTemplate<
           }),
 
           progress: 0.4,
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: pruneAfterDays(60),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -88,7 +91,7 @@ const FinancialStatementInaoApplication: ApplicationTemplate<
                 CurrentUserTypeProvider,
                 IndentityApiProvider,
                 NationalRegistryUserApi,
-                UserProfileApi,
+                UserInfoApi,
               ],
             },
           ],
