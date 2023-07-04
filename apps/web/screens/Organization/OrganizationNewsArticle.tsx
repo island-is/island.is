@@ -49,11 +49,10 @@ const OrganizationNewsArticle: Screen<OrganizationNewsArticleProps> = ({
   useContentfulId(organizationPage.id, newsItem?.id)
   useLocalLinkTypeResolver()
 
-  // We only display breadcrumbs and highlighted nav item if the news has the
-  // primary news tag of the organization
-  const newsBelongToOrganization = newsItem.genericTags.some(
-    (x) => x?.organization?.slug === organizationPage?.organization?.slug,
-  )
+  // We only display breadcrumbs and highlighted nav item if the news item belongs to this organization
+  const newsBelongToOrganization =
+    !!newsItem?.organization?.slug &&
+    newsItem.organization.slug === organizationPage?.organization?.slug
 
   const overviewPath: string = router.asPath.substring(
     0,

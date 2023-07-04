@@ -26,7 +26,7 @@ interface NewsListProps {
   selectedYear: number
   selectedMonth: number
   selectedPage: number
-  selectedTag: string
+  selectedTag: string | string[]
   newsOverviewUrl: string
   newsItemLinkType: LinkType
   parentPageSlug: string

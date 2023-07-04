@@ -49,7 +49,7 @@ interface OrganizationNewsListProps {
   selectedYear: number
   selectedMonth: number
   selectedPage: number
-  selectedTag: string
+  selectedTag: string | string[]
   namespace: GetNamespaceQuery['getNamespace']
   locale: Locale
 }
@@ -351,7 +351,7 @@ OrganizationNewsList.getInitialProps = async ({
     total,
     selectedYear: year,
     selectedMonth: month,
-    selectedTag: '', // TODO: fix
+    selectedTag: newsTags,
     datesMap: createDatesMap(newsDatesList),
     selectedPage,
     namespace,
