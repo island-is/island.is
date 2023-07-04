@@ -2,12 +2,11 @@ import React, { useCallback } from 'react'
 import { useIntl } from 'react-intl'
 
 import { toast } from '@island.is/island-ui/core'
+import { SubstanceMap } from '@island.is/judicial-system/types'
 import { errors } from '@island.is/judicial-system-web/messages'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
-
 import { UpdateIndictmentCountInput } from '@island.is/judicial-system-web/src/graphql/schema'
 
-import { SubstanceMap } from '@island.is/judicial-system/types'
 import {
   useCreateIndictmentCountMutation,
   useDeleteIndictmentCountMutation,
