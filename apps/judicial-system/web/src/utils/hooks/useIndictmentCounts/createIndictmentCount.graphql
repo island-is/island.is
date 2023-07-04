@@ -1,0 +1,33 @@
+mutation CreateIndictmentCount($input: CreateIndictmentCountInput!) {
+  createIndictmentCount(input: $input) {
+    id
+    caseId
+    policeCaseNumber
+    vehicleRegistrationNumber
+    offenses
+    substances
+    lawsBroken
+    incidentDescription
+    legalArguments
+  }
+}
+
+mutation UpdateIndictmentCount($input: UpdateIndictmentCountInput!) {
+  updateIndictmentCount(input: $input) {
+    id
+    caseId
+    policeCaseNumber
+    vehicleRegistrationNumber
+    offenses
+    substances
+    lawsBroken
+    incidentDescription
+    legalArguments
+  }
+}
+
+mutation DeleteIndictmentCount($input: DeleteIndictmentCountInput!) {
+  deleteIndictmentCount(input: $input) {
+    deleted
+  }
+}
