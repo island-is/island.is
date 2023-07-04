@@ -33,6 +33,7 @@ import {
   HomeAllowanceHousing,
   NO,
   YES,
+  IS,
 } from '../lib/constants'
 import {
   getApplicationAnswers,
@@ -265,14 +266,16 @@ export const OldAgePensionForm: Form = buildForm({
                   options: getYesNOOptions(),
                   width: 'half',
                   largeButtons: true,
-                  // condition: (answers, externalData) => {
-                  //   const { residenceHistory } = getApplicationExternalData(
-                  //     externalData,
-                  //   )
-                  //   // check if no res history or?? or if only res history is iceland?
-                  //   if (residenceHistory.length === 0) return true
-                  //   return false
-                  // },
+                  condition: (_, externalData) => {
+                    const { residenceHistory } = getApplicationExternalData(
+                      externalData,
+                    )
+                    // if no residence history returned or if residence history is only iceland, show the question
+                    if (residenceHistory.length === 0) return true
+                    return residenceHistory.every(
+                      (residence) => residence.country === IS,
+                    )
+                  },
                 }),
               ],
             }),

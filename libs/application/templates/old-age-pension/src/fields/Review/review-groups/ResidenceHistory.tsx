@@ -27,29 +27,33 @@ export const ResidenceHistory = ({
       isLast={true}
     >
       <GridRow marginBottom={3}>
-        <GridColumn
-          span={['12/12', '12/12', '12/12', '12/12']}
-          paddingBottom={3}
-        >
-          <Label>
-            {formatMessage(
-              oldAgePensionFormMessage.residence.residenceHistoryTitle,
+        {data.length !== 0 && (
+          <GridColumn
+            span={['12/12', '12/12', '12/12', '12/12']}
+            paddingBottom={3}
+          >
+            <Label>
+              {formatMessage(
+                oldAgePensionFormMessage.residence.residenceHistoryTitle,
+              )}
+            </Label>
+            {data && (
+              <Box paddingTop={3}>
+                <Table columns={columns} data={data} />
+              </Box>
             )}
-          </Label>
-          {data && (
-            <Box paddingTop={3}>
-              <Table columns={columns} data={data} />
-            </Box>
-          )}
-        </GridColumn>
-        <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
-          <RadioValue
-            label={formatMessage(
-              oldAgePensionFormMessage.residence.residenceHistoryQuestion,
-            )}
-            value={residenceHistoryQuestion}
-          />
-        </GridColumn>
+          </GridColumn>
+        )}
+        {residenceHistoryQuestion && (
+          <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+            <RadioValue
+              label={formatMessage(
+                oldAgePensionFormMessage.residence.residenceHistoryQuestion,
+              )}
+              value={residenceHistoryQuestion}
+            />
+          </GridColumn>
+        )}
       </GridRow>
     </ReviewGroup>
   )

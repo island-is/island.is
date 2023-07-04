@@ -541,7 +541,7 @@ export const oldAgePensionFormMessage: MessageDir = {
     },
     agust: {
       id: 'oap.application:period.agust',
-      defaultMessage: 'Águst',
+      defaultMessage: 'Ágúst',
       description: 'Agust',
     },
     september: {
