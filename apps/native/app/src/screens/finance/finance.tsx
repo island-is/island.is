@@ -28,7 +28,7 @@ import styled, {useTheme} from 'styled-components/native';
 import {useState} from 'react';
 import externalOpen from '../../assets/icons/external-open.png';
 import chevronDown from '../../assets/icons/chevron-down.png';
-import { navigateTo } from '../../lib/deep-linking';
+import {navigateTo} from '../../lib/deep-linking';
 
 const Row = styled.View<{border?: boolean}>`
   flex-direction: row;
