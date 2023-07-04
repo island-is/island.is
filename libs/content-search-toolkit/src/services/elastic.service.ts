@@ -349,6 +349,7 @@ export class ElasticService {
           },
         },
       },
+      conflicts: 'proceed',
     })
   }
 
