@@ -1,9 +1,3 @@
-query GetSignedUrl($input: GetSignedUrlInput!) {
-  getSignedUrl(input: $input) {
-    url
-  }
-}
-
 query LimitedAccessGetSignedUrl($input: GetSignedUrlInput!) {
   limitedAccessGetSignedUrl(input: $input) {
     url

@@ -1,5 +1,5 @@
-mutation CreateIndictmentCount($input: CreateIndictmentCountInput!) {
-  createIndictmentCount(input: $input) {
+mutation UpdateIndictmentCount($input: UpdateIndictmentCountInput!) {
+  updateIndictmentCount(input: $input) {
     id
     caseId
     policeCaseNumber

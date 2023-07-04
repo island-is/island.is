@@ -7,11 +7,9 @@ import { errors } from '@island.is/judicial-system-web/messages'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import { UpdateIndictmentCountInput } from '@island.is/judicial-system-web/src/graphql/schema'
 
-import {
-  useCreateIndictmentCountMutation,
-  useDeleteIndictmentCountMutation,
-  useUpdateIndictmentCountMutation,
-} from './createIndictmentCount.generated'
+import { useCreateIndictmentCountMutation } from './createIndictmentCount.generated'
+import { useUpdateIndictmentCountMutation } from './updateIndictmentCount.generated'
+import { useDeleteIndictmentCountMutation } from './deleteIndictmentCount.generated'
 
 export interface UpdateIndictmentCount
   extends Omit<
