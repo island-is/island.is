@@ -52,7 +52,7 @@ const Card = ({
 
   const child = (
     <>
-      <Box>
+      <Box dataTestId="front-page-card">
         <Box
           display="flex"
           flexDirection="row"

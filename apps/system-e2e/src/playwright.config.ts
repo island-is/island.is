@@ -35,7 +35,6 @@ const config: PlaywrightTestConfig = {
   workers: process.env.CI ? 1 : undefined,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: [
-    ['dot'],
     ...((process.env.CI
       ? [
           ['line'],
@@ -50,7 +49,7 @@ const config: PlaywrightTestConfig = {
             },
           ],
         ]
-      : [['null']]) as ReporterDescription[]),
+      : [['dot']]) as ReporterDescription[]),
     ['html', { open: 'never' }],
   ],
 

@@ -8,7 +8,7 @@ import {
   CreateDomain,
 } from '@island.is/services/auth/testing'
 import { createCurrentUser } from '@island.is/testing/fixtures'
-import { ResponseSimple } from '@island.is/clients/rsk/procuring'
+import { GetIndividualRelationships } from '@island.is/clients-rsk-relationships'
 
 export const clientId = '@island.is/webapp'
 
@@ -102,11 +102,14 @@ export class TestCase {
     }))
   }
 
-  get procuration(): ResponseSimple {
+  get procuration(): GetIndividualRelationships {
     return {
       nationalId: this.user.nationalId,
       name: '',
-      companies: this.fromCompanies.map((c) => ({ nationalId: c, name: '' })),
+      relationships: this.fromCompanies.map((c) => ({
+        nationalId: c,
+        name: '',
+      })),
     }
   }
 

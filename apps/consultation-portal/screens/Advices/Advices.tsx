@@ -158,8 +158,12 @@ export const AdvicesScreen = () => {
           <Box paddingBottom={[3, 3, 3, 5, 5]}>
             <Stack space={[3, 3, 3, 5, 5]}>
               <Stack space={3}>
-                <Text variant="h1">{loc.intro.title}</Text>
-                <Text variant="default">{loc.intro.text}</Text>
+                <Text variant="h1" dataTestId="advices_title">
+                  {loc.intro.title}
+                </Text>
+                <Text variant="default" dataTestId="advices_text">
+                  {loc.intro.text}
+                </Text>
               </Stack>
               {!userLoading && !isAuthenticated && (
                 <ActionCard
