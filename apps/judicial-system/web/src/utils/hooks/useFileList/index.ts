@@ -1,19 +1,15 @@
 import { useContext, useEffect, useMemo, useState } from 'react'
-import { useLazyQuery } from '@apollo/client'
 
 import { CaseFileState } from '@island.is/judicial-system/types'
-import {
-  LimitedAccessGetSignedUrlQuery,
-  LimitedAccessGetSignedUrlQueryVariables,
-  GetSignedUrlQuery,
-  GetSignedUrlQueryVariables,
-  GetSignedUrlDocument,
-  LimitedAccessGetSignedUrlDocument,
-} from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   FormContext,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
+
+import {
+  useGetSignedUrlLazyQuery,
+  useLimitedAccessGetSignedUrlLazyQuery,
+} from './sigendUrl.generated'
 
 interface Parameters {
   caseId: string
@@ -27,25 +23,19 @@ const useFileList = ({ caseId }: Parameters) => {
   const [
     getSignedUrl,
     { error: fullAccessError, variables: fullAccessVariables },
-  ] = useLazyQuery<GetSignedUrlQuery, GetSignedUrlQueryVariables>(
-    GetSignedUrlDocument,
-    {
-      fetchPolicy: 'no-cache',
-      onCompleted(data) {
-        if (data?.getSignedUrl?.url) {
-          window.open(data.getSignedUrl.url, '_blank')
-        }
-      },
+  ] = useGetSignedUrlLazyQuery({
+    fetchPolicy: 'no-cache',
+    onCompleted(data) {
+      if (data?.getSignedUrl?.url) {
+        window.open(data.getSignedUrl.url, '_blank')
+      }
     },
-  )
+  })
 
   const [
     limitedAccessGetSignedUrl,
     { error: limitedAccessError, variables: limitedAccessVariables },
-  ] = useLazyQuery<
-    LimitedAccessGetSignedUrlQuery,
-    LimitedAccessGetSignedUrlQueryVariables
-  >(LimitedAccessGetSignedUrlDocument, {
+  ] = useLimitedAccessGetSignedUrlLazyQuery({
     fetchPolicy: 'no-cache',
     onCompleted(data) {
       if (data?.limitedAccessGetSignedUrl?.url) {
