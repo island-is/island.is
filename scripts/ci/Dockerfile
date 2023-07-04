@@ -13,6 +13,7 @@ ADD apps/native/app/package.json ./apps/native/app/
 COPY .yarn/ ./.yarn
 RUN apk add --update --no-cache python3 build-base gcc && ln -sf /usr/bin/python3 /usr/bin/python
 RUN CI=true yarn install --immutable
+RUN CI=true yarn schemas
 
 FROM deps as src
 
@@ -126,6 +127,8 @@ FROM mcr.microsoft.com/playwright:v${PLAYWRIGHT_VERSION}-focal as playwright-bas
 FROM playwright-base as output-playwright
 # TODO: remove awscli dependency (157 MB extra)
 RUN apt-get update -y && apt-get install -y zip awscli && apt-get purge
+ENV PLAYWRIGHT_BROWSER=chromium
+RUN playwright install
 
 ARG APP_HOME
 ARG APP_DIST_HOME
@@ -133,14 +136,10 @@ ARG APP_DIST_HOME
 WORKDIR ${APP_DIST_HOME}
 
 COPY --from=builder /build/${APP_DIST_HOME} .
+COPY --from=deps /build/node_modules ./node_modules/
 RUN chown -R pwuser:pwuser .
 
 USER pwuser
-RUN yarn set version berry
-RUN yarn install
-
-ENV PLAYWRIGHT_BROWSER=chromium
-RUN yarn playwright install ${PLAYWRIGHT_BROWSER}
 
 COPY --chown=pwuser:pwuser ${APP_HOME}/entrypoint.sh .
 
