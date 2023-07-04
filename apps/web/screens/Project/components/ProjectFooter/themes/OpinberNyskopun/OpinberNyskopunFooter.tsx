@@ -12,8 +12,8 @@ import {
 } from '@island.is/island-ui/core'
 import { FooterItem } from '@island.is/web/graphql/schema'
 import { webRichText } from '@island.is/web/utils/richText'
-import * as styles from './OpinberNyskopunFooter.css'
 import { useNamespace } from '@island.is/web/hooks'
+import * as styles from './OpinberNyskopunFooter.css'
 
 interface OpinberNyskopunFooterProps {
   footerItems: FooterItem[]
