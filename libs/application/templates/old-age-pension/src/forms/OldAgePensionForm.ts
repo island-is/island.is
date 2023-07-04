@@ -34,6 +34,7 @@ import {
   NO,
   YES,
   IS,
+  maritalStatuses,
 } from '../lib/constants'
 import {
   getApplicationAnswers,
@@ -182,7 +183,7 @@ export const OldAgePensionForm: Form = buildForm({
                   defaultValue: (application: Application) => {
                     const data = application.externalData.nationalRegistrySpouse
                       .data as NationalRegistrySpouse
-                    return data.maritalStatus
+                    return maritalStatuses[data.maritalStatus]
                   },
                   condition: (_, externalData) => {
                     const { maritalStatus } = getApplicationExternalData(
