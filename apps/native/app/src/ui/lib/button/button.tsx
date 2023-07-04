@@ -1,5 +1,10 @@
 import React from 'react';
-import {ImageStyle, TextProps, TextStyle, TouchableHighlightProps} from 'react-native';
+import {
+  ImageStyle,
+  TextProps,
+  TextStyle,
+  TouchableHighlightProps,
+} from 'react-native';
 import styled, {useTheme} from 'styled-components/native';
 import {dynamicColor} from '../../utils';
 import {font} from '../../utils/font';
@@ -106,7 +111,9 @@ export function Button({
         >
           {title}
         </Text>
-        {icon && <Icon source={icon as any} resizeMode="center" {...iconStyle} />}
+        {icon && (
+          <Icon source={icon as any} resizeMode="center" {...iconStyle} />
+        )}
       </>
     </Host>
   );

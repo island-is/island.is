@@ -104,16 +104,18 @@ export function FinanceStatusCard({
 }: CardProps) {
   const theme = useTheme();
   return (
-    <Host style={{
-      shadowOffset: {
-        width: 0,
-        height: 4,
-      },
-      shadowOpacity: open ? 0.08 : 0,
-      shadowRadius: 16,
-      elevation: 16,
-      shadowColor: 'rgb(0, 32, 128)',
-    }}>
+    <Host
+      style={{
+        shadowOffset: {
+          width: 0,
+          height: 4,
+        },
+        shadowOpacity: open ? 0.08 : 0,
+        shadowRadius: 16,
+        elevation: 16,
+        shadowColor: 'rgb(0, 32, 128)',
+      }}
+    >
       <Card
         onPress={() => {
           LayoutAnimation.configureNext(toggleAnimation);
