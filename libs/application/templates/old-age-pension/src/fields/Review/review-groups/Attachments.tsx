@@ -16,7 +16,7 @@ export const Attachments = ({ application }: ReviewGroupProps) => {
   const { formatMessage } = useLocale()
 
   const attachments = getAttachments(application)
-  console.log('ATTACH ', attachments)
+
   return (
     <>
       {attachments.length > 0 && (

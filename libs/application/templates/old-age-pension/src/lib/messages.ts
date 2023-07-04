@@ -326,12 +326,14 @@ export const oldAgePensionFormMessage: MessageDir = {
       description: 'Add child',
     },
     childPensionTableHeaderName: {
-      id: 'oap.application:connected.applications.child.pension.table.header.name',
+      id:
+        'oap.application:connected.applications.child.pension.table.header.name',
       defaultMessage: 'Nafn',
       description: 'Name',
     },
     childPensionTableHeaderId: {
-      id: 'oap.application:connected.applications.child.pension.table.header.id',
+      id:
+        'oap.application:connected.applications.child.pension.table.header.id',
       defaultMessage: 'Kennitala / fæðingardagur',
       description: 'National ID',
     },
@@ -347,7 +349,8 @@ export const oldAgePensionFormMessage: MessageDir = {
     },
     noChildFoundDescription: {
       id: 'oap.application:connected.applications.no.child.found.description',
-      defaultMessage: 'Samkvæmt uppflettingu í þjóðskrá hefur þú ekki forsjá með neinu barni/börnum. Þú getur bætt við barni ef þú ert með barn á framfærslu og þarft að skila inn staðfestingu á því. ATH ef eftirfarandi upplýsingar eru ekki réttar þá þarf að breyta þeim í Þjóðskrá og koma svo aftur til að klára umsóknina.',
+      defaultMessage:
+        'Samkvæmt uppflettingu í þjóðskrá hefur þú ekki forsjá með neinu barni/börnum. Þú getur bætt við barni ef þú ert með barn á framfærslu og þarft að skila inn staðfestingu á því. ATH ef eftirfarandi upplýsingar eru ekki réttar þá þarf að breyta þeim í Þjóðskrá og koma svo aftur til að klára umsóknina.',
       description: 'english translation',
     },
     registerChildTitle: {

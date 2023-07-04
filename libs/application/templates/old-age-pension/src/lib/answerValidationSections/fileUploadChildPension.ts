@@ -3,7 +3,11 @@ import { Application, Answer } from '@island.is/application/types'
 import isEmpty from 'lodash/isEmpty'
 
 import { validatorErrorMessages } from '../messages'
-import { childCustody_LivesWithApplicant, getApplicationAnswers, getApplicationExternalData } from '../oldAgePensionUtils'
+import {
+  childCustody_LivesWithApplicant,
+  getApplicationAnswers,
+  getApplicationExternalData,
+} from '../oldAgePensionUtils'
 import {
   AnswerValidationConstants,
   HomeAllowanceHousing,
@@ -18,16 +22,14 @@ export const fileUploadChildPension = (
   const obj = newAnswer as Record<string, Answer>
   const { FILEUPLOADCHILDPENSION } = AnswerValidationConstants
 
-  const { childPension } = getApplicationAnswers(
-    application.answers,
+  const { childPension } = getApplicationAnswers(application.answers)
+
+  const DoesNotLiveWithApplicant = childCustody_LivesWithApplicant(
+    application.externalData,
   )
 
-  const DoesNotLiveWithApplicant = childCustody_LivesWithApplicant(application.externalData)
-
   if (childPension.length > 0 && obj.maintenance) {
-    if (
-      isEmpty((obj as { maintenance: unknown[] }).maintenance)
-    ) {
+    if (isEmpty((obj as { maintenance: unknown[] }).maintenance)) {
       return buildError(
         validatorErrorMessages.requireAttachment,
         `${FILEUPLOADCHILDPENSION}.maintenance`,
@@ -35,11 +37,12 @@ export const fileUploadChildPension = (
     }
   }
 
-  if (
-    DoesNotLiveWithApplicant &&
-    obj.notLivesWithApplicant
-  ) {
-    if (isEmpty((obj as { notLivesWithApplicant: unknown[] }).notLivesWithApplicant)) {
+  if (DoesNotLiveWithApplicant && obj.notLivesWithApplicant) {
+    if (
+      isEmpty(
+        (obj as { notLivesWithApplicant: unknown[] }).notLivesWithApplicant,
+      )
+    ) {
       return buildError(
         validatorErrorMessages.requireAttachment,
         `${FILEUPLOADCHILDPENSION}.notLivesWithApplicant`,

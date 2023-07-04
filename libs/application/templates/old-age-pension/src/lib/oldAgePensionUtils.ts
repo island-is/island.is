@@ -443,18 +443,16 @@ export function getAttachments(application: Application) {
 
   // child pension attachments
   const childPensionAttachments = answers.fileUploadChildPension as childPensionAttachments
-  const { childPension } = getApplicationAnswers(
-    application.answers,
-  )
+  const { childPension } = getApplicationAnswers(application.answers)
   const isChildPension = connectedApplications?.includes(
     ConnectedApplications.CHILDPENSION,
   )
 
-  if(childPension.length > 0 && isChildPension) {
+  if (childPension.length > 0 && isChildPension) {
     getAttachmentsName(childPensionAttachments?.maintenance, 'framfærsla')
   }
 
-  if(childCustody_LivesWithApplicant(externalData) && isChildPension) {
+  if (childCustody_LivesWithApplicant(externalData) && isChildPension) {
     getAttachmentsName(childPensionAttachments?.notLivesWithApplicant, 'meðlag')
   }
 

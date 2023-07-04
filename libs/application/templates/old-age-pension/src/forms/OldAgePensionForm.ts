@@ -697,7 +697,8 @@ export const OldAgePensionForm: Form = buildForm({
                 oldAgePensionFormMessage.fileUpload.attachmentDescription,
               uploadButtonLabel:
                 oldAgePensionFormMessage.fileUpload.attachmentButton,
-              condition: (_, externalData) => childCustody_LivesWithApplicant(externalData),
+              condition: (_, externalData) =>
+                childCustody_LivesWithApplicant(externalData),
             }),
           ],
         }),
