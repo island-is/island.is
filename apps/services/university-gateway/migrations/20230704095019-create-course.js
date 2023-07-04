@@ -2,9 +2,10 @@
 
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.sequelize.transaction(t => {
+    return queryInterface.sequelize.transaction((t) => {
       return Promise.all([
-        queryInterface.createTable('course',
+        queryInterface.createTable(
+          'course',
           {
             id: {
               type: Sequelize.UUID,
@@ -35,7 +36,7 @@ module.exports = {
             semester_year: {
               type: Sequelize.INTEGER,
             },
-			semester_season_id: {
+            semester_season_id: {
               type: Sequelize.UUID,
               references: {
                 model: 'semester_season',
@@ -56,16 +57,17 @@ module.exports = {
               type: Sequelize.STRING,
             },
           },
-          { transaction: t }),
-      ]);
-    });
+          { transaction: t },
+        ),
+      ])
+    })
   },
 
   down: (queryInterface, Sequelize) => {
-    return queryInterface.sequelize.transaction(t => {
+    return queryInterface.sequelize.transaction((t) => {
       return Promise.all([
-        queryInterface.dropTable('course', { transaction: t })
-      ]);
-    });
-  }
-};
+        queryInterface.dropTable('course', { transaction: t }),
+      ])
+    })
+  },
+}

@@ -2,9 +2,10 @@
 
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.sequelize.transaction(t => {
+    return queryInterface.sequelize.transaction((t) => {
       return Promise.all([
-        queryInterface.createTable('search_group',
+        queryInterface.createTable(
+          'search_group',
           {
             id: {
               type: Sequelize.UUID,
@@ -19,16 +20,17 @@ module.exports = {
               type: Sequelize.STRING,
             },
           },
-          { transaction: t }),
-      ]);
-    });
+          { transaction: t },
+        ),
+      ])
+    })
   },
 
   down: (queryInterface, Sequelize) => {
-    return queryInterface.sequelize.transaction(t => {
+    return queryInterface.sequelize.transaction((t) => {
       return Promise.all([
         queryInterface.dropTable('search_group', { transaction: t }),
-      ]);
-    });
-  }
-};
+      ])
+    })
+  },
+}

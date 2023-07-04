@@ -54,7 +54,9 @@
     "lint": {
       "executor": "@nrwl/linter:eslint",
       "options": {
-        "lintFilePatterns": ["apps/services/university-gateway/**/*.{ts,tsx,js,jsx}"]
+        "lintFilePatterns": [
+          "apps/services/university-gateway/**/*.{ts,tsx,js,jsx}"
+        ]
       }
     },
     "test": {
@@ -99,10 +101,10 @@
         "cwd": "apps/services/university-gateway/"
       }
     },
-	"migrate/undo": {
+    "migrate/undo": {
       "executor": "@nrwl/workspace:run-commands",
       "options": {
-		"command": "../../../node_modules/.bin/sequelize-cli db:migrate:undo",
+        "command": "../../../node_modules/.bin/sequelize-cli db:migrate:undo",
         "cwd": "apps/services/university-gateway/"
       }
     },
@@ -119,9 +121,7 @@
     "dev": {
       "executor": "@nrwl/workspace:run-commands",
       "options": {
-        "commands": [
-          "scripts/run-xroad-proxy.sh"
-        ],
+        "commands": ["scripts/run-xroad-proxy.sh"],
         "parallel": true
       }
     },

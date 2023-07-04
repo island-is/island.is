@@ -2,9 +2,10 @@
 
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.sequelize.transaction(t => {
+    return queryInterface.sequelize.transaction((t) => {
       return Promise.all([
-        queryInterface.createTable('application_status_history',
+        queryInterface.createTable(
+          'application_status_history',
           {
             id: {
               type: Sequelize.UUID,
@@ -39,18 +40,20 @@ module.exports = {
             date_modified: {
               type: Sequelize.DATE,
             },
-            
           },
-          { transaction: t }),
-              ]);
-    });
+          { transaction: t },
+        ),
+      ])
+    })
   },
 
   down: (queryInterface, Sequelize) => {
-    return queryInterface.sequelize.transaction(t => {
+    return queryInterface.sequelize.transaction((t) => {
       return Promise.all([
-        queryInterface.dropTable('application_status_history', { transaction: t }),
-      ]);
-    });
-  }
-};
+        queryInterface.dropTable('application_status_history', {
+          transaction: t,
+        }),
+      ])
+    })
+  },
+}

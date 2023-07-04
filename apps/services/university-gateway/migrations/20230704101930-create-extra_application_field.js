@@ -2,9 +2,10 @@
 
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.sequelize.transaction(t => {
+    return queryInterface.sequelize.transaction((t) => {
       return Promise.all([
-        queryInterface.createTable('extra_application_field',
+        queryInterface.createTable(
+          'extra_application_field',
           {
             id: {
               type: Sequelize.UUID,
@@ -20,7 +21,7 @@ module.exports = {
               },
               allowNull: false,
             },
-			extra_application_field_type_id: {
+            extra_application_field_type_id: {
               type: Sequelize.UUID,
               references: {
                 model: 'extra_application_field',
@@ -31,35 +32,36 @@ module.exports = {
             name_is: {
               type: Sequelize.STRING,
             },
-			name_en: {
+            name_en: {
               type: Sequelize.STRING,
             },
-			description_is: {
+            description_is: {
               type: Sequelize.STRING,
             },
-			description_en: {
+            description_en: {
               type: Sequelize.STRING,
             },
-			description_en: {
+            description_en: {
               type: Sequelize.STRING,
             },
-			required: {
+            required: {
               type: Sequelize.BOOLEAN,
             },
-			upload_accepted_file_type: {
+            upload_accepted_file_type: {
               type: Sequelize.STRING,
             },
           },
-          { transaction: t }),
-      ]);
-    });
+          { transaction: t },
+        ),
+      ])
+    })
   },
 
   down: (queryInterface, Sequelize) => {
-    return queryInterface.sequelize.transaction(t => {
+    return queryInterface.sequelize.transaction((t) => {
       return Promise.all([
         queryInterface.dropTable('extra_application_field', { transaction: t }),
-      ]);
-    });
-  }
-};
+      ])
+    })
+  },
+}
