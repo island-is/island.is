@@ -75,6 +75,7 @@ const FamilyMember = () => {
         <IntroHeader
           title={person?.spouse?.name || ''}
           intro={dataInfoSpouse}
+          marginBottom={2}
         />
       )}
 
