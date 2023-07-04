@@ -17,7 +17,7 @@ export const Fishermen = ({ application }: ReviewGroupProps) => {
         <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
           <RadioValue
             label={formatMessage(oldAgePensionFormMessage.review.fishermen)}
-            value={applicationType === ApplicationType.FISHERMEN ? YES : NO}
+            value={applicationType === ApplicationType.SAILOR_PENSION ? YES : NO}
           />
         </GridColumn>
       </GridRow>

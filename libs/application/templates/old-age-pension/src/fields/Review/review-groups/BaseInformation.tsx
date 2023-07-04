@@ -136,21 +136,23 @@ export const BaseInformation = ({
         </GridColumn>
       </GridRow>
 
-      <GridRow>
-        <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
-          <DataValue
-            label={formatMessage(oldAgePensionFormMessage.review.spouseName)}
-            value={spouseName}
-          />
-        </GridColumn>
+      {spouseName && (
+        <GridRow>
+          <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+            <DataValue
+              label={formatMessage(oldAgePensionFormMessage.review.spouseName)}
+              value={spouseName}
+            />
+          </GridColumn>
 
-        <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
-          <DataValue
-            label={formatMessage(oldAgePensionFormMessage.review.nationalId)}
-            value={formatKennitala(spouseNationalId)}
-          />
-        </GridColumn>
-      </GridRow>
+          <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+            <DataValue
+              label={formatMessage(oldAgePensionFormMessage.review.nationalId)}
+              value={formatKennitala(spouseNationalId)}
+            />
+          </GridColumn>
+        </GridRow>
+      )}
     </ReviewGroup>
   )
 }
