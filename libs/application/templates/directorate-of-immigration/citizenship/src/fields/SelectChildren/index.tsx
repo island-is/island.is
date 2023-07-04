@@ -6,8 +6,12 @@ import {
   FieldComponents,
   FieldTypes,
 } from '@island.is/application/types'
+import { useLocale } from '@island.is/localization'
 
+//limit to max MAX_CNT_APPLICANTS-1 children
 export const SelectChildren = ({ field, application, error }: any) => {
+  const { formatMessage } = useLocale()
+
   const {
     externalData: { childrenCustodyInformation },
     answers,
@@ -30,7 +34,7 @@ export const SelectChildren = ({ field, application, error }: any) => {
             {showForeignDomicileTag && (
               <div style={{ paddingRight: 15 }}>
                 <Tag disabled variant="red">
-                  Lögheimili utan Íslands {/* TODO þýða texta */}
+                  {selectChildren.checkboxes.tagLegalDomicileNotIceland}
                 </Tag>
               </div>
             )}
@@ -38,9 +42,11 @@ export const SelectChildren = ({ field, application, error }: any) => {
               outlined={child.citizenship?.code === 'IS' ? false : true}
               disabled
               variant={child.citizenship?.code === 'IS' ? 'red' : 'blue'}
-            >{
-              `Ríkisfang: ${child.citizenship?.name}` /* TODO þýða texta */
-            }</Tag>
+            >
+              {formatMessage(selectChildren.checkboxes.tagCitizenship, {
+                citizenship: child.citizenship?.name,
+              })}
+            </Tag>
           </div>
         ),
         disabled: !isCheckable,

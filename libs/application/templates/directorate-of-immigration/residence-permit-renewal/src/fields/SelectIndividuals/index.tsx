@@ -7,11 +7,15 @@ import {
   FieldTypes,
 } from '@island.is/application/types'
 import { getValueViaPath } from '@island.is/application/core'
-import { NationalRegistryUser } from '@island.is/api/schema'
+import { NationalRegistryUser } from '@island.is/api/domains/national-registry'
 import { CurrentResidencePermit } from '@island.is/clients/directorate-of-immigration/residence-permit'
 import { formatDate } from '../../utils'
+import { useLocale } from '@island.is/localization'
 
+//limit to max MAX_CNT_APPLICANTS applicants
 export const SelectIndividuals = ({ field, application, error }: any) => {
+  const { formatMessage } = useLocale()
+
   const {
     externalData: { childrenCustodyInformation },
     answers,
@@ -41,9 +45,9 @@ export const SelectIndividuals = ({ field, application, error }: any) => {
           variant={!canApplyRenewal ? 'red' : 'blue'}
         >
           {canApplyRenewal
-            ? `Gildir til: ${formatDate(
-                currentResidencePermit.permitValidTo,
-              )}` /* TODO þýða texta */
+            ? formatMessage(applicant.labels.pickApplicant.validTo, {
+                date: formatDate(currentResidencePermit.permitValidTo),
+              })
             : currentResidencePermit?.canApplyRenewal?.reason}
         </Tag>
       </div>

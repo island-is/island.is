@@ -3,6 +3,7 @@ import {
   buildSubSection,
   buildCustomField,
   getValueViaPath,
+  buildDescriptionField,
 } from '@island.is/application/core'
 import { CurrentResidencePermit } from '@island.is/clients/directorate-of-immigration/residence-permit'
 import { applicant } from '../../../lib/messages'
@@ -14,7 +15,6 @@ export const PickApplicantSubSection = buildSubSection({
     buildMultiField({
       id: 'pickChildrenMultiField',
       title: applicant.labels.pickApplicant.pageTitle,
-      description: applicant.labels.pickApplicant.description,
       children: [
         buildCustomField(
           {
@@ -39,6 +39,13 @@ export const PickApplicantSubSection = buildSubSection({
             linkUrl: applicant.labels.pickApplicant.warningLinkUrl,
           },
         ),
+        buildDescriptionField({
+          id: 'selectedIndividuals.title',
+          title: applicant.labels.pickApplicant.title,
+          description: applicant.labels.pickApplicant.description,
+          titleVariant: 'h5',
+          space: 3,
+        }),
         buildCustomField({
           id: 'selectedIndividuals',
           title: applicant.labels.pickApplicant.pageTitle,

@@ -92,25 +92,26 @@ export class ResidencePermitClient {
     try {
       const res = await this.applicantApiWithAuth(auth).applicantGetGet()
 
+      //TODOx missing fields in endpoint:
       return {
-        permitTypeId: 123, //TODOx missing field in endpoint
-        permitTypeName: 'Tímabundið dvalarleyfi vegna fjölskyldusameiningar', //TODOx missing field in endpoint
-        permitValidTo: new Date(), //TODOx missing field in endpoint
+        permitTypeId: 123,
+        permitTypeName: 'Tímabundið dvalarleyfi vegna fjölskyldusameiningar',
+        permitValidTo: new Date(),
 
-        isPermitTypeFamily: false, //TODOx missing field in endpoint
-        isPermitTypeStudy: false, //TODOx missing field in endpoint
-        isPermitTypeEmployment: true, //TODOx missing field in endpoint
+        isPermitTypeFamily: true,
+        isPermitTypeStudy: false,
+        isPermitTypeEmployment: false,
 
-        isWorkPermitTypeEmploymentServiceAgreement: true, //TODOx missing field in endpoint
-        isWorkPermitTypeEmploymentOther: false, //TODOx missing field in endpoint
-        isWorkPermitTypeSpecial: false, //TODOx missing field in endpoint
+        isWorkPermitTypeEmploymentServiceAgreement: false,
+        isWorkPermitTypeEmploymentOther: false,
+        isWorkPermitTypeSpecial: false,
 
         canApplyRenewal: {
-          canApply: true, //TODOx missing field in endpoint
-          reason: null, //TODOx missing field in endpoint
+          canApply: true,
+          reason: null,
         },
         canApplyPermanent: {
-          canApply: false, //TODOx missing field in endpoint
+          canApply: false,
         },
       }
     } catch (error) {

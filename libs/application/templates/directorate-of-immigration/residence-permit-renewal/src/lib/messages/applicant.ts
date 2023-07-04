@@ -21,15 +21,16 @@ export const applicant = {
         defaultMessage: 'Umsækjendur',
         description: 'Pick applicant page title',
       },
-      description: {
-        id: 'doi.rpr.application:applicant.labels.pickApplicant.description',
-        defaultMessage: ' ',
-        description: 'Pick applicant description',
-      },
       title: {
         id: 'doi.rpr.application:applicant.labels.pickApplicant.title',
         defaultMessage: 'Fyrir hvern á að sækja um?',
         description: 'Pick applicant sub section title',
+      },
+      description: {
+        id: 'doi.rpr.application:applicant.labels.pickApplicant.description',
+        defaultMessage:
+          'Einungis er hægt að endurnýja dvalarleyfi á sömu forsendum og síðast. Ef forsendur hafa breyst þarf að sækja um annars konar dvalarleyfi. ',
+        description: 'Pick applicant description',
       },
       warningTitle: {
         id: 'doi.rpr.application:applicant.labels.pickApplicant.warningTitle',
@@ -76,16 +77,17 @@ export const applicant = {
         defaultMessage: 'https://island.is/s/utlendingastofnun/',
         description: 'Pick applicant sub section info link url',
       },
-      // checkboxTitle: {
-      //   id: 'doi.rpr.application:applicant.labels.pickApplicant.checkboxTitle',
-      //   defaultMessage: 'Börn í þinni forsjá',
-      //   description: 'Title: displayed above checkboxes',
-      // },
+      validTo: {
+        id: 'doi.rpr.application:applicant.labels.pickApplicant.validTo',
+        defaultMessage: `Gildir til: {date}`,
+        description: 'Pick applicant checkbox tag: valid to',
+      },
       checkboxSubLabel: {
         id:
           'doi.rpr.application:applicant.labels.pickApplicant.checkboxSubLabel',
         defaultMessage: 'Hinn forsjáraðilinn:',
-        description: 'Sublabel: displayed below a childs name',
+        description:
+          'Pick applicant checkbox sublabel: displayed below a childs name',
       },
     }),
     permanent: defineMessages({

@@ -83,17 +83,23 @@ export const selectChildren = {
     },
   }),
   checkboxes: defineMessages({
-    title: {
-      id:
-        'doi.cs.application:section.backgroundInformation.selectChildren.checkboxes.title',
-      defaultMessage: 'Börn í þinni forsjá',
-      description: 'Title: displayed above checkboxes',
-    },
     subLabel: {
       id:
         'doi.cs.application:section.backgroundInformation.selectChildren.checkboxes.sublabel',
       defaultMessage: 'Hinn forsjáraðilinn:',
       description: 'Sublabel: displayed below a childs name',
+    },
+    tagCitizenship: {
+      id:
+        'doi.cs.application:section.backgroundInformation.selectChildren.checkboxes.tagCitizenship',
+      defaultMessage: 'Ríkisfang: {citizenship}',
+      description: 'Tag: citizenship',
+    },
+    tagLegalDomicileNotIceland: {
+      id:
+        'doi.cs.application:section.backgroundInformation.selectChildren.checkboxes.tagLegalDomicileNotIceland',
+      defaultMessage: 'Lögheimili utan Íslands',
+      description: 'Tag: legal domicile not iceland',
     },
   }),
 }
