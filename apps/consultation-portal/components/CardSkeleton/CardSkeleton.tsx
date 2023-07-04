@@ -26,7 +26,6 @@ const CardSkeleton = ({
       paddingX={4}
       paddingY={3}
       className={className}
-      dataTestId="cardSkeleton"
       {...props}
     >
       {children}

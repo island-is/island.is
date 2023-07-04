@@ -37,7 +37,7 @@ test.describe('Endorsements', () => {
     await disableI18n(page)
 
     // Act
-    await page.getByRole('button', { name: 'Skoða lista' }).click()
+    await page.getByRole('button', { name: 'Skoða lista' }).first().click()
     const popupPromise = page.waitForEvent('popup')
     await page
       .getByRole('button', { name: 'Setja nafn mitt á þennan lista' })

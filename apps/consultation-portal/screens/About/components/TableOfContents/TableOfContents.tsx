@@ -7,7 +7,7 @@ import localization from '../../About.json'
 const TableOfContents = () => {
   const loc = localization['tableOfContents']
   return (
-    <Box paddingBottom={[3, 3, 0, 0, 0]} dataTestId="aboutTOC">
+    <Box paddingBottom={[3, 3, 0, 0, 0]}>
       <Contents
         tableOfContentsTitle={loc.title}
         headings={ABOUT_HEADINGS.map((item, index) => ({

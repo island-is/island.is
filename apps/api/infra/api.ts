@@ -29,6 +29,7 @@ import {
   VehicleServiceFjsV1,
   WorkMachines,
   IcelandicGovernmentInstitutionVacancies,
+  RskProcuring,
 } from '../../../infra/src/dsl/xroad'
 
 export const serviceSetup = (services: {
@@ -218,6 +219,10 @@ export const serviceSetup = (services: {
           'clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379',
         ]),
       },
+      XROAD_RSK_PROCURING_SCOPE: json([
+        '@rsk.is/prokura',
+        '@rsk.is/prokura:admin',
+      ]),
     })
 
     .secrets({
@@ -343,6 +348,7 @@ export const serviceSetup = (services: {
       UniversityOfIceland,
       WorkMachines,
       IcelandicGovernmentInstitutionVacancies,
+      RskProcuring,
     )
     .files({ filename: 'islyklar.p12', env: 'ISLYKILL_CERT' })
     .ingress({

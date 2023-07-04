@@ -9,7 +9,7 @@ export interface EnvironmentConfig {
   label: string;
   idsIssuer: string;
   apiUrl: string;
-  configcat: string | null;
+  configCat: string | null;
   datadog: string | null;
 }
 
@@ -18,6 +18,7 @@ interface CognitoResponse {
   idToken: string;
   tokenType: string;
   expiresIn: number;
+  expiresAt: number;
 }
 
 export interface EnvironmentResponse {
@@ -35,8 +36,10 @@ export interface EnvironmentStore extends State {
   environment: EnvironmentConfig;
   cognito: CognitoResponse | null;
   loading: boolean;
+  fetchedAt: number;
+  result: EnvironmentConfig[];
   actions: {
-    setEnvironment(id: string): void;
+    setEnvironment(environment: EnvironmentConfig): void;
     loadEnvironments(): Promise<EnvironmentConfig[]>;
     setCognito(cognito: CognitoResponse): void;
   };
@@ -46,16 +49,24 @@ export const environmentStore = create<EnvironmentStore>(
   persist(
     (set, get) => ({
       environment: environments.prod,
+      result: [],
+      fetchedAt: 0,
       cognito: null,
       loading: false,
       actions: {
-        setEnvironment(id: keyof typeof environments) {
+        setEnvironment(environment: EnvironmentConfig) {
           set({
-            environment: environments[id],
+            environment,
           });
         },
         async loadEnvironments() {
+          if (get().fetchedAt > Date.now() - 1000 * 60 * 2) {
+            // Cache for two minutes
+            return get().result;
+          }
+
           set({loading: true});
+
           try {
             const res = await fetch(config.environmentsUrl, {
               headers: {
@@ -67,7 +78,7 @@ export const environmentStore = create<EnvironmentStore>(
               ...n,
             }));
             const dev = ids.find(n => n.id === 'dev');
-            return [
+            const result = [
               ...ids,
               ...res.results.branches.map(branch => ({
                 ...dev,
@@ -76,25 +87,34 @@ export const environmentStore = create<EnvironmentStore>(
                 apiUrl: `https://${branch.host}${branch.path}`,
               })),
             ];
+            set({loading: false, fetchedAt: Date.now(), result});
+            return result;
           } catch (err) {
-            console.error(err);
+            // noop
           }
           set({loading: false});
-          return [];
+          return Object.values(environments) as EnvironmentConfig[];
         },
         setCognito(cognito: CognitoResponse) {
           set({
-            cognito,
+            cognito: {
+              ...cognito,
+              expiresAt: Date.now() + cognito.expiresIn * 1000,
+            },
           });
         },
       },
     }),
     {
-      name: '@island/environment10',
+      name: '@island/environment11',
       getStorage: () => AsyncStorage,
       deserialize(str: string) {
         const {state, version} = JSON.parse(str);
         delete state.actions;
+        delete state.loading;
+        if (!config.isTestingApp) {
+          state.environment = environments.prod;
+        }
         return {state, version};
       },
     },

@@ -3,6 +3,7 @@ import { ApiScope } from '@island.is/auth/scopes'
 import { m } from '@island.is/service-portal/core'
 import { PortalModule } from '@island.is/portals/core'
 import { InformationPaths } from './lib/paths'
+import { Navigate } from 'react-router-dom'
 
 const UserInfoOverview = lazy(() =>
   import('./screens/UserInfoOverview/UserInfoOverview'),
@@ -19,6 +20,12 @@ export const informationModule: PortalModule = {
     {
       name: 'Mínar upplýsingar',
       path: InformationPaths.MyInfoRoot,
+      enabled: userInfo.scopes.includes(ApiScope.meDetails),
+      element: <Navigate to={InformationPaths.MyInfoRootOverview} replace />,
+    },
+    {
+      name: 'Mín gögn',
+      path: InformationPaths.MyInfoRootOverview,
       enabled: userInfo.scopes.includes(ApiScope.meDetails),
       element: <UserInfoOverview />,
     },
