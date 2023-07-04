@@ -9,21 +9,20 @@ import { expeditedProcessing } from '../../../lib/messages'
 export const ExpeditedProcessingSection = buildSection({
   id: 'expeditedProcessing',
   title: expeditedProcessing.general.sectionTitle,
+  condition: (_, externalData) => {
+    const isPermitTypeEmployment = getValueViaPath(
+      externalData,
+      'currentResidencePermit.data.isPermitTypeEmployment',
+      false,
+    ) as boolean
+
+    return isPermitTypeEmployment
+  },
   children: [
     buildMultiField({
       id: 'expeditedProcessingMultiField',
       title: expeditedProcessing.labels.pageTitle,
       description: expeditedProcessing.labels.description,
-      condition: (_, externalData) => {
-        //TODOx should check kids as well
-        const canApplyPermanent = getValueViaPath(
-          externalData,
-          'currentResidencePermit.data.canApplyPermanent',
-          false,
-        ) as boolean
-
-        return canApplyPermanent
-      },
       children: [
         buildDescriptionField({
           id: 'expeditedProcessing.title',

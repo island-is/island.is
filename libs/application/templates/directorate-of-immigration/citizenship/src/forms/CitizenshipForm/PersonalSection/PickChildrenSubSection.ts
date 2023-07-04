@@ -64,6 +64,7 @@ export const PickChildrenSubSection = buildSubSection({
             title: 'Upplýsingar',
             component: 'InformationBoxWithLink',
             condition: (_, externalData) => {
+              //TODO separate condition for each point in message (A: ef eitt barn er með sameiginleg forsjá, B: ef eitt barn yfir 12 ára)
               const childWithInfo = getValueViaPath(
                 externalData,
                 'childrenCustodyInformation.data',

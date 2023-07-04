@@ -8,8 +8,10 @@ import {
 import { supportingDocuments } from '../../../lib/messages'
 import { Answer, Application, FormValue } from '@island.is/application/types'
 import { Citizenship } from '../../../lib/dataSchema'
-import { getSelectedCustodyChildren } from '../../../utils'
-import * as kennitala from 'kennitala'
+import {
+  getSelectedIndividualAge,
+  getSelectedIndividualName,
+} from '../../../utils'
 
 const FILE_SIZE_LIMIT = 10000000
 
@@ -18,25 +20,20 @@ export const OtherDocumentsSubSection = (index: number) =>
     id: 'otherDocuments',
     title: supportingDocuments.labels.otherDocuments.subSectionTitle,
     children: [
+      // multi field for applicant
       buildMultiField({
         id: 'otherDocumentsMultiField',
         title: supportingDocuments.labels.otherDocuments.pageTitle,
         description: (application: Application) => {
-          const answers = application.answers as Citizenship
-          const selectedInCustody = getSelectedCustodyChildren(
-            application.externalData,
-            answers,
-          )
-
-          const personName =
-            index === 0
-              ? answers.userInformation?.name
-              : !!selectedInCustody && selectedInCustody[index - 1]?.fullName
-
           return {
             ...supportingDocuments.general.description,
             values: {
-              person: `${personName}`,
+              person:
+                getSelectedIndividualName(
+                  application.externalData,
+                  application.answers,
+                  index,
+                ) || '',
             },
           }
         },
@@ -55,6 +52,7 @@ export const OtherDocumentsSubSection = (index: number) =>
             title: supportingDocuments.labels.otherDocuments.birthCertificate,
             introduction: '',
             maxSize: FILE_SIZE_LIMIT,
+            // TODO condition bara ef á búsetuskilyrði barn ísl foreldris
             uploadHeader:
               supportingDocuments.labels.otherDocuments.birthCertificate,
             condition: (answer: Answer) => {
@@ -111,25 +109,21 @@ export const OtherDocumentsSubSection = (index: number) =>
           }),
         ],
       }),
+
+      // multi field for selected children
       buildMultiField({
         id: 'otherDocumentsChildrenMultiField',
         title: supportingDocuments.labels.otherDocuments.pageTitle,
         description: (application: Application) => {
-          const answers = application.answers as Citizenship
-          const selectedInCustody = getSelectedCustodyChildren(
-            application.externalData,
-            answers,
-          )
-
-          const personName =
-            index === 0
-              ? answers.userInformation?.name
-              : !!selectedInCustody && selectedInCustody[index - 1]?.fullName
-
           return {
             ...supportingDocuments.general.description,
             values: {
-              person: `${personName}`,
+              person:
+                getSelectedIndividualName(
+                  application.externalData,
+                  application.answers,
+                  index,
+                ) || '',
             },
           }
         },
@@ -162,20 +156,13 @@ export const OtherDocumentsSubSection = (index: number) =>
             uploadHeader:
               supportingDocuments.labels.otherDocumentsChildren.writtenConsent,
             condition: (formValue: FormValue, externalData) => {
-              const answers = formValue as Citizenship
-              const selectedInCustody = getSelectedCustodyChildren(
+              const age = getSelectedIndividualAge(
                 externalData,
-                answers,
+                formValue,
+                index,
               )
-              const thisChild =
-                !!selectedInCustody &&
-                selectedInCustody.find((_, i) => i === index - 1)
-              const childAge =
-                !!thisChild && kennitala.info(thisChild?.nationalId)
-              if (!!childAge && childAge.age >= 12) {
-                return true
-              }
-              return false
+
+              return !!age && age >= 12
             },
           }),
           buildFileUploadField({
@@ -188,20 +175,7 @@ export const OtherDocumentsSubSection = (index: number) =>
             uploadHeader:
               supportingDocuments.labels.otherDocumentsChildren
                 .otherParentConsent,
-            condition: (formValue: FormValue, externalData) => {
-              const answers = formValue as Citizenship
-              const selectedInCustody = getSelectedCustodyChildren(
-                externalData,
-                answers,
-              )
-              const thisChild =
-                !!selectedInCustody &&
-                selectedInCustody.find((_, i) => i === index - 1)
-              const childAge =
-                !!thisChild && kennitala.info(thisChild?.nationalId)
-
-              return true
-            },
+            // TODO condition ef sameiginleg forsjá
           }),
           buildFileUploadField({
             id: `otherDocuments${index}.custodyDocuments`,

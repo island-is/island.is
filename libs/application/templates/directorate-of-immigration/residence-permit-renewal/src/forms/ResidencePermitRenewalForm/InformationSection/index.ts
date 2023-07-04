@@ -5,31 +5,35 @@ import { StaysAbroadSubSection } from './StaysAbroadSubSection'
 import { CriminalRecordSubSection } from './CriminalRecordSubSection'
 import { PassportSubSection } from './PassportSubSection'
 import { OtherDocumentsSubSection } from './OtherDocumentsSubSection'
-import { ResidencePermitRenewalExternalData } from '../../../shared/types'
+import { StudySubSection } from './StudySubSection'
+import { EmploymentSubSection } from './EmploymentSubSection'
+import { getSelectedIndividualName, isIndividualSelected } from '../../../utils'
 
 export const InformationSection = (index: number) =>
   buildSection({
     id: `information${index}`,
     title: (application: Application) => {
-      const externalData = application.externalData as ResidencePermitRenewalExternalData
-
       return {
         ...information.general.sectionTitleWithPerson,
         values: {
-          person: `${externalData?.nationalRegistry?.data?.fullName} ${
-            index + 1
-          }`,
+          person:
+            getSelectedIndividualName(
+              application.externalData,
+              application.answers,
+              index,
+            ) || '',
         },
       }
     },
-    condition: (formValue: FormValue) => {
-      // TODO look at answers to know if we should display this information section
-      return index < 2
+    condition: (formValue: FormValue, externalData) => {
+      return isIndividualSelected(externalData, formValue, index)
     },
     children: [
-      StaysAbroadSubSection,
-      CriminalRecordSubSection,
-      PassportSubSection,
-      OtherDocumentsSubSection,
+      StaysAbroadSubSection(index),
+      CriminalRecordSubSection(index),
+      StudySubSection(index),
+      EmploymentSubSection(index),
+      PassportSubSection(index),
+      OtherDocumentsSubSection(index),
     ],
   })

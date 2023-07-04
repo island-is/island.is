@@ -118,7 +118,7 @@ export const MaritalStatusSubSection = buildSubSection({
               undefined,
             ) as SpouseIndividual | undefined
 
-            return spouseDetails?.spouseBirthplace?.location //TODO vantar land en ekki borg
+            return spouseDetails?.spouseBirthplace?.location
           },
         }),
         buildTextField({

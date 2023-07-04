@@ -23,14 +23,14 @@ export const SelectChildren = ({ field, application, error }: any) => {
         value: child.nationalId,
         label: child.fullName,
         subLabel: child.otherParent
-          ? `${selectChildren.checkboxes.subLabel.defaultMessage} ${child.otherParent?.fullName}`
+          ? `${selectChildren.checkboxes.subLabel.defaultMessage} ${child.otherParent?.fullName}` //TODO ekki nota defaultMessage, þá þýðist ekki
           : '',
         rightContent: (
           <div style={{ display: 'flex' }}>
             {showForeignDomicileTag && (
               <div style={{ paddingRight: 15 }}>
                 <Tag disabled variant="red">
-                  Lögheimili utan Íslands
+                  Lögheimili utan Íslands {/* TODO þýða texta */}
                 </Tag>
               </div>
             )}
@@ -38,7 +38,9 @@ export const SelectChildren = ({ field, application, error }: any) => {
               outlined={child.citizenship?.code === 'IS' ? false : true}
               disabled
               variant={child.citizenship?.code === 'IS' ? 'red' : 'blue'}
-            >{`Ríkisfang: ${child.citizenship?.name}`}</Tag>
+            >{
+              `Ríkisfang: ${child.citizenship?.name}` /* TODO þýða texta */
+            }</Tag>
           </div>
         ),
         disabled: !isCheckable,

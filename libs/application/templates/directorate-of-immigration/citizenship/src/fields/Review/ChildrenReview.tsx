@@ -5,7 +5,7 @@ import DescriptionText from '../../components/DescriptionText'
 import { useLocale } from '@island.is/localization'
 
 interface ChildrenReviewProps {
-  selectedChildren: Array<ApplicantChildCustodyInformation | undefined>
+  selectedChildren: Array<ApplicantChildCustodyInformation> | undefined
 }
 
 export const ChildrenReview = ({ selectedChildren }: ChildrenReviewProps) => {
@@ -21,20 +21,20 @@ export const ChildrenReview = ({ selectedChildren }: ChildrenReviewProps) => {
         }}
       />
       {selectedChildren &&
-        selectedChildren?.map((child) => {
+        selectedChildren.map((child) => {
           return (
             <GridRow>
               <GridColumn span="1/2">
-                <Text>{child?.fullName}</Text>
+                <Text>{child.fullName}</Text>
                 <Text>
-                  {`${selectChildren.checkboxes.subLabel}: ${child?.otherParent?.fullName}`}
+                  {`${selectChildren.checkboxes.subLabel}: ${child.otherParent?.fullName}`}
                 </Text>
               </GridColumn>
               <GridColumn span="1/2">
                 <Text>
                   {`${formatMessage(
                     personal.labels.userInformation.citizenship,
-                  )}: ${child?.citizenship?.name}`}
+                  )}: ${child.citizenship?.name}`}
                 </Text>
               </GridColumn>
             </GridRow>

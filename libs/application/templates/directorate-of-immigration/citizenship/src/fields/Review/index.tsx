@@ -17,7 +17,7 @@ export const Review: FC<FieldBaseProps> = ({ application, field }) => {
 
   const selectedChildren = getSelectedCustodyChildren(
     application.externalData,
-    answers,
+    application.answers,
   )
   const showParents =
     answers?.residenceCondition.radio === 'childOfIcelander' &&

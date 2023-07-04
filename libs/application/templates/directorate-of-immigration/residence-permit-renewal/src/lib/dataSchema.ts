@@ -7,6 +7,7 @@ export const ResidencePermitRenewalSchema = z.object({
     phone: z.string().min(1),
     securityPin: z.string().min(4),
   }),
+  selectedIndividuals: z.array(z.string()).optional(),
 })
 
 export type ResidencePermitRenewal = z.TypeOf<

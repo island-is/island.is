@@ -14,7 +14,7 @@ export const DocumentReview: FC<FieldBaseProps> = ({ application }) => {
 
   const selectedChildren = getSelectedCustodyChildren(
     application.externalData,
-    answers,
+    application.answers,
   )
 
   return (
@@ -33,8 +33,7 @@ export const DocumentReview: FC<FieldBaseProps> = ({ application }) => {
         </GridColumn>
         {selectedChildren &&
           selectedChildren.length > 0 &&
-          selectedChildren?.map((c) => {
-            const child = c as ApplicantChildCustodyInformation
+          selectedChildren.map((child) => {
             return (
               <GridColumn span="1/2">
                 <DescriptionText

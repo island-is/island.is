@@ -23,14 +23,69 @@ export const applicant = {
       },
       description: {
         id: 'doi.rpr.application:applicant.labels.pickApplicant.description',
-        defaultMessage:
-          'Interdum et malesuada fames ac ante ipsum primis in faucibus.',
+        defaultMessage: ' ',
         description: 'Pick applicant description',
       },
       title: {
         id: 'doi.rpr.application:applicant.labels.pickApplicant.title',
         defaultMessage: 'Fyrir hvern á að sækja um?',
         description: 'Pick applicant sub section title',
+      },
+      warningTitle: {
+        id: 'doi.rpr.application:applicant.labels.pickApplicant.warningTitle',
+        defaultMessage: 'Til athugunar!',
+        description: 'Pick applicant sub section warning title',
+      },
+      warningMessage: {
+        id: 'doi.rpr.application:applicant.labels.pickApplicant.warningMessage',
+        defaultMessage:
+          'Aðilinn sem rétturinn er dreginn af þarf að vera með dvalarleyfi í gildi eða með umsókn í vinnslu hjá Útlendingastofnun.',
+        description: 'Pick applicant sub section warning message',
+      },
+      warningLinkMessage: {
+        id:
+          'doi.rpr.application:applicant.labels.pickApplicant.warningLinkMessage',
+        defaultMessage:
+          'Ef eftirfarandi upplýsingar eru ekki réttar þá þarf að breyta þeim hjá Útlendingastofnun og koma svo aftur til að klára umsóknina.',
+        description: 'Pick applicant sub section warning link message',
+      },
+      warningLinkUrl: {
+        id: 'doi.rpr.application:applicant.labels.pickApplicant.warningLinkUrl',
+        defaultMessage: 'https://island.is/s/utlendingastofnun/',
+        description: 'Pick applicant sub section warning link url',
+      },
+      infoTitle: {
+        id: 'doi.rpr.application:applicant.labels.pickApplicant.infoTitle',
+        defaultMessage: 'Upplýsingar',
+        description: 'Pick applicant sub section info title',
+      },
+      infoMessage: {
+        id: 'doi.rpr.application:applicant.labels.pickApplicant.infoMessage',
+        defaultMessage:
+          'Ef foreldrar fara sameiginlega með forsjá barns þarf að skila inn undirrituðu samþykki hins forsjárforeldrisins til Útlendingastofnunar.',
+        description: 'Pick applicant sub section info message',
+      },
+      infoLinkMessage: {
+        id:
+          'doi.rpr.application:applicant.labels.pickApplicant.infoLinkMessage',
+        defaultMessage: 'Sjá eyðublöð á vefsíðu Útlendingastofnunar.',
+        description: 'Pick applicant sub section info link message',
+      },
+      infoLinkUrl: {
+        id: 'doi.rpr.application:applicant.labels.pickApplicant.infoLinkUrl',
+        defaultMessage: 'https://island.is/s/utlendingastofnun/',
+        description: 'Pick applicant sub section info link url',
+      },
+      // checkboxTitle: {
+      //   id: 'doi.rpr.application:applicant.labels.pickApplicant.checkboxTitle',
+      //   defaultMessage: 'Börn í þinni forsjá',
+      //   description: 'Title: displayed above checkboxes',
+      // },
+      checkboxSubLabel: {
+        id:
+          'doi.rpr.application:applicant.labels.pickApplicant.checkboxSubLabel',
+        defaultMessage: 'Hinn forsjáraðilinn:',
+        description: 'Sublabel: displayed below a childs name',
       },
     }),
     permanent: defineMessages({

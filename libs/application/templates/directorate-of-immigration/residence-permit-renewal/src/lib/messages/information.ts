@@ -64,6 +64,52 @@ export const information = {
         description: 'Criminal record title',
       },
     }),
+    study: defineMessages({
+      subSectionTitle: {
+        id: 'doi.rpr.application:information.labels.study.subSectionTitle',
+        defaultMessage: 'Nám',
+        description: 'Study sub section title',
+      },
+      pageTitle: {
+        id: 'doi.rpr.application:information.labels.study.pageTitle',
+        defaultMessage: 'Nám',
+        description: 'Study page title',
+      },
+      description: {
+        id: 'doi.rpr.application:information.labels.study.description',
+        defaultMessage:
+          'Pellentesque at nibh convallis, sodales nulla ut, sagittis ligula.',
+        description: 'Study description',
+      },
+      title: {
+        id: 'doi.rpr.application:information.labels.study.title',
+        defaultMessage: 'Upplýsingar um nám',
+        description: 'Study title',
+      },
+    }),
+    employment: defineMessages({
+      subSectionTitle: {
+        id: 'doi.rpr.application:information.labels.employment.subSectionTitle',
+        defaultMessage: 'Atvinnuleyfi',
+        description: 'Employment sub section title',
+      },
+      pageTitle: {
+        id: 'doi.rpr.application:information.labels.employment.pageTitle',
+        defaultMessage: 'Atvinnuleyfi',
+        description: 'Employment page title',
+      },
+      description: {
+        id: 'doi.rpr.application:information.labels.employment.description',
+        defaultMessage:
+          'Pellentesque at nibh convallis, sodales nulla ut, sagittis ligula.',
+        description: 'Employment description',
+      },
+      title: {
+        id: 'doi.rpr.application:information.labels.employment.title',
+        defaultMessage: 'Upplýsingar um atvinnuleyfi',
+        description: 'Employment title',
+      },
+    }),
     passport: defineMessages({
       subSectionTitle: {
         id: 'doi.rpr.application:information.labels.passport.subSectionTitle',

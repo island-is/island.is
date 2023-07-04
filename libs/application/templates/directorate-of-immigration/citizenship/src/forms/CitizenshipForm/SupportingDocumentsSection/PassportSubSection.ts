@@ -10,8 +10,7 @@ import {
 } from '@island.is/application/core'
 import { supportingDocuments } from '../../../lib/messages'
 import { Application } from '@island.is/application/types'
-import { Citizenship } from '../../../lib/dataSchema'
-import { getSelectedCustodyChildren } from '../../../utils'
+import { getSelectedIndividualName } from '../../../utils'
 import { TravelDocumentType } from '@island.is/clients/directorate-of-immigration/citizenship'
 
 const FILE_SIZE_LIMIT = 10000000
@@ -25,21 +24,15 @@ export const PassportSubSection = (index: number) =>
         id: `passportMultiField${index}`,
         title: supportingDocuments.labels.passport.pageTitle,
         description: (application: Application) => {
-          const answers = application.answers as Citizenship
-          const selectedInCustody = getSelectedCustodyChildren(
-            application.externalData,
-            answers,
-          )
-
-          const personName =
-            index === 0
-              ? answers.userInformation?.name
-              : !!selectedInCustody && selectedInCustody[index - 1]?.fullName
-
           return {
             ...supportingDocuments.general.description,
             values: {
-              person: `${personName}`,
+              person:
+                getSelectedIndividualName(
+                  application.externalData,
+                  application.answers,
+                  index,
+                ) || '',
             },
           }
         },
@@ -89,7 +82,6 @@ export const PassportSubSection = (index: number) =>
             id: `passport[${index}].publisher`,
             title: supportingDocuments.labels.passport.publisher,
             width: 'half',
-            //TODO fellilisti velja land
           }),
           buildFileUploadField({
             id: 'passport.attachment',
