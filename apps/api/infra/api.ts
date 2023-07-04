@@ -29,6 +29,7 @@ import {
   VehicleServiceFjsV1,
   WorkMachines,
   IcelandicGovernmentInstitutionVacancies,
+  RskProcuring,
 } from '../../../infra/src/dsl/xroad'
 
 export const serviceSetup = (services: {
@@ -222,11 +223,6 @@ export const serviceSetup = (services: {
         '@rsk.is/prokura',
         '@rsk.is/prokura:admin',
       ]),
-      XROAD_RSK_PROCURING_PATH: {
-        dev: 'IS-DEV/GOV/10006/Skatturinn/relationships-v1',
-        staging: 'IS-TEST/GOV/10006/Skatturinn/relationships-v1',
-        prod: 'IS/GOV/10006/Skatturinn/relationships-v1',
-      },
     })
 
     .secrets({
@@ -352,6 +348,7 @@ export const serviceSetup = (services: {
       UniversityOfIceland,
       WorkMachines,
       IcelandicGovernmentInstitutionVacancies,
+      RskProcuring,
     )
     .files({ filename: 'islyklar.p12', env: 'ISLYKILL_CERT' })
     .ingress({
