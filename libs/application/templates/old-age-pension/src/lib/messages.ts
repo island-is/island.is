@@ -851,6 +851,11 @@ export const oldAgePensionFormMessage: MessageDir = {
       defaultMessage: 'Bæta við vinnuveitanda',
       description: 'Add an employer',
     },
+    approvedHeader: {
+      id: 'pl.application:employer.approved.header',
+      defaultMessage: 'Samþykkt',
+      description: 'Approved',
+    },
   }),
 
   errors: defineMessages({

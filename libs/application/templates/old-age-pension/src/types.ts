@@ -8,9 +8,9 @@ export interface combinedResidenceHistory {
 
 export interface Employer {
   email: string
-  phoneNumber: number
+  phoneNumber?: number
+  ratioType: RatioType
   ratioYearly?: string
   rawIndex?: number
-  ratioType: RatioType
   //ratioMonthly?: object // need to do
 }

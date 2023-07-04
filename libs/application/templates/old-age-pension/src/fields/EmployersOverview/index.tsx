@@ -13,8 +13,8 @@ import { useLocale } from '@island.is/localization'
 import { useDeepCompareEffect } from 'react-use'
 import { UPDATE_APPLICATION } from '@island.is/application/graphql'
 import { useMutation } from '@apollo/client'
-// import { EmployersTable } from '../components/EmployersTable'
-import { States, YES } from '../../lib/constants'
+import { EmployersTable } from '../components/EmployersTable'
+import { States } from '../../lib/constants'
 import { getApplicationAnswers } from '../../lib/oldAgePensionUtils'
 
 const EmployersOverview: FC<RepeaterProps> = ({
@@ -81,12 +81,15 @@ const EmployersOverview: FC<RepeaterProps> = ({
 
   return (
     <Box>
+      <Text variant="default">
+        {formatMessage(oldAgePensionFormMessage.employer.employerDescription)}
+      </Text>
       <Box paddingTop={5} paddingBottom={5}>
-        {/* <EmployersTable
+        <EmployersTable
           employers={employers}
           editable={application.state === States.DRAFT}
           onDeleteEmployer={onDeleteEmployer}
-        /> */}
+        />
       </Box>
       <Box alignItems="center">
         <Inline space={1} alignY="center">

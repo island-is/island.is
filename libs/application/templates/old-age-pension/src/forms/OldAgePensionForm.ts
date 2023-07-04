@@ -330,7 +330,7 @@ export const OldAgePensionForm: Form = buildForm({
               },
             }),
             buildRepeater({
-              id: 'employment.employers',
+              id: 'employers',
               title: oldAgePensionFormMessage.employer.employerTitle,
               component: 'EmployersOverview',
               condition: (answers) => {
@@ -342,8 +342,6 @@ export const OldAgePensionForm: Form = buildForm({
                 buildMultiField({
                   id: 'addEmployers',
                   title: oldAgePensionFormMessage.employer.registrationTitle,
-                  description:
-                    oldAgePensionFormMessage.employer.employerDescription,
                   isPartOfRepeater: true,
                   children: [
                     buildTextField({
@@ -384,7 +382,7 @@ export const OldAgePensionForm: Form = buildForm({
                         const currentEmployer =
                           rawEmployers[rawEmployers.length - 1]
 
-                        return currentEmployer.ratioType === RatioType.YEARLY
+                        return currentEmployer?.ratioType === RatioType.YEARLY
                       },
                       placeholder: '1%',
                       variant: 'number',

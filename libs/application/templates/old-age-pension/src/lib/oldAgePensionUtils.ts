@@ -108,11 +108,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
     'homeAllowance.children',
   ) as YesOrNo
 
-  const rawEmployers = getValueViaPath(
-    answers,
-    'employment.employers',
-    [],
-  ) as Employer[]
+  const rawEmployers = getValueViaPath(answers, 'employers', []) as Employer[]
   const employers = filterValidEmployers(rawEmployers)
 
   return {
@@ -632,7 +628,7 @@ export function childCustodyTableData(application: Application) {
 interface IncompleteEmployer {
   email?: string
   phoneNumber?: string
-  ratioType: RatioType
+  ratioType?: RatioType
 }
 
 export const filterValidEmployers = (
@@ -645,10 +641,9 @@ export const filterValidEmployers = (
     }))
     .filter((employer) => {
       const hasEmail = !!employer?.email
-      const hasPhoneNumber = !!employer?.phoneNumber
-      const hasRatioType = !!employer.ratioType
+      const hasRatioType = !!employer?.ratioType
 
-      return hasPhoneNumber && hasEmail && hasRatioType
+      return hasEmail && hasRatioType
     })
 
   return filtered as Employer[]
