@@ -2,29 +2,48 @@
   "root": "apps/services/university-gateway",
   "sourceRoot": "apps/services/university-gateway/src",
   "projectType": "application",
+  "prefix": "services-university-gateway",
+  "generators": {},
   "targets": {
     "build": {
-      "executor": "@nrwl/node:webpack",
-      "outputs": ["{options.outputPath}"],
+      "executor": "./tools/executors/node:build",
       "options": {
         "outputPath": "dist/apps/services/university-gateway",
         "main": "apps/services/university-gateway/src/main.ts",
         "tsConfig": "apps/services/university-gateway/tsconfig.app.json",
-        "assets": ["apps/services/university-gateway/src/assets"]
+        "assets": [
+          "apps/services/university-gateway/src/assets",
+          {
+            "glob": "*",
+            "input": "apps/services/university-gateway/migrations",
+            "output": "./migrations"
+          },
+          {
+            "glob": ".sequelizerc",
+            "input": "apps/services/university-gateway",
+            "output": "./"
+          },
+          {
+            "glob": "sequelize.config.js",
+            "input": "apps/services/university-gateway",
+            "output": "./"
+          },
+          {
+            "glob": "*",
+            "input": "libs/email-service/src/tools/design",
+            "output": "./email-service-assets"
+          }
+        ],
+        "maxWorkers": 2
       },
       "configurations": {
         "production": {
           "optimization": true,
           "extractLicenses": true,
-          "inspect": false,
-          "fileReplacements": [
-            {
-              "replace": "apps/services/university-gateway/src/environments/environment.ts",
-              "with": "apps/services/university-gateway/src/environments/environment.prod.ts"
-            }
-          ]
+          "inspect": false
         }
-      }
+      },
+      "outputs": ["{options.outputPath}"]
     },
     "serve": {
       "executor": "@nrwl/node:node",
@@ -34,27 +53,80 @@
     },
     "lint": {
       "executor": "@nrwl/linter:eslint",
-      "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": ["apps/services/university-gateway/**/*.ts"]
+        "lintFilePatterns": ["apps/services/university-gateway/**/*.{ts,tsx,js,jsx}"]
       }
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/apps/services/university-gateway"],
       "options": {
         "jestConfig": "apps/services/university-gateway/jest.config.js",
         "passWithNoTests": true
+      },
+      "outputs": ["coverage/apps/services/university-gateway"]
+    },
+    "dev-services": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "docker-compose up -d",
+        "cwd": "apps/services/university-gateway"
       }
     },
-
     "schemas/build-openapi": {
       "executor": "@nrwl/workspace:run-commands",
       "options": {
-        "outputPath": "apps/services/university-gateway/src/openapi.yaml",
-        "command": "yarn ts-node -P apps/services/university-gateway/tsconfig.app.json apps/services/university-gateway/src/buildOpenApi.ts"
+        "command": "yarn nx run services-university-gateway:schemas/build-openapi-internal $NX_OPTIONS"
       }
-    }
+    },
+    "schemas/build-openapi-internal": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "outputPath": "apps/services/university-gateway/src/openapi.yaml",
+        "command": "cross-env INIT_SCHEMA=true yarn ts-node -P apps/services/university-gateway/tsconfig.app.json apps/services/university-gateway/src/buildOpenApi.ts"
+      }
+    },
+    "migrate": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "../../../node_modules/.bin/sequelize-cli db:migrate",
+        "cwd": "apps/services/university-gateway/"
+      }
+    },
+    "migrate/generate": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "../../../node_modules/.bin/sequelize-cli migration:generate --name $(whoami)",
+        "cwd": "apps/services/university-gateway/"
+      }
+    },
+	"migrate/undo": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+		"command": "../../../node_modules/.bin/sequelize-cli db:migrate:undo",
+        "cwd": "apps/services/university-gateway/"
+      }
+    },
+    "dev-init": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": [
+          "yarn nx run services-university-gateway:dev-services",
+          "yarn nx run services-university-gateway:migrate"
+        ],
+        "parallel": false
+      }
+    },
+    "dev": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": [
+          "scripts/run-xroad-proxy.sh"
+        ],
+        "parallel": true
+      }
+    },
+    "docker-express": {},
+    "service-service-portal-api": {}
   },
-  "tags": []
+  "tags": ["scope:nest"]
 }
