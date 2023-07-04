@@ -53,7 +53,7 @@
 	<key>NSFaceIDUsageDescription</key>
 	<string>Used for unlocking the app</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string></string>
+	<string/>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Used for license scanning capabilities</string>
 	<key>UIAppFonts</key>
@@ -70,8 +70,6 @@
 		<string>IBMPlexSans-ExtraLightItalic.ttf</string>
 		<string>IBMPlexSans-Thin.ttf</string>
 		<string>IBMPlexSans-ThinItalic.ttf</string>
-		<string>IBMPlexSans-ExtraLight.ttf</string>
-		<string>IBMPlexSans-ExtraLightItalic.ttf</string>
 		<string>IBMPlexSans-Medium.ttf</string>
 		<string>IBMPlexSans-MediumItalic.ttf</string>
 	</array>
@@ -95,5 +93,7 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+  <key>CodePushDeploymentKey</key>
+  <string>8And8KYL9BWRsUAhEBFFUxbVfVTdSM4QBQsr6</string>
 </dict>
 </plist>
