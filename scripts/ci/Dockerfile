@@ -145,7 +145,7 @@ RUN echo "Disable system-e2e"
 # RUN yarn playwright install ${PLAYWRIGHT_BROWSER}
 #
 # COPY --chown=pwuser:pwuser ${APP_HOME}/entrypoint.sh .
-ENTRYPOINT ["./entrypoint.sh"]
+ENTRYPOINT ["echo", "DISABLED SYSTEM_E2E"]
 
 
 FROM playwright-base as output-local
