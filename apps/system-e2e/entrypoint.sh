@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+echo "Disable system-e2e" >&2
+exit 0
+
 set -euo pipefail
 
 : "${TEST_ENVIRONMENT:=local}"

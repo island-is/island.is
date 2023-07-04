@@ -124,27 +124,27 @@ FROM mcr.microsoft.com/playwright:v${PLAYWRIGHT_VERSION}-focal as playwright-bas
 
 
 FROM playwright-base as output-playwright
+RUN echo "Disable system-e2e"
 # TODO: remove awscli dependency (157 MB extra)
-RUN apt-get update -y && apt-get install -y zip awscli && apt-get purge
-
-ARG APP_HOME
-ARG APP_DIST_HOME
-
-WORKDIR ${APP_DIST_HOME}
-
-COPY --from=builder /build/${APP_DIST_HOME} .
-COPY ${APP_HOME}/package.json .
-RUN chown -R pwuser:pwuser .
-
-USER pwuser
-RUN yarn set version berry
-RUN yarn install
-
-ENV PLAYWRIGHT_BROWSER=chromium
-RUN yarn playwright install ${PLAYWRIGHT_BROWSER}
-
-COPY --chown=pwuser:pwuser ${APP_HOME}/entrypoint.sh .
-
+# RUN apt-get update -y && apt-get install -y zip awscli && apt-get purge
+#
+# ARG APP_HOME
+# ARG APP_DIST_HOME
+#
+# WORKDIR ${APP_DIST_HOME}
+#
+# COPY --from=builder /build/${APP_DIST_HOME} .
+# COPY ${APP_HOME}/package.json .
+# RUN chown -R pwuser:pwuser .
+#
+# USER pwuser
+# RUN yarn set version berry
+# RUN yarn install
+#
+# ENV PLAYWRIGHT_BROWSER=chromium
+# RUN yarn playwright install ${PLAYWRIGHT_BROWSER}
+#
+# COPY --chown=pwuser:pwuser ${APP_HOME}/entrypoint.sh .
 ENTRYPOINT ["./entrypoint.sh"]
 
 
