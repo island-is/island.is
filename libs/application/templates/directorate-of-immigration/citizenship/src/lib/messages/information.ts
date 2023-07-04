@@ -9,101 +9,35 @@ export const information = {
     },
   }),
   labels: {
-    residenceConditions: defineMessages({
+    formerIcelander: defineMessages({
       subSectionTitle: {
         id:
-          'doi.cs.application:information.labels.residenceConditions.subSectionTitle',
-        defaultMessage: 'Búsetuskilyrði',
-        description: 'Residence conditions sub section title',
+          'doi.cs.application:information.labels.formerIcelander.subSectionTitle',
+        defaultMessage: 'Fyrrum ísl. ríkisborgari',
+        description: 'formerIcelander sub section title',
       },
       pageTitle: {
-        id:
-          'doi.cs.application:information.labels.residenceConditions.pageTitle',
-        defaultMessage: 'Búsetuskilyrði',
-        description: 'Residence conditions page title',
+        id: 'doi.cs.application:information.labels.formerIcelander.pageTitle',
+        defaultMessage: 'Fyrrum íslenskur ríkisborgari',
+        description: 'formerIcelander title',
       },
       description: {
+        id: 'doi.cs.application:information.labels.formerIcelander.description',
+        defaultMessage:
+          'Ertu fyrrum íslenskur ríkisborgari og hefur átt lögheimili á Íslandi í 1 ár? \\n (Þú hefur missti íslenskt ríkisfang vegna umsóknar og veitingar erlends ríkisfangs)',
+        description: 'formerIcelander description',
+      },
+      alertTitle: {
+        id: 'doi.cs.application:information.labels.formerIcelander.alertTitle',
+        defaultMessage: 'Þú uppfyllir engin búsetuskilyrði',
+        description: 'formerIcelander alert title',
+      },
+      alertDescription: {
         id:
-          'doi.cs.application:information.labels.residenceConditions.description',
+          'doi.cs.application:information.labels.formerIcelander.alertDescription',
         defaultMessage:
-          'Til að eiga rétt á íslenskum ríkisborgararétti þarftu að hafa átt lögheimili á Íslandi í tiltekinn tíma og almennt er miðað við sjö ára samfelld búsetu. Almennt er miðað við sjö ára samfelld búsetu. Þar sem þú uppfyllir ekki sjö ára samfellda búsetu þarftu að velja hvað undanþága á við um þig. Sjá nánari upplýsingar um hvenær má sækja um hér ((https://island.is/rafraen-umsokn-um-rikisborgararett/hvenaer-ma-saekja-um))',
-        description: 'Residence conditions description',
-      },
-      title: {
-        id: 'doi.cs.application:information.labels.residenceConditions.title',
-        defaultMessage: 'Veldu búsetuskilyrði',
-        description: 'Residence conditions title',
-      },
-    }),
-    residenceTypes: defineMessages({
-      married: {
-        id:
-          'doi.cs.application:information.labels.residenceTypes.married.title',
-        defaultMessage:
-          'Er í hjúskap með íslenskum ríkisborgara og hef átt lögheimili á Íslandi í 4 ár frá giftingu',
-        description: 'Residency type radio button title',
-      },
-      marriedSubLabel: {
-        id:
-          'doi.cs.application:information.labels.residenceTypes.married.subLabel',
-        defaultMessage:
-          'ATH sá sem þú ert í hjúskap með þarf að hafa verið íslenskur ríkisborgari í að lágmarki 5 ár',
-        description: 'Residency type radio button sublabel',
-      },
-      coHabit: {
-        id:
-          'doi.cs.application:information.labels.residenceTypes.coHabit.title',
-        defaultMessage:
-          'Er í skráðri sambúð með íslenskum ríkisborgara og hef átt lögheimili á Íslandi í 5 ár frá skráningu sambúðar ',
-        description: 'Residency type radio button title',
-      },
-      coHabitSubLabel: {
-        id:
-          'doi.cs.application:information.labels.residenceTypes.coHabit.subLabel',
-        defaultMessage:
-          'ATH sá sem þú ert í sambúð með þarf að hafa verið íslenskur ríkisborgari í að lágmarki 5 ár',
-        description: 'Residency type radio button sublabel',
-      },
-      childOfResident: {
-        id:
-          'doi.cs.application:information.labels.residenceTypes.childOfResident.title',
-        defaultMessage:
-          'Ég er barn íslensks ríkisborgara og hef átt lögheimili á Íslandi í 2 ár',
-        description: 'Residency type radio button title',
-      },
-      childOfResidentSubLabel: {
-        id:
-          'doi.cs.application:information.labels.residenceTypes.childOfResident.subLabel',
-        defaultMessage:
-          'ATH foreldri þitt þarf að hafa verið íslenskur ríkisborgari í að lágmarki 5 ár',
-        description: 'Residency type radio button sublabel',
-      },
-      nordicResident: {
-        id:
-          'doi.cs.application:information.labels.residenceTypes.nordicResident.title',
-        defaultMessage:
-          'Ég er ríkisborgari Norðurlanda og hef átt lögheimili á Íslandi í 4 ár',
-        description: 'Residency type radio button title',
-      },
-      refugee: {
-        id:
-          'doi.cs.application:information.labels.residenceTypes.refugee.title',
-        defaultMessage:
-          'Ég er flóttamaður eða með dvalarleyfi af mannúðarástæðum og hef átt lögheimili á Íslandi í 5 ár eftir að hafa fengið stöðu sem flóttamaður eða dvalarleyfi af mannúðarástæðum',
-        description: 'Residency type radio button title',
-      },
-      noResidency: {
-        id:
-          'doi.cs.application:information.labels.residenceTypes.noResidency.title',
-        defaultMessage:
-          'Ég er ríkisfangslaus einstaklingur samkvæmt ákvæðum laga um útlendinga og hef átt lögheimili á Íslandi í 5 ár',
-        description: 'Residency type radio button title',
-      },
-      former: {
-        id: 'doi.cs.application:information.labels.residenceTypes.former.title',
-        defaultMessage:
-          'Ég er fyrrum íslenskur ríkisborgari og hef átt lögheimili á Íslandi í 1 ár. Ég missti íslenskt ríkisfang vegna umsóknar og veitingar erlends ríkisfangs',
-        description: 'Residency type radio button title',
+          'Þú uppfyllir engin búsetuskliyrði, vinsamlegast hafðu samband við Útlendingastofnun ef þú telur þig hafa rétt á því. Sjá nánar um búsetuskilyrði hér.',
+        description: 'formerIcelander alert description',
       },
     }),
     parents: defineMessages({

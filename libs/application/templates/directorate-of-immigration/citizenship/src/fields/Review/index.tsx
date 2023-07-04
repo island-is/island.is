@@ -3,7 +3,6 @@ import { FC } from 'react'
 import { Box, Divider } from '@island.is/island-ui/core'
 import { ApplicantReview } from './ApplicantReview'
 import { ChildrenReview } from './ChildrenReview'
-import { ResidencyConditionReview } from './ResidencyConditionReview'
 import { ParentsReview } from './ParentsReview'
 import { MaritalStatusReview } from './MaritalStatusReview'
 import { ResidencyReview } from './ResidencyReview'
@@ -20,9 +19,10 @@ export const Review: FC<FieldBaseProps> = ({ application, field }) => {
     application.answers,
   )
   const showParents =
-    answers?.residenceCondition.radio === 'childOfIcelander' &&
-    answers?.parents &&
-    answers?.parents.length > 0
+    answers?.parentInformation?.parents &&
+    answers?.parentInformation?.parents.length > 0 &&
+    answers?.parentInformation?.parents.filter((x) => x.wasRemoved === 'false')
+      .length > 0
 
   return (
     <Box>
@@ -33,7 +33,6 @@ export const Review: FC<FieldBaseProps> = ({ application, field }) => {
         <ChildrenReview selectedChildren={selectedChildren} />
       )}
       <Divider></Divider>
-      <ResidencyConditionReview field={field} application={application} />
       <Divider></Divider>
       {showParents && <ParentsReview field={field} application={application} />}
       <Divider></Divider>

@@ -45,7 +45,7 @@ export const ResidenceCountriesRepeaterItem: FC<Props & FieldBaseProps> = ({
     'countries.data',
     [],
   ) as Country[]).map(({ id, name }) => ({
-    value: id.toString(),
+    value: name,
     label: name,
   }))
 
@@ -84,7 +84,7 @@ export const ResidenceCountriesRepeaterItem: FC<Props & FieldBaseProps> = ({
           children: undefined,
           type: FieldTypes.SELECT,
           required: true,
-          onSelect: (value) => addCountryToList(value.value as string, index),
+          onSelect: (value) => addCountryToList(value.label as string, index),
         }}
         errors={errors}
       ></SelectFormField>

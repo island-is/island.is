@@ -20,23 +20,38 @@ export const MaritalStatusSubSection = buildSubSection({
     buildMultiField({
       id: 'maritalStatusMultiField',
       title: information.labels.maritalStatus.pageTitle,
-      condition: (answer: Answer, externalData) => {
-        const answers = answer as Citizenship
-
+      condition: (_, externalData) => {
         const residenceConditions = getValueViaPath(
           externalData,
           'residenceConditions.data',
           [],
         ) as ResidenceCondition[]
 
-        const selectedResidenceCondition = residenceConditions.filter(
-          (x) => x.conditionId.toString() === answers.residenceCondition?.radio,
-        )[0]
+        const individual = getValueViaPath(
+          externalData,
+          'individual.data',
+          undefined,
+        ) as CitizenIndividual | undefined
 
-        if (selectedResidenceCondition?.isTypeMaritalStatus) {
-          return true
+        const spouseDetails = getValueViaPath(
+          externalData,
+          'spouseDetails.data',
+          undefined,
+        ) as SpouseIndividual | undefined
+
+        const hasMaritalStatus =
+          residenceConditions.filter((x) => x.isTypeMaritalStatus).length > 0
+
+        let hasDifferentAddress = false
+        if (hasMaritalStatus && spouseDetails) {
+          const myAddressCombination = `${individual?.address?.streetAddress}, ${individual?.address?.postalCode} ${individual?.address?.city}`
+          const mySpouseAddressCombination = `${spouseDetails?.spouse?.address?.streetAddress}, ${spouseDetails?.spouse?.address?.postalCode} ${spouseDetails?.spouse?.address?.city}`
+          hasDifferentAddress =
+            myAddressCombination !== mySpouseAddressCombination
         }
-        return false
+
+        //Only show if individual has an option of marriageType in Hjúskapaskylirði and if the individual does not have the same legal address as the spouse
+        return hasMaritalStatus && hasDifferentAddress
       },
       children: [
         buildDescriptionField({

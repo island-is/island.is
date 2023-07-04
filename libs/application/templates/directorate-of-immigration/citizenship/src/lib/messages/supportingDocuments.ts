@@ -123,6 +123,18 @@ export const supportingDocuments = {
           'Fæðingarvottorð (ef sótt um sem barn ísl. ríkisborgara)',
         description: 'birthCertificate title',
       },
+      acceptedFileTypes: {
+        id:
+          'doi.cs.application:supportingDocuments.labels.otherDocuments.acceptedFileTypes',
+        defaultMessage: 'Tekið er við skjölum með endingu: .pdf, .docx, .rtf',
+        description: 'Accepted file types',
+      },
+      buttonText: {
+        id:
+          'doi.cs.application:supportingDocuments.labels.otherDocuments.buttonText',
+        defaultMessage: 'Velja skjöl til að hlaða upp',
+        description: 'button file types',
+      },
       incomeConfirmation: {
         id:
           'doi.cs.application:supportingDocuments.labels.otherDocuments.incomeConfirmation',

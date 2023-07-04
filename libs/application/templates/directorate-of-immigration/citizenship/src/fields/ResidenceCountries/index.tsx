@@ -14,8 +14,6 @@ export const ResidenceCountries: FC<FieldBaseProps> = (props) => {
 
   const { formatMessage } = useLocale()
 
-  console.log('application', application)
-
   const [hasLivedAbroad, setHasLivedAbroad] = useState<string>(
     getValueViaPath(
       application.answers,
@@ -41,7 +39,6 @@ export const ResidenceCountries: FC<FieldBaseProps> = (props) => {
     setFilteredSelectedCountries(
       selectedCountries.filter((x) => x.wasRemoved !== 'true'),
     )
-    console.log('selected', selectedCountries)
   }, [selectedCountries])
 
   const handleAdd = () =>
