@@ -4,8 +4,7 @@ import { ApolloError } from 'apollo-server-express'
 
 @Injectable()
 export class DirectorateOfImmigrationApi {
-  constructor() {}
-
+  // constructor() {}
   // async getStuff(auth: User, key: string): Promise<string> {
   //   return ''
   // }

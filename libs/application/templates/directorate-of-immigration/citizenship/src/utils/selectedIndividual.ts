@@ -58,7 +58,9 @@ export const getSelectedIndividualAge = (
       undefined,
     ) as CitizenIndividual | undefined
 
-    return kennitala.info(individual?.nationalId!).age
+    return individual?.nationalId
+      ? kennitala.info(individual?.nationalId).age
+      : undefined
   }
 
   const selectedChild = getSelectedCustodyChild(

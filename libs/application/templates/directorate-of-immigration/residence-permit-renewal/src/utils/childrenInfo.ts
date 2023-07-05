@@ -2,20 +2,20 @@ import {
   ApplicantChildCustodyInformation,
   ExternalData,
   FormValue,
+  NationalRegistryIndividual,
 } from '@island.is/application/types'
 import { ResidencePermitRenewal } from '../lib/dataSchema'
 import { getValueViaPath } from '@island.is/application/core'
-import { NationalRegistryUser } from '@island.is/api/domains/national-registry'
 
 export const getSelectedApplicant = (
   externalData: ExternalData,
   answers: FormValue,
-): NationalRegistryUser | undefined => {
+): NationalRegistryIndividual | undefined => {
   const applicantInfo = getValueViaPath(
     externalData,
     'nationalRegistry.data',
     undefined,
-  ) as NationalRegistryUser | undefined
+  ) as NationalRegistryIndividual | undefined
 
   const applicantNationalId = applicantInfo?.nationalId
 

@@ -5,9 +5,9 @@ import {
   ApplicantChildCustodyInformation,
   FieldComponents,
   FieldTypes,
+  NationalRegistryIndividual,
 } from '@island.is/application/types'
 import { getValueViaPath } from '@island.is/application/core'
-import { NationalRegistryUser } from '@island.is/api/domains/national-registry'
 import { CurrentResidencePermit } from '@island.is/clients/directorate-of-immigration/residence-permit'
 import { formatDate } from '../../utils'
 import { useLocale } from '@island.is/localization'
@@ -25,7 +25,7 @@ export const SelectIndividuals = ({ field, application, error }: any) => {
     application.externalData,
     'nationalRegistry.data',
     undefined,
-  ) as NationalRegistryUser | undefined
+  ) as NationalRegistryIndividual | undefined
 
   const applicantCurrentResidencePermit = getValueViaPath(
     application.externalData,
@@ -36,8 +36,8 @@ export const SelectIndividuals = ({ field, application, error }: any) => {
     ?.canApply
 
   const applicantCheckbox = {
-    value: applicant?.nationalId!,
-    label: applicant?.fullName!,
+    value: applicant?.nationalId || '',
+    label: applicant?.fullName || '',
     subLabel: applicantCurrentResidencePermit?.permitTypeName,
     rightContent: (
       <div style={{ display: 'flex' }}>
