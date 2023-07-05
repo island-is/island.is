@@ -11,7 +11,9 @@ import { Citizenship } from '../../../lib/dataSchema'
 import {
   getSelectedIndividualAge,
   getSelectedIndividualName,
+  getSelectedCustodyChildren,
 } from '../../../utils'
+import * as kennitala from 'kennitala'
 
 const FILE_SIZE_LIMIT = 10000000
 
@@ -55,11 +57,13 @@ export const OtherDocumentsSubSection = (index: number) =>
             // TODO condition bara ef á búsetuskilyrði barn ísl foreldris
             uploadHeader:
               supportingDocuments.labels.otherDocuments.birthCertificate,
+            uploadDescription:
+              supportingDocuments.labels.otherDocuments.acceptedFileTypes,
+            uploadButtonLabel:
+              supportingDocuments.labels.otherDocuments.buttonText,
             condition: (answer: Answer) => {
               const answers = answer as Citizenship
-
-              //TODO breyta mv uppfærða hönnun
-              if (answers.residenceCondition?.radio === '20092') {
+              if (answers?.parentInformation?.hasValidParents === 'Yes') {
                 return true
               }
               return false
@@ -73,6 +77,10 @@ export const OtherDocumentsSubSection = (index: number) =>
             maxSize: FILE_SIZE_LIMIT,
             uploadHeader:
               supportingDocuments.labels.otherDocuments.incomeConfirmation,
+            uploadDescription:
+              supportingDocuments.labels.otherDocuments.acceptedFileTypes,
+            uploadButtonLabel:
+              supportingDocuments.labels.otherDocuments.buttonText,
           }),
 
           buildFileUploadField({
@@ -83,6 +91,10 @@ export const OtherDocumentsSubSection = (index: number) =>
             maxSize: FILE_SIZE_LIMIT,
             uploadHeader:
               supportingDocuments.labels.otherDocuments.incomeConfirmationTown,
+            uploadDescription:
+              supportingDocuments.labels.otherDocuments.acceptedFileTypes,
+            uploadButtonLabel:
+              supportingDocuments.labels.otherDocuments.buttonText,
           }),
 
           buildFileUploadField({
@@ -91,6 +103,10 @@ export const OtherDocumentsSubSection = (index: number) =>
             introduction: '',
             maxSize: FILE_SIZE_LIMIT,
             uploadHeader: supportingDocuments.labels.otherDocuments.legalHome,
+            uploadDescription:
+              supportingDocuments.labels.otherDocuments.acceptedFileTypes,
+            uploadButtonLabel:
+              supportingDocuments.labels.otherDocuments.buttonText,
           }),
 
           buildFileUploadField({
@@ -100,6 +116,10 @@ export const OtherDocumentsSubSection = (index: number) =>
             maxSize: FILE_SIZE_LIMIT,
             uploadHeader:
               supportingDocuments.labels.otherDocuments.icelandicTest,
+            uploadDescription:
+              supportingDocuments.labels.otherDocuments.acceptedFileTypes,
+            uploadButtonLabel:
+              supportingDocuments.labels.otherDocuments.buttonText,
           }),
 
           buildCustomField({
@@ -146,6 +166,10 @@ export const OtherDocumentsSubSection = (index: number) =>
             uploadHeader:
               supportingDocuments.labels.otherDocumentsChildren
                 .birthCertificate,
+            uploadDescription:
+              supportingDocuments.labels.otherDocuments.acceptedFileTypes,
+            uploadButtonLabel:
+              supportingDocuments.labels.otherDocuments.buttonText,
           }),
           buildFileUploadField({
             id: `otherDocuments${index}.writtenConsent`,
@@ -155,6 +179,10 @@ export const OtherDocumentsSubSection = (index: number) =>
             maxSize: FILE_SIZE_LIMIT,
             uploadHeader:
               supportingDocuments.labels.otherDocumentsChildren.writtenConsent,
+            uploadDescription:
+              supportingDocuments.labels.otherDocuments.acceptedFileTypes,
+            uploadButtonLabel:
+              supportingDocuments.labels.otherDocuments.buttonText,
             condition: (formValue: FormValue, externalData) => {
               const age = getSelectedIndividualAge(
                 externalData,
@@ -175,7 +203,25 @@ export const OtherDocumentsSubSection = (index: number) =>
             uploadHeader:
               supportingDocuments.labels.otherDocumentsChildren
                 .otherParentConsent,
-            // TODO condition ef sameiginleg forsjá
+            uploadDescription:
+              supportingDocuments.labels.otherDocuments.acceptedFileTypes,
+            uploadButtonLabel:
+              supportingDocuments.labels.otherDocuments.buttonText,
+            condition: (formValue: FormValue, externalData) => {
+              const answers = formValue as Citizenship
+              const selectedInCustody = getSelectedCustodyChildren(
+                externalData,
+                answers,
+              )
+              const thisChild =
+                !!selectedInCustody &&
+                selectedInCustody.find((_, i) => i === index - 1)
+              const childAge =
+                !!thisChild && kennitala.info(thisChild?.nationalId)
+
+              //TODO: klára condition
+              return true
+            },
           }),
           buildFileUploadField({
             id: `otherDocuments${index}.custodyDocuments`,
@@ -187,6 +233,14 @@ export const OtherDocumentsSubSection = (index: number) =>
             uploadHeader:
               supportingDocuments.labels.otherDocumentsChildren
                 .custodyDocuments,
+            uploadDescription:
+              supportingDocuments.labels.otherDocuments.acceptedFileTypes,
+            uploadButtonLabel:
+              supportingDocuments.labels.otherDocuments.buttonText,
+            //TODO: Klára condition
+            condition: () => {
+              return true
+            },
           }),
         ],
       }),

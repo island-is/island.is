@@ -39,14 +39,25 @@ const main = async () => {
     console.log(`--> Running command for ${target}\n`)
 
     try {
+      const skip = target === 'schemas/build-openapi' ? '--exclude=application-system-api' : '';
       await exec(
-        `nx run-many --target=${target} --all --parallel --maxParallel=6 $NX_OPTIONS`,
+        `nx affected --target=${target} --all $NX_OPTIONS ${skip}`,
         {
           env: skipCache
             ? { ...process.env, NX_OPTIONS: '--skip-nx-cache' }
             : process.env,
         },
       )
+      if (skip.length > 0) {
+        await exec(
+          `nx run application-system-api:${target}`,
+          {
+            env: skipCache
+              ? { ...process.env, NX_OPTIONS: '--skip-nx-cache' }
+              : process.env,
+          },
+        ) 
+      }
     } catch (err) {
       console.error(`Error running command: ${err.message}`)
       process.exit(err.code || 1)

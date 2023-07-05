@@ -19,12 +19,16 @@ export const ParentsReview: FC<FieldBaseProps> = ({ application }) => {
         }}
       />
       <GridRow>
-        {answers?.parents &&
-          answers?.parents.length > 0 &&
-          answers?.parents.map((parent) => {
-            ;<GridColumn span="1/2">
-              <Text>{parent.name}</Text>
-            </GridColumn>
+        {answers?.parentInformation?.parents &&
+          answers?.parentInformation?.parents?.length > 0 &&
+          answers?.parentInformation?.parents?.map((parent) => {
+            if (parent.wasRemoved === 'false') {
+              return (
+                <GridColumn span="1/2">
+                  <Text>{parent.name}</Text>
+                </GridColumn>
+              )
+            } else return
           })}
       </GridRow>
     </Box>

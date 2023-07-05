@@ -1,7 +1,5 @@
 import { ExternalData, FormValue } from '@island.is/application/types'
-import { getValueViaPath } from '@island.is/application/core'
 import { getSelectedApplicant, getSelectedCustodyChild } from './'
-import { NationalRegistryUser } from '@island.is/api/schema'
 import * as kennitala from 'kennitala'
 
 export const isIndividualSelected = (

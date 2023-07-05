@@ -78,7 +78,7 @@ export const selectChildren = {
       id:
         'doi.cs.application:section.backgroundInformation.selectChildren.informationChildrenSectionLinkUrl',
       defaultMessage:
-        'https://assets.ctfassets.net/8k0h54kbe6bj/5CWucx9zDz2QVPHaUwxW4n/dca72b9eade259a74717055546044a0d/samthykki-barns-rbr.pdf',
+        'https://island.is/rafraen-umsokn-um-rikisborgararett/fylgigogn-umsoknar-barns',
       description: 'url of the link in text',
     },
   }),

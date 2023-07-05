@@ -1,172 +1,139 @@
 import { NationalRegistryParent } from '@island.is/application/types'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { personal, information } from '../../lib/messages'
 import DescriptionText from '../../components/DescriptionText'
 import { Box, GridColumn, GridRow } from '@island.is/island-ui/core'
 import { NationalIdWithName } from '../NationalIdWithName'
-import { InputController } from '@island.is/shared/form-fields'
+import { InputController, RadioController } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
-import { getValueViaPath } from '@island.is/application/core'
+import { getErrorViaPath, getValueViaPath } from '@island.is/application/core'
+import { ParentsToApplicant } from '../../shared'
+import { useFormContext } from 'react-hook-form'
+import { ParentRepeaterItem } from './ParentRepeaterItem'
 
-export const Parents = ({ field, application, error }: any) => {
+export const Parents = ({ field, application, errors }: any) => {
   const {
     externalData: { nationalRegistryParents },
     answers,
   } = application
 
-  const [parents, setParents] = useState<NationalRegistryParent[]>(
+  const [hasValidParents, setHasValidParents] = useState(
+    getValueViaPath(answers, 'parentInformation.hasValidParents') as string,
+  )
+
+  const defaultParents = [
+    { nationalId: '', name: '', wasRemoved: 'false' },
+    { nationalId: '', name: '', wasRemoved: 'true' },
+  ]
+
+  const [parents, setParents] = useState<ParentsToApplicant[]>(
     getValueViaPath(
       answers,
-      'parents',
-      nationalRegistryParents.data as NationalRegistryParent[],
-    ) as NationalRegistryParent[],
+      'parentInformation.parents',
+      nationalRegistryParents.data.map((x: NationalRegistryParent) => {
+        return { ...x, wasRemoved: 'false' }
+      }) as ParentsToApplicant[],
+    ) as ParentsToApplicant[],
   )
 
   const { formatMessage } = useLocale()
 
-  const addParentToApplication = (nationalId: string) => {
-    console.log('added parent with nationalID: ', nationalId)
+  useEffect(() => {
+    const validParents = parents.filter(
+      (x) => x.nationalId && x.nationalId !== '',
+    )
+    if (validParents.length === 0) {
+      setParents(defaultParents)
+    }
+    if (validParents.length === 1) {
+      setParents([...validParents, { ...defaultParents[1] }])
+    }
+  }, [])
+
+  const addParentToApplication = (newIndex: number) => {
+    setParents(
+      parents.map((parent, index) => {
+        if (newIndex === index) {
+          const a = { ...parent, wasRemoved: 'false' }
+          return a
+        }
+        return parent
+      }),
+    )
+  }
+
+  const handleRemoveAll = () => {
+    setParents(
+      parents.map((p) => {
+        return { ...p, wasRemoved: 'true' }
+      }),
+    )
+  }
+
+  const handleToggleYes = () => {
+    setParents(
+      parents.map((p, index) => {
+        if (index === 0) {
+          return { ...p, wasRemoved: 'false' }
+        } else return p
+      }),
+    )
+  }
+
+  const handleValidParentsChange = (value: string) => {
+    setHasValidParents(value)
+
+    if (value === 'No') {
+      handleRemoveAll()
+    } else {
+      handleToggleYes()
+    }
   }
 
   return (
-    <div>
-      {parents.length > 1 &&
-        parents.map((p, index) => {
+    <Box>
+      <RadioController
+        id={'parentInformation.hasValidParents'}
+        split="1/2"
+        onSelect={(value) => {
+          handleValidParentsChange(value)
+        }}
+        defaultValue={hasValidParents ? 'Yes' : 'No'}
+        options={[
+          {
+            value: 'Yes',
+            label: formatMessage(
+              information.labels.radioButtons.radioOptionYes,
+            ),
+          },
+          {
+            value: 'No',
+            label: formatMessage(information.labels.radioButtons.radioOptionNo),
+          },
+        ]}
+      />
+
+      {!!parents &&
+        parents.map((parent, index) => {
+          const position = parents.indexOf(parent)
+          console.log('rendering loop')
           return (
-            <Box key={`parentBox${index}`}>
-              <DescriptionText
-                text={information.labels.parents.parentTitle}
-                format={{ index: index + 1 }}
-                textProps={{
-                  as: 'h5',
-                  fontWeight: 'semiBold',
-                  paddingBottom: 1,
-                  paddingTop: index === 0 ? 0 : 3,
-                  marginBottom: 0,
-                }}
-              />
-              <GridRow marginTop={0}>
-                <GridColumn span={['1/1', '1/1', '1/2']} paddingTop={2}>
-                  <InputController
-                    id={`${field.id}[${index}].nationalId`}
-                    defaultValue={p.nationalId}
-                    label={formatMessage(
-                      personal.labels.userInformation.nationalId,
-                    )}
-                    readOnly
-                    format="######-####"
-                    backgroundColor="blue"
-                  />
-                </GridColumn>
-                <GridColumn span={['1/1', '1/1', '1/2']} paddingTop={2}>
-                  <InputController
-                    id={`${field.id}[${index}].name`}
-                    defaultValue={p.name}
-                    label={formatMessage(personal.labels.userInformation.name)}
-                    readOnly
-                  />
-                </GridColumn>
-              </GridRow>
-            </Box>
+            <ParentRepeaterItem
+              index={index}
+              field={field}
+              application={application}
+              errors={errors}
+              itemNumber={position}
+              isRequired={index === 0}
+              repeaterField={parent}
+              readOnly={
+                parent.nationalId && parent.nationalId !== '' ? true : false
+              }
+              addParentToApplication={addParentToApplication}
+              isHidden={hasValidParents === 'No'}
+            />
           )
         })}
-      {parents.length === 1 && (
-        <Box>
-          <DescriptionText
-            text={information.labels.parents.parentTitle}
-            format={{ index: 1 }}
-            textProps={{
-              as: 'h5',
-              fontWeight: 'semiBold',
-              paddingBottom: 1,
-              paddingTop: 0,
-              marginBottom: 0,
-            }}
-          />
-          <GridRow>
-            <GridColumn span={['1/1', '1/1', '1/2']} paddingTop={2}>
-              <InputController
-                id={`${field.id}[0].nationalId`}
-                defaultValue={parents[0].nationalId}
-                label={formatMessage(
-                  personal.labels.userInformation.nationalId,
-                )}
-                readOnly
-                format="######-####"
-                backgroundColor="blue"
-              />
-            </GridColumn>
-            <GridColumn span={['1/1', '1/1', '1/2']} paddingTop={2}>
-              <InputController
-                id={`${field.id}[0].name`}
-                defaultValue={parents[0].name}
-                label={formatMessage(personal.labels.userInformation.name)}
-                readOnly
-              />
-            </GridColumn>
-          </GridRow>
-
-          <DescriptionText
-            text={information.labels.parents.parentTitle}
-            format={{ index: 2 }}
-            textProps={{
-              as: 'h5',
-              fontWeight: 'semiBold',
-              paddingBottom: 1,
-              paddingTop: 3,
-              marginBottom: 0,
-            }}
-          />
-          {/* TODO ekki gera required */}
-          <NationalIdWithName
-            field={field}
-            application={application}
-            customId={`${field.id}[1]`}
-            onNationalIdChange={addParentToApplication}
-          />
-        </Box>
-      )}
-
-      {parents.length === 0 && (
-        <div>
-          <DescriptionText
-            text={information.labels.parents.parentTitle}
-            format={{ index: 1 }}
-            textProps={{
-              as: 'h5',
-              fontWeight: 'semiBold',
-              paddingBottom: 1,
-              paddingTop: 0,
-              marginBottom: 0,
-            }}
-          />
-          <NationalIdWithName
-            field={field}
-            application={application}
-            customId={`${field.id}[0]`}
-            onNationalIdChange={addParentToApplication}
-          />
-
-          <DescriptionText
-            text={information.labels.parents.parentTitle}
-            format={{ index: 2 }}
-            textProps={{
-              as: 'h5',
-              fontWeight: 'semiBold',
-              paddingBottom: 1,
-              paddingTop: 3,
-              marginBottom: 0,
-            }}
-          />
-          {/* TODO ekki gera required */}
-          <NationalIdWithName
-            field={field}
-            application={application}
-            customId={`${field.id}[1]`}
-            onNationalIdChange={addParentToApplication}
-          />
-        </div>
-      )}
-    </div>
+    </Box>
   )
 }

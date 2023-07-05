@@ -1,67 +1,54 @@
 import { FC, useEffect, useState } from 'react'
 import { Box, GridRow, GridColumn } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { getErrorViaPath, getValueViaPath } from '@island.is/application/core'
-import { FieldBaseProps } from '@island.is/application/types'
+import { FieldBaseProps, GenericFormField } from '@island.is/application/types'
 import { gql, useLazyQuery } from '@apollo/client'
 import { IdentityInput, Query } from '@island.is/api/schema'
 import { InputController } from '@island.is/shared/form-fields'
 import { useFormContext } from 'react-hook-form'
 import * as kennitala from 'kennitala'
-import { error, personal } from '../../lib/messages'
+import { personal } from '../../lib/messages'
 import debounce from 'lodash/debounce'
 import { IDENTITY_QUERY } from '../../graphql/queries'
+import { ParentsToApplicant } from '../../shared'
+import { getErrorViaPath } from '@island.is/application/core'
 
 interface Props {
   customId?: string
-  onNationalIdChange?: (s: string) => void
-  onNameChange?: (s: string) => void
-  nationalIdDefaultValue?: string
-  nameDefaultValue?: string
-  errorMessage?: string
+  // onNameChange?: (s: string) => void
   disabled?: boolean
+  readOnly?: boolean
+  isRequired?: boolean
+  addParentToApplication: (index: number) => void
+  itemNumber: number
+  repeaterField: GenericFormField<ParentsToApplicant>
 }
 
 export const NationalIdWithName: FC<Props & FieldBaseProps> = ({
   customId = '',
   field,
   application,
-  onNationalIdChange,
-  onNameChange,
-  nationalIdDefaultValue,
-  nameDefaultValue,
-  errorMessage,
+  // onNameChange,
+  itemNumber,
+  readOnly,
   disabled,
+  repeaterField,
+  isRequired,
+  addParentToApplication,
+  ...props
 }) => {
   const { id } = field
+  const { errors } = props
+
   const usedId = customId.length > 0 ? customId : id
   const { formatMessage } = useLocale()
-  const {
-    setValue,
-    formState: { errors },
-  } = useFormContext()
+  const { setValue } = useFormContext()
   const [nationalIdInput, setNationalIdInput] = useState('')
+  const [currentName, setCurrentName] = useState('')
+
   const nameField = `${usedId}.name`
   const nationaIdField = `${usedId}.nationalId`
-  const nameFieldErrors = errorMessage
-    ? nameDefaultValue?.length === 0
-      ? errorMessage
-      : undefined
-    : getErrorViaPath(errors, nameField)
-
-  let nationalIdFieldErrors: string | undefined
-  if (errorMessage && nationalIdDefaultValue?.length === 0) {
-    nationalIdFieldErrors = errorMessage
-  } else if (!errorMessage) {
-    nationalIdFieldErrors = getErrorViaPath(errors, nationaIdField)
-  }
-
-  const defaultNationalId = nationalIdDefaultValue
-    ? nationalIdDefaultValue
-    : getValueViaPath(application.answers, `${usedId}.nationalId`, '')
-  const defaultName = nameDefaultValue
-    ? nameDefaultValue
-    : getValueViaPath(application.answers, `${usedId}.name`, '')
+  const wasRemovedField = `${usedId}.wasRemoved`
 
   const [
     getIdentity,
@@ -72,11 +59,25 @@ export const NationalIdWithName: FC<Props & FieldBaseProps> = ({
     `,
     {
       onCompleted: (data) => {
-        onNameChange && onNameChange(data.identity?.name ?? '')
+        // onNameChange && onNameChange(data.identity?.name ?? '')
         setValue(nameField, data.identity?.name ?? undefined)
+        setCurrentName(data.identity?.name ?? '')
       },
     },
   )
+
+  useEffect(() => {
+    console.log('changing remove field', repeaterField)
+    setValue(wasRemovedField, repeaterField.wasRemoved)
+  }, [repeaterField.wasRemoved, setValue])
+
+  useEffect(() => {
+    console.log('in here', repeaterField)
+  }, [])
+
+  useEffect(() => {
+    console.log('changin this??', repeaterField)
+  }, [repeaterField])
 
   useEffect(() => {
     if (nationalIdInput.length === 10 && kennitala.isValid(nationalIdInput)) {
@@ -90,6 +91,18 @@ export const NationalIdWithName: FC<Props & FieldBaseProps> = ({
     }
   }, [nationalIdInput, getIdentity])
 
+  //TODO SKOÐA HVORT ÞETTA ÞARF
+  useEffect(() => {
+    if (currentName !== '') {
+      const parent = {
+        nationalId: nationalIdInput,
+        name: currentName,
+        wasRemoved: 'false',
+      }
+      addParentToApplication(itemNumber)
+    }
+  }, [currentName])
+
   return (
     <Box>
       <GridRow>
@@ -97,32 +110,22 @@ export const NationalIdWithName: FC<Props & FieldBaseProps> = ({
           <InputController
             id={nationaIdField}
             label={formatMessage(personal.labels.userInformation.nationalId)}
-            defaultValue={defaultNationalId}
             format="######-####"
-            required
+            required={isRequired}
             backgroundColor="blue"
             onChange={debounce((v) => {
               setNationalIdInput(v.target.value.replace(/\W/g, ''))
-              onNationalIdChange &&
-                onNationalIdChange(v.target.value.replace(/\W/g, ''))
             })}
+            readOnly={readOnly}
             loading={queryLoading}
-            error={nationalIdFieldErrors}
+            error={errors && getErrorViaPath(errors, nationaIdField)}
             disabled={disabled}
           />
         </GridColumn>
         <GridColumn span={['1/1', '1/1', '1/2']} paddingTop={2}>
           <InputController
             id={nameField}
-            defaultValue={defaultName}
             label={formatMessage(personal.labels.userInformation.name)}
-            error={
-              queryError || data?.identity === null
-                ? formatMessage(error.nameByNationalId)
-                : nameFieldErrors && !data
-                ? nameFieldErrors
-                : undefined
-            }
             disabled
           />
         </GridColumn>
