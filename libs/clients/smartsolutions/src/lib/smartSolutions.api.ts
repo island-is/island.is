@@ -274,11 +274,20 @@ export class SmartSolutionsApi {
       inputFieldValues,
     }
 
-    this.logger.info('Existing pass has been updated', {
+    const postRes = await this.postPass(updatedPassData)
+
+    if (!postRes.ok) {
+      this.logger.warn('PkPass update failed', {
+        category: LOG_CATEGORY,
+        errorCode: postRes.error.code,
+      })
+      return postRes
+    }
+
+    this.logger.info('Existing pkpass has been updated', {
       category: LOG_CATEGORY,
     })
-
-    return await this.postPass(updatedPassData)
+    return postRes
   }
 
   /**
