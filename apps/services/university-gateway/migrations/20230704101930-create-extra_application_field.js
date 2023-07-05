@@ -5,6 +5,7 @@ module.exports = {
     return queryInterface.sequelize.transaction((t) => {
       return Promise.all([
         queryInterface.createTable(
+          //TODO rename
           'extra_application_field',
           {
             id: {

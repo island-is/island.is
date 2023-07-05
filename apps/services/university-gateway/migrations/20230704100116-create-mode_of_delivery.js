@@ -16,9 +16,10 @@ module.exports = {
             code: {
               type: Sequelize.STRING,
             },
-            description: {
-              type: Sequelize.STRING,
-            },
+            //TODO remove
+            // description: {
+            //   type: Sequelize.STRING,
+            // },
           },
           { transaction: t },
         ),

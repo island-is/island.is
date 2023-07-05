@@ -13,6 +13,7 @@ module.exports = {
               allowNull: false,
               defaultValue: Sequelize.UUIDV4,
             },
+            //TODO afhverju heitir þessi dálkur ekki code í samræmi við aðrar töflur
             tag_value: {
               type: Sequelize.STRING,
             },

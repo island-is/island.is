@@ -16,12 +16,13 @@ module.exports = {
             code: {
               type: Sequelize.STRING,
             },
-            name_is: {
-              type: Sequelize.STRING,
-            },
-            name_en: {
-              type: Sequelize.STRING,
-            },
+            //TODO remove
+            // name_is: {
+            //   type: Sequelize.STRING,
+            // },
+            // name_en: {
+            //   type: Sequelize.STRING,
+            // },
           },
           { transaction: t },
         ),
