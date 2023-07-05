@@ -1,19 +1,19 @@
 import {
-  NationalRegistryV3Address,
-  NationalRegistryV3Name,
+  NationalRegistryUser,
+  NationalRegistryChild,
 } from '@island.is/api/schema'
 import { ExcludesFalse } from '@island.is/service-portal/core'
 
 export const formatNameBreaks = (
-  names?: NationalRegistryV3Name,
+  user: NationalRegistryUser | NationalRegistryChild | undefined,
   labels?: { givenName?: string; middleName?: string; lastName?: string },
 ): string | undefined => {
-  if (!names) return undefined
+  if (!user) return undefined
 
-  const { givenName, middleName, lastName } = names
+  const { firstName, middleName, lastName } = user
 
-  const first = givenName
-    ? `${labels?.givenName || 'Eiginnafn'}: ${givenName}`
+  const first = firstName
+    ? `${labels?.givenName || 'Eiginnafn'}: ${firstName}`
     : undefined
   const middle = middleName
     ? `${labels?.middleName || 'Millinafn'}: ${middleName}`
@@ -27,14 +27,4 @@ export const formatNameBreaks = (
     .join('\n')
 
   return formatted
-}
-
-export const formatResidenceString = (
-  address: NationalRegistryV3Address | undefined,
-): string | undefined => {
-  if (!address?.streetName) {
-    return undefined
-  }
-
-  return `${address.streetName}, ${address.postalCode} ${address.city}`
 }

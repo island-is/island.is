@@ -2,6 +2,8 @@ import React from 'react'
 import { defineMessage } from 'react-intl'
 import { useParams } from 'react-router-dom'
 
+import { useQuery } from '@apollo/client'
+import { Query } from '@island.is/api/schema'
 import {
   Box,
   Divider,
@@ -19,7 +21,7 @@ import {
   UserInfoLine,
 } from '@island.is/service-portal/core'
 
-import { useNationalRegistrySpouseV3Query } from './Spouse.generated'
+import { NATIONAL_REGISTRY_USER } from '../../lib/queries/getNationalRegistryUser'
 
 const dataNotFoundMessage = defineMessage({
   id: 'sp.family:data-not-found',
@@ -39,14 +41,14 @@ const FamilyMember = () => {
   useNamespaces('sp.family')
   const { formatMessage } = useLocale()
 
-  const { data, loading, error } = useNationalRegistrySpouseV3Query()
-  const { nationalRegistryUserV3 } = data || {}
+  const { data, loading, error } = useQuery<Query>(NATIONAL_REGISTRY_USER)
+  const { nationalRegistryUser } = data || {}
 
   const { nationalId } = useParams() as UseParams
 
   const person =
-    nationalRegistryUserV3?.spouse?.nationalId === nationalId
-      ? nationalRegistryUserV3
+    nationalRegistryUser?.spouse?.nationalId === nationalId
+      ? nationalRegistryUser
       : null
 
   if (!nationalId || error || (!loading && !person))
@@ -71,8 +73,9 @@ const FamilyMember = () => {
         </Box>
       ) : (
         <IntroHeader
-          title={person?.spouse?.fullName || ''}
+          title={person?.spouse?.name || ''}
           intro={dataInfoSpouse}
+          marginBottom={2}
         />
       )}
 
@@ -80,7 +83,7 @@ const FamilyMember = () => {
         <UserInfoLine
           title={formatMessage(m.myRegistration)}
           label={defineMessage(m.fullName)}
-          content={person?.spouse?.fullName || '...'}
+          content={person?.spouse?.name || '...'}
           loading={loading}
           translate="no"
         />
@@ -99,7 +102,7 @@ const FamilyMember = () => {
           content={
             error
               ? formatMessage(dataNotFoundMessage)
-              : person?.spouse?.cohabitation || ''
+              : person?.spouse?.cohabitant || ''
           }
           loading={loading}
         />

@@ -29,34 +29,3 @@ export const NATIONAL_REGISTRY_USER = gql`
     }
   }
 `
-
-export const NATIONAL_REGISTRY_USER_V3 = gql`
-  query NationalRegistryUserQuery {
-    nationalRegistryUserV3 {
-      nationalId
-      fullName
-      genderCode
-      familyRegistrationCode
-      banMarking
-      name {
-        givenName
-        middleName
-        lastName
-      }
-      address {
-        streetName
-        postalCode
-        city
-      }
-      birthplace {
-        location
-      }
-      spouse {
-        maritalStatus
-      }
-      religion {
-        name
-      }
-    }
-  }
-`
