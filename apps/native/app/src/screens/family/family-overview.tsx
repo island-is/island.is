@@ -45,7 +45,9 @@ const FamilyMember = React.memo(({item}: {item: any}) => {
   return (
     <View style={{paddingHorizontal: 16}}>
       <TouchableHighlight
-        underlayColor={theme.shade.shade100}
+        underlayColor={
+          theme.isDark ? theme.shades.dark.shade100 : theme.color.blue100
+        }
         style={{marginBottom: 16, borderRadius: 16}}
         onPress={() => {
           navigateTo(`/family/${item.type}/${item.nationalId}`, {

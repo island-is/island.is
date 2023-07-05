@@ -4,7 +4,6 @@ export * from './lib/alert/alert';
 export * from './lib/avatar/avatar';
 export * from './lib/badge/badge';
 export * from './lib/button/button';
-export * from './lib/button/icon-button';
 export * from './lib/bubble/bubble';
 export * from './lib/button/cancel-button';
 export * from './lib/button/close';

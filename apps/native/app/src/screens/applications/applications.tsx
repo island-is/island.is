@@ -2,7 +2,14 @@ import {useQuery} from '@apollo/client';
 import {EmptyList, Heading, ListButton, TopLine} from '@ui';
 import {useCallback, useEffect, useRef, useState} from 'react';
 import {useIntl} from 'react-intl';
-import {Animated, FlatList, Image, RefreshControl, View} from 'react-native';
+import {
+  Animated,
+  FlatList,
+  Image,
+  RefreshControl,
+  SafeAreaView,
+  View,
+} from 'react-native';
 import {NavigationFunctionComponent} from 'react-native-navigation';
 import illustrationSrc from '../../assets/illustrations/le-company-s3.png';
 import {BottomTabsIndicator} from '../../components/bottom-tabs-indicator/bottom-tabs-indicator';
@@ -190,11 +197,11 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
               componentId={componentId}
               hideAction={true}
             />
-            <View style={{paddingHorizontal: 16}}>
+            <SafeAreaView style={{marginHorizontal: 16}}>
               <Heading>
                 {intl.formatMessage({id: 'home.allApplications'})}
               </Heading>
-            </View>
+            </SafeAreaView>
           </View>
         }
         refreshControl={
