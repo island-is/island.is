@@ -28,10 +28,6 @@ export class DrivingLearnersPermitService extends BaseTemplateApiService {
         'studentMentorability.studentNationalId',
         '',
       ) ?? ''
-    return {
-      bingo: true,
-      status: 'ok',
-    }
     const practicePermitApplication = await this.drivingLicenseService
       .postPracticePermitApplication({
         token: auth.authorization.split(' ')[1], // Removes the Bearer prefix
@@ -46,9 +42,6 @@ export class DrivingLearnersPermitService extends BaseTemplateApiService {
           400,
         )
       })
-    return {
-      practicePermitApplication,
-    }
 
     if (!practicePermitApplication.isOk) {
       throw new TemplateApiError(
