@@ -164,7 +164,7 @@ import { createEnhancedFetch } from '@island.is/clients/middlewares'
 const enhancedFetch = createEnhancedFetch({
   name: 'my-fetch',
   cache: {
-    cacheManager: caching({ store: 'memory', ttl: 0 }),
+    cacheManager: await caching('memory', { ttl: 0 }),
   },
   autoAuth: {
     issuer: 'https://your-idp',
@@ -192,7 +192,7 @@ import { createEnhancedFetch } from '@island.is/clients/middlewares'
 const enhancedFetch = createEnhancedFetch({
   name: 'my-fetch',
   cache: {
-    cacheManager: caching({ store: 'memory', ttl: 0 }),
+    cacheManager: await caching('memory', { ttl: 0 }),
   },
 })
 ```

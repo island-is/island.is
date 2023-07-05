@@ -65,7 +65,7 @@ export const attributes: (keyof Case)[] = [
   'courtRecordSignatureDate',
   'parentCaseId',
   'caseModifiedExplanation',
-  'seenByDefender',
+  'openedByDefender',
   'caseResentExplanation',
   'appealState',
   'accusedAppealDecision',
@@ -82,12 +82,16 @@ export const attributes: (keyof Case)[] = [
   'appealConclusion',
   'appealRulingDecision',
   'appealReceivedByCourtDate',
+  'openedByDefender',
 ]
 
 export interface LimitedAccessUpdateCase
   extends Pick<
     Case,
-    'accusedPostponedAppealDate' | 'appealState' | 'defendantStatementDate'
+    | 'accusedPostponedAppealDate'
+    | 'appealState'
+    | 'defendantStatementDate'
+    | 'openedByDefender'
   > {}
 
 export const include: Includeable[] = [
@@ -195,13 +199,6 @@ export class LimitedAccessCaseService {
       throw new NotFoundException(`Case ${caseId} does not exist`)
     }
 
-    if (!theCase.seenByDefender) {
-      await this.caseModel.update(
-        { ...theCase, seenByDefender: nowFactory() },
-        { where: { id: caseId } },
-      )
-    }
-
     return theCase
   }
 
@@ -260,7 +257,10 @@ export class LimitedAccessCaseService {
     // Return limited access case
     const updatedCase = await this.findById(theCase.id)
 
-    if (updatedCase.defendantStatementDate !== theCase.defendantStatementDate) {
+    if (
+      updatedCase.defendantStatementDate?.getTime() !==
+      theCase.defendantStatementDate?.getTime()
+    ) {
       messages.push({
         type: MessageType.SEND_APPEAL_STATEMENT_NOTIFICATION,
         user,
@@ -268,7 +268,9 @@ export class LimitedAccessCaseService {
       })
     }
 
-    await this.messageService.sendMessagesToQueue(messages)
+    if (messages.length > 0) {
+      await this.messageService.sendMessagesToQueue(messages)
+    }
 
     return updatedCase
   }

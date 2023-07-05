@@ -255,6 +255,7 @@ export function formatProsecutorCourtDateEmailNotification(
   const courtRoomText = formatMessage(notifications.courtRoom, {
     courtRoom: courtRoom || 'NONE',
   })
+
   const judgeText = formatMessage(notifications.judge, {
     judgeName: judgeName || 'NONE',
   })

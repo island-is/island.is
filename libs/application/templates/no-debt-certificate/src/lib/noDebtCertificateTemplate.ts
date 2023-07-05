@@ -10,6 +10,7 @@ import {
 } from '@island.is/application/types'
 import {
   EphemeralStateLifeCycle,
+  coreHistoryMessages,
   pruneAfterDays,
 } from '@island.is/application/core'
 import { Events, States, Roles } from './constants'
@@ -51,6 +52,12 @@ const template: ApplicationTemplate<
               label: m.actionCardDraft,
               variant: 'blue',
             },
+            historyLogs: [
+              {
+                logMessage: coreHistoryMessages.applicationStarted,
+                onEvent: DefaultEvents.SUBMIT,
+              },
+            ],
           },
           progress: 0.25,
           lifecycle: EphemeralStateLifeCycle,
@@ -87,6 +94,10 @@ const template: ApplicationTemplate<
             tag: {
               label: m.actionCardDone,
               variant: 'blueberry',
+            },
+            pendingAction: {
+              title: m.pendingActionApplicationCompletedTitle,
+              displayStatus: 'success',
             },
           },
           roles: [

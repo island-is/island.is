@@ -62,7 +62,7 @@ export const AdditionalEstateMember = ({
   }, [foreignCitizenship])
 
   return (
-    <Box position="relative" key={field.id} marginTop={2}>
+    <Box position="relative" key={field.id} marginTop={7}>
       <Controller
         name={initialField}
         control={control}
@@ -123,7 +123,10 @@ export const AdditionalEstateMember = ({
         </GridRow>
       ) : (
         <Box paddingY={2}>
-          <LookupPerson field={{ id: fieldIndex }} error={error} />
+          <LookupPerson
+            field={{ id: fieldIndex, props: { alertWhenUnder18: true } }}
+            error={error}
+          />
         </Box>
       )}
       <GridRow>

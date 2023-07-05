@@ -145,7 +145,7 @@ globalStyle(`${root} .react-datepicker__triangle`, {
 })
 
 globalStyle(`${root} .react-datepicker-popper`, {
-  zIndex: '1',
+  zIndex: '3',
 })
 globalStyle(`${root} .react-datepicker-popper[data-placement^=bottom]`, {
   paddingTop: '10px',

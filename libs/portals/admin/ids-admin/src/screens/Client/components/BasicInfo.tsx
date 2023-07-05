@@ -6,7 +6,7 @@ import { useLocale } from '@island.is/localization'
 import { m } from '../../../lib/messages'
 import { AuthAdminClientSecret } from '../Client.loader'
 import { useCopyToClipboard } from '../../../hooks/useCopyToClipboard'
-import { FormCard } from '../../../components/FormCard'
+import { FormCard } from '../../../components/FormCard/FormCard'
 
 interface BasicInfoProps {
   clientId: string

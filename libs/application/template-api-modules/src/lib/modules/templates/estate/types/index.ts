@@ -81,6 +81,14 @@ type Deceased = {
   address: string
 }
 
+type SpouseField = {
+  spouse: {
+    name: string
+    nationalId: string
+  }
+  selection: string
+}
+
 type SystemMetadata = {
   enabled?: boolean
 }
@@ -106,4 +114,5 @@ export type UploadData = {
   settlement: string
   remarksOnTestament: string
   dividedEstate: string
+  deceasedWithUndividedEstate?: SpouseField
 }

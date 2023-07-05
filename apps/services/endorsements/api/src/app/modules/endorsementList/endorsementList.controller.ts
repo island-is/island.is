@@ -43,7 +43,6 @@ import { AccessGroup } from '../../guards/accessGuard/access.enum'
 import { PaginationDto } from '@island.is/nest/pagination'
 import { PaginatedEndorsementListDto } from './dto/paginatedEndorsementList.dto'
 import { PaginatedEndorsementDto } from '../endorsement/dto/paginatedEndorsement.dto'
-import { SearchQueryDto } from './dto/searchQuery.dto'
 import { EndorsementListInterceptor } from './interceptors/endorsementList.interceptor'
 import { EndorsementListsInterceptor } from './interceptors/endorsementLists.interceptor'
 import { EmailDto } from './dto/email.dto'
@@ -51,11 +50,6 @@ import { SendPdfEmailResponse } from './dto/sendPdfEmail.response'
 
 export class FindTagPaginationComboDto extends IntersectionType(
   FindEndorsementListByTagsDto,
-  PaginationDto,
-) {}
-
-export class SearchPaginationComboDto extends IntersectionType(
-  SearchQueryDto,
   PaginationDto,
 ) {}
 

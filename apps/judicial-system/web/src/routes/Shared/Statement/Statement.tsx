@@ -173,7 +173,9 @@ const Statement = () => {
                   )
                 }
                 onRemove={(file) => handleRemove(file, removeFileCB)}
-                onRetry={(file) => handleRetry(file, handleUIUpdate)}
+                onRetry={(file) =>
+                  handleRetry(file, handleUIUpdate, appealStatementType)
+                }
               />
             </Box>
             <Box component="section" marginBottom={10}>
@@ -203,7 +205,9 @@ const Statement = () => {
                   )
                 }
                 onRemove={(file) => handleRemove(file, removeFileCB)}
-                onRetry={(file) => handleRetry(file, handleUIUpdate)}
+                onRetry={(file) =>
+                  handleRetry(file, handleUIUpdate, appealCaseFilesType)
+                }
               />
             </Box>
           </>

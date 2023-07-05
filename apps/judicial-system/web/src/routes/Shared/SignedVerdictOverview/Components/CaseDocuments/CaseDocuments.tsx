@@ -116,7 +116,6 @@ const CaseDocuments: React.FC<Props> = ({
               />
             ) : user?.role && isCourtRole(user.role) ? (
               <Button
-                variant="ghost"
                 size="small"
                 data-testid="signCourtRecordButton"
                 loading={isRequestingCourtRecordSignature}

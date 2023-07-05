@@ -9,3 +9,8 @@ export const defaultEnvironmentSchema = z.object({
     z.optional(z.array(z.nativeEnum(AuthAdminEnvironment))),
   ),
 })
+
+export const publishSchema = z.object({
+  targetEnvironment: z.nativeEnum(AuthAdminEnvironment),
+  sourceEnvironment: z.nativeEnum(AuthAdminEnvironment),
+})

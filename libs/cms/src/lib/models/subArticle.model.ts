@@ -1,5 +1,6 @@
-import { SystemMetadata } from '@island.is/shared/types'
 import { Field, ID, ObjectType } from '@nestjs/graphql'
+import { CacheField } from '@island.is/nest/graphql'
+import { SystemMetadata } from '@island.is/shared/types'
 import { ISubArticle } from '../generated/contentfulTypes'
 import { mapDocument, SliceUnion } from '../unions/slice.union'
 import { ArticleReference, mapArticleReference } from './articleReference'
@@ -15,10 +16,10 @@ export class SubArticle {
   @Field()
   slug!: string
 
-  @Field(() => ArticleReference, { nullable: true })
+  @CacheField(() => ArticleReference, { nullable: true })
   parent?: ArticleReference
 
-  @Field(() => [SliceUnion])
+  @CacheField(() => [SliceUnion])
   body: Array<typeof SliceUnion> = []
 
   @Field({ nullable: true })

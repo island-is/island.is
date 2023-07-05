@@ -160,6 +160,7 @@ const ChildView: FC<Props> = ({
           <UserInfoLine
             title={formatMessage(m.myRegistration)}
             label={formatMessage(m.fullName)}
+            translate="no"
             content={person?.fullName || '...'}
             tooltip={formatNameBreaks(person ?? undefined, {
               givenName: formatMessage(spmm.givenName),

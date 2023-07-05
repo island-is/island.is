@@ -5,17 +5,15 @@ import {
   LinkV2,
   Stack,
   Text,
-  Tooltip,
 } from '@island.is/island-ui/core'
 import { CardSkeleton } from '../../../../components/'
 import { ReactNode, useEffect, useRef, useState } from 'react'
 import * as styles from './AdviceCard.css'
 import { getShortDate } from '../../../../utils/helpers/dateFunctions'
-import env from '../../../../lib/environment'
 import { REVIEW_CARD_SCROLL_HEIGHT } from '../../../../utils/consts/consts'
-import { renderDocFileName } from '../../utils'
 import localization from '../../Case.json'
 import { AdviceResult } from '../../../../types/interfaces'
+import DocFileName from '../DocFileName/DocFileName'
 
 interface Props {
   advice: AdviceResult
@@ -25,7 +23,9 @@ interface LocProps {
   loc: typeof localization['adviceCard']
 }
 
-interface RenderAdviceProps extends Props, LocProps {}
+interface RenderAdviceProps extends Props, LocProps {
+  isOpen?: boolean
+}
 
 interface LinkProps extends LocProps {
   children: ReactNode
@@ -44,7 +44,7 @@ const Link = ({ loc, children }: LinkProps) => {
   )
 }
 
-const RenderAdvice = ({ advice, loc }: RenderAdviceProps) => {
+const RenderAdvice = ({ advice, loc, isOpen = false }: RenderAdviceProps) => {
   if (advice?.isPrivate) {
     return loc['privateContent']
   }
@@ -56,7 +56,8 @@ const RenderAdvice = ({ advice, loc }: RenderAdviceProps) => {
     retComp.push('.')
     return retComp
   }
-  return advice?.content
+  const content = advice?.content
+  return isOpen ? <div className={styles.divStyle}>{content}</div> : content
 }
 
 export const AdviceCard = ({ advice }: Props) => {
@@ -99,42 +100,14 @@ export const AdviceCard = ({ advice }: Props) => {
           {!advice?.isPrivate && !advice?.isHidden && advice?.participantName}
         </Text>
         <Text variant="default" truncate={!open} ref={ref}>
-          {RenderAdvice({ advice: advice, loc: loc })}
+          {RenderAdvice({ advice: advice, loc: loc, isOpen: open })}
         </Text>
         {!advice?.isPrivate &&
           !advice?.isHidden &&
           advice?.adviceDocuments &&
           advice?.adviceDocuments.length > 0 &&
           advice?.adviceDocuments.map((doc, index) => {
-            return (
-              <Tooltip
-                placement="right"
-                as="span"
-                text={doc.fileName}
-                key={index}
-                fullWidth
-              >
-                <span>
-                  <LinkV2
-                    href={`${env.backendDownloadUrl}${doc.id}`}
-                    color="blue400"
-                    underline="normal"
-                    underlineVisibility="always"
-                    newTab
-                    key={index}
-                  >
-                    {renderDocFileName(doc.fileName)}
-                    <Icon
-                      size="small"
-                      aria-hidden="true"
-                      icon="document"
-                      type="outline"
-                      className={styles.iconStyle}
-                    />
-                  </LinkV2>
-                </span>
-              </Tooltip>
-            )
+            return <DocFileName doc={doc} key={index} isAdvice />
           })}
       </Stack>
     </CardSkeleton>

@@ -1,4 +1,4 @@
-import { BrowserContext, test } from '@playwright/test'
+import { BrowserContext, expect, test } from '@playwright/test'
 import { icelandicAndNoPopupUrl, urls } from '../../../../support/urls'
 import { session } from '../../../../support/session'
 import {
@@ -17,9 +17,9 @@ test.describe('Endorsements', () => {
       browser,
       storageState: 'service-portal-faereyjar.json',
       homeUrl: '/undirskriftalistar',
-      authUrl: '/minarsidur',
       phoneNumber: '0102399',
       delegation: '65° Arctic ehf',
+      authTriggerUrl: '/minarsidur',
     })
   })
 
@@ -36,14 +36,16 @@ test.describe('Endorsements', () => {
     await disableDelegations(page)
     await disableI18n(page)
 
+    // Act
     await page.getByRole('button', { name: 'Skoða lista' }).first().click()
-    await page.waitForSelector('button:text("Setja nafn mitt á þennan lista")')
+    const popupPromise = page.waitForEvent('popup')
     await page
       .getByRole('button', { name: 'Setja nafn mitt á þennan lista' })
       .click()
 
-    await page.waitForSelector('button:text("Setja nafn mitt á þennan lista")')
-
-    // from here a new tab opens and we need to find out how to tap into that ...
+    // Assert
+    const popupPage = await popupPromise
+    await popupPage.getByRole('button', { name: 'Afrita hlekk' }).click()
+    await expect(popupPage.getByText('Staða: Lokið')).toBeVisible()
   })
 })

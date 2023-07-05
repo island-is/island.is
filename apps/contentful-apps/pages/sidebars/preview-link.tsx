@@ -10,6 +10,9 @@ import {
 } from '../../constants'
 
 const previewLinkHandler = {
+  vacancy: (entry: EntryProps<KeyValueMap>) => {
+    return `https://beta.dev01.devland.is/starfatorg/c-${entry.sys.id}`
+  },
   article: (entry: EntryProps<KeyValueMap>) => {
     return `https://beta.dev01.devland.is/${entry.fields.slug[DEFAULT_LOCALE]}`
   },
@@ -74,8 +77,17 @@ const PreviewLinkSidebar = () => {
               environmentId: CONTENTFUL_ENVIRONMENT,
               spaceId: CONTENTFUL_SPACE,
             })
+
+            const bypassCacheSecret =
+              sdk.parameters.instance['bypassCacheSecret']
+
+            const queryParams = bypassCacheSecret
+              ? `?bypass-cache=${bypassCacheSecret}`
+              : ''
+
             const url = await previewLinkHandler[contentTypeId](entry, cma)
-            window.open(url, '_blank')
+
+            window.open(`${url}${queryParams}`, '_blank')
           }
         }}
       >

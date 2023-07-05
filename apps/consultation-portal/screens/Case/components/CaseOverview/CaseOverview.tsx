@@ -18,7 +18,7 @@ export const CaseOverview = ({ chosenCase }: CaseOverviewProps) => {
   const loc = localization['caseOverview']
 
   const upperInstances = [
-    `${loc.upperInstances.case} S-${chosenCase?.caseNumber}`,
+    `${loc.upperInstances.case} ${chosenCase?.caseNumber}`,
     `${loc.upperInstances.show}: ${getShortDate(chosenCase.created)}`,
     `${loc.upperInstances.advicesCount}: ${chosenCase?.adviceCount}`,
   ]
@@ -56,13 +56,15 @@ export const CaseOverview = ({ chosenCase }: CaseOverviewProps) => {
           <CaseStatusCard {...chosenCase} />
         )}
       <Stack space={[3, 3, 3, 4, 4]}>
-        <Box>
-          <Text variant="h4">{loc.announcementTitle}</Text>
-          <Text variant="default">{chosenCase?.announcementText}</Text>
+        <Box dataTestId="short-description">
+          <Text variant="h4">{loc.shortDescriptionTitle}</Text>
+          <Text variant="default">{chosenCase?.shortDescription}</Text>
         </Box>
         <Box>
           <Text variant="h4">{loc.detailedDescriptionTitle}</Text>
-          <Text variant="default">{chosenCase.detailedDescription}</Text>
+          <Text variant="default" whiteSpace="preWrap">
+            {chosenCase.detailedDescription}
+          </Text>
         </Box>
       </Stack>
     </Stack>

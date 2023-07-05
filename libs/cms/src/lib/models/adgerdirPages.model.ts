@@ -1,8 +1,9 @@
-import { Field, ObjectType } from '@nestjs/graphql'
+import { ObjectType } from '@nestjs/graphql'
+import { CacheField } from '@island.is/nest/graphql'
 import { AdgerdirPage } from './adgerdirPage.model'
 
 @ObjectType()
 export class AdgerdirPages {
-  @Field(() => [AdgerdirPage])
+  @CacheField(() => [AdgerdirPage])
   items!: AdgerdirPage[]
 }

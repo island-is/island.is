@@ -12,16 +12,6 @@ export const m = defineMessages({
     defaultMessage: 'Netfang',
     description: '',
   },
-  phoneLabel: {
-    id: 'gpl.application:phoneLabel',
-    defaultMessage: 'Símanúmer ábyrgðarmanns',
-    description: '',
-  },
-  emailLabel: {
-    id: 'gpl.application:emailLabel',
-    defaultMessage: 'Netfang ábyrgðarmanns',
-    description: '',
-  },
 
   // Application Name
   applicationName: {
@@ -253,6 +243,18 @@ export const m = defineMessages({
   validationTilBeforeFrom: {
     id: 'gpl.application:validationTilBeforeFrom',
     defaultMessage: 'Lokadagsetning má ekki vera á undan upphafsdagsetningu',
+    description: '',
+  },
+
+  // History logs
+  logListInProgress: {
+    id: 'gpl.application:listInProgress',
+    defaultMessage: 'Gerð lista hafin',
+    description: '',
+  },
+  logListCreated: {
+    id: 'gpl.application:listCreated',
+    defaultMessage: 'Listi stofnaður',
     description: '',
   },
 })

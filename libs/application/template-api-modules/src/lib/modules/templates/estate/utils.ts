@@ -93,7 +93,7 @@ export const transformUploadDataToPDFStream = async (
   const fontSizes = {
     title: 20,
     subtitle: 16,
-    text: 8,
+    text: 12,
   }
 
   doc.fontSize(fontSizes.title).text(data.applicationType, { align: 'center' })
@@ -107,7 +107,7 @@ export const transformUploadDataToPDFStream = async (
   doc.text(`Heimilisfang: ${data.deceased.address}`)
   moveDownBy(2, doc)
 
-  doc.fontSize(fontSizes.title).text('Tilkynnandi')
+  doc.fontSize(fontSizes.subtitle).text('Tilkynnandi')
   doc.fontSize(fontSizes.text)
   fieldWithValue(doc, 'Nafn', data.notifier.name ?? 'Nafn vantar')
   fieldWithValue(doc, 'Kennitala', data.notifier.ssn ?? 'Kennitala vantar')
@@ -121,7 +121,7 @@ export const transformUploadDataToPDFStream = async (
   moveDownBy(2, doc)
 
   if (data.representative) {
-    doc.fontSize(fontSizes.title).text('Fulltrúi')
+    doc.fontSize(fontSizes.subtitle).text('Fulltrúi')
     doc.fontSize(fontSizes.text)
 
     fieldWithValue(doc, 'Nafn', data.representative.name ?? 'Nafn vantar')
@@ -375,6 +375,24 @@ export const transformUploadDataToPDFStream = async (
   if (data.remarksOnTestament) {
     fieldWithValue(doc, 'Athugasemdir fyrir erfðaskrá', data.remarksOnTestament)
   }
+  moveDownBy(2, doc)
+
+  if (data.deceasedWithUndividedEstate?.spouse?.nationalId) {
+    doc.fontSize(fontSizes.subtitle).text('Maki hins látna í óskiptu búi')
+    doc.fontSize(fontSizes.text)
+
+    fieldWithValue(
+      doc,
+      'Nafn',
+      data.deceasedWithUndividedEstate.spouse.name ?? 'Nafn vantar',
+    )
+    fieldWithValue(
+      doc,
+      'Kennitala',
+      data.deceasedWithUndividedEstate.spouse.nationalId,
+    )
+  }
+
   moveDownBy(2, doc)
 
   doc

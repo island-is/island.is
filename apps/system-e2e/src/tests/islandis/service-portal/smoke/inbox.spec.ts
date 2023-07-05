@@ -67,36 +67,26 @@ test.describe('MS - Pósthólf overview', () => {
 
       // Act
       await page
-        .locator(`role=button[name="${label(m.openFilter)}"]`)
+        .getByRole('button', { name: label(m.openFilter) })
         .first()
         .click()
       await page
-        .locator(`role=button[name="${label(messages.institutionLabel)}"]`)
+        .getByRole('button', { name: label(messages.institutionLabel) })
         .first()
         .click()
       await page.mouse.wheel(0, 50)
 
       // "institution" comes from the api - not translateable
-      const institution = 'RLS'
-      await page.locator(`role=checkbox[name="${institution}"]`).click()
+      const institution = 'Ríkislögreglustjórinn'
+      await page.getByLabel(institution).click()
 
       // Assert
       await expect(page.getByRole('main')).toContainText(label(messages.found))
       await expect(
         page
-          .locator(`role=button[name="${institution}"]`)
+          .getByRole('button', { name: institution })
           .locator(`[data-testid="icon-close"]`),
       ).toBeVisible()
     })
   })
-})
-
-test.describe.skip('Pósthólf', () => {
-  for (const { testCase, home } of [
-    { testCase: 'Pósthólf skjal opnast', home: '/en' },
-  ]) {
-    test(testCase, () => {
-      return
-    })
-  }
 })

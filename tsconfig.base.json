@@ -194,6 +194,9 @@
       "@island.is/api/domains/watson-assistant-chat": [
         "libs/api/domains/watson-assistant-chat/src/index.ts"
       ],
+      "@island.is/api/domains/work-machines": [
+        "libs/api/domains/work-machines/src/index.ts"
+      ],
       "@island.is/api/mocks": ["libs/api/mocks/src/index.ts"],
       "@island.is/api/mocks-react": ["libs/api/mocks/src/react.ts"],
       "@island.is/api/schema": ["libs/api/schema/src/index.ts"],
@@ -421,6 +424,9 @@
       "@island.is/auth/scopes": ["libs/auth/scopes/src/index.ts"],
       "@island.is/auth/shared": ["libs/auth/shared/src/index.ts"],
       "@island.is/cache": ["libs/cache/src/index.ts"],
+      "@island.is/clients-rsk-relationships": [
+        "libs/clients/rsk/relationships/src/index.ts"
+      ],
       "@island.is/clients/adr-and-machine-license": [
         "libs/clients/adr-and-machine-license/src/index.ts"
       ],
@@ -492,6 +498,7 @@
         "libs/clients/icelandic-health-insurance/rights-portal/src/index.ts"
       ],
       "@island.is/clients/identity": ["libs/clients/identity/src/index.ts"],
+      "@island.is/clients/inna": ["libs/clients/inna/src/index.ts"],
       "@island.is/clients/islykill": ["libs/clients/islykill/src/index.ts"],
       "@island.is/clients/judicial-administration": [
         "libs/clients/judicial-administration/src/index.ts"
@@ -524,9 +531,6 @@
       ],
       "@island.is/clients/rsk/personal-tax-return": [
         "libs/clients/rsk/personal-tax-return/src/index.ts"
-      ],
-      "@island.is/clients/rsk/procuring": [
-        "libs/clients/rsk/procuring/src/index.ts"
       ],
       "@island.is/clients/sessions": ["libs/clients/sessions/src/index.ts"],
       "@island.is/clients/smartsolutions": [
@@ -568,6 +572,9 @@
       ],
       "@island.is/clients/vehicles": ["libs/clients/vehicles/src/index.ts"],
       "@island.is/clients/vmst": ["libs/clients/vmst/src/index.ts"],
+      "@island.is/clients/work-machines": [
+        "libs/clients/work-machines/src/index.ts"
+      ],
       "@island.is/clients/zendesk": ["libs/clients/zendesk/src/index.ts"],
       "@island.is/cms": ["libs/cms/src/index.ts"],
       "@island.is/cms-translations": ["libs/cms-translations/src/index.ts"],
@@ -660,6 +667,7 @@
       "@island.is/nest/core": ["libs/nest/core/src/index.ts"],
       "@island.is/nest/dataloader": ["libs/nest/dataloader/src/index.ts"],
       "@island.is/nest/feature-flags": ["libs/nest/feature-flags/src/index.ts"],
+      "@island.is/nest/graphql": ["libs/nest/graphql/src/index.ts"],
       "@island.is/nest/pagination": ["libs/nest/pagination/src/index.ts"],
       "@island.is/nest/problem": ["libs/nest/problem/src/index.ts"],
       "@island.is/nest/sequelize": ["libs/nest/sequelize/src/index.ts"],

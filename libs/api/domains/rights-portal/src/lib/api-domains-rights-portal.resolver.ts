@@ -1,4 +1,4 @@
-import { Query, Resolver } from '@nestjs/graphql'
+import { Args, Query, Resolver } from '@nestjs/graphql'
 import { ApiScope } from '@island.is/auth/scopes'
 import { UseGuards } from '@nestjs/common'
 import { Audit } from '@island.is/nest/audit'
@@ -17,6 +17,10 @@ import {
   FeatureFlag,
   Features,
 } from '@island.is/nest/feature-flags'
+import { HealthCenterHistory } from './models/getHealthCenter.model'
+import { Dentists } from './models/getDentists.model'
+import { GetDentistBillsInput } from './dto/getDentistBills.input'
+import { GetHealthCenterHistoryInput } from './dto/getHealthCenterHistory.input'
 
 @Resolver()
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
@@ -43,5 +47,49 @@ export class RightsPortalResolver {
   @Audit()
   getRightsPortalAidsAndNutrition(@CurrentUser() user: User) {
     return this.rightsPortalService.getAidsAndNutrition(user)
+  }
+
+  @FeatureFlag(Features.servicePortalHealthCenterDentistPage)
+  @Scopes(ApiScope.health)
+  @Query(() => Dentists, {
+    name: 'rightsPortalDentists',
+    nullable: true,
+  })
+  @Audit()
+  getRightsPortalDentists(
+    @CurrentUser() user: User,
+    @Args({
+      name: 'input',
+      nullable: true,
+    })
+    input?: GetDentistBillsInput,
+  ) {
+    return this.rightsPortalService.getDentists(
+      user,
+      input?.dateFrom,
+      input?.dateTo,
+    )
+  }
+
+  @FeatureFlag(Features.servicePortalHealthCenterDentistPage)
+  @Scopes(ApiScope.health)
+  @Query(() => HealthCenterHistory, {
+    name: 'rightsPortalHealthCenterHistory',
+    nullable: true,
+  })
+  @Audit()
+  getRightsPortalHealthCenterHistory(
+    @CurrentUser() user: User,
+    @Args({
+      name: 'input',
+      nullable: true,
+    })
+    input?: GetHealthCenterHistoryInput,
+  ) {
+    return this.rightsPortalService.getHealthCenterHistory(
+      user,
+      input?.dateFrom,
+      input?.dateTo,
+    )
   }
 }

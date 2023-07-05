@@ -115,7 +115,7 @@ export const PendingRejectedTryAgain: FC<FieldBaseProps> = ({
         paddingY={1}
         marginBottom={5}
       >
-        <Text fontWeight="semiBold">Valin fasteign</Text>
+        <Text fontWeight="semiBold">{formatMessage(m.selectedProperty)}</Text>
         <Text>
           {propertyDetails?.propertyNumber}
           {' - '}

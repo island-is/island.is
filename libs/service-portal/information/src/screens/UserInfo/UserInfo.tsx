@@ -49,13 +49,18 @@ const SubjectInfo = () => {
 
   return (
     <>
-      <IntroHeader title={userInfo.profile.name} intro={spmm.userInfoDesc} />
+      <IntroHeader
+        marginBottom={2}
+        title={userInfo.profile.name}
+        intro={spmm.userInfoDesc}
+      />
       <Stack space={2}>
         <UserInfoLine
           title={formatMessage(m.myRegistration)}
           label={m.fullName}
           loading={loading}
           content={nationalRegistryUser?.fullName}
+          translate="no"
           tooltip={formatNameBreaks(nationalRegistryUser ?? undefined, {
             givenName: formatMessage(spmm.givenName),
             middleName: formatMessage(spmm.middleName),
@@ -217,6 +222,7 @@ const SubjectInfo = () => {
             <UserInfoLine
               title={formatMessage(spmm.userFamilyMembersOnNumber)}
               label={userInfo.profile.name}
+              translateLabel="no"
               content={formatNationalId(userInfo.profile.nationalId)}
               loading={loading || familyLoading}
             />
@@ -225,6 +231,7 @@ const SubjectInfo = () => {
               ? nationalRegistryFamily?.map((item) => (
                   <React.Fragment key={item.nationalId}>
                     <UserInfoLine
+                      translateLabel="no"
                       label={item.fullName}
                       content={formatNationalId(item.nationalId)}
                       loading={loading}

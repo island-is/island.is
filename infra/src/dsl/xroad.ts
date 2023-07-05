@@ -117,8 +117,13 @@ export const DrivingLicense = new XroadConf({
         'r1/IS/GOV/5309672079/Logreglan-Protected/RafraentOkuskirteini-v2',
       prod: 'r1/IS/GOV/5309672079/Logreglan-Protected/Okuskirteini-v1',
     },
+    XROAD_DRIVING_LICENSE_V4_PATH: {
+      dev: 'r1/IS-DEV/GOV/10005/Logreglan-Protected/Okuskirteini-v4',
+      staging: 'r1/IS/GOV/5309672079/Logreglan-Protected/Okuskirteini-v4',
+      prod: 'r1/IS/GOV/5309672079/Logreglan-Protected/Okuskirteini-v4',
+    },
     XROAD_DRIVING_LICENSE_V5_PATH: {
-      dev: 'r1/IS-DEV/GOV/10005/Logreglan-Protected/okuskirteini-v5',
+      dev: 'r1/IS-DEV/GOV/10005/Logreglan-Protected/Okuskirteini-v5',
       staging: 'r1/IS/GOV/5309672079/Logreglan-Protected/Okuskirteini-v5',
       prod: 'r1/IS/GOV/5309672079/Logreglan-Protected/Okuskirteini-v5',
     },
@@ -167,9 +172,9 @@ export const RskProcuring = new XroadConf({
         '["clustercfg.general-redis-cluster-group.dnugi2.euw1.cache.amazonaws.com:6379"]',
     },
     XROAD_RSK_PROCURING_PATH: {
-      dev: 'IS-DEV/GOV/10006/Skatturinn/prokura-v1',
-      staging: 'IS-TEST/GOV/5402696029/Skatturinn/prokura-v1',
-      prod: 'IS/GOV/5402696029/Skatturinn/prokura-v1',
+      dev: 'IS-DEV/GOV/10006/Skatturinn/relationships-v1',
+      staging: 'IS-TEST/GOV/5402696029/Skatturinn/relationships-v1',
+      prod: 'IS/GOV/5402696029/Skatturinn/relationships-v1',
     },
   },
   secrets: {
@@ -232,6 +237,17 @@ export const AdrAndMachine = new XroadConf({
       staging:
         'IS-TEST/GOV/4201810439/Vinnueftirlitid-Protected/rettindi-token-v1',
       prod: 'IS/GOV/4201810439/Vinnueftirlitid-Protected/rettindi-token-v1',
+    },
+  },
+})
+
+export const WorkMachines = new XroadConf({
+  env: {
+    XROAD_WORK_MACHINE_LICENSE_PATH: {
+      dev: 'IS-DEV/GOV/10013/Vinnueftirlitid-Protected/vinnuvelar-token',
+      staging:
+        'IS-TEST/GOV/4201810439/Vinnueftirlitid-Protected/vinnuvelar-token',
+      prod: 'IS/GOV/4201810439/Vinnueftirlitid-Protected/vinnuvelar-token',
     },
   },
 })

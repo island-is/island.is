@@ -26,7 +26,7 @@ describe(`${RESTRICTION_CASE_OVERVIEW_ROUTE}/:id`, () => {
   const defenderPhoneNumber = faker.phone.phoneNumber()
   const caseDataAddition: Case = {
     ...caseData,
-    seenByDefender: '2020-09-16T19:50:08.033Z',
+    openedByDefender: '2020-09-16T19:50:08.033Z',
     defendants: [
       {
         name: 'Donald Duck',
@@ -71,7 +71,7 @@ describe(`${RESTRICTION_CASE_OVERVIEW_ROUTE}/:id`, () => {
       })
 
       it('should let the user know if the assigned defender has viewed the case', () => {
-        cy.getByTestid('alertMessageSeenByDefender').should(
+        cy.getByTestid('alertMessageOpenedByDefender').should(
           'not.match',
           ':empty',
         )

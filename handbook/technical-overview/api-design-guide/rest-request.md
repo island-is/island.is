@@ -43,7 +43,7 @@ When working with a REST resource where the resource ID is sensitive, it should 
 An API should prefer non-sensitive IDs like GUIDs as resource IDs.  
 {% endhint %}
 
-A placeholder is needed in the URL path instead of the sensitive resource ID. The placeholder should be prefixed with a dot (`.`) and the name of the path parameter, for example `.nationalId`. The header name should be the name of the path parameter prefixed with `X-Param-`, for example `X-Param-National-Id`.
+A placeholder is needed in the URL path instead of the sensitive resource ID. The placeholder should be prefixed with a dot (`.`) and the name of the path parameter, for example `.national-id`. The header name should be the name of the path parameter prefixed with `X-Param-`, for example `X-Param-National-Id`.
 
 For example instead of:
 

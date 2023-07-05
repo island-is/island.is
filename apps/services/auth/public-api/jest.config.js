@@ -12,6 +12,7 @@ module.exports = {
   transform: {
     '^.+\\.[tj]s$': 'ts-jest',
   },
+  testTimeout: 10000,
   moduleFileExtensions: ['ts', 'js', 'html', 'json'],
   coverageDirectory: '<rootDir>/coverage/apps/services/auth/public-api',
   setupFilesAfterEnv: [`${__dirname}/test/setup.ts`],

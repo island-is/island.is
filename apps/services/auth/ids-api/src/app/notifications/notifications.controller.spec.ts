@@ -1,3 +1,4 @@
+import faker from 'faker'
 import request from 'supertest'
 
 import { SmsService } from '@island.is/nova-sms'
@@ -40,7 +41,10 @@ describe('NotificationsController', () => {
     it('should send sms', async () => {
       const spy = jest.spyOn(smsService, 'sendSms')
 
-      const res = await server.post(`/v1/notifications/sms`)
+      const res = await server.post(`/v1/notifications/sms`).send({
+        toPhoneNumber: faker.phone.phoneNumber('#######'),
+        content: faker.random.word(),
+      })
 
       expect(res.status).toEqual(202)
       expect(spy).toHaveBeenCalled()

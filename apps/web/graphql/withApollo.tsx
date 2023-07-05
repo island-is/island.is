@@ -18,7 +18,7 @@ export const withApollo = (Component) => {
 
   NewComponent.getInitialProps = async (ctx: NextPageContext) => {
     const clientLocale = getLocaleFromPath(ctx.asPath)
-    const apolloClient = initApollo({}, clientLocale)
+    const apolloClient = initApollo({}, clientLocale, ctx)
     const newContext = { ...ctx, apolloClient }
     const props = Component.getInitialProps
       ? await Component.getInitialProps(newContext)

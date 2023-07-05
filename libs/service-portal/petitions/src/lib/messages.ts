@@ -121,7 +121,7 @@ export const m = defineMessages({
     description: '',
   },
   copyLinkError: {
-    id: 'sp.petitions:copyLinkSuccess',
+    id: 'sp.petitions:copyLinkError',
     defaultMessage: 'Ekki tókst að afrita hlekk',
     description: '',
   },
@@ -133,6 +133,11 @@ export const m = defineMessages({
   name: {
     id: 'sp.petitions:name',
     defaultMessage: 'Nafn',
+    description: '',
+  },
+  locality: {
+    id: 'sp.petitions:locality',
+    defaultMessage: 'Sveitarfélag',
     description: '',
   },
   noName: {
@@ -150,6 +155,11 @@ export const m = defineMessages({
   unsignList: {
     id: 'sp.petitions:unsignList',
     defaultMessage: 'Taka nafn mitt af þessum lista',
+    description: '',
+  },
+  modalButtonUnsignListYes: {
+    id: 'sp.petitions:modalButtonUnsignListYes',
+    defaultMessage: 'Taka nafn mitt af lista',
     description: '',
   },
   signList: {

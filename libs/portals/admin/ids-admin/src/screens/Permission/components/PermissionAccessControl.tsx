@@ -4,7 +4,7 @@ import { useLocale } from '@island.is/localization'
 import { Checkbox, CheckboxProps, Stack } from '@island.is/island-ui/core'
 
 import { usePermission } from '../PermissionContext'
-import { FormCard } from '../../../components/FormCard'
+import { FormCard } from '../../../components/FormCard/FormCard'
 import { m } from '../../../lib/messages'
 import { PermissionFormTypes } from '../EditPermission.schema'
 import { useEnvironmentState } from '../../../hooks/useEnvironmentState'

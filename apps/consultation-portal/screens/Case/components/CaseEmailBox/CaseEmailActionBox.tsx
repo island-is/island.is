@@ -42,7 +42,6 @@ const CaseEmailActionBox = ({ button, input }: Props) => {
             <Button
               fluid
               nowrap
-              size="small"
               onClick={button.onClick}
               disabled={button.isDisabled}
               loading={button.isLoading}
