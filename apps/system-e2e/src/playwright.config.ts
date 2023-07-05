@@ -2,8 +2,19 @@ import type {
   PlaywrightTestConfig,
   ReporterDescription,
 } from '@playwright/test'
+import { createHash } from 'crypto'
 import './addons'
 import { urls } from './support/urls'
+
+if (!process.env.SHA_SET) {
+  process.env.SHA_SET = 'true'
+  console.error(
+    `Tesults token sha256${process.env.TESULTS_TOKEN ? '' : ' (empty)'}:`,
+    createHash('sha256')
+      .update(process.env.TESULTS_TOKEN ?? '')
+      .digest('hex'),
+  )
+}
 
 /**
  * Read environment variables from file.
@@ -35,21 +46,17 @@ const config: PlaywrightTestConfig = {
   workers: process.env.CI ? 1 : undefined,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: [
-    ...((process.env.CI
-      ? [
-          ['line'],
-          [
-            'playwright-tesults-reporter',
-            {
-              'tesults-target': process.env.TESULTS_TOKEN,
-              'tesults-build-name': process.env.COMMIT_INFO,
-              'tesults-build-result': 'pass',
-              'tesults-build-reason': 'Always succeed 💯',
-              'tesults-build-description': process.env.COMMIT_INFO_MESSAGE,
-            },
-          ],
-        ]
-      : [['dot']]) as ReporterDescription[]),
+    ['dot'],
+    [
+      'playwright-tesults-reporter',
+      {
+        'tesults-target': process.env.TESULTS_TOKEN,
+        'tesults-build-name': process.env.COMMIT_INFO,
+        'tesults-build-result': 'pass',
+        'tesults-build-reason': 'Always succeed 💯',
+        'tesults-build-description': process.env.COMMIT_INFO_MESSAGE,
+      },
+    ],
     ['html', { open: 'never' }],
   ],
 

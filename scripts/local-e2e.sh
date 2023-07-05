@@ -74,7 +74,7 @@ parse_run_args() {
   local run_args=""
   local tag="latest"
   local env=()
-  local secrets_files=(".env.secret" "$HOME/.env.secret")
+  local secrets_files=(".env.secret")
   local dryrun=false
   local secrets_out_file=".env.local-e2e"
   local volumes=()
@@ -169,21 +169,33 @@ parse_run_args() {
   done
 
   debug "Loading secrets from secrets files"
+  echo '' >"$secrets_out_file"
   for secrets_file in "${secrets_files[@]}"; do
     # local secrets_out_file_looped="$secrets_out_file-$(sha1sum "$secrets_out_file" | head -c 8)"
     if ! [[ -f "$secrets_file" ]]; then continue; fi
     info "Loading secrets from $secrets_file"
     # Parse secrets
-    while read -r secret; do
+    while false && read -r secret; do
       secret="${secret#export }"
       # Only accept key-value pairs
       if [[ -z "$secret" ]] || [[ "$secret" != *=* ]] || [[ "$secret" == \#* ]]; then continue; fi
-      local key="${secret%%=*}"
-      local value="${secret#*=}"
+      local key=${secret%%=*}
+      local value=${secret##*=}
+      local value_unfiltered=${value}
+      local value_sha256="$(echo -n "$value" | sha256sum | cut -d' ' -f1)"
+      set -x
+      eval export "${secret}"
       export "${key}"="${value}" || error "Failed setting secret $secret"
-      debug "Loaded secret $key=${value//?/*}"
+      set +x
+      debug "Loaded secret $key=${value_sha256}"
+      debug "Loaded secret (unfiltered) $key=${value_unfiltered}"
       echo "${secret%=*}=${secret##*=}" >>"$secrets_out_file"
     done <"$secrets_file"
+
+    # Brute sed filtering instead
+    echo "# --- brute filter start ---"
+    cat "$secrets_file" | grep -P '^[A-Za-z_]+=' | tee -a "$secrets_out_file"
+    echo "# --- brute filter end ---"
   done
   run_cmd+=" --env-file $secrets_out_file"
 

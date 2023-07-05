@@ -18,6 +18,7 @@ echo "Playwright args: $*"
 echo "Playwright project: $TEST_PROJECT"
 echo "Playwright version: $(yarn playwright --version)"
 
+echo "sha256sum: $(echo -n "$TESULTS_TOKEN" | sha256sum)"
 TEST_EXIT_CODE=0
 yarn playwright test -c src --project="$TEST_PROJECT" "$@" || TEST_EXIT_CODE=$?
 
