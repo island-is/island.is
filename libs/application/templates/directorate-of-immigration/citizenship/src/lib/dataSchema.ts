@@ -166,7 +166,7 @@ export const CitizenshipSchema = z.object({
   spouse: z.string().min(1),
   countriesOfResidence: CountriesOfResidenceSchema,
   staysAbroad: StaysAbroadSchema,
-  passport: z.array(PassportSchema), //TODO á þetta að vera array?
+  passport: z.array(PassportSchema),
   maritalStatus: MaritalStatusSchema,
   formerIcelander: z.string().refine((v) => v === 'Yes'),
 })

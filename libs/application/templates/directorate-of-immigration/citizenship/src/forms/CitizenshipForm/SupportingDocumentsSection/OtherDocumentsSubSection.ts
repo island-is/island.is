@@ -54,13 +54,6 @@ export const OtherDocumentsSubSection = (index: number) =>
             title: supportingDocuments.labels.otherDocuments.birthCertificate,
             introduction: '',
             maxSize: FILE_SIZE_LIMIT,
-            // TODO condition bara ef á búsetuskilyrði barn ísl foreldris
-            uploadHeader:
-              supportingDocuments.labels.otherDocuments.birthCertificate,
-            uploadDescription:
-              supportingDocuments.labels.otherDocuments.acceptedFileTypes,
-            uploadButtonLabel:
-              supportingDocuments.labels.otherDocuments.buttonText,
             condition: (answer: Answer) => {
               const answers = answer as Citizenship
               if (answers?.parentInformation?.hasValidParents === 'Yes') {
@@ -68,6 +61,12 @@ export const OtherDocumentsSubSection = (index: number) =>
               }
               return false
             },
+            uploadHeader:
+              supportingDocuments.labels.otherDocuments.birthCertificate,
+            uploadDescription:
+              supportingDocuments.labels.otherDocuments.acceptedFileTypes,
+            uploadButtonLabel:
+              supportingDocuments.labels.otherDocuments.buttonText,
           }),
 
           buildFileUploadField({
