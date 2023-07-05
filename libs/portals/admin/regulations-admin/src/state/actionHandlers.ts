@@ -42,7 +42,7 @@ export const actionHandlers: {
   UPDATE_PROP: (state, { name, value }) => {
     const field = state.draft[name]
 
-    // @ts-expect-error (Fuu)
+    // @ts-expect-error  (Fuu)
     value = tidyUp[field.type || '_'](value)
 
     if (value !== field.value) {
@@ -71,7 +71,7 @@ export const actionHandlers: {
       const field = appendix[name]
       // VSCode says no error, but if you remove this line, the build will fail. FML
 
-      // @ts-expect-error (Fuu)
+      // @ts-expect-error  (Fuu)
       value = tidyUp[field.type || '_'](value)
 
       updateFieldValue(field, value)

@@ -417,13 +417,6 @@ const useMakeDraftingState = (inputs: StateInputs) => {
         state.isEditor &&
         // only offer publish from "publish" step
 
-        /**
-         * Posta reglugerð á /save-regulation (postRegulationUpdate)
-         * Posta öllum breytingafærslum á /save-change
-         * Posta öllum brottfellingum á /save-cancel
-         * Eyða draft reglugerð úr ritsjórnarkerfi (er merkt með 'published' í dag)
-         * -Geyma delete impact-
-         */
         state.step.name === StepNames.publish
           ? async () => {
               if (!isDraftPublishable(state)) {
@@ -443,16 +436,6 @@ const useMakeDraftingState = (inputs: StateInputs) => {
                   navigate(getHomeUrl())
                 }
               })
-              // await saveDraftStatus('published').then(({ success, error }) => {
-              //   if (error) {
-              //     dispatch({
-              //       type: 'SAVING_STATUS_DONE',
-              //       error: { message: buttonsMsgs.saveFailure, error },
-              //     })
-              //   } else {
-              //     navigate(getHomeUrl())
-              //   }
-              // })
               return true
             }
           : undefined,
