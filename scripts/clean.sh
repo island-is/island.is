@@ -101,7 +101,7 @@ clean_yarn() {
 
 clean_all() {
   for job in generated caches yarn; do
-    job_uppercase="${job^^}"
+    job_uppercase=$(echo $job | tr '[:lower:]' '[:upper:]')
     job_variable="CLEAN_${job_uppercase}"
 
     # Run only if corresponding job variable is true
