@@ -17,7 +17,7 @@ export const MONTHS = [
   'May',
   'June',
   'July',
-  'Agust',
+  'August',
   'September',
   'October',
   'November',

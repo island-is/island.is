@@ -44,8 +44,8 @@ export const dataSchema = z.object({
     })
     .refine(
       (p) => {
-        const nextMonth = addMonths(new Date(), 1)
-        const startDate = addYears(nextMonth, -2)
+        const today = new Date()
+        const startDate = addYears(today, -2)
         const selectedDate = new Date(p.year + p.month)
         return startDate < selectedDate
       },
