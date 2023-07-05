@@ -135,7 +135,7 @@ const Menu = ({ isFrontPage = false }: MenuProps) => {
                           <Button
                             size="small"
                             onClick={LogIn}
-                            dataTestId="menu_loginBtn"
+                            dataTestId="menu-login-btn"
                           >
                             {loc.buttonLabel}
                           </Button>

@@ -340,14 +340,6 @@ export class CmsResolver {
   }
 
   @CacheControl(defaultCache)
-  @Query(() => TellUsAStory)
-  getTellUsAStory(
-    @Args('input') input: GetTellUsAStoryInput,
-  ): Promise<TellUsAStory> {
-    return this.cmsContentfulService.getTellUsAStory(input)
-  }
-
-  @CacheControl(defaultCache)
   @Query(() => Frontpage, { nullable: true })
   getFrontpage(
     @Args('input') input: GetFrontpageInput,
