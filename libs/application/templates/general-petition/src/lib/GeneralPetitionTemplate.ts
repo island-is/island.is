@@ -53,6 +53,14 @@ const GeneralPetitionTemplate: ApplicationTemplate<
               delete: true,
             },
           ],
+          actionCard: {
+            historyLogs: [
+              {
+                logMessage: m.logListInProgress,
+                onEvent: DefaultEvents.SUBMIT,
+              },
+            ],
+          },
         },
         on: {
           [DefaultEvents.SUBMIT]: {
@@ -85,6 +93,14 @@ const GeneralPetitionTemplate: ApplicationTemplate<
               delete: true,
             },
           ],
+          actionCard: {
+            historyLogs: [
+              {
+                logMessage: m.logListCreated,
+                onEvent: DefaultEvents.SUBMIT,
+              },
+            ],
+          },
         },
         on: {
           [DefaultEvents.SUBMIT]: {
