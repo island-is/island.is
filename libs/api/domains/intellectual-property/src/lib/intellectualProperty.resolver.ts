@@ -6,8 +6,8 @@ import {
   ScopesGuard,
   Scopes,
   CurrentUser,
-  User,
 } from '@island.is/auth-nest-tools'
+import type { User } from '@island.is/auth-nest-tools'
 import { ApiScope } from '@island.is/auth/scopes'
 import { IntellectualPropertyService } from './intellectualProperty.service'
 import { Trademark } from './models/getTrademark.model'
