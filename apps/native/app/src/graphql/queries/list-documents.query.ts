@@ -1,21 +1,20 @@
 import {gql} from '@apollo/client';
-import {IDocument} from '../fragments/document.fragment';
 
 export const LIST_DOCUMENTS_QUERY = gql`
-  query listDocuments {
-    listDocuments {
-      id
-      date
-      subject
-      senderName
-      senderNatReg
-      opened
-      fileType
-      url
+  query listDocumentsV2 {
+    listDocumentsV2(input: {}) {
+      data {
+        id
+        subject
+        senderName
+        senderNatReg
+        date
+        fileType
+        url
+        opened
+        categoryId
+      }
+      totalCount
     }
   }
 `;
-
-export interface ListDocumentsResponse {
-  listDocuments: IDocument[];
-}
