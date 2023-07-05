@@ -5,8 +5,7 @@ import {Navigation, NavigationFunctionComponent} from 'react-native-navigation';
 import {createNavigationOptionHooks} from '../../hooks/create-navigation-option-hooks';
 import {useIntl} from 'react-intl';
 import {testIDs} from '../../utils/test-ids';
-
-import {TabSettings} from './tab-settings';
+import {PersonalInfoContent} from './personal-info-content';
 
 const {
   getNavigationOptions,
@@ -17,20 +16,22 @@ const {
   },
 }));
 
-export const SettingsScreen: NavigationFunctionComponent = ({componentId}) => {
+export const PersonalInfoScreen: NavigationFunctionComponent = ({
+  componentId,
+}) => {
   useNavigationOptions(componentId);
   const intl = useIntl();
   return (
-    <View style={{flex: 1}} testID={testIDs.SCREEN_SETTINGS}>
+    <View style={{flex: 1}} testID={testIDs.SCREEN_PERSONAL_INFO}>
       <NavigationBarSheet
         componentId={componentId}
-        title={intl.formatMessage({id: 'setting.screenTitle'})}
+        title={intl.formatMessage({id: 'personalInfo.screenTitle'})}
         onClosePress={() => Navigation.dismissModal(componentId)}
         style={{marginHorizontal: 16}}
       />
-      <TabSettings />
+      <PersonalInfoContent />
     </View>
   );
 };
 
-SettingsScreen.options = getNavigationOptions;
+PersonalInfoScreen.options = getNavigationOptions;

@@ -13,7 +13,7 @@ import vehicleIcon from '../../assets/icons/vehicle.png';
 import assetsIcon from '../../assets/icons/assets.png';
 import financeIcon from '../../assets/icons/finance.png';
 import {useIntl} from 'react-intl';
-import {formatNationalId} from '../profile/tab-personal-info';
+import {formatNationalId} from './personal-info-content';
 import {getRightButtons} from '../../utils/get-main-root';
 
 const Row = styled.View`

@@ -71,8 +71,6 @@ const Divider = styled.View`
 
 export function ListButton({title, icon, isLoading, ...rest}: ListButtonProps) {
   const theme = useTheme();
-
-  console.log(theme, 'theme');
   return (
     <View>
       <Host

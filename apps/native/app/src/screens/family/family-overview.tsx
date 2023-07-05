@@ -26,7 +26,7 @@ import {BottomTabsIndicator} from '../../components/bottom-tabs-indicator/bottom
 import {navigateTo} from '../../lib/deep-linking';
 import {createNavigationOptionHooks} from '../../hooks/create-navigation-option-hooks';
 import {FAMILY_QUERY} from '../../graphql/queries/list-family-query';
-import {formatNationalId} from '../profile/tab-personal-info';
+import {formatNationalId} from '../more/personal-info-content';
 
 const {
   useNavigationOptions,

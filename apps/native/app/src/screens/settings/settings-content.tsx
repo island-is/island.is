@@ -57,7 +57,7 @@ const PreferencesSwitch = React.memo(
   },
 );
 
-export function TabSettings() {
+export function SettingsContent() {
   const intl = useIntl();
   const theme = useTheme();
   const {
@@ -447,7 +447,7 @@ export function TabSettings() {
                 {
                   id: '5000',
                   label: intl.formatNumber(5, {
-                    style: 'unit',
+                    style: 'decimal',
                     unitDisplay: 'long',
                     unit: 'second',
                   }),
@@ -455,7 +455,7 @@ export function TabSettings() {
                 {
                   id: '10000',
                   label: intl.formatNumber(10, {
-                    style: 'unit',
+                    style: 'decimal',
                     unitDisplay: 'long',
                     unit: 'second',
                   }),
@@ -463,7 +463,7 @@ export function TabSettings() {
                 {
                   id: '15000',
                   label: intl.formatNumber(15, {
-                    style: 'unit',
+                    style: 'decimal',
                     unitDisplay: 'long',
                     unit: 'second',
                   }),
@@ -488,7 +488,7 @@ export function TabSettings() {
             accessory={
               <TableViewAccessory>
                 {intl.formatNumber(Math.floor(appLockTimeout / 1000), {
-                  style: 'unit',
+                  style: 'decimal',
                   unitDisplay: 'short',
                   unit: 'second',
                 })}
