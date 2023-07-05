@@ -20,6 +20,12 @@
         "jestConfig": "libs/application/templates/old-age-pension/jest.config.js",
         "passWithNoTests": true
       }
+    },
+    "extract-strings": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract libs/application/templates/old-age-pension/src/lib/messages.ts"
+      }
     }
   }
 }

@@ -19,17 +19,17 @@ export const oldAgePensionFormMessage: MessageDir = {
       description: 'Application',
     },
     yes: {
-      id: 'oal.application:yes',
+      id: 'oap.application:yes',
       defaultMessage: 'Já',
       description: 'Yes',
     },
     no: {
-      id: 'oal.application:no',
+      id: 'oap.application:no',
       defaultMessage: 'Nei',
       description: 'No',
     },
     arrangementSection: {
-      id: 'oal.application:arrangement.section',
+      id: 'oap.application:arrangement.section',
       defaultMessage: 'Tilhögun',
       description: 'Arrangement',
     },
@@ -53,12 +53,12 @@ export const oldAgePensionFormMessage: MessageDir = {
       description: 'Checbox to confirm data provider',
     },
     skraInformationTitle: {
-      id: 'oap.application:prerequisites.userprofile.title',
+      id: 'oap.application:prerequisites.national.registry.title',
       defaultMessage: 'Upplýsingar frá Þjóðskrá',
       description: 'Information from Registers Iceland',
     },
     skraInformationSubTitle: {
-      id: 'oap.application:prerequisites.userprofile.subtitle',
+      id: 'oap.application:prerequisites.national.registry.subtitle',
       defaultMessage:
         'Sækir upplýsingar um þig, maka og börn frá Þjóðskrá. Einnig eru sóttar upplýsingar um búsetu.',
       description:
@@ -92,7 +92,7 @@ export const oldAgePensionFormMessage: MessageDir = {
       description: 'english translation',
     },
     startApplication: {
-      id: 'oal.application:prerequisites.start.application',
+      id: 'oap.application:prerequisites.start.application',
       defaultMessage: 'Hefja umsókn',
       description: 'Start application',
     },
@@ -124,46 +124,41 @@ export const oldAgePensionFormMessage: MessageDir = {
       description: 'Are you applying for fishermen old-age pension?',
     },
     applicationTypeTitle: {
-      id: 'pl.application:applicationType.title',
+      id: 'oap.application:applicationType.title',
       defaultMessage: 'Tegund umsóknar',
       description: 'Type of application',
     },
     applicationTypeDescription: {
-      id: 'pl.application:applicationType.description',
+      id: 'oap.application:applicationType.description',
       defaultMessage: 'Vinsamlegast veldu tegund umsóknar',
       description: 'Vinsamlegast veldu tegund umsóknar',
     },
-    retirementPensionApplicationTitle: {
-      id: 'pl.application:retirementPension.application.title',
-      defaultMessage: 'Umsókn um ellilífeyri',
-      description: 'retirement pension application',
-    },
     retirementPensionApplicationDescription: {
-      id: 'pl.application:retirementPension.application.description',
+      id: 'oap.application:retirementPension.application.description',
       defaultMessage:
         'Þeir sem eru 65 ára og eldri og hafa átt lögheimili á Íslandi í minnst þrjú ár gætu átt einhvern rétt á ellilífeyri. Sækja þarf um ellilífeyri en almennt myndast réttur við 67 ára aldur.',
       description:
         'Those who are 65 years of age or older and have had legal residence in Iceland for at least three years may have some right to a retirement pension. You have to apply for retirement pension, but in general you are entitled to it at the age of 67.',
     },
     halfRetirementPensionApplicationTitle: {
-      id: 'pl.application:halfRetirementPension.application.title',
+      id: 'oap.application:halfRetirementPension.application.title',
       defaultMessage: 'Umsókn um hálfan ellilífeyri',
       description: 'Application for half retirement pension',
     },
     halfRetirementPensionApplicationDescription: {
-      id: 'pl.application:halfRetirementPension.application.description',
+      id: 'oap.application:halfRetirementPension.application.description',
       defaultMessage:
         'Hægt er að sækja um hálfan ellilífeyri hjá TR samhliða greiðslu hálfs lífeyris frá skyldubundnum atvinnutengdum lífeyrissjóðum.',
       description:
         'You can apply for a half retirement pension from TR together with the payment of half a pension from compulsory employment-related pension funds.',
     },
     fishermenApplicationTitle: {
-      id: 'pl.application:fishermen.application.title',
+      id: 'oap.application:fishermen.application.title',
       defaultMessage: 'Umsókn um ellilífeyri sjómanna',
       description: "Fishermen's retirement pension",
     },
     fishermenApplicationDescription: {
-      id: 'pl.application:fishermen.application.description',
+      id: 'oap.application:fishermen.application.description',
       defaultMessage:
         'Sá sem hefur stundað sjómennsku á lögskráðu íslensku skipi eða skipi gert út af íslenskum aðilum í 25 ár eða lengur getur átt rétt á ellilífeyri frá 60 ára aldri. Fjöldi lögskráðra daga á sjó þarf að vera að lágmarki 180 dagar að meðaltali á ári á 25 árum.',
       description:
@@ -173,7 +168,7 @@ export const oldAgePensionFormMessage: MessageDir = {
 
   applicant: defineMessages({
     applicantSection: {
-      id: 'oal.application:applicant.section',
+      id: 'oap.application:applicant.section',
       defaultMessage: 'Almennar upplýsingar',
       description: 'Applicant information',
     },
@@ -654,22 +649,22 @@ export const oldAgePensionFormMessage: MessageDir = {
       description: 'Attachments',
     },
     attachmentButton: {
-      id: 'pl.application:fileUpload.attachment.button',
+      id: 'oap.application:fileUpload.attachment.button',
       defaultMessage: 'Veldu skjal',
       description: 'Upload file',
     },
     attachmentHeader: {
-      id: 'pl.application:fileUpload.attachment.header',
+      id: 'oap.application:fileUpload.attachment.header',
       defaultMessage: 'Dragðu skjalið hingað til að hlaða upp',
       description: 'Drag files here to upload',
     },
     attachmentDescription: {
-      id: 'pl.application:fileUpload.attachment.description',
+      id: 'oap.application:fileUpload.attachment.description',
       defaultMessage: 'Tekið er við skjölum með endingu: .pdf',
       description: 'Accepted documents with the following extensions: .pdf',
     },
     attachmentMaxSizeError: {
-      id: 'pl.application:fileUpload.attachment.maxSizeError',
+      id: 'oap.application:fileUpload.attachment.maxSizeError',
       defaultMessage: 'Hámark 5 MB á skrá',
       description: 'Max 5 MB per file',
     },
@@ -698,12 +693,12 @@ export const oldAgePensionFormMessage: MessageDir = {
         'Here you can return confirmation of payments to the pension fund. Note that the document must be in .pdf format.',
     },
     fishermenFileTitle: {
-      id: 'oap.application:fileUpload.pensionFile.title',
+      id: 'oap.application:fileUpload.sailor.title',
       defaultMessage: 'Fylgiskjöl sjómanna',
       description: 'Fishermen attachment',
     },
     fishermenFileDescription: {
-      id: 'oap.application:fileUpload.pensionFile.description',
+      id: 'oap.application:fileUpload.sailor.description',
       defaultMessage:
         'Hér getur þú skilað gögnum sem staðfesta hversu marga daga þú hefur verið lögskráður á sjó. Dæmi um slík gögn eru; Yfirlit af stöðuskráningu sjómanns frá Samgöngustofu, sjóferðabækur sem gefnar voru út af Siglingastofnun Íslands, skattframtöl eða siglingavottorð frá Sýslumanni. Athugaðu að skjalið þarf að vera á .pdf formi.',
       description:
@@ -715,7 +710,7 @@ export const oldAgePensionFormMessage: MessageDir = {
       description: 'Additional attachments',
     },
     additionalFileDescription: {
-      id: 'oap.application:fileUpload.earlyRetirement.description',
+      id: 'oap.application:fileUpload.additionalFile.description',
       defaultMessage:
         'Hér getur þú skilað viðbótargögnum til Tryggingastofnunar. Til dæmis staðfestingu frá Þjóðskrá vegna rangar upplýsingar. Athugaðu að skjalið þarf að vera á .pdf formi.',
       description:
@@ -795,27 +790,27 @@ export const oldAgePensionFormMessage: MessageDir = {
 
 export const validatorErrorMessages = defineMessages({
   periodStartDateNeeded: {
-    id: 'pl.application:period.startDate.Needed',
+    id: 'oap.application:period.startDate.Needed',
     defaultMessage: 'Finn ekki byrjunardagsetning.',
     description: 'Could not calculate startDate.',
   },
   periodEndDateNeeded: {
-    id: 'pl.application:period.endDate.Needed',
+    id: 'oap.application:period.endDate.Needed',
     defaultMessage: 'Finn ekki endadagsetning.',
     description: 'Could not calculate endDate.',
   },
   periodYear: {
-    id: 'pl.application:period.year',
+    id: 'oap.application:period.year',
     defaultMessage: 'Vitlaust ár.',
     description: 'Invalid year.',
   },
   periodMonth: {
-    id: 'pl.application:period.month',
+    id: 'oap.application:period.month',
     defaultMessage: 'Vitlaus mánuður.',
     description: 'Invalid month.',
   },
   requireAttachment: {
-    id: 'pl.application:fileUpload.required.attachment',
+    id: 'oap.application:fileUpload.required.attachment',
     defaultMessage: 'Þú þarft að hlaða upp viðhenginu til að halda áfram.',
     description: 'Error message when the attachment file is not provided.',
   },
