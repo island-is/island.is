@@ -47,7 +47,7 @@ interface ProjectNewsListProps {
   selectedYear: number
   selectedMonth: number
   selectedPage: number
-  selectedTag: string
+  selectedTag: string | string[]
   namespace: GetNamespaceQuery['getNamespace']
   locale: Locale
 }
@@ -221,13 +221,9 @@ ProjectNewsList.getInitialProps = async ({ apolloClient, query, locale }) => {
     )
   }
 
-  const newsTags = query.tag
-    ? Array.isArray(query.tag)
-      ? query.tag
-      : [query.tag]
-    : []
+  const tag = query.tag ?? projectPage?.newsTag?.slug ?? ''
 
-  const tag = (query.tag as string) ?? projectPage?.newsTag?.slug ?? ''
+  const newsTags = tag ? (Array.isArray(tag) ? tag : [tag]) : []
 
   const [
     {
@@ -263,7 +259,7 @@ ProjectNewsList.getInitialProps = async ({ apolloClient, query, locale }) => {
         },
       },
     }),
-    query.tag
+    typeof query.tag === 'string'
       ? apolloClient.query<
           GetGenericTagBySlugQuery,
           GetGenericTagBySlugQueryVariables
@@ -326,11 +322,11 @@ ProjectNewsList.getInitialProps = async ({ apolloClient, query, locale }) => {
 
   return {
     projectPage,
-    newsList: projectPage?.newsTag ? newsList : [],
+    newsList,
     total,
     selectedYear: year,
     selectedMonth: month,
-    selectedTag: tag,
+    selectedTag: newsTags,
     datesMap: createDatesMap(newsDatesList),
     selectedPage,
     namespace,

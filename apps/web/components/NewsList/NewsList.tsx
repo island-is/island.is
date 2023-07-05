@@ -88,7 +88,7 @@ export const NewsList = ({
             }
           >
             <Tag variant="blue" active={!router?.query?.tag}>
-              {n('showAllResults', 'Fréttir')}
+              {n('showAllResults', 'Sýna allt')}
             </Tag>
           </LinkV2>
           {filteredNewsTags?.map((tag, index) => (
