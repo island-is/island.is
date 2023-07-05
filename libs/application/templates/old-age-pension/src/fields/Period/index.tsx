@@ -33,13 +33,18 @@ export const Period: FC<FieldBaseProps> = ({ application }) => {
   const [isShowMonth, setIsShowMonth] = useState(!!month)
 
   const optionsYears = getAvailableYears(application)
-  const [optionsMonths, setOptionsMonths] = useState(
-    getAvailableMonths(application, new Date().getFullYear().toString()),
-  )
+  const [optionsMonths, setOptionsMonths] = useState(() => {
+    const rightYear = year ?? new Date().getFullYear().toString()
+    return getAvailableMonths(application, rightYear)
+  })
 
-  const error =
-    getErrorViaPath(errors, 'period.year') ??
-    getErrorViaPath(errors, 'period.month')
+  const getError = (path: string) => {
+    const periodError = getErrorViaPath(errors, 'period')
+    return (
+      getErrorViaPath(errors, path) ??
+      (periodError && typeof periodError != 'string' ? undefined : periodError)
+    )
+  }
 
   const onSelectYear = (option: SelectOption) => {
     const value = option.value as string
@@ -61,7 +66,7 @@ export const Period: FC<FieldBaseProps> = ({ application }) => {
         <Box width="half" marginRight={3} className={styles.yearBox}>
           <SelectFormField
             application={application}
-            error={error}
+            error={getError('period.year')}
             field={{
               type: FieldTypes.SELECT,
               component: FieldComponents.SELECT,
@@ -80,7 +85,7 @@ export const Period: FC<FieldBaseProps> = ({ application }) => {
           <Box width="half" marginLeft={3} className={styles.monthBox}>
             <SelectFormField
               application={application}
-              error={error}
+              error={getError('period.month')}
               field={{
                 type: FieldTypes.SELECT,
                 component: FieldComponents.SELECT,

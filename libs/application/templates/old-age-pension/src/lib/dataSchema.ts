@@ -2,6 +2,8 @@ import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { z } from 'zod'
 import { ApplicationType, HomeAllowanceHousing, NO, YES } from './constants'
 import { oldAgePensionFormMessage } from './messages'
+import addYears from 'date-fns/addYears'
+import addMonths from 'date-fns/addMonths'
 
 export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
@@ -29,16 +31,26 @@ export const dataSchema = z.object({
           )
         )
       },
-      { params: oldAgePensionFormMessage.errors.phonenumber },
+      { params: oldAgePensionFormMessage.errors.phoneNumber },
     ),
   }),
   residenceHistory: z.object({
     question: z.enum([YES, NO]),
   }),
-  period: z.object({
-    year: z.string(),
-    month: z.string(),
-  }),
+  period: z
+    .object({
+      year: z.string(),
+      month: z.string(),
+    })
+    .refine(
+      (p) => {
+        const nextMonth = addMonths(new Date(), 1)
+        const startDate = addYears(nextMonth, -2)
+        const selectedDate = new Date(p.year + p.month)
+        return startDate < selectedDate
+      },
+      { params: oldAgePensionFormMessage.errors.period },
+    ),
   onePaymentPerYear: z.object({
     question: z.enum([YES, NO]),
   }),

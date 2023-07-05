@@ -9,6 +9,7 @@ export const Period = ({
   application,
   editable,
   goToScreen,
+  hasError,
 }: ReviewGroupProps) => {
   const [{ selectedYear, selectedMonth }] = useStatefulAnswers(application)
 
@@ -24,6 +25,7 @@ export const Period = ({
           <DataValue
             label={formatMessage(oldAgePensionFormMessage.review.period)}
             value={`${selectedMonth} ${selectedYear}`}
+            error={hasError('period')}
           />
         </GridColumn>
       </GridRow>
