@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import { FC } from 'react'
 import cn from 'classnames'
 import { useLocale } from '@island.is/localization'
 import { formatText, coreMessages } from '@island.is/application/core'
