@@ -1,4 +1,4 @@
-import {Heading, IconButton, UserCard} from '@ui';
+import {IconButton, UserCard} from '@ui';
 import React from 'react';
 import {Image, SafeAreaView, ScrollView} from 'react-native';
 import {NavigationFunctionComponent} from 'react-native-navigation';
@@ -13,7 +13,7 @@ import vehicleIcon from '../../assets/icons/vehicle.png';
 import assetsIcon from '../../assets/icons/assets.png';
 import financeIcon from '../../assets/icons/finance.png';
 import {useIntl} from 'react-intl';
-import {formatNationalId} from './tab-personal-info';
+import {formatNationalId} from '../profile/tab-personal-info';
 import {getRightButtons} from '../../utils/get-main-root';
 
 const Row = styled.View`
@@ -60,7 +60,7 @@ const {
   },
 );
 
-export const ProfileScreen: NavigationFunctionComponent = ({componentId}) => {
+export const MoreScreen: NavigationFunctionComponent = ({componentId}) => {
   const authStore = useAuthStore();
   const intl = useIntl();
   useNavigationOptions(componentId);
@@ -132,4 +132,4 @@ export const ProfileScreen: NavigationFunctionComponent = ({componentId}) => {
   );
 };
 
-ProfileScreen.options = getNavigationOptions;
+MoreScreen.options = getNavigationOptions;

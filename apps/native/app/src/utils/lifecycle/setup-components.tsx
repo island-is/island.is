@@ -22,7 +22,7 @@ import {WebViewScreen} from '../../screens/webview/webview';
 import {ComponentRegistry as CR} from '../component-registry';
 import {registerComponent} from '../register-component';
 import {VehiclesScreen} from '../../screens/vehicles/vehicles';
-import {ProfileScreen} from '../../screens/profile/profile';
+import {MoreScreen} from '../../screens/more/more';
 import {VehicleDetailScreen} from '../../screens/vehicles/vehicles-detail';
 import {PersonalInfoScreen} from '../../screens/profile/personal-info';
 import {SettingsScreen} from '../../screens/profile/settings';
@@ -76,7 +76,7 @@ export function registerAllComponents() {
   registerComponent(CR.VehicleDetailScreen, VehicleDetailScreen);
   registerComponent(CR.FamilyScreen, FamilyOverviewScreen);
   registerComponent(CR.FamilyDetailScreen, FamilyDetailScreen);
-  registerComponent(CR.ProfileScreen, ProfileScreen);
+  registerComponent(CR.MoreScreen, MoreScreen);
   registerComponent(CR.PersonalInfoScreen, PersonalInfoScreen);
   registerComponent(CR.AssetsOverviewScreen, AssetsOverviewScreen);
   registerComponent(CR.AssetsDetailScreen, AssetsDetailScreen);

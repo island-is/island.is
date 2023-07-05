@@ -30,7 +30,7 @@ export const ComponentRegistry = {
   VehicleDetailScreen: `${prefix}.screens.VehicleDetailScreen`,
   AssetsOverviewScreen: `${prefix}.screens.AssetsOverviewScreen`,
   AssetsDetailScreen: `${prefix}.screens.AssetsDetailScreen`,
-  ProfileScreen: `${prefix}.screens.ProfileScreen`,
+  MoreScreen: `${prefix}.screens.MoreScreen`,
   PersonalInfoScreen: `${prefix}.screens.PersonalInfoScreen`,
   SettingsScreen: `${prefix}.screens.SettingsScreen`,
   FamilyScreen: `${prefix}.screens.FamilyScreen`,
@@ -62,7 +62,7 @@ export const StackRegistry = {
   HomeStack: `${prefix}.stack.HomeStack`,
   WalletStack: `${prefix}.stack.WalletStack`,
   LicenseScannerStack: `${prefix}.stack.LicenseScannerStack`,
-  ProfileStack: `${prefix}.stack.ProfileStack`,
+  MoreStack: `${prefix}.stack.MoreStack`,
   ApplicationsStack: `${prefix}.stack.ApplicationsStack`,
 };
 

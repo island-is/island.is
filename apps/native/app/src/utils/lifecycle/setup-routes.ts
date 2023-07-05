@@ -60,8 +60,8 @@ export function setupRoutes() {
 
   addRoute('/vehicles', async (passProps: any) => {
     await Navigation.dismissAllModals();
-    await Navigation.popToRoot(StackRegistry.ProfileStack);
-    await Navigation.push(ComponentRegistry.ProfileScreen, {
+    await Navigation.popToRoot(StackRegistry.MoreStack);
+    await Navigation.push(ComponentRegistry.MoreScreen, {
       component: {
         name: ComponentRegistry.VehiclesScreen,
         passProps,
@@ -71,8 +71,8 @@ export function setupRoutes() {
 
   addRoute('/assets', async (passProps: any) => {
     await Navigation.dismissAllModals();
-    await Navigation.popToRoot(StackRegistry.ProfileStack);
-    await Navigation.push(ComponentRegistry.ProfileScreen, {
+    await Navigation.popToRoot(StackRegistry.MoreStack);
+    await Navigation.push(ComponentRegistry.MoreScreen, {
       component: {
         name: ComponentRegistry.AssetsOverviewScreen,
         passProps,
@@ -82,8 +82,8 @@ export function setupRoutes() {
 
   addRoute('/family', async (passProps: any) => {
     await Navigation.dismissAllModals();
-    await Navigation.popToRoot(StackRegistry.ProfileStack);
-    await Navigation.push(ComponentRegistry.ProfileScreen, {
+    await Navigation.popToRoot(StackRegistry.MoreStack);
+    await Navigation.push(ComponentRegistry.MoreScreen, {
       component: {
         name: ComponentRegistry.FamilyScreen,
         passProps,
