@@ -272,8 +272,6 @@ export class NationalRegistryV3Service {
   async getBirthplace(nationalId: string): Promise<Birthplace | null> {
     const data = await this.fetchData(nationalId)
 
-    console.log(data)
-
     return (
       (data.faedingarstadur && {
         location: data.faedingarstadur.faedingarStadurHeiti,

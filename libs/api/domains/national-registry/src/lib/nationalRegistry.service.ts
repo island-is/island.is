@@ -4,16 +4,12 @@ import { Injectable, ForbiddenException } from '@nestjs/common'
 
 import { FamilyMember, FamilyChild, User, Gender, MaritalStatus } from './types'
 import { NationalRegistryApi } from '@island.is/clients/national-registry-v1'
-import { NationalRegistryV3ClientService } from '@island.is/clients/national-registry-v3'
 import { FamilyCorrectionInput } from './dto/FamilyCorrectionInput.input'
 import { FamilyCorrectionResponse } from './graphql/models/familyCorrection.model'
 
 @Injectable()
 export class NationalRegistryService {
-  constructor(
-    private nationalRegistryApi: NationalRegistryApi,
-    private natReg3: NationalRegistryV3ClientService,
-  ) {}
+  constructor(private nationalRegistryApi: NationalRegistryApi) {}
 
   async getUser(nationalId: User['nationalId']): Promise<User> {
     const user = await this.nationalRegistryApi.getUser(nationalId)
