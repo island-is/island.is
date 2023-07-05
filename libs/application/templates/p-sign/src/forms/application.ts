@@ -1,10 +1,5 @@
-import {
-  buildForm,
-} from '@island.is/application/core'
-import {
-  Form,
-  FormModes,
-} from '@island.is/application/types'
+import { buildForm } from '@island.is/application/core'
+import { Form, FormModes } from '@island.is/application/types'
 import { sectionDataProviders } from './applicationSections/sectionDataProviders'
 import { sectionInformation } from './applicationSections/sectionInformation'
 import { sectionPhoto } from './applicationSections/sectionPhoto'

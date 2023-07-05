@@ -1,4 +1,7 @@
-import { DefaultStateLifeCycle, coreHistoryMessages } from '@island.is/application/core'
+import {
+  DefaultStateLifeCycle,
+  coreHistoryMessages,
+} from '@island.is/application/core'
 import {
   ApplicationTemplate,
   ApplicationContext,
