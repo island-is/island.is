@@ -6,11 +6,27 @@ export interface combinedResidenceHistory {
   periodTo: Date | string
 }
 
+type monthObject = {
+  January?: string
+  February?: string
+  March?: string
+  April?: string
+  May?: string
+  June?: string
+  July?: string
+  Agust?: string
+  September?: string
+  October?: string
+  November?: string
+  December?: string
+  yearly: string
+}
+
 export interface Employer {
   email: string
   phoneNumber?: number
   ratioType: RatioType
   ratioYearly?: string
   rawIndex?: number
-  //ratioMonthly?: object // need to do
+  ratioMonthly?: monthObject
 }

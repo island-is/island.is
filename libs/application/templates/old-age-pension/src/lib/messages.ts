@@ -797,64 +797,74 @@ export const oldAgePensionFormMessage: MessageDir = {
       description: 'Employee',
     },
     registrationTitle: {
-      id: 'pl.application:employer.registration.title',
+      id: 'oap.application:employer.registration.title',
       defaultMessage: 'Skráning vinnuveitanda',
       description: 'Register an employer',
     },
     email: {
-      id: 'pl.application:employer.email',
+      id: 'oap.application:employer.email',
       defaultMessage: 'Netfang vinnuveitanda (aðeins eitt netfang leyfilegt)',
       description: 'Employer email (only one email address allowed)',
     },
     emailHeader: {
-      id: 'pl.application:employer.email.header',
+      id: 'oap.application:employer.email.header',
       defaultMessage: 'Netfang',
       description: 'Email',
     },
     phoneNumber: {
-      id: 'pl.application:employer.phone.number',
+      id: 'oap.application:employer.phone.number',
       defaultMessage: 'Símanúmer vinnuveitanda ( valfrjálst )',
       description: "Employer's phone number ( optional )",
     },
     phoneNumberHeader: {
-      id: 'pl.application:employer.phone.number.header',
+      id: 'oap.application:employer.phone.number.header',
       defaultMessage: 'Símanúmer',
       description: 'Phone number',
     },
     ratio: {
-      id: 'pl.application:employer.ratio',
+      id: 'oap.application:employer.ratio',
       defaultMessage: 'Starfshlutfall',
       description: 'Employment ratio',
     },
     ratioMonthly: {
-      id: 'pl.application:employer.ratio.monthly',
+      id: 'oap.application:employer.ratio.monthly',
       defaultMessage: 'Starfshlutfall á mánuði',
       description: 'Employment ratio per month',
     },
     ratioYearly: {
-      id: 'pl.application:employer.ratio.yearly',
+      id: 'oap.application:employer.ratio.yearly',
       defaultMessage: 'Starfshlutfall á ári',
       description: 'Employment ratio per year',
     },
     ratioHeader: {
-      id: 'pl.application:employer.ratio.header',
+      id: 'oap.application:employer.ratio.header',
       defaultMessage: 'Starfshlutfall',
       description: 'Ratio',
     },
     addEmployerError: {
-      id: 'pl.application:employer.add.error',
+      id: 'oap.application:employer.add.error',
       defaultMessage: 'Nauðsynlegt er að bæta við amk einum vinnuveitanda',
       description: 'It is required to add at least one employer',
     },
     addEmployer: {
-      id: 'pl.application:employer.add',
+      id: 'oap.application:employer.add',
       defaultMessage: 'Bæta við vinnuveitanda',
       description: 'Add an employer',
     },
     approvedHeader: {
-      id: 'pl.application:employer.approved.header',
+      id: 'oap.application:employer.approved.header',
       defaultMessage: 'Samþykkt',
       description: 'Approved',
+    },
+    month: {
+      id: 'oap.application:employer.month',
+      defaultMessage: 'Mánuður',
+      description: 'Month',
+    },
+    monthlyYearlyDescription: {
+      id: 'oap.application:employer.monthly.yearly.description',
+      defaultMessage: 'Mánaðarskipting á ársgrundvelli',
+      description: 'Monthly distribution on an annual basis',
     },
   }),
 
@@ -863,6 +873,11 @@ export const oldAgePensionFormMessage: MessageDir = {
       id: 'oap.application:error.phonenumber',
       defaultMessage: 'Símanúmerið þarf að vera gilt.',
       description: 'The phone number must be valid.',
+    },
+    ratioYearly: {
+      id: 'oap.application:error.ratio.yearly',
+      defaultMessage: 'Starfhlutfall má ekki vera meira en 50%.',
+      description: 'Employment rate must be less than or equal 50%',
     },
   }),
 }

@@ -14,19 +14,6 @@ export const employment = (newAnswer: unknown, application: Application) => {
   const { employmentStatus } = getApplicationAnswers(application.answers)
 
   if (
-    !(
-      obj.status === Employment.SELFEMPLOYED ||
-      obj.status === Employment.EMPLOYEE
-    ) &&
-    !employmentStatus
-  ) {
-    return buildError(
-      validatorErrorMessages.requireAnswer,
-      `${EMPLOYMENT}.status`,
-    )
-  }
-
-  if (
     obj.selfEmployedAttachment &&
     employmentStatus === Employment.SELFEMPLOYED
   ) {

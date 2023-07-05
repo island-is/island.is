@@ -388,20 +388,18 @@ export const OldAgePensionForm: Form = buildForm({
                       variant: 'number',
                       width: 'half',
                     }),
+                    buildCustomField({
+                      id: 'ratioMonthly',
+                      title: '',
+                      component: 'EmployersRatioMonthly',
+                      condition: (answers) => {
+                        const { rawEmployers } = getApplicationAnswers(answers)
+                        const currentEmployer =
+                          rawEmployers[rawEmployers.length - 1]
 
-                    // buildSelectField({
-                    //   id: 'ratio',
-                    //   dataTestId: 'employment-ratio',
-                    //   title: parentalLeaveFormMessages.employer.ratio,
-                    //   placeholder:
-                    //     parentalLeaveFormMessages.employer.ratioPlaceholder,
-                    //   options: Array(100)
-                    //     .fill(undefined)
-                    //     .map((_, idx, array) => ({
-                    //       value: `${array.length - idx}`,
-                    //       label: `${array.length - idx}%`,
-                    //     })),
-                    // }),
+                        return currentEmployer?.ratioType === RatioType.MONTHLY
+                      },
+                    }),
                   ],
                 }),
               ],

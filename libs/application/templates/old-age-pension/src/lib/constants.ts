@@ -54,6 +54,7 @@ export enum AnswerValidationConstants {
   FILEUPLOADPENEARLYFISHER = 'fileUploadEarlyPenFisher',
   FILEUPLOADHOMEALLOWANCE = 'fileUploadHomeAllowance',
   EMPLOYMENT = 'employment',
+  EMPLOYERS = 'employers',
 }
 
 export enum ApplicationType {
