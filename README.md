@@ -4,7 +4,7 @@ This [GitHub organization](https://github.com/island-is) is the center of develo
 
 These solutions are [FOSS](https://en.wikipedia.org/wiki/Free_and_open-source_software) and open to contributions, but most development will be performed by teams that win tenders to develop new functionality for Digital Iceland.
 
-The repository is a [monorepo](../technical-overview/monorepo.md) that has multiple apps (something that can be built and run) and libraries (which other apps and libraries can depend on). All custom-written services are also stored there.
+The repository is a [monorepo](handbook/technical-overview/monorepo.md) that has multiple apps (something that can be built and run) and libraries (which other apps and libraries can depend on). All custom-written services are also stored there.
 
 ## GitBook
 
