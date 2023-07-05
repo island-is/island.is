@@ -23,15 +23,6 @@ export const subSectionDelivery = buildSubSection({
       title: m.pickupLocationTitle,
       space: 1,
       children: [
-        buildKeyValueField({
-          label: m.informationApplicant,
-          value: ({ externalData: { nationalRegistry } }) =>
-            (nationalRegistry.data as NationalRegistryUser).fullName,
-        }),
-        buildDividerField({
-          title: '',
-          color: 'dark400',
-        }),
         buildDescriptionField({
           id: 'afhending',
           title: m.districtCommisionerTitle,
