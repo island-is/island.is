@@ -52,7 +52,8 @@ const OrganizationNewsArticle: Screen<OrganizationNewsArticleProps> = ({
   // We only display breadcrumbs and highlighted nav item if the news item belongs to this organization
   const newsBelongToOrganization =
     !!newsItem?.organization?.slug &&
-    newsItem.organization.slug === organizationPage?.organization?.slug
+    !!organizationPage?.organization?.slug &&
+    newsItem.organization.slug === organizationPage.organization.slug
 
   const overviewPath: string = router.asPath.substring(
     0,
