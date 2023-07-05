@@ -10,8 +10,6 @@ import { Application, DefaultEvents } from '@island.is/application/types'
 import { format as formatNationalId } from 'kennitala'
 import {
   NationalRegistryUser,
-  UserProfile,
-  DistrictCommissionerAgencies,
 } from '../../types/schema'
 import { m } from '../../lib/messages'
 import format from 'date-fns/format'
