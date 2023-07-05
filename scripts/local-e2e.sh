@@ -175,29 +175,17 @@ parse_run_args() {
     if ! [[ -f "$secrets_file" ]]; then continue; fi
     info "Loading secrets from $secrets_file"
     # Parse secrets
-    while false && read -r secret; do
+    while read -r secret; do
       secret="${secret#export }"
       # Only accept key-value pairs
       if [[ -z "$secret" ]] || [[ "$secret" != *=* ]] || [[ "$secret" == \#* ]]; then continue; fi
       local key=${secret%%=*}
       local value=${secret##*=}
-      local value_unfiltered=${value}
-      local value_sha256="$(echo -n "$value" | sha256sum | cut -d' ' -f1)"
-      set -x
-      eval export "${secret}"
-      export "${key}"="${value}" || error "Failed setting secret $secret"
-      set +x
-      debug "Loaded secret $key=${value_sha256}"
-      debug "Loaded secret (unfiltered) $key=${value_unfiltered}"
-      echo "${secret%=*}=${secret##*=}" >>"$secrets_out_file"
+      echo "export LOCAL_E2E_${key}=${value}" >>"$secrets_out_file"
     done <"$secrets_file"
-
-    # Brute sed filtering instead
-    echo "# --- brute filter start ---"
-    cat "$secrets_file" | grep -P '^[A-Za-z_]+=' | tee -a "$secrets_out_file"
-    echo "# --- brute filter end ---"
+    . "$secrets_out_file"
   done
-  run_cmd+=" --env-file $secrets_out_file"
+  run_cmd+=" --env LOCAL_E2E_*"
 
   # Image to use
   run_cmd+=" $image:$tag"
