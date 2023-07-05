@@ -213,9 +213,9 @@ export function setupRoutes() {
 
   addRoute('/finance', async (passProps: any) => {
     await Navigation.dismissAllModals();
-    await Navigation.popToRoot(StackRegistry.ProfileStack);
+    await Navigation.popToRoot(StackRegistry.MoreStack);
     selectTab(4);
-    await Navigation.push(ComponentRegistry.ProfileScreen, {
+    await Navigation.push(ComponentRegistry.MoreScreen, {
       component: {
         name: ComponentRegistry.FinanceScreen,
         passProps,
