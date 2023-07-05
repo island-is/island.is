@@ -24,7 +24,10 @@ import {
   getApplicationFeatureFlags,
 } from './getApplicationFeatureFlags'
 import { SyslumadurPaymentCatalogApi } from '../dataProviders'
-import { coreHistoryMessages } from '@island.is/application/core'
+import {
+  coreHistoryMessages,
+  corePendingActionMessages,
+} from '@island.is/application/core'
 
 const oneDay = 24 * 3600 * 1000
 const thirtyDays = 24 * 3600 * 1000 * 30
@@ -118,8 +121,9 @@ const DrivingLicenseDuplicateTemplate: ApplicationTemplate<
           status: 'inprogress',
           actionCard: {
             pendingAction: {
-              title: coreHistoryMessages.paymentStarted,
-              displayStatus: 'info',
+              title: corePendingActionMessages.paymentPendingTitle,
+              content: corePendingActionMessages.paymentPendingDescription,
+              displayStatus: 'warning',
             },
             historyLogs: {
               onEvent: DefaultEvents.SUBMIT,
