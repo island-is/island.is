@@ -4,6 +4,7 @@ import {
   Country,
   CriminalRecord,
   CurrentResidencePermit,
+  CurrentResidencePermitType,
   Passport,
   StayAbroad,
   Study,
@@ -87,32 +88,81 @@ export class ResidencePermitClient {
     }
   }
 
-  // TODOx vantar að sækja fyrir börn líka (permitTypeId, permitTypeName, permitValidTo, getCanApplyRenewal, getCanApplyPermanent)
-  async getCurrentResidencePermit(auth: Auth): Promise<CurrentResidencePermit> {
+  async getCurrentResidencePermitList(
+    auth: Auth,
+  ): Promise<CurrentResidencePermit[]> {
     try {
-      const res = await this.applicantApiWithAuth(auth).applicantGetGet()
+      // const res = await this.applicantApiWithAuth(auth).applicantGetGet()
+
+      //TODOx bæta við fyrir börn
+
+      //TODOx missing fields in endpoint:
+      return [
+        {
+          nationalId: auth.nationalId!,
+          permitTypeId: 123,
+          permitTypeName: 'Tímabundið dvalarleyfi vegna fjölskyldusameiningar',
+          permitValidTo: new Date(),
+          canApplyRenewal: {
+            canApply: true,
+            reason: null,
+          },
+          canApplyPermanent: {
+            canApply: false,
+          },
+        },
+        {
+          nationalId: '0703111430',
+          permitTypeId: 456,
+          permitTypeName: 'Tímabundið dvalarleyfi vegna fjölskyldusameiningar',
+          permitValidTo: new Date(),
+          canApplyRenewal: {
+            canApply: true,
+            reason: null,
+          },
+          canApplyPermanent: {
+            canApply: false,
+          },
+        },
+        {
+          nationalId: '1012061490',
+          permitTypeId: 456,
+          permitTypeName: 'Tímabundið dvalarleyfi vegna fjölskyldusameiningar',
+          permitValidTo: new Date(),
+          canApplyRenewal: {
+            canApply: false,
+            reason: 'Íslenskur ríkisborgari',
+          },
+          canApplyPermanent: {
+            canApply: false,
+          },
+        },
+      ]
+    } catch (error) {
+      this.logger.error(
+        'Error when trying to get current residence permit info from UTL',
+        error,
+      )
+      throw new Error(
+        'Villa kom upp þegar reynt var að sækja upplýsingar um núverandi dvalarleyfi þitt.',
+      )
+    }
+  }
+
+  async getApplicantCurrentResidencePermitType(
+    auth: Auth,
+  ): Promise<CurrentResidencePermitType> {
+    try {
+      // const res = await this.applicantApiWithAuth(auth).applicantGetGet()
 
       //TODOx missing fields in endpoint:
       return {
-        permitTypeId: 123,
-        permitTypeName: 'Tímabundið dvalarleyfi vegna fjölskyldusameiningar',
-        permitValidTo: new Date(),
-
         isPermitTypeFamily: true,
         isPermitTypeStudy: false,
         isPermitTypeEmployment: false,
-
         isWorkPermitTypeEmploymentServiceAgreement: false,
         isWorkPermitTypeEmploymentOther: false,
         isWorkPermitTypeSpecial: false,
-
-        canApplyRenewal: {
-          canApply: true,
-          reason: null,
-        },
-        canApplyPermanent: {
-          canApply: false,
-        },
       }
     } catch (error) {
       this.logger.error(

@@ -16,6 +16,7 @@ import {
   Country,
   CriminalRecord,
   CurrentResidencePermit,
+  CurrentResidencePermitType,
   Passport,
   ResidencePermitClient,
   StayAbroad,
@@ -59,13 +60,14 @@ export class ResidencePermitRenewalService extends BaseTemplateApiService {
     return this.residencePermitClient.getTravelDocumentTypes()
   }
 
-  async getCurrentResidencePermit({
+  async getCurrentResidencePermitList({
     auth,
-  }: TemplateApiModuleActionProps): Promise<CurrentResidencePermit> {
-    const res = await this.residencePermitClient.getCurrentResidencePermit(auth)
+  }: TemplateApiModuleActionProps): Promise<CurrentResidencePermit[]> {
+    const res = await this.residencePermitClient.getCurrentResidencePermitList(
+      auth,
+    )
 
-    //TODOx should check kids as well
-    if (!res.canApplyRenewal) {
+    if (!res.find((x) => x.canApplyRenewal)) {
       throw new TemplateApiError(
         {
           title: error.notAllowedToRenew,
@@ -76,6 +78,14 @@ export class ResidencePermitRenewalService extends BaseTemplateApiService {
     }
 
     return res
+  }
+
+  async getApplicantCurrentResidencePermitType({
+    auth,
+  }: TemplateApiModuleActionProps): Promise<CurrentResidencePermitType> {
+    return await this.residencePermitClient.getApplicantCurrentResidencePermitType(
+      auth,
+    )
   }
 
   async getOldStayAbroadList({

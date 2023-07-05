@@ -4,20 +4,23 @@ import {
   buildDescriptionField,
   getValueViaPath,
 } from '@island.is/application/core'
+import { CurrentResidencePermit } from '@island.is/clients/directorate-of-immigration/residence-permit'
 import { applicant } from '../../../lib/messages'
 
 export const PermanentSubSection = buildSubSection({
   id: 'permanent',
   title: applicant.labels.permanent.subSectionTitle,
   condition: (_, externalData) => {
-    //TODOx should check kids as well
-    const canApplyPermanent = getValueViaPath(
+    const currentResidencePermitList = getValueViaPath(
       externalData,
-      'currentResidencePermit.data.canApplyPermanent.canApply',
-      false,
-    ) as boolean
+      'currentResidencePermitList.data',
+      [],
+    ) as CurrentResidencePermit[]
 
-    return canApplyPermanent
+    const canOneApplyPermanent = !!currentResidencePermitList.find(
+      (x) => x.canApplyPermanent,
+    )
+    return canOneApplyPermanent
   },
   children: [
     buildMultiField({

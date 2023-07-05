@@ -15,13 +15,13 @@ export const OtherDocumentsSubSection = (index: number) =>
 
       const isPermitTypeFamily = getValueViaPath(
         externalData,
-        'currentResidencePermit.data.isPermitTypeFamily',
+        'applicantCurrentResidencePermitType.data.isPermitTypeFamily',
         false,
       ) as boolean
 
       const isPermitTypeStudy = getValueViaPath(
         externalData,
-        'currentResidencePermit.data.isPermitTypeStudy',
+        'applicantCurrentResidencePermitType.data.isPermitTypeStudy',
         false,
       ) as boolean
 

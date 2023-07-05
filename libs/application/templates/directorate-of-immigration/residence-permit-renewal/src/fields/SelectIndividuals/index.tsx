@@ -21,22 +21,27 @@ export const SelectIndividuals = ({ field, application, error }: any) => {
     answers,
   } = application
 
+  const currentResidencePermitList = getValueViaPath(
+    application.externalData,
+    'currentResidencePermitList.data',
+    [],
+  ) as CurrentResidencePermit[]
+
   const applicantData = getValueViaPath(
     application.externalData,
     'nationalRegistry.data',
     undefined,
   ) as NationalRegistryUser | undefined
-  const currentResidencePermit = getValueViaPath(
-    application.externalData,
-    'currentResidencePermit.data',
-    undefined,
-  ) as CurrentResidencePermit | undefined
-  const canApplyRenewal = !!currentResidencePermit?.canApplyRenewal.canApply
+  const applicantCurrentResidencePermit = currentResidencePermitList.find(
+    (x) => x.nationalId === applicantData?.nationalId,
+  )
+  const canApplyRenewal = !!applicantCurrentResidencePermit?.canApplyRenewal
+    ?.canApply
 
   const applicantCheckbox = {
     value: applicantData?.nationalId!,
     label: applicantData?.fullName!,
-    subLabel: '',
+    subLabel: applicantCurrentResidencePermit?.permitTypeName,
     rightContent: (
       <div style={{ display: 'flex' }}>
         <Tag
@@ -46,9 +51,11 @@ export const SelectIndividuals = ({ field, application, error }: any) => {
         >
           {canApplyRenewal
             ? formatMessage(applicant.labels.pickApplicant.validTo, {
-                date: formatDate(currentResidencePermit.permitValidTo),
+                date: formatDate(
+                  applicantCurrentResidencePermit?.permitValidTo,
+                ),
               })
-            : currentResidencePermit?.canApplyRenewal?.reason}
+            : applicantCurrentResidencePermit?.canApplyRenewal?.reason}
         </Tag>
       </div>
     ),
@@ -58,7 +65,12 @@ export const SelectIndividuals = ({ field, application, error }: any) => {
   const children = childrenCustodyInformation.data as ApplicantChildCustodyInformation[]
   const childrenCheckboxes = children.map(
     (child: ApplicantChildCustodyInformation) => {
-      const isChildCheckable = true //TODOx skoða börn
+      const childCurrentResidencePermit = currentResidencePermitList.find(
+        (x) => x.nationalId === child.nationalId,
+      )
+
+      const canApplyRenewal = !!childCurrentResidencePermit?.canApplyRenewal
+        ?.canApply
 
       return {
         value: child.nationalId,
@@ -69,11 +81,17 @@ export const SelectIndividuals = ({ field, application, error }: any) => {
         rightContent: (
           <div style={{ display: 'flex' }}>
             <Tag outlined={true} disabled variant={'blue'}>
-              TODOx tag texti börn
+              {canApplyRenewal
+                ? formatMessage(applicant.labels.pickApplicant.validTo, {
+                    date: formatDate(
+                      childCurrentResidencePermit?.permitValidTo,
+                    ),
+                  })
+                : childCurrentResidencePermit?.canApplyRenewal?.reason}
             </Tag>
           </div>
         ),
-        disabled: !isChildCheckable,
+        disabled: !canApplyRenewal,
       }
     },
   )

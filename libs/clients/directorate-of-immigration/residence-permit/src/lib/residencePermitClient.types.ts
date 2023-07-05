@@ -9,15 +9,10 @@ export interface TravelDocumentType {
 }
 
 export interface CurrentResidencePermit {
+  nationalId: string
   permitTypeId: number
   permitTypeName: string
   permitValidTo: Date
-  isPermitTypeFamily: boolean
-  isPermitTypeStudy: boolean
-  isPermitTypeEmployment: boolean
-  isWorkPermitTypeEmploymentServiceAgreement: boolean
-  isWorkPermitTypeEmploymentOther: boolean
-  isWorkPermitTypeSpecial: boolean
   canApplyRenewal: {
     canApply: boolean
     reason?: string | null
@@ -25,6 +20,15 @@ export interface CurrentResidencePermit {
   canApplyPermanent: {
     canApply: boolean
   }
+}
+
+export interface CurrentResidencePermitType {
+  isPermitTypeFamily: boolean
+  isPermitTypeStudy: boolean
+  isPermitTypeEmployment: boolean
+  isWorkPermitTypeEmploymentServiceAgreement: boolean
+  isWorkPermitTypeEmploymentOther: boolean
+  isWorkPermitTypeSpecial: boolean
 }
 
 export interface StayAbroad {

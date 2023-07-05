@@ -27,7 +27,8 @@ import {
   TravelDocumentTypesApi,
   OldStayAbroadListApi,
   OldPassportItemApi,
-  CurrentResidencePermitApi,
+  CurrentResidencePermitListApi,
+  ApplicantCurrentResidencePermitTypeApi,
   OldCriminalRecordListApi,
   OldStudyItemApi,
   OldAgentItemApi,
@@ -99,7 +100,11 @@ export const Prerequisites: Form = buildForm({
               title: '',
             }),
             buildDataProviderItem({
-              provider: CurrentResidencePermitApi,
+              provider: CurrentResidencePermitListApi,
+              title: '',
+            }),
+            buildDataProviderItem({
+              provider: ApplicantCurrentResidencePermitTypeApi,
               title: '',
             }),
             buildDataProviderItem({

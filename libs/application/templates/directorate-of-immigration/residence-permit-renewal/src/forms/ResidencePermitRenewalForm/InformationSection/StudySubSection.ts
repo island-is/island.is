@@ -15,7 +15,7 @@ export const StudySubSection = (index: number) =>
 
       const isPermitTypeStudy = getValueViaPath(
         externalData,
-        'currentResidencePermit.data.isPermitTypeStudy',
+        'applicantCurrentResidencePermitType.data.isPermitTypeStudy',
         false,
       ) as boolean
 

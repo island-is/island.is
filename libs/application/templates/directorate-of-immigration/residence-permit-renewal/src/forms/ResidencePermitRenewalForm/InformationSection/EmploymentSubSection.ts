@@ -15,13 +15,13 @@ export const EmploymentSubSection = (index: number) =>
 
       const isPermitTypeEmployment = getValueViaPath(
         externalData,
-        'currentResidencePermit.data.isPermitTypeEmployment',
+        'applicantCurrentResidencePermitType.data.isPermitTypeEmployment',
         false,
       ) as boolean
 
       const isWorkPermitTypeSpecial = getValueViaPath(
         externalData,
-        'currentResidencePermit.data.isWorkPermitTypeSpecial',
+        'applicantCurrentResidencePermitType.data.isWorkPermitTypeSpecial',
         false,
       ) as boolean
 
@@ -48,7 +48,7 @@ export const EmploymentSubSection = (index: number) =>
             condition: (_, externalData) => {
               const isWorkPermitTypeEmploymentServiceAgreement = getValueViaPath(
                 externalData,
-                'currentResidencePermit.data.isWorkPermitTypeEmploymentServiceAgreement',
+                'applicantCurrentResidencePermitType.data.isWorkPermitTypeEmploymentServiceAgreement',
                 false,
               ) as boolean
 
@@ -62,7 +62,7 @@ export const EmploymentSubSection = (index: number) =>
             condition: (_, externalData) => {
               const isWorkPermitTypeEmploymentOther = getValueViaPath(
                 externalData,
-                'currentResidencePermit.data.isWorkPermitTypeEmploymentOther',
+                'applicantCurrentResidencePermitType.data.isWorkPermitTypeEmploymentOther',
                 false,
               ) as boolean
 
@@ -76,7 +76,7 @@ export const EmploymentSubSection = (index: number) =>
             condition: (_, externalData) => {
               const isWorkPermitTypeSpecial = getValueViaPath(
                 externalData,
-                'currentResidencePermit.data.isWorkPermitTypeSpecial',
+                'applicantCurrentResidencePermitType.data.isWorkPermitTypeSpecial',
                 false,
               ) as boolean
 

@@ -30,9 +30,14 @@ export const TravelDocumentTypesApi = defineTemplateApi({
   externalDataId: 'travelDocumentTypes',
 })
 
-export const CurrentResidencePermitApi = defineTemplateApi({
-  action: ApiActions.getCurrentResidencePermit,
-  externalDataId: 'currentResidencePermit',
+export const CurrentResidencePermitListApi = defineTemplateApi({
+  action: ApiActions.getCurrentResidencePermitList,
+  externalDataId: 'currentResidencePermitList',
+})
+
+export const ApplicantCurrentResidencePermitTypeApi = defineTemplateApi({
+  action: ApiActions.getApplicantCurrentResidencePermitType,
+  externalDataId: 'applicantCurrentResidencePermitType',
 })
 
 export const OldStayAbroadListApi = defineTemplateApi({

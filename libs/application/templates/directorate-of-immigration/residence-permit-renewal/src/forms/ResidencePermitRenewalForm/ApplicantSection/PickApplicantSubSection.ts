@@ -22,10 +22,10 @@ export const PickApplicantSubSection = buildSubSection({
             title: applicant.labels.pickApplicant.warningTitle,
             component: 'AlertWithLink',
             condition: (_, externalData) => {
-              //TODOx skoða líka ef það er amk 1 barn sem má sækja um fyrir (sem er þá á fjölskyldusameiningu og á að sjá þetta warning)
+              //TODO skoða líka ef það er amk 1 barn sem má sækja um fyrir (sem er þá á fjölskyldusameiningu og á að sjá þetta warning)?
               const isPermitTypeFamily = getValueViaPath(
                 externalData,
-                'currentResidencePermit.data.isPermitTypeFamily',
+                'applicantCurrentResidencePermitType.data.isPermitTypeFamily',
                 false,
               ) as boolean
 

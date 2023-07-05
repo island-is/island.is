@@ -79,7 +79,7 @@ export const applicant = {
       },
       validTo: {
         id: 'doi.rpr.application:applicant.labels.pickApplicant.validTo',
-        defaultMessage: `Gildir til: {date}`,
+        defaultMessage: `Gilt til: {date}`,
         description: 'Pick applicant checkbox tag: valid to',
       },
       checkboxSubLabel: {

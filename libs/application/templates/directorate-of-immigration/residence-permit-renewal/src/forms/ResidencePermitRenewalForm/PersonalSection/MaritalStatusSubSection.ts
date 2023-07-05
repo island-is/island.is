@@ -14,7 +14,7 @@ export const MaritalStatusSubSection = buildSubSection({
   condition: (_, externalData) => {
     const isPermitTypeFamily = getValueViaPath(
       externalData,
-      'currentResidencePermit.data.isPermitTypeFamily',
+      'applicantCurrentResidencePermitType.data.isPermitTypeFamily',
       false,
     ) as boolean
 

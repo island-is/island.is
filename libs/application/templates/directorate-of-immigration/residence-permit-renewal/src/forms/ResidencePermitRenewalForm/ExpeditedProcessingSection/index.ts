@@ -12,7 +12,7 @@ export const ExpeditedProcessingSection = buildSection({
   condition: (_, externalData) => {
     const isPermitTypeEmployment = getValueViaPath(
       externalData,
-      'currentResidencePermit.data.isPermitTypeEmployment',
+      'applicantCurrentResidencePermitType.data.isPermitTypeEmployment',
       false,
     ) as boolean
 
