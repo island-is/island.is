@@ -303,6 +303,18 @@ export const en: TranslatedMessages = {
   // finance
   'finance.screenTitle': 'Finance',
 
+  // finance detail
+  'financeDetail.title': 'Detailed information',
+  'financeDetail.paymentBase': 'Payment Base',
+  'financeDetail.yearAndPeriod': `Year and period`,
+  'financeDetail.dueDate': 'Due Date',
+  'financeDetail.finalDueDate': 'Final due date',
+  'financeDetail.principal': 'Principal',
+  'financeDetail.interest': 'Interest',
+  'financeDetail.costs': 'Costs',
+  'financeDetail.payments': 'Payments',
+  'financeDetail.status': 'Status',
+
   // family
   'family.screenTitle': 'Family',
   'family.emptyListTitle': 'Family information',

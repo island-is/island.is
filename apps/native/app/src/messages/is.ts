@@ -220,6 +220,18 @@ export const is = {
   // finance
   'finance.screenTitle': 'Fjármál',
 
+  // finance detail
+  'financeDetail.title': 'Ítarupplýsingar',
+  'financeDetail.paymentBase': 'Gjaldgrunnur',
+  'financeDetail.yearAndPeriod': `Ár og tímabil`,
+  'financeDetail.dueDate': 'Gjalddagi',
+  'financeDetail.finalDueDate': 'Eindagi',
+  'financeDetail.principal': 'Höfuðstóll',
+  'financeDetail.interest': 'Vextir',
+  'financeDetail.costs': 'Kostnaður',
+  'financeDetail.payments': 'Greiðslur',
+  'financeDetail.status': 'Staða',
+
   // family
   'family.screenTitle': 'Fjölskylda',
   'family.emptyListTitle': 'Fjölskyldu upplýsingar',
