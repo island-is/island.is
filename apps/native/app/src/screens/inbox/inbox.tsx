@@ -108,8 +108,8 @@ const {
       iconInsets: {
         bottom: -4,
       },
-      icon: require('../../assets/icons/tabbar-inbox.png'),
-      selectedIcon: require('../../assets/icons/tabbar-inbox-selected.png'),
+      icon: require('../../assets/icons/tabbar-mail.png'),
+      selectedIcon: require('../../assets/icons/tabbar-mail-selected.png'),
     },
   },
 );

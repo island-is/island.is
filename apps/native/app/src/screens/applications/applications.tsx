@@ -60,8 +60,8 @@ const {
       iconInsets: {
         bottom: -4,
       },
-      icon: require('../../assets/icons/tabbar-application.png'),
-      selectedIcon: require('../../assets/icons/tabbar-application-selected.png'),
+      icon: require('../../assets/icons/tabbar-applications.png'),
+      selectedIcon: require('../../assets/icons/tabbar-applications-selected.png'),
     },
   },
 );
