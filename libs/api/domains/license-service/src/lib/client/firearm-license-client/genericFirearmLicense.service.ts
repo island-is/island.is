@@ -139,11 +139,12 @@ export class GenericFirearmLicenseService
     //slice out headers from base64 image string
     const image = data.licenseInfo?.licenseImgBase64
 
-    if (!inputValues) return null
+    if (!inputValues || !data.licenseInfo?.expirationDate) return null
+
     //Fetch template from api?
     const payload: PassDataInput = {
       inputFieldValues: inputValues,
-      expirationDate: data.licenseInfo?.expirationDate,
+      expirationDate: new Date(data.licenseInfo?.expirationDate).toISOString(),
       thumbnail: image
         ? {
             imageBase64String: image.substring(image.indexOf(',') + 1).trim(),
