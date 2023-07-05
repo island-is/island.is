@@ -8,7 +8,7 @@ import {
 } from '@island.is/application/types'
 import { useLocale } from '@island.is/localization'
 
-//limit to max MAX_CNT_APPLICANTS-1 children
+//TODO limit to max MAX_CNT_APPLICANTS-1 children
 export const SelectChildren = ({ field, application, error }: any) => {
   const { formatMessage } = useLocale()
 

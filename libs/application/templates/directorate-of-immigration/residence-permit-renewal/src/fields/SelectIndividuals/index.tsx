@@ -12,7 +12,7 @@ import { CurrentResidencePermit } from '@island.is/clients/directorate-of-immigr
 import { formatDate } from '../../utils'
 import { useLocale } from '@island.is/localization'
 
-//limit to max MAX_CNT_APPLICANTS applicants
+//TODO limit to max MAX_CNT_APPLICANTS applicants
 export const SelectIndividuals = ({ field, application, error }: any) => {
   const { formatMessage } = useLocale()
 
