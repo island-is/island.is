@@ -80,6 +80,7 @@ export class FirearmLicenseApiClientService implements GenericLicenseClient {
     const thumbnail = licenseInfo.licenseImgBase64
     const payload: PassDataInput = {
       inputFieldValues: inputValues,
+      expirationDate: licenseInfo?.expirationDate,
       thumbnail: thumbnail
         ? {
             imageBase64String: thumbnail

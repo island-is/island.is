@@ -143,6 +143,7 @@ export class GenericFirearmLicenseService
     //Fetch template from api?
     const payload: PassDataInput = {
       inputFieldValues: inputValues,
+      expirationDate: data.licenseInfo?.expirationDate,
       thumbnail: image
         ? {
             imageBase64String: image.substring(image.indexOf(',') + 1).trim(),
@@ -197,6 +198,7 @@ export class GenericFirearmLicenseService
     //Fetch template from api?
     const payload: PassDataInput = {
       inputFieldValues: inputValues,
+      expirationDate: data.licenseInfo?.expirationDate,
       thumbnail: image
         ? {
             imageBase64String: parsedImage ?? '',
