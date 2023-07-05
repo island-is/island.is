@@ -196,6 +196,11 @@ export const serviceSetup = (services: {
         staging: 'https://skraidentitystaging.onmicrosoft.com/midlun/.default',
         prod: 'https://skraidentity.onmicrosoft.com/midlun/.default',
       },
+      NATIONAL_REGISTRY_B2C_PATH: {
+        dev: 'IS-DEV/GOV/10001/SKRA-Cloud-Protected/Midlun-v1',
+        staging: 'IS-TEST/GOV/6503760649/SKRA-Cloud-Protected/Midlun-v1',
+        prod: 'IS/GOV/6503760649/SKRA-Cloud-Protected/Midlun-v1',
+      },
       NO_UPDATE_NOTIFIER: 'true',
       FISKISTOFA_ZENTER_CLIENT_ID: '1114',
       SOFFIA_SOAP_URL: {
