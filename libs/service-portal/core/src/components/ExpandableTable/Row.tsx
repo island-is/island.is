@@ -1,7 +1,7 @@
 import React, { useState, useCallback, FC } from 'react'
 import { useLocale } from '@island.is/localization'
 import { ApolloError } from '@apollo/client'
-import AnimateHeight from 'react-animate-height'
+import AnimateHeight, { Height } from 'react-animate-height'
 import {
   Box,
   Text,
@@ -45,7 +45,7 @@ const ExpandableLine: FC<React.PropsWithChildren<Props>> = ({
   const [expanded, toggleExpand] = useState<boolean>(false)
   const [closed, setClosed] = useState<boolean>(true)
 
-  const handleAnimationEnd = useCallback((height: number) => {
+  const handleAnimationEnd = useCallback((height: Height) => {
     if (height === 0) {
       setClosed(true)
     } else {
@@ -175,9 +175,7 @@ const ExpandableLine: FC<React.PropsWithChildren<Props>> = ({
           colSpan={data.length + 1}
         >
           <AnimateHeight
-            onAnimationEnd={(props: { newHeight: number }) =>
-              handleAnimationEnd(props.newHeight)
-            }
+            onHeightAnimationEnd={(newHeight) => handleAnimationEnd(newHeight)}
             duration={300}
             height={children && expanded ? 'auto' : 0}
           >
