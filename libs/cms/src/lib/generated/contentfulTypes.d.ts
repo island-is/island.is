@@ -1440,14 +1440,14 @@ export interface ILatestNewsSliceFields {
   /** News tag */
   newsTag?: IGenericTag | undefined
 
+  /** Organization */
+  organization?: IOrganization | undefined
+
   /** Read more text */
   readMoreText?: string | undefined
 
   /** Read more link */
   readMoreLink?: ILink | undefined
-
-  /** Organization */
-  organization?: IOrganization | undefined
 }
 
 /** Slice to show latest news entries */
@@ -1932,6 +1932,9 @@ export interface INamespace extends Entry<INamespaceFields> {
 }
 
 export interface INewsFields {
+  /** Organization */
+  organization: IOrganization
+
   /** Content status */
   contentStatus?: 'Undefined' | 'Needs work' | 'In review' | 'Done' | undefined
 
@@ -1973,9 +1976,6 @@ export interface INewsFields {
 
   /** og:image */
   featuredImage?: Asset | undefined
-
-  /** Organization */
-  organization?: IOrganization | undefined
 }
 
 export interface INews extends Entry<INewsFields> {
@@ -2990,6 +2990,7 @@ export interface ISliceConnectedComponentFields {
     | 'Tækifærisleyfi/TemporaryEventLicences'
     | 'OrganizationSearchBox'
     | 'Verðbréfamiðlarar/Brokers'
+    | 'PublicVehicleSearch'
     | undefined
 
   /** Localized JSON */
