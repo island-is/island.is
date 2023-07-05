@@ -60,14 +60,21 @@ export class ResidencePermitRenewalService extends BaseTemplateApiService {
     return this.residencePermitClient.getTravelDocumentTypes()
   }
 
-  async getCurrentResidencePermitList({
+  async getApplicantCurrentResidencePermit({
     auth,
-  }: TemplateApiModuleActionProps): Promise<CurrentResidencePermit[]> {
-    const res = await this.residencePermitClient.getCurrentResidencePermitList(
+  }: TemplateApiModuleActionProps): Promise<CurrentResidencePermit> {
+    const applicant = await this.residencePermitClient.getApplicantCurrentResidencePermit(
       auth,
     )
 
-    if (!res.find((x) => x.canApplyRenewal)) {
+    const children = await this.residencePermitClient.getChildrenCurrentResidencePermit(
+      auth,
+    )
+
+    const canAtLeastOneApplyPermanent = !![applicant, ...children].find(
+      (x) => x.canApplyRenewal,
+    )
+    if (!canAtLeastOneApplyPermanent) {
       throw new TemplateApiError(
         {
           title: error.notAllowedToRenew,
@@ -77,7 +84,15 @@ export class ResidencePermitRenewalService extends BaseTemplateApiService {
       )
     }
 
-    return res
+    return applicant
+  }
+
+  async getChildrenCurrentResidencePermit({
+    auth,
+  }: TemplateApiModuleActionProps): Promise<CurrentResidencePermit[]> {
+    return await this.residencePermitClient.getChildrenCurrentResidencePermit(
+      auth,
+    )
   }
 
   async getApplicantCurrentResidencePermitType({

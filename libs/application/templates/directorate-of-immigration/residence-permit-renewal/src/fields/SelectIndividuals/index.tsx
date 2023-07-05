@@ -1,6 +1,6 @@
 import { Box, Tag } from '@island.is/island-ui/core'
 import { CheckboxFormField } from '@island.is/application/ui-fields'
-import { applicant } from '../../lib/messages'
+import { applicant as applicantMessage } from '../../lib/messages'
 import {
   ApplicantChildCustodyInformation,
   FieldComponents,
@@ -21,26 +21,23 @@ export const SelectIndividuals = ({ field, application, error }: any) => {
     answers,
   } = application
 
-  const currentResidencePermitList = getValueViaPath(
-    application.externalData,
-    'currentResidencePermitList.data',
-    [],
-  ) as CurrentResidencePermit[]
-
-  const applicantData = getValueViaPath(
+  const applicant = getValueViaPath(
     application.externalData,
     'nationalRegistry.data',
     undefined,
   ) as NationalRegistryUser | undefined
-  const applicantCurrentResidencePermit = currentResidencePermitList.find(
-    (x) => x.nationalId === applicantData?.nationalId,
-  )
+
+  const applicantCurrentResidencePermit = getValueViaPath(
+    application.externalData,
+    'applicantCurrentResidencePermit.data',
+  ) as CurrentResidencePermit
+
   const canApplyRenewal = !!applicantCurrentResidencePermit?.canApplyRenewal
     ?.canApply
 
   const applicantCheckbox = {
-    value: applicantData?.nationalId!,
-    label: applicantData?.fullName!,
+    value: applicant?.nationalId!,
+    label: applicant?.fullName!,
     subLabel: applicantCurrentResidencePermit?.permitTypeName,
     rightContent: (
       <div style={{ display: 'flex' }}>
@@ -50,7 +47,7 @@ export const SelectIndividuals = ({ field, application, error }: any) => {
           variant={!canApplyRenewal ? 'red' : 'blue'}
         >
           {canApplyRenewal
-            ? formatMessage(applicant.labels.pickApplicant.validTo, {
+            ? formatMessage(applicantMessage.labels.pickApplicant.validTo, {
                 date: formatDate(
                   applicantCurrentResidencePermit?.permitValidTo,
                 ),
@@ -63,9 +60,16 @@ export const SelectIndividuals = ({ field, application, error }: any) => {
   }
 
   const children = childrenCustodyInformation.data as ApplicantChildCustodyInformation[]
+
+  const childrenCurrentResidencePermit = getValueViaPath(
+    application.externalData,
+    'childrenCurrentResidencePermit.data',
+    [],
+  ) as CurrentResidencePermit[]
+
   const childrenCheckboxes = children.map(
     (child: ApplicantChildCustodyInformation) => {
-      const childCurrentResidencePermit = currentResidencePermitList.find(
+      const childCurrentResidencePermit = childrenCurrentResidencePermit.find(
         (x) => x.nationalId === child.nationalId,
       )
 
@@ -76,13 +80,13 @@ export const SelectIndividuals = ({ field, application, error }: any) => {
         value: child.nationalId,
         label: child.fullName,
         subLabel: child.otherParent
-          ? `${applicant.labels.pickApplicant.checkboxSubLabel.defaultMessage} ${child.otherParent?.fullName}` //TODO ekki nota defaultMessage, þá þýðist ekki
+          ? `${applicantMessage.labels.pickApplicant.checkboxSubLabel.defaultMessage} ${child.otherParent?.fullName}` //TODO ekki nota defaultMessage, þá þýðist ekki
           : '',
         rightContent: (
           <div style={{ display: 'flex' }}>
             <Tag outlined={true} disabled variant={'blue'}>
               {canApplyRenewal
-                ? formatMessage(applicant.labels.pickApplicant.validTo, {
+                ? formatMessage(applicantMessage.labels.pickApplicant.validTo, {
                     date: formatDate(
                       childCurrentResidencePermit?.permitValidTo,
                     ),

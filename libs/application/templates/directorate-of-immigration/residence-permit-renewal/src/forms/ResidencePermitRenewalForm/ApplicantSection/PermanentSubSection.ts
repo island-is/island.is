@@ -11,16 +11,23 @@ export const PermanentSubSection = buildSubSection({
   id: 'permanent',
   title: applicant.labels.permanent.subSectionTitle,
   condition: (_, externalData) => {
-    const currentResidencePermitList = getValueViaPath(
+    const applicantCurrentResidencePermit = getValueViaPath(
       externalData,
-      'currentResidencePermitList.data',
+      'applicantCurrentResidencePermit.data',
+    ) as CurrentResidencePermit
+
+    const childrenCurrentResidencePermit = getValueViaPath(
+      externalData,
+      'childrenCurrentResidencePermit.data',
       [],
     ) as CurrentResidencePermit[]
 
-    const canOneApplyPermanent = !!currentResidencePermitList.find(
-      (x) => x.canApplyPermanent,
-    )
-    return canOneApplyPermanent
+    const canAtLeastOneApplyPermanent = !![
+      applicantCurrentResidencePermit,
+      ...childrenCurrentResidencePermit,
+    ].find((x) => x.canApplyPermanent)
+
+    return canAtLeastOneApplyPermanent
   },
   children: [
     buildMultiField({
