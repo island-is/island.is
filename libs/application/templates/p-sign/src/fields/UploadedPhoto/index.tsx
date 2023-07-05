@@ -1,4 +1,3 @@
-import React from 'react'
 import { Box } from '@island.is/island-ui/core'
 import { formatText } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
