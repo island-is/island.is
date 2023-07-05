@@ -36,8 +36,11 @@ import {
   NO,
   RatioType,
   YES,
+  IS,
+  maritalStatuses,
 } from '../lib/constants'
 import {
+  childCustody_LivesWithApplicant,
   getApplicationAnswers,
   getApplicationExternalData,
   getYesNOOptions,
@@ -184,7 +187,7 @@ export const OldAgePensionForm: Form = buildForm({
                   defaultValue: (application: Application) => {
                     const data = application.externalData.nationalRegistrySpouse
                       .data as NationalRegistrySpouse
-                    return data.maritalStatus
+                    return maritalStatuses[data.maritalStatus]
                   },
                   condition: (_, externalData) => {
                     const { maritalStatus } = getApplicationExternalData(
@@ -268,14 +271,16 @@ export const OldAgePensionForm: Form = buildForm({
                   options: getYesNOOptions(),
                   width: 'half',
                   largeButtons: true,
-                  // condition: (answers, externalData) => {
-                  //   const { residenceHistory } = getApplicationExternalData(
-                  //     externalData,
-                  //   )
-                  //   // check if no res history or?? or if only res history is iceland?
-                  //   if (residenceHistory.length === 0) return true
-                  //   return false
-                  // },
+                  condition: (_, externalData) => {
+                    const { residenceHistory } = getApplicationExternalData(
+                      externalData,
+                    )
+                    // if no residence history returned or if residence history is only iceland, show the question
+                    if (residenceHistory.length === 0) return true
+                    return residenceHistory.every(
+                      (residence) => residence.country === IS,
+                    )
+                  },
                 }),
               ],
             }),
@@ -510,7 +515,7 @@ export const OldAgePensionForm: Form = buildForm({
               condition: (answers) => {
                 const { applicationType } = getApplicationAnswers(answers)
 
-                return applicationType === ApplicationType.FISHERMEN
+                return applicationType === ApplicationType.SAILOR_PENSION
               },
             }),
           ],
@@ -592,7 +597,7 @@ export const OldAgePensionForm: Form = buildForm({
                 return [
                   {
                     label:
-                      applicationType === ApplicationType.HALFRETIREMENTPENSION
+                      applicationType === ApplicationType.HALF_OLD_AGE_PENSION
                         ? oldAgePensionFormMessage.connectedApplications
                             .halfHomeAllowance
                         : oldAgePensionFormMessage.connectedApplications
@@ -616,7 +621,7 @@ export const OldAgePensionForm: Form = buildForm({
             const { applicationType } = getApplicationAnswers(
               application.answers,
             )
-            return applicationType === ApplicationType.HALFRETIREMENTPENSION
+            return applicationType === ApplicationType.HALF_OLD_AGE_PENSION
               ? oldAgePensionFormMessage.connectedApplications.halfHomeAllowance
               : oldAgePensionFormMessage.connectedApplications.homeAllowance
           },
@@ -627,7 +632,7 @@ export const OldAgePensionForm: Form = buildForm({
                 const { applicationType } = getApplicationAnswers(
                   application.answers,
                 )
-                return applicationType === ApplicationType.HALFRETIREMENTPENSION
+                return applicationType === ApplicationType.HALF_OLD_AGE_PENSION
                   ? oldAgePensionFormMessage.connectedApplications
                       .halfHomeAllowance
                   : oldAgePensionFormMessage.connectedApplications.homeAllowance
@@ -770,28 +775,37 @@ export const OldAgePensionForm: Form = buildForm({
             )
           },
           children: [
-            buildMultiField({
-              id: 'childPension',
+            buildRepeater({
+              id: 'childPensionRepeater',
               title:
                 oldAgePensionFormMessage.connectedApplications.childPension,
-              description:
-                oldAgePensionFormMessage.connectedApplications
-                  .childPensionDescription,
+              component: 'ChildCustodyRepeater',
               children: [
-                buildCustomField({
-                  id: 'childPension.table',
+                buildMultiField({
+                  id: 'childPension',
                   title:
                     oldAgePensionFormMessage.connectedApplications
-                      .childPensionKidsTitle,
-                  description:
-                    oldAgePensionFormMessage.connectedApplications
-                      .childPensionKidsDescription,
-                  component: 'ChildCustodyTable',
+                      .registerChildTitle,
+                  isPartOfRepeater: true,
+                  children: [
+                    buildTextField({
+                      id: 'nationalIdOrBirthDate',
+                      title:
+                        oldAgePensionFormMessage.connectedApplications
+                          .childPensionTableHeaderId,
+                    }),
+                    buildTextField({
+                      id: 'name',
+                      title:
+                        oldAgePensionFormMessage.connectedApplications
+                          .childPensionFullName,
+                    }),
+                  ],
                 }),
               ],
             }),
             buildFileUploadField({
-              id: 'childPension.maintenanceFileupload',
+              id: 'fileUploadChildPension.maintenance',
               title: oldAgePensionFormMessage.fileUpload.childPensionTitle,
               description:
                 oldAgePensionFormMessage.fileUpload
@@ -809,9 +823,14 @@ export const OldAgePensionForm: Form = buildForm({
                 oldAgePensionFormMessage.fileUpload.attachmentDescription,
               uploadButtonLabel:
                 oldAgePensionFormMessage.fileUpload.attachmentButton,
+              condition: (answers) => {
+                const { childPension } = getApplicationAnswers(answers)
+
+                return childPension.length > 0
+              },
             }),
             buildFileUploadField({
-              id: 'childPension.notLivesWithApplicantFileupload',
+              id: 'fileUploadChildPension.notLivesWithApplicant',
               title: oldAgePensionFormMessage.fileUpload.childPensionTitle,
               description:
                 oldAgePensionFormMessage.fileUpload
@@ -829,6 +848,8 @@ export const OldAgePensionForm: Form = buildForm({
                 oldAgePensionFormMessage.fileUpload.attachmentDescription,
               uploadButtonLabel:
                 oldAgePensionFormMessage.fileUpload.attachmentButton,
+              condition: (_, externalData) =>
+                childCustody_LivesWithApplicant(externalData),
             }),
           ],
         }),

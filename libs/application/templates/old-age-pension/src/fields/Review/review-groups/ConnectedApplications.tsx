@@ -49,7 +49,7 @@ export const ConnectedApplications = ({
                       <Text>
                         {app === Apps.HOMEALLOWANCE
                           ? applicationType ===
-                            ApplicationType.HALFRETIREMENTPENSION
+                            ApplicationType.HALF_OLD_AGE_PENSION
                             ? formatMessage(
                                 oldAgePensionFormMessage.connectedApplications
                                   .halfHomeAllowance,

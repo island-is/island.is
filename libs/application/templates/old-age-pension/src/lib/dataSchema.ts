@@ -13,9 +13,9 @@ export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
   applicationType: z.object({
     option: z.enum([
-      ApplicationType.RETIREMENTPENSION,
-      ApplicationType.HALFRETIREMENTPENSION,
-      ApplicationType.FISHERMEN,
+      ApplicationType.OLD_AGE_PENSION,
+      ApplicationType.HALF_OLD_AGE_PENSION,
+      ApplicationType.SAILOR_PENSION,
     ]),
   }),
   questions: z.object({

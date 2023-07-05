@@ -7,6 +7,7 @@ export const earlyRetirementMinAge = 65
 export const earlyRetirementMaxAge = 66
 export const fishermenMinAge = 60
 export const fishermenMaxAge = 66
+export const IS = 'IS'
 
 export const MONTHS = [
   'January',
@@ -53,14 +54,32 @@ export enum AnswerValidationConstants {
   PERIOD = 'period',
   FILEUPLOADPENEARLYFISHER = 'fileUploadEarlyPenFisher',
   FILEUPLOADHOMEALLOWANCE = 'fileUploadHomeAllowance',
+  FILEUPLOADCHILDPENSION = 'fileUploadChildPension',
   EMPLOYMENT = 'employment',
   EMPLOYERS = 'employers',
 }
 
 export enum ApplicationType {
-  RETIREMENTPENSION = 'retirementPension',
-  HALFRETIREMENTPENSION = 'halfRetirementPension',
-  FISHERMEN = 'fishermen',
+  OLD_AGE_PENSION = 'oldAgePension',
+  HALF_OLD_AGE_PENSION = 'halfOldAgePension',
+  SAILOR_PENSION = 'sailorPension',
+}
+
+const married = 'Gift/ur'
+
+export const maritalStatuses: {
+  [key: string]: string
+} = {
+  '1': 'Ógift/ur',
+  '3': married,
+  '4': 'Ekkja/Ekkill',
+  '5': 'Skilin/nn/ð að borði og sæng',
+  '6': 'Fráskilin/nn/ð',
+  '7': married,
+  '8': married,
+  '9': 'Óupplýst',
+  '0': married,
+  L: married,
 }
 
 export enum Employment {

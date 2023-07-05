@@ -6,6 +6,7 @@ import { period } from './answerValidationSections/period'
 import { fileUploadHomeAllowance } from './answerValidationSections/fileUploadHomeAllowance'
 import { employment } from './answerValidationSections/employment'
 import { employers } from './answerValidationSections/employers'
+import { fileUploadChildPension } from './answerValidationSections/fileUploadChildPension'
 
 const {
   PERIOD,
@@ -13,6 +14,7 @@ const {
   FILEUPLOADHOMEALLOWANCE,
   EMPLOYMENT,
   EMPLOYERS,
+  FILEUPLOADCHILDPENSION,
 } = AnswerValidationConstants
 
 export const answerValidators: Record<string, AnswerValidator> = {
@@ -21,4 +23,5 @@ export const answerValidators: Record<string, AnswerValidator> = {
   [EMPLOYERS]: employers,
   [FILEUPLOADPENEARLYFISHER]: fileUpploadPenEarlyFisher,
   [FILEUPLOADHOMEALLOWANCE]: fileUploadHomeAllowance,
+  [FILEUPLOADCHILDPENSION]: fileUploadChildPension,
 }

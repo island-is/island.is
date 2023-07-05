@@ -60,7 +60,7 @@ export const fileUpploadPenEarlyFisher = (
     }
   }
 
-  if (applicationType === ApplicationType.FISHERMEN && obj.fishermen) {
+  if (applicationType === ApplicationType.SAILOR_PENSION && obj.fishermen) {
     if (isEmpty((obj as { fishermen: unknown[] }).fishermen)) {
       return buildError(
         validatorErrorMessages.requireAttachment,

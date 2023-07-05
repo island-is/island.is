@@ -30,3 +30,9 @@ export interface Employer {
   rawIndex?: number
   ratioMonthly?: monthObject
 }
+
+export interface ChildPensionRow {
+  nationalIdOrBirthDate: string
+  name: string
+  editable?: boolean
+}
