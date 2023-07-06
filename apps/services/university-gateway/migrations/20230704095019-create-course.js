@@ -15,12 +15,15 @@ module.exports = {
             },
             external_id: {
               type: Sequelize.STRING,
+              allowNull: false,
             },
             name_is: {
               type: Sequelize.STRING,
+              allowNull: false,
             },
             name_en: {
               type: Sequelize.STRING,
+              allowNull: false,
             },
             university_id: {
               type: Sequelize.UUID,
@@ -32,9 +35,11 @@ module.exports = {
             },
             credits: {
               type: Sequelize.INTEGER,
+              allowNull: false,
             },
             semester_year: {
               type: Sequelize.INTEGER,
+              allowNull: true,
             },
             semester_season_id: {
               type: Sequelize.UUID,
@@ -46,15 +51,19 @@ module.exports = {
             },
             description_is: {
               type: Sequelize.STRING,
+              allowNull: true,
             },
             description_en: {
               type: Sequelize.STRING,
+              allowNull: true,
             },
             external_url_is: {
               type: Sequelize.STRING,
+              allowNull: true,
             },
             external_url_en: {
               type: Sequelize.STRING,
+              allowNull: true,
             },
           },
           { transaction: t },

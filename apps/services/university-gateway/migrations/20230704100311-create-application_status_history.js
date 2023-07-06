@@ -39,6 +39,7 @@ module.exports = {
             },
             date_modified: {
               type: Sequelize.DATE,
+              allowNull: false,
             },
           },
           { transaction: t },

@@ -15,9 +15,11 @@ module.exports = {
             },
             national_id: {
               type: Sequelize.STRING,
+              allowNull: false,
             },
             contentful_key: {
               type: Sequelize.STRING,
+              allowNull: false,
             },
           },
           { transaction: t },

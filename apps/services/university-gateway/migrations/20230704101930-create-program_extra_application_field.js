@@ -31,24 +31,27 @@ module.exports = {
             },
             name_is: {
               type: Sequelize.STRING,
+              allowNull: false,
             },
             name_en: {
               type: Sequelize.STRING,
+              allowNull: false,
             },
             description_is: {
               type: Sequelize.STRING,
+              allowNull: true,
             },
             description_en: {
               type: Sequelize.STRING,
-            },
-            description_en: {
-              type: Sequelize.STRING,
+              allowNull: true,
             },
             required: {
               type: Sequelize.BOOLEAN,
+              allowNull: true,
             },
             upload_accepted_file_type: {
               type: Sequelize.STRING,
+              allowNull: true,
             },
           },
           { transaction: t },
@@ -60,7 +63,9 @@ module.exports = {
   down: (queryInterface, Sequelize) => {
     return queryInterface.sequelize.transaction((t) => {
       return Promise.all([
-        queryInterface.dropTable('program_extra_application_field', { transaction: t }),
+        queryInterface.dropTable('program_extra_application_field', {
+          transaction: t,
+        }),
       ])
     })
   },

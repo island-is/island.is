@@ -12,11 +12,11 @@ import { Application, ApplicationResponse } from './model'
 import { CreateApplicationDto, UpdateApplicationDto } from './dto'
 
 @ApiTags('Application')
-@Controller()
+@Controller({ path: 'applications' })
 export class ApplicationController {
   constructor(private readonly applicationService: ApplicationService) {}
 
-  @Get('applications/:id')
+  @Get(':id')
   @ApiParam({
     name: 'id',
     required: true,
@@ -34,7 +34,7 @@ export class ApplicationController {
     return this.applicationService.getApplication(id)
   }
 
-  @Post('applications')
+  @Post()
   @ApiBody({
     type: CreateApplicationDto,
   })
@@ -51,7 +51,7 @@ export class ApplicationController {
     return this.applicationService.createApplication(applicationDto)
   }
 
-  @Patch('applications/:id')
+  @Patch(':id')
   @ApiParam({
     name: 'id',
     required: true,

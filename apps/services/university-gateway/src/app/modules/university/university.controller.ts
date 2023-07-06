@@ -4,11 +4,11 @@ import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger'
 import { UniversityResponse } from './model'
 
 @ApiTags('University')
-@Controller()
+@Controller({ path: 'universities' })
 export class UniversityController {
   constructor(private readonly universityService: UniversityService) {}
 
-  @Get('universities')
+  @Get()
   @ApiOkResponse({
     type: UniversityResponse,
     description: 'Returns all universities',

@@ -11,6 +11,14 @@ export class ProgramService {
     private readonly ugReykjavikUniversityClient: UgReykjavikUniversityClient,
   ) {}
 
+  async triggerWorker(): Promise<string> {
+    var programs = this.ugReykjavikUniversityClient.getMajors()
+
+    console.log((await programs)[0])
+
+    return 'Finished adding data to DB'
+  }
+
   async getPrograms(
     { after, before, limit }: PaginateInput,
     active: boolean,

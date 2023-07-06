@@ -15,6 +15,7 @@ module.exports = {
             },
             national_id: {
               type: Sequelize.STRING,
+              allowNull: false,
             },
             university_id: {
               type: Sequelize.UUID,
