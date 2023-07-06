@@ -25,6 +25,7 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-public-api'> => {
       },
       XROAD_TJODSKRA_API_PATH: '/SKRA-Protected/Einstaklingar-v1',
       XROAD_NATIONAL_REGISTRY_ACTOR_TOKEN: 'true',
+      XROAD_RSK_PROCURING_ACTOR_TOKEN: 'true',
       XROAD_NATIONAL_REGISTRY_SERVICE_PATH: {
         dev: 'IS-DEV/GOV/10001/SKRA-Protected/Einstaklingar-v1',
         staging: 'IS-TEST/GOV/6503760649/SKRA-Protected/Einstaklingar-v1',

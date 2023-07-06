@@ -12,11 +12,11 @@ import { subSectionSummary } from './subSectionSummary'
 
 export const draft: Form = buildForm({
   id: 'DrivingLicenseApplicationDraftForm',
-  title: m.applicationName,
+  title: '',
   logo: LogreglanLogo,
   mode: FormModes.DRAFT,
   renderLastScreenButton: true,
-  renderLastScreenBackButton: false,
+  renderLastScreenBackButton: true,
   children: [
     buildSection({
       id: 'externalData',
