@@ -14,6 +14,9 @@ import {
   Button,
   FinanceStatusCard,
   Heading,
+  ListItemSkeleton,
+  Skeleton,
+  StatusCardSkeleton,
   TableViewCell,
   Typography,
   blue400,
@@ -147,6 +150,7 @@ function FinanceStatusCardContainer(props: any) {
   const intl = useIntl();
   const [open, setOpen] = useState(false);
   const {chargeType, org} = props;
+
   const input = {
     orgID: org.id,
     chargeTypeID: chargeType.id,
@@ -386,6 +390,7 @@ const {
 
 export const FinanceScreen: NavigationFunctionComponent = ({componentId}) => {
   useNavigationOptions(componentId);
+  const theme = useTheme();
   const intl = useIntl();
   const {loading, error, data} = useQuery<{
     getFinanceStatus: GetFinanceStatus;
@@ -405,11 +410,14 @@ export const FinanceScreen: NavigationFunctionComponent = ({componentId}) => {
     statusTotals: 0,
   };
 
+  console.log(financeStatusData, 'financeStatusData');
+
+  // Can we not use this instead financeStatusData.statusTotals ?
   function getChargeTypeTotal() {
     const organizationChargeTypes = financeStatusData?.organizations?.map(
       org => org.chargeTypes,
     );
-    const allChargeTypes = organizationChargeTypes.flat();
+    const allChargeTypes = organizationChargeTypes?.flat();
 
     const chargeTypeTotal =
       allChargeTypes.length > 0
@@ -460,9 +468,17 @@ export const FinanceScreen: NavigationFunctionComponent = ({componentId}) => {
           </Text>
         }
         subtitle={
-          <Text size={20} weight="600">{`${intl.formatNumber(
-            getChargeTypeTotal(),
-          )} kr.`}</Text>
+          loading ? (
+            <Skeleton
+              active
+              style={{borderRadius: 4, width: 150}}
+              height={26}
+            />
+          ) : (
+            <Text size={20} weight="600">{`${intl.formatNumber(
+              getChargeTypeTotal(),
+            )} kr.`}</Text>
+          )
         }
       />
       {financeStatusData.organizations?.length > 0 || financeStatusZero ? (
@@ -496,6 +512,26 @@ export const FinanceScreen: NavigationFunctionComponent = ({componentId}) => {
         </SafeAreaView>
       ) : null}
       <SafeAreaView style={{marginHorizontal: 16}}>
+        {loading && (
+          <Skeleton
+            active
+            backgroundColor={{
+              dark: theme.shades.dark.shade300,
+              light: theme.color.blue100,
+            }}
+            overlayColor={{
+              dark: theme.shades.dark.shade200,
+              light: theme.color.blue200,
+            }}
+            overlayOpacity={1}
+            height={80}
+            style={{
+              borderRadius: 8,
+              marginBottom: 16,
+            }}
+          />
+        )}
+
         {financeStatusData?.organizations?.length > 0 || financeStatusZero
           ? financeStatusData?.organizations?.map((org: any, i) =>
               org.chargeTypes.map((chargeType: any, ii: number) => (
