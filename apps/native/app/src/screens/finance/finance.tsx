@@ -109,6 +109,7 @@ const LightButton = (props: any) => {
         paddingTop: 8,
         paddingBottom: 8,
         minWidth: 0,
+        minHeight: 40,
       }}
       textProps={{
         lineBreakMode: 'tail',
@@ -259,12 +260,20 @@ function FinanceStatusCardContainer(props: any) {
             >
               <>
                 <Cell style={{flex: 1}}>
-                  <Text>{charge.finalDueDate}</Text>
+                  {loading ? (
+                    <Skeleton height={18} />
+                  ) : (
+                    <Text>{charge.finalDueDate}</Text>
+                  )}
                 </Cell>
                 <Cell style={{flex: 1}}>
-                  <Text style={{textAlign: 'right'}}>
-                    {intl.formatNumber(charge.totals)} kr.
-                  </Text>
+                  {loading ? (
+                    <Skeleton height={18} />
+                  ) : (
+                    <Text style={{textAlign: 'right'}}>
+                      {intl.formatNumber(charge.totals)} kr.
+                    </Text>
+                  )}
                 </Cell>
                 <Image
                   source={chevronDown}
@@ -433,6 +442,27 @@ export const FinanceScreen: NavigationFunctionComponent = ({componentId}) => {
   // const twoYearsAgo = subYears(new Date(), 2).getFullYear().toString();
   const financeStatusZero = financeStatusData?.statusTotals === 0;
 
+  const skeletonItems = Array.from({length: 5}).map((_, id) => (
+    <Skeleton
+      key={id}
+      active
+      backgroundColor={{
+        dark: theme.shades.dark.shade300,
+        light: theme.color.blue100,
+      }}
+      overlayColor={{
+        dark: theme.shades.dark.shade200,
+        light: theme.color.blue200,
+      }}
+      overlayOpacity={1}
+      height={80}
+      style={{
+        borderRadius: 8,
+        marginBottom: 16,
+      }}
+    />
+  ));
+
   return (
     <ScrollView style={{flex: 1}}>
       <SafeAreaView style={{marginHorizontal: 16}}>
@@ -508,27 +538,11 @@ export const FinanceScreen: NavigationFunctionComponent = ({componentId}) => {
         </SafeAreaView>
       ) : null}
       <SafeAreaView style={{marginHorizontal: 16}}>
-        {/* {loading && (
-          <Skeleton
-            active
-            backgroundColor={{
-              dark: theme.shades.dark.shade300,
-              light: theme.color.blue100,
-            }}
-            overlayColor={{
-              dark: theme.shades.dark.shade200,
-              light: theme.color.blue200,
-            }}
-            overlayOpacity={1}
-            height={80}
-            style={{
-              borderRadius: 8,
-              marginBottom: 16,
-            }}
-          />
-        )} */}
+        {loading && skeletonItems}
 
-        {financeStatusData?.organizations?.length > 0 || financeStatusZero
+        {!loading ||
+        financeStatusData?.organizations?.length > 0 ||
+        financeStatusZero
           ? financeStatusData?.organizations?.map((org: any, i) =>
               org.chargeTypes.map((chargeType: any, ii: number) => (
                 <FinanceStatusCardContainer
