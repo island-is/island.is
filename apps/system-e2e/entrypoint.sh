@@ -18,7 +18,6 @@ echo "Playwright args: $*"
 echo "Playwright project: $TEST_PROJECT"
 echo "Playwright version: $(yarn playwright --version)"
 
-bash -c "$@"
 TEST_EXIT_CODE=0
 yarn playwright test -c src --project="$TEST_PROJECT" "$@" || TEST_EXIT_CODE=$?
 
