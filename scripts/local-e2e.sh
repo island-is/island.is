@@ -182,15 +182,16 @@ parse_run_args() {
       case "$key" in
       '#'* | '') continue ;;
       esac
-      local outvalue="$(
+      local evalue
+      evalue="$(
         eval "$secret" >&2
         debug "Key: '$key'"
         debug "Value: '$value'"
         debug "indirect value: $key=${!key}"
         echo "${!key}"
       )"
-      debug "outvalue: $outvalue"
-      echo "${key}=${outvalue}" >>"$secrets_out_file"
+      debug "Evalued value: $evalue"
+      echo "${key}=${evalue}" >>"$secrets_out_file"
     done <"$secrets_file"
   done
   run_cmd+=" --env-file $secrets_out_file"
