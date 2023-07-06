@@ -41,12 +41,8 @@ module.exports = {
               type: Sequelize.INTEGER,
               allowNull: false,
             },
-            starting_semester_season_id: {
-              type: Sequelize.UUID,
-              references: {
-                model: 'semester_season',
-                key: 'id',
-              },
+            semester_season: {
+              type: Sequelize.ENUM('FALL', 'SPRING', 'SUMMER'),
               allowNull: false,
             },
             application_start_date: {
@@ -65,12 +61,8 @@ module.exports = {
               type: Sequelize.STRING,
               allowNull: false,
             },
-            degree_type_id: {
-              type: Sequelize.UUID,
-              references: {
-                model: 'degree_type',
-                key: 'id',
-              },
+            degree_type: {
+              type: Sequelize.ENUM('UNDERGRADUATE', 'POSTGRADUATE', 'DOCTORAL'),
               allowNull: false,
             },
             degree_abbreviation: {

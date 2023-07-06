@@ -15,12 +15,8 @@ module.exports = {
               },
               allowNull: false,
             },
-            mode_of_delivery_id: {
-              type: Sequelize.UUID,
-              references: {
-                model: 'mode_of_delivery',
-                key: 'id',
-              },
+            mode_of_delivery: {
+              type: Sequelize.ENUM('ON_SITE', 'ONLINE', 'ONLINE_WITH_SESSION'),
               allowNull: false,
             },
           },

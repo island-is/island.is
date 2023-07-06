@@ -23,12 +23,8 @@ module.exports = {
               },
               allowNull: false,
             },
-            program_requirement_id: {
-              type: Sequelize.UUID,
-              references: {
-                model: 'program_requirement',
-                key: 'id',
-              },
+            program_requirement: {
+              type: Sequelize.ENUM('MANDATORY', 'FREE_ELECTIVE', 'RESTRICTED_ELECTIVE'),
               allowNull: false,
             },
           },

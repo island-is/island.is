@@ -21,12 +21,8 @@ module.exports = {
               },
               allowNull: false,
             },
-            extra_application_field_type_id: {
-              type: Sequelize.UUID,
-              references: {
-                model: 'program_extra_application_field',
-                key: 'id',
-              },
+            field_type: {
+              type: Sequelize.ENUM('UPLOAD', 'CHECKBOX', 'TEXT_INPUT', 'TEXT_AREA'),
               allowNull: false,
             },
             name_is: {

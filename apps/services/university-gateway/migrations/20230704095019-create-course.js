@@ -41,12 +41,8 @@ module.exports = {
               type: Sequelize.INTEGER,
               allowNull: true,
             },
-            semester_season_id: {
-              type: Sequelize.UUID,
-              references: {
-                model: 'semester_season',
-                key: 'id',
-              },
+            semester_season: {
+              type: Sequelize.ENUM('FALL', 'SPRING', 'SUMMER'),
               allowNull: false,
             },
             description_is: {
