@@ -29,6 +29,7 @@ import {
   VehicleServiceFjsV1,
   WorkMachines,
   IcelandicGovernmentInstitutionVacancies,
+  RskProcuring,
 } from '../../../infra/src/dsl/xroad'
 
 export const serviceSetup = (services: {
@@ -347,6 +348,7 @@ export const serviceSetup = (services: {
       UniversityOfIceland,
       WorkMachines,
       IcelandicGovernmentInstitutionVacancies,
+      RskProcuring,
     )
     .files({ filename: 'islyklar.p12', env: 'ISLYKILL_CERT' })
     .ingress({

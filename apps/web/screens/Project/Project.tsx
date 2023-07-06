@@ -279,7 +279,7 @@ const ProjectPage: Screen<PageProps> = ({
           />
         )
       })}
-      <ProjectFooter projectPage={projectPage} />
+      <ProjectFooter projectPage={projectPage} namespace={projectNamespace} />
     </>
   )
 }
