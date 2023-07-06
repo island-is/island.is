@@ -49,7 +49,11 @@ const SubjectInfo = () => {
 
   return (
     <>
-      <IntroHeader title={userInfo.profile.name} intro={spmm.userInfoDesc} />
+      <IntroHeader
+        marginBottom={2}
+        title={userInfo.profile.name}
+        intro={spmm.userInfoDesc}
+      />
       <Stack space={2}>
         <UserInfoLine
           title={formatMessage(m.myRegistration)}
