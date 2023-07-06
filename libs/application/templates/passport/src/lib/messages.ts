@@ -413,4 +413,21 @@ export const m = defineMessages({
     defaultMessage: `* Fara í myndatöku á næsta afgreiðslustað sýslumanns.\\n\\n * Þú færð senda tilkynningu á Mínar síður þegar vegabréfið er tilbúið og hægt er að sækja það á þann afhendingarstað sem þú valdir.`,
     description: 'Some description',
   },
+
+  /* History logs */
+  waitingForConfirmationFromParentBTitle: {
+    id: 'pa.application:history.waitingForConfirmationFromParentBTitle',
+    defaultMessage: 'Staðfesting forsjáraðila',
+    description: '',
+  },
+  waitingForConfirmationFromParentBDescription: {
+    id: 'pa.application:history.waitingForConfirmationFromParentBDescription',
+    defaultMessage: 'Beðið eftir staðfestingu forsjáraðila',
+    description: '',
+  },
+  confirmedByParentB: {
+    id: 'pa.application:history.confirmedByParentB',
+    defaultMessage: 'Forsjáraðili hefur staðfest umsókn',
+    description: '',
+  },
 })

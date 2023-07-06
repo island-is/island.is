@@ -169,9 +169,9 @@ export const RskProcuring = new XroadConf({
       prod: '["clustercfg.general-redis-cluster-group.dnugi2.euw1.cache.amazonaws.com:6379"]',
     },
     XROAD_RSK_PROCURING_PATH: {
-      dev: 'IS-DEV/GOV/10006/Skatturinn/prokura-v1',
-      staging: 'IS-TEST/GOV/5402696029/Skatturinn/prokura-v1',
-      prod: 'IS/GOV/5402696029/Skatturinn/prokura-v1',
+      dev: 'IS-DEV/GOV/10006/Skatturinn/relationships-v1',
+      staging: 'IS-TEST/GOV/5402696029/Skatturinn/relationships-v1',
+      prod: 'IS/GOV/5402696029/Skatturinn/relationships-v1',
     },
   },
   secrets: {

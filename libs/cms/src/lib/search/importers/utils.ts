@@ -58,7 +58,7 @@ const getProcessEntries = (contentList: object[]) =>
 
 export const numberOfLinks = (contentList: object[]) => {
   const processLinks = getProcessEntries(contentList).map(
-    (entry) => new URL(entry.processLink),
+    (entry) => new URL(entry.processLink, 'https://island.is'),
   )
   const fillAndSignProcessLinks = processLinks.filter((url) =>
     url.hostname.includes('dropandsign.is'),

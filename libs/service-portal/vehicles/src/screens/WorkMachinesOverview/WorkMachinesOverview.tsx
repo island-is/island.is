@@ -48,20 +48,20 @@ const DEFAULT_PAGE_NUMBER = 1
 const DEFAULT_ORDER_BY = 'RegistrationNumber'
 
 const WorkMachinesOverview = () => {
-  useNamespaces('sp.vehicles')
+  useNamespaces('sp.work-machines')
   const { formatMessage, locale } = useLocale()
 
   const defaultFilterValues: FilterValues = {
     deregistered: {
-      label: formatMessage(messages.showDeregisteredWorkMachines),
+      label: 'showDeregisteredWorkMachines',
       value: false,
     },
     ownerChange: {
-      label: formatMessage(messages.showOwnerChangingWorkMachines),
+      label: 'showOwnerChangingWorkMachines',
       value: false,
     },
     registeredSupervisor: {
-      label: formatMessage(messages.showOwnerSupervisorRegisteredWorkMachines),
+      label: 'showOwnerSupervisorRegisteredWorkMachines',
       value: false,
     },
   }
@@ -187,11 +187,12 @@ const WorkMachinesOverview = () => {
                             (filterKey, index) => {
                               const key = filterKey as keyof FilterValues
                               const filter = activeFilters[key]
+                              const labelKey = filter.label as keyof typeof messages
                               return (
                                 <Checkbox
                                   key={index}
                                   id={`work-machine-filter-${index}`}
-                                  label={filter.label}
+                                  label={formatMessage(messages[labelKey])}
                                   checked={filter.value}
                                   onChange={() => onFilterChange(key, filter)}
                                 />

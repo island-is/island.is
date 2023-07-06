@@ -41,7 +41,7 @@ const OrderedLinks = [
 ]
 
 const WorkMachinesDetail = () => {
-  useNamespaces('sp.vehicles')
+  useNamespaces('sp.work-machines')
   const { formatMessage, locale } = useLocale()
   const { id } = useParams() as UseParams
 
