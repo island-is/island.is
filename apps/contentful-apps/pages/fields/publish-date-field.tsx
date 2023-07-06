@@ -9,12 +9,18 @@ const PublishDateField = () => {
 
   useEffect(() => {
     const initialSys = sdk.entry.getSys()
-    if (initialSys?.firstPublishedAt) {
+    if (
+      initialSys?.firstPublishedAt &&
+      initialSys.firstPublishedAt !== sdk.field.getValue()
+    ) {
       sdk.field.setValue(initialSys.firstPublishedAt)
       setValue(initialSys.firstPublishedAt)
     }
     sdk.entry.onSysChanged((sys) => {
-      if (sys.firstPublishedAt) {
+      if (
+        sys?.firstPublishedAt &&
+        sys.firstPublishedAt !== sdk.field.getValue()
+      ) {
         sdk.field.setValue(sys.firstPublishedAt)
         setValue(sys.firstPublishedAt)
       }
