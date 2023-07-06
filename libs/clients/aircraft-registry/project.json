@@ -1,0 +1,39 @@
+{
+  "root": "libs/clients/aircraft-registry",
+  "sourceRoot": "libs/clients/aircraft-registry/src",
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["libs/clients/aircraft-registry/**/*.ts"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/clients/aircraft-registry"],
+      "options": {
+        "jestConfig": "libs/clients/aircraft-registry/jest.config.js",
+        "passWithNoTests": true
+      }
+    },
+    "update-openapi-document": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": [
+          "curl -H \"X-Road-Client: IS-DEV/GOV/10000/island-is-client\" http://localhost:8081/r1/IS-DEV/GOV/10017/Samgongustofa-Protected/getOpenAPI?serviceCode=Loftfaraskra-V1 > src/clientConfig.json",
+          "prettier --write src/clientConfig.json"
+        ],
+        "parallel": false,
+        "cwd": "libs/clients/aircraft-registry"
+      }
+    },
+    "schemas/external-openapi-generator": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "yarn openapi-generator -o libs/clients/aircraft-registry/gen/fetch -i libs/clients/aircraft-registry/src/clientConfig.json"
+      }
+    }
+  },
+  "tags": ["lib:client"]
+}
