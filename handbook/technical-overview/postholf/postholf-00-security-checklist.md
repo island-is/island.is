@@ -1,4 +1,4 @@
-# Security checklist
+# Security Checklist
 
 This checklist defines requirements that Skjalaveita web services need to fulfill before a connection to the Ísland.is Pósthólf can take place. The purpose of this checklist is to prevent possible security issues when web services are implemented.
 

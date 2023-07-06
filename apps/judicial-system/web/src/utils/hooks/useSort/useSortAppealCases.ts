@@ -1,10 +1,11 @@
-import { AppealedCasesQueryResponse } from '@island.is/judicial-system-web/src/routes/CourtOfAppeal/Cases/Cases'
+import { CaseListEntry } from '@island.is/judicial-system-web/src/graphql/schema'
+
 import { useState, useMemo } from 'react'
 
 const useSortAppealCases = (
   defaultColumn: string,
   defaultDirection: 'ascending' | 'descending',
-  data: AppealedCasesQueryResponse[],
+  data: CaseListEntry[],
 ) => {
   const [sortConfig, setSortConfig] = useState({
     column: defaultColumn,
@@ -31,7 +32,7 @@ const useSortAppealCases = (
   const sortedData = useMemo(() => {
     if (sortConfig && data) {
       return [...data].sort((a, b) => {
-        const getColumnValue = (entry: AppealedCasesQueryResponse) => {
+        const getColumnValue = (entry: CaseListEntry): string => {
           if (
             sortConfig.column === 'defendant' &&
             entry.defendants &&
@@ -39,9 +40,8 @@ const useSortAppealCases = (
           ) {
             return entry.defendants[0].name ?? ''
           }
-          return entry.appealedDate
+          return entry.appealedDate ?? ''
         }
-
         const compareResult = getColumnValue(a).localeCompare(getColumnValue(b))
 
         return sortConfig.direction === 'ascending'

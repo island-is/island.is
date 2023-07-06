@@ -82,6 +82,7 @@ export function font(settings: FontSettings = {}) {
     font-family: ${props => fontByWeight(propOrValue(props)(fontWeight))};
     color: ${dynamicColor(color)};
     font-size: ${props => propOrValue(props)(fontSize)}px;
+    font-weight: ${fontWeight};
     line-height: ${props =>
       typeof lineHeight === 'undefined'
         ? lineHeightByFontSize(propOrValue(props)(fontSize))

@@ -8,13 +8,13 @@ import {
   formatDOB,
 } from '@island.is/judicial-system/formatters'
 
+import { CaseListEntry } from '@island.is/judicial-system-web/src/graphql/schema'
 import { displayCaseType } from '@island.is/judicial-system-web/src/routes/Shared/Cases/utils'
-import { AppealedCasesQueryResponse } from '@island.is/judicial-system-web/src/routes/CourtOfAppeal/Cases/Cases'
 import { TagAppealState } from '@island.is/judicial-system-web/src/components'
 import { CategoryCard } from '@island.is/judicial-system-web/src/components/Table'
 
 interface Props {
-  theCase: AppealedCasesQueryResponse
+  theCase: CaseListEntry
   onClick: () => void
 }
 
@@ -23,7 +23,11 @@ const MobileAppealCase: React.FC<Props> = ({ theCase, onClick, children }) => {
 
   return (
     <CategoryCard
-      heading={displayCaseType(formatMessage, theCase.type, theCase.decision)}
+      heading={displayCaseType(
+        formatMessage,
+        theCase.type,
+        theCase.decision ?? undefined,
+      )}
       onClick={onClick}
       tags={[
         <TagAppealState
