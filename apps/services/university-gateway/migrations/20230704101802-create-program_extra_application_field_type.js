@@ -13,8 +13,7 @@ module.exports = {
               allowNull: false,
               defaultValue: Sequelize.UUIDV4,
             },
-            //TODO fix typo
-            field_tyoe: {
+            field_type: {
               type: Sequelize.STRING,
             },
           },

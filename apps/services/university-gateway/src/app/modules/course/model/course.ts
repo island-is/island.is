@@ -53,7 +53,7 @@ export class Course {
 
   @ApiProperty({
     description: 'Which year this course is taught on',
-    example: 2023, //TODOx should be number of year?
+    example: 2023,
   })
   semesterYear!: number
 
