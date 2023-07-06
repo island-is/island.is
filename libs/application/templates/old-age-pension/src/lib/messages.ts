@@ -901,8 +901,8 @@ export const oldAgePensionFormMessage: MessageDir = {
       defaultMessage: 'Mánuður',
       description: 'Month',
     },
-    monthlyYearlyDescription: {
-      id: 'oap.application:employer.monthly.yearly.description',
+    monthlyAvgDescription: {
+      id: 'oap.application:employer.monthly.avg.description',
       defaultMessage: 'Mánaðarskipting á ársgrundvelli',
       description: 'Monthly distribution on an annual basis',
     },
@@ -913,11 +913,6 @@ export const oldAgePensionFormMessage: MessageDir = {
       id: 'oap.application:error.phonenumber',
       defaultMessage: 'Símanúmerið þarf að vera gilt.',
       description: 'The phone number must be valid.',
-    },
-    ratioYearly: {
-      id: 'oap.application:error.ratio.yearly',
-      defaultMessage: 'Starfhlutfall má ekki vera meira en 50%.',
-      description: 'Employment rate must be less than or equal 50%',
     },
   }),
 }
@@ -952,5 +947,40 @@ export const validatorErrorMessages = defineMessages({
     id: 'oap.application:fileUpload.required.attachment',
     defaultMessage: 'Þú þarft að hlaða upp viðhenginu til að halda áfram.',
     description: 'Error message when the attachment file is not provided.',
+  },
+  employerEmailMissing: {
+    id: 'oap.application:employer.email.missing',
+    defaultMessage: 'Netfang atvinnurekanda vantar',
+    description: 'Employer email missing',
+  },
+  employerRatioTypeMissing: {
+    id: 'oap.application:employer.ratioType.missing',
+    defaultMessage: 'Vinsamlegast veldu starfhlutfall',
+    description: 'Copy when ratioType is missing',
+  },
+  employersNotAList: {
+    id: 'oap.application:employers.employersNotAList',
+    defaultMessage: 'Svar þarf að vera listi af atvinnurekanda',
+    description: 'Copy when employers is not a list',
+  },
+  employersRatioMoreThan50: {
+    id: 'oap.application:employers.ratio.more.than.50',
+    defaultMessage: 'Starfhlutfall má ekki vera meira en 50%',
+    description: 'Employment rate must be less than or equal 50%',
+  },
+  employersRatioLessThan0: {
+    id: 'oap.application:employers.ratio.less.than.0',
+    defaultMessage: 'Starfhlutfall má ekki vera minni en 1%',
+    description: 'Employment rate must be more than 0%',
+  },
+  employerRatioMissing: {
+    id: 'oap.application:employer.ratio.missing',
+    defaultMessage: 'Starfhlutfall vantar',
+    description: 'Employer rate missing',
+  },
+  employersPhoneNumberInvalid: {
+    id: 'oap.application:employer.phoneNumber.invalid',
+    defaultMessage: 'Símanúmer verður að vera GSM númer',
+    description: 'Phone number must be a GSM number',
   },
 })

@@ -46,13 +46,13 @@ function buildApplication(data?: {
 }
 
 describe('getStartDateAndEndDate', () => {
-  it('should return 2 years ago for startDate and 6 months ahead for endDate', () => {
+  it('should return 1 year 11 months ago for startDate and 6 months ahead for endDate', () => {
     const application = buildApplication()
-    const { isFishermen } = getApplicationAnswers(application.answers)
+    const { applicationType } = getApplicationAnswers(application.answers)
     const today = new Date()
-    const startDate = addYears(today, -2).toDateString()
+    const startDate = addMonths(addYears(today, -2), 1).toDateString()
     const endDate = addMonths(today, 6).toDateString()
-    const res = getStartDateAndEndDate(application.applicant, isFishermen)
+    const res = getStartDateAndEndDate(application.applicant, applicationType)
 
     expect({
       startDate: res.startDate?.toDateString(),
@@ -64,10 +64,14 @@ describe('getStartDateAndEndDate', () => {
 describe('getAvailableYears', () => {
   it('should return available years', () => {
     const application = buildApplication()
-    const startDateYear = addYears(new Date(), -2).getFullYear()
+    const today = new Date()
+    const startDateYear = addMonths(addYears(today, -2), 1).getFullYear()
+    const endDateYear = addMonths(today, 6).getFullYear()
 
     const res = getAvailableYears(application)
-    const expected = Array.from(Array(3).keys()).map((x) => {
+    const expected = Array.from(
+      Array(endDateYear - startDateYear + 1).keys(),
+    ).map((x) => {
       const theYear = x + startDateYear
       return { value: theYear.toString(), label: theYear.toString() }
     })

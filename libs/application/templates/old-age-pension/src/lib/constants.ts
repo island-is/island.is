@@ -8,6 +8,7 @@ export const earlyRetirementMaxAge = 66
 export const fishermenMinAge = 60
 export const fishermenMaxAge = 66
 export const IS = 'IS'
+export const employeeRatio = 50
 
 export const MONTHS = [
   'January',

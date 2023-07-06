@@ -39,7 +39,7 @@ export const EmployersTable = ({
           const ratioYearly =
             e.ratioType === RatioType.YEARLY
               ? e.ratioYearly ?? 0
-              : e.ratioMonthly?.yearly ?? 0
+              : e.ratioMonthlyAvg ?? 0
           return (
             <T.Row key={`${e.email}${i}`}>
               {editable && (

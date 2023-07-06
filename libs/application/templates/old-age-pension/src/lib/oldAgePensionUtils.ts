@@ -115,7 +115,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
 
   const rawEmployers = getValueViaPath(answers, 'employers', []) as Employer[]
   const employers = filterValidEmployers(rawEmployers)
-  
+
   const childPension = getValueViaPath(
     answers,
     'childPensionRepeater',

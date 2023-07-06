@@ -24,11 +24,12 @@ type monthObject = {
 
 export interface Employer {
   email: string
-  phoneNumber?: number
+  phoneNumber?: string
   ratioType: RatioType
   ratioYearly?: string
   rawIndex?: number
   ratioMonthly?: monthObject
+  ratioMonthlyAvg?: string
 }
 
 export interface ChildPensionRow {

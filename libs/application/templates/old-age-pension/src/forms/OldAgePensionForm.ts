@@ -307,7 +307,6 @@ export const OldAgePensionForm: Form = buildForm({
                   label: oldAgePensionFormMessage.employer.employee,
                 },
               ],
-              defaultValue: Employment.EMPLOYEE,
               width: 'half',
               largeButtons: true,
             }),
@@ -366,6 +365,7 @@ export const OldAgePensionForm: Form = buildForm({
                       title: '',
                       width: 'half',
                       space: 3,
+                      required: true,
                       options: [
                         {
                           value: RatioType.YEARLY,
