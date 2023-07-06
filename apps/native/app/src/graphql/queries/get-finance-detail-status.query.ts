@@ -7,22 +7,22 @@ export const GET_FINANCE_STATUS_DETAILS = gql`
 `;
 
 export interface GetFinanceStatusDetails {
-  timestamp: string
-  chargeItemSubjects: ChargeItemSubject[]
+  timestamp: string;
+  chargeItemSubjects: ChargeItemSubject[];
 }
 
 export interface ChargeItemSubject {
-  chargeItemSubject: string
-  timePeriod: string
-  estimate: boolean
-  dueDate: string
-  finalDueDate: string
-  principal: number
-  interest: number
-  cost: number
-  paid: number
-  totals: number
-  dueTotals: number
-  documentID: string
-  payID: string
+  chargeItemSubject: string;
+  timePeriod: string;
+  estimate: boolean;
+  dueDate: string;
+  finalDueDate: string;
+  principal: number;
+  interest: number;
+  cost: number;
+  paid: number;
+  totals: number;
+  dueTotals: number;
+  documentID: string;
+  payID: string;
 }

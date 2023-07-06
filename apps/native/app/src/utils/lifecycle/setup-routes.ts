@@ -223,20 +223,23 @@ export function setupRoutes() {
     });
   });
 
-  addRoute('/finance/status/:orgId/:chargeTypeId/:index', async (passProps: any) => {
-    Navigation.showModal({
-      stack: {
-        children: [
-          {
-            component: {
-              name: ComponentRegistry.FinanceStatusDetailScreen,
-              passProps,
+  addRoute(
+    '/finance/status/:orgId/:chargeTypeId/:index',
+    async (passProps: any) => {
+      Navigation.showModal({
+        stack: {
+          children: [
+            {
+              component: {
+                name: ComponentRegistry.FinanceStatusDetailScreen,
+                passProps,
+              },
             },
-          },
-        ],
-      },
-    });
-  });
+          ],
+        },
+      });
+    },
+  );
 
   addRoute('/family/:type/:nationalId', (passProps: any) => {
     Navigation.showModal({

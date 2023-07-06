@@ -48,10 +48,10 @@ export interface ChargeType {
   dueTotals: number;
 }
 export interface GetDebtStatus {
-  myDebtStatus: MyDebtStatus[]
+  myDebtStatus: MyDebtStatus[];
 }
 
 export interface MyDebtStatus {
-  approvedSchedule: number
-  possibleToSchedule: number
+  approvedSchedule: number;
+  possibleToSchedule: number;
 }
