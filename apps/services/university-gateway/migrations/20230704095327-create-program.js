@@ -106,13 +106,6 @@ module.exports = {
               defaultValue: [],
               allowNull: false,
             },
-            // mode_of_delivery: {
-            //   type: Sequelize.ARRAY(
-            //     Sequelize.ENUM('ON_SITE', 'ONLINE', 'ONLINE_WITH_SESSION'),
-            //   ),
-            //   defaultValue: [],
-            //   allowNull: false,
-            // },
             admission_requirements_is: {
               type: Sequelize.STRING,
               allowNull: true,
