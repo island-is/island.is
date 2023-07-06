@@ -40,13 +40,18 @@ export class InternalCreateCaseDto {
 
   @IsOptional()
   @IsString()
+  @ApiPropertyOptional({ enum: Gender })
+  readonly accusedGender?: Gender
+
+  @IsOptional()
+  @IsString()
   @ApiPropertyOptional()
   readonly accusedAddress?: string
 
   @IsOptional()
   @IsString()
-  @ApiPropertyOptional({ enum: Gender })
-  readonly accusedGender?: Gender
+  @ApiPropertyOptional()
+  readonly citizenship?: string
 
   @IsOptional()
   @IsString()
