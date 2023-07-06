@@ -173,6 +173,11 @@ export const en: TranslatedMessages = {
   'walletPass.screenTitle': 'Pass',
   'walletPass.lastUpdate': 'Last updated',
   'walletPass.expirationDate': 'Expiration date',
+  'walletPass.errorTitle': 'Error',
+  'walletPass.errorNotPossibleToAddDriverLicense':
+    'At the moment it is not possible to add driving licenses to the phone.',
+  'walletPass.moreInfo': 'More information',
+  'walletPass.alertClose': 'Cancel',
 
   // wallet passport
   'walletPassport.screenTitle': 'Passport',
@@ -302,6 +307,7 @@ export const en: TranslatedMessages = {
 
   // finance
   'finance.screenTitle': 'Finance',
+  'finance.dropDownLabel': 'Payment Base',
 
   // finance detail
   'financeDetail.title': 'Detailed information',

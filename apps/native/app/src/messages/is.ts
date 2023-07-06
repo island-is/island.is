@@ -219,6 +219,7 @@ export const is = {
 
   // finance
   'finance.screenTitle': 'Fjármál',
+  'finance.dropDownLabel': 'Gjaldgrunnur',
 
   // finance detail
   'financeDetail.title': 'Ítarupplýsingar',
@@ -269,6 +270,11 @@ export const is = {
   'walletPass.screenTitle': 'Skírteini',
   'walletPass.lastUpdate': 'Síðast uppfært',
   'walletPass.expirationDate': 'Gildir til',
+  'walletPass.errorTitle': 'Villa',
+  'walletPass.errorNotPossibleToAddDriverLicense':
+    'Í augnablikinu er ekki hægt að senda ökuskírteini í síma.',
+  'walletPass.moreInfo': 'Nánari upplýsingar',
+  'walletPass.alertClose': 'Loka',
 
   // wallet passport
   'walletPassport.screenTitle': 'Vegabréf',
