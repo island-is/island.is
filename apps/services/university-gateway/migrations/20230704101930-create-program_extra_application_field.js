@@ -5,8 +5,7 @@ module.exports = {
     return queryInterface.sequelize.transaction((t) => {
       return Promise.all([
         queryInterface.createTable(
-          //TODO rename
-          'extra_application_field',
+          'program_extra_application_field',
           {
             id: {
               type: Sequelize.UUID,
@@ -25,7 +24,7 @@ module.exports = {
             extra_application_field_type_id: {
               type: Sequelize.UUID,
               references: {
-                model: 'extra_application_field',
+                model: 'program_extra_application_field',
                 key: 'id',
               },
               allowNull: false,
@@ -61,7 +60,7 @@ module.exports = {
   down: (queryInterface, Sequelize) => {
     return queryInterface.sequelize.transaction((t) => {
       return Promise.all([
-        queryInterface.dropTable('extra_application_field', { transaction: t }),
+        queryInterface.dropTable('program_extra_application_field', { transaction: t }),
       ])
     })
   },
