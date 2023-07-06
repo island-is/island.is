@@ -15,12 +15,9 @@ module.exports = {
               },
               allowNull: false,
             },
-            search_group_id: {
-              type: Sequelize.UUID,
-              references: {
-                model: 'search_group',
-                key: 'id',
-              },
+            search_group: {
+              type: Sequelize.ARRAY(Sequelize.STRING),
+              defaultValue: [],
               allowNull: false,
             },
           },
