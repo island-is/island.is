@@ -6,51 +6,77 @@
   "generators": {},
   "targets": {
     "build": {
-      "executor": "nx:run-commands",
-      "options": {
-        "commands": ["yarn nx build-next web", "yarn nx build-server web"]
-      },
-      "configurations": {
-        "production": {
-          "args": "--prod"
-        }
-      },
-      "outputs": ["{workspaceRoot}/dist/apps/web"]
-    },
-    "build-next": {
       "executor": "@nx/next:build",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
       "options": {
         "outputPath": "dist/apps/web"
       },
       "configurations": {
+        "development": {
+          "outputPath": "apps/web"
+        },
         "production": {}
       },
-      "outputs": ["{options.outputPath}"]
+      "dependsOn": [
+        "build-custom-server"
+      ]
     },
-    "build-server": {
+    "serve": {
+      "executor": "@nx/next:server",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "web:build",
+        "dev": true,
+        "customServerTarget": "web:serve-custom-server"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "web:build:development",
+          "dev": true,
+          "customServerTarget": "web:serve-custom-server:development"
+        },
+        "production": {
+          "buildTarget": "web:build:production",
+          "dev": false,
+          "customServerTarget": "web:serve-custom-server:production"
+        }
+      }
+    },
+    "build-custom-server": {
       "executor": "@nx/webpack:webpack",
+      "defaultConfiguration": "production",
       "options": {
         "outputPath": "dist/apps/web",
         "main": "apps/web/server.ts",
-        "tsConfig": "apps/web/tsconfig.json",
+        "tsConfig": "apps/web/tsconfig.server.json",
         "maxWorkers": 2,
         "assets": [],
         "compiler": "tsc",
         "target": "node"
       },
       "configurations": {
+        "development": {},
         "production": {
           "optimization": true,
           "extractLicenses": true,
           "inspect": false
         }
-      },
-      "outputs": ["{options.outputPath}"]
+      }
     },
-    "serve": {
+    "serve-custom-server": {
       "executor": "@nx/js:node",
+      "defaultConfiguration": "development",
       "options": {
-        "buildTarget": "web:build-server"
+        "buildTarget": "web:build-custom-server"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "web:build-custom-server:development"
+        },
+        "production": {
+          "buildTarget": "web:build-custom-server:production"
+        }
       }
     },
     "export": {
