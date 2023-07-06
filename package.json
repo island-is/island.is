@@ -351,7 +351,6 @@
     "@testing-library/user-event": "14.4.3",
     "@types/aws-sdk": "2.7.0",
     "@types/aws4": "1.5.1",
-    "@types/bull": "4.10.0",
     "@types/classnames": "2.2.10",
     "@types/cookie-parser": "1.4.2",
     "@types/cross-spawn": "6.0.2",
