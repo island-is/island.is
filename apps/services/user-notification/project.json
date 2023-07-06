@@ -35,13 +35,13 @@
       }
     },
     "serve": {
-      "executor": "@nx/node:node",
+      "executor": "@nx/js:node",
       "options": {
         "buildTarget": "services-user-notification:build"
       }
     },
     "worker": {
-      "executor": "@nx/node:node",
+      "executor": "@nx/js:node",
       "options": {
         "buildTarget": "services-user-notification:build",
         "args": ["--job", "worker"]

@@ -61,7 +61,7 @@
       }
     },
     "serve": {
-      "executor": "@nx/node:node",
+      "executor": "@nx/js:node",
       "options": {
         "buildTarget": "services-sessions:esbuild"
       }
@@ -82,7 +82,7 @@
       }
     },
     "worker": {
-      "executor": "@nx/node:node",
+      "executor": "@nx/js:node",
       "options": {
         "buildTarget": "services-sessions:esbuild",
         "args": ["--job", "worker"]

@@ -47,7 +47,7 @@
       "outputs": ["{options.outputPath}"]
     },
     "serve": {
-      "executor": "@nx/node:node",
+      "executor": "@nx/js:node",
       "options": {
         "buildTarget": "services-user-profile:build"
       }

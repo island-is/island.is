@@ -92,7 +92,7 @@
       "outputs": ["{options.outputPath}"]
     },
     "serve": {
-      "executor": "@nx/node:node",
+      "executor": "@nx/js:node",
       "options": {
         "buildTarget": "application-system-api:build"
       }
@@ -113,7 +113,7 @@
       "outputs": ["{workspaceRoot}/coverage/apps/application-system/api"]
     },
     "worker": {
-      "executor": "@nx/node:node",
+      "executor": "@nx/js:node",
       "options": {
         "buildTarget": "application-system-api:build",
         "args": ["--job", "worker"]
