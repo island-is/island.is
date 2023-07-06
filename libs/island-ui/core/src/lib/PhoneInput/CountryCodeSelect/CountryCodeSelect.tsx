@@ -25,7 +25,7 @@ import {
 
 export const CountryCodeSelect = <
   Opt extends OptionType,
-  Value extends OptionValue,
+  Value extends OptionValue
 >({
   name,
   id = name,

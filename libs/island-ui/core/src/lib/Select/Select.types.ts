@@ -14,7 +14,7 @@ declare module 'react-select/dist/declarations/src/Select' {
   export interface Props<
     Option,
     IsMulti extends boolean,
-    Group extends GroupBase<Option>,
+    Group extends GroupBase<Option>
   > {
     icon: SelectPropsWithOptions['icon']
     hasError?: SelectPropsWithOptions['hasError']
@@ -79,8 +79,10 @@ export interface SelectProps<Opt extends Option, Value extends OptionValue> {
   filterConfig?: FilterConfig
 }
 
-export type SelectPropsWithOptions<Value extends OptionValue = string> =
-  SelectProps<Option, Value>
+export type SelectPropsWithOptions<
+  Value extends OptionValue = string
+> = SelectProps<Option, Value>
 
-export type SelectOnChange<Value extends OptionValue = string> =
-  SelectPropsWithOptions<Value>['onChange']
+export type SelectOnChange<
+  Value extends OptionValue = string
+> = SelectPropsWithOptions<Value>['onChange']

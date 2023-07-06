@@ -19,12 +19,12 @@ type PropsFromSelectProps<Opt extends Option, Value extends OptionValue> = Pick<
 >
 
 export type CountryCodeSelectPropsWithOptions<
-  Value extends OptionValue = string,
+  Value extends OptionValue = string
 > = CountryCodeSelectProps<Option, Value>
 
 export type CountryCodeSelectProps<
   Opt extends Option,
-  Value extends OptionValue,
+  Value extends OptionValue
 > = PropsFromSelectProps<Opt, Value> & {
   inputHasFocus?: boolean
   inputHasLabel?: boolean
