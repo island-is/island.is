@@ -2,7 +2,7 @@
 export default {
   displayName: 'api-domains-work-machines',
   preset: './jest.preset.js',
-  rootDir: '../../..',
+  rootDir: '../../../..',
   roots: [__dirname],
   globals: {},
   testEnvironment: 'node',
