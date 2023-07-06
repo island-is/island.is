@@ -14,9 +14,7 @@ import {
   Button,
   FinanceStatusCard,
   Heading,
-  ListItemSkeleton,
   Skeleton,
-  StatusCardSkeleton,
   TableViewCell,
   Typography,
   blue400,
@@ -25,7 +23,7 @@ import {
 } from '@ui';
 import {FormattedMessage, useIntl} from 'react-intl';
 import styled, {useTheme} from 'styled-components/native';
-import {useEffect, useState} from 'react';
+import {useState} from 'react';
 import externalOpen from '../../assets/icons/external-open.png';
 import chevronDown from '../../assets/icons/chevron-down.png';
 import {navigateTo} from '../../lib/deep-linking';
@@ -410,8 +408,6 @@ export const FinanceScreen: NavigationFunctionComponent = ({componentId}) => {
     statusTotals: 0,
   };
 
-  console.log(financeStatusData, 'financeStatusData');
-
   // Can we not use this instead financeStatusData.statusTotals ?
   function getChargeTypeTotal() {
     const organizationChargeTypes = financeStatusData?.organizations?.map(
@@ -512,7 +508,7 @@ export const FinanceScreen: NavigationFunctionComponent = ({componentId}) => {
         </SafeAreaView>
       ) : null}
       <SafeAreaView style={{marginHorizontal: 16}}>
-        {loading && (
+        {/* {loading && (
           <Skeleton
             active
             backgroundColor={{
@@ -530,7 +526,7 @@ export const FinanceScreen: NavigationFunctionComponent = ({componentId}) => {
               marginBottom: 16,
             }}
           />
-        )}
+        )} */}
 
         {financeStatusData?.organizations?.length > 0 || financeStatusZero
           ? financeStatusData?.organizations?.map((org: any, i) =>
