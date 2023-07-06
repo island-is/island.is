@@ -110,7 +110,7 @@ parse_run_args() {
       env+=("$2")
       shift 2
       ;;
-    --secrets-file)
+    --secrets-file | --env-file)
       secrets_files+=("$2")
       shift 2
       ;;
@@ -169,7 +169,7 @@ parse_run_args() {
   done
 
   debug "Loading secrets from secrets files"
-  echo '' >"$secrets_out_file"
+  echo 'LOCAL_E2E=true' >"$secrets_out_file"
   for secrets_file in "${secrets_files[@]}"; do
     # local secrets_out_file_looped="$secrets_out_file-$(sha1sum "$secrets_out_file" | head -c 8)"
     if ! [[ -f "$secrets_file" ]]; then continue; fi
@@ -177,15 +177,23 @@ parse_run_args() {
     # Parse secrets
     while read -r secret; do
       secret="${secret#export }"
-      # Only accept key-value pairs
-      if [[ -z "$secret" ]] || [[ "$secret" != *=* ]] || [[ "$secret" == \#* ]]; then continue; fi
-      local key=${secret%%=*}
-      local value=${secret##*=}
-      echo "export LOCAL_E2E_${key}=${value}" >>"$secrets_out_file"
+      local key="${secret%%=*}"
+      local value="${secret#*=}"
+      case "$key" in
+      '#'* | '') continue ;;
+      esac
+      local outvalue="$(
+        eval "$secret" >&2
+        debug "Key: '$key'"
+        debug "Value: '$value'"
+        debug "indirect value: $key=${!key}"
+        echo "${!key}"
+      )"
+      debug "outvalue: $outvalue"
+      echo "${key}=${outvalue}" >>"$secrets_out_file"
     done <"$secrets_file"
-    . "$secrets_out_file"
   done
-  run_cmd+=" --env LOCAL_E2E_*"
+  run_cmd+=" --env-file $secrets_out_file"
 
   # Image to use
   run_cmd+=" $image:$tag"
