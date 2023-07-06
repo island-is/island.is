@@ -140,7 +140,7 @@
 ## Libs
 
 - [API](libs/api/README.md)
-    - [API Domains Aircraft Registry](libs/api/domains/aircraft-registry/README.md)
+  - [API Domains Aircraft Registry](libs/api/domains/aircraft-registry/README.md)
   - [Mocks](libs/api/mocks/README.md)
 - [API Catalogue](libs/api-catalogue/README.md)
   - [Elastic](libs/api-catalogue/elastic/README.md)
