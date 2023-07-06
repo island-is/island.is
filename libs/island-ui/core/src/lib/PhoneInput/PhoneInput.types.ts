@@ -1,26 +1,31 @@
-import { ActionMeta, OptionsType, ValueType } from 'react-select'
-import { AriaError, InputBackgroundColor } from '../Input/types'
-import { Option } from '../Select/Select'
+import { Option, OptionValue, SelectProps } from '../Select/Select.types'
 
-export interface CountryCodeSelectProps {
-  name: string
-  options: OptionsType<Option>
-  id?: string
-  disabled?: boolean
-  onChange?: ((
-    value: ValueType<Option>,
-    actionMeta: ActionMeta<Option>,
-  ) => void) &
-    ((value: ValueType<Option>, action: ActionMeta<Option>) => void)
-  value?: ValueType<Option>
-  placeholder?: string
-  defaultValue?: Option
-  isSearchable?: boolean
-  size?: 'xs' | 'sm' | 'md'
-  isCreatable?: boolean
-  backgroundColor?: InputBackgroundColor
-  ariaError?: AriaError
-  isClearable?: boolean
+type PropsFromSelectProps<Opt extends Option, Value extends OptionValue> = Pick<
+  SelectProps<Opt, Value>,
+  | 'name'
+  | 'options'
+  | 'id'
+  | 'disabled'
+  | 'onChange'
+  | 'value'
+  | 'placeholder'
+  | 'defaultValue'
+  | 'isSearchable'
+  | 'size'
+  | 'isCreatable'
+  | 'backgroundColor'
+  | 'ariaError'
+  | 'isClearable'
+>
+
+export type CountryCodeSelectPropsWithOptions<
+  Value extends OptionValue = string,
+> = CountryCodeSelectProps<Option, Value>
+
+export type CountryCodeSelectProps<
+  Opt extends Option,
+  Value extends OptionValue,
+> = PropsFromSelectProps<Opt, Value> & {
   inputHasFocus?: boolean
   inputHasLabel?: boolean
   onFocus?: () => void

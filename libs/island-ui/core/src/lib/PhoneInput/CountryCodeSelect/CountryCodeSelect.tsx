@@ -1,7 +1,13 @@
 import React from 'react'
-import { TestSupport } from '@island.is/island-ui/utils'
-import ReactSelect from 'react-select'
 import cn from 'classnames'
+import ReactSelect from 'react-select'
+
+import { TestSupport } from '@island.is/island-ui/utils'
+import {
+  Option as OptionType,
+  OptionValue,
+  ReactSelectProps,
+} from '../../Select/Select.types'
 import { CountryCodeSelectProps } from '../PhoneInput.types'
 import * as styles from './CountryCodeSelect.css'
 import {
@@ -17,7 +23,10 @@ import {
   customStyles,
 } from './Components'
 
-export const CountryCodeSelect = ({
+export const CountryCodeSelect = <
+  Opt extends OptionType,
+  Value extends OptionValue,
+>({
   name,
   id = name,
   disabled,
@@ -34,7 +43,7 @@ export const CountryCodeSelect = ({
   onBlur,
   onMenuOpen,
   onMenuClose,
-}: CountryCodeSelectProps & TestSupport) => {
+}: CountryCodeSelectProps<Opt, Value> & TestSupport) => {
   return (
     <div
       className={cn(styles.wrapper, {
@@ -49,9 +58,12 @@ export const CountryCodeSelect = ({
         id={id}
         name={name}
         isDisabled={disabled}
-        onChange={onChange}
+        isMulti={false}
+        // We need to cast the onChange and options to the correct type
+        // because we are not using multi select and that is a part of the onChange and options type
+        onChange={onChange as ReactSelectProps['onChange']}
+        options={options as ReactSelectProps['options']}
         value={value}
-        options={options}
         icon="chevronDown"
         classNamePrefix="country-code-select"
         styles={customStyles}

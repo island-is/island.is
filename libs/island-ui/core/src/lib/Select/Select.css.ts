@@ -22,9 +22,8 @@ export const valueContainer = style(
   'valueContainer',
 )
 
-globalStyle(`${wrapper} ${valueContainer} .css-b8ldur-Input`, {
+globalStyle(`${wrapper} ${valueContainer} .island-select__input-container`, {
   margin: 0,
-  padding: 0,
 })
 
 export const placeholder = style({
@@ -79,6 +78,8 @@ globalStyle(`${wrapper} .css-1g6gooi`, {
 })
 globalStyle(`${wrapper} .island-select__control${container}`, {
   ...inputMixins.container,
+  flexDirection: 'column',
+  alignItems: 'flex-start',
   paddingRight: 70,
   border: 0,
 })

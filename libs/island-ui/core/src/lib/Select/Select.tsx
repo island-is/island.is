@@ -1,15 +1,10 @@
 import React from 'react'
 import cn from 'classnames'
-import ReactSelect, {
-  OptionsType,
-  GroupedOptionsType,
-  ActionMeta,
-  ValueType,
-  createFilter,
-} from 'react-select'
-import { Config } from 'react-select/src/filters'
+import ReactSelect, { createFilter } from 'react-select'
 import CreatableReactSelect from 'react-select/creatable'
-import { formatGroupLabel } from 'react-select/src/builtins'
+
+import { TestSupport } from '@island.is/island-ui/utils'
+
 import {
   Option,
   Menu,
@@ -22,53 +17,16 @@ import {
   ValueContainer,
   customStyles,
 } from './Components'
-import { InputBackgroundColor } from '../Input/types'
+import {
+  OptionValue,
+  Option as OptionType,
+  SelectProps,
+  ReactSelectProps,
+  AriaError,
+} from './Select.types'
 import * as styles from './Select.css'
-import { TestSupport } from '@island.is/island-ui/utils'
 
-interface AriaError {
-  'aria-invalid': boolean
-  'aria-describedby': string
-}
-
-export type Option = {
-  label: string
-  value: string | number
-  description?: string
-  descriptionTruncated?: boolean
-  disabled?: boolean
-}
-
-export interface SelectProps {
-  name: string
-  options: OptionsType<Option> | GroupedOptionsType<Option>
-  id?: string
-  disabled?: boolean
-  hasError?: boolean
-  errorMessage?: string
-  noOptionsMessage?: string
-  onChange?: ((
-    value: ValueType<Option>,
-    actionMeta: ActionMeta<Option>,
-  ) => void) &
-    ((value: ValueType<Option>, action: ActionMeta<Option>) => void)
-  label?: string
-  value?: ValueType<Option>
-  placeholder?: string
-  defaultValue?: Option
-  icon?: string
-  isSearchable?: boolean
-  size?: 'xs' | 'sm' | 'md'
-  isCreatable?: boolean
-  backgroundColor?: InputBackgroundColor
-  required?: boolean
-  ariaError?: AriaError
-  formatGroupLabel?: formatGroupLabel<Option>
-  isClearable?: boolean
-  filterConfig?: Config | null
-}
-
-export const Select = ({
+export const Select = <Opt extends OptionType, Value extends OptionValue>({
   name,
   id = name,
   disabled,
@@ -90,8 +48,8 @@ export const Select = ({
   formatGroupLabel,
   isClearable,
   dataTestId,
-  filterConfig = null,
-}: SelectProps & TestSupport) => {
+  filterConfig,
+}: SelectProps<Opt, Value> & TestSupport) => {
   const errorId = `${id}-error`
   const ariaError = hasError
     ? {
@@ -116,10 +74,13 @@ export const Select = ({
         id={id}
         name={name}
         isDisabled={disabled}
-        options={options}
         styles={customStyles}
         classNamePrefix="island-select"
-        onChange={onChange}
+        isMulti={false}
+        // We need to cast the onChange and options to the correct type
+        // because we are not using multi select and that is a part of the onChange and options type
+        onChange={onChange as ReactSelectProps['onChange']}
+        options={options as ReactSelectProps['options']}
         label={label}
         value={value}
         icon={icon}
@@ -172,10 +133,11 @@ export const Select = ({
         id={id}
         name={name}
         isDisabled={disabled}
-        options={options}
         styles={customStyles}
         classNamePrefix="island-select"
-        onChange={onChange}
+        isMulti={false}
+        onChange={onChange as ReactSelectProps['onChange']}
+        options={options as ReactSelectProps['options']}
         label={label}
         value={value}
         dataTestId={dataTestId}

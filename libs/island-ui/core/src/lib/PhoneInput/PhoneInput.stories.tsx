@@ -1,4 +1,4 @@
-import React, { PropsWithChildren } from 'react'
+import { PropsWithChildren } from 'react'
 import { withFigma } from '../../utils/withFigma'
 import { PhoneInput } from './PhoneInput'
 
