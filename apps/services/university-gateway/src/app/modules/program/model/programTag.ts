@@ -2,11 +2,11 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { Column, DataType, Model, Table } from 'sequelize-typescript'
 
 @Table({
-  tableName: 'university',
+  tableName: 'tag',
 })
-export class University extends Model {
+export class ProgramTag extends Model {
   @ApiProperty({
-    description: 'University ID',
+    description: 'Tag ID',
     example: '00000000-0000-0000-0000-000000000000',
   })
   @Column({
@@ -18,30 +18,22 @@ export class University extends Model {
   id!: string
 
   @ApiProperty({
-    description: 'University national ID',
-    example: '123456-7890',
+    description: 'Tag code',
+    example: 'ENGINEER',
   })
   @Column({
     type: DataType.STRING,
     allowNull: false,
   })
-  nationalId!: string
+  code!: string
 
   @ApiProperty({
-    description: 'Contentful key for university',
-    example: 'UniversityOfIceland',
+    description: 'Contentful key for tag',
+    example: 'engineer',
   })
   @Column({
     type: DataType.STRING,
     allowNull: false,
   })
   contentfulKey!: string
-}
-
-export class UniversityResponse {
-  @ApiProperty({
-    description: 'University data',
-    type: [University],
-  })
-  data!: University[]
 }

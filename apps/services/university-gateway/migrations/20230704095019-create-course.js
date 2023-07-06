@@ -25,6 +25,10 @@ module.exports = {
               type: Sequelize.STRING,
               allowNull: false,
             },
+            required: {
+              type: Sequelize.BOOLEAN,
+              allowNull: true,
+            },
             university_id: {
               type: Sequelize.UUID,
               references: {

@@ -1,19 +1,29 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
-import {
-  DegreeType,
-  InterestTag,
-  Season,
-  ModeOfDelivery,
-} from '../../program/types'
+import { DegreeType, Season } from '../../program/types'
 import { ExampleCourse } from './exampleCourse'
 import { ExampleProgramExtraApplicationField } from './exampleProgramExtraApplicationField'
+import { ExampleProgramModeOfDelivery } from './exampleProgramModeOfDelivery'
+import { ExampleProgramTag } from './exampleProgramTag'
 
 export class ExampleProgram {
+  // @ApiProperty({
+  //   description: 'Program ID',
+  //   example: '00000000-0000-0000-0000-000000000000',
+  // })
+  // id!: string
+
   @ApiProperty({
     description: 'External ID for the program (from University)',
     example: 'ABC12345',
   })
   externalId!: string
+
+  // @ApiProperty({
+  //   description:
+  //     'Whether the program is active and should be displayed on the external web',
+  //   example: true,
+  // })
+  // active!: boolean
 
   @ApiProperty({
     description: 'Program name (Icelandic)',
@@ -86,7 +96,7 @@ export class ExampleProgram {
 
   @ApiProperty({
     description: 'Number of course credits (in ECTS)',
-    example: '180',
+    example: 180,
   })
   credits!: number
 
@@ -94,22 +104,19 @@ export class ExampleProgram {
     description: 'Program description (Icelandic)',
     example: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
   })
-  @ApiPropertyOptional()
-  descriptionIs?: string
+  descriptionIs!: string
 
   @ApiProperty({
     description: 'Program description (English)',
     example: 'Mauris a justo arcu. Orci varius natoque penatibus.',
   })
-  @ApiPropertyOptional()
-  descriptionEn?: string
+  descriptionEn!: string
 
   @ApiProperty({
     description: 'Total duration for this program (in years)',
     example: 3,
   })
-  @ApiPropertyOptional()
-  durationInYears?: number
+  durationInYears!: number
 
   @ApiProperty({
     description: 'Cost for program (per year)',
@@ -141,21 +148,23 @@ export class ExampleProgram {
   externalUrlEn?: string
 
   @ApiProperty({
-    description: 'Modes of deliveries available for the program',
-    example: [ModeOfDelivery.ON_SITE],
-    enum: ModeOfDelivery,
-    isArray: true,
+    description: 'Search keywords for the program',
+    example: ['stærðfræði'],
   })
-  modeOfDelivery!: [ModeOfDelivery]
+  searchKeywords!: string[]
+
+  @ApiProperty({
+    description: 'Modes of deliveries available for the program',
+    type: [ExampleProgramModeOfDelivery],
+  })
+  modeOfDelivery!: [ExampleProgramModeOfDelivery]
 
   @ApiProperty({
     description:
-      'Interest tag for the program (to be able to categorize programs after interest)',
-    example: [InterestTag.ENGINEER],
-    enum: InterestTag,
-    isArray: true,
+      'List of (interest) tags connected to this program (to be able to categorize programs after interest)',
+    type: [ExampleProgramTag],
   })
-  interestTags?: [InterestTag]
+  tag?: [ExampleProgramTag]
 
   @ApiProperty({
     description: 'Admission requirements for program (Icelandic)',
@@ -200,17 +209,17 @@ export class ExampleProgram {
   costInformationEn?: string
 
   @ApiProperty({
-    description: 'Column description for data',
+    description: 'List of courses that belong to this program',
     type: [ExampleCourse],
   })
   courses!: ExampleCourse[]
 
   @ApiProperty({
     description:
-      'Other fields that should be displayed in the application for the program',
+      'Extra application fields that should be displayed in the application for the program',
     type: [ExampleProgramExtraApplicationField],
   })
-  extraApplicationFields?: ExampleProgramExtraApplicationField[]
+  extraApplicationFields?: [ExampleProgramExtraApplicationField]
 }
 
 export class ExampleProgramResponse {

@@ -10,8 +10,8 @@ module.exports = {
             id: {
               type: Sequelize.UUID,
               primaryKey: true,
-              allowNull: false,
               defaultValue: Sequelize.UUIDV4,
+              allowNull: false,
             },
             national_id: {
               type: Sequelize.STRING,
@@ -33,7 +33,11 @@ module.exports = {
               },
               allowNull: false,
             },
-            application_status: {
+            mode_of_delivery_id: {
+              type: Sequelize.ENUM('ON_SITE', 'ONLINE', 'ONLINE_WITH_SESSION'),
+              allowNull: false,
+            },
+            status: {
               type: Sequelize.ENUM(
                 'IN_REVIEW',
                 'IN_PROGRESS',
@@ -44,12 +48,8 @@ module.exports = {
                 'REJECTED_BY_UNIVERSITY_REASON_INSUFFICIENT',
                 'REJECTED_BY_UNIVERSITY_REASON_NO_AVAILABILITY',
                 'CANCELLED_BY_STUDENT',
-                'PAYMENT_COMPLETE'
+                'PAYMENT_COMPLETE',
               ),
-              allowNull: false,
-            },
-            mode_of_delivery_id: {
-              type: Sequelize.ENUM('ON_SITE', 'ONLINE', 'ONLINE_WITH_SESSION'),
               allowNull: false,
             },
           },

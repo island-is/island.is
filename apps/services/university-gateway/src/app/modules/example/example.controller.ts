@@ -8,11 +8,7 @@ import {
   ApiParam,
   ApiTags,
 } from '@nestjs/swagger'
-import { ExampleProgramResponse } from './model'
-import {
-  ExampleApplication,
-  ExampleApplicationResponse,
-} from './model/exampleApplicationStatus'
+import { ExampleApplicationResponse, ExampleProgramResponse } from './model'
 import { CreateApplicationDto } from './dto'
 import { UpdateApplicationDto } from './dto/updateApplicationDto'
 

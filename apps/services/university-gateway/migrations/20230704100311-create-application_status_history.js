@@ -10,8 +10,8 @@ module.exports = {
             id: {
               type: Sequelize.UUID,
               primaryKey: true,
-              allowNull: false,
               defaultValue: Sequelize.UUIDV4,
+              allowNull: false,
             },
             application_id: {
               type: Sequelize.UUID,
@@ -32,7 +32,7 @@ module.exports = {
                 'REJECTED_BY_UNIVERSITY_REASON_INSUFFICIENT',
                 'REJECTED_BY_UNIVERSITY_REASON_NO_AVAILABILITY',
                 'CANCELLED_BY_STUDENT',
-                'PAYMENT_COMPLETE'
+                'PAYMENT_COMPLETE',
               ),
               allowNull: false,
             },
@@ -47,11 +47,11 @@ module.exports = {
                 'REJECTED_BY_UNIVERSITY_REASON_INSUFFICIENT',
                 'REJECTED_BY_UNIVERSITY_REASON_NO_AVAILABILITY',
                 'CANCELLED_BY_STUDENT',
-                'PAYMENT_COMPLETE'
+                'PAYMENT_COMPLETE',
               ),
               allowNull: false,
             },
-            date_modified: {
+            modified: {
               type: Sequelize.DATE,
               allowNull: false,
             },

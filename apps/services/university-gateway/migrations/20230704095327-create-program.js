@@ -10,8 +10,8 @@ module.exports = {
             id: {
               type: Sequelize.UUID,
               primaryKey: true,
-              allowNull: false,
               defaultValue: Sequelize.UUIDV4,
+              allowNull: false,
             },
             external_id: {
               type: Sequelize.STRING,
@@ -37,11 +37,19 @@ module.exports = {
               },
               allowNull: false,
             },
+            department_name_is: {
+              type: Sequelize.STRING,
+              allowNull: false,
+            },
+            department_name_en: {
+              type: Sequelize.STRING,
+              allowNull: false,
+            },
             starting_semester_year: {
               type: Sequelize.INTEGER,
               allowNull: false,
             },
-            semester_season: {
+            starting_semester_season: {
               type: Sequelize.ENUM('FALL', 'SPRING', 'SUMMER'),
               allowNull: false,
             },
@@ -51,14 +59,6 @@ module.exports = {
             },
             application_end_date: {
               type: Sequelize.DATE,
-              allowNull: false,
-            },
-            department_name_is: {
-              type: Sequelize.STRING,
-              allowNull: false,
-            },
-            department_name_en: {
-              type: Sequelize.STRING,
               allowNull: false,
             },
             degree_type: {
@@ -87,7 +87,7 @@ module.exports = {
             },
             cost_per_year: {
               type: Sequelize.INTEGER,
-              allowNull: true, //TODO bíða eftir niðurstöðu efnishóps
+              allowNull: true,
             },
             isced_code: {
               type: Sequelize.STRING,
@@ -101,6 +101,18 @@ module.exports = {
               type: Sequelize.STRING,
               allowNull: true,
             },
+            search_keywords: {
+              type: Sequelize.ARRAY(Sequelize.STRING),
+              defaultValue: [],
+              allowNull: false,
+            },
+            // mode_of_delivery: {
+            //   type: Sequelize.ARRAY(
+            //     Sequelize.ENUM('ON_SITE', 'ONLINE', 'ONLINE_WITH_SESSION'),
+            //   ),
+            //   defaultValue: [],
+            //   allowNull: false,
+            // },
             admission_requirements_is: {
               type: Sequelize.STRING,
               allowNull: true,

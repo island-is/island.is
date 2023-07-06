@@ -1,11 +1,29 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
+import {
+  Column,
+  CreatedAt,
+  DataType,
+  HasMany,
+  Model,
+  Table,
+  UpdatedAt,
+} from 'sequelize-typescript'
 import { Season } from '../../program/types'
 import { PageInfo } from '../../program/model/pageInfo'
 
-export class Course {
+@Table({
+  tableName: 'course',
+})
+export class Course extends Model {
   @ApiProperty({
     description: 'Course ID',
     example: '00000000-0000-0000-0000-000000000000',
+  })
+  @Column({
+    type: DataType.UUID,
+    primaryKey: true,
+    defaultValue: DataType.UUIDV4,
+    allowNull: false,
   })
   id!: string
 
@@ -13,11 +31,19 @@ export class Course {
     description: 'External ID for the course (from University)',
     example: 'ABC12345',
   })
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+  })
   externalId!: string
 
   @ApiProperty({
     description: 'Course name (Icelandic)',
     example: 'Tölvunarfræði I',
+  })
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
   })
   nameIs!: string
 
@@ -25,11 +51,19 @@ export class Course {
     description: 'Course name (English)',
     example: 'Computer science I',
   })
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+  })
   nameEn!: string
 
   @ApiProperty({
     description: 'Whether the course is required to take within the program',
     example: true,
+  })
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: true,
   })
   required!: boolean
 
@@ -37,17 +71,19 @@ export class Course {
     description: 'University ID',
     example: '00000000-0000-0000-0000-000000000000',
   })
-  universityId!: string
-
-  @ApiProperty({
-    description: 'Program ID',
-    example: '00000000-0000-0000-0000-000000000000',
+  @Column({
+    type: DataType.UUID,
+    allowNull: false,
   })
-  programId!: string
+  universityId!: string
 
   @ApiProperty({
     description: 'Number of course credits (in ECTS)',
     example: 8,
+  })
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: false,
   })
   credits!: number
 
@@ -55,12 +91,22 @@ export class Course {
     description: 'Which year this course is taught on',
     example: 2023,
   })
-  semesterYear!: number
+  @ApiPropertyOptional()
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: true,
+  })
+  semesterYear?: number
 
   @ApiProperty({
     description: 'Which season this course is taught on',
     example: Season.FALL,
     enum: Season,
+  })
+  @Column({
+    type: DataType.ENUM,
+    values: Object.values(Season),
+    allowNull: false,
   })
   semesterSeason!: Season
 
@@ -69,6 +115,10 @@ export class Course {
     example: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
   })
   @ApiPropertyOptional()
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
   descriptionIs?: string
 
   @ApiProperty({
@@ -76,6 +126,10 @@ export class Course {
     example: 'Mauris a justo arcu. Orci varius natoque penatibus.',
   })
   @ApiPropertyOptional()
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
   descriptionEn?: string
 
   @ApiProperty({
@@ -84,6 +138,10 @@ export class Course {
     example: 'https://www.hi.is/grunnnam/tolvunarfraedi/staerdfraedigreining-i',
   })
   @ApiPropertyOptional()
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
   externalUrlIs?: string
 
   @ApiProperty({
@@ -93,6 +151,10 @@ export class Course {
       'https://www.en.hi.is/undergraduate-study/computer-science/mathematical-analysis-i',
   })
   @ApiPropertyOptional()
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
   externalUrlEn?: string
 }
 

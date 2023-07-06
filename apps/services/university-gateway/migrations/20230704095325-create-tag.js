@@ -5,19 +5,20 @@ module.exports = {
     return queryInterface.sequelize.transaction((t) => {
       return Promise.all([
         queryInterface.createTable(
-          'program_search_group',
+          'tag',
           {
-            program_id: {
+            id: {
               type: Sequelize.UUID,
-              references: {
-                model: 'program',
-                key: 'id',
-              },
+              primaryKey: true,
+              defaultValue: Sequelize.UUIDV4,
               allowNull: false,
             },
-            search_group: {
-              type: Sequelize.ARRAY(Sequelize.STRING),
-              defaultValue: [],
+            code: {
+              type: Sequelize.STRING,
+              allowNull: false,
+            },
+            contentful_key: {
+              type: Sequelize.STRING,
               allowNull: false,
             },
           },
@@ -29,9 +30,7 @@ module.exports = {
 
   down: (queryInterface, Sequelize) => {
     return queryInterface.sequelize.transaction((t) => {
-      return Promise.all([
-        queryInterface.dropTable('program_search_group', { transaction: t }),
-      ])
+      return Promise.all([queryInterface.dropTable('tag', { transaction: t })])
     })
   },
 }

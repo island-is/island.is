@@ -7,22 +7,12 @@ module.exports = {
         queryInterface.createTable(
           'program_extra_application_field',
           {
-            id: {
-              type: Sequelize.UUID,
-              primaryKey: true,
-              allowNull: false,
-              defaultValue: Sequelize.UUIDV4,
-            },
             program_id: {
               type: Sequelize.UUID,
               references: {
                 model: 'program',
                 key: 'id',
               },
-              allowNull: false,
-            },
-            field_type: {
-              type: Sequelize.ENUM('UPLOAD', 'CHECKBOX', 'TEXT_INPUT', 'TEXT_AREA'),
               allowNull: false,
             },
             name_is: {
@@ -43,7 +33,16 @@ module.exports = {
             },
             required: {
               type: Sequelize.BOOLEAN,
-              allowNull: true,
+              allowNull: false,
+            },
+            field_type: {
+              type: Sequelize.ENUM(
+                'UPLOAD',
+                'CHECKBOX',
+                'TEXT_INPUT',
+                'TEXT_AREA',
+              ),
+              allowNull: false,
             },
             upload_accepted_file_type: {
               type: Sequelize.STRING,

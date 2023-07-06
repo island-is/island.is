@@ -23,8 +23,12 @@ module.exports = {
               },
               allowNull: false,
             },
-            program_requirement: {
-              type: Sequelize.ENUM('MANDATORY', 'FREE_ELECTIVE', 'RESTRICTED_ELECTIVE'),
+            requirement: {
+              type: Sequelize.ENUM(
+                'MANDATORY',
+                'FREE_ELECTIVE',
+                'RESTRICTED_ELECTIVE',
+              ),
               allowNull: false,
             },
           },

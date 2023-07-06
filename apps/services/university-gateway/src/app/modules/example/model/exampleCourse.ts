@@ -2,6 +2,12 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { Season } from '../../program/types'
 
 export class ExampleCourse {
+  // @ApiProperty({
+  //   description: 'Course ID',
+  //   example: '00000000-0000-0000-0000-000000000000',
+  // })
+  // id!: string
+
   @ApiProperty({
     description: 'External ID for the course (from University)',
     example: 'ABC12345',
@@ -32,12 +38,6 @@ export class ExampleCourse {
   // })
   // universityId!: string
 
-  // @ApiProperty({
-  //   description: 'Program ID',
-  //   example: '00000000-0000-0000-0000-000000000000',
-  // })
-  // programId!: string
-
   @ApiProperty({
     description: 'Number of course credits (in ECTS)',
     example: 8,
@@ -48,7 +48,8 @@ export class ExampleCourse {
     description: 'Which year this course is taught on',
     example: 2023,
   })
-  semesterYear!: number
+  @ApiPropertyOptional()
+  semesterYear?: number
 
   @ApiProperty({
     description: 'Which season this course is taught on',
