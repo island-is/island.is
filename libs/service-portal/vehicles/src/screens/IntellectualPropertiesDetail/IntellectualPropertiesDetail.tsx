@@ -8,6 +8,7 @@ import {
   NotFound,
   TableGrid,
   UserInfoLine,
+  formatDate,
   m,
 } from '@island.is/service-portal/core'
 import { ipMessages } from '../../lib/messages'
@@ -61,12 +62,11 @@ const IntellectualPropertiesDetail = () => {
   }
 
   const ip = data?.intellectualPropertyPatent
-
   return (
     <>
       <Box marginBottom={[1, 1, 3]}>
         <IntroHeader
-          title={ip?.patentName || 'SOME DEFAULT TITLE'}
+          title={ip?.patentNameInOrgLanguage || 'SOME DEFAULT TITLE'}
           intro="Lorem ipsum dolor sit amet consectetur arcu quam quis consequat."
         />
       </Box>
@@ -123,34 +123,45 @@ const IntellectualPropertiesDetail = () => {
             content={ip?.classificationType ?? ''}
           />
           <Divider />
-          <UserInfoLine
-            label={ipMessages.make}
-            content={ip?.internalClassifications?.[0]?.type ?? ''}
-          />
-          <Divider />
           <UserInfoLine label={ipMessages.status} content={ip?.status ?? ''} />
           <Divider />
         </Stack>
         <Timeline title={'Tímalína'}>
           {[
             <Stack space="smallGutter">
-              <Text variant="h5">03.02.20</Text>
+              <Text variant="h5">
+                {ip?.applicationDate
+                  ? formatDate(ip.applicationDate, 'dd.MM.yy')
+                  : ''}
+              </Text>
               <Text>Umsókn</Text>
             </Stack>,
             <Stack space="smallGutter">
-              <Text variant="h5">05.02.20</Text>
+              <Text variant="h5">
+                {ip?.registeredDate
+                  ? formatDate(ip.registeredDate, 'dd.MM.yy')
+                  : ''}
+              </Text>
               <Text>Skráning</Text>
             </Stack>,
             <Stack space="smallGutter">
-              <Text variant="h5">10.08.30</Text>
+              <Text variant="h5">
+                {ip?.maxValidDate
+                  ? formatDate(ip.maxValidDate, 'dd.MM.yy')
+                  : ''}
+              </Text>
               <Text>Birting</Text>
             </Stack>,
             <Stack space="smallGutter">
-              <Text variant="h5">12.12.46</Text>
+              <Text variant="h5">?????</Text>
               <Text>Andmælafrestur</Text>
             </Stack>,
             <Stack space="smallGutter">
-              <Text variant="h5">30.63.6803</Text>
+              <Text variant="h5">
+                <Text variant="h5">
+                  {ip?.expires ? formatDate(ip?.expires, 'dd.MM.yy') : ''}
+                </Text>
+              </Text>
               <Text>Gildir til</Text>
             </Stack>,
           ]}
@@ -161,31 +172,42 @@ const IntellectualPropertiesDetail = () => {
             [
               {
                 title: 'Umsóknardagur',
-                value: '06.03.20',
+                value: ip?.applicationDate
+                  ? formatDate(ip.applicationDate, 'dd.MM.yy')
+                  : '',
               },
               {
                 title: 'Umsóknarnúmer',
-                value: 'VOT344664',
+                value: ip?.applicationNumber
+                  ? formatDate(ip?.applicationNumber, 'dd.MM.yy')
+                  : '',
               },
               {
                 title: 'Birtingardagur',
-                value: '15.05.20',
+                value: ip?.applicationDatePublishedAsAvailable
+                  ? formatDate(
+                      ip.applicationDatePublishedAsAvailable,
+                      'dd.MM.yy',
+                    )
+                  : '',
               },
               {
                 title: 'Myndflokkur',
-                value: '24Jfdgh',
+                value: '?????????',
               },
               {
                 title: 'Andmælafrestur',
-                value: '17.07.20',
+                value: '?????????',
               },
               {
                 title: 'Merkið er í lit',
-                value: 'Já',
+                value: '?????????',
               },
               {
                 title: 'Skráningardagur',
-                value: '24.04.20',
+                value: ip?.registeredDate
+                  ? formatDate(ip.registeredDate, 'dd.MM.yy')
+                  : '',
               },
             ].filter((Boolean as unknown) as ExcludesFalse),
             2,
@@ -195,18 +217,17 @@ const IntellectualPropertiesDetail = () => {
           <UserInfoLine
             title="Eigandi"
             label="Nafn"
-            content="
-            Þjálfunarmúll fyrir hesta"
+            content={ip?.owner?.name ?? ''}
           ></UserInfoLine>
           <Divider />
-          <UserInfoLine label="Heimilsfang" content="Leirvogstunga 29" />
+          <UserInfoLine label="Heimilsfang" content={ip?.owner?.home ?? ''} />
           <Divider />
         </Stack>
         <Stack space="p2">
           <UserInfoLine
             title="Hönnuður"
             label="Nafn"
-            content="Eiríkur Ingólfsson"
+            content={ip?.inventors?.[0]?.name ?? ''}
           ></UserInfoLine>
           <Divider />
         </Stack>
@@ -214,12 +235,12 @@ const IntellectualPropertiesDetail = () => {
           <UserInfoLine
             title="Umboðsmaður"
             label="Nafn"
-            content="Árnason Faktor ehf."
+            content={ip?.patentAgent?.name ?? ''}
           ></UserInfoLine>
           <Divider />
           <UserInfoLine
             label="Heimilisfang"
-            content="Guðríðarstíg 2-4, 113 Reykjavík"
+            content={ip?.patentAgent?.address ?? ''}
           ></UserInfoLine>
           <Divider />
         </Stack>

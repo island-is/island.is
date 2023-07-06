@@ -9,10 +9,10 @@ export const dateParse = (startDate: string) => {
 }
 
 // Takes in date string or date
-export const formatDate = (date: string | Date) => {
+export const formatDate = (date: string | Date, dateFormat = 'dd.MM.yyyy') => {
   const arg = date instanceof Date ? date : new Date(date)
   try {
-    return format(arg, 'dd.MM.yyyy')
+    return format(arg, dateFormat)
   } catch {
     return date instanceof Date ? date.toDateString() : date
   }
