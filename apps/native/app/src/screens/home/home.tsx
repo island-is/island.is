@@ -143,12 +143,6 @@ export const MainHomeScreen: NavigationFunctionComponent = ({componentId}) => {
       component: <OnboardingModule />,
     },
     {
-      id: 'debug',
-      component: (
-        <Button title="Finance" onPress={() => navigateTo('/finance')} />
-      ),
-    },
-    {
       id: 'applications',
       component: (
         <ApplicationsModule

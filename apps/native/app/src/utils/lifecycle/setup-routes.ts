@@ -223,7 +223,7 @@ export function setupRoutes() {
     });
   });
 
-  addRoute('/finance/status/:orgId/:chargeTypeId', async (passProps: any) => {
+  addRoute('/finance/status/:orgId/:chargeTypeId/:index', async (passProps: any) => {
     Navigation.showModal({
       stack: {
         children: [

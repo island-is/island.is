@@ -20,15 +20,26 @@ import {
   dynamicColor,
   font,
 } from '@ui';
-import getFinanceStatus from './getFinanceStatus.json';
-import getDebtStatus from './getDebtStatus.json';
-import getFinanceStatusDetails from './getFinanceStatusDetails.json';
 import {FormattedMessage, useIntl} from 'react-intl';
 import styled, {useTheme} from 'styled-components/native';
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import externalOpen from '../../assets/icons/external-open.png';
 import chevronDown from '../../assets/icons/chevron-down.png';
 import {navigateTo} from '../../lib/deep-linking';
+import {openBrowser} from '../../lib/rn-island';
+import {getConfig} from '../../config';
+import {useLazyQuery, useQuery} from '@apollo/client';
+import {
+  GET_FINANCE_STATUS,
+  GetDebtStatus,
+  GetFinanceStatus,
+} from '../../graphql/queries/get-finance-status.query';
+import {
+  GET_FINANCE_STATUS_DETAILS,
+  GetFinanceStatusDetails,
+} from '../../graphql/queries/get-finance-detail-status.query';
+import {client} from '../../graphql/client';
+import {showPicker} from '../../lib/show-picker';
 
 const Row = styled.View<{border?: boolean}>`
   flex-direction: row;
@@ -136,13 +147,31 @@ function FinanceStatusCardContainer(props: any) {
   const intl = useIntl();
   const [open, setOpen] = useState(false);
   const {chargeType, org} = props;
-
-  const {loading, error, ...detailsQuery} = {
-    loading: false,
-    error: null,
-    ...getFinanceStatusDetails,
+  const input = {
+    orgID: org.id,
+    chargeTypeID: chargeType.id,
   };
-  const financeStatusDetails = detailsQuery.data?.getFinanceStatusDetails || {};
+  const {loading, error, ...detailsQuery} = useQuery<{
+    getFinanceStatusDetails: GetFinanceStatusDetails;
+  }>(GET_FINANCE_STATUS_DETAILS, {
+    variables: {
+      input,
+    },
+    client,
+    skip: !open,
+  });
+  const financeStatusDetails: GetFinanceStatusDetails = detailsQuery.data
+    ?.getFinanceStatusDetails || {
+    chargeItemSubjects: [],
+    timestamp: '',
+  };
+
+  const chargeItemSubjects = [
+    ...new Set(
+      financeStatusDetails.chargeItemSubjects.map(i => i.chargeItemSubject),
+    ),
+  ];
+  const [selectedChargeItemSubject, setSelectedChargeItemSubject] = useState(0);
 
   return (
     <FinanceStatusCard
@@ -167,10 +196,27 @@ function FinanceStatusCardContainer(props: any) {
           />
         </Text>
         <LightButton
-          title="2203030560"
+          title={chargeItemSubjects[selectedChargeItemSubject]}
           icon={chevronDown}
           textStyle={{flex: 1}}
           onPress={() => {
+            showPicker({
+              title: intl.formatMessage({
+                id: 'finance.statusCard.paymentBase',
+                defaultMessage: 'Gjaldgrunnur',
+              }),
+              items: chargeItemSubjects.map((label, value) => ({
+                label,
+                value,
+                id: String(value),
+              })),
+              selectedId: String(selectedChargeItemSubject),
+              cancel: true,
+            }).then(value => {
+              if (value.selectedItem) {
+                setSelectedChargeItemSubject(Number(value.selectedItem.id));
+              }
+            });
             // void
           }}
         />
@@ -192,41 +238,51 @@ function FinanceStatusCardContainer(props: any) {
             </Text>
           </Cell>
         </Row>
-        {financeStatusDetails?.chargeItemSubjects?.map((charge, index) => (
-          <TouchableRow
-            key={index}
-            underlayColor="rgba(128,128,128,0.1)"
-            onPress={() => {
-              navigateTo(`/finance/status/${org.id}/${chargeType.id}`);
-            }}
-          >
-            <>
-              <Cell style={{flex: 1}}>
-                <Text>{charge.finalDueDate}</Text>
-              </Cell>
-              <Cell style={{flex: 1}}>
-                <Text style={{textAlign: 'right'}}>
-                  {intl.formatNumber(charge.totals)} kr.
-                </Text>
-              </Cell>
-              <Image
-                source={chevronDown}
-                style={{
-                  tintColor: 'rgba(128,128,128,0.6)',
-                  transform: [
-                    {rotate: '-90deg'},
-                    {
-                      translateY: -1,
-                    },
-                    {
-                      translateX: -6,
-                    },
-                  ],
-                }}
-              />
-            </>
-          </TouchableRow>
-        ))}
+        {financeStatusDetails?.chargeItemSubjects?.map((charge, index) => {
+          if (
+            charge.chargeItemSubject !==
+            chargeItemSubjects[selectedChargeItemSubject]
+          ) {
+            return null;
+          }
+          return (
+            <TouchableRow
+              key={index}
+              underlayColor="rgba(128,128,128,0.1)"
+              onPress={() => {
+                navigateTo(
+                  `/finance/status/${org.id}/${chargeType.id}/${index}`,
+                );
+              }}
+            >
+              <>
+                <Cell style={{flex: 1}}>
+                  <Text>{charge.finalDueDate}</Text>
+                </Cell>
+                <Cell style={{flex: 1}}>
+                  <Text style={{textAlign: 'right'}}>
+                    {intl.formatNumber(charge.totals)} kr.
+                  </Text>
+                </Cell>
+                <Image
+                  source={chevronDown}
+                  style={{
+                    tintColor: 'rgba(128,128,128,0.6)',
+                    transform: [
+                      {rotate: '-90deg'},
+                      {
+                        translateY: -1,
+                      },
+                      {
+                        translateX: -6,
+                      },
+                    ],
+                  }}
+                />
+              </>
+            </TouchableRow>
+          );
+        })}
         <Row>
           <Cell style={{flex: 1, alignItems: 'flex-end'}}>
             <Text weight="600" style={{marginBottom: 4}}>
@@ -331,26 +387,23 @@ const {
 export const FinanceScreen: NavigationFunctionComponent = ({componentId}) => {
   useNavigationOptions(componentId);
   const intl = useIntl();
-  const {loading, error, ...statusQuery} = {
-    loading: false,
-    error: false,
-    ...getFinanceStatus,
-  };
+  const {loading, error, data} = useQuery<{
+    getFinanceStatus: GetFinanceStatus;
+    getDebtStatus: GetDebtStatus;
+  }>(GET_FINANCE_STATUS, {client, errorPolicy: 'ignore'});
 
-  const {data: debtStatusData, loading: debtStatusLoading} = {
-    loading: false,
-    ...getDebtStatus,
-  };
-
-  const debtStatus = debtStatusData?.getDebtStatus?.myDebtStatus;
+  const debtStatus = data?.getDebtStatus?.myDebtStatus;
   let scheduleButtonVisible = false;
-  if (debtStatus && debtStatus.length > 0 && !debtStatusLoading) {
+  if (debtStatus && debtStatus.length > 0 && !loading) {
     scheduleButtonVisible =
       debtStatus[0]?.approvedSchedule > 0 ||
       debtStatus[0]?.possibleToSchedule > 0;
   }
 
-  const financeStatusData = statusQuery.data?.getFinanceStatus || {};
+  const financeStatusData = data?.getFinanceStatus ?? {
+    organizations: [],
+    statusTotals: 0,
+  };
 
   function getChargeTypeTotal() {
     const organizationChargeTypes = financeStatusData?.organizations?.map(
@@ -429,6 +482,15 @@ export const FinanceScreen: NavigationFunctionComponent = ({componentId}) => {
                 />
               }
               icon={externalOpen}
+              onPress={() => {
+                openBrowser(
+                  `${getConfig().apiUrl.replace(
+                    /\/api/,
+                    '',
+                  )}/umsoknir/greidsluaaetlun/`,
+                  componentId,
+                );
+              }}
             />
           )}
         </SafeAreaView>

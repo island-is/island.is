@@ -1,9 +1,15 @@
-import {NavigationBarSheet, InputRow, Input} from '@ui';
+import {Input, InputRow, NavigationBarSheet} from '@ui';
 import {useIntl} from 'react-intl';
-import {ScrollView, Text, View} from 'react-native';
+import {ScrollView, View} from 'react-native';
 import {Navigation, NavigationFunctionComponent} from 'react-native-navigation';
 import {createNavigationOptionHooks} from '../../hooks/create-navigation-option-hooks';
 import {testIDs} from '../../utils/test-ids';
+import {useQuery} from '@apollo/client';
+import {client} from '../../graphql/client';
+import {
+  GET_FINANCE_STATUS_DETAILS,
+  GetFinanceStatusDetails,
+} from '../../graphql/queries/get-finance-detail-status.query';
 
 const {useNavigationOptions} = createNavigationOptionHooks(() => ({
   topBar: {
@@ -11,30 +17,33 @@ const {useNavigationOptions} = createNavigationOptionHooks(() => ({
   },
 }));
 
-export const FinanceStatusDetailScreen: NavigationFunctionComponent = ({
-  componentId,
-}) => {
+export const FinanceStatusDetailScreen: NavigationFunctionComponent<{
+  chargeTypeId: string;
+  orgId: string;
+  index: string;
+}> = ({componentId, chargeTypeId, orgId, index}) => {
   useNavigationOptions(componentId);
   const intl = useIntl();
+  const {loading, ...financeStatusDetails} = useQuery<{
+    getFinanceStatusDetails: GetFinanceStatusDetails;
+  }>(GET_FINANCE_STATUS_DETAILS, {
+    variables: {
+      input: {
+        orgID: orgId,
+        chargeTypeID: chargeTypeId,
+      },
+    },
+    client,
+  });
+  const error = !!financeStatusDetails.error;
+  const item =
+    financeStatusDetails.data?.getFinanceStatusDetails.chargeItemSubjects[
+      Number(index)
+    ];
 
-  const item = {
-    chargeItemSubject: '2804882329',
-    timePeriod: '202307',
-    estimate: false,
-    dueDate: '01.07.2023',
-    finalDueDate: '31.07.2023',
-    principal: 13722,
-    interest: 0,
-    cost: 0,
-    paid: 0,
-    totals: 13722,
-    dueTotals: 13722,
-    documentID: '',
-    payID: '',
-  };
-
-  const loading = false;
-  const error = false;
+  if (!item) {
+    return null;
+  }
 
   return (
     <View style={{flex: 1}} testID={testIDs.SCREEN_FINANCE_DETAIL}>
@@ -79,13 +88,13 @@ export const FinanceStatusDetailScreen: NavigationFunctionComponent = ({
               loading={loading}
               error={error}
               label={intl.formatMessage({id: 'financeDetail.principal'})}
-              value={String(item.principal) + ' kr.'}
+              value={`${intl.formatNumber(item.principal)} kr.`}
             />
             <Input
               loading={loading}
               error={error}
               label={intl.formatMessage({id: 'financeDetail.interest'})}
-              value={String(item.interest) + ' kr.'}
+              value={`${intl.formatNumber(item.interest)} kr.`}
             />
           </InputRow>
           <InputRow>
@@ -93,13 +102,13 @@ export const FinanceStatusDetailScreen: NavigationFunctionComponent = ({
               loading={loading}
               error={error}
               label={intl.formatMessage({id: 'financeDetail.costs'})}
-              value={String(item.cost) + ' kr.'}
+              value={`${intl.formatNumber(item.cost)} kr.`}
             />
             <Input
               loading={loading}
               error={error}
               label={intl.formatMessage({id: 'financeDetail.payments'})}
-              value={String(item.paid) + ' kr.'}
+              value={`${intl.formatNumber(item.paid)} kr.`}
             />
           </InputRow>
           <InputRow>
@@ -107,7 +116,7 @@ export const FinanceStatusDetailScreen: NavigationFunctionComponent = ({
               loading={loading}
               error={error}
               label={intl.formatMessage({id: 'financeDetail.status'})}
-              value={String(item.totals) + ' kr.'}
+              value={`${intl.formatNumber(item.totals)} kr.`}
             />
           </InputRow>
         </View>
