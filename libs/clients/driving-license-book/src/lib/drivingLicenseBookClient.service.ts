@@ -201,7 +201,7 @@ export class DrivingLicenseBookClientApiFactory {
 
   async getStudent({
     nationalId,
-  }: DrivingLicenseBookStudentInput): Promise<DrivingLicenseBookStudentOverview> {
+  }: DrivingLicenseBookStudentInput): Promise<DrivingLicenseBookStudentOverview | null> {
     const api = await this.create()
     const { data } = await api.apiStudentGetStudentOverviewSsnGet({
       ssn: nationalId,
@@ -214,9 +214,7 @@ export class DrivingLicenseBookClientApiFactory {
       this.logger.warning(
         `${LOGTAG} Error fetching student, student has no active book`,
       )
-      throw new NotFoundException(
-        `driving-license-book-client: Student has no active book`,
-      )
+      return null
     }
     return getStudentAndBookMapper(data, book)
   }

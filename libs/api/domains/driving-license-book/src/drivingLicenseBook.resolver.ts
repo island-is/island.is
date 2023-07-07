@@ -63,7 +63,7 @@ export class DrivingLicenseBookResolver {
   }
 
   @UseGuards(DrivingInstructorGuard)
-  @Query(() => DrivingLicenseBookStudentOverview)
+  @Query(() => DrivingLicenseBookStudentOverview, {nullable: true})
   @UseInterceptors(StudentIdInterceptor)
   drivingLicenseBookStudentForTeacher(
     @Args('input') input: DrivingLicenseBookStudentInput,
@@ -72,7 +72,7 @@ export class DrivingLicenseBookResolver {
   }
 
   @UseGuards(DrivingSchoolEmployeeGuard)
-  @Query(() => DrivingLicenseBookStudentOverview)
+  @Query(() => DrivingLicenseBookStudentOverview, {nullable: true})
   @UseInterceptors(StudentIdInterceptor)
   drivingLicenseBookStudent(
     @Args('input') input: DrivingLicenseBookStudentInput,
