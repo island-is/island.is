@@ -211,7 +211,7 @@ export class DrivingLicenseBookClientApiFactory {
     const book = data?.books?.[0]
 
     if (!book || !data) {
-      this.logger.error(
+      this.logger.warning(
         `${LOGTAG} Error fetching student, student has no active book`,
       )
       throw new NotFoundException(
