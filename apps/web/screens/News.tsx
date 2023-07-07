@@ -440,7 +440,7 @@ NewsListNew.getInitialProps = async ({ apolloClient, locale, query }) => {
       variables: {
         input: {
           lang: locale as ContentLanguage,
-          tag,
+          tags: [tag],
         },
       },
     }),

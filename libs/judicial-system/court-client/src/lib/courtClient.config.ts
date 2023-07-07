@@ -14,8 +14,5 @@ export const courtClientModuleConfig = defineConfig({
     courtApiAvailable: !(env.optional('BLOCKED_API_INTEGRATION') ?? '')
       .split(',')
       .includes('COURT'),
-    courtLitigantApiAvailable: !(env.optional('BLOCKED_API_INTEGRATION') ?? '')
-      .split(',')
-      .includes('COURT_LITIGANT'),
   }),
 })
