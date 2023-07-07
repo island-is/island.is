@@ -7,20 +7,26 @@ import {
 } from '@island.is/clients/university-gateway/reykjavik-university'
 import { ConfigModule } from '@nestjs/config'
 import { SequelizeModule } from '@nestjs/sequelize'
-import { Program } from './model'
-import { ProgramModeOfDelivery } from './model/programModeOfDelivery'
-import { ProgramTag } from './model/programTag'
+import {
+  Program,
+  ProgramExtraApplicationField,
+  ProgramModeOfDelivery,
+  ProgramTag,
+  Tag,
+} from './model'
 import { University } from '../university/model'
-import { Tag } from './model/tag'
+import { Course } from '../course/model'
 
 @Module({
   imports: [
     SequelizeModule.forFeature([
-      Program,
-      ProgramModeOfDelivery,
-      ProgramTag,
       University,
+      Course,
       Tag,
+      ProgramTag,
+      ProgramModeOfDelivery,
+      ProgramExtraApplicationField,
+      Program,
     ]),
     UgReykjavikUniversityClientModule,
     ConfigModule.forRoot({

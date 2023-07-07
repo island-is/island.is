@@ -9,8 +9,7 @@ import {
   UpdatedAt,
 } from 'sequelize-typescript'
 import { Season } from '../../program/types'
-import { PageInfo } from '../../program/model/pageInfo'
-import { Program } from '../../program/model'
+import { PageInfo, Program } from '../../program/model'
 import { University } from '../../university/model'
 
 @Table({

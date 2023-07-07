@@ -7,9 +7,8 @@ import {
   ApiQuery,
   ApiTags,
 } from '@nestjs/swagger'
-import { ProgramDetailsResponse, ProgramResponse } from './model'
+import { ProgramDetailsResponse, ProgramResponse, TagResponse } from './model'
 import { DegreeType, Season } from './types'
-import { TagResponse } from './model/tag'
 
 @ApiTags('Program')
 @Controller({ path: 'programs' })

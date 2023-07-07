@@ -11,7 +11,6 @@ import {
 import { Course } from '../../course/model'
 import { Requirement } from '../../course/types'
 import { Program } from './program'
-import { Tag } from './tag'
 
 @Table({
   tableName: 'program_course',

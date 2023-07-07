@@ -1,11 +1,16 @@
 import { Injectable } from '@nestjs/common'
-import { Program, ProgramDetailsResponse, ProgramResponse } from './model'
+import {
+  Program,
+  ProgramDetailsResponse,
+  ProgramResponse,
+  ProgramTag,
+  Tag,
+  TagResponse,
+} from './model'
 import { UgReykjavikUniversityClient } from '@island.is/clients/university-gateway/reykjavik-university'
 import { DegreeType, PaginateInput, Season } from './types'
 import { InjectModel } from '@nestjs/sequelize'
 import { University } from '../university/model'
-import { ProgramTag } from './model/programTag'
-import { Tag, TagResponse } from './model/tag'
 
 @Injectable()
 export class ProgramService {
