@@ -509,8 +509,9 @@
           "detail": { "type": "string", "nullable": true },
           "instance": { "type": "string", "nullable": true }
         },
-        "additionalProperties": {}
-      }
+        "additionalProperties": false
+      },
+      "ValidationProblemDetails": { "additionalProperties": false }
     }
   }
 }
