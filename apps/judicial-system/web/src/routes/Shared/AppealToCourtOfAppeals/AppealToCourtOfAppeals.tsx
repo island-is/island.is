@@ -119,9 +119,9 @@ const AppealToCourtOfAppeals = () => {
             {formatMessage(strings.title)}
           </Text>
         </Box>
-        {workingCase.courtEndTime && (
+        {workingCase.rulingDate && (
           <Box marginBottom={7}>
-            <RulingDateLabel courtEndTime={workingCase.courtEndTime} />
+            <RulingDateLabel rulingDate={workingCase.rulingDate} />
           </Box>
         )}
 

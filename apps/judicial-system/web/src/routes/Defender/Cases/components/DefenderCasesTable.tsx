@@ -164,8 +164,8 @@ export const DefenderCasesTable: React.FC<Props> = (props) => {
                   <td className={styles.td}>
                     <Text>
                       {c.validToDate &&
-                        c.courtEndTime &&
-                        `${formatDate(c.courtEndTime, 'd.M.y')} - ${formatDate(
+                        c.rulingDate &&
+                        `${formatDate(c.rulingDate, 'd.M.y')} - ${formatDate(
                           c.validToDate,
                           'd.M.y',
                         )}`}

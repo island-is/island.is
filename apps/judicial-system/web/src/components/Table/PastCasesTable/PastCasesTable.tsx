@@ -80,7 +80,7 @@ const PastCasesTable: React.FC<Props> = (props) => {
                 theCase.state,
                 theCase.validToDate,
                 theCase.initialRulingDate,
-                theCase.courtEndTime,
+                theCase.rulingDate,
               )}
             />
           </MobilePastCase>
@@ -169,7 +169,7 @@ const PastCasesTable: React.FC<Props> = (props) => {
                   column.state,
                   column.validToDate,
                   column.initialRulingDate,
-                  column.courtEndTime,
+                  column.rulingDate,
                 )}
               </Text>
             </td>
