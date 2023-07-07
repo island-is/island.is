@@ -4,14 +4,20 @@ import {
   WorkMachine,
   PaginatedCollectionResponse,
 } from './models/getWorkMachines'
-import { Injectable } from '@nestjs/common'
-import { Action, ExternalLink } from './api-domains-work-machines.types'
+import { Inject, Injectable } from '@nestjs/common'
+import { Action, ExternalLink } from './workMachines.types'
 import { GetWorkMachineCollectionInput } from './dto/getWorkMachineCollection.input'
 import { GetWorkMachineInput } from './dto/getWorkMachine.input'
 import { GetDocumentsInput } from './dto/getDocuments.input'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 @Injectable()
 export class WorkMachinesService {
-  constructor(private readonly machineService: WorkMachinesClientService) {}
+  constructor(
+    @Inject(LOGGER_PROVIDER)
+    private logger: Logger,
+    private readonly machineService: WorkMachinesClientService,
+  ) {}
 
   private mapRelToAction = (rel?: string) => {
     switch (rel) {
@@ -51,6 +57,12 @@ export class WorkMachinesService {
   ): Promise<PaginatedCollectionResponse> {
     const data = await this.machineService.getWorkMachines(user, input)
 
+    if (!data.links || !data.pagination || !data.labels) {
+      this.logger.warn(
+        'No links, labels or pagination data in work machines collection response',
+      )
+    }
+
     const value = data.value?.map(
       (v) =>
         ({
@@ -88,6 +100,10 @@ export class WorkMachinesService {
     input: GetWorkMachineInput,
   ): Promise<WorkMachine | null> {
     const data = await this.machineService.getWorkMachineById(user, input)
+
+    if (!data.links || !data.labels) {
+      this.logger.warn('No links or label in work machine response')
+    }
 
     const links = data.links?.length
       ? data.links.map((l) => {

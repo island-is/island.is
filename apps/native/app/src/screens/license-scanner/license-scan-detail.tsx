@@ -17,6 +17,11 @@ enum ScanResult {
   UNKNOWN = 'Unknown',
 }
 
+const DriversLicenseTemplateIds = [
+  'cd998d1b-3cfa-4753-9f1e-6dc5187c59f9',
+  '3d2a9e02-24ef-446b-ab4a-f34b26850460',
+];
+
 const FirearmTemplateIds = [
   'dfb706c1-3a78-4518-bf25-cebbf0a93132',
   '61f74977-0e81-4786-94df-6b8470013f09',
@@ -55,6 +60,11 @@ export const LicenseScanDetailScreen: NavigationFunctionComponent<
         if (parsed?.TGLJZW) {
           setScanResult(ScanResult.DRIVER_LICENCE);
         }
+
+        if (DriversLicenseTemplateIds.includes(parsed?.passTemplateId)) {
+          setScanResult(ScanResult.DRIVER_LICENCE);
+        }
+
         if (FirearmTemplateIds.includes(parsed?.passTemplateId)) {
           setScanResult(ScanResult.FIREARM_LICENSE);
         }

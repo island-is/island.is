@@ -24,7 +24,7 @@ export const subSectionOtherCountry = buildSubSection({
           id: 'drivingLicenseInOtherCountry',
           backgroundColor: 'white',
           title: '',
-          description: '',
+          width: 'half',
           space: 0,
           largeButtons: true,
           options: [

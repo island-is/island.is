@@ -1,6 +1,7 @@
 import {
   DefaultStateLifeCycle,
   EphemeralStateLifeCycle,
+  coreHistoryMessages,
   getValueViaPath,
 } from '@island.is/application/core'
 import {
@@ -13,6 +14,7 @@ import {
   defineTemplateApi,
   NationalRegistryUserApi,
   UserProfileApi,
+  DefaultEvents,
 } from '@island.is/application/types'
 import { m } from './messages'
 import { estateSchema } from './dataSchema'
@@ -46,11 +48,7 @@ const EstateTemplate: ApplicationTemplate<
           name: '',
           status: 'draft',
           progress: 0,
-          lifecycle: {
-            shouldBeListed: false,
-            shouldBePruned: true,
-            whenToPrune: 24 * 3600 * 1000,
-          },
+          lifecycle: EphemeralStateLifeCycle,
           onEntry: defineTemplateApi({
             action: ApiActions.syslumennOnEntry,
             shouldPersistToExternalData: true,
@@ -91,9 +89,17 @@ const EstateTemplate: ApplicationTemplate<
               delete: true,
             },
           ],
+          actionCard: {
+            historyLogs: [
+              {
+                logMessage: coreHistoryMessages.applicationStarted,
+                onEvent: DefaultEvents.SUBMIT,
+              },
+            ],
+          },
         },
         on: {
-          SUBMIT: {
+          [DefaultEvents.SUBMIT]: {
             target: States.draft,
           },
         },
@@ -150,13 +156,19 @@ const EstateTemplate: ApplicationTemplate<
               api: [NationalRegistryUserApi, UserProfileApi, EstateApi],
             },
           ],
+          actionCard: {
+            historyLogs: [
+              {
+                logMessage: coreHistoryMessages.applicationReceived,
+                onEvent: DefaultEvents.SUBMIT,
+              },
+            ],
+          },
         },
         on: {
-          SUBMIT: [
-            {
-              target: States.done,
-            },
-          ],
+          [DefaultEvents.SUBMIT]: {
+            target: States.done,
+          },
         },
       },
       [States.done]: {
