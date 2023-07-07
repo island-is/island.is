@@ -9,8 +9,8 @@ import {
   UpdatedAt,
 } from 'sequelize-typescript'
 import { Season } from '../../program/types'
-import { PageInfo, Program } from '../../program/model'
 import { University } from '../../university/model'
+import { PageInfo } from '@island.is/nest/pagination'
 
 @Table({
   tableName: 'course',
@@ -27,17 +27,6 @@ export class Course extends Model {
     allowNull: false,
   })
   id!: string
-
-  @ApiProperty({
-    description: 'Program ID',
-    example: '00000000-0000-0000-0000-000000000000',
-  })
-  @Column({
-    type: DataType.UUID,
-    allowNull: false,
-  })
-  @ForeignKey(() => Program)
-  programId!: string
 
   @ApiProperty({
     description: 'External ID for the course (from University)',
@@ -182,13 +171,11 @@ export class CourseResponse {
 
   @ApiProperty({
     description: 'Page information (for pagination)',
-    type: PageInfo,
   })
   pageInfo!: PageInfo
 
   @ApiProperty({
     description: 'Total number of items in result (for pagination)',
-    example: 25,
   })
   totalCount!: number
 }

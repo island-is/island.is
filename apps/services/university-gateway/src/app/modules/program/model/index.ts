@@ -1,4 +1,3 @@
-export * from './pageInfo'
 export * from './program'
 export * from './programCourse'
 export * from './programExtraApplicationField'

@@ -10,11 +10,11 @@ import {
 import { CourseDetailsResponse, CourseResponse } from './model'
 
 @ApiTags('Course')
-@Controller({ path: 'courses' })
+@Controller()
 export class CourseController {
   constructor(private readonly courseService: CourseService) {}
 
-  @Get()
+  @Get('courses')
   @ApiQuery({
     name: 'limit',
     required: false,
@@ -64,7 +64,7 @@ export class CourseController {
     )
   }
 
-  @Get(':id')
+  @Get('courses/:id')
   @ApiParam({
     name: 'id',
     required: true,

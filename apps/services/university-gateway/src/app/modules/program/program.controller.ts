@@ -11,23 +11,11 @@ import { ProgramDetailsResponse, ProgramResponse, TagResponse } from './model'
 import { DegreeType, Season } from './types'
 
 @ApiTags('Program')
-@Controller({ path: 'programs' })
+@Controller()
 export class ProgramController {
   constructor(private readonly programService: ProgramService) {}
 
-  @Get('trigger-worker')
-  @ApiOkResponse({
-    type: ProgramDetailsResponse,
-    description: 'TEST',
-  })
-  @ApiOperation({
-    summary: 'TEST - Used to trigger fake worker',
-  })
-  async triggerWorker(): Promise<string> {
-    return this.programService.triggerWorker()
-  }
-
-  @Get()
+  @Get('programs')
   @ApiQuery({
     name: 'limit',
     required: false,
@@ -101,7 +89,7 @@ export class ProgramController {
     )
   }
 
-  @Get(':id')
+  @Get('programs/:id')
   @ApiParam({
     name: 'id',
     required: true,
@@ -121,7 +109,7 @@ export class ProgramController {
     return this.programService.getProgramDetails(id)
   }
 
-  @Get()
+  @Get('tags')
   @ApiOkResponse({
     type: TagResponse,
     description: 'Returns all tags',

@@ -1,5 +1,5 @@
 export type PaginateInput = {
-  after?: string
+  after: string
   before?: string
   limit: number
 }

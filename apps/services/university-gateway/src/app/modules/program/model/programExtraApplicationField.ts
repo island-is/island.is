@@ -89,7 +89,7 @@ export class ProgramExtraApplicationField extends Model {
     type: DataType.BOOLEAN,
     allowNull: false,
   })
-  required!: string
+  required!: boolean
 
   @ApiProperty({
     description:

@@ -1,20 +1,46 @@
 import { Injectable } from '@nestjs/common'
-import { CourseDetailsResponse, CourseResponse } from './model'
+import { InjectModel } from '@nestjs/sequelize'
+import { Course, CourseDetailsResponse, CourseResponse } from './model'
 import { PaginateInput } from '../program/types'
-
-//TODOx connect with new university DB
+import { paginate } from '@island.is/nest/pagination'
 
 @Injectable()
 export class CourseService {
+  constructor(
+    @InjectModel(Course)
+    private courseModel: typeof Course,
+  ) {}
+
   async getCourses(
     { after, before, limit }: PaginateInput,
     programId: string,
     universityId: string,
   ): Promise<CourseResponse> {
-    throw Error('Not ready')
+    const where: {
+      programId?: string
+      universityId?: string
+    } = {}
+    if (programId !== undefined) where.programId = programId
+    if (universityId !== undefined) where.universityId = universityId
+
+    return await paginate({
+      Model: this.courseModel,
+      limit: limit,
+      after: after,
+      before: before,
+      primaryKeyField: 'id',
+      orderOption: [['id', 'ASC']],
+      where: where,
+    })
   }
 
   async getCourseDetails(id: string): Promise<CourseDetailsResponse> {
-    throw Error('Not ready')
+    const course = await this.courseModel.findOne({ where: { id: id } })
+
+    if (!course) {
+      throw Error('Not found')
+    }
+
+    return { data: course }
   }
 }

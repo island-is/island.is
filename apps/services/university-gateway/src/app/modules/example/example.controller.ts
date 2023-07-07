@@ -13,11 +13,11 @@ import { CreateApplicationDto } from './dto'
 import { UpdateApplicationDto } from './dto/updateApplicationDto'
 
 @ApiTags('Example endpoints for universities')
-@Controller({ path: 'example' })
+@Controller()
 export class ExampleController {
   constructor(private readonly exampleService: ExampleService) {}
 
-  @Get('active-programs')
+  @Get('example/active-programs')
   @ApiOkResponse({
     type: ExampleProgramResponse,
     description: 'Returns all active programs',
@@ -29,7 +29,7 @@ export class ExampleController {
     throw Error('Dummy endpoint')
   }
 
-  @Get('applications/:id')
+  @Get('example/applications/:id')
   @ApiParam({
     name: 'id',
     required: true,
@@ -47,7 +47,7 @@ export class ExampleController {
     throw Error('Dummy endpoint')
   }
 
-  @Post('applications')
+  @Post('example/applications')
   @ApiBody({
     type: CreateApplicationDto,
   })
@@ -64,7 +64,7 @@ export class ExampleController {
     throw Error('Dummy endpoint')
   }
 
-  @Patch('applications/:id')
+  @Patch('example/applications/:id')
   @ApiParam({
     name: 'id',
     required: true,
@@ -87,5 +87,17 @@ export class ExampleController {
     @Body() applicationDto: UpdateApplicationDto,
   ): Promise<string> {
     throw Error('Dummy endpoint')
+  }
+
+  @Get('example/trigger-worker')
+  @ApiOkResponse({
+    type: String,
+    description: 'TEST',
+  })
+  @ApiOperation({
+    summary: 'TEST - Used to trigger fake worker',
+  })
+  async triggerWorker(): Promise<string> {
+    return this.exampleService.triggerWorker()
   }
 }

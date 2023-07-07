@@ -3,7 +3,7 @@ import { Application, ApplicationResponse } from './model'
 import { UgReykjavikUniversityClient } from '@island.is/clients/university-gateway/reykjavik-university'
 import { CreateApplicationDto, UpdateApplicationDto } from './dto'
 
-// TODOx connect to ReykjavikUniversityClient and UniversityOfIcelandClient
+// TODOx connect to university APIs when they are ready
 
 @Injectable()
 export class ApplicationService {

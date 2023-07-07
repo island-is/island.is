@@ -10,12 +10,12 @@ import {
   UpdatedAt,
 } from 'sequelize-typescript'
 import { DegreeType, Season } from '../types'
-import { PageInfo } from './pageInfo'
-import { Course } from '../../course/model'
 import { ProgramExtraApplicationField } from './programExtraApplicationField'
 import { ProgramTag } from './programTag'
 import { ProgramModeOfDelivery } from './programModeOfDelivery'
 import { University } from '../../university/model'
+import { ProgramCourse } from './programCourse'
+import { PageInfo } from '@island.is/nest/pagination'
 
 @Table({
   tableName: 'program',
@@ -333,10 +333,10 @@ export class Program extends Model {
 
   @ApiProperty({
     description: 'List of courses that belong to this program',
-    type: [Course],
+    type: [ProgramCourse],
   })
-  @HasMany(() => Course)
-  courses!: Course[]
+  @HasMany(() => ProgramCourse)
+  courses!: ProgramCourse[]
 
   @ApiProperty({
     description:
@@ -359,7 +359,7 @@ export class Program extends Model {
     type: [ProgramExtraApplicationField],
   })
   @HasMany(() => ProgramExtraApplicationField)
-  extraApplicationFields?: [ProgramExtraApplicationField]
+  extraApplicationField?: [ProgramExtraApplicationField]
 
   @ApiProperty({
     type: String,
@@ -383,13 +383,11 @@ export class ProgramResponse {
 
   @ApiProperty({
     description: 'Page information (for pagination)',
-    type: PageInfo,
   })
   pageInfo!: PageInfo
 
   @ApiProperty({
     description: 'Total number of items in result (for pagination)',
-    example: 25,
   })
   totalCount!: number
 }

@@ -14,19 +14,17 @@ import {
   ProgramTag,
   Tag,
 } from './model'
-import { University } from '../university/model'
 import { Course } from '../course/model'
 
 @Module({
   imports: [
     SequelizeModule.forFeature([
-      University,
       Course,
       Tag,
+      Program,
       ProgramTag,
       ProgramModeOfDelivery,
       ProgramExtraApplicationField,
-      Program,
     ]),
     UgReykjavikUniversityClientModule,
     ConfigModule.forRoot({
