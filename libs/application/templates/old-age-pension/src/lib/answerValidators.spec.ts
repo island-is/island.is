@@ -70,7 +70,7 @@ describe('answerValidators', () => {
 
   it('should return an error if selectedYear is more than 6 months ahead', () => {
     const newAnswers = {
-      year: addYears(today, 1).getFullYear().toString(),
+      year: addYears(today, 2).getFullYear().toString(),
       month: MONTHS[today.getMonth()],
     }
 
@@ -94,30 +94,300 @@ describe('answerValidators', () => {
     })
   })
 
-  it('should return an error if selectedMonth is more than 6 months ahead', () => {
-    const today = new Date()
-    const newDate = addMonths(today, 8)
-    const newAnswers = {
-      year: newDate.getFullYear().toString(),
-      month: MONTHS[newDate.getMonth()],
+  it('should return an error if missing employer email', () => {
+    const newAnswers = [
+      {
+        email: '',
+        phoneNumber: '',
+        ratioType: '',
+        ratioYearly: '',
+        ratioMonthlyAvg: '',
+        ratioMonth: {
+          March: '',
+          April: '',
+        },
+      },
+    ]
+
+    const newApplication = {
+      ...application,
+      answers: {
+        employment: {
+          status: 'employee',
+        },
+      },
     }
 
-    if (today.getFullYear() != newDate.getFullYear()) {
-      expect(answerValidators['period'](newAnswers, application)).toStrictEqual(
-        {
-          message: validatorErrorMessages.periodYear,
-          path: 'period.year',
-          values: undefined,
+    expect(
+      answerValidators['employers'](newAnswers, newApplication),
+    ).toStrictEqual({
+      message: validatorErrorMessages.employerEmailMissing,
+      path: 'employers[0].email',
+      values: undefined,
+    })
+  })
+
+  it('should return an error if missing employer rate', () => {
+    const newAnswers = [
+      {
+        email: 'fajefja@bs.is',
+        phoneNumber: '',
+        ratioType: '',
+        ratioYearly: '',
+        ratioMonthlyAvg: '',
+        ratioMonth: {
+          March: '',
+          April: '',
         },
-      )
-    } else {
-      expect(answerValidators['period'](newAnswers, application)).toStrictEqual(
-        {
-          message: validatorErrorMessages.periodMonth,
-          path: 'period.month',
-          values: undefined,
+      },
+    ]
+
+    const newApplication = {
+      ...application,
+      answers: {
+        employment: {
+          status: 'employee',
         },
-      )
+      },
     }
+
+    expect(
+      answerValidators['employers'](newAnswers, newApplication),
+    ).toStrictEqual({
+      message: validatorErrorMessages.employerRatioTypeMissing,
+      path: 'employers[0].ratioType',
+      values: undefined,
+    })
+  })
+
+  it('should return an error if phoneNumber is not GSM', () => {
+    const newAnswers = [
+      {
+        email: 'fajefja@bs.is',
+        phoneNumber: '5555555',
+        ratioType: 'yearly',
+        ratioYearly: '',
+        ratioMonthlyAvg: '',
+        ratioMonth: {
+          March: '',
+          April: '',
+        },
+      },
+    ]
+
+    const newApplication = {
+      ...application,
+      answers: {
+        employment: {
+          status: 'employee',
+        },
+      },
+    }
+
+    expect(
+      answerValidators['employers'](newAnswers, newApplication),
+    ).toStrictEqual({
+      message: validatorErrorMessages.employersPhoneNumberInvalid,
+      path: 'employers[0].phoneNumber',
+      values: undefined,
+    })
+  })
+
+  it('should return an error if missing ratioYearly', () => {
+    const newAnswers = [
+      {
+        email: 'fajefja@bs.is',
+        phoneNumber: '',
+        ratioType: 'yearly',
+        ratioYearly: '',
+        ratioMonthlyAvg: '',
+        ratioMonth: {
+          March: '',
+          April: '',
+        },
+      },
+    ]
+
+    const newApplication = {
+      ...application,
+      answers: {
+        employment: {
+          status: 'employee',
+        },
+      },
+    }
+
+    expect(
+      answerValidators['employers'](newAnswers, newApplication),
+    ).toStrictEqual({
+      message: validatorErrorMessages.employerRatioMissing,
+      path: 'employers[0].ratioYearly',
+      values: undefined,
+    })
+  })
+
+  it('should return an error if ratioYearly is more than 50', () => {
+    const newAnswers = [
+      {
+        email: 'fajefja@bs.is',
+        phoneNumber: '',
+        ratioType: 'yearly',
+        ratioYearly: '56',
+        ratioMonthlyAvg: '',
+        ratioMonth: {
+          March: '',
+          April: '',
+        },
+      },
+    ]
+
+    const newApplication = {
+      ...application,
+      answers: {
+        employment: {
+          status: 'employee',
+        },
+      },
+    }
+
+    expect(
+      answerValidators['employers'](newAnswers, newApplication),
+    ).toStrictEqual({
+      message: validatorErrorMessages.employersRatioMoreThan50,
+      path: 'employers[0].ratioYearly',
+      values: undefined,
+    })
+  })
+
+  it('should return an error if ratioYearly is less than 1', () => {
+    const newAnswers = [
+      {
+        email: 'fajefja@bs.is',
+        phoneNumber: '',
+        ratioType: 'yearly',
+        ratioYearly: '0',
+        ratioMonthlyAvg: '',
+        ratioMonth: {
+          March: '',
+          April: '',
+        },
+      },
+    ]
+
+    const newApplication = {
+      ...application,
+      answers: {
+        employment: {
+          status: 'employee',
+        },
+      },
+    }
+
+    expect(
+      answerValidators['employers'](newAnswers, newApplication),
+    ).toStrictEqual({
+      message: validatorErrorMessages.employersRatioLessThan0,
+      path: 'employers[0].ratioYearly',
+      values: undefined,
+    })
+  })
+
+  it('should return an error if missing ratioMonthlyAvg', () => {
+    const newAnswers = [
+      {
+        email: 'fajefja@bs.is',
+        phoneNumber: '',
+        ratioType: 'monthly',
+        ratioYearly: '',
+        ratioMonthlyAvg: '',
+        ratioMonth: {
+          March: '30',
+          April: '40',
+        },
+      },
+    ]
+
+    const newApplication = {
+      ...application,
+      answers: {
+        employment: {
+          status: 'employee',
+        },
+      },
+    }
+
+    expect(
+      answerValidators['employers'](newAnswers, newApplication),
+    ).toStrictEqual({
+      message: validatorErrorMessages.employerRatioMissing,
+      path: 'employers[0].ratioMonthlyAvg',
+      values: undefined,
+    })
+  })
+
+  it('should return an error if ratioMonthlyAvg is more than 50', () => {
+    const newAnswers = [
+      {
+        email: 'fajefja@bs.is',
+        phoneNumber: '',
+        ratioType: 'monthly',
+        ratioYearly: '56',
+        ratioMonthlyAvg: '67',
+        ratioMonth: {
+          March: '400',
+          April: '400',
+        },
+      },
+    ]
+
+    const newApplication = {
+      ...application,
+      answers: {
+        employment: {
+          status: 'employee',
+        },
+      },
+    }
+
+    expect(
+      answerValidators['employers'](newAnswers, newApplication),
+    ).toStrictEqual({
+      message: validatorErrorMessages.employersRatioMoreThan50,
+      path: 'employers[0].ratioMonthlyAvg',
+      values: undefined,
+    })
+  })
+
+  it('should return an error if ratioMonthlyAvg is less than 1', () => {
+    const newAnswers = [
+      {
+        email: 'fajefja@bs.is',
+        phoneNumber: '',
+        ratioType: 'monthly',
+        ratioYearly: '0',
+        ratioMonthlyAvg: '0',
+        ratioMonth: {
+          March: '',
+          April: '',
+        },
+      },
+    ]
+
+    const newApplication = {
+      ...application,
+      answers: {
+        employment: {
+          status: 'employee',
+        },
+      },
+    }
+
+    expect(
+      answerValidators['employers'](newAnswers, newApplication),
+    ).toStrictEqual({
+      message: validatorErrorMessages.employersRatioLessThan0,
+      path: 'employers[0].ratioMonthlyAvg',
+      values: undefined,
+    })
   })
 })

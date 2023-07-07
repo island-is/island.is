@@ -279,6 +279,11 @@ export const oldAgePensionFormMessage: MessageDir = {
       defaultMessage: 'Heimilisuppbót',
       description: 'Home allowance',
     },
+    halfHomeAllowance: {
+      id: 'oap.application:connected.applications.half.homeAllowance',
+      defaultMessage: 'Hálfan heimilisuppbót',
+      description: 'Half home allowance',
+    },
     childPension: {
       id: 'oap.application:connected.applications.childPension',
       defaultMessage: 'Barnalífeyri vegna ellilífeyris',
@@ -579,10 +584,10 @@ export const oldAgePensionFormMessage: MessageDir = {
       defaultMessage: 'Júlí',
       description: 'July',
     },
-    agust: {
-      id: 'oap.application:period.agust',
+    august: {
+      id: 'oap.application:period.august',
       defaultMessage: 'Ágúst',
-      description: 'Agust',
+      description: 'August',
     },
     september: {
       id: 'oap.application:period.september',
@@ -754,6 +759,23 @@ export const oldAgePensionFormMessage: MessageDir = {
         'Hér getur þú skilað staðfestingu á að þú sért með barn á framfærlsu. Vinsamlegast gerðu grein fyrir barninu og ykkar tenglsum í skjalinu. Athugaðu að skjalið þarf að vera á .pdf formi.',
       description: 'english translation',
     },
+    selfEmployedTitle: {
+      id: 'oap.application:fileUpload.selfEmployed.title',
+      defaultMessage: 'Fylgiskjöl reiknað endurgjald',
+      description: "Self-employed's attachment",
+    },
+    selfEmployedSubTitle: {
+      id: 'oap.application:fileUpload.selfEmployed.title',
+      defaultMessage: 'Fylgiskjöl endurgjald',
+      description: 'Self-employed attachment',
+    },
+    selfEmployedDescription: {
+      id: 'oap.application:fileUpload.selfEmployed.description',
+      defaultMessage:
+        'Hér getur þú skilað staðfestingu á lækkun á reiknuðu endurgjaldi (fæst hjá RSK). Athugaðu að skjalið þarf að vera á .pdf formi.',
+      description:
+        'Here you can submit confirmation of a reduction in the calculated remuneration (available from RSK). Note that the document must be in .pdf format.',
+    },
   }),
 
   comment: defineMessages({
@@ -779,6 +801,113 @@ export const oldAgePensionFormMessage: MessageDir = {
     },
   }),
 
+  employer: defineMessages({
+    employerTitle: {
+      id: 'oap.application:employer.employerTitle',
+      defaultMessage: 'Vinnuveitendur',
+      description: 'Employers',
+    },
+    employerDescription: {
+      id: 'oap.application:employer.employerDescription',
+      defaultMessage:
+        'Hver og einn skráður vinnuveitandi þarf að staðfesta starfshlutfall þitt. Þegar þú hefur sent umsóknina verður sendur tölvupóstur og sms til vinnuveitenda. Viðtakendur fá aðgang að umsókninni, en getur einungis séð upplýsingar sem varða starfshlutfall þitt. Ef einhver skráðra vinnuveitenda hafna þarft þú að gera viðeigandi breytingar á umsókninni.',
+      description:
+        'Each registered employer must verify your employment rate. Once you have submitted the application, an email and SMS will be sent to the employers. Recipients get access to the application, but can only see information related to your employment rate. If any of the registered employers reject you, you need to make the appropriate changes to the application.',
+    },
+    selfEmployedOrEmployeeTitle: {
+      id: 'oap.application:employer.selfEmployedOrEmployeeTitle',
+      defaultMessage: 'Sjálfstætt starfandi eða launþegi?',
+      description: 'Self-employed or employee?',
+    },
+    selfEmployedOrEmployeeDescription: {
+      id: 'oap.application:employer.selfEmployedOrEmployee.description',
+      defaultMessage:
+        'Ef þú ert sjálfstætt starfandi þarft þú að skila inn staðfestingu frá Skattinum á lækkun á reiknuðu endurgjaldi. Ef þú ert launþegi þarft þú að skrá þinn vinnuveitanda svo hann geti samþykkt starfshlutfallið þitt.',
+      description:
+        'If you are self-employed, you must submit confirmation from the Tax Office of a reduction in the calculated remuneration. If you are an employee, you need to register your employer so that they can approve your employment rate.',
+    },
+    selfEmployed: {
+      id: 'oap.application:employer.selfEmployed',
+      defaultMessage: 'Sjálfstætt starfandi',
+      description: 'Self-employed',
+    },
+    employee: {
+      id: 'oap.application:employer.employee',
+      defaultMessage: 'Launþegi',
+      description: 'Employee',
+    },
+    registrationTitle: {
+      id: 'oap.application:employer.registration.title',
+      defaultMessage: 'Skráning vinnuveitanda',
+      description: 'Register an employer',
+    },
+    email: {
+      id: 'oap.application:employer.email',
+      defaultMessage: 'Netfang vinnuveitanda (aðeins eitt netfang leyfilegt)',
+      description: 'Employer email (only one email address allowed)',
+    },
+    emailHeader: {
+      id: 'oap.application:employer.email.header',
+      defaultMessage: 'Netfang',
+      description: 'Email',
+    },
+    phoneNumber: {
+      id: 'oap.application:employer.phone.number',
+      defaultMessage: 'Símanúmer vinnuveitanda ( valfrjálst )',
+      description: "Employer's phone number ( optional )",
+    },
+    phoneNumberHeader: {
+      id: 'oap.application:employer.phone.number.header',
+      defaultMessage: 'Símanúmer',
+      description: 'Phone number',
+    },
+    ratio: {
+      id: 'oap.application:employer.ratio',
+      defaultMessage: 'Starfshlutfall',
+      description: 'Employment ratio',
+    },
+    ratioMonthly: {
+      id: 'oap.application:employer.ratio.monthly',
+      defaultMessage: 'Starfshlutfall á mánuði',
+      description: 'Employment ratio per month',
+    },
+    ratioYearly: {
+      id: 'oap.application:employer.ratio.yearly',
+      defaultMessage: 'Starfshlutfall á ári',
+      description: 'Employment ratio per year',
+    },
+    ratioHeader: {
+      id: 'oap.application:employer.ratio.header',
+      defaultMessage: 'Starfshlutfall',
+      description: 'Ratio',
+    },
+    addEmployerError: {
+      id: 'oap.application:employer.add.error',
+      defaultMessage: 'Nauðsynlegt er að bæta við amk einum vinnuveitanda',
+      description: 'It is required to add at least one employer',
+    },
+    addEmployer: {
+      id: 'oap.application:employer.add',
+      defaultMessage: 'Bæta við vinnuveitanda',
+      description: 'Add an employer',
+    },
+    approvedHeader: {
+      id: 'oap.application:employer.approved.header',
+      defaultMessage: 'Samþykkt',
+      description: 'Approved',
+    },
+    month: {
+      id: 'oap.application:employer.month',
+      defaultMessage: 'Mánuður',
+      description: 'Month',
+    },
+    monthlyAvgDescription: {
+      id: 'oap.application:employer.monthly.avg.description',
+      defaultMessage: 'Mánaðarskipting á ársgrundvelli',
+      description: 'Monthly distribution on an annual basis',
+    },
+  }),
+
   errors: defineMessages({
     phoneNumber: {
       id: 'oap.application:error.phonenumber',
@@ -794,6 +923,11 @@ export const oldAgePensionFormMessage: MessageDir = {
 }
 
 export const validatorErrorMessages = defineMessages({
+  requireAnswer: {
+    id: 'oap.application:fileUpload.required.answer',
+    defaultMessage: 'Ógilt gildi',
+    description: 'Invalid value',
+  },
   periodStartDateNeeded: {
     id: 'oap.application:period.startDate.Needed',
     defaultMessage: 'Finn ekki byrjunardagsetning.',
@@ -818,5 +952,40 @@ export const validatorErrorMessages = defineMessages({
     id: 'oap.application:fileUpload.required.attachment',
     defaultMessage: 'Þú þarft að hlaða upp viðhenginu til að halda áfram.',
     description: 'Error message when the attachment file is not provided.',
+  },
+  employerEmailMissing: {
+    id: 'oap.application:employer.email.missing',
+    defaultMessage: 'Netfang atvinnurekanda vantar',
+    description: 'Employer email missing',
+  },
+  employerRatioTypeMissing: {
+    id: 'oap.application:employer.ratioType.missing',
+    defaultMessage: 'Vinsamlegast veldu starfhlutfall',
+    description: 'Copy when ratioType is missing',
+  },
+  employersNotAList: {
+    id: 'oap.application:employers.employersNotAList',
+    defaultMessage: 'Svar þarf að vera listi af atvinnurekanda',
+    description: 'Copy when employers is not a list',
+  },
+  employersRatioMoreThan50: {
+    id: 'oap.application:employers.ratio.more.than.50',
+    defaultMessage: 'Starfhlutfall má ekki vera meira en 50%',
+    description: 'Employment rate must be less than or equal 50%',
+  },
+  employersRatioLessThan0: {
+    id: 'oap.application:employers.ratio.less.than.0',
+    defaultMessage: 'Starfhlutfall má ekki vera minni en 1%',
+    description: 'Employment rate must be more than 0%',
+  },
+  employerRatioMissing: {
+    id: 'oap.application:employer.ratio.missing',
+    defaultMessage: 'Starfhlutfall vantar',
+    description: 'Employer rate missing',
+  },
+  employersPhoneNumberInvalid: {
+    id: 'oap.application:employer.phoneNumber.invalid',
+    defaultMessage: 'Símanúmer verður að vera GSM númer',
+    description: 'Phone number must be a GSM number',
   },
 })

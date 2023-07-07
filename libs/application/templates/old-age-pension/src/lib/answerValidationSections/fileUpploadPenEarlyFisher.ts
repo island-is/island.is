@@ -14,7 +14,6 @@ import {
   earlyRetirementMaxAge,
   earlyRetirementMinAge,
   MONTHS,
-  YES,
 } from '../constants'
 import { buildError } from './utils'
 

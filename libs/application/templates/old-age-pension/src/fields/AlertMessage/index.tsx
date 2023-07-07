@@ -47,7 +47,7 @@ export const FieldAlertMessage: FC<FieldBaseProps & FieldAlertMessageProps> = ({
   )
 }
 
-export const PeriodWarningWithLink: FC<
+export const EarlyRetirementWarning: FC<
   FieldBaseProps & DescriptionLinkProps
 > = ({ application, field }) => {
   const { props, title } = field

@@ -11,7 +11,10 @@ import { useLocale } from '@island.is/localization'
 
 import { getApplicationAnswers } from '../../../lib/oldAgePensionUtils'
 import { oldAgePensionFormMessage } from '../../../lib/messages'
-import { ConnectedApplications as Apps } from '../../../lib/constants'
+import {
+  ApplicationType,
+  ConnectedApplications as Apps,
+} from '../../../lib/constants'
 
 export const ConnectedApplications = ({
   application,
@@ -19,7 +22,9 @@ export const ConnectedApplications = ({
   goToScreen,
 }: ReviewGroupProps) => {
   const { formatMessage } = useLocale()
-  const { connectedApplications } = getApplicationAnswers(application.answers)
+  const { connectedApplications, applicationType } = getApplicationAnswers(
+    application.answers,
+  )
 
   return (
     <>
@@ -43,10 +48,16 @@ export const ConnectedApplications = ({
                     <Bullet key={index}>
                       <Text>
                         {app === Apps.HOMEALLOWANCE
-                          ? formatMessage(
-                              oldAgePensionFormMessage.connectedApplications
-                                .homeAllowance,
-                            )
+                          ? applicationType ===
+                            ApplicationType.HALF_OLD_AGE_PENSION
+                            ? formatMessage(
+                                oldAgePensionFormMessage.connectedApplications
+                                  .halfHomeAllowance,
+                              )
+                            : formatMessage(
+                                oldAgePensionFormMessage.connectedApplications
+                                  .homeAllowance,
+                              )
                           : formatMessage(
                               oldAgePensionFormMessage.connectedApplications
                                 .childPension,

@@ -10,6 +10,8 @@ import {
   earlyRetirementMaxAge,
   NO,
   ApplicationType,
+  Employment,
+  RatioType,
 } from './constants'
 import {
   ApplicantChildCustodyInformation,
@@ -24,7 +26,7 @@ import * as kennitala from 'kennitala'
 import addYears from 'date-fns/addYears'
 import addMonths from 'date-fns/addMonths'
 import addDays from 'date-fns/addDays'
-import { ChildPensionRow, combinedResidenceHistory } from '../types'
+import { combinedResidenceHistory, Employer, ChildPensionRow } from '../types'
 import React from 'react'
 import { useLocale } from '@island.is/localization'
 import { getCountryByCode } from '@island.is/shared/utils'
@@ -43,6 +45,10 @@ interface earlyRetirementPensionfundFishermen {
 interface leaseAgreementSchoolConfirmation {
   leaseAgreement?: fileType[]
   schoolConfirmation?: fileType[]
+}
+
+interface selfEmployed {
+  selfEmployedAttachment?: fileType[]
 }
 
 interface childPensionAttachments {
@@ -97,10 +103,18 @@ export function getApplicationAnswers(answers: Application['answers']) {
     'homeAllowance.housing',
   ) as HomeAllowanceHousing
 
+  const employmentStatus = getValueViaPath(
+    answers,
+    'employment.status',
+  ) as Employment
+
   const homeAllowanceChildren = getValueViaPath(
     answers,
     'homeAllowance.children',
   ) as YesOrNo
+
+  const rawEmployers = getValueViaPath(answers, 'employers', []) as Employer[]
+  const employers = filterValidEmployers(rawEmployers)
 
   const childPension = getValueViaPath(
     answers,
@@ -121,6 +135,9 @@ export function getApplicationAnswers(answers: Application['answers']) {
     connectedApplications,
     homeAllowanceHousing,
     homeAllowanceChildren,
+    employmentStatus,
+    employers,
+    rawEmployers,
     childPension,
   }
 }
@@ -340,7 +357,7 @@ export function getAvailableMonths(
       case 'July':
         return { value: month, label: oldAgePensionFormMessage.period.july }
       case 'August':
-        return { value: month, label: oldAgePensionFormMessage.period.agust }
+        return { value: month, label: oldAgePensionFormMessage.period.august }
       case 'September':
         return {
           value: month,
@@ -415,6 +432,7 @@ export function getAttachments(application: Application) {
     homeAllowanceChildren,
     homeAllowanceHousing,
     connectedApplications,
+    employmentStatus,
   } = getApplicationAnswers(answers)
   const earlyRetirement = isEarlyRetirement(answers, externalData)
   const attachments: string[] = []
@@ -439,6 +457,15 @@ export function getAttachments(application: Application) {
   }
   if (homeAllowanceChildren === YES && isHomeAllowance) {
     getAttachmentsName(leaseAgrSchoolConf?.schoolConfirmation, 'skólavist')
+  }
+
+  // self-employed
+  if (employmentStatus === Employment.SELFEMPLOYED) {
+    const selfEmpoyed = answers.employment as selfEmployed
+    getAttachmentsName(
+      selfEmpoyed.selfEmployedAttachment,
+      'sjálfstætt starfandi',
+    )
   }
 
   // child pension attachments
@@ -604,4 +631,28 @@ export function childCustody_LivesWithApplicant(
   })
 
   return returnStatus
+}
+
+interface IncompleteEmployer {
+  email?: string
+  phoneNumber?: string
+  ratioType?: RatioType
+}
+
+export const filterValidEmployers = (
+  employers: (IncompleteEmployer | Employer)[],
+): Employer[] => {
+  const filtered = employers
+    .map((employer, index) => ({
+      ...employer,
+      rawIndex: index,
+    }))
+    .filter((employer) => {
+      const hasEmail = !!employer?.email
+      const hasRatioType = !!employer?.ratioType
+
+      return hasEmail && hasRatioType
+    })
+
+  return filtered as Employer[]
 }

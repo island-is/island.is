@@ -17,14 +17,7 @@ import {
 } from '@island.is/application/types'
 import { pruneAfterDays } from '@island.is/application/core'
 
-import {
-  ConnectedApplications,
-  Events,
-  HomeAllowanceHousing,
-  Roles,
-  States,
-  YES,
-} from './constants'
+import { ConnectedApplications, Events, Roles, States } from './constants'
 import { dataSchema } from './dataSchema'
 import { oldAgePensionFormMessage } from './messages'
 import { answerValidators } from './answerValidators'

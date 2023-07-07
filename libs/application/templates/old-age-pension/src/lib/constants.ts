@@ -8,6 +8,7 @@ export const earlyRetirementMaxAge = 66
 export const fishermenMinAge = 60
 export const fishermenMaxAge = 66
 export const IS = 'IS'
+export const employeeRatio = 50
 
 export const MONTHS = [
   'January',
@@ -55,6 +56,8 @@ export enum AnswerValidationConstants {
   FILEUPLOADPENEARLYFISHER = 'fileUploadEarlyPenFisher',
   FILEUPLOADHOMEALLOWANCE = 'fileUploadHomeAllowance',
   FILEUPLOADCHILDPENSION = 'fileUploadChildPension',
+  EMPLOYMENT = 'employment',
+  EMPLOYERS = 'employers',
 }
 
 export enum ApplicationType {
@@ -78,4 +81,14 @@ export const maritalStatuses: {
   '9': 'Óupplýst',
   '0': married,
   L: married,
+}
+
+export enum Employment {
+  SELFEMPLOYED = 'selfEmployed',
+  EMPLOYEE = 'employee',
+}
+
+export enum RatioType {
+  YEARLY = 'yearly',
+  MONTHLY = 'monthly',
 }

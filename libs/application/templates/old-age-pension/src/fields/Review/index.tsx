@@ -13,6 +13,9 @@ import { Comment } from './review-groups/Comment'
 import { Attachments } from './review-groups/Attachments'
 import { ResidenceHistory } from './review-groups/ResidenceHistory'
 import { ConnectedApplications } from './review-groups/ConnectedApplications'
+import { Employers } from './review-groups/employers'
+import { getApplicationAnswers } from '../../lib/oldAgePensionUtils'
+import { Employment } from '../../lib/constants'
 
 interface ReviewScreenProps {
   application: Application
@@ -30,6 +33,7 @@ export const Review: FC<ReviewScreenProps> = ({
 }) => {
   const editable = field.props?.editable ?? false
   const { formatMessage } = useLocale()
+  const { employmentStatus } = getApplicationAnswers(application.answers)
 
   const hasError = (id: string) => get(errors, id) as string
 
@@ -47,7 +51,6 @@ export const Review: FC<ReviewScreenProps> = ({
   return (
     <>
       <Box>
-        {/* <PrintButton /> */}
         <Box marginBottom={2}>
           <Text variant="h2">
             {formatMessage(oldAgePensionFormMessage.review.confirmSectionTitle)}
@@ -63,6 +66,9 @@ export const Review: FC<ReviewScreenProps> = ({
       </Box>
       <BaseInformation {...childProps} />
       <ResidenceHistory {...childProps} />
+      {employmentStatus === Employment.EMPLOYEE && (
+        <Employers {...childProps} />
+      )}
       <Period {...childProps} />
       <Fishermen {...childProps} />
       <ConnectedApplications {...childProps} />

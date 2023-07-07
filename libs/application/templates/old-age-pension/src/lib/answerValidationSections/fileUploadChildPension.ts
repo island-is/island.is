@@ -6,13 +6,8 @@ import { validatorErrorMessages } from '../messages'
 import {
   childCustody_LivesWithApplicant,
   getApplicationAnswers,
-  getApplicationExternalData,
 } from '../oldAgePensionUtils'
-import {
-  AnswerValidationConstants,
-  HomeAllowanceHousing,
-  YES,
-} from '../constants'
+import { AnswerValidationConstants } from '../constants'
 import { buildError } from './utils'
 
 export const fileUploadChildPension = (
