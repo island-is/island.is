@@ -113,23 +113,15 @@ module.exports = {
         'samfelag_og_stjornmal',
         'efnahagur_log_og_rekstur',
         'kennsla_sidfraedi_og_mannleg_hegdun',
+        'fjolmidlar_upplysingataekni_og_midlun',
+        'saga_menning_listir_og_tru',
         'tungumal_og_malvisindi',
         'liftaekni_og_lyf',
-        '',
+        'heilsa_likama_og_lidan',
+        'verkfraedi_raunvisindi_taekni_og_tolur',
+        'honnun_listir_og_menning',
+        'landbunadur_og_sjavarutvegur',
       ],
     })
   },
 }
-
-//Lífríki, umhverfi og auðlindir
-//Samfélag og stjórnmál
-//Efnahagur, lög og rekstur
-//Kennsla, siðfræði og mannleg hegðun
-//Fjölmiðlar, upplýsingatækni og miðlun
-//Saga, menning, listir og trú
-//Tungumál og málvísindi
-//Líftækni og lyf
-//Heilsa, líkami og líðan
-//Verkfræði, raunvísindi, tækni og tölur
-//Hönnun, listir og menning
-//Landbúnaður og sjávarútvegur
