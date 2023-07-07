@@ -318,6 +318,9 @@ export class Patent {
   registeredDate?: Date
 
   @Field(() => Date, { nullable: true })
+  maxValidObjectionDate?: Date
+
+  @Field(() => Date, { nullable: true })
   epDatePublication?: Date
 
   @Field(() => Date, { nullable: true })

@@ -19,6 +19,32 @@ const IntellectualPropertiesOverview = () => {
 
   const { loading, data, error } = useGetPatentsQuery({})
 
+  const generateActionCard = (
+    index: number,
+    heading?: string | null,
+    ipId?: string | null,
+    description?: string | null,
+    url?: string | null,
+    tag?: string | null,
+  ) => (
+    <Box marginBottom={3} key={index}>
+      <ActionCard
+        text={`${ipId}${description ? ' - ' + description : ''}`}
+        heading={heading ?? ''}
+        cta={{
+          label: formatMessage(m.view),
+          variant: 'text',
+          url: url ?? '',
+        }}
+        tag={{
+          variant: 'blue',
+          outlined: false,
+          label: tag ?? '',
+        }}
+      />
+    </Box>
+  )
+
   if (error && !loading) {
     return (
       <ErrorScreen
@@ -33,6 +59,8 @@ const IntellectualPropertiesOverview = () => {
     )
   }
 
+  console.log(JSON.stringify(data?.intellectualProperties?.trademarks))
+
   return (
     <Box marginBottom={[6, 6, 10]}>
       <IntroHeader
@@ -46,7 +74,7 @@ const IntellectualPropertiesOverview = () => {
         </Box>
       )}
 
-      {!loading && !data?.intellectualPropertyPatentCollection?.length && (
+      {!loading && !data?.intellectualProperties?.patents?.length && (
         <Box width="full" marginTop={4} display="flex" justifyContent="center">
           <Box marginTop={8}>
             <EmptyState />
@@ -56,31 +84,51 @@ const IntellectualPropertiesOverview = () => {
 
       {!loading &&
         !error &&
-        data?.intellectualPropertyPatentCollection?.map((ip, index) => {
-          return (
-            <Box marginBottom={3} key={index}>
-              <ActionCard
-                text={`${ip.applicationNumber ?? ''} - SOME CATEGORY`}
-                heading={ip.patentName || 'TEMP HEADING'}
-                cta={{
-                  label: formatMessage(m.view),
-                  variant: 'text',
-                  url: ip.applicationNumber
-                    ? ServicePortalPath.AssetsIntellectualPropertiesDetail.replace(
-                        ':id',
-                        ip.applicationNumber,
-                      )
-                    : undefined,
-                }}
-                tag={{
-                  variant: 'blue',
-                  outlined: false,
-                  label: ip.statusText ?? '',
-                }}
-              />
-            </Box>
-          )
-        })}
+        data?.intellectualProperties?.trademarks?.map((ip, index) =>
+          generateActionCard(
+            index,
+            ip.text,
+            ip.vmId,
+            ip.type,
+            ServicePortalPath.AssetsIntellectualPropertiesDetail.replace(
+              ':id',
+              ip.vmId ?? '',
+            ),
+            ip.status,
+          ),
+        )}
+      {!loading &&
+        !error &&
+        data?.intellectualProperties?.designs?.map((ip, index) =>
+          generateActionCard(
+            index,
+            ip.specification,
+            ip.hid,
+            undefined,
+            ip.hid
+              ? ServicePortalPath.AssetsIntellectualPropertiesDetail.replace(
+                  ':id',
+                  ip.hid,
+                )
+              : '',
+            ip.status,
+          ),
+        )}
+      {!loading &&
+        !error &&
+        data?.intellectualProperties?.patents?.map((ip, index) =>
+          generateActionCard(
+            index,
+            ip.patentName || 'TEMP NAME',
+            ip.applicationNumber,
+            undefined,
+            ServicePortalPath.AssetsIntellectualPropertiesDetail.replace(
+              ':id',
+              ip.applicationNumber ?? '',
+            ),
+            ip.statusText,
+          ),
+        )}
     </Box>
   )
 }

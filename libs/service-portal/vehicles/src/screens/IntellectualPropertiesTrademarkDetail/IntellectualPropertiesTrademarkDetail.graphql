@@ -1,0 +1,27 @@
+query getIntellectualPropertyTrademarkById($input: IntellectualPropertyInput!) {
+  intellectualPropertyTrademark(input: $input) {
+    vmId
+    text
+    type
+    subType
+    status
+    canRenew
+    applicationDate
+    datePublished
+    dateRegistration
+    imageCategories
+    isColorMark
+    markOwners {
+      name
+      address
+    }
+    markAgent {
+      name
+      address
+    }
+    markCategories {
+      categoryNumber
+      categoryDescription
+    }
+  }
+}

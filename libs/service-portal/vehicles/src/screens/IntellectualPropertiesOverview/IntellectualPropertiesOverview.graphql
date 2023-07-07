@@ -1,10 +1,25 @@
 query GetPatents {
-  intellectualPropertyPatentCollection {
-    applicationNumber
-    registrationNumber
-    patentName
-    patentNameInOrgLanguage
-    statusText
-    applicationDate
+  intellectualProperties {
+    patents {
+      applicationNumber
+      registrationNumber
+      patentName
+      patentNameInOrgLanguage
+      statusText
+      applicationDate
+    }
+    trademarks {
+      text
+      type
+      status
+      applicationDate
+      vmId
+    }
+    designs {
+      applicationNumber
+      hId
+      status
+      specification
+    }
   }
 }

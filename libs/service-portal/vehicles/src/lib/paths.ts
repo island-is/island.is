@@ -8,5 +8,4 @@ export enum VehiclePaths {
   AssetsWorkMachines = '/okutaeki/vinnuvelar',
   AssetsWorkMachinesDetail = '/okutaeki/vinnuvelar/:regNumber/:id',
   AssetsIntellectualPropertiesOverview = '/okutaeki/hugverkarettindi',
-  AssetsIntellectualPropertiesDetail = '/okutaeki/hugverkarettindi/:id',
 }

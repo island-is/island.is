@@ -10,11 +10,11 @@ import {
 import type { User } from '@island.is/auth-nest-tools'
 import { ApiScope } from '@island.is/auth/scopes'
 import { IntellectualPropertyService } from './intellectualProperty.service'
-import { Trademark } from './models/getTrademark.model'
-import { PatentCollectionEntry } from './models/getPatentCollection.model'
-import { Design } from './models/getDesign.model'
-import { GetPatentInput } from './dto/getPatent.input'
 import { Patent } from './models/getPatent.model'
+import { IntellectualProperties } from './models/getIntellectualProperties.model'
+import { Design } from './models/getDesign.model'
+import { GetIntellectualPropertyInput } from './dto/getPatent.input'
+import { Trademark } from './models/getTrademark.model'
 
 @Resolver()
 @UseGuards(IdsUserGuard, ScopesGuard)
@@ -23,23 +23,13 @@ export class IntellectualPropertyResolver {
   constructor(private readonly ipService: IntellectualPropertyService) {}
 
   @Scopes(ApiScope.internal)
-  @Query(() => [Trademark], {
-    name: 'intellectualPropertyTrademarks',
+  @Query(() => IntellectualProperties, {
+    name: 'intellectualProperties',
     nullable: true,
   })
   @Audit()
-  getIntellectualPropertyTrademarks(@CurrentUser() user: User) {
-    return this.ipService.getTrademarks(user)
-  }
-
-  @Scopes(ApiScope.internal)
-  @Query(() => [PatentCollectionEntry], {
-    name: 'intellectualPropertyPatentCollection',
-    nullable: true,
-  })
-  @Audit()
-  getIntellectualPropertyPatentCollection(@CurrentUser() user: User) {
-    return this.ipService.getPatents(user)
+  getIntellectualProperties(@CurrentUser() user: User) {
+    return this.ipService.getIntellectualProperties(user)
   }
 
   @Scopes(ApiScope.internal)
@@ -48,20 +38,36 @@ export class IntellectualPropertyResolver {
     nullable: true,
   })
   @Audit()
-  getIntellectualPropertyPatentByApplicationNumber(
-    @Args('input', { type: () => GetPatentInput })
-    input: GetPatentInput,
+  getIntellectualPropertyPatentById(
+    @Args('input', { type: () => GetIntellectualPropertyInput })
+    input: GetIntellectualPropertyInput,
   ) {
-    return this.ipService.getPatentByApplicationNumber(input.applicationId)
+    return this.ipService.getPatentByApplicationNumber(input.key)
   }
 
   @Scopes(ApiScope.internal)
-  @Query(() => [Design], {
-    name: 'intellectualPropertyDesigns',
+  @Query(() => Design, {
+    name: 'intellectualPropertyDesign',
     nullable: true,
   })
   @Audit()
-  getIntellectualPropertyDesigns(@CurrentUser() user: User) {
-    return this.ipService.getDesigns(user)
+  getIntellectualPropertyDesignById(
+    @Args('input', { type: () => GetIntellectualPropertyInput })
+    input: GetIntellectualPropertyInput,
+  ) {
+    return this.ipService.getDesignByHID(input.key)
+  }
+
+  @Scopes(ApiScope.internal)
+  @Query(() => Trademark, {
+    name: 'intellectualPropertyTrademark',
+    nullable: true,
+  })
+  @Audit()
+  getIntellectualPropertyTrademarkById(
+    @Args('input', { type: () => GetIntellectualPropertyInput })
+    input: GetIntellectualPropertyInput,
+  ) {
+    return this.ipService.getTrademarkByVmId(input.key)
   }
 }
