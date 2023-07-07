@@ -760,17 +760,17 @@ export const oldAgePensionFormMessage: MessageDir = {
       description: 'english translation',
     },
     selfEmployedTitle: {
-      id: 'pl.application:fileUpload.selfEmployed.title',
+      id: 'oap.application:fileUpload.selfEmployed.title',
       defaultMessage: 'Fylgiskjöl reiknað endurgjald',
       description: "Self-employed's attachment",
     },
     selfEmployedSubTitle: {
-      id: 'pl.application:fileUpload.selfEmployed.title',
+      id: 'oap.application:fileUpload.selfEmployed.title',
       defaultMessage: 'Fylgiskjöl endurgjald',
       description: 'Self-employed attachment',
     },
     selfEmployedDescription: {
-      id: 'pl.application:fileUpload.selfEmployed.description',
+      id: 'oap.application:fileUpload.selfEmployed.description',
       defaultMessage:
         'Hér getur þú skilað staðfestingu á lækkun á reiknuðu endurgjaldi (fæst hjá RSK). Athugaðu að skjalið þarf að vera á .pdf formi.',
       description:
@@ -924,7 +924,7 @@ export const oldAgePensionFormMessage: MessageDir = {
 
 export const validatorErrorMessages = defineMessages({
   requireAnswer: {
-    id: 'pl.application:fileUpload.required.answer',
+    id: 'oap.application:fileUpload.required.answer',
     defaultMessage: 'Ógilt gildi',
     description: 'Invalid value',
   },
