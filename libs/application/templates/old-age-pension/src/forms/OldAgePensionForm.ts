@@ -289,6 +289,10 @@ export const OldAgePensionForm: Form = buildForm({
         buildSubSection({
           id: 'employment',
           title: oldAgePensionFormMessage.employer.employerTitle,
+          condition: (answers) => {
+            const { applicationType } = getApplicationAnswers(answers)
+            return applicationType === ApplicationType.HALF_OLD_AGE_PENSION
+          },
           children: [
             buildRadioField({
               id: 'employment.status',

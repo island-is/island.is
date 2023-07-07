@@ -101,9 +101,7 @@ export const PrerequisitesForm: Form = buildForm({
               options: [
                 {
                   value: ApplicationType.OLD_AGE_PENSION,
-                  label:
-                    oldAgePensionFormMessage.shared
-                      .applicationTitle,
+                  label: oldAgePensionFormMessage.shared.applicationTitle,
                   subLabel:
                     oldAgePensionFormMessage.pre
                       .retirementPensionApplicationDescription,
