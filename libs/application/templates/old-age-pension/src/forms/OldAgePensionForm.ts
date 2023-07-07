@@ -308,6 +308,7 @@ export const OldAgePensionForm: Form = buildForm({
                 },
               ],
               width: 'half',
+              defaultValue: Employment.EMPLOYEE,
               largeButtons: true,
             }),
             buildFileUploadField({
