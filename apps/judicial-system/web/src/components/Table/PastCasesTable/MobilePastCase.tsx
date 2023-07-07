@@ -63,14 +63,16 @@ const MobilePastCase: React.FC<Props> = ({
           )}
         </>
       )}
-      <br />
       {theCase.created && (
-        <Text variant="small" fontWeight={'medium'}>
-          {`${formatMessage(tables.created)} ${format(
-            parseISO(theCase.created),
-            'd.M.y',
-          )}`}
-        </Text>
+        <>
+          <br />
+          <Text variant="small" fontWeight={'medium'}>
+            {`${formatMessage(tables.created)} ${format(
+              parseISO(theCase.created),
+              'd.M.y',
+            )}`}
+          </Text>
+        </>
       )}
       <Box marginTop={1}>{children}</Box>
     </CategoryCard>

@@ -14,6 +14,7 @@ import { displayCaseType } from './utils'
 import * as styles from './MobileCase.css'
 import format from 'date-fns/format'
 import parseISO from 'date-fns/parseISO'
+import { tables } from '@island.is/judicial-system-web/messages'
 
 interface CategoryCardProps {
   heading: string | React.ReactNode
@@ -95,12 +96,15 @@ const MobileCase: React.FC<Props> = ({
         </>
       )}
       {theCase.created && (
-        <Text variant="small" fontWeight={'medium'}>
-          {`${formatMessage(m.activeRequests.table.headers.created)} ${format(
-            parseISO(theCase.created),
-            'd.M.y',
-          )}`}
-        </Text>
+        <>
+          <br />
+          <Text variant="small" fontWeight={'medium'}>
+            {`${formatMessage(tables.created)} ${format(
+              parseISO(theCase.created),
+              'd.M.y',
+            )}`}
+          </Text>
+        </>
       )}
       <Box marginTop={1}>{children}</Box>
     </CategoryCard>
