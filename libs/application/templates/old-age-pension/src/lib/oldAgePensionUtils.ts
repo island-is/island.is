@@ -357,7 +357,7 @@ export function getAvailableMonths(
       case 'July':
         return { value: month, label: oldAgePensionFormMessage.period.july }
       case 'August':
-        return { value: month, label: oldAgePensionFormMessage.period.agust }
+        return { value: month, label: oldAgePensionFormMessage.period.august }
       case 'September':
         return {
           value: month,

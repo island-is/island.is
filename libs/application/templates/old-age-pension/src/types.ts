@@ -14,7 +14,7 @@ type monthObject = {
   May?: string
   June?: string
   July?: string
-  Agust?: string
+  August?: string
   September?: string
   October?: string
   November?: string
