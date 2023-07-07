@@ -83,7 +83,6 @@ const PastCasesTable: React.FC<Props> = (props) => {
                 theCase.courtEndTime,
               )}
             />
-            <CreatedDate created={theCase.created} />
           </MobilePastCase>
         </Box>
       ))}
