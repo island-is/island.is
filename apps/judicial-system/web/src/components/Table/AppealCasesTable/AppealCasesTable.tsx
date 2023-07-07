@@ -21,7 +21,6 @@ import { TagAppealState } from '@island.is/judicial-system-web/src/components'
 import {
   ColumnCaseType,
   CourtCaseNumber,
-  CreatedDate,
   DefendantInfo,
   SortButton,
   TableContainer,

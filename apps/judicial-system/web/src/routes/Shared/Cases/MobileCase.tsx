@@ -12,6 +12,8 @@ import TagCaseState from '@island.is/judicial-system-web/src/components/TagCaseS
 
 import { displayCaseType } from './utils'
 import * as styles from './MobileCase.css'
+import format from 'date-fns/format'
+import parseISO from 'date-fns/parseISO'
 
 interface CategoryCardProps {
   heading: string | React.ReactNode
@@ -91,6 +93,14 @@ const MobileCase: React.FC<Props> = ({
             <Text>{`+ ${theCase.defendants.length - 1}`}</Text>
           )}
         </>
+      )}
+      {theCase.created && (
+        <Text variant="small" fontWeight={'medium'}>
+          {`${formatMessage(m.activeRequests.table.headers.created)} ${format(
+            parseISO(theCase.created),
+            'd.M.y',
+          )}`}
+        </Text>
       )}
       <Box marginTop={1}>{children}</Box>
     </CategoryCard>

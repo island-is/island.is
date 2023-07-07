@@ -144,13 +144,6 @@ const ActiveCases: React.FC<Props> = (props) => {
                 )}`}
               </Text>
             )}
-            {theCase.created && (
-              <Text variant="small" fontWeight={'medium'}>
-                {`${formatMessage(
-                  m.activeRequests.table.headers.created,
-                )} ${format(parseISO(theCase.created), 'd.M.y')}`}
-              </Text>
-            )}
           </MobileCase>
         </Box>
       ))}

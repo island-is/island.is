@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react'
 import { CaseListEntry } from '@island.is/judicial-system/types'
+import { sortableTableColumn } from '@island.is/judicial-system-web/src/types'
 
 const useSortCases = (
   defaultColumn: string,
@@ -28,7 +29,7 @@ const useSortCases = (
     return sortConfig.column === column ? sortConfig.direction : undefined
   }
 
-  const isActiveColumn = (column: string) => {
+  const isActiveColumn = (column: sortableTableColumn) => {
     if (!sortConfig) {
       return false
     }
