@@ -108,6 +108,20 @@
         "cwd": "apps/services/university-gateway/"
       }
     },
+    "seed": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "../../../node_modules/.bin/sequelize-cli db:seed:all",
+        "cwd": "apps/services/university-gateway/"
+      }
+    },
+    "seed/undo": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "../../../node_modules/.bin/sequelize-cli db:seed:undo",
+        "cwd": "apps/services/university-gateway/"
+      }
+    },
     "dev-init": {
       "executor": "@nrwl/workspace:run-commands",
       "options": {
