@@ -7,6 +7,12 @@ module.exports = {
         queryInterface.createTable(
           'program_extra_application_field',
           {
+            id: {
+              type: Sequelize.UUID,
+              primaryKey: true,
+              defaultValue: Sequelize.UUIDV4,
+              allowNull: false,
+            },
             program_id: {
               type: Sequelize.UUID,
               references: {
@@ -47,6 +53,14 @@ module.exports = {
             upload_accepted_file_type: {
               type: Sequelize.STRING,
               allowNull: true,
+            },
+            created: {
+              type: Sequelize.DATE,
+              allowNull: false,
+            },
+            modified: {
+              type: Sequelize.DATE,
+              allowNull: false,
             },
           },
           { transaction: t },

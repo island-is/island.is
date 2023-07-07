@@ -130,6 +130,14 @@ module.exports = {
               type: Sequelize.STRING,
               allowNull: true,
             },
+            created: {
+              type: Sequelize.DATE,
+              allowNull: false,
+            },
+            modified: {
+              type: Sequelize.DATE,
+              allowNull: false,
+            },
           },
           { transaction: t },
         ),

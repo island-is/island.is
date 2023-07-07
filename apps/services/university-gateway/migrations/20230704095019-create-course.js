@@ -25,10 +25,6 @@ module.exports = {
               type: Sequelize.STRING,
               allowNull: false,
             },
-            required: {
-              type: Sequelize.BOOLEAN,
-              allowNull: true,
-            },
             university_id: {
               type: Sequelize.UUID,
               references: {
@@ -64,6 +60,14 @@ module.exports = {
             external_url_en: {
               type: Sequelize.STRING,
               allowNull: true,
+            },
+            created: {
+              type: Sequelize.DATE,
+              allowNull: false,
+            },
+            modified: {
+              type: Sequelize.DATE,
+              allowNull: false,
             },
           },
           { transaction: t },

@@ -1,7 +1,17 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { Column, DataType, Model, Table } from 'sequelize-typescript'
+import {
+  Column,
+  CreatedAt,
+  DataType,
+  ForeignKey,
+  Model,
+  Table,
+  UpdatedAt,
+} from 'sequelize-typescript'
 import { ApplicationStatus } from '../types'
 import { ModeOfDelivery } from '../../program/types'
+import { Program } from '../../program/model'
+import { University } from '../../university/model'
 
 @Table({
   tableName: 'application',
@@ -37,6 +47,7 @@ export class Application extends Model {
     type: DataType.UUID,
     allowNull: false,
   })
+  @ForeignKey(() => University)
   universityId!: string
 
   @ApiProperty({
@@ -47,6 +58,7 @@ export class Application extends Model {
     type: DataType.UUID,
     allowNull: false,
   })
+  @ForeignKey(() => Program)
   programId!: string
 
   @ApiProperty({
@@ -72,6 +84,18 @@ export class Application extends Model {
     allowNull: false,
   })
   status!: ApplicationStatus
+
+  @ApiProperty({
+    type: String,
+  })
+  @CreatedAt
+  readonly created!: Date
+
+  @ApiProperty({
+    type: String,
+  })
+  @UpdatedAt
+  readonly modified!: Date
 }
 
 export class ApplicationResponse {

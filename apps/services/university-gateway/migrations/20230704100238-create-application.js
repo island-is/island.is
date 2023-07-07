@@ -52,6 +52,14 @@ module.exports = {
               ),
               allowNull: false,
             },
+            created: {
+              type: Sequelize.DATE,
+              allowNull: false,
+            },
+            modified: {
+              type: Sequelize.DATE,
+              allowNull: false,
+            },
           },
           { transaction: t },
         ),

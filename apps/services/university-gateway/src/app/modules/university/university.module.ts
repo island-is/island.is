@@ -1,18 +1,16 @@
 import { Module } from '@nestjs/common'
 import { UniversityController } from './university.controller'
 import { UniversityService } from './university.service'
-import {
-  UgReykjavikUniversityClientModule,
-  UgReykjavikUniversityClientConfig,
-} from '@island.is/clients/university-gateway/reykjavik-university'
 import { ConfigModule } from '@nestjs/config'
+import { University } from './model'
+import { SequelizeModule } from '@nestjs/sequelize'
 
 @Module({
   imports: [
-    UgReykjavikUniversityClientModule,
+    SequelizeModule.forFeature([University]),
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [UgReykjavikUniversityClientConfig],
+      load: [],
     }),
   ],
   controllers: [UniversityController],

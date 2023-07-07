@@ -3,13 +3,15 @@ import {
   Column,
   CreatedAt,
   DataType,
-  HasMany,
+  ForeignKey,
   Model,
   Table,
   UpdatedAt,
 } from 'sequelize-typescript'
 import { Season } from '../../program/types'
 import { PageInfo } from '../../program/model/pageInfo'
+import { Program } from '../../program/model'
+import { University } from '../../university/model'
 
 @Table({
   tableName: 'course',
@@ -26,6 +28,17 @@ export class Course extends Model {
     allowNull: false,
   })
   id!: string
+
+  @ApiProperty({
+    description: 'Program ID',
+    example: '00000000-0000-0000-0000-000000000000',
+  })
+  @Column({
+    type: DataType.UUID,
+    allowNull: false,
+  })
+  @ForeignKey(() => Program)
+  programId!: string
 
   @ApiProperty({
     description: 'External ID for the course (from University)',
@@ -58,16 +71,6 @@ export class Course extends Model {
   nameEn!: string
 
   @ApiProperty({
-    description: 'Whether the course is required to take within the program',
-    example: true,
-  })
-  @Column({
-    type: DataType.BOOLEAN,
-    allowNull: true,
-  })
-  required!: boolean
-
-  @ApiProperty({
     description: 'University ID',
     example: '00000000-0000-0000-0000-000000000000',
   })
@@ -75,6 +78,7 @@ export class Course extends Model {
     type: DataType.UUID,
     allowNull: false,
   })
+  @ForeignKey(() => University)
   universityId!: string
 
   @ApiProperty({
@@ -156,9 +160,19 @@ export class Course extends Model {
     allowNull: true,
   })
   externalUrlEn?: string
-}
 
-export class CourseDetails extends Course {}
+  @ApiProperty({
+    type: String,
+  })
+  @CreatedAt
+  readonly created!: Date
+
+  @ApiProperty({
+    type: String,
+  })
+  @UpdatedAt
+  readonly modified!: Date
+}
 
 export class CourseResponse {
   @ApiProperty({
@@ -183,7 +197,7 @@ export class CourseResponse {
 export class CourseDetailsResponse {
   @ApiProperty({
     description: 'Course data',
-    type: CourseDetails,
+    type: Course,
   })
-  data!: CourseDetails
+  data!: Course
 }

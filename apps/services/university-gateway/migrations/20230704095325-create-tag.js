@@ -13,12 +13,25 @@ module.exports = {
               defaultValue: Sequelize.UUIDV4,
               allowNull: false,
             },
+            //TODOx unique key constraint for code
             code: {
               type: Sequelize.STRING,
               allowNull: false,
             },
-            contentful_key: {
+            name_is: {
               type: Sequelize.STRING,
+              allowNull: false,
+            },
+            name_en: {
+              type: Sequelize.STRING,
+              allowNull: false,
+            },
+            created: {
+              type: Sequelize.DATE,
+              allowNull: false,
+            },
+            modified: {
+              type: Sequelize.DATE,
               allowNull: false,
             },
           },

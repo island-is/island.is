@@ -9,6 +9,7 @@ import {
 } from '@nestjs/swagger'
 import { ProgramDetailsResponse, ProgramResponse } from './model'
 import { DegreeType, Season } from './types'
+import { TagResponse } from './model/tag'
 
 @ApiTags('Program')
 @Controller({ path: 'programs' })
@@ -85,11 +86,11 @@ export class ProgramController {
     @Query('limit') limit: number,
     @Query('before') before: string,
     @Query('after') after: string,
-    @Query('active') active: boolean,
-    @Query('year') year: number,
-    @Query('season') season: Season,
-    @Query('universityId') universityId: string,
-    @Query('degreeType') degreeType: DegreeType,
+    @Query('active') active?: boolean,
+    @Query('year') year?: number,
+    @Query('season') season?: Season,
+    @Query('universityId') universityId?: string,
+    @Query('degreeType') degreeType?: DegreeType,
   ): Promise<ProgramResponse> {
     return this.programService.getPrograms(
       { after, before, limit },
@@ -119,5 +120,17 @@ export class ProgramController {
     @Param('id') id: string,
   ): Promise<ProgramDetailsResponse> {
     return this.programService.getProgramDetails(id)
+  }
+
+  @Get()
+  @ApiOkResponse({
+    type: TagResponse,
+    description: 'Returns all tags',
+  })
+  @ApiOperation({
+    summary: 'Get all tags',
+  })
+  async getTags(): Promise<TagResponse> {
+    return this.programService.getTags()
   }
 }

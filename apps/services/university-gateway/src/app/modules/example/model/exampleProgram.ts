@@ -154,19 +154,6 @@ export class ExampleProgram {
   searchKeywords!: string[]
 
   @ApiProperty({
-    description: 'Modes of deliveries available for the program',
-    type: [ExampleProgramModeOfDelivery],
-  })
-  modeOfDelivery!: [ExampleProgramModeOfDelivery]
-
-  @ApiProperty({
-    description:
-      'List of (interest) tags connected to this program (to be able to categorize programs after interest)',
-    type: [ExampleProgramTag],
-  })
-  tag?: [ExampleProgramTag]
-
-  @ApiProperty({
     description: 'Admission requirements for program (Icelandic)',
     example: 'Nemandinn verður að hafa klárað stúdentspróf',
   })
@@ -213,6 +200,19 @@ export class ExampleProgram {
     type: [ExampleCourse],
   })
   courses!: ExampleCourse[]
+
+  @ApiProperty({
+    description: 'Modes of deliveries available for the program',
+    type: [ExampleProgramModeOfDelivery],
+  })
+  modeOfDelivery!: [ExampleProgramModeOfDelivery]
+
+  @ApiProperty({
+    description:
+      'List of (interest) tags connected to this program (to be able to categorize programs after interest)',
+    type: [ExampleProgramTag],
+  })
+  tag?: [ExampleProgramTag]
 
   @ApiProperty({
     description:

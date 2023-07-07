@@ -1,6 +1,20 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
+import { ApiProperty } from '@nestjs/swagger'
 
 export class ExampleProgramTag {
+  @ApiProperty({
+    description: 'Program ID',
+    example: '00000000-0000-0000-0000-000000000000',
+  })
+  programId!: string
+
+  @ApiProperty({
+    description: 'Tag ID',
+    example: '00000000-0000-0000-0000-000000000000',
+  })
+  tagId!: string
+}
+
+export class ExampleTag {
   @ApiProperty({
     description: 'Tag ID',
     example: '00000000-0000-0000-0000-000000000000',
@@ -14,8 +28,14 @@ export class ExampleProgramTag {
   code!: string
 
   @ApiProperty({
-    description: 'Contentful key for tag',
-    example: 'engineer',
+    description: 'Tag name (Icelandic)',
+    example: 'Verkfræði',
   })
-  contentfulKey!: string
+  nameIs!: string
+
+  @ApiProperty({
+    description: 'Tag name (English)',
+    example: 'Engineer',
+  })
+  nameEn!: string
 }

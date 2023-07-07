@@ -1,5 +1,14 @@
-import { Column, DataType, Model, Table, UpdatedAt } from 'sequelize-typescript'
+import {
+  Column,
+  CreatedAt,
+  DataType,
+  ForeignKey,
+  Model,
+  Table,
+  UpdatedAt,
+} from 'sequelize-typescript'
 import { ApplicationStatus } from '../types'
+import { Application } from './application'
 
 @Table({
   tableName: 'application_status_history',
@@ -17,6 +26,7 @@ export class ApplicationStatusHistory extends Model {
     type: DataType.UUID,
     allowNull: false,
   })
+  @ForeignKey(() => Application)
   applicationId!: string
 
   @Column({
@@ -32,6 +42,9 @@ export class ApplicationStatusHistory extends Model {
     allowNull: false,
   })
   newStatus!: ApplicationStatus
+
+  @CreatedAt
+  readonly created!: Date
 
   @UpdatedAt
   readonly modified!: Date

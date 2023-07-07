@@ -1,5 +1,12 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
-import { Column, DataType, Model, Table } from 'sequelize-typescript'
+import { ApiProperty } from '@nestjs/swagger'
+import {
+  Column,
+  CreatedAt,
+  DataType,
+  Model,
+  Table,
+  UpdatedAt,
+} from 'sequelize-typescript'
 
 @Table({
   tableName: 'university',
@@ -36,6 +43,18 @@ export class University extends Model {
     allowNull: false,
   })
   contentfulKey!: string
+
+  @ApiProperty({
+    type: String,
+  })
+  @CreatedAt
+  readonly created!: Date
+
+  @ApiProperty({
+    type: String,
+  })
+  @UpdatedAt
+  readonly modified!: Date
 }
 
 export class UniversityResponse {

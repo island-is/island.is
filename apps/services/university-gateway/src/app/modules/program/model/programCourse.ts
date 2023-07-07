@@ -8,13 +8,15 @@ import {
   Table,
   UpdatedAt,
 } from 'sequelize-typescript'
+import { Course } from '../../course/model'
+import { Requirement } from '../../course/types'
 import { Program } from './program'
 import { Tag } from './tag'
 
 @Table({
-  tableName: 'program_tag',
+  tableName: 'program_course',
 })
-export class ProgramTag extends Model {
+export class ProgramCourse extends Model {
   @ApiProperty({
     description: 'Program tag ID',
     example: '00000000-0000-0000-0000-000000000000',
@@ -39,15 +41,27 @@ export class ProgramTag extends Model {
   programId!: string
 
   @ApiProperty({
-    description: 'Tag ID',
+    description: 'Course ID',
     example: '00000000-0000-0000-0000-000000000000',
   })
   @Column({
     type: DataType.UUID,
     allowNull: false,
   })
-  @ForeignKey(() => Tag)
-  tagId!: string
+  @ForeignKey(() => Course)
+  courseId!: string
+
+  @ApiProperty({
+    description: 'Whether the course is required or not',
+    example: Requirement.MANDATORY,
+    enum: Requirement,
+  })
+  @Column({
+    type: DataType.ENUM,
+    values: Object.values(Requirement),
+    allowNull: false,
+  })
+  requirement!: Requirement
 
   @ApiProperty({
     type: String,

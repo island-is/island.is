@@ -1,11 +1,21 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
-import { Column, DataType, HasMany, Model, Table } from 'sequelize-typescript'
+import {
+  Column,
+  CreatedAt,
+  DataType,
+  ForeignKey,
+  HasMany,
+  Model,
+  Table,
+  UpdatedAt,
+} from 'sequelize-typescript'
 import { DegreeType, Season } from '../types'
 import { PageInfo } from './pageInfo'
-import { CourseDetails } from '../../course/model'
+import { Course } from '../../course/model'
 import { ProgramExtraApplicationField } from './programExtraApplicationField'
 import { ProgramTag } from './programTag'
 import { ProgramModeOfDelivery } from './programModeOfDelivery'
+import { University } from '../../university/model'
 
 @Table({
   tableName: 'program',
@@ -72,6 +82,7 @@ export class Program extends Model {
     type: DataType.UUID,
     allowNull: false,
   })
+  @ForeignKey(() => University)
   universityId!: string
 
   @ApiProperty({
@@ -255,23 +266,6 @@ export class Program extends Model {
   searchKeywords!: string[]
 
   @ApiProperty({
-    description: 'Modes of deliveries available for the program',
-    type: [ProgramModeOfDelivery],
-  })
-  @HasMany(() => ProgramModeOfDelivery)
-  modeOfDelivery!: [ProgramModeOfDelivery]
-
-  @ApiProperty({
-    description:
-      'List of (interest) tags connected to this program (to be able to categorize programs after interest)',
-    type: [ProgramTag],
-  })
-  @HasMany(() => ProgramTag)
-  tag?: [ProgramTag]
-}
-
-export class ProgramDetails extends Program {
-  @ApiProperty({
     description: 'Admission requirements for program (Icelandic)',
     example: 'Nemandinn verður að hafa klárað stúdentspróf',
   })
@@ -339,10 +333,25 @@ export class ProgramDetails extends Program {
 
   @ApiProperty({
     description: 'List of courses that belong to this program',
-    type: [CourseDetails],
+    type: [Course],
   })
-  @HasMany(() => CourseDetails)
-  courses!: CourseDetails[]
+  @HasMany(() => Course)
+  courses!: Course[]
+
+  @ApiProperty({
+    description:
+      'List of (interest) tags connected to this program (to be able to categorize programs after interest)',
+    type: [ProgramTag],
+  })
+  @HasMany(() => ProgramTag)
+  tag?: [ProgramTag]
+
+  @ApiProperty({
+    description: 'Modes of deliveries available for the program',
+    type: [ProgramModeOfDelivery],
+  })
+  @HasMany(() => ProgramModeOfDelivery)
+  modeOfDelivery!: [ProgramModeOfDelivery]
 
   @ApiProperty({
     description:
@@ -351,6 +360,18 @@ export class ProgramDetails extends Program {
   })
   @HasMany(() => ProgramExtraApplicationField)
   extraApplicationFields?: [ProgramExtraApplicationField]
+
+  @ApiProperty({
+    type: String,
+  })
+  @CreatedAt
+  readonly created!: Date
+
+  @ApiProperty({
+    type: String,
+  })
+  @UpdatedAt
+  readonly modified!: Date
 }
 
 export class ProgramResponse {
@@ -376,7 +397,7 @@ export class ProgramResponse {
 export class ProgramDetailsResponse {
   @ApiProperty({
     description: 'Program data',
-    type: ProgramDetails,
+    type: Program,
   })
-  data!: ProgramDetails
+  data!: Program
 }

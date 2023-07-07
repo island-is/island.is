@@ -7,6 +7,12 @@ module.exports = {
         queryInterface.createTable(
           'program_tag',
           {
+            id: {
+              type: Sequelize.UUID,
+              primaryKey: true,
+              defaultValue: Sequelize.UUIDV4,
+              allowNull: false,
+            },
             program_id: {
               type: Sequelize.UUID,
               references: {
@@ -21,6 +27,14 @@ module.exports = {
                 model: 'tag',
                 key: 'id',
               },
+              allowNull: false,
+            },
+            created: {
+              type: Sequelize.DATE,
+              allowNull: false,
+            },
+            modified: {
+              type: Sequelize.DATE,
               allowNull: false,
             },
           },

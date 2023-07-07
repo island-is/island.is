@@ -1,11 +1,43 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
-import { Column, DataType, Model, Table } from 'sequelize-typescript'
+import {
+  Column,
+  CreatedAt,
+  DataType,
+  ForeignKey,
+  Model,
+  Table,
+  UpdatedAt,
+} from 'sequelize-typescript'
 import { FieldType } from '../types'
+import { Program } from './program'
 
 @Table({
   tableName: 'program_extra_application_field',
 })
 export class ProgramExtraApplicationField extends Model {
+  @ApiProperty({
+    description: 'Program extra application field ID',
+    example: '00000000-0000-0000-0000-000000000000',
+  })
+  @Column({
+    type: DataType.UUID,
+    primaryKey: true,
+    defaultValue: DataType.UUIDV4,
+    allowNull: false,
+  })
+  id!: string
+
+  @ApiProperty({
+    description: 'Program ID',
+    example: '00000000-0000-0000-0000-000000000000',
+  })
+  @Column({
+    type: DataType.UUID,
+    allowNull: false,
+  })
+  @ForeignKey(() => Program)
+  programId!: string
+
   @ApiProperty({
     description: 'Field name (Icelandic)',
     example: 'Ferilskrá',
@@ -83,4 +115,16 @@ export class ProgramExtraApplicationField extends Model {
     allowNull: true,
   })
   uploadAcceptedFileType?: string
+
+  @ApiProperty({
+    type: String,
+  })
+  @CreatedAt
+  readonly created!: Date
+
+  @ApiProperty({
+    type: String,
+  })
+  @UpdatedAt
+  readonly modified!: Date
 }

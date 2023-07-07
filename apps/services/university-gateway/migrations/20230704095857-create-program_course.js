@@ -7,6 +7,12 @@ module.exports = {
         queryInterface.createTable(
           'program_course',
           {
+            id: {
+              type: Sequelize.UUID,
+              primaryKey: true,
+              defaultValue: Sequelize.UUIDV4,
+              allowNull: false,
+            },
             program_id: {
               type: Sequelize.UUID,
               references: {
@@ -29,6 +35,14 @@ module.exports = {
                 'FREE_ELECTIVE',
                 'RESTRICTED_ELECTIVE',
               ),
+              allowNull: false,
+            },
+            created: {
+              type: Sequelize.DATE,
+              allowNull: false,
+            },
+            modified: {
+              type: Sequelize.DATE,
               allowNull: false,
             },
           },

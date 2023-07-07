@@ -3,20 +3,17 @@ import {
   Column,
   CreatedAt,
   DataType,
-  ForeignKey,
   Model,
   Table,
   UpdatedAt,
 } from 'sequelize-typescript'
-import { Program } from './program'
-import { Tag } from './tag'
 
 @Table({
-  tableName: 'program_tag',
+  tableName: 'tag',
 })
-export class ProgramTag extends Model {
+export class Tag extends Model {
   @ApiProperty({
-    description: 'Program tag ID',
+    description: 'Tag ID',
     example: '00000000-0000-0000-0000-000000000000',
   })
   @Column({
@@ -28,26 +25,34 @@ export class ProgramTag extends Model {
   id!: string
 
   @ApiProperty({
-    description: 'Program ID',
-    example: '00000000-0000-0000-0000-000000000000',
+    description: 'Tag code',
+    example: 'ENGINEER',
   })
   @Column({
-    type: DataType.UUID,
+    type: DataType.STRING,
     allowNull: false,
   })
-  @ForeignKey(() => Program)
-  programId!: string
+  code!: string
 
   @ApiProperty({
-    description: 'Tag ID',
-    example: '00000000-0000-0000-0000-000000000000',
+    description: 'Tag name (Icelandic)',
+    example: 'Verkfræði',
   })
   @Column({
-    type: DataType.UUID,
+    type: DataType.STRING,
     allowNull: false,
   })
-  @ForeignKey(() => Tag)
-  tagId!: string
+  nameIs!: string
+
+  @ApiProperty({
+    description: 'Tag name (English)',
+    example: 'Engineer',
+  })
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+  })
+  nameEn!: string
 
   @ApiProperty({
     type: String,
@@ -60,4 +65,12 @@ export class ProgramTag extends Model {
   })
   @UpdatedAt
   readonly modified!: Date
+}
+
+export class TagResponse {
+  @ApiProperty({
+    description: 'Tag data',
+    type: [Tag],
+  })
+  data!: Tag[]
 }
