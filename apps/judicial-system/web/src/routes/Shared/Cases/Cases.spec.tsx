@@ -486,7 +486,7 @@ describe('Cases', () => {
         </MockedProvider>,
       )
 
-      userEvent.click(await screen.findByText('Stofnað/Fyrirtaka'))
+      userEvent.click(await screen.findByText('Fyrirtaka'))
 
       const tableRows = await screen.findAllByTestId('custody-cases-table-row')
 
@@ -511,7 +511,7 @@ describe('Cases', () => {
         </MockedProvider>,
       )
 
-      userEvent.dblClick(await screen.findByText('Stofnað/Fyrirtaka'))
+      userEvent.dblClick(await screen.findByText('Fyrirtaka'))
 
       const tableRows = await screen.findAllByTestId('custody-cases-table-row')
 

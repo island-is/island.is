@@ -77,6 +77,7 @@ export const DefenderCasesTable: React.FC<Props> = (props) => {
                   sortAsc={getClassNamesFor('defendant') === 'ascending'}
                   sortDes={getClassNamesFor('defendant') === 'descending'}
                   isActive={isActiveColumn('defendant')}
+                  dataTestid="accusedNameSortButton"
                 />
               </th>
               <th className={styles.th}>

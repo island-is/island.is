@@ -164,6 +164,7 @@ const ActiveCases: React.FC<Props> = (props) => {
               sortAsc={getClassNamesFor('defendant') === 'ascending'}
               sortDes={getClassNamesFor('defendant') === 'descending'}
               isActive={sortConfig.column === 'defendant'}
+              dataTestid="accusedNameSortButton"
             />
           </th>
           <th className={styles.th}>
