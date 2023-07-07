@@ -28,6 +28,13 @@ const useSortCases = (
     return sortConfig.column === column ? sortConfig.direction : undefined
   }
 
+  const isActiveColumn = (column: string) => {
+    if (!sortConfig) {
+      return false
+    }
+    return sortConfig.column === column
+  }
+
   const sortedData = useMemo(() => {
     if (sortConfig && data) {
       return [...data].sort((a, b) => {
@@ -52,7 +59,7 @@ const useSortCases = (
     return data
   }, [data, sortConfig])
 
-  return { sortedData, requestSort, getClassNamesFor }
+  return { sortedData, requestSort, getClassNamesFor, isActiveColumn }
 }
 
 export default useSortCases

@@ -10,10 +10,11 @@ interface Props {
   onClick: () => void
   sortAsc: boolean
   sortDes: boolean
+  isActive: boolean
 }
 
 const SortButton: React.FC<Props> = (props) => {
-  const { title, onClick, sortAsc, sortDes } = props
+  const { title, onClick, sortAsc, sortDes, isActive } = props
 
   return (
     <Box
@@ -23,7 +24,7 @@ const SortButton: React.FC<Props> = (props) => {
       className={styles.thButton}
       onClick={onClick}
     >
-      <Text fontWeight="regular">{title}</Text>
+      <Text fontWeight={isActive ? 'semiBold' : 'regular'}>{title}</Text>
       <Box
         className={cn(styles.sortIcon, {
           [styles.sortAsc]: sortAsc,
