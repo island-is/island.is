@@ -262,7 +262,7 @@ export const oldAgePensionFormMessage: MessageDir = {
       description: 'Do you want to use your personal discount?',
     },
     spouseDiscount: {
-      id: 'oap.application:payment.personal.discount',
+      id: 'oap.application:payment.spouse.discount',
       defaultMessage: 'Vilt þú nýta persónuafsláttinn maka þíns?',
       description: 'Do you want to use your spouse personal discount?',
     },
@@ -846,7 +846,7 @@ export const oldAgePensionFormMessage: MessageDir = {
       description: "Self-employed's attachment",
     },
     selfEmployedSubTitle: {
-      id: 'oap.application:fileUpload.selfEmployed.title',
+      id: 'oap.application:fileUpload.selfEmployed.sub.title',
       defaultMessage: 'Fylgiskjöl endurgjald',
       description: 'Self-employed attachment',
     },
