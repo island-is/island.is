@@ -179,6 +179,7 @@ const ActiveCases: React.FC<Props> = (props) => {
               sortAsc={getClassNamesFor('createdAt') === 'ascending'}
               sortDes={getClassNamesFor('createdAt') === 'descending'}
               isActive={sortConfig.column === 'createdAt'}
+              dataTestid="createdAtSortButton"
             />
           </th>
           <th className={styles.th}>
