@@ -1,8 +1,9 @@
-import { Field, ObjectType } from '@nestjs/graphql'
+import { ObjectType } from '@nestjs/graphql'
+import { CacheField } from '@island.is/nest/graphql'
 import { Aircraft } from '../models/aircraft.model'
 
 @ObjectType('AircraftRegistryAircraftsBySearchTermResponse')
 export class AircraftsBySearchTermResponse {
-  @Field(() => [Aircraft], { nullable: true })
+  @CacheField(() => [Aircraft], { nullable: true })
   aircrafts?: Aircraft[] | null
 }

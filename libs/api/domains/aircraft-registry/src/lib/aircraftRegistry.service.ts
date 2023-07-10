@@ -4,7 +4,7 @@ import {
 } from '@island.is/clients/aircraft-registry'
 import { AllAircraftsResponse } from './dto/allAircraftsResponse'
 import { Injectable } from '@nestjs/common'
-import { AircraftsBySearchTermResponse } from './dto/AircraftsBySearchTermResponse'
+import { AircraftsBySearchTermResponse } from './dto/aircraftsBySearchTermResponse'
 
 @Injectable()
 export class AircraftRegistryService {
