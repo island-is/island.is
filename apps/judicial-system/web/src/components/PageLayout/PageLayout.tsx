@@ -46,6 +46,7 @@ export interface RouteSection {
 }
 
 interface SectionProps {
+  workingCase: Case
   section: RouteSection
   index: number
   activeSection?: number
@@ -63,17 +64,20 @@ const SubsectionChild: React.FC<{
 )
 
 const DisplaySection: React.FC<SectionProps> = (props) => {
-  const { section, index, activeSection, activeSubSection } = props
+  const { workingCase, section, index, activeSection, activeSubSection } = props
 
   const validations = stepValidations()
   const validationFunctions = Object.entries(validations)
 
   const validate = (href?: string) => {
     if (!href) return false
-    console.log('href ', href)
-    return validationFunctions.find(([el]) => {
+    const bla = validationFunctions.find(([el]) => {
       return href.includes(el)
     })
+    if (!bla || bla?.length !== 2) {
+      return false
+    }
+    return bla[1](workingCase)
   }
 
   return (
@@ -83,8 +87,11 @@ const DisplaySection: React.FC<SectionProps> = (props) => {
       isActive={section.isActive}
       isComplete={activeSection ? index < activeSection : false}
       subSections={section.children.map((subSection, index) => {
-        console.log('subSection', validate(subSection.href))
-        if (subSection.href && activeSubSection && activeSubSection > index) {
+        if (
+          activeSubSection !== index &&
+          subSection.href &&
+          validate(subSection.href)
+        ) {
           return (
             <LinkV2
               href={subSection.href}
@@ -173,6 +180,7 @@ const SidePanel: React.FC<SidePanelProps> = ({
             sections={sections.map((section, index) => (
               <DisplaySection
                 key={`${section.name}-${index}`}
+                workingCase={workingCase}
                 section={section}
                 index={index}
                 activeSection={activeSection}
