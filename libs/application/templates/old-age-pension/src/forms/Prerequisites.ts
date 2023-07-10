@@ -36,12 +36,39 @@ export const PrerequisitesForm: Form = buildForm({
   id: 'OldAgePensionPrerequisites',
   title: oldAgePensionFormMessage.shared.formTitle,
   logo: Logo,
-  mode: FormModes.DRAFT,
+  mode: FormModes.NOT_STARTED,
+  renderLastScreenButton: true,
+  renderLastScreenBackButton: true,
   children: [
     buildSection({
       id: 'prerequisites',
       title: oldAgePensionFormMessage.pre.prerequisitesSection,
       children: [
+        buildSubSection({
+          id: 'forInformation',
+          title: oldAgePensionFormMessage.pre.forInfoSubSection,
+          children: [
+            buildMultiField({
+              id: 'preInfo',
+              title: oldAgePensionFormMessage.pre.forInfoSubSection,
+              children: [
+                buildDescriptionField({
+                  id: 'preInfo.descriptionOne',
+                  title: '',
+                  description: oldAgePensionFormMessage.pre.forInfoDescription,
+                }),
+                // Accordion card here
+                buildDescriptionField({
+                  id: 'preInfo.descriptionTwo',
+                  space: 4,
+                  title: '',
+                  description:
+                    oldAgePensionFormMessage.pre.forInfoSecondDescription,
+                }),
+              ],
+            }),
+          ],
+        }),
         buildSubSection({
           id: 'externalData',
           title: oldAgePensionFormMessage.pre.externalDataSubSection,
@@ -66,24 +93,19 @@ export const PrerequisitesForm: Form = buildForm({
                 }),
                 buildDataProviderItem({
                   provider: NationalRegistrySpouseApi,
-                  title: oldAgePensionFormMessage.pre.skraInformationTitle,
-                  subTitle:
-                    oldAgePensionFormMessage.pre.skraInformationSubTitle,
+                  title: '',
                 }),
                 buildDataProviderItem({
                   provider: ChildrenCustodyInformationApi,
-                  title: oldAgePensionFormMessage.pre.childrenCustodyTitle,
-                  subTitle: oldAgePensionFormMessage.pre.childrenCustodyTitle,
+                  title: '',
                 }),
                 buildDataProviderItem({
                   provider: NationalRegistryResidenceHistoryApi,
-                  title: oldAgePensionFormMessage.pre.residenceHistoryTitle,
-                  subTitle: oldAgePensionFormMessage.pre.residenceHistoryTitle,
+                  title: '',
                 }),
                 buildDataProviderItem({
                   provider: NationalRegistryCohabitantsApi,
-                  title: oldAgePensionFormMessage.pre.cohabitantsTitle,
-                  subTitle: oldAgePensionFormMessage.pre.cohabitantsTitle,
+                  title: '',
                 }),
               ],
             }),

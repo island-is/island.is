@@ -41,8 +41,23 @@ export const oldAgePensionFormMessage: MessageDir = {
       defaultMessage: 'Forsendur',
       description: 'Prerequisites',
     },
+    forInfoSubSection: {
+      id: 'oap.application:for.info.sub.section',
+      defaultMessage: 'Til upplýsinga',
+      description: 'For Information',
+    },
+    forInfoDescription: {
+      id: 'oap.application:for.info.description',
+      defaultMessage: 'TR sækir nauðsynlegar upplýsingar til úrvinnslu umsókna og afgreiðslu mála. Þær upplýsingar geta varðað bæði tekjur og aðrar aðstæður þínar.\n \nMisjafnt er eftir tegund umsóknar hvaða upplýsingar þarf til úrvinnslu en ekki eru sóttar meiri upplýsingar en nauðsynlegt er hverju sinni.',
+      description: 'english translation',
+    },
+    forInfoSecondDescription: {
+      id: 'oap.application:for.info.second.description',
+      defaultMessage: 'Ef tekjur eða aðrar aðstæður þínar breytast verður þú að láta TR vita þar sem það getur haft áhrif á greiðslur þínar.\n \nFrekari upplýsingar um gagnaöflun og meðferð persónuupplýsinga má finna í persónuverndarstefnu Tryggingastofnunar, www.tr.is/personuvernd. \n \nÞeim umsóknum sem sendar eru TR í gegnum Mínar síður Ísland.is verður svarað rafrænt',
+      description: 'english translation'
+    },
     externalDataSubSection: {
-      id: 'oap.application:externalData.subSection',
+      id: 'oap.application:externalData.sub.section',
       defaultMessage: 'Gagnaöflun',
       description: 'External Data',
     },
@@ -60,7 +75,7 @@ export const oldAgePensionFormMessage: MessageDir = {
     skraInformationSubTitle: {
       id: 'oap.application:prerequisites.national.registry.subtitle',
       defaultMessage:
-        'Sækir upplýsingar um þig, maka og börn frá Þjóðskrá. Einnig eru sóttar upplýsingar um búsetu.',
+        'Sækir upplýsingar um þig, maka og börn frá Þjóðskrá. Einnig eru sóttar upplýsingar um búsetu, íbúaskrá og forsjá',
       description:
         'Information about you, spouse and children will be retrieved from Registers Iceland. Information about residence will also be retrieved.',
     },
@@ -75,21 +90,6 @@ export const oldAgePensionFormMessage: MessageDir = {
         'Upplýsingar um netfang, símanúmer og bankareikning eru sóttar frá mínum síðum á Ísland.is.',
       description:
         'Information about email address, phone number and bank account will be retrieved from your account at Ísland.is.',
-    },
-    residenceHistoryTitle: {
-      id: 'oap.application:prerequisites.residence.history.title',
-      defaultMessage: 'Búsetudaga frá Þjóðskrá',
-      description: 'english translation',
-    },
-    childrenCustodyTitle: {
-      id: 'oap.application:prerequisites.children.custody.title',
-      defaultMessage: 'Forsjá frá Þjóðskrá',
-      description: 'english translation',
-    },
-    cohabitantsTitle: {
-      id: 'oap.application:prerequisites.cohabitants.title',
-      defaultMessage: 'Samíbúar frá Þjóðskrá',
-      description: 'english translation',
     },
     startApplication: {
       id: 'oap.application:prerequisites.start.application',
