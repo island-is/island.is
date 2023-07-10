@@ -98,6 +98,7 @@
     "application-templates-general-fishing-license": "libs/application/templates/general-fishing-license",
     "application-templates-general-petition": "libs/application/templates/general-petition",
     "application-templates-health-insurance": "libs/application/templates/health-insurance",
+    "application-templates-household-supplement": "libs/application/templates/household-supplement",
     "application-templates-inheritance-report": "libs/application/templates/inheritance-report",
     "application-templates-institution-collaboration": "libs/application/templates/institution-collaboration",
     "application-templates-login-service": "libs/application/templates/login-service",
