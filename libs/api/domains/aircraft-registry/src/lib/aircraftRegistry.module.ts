@@ -6,6 +6,5 @@ import { AircraftRegistryService } from './aircraftRegistry.service'
 @Module({
   imports: [AircraftRegistryClientModule],
   providers: [AircraftRegistryService, AircraftRegistryResolver],
-  exports: [],
 })
 export class AircraftRegistryModule {}

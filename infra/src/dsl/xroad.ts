@@ -564,7 +564,7 @@ export const AircraftRegistry = new XroadConf({
   env: {
     XROAD_AIRCRAFT_REGISTRY_PATH: {
       dev: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Loftfaraskra-V1',
-      // TODO: ask when the aircraft registry will be up on prod/staging
+      // TODO: Update staging and prod paths once the aircraft registry api is available there
       staging: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Loftfaraskra-V1',
       prod: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Loftfaraskra-V1',
     },
