@@ -8,7 +8,6 @@ import {
   TopLine,
 } from '@ui';
 import React, {useCallback, useEffect, useRef, useState} from 'react';
-import {useIntl} from 'react-intl';
 import {
   Animated,
   FlatList,
@@ -25,24 +24,25 @@ import SpotlightSearch from 'react-native-spotlight-search';
 import {useTheme} from 'styled-components/native';
 import illustrationSrc from '../../assets/illustrations/le-moving-s6.png';
 import {BottomTabsIndicator} from '../../components/bottom-tabs-indicator/bottom-tabs-indicator';
-// import { useFeatureFlag } from '../../contexts/feature-flag-provider'
+import {useFeatureFlag} from '../../contexts/feature-flag-provider';
 import {client} from '../../graphql/client';
 import {IGenericUserLicense} from '../../graphql/fragments/license.fragment';
 import {IIdentityDocumentModel} from '../../graphql/fragments/passport.fragment';
-import {GET_IDENTITY_DOCUMENT_QUERY} from '../../graphql/queries/get-identity-document.query';
 import {GenericLicenseType} from '../../graphql/queries/get-license.query';
 import {
   ListGenericLicensesResponse,
   LIST_GENERIC_LICENSES_QUERY,
 } from '../../graphql/queries/list-licenses.query';
-import {useActiveTabItemPress} from '../../hooks/use-active-tab-item-press';
 import {createNavigationOptionHooks} from '../../hooks/create-navigation-option-hooks';
+import {useActiveTabItemPress} from '../../hooks/use-active-tab-item-press';
 import {navigateTo} from '../../lib/deep-linking';
 import {usePreferencesStore} from '../../stores/preferences-store';
 import {LicenseStatus, LicenseType} from '../../types/license-type';
 import {ButtonRegistry} from '../../utils/component-registry';
 import {getRightButtons} from '../../utils/get-main-root';
 import {testIDs} from '../../utils/test-ids';
+import {useIntl} from 'react-intl';
+import {GET_IDENTITY_DOCUMENT_QUERY} from '../../graphql/queries/get-identity-document.query';
 
 type WalletItem =
   | (IGenericUserLicense & {type: undefined})
@@ -174,8 +174,8 @@ export const WalletScreen: NavigationFunctionComponent = ({componentId}) => {
 
   const theme = useTheme();
   const {dismiss, dismissed} = usePreferencesStore();
-  const showPassport = false; // useFeatureFlag('isPassportEnabled', false);
-  const showDisability = false; // useFeatureFlag('isDisabilityFlagEnabled', false);
+  const showPassport = useFeatureFlag('isPassportEnabled', false);
+  const showDisability = useFeatureFlag('isDisabilityFlagEnabled', false);
 
   const res = useQuery<ListGenericLicensesResponse>(
     LIST_GENERIC_LICENSES_QUERY,
@@ -301,7 +301,8 @@ export const WalletScreen: NavigationFunctionComponent = ({componentId}) => {
               image={
                 <Image
                   source={illustrationSrc}
-                  style={{width: 198, height: 146}}
+                  style={{width: 146, height: 198}}
+                  resizeMode="contain"
                 />
               }
             />

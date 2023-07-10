@@ -1,5 +1,5 @@
-import { Base, JudicialSystem } from '../../../../infra/src/dsl/xroad'
 import { ref, service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
+import { Base, JudicialSystem } from '../../../../infra/src/dsl/xroad'
 
 const postgresInfo = {
   passwordSecret: '/k8s/judicial-system/DB_PASSWORD',
@@ -45,10 +45,15 @@ export const serviceSetup = (): ServiceBuilder<'judicial-system-backend'> =>
       SQS_REGION: 'eu-west-1',
       BLOCKED_API_INTEGRATION: {
         dev: '',
-        staging: 'COURT,COURT_LITIGANT,POLICE_CASE,POLICE_CASE_V2',
+        staging: 'COURT,POLICE_CASE,POLICE_CASE_V2',
         prod: 'POLICE_CASE_V2',
       },
       NO_UPDATE_NOTIFIER: 'true',
+      NOVA_ACCEPT_UNAUTHORIZED: {
+        dev: 'true',
+        staging: 'false',
+        prod: 'false',
+      },
     })
     .xroad(Base, JudicialSystem)
     .secrets({

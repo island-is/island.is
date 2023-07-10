@@ -1,12 +1,12 @@
 import { UserProfile, Application } from '@island.is/api/schema'
 import {
   buildMultiField,
+  buildPhoneField,
   buildSection,
   buildTextField,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import { format as formatNationalId } from 'kennitala'
-import { removeCountryCode } from '@island.is/application/ui-components'
 import { EstateTypes } from '../../lib/constants'
 
 export const announcerInfo = buildSection({
@@ -59,19 +59,20 @@ export const announcerInfo = buildSection({
             return externalData.nationalRegistry?.data.address.streetAddress
           },
         }),
-        buildTextField({
+        buildPhoneField({
           id: 'applicant.phone',
           title: m.phone,
           width: 'half',
-          format: '###-####',
           required: true,
+          disableDropdown: true,
+          allowedCountryCodes: ['IS'],
           defaultValue: (application: Application) => {
             const phone =
               (application.externalData.userProfile?.data as {
                 mobilePhoneNumber?: string
               })?.mobilePhoneNumber ?? ''
 
-            return removeCountryCode(phone)
+            return phone
           },
         }),
         buildTextField({

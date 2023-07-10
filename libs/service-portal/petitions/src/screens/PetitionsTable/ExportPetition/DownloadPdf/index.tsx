@@ -14,6 +14,7 @@ import {
   PaginatedEndorsementResponse,
 } from '@island.is/api/schema'
 import { dark200 } from '@island.is/island-ui/theme'
+import { format as formatNationalId } from 'kennitala'
 
 const MyPdfDocument = (data: {
   petition?: EndorsementList
@@ -38,24 +39,31 @@ const MyPdfDocument = (data: {
           <Text style={pdfStyles.header}>Um undirskriftalista</Text>
           <Text>{petition?.description}</Text>
           <View style={pdfStyles.row}>
-            <View>
-              <Text style={pdfStyles.header}>Ábyrgðarmaður: </Text>
-              <Text>{petition?.ownerName}</Text>
-            </View>
-            <View>
+            <View style={pdfStyles.widthHalf}>
               <Text style={pdfStyles.header}>Opinn til: </Text>
               <Text>{formatDate(petition?.closedDate)}</Text>
             </View>
-            <View>
+            <View style={pdfStyles.widthHalf}>
               <Text style={pdfStyles.header}>Fjöldi undirskrifta: </Text>
               <Text>{petitionSigners?.totalCount}</Text>
+            </View>
+          </View>
+          <View style={pdfStyles.row}>
+            <View style={pdfStyles.widthHalf}>
+              <Text style={pdfStyles.header}>Ábyrgðarmaður: </Text>
+              <Text>{petition?.ownerName}</Text>
+            </View>
+            <View style={pdfStyles.widthHalf}>
+              <Text style={pdfStyles.header}>Kennitala ábyrgðarmanns: </Text>
+              <Text>{formatNationalId(petition?.owner as string)}</Text>
             </View>
           </View>
         </View>
         <View style={pdfStyles.tableView}>
           <View style={pdfStyles.tableRow}>
-            <Text style={pdfStyles.tableHeader}>Dags. skráð</Text>
+            <Text style={pdfStyles.tableHeaderDate}>Dags. skráð</Text>
             <Text style={pdfStyles.tableHeader}>Nafn</Text>
+            <Text style={pdfStyles.tableHeader}>Sveitarfélag</Text>
           </View>
           <View>
             {petitionSigners?.data?.map((sign: Endorsement) => {
@@ -64,8 +72,11 @@ const MyPdfDocument = (data: {
                   <Text style={{ width: '20%' }}>
                     {formatDate(sign.created)}
                   </Text>
-                  <Text>
-                    {sign.meta.fullName ? sign.meta.fullName : 'no name'}
+                  <Text style={{ width: '30%' }}>
+                    {sign.meta.fullName ? sign.meta.fullName : ''}
+                  </Text>
+                  <Text style={{ width: '30%' }}>
+                    {sign.meta.locality ? sign.meta.locality : ''}
                   </Text>
                 </View>
               )
@@ -88,7 +99,7 @@ export const pdfStyles = StyleSheet.create({
   body: {
     paddingVertical: 50,
     paddingHorizontal: 60,
-    fontFamily: 'Open Sans',
+    fontFamily: 'IBM Plex Sans',
     fontSize: 10,
   },
   title: {
@@ -100,14 +111,21 @@ export const pdfStyles = StyleSheet.create({
     marginTop: 20,
     marginBottom: 5,
   },
-  tableHeader: {
+  tableHeaderDate: {
     fontWeight: 600,
     marginBottom: 5,
     width: '20%',
   },
+  tableHeader: {
+    fontWeight: 600,
+    marginBottom: 5,
+    width: '30%',
+  },
   row: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+  },
+  widthHalf: {
+    width: '50%',
   },
   listInfo: {
     paddingBottom: 30,
@@ -133,7 +151,7 @@ export const pdfStyles = StyleSheet.create({
 })
 
 Font.register({
-  family: 'Open Sans',
+  family: 'IBM Plex Sans',
   fonts: [
     {
       src: './assets/fonts/ibm-plex-sans-v7-latin-regular.ttf',

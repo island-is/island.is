@@ -59,8 +59,7 @@
     "decompress-response",
     "lowercase-keys",
     "mimic-response",
-    "pdfkit",
-    "jsdom"
+    "pdfkit"
   ],
   "keepNames": true
 }

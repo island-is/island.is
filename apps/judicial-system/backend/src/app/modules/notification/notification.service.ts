@@ -1206,7 +1206,8 @@ export class NotificationService {
     const recipients = await Promise.all(promises)
 
     if (recipients.length === 0) {
-      return { notificationSent: false }
+      // Nothing to send
+      return { notificationSent: true }
     }
 
     return this.recordNotification(
@@ -1288,7 +1289,8 @@ export class NotificationService {
     const recipients = await Promise.all(promises)
 
     if (recipients.length === 0) {
-      return { notificationSent: false }
+      // Nothing to send
+      return { notificationSent: true }
     }
 
     return this.recordNotification(
@@ -1304,17 +1306,14 @@ export class NotificationService {
     theCase: Case,
   ): Promise<SendNotificationResponse> {
     if (
-      (await this.hasReceivedNotification(
-        theCase.id,
-        NotificationType.DEFENDANTS_NOT_UPDATED_AT_COURT,
-        theCase.judge?.email,
-      )) ||
+      !theCase.registrar ||
       (await this.hasReceivedNotification(
         theCase.id,
         NotificationType.DEFENDANTS_NOT_UPDATED_AT_COURT,
         theCase.registrar?.email,
       ))
     ) {
+      // Nothing to send
       return { notificationSent: true }
     }
 
@@ -1329,27 +1328,17 @@ export class NotificationService {
       { courtCaseNumber: theCase.courtCaseNumber },
     )
 
-    const promises = [
-      this.sendEmail(subject, html, theCase.judge?.name, theCase.judge?.email),
-    ]
-
-    if (theCase.registrar) {
-      promises.push(
-        this.sendEmail(
-          subject,
-          html,
-          theCase.registrar.name,
-          theCase.registrar.email,
-        ),
-      )
-    }
-
-    const recipients = await Promise.all(promises)
+    const recipient = await this.sendEmail(
+      subject,
+      html,
+      theCase.registrar.name,
+      theCase.registrar.email,
+    )
 
     return this.recordNotification(
       theCase.id,
       NotificationType.DEFENDANTS_NOT_UPDATED_AT_COURT,
-      recipients,
+      [recipient],
     )
   }
 

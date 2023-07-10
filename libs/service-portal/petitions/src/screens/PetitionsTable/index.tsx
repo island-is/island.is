@@ -45,24 +45,26 @@ const PetitionsTable = (data: {
     <Box>
       <Box display="flex" justifyContent="spaceBetween" marginBottom={2}>
         <Text variant="h3">{formatMessage(m.petitionsOverview)}</Text>
-        {data.canEdit && (
-          <DropdownExport
-            petition={data.petition}
-            petitionSigners={data.petitionSigners}
-            petitionId={data.listId}
-            onGetCSV={() => getCSV(petitionSigners, 'Undirskriftalisti')}
-          />
-        )}
+        <Box>
+          {data.canEdit && (
+            <DropdownExport
+              petition={data.petition}
+              petitionSigners={data.petitionSigners}
+              petitionId={data.listId}
+              onGetCSV={() => getCSV(petitionSigners, 'Undirskriftalisti')}
+            />
+          )}
+        </Box>
       </Box>
       <Stack space={3}>
         <T.Table>
           <T.Head>
             <T.Row>
               <T.HeadData>{formatMessage(m.date)}</T.HeadData>
-              <T.HeadData colSpan={4}>{formatMessage(m.name)}</T.HeadData>
-              <T.HeadData></T.HeadData>
-              <T.HeadData></T.HeadData>
-              <T.HeadData></T.HeadData>
+              <T.HeadData>{formatMessage(m.name)}</T.HeadData>
+              {data.canEdit && (
+                <T.HeadData>{formatMessage(m.locality)}</T.HeadData>
+              )}
             </T.Row>
           </T.Head>
           <T.Body>
@@ -72,14 +74,16 @@ const PetitionsTable = (data: {
                   <T.Data text={{ variant: 'medium' }}>
                     {formatDate(petition.created)}
                   </T.Data>
-                  <T.Data text={{ variant: 'medium' }} colSpan={4}>
+                  <T.Data text={{ variant: 'medium' }}>
                     {petition.meta.fullName
                       ? petition.meta.fullName
                       : formatMessage(m.noName)}
                   </T.Data>
-                  <T.Data></T.Data>
-                  <T.Data></T.Data>
-                  <T.Data></T.Data>
+                  {data.canEdit && (
+                    <T.Data text={{ variant: 'medium' }}>
+                      {petition.meta.locality ? petition.meta.locality : ''}
+                    </T.Data>
+                  )}
                 </T.Row>
               )
             })}

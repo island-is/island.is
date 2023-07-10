@@ -97,7 +97,7 @@ judicial-system-api:
 judicial-system-backend:
   enabled: true
   env:
-    BLOCKED_API_INTEGRATION: 'COURT,COURT_LITIGANT,POLICE_CASE,POLICE_CASE_V2'
+    BLOCKED_API_INTEGRATION: 'COURT,POLICE_CASE,POLICE_CASE_V2'
     CLIENT_URL: 'https://judicial-system.staging01.devland.is'
     CONTENTFUL_ENVIRONMENT: 'test'
     CONTENTFUL_HOST: 'cdn.contentful.com'
@@ -108,6 +108,7 @@ judicial-system-backend:
     DOKOBIT_URL: 'https://developers.dokobit.com'
     EMAIL_REGION: 'eu-west-1'
     NODE_OPTIONS: '--max-old-space-size=976'
+    NOVA_ACCEPT_UNAUTHORIZED: 'false'
     NO_UPDATE_NOTIFIER: 'true'
     S3_BUCKET: 'island-is-staging-upload-judicial-system'
     S3_REGION: 'eu-west-1'

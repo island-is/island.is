@@ -27,7 +27,7 @@ export class PaginatedEndorsementInterceptor implements NestInterceptor {
     const user = GqlExecutionContext.create(context).getContext().req?.user
     const listId = GqlExecutionContext.create(context).getContext().req?.params
       ?.listId
-    const listOwnerNationalId = await this.endorsementService.getListOwnerNationalId(
+    const listOwnerNationalId = await this.endorsementListService.getListOwnerNationalId(
       listId,
     )
     const isListOwner = user?.nationalId === listOwnerNationalId

@@ -253,7 +253,14 @@ const UploadFilesToPoliceCase: React.FC<{
           )
         }
         onRemove={(file) => handleRemove(file, removeFileCB)}
-        onRetry={(file) => handleRetry(file, handleUIUpdate)}
+        onRetry={(file) =>
+          handleRetry(
+            file,
+            handleUIUpdate,
+            CaseFileCategory.CASE_FILE,
+            policeCaseNumber,
+          )
+        }
         errorMessage={errorMessage}
         disabled={isUploading}
         showFileSize
