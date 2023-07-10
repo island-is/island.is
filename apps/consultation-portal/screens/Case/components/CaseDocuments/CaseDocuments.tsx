@@ -1,3 +1,4 @@
+import { sortLocale } from '../../../../utils/helpers'
 import { CardSkeleton } from '../../../../components'
 import { Document } from '../../../../types/interfaces'
 import { DocFileName, Stacked } from '../../components'
@@ -8,11 +9,16 @@ interface Props {
 }
 
 export const CaseDocuments = ({ title, documents }: Props) => {
+  const sortedDocuments = sortLocale({
+    list: documents,
+    sortOption: 'fileOrLink',
+  })
+
   return (
     <CardSkeleton>
       <Stacked title={title}>
-        {documents.map((doc, index) => {
-          return <DocFileName doc={doc} key={index} />
+        {sortedDocuments.map((doc: Document) => {
+          return <DocFileName doc={doc} key={doc.id} />
         })}
       </Stacked>
     </CardSkeleton>
