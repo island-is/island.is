@@ -79,7 +79,6 @@ export const sortLocale = ({ list, sortOption }: Props) => {
     (a, b) => {
       const aSortOption = getSortOption(a)
       const bSortOption = getSortOption(b)
-
       const lowerCaseA = aSortOption.toLowerCase()
       const lowerCaseB = bSortOption.toLowerCase()
       const minLen = Math.min(lowerCaseA.length, lowerCaseB.length)
