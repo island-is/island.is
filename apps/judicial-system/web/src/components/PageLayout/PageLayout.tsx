@@ -99,7 +99,7 @@ const DisplaySection: React.FC<SectionProps> = (props) => {
               key={`${subSection.name}-${index}`}
             >
               <SubsectionChild isActive={subSection.isActive}>
-                {subSection.name} bla
+                {subSection.name}
               </SubsectionChild>
             </LinkV2>
           )
