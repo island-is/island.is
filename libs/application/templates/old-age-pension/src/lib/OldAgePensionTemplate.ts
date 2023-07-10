@@ -80,7 +80,7 @@ const OldAgePensionTemplate: ApplicationTemplate<
         },
       },
       [States.DRAFT]: {
-        exit: ['clearHomeAllowance'],
+        exit: ['clearHouseholdSupplement'],
         meta: {
           name: States.DRAFT,
           status: 'draft',
@@ -113,17 +113,19 @@ const OldAgePensionTemplate: ApplicationTemplate<
   },
   stateMachineOptions: {
     actions: {
-      clearHomeAllowance: assign((context) => {
+      clearHouseholdSupplement: assign((context) => {
         const { application } = context
         const { connectedApplications } = getApplicationAnswers(
           application.answers,
         )
 
         if (
-          !connectedApplications?.includes(ConnectedApplications.HOMEALLOWANCE)
+          !connectedApplications?.includes(
+            ConnectedApplications.HOUSEHOLDSUPPLEMENT,
+          )
         ) {
-          unset(application.answers, 'homeAllowance')
-          unset(application.answers, 'fileUploadHomeAllowance')
+          unset(application.answers, 'householdSupplement')
+          unset(application.answers, 'fileUploadHouseholdSupplement')
         }
 
         return context

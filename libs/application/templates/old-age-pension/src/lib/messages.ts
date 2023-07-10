@@ -28,11 +28,6 @@ export const oldAgePensionFormMessage: MessageDir = {
       defaultMessage: 'Nei',
       description: 'No',
     },
-    arrangementSection: {
-      id: 'oap.application:arrangement.section',
-      defaultMessage: 'Tilhögun',
-      description: 'Arrangement',
-    },
   }),
 
   pre: defineMessages({
@@ -337,15 +332,15 @@ export const oldAgePensionFormMessage: MessageDir = {
       description:
         'Here are related applications you may be eligible for. Check the applications you want to apply for.',
     },
-    homeAllowance: {
-      id: 'oap.application:connected.applications.homeAllowance',
+    householdSupplement: {
+      id: 'oap.application:connected.applications.household.supplement',
       defaultMessage: 'Heimilisuppbót',
-      description: 'Home allowance',
+      description: 'Household Supplement',
     },
-    halfHomeAllowance: {
-      id: 'oap.application:connected.applications.half.homeAllowance',
+    halfHouseholdSupplement: {
+      id: 'oap.application:connected.applications.half.household.supplement',
       defaultMessage: 'Hálf heimilisuppbót',
-      description: 'Half home allowance',
+      description: 'Half household supplement',
     },
     childPension: {
       id: 'oap.application:connected.applications.childPension',
@@ -421,45 +416,48 @@ export const oldAgePensionFormMessage: MessageDir = {
       defaultMessage: 'Skráning barns',
       description: 'Registration of a child',
     },
-    homeAllowanceDescription: {
-      id: 'oap.application:connected.applications.home.allowance.description',
+    householdSupplementDescription: {
+      id:
+        'oap.application:connected.applications.household.supplement.description',
       defaultMessage:
         'Til að eiga rétt á heimilisuppbót verður umsækjandi að vera einhleypur og búa einn. Einnig er heimilt að greiða heimilisuppbót til lífeyrisþega ef maki dvelur á stofnun fyrir aldraða. Tvær undantekningar eru á þessu: býr með barni/börnum yngri en 18 ára eða 18-25 ára ungmenni/um  sem er í námi eða ef ungmenni yngra en 25 ára er með tímabundið aðsetur fjarri lögheimili vegna náms.',
       description:
-        'To be eligible for housing allowance, the applicant must be single and live alone. It is also permitted to pay household allowance to the pensioner if the spouse stays in an institution for the elderly. There are two exceptions to this: lives with a child/children under the age of 18 or a young person aged 18-25 who is studying or if a young person under the age of 25 has a temporary residence away from their legal residence due to studies.',
+        'To be eligible for household supplement, the applicant must be single and live alone. It is also permitted to pay household allowance to the pensioner if the spouse stays in an institution for the elderly. There are two exceptions to this: lives with a child/children under the age of 18 or a young person aged 18-25 who is studying or if a young person under the age of 25 has a temporary residence away from their legal residence due to studies.',
     },
-    homeAllowanceHousing: {
-      id: 'oap.application:connected.applications.home.allowance.housing',
+    householdSupplementHousing: {
+      id: 'oap.application:connected.applications.household.supplement.housing',
       defaultMessage: 'Hvar býrð þú?',
       description: 'Where do you live?',
     },
-    homeAllowanceHousingOwner: {
-      id: 'oap.application:connected.applications.home.allowance.housing.owner',
-      defaultMessage: 'Bý í eigin húsnæði',
+    householdSupplementHousingOwner: {
+      id:
+        'oap.application:connected.applications.household.supplement.housing.owner',
+      defaultMessage: 'í eigin húsnæði',
       description: 'Live in own place',
     },
-    homeAllowanceHousingRenter: {
+    householdSupplementHousingRenter: {
       id:
-        'oap.application:connected.applications.home.allowance.housing.renter',
-      defaultMessage: 'Bý í leiguhúsnæði',
+        'oap.application:connected.applications.household.supplement.housing.renter',
+      defaultMessage: 'í leiguhúsnæði',
       description: 'Live in a rented place',
     },
-    homeAllowanceChildrenBetween18And25: {
+    householdSupplementChildrenBetween18And25: {
       id:
-        'oap.application:connected.applications.home.allowance.children.betweem18And25',
+        'oap.application:connected.applications.household.supplement.children.betweem18And25',
       defaultMessage:
         'Býr ungmenni á aldrinum 18-25 ára á heimilinu sem er í námi?',
       description:
         'Does a young person aged 18-25 live in the household who is studying?',
     },
-    homeAllowanceAlertTitle: {
-      id: 'oap.application:connected.applications.home.allowance.alert.title',
+    householdSupplementAlertTitle: {
+      id:
+        'oap.application:connected.applications.household.supplement.alert.title',
       defaultMessage: 'Athuga',
       description: 'Attention',
     },
-    homeAllowanceAlertDescription: {
+    householdSupplementAlertDescription: {
       id:
-        'oap.application:connected.applications.home.allowance.alert.description',
+        'oap.application:connected.applications.household.supplement.alert.description',
       defaultMessage:
         'Samkvæmt uppflettingu í Þjóðskrá býr einstaklingur eldri en 25 ára á sama lögheimili og þú. Ef þú telur þetta vera vitlaust skaltu hafa samband við Þjóðskrá til að laga þetta. Þegar þú ert búinn að gera viðeigandi breytingar hjá Þjóðskrá getur þú haldið áfram með umsóknina og skila inn skjali því til staðfestingar hér aftar í ferlinu.',
       description:
@@ -804,20 +802,20 @@ export const oldAgePensionFormMessage: MessageDir = {
       description:
         'Here you can submit additional data to TR. For example, confirmation from the National Registry due to incorrect information. Note that the document must be in .pdf format.',
     },
-    homeAllowanceTitle: {
-      id: 'oap.application:fileUppload.homeAllowance.title',
+    householdSupplementTitle: {
+      id: 'oap.application:fileUppload.household.supplement.title',
       defaultMessage: 'Fylgiskjöl Heimilisuppbóta',
-      description: 'Home allowance additional files',
+      description: 'Household supplement additional files',
     },
-    homeAllowanceLeaseAgreement: {
-      id: 'oap.application:fileUppload.homeAllowance.leaseAgreement',
+    householdSupplementLeaseAgreement: {
+      id: 'oap.application:fileUppload.household.supplement.leaseAgreement',
       defaultMessage:
         'Hér getur þú skilað undirritaðum leigusamningi. Athugaðu að skjalið þarf að vera á .pdf formi.',
       description:
         'Here you can upload the signed rental agreement. Note that the document must be in .pdf format.',
     },
-    homeAllowanceSchoolConfirmation: {
-      id: 'oap.application:fileUppload.homeAllowance.schoolConfirmation',
+    householdSupplementSchoolConfirmation: {
+      id: 'oap.application:fileUppload.household.supplement.schoolConfirmation',
       defaultMessage:
         'Hér getur þú skilað vottorði um skólavist ungmennis. Athugaðu að skjalið þarf að vera á .pdf formi.',
       description:

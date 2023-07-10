@@ -2,7 +2,7 @@ import { formatText, getValueViaPath } from '@island.is/application/core'
 import {
   MONTHS,
   ConnectedApplications,
-  HomeAllowanceHousing,
+  HouseholdSupplementHousing,
   oldAgePensionAge,
   YES,
   fishermenMinAge,
@@ -99,19 +99,19 @@ export function getApplicationAnswers(answers: Application['answers']) {
     'connectedApplications',
   ) as ConnectedApplications[]
 
-  const homeAllowanceHousing = getValueViaPath(
+  const householdSupplementHousing = getValueViaPath(
     answers,
-    'homeAllowance.housing',
-  ) as HomeAllowanceHousing
+    'householdSupplement.housing',
+  ) as HouseholdSupplementHousing
 
   const employmentStatus = getValueViaPath(
     answers,
     'employment.status',
   ) as Employment
 
-  const homeAllowanceChildren = getValueViaPath(
+  const householdSupplementChildren = getValueViaPath(
     answers,
-    'homeAllowance.children',
+    'householdSupplement.children',
   ) as YesOrNo
 
   const rawEmployers = getValueViaPath(answers, 'employers', []) as Employer[]
@@ -149,8 +149,8 @@ export function getApplicationAnswers(answers: Application['answers']) {
     onePaymentPerYear,
     comment,
     connectedApplications,
-    homeAllowanceHousing,
-    homeAllowanceChildren,
+    householdSupplementHousing,
+    householdSupplementChildren,
     employmentStatus,
     employers,
     rawEmployers,
@@ -454,8 +454,8 @@ export function getAttachments(application: Application) {
   const { answers, externalData } = application
   const {
     applicationType,
-    homeAllowanceChildren,
-    homeAllowanceHousing,
+    householdSupplementChildren,
+    householdSupplementHousing,
     connectedApplications,
     employmentStatus,
   } = getApplicationAnswers(answers)
@@ -473,14 +473,17 @@ export function getAttachments(application: Application) {
   }
 
   // leaseAgreement, schoolAgreement
-  const leaseAgrSchoolConf = answers.fileUploadHomeAllowance as leaseAgreementSchoolConfirmation
-  const isHomeAllowance = connectedApplications?.includes(
-    ConnectedApplications.HOMEALLOWANCE,
+  const leaseAgrSchoolConf = answers.fileUploadHouseholdSupplement as leaseAgreementSchoolConfirmation
+  const isHouseholdSupplement = connectedApplications?.includes(
+    ConnectedApplications.HOUSEHOLDSUPPLEMENT,
   )
-  if (homeAllowanceHousing === HomeAllowanceHousing.RENTER && isHomeAllowance) {
+  if (
+    householdSupplementHousing === HouseholdSupplementHousing.RENTER &&
+    isHouseholdSupplement
+  ) {
     getAttachmentsName(leaseAgrSchoolConf?.leaseAgreement, 'leigusamningur')
   }
-  if (homeAllowanceChildren === YES && isHomeAllowance) {
+  if (householdSupplementChildren === YES && isHouseholdSupplement) {
     getAttachmentsName(leaseAgrSchoolConf?.schoolConfirmation, 'skólavist')
   }
 

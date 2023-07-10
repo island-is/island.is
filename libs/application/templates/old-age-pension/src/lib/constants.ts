@@ -42,11 +42,11 @@ export enum States {
 }
 
 export enum ConnectedApplications {
-  HOMEALLOWANCE = 'homeAllowance',
+  HOUSEHOLDSUPPLEMENT = 'householdSupplement',
   CHILDPENSION = 'childPension',
 }
 
-export enum HomeAllowanceHousing {
+export enum HouseholdSupplementHousing {
   HOUSEOWNER = 'houseOwner',
   RENTER = 'renter',
 }
@@ -54,7 +54,7 @@ export enum HomeAllowanceHousing {
 export enum AnswerValidationConstants {
   PERIOD = 'period',
   FILEUPLOADPENEARLYFISHER = 'fileUploadEarlyPenFisher',
-  FILEUPLOADHOMEALLOWANCE = 'fileUploadHomeAllowance',
+  FILEUPLOADHOUSEHOLDSUPPLEMENT = 'fileUploadHouseholdSupplement',
   FILEUPLOADCHILDPENSION = 'fileUploadChildPension',
   EMPLOYMENT = 'employment',
   EMPLOYERS = 'employers',

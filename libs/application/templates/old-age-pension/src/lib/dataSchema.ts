@@ -2,7 +2,7 @@ import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { z } from 'zod'
 import {
   ApplicationType,
-  HomeAllowanceHousing,
+  HouseholdSupplementHousing,
   NO,
   taxLevelOptions,
   YES,
@@ -60,10 +60,10 @@ export const dataSchema = z.object({
   onePaymentPerYear: z.object({
     question: z.enum([YES, NO]),
   }),
-  homeAllowance: z.object({
+  householdSupplement: z.object({
     housing: z.enum([
-      HomeAllowanceHousing.HOUSEOWNER,
-      HomeAllowanceHousing.RENTER,
+      HouseholdSupplementHousing.HOUSEOWNER,
+      HouseholdSupplementHousing.RENTER,
     ]),
     children: z.enum([YES, NO]),
   }),

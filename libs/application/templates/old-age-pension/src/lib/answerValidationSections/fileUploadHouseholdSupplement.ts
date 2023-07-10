@@ -6,40 +6,41 @@ import { validatorErrorMessages } from '../messages'
 import { getApplicationAnswers } from '../oldAgePensionUtils'
 import {
   AnswerValidationConstants,
-  HomeAllowanceHousing,
+  HouseholdSupplementHousing,
   YES,
 } from '../constants'
 import { buildError } from './utils'
 
-export const fileUploadHomeAllowance = (
+export const fileUploadHouseholdSupplement = (
   newAnswer: unknown,
   application: Application,
 ) => {
   const obj = newAnswer as Record<string, Answer>
-  const { FILEUPLOADHOMEALLOWANCE } = AnswerValidationConstants
+  const { FILEUPLOADHOUSEHOLDSUPPLEMENT } = AnswerValidationConstants
 
-  const { homeAllowanceChildren, homeAllowanceHousing } = getApplicationAnswers(
-    application.answers,
-  )
-  if (homeAllowanceChildren === YES && obj.schoolConfirmation) {
+  const {
+    householdSupplementChildren,
+    householdSupplementHousing,
+  } = getApplicationAnswers(application.answers)
+  if (householdSupplementChildren === YES && obj.schoolConfirmation) {
     if (
       isEmpty((obj as { schoolConfirmation: unknown[] }).schoolConfirmation)
     ) {
       return buildError(
         validatorErrorMessages.requireAttachment,
-        `${FILEUPLOADHOMEALLOWANCE}.schoolConfirmation`,
+        `${FILEUPLOADHOUSEHOLDSUPPLEMENT}.schoolConfirmation`,
       )
     }
   }
 
   if (
-    homeAllowanceHousing === HomeAllowanceHousing.RENTER &&
+    householdSupplementHousing === HouseholdSupplementHousing.RENTER &&
     obj.leaseAgreement
   ) {
     if (isEmpty((obj as { leaseAgreement: unknown[] }).leaseAgreement)) {
       return buildError(
         validatorErrorMessages.requireAttachment,
-        `${FILEUPLOADHOMEALLOWANCE}.leaseAgreement`,
+        `${FILEUPLOADHOUSEHOLDSUPPLEMENT}.leaseAgreement`,
       )
     }
   }

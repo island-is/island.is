@@ -47,16 +47,16 @@ export const ConnectedApplications = ({
                   return (
                     <Bullet key={index}>
                       <Text>
-                        {app === Apps.HOMEALLOWANCE
+                        {app === Apps.HOUSEHOLDSUPPLEMENT
                           ? applicationType ===
                             ApplicationType.HALF_OLD_AGE_PENSION
                             ? formatMessage(
                                 oldAgePensionFormMessage.connectedApplications
-                                  .halfHomeAllowance,
+                                  .halfHouseholdSupplement,
                               )
                             : formatMessage(
                                 oldAgePensionFormMessage.connectedApplications
-                                  .homeAllowance,
+                                  .householdSupplement,
                               )
                           : formatMessage(
                               oldAgePensionFormMessage.connectedApplications

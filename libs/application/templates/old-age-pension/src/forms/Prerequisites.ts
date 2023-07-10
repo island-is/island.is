@@ -220,11 +220,6 @@ export const PrerequisitesForm: Form = buildForm({
       children: [],
     }),
     buildSection({
-      id: 'arrangement',
-      title: oldAgePensionFormMessage.shared.arrangementSection,
-      children: [],
-    }),
-    buildSection({
       id: 'relatedApplications',
       title:
         oldAgePensionFormMessage.connectedApplications
@@ -237,7 +232,7 @@ export const PrerequisitesForm: Form = buildForm({
       children: [],
     }),
     buildSection({
-      id: 'confirmation',
+      id: 'confirm',
       title: oldAgePensionFormMessage.review.confirmSectionTitle,
       children: [],
     }),

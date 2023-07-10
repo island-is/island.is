@@ -3,7 +3,7 @@ import { AnswerValidator } from '@island.is/application/core'
 import { AnswerValidationConstants } from './constants'
 import { fileUpploadPenEarlyFisher } from './answerValidationSections/fileUpploadPenEarlyFisher'
 import { period } from './answerValidationSections/period'
-import { fileUploadHomeAllowance } from './answerValidationSections/fileUploadHomeAllowance'
+import { fileUploadHouseholdSupplement } from './answerValidationSections/fileUploadHouseholdSupplement'
 import { employment } from './answerValidationSections/employment'
 import { employers } from './answerValidationSections/employers'
 import { fileUploadChildPension } from './answerValidationSections/fileUploadChildPension'
@@ -11,7 +11,7 @@ import { fileUploadChildPension } from './answerValidationSections/fileUploadChi
 const {
   PERIOD,
   FILEUPLOADPENEARLYFISHER,
-  FILEUPLOADHOMEALLOWANCE,
+  FILEUPLOADHOUSEHOLDSUPPLEMENT,
   EMPLOYMENT,
   EMPLOYERS,
   FILEUPLOADCHILDPENSION,
@@ -22,6 +22,6 @@ export const answerValidators: Record<string, AnswerValidator> = {
   [EMPLOYMENT]: employment,
   [EMPLOYERS]: employers,
   [FILEUPLOADPENEARLYFISHER]: fileUpploadPenEarlyFisher,
-  [FILEUPLOADHOMEALLOWANCE]: fileUploadHomeAllowance,
+  [FILEUPLOADHOUSEHOLDSUPPLEMENT]: fileUploadHouseholdSupplement,
   [FILEUPLOADCHILDPENSION]: fileUploadChildPension,
 }

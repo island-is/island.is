@@ -32,7 +32,7 @@ import {
   ConnectedApplications,
   Employment,
   FILE_SIZE_LIMIT,
-  HomeAllowanceHousing,
+  HouseholdSupplementHousing,
   NO,
   RatioType,
   YES,
@@ -263,7 +263,7 @@ export const OldAgePensionForm: Form = buildForm({
                   id: 'paymentInfo.bank',
                   title: oldAgePensionFormMessage.payment.bank,
                   backgroundColor: 'white',
-                  disabled: true,
+                  //disabled: true,
                   defaultValue: (application: Application) => {
                     const userProfile = application.externalData.userProfile
                       .data as UserProfile
@@ -662,10 +662,10 @@ export const OldAgePensionForm: Form = buildForm({
                     label:
                       applicationType === ApplicationType.HALF_OLD_AGE_PENSION
                         ? oldAgePensionFormMessage.connectedApplications
-                            .halfHomeAllowance
+                            .halfHouseholdSupplement
                         : oldAgePensionFormMessage.connectedApplications
-                            .homeAllowance,
-                    value: ConnectedApplications.HOMEALLOWANCE,
+                            .householdSupplement,
+                    value: ConnectedApplications.HOUSEHOLDSUPPLEMENT,
                   },
                   {
                     label:
@@ -679,48 +679,51 @@ export const OldAgePensionForm: Form = buildForm({
           ],
         }),
         buildSubSection({
-          id: 'homeAllowanceSection',
+          id: 'householdSupplementSection',
           title: (application) => {
             const { applicationType } = getApplicationAnswers(
               application.answers,
             )
             return applicationType === ApplicationType.HALF_OLD_AGE_PENSION
-              ? oldAgePensionFormMessage.connectedApplications.halfHomeAllowance
-              : oldAgePensionFormMessage.connectedApplications.homeAllowance
+              ? oldAgePensionFormMessage.connectedApplications
+                  .halfHouseholdSupplement
+              : oldAgePensionFormMessage.connectedApplications
+                  .householdSupplement
           },
           condition: (answers) => {
             const { connectedApplications } = getApplicationAnswers(answers)
 
             return connectedApplications?.includes(
-              ConnectedApplications.HOMEALLOWANCE,
+              ConnectedApplications.HOUSEHOLDSUPPLEMENT,
             )
           },
           children: [
             buildMultiField({
-              id: 'homeAllowance',
+              id: 'householdSupplement',
               title: (application) => {
                 const { applicationType } = getApplicationAnswers(
                   application.answers,
                 )
                 return applicationType === ApplicationType.HALF_OLD_AGE_PENSION
                   ? oldAgePensionFormMessage.connectedApplications
-                      .halfHomeAllowance
-                  : oldAgePensionFormMessage.connectedApplications.homeAllowance
+                      .halfHouseholdSupplement
+                  : oldAgePensionFormMessage.connectedApplications
+                      .householdSupplement
               },
               description:
                 oldAgePensionFormMessage.connectedApplications
-                  .homeAllowanceDescription,
+                  .householdSupplementDescription,
               children: [
                 buildCustomField(
                   {
-                    id: 'homeAllowance.alert',
+                    id: 'householdSupplement.alert',
                     title:
                       oldAgePensionFormMessage.connectedApplications
-                        .homeAllowanceAlertTitle,
+                        .householdSupplementAlertTitle,
                     component: 'FieldAlertMessage',
                     description:
                       oldAgePensionFormMessage.connectedApplications
-                        .homeAllowanceAlertDescription,
+                        .householdSupplementAlertDescription,
                     condition: (_, externalData) => {
                       return isExistsCohabitantOlderThan25(externalData)
                     },
@@ -728,32 +731,32 @@ export const OldAgePensionForm: Form = buildForm({
                   { type: 'warning' },
                 ),
                 buildRadioField({
-                  id: 'homeAllowance.housing',
+                  id: 'householdSupplement.housing',
                   title:
                     oldAgePensionFormMessage.connectedApplications
-                      .homeAllowanceHousing,
+                      .householdSupplementHousing,
                   options: [
                     {
-                      value: HomeAllowanceHousing.HOUSEOWNER,
+                      value: HouseholdSupplementHousing.HOUSEOWNER,
                       label:
                         oldAgePensionFormMessage.connectedApplications
-                          .homeAllowanceHousingOwner,
+                          .householdSupplementHousingOwner,
                     },
                     {
-                      value: HomeAllowanceHousing.RENTER,
+                      value: HouseholdSupplementHousing.RENTER,
                       label:
                         oldAgePensionFormMessage.connectedApplications
-                          .homeAllowanceHousingRenter,
+                          .householdSupplementHousingRenter,
                     },
                   ],
                   width: 'half',
                   required: true,
                 }),
                 buildRadioField({
-                  id: 'homeAllowance.children',
+                  id: 'householdSupplement.children',
                   title:
                     oldAgePensionFormMessage.connectedApplications
-                      .homeAllowanceChildrenBetween18And25,
+                      .householdSupplementChildrenBetween18And25,
                   options: getYesNOOptions(),
                   width: 'half',
                   required: true,
@@ -761,12 +764,15 @@ export const OldAgePensionForm: Form = buildForm({
               ],
             }),
             buildFileUploadField({
-              id: 'fileUploadHomeAllowance.leaseAgreement',
-              title: oldAgePensionFormMessage.fileUpload.homeAllowanceTitle,
+              id: 'fileUploadHouseholdSupplement.leaseAgreement',
+              title:
+                oldAgePensionFormMessage.fileUpload.householdSupplementTitle,
               description:
-                oldAgePensionFormMessage.fileUpload.homeAllowanceLeaseAgreement,
+                oldAgePensionFormMessage.fileUpload
+                  .householdSupplementLeaseAgreement,
               introduction:
-                oldAgePensionFormMessage.fileUpload.homeAllowanceLeaseAgreement,
+                oldAgePensionFormMessage.fileUpload
+                  .householdSupplementLeaseAgreement,
               maxSize: FILE_SIZE_LIMIT,
               maxSizeErrorText:
                 oldAgePensionFormMessage.fileUpload.attachmentMaxSizeError,
@@ -779,27 +785,29 @@ export const OldAgePensionForm: Form = buildForm({
                 oldAgePensionFormMessage.fileUpload.attachmentButton,
               condition: (answers) => {
                 const {
-                  homeAllowanceHousing,
+                  householdSupplementHousing,
                   connectedApplications,
                 } = getApplicationAnswers(answers)
 
                 return (
-                  homeAllowanceHousing === HomeAllowanceHousing.RENTER &&
+                  householdSupplementHousing ===
+                    HouseholdSupplementHousing.RENTER &&
                   connectedApplications?.includes(
-                    ConnectedApplications.HOMEALLOWANCE,
+                    ConnectedApplications.HOUSEHOLDSUPPLEMENT,
                   )
                 )
               },
             }),
             buildFileUploadField({
-              id: 'fileUploadHomeAllowance.schoolConfirmation',
-              title: oldAgePensionFormMessage.fileUpload.homeAllowanceTitle,
+              id: 'fileUploadHouseholdSupplement.schoolConfirmation',
+              title:
+                oldAgePensionFormMessage.fileUpload.householdSupplementTitle,
               description:
                 oldAgePensionFormMessage.fileUpload
-                  .homeAllowanceSchoolConfirmation,
+                  .householdSupplementSchoolConfirmation,
               introduction:
                 oldAgePensionFormMessage.fileUpload
-                  .homeAllowanceSchoolConfirmation,
+                  .householdSupplementSchoolConfirmation,
               maxSize: FILE_SIZE_LIMIT,
               maxSizeErrorText:
                 oldAgePensionFormMessage.fileUpload.attachmentMaxSizeError,
@@ -812,14 +820,14 @@ export const OldAgePensionForm: Form = buildForm({
                 oldAgePensionFormMessage.fileUpload.attachmentButton,
               condition: (answers) => {
                 const {
-                  homeAllowanceChildren,
+                  householdSupplementChildren,
                   connectedApplications,
                 } = getApplicationAnswers(answers)
 
                 return (
-                  homeAllowanceChildren === YES &&
+                  householdSupplementChildren === YES &&
                   connectedApplications?.includes(
-                    ConnectedApplications.HOMEALLOWANCE,
+                    ConnectedApplications.HOUSEHOLDSUPPLEMENT,
                   )
                 )
               },
