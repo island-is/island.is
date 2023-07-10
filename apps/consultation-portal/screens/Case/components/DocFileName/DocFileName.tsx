@@ -16,14 +16,20 @@ const DocFileName = ({ doc, isAdvice = false }: Props) => {
   const icon = isLink ? 'link' : 'document'
   const iconTitle = isLink ? loc.linkTitle : loc.documentTitle
   const linkHref = isLink ? doc.link : `${env.backendDownloadUrl}${doc.id}`
-  const fileNameOrDesc = isLink ? doc.description : doc.fileName
+  const fileNameOrDesc = doc.description ? doc.description : doc.fileName
+  const name = isLink
+    ? fileNameOrDesc
+      ? fileNameOrDesc
+      : doc.link
+    : fileNameOrDesc
+
   const linkDesc = renderDocFileName({
-    name: fileNameOrDesc,
+    name: name,
     isAdvice: isAdvice,
   })
 
   return (
-    <Tooltip placement="right" as="span" text={fileNameOrDesc} fullWidth>
+    <Tooltip placement="right" as="span" text={name} fullWidth>
       <span>
         <LinkV2
           href={linkHref}
