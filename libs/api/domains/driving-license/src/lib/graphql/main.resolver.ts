@@ -1,5 +1,7 @@
 import { Args, Query, Resolver } from '@nestjs/graphql'
 import { UseGuards } from '@nestjs/common'
+import { CacheControl, CacheControlOptions } from '@island.is/nest/graphql'
+import { CACHE_CONTROL_MAX_AGE } from '@island.is/shared/constants'
 import { ApiScope } from '@island.is/auth/scopes'
 import type { User } from '@island.is/auth-nest-tools'
 import {
@@ -7,6 +9,7 @@ import {
   ScopesGuard,
   CurrentUser,
   Scopes,
+  BypassAuth,
 } from '@island.is/auth-nest-tools'
 import { DrivingLicenseService } from '../drivingLicense.service'
 export * from '@island.is/nest/audit'
@@ -19,12 +22,14 @@ import {
   StudentAssessment,
   ApplicationEligibilityInput,
   Teacher,
+  TeacherV4,
 } from './models'
 import { AuditService } from '@island.is/nest/audit'
 import { DrivingInstructorGuard } from './guards/drivingInstructor.guard'
 import { StudentCanGetPracticePermitInput } from './models/studentCanGetPracticePermit.input'
 import { StudentCanGetPracticePermit } from './models/studentCanGetPracticePermit.model'
 
+const defaultCache: CacheControlOptions = { maxAge: CACHE_CONTROL_MAX_AGE }
 const namespace = '@island.is/api/driving-license'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
@@ -64,6 +69,13 @@ export class MainResolver {
   @Query(() => [Teacher])
   drivingLicenseTeachers() {
     return this.drivingLicenseService.getTeachers()
+  }
+
+  @BypassAuth()
+  @CacheControl(defaultCache)
+  @Query(() => [TeacherV4])
+  drivingLicenseTeachersV4() {
+    return this.drivingLicenseService.getTeachersV4()
   }
 
   @Query(() => HasTeachingRights)
