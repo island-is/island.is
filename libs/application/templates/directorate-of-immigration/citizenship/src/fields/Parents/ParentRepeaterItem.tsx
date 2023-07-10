@@ -37,8 +37,6 @@ export const ParentRepeaterItem: FC<Props & FieldBaseProps> = ({
 }) => {
   const { application, errors, field } = props
 
-  console.log('repeaterField', repeaterField)
-
   return (
     <Box key={`parentBox${index}`} hidden={isHidden}>
       <DescriptionText

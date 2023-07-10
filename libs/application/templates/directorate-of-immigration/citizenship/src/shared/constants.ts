@@ -15,4 +15,4 @@ export enum ApiActions {
   validateApplication = 'validateApplication',
 }
 
-export const MAX_CNT_APPLICANTS = 10
+export const MAX_CNT_APPLICANTS = 18

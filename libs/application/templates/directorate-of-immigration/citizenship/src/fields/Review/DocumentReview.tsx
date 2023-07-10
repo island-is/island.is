@@ -8,8 +8,19 @@ import DescriptionText from '../../components/DescriptionText'
 import { review } from '../../lib/messages'
 import { Citizenship } from '../../lib/dataSchema'
 import { getSelectedCustodyChildren } from '../../utils/childrenInfo'
+import { Routes } from '../../lib/constants'
+import SummaryBlock from '../../components/SummaryBlock'
 
-export const DocumentReview: FC<FieldBaseProps> = ({ application }) => {
+interface Props extends FieldBaseProps {
+  goToScreen?: (id: string) => void
+  route: Routes
+}
+
+export const DocumentReview: FC<Props> = ({
+  application,
+  goToScreen,
+  route,
+}) => {
   const answers = application.answers as Citizenship
 
   const selectedChildren = getSelectedCustodyChildren(
@@ -17,38 +28,42 @@ export const DocumentReview: FC<FieldBaseProps> = ({ application }) => {
     application.answers,
   )
 
+  console.log('documentsReview', answers)
+
   return (
-    <Box paddingBottom={4} paddingTop={4}>
-      <GridRow>
-        <GridColumn span="1/2">
-          <DescriptionText
-            text={review.labels.documents}
-            format={{ name: answers?.userInformation?.name }}
-            textProps={{
-              as: 'h4',
-              fontWeight: 'semiBold',
-              marginBottom: 0,
-            }}
-          />
-        </GridColumn>
-        {selectedChildren &&
-          selectedChildren.length > 0 &&
-          selectedChildren.map((child) => {
-            return (
-              <GridColumn span="1/2">
-                <DescriptionText
-                  text={review.labels.documents}
-                  format={{ name: child.fullName }}
-                  textProps={{
-                    as: 'h4',
-                    fontWeight: 'semiBold',
-                    marginBottom: 0,
-                  }}
-                />
-              </GridColumn>
-            )
-          })}
-      </GridRow>
-    </Box>
+    <SummaryBlock editAction={() => goToScreen?.(route)}>
+      <Box paddingBottom={4}>
+        <GridRow>
+          <GridColumn span="1/2">
+            <DescriptionText
+              text={review.labels.documents}
+              format={{ name: answers?.userInformation?.name }}
+              textProps={{
+                as: 'h4',
+                fontWeight: 'semiBold',
+                marginBottom: 0,
+              }}
+            />
+          </GridColumn>
+          {selectedChildren &&
+            selectedChildren.length > 0 &&
+            selectedChildren.map((child) => {
+              return (
+                <GridColumn span="1/2">
+                  <DescriptionText
+                    text={review.labels.documents}
+                    format={{ name: child.fullName }}
+                    textProps={{
+                      as: 'h4',
+                      fontWeight: 'semiBold',
+                      marginBottom: 0,
+                    }}
+                  />
+                </GridColumn>
+              )
+            })}
+        </GridRow>
+      </Box>
+    </SummaryBlock>
   )
 }

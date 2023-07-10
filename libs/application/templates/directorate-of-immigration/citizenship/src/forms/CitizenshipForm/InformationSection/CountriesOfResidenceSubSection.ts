@@ -4,13 +4,14 @@ import {
   buildCustomField,
 } from '@island.is/application/core'
 import { information } from '../../../lib/messages'
+import { Routes } from '../../../lib/constants'
 
 export const CountriesOfResidenceSubSection = buildSubSection({
-  id: 'countriesOfResidence',
+  id: Routes.COUNTRIESOFRESIDENCE,
   title: information.labels.countriesOfResidence.subSectionTitle,
   children: [
     buildMultiField({
-      id: 'countriesOfResidenceMultiField',
+      id: Routes.COUNTRIESOFRESIDENCE,
       title: information.labels.countriesOfResidence.pageTitle,
       children: [
         buildCustomField({

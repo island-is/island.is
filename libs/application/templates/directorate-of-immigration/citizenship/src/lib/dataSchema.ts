@@ -157,6 +157,11 @@ const MaritalStatusSchema = z.object({
   dateOfMarritalStatus: z.string().min(1),
 })
 
+const PassportItemSchema = z.object({
+  nationalId: z.string().optional(),
+  passport: PassportSchema,
+})
+
 export const CitizenshipSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
   userInformation: UserInformationSchema,
@@ -166,7 +171,7 @@ export const CitizenshipSchema = z.object({
   spouse: z.string().min(1),
   countriesOfResidence: CountriesOfResidenceSchema,
   staysAbroad: StaysAbroadSchema,
-  passport: z.array(PassportSchema),
+  passports: z.array(PassportItemSchema),
   maritalStatus: MaritalStatusSchema,
   formerIcelander: z.string().refine((v) => v === 'Yes'),
 })

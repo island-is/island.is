@@ -8,9 +8,10 @@ import { information } from '../../../lib/messages'
 import { Answer } from '@island.is/application/types'
 import { Citizenship } from '../../../lib/dataSchema'
 import { ResidenceCondition } from '@island.is/clients/directorate-of-immigration/citizenship'
+import { Routes } from '../../../lib/constants'
 
 export const ParentsSubSection = buildSubSection({
-  id: 'parentInformation',
+  id: Routes.PARENTINFORMATION,
   title: information.labels.parents.subSectionTitle,
   condition: (_, externalData) => {
     const residenceConditionOptions = getValueViaPath(
@@ -24,7 +25,7 @@ export const ParentsSubSection = buildSubSection({
   },
   children: [
     buildMultiField({
-      id: 'parentsMultiField',
+      id: Routes.PARENTINFORMATION,
       title: information.labels.parents.pageTitle,
       children: [
         buildCustomField({

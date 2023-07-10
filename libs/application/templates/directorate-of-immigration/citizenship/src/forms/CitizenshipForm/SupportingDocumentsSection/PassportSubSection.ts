@@ -12,16 +12,18 @@ import { supportingDocuments } from '../../../lib/messages'
 import { Application } from '@island.is/application/types'
 import { getSelectedIndividualName } from '../../../utils'
 import { TravelDocumentType } from '@island.is/clients/directorate-of-immigration/citizenship'
+import { CitizenIndividual } from '../../../shared'
+import { Routes } from '../../../lib/constants'
 
 const FILE_SIZE_LIMIT = 10000000
 
 export const PassportSubSection = (index: number) =>
   buildSubSection({
-    id: `passport${index}`,
+    id: `passports[${index}]`,
     title: supportingDocuments.labels.passport.subSectionTitle,
     children: [
       buildMultiField({
-        id: `passportMultiField${index}`,
+        id: `passports[${index}]`,
         title: supportingDocuments.labels.passport.pageTitle,
         description: (application: Application) => {
           return {
@@ -37,31 +39,44 @@ export const PassportSubSection = (index: number) =>
           }
         },
         children: [
+          // buildTextField({
+          //   id: `passports[${index}].nationalId`,
+          //   title: '',
+          //   defaultValue: (application: Application) => {
+          //     const individual = getValueViaPath(
+          //       application.externalData,
+          //       'individual.data',
+          //       undefined,
+          //     ) as CitizenIndividual | undefined
+
+          //     return individual?.nationalId
+          //   },
+          // }),
           buildDescriptionField({
-            id: `passport${index}.title`,
+            id: `passports[${index}].passport.title`,
             title: supportingDocuments.labels.passport.title,
             titleVariant: 'h5',
           }),
           buildDateField({
-            id: `passport[${index}].publishDate`,
+            id: `passports[${index}].passport.publishDate`,
             title: supportingDocuments.labels.passport.publishDate,
             placeholder: supportingDocuments.labels.passport.datePlaceholder,
             width: 'half',
           }),
           buildDateField({
-            id: `passport[${index}].expirationDate`,
+            id: `passports[${index}].passport.expirationDate`,
             title: supportingDocuments.labels.passport.expirationDate,
             placeholder: supportingDocuments.labels.passport.datePlaceholder,
             width: 'half',
           }),
           buildTextField({
-            id: `passport[${index}].passportNumber`,
+            id: `passports[${index}].passport.passportNumber`,
             title: supportingDocuments.labels.passport.passportNumber,
             placeholder: supportingDocuments.labels.passport.numberPlaceholder,
             width: 'half',
           }),
           buildSelectField({
-            id: `passport[${index}].passportType`,
+            id: `passports[${index}].passport.passportType`,
             title: supportingDocuments.labels.passport.passportType,
             placeholder: supportingDocuments.labels.passport.typePlaceholder,
             width: 'half',
@@ -79,16 +94,17 @@ export const PassportSubSection = (index: number) =>
             },
           }),
           buildTextField({
-            id: `passport[${index}].publisher`,
+            id: `passports[${index}].passport.publisher`,
             title: supportingDocuments.labels.passport.publisher,
             width: 'half',
           }),
           buildFileUploadField({
-            id: 'passport.attachment',
+            id: `passports[${index}].passport.attachment`,
             title: '',
             introduction: '',
             maxSize: FILE_SIZE_LIMIT,
-            uploadHeader: 'æljksadf', //TODO
+            uploadHeader:
+              supportingDocuments.labels.passport.uploadTitlePlaceholder,
           }),
         ],
       }),

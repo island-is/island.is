@@ -7,9 +7,10 @@ import {
 import { selectChildren } from '../../../lib/messages'
 import * as kennitala from 'kennitala'
 import { ApplicantChildCustodyInformation } from '@island.is/application/types'
+import { Routes } from '../../../lib/constants'
 
 export const PickChildrenSubSection = buildSubSection({
-  id: 'pickChildren',
+  id: Routes.PICKCHILDREN,
   title: selectChildren.general.subSectionTitle,
   condition: (_, externalData) => {
     const childWithInfo = getValueViaPath(
@@ -22,7 +23,7 @@ export const PickChildrenSubSection = buildSubSection({
   },
   children: [
     buildMultiField({
-      id: 'pickChildrenMultiField',
+      id: Routes.PICKCHILDREN,
       title: selectChildren.general.pageTitle,
       description: selectChildren.general.description,
       children: [

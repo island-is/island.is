@@ -10,17 +10,18 @@ import { Application, UserProfile } from '@island.is/api/schema'
 import { formatDate } from '../../../utils'
 import { NationalRegistryBirthplace } from '@island.is/application/types'
 import { CitizenIndividual } from '../../../shared'
+import { Routes } from '../../../lib/constants'
 
 export const UserInformationSubSection = buildSubSection({
-  id: 'userInformation',
+  id: Routes.USERINFORMATION,
   title: personal.labels.userInformation.subSectionTitle,
   children: [
     buildMultiField({
-      id: 'userInformationMultiField',
+      id: Routes.USERINFORMATION,
       title: personal.labels.userInformation.pageTitle,
       children: [
         buildDescriptionField({
-          id: 'userInformation.title',
+          id: `${Routes.USERINFORMATION}.title`,
           title: personal.labels.userInformation.title,
           titleVariant: 'h5',
         }),
