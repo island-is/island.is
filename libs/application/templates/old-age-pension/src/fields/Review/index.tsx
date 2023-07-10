@@ -5,7 +5,6 @@ import { FC } from 'react'
 import get from 'lodash/get'
 import has from 'lodash/has'
 
-import { oldAgePensionFormMessage } from '../../lib/messages'
 import { BaseInformation } from './review-groups/BaseInformation'
 import { Fishermen } from './review-groups/Fishermen'
 import { Period } from './review-groups/Period'
@@ -14,6 +13,9 @@ import { Attachments } from './review-groups/Attachments'
 import { ResidenceHistory } from './review-groups/ResidenceHistory'
 import { ConnectedApplications } from './review-groups/ConnectedApplications'
 import { Employers } from './review-groups/employers'
+import { PaymentInformation } from './review-groups/PaymentInformation'
+
+import { oldAgePensionFormMessage } from '../../lib/messages'
 import { getApplicationAnswers } from '../../lib/oldAgePensionUtils'
 import { Employment } from '../../lib/constants'
 
@@ -65,6 +67,7 @@ export const Review: FC<ReviewScreenProps> = ({
         </Box>
       </Box>
       <BaseInformation {...childProps} />
+      <PaymentInformation {...childProps} />
       <ResidenceHistory {...childProps} />
       {employmentStatus === Employment.EMPLOYEE && (
         <Employers {...childProps} />
