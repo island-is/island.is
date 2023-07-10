@@ -238,6 +238,67 @@ export const oldAgePensionFormMessage: MessageDir = {
     },
   }),
 
+  payment: defineMessages({
+    title: {
+      id: 'oap.application:payment.title',
+      defaultMessage: 'Greiðsluupplýsingar',
+      description: 'Payment information',
+    },
+    alertTitle: {
+      id: 'oap.application:payment.alert.title',
+      defaultMessage: 'Til athugunar!',
+      description: 'For consideration',
+    },
+    alertMessage: {
+      id: 'oap.application:payment.alert.message',
+      defaultMessage:
+        'Allar þínar greiðslur frá Tryggingastofnun eru greiddar inná bankareikninginn hér að neðan. Ef þú breytir bankaupplýsingunum þínum munu allar þínar greiðslur frá Tryggingastofnun verða greiddar inná þann reiking.',
+      description:
+        'All your payments from TR are paid into the bank account below. If you change your bank details, all your payments from the TR will be paid into that account.',
+    },
+    bank: {
+      id: 'oap.application:payment.bank',
+      defaultMessage: 'Banki',
+      description: 'Bank',
+    },
+    personalDiscount: {
+      id: 'oap.application:payment.personal.discount',
+      defaultMessage: 'Vilt þú nýta persónuafsláttinn þinn?',
+      description: 'Do you want to use your personal discount?',
+    },
+    spouseDiscount: {
+      id: 'oap.application:payment.personal.discount',
+      defaultMessage: 'Vilt þú nýta persónuafsláttinn maka þíns?',
+      description: 'Do you want to use your spouse personal discount?',
+    },
+    taxLevel: {
+      id: 'oap.application:payment.tax.level',
+      defaultMessage: 'Skattþrep',
+      description: 'Tax level',
+    },
+    taxIncomeLevel: {
+      id: 'oap.application:payment.tax.first.level',
+      defaultMessage:
+        'Ég vil að staðgreiðslan sé reiknuð út frá tekjuáætlun minni',
+      description:
+        'I want the withholding tax to be calculated based on my income estimate',
+    },
+    taxFirstLevel: {
+      id: 'oap.application:payment.tax.second.level',
+      defaultMessage:
+        'Ég vil að miðað sé við Skattþrep 1 í útreikningum staðgreiðslu (31,45% af tekjum: 0 - 409.986 kr.)',
+      description:
+        'I want tax level 1 to be taken into account in the withholding calculations (31.45% of income: 0 - 409,986 ISK)',
+    },
+    taxSecondLevel: {
+      id: 'oap.application:payment.tax.third.level',
+      defaultMessage:
+        'Ég vil að miðað sé við Skattþrep 2 í útreikningum staðgreiðslu (37,95% af tekjum: 409.986 - 1.151.012 kr.)',
+      description:
+        'I want tax level 2 to be taken into account in the withholding calculations (37.95% of income: ISK 409,986 - ISK 1,151,012)',
+    },
+  }),
+
   onePaymentPerYear: defineMessages({
     onePaymentPerYearTitle: {
       id: 'oap.application:one.payment.per.year.title',
@@ -502,6 +563,26 @@ export const oldAgePensionFormMessage: MessageDir = {
       defaultMessage:
         'Vinsamlegast farðu yfir umsóknina áður en þú sendir hana inn.',
       description: 'Please review the application before submitting.',
+    },
+    bank: {
+      id: 'oap.application:conformation.bank',
+      defaultMessage: 'Banki',
+      description: 'Bank',
+    },
+    personalDiscount: {
+      id: 'oap.application:conformation.personal.discount',
+      defaultMessage: 'Persónuafláttur',
+      description: 'Personal discount',
+    },
+    spouseDiscount: {
+      id: 'oap.application:conformation.spouse.discount',
+      defaultMessage: 'Persónuafsláttur maka',
+      description: 'Spouse personal discount',
+    },
+    taxLevel: {
+      id: 'oap.application:conformation.tax.level',
+      defaultMessage: 'Skattþrep',
+      description: 'Tax level',
     },
   }),
 

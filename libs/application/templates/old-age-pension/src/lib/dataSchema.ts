@@ -1,6 +1,12 @@
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { z } from 'zod'
-import { ApplicationType, HomeAllowanceHousing, NO, YES } from './constants'
+import {
+  ApplicationType,
+  HomeAllowanceHousing,
+  NO,
+  taxLevelOptions,
+  YES,
+} from './constants'
 import { oldAgePensionFormMessage } from './messages'
 import addYears from 'date-fns/addYears'
 import addMonths from 'date-fns/addMonths'
@@ -60,6 +66,16 @@ export const dataSchema = z.object({
       HomeAllowanceHousing.RENTER,
     ]),
     children: z.enum([YES, NO]),
+  }),
+  paymentInfo: z.object({
+    bank: z.string(),
+    personalDiscount: z.enum([YES, NO]),
+    spouseDiscount: z.enum([YES, NO]),
+    taxLevel: z.enum([
+      taxLevelOptions.INCOME,
+      taxLevelOptions.FIRST_LEVEL,
+      taxLevelOptions.SECOND_LEVEL,
+    ]),
   }),
 })
 

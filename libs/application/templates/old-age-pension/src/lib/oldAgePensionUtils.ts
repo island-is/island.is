@@ -12,6 +12,7 @@ import {
   ApplicationType,
   Employment,
   RatioType,
+  taxLevelOptions,
 } from './constants'
 import {
   ApplicantChildCustodyInformation,
@@ -122,6 +123,21 @@ export function getApplicationAnswers(answers: Application['answers']) {
     [],
   ) as ChildPensionRow[]
 
+  const personalDiscount = getValueViaPath(
+    answers,
+    'paymentInfo.personalDiscount',
+  ) as YesOrNo
+
+  const spouseDiscount = getValueViaPath(
+    answers,
+    'paymentInfo.spouseDiscount',
+  ) as YesOrNo
+
+  const taxLevel = getValueViaPath(
+    answers,
+    'paymentInfo.taxLevel',
+  ) as taxLevelOptions
+
   return {
     pensionFundQuestion,
     applicationType,
@@ -139,6 +155,9 @@ export function getApplicationAnswers(answers: Application['answers']) {
     employers,
     rawEmployers,
     childPension,
+    personalDiscount,
+    spouseDiscount,
+    taxLevel,
   }
 }
 
@@ -210,6 +229,11 @@ export function getApplicationExternalData(
     'nationalRegistrySpouse.data.maritalStatus',
   ) as string
 
+  const bank = getValueViaPath(
+    externalData,
+    'userProfile.data.bankInfo',
+  ) as string
+
   return {
     residenceHistory,
     cohabitants,
@@ -222,6 +246,7 @@ export function getApplicationExternalData(
     spouseName,
     spouseNationalId,
     maritalStatus,
+    bank,
   }
 }
 
@@ -517,6 +542,24 @@ export function getYesNOOptions() {
     {
       value: NO,
       label: oldAgePensionFormMessage.shared.no,
+    },
+  ]
+  return options
+}
+
+export function getTaxOptions() {
+  const options: Option[] = [
+    {
+      value: taxLevelOptions.INCOME,
+      label: oldAgePensionFormMessage.payment.taxIncomeLevel,
+    },
+    {
+      value: taxLevelOptions.FIRST_LEVEL,
+      label: oldAgePensionFormMessage.payment.taxFirstLevel,
+    },
+    {
+      value: taxLevelOptions.SECOND_LEVEL,
+      label: oldAgePensionFormMessage.payment.taxSecondLevel,
     },
   ]
   return options

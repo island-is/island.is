@@ -43,6 +43,7 @@ import {
   childCustody_LivesWithApplicant,
   getApplicationAnswers,
   getApplicationExternalData,
+  getTaxOptions,
   getYesNOOptions,
   isEarlyRetirement,
   isExistsCohabitantOlderThan25,
@@ -235,6 +236,63 @@ export const OldAgePensionForm: Form = buildForm({
                     if (spouseNationalId) return true
                     return false
                   },
+                }),
+              ],
+            }),
+          ],
+        }),
+        buildSubSection({
+          id: 'payment',
+          title: oldAgePensionFormMessage.payment.title,
+          children: [
+            buildMultiField({
+              id: 'paymentInfo',
+              title: oldAgePensionFormMessage.payment.title,
+              description: '',
+              children: [
+                buildCustomField(
+                  {
+                    id: 'paymentInfo.alert',
+                    title: oldAgePensionFormMessage.payment.alertTitle,
+                    component: 'FieldAlertMessage',
+                    description: oldAgePensionFormMessage.payment.alertMessage,
+                  },
+                  { type: 'warning' },
+                ),
+                buildTextField({
+                  id: 'paymentInfo.bank',
+                  title: oldAgePensionFormMessage.payment.bank,
+                  backgroundColor: 'white',
+                  disabled: true,
+                  defaultValue: (application: Application) => {
+                    const userProfile = application.externalData.userProfile
+                      .data as UserProfile
+                    return userProfile.bankInfo
+                  },
+                }),
+                buildRadioField({
+                  id: 'paymentInfo.personalDiscount',
+                  title: oldAgePensionFormMessage.payment.personalDiscount,
+                  options: getYesNOOptions(),
+                  width: 'half',
+                  largeButtons: true,
+                  space: 'containerGutter',
+                }),
+                buildRadioField({
+                  id: 'paymentInfo.spouseDiscount',
+                  title: oldAgePensionFormMessage.payment.spouseDiscount,
+                  options: getYesNOOptions(),
+                  width: 'half',
+                  largeButtons: true,
+                  space: 'containerGutter',
+                }),
+                buildRadioField({
+                  id: 'paymentInfo.taxLevel',
+                  title: oldAgePensionFormMessage.payment.taxLevel,
+                  options: getTaxOptions(),
+                  width: 'full',
+                  largeButtons: true,
+                  space: 'containerGutter',
                 }),
               ],
             }),
