@@ -17,9 +17,7 @@ export const ApiConfig = {
     return new Configuration({
       fetchApi: createEnhancedFetch({
         name: 'clients-aircraft-registry',
-        logErrorResponseBody: true,
         treat400ResponsesAsErrors: true,
-        timeout: 20000,
       }),
       basePath: `${xroadConfig.xRoadBasePath}/r1/${config.xRoadServicePath}`,
       headers: {
