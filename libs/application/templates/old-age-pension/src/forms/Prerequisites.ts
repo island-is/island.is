@@ -232,8 +232,8 @@ export const PrerequisitesForm: Form = buildForm({
       children: [],
     }),
     buildSection({
-      id: 'comment',
-      title: oldAgePensionFormMessage.comment.commentSection,
+      id: 'additionalInformation',
+      title: oldAgePensionFormMessage.comment.additionalInfoTitle,
       children: [],
     }),
     buildSection({

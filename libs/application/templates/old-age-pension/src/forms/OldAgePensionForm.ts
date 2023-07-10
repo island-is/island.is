@@ -630,6 +630,13 @@ export const OldAgePensionForm: Form = buildForm({
               ? oldAgePensionFormMessage.connectedApplications.halfHomeAllowance
               : oldAgePensionFormMessage.connectedApplications.homeAllowance
           },
+          condition: (answers) => {
+            const { connectedApplications } = getApplicationAnswers(answers)
+
+            return connectedApplications?.includes(
+              ConnectedApplications.HOMEALLOWANCE,
+            )
+          },
           children: [
             buildMultiField({
               id: 'homeAllowance',
@@ -645,13 +652,6 @@ export const OldAgePensionForm: Form = buildForm({
               description:
                 oldAgePensionFormMessage.connectedApplications
                   .homeAllowanceDescription,
-              condition: (answers) => {
-                const { connectedApplications } = getApplicationAnswers(answers)
-
-                return connectedApplications?.includes(
-                  ConnectedApplications.HOMEALLOWANCE,
-                )
-              },
               children: [
                 buildCustomField(
                   {
@@ -771,7 +771,6 @@ export const OldAgePensionForm: Form = buildForm({
         buildSubSection({
           id: 'childPensionSection',
           title: oldAgePensionFormMessage.connectedApplications.childPension,
-          // viljum við hafa condition-ið á þessu level-i eða neðar?
           condition: (answers) => {
             const { connectedApplications } = getApplicationAnswers(answers)
 
