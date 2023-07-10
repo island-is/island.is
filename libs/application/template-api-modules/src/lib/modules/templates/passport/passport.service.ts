@@ -49,10 +49,13 @@ export class PassportService extends BaseTemplateApiService {
     return identityDocument
   }
 
-  async deliveryAddress({ auth }: TemplateApiModuleActionProps) {
+  async deliveryAddress({ auth, application }: TemplateApiModuleActionProps) {
     const res = await this.passportApi.getDeliveryAddress(auth)
     if (!res) {
-      this.logger.warn('No delivery address for passport found for user')
+      this.logger.warn(
+        'No delivery address for passport found for user for application: ',
+        application.id,
+      )
       throw new TemplateApiError(
         {
           title: coreErrorMessages.failedDataProvider,
