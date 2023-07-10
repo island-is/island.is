@@ -1,11 +1,15 @@
-import React from 'react'
-
-import { Box, Button, Checkbox } from '@island.is/island-ui/core'
-import { lokeNumberList as strings } from './LokeNumberList.strings'
+import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
 
+import { Box, Button, Checkbox } from '@island.is/island-ui/core'
+
+import { useGetPoliceCaseInfoQuery } from '../../../graphql/PoliceCaseInfo.generated'
+import { PoliceCaseInfo } from '@island.is/judicial-system-web/src/graphql/schema'
+
+import { lokeNumberList as strings } from './LokeNumberList.strings'
+
 interface Props {
-  index?: number
+  caseId: string
 }
 interface CheckBoxContainerProps {
   children: React.ReactNode
@@ -26,8 +30,27 @@ const CheckBoxContainer: React.FC<CheckBoxContainerProps> = (props) => {
 }
 
 export const LokeNumberList: React.FC<Props> = (props) => {
-  const { index } = props
+  const { caseId } = props
   const { formatMessage } = useIntl()
+
+  const [policeCaseInfoResponse, setPoliceCaseInfoResponse] = useState<
+    PoliceCaseInfo[]
+  >()
+
+  useGetPoliceCaseInfoQuery({
+    variables: {
+      input: {
+        caseId: caseId,
+      },
+    },
+    fetchPolicy: 'no-cache',
+    onCompleted: (data) => {
+      setPoliceCaseInfoResponse(data.policeCaseInfo as PoliceCaseInfo[])
+    },
+    onError: (error) => {
+      // TODO
+    },
+  })
 
   return (
     <>
@@ -45,10 +68,16 @@ export const LokeNumberList: React.FC<Props> = (props) => {
             name="Velja öll"
           />
         </Box>
-
-        <CheckBoxContainer>
-          <Checkbox label="NUMBER" name="NUMBER" backgroundColor="blue" />
-        </CheckBoxContainer>
+        {policeCaseInfoResponse &&
+          policeCaseInfoResponse.map((info) => (
+            <CheckBoxContainer key={info.policeCaseNumber}>
+              <Checkbox
+                label={info.policeCaseNumber}
+                name={info.policeCaseNumber}
+                backgroundColor="blue"
+              />
+            </CheckBoxContainer>
+          ))}
       </Box>
       <Box
         display="flex"

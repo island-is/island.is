@@ -363,10 +363,15 @@ const Defendant: React.FC = () => {
         <Box component="section" marginBottom={5}>
           <SectionHeading
             title={formatMessage(defendant.policeCaseNumbersHeading)}
-            // description={formatMessage(defendant.policeCaseNumbersDescription)}
+            description={
+              workingCase.origin === CaseOrigin.LOKE &&
+              formatMessage(defendant.policeCaseNumbersDescription)
+            }
           />
           {/* TODO Add when feature is ready */}
-          {/* <LokeNumberList /> */}
+          {workingCase.origin === CaseOrigin.LOKE && (
+            <LokeNumberList caseId={workingCase.id} />
+          )}
           <AnimatePresence>
             {policeCases.map((policeCase, index) => (
               <motion.div
