@@ -23,8 +23,6 @@ const DocFileName = ({ doc, isAdvice = false }: Props) => {
       : doc.link
     : fileNameOrDesc
 
-  
-
   const linkDesc = renderDocFileName({
     name: name,
     isAdvice: isAdvice,
