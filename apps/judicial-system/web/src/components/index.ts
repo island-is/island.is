@@ -10,7 +10,6 @@ export { default as CaseResubmitModal } from './CaseResubmitModal/CaseResubmitMo
 export { default as CheckboxList } from './CheckboxList/CheckboxList'
 export { default as CommentsAccordionItem } from './AccordionItems/CommentsAccordionItem/CommentsAccordionItem'
 export { default as ConclusionDraft } from './ConclusionDraft/ConclusionDraft'
-export { default as CourtCaseNumber } from './Table/CourtCaseNumber/CourtCaseNumber'
 export {
   CourtArrangements,
   useCourtArrangements,
@@ -19,7 +18,6 @@ export { default as CourtDocuments } from './CourtDocuments/CourtDocuments'
 export { default as CourtRecordAccordionItem } from './AccordionItems/CourtRecordAccordionItem/CourtRecordAccordionItem'
 export { default as DateTime } from './DateTime/DateTime'
 export { default as Decision } from './Decision/Decision'
-export { default as DefendantInfo } from './Table/DefendantInfo/DefendantInfo'
 export { default as DefenderInfo } from './DefenderInfo/DefenderInfo'
 export { default as DefenderInput } from './DefenderInfo/DefenderInput'
 export { default as DefenderNotFound } from './DefenderInfo/DefenderNotFound'
@@ -62,10 +60,8 @@ export { default as SignedDocument } from './SignedDocument/SignedDocument'
 export { default as OverviewHeader } from './OverviewHeader/OverviewHeader'
 export { default as TagAppealState } from './TagAppealState/TagAppealState'
 export { default as TagCaseState } from './TagCaseState/TagCaseState'
-
 export { default as AppealCasesTable } from './Table/AppealCasesTable/AppealCasesTable'
 export { default as PastCasesTable } from './Table/PastCasesTable/PastCasesTable'
-
 export {
   SigningModal,
   useRequestRulingSignature,
@@ -85,5 +81,6 @@ export { default as CaseResentExplanation } from './CaseResentExplanation/CaseRe
 export { default as AppealConclusion } from './Conclusion/AppealConclusion'
 export { AlertBanner } from './AlertBanner'
 export { default as RulingDateLabel } from './RulingDateLabel/RulingDateLabel'
+export { default as SharedPageLayout } from './SharedPageLayout/SharedPageLayout'
 
 export type { Rect } from './ViewportProvider/ViewportProvider'

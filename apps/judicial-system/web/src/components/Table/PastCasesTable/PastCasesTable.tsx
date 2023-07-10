@@ -1,16 +1,15 @@
 import React, { useContext, useMemo } from 'react'
 import cn from 'classnames'
+
 import { theme } from '@island.is/island-ui/theme'
 import { Box, Text } from '@island.is/island-ui/core'
-
 import { useIntl } from 'react-intl'
 import { capitalize } from '@island.is/judicial-system/formatters'
-import { tables, core } from '@island.is/judicial-system-web/messages'
 import {
   CaseListEntry,
   isExtendedCourtRole,
 } from '@island.is/judicial-system/types'
-
+import { tables, core } from '@island.is/judicial-system-web/messages'
 import {
   useSortCases,
   useViewport,
@@ -78,7 +77,7 @@ const PastCasesTable: React.FC<Props> = (props) => {
                 theCase.state,
                 theCase.validToDate,
                 theCase.initialRulingDate,
-                theCase.courtEndTime,
+                theCase.rulingDate,
               )}
             />
           </MobilePastCase>
@@ -142,7 +141,10 @@ const PastCasesTable: React.FC<Props> = (props) => {
                 />
               </Box>
               {column.appealState && (
-                <TagAppealState appealState={column.appealState} />
+                <TagAppealState
+                  appealState={column.appealState}
+                  appealRulingDecision={column.appealRulingDecision}
+                />
               )}
             </td>
             <td>
@@ -151,7 +153,7 @@ const PastCasesTable: React.FC<Props> = (props) => {
                   column.state,
                   column.validToDate,
                   column.initialRulingDate,
-                  column.courtEndTime,
+                  column.rulingDate,
                 )}
               </Text>
             </td>

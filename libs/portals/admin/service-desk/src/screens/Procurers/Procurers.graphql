@@ -1,0 +1,12 @@
+query CompanyRelationships($input: RskCompanyInfoInput!) {
+  companyRegistryCompany(input: $input) {
+    name
+    nationalId
+    companyInfo {
+      relationships {
+        name
+        nationalId
+      }
+    }
+  }
+}

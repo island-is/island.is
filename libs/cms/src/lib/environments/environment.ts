@@ -17,6 +17,7 @@ export default {
     'link',
     'frontpage',
     'enhancedAsset',
+    'vacancy',
   ],
   nestedContentTypes: [
     'alertBanner',
@@ -75,6 +76,11 @@ export default {
     'teamList',
     'teamMember',
     'sliceDropdown',
+    'sidebarCard',
+    'genericTag',
+    'latestNewsSlice',
+    'supportCategory',
+    'supportSubCategory',
   ],
   // Content types that have the 'activeTranslations' JSON field
   localizedContentTypes: ['article'],

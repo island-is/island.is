@@ -82,6 +82,18 @@ export class DrivingLicenseApi {
   }
 
   public async getCurrentLicense(input: {
+    token: string
+  }): Promise<DriversLicense> {
+    const license = await this.v5.getCurrentLicenseV5({
+      apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
+      apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
+      jwttoken: input.token?.replace('Bearer ', ''),
+    })
+    return DrivingLicenseApi.normalizeDrivingLicenseDTO(license)
+  }
+
+  // TODO: deprecate this function and use getCurrentLicense instead
+  public async legacyGetCurrentLicense(input: {
     nationalId: string
     token?: string
   }): Promise<DriversLicense | null> {
@@ -194,6 +206,31 @@ export class DrivingLicenseApi {
     }
   }
 
+  // TODO: We should consider changing the DriversLicense type to reflect
+  // the new DTO from v5. This should be done as part of a larger refactor
+  // for the driving license client.
+  private static normalizeDrivingLicenseDTO(
+    license: v5.DriverLicenseDto,
+  ): DriversLicense {
+    const normalizedLicense: DriversLicense = {
+      ...license,
+      id: license.id ?? -1,
+      name: license.name ?? '',
+      categories:
+        license.categories?.map((category) => {
+          return {
+            ...category,
+            id: category.id ?? -1,
+            issued: category.publishDate ?? null,
+            comments: category.comment ?? null,
+            name: category.categoryName ?? '',
+            expires: category.dateTo ?? null,
+          }
+        }) ?? [],
+    }
+    return normalizedLicense
+  }
+
   public async getAllLicenses(input: {
     nationalId: string
   }): Promise<DriversLicense[]> {
@@ -220,7 +257,7 @@ export class DrivingLicenseApi {
     return await this.v5.apiDrivinglicenseV5DeprivationGet({
       apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
       apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
-      jwttoken: input.token ?? '',
+      jwttoken: input.token?.replace('Bearer ', '') ?? '',
     })
   }
 
@@ -427,7 +464,7 @@ export class DrivingLicenseApi {
     return await this.v5.apiDrivinglicenseV5CanapplyforPracticepermitPost({
       apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
       apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
-      jwttoken: params.token,
+      jwttoken: params.token.replace('Bearer ', ''),
       postPracticePermit: {
         dateFrom: new Date(),
         studentSSN: params.studentSSN,
@@ -443,10 +480,28 @@ export class DrivingLicenseApi {
     return await this.v5.apiDrivinglicenseV5ApplicationsPracticepermitPost({
       apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
       apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
-      jwttoken: params.token,
+      jwttoken: params.token.replace('Bearer ', ''),
       postPracticePermit: {
         dateFrom: new Date(),
         studentSSN: params.studentSSN,
+        userId: v5.DRIVING_LICENSE_API_USER_ID,
+      },
+    })
+  }
+
+  async postApplicationNewCollaborative(params: {
+    token: string
+    districtId: number
+    stolenOrLost: boolean
+  }): Promise<number> {
+    const { districtId, token, stolenOrLost } = params
+    return await this.v5.apiDrivinglicenseV5ApplicationsNewCollaborativePost({
+      apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
+      apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
+      jwttoken: token.replace('Bearer ', ''),
+      postNewCollaborative: {
+        districtId,
+        licenseStolenOrLost: stolenOrLost,
         userId: v5.DRIVING_LICENSE_API_USER_ID,
       },
     })

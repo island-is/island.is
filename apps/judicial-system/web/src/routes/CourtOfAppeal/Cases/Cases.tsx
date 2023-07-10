@@ -14,42 +14,13 @@ import { titles, tables } from '@island.is/judicial-system-web/messages'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   CaseAppealState,
-  CaseType,
-  Defendant,
+  CaseListEntry,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-
-import {
-  CaseAppealDecision,
-  CaseAppealRulingDecision,
-  CaseDecision,
-  CaseState,
-} from '@island.is/judicial-system/types'
 
 import { AppealedCasesQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 
 import { logoContainer } from '../../Shared/Cases/Cases.css'
 import { courtOfAppealCases as strings } from './Cases.strings'
-
-export interface AppealedCasesQueryResponse {
-  courtCaseNumber: string
-  defendants: Defendant[]
-  type: CaseType
-  decision: CaseDecision
-  state: CaseState
-  appealState: CaseAppealState
-  appealRulingDecision: CaseAppealRulingDecision
-  accusedAppealDecision: CaseAppealDecision
-  prosecutorAppealDecision: CaseAppealDecision
-  courtEndTime: string
-  accusedPostponedAppealDate: string
-  prosecutorPostponedAppealDate: string
-  validToDate: string
-  policeCaseNumbers: string[]
-  parentCaseId: string
-  appealedDate: string
-  appealCaseNumber: string
-  id: string
-}
 
 const CourtOfAppealCases = () => {
   const { formatMessage } = useIntl()
@@ -58,7 +29,7 @@ const CourtOfAppealCases = () => {
   const input = { appealState: ['RECEIVED', 'COMPLETED'] }
 
   const { data: appealedCases, loading } = useQuery<{
-    cases: AppealedCasesQueryResponse[]
+    cases: CaseListEntry[]
   }>(AppealedCasesQuery, { variables: { input }, fetchPolicy: 'no-cache' })
 
   const appealedCasesData = appealedCases?.cases || []

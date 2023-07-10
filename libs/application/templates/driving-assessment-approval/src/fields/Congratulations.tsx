@@ -1,4 +1,3 @@
-import React from 'react'
 import { Box, ContentBlock, AlertMessage } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { formatText } from '@island.is/application/core'

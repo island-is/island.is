@@ -87,8 +87,8 @@ import { DrivingLicenseBookUpdateInstructorService } from './driving-license-boo
 import { DrivingLearnersPermitModule } from './driving-learners-permit/driving-learners-permit.module'
 import { DrivingLearnersPermitService } from './driving-learners-permit/driving-learners-permit.service'
 
-//TODO: ADD These templates.
 import { DrivingLicenseDuplicateModule } from './driving-license-duplicate/driving-license-duplicate.module'
+import { DrivingLicenseDuplicateService } from './driving-license-duplicate/driving-license-duplicate.service'
 
 export const modules = [
   ReferenceTemplateModule,
@@ -136,6 +136,7 @@ export const modules = [
   EuropeanHealthInsuranceCardModule,
   DrivingLicenseBookUpdateInstructorModule,
   DrivingLearnersPermitModule,
+  DrivingLicenseDuplicateModule,
 ]
 
 export const services = [
@@ -184,4 +185,5 @@ export const services = [
   EuropeanHealthInsuranceCardService,
   DrivingLicenseBookUpdateInstructorService,
   DrivingLearnersPermitService,
+  DrivingLicenseDuplicateService,
 ]

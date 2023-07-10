@@ -521,9 +521,9 @@ export const SignedVerdictOverview: React.FC = () => {
             <Box display="flex" justifyContent="spaceBetween" marginBottom={3}>
               <Box>
                 <OverviewHeader />
-                {workingCase.courtEndTime && (
+                {workingCase.rulingDate && (
                   <Box>
-                    <RulingDateLabel courtEndTime={workingCase.courtEndTime} />
+                    <RulingDateLabel rulingDate={workingCase.rulingDate} />
                   </Box>
                 )}
               </Box>
@@ -741,8 +741,7 @@ export const SignedVerdictOverview: React.FC = () => {
           {user?.role === UserRole.PROSECUTOR &&
             user.institution?.id ===
               workingCase.creatingProsecutor?.institution?.id &&
-            isRestrictionCase(workingCase.type) &&
-            !workingCase.appealState && (
+            isRestrictionCase(workingCase.type) && (
               <ShareCase
                 selectedSharingInstitutionId={selectedSharingInstitutionId}
                 setSelectedSharingInstitutionId={
