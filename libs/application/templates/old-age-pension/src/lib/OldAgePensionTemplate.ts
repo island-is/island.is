@@ -39,11 +39,11 @@ const OldAgePensionTemplate: ApplicationTemplate<
   translationNamespaces: [ApplicationConfigurations.OldAgePension.translation],
   dataSchema,
   stateMachineConfig: {
-    initial: States.PREREQUESITES,
+    initial: States.PREREQUISITES,
     states: {
-      [States.PREREQUESITES]: {
+      [States.PREREQUISITES]: {
         meta: {
-          name: States.PREREQUESITES,
+          name: States.PREREQUISITES,
           status: 'draft',
           lifecycle: pruneAfterDays(1),
           progress: 0.25,

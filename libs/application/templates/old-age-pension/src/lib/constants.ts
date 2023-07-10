@@ -36,7 +36,7 @@ export enum Roles {
 }
 
 export enum States {
-  PREREQUESITES = 'prerequesites',
+  PREREQUISITES = 'prerequisites',
   DRAFT = 'draft',
   DONE = 'done',
 }
