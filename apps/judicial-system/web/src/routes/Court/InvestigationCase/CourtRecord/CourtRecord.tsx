@@ -110,7 +110,6 @@ const CourtRecord = () => {
     'prosecutorAppealAnnouncement',
     'endOfSessionBookings',
   ])
-
   const initialize = useCallback(() => {
     const autofillAttendees = []
 
@@ -156,6 +155,7 @@ const CourtRecord = () => {
         }
       }
     }
+
     setAndSendCaseToServer(
       [
         {
@@ -193,9 +193,6 @@ const CourtRecord = () => {
               : workingCase.sessionArrangements ===
                 SessionArrangements.PROSECUTOR_PRESENT
               ? formatMessage(m.sections.sessionBookings.autofillProsecutor)
-              : workingCase.sessionArrangements ===
-                SessionArrangements.NONE_PRESENT
-              ? formatMessage(m.sections.sessionBookings.autofillNonePresent)
               : undefined,
         },
       ],
