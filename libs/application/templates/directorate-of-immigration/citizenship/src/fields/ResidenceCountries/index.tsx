@@ -46,6 +46,7 @@ export const ResidenceCountries: FC<FieldBaseProps> = (props) => {
       ...selectedCountries,
       {
         country: '',
+        countryId: -1,
         wasRemoved: 'false',
       },
     ])

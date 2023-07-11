@@ -289,9 +289,9 @@ export class CitizenshipService extends BaseTemplateApiService {
     const spouseDetails = application.externalData.spouseDetails.data as
       | SpouseIndividual
       | undefined
-    const applicantPassport = answers.passport?.find(
+    const applicantPassport = answers.passports?.find(
       (p) => p.nationalId === application.applicant,
-    )
+    )?.passport
 
     if (!applicantPassport) {
       throw new Error('Ekki er búið að skrá upplýsingar um vegabréf umsækjanda')

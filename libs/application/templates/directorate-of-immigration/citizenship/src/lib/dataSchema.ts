@@ -144,8 +144,6 @@ const ParentsSchema = z.object({
 })
 
 const PassportSchema = z.object({
-  //TODO vantar ekki nationalId hér, svo hægt sé að vita hver eigi hvaða vegabréf (kóðalega séð) (bæti við en þarf að laga annarsstaðar líka)
-  nationalId: z.string(),
   publishDate: z.string().min(1),
   expirationDate: z.string().min(1),
   passportNumber: z.string().min(1),

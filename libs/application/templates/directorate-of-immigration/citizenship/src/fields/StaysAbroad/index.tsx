@@ -45,6 +45,7 @@ export const StaysAbroad: FC<FieldBaseProps> = (props) => {
       ...selectedCountries,
       {
         country: '',
+        countryId: -1,
         wasRemoved: 'false',
         dateTo: '',
         dateFrom: '',
