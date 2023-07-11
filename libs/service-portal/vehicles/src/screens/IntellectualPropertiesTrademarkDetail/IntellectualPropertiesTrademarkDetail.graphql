@@ -9,6 +9,7 @@ query getIntellectualPropertyTrademarkById($input: IntellectualPropertyInput!) {
     applicationDate
     datePublished
     dateRegistration
+    maxValidObjectionDate
     imageCategories
     isColorMark
     markOwners {

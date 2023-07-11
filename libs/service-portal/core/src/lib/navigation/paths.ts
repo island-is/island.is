@@ -102,7 +102,9 @@ export enum ServicePortalPath {
   AssetsWorkMachines = '/okutaeki/vinnuvelar',
   AssetsWorkMachinesDetail = '/okutaeki/vinnuvelar/:regNumber/:id',
   AssetsIntellectualProperties = '/okutaeki/hugverkarettindi',
-  AssetsIntellectualPropertiesDetail = '/okutaeki/hugverkarettindi/:id',
+  AssetsIntellectualPropertiesTrademark = '/okutaeki/hugverkarettindi/vorumerki/:id',
+  AssetsIntellectualPropertiesPatent = '/okutaeki/hugverkarettindi/einkaleyfi/:id',
+  AssetsIntellectualPropertiesDesign = '/okutaeki/hugverkarettindi/honnun/:id',
 
   // Messages
   MessagesRoot = '/skilabod',

@@ -9,7 +9,9 @@ query getIntellectualPropertyPatentById($input: IntellectualPropertyInput!) {
     applicationDatePublishedAsAvailable
     registeredDate
     maxValidObjectionDate
-    internalClassifications
+    internalClassifications {
+      category
+    }
     owner {
       name
       home

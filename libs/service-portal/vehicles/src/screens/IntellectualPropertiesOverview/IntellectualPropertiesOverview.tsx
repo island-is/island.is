@@ -8,14 +8,14 @@ import {
   ServicePortalPath,
   m,
 } from '@island.is/service-portal/core'
-import { Box, GridColumn, GridRow } from '@island.is/island-ui/core'
+import { Box } from '@island.is/island-ui/core'
 import { IntroHeader } from '@island.is/portals/core'
 import { ipMessages as messages } from '../../lib/messages'
 import { useGetPatentsQuery } from './IntellectualPropertiesOverview.generated'
 
 const IntellectualPropertiesOverview = () => {
   useNamespaces('sp.intellectual-property')
-  const { formatMessage, locale } = useLocale()
+  const { formatMessage } = useLocale()
 
   const { loading, data, error } = useGetPatentsQuery({})
 
@@ -59,8 +59,6 @@ const IntellectualPropertiesOverview = () => {
     )
   }
 
-  console.log(JSON.stringify(data?.intellectualProperties?.trademarks))
-
   return (
     <Box marginBottom={[6, 6, 10]}>
       <IntroHeader
@@ -90,7 +88,7 @@ const IntellectualPropertiesOverview = () => {
             ip.text,
             ip.vmId,
             ip.type,
-            ServicePortalPath.AssetsIntellectualPropertiesDetail.replace(
+            ServicePortalPath.AssetsIntellectualPropertiesTrademark.replace(
               ':id',
               ip.vmId ?? '',
             ),
@@ -103,12 +101,12 @@ const IntellectualPropertiesOverview = () => {
           generateActionCard(
             index,
             ip.specification,
-            ip.hid,
+            ip.hId,
             undefined,
-            ip.hid
-              ? ServicePortalPath.AssetsIntellectualPropertiesDetail.replace(
+            ip.hId
+              ? ServicePortalPath.AssetsIntellectualPropertiesDesign.replace(
                   ':id',
-                  ip.hid,
+                  ip.hId,
                 )
               : '',
             ip.status,
@@ -122,7 +120,7 @@ const IntellectualPropertiesOverview = () => {
             ip.patentName || 'TEMP NAME',
             ip.applicationNumber,
             undefined,
-            ServicePortalPath.AssetsIntellectualPropertiesDetail.replace(
+            ServicePortalPath.AssetsIntellectualPropertiesPatent.replace(
               ':id',
               ip.applicationNumber ?? '',
             ),

@@ -27,6 +27,21 @@ const IPOverview = lazy(() =>
     './screens/IntellectualPropertiesOverview/IntellectualPropertiesOverview'
   ),
 )
+const IPDesignDetail = lazy(() =>
+  import(
+    './screens/IntellectualPropertiesDesignDetail/IntellectualPropertiesDesignDetail'
+  ),
+)
+const IPTrademarkDetail = lazy(() =>
+  import(
+    './screens/IntellectualPropertiesTrademarkDetail/IntellectualPropertiesTrademarkDetail'
+  ),
+)
+const IPPatentDetail = lazy(() =>
+  import(
+    './screens/IntellectualPropertiesPatentDetail/IntellectualPropertiesPatentDetail'
+  ),
+)
 
 export const vehiclesModule: PortalModule = {
   name: 'Ökutæki',
@@ -90,6 +105,24 @@ export const vehiclesModule: PortalModule = {
       path: VehiclePaths.AssetsIntellectualPropertiesOverview,
       enabled: userInfo.scopes.includes(ApiScope.internal),
       element: <IPOverview />,
+    },
+    {
+      name: m.intellectualProperty,
+      path: VehiclePaths.AssetsIntellectualPropertiesDesign,
+      enabled: userInfo.scopes.includes(ApiScope.internal),
+      element: <IPDesignDetail />,
+    },
+    {
+      name: m.intellectualProperty,
+      path: VehiclePaths.AssetsIntellectualPropertiesTrademark,
+      enabled: userInfo.scopes.includes(ApiScope.internal),
+      element: <IPTrademarkDetail />,
+    },
+    {
+      name: m.intellectualProperty,
+      path: VehiclePaths.AssetsIntellectualPropertiesPatent,
+      enabled: userInfo.scopes.includes(ApiScope.internal),
+      element: <IPPatentDetail />,
     },
   ],
 }

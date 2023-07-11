@@ -1,9 +1,9 @@
 import { Field, ObjectType, registerEnumType } from '@nestjs/graphql'
 
 export enum TrademarkSubType {
-  TRADEMARK = 'TRADEMARK',
-  CERTIFICATION_MARK = 'CERTIFICATION_MARK',
-  COLLECTIVE_MARK = 'COLLECTIVE_MARK',
+  TRADEMARK = 'Trademark',
+  CERTIFICATION_MARK = 'CertificationMark',
+  COLLECTIVE_MARK = 'CollectiveMark',
 }
 
 registerEnumType(TrademarkSubType, { name: 'TrademarkSubType' })
@@ -104,17 +104,17 @@ export class Trademark {
   @Field(() => String, { nullable: true })
   originamlImagePath?: string | null
 
-  @Field(() => String, { nullable: true })
-  applicationDate?: string | null
+  @Field(() => Date, { nullable: true })
+  applicationDate?: Date
 
-  @Field(() => String, { nullable: true })
-  dateExpires?: string | null
+  @Field(() => Date, { nullable: true })
+  dateExpires?: Date
 
-  @Field(() => String, { nullable: true })
-  dateRegistration?: string | null
+  @Field(() => Date, { nullable: true })
+  dateRegistration?: Date
 
-  @Field(() => String, { nullable: true })
-  dateInternationalRegistration?: string | null
+  @Field(() => Date, { nullable: true })
+  dateInternationalRegistration?: Date
 
   @Field(() => String, { nullable: true })
   mpNumber?: string | null
@@ -122,14 +122,14 @@ export class Trademark {
   @Field(() => String, { nullable: true })
   vmId?: string | null
 
-  @Field(() => String, { nullable: true })
-  dateModified?: string | null
+  @Field(() => Date, { nullable: true })
+  dateModified?: Date
 
-  @Field(() => String, { nullable: true })
-  date?: string | null
+  @Field(() => Date, { nullable: true })
+  date?: Date
 
-  @Field(() => String, { nullable: true })
-  dateSubsequentDesignation?: string | null
+  @Field(() => Date, { nullable: true })
+  dateSubsequentDesignation?: Date
 
   @Field({ nullable: true })
   isColorMark?: boolean
@@ -140,17 +140,17 @@ export class Trademark {
   @Field(() => String, { nullable: true })
   useLimitedTo?: string | null
 
-  @Field(() => String, { nullable: true })
-  dateUnRegistered?: string | null
+  @Field(() => Date, { nullable: true })
+  dateUnRegistered?: Date
 
-  @Field(() => String, { nullable: true })
-  datePublished?: string | null
+  @Field(() => Date, { nullable: true })
+  datePublished?: Date
 
-  @Field(() => String, { nullable: true })
-  maxValidObjectionDate?: string | null
+  @Field(() => Date, { nullable: true })
+  maxValidObjectionDate?: Date
 
-  @Field(() => String, { nullable: true })
-  dateRenewed?: string | null
+  @Field(() => Date, { nullable: true })
+  dateRenewed?: Date
 
   @Field(() => String, { nullable: true })
   imageCategories?: string | null

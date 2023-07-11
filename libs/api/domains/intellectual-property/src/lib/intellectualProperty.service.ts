@@ -72,10 +72,31 @@ export class IntellectualPropertyService {
     return {
       ...trademark,
       subType,
-      vmId: trademark.vmid,
-      maxValidObjectionDate: trademark.datePublished
-        ? addMonths(new Date(trademark.datePublished), 2).toISOString()
+      applicationDate: trademark.applicationDate
+        ? new Date(trademark.applicationDate)
         : undefined,
+      dateRegistration: trademark.dateRegistration
+        ? new Date(trademark.dateRegistration)
+        : undefined,
+      dateUnRegistered: trademark.dateUnRegistered
+        ? new Date(trademark.dateUnRegistered)
+        : undefined,
+      dateExpires: trademark.dateExpires
+        ? new Date(trademark.dateExpires)
+        : undefined,
+      dateRenewed: trademark.dateRenewed
+        ? new Date(trademark.dateRenewed)
+        : undefined,
+      dateInternationalRegistration: trademark.dateInternationalRegistration
+        ? new Date(trademark.dateInternationalRegistration)
+        : undefined,
+      dateModified: trademark.dateModified
+        ? new Date(trademark.dateModified)
+        : undefined,
+      datePublished: trademark.datePublished
+        ? new Date(trademark.datePublished)
+        : undefined,
+      vmId: trademark.vmid,
       acquiredDistinctiveness: trademark.skradVegnaMarkadsfestu,
     }
   }

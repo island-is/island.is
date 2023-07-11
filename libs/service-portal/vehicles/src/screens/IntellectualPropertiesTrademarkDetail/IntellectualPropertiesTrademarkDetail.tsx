@@ -12,7 +12,6 @@ import {
   m,
 } from '@island.is/service-portal/core'
 import { ipMessages } from '../../lib/messages'
-import { useGetIntellectualPropertyByIdQuery } from './IntellectualPropertiesDetail.generated'
 import {
   Box,
   Button,
@@ -25,23 +24,26 @@ import {
 } from '@island.is/island-ui/core'
 import Timeline from '../../components/Timeline/Timeline'
 import chunk from 'lodash/chunk'
+import { useGetIntellectualPropertyTrademarkByIdQuery } from './IntellectualPropertiesTrademarkDetail.generated'
 
 type UseParams = {
   id: string
 }
 
-const IntellectualPropertiesDetail = () => {
-  useNamespaces('sp.vehicles')
+const IntellectualPropertiesTrademarkDetail = () => {
+  useNamespaces('sp.intellectual-property')
   const { formatMessage } = useLocale()
   const { id } = useParams() as UseParams
 
-  const { data, loading, error } = useGetIntellectualPropertyByIdQuery({
-    variables: {
-      input: {
-        applicationId: id,
+  const { data, loading, error } = useGetIntellectualPropertyTrademarkByIdQuery(
+    {
+      variables: {
+        input: {
+          key: id,
+        },
       },
     },
-  })
+  )
 
   if (error && !loading) {
     return (
@@ -57,16 +59,16 @@ const IntellectualPropertiesDetail = () => {
     )
   }
 
-  if (!data?.intellectualPropertyPatent && !loading) {
+  if (!data?.intellectualPropertyTrademark && !loading) {
     return <NotFound title={formatMessage(m.notFound)} />
   }
 
-  const ip = data?.intellectualPropertyPatent
+  const ip = data?.intellectualPropertyTrademark
   return (
     <>
       <Box marginBottom={[1, 1, 3]}>
         <IntroHeader
-          title={ip?.patentNameInOrgLanguage || 'SOME DEFAULT TITLE'}
+          title={ip?.text || 'SOME TRADEMARK'}
           intro="Lorem ipsum dolor sit amet consectetur arcu quam quis consequat."
         />
       </Box>
@@ -81,31 +83,7 @@ const IntellectualPropertiesDetail = () => {
                   iconType="outline"
                   variant="utility"
                 >
-                  {'Ógilding'}
-                </Button>
-                <Button
-                  size="medium"
-                  icon="reader"
-                  iconType="outline"
-                  variant="utility"
-                >
-                  {'Veðsetning'}
-                </Button>
-                <Button
-                  size="medium"
-                  icon="reader"
-                  iconType="outline"
-                  variant="utility"
-                >
-                  {'Nytjaleyfi'}
-                </Button>
-                <Button
-                  size="medium"
-                  icon="reader"
-                  iconType="outline"
-                  variant="utility"
-                >
-                  {'Afturköllun'}
+                  {'Skráningarskírteini'}
                 </Button>
               </Inline>
             </Box>
@@ -115,134 +93,161 @@ const IntellectualPropertiesDetail = () => {
           <UserInfoLine
             title={formatMessage(ipMessages.baseInfo)}
             label={ipMessages.name}
-            content={ip?.patentName ?? ''}
+            content={ip?.text ?? ''}
+            loading={loading}
           />
           <Divider />
           <UserInfoLine
             label={ipMessages.type}
-            content={ip?.classificationType ?? ''}
+            content={ip?.type ?? ''}
+            loading={loading}
           />
           <Divider />
-          <UserInfoLine label={ipMessages.status} content={ip?.status ?? ''} />
+          <UserInfoLine
+            label={ipMessages.status}
+            content={ip?.status ?? ''}
+            loading={loading}
+          />
+          <Divider />
+          <UserInfoLine
+            label={ipMessages.make}
+            content={ip?.subType ?? ''}
+            loading={loading}
+          />
+          <Divider />
+          <UserInfoLine
+            label={ipMessages.status}
+            content={ip?.status ?? ''}
+            loading={loading}
+          />
           <Divider />
         </Stack>
-        <Timeline title={'Tímalína'}>
-          {[
-            <Stack space="smallGutter">
-              <Text variant="h5">
-                {ip?.applicationDate
-                  ? formatDate(ip.applicationDate, 'dd.MM.yy')
-                  : ''}
-              </Text>
-              <Text>Umsókn</Text>
-            </Stack>,
-            <Stack space="smallGutter">
-              <Text variant="h5">
-                {ip?.registeredDate
-                  ? formatDate(ip.registeredDate, 'dd.MM.yy')
-                  : ''}
-              </Text>
-              <Text>Skráning</Text>
-            </Stack>,
-            <Stack space="smallGutter">
-              <Text variant="h5">
-                {ip?.maxValidDate
-                  ? formatDate(ip.maxValidDate, 'dd.MM.yy')
-                  : ''}
-              </Text>
-              <Text>Birting</Text>
-            </Stack>,
-            <Stack space="smallGutter">
-              <Text variant="h5">?????</Text>
-              <Text>Andmælafrestur</Text>
-            </Stack>,
-            <Stack space="smallGutter">
-              <Text variant="h5">
-                <Text variant="h5">
-                  {ip?.expires ? formatDate(ip?.expires, 'dd.MM.yy') : ''}
-                </Text>
-              </Text>
-              <Text>Gildir til</Text>
-            </Stack>,
-          ]}
-        </Timeline>
-        <TableGrid
-          title={'Upplýsingar'}
-          dataArray={chunk(
-            [
-              {
-                title: 'Umsóknardagur',
-                value: ip?.applicationDate
-                  ? formatDate(ip.applicationDate, 'dd.MM.yy')
-                  : '',
-              },
-              {
-                title: 'Umsóknarnúmer',
-                value: ip?.applicationNumber
-                  ? formatDate(ip?.applicationNumber, 'dd.MM.yy')
-                  : '',
-              },
-              {
-                title: 'Birtingardagur',
-                value: ip?.applicationDatePublishedAsAvailable
-                  ? formatDate(
-                      ip.applicationDatePublishedAsAvailable,
-                      'dd.MM.yy',
-                    )
-                  : '',
-              },
-              {
-                title: 'Myndflokkur',
-                value: '?????????',
-              },
-              {
-                title: 'Andmælafrestur',
-                value: '?????????',
-              },
-              {
-                title: 'Merkið er í lit',
-                value: '?????????',
-              },
-              {
-                title: 'Skráningardagur',
-                value: ip?.registeredDate
-                  ? formatDate(ip.registeredDate, 'dd.MM.yy')
-                  : '',
-              },
-            ].filter((Boolean as unknown) as ExcludesFalse),
-            2,
-          )}
-        />
+        {!loading && !error && (
+          <>
+            <Timeline title={'Tímalína'}>
+              {[
+                <Stack space="smallGutter">
+                  <Text variant="h5">
+                    {ip?.applicationDate
+                      ? formatDate(ip.applicationDate, 'dd.MM.yy')
+                      : ''}
+                  </Text>
+                  <Text>Umsókn</Text>
+                </Stack>,
+                <Stack space="smallGutter">
+                  <Text variant="h5">
+                    {ip?.dateRegistration
+                      ? formatDate(ip.dateRegistration, 'dd.MM.yy')
+                      : ''}
+                  </Text>
+                  <Text>Skráning</Text>
+                </Stack>,
+                <Stack space="smallGutter">
+                  <Text variant="h5">
+                    {ip?.datePublished
+                      ? formatDate(ip.datePublished, 'dd.MM.yy')
+                      : ''}
+                  </Text>
+                  <Text>Birting</Text>
+                </Stack>,
+                <Stack space="smallGutter">
+                  <Text variant="h5">
+                    {ip?.maxValidObjectionDate
+                      ? formatDate(ip.maxValidObjectionDate, 'dd.MM.yy')
+                      : ''}
+                  </Text>
+                  <Text>Andmælafrestur</Text>
+                </Stack>,
+              ]}
+            </Timeline>
+            <TableGrid
+              title={'Upplýsingar'}
+              dataArray={chunk(
+                [
+                  {
+                    title: 'Umsóknardagur',
+                    value: ip?.applicationDate
+                      ? formatDate(ip.applicationDate, 'dd.MM.yy')
+                      : '',
+                  },
+                  {
+                    title: 'Umsóknarnúmer',
+                    value: ip?.vmId ? formatDate(ip?.vmId, 'dd.MM.yy') : '',
+                  },
+                  {
+                    title: 'Birtingardagur',
+                    value: ip?.datePublished
+                      ? formatDate(ip.datePublished, 'dd.MM.yy')
+                      : '',
+                  },
+                  {
+                    title: 'Myndflokkur',
+                    value: ip?.imageCategories ?? '',
+                  },
+                  {
+                    title: 'Andmælafrestur',
+                    value: ip?.maxValidObjectionDate
+                      ? formatDate(ip.maxValidObjectionDate, 'dd.MM.yy')
+                      : '',
+                  },
+                  {
+                    title: 'Merkið er í lit',
+                    value: ip?.isColorMark ? 'Já' : 'Nei',
+                  },
+                  {
+                    title: 'Skráningardagur',
+                    value: ip?.dateRegistration
+                      ? formatDate(ip.dateRegistration, 'dd.MM.yy')
+                      : '',
+                  },
+                ].filter((Boolean as unknown) as ExcludesFalse),
+                2,
+              )}
+            />
+          </>
+        )}
         <Stack space="p2">
           <UserInfoLine
             title="Eigandi"
             label="Nafn"
-            content={ip?.owner?.name ?? ''}
-          ></UserInfoLine>
+            content={ip?.markOwners?.[0]?.name ?? ''}
+            loading={loading}
+          />
           <Divider />
-          <UserInfoLine label="Heimilsfang" content={ip?.owner?.home ?? ''} />
-          <Divider />
-        </Stack>
-        <Stack space="p2">
           <UserInfoLine
-            title="Hönnuður"
-            label="Nafn"
-            content={ip?.inventors?.[0]?.name ?? ''}
-          ></UserInfoLine>
+            label="Heimilsfang"
+            content={ip?.markOwners?.[0]?.address ?? ''}
+            loading={loading}
+          />
           <Divider />
         </Stack>
         <Stack space="p2">
           <UserInfoLine
             title="Umboðsmaður"
             label="Nafn"
-            content={ip?.patentAgent?.name ?? ''}
-          ></UserInfoLine>
+            content={ip?.markAgent?.name ?? ''}
+            loading={loading}
+          />
           <Divider />
           <UserInfoLine
             label="Heimilisfang"
-            content={ip?.patentAgent?.address ?? ''}
-          ></UserInfoLine>
+            content={ip?.markAgent?.address ?? ''}
+            loading={loading}
+          />
           <Divider />
+        </Stack>
+        <Stack space="p2">
+          {ip?.markCategories?.length &&
+            ip?.markCategories.map((c) => (
+              <>
+                <UserInfoLine
+                  label={`Flokkur ${c.categoryNumber}`}
+                  content={c.categoryDescription ?? ''}
+                  loading={loading}
+                />
+                <Divider />
+              </>
+            ))}
         </Stack>
         <Text variant="small" paddingBottom={2}>
           Lorem ipsum dolor sit amet consectetur. Sem libero at mi feugiat diam.
@@ -256,4 +261,4 @@ const IntellectualPropertiesDetail = () => {
   )
 }
 
-export default IntellectualPropertiesDetail
+export default IntellectualPropertiesTrademarkDetail

@@ -47,6 +47,23 @@ export const vehiclesNavigation: PortalNavigationItem = {
     {
       name: m.intellectualProperty,
       path: VehiclePaths.AssetsIntellectualPropertiesOverview,
+      children: [
+        {
+          name: 'id',
+          navHide: true,
+          path: VehiclePaths.AssetsIntellectualPropertiesDesign,
+        },
+        {
+          name: 'id',
+          navHide: true,
+          path: VehiclePaths.AssetsIntellectualPropertiesTrademark,
+        },
+        {
+          name: 'id',
+          navHide: true,
+          path: VehiclePaths.AssetsIntellectualPropertiesPatent,
+        },
+      ],
     },
   ],
   description: m.vehiclesDescription,
