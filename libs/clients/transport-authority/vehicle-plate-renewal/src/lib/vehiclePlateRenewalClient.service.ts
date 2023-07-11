@@ -98,4 +98,10 @@ export class VehiclePlateRenewalClient {
       },
     })
   }
+
+  public async getPlateAvailability(regno: string) {
+    return this.plateOwnershipApi.plateavailableGet({
+      regno,
+    })
+  }
 }

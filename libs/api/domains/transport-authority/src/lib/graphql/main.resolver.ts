@@ -2,6 +2,7 @@ import { Args, Query, Resolver } from '@nestjs/graphql'
 import { ApiScope } from '@island.is/auth/scopes'
 import { UseGuards } from '@nestjs/common'
 import {
+  BypassAuth,
   CurrentUser,
   IdsUserGuard,
   Scopes,
@@ -13,6 +14,7 @@ import {
   OwnerChangeAnswers,
   CheckTachoNetInput,
   OperatorChangeAnswers,
+  PlateAvailabilityInput,
 } from './dto'
 import {
   CheckTachoNetExists,
@@ -22,6 +24,7 @@ import {
   VehicleOwnerchangeChecksByPermno,
   VehiclePlateOrderChecksByPermno,
   MyPlateOwnershipChecksByRegno,
+  PlateAvailability,
 } from './models'
 import { CoOwnerChangeAnswers } from './dto/coOwnerChangeAnswers.input'
 
@@ -126,12 +129,18 @@ export class MainResolver {
     nullable: true,
   })
   async getMyPlateOwnershipChecksByRegno(
-    @Args('regno', { type: () => String }) regno: string,
+    @Args('input', { type: () => String }) regno: string,
     @CurrentUser() user: User,
   ) {
     return await this.transportAuthorityApi.getMyPlateOwnershipChecksByRegno(
       user,
       regno,
     )
+  }
+
+  @BypassAuth()
+  @Query(() => PlateAvailability)
+  async plateAvailable(@Args('input') input: PlateAvailabilityInput) {
+    return this.transportAuthorityApi.getPlateAvailability(input.regno)
   }
 }
