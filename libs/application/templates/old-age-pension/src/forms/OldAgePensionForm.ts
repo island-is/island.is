@@ -38,6 +38,7 @@ import {
   YES,
   IS,
   maritalStatuses,
+  taxLevelOptions,
 } from '../lib/constants'
 import {
   childCustody_LivesWithApplicant,
@@ -264,6 +265,8 @@ export const OldAgePensionForm: Form = buildForm({
                   title: oldAgePensionFormMessage.payment.bank,
                   backgroundColor: 'white',
                   //disabled: true,
+                  format: '####-##-######',
+                  placeholder: '0000-00-000000',
                   defaultValue: (application: Application) => {
                     const userProfile = application.externalData.userProfile
                       .data as UserProfile
@@ -271,20 +274,50 @@ export const OldAgePensionForm: Form = buildForm({
                   },
                 }),
                 buildRadioField({
-                  id: 'paymentInfo.personalDiscount',
-                  title: oldAgePensionFormMessage.payment.personalDiscount,
+                  id: 'paymentInfo.personalAllowance',
+                  title: oldAgePensionFormMessage.payment.personalAllowance,
                   options: getYesNOOptions(),
                   width: 'half',
                   largeButtons: true,
                   space: 'containerGutter',
                 }),
+                buildTextField({
+                  id: 'paymentInfo.personalAllowanceUsage',
+                  title:
+                    oldAgePensionFormMessage.payment
+                      .personalAllowancePercentage,
+                  suffix: '%',
+                  condition: (answers) => {
+                    const { personalAllowance } = getApplicationAnswers(answers)
+                    return personalAllowance === YES
+                  },
+                  placeholder: '1%',
+                  variant: 'number',
+                  width: 'half',
+                  maxLength: 4,
+                }),
                 buildRadioField({
-                  id: 'paymentInfo.spouseDiscount',
-                  title: oldAgePensionFormMessage.payment.spouseDiscount,
+                  id: 'paymentInfo.spouseAllowance',
+                  title: oldAgePensionFormMessage.payment.spouseAllowance,
                   options: getYesNOOptions(),
                   width: 'half',
                   largeButtons: true,
                   space: 'containerGutter',
+                }),
+                buildTextField({
+                  id: 'paymentInfo.spouseAllowanceUsage',
+                  title:
+                    oldAgePensionFormMessage.payment
+                      .personalAllowancePercentage,
+                  suffix: '%',
+                  condition: (answers) => {
+                    const { spouseAllowance } = getApplicationAnswers(answers)
+                    return spouseAllowance === YES
+                  },
+                  placeholder: '1%',
+                  variant: 'number',
+                  width: 'half',
+                  maxLength: 4,
                 }),
                 buildRadioField({
                   id: 'paymentInfo.taxLevel',
@@ -293,6 +326,7 @@ export const OldAgePensionForm: Form = buildForm({
                   width: 'full',
                   largeButtons: true,
                   space: 'containerGutter',
+                  defaultValue: taxLevelOptions.INCOME,
                 }),
               ],
             }),

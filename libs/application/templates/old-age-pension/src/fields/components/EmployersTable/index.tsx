@@ -18,6 +18,10 @@ export const EmployersTable = ({
   onDeleteEmployer = () => undefined,
 }: EmployerTableProps) => {
   const { formatMessage } = useLocale()
+  const newEmployers = employers?.filter(
+    (e, index) =>
+      employers.findIndex((item) => item.email === e.email) === index,
+  )
 
   return (
     <T.Table>
@@ -36,7 +40,7 @@ export const EmployersTable = ({
         </T.Row>
       </T.Head>
       <T.Body>
-        {employers?.map((e, i) => {
+        {newEmployers?.map((e, i) => {
           const ratioYearly =
             e.ratioType === RatioType.YEARLY
               ? e.ratioYearly ?? 0

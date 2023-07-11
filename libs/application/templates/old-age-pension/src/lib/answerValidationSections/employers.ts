@@ -60,6 +60,16 @@ export const employers = (newAnswer: unknown, application: Application) => {
   }
 
   for (const { i, e } of rawEmployers.map((e, i) => ({ i, e }))) {
+    if (
+      e.email &&
+      rawEmployers.findIndex((item) => item.email === e.email) !== i
+    ) {
+      return buildError(
+        validatorErrorMessages.employerEmailDuplicate,
+        `${EMPLOYERS}[${i}].email`,
+      )
+    }
+
     if (e.phoneNumber) {
       const phoneNumber = parsePhoneNumberFromString(e.phoneNumber, 'IS')
       const phoneNumberStartStr = ['6', '7', '8']

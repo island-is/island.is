@@ -7,6 +7,7 @@ import { fileUploadHouseholdSupplement } from './answerValidationSections/fileUp
 import { employment } from './answerValidationSections/employment'
 import { employers } from './answerValidationSections/employers'
 import { fileUploadChildPension } from './answerValidationSections/fileUploadChildPension'
+import { paymentInfo } from './answerValidationSections/paymentInfo'
 
 const {
   PERIOD,
@@ -15,6 +16,7 @@ const {
   EMPLOYMENT,
   EMPLOYERS,
   FILEUPLOADCHILDPENSION,
+  PAYMENTINFO,
 } = AnswerValidationConstants
 
 export const answerValidators: Record<string, AnswerValidator> = {
@@ -24,4 +26,5 @@ export const answerValidators: Record<string, AnswerValidator> = {
   [FILEUPLOADPENEARLYFISHER]: fileUpploadPenEarlyFisher,
   [FILEUPLOADHOUSEHOLDSUPPLEMENT]: fileUploadHouseholdSupplement,
   [FILEUPLOADCHILDPENSION]: fileUploadChildPension,
+  [PAYMENTINFO]: paymentInfo,
 }
