@@ -39,6 +39,7 @@ export class MainResolver {
     private readonly drivingLicenseService: DrivingLicenseService,
     private readonly auditService: AuditService,
   ) {}
+
   @Scopes(ApiScope.internal)
   @Query(() => DrivingLicense, { nullable: true })
   drivingLicense(@CurrentUser() user: User) {
