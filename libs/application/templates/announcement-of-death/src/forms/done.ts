@@ -5,14 +5,11 @@ import {
   buildDescriptionField,
   buildSection,
   getValueViaPath,
-  buildExpandableDescriptionField,
 } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
-import { application } from 'express'
 import CoatOfArms from '../assets/CoatOfArms'
 import { m } from '../lib/messages'
 import {
-  additionalInfo,
   extraInfo,
   files,
   inheritance,

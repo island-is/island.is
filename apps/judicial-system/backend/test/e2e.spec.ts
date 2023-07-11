@@ -300,7 +300,8 @@ function caseToCCase(dbCase: Case): CCase {
     validToDate: theCase.validToDate && theCase.validToDate.toISOString(),
     isolationToDate:
       theCase.isolationToDate && theCase.isolationToDate.toISOString(),
-    rulingDate: theCase.rulingDate && theCase.rulingDate.toISOString(),
+    rulingSignatureDate:
+      theCase.rulingSignatureDate && theCase.rulingSignatureDate.toISOString(),
     accusedPostponedAppealDate:
       theCase.accusedPostponedAppealDate &&
       theCase.accusedPostponedAppealDate.toISOString(),
@@ -451,7 +452,9 @@ function expectCasesToMatch(caseOne: CCase, caseTwo: CCase) {
   expect(caseOne.prosecutorAppealAnnouncement ?? null).toBe(
     caseTwo.prosecutorAppealAnnouncement ?? null,
   )
-  expect(caseOne.rulingDate ?? null).toBe(caseTwo.rulingDate ?? null)
+  expect(caseOne.rulingSignatureDate ?? null).toBe(
+    caseTwo.rulingSignatureDate ?? null,
+  )
   expect(caseOne.accusedPostponedAppealDate ?? null).toBe(
     caseTwo.accusedPostponedAppealDate ?? null,
   )

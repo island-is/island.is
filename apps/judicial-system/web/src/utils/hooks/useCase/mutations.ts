@@ -163,6 +163,7 @@ export const UpdateCaseMutation = gql`
       accusedPostponedAppealDate
       prosecutorPostponedAppealDate
       rulingDate
+      rulingSignatureDate
       judge {
         id
         name
@@ -349,6 +350,7 @@ export const LimitedAccessUpdateCaseMutation = gql`
       isolationToDate
       conclusion
       rulingDate
+      rulingSignatureDate
       registrar {
         id
         name

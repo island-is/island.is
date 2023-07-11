@@ -41,6 +41,7 @@ const UserInfoOverview = () => {
   return (
     <>
       <IntroHeader
+        marginBottom={2}
         title={m.myInfo}
         intro={spmm.userInfoDesc}
         serviceProviderID={THJODSKRA_ID}

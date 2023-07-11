@@ -40,12 +40,13 @@ export enum ServicePortalPath {
   SettingsIslykill = '/stillingar/islykill',
 
   // Family
-  Child = '/min-gogn/barn/:nationalId',
-  FamilyMember = '/min-gogn/fjolskylda/:nationalId',
-  Spouse = '/min-gogn/maki/:nationalId',
+  Child = '/min-gogn/yfirlit/barn/:nationalId',
+  FamilyMember = '/min-gogn/yfirlit/:nationalId',
+  Spouse = '/min-gogn/yfirlit/maki/:nationalId',
   MyInfoRoot = '/min-gogn',
-  UserInfo = '/min-gogn/minar-upplysingar',
-  Endorsements = '/min-gogn/medmaeli',
+  MyInfoRootOverview = '/min-gogn/yfirlit',
+  UserInfo = '/min-gogn/yfirlit/minar-upplysingar',
+  Company = '/fyrirtaeki',
 
   // Education License
   EducationLicense = '/min-gogn/leyfisbref',
@@ -56,8 +57,6 @@ export enum ServicePortalPath {
   EducationCareer = '/min-gogn/menntun/namsferill',
   EducationStudentAssessment = '/min-gogn/menntun/namsferill/:familyIndex/samraemd-prof',
   EducationExternal = 'https://minarsidur.island.is/minar-sidur/menntun/namsferill/',
-
-  Company = '/fyrirtaeki',
 
   // General Petitions
   Petitions = '/min-gogn/listar',

@@ -160,15 +160,3 @@ test.describe('MS - Vehicles', () => {
     })
   })
 })
-
-test.describe.skip('Ökutæki', () => {
-  for (const { testCase } of [
-    { testCase: 'Ökutæki ferilskýrsla + eignastöðuvottorð', home: '/en' },
-    { testCase: 'Ökutækjaferill', home: '/en' },
-    { testCase: 'Ökunám', home: '/en' },
-  ]) {
-    test(testCase, () => {
-      return
-    })
-  }
-})

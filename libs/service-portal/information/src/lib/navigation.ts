@@ -12,7 +12,7 @@ export const informationNavigation: PortalNavigationItem = {
   children: [
     {
       name: m.myInfo,
-      path: InformationPaths.MyInfoRoot,
+      path: InformationPaths.MyInfoRootOverview,
     },
     {
       name: m.detailInfo,

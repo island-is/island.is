@@ -13,13 +13,7 @@ const Eyebrows = ({ instances, color, style, wrap, truncate }: Props) => {
   const mapInstances = instances.map((item, index) => {
     return (
       <>
-        <Text
-          variant="eyebrow"
-          color={color}
-          truncate={truncate}
-          key={index}
-          dataTestId="eyebrows"
-        >
+        <Text variant="eyebrow" color={color} truncate={truncate} key={index}>
           {item}
         </Text>
         {instances[index + 1] && <div className={style} />}

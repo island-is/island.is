@@ -57,13 +57,13 @@ const AppealSection: React.FC<Props> = (props) => {
       </Box>
       {(workingCase.accusedAppealDecision === CaseAppealDecision.POSTPONE ||
         workingCase.prosecutorAppealDecision === CaseAppealDecision.POSTPONE) &&
-        workingCase.courtEndTime &&
+        workingCase.rulingDate &&
         !isHighCourt && (
           <Box marginBottom={3}>
             <Text>
               {formatMessage(signedVerdictOverview.sections.appeal.deadline, {
                 isAppealDeadlineExpired: workingCase.isAppealDeadlineExpired,
-                appealDeadline: getAppealEndDate(workingCase.courtEndTime),
+                appealDeadline: getAppealEndDate(workingCase.rulingDate),
               })}
             </Text>
           </Box>
@@ -75,10 +75,10 @@ const AppealSection: React.FC<Props> = (props) => {
               text={formatMessage(
                 signedVerdictOverview.sections.appeal.defendantAppealed,
                 {
-                  courtEndTime: `${formatDate(
-                    workingCase.courtEndTime,
+                  rulingDate: `${formatDate(
+                    workingCase.rulingDate,
                     'PP',
-                  )} kl. ${formatDate(workingCase.courtEndTime, 'p')}`,
+                  )} kl. ${formatDate(workingCase.rulingDate, 'p')}`,
                 },
               )}
               fluid
@@ -94,10 +94,10 @@ const AppealSection: React.FC<Props> = (props) => {
               text={formatMessage(
                 signedVerdictOverview.sections.appeal.prosecutorAppealed,
                 {
-                  courtEndTime: `${formatDate(
-                    workingCase.courtEndTime,
+                  rulingDate: `${formatDate(
+                    workingCase.rulingDate,
                     'PP',
-                  )} kl. ${formatDate(workingCase.courtEndTime, 'p')}`,
+                  )} kl. ${formatDate(workingCase.rulingDate, 'p')}`,
                 },
               )}
               fluid

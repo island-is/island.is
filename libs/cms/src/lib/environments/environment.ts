@@ -79,6 +79,8 @@ export default {
     'sidebarCard',
     'genericTag',
     'latestNewsSlice',
+    'supportCategory',
+    'supportSubCategory',
   ],
   // Content types that have the 'activeTranslations' JSON field
   localizedContentTypes: ['article'],

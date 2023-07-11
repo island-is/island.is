@@ -52,6 +52,7 @@ const SubjectInfo = () => {
   return (
     <>
       <IntroHeader
+        marginBottom={2}
         title={userInfo.profile.name}
         intro={spmm.userInfoDesc}
         serviceProviderID={THJODSKRA_ID}
