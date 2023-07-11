@@ -28,6 +28,7 @@ import {
   BrokersList,
   SliceDropdown,
   PublicVehicleSearch,
+  AircraftSearch,
 } from '@island.is/web/components'
 import {
   PowerBiSlice as PowerBiSliceSchema,
@@ -66,6 +67,8 @@ export const webRenderConnectedComponent = (slice) => {
       return <BrokersList slice={slice} />
     case 'PublicVehicleSearch':
       return <PublicVehicleSearch slice={slice} />
+    case 'AircraftSearch':
+      return <AircraftSearch slice={slice} />
     default:
       break
   }
