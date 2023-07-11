@@ -32,7 +32,11 @@ import Logo from '../Logo/Logo'
 import Skeleton from '../Skeleton/Skeleton'
 import useSections from '../../utils/hooks/useSections'
 import * as styles from './PageLayout.css'
-import { stepValidations, stepValidationsType } from '../../utils/formHelper'
+import {
+  findFirstInvalidStep,
+  stepValidations,
+  stepValidationsType,
+} from '../../utils/formHelper'
 
 export interface RouteSection {
   name: string
@@ -87,22 +91,44 @@ const DisplaySection: React.FC<SectionProps> = (props) => {
       isActive={section.isActive}
       isComplete={activeSection ? index < activeSection : false}
       subSections={section.children.map((subSection, index) => {
-        if (
-          activeSubSection !== index &&
-          subSection.href &&
-          validate(subSection.href)
-        ) {
-          return (
-            <LinkV2
-              href={subSection.href}
-              underline="small"
-              key={`${subSection.name}-${index}`}
-            >
-              <SubsectionChild isActive={subSection.isActive}>
-                {subSection.name}
-              </SubsectionChild>
-            </LinkV2>
-          )
+        if (workingCase.appealState) {
+          if (
+            activeSubSection !== index &&
+            subSection.href &&
+            (validate(subSection.href) ||
+              subSection?.href?.includes(
+                findFirstInvalidStep(
+                  constants.courtOfAppealRoutes,
+                  workingCase,
+                ) ?? '',
+              ))
+          ) {
+            return (
+              <LinkV2
+                href={subSection.href}
+                underline="small"
+                key={`${subSection.name}-${index}`}
+              >
+                <SubsectionChild isActive={subSection.isActive}>
+                  {subSection.name}
+                </SubsectionChild>
+              </LinkV2>
+            )
+          }
+        } else {
+          if (subSection.href && activeSubSection && activeSubSection > index) {
+            return (
+              <LinkV2
+                href={subSection.href}
+                underline="small"
+                key={`${subSection.name}-${index}`}
+              >
+                <SubsectionChild isActive={subSection.isActive}>
+                  {subSection.name}
+                </SubsectionChild>
+              </LinkV2>
+            )
+          }
         }
 
         if (subSection.onClick) {
