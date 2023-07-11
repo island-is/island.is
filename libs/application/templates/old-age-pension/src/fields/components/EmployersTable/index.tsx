@@ -4,6 +4,7 @@ import { useLocale } from '@island.is/localization'
 
 import { Employer } from '../../../types'
 import { RatioType } from '../../../lib/constants'
+import { formatPhoneNumber } from '@island.is/application/ui-components'
 
 interface EmployerTableProps {
   employers: Employer[] | undefined
@@ -55,7 +56,7 @@ export const EmployersTable = ({
                 </T.Data>
               )}
               <T.Data>{e.email}</T.Data>
-              <T.Data>{e.phoneNumber}</T.Data>
+              <T.Data>{formatPhoneNumber(e.phoneNumber!)}</T.Data>
               <T.Data>{ratioYearly}%</T.Data>
             </T.Row>
           )

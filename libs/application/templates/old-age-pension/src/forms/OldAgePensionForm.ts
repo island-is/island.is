@@ -454,7 +454,7 @@ export const OldAgePensionForm: Form = buildForm({
                       },
                       placeholder: '1%',
                       variant: 'number',
-                      width: 'half',
+                      width: 'full',
                     }),
                     buildCustomField({
                       id: 'ratioMonthly',
