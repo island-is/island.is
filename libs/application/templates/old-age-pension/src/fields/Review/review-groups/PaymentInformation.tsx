@@ -11,15 +11,22 @@ import { oldAgePensionFormMessage } from '../../../lib/messages'
 import { ReviewGroupProps } from './props'
 import { useStatefulAnswers } from '../../../hooks/useStatefulAnswers'
 import { getTaxLevelOption } from './utils'
+import { YES } from '../../../lib/constants'
 
 export const PaymentInformation = ({
   application,
   editable,
   goToScreen,
 }: ReviewGroupProps) => {
-  const [{ taxLevel, personalDiscount, spouseDiscount }] = useStatefulAnswers(
-    application,
-  )
+  const [
+    {
+      taxLevel,
+      personalAllowance,
+      spouseAllowance,
+      personalAllowanceUsage,
+      spouseAllowanceUsage,
+    },
+  ] = useStatefulAnswers(application)
 
   const { bank } = getApplicationExternalData(application.externalData)
 
@@ -40,25 +47,43 @@ export const PaymentInformation = ({
       </GridRow>
 
       <GridRow marginBottom={3}>
-        <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
+        <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
           <RadioValue
             label={formatMessage(
-              oldAgePensionFormMessage.review.personalDiscount,
+              oldAgePensionFormMessage.review.personalAllowance,
             )}
-            value={personalDiscount}
+            value={personalAllowance}
           />
         </GridColumn>
+
+        {personalAllowance === YES && (
+          <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
+            <DataValue
+              label={formatMessage(oldAgePensionFormMessage.review.ratio)}
+              value={`${personalAllowanceUsage}%`}
+            />
+          </GridColumn>
+        )}
       </GridRow>
 
       <GridRow marginBottom={3}>
-        <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
+        <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
           <RadioValue
             label={formatMessage(
-              oldAgePensionFormMessage.review.spouseDiscount,
+              oldAgePensionFormMessage.review.spouseAllowance,
             )}
-            value={spouseDiscount}
+            value={spouseAllowance}
           />
         </GridColumn>
+
+        {spouseAllowance === YES && (
+          <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
+            <DataValue
+              label={formatMessage(oldAgePensionFormMessage.review.ratio)}
+              value={`${spouseAllowanceUsage}%`}
+            />
+          </GridColumn>
+        )}
       </GridRow>
 
       <GridRow>

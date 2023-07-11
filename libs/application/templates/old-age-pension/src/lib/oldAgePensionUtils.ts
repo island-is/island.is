@@ -123,15 +123,25 @@ export function getApplicationAnswers(answers: Application['answers']) {
     [],
   ) as ChildPensionRow[]
 
-  const personalDiscount = getValueViaPath(
+  const personalAllowance = getValueViaPath(
     answers,
-    'paymentInfo.personalDiscount',
+    'paymentInfo.personalAllowance',
   ) as YesOrNo
 
-  const spouseDiscount = getValueViaPath(
+  const personalAllowanceUsage = getValueViaPath(
     answers,
-    'paymentInfo.spouseDiscount',
+    'paymentInfo.personalAllowanceUsage',
+  ) as string
+
+  const spouseAllowance = getValueViaPath(
+    answers,
+    'paymentInfo.spouseAllowance',
   ) as YesOrNo
+
+  const spouseAllowanceUsage = getValueViaPath(
+    answers,
+    'paymentInfo.spouseAllowanceUsage',
+  ) as string
 
   const taxLevel = getValueViaPath(
     answers,
@@ -155,8 +165,10 @@ export function getApplicationAnswers(answers: Application['answers']) {
     employers,
     rawEmployers,
     childPension,
-    personalDiscount,
-    spouseDiscount,
+    personalAllowance,
+    spouseAllowance,
+    personalAllowanceUsage,
+    spouseAllowanceUsage,
     taxLevel,
   }
 }

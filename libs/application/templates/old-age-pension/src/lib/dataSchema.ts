@@ -69,8 +69,10 @@ export const dataSchema = z.object({
   }),
   paymentInfo: z.object({
     bank: z.string(),
-    personalDiscount: z.enum([YES, NO]),
-    spouseDiscount: z.enum([YES, NO]),
+    spouseAllowance: z.enum([YES, NO]),
+    spouseAllownaceUsage: z.string().optional(),
+    personalAllowance: z.enum([YES, NO]),
+    personalAllowanceUsage: z.string().optional(),
     taxLevel: z.enum([
       taxLevelOptions.INCOME,
       taxLevelOptions.FIRST_LEVEL,

@@ -58,6 +58,7 @@ export enum AnswerValidationConstants {
   FILEUPLOADCHILDPENSION = 'fileUploadChildPension',
   EMPLOYMENT = 'employment',
   EMPLOYERS = 'employers',
+  PAYMENTINFO = 'paymentInfo',
 }
 
 export enum taxLevelOptions {

@@ -256,15 +256,15 @@ export const oldAgePensionFormMessage: MessageDir = {
       defaultMessage: 'Banki',
       description: 'Bank',
     },
-    personalDiscount: {
-      id: 'oap.application:payment.personal.discount',
+    personalAllowance: {
+      id: 'oap.application:payment.personal.allowance',
       defaultMessage: 'Vilt þú nýta persónuafsláttinn þinn?',
-      description: 'Do you want to use your personal discount?',
+      description: 'Do you want to use your personal allowance?',
     },
-    spouseDiscount: {
-      id: 'oap.application:payment.spouse.discount',
+    spouseAllowance: {
+      id: 'oap.application:payment.spouse.allowance',
       defaultMessage: 'Vilt þú nýta persónuafsláttinn maka þíns?',
-      description: 'Do you want to use your spouse personal discount?',
+      description: 'Do you want to use your spouse personal allowance?',
     },
     taxLevel: {
       id: 'oap.application:payment.tax.level',
@@ -291,6 +291,11 @@ export const oldAgePensionFormMessage: MessageDir = {
         'Ég vil að miðað sé við Skattþrep 2 í útreikningum staðgreiðslu (37,95% af tekjum: 409.986 - 1.151.012 kr.)',
       description:
         'I want tax level 2 to be taken into account in the withholding calculations (37.95% of income: ISK 409,986 - ISK 1,151,012)',
+    },
+    personalAllowancePercentage: {
+      id: 'oap.application:payment.personal.allowance.percentage',
+      defaultMessage: 'Skráðu tölu á bilinu 1-100',
+      description: 'Enter a number between 1-100',
     },
   }),
 
@@ -567,20 +572,25 @@ export const oldAgePensionFormMessage: MessageDir = {
       defaultMessage: 'Banki',
       description: 'Bank',
     },
-    personalDiscount: {
-      id: 'oap.application:conformation.personal.discount',
+    personalAllowance: {
+      id: 'oap.application:conformation.personal.allowance',
       defaultMessage: 'Persónuafláttur',
-      description: 'Personal discount',
+      description: 'Personal allowance',
     },
-    spouseDiscount: {
-      id: 'oap.application:conformation.spouse.discount',
+    spouseAllowance: {
+      id: 'oap.application:conformation.spouse.allowance',
       defaultMessage: 'Persónuafsláttur maka',
-      description: 'Spouse personal discount',
+      description: 'Spouse personal allowance',
     },
     taxLevel: {
       id: 'oap.application:conformation.tax.level',
       defaultMessage: 'Skattþrep',
       description: 'Tax level',
+    },
+    ratio: {
+      id: 'oap.application:conformation.ratio',
+      defaultMessage: 'Hlutall',
+      description: 'Ratio',
     },
   }),
 
@@ -1039,6 +1049,11 @@ export const validatorErrorMessages = defineMessages({
     defaultMessage: 'Netfang atvinnurekanda vantar',
     description: 'Employer email missing',
   },
+  employerEmailDuplicate: {
+    id: 'oap.application:employer.email.duplicate',
+    defaultMessage: 'Netfang atvinnurekanda er þegar skráð',
+    description: 'Employer email is already added',
+  },
   employerRatioTypeMissing: {
     id: 'oap.application:employer.ratioType.missing',
     defaultMessage: 'Vinsamlegast veldu starfhlutfall',
@@ -1068,5 +1083,10 @@ export const validatorErrorMessages = defineMessages({
     id: 'oap.application:employer.phoneNumber.invalid',
     defaultMessage: 'Símanúmer verður að vera GSM númer',
     description: 'Phone number must be a GSM number',
+  },
+  personalAllowance: {
+    id: 'oap.application:payment.personal.allowance',
+    defaultMessage: 'Persónuafsláttur verður að vera milli 1 og 100',
+    description: 'Personal allowace has to be between 1 and 100',
   },
 })
