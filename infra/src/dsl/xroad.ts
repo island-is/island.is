@@ -560,18 +560,13 @@ export const IcelandicGovernmentInstitutionVacancies = new XroadConf({
   },
 })
 
-export const DirectorateOfImmigration = new XroadConf({
+export const AircraftRegistry = new XroadConf({
   env: {
-    XROAD_CITIZENSHIP_PATH: {
-      dev: 'IS-DEV/GOV/10017/Utlendingastofnun-Protected/Citizenship-V1',
-      staging: 'IS-DEV/GOV/10017/Utlendingastofnun-Protected/Citizenship-V1',
-      prod: 'IS/GOV/5405131040/Utlendingastofnun-Protected/Citizenship-V1',
-    },
-    XROAD_RESIDENCE_PERMIT_PATH: {
-      dev: 'IS-DEV/GOV/10017/Utlendingastofnun-Protected/Residence-Permit-V1',
-      staging:
-        'IS-DEV/GOV/10017/Utlendingastofnun-Protected/Residence-Permit-V1',
-      prod: 'IS/GOV/5405131040/Utlendingastofnun-Protected/Residence-Permit-V1',
+    XROAD_AIRCRAFT_REGISTRY_PATH: {
+      dev: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Loftfaraskra-V1',
+      // TODO: Update staging and prod paths once the aircraft registry api is available there
+      staging: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Loftfaraskra-V1',
+      prod: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Loftfaraskra-V1',
     },
   },
 })

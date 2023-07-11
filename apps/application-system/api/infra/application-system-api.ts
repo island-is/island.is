@@ -14,7 +14,6 @@ import {
   Client,
   CriminalRecord,
   DataProtectionComplaint,
-  DirectorateOfImmigration,
   DrivingLicense,
   EHIC,
   Finance,
@@ -246,7 +245,6 @@ export const serviceSetup = (services: {
       Vehicles,
       Passports,
       EHIC,
-      DirectorateOfImmigration,
     )
     .secrets({
       NOVA_URL: '/k8s/application-system-api/NOVA_URL',
