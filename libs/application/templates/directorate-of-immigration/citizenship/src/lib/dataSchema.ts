@@ -1,5 +1,6 @@
 import { z } from 'zod'
 import * as kennitala from 'kennitala'
+import { YES } from '@island.is/application/core'
 
 const UserSchemaBase = z.object({
   nationalId: z
@@ -35,7 +36,8 @@ const ResidenceConditionSchema = z.object({
 
 export const RemoveableStayAbroadSchema = z
   .object({
-    country: z.string().optional(),
+    country: z.string().optional(), //TODO ætti að vera countryId sem er number (bæti við en þarf að laga annarsstaðar líka)
+    countryId: z.number(),
     dateTo: z.string().optional(),
     dateFrom: z.string().optional(),
     purpose: z.string().optional(),
@@ -99,7 +101,8 @@ const StaysAbroadSchema = z.object({
 
 export const RemoveableCountrySchema = z
   .object({
-    country: z.string(),
+    country: z.string(), //TODO ætti að vera countryId sem er number (bæti við en þarf að laga annarsstaðar líka)
+    countryId: z.number(),
     wasRemoved: z.string().min(1).optional(),
   })
   .refine(
@@ -141,11 +144,15 @@ const ParentsSchema = z.object({
 })
 
 const PassportSchema = z.object({
+  //TODO vantar ekki nationalId hér, svo hægt sé að vita hver eigi hvaða vegabréf (kóðalega séð) (bæti við en þarf að laga annarsstaðar líka)
+  nationalId: z.string(),
   publishDate: z.string().min(1),
   expirationDate: z.string().min(1),
   passportNumber: z.string().min(1),
-  passportType: z.string().min(1),
-  publisher: z.string().min(1),
+  passportType: z.string().min(1), //TODO ætti að vera passportTypeId sem er number (bæti við en þarf að laga annarsstaðar líka)
+  passportTypeId: z.number().min(1),
+  publisher: z.string().min(1), //TODO breyta í countryOfIssuerId sem er number (bæti við en þarf að laga annarsstaðar líka)
+  countryOfIssuerId: z.number().min(1),
 })
 
 const MaritalStatusSchema = z.object({
@@ -154,7 +161,8 @@ const MaritalStatusSchema = z.object({
   birthCountry: z.string().min(1),
   name: z.string().min(1),
   citizenship: z.string().min(1),
-  dateOfMarritalStatus: z.string().min(1),
+  dateOfMarritalStatus: z.string().min(1), //TODO fix typo (two "R"s)
+  explanation: z.string().optional(), //TODO vantaði ekki þennan reit? (bætti við en má skoða)
 })
 
 export const CitizenshipSchema = z.object({
@@ -168,7 +176,7 @@ export const CitizenshipSchema = z.object({
   staysAbroad: StaysAbroadSchema,
   passport: z.array(PassportSchema),
   maritalStatus: MaritalStatusSchema,
-  formerIcelander: z.string().refine((v) => v === 'Yes'),
+  formerIcelander: z.string().refine((v) => v === YES),
 })
 
 export type Citizenship = z.TypeOf<typeof CitizenshipSchema>

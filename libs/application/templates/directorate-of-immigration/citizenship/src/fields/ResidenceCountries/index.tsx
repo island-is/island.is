@@ -3,7 +3,7 @@ import { FieldBaseProps } from '@island.is/application/types'
 import { Box, Button } from '@island.is/island-ui/core'
 import { ResidenceCountriesRepeaterItem } from './ResidenceCountriesRepeaterItem'
 import { CountryOfResidence } from '../../shared'
-import { getValueViaPath } from '@island.is/application/core'
+import { getValueViaPath, NO, YES } from '@island.is/application/core'
 import { RadioController } from '@island.is/shared/form-fields'
 import { information } from '../../lib/messages'
 import DescriptionText from '../../components/DescriptionText'
@@ -85,7 +85,7 @@ export const ResidenceCountries: FC<FieldBaseProps> = (props) => {
   const handleLiveAbroadChange = (value: string) => {
     setHasLivedAbroad(value)
 
-    if (value === 'No') {
+    if (value === NO) {
       handleRemoveAll()
     } else {
       handleAdd()
@@ -112,20 +112,20 @@ export const ResidenceCountries: FC<FieldBaseProps> = (props) => {
         defaultValue={hasLivedAbroad}
         options={[
           {
-            value: 'Yes',
+            value: YES,
             label: formatMessage(
               information.labels.radioButtons.radioOptionYes,
             ),
           },
           {
-            value: 'No',
+            value: NO,
             label: formatMessage(information.labels.radioButtons.radioOptionNo),
           },
         ]}
       />
 
       <Box>
-        {hasLivedAbroad === 'Yes' && (
+        {hasLivedAbroad === YES && (
           <DescriptionText
             text={information.labels.countriesOfResidence.countryListTitle}
             textProps={{
@@ -152,7 +152,7 @@ export const ResidenceCountries: FC<FieldBaseProps> = (props) => {
           )
         })}
 
-        {hasLivedAbroad === 'Yes' && (
+        {hasLivedAbroad === YES && (
           <Box paddingTop={4}>
             <Button
               variant="ghost"

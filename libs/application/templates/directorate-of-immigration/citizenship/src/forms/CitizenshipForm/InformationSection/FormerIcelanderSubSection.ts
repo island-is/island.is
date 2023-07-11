@@ -4,6 +4,7 @@ import {
   buildCustomField,
   buildRadioField,
   getValueViaPath,
+  NO,
 } from '@island.is/application/core'
 import { information } from '../../../lib/messages'
 import { Answer } from '@island.is/application/types'
@@ -19,7 +20,7 @@ export const FormerIcelanderSubSection = buildSubSection({
       description: information.labels.formerIcelander.description,
       condition: (answer: Answer) => {
         const answers = answer as Citizenship
-        return answers?.parentInformation?.hasValidParents === 'No'
+        return answers?.parentInformation?.hasValidParents === NO
       },
       children: [
         buildCustomField({

@@ -4,6 +4,7 @@ import {
   buildDescriptionField,
   buildCustomField,
   buildFileUploadField,
+  YES,
 } from '@island.is/application/core'
 import { supportingDocuments } from '../../../lib/messages'
 import { Answer, Application, FormValue } from '@island.is/application/types'
@@ -56,7 +57,7 @@ export const OtherDocumentsSubSection = (index: number) =>
             maxSize: FILE_SIZE_LIMIT,
             condition: (answer: Answer) => {
               const answers = answer as Citizenship
-              if (answers?.parentInformation?.hasValidParents === 'Yes') {
+              if (answers?.parentInformation?.hasValidParents === YES) {
                 return true
               }
               return false

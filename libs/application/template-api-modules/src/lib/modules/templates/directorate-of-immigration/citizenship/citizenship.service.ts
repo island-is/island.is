@@ -3,6 +3,7 @@ import { SharedTemplateApiService } from '../../../shared'
 import { TemplateApiModuleActionProps } from '../../../../types'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
 import {
+  ApplicantChildCustodyInformation,
   ApplicationTypes,
   InstitutionNationalIds,
   NationalRegistryBirthplace,
@@ -26,7 +27,7 @@ import {
   TravelDocumentType,
 } from '@island.is/clients/directorate-of-immigration/citizenship'
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
-import { coreErrorMessages } from '@island.is/application/core'
+import { coreErrorMessages, YES } from '@island.is/application/core'
 
 @Injectable()
 export class CitizenshipService extends BaseTemplateApiService {
@@ -276,8 +277,112 @@ export class CitizenshipService extends BaseTemplateApiService {
     }
 
     const answers = application.answers as CitizenshipAnswers
+    const individual = application.externalData.individual.data as
+      | CitizenIndividual
+      | undefined
+    const nationalRegistryBirthplace = application.externalData
+      .nationalRegistryBirthplace.data as NationalRegistryBirthplace | undefined
+    const childrenCustodyInformation = application.externalData
+      .childrenCustodyInformation.data as
+      | ApplicantChildCustodyInformation[]
+      | undefined
+    const spouseDetails = application.externalData.spouseDetails.data as
+      | SpouseIndividual
+      | undefined
+    const applicantPassport = answers.passport?.find(
+      (p) => p.nationalId === application.applicant,
+    )
+
+    if (!applicantPassport) {
+      throw new Error('Ekki er búið að skrá upplýsingar um vegabréf umsækjanda')
+    }
 
     // Submit the application
-    await this.citizenshipClient.submitApplicationForCitizenship(auth)
+    await this.citizenshipClient.submitApplicationForCitizenship(auth, {
+      selectedChildren: answers.selectedChildren || [],
+      isFormerIcelandicCitizen: answers.formerIcelander === YES,
+      name: individual?.fullName,
+      address: individual?.address?.streetAddress,
+      postalCode: individual?.address?.postalCode,
+      email: answers.userInformation?.email,
+      phone: answers.userInformation?.phone,
+      citizenshipCode: individual?.citizenship?.code,
+      residenceInIcelandLastChangeDate:
+        individual?.residenceInIcelandLastChangeDate,
+      birthCountry: nationalRegistryBirthplace?.location,
+      children:
+        childrenCustodyInformation?.map((c) => ({
+          nationalId: c.nationalId,
+          name: c.fullName,
+          citizenshipCode: c.citizenship?.code,
+        })) || [],
+      maritalStatusCode: spouseDetails?.maritalStatus,
+      dateOfMaritalStatus: spouseDetails?.lastModified,
+      spouse: spouseDetails?.nationalId
+        ? {
+            nationalId: spouseDetails.nationalId!,
+            name: spouseDetails.name!,
+            birthCountry: spouseDetails.spouseBirthplace?.location,
+            citizenshipCode: spouseDetails.spouse?.citizenship?.code,
+            address: spouseDetails.spouse?.address?.streetAddress,
+            reasonDifferentAddress: answers.maritalStatus?.explanation,
+          }
+        : undefined,
+      parents:
+        answers.parentInformation?.parents
+          ?.filter((p) => p.nationalId)
+          ?.map((p) => ({
+            nationalId: p.nationalId!,
+            name: p.name!,
+          })) || [],
+      countriesOfResidence:
+        answers.countriesOfResidence?.selectedAbroadCountries?.map((c) => ({
+          countryId: c.countryId,
+        })) || [],
+      staysAbroad:
+        answers.staysAbroad?.selectedAbroadCountries?.map((s) => ({
+          countryId: s.countryId,
+          dateFrom: s.dateFrom ? new Date(s.dateFrom) : undefined,
+          dateTo: s.dateTo ? new Date(s.dateTo) : undefined,
+          purpose: s.purpose,
+        })) || [],
+      passport: {
+        dateOfIssue: new Date(applicantPassport.publishDate),
+        dateOfExpiry: new Date(applicantPassport.expirationDate),
+        passportNumber: applicantPassport.passportNumber,
+        passportTypeId: applicantPassport.passportTypeId,
+        countryOfIssuerId: applicantPassport.countryOfIssuerId,
+      },
+      //TODOx missing in answers:
+      supportingDocuments: {
+        birthCertificate: { base64: '' },
+        subsistenceCertificate: { base64: '' },
+        subsistenceCertificateForTown: { base64: '' },
+        certificateOfLegalResidenceHistory: { base64: '' },
+        icelandicTestCertificate: { base64: '' },
+        criminalRecordList: [{ countryId: 1, base64: '' }],
+      },
+      //TODOx missing in answers:
+      childrenPassport: [
+        {
+          nationalId: '',
+          dateOfIssue: new Date(),
+          dateOfExpiry: new Date(),
+          passportNumber: '',
+          passportTypeId: 1,
+          countryIdOfIssuer: 1,
+        },
+      ],
+      //TODOx missing in answers:
+      childrenSupportingDocuments: [
+        {
+          nationalId: '',
+          birthCertificate: { base64: '' },
+          writtenConsentFromChild: { base64: '' },
+          writtenConsentFromOtherParent: { base64: '' },
+          custodyDocuments: { base64: '' },
+        },
+      ],
+    })
   }
 }

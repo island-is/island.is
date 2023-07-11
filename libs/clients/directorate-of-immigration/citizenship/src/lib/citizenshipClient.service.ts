@@ -1,5 +1,6 @@
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import {
+  CitizenshipApplication,
   Country,
   CountryOfResidence,
   ForeignCriminalRecordFile,
@@ -11,25 +12,51 @@ import {
 import { Inject, Injectable, Logger } from '@nestjs/common'
 import {
   ApplicantResidenceConditionApi,
+  ApplicationApi,
+  ChildrenApi,
   CountryOfResidenceApi,
   LookupType,
   OptionSetApi,
+  ParentApi,
   ResidenceAbroadApi,
+  SpouseApi,
   TravelDocumentApi,
 } from '../../gen/fetch'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import { child } from 'winston'
 
 @Injectable()
 export class CitizenshipClient {
   constructor(
-    private optionSetApi: OptionSetApi,
+    private applicationApi: ApplicationApi,
+    private childrenApi: ChildrenApi,
+    private spouseApi: SpouseApi,
+    private parentApi: ParentApi,
     private countryOfResidenceApi: CountryOfResidenceApi,
     private residenceAbroadApi: ResidenceAbroadApi,
     private travelDocumentApi: TravelDocumentApi,
     private applicantResidenceConditionApi: ApplicantResidenceConditionApi,
+    private optionSetApi: OptionSetApi,
+
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
   ) {}
+
+  private applicationApiWithAuth(auth: Auth) {
+    return this.applicationApi.withMiddleware(new AuthMiddleware(auth))
+  }
+
+  private childrenApiWithAuth(auth: Auth) {
+    return this.childrenApi.withMiddleware(new AuthMiddleware(auth))
+  }
+
+  private spouseApiWithAuth(auth: Auth) {
+    return this.spouseApi.withMiddleware(new AuthMiddleware(auth))
+  }
+
+  private parentApiWithAuth(auth: Auth) {
+    return this.parentApi.withMiddleware(new AuthMiddleware(auth))
+  }
 
   private countryOfResidenceApiWithAuth(auth: Auth) {
     return this.countryOfResidenceApi.withMiddleware(new AuthMiddleware(auth))
@@ -187,7 +214,186 @@ export class CitizenshipClient {
     return [] // TODOx missing endpoint in API
   }
 
-  async submitApplicationForCitizenship(auth: User): Promise<void> {
-    // TODOx connect to POST endpoint
+  // ATH ég þarf að fá að vita hvað ég má POST-a án þess að þurfa pæla í duplicates
+  async submitApplicationForCitizenship(
+    auth: User,
+    application: CitizenshipApplication,
+  ): Promise<void> {
+    // create application for applicant
+    const applicationId = await this.applicationApiWithAuth(
+      auth,
+    ).apiApplicationPost({
+      applicationNewModel: {
+        caseTypeId: 30020,
+        classificationId: null,
+        classificationTypeId: null,
+        classificationDetailId: null,
+        // TODOx isFormerIcelandicCitizen: application.isFormerIcelandicCitizen,
+      },
+    })
+
+    // submit basic information about applicant
+    // TODOx missing endpoint
+    // await this.applicationApiWithAuth(auth).post({
+    //   name: application.name,
+    //   address: application.address,
+    //   postalCode: application.postalCode,
+    //   email: application.email,
+    //   phone: application.phone,
+    //   citizenshipCode: application.citizenshipCode,
+    //   residenceInIcelandLastChangeDate:
+    //     application.residenceInIcelandLastChangeDate,
+    //   birthCountry: application.birthCountry,
+    // })
+
+    // submit information about applicant's children
+    const children = application.children
+    for (let i = 0; i < children.length; i++) {
+      await this.childrenApiWithAuth(auth).apiChildrenPost({
+        childrenNewModel: {
+          // nationalId: children[i].nationalId,
+          nationalityId: 1, //TODOx children[i].citizenshipCode,
+          givenName: children[i].name, //TODOx sleppa að splitta nafni
+          surName: children[i].name, //TODOx sleppa að splitta nafni
+        },
+      })
+    }
+
+    // submit information about spouse
+    await this.spouseApiWithAuth(auth).apiSpousePost({
+      spouseNewModel: {
+        maritalStatusId: 1, //TODOx er hægt að fá ID application.maritalStatusCode,
+        dateOfMarriage: application.dateOfMaritalStatus,
+        icelandicidIDNO: application.spouse?.nationalId,
+        givenName: application.spouse?.name, //TODOx sleppa að splitta nafni
+        surName: application.spouse?.name, //TODOx sleppa að splitta nafni
+        applicantAddress: application.address,
+        spouseAddress: application.spouse?.address,
+        explanation: application.spouse?.reasonDifferentAddress,
+        nationalityId: 1, //TODOx application.spouseCitizenshipCode,
+      },
+    })
+
+    // submit information about parents with Icelandic citizenship
+    const parents = application.parents
+    for (let i = 0; i < parents.length; i++) {
+      await this.parentApiWithAuth(auth).apiParentPost({
+        parentNewModel: {
+          icelandicIDNO: parents[i].nationalId,
+          givenName: parents[i].name, //TODOx sleppa að splitta nafni
+          surName: parents[i].name, //TODOx sleppa að splitta nafni
+        },
+      })
+    }
+
+    // submit information about countries of residence
+    const countriesOfResidence = application.countriesOfResidence
+    for (let i = 0; i < countriesOfResidence.length; i++) {
+      await this.countryOfResidenceApiWithAuth(auth).apiCountryOfResidencePost({
+        countryOfResidenceNewModel: {
+          countryId: countriesOfResidence[i].countryId,
+        },
+      })
+    }
+
+    // submit information about stays abroad
+    const staysAbroad = application.staysAbroad
+    for (let i = 0; i < staysAbroad.length; i++) {
+      await this.residenceAbroadApiWithAuth(auth).apiResidenceAbroadPost({
+        residenceAbroadNewModel: {
+          countryId: staysAbroad[i].countryId,
+          dateFrom: staysAbroad[i].dateFrom,
+          dateTo: staysAbroad[i].dateTo,
+          purposeOfStay: staysAbroad[i].purpose,
+        },
+      })
+    }
+
+    // submit information about travel document (passport) for applicant
+    await this.travelDocumentApiWithAuth(auth).apiTravelDocumentPost({
+      travelDocumentNewModel: {
+        dateOfExpiry: application.passport.dateOfExpiry,
+        dateOfIssue: application.passport.dateOfIssue,
+        issuingCountryId: application.passport.countryOfIssuerId,
+        name: application.name,
+        travelDocumentNo: application.passport.passportNumber,
+        travelDocumentTypeId: application.passport.passportTypeId,
+      },
+    })
+
+    // submit all other supporting documents for applicant
+    //TODOx missing endpoint
+    // await this.supportingDocumentsApiWithAuth(auth).post({
+    //   birthCertificate:
+    //     application.supportingDocuments.birthCertificate?.base64,
+    //   subsistenceCertificate:
+    //     application.supportingDocuments.subsistenceCertificate.base64,
+    //   subsistenceCertificateForTown:
+    //     application.supportingDocuments.subsistenceCertificateForTown.base64,
+    //   certificateOfLegalResidenceHistory:
+    //     application.supportingDocuments.certificateOfLegalResidenceHistory
+    //       .base64,
+    //   icelandicTestCertificate:
+    //     application.supportingDocuments.icelandicTestCertificate.base64,
+    //   criminalRecord: application.supportingDocuments.criminalRecordList.map(
+    //     (x) => x.base64,
+    //   ),
+    // })
+
+    // create application and submit information for selected children
+    // TODOx missing endpoints for children
+    // const selectedChildren = application.selectedChildren
+    // for (let i = 0; i < selectedChildren.length; i++) {
+    //   const childNationalId = selectedChildren[i]
+    //   const child = application.children.find(
+    //     (c) => c.nationalId === childNationalId,
+    //   )
+
+    //   // create application for child
+    //   const childApplicationId = await this.applicationApiWithAuth(
+    //     auth,
+    //   ).apiApplicationPost({
+    //     applicationNewModel: {
+    //       // TODOx childNationalId: childNationalId
+    //       caseTypeId: 30020,
+    //       classificationId: null,
+    //       classificationTypeId: null,
+    //       classificationDetailId: null,
+    //     },
+    //   })
+
+    //   // submit information about travel document (passport) for child
+    //   const childPassport = application.childrenPassport.find(
+    //     (c) => c.nationalId === childNationalId,
+    //   )
+    //   if (childPassport)
+    //     await this.travelDocumentApiWithAuth(auth).apiTravelDocumentPost({
+    //       travelDocumentNewModel: {
+    //         // TODOx childNationalId: childNationalId
+    //         dateOfExpiry: childPassport.dateOfExpiry,
+    //         dateOfIssue: childPassport.dateOfIssue,
+    //         issuingCountryId: childPassport.countryIdOfIssuer,
+    //         name: child?.name,
+    //         travelDocumentNo: childPassport.passportNumber,
+    //         travelDocumentTypeId: childPassport.passportTypeId,
+    //       },
+    //     })
+
+    //   // submit all other supporting documents for child
+    //   //TODOx missing endpoint
+    //   const childSupportingDocuments = application.childrenSupportingDocuments.find(
+    //     (c) => c.nationalId === childNationalId,
+    //   )
+    //   if (childSupportingDocuments)
+    //     await this.supportingDocumentsApiWithAuth(auth).post({
+    //       // TODOx childNationalId: childNationalId
+    //       birthCertificate: childSupportingDocuments.birthCertificate.base64,
+    //       writtenConsentFromChild:
+    //         childSupportingDocuments.writtenConsentFromChild?.base64,
+    //       writtenConsentFromOtherParent:
+    //         childSupportingDocuments.writtenConsentFromOtherParent?.base64,
+    //       custodyDocuments: childSupportingDocuments.custodyDocuments.base64,
+    //     })
+    // }
   }
 }

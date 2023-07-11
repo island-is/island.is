@@ -3,7 +3,7 @@ import { FieldBaseProps } from '@island.is/application/types'
 import { Box, Button } from '@island.is/island-ui/core'
 import { StaysAbroadRepeaterItem } from './StaysAbroadRepeaterItem'
 import { CountryOfVisit } from '../../shared'
-import { getValueViaPath } from '@island.is/application/core'
+import { getValueViaPath, NO, YES } from '@island.is/application/core'
 import { RadioController } from '@island.is/shared/form-fields'
 import { information } from '../../lib/messages'
 import DescriptionText from '../../components/DescriptionText'
@@ -95,7 +95,7 @@ export const StaysAbroad: FC<FieldBaseProps> = (props) => {
   const handleStayAbroadChange = (value: string) => {
     setHasStayedAbroad(value)
 
-    if (value === 'No') {
+    if (value === NO) {
       handleRemoveAll()
     } else {
       handleAdd()
@@ -130,13 +130,13 @@ export const StaysAbroad: FC<FieldBaseProps> = (props) => {
         defaultValue={hasStayedAbroad}
         options={[
           {
-            value: 'Yes',
+            value: YES,
             label: formatMessage(
               information.labels.radioButtons.radioOptionYes,
             ),
           },
           {
-            value: 'No',
+            value: NO,
             label: formatMessage(information.labels.radioButtons.radioOptionNo),
           },
         ]}
@@ -159,7 +159,7 @@ export const StaysAbroad: FC<FieldBaseProps> = (props) => {
             />
           )
         })}
-        {hasStayedAbroad === 'Yes' && (
+        {hasStayedAbroad === YES && (
           <Box paddingTop={2}>
             <Button
               variant="ghost"

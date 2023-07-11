@@ -6,7 +6,12 @@ import { Box, GridColumn, GridRow } from '@island.is/island-ui/core'
 import { NationalIdWithName } from '../NationalIdWithName'
 import { InputController, RadioController } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
-import { getErrorViaPath, getValueViaPath } from '@island.is/application/core'
+import {
+  getErrorViaPath,
+  getValueViaPath,
+  NO,
+  YES,
+} from '@island.is/application/core'
 import { ParentsToApplicant } from '../../shared'
 import { useFormContext } from 'react-hook-form'
 import { ParentRepeaterItem } from './ParentRepeaterItem'
@@ -83,7 +88,7 @@ export const Parents = ({ field, application, errors }: any) => {
   const handleValidParentsChange = (value: string) => {
     setHasValidParents(value)
 
-    if (value === 'No') {
+    if (value === NO) {
       handleRemoveAll()
     } else {
       handleToggleYes()
@@ -98,16 +103,16 @@ export const Parents = ({ field, application, errors }: any) => {
         onSelect={(value) => {
           handleValidParentsChange(value)
         }}
-        defaultValue={hasValidParents ? 'Yes' : 'No'}
+        defaultValue={hasValidParents ? YES : NO}
         options={[
           {
-            value: 'Yes',
+            value: YES,
             label: formatMessage(
               information.labels.radioButtons.radioOptionYes,
             ),
           },
           {
-            value: 'No',
+            value: YES,
             label: formatMessage(information.labels.radioButtons.radioOptionNo),
           },
         ]}
@@ -130,7 +135,7 @@ export const Parents = ({ field, application, errors }: any) => {
                 parent.nationalId && parent.nationalId !== '' ? true : false
               }
               addParentToApplication={addParentToApplication}
-              isHidden={hasValidParents === 'No'}
+              isHidden={hasValidParents === NO}
             />
           )
         })}

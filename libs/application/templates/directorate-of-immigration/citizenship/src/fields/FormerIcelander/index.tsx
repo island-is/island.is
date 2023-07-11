@@ -9,7 +9,7 @@ import {
 } from '@island.is/island-ui/core'
 import { RadioController } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
-import { getValueViaPath } from '@island.is/application/core'
+import { getValueViaPath, NO, YES } from '@island.is/application/core'
 
 export const FormerIcelander = ({ application }: any) => {
   const { answers } = application
@@ -33,21 +33,21 @@ export const FormerIcelander = ({ application }: any) => {
         onSelect={(value) => {
           handleIsFormerIcelanderChange(value)
         }}
-        defaultValue={isFormerIcelander ? 'Yes' : 'No'}
+        defaultValue={isFormerIcelander ? YES : NO}
         options={[
           {
-            value: 'Yes',
+            value: YES,
             label: formatMessage(
               information.labels.radioButtons.radioOptionYes,
             ),
           },
           {
-            value: 'No',
+            value: NO,
             label: formatMessage(information.labels.radioButtons.radioOptionNo),
           },
         ]}
       />
-      {(!isFormerIcelander || isFormerIcelander === 'No') && (
+      {(!isFormerIcelander || isFormerIcelander === NO) && (
         <AlertMessage
           type="error"
           title={formatMessage(information.labels.formerIcelander.alertTitle)}
