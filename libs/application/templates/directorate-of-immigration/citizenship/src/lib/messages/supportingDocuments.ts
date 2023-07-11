@@ -89,6 +89,12 @@ export const supportingDocuments = {
         defaultMessage: 'Veldu tegund',
         description: 'Type placeholder',
       },
+      uploadTitlePlaceholder: {
+        id:
+          'doi.cs.application:supportingDocuments.labels.passport.uploadTitlePlaceholder',
+        defaultMessage: 'Afrit af vegabréfi',
+        description: 'Upload title placeholder',
+      },
     }),
     otherDocuments: defineMessages({
       subSectionTitle: {

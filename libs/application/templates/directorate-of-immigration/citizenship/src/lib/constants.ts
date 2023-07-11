@@ -13,3 +13,13 @@ export enum States {
 export enum Roles {
   APPLICANT = 'applicant',
 }
+
+export enum Routes {
+  USERINFORMATION = 'userInformation',
+  PICKCHILDREN = 'pickChildren',
+  PARENTINFORMATION = 'parentInformation',
+  MARITALSTATUS = 'maritalStatus',
+  COUNTRIESOFRESIDENCE = 'countriesOfResidence',
+  STAYSABROAD = 'staysAbroad',
+  PASSPORTS = 'passports[0]',
+}

@@ -67,17 +67,8 @@ export const NationalIdWithName: FC<Props & FieldBaseProps> = ({
   )
 
   useEffect(() => {
-    console.log('changing remove field', repeaterField)
     setValue(wasRemovedField, repeaterField.wasRemoved)
   }, [repeaterField.wasRemoved, setValue])
-
-  useEffect(() => {
-    console.log('in here', repeaterField)
-  }, [])
-
-  useEffect(() => {
-    console.log('changin this??', repeaterField)
-  }, [repeaterField])
 
   useEffect(() => {
     if (nationalIdInput.length === 10 && kennitala.isValid(nationalIdInput)) {

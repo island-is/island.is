@@ -133,13 +133,13 @@ const template: ApplicationTemplate<
                 import('../forms/CitizenshipForm').then((module) =>
                   Promise.resolve(module.CitizenshipForm),
                 ),
-              actions: [
-                {
-                  event: DefaultEvents.SUBMIT,
-                  name: 'Staðfesta',
-                  type: 'primary',
-                },
-              ],
+              // actions: [
+              //   {
+              //     event: DefaultEvents.SUBMIT,
+              //     name: 'Staðfesta',
+              //     type: 'primary',
+              //   },
+              // ],
               write: 'all',
               delete: true,
             },

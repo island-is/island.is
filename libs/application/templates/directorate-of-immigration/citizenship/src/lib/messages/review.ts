@@ -20,6 +20,11 @@ export const review = {
     },
   }),
   labels: defineMessages({
+    changeButtonText: {
+      id: 'doi.cs.application:review.labels.changeButtonText',
+      defaultMessage: 'Breyta',
+      description: 'change button label',
+    },
     applicant: {
       id: 'doi.cs.application:review.labels.applicant',
       defaultMessage: 'Umsækjandi',
@@ -59,6 +64,11 @@ export const review = {
       id: 'doi.cs.application:review.labels.abroadStays',
       defaultMessage: 'Dvöl erlendis',
       description: 'abroadStays review label',
+    },
+    passports: {
+      id: 'doi.cs.application:review.labels.passports',
+      defaultMessage: 'Vegabréf {name}',
+      description: 'passport review label',
     },
     documents: {
       id: 'doi.cs.application:review.labels.documents',

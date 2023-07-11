@@ -23,7 +23,7 @@ export const Parents = ({ field, application, errors }: any) => {
   } = application
 
   const [hasValidParents, setHasValidParents] = useState(
-    getValueViaPath(answers, 'parentInformation.hasValidParents') as string,
+    getValueViaPath(answers, 'parentInformation.hasValidParents', NO) as string,
   )
 
   const defaultParents = [
@@ -47,11 +47,16 @@ export const Parents = ({ field, application, errors }: any) => {
     const validParents = parents.filter(
       (x) => x.nationalId && x.nationalId !== '',
     )
-    if (validParents.length === 0) {
+    if (hasValidParents === YES && validParents.length === 0) {
       setParents(defaultParents)
     }
-    if (validParents.length === 1) {
+    if (hasValidParents === YES && validParents.length === 1) {
       setParents([...validParents, { ...defaultParents[1] }])
+    }
+
+    if (hasValidParents === NO) {
+      //set two parents with wasRemoved = true to pass validation but also to exist if user toggles to Yes
+      setParents([defaultParents[1], defaultParents[1]])
     }
   }, [])
 
@@ -103,7 +108,7 @@ export const Parents = ({ field, application, errors }: any) => {
         onSelect={(value) => {
           handleValidParentsChange(value)
         }}
-        defaultValue={hasValidParents ? YES : NO}
+        defaultValue={hasValidParents === NO ? hasValidParents : YES}
         options={[
           {
             value: YES,
@@ -121,7 +126,6 @@ export const Parents = ({ field, application, errors }: any) => {
       {!!parents &&
         parents.map((parent, index) => {
           const position = parents.indexOf(parent)
-          console.log('rendering loop')
           return (
             <ParentRepeaterItem
               index={index}

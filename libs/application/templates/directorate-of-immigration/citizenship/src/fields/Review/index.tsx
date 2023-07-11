@@ -10,8 +10,13 @@ import { DocumentReview } from './DocumentReview'
 import { StaysAbroadReview } from './StaysAbroadReview'
 import { Citizenship } from '../../lib/dataSchema'
 import { getSelectedCustodyChildren } from '../../utils/childrenInfo'
+import { Routes } from '../../lib/constants'
 
-export const Review: FC<FieldBaseProps> = ({ application, field }) => {
+export const Review: FC<FieldBaseProps> = ({
+  application,
+  field,
+  goToScreen,
+}) => {
   const answers = application.answers as Citizenship
 
   const selectedChildren = getSelectedCustodyChildren(
@@ -27,24 +32,62 @@ export const Review: FC<FieldBaseProps> = ({ application, field }) => {
   return (
     <Box>
       <Divider></Divider>
-      <ApplicantReview field={field} application={application} />
+      <ApplicantReview
+        field={field}
+        application={application}
+        route={Routes.USERINFORMATION}
+        goToScreen={goToScreen}
+      />
       <Divider></Divider>
       {selectedChildren && selectedChildren.length > 0 && (
-        <ChildrenReview selectedChildren={selectedChildren} />
+        <ChildrenReview
+          field={field}
+          application={application}
+          selectedChildren={selectedChildren}
+          route={Routes.PICKCHILDREN}
+          goToScreen={goToScreen}
+        />
       )}
       <Divider></Divider>
       <Divider></Divider>
-      {showParents && <ParentsReview field={field} application={application} />}
+      {showParents && (
+        <ParentsReview
+          field={field}
+          application={application}
+          route={Routes.PARENTINFORMATION}
+          goToScreen={goToScreen}
+        />
+      )}
       <Divider></Divider>
       {answers?.maritalStatus && (
-        <MaritalStatusReview field={field} application={application} />
+        <MaritalStatusReview
+          field={field}
+          application={application}
+          route={Routes.MARITALSTATUS}
+          goToScreen={goToScreen}
+        />
       )}
       <Divider></Divider>
-      <ResidencyReview field={field} application={application} />
+      <ResidencyReview
+        field={field}
+        application={application}
+        route={Routes.COUNTRIESOFRESIDENCE}
+        goToScreen={goToScreen}
+      />
       <Divider></Divider>
-      <StaysAbroadReview field={field} application={application} />
+      <StaysAbroadReview
+        field={field}
+        application={application}
+        route={Routes.STAYSABROAD}
+        goToScreen={goToScreen}
+      />
       <Divider></Divider>
-      <DocumentReview field={field} application={application} />
+      <DocumentReview
+        field={field}
+        application={application}
+        route={Routes.PASSPORTS}
+        goToScreen={goToScreen}
+      />
     </Box>
   )
 }

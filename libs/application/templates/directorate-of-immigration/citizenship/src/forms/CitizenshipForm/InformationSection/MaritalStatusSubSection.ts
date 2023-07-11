@@ -12,13 +12,14 @@ import { Citizenship } from '../../../lib/dataSchema'
 import { CitizenIndividual, SpouseIndividual } from '../../../shared'
 import { ResidenceCondition } from '@island.is/clients/directorate-of-immigration/citizenship'
 import { formatDate } from '../../../utils'
+import { Routes } from '../../../lib/constants'
 
 export const MaritalStatusSubSection = buildSubSection({
-  id: 'maritalStatus',
+  id: Routes.MARITALSTATUS,
   title: information.labels.maritalStatus.subSectionTitle,
   children: [
     buildMultiField({
-      id: 'maritalStatusMultiField',
+      id: Routes.MARITALSTATUS,
       title: information.labels.maritalStatus.pageTitle,
       condition: (_, externalData) => {
         const residenceConditions = getValueViaPath(
