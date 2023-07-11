@@ -1,4 +1,8 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
+import {
+  ApiHideProperty,
+  ApiProperty,
+  ApiPropertyOptional,
+} from '@nestjs/swagger'
 import {
   Column,
   CreatedAt,
@@ -149,15 +153,17 @@ export class Course extends Model {
   })
   externalUrlEn?: string
 
-  @ApiProperty({
-    type: String,
-  })
+  // @ApiProperty({
+  //   type: String,
+  // })
+  @ApiHideProperty()
   @CreatedAt
   readonly created!: Date
 
-  @ApiProperty({
-    type: String,
-  })
+  // @ApiProperty({
+  //   type: String,
+  // })
+  @ApiHideProperty()
   @UpdatedAt
   readonly modified!: Date
 }

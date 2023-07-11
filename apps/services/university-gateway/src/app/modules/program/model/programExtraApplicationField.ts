@@ -1,4 +1,8 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
+import {
+  ApiHideProperty,
+  ApiProperty,
+  ApiPropertyOptional,
+} from '@nestjs/swagger'
 import {
   Column,
   CreatedAt,
@@ -15,10 +19,11 @@ import { Program } from './program'
   tableName: 'program_extra_application_field',
 })
 export class ProgramExtraApplicationField extends Model {
-  @ApiProperty({
-    description: 'Program extra application field ID',
-    example: '00000000-0000-0000-0000-000000000000',
-  })
+  // @ApiProperty({
+  //   description: 'Program extra application field ID',
+  //   example: '00000000-0000-0000-0000-000000000000',
+  // })
+  @ApiHideProperty()
   @Column({
     type: DataType.UUID,
     primaryKey: true,
@@ -27,10 +32,11 @@ export class ProgramExtraApplicationField extends Model {
   })
   id!: string
 
-  @ApiProperty({
-    description: 'Program ID',
-    example: '00000000-0000-0000-0000-000000000000',
-  })
+  // @ApiProperty({
+  //   description: 'Program ID',
+  //   example: '00000000-0000-0000-0000-000000000000',
+  // })
+  @ApiHideProperty()
   @Column({
     type: DataType.UUID,
     allowNull: false,
@@ -116,15 +122,17 @@ export class ProgramExtraApplicationField extends Model {
   })
   uploadAcceptedFileType?: string
 
-  @ApiProperty({
-    type: String,
-  })
+  // @ApiProperty({
+  //   type: String,
+  // })
+  @ApiHideProperty()
   @CreatedAt
   readonly created!: Date
 
-  @ApiProperty({
-    type: String,
-  })
+  // @ApiProperty({
+  //   type: String,
+  // })
+  @ApiHideProperty()
   @UpdatedAt
   readonly modified!: Date
 }

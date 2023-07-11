@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger'
+import { ApiHideProperty, ApiProperty } from '@nestjs/swagger'
 import {
   Column,
   CreatedAt,
@@ -15,10 +15,11 @@ import { Program } from './program'
   tableName: 'program_mode_of_delivery',
 })
 export class ProgramModeOfDelivery extends Model {
-  @ApiProperty({
-    description: 'Program mode of delivery ID',
-    example: '00000000-0000-0000-0000-000000000000',
-  })
+  // @ApiProperty({
+  //   description: 'Program mode of delivery ID',
+  //   example: '00000000-0000-0000-0000-000000000000',
+  // })
+  @ApiHideProperty()
   @Column({
     type: DataType.UUID,
     primaryKey: true,
@@ -27,10 +28,11 @@ export class ProgramModeOfDelivery extends Model {
   })
   id!: string
 
-  @ApiProperty({
-    description: 'Program ID',
-    example: '00000000-0000-0000-0000-000000000000',
-  })
+  // @ApiProperty({
+  //   description: 'Program ID',
+  //   example: '00000000-0000-0000-0000-000000000000',
+  // })
+  @ApiHideProperty()
   @Column({
     type: DataType.UUID,
     allowNull: false,
@@ -50,15 +52,17 @@ export class ProgramModeOfDelivery extends Model {
   })
   modeOfDelivery!: ModeOfDelivery
 
-  @ApiProperty({
-    type: String,
-  })
+  // @ApiProperty({
+  //   type: String,
+  // })
+  @ApiHideProperty()
   @CreatedAt
   readonly created!: Date
 
-  @ApiProperty({
-    type: String,
-  })
+  // @ApiProperty({
+  //   type: String,
+  // })
+  @ApiHideProperty()
   @UpdatedAt
   readonly modified!: Date
 }

@@ -75,10 +75,21 @@ export class ProgramService {
       include: [
         {
           model: ProgramTag,
-          include: [{ model: Tag }],
+          include: [
+            {
+              model: Tag,
+              attributes: {
+                exclude: ['created', 'modified'],
+              },
+            },
+          ],
+          attributes: {
+            exclude: [/*'id',*/ 'programId', 'tagId', 'created', 'modified'], //TODOx exclude id
+          },
         },
         {
           model: ProgramModeOfDelivery,
+          attributes: { exclude: ['id', 'programId', 'created', 'modified'] },
         },
       ],
     })
@@ -90,7 +101,17 @@ export class ProgramService {
       include: [
         {
           model: ProgramCourse,
-          include: [{ model: Course }],
+          include: [
+            {
+              model: Course,
+              attributes: {
+                exclude: ['created', 'modified'],
+              },
+            },
+          ],
+          attributes: {
+            exclude: ['id', 'programId', 'courseId', 'created', 'modified'],
+          },
         },
         {
           model: ProgramTag,
@@ -98,17 +119,21 @@ export class ProgramService {
             {
               model: Tag,
               attributes: {
-                exclude: ['id', 'created', 'modified'],
+                exclude: ['created', 'modified'],
               },
             },
           ],
-          attributes: { exclude: ['id', 'programId', 'created', 'modified'] },
+          attributes: {
+            exclude: [/*'id',*/ 'programId', 'tagId', 'created', 'modified'], //TODOx exclude id
+          },
         },
         {
           model: ProgramModeOfDelivery,
+          attributes: { exclude: ['id', 'programId', 'created', 'modified'] },
         },
         {
           model: ProgramExtraApplicationField,
+          attributes: { exclude: ['id', 'programId', 'created', 'modified'] },
         },
       ],
     })
