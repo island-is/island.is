@@ -233,7 +233,6 @@ const Indictment: React.FC = () => {
     setAndSendCaseToServer(
       [
         {
-          force: true,
           indictmentIntroduction: indictmentIntroductionAutofill?.join(''),
           demands: workingCase.requestDriversLicenseSuspension
             ? formatMessage(strings.demandsAutofillWithSuspension)
