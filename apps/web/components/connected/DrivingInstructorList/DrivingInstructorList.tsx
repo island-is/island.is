@@ -44,11 +44,13 @@ const getSortedAndFilteredDrivingInstructors = (
   }
 
   const containsAllTerms = (instructor: DrivingInstructor): boolean => {
-    return searchTerms.every(
-      (searchTerm) =>
+    return searchTerms.every((searchTerm) => {
+      return (
         instructor.name?.trim().toLowerCase().includes(searchTerm) ||
-        instructor.nationalId?.trim().toLowerCase().includes(searchTerm),
-    )
+        instructor.nationalId?.trim().toLowerCase().includes(searchTerm) ||
+        String(instructor.driverLicenseId).includes(searchTerm)
+      )
+    })
   }
 
   // Categorize the instructors into two arrays based on the matching criteria
@@ -117,6 +119,15 @@ const DrivingInstructorList = ({ slice }: DrivingInstructorListProps) => {
           message={n('errorOccurredMessage', 'Ekki tókst að sækja ökukennara')}
         />
       )}
+
+      {called && !loading && !error && !filteredInstructors?.length && (
+        <Box display="flex" justifyContent="center">
+          <Text fontWeight="semiBold">
+            {n('noResultsFound', 'Engir ökukennarar fundust')}
+          </Text>
+        </Box>
+      )}
+
       {filteredInstructors?.length > 0 && !error && (
         <Box>
           <T.Table>
