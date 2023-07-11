@@ -118,7 +118,7 @@ const SubscriptionTableItem = ({
     return (
       <Stack space={1}>
         <Text variant="h5">
-          {isGeneralSubscription ? loc.allCases : item.caseNumber}
+          {isGeneralSubscription ? loc.allCases : `S-${item.caseNumber}`}
         </Text>
         <Text variant="medium" fontWeight="light">
           {item.name}
@@ -150,7 +150,7 @@ const SubscriptionTableItem = ({
           <>
             <Data>
               <Text variant="h5">
-                {isGeneralSubscription ? loc.allCases : item.caseNumber}
+                {isGeneralSubscription ? loc.allCases : `S-${item.caseNumber}`}
               </Text>
             </Data>
             <Data>

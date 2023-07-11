@@ -61,7 +61,6 @@ const SubscriptionTableHeader = ({ currentTab }: TableHeaderProps) => {
               box={{
                 background: 'transparent',
                 borderColor: 'transparent',
-                width: 'touchable',
               }}
               key={'tableHeaderKey_1'}
             >

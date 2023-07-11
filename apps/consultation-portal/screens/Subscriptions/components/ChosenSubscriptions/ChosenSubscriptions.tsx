@@ -89,7 +89,7 @@ const ChosenSubscriptions = ({
                   setSubscriptionArray={setSubscriptionArray}
                   titleColumn={
                     <Text variant="h5" truncate={isMobile} color={'dark400'}>
-                      {item.caseNumber}
+                      {`S-${item.caseNumber}`}
                     </Text>
                   }
                 >
