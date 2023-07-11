@@ -136,14 +136,18 @@ const SubscriptionTableItem = ({
         {currentTab !== Area.case ? (
           isGeneralSubscription ? (
             <Data>
-              <Text variant="medium" fontWeight="semiBold">{loc.allCases}</Text>
+              <Text variant="medium" fontWeight="semiBold">
+                {loc.allCases}
+              </Text>
               <Text variant="medium" fontWeight="light">
                 {item.name}
               </Text>
             </Data>
           ) : (
             <Data>
-              <Text variant="medium" fontWeight="semiBold">{item.name}</Text>
+              <Text variant="medium" fontWeight="semiBold">
+                {item.name}
+              </Text>
             </Data>
           )
         ) : mdBreakpoint ? (
