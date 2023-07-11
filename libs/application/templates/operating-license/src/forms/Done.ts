@@ -1,7 +1,5 @@
 import {
   buildCustomField,
-  buildDescriptionField,
-  buildDividerField,
   buildForm,
   buildMultiField,
 } from '@island.is/application/core'

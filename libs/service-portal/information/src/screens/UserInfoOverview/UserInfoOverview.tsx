@@ -37,7 +37,11 @@ const UserInfoOverview = () => {
 
   return (
     <>
-      <IntroHeader title={m.myInfo} intro={spmm.userInfoDesc} />
+      <IntroHeader
+        marginBottom={2}
+        title={m.myInfo}
+        intro={spmm.userInfoDesc}
+      />
 
       <Stack space={2}>
         {called && !loading && !error && !nationalRegistryUser ? (

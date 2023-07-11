@@ -172,9 +172,9 @@ export const RskProcuring = new XroadConf({
         '["clustercfg.general-redis-cluster-group.dnugi2.euw1.cache.amazonaws.com:6379"]',
     },
     XROAD_RSK_PROCURING_PATH: {
-      dev: 'IS-DEV/GOV/10006/Skatturinn/prokura-v1',
-      staging: 'IS-TEST/GOV/5402696029/Skatturinn/prokura-v1',
-      prod: 'IS/GOV/5402696029/Skatturinn/prokura-v1',
+      dev: 'IS-DEV/GOV/10006/Skatturinn/relationships-v1',
+      staging: 'IS-TEST/GOV/5402696029/Skatturinn/relationships-v1',
+      prod: 'IS/GOV/5402696029/Skatturinn/relationships-v1',
     },
   },
   secrets: {
@@ -557,5 +557,16 @@ export const IcelandicGovernmentInstitutionVacancies = new XroadConf({
       '/k8s/xroad/client/ICELANDIC_GOVERNMENT_INSTITUTION_VACANCIES_USERNAME',
     ICELANDIC_GOVERNMENT_INSTITUTION_VACANCIES_PASSWORD:
       '/k8s/xroad/client/ICELANDIC_GOVERNMENT_INSTITUTION_VACANCIES_PASSWORD',
+  },
+})
+
+export const AircraftRegistry = new XroadConf({
+  env: {
+    XROAD_AIRCRAFT_REGISTRY_PATH: {
+      dev: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Loftfaraskra-V1',
+      // TODO: Update staging and prod paths once the aircraft registry api is available there
+      staging: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Loftfaraskra-V1',
+      prod: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Loftfaraskra-V1',
+    },
   },
 })
