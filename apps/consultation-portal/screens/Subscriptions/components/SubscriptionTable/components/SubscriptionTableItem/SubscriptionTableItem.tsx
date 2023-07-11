@@ -117,7 +117,7 @@ const SubscriptionTableItem = ({
   const Stacked = () => {
     return (
       <Stack space={1}>
-        <Text variant="h5">
+        <Text variant="medium" fontWeight="semiBold">
           {isGeneralSubscription ? loc.allCases : `S-${item.caseNumber}`}
         </Text>
         <Text variant="medium" fontWeight="light">
@@ -136,20 +136,20 @@ const SubscriptionTableItem = ({
         {currentTab !== Area.case ? (
           isGeneralSubscription ? (
             <Data>
-              <Text variant="h5">{loc.allCases}</Text>
+              <Text variant="medium" fontWeight="semiBold">{loc.allCases}</Text>
               <Text variant="medium" fontWeight="light">
                 {item.name}
               </Text>
             </Data>
           ) : (
             <Data>
-              <Text variant="h5">{item.name}</Text>
+              <Text variant="medium" fontWeight="semiBold">{item.name}</Text>
             </Data>
           )
         ) : mdBreakpoint ? (
           <>
             <Data>
-              <Text variant="h5">
+              <Text variant="medium" fontWeight="semiBold">
                 {isGeneralSubscription ? loc.allCases : `S-${item.caseNumber}`}
               </Text>
             </Data>

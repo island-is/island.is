@@ -69,7 +69,7 @@ const ChosenSubscriptions = ({
               subscriptionArray={subscriptionArray}
               setSubscriptionArray={setSubscriptionArray}
               titleColumn={
-                <Text variant="h5" color={'dark400'}>
+                <Text variant="medium" fontWeight="semiBold" color={'dark400'}>
                   {loc.cardTitle}
                 </Text>
               }
@@ -88,7 +88,7 @@ const ChosenSubscriptions = ({
                   subscriptionArray={subscriptionArray}
                   setSubscriptionArray={setSubscriptionArray}
                   titleColumn={
-                    <Text variant="h5" truncate={isMobile} color={'dark400'}>
+                    <Text variant="medium" fontWeight="semiBold" truncate={isMobile} color={'dark400'}>
                       {`S-${item.caseNumber}`}
                     </Text>
                   }
@@ -108,7 +108,7 @@ const ChosenSubscriptions = ({
                   toggleAble={toggleAble}
                   setSubscriptionArray={setSubscriptionArray}
                   titleColumn={
-                    <Text variant="h5" truncate={isMobile} color={'blue400'}>
+                    <Text variant="medium" fontWeight="semiBold" truncate={isMobile} color={'blue400'}>
                       {item.name}
                     </Text>
                   }
@@ -133,7 +133,7 @@ const ChosenSubscriptions = ({
                   subscriptionArray={subscriptionArray}
                   setSubscriptionArray={setSubscriptionArray}
                   titleColumn={
-                    <Text variant="h5" truncate={isMobile} color={'blue400'}>
+                    <Text variant="medium" fontWeight="semiBold" truncate={isMobile} color={'blue400'}>
                       {item.name}
                     </Text>
                   }
