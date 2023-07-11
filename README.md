@@ -44,14 +44,20 @@ If you are running on Windows we recommend using [Docker and WSL2](https://docs.
 
 There are many projects that can be built and run. [Click here to see the full list](https://github.com/island-is/island.is/blob/main/nx.json).
 
-### Fresh start
+### Fresh start/changing branches
 
-Install dependencies and generate some library files:
-
+Run on whenever you check out a branch:
 ```bash
 yarn install
 yarn schemas
 ```
+
+When you clone the repo for the first time, and whenever you change branches, you need to update your dependencies to match your current branch using `yarn install`.
+In addition, schemas change frequently, so you will also need to update the generated schemas and clients using `yarn schemas`.
+
+If you you want schemas to be generated on every install you can set the environment variable `GENERATE_SCHEMAS_ON_INSTALL=true`.
+Note that this will generate the schemas when rebuilding the workspace in the post-install phase, with no output, so the `install` script seems to hang.
+
 
 ### Development server
 
