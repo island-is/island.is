@@ -36,6 +36,7 @@ import { tagAggregationQuery } from '../queries/tagAggregation'
 import { typeAggregationQuery } from '../queries/typeAggregation'
 import { rankEvaluationQuery } from '../queries/rankEvaluation'
 import { filterDoc, getValidBulkRequestChunk } from './utils'
+import { ResponseError } from '@elastic/elasticsearch/lib/errors'
 
 type RequestBodyType<T = Record<string, any>> = T | string | Buffer
 type RankResultMap<T extends string> = Record<string, RankEvaluationResponse<T>>
@@ -113,22 +114,53 @@ export class ElasticService {
 
       let requestChunk = getValidBulkRequestChunk(requests)
 
-      while (requestChunk.length) {
-        // wait for request b4 continuing
-        const response = await client.bulk({
-          index: index,
-          body: requestChunk,
-        })
+      let tooManyRequestsFailureCount = 0
 
-        // not all errors are thrown log if the response has any errors
-        if (response.body.errors) {
-          // Filter HUGE request object
-          filterDoc(response)
-          logger.error('Failed to import some documents in bulk import', {
-            response,
+      while (requestChunk.length) {
+        try {
+          // wait for request b4 continuing
+          const response = await client.bulk({
+            index: index,
+            body: requestChunk,
           })
+          // not all errors are thrown log if the response has any errors
+          if (response.body.errors) {
+            // Filter HUGE request object
+            filterDoc(response)
+            logger.error('Failed to import some documents in bulk import', {
+              response,
+            })
+          }
+          requestChunk = getValidBulkRequestChunk(requests)
+        } catch (error) {
+          const tooManyRequestsStatusCode = 429
+          if (
+            error instanceof ResponseError &&
+            error.statusCode === tooManyRequestsStatusCode
+          ) {
+            if (tooManyRequestsFailureCount > 50) {
+              // Filter HUGE request object
+              filterDoc(error)
+              logger.error(
+                'Elasticsearch request failed on bulk import, Too many requests',
+                error,
+              )
+              throw error
+            }
+
+            tooManyRequestsFailureCount += 1
+
+            // Wait for 100-300ms and then try again
+            await new Promise((r) =>
+              setTimeout(r, Math.max(100, Math.random() * 300)),
+            )
+          } else {
+            // Filter HUGE request object
+            filterDoc(error)
+            logger.error('Elasticsearch request failed on bulk import', error)
+            throw error
+          }
         }
-        requestChunk = getValidBulkRequestChunk(requests)
       }
 
       return true
