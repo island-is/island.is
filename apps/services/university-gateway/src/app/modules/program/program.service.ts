@@ -84,7 +84,7 @@ export class ProgramService {
             },
           ],
           attributes: {
-            exclude: [/*'id',*/ 'programId', 'tagId', 'created', 'modified'], //TODOx exclude id
+            exclude: [/*'id',*/ 'programId', 'tagId', 'created', 'modified'],
           },
         },
         {
@@ -124,7 +124,7 @@ export class ProgramService {
             },
           ],
           attributes: {
-            exclude: [/*'id',*/ 'programId', 'tagId', 'created', 'modified'], //TODOx exclude id
+            exclude: [/*'id',*/ 'programId', 'tagId', 'created', 'modified'],
           },
         },
         {
