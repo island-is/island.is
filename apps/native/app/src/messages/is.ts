@@ -219,7 +219,18 @@ export const is = {
 
   // finance
   'finance.screenTitle': 'Fjármál',
-  'finance.dropDownLabel': 'Gjaldgrunnur',
+  "finance.statusCard.status": "Staða",
+  "finance.statusCard.paymentBase": "Gjaldgrunnur",
+  "finance.statusCard.deadline": "Eindagi",
+  "finance.statusCard.amount": "Upphæð",
+  "finance.statusCard.total": "Samtals",
+  "finance.statusCard.organization": "Þjónustuaðili",
+  "finance.statusCard.organizationWebsite": "Vefur",
+  "finance.statusCard.organizationEmail": "Netfang",
+  "finance.statusCard.organizationPhone": "Sími",
+  "finance.statusCard.schedulePaymentPlan": "Gera greiðsluáætlun",
+  "finance.heading.title": "Staða við ríkissjóð og stofnanir",
+  "finance.heading.subtitle": "Hér sérð þú sundurliðun skulda og/eða inneigna hjá ríkissjóði og stofnunum.",
 
   // finance detail
   'financeDetail.title': 'Ítarupplýsingar',

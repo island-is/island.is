@@ -93,19 +93,21 @@ const LightButton = (props: any) => {
       {...props}
       isOutlined
       iconStyle={{
-        tintColor: blue400,
+        tintColor: props.disabled ? '#999' : blue400,
       }}
       style={{
-        borderColor: Platform.select<any>({
-          ios: DynamicColorIOS({
-            dark: theme.shades.dark.shade300,
-            light: theme.color.blue200,
-          }),
-          android:
-            theme.colorScheme === 'dark'
-              ? theme.shades.dark.shade300
-              : theme.color.blue200,
-        }),
+        borderColor: props.disabled
+          ? 'rgba(128,128,128,0.25)'
+          : Platform.select<any>({
+              ios: DynamicColorIOS({
+                dark: theme.shades.dark.shade300,
+                light: theme.color.blue200,
+              }),
+              android:
+                theme.colorScheme === 'dark'
+                  ? theme.shades.dark.shade300
+                  : theme.color.blue200,
+            }),
         paddingTop: 8,
         paddingBottom: 8,
         minWidth: 0,
@@ -119,16 +121,18 @@ const LightButton = (props: any) => {
         textAlign: 'left',
         fontSize: 12,
         fontWeight: '500',
-        color: Platform.select<any>({
-          ios: DynamicColorIOS({
-            dark: theme.shades.dark.foreground,
-            light: theme.shades.light.foreground,
-          }),
-          android:
-            theme.colorScheme === 'dark'
-              ? theme.shades.dark.foreground
-              : theme.shades.light.foreground,
-        }),
+        color: props.disabled
+          ? '#999'
+          : Platform.select<any>({
+              ios: DynamicColorIOS({
+                dark: theme.shades.dark.foreground,
+                light: theme.shades.light.foreground,
+              }),
+              android:
+                theme.colorScheme === 'dark'
+                  ? theme.shades.dark.foreground
+                  : theme.shades.light.foreground,
+            }),
         ...props.textStyle,
       }}
     />
@@ -199,7 +203,14 @@ function FinanceStatusCardContainer(props: any) {
           />
         </Text>
         <LightButton
-          title={chargeItemSubjects[selectedChargeItemSubject]}
+          title={
+            loading
+              ? intl.formatMessage({
+                  id: 'settings.about.codePushLoading',
+                  defaultMessage: 'Hleð...',
+                })
+              : chargeItemSubjects[selectedChargeItemSubject]
+          }
           icon={chevronDown}
           textStyle={{flex: 1}}
           onPress={() => {
@@ -241,59 +252,59 @@ function FinanceStatusCardContainer(props: any) {
             </Text>
           </Cell>
         </Row>
-        {financeStatusDetails?.chargeItemSubjects?.map((charge, index) => {
-          if (
-            charge.chargeItemSubject !==
-            chargeItemSubjects[selectedChargeItemSubject]
-          ) {
-            return null;
-          }
-          return (
-            <TouchableRow
-              key={index}
-              underlayColor="rgba(128,128,128,0.1)"
-              onPress={() => {
-                navigateTo(
-                  `/finance/status/${org.id}/${chargeType.id}/${index}`,
-                );
-              }}
-            >
-              <>
+        {loading
+          ? Array.from({length: 3}).map((_, index) => (
+              <Row key={index}>
                 <Cell style={{flex: 1}}>
-                  {loading ? (
-                    <Skeleton height={18} />
-                  ) : (
-                    <Text>{charge.finalDueDate}</Text>
-                  )}
+                  <Skeleton height={18} />
                 </Cell>
-                <Cell style={{flex: 1}}>
-                  {loading ? (
-                    <Skeleton height={18} />
-                  ) : (
-                    <Text style={{textAlign: 'right'}}>
-                      {intl.formatNumber(charge.totals)} kr.
-                    </Text>
-                  )}
-                </Cell>
-                <Image
-                  source={chevronDown}
-                  style={{
-                    tintColor: 'rgba(128,128,128,0.6)',
-                    transform: [
-                      {rotate: '-90deg'},
-                      {
-                        translateY: -1,
-                      },
-                      {
-                        translateX: -6,
-                      },
-                    ],
+              </Row>
+            ))
+          : financeStatusDetails?.chargeItemSubjects?.map((charge, index) => {
+              if (
+                charge.chargeItemSubject !==
+                chargeItemSubjects[selectedChargeItemSubject]
+              ) {
+                return null;
+              }
+              return (
+                <TouchableRow
+                  key={index}
+                  underlayColor="rgba(128,128,128,0.1)"
+                  onPress={() => {
+                    navigateTo(
+                      `/finance/status/${org.id}/${chargeType.id}/${index}`,
+                    );
                   }}
-                />
-              </>
-            </TouchableRow>
-          );
-        })}
+                >
+                  <>
+                    <Cell style={{flex: 1}}>
+                      <Text>{charge.finalDueDate}</Text>
+                    </Cell>
+                    <Cell style={{flex: 1}}>
+                      <Text style={{textAlign: 'right'}}>
+                        {intl.formatNumber(charge.totals)} kr.
+                      </Text>
+                    </Cell>
+                    <Image
+                      source={chevronDown}
+                      style={{
+                        tintColor: 'rgba(128,128,128,0.6)',
+                        transform: [
+                          {rotate: '-90deg'},
+                          {
+                            translateY: -1,
+                          },
+                          {
+                            translateX: -6,
+                          },
+                        ],
+                      }}
+                    />
+                  </>
+                </TouchableRow>
+              );
+            })}
         <Row>
           <Cell style={{flex: 1, alignItems: 'flex-end'}}>
             <Text weight="600" style={{marginBottom: 4}}>
@@ -302,7 +313,11 @@ function FinanceStatusCardContainer(props: any) {
                 defaultMessage="Samtals"
               />
             </Text>
-            <Text>{intl.formatNumber(chargeType.totals)} kr.</Text>
+            {loading ? (
+              <Skeleton height={18} />
+            ) : (
+              <Text>{intl.formatNumber(chargeType.totals)} kr.</Text>
+            )}
           </Cell>
         </Row>
       </View>
@@ -313,7 +328,14 @@ function FinanceStatusCardContainer(props: any) {
             defaultMessage="Þjónustuaðili"
           />
         </Text>
-        <Text style={{paddingTop: 4}}>{org.name}</Text>
+        {loading ? (
+          <>
+            <Skeleton height={18} style={{marginTop: 8}} />
+            <Skeleton height={18} style={{marginTop: 8}} />
+          </>
+        ) : (
+          <Text style={{paddingTop: 4}}>{org.name}</Text>
+        )}
         <Row>
           {org.homepage ? (
             <Cell>
@@ -507,42 +529,37 @@ export const FinanceScreen: NavigationFunctionComponent = ({componentId}) => {
           )
         }
       />
-      {financeStatusData.organizations?.length > 0 || financeStatusZero ? (
-        <SafeAreaView
-          style={{
-            marginHorizontal: 16,
-            marginBottom: 24,
-            alignItems: 'flex-start',
-          }}
-        >
-          {scheduleButtonVisible && (
-            <LightButton
-              title={
-                <FormattedMessage
-                  id="finance.statusCard.schedulePaymentPlan"
-                  defaultMessage="Gera greiðsluáætlun"
-                />
-              }
-              icon={externalOpen}
-              onPress={() => {
-                openBrowser(
-                  `${getConfig().apiUrl.replace(
-                    /\/api/,
-                    '',
-                  )}/umsoknir/greidsluaaetlun/`,
-                  componentId,
-                );
-              }}
+      <SafeAreaView
+        style={{
+          marginHorizontal: 16,
+          marginBottom: 24,
+          alignItems: 'flex-start',
+        }}
+      >
+        <LightButton
+          title={
+            <FormattedMessage
+              id="finance.statusCard.schedulePaymentPlan"
+              defaultMessage="Gera greiðsluáætlun"
             />
-          )}
-        </SafeAreaView>
-      ) : null}
+          }
+          disabled={!scheduleButtonVisible}
+          icon={externalOpen}
+          onPress={() => {
+            openBrowser(
+              `${getConfig().apiUrl.replace(
+                /\/api/,
+                '',
+              )}/umsoknir/greidsluaaetlun/`,
+              componentId,
+            );
+          }}
+        />
+      </SafeAreaView>
       <SafeAreaView style={{marginHorizontal: 16}}>
-        {loading && skeletonItems}
-
-        {!loading ||
-        financeStatusData?.organizations?.length > 0 ||
-        financeStatusZero
+        {loading
+          ? skeletonItems
+          : financeStatusData?.organizations?.length > 0 || financeStatusZero
           ? financeStatusData?.organizations?.map((org: any, i) =>
               org.chargeTypes.map((chargeType: any, ii: number) => (
                 <FinanceStatusCardContainer

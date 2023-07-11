@@ -1,0 +1,30 @@
+default_platform(:ios)
+
+platform :ios do
+  desc "Push a new beta build to TestFlight"
+
+  lane :increment_version do
+    increment_build_number(xcodeproj: "IslandApp.xcodeproj")
+  end
+
+  lane :beta_dev do
+    increment_version
+    build_app(
+      workspace: "IslandApp.xcworkspace",
+      scheme: "Ísland.dev",
+      output_directory: "./build",
+      suppress_xcode_output: true
+    )
+    upload_to_testflight
+  end
+
+  lane :beta_prod do
+    increment_version
+    build_app(
+      workspace: "IslandApp.xcworkspace",
+      scheme: "Ísland.is",
+      output_directory: "./build"
+    )
+    upload_to_testflight
+  end
+end
