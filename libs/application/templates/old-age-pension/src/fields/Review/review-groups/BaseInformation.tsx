@@ -64,8 +64,8 @@ export const BaseInformation = ({
             </GridColumn>
             <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
               <PhoneInputController
-                id="applicantInfo.phoneNumber"
-                name="applicantInfo.phoneNumber"
+                id="applicantInfo.phonenumber"
+                name="applicantInfo.phonenumber"
                 defaultValue={applicantPhonenumber}
                 placeholder="000-0000"
                 label={formatMessage(
@@ -74,10 +74,10 @@ export const BaseInformation = ({
                 onChange={(e) => {
                   setStateful((prev: any) => ({
                     ...prev,
-                    applicantPhonenumber: e.target.value,
+                    applicantPhonenumber: e.target.defaultValue,
                   }))
                 }}
-                error={hasError('applicantInfo.phoneNumber')}
+                error={hasError('applicantInfo.phonenumber')}
               />
             </GridColumn>
           </GridRow>

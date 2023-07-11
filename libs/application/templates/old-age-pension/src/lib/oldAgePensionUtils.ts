@@ -57,6 +57,10 @@ interface childPensionAttachments {
   notLivesWithApplicant?: fileType[]
 }
 
+interface additionalInformation {
+  additionalDocuments?: fileType[]
+}
+
 export function getApplicationAnswers(answers: Application['answers']) {
   const pensionFundQuestion = getValueViaPath(
     answers,
@@ -458,6 +462,7 @@ export function getAttachments(application: Application) {
     householdSupplementHousing,
     connectedApplications,
     employmentStatus,
+    childPension,
   } = getApplicationAnswers(answers)
   const earlyRetirement = isEarlyRetirement(answers, externalData)
   const attachments: string[] = []
@@ -498,7 +503,6 @@ export function getAttachments(application: Application) {
 
   // child pension attachments
   const childPensionAttachments = answers.fileUploadChildPension as childPensionAttachments
-  const { childPension } = getApplicationAnswers(application.answers)
   const isChildPension = connectedApplications?.includes(
     ConnectedApplications.CHILDPENSION,
   )
@@ -509,6 +513,17 @@ export function getAttachments(application: Application) {
 
   if (childCustody_LivesWithApplicant(externalData) && isChildPension) {
     getAttachmentsName(childPensionAttachments?.notLivesWithApplicant, 'meðlag')
+  }
+
+  const additionalInfo = answers.fileUploadAdditionalFiles as additionalInformation
+  console.log('additionalInfo ', additionalInfo)
+
+  if (
+    additionalInfo.additionalDocuments &&
+    additionalInfo.additionalDocuments?.length > 0
+  ) {
+    console.log('hingað inn')
+    getAttachmentsName(additionalInfo.additionalDocuments, 'viðbótargögn')
   }
 
   return attachments

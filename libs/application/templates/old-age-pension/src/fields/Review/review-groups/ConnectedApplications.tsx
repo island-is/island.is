@@ -27,50 +27,45 @@ export const ConnectedApplications = ({
   )
 
   return (
-    <>
-      {connectedApplications.length > 0 && (
-        <ReviewGroup
-          isLast={true}
-          isEditable={editable}
-          editAction={() => goToScreen?.('connectedApplications')}
-        >
-          <GridRow marginBottom={3}>
-            <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
-              <Label>
-                {formatMessage(
-                  oldAgePensionFormMessage.connectedApplications
-                    .connectedApplicationsSection,
-                )}
-              </Label>
-              <BulletList type="ul">
-                {connectedApplications.map((app, index) => {
-                  return (
-                    <Bullet key={index}>
-                      <Text>
-                        {app === Apps.HOUSEHOLDSUPPLEMENT
-                          ? applicationType ===
-                            ApplicationType.HALF_OLD_AGE_PENSION
-                            ? formatMessage(
-                                oldAgePensionFormMessage.connectedApplications
-                                  .halfHouseholdSupplement,
-                              )
-                            : formatMessage(
-                                oldAgePensionFormMessage.connectedApplications
-                                  .householdSupplement,
-                              )
-                          : formatMessage(
-                              oldAgePensionFormMessage.connectedApplications
-                                .childPension,
-                            )}
-                      </Text>
-                    </Bullet>
-                  )
-                })}
-              </BulletList>
-            </GridColumn>
-          </GridRow>
-        </ReviewGroup>
-      )}
-    </>
+    <ReviewGroup
+      isLast={true}
+      isEditable={editable}
+      editAction={() => goToScreen?.('connectedApplications')}
+    >
+      <GridRow marginBottom={3}>
+        <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
+          <Label>
+            {formatMessage(
+              oldAgePensionFormMessage.connectedApplications
+                .connectedApplicationsSection,
+            )}
+          </Label>
+          <BulletList type="ul">
+            {connectedApplications.map((app, index) => {
+              return (
+                <Bullet key={index}>
+                  <Text>
+                    {app === Apps.HOUSEHOLDSUPPLEMENT
+                      ? applicationType === ApplicationType.HALF_OLD_AGE_PENSION
+                        ? formatMessage(
+                            oldAgePensionFormMessage.connectedApplications
+                              .halfHouseholdSupplement,
+                          )
+                        : formatMessage(
+                            oldAgePensionFormMessage.connectedApplications
+                              .householdSupplement,
+                          )
+                      : formatMessage(
+                          oldAgePensionFormMessage.connectedApplications
+                            .childPension,
+                        )}
+                  </Text>
+                </Bullet>
+              )
+            })}
+          </BulletList>
+        </GridColumn>
+      </GridRow>
+    </ReviewGroup>
   )
 }

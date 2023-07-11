@@ -1,23 +1,24 @@
 import { Application, Field, RecordObject } from '@island.is/application/types'
-import { Box, Text } from '@island.is/island-ui/core'
+import { Box, GridColumn, GridRow, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { FC } from 'react'
 import get from 'lodash/get'
 import has from 'lodash/has'
 
 import { BaseInformation } from './review-groups/BaseInformation'
-import { Fishermen } from './review-groups/Fishermen'
 import { Period } from './review-groups/Period'
 import { Comment } from './review-groups/Comment'
 import { Attachments } from './review-groups/Attachments'
 import { ResidenceHistory } from './review-groups/ResidenceHistory'
 import { ConnectedApplications } from './review-groups/ConnectedApplications'
-import { Employers } from './review-groups/employers'
+import { Employers } from './review-groups/Employers'
 import { PaymentInformation } from './review-groups/PaymentInformation'
 
 import { oldAgePensionFormMessage } from '../../lib/messages'
 import { getApplicationAnswers } from '../../lib/oldAgePensionUtils'
-import { Employment } from '../../lib/constants'
+import { ApplicationType, Employment, YES } from '../../lib/constants'
+import { RadioValue, ReviewGroup } from '@island.is/application/ui-components'
+import { OnePaymentPerYear } from './review-groups/OnePaymentPerYear'
 
 interface ReviewScreenProps {
   application: Application
@@ -35,7 +36,11 @@ export const Review: FC<ReviewScreenProps> = ({
 }) => {
   const editable = field.props?.editable ?? false
   const { formatMessage } = useLocale()
-  const { employmentStatus } = getApplicationAnswers(application.answers)
+  const {
+    employmentStatus,
+    applicationType,
+    connectedApplications,
+  } = getApplicationAnswers(application.answers)
 
   const hasError = (id: string) => get(errors, id) as string
 
@@ -73,8 +78,22 @@ export const Review: FC<ReviewScreenProps> = ({
         <Employers {...childProps} />
       )}
       <Period {...childProps} />
-      <Fishermen {...childProps} />
-      <ConnectedApplications {...childProps} />
+      {applicationType === ApplicationType.SAILOR_PENSION && (
+        <ReviewGroup>
+          <GridRow marginBottom={3}>
+            <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+              <RadioValue
+                label={formatMessage(oldAgePensionFormMessage.review.fishermen)}
+                value={YES}
+              />
+            </GridColumn>
+          </GridRow>
+        </ReviewGroup>
+      )}
+      <OnePaymentPerYear {...childProps} />
+      {connectedApplications.length > 0 && (
+        <ConnectedApplications {...childProps} />
+      )}
       <Comment {...childProps} />
       <Attachments {...childProps} />
     </>
