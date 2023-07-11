@@ -47,6 +47,7 @@ There are many projects that can be built and run. [Click here to see the full l
 ### Fresh start/changing branches
 
 Run on whenever you check out a branch:
+
 ```bash
 yarn install
 yarn schemas
@@ -57,7 +58,6 @@ In addition, schemas change frequently, so you will also need to update the gene
 
 If you you want schemas to be generated on every install you can set the environment variable `GENERATE_SCHEMAS_ON_INSTALL=true`.
 Note that this will generate the schemas when rebuilding the workspace in the post-install phase, with no output, so the `install` script seems to hang.
-
 
 ### Development server
 
