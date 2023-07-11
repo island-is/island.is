@@ -1,6 +1,11 @@
 import { useLazyQuery } from '@apollo/client'
 import { useState } from 'react'
-import { AsyncSearchInput, Box } from '@island.is/island-ui/core'
+import {
+  AlertMessage,
+  AsyncSearchInput,
+  Box,
+  Text,
+} from '@island.is/island-ui/core'
 import {
   ConnectedComponent,
   Query,
@@ -8,6 +13,8 @@ import {
 } from '@island.is/web/graphql/schema'
 import { useNamespace } from '@island.is/web/hooks'
 import { PLATE_AVAILABLE_SEARCH_QUERY } from '@island.is/web/screens/queries/PublicVehicleSearch'
+
+import * as styles from './PlateAvailableSearch.css'
 
 interface PlateAvailableSearchProps {
   slice: ConnectedComponent
@@ -17,13 +24,22 @@ const PlateAvailableSearch = ({ slice }: PlateAvailableSearchProps) => {
   const n = useNamespace(slice?.json ?? {})
   const [hasFocus, setHasFocus] = useState(false)
   const [searchValue, setSearchValue] = useState('')
+  const [
+    shouldDisplayValidationError,
+    setShouldDisplayValidationError,
+  ] = useState(false)
 
   const [search, { data, error, loading }] = useLazyQuery<
-    Query['plateAvailable'],
+    Query,
     QueryPlateAvailableArgs
   >(PLATE_AVAILABLE_SEARCH_QUERY)
 
   const handleSearch = () => {
+    if (searchValue.length < 2 || searchValue.length > 6) {
+      setShouldDisplayValidationError(true)
+      return
+    }
+    setShouldDisplayValidationError(false)
     search({
       variables: { input: { regno: searchValue } },
     })
@@ -31,7 +47,10 @@ const PlateAvailableSearch = ({ slice }: PlateAvailableSearchProps) => {
 
   return (
     <Box>
-      <Box marginTop={2} marginBottom={3}>
+      <Text>
+        {n('aboveText', 'Hér má athuga hvort tiltekið einkanúmer sé laust')}
+      </Text>
+      <Box marginBottom={3}>
         <AsyncSearchInput
           buttonProps={{
             onClick: handleSearch,
@@ -39,9 +58,9 @@ const PlateAvailableSearch = ({ slice }: PlateAvailableSearchProps) => {
             onBlur: () => setHasFocus(false),
           }}
           inputProps={{
-            name: 'public-vehicle-search',
+            name: 'plate-available-search',
             inputSize: 'large',
-            placeholder: n('inputPlaceholder', 'Leita í ökutækjaskrá'),
+            placeholder: n('inputPlaceholder', 'Leita að einkanúmeri'),
             colored: true,
             onChange: (ev) => setSearchValue(ev.target.value.toUpperCase()),
             value: searchValue,
@@ -52,11 +71,52 @@ const PlateAvailableSearch = ({ slice }: PlateAvailableSearchProps) => {
             },
           }}
           hasFocus={hasFocus}
-          rootProps={{}}
           loading={loading}
+          hasError={shouldDisplayValidationError}
         />
       </Box>
-      {JSON.stringify(data || error)}
+      {!loading && error && (
+        <AlertMessage
+          type="error"
+          title={n('errorOccurredTitle', 'Villa kom upp')}
+          message={n(
+            'errorOccurredMessage',
+            'Ekki tókst að upplýsingar um einkanúmer',
+          )}
+        />
+      )}
+      {shouldDisplayValidationError && (
+        <Text variant="small">
+          <span className={styles.bold}>{n('attention', 'Athugið:')} </span>
+          {n(
+            'regnoValidationText',
+            'Einkanúmer mega vera 2-6 íslenskir stafir eða tölur, og eitt bil að auki, en mega ekki líkjast venjulegum skráningarnúmerum.',
+          )}
+        </Text>
+      )}
+      {data &&
+        data?.plateAvailable?.regno &&
+        data?.plateAvailable?.available && (
+          <Text>
+            {(n('a', 'Merkið {{ENTERED_NUMBER}} er laust') as string).replace(
+              '{{ENTERED_NUMBER}}',
+              data?.plateAvailable?.regno,
+            )}
+          </Text>
+        )}
+      {data &&
+        data?.plateAvailable?.regno &&
+        !data?.plateAvailable?.available && (
+          <Text>
+            {(n(
+              'ee',
+              'Merkið {{ENTERED_NUMBER}} er í notkun og ekki laust til úthlutunar',
+            ) as string).replace(
+              '{{ENTERED_NUMBER}}',
+              data?.plateAvailable?.regno,
+            )}
+          </Text>
+        )}
     </Box>
   )
 }
