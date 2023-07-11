@@ -1,5 +1,9 @@
 import { Sequelize } from 'sequelize-typescript'
-import { BadRequestException, Injectable } from '@nestjs/common'
+import {
+  BadRequestException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Transaction } from 'sequelize'
 import omit from 'lodash/omit'
@@ -17,6 +21,8 @@ import { NoContentException } from '@island.is/nest/problem'
 import { AdminPatchScopeDto } from './dto/admin-patch-scope.dto'
 import { TranslatedValueDto } from '../../translation/dto/translated-value.dto'
 import { TranslationService } from '../../translation/translation.service'
+import { User } from '@island.is/auth-nest-tools'
+import { AdminPortalScope } from '@island.is/auth/scopes'
 
 /**
  * This is a service that is used to access the admin scopes
@@ -239,11 +245,19 @@ export class AdminScopeService {
     scopeName,
     tenantId,
     input,
+    user,
   }: {
     scopeName: string
     tenantId: string
     input: AdminPatchScopeDto
+    user: User
   }): Promise<AdminScopeDTO> {
+    const isSuperUser = user.scope.includes(AdminPortalScope.idsAdminSuperUser)
+
+    if (!isSuperUser) {
+      throw new UnauthorizedException()
+    }
+
     if (Object.keys(input).length === 0) {
       throw new BadRequestException('No fields provided to update.')
     }

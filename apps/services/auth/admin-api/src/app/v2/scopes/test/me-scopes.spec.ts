@@ -388,14 +388,18 @@ const patchExpectedOutput = {
 }
 
 const patchTestCases: Record<string, PatchTestCase> = {
-  'should update scope and have access as current user': {
+  'should not update scope since user is not a super user': {
     user: currentUser,
     tenantId: TENANT_ID,
     scopeName: mockedPatchApiScope.name,
     input: inputPatch,
     expected: {
-      status: 200,
-      body: patchExpectedOutput,
+      status: 401,
+      body: {
+        status: 401,
+        title: 'Unauthorized',
+        type: 'https://httpstatuses.org/401',
+      },
     },
   },
   'should update scope and have access as super user': {
