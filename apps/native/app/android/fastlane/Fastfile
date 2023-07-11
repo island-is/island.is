@@ -1,0 +1,56 @@
+default_platform(:android)
+
+
+platform :android do
+  desc "Upload a new AAB to the Google Play store"
+  lane :play_store_upload do |options|
+    track = options[:track] || 'internal'
+    app = options[:app] || 'prod'
+    aab = "app/build/outputs/bundle/" + (app == 'dev' ? 'devRelease/app-dev-release.aab' : 'prodRelease/app-prod-release.aab')
+    upload_to_play_store(
+      json_key: 'service-account.json',
+      track: track,
+      package_name: app == 'prod' ? 'is.island.app' : 'is.island.app.dev',
+      aab: aab,
+      skip_upload_apk: true,
+      skip_upload_metadata: true,
+      skip_upload_changelogs: true,
+      skip_upload_images: true,
+      skip_upload_screenshots: true
+    )
+  end
+
+  lane :increment_version do
+    increment_version_name(gradle_file_path: "app/build.gradle")
+  end
+
+  lane :increment_build do
+    increment_version_code(gradle_file_path: "app/build.gradle")
+  end
+
+  desc "Submit a new Beta Build"
+  lane :beta do |options|
+    variants = options[:variants] || 'dev,prod'
+    # Increment build version
+    increment_build
+    # Build app variants
+    gradle(
+      task: variants.split(',').map { |variant| "bundle#{variant.capitalize}Release" }.join(' '),
+      print_command_output: false
+    )
+    # Upload variants
+    if (variants.include? 'dev')
+      play_store_upload(
+        track: 'internal',
+        app: 'dev'
+      )
+    end
+    if (variants.include? 'prod')
+      play_store_upload(
+        track: 'internal',
+        app: 'prod'
+      )
+    end
+  end
+
+end

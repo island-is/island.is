@@ -12,7 +12,6 @@ platform :ios do
     build_app(
       workspace: "IslandApp.xcworkspace",
       scheme: "Ísland.dev",
-      output_directory: "./build",
       suppress_xcode_output: true
     )
     upload_to_testflight
