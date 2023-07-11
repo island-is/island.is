@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger'
+import { ApiHideProperty, ApiProperty } from '@nestjs/swagger'
 import {
   Column,
   CreatedAt,
@@ -7,15 +7,17 @@ import {
   Table,
   UpdatedAt,
 } from 'sequelize-typescript'
+import { ProgramTag } from './programTag'
 
 @Table({
   tableName: 'tag',
 })
 export class Tag extends Model {
-  @ApiProperty({
-    description: 'Tag ID',
-    example: '00000000-0000-0000-0000-000000000000',
-  })
+  // @ApiProperty({
+  //   description: 'Tag ID',
+  //   example: '00000000-0000-0000-0000-000000000000',
+  // })
+  @ApiHideProperty()
   @Column({
     type: DataType.UUID,
     primaryKey: true,
@@ -54,15 +56,17 @@ export class Tag extends Model {
   })
   nameEn!: string
 
-  @ApiProperty({
-    type: String,
-  })
+  // @ApiProperty({
+  //   type: String,
+  // })
+  @ApiHideProperty()
   @CreatedAt
   readonly created!: Date
 
-  @ApiProperty({
-    type: String,
-  })
+  // @ApiProperty({
+  //   type: String,
+  // })
+  @ApiHideProperty()
   @UpdatedAt
   readonly modified!: Date
 }

@@ -93,6 +93,11 @@ module.exports = {
               type: Sequelize.STRING,
               allowNull: false,
             },
+            search_keywords: {
+              type: Sequelize.ARRAY(Sequelize.STRING),
+              defaultValue: [],
+              allowNull: false,
+            },
             external_url_is: {
               type: Sequelize.STRING,
               allowNull: true,
@@ -100,11 +105,6 @@ module.exports = {
             external_url_en: {
               type: Sequelize.STRING,
               allowNull: true,
-            },
-            search_keywords: {
-              type: Sequelize.ARRAY(Sequelize.STRING),
-              defaultValue: [],
-              allowNull: false,
             },
             admission_requirements_is: {
               type: Sequelize.STRING,

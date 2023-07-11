@@ -232,6 +232,16 @@ export class Program extends Model {
   iscedCode!: string
 
   @ApiProperty({
+    description: 'Search keywords for the program',
+    example: ['stærðfræði'],
+  })
+  @Column({
+    type: DataType.ARRAY(DataType.STRING),
+    allowNull: false,
+  })
+  searchKeywords!: string[]
+
+  @ApiProperty({
     description:
       'External url  for the program from the university web page (Icelandic)',
     example: 'https://www.ru.is/grunnnam/tolvunarfraedi',
@@ -254,16 +264,6 @@ export class Program extends Model {
     allowNull: true,
   })
   externalUrlEn?: string
-
-  @ApiProperty({
-    description: 'Search keywords for the program',
-    example: ['stærðfræði'],
-  })
-  @Column({
-    type: DataType.ARRAY(DataType.STRING),
-    allowNull: false,
-  })
-  searchKeywords!: string[]
 
   @ApiProperty({
     description: 'Admission requirements for program (Icelandic)',

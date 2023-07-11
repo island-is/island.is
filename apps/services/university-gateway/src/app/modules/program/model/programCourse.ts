@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger'
 import {
+  BelongsTo,
   Column,
   CreatedAt,
   DataType,
@@ -49,6 +50,13 @@ export class ProgramCourse extends Model {
   })
   @ForeignKey(() => Course)
   courseId!: string
+
+  @ApiProperty({
+    description: 'Course details',
+    type: Course,
+  })
+  @BelongsTo(() => Course, 'courseId')
+  details?: Course
 
   @ApiProperty({
     description: 'Whether the course is required or not',

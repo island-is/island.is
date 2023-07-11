@@ -1,5 +1,6 @@
-import { ApiProperty } from '@nestjs/swagger'
+import { ApiHideProperty, ApiProperty } from '@nestjs/swagger'
 import {
+  BelongsTo,
   Column,
   CreatedAt,
   DataType,
@@ -15,10 +16,11 @@ import { Tag } from './tag'
   tableName: 'program_tag',
 })
 export class ProgramTag extends Model {
-  @ApiProperty({
-    description: 'Program tag ID',
-    example: '00000000-0000-0000-0000-000000000000',
-  })
+  // @ApiProperty({
+  //   description: 'Program tag ID',
+  //   example: '00000000-0000-0000-0000-000000000000',
+  // })
+  @ApiHideProperty()
   @Column({
     type: DataType.UUID,
     primaryKey: true,
@@ -27,10 +29,11 @@ export class ProgramTag extends Model {
   })
   id!: string
 
-  @ApiProperty({
-    description: 'Program ID',
-    example: '00000000-0000-0000-0000-000000000000',
-  })
+  // @ApiProperty({
+  //   description: 'Program ID',
+  //   example: '00000000-0000-0000-0000-000000000000',
+  // })
+  @ApiHideProperty()
   @Column({
     type: DataType.UUID,
     allowNull: false,
@@ -50,14 +53,23 @@ export class ProgramTag extends Model {
   tagId!: string
 
   @ApiProperty({
-    type: String,
+    description: 'Tag details',
+    type: Tag,
   })
+  @BelongsTo(() => Tag, 'tagId')
+  details?: Tag
+
+  // @ApiProperty({
+  //   type: String,
+  // })
+  @ApiHideProperty()
   @CreatedAt
   readonly created!: Date
 
-  @ApiProperty({
-    type: String,
-  })
+  // @ApiProperty({
+  //   type: String,
+  // })
+  @ApiHideProperty()
   @UpdatedAt
   readonly modified!: Date
 }

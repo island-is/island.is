@@ -1,7 +1,10 @@
 import { Injectable } from '@nestjs/common'
 import {
   Program,
+  ProgramCourse,
   ProgramDetailsResponse,
+  ProgramExtraApplicationField,
+  ProgramModeOfDelivery,
   ProgramResponse,
   ProgramTag,
   Tag,
@@ -11,12 +14,11 @@ import { UgReykjavikUniversityClient } from '@island.is/clients/university-gatew
 import { DegreeType, PaginateInput, Season } from './types'
 import { InjectModel } from '@nestjs/sequelize'
 import { paginate } from '@island.is/nest/pagination'
+import { Course } from '../course/model'
 
 @Injectable()
 export class ProgramService {
   constructor(
-    private readonly ugReykjavikUniversityClient: UgReykjavikUniversityClient,
-
     @InjectModel(Program)
     private programModel: typeof Program,
 
@@ -27,7 +29,6 @@ export class ProgramService {
     private tagModel: typeof Tag,
   ) {}
 
-  //TODOx smaller object when returning list
   async getPrograms(
     { after, before, limit }: PaginateInput,
     active?: boolean,
@@ -55,18 +56,62 @@ export class ProgramService {
       after: after,
       before: before,
       primaryKeyField: 'id',
-      orderOption: [['id', 'ASC']],
+      orderOption: [['created', 'ASC']],
       where: where,
+      attributes: {
+        exclude: [
+          'externalUrlIs',
+          'externalUrlEn',
+          'admissionRequirementsIs',
+          'admissionRequirementsEn',
+          'studyRequirementsIs',
+          'studyRequirementsEn',
+          'costInformationIs',
+          'costInformationEn',
+          'courses',
+          'extraApplicationField',
+        ],
+      },
+      include: [
+        {
+          model: ProgramTag,
+          include: [{ model: Tag }],
+        },
+        {
+          model: ProgramModeOfDelivery,
+        },
+      ],
     })
-
-    //TODOx tags
-    //TODOx courses
-    //TODOx modeOfDelivery
-    //TODOx extraApplicationFields
   }
 
   async getProgramDetails(id: string): Promise<ProgramDetailsResponse> {
-    const program = await this.programModel.findOne({ where: { id: id } })
+    const program = await this.programModel.findOne({
+      where: { id: id },
+      include: [
+        {
+          model: ProgramCourse,
+          include: [{ model: Course }],
+        },
+        {
+          model: ProgramTag,
+          include: [
+            {
+              model: Tag,
+              attributes: {
+                exclude: ['id', 'created', 'modified'],
+              },
+            },
+          ],
+          attributes: { exclude: ['id', 'programId', 'created', 'modified'] },
+        },
+        {
+          model: ProgramModeOfDelivery,
+        },
+        {
+          model: ProgramExtraApplicationField,
+        },
+      ],
+    })
 
     if (!program) {
       throw Error('Not found')
