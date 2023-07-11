@@ -7,6 +7,8 @@ import { Citizenship } from '../../lib/dataSchema'
 import { useLocale } from '@island.is/localization'
 import { Routes } from '../../lib/constants'
 import SummaryBlock from '../../components/SummaryBlock'
+import { getValueViaPath } from '@island.is/application/core'
+import { Country } from '@island.is/clients/directorate-of-immigration/citizenship'
 
 interface Props extends FieldBaseProps {
   goToScreen?: (id: string) => void
@@ -20,6 +22,12 @@ export const StaysAbroadReview: FC<Props> = ({
 }) => {
   const answers = application.answers as Citizenship
   const { formatMessage } = useLocale()
+
+  const countryOptions = getValueViaPath(
+    application.externalData,
+    'countries.data',
+    [],
+  ) as Country[]
 
   return (
     <SummaryBlock editAction={() => goToScreen?.(route)}>
@@ -39,7 +47,11 @@ export const StaysAbroadReview: FC<Props> = ({
             answers?.staysAbroad?.selectedAbroadCountries?.map((country) => {
               return (
                 <GridColumn span="1/2">
-                  <Text>{country.country}</Text>
+                  {
+                    countryOptions.filter(
+                      (z) => z.id === parseInt(country.countryId),
+                    )[0]
+                  }
                 </GridColumn>
               )
             })

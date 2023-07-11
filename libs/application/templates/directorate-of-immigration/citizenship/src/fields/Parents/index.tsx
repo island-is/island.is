@@ -13,7 +13,6 @@ import {
   YES,
 } from '@island.is/application/core'
 import { ParentsToApplicant } from '../../shared'
-import { useFormContext } from 'react-hook-form'
 import { ParentRepeaterItem } from './ParentRepeaterItem'
 
 export const Parents = ({ field, application, errors }: any) => {
@@ -108,7 +107,7 @@ export const Parents = ({ field, application, errors }: any) => {
         onSelect={(value) => {
           handleValidParentsChange(value)
         }}
-        defaultValue={hasValidParents === NO ? hasValidParents : YES}
+        defaultValue={hasValidParents === YES ? hasValidParents : ''}
         options={[
           {
             value: YES,
@@ -117,7 +116,7 @@ export const Parents = ({ field, application, errors }: any) => {
             ),
           },
           {
-            value: YES,
+            value: NO,
             label: formatMessage(information.labels.radioButtons.radioOptionNo),
           },
         ]}

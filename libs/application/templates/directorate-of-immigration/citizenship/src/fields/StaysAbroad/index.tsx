@@ -3,14 +3,19 @@ import { FieldBaseProps } from '@island.is/application/types'
 import { Box, Button } from '@island.is/island-ui/core'
 import { StaysAbroadRepeaterItem } from './StaysAbroadRepeaterItem'
 import { CountryOfVisit } from '../../shared'
-import { getValueViaPath, NO, YES } from '@island.is/application/core'
+import {
+  getErrorViaPath,
+  getValueViaPath,
+  NO,
+  YES,
+} from '@island.is/application/core'
 import { RadioController } from '@island.is/shared/form-fields'
 import { information } from '../../lib/messages'
 import DescriptionText from '../../components/DescriptionText'
 import { useLocale } from '@island.is/localization'
 
 export const StaysAbroad: FC<FieldBaseProps> = (props) => {
-  const { application, setBeforeSubmitCallback } = props
+  const { application, errors } = props
   const [showItemTitle, setShowItemTitle] = useState(false)
 
   const { formatMessage } = useLocale()
@@ -44,8 +49,7 @@ export const StaysAbroad: FC<FieldBaseProps> = (props) => {
     setSelectedCountries([
       ...selectedCountries,
       {
-        country: '',
-        countryId: -1,
+        countryId: '',
         wasRemoved: 'false',
         dateTo: '',
         dateFrom: '',
@@ -121,13 +125,13 @@ export const StaysAbroad: FC<FieldBaseProps> = (props) => {
           marginBottom: 3,
         }}
       />
-      {/* TODO vantar að gera kassa rauðan ef tómt */}
       <RadioController
         id={'staysAbroad.hasStayedAbroad'}
         split="1/2"
         onSelect={(value) => {
           handleStayAbroadChange(value)
         }}
+        error={errors && getErrorViaPath(errors, 'staysAbroad.hasStayedAbroad')}
         defaultValue={hasStayedAbroad}
         options={[
           {

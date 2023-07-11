@@ -1,16 +1,21 @@
 import { FC, useEffect, useState } from 'react'
 import { FieldBaseProps } from '@island.is/application/types'
-import { Box, Button } from '@island.is/island-ui/core'
+import { Box, Button, Option } from '@island.is/island-ui/core'
 import { ResidenceCountriesRepeaterItem } from './ResidenceCountriesRepeaterItem'
 import { CountryOfResidence } from '../../shared'
-import { getValueViaPath, NO, YES } from '@island.is/application/core'
+import {
+  getErrorViaPath,
+  getValueViaPath,
+  NO,
+  YES,
+} from '@island.is/application/core'
 import { RadioController } from '@island.is/shared/form-fields'
 import { information } from '../../lib/messages'
 import DescriptionText from '../../components/DescriptionText'
 import { useLocale } from '@island.is/localization'
 
 export const ResidenceCountries: FC<FieldBaseProps> = (props) => {
-  const { application, setBeforeSubmitCallback } = props
+  const { application, errors } = props
 
   const { formatMessage } = useLocale()
 
@@ -36,6 +41,7 @@ export const ResidenceCountries: FC<FieldBaseProps> = (props) => {
   )
 
   useEffect(() => {
+    console.log('selectedCountries', selectedCountries)
     setFilteredSelectedCountries(
       selectedCountries.filter((x) => x.wasRemoved !== 'true'),
     )
@@ -45,8 +51,7 @@ export const ResidenceCountries: FC<FieldBaseProps> = (props) => {
     setSelectedCountries([
       ...selectedCountries,
       {
-        country: '',
-        countryId: -1,
+        countryId: '',
         wasRemoved: 'false',
       },
     ])
@@ -76,7 +81,10 @@ export const ResidenceCountries: FC<FieldBaseProps> = (props) => {
     setSelectedCountries(
       selectedCountries.map((country, index) => {
         if (newIndex === index) {
-          return { ...country, country: newCountry }
+          return {
+            ...country,
+            countryId: newCountry,
+          }
         }
         return country
       }),
@@ -103,13 +111,16 @@ export const ResidenceCountries: FC<FieldBaseProps> = (props) => {
           marginBottom: 3,
         }}
       />
-      {/* TODO vantar að gera kassa rauðan ef tómt */}
       <RadioController
         id={'countriesOfResidence.hasLivedAbroad'}
         split="1/2"
         onSelect={(value) => {
           handleLiveAbroadChange(value)
         }}
+        error={
+          errors &&
+          getErrorViaPath(errors, 'countriesOfResidence.hasLivedAbroad')
+        }
         defaultValue={hasLivedAbroad}
         options={[
           {

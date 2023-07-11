@@ -33,7 +33,7 @@ export const FormerIcelander = ({ application }: any) => {
         onSelect={(value) => {
           handleIsFormerIcelanderChange(value)
         }}
-        defaultValue={isFormerIcelander ? YES : NO}
+        defaultValue={isFormerIcelander ? YES : ''}
         options={[
           {
             value: YES,
@@ -47,7 +47,7 @@ export const FormerIcelander = ({ application }: any) => {
           },
         ]}
       />
-      {(!isFormerIcelander || isFormerIcelander === NO) && (
+      {isFormerIcelander === NO && (
         <AlertMessage
           type="error"
           title={formatMessage(information.labels.formerIcelander.alertTitle)}

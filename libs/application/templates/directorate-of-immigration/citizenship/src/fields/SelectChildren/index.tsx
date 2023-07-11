@@ -1,4 +1,4 @@
-import { Box, Tag } from '@island.is/island-ui/core'
+import { AlertMessage, Box, Tag } from '@island.is/island-ui/core'
 import { CheckboxFormField } from '@island.is/application/ui-fields'
 import { selectChildren } from '../../lib/messages'
 import {
@@ -7,8 +7,9 @@ import {
   FieldTypes,
 } from '@island.is/application/types'
 import { useLocale } from '@island.is/localization'
+import { useState } from 'react'
+import { MAX_CNT_APPLICANTS } from '../../shared'
 
-//TODO limit to max MAX_CNT_APPLICANTS-1 children
 export const SelectChildren = ({ field, application, error }: any) => {
   const { formatMessage } = useLocale()
 
@@ -17,6 +18,7 @@ export const SelectChildren = ({ field, application, error }: any) => {
     answers,
   } = application
   const children = childrenCustodyInformation.data as ApplicantChildCustodyInformation[]
+
   const childrenCheckboxes = children.map(
     (child: ApplicantChildCustodyInformation) => {
       const showForeignDomicileTag = !child.domicileInIceland
@@ -27,7 +29,9 @@ export const SelectChildren = ({ field, application, error }: any) => {
         value: child.nationalId,
         label: child.fullName,
         subLabel: child.otherParent
-          ? `${selectChildren.checkboxes.subLabel.defaultMessage} ${child.otherParent?.fullName}` //TODO ekki nota defaultMessage, þá þýðist ekki
+          ? `${formatMessage(selectChildren.checkboxes.subLabel)} ${
+              child.otherParent?.fullName
+            }`
           : '',
         rightContent: (
           <div style={{ display: 'flex' }}>
@@ -54,6 +58,10 @@ export const SelectChildren = ({ field, application, error }: any) => {
     },
   )
 
+  const [numberOfChecked, setNumberOfChecked] = useState(0)
+  const handleCheckboxChange = (length: number) => {
+    setNumberOfChecked(length)
+  }
   return (
     <Box>
       <Box>
@@ -70,11 +78,21 @@ export const SelectChildren = ({ field, application, error }: any) => {
             children: undefined,
             options: childrenCheckboxes,
             onSelect: (newAnswer) => {
+              handleCheckboxChange(newAnswer.length)
               return { ...answers, selectedChildren: newAnswer }
             },
           }}
         />
       </Box>
+      {numberOfChecked > MAX_CNT_APPLICANTS && (
+        <Box paddingBottom={1}>
+          <AlertMessage
+            type="error"
+            title="TODO: Ekki hægt"
+            message="TODO: Ekki hægt að sækja um fyrir svona mörg börn"
+          />
+        </Box>
+      )}
     </Box>
   )
 }

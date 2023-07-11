@@ -4,7 +4,7 @@ import {
   FieldTypes,
   GenericFormField,
 } from '@island.is/application/types'
-import { Box, Button } from '@island.is/island-ui/core'
+import { Box, Button, Option } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { FC, useEffect } from 'react'
 import { useFormContext } from 'react-hook-form'
@@ -37,7 +37,7 @@ export const ResidenceCountriesRepeaterItem: FC<Props & FieldBaseProps> = ({
   const { formatMessage } = useLocale()
   const { application, errors } = props
   const fieldIndex = `${id}[${index}]`
-  const countryField = `${fieldIndex}.country`
+  const countryField = `${fieldIndex}.countryId`
   const wasRemovedField = `${fieldIndex}.wasRemoved`
 
   const countryOptions = (getValueViaPath(
@@ -45,7 +45,7 @@ export const ResidenceCountriesRepeaterItem: FC<Props & FieldBaseProps> = ({
     'countries.data',
     [],
   ) as Country[]).map(({ id, name }) => ({
-    value: name,
+    value: id.toString(),
     label: name,
   }))
 
@@ -84,7 +84,7 @@ export const ResidenceCountriesRepeaterItem: FC<Props & FieldBaseProps> = ({
           children: undefined,
           type: FieldTypes.SELECT,
           required: true,
-          onSelect: (value) => addCountryToList(value.label as string, index),
+          onSelect: (value) => addCountryToList(value.value as string, index),
         }}
         errors={errors}
       ></SelectFormField>

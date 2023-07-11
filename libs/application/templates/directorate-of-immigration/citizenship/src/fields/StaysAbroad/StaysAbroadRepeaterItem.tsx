@@ -48,7 +48,7 @@ export const StaysAbroadRepeaterItem: FC<Props & FieldBaseProps> = ({
   const { formatMessage } = useLocale()
   const { application, errors } = props
   const fieldIndex = `${id}[${index}]`
-  const countryField = `${fieldIndex}.country`
+  const countryField = `${fieldIndex}.countryId`
   const dateToField = `${fieldIndex}.dateTo`
   const dateFromField = `${fieldIndex}.dateFrom`
   const purposeField = `${fieldIndex}.purpose`
@@ -123,7 +123,7 @@ export const StaysAbroadRepeaterItem: FC<Props & FieldBaseProps> = ({
           type: FieldTypes.SELECT,
           required: true,
           onSelect: (value) =>
-            addDataToCountryList('country', value.value as string, index),
+            addDataToCountryList('countryId', value.value as string, index),
         }}
       ></SelectFormField>
       <Box paddingBottom={2} paddingTop={2}>

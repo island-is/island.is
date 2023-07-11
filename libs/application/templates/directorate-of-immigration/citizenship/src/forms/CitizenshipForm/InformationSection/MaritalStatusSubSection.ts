@@ -77,7 +77,7 @@ export const MaritalStatusSubSection = buildSubSection({
           },
         }),
         buildTextField({
-          id: 'maritalStatus.dateOfMarritalStatus',
+          id: 'maritalStatus.dateOfMaritalStatus',
           title: information.labels.maritalStatus.marritalStatusDate,
           backgroundColor: 'white',
           width: 'half',
