@@ -109,6 +109,8 @@
 - [Judicial System](apps/judicial-system/README.md)
 - [Mobile Apps](apps/native/README.md)
   - [Ísland.is App](apps/native/app/README.md)
+      - [Installation](apps/native/app/android/fastlane/README.md)
+      - [Installation](apps/native/app/ios/fastlane/README.md)
 - [User Portals](apps/portals/README.md)
   - [Admin Portal](apps/portals/admin/README.md)
 - [Reference Backend](apps/reference-backend/README.md)
