@@ -40,7 +40,7 @@ import { useI18n } from '@island.is/web/i18n'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { useRouter } from 'next/router'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useDebounce } from 'react-use'
 import { Screen } from '../../../types'
 import {
@@ -76,6 +76,7 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
   const router = useRouter()
   const { width } = useWindowSize()
   const [searchValue, setSearchValue] = useState('')
+  const filterValuesHaveBeenInitialized = useRef(false)
 
   const n = useNamespace(namespace)
 
@@ -237,6 +238,25 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
         },
       })
       setIsTyping(false)
+
+      const updatedQueryParams = { ...router.query }
+
+      if (!searchValue) {
+        if (filterValuesHaveBeenInitialized.current) {
+          delete updatedQueryParams['q']
+        } else if (updatedQueryParams['q']) {
+          setSearchValue(updatedQueryParams['q'] as string)
+        }
+      } else {
+        updatedQueryParams['q'] = searchValue
+      }
+
+      filterValuesHaveBeenInitialized.current = true
+
+      router.replace({
+        pathname: router.pathname,
+        query: updatedQueryParams,
+      })
     },
     DEBOUNCE_TIME_IN_MS,
     [parameters, activeLocale, searchValue, selectedOrderOption],
@@ -321,6 +341,14 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
                     ...prevParameters,
                     [categoryId]: selected,
                   }))
+
+                  // TODO: update queryparams
+                  // const updatedQueryParams = { ...router.query }
+                  // updatedQueryParams['filter']
+                  // router.replace({
+                  //   pathname: router.pathname,
+                  //   query: updatedQueryParams,
+                  // })
                 }}
                 onClear={(categoryId) => {
                   setIsTyping(true)
@@ -328,6 +356,13 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
                     ...prevParameters,
                     [categoryId]: [],
                   }))
+                  // TODO: update query params
+                  // const updatedQueryParams = { ...router.query }
+                  // delete updatedQueryParams['filter']
+                  // router.replace({
+                  //   pathname: router.pathname,
+                  //   query: updatedQueryParams,
+                  // })
                 }}
                 categories={filterCategories}
               ></FilterMultiChoice>
