@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import {
   TrademarksApi,
   PatentSearchApi,
@@ -13,10 +13,14 @@ import { Trademark, TrademarkSubType } from './models/getTrademark.model'
 import { Design } from './models/getDesign.model'
 import { IntellectualProperties } from './models/getIntellectualProperties.model'
 import addMonths from 'date-fns/addMonths'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
+import ParseDate from 'date-fns/parse'
 
 @Injectable()
 export class IntellectualPropertyService {
   constructor(
+    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
     private readonly trademarksApi: TrademarksApi,
     private readonly patentSearchApi: PatentSearchApi,
     private readonly designSearchApi: DesignSearchApi,
@@ -73,28 +77,31 @@ export class IntellectualPropertyService {
       ...trademark,
       subType,
       applicationDate: trademark.applicationDate
-        ? new Date(trademark.applicationDate)
+        ? this.parseDate(trademark.applicationDate)
         : undefined,
       dateRegistration: trademark.dateRegistration
-        ? new Date(trademark.dateRegistration)
+        ? this.parseDate(trademark.dateRegistration)
         : undefined,
       dateUnRegistered: trademark.dateUnRegistered
-        ? new Date(trademark.dateUnRegistered)
+        ? this.parseDate(trademark.dateUnRegistered)
         : undefined,
       dateExpires: trademark.dateExpires
-        ? new Date(trademark.dateExpires)
+        ? this.parseDate(trademark.dateExpires)
         : undefined,
       dateRenewed: trademark.dateRenewed
-        ? new Date(trademark.dateRenewed)
+        ? this.parseDate(trademark.dateRenewed)
         : undefined,
       dateInternationalRegistration: trademark.dateInternationalRegistration
-        ? new Date(trademark.dateInternationalRegistration)
+        ? this.parseDate(trademark.dateInternationalRegistration)
         : undefined,
       dateModified: trademark.dateModified
-        ? new Date(trademark.dateModified)
+        ? this.parseDate(trademark.dateModified)
         : undefined,
       datePublished: trademark.datePublished
-        ? new Date(trademark.datePublished)
+        ? this.parseDate(trademark.datePublished)
+        : undefined,
+      maxValidObjectionDate: trademark.datePublished
+        ? addMonths(this.parseDate(trademark.datePublished), 2)
         : undefined,
       vmId: trademark.vmid,
       acquiredDistinctiveness: trademark.skradVegnaMarkadsfestu,
@@ -136,4 +143,7 @@ export class IntellectualPropertyService {
       classification: response?.classification?.category,
     }
   }
+
+  private parseDate = (date: string) =>
+    ParseDate(date, 'dd.MM.yyyy HH:mm:ss', new Date())
 }

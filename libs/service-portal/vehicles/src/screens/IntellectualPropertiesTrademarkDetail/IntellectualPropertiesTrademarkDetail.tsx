@@ -4,6 +4,7 @@ import { useParams } from 'react-router-dom'
 import {
   ErrorScreen,
   ExcludesFalse,
+  ExpandRow,
   IntroHeader,
   NotFound,
   TableGrid,
@@ -13,6 +14,8 @@ import {
 } from '@island.is/service-portal/core'
 import { ipMessages } from '../../lib/messages'
 import {
+  Accordion,
+  AccordionItem,
   Box,
   Button,
   Divider,
@@ -25,7 +28,6 @@ import {
 import Timeline from '../../components/Timeline/Timeline'
 import chunk from 'lodash/chunk'
 import { useGetIntellectualPropertyTrademarkByIdQuery } from './IntellectualPropertiesTrademarkDetail.generated'
-
 type UseParams = {
   id: string
 }
@@ -236,19 +238,26 @@ const IntellectualPropertiesTrademarkDetail = () => {
           />
           <Divider />
         </Stack>
-        <Stack space="p2">
-          {ip?.markCategories?.length &&
-            ip?.markCategories.map((c) => (
-              <>
-                <UserInfoLine
-                  label={`Flokkur ${c.categoryNumber}`}
-                  content={c.categoryDescription ?? ''}
-                  loading={loading}
-                />
-                <Divider />
-              </>
-            ))}
-        </Stack>
+
+        {ip?.markCategories?.length && (
+          <Accordion dividerOnBottom dividerOnTop={false} space={3}>
+            {ip?.markCategories?.map((category, index) => {
+              if (!category.categoryNumber) {
+                return null
+              }
+
+              return (
+                <AccordionItem
+                  key={`${category.categoryNumber}-${index}}`}
+                  id={category.categoryNumber}
+                  label={`Flokkur ${category.categoryNumber}`}
+                >
+                  <Text>{category.categoryDescription ?? ''}</Text>
+                </AccordionItem>
+              )
+            })}
+          </Accordion>
+        )}
         <Text variant="small" paddingBottom={2}>
           Lorem ipsum dolor sit amet consectetur. Sem libero at mi feugiat diam.
           Turpis quam dignissim eleifend lectus venenatis. Nullam et aliquet
