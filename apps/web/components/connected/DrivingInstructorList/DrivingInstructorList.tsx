@@ -3,6 +3,7 @@ import {
   AlertMessage,
   Box,
   Input,
+  LoadingDots,
   Pagination,
   Table as T,
   Text,
@@ -125,6 +126,12 @@ const DrivingInstructorList = ({ slice }: DrivingInstructorListProps) => {
           <Text fontWeight="semiBold">
             {n('noResultsFound', 'Engir ökukennarar fundust')}
           </Text>
+        </Box>
+      )}
+
+      {!called && loading && (
+        <Box display="flex" justifyContent="center">
+          <LoadingDots />
         </Box>
       )}
 
