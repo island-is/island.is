@@ -289,9 +289,7 @@ export class CitizenshipService extends BaseTemplateApiService {
     const spouseDetails = application.externalData.spouseDetails.data as
       | SpouseIndividual
       | undefined
-    const applicantPassport = answers.passports?.find(
-      (p) => p.nationalId === application.applicant,
-    )?.passport
+    const applicantPassport = answers.passport
 
     if (!applicantPassport) {
       throw new Error('Ekki er búið að skrá upplýsingar um vegabréf umsækjanda')
@@ -335,13 +333,15 @@ export class CitizenshipService extends BaseTemplateApiService {
             nationalId: p.nationalId!,
             name: p.name!,
           })) || [],
+      //TODO: Á ekki eftir að remove-a items með wasRemoved = true?
       countriesOfResidence:
         answers.countriesOfResidence?.selectedAbroadCountries?.map((c) => ({
-          countryId: c.countryId,
+          countryId: parseInt(c.countryId),
         })) || [],
+      //TODO: Á ekki eftir að remove-a items með wasRemoved = true?
       staysAbroad:
         answers.staysAbroad?.selectedAbroadCountries?.map((s) => ({
-          countryId: s.countryId,
+          countryId: parseInt(s.countryId),
           dateFrom: s.dateFrom ? new Date(s.dateFrom) : undefined,
           dateTo: s.dateTo ? new Date(s.dateTo) : undefined,
           purpose: s.purpose,
@@ -350,8 +350,8 @@ export class CitizenshipService extends BaseTemplateApiService {
         dateOfIssue: new Date(applicantPassport.publishDate),
         dateOfExpiry: new Date(applicantPassport.expirationDate),
         passportNumber: applicantPassport.passportNumber,
-        passportTypeId: applicantPassport.passportTypeId,
-        countryOfIssuerId: applicantPassport.countryOfIssuerId,
+        passportTypeId: parseInt(applicantPassport.passportTypeId),
+        countryOfIssuerId: parseInt(applicantPassport.countryOfIssuerId),
       },
       //TODOx missing in answers:
       supportingDocuments: {

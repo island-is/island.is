@@ -61,10 +61,17 @@ export const selectChildren = {
       description:
         'information message title for persons with children between 12 and 17 years of age',
     },
-    information: {
+    informationSharedCustody: {
       id:
         'doi.cs.application:section.backgroundInformation.selectChildren.informationChildrenSectionMessage#markdown',
-      defaultMessage: `Ef foreldrar fara sameiginlega með forsjá barns þarf að skila inn undirrituðu samþykki hins forsjárforeldrisins til Útlendingastofnunar. \n\n Ef sótt er um ríkisborgararétt fyrir barn á aldrinum 12-17 ára þarf að skila undirrituðu samþykki þess til Útlendingastofnunar`,
+      defaultMessage: `Ef foreldrar fara sameiginlega með forsjá barns þarf að skila inn undirrituðu samþykki hins forsjárforeldrisins til Útlendingastofnunar.`,
+      description:
+        'information message for persons with children with shared custody',
+    },
+    informationChildAge: {
+      id:
+        'doi.cs.application:section.backgroundInformation.selectChildren.informationChildrenSectionMessage#markdown',
+      defaultMessage: `Ef sótt er um ríkisborgararétt fyrir barn á aldrinum 12-17 ára þarf að skila undirrituðu samþykki þess til Útlendingastofnunar`,
       description:
         'information message for persons with children between 12 and 17 years of age',
     },

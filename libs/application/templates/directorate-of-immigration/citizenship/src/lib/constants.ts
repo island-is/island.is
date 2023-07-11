@@ -21,5 +21,8 @@ export enum Routes {
   MARITALSTATUS = 'maritalStatus',
   COUNTRIESOFRESIDENCE = 'countriesOfResidence',
   STAYSABROAD = 'staysAbroad',
-  PASSPORTS = 'passports[0]',
+  PASSPORT = 'passport',
+  CHILDRENPASSPORT = 'childrenPassport',
+  SUPPORTINGDOCUMENTS = 'supportingDocuments',
+  CHILDSUPPORTINGDOCUMENTS = 'childrenSupportingDocuments',
 }

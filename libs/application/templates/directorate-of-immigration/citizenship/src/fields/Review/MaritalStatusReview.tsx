@@ -34,7 +34,7 @@ export const MaritalStatusReview: FC<Props> = ({
               }}
             />
             <Text>{answers?.maritalStatus?.status}</Text>
-            <Text>{answers?.maritalStatus?.dateOfMarritalStatus}</Text>
+            <Text>{answers?.maritalStatus?.dateOfMaritalStatus}</Text>
           </GridColumn>
           <GridColumn span="1/2">
             <DescriptionText

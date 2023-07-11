@@ -59,36 +59,32 @@ export const PickChildrenSubSection = buildSubSection({
           title: selectChildren.general.pageTitle,
           component: 'SelectChildren',
         }),
-        buildCustomField(
-          {
-            id: 'generalMessage',
-            title: 'Upplýsingar',
-            component: 'InformationBoxWithLink',
-            condition: (_, externalData) => {
-              //TODO separate condition for each point in message (A: ef eitt barn er með sameiginleg forsjá, B: ef eitt barn yfir 12 ára)
-              const childWithInfo = getValueViaPath(
-                externalData,
-                'childrenCustodyInformation.data',
-                [],
-              ) as ApplicantChildCustodyInformation[]
+        buildCustomField({
+          id: 'generalMessage',
+          title: 'Upplýsingar',
+          component: 'ChildrenInformationBoxWithLink',
+          condition: (_, externalData) => {
+            const childWithInfo = getValueViaPath(
+              externalData,
+              'childrenCustodyInformation.data',
+              [],
+            ) as ApplicantChildCustodyInformation[]
 
-              const childrenInAgeRange = childWithInfo.filter((child) => {
-                const childInfo = kennitala.info(child.nationalId)
-                return childInfo.age >= 11 || childInfo.age <= 18
-              })
+            const childrenInAgeRange = childWithInfo.filter((child) => {
+              const childInfo = kennitala.info(child.nationalId)
+              return childInfo.age >= 11 || childInfo.age <= 18
+            })
 
-              return childrenInAgeRange ? childrenInAgeRange.length > 0 : false
-            },
+            const showSharedCustodyWarning = childWithInfo.filter((child) => {
+              return !!child.otherParent
+            })
+
+            return (childrenInAgeRange && childrenInAgeRange.length > 0) ||
+              showSharedCustodyWarning
+              ? true
+              : false
           },
-          {
-            title: selectChildren.informationChildrenSection.title,
-            message: selectChildren.informationChildrenSection.information,
-            linkTitle:
-              selectChildren.informationChildrenSection.linkTitle
-                .defaultMessage,
-            linkUrl: selectChildren.informationChildrenSection.linkUrl,
-          },
-        ),
+        }),
       ],
     }),
   ],

@@ -85,7 +85,7 @@ export const Review: FC<FieldBaseProps> = ({
       <DocumentReview
         field={field}
         application={application}
-        route={Routes.PASSPORTS}
+        route={Routes.PASSPORT}
         goToScreen={goToScreen}
       />
     </Box>

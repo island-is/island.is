@@ -5,14 +5,15 @@ import { InformationSection } from './InformationSection'
 import { PaymentSection } from './PaymentSection'
 import { PersonalSection } from './PersonalSection'
 import { ReviewSection } from './ReviewSection'
-import { SupportingDocumentsSection } from './SupportingDocumentsSection'
+import { ChildrenSupportingDocumentsSection } from './ChildrenSupportingDocuments'
 import { Logo } from '../../assets/Logo'
 import { MAX_CNT_APPLICANTS } from '../../shared'
+import { SupportingDocumentsSection } from './SupportingDocumentsSection'
 
 const buildSupportingDocumentsSections = (): Section[] => {
-  return [...Array(MAX_CNT_APPLICANTS)].map((_key, index) =>
-    SupportingDocumentsSection(index),
-  )
+  return [...Array(MAX_CNT_APPLICANTS)].map((_key, index) => {
+    return ChildrenSupportingDocumentsSection(index)
+  })
 }
 
 export const CitizenshipForm: Form = buildForm({
@@ -30,6 +31,7 @@ export const CitizenshipForm: Form = buildForm({
     }),
     PersonalSection,
     InformationSection,
+    SupportingDocumentsSection,
     ...buildSupportingDocumentsSections(),
     ReviewSection,
     PaymentSection,

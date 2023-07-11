@@ -36,16 +36,15 @@ const ResidenceConditionSchema = z.object({
 
 export const RemoveableStayAbroadSchema = z
   .object({
-    country: z.string().optional(), //TODO ætti að vera countryId sem er number (bæti við en þarf að laga annarsstaðar líka)
-    countryId: z.number(),
+    countryId: z.string(),
     dateTo: z.string().optional(),
     dateFrom: z.string().optional(),
     purpose: z.string().optional(),
     wasRemoved: z.string().optional(),
   })
   .refine(
-    ({ wasRemoved, country }) => {
-      return wasRemoved === 'true' || (country && country.length > 0)
+    ({ wasRemoved, countryId }) => {
+      return wasRemoved === 'true' || (countryId && countryId.length > 0)
     },
     {
       path: ['country'],
@@ -101,16 +100,15 @@ const StaysAbroadSchema = z.object({
 
 export const RemoveableCountrySchema = z
   .object({
-    country: z.string(), //TODO ætti að vera countryId sem er number (bæti við en þarf að laga annarsstaðar líka)
-    countryId: z.number(),
-    wasRemoved: z.string().min(1).optional(),
+    countryId: z.string(),
+    wasRemoved: z.string().min(1),
   })
   .refine(
-    ({ wasRemoved, country }) => {
-      return wasRemoved === 'true' || (country && country.length > 0)
+    ({ wasRemoved, countryId }) => {
+      return wasRemoved === 'true' || (countryId && countryId.length > 0)
     },
     {
-      path: ['country'],
+      path: ['countryId'],
     },
   )
 
@@ -147,10 +145,19 @@ const PassportSchema = z.object({
   publishDate: z.string().min(1),
   expirationDate: z.string().min(1),
   passportNumber: z.string().min(1),
-  passportType: z.string().min(1), //TODO ætti að vera passportTypeId sem er number (bæti við en þarf að laga annarsstaðar líka)
-  passportTypeId: z.number().min(1),
-  publisher: z.string().min(1), //TODO breyta í countryOfIssuerId sem er number (bæti við en þarf að laga annarsstaðar líka)
-  countryOfIssuerId: z.number().min(1),
+  passportTypeId: z.string().min(1),
+  countryOfIssuerId: z.string().min(1),
+  file: z.array(z.string()).optional(),
+})
+
+const ChildrenPassportSchema = z.object({
+  nationalId: z.string().min(1),
+  publishDate: z.string().min(1),
+  expirationDate: z.string().min(1),
+  passportNumber: z.string().min(1),
+  passportTypeId: z.string().min(1),
+  countryOfIssuerId: z.string().min(1),
+  file: z.array(z.string()).optional(),
 })
 
 const MaritalStatusSchema = z.object({
@@ -159,13 +166,30 @@ const MaritalStatusSchema = z.object({
   birthCountry: z.string().min(1),
   name: z.string().min(1),
   citizenship: z.string().min(1),
-  dateOfMarritalStatus: z.string().min(1), //TODO fix typo (two "R"s)
-  explanation: z.string().optional(), //TODO vantaði ekki þennan reit? (bætti við en má skoða)
+  dateOfMaritalStatus: z.string().min(1),
+  explanation: z.string().optional(),
 })
 
-const PassportItemSchema = z.object({
-  nationalId: z.string().optional(),
-  passport: PassportSchema,
+const CriminalRecordSchema = z.object({
+  countryId: z.string().min(1).optional(),
+  file: z.array(z.string()).optional(),
+})
+
+const SupportingDocumentsSchema = z.object({
+  birthCertificate: z.array(z.string()).optional(),
+  subsistenceCertificate: z.array(z.string()).optional(),
+  subsistenceCertificateForTown: z.array(z.string()).optional(),
+  certificateOfLegalResidenceHistory: z.array(z.string()).optional(),
+  icelandicTestCertificate: z.array(z.string()).optional(),
+  criminalRecordList: z.array(CriminalRecordSchema).optional(),
+})
+
+const ChildrenSupportingDocumentsSchema = z.object({
+  nationalId: z.string().min(1).optional(),
+  birthCertificate: z.array(z.string()).optional(),
+  writtenConsentFromChild: z.array(z.string()).optional(),
+  writtenConsentFromOtherParent: z.array(z.string()).optional(),
+  custodyDocuments: z.array(z.string()).optional(),
 })
 
 export const CitizenshipSchema = z.object({
@@ -177,9 +201,14 @@ export const CitizenshipSchema = z.object({
   spouse: z.string().min(1),
   countriesOfResidence: CountriesOfResidenceSchema,
   staysAbroad: StaysAbroadSchema,
-  passports: z.array(PassportItemSchema),
+  passport: PassportSchema,
+  childrenPassport: z.array(ChildrenPassportSchema).optional(),
   maritalStatus: MaritalStatusSchema,
   formerIcelander: z.string().refine((v) => v === YES),
+  supportingDocuments: SupportingDocumentsSchema,
+  childrenSupportingDocuments: z
+    .array(ChildrenSupportingDocumentsSchema)
+    .optional(),
 })
 
 export type Citizenship = z.TypeOf<typeof CitizenshipSchema>

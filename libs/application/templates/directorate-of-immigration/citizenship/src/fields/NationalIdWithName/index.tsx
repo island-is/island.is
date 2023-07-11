@@ -59,7 +59,6 @@ export const NationalIdWithName: FC<Props & FieldBaseProps> = ({
     `,
     {
       onCompleted: (data) => {
-        // onNameChange && onNameChange(data.identity?.name ?? '')
         setValue(nameField, data.identity?.name ?? undefined)
         setCurrentName(data.identity?.name ?? '')
       },
@@ -82,14 +81,8 @@ export const NationalIdWithName: FC<Props & FieldBaseProps> = ({
     }
   }, [nationalIdInput, getIdentity])
 
-  //TODO SKOÐA HVORT ÞETTA ÞARF
   useEffect(() => {
     if (currentName !== '') {
-      const parent = {
-        nationalId: nationalIdInput,
-        name: currentName,
-        wasRemoved: 'false',
-      }
       addParentToApplication(itemNumber)
     }
   }, [currentName])

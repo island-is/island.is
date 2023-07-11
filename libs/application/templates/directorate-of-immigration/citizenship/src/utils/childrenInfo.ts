@@ -46,8 +46,10 @@ export const getSelectedCustodyChild = (
     undefined,
   ) as ApplicantChildCustodyInformation[] | undefined
 
-  const childInfo = custodyChildren && custodyChildren[sectionIndex - 1] // minus one since first sectionIndex is applicant
+  const childInfo = custodyChildren && custodyChildren[sectionIndex]
   const childNationalId = childInfo?.nationalId
+
+  console.log('childInfo', childInfo)
 
   const selectedChildren = (answers as Citizenship).selectedChildren
   const isSelected =

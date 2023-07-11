@@ -9,13 +9,12 @@ export const isIndividualSelected = (
   answers: FormValue,
   sectionIndex: number,
 ): boolean => {
-  if (sectionIndex === 0) return true
-
   const selectedChild = getSelectedCustodyChild(
     externalData,
     answers,
     sectionIndex,
   )
+
   return !!selectedChild
 }
 
@@ -24,21 +23,12 @@ export const getSelectedIndividualName = (
   answers: FormValue,
   sectionIndex: number,
 ): string | undefined => {
-  if (sectionIndex === 0) {
-    const individual = getValueViaPath(
-      externalData,
-      'individual.data',
-      undefined,
-    ) as CitizenIndividual | undefined
-
-    return individual?.fullName
-  }
-
   const selectedChild = getSelectedCustodyChild(
     externalData,
     answers,
     sectionIndex,
   )
+
   if (selectedChild) {
     return selectedChild.fullName
   }
@@ -51,18 +41,6 @@ export const getSelectedIndividualAge = (
   answers: FormValue,
   sectionIndex: number,
 ): number | undefined => {
-  if (sectionIndex === 0) {
-    const individual = getValueViaPath(
-      externalData,
-      'individual.data',
-      undefined,
-    ) as CitizenIndividual | undefined
-
-    return individual?.nationalId
-      ? kennitala.info(individual?.nationalId).age
-      : undefined
-  }
-
   const selectedChild = getSelectedCustodyChild(
     externalData,
     answers,
