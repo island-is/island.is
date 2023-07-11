@@ -43,6 +43,9 @@ export class OrganizationPage {
   @CacheField(() => GenericTag, { nullable: true })
   newsTag!: GenericTag | null
 
+  @CacheField(() => [GenericTag], { nullable: true })
+  secondaryNewsTags?: GenericTag[] | null
+
   @CacheField(() => [LinkGroup])
   menuLinks!: Array<LinkGroup>
 
@@ -101,4 +104,5 @@ export const mapOrganizationPage = ({
   defaultHeaderImage: fields.defaultHeaderImage
     ? mapImage(fields.defaultHeaderImage)
     : undefined,
+  secondaryNewsTags: (fields.secondaryNewsTags ?? []).map(mapGenericTag),
 })
