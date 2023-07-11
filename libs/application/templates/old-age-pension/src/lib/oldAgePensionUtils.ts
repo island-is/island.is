@@ -1,6 +1,5 @@
 import { formatText, getValueViaPath } from '@island.is/application/core'
 import {
-  MONTHS,
   ConnectedApplications,
   HouseholdSupplementHousing,
   oldAgePensionAge,
@@ -13,6 +12,7 @@ import {
   Employment,
   RatioType,
   taxLevelOptions,
+  MONTHS,
 } from './constants'
 import {
   ApplicantChildCustodyInformation,
@@ -368,40 +368,41 @@ export function getAvailableMonths(
   } else if (endDate.getFullYear().toString() === selectedYear) {
     months = months.slice(0, endDate.getMonth() + 1)
   }
-
-  return months.map((month) => {
-    switch (month) {
-      case 'January':
-        return { value: month, label: oldAgePensionFormMessage.period.january }
-      case 'February':
-        return { value: month, label: oldAgePensionFormMessage.period.february }
-      case 'March':
-        return { value: month, label: oldAgePensionFormMessage.period.march }
-      case 'April':
-        return { value: month, label: oldAgePensionFormMessage.period.april }
-      case 'May':
-        return { value: month, label: oldAgePensionFormMessage.period.may }
-      case 'June':
-        return { value: month, label: oldAgePensionFormMessage.period.june }
-      case 'July':
-        return { value: month, label: oldAgePensionFormMessage.period.july }
-      case 'August':
-        return { value: month, label: oldAgePensionFormMessage.period.august }
-      case 'September':
-        return {
-          value: month,
-          label: oldAgePensionFormMessage.period.september,
-        }
-      case 'October':
-        return { value: month, label: oldAgePensionFormMessage.period.october }
-      case 'November':
-        return { value: month, label: oldAgePensionFormMessage.period.november }
-      case 'December':
-        return { value: month, label: oldAgePensionFormMessage.period.desember }
-      default:
-        return { value: '0', label: '' }
-    }
-  })
+  console.log('months ', months)
+  return months
+  // return months.map((month) => {
+  //   switch (month) {
+  //     case 'January':
+  //       return { value: month, label: oldAgePensionFormMessage.period.january }
+  //     case 'February':
+  //       return { value: month, label: oldAgePensionFormMessage.period.february }
+  //     case 'March':
+  //       return { value: month, label: oldAgePensionFormMessage.period.march }
+  //     case 'April':
+  //       return { value: month, label: oldAgePensionFormMessage.period.april }
+  //     case 'May':
+  //       return { value: month, label: oldAgePensionFormMessage.period.may }
+  //     case 'June':
+  //       return { value: month, label: oldAgePensionFormMessage.period.june }
+  //     case 'July':
+  //       return { value: month, label: oldAgePensionFormMessage.period.july }
+  //     case 'August':
+  //       return { value: month, label: oldAgePensionFormMessage.period.august }
+  //     case 'September':
+  //       return {
+  //         value: month,
+  //         label: oldAgePensionFormMessage.period.september,
+  //       }
+  //     case 'October':
+  //       return { value: month, label: oldAgePensionFormMessage.period.october }
+  //     case 'November':
+  //       return { value: month, label: oldAgePensionFormMessage.period.november }
+  //     case 'December':
+  //       return { value: month, label: oldAgePensionFormMessage.period.desember }
+  //     default:
+  //       return { value: '0', label: '' }
+  //   }
+  // })
 }
 
 export function getAgeBetweenTwoDates(
@@ -432,7 +433,10 @@ export function isEarlyRetirement(
     dateOfBirth.getFullYear(),
     dateOfBirth.getMonth(),
   )
-  const selectedDate = new Date(+selectedYear, MONTHS.indexOf(selectedMonth))
+  const selectedDate = new Date(
+    +selectedYear,
+    MONTHS.findIndex((x) => x.value === selectedMonth),
+  )
 
   const age = getAgeBetweenTwoDates(selectedDate, dateOfBirth00)
 
@@ -516,13 +520,11 @@ export function getAttachments(application: Application) {
   }
 
   const additionalInfo = answers.fileUploadAdditionalFiles as additionalInformation
-  console.log('additionalInfo ', additionalInfo)
 
   if (
     additionalInfo.additionalDocuments &&
     additionalInfo.additionalDocuments?.length > 0
   ) {
-    console.log('hingað inn')
     getAttachmentsName(additionalInfo.additionalDocuments, 'viðbótargögn')
   }
 

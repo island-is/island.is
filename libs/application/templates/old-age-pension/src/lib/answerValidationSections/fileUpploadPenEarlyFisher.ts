@@ -35,7 +35,12 @@ export const fileUpploadPenEarlyFisher = (
     dateOfBirth.getFullYear(),
     dateOfBirth.getMonth(),
   )
-  const selectedDate = new Date(+selectedYear, MONTHS.indexOf(selectedMonth))
+
+  const selectedDate = new Date(
+    +selectedYear,
+    MONTHS.findIndex((x) => x.value === selectedMonth),
+  )
+
   const age = getAgeBetweenTwoDates(selectedDate, dateOfBirth00)
 
   if (obj.pension) {

@@ -44,7 +44,7 @@ export const period = (newAnswer: unknown, application: Application) => {
   const newEndDate = new Date(endDate.getFullYear(), endDate.getMonth())
   const selectedDate = new Date(
     +year,
-    MONTHS.findIndex((e) => e === month),
+    MONTHS.findIndex((x) => x.value === month),
   )
 
   if (newStartDate > selectedDate || newEndDate < selectedDate) {

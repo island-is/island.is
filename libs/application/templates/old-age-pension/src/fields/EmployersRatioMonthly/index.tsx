@@ -91,17 +91,17 @@ const EmployersRatioMonthly: FC<RepeaterProps & FieldBaseProps> = ({
       </T.Head>
       <T.Body>
         {MONTHS?.map((e, i) => (
-          <T.Row key={`${e}${i}`}>
-            <T.Data width="50%">{e}</T.Data>
+          <T.Row key={`${e.value}`}>
+            <T.Data width="50%">{formatMessage(e.label)}</T.Data>
             <T.Data>
               <InputController
-                id={`${id}.${e}`}
+                id={`${id}.${e.value}`}
                 placeholder="0%"
                 label={formatMessage(oldAgePensionFormMessage.employer.ratio)}
                 maxLength={4}
                 type="number"
                 suffix="%"
-                onChange={(val) => onChange(val.target.value, e)}
+                onChange={(val) => onChange(val.target.value, e.value)}
               />
             </T.Data>
           </T.Row>
