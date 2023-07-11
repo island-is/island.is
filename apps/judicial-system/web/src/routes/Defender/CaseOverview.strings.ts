@@ -3,8 +3,8 @@ import { defineMessages } from 'react-intl'
 // Strings on signed verdict overview screen
 export const strings = defineMessages({
   rulingDate: {
-    id: 'judicial.system.core:defender_case_overview.ruling_date',
-    defaultMessage: 'Úrskurðað {courtEndTime}',
+    id: 'judicial.system.core:defender_case_overview.ruling_date_v2',
+    defaultMessage: 'Úrskurðað {rulingDate}',
     description: 'Notaður fyrir tíma úrskurðar á yfirlitsskjá verjanda.',
   },
   modifiedDatesHeading: {

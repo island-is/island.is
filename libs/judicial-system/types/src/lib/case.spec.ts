@@ -136,7 +136,7 @@ describe('isAppealed', () => {
 describe('getAppealInfo', () => {
   test('should return that case can be appealed and the correct appeal deadline when case appeal decision was postponed', () => {
     const workingCase = {
-      courtEndTime: '2022-06-15T19:50:08.033Z',
+      rulingDate: '2022-06-15T19:50:08.033Z',
       prosecutorAppealDecision: CaseAppealDecision.POSTPONE,
     } as Case
 
@@ -153,7 +153,7 @@ describe('getAppealInfo', () => {
 
   test('should return that case has been appealed by the prosecutor, and return the correct appealed date', () => {
     const workingCase = {
-      courtEndTime: '2022-06-15T19:50:08.033Z',
+      rulingDate: '2022-06-15T19:50:08.033Z',
       appealState: CaseAppealState.APPEALED,
       prosecutorPostponedAppealDate: '2022-06-15T19:50:08.033Z',
     } as Case
@@ -172,7 +172,7 @@ describe('getAppealInfo', () => {
 
   test('should return that case has been appealed by the defender, and return the correct appealed date', () => {
     const workingCase = {
-      courtEndTime: '2022-06-15T19:50:08.033Z',
+      rulingDate: '2022-06-15T19:50:08.033Z',
       appealState: CaseAppealState.APPEALED,
       accusedPostponedAppealDate: '2022-06-15T19:50:08.033Z',
     } as Case
@@ -191,7 +191,7 @@ describe('getAppealInfo', () => {
 
   test('should return that case has not yet been appealed if case appeal decision was postponed and the case has not been appealed yet', () => {
     const workingCase = {
-      courtEndTime: '2022-06-15T19:50:08.033Z',
+      rulingDate: '2022-06-15T19:50:08.033Z',
       prosecutorAppealDecision: CaseAppealDecision.POSTPONE,
     } as Case
 
@@ -208,7 +208,7 @@ describe('getAppealInfo', () => {
 
   test('should return that the case cannot be appealed if neither party has postponed the appeal', () => {
     const workingCase = {
-      courtEndTime: '2022-06-15T19:50:08.033Z',
+      rulingDate: '2022-06-15T19:50:08.033Z',
       prosecutorAppealDecision: CaseAppealDecision.ACCEPT,
       accusedAppealDecision: CaseAppealDecision.NOT_APPLICABLE,
     } as Case
@@ -226,7 +226,7 @@ describe('getAppealInfo', () => {
 
   test('should return a statement deadline if the case has been marked as received by the court', () => {
     const workingCase = {
-      courtEndTime: '2022-06-15T19:50:08.033Z',
+      rulingDate: '2022-06-15T19:50:08.033Z',
       appealReceivedByCourtDate: '2022-06-15T19:50:08.033Z',
       state: CaseState.RECEIVED,
     } as Case
@@ -249,7 +249,7 @@ describe('getAppealInfo', () => {
       '$appealState should return that case has been appealed',
       ({ appealState }) => {
         const workingCase = {
-          courtEndTime: '2022-06-15T19:50:08.033Z',
+          rulingDate: '2022-06-15T19:50:08.033Z',
           appealState,
         } as Case
 

@@ -154,16 +154,22 @@ const SubscriptionTableItem = ({
               </Text>
             </Data>
             <Data>
-              <LinkBox>
+              {isGeneralSubscription ? (
                 <Text variant="medium" fontWeight="light">
                   {item.name}
                 </Text>
-              </LinkBox>
+              ) : (
+                <LinkBox>
+                  <Text variant="medium" fontWeight="light">
+                    {item.name}
+                  </Text>
+                </LinkBox>
+              )}
             </Data>
           </>
         ) : (
           <>
-            <Data isLastOrFirst>
+            <Data>
               {isGeneralSubscription ? (
                 <Stacked />
               ) : (
@@ -174,6 +180,9 @@ const SubscriptionTableItem = ({
             </Data>
           </>
         )}
+        <Data isLastOrFirst>
+          <></>
+        </Data>
       </Row>
     </>
   )

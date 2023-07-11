@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { ApplicationReasons, YES } from './constants'
+import { YES } from './constants'
 import { m } from './messages'
 
 export const dataSchema = z.object({
@@ -8,7 +8,9 @@ export const dataSchema = z.object({
   name: z.string(),
   district: z.string(),
   reason: z.object({
-    reasonGiven: z.enum([ApplicationReasons.STOLEN, ApplicationReasons.LOST]),
+    confirmationCheckbox: z.array(z.string()).refine((v) => v.includes(YES), {
+      params: m.requiredCheckmark,
+    }),
   }),
   overview: z.object({
     confirmationCheckbox: z.array(z.string()).refine((v) => v.includes(YES), {
@@ -16,5 +18,3 @@ export const dataSchema = z.object({
     }),
   }),
 })
-
-export type PSignSchema = z.TypeOf<typeof dataSchema>

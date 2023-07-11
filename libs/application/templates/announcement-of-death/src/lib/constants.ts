@@ -1,4 +1,4 @@
-import { DefaultEvents } from '@island.is/application/types'
+import { DefaultEvents, StateLifeCycle } from '@island.is/application/types'
 
 export type Events =
   | { type: DefaultEvents.SUBMIT }
@@ -28,4 +28,16 @@ export enum ApiActions {
   submitApplication = 'submitApplication',
   syslumennOnEntry = 'syslumennOnEntry',
   assignElectedPerson = 'assignElectedPerson',
+}
+
+export const HalfYearLifeCycle: StateLifeCycle = {
+  shouldBeListed: true,
+  shouldBePruned: true,
+  whenToPrune: 1000 * 3600 * 24 * 182, // 6 months
+}
+
+export const DayLifeCycle: StateLifeCycle = {
+  shouldBeListed: true,
+  shouldBePruned: true,
+  whenToPrune: 1000 * 3600 * 24,
 }

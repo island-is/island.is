@@ -354,12 +354,14 @@ export class DrivingLicenseService {
 
   async drivingLicenseDuplicateSubmission(params: {
     districtId: number
-    ssn: string
+    token: string
+    stolenOrLost: boolean
   }): Promise<number> {
-    const { districtId, ssn } = params
+    const { districtId, token, stolenOrLost } = params
     return await this.drivingLicenseApi.postApplicationNewCollaborative({
       districtId,
-      ssn,
+      stolenOrLost,
+      token,
     })
   }
 

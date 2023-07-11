@@ -9,6 +9,7 @@ import {
   HasQualityPhoto,
   YES,
   DrivingLicense,
+  HasQualitySignature,
 } from './types'
 import {
   DrivingLicenseBookService,
@@ -206,7 +207,7 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
   async qualitySignature({
     auth,
     application,
-  }: TemplateApiModuleActionProps): Promise<QualitySignature | null> {
+  }: TemplateApiModuleActionProps): Promise<HasQualitySignature | null> {
     // If running locally or on dev allow for fake data
     const useFakeData = getValueViaPath<'yes' | 'no'>(
       application.answers,
@@ -220,15 +221,20 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
       )
       if (hasQualitySignature === 'yes') {
         return {
-          data: '',
+          hasQualitySignature: true,
         }
       } else {
         return null
       }
     }
-    return this.drivingLicenseService.getQualitySignature({
-      nationalId: auth.nationalId,
-    })
+    const hasQualitySignature = await this.drivingLicenseService.getHasQualitySignature(
+      {
+        nationalId: auth.nationalId,
+      },
+    )
+    return {
+      hasQualitySignature,
+    }
   }
 
   async juristictions(): Promise<Juristiction[]> {
