@@ -282,10 +282,6 @@ export class CitizenshipService extends BaseTemplateApiService {
       | undefined
     const nationalRegistryBirthplace = application.externalData
       .nationalRegistryBirthplace.data as NationalRegistryBirthplace | undefined
-    const childrenCustodyInformation = application.externalData
-      .childrenCustodyInformation.data as
-      | ApplicantChildCustodyInformation[]
-      | undefined
     const spouseDetails = application.externalData.spouseDetails.data as
       | SpouseIndividual
       | undefined
@@ -310,12 +306,6 @@ export class CitizenshipService extends BaseTemplateApiService {
       residenceInIcelandLastChangeDate:
         individual?.residenceInIcelandLastChangeDate,
       birthCountry: nationalRegistryBirthplace?.location,
-      children:
-        childrenCustodyInformation?.map((c) => ({
-          nationalId: c.nationalId,
-          name: c.fullName,
-          citizenshipCode: c.citizenship?.code,
-        })) || [],
       maritalStatusCode: spouseDetails?.maritalStatus,
       dateOfMaritalStatus: spouseDetails?.lastModified,
       spouse: spouseDetails?.nationalId

@@ -214,7 +214,6 @@ export class CitizenshipClient {
     return [] // TODOx missing endpoint in API
   }
 
-  // ATH ég þarf að fá að vita hvað ég má POST-a án þess að þurfa pæla í duplicates
   async submitApplicationForCitizenship(
     auth: User,
     application: CitizenshipApplication,
@@ -245,19 +244,6 @@ export class CitizenshipClient {
     //     application.residenceInIcelandLastChangeDate,
     //   birthCountry: application.birthCountry,
     // })
-
-    // submit information about applicant's children
-    const children = application.children
-    for (let i = 0; i < children.length; i++) {
-      await this.childrenApiWithAuth(auth).apiChildrenPost({
-        childrenNewModel: {
-          // nationalId: children[i].nationalId,
-          nationalityId: 1, //TODOx children[i].citizenshipCode,
-          givenName: children[i].name, //TODOx sleppa að splitta nafni
-          surName: children[i].name, //TODOx sleppa að splitta nafni
-        },
-      })
-    }
 
     // submit information about spouse
     await this.spouseApiWithAuth(auth).apiSpousePost({
