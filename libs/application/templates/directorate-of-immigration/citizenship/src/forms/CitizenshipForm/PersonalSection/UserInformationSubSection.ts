@@ -55,7 +55,7 @@ export const UserInformationSubSection = buildSubSection({
               undefined,
             ) as CitizenIndividual | undefined
 
-            return individual?.fullName
+            return `${individual?.givenName} ${individual?.familyName}`
           },
         }),
         buildTextField({

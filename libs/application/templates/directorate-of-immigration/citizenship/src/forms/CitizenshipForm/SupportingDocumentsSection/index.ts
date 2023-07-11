@@ -20,7 +20,7 @@ export const SupportingDocumentsSection = buildSection({
     return {
       ...supportingDocuments.general.sectionTitleWithPerson,
       values: {
-        person: applicant?.fullName,
+        person: `${applicant?.givenName} ${applicant?.familyName}`,
       },
     }
   },

@@ -234,7 +234,8 @@ export class CitizenshipClient {
     // submit basic information about applicant
     // TODOx missing endpoint
     // await this.applicationApiWithAuth(auth).post({
-    //   name: application.name,
+    //   givenName: application.givenName,
+    //   surName: application.familyName,
     //   address: application.address,
     //   postalCode: application.postalCode,
     //   email: application.email,
@@ -251,8 +252,8 @@ export class CitizenshipClient {
         maritalStatusId: 1, //TODOx er hægt að fá ID application.maritalStatusCode,
         dateOfMarriage: application.dateOfMaritalStatus,
         icelandicidIDNO: application.spouse?.nationalId,
-        givenName: application.spouse?.name, //TODOx sleppa að splitta nafni
-        surName: application.spouse?.name, //TODOx sleppa að splitta nafni
+        givenName: application.spouse?.givenName,
+        surName: application.spouse?.familyName,
         applicantAddress: application.address,
         spouseAddress: application.spouse?.address,
         explanation: application.spouse?.reasonDifferentAddress,
@@ -266,8 +267,8 @@ export class CitizenshipClient {
       await this.parentApiWithAuth(auth).apiParentPost({
         parentNewModel: {
           icelandicIDNO: parents[i].nationalId,
-          givenName: parents[i].name, //TODOx sleppa að splitta nafni
-          surName: parents[i].name, //TODOx sleppa að splitta nafni
+          givenName: parents[i].givenName,
+          surName: parents[i].familyName,
         },
       })
     }
@@ -301,7 +302,7 @@ export class CitizenshipClient {
         dateOfExpiry: application.passport.dateOfExpiry,
         dateOfIssue: application.passport.dateOfIssue,
         issuingCountryId: application.passport.countryOfIssuerId,
-        name: application.name,
+        name: application.fullName,
         travelDocumentNo: application.passport.passportNumber,
         travelDocumentTypeId: application.passport.passportTypeId,
       },

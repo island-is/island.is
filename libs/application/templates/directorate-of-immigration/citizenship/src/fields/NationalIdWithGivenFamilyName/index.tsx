@@ -24,7 +24,7 @@ interface Props {
   repeaterField: GenericFormField<ParentsToApplicant>
 }
 
-export const NationalIdWithName: FC<Props & FieldBaseProps> = ({
+export const NationalIdWithGivenFamilyName: FC<Props & FieldBaseProps> = ({
   customId = '',
   field,
   application,
@@ -46,7 +46,8 @@ export const NationalIdWithName: FC<Props & FieldBaseProps> = ({
   const [nationalIdInput, setNationalIdInput] = useState('')
   const [currentName, setCurrentName] = useState('')
 
-  const nameField = `${usedId}.name`
+  const givenNameField = `${usedId}.givenName`
+  const familyNameField = `${usedId}.familyName`
   const nationaIdField = `${usedId}.nationalId`
   const wasRemovedField = `${usedId}.wasRemoved`
 
@@ -59,8 +60,11 @@ export const NationalIdWithName: FC<Props & FieldBaseProps> = ({
     `,
     {
       onCompleted: (data) => {
-        setValue(nameField, data.identity?.name ?? undefined)
-        setCurrentName(data.identity?.name ?? '')
+        setValue(givenNameField, data.identity?.givenName ?? undefined)
+        setValue(familyNameField, data.identity?.familyName ?? undefined)
+        setCurrentName(
+          `${data.identity?.givenName} ${data.identity?.familyName}`,
+        )
       },
     },
   )
@@ -108,7 +112,7 @@ export const NationalIdWithName: FC<Props & FieldBaseProps> = ({
         </GridColumn>
         <GridColumn span={['1/1', '1/1', '1/2']} paddingTop={2}>
           <InputController
-            id={nameField}
+            id={givenNameField}
             label={formatMessage(personal.labels.userInformation.name)}
             disabled
           />

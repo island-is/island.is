@@ -30,7 +30,7 @@ export const getSelectedIndividualName = (
   )
 
   if (selectedChild) {
-    return selectedChild.fullName
+    return `${selectedChild.givenName} ${selectedChild.familyName}`
   }
 
   return undefined

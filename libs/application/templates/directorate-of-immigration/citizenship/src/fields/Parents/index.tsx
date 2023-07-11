@@ -1,17 +1,10 @@
 import { NationalRegistryParent } from '@island.is/application/types'
 import { useEffect, useState } from 'react'
-import { personal, information } from '../../lib/messages'
-import DescriptionText from '../../components/DescriptionText'
-import { Box, GridColumn, GridRow } from '@island.is/island-ui/core'
-import { NationalIdWithName } from '../NationalIdWithName'
-import { InputController, RadioController } from '@island.is/shared/form-fields'
+import { information } from '../../lib/messages'
+import { Box } from '@island.is/island-ui/core'
+import { RadioController } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
-import {
-  getErrorViaPath,
-  getValueViaPath,
-  NO,
-  YES,
-} from '@island.is/application/core'
+import { getValueViaPath, NO, YES } from '@island.is/application/core'
 import { ParentsToApplicant } from '../../shared'
 import { ParentRepeaterItem } from './ParentRepeaterItem'
 
@@ -26,8 +19,8 @@ export const Parents = ({ field, application, errors }: any) => {
   )
 
   const defaultParents = [
-    { nationalId: '', name: '', wasRemoved: 'false' },
-    { nationalId: '', name: '', wasRemoved: 'true' },
+    { nationalId: '', givenName: '', familyName: '', wasRemoved: 'false' },
+    { nationalId: '', givenName: '', familyName: '', wasRemoved: 'true' },
   ]
 
   const [parents, setParents] = useState<ParentsToApplicant[]>(

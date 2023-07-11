@@ -52,7 +52,7 @@ export const DocumentReview: FC<Props> = ({
                 <GridColumn span="1/2">
                   <DescriptionText
                     text={review.labels.documents}
-                    format={{ name: child.fullName }}
+                    format={{ name: `${child.givenName} ${child.familyName}` }}
                     textProps={{
                       as: 'h4',
                       fontWeight: 'semiBold',

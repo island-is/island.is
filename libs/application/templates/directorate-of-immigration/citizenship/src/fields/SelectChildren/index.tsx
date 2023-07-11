@@ -27,7 +27,7 @@ export const SelectChildren = ({ field, application, error }: any) => {
 
       return {
         value: child.nationalId,
-        label: child.fullName,
+        label: `${child.givenName} ${child.familyName}`,
         subLabel: child.otherParent
           ? `${formatMessage(selectChildren.checkboxes.subLabel)} ${
               child.otherParent?.fullName

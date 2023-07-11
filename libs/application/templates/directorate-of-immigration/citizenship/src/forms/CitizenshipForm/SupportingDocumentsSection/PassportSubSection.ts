@@ -37,7 +37,7 @@ export const PassportSubSection = buildSubSection({
         return {
           ...supportingDocuments.general.description,
           values: {
-            person: applicant?.fullName,
+            person: `${applicant?.givenName} ${applicant?.familyName}`,
           },
         }
       },

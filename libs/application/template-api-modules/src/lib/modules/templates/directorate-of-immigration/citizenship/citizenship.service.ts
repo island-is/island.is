@@ -133,6 +133,8 @@ export class CitizenshipService extends BaseTemplateApiService {
     return (
       person && {
         nationalId: person.nationalId,
+        givenName: person.givenName,
+        familyName: person.familyName,
         fullName: person.name,
         age: kennitala.info(person.nationalId).age,
         citizenship: citizenship && {
@@ -295,7 +297,9 @@ export class CitizenshipService extends BaseTemplateApiService {
     await this.citizenshipClient.submitApplicationForCitizenship(auth, {
       selectedChildren: answers.selectedChildren || [],
       isFormerIcelandicCitizen: answers.formerIcelander === YES,
-      name: individual?.fullName,
+      givenName: individual?.givenName,
+      familyName: individual?.familyName,
+      fullName: individual?.fullName,
       address: individual?.address?.streetAddress,
       postalCode: individual?.address?.postalCode,
       email: answers.userInformation?.email,
@@ -309,7 +313,8 @@ export class CitizenshipService extends BaseTemplateApiService {
       spouse: spouseDetails?.nationalId
         ? {
             nationalId: spouseDetails.nationalId!,
-            name: spouseDetails.name!,
+            givenName: spouseDetails.spouse?.givenName,
+            familyName: spouseDetails.spouse?.familyName,
             birthCountry: spouseDetails.spouseBirthplace?.location,
             citizenshipCode: spouseDetails.spouse?.citizenship?.code,
             address: spouseDetails.spouse?.address?.streetAddress,
@@ -321,7 +326,8 @@ export class CitizenshipService extends BaseTemplateApiService {
           ?.filter((p) => p.nationalId)
           ?.map((p) => ({
             nationalId: p.nationalId!,
-            name: p.name!,
+            givenName: p.givenName,
+            familyName: p.familyName,
           })) || [],
       //TODO: Á ekki eftir að remove-a items með wasRemoved = true?
       countriesOfResidence:

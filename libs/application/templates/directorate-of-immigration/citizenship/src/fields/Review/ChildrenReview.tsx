@@ -37,7 +37,7 @@ export const ChildrenReview = ({
             return (
               <GridRow>
                 <GridColumn span="1/2">
-                  <Text>{child.fullName}</Text>
+                  <Text>{`${child.givenName} ${child.familyName}`}</Text>
                   {child.otherParent && (
                     <Text>
                       {`${selectChildren.checkboxes.subLabel}: ${child.otherParent?.fullName}`}

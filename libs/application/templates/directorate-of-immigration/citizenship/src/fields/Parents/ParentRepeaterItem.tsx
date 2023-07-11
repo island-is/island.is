@@ -9,7 +9,7 @@ import { FC } from 'react'
 import { ParentsToApplicant } from '../../shared'
 import { information } from '../../lib/messages'
 import DescriptionText from '../../components/DescriptionText'
-import { NationalIdWithName } from '../NationalIdWithName'
+import { NationalIdWithGivenFamilyName } from '../NationalIdWithGivenFamilyName'
 
 interface Props {
   index: number
@@ -50,7 +50,7 @@ export const ParentRepeaterItem: FC<Props & FieldBaseProps> = ({
           marginBottom: 0,
         }}
       />
-      <NationalIdWithName
+      <NationalIdWithGivenFamilyName
         field={field}
         application={application}
         customId={`${field.id}.parents[${index}]`}
