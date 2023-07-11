@@ -33,13 +33,13 @@ const defaultCache: CacheControlOptions = { maxAge: CACHE_CONTROL_MAX_AGE }
 const namespace = '@island.is/api/driving-license'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
-@Scopes(ApiScope.internal)
 @Resolver()
 export class MainResolver {
   constructor(
     private readonly drivingLicenseService: DrivingLicenseService,
     private readonly auditService: AuditService,
   ) {}
+  @Scopes(ApiScope.internal)
   @Query(() => DrivingLicense, { nullable: true })
   drivingLicense(@CurrentUser() user: User) {
     return this.auditService.auditPromise(
@@ -53,6 +53,7 @@ export class MainResolver {
     )
   }
 
+  @Scopes(ApiScope.internal)
   @Query(() => DrivingLicense, { nullable: true })
   legacyDrivingLicense(@CurrentUser() user: User) {
     return this.auditService.auditPromise(
@@ -66,6 +67,7 @@ export class MainResolver {
     )
   }
 
+  @Scopes(ApiScope.internal)
   @Query(() => [Teacher])
   drivingLicenseTeachers() {
     return this.drivingLicenseService.getTeachers()
@@ -78,6 +80,7 @@ export class MainResolver {
     return this.drivingLicenseService.getTeachersV4()
   }
 
+  @Scopes(ApiScope.internal)
   @Query(() => HasTeachingRights)
   drivingLicenseTeachingRights(@CurrentUser() user: User) {
     return this.auditService.auditPromise(
@@ -91,6 +94,7 @@ export class MainResolver {
     )
   }
 
+  @Scopes(ApiScope.internal)
   @UseGuards(DrivingInstructorGuard)
   @Query(() => StudentInformationResult)
   async drivingLicenseStudentInformation(
@@ -113,6 +117,7 @@ export class MainResolver {
     }
   }
 
+  @Scopes(ApiScope.internal)
   @Query(() => ApplicationEligibility)
   drivingLicenseApplicationEligibility(
     @CurrentUser() user: User,
@@ -125,6 +130,7 @@ export class MainResolver {
     )
   }
 
+  @Scopes(ApiScope.internal)
   @Query(() => ApplicationEligibility)
   learnerMentorEligibility(@CurrentUser() user: User) {
     return this.drivingLicenseService.getLearnerMentorEligibility(
@@ -133,16 +139,19 @@ export class MainResolver {
     )
   }
 
+  @Scopes(ApiScope.internal)
   @Query(() => [Juristiction])
   drivingLicenseListOfJuristictions() {
     return this.drivingLicenseService.getListOfJuristictions()
   }
 
+  @Scopes(ApiScope.internal)
   @Query(() => StudentAssessment, { nullable: true })
   drivingLicenseStudentAssessment(@CurrentUser() user: User) {
     return this.drivingLicenseService.getDrivingAssessment(user.nationalId)
   }
 
+  @Scopes(ApiScope.internal)
   @Query(() => StudentCanGetPracticePermit, { nullable: true })
   drivingLicenseStudentCanGetPracticePermit(
     @CurrentUser() user: User,
