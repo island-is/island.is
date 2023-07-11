@@ -18,7 +18,6 @@ import {
 import {
   DrivingLicenseApi,
   Juristiction,
-  QualitySignature,
   Teacher,
 } from '@island.is/clients/driving-license'
 import sortTeachers from './sortTeachers'

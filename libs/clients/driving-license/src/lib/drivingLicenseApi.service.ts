@@ -259,7 +259,7 @@ export class DrivingLicenseApi {
     return teachers.map((teacher) => ({
       name: teacher?.name ?? '',
       nationalId: teacher?.ssn ?? '',
-      driverLicenseId: teacher.driverLicenseId,
+      driverLicenseId: teacher?.driverLicenseId,
     }))
   }
 
