@@ -42,10 +42,10 @@ const CaseFilesOverview: React.FC = () => {
           title={formatMessage(core.pdfButtonRuling)}
           pdfType={'ruling'}
         >
-          {workingCase.rulingDate ? (
+          {workingCase.rulingSignatureDate ? (
             <SignedDocument
               signatory={workingCase.judge?.name}
-              signingDate={workingCase.rulingDate}
+              signingDate={workingCase.rulingSignatureDate}
             />
           ) : (
             <Text>{formatMessage(strings.unsignedDocument)}</Text>
