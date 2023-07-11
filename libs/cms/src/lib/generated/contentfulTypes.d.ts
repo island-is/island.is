@@ -1440,9 +1440,6 @@ export interface ILatestNewsSliceFields {
   /** News tag */
   newsTag?: IGenericTag | undefined
 
-  /** Organization */
-  organization?: IOrganization | undefined
-
   /** Read more text */
   readMoreText?: string | undefined
 
@@ -1932,9 +1929,6 @@ export interface INamespace extends Entry<INamespaceFields> {
 }
 
 export interface INewsFields {
-  /** Organization */
-  organization: IOrganization
-
   /** Content status */
   contentStatus?: 'Undefined' | 'Needs work' | 'In review' | 'Done' | undefined
 
@@ -2338,11 +2332,8 @@ export interface IOrganizationPageFields {
   /** Organization */
   organization: IOrganization
 
-  /** Primary news tag */
+  /** News tag */
   newsTag?: IGenericTag | undefined
-
-  /** Secondary news tags */
-  secondaryNewsTags?: IGenericTag[] | undefined
 
   /** Slug */
   slug: string
@@ -2720,11 +2711,8 @@ export interface IProjectPageFields {
       )[]
     | undefined
 
-  /** Primary news tag */
+  /** News Tag */
   newsTag?: IGenericTag | undefined
-
-  /** Secondary news tags */
-  secondaryNewsTags?: IGenericTag[] | undefined
 
   /** Project Subpages */
   projectSubpages?: IProjectSubpage[] | undefined
@@ -2990,7 +2978,6 @@ export interface ISliceConnectedComponentFields {
     | 'Tækifærisleyfi/TemporaryEventLicences'
     | 'OrganizationSearchBox'
     | 'Verðbréfamiðlarar/Brokers'
-    | 'PublicVehicleSearch'
     | undefined
 
   /** Localized JSON */
@@ -3906,38 +3893,20 @@ export interface IVacancyFields {
   /** Intro */
   intro?: Document | undefined
 
-  /** Job Listed */
+  /** Application Deadline From */
   applicationDeadlineFrom: string
 
-  /** Application Deadline */
+  /** Application Deadline To */
   applicationDeadlineTo: string
 
-  /** Category */
-  fieldOfWork:
-    | 'Stjórnunarstörf'
-    | 'Sérfræðistörf'
-    | 'Kennsla og rannsóknir'
-    | 'Heilbrigðisþjónusta'
-    | 'Löggæslustörf'
-    | 'Tæknistörf'
-    | 'Önnur störf'
-    | 'Skrifstofustörf'
-    | 'Sumarstörf'
+  /** Field Of Work */
+  fieldOfWork?: string | undefined
 
   /** Organization */
-  organization: IOrganization
+  organization?: IOrganization | undefined
 
   /** Locations */
-  locations: (
-    | 'Án staðsetningar'
-    | 'Höfuðborgarsvæðið'
-    | 'Norðurland'
-    | 'Vesturland'
-    | 'Austurland'
-    | 'Suðurland'
-    | 'Vestfirðir'
-    | 'Suðurnes'
-  )[]
+  locations?: string[] | undefined
 
   /** Job Percentage */
   jobPercentage?: string | undefined
@@ -3945,10 +3914,10 @@ export interface IVacancyFields {
   /** Application Link Url */
   applicationHref?: string | undefined
 
-  /** Requirements */
+  /** Qualification Requirements */
   qualificationRequirements?: Document | undefined
 
-  /** Responsibilities */
+  /** Tasks And Responsibilities */
   tasksAndResponsibilities?: Document | undefined
 
   /** Description */

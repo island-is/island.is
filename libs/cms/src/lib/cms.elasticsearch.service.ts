@@ -97,7 +97,7 @@ export class CmsElasticsearchService {
 
   async getNews(
     index: string,
-    { size, page, order, month, year, tags, organization }: GetNewsInput,
+    { size, page, order, month, year, tags }: GetNewsInput,
   ): Promise<NewsList> {
     let dateQuery
     if (year) {
@@ -111,24 +111,11 @@ export class CmsElasticsearchService {
       dateQuery = {}
     }
 
-    const tagList: {
-      key: string
-      type: string
-    }[] = []
-
     let tagQuery
     if (tags) {
-      for (const tag of tags) {
-        tagList.push({ key: tag, type: 'genericTag' })
+      tagQuery = {
+        tags: tags.map((tag) => ({ key: tag, type: 'genericTag' })),
       }
-    }
-
-    if (organization) {
-      tagList.push({ key: organization, type: 'organization' })
-    }
-
-    if (tagList.length > 0) {
-      tagQuery = { tags: tagList }
     }
 
     const query = {
@@ -158,24 +145,17 @@ export class CmsElasticsearchService {
 
   async getNewsDates(
     index: string,
-    { order, tags, organization }: GetNewsDatesInput,
+    { order, tag }: GetNewsDatesInput,
   ): Promise<string[]> {
-    const tagList: { key: string; type: string }[] = []
-
     let tagQuery
-    if (tags) {
-      for (const tag of tags) {
-        tagList.push({ key: tag, type: 'genericTag' })
-      }
-    }
-
-    if (organization) {
-      tagList.push({ key: organization, type: 'organization' })
-    }
-
-    if (tagList.length > 0) {
+    if (tag) {
       tagQuery = {
-        tags: tagList,
+        tags: [
+          {
+            key: tag,
+            type: 'genericTag',
+          },
+        ],
       }
     }
 

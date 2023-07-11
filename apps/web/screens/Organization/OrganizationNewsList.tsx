@@ -49,7 +49,7 @@ interface OrganizationNewsListProps {
   selectedYear: number
   selectedMonth: number
   selectedPage: number
-  selectedTag: string | string[]
+  selectedTag: string
   namespace: GetNamespaceQuery['getNamespace']
   locale: Locale
 }
@@ -188,7 +188,6 @@ const OrganizationNewsList: Screen<OrganizationNewsListProps> = ({
         monthOptions={monthOptions}
         title={newsTitle}
         newsPerPage={PERPAGE}
-        newsTags={organizationPage.secondaryNewsTags}
       />
     </OrganizationWrapper>
   )
@@ -241,12 +240,7 @@ OrganizationNewsList.getInitialProps = async ({
     )
   }
 
-  const newsTags = query.tag
-    ? Array.isArray(query.tag)
-      ? query.tag
-      : [query.tag]
-    : []
-  const organizationSlug = organizationPage.organization?.slug
+  const tag = (query.tag as string) ?? organizationPage?.newsTag?.slug ?? ''
 
   const [
     {
@@ -265,8 +259,7 @@ OrganizationNewsList.getInitialProps = async ({
       variables: {
         input: {
           lang: locale as Locale,
-          tags: newsTags,
-          organization: organizationSlug,
+          tag,
         },
       },
     }),
@@ -279,8 +272,7 @@ OrganizationNewsList.getInitialProps = async ({
           page: selectedPage,
           year,
           month,
-          tags: newsTags,
-          organization: organizationSlug,
+          tags: [tag],
         },
       },
     }),
@@ -347,11 +339,11 @@ OrganizationNewsList.getInitialProps = async ({
 
   return {
     organizationPage,
-    newsList: newsList ?? [],
+    newsList: organizationPage?.newsTag ? newsList : [],
     total,
     selectedYear: year,
     selectedMonth: month,
-    selectedTag: newsTags,
+    selectedTag: tag,
     datesMap: createDatesMap(newsDatesList),
     selectedPage,
     namespace,

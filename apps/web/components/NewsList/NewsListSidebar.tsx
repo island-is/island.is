@@ -17,7 +17,7 @@ interface NewsListSidebarProps {
   title: string
   selectedYear: number
   selectedMonth: number
-  selectedTag: string | string[]
+  selectedTag: string
   newsOverviewUrl: string
   namespace: Record<string, string>
   yearOptions: { label: any; value: any }[]

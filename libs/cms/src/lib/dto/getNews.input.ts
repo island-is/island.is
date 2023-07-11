@@ -39,8 +39,4 @@ export class GetNewsInput {
   @Field(() => [String], { nullable: true })
   @IsOptional()
   tags?: string[]
-
-  @Field(() => String, { nullable: true })
-  @IsOptional()
-  organization?: string
 }

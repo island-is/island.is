@@ -96,9 +96,6 @@ export const GET_SINGLE_NEWS_ITEM_QUERY = gql`
         title
         slug
       }
-      organization {
-        slug
-      }
     }
   }
   ${slices}
