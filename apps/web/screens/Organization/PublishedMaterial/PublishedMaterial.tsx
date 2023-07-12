@@ -381,14 +381,6 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
                     ...prevParameters,
                     [categoryId]: selected,
                   }))
-
-                  // TODO: update queryparams
-                  // const updatedQueryParams = { ...router.query }
-                  // updatedQueryParams['filter']
-                  // router.replace({
-                  //   pathname: router.pathname,
-                  //   query: updatedQueryParams,
-                  // })
                 }}
                 onClear={(categoryId) => {
                   setIsTyping(true)
@@ -396,13 +388,6 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
                     ...prevParameters,
                     [categoryId]: [],
                   }))
-                  // TODO: update query params
-                  // const updatedQueryParams = { ...router.query }
-                  // delete updatedQueryParams['filter']
-                  // router.replace({
-                  //   pathname: router.pathname,
-                  //   query: updatedQueryParams,
-                  // })
                 }}
                 categories={filterCategories}
               ></FilterMultiChoice>
