@@ -111,9 +111,6 @@ export const idsAdminModule: PortalModule = {
                 path: IDSAdminPaths.IDSAdminPermissions,
                 element: <Permissions />,
                 loader: permissionsLoader(props),
-                enabled: props.userInfo?.scopes.includes(
-                  AdminPortalScope.idsAdminSuperUser,
-                ),
                 handle: {
                   backPath: IDSAdminPaths.IDSAdmin,
                 },
@@ -121,9 +118,6 @@ export const idsAdminModule: PortalModule = {
                   {
                     name: m.createPermission,
                     navHide: true,
-                    enabled: props.userInfo?.scopes.includes(
-                      AdminPortalScope.idsAdminSuperUser,
-                    ),
                     path: IDSAdminPaths.IDSAdminPermissionsCreate,
                     element: <CreatePermission />,
                     action: createPermissionAction(props),

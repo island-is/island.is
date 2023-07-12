@@ -388,17 +388,38 @@ const patchExpectedOutput = {
 }
 
 const patchTestCases: Record<string, PatchTestCase> = {
-  'should not update scope since user is not a super user': {
+  'should not update scope since user is not a super user and input contains super user fields': {
     user: currentUser,
     tenantId: TENANT_ID,
     scopeName: mockedPatchApiScope.name,
     input: inputPatch,
     expected: {
-      status: 401,
+      status: 403,
       body: {
-        status: 401,
-        title: 'Unauthorized',
-        type: 'https://httpstatuses.org/401',
+        detail: 'User does not have access to update admin controlled fields',
+        status: 403,
+        title: 'Forbidden',
+        type: 'https://httpstatuses.org/403',
+      },
+    },
+  },
+  'should update scope even though user is not a super user since there are no super admin fields': {
+    user: currentUser,
+    tenantId: TENANT_ID,
+    scopeName: mockedPatchApiScope.name,
+    input: {
+      description: inputPatch.description,
+      displayName: inputPatch.displayName,
+    },
+    expected: {
+      status: 200,
+      body: {
+        ...patchExpectedOutput,
+        grantToAuthenticatedUser: true,
+        grantToLegalGuardians: false,
+        grantToProcuringHolders: false,
+        allowExplicitDelegationGrant: false,
+        isAccessControlled: false,
       },
     },
   },

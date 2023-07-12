@@ -1,8 +1,8 @@
 import { Sequelize } from 'sequelize-typescript'
 import {
   BadRequestException,
+  ForbiddenException,
   Injectable,
-  UnauthorizedException,
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Transaction } from 'sequelize'
@@ -18,7 +18,10 @@ import { ApiScopeUserClaim } from '../models/api-scope-user-claim.model'
 import { AdminScopeDTO } from './dto/admin-scope.dto'
 import { AdminTranslationService } from './services/admin-translation.service'
 import { NoContentException } from '@island.is/nest/problem'
-import { AdminPatchScopeDto } from './dto/admin-patch-scope.dto'
+import {
+  AdminPatchScopeDto,
+  superUserScopeFields,
+} from './dto/admin-patch-scope.dto'
 import { TranslatedValueDto } from '../../translation/dto/translated-value.dto'
 import { TranslationService } from '../../translation/translation.service'
 import { User } from '@island.is/auth-nest-tools'
@@ -252,14 +255,15 @@ export class AdminScopeService {
     input: AdminPatchScopeDto
     user: User
   }): Promise<AdminScopeDTO> {
-    const isSuperUser = user.scope.includes(AdminPortalScope.idsAdminSuperUser)
-
-    if (!isSuperUser) {
-      throw new UnauthorizedException()
-    }
-
     if (Object.keys(input).length === 0) {
       throw new BadRequestException('No fields provided to update.')
+    }
+
+    const isValid = await this.validateUserUpdateAccess(input, user)
+    if (!isValid) {
+      throw new ForbiddenException(
+        'User does not have access to update admin controlled fields',
+      )
     }
 
     // Check if scope exists
@@ -311,5 +315,24 @@ export class AdminScopeService {
       scopeName,
       tenantId,
     })
+  }
+
+  private async validateUserUpdateAccess(
+    input: AdminPatchScopeDto,
+    user: User,
+  ): Promise<boolean> {
+    const isSuperUser = user.scope.includes(AdminPortalScope.idsAdminSuperUser)
+
+    const updatedFields = Object.keys(input)
+    const superUserUpdatedFields = updatedFields.filter((field) =>
+      superUserScopeFields.includes(field),
+    )
+
+    if (superUserUpdatedFields.length === 0) {
+      return true
+    }
+
+    // If there is a superUser field in the updated fields, the user must be a superUser
+    return superUserUpdatedFields.length > 0 && isSuperUser
   }
 }
