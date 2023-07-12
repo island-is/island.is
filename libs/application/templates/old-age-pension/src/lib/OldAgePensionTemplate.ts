@@ -1,6 +1,5 @@
 import { assign } from 'xstate'
 import unset from 'lodash/unset'
-
 import {
   ApplicationTemplate,
   ApplicationContext,
@@ -15,11 +14,21 @@ import {
   NationalRegistrySpouseApi,
   ChildrenCustodyInformationApi,
 } from '@island.is/application/types'
-import { pruneAfterDays } from '@island.is/application/core'
-
-import { ConnectedApplications, Events, Roles, States } from './constants'
+import {
+  coreMessages,
+  pruneAfterDays,
+  DefaultStateLifeCycle,
+  coreHistoryMessages,
+} from '@island.is/application/core'
+import {
+  ConnectedApplications,
+  Events,
+  Roles,
+  States,
+  OAPEvents,
+} from './constants'
 import { dataSchema } from './dataSchema'
-import { oldAgePensionFormMessage } from './messages'
+import { oldAgePensionFormMessage, statesMessages } from './messages'
 import { answerValidators } from './answerValidators'
 import {
   NationalRegistryResidenceHistoryApi,
@@ -85,6 +94,13 @@ const OldAgePensionTemplate: ApplicationTemplate<
           name: States.DRAFT,
           status: 'draft',
           lifecycle: pruneAfterDays(30),
+          actionCard: {
+            description: statesMessages.draftDescription,
+            historyLogs: {
+              onEvent: DefaultEvents.SUBMIT,
+              logMessage: statesMessages.applicationSent,
+            },
+          },
           progress: 0.25,
           roles: [
             {
@@ -105,9 +121,182 @@ const OldAgePensionTemplate: ApplicationTemplate<
             },
           ],
         },
-        // on: {
-        //   SUBMIT: [],
-        // },
+        on: {
+          SUBMIT: [{ target: States.TRYGGINGASTOFNUN_SUBMITTED }],
+        },
+      },
+      [States.TRYGGINGASTOFNUN_SUBMITTED]: {
+        meta: {
+          name: States.TRYGGINGASTOFNUN_SUBMITTED,
+          progress: 0.75,
+          status: 'inprogress',
+          lifecycle: DefaultStateLifeCycle,
+          actionCard: {
+            pendingAction: {
+              title: statesMessages.tryggingastofnunSubmittedTitle,
+              content: statesMessages.tryggingastofnunSubmittedContent,
+              displayStatus: 'info',
+            },
+            historyLogs: [
+              {
+                onEvent: DefaultEvents.EDIT,
+                logMessage: statesMessages.applicationEdited,
+              },
+            ],
+          },
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/InReview').then((val) =>
+                  Promise.resolve(val.InReview),
+                ),
+              actions: [
+                {
+                  event: DefaultEvents.EDIT,
+                  name: 'Breyta umsókn',
+                  type: 'primary',
+                },
+              ],
+              read: 'all',
+              write: 'all',
+            },
+          ],
+        },
+        on: {
+          [DefaultEvents.EDIT]: { target: States.DRAFT },
+        },
+      },
+      [States.TRYGGINGASTOFNUN_IN_REVIEW]: {
+        meta: {
+          name: States.TRYGGINGASTOFNUN_IN_REVIEW,
+          progress: 0.75,
+          status: 'inprogress',
+          lifecycle: DefaultStateLifeCycle,
+          actionCard: {
+            pendingAction: {
+              title: statesMessages.tryggingastofnunInReviewTitle,
+              content: statesMessages.tryggingastofnunInReviewContent,
+              displayStatus: 'info',
+            },
+            historyLogs: [
+              // TODO: Þarf þetta að vera hérna? kemur þetta inn þegar TR gerir breytingar?
+              {
+                onEvent: DefaultEvents.REJECT,
+                logMessage: coreHistoryMessages.applicationRejected,
+              },
+              {
+                onEvent: DefaultEvents.APPROVE,
+                logMessage: coreHistoryMessages.applicationApproved,
+              },
+              {
+                onEvent: OAPEvents.ADDITIONALDOCUMENTSREQUIRED,
+                logMessage: statesMessages.additionalDocumentRequired,
+              },
+            ],
+          },
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/InReview').then((val) =>
+                  Promise.resolve(val.InReview),
+                ),
+              read: 'all',
+            },
+          ],
+        },
+        on: {
+          [DefaultEvents.APPROVE]: { target: States.APPROVED },
+          [DefaultEvents.REJECT]: { target: States.REJECTED },
+          ADDITIONALDOCUMENTSREQUIRED: {
+            target: States.ADDITIONAL_DOCUMENTS_REQUIRED,
+          },
+        },
+      },
+      [States.ADDITIONAL_DOCUMENTS_REQUIRED]: {
+        meta: {
+          status: 'inprogress',
+          name: States.ADDITIONAL_DOCUMENTS_REQUIRED,
+          actionCard: {
+            tag: {
+              label: coreMessages.tagsRequiresAction,
+              variant: 'red',
+            },
+            pendingAction: {
+              title: 'Gögn vantar',
+              content: statesMessages.additionalDocumentRequiredDescription,
+              displayStatus: 'warning',
+            },
+            historyLogs: [
+              {
+                onEvent: DefaultEvents.APPROVE,
+                logMessage: statesMessages.additionalDocumentsSent,
+              },
+            ],
+          },
+          lifecycle: pruneAfterDays(970),
+          progress: 0.5,
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/AdditionalDocumentsRequired').then((val) =>
+                  Promise.resolve(val.AdditionalDocumentsRequired),
+                ),
+              read: 'all',
+              write: 'all',
+            },
+          ],
+        },
+        on: {
+          [DefaultEvents.APPROVE]: {
+            target: States.TRYGGINGASTOFNUN_SUBMITTED,
+          },
+        },
+      },
+      [States.APPROVED]: {
+        meta: {
+          name: States.APPROVED,
+          progress: 1,
+          status: 'approved',
+          lifecycle: DefaultStateLifeCycle,
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                // // TODO: á að gera sér síðu fyrir Approved?
+                // import('../forms/Approved').then((val) =>
+                //   Promise.resolve(val.Approved),
+                // ),
+                import('../forms/InReview').then((val) =>
+                  Promise.resolve(val.InReview),
+                ),
+              read: 'all',
+            },
+          ],
+        },
+      },
+      [States.REJECTED]: {
+        meta: {
+          name: States.REJECTED,
+          progress: 1,
+          status: 'rejected',
+          lifecycle: DefaultStateLifeCycle,
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                // // TODO: á að gera sér síðu fyrir Rejected?
+                // import('../forms/Rejected').then((val) =>
+                //   Promise.resolve(val.Rejected),
+                // ),
+                import('../forms/InReview').then((val) =>
+                  Promise.resolve(val.InReview),
+                ),
+            },
+          ],
+        },
       },
     },
   },

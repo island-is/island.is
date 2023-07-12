@@ -46,9 +46,17 @@ export const MONTHS = [
 
 export const FILE_SIZE_LIMIT = 5000000 // 5MB
 
+export enum OAPEvents {
+  ADDITIONALDOCUMENTSREQUIRED = 'ADDITIONALDOCUMENTSREQUIRED',
+}
+
 export type Events =
   | { type: DefaultEvents.SUBMIT }
   | { type: DefaultEvents.EDIT }
+  | { type: DefaultEvents.APPROVE }
+  | { type: DefaultEvents.REJECT }
+  // | { type: 'ADDITIONALDOCUMENTSREQUIRED' } // Ex: TR ask for more documents
+  | { type: OAPEvents.ADDITIONALDOCUMENTSREQUIRED } // Ex: TR ask for more documents
 
 export enum Roles {
   APPLICANT = 'applicant',
@@ -57,7 +65,14 @@ export enum Roles {
 export enum States {
   PREREQUISITES = 'prerequisites',
   DRAFT = 'draft',
-  DONE = 'done',
+
+  TRYGGINGASTOFNUN_SUBMITTED = 'tryggingastofnunSubmitted',
+  TRYGGINGASTOFNUN_IN_REVIEW = 'tryggingastofnunInReview',
+
+  ADDITIONAL_DOCUMENTS_REQUIRED = 'additionalDocumentsRequired',
+
+  REJECTED = 'rejected',
+  APPROVED = 'approved',
 }
 
 export enum ConnectedApplications {

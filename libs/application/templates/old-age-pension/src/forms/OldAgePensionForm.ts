@@ -1043,7 +1043,7 @@ export const OldAgePensionForm: Form = buildForm({
         }),
         buildCustomField({
           id: 'thankYou',
-          title: 'Takk vantar texta',
+          title: oldAgePensionFormMessage.conclusionScreen.title,
           component: 'Conclusion',
         }),
       ],
