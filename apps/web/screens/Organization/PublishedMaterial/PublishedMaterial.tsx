@@ -403,7 +403,7 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
                 options={orderByOptions}
                 value={selectedOrderOption}
                 onChange={(option) => {
-                  setSelectedOrderOption(option)
+                  setSelectedOrderOption(option as Option)
                 }}
               />
             </Box>
