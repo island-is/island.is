@@ -29,21 +29,6 @@ export const MONTHS = [
   { value: 'December', label: oldAgePensionFormMessage.period.desember },
 ]
 
-// export const MONTHS = [
-//   'January',
-//   'February',
-//   'March',
-//   'April',
-//   'May',
-//   'June',
-//   'July',
-//   'August',
-//   'September',
-//   'October',
-//   'November',
-//   'December',
-// ]
-
 export const FILE_SIZE_LIMIT = 5000000 // 5MB
 
 export type Events =
