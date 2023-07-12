@@ -56,7 +56,6 @@ import {
   getGenericTagGroupHierarchy,
   getInitialParameters,
 } from './utils'
-import { ValueType } from 'react-select'
 import * as styles from './PublishedMaterial.css'
 
 const ASSETS_PER_PAGE = 20
@@ -77,6 +76,7 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
   const { width } = useWindowSize()
   const [searchValue, setSearchValue] = useState('')
   const filterValuesHaveBeenInitialized = useRef(false)
+  const initialFilterParametersValueHasBeenSet = useRef(false)
 
   const n = useNamespace(namespace)
 
@@ -109,9 +109,9 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
     ]
   }, [])
 
-  const [selectedOrderOption, setSelectedOrderOption] = useState<
-    ValueType<Option>
-  >(orderByOptions?.[0])
+  const [selectedOrderOption, setSelectedOrderOption] = useState<Option>(
+    orderByOptions?.[0],
+  )
 
   useContentfulId(organizationPage.id)
   useLocalLinkTypeResolver()
@@ -179,7 +179,9 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
   }))
 
   useEffect(() => {
-    setParameters(getInitialParameters(initialFilterCategories))
+    if (!initialFilterParametersValueHasBeenSet.current) {
+      setParameters(getInitialParameters(initialFilterCategories))
+    }
   }, [initialFilterCategories])
 
   const loadMore = () => {
@@ -251,12 +253,45 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
         updatedQueryParams['q'] = searchValue
       }
 
+      if (!filterValuesHaveBeenInitialized.current) {
+        if (updatedQueryParams.order) {
+          const newOrder = orderByOptions.find(
+            (o) => o.value === updatedQueryParams.order,
+          )
+          if (newOrder) setSelectedOrderOption(newOrder)
+        }
+
+        if (updatedQueryParams.filters) {
+          try {
+            const updatedFilters = JSON.parse(
+              updatedQueryParams.filters as string,
+            )
+            setParameters(updatedFilters)
+            initialFilterParametersValueHasBeenSet.current = true
+          } catch (_) {
+            delete updatedQueryParams.filters
+          }
+        }
+      } else {
+        updatedQueryParams.order = selectedOrderOption.value as string
+
+        if (Object.values(parameters).every((value) => !value?.length)) {
+          delete updatedQueryParams.filters
+        } else {
+          updatedQueryParams.filters = JSON.stringify(parameters)
+        }
+      }
+
       filterValuesHaveBeenInitialized.current = true
 
-      router.replace({
-        pathname: router.pathname,
-        query: updatedQueryParams,
-      })
+      router.replace(
+        {
+          pathname: router.pathname,
+          query: updatedQueryParams,
+        },
+        undefined,
+        { scroll: false },
+      )
     },
     DEBOUNCE_TIME_IN_MS,
     [parameters, activeLocale, searchValue, selectedOrderOption],
