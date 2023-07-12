@@ -11,6 +11,7 @@ import { formatDate } from '../../../utils'
 import { NationalRegistryBirthplace } from '@island.is/application/types'
 import { CitizenIndividual } from '../../../shared'
 import { Routes } from '../../../lib/constants'
+import { useAuth } from '@island.is/auth/react'
 
 export const UserInformationSubSection = buildSubSection({
   id: Routes.USERINFORMATION,
@@ -49,6 +50,7 @@ export const UserInformationSubSection = buildSubSection({
           width: 'half',
           readOnly: true,
           defaultValue: (application: Application) => {
+            console.log('application', application)
             const individual = getValueViaPath(
               application.externalData,
               'individual.data',
@@ -114,6 +116,10 @@ export const UserInformationSubSection = buildSubSection({
           format: '###-####',
           required: true,
           defaultValue: (application: Application) => {
+            const auth = useAuth()
+            const a = auth.userInfo
+
+            console.log('a', a)
             const userProfile = getValueViaPath(
               application.externalData,
               'userProfile.data',

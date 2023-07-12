@@ -41,7 +41,6 @@ export const ResidenceCountries: FC<FieldBaseProps> = (props) => {
   )
 
   useEffect(() => {
-    console.log('selectedCountries', selectedCountries)
     setFilteredSelectedCountries(
       selectedCountries.filter((x) => x.wasRemoved !== 'true'),
     )

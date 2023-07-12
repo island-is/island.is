@@ -14,7 +14,6 @@ import { getValueViaPath, NO, YES } from '@island.is/application/core'
 export const FormerIcelander = ({ application }: any) => {
   const { answers } = application
 
-  console.log('ansers', answers)
   const [isFormerIcelander, setIsFormerIcelander] = useState(
     getValueViaPath(answers, 'formerIcelander') as string,
   )

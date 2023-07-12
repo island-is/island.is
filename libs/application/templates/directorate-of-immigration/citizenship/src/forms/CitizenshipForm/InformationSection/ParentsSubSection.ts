@@ -19,8 +19,8 @@ export const ParentsSubSection = buildSubSection({
       'residenceConditions.data',
       [],
     ) as ResidenceCondition[]
-
-    return residenceConditionOptions.length === 0
+    return true
+    //return residenceConditionOptions.length === 0
   },
   children: [
     buildMultiField({

@@ -32,7 +32,6 @@ export const ChildrenPassportSubSection = (index: number) =>
         id: Routes.CHILDRENPASSPORT,
         title: supportingDocuments.labels.passport.pageTitle,
         description: (application: Application) => {
-          console.log('index', index)
           return {
             ...supportingDocuments.general.description,
             values: {
