@@ -250,6 +250,19 @@ export class DrivingLicenseApi {
     }))
   }
 
+  public async getTeachersV4() {
+    const teachers = await this.v4.apiDrivinglicenseV4DrivinginstructorsGet({
+      apiVersion: v4.DRIVING_LICENSE_API_VERSION_V4,
+      apiVersion2: v4.DRIVING_LICENSE_API_VERSION_V4,
+    })
+
+    return teachers.map((teacher) => ({
+      name: teacher?.name ?? '',
+      nationalId: teacher?.ssn ?? '',
+      driverLicenseId: teacher?.driverLicenseId,
+    }))
+  }
+
   public async getDeprivation(input: {
     nationalId: string
     token?: string
