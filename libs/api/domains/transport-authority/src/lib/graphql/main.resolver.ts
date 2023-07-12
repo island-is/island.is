@@ -129,7 +129,7 @@ export class MainResolver {
     nullable: true,
   })
   async getMyPlateOwnershipChecksByRegno(
-    @Args('input', { type: () => String }) regno: string,
+    @Args('regno', { type: () => String }) regno: string,
     @CurrentUser() user: User,
   ) {
     return await this.transportAuthorityApi.getMyPlateOwnershipChecksByRegno(
