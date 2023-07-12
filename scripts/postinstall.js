@@ -1,7 +1,7 @@
 const { spawn } = require('child_process')
 
 function schemas() {
-  if (!process.env.RUN_POSTINSTALL_SCHEMAS) process.exit(0)
+  if (!process.env.GENERATE_SCHEMAS_ON_INSTALL) process.exit(0)
   const cmd = spawn('yarn schemas', {
     shell: true,
     stdio: 'inherit',
