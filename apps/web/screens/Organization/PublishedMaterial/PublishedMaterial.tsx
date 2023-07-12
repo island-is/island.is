@@ -243,6 +243,7 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
 
       const updatedQueryParams = { ...router.query }
 
+      // Update search input state and query params
       if (!searchValue) {
         if (filterValuesHaveBeenInitialized.current) {
           delete updatedQueryParams['q']
@@ -253,6 +254,7 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
         updatedQueryParams['q'] = searchValue
       }
 
+      // Update order dropdown state and query params
       if (!filterValuesHaveBeenInitialized.current) {
         if (updatedQueryParams.order) {
           const newOrder = orderByOptions.find(
@@ -260,7 +262,12 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
           )
           if (newOrder) setSelectedOrderOption(newOrder)
         }
+      } else {
+        updatedQueryParams.order = selectedOrderOption.value as string
+      }
 
+      // Update filter categories state and query params
+      if (!filterValuesHaveBeenInitialized.current) {
         if (updatedQueryParams.filters) {
           try {
             const updatedFilters = JSON.parse(
@@ -273,8 +280,6 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
           }
         }
       } else {
-        updatedQueryParams.order = selectedOrderOption.value as string
-
         if (Object.values(parameters).every((value) => !value?.length)) {
           delete updatedQueryParams.filters
         } else {
