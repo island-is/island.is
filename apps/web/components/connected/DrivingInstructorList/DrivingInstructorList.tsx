@@ -40,7 +40,9 @@ const getSortedAndFilteredDrivingInstructors = (
   ): boolean => {
     return (
       instructor.name?.trim().toLowerCase().startsWith(fullSearchString) ||
-      instructor.nationalId?.trim().toLowerCase().startsWith(fullSearchString)
+      instructor.nationalId?.trim().startsWith(fullSearchString) ||
+      (instructor.driverLicenseId &&
+        String(instructor.driverLicenseId).startsWith(fullSearchString))
     )
   }
 
@@ -48,8 +50,9 @@ const getSortedAndFilteredDrivingInstructors = (
     return searchTerms.every((searchTerm) => {
       return (
         instructor.name?.trim().toLowerCase().includes(searchTerm) ||
-        instructor.nationalId?.trim().toLowerCase().includes(searchTerm) ||
-        String(instructor.driverLicenseId).includes(searchTerm)
+        instructor.nationalId?.trim().includes(searchTerm) ||
+        (instructor.driverLicenseId &&
+          String(instructor.driverLicenseId).includes(searchTerm))
       )
     })
   }
