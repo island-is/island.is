@@ -47,7 +47,7 @@ interface ProjectNewsListProps {
   selectedYear: number
   selectedMonth: number
   selectedPage: number
-  selectedTag: string | string[]
+  selectedTag: string
   namespace: GetNamespaceQuery['getNamespace']
   locale: Locale
 }
@@ -163,7 +163,6 @@ const ProjectNewsList: Screen<ProjectNewsListProps> = ({
           monthOptions={monthOptions}
           title={newsTitle}
           newsPerPage={10}
-          newsTags={projectPage.secondaryNewsTags}
         />
       </ProjectWrapper>
       <HeadWithSocialSharing
@@ -221,9 +220,7 @@ ProjectNewsList.getInitialProps = async ({ apolloClient, query, locale }) => {
     )
   }
 
-  const tag = query.tag ?? projectPage?.newsTag?.slug ?? ''
-
-  const newsTags = tag ? (Array.isArray(tag) ? tag : [tag]) : []
+  const tag = (query.tag as string) ?? projectPage?.newsTag?.slug ?? ''
 
   const [
     {
@@ -242,7 +239,7 @@ ProjectNewsList.getInitialProps = async ({ apolloClient, query, locale }) => {
       variables: {
         input: {
           lang: locale as Locale,
-          tags: newsTags,
+          tag,
         },
       },
     }),
@@ -255,11 +252,11 @@ ProjectNewsList.getInitialProps = async ({ apolloClient, query, locale }) => {
           page: selectedPage,
           year,
           month,
-          tags: newsTags,
+          tags: [tag],
         },
       },
     }),
-    typeof query.tag === 'string'
+    query.tag
       ? apolloClient.query<
           GetGenericTagBySlugQuery,
           GetGenericTagBySlugQueryVariables
@@ -322,11 +319,11 @@ ProjectNewsList.getInitialProps = async ({ apolloClient, query, locale }) => {
 
   return {
     projectPage,
-    newsList,
+    newsList: projectPage?.newsTag ? newsList : [],
     total,
     selectedYear: year,
     selectedMonth: month,
-    selectedTag: newsTags,
+    selectedTag: tag,
     datesMap: createDatesMap(newsDatesList),
     selectedPage,
     namespace,

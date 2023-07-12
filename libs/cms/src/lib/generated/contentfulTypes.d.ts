@@ -1440,11 +1440,11 @@ export interface ILatestNewsSliceFields {
   /** News tag */
   newsTag?: IGenericTag | undefined
 
-  /** Organization */
-  organization?: IOrganization | undefined
-
   /** Read more text */
   readMoreText?: string | undefined
+
+  /** Organization */
+  organization?: IOrganization | undefined
 
   /** Read more link */
   readMoreLink?: ILink | undefined
@@ -2722,9 +2722,6 @@ export interface IProjectPageFields {
 
   /** Primary news tag */
   newsTag?: IGenericTag | undefined
-
-  /** Secondary news tags */
-  secondaryNewsTags?: IGenericTag[] | undefined
 
   /** Project Subpages */
   projectSubpages?: IProjectSubpage[] | undefined
