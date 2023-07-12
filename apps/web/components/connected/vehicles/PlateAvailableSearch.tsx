@@ -16,6 +16,35 @@ import { PLATE_AVAILABLE_SEARCH_QUERY } from '@island.is/web/screens/queries/Pub
 
 import * as styles from './PlateAvailableSearch.css'
 
+const REPLACEMENT_KEY = '{{USER_INPUT}}'
+
+interface Props {
+  text: string
+  replacementKey: string
+  replacementValue: string
+}
+
+const TextWithReplacedBoldValue = ({
+  text,
+  replacementKey,
+  replacementValue,
+}: Props) => {
+  if (!text.includes(replacementKey)) return <Text>{text}</Text>
+
+  const indexOfReplacementKey = text.indexOf(replacementKey)
+
+  const prefix = text.slice(0, text.indexOf(replacementKey))
+  const postfix = text.slice(indexOfReplacementKey + replacementKey.length)
+
+  return (
+    <Text>
+      {prefix}
+      <span className={styles.bold}>{replacementValue}</span>
+      {postfix}
+    </Text>
+  )
+}
+
 interface PlateAvailableSearchProps {
   slice: ConnectedComponent
 }
@@ -45,11 +74,18 @@ const PlateAvailableSearch = ({ slice }: PlateAvailableSearchProps) => {
     })
   }
 
+  const aboveText = n(
+    'aboveText',
+    'Hér má athuga hvort tiltekið einkanúmer sé laust',
+  ) as string
+
   return (
     <Box>
-      <Text>
-        {n('aboveText', 'Hér má athuga hvort tiltekið einkanúmer sé laust')}
-      </Text>
+      {aboveText && (
+        <Box marginBottom={2}>
+          <Text>{aboveText}</Text>
+        </Box>
+      )}
       <Box marginBottom={3}>
         <AsyncSearchInput
           buttonProps={{
@@ -94,28 +130,30 @@ const PlateAvailableSearch = ({ slice }: PlateAvailableSearchProps) => {
           )}
         </Text>
       )}
-      {data &&
-        data?.plateAvailable?.regno &&
-        data?.plateAvailable?.available && (
-          <Text>
-            {(n('a', 'Merkið {{ENTERED_NUMBER}} er laust') as string).replace(
-              '{{ENTERED_NUMBER}}',
-              data?.plateAvailable?.regno,
-            )}
-          </Text>
+      {!error &&
+        !shouldDisplayValidationError &&
+        data &&
+        data.plateAvailable?.regno &&
+        data.plateAvailable.available && (
+          <TextWithReplacedBoldValue
+            text={n('plateAvailableText', `Merkið ${REPLACEMENT_KEY} er laust`)}
+            replacementKey={REPLACEMENT_KEY}
+            replacementValue={data.plateAvailable.regno}
+          />
         )}
-      {data &&
-        data?.plateAvailable?.regno &&
-        !data?.plateAvailable?.available && (
-          <Text>
-            {(n(
-              'ee',
-              'Merkið {{ENTERED_NUMBER}} er í notkun og ekki laust til úthlutunar',
-            ) as string).replace(
-              '{{ENTERED_NUMBER}}',
-              data?.plateAvailable?.regno,
+      {!error &&
+        !shouldDisplayValidationError &&
+        data &&
+        data.plateAvailable?.regno &&
+        !data.plateAvailable.available && (
+          <TextWithReplacedBoldValue
+            text={n(
+              'plateUnavailableText',
+              `Merkið ${REPLACEMENT_KEY} er í notkun og ekki laust til úthlutunar`,
             )}
-          </Text>
+            replacementKey={REPLACEMENT_KEY}
+            replacementValue={data.plateAvailable.regno}
+          />
         )}
     </Box>
   )
