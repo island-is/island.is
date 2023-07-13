@@ -32,9 +32,10 @@ import * as constants from '@island.is/judicial-system/consts'
 
 import { DefendantInfo } from '../../components'
 import { defendant } from './Defendant.strings'
-import { PoliceCaseInfo } from './PoliceCaseInfo'
+import { LokeNumberList } from './LokeNumberList/LokeNumberList'
+import { PoliceCaseInfo } from './PoliceCaseInfo/PoliceCaseInfo'
 
-interface PoliceCase {
+export interface PoliceCase {
   number: string
   subtypes?: IndictmentSubtype[]
   place?: string
@@ -114,15 +115,14 @@ const Defendant: React.FC = () => {
     setPoliceCases(getPoliceCases(workingCase))
   }, [workingCase])
 
-  const handleCreatePoliceCase = async () => {
+  const handleCreatePoliceCase = async (policeCaseInfo?: PoliceCase) => {
+    const newPoliceCase = policeCaseInfo ?? { number: '' }
+
     const [
       policeCaseNumbers,
       indictmentSubtypes,
       crimeScenes,
-    ] = getPoliceCasesForUpdate([
-      ...getPoliceCases(workingCase),
-      { number: '' },
-    ])
+    ] = getPoliceCasesForUpdate([...getPoliceCases(workingCase), newPoliceCase])
 
     setAndSendCaseToServer(
       [
@@ -162,6 +162,7 @@ const Defendant: React.FC = () => {
 
   const handleDeletePoliceCase = (index: number) => {
     const policeCases = getPoliceCases(workingCase)
+
     const [
       policeCaseNumbers,
       indictmentSubtypes,
@@ -362,7 +363,19 @@ const Defendant: React.FC = () => {
         <Box component="section" marginBottom={5}>
           <SectionHeading
             title={formatMessage(defendant.policeCaseNumbersHeading)}
+            description={
+              workingCase.origin === CaseOrigin.LOKE &&
+              formatMessage(defendant.policeCaseNumbersDescription)
+            }
           />
+          {/* TODO Add when feature is ready */}
+          {workingCase.origin === CaseOrigin.LOKE && (
+            <LokeNumberList
+              caseId={workingCase.id}
+              onAddPoliceCaseNumber={handleCreatePoliceCase}
+              onRemovePoliceCaseNumber={handleDeletePoliceCase}
+            />
+          )}
           <AnimatePresence>
             {policeCases.map((policeCase, index) => (
               <motion.div
@@ -408,7 +421,9 @@ const Defendant: React.FC = () => {
               data-testid="addPoliceCaseInfoButton"
               variant="ghost"
               icon="add"
-              onClick={handleCreatePoliceCase}
+              onClick={() => {
+                handleCreatePoliceCase()
+              }}
               disabled={policeCases.some(
                 (policeCase) =>
                   !policeCase.number ||

@@ -25,15 +25,15 @@ const AboutScreen: React.FC = () => {
       <GridContainer>
         <GridRow>
           <GridColumn
-            span={['12/12', '12/12', '9/12', '9/12', '8/12']}
-            offset={['0', '0', '0', '0', '1/12']}
+            span={['12/12', '12/12', '9/12', '9/12', '9/12']}
             order={[1, 1, 0]}
           >
             <AboutContent />
           </GridColumn>
           <GridColumn
-            span={['12/12', '12/12', '3/12', '3/12', '3/12']}
+            span={['12/12', '12/12', '3/12', '2/12', '2/12']}
             order={[0, 0, 1]}
+            offset={['0', '0', '0', '1/12', '1/12']}
           >
             <TableOfContents />
           </GridColumn>
