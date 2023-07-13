@@ -93,7 +93,7 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
     buildSection({
       id: 'information',
       title: section.information,
-      children: [applicantInformationMultiField({phoneRequired: true})],
+      children: [applicantInformationMultiField({ phoneRequired: true })],
     }),
     buildSection({
       id: 'section.complainedFor',
