@@ -68,11 +68,11 @@ export const serviceSetup = (): ServiceBuilder<'search-indexer-service'> =>
           name: 'migrate-elastic',
           resources: {
             requests: {
-              cpu: '100m',
-              memory: '512Mi',
+              cpu: '300m',
+              memory: '1536Mi',
             },
             limits: {
-              cpu: '400m',
+              cpu: '700m',
               memory: '2048Mi',
             },
           },
@@ -108,11 +108,11 @@ export const serviceSetup = (): ServiceBuilder<'search-indexer-service'> =>
     })
     .resources({
       requests: {
-        cpu: '100m',
-        memory: '512Mi',
+        cpu: '400m',
+        memory: '1536Mi',
       },
       limits: {
-        cpu: '400m',
+        cpu: '800m',
         memory: '2048Mi',
       },
     })
