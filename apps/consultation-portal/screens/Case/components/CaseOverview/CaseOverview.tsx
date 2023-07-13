@@ -18,7 +18,7 @@ export const CaseOverview = ({ chosenCase }: CaseOverviewProps) => {
   const loc = localization['caseOverview']
 
   const upperInstances = [
-    `${loc.upperInstances.case} ${chosenCase?.caseNumber}`,
+    `${loc.upperInstances.case} S-${chosenCase?.caseNumber}`,
     `${loc.upperInstances.show}: ${getShortDate(chosenCase.created)}`,
     `${loc.upperInstances.advicesCount}: ${chosenCase?.adviceCount}`,
   ]
