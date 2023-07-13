@@ -1,12 +1,7 @@
-import {
-  EinstaklingurDTOAllt,
-  NationalRegistryV3ClientService,
-} from '@island.is/clients/national-registry-v3'
+import { NationalRegistryV3ClientService } from '@island.is/clients/national-registry-v3'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { Person } from './graphql/models/nationalRegistryPerson.model'
-import { User } from '@island.is/auth-nest-tools'
-import { ChildGuardianship } from './graphql/models/nationalRegistryChildGuardianship.model'
 import { Spouse } from './graphql/models/nationalRegistrySpouse.model'
 import { Inject } from '@nestjs/common'
 import { Address } from './graphql/models/nationalRegistryAddress.model'
@@ -15,9 +10,6 @@ import { Citizenship } from './graphql/models/nationalRegistryCitizenship.model'
 import { Name } from './graphql/models/nationalRegistryName.model'
 import { Religion } from './graphql/models/nationalRegistryReligion.model'
 import { Custodian } from './graphql/models/nationalRegistryCustodian.model'
-import { DomicilePopulace } from './graphql/models/nationalRegistryDomicilePopulace.model'
-
-type ExcludesFalse = <T>(x: T | null | undefined | '') => x is T
 
 export class NationalRegistryV3Service {
   constructor(
@@ -26,46 +18,25 @@ export class NationalRegistryV3Service {
     private logger: Logger,
   ) {}
 
-  private fetchData = (nationalId: string) =>
-    this.nationalRegistryApi.getData(nationalId)
-
-  private extractPerson = (data: EinstaklingurDTOAllt) => {
-    if (!data.kennitala || !data.nafn) {
-      return null
-    }
-
-    return (
-      data && {
-        nationalId: data.kennitala,
-        fullName: data.nafn,
-        gender: data.kyn?.kynTexti,
-        familyRegistrationCode: data.logheimilistengsl?.logheimilistengsl,
-        banMarking: data.bannmerking === 'true',
-        fate: data.afdrif,
-      }
-    )
-  }
-
   async getNationalRegistryPerson(nationalId: string): Promise<Person | null> {
-    const person = await this.fetchData(nationalId)
+    const person = await this.nationalRegistryApi.getIndividual(nationalId)
 
-    return this.extractPerson(person)
+    return person && { ...person, fullName: person.name }
   }
 
   async getAddress(nationalId: string): Promise<Address | null> {
-    const data = await this.fetchData(nationalId)
+    const address = await this.nationalRegistryApi.getAddress(nationalId)
 
     return (
-      (data.heimilisfang && {
-        streetName: data.heimilisfang.husHeiti,
-        postalCode: data.heimilisfang.postnumer,
-        city: data.heimilisfang.poststod,
-        municipalityText: data.heimilisfang.sveitarfelag,
-      }) ??
-      null
+      address && {
+        streetName: address.streetAddress,
+        postalCode: address.postalCode,
+        city: address.city,
+        municipalityText: address.municipality,
+      }
     )
   }
-
+  /*
   async getParents(nationalId: string): Promise<Array<Person> | null> {
     const data = await this.fetchData(nationalId)
 
@@ -91,43 +62,27 @@ export class NationalRegistryV3Service {
       )) ?? []
 
     return parentData.filter((parent): parent is Person => parent != null)
-  }
+  }*/
 
   async getCustodians(nationalId: string): Promise<Array<Custodian> | null> {
-    const data = await this.fetchData(nationalId)
+    const data = await this.nationalRegistryApi.getCustodians(nationalId)
 
-    if (!data.forsja || !data.forsja.forsjaradilar) {
-      return null
-    }
-
-    const custodianData: Array<Custodian | null> =
-      (await Promise.all(
-        data.forsja.forsjaradilar
-          .map(async (custodian) => {
-            if (!custodian.forsjaAdiliKennitala || !custodian.forsjaAdiliNafn) {
-              return null
-            }
-            const custodianData = await this.fetchData(
-              custodian.forsjaAdiliKennitala,
-            )
-            return {
-              ...this.extractPerson(custodianData),
-              nationalId: custodian.forsjaAdiliKennitala,
-              fullName: custodian.forsjaAdiliNafn,
-              custodyText: custodian.forsjaTexti,
-              livesWithChild: custodianData.logheimilistengsl?.logheimilismedlimir
-                ?.map((l) => l.kennitala)
-                .includes(data.kennitala),
-            }
-          })
-          .filter((Boolean as unknown) as ExcludesFalse),
-      )) ?? []
-
-    return custodianData.filter(
-      (custodian): custodian is Custodian => custodian != null,
+    return (
+      data &&
+      data.map(
+        (custodian) =>
+          ({
+            nationalId: custodian.nationalId,
+            name: custodian.name,
+            custodyCode: custodian.custodyCode,
+            custodyText: custodian.custodyText,
+            livesWithChild: custodian.livesWithChild,
+          } as Custodian),
+      )
     )
   }
 
+  /*
   async getChildGuardianship(
     user: User,
     childNationalId: string,
@@ -160,54 +115,33 @@ export class NationalRegistryV3Service {
       childNationalId,
       legalDomicileParent,
     }
-  }
+  }*/
 
   async getSpouse(nationalId: string): Promise<Spouse | null> {
-    const data = await this.fetchData(nationalId)
+    const data = await this.nationalRegistryApi.getSpouse(nationalId)
 
     return (
-      (data.hjuskaparstada && {
-        nationalId: data.hjuskaparstada.makiKennitala,
-        fullName: data.hjuskaparstada.makiNafn,
-        maritalStatus: data.hjuskaparstada.hjuskaparstadaTexti,
-        cohabitation: data.hjuskaparstada.sambudTexti,
-      }) ??
-      null
-    )
-  }
-
-  async getDomicilePopulace(
-    nationalId: string,
-  ): Promise<DomicilePopulace | null> {
-    const data = await this.fetchData(nationalId)
-
-    return (
-      (data.logheimilistengsl &&
-        ({
-          legalDomicileId: data.logheimilistengsl.logheimilistengsl,
-          populace: data.logheimilistengsl.logheimilismedlimir?.map(
-            (person) => ({
-              nationalId: person.kennitala,
-              name: person.nafn,
-            }),
-          ),
-        } as DomicilePopulace)) ??
-      null
+      data && {
+        nationalId: data.nationalId,
+        name: data.name,
+        maritalStatus: data.maritalStatus,
+        cohabitation: data.cohabitation,
+      }
     )
   }
 
   async getCitizenship(nationalId: string): Promise<Citizenship | null> {
-    const data = await this.fetchData(nationalId)
+    const data = await this.nationalRegistryApi.getCitizenship(nationalId)
 
     return (
-      (data.rikisfang && {
-        name: data.rikisfang.rikisfangLand,
-        code: data.rikisfang.rikisfangKodi,
-      }) ??
-      null
+      data && {
+        name: data.name,
+        code: data.code,
+      }
     )
   }
 
+  /*
   async getChildren(nationalId: string): Promise<Array<Person> | null> {
     const parentData = await this.fetchData(nationalId)
 
@@ -267,44 +201,39 @@ export class NationalRegistryV3Service {
     )
 
     return childDetails.filter((child): child is Person => child != null)
-  }
+  }*/
 
   async getBirthplace(nationalId: string): Promise<Birthplace | null> {
-    const data = await this.fetchData(nationalId)
+    const data = await this.nationalRegistryApi.getBirthplace(nationalId)
 
     return (
-      (data.faedingarstadur && {
-        location: data.faedingarstadur.faedingarStadurHeiti,
-        municipalityCode: data.faedingarstadur.faedingarStadurKodi,
-        dateOfBirth: data.faedingarstadur.faedingarDagur
-          ? new Date(data.faedingarstadur.faedingarDagur)
-          : undefined,
-      }) ??
-      null
+      data && {
+        location: data.location,
+        municipalityCode: data.municipalityCode,
+        dateOfBirth: data.dateOfBirth ?? undefined,
+      }
     )
   }
 
   async getName(nationalId: string): Promise<Name | null> {
-    const data = await this.fetchData(nationalId)
+    const data = await this.nationalRegistryApi.getName(nationalId)
 
     return (
-      (data.fulltNafn && {
-        givenName: data.fulltNafn.eiginNafn,
-        middleName: data.fulltNafn.milliNafn,
-        lastName: data.fulltNafn.kenniNafn,
-      }) ??
-      null
+      data && {
+        givenName: data.givenName,
+        middleName: data.middleName,
+        lastName: data.lastName,
+      }
     )
   }
 
   async getReligion(nationalId: string): Promise<Religion | null> {
-    const data = await this.fetchData(nationalId)
+    const data = await this.nationalRegistryApi.getReligion(nationalId)
 
     return (
-      (data.trufelag && {
-        name: data.trufelag.trufelagHeiti,
-      }) ??
-      null
+      data && {
+        name: data.name,
+      }
     )
   }
 }

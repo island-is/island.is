@@ -5,7 +5,7 @@ export class Spouse {
   nationalId?: string | null
 
   @Field(() => String, { nullable: true })
-  fullName?: string | null
+  name?: string | null
 
   @Field(() => String, { nullable: true })
   maritalStatus?: string | null
