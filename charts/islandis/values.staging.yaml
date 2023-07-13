@@ -1650,11 +1650,11 @@ search-indexer-service:
         name: 'migrate-elastic'
         resources:
           limits:
-            cpu: '400m'
+            cpu: '700m'
             memory: '2048Mi'
           requests:
-            cpu: '100m'
-            memory: '512Mi'
+            cpu: '300m'
+            memory: '1536Mi'
       - args:
           - '/webapp/migrateKibana.js'
         command:
@@ -1694,11 +1694,11 @@ search-indexer-service:
     min: 1
   resources:
     limits:
-      cpu: '400m'
+      cpu: '800m'
       memory: '2048Mi'
     requests:
-      cpu: '100m'
-      memory: '512Mi'
+      cpu: '400m'
+      memory: '1536Mi'
   secrets:
     API_CMS_DELETION_TOKEN: '/k8s/search-indexer/API_CMS_DELETION_TOKEN'
     API_CMS_SYNC_TOKEN: '/k8s/search-indexer/API_CMS_SYNC_TOKEN'

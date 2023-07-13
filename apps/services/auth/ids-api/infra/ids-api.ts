@@ -97,11 +97,11 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-ids-api'> => {
     .resources({
       limits: {
         cpu: '800m',
-        memory: '512Mi',
+        memory: '768Mi',
       },
       requests: {
-        cpu: '100m',
-        memory: '256Mi',
+        cpu: '400m',
+        memory: '512Mi',
       },
     })
     .replicaCount({
