@@ -97,7 +97,7 @@ export const errorMessage = style(inputMixins.errorMessage)
 
 export const hasError = style({
   ...inputMixins.inputErrorState,
-  ...inputMixins.inputErrorStateWithBefore
+  ...inputMixins.inputErrorStateWithBefore,
 })
 
 export const label = style({
