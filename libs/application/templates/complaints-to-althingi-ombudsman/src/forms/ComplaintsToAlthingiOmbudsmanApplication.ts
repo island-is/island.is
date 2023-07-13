@@ -6,6 +6,7 @@ import {
   buildFileUploadField,
   buildForm,
   buildMultiField,
+  buildPhoneField,
   buildRadioField,
   buildSection,
   buildSubmitField,
@@ -92,7 +93,7 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
     buildSection({
       id: 'information',
       title: section.information,
-      children: [applicantInformationMultiField()],
+      children: [applicantInformationMultiField({phoneRequired: true})],
     }),
     buildSection({
       id: 'section.complainedFor',
@@ -153,6 +154,7 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
             buildTextField({
               id: 'complainedForInformation.postcode',
               title: information.aboutTheComplainer.postcode,
+              format: '###',
               backgroundColor: 'blue',
               required: true,
               width: 'half',
@@ -168,18 +170,15 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
               id: 'complainedForInformation.email',
               title: information.aboutTheComplainer.email,
               backgroundColor: 'blue',
-              required: true,
               width: 'half',
               variant: 'email',
             }),
-            buildTextField({
+            buildPhoneField({
               id: 'complainedForInformation.phone',
               title: information.aboutTheComplainer.phone,
-              format: '###-####',
-              backgroundColor: 'blue',
-              required: true,
               width: 'half',
-              variant: 'tel',
+              backgroundColor: 'blue',
+              defaultValue: '',
             }),
             buildCustomField(
               {
