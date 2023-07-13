@@ -8,6 +8,7 @@ import { capitalize, enumerate } from '@island.is/judicial-system/formatters'
 import { Defendant, isIndictmentCase } from '@island.is/judicial-system/types'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
+import RulingDateLabel from '@island.is/judicial-system-web/src/components/RulingDateLabel/RulingDateLabel'
 
 const PoliceCaseNumbersTags: React.FC<{ policeCaseNumbers: string[] }> = ({
   policeCaseNumbers,
@@ -94,7 +95,7 @@ export const ProsecutorCaseInfo: React.FC<Props & { hideCourt?: boolean }> = ({
 }
 
 export const CourtCaseInfo: React.FC<Props> = ({ workingCase }) => {
-  const { courtCaseNumber, prosecutor } = workingCase
+  const { courtCaseNumber, prosecutor, rulingDate } = workingCase
   const { formatMessage } = useIntl()
 
   return (
@@ -108,6 +109,12 @@ export const CourtCaseInfo: React.FC<Props> = ({ workingCase }) => {
           </Text>
         </Box>
       )}
+      {rulingDate && (
+        <Box>
+          <RulingDateLabel rulingDate={rulingDate} />
+        </Box>
+      )}
+
       {prosecutor?.institution?.name && (
         <Entry
           label={formatMessage(core.prosecutor)}
