@@ -55,7 +55,7 @@
     "ts": "node -r ./scripts/ts-node.js",
     "openapi-generator": "openapi-generator generate -g typescript-fetch --additional-properties=typescriptThreePlus=true",
     "schemas": "node ./scripts/schemas.js",
-    "postinstall": "node ./scripts/postinstall.js",
+    "postinstall": "[[ -n \"$CI\" ]] || node ./scripts/postinstall.js",
     "gitbook": "node ./scripts/gitbook.js",
     "check-tags": "yarn ts scripts/check-tags.ts",
     "charts": "cd ./infra && yarn charts",
