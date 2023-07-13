@@ -349,6 +349,34 @@ export const NationalRegistry = new XroadConf({
   },
 })
 
+export const NationalRegistryB2C = new XroadConf({
+  env: {
+    NATIONAL_REGISTRY_B2C_CLIENT_ID: {
+      dev: 'b464afdd-056b-406d-b650-6d41733cfeb7',
+      staging: 'ca128c23-b43c-443d-bade-ec5a146a933f',
+      prod: '2304d7ca-7ed3-4188-8b6d-e1b7e0e3df7f',
+    },
+    NATIONAL_REGISTRY_B2C_ENDPOINT: {
+      dev:
+        'https://skraidentitydev.b2clogin.com/skraidentitydev.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token',
+      staging:
+        'https://skraidentitydev.b2clogin.com/skraidentitystaging.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token',
+      prod:
+        'https://skraidentity.b2clogin.com/skraidentity.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token',
+    },
+    NATIONAL_REGISTRY_B2C_SCOPE: {
+      dev: 'https://skraidentitydev.onmicrosoft.com/midlun/.default',
+      staging: 'https://skraidentitystaging.onmicrosoft.com/midlun/.default',
+      prod: 'https://skraidentity.onmicrosoft.com/midlun/.default',
+    },
+    NATIONAL_REGISTRY_B2C_PATH: {
+      dev: 'IS-DEV/GOV/10001/SKRA-Cloud-Protected/Midlun-v1',
+      staging: 'IS-TEST/GOV/6503760649/SKRA-Cloud-Protected/Midlun-v1',
+      prod: 'IS/GOV/6503760649/SKRA-Cloud-Protected/Midlun-v1',
+    },
+  },
+})
+
 export const Passports = new XroadConf({
   env: {
     XROAD_PASSPORT_LICENSE_PATH: {
