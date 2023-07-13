@@ -4,7 +4,7 @@ import {
   ApplicationType,
   HouseholdSupplementHousing,
   NO,
-  taxLevelOptions,
+  TaxLevelOptions,
   YES,
 } from './constants'
 import { oldAgePensionFormMessage } from './messages'
@@ -74,9 +74,9 @@ export const dataSchema = z.object({
     personalAllowance: z.enum([YES, NO]),
     personalAllowanceUsage: z.string().optional(),
     taxLevel: z.enum([
-      taxLevelOptions.INCOME,
-      taxLevelOptions.FIRST_LEVEL,
-      taxLevelOptions.SECOND_LEVEL,
+      TaxLevelOptions.INCOME,
+      TaxLevelOptions.FIRST_LEVEL,
+      TaxLevelOptions.SECOND_LEVEL,
     ]),
   }),
 })

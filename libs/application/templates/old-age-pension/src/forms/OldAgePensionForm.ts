@@ -38,7 +38,7 @@ import {
   YES,
   IS,
   maritalStatuses,
-  taxLevelOptions,
+  TaxLevelOptions,
 } from '../lib/constants'
 import {
   childCustody_LivesWithApplicant,
@@ -326,7 +326,7 @@ export const OldAgePensionForm: Form = buildForm({
                   width: 'full',
                   largeButtons: true,
                   space: 'containerGutter',
-                  defaultValue: taxLevelOptions.INCOME,
+                  defaultValue: TaxLevelOptions.INCOME,
                 }),
               ],
             }),
@@ -424,6 +424,7 @@ export const OldAgePensionForm: Form = buildForm({
                 oldAgePensionFormMessage.fileUpload.attachmentDescription,
               uploadButtonLabel:
                 oldAgePensionFormMessage.fileUpload.attachmentButton,
+              uploadMultiple: true,
               condition: (answers) => {
                 const { employmentStatus } = getApplicationAnswers(answers)
 
@@ -570,6 +571,7 @@ export const OldAgePensionForm: Form = buildForm({
                 oldAgePensionFormMessage.fileUpload.attachmentDescription,
               uploadButtonLabel:
                 oldAgePensionFormMessage.fileUpload.attachmentButton,
+              uploadMultiple: true,
               condition: (answers, externalData) => {
                 return isEarlyRetirement(answers, externalData)
               },
@@ -591,6 +593,7 @@ export const OldAgePensionForm: Form = buildForm({
                 oldAgePensionFormMessage.fileUpload.attachmentDescription,
               uploadButtonLabel:
                 oldAgePensionFormMessage.fileUpload.attachmentButton,
+              uploadMultiple: true,
             }),
             buildFileUploadField({
               id: 'fileUploadEarlyPenFisher.fishermen',
@@ -609,6 +612,7 @@ export const OldAgePensionForm: Form = buildForm({
                 oldAgePensionFormMessage.fileUpload.attachmentDescription,
               uploadButtonLabel:
                 oldAgePensionFormMessage.fileUpload.attachmentButton,
+              uploadMultiple: true,
               condition: (answers) => {
                 const { applicationType } = getApplicationAnswers(answers)
 
@@ -817,6 +821,7 @@ export const OldAgePensionForm: Form = buildForm({
                 oldAgePensionFormMessage.fileUpload.attachmentDescription,
               uploadButtonLabel:
                 oldAgePensionFormMessage.fileUpload.attachmentButton,
+              uploadMultiple: true,
               condition: (answers) => {
                 const {
                   householdSupplementHousing,
@@ -852,6 +857,7 @@ export const OldAgePensionForm: Form = buildForm({
                 oldAgePensionFormMessage.fileUpload.attachmentDescription,
               uploadButtonLabel:
                 oldAgePensionFormMessage.fileUpload.attachmentButton,
+              uploadMultiple: true,
               condition: (answers) => {
                 const {
                   householdSupplementChildren,
@@ -927,6 +933,7 @@ export const OldAgePensionForm: Form = buildForm({
                 oldAgePensionFormMessage.fileUpload.attachmentDescription,
               uploadButtonLabel:
                 oldAgePensionFormMessage.fileUpload.attachmentButton,
+              uploadMultiple: true,
               condition: (answers) => {
                 const { childPension } = getApplicationAnswers(answers)
 
@@ -938,7 +945,7 @@ export const OldAgePensionForm: Form = buildForm({
               title: oldAgePensionFormMessage.fileUpload.childPensionTitle,
               description:
                 oldAgePensionFormMessage.fileUpload
-                  .childPensiontNotLivesWithApplicantDescription,
+                  .childPensionNotLivesWithApplicantDescription,
               introduction:
                 oldAgePensionFormMessage.fileUpload
                   .childPensionNotLivesWithApplicantDescription,
@@ -952,6 +959,7 @@ export const OldAgePensionForm: Form = buildForm({
                 oldAgePensionFormMessage.fileUpload.attachmentDescription,
               uploadButtonLabel:
                 oldAgePensionFormMessage.fileUpload.attachmentButton,
+              uploadMultiple: true,
               condition: (_, externalData) =>
                 childCustody_LivesWithApplicant(externalData),
             }),
@@ -984,6 +992,7 @@ export const OldAgePensionForm: Form = buildForm({
                 oldAgePensionFormMessage.fileUpload.attachmentDescription,
               uploadButtonLabel:
                 oldAgePensionFormMessage.fileUpload.attachmentButton,
+              uploadMultiple: true,
             }),
           ],
         }),

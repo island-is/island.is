@@ -592,6 +592,60 @@ export const oldAgePensionFormMessage: MessageDir = {
       defaultMessage: 'Hlutall',
       description: 'Ratio',
     },
+    pensionAttachment: {
+      id: 'oap.application:review.pension.attachment',
+      defaultMessage: 'Staðfesting að sótt hafi verið um hjá lífeyrissjóði',
+      description:
+        'confirmation that an application has been made to a pension fund',
+    },
+    earlyRetirementAttachment: {
+      id: 'oap.application:review.early.retirement.attachment',
+      defaultMessage:
+        'Yfirlit úr lífeyrisgátt sem þú hefur áunnið þér réttindi í',
+      description:
+        'Overview from the pension portal in which you have earned rights',
+    },
+    fishermenAttachment: {
+      id: 'oap.application:review.fishermen.attachment',
+      defaultMessage:
+        'Staðfesting hversu marga daga þú hefur verið lögskráður á sjó',
+      description:
+        'Confirmation of how many days you have been registered at sea',
+    },
+    leaseAgreementAttachment: {
+      id: 'oap.application:review.lease.agreement.attachment',
+      defaultMessage: 'Undirritaður leigusamningur',
+      description: 'Signed lease agreement',
+    },
+    schoolConfirmationAttachment: {
+      id: 'oap.application:review.school.confirmation.attachment',
+      defaultMessage: 'Vottorð um skólavist ungmennis',
+      description: 'Certificate of school attendance of a young person',
+    },
+    selfEmployedAttachment: {
+      id: 'oap.application:review.self.employed.attachment',
+      defaultMessage:
+        'Staðfesting á lækkun á reiknuðu endurgjaldi (fæst hjá RSK)',
+      description:
+        'Confirmation of a reduction in the calculated remuneration (available from RSK)',
+    },
+    maintenanceAttachment: {
+      id: 'oap.application:review.maintenance.attachment',
+      defaultMessage: 'Staðfesting á að þú sért með barn á framfærslu',
+      description: 'Confirmation that you have a dependent child',
+    },
+    notLivesWithApplicantAttachment: {
+      id: 'oap.application:review.not.lives.with.applicant.attachment',
+      defaultMessage:
+        'Meðlagsúrskurður eða samningur frá sýslumanni vegna barns/barna sem er ekki með lögheimili hjá þér',
+      description:
+        'Child support order or agreement from the magistrate for a child/children who do not have legal residence with you',
+    },
+    additionalDocumentsAttachment: {
+      id: 'oap.application:review.additional.documents.attachment',
+      defaultMessage: 'Viðbótargögn til Tryggingastofnunar',
+      description: 'Additional documents to Tryggingastofnunar',
+    },
   }),
 
   period: defineMessages({
