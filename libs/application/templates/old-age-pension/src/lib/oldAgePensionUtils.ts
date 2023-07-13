@@ -399,41 +399,8 @@ export function getAvailableMonths(
   } else if (endDate.getFullYear().toString() === selectedYear) {
     months = months.slice(0, endDate.getMonth() + 1)
   }
-  console.log('months ', months)
+
   return months
-  // return months.map((month) => {
-  //   switch (month) {
-  //     case 'January':
-  //       return { value: month, label: oldAgePensionFormMessage.period.january }
-  //     case 'February':
-  //       return { value: month, label: oldAgePensionFormMessage.period.february }
-  //     case 'March':
-  //       return { value: month, label: oldAgePensionFormMessage.period.march }
-  //     case 'April':
-  //       return { value: month, label: oldAgePensionFormMessage.period.april }
-  //     case 'May':
-  //       return { value: month, label: oldAgePensionFormMessage.period.may }
-  //     case 'June':
-  //       return { value: month, label: oldAgePensionFormMessage.period.june }
-  //     case 'July':
-  //       return { value: month, label: oldAgePensionFormMessage.period.july }
-  //     case 'August':
-  //       return { value: month, label: oldAgePensionFormMessage.period.august }
-  //     case 'September':
-  //       return {
-  //         value: month,
-  //         label: oldAgePensionFormMessage.period.september,
-  //       }
-  //     case 'October':
-  //       return { value: month, label: oldAgePensionFormMessage.period.october }
-  //     case 'November':
-  //       return { value: month, label: oldAgePensionFormMessage.period.november }
-  //     case 'December':
-  //       return { value: month, label: oldAgePensionFormMessage.period.desember }
-  //     default:
-  //       return { value: '0', label: '' }
-  //   }
-  // })
 }
 
 export function getAgeBetweenTwoDates(

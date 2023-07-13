@@ -74,7 +74,7 @@ export const BaseInformation = ({
                 onChange={(e) => {
                   setStateful((prev: any) => ({
                     ...prev,
-                    applicantPhonenumber: e.target.defaultValue,
+                    applicantPhonenumber: e.target.value,
                   }))
                 }}
                 error={hasError('applicantInfo.phonenumber')}
