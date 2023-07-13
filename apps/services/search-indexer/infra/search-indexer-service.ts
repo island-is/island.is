@@ -23,6 +23,11 @@ const envs = {
     staging: '40',
     prod: '40',
   },
+  SHOULD_SEARCH_INDEXER_RESOLVE_NESTED_ENTRIES: {
+    dev: 'false',
+    staging: 'false',
+    prod: 'false',
+  },
   AIR_DISCOUNT_SCHEME_FRONTEND_HOSTNAME: {
     dev: 'loftbru.dev01.devland.is',
     staging: 'loftbru.staging01.devland.is',

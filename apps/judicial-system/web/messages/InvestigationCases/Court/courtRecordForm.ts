@@ -115,6 +115,14 @@ export const icCourtRecord = {
         description:
           'Sjálfgefinn texti í "Afstaða varnaraðila, málflutningur og aðrar bókanir" textaboxi á þingbókar skrefi í gæsluvarðhalds- og farbannsmálum þegar varnaraðili er ekki kvaddur fyrir dómþing.',
       },
+      autofillNonePresent: {
+        id:
+          'judicial.system.investigation_cases:court_record.session_bookings.autofill_none_present#markdown',
+        defaultMessage:
+          'Dómari hefur fallist á að krafan hljóti meðferð fyrir dómi án þess að varnaraðili verði kvaddur/kvödd á dómþing, sbr. 1. mgr. 104. gr. laga nr. 88/2008.',
+        description:
+          'Sjálfgefinn texti í "Afstaða varnaraðila, málflutningur og aðrar bókanir" textaboxi á þingbókar skrefi í gæsluvarðhalds- og farbannsmálum þegar varnaraðili né sækjandi eru ekki kvaddir fyrir dómþing.',
+      },
       autofillRestrainingOrder: {
         id:
           'judicial.system.investigation_cases:court_record.session_bookings.autofill_restraining_order#markdown',
