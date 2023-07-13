@@ -1845,6 +1845,7 @@ search-indexer-service:
     ELASTIC_NODE: 'https://vpc-search-njkekqydiegezhr4vqpkfnw5la.eu-west-1.es.amazonaws.com'
     NODE_OPTIONS: '--max-old-space-size=2000'
     SERVERSIDE_FEATURES_ON: ''
+    SHOULD_SEARCH_INDEXER_RESOLVE_NESTED_ENTRIES: 'false'
   grantNamespaces: []
   grantNamespacesEnabled: false
   healthCheck:
@@ -1926,6 +1927,7 @@ search-indexer-service:
       NODE_OPTIONS: '--max-old-space-size=2048'
       S3_BUCKET: 'dev-es-custom-packages'
       SERVERSIDE_FEATURES_ON: ''
+      SHOULD_SEARCH_INDEXER_RESOLVE_NESTED_ENTRIES: 'false'
     secrets:
       CONTENTFUL_ACCESS_TOKEN: '/k8s/search-indexer/CONTENTFUL_ACCESS_TOKEN'
   namespace: 'search-indexer'
