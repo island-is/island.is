@@ -1,3 +1,4 @@
+import { MessageDescriptor } from 'react-intl'
 import { formatText, getValueViaPath } from '@island.is/application/core'
 import {
   ConnectedApplications,
@@ -11,8 +12,9 @@ import {
   ApplicationType,
   Employment,
   RatioType,
-  taxLevelOptions,
+  TaxLevelOptions,
   MONTHS,
+  AttachmentLabel,
 } from './constants'
 import {
   ApplicantChildCustodyInformation,
@@ -32,33 +34,50 @@ import React from 'react'
 import { useLocale } from '@island.is/localization'
 import { getCountryByCode } from '@island.is/shared/utils'
 
-interface fileType {
+interface FileType {
   key: string
   name: string
 }
 
-interface earlyRetirementPensionfundFishermen {
-  earlyRetirement?: fileType[]
-  pension?: fileType[]
-  fishermen?: fileType[]
+interface EarlyRetirementPensionfundFishermen {
+  earlyRetirement?: FileType[]
+  pension?: FileType[]
+  fishermen?: FileType[]
 }
 
-interface leaseAgreementSchoolConfirmation {
-  leaseAgreement?: fileType[]
-  schoolConfirmation?: fileType[]
+interface LeaseAgreementSchoolConfirmation {
+  leaseAgreement?: FileType[]
+  schoolConfirmation?: FileType[]
 }
 
-interface selfEmployed {
-  selfEmployedAttachment?: fileType[]
+interface SelfEmployed {
+  SelfEmployedAttachment?: FileType[]
 }
 
-interface childPensionAttachments {
-  maintenance?: fileType[]
-  notLivesWithApplicant?: fileType[]
+interface ChildPensionAttachments {
+  maintenance?: FileType[]
+  notLivesWithApplicant?: FileType[]
 }
 
-interface additionalInformation {
-  additionalDocuments?: fileType[]
+interface AdditionalInformation {
+  additionalDocuments?: FileType[]
+}
+
+enum AttachmentTypes {
+  PENSION = 'pension',
+  EARLY_RETIREMENT = 'earlyRetirement',
+  FISHERMAN = 'fishermen',
+  LEASE_AGREEMENT = 'leaseAgreement',
+  SCHOOL_CONFIRMATION = 'schoolConfirmation',
+  SELF_EMPLOYED_ATTACHMENT = 'SelfEmployedAttachment',
+  MAINTENANCE = 'maintenance',
+  NOT_LIVES_WITH_APPLICANT = 'notLivesWithApplicant',
+  ADDITIONAL_DOCUMENTS = 'additionalDocuments',
+}
+
+interface Attachments {
+  attachments: FileType[]
+  label: MessageDescriptor
 }
 
 export function getApplicationAnswers(answers: Application['answers']) {
@@ -150,7 +169,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
   const taxLevel = getValueViaPath(
     answers,
     'paymentInfo.taxLevel',
-  ) as taxLevelOptions
+  ) as TaxLevelOptions
 
   return {
     pensionFundQuestion,
@@ -380,41 +399,8 @@ export function getAvailableMonths(
   } else if (endDate.getFullYear().toString() === selectedYear) {
     months = months.slice(0, endDate.getMonth() + 1)
   }
-  console.log('months ', months)
+
   return months
-  // return months.map((month) => {
-  //   switch (month) {
-  //     case 'January':
-  //       return { value: month, label: oldAgePensionFormMessage.period.january }
-  //     case 'February':
-  //       return { value: month, label: oldAgePensionFormMessage.period.february }
-  //     case 'March':
-  //       return { value: month, label: oldAgePensionFormMessage.period.march }
-  //     case 'April':
-  //       return { value: month, label: oldAgePensionFormMessage.period.april }
-  //     case 'May':
-  //       return { value: month, label: oldAgePensionFormMessage.period.may }
-  //     case 'June':
-  //       return { value: month, label: oldAgePensionFormMessage.period.june }
-  //     case 'July':
-  //       return { value: month, label: oldAgePensionFormMessage.period.july }
-  //     case 'August':
-  //       return { value: month, label: oldAgePensionFormMessage.period.august }
-  //     case 'September':
-  //       return {
-  //         value: month,
-  //         label: oldAgePensionFormMessage.period.september,
-  //       }
-  //     case 'October':
-  //       return { value: month, label: oldAgePensionFormMessage.period.october }
-  //     case 'November':
-  //       return { value: month, label: oldAgePensionFormMessage.period.november }
-  //     case 'December':
-  //       return { value: month, label: oldAgePensionFormMessage.period.desember }
-  //     default:
-  //       return { value: '0', label: '' }
-  //   }
-  // })
 }
 
 export function getAgeBetweenTwoDates(
@@ -460,13 +446,14 @@ export function isEarlyRetirement(
 }
 
 export function getAttachments(application: Application) {
-  const getAttachmentsName = (
-    attachmentsArr: fileType[] | undefined,
-    type: string,
+  const getAttachmentDetails = (
+    attachmentsArr: FileType[] | undefined,
+    attachmentType: AttachmentTypes,
   ) => {
     if (attachmentsArr && attachmentsArr.length > 0) {
-      attachmentsArr.map((attch) => {
-        attachments.push(`${type} - ${attch?.name}`)
+      attachments.push({
+        attachments: attachmentsArr,
+        label: AttachmentLabel[attachmentType],
       })
     }
   }
@@ -481,20 +468,24 @@ export function getAttachments(application: Application) {
     childPension,
   } = getApplicationAnswers(answers)
   const earlyRetirement = isEarlyRetirement(answers, externalData)
-  const attachments: string[] = []
+  const attachments: Attachments[] = []
 
   // Early retirement, pension fund, fishermen
-  const earlyPenFisher = answers.fileUploadEarlyPenFisher as earlyRetirementPensionfundFishermen
-  getAttachmentsName(earlyPenFisher?.pension, 'lífeyrissjóðir')
+  const earlyPenFisher = answers.fileUploadEarlyPenFisher as EarlyRetirementPensionfundFishermen
+
+  getAttachmentDetails(earlyPenFisher?.pension, AttachmentTypes.PENSION)
   if (earlyRetirement) {
-    getAttachmentsName(earlyPenFisher?.earlyRetirement, 'snemmtaka')
+    getAttachmentDetails(
+      earlyPenFisher?.earlyRetirement,
+      AttachmentTypes.EARLY_RETIREMENT,
+    )
   }
   if (applicationType === ApplicationType.SAILOR_PENSION) {
-    getAttachmentsName(earlyPenFisher?.fishermen, 'sjómanna')
+    getAttachmentDetails(earlyPenFisher?.fishermen, AttachmentTypes.FISHERMAN)
   }
 
   // leaseAgreement, schoolAgreement
-  const leaseAgrSchoolConf = answers.fileUploadHouseholdSupplement as leaseAgreementSchoolConfirmation
+  const leaseAgrSchoolConf = answers.fileUploadHouseholdSupplement as LeaseAgreementSchoolConfirmation
   const isHouseholdSupplement = connectedApplications?.includes(
     ConnectedApplications.HOUSEHOLDSUPPLEMENT,
   )
@@ -502,42 +493,57 @@ export function getAttachments(application: Application) {
     householdSupplementHousing === HouseholdSupplementHousing.RENTER &&
     isHouseholdSupplement
   ) {
-    getAttachmentsName(leaseAgrSchoolConf?.leaseAgreement, 'leigusamningur')
+    getAttachmentDetails(
+      leaseAgrSchoolConf?.leaseAgreement,
+      AttachmentTypes.LEASE_AGREEMENT,
+    )
   }
   if (householdSupplementChildren === YES && isHouseholdSupplement) {
-    getAttachmentsName(leaseAgrSchoolConf?.schoolConfirmation, 'skólavist')
+    getAttachmentDetails(
+      leaseAgrSchoolConf?.schoolConfirmation,
+      AttachmentTypes.SCHOOL_CONFIRMATION,
+    )
   }
 
   // self-employed
   if (employmentStatus === Employment.SELFEMPLOYED) {
-    const selfEmpoyed = answers.employment as selfEmployed
-    getAttachmentsName(
-      selfEmpoyed.selfEmployedAttachment,
-      'sjálfstætt starfandi',
+    const selfEmpoyed = answers.employment as SelfEmployed
+    getAttachmentDetails(
+      selfEmpoyed?.SelfEmployedAttachment,
+      AttachmentTypes.SELF_EMPLOYED_ATTACHMENT,
     )
   }
 
   // child pension attachments
-  const childPensionAttachments = answers.fileUploadChildPension as childPensionAttachments
+  const childPensionAttachments = answers.fileUploadChildPension as ChildPensionAttachments
   const isChildPension = connectedApplications?.includes(
     ConnectedApplications.CHILDPENSION,
   )
 
   if (childPension.length > 0 && isChildPension) {
-    getAttachmentsName(childPensionAttachments?.maintenance, 'framfærsla')
+    getAttachmentDetails(
+      childPensionAttachments?.maintenance,
+      AttachmentTypes.MAINTENANCE,
+    )
   }
 
   if (childCustody_LivesWithApplicant(externalData) && isChildPension) {
-    getAttachmentsName(childPensionAttachments?.notLivesWithApplicant, 'meðlag')
+    getAttachmentDetails(
+      childPensionAttachments?.notLivesWithApplicant,
+      AttachmentTypes.NOT_LIVES_WITH_APPLICANT,
+    )
   }
 
-  const additionalInfo = answers.fileUploadAdditionalFiles as additionalInformation
+  const additionalInfo = answers.fileUploadAdditionalFiles as AdditionalInformation
 
   if (
     additionalInfo.additionalDocuments &&
     additionalInfo.additionalDocuments?.length > 0
   ) {
-    getAttachmentsName(additionalInfo.additionalDocuments, 'viðbótargögn')
+    getAttachmentDetails(
+      additionalInfo?.additionalDocuments,
+      AttachmentTypes.ADDITIONAL_DOCUMENTS,
+    )
   }
 
   return attachments
@@ -582,15 +588,15 @@ export function getYesNOOptions() {
 export function getTaxOptions() {
   const options: Option[] = [
     {
-      value: taxLevelOptions.INCOME,
+      value: TaxLevelOptions.INCOME,
       label: oldAgePensionFormMessage.payment.taxIncomeLevel,
     },
     {
-      value: taxLevelOptions.FIRST_LEVEL,
+      value: TaxLevelOptions.FIRST_LEVEL,
       label: oldAgePensionFormMessage.payment.taxFirstLevel,
     },
     {
-      value: taxLevelOptions.SECOND_LEVEL,
+      value: TaxLevelOptions.SECOND_LEVEL,
       label: oldAgePensionFormMessage.payment.taxSecondLevel,
     },
   ]

@@ -4,6 +4,7 @@ import { useLocale } from '@island.is/localization'
 import { oldAgePensionFormMessage } from '../../../lib/messages'
 import { ReviewGroupProps } from './props'
 import { useStatefulAnswers } from '../../../hooks/useStatefulAnswers'
+import { MONTHS } from '../../../lib/constants'
 
 export const Period = ({
   application,
@@ -12,7 +13,7 @@ export const Period = ({
   hasError,
 }: ReviewGroupProps) => {
   const [{ selectedYear, selectedMonth }] = useStatefulAnswers(application)
-
+  const month = MONTHS.find((x) => x.value === selectedMonth)
   const { formatMessage } = useLocale()
 
   return (
@@ -24,7 +25,7 @@ export const Period = ({
         <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
           <DataValue
             label={formatMessage(oldAgePensionFormMessage.review.period)}
-            value={`${selectedMonth} ${selectedYear}`}
+            value={`${formatMessage(month?.label!)} ${selectedYear}`}
             error={hasError('period')}
           />
         </GridColumn>

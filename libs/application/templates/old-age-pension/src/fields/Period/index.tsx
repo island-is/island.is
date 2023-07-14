@@ -50,7 +50,6 @@ export const Period: FC<FieldBaseProps> = ({ application }) => {
     const value = option.value as string
     setSeletedYear(value)
 
-    setIsShowMonth(true)
     const months = getAvailableMonths(application, value)
     setOptionsMonths(months)
   }
@@ -81,7 +80,6 @@ export const Period: FC<FieldBaseProps> = ({ application }) => {
             }}
           />
         </Box>
-        {isShowMonth && (
           <Box width="half" marginLeft={3} className={styles.monthBox}>
             <SelectFormField
               application={application}
@@ -94,13 +92,12 @@ export const Period: FC<FieldBaseProps> = ({ application }) => {
                   oldAgePensionFormMessage.period.periodInputMonthDefaultText,
                 id: 'period.month',
                 children: undefined,
-                options: optionsMonths,
+                options: selectedYear ? optionsMonths : [],
                 backgroundColor: 'blue',
                 onSelect: onSelectMonth,
               }}
             />
           </Box>
-        )}
       </Box>
     </Box>
   )

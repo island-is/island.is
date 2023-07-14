@@ -1,5 +1,6 @@
 import { DefaultEvents } from '@island.is/application/types'
 import { oldAgePensionFormMessage } from './messages'
+import { MessageDescriptor } from 'react-intl'
 
 export const YES = 'yes'
 export const NO = 'no'
@@ -28,21 +29,6 @@ export const MONTHS = [
   { value: 'November', label: oldAgePensionFormMessage.period.november },
   { value: 'December', label: oldAgePensionFormMessage.period.desember },
 ]
-
-// export const MONTHS = [
-//   'January',
-//   'February',
-//   'March',
-//   'April',
-//   'May',
-//   'June',
-//   'July',
-//   'August',
-//   'September',
-//   'October',
-//   'November',
-//   'December',
-// ]
 
 export const FILE_SIZE_LIMIT = 5000000 // 5MB
 
@@ -95,7 +81,7 @@ export enum AnswerValidationConstants {
   PAYMENTINFO = 'paymentInfo',
 }
 
-export enum taxLevelOptions {
+export enum TaxLevelOptions {
   INCOME = 'income',
   FIRST_LEVEL = 'firstLevel',
   SECOND_LEVEL = 'secondLevel',
@@ -105,6 +91,24 @@ export enum ApplicationType {
   OLD_AGE_PENSION = 'oldAgePension',
   HALF_OLD_AGE_PENSION = 'halfOldAgePension',
   SAILOR_PENSION = 'sailorPension',
+}
+
+export const AttachmentLabel: {
+  [key: string]: MessageDescriptor
+} = {
+  pension: oldAgePensionFormMessage.review.pensionAttachment,
+  earlyRetirement: oldAgePensionFormMessage.review.earlyRetirementAttachment,
+  fishermen: oldAgePensionFormMessage.review.fishermenAttachment,
+  leaseAgreement: oldAgePensionFormMessage.review.leaseAgreementAttachment,
+  schoolConfirmation:
+    oldAgePensionFormMessage.review.schoolConfirmationAttachment,
+  selfEmployedAttachment:
+    oldAgePensionFormMessage.review.selfEmployedAttachment,
+  maintenance: oldAgePensionFormMessage.review.maintenanceAttachment,
+  notLivesWithApplicant:
+    oldAgePensionFormMessage.review.notLivesWithApplicantAttachment,
+  additionalDocuments:
+    oldAgePensionFormMessage.review.additionalDocumentsAttachment,
 }
 
 const married = 'Gift/ur'
