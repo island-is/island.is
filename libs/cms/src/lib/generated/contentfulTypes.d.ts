@@ -1440,6 +1440,9 @@ export interface ILatestNewsSliceFields {
   /** News tag */
   newsTag?: IGenericTag | undefined
 
+  /** Organization */
+  organization?: IOrganization | undefined
+
   /** Read more text */
   readMoreText?: string | undefined
 
@@ -1929,6 +1932,9 @@ export interface INamespace extends Entry<INamespaceFields> {
 }
 
 export interface INewsFields {
+  /** Organization */
+  organization: IOrganization
+
   /** Content status */
   contentStatus?: 'Undefined' | 'Needs work' | 'In review' | 'Done' | undefined
 
@@ -2984,6 +2990,7 @@ export interface ISliceConnectedComponentFields {
     | 'Tækifærisleyfi/TemporaryEventLicences'
     | 'OrganizationSearchBox'
     | 'Verðbréfamiðlarar/Brokers'
+    | 'PublicVehicleSearch'
     | undefined
 
   /** Localized JSON */
@@ -3906,13 +3913,31 @@ export interface IVacancyFields {
   applicationDeadlineTo: string
 
   /** Category */
-  fieldOfWork: string
+  fieldOfWork:
+    | 'Stjórnunarstörf'
+    | 'Sérfræðistörf'
+    | 'Kennsla og rannsóknir'
+    | 'Heilbrigðisþjónusta'
+    | 'Löggæslustörf'
+    | 'Tæknistörf'
+    | 'Önnur störf'
+    | 'Skrifstofustörf'
+    | 'Sumarstörf'
 
   /** Organization */
   organization: IOrganization
 
   /** Locations */
-  locations: string[]
+  locations: (
+    | 'Án staðsetningar'
+    | 'Höfuðborgarsvæðið'
+    | 'Norðurland'
+    | 'Vesturland'
+    | 'Austurland'
+    | 'Suðurland'
+    | 'Vestfirðir'
+    | 'Suðurnes'
+  )[]
 
   /** Job Percentage */
   jobPercentage?: string | undefined

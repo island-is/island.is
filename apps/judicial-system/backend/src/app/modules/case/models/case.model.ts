@@ -747,7 +747,7 @@ export class Case extends Model {
   prosecutorPostponedAppealDate?: Date
 
   /**********
-   * The date and time of the judge's ruling signature
+   * The date and time of the judge's ruling (when the csae is completed)
    **********/
   @Column({
     type: DataType.DATE,
@@ -755,6 +755,16 @@ export class Case extends Model {
   })
   @ApiPropertyOptional()
   rulingDate?: Date
+
+  /**********
+   * The date and time of the judge's ruling signature
+   **********/
+  @Column({
+    type: DataType.DATE,
+    allowNull: true,
+  })
+  @ApiPropertyOptional()
+  rulingSignatureDate?: Date
 
   /**********
    * The date and time of the judge's inital ruling signature - used for extended cases

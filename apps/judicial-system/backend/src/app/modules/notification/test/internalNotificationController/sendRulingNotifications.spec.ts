@@ -183,7 +183,7 @@ describe('InternalNotificationController - Send ruling notifications', () => {
         state: CaseState.ACCEPTED,
         decision,
         courtCaseNumber: '007-2022-07',
-        rulingDate: new Date('2021-07-01'),
+        rulingSignatureDate: new Date('2021-07-01'),
         defendants: [{ noNationalId: true }] as Defendant[],
         court: { name: 'Héraðsdómur Reykjavíkur' },
       } as Case
@@ -226,7 +226,7 @@ describe('InternalNotificationController - Send ruling notifications', () => {
       state: CaseState.ACCEPTED,
       decision,
       courtCaseNumber: '007-2022-07',
-      rulingDate: new Date('2021-07-01'),
+      rulingSignatureDate: new Date('2021-07-01'),
       defendants: [{ noNationalId: true }] as Defendant[],
     } as Case
 
@@ -251,7 +251,7 @@ describe('InternalNotificationController - Send ruling notifications', () => {
       state: CaseState.ACCEPTED,
       decision: CaseDecision.ACCEPTING,
       courtCaseNumber: '007-2022-07',
-      rulingDate: new Date('2021-07-01'),
+      rulingSignatureDate: new Date('2021-07-01'),
       defendants: [{ nationalId: '0000000000' }],
     } as Case
 
@@ -276,7 +276,7 @@ describe('InternalNotificationController - Send ruling notifications', () => {
       state: CaseState.ACCEPTED,
       decision: CaseDecision.ACCEPTING,
       courtCaseNumber: '007-2022-07',
-      rulingDate: new Date('2021-07-01'),
+      rulingSignatureDate: new Date('2021-07-01'),
       defendants: [{ nationalId: '0000000000' }],
       court: { name: 'Héraðsdómur Reykjavíkur' },
     } as Case
@@ -317,7 +317,7 @@ describe('InternalNotificationController - Send ruling notifications', () => {
       state: CaseState.ACCEPTED,
       decision: CaseDecision.ACCEPTING,
       courtCaseNumber: '007-2022-07',
-      rulingDate: new Date('2021-07-01'),
+      rulingSignatureDate: new Date('2021-07-01'),
       defendants: [{ noNationalId: true }] as Defendant[],
       court: { name: 'Héraðsdómur Reykjavíkur' },
     } as Case

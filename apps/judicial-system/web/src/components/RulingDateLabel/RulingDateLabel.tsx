@@ -8,18 +8,18 @@ import * as constants from '@island.is/judicial-system/consts'
 import { rulingDateLabel as strings } from './RulingDateLabel.strings'
 
 interface Props {
-  courtEndTime: string
+  rulingDate: string
 }
 
 const RulingDateLabel: React.FC<Props> = (props) => {
-  const { courtEndTime } = props
+  const { rulingDate } = props
   const { formatMessage } = useIntl()
 
   return (
     <Text as="h5" variant="h5">
       {formatMessage(strings.text, {
-        courtEndTime: `${formatDate(courtEndTime, 'PPP')} kl. ${formatDate(
-          courtEndTime,
+        courtEndTime: `${formatDate(rulingDate, 'PPP')} kl. ${formatDate(
+          rulingDate,
           constants.TIME_FORMAT,
         )}`,
       })}

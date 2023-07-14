@@ -23,6 +23,7 @@ import {
   DrivingAssessment,
   DrivingLicenseApi,
   Teacher,
+  TeacherV4,
 } from '@island.is/clients/driving-license'
 import {
   BLACKLISTED_JURISTICTION,
@@ -139,6 +140,12 @@ export class DrivingLicenseService {
 
   async getTeachers(): Promise<Teacher[]> {
     const teachers = await this.drivingLicenseApi.getTeachers()
+
+    return teachers.sort(sortTeachers)
+  }
+
+  async getTeachersV4(): Promise<TeacherV4[]> {
+    const teachers = await this.drivingLicenseApi.getTeachersV4()
 
     return teachers.sort(sortTeachers)
   }
