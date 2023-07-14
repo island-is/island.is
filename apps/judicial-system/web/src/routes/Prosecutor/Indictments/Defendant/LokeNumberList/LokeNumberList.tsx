@@ -164,7 +164,10 @@ export const LokeNumberList: React.FC<Props> = (props) => {
         marginTop={3}
         marginBottom={5}
       >
-        <Button onClick={handleCreatePoliceCases}>
+        <Button
+          onClick={handleCreatePoliceCases}
+          disabled={selectedPoliceCases.length === 0}
+        >
           {formatMessage(strings.selectNumbersButton)}
         </Button>
       </Box>
