@@ -258,6 +258,7 @@ export const SignedVerdictOverview: React.FC<
   const [getCourtRecordSignatureConfirmation] =
     useCourtRecordSignatureConfirmationLazyQuery({
       fetchPolicy: 'no-cache',
+      errorPolicy: 'all',
       onCompleted: (courtRecordSignatureConfirmationData) => {
         if (
           courtRecordSignatureConfirmationData?.courtRecordSignatureConfirmation
@@ -520,9 +521,9 @@ export const SignedVerdictOverview: React.FC<
             <Box display="flex" justifyContent="spaceBetween" marginBottom={3}>
               <Box>
                 <OverviewHeader />
-                {workingCase.courtEndTime && (
+                {workingCase.rulingDate && (
                   <Box>
-                    <RulingDateLabel courtEndTime={workingCase.courtEndTime} />
+                    <RulingDateLabel rulingDate={workingCase.rulingDate} />
                   </Box>
                 )}
               </Box>

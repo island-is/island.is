@@ -52,13 +52,7 @@ export const Cases: React.FC<React.PropsWithChildren<unknown>> = () => {
         return [[], []]
       }
 
-      return partition(cases, (c) => {
-        if (isIndictmentCase(c.type)) {
-          return !completedCaseStates.includes(c.state)
-        } else {
-          return !(completedCaseStates.includes(c.state) && c.rulingDate)
-        }
-      })
+      return partition(cases, (c) => !completedCaseStates.includes(c.state))
     }, [cases])
 
   const {

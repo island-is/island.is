@@ -343,16 +343,16 @@ export const signedVerdictOverview = {
           'Kærufrestur {isAppealDeadlineExpired, select, true {rann} false {rennur}} út {appealDeadline}',
       },
       defendantAppealed: {
-        id: 'judicial.system.core:signed_verdict_overview.appeal.defendant_appealed',
+        id: 'judicial.system.core:signed_verdict_overview.appeal.defendant_appealed_v2',
         defaultMessage:
-          'Varnaraðili hefur kært úrskurðinn í þinghaldi sem lauk {courtEndTime}',
+          'Varnaraðili hefur kært úrskurðinn í þinghaldi sem lauk {rulingDate}',
         description:
           'Notaður sem upplýsingatexti sem útskýrir að varnaraðili kærði úrskurðinn í þinghaldi á yfirlitsskjá afgreiddra mála.',
       },
       prosecutorAppealed: {
-        id: 'judicial.system.core:signed_verdict_overview.appeal.prosecutor_appealed',
+        id: 'judicial.system.core:signed_verdict_overview.appeal.prosecutor_appealed_v2',
         defaultMessage:
-          'Sækjandi hefur kært úrskurðinn í þinghaldi sem lauk {courtEndTime}',
+          'Sækjandi hefur kært úrskurðinn í þinghaldi sem lauk {rulingDate}',
         description:
           'Notaður sem upplýsingatexti sem útskýrir að sækjandi kærði úrskurðinn í þinghaldi á yfirlitsskjá afgreiddra mála.',
       },

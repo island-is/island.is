@@ -6,6 +6,13 @@ export const defendant = defineMessages({
     defaultMessage: 'Ákærði',
     description: 'Notaður sem titill á ákærða skrefi í ákærum.',
   },
+  policeCaseNumbersDescription: {
+    id: 'judicial.system.core:indictments_defendant.police_case_numbers_description',
+    defaultMessage:
+      'Ákæran var stofnuð í LÖKE. Veldu öll viðeigandi málsnúmer.',
+    description:
+      'Notaður sem titill fyrir "málsnúmer lögreglu" hlutann á ákærða skrefi í ákærum.',
+  },
   policeCaseNumbersHeading: {
     id: 'judicial.system.core:indictments_defendant.police_case_numbers_heading',
     defaultMessage: 'Málsnúmer lögreglu',

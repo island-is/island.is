@@ -30,6 +30,7 @@ import {
   TableHeaderText,
   DurationDate,
   getDurationDate,
+  CreatedDate,
 } from '@island.is/judicial-system-web/src/components/Table'
 
 import MobilePastCase from './MobilePastCase'
@@ -47,11 +48,9 @@ const PastCasesTable: React.FC<React.PropsWithChildren<Props>> = (props) => {
   const { formatMessage } = useIntl()
   const { user } = useContext(UserContext)
 
-  const { sortedData, requestSort, getClassNamesFor } = useSortCases(
-    'createdAt',
-    'descending',
-    cases,
-  )
+  const { sortedData, requestSort, getClassNamesFor, isActiveColumn } =
+    useSortCases('createdAt', 'descending', cases)
+
   const pastCasesData = useMemo(
     () =>
       cases.sort((a: CaseListEntry, b: CaseListEntry) =>
@@ -77,7 +76,7 @@ const PastCasesTable: React.FC<React.PropsWithChildren<Props>> = (props) => {
                 theCase.state,
                 theCase.validToDate,
                 theCase.initialRulingDate,
-                theCase.courtEndTime,
+                theCase.rulingDate,
               )}
             />
           </MobilePastCase>
@@ -97,9 +96,19 @@ const PastCasesTable: React.FC<React.PropsWithChildren<Props>> = (props) => {
               onClick={() => requestSort('defendant')}
               sortAsc={getClassNamesFor('defendant') === 'ascending'}
               sortDes={getClassNamesFor('defendant') === 'descending'}
+              isActive={isActiveColumn('defendant')}
             />
           </th>
           <TableHeaderText title={formatMessage(tables.type)} />
+          <th className={cn(styles.th, styles.largeColumn)}>
+            <SortButton
+              title={capitalize(formatMessage(tables.created, { suffix: 'i' }))}
+              onClick={() => requestSort('createdAt')}
+              sortAsc={getClassNamesFor('createdAt') === 'ascending'}
+              sortDes={getClassNamesFor('createdAt') === 'descending'}
+              isActive={isActiveColumn('createdAt')}
+            />
+          </th>
           <TableHeaderText title={formatMessage(tables.state)} />
           <TableHeaderText title={formatMessage(tables.duration)} />
         </>
@@ -130,6 +139,9 @@ const PastCasesTable: React.FC<React.PropsWithChildren<Props>> = (props) => {
               />
             </td>
             <td>
+              <CreatedDate created={column.created} />
+            </td>
+            <td>
               <Box marginRight={1} marginBottom={1}>
                 <TagCaseState
                   caseState={column.state}
@@ -153,7 +165,7 @@ const PastCasesTable: React.FC<React.PropsWithChildren<Props>> = (props) => {
                   column.state,
                   column.validToDate,
                   column.initialRulingDate,
-                  column.courtEndTime,
+                  column.rulingDate,
                 )}
               </Text>
             </td>

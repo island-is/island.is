@@ -168,8 +168,9 @@ export function getIncidentDescriptionReason(
 ) {
   let reason = offenses.reduce((acc, offense, index) => {
     if (
-      offenses.length > 1 &&
-      (index === offenses.length - 1 ||
+      (offenses.length > 1 && index === offenses.length - 1) ||
+      (offenses.length > 2 &&
+        index === offenses.length - 2 &&
         offense === IndictmentCountOffense.ILLEGAL_DRUGS_DRIVING)
     ) {
       acc += ' og '

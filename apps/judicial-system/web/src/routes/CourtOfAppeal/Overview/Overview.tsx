@@ -44,6 +44,7 @@ const CourtOfAppealOverview: React.FC<
         workingCase={workingCase}
         isLoading={isLoadingWorkingCase}
         notFound={caseNotFound}
+        onNavigationTo={handleNavigationTo}
       >
         <PageHeader title={titleForCase(formatMessage, workingCase)} />
         <FormContentContainer>

@@ -125,7 +125,7 @@ describe('CaseController - Get ruling signature confirmation', () => {
 
     it('should set the ruling date', () => {
       expect(mockCaseModel.update).toHaveBeenCalledWith(
-        { rulingDate: date },
+        { rulingSignatureDate: date },
         { where: { id: caseId }, transaction },
       )
     })
@@ -166,7 +166,7 @@ describe('CaseController - Get ruling signature confirmation', () => {
 
     it('should set the ruling date', () => {
       expect(mockCaseModel.update).toHaveBeenCalledWith(
-        { rulingDate: date },
+        { rulingSignatureDate: date },
         { where: { id: caseId }, transaction },
       )
     })

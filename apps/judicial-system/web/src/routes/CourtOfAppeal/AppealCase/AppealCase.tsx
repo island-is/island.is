@@ -93,7 +93,12 @@ const AppealCase = () => {
     router.push(`${destination}/${workingCase.id}`)
 
   return (
-    <PageLayout workingCase={workingCase} isLoading={false} notFound={false}>
+    <PageLayout
+      workingCase={workingCase}
+      isLoading={false}
+      notFound={false}
+      onNavigationTo={handleNavigationTo}
+    >
       <PageHeader title={formatMessage(strings.title)} />
       <FormContentContainer>
         <PageTitle>{formatMessage(strings.title)}</PageTitle>

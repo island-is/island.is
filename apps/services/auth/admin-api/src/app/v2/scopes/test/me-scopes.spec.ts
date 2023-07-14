@@ -316,6 +316,17 @@ const createTestCases: Record<string, CreateTestCase> = {
       },
     },
   },
+  'should return a bad request because of illegal fields': {
+    user: superUser,
+    tenantId: TENANT_ID,
+    input: { ...createInput, enabled: false } as typeof createInput,
+    expected: {
+      status: 400,
+      body: {
+        detail: ['property enabled should not exist'],
+      },
+    },
+  },
 }
 
 interface PatchTestCase {
@@ -390,16 +401,43 @@ const patchExpectedOutput = {
 }
 
 const patchTestCases: Record<string, PatchTestCase> = {
-  'should update scope and have access as current user': {
-    user: currentUser,
-    tenantId: TENANT_ID,
-    scopeName: mockedPatchApiScope.name,
-    input: inputPatch,
-    expected: {
-      status: 200,
-      body: patchExpectedOutput,
+  'should not update scope since user is not a super user and input contains super user fields':
+    {
+      user: currentUser,
+      tenantId: TENANT_ID,
+      scopeName: mockedPatchApiScope.name,
+      input: inputPatch,
+      expected: {
+        status: 403,
+        body: {
+          detail: 'User does not have access to update admin controlled fields',
+          status: 403,
+          title: 'Forbidden',
+          type: 'https://httpstatuses.org/403',
+        },
+      },
     },
-  },
+  'should update scope even though user is not a super user since there are no super admin fields':
+    {
+      user: currentUser,
+      tenantId: TENANT_ID,
+      scopeName: mockedPatchApiScope.name,
+      input: {
+        description: inputPatch.description,
+        displayName: inputPatch.displayName,
+      },
+      expected: {
+        status: 200,
+        body: {
+          ...patchExpectedOutput,
+          grantToAuthenticatedUser: true,
+          grantToLegalGuardians: false,
+          grantToProcuringHolders: false,
+          allowExplicitDelegationGrant: false,
+          isAccessControlled: false,
+        },
+      },
+    },
   'should update scope and have access as super user': {
     user: superUser,
     tenantId: TENANT_ID,
@@ -419,6 +457,24 @@ const patchTestCases: Record<string, PatchTestCase> = {
       status: 400,
       body: {
         detail: 'No fields provided to update.',
+        status: 400,
+        title: 'Bad Request',
+        type: 'https://httpstatuses.org/400',
+      },
+    },
+  },
+  'should return a bad request for unexpected input': {
+    user: superUser,
+    tenantId: TENANT_ID,
+    scopeName: mockedPatchApiScope.name,
+    input: {
+      displayName: inputPatch.displayName,
+      enabled: false,
+    } as unknown as typeof inputPatch,
+    expected: {
+      status: 400,
+      body: {
+        detail: ['property enabled should not exist'],
         status: 400,
         title: 'Bad Request',
         type: 'https://httpstatuses.org/400',

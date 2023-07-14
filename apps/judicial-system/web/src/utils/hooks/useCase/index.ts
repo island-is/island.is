@@ -190,7 +190,17 @@ const openCase = (caseToOpen: Case, user: User) => {
     if (isIndictmentCase(caseToOpen.type)) {
       routeTo = constants.CLOSED_INDICTMENT_OVERVIEW_ROUTE
     } else if (user?.institution?.type === InstitutionType.HIGH_COURT) {
-      routeTo = constants.COURT_OF_APPEAL_OVERVIEW_ROUTE
+      if (
+        findFirstInvalidStep(constants.courtOfAppealRoutes, caseToOpen) ===
+        constants.courtOfAppealRoutes[1]
+      ) {
+        routeTo = constants.COURT_OF_APPEAL_OVERVIEW_ROUTE
+      } else {
+        routeTo = findFirstInvalidStep(
+          constants.courtOfAppealRoutes,
+          caseToOpen,
+        )
+      }
     } else {
       routeTo = constants.SIGNED_VERDICT_OVERVIEW_ROUTE
     }
@@ -276,6 +286,7 @@ const useCase = () => {
 
   const [getCaseToOpen] = useCaseLazyQuery({
     fetchPolicy: 'no-cache',
+    errorPolicy: 'all',
     onCompleted: (caseData) => {
       if (user && caseData?.case) {
         openCase(caseData.case as Case, user)

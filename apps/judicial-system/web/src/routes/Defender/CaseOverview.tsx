@@ -101,11 +101,11 @@ export const CaseOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
                   <Box>
                     <Text variant="h5">
                       {formatMessage(strings.rulingDate, {
-                        courtEndTime: `${formatDate(
-                          workingCase.courtEndTime,
+                        rulingDate: `${formatDate(
+                          workingCase.rulingDate,
                           'PPP',
                         )} kl. ${formatDate(
-                          workingCase.courtEndTime,
+                          workingCase.rulingDate,
                           constants.TIME_FORMAT,
                         )}`,
                       })}
@@ -293,10 +293,10 @@ export const CaseOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
                       title={formatMessage(core.pdfButtonRuling)}
                       pdfType={'limitedAccess/ruling'}
                     >
-                      {workingCase.rulingDate ? (
+                      {workingCase.rulingSignatureDate ? (
                         <SignedDocument
                           signatory={workingCase.judge?.name}
-                          signingDate={workingCase.rulingDate}
+                          signingDate={workingCase.rulingSignatureDate}
                         />
                       ) : (
                         <Text>{formatMessage(strings.unsignedRuling)}</Text>

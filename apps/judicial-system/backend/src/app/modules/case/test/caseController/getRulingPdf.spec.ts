@@ -47,7 +47,7 @@ describe('CaseController - Get ruling pdf', () => {
 
   describe('AWS S3 lookup', () => {
     const caseId = uuid()
-    const theCase = { id: caseId, rulingDate: nowFactory() } as Case
+    const theCase = { id: caseId, rulingSignatureDate: nowFactory() } as Case
     const res = {} as Response
 
     beforeEach(async () => {
@@ -63,7 +63,7 @@ describe('CaseController - Get ruling pdf', () => {
 
   describe('AWS S3 pdf returned', () => {
     const caseId = uuid()
-    const theCase = { id: caseId, rulingDate: nowFactory() } as Case
+    const theCase = { id: caseId, rulingSignatureDate: nowFactory() } as Case
     const res = { end: jest.fn() } as unknown as Response
     const pdf = {}
 
@@ -81,7 +81,7 @@ describe('CaseController - Get ruling pdf', () => {
 
   describe('AWS S3 lookup fails', () => {
     const caseId = uuid()
-    const theCase = { id: caseId, rulingDate: nowFactory() } as Case
+    const theCase = { id: caseId, rulingSignatureDate: nowFactory() } as Case
     const res = {} as Response
     const error = new Error('Some ignored error')
 
@@ -102,7 +102,7 @@ describe('CaseController - Get ruling pdf', () => {
 
   describe('pdf generated', () => {
     const caseId = uuid()
-    const theCase = { id: caseId, rulingDate: nowFactory() } as Case
+    const theCase = { id: caseId, rulingSignatureDate: nowFactory() } as Case
     const res = {} as Response
 
     beforeEach(async () => {
@@ -122,7 +122,7 @@ describe('CaseController - Get ruling pdf', () => {
 
   describe('pdf generated', () => {
     const caseId = uuid()
-    const theCase = { id: caseId, rulingDate: nowFactory() } as Case
+    const theCase = { id: caseId, rulingSignatureDate: nowFactory() } as Case
     const res = {} as Response
 
     beforeEach(async () => {
@@ -159,7 +159,7 @@ describe('CaseController - Get ruling pdf', () => {
 
   describe('generated pdf returned', () => {
     const caseId = uuid()
-    const theCase = { id: caseId, rulingDate: nowFactory() } as Case
+    const theCase = { id: caseId, rulingSignatureDate: nowFactory() } as Case
     const res = { end: jest.fn() } as unknown as Response
     const pdf = {}
 
@@ -179,7 +179,7 @@ describe('CaseController - Get ruling pdf', () => {
 
   describe('pdf generation fails', () => {
     const caseId = uuid()
-    const theCase = { id: caseId, rulingDate: nowFactory() } as Case
+    const theCase = { id: caseId, rulingSignatureDate: nowFactory() } as Case
     let then: Then
     const res = {} as Response
 

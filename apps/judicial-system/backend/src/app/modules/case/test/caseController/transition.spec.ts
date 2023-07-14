@@ -61,7 +61,7 @@ describe('CaseController - Transition', () => {
     )
 
     const mockToday = nowFactory as jest.Mock
-    mockToday.mockReturnValueOnce(date)
+    mockToday.mockReturnValue(date)
     const mockUpdate = mockCaseModel.update as jest.Mock
     mockUpdate.mockResolvedValue([1])
 
@@ -122,17 +122,20 @@ describe('CaseController - Transition', () => {
             state: CaseFileState.STORED_IN_COURT,
           },
         ]
+        const courtEndTime = randomDate()
         const theCase = {
           id: caseId,
           type,
           state: oldState,
           caseFiles,
+          courtEndTime,
         } as Case
         const updatedCase = {
           id: caseId,
           type,
           state: newState,
           caseFiles,
+          courtEndTime,
         } as Case
         let then: Then
 
@@ -149,6 +152,19 @@ describe('CaseController - Transition', () => {
               state: newState,
               parentCaseId:
                 transition === CaseTransition.DELETE ? null : undefined,
+              rulingDate: [
+                CaseTransition.ACCEPT,
+                CaseTransition.REJECT,
+                CaseTransition.DISMISS,
+              ].includes(transition)
+                ? isIndictmentCase(type)
+                  ? date
+                  : courtEndTime
+                : transition === CaseTransition.REOPEN
+                ? null
+                : undefined,
+              rulingSignatureDate:
+                transition === CaseTransition.REOPEN ? null : undefined,
               courtRecordSignatoryId:
                 transition === CaseTransition.REOPEN ? null : undefined,
               courtRecordSignatureDate:

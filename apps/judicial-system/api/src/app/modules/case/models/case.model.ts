@@ -245,6 +245,9 @@ export class Case implements TCase {
   readonly rulingDate?: string
 
   @Field({ nullable: true })
+  readonly rulingSignatureDate?: string
+
+  @Field({ nullable: true })
   readonly initialRulingDate?: string
 
   @Field(() => User, { nullable: true })

@@ -138,10 +138,10 @@ const CaseDocuments: React.FC<React.PropsWithChildren<Props>> = ({
             pdfType={'ruling'}
           >
             <Box display="flex" flexDirection="row">
-              {workingCase.rulingDate ? (
+              {workingCase.rulingSignatureDate ? (
                 <SignedDocument
                   signatory={workingCase.judge?.name}
-                  signingDate={workingCase.rulingDate}
+                  signingDate={workingCase.rulingSignatureDate}
                 />
               ) : user && user.id === workingCase.judge?.id ? (
                 <Button

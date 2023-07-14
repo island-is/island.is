@@ -327,6 +327,9 @@ export class ContentfulService {
       process.env.CONTENTFUL_ENTRY_FETCH_CHUNK_SIZE ?? 40,
     )
 
+    const shouldResolveNestedEntries =
+      process.env.SHOULD_SEARCH_INDEXER_RESOLVE_NESTED_ENTRIES === 'true'
+
     logger.info(`Sync chunk size is: ${chunkSize}`)
 
     const populatedSyncEntriesResult = await this.getPopulatedSyncEntries(
@@ -342,7 +345,7 @@ export class ContentfulService {
     const isDeltaUpdate = syncType !== 'full'
 
     // In case of delta updates, we need to resolve embedded entries to their root model
-    if (isDeltaUpdate) {
+    if (isDeltaUpdate && shouldResolveNestedEntries) {
       logger.info('Finding root entries from nestedEntries')
 
       const visitedEntryIds = new Set<string>()

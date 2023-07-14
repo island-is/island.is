@@ -74,7 +74,7 @@ parse_run_args() {
   local run_args=""
   local tag="latest"
   local env=()
-  local secrets_files=(".env.secret" "$HOME/.env.secret")
+  local secrets_files=(".env.secret")
   local dryrun=false
   local secrets_out_file=".env.local-e2e"
   local volumes=()
@@ -110,7 +110,7 @@ parse_run_args() {
       env+=("$2")
       shift 2
       ;;
-    --secrets-file)
+    --secrets-file | --env-file)
       secrets_files+=("$2")
       shift 2
       ;;
@@ -169,6 +169,7 @@ parse_run_args() {
   done
 
   debug "Loading secrets from secrets files"
+  echo 'LOCAL_E2E=true' >"$secrets_out_file"
   for secrets_file in "${secrets_files[@]}"; do
     # local secrets_out_file_looped="$secrets_out_file-$(sha1sum "$secrets_out_file" | head -c 8)"
     if ! [[ -f "$secrets_file" ]]; then continue; fi
@@ -176,13 +177,21 @@ parse_run_args() {
     # Parse secrets
     while read -r secret; do
       secret="${secret#export }"
-      # Only accept key-value pairs
-      if [[ -z "$secret" ]] || [[ "$secret" != *=* ]] || [[ "$secret" == \#* ]]; then continue; fi
       local key="${secret%%=*}"
       local value="${secret#*=}"
-      export "${key}"="${value}" || error "Failed setting secret $secret"
-      debug "Loaded secret $key=${value//?/*}"
-      echo "${secret%=*}=${secret##*=}" >>"$secrets_out_file"
+      case "$key" in
+      '#'* | '') continue ;;
+      esac
+      local evalue
+      evalue="$(
+        eval "$secret" >&2
+        debug "Key: '$key'"
+        debug "Value: '$value'"
+        debug "indirect value: $key=${!key}"
+        echo "${!key}"
+      )"
+      debug "Evalued value: $evalue"
+      echo "${key}=${evalue}" >>"$secrets_out_file"
     done <"$secrets_file"
   done
   run_cmd+=" --env-file $secrets_out_file"

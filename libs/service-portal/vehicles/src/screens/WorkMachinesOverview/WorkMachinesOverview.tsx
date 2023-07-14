@@ -187,7 +187,8 @@ const WorkMachinesOverview = () => {
                             (filterKey, index) => {
                               const key = filterKey as keyof FilterValues
                               const filter = activeFilters[key]
-                              const labelKey = filter.label as keyof typeof messages
+                              const labelKey =
+                                filter.label as keyof typeof messages
                               return (
                                 <Checkbox
                                   key={index}

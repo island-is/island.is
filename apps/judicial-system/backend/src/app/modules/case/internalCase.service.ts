@@ -466,6 +466,7 @@ export class InternalCaseService {
               name: caseToCreate.accusedName,
               gender: caseToCreate.accusedGender,
               address: caseToCreate.accusedAddress,
+              citizenship: caseToCreate.citizenship,
             },
             transaction,
           ),

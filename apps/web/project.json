@@ -18,9 +18,7 @@
         },
         "production": {}
       },
-      "dependsOn": [
-        "build-custom-server"
-      ]
+      "dependsOn": ["build-custom-server"]
     },
     "serve": {
       "executor": "@nx/next:server",

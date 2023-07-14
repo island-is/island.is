@@ -6,7 +6,7 @@ import format from 'date-fns/format'
 import parseISO from 'date-fns/parseISO'
 import localeIS from 'date-fns/locale/is'
 
-import { Box, Icon, Text } from '@island.is/island-ui/core'
+import { Box, Text } from '@island.is/island-ui/core'
 
 import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
 import { CaseType, isIndictmentCase } from '@island.is/judicial-system/types'
@@ -27,6 +27,8 @@ import {
   TableSkeleton,
   CourtCaseNumber,
   DefendantInfo,
+  CreatedDate,
+  SortButton,
 } from '@island.is/judicial-system-web/src/components/Table'
 
 import * as styles from './DefenderCasesTable.css'
@@ -42,11 +44,8 @@ export const DefenderCasesTable: React.FC<React.PropsWithChildren<Props>> = (
 ) => {
   const { formatMessage } = useIntl()
   const { cases, showingCompletedCases, loading } = props
-  const { sortedData, requestSort, getClassNamesFor } = useSortCases(
-    'createdAt',
-    'descending',
-    cases,
-  )
+  const { sortedData, requestSort, getClassNamesFor, isActiveColumn } =
+    useSortCases('createdAt', 'descending', cases)
 
   const handleRowClick = (id: string, type: CaseType) => {
     isIndictmentCase(type)
@@ -67,66 +66,35 @@ export const DefenderCasesTable: React.FC<React.PropsWithChildren<Props>> = (
                   {formatMessage(tables.caseNumber)}
                 </Text>
               </th>
-              <th className={styles.th}>
-                <Box
-                  component="button"
-                  display="flex"
-                  alignItems="center"
-                  className={styles.thButton}
-                  onClick={() => requestSort('createdAt')}
-                >
-                  <Text fontWeight="regular">
-                    {formatMessage(tables.created)}
-                  </Text>
-                  <Box
-                    className={cn(styles.sortIcon, {
-                      [styles.sortCreatedAsc]:
-                        getClassNamesFor('createdAt') === 'ascending',
-                      [styles.sortCreatedDes]:
-                        getClassNamesFor('createdAt') === 'descending',
-                    })}
-                    marginLeft={1}
-                    component="span"
-                    display="flex"
-                    alignItems="center"
-                  >
-                    <Icon icon="caretUp" size="small" />
-                  </Box>
-                </Box>
+              <th className={cn(styles.th, styles.largeColumn)}>
+                <SortButton
+                  title={capitalize(
+                    formatMessage(core.defendant, { suffix: 'i' }),
+                  )}
+                  onClick={() => requestSort('defendant')}
+                  sortAsc={getClassNamesFor('defendant') === 'ascending'}
+                  sortDes={getClassNamesFor('defendant') === 'descending'}
+                  isActive={isActiveColumn('defendant')}
+                  dataTestid="accusedNameSortButton"
+                />
               </th>
               <th className={styles.th}>
                 <Text as="span" fontWeight="regular">
                   {formatMessage(tables.type)}
                 </Text>
               </th>
-              <th className={cn(styles.th, styles.largeColumn)}>
-                <Box
-                  component="button"
-                  display="flex"
-                  alignItems="center"
-                  className={styles.thButton}
-                  onClick={() => requestSort('defendant')}
-                  data-testid="accusedNameSortButton"
-                >
-                  <Text fontWeight="regular">
-                    {capitalize(formatMessage(core.defendant, { suffix: 'i' }))}
-                  </Text>
-                  <Box
-                    className={cn(styles.sortIcon, {
-                      [styles.sortAccusedNameAsc]:
-                        getClassNamesFor('defendant') === 'ascending',
-                      [styles.sortAccusedNameDes]:
-                        getClassNamesFor('defendant') === 'descending',
-                    })}
-                    marginLeft={1}
-                    component="span"
-                    display="flex"
-                    alignItems="center"
-                  >
-                    <Icon icon="caretDown" size="small" />
-                  </Box>
-                </Box>
+              <th className={styles.th}>
+                <SortButton
+                  title={capitalize(
+                    formatMessage(tables.created, { suffix: 'i' }),
+                  )}
+                  onClick={() => requestSort('createdAt')}
+                  sortAsc={getClassNamesFor('createdAt') === 'ascending'}
+                  sortDes={getClassNamesFor('createdAt') === 'descending'}
+                  isActive={isActiveColumn('createdAt')}
+                />
               </th>
+
               <th className={cn(styles.th, styles.largeColumn)}>
                 <Text as="span" fontWeight="regular">
                   {formatMessage(tables.state)}
@@ -163,11 +131,7 @@ export const DefenderCasesTable: React.FC<React.PropsWithChildren<Props>> = (
                   />
                 </td>
                 <td className={cn(styles.td)}>
-                  <Text as="span">
-                    {format(parseISO(c.created), 'd.M.y', {
-                      locale: localeIS,
-                    })}
-                  </Text>
+                  <DefendantInfo defendants={c.defendants} />
                 </td>
                 <td className={styles.td}>
                   <Text as="span">
@@ -175,8 +139,9 @@ export const DefenderCasesTable: React.FC<React.PropsWithChildren<Props>> = (
                   </Text>
                 </td>
                 <td className={cn(styles.td)}>
-                  <DefendantInfo defendants={c.defendants} />
+                  <CreatedDate created={c.created} />
                 </td>
+
                 <td className={styles.td} data-testid="tdTag">
                   <Box marginRight={1} marginBottom={1}>
                     <TagCaseState
@@ -197,8 +162,8 @@ export const DefenderCasesTable: React.FC<React.PropsWithChildren<Props>> = (
                   <td className={styles.td}>
                     <Text>
                       {c.validToDate &&
-                        c.courtEndTime &&
-                        `${formatDate(c.courtEndTime, 'd.M.y')} - ${formatDate(
+                        c.rulingDate &&
+                        `${formatDate(c.rulingDate, 'd.M.y')} - ${formatDate(
                           c.validToDate,
                           'd.M.y',
                         )}`}

@@ -9,6 +9,8 @@ import {
   CaseTransition,
   isIndictmentCase,
   completedCaseStates,
+  isProsecutionRole,
+  isCourtRole,
 } from '@island.is/judicial-system/types'
 import { capitalize } from '@island.is/judicial-system/formatters'
 import * as constants from '@island.is/judicial-system/consts'
@@ -101,8 +103,8 @@ export const Cases: React.FC<React.PropsWithChildren<unknown>> = () => {
   const { user } = useContext(UserContext)
   const [isFiltering, setIsFiltering] = useState<boolean>(false)
 
-  const isProsecutor = user?.role === UserRole.PROSECUTOR
-  const isRepresentative = user?.role === UserRole.REPRESENTATIVE
+  const isProsecutionUser = user && isProsecutionRole(user?.role)
+  const isDistrictCourtUser = user && isCourtRole(user?.role)
 
   const {
     transitionCase,
@@ -141,13 +143,15 @@ export const Cases: React.FC<React.PropsWithChildren<unknown>> = () => {
       })
 
       return partition(casesWithoutDeleted, (c) => {
-        if (isIndictmentCase(c.type)) {
+        if (isIndictmentCase(c.type) || !isDistrictCourtUser) {
           return !completedCaseStates.includes(c.state)
         } else {
-          return !(completedCaseStates.includes(c.state) && c.rulingDate)
+          return !(
+            completedCaseStates.includes(c.state) && c.rulingSignatureDate
+          )
         }
       })
-    }, [resCases])
+    }, [isDistrictCourtUser, resCases])
 
   const {
     filter,
@@ -180,9 +184,7 @@ export const Cases: React.FC<React.PropsWithChildren<unknown>> = () => {
       <PageHeader title={formatMessage(titles.shared.cases)} />
       <div className={styles.logoContainer}>
         <Logo />
-        {isProsecutor || isRepresentative ? (
-          <CreateCaseButton user={user} />
-        ) : null}
+        {isProsecutionUser ? <CreateCaseButton user={user} /> : null}
       </div>
 
       <Box marginBottom={[2, 5, 5]} className={styles.filterContainer}>

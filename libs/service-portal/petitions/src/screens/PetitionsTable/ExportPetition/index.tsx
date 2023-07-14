@@ -13,6 +13,7 @@ import {
   PaginatedEndorsementResponse,
 } from '@island.is/api/schema'
 import { formatDate } from '../../../lib/utils'
+import cn from 'classnames'
 
 interface Props {
   petition?: EndorsementList
@@ -65,7 +66,7 @@ const DropdownExport: FC<React.PropsWithChildren<Props>> = ({
 
   return (
     <Box className={styles.buttonWrapper} display="flex">
-      <Box marginRight={2}>
+      <Box marginRight={2} className={styles.hideInMobile}>
         <Button
           onClick={() => {
             const copied = copyToClipboard(baseUrl + petitionId)
@@ -81,10 +82,33 @@ const DropdownExport: FC<React.PropsWithChildren<Props>> = ({
         </Button>
       </Box>
       <DropdownMenu
-        icon="download"
+        icon="ellipsisVertical"
         iconType="outline"
         menuLabel={formatMessage(m.downloadPetitions)}
         items={[
+          {
+            title: formatMessage(m.downloadPetitions),
+            render: () => {
+              return (
+                <button
+                  className={cn(styles.hideOnDesktop, styles.menuItem)}
+                  onClick={() => {
+                    const copied = copyToClipboard(baseUrl + petitionId)
+                    if (!copied) {
+                      return toast.error(
+                        formatMessage(m.copyLinkError.defaultMessage),
+                      )
+                    }
+                    toast.success(
+                      formatMessage(m.copyLinkSuccess.defaultMessage),
+                    )
+                  }}
+                >
+                  {formatMessage(m.linkToList)}
+                </button>
+              )
+            },
+          },
           {
             title: formatMessage(m.asPdf),
             render: () => (

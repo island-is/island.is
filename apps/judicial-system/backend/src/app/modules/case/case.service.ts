@@ -147,6 +147,7 @@ export interface UpdateCase
   policeCaseNumbers?: string[]
   defendantWaivesRightToCounsel?: boolean
   rulingDate?: Date | null
+  rulingSignatureDate?: Date | null
   rulingModifiedHistory?: string
   courtRecordSignatoryId?: string | null
   courtRecordSignatureDate?: Date | null
@@ -1072,7 +1073,7 @@ export class CaseService {
   }
 
   async getRulingPdf(theCase: Case): Promise<Buffer> {
-    if (theCase.rulingDate) {
+    if (theCase.rulingSignatureDate) {
       try {
         return await this.awsS3Service.getObject(
           `generated/${theCase.id}/ruling.pdf`,
@@ -1246,7 +1247,12 @@ export class CaseService {
         return { documentSigned: false, message: 'Failed to upload to S3' }
       }
 
-      await this.update(theCase, { rulingDate: nowFactory() }, user, false)
+      await this.update(
+        theCase,
+        { rulingSignatureDate: nowFactory() },
+        user,
+        false,
+      )
 
       await this.addMessagesForCompletedCaseToQueue(theCase, user)
 

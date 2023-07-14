@@ -180,9 +180,9 @@ export const notifications = {
         'Notaður sem titil á  pósti til sækjanda þegar fyrirtökutími er staðfestur',
     },
     body: {
-      id: 'judicial.system.backend:notifications.prosecutor_court_date_email.body_v1',
+      id: 'judicial.system.backend:notifications.prosecutor_court_date_email.body_v2',
       defaultMessage:
-        '{scheduledCaseText}<br /><br />{courtDateText}<br /><br />{courtRoomText}<br /><br />{judgeText}{registrarText, select, NONE {} other {<br /><br />{registrarText}}}{sessionArrangements, select, PROSECUTOR_PRESENT {} NONE_PRESENT {<br /><br /> Krafa tekin fyrir án boðunar í þinghald.} other {<br /><br />{defenderText}.}}',
+        '{scheduledCaseText}<br /><br />{courtDateText}<br /><br />{courtRoomText}<br /><br />{judgeText}{registrarText, select, NONE {} other {<br /><br />{registrarText}}}{sessionArrangements, select, PROSECUTOR_PRESENT {} NONE_PRESENT {<br /><br /> <strong> Krafan verður tekin fyrir án boðunar í þinghald. </strong>} other {<br /><br />{defenderText}.}}',
       description:
         'Notaður fyrir beinagrind á pósti til sækjanda þegar fyrirtökutími er staðfestur',
     },
