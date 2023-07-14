@@ -1,4 +1,7 @@
-import { EphemeralStateLifeCycle } from '@island.is/application/core'
+import {
+  EphemeralStateLifeCycle,
+  coreHistoryMessages,
+} from '@island.is/application/core'
 import {
   ApplicationTemplate,
   ApplicationContext,
@@ -7,30 +10,23 @@ import {
   ApplicationRole,
   Application,
   DefaultEvents,
-  StateLifeCycle,
   defineTemplateApi,
   NationalRegistryUserApi,
   UserProfileApi,
   ExistingApplicationApi,
 } from '@island.is/application/types'
-import { Events, States, Roles } from './constants'
+import {
+  Events,
+  States,
+  Roles,
+  HalfYearLifeCycle,
+  DayLifeCycle,
+} from './constants'
 import { dataSchema } from './dataSchema'
 import { m } from '../lib/messages'
 import { ApiActions } from './constants'
 import { DeathNoticeApi } from '../dataProviders'
 import { determineMessageFromApplicationAnswers } from './utils'
-
-const HalfYearLifeCycle: StateLifeCycle = {
-  shouldBeListed: true,
-  shouldBePruned: true,
-  whenToPrune: 1000 * 3600 * 24 * 182, // 6 months
-}
-
-const DayLifeCycle: StateLifeCycle = {
-  shouldBeListed: true,
-  shouldBePruned: true,
-  whenToPrune: 1000 * 3600 * 24,
-}
 
 const AnnouncementOfDeathTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -50,9 +46,6 @@ const AnnouncementOfDeathTemplate: ApplicationTemplate<
         meta: {
           name: 'Prerequisites',
           status: 'draft',
-          actionCard: {
-            title: m.applicationTitle,
-          },
           onEntry: defineTemplateApi({
             action: ApiActions.syslumennOnEntry,
             shouldPersistToExternalData: true,
@@ -92,6 +85,18 @@ const AnnouncementOfDeathTemplate: ApplicationTemplate<
               ],
             },
           ],
+          actionCard: {
+            historyLogs: [
+              {
+                logMessage: coreHistoryMessages.applicationStarted,
+                onEvent: DefaultEvents.SUBMIT,
+              },
+              {
+                logMessage: m.logApplicationDelegated,
+                onEvent: DefaultEvents.REJECT,
+              },
+            ],
+          },
         },
         on: {
           [DefaultEvents.SUBMIT]: { target: States.DRAFT },
@@ -101,9 +106,6 @@ const AnnouncementOfDeathTemplate: ApplicationTemplate<
       [States.DRAFT]: {
         meta: {
           name: 'Draft',
-          actionCard: {
-            title: m.applicationTitle,
-          },
           status: 'draft',
           progress: 0.5,
           lifecycle: HalfYearLifeCycle,
@@ -140,6 +142,14 @@ const AnnouncementOfDeathTemplate: ApplicationTemplate<
               ],
             },
           ],
+          actionCard: {
+            historyLogs: [
+              {
+                logMessage: coreHistoryMessages.applicationSent,
+                onEvent: DefaultEvents.SUBMIT,
+              },
+            ],
+          },
         },
         on: {
           [DefaultEvents.SUBMIT]: { target: States.DONE },
