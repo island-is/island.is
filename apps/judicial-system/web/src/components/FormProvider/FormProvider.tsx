@@ -15,7 +15,7 @@ import {
   CaseOrigin,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
-import { CaseData, LimitedAccessCaseData, TempCase as Case } from '../../types'
+import { TempCase as Case } from '../../types'
 import { UserContext } from '../UserProvider/UserProvider'
 import LimitedAccessCaseQuery from './limitedAccessCaseGql'
 import CaseQuery from './caseGql'
