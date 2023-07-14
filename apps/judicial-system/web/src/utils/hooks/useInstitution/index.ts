@@ -29,6 +29,7 @@ const institutions: {
 const useInstitution = (skip = false) => {
   const { data, loading } = useQuery<InstitutionData>(InstitutionsQuery, {
     skip: skip || Boolean(rawInstitutions),
+    errorPolicy: 'all',
   })
 
   if (data && data.institutions && !rawInstitutions) {
