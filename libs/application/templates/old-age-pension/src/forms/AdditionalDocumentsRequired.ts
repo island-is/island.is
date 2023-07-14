@@ -32,7 +32,7 @@ export const AdditionalDocumentsRequired: Form = buildForm({
           title: oldAgePensionFormMessage.fileUpload.additionalFileTitle,
           children: [
             buildFileUploadField({
-              id: 'fileUpload.additionalDocuments',
+              id: 'fileUploadAdditionalFiles.additionalDocuments',
               title: oldAgePensionFormMessage.fileUpload.additionalFileTitle,
               description:
                 oldAgePensionFormMessage.fileUpload.additionalFileDescription,
@@ -48,6 +48,7 @@ export const AdditionalDocumentsRequired: Form = buildForm({
                 oldAgePensionFormMessage.fileUpload.attachmentDescription,
               uploadButtonLabel:
                 oldAgePensionFormMessage.fileUpload.attachmentButton,
+              uploadMultiple: true,
             }),
             buildSubmitField({
               id: 'additionalDocumentsSubmit',

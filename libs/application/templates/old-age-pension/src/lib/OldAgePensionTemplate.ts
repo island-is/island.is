@@ -18,14 +18,12 @@ import {
   coreMessages,
   pruneAfterDays,
   DefaultStateLifeCycle,
-  coreHistoryMessages,
 } from '@island.is/application/core'
 import {
   ConnectedApplications,
   Events,
   Roles,
   States,
-  OAPEvents,
 } from './constants'
 import { dataSchema } from './dataSchema'
 import { oldAgePensionFormMessage, statesMessages } from './messages'
@@ -132,6 +130,9 @@ const OldAgePensionTemplate: ApplicationTemplate<
           status: 'inprogress',
           lifecycle: DefaultStateLifeCycle,
           actionCard: {
+            tag: {
+              label: statesMessages.pendingTag,
+            },
             pendingAction: {
               title: statesMessages.tryggingastofnunSubmittedTitle,
               content: statesMessages.tryggingastofnunSubmittedContent,
@@ -180,18 +181,9 @@ const OldAgePensionTemplate: ApplicationTemplate<
               displayStatus: 'info',
             },
             historyLogs: [
-              // TODO: Þarf þetta að vera hérna? kemur þetta inn þegar TR gerir breytingar?
-              {
-                onEvent: DefaultEvents.REJECT,
-                logMessage: coreHistoryMessages.applicationRejected,
-              },
               {
                 onEvent: DefaultEvents.APPROVE,
-                logMessage: coreHistoryMessages.applicationApproved,
-              },
-              {
-                onEvent: OAPEvents.ADDITIONALDOCUMENTSREQUIRED,
-                logMessage: statesMessages.additionalDocumentRequired,
+                logMessage: statesMessages.additionalDocumentsAdded,
               },
             ],
           },
@@ -224,16 +216,10 @@ const OldAgePensionTemplate: ApplicationTemplate<
               variant: 'red',
             },
             pendingAction: {
-              title: 'Gögn vantar',
+              title: statesMessages.additionalDocumentRequired,
               content: statesMessages.additionalDocumentRequiredDescription,
               displayStatus: 'warning',
             },
-            historyLogs: [
-              {
-                onEvent: DefaultEvents.APPROVE,
-                logMessage: statesMessages.additionalDocumentsSent,
-              },
-            ],
           },
           lifecycle: pruneAfterDays(970),
           progress: 0.5,
@@ -251,7 +237,7 @@ const OldAgePensionTemplate: ApplicationTemplate<
         },
         on: {
           [DefaultEvents.APPROVE]: {
-            target: States.TRYGGINGASTOFNUN_SUBMITTED,
+            target: States.TRYGGINGASTOFNUN_IN_REVIEW,
           },
         },
       },
@@ -260,15 +246,18 @@ const OldAgePensionTemplate: ApplicationTemplate<
           name: States.APPROVED,
           progress: 1,
           status: 'approved',
+          actionCard: {
+            pendingAction: {
+              title: statesMessages.applicationApproved,
+              content: statesMessages.applicationApprovedDescription,
+              displayStatus: 'success',
+            },
+          },
           lifecycle: DefaultStateLifeCycle,
           roles: [
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                // // TODO: á að gera sér síðu fyrir Approved?
-                // import('../forms/Approved').then((val) =>
-                //   Promise.resolve(val.Approved),
-                // ),
                 import('../forms/InReview').then((val) =>
                   Promise.resolve(val.InReview),
                 ),
@@ -282,15 +271,20 @@ const OldAgePensionTemplate: ApplicationTemplate<
           name: States.REJECTED,
           progress: 1,
           status: 'rejected',
+          actionCard: {
+            historyLogs: [
+              {
+                // TODO: Þurfum mögulega að breyta þessu þegar við vitum hvernig TR gerir stöðubreytingar
+                onEvent: States.REJECTED,
+                logMessage: statesMessages.applicationRejected,
+              },
+            ],
+          },
           lifecycle: DefaultStateLifeCycle,
           roles: [
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                // // TODO: á að gera sér síðu fyrir Rejected?
-                // import('../forms/Rejected').then((val) =>
-                //   Promise.resolve(val.Rejected),
-                // ),
                 import('../forms/InReview').then((val) =>
                   Promise.resolve(val.InReview),
                 ),

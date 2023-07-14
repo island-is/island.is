@@ -1247,7 +1247,7 @@ export const statesMessages = defineMessages({
   },
   tryggingastofnunSubmittedContent: {
     id: 'oap.application:tryggingastofnunSubmittedContent',
-    defaultMessage: 'Umsóknin þín er í bið eftir yfirferð',
+    defaultMessage: 'Umsóknin þín er í bið eftir yfirferð. Hægt er að breyta umsókn þar til umsókn er komin í yfirferð.',
     description: 'Application waiting for review',
   },
 
@@ -1276,8 +1276,13 @@ export const statesMessages = defineMessages({
   },
   applicationApproved: {
     id: 'oap.application:applicationApproved',
-    defaultMessage: 'Umsókn samþykkt',
-    description: 'Application accepted',
+    defaultMessage: 'Tryggingastofnun hefur samþykkt umsóknina',
+    description: 'Tryggingastofnun has accepted the application',
+  },
+  applicationApprovedDescription: {
+    id: 'oap.application:applicationApprovedDescription',
+    defaultMessage: 'Umsókn vegna ellilífeyris hefur verið samþykkt',
+    description: 'The application for old-age pension has been approved',
   },
 
   additionalDocumentRequired: {
@@ -1285,14 +1290,19 @@ export const statesMessages = defineMessages({
     defaultMessage: 'Viðbótargögn vantar',
     description: 'Additional documents required',
   },
-  additionalDocumentsSent: {
-    id: 'oap.application:additionalDocumentsSent',
-    defaultMessage: 'Viðbótargögn send',
-    description: 'Additional documents sent',
+  additionalDocumentsAdded: {
+    id: 'oap.application:additionalDocumentsAdded',
+    defaultMessage: 'Viðbótargögnum bætt við',
+    description: 'Additional documents added',
   },
   additionalDocumentRequiredDescription: {
     id: 'oap.application:additionalDocumentRequired.description',
     defaultMessage: 'Tryggingastofnun vantar frekari gögn vegna umsóknarinnar.',
     description: 'Description of the state - additionalDocumentRequired',
+  },
+  pendingTag: {
+    id: 'oap.application:pending.tag',
+    defaultMessage: 'Í bið',
+    description: 'Pending',
   },
 })
