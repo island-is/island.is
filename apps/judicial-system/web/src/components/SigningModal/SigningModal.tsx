@@ -128,8 +128,9 @@ export const SigningModal: React.FC<SigningModalProps> = ({
         caseId: workingCase.id,
       },
     },
-    fetchPolicy: 'no-cache',
     skip: !requestRulingSignatureResponse,
+    fetchPolicy: 'no-cache',
+    errorPolicy: 'all',
   })
 
   const signingProgress = getSigningProgress(
