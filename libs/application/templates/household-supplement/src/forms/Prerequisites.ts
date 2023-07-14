@@ -73,11 +73,6 @@ export const PrerequisitesForm: Form = buildForm({
       children: [],
     }),
     buildSection({
-      id: 'arrangement',
-      title: householdSupplementFormMessage.arrangement.section,
-      children: [],
-    }),
-    buildSection({
       id: 'additionalInfo',
       title: householdSupplementFormMessage.additionalInfo.section,
       children: [],

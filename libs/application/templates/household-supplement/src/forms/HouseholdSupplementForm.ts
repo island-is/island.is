@@ -1,13 +1,20 @@
 import {
+  buildCustomField,
   buildDescriptionField,
   buildForm,
   buildMultiField,
   buildPhoneField,
   buildSection,
   buildSubSection,
+  buildSubmitField,
   buildTextField,
 } from '@island.is/application/core'
-import { Application, Form, FormModes } from '@island.is/application/types'
+import {
+  Application,
+  DefaultEvents,
+  Form,
+  FormModes,
+} from '@island.is/application/types'
 import Logo from '../assets/Logo'
 import { householdSupplementFormMessage } from '../lib/messages'
 import { UserProfile } from '@island.is/api/schema'
@@ -74,26 +81,100 @@ export const HouseholdSupplementForm: Form = buildForm({
               id: 'paymentInfo',
               title: householdSupplementFormMessage.info.paymentTitle,
               description: '',
-              children: [],
+              children: [
+                buildCustomField(
+                  {
+                    id: 'paymentInfo.alert',
+                    title:
+                      householdSupplementFormMessage.info.paymentAlertTitle,
+                    component: 'FieldAlertMessage',
+                    description:
+                      householdSupplementFormMessage.info.paymentAlertMessage,
+                  },
+                  { type: 'info' },
+                ),
+                buildTextField({
+                  id: 'paymentInfo.bank',
+                  title: householdSupplementFormMessage.info.paymentBank,
+                  backgroundColor: 'white',
+                  //disabled: true,
+                  format: '####-##-######',
+                  placeholder: '0000-00-000000',
+                  defaultValue: (application: Application) => {
+                    const userProfile = application.externalData.userProfile
+                      .data as UserProfile
+                    return userProfile.bankInfo
+                  },
+                }),
+              ],
             }),
           ],
         }),
+        // buildSubSection({
+        //   id: 'householdSupplementSection',
+        //   title: householdSupplementFormMessage.shared.householdSupplement,
+        //   children: [
+        //     buildMultiField({
+        //       id: 'householdSupplement',
+        //       title: householdSupplementFormMessage.shared.householdSupplement,
+        //       description:
+        //         householdSupplementFormMessage.info
+        //           .householdSupplementDescription,
+        //       children: [],
+        //     }),
+        //   ],
+        // }),
       ],
     }),
-    buildSection({
-      id: 'arrangement',
-      title: householdSupplementFormMessage.arrangement.section,
-      children: [],
-    }),
-    buildSection({
-      id: 'additionalInfo',
-      title: householdSupplementFormMessage.additionalInfo.section,
-      children: [],
-    }),
+    // buildSection({
+    //   id: 'additionalInfo',
+    //   title: householdSupplementFormMessage.additionalInfo.section,
+    //   children: [],
+    // }),
     buildSection({
       id: 'confirm',
       title: householdSupplementFormMessage.confirm.section,
-      children: [],
+      children: [
+        buildSubSection({
+          title: '',
+          children: [
+            buildMultiField({
+              id: 'confirm',
+              title: '',
+              description: '',
+              children: [
+                buildCustomField(
+                  {
+                    id: 'confirmScreen',
+                    title: householdSupplementFormMessage.confirm.confirmTitle,
+                    component: 'Review',
+                  },
+                  {
+                    editable: true,
+                  },
+                ),
+                buildSubmitField({
+                  id: 'submit',
+                  placement: 'footer',
+                  title: householdSupplementFormMessage.confirm.confirmTitle,
+                  actions: [
+                    {
+                      event: DefaultEvents.SUBMIT,
+                      name: householdSupplementFormMessage.confirm.confirmTitle,
+                      type: 'primary',
+                    },
+                  ],
+                }),
+              ],
+            }),
+          ],
+        }),
+        buildCustomField({
+          id: 'thankYou',
+          title: householdSupplementFormMessage.conclusion.title,
+          component: 'Conclusion',
+        }),
+      ],
     }),
   ],
 })
