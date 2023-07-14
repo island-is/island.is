@@ -258,7 +258,7 @@ export const OldAgePensionForm: Form = buildForm({
                     component: 'FieldAlertMessage',
                     description: oldAgePensionFormMessage.payment.alertMessage,
                   },
-                  { type: 'warning' },
+                  { type: 'info' },
                 ),
                 buildTextField({
                   id: 'paymentInfo.bank',
@@ -1052,7 +1052,7 @@ export const OldAgePensionForm: Form = buildForm({
         }),
         buildCustomField({
           id: 'thankYou',
-          title: 'Takk vantar texta',
+          title: oldAgePensionFormMessage.conclusionScreen.title,
           component: 'Conclusion',
         }),
       ],
