@@ -76,7 +76,6 @@ const ActiveCases: React.FC<Props> = (props) => {
   // The index of requset that's about to be removed
   const [requestToRemoveIndex, setRequestToRemoveIndex] = useState<number>()
 
-  // TODO look at
   useMemo(() => {
     if (cases && sortConfig) {
       cases.sort((a: CaseListEntry, b: CaseListEntry) => {
