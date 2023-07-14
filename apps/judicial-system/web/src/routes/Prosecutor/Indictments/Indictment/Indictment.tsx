@@ -249,7 +249,6 @@ const Indictment: React.FC = () => {
     setWorkingCase,
     handleCreateIndictmentCount,
   ])
-  console.log('asjdjasdjajsj')
 
   useOnceOn(isCaseUpToDate, initialize)
 
