@@ -5,9 +5,7 @@
     "noEmit": false,
     "incremental": true,
     "tsBuildInfoFile": "../../../tmp/buildcache/apps/financial-aid/web-veita/server",
-    "types": [
-      "node"
-    ]
+    "types": ["node"]
   },
   "include": ["server.ts"]
 }

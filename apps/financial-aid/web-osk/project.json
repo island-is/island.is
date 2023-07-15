@@ -25,9 +25,7 @@
           ]
         }
       },
-      "dependsOn": [
-        "build-custom-server"
-      ]
+      "dependsOn": ["build-custom-server"]
     },
     "build-custom-server": {
       "executor": "@nx/webpack:webpack",
