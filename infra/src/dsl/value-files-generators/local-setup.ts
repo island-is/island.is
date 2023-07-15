@@ -15,7 +15,7 @@ const execAsync = promisify(exec)
 
 const mapServiceToNXname = async (serviceName: string) => {
   const nxShowProjects = await execAsync(
-    `nx show projects --json --withTarget service-${serviceName}`,
+    `npx nx show projects --json --withTarget service-${serviceName}`,
   )
   const nxName = JSON.parse(nxShowProjects.stdout)
 
