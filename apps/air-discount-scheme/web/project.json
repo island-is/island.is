@@ -6,54 +6,77 @@
   "generators": {},
   "targets": {
     "build": {
-      "executor": "nx:run-commands",
-      "options": {
-        "commands": [
-          "yarn nx build-next air-discount-scheme-web",
-          "yarn nx build-server air-discount-scheme-web"
-        ]
-      },
-      "configurations": {
-        "production": {
-          "args": "--prod"
-        }
-      },
-      "outputs": ["{workspaceRoot}/dist/apps/air-discount-scheme/web"]
-    },
-    "build-next": {
       "executor": "@nx/next:build",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
       "options": {
         "outputPath": "dist/apps/air-discount-scheme/web"
       },
       "configurations": {
+        "development": {
+          "outputPath": "apps/air-discount-scheme/web"
+        },
         "production": {}
       },
-      "outputs": ["{options.outputPath}"]
+      "dependsOn": [
+        "build-custom-server"
+      ]
     },
-    "build-server": {
+    "build-custom-server": {
       "executor": "@nx/webpack:webpack",
+      "defaultConfiguration": "production",
       "options": {
         "outputPath": "dist/apps/air-discount-scheme/web",
         "main": "apps/air-discount-scheme/web/server.ts",
-        "tsConfig": "apps/air-discount-scheme/web/tsconfig.json",
+        "tsConfig": "apps/air-discount-scheme/web/tsconfig.server.json",
         "maxWorkers": 2,
         "assets": [],
         "compiler": "tsc",
         "target": "node"
       },
       "configurations": {
+        "development": {},
         "production": {
           "optimization": true,
           "extractLicenses": true,
           "inspect": false
         }
-      },
-      "outputs": ["{options.outputPath}"]
+      }
     },
     "serve": {
-      "executor": "@nx/js:node",
+      "executor": "@nx/next:server",
+      "defaultConfiguration": "development",
       "options": {
-        "buildTarget": "air-discount-scheme-web:build-server"
+        "buildTarget": "air-discount-scheme-web:build",
+        "dev": true,
+        "customServerTarget": "air-discount-scheme-web:serve-custom-server"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "air-discount-scheme-web:build:development",
+          "dev": true,
+          "customServerTarget": "air-discount-scheme-web:serve-custom-server:development"
+        },
+        "production": {
+          "buildTarget": "air-discount-scheme-web:build:production",
+          "dev": false,
+          "customServerTarget": "air-discount-scheme-web:serve-custom-server:production"
+        }
+      }
+    },
+    "serve-custom-server": {
+      "executor": "@nx/js:node",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "air-discount-scheme-web:build-custom-server"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "air-discount-scheme-web:build-custom-server:development"
+        },
+        "production": {
+          "buildTarget": "air-discount-scheme-web:build-custom-server:production"
+        }
       }
     },
     "export": {
