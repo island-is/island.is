@@ -16,7 +16,7 @@ import {
   NationalRegistryClientConfig,
   NationalRegistryClientModule,
 } from '@island.is/clients/national-registry-v2'
-import { CACHE_MANAGER } from '@nestjs/common'
+import { CACHE_MANAGER } from '@nestjs/cache-manager'
 import { ConfigModule, XRoadConfig } from '@island.is/nest/config'
 import { AirlineUser } from '../../../user/user.model'
 import { createTestUser } from '../../../../../../test/createTestUser'
