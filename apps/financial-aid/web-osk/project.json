@@ -6,26 +6,16 @@
   "generators": {},
   "targets": {
     "build": {
-      "executor": "nx:run-commands",
-      "options": {
-        "commands": [
-          "yarn nx build-next financial-aid-web-osk",
-          "yarn nx build-server financial-aid-web-osk"
-        ]
-      },
-      "configurations": {
-        "production": {
-          "args": "--prod"
-        }
-      },
-      "outputs": ["{workspaceRoot}/dist/apps/financial-aid/web-osk"]
-    },
-    "build-next": {
       "executor": "@nx/next:build",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
       "options": {
         "outputPath": "dist/apps/financial-aid/web-osk"
       },
       "configurations": {
+        "development": {
+          "outputPath": "apps/financial-aid/web-osk"
+        },
         "production": {
           "fileReplacements": [
             {
@@ -35,32 +25,65 @@
           ]
         }
       },
-      "outputs": ["{options.outputPath}"]
+      "dependsOn": [
+        "build-custom-server"
+      ]
     },
-    "build-server": {
+    "build-custom-server": {
       "executor": "@nx/webpack:webpack",
+      "defaultConfiguration": "production",
       "options": {
         "outputPath": "dist/apps/financial-aid/web-osk",
         "main": "apps/financial-aid/web-osk/server.ts",
-        "tsConfig": "apps/financial-aid/web-osk/tsconfig.json",
+        "tsConfig": "apps/financial-aid/web-osk/tsconfig.server.json",
         "maxWorkers": 2,
         "assets": [],
         "compiler": "tsc",
         "target": "node"
       },
       "configurations": {
+        "development": {},
         "production": {
           "optimization": true,
           "extractLicenses": true,
           "inspect": false
         }
-      },
-      "outputs": ["{options.outputPath}"]
+      }
     },
     "serve": {
-      "executor": "@nx/js:node",
+      "executor": "@nx/next:server",
+      "defaultConfiguration": "development",
       "options": {
-        "buildTarget": "financial-aid-web-osk:build-server"
+        "buildTarget": "financial-aid-web-osk:build",
+        "dev": true,
+        "customServerTarget": "financial-aid-web-osk:serve-custom-server"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "financial-aid-web-osk:build:development",
+          "dev": true,
+          "customServerTarget": "financial-aid-web-osk:serve-custom-server:development"
+        },
+        "production": {
+          "buildTarget": "financial-aid-web-osk:build:production",
+          "dev": false,
+          "customServerTarget": "financial-aid-web-osk:serve-custom-server:production"
+        }
+      }
+    },
+    "serve-custom-server": {
+      "executor": "@nx/js:node",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "financial-aid-web-osk:build-custom-server"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "financial-aid-web-osk:build-custom-server:development"
+        },
+        "production": {
+          "buildTarget": "financial-aid-web-osk:build-custom-server:production"
+        }
       }
     },
     "export": {

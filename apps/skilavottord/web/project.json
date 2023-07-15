@@ -6,54 +6,77 @@
   "generators": {},
   "targets": {
     "build": {
-      "executor": "nx:run-commands",
-      "options": {
-        "commands": [
-          "yarn nx build-next skilavottord-web",
-          "yarn nx build-server skilavottord-web"
-        ]
-      },
-      "configurations": {
-        "production": {
-          "args": "--prod"
-        }
-      },
-      "outputs": ["{workspaceRoot}/dist/apps/skilavottord/web"]
-    },
-    "build-next": {
       "executor": "@nx/next:build",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
       "options": {
         "outputPath": "dist/apps/skilavottord/web"
       },
       "configurations": {
+        "development": {
+          "outputPath": "apps/skilavottord/web"
+        },
         "production": {}
       },
-      "outputs": ["{options.outputPath}"]
+      "dependsOn": [
+        "build-custom-server"
+      ]
     },
-    "build-server": {
+    "build-custom-server": {
       "executor": "@nx/webpack:webpack",
+      "defaultConfiguration": "production",
       "options": {
         "outputPath": "dist/apps/skilavottord/web",
         "main": "apps/skilavottord/web/server.ts",
-        "tsConfig": "apps/skilavottord/web/tsconfig.json",
+        "tsConfig": "apps/skilavottord/web/tsconfig.server.json",
         "maxWorkers": 2,
         "assets": [],
         "compiler": "tsc",
         "target": "node"
       },
       "configurations": {
+        "development": {},
         "production": {
           "optimization": true,
           "extractLicenses": true,
           "inspect": false
         }
-      },
-      "outputs": ["{options.outputPath}"]
+      }
     },
     "serve": {
-      "executor": "@nx/js:node",
+      "executor": "@nx/next:server",
+      "defaultConfiguration": "development",
       "options": {
-        "buildTarget": "skilavottord-web:build-server"
+        "buildTarget": "skilavottord-web:build",
+        "dev": true,
+        "customServerTarget": "skilavottord-web:serve-custom-server"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "skilavottord-web:build:development",
+          "dev": true,
+          "customServerTarget": "skilavottord-web:serve-custom-server:development"
+        },
+        "production": {
+          "buildTarget": "skilavottord-web:build:production",
+          "dev": false,
+          "customServerTarget": "skilavottord-web:serve-custom-server:production"
+        }
+      }
+    },
+    "serve-custom-server": {
+      "executor": "@nx/js:node",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "skilavottord-web:build-custom-server"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "skilavottord-web:build-custom-server:development"
+        },
+        "production": {
+          "buildTarget": "skilavottord-web:build-custom-server:production"
+        }
       }
     },
     "export": {

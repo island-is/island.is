@@ -5,54 +5,77 @@
   "projectType": "application",
   "targets": {
     "build": {
-      "executor": "nx:run-commands",
-      "options": {
-        "commands": [
-          "yarn nx build-next contentful-apps",
-          "yarn nx build-server contentful-apps"
-        ]
-      },
-      "configurations": {
-        "production": {
-          "args": "--prod"
-        }
-      },
-      "outputs": ["{workspaceRoot}/dist/apps/contentful-apps"]
-    },
-    "build-next": {
       "executor": "@nx/next:build",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
       "options": {
         "outputPath": "dist/apps/contentful-apps"
       },
       "configurations": {
+        "development": {
+          "outputPath": "apps/contentful-apps"
+        },
         "production": {}
       },
-      "outputs": ["{options.outputPath}"]
+      "dependsOn": [
+        "build-custom-server"
+      ]
     },
-    "build-server": {
+    "build-custom-server": {
       "executor": "@nx/webpack:webpack",
+      "defaultConfiguration": "production",
       "options": {
         "outputPath": "dist/apps/contentful-apps",
         "main": "apps/contentful-apps/server.ts",
-        "tsConfig": "apps/contentful-apps/tsconfig.json",
+        "tsConfig": "apps/contentful-apps/tsconfig.server.json",
         "maxWorkers": 2,
         "assets": [],
         "compiler": "tsc",
         "target": "node"
       },
       "configurations": {
+        "development": {},
         "production": {
           "optimization": true,
           "extractLicenses": true,
           "inspect": false
         }
-      },
-      "outputs": ["{options.outputPath}"]
+      }
     },
     "serve": {
-      "executor": "@nx/js:node",
+      "executor": "@nx/next:server",
+      "defaultConfiguration": "development",
       "options": {
-        "buildTarget": "contentful-apps:build-server"
+        "buildTarget": "contentful-apps:build",
+        "dev": true,
+        "customServerTarget": "contentful-apps:serve-custom-server"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "contentful-apps:build:development",
+          "dev": true,
+          "customServerTarget": "contentful-apps:serve-custom-server:development"
+        },
+        "production": {
+          "buildTarget": "contentful-apps:build:production",
+          "dev": false,
+          "customServerTarget": "contentful-apps:serve-custom-server:production"
+        }
+      }
+    },
+    "serve-custom-server": {
+      "executor": "@nx/js:node",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "contentful-apps:build-custom-server"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "contentful-apps:build-custom-server:development"
+        },
+        "production": {
+          "buildTarget": "contentful-apps:build-custom-server:production"
+        }
       }
     },
     "export": {

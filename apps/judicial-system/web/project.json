@@ -6,54 +6,77 @@
   "generators": {},
   "targets": {
     "build": {
-      "executor": "nx:run-commands",
-      "options": {
-        "commands": [
-          "yarn nx build-next judicial-system-web",
-          "yarn nx build-server judicial-system-web"
-        ]
-      },
-      "configurations": {
-        "production": {
-          "args": "--prod"
-        }
-      },
-      "outputs": ["{workspaceRoot}/dist/apps/judicial-system/web"]
-    },
-    "build-next": {
       "executor": "@nx/next:build",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
       "options": {
         "outputPath": "dist/apps/judicial-system/web"
       },
       "configurations": {
+        "development": {
+          "outputPath": "apps/judicial-system/web"
+        },
         "production": {}
       },
-      "outputs": ["{options.outputPath}"]
+      "dependsOn": [
+        "build-custom-server"
+      ]
     },
-    "build-server": {
+    "build-custom-server": {
       "executor": "@nx/webpack:webpack",
+      "defaultConfiguration": "production",
       "options": {
         "outputPath": "dist/apps/judicial-system/web",
         "main": "apps/judicial-system/web/server.ts",
-        "tsConfig": "apps/judicial-system/web/tsconfig.json",
+        "tsConfig": "apps/judicial-system/web/tsconfig.server.json",
         "maxWorkers": 2,
         "assets": [],
         "compiler": "tsc",
         "target": "node"
       },
       "configurations": {
+        "development": {},
         "production": {
           "optimization": true,
           "extractLicenses": true,
           "inspect": false
         }
-      },
-      "outputs": ["{options.outputPath}"]
+      }
     },
     "serve": {
-      "executor": "@nx/js:node",
+      "executor": "@nx/next:server",
+      "defaultConfiguration": "development",
       "options": {
-        "buildTarget": "judicial-system-web:build-server"
+        "buildTarget": "judicial-system-web:build",
+        "dev": true,
+        "customServerTarget": "judicial-system-web:serve-custom-server"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "judicial-system-web:build:development",
+          "dev": true,
+          "customServerTarget": "judicial-system-web:serve-custom-server:development"
+        },
+        "production": {
+          "buildTarget": "judicial-system-web:build:production",
+          "dev": false,
+          "customServerTarget": "judicial-system-web:serve-custom-server:production"
+        }
+      }
+    },
+    "serve-custom-server": {
+      "executor": "@nx/js:node",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "judicial-system-web:build-custom-server"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "judicial-system-web:build-custom-server:development"
+        },
+        "production": {
+          "buildTarget": "judicial-system-web:build-custom-server:production"
+        }
       }
     },
     "export": {

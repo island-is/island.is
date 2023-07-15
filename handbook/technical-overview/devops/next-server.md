@@ -1,16 +1,6 @@
 # NextJS Custom Server
 
-We use a custom NextJS server to standardise logging, tracing and metrics in production.
-
-## How it works
-
-In development, we use `@nx/node:execute` to build and run a project-specific `server.ts` module. This file imports shared code that configures our environments, and starts an express server. It then configures NextJS as an express middleware that builds and serves pages directly from the source folder.
-
-In production, we run two build commands targeting the same `dist` folder: A NextJS build (using `@nx/next:build`) and a `server.ts` build (using `@nx/node:build`). When we run the compiled `server.ts` module, it runs the same code, but this time using the compiled NextJS app.
-
-{% hint style="warning" %}
-This logic depends on `process.env.NODE_ENV === 'production'`. When it is true, `server.ts` loads a production nextjs build in `cwd`. When it is false, `server.ts` runs NextJS in development mode, and tries to serve pages from the source directory.
-{% endhint %}
+We use a custom NextJS server to standardise logging, tracing and metrics in production. This uses NX's official support for [custom servers in NextJS](https://nx.dev/packages/next/generators/custom-server).
 
 ## Setup in new project
 
@@ -27,45 +17,58 @@ bootstrap({
 })
 ```
 
-2. Open the `project.json` file in your project folder and replace the "build" and "serve" target keys with the following content. Be sure to replace the `{{variables}}` with correct values, and edit `build` configurations as needed.
+2. Then create a new tsconfig file called `tsconfig.server.json` with the following contents. Be sure to replace the `{{variables}}` with correct values.
+
+```
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "module": "commonjs",
+    "noEmit": false,
+    "incremental": true,
+    "tsBuildInfoFile": "../../{{extraRelativePathToRoot}}tmp/buildcache/apps/{{pathToAppDir}}/server",
+    "types": [
+      "node"
+    ]
+  },
+  "include": ["server.ts"]
+}
+```
+
+3. Finally, open the `project.json` file in your project folder and replace the "build" and "serve" target keys with the following content. Remember to replace the `{{variables}}` with correct values, and edit the `build` configurations as needed.
 
 ```json
 "build": {
-  "executor": "@nx/workspace:run-commands",
-  "options": {
-    "outputPath": "dist/apps/{{pathToAppDir}}",
-    "commands": [
-      "yarn nx run {{projectName}}:build-next:production",
-      "yarn nx run {{projectName}}:build-server:production"
-    ]
-  }
-},
-"build-next": {
   "executor": "@nx/next:build",
+  "outputs": ["{options.outputPath}"],
+  "defaultConfiguration": "production",
   "options": {
-    "root": "apps/{{pathToAppDir}}",
     "outputPath": "dist/apps/{{pathToAppDir}}"
   },
   "configurations": {
-    "production": {
-      "fileReplacements": [
-        {
-          "replace": "apps/{{pathToAppDir}}/environments/environment.ts",
-          "with": "apps/{{pathToAppDir}}/environments/environment.prod.ts"
-        }
-      ]
-    }
-  }
+    "development": {
+      "outputPath": "apps/{{pathToAppDir}}"
+    },
+    "production": {}
+  },
+  "dependsOn": [
+    "build-custom-server"
+  ]
 },
-"build-server": {
-  "executor": "@nx/node:build",
+"build-custom-server": {
+  "executor": "@nx/webpack:webpack",
+  "defaultConfiguration": "production",
   "options": {
     "outputPath": "dist/apps/{{pathToAppDir}}",
     "main": "apps/{{pathToAppDir}}/server.ts",
-    "tsConfig": "apps/{{pathToAppDir}}/tsconfig.json",
-    "maxWorkers": 2
+    "tsConfig": "apps/{{pathToAppDir}}/tsconfig.server.json",
+    "maxWorkers": 2,
+    "assets": [],
+    "compiler": "tsc",
+    "target": "node"
   },
   "configurations": {
+    "development": {},
     "production": {
       "optimization": true,
       "extractLicenses": true,
@@ -74,27 +77,38 @@ bootstrap({
   }
 },
 "serve": {
-  "executor": "@nx/node:execute",
+  "executor": "@nx/next:server",
+  "defaultConfiguration": "development",
   "options": {
-    "buildTarget": "{{projectName}}:build-server"
-  }
-},
-```
-
-3. Also, in the `project.json` of your e2e project add a `baseUrl` to the `e2e` target so Cypress can find your server:
-
-```json
-"e2e": {
-  "executor": "@nx/cypress:cypress",
-  "options": {
-    "cypressConfig": "apps/{{pathToAppDir}}-e2e/cypress.config.ts",
-    "tsConfig": "apps/{{pathToAppDir}}-e2e/tsconfig.e2e.json",
-    "baseUrl": "http://localhost:4200",
-    "devServerTarget": "{{projectName}}:serve"
+    "buildTarget": "{{projectName}}:build",
+    "dev": true,
+    "customServerTarget": "{{projectName}}:serve-custom-server"
   },
   "configurations": {
+    "development": {
+      "buildTarget": "{{projectName}}:build:development",
+      "dev": true,
+      "customServerTarget": "{{projectName}}:serve-custom-server:development"
+    },
     "production": {
-      "devServerTarget": "{{projectName}}:serve:production"
+      "buildTarget": "{{projectName}}:build:production",
+      "dev": false,
+      "customServerTarget": "{{projectName}}:serve-custom-server:production"
+    }
+  }
+},
+"serve-custom-server": {
+  "executor": "@nx/js:node",
+  "defaultConfiguration": "development",
+  "options": {
+    "buildTarget": "{{projectName}}:build-custom-server"
+  },
+  "configurations": {
+    "development": {
+      "buildTarget": "{{projectName}}:build-custom-server:development"
+    },
+    "production": {
+      "buildTarget": "{{projectName}}:build-custom-server:production"
     }
   }
 },

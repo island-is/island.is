@@ -6,26 +6,16 @@
   "generators": {},
   "targets": {
     "build": {
-      "executor": "nx:run-commands",
-      "options": {
-        "commands": [
-          "yarn nx build-next financial-aid-web-veita",
-          "yarn nx build-server financial-aid-web-veita"
-        ]
-      },
-      "configurations": {
-        "production": {
-          "args": "--prod"
-        }
-      },
-      "outputs": ["{workspaceRoot}/dist/apps/financial-aid/web-veita"]
-    },
-    "build-next": {
       "executor": "@nx/next:build",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
       "options": {
         "outputPath": "dist/apps/financial-aid/web-veita"
       },
       "configurations": {
+        "development": {
+          "outputPath": "apps/financial-aid/web-veita"
+        },
         "production": {
           "fileReplacements": [
             {
@@ -35,32 +25,65 @@
           ]
         }
       },
-      "outputs": ["{options.outputPath}"]
+      "dependsOn": [
+        "build-custom-server"
+      ]
     },
-    "build-server": {
+    "build-custom-server": {
       "executor": "@nx/webpack:webpack",
+      "defaultConfiguration": "production",
       "options": {
         "outputPath": "dist/apps/financial-aid/web-veita",
         "main": "apps/financial-aid/web-veita/server.ts",
-        "tsConfig": "apps/financial-aid/web-veita/tsconfig.json",
+        "tsConfig": "apps/financial-aid/web-veita/tsconfig.server.json",
         "maxWorkers": 2,
         "assets": [],
         "compiler": "tsc",
         "target": "node"
       },
       "configurations": {
+        "development": {},
         "production": {
           "optimization": true,
           "extractLicenses": true,
           "inspect": false
         }
-      },
-      "outputs": ["{options.outputPath}"]
+      }
     },
     "serve": {
-      "executor": "@nx/js:node",
+      "executor": "@nx/next:server",
+      "defaultConfiguration": "development",
       "options": {
-        "buildTarget": "financial-aid-web-veita:build-server"
+        "buildTarget": "financial-aid-web-veita:build",
+        "dev": true,
+        "customServerTarget": "financial-aid-web-veita:serve-custom-server"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "financial-aid-web-veita:build:development",
+          "dev": true,
+          "customServerTarget": "financial-aid-web-veita:serve-custom-server:development"
+        },
+        "production": {
+          "buildTarget": "financial-aid-web-veita:build:production",
+          "dev": false,
+          "customServerTarget": "financial-aid-web-veita:serve-custom-server:production"
+        }
+      }
+    },
+    "serve-custom-server": {
+      "executor": "@nx/js:node",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "financial-aid-web-veita:build-custom-server"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "financial-aid-web-veita:build-custom-server:development"
+        },
+        "production": {
+          "buildTarget": "financial-aid-web-veita:build-custom-server:production"
+        }
       }
     },
     "export": {
