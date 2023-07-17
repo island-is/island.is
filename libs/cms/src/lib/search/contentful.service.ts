@@ -238,13 +238,13 @@ export class ContentfulService {
     return flatten(chunkedChanges)
   }
 
-  /** Example if locale is 'is-IS'
+  /** Example if locale is 'en':
    *
    *  { fields: { title: { en: 'English', 'is-IS': 'Íslenska' } } }
    *
    *  would become:
    *
-   *  { fields: { title: 'Íslenska' } }
+   *  { fields: { title: 'English' } }
    * */
   private removeLocaleKeysFromEntryItems = (
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
