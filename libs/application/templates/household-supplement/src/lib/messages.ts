@@ -115,59 +115,90 @@ export const householdSupplementFormMessage: MessageDir = {
       description: 'Payment information',
     },
     paymentAlertTitle: {
-      id: 'hs.application:payment.alert.title',
+      id: 'hs.application:info.payment.alert.title',
       defaultMessage: 'Til athugunar!',
       description: 'For consideration',
     },
     paymentAlertMessage: {
-      id: 'hs.application:payment.alert.message',
+      id: 'hs.application:info.payment.alert.message',
       defaultMessage:
         'Allar þínar greiðslur frá Tryggingastofnun eru greiddar inná bankareikninginn hér að neðan. Ef þú breytir bankaupplýsingunum þínum munu allar þínar greiðslur frá Tryggingastofnun verða greiddar inná þann reiking.',
       description:
         'All your payments from TR are paid into the bank account below. If you change your bank details, all your payments from the TR will be paid into that account.',
     },
     paymentBank: {
-      id: 'hs.application:payment.bank',
+      id: 'hs.application:info.payment.bank',
       defaultMessage: 'Banki',
       description: 'Bank',
     },
     householdSupplementDescription: {
-      id: 'hs.application:household.supplement.description',
+      id: 'hs.application:info.household.supplement.description',
       defaultMessage:
         'Til að eiga rétt á heimilisuppbót verður umsækjandi að vera einhleypur og búa einn. Einnig er heimilt að greiða heimilisuppbót til lífeyrisþega ef maki dvelur á stofnun fyrir aldraða. Tvær undantekningar eru á þessu: býr með barni/börnum yngri en 18 ára eða 18-25 ára ungmenni/um  sem er í námi eða ef ungmenni yngra en 25 ára er með tímabundið aðsetur fjarri lögheimili vegna náms.',
       description: 'english translation',
     },
     householdSupplementHousing: {
-      id: 'hs.application:household.supplement.housing',
+      id: 'hs.application:info.household.supplement.housing',
       defaultMessage: 'Hvar býrð þú?',
       description: 'Where do you live?',
     },
     householdSupplementHousingOwner: {
-      id: 'hs.application:household.supplement.housing.owner',
+      id: 'hs.application:info.household.supplement.housing.owner',
       defaultMessage: 'í eigin húsnæði',
       description: 'english translation',
     },
     householdSupplementHousingRenter: {
-      id: 'hs.application:household.supplement.housing.renter',
+      id: 'hs.application:info.household.supplement.housing.renter',
       defaultMessage: 'í leiguhúsnæði',
       description: 'in a rented place',
     },
     householdSupplementChildrenBetween18And25: {
-      id: 'hs.application:household.supplement.children.betweem18And25',
+      id: 'hs.application:info.household.supplement.children.betweem18And25',
       defaultMessage:
         'Býr ungmenni á aldrinum 18-25 ára á heimilinu sem er í námi?',
       description: 'english translation',
     },
     householdSupplementAlertTitle: {
-      id: 'hs.application:household.supplement.alert.title',
+      id: 'hs.application:info.household.supplement.alert.title',
       defaultMessage: 'Athuga',
       description: 'Attention',
     },
     householdSupplementAlertDescription: {
-      id: 'hs.application:household.supplement.alert.description',
+      id: 'hs.application:info.household.supplement.alert.description',
       defaultMessage:
         'Samkvæmt uppflettingu í Þjóðskrá býr einstaklingur eldri en 25 ára á sama lögheimili og þú. Ef þú telur þetta vera vitlaust skaltu hafa samband við Þjóðskrá til að laga þetta. Þegar þú ert búinn að gera viðeigandi breytingar hjá Þjóðskrá getur þú haldið áfram með umsóknina og skila inn skjali því til staðfestingar hér aftar í ferlinu.',
       description: 'english translation',
+    },
+    periodTitle: {
+      id: 'hs.application:info.period.title',
+      defaultMessage: 'Tímabil',
+      description: `Period`,
+    },
+    periodDescription: {
+      id: 'hs.application:info.period.description',
+      defaultMessage:
+        'Veldu tímabil sem þú vilt byrja að fá greidda heimilisuppbót. Hægt er að sækja fyrir árið í ár og 2 ár aftur í tímann.',
+      description: `english translation`,
+    },
+    periodYear: {
+      id: 'hs.application:info.period.year',
+      defaultMessage: 'Ár',
+      description: 'Year',
+    },
+    periodYearDefaultText: {
+      id: 'hs.application:info.period.year.default.text',
+      defaultMessage: 'Veldu ár',
+      description: 'Select year',
+    },
+    periodMonth: {
+      id: 'hs.application:info.period.month',
+      defaultMessage: 'Mánuður',
+      description: 'Month',
+    },
+    periodMonthDefaultText: {
+      id: 'hs.application:info.period.month.default.text',
+      defaultMessage: 'Veldu mánuð',
+      description: 'Select month',
     },
   }),
 
@@ -203,6 +234,69 @@ export const householdSupplementFormMessage: MessageDir = {
       id: 'hs.application:conclusion.title',
       defaultMessage: 'Umsókn móttekin og bíður tekjuáætlunar',
       description: 'Congratulations, below are the next steps',
+    },
+  }),
+
+  months: defineMessages({
+    january: {
+      id: 'hs.application:month.january',
+      defaultMessage: 'Janúar',
+      description: 'January',
+    },
+    february: {
+      id: 'hs.application:month.february',
+      defaultMessage: 'Febrúar',
+      description: 'February',
+    },
+    march: {
+      id: 'hs.application:month.march',
+      defaultMessage: 'Mars',
+      description: 'March',
+    },
+    april: {
+      id: 'hs.application:month.april',
+      defaultMessage: 'Apríl',
+      description: 'April',
+    },
+    may: {
+      id: 'hs.application:month.may',
+      defaultMessage: 'Maí',
+      description: 'May',
+    },
+    june: {
+      id: 'hs.application:month.june',
+      defaultMessage: 'Júní',
+      description: 'June',
+    },
+    july: {
+      id: 'hs.application:month.july',
+      defaultMessage: 'Júlí',
+      description: 'July',
+    },
+    august: {
+      id: 'hs.application:month.august',
+      defaultMessage: 'Ágúst',
+      description: 'August',
+    },
+    september: {
+      id: 'hs.application:month.september',
+      defaultMessage: 'September',
+      description: 'September',
+    },
+    october: {
+      id: 'hs.application:month.october',
+      defaultMessage: 'Október',
+      description: 'October',
+    },
+    november: {
+      id: 'hs.application:month.november',
+      defaultMessage: 'Nóvember',
+      description: 'November',
+    },
+    desember: {
+      id: 'hs.application:month.desember',
+      defaultMessage: 'Desember',
+      description: 'December',
     },
   }),
 
