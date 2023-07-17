@@ -1,5 +1,9 @@
 const devConfig = {
   production: false,
+  identityServerAuth: {
+    issuer: 'https://identity-server.dev01.devland.is',
+    audience: '@rettarvorslugatt.island.is',
+  },
   auth: {
     jwtSecret: 'jwt-secret',
     secretToken: 'secret-backend-api-token',
@@ -70,6 +74,12 @@ if (process.env.NODE_ENV === 'production') {
 
 const prodConfig = {
   production: true,
+  identityServerAuth: {
+    issuer: process.env.IDENTITY_SERVER_DOMAIN
+      ? `https://${process.env.IDENTITY_SERVER_DOMAIN}`
+      : '',
+    audience: '@rettarvorslugatt.island.is',
+  },
   auth: {
     jwtSecret: process.env.AUTH_JWT_SECRET ?? '',
     secretToken: process.env.BACKEND_ACCESS_TOKEN ?? '',

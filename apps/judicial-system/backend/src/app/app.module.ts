@@ -6,7 +6,7 @@ import { ConfigModule } from '@island.is/nest/config'
 import { signingModuleConfig } from '@island.is/dokobit-signing'
 import { courtClientModuleConfig } from '@island.is/judicial-system/court-client'
 import { messageModuleConfig } from '@island.is/judicial-system/message'
-import { SharedAuthModule } from '@island.is/judicial-system/auth'
+import { AuthModule } from '@island.is/auth-nest-tools'
 
 import { environment } from '../environments'
 import {
@@ -29,10 +29,7 @@ import { SequelizeConfigService } from './sequelizeConfig.service'
     SequelizeModule.forRootAsync({
       useClass: SequelizeConfigService,
     }),
-    SharedAuthModule.register({
-      jwtSecret: environment.auth.jwtSecret,
-      secretToken: environment.auth.secretToken,
-    }),
+    AuthModule.register(environment.identityServerAuth),
     CaseModule,
     DefendantModule,
     IndictmentCountModule,
