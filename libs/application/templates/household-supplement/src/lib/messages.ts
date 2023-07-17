@@ -294,12 +294,12 @@ export const householdSupplementFormMessage: MessageDir = {
       description: 'Confirm',
     },
     title: {
-      id: 'hs.application:confirmation.title',
+      id: 'hs.application:confirm.title',
       defaultMessage: 'Senda inn umsókn',
       description: 'Submit application',
     },
     description: {
-      id: 'hs.application:confirmation.description',
+      id: 'hs.application:confirm.description',
       defaultMessage:
         'Vinsamlegast farðu yfir umsóknina áður en þú sendir hana inn.',
       description: 'Please review the application before submitting.',
@@ -319,13 +319,52 @@ export const householdSupplementFormMessage: MessageDir = {
       defaultMessage: 'Viðbótargögn til Tryggingastofnunar',
       description: 'Additional documents to Tryggingastofnunar',
     },
+    overviewTitle: {
+      id: 'hs.application:confirm.overview.title',
+      defaultMessage: 'Yfirlit',
+      description: 'Overview',
+    },
+    buttonsEdit: {
+      id: 'hs.application:confirm.buttons.edit',
+      defaultMessage: 'Breyta umsókn',
+      description: 'Edit application',
+    },
   }),
 
-  conclusion: defineMessages({
+  conclusionScreen: defineMessages({
     title: {
-      id: 'hs.application:conclusion.title',
-      defaultMessage: 'Umsókn móttekin og bíður tekjuáætlunar',
-      description: 'Congratulations, below are the next steps',
+      id: 'hs.application:conclusionScreen.title',
+      defaultMessage: 'Umsókn móttekin',
+      description: 'Application received',
+    },
+    alertTitle: {
+      id: 'hs.application:conclusionScreen.alertTitle',
+      defaultMessage:
+        'Umsókn um heimilisuppbót hefur verið send til Tryggingastofnunar',
+      description:
+        'An application for household supplements has been sent to Tryggingastofnunar',
+    },
+    bulletList: {
+      id: `hs.application:conclusionScreen.bulletList#markdown`,
+      defaultMessage: `* Tryggingastofnun fer yfir umsóknina og staðfestir að allar upplýsingar eru réttar.\n* Ef þörf er á er kallað eftir frekari upplýsingum/gögnum.\n* Þegar öll nauðsynleg gögn hafa borist, fer Tryggingastofnun yfir umsókn og er afstaða tekin til heimilisuppbótar.`,
+      description: 'BulletList',
+    },
+    nextStepsLabel: {
+      id: 'hs.application:conclusionScreen.nextStepsLabel',
+      defaultMessage: 'Hvað gerist næst?',
+      description: 'What happens next?',
+    },
+    nextStepsText: {
+      id: 'hs.application:conclusionScreen.nextStepsText',
+      defaultMessage:
+        'Hjá Tryggingastofnun verður farið yfir umsóknina. Ef þörf er á er kallað eftir frekari upplýsingum/gögnum. Þegar öll nauðsynleg gögn hafa borist er afstaða tekin til ellilífeyris.',
+      description:
+        'The application will be reviewed at the Insurance Agency. If needed, additional information/data is requested. Once all the necessary data have been received, a position is taken on the retirement pension.',
+    },
+    buttonsViewApplication: {
+      id: 'hs.application:conclusionScreen.buttonsViewApplication',
+      defaultMessage: 'Skoða umsókn',
+      description: 'View application',
     },
   }),
 
@@ -400,6 +439,14 @@ export const householdSupplementFormMessage: MessageDir = {
     },
   }),
 }
+
+export const inReviewFormMessages = defineMessages({
+  formTitle: {
+    id: 'hs.application:inReview.form.title',
+    defaultMessage: 'Umsókn um heimilisuppbót',
+    description: 'Household supplement',
+  },
+})
 
 export const validatorErrorMessages = defineMessages({
   requireAnswer: {
@@ -476,5 +523,84 @@ export const validatorErrorMessages = defineMessages({
     id: 'hs.application:payment.personal.allowance',
     defaultMessage: 'Persónuafsláttur verður að vera milli 1 og 100',
     description: 'Personal allowace has to be between 1 and 100',
+  },
+})
+
+export const statesMessages = defineMessages({
+  draftDescription: {
+    id: 'hs.application:draft.description',
+    defaultMessage: 'Þú hefur útbúið drög að umsókn.',
+    description: 'Description of the state - draft',
+  },
+  applicationSent: {
+    id: 'hs.application:applicationSent',
+    defaultMessage: 'Umsókn send',
+    description: 'History application sent',
+  },
+  tryggingastofnunSubmittedTitle: {
+    id: 'hs.application:tryggingastofnunSubmittedTitle',
+    defaultMessage: 'Umsókn hefur verið send til Tryggingastofnunnar',
+    description: 'The application has been sent to Tryggingastofnunnar',
+  },
+  tryggingastofnunSubmittedContent: {
+    id: 'hs.application:tryggingastofnunSubmittedContent',
+    defaultMessage:
+      'Umsóknin þín er í bið eftir yfirferð. Hægt er að breyta umsókn þar til umsókn er komin í yfirferð.',
+    description: 'Application waiting for review',
+  },
+
+  tryggingastofnunInReviewTitle: {
+    id: 'hs.application:tryggingastofnunInReviewTitle',
+    defaultMessage: 'Verið er að fara yfir umsóknina',
+    description: 'The application is being reviewed',
+  },
+  tryggingastofnunInReviewContent: {
+    id: 'hs.application:tryggingastofnunInReviewContent',
+    defaultMessage:
+      'Tryggingastofnun fer núna yfir umsóknina og því getur þetta tekið nokkra daga',
+    description:
+      'Tryggingastofnun is currently reviewing the application, so this may take a few days',
+  },
+
+  applicationEdited: {
+    id: 'hs.application:applicationEdited',
+    defaultMessage: 'Umsókn breytt',
+    description: 'Application edited',
+  },
+  applicationRejected: {
+    id: 'hs.application:applicationRejected',
+    defaultMessage: 'Umsókn hafnað',
+    description: 'Application rejected',
+  },
+  applicationApproved: {
+    id: 'hs.application:applicationApproved',
+    defaultMessage: 'Tryggingastofnun hefur samþykkt umsóknina',
+    description: 'Tryggingastofnun has accepted the application',
+  },
+  applicationApprovedDescription: {
+    id: 'hs.application:applicationApprovedDescription',
+    defaultMessage: 'Umsókn um heimilisuppbót hefur verið samþykkt',
+    description: 'The application for household supplement has been approved',
+  },
+
+  additionalDocumentRequired: {
+    id: 'hs.application:additionalDocumentRequired',
+    defaultMessage: 'Viðbótargögn vantar',
+    description: 'Additional documents required',
+  },
+  additionalDocumentsAdded: {
+    id: 'hs.application:additionalDocumentsAdded',
+    defaultMessage: 'Viðbótargögnum bætt við',
+    description: 'Additional documents added',
+  },
+  additionalDocumentRequiredDescription: {
+    id: 'hs.application:additionalDocumentRequired.description',
+    defaultMessage: 'Tryggingastofnun vantar frekari gögn vegna umsóknarinnar.',
+    description: 'Description of the state - additionalDocumentRequired',
+  },
+  pendingTag: {
+    id: 'hs.application:pending.tag',
+    defaultMessage: 'Í bið',
+    description: 'Pending',
   },
 })

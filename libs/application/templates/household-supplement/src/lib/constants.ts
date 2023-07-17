@@ -19,6 +19,14 @@ export enum States {
   PREREQUISITES = 'prerequisites',
   DRAFT = 'draft',
   DONE = 'done',
+
+  TRYGGINGASTOFNUN_SUBMITTED = 'tryggingastofnunSubmitted',
+  TRYGGINGASTOFNUN_IN_REVIEW = 'tryggingastofnunInReview',
+
+  ADDITIONAL_DOCUMENTS_REQUIRED = 'additionalDocumentsRequired',
+
+  REJECTED = 'rejected',
+  APPROVED = 'approved',
 }
 
 export enum HouseholdSupplementHousing {

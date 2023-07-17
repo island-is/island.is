@@ -339,7 +339,7 @@ export const HouseholdSupplementForm: Form = buildForm({
                 buildCustomField(
                   {
                     id: 'confirmScreen',
-                    title: householdSupplementFormMessage.confirm.confirmTitle,
+                    title: householdSupplementFormMessage.confirm.title,
                     component: 'Review',
                   },
                   {
@@ -349,11 +349,11 @@ export const HouseholdSupplementForm: Form = buildForm({
                 buildSubmitField({
                   id: 'submit',
                   placement: 'footer',
-                  title: householdSupplementFormMessage.confirm.confirmTitle,
+                  title: householdSupplementFormMessage.confirm.title,
                   actions: [
                     {
                       event: DefaultEvents.SUBMIT,
-                      name: householdSupplementFormMessage.confirm.confirmTitle,
+                      name: householdSupplementFormMessage.confirm.title,
                       type: 'primary',
                     },
                   ],
@@ -364,7 +364,7 @@ export const HouseholdSupplementForm: Form = buildForm({
         }),
         buildCustomField({
           id: 'thankYou',
-          title: householdSupplementFormMessage.conclusion.title,
+          title: householdSupplementFormMessage.conclusionScreen.title,
           component: 'Conclusion',
         }),
       ],
