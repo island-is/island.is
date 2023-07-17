@@ -217,7 +217,7 @@ export function getAttachments(application: Application) {
   return attachments
 }
 
-// returns awailable years. Awailable period is
+// returns available years. Available period is
 // 2 years back in time and 6 months in the future.
 export function getAvailableYears(application: Application) {
   const { applicantNationalId } = getApplicationExternalData(
@@ -241,7 +241,7 @@ export function getAvailableYears(application: Application) {
   )
 }
 
-// returns awailable months for selected year, since awailable period is
+// returns available months for selected year, since available period is
 // 2 years back in time and 6 months in the future.
 export function getAvailableMonths(
   application: Application,

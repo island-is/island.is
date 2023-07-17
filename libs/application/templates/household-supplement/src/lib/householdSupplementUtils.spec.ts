@@ -15,6 +15,7 @@ import {
 } from './householdSupplementUtils'
 import { subYears } from 'date-fns'
 import { MONTHS } from './constants'
+import { isExistsCohabitantOlderThan25 } from './householdSupplementUtils'
 
 function buildApplication(data?: {
   answers?: FormValue
@@ -53,13 +54,6 @@ describe('getAvailableYears', () => {
     const startDateYear = subYears(new Date(), 2).getFullYear()
     const endDateYear = addMonths(new Date(), 6).getFullYear()
     const res = getAvailableYears(application)
-
-    // const expected = Array.from(
-    //   Array(endDateYear - startDateYear + 1).keys(),
-    // ).map((x) => {
-    //   const theYear = x + startDateYear
-    //   return { value: theYear.toString(), label: theYear.toString() }
-    // })
 
     const expected = Array.from(
       Array(endDateYear - (startDateYear - 1)),
@@ -128,5 +122,39 @@ describe('getAvailableMonths', () => {
     }
 
     expect(res).toEqual(months)
+  })
+})
+
+describe('isExistsCohabitantOlderThan25', () => {
+  it('should return true if user has cohabitant older than 25', () => {
+    const application = buildApplication({
+      externalData: {
+        nationalRegistryCohabitants: {
+          data: ['2605791429'],
+          date: new Date(),
+          status: 'success',
+        },
+      },
+    })
+
+    const res = isExistsCohabitantOlderThan25(application.externalData)
+
+    expect(res).toEqual(true)
+  })
+
+  it('should return false if user has cohabitant older than 25', () => {
+    const application = buildApplication({
+      externalData: {
+        nationalRegistryCohabitants: {
+          data: ['0212181460'],
+          date: new Date(),
+          status: 'success',
+        },
+      },
+    })
+
+    const res = isExistsCohabitantOlderThan25(application.externalData)
+
+    expect(res).toEqual(false)
   })
 })
