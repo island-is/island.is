@@ -238,6 +238,33 @@ export class ContentfulService {
     return flatten(chunkedChanges)
   }
 
+  /** Example if locale is 'is-IS'
+   *
+   *  { fields: { title: { en: 'English', 'is-IS': 'Íslenska' } } }
+   *
+   *  would become:
+   *
+   *  { fields: { title: 'Íslenska' } }
+   * */
+  private removeLocaleKeysFromEntryItems = (
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    items: Entry<any>[],
+    locale: Locale,
+  ) => {
+    for (const item of items) {
+      const fields = item.fields
+      for (const fieldKey in fields) {
+        for (const fieldLocale in fields[fieldKey]) {
+          if (fieldLocale === this.contentfulLocaleMap[locale]) {
+            fields[fieldKey] = fields[fieldKey][fieldLocale]
+            break
+          }
+        }
+      }
+    }
+    return items
+  }
+
   /**
    * Gets entries from the Sync API, fetches nested content from Contentful and returns the result
    */
@@ -287,17 +314,20 @@ export class ContentfulService {
       nestedEntries: nestedEntryIds.length,
     })
 
-    // Get all sync entries from Contentful endpoints for this locale, we could parse the sync response into locales but we are opting for this for simplicity
-    const indexableEntries = await this.getPopulatedContentulEntries(
-      entries.filter(
-        (entry) =>
-          !entriesThatHadTheirTranslationTurnedOff.has(entry.sys.id) &&
-          // Only populate the indexable entries
-          environment.indexableTypes.includes(entry.sys.contentType.sys.id),
-      ),
-      locale,
-      chunkSize,
+    const indexableEntries = entries.filter(
+      (entry) =>
+        !entriesThatHadTheirTranslationTurnedOff.has(entry.sys.id) &&
+        environment.indexableTypes.includes(entry.sys.contentType.sys.id),
     )
+
+    // Get all sync entries from Contentful endpoints for this locale, we could parse the sync response into locales but we are opting for this for simplicity
+    const populatedIndexableEntries = !isDeltaUpdate
+      ? this.removeLocaleKeysFromEntryItems(indexableEntries, locale)
+      : await this.getPopulatedContentulEntries(
+          indexableEntries,
+          locale,
+          chunkSize,
+        )
 
     // extract ids from deletedEntries
     const deletedEntryIds = deletedEntries.map((entry) => entry.sys.id)
@@ -307,7 +337,7 @@ export class ContentfulService {
     }
 
     return {
-      indexableEntries,
+      indexableEntries: populatedIndexableEntries,
       nestedEntryIds,
       deletedEntryIds,
       newNextSyncToken,
