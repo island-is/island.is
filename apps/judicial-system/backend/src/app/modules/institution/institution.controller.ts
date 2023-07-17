@@ -3,14 +3,14 @@ import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
-import { JwtAuthGuard } from '@island.is/judicial-system/auth'
 
 import { InstitutionService } from './institution.service'
 import { Institution } from './institution.model'
+import { IdsUserGuard } from '@island.is/auth-nest-tools'
 
 @Controller('api')
 @ApiTags('institutions')
-@UseGuards(JwtAuthGuard)
+@UseGuards(IdsUserGuard)
 export class InstitutionController {
   constructor(
     private readonly institutionService: InstitutionService,

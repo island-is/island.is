@@ -15,10 +15,11 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import {
   CurrentHttpUser,
-  JwtAuthGuard,
   RolesGuard,
   RolesRules,
 } from '@island.is/judicial-system/auth'
+import { IdsUserGuard } from '@island.is/auth-nest-tools'
+
 import {
   indictmentCases,
   investigationCases,
@@ -56,7 +57,7 @@ import { SignedUrl } from './models/signedUrl.model'
 import { UploadFileToCourtResponse } from './models/uploadFileToCourt.response'
 import { FileService } from './file.service'
 
-@UseGuards(JwtAuthGuard)
+@UseGuards(IdsUserGuard)
 @Controller('api/case/:caseId')
 @ApiTags('files')
 export class FileController {

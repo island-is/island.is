@@ -15,7 +15,6 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import {
   CurrentHttpUser,
-  JwtAuthGuard,
   RolesGuard,
   RolesRules,
   TokenGuard,
@@ -26,6 +25,7 @@ import { CreateUserDto } from './dto/createUser.dto'
 import { UpdateUserDto } from './dto/updateUser.dto'
 import { User } from './user.model'
 import { UserService } from './user.service'
+import { IdsUserGuard } from '@island.is/auth-nest-tools'
 
 @Controller('api')
 @ApiTags('users')
@@ -35,7 +35,7 @@ export class UserController {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(RolesGuard)
   @RolesRules(adminRule)
   @Post('user')
   @ApiCreatedResponse({ type: User, description: 'Creates a new user' })
@@ -45,7 +45,7 @@ export class UserController {
     return this.userService.create(userToCreate)
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(RolesGuard)
   @RolesRules(adminRule)
   @Patch('user/:userId')
   @ApiOkResponse({ type: User, description: 'Updates an existing user' })
@@ -58,7 +58,7 @@ export class UserController {
     return this.userService.update(userId, userToUpdate)
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(IdsUserGuard)
   @Get('users')
   @ApiOkResponse({
     type: User,
@@ -71,7 +71,7 @@ export class UserController {
     return this.userService.getAll(user)
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(IdsUserGuard)
   @Get('user/:userId')
   @ApiOkResponse({
     type: User,
