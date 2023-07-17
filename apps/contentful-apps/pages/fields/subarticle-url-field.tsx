@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useDebounce } from 'react-use'
 import { FieldExtensionSDK } from '@contentful/app-sdk'
 import { useCMA, useSDK } from '@contentful/react-apps-toolkit'
@@ -30,19 +30,13 @@ const SubArticleUrlField = () => {
   )
   const [loading, setLoading] = useState(true)
   const [firstRender, setFirstRender] = useState(true)
+  const parentHasBeenSet = useRef<boolean | null>(null)
 
-  useEffect(() => {
-    setValue(sdk.field?.getValue()?.split('/')?.pop() ?? '')
-  }, [sdk.field])
-
-  useEffect(() => {
-    sdk.window.startAutoResizer()
-  }, [sdk.window])
-
-  useEffect(() => {
+  const fetchParentArticle = useCallback(() => {
     const parentArticleId = sdk.entry.fields['parent']?.getValue()?.sys?.id
 
     if (!parentArticleId) {
+      parentHasBeenSet.current = false
       setLoading(false)
       return
     }
@@ -78,8 +72,30 @@ const SubArticleUrlField = () => {
         setLoading(false)
         console.error(error)
       })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [cma.entry, sdk.entry, sdk.field])
+  }, [cma.entry, defaultLocale, sdk.entry, sdk.field.locale])
+
+  useEffect(() => {
+    sdk.entry.onSysChanged(() => {
+      if (parentHasBeenSet.current !== false) return
+
+      const parentId = sdk.entry.fields?.['parent']?.getValue()?.sys?.id
+
+      if (!parentId) return
+
+      // Refetch parent if subArticle was missing a parent but got one at a later point
+      fetchParentArticle()
+    })
+  }, [fetchParentArticle, sdk.entry])
+
+  useEffect(() => {
+    setValue(sdk.field?.getValue()?.split('/')?.pop() ?? '')
+  }, [sdk.field])
+
+  useEffect(() => {
+    sdk.window.startAutoResizer()
+  }, [sdk.window])
+
+  useEffect(fetchParentArticle, [fetchParentArticle])
 
   useDebounce(
     () => {
