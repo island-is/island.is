@@ -5,10 +5,11 @@ import {
   YES,
   NO,
   AttachmentLabel,
+  MONTHS,
 } from './constants'
 import { Option, Application, YesOrNo } from '@island.is/application/types'
 import { householdSupplementFormMessage } from './messages'
-
+import { addMonths, addYears, subYears } from 'date-fns'
 import * as kennitala from 'kennitala'
 
 interface FileType {
@@ -45,10 +46,16 @@ export function getApplicationAnswers(answers: Application['answers']) {
     'householdSupplement.children',
   ) as YesOrNo
 
+  const selectedYear = getValueViaPath(answers, 'period.year') as string
+
+  const selectedMonth = getValueViaPath(answers, 'period.month') as string
+
   return {
     householdSupplementHousing,
     householdSupplementChildren,
     bank,
+    selectedYear,
+    selectedMonth,
   }
 }
 
@@ -206,4 +213,55 @@ export function getAttachments(application: Application) {
   //   }
 
   return attachments
+}
+
+// returns awailable years. Awailable period is
+// 2 years back in time and 6 months in the future.
+export function getAvailableYears(application: Application) {
+  const { applicantNationalId } = getApplicationExternalData(
+    application.externalData,
+  )
+
+  if (!applicantNationalId) return []
+
+  const twoYearsBackInTime = subYears(new Date(), 2).getFullYear()
+  const sixMonthsInTheFuture = addMonths(new Date(), 6).getFullYear()
+
+  console.log('sixMonthsInTheFuture ', sixMonthsInTheFuture)
+  return Array.from(
+    Array(sixMonthsInTheFuture - (twoYearsBackInTime - 1)),
+    (_, i) => {
+      return {
+        value: (i + twoYearsBackInTime).toString(),
+        label: (i + twoYearsBackInTime).toString(),
+      }
+    },
+  )
+}
+
+// returns awailable months for selected year, since awailable period is
+// 2 years back in time and 6 months in the future.
+export function getAvailableMonths(
+  application: Application,
+  selectedYear: string,
+) {
+  const { applicantNationalId } = getApplicationExternalData(
+    application.externalData,
+  )
+
+  if (!applicantNationalId) return []
+  if (!selectedYear) return []
+
+  const twoYearsBackInTime = subYears(new Date(), 2)
+  const sixMonthsInTheFuture = addMonths(new Date(), 6)
+
+  let months = MONTHS
+
+  if (twoYearsBackInTime.getFullYear().toString() === selectedYear) {
+    months = months.slice(twoYearsBackInTime.getMonth(), months.length + 1)
+  } else if (sixMonthsInTheFuture.getFullYear().toString() === selectedYear) {
+    months = months.slice(0, sixMonthsInTheFuture.getMonth() + 1)
+  }
+
+  return months
 }

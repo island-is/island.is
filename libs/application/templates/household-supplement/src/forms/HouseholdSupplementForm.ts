@@ -3,6 +3,7 @@ import {
   buildMultiField,
   buildPhoneField,
   buildSection,
+  buildSelectField,
   buildSubSection,
   buildSubmitField,
   buildTextField,
@@ -179,6 +180,39 @@ export const HouseholdSupplementForm: Form = buildForm({
                   options: getYesNOOptions(),
                   width: 'half',
                   required: true,
+                }),
+              ],
+            }),
+          ],
+        }),
+        // buildSubSection({
+        //   id: 'householdSupplementSection',
+        //   title: householdSupplementFormMessage.shared.householdSupplement,
+        //   children: [
+        //     buildMultiField({
+        //       id: 'householdSupplement',
+        //       title: householdSupplementFormMessage.shared.householdSupplement,
+        //       description:
+        //         householdSupplementFormMessage.info
+        //           .householdSupplementDescription,
+        //       children: [],
+        //     }),
+        //   ],
+        // }),
+        buildSubSection({
+          id: 'periodSection',
+          title: householdSupplementFormMessage.info.periodTitle,
+          children: [
+            buildMultiField({
+              id: 'periodField',
+              title: householdSupplementFormMessage.info.periodTitle,
+              description:
+                householdSupplementFormMessage.info.periodDescription,
+              children: [
+                buildCustomField({
+                  id: 'period',
+                  title: householdSupplementFormMessage.info.periodTitle,
+                  component: 'Period',
                 }),
               ],
             }),
