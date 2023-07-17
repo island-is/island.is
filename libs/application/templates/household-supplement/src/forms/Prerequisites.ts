@@ -14,6 +14,7 @@ import {
 } from '@island.is/application/types'
 import Logo from '../assets/Logo'
 import { householdSupplementFormMessage } from '../lib/messages'
+import { NationalRegistryCohabitantsApi } from '../dataProviders'
 
 export const PrerequisitesForm: Form = buildForm({
   id: 'HousholdSupplementPrerequisites',
@@ -62,6 +63,10 @@ export const PrerequisitesForm: Form = buildForm({
               subTitle:
                 householdSupplementFormMessage.pre
                   .userProfileInformationSubTitle,
+            }),
+            buildDataProviderItem({
+              provider: NationalRegistryCohabitantsApi,
+              title: '',
             }),
           ],
         }),

@@ -1,6 +1,6 @@
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { z } from 'zod'
-import { NO, YES } from './constants'
+import { NO, YES, HouseholdSupplementHousing } from './constants'
 import { householdSupplementFormMessage } from './messages'
 
 export const dataSchema = z.object({
@@ -28,6 +28,13 @@ export const dataSchema = z.object({
   }),
   paymentInfo: z.object({
     bank: z.string(),
+  }),
+  householdSupplement: z.object({
+    housing: z.enum([
+      HouseholdSupplementHousing.HOUSEOWNER,
+      HouseholdSupplementHousing.RENTER,
+    ]),
+    children: z.enum([YES, NO]),
   }),
 })
 

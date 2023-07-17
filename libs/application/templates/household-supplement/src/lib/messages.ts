@@ -171,6 +171,65 @@ export const householdSupplementFormMessage: MessageDir = {
     },
   }),
 
+  fileUpload: defineMessages({
+    attachmentButton: {
+      id: 'hs.application:fileUpload.attachment.button',
+      defaultMessage: 'Veldu skjal',
+      description: 'Upload file',
+    },
+    attachmentHeader: {
+      id: 'hs.application:fileUpload.attachment.header',
+      defaultMessage: 'Dragðu skjalið hingað til að hlaða upp',
+      description: 'Drag files here to upload',
+    },
+    attachmentDescription: {
+      id: 'hs.application:fileUpload.attachment.description',
+      defaultMessage: 'Tekið er við skjölum með endingu: .pdf',
+      description: 'Accepted documents with the following extensions: .pdf',
+    },
+    attachmentMaxSizeError: {
+      id: 'hs.application:fileUpload.attachment.maxSizeError',
+      defaultMessage: 'Hámark 5 MB á skrá',
+      description: 'Max 5 MB per file',
+    },
+    additionalFileTitle: {
+      id: 'hs.application:fileUpload.additionalFile.title',
+      defaultMessage: 'Fylgiskjöl viðbótagögn',
+      description: 'Additional attachments',
+    },
+    additionalFileDescription: {
+      id: 'hs.application:fileUpload.additionalFile.description',
+      defaultMessage:
+        'Hér getur þú skilað viðbótargögnum til Tryggingastofnunar. Til dæmis staðfestingu frá Þjóðskrá vegna rangar upplýsingar. Athugaðu að skjalið þarf að vera á .pdf formi.',
+      description:
+        'Here you can submit additional data to TR. For example, confirmation from the National Registry due to incorrect information. Note that the document must be in .pdf format.',
+    },
+    leaseAgreementTitle: {
+      id: 'hs.application:fileUppload.lease.agreement.title',
+      defaultMessage: 'Fylgiskjöl leigusamningur',
+      description: 'Household supplement rental agreement',
+    },
+    schoolConfirmationTitle: {
+      id: 'hs.application:fileUppload.school.confirmation.title',
+      defaultMessage: 'Fylgiskjöl skólavottorð',
+      description: "Household supplement young person's school attendance",
+    },
+    leaseAgreement: {
+      id: 'hs.application:fileUppload.lease.agreement',
+      defaultMessage:
+        'Hér getur þú skilað undirritaðum leigusamningi. Athugaðu að skjalið þarf að vera á .pdf formi.',
+      description:
+        'Here you can upload the signed rental agreement. Note that the document must be in .pdf format.',
+    },
+    schoolConfirmation: {
+      id: 'hs.application:fileUppload.school.confirmation',
+      defaultMessage:
+        'Hér getur þú skilað vottorði um skólavist ungmennis. Athugaðu að skjalið þarf að vera á .pdf formi.',
+      description:
+        "Here you can upload a certificate of a young person's school attendance. Note that the document must be in .pdf format.",
+    },
+  }),
+
   additionalInfo: defineMessages({
     section: {
       id: 'hs.application:additional.info.section',
@@ -196,6 +255,21 @@ export const householdSupplementFormMessage: MessageDir = {
         'Vinsamlegast farðu yfir umsóknina áður en þú sendir hana inn.',
       description: 'Please review the application before submitting.',
     },
+    leaseAgreementAttachment: {
+      id: 'hs.application:confirm.lease.agreement.attachment',
+      defaultMessage: 'Undirritaður leigusamningur',
+      description: 'Signed lease agreement',
+    },
+    schoolConfirmationAttachment: {
+      id: 'hs.application:confirm.school.confirmation.attachment',
+      defaultMessage: 'Vottorð um skólavist ungmennis',
+      description: 'Certificate of school attendance of a young person',
+    },
+    additionalDocumentsAttachment: {
+      id: 'hs.application:confirm.additional.documents.attachment',
+      defaultMessage: 'Viðbótargögn til Tryggingastofnunar',
+      description: 'Additional documents to Tryggingastofnunar',
+    },
   }),
 
   conclusion: defineMessages({
@@ -214,3 +288,81 @@ export const householdSupplementFormMessage: MessageDir = {
     },
   }),
 }
+
+export const validatorErrorMessages = defineMessages({
+  requireAnswer: {
+    id: 'oap.application:fileUpload.required.answer',
+    defaultMessage: 'Ógilt gildi',
+    description: 'Invalid value',
+  },
+  periodStartDateNeeded: {
+    id: 'oap.application:period.startDate.Needed',
+    defaultMessage: 'Finn ekki byrjunardagsetning.',
+    description: 'Could not calculate startDate.',
+  },
+  periodEndDateNeeded: {
+    id: 'oap.application:period.endDate.Needed',
+    defaultMessage: 'Finn ekki endadagsetning.',
+    description: 'Could not calculate endDate.',
+  },
+  periodYear: {
+    id: 'oap.application:period.year',
+    defaultMessage: 'Vitlaust ár.',
+    description: 'Invalid year.',
+  },
+  periodMonth: {
+    id: 'oap.application:period.month',
+    defaultMessage: 'Vitlaus mánuður.',
+    description: 'Invalid month.',
+  },
+  requireAttachment: {
+    id: 'oap.application:fileUpload.required.attachment',
+    defaultMessage: 'Þú þarft að hlaða upp viðhenginu til að halda áfram.',
+    description: 'Error message when the attachment file is not provided.',
+  },
+  employerEmailMissing: {
+    id: 'oap.application:employer.email.missing',
+    defaultMessage: 'Netfang atvinnurekanda vantar',
+    description: 'Employer email missing',
+  },
+  employerEmailDuplicate: {
+    id: 'oap.application:employer.email.duplicate',
+    defaultMessage: 'Netfang atvinnurekanda er þegar skráð',
+    description: 'Employer email is already added',
+  },
+  employerRatioTypeMissing: {
+    id: 'oap.application:employer.ratioType.missing',
+    defaultMessage: 'Vinsamlegast veldu starfhlutfall',
+    description: 'Copy when ratioType is missing',
+  },
+  employersNotAList: {
+    id: 'oap.application:employers.employersNotAList',
+    defaultMessage: 'Svar þarf að vera listi af atvinnurekanda',
+    description: 'Copy when employers is not a list',
+  },
+  employersRatioMoreThan50: {
+    id: 'oap.application:employers.ratio.more.than.50',
+    defaultMessage: 'Starfhlutfall má ekki vera meira en 50%',
+    description: 'Employment rate must be less than or equal 50%',
+  },
+  employersRatioLessThan0: {
+    id: 'oap.application:employers.ratio.less.than.0',
+    defaultMessage: 'Starfhlutfall má ekki vera minni en 1%',
+    description: 'Employment rate must be more than 0%',
+  },
+  employerRatioMissing: {
+    id: 'oap.application:employer.ratio.missing',
+    defaultMessage: 'Starfhlutfall vantar',
+    description: 'Employer rate missing',
+  },
+  employersPhoneNumberInvalid: {
+    id: 'oap.application:employer.phoneNumber.invalid',
+    defaultMessage: 'Símanúmer verður að vera GSM númer',
+    description: 'Phone number must be a GSM number',
+  },
+  personalAllowance: {
+    id: 'oap.application:payment.personal.allowance',
+    defaultMessage: 'Persónuafsláttur verður að vera milli 1 og 100',
+    description: 'Personal allowace has to be between 1 and 100',
+  },
+})

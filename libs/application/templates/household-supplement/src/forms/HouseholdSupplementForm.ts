@@ -1,6 +1,4 @@
 import {
-  buildCustomField,
-  buildDescriptionField,
   buildForm,
   buildMultiField,
   buildPhoneField,
@@ -8,6 +6,9 @@ import {
   buildSubSection,
   buildSubmitField,
   buildTextField,
+  buildCustomField,
+  buildRadioField,
+  buildFileUploadField,
 } from '@island.is/application/core'
 import {
   Application,
@@ -18,6 +19,16 @@ import {
 import Logo from '../assets/Logo'
 import { householdSupplementFormMessage } from '../lib/messages'
 import { UserProfile } from '@island.is/api/schema'
+import {
+  HouseholdSupplementHousing,
+  FILE_SIZE_LIMIT,
+  YES,
+} from '../lib/constants'
+import {
+  getYesNOOptions,
+  isExistsCohabitantOlderThan25,
+  getApplicationAnswers,
+} from '../lib/householdSupplementUtils'
 
 export const HouseholdSupplementForm: Form = buildForm({
   id: 'HouseholdSupplementDraft',
@@ -110,20 +121,139 @@ export const HouseholdSupplementForm: Form = buildForm({
             }),
           ],
         }),
-        // buildSubSection({
-        //   id: 'householdSupplementSection',
-        //   title: householdSupplementFormMessage.shared.householdSupplement,
-        //   children: [
-        //     buildMultiField({
-        //       id: 'householdSupplement',
-        //       title: householdSupplementFormMessage.shared.householdSupplement,
-        //       description:
-        //         householdSupplementFormMessage.info
-        //           .householdSupplementDescription,
-        //       children: [],
-        //     }),
-        //   ],
-        // }),
+        buildSubSection({
+          id: 'householdSupplementSection',
+          title: householdSupplementFormMessage.shared.householdSupplement,
+          children: [
+            buildMultiField({
+              id: 'householdSupplement',
+              title: householdSupplementFormMessage.shared.householdSupplement,
+              description:
+                householdSupplementFormMessage.info
+                  .householdSupplementDescription,
+              children: [
+                buildCustomField(
+                  {
+                    id: 'householdSupplement.alert',
+                    title:
+                      householdSupplementFormMessage.info
+                        .householdSupplementAlertTitle,
+                    component: 'FieldAlertMessage',
+                    description:
+                      householdSupplementFormMessage.info
+                        .householdSupplementAlertDescription,
+
+                    condition: (_, externalData) => {
+                      return isExistsCohabitantOlderThan25(externalData)
+                    },
+                  },
+                  { type: 'warning' },
+                ),
+                buildRadioField({
+                  id: 'householdSupplement.housing',
+                  title:
+                    householdSupplementFormMessage.info
+                      .householdSupplementHousing,
+                  options: [
+                    {
+                      value: HouseholdSupplementHousing.HOUSEOWNER,
+                      label:
+                        householdSupplementFormMessage.info
+                          .householdSupplementHousingOwner,
+                    },
+                    {
+                      value: HouseholdSupplementHousing.RENTER,
+                      label:
+                        householdSupplementFormMessage.info
+                          .householdSupplementHousingRenter,
+                    },
+                  ],
+                  width: 'half',
+                  required: true,
+                }),
+                buildRadioField({
+                  id: 'householdSupplement.children',
+                  title:
+                    householdSupplementFormMessage.info
+                      .householdSupplementChildrenBetween18And25,
+                  options: getYesNOOptions(),
+                  width: 'half',
+                  required: true,
+                }),
+              ],
+            }),
+          ],
+        }),
+        buildSubSection({
+          id: 'fileUploadLeaseAgreement',
+          title: householdSupplementFormMessage.fileUpload.leaseAgreementTitle,
+          condition: (answers) => {
+            const { householdSupplementHousing } = getApplicationAnswers(
+              answers,
+            )
+            return (
+              householdSupplementHousing === HouseholdSupplementHousing.RENTER
+            )
+          },
+          children: [
+            buildFileUploadField({
+              id: 'fileUpload.leaseAgreement',
+              title:
+                householdSupplementFormMessage.fileUpload.leaseAgreementTitle,
+              description:
+                householdSupplementFormMessage.fileUpload.leaseAgreement,
+              introduction:
+                householdSupplementFormMessage.fileUpload.leaseAgreement,
+              maxSize: FILE_SIZE_LIMIT,
+              maxSizeErrorText:
+                householdSupplementFormMessage.fileUpload
+                  .attachmentMaxSizeError,
+              uploadAccept: '.pdf',
+              uploadHeader:
+                householdSupplementFormMessage.fileUpload.attachmentHeader,
+              uploadDescription:
+                householdSupplementFormMessage.fileUpload.attachmentDescription,
+              uploadButtonLabel:
+                householdSupplementFormMessage.fileUpload.attachmentButton,
+              uploadMultiple: true,
+            }),
+          ],
+        }),
+        buildSubSection({
+          id: 'fileUploadSchoolConfirmation',
+          title:
+            householdSupplementFormMessage.fileUpload.schoolConfirmationTitle,
+          condition: (answers) => {
+            const { householdSupplementChildren } = getApplicationAnswers(
+              answers,
+            )
+            return householdSupplementChildren === YES
+          },
+          children: [
+            buildFileUploadField({
+              id: 'fileUpload.schoolConfirmation',
+              title:
+                householdSupplementFormMessage.fileUpload
+                  .schoolConfirmationTitle,
+              description:
+                householdSupplementFormMessage.fileUpload.schoolConfirmation,
+              introduction:
+                householdSupplementFormMessage.fileUpload.schoolConfirmation,
+              maxSize: FILE_SIZE_LIMIT,
+              maxSizeErrorText:
+                householdSupplementFormMessage.fileUpload
+                  .attachmentMaxSizeError,
+              uploadAccept: '.pdf',
+              uploadHeader:
+                householdSupplementFormMessage.fileUpload.attachmentHeader,
+              uploadDescription:
+                householdSupplementFormMessage.fileUpload.attachmentDescription,
+              uploadButtonLabel:
+                householdSupplementFormMessage.fileUpload.attachmentButton,
+              uploadMultiple: true,
+            }),
+          ],
+        }),
       ],
     }),
     // buildSection({

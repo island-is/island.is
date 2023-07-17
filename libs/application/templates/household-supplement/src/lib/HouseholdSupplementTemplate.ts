@@ -15,7 +15,9 @@ import {
 import { pruneAfterDays } from '@island.is/application/core'
 import { Events, Roles, States } from './constants'
 import { dataSchema } from './dataSchema'
+import { answerValidators } from './answerValidators'
 import { householdSupplementFormMessage } from './messages'
+import { NationalRegistryCohabitantsApi } from '../dataProviders'
 
 const HouseholdSupplementTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -59,6 +61,7 @@ const HouseholdSupplementTemplate: ApplicationTemplate<
                 NationalRegistryUserApi,
                 UserProfileApi,
                 NationalRegistrySpouseApi,
+                NationalRegistryCohabitantsApi,
               ],
               delete: true,
             },
@@ -108,6 +111,7 @@ const HouseholdSupplementTemplate: ApplicationTemplate<
     }
     return undefined
   },
+  answerValidators,
 }
 
 export default HouseholdSupplementTemplate
