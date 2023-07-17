@@ -34,6 +34,7 @@ const devConfig = {
     url: process.env.EVENT_URL,
     errorUrl: process.env.ERROR_EVENT_URL,
   },
+  idsTokenCookieName: 'next-auth.session-token',
 }
 
 if (process.env.NODE_ENV === 'production') {
@@ -109,6 +110,7 @@ const prodConfig = {
     url: process.env.EVENT_URL,
     errorUrl: process.env.ERROR_EVENT_URL,
   },
+  idsTokenCookieName: '__Secure-next-auth.session-token',
 }
 
 export default process.env.NODE_ENV === 'production' ? prodConfig : devConfig
