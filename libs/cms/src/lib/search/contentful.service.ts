@@ -320,7 +320,6 @@ export class ContentfulService {
         environment.indexableTypes.includes(entry.sys.contentType.sys.id),
     )
 
-    // Get all sync entries from Contentful endpoints for this locale, we could parse the sync response into locales but we are opting for this for simplicity
     const populatedIndexableEntries = !isDeltaUpdate
       ? this.removeLocaleKeysFromEntryItems(indexableEntries, locale)
       : await this.getPopulatedContentulEntries(
