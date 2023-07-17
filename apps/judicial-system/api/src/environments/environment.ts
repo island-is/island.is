@@ -1,12 +1,20 @@
 const devConfig = {
   production: false,
+  idsTokenCookieName: process.env.IDS_COOKIE_NAME ?? 'next-auth.session-token',
+  identityServerAuth: {
+    issuer: process.env.IDENTITY_SERVER_DOMAIN
+      ? `https://${process.env.IDENTITY_SERVER_DOMAIN}`
+      : 'https://identity-server.dev01.devland.is',
+    audience: '@rettarvorslugatt.island.is',
+  },
   auth: {
     samlEntryPoint: 'https://innskraning.island.is/?id=judicial-system.local',
-    audience: 'localhost:4200',
+    audience: '@rettarvorslugatt.island.is',
     allowAuthBypass: true,
     jwtSecret: 'jwt-secret',
     secretToken: 'secret-backend-api-token',
   },
+
   auditTrail: {
     useGenericLogger: true,
   },
@@ -41,6 +49,12 @@ if (process.env.NODE_ENV === 'production') {
 
 const prodConfig = {
   production: true,
+  identityServerAuth: {
+    issuer: process.env.IDENTITY_SERVER_DOMAIN
+      ? `https://${process.env.IDENTITY_SERVER_DOMAIN}`
+      : '',
+    audience: '@rettarvorslugatt.island.is',
+  },
   auth: {
     samlEntryPoint: process.env.SAML_ENTRY_POINT,
     audience: process.env.AUTH_AUDIENCE,
@@ -60,6 +74,7 @@ const prodConfig = {
   features: {
     hidden: process.env.HIDDEN_FEATURES,
   },
+  idsTokenCookieName: process.env.IDS_COOKIE_NAME ?? 'next-auth.session-token',
 }
 
 export default process.env.NODE_ENV === 'production' ? prodConfig : devConfig
