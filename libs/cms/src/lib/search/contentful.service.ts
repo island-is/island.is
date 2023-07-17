@@ -238,6 +238,34 @@ export class ContentfulService {
     return flatten(chunkedChanges)
   }
 
+  private removeLocaleKeysFromEntry(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    entry: Entry<any> | Array<any>,
+    locale: Locale,
+  ) {
+    if (Array.isArray(entry)) {
+      for (const obj of entry) {
+        this.removeLocaleKeysFromEntry(obj, locale)
+      }
+      return
+    }
+
+    const fields = entry?.fields
+    if (!fields) return
+
+    for (const fieldKey in fields) {
+      for (const fieldLocale in fields[fieldKey]) {
+        if (fieldLocale === this.contentfulLocaleMap[locale]) {
+          fields[fieldKey] = fields[fieldKey][fieldLocale]
+          if (typeof fields[fieldKey] === 'object') {
+            this.removeLocaleKeysFromEntry(fields[fieldKey], locale)
+          }
+          break
+        }
+      }
+    }
+  }
+
   /** Example if locale is 'en':
    *
    *  { fields: { title: { en: 'English', 'is-IS': 'Íslenska' } } }
@@ -252,16 +280,9 @@ export class ContentfulService {
     locale: Locale,
   ) => {
     for (const item of items) {
-      const fields = item.fields
-      for (const fieldKey in fields) {
-        for (const fieldLocale in fields[fieldKey]) {
-          if (fieldLocale === this.contentfulLocaleMap[locale]) {
-            fields[fieldKey] = fields[fieldKey][fieldLocale]
-            break
-          }
-        }
-      }
+      this.removeLocaleKeysFromEntry(item, locale)
     }
+
     return items
   }
 
