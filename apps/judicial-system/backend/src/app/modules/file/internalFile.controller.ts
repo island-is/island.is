@@ -10,7 +10,6 @@ import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
-import { TokenGuard } from '@island.is/judicial-system/auth'
 import { indictmentCases } from '@island.is/judicial-system/types'
 
 import {
@@ -27,7 +26,6 @@ import { CaseFile } from './models/file.model'
 import { FileService } from './file.service'
 import { DeliverDto } from './dto/deliver.dto'
 
-@UseGuards(TokenGuard)
 @Controller('api/internal/case/:caseId/file/:fileId')
 @ApiTags('internal files')
 export class InternalFileController {

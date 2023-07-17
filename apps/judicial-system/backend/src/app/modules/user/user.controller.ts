@@ -17,7 +17,6 @@ import {
   CurrentHttpUser,
   RolesGuard,
   RolesRules,
-  TokenGuard,
 } from '@island.is/judicial-system/auth'
 
 import { adminRule } from '../../guards'
@@ -83,7 +82,6 @@ export class UserController {
     return this.userService.findById(userId)
   }
 
-  @UseGuards(TokenGuard)
   @Get('user')
   @ApiOkResponse({
     type: User,

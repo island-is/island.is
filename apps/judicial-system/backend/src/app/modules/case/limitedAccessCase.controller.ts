@@ -22,7 +22,6 @@ import {
   JwtAuthGuard,
   RolesGuard,
   RolesRules,
-  TokenGuard,
 } from '@island.is/judicial-system/auth'
 import {
   CaseAppealState,
@@ -174,7 +173,6 @@ export class LimitedAccessCaseController {
     return updatedCase
   }
 
-  @UseGuards(TokenGuard)
   @Get('cases/limitedAccess/defender')
   @ApiOkResponse({
     type: User,

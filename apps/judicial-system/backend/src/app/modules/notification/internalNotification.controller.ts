@@ -10,14 +10,13 @@ import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
-import { TokenGuard } from '@island.is/judicial-system/auth'
 
 import { Case, CaseHasExistedGuard, CurrentCase } from '../case'
 import { SendInternalNotificationDto } from './dto/sendInternalNotification.dto'
 import { DeliverResponse } from './models/deliver.response'
 import { NotificationService } from './notification.service'
 
-@UseGuards(TokenGuard, CaseHasExistedGuard)
+@UseGuards(CaseHasExistedGuard)
 @Controller('api/internal/case/:caseId')
 @ApiTags('internal notifications')
 export class InternalNotificationController {

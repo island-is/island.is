@@ -11,7 +11,6 @@ import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
-import { TokenGuard } from '@island.is/judicial-system/auth'
 import {
   indictmentCases,
   investigationCases,
@@ -32,7 +31,6 @@ import { InternalCaseService } from './internalCase.service'
 
 @Controller('api/internal')
 @ApiTags('internal cases')
-@UseGuards(TokenGuard)
 export class InternalCaseController {
   constructor(
     private readonly internalCaseService: InternalCaseService,
