@@ -187,30 +187,29 @@ export function getAttachments(application: Application) {
   } = getApplicationAnswers(answers)
   const attachments: Attachments[] = []
 
-  const leaseAgrSchoolConf = answers.fileUpload as LeaseAgreementSchoolConfirmationAdditionalDocuments
+  const leaseAgrSchoolConfAdditionalDoc = answers.fileUpload as LeaseAgreementSchoolConfirmationAdditionalDocuments
 
   if (householdSupplementHousing === HouseholdSupplementHousing.RENTER) {
     getAttachmentDetails(
-      leaseAgrSchoolConf?.leaseAgreement,
+      leaseAgrSchoolConfAdditionalDoc?.leaseAgreement,
       AttachmentTypes.LEASE_AGREEMENT,
     )
   }
   if (householdSupplementChildren === YES) {
     getAttachmentDetails(
-      leaseAgrSchoolConf?.schoolConfirmation,
+      leaseAgrSchoolConfAdditionalDoc?.schoolConfirmation,
       AttachmentTypes.SCHOOL_CONFIRMATION,
     )
   }
-
-  //   if (
-  //     additionalInfo.additionalDocuments &&
-  //     additionalInfo.additionalDocuments?.length > 0
-  //   ) {
-  //     getAttachmentDetails(
-  //       additionalInfo?.additionalDocuments,
-  //       AttachmentTypes.ADDITIONAL_DOCUMENTS,
-  //     )
-  //   }
+  if (
+    leaseAgrSchoolConfAdditionalDoc.additionalDocuments &&
+    leaseAgrSchoolConfAdditionalDoc.additionalDocuments?.length > 0
+  ) {
+    getAttachmentDetails(
+      leaseAgrSchoolConfAdditionalDoc?.additionalDocuments,
+      AttachmentTypes.ADDITIONAL_DOCUMENTS,
+    )
+  }
 
   return attachments
 }

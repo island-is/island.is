@@ -185,20 +185,6 @@ export const HouseholdSupplementForm: Form = buildForm({
             }),
           ],
         }),
-        // buildSubSection({
-        //   id: 'householdSupplementSection',
-        //   title: householdSupplementFormMessage.shared.householdSupplement,
-        //   children: [
-        //     buildMultiField({
-        //       id: 'householdSupplement',
-        //       title: householdSupplementFormMessage.shared.householdSupplement,
-        //       description:
-        //         householdSupplementFormMessage.info
-        //           .householdSupplementDescription,
-        //       children: [],
-        //     }),
-        //   ],
-        // }),
         buildSubSection({
           id: 'periodSection',
           title: householdSupplementFormMessage.info.periodTitle,
@@ -290,11 +276,41 @@ export const HouseholdSupplementForm: Form = buildForm({
         }),
       ],
     }),
-    // buildSection({
-    //   id: 'additionalInfo',
-    //   title: householdSupplementFormMessage.additionalInfo.section,
-    //   children: [],
-    // }),
+    buildSection({
+      id: 'additionalInfo',
+      title: householdSupplementFormMessage.additionalInfo.section,
+      children: [
+        buildSubSection({
+          id: 'fileUploadAdditionalFiles',
+          title:
+            householdSupplementFormMessage.fileUpload.additionalFileTitle,
+          children: [
+            buildFileUploadField({
+              id: 'fileUpload.additionalDocuments',
+              title:
+                householdSupplementFormMessage.fileUpload
+                  .additionalFileTitle,
+              description:
+                householdSupplementFormMessage.fileUpload.additionalFileDescription,
+              introduction:
+                householdSupplementFormMessage.fileUpload.additionalFileDescription,
+              maxSize: FILE_SIZE_LIMIT,
+              maxSizeErrorText:
+                householdSupplementFormMessage.fileUpload
+                  .attachmentMaxSizeError,
+              uploadAccept: '.pdf',
+              uploadHeader:
+                householdSupplementFormMessage.fileUpload.attachmentHeader,
+              uploadDescription:
+                householdSupplementFormMessage.fileUpload.attachmentDescription,
+              uploadButtonLabel:
+                householdSupplementFormMessage.fileUpload.attachmentButton,
+              uploadMultiple: true,
+            }),
+          ],
+        }),
+      ],
+    }),
     buildSection({
       id: 'confirm',
       title: householdSupplementFormMessage.confirm.section,
