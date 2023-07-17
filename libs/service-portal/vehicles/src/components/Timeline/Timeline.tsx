@@ -2,24 +2,41 @@ import React, { FC, ReactElement } from 'react'
 import cn from 'classnames'
 import * as styles from './Timeline.css'
 import { Box, Column, Columns, Stack, Text } from '@island.is/island-ui/core'
+import differenceInCalendarDays from 'date-fns/differenceInCalendarDays'
 
 interface Props {
   children?: Array<ReactElement>
-  step?: number
   title?: string
+  maxDate?: Date | null
+  minDate?: Date | null
   className?: string
 }
 export const Timeline: FC<Props> = ({
   children,
   title,
-  step = 0,
+  maxDate,
+  minDate,
   className,
 }) => {
   if (!children) {
     return null
   }
 
-  const isFirstOrLastStep = step === children.length || step === 0
+  const today = new Date()
+  console.log(typeof maxDate)
+  let currentProgress = 0
+
+  if (maxDate && minDate) {
+    const dateDifferenceStart = differenceInCalendarDays(minDate, today)
+    const dateDifferenceEnd = differenceInCalendarDays(today, maxDate)
+
+    currentProgress = (dateDifferenceStart + 1) / (dateDifferenceEnd + 1)
+    console.log(minDate)
+    console.log(today)
+    console.log(dateDifferenceEnd)
+  }
+
+  console.log(currentProgress)
 
   return (
     <Stack space={5}>
@@ -36,28 +53,25 @@ export const Timeline: FC<Props> = ({
           borderRadius="large"
           width="full"
         >
-          <Box
-            position="relative"
-            overflow="hidden"
-            borderRadius="large"
-            height="full"
-            width="full"
-          >
+          {currentProgress && currentProgress > 1 && (
             <Box
-              className={styles.inner}
-              background={'blue400'}
+              position="relative"
+              overflow="hidden"
               borderRadius="large"
-              position="absolute"
-              style={{
-                transform: `translateX(${
-                  1 -
-                  ((children.length - step) / children.length -
-                    (isFirstOrLastStep ? 0 : 0.05)) *
-                    100
-                }%)`,
-              }}
-            />
-          </Box>
+              height="full"
+              width="full"
+            >
+              <Box
+                className={styles.inner}
+                background={'blue400'}
+                borderRadius="large"
+                position="absolute"
+                style={{
+                  transform: `translateX(${1 - currentProgress * 100}%)`,
+                }}
+              />
+            </Box>
+          )}
         </Box>
         <Columns>
           {children?.map((child, index) => (

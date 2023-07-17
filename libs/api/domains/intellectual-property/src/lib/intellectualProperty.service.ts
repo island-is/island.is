@@ -9,13 +9,19 @@ import type { User } from '@island.is/auth-nest-tools'
 import { DesignCollectionEntry } from './models/getDesignCollection.model'
 import { PatentCollectionEntry } from './models/getPatentCollection.model'
 import { Patent } from './models/getPatent.model'
-import { Trademark, TrademarkSubType } from './models/getTrademark.model'
-import { Design } from './models/getDesign.model'
+import {
+  Trademark,
+  TrademarkSubType,
+  TrademarkType,
+} from './models/getTrademark.model'
+import { Design, Image } from './models/getDesign.model'
 import { IntellectualProperties } from './models/getIntellectualProperties.model'
 import addMonths from 'date-fns/addMonths'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import ParseDate from 'date-fns/parse'
+
+type ExcludesFalse = <T>(x: T | null | undefined | false | '') => x is T
 
 @Injectable()
 export class IntellectualPropertyService {
@@ -73,8 +79,18 @@ export class IntellectualPropertyService {
       ? TrademarkSubType.CERTIFICATION_MARK
       : TrademarkSubType.TRADEMARK
 
+    const type =
+      trademark.type === 'margmiðlunarmerki'
+        ? TrademarkType.MULTIMEDIA
+        : trademark.type === 'hreyfimerki'
+        ? TrademarkType.ANIMATION
+        : trademark.type === 'hljóðmerki'
+        ? TrademarkType.AUDIO
+        : undefined
+
     return {
       ...trademark,
+      type,
       subType,
       applicationDate: trademark.applicationDate
         ? this.parseDate(trademark.applicationDate)
@@ -134,13 +150,36 @@ export class IntellectualPropertyService {
     this.designSearchApi.designSearchGetDesignBySSNGet({ ssn: '5411911789' })
 
   async getDesignByHID(hId: string): Promise<Design | null> {
-    const response = await this.designSearchApi.designSearchGetByHIDGet({
-      hid: hId,
-    })
+    const responses = await Promise.all([
+      this.designSearchApi.designSearchGetByHIDGet({
+        hid: hId,
+      }),
+      this.designSearchApi.designSearchGetDesignsGet({
+        hid: hId,
+      }),
+    ])
+
+    //shady stuff
+    const designImages = responses[1]
+      .flatMap(({ designNumber, designImage }) =>
+        designImage?.flatMap(
+          (i) =>
+            ({
+              designNumber,
+              imageNumber: i.imageNumber,
+              image: i.value,
+            } as Image),
+        ),
+      )
+      .filter((Boolean as unknown) as ExcludesFalse)
+
+    this.logger.debug(JSON.stringify(responses[0]))
 
     return {
-      ...response,
-      classification: response?.classification?.category,
+      ...responses[0],
+      expiryDate: responses[0]?.validTo,
+      classification: responses[0]?.classification?.category,
+      images: designImages,
     }
   }
 

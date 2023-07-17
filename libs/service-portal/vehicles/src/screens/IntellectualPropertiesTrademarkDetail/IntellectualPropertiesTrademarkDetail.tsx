@@ -13,6 +13,7 @@ import {
   m,
 } from '@island.is/service-portal/core'
 import { ipMessages } from '../../lib/messages'
+import { MultiImage } from '../../../../core/src'
 import {
   Accordion,
   AccordionItem,

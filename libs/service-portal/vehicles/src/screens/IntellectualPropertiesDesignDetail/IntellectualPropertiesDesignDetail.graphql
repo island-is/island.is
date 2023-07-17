@@ -2,15 +2,23 @@ query getIntellectualPropertyDesignById($input: IntellectualPropertyInput!) {
   intellectualPropertyDesign(input: $input) {
     specification {
       description
+      specificationText
     }
     hId
     status
     canRenew
-    applicationDate
     publishDate
+    applicationDate
     registrationDate
+    internationalRegistrationDate
+    expiryDate
     classification
     status
+    images {
+      designNumber
+      imageNumber
+      image
+    }
     owners {
       name
       address

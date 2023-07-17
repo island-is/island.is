@@ -3,10 +3,13 @@ import { ObjectType, Field, Int, OmitType } from '@nestjs/graphql'
 @ObjectType('IntellectualPropertyDesignImage')
 export class Image {
   @Field(() => Int, { nullable: true })
+  designNumber?: number
+
+  @Field(() => Int, { nullable: true })
   imageNumber?: number
 
   @Field(() => String, { nullable: true })
-  value?: string | null
+  image?: string | null
 }
 
 @ObjectType('IntellectualPropertyDesignPledge')
@@ -83,15 +86,6 @@ export class Appeal {
   dateConclusion?: Date
 }
 
-@ObjectType('IntellectualPropertyDesignDetail')
-export class Detail {
-  @Field(() => Int, { nullable: true })
-  designNumber?: number
-
-  @Field(() => Image, { nullable: true })
-  designImage?: Image
-}
-
 @ObjectType('IntellectualPropertyDesignCountry')
 export class Country {
   @Field(() => String, { nullable: true })
@@ -157,6 +151,7 @@ export class Specification {
   @Field(() => String, { nullable: true })
   specificationCount?: string | null
 }
+
 @ObjectType('IntellectualPropertyDesign')
 export class Design {
   @Field(() => Date, { nullable: true })
@@ -165,20 +160,20 @@ export class Design {
   @Field(() => Date, { nullable: true })
   applicationDateAvailable?: Date
 
-  @Field(() => String, { nullable: true })
+  @Field(() => Date, { nullable: true })
   applicationDatePublishedAsAvailable?: Date
 
-  @Field(() => String, { nullable: true })
+  @Field(() => Date, { nullable: true })
   internationalRegistrationDate?: Date
 
-  @Field(() => String, { nullable: true })
+  @Field(() => Date, { nullable: true })
   applicationDeadlineDate?: Date
 
-  @Field(() => String, { nullable: true })
+  @Field(() => Date, { nullable: true })
   announcementDate?: Date
 
-  @Field(() => String, { nullable: true })
-  validTo?: Date
+  @Field(() => Date, { nullable: true })
+  expiryDate?: Date
 
   @Field(() => Int, { nullable: true })
   statusID?: number
@@ -246,8 +241,8 @@ export class Design {
   @Field(() => Contact, { nullable: true })
   contact?: Contact
 
-  @Field(() => Detail, { nullable: true })
-  designDetail?: Detail | null
+  @Field(() => [Image], { nullable: true })
+  images?: Array<Image> | null
 
   @Field(() => [String], { nullable: true })
   classification?: Array<string> | null

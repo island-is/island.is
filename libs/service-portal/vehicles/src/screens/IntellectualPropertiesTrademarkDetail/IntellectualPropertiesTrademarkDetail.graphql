@@ -12,6 +12,11 @@ query getIntellectualPropertyTrademarkById($input: IntellectualPropertyInput!) {
     maxValidObjectionDate
     imageCategories
     isColorMark
+    imagePath
+    media {
+      mediaType
+      mediaPath
+    }
     markOwners {
       name
       address

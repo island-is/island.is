@@ -668,8 +668,7 @@ export const ipMessages = defineMessages({
   },
   description: {
     id: 'sp.intellectual-property:description',
-    defaultMessage:
-      'Lorem ipsum dolor sit amet consectetur. Arcu quam quis consequat tellus. Netus tristique molestie id cursus non sed. ',
+    defaultMessage: 'Lýsing',
   },
   baseInfo: {
     id: 'sp.intellectual-property:base-info',
@@ -690,6 +689,34 @@ export const ipMessages = defineMessages({
   status: {
     id: 'sp.intellectual-property:status',
     defaultMessage: 'Staða',
+  },
+  internationalRegistration: {
+    id: 'sp.intellectual-property:international-registration',
+    defaultMessage: 'Alþjóðleg skráning',
+  },
+  internationalRegistrationDate: {
+    id: 'sp.intellectual-property:international-registration-date',
+    defaultMessage: 'Alþjóðlegur skráningardagur',
+  },
+  publish: {
+    id: 'sp.intellectual-property:publish',
+    defaultMessage: 'Birting',
+  },
+  publishDate: {
+    id: 'sp.intellectual-property:publish-date',
+    defaultMessage: 'Birtingardagur',
+  },
+  registration: {
+    id: 'sp.intellectual-property:registration',
+    defaultMessage: 'Skráning',
+  },
+  registrationDate: {
+    id: 'sp.intellectual-property:registration-date',
+    defaultMessage: 'Skráningardagur',
+  },
+  expires: {
+    id: 'sp.intellectual-property:expires',
+    defaultMessage: 'Gildir til',
   },
 })
 

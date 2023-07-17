@@ -63,13 +63,13 @@ const IntellectualPropertiesDesignDetail = () => {
   }
 
   const ip = data?.intellectualPropertyDesign
+
+  console.log(ip?.internationalRegistrationDate)
+  console.log(typeof ip?.internationalRegistrationDate)
   return (
     <>
       <Box marginBottom={[1, 1, 3]}>
-        <IntroHeader
-          title={ip?.specification?.description || 'A DESIGN'}
-          intro="Lorem ipsum dolor sit amet consectetur arcu quam quis consequat."
-        />
+        <IntroHeader title={ip?.specification?.specificationText ?? ''} />
       </Box>
 
       <Stack space="containerGutter">
@@ -116,13 +116,19 @@ const IntellectualPropertiesDesignDetail = () => {
         <Stack space="p2">
           <UserInfoLine
             title={formatMessage(ipMessages.baseInfo)}
-            label={ipMessages.name}
+            label={formatMessage(ipMessages.name)}
+            content={ip?.specification?.specificationText ?? ''}
+            loading={loading}
+          />
+          <Divider />
+          <UserInfoLine
+            label={formatMessage(ipMessages.description)}
             content={ip?.specification?.description ?? ''}
             loading={loading}
           />
           <Divider />
           <UserInfoLine
-            label={ipMessages.status}
+            label={formatMessage(ipMessages.status)}
             content={ip?.status ?? ''}
             loading={loading}
           />
@@ -130,23 +136,21 @@ const IntellectualPropertiesDesignDetail = () => {
         </Stack>
         {!loading && !error && (
           <>
-            <Timeline title={'Tímalína'}>
+            <Timeline
+              title={'Tímalína'}
+              maxDate={ip?.expiryDate}
+              minDate={ip?.internationalRegistrationDate}
+            >
               {[
                 <Stack space="smallGutter">
                   <Text variant="h5">
-                    {ip?.applicationDate
-                      ? formatDate(ip.applicationDate, 'dd.MM.yy')
+                    {ip?.internationalRegistrationDate
+                      ? formatDate(ip.internationalRegistrationDate, 'dd.MM.yy')
                       : ''}
                   </Text>
-                  <Text>Umsókn</Text>
-                </Stack>,
-                <Stack space="smallGutter">
-                  <Text variant="h5">
-                    {ip?.registrationDate
-                      ? formatDate(ip.registrationDate, 'dd.MM.yy')
-                      : ''}
+                  <Text>
+                    {formatMessage(ipMessages.internationalRegistration)}
                   </Text>
-                  <Text>Skráning</Text>
                 </Stack>,
                 <Stack space="smallGutter">
                   <Text variant="h5">
@@ -154,7 +158,15 @@ const IntellectualPropertiesDesignDetail = () => {
                       ? formatDate(ip.publishDate, 'dd.MM.yy')
                       : ''}
                   </Text>
-                  <Text>Birting</Text>
+                  <Text>{formatMessage(ipMessages.publish)}</Text>
+                </Stack>,
+                <Stack space="smallGutter">
+                  <Text variant="h5">
+                    {ip?.expiryDate
+                      ? formatDate(ip.expiryDate, 'dd.MM.yy')
+                      : ''}
+                  </Text>
+                  <Text>{formatMessage(ipMessages.expires)}</Text>
                 </Stack>,
               ]}
             </Timeline>
@@ -163,9 +175,11 @@ const IntellectualPropertiesDesignDetail = () => {
               dataArray={chunk(
                 [
                   {
-                    title: 'Umsóknardagur',
-                    value: ip?.applicationDate
-                      ? formatDate(ip.applicationDate, 'dd.MM.yy')
+                    title: formatMessage(
+                      ipMessages.internationalRegistrationDate,
+                    ),
+                    value: ip?.internationalRegistrationDate
+                      ? formatDate(ip.internationalRegistrationDate, 'dd.MM.yy')
                       : '',
                   },
                   {

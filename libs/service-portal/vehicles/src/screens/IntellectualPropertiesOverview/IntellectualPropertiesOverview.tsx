@@ -101,14 +101,12 @@ const IntellectualPropertiesOverview = () => {
           generateActionCard(
             index,
             ip.specification,
-            ip.hId,
+            'H0002611',
             undefined,
-            ip.hId
-              ? ServicePortalPath.AssetsIntellectualPropertiesDesign.replace(
-                  ':id',
-                  ip.hId,
-                )
-              : '',
+            ServicePortalPath.AssetsIntellectualPropertiesDesign.replace(
+              ':id',
+              'H0002611',
+            ),
             ip.status,
           ),
         )}

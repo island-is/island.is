@@ -6,7 +6,14 @@ export enum TrademarkSubType {
   COLLECTIVE_MARK = 'CollectiveMark',
 }
 
+export enum TrademarkType {
+  AUDIO = 'Audio',
+  ANIMATION = 'Animation',
+  MULTIMEDIA = 'Multimedia',
+}
+
 registerEnumType(TrademarkSubType, { name: 'TrademarkSubType' })
+registerEnumType(TrademarkType, { name: 'TrademarkType' })
 
 @ObjectType('IntellectualPropertyTrademarkAgent')
 export class Agent {
@@ -72,7 +79,7 @@ export class Trademark {
   text?: string | null
 
   @Field(() => String, { nullable: true })
-  type?: string | null
+  type?: TrademarkType
 
   @Field(() => TrademarkSubType, { nullable: true })
   subType?: TrademarkSubType
@@ -102,7 +109,7 @@ export class Trademark {
   imagePath?: string | null
 
   @Field(() => String, { nullable: true })
-  originamlImagePath?: string | null
+  originalImagePath?: string | null
 
   @Field(() => Date, { nullable: true })
   applicationDate?: Date
