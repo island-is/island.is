@@ -1,12 +1,12 @@
 import { RatioType } from './lib/constants'
 
-export interface combinedResidenceHistory {
+export interface CombinedResidenceHistory {
   country: string
   periodFrom: Date
   periodTo: Date | string
 }
 
-type monthObject = {
+type MonthObject = {
   January?: string
   February?: string
   March?: string
@@ -28,7 +28,7 @@ export interface Employer {
   ratioType: RatioType
   ratioYearly?: string
   rawIndex?: number
-  ratioMonthly?: monthObject
+  ratioMonthly?: MonthObject
   ratioMonthlyAvg?: string
 }
 

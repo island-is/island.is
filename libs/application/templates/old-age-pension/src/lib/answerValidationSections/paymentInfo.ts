@@ -4,7 +4,7 @@ import { validatorErrorMessages } from '../messages'
 import { AnswerValidationConstants, YES } from '../constants'
 import { buildError } from './utils'
 
-export const paymentInfo = (newAnswer: unknown, application: Application) => {
+export const paymentInfo = (newAnswer: unknown) => {
   const obj = newAnswer as Record<string, Answer>
   const { PAYMENTINFO } = AnswerValidationConstants
 

@@ -17,10 +17,10 @@ import { InputController } from '@island.is/shared/form-fields'
 import { TextFormField } from '@island.is/application/ui-fields'
 import { getErrorViaPath } from '@island.is/application/core'
 
-interface monthObject {
+interface MonthObject {
   [key: string]: string
 }
-let ratiosObj: monthObject = {}
+let ratiosObj: MonthObject = {}
 
 const EmployersRatioMonthly: FC<RepeaterProps & FieldBaseProps> = ({
   application,
@@ -66,12 +66,12 @@ const EmployersRatioMonthly: FC<RepeaterProps & FieldBaseProps> = ({
     return Math.round(total / 12)
   }
 
-  const updateProp = (key: keyof monthObject, value: string) => {
+  const updateProp = (key: keyof MonthObject, value: string) => {
     ratiosObj[key] = value
   }
 
   const onChange = async (val: string, month: string) => {
-    updateProp(month as keyof monthObject, val)
+    updateProp(month as keyof MonthObject, val)
     const calYearly = calculateYearly()
 
     setYearly(calYearly.toString())
@@ -90,7 +90,7 @@ const EmployersRatioMonthly: FC<RepeaterProps & FieldBaseProps> = ({
         </T.Row>
       </T.Head>
       <T.Body>
-        {MONTHS?.map((e, i) => (
+        {MONTHS?.map((e) => (
           <T.Row key={`${e.value}`}>
             <T.Data width="50%">{formatMessage(e.label)}</T.Data>
             <T.Data>

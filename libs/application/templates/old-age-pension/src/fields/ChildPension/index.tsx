@@ -1,5 +1,5 @@
 import { RepeaterProps } from '@island.is/application/types'
-import { FC, useEffect } from 'react'
+import { FC } from 'react'
 import {
   getApplicationAnswers,
   getApplicationExternalData,
@@ -29,7 +29,7 @@ export const ChildCustodyRepeater: FC<RepeaterProps> = ({
     application.externalData,
   )
   const { childPension } = getApplicationAnswers(application.answers)
-  let children = childPension
+  const children = childPension
 
   // put custody info from national registry into data
   const data: ChildPensionRow[] = custodyInformation.map((info) => {

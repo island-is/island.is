@@ -29,8 +29,7 @@ export const Period: FC<FieldBaseProps> = ({ application }) => {
   )
 
   const [selectedYear, setSeletedYear] = useState(year)
-  const [selectedMonth, setSeletedMonth] = useState(month)
-  const [isShowMonth, setIsShowMonth] = useState(!!month)
+  const [, setSeletedMonth] = useState(month)
 
   const optionsYears = getAvailableYears(application)
   const [optionsMonths, setOptionsMonths] = useState(() => {
@@ -80,24 +79,24 @@ export const Period: FC<FieldBaseProps> = ({ application }) => {
             }}
           />
         </Box>
-          <Box width="half" marginLeft={3} className={styles.monthBox}>
-            <SelectFormField
-              application={application}
-              error={getError('period.month')}
-              field={{
-                type: FieldTypes.SELECT,
-                component: FieldComponents.SELECT,
-                title: oldAgePensionFormMessage.period.periodInputMonth,
-                placeholder:
-                  oldAgePensionFormMessage.period.periodInputMonthDefaultText,
-                id: 'period.month',
-                children: undefined,
-                options: selectedYear ? optionsMonths : [],
-                backgroundColor: 'blue',
-                onSelect: onSelectMonth,
-              }}
-            />
-          </Box>
+        <Box width="half" marginLeft={3} className={styles.monthBox}>
+          <SelectFormField
+            application={application}
+            error={getError('period.month')}
+            field={{
+              type: FieldTypes.SELECT,
+              component: FieldComponents.SELECT,
+              title: oldAgePensionFormMessage.period.periodInputMonth,
+              placeholder:
+                oldAgePensionFormMessage.period.periodInputMonthDefaultText,
+              id: 'period.month',
+              children: undefined,
+              options: selectedYear ? optionsMonths : [],
+              backgroundColor: 'blue',
+              onSelect: onSelectMonth,
+            }}
+          />
+        </Box>
       </Box>
     </Box>
   )

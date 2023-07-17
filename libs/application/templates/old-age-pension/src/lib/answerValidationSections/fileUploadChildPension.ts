@@ -4,7 +4,7 @@ import isEmpty from 'lodash/isEmpty'
 
 import { validatorErrorMessages } from '../messages'
 import {
-  childCustody_LivesWithApplicant,
+  childCustodyLivesWithApplicant,
   getApplicationAnswers,
 } from '../oldAgePensionUtils'
 import { AnswerValidationConstants } from '../constants'
@@ -19,7 +19,7 @@ export const fileUploadChildPension = (
 
   const { childPension } = getApplicationAnswers(application.answers)
 
-  const DoesNotLiveWithApplicant = childCustody_LivesWithApplicant(
+  const DoesNotLiveWithApplicant = childCustodyLivesWithApplicant(
     application.externalData,
   )
 

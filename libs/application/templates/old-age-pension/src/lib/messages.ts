@@ -931,19 +931,19 @@ export const oldAgePensionFormMessage: MessageDir = {
         'Here you can submit additional data to TR. For example, confirmation from the National Registry due to incorrect information. Note that the document must be in .pdf format.',
     },
     householdSupplementTitle: {
-      id: 'oap.application:fileUppload.household.supplement.title',
+      id: 'oap.application:fileUpload.household.supplement.title',
       defaultMessage: 'Fylgiskjöl Heimilisuppbóta',
       description: 'Household supplement additional files',
     },
     householdSupplementLeaseAgreement: {
-      id: 'oap.application:fileUppload.household.supplement.leaseAgreement',
+      id: 'oap.application:fileUpload.household.supplement.leaseAgreement',
       defaultMessage:
         'Hér getur þú skilað undirritaðum leigusamningi. Athugaðu að skjalið þarf að vera á .pdf formi.',
       description:
         'Here you can upload the signed rental agreement. Note that the document must be in .pdf format.',
     },
     householdSupplementSchoolConfirmation: {
-      id: 'oap.application:fileUppload.household.supplement.schoolConfirmation',
+      id: 'oap.application:fileUpload.household.supplement.schoolConfirmation',
       defaultMessage:
         'Hér getur þú skilað vottorði um skólavist ungmennis. Athugaðu að skjalið þarf að vera á .pdf formi.',
       description:
@@ -1247,7 +1247,8 @@ export const statesMessages = defineMessages({
   },
   tryggingastofnunSubmittedContent: {
     id: 'oap.application:tryggingastofnunSubmittedContent',
-    defaultMessage: 'Umsóknin þín er í bið eftir yfirferð. Hægt er að breyta umsókn þar til umsókn er komin í yfirferð.',
+    defaultMessage:
+      'Umsóknin þín er í bið eftir yfirferð. Hægt er að breyta umsókn þar til umsókn er komin í yfirferð.',
     description: 'Application waiting for review',
   },
 

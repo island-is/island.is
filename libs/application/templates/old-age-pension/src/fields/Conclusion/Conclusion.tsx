@@ -102,7 +102,8 @@ const Conclusion: FC<FieldBaseProps> = ({ application, field }) => {
           <Box display="inlineFlex" padding={2} paddingRight="none">
             <Button icon="arrowForward" onClick={handleRefresh} type="submit">
               {formatMessage(
-                oldAgePensionFormMessage.conclusionScreen.buttonsViewApplication,
+                oldAgePensionFormMessage.conclusionScreen
+                  .buttonsViewApplication,
               )}
             </Button>
           </Box>

@@ -46,7 +46,7 @@ const validatePeriodRepeaterFields = (
   }
 }
 
-export const employers = (newAnswer: unknown, application: Application) => {
+export const employers = (newAnswer: unknown) => {
   const rawEmployers = newAnswer as Employer[] | undefined
   const { EMPLOYERS } = AnswerValidationConstants
 

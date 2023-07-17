@@ -1,5 +1,4 @@
 import {
-  buildAlertMessageField,
   buildCustomField,
   buildDataProviderItem,
   buildDescriptionField,
@@ -21,7 +20,7 @@ import {
   UserProfileApi,
 } from '@island.is/application/types'
 import Logo from '../assets/Logo'
-import { ApplicationType, NO, YES } from '../lib/constants'
+import { ApplicationType, NO } from '../lib/constants'
 import { oldAgePensionFormMessage } from '../lib/messages'
 import {
   getApplicationAnswers,

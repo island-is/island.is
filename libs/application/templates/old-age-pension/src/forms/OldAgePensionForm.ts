@@ -41,7 +41,7 @@ import {
   TaxLevelOptions,
 } from '../lib/constants'
 import {
-  childCustody_LivesWithApplicant,
+  childCustodyLivesWithApplicant,
   getApplicationAnswers,
   getApplicationExternalData,
   getTaxOptions,
@@ -961,7 +961,7 @@ export const OldAgePensionForm: Form = buildForm({
                 oldAgePensionFormMessage.fileUpload.attachmentButton,
               uploadMultiple: true,
               condition: (_, externalData) =>
-                childCustody_LivesWithApplicant(externalData),
+                childCustodyLivesWithApplicant(externalData),
             }),
           ],
         }),

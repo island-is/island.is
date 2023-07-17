@@ -1,5 +1,11 @@
 import { Application, Field, RecordObject } from '@island.is/application/types'
-import { Box, GridColumn, GridRow, Text, Button } from '@island.is/island-ui/core'
+import {
+  Box,
+  GridColumn,
+  GridRow,
+  Text,
+  Button,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { FC, useCallback } from 'react'
 import { useMutation } from '@apollo/client'
@@ -17,7 +23,11 @@ import { PaymentInformation } from './review-groups/PaymentInformation'
 import { oldAgePensionFormMessage } from '../../lib/messages'
 import { getApplicationAnswers } from '../../lib/oldAgePensionUtils'
 import { ApplicationType, Employment, YES, States } from '../../lib/constants'
-import { RadioValue, ReviewGroup, handleServerError } from '@island.is/application/ui-components'
+import {
+  RadioValue,
+  ReviewGroup,
+  handleServerError,
+} from '@island.is/application/ui-components'
 import { OnePaymentPerYear } from './review-groups/OnePaymentPerYear'
 import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
 
@@ -43,6 +53,7 @@ export const Review: FC<ReviewScreenProps> = ({
     employmentStatus,
     applicationType,
     connectedApplications,
+    comment,
   } = getApplicationAnswers(application.answers)
   const { state } = application
 
@@ -164,7 +175,7 @@ export const Review: FC<ReviewScreenProps> = ({
       {connectedApplications.length > 0 && (
         <ConnectedApplications {...childProps} />
       )}
-      <Comment {...childProps} />
+      {comment && <Comment {...childProps} />}
       <Attachments {...childProps} />
     </>
   )

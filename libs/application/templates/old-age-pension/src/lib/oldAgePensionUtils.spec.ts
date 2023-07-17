@@ -12,7 +12,15 @@ import {
   getStartDateAndEndDate,
   getAvailableYears,
   getApplicationAnswers,
+  getAvailableMonths,
+  getAgeBetweenTwoDates,
+  getApplicationExternalData,
+  isEarlyRetirement,
+  isExistsCohabitantOlderThan25,
+  childCustodyLivesWithApplicant,
 } from './oldAgePensionUtils'
+import { ApplicationType, MONTHS } from './constants'
+import * as kennitala from 'kennitala'
 
 function buildApplication(data?: {
   answers?: FormValue
@@ -32,15 +40,7 @@ function buildApplication(data?: {
     applicantActors: [],
     answers,
     state,
-    externalData: {
-      nationalRegistry: {
-        data: {
-          nationalId: '0101307789',
-        },
-        date: new Date(),
-        status: 'success',
-      },
-    },
+    externalData,
     status: ApplicationStatus.IN_PROGRESS,
   }
 }
@@ -63,7 +63,17 @@ describe('getStartDateAndEndDate', () => {
 
 describe('getAvailableYears', () => {
   it('should return available years', () => {
-    const application = buildApplication()
+    const application = buildApplication({
+      externalData: {
+        nationalRegistry: {
+          data: {
+            nationalId: '0101307789',
+          },
+          date: new Date(),
+          status: 'success',
+        },
+      },
+    })
     const today = new Date()
     const startDateYear = addMonths(addYears(today, -2), 1).getFullYear()
     const endDateYear = addMonths(today, 6).getFullYear()
@@ -77,5 +87,212 @@ describe('getAvailableYears', () => {
     })
 
     expect(res).toEqual(expected)
+  })
+})
+
+describe('getAvailableMonths', () => {
+  it('should return available months for selected year, selected year same as start date', () => {
+    const application = buildApplication({
+      externalData: {
+        nationalRegistry: {
+          data: {
+            nationalId: '0101307789',
+          },
+          date: new Date(),
+          status: 'success',
+        },
+      },
+    })
+    const today = new Date()
+    const startDate = addMonths(addYears(today, -2), 1)
+    const endDate = addMonths(new Date(), 6)
+    const selectedYear = startDate.getFullYear().toString()
+    const res = getAvailableMonths(application, selectedYear)
+
+    let months = MONTHS
+
+    if (startDate.getFullYear().toString() === selectedYear) {
+      months = months.slice(startDate.getMonth(), months.length + 1)
+    } else if (endDate.getFullYear().toString() === selectedYear) {
+      months = months.slice(0, endDate.getMonth() + 1)
+    }
+
+    expect(res).toEqual(months)
+  })
+
+  it('should return available months for selected year, selected year same as end date', () => {
+    const application = buildApplication({
+      externalData: {
+        nationalRegistry: {
+          data: {
+            nationalId: '0101307789',
+          },
+          date: new Date(),
+          status: 'success',
+        },
+      },
+    })
+    const today = new Date()
+    const startDate = addMonths(addYears(today, -2), 1)
+    const endDate = addMonths(new Date(), 6)
+    const selectedYear = endDate.getFullYear().toString()
+    const res = getAvailableMonths(application, selectedYear)
+
+    let months = MONTHS
+
+    if (startDate.getFullYear().toString() === selectedYear) {
+      months = months.slice(startDate.getMonth(), months.length + 1)
+    } else if (endDate.getFullYear().toString() === selectedYear) {
+      months = months.slice(0, endDate.getMonth() + 1)
+    }
+
+    expect(res).toEqual(months)
+  })
+
+  it('should return available months for selected year, selected year is todays year', () => {
+    const application = buildApplication({
+      externalData: {
+        nationalRegistry: {
+          data: {
+            nationalId: '0101307789',
+          },
+          date: new Date(),
+          status: 'success',
+        },
+      },
+    })
+    const today = new Date()
+    const startDate = addMonths(addYears(today, -2), 1)
+    const endDate = addMonths(new Date(), 6)
+    const selectedYear = new Date().getFullYear().toString()
+    const res = getAvailableMonths(application, selectedYear)
+
+    let months = MONTHS
+
+    if (startDate.getFullYear().toString() === selectedYear) {
+      months = months.slice(startDate.getMonth(), months.length + 1)
+    } else if (endDate.getFullYear().toString() === selectedYear) {
+      months = months.slice(0, endDate.getMonth() + 1)
+    }
+
+    expect(res).toEqual(months)
+  })
+})
+
+describe('getAgeBetweenTwoDates', () => {
+  it('should return age between two dates', () => {
+    const application = buildApplication({
+      externalData: {
+        nationalRegistry: {
+          data: {
+            nationalId: '0101307789',
+          },
+          date: new Date(),
+          status: 'success',
+        },
+      },
+    })
+
+    const { applicantNationalId } = getApplicationExternalData(
+      application.externalData,
+    )
+    const dateOfBirth = kennitala.info(applicantNationalId).birthday
+    const dateOfBirth00 = new Date(
+      dateOfBirth.getFullYear(),
+      dateOfBirth.getMonth(),
+    )
+
+    const age = getAgeBetweenTwoDates(new Date(2023, 7, 17), dateOfBirth00)
+
+    expect(age).toEqual(93)
+  })
+})
+
+describe('isEarlyRetirement', () => {
+  it('should return false if user is not taking early retirement', () => {
+    const application = buildApplication({
+      answers: {
+        applicationType: {
+          option: ApplicationType.OLD_AGE_PENSION,
+        },
+        period: {
+          year: '2021',
+          month: 'August',
+        },
+      },
+      externalData: {
+        nationalRegistry: {
+          data: {
+            nationalId: '0101307789',
+          },
+          date: new Date(),
+          status: 'success',
+        },
+      },
+    })
+
+    const res = isEarlyRetirement(application.answers, application.externalData)
+
+    expect(res).toEqual(false)
+  })
+})
+
+describe('isExistsCohabitantOlderThan25', () => {
+  it('should return true if user has cohabitant older than 25', () => {
+    const application = buildApplication({
+      externalData: {
+        nationalRegistryCohabitants: {
+          data: ['2605791429'],
+          date: new Date(),
+          status: 'success',
+        },
+      },
+    })
+
+    const res = isExistsCohabitantOlderThan25(application.externalData)
+
+    expect(res).toEqual(true)
+  })
+
+  it('should return false if user has cohabitant older than 25', () => {
+    const application = buildApplication({
+      externalData: {
+        nationalRegistryCohabitants: {
+          data: ['0212181460'],
+          date: new Date(),
+          status: 'success',
+        },
+      },
+    })
+
+    const res = isExistsCohabitantOlderThan25(application.externalData)
+
+    expect(res).toEqual(false)
+  })
+})
+
+describe('childCustodyLivesWithApplicant', () => {
+  it('should return true if children < 18 DOES NOT live with applicant', () => {
+    const application = buildApplication({
+      externalData: {
+        childrenCustodyInformation: {
+          data: [
+            {
+              fullName: 'Ljósbrá ÞÍ Ívarsdóttir',
+              genderCode: '4',
+              nationalId: '0703111430',
+              livesWithApplicant: false,
+              livesWithBothParents: false,
+            },
+          ],
+          date: new Date(),
+          status: 'success',
+        },
+      },
+    })
+
+    const res = childCustodyLivesWithApplicant(application.externalData)
+
+    expect(res).toEqual(true)
   })
 })

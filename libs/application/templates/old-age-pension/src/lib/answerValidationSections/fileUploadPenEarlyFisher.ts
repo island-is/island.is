@@ -17,7 +17,7 @@ import {
 } from '../constants'
 import { buildError } from './utils'
 
-export const fileUpploadPenEarlyFisher = (
+export const fileUploadPenEarlyFisher = (
   newAnswer: unknown,
   application: Application,
 ) => {

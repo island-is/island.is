@@ -19,12 +19,7 @@ import {
   pruneAfterDays,
   DefaultStateLifeCycle,
 } from '@island.is/application/core'
-import {
-  ConnectedApplications,
-  Events,
-  Roles,
-  States,
-} from './constants'
+import { ConnectedApplications, Events, Roles, States } from './constants'
 import { dataSchema } from './dataSchema'
 import { oldAgePensionFormMessage, statesMessages } from './messages'
 import { answerValidators } from './answerValidators'

@@ -29,7 +29,7 @@ import * as kennitala from 'kennitala'
 import addYears from 'date-fns/addYears'
 import addMonths from 'date-fns/addMonths'
 import addDays from 'date-fns/addDays'
-import { combinedResidenceHistory, Employer, ChildPensionRow } from '../types'
+import { CombinedResidenceHistory, Employer, ChildPensionRow } from '../types'
 import React from 'react'
 import { useLocale } from '@island.is/localization'
 import { getCountryByCode } from '@island.is/shared/utils'
@@ -310,7 +310,7 @@ export function getStartDateAndEndDate(
     thisYearBirthdayPlusOneMonth,
     thisYearBirthdayPlusOneMonth.getDay() + 1,
   )
-  let endDate = addMonths(today, 6) // þarf að spyrja hvort það sé +6 eða +7
+  const endDate = addMonths(today, 6) // þarf að spyrja hvort það sé +6 eða +7
 
   if (thisYearAge >= oldAgePensionAge) {
     // >= 67 year old
@@ -527,7 +527,7 @@ export function getAttachments(application: Application) {
     )
   }
 
-  if (childCustody_LivesWithApplicant(externalData) && isChildPension) {
+  if (childCustodyLivesWithApplicant(externalData) && isChildPension) {
     getAttachmentDetails(
       childPensionAttachments?.notLivesWithApplicant,
       AttachmentTypes.NOT_LIVES_WITH_APPLICANT,
@@ -552,8 +552,8 @@ export function getAttachments(application: Application) {
 // return combine residence history if the applicant had domestic transport
 export function getCombinedResidenceHistory(
   residenceHistory: NationalRegistryResidenceHistory[],
-): combinedResidenceHistory[] {
-  let combinedResidenceHistory: combinedResidenceHistory[] = []
+): CombinedResidenceHistory[] {
+  const combinedResidenceHistory: CombinedResidenceHistory[] = []
 
   residenceHistory.map((history) => {
     if (combinedResidenceHistory.length === 0) {
@@ -624,8 +624,8 @@ export function isExistsCohabitantOlderThan25(
 
 function residenceMapper(
   history: NationalRegistryResidenceHistory,
-): combinedResidenceHistory {
-  const residence = {} as combinedResidenceHistory
+): CombinedResidenceHistory {
+  const residence = {} as CombinedResidenceHistory
   residence.country = history.country!
   residence.periodFrom = history.dateOfChange!
   residence.periodTo = '-'
@@ -655,7 +655,6 @@ export function residenceHistoryTableData(application: Application) {
           history.periodTo !== '-'
             ? new Date(history.periodTo).toLocaleDateString()
             : '-',
-        // lengthOfStay: 0//history.periodTo !== '-' ? formatDistance(history.periodTo as Date, history.periodFrom) : '-' //lengthOfStay(history.periodTo as Date, history.periodFrom)
       }
     }) ?? []
 
@@ -689,10 +688,6 @@ export function residenceHistoryTableData(application: Application) {
         ),
         accessor: 'periodTo',
       } as const,
-      // {
-      //   Header: formatText('Dvalartími (16-67 ára)', application, formatMessage),
-      //   accessor: 'lengthOfStay',
-      // } as const,
     ],
     [application, formatMessage],
   )
@@ -701,11 +696,13 @@ export function residenceHistoryTableData(application: Application) {
 }
 
 // returns true if some of applicant children DOES NOT live with him.
-export function childCustody_LivesWithApplicant(
+export function childCustodyLivesWithApplicant(
   externalData: Application['externalData'],
 ) {
   let returnStatus = false
   const { custodyInformation } = getApplicationExternalData(externalData)
+
+  console.log('custodyInformation ', custodyInformation)
 
   custodyInformation.map((child) => {
     !child.livesWithApplicant ? (returnStatus = true) : (returnStatus = false)
