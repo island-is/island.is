@@ -3,7 +3,6 @@ import {
   buildMultiField,
   buildPhoneField,
   buildSection,
-  buildSelectField,
   buildSubSection,
   buildSubmitField,
   buildTextField,
@@ -282,18 +281,18 @@ export const HouseholdSupplementForm: Form = buildForm({
       children: [
         buildSubSection({
           id: 'fileUploadAdditionalFiles',
-          title:
-            householdSupplementFormMessage.fileUpload.additionalFileTitle,
+          title: householdSupplementFormMessage.fileUpload.additionalFileTitle,
           children: [
             buildFileUploadField({
               id: 'fileUpload.additionalDocuments',
               title:
-                householdSupplementFormMessage.fileUpload
-                  .additionalFileTitle,
+                householdSupplementFormMessage.fileUpload.additionalFileTitle,
               description:
-                householdSupplementFormMessage.fileUpload.additionalFileDescription,
+                householdSupplementFormMessage.fileUpload
+                  .additionalFileDescription,
               introduction:
-                householdSupplementFormMessage.fileUpload.additionalFileDescription,
+                householdSupplementFormMessage.fileUpload
+                  .additionalFileDescription,
               maxSize: FILE_SIZE_LIMIT,
               maxSizeErrorText:
                 householdSupplementFormMessage.fileUpload
@@ -306,6 +305,20 @@ export const HouseholdSupplementForm: Form = buildForm({
               uploadButtonLabel:
                 householdSupplementFormMessage.fileUpload.attachmentButton,
               uploadMultiple: true,
+            }),
+          ],
+        }),
+        buildSubSection({
+          id: 'commentSection',
+          title: householdSupplementFormMessage.comment.commentSection,
+          children: [
+            buildTextField({
+              id: 'comment',
+              title: householdSupplementFormMessage.comment.commentSection,
+              variant: 'textarea',
+              rows: 10,
+              description: householdSupplementFormMessage.comment.description,
+              placeholder: householdSupplementFormMessage.comment.placeholder,
             }),
           ],
         }),

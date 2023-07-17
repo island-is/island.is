@@ -6,8 +6,9 @@ import get from 'lodash/get'
 import has from 'lodash/has'
 
 import { Payment } from './review-groups/Payment'
-import { Attachments } from './review-groups/Attachments'
 import { HouseholdSupplement } from './review-groups/HouseholdSupplement'
+import { Comment } from './review-groups/Comment'
+import { Attachments } from './review-groups/Attachments'
 
 import { householdSupplementFormMessage } from '../../lib/messages'
 
@@ -52,6 +53,7 @@ export const Review: FC<ReviewScreenProps> = ({
       </Box>
       <Payment {...childProps} />
       <HouseholdSupplement {...childProps} />
+      <Comment {...childProps} />
       <Attachments {...childProps} />
     </>
   )

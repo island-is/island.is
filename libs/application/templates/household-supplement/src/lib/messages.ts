@@ -269,6 +269,24 @@ export const householdSupplementFormMessage: MessageDir = {
     },
   }),
 
+  comment: defineMessages({
+    commentSection: {
+      id: 'hs.application:comment.section',
+      defaultMessage: 'Athugasemd',
+      description: 'Comment',
+    },
+    description: {
+      id: 'hs.application:comment.description',
+      defaultMessage: 'Hafir þú einhverja athugasemd skildu hana eftir hér.',
+      description: 'If you have any comments, leave them here.',
+    },
+    placeholder: {
+      id: 'hs.application:comment.placeholder',
+      defaultMessage: 'Skrifaðu hér athugasemd',
+      description: 'Your comment',
+    },
+  }),
+
   confirm: defineMessages({
     section: {
       id: 'hs.application:confirm.section',
@@ -385,77 +403,77 @@ export const householdSupplementFormMessage: MessageDir = {
 
 export const validatorErrorMessages = defineMessages({
   requireAnswer: {
-    id: 'oap.application:fileUpload.required.answer',
+    id: 'hs.application:fileUpload.required.answer',
     defaultMessage: 'Ógilt gildi',
     description: 'Invalid value',
   },
   periodStartDateNeeded: {
-    id: 'oap.application:period.startDate.Needed',
+    id: 'hs.application:period.startDate.Needed',
     defaultMessage: 'Finn ekki byrjunardagsetning.',
     description: 'Could not calculate startDate.',
   },
   periodEndDateNeeded: {
-    id: 'oap.application:period.endDate.Needed',
+    id: 'hs.application:period.endDate.Needed',
     defaultMessage: 'Finn ekki endadagsetning.',
     description: 'Could not calculate endDate.',
   },
   periodYear: {
-    id: 'oap.application:period.year',
+    id: 'hs.application:period.year',
     defaultMessage: 'Vitlaust ár.',
     description: 'Invalid year.',
   },
   periodMonth: {
-    id: 'oap.application:period.month',
+    id: 'hs.application:period.month',
     defaultMessage: 'Vitlaus mánuður.',
     description: 'Invalid month.',
   },
   requireAttachment: {
-    id: 'oap.application:fileUpload.required.attachment',
+    id: 'hs.application:fileUpload.required.attachment',
     defaultMessage: 'Þú þarft að hlaða upp viðhenginu til að halda áfram.',
     description: 'Error message when the attachment file is not provided.',
   },
   employerEmailMissing: {
-    id: 'oap.application:employer.email.missing',
+    id: 'hs.application:employer.email.missing',
     defaultMessage: 'Netfang atvinnurekanda vantar',
     description: 'Employer email missing',
   },
   employerEmailDuplicate: {
-    id: 'oap.application:employer.email.duplicate',
+    id: 'hs.application:employer.email.duplicate',
     defaultMessage: 'Netfang atvinnurekanda er þegar skráð',
     description: 'Employer email is already added',
   },
   employerRatioTypeMissing: {
-    id: 'oap.application:employer.ratioType.missing',
+    id: 'hs.application:employer.ratioType.missing',
     defaultMessage: 'Vinsamlegast veldu starfhlutfall',
     description: 'Copy when ratioType is missing',
   },
   employersNotAList: {
-    id: 'oap.application:employers.employersNotAList',
+    id: 'hs.application:employers.employersNotAList',
     defaultMessage: 'Svar þarf að vera listi af atvinnurekanda',
     description: 'Copy when employers is not a list',
   },
   employersRatioMoreThan50: {
-    id: 'oap.application:employers.ratio.more.than.50',
+    id: 'hs.application:employers.ratio.more.than.50',
     defaultMessage: 'Starfhlutfall má ekki vera meira en 50%',
     description: 'Employment rate must be less than or equal 50%',
   },
   employersRatioLessThan0: {
-    id: 'oap.application:employers.ratio.less.than.0',
+    id: 'hs.application:employers.ratio.less.than.0',
     defaultMessage: 'Starfhlutfall má ekki vera minni en 1%',
     description: 'Employment rate must be more than 0%',
   },
   employerRatioMissing: {
-    id: 'oap.application:employer.ratio.missing',
+    id: 'hs.application:employer.ratio.missing',
     defaultMessage: 'Starfhlutfall vantar',
     description: 'Employer rate missing',
   },
   employersPhoneNumberInvalid: {
-    id: 'oap.application:employer.phoneNumber.invalid',
+    id: 'hs.application:employer.phoneNumber.invalid',
     defaultMessage: 'Símanúmer verður að vera GSM númer',
     description: 'Phone number must be a GSM number',
   },
   personalAllowance: {
-    id: 'oap.application:payment.personal.allowance',
+    id: 'hs.application:payment.personal.allowance',
     defaultMessage: 'Persónuafsláttur verður að vera milli 1 og 100',
     description: 'Personal allowace has to be between 1 and 100',
   },
