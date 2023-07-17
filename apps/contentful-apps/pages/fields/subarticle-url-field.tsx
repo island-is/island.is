@@ -30,16 +30,18 @@ const SubArticleUrlField = () => {
   )
   const [loading, setLoading] = useState(true)
   const [firstRender, setFirstRender] = useState(true)
-  const parentHasBeenSet = useRef<boolean | null>(null)
+  const parentArticleIsPresent = useRef<boolean | null>(null)
 
   const fetchParentArticle = useCallback(() => {
     const parentArticleId = sdk.entry.fields['parent']?.getValue()?.sys?.id
 
     if (!parentArticleId) {
-      parentHasBeenSet.current = false
+      parentArticleIsPresent.current = false
       setLoading(false)
       return
     }
+
+    parentArticleIsPresent.current = true
 
     cma.entry
       .get({
@@ -76,7 +78,7 @@ const SubArticleUrlField = () => {
 
   useEffect(() => {
     sdk.entry.onSysChanged(() => {
-      if (parentHasBeenSet.current !== false) return
+      if (parentArticleIsPresent.current !== false) return
 
       const parentId = sdk.entry.fields?.['parent']?.getValue()?.sys?.id
 
