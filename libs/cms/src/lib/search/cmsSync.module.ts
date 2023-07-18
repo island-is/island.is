@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common'
 import { ElasticService } from '@island.is/content-search-toolkit'
-import { ContentfulService } from './contentful.service'
+import { ContentfulService } from './contentfulService'
 import { ArticleSyncService } from './importers/article.service'
 import { CmsSyncService } from './cmsSync.service'
 import { LifeEventsPageSyncService } from './importers/lifeEventsPage.service'

@@ -8,7 +8,7 @@ import {
   SyncCollection,
 } from 'contentful'
 import Bottleneck from 'bottleneck'
-import environment from '../environments/environment'
+import environment from '../../environments/environment'
 import { logger } from '@island.is/logging'
 import { Injectable } from '@nestjs/common'
 import { ElasticService } from '@island.is/content-search-toolkit'
@@ -19,6 +19,7 @@ import {
   getElasticsearchIndex,
 } from '@island.is/content-search-index-manager'
 import { Locale } from 'locale'
+import { contentfulLocaleMap, removeLocaleKeysFromEntry } from './utils'
 
 // Taken from here: https://github.com/contentful/contentful-sdk-core/blob/054328ba2d0df364a5f1ce6d164c5018efb63572/lib/create-http-client.js#L34-L42
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -51,12 +52,6 @@ export class ContentfulService {
   private limiter: Bottleneck
   private defaultIncludeDepth = 4
   private contentfulClient: ContentfulClientApi
-  // TODO: Make the contentful locale reflect the api locale
-  // contentful locale does not always reflect the api locale so we need this map
-  private contentfulLocaleMap = {
-    is: 'is-IS',
-    en: 'en',
-  }
 
   constructor(private readonly elasticService: ElasticService) {
     const params: CreateClientParams = {
@@ -227,7 +222,7 @@ export class ContentfulService {
         const items = await this.getContentfulData(chunkSize, {
           include: this.defaultIncludeDepth,
           'sys.id[in]': chunkIds.join(','),
-          locale: this.contentfulLocaleMap[locale],
+          locale: contentfulLocaleMap[locale],
         })
 
         chunkedChanges.push(items)
@@ -236,34 +231,6 @@ export class ContentfulService {
     } while (chunkToProcess.length)
 
     return flatten(chunkedChanges)
-  }
-
-  private removeLocaleKeysFromEntry(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    entry: Entry<any> | Array<any>,
-    locale: Locale,
-  ) {
-    if (Array.isArray(entry)) {
-      for (const obj of entry) {
-        this.removeLocaleKeysFromEntry(obj, locale)
-      }
-      return
-    }
-
-    const fields = entry?.fields
-    if (!fields) return
-
-    for (const fieldKey in fields) {
-      for (const fieldLocale in fields[fieldKey]) {
-        if (fieldLocale === this.contentfulLocaleMap[locale]) {
-          fields[fieldKey] = fields[fieldKey][fieldLocale]
-          if (typeof fields[fieldKey] === 'object') {
-            this.removeLocaleKeysFromEntry(fields[fieldKey], locale)
-          }
-          break
-        }
-      }
-    }
   }
 
   /** Example if locale is 'en':
@@ -280,9 +247,8 @@ export class ContentfulService {
     locale: Locale,
   ) => {
     for (const item of items) {
-      this.removeLocaleKeysFromEntry(item, locale)
+      removeLocaleKeysFromEntry(item, locale)
     }
-
     return items
   }
 
@@ -313,9 +279,9 @@ export class ContentfulService {
       )
       for (const localizedEntry of localizedEntries) {
         const translationIsActive =
-          localizedEntry.fields.activeTranslations?.[
-            this.contentfulLocaleMap.is
-          ]?.[locale] ?? true
+          localizedEntry.fields.activeTranslations?.[contentfulLocaleMap.is]?.[
+            locale
+          ] ?? true
 
         if (!translationIsActive) {
           entriesThatHadTheirTranslationTurnedOff.add(localizedEntry.sys.id)
@@ -419,7 +385,7 @@ export class ContentfulService {
             this.getContentfulData(chunkSize, {
               include: this.defaultIncludeDepth,
               links_to_entry: entryId,
-              locale: this.contentfulLocaleMap[locale],
+              locale: contentfulLocaleMap[locale],
             }),
           )
         }
