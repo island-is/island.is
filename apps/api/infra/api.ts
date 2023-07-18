@@ -132,6 +132,7 @@ export const serviceSetup = (services: {
         (h) => `http://${h.svc(services.regulationsAdminBackend)}`,
       ),
       IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/api',
+      ISLYKILL_CERT: '/etc/config/islyklar.p12',
       AIR_DISCOUNT_SCHEME_CLIENT_TIMEOUT: '20000',
       XROAD_NATIONAL_REGISTRY_TIMEOUT: '20000',
       XROAD_PROPERTIES_TIMEOUT: '35000',
@@ -287,7 +288,6 @@ export const serviceSetup = (services: {
       FIREARM_LICENSE_FETCH_TIMEOUT: '/k8s/api/FIREARM_LICENSE_FETCH_TIMEOUT',
       DISABILITY_LICENSE_FETCH_TIMEOUT:
         '/k8s/api/DISABILITY_LICENSE_FETCH_TIMEOUT',
-      ISLYKILL_CERT: '/etc/config/islyklar.p12',
       ISLYKILL_SERVICE_PASSPHRASE: '/k8s/api/ISLYKILL_SERVICE_PASSPHRASE',
       ISLYKILL_SERVICE_BASEPATH: '/k8s/api/ISLYKILL_SERVICE_BASEPATH',
       IDENTITY_SERVER_CLIENT_SECRET: '/k8s/api/IDENTITY_SERVER_CLIENT_SECRET',
