@@ -1,4 +1,3 @@
-import addYears from 'date-fns/addYears'
 import addMonths from 'date-fns/addMonths'
 import {
   ApplicationWithAttachments as Application,
@@ -35,22 +34,24 @@ function buildApplication(data?: {
     applicantActors: [],
     answers,
     state,
-    externalData: {
-      nationalRegistry: {
-        data: {
-          nationalId: '0101307789',
-        },
-        date: new Date(),
-        status: 'success',
-      },
-    },
+    externalData,
     status: ApplicationStatus.IN_PROGRESS,
   }
 }
 
 describe('getAvailableYears', () => {
   it('should return available years', () => {
-    const application = buildApplication()
+    const application = buildApplication({
+      externalData: {
+        nationalRegistry: {
+          data: {
+            nationalId: '0101307789',
+          },
+          date: new Date(),
+          status: 'success',
+        },
+      },
+    })
     const startDateYear = subYears(new Date(), 2).getFullYear()
     const endDateYear = addMonths(new Date(), 6).getFullYear()
     const res = getAvailableYears(application)
@@ -71,7 +72,17 @@ describe('getAvailableYears', () => {
 
 describe('getAvailableMonths', () => {
   it('should return available months for selected year, selected year same as start date', () => {
-    const application = buildApplication()
+    const application = buildApplication({
+      externalData: {
+        nationalRegistry: {
+          data: {
+            nationalId: '0101307789',
+          },
+          date: new Date(),
+          status: 'success',
+        },
+      },
+    })
     const startDate = subYears(new Date(), 2)
     const endDate = addMonths(new Date(), 6)
     const selectedYear = startDate.getFullYear().toString()
@@ -89,7 +100,17 @@ describe('getAvailableMonths', () => {
   })
 
   it('should return available months for selected year, selected year same as end date', () => {
-    const application = buildApplication()
+    const application = buildApplication({
+      externalData: {
+        nationalRegistry: {
+          data: {
+            nationalId: '0101307789',
+          },
+          date: new Date(),
+          status: 'success',
+        },
+      },
+    })
     const startDate = subYears(new Date(), 2)
     const endDate = addMonths(new Date(), 6)
     const selectedYear = endDate.getFullYear().toString()
@@ -107,7 +128,17 @@ describe('getAvailableMonths', () => {
   })
 
   it('should return available months for selected year, selected year is todays year', () => {
-    const application = buildApplication()
+    const application = buildApplication({
+      externalData: {
+        nationalRegistry: {
+          data: {
+            nationalId: '0101307789',
+          },
+          date: new Date(),
+          status: 'success',
+        },
+      },
+    })
     const startDate = subYears(new Date(), 2)
     const endDate = addMonths(new Date(), 6)
     const selectedYear = new Date().getFullYear().toString()
@@ -129,6 +160,13 @@ describe('isExistsCohabitantOlderThan25', () => {
   it('should return true if user has cohabitant older than 25', () => {
     const application = buildApplication({
       externalData: {
+        nationalRegistry: {
+          data: {
+            nationalId: '0101307789',
+          },
+          date: new Date(),
+          status: 'success',
+        },
         nationalRegistryCohabitants: {
           data: ['2605791429'],
           date: new Date(),
@@ -145,6 +183,13 @@ describe('isExistsCohabitantOlderThan25', () => {
   it('should return false if user has cohabitant older than 25', () => {
     const application = buildApplication({
       externalData: {
+        nationalRegistry: {
+          data: {
+            nationalId: '0101307789',
+          },
+          date: new Date(),
+          status: 'success',
+        },
         nationalRegistryCohabitants: {
           data: ['0212181460'],
           date: new Date(),

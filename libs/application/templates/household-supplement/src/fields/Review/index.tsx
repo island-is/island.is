@@ -14,6 +14,7 @@ import { householdSupplementFormMessage } from '../../lib/messages'
 import { States } from '../../lib/constants'
 import { handleServerError } from '@island.is/application/ui-components'
 import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
+import { Period } from './review-groups/Period'
 
 interface ReviewScreenProps {
   application: Application
@@ -131,6 +132,7 @@ export const Review: FC<ReviewScreenProps> = ({
       )}
       <Payment {...childProps} />
       <HouseholdSupplement {...childProps} />
+      <Period {...childProps} />
       <Comment {...childProps} />
       <Attachments {...childProps} />
     </>

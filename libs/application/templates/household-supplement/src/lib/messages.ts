@@ -449,6 +449,11 @@ export const householdSupplementFormMessage: MessageDir = {
       defaultMessage: 'Símanúmerið þarf að vera gilt.',
       description: 'The phone number must be valid.',
     },
+    period: {
+      id: 'hs.application:error.period',
+      defaultMessage: 'Tímabil þarf að vera gilt.',
+      description: 'The period must be valid.',
+    },
   }),
 }
 

@@ -9,7 +9,7 @@ import {
 } from './constants'
 import { Option, Application, YesOrNo } from '@island.is/application/types'
 import { householdSupplementFormMessage } from './messages'
-import { addMonths, addYears, subYears } from 'date-fns'
+import { addMonths, subYears } from 'date-fns'
 import * as kennitala from 'kennitala'
 
 interface FileType {
@@ -158,6 +158,7 @@ export function isExistsCohabitantOlderThan25(
     externalData,
   )
 
+  console.log('cohabitants ', cohabitants)
   let isOlderThan25 = false
   cohabitants.forEach((cohabitant) => {
     if (cohabitant !== applicantNationalId) {

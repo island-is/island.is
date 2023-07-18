@@ -2,6 +2,7 @@ import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { z } from 'zod'
 import { NO, YES, HouseholdSupplementHousing } from './constants'
 import { householdSupplementFormMessage } from './messages'
+import { addYears } from 'date-fns'
 
 export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
@@ -36,6 +37,20 @@ export const dataSchema = z.object({
     ]),
     children: z.enum([YES, NO]),
   }),
+  period: z
+    .object({
+      year: z.string(),
+      month: z.string(),
+    })
+    .refine(
+      (p) => {
+        const today = new Date()
+        const startDate = addYears(today, -2)
+        const selectedDate = new Date(p.year + p.month)
+        return startDate < selectedDate
+      },
+      { params: householdSupplementFormMessage.errors.period },
+    ),
 })
 
 export type SchemaFormValues = z.infer<typeof dataSchema>
