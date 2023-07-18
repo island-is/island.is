@@ -12,8 +12,8 @@ export enum TrademarkType {
   MULTIMEDIA = 'Multimedia',
 }
 
-registerEnumType(TrademarkSubType, { name: 'TrademarkSubType' })
 registerEnumType(TrademarkType, { name: 'TrademarkType' })
+registerEnumType(TrademarkSubType, { name: 'TrademarkSubType' })
 
 @ObjectType('IntellectualPropertyTrademarkAgent')
 export class Agent {
@@ -78,7 +78,7 @@ export class Trademark {
   @Field(() => String, { nullable: true })
   text?: string | null
 
-  @Field(() => String, { nullable: true })
+  @Field(() => TrademarkType, { nullable: true })
   type?: TrademarkType
 
   @Field(() => TrademarkSubType, { nullable: true })

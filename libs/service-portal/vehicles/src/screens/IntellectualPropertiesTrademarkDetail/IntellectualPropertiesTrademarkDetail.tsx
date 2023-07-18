@@ -4,7 +4,6 @@ import { useParams } from 'react-router-dom'
 import {
   ErrorScreen,
   ExcludesFalse,
-  ExpandRow,
   IntroHeader,
   NotFound,
   TableGrid,
@@ -13,15 +12,12 @@ import {
   m,
 } from '@island.is/service-portal/core'
 import { ipMessages } from '../../lib/messages'
-import { MultiImage } from '../../../../core/src'
 import {
   Accordion,
   AccordionItem,
   Box,
   Button,
   Divider,
-  GridColumn,
-  GridRow,
   Inline,
   Stack,
   Text,
@@ -29,6 +25,10 @@ import {
 import Timeline from '../../components/Timeline/Timeline'
 import chunk from 'lodash/chunk'
 import { useGetIntellectualPropertyTrademarkByIdQuery } from './IntellectualPropertiesTrademarkDetail.generated'
+import Image from '../../../../core/src/components/Image/Image'
+import AudioPlayer from '../../../../core/src/components/AudioPlayer/AudioPlayer'
+import { TrademarkType } from '@island.is/api/schema'
+
 type UseParams = {
   id: string
 }
@@ -76,22 +76,25 @@ const IntellectualPropertiesTrademarkDetail = () => {
         />
       </Box>
       <Stack space="containerGutter">
-        <GridRow>
-          <GridColumn span="12/12">
-            <Box marginBottom={3} paddingRight={2}>
-              <Inline space={2}>
-                <Button
-                  size="medium"
-                  icon="reader"
-                  iconType="outline"
-                  variant="utility"
-                >
-                  {'Skráningarskírteini'}
-                </Button>
-              </Inline>
-            </Box>
-          </GridColumn>
-        </GridRow>
+        <Box marginBottom={3} paddingRight={2}>
+          <Inline space={2}>
+            <Button
+              size="medium"
+              icon="reader"
+              iconType="outline"
+              variant="utility"
+            >
+              {'Skráningarskírteini'}
+            </Button>
+          </Inline>
+        </Box>
+
+        {ip?.imagePath && (
+          <Image url={ip.imagePath} title={'Trademark image'}></Image>
+        )}
+        {ip?.type === TrademarkType.AUDIO && ip.media?.mediaPath && (
+          <AudioPlayer url={ip.media?.mediaPath} />
+        )}
         <Stack space="p2">
           <UserInfoLine
             title={formatMessage(ipMessages.baseInfo)}

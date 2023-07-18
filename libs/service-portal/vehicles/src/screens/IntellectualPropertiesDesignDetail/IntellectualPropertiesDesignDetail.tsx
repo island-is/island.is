@@ -71,49 +71,45 @@ const IntellectualPropertiesDesignDetail = () => {
       </Box>
 
       <Stack space="containerGutter">
-        <GridRow>
-          <GridColumn span="12/12">
-            <Box marginBottom={3} paddingRight={2}>
-              <Inline space={2}>
-                <Button
-                  size="medium"
-                  icon="reader"
-                  iconType="outline"
-                  variant="utility"
-                >
-                  {'Ógilding'}
-                </Button>
-                <Button
-                  size="medium"
-                  icon="reader"
-                  iconType="outline"
-                  variant="utility"
-                >
-                  {'Veðsetning'}
-                </Button>
-                <Button
-                  size="medium"
-                  icon="reader"
-                  iconType="outline"
-                  variant="utility"
-                >
-                  {'Nytjaleyfi'}
-                </Button>
-                <Button
-                  size="medium"
-                  icon="reader"
-                  iconType="outline"
-                  variant="utility"
-                >
-                  {'Afturköllun'}
-                </Button>
-              </Inline>
-            </Box>
-            {ip?.images?.length && (
-              <MultiImage images={ip?.images ?? []} title="bjrbjarila" />
-            )}
-          </GridColumn>
-        </GridRow>
+        <Box marginBottom={3} paddingRight={2}>
+          <Inline space={2}>
+            <Button
+              size="medium"
+              icon="reader"
+              iconType="outline"
+              variant="utility"
+            >
+              {'Ógilding'}
+            </Button>
+            <Button
+              size="medium"
+              icon="reader"
+              iconType="outline"
+              variant="utility"
+            >
+              {'Veðsetning'}
+            </Button>
+            <Button
+              size="medium"
+              icon="reader"
+              iconType="outline"
+              variant="utility"
+            >
+              {'Nytjaleyfi'}
+            </Button>
+            <Button
+              size="medium"
+              icon="reader"
+              iconType="outline"
+              variant="utility"
+            >
+              {'Afturköllun'}
+            </Button>
+          </Inline>
+        </Box>
+        {ip?.images?.length && (
+          <MultiImage images={ip?.images ?? []} title="bjrbjarila" />
+        )}
         <Stack space="p2">
           <UserInfoLine
             title={formatMessage(ipMessages.baseInfo)}
