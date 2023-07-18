@@ -1,3 +1,4 @@
+import { AuthModule as AuthNestModule } from '@island.is/auth-nest-tools'
 import { Module } from '@nestjs/common'
 import { GraphQLModule } from '@nestjs/graphql'
 import { ApolloDriver } from '@nestjs/apollo'
@@ -46,6 +47,7 @@ const autoSchemaFile = environment.production
       jwtSecret: environment.auth.jwtSecret,
       secretToken: environment.auth.secretToken,
     }),
+    AuthNestModule.register(environment.identityServerAuth),
     AuditTrailModule.register(environment.auditTrail),
     AuthModule,
     UserModule,
