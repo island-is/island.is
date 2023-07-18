@@ -47,6 +47,7 @@ export const thumbnail = style({
   position: 'relative',
   height: theme.spacing[10],
   width: theme.spacing[10],
+  border: '1px solid',
   borderRadius: theme.border.radius.large,
   borderColor: theme.border.color.blue200,
   opacity: 0.6,
