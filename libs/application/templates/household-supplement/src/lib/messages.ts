@@ -259,6 +259,18 @@ export const householdSupplementFormMessage: MessageDir = {
       description:
         "Here you can upload a certificate of a young person's school attendance. Note that the document must be in .pdf format.",
     },
+    additionalDocumentRequired: {
+      id: 'hs.application:fileUpload.additional.document.required',
+      defaultMessage:
+        'Viðbótargögn krafist, vinsamlegast hlaðið viðbótargögn á næstu síðu',
+      description:
+        'Additional document(s) required, on the next page you will be able to upload the additional document(s), to begin please press continue.',
+    },
+    additionalDocumentsEditSubmit: {
+      id: 'hs.application:fileUpload.additional.documents.edit.submit',
+      defaultMessage: 'Senda inn',
+      description: 'Submit',
+    },
   }),
 
   additionalInfo: defineMessages({

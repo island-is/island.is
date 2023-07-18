@@ -79,6 +79,7 @@ const HouseholdSupplementTemplate: ApplicationTemplate<
           name: States.DRAFT,
           status: 'draft',
           lifecycle: pruneAfterDays(30),
+          progress: 0.25,
           actionCard: {
             description: statesMessages.draftDescription,
             historyLogs: {
@@ -86,7 +87,6 @@ const HouseholdSupplementTemplate: ApplicationTemplate<
               logMessage: statesMessages.applicationSent,
             },
           },
-          progress: 0.25,
           roles: [
             {
               id: Roles.APPLICANT,
@@ -113,9 +113,9 @@ const HouseholdSupplementTemplate: ApplicationTemplate<
       [States.TRYGGINGASTOFNUN_SUBMITTED]: {
         meta: {
           name: States.TRYGGINGASTOFNUN_SUBMITTED,
-          progress: 0.75,
           status: 'inprogress',
           lifecycle: DefaultStateLifeCycle,
+          progress: 0.75,
           actionCard: {
             tag: {
               label: statesMessages.pendingTag,
@@ -153,6 +153,130 @@ const HouseholdSupplementTemplate: ApplicationTemplate<
         },
         on: {
           [DefaultEvents.EDIT]: { target: States.DRAFT },
+        },
+      },
+      [States.TRYGGINGASTOFNUN_IN_REVIEW]: {
+        meta: {
+          name: States.TRYGGINGASTOFNUN_IN_REVIEW,
+          status: 'inprogress',
+          lifecycle: DefaultStateLifeCycle,
+          progress: 0.75,
+          actionCard: {
+            pendingAction: {
+              title: statesMessages.tryggingastofnunInReviewTitle,
+              content: statesMessages.tryggingastofnunInReviewContent,
+              displayStatus: 'info',
+            },
+            historyLogs: [
+              {
+                onEvent: DefaultEvents.APPROVE,
+                logMessage: statesMessages.additionalDocumentsAdded,
+              },
+            ],
+          },
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/InReview').then((val) =>
+                  Promise.resolve(val.InReview),
+                ),
+              read: 'all',
+            },
+          ],
+        },
+        on: {
+          [DefaultEvents.APPROVE]: { target: States.APPROVED },
+          [DefaultEvents.REJECT]: { target: States.REJECTED },
+          ADDITIONALDOCUMENTSREQUIRED: {
+            target: States.ADDITIONAL_DOCUMENTS_REQUIRED,
+          },
+        },
+      },
+      [States.ADDITIONAL_DOCUMENTS_REQUIRED]: {
+        meta: {
+          name: States.ADDITIONAL_DOCUMENTS_REQUIRED,
+          status: 'inprogress',
+          lifecycle: pruneAfterDays(970),
+          progress: 0.5,
+          actionCard: {
+            tag: {
+              label: coreMessages.tagsRequiresAction,
+              variant: 'red',
+            },
+            pendingAction: {
+              title: statesMessages.additionalDocumentRequired,
+              content: statesMessages.additionalDocumentRequiredDescription,
+              displayStatus: 'warning',
+            },
+          },
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/AdditionalDocumentsRequired').then((val) =>
+                  Promise.resolve(val.AdditionalDocumentsRequired),
+                ),
+              read: 'all',
+              write: 'all',
+            },
+          ],
+        },
+        on: {
+          [DefaultEvents.APPROVE]: {
+            target: States.TRYGGINGASTOFNUN_IN_REVIEW,
+          },
+        },
+      },
+      [States.APPROVED]: {
+        meta: {
+          name: States.APPROVED,
+          status: 'approved',
+          lifecycle: DefaultStateLifeCycle,
+          progress: 1,
+          actionCard: {
+            pendingAction: {
+              title: statesMessages.applicationApproved,
+              content: statesMessages.applicationApprovedDescription,
+              displayStatus: 'success',
+            },
+          },
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/InReview').then((val) =>
+                  Promise.resolve(val.InReview),
+                ),
+              read: 'all',
+            },
+          ],
+        },
+      },
+      [States.REJECTED]: {
+        meta: {
+          name: States.REJECTED,
+          status: 'rejected',
+          lifecycle: DefaultStateLifeCycle,
+          progress: 1,
+          actionCard: {
+            historyLogs: [
+              {
+                // TODO: Þurfum mögulega að breyta þessu þegar við vitum hvernig TR gerir stöðubreytingar
+                onEvent: States.REJECTED,
+                logMessage: statesMessages.applicationRejected,
+              },
+            ],
+          },
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/InReview').then((val) =>
+                  Promise.resolve(val.InReview),
+                ),
+            },
+          ],
         },
       },
     },
