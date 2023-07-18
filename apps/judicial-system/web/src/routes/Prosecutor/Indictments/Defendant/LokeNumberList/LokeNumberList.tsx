@@ -63,7 +63,7 @@ export const LokeNumberList: React.FC<Props> = (props) => {
       setIsLoading(false)
       setPoliceCaseInfoResponse(data.policeCaseInfo as PoliceCaseInfo[])
     },
-    onError: (error) => {
+    onError: () => {
       setHasError(true)
     },
   })
