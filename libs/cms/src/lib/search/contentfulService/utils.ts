@@ -24,7 +24,12 @@ export function removeLocaleKeysFromEntry(
     }
     if (key === contentfulLocaleMap[locale]) {
       return value
-    } else if (Object.values(contentfulLocaleMap).includes(key)) {
+    }
+  }
+
+  // Make sure we null out the other locale values
+  for (const key in node) {
+    if (Object.values(contentfulLocaleMap).includes(key)) {
       return null
     }
   }
