@@ -30,7 +30,11 @@ const CourtOfAppealCases = () => {
 
   const { data: appealedCases, loading } = useQuery<{
     cases: CaseListEntry[]
-  }>(AppealedCasesQuery, { variables: { input }, fetchPolicy: 'no-cache' })
+  }>(AppealedCasesQuery, {
+    variables: { input },
+    fetchPolicy: 'no-cache',
+    errorPolicy: 'all',
+  })
 
   const appealedCasesData = appealedCases?.cases || []
 
