@@ -166,6 +166,7 @@ export const serviceSetup = (services: {
         prod: 'Stafrænt Ísland',
       },
       IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/application-system',
+      ISLYKILL_CERT: '/etc/config/islyklar.p12',
       FUNDING_GOVERNMENT_PROJECTS_APPLICATION_RECIPIENT_EMAIL_ADDRESS: {
         dev: 'gunnar.ingi@fjr.is',
         staging: 'gunnar.ingi@fjr.is',
@@ -300,7 +301,7 @@ export const serviceSetup = (services: {
       max: 60,
       min: 2,
     })
-    .files({ filename: 'islyklar.p12', env: 'ISLYKILL_CERT' })
+    .volumes({name: 'islykill_cert', size: '1Gi', accessModes: 'ReadOnly', mountPath: '/etc/config/islyklar.p12', storageClass: 'efs-csi'})
     .ingress({
       primary: {
         host: {

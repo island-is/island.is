@@ -287,6 +287,7 @@ export const serviceSetup = (services: {
       FIREARM_LICENSE_FETCH_TIMEOUT: '/k8s/api/FIREARM_LICENSE_FETCH_TIMEOUT',
       DISABILITY_LICENSE_FETCH_TIMEOUT:
         '/k8s/api/DISABILITY_LICENSE_FETCH_TIMEOUT',
+      ISLYKILL_CERT: '/etc/config/islyklar.p12',
       ISLYKILL_SERVICE_PASSPHRASE: '/k8s/api/ISLYKILL_SERVICE_PASSPHRASE',
       ISLYKILL_SERVICE_BASEPATH: '/k8s/api/ISLYKILL_SERVICE_BASEPATH',
       IDENTITY_SERVER_CLIENT_SECRET: '/k8s/api/IDENTITY_SERVER_CLIENT_SECRET',
@@ -352,7 +353,7 @@ export const serviceSetup = (services: {
       RskProcuring,
       AircraftRegistry,
     )
-    .files({ filename: 'islyklar.p12', env: 'ISLYKILL_CERT' })
+    .volumes({name: 'islykill_cert', size: '1Gi', accessModes: 'ReadOnly', mountPath: '/etc/config/islyklar.p12', storageClass: 'efs-csi'})
     .ingress({
       primary: {
         host: {
