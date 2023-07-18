@@ -1,11 +1,17 @@
-import React, { FC, useState, useEffect, useRef } from 'react'
+import { FC, useState, useEffect } from 'react'
 import cn from 'classnames'
 import * as styles from './MultiImage.css'
 import { useMountedState } from 'react-use'
+import { Box, Inline, Stack, Text } from '@island.is/island-ui/core'
+import { ExcludesFalse } from '../..'
+import MultiImageModal from './MultiImageModal'
 
 export interface MultiImageProps {
-  url: string
-  title?: string
+  images: Array<{
+    image?: string | null
+    imageNumber?: number | null
+  }>
+  title: string
 }
 
 const useImageLoader = (url: string): boolean => {
@@ -25,17 +31,107 @@ const useImageLoader = (url: string): boolean => {
   return loaded
 }
 
-export const MultiImage: FC<MultiImageProps> = ({ url, title }) => {
-  const imageLoaded = useImageLoader(url)
+export const MultiImage: FC<MultiImageProps> = ({ images, title }) => {
+  const [firstImage, ...restOfImages] = images
+  const lastImage = images[3]
+
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0)
+  const [isModalOpen, setIsModalOpen] = useState(true)
+
+  const imageLoaded = useImageLoader(firstImage?.image ?? '')
 
   return (
-    <div className={styles.container}>
-      <img
-        src={url}
-        alt={title}
-        className={cn(styles.image, { [styles.show]: imageLoaded })}
-      />
-    </div>
+    <>
+      <Inline space={2}>
+        <Box
+          className={styles.container}
+          style={{ height: '352px', width: '352px' }}
+        >
+          <img
+            src={`data:image/png;base64,${images[selectedImageIndex].image}`}
+            alt={title}
+            className={cn(styles.image)}
+          />
+        </Box>
+        {restOfImages.length && (
+          <Box className={styles.thumbnailGrid}>
+            <Stack space="p1">
+              {restOfImages
+                .slice(0, 3)
+                .map(({ image }, index) => {
+                  if (!image) {
+                    return null
+                  }
+
+                  return (
+                    <Box
+                      key={index}
+                      className={cn(styles.container, {
+                        [styles.selectedImageOverlay]:
+                          index === selectedImageIndex,
+                      })}
+                      style={{ height: '80px', width: '80px' }}
+                    >
+                      <button
+                        type="button"
+                        onClick={() => setSelectedImageIndex(index)}
+                      >
+                        <img
+                          src={`data:image/png;base64,${image}`}
+                          alt={title}
+                          className={cn(styles.image)}
+                        />
+                      </button>
+                    </Box>
+                  )
+                })
+                .filter((Boolean as unknown) as ExcludesFalse)}
+              {lastImage && lastImage.image && (
+                <Box
+                  className={cn(styles.container)}
+                  style={{ height: '80px', width: '80px' }}
+                >
+                  <img
+                    src={`data:image/png;base64,${lastImage.image}`}
+                    alt={title}
+                    className={styles.image}
+                  />
+                  <button type="button" onClick={() => setIsModalOpen(true)}>
+                    <Box className={styles.lastImageOverlay}>
+                      <Text
+                        variant="h4"
+                        as="p"
+                        color="blue400"
+                        fontWeight="semiBold"
+                      >
+                        +{images.length - 4}
+                      </Text>
+                    </Box>
+                  </button>
+                </Box>
+              )}
+            </Stack>
+          </Box>
+        )}
+      </Inline>
+      {isModalOpen && lastImage.image && (
+        <MultiImageModal
+          id="ip-design-modal"
+          isVisible={isModalOpen}
+          images={images
+            .map((i, index) => (
+              <img
+                key={index}
+                src={`data:image/png;base64,${i.image}`}
+                alt={`some alt text`}
+                className={styles.image}
+              />
+            ))
+            .filter((Boolean as unknown) as ExcludesFalse)}
+          label="all designs"
+        />
+      )}
+    </>
   )
 }
 

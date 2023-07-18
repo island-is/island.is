@@ -1,0 +1,141 @@
+import { FC, ReactElement, useMemo, useState } from 'react'
+import {
+  Box,
+  Button,
+  Column,
+  Columns,
+  GridColumn,
+  GridContainer,
+  GridRow,
+  Icon,
+  Inline,
+  ModalBase,
+  Text,
+} from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
+import * as styles from './MultiImageModal.css'
+import cn from 'classnames'
+
+import Modal from '../Modal/Modal'
+import classNames from 'classnames'
+
+interface Props {
+  id: string
+  toggleClose?: boolean
+  isVisible?: boolean
+  initialVisibility?: boolean
+  disclosure?: ReactElement
+  label?: string
+  images?: Array<ReactElement>
+  onThumbnailClick?: () => void
+}
+
+const MAX_GALLERY_IMAGES = 6
+
+export const MultiImageModal: FC<Props> = ({
+  id,
+  toggleClose,
+  isVisible,
+  initialVisibility,
+  disclosure,
+  label,
+  images,
+}) => {
+  const { formatMessage } = useLocale()
+  const [currentIndex, setCurrentIndex] = useState(0)
+
+  const galleryImages = useMemo(() => {
+    console.log(images?.[currentIndex])
+    if (!images) {
+      return null
+    }
+    if (currentIndex >= MAX_GALLERY_IMAGES) {
+      return images?.slice(
+        currentIndex + 1 - MAX_GALLERY_IMAGES,
+        currentIndex + 1,
+      )
+    }
+    return images.slice(0, MAX_GALLERY_IMAGES)
+  }, [currentIndex, images])
+
+  if (!images || !galleryImages) {
+    return null
+  }
+
+  const onChevronBackClick = () => {
+    if (currentIndex > 0) {
+      setCurrentIndex(currentIndex - 1)
+    }
+  }
+
+  const onChevronForwardClick = () => {
+    if (currentIndex < images?.length - 1) {
+      setCurrentIndex(currentIndex + 1)
+    }
+  }
+
+  return (
+    <ModalBase
+      baseId={id}
+      toggleClose={toggleClose}
+      isVisible={isVisible}
+      initialVisibility={initialVisibility}
+      disclosure={disclosure}
+      modalLabel={label}
+      className={styles.modal}
+    >
+      <GridContainer className={styles.container}>
+        <GridRow>
+          <GridColumn className={styles.arrows} span={'2/12'}>
+            <Button
+              icon="chevronBack"
+              size="small"
+              variant="ghost"
+              disabled={currentIndex <= 0}
+              onClick={onChevronBackClick}
+            />
+          </GridColumn>
+          <GridColumn span={'8/12'} className={styles.mainImage}>
+            {images[currentIndex]}
+          </GridColumn>
+          <GridColumn className={styles.arrows} span={'2/12'}>
+            <Button
+              icon="chevronForward"
+              size="small"
+              variant="ghost"
+              disabled={currentIndex >= images?.length - 1}
+              onClick={onChevronForwardClick}
+            />
+          </GridColumn>
+        </GridRow>
+        <GridRow>
+          {galleryImages?.length && (
+            <Box>
+              <Box display="flex" justifyContent="center">
+                <Text variant="small">
+                  {currentIndex + 1}/{images.length}
+                </Text>
+              </Box>
+              <Columns space={2}>
+                {galleryImages.map((i, index) => (
+                  <Column key={index}>
+                    <Box
+                      className={cn(styles.thumbnail, {
+                        [styles.selectedThumbnail]:
+                          images.indexOf(i) === currentIndex,
+                      })}
+                    >
+                      {i}
+                    </Box>
+                  </Column>
+                ))}
+              </Columns>
+            </Box>
+          )}
+        </GridRow>
+      </GridContainer>
+    </ModalBase>
+  )
+}
+
+export default MultiImageModal

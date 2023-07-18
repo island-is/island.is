@@ -1,19 +1,40 @@
 import { style } from '@vanilla-extract/css'
 import { theme } from '@island.is/island-ui/theme'
+import { hexToRgba } from '@island.is/island-ui/utils'
+
+export const thumbnailGrid = style({})
 
 export const container = style({
   position: 'relative',
+  border: '1px solid #d2d2d2',
+  borderRadius: ' 8px',
   overflow: 'hidden',
+  transition: 'border .2s',
+})
+
+export const selectedImageOverlay = style({
+  borderColor: theme.color.blue400,
 })
 
 export const image = style({
   position: 'absolute',
-  top: 0,
-  left: 0,
+  top: '0',
+  left: '0',
   width: '100%',
   height: '100%',
-  opacity: 0,
-  transition: 'opacity .5s',
+  objectFit: 'contain',
+})
+
+export const lastImageOverlay = style({
+  position: 'absolute',
+  top: '0',
+  left: '0',
+  height: '100%',
+  width: '100%',
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  background: hexToRgba(theme.color.blue100, 0.6),
 })
 
 export const thumbnail = style({

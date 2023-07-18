@@ -6,6 +6,7 @@ import {
   ErrorScreen,
   ExcludesFalse,
   IntroHeader,
+  MultiImage,
   NotFound,
   TableGrid,
   UserInfoLine,
@@ -63,9 +64,6 @@ const IntellectualPropertiesDesignDetail = () => {
   }
 
   const ip = data?.intellectualPropertyDesign
-
-  console.log(ip?.internationalRegistrationDate)
-  console.log(typeof ip?.internationalRegistrationDate)
   return (
     <>
       <Box marginBottom={[1, 1, 3]}>
@@ -111,6 +109,9 @@ const IntellectualPropertiesDesignDetail = () => {
                 </Button>
               </Inline>
             </Box>
+            {ip?.images?.length && (
+              <MultiImage images={ip?.images ?? []} title="bjrbjarila" />
+            )}
           </GridColumn>
         </GridRow>
         <Stack space="p2">

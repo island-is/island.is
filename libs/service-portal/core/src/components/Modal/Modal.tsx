@@ -9,6 +9,7 @@ interface Props {
   isVisible?: boolean
   initialVisibility?: boolean
   disclosure?: ReactElement
+  label?: string
 }
 
 export const Modal: FC<Props> = ({
@@ -19,6 +20,7 @@ export const Modal: FC<Props> = ({
   disclosure,
   isVisible,
   initialVisibility = true,
+  label,
 }) => {
   const handleOnVisibilityChange = (isVisible: boolean) => {
     !isVisible && onCloseModal && onCloseModal()
@@ -32,6 +34,8 @@ export const Modal: FC<Props> = ({
       onVisibilityChange={handleOnVisibilityChange}
       disclosure={disclosure}
       isVisible={isVisible}
+      modalLabel={label}
+      hideOnClickOutside={false}
     >
       {({ closeModal }: { closeModal: () => void }) => (
         <Box background="white" paddingY={[3, 6, 12]} paddingX={[3, 6, 12, 15]}>
