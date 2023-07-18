@@ -24,7 +24,9 @@ export const Period = ({
       <GridRow marginBottom={3}>
         <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
           <DataValue
-            label={formatMessage(householdSupplementFormMessage.info.periodTitle)}
+            label={formatMessage(
+              householdSupplementFormMessage.info.periodTitle,
+            )}
             value={`${formatMessage(month?.label!)} ${selectedYear}`}
             error={hasError('period')}
           />
