@@ -13,4 +13,10 @@ export const lokeNumberList = defineMessages({
     description:
       'Textin á takkanum sem velur Löke númerið sem er valið í töflunni',
   },
+  errorMessage: {
+    id: 'judicial.system.core:loke_number_list.error_message',
+    defaultMessage: 'Ekki tókst að sækja Löke númer',
+    description:
+      'Villuskilaboðin sem koma þegar tekst ekki að sækja Löke númerin',
+  },
 })
