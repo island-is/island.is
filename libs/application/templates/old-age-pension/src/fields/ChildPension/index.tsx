@@ -41,7 +41,7 @@ export const ChildCustodyRepeater: FC<RepeaterProps> = ({
   })
 
   // push manually added children to data
-  children.map((child) => {
+  children.forEach((child) => {
     data.push({
       name: child['name'],
       nationalIdOrBirthDate: child['nationalIdOrBirthDate'],

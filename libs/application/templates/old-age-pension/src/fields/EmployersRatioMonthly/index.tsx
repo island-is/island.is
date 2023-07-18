@@ -45,14 +45,15 @@ const EmployersRatioMonthly: FC<RepeaterProps & FieldBaseProps> = ({
     if (currentEmployer?.ratioMonthlyAvg) {
       setYearly(currentEmployer.ratioMonthlyAvg)
     }
-  }, [])
+  }, [rawEmployers])
+
 
   useEffect(() => {
     setValue(
       `employers[${rawEmployers.length - 1}].${fieldId}`,
       yearly.toString(),
     )
-  }, [yearly, setValue])
+  }, [yearly, setValue, rawEmployers])
 
   const calculateYearly = () => {
     let total = 0

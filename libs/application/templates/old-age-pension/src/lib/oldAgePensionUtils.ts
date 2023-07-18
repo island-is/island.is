@@ -555,14 +555,15 @@ export function getCombinedResidenceHistory(
 ): CombinedResidenceHistory[] {
   const combinedResidenceHistory: CombinedResidenceHistory[] = []
 
-  residenceHistory.map((history) => {
+  residenceHistory.forEach((history) => {
     if (combinedResidenceHistory.length === 0) {
       return combinedResidenceHistory.push(residenceMapper(history))
     }
 
     const priorResidence = combinedResidenceHistory.at(-1)
-    if (priorResidence?.country !== history.country) {
-      combinedResidenceHistory.at(-1)!.periodTo = history.dateOfChange!
+
+    if (priorResidence && priorResidence?.country !== history.country) {
+      priorResidence.periodTo = history.dateOfChange ?? '-'
 
       return combinedResidenceHistory.push(residenceMapper(history))
     }
@@ -626,9 +627,12 @@ function residenceMapper(
   history: NationalRegistryResidenceHistory,
 ): CombinedResidenceHistory {
   const residence = {} as CombinedResidenceHistory
-  residence.country = history.country!
-  residence.periodFrom = history.dateOfChange!
-  residence.periodTo = '-'
+
+  if (history.country && history.dateOfChange) {
+    residence.country = history.country
+    residence.periodFrom = history.dateOfChange
+    residence.periodTo = '-'
+  }
 
   return residence
 }
@@ -702,9 +706,7 @@ export function childCustodyLivesWithApplicant(
   let returnStatus = false
   const { custodyInformation } = getApplicationExternalData(externalData)
 
-  console.log('custodyInformation ', custodyInformation)
-
-  custodyInformation.map((child) => {
+  custodyInformation.forEach((child) => {
     !child.livesWithApplicant ? (returnStatus = true) : (returnStatus = false)
   })
 

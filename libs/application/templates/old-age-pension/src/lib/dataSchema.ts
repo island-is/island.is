@@ -9,7 +9,6 @@ import {
 } from './constants'
 import { oldAgePensionFormMessage } from './messages'
 import addYears from 'date-fns/addYears'
-import addMonths from 'date-fns/addMonths'
 
 export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),

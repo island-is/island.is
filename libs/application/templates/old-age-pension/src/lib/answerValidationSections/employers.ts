@@ -1,9 +1,5 @@
-import { Application } from '@island.is/application/types'
 import { AnswerValidationError } from '@island.is/application/core'
-
-import { isArray } from 'lodash'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
-
 import { validatorErrorMessages } from '../messages'
 import {
   AnswerValidationConstants,
@@ -55,7 +51,7 @@ export const employers = (newAnswer: unknown) => {
     return validationError
   }
 
-  if (!isArray(rawEmployers)) {
+  if (!Array.isArray(rawEmployers)) {
     return buildError(validatorErrorMessages.employersNotAList, `${EMPLOYERS}`)
   }
 

@@ -54,7 +54,7 @@ export const BaseInformation = ({
                 type="email"
                 label={formatMessage(oldAgePensionFormMessage.review.email)}
                 onChange={(e) =>
-                  setStateful((prev: any) => ({
+                  setStateful((prev) => ({
                     ...prev,
                     applicantEmail: e.target.value,
                   }))
@@ -72,7 +72,7 @@ export const BaseInformation = ({
                   oldAgePensionFormMessage.review.phonenumber,
                 )}
                 onChange={(e) => {
-                  setStateful((prev: any) => ({
+                  setStateful((prev) => ({
                     ...prev,
                     applicantPhonenumber: e.target.value,
                   }))

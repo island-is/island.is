@@ -1,4 +1,4 @@
-import { Application, Answer } from '@island.is/application/types'
+import { Answer } from '@island.is/application/types'
 
 import { validatorErrorMessages } from '../messages'
 import { AnswerValidationConstants, YES } from '../constants'

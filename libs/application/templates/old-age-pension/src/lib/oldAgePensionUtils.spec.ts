@@ -242,6 +242,7 @@ describe('isExistsCohabitantOlderThan25', () => {
     const application = buildApplication({
       externalData: {
         nationalRegistryCohabitants: {
+          // eslint-disable-next-line local-rules/disallow-kennitalas
           data: ['2605791429'],
           date: new Date(),
           status: 'success',
@@ -258,6 +259,7 @@ describe('isExistsCohabitantOlderThan25', () => {
     const application = buildApplication({
       externalData: {
         nationalRegistryCohabitants: {
+          // eslint-disable-next-line local-rules/disallow-kennitalas
           data: ['0212181460'],
           date: new Date(),
           status: 'success',
@@ -280,6 +282,7 @@ describe('childCustodyLivesWithApplicant', () => {
             {
               fullName: 'Ljósbrá ÞÍ Ívarsdóttir',
               genderCode: '4',
+              // eslint-disable-next-line local-rules/disallow-kennitalas
               nationalId: '0703111430',
               livesWithApplicant: false,
               livesWithBothParents: false,
