@@ -7,10 +7,14 @@ module.exports = {
     '^.+\\.[tj]sx?$': 'ts-jest',
   },
   globals: {
-    'ts-jest': { tsconfig: `${__dirname}/tsconfig.spec.json` },
+    'ts-jest': { tsconfig: `${__dirname}/tsconfig.json` },
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'html'],
   displayName: 'external-contracts-tests',
   modulePathIgnorePatterns: ['<rootDir>/main.spec.ts'],
   testEnvironment: 'node',
+  reporters: [
+    'default',
+    // '<rootDir>/my-jest-reporter.js'
+  ],
 }
