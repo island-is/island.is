@@ -41,7 +41,7 @@ export const complaintInformation = defineMessages({
   },
   appealsHeader: {
     id: 'ctao.application:complaintInformation.appeals.header',
-    defaultMessage: 'Hafa kæruleiðir verið tæmdar',
+    defaultMessage: 'Hafa kæruleiðir verið nýttar',
     description: 'The header of the appeals section',
   },
   appealsSectionTitle: {
