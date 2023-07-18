@@ -158,7 +158,6 @@ export function isExistsCohabitantOlderThan25(
     externalData,
   )
 
-  console.log('cohabitants ', cohabitants)
   let isOlderThan25 = false
   cohabitants.forEach((cohabitant) => {
     if (cohabitant !== applicantNationalId) {
@@ -230,7 +229,6 @@ export function getAvailableYears(application: Application) {
   const twoYearsBackInTime = subYears(new Date(), 2).getFullYear()
   const sixMonthsInTheFuture = addMonths(new Date(), 6).getFullYear()
 
-  console.log('sixMonthsInTheFuture ', sixMonthsInTheFuture)
   return Array.from(
     Array(sixMonthsInTheFuture - (twoYearsBackInTime - 1)),
     (_, i) => {
