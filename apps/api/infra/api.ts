@@ -353,7 +353,13 @@ export const serviceSetup = (services: {
       RskProcuring,
       AircraftRegistry,
     )
-    .volumes({name: 'islykill_cert', size: '1Gi', accessModes: 'ReadOnly', mountPath: '/etc/config/islyklar.p12', storageClass: 'efs-csi'})
+    .volumes({
+      name: 'islykill_cert',
+      size: '1Gi',
+      accessModes: 'ReadOnly',
+      mountPath: '/etc/config/islyklar.p12',
+      storageClass: 'efs-csi',
+    })
     .ingress({
       primary: {
         host: {

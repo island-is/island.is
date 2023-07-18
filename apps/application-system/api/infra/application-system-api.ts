@@ -301,7 +301,13 @@ export const serviceSetup = (services: {
       max: 60,
       min: 2,
     })
-    .volumes({name: 'islykill_cert', size: '1Gi', accessModes: 'ReadOnly', mountPath: '/etc/config/islyklar.p12', storageClass: 'efs-csi'})
+    .volumes({
+      name: 'islykill_cert',
+      size: '1Gi',
+      accessModes: 'ReadOnly',
+      mountPath: '/etc/config/islyklar.p12',
+      storageClass: 'efs-csi',
+    })
     .ingress({
       primary: {
         host: {
