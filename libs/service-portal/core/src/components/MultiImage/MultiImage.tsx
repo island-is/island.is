@@ -36,9 +36,7 @@ export const MultiImage: FC<MultiImageProps> = ({ images, title }) => {
   const lastImage = images[3]
 
   const [selectedImageIndex, setSelectedImageIndex] = useState(0)
-  const [isModalOpen, setIsModalOpen] = useState(true)
-
-  const imageLoaded = useImageLoader(firstImage?.image ?? '')
+  const [isModalOpen, setIsModalOpen] = useState(false)
 
   return (
     <>
@@ -118,6 +116,7 @@ export const MultiImage: FC<MultiImageProps> = ({ images, title }) => {
         <MultiImageModal
           id="ip-design-modal"
           isVisible={isModalOpen}
+          onVisibilityChange={(isVisible) => setIsModalOpen(isVisible)}
           images={images
             .map((i, index) => (
               <img

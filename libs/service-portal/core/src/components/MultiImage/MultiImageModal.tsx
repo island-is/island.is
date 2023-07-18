@@ -22,11 +22,11 @@ import classNames from 'classnames'
 interface Props {
   id: string
   toggleClose?: boolean
-  isVisible?: boolean
-  initialVisibility?: boolean
+  isVisible: boolean
   disclosure?: ReactElement
   label?: string
   images?: Array<ReactElement>
+  onVisibilityChange: (isVisible: boolean) => void
   onThumbnailClick?: () => void
 }
 
@@ -34,9 +34,8 @@ const MAX_GALLERY_IMAGES = 6
 
 export const MultiImageModal: FC<Props> = ({
   id,
-  toggleClose,
+  onVisibilityChange,
   isVisible,
-  initialVisibility,
   disclosure,
   label,
   images,
@@ -45,7 +44,6 @@ export const MultiImageModal: FC<Props> = ({
   const [currentIndex, setCurrentIndex] = useState(0)
 
   const galleryImages = useMemo(() => {
-    console.log(images?.[currentIndex])
     if (!images) {
       return null
     }
@@ -77,9 +75,8 @@ export const MultiImageModal: FC<Props> = ({
   return (
     <ModalBase
       baseId={id}
-      toggleClose={toggleClose}
+      onVisibilityChange={onVisibilityChange}
       isVisible={isVisible}
-      initialVisibility={initialVisibility}
       disclosure={disclosure}
       modalLabel={label}
       className={styles.modal}
