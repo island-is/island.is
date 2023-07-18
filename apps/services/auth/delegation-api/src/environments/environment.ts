@@ -15,7 +15,7 @@ const prodConfig = {
   audit: {
     defaultNamespace: '@island.is/auth/delegation-api',
     groupName: process.env.AUDIT_GROUP_NAME,
-    serviceName: 'services-auth-public-api',
+    serviceName: 'services-auth-delegation-api',
   },
   auth: {
     audience,

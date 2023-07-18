@@ -400,7 +400,6 @@ const Defendant: React.FC = () => {
               formatMessage(defendant.policeCaseNumbersDescription)
             }
           />
-          {/* TODO Add when feature is ready */}
           {workingCase.origin === CaseOrigin.LOKE && (
             <LokeNumberList
               caseId={workingCase.id}
@@ -440,7 +439,7 @@ const Defendant: React.FC = () => {
                     }
                     updatePoliceCases={handleUpdatePoliceCases}
                     policeCaseNumberImmutable={
-                      workingCase.origin === CaseOrigin.LOKE && index === 0
+                      workingCase.origin === CaseOrigin.LOKE
                     }
                   />
                 </Box>
