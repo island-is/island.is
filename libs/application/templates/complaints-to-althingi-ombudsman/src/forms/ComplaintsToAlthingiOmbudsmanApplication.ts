@@ -406,6 +406,17 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
               condition: (answers: FormValue) =>
                 answers.preexistingComplaint === YES,
             }),
+            buildCustomField({
+              id:
+                'preexistingComplaint.preexistingComplaintAlternativeAlertMessage',
+              title: preexistingComplaint.alternativeAlertMessage.title,
+              component: 'FieldAlertMessage',
+              description:
+                preexistingComplaint.alternativeAlertMessage.description,
+              doesNotRequireAnswer: true,
+              condition: (answers: FormValue) =>
+                answers.preexistingComplaint === NO,
+            }),
           ],
         }),
         buildMultiField({
