@@ -19,14 +19,16 @@ export const modal = style({
 export const container = style({
   height: '100%',
   width: '100%',
-  display: 'grid',
-  gridTemplateRows: '80% 20%',
   backgroundColor: white,
   padding: theme.spacing[1],
 })
 
-export const mainImage = style({
-  height: '90%',
+export const content = style({
+  height: '80%',
+})
+
+export const mainIMage = style({
+  height: '100%',
 })
 
 export const arrows = style({
@@ -34,7 +36,12 @@ export const arrows = style({
   color: theme.color.dark300,
 })
 
-export const imageNav = style({})
+export const thumbnailGallery = style({
+  display: 'flex',
+  gap: theme.spacing[1],
+  paddingLeft: theme.spacing[2],
+  paddingRight: theme.spacing[2],
+})
 
 export const thumbnail = style({
   position: 'relative',

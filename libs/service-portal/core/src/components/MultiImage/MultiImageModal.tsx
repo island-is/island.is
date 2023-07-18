@@ -84,56 +84,53 @@ export const MultiImageModal: FC<Props> = ({
       modalLabel={label}
       className={styles.modal}
     >
-      <GridContainer className={styles.container}>
-        <GridRow>
-          <GridColumn className={styles.arrows} span={'2/12'}>
-            <Button
-              icon="chevronBack"
-              size="small"
-              variant="ghost"
-              disabled={currentIndex <= 0}
-              onClick={onChevronBackClick}
-            />
-          </GridColumn>
-          <GridColumn span={'8/12'} className={styles.mainImage}>
-            {images[currentIndex]}
-          </GridColumn>
-          <GridColumn className={styles.arrows} span={'2/12'}>
-            <Button
-              icon="chevronForward"
-              size="small"
-              variant="ghost"
-              disabled={currentIndex >= images?.length - 1}
-              onClick={onChevronForwardClick}
-            />
-          </GridColumn>
-        </GridRow>
-        <GridRow>
-          {galleryImages?.length && (
-            <Box>
-              <Box display="flex" justifyContent="center">
-                <Text variant="small">
-                  {currentIndex + 1}/{images.length}
-                </Text>
-              </Box>
-              <Columns space={2}>
-                {galleryImages.map((i, index) => (
-                  <Column key={index}>
-                    <Box
-                      className={cn(styles.thumbnail, {
-                        [styles.selectedThumbnail]:
-                          images.indexOf(i) === currentIndex,
-                      })}
-                    >
-                      {i}
-                    </Box>
-                  </Column>
-                ))}
-              </Columns>
+      <Box className={styles.container}>
+        <GridContainer className={styles.content}>
+          <GridRow className={styles.mainIMage}>
+            <GridColumn className={styles.arrows} span={'2/12'}>
+              <Button
+                icon="chevronBack"
+                size="small"
+                variant="ghost"
+                disabled={currentIndex <= 0}
+                onClick={onChevronBackClick}
+              />
+            </GridColumn>
+            <GridColumn span={'8/12'}>{images[currentIndex]}</GridColumn>
+            <GridColumn className={styles.arrows} span={'2/12'}>
+              <Button
+                icon="chevronForward"
+                size="small"
+                variant="ghost"
+                disabled={currentIndex >= images?.length - 1}
+                onClick={onChevronForwardClick}
+              />
+            </GridColumn>
+          </GridRow>
+        </GridContainer>
+        {galleryImages?.length && (
+          <Box>
+            <Box display="flex" justifyContent="center">
+              <Text variant="small">
+                {currentIndex + 1}/{images.length}
+              </Text>
             </Box>
-          )}
-        </GridRow>
-      </GridContainer>
+            <Box className={styles.thumbnailGallery}>
+              {galleryImages.map((i, index) => (
+                <Box
+                  key={index}
+                  className={cn(styles.thumbnail, {
+                    [styles.selectedThumbnail]:
+                      images.indexOf(i) === currentIndex,
+                  })}
+                >
+                  {i}
+                </Box>
+              ))}
+            </Box>
+          </Box>
+        )}
+      </Box>
     </ModalBase>
   )
 }
