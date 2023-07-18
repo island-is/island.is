@@ -18,14 +18,14 @@ export function removeLocaleKeysFromEntry(
   for (const key in node) {
     const value = node[key as keyof typeof node]
     if (typeof value === 'object') {
-      ;(node[key as keyof typeof node] as object) = removeLocaleKeysFromEntry(
-        value,
-        locale,
-        visited,
-      )
+      ;(node[key as keyof typeof node] as
+        | object
+        | null) = removeLocaleKeysFromEntry(value, locale, visited)
     }
     if (key === contentfulLocaleMap[locale]) {
       return value
+    } else if (Object.values(contentfulLocaleMap).includes(key)) {
+      return null
     }
   }
 

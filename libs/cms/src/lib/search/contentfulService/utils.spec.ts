@@ -18,6 +18,9 @@ describe('test', () => {
             },
           },
         },
+        slug: {
+          en: 'test',
+        },
       },
     }
 
@@ -31,6 +34,7 @@ describe('test', () => {
             title: 'Titill hóps',
           },
         },
+        slug: null,
       },
     })
   })
