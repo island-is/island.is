@@ -4,7 +4,7 @@ import { AppModule } from './app/app.module'
 import { openApi } from './openApi'
 
 buildOpenApi({
-  path: 'apps/services/sessions/src/openapi.yaml',
+  path: 'apps/services/sessions/src/openapi.yml',
   appModule: AppModule,
   openApi,
   enableVersioning: true,

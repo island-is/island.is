@@ -46,7 +46,7 @@
     "schemas/build-openapi": {
       "executor": "@nrwl/workspace:run-commands",
       "options": {
-        "outputPath": "apps/services/auth/personal-representative/src/openapi.yaml",
+        "outputPath": "apps/services/auth/personal-representative/src/openapi.yml",
         "command": "cross-env INIT_SCHEMA=true yarn ts-node -P apps/services/auth/personal-representative/tsconfig.app.json apps/services/auth/personal-representative/src/buildOpenApi.ts"
       }
     },

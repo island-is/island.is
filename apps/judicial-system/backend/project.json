@@ -73,7 +73,7 @@
     "schemas/build-openapi": {
       "executor": "@nrwl/workspace:run-commands",
       "options": {
-        "outputPath": "apps/judicial-system/backend/src/openapi.yaml",
+        "outputPath": "apps/judicial-system/backend/src/openapi.yml",
         "command": "cross-env INIT_SCHEMA=true yarn ts-node -P apps/judicial-system/backend/tsconfig.app.json apps/judicial-system/backend/src/buildOpenApi.ts"
       }
     },

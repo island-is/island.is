@@ -7,7 +7,7 @@ import { OpsEnv } from '../dsl/types/input-types'
   for (const [name, envs] of Object.entries(Deployments)) {
     for (const [envType, envName] of Object.entries(envs)) {
       writeFileSync(
-        `${__dirname}/../../../charts/${name}/values.${Envs[envName].type}.yaml`,
+        `${__dirname}/../../../charts/${name}/values.${Envs[envName].type}.yml`,
         await renderEnv(envType as OpsEnv, name as ChartName),
         { encoding: 'utf8' },
       )

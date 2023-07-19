@@ -22,9 +22,9 @@ if [ -z "${2}" ]; then
     exit 1
 fi
 
-# curl https://api.github.com/repos/island-is/island.is/contents/charts/islandis/values.prod.yaml | jq -r ".content" | base64 --decode
-curl -s -H "Accept: application/json" 'https://api.github.com/repos/island-is/island.is/contents/charts/islandis/values.prod.yaml?ref='${1}'' | jq -r ".content" | base64 --decode > current-release.json
-curl -s -H "Accept: application/json" 'https://api.github.com/repos/island-is/island.is/contents/charts/islandis/values.prod.yaml?ref='${2}'' | jq -r ".content" | base64 --decode > new-release.json
+# curl https://api.github.com/repos/island-is/island.is/contents/charts/islandis/values.prod.yml | jq -r ".content" | base64 --decode
+curl -s -H "Accept: application/json" 'https://api.github.com/repos/island-is/island.is/contents/charts/islandis/values.prod.yml?ref='${1}'' | jq -r ".content" | base64 --decode > current-release.json
+curl -s -H "Accept: application/json" 'https://api.github.com/repos/island-is/island.is/contents/charts/islandis/values.prod.yml?ref='${2}'' | jq -r ".content" | base64 --decode > new-release.json
 diff -u ./current-release.json ./new-release.json | ydiff -w 0 -s
 rm -f ./new-release.json
 rm -f ./current-release.json

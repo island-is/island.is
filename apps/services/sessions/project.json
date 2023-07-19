@@ -107,7 +107,7 @@
     "schemas/build-openapi": {
       "executor": "@nrwl/workspace:run-commands",
       "options": {
-        "outputPath": "apps/services/sessions/src/openapi.yaml",
+        "outputPath": "apps/services/sessions/src/openapi.yml",
         "command": "cross-env INIT_SCHEMA=true yarn ts-node -P apps/services/sessions/tsconfig.app.json apps/services/sessions/src/buildOpenApi.ts"
       }
     },

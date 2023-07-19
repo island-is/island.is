@@ -26,7 +26,7 @@ import { NotificationsService } from './app/modules/notifications/notifications.
 class BuildModule {}
 
 buildOpenApi({
-  path: 'apps/services/user-notification/src/openapi.yaml',
+  path: 'apps/services/user-notification/src/openapi.yml',
   appModule: BuildModule,
   openApi,
 })

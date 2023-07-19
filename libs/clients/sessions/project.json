@@ -21,7 +21,7 @@
       "executor": "@nrwl/workspace:run-commands",
       "options": {
         "outputPath": "libs/clients/sessions/gen",
-        "command": "yarn openapi-generator -o libs/clients/sessions/gen/fetch -i apps/services/sessions/src/openapi.yaml --additional-properties=enumPropertyNaming=original"
+        "command": "yarn openapi-generator -o libs/clients/sessions/gen/fetch -i apps/services/sessions/src/openapi.yml --additional-properties=enumPropertyNaming=original"
       }
     }
   },

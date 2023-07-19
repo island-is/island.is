@@ -24,7 +24,7 @@
         "outputPath": "libs/clients/regulations-admin/gen",
         "commands": [
           "nx run regulations-admin-backend:schemas/build-openapi $NX_OPTIONS",
-          "yarn openapi-generator -o libs/clients/regulations-admin/gen/fetch -i apps/services/regulations-admin-backend/src/openapi.yaml"
+          "yarn openapi-generator -o libs/clients/regulations-admin/gen/fetch -i apps/services/regulations-admin-backend/src/openapi.yml"
         ],
         "parallel": false
       }

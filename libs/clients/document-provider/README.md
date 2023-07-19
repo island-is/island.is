@@ -7,7 +7,7 @@
 This library implements a client to use DocumentProvider APIs
 
 > NOTE: Since there is a race condition while creating schemas in the build process, the documents-service has to be treated as external service.
-> Therefore, the yaml has to be copied from `apps/services/documents/src/openapi.yaml` and pasted into the `clientConfig.yaml`.
+> Therefore, the yaml has to be copied from `apps/services/documents/src/openapi.yml` and pasted into the `clientConfig.yml`.
 
 ### Import into other NESTJS modules
 

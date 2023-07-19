@@ -4,7 +4,7 @@ import { AppModule } from './app/app.module'
 import { openApi } from './openApi'
 
 buildOpenApi({
-  path: 'apps/judicial-system/xrd-api/src/openapi.yaml',
+  path: 'apps/judicial-system/xrd-api/src/openapi.yml',
   appModule: AppModule,
   openApi,
 })

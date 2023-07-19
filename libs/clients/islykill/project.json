@@ -21,7 +21,7 @@
     "schemas/external-openapi-generator": {
       "executor": "@nrwl/workspace:run-commands",
       "options": {
-        "command": "yarn openapi-generator -o libs/clients/islykill/gen/fetch -i libs/clients/islykill/src/clientConfig.yaml"
+        "command": "yarn openapi-generator -o libs/clients/islykill/gen/fetch -i libs/clients/islykill/src/clientConfig.yml"
       }
     }
   },

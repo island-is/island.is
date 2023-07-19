@@ -23,7 +23,7 @@
         "outputPath": "libs/clients/user-profile/gen",
         "commands": [
           "nx run services-user-profile:schemas/build-openapi-internal $NX_OPTIONS",
-          "yarn openapi-generator -o libs/clients/user-profile/gen/fetch -i apps/services/user-profile/src/openapi.yaml"
+          "yarn openapi-generator -o libs/clients/user-profile/gen/fetch -i apps/services/user-profile/src/openapi.yml"
         ],
         "parallel": false
       }

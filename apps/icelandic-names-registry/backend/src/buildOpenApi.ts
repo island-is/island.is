@@ -4,7 +4,7 @@ import { AppModule } from './app/app.module'
 import { openApi } from './openApi'
 
 buildOpenApi({
-  path: 'apps/icelandic-names-registry/backend/src/openapi.yaml',
+  path: 'apps/icelandic-names-registry/backend/src/openapi.yml',
   appModule: AppModule,
   openApi,
 })

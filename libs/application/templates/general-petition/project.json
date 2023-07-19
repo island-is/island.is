@@ -73,7 +73,7 @@
     "schemas/openapi-generator": {
       "executor": "@nrwl/workspace:run-commands",
       "options": {
-        "command": "yarn openapi-generator -o libs/application/template-api-modules/src/lib/modules/templates/general-petition/gen/fetch/endorsements -i apps/services/endorsements/api/src/openapi.yaml --additional-properties=enumPropertyNaming=original"
+        "command": "yarn openapi-generator -o libs/application/template-api-modules/src/lib/modules/templates/general-petition/gen/fetch/endorsements -i apps/services/endorsements/api/src/openapi.yml --additional-properties=enumPropertyNaming=original"
       }
     }
   },

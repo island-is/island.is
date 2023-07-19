@@ -19,7 +19,7 @@ export const buildOpenApi = async ({
   enableVersioning?: boolean
 }) => {
   try {
-    logger.info('Creating openapi.yaml file ...', { path })
+    logger.info('Creating openapi.yml file ...', { path })
 
     const app = await NestFactory.create(InfraModule.forRoot({ appModule }), {
       logger: LoggingModule.createLogger(),
@@ -39,6 +39,6 @@ export const buildOpenApi = async ({
     // TODO: Remove this when it's been fixed.
     process.exit(0)
   } catch (e: any) {
-    logger.error('Error while creating openapi.yaml', e)
+    logger.error('Error while creating openapi.yml', e)
   }
 }

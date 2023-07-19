@@ -21,7 +21,7 @@
     "schemas/external-openapi-generator": {
       "executor": "@nrwl/workspace:run-commands",
       "options": {
-        "command": "yarn openapi-generator -o libs/clients/vmst/gen/fetch -i libs/clients/vmst/src/clientConfig.yaml"
+        "command": "yarn openapi-generator -o libs/clients/vmst/gen/fetch -i libs/clients/vmst/src/clientConfig.yml"
       }
     }
   },

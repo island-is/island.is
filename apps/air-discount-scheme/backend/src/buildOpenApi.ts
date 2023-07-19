@@ -8,7 +8,7 @@ const outputFile = process.env.ADS_PRIVATE_CLIENT
   : 'openapi'
 
 buildOpenApi({
-  path: `apps/air-discount-scheme/backend/src/${outputFile}.yaml`,
+  path: `apps/air-discount-scheme/backend/src/${outputFile}.yml`,
   appModule: AppModule,
   openApi,
 })

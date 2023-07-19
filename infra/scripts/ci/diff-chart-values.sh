@@ -10,7 +10,7 @@ case "$1" in
         ENVS=("dev" "staging" "prod")
         cd "$ROOT"
         for env in "${ENVS[@]}"; do
-           node -r esbuild-register "$ROOT"/src/cli/cli render-env --chart="$1" --env="${env}" | diff "$ROOT"/../charts/"$1"/values."${env}".yaml -
+           node -r esbuild-register "$ROOT"/src/cli/cli render-env --chart="$1" --env="${env}" | diff "$ROOT"/../charts/"$1"/values."${env}".yml -
         done
         ;;
     *)

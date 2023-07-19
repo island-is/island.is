@@ -8,7 +8,7 @@ You will need `java` installed on your machine to be able to run the `yarn schem
 
 ## Understanding how automatic schemas works
 
-We are only tracking file that are coming from an external source, e.g. `contentfulTypes.d.ts` that depends on contentful to be generated. The same goes for an `openapi.yaml` file that comes from an external service.
+We are only tracking file that are coming from an external source, e.g. `contentfulTypes.d.ts` that depends on contentful to be generated. The same goes for an `openapi.yml` file that comes from an external service.
 
 When you do `yarn install` the scripts will generate all the schemas and types for the project. It takes around ~45sec to generate all schemas, definitions types and open api schemas. The output is cached using NX to avoid re-generating all files again when no changes have been detected. It can go down up to ~5sec to run again.
 
@@ -73,7 +73,7 @@ export const openApi = new DocumentBuilder()
   .build()
 ```
 
-Next, we need to create an `buildOpenApi.ts` that will consume the previous file and generate the `openapi.yaml` file.
+Next, we need to create an `buildOpenApi.ts` that will consume the previous file and generate the `openapi.yml` file.
 
 ```typescript
 import { buildOpenApi } from '@island.is/infra-nest-server'
@@ -82,7 +82,7 @@ import { AppModule } from './app/app.module'
 import { openApi } from './openApi'
 
 buildOpenApi({
-  path: 'PATH/openapi.yaml',
+  path: 'PATH/openapi.yml',
   appModule: AppModule,
   openApi,
 })
@@ -94,7 +94,7 @@ Finally, we add the script into the `project.json` for the project.
 "schemas/build-openapi": {
   "executor": "@nrwl/workspace:run-commands",
   "options": {
-    "outputPath": "PATH/openapi.yaml",
+    "outputPath": "PATH/openapi.yml",
     "command": "yarn ts-node -P PATH/tsconfig.app.json PATH/buildOpenApi.ts"
   }
 }
@@ -123,10 +123,10 @@ if (process.env.INIT_SCHEMA === 'true') {
 
 ### Typed fetch client (schemas/openapi-generator)
 
-We will now use the `openapi.yaml` file generated from the previous script to run `openapi-generator`.
+We will now use the `openapi.yml` file generated from the previous script to run `openapi-generator`.
 
 {% hint style="info" %}
-If the `.yaml` file comes from an outside source, don't name it openapi.yaml, otherwise it will be git ignored.
+If the `.yml` file comes from an outside source, don't name it openapi.yml, otherwise it will be git ignored.
 {% endhint %}
 
 Add the following script to the project's `project.json`.
@@ -136,7 +136,7 @@ Add the following script to the project's `project.json`.
   "executor": "@nrwl/workspace:run-commands",
   "options": {
     "outputPath": "PATH/gen/fetch",
-    "command": "yarn openapi-generator -o PATH/gen/fetch -i PATH/openapi.yaml"
+    "command": "yarn openapi-generator -o PATH/gen/fetch -i PATH/openapi.yml"
   }
 }
 ```

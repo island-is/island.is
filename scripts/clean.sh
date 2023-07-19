@@ -64,7 +64,7 @@ cli() {
 }
 
 clean_generated() {
-  find . -type f \( -name "openapi.yaml" \
+  find . -type f \( -name "openapi.yml" \
     -o -name "api.graphql" \
     -o -name "schema.d.ts" \
     -o -name "schema.tsx" \

@@ -73,8 +73,8 @@
       "executor": "@nrwl/workspace:run-commands",
       "options": {
         "outputPath": [
-          "apps/air-discount-scheme/backend/src/openapi.yaml",
-          "apps/air-discount-scheme/backend/src/private-openapi.yaml"
+          "apps/air-discount-scheme/backend/src/openapi.yml",
+          "apps/air-discount-scheme/backend/src/private-openapi.yml"
         ],
         "commands": [
           "cross-env INIT_SCHEMA=true yarn ts-node --files -P apps/air-discount-scheme/backend/tsconfig.app.json apps/air-discount-scheme/backend/src/buildOpenApi.ts",

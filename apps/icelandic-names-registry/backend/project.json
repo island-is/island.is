@@ -80,7 +80,7 @@
     "schemas/build-openapi": {
       "executor": "@nrwl/workspace:run-commands",
       "options": {
-        "outputPath": "apps/icelandic-names-registry/backend/src/openapi.yaml",
+        "outputPath": "apps/icelandic-names-registry/backend/src/openapi.yml",
         "command": "cross-env INIT_SCHEMA=true yarn ts-node -P apps/icelandic-names-registry/backend/tsconfig.app.json apps/icelandic-names-registry/backend/src/buildOpenApi.ts"
       }
     },

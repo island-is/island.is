@@ -70,7 +70,7 @@
     "schemas/build-openapi": {
       "executor": "@nrwl/workspace:run-commands",
       "options": {
-        "outputPath": "apps/reference-backend/src/openapi.yaml",
+        "outputPath": "apps/reference-backend/src/openapi.yml",
         "command": "cross-env INIT_SCHEMA=true yarn ts-node -P apps/reference-backend/tsconfig.app.json apps/reference-backend/src/buildOpenApi.ts"
       }
     },

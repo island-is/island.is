@@ -21,8 +21,8 @@
       "executor": "@nrwl/workspace:run-commands",
       "options": {
         "commands": [
-          "yarn openapi-generator -o libs/clients/auth/ids-api/gen/fetch -i libs/clients/auth/ids-api/src/clientConfig.yaml",
-          "prettier --write libs/clients/auth/ids-api/src/clientConfig.yaml"
+          "yarn openapi-generator -o libs/clients/auth/ids-api/gen/fetch -i libs/clients/auth/ids-api/src/clientConfig.yml",
+          "prettier --write libs/clients/auth/ids-api/src/clientConfig.yml"
         ]
       }
     }
