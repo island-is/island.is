@@ -2,7 +2,7 @@
 
 set -euo pipefail
 
-. ~/.env.secret
+# . ~/.env.secret
 
 export DD_CIVISIBILITY_AGENTLESS_ENABLED=true
 export DD_API_KEY=$DATADOG_API_KEY
