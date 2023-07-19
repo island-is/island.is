@@ -341,6 +341,26 @@ export const householdSupplementFormMessage: MessageDir = {
       defaultMessage: 'Breyta umsókn',
       description: 'Edit application',
     },
+    name: {
+      id: 'hs.application:confirm.name',
+      defaultMessage: 'Nafn',
+      description: 'Name',
+    },
+    nationalId: {
+      id: 'hs.application:confirm.nationalId',
+      defaultMessage: 'Kennitala',
+      description: 'National registry ID',
+    },
+    email: {
+      id: 'hs.application:confirm.email',
+      defaultMessage: 'Netfang',
+      description: 'Email',
+    },
+    phonenumber: {
+      id: 'hs.application:confirm.phonenumber',
+      defaultMessage: 'Símanúmer',
+      description: 'phonenumber',
+    },
   }),
 
   conclusionScreen: defineMessages({

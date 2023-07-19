@@ -35,7 +35,18 @@ interface Attachments {
 }
 
 export function getApplicationAnswers(answers: Application['answers']) {
+  const applicantEmail = getValueViaPath(
+    answers,
+    'applicantInfo.email',
+  ) as string
+
+  const applicantPhonenumber = getValueViaPath(
+    answers,
+    'applicantInfo.phonenumber',
+  ) as string
+
   const bank = getValueViaPath(answers, 'paymentInfo.bank') as string
+
   const householdSupplementHousing = getValueViaPath(
     answers,
     'householdSupplement.housing',
@@ -53,6 +64,8 @@ export function getApplicationAnswers(answers: Application['answers']) {
   const comment = getValueViaPath(answers, 'comment') as string
 
   return {
+    applicantEmail,
+    applicantPhonenumber,
     householdSupplementHousing,
     householdSupplementChildren,
     bank,

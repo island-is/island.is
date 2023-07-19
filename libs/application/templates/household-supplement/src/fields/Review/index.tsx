@@ -6,6 +6,7 @@ import { useMutation } from '@apollo/client'
 import get from 'lodash/get'
 import has from 'lodash/has'
 
+import { BaseInformation } from './review-groups/BaseInformation'
 import { Payment } from './review-groups/Payment'
 import { HouseholdSupplement } from './review-groups/HouseholdSupplement'
 import { Comment } from './review-groups/Comment'
@@ -130,6 +131,7 @@ export const Review: FC<ReviewScreenProps> = ({
           )}
         </Box>
       )}
+      <BaseInformation {...childProps} />
       <Payment {...childProps} />
       <HouseholdSupplement {...childProps} />
       <Period {...childProps} />
