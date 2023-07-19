@@ -43,7 +43,6 @@ runs:
         DOCKER_REGISTRY: ${{ inputs.docker-registry }}
         NODE_OPTIONS: -r dd-trace/ci/init --max-old-space-size=8192
         DD_CIVISIBILITY_AGENTLESS_ENABLED: true
-        DD_API_KEY: $DATADOG_API_KEY
         DD_SITE: datadoghq.eu
         DD_ENV: test-ci
         DD_SERVICE: ci-test
