@@ -254,6 +254,7 @@ jobs:
           NODE_OPTIONS_SECRET: ${{ secrets.NODE_OPTIONS }}
           SKIP_TESTS_ON_BRANCH: ${{ secrets.SKIP_TESTS_ON_BRANCH }}
         with:
+          dd_api_key: '${{ secrets.DD_API_KEY }}'
           codecov-token: ${{ secrets.CODECOV_TOKEN }}
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}

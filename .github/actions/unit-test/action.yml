@@ -41,6 +41,7 @@ runs:
       run: |
         echo "NODE_OPTIONS_SECRET: $NODE_OPTIONS_SECRET"
         echo "SKIP_TESTS_ON_BRANCH: $SKIP_TESTS_ON_BRANCH"
+        echo "DD_API_KEY: $(echo $DD_API_KEY | sha1sum)"
 
     - name: Running tests
       run: ./scripts/ci/run-in-parallel.sh 30_test
@@ -53,7 +54,7 @@ runs:
         DD_ENV: test-ci
         DD_SERVICE: ci-test
         DD_TRACE_ENABLED: true
-        DD_API_KEY: ${{ secrets.DD_API_KEY }}
+        DD_API_KEY: ${{ inputs.dd_api_key }}
         CI: true
 
     - name: Cached codecov uploader
