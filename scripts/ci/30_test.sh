@@ -9,4 +9,4 @@ if [[ ! " ${projects_uncollectible_coverage[*]} " =~ " ${APP} " ]]; then
   EXTRA_OPTS="--codeCoverage"
 fi
 
-SERVERSIDE_FEATURES_ON=\"\" NODE_OPTIONS="--max-old-space-size=8192 --unhandled-rejections=warn" yarn run test "${APP}" "${EXTRA_OPTS}" --verbose --no-watchman "$@"
+SERVERSIDE_FEATURES_ON=\"\" NODE_OPTIONS="--max-old-space-size=8192 --unhandled-rejections=warn --require=dd-trace/ci/init ${NODE_OPTIONS:-}" yarn run test "${APP}" "${EXTRA_OPTS}" --verbose --no-watchman "$@"
