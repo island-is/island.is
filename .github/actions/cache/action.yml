@@ -87,7 +87,7 @@ runs:
            [[ "${{ steps.cache_try_number_two.outputs.cache-hit }}" == "true" ]] || \
            [[ "${{ steps.cache_try_number_three.outputs.cache-hit }}" == "true" ]]
         then
-          echo "::set-output name=cache-hit::true"
+          echo "cache-hit=true" >> $GITHUB_STATE
         else
-          echo "::set-output name=cache-hit::false"
+          echo "cache-hit=false" >> $GITHUB_STATE
         fi
