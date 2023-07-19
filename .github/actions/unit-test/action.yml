@@ -41,7 +41,7 @@ runs:
       shell: bash
       env:
         DOCKER_REGISTRY: ${{ inputs.docker-registry }}
-        NODE_OPTIONS: --max-old-space-size=8192
+        NODE_OPTIONS: -r dd-trace/ci/init --max-old-space-size=8192
 
     - name: Cached codecov uploader
       id: codecov-cache
