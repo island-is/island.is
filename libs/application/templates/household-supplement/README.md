@@ -4,38 +4,38 @@
 
 This application template allows applicants to apply for household supplement. 
 
-![](./assets/old-age-pension-flow-chart.png)
+![](./assets/household-supplement-flow-chart.png)
 
 ### States
 #### Prerequisites
 
 This state is a temporary state that all new applications will be created in. It has a short lifespan and is unlisted.
 
-The purpose of this state is to be a guard into the actual application. There the applicant reads general information on the processing and data collection for applications at TR. There is an external data step which fetches data from Þjóðskrá, TR and user profile. If they applicant is not a pensioner (old age, disability and rehabilitation) they cannot advance to the next step and make an application.
+The purpose of this state is to be a guard into the actual application. There the applicant reads general information on the processing and data collection for applications at TR. There is an external data step which fetches data from Þjóðskrá, TR and user profile. If the applicant is not a pensioner (old age, disability or rehabilitation) they cannot advance to the next step and make an application.
 
 #### Draft
 
-Valid applicants will be able to advance to this state where they can start the actual application and fill in all the relevant data.
+Valid applicant will be able to advance to this state where they can start the actual application and fill in all the relevant data.
 
 #### Tryggingastofnun submitted
 
-When applicant has sent in his application to TR the application is in this state. Here the applications can be edited.
+When applicant has sent in the application to TR the application is in this state. Here the application can be edited.
 
 #### Tryggingastofnun in review
 
-Application are in this state when Tryggingastofnun starts to review the application. Here the applications can not be edited.
+For application to be in this state, TR need to make a state change when they start to review the application. Here the application can not be edited.
 
 #### Additional document required
 
-TR asks for additional documents while processing the application.
+If TR needs additional documents to finish processing the application they can make a state change so the applicant can add their missing documents.
 
 #### Approved
 
-Applicantions have been approved by TR.
+Application have been approved by TR.
 
 #### Rejected
 
-Applicantions have been rejected by TR.
+Application have been rejected by TR.
 
 ### Localisation
 
