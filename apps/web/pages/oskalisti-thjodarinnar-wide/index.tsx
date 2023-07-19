@@ -35,8 +35,9 @@ function Stuff() {
               </Text>
               <iframe
                 frameBorder="0"
+                scrolling="no"
                 width="100%"
-                height="1500px"
+                height="2500px"
                 src="https://islandis.featureupvote.com/"
               ></iframe>
             </GridColumn>
