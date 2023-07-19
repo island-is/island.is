@@ -1,3 +1,4 @@
+import { EinstaklingurDTOHeimili } from '@island.is/clients/national-registry-v3'
 import { Field, ObjectType } from '@nestjs/graphql'
 
 @ObjectType('NationalRegistryV3Address')
@@ -16,4 +17,19 @@ export class Address {
 
   @Field(() => String, { nullable: true })
   municipalityCode?: string | null
+}
+
+export function formatAddress(
+  address: EinstaklingurDTOHeimili | null | undefined,
+): Address | null {
+  if (!address || !address.husHeiti) {
+    return null
+  }
+
+  return {
+    streetName: address.husHeiti,
+    postalCode: address.postnumer ?? null,
+    city: address.poststod ?? null,
+    municipalityText: address.sveitarfelag ?? null,
+  }
 }

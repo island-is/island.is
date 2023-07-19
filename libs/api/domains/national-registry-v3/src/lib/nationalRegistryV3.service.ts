@@ -1,15 +1,28 @@
 import { NationalRegistryV3ClientService } from '@island.is/clients/national-registry-v3'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
-import { Person } from './graphql/models/nationalRegistryPerson.model'
-import { Spouse } from './graphql/models/nationalRegistrySpouse.model'
+import { Person, formatPerson } from './models/nationalRegistryPerson.model'
+import { Spouse, formatSpouse } from './models/nationalRegistrySpouse.model'
 import { Inject } from '@nestjs/common'
-import { Address } from './graphql/models/nationalRegistryAddress.model'
-import { Birthplace } from './graphql/models/nationalRegistryBirthplace.model'
-import { Citizenship } from './graphql/models/nationalRegistryCitizenship.model'
-import { Name } from './graphql/models/nationalRegistryName.model'
-import { Religion } from './graphql/models/nationalRegistryReligion.model'
-import { Custodian } from './graphql/models/nationalRegistryCustodian.model'
+import { Address, formatAddress } from './models/nationalRegistryAddress.model'
+import {
+  Birthplace,
+  formatBirthplace,
+} from './models/nationalRegistryBirthplace.model'
+import {
+  Citizenship,
+  formatCitizenship,
+} from './models/nationalRegistryCitizenship.model'
+import { Name, formatName } from './models/nationalRegistryName.model'
+import {
+  Religion,
+  formatReligion,
+} from './models/nationalRegistryReligion.model'
+import {
+  Custodian,
+  formatCustodian,
+} from './models/nationalRegistryCustodian.model'
+import { ExcludesFalse } from './utils'
 
 export class NationalRegistryV3Service {
   constructor(
@@ -19,22 +32,21 @@ export class NationalRegistryV3Service {
   ) {}
 
   async getNationalRegistryPerson(nationalId: string): Promise<Person | null> {
-    const person = await this.nationalRegistryApi.getIndividual(nationalId)
+    const person = await this.nationalRegistryApi.getAllDataIndividual(
+      nationalId,
+    )
 
-    return person && { ...person, fullName: person.name }
+    if (!person?.kennitala) {
+      return null
+    }
+
+    return formatPerson(person)
   }
 
   async getAddress(nationalId: string): Promise<Address | null> {
     const address = await this.nationalRegistryApi.getAddress(nationalId)
 
-    return (
-      address && {
-        streetName: address.streetAddress,
-        postalCode: address.postalCode,
-        city: address.city,
-        municipalityText: address.municipality,
-      }
-    )
+    return address && formatAddress(address)
   }
   /*
   async getParents(nationalId: string): Promise<Array<Person> | null> {
@@ -65,21 +77,14 @@ export class NationalRegistryV3Service {
   }*/
 
   async getCustodians(nationalId: string): Promise<Array<Custodian> | null> {
-    const data = await this.nationalRegistryApi.getCustodians(nationalId)
+    const data = await this.nationalRegistryApi.getAllDataIndividual(nationalId)
 
-    return (
-      data &&
-      data.map(
-        (custodian) =>
-          ({
-            nationalId: custodian.nationalId,
-            name: custodian.name,
-            custodyCode: custodian.custodyCode,
-            custodyText: custodian.custodyText,
-            livesWithChild: custodian.livesWithChild,
-          } as Custodian),
-      )
-    )
+    const custodians =
+      data?.forsja?.forsjaradilar
+        ?.map((custodian) => formatCustodian(custodian, data.logheimilistengsl))
+        .filter((Boolean as unknown) as ExcludesFalse) ?? null
+
+    return custodians
   }
 
   /*
@@ -120,25 +125,13 @@ export class NationalRegistryV3Service {
   async getSpouse(nationalId: string): Promise<Spouse | null> {
     const data = await this.nationalRegistryApi.getSpouse(nationalId)
 
-    return (
-      data && {
-        nationalId: data.nationalId,
-        name: data.name,
-        maritalStatus: data.maritalStatus,
-        cohabitation: data.cohabitation,
-      }
-    )
+    return data && formatSpouse(data)
   }
 
   async getCitizenship(nationalId: string): Promise<Citizenship | null> {
     const data = await this.nationalRegistryApi.getCitizenship(nationalId)
 
-    return (
-      data && {
-        name: data.name,
-        code: data.code,
-      }
-    )
+    return data && formatCitizenship(data)
   }
 
   /*
@@ -206,34 +199,18 @@ export class NationalRegistryV3Service {
   async getBirthplace(nationalId: string): Promise<Birthplace | null> {
     const data = await this.nationalRegistryApi.getBirthplace(nationalId)
 
-    return (
-      data && {
-        location: data.location,
-        municipalityCode: data.municipalityCode,
-        dateOfBirth: data.dateOfBirth ?? undefined,
-      }
-    )
+    return data && formatBirthplace(data)
   }
 
   async getName(nationalId: string): Promise<Name | null> {
     const data = await this.nationalRegistryApi.getName(nationalId)
 
-    return (
-      data && {
-        givenName: data.givenName,
-        middleName: data.middleName,
-        lastName: data.lastName,
-      }
-    )
+    return data && formatName(data)
   }
 
   async getReligion(nationalId: string): Promise<Religion | null> {
     const data = await this.nationalRegistryApi.getReligion(nationalId)
 
-    return (
-      data && {
-        name: data.name,
-      }
-    )
+    return data && formatReligion(data)
   }
 }

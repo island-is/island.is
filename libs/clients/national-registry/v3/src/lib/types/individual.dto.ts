@@ -6,6 +6,7 @@ export interface IndividualDto {
   nationalIdType: string | null
   exceptionFromDirectMarketing: boolean
   fate: string | null
+  rawData: string | null
 }
 
 export function formatIndividualDto(
@@ -20,5 +21,6 @@ export function formatIndividualDto(
     nationalIdType: individual.tegundKennitolu ?? null,
     exceptionFromDirectMarketing: individual.bannmerking === 'true' ?? false,
     fate: individual.afdrif ?? null,
+    rawData: JSON.stringify(individual),
   }
 }

@@ -1,7 +1,4 @@
-import {
-  EinstaklingurDTOHeimili,
-  EinstaklingurDTORikisfang,
-} from '../../../gen/fetch'
+import { EinstaklingurDTORikisfang } from '../../../gen/fetch'
 
 export interface CitizenshipDto {
   name: string
