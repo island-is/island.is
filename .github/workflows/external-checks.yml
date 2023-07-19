@@ -99,7 +99,7 @@ jobs:
             fi
           }
 
-          echo ::set-output name=changed::$(check)
+          echo "changed=$(check)" >> $GITHUB_STATE
       - name: Comment on PR
         if: steps.changes.outputs.changed == 1
         uses: actions/github-script@v6
