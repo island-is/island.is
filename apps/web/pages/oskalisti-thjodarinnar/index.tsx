@@ -61,6 +61,4 @@ function Stuff() {
   )
 }
 
-const screen = withMainLayout(Stuff)
-
-export default withApollo(withLocale('is')(screen))
+export default withApollo(withLocale('is')(withMainLayout(Stuff)))
