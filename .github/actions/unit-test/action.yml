@@ -36,6 +36,14 @@ runs:
       run: npm install -g yarn
       shell: bash
 
+    - name: Debug secrets
+      env:
+        NODE_OPTIONS_SECRET: ${{ secrets.NODE_OPTIONS }}
+        SKIP_TESTS_ON_BRANCH: ${{ secrets.SKIP_TESTS_ON_BRANCH }}
+      run: |
+        echo "NODE_OPTIONS_SECRET: $NODE_OPTIONS_SECRET"
+        echo "SKIP_TESTS_ON_BRANCH: $SKIP_TESTS_ON_BRANCH"
+
     - name: Running tests
       run: ./scripts/ci/run-in-parallel.sh 30_test
       shell: bash
