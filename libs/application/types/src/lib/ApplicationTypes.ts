@@ -240,6 +240,6 @@ export const ApplicationConfigurations = {
   },
   [ApplicationTypes.HOUSEHOLD_SUPPLEMENT]: {
     slug: 'heimilisuppbot',
-    translation: 'hs.applications',
+    translation: 'hs.application',
   },
 }
