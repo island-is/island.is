@@ -9,11 +9,12 @@ inputs:
     required: true
   codecov-token:
     required: true
-defaults:
-  run:
-    shell: bash
+
 runs:
   using: 'composite'
+  defaults:
+    run:
+      shell: bash
   steps:
     - name: Docker login to ECR repo
       run: ./scripts/ci/docker-login-ecr.sh
