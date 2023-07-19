@@ -24,9 +24,7 @@ export const Period: FC<FieldBaseProps> = ({ application }) => {
     formState: { errors },
   } = useFormContext()
 
-  const { selectedYear: year, selectedMonth: month } = getApplicationAnswers(
-    application.answers,
-  )
+  const { selectedYear: year } = getApplicationAnswers(application.answers)
 
   const [selectedYear, setSeletedYear] = useState(year)
   // const [selectedMonth, setSeletedMonth] = useState(month)

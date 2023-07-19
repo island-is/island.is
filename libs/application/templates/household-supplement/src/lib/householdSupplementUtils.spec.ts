@@ -9,10 +9,9 @@ import {
 
 import {
   getAvailableYears,
-  getApplicationAnswers,
   getAvailableMonths,
 } from './householdSupplementUtils'
-import { subYears } from 'date-fns'
+import subYears from 'date-fns/subYears'
 import { MONTHS } from './constants'
 import { isExistsCohabitantOlderThan25 } from './householdSupplementUtils'
 
@@ -168,6 +167,7 @@ describe('isExistsCohabitantOlderThan25', () => {
           status: 'success',
         },
         nationalRegistryCohabitants: {
+          // eslint-disable-next-line local-rules/disallow-kennitalas
           data: ['2605791429'],
           date: new Date(),
           status: 'success',
@@ -191,6 +191,7 @@ describe('isExistsCohabitantOlderThan25', () => {
           status: 'success',
         },
         nationalRegistryCohabitants: {
+          // eslint-disable-next-line local-rules/disallow-kennitalas
           data: ['0212181460'],
           date: new Date(),
           status: 'success',

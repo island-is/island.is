@@ -9,7 +9,8 @@ import {
 } from './constants'
 import { Option, Application, YesOrNo } from '@island.is/application/types'
 import { householdSupplementFormMessage } from './messages'
-import { addMonths, subYears } from 'date-fns'
+import addMonths from 'date-fns/addMonths'
+import subYears from 'date-fns/subYears'
 import * as kennitala from 'kennitala'
 
 interface FileType {

@@ -2,7 +2,7 @@ import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { z } from 'zod'
 import { NO, YES, HouseholdSupplementHousing } from './constants'
 import { householdSupplementFormMessage } from './messages'
-import { addYears } from 'date-fns'
+import addYears from 'date-fns/addYears'
 
 export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),

@@ -1,7 +1,7 @@
 import { Application, Field, RecordObject } from '@island.is/application/types'
 import { Box, Text, Button } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { FC, useCallback } from 'react'
+import { FC } from 'react'
 import { useMutation } from '@apollo/client'
 import get from 'lodash/get'
 import has from 'lodash/has'
@@ -54,7 +54,7 @@ export const Review: FC<ReviewScreenProps> = ({
     },
   )
 
-  const handleSubmit = useCallback(async (event: string) => {
+  const handleSubmit = async (event: string) => {
     const res = await submitApplication({
       variables: {
         input: {
@@ -69,7 +69,7 @@ export const Review: FC<ReviewScreenProps> = ({
       // Takes them to the next state (which loads the relevant form)
       refetch?.()
     }
-  }, [])
+  }
 
   // TODO: Hvaða states eiga sjá þetta? Mega öll state sjá nema DRAFT og PREREQUISITES??
   const canView =

@@ -27,7 +27,7 @@ export const Period = ({
             label={formatMessage(
               householdSupplementFormMessage.info.periodTitle,
             )}
-            value={`${formatMessage(month?.label!)} ${selectedYear}`}
+            value={`${month && formatMessage(month.label)} ${selectedYear}`}
             error={hasError('period')}
           />
         </GridColumn>
