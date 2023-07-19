@@ -37,9 +37,7 @@ runs:
       shell: bash
 
     - name: Debug secrets
-      env:
-        NODE_OPTIONS_SECRET: ${{ secrets.NODE_OPTIONS }}
-        SKIP_TESTS_ON_BRANCH: ${{ secrets.SKIP_TESTS_ON_BRANCH }}
+      shell: bash
       run: |
         echo "NODE_OPTIONS_SECRET: $NODE_OPTIONS_SECRET"
         echo "SKIP_TESTS_ON_BRANCH: $SKIP_TESTS_ON_BRANCH"
