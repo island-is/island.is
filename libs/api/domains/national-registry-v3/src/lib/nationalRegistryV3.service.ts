@@ -198,7 +198,6 @@ export class NationalRegistryV3Service {
 
   async getBirthplace(nationalId: string): Promise<Birthplace | null> {
     const data = await this.nationalRegistryApi.getBirthplace(nationalId)
-
     return data && formatBirthplace(data)
   }
 

@@ -10,10 +10,13 @@ import { UseGuards } from '@nestjs/common'
 import { Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
 import { ApiScope } from '@island.is/auth/scopes'
 import { Audit } from '@island.is/nest/audit'
-import { Person, formatPerson } from './models/nationalRegistryPerson.model'
+import { Person } from './models/nationalRegistryPerson.model'
 import { Spouse, formatSpouse } from './models/nationalRegistrySpouse.model'
 import { Address, formatAddress } from './models/nationalRegistryAddress.model'
-import { Birthplace } from './models/nationalRegistryBirthplace.model'
+import {
+  Birthplace,
+  formatBirthplace,
+} from './models/nationalRegistryBirthplace.model'
 import {
   Citizenship,
   formatCitizenship,
@@ -112,6 +115,9 @@ export class NationalRegistryV3Resolver {
   async resolveBirthPlace(
     @Parent() person: Person,
   ): Promise<Birthplace | null> {
+    if (person.rawData) {
+      return formatBirthplace(person.rawData.faedingarstadur)
+    }
     return this.nationalRegistryV3Service.getBirthplace(person.nationalId)
   }
 
