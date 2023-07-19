@@ -1,6 +1,8 @@
 name: 'Unit Test'
 description: 'Run unit tests'
 inputs:
+  dd-api-key:
+    required: true
   aws-access-key-id:
     required: true
   aws-secret-access-key:
@@ -54,7 +56,7 @@ runs:
         DD_ENV: test-ci
         DD_SERVICE: ci-test
         DD_TRACE_ENABLED: true
-        DD_API_KEY: ${{ inputs.dd_api_key }}
+        DD_API_KEY: ${{ inputs.dd-api-key }}
         CI: true
 
     - name: Cached codecov uploader
