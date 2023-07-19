@@ -47,6 +47,7 @@ runs:
         DD_ENV: test-ci
         DD_SERVICE: ci-test
         DD_TRACE_ENABLED: true
+        DD_API_KEY: ${{ secrets.DD_API_KEY }}
         CI: true
 
     - name: Cached codecov uploader
