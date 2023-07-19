@@ -9,15 +9,12 @@ inputs:
     required: true
   codecov-token:
     required: true
-
 runs:
   using: 'composite'
-  defaults:
-    run:
-      shell: bash
   steps:
     - name: Docker login to ECR repo
       run: ./scripts/ci/docker-login-ecr.sh
+      shell: bash
       env:
         AWS_ACCESS_KEY_ID: ${{ inputs.aws-access-key-id }}
         AWS_SECRET_ACCESS_KEY: ${{ inputs.aws-secret-access-key }}
@@ -25,15 +22,19 @@ runs:
     - name: Set Codeconv version numner
       run: |
         echo "CODECOV_REV=v0.3.2" >> $GITHUB_ENV
+      shell: bash
 
     - name: Setup yarn
       run: npm install -g yarn
+      shell: bash
 
     - uses: actions/setup-node@v2
       with:
         node-version: '18'
 
+    - name: Setup yarn
       run: npm install -g yarn
+      shell: bash
 
     - name: Debug secrets
       env:
@@ -45,6 +46,7 @@ runs:
 
     - name: Running tests
       run: ./scripts/ci/run-in-parallel.sh 30_test
+      shell: bash
       env:
         DOCKER_REGISTRY: ${{ inputs.docker-registry }}
         NODE_OPTIONS: -r dd-trace/ci/init --max-old-space-size=8192
@@ -71,11 +73,13 @@ runs:
 
         curl -O https://uploader.codecov.io/$CODECOV_REV/linux/codecov
         curl -O https://uploader.codecov.io/$CODECOV_REV/linux/codecov.SHA256SUM
+        curl -O https://uploader.codecov.io/$CODECOV_REV/linux/codecov.SHA256SUM.sig
 
         # Integrity check
         gpgv codecov.SHA256SUM.sig codecov.SHA256SUM
         shasum -a 256 -c codecov.SHA256SUM
         rm codecov.SHA256SUM.sig codecov.SHA256SUM
+      shell: bash
 
     - name: Install codecov uploader
       id: codecov
@@ -86,8 +90,10 @@ runs:
         mkdir -p "$HOME/.local/bin"
         cp codecov "$HOME/.local/bin/codecov"
         echo "$HOME/.local/bin" >> $GITHUB_PATH
+      shell: bash
 
     - name: Upload coverage reports
       run: ./scripts/ci/run-in-parallel.sh 50_upload-coverage || true # If for some reason codecov is down, we can still build. This is not a perfect solution though.
+      shell: bash
       env:
         CODECOV_TOKEN: ${{ inputs.codecov-token }}
