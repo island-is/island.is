@@ -2,6 +2,7 @@ import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { z } from 'zod'
 import { NO, YES } from './constants'
 import { pensionSupplementFormMessage } from './messages'
+import { formatBankInfo } from './pensionSupplementUtils'
 
 export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
@@ -23,7 +24,16 @@ export const dataSchema = z.object({
           )
         )
       },
-      { params: pensionSupplementFormMessage.errors.phonenumber },
+      { params: pensionSupplementFormMessage.errors.phoneNumber },
+    ),
+  }),
+  paymentInfo: z.object({
+    bank: z.string().refine(
+      (b) => {
+        const bankAccount = formatBankInfo(b)
+        return bankAccount.length === 12 // 4 (bank) + 2 (ledger) + 6 (number)
+      },
+      { params: pensionSupplementFormMessage.errors.bank },
     ),
   }),
 })

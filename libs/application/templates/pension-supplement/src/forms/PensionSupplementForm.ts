@@ -5,8 +5,15 @@ import {
   buildSection,
   buildSubSection,
   buildTextField,
+  buildCustomField,
+  buildSubmitField,
 } from '@island.is/application/core'
-import { Application, Form, FormModes } from '@island.is/application/types'
+import {
+  Application,
+  DefaultEvents,
+  Form,
+  FormModes,
+} from '@island.is/application/types'
 import Logo from '../assets/Logo'
 import { pensionSupplementFormMessage } from '../lib/messages'
 import { UserProfile } from '@island.is/api/schema'
@@ -72,7 +79,30 @@ export const PensionSupplementForm: Form = buildForm({
               id: 'paymentInfo',
               title: pensionSupplementFormMessage.info.paymentTitle,
               description: '',
-              children: [],
+              children: [
+                buildCustomField(
+                  {
+                    id: 'paymentInfo.alert',
+                    title: pensionSupplementFormMessage.info.paymentAlertTitle,
+                    component: 'FieldAlertMessage',
+                    description:
+                      pensionSupplementFormMessage.info.paymentAlertMessage,
+                  },
+                  { type: 'info' },
+                ),
+                buildTextField({
+                  id: 'paymentInfo.bank',
+                  title: pensionSupplementFormMessage.info.paymentBank,
+                  backgroundColor: 'white',
+                  format: '####-##-######',
+                  placeholder: '0000-00-000000',
+                  defaultValue: (application: Application) => {
+                    const userProfile = application.externalData.userProfile
+                      .data as UserProfile
+                    return userProfile.bankInfo
+                  },
+                }),
+              ],
             }),
           ],
         }),
@@ -86,7 +116,47 @@ export const PensionSupplementForm: Form = buildForm({
     buildSection({
       id: 'confirm',
       title: pensionSupplementFormMessage.confirm.section,
-      children: [],
+      children: [
+        buildSubSection({
+          title: '',
+          children: [
+            buildMultiField({
+              id: 'confirm',
+              title: '',
+              description: '',
+              children: [
+                buildCustomField(
+                  {
+                    id: 'confirmScreen',
+                    title: pensionSupplementFormMessage.confirm.title,
+                    component: 'Review',
+                  },
+                  {
+                    editable: true,
+                  },
+                ),
+                buildSubmitField({
+                  id: 'submit',
+                  placement: 'footer',
+                  title: pensionSupplementFormMessage.confirm.title,
+                  actions: [
+                    {
+                      event: DefaultEvents.SUBMIT,
+                      name: pensionSupplementFormMessage.confirm.title,
+                      type: 'primary',
+                    },
+                  ],
+                }),
+              ],
+            }),
+          ],
+        }),
+        buildCustomField({
+          id: 'thankYou',
+          title: pensionSupplementFormMessage.conclusionScreen.title,
+          component: 'Conclusion',
+        }),
+      ],
     }),
   ],
 })

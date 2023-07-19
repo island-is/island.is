@@ -109,6 +109,23 @@ export const pensionSupplementFormMessage: MessageDir = {
       defaultMessage: 'Greiðsluupplýsingar',
       description: 'Payment information',
     },
+    paymentAlertTitle: {
+      id: 'tr.ps.application:info.payment.alert.title',
+      defaultMessage: 'Til athugunar!',
+      description: 'For consideration',
+    },
+    paymentAlertMessage: {
+      id: 'tr.ps.application:info.payment.alert.message',
+      defaultMessage:
+        'Allar þínar greiðslur frá Tryggingastofnun eru greiddar inná bankareikninginn hér að neðan. Ef þú breytir bankaupplýsingunum þínum munu allar þínar greiðslur frá Tryggingastofnun verða greiddar inná þann reiking.',
+      description:
+        'All your payments from TR are paid into the bank account below. If you change your bank details, all your payments from the TR will be paid into that account.',
+    },
+    paymentBank: {
+      id: 'tr.ps.application:info.payment.bank',
+      defaultMessage: 'Banki',
+      description: 'Bank',
+    },
   }),
 
   additionalInfo: defineMessages({
@@ -125,6 +142,55 @@ export const pensionSupplementFormMessage: MessageDir = {
       defaultMessage: 'Staðfesting',
       description: 'Confirm',
     },
+    title: {
+      id: 'tr.ps.application:confirm.title',
+      defaultMessage: 'Senda inn umsókn',
+      description: 'Submit application',
+    },
+    description: {
+      id: 'tr.ps.application:confirm.description',
+      defaultMessage:
+        'Vinsamlegast farðu yfir umsóknina áður en þú sendir hana inn.',
+      description: 'Please review the application before submitting.',
+    },
+    overviewTitle: {
+      id: 'tr.ps.application:confirm.overview.title',
+      defaultMessage: 'Yfirlit',
+      description: 'Overview',
+    },
+    buttonsEdit: {
+      id: 'tr.ps.application:confirm.buttons.edit',
+      defaultMessage: 'Breyta umsókn',
+      description: 'Edit application',
+    },
+    name: {
+      id: 'tr.ps.application:confirm.name',
+      defaultMessage: 'Nafn',
+      description: 'Name',
+    },
+    nationalId: {
+      id: 'tr.ps.application:confirm.nationalId',
+      defaultMessage: 'Kennitala',
+      description: 'National registry ID',
+    },
+    email: {
+      id: 'tr.ps.application:confirm.email',
+      defaultMessage: 'Netfang',
+      description: 'Email',
+    },
+    phonenumber: {
+      id: 'tr.ps.application:confirm.phonenumber',
+      defaultMessage: 'Símanúmer',
+      description: 'phonenumber',
+    },
+  }),
+
+  conclusionScreen: defineMessages({
+    title: {
+      id: 'tr.ps.application:conclusionScreen.title',
+      defaultMessage: 'Umsókn móttekin',
+      description: 'Application received',
+    },
   }),
 
   errors: defineMessages({
@@ -132,6 +198,11 @@ export const pensionSupplementFormMessage: MessageDir = {
       id: 'tr.ps.application:error.phonenumber',
       defaultMessage: 'Símanúmerið þarf að vera gilt.',
       description: 'The phone number must be valid.',
+    },
+    bank: {
+      id: 'tr.ps.application:error.bank',
+      defaultMessage: 'Ógilt bankanúmer. Þarf að vera á forminu: 0000-11-222222',
+      description: 'Invalid bank account. Has to be formatted: 0000-11-222222',
     },
   }),
 }

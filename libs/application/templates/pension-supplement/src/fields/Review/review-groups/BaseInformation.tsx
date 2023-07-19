@@ -1,0 +1,129 @@
+import { DataValue, ReviewGroup } from '@island.is/application/ui-components'
+import { Box, GridColumn, GridRow } from '@island.is/island-ui/core'
+import {
+  InputController,
+  PhoneInputController,
+} from '@island.is/shared/form-fields'
+import { useLocale } from '@island.is/localization'
+import { format as formatKennitala } from 'kennitala'
+import { getApplicationExternalData } from '../../../lib/pensionSupplementUtils'
+import { pensionSupplementFormMessage } from '../../../lib/messages'
+import { ReviewGroupProps } from './props'
+import { useStatefulAnswers } from '../../../hooks/useStatefulAnswers'
+
+export const BaseInformation = ({
+  application,
+  editable,
+  groupHasNoErrors,
+  hasError,
+}: ReviewGroupProps) => {
+  const [
+    { applicantEmail, applicantPhonenumber },
+    setStateful,
+  ] = useStatefulAnswers(application)
+
+  const { applicantName, applicantNationalId } = getApplicationExternalData(
+    application.externalData,
+  )
+
+  const { formatMessage } = useLocale()
+
+  return (
+    <ReviewGroup
+      isEditable={editable}
+      canCloseEdit={groupHasNoErrors([
+        'applicantInfo.email',
+        'applicantInfo.phonenumber',
+      ])}
+      editChildren={
+        <Box marginTop={[8, 8, 8, 0]}>
+          <GridRow>
+            <GridColumn
+              span={['12/12', '12/12', '12/12', '7/12']}
+              paddingBottom={3}
+            >
+              <InputController
+                id="applicantInfo.email"
+                name="applicantInfo.email"
+                defaultValue={applicantEmail}
+                backgroundColor="blue"
+                type="email"
+                label={formatMessage(
+                  pensionSupplementFormMessage.confirm.email,
+                )}
+                onChange={(e) =>
+                  setStateful((prev) => ({
+                    ...prev,
+                    applicantEmail: e.target.value,
+                  }))
+                }
+                error={hasError('applicantInfo.email')}
+              />
+            </GridColumn>
+          </GridRow>
+          <GridRow>
+            <GridColumn span={['12/12', '12/12', '12/12', '7/12']}>
+              <PhoneInputController
+                id="applicantInfo.phonenumber"
+                name="applicantInfo.phonenumber"
+                defaultValue={applicantPhonenumber}
+                backgroundColor="blue"
+                placeholder="000-0000"
+                label={formatMessage(
+                  pensionSupplementFormMessage.confirm.phonenumber,
+                )}
+                onChange={(e) => {
+                  setStateful((prev) => ({
+                    ...prev,
+                    applicantPhonenumber: e.target.value,
+                  }))
+                }}
+                error={hasError('applicantInfo.phonenumber')}
+              />
+            </GridColumn>
+          </GridRow>
+        </Box>
+      }
+      triggerValidation
+    >
+      {applicantName !== '' && (
+        <GridRow marginBottom={3}>
+          <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+            <DataValue
+              label={formatMessage(pensionSupplementFormMessage.confirm.name)}
+              value={applicantName}
+            />
+          </GridColumn>
+          <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+            <DataValue
+              label={formatMessage(
+                pensionSupplementFormMessage.confirm.nationalId,
+              )}
+              value={formatKennitala(applicantNationalId)}
+            />
+          </GridColumn>
+        </GridRow>
+      )}
+
+      <GridRow marginBottom={3}>
+        <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+          <DataValue
+            label={formatMessage(pensionSupplementFormMessage.confirm.email)}
+            value={applicantEmail}
+            error={hasError('applicantInfo.email')}
+          />
+        </GridColumn>
+
+        <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+          <DataValue
+            label={formatMessage(
+              pensionSupplementFormMessage.confirm.phonenumber,
+            )}
+            value={applicantPhonenumber}
+            error={hasError('applicantInfo.phonenumber')}
+          />
+        </GridColumn>
+      </GridRow>
+    </ReviewGroup>
+  )
+}
