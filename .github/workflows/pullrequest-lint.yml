@@ -17,7 +17,7 @@ jobs:
     container:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     steps:
-      - uses: amannn/action-semantic-pull-request@v5
+      - uses: amannn/action-semantic-pull-request@v4.5.0
         with:
           types: |
             feat
@@ -32,6 +32,5 @@ jobs:
             ci
             chore
             revert
-            qa
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
