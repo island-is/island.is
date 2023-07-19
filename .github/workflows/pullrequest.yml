@@ -166,7 +166,7 @@ jobs:
         run: |
           CHUNKS=$(./scripts/ci/generate-chunks.sh lint)
           if [[ $CHUNKS != "[]" ]]; then
-            echo "::set-output name=CHUNKS::{\"projects\":$CHUNKS}"
+            echo "CHUNKS={\"projects\":$CHUNKS}" >> $GITHUB_OUTPUT
           fi
 
       - name: Prepare test targets
@@ -174,7 +174,7 @@ jobs:
         run: |
           CHUNKS=$(./scripts/ci/generate-chunks.sh test)
           if [[ $CHUNKS != "[]" ]]; then
-            echo "::set-output name=CHUNKS::{\"projects\":$CHUNKS}"
+            echo "CHUNKS={\"projects\":$CHUNKS}" >> $GITHUB_OUTPUT
           fi
 
       - name: Prepare e2e targets
@@ -184,9 +184,9 @@ jobs:
         run: |
           CHUNKS=$(./scripts/ci/generate-chunks.sh e2e-ci)
           if [[ $CHUNKS != "[]" ]]; then
-            echo "::set-output name=CHUNKS::{\"projects\":$CHUNKS}"
+            echo "CHUNKS={\"projects\":$CHUNKS}" >> $GITHUB_OUTPUT
           fi
-          echo "::set-output name=BUILD_ID::$GITHUB_RUN_ID-$GITHUB_RUN_NUMBER-$(uuidgen)"
+          echo "BUILD_ID=$GITHUB_RUN_ID-$GITHUB_RUN_NUMBER-$(uuidgen)" >> $GITHUB_OUTPUT
 
       - name: Prepare build targets
         id: build_projects
@@ -195,7 +195,7 @@ jobs:
         run: |
           CHUNKS=$(./scripts/ci/generate-chunks.sh build)
           if [[ $CHUNKS != "[]" ]]; then
-            echo "::set-output name=CHUNKS::{\"projects\":$CHUNKS}"
+            echo "CHUNKS={\"projects\":$CHUNKS}" >> $GITHUB_OUTPUT
           fi
 
   tests:
