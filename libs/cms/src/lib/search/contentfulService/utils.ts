@@ -9,6 +9,7 @@ export const contentfulLocaleMap = {
 export function removeLocaleKeysFromEntry(
   node: object,
   locale: Locale,
+  skippedKey?: string,
   visited = new Set<object>(),
 ) {
   if (!node || typeof node !== 'object' || visited.has(node)) return node
@@ -17,10 +18,13 @@ export function removeLocaleKeysFromEntry(
 
   for (const key in node) {
     const value = node[key as keyof typeof node]
+
+    if (skippedKey && key === skippedKey) continue
+
     if (typeof value === 'object') {
       ;(node[key as keyof typeof node] as
         | object
-        | null) = removeLocaleKeysFromEntry(value, locale, visited)
+        | null) = removeLocaleKeysFromEntry(value, locale, skippedKey, visited)
     }
     if (key === contentfulLocaleMap[locale]) {
       return value

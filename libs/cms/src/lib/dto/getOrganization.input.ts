@@ -1,12 +1,11 @@
 import { Field, InputType } from '@nestjs/graphql'
-import { IsOptional, IsString } from 'class-validator'
+import { IsString } from 'class-validator'
 
 @InputType()
 export class GetOrganizationInput {
-  @Field({ nullable: true })
+  @Field(() => String)
   @IsString()
-  @IsOptional()
-  slug?: string
+  slug!: string
 
   @Field(() => String)
   @IsString()

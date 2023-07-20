@@ -247,7 +247,7 @@ export class ContentfulService {
     locale: Locale,
   ) => {
     for (const item of items) {
-      removeLocaleKeysFromEntry(item, locale)
+      removeLocaleKeysFromEntry(item, locale, 'activeTranslations')
     }
     return items
   }
@@ -307,13 +307,17 @@ export class ContentfulService {
         environment.indexableTypes.includes(entry.sys.contentType.sys.id),
     )
 
-    const populatedIndexableEntries = !isDeltaUpdate
-      ? this.removeLocaleKeysFromEntryItems(indexableEntries, locale)
-      : await this.getPopulatedContentulEntries(
-          indexableEntries,
-          locale,
-          chunkSize,
-        )
+    // TODO: revisit
+    const populatedIndexableEntries =
+      // !isDeltaUpdate
+      //   ? this.removeLocaleKeysFromEntryItems(indexableEntries, locale)
+      //   :
+
+      await this.getPopulatedContentulEntries(
+        indexableEntries,
+        locale,
+        chunkSize,
+      )
 
     // extract ids from deletedEntries
     const deletedEntryIds = deletedEntries.map((entry) => entry.sys.id)

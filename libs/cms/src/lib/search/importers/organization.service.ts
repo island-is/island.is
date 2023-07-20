@@ -41,6 +41,7 @@ export class OrganizationSyncService implements CmsSyncProvider<IOrganization> {
             response: JSON.stringify({ ...mapped, typename: 'Organization' }),
             dateCreated: entry.sys.createdAt,
             dateUpdated: new Date().getTime().toString(),
+            tags: [{ type: 'organization', key: mapped.slug }],
           }
         } catch (error) {
           logger.warn('Failed to import organization', {

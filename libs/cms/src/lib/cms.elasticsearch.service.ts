@@ -216,6 +216,21 @@ export class CmsElasticsearchService {
     return response ? JSON.parse(response) : null
   }
 
+  async getSingleOrganization(index: string, slug: string) {
+    const query = {
+      types: ['webOrganization'],
+      tags: [{ type: 'organization', key: slug }],
+    }
+
+    const response = await this.elasticService.getDocumentsByMetaData(
+      index,
+      query,
+    )
+
+    const data = response.hits.hits?.[0]?._source?.response
+    return data ? JSON.parse(data) : null
+  }
+
   async getSingleOrganizationSubpage(
     index: string,
     { slug, organizationSlug }: GetOrganizationSubpageInput,
@@ -250,6 +265,44 @@ export class CmsElasticsearchService {
 
     const response = menuResponse.hits.hits?.[0]?._source?.response
     return response ? JSON.parse(response) : null
+  }
+
+  async getSingleEntryById(index: string, id: string) {
+    // TODO: test out invalid id's
+    const response = await this.elasticService.findById(index, id)
+    const data = response.body?._source?.response
+    return data ? JSON.parse(data) : null
+  }
+
+  async getEntriesByIds<T>(index: string, ids: string[]) {
+    // TODO: test out invalid id's
+
+    const response: ApiResponse<
+      SearchResponse<MappedData>
+    > = await this.elasticService.findByQuery(index, {
+      query: {
+        terms: {
+          _id: ids,
+        },
+      },
+    })
+
+    const map = new Map<string, T>()
+
+    response.body.hits.hits.forEach((item) => {
+      const parsedData = JSON.parse(item._source.response ?? 'null')
+      if (parsedData) map.set(item._id, parsedData)
+    })
+
+    const result = []
+
+    // Make sure the order of items matches the order of id's passed in
+    for (const id of ids) {
+      const data = map.get(id)
+      if (data) result.push(data)
+    }
+
+    return result
   }
 
   async getSingleMenu<RequestedMenuType>(

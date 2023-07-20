@@ -1,5 +1,6 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql'
 import { CacheField } from '@island.is/nest/graphql'
+import type { Locale } from 'locale'
 import { IOrganization } from '../generated/contentfulTypes'
 import { Image, mapImage } from './image.model'
 import { OrganizationTag, mapOrganizationTag } from './organizationTag.model'
@@ -71,6 +72,9 @@ export class Organization {
 
   @Field({ nullable: true })
   nameInVacancyList?: string
+
+  @Field(() => String, { nullable: true })
+  locale?: Locale | null
 }
 
 export const mapOrganization = ({
@@ -103,5 +107,6 @@ export const mapOrganization = ({
     hasALandingPage: fields.hasALandingPage ?? true,
     trackingDomain: fields.trackingDomain ?? '',
     nameInVacancyList: fields.nameInVacancyList,
+    locale: sys.locale === 'is-IS' ? 'is' : (sys.locale as Locale),
   }
 }

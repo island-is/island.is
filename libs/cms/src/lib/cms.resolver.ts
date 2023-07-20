@@ -195,9 +195,11 @@ export class CmsResolver {
   getOrganization(
     @Args('input') input: GetOrganizationInput,
   ): Promise<Organization | null> {
-    return this.cmsContentfulService.getOrganization(
-      input?.slug ?? '',
-      input?.lang ?? 'is-IS',
+    return this.cmsElasticsearchService.getSingleOrganization(
+      getElasticsearchIndex(
+        input.lang === 'is-IS' ? 'is' : (input.lang as Locale),
+      ),
+      input.slug,
     )
   }
 
@@ -554,9 +556,11 @@ export class LatestNewsSliceResolver {
 @Resolver(() => Article)
 @CacheControl(defaultCache)
 export class ArticleResolver {
-  constructor(private cmsContentfulService: CmsContentfulService) {}
+  constructor(
+    private cmsContentfulService: CmsContentfulService,
+    private cmsElasticSearchService: CmsElasticsearchService,
+  ) {}
 
-  @CacheControl(defaultCache)
   @ResolveField(() => [Article])
   async relatedArticles(
     @Parent() article: (Article & { lang?: Locale }) | null,
@@ -566,6 +570,16 @@ export class ArticleResolver {
     return this.cmsContentfulService.getRelatedArticles(
       article.slug,
       article?.lang ?? 'is',
+    )
+  }
+
+  @ResolveField(() => [Article])
+  async organization(@Parent() article: Article): Promise<Organization[]> {
+    if (!article?.organization?.length) return []
+
+    return this.cmsElasticSearchService.getEntriesByIds<Organization>(
+      getElasticsearchIndex(article.organization[0]?.locale || 'is'),
+      article.organization.map((o) => o.id),
     )
   }
 }
@@ -609,6 +623,7 @@ export class FeaturedSupportQNAsResolver {
 }
 
 @Resolver(() => PowerBiSlice)
+@CacheControl(defaultCache)
 export class PowerBiSliceResolver {
   constructor(private powerBiService: PowerBiService) {}
 
@@ -617,5 +632,21 @@ export class PowerBiSliceResolver {
   })
   async powerBiEmbedPropsFromServer(@Parent() powerBiSlice: PowerBiSlice) {
     return this.powerBiService.getEmbedProps(powerBiSlice)
+  }
+}
+
+@Resolver(() => OrganizationPage)
+@CacheControl(defaultCache)
+export class OrganizationPageResolver {
+  constructor(private cmsElasticsearchService: CmsElasticsearchService) {}
+
+  @CacheControl(defaultCache)
+  @ResolveField(() => Organization)
+  async organization(@Parent() organizationPage: OrganizationPage) {
+    if (!organizationPage?.organization?.id) return null
+    return this.cmsElasticsearchService.getSingleEntryById(
+      getElasticsearchIndex(organizationPage.organization.locale || 'is'),
+      organizationPage.organization.id,
+    )
   }
 }
