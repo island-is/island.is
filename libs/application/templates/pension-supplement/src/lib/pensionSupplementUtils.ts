@@ -1,7 +1,28 @@
+import { MessageDescriptor } from 'react-intl'
 import { getValueViaPath } from '@island.is/application/core'
 import { Application, Option } from '@island.is/application/types'
-import { ApplicationReason } from './constants'
+import { ApplicationReason, AttachmentLabel } from './constants'
 import { pensionSupplementFormMessage } from './messages'
+
+interface FileType {
+  key: string
+  name: string
+}
+
+interface PensionSupplementAttachments {
+  assistedCareAtHome?: FileType[]
+  additionalDocuments?: FileType[]
+}
+
+enum AttachmentTypes {
+  ASSISTED_CARE_AT_HOME = 'assistedCareAtHome',
+  ADDITIONAL_DOCUMENTS = 'additionalDocuments',
+}
+
+interface Attachments {
+  attachments: FileType[]
+  label: MessageDescriptor
+}
 
 export function getApplicationAnswers(answers: Application['answers']) {
   const applicantEmail = getValueViaPath(
@@ -118,4 +139,45 @@ export function getApplicationReasonOptions() {
     },
   ]
   return options
+}
+
+export function getAttachments(application: Application) {
+  const getAttachmentDetails = (
+    attachmentsArr: FileType[] | undefined,
+    attachmentType: AttachmentTypes,
+  ) => {
+    if (attachmentsArr && attachmentsArr.length > 0) {
+      attachments.push({
+        attachments: attachmentsArr,
+        label: AttachmentLabel[attachmentType],
+      })
+    }
+  }
+
+  const { answers } = application
+  const { applicationReason } = getApplicationAnswers(answers)
+  const attachments: Attachments[] = []
+
+  const pensionSupplementAttachments = answers.fileUpload as PensionSupplementAttachments
+
+  applicationReason.forEach((reason) => {
+    if (reason === ApplicationReason.ASSISTED_CARE_AT_HOME) {
+      getAttachmentDetails(
+        pensionSupplementAttachments?.assistedCareAtHome,
+        AttachmentTypes.ASSISTED_CARE_AT_HOME,
+      )
+    }
+  })
+
+  // if (
+  //   pensionSupplementAttachments.additionalDocuments &&
+  //   pensionSupplementAttachments.additionalDocuments?.length > 0
+  // ) {
+  //   getAttachmentDetails(
+  //     pensionSupplementAttachments?.additionalDocuments,
+  //     AttachmentTypes.ADDITIONAL_DOCUMENTS,
+  //   )
+  // }
+
+  return attachments
 }

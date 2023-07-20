@@ -176,6 +176,53 @@ export const pensionSupplementFormMessage: MessageDir = {
     },
   }),
 
+  fileUpload: defineMessages({
+    attachmentButton: {
+      id: 'tr.ps.application:fileUpload.attachment.button',
+      defaultMessage: 'Veldu skjal',
+      description: 'Upload file',
+    },
+    attachmentHeader: {
+      id: 'tr.ps.application:fileUpload.attachment.header',
+      defaultMessage: 'Dragðu skjalið hingað til að hlaða upp',
+      description: 'Drag files here to upload',
+    },
+    attachmentDescription: {
+      id: 'tr.ps.application:fileUpload.attachment.description',
+      defaultMessage: 'Tekið er við skjölum með endingu: .pdf',
+      description: 'Accepted documents with the following extensions: .pdf',
+    },
+    attachmentMaxSizeError: {
+      id: 'tr.ps.application:fileUpload.attachment.maxSizeError',
+      defaultMessage: 'Hámark 5 MB á skrá',
+      description: 'Max 5 MB per file',
+    },
+    additionalFileTitle: {
+      id: 'tr.ps.application:fileUpload.additionalFile.title',
+      defaultMessage: 'Fylgiskjöl viðbótagögn',
+      description: 'Additional attachments',
+    },
+    additionalFileDescription: {
+      id: 'tr.ps.application:fileUpload.additionalFile.description',
+      defaultMessage:
+        'Hér getur þú skilað viðbótargögnum til Tryggingastofnunar. Til dæmis staðfestingu frá Þjóðskrá vegna rangar upplýsingar. Athugaðu að skjalið þarf að vera á .pdf formi.',
+      description:
+        'Here you can submit additional data to TR. For example, confirmation from the National Registry due to incorrect information. Note that the document must be in .pdf format.',
+    },
+    assistedCareAtHomeTitle: {
+      id: 'tr.ps.application:fileUppload.assisted.care.at.home.title',
+      defaultMessage: 'Fylgiskjöl umönnun í heimahúsi',
+      description: 'Pension supplement assisted care at home attachment',
+    },
+    assistedCareAtHome: {
+      id: 'tr.ps.application:fileUppload.assisted.care.at.home',
+      defaultMessage:
+        'Hér getur þú skilað staðfestingu á kostnaði sem opinberir aðilar greiða ekki. Athugaðu að skjalið þarf að vera á .pdf formi.',
+      description:
+        'Here you can upload a confirmation of costs that public entities do not pay. Note that the document must be in .pdf format.',
+    },
+  }),
+
   additionalInfo: defineMessages({
     section: {
       id: 'tr.ps.application:additional.info.section',
@@ -230,6 +277,11 @@ export const pensionSupplementFormMessage: MessageDir = {
       id: 'tr.ps.application:confirm.phonenumber',
       defaultMessage: 'Símanúmer',
       description: 'phonenumber',
+    },
+    additionalDocumentsAttachment: {
+      id: 'tr.ps.application:confirm.additional.documents.attachment',
+      defaultMessage: 'Viðbótargögn til Tryggingastofnunar',
+      description: 'Additional documents to Tryggingastofnunar',
     },
   }),
 

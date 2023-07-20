@@ -9,6 +9,7 @@ import has from 'lodash/has'
 import { BaseInformation } from './review-groups/BaseInformation'
 import { Payment } from './review-groups/Payment'
 import { ApplicationReason } from './review-groups/ApplicationReason'
+import { Attachments } from './review-groups/Attachments'
 
 import { pensionSupplementFormMessage } from '../../lib/messages'
 import { States } from '../../lib/constants'
@@ -130,6 +131,7 @@ export const Review: FC<ReviewScreenProps> = ({
       <BaseInformation {...childProps} />
       <Payment {...childProps} />
       <ApplicationReason {...childProps} />
+      <Attachments {...childProps} />
     </>
   )
 }

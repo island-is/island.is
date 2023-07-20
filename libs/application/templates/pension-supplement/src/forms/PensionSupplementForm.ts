@@ -8,6 +8,7 @@ import {
   buildCustomField,
   buildSubmitField,
   buildCheckboxField,
+  buildFileUploadField,
 } from '@island.is/application/core'
 import {
   Application,
@@ -18,7 +19,11 @@ import {
 import Logo from '../assets/Logo'
 import { pensionSupplementFormMessage } from '../lib/messages'
 import { UserProfile } from '@island.is/api/schema'
-import { getApplicationReasonOptions } from '../lib/pensionSupplementUtils'
+import {
+  getApplicationReasonOptions,
+  getApplicationAnswers,
+} from '../lib/pensionSupplementUtils'
+import { ApplicationReason, FILE_SIZE_LIMIT } from '../lib/constants'
 
 export const PensionSupplementForm: Form = buildForm({
   id: 'PensionSupplementDraft',
@@ -119,6 +124,40 @@ export const PensionSupplementForm: Form = buildForm({
                 pensionSupplementFormMessage.info.applicationReasonDescription,
               required: true,
               options: getApplicationReasonOptions(),
+            }),
+          ],
+        }),
+        buildSubSection({
+          id: 'fileUploadAssistedCareAtHome',
+          title:
+            pensionSupplementFormMessage.fileUpload.assistedCareAtHomeTitle,
+          condition: (answers) => {
+            const { applicationReason } = getApplicationAnswers(answers)
+
+            return applicationReason.includes(
+              ApplicationReason.ASSISTED_CARE_AT_HOME,
+            )
+          },
+          children: [
+            buildFileUploadField({
+              id: 'fileUpload.assistedCareAtHome',
+              title:
+                pensionSupplementFormMessage.fileUpload.assistedCareAtHomeTitle,
+              description:
+                pensionSupplementFormMessage.fileUpload.assistedCareAtHome,
+              introduction:
+                pensionSupplementFormMessage.fileUpload.assistedCareAtHome,
+              maxSize: FILE_SIZE_LIMIT,
+              maxSizeErrorText:
+                pensionSupplementFormMessage.fileUpload.attachmentMaxSizeError,
+              uploadAccept: '.pdf',
+              uploadHeader:
+                pensionSupplementFormMessage.fileUpload.attachmentHeader,
+              uploadDescription:
+                pensionSupplementFormMessage.fileUpload.attachmentDescription,
+              uploadButtonLabel:
+                pensionSupplementFormMessage.fileUpload.attachmentButton,
+              uploadMultiple: true,
             }),
           ],
         }),

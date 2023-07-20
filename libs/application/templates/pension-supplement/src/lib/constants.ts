@@ -1,7 +1,11 @@
 import { DefaultEvents } from '@island.is/application/types'
+import { MessageDescriptor } from 'react-intl'
+import { pensionSupplementFormMessage } from './messages'
 
 export const YES = 'yes'
 export const NO = 'no'
+
+export const FILE_SIZE_LIMIT = 5000000 // 5MB
 
 export type Events =
   | { type: DefaultEvents.SUBMIT }
@@ -33,4 +37,12 @@ export enum ApplicationReason {
   PURCHASE_OF_HEARING_AIDS = 'purchaseOfHearingAids', // Kaup á heyrnartækjum
   OXYGEN_FILTER_COST = 'oxygenFilterCost', // Rafmagn á súrefnissíu
   HALFWAY_HOUSE = 'halfwayHouse', // Dvöl á áfangaheimili
+}
+
+export const AttachmentLabel: {
+  [key: string]: MessageDescriptor
+} = {
+  assistedCareAtHome: pensionSupplementFormMessage.fileUpload.assistedCareAtHomeTitle,
+  additionalDocuments:
+    pensionSupplementFormMessage.confirm.additionalDocumentsAttachment,
 }
