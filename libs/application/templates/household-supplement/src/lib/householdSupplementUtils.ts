@@ -271,9 +271,8 @@ export function getAvailableMonths(
   const sixMonthsInTheFuture = addMonths(new Date(), 6)
 
   let months = MONTHS
-
   if (twoYearsBackInTime.getFullYear().toString() === selectedYear) {
-    months = months.slice(twoYearsBackInTime.getMonth(), months.length + 1)
+    months = months.slice(twoYearsBackInTime.getMonth() + 1, months.length)
   } else if (sixMonthsInTheFuture.getFullYear().toString() === selectedYear) {
     months = months.slice(0, sixMonthsInTheFuture.getMonth() + 1)
   }

@@ -1,4 +1,5 @@
 import addMonths from 'date-fns/addMonths'
+import subYears from 'date-fns/subYears'
 import {
   ApplicationWithAttachments as Application,
   ApplicationStatus,
@@ -11,7 +12,6 @@ import {
   getAvailableYears,
   getAvailableMonths,
 } from './householdSupplementUtils'
-import subYears from 'date-fns/subYears'
 import { MONTHS } from './constants'
 import { isExistsCohabitantOlderThan25 } from './householdSupplementUtils'
 

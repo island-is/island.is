@@ -27,8 +27,6 @@ export const Period: FC<FieldBaseProps> = ({ application }) => {
   const { selectedYear: year } = getApplicationAnswers(application.answers)
 
   const [selectedYear, setSeletedYear] = useState(year)
-  // const [selectedMonth, setSeletedMonth] = useState(month)
-
   const optionsYears = getAvailableYears(application)
   const [optionsMonths, setOptionsMonths] = useState(() => {
     const rightYear = year ?? new Date().getFullYear().toString()
@@ -50,11 +48,6 @@ export const Period: FC<FieldBaseProps> = ({ application }) => {
     const months = getAvailableMonths(application, value)
     setOptionsMonths(months)
   }
-
-  // const onSelectMonth = (option: SelectOption) => {
-  //   const value = option.value as string
-  //   setSeletedMonth(value)
-  // }
 
   return (
     <Box paddingTop={6} paddingBottom={6}>
@@ -91,7 +84,6 @@ export const Period: FC<FieldBaseProps> = ({ application }) => {
               children: undefined,
               options: selectedYear ? optionsMonths : [],
               backgroundColor: 'blue',
-              //onSelect: onSelectMonth,
             }}
           />
         </Box>
