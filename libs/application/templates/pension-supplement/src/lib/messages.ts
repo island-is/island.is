@@ -31,11 +31,6 @@ export const pensionSupplementFormMessage: MessageDir = {
   }),
 
   pre: defineMessages({
-    // prerequisitesSection: {
-    //   id: 'trps.application:prerequisites.section',
-    //   defaultMessage: 'Forsendur',
-    //   description: 'Prerequisites',
-    // },
     externalDataSection: {
       id: 'tr.ps.application:external.data.section',
       defaultMessage: 'Gagnaöflun',
@@ -71,7 +66,7 @@ export const pensionSupplementFormMessage: MessageDir = {
         'Information about you, spouse and children will be retrieved from Registers Iceland.',
     },
     startApplication: {
-      id: 'tr.ps.application.start.application',
+      id: 'tr.ps.application:start.application',
       defaultMessage: 'Hefja umsókn',
       description: 'Start application',
     },
@@ -173,6 +168,37 @@ export const pensionSupplementFormMessage: MessageDir = {
       id: 'tr.ps.application:info.application.reason.halfway.house',
       defaultMessage: 'Dvöl á áfangaheimili',
       description: 'Halfway house',
+    },
+    periodTitle: {
+      id: 'tr.ps.application:info.period.title',
+      defaultMessage: 'Tímabil',
+      description: `Period`,
+    },
+    periodDescription: {
+      id: 'tr.ps.application:info.period.description',
+      defaultMessage:
+        'Veldu tímabil sem þú vilt byrja að fá greidda heimilisuppbót. Hægt er að sækja fyrir árið í ár og 2 ár aftur í tímann.',
+      description: `english translation`,
+    },
+    periodYear: {
+      id: 'tr.ps.application:info.period.year',
+      defaultMessage: 'Ár',
+      description: 'Year',
+    },
+    periodYearDefaultText: {
+      id: 'tr.ps.application:info.period.year.default.text',
+      defaultMessage: 'Veldu ár',
+      description: 'Select year',
+    },
+    periodMonth: {
+      id: 'tr.ps.application:info.period.month',
+      defaultMessage: 'Mánuður',
+      description: 'Month',
+    },
+    periodMonthDefaultText: {
+      id: 'tr.ps.application:info.period.month.default.text',
+      defaultMessage: 'Veldu mánuð',
+      description: 'Select month',
     },
   }),
 
@@ -356,6 +382,69 @@ export const pensionSupplementFormMessage: MessageDir = {
     },
   }),
 
+  months: defineMessages({
+    january: {
+      id: 'hs.application:month.january',
+      defaultMessage: 'Janúar',
+      description: 'January',
+    },
+    february: {
+      id: 'hs.application:month.february',
+      defaultMessage: 'Febrúar',
+      description: 'February',
+    },
+    march: {
+      id: 'hs.application:month.march',
+      defaultMessage: 'Mars',
+      description: 'March',
+    },
+    april: {
+      id: 'hs.application:month.april',
+      defaultMessage: 'Apríl',
+      description: 'April',
+    },
+    may: {
+      id: 'hs.application:month.may',
+      defaultMessage: 'Maí',
+      description: 'May',
+    },
+    june: {
+      id: 'hs.application:month.june',
+      defaultMessage: 'Júní',
+      description: 'June',
+    },
+    july: {
+      id: 'hs.application:month.july',
+      defaultMessage: 'Júlí',
+      description: 'July',
+    },
+    august: {
+      id: 'hs.application:month.august',
+      defaultMessage: 'Ágúst',
+      description: 'August',
+    },
+    september: {
+      id: 'hs.application:month.september',
+      defaultMessage: 'September',
+      description: 'September',
+    },
+    october: {
+      id: 'hs.application:month.october',
+      defaultMessage: 'Október',
+      description: 'October',
+    },
+    november: {
+      id: 'hs.application:month.november',
+      defaultMessage: 'Nóvember',
+      description: 'November',
+    },
+    desember: {
+      id: 'hs.application:month.desember',
+      defaultMessage: 'Desember',
+      description: 'December',
+    },
+  }),
+
   errors: defineMessages({
     phoneNumber: {
       id: 'tr.ps.application:error.phonenumber',
@@ -372,6 +461,11 @@ export const pensionSupplementFormMessage: MessageDir = {
       id: 'tr.ps.application:error.application.reason',
       defaultMessage: 'Skylda að velja einhverja ástæðu',
       description: 'Required to choose some reason',
+    },
+    period: {
+      id: 'tr.ps.application:error.period',
+      defaultMessage: 'Tímabil þarf að vera gilt.',
+      description: 'The period must be valid.',
     },
   }),
 }

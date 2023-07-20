@@ -15,6 +15,7 @@ import { pensionSupplementFormMessage } from '../../lib/messages'
 import { States } from '../../lib/constants'
 import { handleServerError } from '@island.is/application/ui-components'
 import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
+import { Period } from './review-groups/Period'
 
 interface ReviewScreenProps {
   application: Application
@@ -131,6 +132,7 @@ export const Review: FC<ReviewScreenProps> = ({
       <BaseInformation {...childProps} />
       <Payment {...childProps} />
       <ApplicationReason {...childProps} />
+      <Period {...childProps} />
       <Attachments {...childProps} />
     </>
   )

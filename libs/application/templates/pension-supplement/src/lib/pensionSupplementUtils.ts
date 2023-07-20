@@ -1,8 +1,10 @@
 import { MessageDescriptor } from 'react-intl'
 import { getValueViaPath } from '@island.is/application/core'
 import { Application, Option } from '@island.is/application/types'
-import { ApplicationReason, AttachmentLabel } from './constants'
+import { ApplicationReason, AttachmentLabel, MONTHS } from './constants'
 import { pensionSupplementFormMessage } from './messages'
+import subYears from 'date-fns/subYears'
+import addMonths from 'date-fns/addMonths'
 
 interface FileType {
   key: string
@@ -53,11 +55,17 @@ export function getApplicationAnswers(answers: Application['answers']) {
     'applicationReason',
   ) as ApplicationReason[]
 
+  const selectedYear = getValueViaPath(answers, 'period.year') as string
+
+  const selectedMonth = getValueViaPath(answers, 'period.month') as string
+
   return {
     applicantEmail,
     applicantPhonenumber,
     bank,
     applicationReason,
+    selectedYear,
+    selectedMonth,
   }
 }
 
@@ -225,4 +233,53 @@ export function getAttachments(application: Application) {
   // }
 
   return attachments
+}
+
+// returns awailable years. Available period is
+// 2 years back in time and 6 months in the future.
+export function getAvailableYears(application: Application) {
+  const { applicantNationalId } = getApplicationExternalData(
+    application.externalData,
+  )
+
+  if (!applicantNationalId) return []
+
+  const twoYearsBackInTime = subYears(new Date(), 2).getFullYear()
+  const sixMonthsInTheFuture = addMonths(new Date(), 6).getFullYear()
+
+  return Array.from(
+    Array(sixMonthsInTheFuture - (twoYearsBackInTime - 1)),
+    (_, i) => {
+      return {
+        value: (i + twoYearsBackInTime).toString(),
+        label: (i + twoYearsBackInTime).toString(),
+      }
+    },
+  )
+}
+
+// returns available months for selected year, since available period is
+// 2 years back in time and 6 months in the future.
+export function getAvailableMonths(
+  application: Application,
+  selectedYear: string,
+) {
+  const { applicantNationalId } = getApplicationExternalData(
+    application.externalData,
+  )
+
+  if (!applicantNationalId) return []
+  if (!selectedYear) return []
+
+  const twoYearsBackInTime = subYears(new Date(), 2)
+  const sixMonthsInTheFuture = addMonths(new Date(), 6)
+
+  let months = MONTHS
+  if (twoYearsBackInTime.getFullYear().toString() === selectedYear) {
+    months = months.slice(twoYearsBackInTime.getMonth() + 1, months.length)
+  } else if (sixMonthsInTheFuture.getFullYear().toString() === selectedYear) {
+    months = months.slice(0, sixMonthsInTheFuture.getMonth() + 1)
+  }
+
+  return months
 }
