@@ -78,7 +78,7 @@ export class IcelandicGovernmentInstitutionVacanciesResolver {
     if (item.organization?.id) {
       item.organization = await this.cmsElasticService.getSingleEntryById(
         index,
-        item.organization?.id,
+        item.organization.id,
       )
     }
 
