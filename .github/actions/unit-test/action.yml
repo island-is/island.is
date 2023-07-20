@@ -43,11 +43,6 @@ runs:
       shell: bash
       env:
         DOCKER_REGISTRY: ${{ inputs.docker-registry }}
-        NODE_OPTIONS: -r dd-trace/ci/init --max-old-space-size=8192
-        DD_CIVISIBILITY_AGENTLESS_ENABLED: true
-        DD_SITE: datadoghq.eu
-        DD_ENV: dev
-        DD_SERVICE: unit-test-action
         DD_API_KEY: ${{ inputs.dd-api-key }}
 
     - name: Cached codecov uploader

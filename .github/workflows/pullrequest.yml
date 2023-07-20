@@ -250,8 +250,6 @@ jobs:
         run: tar zxvf generated_files.tar.gz
 
       - uses: ./.github/actions/unit-test
-        env:
-          SKIP_TESTS_ON_BRANCH: ${{ secrets.SKIP_TESTS_ON_BRANCH }}
         with:
           dd-api-key: '${{ secrets.DD_API_KEY }}'
           codecov-token: ${{ secrets.CODECOV_TOKEN }}
