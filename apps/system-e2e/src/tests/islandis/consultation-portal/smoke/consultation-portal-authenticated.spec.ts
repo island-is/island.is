@@ -4,36 +4,17 @@ import { session } from '../../../../support/session'
 
 test.describe('Consultation portal authenticated', () => {
   let context: BrowserContext
-  const authLink = new RegExp(`^${urls.authUrl}`)
 
-  test.use({ baseURL: `${urls.islandisBaseUrl}/samradsgatt` })
-
-  const checkIfLoggedOutOrLoggedIn = async (page: Page) => {
-    await page.goto(icelandicAndNoPopupUrl('/samradsgatt'))
-    const loggedOut = page.getByTestId('menu-login-btn')
-    const loggedIn = page.getByRole('button', { name: 'Gervimaður Afríka' })
-    if (await loggedOut.isVisible()) {
-      await loggedOut.click()
-      await page.waitForURL(authLink)
-      await page.locator('#phoneUserIdentifier').fill('0103019')
-      await page.locator('#submitPhoneNumber').isEnabled()
-      await page.locator('#submitPhoneNumber').click()
-      await page.waitForURL(`**${icelandicAndNoPopupUrl('/samradsgatt')}`)
-    } else {
-      await loggedIn.isVisible()
-    }
-  }
-
-  test.beforeAll(async ({ browser, baseURL }) => {
+  test.beforeAll(async ({ browser }) => {
     context = await session({
       browser: browser,
       storageState: 'consultation-auth.json',
-      idsLoginOn: false,
+      idsLoginOn: true,
       phoneNumber: '0103019',
-      homeUrl: baseURL,
+      homeUrl: '/samradsgatt',
+      authTriggerUrl: '/minarsidur',
     })
     const page = await context.newPage()
-    await checkIfLoggedOutOrLoggedIn(page)
   })
 
   test.afterAll(async () => {
