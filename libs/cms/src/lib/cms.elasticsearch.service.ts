@@ -28,6 +28,7 @@ import { SupportQNA } from './models/supportQNA.model'
 import { GetFeaturedSupportQNAsInput } from './dto/getFeaturedSupportQNAs.input'
 import { Vacancy } from './models/vacancy.model'
 import { ResponseError } from '@elastic/elasticsearch/lib/errors'
+import { Organization } from './models/organization.model'
 
 @Injectable()
 export class CmsElasticsearchService {
@@ -268,15 +269,19 @@ export class CmsElasticsearchService {
   }
 
   async getSingleEntryById(index: string, id: string) {
-    // TODO: test out invalid id's
-    const response = await this.elasticService.findById(index, id)
-    const data = response.body?._source?.response
-    return data ? JSON.parse(data) : null
+    try {
+      const response = await this.elasticService.findById(index, id)
+      const data = response.body?._source?.response
+      return data ? JSON.parse(data) : null
+    } catch (error) {
+      if (error instanceof ResponseError) {
+        if (error?.statusCode === 404) return null
+      }
+      throw error
+    }
   }
 
   async getEntriesByIds<T>(index: string, ids: string[]) {
-    // TODO: test out invalid id's
-
     const response: ApiResponse<
       SearchResponse<MappedData>
     > = await this.elasticService.findByQuery(index, {
@@ -315,19 +320,6 @@ export class CmsElasticsearchService {
     return response ? JSON.parse(response) : null
   }
 
-  async getSingleVacancy(index: string, id: string) {
-    try {
-      const vacancyResponse = await this.elasticService.findById(index, id)
-      const response = vacancyResponse.body?._source?.response
-      return response ? JSON.parse(response) : null
-    } catch (error) {
-      if (error instanceof ResponseError) {
-        if (error?.statusCode === 404) return null
-      }
-      throw error
-    }
-  }
-
   async getVacancies(index: string) {
     const vacanciesResponse = await this.elasticService.getDocumentsByMetaData(
       index,
@@ -335,11 +327,33 @@ export class CmsElasticsearchService {
         types: ['webVacancy'],
       },
     )
-    return vacanciesResponse.hits.hits
+    const vacancies = vacanciesResponse.hits.hits
       .map<Vacancy>((response) =>
         JSON.parse(response._source.response ?? 'null'),
       )
       .filter(Boolean)
+
+    const organizationIds = vacancies
+      .filter((v) => v.organization?.id)
+      .map((v) => v.organization?.id) as string[]
+
+    const organizations = await this.getEntriesByIds<Organization>(
+      index,
+      organizationIds,
+    )
+
+    const organizationMap = new Map<string, Organization>()
+
+    for (const organization of organizations) {
+      organizationMap.set(organization.id, organization)
+    }
+
+    return vacancies.map((vacancy) => ({
+      ...vacancy,
+      organization: vacancy.organization?.id
+        ? organizationMap.get(vacancy.organization.id)
+        : vacancy.organization,
+    }))
   }
 
   async getPublishedMaterial(

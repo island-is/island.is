@@ -15,7 +15,6 @@ import {
   NewsResolver,
   SupportCategoryResolver,
   SupportQNAResolver,
-  VacancyResolver,
 } from './cms.resolver'
 import { CmsContentfulService } from './cms.contentful.service'
 import { ContentfulRepository } from './contentful.repository'
@@ -48,7 +47,6 @@ import { PowerBiConfig } from './powerbi.config'
     NewsResolver,
     SupportCategoryResolver,
     SupportQNAResolver,
-    VacancyResolver,
   ],
   exports: [
     ContentfulRepository,

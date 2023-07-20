@@ -7,7 +7,7 @@ import {
 } from '@island.is/clients/icelandic-government-institution-vacancies'
 import { CacheControl, CacheControlOptions } from '@island.is/nest/graphql'
 import { CACHE_CONTROL_MAX_AGE } from '@island.is/shared/constants'
-import { CmsElasticsearchService } from '@island.is/cms'
+import { CmsElasticsearchService, Vacancy } from '@island.is/cms'
 import { IcelandicGovernmentInstitutionVacanciesInput } from './dto/icelandicGovernmentInstitutionVacancies.input'
 import { IcelandicGovernmentInstitutionVacanciesResponse } from './dto/icelandicGovernmentInstitutionVacanciesResponse'
 import { IcelandicGovernmentInstitutionVacancyByIdInput } from './dto/icelandicGovernmentInstitutionVacancyById.input'
@@ -65,13 +65,23 @@ export class IcelandicGovernmentInstitutionVacanciesResolver {
   }
 
   private async getVacancyFromCms(id: string) {
-    const item = await this.cmsElasticService.getSingleVacancy(
-      getElasticsearchIndex('is'),
+    const index = getElasticsearchIndex('is')
+
+    const item = (await this.cmsElasticService.getSingleEntryById(
+      index,
       id,
-    )
+    )) as Vacancy
     if (!item) {
       return { vacancy: null }
     }
+
+    if (item.organization?.id) {
+      item.organization = await this.cmsElasticService.getSingleEntryById(
+        index,
+        item.organization?.id,
+      )
+    }
+
     return {
       vacancy: mapIcelandicGovernmentInstitutionVacancyByIdResponseFromCms(
         item,

@@ -773,18 +773,3 @@ export class SupportQNAResolver {
     )
   }
 }
-
-@Resolver(() => Vacancy)
-@CacheControl(defaultCache)
-export class VacancyResolver {
-  constructor(private cmsElasticsearchService: CmsElasticsearchService) {}
-
-  @ResolveField(() => Organization)
-  async organization(@Parent() vacancy: Vacancy) {
-    if (!vacancy?.organization?.id) return null
-    return this.cmsElasticsearchService.getSingleEntryById(
-      getElasticsearchIndex(vacancy.organization.locale || 'is'),
-      vacancy.organization.id,
-    )
-  }
-}
