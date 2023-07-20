@@ -18,11 +18,11 @@ export default {
     'frontpage',
     'enhancedAsset',
     'vacancy',
+    'organization',
   ],
   nestedContentTypes: [
     'alertBanner',
     'organizationPage',
-    'organization',
     'subArticle',
     'step',
     'stepper',

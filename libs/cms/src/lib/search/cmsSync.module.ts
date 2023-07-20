@@ -18,6 +18,7 @@ import { LinkSyncService } from './importers/link.service'
 import { ProjectPageSyncService } from './importers/projectPage.service'
 import { EnhancedAssetSyncService } from './importers/enhancedAsset.service'
 import { VacancySyncService } from './importers/vacancy.service'
+import { OrganizationSyncService } from './importers/organization.service'
 
 @Module({
   providers: [
@@ -40,6 +41,7 @@ import { VacancySyncService } from './importers/vacancy.service'
     LinkSyncService,
     EnhancedAssetSyncService,
     VacancySyncService,
+    OrganizationSyncService,
   ],
   exports: [CmsSyncService],
 })
