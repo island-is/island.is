@@ -3,6 +3,7 @@ import { useQuery } from '@apollo/client/react'
 import { GET_TEMPORARY_EVENT_LICENCES } from './queries'
 import {
   ConnectedComponent,
+  Maybe,
   Query,
   TemporaryEventLicence,
 } from '@island.is/web/graphql/schema'
@@ -63,7 +64,7 @@ const TemporaryEventLicencesList: FC<TemporaryEventLicencesListProps> = ({
 
   const getLicenceTypeRepresentation = (
     licence: TemporaryEventLicence,
-  ): string => {
+  ): Maybe<string> | undefined => {
     let result = licence.licenceType
     if (
       licence.licenceSubType &&
@@ -101,14 +102,14 @@ const TemporaryEventLicencesList: FC<TemporaryEventLicencesListProps> = ({
         const dataRows = []
         for (const temporaryEventLicence of temporaryEventLicences) {
           dataRows.push([
-            temporaryEventLicence.licenceType, // Tegund
-            temporaryEventLicence.licenceSubType, // Tegund leyfis
-            temporaryEventLicence.licenseNumber, // Leyfisnúmer
-            temporaryEventLicence.licenseHolder, // Leyfishafi
-            temporaryEventLicence.licenseResponsible, // Ábyrgðarmaður
-            temporaryEventLicence.validFrom?.toString(), // Gildir frá
-            temporaryEventLicence.validTo?.toString(), // Gildir til
-            temporaryEventLicence.issuedBy, // Útgefið af
+            temporaryEventLicence.licenceType ?? '', // Tegund
+            temporaryEventLicence.licenceSubType ?? '', // Tegund leyfis
+            temporaryEventLicence.licenseNumber ?? '', // Leyfisnúmer
+            temporaryEventLicence.licenseHolder ?? '', // Leyfishafi
+            temporaryEventLicence.licenseResponsible ?? '', // Ábyrgðarmaður
+            temporaryEventLicence.validFrom?.toString() ?? '', // Gildir frá
+            temporaryEventLicence.validTo?.toString() ?? '', // Gildir til
+            temporaryEventLicence.issuedBy ?? '', // Útgefið af
           ])
         }
         return resolve(prepareCsvString(headerRow, dataRows))
