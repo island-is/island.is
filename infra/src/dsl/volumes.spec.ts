@@ -44,13 +44,13 @@ describe('Volume Support', () => {
     })) as SerializeSuccess<HelmService>
   })
   it('Support multi volume definitions', () => {
-      expect(stagingWithVolumes.serviceDef[0].pvcs![1]).toEqual({
-        name: 'somethingelse',
-        size: '1Gi',
-        accessModes: 'ReadWriteMany',
-        mountPath: '/storage_two',
-        storageClass: 'efs-csi',
-      })
+    expect(stagingWithVolumes.serviceDef[0].pvcs![1]).toEqual({
+      name: 'somethingelse',
+      size: '1Gi',
+      accessModes: 'ReadWriteMany',
+      mountPath: '/storage_two',
+      storageClass: 'efs-csi',
+    })
   })
   it('Support default name for volumes', async () => {
     const sut: ServiceBuilder<'api'> = service('api').volumes({
