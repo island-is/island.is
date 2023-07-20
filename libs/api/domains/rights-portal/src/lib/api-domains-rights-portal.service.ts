@@ -7,7 +7,10 @@ import {
 } from '@island.is/clients/icelandic-health-insurance/rights-portal'
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { handle404 } from '@island.is/clients/middlewares'
-import { HealthCenterHistory } from './models/getHealthCenter.model'
+import {
+  HealthCenterHistory,
+  HealthCenterHistoryEntry,
+} from './models/getHealthCenter.model'
 import { Dentists, DentistBill } from './models/getDentists.model'
 import subYears from 'date-fns/subYears'
 
@@ -81,13 +84,26 @@ export class RightsPortalService {
         }),
       ])
 
+      const history = res[1]
+        ? res[1].map(
+            (h) =>
+              ({
+                ...h,
+                healthCenter: {
+                  ...h.healthCenter,
+                  name: h.healthCenter?.healthCenter,
+                },
+              } as HealthCenterHistoryEntry),
+          )
+        : []
+
       if (!res) return null
       return {
         current: {
           ...res[0],
           name: res[0].healthCenter,
         },
-        history: res[1],
+        history,
       }
     } catch (e) {
       return handle404(e)
