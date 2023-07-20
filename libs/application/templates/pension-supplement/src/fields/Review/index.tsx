@@ -16,6 +16,7 @@ import { States } from '../../lib/constants'
 import { handleServerError } from '@island.is/application/ui-components'
 import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
 import { Period } from './review-groups/Period'
+import { Comment } from './review-groups/Comment'
 
 interface ReviewScreenProps {
   application: Application
@@ -133,6 +134,7 @@ export const Review: FC<ReviewScreenProps> = ({
       <Payment {...childProps} />
       <ApplicationReason {...childProps} />
       <Period {...childProps} />
+      <Comment {...childProps} />
       <Attachments {...childProps} />
     </>
   )

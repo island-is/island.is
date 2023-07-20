@@ -386,6 +386,22 @@ export const PensionSupplementForm: Form = buildForm({
             }),
           ],
         }),
+        buildSubSection({
+          id: 'commentSection',
+          title: pensionSupplementFormMessage.additionalInfo.commentSection,
+          children: [
+            buildTextField({
+              id: 'comment',
+              title: pensionSupplementFormMessage.additionalInfo.commentSection,
+              variant: 'textarea',
+              rows: 10,
+              description:
+                pensionSupplementFormMessage.additionalInfo.commentDescription,
+              placeholder:
+                pensionSupplementFormMessage.additionalInfo.commentPlaceholder,
+            }),
+          ],
+        }),
       ],
     }),
     buildSection({

@@ -59,6 +59,8 @@ export function getApplicationAnswers(answers: Application['answers']) {
 
   const selectedMonth = getValueViaPath(answers, 'period.month') as string
 
+  const comment = getValueViaPath(answers, 'comment') as string
+
   return {
     applicantEmail,
     applicantPhonenumber,
@@ -66,6 +68,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
     applicationReason,
     selectedYear,
     selectedMonth,
+    comment,
   }
 }
 
