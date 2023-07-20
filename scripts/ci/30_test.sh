@@ -10,14 +10,14 @@ if [[ ! " ${projects_uncollectible_coverage[*]} " =~ " ${APP} " ]]; then
 fi
 
 DD_ENV=ci \
-  DD_SERVICE=ci-test \
+  DD_SERVICE="${APP}" \
   DD_SITE=datadoghq.eu \
   DD_CIVISIBILITY_AGENTLESS_ENABLED=true \
   SERVERSIDE_FEATURES_ON=\"\" \
   NODE_OPTIONS="--max-old-space-size=8192 --unhandled-rejections=warn --require=dd-trace/ci/init ${NODE_OPTIONS:-}" \
   yarn run test \
   "${APP}" \
-  "${EXTRA_OPTS}" \
+  ${EXTRA_OPTS} \
   --verbose \
   --no-watchman \
   "$@"
