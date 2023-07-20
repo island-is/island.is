@@ -394,62 +394,62 @@ export const pensionSupplementFormMessage: MessageDir = {
 
   months: defineMessages({
     january: {
-      id: 'hs.application:month.january',
+      id: 'tr.ps.application:month.january',
       defaultMessage: 'Janúar',
       description: 'January',
     },
     february: {
-      id: 'hs.application:month.february',
+      id: 'tr.ps.application:month.february',
       defaultMessage: 'Febrúar',
       description: 'February',
     },
     march: {
-      id: 'hs.application:month.march',
+      id: 'tr.ps.application:month.march',
       defaultMessage: 'Mars',
       description: 'March',
     },
     april: {
-      id: 'hs.application:month.april',
+      id: 'tr.ps.application:month.april',
       defaultMessage: 'Apríl',
       description: 'April',
     },
     may: {
-      id: 'hs.application:month.may',
+      id: 'tr.ps.application:month.may',
       defaultMessage: 'Maí',
       description: 'May',
     },
     june: {
-      id: 'hs.application:month.june',
+      id: 'tr.ps.application:month.june',
       defaultMessage: 'Júní',
       description: 'June',
     },
     july: {
-      id: 'hs.application:month.july',
+      id: 'tr.ps.application:month.july',
       defaultMessage: 'Júlí',
       description: 'July',
     },
     august: {
-      id: 'hs.application:month.august',
+      id: 'tr.ps.application:month.august',
       defaultMessage: 'Ágúst',
       description: 'August',
     },
     september: {
-      id: 'hs.application:month.september',
+      id: 'tr.ps.application:month.september',
       defaultMessage: 'September',
       description: 'September',
     },
     october: {
-      id: 'hs.application:month.october',
+      id: 'tr.ps.application:month.october',
       defaultMessage: 'Október',
       description: 'October',
     },
     november: {
-      id: 'hs.application:month.november',
+      id: 'tr.ps.application:month.november',
       defaultMessage: 'Nóvember',
       description: 'November',
     },
     desember: {
-      id: 'hs.application:month.desember',
+      id: 'tr.ps.application:month.desember',
       defaultMessage: 'Desember',
       description: 'December',
     },
@@ -482,7 +482,7 @@ export const pensionSupplementFormMessage: MessageDir = {
 
 export const validatorErrorMessages = defineMessages({
   requireAttachment: {
-    id: 'hs.application:fileUpload.required.attachment',
+    id: 'tr.ps.application:fileUpload.required.attachment',
     defaultMessage: 'Þú þarft að hlaða upp viðhenginu til að halda áfram.',
     description: 'Error message when the attachment file is not provided.',
   },
