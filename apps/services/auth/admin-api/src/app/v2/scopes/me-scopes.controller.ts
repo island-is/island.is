@@ -114,6 +114,7 @@ export class MeScopesController {
         tenantId,
         scopeName,
         input,
+        user,
       }),
     )
   }
