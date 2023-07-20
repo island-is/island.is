@@ -573,13 +573,35 @@ export class ArticleResolver {
     )
   }
 
-  @ResolveField(() => [Article])
+  @ResolveField(() => [Organization])
   async organization(@Parent() article: Article): Promise<Organization[]> {
     if (!article?.organization?.length) return []
 
     return this.cmsElasticSearchService.getEntriesByIds<Organization>(
       getElasticsearchIndex(article.organization[0]?.locale || 'is'),
       article.organization.map((o) => o.id),
+    )
+  }
+
+  @ResolveField(() => [Organization])
+  async relatedOrganization(
+    @Parent() article: Article,
+  ): Promise<Organization[]> {
+    if (!article?.relatedOrganization?.length) return []
+
+    return this.cmsElasticSearchService.getEntriesByIds<Organization>(
+      getElasticsearchIndex(article.relatedOrganization[0]?.locale || 'is'),
+      article.relatedOrganization.map((o) => o.id),
+    )
+  }
+
+  @ResolveField(() => [Organization])
+  async responsibleParty(@Parent() article: Article): Promise<Organization[]> {
+    if (!article?.responsibleParty?.length) return []
+
+    return this.cmsElasticSearchService.getEntriesByIds<Organization>(
+      getElasticsearchIndex(article.responsibleParty[0]?.locale || 'is'),
+      article.responsibleParty.map((o) => o.id),
     )
   }
 }
