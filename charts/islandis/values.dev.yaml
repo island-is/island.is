@@ -405,7 +405,7 @@ api:
   podSecurityContext:
     fsGroup: 65534
   pvcs:
-    - accessModes: 'ReadOnlyMany'
+    - accessModes: 'ReadWriteMany'
       mountPath: '/etc/config/islyklar.p12'
       name: 'islykill-cert'
       size: '1Gi'
@@ -664,7 +664,7 @@ application-system-api:
   podSecurityContext:
     fsGroup: 65534
   pvcs:
-    - accessModes: 'ReadOnlyMany'
+    - accessModes: 'ReadWriteMany'
       mountPath: '/etc/config/islyklar.p12'
       name: 'islykill-cert'
       size: '1Gi'

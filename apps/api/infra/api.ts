@@ -356,7 +356,7 @@ export const serviceSetup = (services: {
     .volumes({
       name: 'islykill-cert',
       size: '1Gi',
-      accessModes: 'ReadOnly',
+      accessModes: 'ReadWrite',
       mountPath: '/etc/config/islyklar.p12',
       storageClass: 'efs-csi',
     })
