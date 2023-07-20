@@ -14,7 +14,6 @@ export const maskOutFieldsMiddleware: FieldMiddleware = async (
     } = extensions.filterFields as any
 
     if (condition(ctx) && !fields.includes(info.fieldName)) {
-      // 🌴 🌴 🌴
       return null
     }
   }
