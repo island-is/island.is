@@ -159,7 +159,7 @@
     "dataloader": "2.1.0",
     "date-fns": "2.28.0",
     "datebook": "7.0.8",
-    "dd-trace": "4.7.0",
+    "dd-trace": "3.15.0",
     "deepmerge": "4.2.2",
     "downshift": "5.4.3",
     "entropy-string": "4.2.0",
