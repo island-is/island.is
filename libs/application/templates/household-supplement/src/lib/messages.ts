@@ -76,7 +76,7 @@ export const householdSupplementFormMessage: MessageDir = {
         'Information about you, spouse and children will be retrieved from Registers Iceland.',
     },
     startApplication: {
-      id: 'hs.application.start.application',
+      id: 'hs.application:start.application',
       defaultMessage: 'Hefja umsókn',
       description: 'Start application',
     },
