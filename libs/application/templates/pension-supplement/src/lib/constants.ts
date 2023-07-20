@@ -24,3 +24,13 @@ export enum States {
   REJECTED = 'rejected',
   APPROVED = 'approved',
 }
+
+export enum ApplicationReason {
+  MEDICINE_COST = 'medicineCost', // Lyfja- eða sjúkrahjálp
+  HOUSE_RENT = 'houseRent', // Húsaleiga sem fellur utan húsaleigubóta frá sveitafélagi
+  ASSISTED_CARE_AT_HOME = 'assistedCareAtHome', // Umönnun í heimahúsi
+  ASSISTED_LIVING = 'assistedLiving', // Dvöl á sambýli eða áfangaheimili
+  PURCHASE_OF_HEARING_AIDS = 'purchaseOfHearingAids', // Kaup á heyrnartækjum
+  OXYGEN_FILTER_COST = 'oxygenFilterCost', // Rafmagn á súrefnissíu
+  HALFWAY_HOUSE = 'halfwayHouse', // Dvöl á áfangaheimili
+}

@@ -1,5 +1,7 @@
 import { getValueViaPath } from '@island.is/application/core'
-import { Application } from '@island.is/application/types'
+import { Application, Option } from '@island.is/application/types'
+import { ApplicationReason } from './constants'
+import { pensionSupplementFormMessage } from './messages'
 
 export function getApplicationAnswers(answers: Application['answers']) {
   const applicantEmail = getValueViaPath(
@@ -14,10 +16,16 @@ export function getApplicationAnswers(answers: Application['answers']) {
 
   const bank = getValueViaPath(answers, 'paymentInfo.bank') as string
 
+  const applicationReason = getValueViaPath(
+    answers,
+    'applicationReason',
+  ) as ApplicationReason[]
+
   return {
     applicantEmail,
     applicantPhonenumber,
     bank,
+    applicationReason,
   }
 }
 
@@ -72,4 +80,42 @@ export const formatBankInfo = (bankInfo: string) => {
   }
 
   return bankInfo
+}
+
+export function getApplicationReasonOptions() {
+  const options: Option[] = [
+    {
+      value: ApplicationReason.MEDICINE_COST,
+      label: pensionSupplementFormMessage.info.applicationReasonMedicineCost,
+    },
+    {
+      value: ApplicationReason.ASSISTED_CARE_AT_HOME,
+      label:
+        pensionSupplementFormMessage.info.applicationReasonAssistedCareAtHome,
+    },
+    {
+      value: ApplicationReason.OXYGEN_FILTER_COST,
+      label:
+        pensionSupplementFormMessage.info.applicationReasonOxygenFilterCost,
+    },
+    {
+      value: ApplicationReason.PURCHASE_OF_HEARING_AIDS,
+      label:
+        pensionSupplementFormMessage.info
+          .applicationReasonPurchaseOfHearingAids,
+    },
+    {
+      value: ApplicationReason.ASSISTED_LIVING,
+      label: pensionSupplementFormMessage.info.applicationReasonAssistedLiving,
+    },
+    {
+      value: ApplicationReason.HALFWAY_HOUSE,
+      label: pensionSupplementFormMessage.info.applicationReasonHalfwayHouse,
+    },
+    {
+      value: ApplicationReason.HOUSE_RENT,
+      label: pensionSupplementFormMessage.info.applicationReasonHouseRent,
+    },
+  ]
+  return options
 }

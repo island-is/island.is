@@ -7,6 +7,7 @@ import {
   buildTextField,
   buildCustomField,
   buildSubmitField,
+  buildCheckboxField,
 } from '@island.is/application/core'
 import {
   Application,
@@ -17,6 +18,7 @@ import {
 import Logo from '../assets/Logo'
 import { pensionSupplementFormMessage } from '../lib/messages'
 import { UserProfile } from '@island.is/api/schema'
+import { getApplicationReasonOptions } from '../lib/pensionSupplementUtils'
 
 export const PensionSupplementForm: Form = buildForm({
   id: 'PensionSupplementDraft',
@@ -103,6 +105,20 @@ export const PensionSupplementForm: Form = buildForm({
                   },
                 }),
               ],
+            }),
+          ],
+        }),
+        buildSubSection({
+          id: 'reason',
+          title: pensionSupplementFormMessage.info.applicationReasonTitle,
+          children: [
+            buildCheckboxField({
+              id: 'applicationReason',
+              title: pensionSupplementFormMessage.info.applicationReasonTitle,
+              description:
+                pensionSupplementFormMessage.info.applicationReasonDescription,
+              required: true,
+              options: getApplicationReasonOptions(),
             }),
           ],
         }),

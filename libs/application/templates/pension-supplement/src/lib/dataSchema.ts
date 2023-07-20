@@ -3,6 +3,7 @@ import { z } from 'zod'
 import { NO, YES } from './constants'
 import { pensionSupplementFormMessage } from './messages'
 import { formatBankInfo } from './pensionSupplementUtils'
+import { ApplicationReason } from './constants'
 
 export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
@@ -36,6 +37,21 @@ export const dataSchema = z.object({
       { params: pensionSupplementFormMessage.errors.bank },
     ),
   }),
+  applicationReason: z
+    .array(
+      z.enum([
+        ApplicationReason.MEDICINE_COST,
+        ApplicationReason.ASSISTED_CARE_AT_HOME,
+        ApplicationReason.OXYGEN_FILTER_COST,
+        ApplicationReason.PURCHASE_OF_HEARING_AIDS,
+        ApplicationReason.ASSISTED_LIVING,
+        ApplicationReason.HALFWAY_HOUSE,
+        ApplicationReason.HOUSE_RENT,
+      ]),
+    )
+    .refine((a) => a.length !== 0, {
+      params: pensionSupplementFormMessage.errors.applicationReason,
+    }),
 })
 
 export type SchemaFormValues = z.infer<typeof dataSchema>

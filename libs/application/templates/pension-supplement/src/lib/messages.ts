@@ -126,6 +126,54 @@ export const pensionSupplementFormMessage: MessageDir = {
       defaultMessage: 'Banki',
       description: 'Bank',
     },
+    applicationReasonTitle: {
+      id: 'tr.ps.application:info.application.reason.title',
+      defaultMessage: 'Ástæða umsóknar',
+      description: 'Reason for application',
+    },
+    applicationReasonDescription: {
+      id: 'tr.ps.application:info.application.reason.description',
+      defaultMessage:
+        'Hægt er að merkja við marga möguleika en skylda að merkja við einhvern.',
+      description: 'You can check many options, but you must check someone.',
+    },
+    applicationReasonMedicineCost: {
+      id: 'tr.ps.application:info.application.reason.medicine.cost',
+      defaultMessage: 'Lyfja- eða sjúkrahjálp',
+      description: 'Medicine cost',
+    },
+    applicationReasonAssistedCareAtHome: {
+      id: 'tr.ps.application:info.application.reason.assisted.care.at.home',
+      defaultMessage: 'Umönnun í heimahúsi',
+      description: 'Assisted care at home',
+    },
+    applicationReasonHouseRent: {
+      id: 'tr.ps.application:info.application.reason.house.rent',
+      defaultMessage:
+        'Húsaleiga sem fellur utan húsaleigubóta frá sveitafélagi',
+      description:
+        'House rent that falls outside the rent allowance from the municipality',
+    },
+    applicationReasonAssistedLiving: {
+      id: 'tr.ps.application:info.application.reason.assisted.living',
+      defaultMessage: 'Dvöl á sambýli eða áfangaheimili',
+      description: 'Assisted living',
+    },
+    applicationReasonPurchaseOfHearingAids: {
+      id: 'tr.ps.application:info.application.reason.purchase.of.hearing.aids',
+      defaultMessage: 'Kaup á heyrnartækjum',
+      description: 'Purchase of hearing aids',
+    },
+    applicationReasonOxygenFilterCost: {
+      id: 'tr.ps.application:info.application.reason.oxygen.filter.cost',
+      defaultMessage: 'Rafmagn á súrefnissíu',
+      description: 'Oxygen filter voltage/cost',
+    },
+    applicationReasonHalfwayHouse: {
+      id: 'tr.ps.application:info.application.reason.halfway.house',
+      defaultMessage: 'Dvöl á áfangaheimili',
+      description: 'Halfway house',
+    },
   }),
 
   additionalInfo: defineMessages({
@@ -201,8 +249,14 @@ export const pensionSupplementFormMessage: MessageDir = {
     },
     bank: {
       id: 'tr.ps.application:error.bank',
-      defaultMessage: 'Ógilt bankanúmer. Þarf að vera á forminu: 0000-11-222222',
+      defaultMessage:
+        'Ógilt bankanúmer. Þarf að vera á forminu: 0000-11-222222',
       description: 'Invalid bank account. Has to be formatted: 0000-11-222222',
+    },
+    applicationReason: {
+      id: 'tr.ps.application:error.application.reason',
+      defaultMessage: 'Skylda að velja einhverja ástæðu',
+      description: 'Required to choose some reason',
     },
   }),
 }
