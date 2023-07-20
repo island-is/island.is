@@ -14,6 +14,7 @@ import {
 import { pruneAfterDays } from '@island.is/application/core'
 import { Events, Roles, States } from './constants'
 import { dataSchema } from './dataSchema'
+import { answerValidators } from './answerValidators'
 import { pensionSupplementFormMessage } from './messages'
 
 const PensionSupplementTemplate: ApplicationTemplate<
@@ -103,6 +104,7 @@ const PensionSupplementTemplate: ApplicationTemplate<
     }
     return undefined
   },
+  answerValidators,
 }
 
 export default PensionSupplementTemplate

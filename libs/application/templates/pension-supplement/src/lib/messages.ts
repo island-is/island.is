@@ -150,7 +150,7 @@ export const pensionSupplementFormMessage: MessageDir = {
     applicationReasonHouseRent: {
       id: 'tr.ps.application:info.application.reason.house.rent',
       defaultMessage:
-        'Húsaleiga sem fellur utan húsaleigubóta frá sveitafélagi',
+        'Húsaleiga sem fellur utan húsaleigubóta frá sveitarfélagi',
       description:
         'House rent that falls outside the rent allowance from the municipality',
     },
@@ -216,6 +216,69 @@ export const pensionSupplementFormMessage: MessageDir = {
     },
     assistedCareAtHome: {
       id: 'tr.ps.application:fileUppload.assisted.care.at.home',
+      defaultMessage:
+        'Hér getur þú skilað staðfestingu á kostnaði sem opinberir aðilar greiða ekki. Athugaðu að skjalið þarf að vera á .pdf formi.',
+      description:
+        'Here you can upload a confirmation of costs that public entities do not pay. Note that the document must be in .pdf format.',
+    },
+    houseRentSectionTitle: {
+      id: 'tr.ps.application:fileUppload.house.rent.section.title',
+      defaultMessage: 'Fylgiskjöl húsaleiga',
+      description:
+        'Attachments for rent that is not covered by rent allowance from the municipality',
+    },
+    houseRentTitle: {
+      id: 'tr.ps.application:fileUppload.house.rent.title',
+      defaultMessage:
+        'Fylgiskjöl húsaleiga sem fellur utan húsaleigubóta frá sveitarfélagi',
+      description:
+        'Attachments for house rent that falls outside the rent allowance from the municipality',
+    },
+    houseRentAgreement: {
+      id: 'tr.ps.application:fileUppload.house.rent.agreement',
+      defaultMessage:
+        'Hér getur þú skilað húsaleigusamning undirrituðum af leigusala/umboðsmanni og leigutaka. Athugaðu að skjalið þarf að vera á .pdf formi.',
+      description:
+        'Here you can return the tenancy agreement signed by the landlord/agent and the tenant. Note that the document must be in .pdf format.',
+    },
+    houseRentAllowance: {
+      id: 'tr.ps.application:fileUppload.house.rent.allowance',
+      defaultMessage:
+        'Hér getur þú skilað staðfestingu á að ekki sé réttur á húsaleigubótum. Athugaðu að skjalið þarf að vera á .pdf formi.',
+      description:
+        'Here you can submit a confirmation that you are not entitled to rent allowance. Note that the document must be in .pdf format.',
+    },
+    assistedLivingTitle: {
+      id: 'tr.ps.application:fileUppload.assisted.living.title',
+      defaultMessage: 'Fylgiskjöl dvöl á sambýli eða áfangaheimili',
+      description: 'Attachments assisted living',
+    },
+    assistedLiving: {
+      id: 'tr.ps.application:fileUppload.assisted.living',
+      defaultMessage:
+        'Hér getur þú skilað undirritaðri staðfestingu á dvöl frá umsjónaraðila/forstöðumanni. Athugaðu að skjalið þarf að vera á .pdf formi.',
+      description:
+        'Here you can return a signed confirmation of your stay from the supervisor/director. Note that the document must be in .pdf format.',
+    },
+    purchaseOfHearingAidsTitle: {
+      id: 'tr.ps.application:fileUppload.purchase.of.hearing.aids.title',
+      defaultMessage: 'Fylgiskjöl kaup á heyrnartækjum',
+      description: 'Attachments purchase of hearing aids',
+    },
+    purchaseOfHearingAids: {
+      id: 'tr.ps.application:fileUppload.purchase.of.hearing.aids',
+      defaultMessage:
+        'Hér getur þú skilað reikning vegna kaupa á heyrnatækjum innan 4 ára. Athugaðu að skjalið þarf að vera á .pdf formi.',
+      description:
+        'Here you can return an invoice for the purchase of hearing aids within 4 years. Note that the document must be in .pdf format.',
+    },
+    halfwayHouseTitle: {
+      id: 'tr.ps.application:fileUppload.halfway.house.title',
+      defaultMessage: 'Fylgiskjöl dvöl á áfangaheimili',
+      description: 'Attachments halfway house',
+    },
+    halfwayHouse: {
+      id: 'tr.ps.application:fileUppload.halfway.house',
       defaultMessage:
         'Hér getur þú skilað staðfestingu á kostnaði sem opinberir aðilar greiða ekki. Athugaðu að skjalið þarf að vera á .pdf formi.',
       description:
@@ -312,3 +375,11 @@ export const pensionSupplementFormMessage: MessageDir = {
     },
   }),
 }
+
+export const validatorErrorMessages = defineMessages({
+  requireAttachment: {
+    id: 'hs.application:fileUpload.required.attachment',
+    defaultMessage: 'Þú þarft að hlaða upp viðhenginu til að halda áfram.',
+    description: 'Error message when the attachment file is not provided.',
+  },
+})

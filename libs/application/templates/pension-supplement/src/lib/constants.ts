@@ -39,10 +39,20 @@ export enum ApplicationReason {
   HALFWAY_HOUSE = 'halfwayHouse', // Dvöl á áfangaheimili
 }
 
+export enum AnswerValidationConstants {
+  FILEUPLOAD = 'fileUpload',
+}
+
 export const AttachmentLabel: {
   [key: string]: MessageDescriptor
 } = {
-  assistedCareAtHome: pensionSupplementFormMessage.fileUpload.assistedCareAtHomeTitle,
+  assistedCareAtHome:
+    pensionSupplementFormMessage.fileUpload.assistedCareAtHomeTitle,
+  houseRent: pensionSupplementFormMessage.fileUpload.houseRentTitle,
+  assistedLiving: pensionSupplementFormMessage.fileUpload.assistedLivingTitle,
+  purchaseOfHearingAids:
+    pensionSupplementFormMessage.fileUpload.purchaseOfHearingAidsTitle,
+  halfwayHouse: pensionSupplementFormMessage.fileUpload.halfwayHouseTitle,
   additionalDocuments:
     pensionSupplementFormMessage.confirm.additionalDocumentsAttachment,
 }

@@ -134,8 +134,11 @@ export const PensionSupplementForm: Form = buildForm({
           condition: (answers) => {
             const { applicationReason } = getApplicationAnswers(answers)
 
-            return applicationReason.includes(
-              ApplicationReason.ASSISTED_CARE_AT_HOME,
+            return (
+              applicationReason &&
+              applicationReason.includes(
+                ApplicationReason.ASSISTED_CARE_AT_HOME,
+              )
             )
           },
           children: [
@@ -147,6 +150,176 @@ export const PensionSupplementForm: Form = buildForm({
                 pensionSupplementFormMessage.fileUpload.assistedCareAtHome,
               introduction:
                 pensionSupplementFormMessage.fileUpload.assistedCareAtHome,
+              maxSize: FILE_SIZE_LIMIT,
+              maxSizeErrorText:
+                pensionSupplementFormMessage.fileUpload.attachmentMaxSizeError,
+              uploadAccept: '.pdf',
+              uploadHeader:
+                pensionSupplementFormMessage.fileUpload.attachmentHeader,
+              uploadDescription:
+                pensionSupplementFormMessage.fileUpload.attachmentDescription,
+              uploadButtonLabel:
+                pensionSupplementFormMessage.fileUpload.attachmentButton,
+              uploadMultiple: true,
+            }),
+          ],
+        }),
+        buildSubSection({
+          id: 'fileUploadPurchaseOfHearingAids',
+          title:
+            pensionSupplementFormMessage.fileUpload.purchaseOfHearingAidsTitle,
+          condition: (answers) => {
+            const { applicationReason } = getApplicationAnswers(answers)
+
+            return (
+              applicationReason &&
+              applicationReason.includes(
+                ApplicationReason.PURCHASE_OF_HEARING_AIDS,
+              )
+            )
+          },
+          children: [
+            buildFileUploadField({
+              id: 'fileUpload.purchaseOfHearingAids',
+              title:
+                pensionSupplementFormMessage.fileUpload
+                  .purchaseOfHearingAidsTitle,
+              description:
+                pensionSupplementFormMessage.fileUpload.purchaseOfHearingAids,
+              introduction:
+                pensionSupplementFormMessage.fileUpload.purchaseOfHearingAids,
+              maxSize: FILE_SIZE_LIMIT,
+              maxSizeErrorText:
+                pensionSupplementFormMessage.fileUpload.attachmentMaxSizeError,
+              uploadAccept: '.pdf',
+              uploadHeader:
+                pensionSupplementFormMessage.fileUpload.attachmentHeader,
+              uploadDescription:
+                pensionSupplementFormMessage.fileUpload.attachmentDescription,
+              uploadButtonLabel:
+                pensionSupplementFormMessage.fileUpload.attachmentButton,
+              uploadMultiple: true,
+            }),
+          ],
+        }),
+        buildSubSection({
+          id: 'fileUploadAssistedLiving',
+          title: pensionSupplementFormMessage.fileUpload.assistedLivingTitle,
+          condition: (answers) => {
+            const { applicationReason } = getApplicationAnswers(answers)
+
+            return (
+              applicationReason &&
+              applicationReason.includes(ApplicationReason.ASSISTED_LIVING)
+            )
+          },
+          children: [
+            buildFileUploadField({
+              id: 'fileUpload.assistedLiving',
+              title:
+                pensionSupplementFormMessage.fileUpload.assistedLivingTitle,
+              description:
+                pensionSupplementFormMessage.fileUpload.assistedLiving,
+              introduction:
+                pensionSupplementFormMessage.fileUpload.assistedLiving,
+              maxSize: FILE_SIZE_LIMIT,
+              maxSizeErrorText:
+                pensionSupplementFormMessage.fileUpload.attachmentMaxSizeError,
+              uploadAccept: '.pdf',
+              uploadHeader:
+                pensionSupplementFormMessage.fileUpload.attachmentHeader,
+              uploadDescription:
+                pensionSupplementFormMessage.fileUpload.attachmentDescription,
+              uploadButtonLabel:
+                pensionSupplementFormMessage.fileUpload.attachmentButton,
+              uploadMultiple: true,
+            }),
+          ],
+        }),
+        buildSubSection({
+          id: 'fileUploadHalfwayHouse',
+          title: pensionSupplementFormMessage.fileUpload.halfwayHouseTitle,
+          condition: (answers) => {
+            const { applicationReason } = getApplicationAnswers(answers)
+
+            return (
+              applicationReason &&
+              applicationReason.includes(ApplicationReason.HALFWAY_HOUSE)
+            )
+          },
+          children: [
+            buildFileUploadField({
+              id: 'fileUpload.halfwayHouse',
+              title: pensionSupplementFormMessage.fileUpload.halfwayHouseTitle,
+              description: pensionSupplementFormMessage.fileUpload.halfwayHouse,
+              introduction:
+                pensionSupplementFormMessage.fileUpload.halfwayHouse,
+              maxSize: FILE_SIZE_LIMIT,
+              maxSizeErrorText:
+                pensionSupplementFormMessage.fileUpload.attachmentMaxSizeError,
+              uploadAccept: '.pdf',
+              uploadHeader:
+                pensionSupplementFormMessage.fileUpload.attachmentHeader,
+              uploadDescription:
+                pensionSupplementFormMessage.fileUpload.attachmentDescription,
+              uploadButtonLabel:
+                pensionSupplementFormMessage.fileUpload.attachmentButton,
+              uploadMultiple: true,
+            }),
+          ],
+        }),
+        buildSubSection({
+          id: 'fileUploadHouseRentAgreement',
+          title: pensionSupplementFormMessage.fileUpload.houseRentSectionTitle,
+          condition: (answers) => {
+            const { applicationReason } = getApplicationAnswers(answers)
+
+            return (
+              applicationReason &&
+              applicationReason.includes(ApplicationReason.HOUSE_RENT)
+            )
+          },
+          children: [
+            buildFileUploadField({
+              id: 'fileUpload.houseRentAgreement',
+              title: pensionSupplementFormMessage.fileUpload.houseRentTitle,
+              description:
+                pensionSupplementFormMessage.fileUpload.houseRentAgreement,
+              introduction:
+                pensionSupplementFormMessage.fileUpload.houseRentAgreement,
+              maxSize: FILE_SIZE_LIMIT,
+              maxSizeErrorText:
+                pensionSupplementFormMessage.fileUpload.attachmentMaxSizeError,
+              uploadAccept: '.pdf',
+              uploadHeader:
+                pensionSupplementFormMessage.fileUpload.attachmentHeader,
+              uploadDescription:
+                pensionSupplementFormMessage.fileUpload.attachmentDescription,
+              uploadButtonLabel:
+                pensionSupplementFormMessage.fileUpload.attachmentButton,
+              uploadMultiple: true,
+            }),
+          ],
+        }),
+        buildSubSection({
+          id: 'fileUploadHouseRentAllowance',
+          title: pensionSupplementFormMessage.fileUpload.houseRentSectionTitle,
+          condition: (answers) => {
+            const { applicationReason } = getApplicationAnswers(answers)
+
+            return (
+              applicationReason &&
+              applicationReason.includes(ApplicationReason.HOUSE_RENT)
+            )
+          },
+          children: [
+            buildFileUploadField({
+              id: 'fileUpload.houseRentAllowance',
+              title: pensionSupplementFormMessage.fileUpload.houseRentTitle,
+              description:
+                pensionSupplementFormMessage.fileUpload.houseRentAllowance,
+              introduction:
+                pensionSupplementFormMessage.fileUpload.houseRentAllowance,
               maxSize: FILE_SIZE_LIMIT,
               maxSizeErrorText:
                 pensionSupplementFormMessage.fileUpload.attachmentMaxSizeError,

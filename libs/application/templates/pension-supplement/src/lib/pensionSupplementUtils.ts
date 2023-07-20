@@ -12,10 +12,21 @@ interface FileType {
 interface PensionSupplementAttachments {
   assistedCareAtHome?: FileType[]
   additionalDocuments?: FileType[]
+  houseRentAgreement?: FileType[]
+  houseRentAllowance?: FileType[]
+  assistedLiving?: FileType[]
+  purchaseOfHearingAids?: FileType[]
+  halfwayHouse?: FileType[]
 }
 
 enum AttachmentTypes {
   ASSISTED_CARE_AT_HOME = 'assistedCareAtHome',
+  MEDICINE_COST = 'medicineCost',
+  HOUSE_RENT = 'houseRent',
+  ASSISTED_LIVING = 'assistedLiving',
+  PURCHASE_OF_HEARING_AIDS = 'purchaseOfHearingAids',
+  OXYGEN_FILTER_COST = 'oxygenFilterCost',
+  HALFWAY_HOUSE = 'halfwayHouse',
   ADDITIONAL_DOCUMENTS = 'additionalDocuments',
 }
 
@@ -165,6 +176,40 @@ export function getAttachments(application: Application) {
       getAttachmentDetails(
         pensionSupplementAttachments?.assistedCareAtHome,
         AttachmentTypes.ASSISTED_CARE_AT_HOME,
+      )
+    }
+    if (reason === ApplicationReason.HOUSE_RENT) {
+      if (
+        pensionSupplementAttachments?.houseRentAgreement &&
+        pensionSupplementAttachments?.houseRentAgreement.length > 0 &&
+        pensionSupplementAttachments?.houseRentAllowance &&
+        pensionSupplementAttachments?.houseRentAllowance.length > 0
+      ) {
+        getAttachmentDetails(
+          [
+            ...pensionSupplementAttachments.houseRentAgreement,
+            ...pensionSupplementAttachments.houseRentAllowance,
+          ],
+          AttachmentTypes.HOUSE_RENT,
+        )
+      }
+    }
+    if (reason === ApplicationReason.ASSISTED_LIVING) {
+      getAttachmentDetails(
+        pensionSupplementAttachments?.assistedLiving,
+        AttachmentTypes.ASSISTED_LIVING,
+      )
+    }
+    if (reason === ApplicationReason.PURCHASE_OF_HEARING_AIDS) {
+      getAttachmentDetails(
+        pensionSupplementAttachments?.purchaseOfHearingAids,
+        AttachmentTypes.PURCHASE_OF_HEARING_AIDS,
+      )
+    }
+    if (reason === ApplicationReason.HALFWAY_HOUSE) {
+      getAttachmentDetails(
+        pensionSupplementAttachments?.halfwayHouse,
+        AttachmentTypes.HALFWAY_HOUSE,
       )
     }
   })
