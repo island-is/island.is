@@ -302,7 +302,7 @@ export const serviceSetup = (services: {
       min: 2,
     })
     .volumes({
-      name: 'islykill_cert',
+      name: 'islykill-cert',
       size: '1Gi',
       accessModes: 'ReadOnly',
       mountPath: '/etc/config/islyklar.p12',

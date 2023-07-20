@@ -407,7 +407,7 @@ api:
   pvcs:
     - accessModes: 'ReadOnlyMany'
       mountPath: '/etc/config/islyklar.p12'
-      name: 'islykill_cert'
+      name: 'islykill-cert'
       size: '1Gi'
       storageClass: 'efs-csi'
   replicaCount:
@@ -666,7 +666,7 @@ application-system-api:
   pvcs:
     - accessModes: 'ReadOnlyMany'
       mountPath: '/etc/config/islyklar.p12'
-      name: 'islykill_cert'
+      name: 'islykill-cert'
       size: '1Gi'
       storageClass: 'efs-csi'
   replicaCount:
