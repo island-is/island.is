@@ -117,7 +117,7 @@ export class MeDelegationsController {
     @Headers('X-Query-OtherUser') otherUser: string,
   ): Promise<DelegationDTO[]> {
     switch (direction) {
-      case DelegationDirection.INCOMING: {
+      case DelegationDirection.OUTGOING: {
         if (user.actor) {
           throw new BadRequestException(
             'Only supported when the subject is the authenticated user.',
@@ -130,7 +130,7 @@ export class MeDelegationsController {
           otherUser,
         )
       }
-      case DelegationDirection.OUTGOING: {
+      case DelegationDirection.INCOMING: {
         return this.delegationsOutgoingService.findAll(
           user,
           validity,
