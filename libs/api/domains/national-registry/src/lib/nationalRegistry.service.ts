@@ -15,7 +15,7 @@ export class NationalRegistryService {
     const user = await this.nationalRegistryApi.getUser(nationalId)
     return {
       nationalId: user.Kennitala,
-      name: user.Birtnafn + '-nafn',
+      name: user.Birtnafn,
       firstName: user.Eiginnafn,
       middleName: user.Millinafn,
       lastName: user.Kenninafn,
