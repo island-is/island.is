@@ -217,7 +217,7 @@ export class CmsElasticsearchService {
     return response ? JSON.parse(response) : null
   }
 
-  async getSingleOrganization(index: string, slug: string) {
+  async getSingleOrganizationBySlug(index: string, slug: string) {
     const query = {
       types: ['webOrganization'],
       tags: [{ type: 'organization', key: slug }],
