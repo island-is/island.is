@@ -54,7 +54,7 @@ export const AttachmentLabel: {
     pensionSupplementFormMessage.fileUpload.purchaseOfHearingAidsTitle,
   halfwayHouse: pensionSupplementFormMessage.fileUpload.halfwayHouseTitle,
   additionalDocuments:
-    pensionSupplementFormMessage.confirm.additionalDocumentsAttachment,
+    pensionSupplementFormMessage.fileUpload.additionalFileTitle,
 }
 
 export const MONTHS = [

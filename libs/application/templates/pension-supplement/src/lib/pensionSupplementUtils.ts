@@ -222,15 +222,15 @@ export function getAttachments(application: Application) {
     }
   })
 
-  // if (
-  //   pensionSupplementAttachments.additionalDocuments &&
-  //   pensionSupplementAttachments.additionalDocuments?.length > 0
-  // ) {
-  //   getAttachmentDetails(
-  //     pensionSupplementAttachments?.additionalDocuments,
-  //     AttachmentTypes.ADDITIONAL_DOCUMENTS,
-  //   )
-  // }
+  if (
+    pensionSupplementAttachments.additionalDocuments &&
+    pensionSupplementAttachments.additionalDocuments?.length > 0
+  ) {
+    getAttachmentDetails(
+      pensionSupplementAttachments?.additionalDocuments,
+      AttachmentTypes.ADDITIONAL_DOCUMENTS,
+    )
+  }
 
   return attachments
 }

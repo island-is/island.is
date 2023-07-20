@@ -367,11 +367,6 @@ export const pensionSupplementFormMessage: MessageDir = {
       defaultMessage: 'Símanúmer',
       description: 'phonenumber',
     },
-    additionalDocumentsAttachment: {
-      id: 'tr.ps.application:confirm.additional.documents.attachment',
-      defaultMessage: 'Viðbótargögn til Tryggingastofnunar',
-      description: 'Additional documents to Tryggingastofnunar',
-    },
   }),
 
   conclusionScreen: defineMessages({

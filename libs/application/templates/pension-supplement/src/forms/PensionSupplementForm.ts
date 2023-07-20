@@ -357,7 +357,36 @@ export const PensionSupplementForm: Form = buildForm({
     buildSection({
       id: 'additionalInfo',
       title: pensionSupplementFormMessage.additionalInfo.section,
-      children: [],
+      children: [
+        buildSubSection({
+          id: 'fileUploadAdditionalFiles',
+          title: pensionSupplementFormMessage.fileUpload.additionalFileTitle,
+          children: [
+            buildFileUploadField({
+              id: 'fileUpload.additionalDocuments',
+              title:
+                pensionSupplementFormMessage.fileUpload.additionalFileTitle,
+              description:
+                pensionSupplementFormMessage.fileUpload
+                  .additionalFileDescription,
+              introduction:
+                pensionSupplementFormMessage.fileUpload
+                  .additionalFileDescription,
+              maxSize: FILE_SIZE_LIMIT,
+              maxSizeErrorText:
+                pensionSupplementFormMessage.fileUpload.attachmentMaxSizeError,
+              uploadAccept: '.pdf',
+              uploadHeader:
+                pensionSupplementFormMessage.fileUpload.attachmentHeader,
+              uploadDescription:
+                pensionSupplementFormMessage.fileUpload.attachmentDescription,
+              uploadButtonLabel:
+                pensionSupplementFormMessage.fileUpload.attachmentButton,
+              uploadMultiple: true,
+            }),
+          ],
+        }),
+      ],
     }),
     buildSection({
       id: 'confirm',
