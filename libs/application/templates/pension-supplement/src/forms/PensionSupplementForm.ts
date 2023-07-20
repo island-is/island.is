@@ -128,6 +128,24 @@ export const PensionSupplementForm: Form = buildForm({
           ],
         }),
         buildSubSection({
+          id: 'periodSection',
+          title: pensionSupplementFormMessage.info.periodTitle,
+          children: [
+            buildMultiField({
+              id: 'periodField',
+              title: pensionSupplementFormMessage.info.periodTitle,
+              description: pensionSupplementFormMessage.info.periodDescription,
+              children: [
+                buildCustomField({
+                  id: 'period',
+                  title: pensionSupplementFormMessage.info.periodTitle,
+                  component: 'Period',
+                }),
+              ],
+            }),
+          ],
+        }),
+        buildSubSection({
           id: 'fileUploadAssistedCareAtHome',
           title:
             pensionSupplementFormMessage.fileUpload.assistedCareAtHomeTitle,

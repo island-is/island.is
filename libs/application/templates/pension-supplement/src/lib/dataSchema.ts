@@ -4,6 +4,7 @@ import { NO, YES } from './constants'
 import { pensionSupplementFormMessage } from './messages'
 import { formatBankInfo } from './pensionSupplementUtils'
 import { ApplicationReason } from './constants'
+import addYears from 'date-fns/addYears'
 
 export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
@@ -52,6 +53,20 @@ export const dataSchema = z.object({
     .refine((a) => a.length !== 0, {
       params: pensionSupplementFormMessage.errors.applicationReason,
     }),
+  period: z
+    .object({
+      year: z.string(),
+      month: z.string(),
+    })
+    .refine(
+      (p) => {
+        const today = new Date()
+        const startDate = addYears(today, -2)
+        const selectedDate = new Date(p.year + p.month)
+        return startDate < selectedDate
+      },
+      { params: pensionSupplementFormMessage.errors.period },
+    ),
 })
 
 export type SchemaFormValues = z.infer<typeof dataSchema>
