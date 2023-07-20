@@ -5619,28 +5619,28 @@ __metadata:
   linkType: hard
 
 "@datadog/native-metrics@npm:^1.5.0":
-  version: 1.6.0
-  resolution: "@datadog/native-metrics@npm:1.6.0"
+  version: 1.5.0
+  resolution: "@datadog/native-metrics@npm:1.5.0"
   dependencies:
     node-gyp: latest
     node-gyp-build: ^3.9.0
-  checksum: aad021e79687683d1b058b1534387f998cd090a60b786d4996cf1f7408a2b11e246a7486e5dffd3f7cf723f5cfde8763ad3928e521e7c0f51a33a12db03af9c0
+  checksum: 4cd4862990ef31c147cf5bc11ffbbabfcb69a7bb772347249def22f6a60864c3869b7ac531adb2df406320d094643577cdc4e8a0d47fcc002f29264a1bb15327
   languageName: node
   linkType: hard
 
 "@datadog/pprof@npm:^2.0.0":
-  version: 2.2.3
-  resolution: "@datadog/pprof@npm:2.2.3"
+  version: 2.0.0
+  resolution: "@datadog/pprof@npm:2.0.0"
   dependencies:
     delay: ^5.0.0
     node-gyp: latest
     node-gyp-build: ^3.9.0
     p-limit: ^3.1.0
     pify: ^5.0.0
-    pprof-format: ^2.0.7
+    pprof-format: ^2.0.6
     source-map: ^0.7.3
     split: ^1.0.1
-  checksum: eb217b0b9172f28019c7ec585ccf7a3b1b238cdd077fe627c1cc20a2ee4c18afcc7df882a5989ec4f86463cf351da3df0214c5c44c10e2028c28bdc5e04dd5dc
+  checksum: feff1f341d332d04a8c43628b2315e726ca9ec35849fe9f662da30211ba976b590b741e893018a38ef0003fa19968fb4814c68a3e2740e547f64ee65ae0734c0
   languageName: node
   linkType: hard
 
@@ -16306,15 +16306,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"acorn-import-assertions@npm:^1.9.0":
-  version: 1.9.0
-  resolution: "acorn-import-assertions@npm:1.9.0"
-  peerDependencies:
-    acorn: ^8
-  checksum: 944fb2659d0845c467066bdcda2e20c05abe3aaf11972116df457ce2627628a81764d800dd55031ba19de513ee0d43bb771bc679cc0eda66dc8b4fade143bc0c
-  languageName: node
-  linkType: hard
-
 "acorn-jsx@npm:^5.3.1":
   version: 5.3.1
   resolution: "acorn-jsx@npm:5.3.1"
@@ -16398,15 +16389,6 @@ __metadata:
   bin:
     acorn: bin/acorn
   checksum: f790b99a1bf63ef160c967e23c46feea7787e531292bb827126334612c234ed489a0dc2c7ba33156416f0ffa8d25bf2b0fdb7f35c2ba60eb3e960572bece4001
-  languageName: node
-  linkType: hard
-
-"acorn@npm:^8.8.2":
-  version: 8.10.0
-  resolution: "acorn@npm:8.10.0"
-  bin:
-    acorn: bin/acorn
-  checksum: 538ba38af0cc9e5ef983aee196c4b8b4d87c0c94532334fa7e065b2c8a1f85863467bb774231aae91613fcda5e68740c15d97b1967ae3394d20faddddd8af61d
   languageName: node
   linkType: hard
 
@@ -20038,13 +20020,6 @@ __metadata:
   version: 1.2.2
   resolution: "cjs-module-lexer@npm:1.2.2"
   checksum: 977f3f042bd4f08e368c890d91eecfbc4f91da0bc009a3c557bc4dfbf32022ad1141244ac1178d44de70fc9f3dea7add7cd9a658a34b9fae98a55d8f92331ce5
-  languageName: node
-  linkType: hard
-
-"cjs-module-lexer@npm:^1.2.2":
-  version: 1.2.3
-  resolution: "cjs-module-lexer@npm:1.2.3"
-  checksum: 5ea3cb867a9bb609b6d476cd86590d105f3cfd6514db38ff71f63992ab40939c2feb68967faa15a6d2b1f90daa6416b79ea2de486e9e2485a6f8b66a21b4fb0a
   languageName: node
   linkType: hard
 
@@ -29191,14 +29166,11 @@ __metadata:
   linkType: hard
 
 "import-in-the-middle@npm:^1.3.4":
-  version: 1.4.1
-  resolution: "import-in-the-middle@npm:1.4.1"
+  version: 1.3.4
+  resolution: "import-in-the-middle@npm:1.3.4"
   dependencies:
-    acorn: ^8.8.2
-    acorn-import-assertions: ^1.9.0
-    cjs-module-lexer: ^1.2.2
     module-details-from-path: ^1.0.3
-  checksum: 39cf8ba24f660dfd7f57cd871ea39b0162cb80d6fefd9150988b8836e50c3c64d9ea8793777f631730de929e90d8bd5cf18bcb65338d05e810c8d26075cddb26
+  checksum: a1949ecf5f13a49bd78627ce86c6c3ba955b6f1e631548282780712d1b007d51b595599c84c7eb4a8b397c0285d0095da30e43813c35205e2ee3cfc5e4bd7558
   languageName: node
   linkType: hard
 
@@ -40742,7 +40714,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pprof-format@npm:^2.0.7":
+"pprof-format@npm:^2.0.6":
   version: 2.0.7
   resolution: "pprof-format@npm:2.0.7"
   checksum: 0033740ba5ffb9a0d684e7fc3a616d2932d21b908a62a095e88a0091fcd1ef9af379060b303429d9df8698c9f48a789202cc38ba1c71b3c4a6084a5604647367
@@ -41115,8 +41087,8 @@ __metadata:
   linkType: hard
 
 "protobufjs@npm:^7.1.2":
-  version: 7.2.4
-  resolution: "protobufjs@npm:7.2.4"
+  version: 7.2.2
+  resolution: "protobufjs@npm:7.2.2"
   dependencies:
     "@protobufjs/aspromise": ^1.1.2
     "@protobufjs/base64": ^1.1.2
@@ -41130,7 +41102,7 @@ __metadata:
     "@protobufjs/utf8": ^1.1.0
     "@types/node": ">=13.7.0"
     long: ^5.0.0
-  checksum: a952cdf2a5e5250c16ae651b570849b6f5b20a5475c3eef63ffb290ad239aa2916adfc1cc676f7fc93c69f48113df268761c0c246f7f023118c85bdd1a170044
+  checksum: 86166e8f3e46789fa4d117ae72c17356db36bf87c0e0710d224be32e543b1c378a94e66dc2b1de5af45edfc25f56acfc7e688c50c956426a3ae97bc474f4445c
   languageName: node
   linkType: hard
 
