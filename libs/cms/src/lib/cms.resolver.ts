@@ -93,6 +93,9 @@ import { FeaturedSupportQNAs } from './models/featuredSupportQNAs.model'
 import { PowerBiSlice } from './models/powerBiSlice.model'
 import { GetPowerBiEmbedPropsFromServerResponse } from './dto/getPowerBiEmbedPropsFromServer.response'
 import { GetOrganizationByTitleInput } from './dto/getOrganizationByTitle.input'
+import { ArticleReference } from './models/articleReference'
+import { EnhancedAsset } from './models/enhancedAsset.model'
+import { Vacancy } from './models/vacancy.model'
 
 const defaultCache: CacheControlOptions = { maxAge: CACHE_CONTROL_MAX_AGE }
 
@@ -542,7 +545,6 @@ export class CmsResolver {
 export class LatestNewsSliceResolver {
   constructor(private cmsElasticsearchService: CmsElasticsearchService) {}
 
-  @CacheControl(defaultCache)
   @ResolveField(() => [News])
   async news(@Parent() { news: input }: LatestNewsSlice): Promise<News[]> {
     const newsList = await this.cmsElasticsearchService.getNews(
@@ -550,6 +552,15 @@ export class LatestNewsSliceResolver {
       input,
     )
     return newsList.items
+  }
+
+  @ResolveField(() => Organization)
+  async organization(@Parent() enhancedAsset: EnhancedAsset) {
+    if (!enhancedAsset?.organization?.id) return null
+    return this.cmsElasticsearchService.getSingleEntryById(
+      getElasticsearchIndex(enhancedAsset.organization.locale || 'is'),
+      enhancedAsset.organization.id,
+    )
   }
 }
 
@@ -602,6 +613,22 @@ export class ArticleResolver {
     return this.cmsElasticSearchService.getEntriesByIds<Organization>(
       getElasticsearchIndex(article.responsibleParty[0]?.locale || 'is'),
       article.responsibleParty.map((o) => o.id),
+    )
+  }
+}
+
+@Resolver(() => ArticleReference)
+@CacheControl(defaultCache)
+export class ArticleReferenceResolver {
+  constructor(private cmsElasticSearchService: CmsElasticsearchService) {}
+
+  @ResolveField(() => [Organization])
+  async organization(@Parent() article: Article): Promise<Organization[]> {
+    if (!article?.organization?.length) return []
+
+    return this.cmsElasticSearchService.getEntriesByIds<Organization>(
+      getElasticsearchIndex(article.organization[0]?.locale || 'is'),
+      article.organization.map((o) => o.id),
     )
   }
 }
@@ -662,13 +689,102 @@ export class PowerBiSliceResolver {
 export class OrganizationPageResolver {
   constructor(private cmsElasticsearchService: CmsElasticsearchService) {}
 
-  @CacheControl(defaultCache)
   @ResolveField(() => Organization)
   async organization(@Parent() organizationPage: OrganizationPage) {
     if (!organizationPage?.organization?.id) return null
     return this.cmsElasticsearchService.getSingleEntryById(
       getElasticsearchIndex(organizationPage.organization.locale || 'is'),
       organizationPage.organization.id,
+    )
+  }
+}
+
+@Resolver(() => Auction)
+@CacheControl(defaultCache)
+export class AuctionResolver {
+  constructor(private cmsElasticsearchService: CmsElasticsearchService) {}
+
+  @ResolveField(() => Organization)
+  async organization(@Parent() auction: Auction) {
+    if (!auction?.organization?.id) return null
+    return this.cmsElasticsearchService.getSingleEntryById(
+      getElasticsearchIndex(auction.organization.locale || 'is'),
+      auction.organization.id,
+    )
+  }
+}
+
+@Resolver(() => EnhancedAsset)
+@CacheControl(defaultCache)
+export class EnhancedAssetResolver {
+  constructor(private cmsElasticsearchService: CmsElasticsearchService) {}
+
+  @ResolveField(() => Organization)
+  async organization(@Parent() enhancedAsset: EnhancedAsset) {
+    if (!enhancedAsset?.organization?.id) return null
+    return this.cmsElasticsearchService.getSingleEntryById(
+      getElasticsearchIndex(enhancedAsset.organization.locale || 'is'),
+      enhancedAsset.organization.id,
+    )
+  }
+}
+
+@Resolver(() => News)
+@CacheControl(defaultCache)
+export class NewsResolver {
+  constructor(private cmsElasticsearchService: CmsElasticsearchService) {}
+
+  @ResolveField(() => Organization)
+  async organization(@Parent() news: News) {
+    if (!news?.organization?.id) return null
+    return this.cmsElasticsearchService.getSingleEntryById(
+      getElasticsearchIndex(news.organization.locale || 'is'),
+      news.organization.id,
+    )
+  }
+}
+
+@Resolver(() => SupportCategory)
+@CacheControl(defaultCache)
+export class SupportCategoryResolver {
+  constructor(private cmsElasticsearchService: CmsElasticsearchService) {}
+
+  @ResolveField(() => Organization)
+  async organization(@Parent() supportCategory: SupportCategory) {
+    if (!supportCategory?.organization?.id) return null
+    return this.cmsElasticsearchService.getSingleEntryById(
+      getElasticsearchIndex(supportCategory.organization.locale || 'is'),
+      supportCategory.organization.id,
+    )
+  }
+}
+
+@Resolver(() => SupportQNA)
+@CacheControl(defaultCache)
+export class SupportQNAResolver {
+  constructor(private cmsElasticsearchService: CmsElasticsearchService) {}
+
+  @ResolveField(() => Organization)
+  async organization(@Parent() supportQNA: SupportQNA) {
+    if (!supportQNA?.organization?.id) return null
+    return this.cmsElasticsearchService.getSingleEntryById(
+      getElasticsearchIndex(supportQNA.organization.locale || 'is'),
+      supportQNA.organization.id,
+    )
+  }
+}
+
+@Resolver(() => Vacancy)
+@CacheControl(defaultCache)
+export class VacancyResolver {
+  constructor(private cmsElasticsearchService: CmsElasticsearchService) {}
+
+  @ResolveField(() => Organization)
+  async organization(@Parent() vacancy: Vacancy) {
+    if (!vacancy?.organization?.id) return null
+    return this.cmsElasticsearchService.getSingleEntryById(
+      getElasticsearchIndex(vacancy.organization.locale || 'is'),
+      vacancy.organization.id,
     )
   }
 }

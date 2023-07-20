@@ -8,6 +8,14 @@ import {
   FeaturedArticlesResolver,
   FeaturedSupportQNAsResolver,
   PowerBiSliceResolver,
+  OrganizationPageResolver,
+  ArticleReferenceResolver,
+  AuctionResolver,
+  EnhancedAssetResolver,
+  NewsResolver,
+  SupportCategoryResolver,
+  SupportQNAResolver,
+  VacancyResolver,
 } from './cms.resolver'
 import { CmsContentfulService } from './cms.contentful.service'
 import { ContentfulRepository } from './contentful.repository'
@@ -33,6 +41,14 @@ import { PowerBiConfig } from './powerbi.config'
     OrganizationLogoLoader,
     PowerBiService,
     PowerBiSliceResolver,
+    OrganizationPageResolver,
+    ArticleReferenceResolver,
+    AuctionResolver,
+    EnhancedAssetResolver,
+    NewsResolver,
+    SupportCategoryResolver,
+    SupportQNAResolver,
+    VacancyResolver,
   ],
   exports: [
     ContentfulRepository,
