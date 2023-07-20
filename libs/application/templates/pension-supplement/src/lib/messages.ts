@@ -318,6 +318,21 @@ export const pensionSupplementFormMessage: MessageDir = {
       defaultMessage: 'Viðbótarupplýsingar',
       description: 'Additional information',
     },
+    commentSection: {
+      id: 'tr.ps.application:additional.info.comment.section',
+      defaultMessage: 'Athugasemd',
+      description: 'Comment',
+    },
+    commentDescription: {
+      id: 'tr.ps.application:additional.info.comment.description',
+      defaultMessage: 'Hafir þú einhverja athugasemd skildu hana eftir hér.',
+      description: 'If you have any comments, leave them here.',
+    },
+    commentPlaceholder: {
+      id: 'tr.ps.application:additional.info.comment.placeholder',
+      defaultMessage: 'Skrifaðu hér athugasemd',
+      description: 'Your comment',
+    },
   }),
 
   confirm: defineMessages({
