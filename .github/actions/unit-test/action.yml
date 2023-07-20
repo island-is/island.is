@@ -38,13 +38,6 @@ runs:
       run: npm install -g yarn
       shell: bash
 
-    - name: Debug secrets
-      shell: bash
-      run: |
-        echo "NODE_OPTIONS_SECRET: $NODE_OPTIONS_SECRET"
-        echo "SKIP_TESTS_ON_BRANCH: $SKIP_TESTS_ON_BRANCH"
-        echo "DD_API_KEY: $(echo $DD_API_KEY | sha1sum)"
-
     - name: Running tests
       run: ./scripts/ci/run-in-parallel.sh 30_test
       shell: bash
@@ -53,11 +46,9 @@ runs:
         NODE_OPTIONS: -r dd-trace/ci/init --max-old-space-size=8192
         DD_CIVISIBILITY_AGENTLESS_ENABLED: true
         DD_SITE: datadoghq.eu
-        DD_ENV: test-ci
-        DD_SERVICE: ci-test
-        DD_TRACE_ENABLED: true
+        DD_ENV: dev
+        DD_SERVICE: unit-test-action
         DD_API_KEY: ${{ inputs.dd-api-key }}
-        CI: true
 
     - name: Cached codecov uploader
       id: codecov-cache

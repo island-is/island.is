@@ -251,9 +251,7 @@ jobs:
 
       - uses: ./.github/actions/unit-test
         env:
-          NODE_OPTIONS_SECRET: ${{ secrets.NODE_OPTIONS }}
           SKIP_TESTS_ON_BRANCH: ${{ secrets.SKIP_TESTS_ON_BRANCH }}
-          DD_API_KEY: '${{ secrets.DD_API_KEY }}'
         with:
           dd-api-key: '${{ secrets.DD_API_KEY }}'
           codecov-token: ${{ secrets.CODECOV_TOKEN }}
