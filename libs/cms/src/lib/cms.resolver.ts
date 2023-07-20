@@ -198,7 +198,7 @@ export class CmsResolver {
   getOrganization(
     @Args('input') input: GetOrganizationInput,
   ): Promise<Organization | null> {
-    return this.cmsElasticsearchService.getSingleOrganization(
+    return this.cmsElasticsearchService.getSingleOrganizationBySlug(
       getElasticsearchIndex(
         input.lang === 'is-IS' ? 'is' : (input.lang as Locale),
       ),
