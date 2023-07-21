@@ -2,14 +2,13 @@ import {
   Label,
   RadioValue,
   ReviewGroup,
-  Table,
 } from '@island.is/application/ui-components'
 import { Box, GridColumn, GridRow } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { oldAgePensionFormMessage } from '../../../lib/messages'
 import { ReviewGroupProps } from './props'
 import { useStatefulAnswers } from '../../../hooks/useStatefulAnswers'
-import { residenceHistoryTableData } from '../../../lib/oldAgePensionUtils'
+import ResidenceHistoryTable from '../../ResidenceHistory/ResidenceHistoryTable'
 
 export const ResidenceHistory = ({
   application,
@@ -18,7 +17,6 @@ export const ResidenceHistory = ({
 }: ReviewGroupProps) => {
   const { formatMessage } = useLocale()
   const [{ residenceHistoryQuestion }] = useStatefulAnswers(application)
-  const { data, columns } = residenceHistoryTableData(application)
 
   return (
     <ReviewGroup
@@ -27,7 +25,7 @@ export const ResidenceHistory = ({
       isLast={true}
     >
       <GridRow marginBottom={3}>
-        {data.length !== 0 && (
+        {!residenceHistoryQuestion && (
           <GridColumn
             span={['12/12', '12/12', '12/12', '12/12']}
             paddingBottom={3}
@@ -37,11 +35,9 @@ export const ResidenceHistory = ({
                 oldAgePensionFormMessage.residence.residenceHistoryTitle,
               )}
             </Label>
-            {data && (
-              <Box paddingTop={3}>
-                <Table columns={columns} data={data} />
-              </Box>
-            )}
+            <Box paddingTop={3}>
+              <ResidenceHistoryTable application={application} />
+            </Box>
           </GridColumn>
         )}
         {residenceHistoryQuestion && (
