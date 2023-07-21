@@ -10,12 +10,14 @@ import {
   NationalRegistryUserApi,
   UserProfileApi,
 } from '@island.is/application/types'
-
-import { pruneAfterDays } from '@island.is/application/core'
+import {
+  pruneAfterDays,
+  DefaultStateLifeCycle,
+} from '@island.is/application/core'
 import { Events, Roles, States } from './constants'
 import { dataSchema } from './dataSchema'
 import { answerValidators } from './answerValidators'
-import { pensionSupplementFormMessage } from './messages'
+import { pensionSupplementFormMessage, statesMessages } from './messages'
 
 const PensionSupplementTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -69,6 +71,13 @@ const PensionSupplementTemplate: ApplicationTemplate<
           name: States.DRAFT,
           status: 'draft',
           lifecycle: pruneAfterDays(30),
+          actionCard: {
+            description: statesMessages.draftDescription,
+            historyLogs: {
+              onEvent: DefaultEvents.SUBMIT,
+              logMessage: statesMessages.applicationSent,
+            },
+          },
           progress: 0.25,
           roles: [
             {
@@ -89,9 +98,54 @@ const PensionSupplementTemplate: ApplicationTemplate<
             },
           ],
         },
-        // on: {
-        //   SUBMIT: [],
-        // },
+        on: {
+          SUBMIT: [{ target: States.TRYGGINGASTOFNUN_SUBMITTED }],
+        },
+      },
+      [States.TRYGGINGASTOFNUN_SUBMITTED]: {
+        meta: {
+          name: States.TRYGGINGASTOFNUN_SUBMITTED,
+          progress: 0.75,
+          status: 'inprogress',
+          lifecycle: DefaultStateLifeCycle,
+          actionCard: {
+            tag: {
+              label: statesMessages.pendingTag,
+            },
+            pendingAction: {
+              title: statesMessages.tryggingastofnunSubmittedTitle,
+              content: statesMessages.tryggingastofnunSubmittedContent,
+              displayStatus: 'info',
+            },
+            historyLogs: [
+              {
+                onEvent: DefaultEvents.EDIT,
+                logMessage: statesMessages.applicationEdited,
+              },
+            ],
+          },
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/InReview').then((val) =>
+                  Promise.resolve(val.InReview),
+                ),
+              actions: [
+                {
+                  event: DefaultEvents.EDIT,
+                  name: 'Breyta umsókn',
+                  type: 'primary',
+                },
+              ],
+              read: 'all',
+              write: 'all',
+            },
+          ],
+        },
+        on: {
+          [DefaultEvents.EDIT]: { target: States.DRAFT },
+        },
       },
     },
   },

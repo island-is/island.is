@@ -390,6 +390,35 @@ export const pensionSupplementFormMessage: MessageDir = {
       defaultMessage: 'Umsókn móttekin',
       description: 'Application received',
     },
+    alertTitle: {
+      id: 'ul.application:conclusionScreen.alertTitle',
+      defaultMessage:
+        'Umsókn um uppbót á lífeyri hefur verið send til Tryggingastofnunar',
+      description:
+        'An application for pension supplements has been sent to Tryggingastofnunar',
+    },
+    bulletList: {
+      id: `ul.application:conclusionScreen.bulletList#markdown`,
+      defaultMessage: `* Tryggingastofnun fer yfir umsóknina og staðfestir að allar upplýsingar eru réttar.\n* Ef þörf er á er kallað eftir frekari upplýsingum/gögnum.\n* Þegar öll nauðsynleg gögn hafa borist, fer Tryggingastofnun yfir umsókn og er afstaða tekin til uppbóta á lífeyri.`,
+      description: 'BulletList',
+    },
+    nextStepsLabel: {
+      id: 'ul.application:conclusionScreen.nextStepsLabel',
+      defaultMessage: 'Hvað gerist næst?',
+      description: 'What happens next?',
+    },
+    nextStepsText: {
+      id: 'ul.application:conclusionScreen.nextStepsText',
+      defaultMessage:
+        'Hjá Tryggingastofnun verður farið yfir umsóknina. Ef þörf er á er kallað eftir frekari upplýsingum/gögnum. Þegar öll nauðsynleg gögn hafa borist er afstaða tekin til uppbóta á lífeyri.',
+      description:
+        'The application will be reviewed at the Insurance Agency. If needed, additional information/data is requested. Once all the necessary data have been received, a position is taken on the pension supplement.',
+    },
+    buttonsViewApplication: {
+      id: 'ul.application:conclusionScreen.buttonsViewApplication',
+      defaultMessage: 'Skoða umsókn',
+      description: 'View application',
+    },
   }),
 
   months: defineMessages({
@@ -484,5 +513,47 @@ export const validatorErrorMessages = defineMessages({
     id: 'ul.application:fileUpload.required.attachment',
     defaultMessage: 'Þú þarft að hlaða upp viðhenginu til að halda áfram.',
     description: 'Error message when the attachment file is not provided.',
+  },
+})
+
+export const inReviewFormMessages = defineMessages({
+  formTitle: {
+    id: 'ul.application:inReview.form.title',
+    defaultMessage: 'Umsókn um uppbót á lífeyri',
+    description: 'Pension supplement',
+  },
+})
+
+export const statesMessages = defineMessages({
+  draftDescription: {
+    id: 'ul.application:draft.description',
+    defaultMessage: 'Þú hefur útbúið drög að umsókn.',
+    description: 'Description of the state - draft',
+  },
+  applicationSent: {
+    id: 'ul.application:applicationSent',
+    defaultMessage: 'Umsókn send',
+    description: 'History application sent',
+  },
+  tryggingastofnunSubmittedTitle: {
+    id: 'ul.application:tryggingastofnunSubmittedTitle',
+    defaultMessage: 'Umsókn hefur verið send til Tryggingastofnunnar',
+    description: 'The application has been sent to Tryggingastofnunnar',
+  },
+  tryggingastofnunSubmittedContent: {
+    id: 'ul.application:tryggingastofnunSubmittedContent',
+    defaultMessage:
+      'Umsóknin þín er í bið eftir yfirferð. Hægt er að breyta umsókn þar til umsókn er komin í yfirferð.',
+    description: 'Application waiting for review',
+  },
+  applicationEdited: {
+    id: 'ul.application:applicationEdited',
+    defaultMessage: 'Umsókn breytt',
+    description: 'Application edited',
+  },
+  pendingTag: {
+    id: 'ul.application:pending.tag',
+    defaultMessage: 'Í bið',
+    description: 'Pending',
   },
 })
