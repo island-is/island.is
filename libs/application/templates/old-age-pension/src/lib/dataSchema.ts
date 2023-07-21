@@ -7,8 +7,9 @@ import {
   TaxLevelOptions,
   YES,
 } from './constants'
-import { oldAgePensionFormMessage } from './messages'
+import { errorMessages } from './messages'
 import addYears from 'date-fns/addYears'
+import { formatBankInfo } from './oldAgePensionUtils'
 
 export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
@@ -31,12 +32,14 @@ export const dataSchema = z.object({
         return (
           phoneNumber &&
           phoneNumber.isValid() &&
-          phoneNumberStartStr.some((substr) =>
-            phoneNumber.nationalNumber.startsWith(substr),
-          )
+          (phoneNumber.country === 'IS'
+            ? phoneNumberStartStr.some((substr) =>
+                phoneNumber.nationalNumber.startsWith(substr),
+              )
+            : true)
         )
       },
-      { params: oldAgePensionFormMessage.errors.phoneNumber },
+      { params: errorMessages.phoneNumber },
     ),
   }),
   residenceHistory: z.object({
@@ -54,7 +57,7 @@ export const dataSchema = z.object({
         const selectedDate = new Date(p.year + p.month)
         return startDate < selectedDate
       },
-      { params: oldAgePensionFormMessage.errors.period },
+      { params: errorMessages.period },
     ),
   onePaymentPerYear: z.object({
     question: z.enum([YES, NO]),
@@ -67,7 +70,13 @@ export const dataSchema = z.object({
     children: z.enum([YES, NO]),
   }),
   paymentInfo: z.object({
-    bank: z.string(),
+    bank: z.string().refine(
+      (b) => {
+        const bankAccount = formatBankInfo(b)
+        return bankAccount.length === 12 // 4 (bank) + 2 (ledger) + 6 (number)
+      },
+      { params: errorMessages.bank },
+    ),
     spouseAllowance: z.enum([YES, NO]),
     spouseAllownaceUsage: z.string().optional(),
     personalAllowance: z.enum([YES, NO]),
