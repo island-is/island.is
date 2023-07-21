@@ -10,6 +10,8 @@ import { getApplicationExternalData } from '../../../lib/pensionSupplementUtils'
 import { pensionSupplementFormMessage } from '../../../lib/messages'
 import { ReviewGroupProps } from './props'
 import { useStatefulAnswers } from '../../../hooks/useStatefulAnswers'
+import { formatNumber } from 'libphonenumber-js'
+import { useFormContext } from 'react-hook-form'
 
 export const BaseInformation = ({
   application,
@@ -27,6 +29,9 @@ export const BaseInformation = ({
   )
 
   const { formatMessage } = useLocale()
+  const { getValues } = useFormContext()
+
+  const phonenumber = getValues('applicantInfo.phonenumber')
 
   return (
     <ReviewGroup
@@ -68,7 +73,6 @@ export const BaseInformation = ({
                 name="applicantInfo.phonenumber"
                 defaultValue={applicantPhonenumber}
                 backgroundColor="blue"
-                placeholder="000-0000"
                 label={formatMessage(
                   pensionSupplementFormMessage.confirm.phonenumber,
                 )}
@@ -119,7 +123,7 @@ export const BaseInformation = ({
             label={formatMessage(
               pensionSupplementFormMessage.confirm.phonenumber,
             )}
-            value={applicantPhonenumber}
+            value={formatNumber(phonenumber, 'International')}
             error={hasError('applicantInfo.phonenumber')}
           />
         </GridColumn>

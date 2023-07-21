@@ -66,7 +66,6 @@ export const PensionSupplementForm: Form = buildForm({
                   id: 'applicantInfo.phonenumber',
                   title: pensionSupplementFormMessage.info.applicantPhonenumber,
                   width: 'half',
-                  placeholder: '000-0000',
                   required: true,
                   defaultValue: (application: Application) => {
                     const data = application.externalData.userProfile
