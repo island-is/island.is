@@ -52,18 +52,6 @@ export const FieldAlertMessage: FC<FieldBaseProps & FieldAlertMessageProps> = ({
             : undefined
         }
       />
-      {/* Add empty RadioFormField so we could bypass issue with Alertmessage without ID */}
-      <RadioFormField
-        field={{
-          id: id,
-          type: FieldTypes.RADIO,
-          component: FieldComponents.RADIO,
-          title,
-          children: undefined,
-          options: [],
-        }}
-        application={application}
-      />
     </Box>
   )
 }
@@ -112,18 +100,6 @@ export const EarlyRetirementWarning: FC<
           </Stack>
         </Box>
       </Box>
-      {/* Add empty RadioFormField so we could bypass issue with Warning message without ID */}
-      <RadioFormField
-        field={{
-          id: id,
-          type: FieldTypes.RADIO,
-          component: FieldComponents.RADIO,
-          title,
-          children: undefined,
-          options: [],
-        }}
-        application={application}
-      />
     </Box>
   )
 }
