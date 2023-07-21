@@ -1,6 +1,7 @@
 import { BrowserContext, expect, Page, test } from '@playwright/test'
 import { icelandicAndNoPopupUrl, urls } from '../../../../support/urls'
 import { session } from '../../../../support/session'
+import { sleep } from '../../../../support/utils'
 
 test.describe('Consultation portal authenticated', () => {
   let context: BrowserContext
@@ -11,13 +12,15 @@ test.describe('Consultation portal authenticated', () => {
     context = await session({
       browser: browser,
       storageState: 'consultation-auth.json',
-      idsLoginOn: true,
+      idsLoginOn: { nextAuth: { nextAuthRoot: 'samradsgatt' } },
       phoneNumber: '0103019',
       homeUrl,
-      authTriggerUrl: '/minarsidur',
+      authTrigger: async (page) => {
+        await page.goto(homeUrl)
+        await page.getByTestId('menu-login-btn').click()
+        return page.url()
+      },
     })
-    const page = await context.newPage()
-    await page.goto(icelandicAndNoPopupUrl(homeUrl))
   })
 
   test.afterAll(async () => {
