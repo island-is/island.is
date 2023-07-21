@@ -39,7 +39,6 @@ import {
 } from '@island.is/api/domains/communications'
 import { IdentityModule } from '@island.is/api/domains/identity'
 import { NationalRegistryV3ClientConfig } from '@island.is/clients/national-registry-v3'
-import { NationalRegistryV3Module } from '@island.is/api/domains/national-registry-v3'
 import {
   GenericAdrLicenseConfig,
   GenericDisabilityLicenseConfig,
@@ -126,6 +125,7 @@ import { GraphqlOptionsFactory } from './graphql-options.factory'
 import { HealthController } from './health.controller'
 import { GraphQLConfig } from './graphql.config'
 import { RskRelationshipsClientConfig } from '@island.is/clients-rsk-relationships'
+import { NationalRegistrySoffiaClientConfig } from '@island.is/clients/national-registry-v1'
 
 const environment = getConfig
 
@@ -201,14 +201,14 @@ const environment = getConfig
     }),
     CmsTranslationsModule,
     TerminusModule,
-    NationalRegistryModule.register({
+    /*NationalRegistryModule.register({
       nationalRegistry: {
         baseSoapUrl: environment.nationalRegistry.baseSoapUrl!,
         user: environment.nationalRegistry.user!,
         password: environment.nationalRegistry.password!,
         host: environment.nationalRegistry.host!,
       },
-    }),
+    }),*/
     HealthInsuranceModule.register({
       clientV2Config: {
         xRoadBaseUrl: environment.healthInsuranceV2.xRoadBaseUrl!,
@@ -254,8 +254,8 @@ const environment = getConfig
     AssetsModule,
     PassportModule,
     AirDiscountSchemeModule,
+    NationalRegistryModule,
     NationalRegistryXRoadModule,
-    NationalRegistryV3Module,
     ApiDomainsPaymentModule,
     PaymentScheduleModule,
     ProblemModule,
@@ -282,6 +282,7 @@ const environment = getConfig
         AirDiscountSchemeClientConfig,
         ConsultationPortalClientConfig,
         AssetsClientConfig,
+        NationalRegistrySoffiaClientConfig,
         NationalRegistryV3ClientConfig,
         FirearmLicenseClientConfig,
         DisabilityLicenseClientConfig,

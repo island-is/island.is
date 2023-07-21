@@ -1,8 +1,8 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql'
 import { NationalRegistryAddress } from './nationalRegistryAddress.model'
 
-@ObjectType('NationalRegistryXRoadFamilyMemberInfo')
-export class NationalRegistryFamilyMemberInfo {
+@ObjectType()
+export class NationalRegistryFamilyMember {
   @Field(() => ID)
   nationalId!: string
 
