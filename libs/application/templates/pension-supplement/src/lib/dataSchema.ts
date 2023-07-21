@@ -4,6 +4,7 @@ import { NO, YES } from './constants'
 import { errorMessages } from './messages'
 import { ApplicationReason } from './constants'
 import addYears from 'date-fns/addYears'
+import { formatBankInfo } from './pensionSupplementUtils'
 
 export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
@@ -32,7 +33,10 @@ export const dataSchema = z.object({
   }),
   paymentInfo: z.object({
     bank: z.string().refine(
-      (b) => b.length === 12, // 4 (bank) + 2 (ledger) + 6 (number)
+      (b) => {
+        const bankAccount = formatBankInfo(b)
+        return bankAccount.length === 12 // 4 (bank) + 2 (ledger) + 6 (number)
+      },
       { params: errorMessages.bank },
     ),
   }),
