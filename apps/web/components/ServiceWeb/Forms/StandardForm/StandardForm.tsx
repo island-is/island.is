@@ -27,14 +27,13 @@ import {
   LoadingDots,
   Checkbox,
 } from '@island.is/island-ui/core'
-import { Organizations, SupportCategory } from '@island.is/api/schema'
+import { Organizations, SupportCategory } from '@island.is/web/graphql/schema'
 import { GET_SUPPORT_SEARCH_RESULTS_QUERY } from '@island.is/web/screens/queries'
 import {
   ContentLanguage,
   GetSupportSearchResultsQuery,
   GetSupportSearchResultsQueryVariables,
   SearchableContentTypes,
-  SearchableTags,
   SupportQna,
 } from '@island.is/web/graphql/schema'
 import { useNamespace } from '@island.is/web/hooks'
@@ -66,10 +65,6 @@ interface StandardFormProps {
   stateEntities: string[]
   formNamespace: FormNamespace
 }
-
-const mannaudstorgTag = [
-  { key: 'mannaudstorg', type: SearchableTags.Organization },
-]
 
 const labels: Record<string, string> = {
   syslumadur: 'Sýslumannsembætti',
