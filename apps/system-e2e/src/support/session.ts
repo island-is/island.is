@@ -63,7 +63,7 @@ async function ensureIDSsession(
       const idsPage = await context.newPage()
       if (typeof authTrigger === 'string') await idsPage.goto(authTrigger)
       else authTrigger = await authTrigger(idsPage)
-      await idsLogin(idsPage, phoneNumber, homeUrl, delegation)
+      await idsLogin(idsPage, phoneNumber, authTrigger, delegation)
       await idsPage.close()
     } else {
       debug(`IDS(next-auth) session exists`)
