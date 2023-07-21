@@ -263,7 +263,14 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
           if (newOrder) setSelectedOrderOption(newOrder)
         }
       } else {
-        updatedQueryParams.order = selectedOrderOption.value as string
+        if (
+          !(
+            selectedOrderOption?.value === orderByOptions[0].value &&
+            !updatedQueryParams.order
+          )
+        ) {
+          updatedQueryParams.order = selectedOrderOption.value as string
+        }
       }
 
       // Update filter categories state and query params
