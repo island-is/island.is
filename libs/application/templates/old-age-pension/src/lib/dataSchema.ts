@@ -49,7 +49,6 @@ export const dataSchema = z.object({
     .object({
       year: z.string(),
       month: z.string(),
-      alert: z.string().optional(),
     })
     .refine(
       (p) => {
@@ -71,7 +70,6 @@ export const dataSchema = z.object({
     children: z.enum([YES, NO]),
   }),
   paymentInfo: z.object({
-    alert: z.string().optional(),
     bank: z.string().refine(
       (b) => {
         const bankAccount = formatBankInfo(b)

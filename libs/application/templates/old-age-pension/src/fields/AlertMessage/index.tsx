@@ -2,15 +2,9 @@ import { AlertMessage, AlertMessageType } from '@island.is/island-ui/core'
 import React, { FC } from 'react'
 import { useLocale } from '@island.is/localization'
 import { formatText } from '@island.is/application/core'
-import {
-  FieldBaseProps,
-  FieldComponents,
-  FieldTypes,
-} from '@island.is/application/types'
+import { FieldBaseProps } from '@island.is/application/types'
 import { Box, Icon, Stack, Link, Text } from '@island.is/island-ui/core'
 import * as styles from './earlyRetirementWarning.css'
-import { useFormContext } from 'react-hook-form'
-import { RadioFormField } from '@island.is/application/ui-fields'
 
 type FieldAlertMessageProps = {
   field: {
@@ -35,11 +29,9 @@ export const FieldAlertMessage: FC<FieldBaseProps & FieldAlertMessageProps> = ({
   application,
   field,
 }) => {
-  const { title, description, props, id } = field
+  const { title, description, props } = field
   const { formatMessage } = useLocale()
   const { type } = props
-  const { setValue } = useFormContext()
-  setValue(id, 'true')
 
   return (
     <Box marginBottom={[4, 4, 5]}>
@@ -59,11 +51,9 @@ export const FieldAlertMessage: FC<FieldBaseProps & FieldAlertMessageProps> = ({
 export const EarlyRetirementWarning: FC<
   FieldBaseProps & DescriptionLinkProps
 > = ({ application, field }) => {
-  const { props, title, id } = field
+  const { props, title } = field
   const { formatMessage } = useLocale()
   const { descriptionFirstPart, descriptionSecondPart, linkName, url } = props
-  const { setValue } = useFormContext()
-  setValue(id, 'true')
 
   return (
     <Box
