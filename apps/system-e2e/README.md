@@ -1,6 +1,17 @@
 # System Testing
 
-Welcome to testing. Jump to the section you need below.
+Welcome to testing. For your convenience each section has a TL;DR, so you can quickly get started.
+
+## Test environment
+
+System smoke tests are run against our live [dev web](https://beta.dev01.devland.is/), on every commit to `main`.
+This means that changes done on the dev web will be reflected in the system tests.
+E.g. if you change a users preferred locale, your test will break if it's not language-agnostic.
+To combat this we have implemented `disablers.disable*` and `urls.icelandicAndNoPopup`.
+We plan on phasing these out for mocking with Mountebank and test servers.
+
+System acceptance tests will be running in their own isolated dev-environment, daily.
+We haven't yet implemented running these tests regularly, and require manual start, for now.
 
 # 🏃 Running tests
 
@@ -8,8 +19,9 @@ When testing an app/project you need to first start the app, then test it with P
 
 ## ⚡ TL;DR
 
+- Set up Playwright: `yarn install && yarn schemas && yarn playwright install`
 - Start the application: `yarn dev-init <app> && yarn dev <app>`
-- Test the app: `yarn playwright test 'system-e2e/.*/<name-of-your-app>'`
+- Test the app: `yarn system-e2e <name-of-your-app>`
 
 ## 👨‍🍳 Prepare the app
 
@@ -33,16 +45,16 @@ However, not all projects support this, or are incomplete in this setup. If this
 
 First time you run Playwright, you'll need to set up its runtime environment with `yarn playwright install`. Then, you can list tests with the `--list` flag or run tests in various ways:
 
-- Using playwright directly: `yarn playwright test '<name-of-your-app>/.*/<smoke|acceptance>'`
-- Specific test file: `yarn playwright test '<path/to/your/test/file>'`
-- Using a pattern (regex): `yarn playwright test '<pattern>'`
+- Using playwright directly: `yarn playwright test -c apps/system-e2e '<name-of-your-app>/.*/<smoke|acceptance>'`
+- Specific test file: `yarn system-e2e '<path/to/your/test/file>'`
+- Using a path pattern (regex): `yarn system-e2e '<pattern>'`
 
 {% hint style="example" %}
 
-- smoke: `yarn playwright test 'application-system-form/smoke'`
-- acceptance: `yarn playwright test 'service-portal/acceptance'`
-- both: `yarn playwright test 'system-e2e/.*/web'`
-- pattern `yarn playwright test 'system-e2e/.*/s?port?'`
+- smoke: `yarn system-e2e 'application-system-form/smoke'`
+- acceptance: `yarn system-e2e 'service-portal/acceptance'`
+- both: `yarn system-e2e 'system-e2e/.*/web'`
+- pattern `yarn system-e2e 'system-e2e/.*/s?port?'`
 
 Note that the pattern is a RegEx string in quotes.
 {% endhint %}
