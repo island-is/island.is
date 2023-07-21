@@ -1,7 +1,7 @@
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { z } from 'zod'
 import { NO, YES, HouseholdSupplementHousing } from './constants'
-import { householdSupplementFormMessage } from './messages'
+import { errorMessages } from './messages'
 import addYears from 'date-fns/addYears'
 
 export const dataSchema = z.object({
@@ -19,16 +19,21 @@ export const dataSchema = z.object({
         return (
           phoneNumber &&
           phoneNumber.isValid() &&
-          phoneNumberStartStr.some((substr) =>
-            phoneNumber.nationalNumber.startsWith(substr),
-          )
+          (phoneNumber.country === 'IS'
+            ? phoneNumberStartStr.some((substr) =>
+                phoneNumber.nationalNumber.startsWith(substr),
+              )
+            : true)
         )
       },
-      { params: householdSupplementFormMessage.errors.phonenumber },
+      { params: errorMessages.phoneNumber },
     ),
   }),
   paymentInfo: z.object({
-    bank: z.string(),
+    bank: z.string().refine(
+      (b) => b.length === 12, // 4 (bank) + 2 (ledger) + 6 (number),
+      { params: errorMessages.bank },
+    ),
   }),
   householdSupplement: z.object({
     housing: z.enum([
@@ -49,7 +54,7 @@ export const dataSchema = z.object({
         const selectedDate = new Date(p.year + p.month)
         return startDate < selectedDate
       },
-      { params: householdSupplementFormMessage.errors.period },
+      { params: errorMessages.period },
     ),
 })
 

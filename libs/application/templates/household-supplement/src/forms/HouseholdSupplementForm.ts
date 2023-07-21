@@ -72,7 +72,6 @@ export const HouseholdSupplementForm: Form = buildForm({
                   title:
                     householdSupplementFormMessage.info.applicantPhonenumber,
                   width: 'half',
-                  placeholder: '000-0000',
                   required: true,
                   defaultValue: (application: Application) => {
                     const data = application.externalData.userProfile

@@ -10,6 +10,8 @@ import { getApplicationExternalData } from '../../../lib/householdSupplementUtil
 import { householdSupplementFormMessage } from '../../../lib/messages'
 import { ReviewGroupProps } from './props'
 import { useStatefulAnswers } from '../../../hooks/useStatefulAnswers'
+import { formatNumber } from 'libphonenumber-js'
+import { useFormContext } from 'react-hook-form'
 
 export const BaseInformation = ({
   application,
@@ -27,6 +29,9 @@ export const BaseInformation = ({
   )
 
   const { formatMessage } = useLocale()
+  const { getValues } = useFormContext()
+
+  const phonenumber = getValues('applicantInfo.phonenumber')
 
   return (
     <ReviewGroup
@@ -47,6 +52,7 @@ export const BaseInformation = ({
                 name="applicantInfo.email"
                 defaultValue={applicantEmail}
                 type="email"
+                backgroundColor="blue"
                 label={formatMessage(
                   householdSupplementFormMessage.confirm.email,
                 )}
@@ -66,7 +72,7 @@ export const BaseInformation = ({
                 id="applicantInfo.phonenumber"
                 name="applicantInfo.phonenumber"
                 defaultValue={applicantPhonenumber}
-                placeholder="000-0000"
+                backgroundColor="blue"
                 label={formatMessage(
                   householdSupplementFormMessage.confirm.phonenumber,
                 )}
@@ -117,7 +123,7 @@ export const BaseInformation = ({
             label={formatMessage(
               householdSupplementFormMessage.confirm.phonenumber,
             )}
-            value={applicantPhonenumber}
+            value={formatNumber(phonenumber, 'International')}
             error={hasError('applicantInfo.phonenumber')}
           />
         </GridColumn>

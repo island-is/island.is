@@ -1,4 +1,8 @@
-import { DataValue, ReviewGroup } from '@island.is/application/ui-components'
+import {
+  DataValue,
+  ReviewGroup,
+  formatBankInfo,
+} from '@island.is/application/ui-components'
 import { GridColumn, GridRow } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 
@@ -26,7 +30,7 @@ export const Payment = ({
             label={formatMessage(
               householdSupplementFormMessage.info.paymentBank,
             )}
-            value={bank}
+            value={formatBankInfo(bank)}
           />
         </GridColumn>
       </GridRow>

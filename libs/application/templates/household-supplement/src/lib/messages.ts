@@ -462,20 +462,30 @@ export const householdSupplementFormMessage: MessageDir = {
       description: 'December',
     },
   }),
-
-  errors: defineMessages({
-    phoneNumber: {
-      id: 'hs.application:error.phonenumber',
-      defaultMessage: 'Símanúmerið þarf að vera gilt.',
-      description: 'The phone number must be valid.',
-    },
-    period: {
-      id: 'hs.application:error.period',
-      defaultMessage: 'Tímabil þarf að vera gilt.',
-      description: 'The period must be valid.',
-    },
-  }),
 }
+
+export const errorMessages = defineMessages({
+  phoneNumber: {
+    id: 'hs.application:error.phonenumber',
+    defaultMessage: 'Símanúmerið þarf að vera gilt.',
+    description: 'The phone number must be valid.',
+  },
+  bank: {
+    id: 'hs.application:error.bank',
+    defaultMessage: 'Ógilt bankanúmer. Þarf að vera á forminu: 0000-11-222222',
+    description: 'Invalid bank account. Has to be formatted: 0000-11-222222',
+  },
+  applicationReason: {
+    id: 'hs.application:error.application.reason',
+    defaultMessage: 'Skylda að velja einhverja ástæðu',
+    description: 'Required to choose some reason',
+  },
+  period: {
+    id: 'hs.application:error.period',
+    defaultMessage: 'Tímabil þarf að vera gilt.',
+    description: 'The period must be valid.',
+  },
+})
 
 export const inReviewFormMessages = defineMessages({
   formTitle: {
