@@ -464,8 +464,7 @@ export const errorMessages = defineMessages({
   },
   bank: {
     id: 'ul.application:error.bank',
-    defaultMessage:
-      'Ógilt bankanúmer. Þarf að vera á forminu: 0000-11-222222',
+    defaultMessage: 'Ógilt bankanúmer. Þarf að vera á forminu: 0000-11-222222',
     description: 'Invalid bank account. Has to be formatted: 0000-11-222222',
   },
   applicationReason: {

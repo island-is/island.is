@@ -116,15 +116,6 @@ export function getApplicationExternalData(
   }
 }
 
-export const formatBankInfo = (bankInfo: string) => {
-  const formattedBankInfo = bankInfo.replace(/[^0-9]/g, '')
-  if (formattedBankInfo && formattedBankInfo.length === 12) {
-    return formattedBankInfo
-  }
-
-  return bankInfo
-}
-
 export function getApplicationReasonOptions() {
   const options: Option[] = [
     {

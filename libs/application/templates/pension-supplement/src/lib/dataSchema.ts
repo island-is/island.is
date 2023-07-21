@@ -2,7 +2,6 @@ import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { z } from 'zod'
 import { NO, YES } from './constants'
 import { errorMessages } from './messages'
-import { formatBankInfo } from './pensionSupplementUtils'
 import { ApplicationReason } from './constants'
 import addYears from 'date-fns/addYears'
 
@@ -21,9 +20,11 @@ export const dataSchema = z.object({
         return (
           phoneNumber &&
           phoneNumber.isValid() &&
-          phoneNumberStartStr.some((substr) =>
-            phoneNumber.nationalNumber.startsWith(substr),
-          )
+          (phoneNumber.country === 'IS'
+            ? phoneNumberStartStr.some((substr) =>
+                phoneNumber.nationalNumber.startsWith(substr),
+              )
+            : true)
         )
       },
       { params: errorMessages.phoneNumber },
@@ -31,11 +32,8 @@ export const dataSchema = z.object({
   }),
   paymentInfo: z.object({
     bank: z.string().refine(
-      (b) => {
-        const bankAccount = formatBankInfo(b)
-        return bankAccount.length === 12 // 4 (bank) + 2 (ledger) + 6 (number)
-      },
-      { params:  errorMessages.bank },
+      (b) => b.length === 12, // 4 (bank) + 2 (ledger) + 6 (number)
+      { params: errorMessages.bank },
     ),
   }),
   applicationReason: z
@@ -51,7 +49,7 @@ export const dataSchema = z.object({
       ]),
     )
     .refine((a) => a.length !== 0, {
-      params:  errorMessages.applicationReason,
+      params: errorMessages.applicationReason,
     }),
   period: z
     .object({
@@ -65,7 +63,7 @@ export const dataSchema = z.object({
         const selectedDate = new Date(p.year + p.month)
         return startDate < selectedDate
       },
-      { params:  errorMessages.period },
+      { params: errorMessages.period },
     ),
 })
 
