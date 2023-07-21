@@ -98,6 +98,7 @@ export const HouseholdSupplementForm: Form = buildForm({
                     title:
                       householdSupplementFormMessage.info.paymentAlertTitle,
                     component: 'FieldAlertMessage',
+                    doesNotRequireAnswer: true,
                     description:
                       householdSupplementFormMessage.info.paymentAlertMessage,
                   },
@@ -138,6 +139,7 @@ export const HouseholdSupplementForm: Form = buildForm({
                       householdSupplementFormMessage.info
                         .householdSupplementAlertTitle,
                     component: 'FieldAlertMessage',
+                    doesNotRequireAnswer: true,
                     description:
                       householdSupplementFormMessage.info
                         .householdSupplementAlertDescription,
