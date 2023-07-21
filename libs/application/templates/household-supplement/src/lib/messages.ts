@@ -475,11 +475,6 @@ export const errorMessages = defineMessages({
     defaultMessage: 'Ógilt bankanúmer. Þarf að vera á forminu: 0000-11-222222',
     description: 'Invalid bank account. Has to be formatted: 0000-11-222222',
   },
-  applicationReason: {
-    id: 'hs.application:error.application.reason',
-    defaultMessage: 'Skylda að velja einhverja ástæðu',
-    description: 'Required to choose some reason',
-  },
   period: {
     id: 'hs.application:error.period',
     defaultMessage: 'Tímabil þarf að vera gilt.',
