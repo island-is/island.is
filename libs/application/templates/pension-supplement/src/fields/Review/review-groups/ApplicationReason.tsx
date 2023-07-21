@@ -32,6 +32,7 @@ export const ApplicationReason = ({
 
   return (
     <ReviewGroup
+      isLast
       isEditable={editable}
       editAction={() => goToScreen?.('applicationReason')}
     >
