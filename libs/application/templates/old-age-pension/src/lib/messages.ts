@@ -1140,6 +1140,12 @@ export const oldAgePensionFormMessage: MessageDir = {
       defaultMessage: 'Tímabil þarf að vera gilt.',
       description: 'The period must be valid.',
     },
+    bank: {
+      id: 'oap.application:error.bank',
+      defaultMessage:
+        'Ógilt bankanúmer. Þarf að vera á forminu: 0000-11-222222',
+      description: 'Invalid bank account. Has to be formatted: 0000-11-222222',
+    },
   }),
 }
 

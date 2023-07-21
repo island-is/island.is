@@ -9,6 +9,7 @@ import {
 } from './constants'
 import { oldAgePensionFormMessage } from './messages'
 import addYears from 'date-fns/addYears'
+import { formatBankInfo } from './oldAgePensionUtils'
 
 export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
@@ -46,6 +47,7 @@ export const dataSchema = z.object({
     .object({
       year: z.string(),
       month: z.string(),
+      alert: z.string().optional(),
     })
     .refine(
       (p) => {
@@ -67,7 +69,14 @@ export const dataSchema = z.object({
     children: z.enum([YES, NO]),
   }),
   paymentInfo: z.object({
-    bank: z.string(),
+    alert: z.string().optional(),
+    bank: z.string().refine(
+      (b) => {
+        const bankAccount = formatBankInfo(b)
+        return bankAccount.length === 12 // 4 (bank) + 2 (ledger) + 6 (number)
+      },
+      { params: oldAgePensionFormMessage.errors.bank },
+    ),
     spouseAllowance: z.enum([YES, NO]),
     spouseAllownaceUsage: z.string().optional(),
     personalAllowance: z.enum([YES, NO]),

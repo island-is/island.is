@@ -47,7 +47,6 @@ const EmployersRatioMonthly: FC<RepeaterProps & FieldBaseProps> = ({
     }
   }, [rawEmployers])
 
-
   useEffect(() => {
     setValue(
       `employers[${rawEmployers.length - 1}].${fieldId}`,
