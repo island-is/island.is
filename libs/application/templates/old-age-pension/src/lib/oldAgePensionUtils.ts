@@ -1,5 +1,5 @@
 import { MessageDescriptor } from 'react-intl'
-import { formatText, getValueViaPath } from '@island.is/application/core'
+import { getValueViaPath } from '@island.is/application/core'
 import {
   ConnectedApplications,
   HouseholdSupplementHousing,
@@ -30,9 +30,6 @@ import addYears from 'date-fns/addYears'
 import addMonths from 'date-fns/addMonths'
 import addDays from 'date-fns/addDays'
 import { CombinedResidenceHistory, Employer, ChildPensionRow } from '../types'
-import React from 'react'
-import { useLocale } from '@island.is/localization'
-import { getCountryByCode } from '@island.is/shared/utils'
 
 interface FileType {
   key: string
@@ -583,6 +580,7 @@ export function getYesNOOptions() {
       label: oldAgePensionFormMessage.shared.no,
     },
   ]
+
   return options
 }
 
@@ -601,6 +599,7 @@ export function getTaxOptions() {
       label: oldAgePensionFormMessage.payment.taxSecondLevel,
     },
   ]
+
   return options
 }
 
@@ -635,68 +634,6 @@ function residenceMapper(
   }
 
   return residence
-}
-
-export function residenceHistoryTableData(application: Application) {
-  const { lang, formatMessage } = useLocale()
-  const { residenceHistory } = getApplicationExternalData(
-    application.externalData,
-  )
-
-  const combinedResidenceHistory = getCombinedResidenceHistory(
-    [...residenceHistory].reverse(),
-  )
-
-  const formattedData =
-    combinedResidenceHistory.map((history) => {
-      return {
-        country:
-          lang === 'is'
-            ? getCountryByCode(history.country)?.name_is
-            : getCountryByCode(history.country)?.name,
-        periodFrom: new Date(history.periodFrom).toLocaleDateString(),
-        periodTo:
-          history.periodTo !== '-'
-            ? new Date(history.periodTo).toLocaleDateString()
-            : '-',
-      }
-    }) ?? []
-
-  const data = React.useMemo(() => [...formattedData], [formattedData])
-
-  const columns = React.useMemo(
-    () => [
-      {
-        Header: formatText(
-          oldAgePensionFormMessage.residence.residenceHistoryCountryTableHeader,
-          application,
-          formatMessage,
-        ),
-        accessor: 'country',
-      } as const,
-      {
-        Header: formatText(
-          oldAgePensionFormMessage.residence
-            .residenceHistoryPeriodFromTableHeader,
-          application,
-          formatMessage,
-        ),
-        accessor: 'periodFrom',
-      } as const,
-      {
-        Header: formatText(
-          oldAgePensionFormMessage.residence
-            .residenceHistoryPeriodToTableHeader,
-          application,
-          formatMessage,
-        ),
-        accessor: 'periodTo',
-      } as const,
-    ],
-    [application, formatMessage],
-  )
-
-  return { data, columns }
 }
 
 // returns true if some of applicant children DOES NOT live with him.

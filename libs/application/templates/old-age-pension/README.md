@@ -2,11 +2,12 @@
 
 ## Description
 
-This application template allows applicants to apply for old age pension. 
+This application template allows applicants to apply for old age pension.
 
 ![](./assets/old-age-pension-flow-chart.png)
 
 ### States
+
 #### Prerequisites
 
 This state is a temporary state that all new applications will be created in. It has a short lifespan and is unlisted.
