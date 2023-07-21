@@ -45,7 +45,6 @@
     "api-domains-mortgage-certificate": "libs/api/domains/mortgage-certificate",
     "api-domains-municipalities-financial-aid": "libs/api/domains/municipalities-financial-aid",
     "api-domains-national-registry": "libs/api/domains/national-registry",
-    "api-domains-national-registry-v3": "libs/api/domains/national-registry-v3",
     "api-domains-national-registry-x-road": "libs/api/domains/national-registry-x-road",
     "api-domains-passport": "libs/api/domains/passport",
     "api-domains-payment": "libs/api/domains/payment",

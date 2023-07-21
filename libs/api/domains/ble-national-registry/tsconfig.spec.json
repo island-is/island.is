@@ -1,0 +1,19 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "../../../../dist/out-tsc",
+    "module": "commonjs",
+    "types": ["jest", "node"]
+  },
+  "include": [
+    "../national-registry/**/*.spec.ts",
+    "../national-registry/**/*.test.ts",
+    "../national-registry/**/*.spec.tsx",
+    "../national-registry/**/*.test.tsx",
+    "../national-registry/**/*.spec.js",
+    "../national-registry/**/*.test.js",
+    "../national-registry/**/*.spec.jsx",
+    "../national-registry/**/*.test.jsx",
+    "../national-registry/**/*.d.ts"
+  ]
+}

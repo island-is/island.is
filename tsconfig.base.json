@@ -146,9 +146,6 @@
       "@island.is/api/domains/national-registry": [
         "libs/api/domains/national-registry/src/index.ts"
       ],
-      "@island.is/api/domains/national-registry-v3": [
-        "libs/api/domains/national-registry-v3/src/index.ts"
-      ],
       "@island.is/api/domains/national-registry-x-road": [
         "libs/api/domains/national-registry-x-road/src/index.ts"
       ],

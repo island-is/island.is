@@ -1,6 +1,7 @@
+import { EinstaklingurDTOTru } from '@island.is/clients/national-registry-v3'
 import { Field, ObjectType } from '@nestjs/graphql'
 
-@ObjectType('NationalRegistryXRoadReligion')
+@ObjectType()
 export class NationalRegistryReligion {
   @Field(() => String, { nullable: true })
   name?: string | null

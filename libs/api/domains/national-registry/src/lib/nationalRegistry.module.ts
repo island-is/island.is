@@ -1,46 +1,32 @@
-import { DynamicModule } from '@nestjs/common'
-import { HttpModule } from '@nestjs/axios'
-
-import {
-  FamilyMemberResolver,
-  UserResolver,
-  ChildResolver,
-  CorrectionResolver,
-} from './graphql'
-import { NationalRegistryService } from './nationalRegistry.service'
+import { Module } from '@nestjs/common'
+import { NationalRegistryV3Service } from './services/v3/nationalRegistryV3.service'
+import { NationalRegistryV3ClientModule } from '@island.is/clients/national-registry-v3'
+import { NationalRegistryResolver } from './nationalRegistry.resolver'
+import { NationalRegistryXRoadService } from './services/v2/nationalRegistryXRoad.service'
+import { NationalRegistryClientModule } from '@island.is/clients/national-registry-v2'
 import {
   NationalRegistryApi,
-  NationalRegistryConfig,
+  NationalRegistrySoffiaClientConfig,
 } from '@island.is/clients/national-registry-v1'
+import { ConfigType } from '@nestjs/config'
 
-export interface Config {
-  nationalRegistry: NationalRegistryConfig
-}
-
-export class NationalRegistryModule {
-  static register(config: Config): DynamicModule {
-    return {
-      module: NationalRegistryModule,
-      imports: [
-        HttpModule.register({
-          timeout: 20000,
-        }),
-      ],
-      providers: [
-        NationalRegistryService,
-        UserResolver,
-        FamilyMemberResolver,
-        ChildResolver,
-        CorrectionResolver,
-        {
-          provide: NationalRegistryApi,
-          // See method doc for disable reason.
-          // eslint-disable-next-line local-rules/no-async-module-init
-          useFactory: async () =>
-            NationalRegistryApi.instantiateClass(config.nationalRegistry),
-        },
-      ],
-      exports: [NationalRegistryService],
-    }
-  }
-}
+@Module({
+  imports: [NationalRegistryV3ClientModule, NationalRegistryClientModule],
+  providers: [
+    NationalRegistryResolver,
+    NationalRegistryXRoadService,
+    NationalRegistryV3Service,
+    {
+      provide: NationalRegistryApi,
+      // See method doc for disable reason.
+      // eslint-disable-next-line local-rules/no-async-module-init
+      useFactory: async (
+        config: ConfigType<typeof NationalRegistrySoffiaClientConfig>,
+      ) => {
+        NationalRegistryApi.instantiateClass(config)
+      },
+      inject: [NationalRegistrySoffiaClientConfig.KEY],
+    },
+  ],
+})
+export class NationalRegistryModule {}
