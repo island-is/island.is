@@ -41,9 +41,7 @@ export const ComplaintsToAlthingiOmbudsmanSchema = z.object({
     email: z.string().optional(),
     phone: z.string().optional(),
     connection: z.string().refine((v) => v, { params: error.required }),
-    powerOfAttorney: z
-      .array(FileSchema)
-      .refine((v) => v && v.length > 0, { params: error.document }),
+    powerOfAttorney: z.array(FileSchema).optional(),
   }),
   complaintDescription: z.object({
     decisionDate: z.string().optional(),

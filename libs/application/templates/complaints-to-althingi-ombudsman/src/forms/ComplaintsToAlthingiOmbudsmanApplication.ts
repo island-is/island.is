@@ -361,19 +361,19 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
             }),
           ],
         }),
-        buildSubSection({
-          id: 'complaint.section.appeals',
-          title: complaintInformation.appealsSectionTitle,
-          children: [
-            buildRadioField({
-              id: 'appeals',
-              title: complaintInformation.appealsHeader,
-              width: 'half',
-              options: [
-                { label: shared.general.yes, value: YES },
-                { label: shared.general.no, value: NO },
-              ],
-            }),
+      ],
+    }),
+    buildSection({
+      id: 'complaint.section.appeals',
+      title: complaintInformation.appealsSectionTitle,
+      children: [
+        buildRadioField({
+          id: 'appeals',
+          title: complaintInformation.appealsHeader,
+          width: 'half',
+          options: [
+            { label: shared.general.yes, value: YES },
+            { label: shared.general.no, value: NO },
           ],
         }),
       ],
@@ -404,6 +404,17 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
               doesNotRequireAnswer: true,
               condition: (answers: FormValue) =>
                 answers.preexistingComplaint === YES,
+            }),
+            buildCustomField({
+              id:
+                'preexistingComplaint.preexistingComplaintAlternativeAlertMessage',
+              title: preexistingComplaint.alternativeAlertMessage.title,
+              component: 'FieldAlertMessage',
+              description:
+                preexistingComplaint.alternativeAlertMessage.description,
+              doesNotRequireAnswer: true,
+              condition: (answers: FormValue) =>
+                answers.preexistingComplaint === NO,
             }),
           ],
         }),
@@ -484,6 +495,7 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
       expandableHeader: confirmation.information.title,
       expandableIntro: confirmation.information.intro,
       expandableDescription: confirmation.information.bulletList,
+      sectionTitle: confirmation.general.title,
     }),
   ],
 })
