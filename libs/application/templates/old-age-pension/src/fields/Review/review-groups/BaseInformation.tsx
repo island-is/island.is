@@ -10,6 +10,8 @@ import { getApplicationExternalData } from '../../../lib/oldAgePensionUtils'
 import { oldAgePensionFormMessage } from '../../../lib/messages'
 import { ReviewGroupProps } from './props'
 import { useStatefulAnswers } from '../../../hooks/useStatefulAnswers'
+import { formatNumber } from 'libphonenumber-js'
+import { useFormContext } from 'react-hook-form'
 
 export const BaseInformation = ({
   application,
@@ -32,19 +34,22 @@ export const BaseInformation = ({
   } = getApplicationExternalData(application.externalData)
 
   const { formatMessage } = useLocale()
+  const { getValues } = useFormContext()
+
+  const phonenumber = getValues('applicantInfo.phonenumber')
 
   return (
     <ReviewGroup
       isEditable={editable}
       canCloseEdit={groupHasNoErrors([
         'applicantInfo.email',
-        'applicantInfo.phoneNumber',
+        'applicantInfo.phonenumber',
       ])}
       editChildren={
         <Box marginTop={[8, 8, 8, 0]}>
           <GridRow>
             <GridColumn
-              span={['12/12', '12/12', '12/12', '6/12']}
+              span={['12/12', '12/12', '12/12', '7/12']}
               paddingBottom={3}
             >
               <InputController
@@ -52,6 +57,7 @@ export const BaseInformation = ({
                 name="applicantInfo.email"
                 defaultValue={applicantEmail}
                 type="email"
+                backgroundColor="blue"
                 label={formatMessage(oldAgePensionFormMessage.review.email)}
                 onChange={(e) =>
                   setStateful((prev) => ({
@@ -62,12 +68,14 @@ export const BaseInformation = ({
                 error={hasError('applicantInfo.email')}
               />
             </GridColumn>
-            <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
+          </GridRow>
+          <GridRow>
+            <GridColumn span={['12/12', '12/12', '12/12', '7/12']}>
               <PhoneInputController
                 id="applicantInfo.phonenumber"
                 name="applicantInfo.phonenumber"
                 defaultValue={applicantPhonenumber}
-                placeholder="000-0000"
+                backgroundColor="blue"
                 label={formatMessage(
                   oldAgePensionFormMessage.review.phonenumber,
                 )}
@@ -130,7 +138,7 @@ export const BaseInformation = ({
         <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
           <DataValue
             label={formatMessage(oldAgePensionFormMessage.review.phonenumber)}
-            value={applicantPhonenumber}
+            value={formatNumber(phonenumber, 'International')}
             error={hasError('applicantInfo.phonenumber')}
           />
         </GridColumn>
