@@ -1,6 +1,6 @@
 export { FieldAlertMessage, EarlyRetirementWarning } from './AlertMessage'
 export { Period } from './Period'
-export { ResidenceHistoryTable } from './ResidenceHistory'
+export { ResidenceHistory } from './ResidenceHistory'
 export { default as ChildPensionTable } from './ChildPension'
 export { Review } from './Review'
 export { default as EmployersOverview } from './EmployersOverview'

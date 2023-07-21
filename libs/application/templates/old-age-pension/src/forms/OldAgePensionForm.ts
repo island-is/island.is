@@ -345,7 +345,7 @@ export const OldAgePensionForm: Form = buildForm({
                   id: 'residenceHistory.table',
                   doesNotRequireAnswer: true,
                   title: '',
-                  component: 'ResidenceHistoryTable',
+                  component: 'ResidenceHistory',
                   condition: (_, externalData) => {
                     const { residenceHistory } = getApplicationExternalData(
                       externalData,
