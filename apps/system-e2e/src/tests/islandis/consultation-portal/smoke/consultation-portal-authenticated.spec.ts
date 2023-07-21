@@ -4,6 +4,8 @@ import { session } from '../../../../support/session'
 
 test.describe('Consultation portal authenticated', () => {
   let context: BrowserContext
+  let consultationContext: BrowserContext
+  const homeUrl = '/samradsgatt'
 
   test.beforeAll(async ({ browser }) => {
     context = await session({
@@ -11,10 +13,11 @@ test.describe('Consultation portal authenticated', () => {
       storageState: 'consultation-auth.json',
       idsLoginOn: true,
       phoneNumber: '0103019',
-      homeUrl: '/samradsgatt',
+      homeUrl,
       authTriggerUrl: '/minarsidur',
     })
     const page = await context.newPage()
+    await page.goto(icelandicAndNoPopupUrl(homeUrl))
   })
 
   test.afterAll(async () => {
