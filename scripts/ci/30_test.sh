@@ -6,7 +6,7 @@ set -euxo pipefail
 : "${DD_ENV:=dev}"
 : "${DD_SERVICE:=unit-test-action}"
 : "${DD_API_KEY:='<set-api-key>'}"
-: "${NODE_OPTIONS:=--max-old-space-size=8192}"
+: "${NODE_OPTIONS:=}"
 
 # Default to big old-space, and more options for testing, but allow overriding
 NODE_OPTIONS="--max-old-space-size=8193 --unhandled-rejections=warn --require=dd-trace/ci/init ${NODE_OPTIONS:-}"
