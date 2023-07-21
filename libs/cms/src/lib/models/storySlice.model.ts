@@ -3,6 +3,7 @@ import { CacheField } from '@island.is/nest/graphql'
 import { SystemMetadata } from '@island.is/shared/types'
 import { IStorySection } from '../generated/contentfulTypes'
 import { Story, mapStory } from './story.model'
+import { getArrayOrEmptyArrayFallback } from './utils'
 
 @ObjectType()
 export class StorySlice {
@@ -23,5 +24,5 @@ export const mapStorySlice = ({
   typename: 'StorySlice',
   id: sys.id,
   readMoreText: fields.readMoreText ?? '',
-  stories: (fields.stories ?? []).map(mapStory),
+  stories: getArrayOrEmptyArrayFallback(fields.stories).map(mapStory),
 })

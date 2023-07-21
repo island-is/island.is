@@ -6,6 +6,7 @@ import {
   BulletEntryUnion,
   mapBulletEntryUnion,
 } from '../unions/bulletEntry.union'
+import { getArrayOrEmptyArrayFallback } from './utils'
 
 @ObjectType()
 export class BulletListSlice {
@@ -22,5 +23,7 @@ export const mapBulletListSlice = ({
 }: IBigBulletList): SystemMetadata<BulletListSlice> => ({
   typename: 'BulletListSlice',
   id: sys.id,
-  bullets: (fields.bullets ?? []).map(mapBulletEntryUnion),
+  bullets: getArrayOrEmptyArrayFallback(fields.bullets).map(
+    mapBulletEntryUnion,
+  ),
 })

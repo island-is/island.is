@@ -3,6 +3,7 @@ import { CacheField } from '@island.is/nest/graphql'
 import { SystemMetadata } from '@island.is/shared/types'
 import { ITimeline } from '../generated/contentfulTypes'
 import { TimelineEvent, mapTimelineEvent } from './timelineEvent.model'
+import { getArrayOrEmptyArrayFallback } from './utils'
 
 @ObjectType()
 export class TimelineSlice {
@@ -30,6 +31,6 @@ export const mapTimelineSlice = ({
   id: sys.id,
   title: fields.title ?? '',
   intro: fields.intro ?? '',
-  events: (fields.events ?? []).map(mapTimelineEvent),
+  events: getArrayOrEmptyArrayFallback(fields.events).map(mapTimelineEvent),
   hasBorderAbove: fields.hasBorderAbove ?? true,
 })

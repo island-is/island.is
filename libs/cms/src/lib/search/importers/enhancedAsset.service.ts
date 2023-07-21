@@ -13,6 +13,7 @@ export class EnhancedAssetSyncService
     return entries.filter(
       (entry: Entry<any>): entry is IEnhancedAsset =>
         entry.sys.contentType.sys.id === 'enhancedAsset' &&
+        entry.fields &&
         !!entry.fields.title,
     )
   }

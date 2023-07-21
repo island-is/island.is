@@ -6,6 +6,7 @@ import {
   mapMenuLinkWithChildren,
   MenuLinkWithChildren,
 } from './menuLinkWithChildren.model'
+import { getArrayOrEmptyArrayFallback } from './utils'
 
 @ObjectType()
 export class Menu {
@@ -25,6 +26,8 @@ export class Menu {
 export const mapMenu = ({ sys, fields }: IMenu): Menu => ({
   id: sys.id,
   title: fields.title ?? '',
-  links: (fields.links ?? []).map(mapLink),
-  menuLinks: (fields.menuLinks ?? []).map(mapMenuLinkWithChildren),
+  links: getArrayOrEmptyArrayFallback(fields.links).map(mapLink),
+  menuLinks: getArrayOrEmptyArrayFallback(fields.menuLinks).map(
+    mapMenuLinkWithChildren,
+  ),
 })

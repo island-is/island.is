@@ -2,6 +2,7 @@ import { Field, ID, ObjectType } from '@nestjs/graphql'
 import { CacheField } from '@island.is/nest/graphql'
 import { IGroupedMenu } from '../generated/contentfulTypes'
 import { Menu, mapMenu } from './menu.model'
+import { getArrayOrEmptyArrayFallback } from './utils'
 
 @ObjectType()
 export class GroupedMenu {
@@ -18,5 +19,5 @@ export class GroupedMenu {
 export const mapGroupedMenu = ({ sys, fields }: IGroupedMenu): GroupedMenu => ({
   id: sys.id,
   title: fields.title ?? '',
-  menus: (fields.menus ?? []).map(mapMenu),
+  menus: getArrayOrEmptyArrayFallback(fields.menus).map(mapMenu),
 })

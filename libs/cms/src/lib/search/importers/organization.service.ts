@@ -16,6 +16,7 @@ export class OrganizationSyncService implements CmsSyncProvider<IOrganization> {
     return entries.filter(
       (entry: Entry<any>): entry is IOrganization =>
         entry.sys.contentType.sys.id === 'organization' &&
+        entry.fields &&
         !!entry.fields.title &&
         !!entry.fields.slug,
     )

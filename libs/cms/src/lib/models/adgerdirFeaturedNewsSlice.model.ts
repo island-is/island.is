@@ -2,6 +2,7 @@ import { Field, ID, ObjectType } from '@nestjs/graphql'
 import { CacheField } from '@island.is/nest/graphql'
 import { IVidspyrnaFeaturedNews } from '../generated/contentfulTypes'
 import { News, mapNews } from './news.model'
+import { getArrayOrEmptyArrayFallback } from './utils'
 
 @ObjectType()
 export class AdgerdirFeaturedNewsSlice {
@@ -26,5 +27,5 @@ export const mapAdgerdirFeaturedNewsSlice = ({
   new AdgerdirFeaturedNewsSlice({
     id: sys?.id ?? '',
     title: fields?.title ?? '',
-    featured: fields?.featured ? fields.featured.map(mapNews) : [],
+    featured: getArrayOrEmptyArrayFallback(fields.featured).map(mapNews),
   })

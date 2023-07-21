@@ -11,7 +11,9 @@ export class VacancySyncService implements CmsSyncProvider<IVacancy> {
   processSyncData(entries: processSyncDataInput<IVacancy>) {
     return entries.filter(
       (entry: Entry<any>): entry is IVacancy =>
-        entry.sys.contentType.sys.id === 'vacancy' && !!entry.fields.title,
+        entry.sys.contentType.sys.id === 'vacancy' &&
+        entry.fields &&
+        !!entry.fields.title,
     )
   }
 

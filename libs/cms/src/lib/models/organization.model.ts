@@ -7,6 +7,7 @@ import { OrganizationTag, mapOrganizationTag } from './organizationTag.model'
 import { FooterItem, mapFooterItem } from './footerItem.model'
 import { mapNamespace, Namespace } from './namespace.model'
 import { GenericTag, mapGenericTag } from './genericTag.model'
+import { getArrayOrEmptyArrayFallback } from './utils'
 
 @ObjectType()
 export class Organization {
@@ -87,10 +88,12 @@ export const mapOrganization = ({
     shortTitle: fields.shortTitle ?? '',
     description: fields.description ?? '',
     slug: fields.slug?.trim() ?? '',
-    tag: (fields.tag ?? []).map(mapOrganizationTag),
+    tag: getArrayOrEmptyArrayFallback(fields.tag).map(mapOrganizationTag),
     logo: fields.logo ? mapImage(fields.logo) : null,
     link: fields.link ?? '',
-    footerItems: (fields.footerItems ?? []).map(mapFooterItem),
+    footerItems: getArrayOrEmptyArrayFallback(fields.footerItems).map(
+      mapFooterItem,
+    ),
     phone: fields.phone ?? '',
     email: fields.email ?? '',
     serviceWebTitle: fields.serviceWebTitle ?? '',
@@ -100,9 +103,9 @@ export const mapOrganization = ({
     serviceWebFeaturedImage: fields.serviceWebFeaturedImage
       ? mapImage(fields.serviceWebFeaturedImage)
       : null,
-    publishedMaterialSearchFilterGenericTags: fields.publishedMaterialSearchFilterGenericTags
-      ? fields.publishedMaterialSearchFilterGenericTags.map(mapGenericTag)
-      : [],
+    publishedMaterialSearchFilterGenericTags: getArrayOrEmptyArrayFallback(
+      fields.publishedMaterialSearchFilterGenericTags,
+    ).map(mapGenericTag),
     showsUpOnTheOrganizationsPage: fields.showsUpOnTheOrganizationsPage ?? true,
     hasALandingPage: fields.hasALandingPage ?? true,
     trackingDomain: fields.trackingDomain ?? '',

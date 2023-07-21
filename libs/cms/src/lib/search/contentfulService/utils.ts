@@ -17,9 +17,9 @@ export function removeLocaleKeysFromEntry(
   visited.add(node)
 
   for (const key in node) {
-    const value = node[key as keyof typeof node]
-
     if (skippedKey && key === skippedKey) continue
+
+    const value = node[key as keyof typeof node]
 
     if (typeof value === 'object') {
       ;(node[key as keyof typeof node] as
@@ -33,6 +33,7 @@ export function removeLocaleKeysFromEntry(
 
   // Make sure we null out the other locale values
   for (const key in node) {
+    if (skippedKey && key === skippedKey) continue
     if (Object.values(contentfulLocaleMap).includes(key)) {
       return null
     }

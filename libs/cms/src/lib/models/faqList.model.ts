@@ -6,6 +6,7 @@ import {
   QuestionAndAnswer,
   mapQuestionAndAnswer,
 } from './questionAndAnswer.model'
+import { getArrayOrEmptyArrayFallback } from './utils'
 
 @ObjectType()
 export class FaqList {
@@ -29,6 +30,8 @@ export const mapFaqList = ({
   typename: 'FaqList',
   id: sys.id,
   title: fields.title ?? '',
-  questions: (fields.questions ?? []).map(mapQuestionAndAnswer),
+  questions: getArrayOrEmptyArrayFallback(fields.questions).map(
+    mapQuestionAndAnswer,
+  ),
   showTitle: fields.showTitle ?? true,
 })

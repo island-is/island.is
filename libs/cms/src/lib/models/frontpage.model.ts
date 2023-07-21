@@ -7,6 +7,7 @@ import { LifeEventPage, mapLifeEventPage } from './lifeEventPage.model'
 import { LinkList, mapLinkList } from './linkList.model'
 import { mapNamespace, Namespace } from './namespace.model'
 import { Image, mapImage } from './image.model'
+import { getArrayOrEmptyArrayFallback } from './utils'
 
 @ObjectType()
 export class Frontpage {
@@ -56,12 +57,14 @@ export const mapFrontpage = ({ fields, sys }: IFrontpage): Frontpage => ({
   heading: fields.heading ?? '',
   imageAlternativeText: fields.imageAlternativeText ?? '',
   image: fields.image ? mapImage(fields.image) : null,
-  videos: (fields.videos ?? []).map(mapImage),
+  videos: getArrayOrEmptyArrayFallback(fields.videos).map(mapImage),
   imageMobile: fields.imageMobile ? mapImage(fields.imageMobile) : null,
-  videosMobile: (fields.videosMobile ?? []).map(mapImage),
-  featured: (fields.featured ?? []).map(mapFeatured),
-  slides: (fields.slides ?? []).map(mapFrontpageSlider),
+  videosMobile: getArrayOrEmptyArrayFallback(fields.videosMobile).map(mapImage),
+  featured: getArrayOrEmptyArrayFallback(fields.featured).map(mapFeatured),
+  slides: getArrayOrEmptyArrayFallback(fields.slides).map(mapFrontpageSlider),
   namespace: fields.namespace ? mapNamespace(fields.namespace) : null,
-  lifeEvents: (fields.lifeEvents ?? []).map(mapLifeEventPage),
+  lifeEvents: getArrayOrEmptyArrayFallback(fields.lifeEvents).map(
+    mapLifeEventPage,
+  ),
   linkList: fields.linkList ? mapLinkList(fields.linkList) : null,
 })

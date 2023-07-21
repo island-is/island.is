@@ -3,6 +3,7 @@ import { CacheField } from '@island.is/nest/graphql'
 import { SystemMetadata } from '@island.is/shared/types'
 import { ICardSection } from '../generated/contentfulTypes'
 import { LinkCard, mapLinkCard } from './linkCard.model'
+import { getArrayOrEmptyArrayFallback } from './utils'
 
 @ObjectType()
 export class LinkCardSlice {
@@ -23,5 +24,5 @@ export const mapLinkCardSlice = ({
   typename: 'LinkCardSlice',
   id: sys.id,
   title: fields.title ?? '',
-  cards: (fields.cards ?? []).map(mapLinkCard),
+  cards: getArrayOrEmptyArrayFallback(fields.cards).map(mapLinkCard),
 })

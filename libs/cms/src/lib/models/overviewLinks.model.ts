@@ -5,6 +5,7 @@ import { SystemMetadata } from '@island.is/shared/types'
 import { IOverviewLinks } from '../generated/contentfulTypes'
 import { Link, mapLink } from './link.model'
 import { IntroLinkImage, mapIntroLinkImage } from './introLinkImage.model'
+import { getArrayOrEmptyArrayFallback } from './utils'
 
 @ObjectType()
 export class OverviewLinks {
@@ -27,7 +28,9 @@ export const mapOverviewLinks = ({
 }: IOverviewLinks): SystemMetadata<OverviewLinks> => ({
   typename: 'OverviewLinks',
   id: sys.id,
-  overviewLinks: (fields.overviewLinks ?? []).map(mapIntroLinkImage),
+  overviewLinks: getArrayOrEmptyArrayFallback(fields.overviewLinks).map(
+    mapIntroLinkImage,
+  ),
   link: fields.link ? mapLink(fields.link) : null,
   hasBorderAbove: fields.hasBorderAbove ?? true,
 })

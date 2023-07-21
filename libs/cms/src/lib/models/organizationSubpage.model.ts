@@ -10,6 +10,7 @@ import {
   safelyMapSliceUnion,
   SliceUnion,
 } from '../unions/slice.union'
+import { getArrayOrEmptyArrayFallback } from './utils'
 
 @ObjectType()
 export class OrganizationSubpage {
@@ -65,8 +66,10 @@ export const mapOrganizationSubpage = ({
   description: fields.description
     ? mapDocument(fields.description, sys.id + ':content')
     : [],
-  links: (fields.links ?? []).map(mapLink),
-  slices: (fields.slices ?? []).map(safelyMapSliceUnion).filter(Boolean),
+  links: getArrayOrEmptyArrayFallback(fields.links).map(mapLink),
+  slices: getArrayOrEmptyArrayFallback(fields.slices)
+    .map(safelyMapSliceUnion)
+    .filter(Boolean),
   showTableOfContents: fields.showTableOfContents ?? false,
   sliceCustomRenderer: fields.sliceCustomRenderer ?? '',
   sliceExtraText: fields.sliceExtraText ?? '',

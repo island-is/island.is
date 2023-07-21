@@ -21,6 +21,7 @@ export class SupportQNASyncService implements CmsSyncProvider<ISupportQna> {
   ): singleEntry is ISupportQna {
     return (
       singleEntry.sys.contentType.sys.id === 'supportQNA' &&
+      singleEntry.fields &&
       !!singleEntry.fields.question
     )
   }

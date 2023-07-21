@@ -20,6 +20,8 @@ import {
 } from '@island.is/content-search-index-manager'
 import { Locale } from 'locale'
 import { contentfulLocaleMap, removeLocaleKeysFromEntry } from './utils'
+import { writeFileSync } from 'fs'
+import { inspect } from 'util'
 
 // Taken from here: https://github.com/contentful/contentful-sdk-core/blob/054328ba2d0df364a5f1ce6d164c5018efb63572/lib/create-http-client.js#L34-L42
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -242,8 +244,7 @@ export class ContentfulService {
    *  { fields: { title: 'English' } }
    * */
   private removeLocaleKeysFromEntryItems = (
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    items: Entry<any>[],
+    items: Entry<unknown>[],
     locale: Locale,
   ) => {
     for (const item of items) {
@@ -307,17 +308,53 @@ export class ContentfulService {
         environment.indexableTypes.includes(entry.sys.contentType.sys.id),
     )
 
-    // TODO: revisit
-    const populatedIndexableEntries =
-      // !isDeltaUpdate
-      //   ? this.removeLocaleKeysFromEntryItems(indexableEntries, locale)
-      //   :
+    writeFileSync(
+      '1.js',
+      inspect(
+        indexableEntries.find((e) => e.sys.id === '63PrIsr7luXY8aXOsCT79n'),
+        true,
+        99999,
+      ),
+    )
 
-      await this.getPopulatedContentulEntries(
-        indexableEntries,
-        locale,
-        chunkSize,
-      )
+    writeFileSync(
+      '2.js',
+      inspect(
+        indexableEntries.find((e) => e.sys.id === '63PrIsr7luXY8aXOsCT79n'),
+        true,
+        99999,
+      ),
+    )
+
+    const populatedIndexableEntries = !isDeltaUpdate
+      ? this.removeLocaleKeysFromEntryItems(indexableEntries, locale)
+      : await this.getPopulatedContentulEntries(
+          indexableEntries,
+          locale,
+          chunkSize,
+        )
+
+    writeFileSync(
+      '1-1.js',
+      inspect(
+        populatedIndexableEntries.find(
+          (e) => e.sys.id === '63PrIsr7luXY8aXOsCT79n',
+        ),
+        true,
+        99999,
+      ),
+    )
+
+    writeFileSync(
+      '2-2.js',
+      inspect(
+        populatedIndexableEntries.find(
+          (e) => e.sys.id === '63PrIsr7luXY8aXOsCT79n',
+        ),
+        true,
+        99999,
+      ),
+    )
 
     // extract ids from deletedEntries
     const deletedEntryIds = deletedEntries.map((entry) => entry.sys.id)

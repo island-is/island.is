@@ -5,6 +5,7 @@ import { IVidspyrnaPage } from '../generated/contentfulTypes'
 import { AdgerdirTag, mapAdgerdirTag } from './adgerdirTag.model'
 import { mapProcessEntry, ProcessEntry } from './processEntry.model'
 import { mapDocument, SliceUnion } from '../unions/slice.union'
+import { getArrayOrEmptyArrayFallback } from './utils'
 
 @ObjectType()
 export class AdgerdirPage {
@@ -62,7 +63,7 @@ export const mapAdgerdirPage = ({
   description: fields?.description ?? '',
   longDescription: fields?.longDescription,
   objective: '',
-  tags: (fields?.tags ?? []).map(mapAdgerdirTag),
+  tags: getArrayOrEmptyArrayFallback(fields?.tags).map(mapAdgerdirTag),
   status: '',
   link: fields?.link ?? '',
   linkButtonText: fields?.linkButtonText ?? '',

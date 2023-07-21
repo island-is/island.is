@@ -3,6 +3,7 @@ import { CacheField } from '@island.is/nest/graphql'
 import { IPageHeader, ITimeline } from '../generated/contentfulTypes'
 import { Link, mapLink } from './link.model'
 import { TimelineSlice, mapTimelineSlice } from './timelineSlice.model'
+import { getArrayOrEmptyArrayFallback } from './utils'
 
 @ObjectType()
 export class PageHeader {
@@ -37,8 +38,8 @@ export const mapPageHeader = (entry: IPageHeader): PageHeader => {
     title: fields.title ?? '',
     introduction: fields.introduction ?? '',
     navigationText: fields.navigationText ?? '',
-    links: (fields.links ?? []).map(mapLink),
-    slices: (fields.slices ?? [])
+    links: getArrayOrEmptyArrayFallback(fields.links).map(mapLink),
+    slices: getArrayOrEmptyArrayFallback(fields.slices)
       .filter(
         (entry): entry is ITimeline =>
           entry.sys.contentType.sys.id === 'timeline',

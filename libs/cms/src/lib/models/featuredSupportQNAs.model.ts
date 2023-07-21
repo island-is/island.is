@@ -5,6 +5,7 @@ import { Link, mapLink } from './link.model'
 import { mapSupportQNA, SupportQNA } from './supportQNA.model'
 import { IFeaturedSupportQnAs } from '../generated/contentfulTypes'
 import { GetFeaturedSupportQNAsInput } from '../dto/getFeaturedSupportQNAs.input'
+import { getArrayOrEmptyArrayFallback } from './utils'
 
 @ObjectType()
 export class FeaturedSupportQNAs {
@@ -35,7 +36,9 @@ export const mapFeaturedSupportQNAs = ({
   id: sys.id,
   renderedTitle: fields.renderedTitle ?? '',
   link: fields.link ? mapLink(fields.link) : null,
-  supportQNAs: (fields.supportQNAs ?? []).map(mapSupportQNA),
+  supportQNAs: getArrayOrEmptyArrayFallback(fields.supportQNAs).map(
+    mapSupportQNA,
+  ),
   automaticallyFetchSupportQNAs: fields.automaticallyFetchSupportQNAs ?? false,
   resolvedSupportQNAs: {
     lang:

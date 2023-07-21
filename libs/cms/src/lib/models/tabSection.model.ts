@@ -3,6 +3,7 @@ import { CacheField } from '@island.is/nest/graphql'
 import { SystemMetadata } from '@island.is/shared/types'
 import { ITabSection } from '../generated/contentfulTypes'
 import { TabContent, mapTabContent } from './tabContent.model'
+import { getArrayOrEmptyArrayFallback } from './utils'
 
 @ObjectType()
 export class TabSection {
@@ -23,5 +24,5 @@ export const mapTabSection = ({
   typename: 'TabSection',
   id: sys.id,
   title: fields.title ?? '',
-  tabs: (fields.tabs ?? []).map(mapTabContent),
+  tabs: getArrayOrEmptyArrayFallback(fields.tabs).map(mapTabContent),
 })

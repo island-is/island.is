@@ -1,6 +1,7 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql'
 import graphqlTypeJson from 'graphql-type-json'
 import { IFormField } from '../generated/contentfulTypes'
+import { getArrayOrEmptyArrayFallback } from './utils'
 
 @ObjectType()
 export class FormField {
@@ -49,7 +50,7 @@ export const mapFormField = ({ sys, fields }: IFormField): FormField => ({
   placeholder: fields.placeholder ?? '',
   type: fields.type ?? 'input',
   required: fields.required ?? false,
-  options: fields.options ?? [],
+  options: getArrayOrEmptyArrayFallback(fields.options),
   emailConfig: fields.emailConfig ?? {},
   informationText: fields.informationText ?? '',
 })

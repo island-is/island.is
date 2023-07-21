@@ -3,6 +3,7 @@ import { CacheField } from '@island.is/nest/graphql'
 import { IMenuLinkWithChildren } from '../generated/contentfulTypes'
 import { mapMenuLink, MenuLink } from './menuLink.model'
 import { mapReferenceLink, ReferenceLink } from './referenceLink.model'
+import { getArrayOrEmptyArrayFallback } from './utils'
 
 @ObjectType()
 export class MenuLinkWithChildren {
@@ -21,7 +22,7 @@ export const mapMenuLinkWithChildren = ({
 }: IMenuLinkWithChildren): MenuLinkWithChildren => ({
   title: fields.title ?? '',
   link: fields.link ? mapReferenceLink(fields.link) : null,
-  childLinks: (fields.childLinks ?? [])
+  childLinks: getArrayOrEmptyArrayFallback(fields.childLinks)
     .map(mapMenuLink)
     .filter((childLink) => !!childLink?.link?.slug && !!childLink?.title),
 })

@@ -4,6 +4,7 @@ import { CacheField } from '@island.is/nest/graphql'
 import { SystemMetadata } from '@island.is/shared/types'
 import { IEmailSignup } from '../generated/contentfulTypes'
 import { FormField, mapFormField } from './formField.model'
+import { getArrayOrEmptyArrayFallback } from './utils'
 
 @ObjectType()
 export class EmailSignup {
@@ -37,7 +38,7 @@ export const mapEmailSignup = ({
   id: sys.id,
   title: fields.title ?? '',
   description: fields.description ?? '',
-  formFields: (fields.formFields ?? []).map(mapFormField),
+  formFields: getArrayOrEmptyArrayFallback(fields.formFields).map(mapFormField),
   signupType: fields.signupType || 'mailchimp',
   configuration: fields.configuration ?? {},
   translations: fields.translations ?? {},

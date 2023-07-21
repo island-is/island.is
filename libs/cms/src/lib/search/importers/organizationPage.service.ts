@@ -13,6 +13,7 @@ export class OrganizationPageSyncService
     return entries.filter(
       (entry: Entry<any>): entry is IOrganizationPage =>
         entry.sys.contentType.sys.id === 'organizationPage' &&
+        entry.fields &&
         !!entry.fields.title,
     )
   }

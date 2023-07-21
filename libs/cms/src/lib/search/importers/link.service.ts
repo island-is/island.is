@@ -11,7 +11,9 @@ export class LinkSyncService implements CmsSyncProvider<ILink> {
   processSyncData(entries: processSyncDataInput<ILink>) {
     return entries.filter(
       (entry: Entry<any>): entry is ILink =>
-        entry.sys.contentType.sys.id === 'link' && entry.fields.searchable,
+        entry.sys.contentType.sys.id === 'link' &&
+        entry.fields &&
+        entry.fields.searchable,
     )
   }
 

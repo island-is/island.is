@@ -4,6 +4,7 @@ import { SystemMetadata } from '@island.is/shared/types'
 
 import { ISliceDropdown } from '../generated/contentfulTypes'
 import { mapOneColumnText, OneColumnText } from './oneColumnText.model'
+import { getArrayOrEmptyArrayFallback } from './utils'
 
 @ObjectType()
 export class SliceDropdown {
@@ -24,5 +25,5 @@ export const mapSliceDropdown = ({
   typename: 'SliceDropdown',
   id: sys.id,
   dropdownLabel: fields.dropdownLabel,
-  slices: fields?.slices?.map(mapOneColumnText) ?? [],
+  slices: getArrayOrEmptyArrayFallback(fields?.slices).map(mapOneColumnText),
 })

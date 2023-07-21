@@ -3,6 +3,7 @@ import { CacheField } from '@island.is/nest/graphql'
 import { ITeamList } from '../generated/contentfulTypes'
 import { SystemMetadata } from '@island.is/shared/types'
 import { TeamMember, mapTeamMember } from './teamMember.model'
+import { getArrayOrEmptyArrayFallback } from './utils'
 
 @ObjectType()
 export class TeamList {
@@ -19,5 +20,7 @@ export const mapTeamList = ({
 }: ITeamList): SystemMetadata<TeamList> => ({
   typename: 'TeamList',
   id: sys.id,
-  teamMembers: (fields.teamMembers ?? []).map(mapTeamMember),
+  teamMembers: getArrayOrEmptyArrayFallback(fields.teamMembers).map(
+    mapTeamMember,
+  ),
 })

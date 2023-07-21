@@ -6,6 +6,7 @@ import { Image, mapImage } from './image.model'
 import { LinkCardSlice, mapLinkCardSlice } from './linkCardSlice.model'
 import { GraphCard, mapGraphCard } from './graphCard.model'
 import { StatisticsCard, mapStatisticsCard } from './statisticsCard.model'
+import { getArrayOrEmptyArrayFallback } from './utils'
 
 @ObjectType()
 export class OpenDataPage {
@@ -62,14 +63,14 @@ export const mapOpenDataPage = ({
     : null,
   link: fields.link ?? '',
   linkTitle: fields.linkTitle ?? '',
-  statisticsCardsSection: (fields.statisticsCardsSection ?? []).map(
-    mapStatisticsCard,
-  ),
+  statisticsCardsSection: getArrayOrEmptyArrayFallback(
+    fields.statisticsCardsSection,
+  ).map(mapStatisticsCard),
   chartSectionTitle: fields.chartSectionTitle ?? '',
   externalLinkCardSelection: fields.externalLinkCardSelection
     ? mapLinkCardSlice(fields.externalLinkCardSelection)
     : null,
-  graphCards: (fields.graphCards ?? []).map(mapGraphCard),
+  graphCards: getArrayOrEmptyArrayFallback(fields.graphCards).map(mapGraphCard),
   externalLinkSectionTitle: fields.externalLinkSectionTitle ?? '',
   externalLinkSectionDescription: fields.externalLinkSectionDescription ?? '',
   externalLinkSectionImage: fields.externalLinkSectionImage

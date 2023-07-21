@@ -4,6 +4,7 @@ import { IEnhancedAsset } from '../generated/contentfulTypes'
 import { Asset, mapAsset } from './asset.model'
 import { GenericTag, mapGenericTag } from './genericTag.model'
 import { mapOrganization, Organization } from './organization.model'
+import { getArrayOrEmptyArrayFallback } from './utils'
 
 @ObjectType()
 export class EnhancedAsset {
@@ -36,7 +37,9 @@ export const mapEnhancedAsset = ({
   id: sys.id,
   title: fields.title ?? '',
   file: fields.file ? mapAsset(fields.file) : null,
-  genericTags: fields.genericTags ? fields.genericTags.map(mapGenericTag) : [],
+  genericTags: getArrayOrEmptyArrayFallback(fields.genericTags).map(
+    mapGenericTag,
+  ),
   releaseDate: fields.releaseDate ?? null,
   organization: fields.organization
     ? mapOrganization(fields.organization)

@@ -21,10 +21,12 @@ describe('test', () => {
         slug: {
           en: 'test',
         },
+        relatedContent: {},
+        activeTranslations: {},
       },
     }
 
-    removeLocaleKeysFromEntry(testObject, 'is')
+    removeLocaleKeysFromEntry(testObject, 'is', 'activeTranslations')
 
     expect(testObject).toStrictEqual({
       fields: {
@@ -35,6 +37,8 @@ describe('test', () => {
           },
         },
         slug: null,
+        relatedContent: null,
+        activeTranslations: {},
       },
     })
   })

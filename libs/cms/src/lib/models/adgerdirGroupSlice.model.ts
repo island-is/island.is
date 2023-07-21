@@ -3,6 +3,7 @@ import { CacheField } from '@island.is/nest/graphql'
 import { IVidspyrnaFlokkur } from '../generated/contentfulTypes'
 import { Image, mapImage } from './image.model'
 import { AdgerdirPage, mapAdgerdirPage } from './adgerdirPage.model'
+import { getArrayOrEmptyArrayFallback } from './utils'
 
 @ObjectType()
 export class AdgerdirGroupSlice {
@@ -39,5 +40,5 @@ export const mapAdgerdirGroupSlice = ({
     subtitle: fields?.subtitle ?? '',
     description: fields?.description ?? '',
     image: fields?.image?.fields?.file ? mapImage(fields.image) : null,
-    pages: fields?.pages ? fields.pages.map(mapAdgerdirPage) : [],
+    pages: getArrayOrEmptyArrayFallback(fields.pages).map(mapAdgerdirPage),
   })

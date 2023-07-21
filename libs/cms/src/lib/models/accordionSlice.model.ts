@@ -4,6 +4,7 @@ import { CacheField } from '@island.is/nest/graphql'
 import { IAccordionSlice } from '../generated/contentfulTypes'
 import { SystemMetadata } from 'api-cms-domain'
 import { mapOneColumnText, OneColumnText } from './oneColumnText.model'
+import { getArrayOrEmptyArrayFallback } from './utils'
 
 @ObjectType()
 export class AccordionSlice {
@@ -37,7 +38,9 @@ export const mapAccordionSlice = ({
   id: sys.id,
   title: fields.title ?? '',
   type: fields.type ?? '',
-  accordionItems: (fields.accordionItems ?? []).map(mapOneColumnText),
+  accordionItems: getArrayOrEmptyArrayFallback(fields.accordionItems).map(
+    mapOneColumnText,
+  ),
   hasBorderAbove: fields.hasBorderAbove ?? true,
   showTitle: fields.showTitle ?? true,
   titleHeadingLevel: fields.titleHeadingLevel ?? 'h2',

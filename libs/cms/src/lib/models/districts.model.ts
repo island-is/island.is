@@ -5,6 +5,7 @@ import { SystemMetadata } from '@island.is/shared/types'
 import { IDistricts } from '../generated/contentfulTypes'
 import { Image, mapImage } from './image.model'
 import { Link, mapLink } from './link.model'
+import { getArrayOrEmptyArrayFallback } from './utils'
 
 @ObjectType()
 export class Districts {
@@ -36,6 +37,6 @@ export const mapDistricts = ({
   title: fields.title ?? '',
   description: fields.description ?? '',
   image: fields.image ? mapImage(fields.image) : null,
-  links: (fields.links ?? []).map(mapLink),
+  links: getArrayOrEmptyArrayFallback(fields.links).map(mapLink),
   hasBorderAbove: fields.hasBorderAbove ?? true,
 })

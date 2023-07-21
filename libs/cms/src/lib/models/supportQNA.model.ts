@@ -11,6 +11,7 @@ import {
   mapSupportSubCategory,
   SupportSubCategory,
 } from './supportSubCategory.model'
+import { getArrayOrEmptyArrayFallback } from './utils'
 
 @ObjectType()
 export class SupportQNA {
@@ -58,15 +59,15 @@ export const mapSupportQNA = ({ fields, sys }: ISupportQna): SupportQNA => ({
     ? mapSupportSubCategory(fields.subCategory)
     : null,
   importance: fields.importance ?? 0,
-  relatedLinks: fields.relatedLinks
-    ? fields.relatedLinks.map((link) => {
-        if (link.sys?.contentType?.sys?.id === 'link') {
-          return mapLink(link as ILink)
-        }
-        const supportQnA = link as ISupportQna
-        return mapLink(convertSupportQnAToLink(supportQnA, sys.locale))
-      })
-    : [],
+  relatedLinks: getArrayOrEmptyArrayFallback(fields.relatedLinks).map(
+    (link) => {
+      if (link.sys?.contentType?.sys?.id === 'link') {
+        return mapLink(link as ILink)
+      }
+      const supportQnA = link as ISupportQna
+      return mapLink(convertSupportQnAToLink(supportQnA, sys.locale))
+    },
+  ),
   contactLink: fields.contactLink ?? '',
 })
 

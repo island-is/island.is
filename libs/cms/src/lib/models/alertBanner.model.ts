@@ -2,6 +2,7 @@ import { Field, ObjectType, ID, Int } from '@nestjs/graphql'
 import { CacheField } from '@island.is/nest/graphql'
 import { IAlertBanner } from '../generated/contentfulTypes'
 import { mapReferenceLink, ReferenceLink } from './referenceLink.model'
+import { getArrayOrEmptyArrayFallback } from './utils'
 
 @ObjectType()
 export class AlertBanner {
@@ -46,5 +47,5 @@ export const mapAlertBanner = ({ fields, sys }: IAlertBanner): AlertBanner => ({
   link: fields.link ? mapReferenceLink(fields.link) : null,
   isDismissable: fields.isDismissable ?? true,
   dismissedForDays: fields.dismissedForDays ?? 7,
-  servicePortalPaths: fields.servicePortalPaths ?? [],
+  servicePortalPaths: getArrayOrEmptyArrayFallback(fields.servicePortalPaths),
 })

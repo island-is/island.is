@@ -4,6 +4,7 @@ import { SystemMetadata } from '@island.is/shared/types'
 
 import { INumberBulletSection } from '../generated/contentfulTypes'
 import { NumberBullet, mapNumberBullet } from './numberBullet.model'
+import { getArrayOrEmptyArrayFallback } from './utils'
 
 @ObjectType()
 export class NumberBulletGroup {
@@ -24,5 +25,5 @@ export const mapNumberBulletGroup = ({
   typename: 'NumberBulletGroup',
   id: sys.id,
   defaultVisible: fields.defaultVisible ?? 5,
-  bullets: (fields.bullets ?? []).map(mapNumberBullet),
+  bullets: getArrayOrEmptyArrayFallback(fields.bullets).map(mapNumberBullet),
 })

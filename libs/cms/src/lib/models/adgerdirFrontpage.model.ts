@@ -9,6 +9,7 @@ import {
   AdgerdirSliceUnion,
   mapAdgerdirSliceUnion,
 } from '../unions/adgerdirSlice.union'
+import { getArrayOrEmptyArrayFallback } from './utils'
 
 @ObjectType()
 export class AdgerdirFrontpage {
@@ -48,9 +49,7 @@ export const mapAdgerdirFrontpage = ({
     sys?.id && fields?.content
       ? mapDocument(fields.content, sys?.id + ':content')
       : [],
-  slices: fields?.slices
-    ? fields.slices
-        .filter((x) => x.sys?.contentType?.sys?.id)
-        .map(mapAdgerdirSliceUnion)
-    : [],
+  slices: getArrayOrEmptyArrayFallback(fields.slices)
+    .filter((x) => x.sys?.contentType?.sys?.id)
+    .map(mapAdgerdirSliceUnion),
 })

@@ -4,6 +4,7 @@ import { SystemMetadata } from '@island.is/shared/types'
 import { IMultipleStatistics } from '../generated/contentfulTypes'
 import { Statistics, mapStatistics } from './statistics.model'
 import { Link, mapLink } from './link.model'
+import { getArrayOrEmptyArrayFallback } from './utils'
 
 @ObjectType()
 export class MultipleStatistics {
@@ -30,7 +31,9 @@ export const mapMultipleStatistics = ({
   typename: 'MultipleStatistics',
   id: sys.id,
   title: fields.title ?? '',
-  statistics: (fields.statistics ?? []).map(mapStatistics),
+  statistics: getArrayOrEmptyArrayFallback(fields.statistics).map(
+    mapStatistics,
+  ),
   link: fields.link ? mapLink(fields.link) : null,
   hasBorderAbove: fields.hasBorderAbove ?? true,
 })

@@ -15,6 +15,8 @@ import {
   numberOfLinks,
   removeEntryHyperlinkFields,
 } from './utils'
+import { writeFileSync } from 'fs'
+import { inspect } from 'util'
 
 interface MetaData {
   metadata: {
@@ -32,6 +34,8 @@ interface MetaData {
 export class ArticleSyncService implements CmsSyncProvider<IArticle> {
   // Only process articles that we consider not to be empty
   validateArticle(singleEntry: Entry<any> | IArticle): singleEntry is IArticle {
+    if (!singleEntry.fields) return false
+
     const isDefaultLocale = singleEntry.sys.locale === 'is-IS'
 
     const otherLocaleThanDefaultLocaleIsActive =
@@ -135,6 +139,25 @@ export class ArticleSyncService implements CmsSyncProvider<IArticle> {
             })
           }
         } catch (error) {
+          if (
+            entry.sys.id === '63PrIsr7luXY8aXOsCT79n' ||
+            entry.sys.id === 'SAApb5YIG8SecNb4ADKnr'
+          ) {
+            writeFileSync(
+              `${entry.sys.id}.js`,
+              inspect(
+                {
+                  otherCategories: entry.fields.otherCategories,
+                  otherGroups: entry.fields.otherGroups,
+                  otherSubgroups: entry.fields.otherSubgroups,
+                  relatedContent: entry.fields.relatedContent,
+                },
+                true,
+                99999,
+              ),
+            )
+          }
+
           logger.warn('Failed to map article', {
             error: error.message,
             id: entry?.sys?.id,

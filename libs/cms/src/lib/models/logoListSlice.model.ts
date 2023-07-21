@@ -3,6 +3,7 @@ import { CacheField } from '@island.is/nest/graphql'
 import { SystemMetadata } from '@island.is/shared/types'
 import { ILogoListSlice } from '../generated/contentfulTypes'
 import { Image, mapImage } from './image.model'
+import { getArrayOrEmptyArrayFallback } from './utils'
 
 @ObjectType()
 export class LogoListSlice {
@@ -27,5 +28,5 @@ export const mapLogoListSlice = ({
   id: sys.id,
   title: fields.title ?? '',
   body: fields.body ?? '',
-  images: (fields.images ?? []).map(mapImage),
+  images: getArrayOrEmptyArrayFallback(fields.images).map(mapImage),
 })

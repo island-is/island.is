@@ -4,6 +4,7 @@ import { IGenericOverviewPage } from '../generated/contentfulTypes'
 import { Html, mapHtml } from './html.model'
 import { Menu, mapMenu } from './menu.model'
 import { IntroLinkImage, mapIntroLinkImage } from './introLinkImage.model'
+import { getArrayOrEmptyArrayFallback } from './utils'
 
 @ObjectType()
 export class GenericOverviewPage {
@@ -35,5 +36,7 @@ export const mapGenericOverviewPage = ({
   pageIdentifier: fields.pageIdentifier ?? '',
   intro: (fields.intro && mapHtml(fields.intro, sys.id + ':intro')) ?? null,
   navigation: fields.navigation ? mapMenu(fields.navigation) : null,
-  overviewLinks: (fields.overviewLinks ?? []).map(mapIntroLinkImage),
+  overviewLinks: getArrayOrEmptyArrayFallback(fields.overviewLinks).map(
+    mapIntroLinkImage,
+  ),
 })

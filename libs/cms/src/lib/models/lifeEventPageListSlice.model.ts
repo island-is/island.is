@@ -3,6 +3,7 @@ import { CacheField } from '@island.is/nest/graphql'
 import type { SystemMetadata } from '@island.is/shared/types'
 import type { ILifeEventPageListSlice } from '../generated/contentfulTypes'
 import { LifeEventPage, mapLifeEventPage } from './lifeEventPage.model'
+import { getArrayOrEmptyArrayFallback } from './utils'
 
 @ObjectType()
 export class LifeEventPageListSlice {
@@ -23,7 +24,7 @@ export const mapLifeEventPageListSlice = ({
   typename: 'LifeEventPageListSlice',
   id: sys.id,
   title: fields.title ?? '',
-  lifeEventPageList: fields.lifeEventPageList
-    ? fields.lifeEventPageList.map(mapLifeEventPage)
-    : [],
+  lifeEventPageList: getArrayOrEmptyArrayFallback(fields.lifeEventPageList).map(
+    mapLifeEventPage,
+  ),
 })

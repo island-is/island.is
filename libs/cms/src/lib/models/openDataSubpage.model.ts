@@ -5,6 +5,7 @@ import * as types from '../generated/contentfulTypes'
 import { GraphCard, mapGraphCard } from './graphCard.model'
 import { StatisticsCard, mapStatisticsCard } from './statisticsCard.model'
 import { Image, mapImage } from './image.model'
+import { getArrayOrEmptyArrayFallback } from './utils'
 
 @ObjectType()
 export class OpenDataSubpage {
@@ -39,8 +40,10 @@ export const mapOpenDataSubpage = ({
   pageTitle: fields.pageTitle ?? '',
   fundTitle: fields.fundTitle ?? '',
   fundDescription: fields.fundDescription ?? '',
-  statisticsCards: (fields.statisticsCards ?? []).map(mapStatisticsCard),
-  graphCards: (fields.graphCards ?? []).map(mapGraphCard),
+  statisticsCards: getArrayOrEmptyArrayFallback(fields.statisticsCards).map(
+    mapStatisticsCard,
+  ),
+  graphCards: getArrayOrEmptyArrayFallback(fields.graphCards).map(mapGraphCard),
   organizationLogo: fields.organizationLogo
     ? mapImage(fields.organizationLogo)
     : null,

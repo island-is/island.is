@@ -22,6 +22,7 @@ export class AdgerdirPageSyncService
     return entries.filter(
       (entry: Entry<any>): entry is IVidspyrnaPage =>
         entry.sys.contentType.sys.id === 'vidspyrnaPage' &&
+        entry.fields &&
         !!entry.fields.title &&
         !isCircular(entry),
     )

@@ -5,6 +5,7 @@ import { Image, mapImage } from './image.model'
 import { GenericTag, mapGenericTag } from './genericTag.model'
 import { mapDocument, SliceUnion } from '../unions/slice.union'
 import { Organization, mapOrganization } from './organization.model'
+import { getArrayOrEmptyArrayFallback } from './utils'
 
 @ObjectType()
 export class News {
@@ -59,7 +60,9 @@ export const mapNews = ({ fields, sys }: INews): News => ({
   content: fields.content
     ? mapDocument(fields.content, sys.id + ':content')
     : [],
-  genericTags: (fields.genericTags ?? []).map(mapGenericTag),
+  genericTags: getArrayOrEmptyArrayFallback(fields.genericTags).map(
+    mapGenericTag,
+  ),
   fullWidthImageInContent: fields.fullWidthImageInContent ?? true,
   initialPublishDate: fields.initialPublishDate ?? '',
   featuredImage: fields.featuredImage ? mapImage(fields.featuredImage) : null,

@@ -11,7 +11,9 @@ export class ProjectPageSyncService implements CmsSyncProvider<IProjectPage> {
   processSyncData(entries: processSyncDataInput<IProjectPage>) {
     return entries.filter(
       (entry: Entry<any>): entry is IProjectPage =>
-        entry.sys.contentType.sys.id === 'projectPage' && !!entry.fields.title,
+        entry.sys.contentType.sys.id === 'projectPage' &&
+        entry.fields &&
+        !!entry.fields.title,
     )
   }
 

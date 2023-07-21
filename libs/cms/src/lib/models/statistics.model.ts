@@ -3,6 +3,7 @@ import { CacheField } from '@island.is/nest/graphql'
 import { SystemMetadata } from '@island.is/shared/types'
 import { IStatistics } from '../generated/contentfulTypes'
 import { Statistic, mapStatistic } from './statistic.model'
+import { getArrayOrEmptyArrayFallback } from './utils'
 
 @ObjectType()
 export class Statistics {
@@ -23,5 +24,5 @@ export const mapStatistics = ({
   typename: 'Statistics',
   id: sys.id,
   title: fields.title ?? '',
-  statistics: (fields.statistics ?? []).map(mapStatistic),
+  statistics: getArrayOrEmptyArrayFallback(fields.statistics).map(mapStatistic),
 })

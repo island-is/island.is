@@ -14,6 +14,7 @@ import { mapDocument, SliceUnion } from '../unions/slice.union'
 import { mapProcessEntry, ProcessEntry } from './processEntry.model'
 import { mapStepper, Stepper } from './stepper.model'
 import { AlertBanner, mapAlertBanner } from './alertBanner.model'
+import { getArrayOrEmptyArrayFallback } from './utils'
 
 @ObjectType()
 export class Article {
@@ -112,33 +113,41 @@ export const mapArticle = ({
     ? mapProcessEntry(fields.processEntry)
     : null,
   category: fields.category ? mapArticleCategory(fields.category) : null,
-  otherCategories: (fields.otherCategories ?? []).map(mapArticleCategory),
+  otherCategories: getArrayOrEmptyArrayFallback(fields.otherCategories).map(
+    mapArticleCategory,
+  ),
   group: fields.group ? mapArticleGroup(fields.group) : null,
-  otherGroups: (fields.otherGroups ?? []).map(mapArticleGroup),
+  otherGroups: getArrayOrEmptyArrayFallback(fields.otherGroups).map(
+    mapArticleGroup,
+  ),
   subgroup: fields.subgroup ? mapArticleSubgroup(fields.subgroup) : null,
-  otherSubgroups: (fields.otherSubgroups ?? []).map(mapArticleSubgroup),
-  organization: (fields.organization ?? [])
+  otherSubgroups: getArrayOrEmptyArrayFallback(fields.otherSubgroups).map(
+    mapArticleSubgroup,
+  ),
+  organization: getArrayOrEmptyArrayFallback(fields.organization)
     .filter(
       (organization) => organization.fields?.title && organization.fields?.slug,
     )
     .map(mapOrganization),
-  relatedOrganization: (fields.relatedOrganization ?? [])
+  relatedOrganization: getArrayOrEmptyArrayFallback(fields.relatedOrganization)
     .filter(
       (relatedOrganization) =>
         relatedOrganization.fields?.title && relatedOrganization.fields?.slug,
     )
     .map(mapOrganization),
-  responsibleParty: (fields.responsibleParty ?? [])
+  responsibleParty: getArrayOrEmptyArrayFallback(fields.responsibleParty)
     .filter(
       (responsibleParty) =>
         responsibleParty.fields?.title && responsibleParty.fields?.slug,
     )
     .map(mapOrganization),
-  subArticles: (fields.subArticles ?? [])
+  subArticles: getArrayOrEmptyArrayFallback(fields.subArticles)
     .filter((subArticle) => subArticle.fields?.title && subArticle.fields?.url)
     .map(mapSubArticle),
   relatedArticles: [], // populated by resolver
-  relatedContent: (fields.relatedContent ?? []).map(mapLink),
+  relatedContent: getArrayOrEmptyArrayFallback(fields.relatedContent).map(
+    mapLink,
+  ),
   featuredImage: fields.featuredImage ? mapImage(fields.featuredImage) : null,
   showTableOfContents: fields.showTableOfContents ?? false,
   stepper: fields.stepper ? mapStepper(fields.stepper) : null,

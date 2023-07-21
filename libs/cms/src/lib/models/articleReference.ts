@@ -16,6 +16,7 @@ import { ArticleGroup, mapArticleGroup } from './articleGroup.model'
 import { mapOrganization, Organization } from './organization.model'
 import { ArticleCategory, mapArticleCategory } from './articleCategory.model'
 import { mapProcessEntry, ProcessEntry } from './processEntry.model'
+import { getArrayOrEmptyArrayFallback } from './utils'
 
 @ObjectType()
 export class ArticleReference {
@@ -58,7 +59,7 @@ export const mapArticleReference = ({
   intro: fields?.intro ?? '',
   group: fields?.group ? mapArticleGroup(fields.group) : null,
   category: fields?.category ? mapArticleCategory(fields.category) : null,
-  organization: (fields?.organization ?? [])
+  organization: getArrayOrEmptyArrayFallback(fields?.organization)
     .filter(
       (organization) => organization.fields?.title && organization.fields?.slug,
     )

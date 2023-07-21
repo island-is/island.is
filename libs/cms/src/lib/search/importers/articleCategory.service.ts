@@ -18,6 +18,7 @@ export class ArticleCategorySyncService
     return entries.filter(
       (entry: Entry<any>): entry is IArticleCategory =>
         entry.sys.contentType.sys.id === 'articleCategory' &&
+        entry.fields &&
         !!entry.fields.title &&
         !isCircular(entry),
     )

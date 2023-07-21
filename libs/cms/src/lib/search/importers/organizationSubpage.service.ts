@@ -15,6 +15,7 @@ export class OrganizationSubpageSyncService
     return entries.filter(
       (entry: Entry<any>): entry is IOrganizationSubpage =>
         entry.sys.contentType.sys.id === 'organizationSubpage' &&
+        entry.fields &&
         !!entry.fields.title,
     )
   }

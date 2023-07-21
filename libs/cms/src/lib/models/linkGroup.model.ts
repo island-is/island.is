@@ -4,6 +4,7 @@ import { CacheField } from '@island.is/nest/graphql'
 import { ILinkGroup } from '../generated/contentfulTypes'
 
 import { Link, mapLink } from './link.model'
+import { getArrayOrEmptyArrayFallback } from './utils'
 
 @ObjectType()
 export class LinkGroup {
@@ -24,5 +25,7 @@ export const mapLinkGroup = ({ fields, sys }: ILinkGroup): LinkGroup => ({
   id: sys.id,
   name: fields.name ?? '',
   primaryLink: fields.primaryLink ? mapLink(fields.primaryLink) : null,
-  childrenLinks: (fields.childrenLinks ?? []).map(mapLink),
+  childrenLinks: getArrayOrEmptyArrayFallback(fields.childrenLinks).map(
+    mapLink,
+  ),
 })

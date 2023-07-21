@@ -15,6 +15,7 @@ import { LinkGroup, mapLinkGroup } from './linkGroup.model'
 import { FooterItem, mapFooterItem } from './footerItem.model'
 import { Link, mapLink } from './link.model'
 import { mapNamespace, Namespace } from './namespace.model'
+import { getArrayOrEmptyArrayFallback } from './utils'
 
 @ObjectType()
 export class ProjectPage {
@@ -94,7 +95,7 @@ export const mapProjectPage = ({ sys, fields }: IProjectPage): ProjectPage => ({
   slug: fields.slug ?? '',
   theme: fields.theme ?? 'default',
   sidebar: fields.sidebar ?? false,
-  sidebarLinks: (fields.sidebarLinks ?? [])
+  sidebarLinks: getArrayOrEmptyArrayFallback(fields.sidebarLinks)
     .map(mapLinkGroup)
     .filter((link) => Boolean(link.primaryLink)),
   subtitle: fields.subtitle ?? '',
@@ -103,12 +104,14 @@ export const mapProjectPage = ({ sys, fields }: IProjectPage): ProjectPage => ({
     ? mapDocument(fields.content, sys.id + ':content')
     : [],
   stepper: fields.stepper ? mapStepper(fields.stepper) : null,
-  slices: (fields.slices ?? []).map(safelyMapSliceUnion).filter(Boolean),
-  bottomSlices: (fields.bottomSlices ?? [])
+  slices: getArrayOrEmptyArrayFallback(fields.slices)
+    .map(safelyMapSliceUnion)
+    .filter(Boolean),
+  bottomSlices: getArrayOrEmptyArrayFallback(fields.bottomSlices)
     .map(safelyMapSliceUnion)
     .filter(Boolean),
   newsTag: fields.newsTag ? mapGenericTag(fields.newsTag) : null,
-  projectSubpages: (fields.projectSubpages ?? [])
+  projectSubpages: getArrayOrEmptyArrayFallback(fields.projectSubpages)
     .filter((p) => p.fields?.title)
     .map(mapProjectSubpage),
   featuredImage: fields.featuredImage ? mapImage(fields.featuredImage) : null,
@@ -117,7 +120,9 @@ export const mapProjectPage = ({ sys, fields }: IProjectPage): ProjectPage => ({
     : null,
   defaultHeaderBackgroundColor: fields.defaultHeaderBackgroundColor ?? '',
   featuredDescription: fields.featuredDescription ?? '',
-  footerItems: fields.footerItems ? fields.footerItems.map(mapFooterItem) : [],
+  footerItems: getArrayOrEmptyArrayFallback(fields.footerItems).map(
+    mapFooterItem,
+  ),
   backLink: fields.backLink ? mapLink(fields.backLink) : null,
   contentIsFullWidth: fields.contentIsFullWidth ?? false,
   namespace: fields.namespace ? mapNamespace(fields.namespace) : null,

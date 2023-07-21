@@ -18,6 +18,7 @@ export class LifeEventsPageSyncService
     return entries.filter(
       (entry: Entry<any>): entry is ILifeEventPage =>
         entry.sys.contentType.sys.id === 'lifeEventPage' &&
+        entry.fields &&
         !!entry.fields.title &&
         !isCircular(entry),
     )

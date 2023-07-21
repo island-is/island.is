@@ -13,6 +13,7 @@ import {
 } from './organizationTheme.model'
 import { GenericTag, mapGenericTag } from './genericTag.model'
 import { AlertBanner, mapAlertBanner } from './alertBanner.model'
+import { getArrayOrEmptyArrayFallback } from './utils'
 
 @ObjectType()
 export class OrganizationPage {
@@ -78,12 +79,16 @@ export const mapOrganizationPage = ({
   description: fields.description ?? '',
   theme: fields.theme ?? 'default',
   themeProperties: mapOrganizationTheme(fields.themeProperties ?? {}),
-  slices: (fields.slices ?? []).map(safelyMapSliceUnion).filter(Boolean),
-  bottomSlices: (fields.bottomSlices ?? [])
+  slices: getArrayOrEmptyArrayFallback(fields.slices)
     .map(safelyMapSliceUnion)
     .filter(Boolean),
-  secondaryNewsTags: (fields.secondaryNewsTags ?? []).map(mapGenericTag),
-  menuLinks: (fields.menuLinks ?? []).map(mapLinkGroup),
+  bottomSlices: getArrayOrEmptyArrayFallback(fields.bottomSlices)
+    .map(safelyMapSliceUnion)
+    .filter(Boolean),
+  secondaryNewsTags: getArrayOrEmptyArrayFallback(fields.secondaryNewsTags).map(
+    mapGenericTag,
+  ),
+  menuLinks: getArrayOrEmptyArrayFallback(fields.menuLinks).map(mapLinkGroup),
   secondaryMenu: fields.secondaryMenu
     ? mapLinkGroup(fields.secondaryMenu)
     : null,
@@ -91,10 +96,12 @@ export const mapOrganizationPage = ({
     ? mapOrganization(fields.organization)
     : null,
   featuredImage: fields.featuredImage ? mapImage(fields.featuredImage) : null,
-  sidebarCards: (fields.sidebarCards ?? [])
+  sidebarCards: getArrayOrEmptyArrayFallback(fields.sidebarCards)
     .map(safelyMapSliceUnion)
     .filter(Boolean),
-  externalLinks: (fields.externalLinks ?? []).map(mapLink),
+  externalLinks: getArrayOrEmptyArrayFallback(fields.externalLinks).map(
+    mapLink,
+  ),
   alertBanner: fields.alertBanner
     ? mapAlertBanner(fields.alertBanner)
     : undefined,

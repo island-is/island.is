@@ -3,6 +3,7 @@ import { CacheField } from '@island.is/nest/graphql'
 import { SystemMetadata } from '@island.is/shared/types'
 import { IForm } from '../generated/contentfulTypes'
 import { FormField, mapFormField } from './formField.model'
+import { getArrayOrEmptyArrayFallback } from './utils'
 
 @ObjectType()
 export class Form {
@@ -43,7 +44,7 @@ export const mapForm = ({ sys, fields }: IForm): SystemMetadata<Form> => {
     id: sys.id,
     title: fields.title ?? '',
     intro: fields.intro ?? '',
-    fields: (fields.fields ?? []).map(mapFormField),
+    fields: getArrayOrEmptyArrayFallback(fields.fields).map(mapFormField),
     successText: fields.successText ?? '',
     aboutYouHeadingText: fields.aboutYouHeadingText ?? '',
     questionsHeadingText: fields.questionsHeadingText ?? '',

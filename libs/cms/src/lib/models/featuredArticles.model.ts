@@ -11,6 +11,7 @@ import { Link, mapLink } from './link.model'
 import { ArticleReference, mapArticleReference } from './articleReference'
 import { GetArticlesInput } from '../dto/getArticles.input'
 import { Article } from './article.model'
+import { getArrayOrEmptyArrayFallback } from './utils'
 
 @ObjectType()
 export class FeaturedArticles {
@@ -50,7 +51,9 @@ export const mapFeaturedArticles = ({
   id: sys.id,
   title: fields.title ?? '',
   image: fields.image ? mapImage(fields.image) : null,
-  articles: (fields.articles ?? []).map(mapArticleReference),
+  articles: getArrayOrEmptyArrayFallback(fields.articles).map(
+    mapArticleReference,
+  ),
   automaticallyFetchArticles: fields.automaticallyFetchArticles ?? false,
   sortBy: fields.sortBy ?? 'popularity',
   resolvedArticles: {

@@ -4,6 +4,7 @@ import { CacheField } from '@island.is/nest/graphql'
 import { IVacancy } from '../generated/contentfulTypes'
 import { Organization, mapOrganization } from './organization.model'
 import { Html, mapHtml } from './html.model'
+import { getArrayOrEmptyArrayFallback } from './utils'
 
 @ObjectType()
 export class Vacancy {
@@ -87,5 +88,7 @@ export const mapVacancy = ({ fields, sys }: IVacancy): Vacancy => ({
         `${sys.id}:tasksAndResponsibilities`,
       )) ??
     null,
-  contacts: (fields.contacts as Vacancy['contacts']) ?? [],
+  contacts: getArrayOrEmptyArrayFallback(
+    fields.contacts as Vacancy['contacts'],
+  ),
 })
