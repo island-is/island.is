@@ -1,5 +1,3 @@
-import { promisify } from 'util'
-import { exec } from 'child_process'
 import {
   LocalrunService,
   LocalrunValueFile,
@@ -7,17 +5,33 @@ import {
 } from '../types/output-types'
 import { Localhost } from '../localhost-runtime'
 import { EXCLUDED_ENVIRONMENT_NAMES } from '../../cli/render-env-vars'
-import { writeFile } from 'fs/promises'
+import { readFile, writeFile } from 'fs/promises'
+import { globSync } from 'glob'
 import { join } from 'path'
 import { rootDir } from '../consts'
 
-const execAsync = promisify(exec)
-
 const mapServiceToNXname = async (serviceName: string) => {
-  const nxShowProjects = await execAsync(
-    `npx nx show projects --json --withTarget service-${serviceName}`,
-  )
-  const nxName = JSON.parse(nxShowProjects.stdout)
+  const projectRootPath = join(__dirname, '..', '..', '..', '..')
+  const projects = globSync(['apps/*/project.json', 'apps/*/*/project.json'], {
+    cwd: projectRootPath,
+  })
+  const nxName = (
+    await Promise.all(
+      projects.map(async (path) => {
+        const project: {
+          name: string
+          targets: { [name: string]: any }
+        } = JSON.parse(
+          await readFile(join(projectRootPath, path), {
+            encoding: 'utf-8',
+          }),
+        )
+        return typeof project.targets[`service-${serviceName}`] !== 'undefined'
+          ? project.name
+          : null
+      }),
+    )
+  ).filter((name) => name !== null) as string[]
 
   if (nxName.length > 1)
     throw new Error(
