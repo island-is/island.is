@@ -129,7 +129,13 @@ export const MultiImageModal: FC<Props> = ({
                       images.indexOf(i) === currentIndex,
                   })}
                 >
-                  {i}
+                  <button
+                    className="domain-create-form__button__cancel"
+                    type="button"
+                    onClick={() => setCurrentIndex(indexLimits.low + index)}
+                  >
+                    {i}
+                  </button>
                 </Box>
               ))}
             </Box>
