@@ -36,9 +36,8 @@ export class RskRelationshipsClient {
     user: User,
   ): Promise<GetIndividualRelationships | null> {
     const individual = await this.defaultApiWithAuth(user)
-      .individualLookup({
+      .meLookup({
         ...this.getDefaultRequestHeaders(user),
-        xParamNationalId: user.nationalId,
       })
       .catch(this.handle404)
 

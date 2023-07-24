@@ -59,9 +59,8 @@ export const kb = (bytes?: number) => {
   return bytes ? Math.ceil(bytes / 1024) : ''
 }
 
-export const getAppealEndDate = (courtEndTime: string) => {
-  const courtEndTimeToDate = parseISO(courtEndTime)
-  const appealEndDate = addDays(courtEndTimeToDate, 3)
+export const getAppealEndDate = (rulingDate: string) => {
+  const appealEndDate = addDays(parseISO(rulingDate), 3)
   return formatDate(appealEndDate, 'PPPp')
 }
 
