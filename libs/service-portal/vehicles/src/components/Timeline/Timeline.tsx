@@ -1,7 +1,14 @@
 import React, { FC, ReactElement } from 'react'
 import cn from 'classnames'
 import * as styles from './Timeline.css'
-import { Box, Column, Columns, Stack, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  Column,
+  Columns,
+  Stack,
+  Text,
+  Tooltip,
+} from '@island.is/island-ui/core'
 import differenceInCalendarDays from 'date-fns/differenceInCalendarDays'
 
 interface Props {
@@ -26,9 +33,14 @@ export const Timeline: FC<Props> = ({
   let currentProgress = 0
 
   if (maxDate && minDate) {
-    const dateDifferenceStart = differenceInCalendarDays(minDate, today)
-    const dateDifferenceEnd = differenceInCalendarDays(today, maxDate)
-
+    const dateDifferenceStart = differenceInCalendarDays(
+      today,
+      minDate instanceof Date ? minDate : new Date(minDate),
+    )
+    const dateDifferenceEnd = differenceInCalendarDays(
+      maxDate instanceof Date ? maxDate : new Date(maxDate),
+      today,
+    )
     currentProgress = (dateDifferenceStart + 1) / (dateDifferenceEnd + 1)
   }
 
@@ -47,24 +59,43 @@ export const Timeline: FC<Props> = ({
           borderRadius="large"
           width="full"
         >
-          {currentProgress && currentProgress > 1 && (
-            <Box
-              position="relative"
-              overflow="hidden"
-              borderRadius="large"
-              height="full"
-              width="full"
-            >
+          {currentProgress && (
+            <>
               <Box
-                className={styles.inner}
-                background={'blue400'}
+                position="relative"
+                overflow="hidden"
                 borderRadius="large"
-                position="absolute"
-                style={{
-                  transform: `translateX(${1 - currentProgress * 100}%)`,
-                }}
-              />
-            </Box>
+                height="full"
+                width="full"
+                style={{ top: 0 }}
+              >
+                <Box
+                  className={styles.inner}
+                  background={'blue400'}
+                  borderRadius="large"
+                  position="absolute"
+                  style={{
+                    transform: `translateX(${(1 - currentProgress) * -100}%)`,
+                  }}
+                />
+              </Box>
+              <Box
+                height="full"
+                width="full"
+                position="relative"
+                style={{ top: 0 }}
+              >
+                <Tooltip text="Í dag" placement="top">
+                  <Box
+                    position="absolute"
+                    className={styles.tooltip}
+                    style={{
+                      left: `${currentProgress * 100}%`,
+                    }}
+                  />
+                </Tooltip>
+              </Box>
+            </>
           )}
         </Box>
         <Columns>

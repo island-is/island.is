@@ -173,8 +173,6 @@ export class IntellectualPropertyService {
       )
       .filter((Boolean as unknown) as ExcludesFalse)
 
-    this.logger.debug(JSON.stringify(responses[0]))
-
     return {
       ...responses[0],
       expiryDate: responses[0]?.validTo,
