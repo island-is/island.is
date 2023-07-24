@@ -2,7 +2,6 @@ import React from 'react'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { useParams } from 'react-router-dom'
 import {
-  CardLoader,
   ErrorScreen,
   ExcludesFalse,
   IntroHeader,
@@ -18,8 +17,6 @@ import {
   Box,
   Button,
   Divider,
-  GridColumn,
-  GridRow,
   Inline,
   Stack,
   Text,

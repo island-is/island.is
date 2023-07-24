@@ -1,23 +1,16 @@
-import { FC, ReactElement, useMemo, useState } from 'react'
+import { FC, ReactElement, useEffect, useMemo, useState } from 'react'
 import {
   Box,
   Button,
-  Column,
-  Columns,
   GridColumn,
   GridContainer,
   GridRow,
-  Icon,
-  Inline,
   ModalBase,
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import * as styles from './MultiImageModal.css'
 import cn from 'classnames'
-
-import Modal from '../Modal/Modal'
-import classNames from 'classnames'
 
 interface Props {
   id: string
@@ -42,19 +35,34 @@ export const MultiImageModal: FC<Props> = ({
 }) => {
   const { formatMessage } = useLocale()
   const [currentIndex, setCurrentIndex] = useState(0)
+  const [indexLimits, setIndexLimits] = useState({
+    low: 0,
+    high: MAX_GALLERY_IMAGES - 1,
+  })
+
+  useEffect(() => {
+    if (currentIndex <= indexLimits['low']) {
+      const delta = indexLimits.low - currentIndex
+      setIndexLimits({
+        low: indexLimits.low - delta,
+        high: indexLimits.high - delta,
+      })
+    } else if (indexLimits['high'] <= currentIndex) {
+      const delta = currentIndex - indexLimits.high
+      setIndexLimits({
+        low: indexLimits.low + delta,
+        high: indexLimits.high + delta,
+      })
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentIndex])
 
   const galleryImages = useMemo(() => {
     if (!images) {
       return null
     }
-    if (currentIndex >= MAX_GALLERY_IMAGES) {
-      return images?.slice(
-        currentIndex + 1 - MAX_GALLERY_IMAGES,
-        currentIndex + 1,
-      )
-    }
-    return images.slice(0, MAX_GALLERY_IMAGES)
-  }, [currentIndex, images])
+    return images.slice(indexLimits.low, indexLimits.high + 1)
+  }, [indexLimits, images])
 
   if (!images || !galleryImages) {
     return null

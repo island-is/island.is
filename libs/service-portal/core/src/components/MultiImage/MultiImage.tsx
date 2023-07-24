@@ -53,62 +53,60 @@ export const MultiImage: FC<MultiImageProps> = ({ images, title }) => {
         </Box>
         {restOfImages.length && (
           <Box className={styles.thumbnailGrid}>
-            <Stack space="p1">
-              {restOfImages
-                .slice(0, 3)
-                .map(({ image }, index) => {
-                  if (!image) {
-                    return null
-                  }
+            {restOfImages
+              .slice(0, 3)
+              .map(({ image }, index) => {
+                if (!image) {
+                  return null
+                }
 
-                  return (
-                    <Box
-                      key={index}
-                      className={cn(styles.container, {
-                        [styles.selectedImageOverlay]:
-                          index === selectedImageIndex,
-                      })}
-                      style={{ height: '80px', width: '80px' }}
+                return (
+                  <Box
+                    key={index}
+                    className={cn(styles.container, {
+                      [styles.selectedImageOverlay]:
+                        index === selectedImageIndex,
+                    })}
+                    style={{ height: '80px', width: '80px' }}
+                  >
+                    <button
+                      type="button"
+                      onClick={() => setSelectedImageIndex(index)}
                     >
-                      <button
-                        type="button"
-                        onClick={() => setSelectedImageIndex(index)}
-                      >
-                        <img
-                          src={`data:image/png;base64,${image}`}
-                          alt={title}
-                          className={cn(styles.image)}
-                        />
-                      </button>
-                    </Box>
-                  )
-                })
-                .filter((Boolean as unknown) as ExcludesFalse)}
-              {lastImage && lastImage.image && (
-                <Box
-                  className={cn(styles.container)}
-                  style={{ height: '80px', width: '80px' }}
-                >
-                  <img
-                    src={`data:image/png;base64,${lastImage.image}`}
-                    alt={title}
-                    className={styles.image}
-                  />
-                  <button type="button" onClick={() => setIsModalOpen(true)}>
-                    <Box className={styles.lastImageOverlay}>
-                      <Text
-                        variant="h4"
-                        as="p"
-                        color="blue400"
-                        fontWeight="semiBold"
-                      >
-                        +{images.length - 4}
-                      </Text>
-                    </Box>
-                  </button>
-                </Box>
-              )}
-            </Stack>
+                      <img
+                        src={`data:image/png;base64,${image}`}
+                        alt={title}
+                        className={cn(styles.image)}
+                      />
+                    </button>
+                  </Box>
+                )
+              })
+              .filter((Boolean as unknown) as ExcludesFalse)}
+            {lastImage && lastImage.image && (
+              <Box
+                className={cn(styles.container)}
+                style={{ height: '80px', width: '80px' }}
+              >
+                <img
+                  src={`data:image/png;base64,${lastImage.image}`}
+                  alt={title}
+                  className={styles.image}
+                />
+                <button type="button" onClick={() => setIsModalOpen(true)}>
+                  <Box className={styles.lastImageOverlay}>
+                    <Text
+                      variant="h4"
+                      as="p"
+                      color="blue400"
+                      fontWeight="semiBold"
+                    >
+                      +{images.length - 4}
+                    </Text>
+                  </Box>
+                </button>
+              </Box>
+            )}
           </Box>
         )}
       </Inline>
