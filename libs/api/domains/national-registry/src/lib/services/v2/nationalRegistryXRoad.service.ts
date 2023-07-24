@@ -13,8 +13,7 @@ import { NationalRegistryBirthplace } from '../../models/nationalRegistryBirthpl
 import { NationalRegistryFamilyMember } from '../../models/nationalRegistryFamilyMember.model'
 import { NationalRegistrySpouse } from '../../models/nationalRegistrySpouse.model'
 import { NationalRegistryChildGuardianship } from '../../models/nationalRegistryChildGuardianship.model'
-import { NationalRegistryName } from '../../models/nationalRegistryName.model'
-import { NationalRegistryResidence } from '../../models/nationalRegistryResidenceInfo.model'
+import { NationalRegistryResidenceHistoryEntry } from '../../models/nationalRegistryResidenceHistoryEntry.model'
 
 @Injectable()
 export class NationalRegistryXRoadService {
@@ -26,7 +25,7 @@ export class NationalRegistryXRoadService {
 
   async getNationalRegistryResidenceHistory(
     nationalId: string,
-  ): Promise<NationalRegistryResidence[] | null> {
+  ): Promise<NationalRegistryResidenceHistoryEntry[] | null> {
     const historyList = await this.nationalRegistryApi.getResidenceHistory(
       nationalId,
     )

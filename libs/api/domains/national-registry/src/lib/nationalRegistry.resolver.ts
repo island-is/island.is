@@ -38,12 +38,11 @@ import {
   formatAddress,
   formatName,
   formatReligion,
-  formatPerson,
+  formatResidenceInfo,
 } from './services/v3/mapper'
 import { NationalRegistryChildGuardianship } from './models/nationalRegistryChildGuardianship.model'
 import { ChildGuardianshipInput } from './dto/ChildGuardianshipInput'
 import { ExcludesFalse } from './utils'
-import { child } from 'winston'
 import { NationalRegistryResidenceInfo } from './models/nationalRegistryResidenceInfo.model'
 import { NationalRegistryResidenceHistoryEntry } from './models/nationalRegistryResidenceHistoryEntry.model'
 
@@ -128,7 +127,6 @@ export class NationalRegistryResolver {
   })
   @Audit()
   async resolveParents(
-    @Context('req') { user }: { user: User },
     @Parent() person: NationalRegistryPersonDiscriminated,
   ): Promise<Array<NationalRegistryPerson> | null> {
     if (person.nationalId !== person.nationalId || person.api === 'v2') {
@@ -173,19 +171,19 @@ export class NationalRegistryResolver {
     }
     return null
   }
-  @ResolveField(
-    'residenceHistory',
-    () => [NationalRegistryResidenceHistoryEntry],
-    {
-      nullable: true,
-    },
-  )
+
+  @ResolveField('residenceInfo', () => NationalRegistryResidenceInfo, {
+    nullable: true,
+  })
   @Audit()
   async resolveResidenceInfo(
     @Parent() person: NationalRegistryPersonDiscriminated,
   ): Promise<NationalRegistryResidenceInfo | null> {
     if (person.api === 'v3') {
-      return this.v3.getNationalRegistryResidenceInfo(person.nationalId)
+      this.logger.debug(JSON.stringify(person.rawData))
+      return person.rawData
+        ? formatResidenceInfo(person.rawData.itarupplysingar)
+        : this.v3.getNationalRegistryResidenceInfo(person.nationalId)
     }
     return null
   }

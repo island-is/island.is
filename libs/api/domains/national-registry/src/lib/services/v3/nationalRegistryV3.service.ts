@@ -7,7 +7,6 @@ import { FamilyCorrectionInput } from '../../dto/FamilyCorrectionInput.input'
 import { NationalRegistryAddress } from '../../models/nationalRegistryAddress.model'
 import { NationalRegistryBirthplace } from '../../models/nationalRegistryBirthplace.model'
 import { NationalRegistryCitizenship } from '../../models/nationalRegistryCitizenship.model'
-import { NationalRegistryCustodian } from '../../models/nationalRegistryCustodian.model'
 import { NationalRegistryFamilyCorrectionResponse } from '../../models/nationalRegistryFamilyCorrection.model'
 import { NationalRegistryName } from '../../models/nationalRegistryName.model'
 import {
@@ -22,7 +21,6 @@ import some from 'lodash/some'
 import { NationalRegistryFamilyMember } from '../../models/nationalRegistryFamilyMember.model'
 import {
   formatAddress,
-  formatCustodian,
   formatSpouse,
   formatCitizenship,
   formatBirthplace,
@@ -33,11 +31,7 @@ import {
   formatResidenceInfo,
 } from './mapper'
 import { NationalRegistryChildGuardianship } from '../../models/nationalRegistryChildGuardianship.model'
-import { child } from 'winston'
-import {
-  NationalRegistryResidenceHistoryEntry,
-  NationalRegistryResidenceInfo,
-} from '../../models/nationalRegistryResidenceInfo.model'
+import { NationalRegistryResidenceInfo } from '../../models/nationalRegistryResidenceInfo.model'
 
 export class NationalRegistryV3Service {
   constructor(
@@ -305,6 +299,8 @@ export class NationalRegistryV3Service {
     nationalId: string,
   ): Promise<NationalRegistryResidenceInfo | null> {
     const data = await this.nationalRegistryV3.getResidence(nationalId)
+
+    this.logger.debug(JSON.stringify(data))
 
     return data && formatResidenceInfo(data)
   }
