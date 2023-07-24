@@ -34,6 +34,7 @@ export const PaymentInformation = ({
 
   return (
     <ReviewGroup
+      isLast
       isEditable={editable}
       editAction={() => goToScreen?.('paymentInfo')}
     >

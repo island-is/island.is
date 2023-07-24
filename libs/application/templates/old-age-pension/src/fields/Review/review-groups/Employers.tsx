@@ -16,6 +16,7 @@ export const Employers = ({
 
   return (
     <ReviewGroup
+      isLast
       isEditable={editable}
       editAction={() => goToScreen?.('employers')}
     >

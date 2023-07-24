@@ -16,6 +16,7 @@ export const OnePaymentPerYear = ({
 
   return (
     <ReviewGroup
+      isLast
       isEditable={editable}
       editAction={() => goToScreen?.('onePaymentPerYear')}
     >
