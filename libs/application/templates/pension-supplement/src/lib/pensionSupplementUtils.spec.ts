@@ -75,7 +75,7 @@ describe('getAvailableMonths', () => {
     let months = MONTHS
 
     if (startDate.getFullYear().toString() === selectedYear) {
-      months = months.slice(startDate.getMonth(), months.length + 1)
+      months = months.slice(startDate.getMonth() + 1, months.length)
     } else if (endDate.getFullYear().toString() === selectedYear) {
       months = months.slice(0, endDate.getMonth() + 1)
     }
