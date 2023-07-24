@@ -256,6 +256,7 @@ export const OldAgePensionForm: Form = buildForm({
                     title: oldAgePensionFormMessage.payment.alertTitle,
                     component: 'FieldAlertMessage',
                     description: oldAgePensionFormMessage.payment.alertMessage,
+                    doesNotRequireAnswer: true,
                   },
                   { type: 'info' },
                 ),
@@ -532,6 +533,7 @@ export const OldAgePensionForm: Form = buildForm({
                     condition: (answers, externalData) => {
                       return isEarlyRetirement(answers, externalData)
                     },
+                    doesNotRequireAnswer: true,
                   },
                   {
                     descriptionFirstPart:

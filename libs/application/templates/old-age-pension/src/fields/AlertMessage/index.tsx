@@ -32,6 +32,7 @@ export const FieldAlertMessage: FC<FieldBaseProps & FieldAlertMessageProps> = ({
   const { title, description, props } = field
   const { formatMessage } = useLocale()
   const { type } = props
+
   return (
     <Box marginBottom={[4, 4, 5]}>
       <AlertMessage
@@ -53,6 +54,7 @@ export const EarlyRetirementWarning: FC<
   const { props, title } = field
   const { formatMessage } = useLocale()
   const { descriptionFirstPart, descriptionSecondPart, linkName, url } = props
+
   return (
     <Box
       padding={[1, 1, 2]}
@@ -72,7 +74,11 @@ export const EarlyRetirementWarning: FC<
             </Text>
             <Box display="flex" alignItems="center">
               <Text>
-                {formatText(descriptionFirstPart, application, formatMessage)}
+                {`${formatText(
+                  descriptionFirstPart,
+                  application,
+                  formatMessage,
+                )} `}
                 <Link href={formatText(url, application, formatMessage)}>
                   <span className={styles.link}>
                     {formatText(linkName, application, formatMessage)}

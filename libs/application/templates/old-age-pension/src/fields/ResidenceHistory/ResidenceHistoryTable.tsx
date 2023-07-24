@@ -9,7 +9,6 @@ import {
   getCombinedResidenceHistory,
 } from '../../lib/oldAgePensionUtils'
 import { getCountryByCode } from '@island.is/shared/utils'
-import { Box } from '@island.is/island-ui/core'
 
 interface ResidenceHistoryTableProps {
   application: Application

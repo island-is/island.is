@@ -1,5 +1,5 @@
 import { RepeaterProps } from '@island.is/application/types'
-import { FC, useEffect } from 'react'
+import { FC, useEffect, useState } from 'react'
 import {
   AlertMessage,
   Box,
@@ -31,9 +31,6 @@ const EmployersOverview: FC<RepeaterProps> = ({
   const [updateApplication] = useMutation(UPDATE_APPLICATION)
 
   useEffect(() => {
-    const newAnswers = getApplicationAnswers(application.answers)
-    employers = newAnswers.employers
-
     if (employers.length === 0) {
       expandRepeater()
     }
