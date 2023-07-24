@@ -10,20 +10,31 @@ import { Inline } from '../Inline/Inline'
 import { Tag, TagProps } from '../Tag/Tag'
 import { Hyphen } from '../Hyphen/Hyphen'
 import { Text, TextProps } from '../Text/Text'
-
-import * as styles from './CategoryCard.css'
-import { Checkbox } from '../Checkbox/Checkbox'
 import { Button, ButtonSizes, ButtonTypes } from '../Button/Button'
 import { Icon as IconType } from '../IconRC/iconMap'
 
+import * as styles from './ActionCategoryCard.css'
+import { Checkbox } from '../Checkbox/Checkbox'
+
 export const STACK_WIDTH = 280
 
-export type CategoryCardTag = {
+type Tag = {
   label: string
   href?: string
   onClick?: () => void
   disabled?: boolean
-  outlined?: boolean
+}
+
+type SidePanelItems = {
+  icon?: React.ReactNode
+  title: string
+}
+
+type SidePanelConfigProps = {
+  onCheck?: () => void
+  buttonLabel?: string
+  checkboxLabel?: string
+  items?: Array<SidePanelItems>
 }
 
 export type CTAProps = {
@@ -39,28 +50,16 @@ export type CTAProps = {
   disabled?: boolean
 }
 
-type SidePanelItems = {
-  icon?: React.ReactNode
-  title: string
-}
-
-type SidePanelConfigProps = {
-  onCheck?: () => void
-  buttonLabel?: string
-  checkboxLabel?: string
-  items?: Array<SidePanelItems>
-  cta?: CTAProps
-}
-
-export type CategoryCardProps = {
+export type ActionCategoryCardProps = {
   ref?: UseMeasureRef<HTMLElement>
   width?: number
   icon?: React.ReactElement
+  iconText?: string
   heading: string
   headingAs?: TextProps['as']
   headingVariant?: TextProps['variant']
   text: string
-  tags?: CategoryCardTag[]
+  tags?: Tag[]
   tagOptions?: Pick<TagProps, 'hyphenate' | 'truncate' | 'textLeft'>
   href?: string
   colorScheme?: 'blue' | 'purple' | 'red'
@@ -75,9 +74,20 @@ export type CategoryCardProps = {
   to?: string
   component?: ElementType
 
+  secondaryTag?: Tag
+
+  cta?: CTAProps
+  secondaryCta?: CTAProps
+
   //TODO: DOCUMENT THIS: NEW ITEMS FOR HASKOLANAM
   sidePanelConfig?: SidePanelConfigProps
 }
+
+const defaultCta = {
+  variant: 'primary',
+  icon: 'arrowForward',
+  onClick: () => null,
+} as const
 
 const colorSchemes = {
   blue: {
@@ -97,7 +107,7 @@ const colorSchemes = {
   },
 } as const
 
-export type CategoryCardImage =
+export type ActionCategoryCardImage =
   | {
       src: string
       alt: string
@@ -113,7 +123,7 @@ export type CategoryCardImage =
 
 const Component = forwardRef<
   HTMLElement,
-  CategoryCardProps & CategoryCardImage
+  ActionCategoryCardProps & ActionCategoryCardImage
 >(
   (
     {
@@ -123,6 +133,7 @@ const Component = forwardRef<
       headingAs = 'h3',
       headingVariant = 'h3',
       icon,
+      iconText,
       text,
       href = '/',
       tags = [],
@@ -130,17 +141,21 @@ const Component = forwardRef<
       truncateHeading = false,
       src,
       alt,
-      sidePanelConfig,
       objectFit = 'contain',
       customImage,
       hyphenate = false,
       tagOptions,
+      secondaryTag,
       autoStack,
+      sidePanelConfig,
+      cta: _cta,
+      secondaryCta,
       ...rest
     },
     ref,
   ) => {
     const { borderColor, textColor, tagVariant } = colorSchemes[colorScheme]
+    const cta = { ...defaultCta, ..._cta }
 
     const hasTags = Array.isArray(tags) && tags.length > 0
     const hasImage = !!src || !!customImage
@@ -148,17 +163,32 @@ const Component = forwardRef<
     const shouldStack = width && width < stackWidth
 
     const renderCTA = () => {
-      const hasCTA = !!sidePanelConfig?.cta?.label
-      const cta = sidePanelConfig?.cta
+      const hasCTA = !!cta.label
+      const hasSecondaryCTA = hasCTA && secondaryCta?.label
+
       return (
-        hasCTA &&
-        cta && (
+        hasCTA && (
           <Box
             paddingTop="gutter"
             display="flex"
             justifyContent={['flexStart', 'flexEnd']}
+            alignItems="center"
             flexDirection="row"
           >
+            {hasSecondaryCTA && (
+              <Box paddingRight={2} paddingLeft={2}>
+                <Button
+                  variant={secondaryCta.variant}
+                  size={secondaryCta?.size}
+                  onClick={secondaryCta?.onClick}
+                  icon={secondaryCta?.icon}
+                  iconType={secondaryCta?.iconType}
+                  disabled={secondaryCta?.disabled}
+                >
+                  {secondaryCta?.label}
+                </Button>
+              </Box>
+            )}
             <Box>
               <Button
                 {...(cta.buttonType ?? { variant: cta.variant })}
@@ -167,7 +197,6 @@ const Component = forwardRef<
                 disabled={cta.disabled}
                 icon={cta.icon}
                 iconType={cta.iconType}
-                nowrap
               >
                 {cta.label}
               </Button>
@@ -206,19 +235,18 @@ const Component = forwardRef<
         >
           <Box
             display="flex"
-            height={sidePanelConfig ? undefined : 'full'}
             width="full"
             flexDirection="column"
-            justifyContent={sidePanelConfig ? 'spaceBetween' : 'flexStart'}
-            style={sidePanelConfig && { alignSelf: 'stretch' }}
+            justifyContent="spaceBetween"
+            style={{ alignSelf: 'stretch' }}
           >
-            <Box>
-              <Box
-                display="flex"
-                flexDirection="row"
-                alignItems={icon ? 'center' : 'flexEnd'}
-              >
-                {icon && (
+            <Box
+              display="flex"
+              flexDirection={iconText ? 'column' : 'row'}
+              alignItems={iconText ? 'flexStart' : icon ? 'center' : 'flexEnd'}
+            >
+              {icon && (
+                <Box display="flex" alignItems="center" marginBottom={2}>
                   <Box
                     paddingRight={1}
                     display="flex"
@@ -227,7 +255,16 @@ const Component = forwardRef<
                   >
                     {icon}
                   </Box>
-                )}
+                  {iconText && <Text variant="small">{iconText}</Text>}
+                </Box>
+              )}
+              <Box
+                display="flex"
+                flexDirection="row"
+                justifyContent="spaceBetween"
+                width="full"
+                columnGap={2}
+              >
                 <Text
                   as={headingAs}
                   variant={headingVariant}
@@ -237,22 +274,35 @@ const Component = forwardRef<
                 >
                   {hyphenate ? <Hyphen>{heading}</Hyphen> : heading}
                 </Text>
+                <Tag
+                  key={secondaryTag?.label}
+                  disabled={secondaryTag?.disabled}
+                  outlined={true}
+                  variant="white"
+                  href={secondaryTag?.href}
+                  onClick={secondaryTag?.onClick}
+                  {...tagOptions}
+                >
+                  {secondaryTag?.label}
+                </Tag>
               </Box>
-              <Text paddingTop={1}>{text}</Text>
             </Box>
-            {hasTags && (
-              <Box paddingTop={3}>
-                <Inline space={['smallGutter', 'smallGutter', 'gutter']}>
-                  {tags.map((tag) => {
-                    console.log('tag', tag.outlined)
-                    return (
+            <Text paddingTop={2} paddingBottom={3}>
+              {text}
+            </Text>
+            <Box
+              display="flex"
+              flexDirection="row"
+              justifyContent={hasTags ? 'spaceBetween' : 'flexEnd'}
+            >
+              {hasTags && (
+                <Box paddingTop={3}>
+                  <Inline space={['smallGutter', 'smallGutter', 'gutter']}>
+                    {tags.map((tag) => (
                       <Tag
                         key={tag.label}
                         disabled={tag.disabled}
-                        outlined={
-                          (tag.outlined || tag.outlined === undefined) &&
-                          !tag.href
-                        }
+                        outlined={!tag.href}
                         variant={tagVariant}
                         href={tag.href}
                         onClick={tag.onClick}
@@ -260,11 +310,12 @@ const Component = forwardRef<
                       >
                         {tag.label}
                       </Tag>
-                    )
-                  })}
-                </Inline>
-              </Box>
-            )}
+                    ))}
+                  </Inline>
+                </Box>
+              )}
+              <Box>{renderCTA()}</Box>
+            </Box>
           </Box>
           {hasImage &&
             (customImage ? (
@@ -290,13 +341,19 @@ const Component = forwardRef<
                 />
               </Box>
             ))}
+
           {sidePanelConfig && (
             <Box
               display="flex"
               flexDirection="column"
               position="relative"
               justifyContent="flexStart"
-              paddingLeft={5}
+              alignItems="center"
+              borderLeftWidth="standard"
+              borderStyle="solid"
+              borderColor="blue200"
+              paddingLeft={3}
+              marginLeft={5}
               style={{ alignSelf: 'stretch' }}
             >
               {sidePanelConfig.items &&
@@ -315,14 +372,13 @@ const Component = forwardRef<
                     </Box>
                   )
                 })}
-              <Box>
+              <Box marginTop={2}>
                 <Checkbox
                   label="Setja í samanburð"
                   labelVariant="small"
                   onChange={sidePanelConfig.onCheck}
                 />
               </Box>
-              <Box>{renderCTA()}</Box>
             </Box>
           )}
         </Box>
@@ -331,7 +387,9 @@ const Component = forwardRef<
   },
 )
 
-export const CategoryCard = (props: CategoryCardProps & CategoryCardImage) => {
+export const ActionCategoryCard = (
+  props: ActionCategoryCardProps & ActionCategoryCardImage,
+) => {
   return props.autoStack ? (
     <WithMeasureProps>
       {(measureProps) => <Component {...props} {...measureProps} />}
