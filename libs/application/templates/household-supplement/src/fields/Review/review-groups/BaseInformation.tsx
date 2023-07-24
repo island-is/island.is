@@ -35,6 +35,7 @@ export const BaseInformation = ({
 
   return (
     <ReviewGroup
+      isLast
       isEditable={editable}
       canCloseEdit={groupHasNoErrors([
         'applicantInfo.email',

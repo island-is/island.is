@@ -19,6 +19,7 @@ export const Comment = ({
     <>
       {comment && (
         <ReviewGroup
+          isLast
           isEditable={editable}
           editAction={() => goToScreen?.('comment')}
         >

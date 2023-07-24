@@ -18,6 +18,7 @@ export const Period = ({
 
   return (
     <ReviewGroup
+      isLast
       isEditable={editable}
       editAction={() => goToScreen?.('periodField')}
     >
