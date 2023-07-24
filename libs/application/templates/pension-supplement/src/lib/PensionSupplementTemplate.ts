@@ -160,12 +160,6 @@ const PensionSupplementTemplate: ApplicationTemplate<
               content: statesMessages.tryggingastofnunInReviewContent,
               displayStatus: 'info',
             },
-            historyLogs: [
-              {
-                onEvent: DefaultEvents.APPROVE,
-                logMessage: statesMessages.additionalDocumentsAdded,
-              },
-            ],
           },
           roles: [
             {
@@ -200,6 +194,12 @@ const PensionSupplementTemplate: ApplicationTemplate<
               content: statesMessages.additionalDocumentRequiredDescription,
               displayStatus: 'warning',
             },
+            historyLogs: [
+              {
+                onEvent: DefaultEvents.APPROVE,
+                logMessage: statesMessages.additionalDocumentsAdded,
+              },
+            ],
           },
           lifecycle: pruneAfterDays(970),
           progress: 0.5,
