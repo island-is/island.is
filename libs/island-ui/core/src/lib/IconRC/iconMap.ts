@@ -68,6 +68,8 @@ export type Icon =
   | 'share'
   | 'QRCode'
   | 'globe'
+  | 'gridView'
+  | 'listView'
 
 export default {
   filled: {
@@ -139,6 +141,8 @@ export default {
     share: 'Share',
     QRCode: 'QRCodeOutline',
     globe: 'Globe',
+    gridView: 'GridView',
+    listView: 'ListView',
   },
   outline: {
     accessibility: 'AccessibilityOutline',
@@ -209,5 +213,7 @@ export default {
     share: 'ShareOutline',
     QRCode: 'QRCodeOutline',
     globe: 'Globe',
+    gridView: 'GridView',
+    listView: 'ListView',
   },
 }

@@ -1,0 +1,45 @@
+{
+  "root": "libs/clients/directorate-of-immigration/residence-permit",
+  "sourceRoot": "libs/clients/directorate-of-immigration/residence-permit/src",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": [
+          "libs/clients/directorate-of-immigration/residence-permit/**/*.ts"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": [
+        "coverage/libs/clients/directorate-of-immigration/residence-permit"
+      ],
+      "options": {
+        "jestConfig": "libs/clients/directorate-of-immigration/residence-permit/jest.config.js",
+        "passWithNoTests": true
+      }
+    },
+    "update-openapi-document": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": [
+          "curl https://utl-umsokn.azurewebsites.net/swagger/v1/swagger.json -H 'Accept: application/json' > src/clientConfig.json"
+        ],
+        "parallel": false,
+        "cwd": "libs/clients/directorate-of-immigration/residence-permit"
+      }
+    },
+    "schemas/external-openapi-generator": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": [
+          "yarn openapi-generator -o libs/clients/directorate-of-immigration/residence-permit/gen/fetch -i libs/clients/directorate-of-immigration/residence-permit/src/clientConfig.json"
+        ]
+      }
+    }
+  },
+  "tags": ["lib:client", "scope:client"]
+}

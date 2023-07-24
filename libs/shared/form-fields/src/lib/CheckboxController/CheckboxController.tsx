@@ -17,6 +17,7 @@ interface Option {
   tooltip?: React.ReactNode
   disabled?: boolean
   excludeOthers?: boolean
+  rightContent?: React.ReactNode
 }
 interface CheckboxControllerProps {
   defaultValue?: string[]
@@ -91,6 +92,7 @@ export const CheckboxController: FC<CheckboxControllerProps> = ({
                   setValue(id, newChoices)
                   onSelect(newChoices)
                 }}
+                rightContent={option.rightContent}
                 checked={value && value.includes(option.value)}
                 name={name}
                 id={`${id}[${index}]`}

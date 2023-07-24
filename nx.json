@@ -42,6 +42,36 @@
     }
   },
   "targetDependencies": {
+    "schemas/external-openapi-generator": [
+      {
+        "target": "schemas/external-openapi-generator",
+        "projects": "dependencies"
+      }
+    ],
+    "schemas/build-openapi": [
+      {
+        "target": "schemas/build-openapi",
+        "projects": "dependencies"
+      }
+    ],
+    "schemas/openapi-generator": [
+      {
+        "target": "schemas/openapi-generator",
+        "projects": "dependencies"
+      }
+    ],
+    "schemas/build-graphql-schema": [
+      {
+        "target": "schemas/build-graphql-schema",
+        "projects": "dependencies"
+      }
+    ],
+    "schemas/codegen": [
+      {
+        "target": "schemas/build-graphql-schema",
+        "projects": "dependencies"
+      }
+    ],
     "build": [
       {
         "target": "build",

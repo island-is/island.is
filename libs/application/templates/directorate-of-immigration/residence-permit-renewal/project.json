@@ -1,0 +1,33 @@
+{
+  "root": "libs/application/templates/directorate-of-immigration/residence-permit-renewal",
+  "sourceRoot": "libs/application/templates/directorate-of-immigration/residence-permit-renewal/src",
+  "projectType": "library",
+  "tags": ["scope:application-system", "lib:application-system"],
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": [
+          "libs/application/templates/directorate-of-immigration/residence-permit-renewal/**/*.{ts,tsx,js,jsx}"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": [
+        "coverage/libs/application/templates/directorate-of-immigration/residence-permit-renewal"
+      ],
+      "options": {
+        "jestConfig": "libs/application/templates/directorate-of-immigration/residence-permit-renewal/jest.config.js",
+        "passWithNoTests": true
+      }
+    },
+    "extract-strings": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/directorate-of-immigration/residence-permit-renewal/src/**/*.{js,ts,tsx}'"
+      }
+    }
+  }
+}

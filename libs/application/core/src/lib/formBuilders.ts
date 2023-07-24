@@ -51,6 +51,7 @@ export function buildDataProviderItem(
     order: data.provider?.order,
     title: data.title,
     subTitle: data.subTitle,
+    pageTitle: data.pageTitle,
     source: data.source,
   }
 }
