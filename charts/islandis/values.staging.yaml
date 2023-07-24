@@ -404,8 +404,8 @@ api:
     fsGroup: 65534
   pvcs:
     - accessModes: 'ReadWriteMany'
-      mountPath: '/etc/config/islyklar.p12'
-      name: 'islykill-cert'
+      mountPath: '/etc/config/'
+      name: 'islyklar.p12'
       size: '1Gi'
       storageClass: 'efs-csi'
   replicaCount:
@@ -663,8 +663,8 @@ application-system-api:
     fsGroup: 65534
   pvcs:
     - accessModes: 'ReadWriteMany'
-      mountPath: '/etc/config/islyklar.p12'
-      name: 'islykill-cert'
+      mountPath: '/etc/config/'
+      name: 'islyklar.p12'
       size: '1Gi'
       storageClass: 'efs-csi'
   replicaCount:
