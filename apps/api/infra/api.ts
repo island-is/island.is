@@ -354,10 +354,10 @@ export const serviceSetup = (services: {
       AircraftRegistry,
     )
     .volumes({
-      name: 'islykill-cert',
+      name: 'islyklar.p12',
       size: '1Gi',
       accessModes: 'ReadWrite',
-      mountPath: '/etc/config/islyklar.p12',
+      mountPath: '/etc/config/',
       storageClass: 'efs-csi',
     })
     .ingress({
