@@ -24,7 +24,7 @@ export const Comment = ({
           editAction={() => goToScreen?.('comment')}
         >
           <GridRow marginBottom={3}>
-            <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
+            <GridColumn span={['10/12', '10/12', '10/12', '10/12']}>
               <DataValue
                 label={formatMessage(
                   pensionSupplementFormMessage.additionalInfo.commentSection,
