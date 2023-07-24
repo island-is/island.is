@@ -10,6 +10,9 @@ export const FILE_SIZE_LIMIT = 5000000 // 5MB
 export type Events =
   | { type: DefaultEvents.SUBMIT }
   | { type: DefaultEvents.EDIT }
+  | { type: DefaultEvents.APPROVE }
+  | { type: DefaultEvents.REJECT }
+  | { type: 'ADDITIONALDOCUMENTSREQUIRED' } // Ex: TR ask for more documents
 
 export enum Roles {
   APPLICANT = 'applicant',

@@ -546,10 +546,52 @@ export const statesMessages = defineMessages({
       'Umsóknin þín er í bið eftir yfirferð. Hægt er að breyta umsókn þar til umsókn er komin í yfirferð.',
     description: 'Application waiting for review',
   },
+  tryggingastofnunInReviewTitle: {
+    id: 'ul.application:tryggingastofnunInReviewTitle',
+    defaultMessage: 'Verið er að fara yfir umsóknina',
+    description: 'The application is being reviewed',
+  },
+  tryggingastofnunInReviewContent: {
+    id: 'ul.application:tryggingastofnunInReviewContent',
+    defaultMessage:
+      'Tryggingastofnun fer núna yfir umsóknina og því getur þetta tekið nokkra daga',
+    description:
+      'Tryggingastofnun is currently reviewing the application, so this may take a few days',
+  },
   applicationEdited: {
     id: 'ul.application:applicationEdited',
     defaultMessage: 'Umsókn breytt',
     description: 'Application edited',
+  },
+  applicationRejected: {
+    id: 'ul.application:applicationRejected',
+    defaultMessage: 'Umsókn hafnað',
+    description: 'Application rejected',
+  },
+  applicationApproved: {
+    id: 'ul.application:applicationApproved',
+    defaultMessage: 'Tryggingastofnun hefur samþykkt umsóknina',
+    description: 'Tryggingastofnun has accepted the application',
+  },
+  applicationApprovedDescription: {
+    id: 'ul.application:applicationApprovedDescription',
+    defaultMessage: 'Umsókn vegna ellilífeyris hefur verið samþykkt',
+    description: 'The application for old-age pension has been approved',
+  },
+  additionalDocumentRequired: {
+    id: 'ul.application:additionalDocumentRequired',
+    defaultMessage: 'Viðbótargögn vantar',
+    description: 'Additional documents required',
+  },
+  additionalDocumentsAdded: {
+    id: 'ul.application:additionalDocumentsAdded',
+    defaultMessage: 'Viðbótargögnum bætt við',
+    description: 'Additional documents added',
+  },
+  additionalDocumentRequiredDescription: {
+    id: 'ul.application:additionalDocumentRequired.description',
+    defaultMessage: 'Tryggingastofnun vantar frekari gögn vegna umsóknarinnar.',
+    description: 'Description of the state - additionalDocumentRequired',
   },
   pendingTag: {
     id: 'ul.application:pending.tag',
