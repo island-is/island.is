@@ -622,6 +622,15 @@ export function isExistsCohabitantOlderThan25(
   return isOlderThan25
 }
 
+export function isMoreThan2Year(answers: Application['answers']) {
+  const { selectedMonth, selectedYear } = getApplicationAnswers(answers)
+  const today = new Date()
+  const startDate = addYears(today, -2)
+  const selectedDate = new Date(selectedYear + selectedMonth)
+
+  return startDate > selectedDate
+}
+
 function residenceMapper(
   history: NationalRegistryResidenceHistory,
 ): CombinedResidenceHistory {
