@@ -91,6 +91,7 @@ export const PensionSupplementForm: Form = buildForm({
                     id: 'paymentInfo.alert',
                     title: pensionSupplementFormMessage.info.paymentAlertTitle,
                     component: 'FieldAlertMessage',
+                    doesNotRequireAnswer: true,
                     description:
                       pensionSupplementFormMessage.info.paymentAlertMessage,
                   },
