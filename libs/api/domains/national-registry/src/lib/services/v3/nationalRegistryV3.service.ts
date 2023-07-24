@@ -30,10 +30,14 @@ import {
   formatReligion,
   formatPerson,
   formatPersonDiscriminated,
+  formatResidenceInfo,
 } from './mapper'
 import { NationalRegistryChildGuardianship } from '../../models/nationalRegistryChildGuardianship.model'
 import { child } from 'winston'
-import { NationalRegistryResidence } from '../../models/nationalRegistryResidence.model'
+import {
+  NationalRegistryResidenceHistoryEntry,
+  NationalRegistryResidenceInfo,
+} from '../../models/nationalRegistryResidenceInfo.model'
 
 export class NationalRegistryV3Service {
   constructor(
@@ -297,9 +301,11 @@ export class NationalRegistryV3Service {
     return data && formatReligion(data)
   }
 
-  async getNationalRegistryResidenceHistory(
+  async getNationalRegistryResidenceInfo(
     nationalId: string,
-  ): Promise<NationalRegistryResidence[] | null> {
-    return null
+  ): Promise<NationalRegistryResidenceInfo | null> {
+    const data = await this.nationalRegistryV3.getResidence(nationalId)
+
+    return data && formatResidenceInfo(data)
   }
 }

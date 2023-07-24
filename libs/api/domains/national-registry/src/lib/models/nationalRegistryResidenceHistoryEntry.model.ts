@@ -2,7 +2,7 @@ import { Field, ObjectType } from '@nestjs/graphql'
 import { NationalRegistryAddress } from './nationalRegistryAddress.model'
 
 @ObjectType()
-export class NationalRegistryResidence {
+export class NationalRegistryResidenceHistoryEntry {
   @Field(() => NationalRegistryAddress)
   address!: NationalRegistryAddress
 

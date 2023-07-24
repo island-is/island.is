@@ -8,6 +8,7 @@ import {
   EinstaklingurDTOForsjaItem,
   EinstaklingurDTOLoghTengsl,
   EinstaklingurDTONafnAllt,
+  EinstaklingurDTOItarAuka,
 } from '@island.is/clients/national-registry-v3'
 import { NationalRegistryAddress } from '../../models/nationalRegistryAddress.model'
 import { NationalRegistryBirthplace } from '../../models/nationalRegistryBirthplace.model'
@@ -20,8 +21,7 @@ import {
 } from '../../models/nationalRegistryPerson.model'
 import { NationalRegistryReligion } from '../../models/nationalRegistryReligion.model'
 import { NationalRegistrySpouse } from '../../models/nationalRegistrySpouse.model'
-import { ExcludesFalse } from '../../utils'
-import { NationalRegistryDomicileInhabitants } from '../../models/nationalRegistryDomicileInhabitants.model'
+import { NationalRegistryResidenceInfo } from '../../models/nationalRegistryResidenceInfo.model'
 
 export function formatPersonDiscriminated(
   individual: EinstaklingurDTOAllt | null | undefined,
@@ -173,6 +173,22 @@ export function formatDomicilePopulace(
       .filter((Boolean as unknown) as ExcludesFalse),
   }
 }*/
+
+export function formatResidenceInfo(
+  info: EinstaklingurDTOItarAuka | null | undefined,
+): NationalRegistryResidenceInfo | null {
+  if (!info || !info.logheimiliskodi) {
+    return null
+  }
+
+  return {
+    domicileId: info.logheimiliskodi,
+    domicileIdLast1stOfDecember: info.logheimiliskodi112 ?? null,
+    domicileIdPreviousIcelandResidence: info.logheimiliskodiSIsl ?? null,
+    residence: info.heimilisfang ? formatAddress(info.heimilisfang) : null,
+    address: info.adsetur ? formatAddress(info.adsetur) : null,
+  }
+}
 
 export function formatName(
   name: EinstaklingurDTONafnAllt | null | undefined,

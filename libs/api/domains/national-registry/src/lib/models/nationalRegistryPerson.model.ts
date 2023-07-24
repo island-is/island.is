@@ -6,7 +6,8 @@ import { NationalRegistrySpouse } from './nationalRegistrySpouse.model'
 import { NationalRegistryAddress } from './nationalRegistryAddress.model'
 import { NationalRegistryName } from './nationalRegistryName.model'
 import { NationalRegistryReligion } from './nationalRegistryReligion.model'
-import { NationalRegistryResidence } from './nationalRegistryResidence.model'
+import { NationalRegistryResidenceInfo } from './nationalRegistryResidenceInfo.model'
+import { NationalRegistryResidenceHistoryEntry } from './nationalRegistryResidenceHistoryEntry.model'
 
 type PersonV3 = NationalRegistryPerson & {
   api: 'v3'
@@ -54,8 +55,11 @@ export class NationalRegistryPerson {
   @Field(() => String, { nullable: true })
   fate?: string | null
 
-  @Field(() => [NationalRegistryResidence], { nullable: true })
-  residenceHistory?: NationalRegistryResidence[]
+  @Field(() => [NationalRegistryResidenceHistoryEntry], { nullable: true })
+  residenceHistory?: NationalRegistryResidenceHistoryEntry[]
+
+  @Field(() => NationalRegistryResidenceInfo, { nullable: true })
+  residenceInfo?: NationalRegistryResidenceInfo
 
   @Field(() => NationalRegistryBirthplace, { nullable: true })
   birthplace?: NationalRegistryBirthplace | null

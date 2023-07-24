@@ -14,7 +14,7 @@ import { NationalRegistryFamilyMember } from '../../models/nationalRegistryFamil
 import { NationalRegistrySpouse } from '../../models/nationalRegistrySpouse.model'
 import { NationalRegistryChildGuardianship } from '../../models/nationalRegistryChildGuardianship.model'
 import { NationalRegistryName } from '../../models/nationalRegistryName.model'
-import { NationalRegistryResidence } from '../../models/nationalRegistryResidence.model'
+import { NationalRegistryResidence } from '../../models/nationalRegistryResidenceInfo.model'
 
 @Injectable()
 export class NationalRegistryXRoadService {

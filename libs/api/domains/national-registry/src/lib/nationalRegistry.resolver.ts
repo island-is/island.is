@@ -44,7 +44,8 @@ import { NationalRegistryChildGuardianship } from './models/nationalRegistryChil
 import { ChildGuardianshipInput } from './dto/ChildGuardianshipInput'
 import { ExcludesFalse } from './utils'
 import { child } from 'winston'
-import { NationalRegistryResidence } from './models/nationalRegistryResidence.model'
+import { NationalRegistryResidenceInfo } from './models/nationalRegistryResidenceInfo.model'
+import { NationalRegistryResidenceHistoryEntry } from './models/nationalRegistryResidenceHistoryEntry.model'
 
 @UseGuards(IdsAuthGuard, IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.meDetails)
@@ -156,16 +157,37 @@ export class NationalRegistryResolver {
     return this.v3.getCustodians(person.nationalId)
   }
 
-  @ResolveField('residenceHistory', () => [NationalRegistryResidence], {
-    nullable: true,
-  })
+  @ResolveField(
+    'residenceHistory',
+    () => [NationalRegistryResidenceHistoryEntry],
+    {
+      nullable: true,
+    },
+  )
   @Audit()
   async resolveResidenceHistory(
     @Parent() person: NationalRegistryPersonDiscriminated,
-  ): Promise<NationalRegistryResidence[] | null> {
-    return this.dataService(person.api).getNationalRegistryResidenceHistory(
-      person.nationalId,
-    )
+  ): Promise<NationalRegistryResidenceHistoryEntry[] | null> {
+    if (person.api === 'v2') {
+      return this.v2.getNationalRegistryResidenceHistory(person.nationalId)
+    }
+    return null
+  }
+  @ResolveField(
+    'residenceHistory',
+    () => [NationalRegistryResidenceHistoryEntry],
+    {
+      nullable: true,
+    },
+  )
+  @Audit()
+  async resolveResidenceInfo(
+    @Parent() person: NationalRegistryPersonDiscriminated,
+  ): Promise<NationalRegistryResidenceInfo | null> {
+    if (person.api === 'v3') {
+      return this.v3.getNationalRegistryResidenceInfo(person.nationalId)
+    }
+    return null
   }
 
   @ResolveField('birthplace', () => NationalRegistryBirthplace, {

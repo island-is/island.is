@@ -6,6 +6,7 @@ import {
   EinstaklingurDTOForsjaItem,
   EinstaklingurDTOHeimili,
   EinstaklingurDTOHju,
+  EinstaklingurDTOItarAuka,
   EinstaklingurDTOLogforeldrar,
   EinstaklingurDTONafnAllt,
   EinstaklingurDTORikisfang,
@@ -85,6 +86,13 @@ export class NationalRegistryV3ClientService {
 
   getReligion = (nationalId: string): Promise<EinstaklingurDTOTru | null> =>
     this.individualApi.midlunV02EinstaklingarNationalIdTruGet({
+      nationalId,
+    })
+
+  getResidence = (
+    nationalId: string,
+  ): Promise<EinstaklingurDTOItarAuka | null> =>
+    this.individualApi.midlunV02EinstaklingarNationalIdItarGet({
       nationalId,
     })
 }
