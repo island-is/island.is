@@ -6,10 +6,10 @@ export const contentfulLocaleMap = {
   en: 'en',
 }
 
-export function removeLocaleKeysFromEntry(
+export function parseSyncApiNode(
   node: object,
   locale: Locale,
-  skippedKey?: string,
+  skippedKeys?: string[],
   visited = new Set<object>(),
 ) {
   if (!node || typeof node !== 'object' || visited.has(node)) return node
@@ -17,14 +17,23 @@ export function removeLocaleKeysFromEntry(
   visited.add(node)
 
   for (const key in node) {
-    if (skippedKey && key === skippedKey) continue
+    if (skippedKeys && skippedKeys.includes(key)) continue
 
     const value = node[key as keyof typeof node]
 
     if (typeof value === 'object') {
-      ;(node[key as keyof typeof node] as
-        | object
-        | null) = removeLocaleKeysFromEntry(value, locale, skippedKey, visited)
+      if (key === 'sys') {
+        ;(node['sys' as keyof typeof node] as { locale: string }).locale =
+          contentfulLocaleMap[locale]
+        continue
+      }
+
+      ;(node[key as keyof typeof node] as object | null) = parseSyncApiNode(
+        value,
+        locale,
+        skippedKeys,
+        visited,
+      )
     }
     if (key === contentfulLocaleMap[locale]) {
       return value
@@ -33,7 +42,7 @@ export function removeLocaleKeysFromEntry(
 
   // Make sure we null out the other locale values
   for (const key in node) {
-    if (skippedKey && key === skippedKey) continue
+    if (skippedKeys && skippedKeys.includes(key)) continue
     if (Object.values(contentfulLocaleMap).includes(key)) {
       return null
     }

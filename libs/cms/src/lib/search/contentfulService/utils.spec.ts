@@ -1,8 +1,9 @@
-import { removeLocaleKeysFromEntry } from './utils'
+import { parseSyncApiNode } from './utils'
 
-describe('test', () => {
-  it('should', () => {
+describe('sync api parsing', () => {
+  it('should mutate object correctly', () => {
     const testObject = {
+      sys: {},
       fields: {
         title: {
           'is-IS': 'Prufa',
@@ -21,14 +22,22 @@ describe('test', () => {
         slug: {
           en: 'test',
         },
+        news: {
+          tags: ['some-organization-slug'],
+          size: 4,
+          order: 'desc',
+          organization: 'some-organization-slug',
+          lang: 'is',
+        },
         relatedContent: {},
         activeTranslations: {},
       },
     }
 
-    removeLocaleKeysFromEntry(testObject, 'is', 'activeTranslations')
+    parseSyncApiNode(testObject, 'is', ['activeTranslations'])
 
     expect(testObject).toStrictEqual({
+      sys: { locale: 'is-IS' },
       fields: {
         title: 'Prufa',
         group: {
@@ -37,8 +46,15 @@ describe('test', () => {
           },
         },
         slug: null,
-        relatedContent: null,
+        relatedContent: {},
         activeTranslations: {},
+        news: {
+          tags: ['some-organization-slug'],
+          size: 4,
+          order: 'desc',
+          organization: 'some-organization-slug',
+          lang: 'is',
+        },
       },
     })
   })

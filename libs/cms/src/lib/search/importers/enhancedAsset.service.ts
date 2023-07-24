@@ -50,7 +50,7 @@ export class EnhancedAssetSyncService
             releaseDate: mapped.releaseDate,
           }
         } catch (error) {
-          logger.warn('Failed to import project page', {
+          logger.warn('Failed to import enhanced asset', {
             error: error.message,
             id: entry?.sys?.id,
           })

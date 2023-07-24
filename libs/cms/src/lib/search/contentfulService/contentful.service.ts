@@ -19,7 +19,7 @@ import {
   getElasticsearchIndex,
 } from '@island.is/content-search-index-manager'
 import { Locale } from 'locale'
-import { contentfulLocaleMap, removeLocaleKeysFromEntry } from './utils'
+import { contentfulLocaleMap, parseSyncApiNode } from './utils'
 import { writeFileSync } from 'fs'
 import { inspect } from 'util'
 
@@ -243,12 +243,9 @@ export class ContentfulService {
    *
    *  { fields: { title: 'English' } }
    * */
-  private removeLocaleKeysFromEntryItems = (
-    items: Entry<unknown>[],
-    locale: Locale,
-  ) => {
+  private parseSyncApiEntries = (items: Entry<unknown>[], locale: Locale) => {
     for (const item of items) {
-      removeLocaleKeysFromEntry(item, locale, 'activeTranslations')
+      parseSyncApiNode(item, locale, ['activeTranslations']) // TODO: check if we really need this skip key thing
     }
     return items
   }
@@ -309,25 +306,40 @@ export class ContentfulService {
     )
 
     writeFileSync(
-      '1.js',
+      'orgsubpage-b4.js',
       inspect(
-        indexableEntries.find((e) => e.sys.id === '63PrIsr7luXY8aXOsCT79n'),
+        indexableEntries.filter(
+          (e) => e.sys.contentType.sys.id === 'organizationSubpage',
+        ),
         true,
-        99999,
+        9999999,
       ),
     )
 
     writeFileSync(
-      '2.js',
+      'projectpage-b4.js',
       inspect(
-        indexableEntries.find((e) => e.sys.id === '63PrIsr7luXY8aXOsCT79n'),
+        indexableEntries.filter(
+          (e) => e.sys.contentType.sys.id === 'projectPage',
+        ),
         true,
-        99999,
+        9999999,
+      ),
+    )
+
+    writeFileSync(
+      'supportqna-b4.js',
+      inspect(
+        indexableEntries.filter(
+          (e) => e.sys.contentType.sys.id === 'supportQNA',
+        ),
+        true,
+        9999999,
       ),
     )
 
     const populatedIndexableEntries = !isDeltaUpdate
-      ? this.removeLocaleKeysFromEntryItems(indexableEntries, locale)
+      ? this.parseSyncApiEntries(indexableEntries, locale)
       : await this.getPopulatedContentulEntries(
           indexableEntries,
           locale,
@@ -335,24 +347,35 @@ export class ContentfulService {
         )
 
     writeFileSync(
-      '1-1.js',
+      'orgsubpage-after.js',
       inspect(
-        populatedIndexableEntries.find(
-          (e) => e.sys.id === '63PrIsr7luXY8aXOsCT79n',
+        populatedIndexableEntries.filter(
+          (e) => e.sys.contentType.sys.id === 'organizationSubpage',
         ),
         true,
-        99999,
+        9999999,
       ),
     )
 
     writeFileSync(
-      '2-2.js',
+      'projectpage-after.js',
       inspect(
-        populatedIndexableEntries.find(
-          (e) => e.sys.id === '63PrIsr7luXY8aXOsCT79n',
+        populatedIndexableEntries.filter(
+          (e) => e.sys.contentType.sys.id === 'projectPage',
         ),
         true,
-        99999,
+        9999999,
+      ),
+    )
+
+    writeFileSync(
+      'supportqna-after.js',
+      inspect(
+        populatedIndexableEntries.filter(
+          (e) => e.sys.contentType.sys.id === 'supportQNA',
+        ),
+        true,
+        9999999,
       ),
     )
 
