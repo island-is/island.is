@@ -160,12 +160,12 @@ const PensionSupplementTemplate: ApplicationTemplate<
               content: statesMessages.tryggingastofnunInReviewContent,
               displayStatus: 'info',
             },
-            // historyLogs: [
-            //   {
-            //     onEvent: DefaultEvents.APPROVE,
-            //     logMessage: statesMessages.additionalDocumentsAdded,
-            //   },
-            // ],
+            historyLogs: [
+              {
+                onEvent: DefaultEvents.APPROVE,
+                logMessage: statesMessages.additionalDocumentsAdded,
+              },
+            ],
           },
           roles: [
             {
@@ -181,46 +181,46 @@ const PensionSupplementTemplate: ApplicationTemplate<
         on: {
           [DefaultEvents.APPROVE]: { target: States.APPROVED },
           [DefaultEvents.REJECT]: { target: States.REJECTED },
-          // ADDITIONALDOCUMENTSREQUIRED: {
-          //   target: States.ADDITIONAL_DOCUMENTS_REQUIRED,
-          // },
+          ADDITIONALDOCUMENTSREQUIRED: {
+            target: States.ADDITIONAL_DOCUMENTS_REQUIRED,
+          },
         },
       },
-      // [States.ADDITIONAL_DOCUMENTS_REQUIRED]: {
-      //   meta: {
-      //     status: 'inprogress',
-      //     name: States.ADDITIONAL_DOCUMENTS_REQUIRED,
-      //     actionCard: {
-      //       tag: {
-      //         label: coreMessages.tagsRequiresAction,
-      //         variant: 'red',
-      //       },
-      //       pendingAction: {
-      //         title: statesMessages.additionalDocumentRequired,
-      //         content: statesMessages.additionalDocumentRequiredDescription,
-      //         displayStatus: 'warning',
-      //       },
-      //     },
-      //     lifecycle: pruneAfterDays(970),
-      //     progress: 0.5,
-      //     roles: [
-      //       {
-      //         id: Roles.APPLICANT,
-      //         formLoader: () =>
-      //           import('../forms/AdditionalDocumentsRequired').then((val) =>
-      //             Promise.resolve(val.AdditionalDocumentsRequired),
-      //           ),
-      //         read: 'all',
-      //         write: 'all',
-      //       },
-      //     ],
-      //   },
-      //   on: {
-      //     [DefaultEvents.APPROVE]: {
-      //       target: States.TRYGGINGASTOFNUN_IN_REVIEW,
-      //     },
-      //   },
-      // },
+      [States.ADDITIONAL_DOCUMENTS_REQUIRED]: {
+        meta: {
+          status: 'inprogress',
+          name: States.ADDITIONAL_DOCUMENTS_REQUIRED,
+          actionCard: {
+            tag: {
+              label: coreMessages.tagsRequiresAction,
+              variant: 'red',
+            },
+            pendingAction: {
+              title: statesMessages.additionalDocumentRequired,
+              content: statesMessages.additionalDocumentRequiredDescription,
+              displayStatus: 'warning',
+            },
+          },
+          lifecycle: pruneAfterDays(970),
+          progress: 0.5,
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/AdditionalDocumentsRequired').then((val) =>
+                  Promise.resolve(val.AdditionalDocumentsRequired),
+                ),
+              read: 'all',
+              write: 'all',
+            },
+          ],
+        },
+        on: {
+          [DefaultEvents.APPROVE]: {
+            target: States.TRYGGINGASTOFNUN_IN_REVIEW,
+          },
+        },
+      },
       [States.APPROVED]: {
         meta: {
           name: States.APPROVED,

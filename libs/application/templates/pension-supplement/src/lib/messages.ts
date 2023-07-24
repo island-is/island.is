@@ -310,6 +310,18 @@ export const pensionSupplementFormMessage: MessageDir = {
       description:
         'Here you can upload a confirmation of costs that public entities do not pay. Note that the document must be in .pdf format.',
     },
+    additionalDocumentRequired: {
+      id: 'ul.application:fileUpload.additionalDocumentRequired',
+      defaultMessage:
+        'Viðbótargögn krafist, vinsamlegast hlaðið viðbótargögnum á næstu síðu',
+      description:
+        'Additional document(s) required, on the next page you will be able to upload the additional document(s), to begin please press continue.',
+    },
+    additionalDocumentsEditSubmit: {
+      id: 'ul.application:fileUpload.additionalDocumentsEditSubmit',
+      defaultMessage: 'Senda inn',
+      description: 'Submit',
+    },
   }),
 
   additionalInfo: defineMessages({
