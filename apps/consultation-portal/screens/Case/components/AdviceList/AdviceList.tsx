@@ -1,4 +1,4 @@
-import { AdviceResult, Case, UserAdvice } from '../../../../types/interfaces'
+import { AdviceResult, Case } from '../../../../types/interfaces'
 import { Stack, Text, Button, Link, Box } from '@island.is/island-ui/core'
 import AdviceCard from '../AdviceCard/AdviceCard'
 import { SHOW_INITIAL_REVIEWS_AMOUNT } from '../../../../utils/consts/consts'

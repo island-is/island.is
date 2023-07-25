@@ -28,7 +28,8 @@ export const complainee = {
     },
     complaineeNameGovernmentTitle: {
       id: 'ctao.application:complainee.complaineeName.government.title',
-      defaultMessage: 'Nafn stjórnvalds sem kvörtun beinist að',
+      defaultMessage:
+        'Heiti stjórnvalds eða annars aðila sem kvörtun beinist að',
       description: 'Government complainee name input title',
     },
     complaineeNameGovernmentPlaceholder: {

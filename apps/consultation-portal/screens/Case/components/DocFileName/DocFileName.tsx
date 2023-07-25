@@ -17,11 +17,12 @@ const DocFileName = ({ doc, isAdvice = false }: Props) => {
   const iconTitle = isLink ? loc.linkTitle : loc.documentTitle
   const linkHref = isLink ? doc.link : `${env.backendDownloadUrl}${doc.id}`
   const fileNameOrDesc = doc.description ? doc.description : doc.fileName
-  const name = isLink
+  const downloadName = isLink
     ? fileNameOrDesc
       ? fileNameOrDesc
       : doc.link
     : fileNameOrDesc
+  const name = isAdvice ? doc.fileName : downloadName
 
   const linkDesc = renderDocFileName({
     name: name,
