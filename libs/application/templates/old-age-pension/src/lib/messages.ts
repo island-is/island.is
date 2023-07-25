@@ -1195,7 +1195,7 @@ export const validatorErrorMessages = defineMessages({
     description: 'Copy when ratioType is missing',
   },
   employersNotAList: {
-    id: 'oap.application:employers.employersNotAList',
+    id: 'oap.application:employers.employers.not.a.list',
     defaultMessage: 'Svar þarf að vera listi af atvinnurekanda',
     description: 'Copy when employers is not a list',
   },
@@ -1203,6 +1203,22 @@ export const validatorErrorMessages = defineMessages({
     id: 'oap.application:employers.ratio.more.than.50',
     defaultMessage: 'Starfhlutfall má ekki vera meira en 50%',
     description: 'Employment rate must be less than or equal 50%',
+  },
+  employersUnexpectedError: {
+    id: 'oap.application:employers.periods.unexpected.error',
+    defaultMessage: 'Óvænt villa kom upp',
+    description: 'Copy when an unexpected error occurs',
+  },
+  totalEmployersRatioMoreThan50: {
+    id: 'oap.application:total.employers.ratio.more.than.50',
+    defaultMessage: 'Suma Starfhlutfals má ekki vera meira en 50%',
+    description: 'Sumary of Employment rate must be less than or equal 50%',
+  },
+  employersCouldNotContinue: {
+    id: 'oap.application:employers.periods.could.not.continue',
+    defaultMessage: 'Þú þarft að skrá atvinnurekanda',
+    description:
+      'Copy when employers list is empty and user is trying to continue',
   },
   employersRatioLessThan0: {
     id: 'oap.application:employers.ratio.less.than.0',

@@ -5,7 +5,7 @@ import { fileUploadPenEarlyFisher } from './answerValidationSections/fileUploadP
 import { period } from './answerValidationSections/period'
 import { fileUploadHouseholdSupplement } from './answerValidationSections/fileUploadHouseholdSupplement'
 import { employment } from './answerValidationSections/employment'
-import { employers } from './answerValidationSections/employers'
+import { validateLastestEmployer } from './answerValidationSections/validateLastestEmployer'
 import { fileUploadChildPension } from './answerValidationSections/fileUploadChildPension'
 import { paymentInfo } from './answerValidationSections/paymentInfo'
 
@@ -14,7 +14,7 @@ const {
   FILEUPLOADPENEARLYFISHER,
   FILEUPLOADHOUSEHOLDSUPPLEMENT,
   EMPLOYMENT,
-  EMPLOYERS,
+  VALIDATE_LATEST_EMPLOYER,
   FILEUPLOADCHILDPENSION,
   PAYMENTINFO,
 } = AnswerValidationConstants
@@ -22,7 +22,7 @@ const {
 export const answerValidators: Record<string, AnswerValidator> = {
   [PERIOD]: period,
   [EMPLOYMENT]: employment,
-  [EMPLOYERS]: employers,
+  [VALIDATE_LATEST_EMPLOYER]: validateLastestEmployer,
   [FILEUPLOADPENEARLYFISHER]: fileUploadPenEarlyFisher,
   [FILEUPLOADHOUSEHOLDSUPPLEMENT]: fileUploadHouseholdSupplement,
   [FILEUPLOADCHILDPENSION]: fileUploadChildPension,
