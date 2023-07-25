@@ -278,10 +278,10 @@ const WorkMachinesOverview = () => {
           <Box>
             <Pagination
               page={page}
-              totalPages={
+              totalPages={Math.ceil(
                 data.workMachinesPaginatedCollection.totalCount /
-                DEFAULT_PAGE_SIZE
-              }
+                  DEFAULT_PAGE_SIZE,
+              )}
               renderLink={(page, className, children) => (
                 <button className={className} onClick={() => setPage(page)}>
                   {children}

@@ -303,6 +303,13 @@ export const serviceSetup = (services: {
       min: 2,
     })
     .files({ filename: 'islyklar.p12', env: 'ISLYKILL_CERT' })
+    .volumes({
+      name: 'islyklar.p12',
+      size: '1Gi',
+      accessModes: 'ReadWrite',
+      mountPath: '/etc/config/',
+      storageClass: 'efs-csi',
+    })
     .ingress({
       primary: {
         host: {

@@ -115,21 +115,25 @@ export const ComplainedFor: FC<React.PropsWithChildren<Props>> = ({
                 label={complainedForMessages.labels.postcode}
               />
             </GridColumn>
-            <GridColumn span={['9/12', '9/12', '9/12', '4/12']}>
-              <ValueLine
-                value={complainedFor.phone}
-                label={complainedForMessages.labels.phone}
-              />
-            </GridColumn>
+            {complainedFor.phone && (
+              <GridColumn span={['9/12', '9/12', '9/12', '4/12']}>
+                <ValueLine
+                  value={complainedFor.phone}
+                  label={complainedForMessages.labels.phone}
+                />
+              </GridColumn>
+            )}
           </GridRow>
-          <GridRow>
-            <GridColumn span="9/12">
-              <ValueLine
-                value={complainedFor.email}
-                label={complainedForMessages.labels.email}
-              />
-            </GridColumn>
-          </GridRow>
+          {complainedFor.email && (
+            <GridRow>
+              <GridColumn span="9/12">
+                <ValueLine
+                  value={complainedFor.email}
+                  label={complainedForMessages.labels.email}
+                />
+              </GridColumn>
+            </GridRow>
+          )}
         </ReviewGroup>
       )}
     </>

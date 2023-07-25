@@ -10,7 +10,7 @@ export const complaintDescription = {
     decisionInfo: {
       id: 'ctao.application:complaintDescription.decisionInfo',
       defaultMessage:
-        'Eitt af skilyrðunum fyrir því að umboðsmaður Alþingis geti tekið kvörtun til meðferðar er að hún sé borin fram innan árs frá niðurstöðu stjórnvalds í máli.',
+        'Í kvörtun á að lýsa þeirri úrlausn eða háttsemi sem er tilefni kvörtunar. Hér skalt þú reyna að lýsa því hvað í meðferð stjórnvalda eða annarra á máli þínu þú ert ósátt/-ur við. Lýsing kvörtunar þarf ekki að vera flókin, t.d. er ekki nauðsynlegt að vísa til lagareglna.',
       description: 'Page description when complaint type is decision',
     },
     alertTitle: {
@@ -21,7 +21,7 @@ export const complaintDescription = {
     alertMessage: {
       id: 'ctao.application:complaintDescription.alertMessage',
       defaultMessage:
-        'Yfirleitt eru umsóknir um ákvarðanir lengra en ár aftur í tímann ekki teknar fyrir.',
+        'Kvörtun þarf að berast innan árs frá því að niðurstaða stjórnvalds liggur fyrir',
       description: 'Description alert message',
     },
   }),

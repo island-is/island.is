@@ -352,7 +352,6 @@ const Defendant: React.FC<React.PropsWithChildren<unknown>> = () => {
               formatMessage(defendant.policeCaseNumbersDescription)
             }
           />
-          {/* TODO Add when feature is ready */}
           {workingCase.origin === CaseOrigin.LOKE && (
             <LokeNumberList
               caseId={workingCase.id}
@@ -393,7 +392,7 @@ const Defendant: React.FC<React.PropsWithChildren<unknown>> = () => {
                     }
                     updatePoliceCases={handleUpdatePoliceCases}
                     policeCaseNumberImmutable={
-                      workingCase.origin === CaseOrigin.LOKE && index === 0
+                      workingCase.origin === CaseOrigin.LOKE
                     }
                   />
                 </Box>
