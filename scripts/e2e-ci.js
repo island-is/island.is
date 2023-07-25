@@ -105,6 +105,9 @@ const serve = () => {
   // Start static-serve
   let child = spawn('node', CMD[`SERVE_${argv.type.toUpperCase()}`], {
     stdio: 'inherit',
+    env: {
+      NODE_ENV: 'production',
+    },
   })
   console.log(`Serving target project in a child process: ${child.pid}`)
 
