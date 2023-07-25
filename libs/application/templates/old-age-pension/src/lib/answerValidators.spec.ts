@@ -292,6 +292,50 @@ describe('answerValidators', () => {
     })
   })
 
+  it('should return on ratioYearly an error if summary ratio is more than 50', () => {
+    const newAnswers = [
+      {
+        email: 'fajefja@bs.is',
+        phoneNumber: '',
+        ratioType: 'monthly',
+        ratioYearly: '20',
+        ratioMonthlyAvg: '20',
+        ratioMonth: {
+          March: '400',
+          April: '400',
+        },
+      },
+      {
+        email: 'fajja@bs.is',
+        phoneNumber: '',
+        ratioType: 'yearly',
+        ratioYearly: '40',
+        ratioMonthlyAvg: '40',
+        ratioMonth: {
+          March: '400',
+          April: '400',
+        },
+      },
+    ]
+
+    const newApplication = {
+      ...application,
+      answers: {
+        employment: {
+          status: 'employee',
+        },
+      },
+    }
+
+    expect(
+      answerValidators['employers'](newAnswers, newApplication),
+    ).toStrictEqual({
+      message: validatorErrorMessages.totalEmployersRatioMoreThan50,
+      path: 'employers[1].ratioYearly',
+      values: undefined,
+    })
+  })
+
   it('should return an error if missing ratioMonthlyAvg', () => {
     const newAnswers = [
       {
@@ -354,6 +398,50 @@ describe('answerValidators', () => {
     ).toStrictEqual({
       message: validatorErrorMessages.employersRatioMoreThan50,
       path: 'employers[0].ratioMonthlyAvg',
+      values: undefined,
+    })
+  })
+
+  it('should return on ratioMonthlyAvg an error if summary ratio is more than 50', () => {
+    const newAnswers = [
+      {
+        email: 'fajja@bs.is',
+        phoneNumber: '',
+        ratioType: 'yearly',
+        ratioYearly: '40',
+        ratioMonthlyAvg: '40',
+        ratioMonth: {
+          March: '400',
+          April: '400',
+        },
+      },
+      {
+        email: 'fajefja@bs.is',
+        phoneNumber: '',
+        ratioType: 'monthly',
+        ratioYearly: '20',
+        ratioMonthlyAvg: '20',
+        ratioMonth: {
+          March: '400',
+          April: '400',
+        },
+      },
+    ]
+
+    const newApplication = {
+      ...application,
+      answers: {
+        employment: {
+          status: 'employee',
+        },
+      },
+    }
+
+    expect(
+      answerValidators['employers'](newAnswers, newApplication),
+    ).toStrictEqual({
+      message: validatorErrorMessages.totalEmployersRatioMoreThan50,
+      path: 'employers[1].ratioMonthlyAvg',
       values: undefined,
     })
   })

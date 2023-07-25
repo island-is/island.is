@@ -18,6 +18,7 @@ import {
   isEarlyRetirement,
   isExistsCohabitantOlderThan25,
   childCustodyLivesWithApplicant,
+  filterValidEmployers,
 } from './oldAgePensionUtils'
 import { ApplicationType, MONTHS } from './constants'
 import * as kennitala from 'kennitala'
@@ -297,5 +298,78 @@ describe('childCustodyLivesWithApplicant', () => {
     const res = childCustodyLivesWithApplicant(application.externalData)
 
     expect(res).toEqual(true)
+  })
+})
+
+describe('filterValidEmployers', () => {
+  it('should return true filtered employers list', () => {
+    const application = buildApplication({
+      answers: {
+        applicationType: {
+          option: ApplicationType.OLD_AGE_PENSION,
+        },
+        employers: [
+          {
+            email: 'fajefja@bs.is',
+            phoneNumber: '',
+            ratioType: 'monthly',
+            ratioYearly: '20',
+            ratioMonthlyAvg: '20',
+            ratioMonth: {
+              March: '400',
+              April: '400',
+            },
+          },
+          {
+            email: '',
+            phoneNumber: '',
+            ratioType: 'yearly',
+            ratioYearly: '20',
+          },
+          {
+            email: 'fajefja@bs.is',
+            phoneNumber: '',
+            ratioType: 'yearly',
+            ratioYearly: '20',
+          },
+          {
+            email: 'fajefja@bs.is',
+            phoneNumber: '',
+            ratioType: '',
+            ratioYearly: '20',
+          },
+        ],
+      },
+    })
+
+    const filteredList = [
+      {
+        email: 'fajefja@bs.is',
+        phoneNumber: '',
+        ratioType: 'monthly',
+        ratioYearly: '20',
+        ratioMonthlyAvg: '20',
+        ratioMonth: {
+          March: '400',
+          April: '400',
+        },
+        rawIndex: 0,
+      },
+      {
+        email: 'fajefja@bs.is',
+        phoneNumber: '',
+        ratioType: 'yearly',
+        ratioYearly: '20',
+        rawIndex: 2,
+      },
+    ]
+
+    const { rawEmployers, employers } = getApplicationAnswers(
+      application.answers,
+    )
+    const res = filterValidEmployers(rawEmployers)
+
+    expect(employers).toEqual(filteredList)
+    expect(res).toEqual(filteredList)
   })
 })
