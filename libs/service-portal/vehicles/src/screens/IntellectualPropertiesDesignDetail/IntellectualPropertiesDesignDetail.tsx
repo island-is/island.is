@@ -64,7 +64,7 @@ const IntellectualPropertiesDesignDetail = () => {
   return (
     <>
       <Box marginBottom={[1, 1, 3]}>
-        <IntroHeader title={ip?.specification?.specificationText ?? ''} />
+        <IntroHeader title={id} />
       </Box>
 
       <Stack space="containerGutter">
@@ -104,9 +104,11 @@ const IntellectualPropertiesDesignDetail = () => {
             </Button>
           </Inline>
         </Box>
-        {ip?.images?.length && (
-          <MultiImage images={ip?.images ?? []} title="bjrbjarila" />
-        )}
+        <MultiImage
+          loading={loading}
+          images={ip?.images ?? []}
+          title="Design images"
+        />
         <Stack space="p2">
           <UserInfoLine
             title={formatMessage(ipMessages.baseInfo)}

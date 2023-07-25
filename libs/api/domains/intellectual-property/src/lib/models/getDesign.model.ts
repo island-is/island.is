@@ -1,17 +1,5 @@
 import { ObjectType, Field, Int, OmitType } from '@nestjs/graphql'
 
-@ObjectType('IntellectualPropertyDesignImage')
-export class Image {
-  @Field(() => Int, { nullable: true })
-  designNumber?: number
-
-  @Field(() => Int, { nullable: true })
-  imageNumber?: number
-
-  @Field(() => String, { nullable: true })
-  image?: string | null
-}
-
 @ObjectType('IntellectualPropertyDesignPledge')
 export class Pledge {
   @Field(() => String, { nullable: true })
@@ -240,9 +228,6 @@ export class Design {
 
   @Field(() => Contact, { nullable: true })
   contact?: Contact
-
-  @Field(() => [Image], { nullable: true })
-  images?: Array<Image> | null
 
   @Field(() => [String], { nullable: true })
   classification?: Array<string> | null

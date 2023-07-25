@@ -1,4 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
 import {
   TrademarksApi,
   PatentSearchApi,
@@ -14,12 +16,11 @@ import {
   TrademarkSubType,
   TrademarkType,
 } from './models/getTrademark.model'
-import { Design, Image } from './models/getDesign.model'
+import { Design } from './models/getDesign.model'
+import { Image } from './models/getDesignImage.model'
 import { IntellectualProperties } from './models/getIntellectualProperties.model'
-import addMonths from 'date-fns/addMonths'
-import { LOGGER_PROVIDER } from '@island.is/logging'
-import type { Logger } from '@island.is/logging'
 import ParseDate from 'date-fns/parse'
+import addMonths from 'date-fns/addMonths'
 
 type ExcludesFalse = <T>(x: T | null | undefined | false | '') => x is T
 
@@ -150,17 +151,24 @@ export class IntellectualPropertyService {
     this.designSearchApi.designSearchGetDesignBySSNGet({ ssn: '5411911789' })
 
   async getDesignByHID(hId: string): Promise<Design | null> {
-    const responses = await Promise.all([
-      this.designSearchApi.designSearchGetByHIDGet({
-        hid: hId,
-      }),
-      this.designSearchApi.designSearchGetDesignsGet({
-        hid: hId,
-      }),
-    ])
+    const response = await this.designSearchApi.designSearchGetByHIDGet({
+      hid: hId,
+    })
+
+    return {
+      ...response,
+      expiryDate: response?.validTo,
+      classification: response.classification?.category,
+    }
+  }
+
+  async getDesignImages(hId: string): Promise<Array<Image> | null> {
+    const response = await this.designSearchApi.designSearchGetDesignsGet({
+      hid: hId,
+    })
 
     //shady stuff
-    const designImages = responses[1]
+    const designImages = response
       .flatMap(({ designNumber, designImage }) =>
         designImage?.flatMap(
           (i) =>
@@ -173,12 +181,21 @@ export class IntellectualPropertyService {
       )
       .filter((Boolean as unknown) as ExcludesFalse)
 
-    return {
-      ...responses[0],
-      expiryDate: responses[0]?.validTo,
-      classification: responses[0]?.classification?.category,
-      images: designImages,
-    }
+    return designImages
+  }
+
+  getDesignImage(
+    hId: string,
+    designNumber: string,
+    imageNumber: string,
+    size?: string,
+  ) {
+    return this.designSearchApi.designSearchGetDesignImageGet({
+      hid: hId,
+      designNumber,
+      imageNumber,
+      size,
+    })
   }
 
   private parseDate = (date: string) =>

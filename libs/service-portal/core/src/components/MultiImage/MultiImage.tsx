@@ -2,7 +2,7 @@ import { FC, useState, useEffect } from 'react'
 import cn from 'classnames'
 import * as styles from './MultiImage.css'
 import { useMountedState } from 'react-use'
-import { Box, Inline, Stack, Text } from '@island.is/island-ui/core'
+import { Box, Inline, LoadingDots, Text } from '@island.is/island-ui/core'
 import { ExcludesFalse } from '../..'
 import MultiImageModal from './MultiImageModal'
 
@@ -12,6 +12,7 @@ export interface MultiImageProps {
     imageNumber?: number | null
   }>
   title: string
+  loading?: boolean
 }
 
 const useImageLoader = (url: string): boolean => {
@@ -31,7 +32,11 @@ const useImageLoader = (url: string): boolean => {
   return loaded
 }
 
-export const MultiImage: FC<MultiImageProps> = ({ images, title }) => {
+export const MultiImage: FC<MultiImageProps> = ({
+  images,
+  title,
+  loading = false,
+}) => {
   const [firstImage, ...restOfImages] = images
   const lastImage = images[3]
 
@@ -45,13 +50,25 @@ export const MultiImage: FC<MultiImageProps> = ({ images, title }) => {
           className={styles.container}
           style={{ height: '352px', width: '352px' }}
         >
-          <img
-            src={`data:image/png;base64,${images[selectedImageIndex].image}`}
-            alt={title}
-            className={cn(styles.image)}
-          />
+          {loading ? (
+            <Box
+              display="flex"
+              justifyContent="center"
+              alignItems="center"
+              textAlign="center"
+              height="full"
+            >
+              <LoadingDots large />
+            </Box>
+          ) : (
+            <img
+              src={`data:image/png;base64,${images[selectedImageIndex].image}`}
+              alt={title}
+              className={cn(styles.image)}
+            />
+          )}
         </Box>
-        {restOfImages.length && (
+        {!loading && restOfImages.length && (
           <Box className={styles.thumbnailGrid}>
             {restOfImages
               .slice(0, 3)

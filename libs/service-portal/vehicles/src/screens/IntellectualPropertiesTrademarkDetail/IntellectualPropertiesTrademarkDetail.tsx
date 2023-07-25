@@ -11,7 +11,7 @@ import {
   formatDate,
   m,
 } from '@island.is/service-portal/core'
-import { ipMessages } from '../../lib/messages'
+import { ipMessages, messages } from '../../lib/messages'
 import {
   Accordion,
   AccordionItem,
@@ -62,18 +62,16 @@ const IntellectualPropertiesTrademarkDetail = () => {
     )
   }
 
-  if (!data?.intellectualPropertyTrademark && !loading) {
-    return <NotFound title={formatMessage(m.notFound)} />
+  const ip = data?.intellectualPropertyTrademark
+
+  if (!ip && !loading) {
+    return <NotFound title={formatMessage(messages.notFound)} />
   }
 
-  const ip = data?.intellectualPropertyTrademark
   return (
     <>
       <Box marginBottom={[1, 1, 3]}>
-        <IntroHeader
-          title={ip?.text || 'SOME TRADEMARK'}
-          intro="Lorem ipsum dolor sit amet consectetur arcu quam quis consequat."
-        />
+        <IntroHeader title={id} intro={ip?.text ?? ''} />
       </Box>
       <Stack space="containerGutter">
         <Box marginBottom={3} paddingRight={2}>
@@ -99,7 +97,7 @@ const IntellectualPropertiesTrademarkDetail = () => {
           <UserInfoLine
             title={formatMessage(ipMessages.baseInfo)}
             label={ipMessages.name}
-            content={ip?.text ?? ''}
+            content={ip?.text ?? ip?.vmId ?? ''}
             loading={loading}
           />
           <Divider />
@@ -130,7 +128,11 @@ const IntellectualPropertiesTrademarkDetail = () => {
         </Stack>
         {!loading && !error && (
           <>
-            <Timeline title={'Tímalína'}>
+            <Timeline
+              title={'Tímalína'}
+              maxDate={ip?.dateExpires}
+              minDate={ip?.applicationDate}
+            >
               {[
                 <Stack space="smallGutter">
                   <Text variant="h5">
@@ -139,14 +141,6 @@ const IntellectualPropertiesTrademarkDetail = () => {
                       : ''}
                   </Text>
                   <Text>Umsókn</Text>
-                </Stack>,
-                <Stack space="smallGutter">
-                  <Text variant="h5">
-                    {ip?.dateRegistration
-                      ? formatDate(ip.dateRegistration, 'dd.MM.yy')
-                      : ''}
-                  </Text>
-                  <Text>Skráning</Text>
                 </Stack>,
                 <Stack space="smallGutter">
                   <Text variant="h5">
@@ -163,6 +157,22 @@ const IntellectualPropertiesTrademarkDetail = () => {
                       : ''}
                   </Text>
                   <Text>Andmælafrestur</Text>
+                </Stack>,
+                <Stack space="smallGutter">
+                  <Text variant="h5">
+                    {ip?.dateRegistration
+                      ? formatDate(ip.dateRegistration, 'dd.MM.yy')
+                      : ''}
+                  </Text>
+                  <Text>Skráning</Text>
+                </Stack>,
+                <Stack space="smallGutter">
+                  <Text variant="h5">
+                    {ip?.dateExpires
+                      ? formatDate(ip?.dateExpires, 'dd.MM.yy')
+                      : ''}
+                  </Text>
+                  <Text>Gildir til</Text>
                 </Stack>,
               ]}
             </Timeline>
@@ -206,6 +216,12 @@ const IntellectualPropertiesTrademarkDetail = () => {
                       ? formatDate(ip.dateRegistration, 'dd.MM.yy')
                       : '',
                   },
+                  {
+                    title: 'Gildir til',
+                    value: ip?.dateExpires
+                      ? formatDate(ip.dateExpires, 'dd.MM.yy')
+                      : '',
+                  },
                 ].filter((Boolean as unknown) as ExcludesFalse),
                 2,
               )}
@@ -245,21 +261,23 @@ const IntellectualPropertiesTrademarkDetail = () => {
 
         {ip?.markCategories?.length && (
           <Accordion dividerOnBottom dividerOnTop={false} space={3}>
-            {ip?.markCategories?.map((category, index) => {
-              if (!category.categoryNumber) {
-                return null
-              }
+            {ip?.markCategories
+              ?.map((category, index) => {
+                if (!category.categoryNumber) {
+                  return null
+                }
 
-              return (
-                <AccordionItem
-                  key={`${category.categoryNumber}-${index}}`}
-                  id={category.categoryNumber}
-                  label={`Flokkur ${category.categoryNumber}`}
-                >
-                  <Text>{category.categoryDescription ?? ''}</Text>
-                </AccordionItem>
-              )
-            })}
+                return (
+                  <AccordionItem
+                    key={`${category.categoryNumber}-${index}}`}
+                    id={category.categoryNumber}
+                    label={`Flokkur ${category.categoryNumber}`}
+                  >
+                    <Text>{category.categoryDescription ?? ''}</Text>
+                  </AccordionItem>
+                )
+              })
+              .filter((Boolean as unknown) as ExcludesFalse)}
           </Accordion>
         )}
         <Text variant="small" paddingBottom={2}>

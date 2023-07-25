@@ -13,8 +13,10 @@ import { IntellectualPropertyService } from './intellectualProperty.service'
 import { Patent } from './models/getPatent.model'
 import { IntellectualProperties } from './models/getIntellectualProperties.model'
 import { Design } from './models/getDesign.model'
+import { Image } from './models/getDesignImage.model'
 import { GetIntellectualPropertyInput } from './dto/getPatent.input'
 import { Trademark } from './models/getTrademark.model'
+import { GetIntellectualPropertyDesignImageInput } from './dto/getDesignImage.input'
 
 @Resolver()
 @UseGuards(IdsUserGuard, ScopesGuard)
@@ -56,6 +58,37 @@ export class IntellectualPropertyResolver {
     input: GetIntellectualPropertyInput,
   ) {
     return this.ipService.getDesignByHID(input.key)
+  }
+
+  @Scopes(ApiScope.internal)
+  @Query(() => [Image], {
+    name: 'intellectualPropertyDesignImageCollection',
+    nullable: true,
+  })
+  @Audit()
+  getIntellectualPropertyDesignImageCollectionById(
+    @Args('input', { type: () => GetIntellectualPropertyInput })
+    input: GetIntellectualPropertyInput,
+  ) {
+    return this.ipService.getDesignByHID(input.key)
+  }
+
+  @Scopes(ApiScope.internal)
+  @Query(() => [Image], {
+    name: 'intellectualPropertyDesignImageCollection',
+    nullable: true,
+  })
+  @Audit()
+  getIntellectualPropertyDesignImageById(
+    @Args('input', { type: () => GetIntellectualPropertyDesignImageInput })
+    input: GetIntellectualPropertyDesignImageInput,
+  ) {
+    return this.ipService.getDesignImage(
+      input.hId,
+      input.designNumber,
+      input.imageNumber,
+      input.size,
+    )
   }
 
   @Scopes(ApiScope.internal)

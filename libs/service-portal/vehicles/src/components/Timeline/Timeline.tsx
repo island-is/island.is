@@ -9,6 +9,7 @@ import {
   Text,
   Tooltip,
 } from '@island.is/island-ui/core'
+import ProgressBar from '../../../../core/src/components/ProgressBar/ProgressBar'
 import differenceInCalendarDays from 'date-fns/differenceInCalendarDays'
 
 interface Props {
@@ -61,40 +62,16 @@ export const Timeline: FC<Props> = ({
         >
           {currentProgress && (
             <>
-              <Box
-                position="relative"
-                overflow="hidden"
-                borderRadius="large"
-                height="full"
-                width="full"
-                style={{ top: 0 }}
-              >
+              <ProgressBar progress={currentProgress} />
+              <Tooltip text="Í dag" placement="top">
                 <Box
-                  className={styles.inner}
-                  background={'blue400'}
-                  borderRadius="large"
                   position="absolute"
+                  className={styles.tooltip}
                   style={{
-                    transform: `translateX(${(1 - currentProgress) * -100}%)`,
+                    left: `${currentProgress * 100}%`,
                   }}
                 />
-              </Box>
-              <Box
-                height="full"
-                width="full"
-                position="relative"
-                style={{ top: 0 }}
-              >
-                <Tooltip text="Í dag" placement="top">
-                  <Box
-                    position="absolute"
-                    className={styles.tooltip}
-                    style={{
-                      left: `${currentProgress * 100}%`,
-                    }}
-                  />
-                </Tooltip>
-              </Box>
+              </Tooltip>
             </>
           )}
         </Box>
