@@ -15,7 +15,7 @@ export type Hash = { [name: string]: Hash | string | number }
 export type ValueSource = string | ((e: Context) => string)
 export type ValueType = MissingSettingType | ValueSource
 // See https://kubernetes.io/docs/concepts/storage/persistent-volumes/#access-modes for more info
-export type AccessModes = 'ReadWrite' | 'ReadOnly'
+export type AccessModes = 'ReadWrite'
 export type PostgresInfo = {
   host?: {
     [idx in OpsEnv]: string
