@@ -132,7 +132,6 @@ export const serviceSetup = (services: {
         (h) => `http://${h.svc(services.regulationsAdminBackend)}`,
       ),
       IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/api',
-      ISLYKILL_CERT: '/etc/config/islyklar.p12',
       AIR_DISCOUNT_SCHEME_CLIENT_TIMEOUT: '20000',
       XROAD_NATIONAL_REGISTRY_TIMEOUT: '20000',
       XROAD_PROPERTIES_TIMEOUT: '35000',

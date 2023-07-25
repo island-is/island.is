@@ -166,7 +166,6 @@ export const serviceSetup = (services: {
         prod: 'Stafrænt Ísland',
       },
       IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/application-system',
-      ISLYKILL_CERT: '/etc/config/islyklar.p12',
       FUNDING_GOVERNMENT_PROJECTS_APPLICATION_RECIPIENT_EMAIL_ADDRESS: {
         dev: 'gunnar.ingi@fjr.is',
         staging: 'gunnar.ingi@fjr.is',
