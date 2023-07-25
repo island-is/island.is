@@ -71,44 +71,6 @@ const EmployersOverview: FC<RepeaterProps> = ({
     await setRepeaterItems(reducedEmployers)
   }
 
-  useDeepCompareEffect(() => {
-    setBeforeSubmitCallback?.(async () => {
-      try {
-        // Run answer validator on the periods selected by the user
-        const { errors } = await updateApplication({
-          variables: {
-            input: {
-              id: application.id,
-              answers: { validatedEmployers: employers },
-            },
-            locale,
-          },
-        })
-
-        if (errors) {
-          return [
-            false,
-            formatMessage(
-              oldAgePensionFormMessage.validatorErrorMessages
-                .employersCouldNotContinue,
-            ),
-          ]
-        }
-
-        return [true, null]
-      } catch (e) {
-        console.log('eeerrror', e)
-        return [
-          false,
-          formatMessage(
-            oldAgePensionFormMessage.validatorErrorMessages
-              .employersUnexpectedError,
-          ),
-        ]
-      }
-    })
-  }, [setBeforeSubmitCallback, employers])
-
   return (
     <Box>
       <Text variant="default">
