@@ -404,7 +404,12 @@ api:
   namespace: 'islandis'
   podSecurityContext:
     fsGroup: 65534
-  pvcs: []
+  pvcs:
+    - accessModes: 'ReadWriteMany'
+      mountPath: '/etc/config/'
+      name: 'islyklar.p12'
+      size: '1Gi'
+      storageClass: 'efs-csi'
   replicaCount:
     default: 2
     max: 50
@@ -660,7 +665,12 @@ application-system-api:
   namespace: 'application-system'
   podSecurityContext:
     fsGroup: 65534
-  pvcs: []
+  pvcs:
+    - accessModes: 'ReadWriteMany'
+      mountPath: '/etc/config/'
+      name: 'islyklar.p12'
+      size: '1Gi'
+      storageClass: 'efs-csi'
   replicaCount:
     default: 2
     max: 60
