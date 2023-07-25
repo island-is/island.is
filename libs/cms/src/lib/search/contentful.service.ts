@@ -8,7 +8,7 @@ import {
   SyncCollection,
 } from 'contentful'
 import Bottleneck from 'bottleneck'
-import environment from '../../environments/environment'
+import environment from '../environments/environment'
 import { logger } from '@island.is/logging'
 import { Injectable } from '@nestjs/common'
 import { ElasticService } from '@island.is/content-search-toolkit'
@@ -19,9 +19,6 @@ import {
   getElasticsearchIndex,
 } from '@island.is/content-search-index-manager'
 import { Locale } from 'locale'
-import { contentfulLocaleMap, parseSyncApiNode } from './utils'
-import { writeFileSync } from 'fs'
-import { inspect } from 'util'
 
 // Taken from here: https://github.com/contentful/contentful-sdk-core/blob/054328ba2d0df364a5f1ce6d164c5018efb63572/lib/create-http-client.js#L34-L42
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -54,6 +51,10 @@ export class ContentfulService {
   private limiter: Bottleneck
   private defaultIncludeDepth = 4
   private contentfulClient: ContentfulClientApi
+  private readonly contentfulLocaleMap = {
+    is: 'is-IS',
+    en: 'en',
+  }
 
   constructor(private readonly elasticService: ElasticService) {
     const params: CreateClientParams = {
@@ -224,7 +225,7 @@ export class ContentfulService {
         const items = await this.getContentfulData(chunkSize, {
           include: this.defaultIncludeDepth,
           'sys.id[in]': chunkIds.join(','),
-          locale: contentfulLocaleMap[locale],
+          locale: this.contentfulLocaleMap[locale],
         })
 
         chunkedChanges.push(items)
@@ -233,21 +234,6 @@ export class ContentfulService {
     } while (chunkToProcess.length)
 
     return flatten(chunkedChanges)
-  }
-
-  /** Example if locale is 'en':
-   *
-   *  { fields: { title: { en: 'English', 'is-IS': 'Íslenska' } } }
-   *
-   *  would become:
-   *
-   *  { fields: { title: 'English' } }
-   * */
-  private parseSyncApiEntries = (items: Entry<unknown>[], locale: Locale) => {
-    for (const item of items) {
-      parseSyncApiNode(item, locale, ['activeTranslations']) // TODO: check if we really need this skip key thing
-    }
-    return items
   }
 
   /**
@@ -277,9 +263,9 @@ export class ContentfulService {
       )
       for (const localizedEntry of localizedEntries) {
         const translationIsActive =
-          localizedEntry.fields.activeTranslations?.[contentfulLocaleMap.is]?.[
-            locale
-          ] ?? true
+          localizedEntry.fields.activeTranslations?.[
+            this.contentfulLocaleMap.is
+          ]?.[locale] ?? true
 
         if (!translationIsActive) {
           entriesThatHadTheirTranslationTurnedOff.add(localizedEntry.sys.id)
@@ -305,78 +291,10 @@ export class ContentfulService {
         environment.indexableTypes.includes(entry.sys.contentType.sys.id),
     )
 
-    writeFileSync(
-      'orgsubpage-b4.js',
-      inspect(
-        indexableEntries.filter(
-          (e) => e.sys.contentType.sys.id === 'organizationSubpage',
-        ),
-        true,
-        9999999,
-      ),
-    )
-
-    writeFileSync(
-      'projectpage-b4.js',
-      inspect(
-        indexableEntries.filter(
-          (e) => e.sys.contentType.sys.id === 'projectPage',
-        ),
-        true,
-        9999999,
-      ),
-    )
-
-    writeFileSync(
-      'supportqna-b4.js',
-      inspect(
-        indexableEntries.filter(
-          (e) => e.sys.contentType.sys.id === 'supportQNA',
-        ),
-        true,
-        9999999,
-      ),
-    )
-
-    const populatedIndexableEntries = !isDeltaUpdate
-      ? this.parseSyncApiEntries(indexableEntries, locale)
-      : await this.getPopulatedContentulEntries(
-          indexableEntries,
-          locale,
-          chunkSize,
-        )
-
-    writeFileSync(
-      'orgsubpage-after.js',
-      inspect(
-        populatedIndexableEntries.filter(
-          (e) => e.sys.contentType.sys.id === 'organizationSubpage',
-        ),
-        true,
-        9999999,
-      ),
-    )
-
-    writeFileSync(
-      'projectpage-after.js',
-      inspect(
-        populatedIndexableEntries.filter(
-          (e) => e.sys.contentType.sys.id === 'projectPage',
-        ),
-        true,
-        9999999,
-      ),
-    )
-
-    writeFileSync(
-      'supportqna-after.js',
-      inspect(
-        populatedIndexableEntries.filter(
-          (e) => e.sys.contentType.sys.id === 'supportQNA',
-        ),
-        true,
-        9999999,
-      ),
+    const populatedIndexableEntries = await this.getPopulatedContentulEntries(
+      indexableEntries,
+      locale,
+      chunkSize,
     )
 
     // extract ids from deletedEntries
@@ -449,7 +367,7 @@ export class ContentfulService {
             this.getContentfulData(chunkSize, {
               include: this.defaultIncludeDepth,
               links_to_entry: entryId,
-              locale: contentfulLocaleMap[locale],
+              locale: this.contentfulLocaleMap[locale],
             }),
           )
         }
