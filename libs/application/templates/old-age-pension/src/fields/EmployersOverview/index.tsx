@@ -1,5 +1,5 @@
 import { RepeaterProps } from '@island.is/application/types'
-import { FC, useEffect, useState } from 'react'
+import { FC, useEffect } from 'react'
 import {
   AlertMessage,
   Box,
@@ -16,6 +16,7 @@ import { useMutation } from '@apollo/client'
 import { EmployersTable } from '../components/EmployersTable'
 import { States } from '../../lib/constants'
 import { getApplicationAnswers } from '../../lib/oldAgePensionUtils'
+import { Employer } from '../../types'
 
 const EmployersOverview: FC<RepeaterProps> = ({
   error,
@@ -24,11 +25,22 @@ const EmployersOverview: FC<RepeaterProps> = ({
   setRepeaterItems,
   setBeforeSubmitCallback,
 }) => {
-  const answers = getApplicationAnswers(application.answers)
-  let employers = answers.employers
+  const { employers } = getApplicationAnswers(application.answers)
 
   const { formatMessage, locale } = useLocale()
   const [updateApplication] = useMutation(UPDATE_APPLICATION)
+
+  const onUpdateApplication = async (reducedEmployers: Employer[]) => {
+    await updateApplication({
+      variables: {
+        input: {
+          id: application.id,
+          answers: { employers: reducedEmployers },
+        },
+        locale,
+      },
+    })
+  }
 
   useEffect(() => {
     if (employers.length === 0) {
@@ -45,36 +57,19 @@ const EmployersOverview: FC<RepeaterProps> = ({
     updateApplication,
   ])
 
+  useEffect(() => {
+    onUpdateApplication(employers)
+  }, [])
+
   const onDeleteEmployer = async (email: string) => {
     const reducedEmployers = employers?.filter((e) => e.email !== email)
     if (!reducedEmployers) {
       return
     }
 
-    await updateApplication({
-      variables: {
-        input: {
-          id: application.id,
-          answers: { employers: reducedEmployers },
-        },
-        locale,
-      },
-    })
+    onUpdateApplication(reducedEmployers)
     await setRepeaterItems(reducedEmployers)
   }
-
-  useDeepCompareEffect(() => {
-    setBeforeSubmitCallback?.(async () => {
-      if (!employers || employers.length === 0) {
-        return [
-          false,
-          formatMessage(oldAgePensionFormMessage.employer.addEmployerError),
-        ]
-      }
-
-      return [true, null]
-    })
-  }, [setBeforeSubmitCallback, employers])
 
   return (
     <Box>

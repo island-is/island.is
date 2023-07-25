@@ -77,7 +77,7 @@ export enum AnswerValidationConstants {
   FILEUPLOADHOUSEHOLDSUPPLEMENT = 'fileUploadHouseholdSupplement',
   FILEUPLOADCHILDPENSION = 'fileUploadChildPension',
   EMPLOYMENT = 'employment',
-  EMPLOYERS = 'employers',
+  VALIDATE_LATEST_EMPLOYER = 'employers',
   PAYMENTINFO = 'paymentInfo',
 }
 

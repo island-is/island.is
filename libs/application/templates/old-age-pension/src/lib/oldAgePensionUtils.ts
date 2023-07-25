@@ -654,6 +654,8 @@ interface IncompleteEmployer {
   email?: string
   phoneNumber?: string
   ratioType?: RatioType
+  ratioYearly?: string
+  ratioMonthlyAvg?: string
 }
 
 export const filterValidEmployers = (
@@ -667,8 +669,9 @@ export const filterValidEmployers = (
     .filter((employer) => {
       const hasEmail = !!employer?.email
       const hasRatioType = !!employer?.ratioType
+      const hasRatio = !!employer?.ratioYearly || !!employer?.ratioMonthlyAvg
 
-      return hasEmail && hasRatioType
+      return hasEmail && hasRatioType && hasRatio
     })
 
   return filtered as Employer[]
