@@ -1,4 +1,4 @@
-query getIntellectualPropertyDesignById($input: IntellectualPropertyInput!) {
+query getIntellectualPropertyDesign($input: IntellectualPropertyInput!) {
   intellectualPropertyDesign(input: $input) {
     specification {
       description
@@ -14,11 +14,6 @@ query getIntellectualPropertyDesignById($input: IntellectualPropertyInput!) {
     expiryDate
     classification
     status
-    images {
-      designNumber
-      imageNumber
-      image
-    }
     owners {
       name
       address
@@ -29,6 +24,13 @@ query getIntellectualPropertyDesignById($input: IntellectualPropertyInput!) {
     agent {
       name
       address
+    }
+  }
+  intellectualPropertyDesignImageCollection(input: $input) {
+    images {
+      designNumber
+      imageNumber
+      image
     }
   }
 }

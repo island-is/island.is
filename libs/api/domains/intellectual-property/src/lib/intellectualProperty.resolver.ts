@@ -17,6 +17,7 @@ import { Image } from './models/getDesignImage.model'
 import { GetIntellectualPropertyInput } from './dto/getPatent.input'
 import { Trademark } from './models/getTrademark.model'
 import { GetIntellectualPropertyDesignImageInput } from './dto/getDesignImage.input'
+import { DesignImageCollection } from './models/getDesignImageCollection.model'
 
 @Resolver()
 @UseGuards(IdsUserGuard, ScopesGuard)
@@ -61,21 +62,23 @@ export class IntellectualPropertyResolver {
   }
 
   @Scopes(ApiScope.internal)
-  @Query(() => [Image], {
+  @Query(() => DesignImageCollection, {
     name: 'intellectualPropertyDesignImageCollection',
     nullable: true,
   })
   @Audit()
-  getIntellectualPropertyDesignImageCollectionById(
+  async getIntellectualPropertyDesignImageCollectionById(
     @Args('input', { type: () => GetIntellectualPropertyInput })
     input: GetIntellectualPropertyInput,
   ) {
-    return this.ipService.getDesignByHID(input.key)
+    return {
+      images: await this.ipService.getDesignImages(input.key),
+    }
   }
 
   @Scopes(ApiScope.internal)
-  @Query(() => [Image], {
-    name: 'intellectualPropertyDesignImageCollection',
+  @Query(() => Image, {
+    name: 'intellectualPropertyDesignImage',
     nullable: true,
   })
   @Audit()

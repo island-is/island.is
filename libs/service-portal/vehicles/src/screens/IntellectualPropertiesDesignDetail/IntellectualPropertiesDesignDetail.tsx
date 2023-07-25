@@ -23,7 +23,7 @@ import {
 } from '@island.is/island-ui/core'
 import Timeline from '../../components/Timeline/Timeline'
 import chunk from 'lodash/chunk'
-import { useGetIntellectualPropertyDesignByIdQuery } from './IntellectualPropertiesDesignDetail.generated'
+import { useGetIntellectualPropertyDesignQuery } from './IntellectualPropertiesDesignDetail.generated'
 
 type UseParams = {
   id: string
@@ -34,7 +34,7 @@ const IntellectualPropertiesDesignDetail = () => {
   const { formatMessage } = useLocale()
   const { id } = useParams() as UseParams
 
-  const { data, loading, error } = useGetIntellectualPropertyDesignByIdQuery({
+  const { data, loading, error } = useGetIntellectualPropertyDesignQuery({
     variables: {
       input: {
         key: id,
@@ -61,6 +61,7 @@ const IntellectualPropertiesDesignDetail = () => {
   }
 
   const ip = data?.intellectualPropertyDesign
+
   return (
     <>
       <Box marginBottom={[1, 1, 3]}>
@@ -106,7 +107,7 @@ const IntellectualPropertiesDesignDetail = () => {
         </Box>
         <MultiImage
           loading={loading}
-          images={ip?.images ?? []}
+          images={data?.intellectualPropertyDesignImageCollection?.images ?? []}
           title="Design images"
         />
         <Stack space="p2">
