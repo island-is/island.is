@@ -303,6 +303,13 @@ export const OldAgePensionForm: Form = buildForm({
                   width: 'half',
                   largeButtons: true,
                   space: 'containerGutter',
+                  condition: (answers, externalData) => {
+                    const { hasSpouse } = getApplicationExternalData(
+                      externalData,
+                    )
+                    if (hasSpouse) return true
+                    return false
+                  },
                 }),
                 buildTextField({
                   id: 'paymentInfo.spouseAllowanceUsage',
@@ -310,9 +317,12 @@ export const OldAgePensionForm: Form = buildForm({
                     oldAgePensionFormMessage.payment
                       .personalAllowancePercentage,
                   suffix: '%',
-                  condition: (answers) => {
+                  condition: (answers, externalData) => {
                     const { spouseAllowance } = getApplicationAnswers(answers)
-                    return spouseAllowance === YES
+                    const { hasSpouse } = getApplicationExternalData(
+                      externalData,
+                    )
+                    return hasSpouse && spouseAllowance === YES
                   },
                   placeholder: '1%',
                   variant: 'number',
