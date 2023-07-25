@@ -42,8 +42,6 @@ const ProgressBar: FC<Props> = ({
     onClick(clickWidthPercent)
   }
 
-  console.log(renderProgressBar)
-
   return (
     <Box
       className={cn(styles.progress, className)}

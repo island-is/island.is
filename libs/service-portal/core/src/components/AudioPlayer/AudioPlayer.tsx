@@ -10,7 +10,7 @@ import {
 import format from 'date-fns/format'
 import * as styles from './AudioPlayer.css'
 import ProgressBar from '../ProgressBar/ProgressBar'
-export interface Props {
+interface Props {
   url: string
 }
 
@@ -49,7 +49,6 @@ const AudioPlayer: FC<Props> = ({ url }) => {
 
   useEffect(() => {
     if (isPlaying) {
-      console.log('playing')
       audioRef.current?.play()
     } else {
       audioRef.current?.pause()

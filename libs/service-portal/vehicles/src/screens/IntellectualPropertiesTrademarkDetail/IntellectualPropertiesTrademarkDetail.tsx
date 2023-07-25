@@ -25,8 +25,9 @@ import {
 import Timeline from '../../components/Timeline/Timeline'
 import chunk from 'lodash/chunk'
 import { useGetIntellectualPropertyTrademarkByIdQuery } from './IntellectualPropertiesTrademarkDetail.generated'
-import Image from '../../../../core/src/components/Image/Image'
 import AudioPlayer from '../../../../core/src/components/AudioPlayer/AudioPlayer'
+import VideoPlayer from '../../../../core/src/components/VideoPlayer/VideoPlayer'
+import Image from '../../../../core/src/components/Image/Image'
 import { TrademarkType } from '@island.is/api/schema'
 
 type UseParams = {
@@ -87,8 +88,17 @@ const IntellectualPropertiesTrademarkDetail = () => {
           </Inline>
         </Box>
 
-        {ip?.imagePath && (
-          <Image url={ip.imagePath} title={'Trademark image'}></Image>
+        {ip?.type === TrademarkType.MULTIMEDIA && ip.media?.mediaPath && (
+          <VideoPlayer url={ip.media?.mediaPath} />
+        )}
+        {ip?.type === TrademarkType.ANIMATION && ip.media?.mediaPath && (
+          <Image
+            url={ip.media?.mediaPath}
+            title={ip?.text ?? ''}
+            height="352px"
+            width="352px"
+            isAnimation
+          ></Image>
         )}
         {ip?.type === TrademarkType.AUDIO && ip.media?.mediaPath && (
           <AudioPlayer url={ip.media?.mediaPath} />
