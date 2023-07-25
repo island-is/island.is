@@ -46,9 +46,9 @@ const CourtOfAppealCaseOverviewHeader: React.FC = () => {
         <Box>
           <OverviewHeader />
 
-          {workingCase.courtEndTime && (
+          {workingCase.rulingDate && (
             <Box>
-              <RulingDateLabel courtEndTime={workingCase.courtEndTime} />
+              <RulingDateLabel rulingDate={workingCase.rulingDate} />
             </Box>
           )}
           {workingCase.appealedDate && (

@@ -139,6 +139,30 @@ describe('getIncidentDescriptionReason', () => {
     )
   })
 
+  test('should return a description with illegal drugs', () => {
+    const offenses = [offense.DRUNK_DRIVING, offense.ILLEGAL_DRUGS_DRIVING]
+
+    const result = getIncidentDescriptionReason(offenses, {}, formatMessage)
+
+    expect(result).toBe(
+      'undir áhrifum áfengis og óhæfur til að stjórna henni örugglega vegna áhrifa ávana- og fíkniefna',
+    )
+  })
+
+  test('should return a description with illegal drugs as third offence', () => {
+    const offenses = [
+      offense.DRIVING_WITHOUT_LICENCE,
+      offense.DRUNK_DRIVING,
+      offense.ILLEGAL_DRUGS_DRIVING,
+    ]
+
+    const result = getIncidentDescriptionReason(offenses, {}, formatMessage)
+
+    expect(result).toBe(
+      'sviptur ökurétti, undir áhrifum áfengis og óhæfur til að stjórna henni örugglega vegna áhrifa ávana- og fíkniefna',
+    )
+  })
+
   test('should return a description with illegal and prescription drugs', () => {
     const offenses = [
       offense.DRUNK_DRIVING,
@@ -150,6 +174,19 @@ describe('getIncidentDescriptionReason', () => {
 
     expect(result).toBe(
       'undir áhrifum áfengis og óhæfur til að stjórna henni örugglega vegna áhrifa ávana- og fíkniefna og slævandi lyfja',
+    )
+  })
+
+  test('should return a description with only illegal and prescription drugs', () => {
+    const offenses = [
+      offense.ILLEGAL_DRUGS_DRIVING,
+      offense.PRESCRIPTION_DRUGS_DRIVING,
+    ]
+
+    const result = getIncidentDescriptionReason(offenses, {}, formatMessage)
+
+    expect(result).toBe(
+      'óhæfur til að stjórna henni örugglega vegna áhrifa ávana- og fíkniefna og slævandi lyfja',
     )
   })
 })
