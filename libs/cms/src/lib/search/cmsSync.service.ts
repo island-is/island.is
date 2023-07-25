@@ -10,7 +10,7 @@ import {
 } from '@island.is/content-search-indexer/types'
 import { ArticleSyncService } from './importers/article.service'
 import { SubArticleSyncService } from './importers/subArticle.service'
-import { ContentfulService } from './contentfulService'
+import { ContentfulService } from './contentful.service'
 import { LifeEventsPageSyncService } from './importers/lifeEventsPage.service'
 import { ArticleCategorySyncService } from './importers/articleCategory.service'
 import { NewsSyncService } from './importers/news.service'
