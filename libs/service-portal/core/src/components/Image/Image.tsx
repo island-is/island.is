@@ -59,5 +59,3 @@ export const Image: FC<Props> = ({
     </Box>
   )
 }
-
-export default Image

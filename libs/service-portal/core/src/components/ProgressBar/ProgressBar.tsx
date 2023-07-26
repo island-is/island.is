@@ -2,7 +2,6 @@ import { Box } from '@island.is/island-ui/core'
 import React, { useRef, FC } from 'react'
 import cn from 'classnames'
 import * as styles from './ProgressBar.css'
-import { Colors, theme } from '@island.is/island-ui/theme'
 
 interface Props {
   progress: number
@@ -12,7 +11,7 @@ interface Props {
   renderProgressBar?: boolean
 }
 
-const ProgressBar: FC<Props> = ({
+export const ProgressBar: FC<Props> = ({
   progress,
   className,
   variant,
@@ -68,5 +67,3 @@ const ProgressBar: FC<Props> = ({
     </Box>
   )
 }
-
-export default ProgressBar

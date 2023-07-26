@@ -9,13 +9,13 @@ import {
 } from '@island.is/island-ui/core'
 import format from 'date-fns/format'
 import * as styles from './AudioPlayer.css'
-import ProgressBar from '../ProgressBar/ProgressBar'
+import { ProgressBar } from '../ProgressBar/ProgressBar'
 interface Props {
   url: string
   title?: string
 }
 
-const AudioPlayer: FC<Props> = ({ url, title }) => {
+export const AudioPlayer: FC<Props> = ({ url, title }) => {
   const [trackProgress, setTrackProgress] = useState(0)
   const [duration, setDuration] = useState(0)
   const [isPlaying, setIsPlaying] = useState(false)
@@ -141,5 +141,3 @@ const AudioPlayer: FC<Props> = ({ url, title }) => {
     </GridContainer>
   )
 }
-
-export default AudioPlayer

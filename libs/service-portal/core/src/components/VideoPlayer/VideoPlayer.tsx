@@ -10,15 +10,15 @@ import {
 } from '@island.is/island-ui/core'
 import format from 'date-fns/format'
 import * as styles from './VideoPlayer.css'
-import ProgressBar from '../ProgressBar/ProgressBar'
 import cn from 'classnames'
+import { ProgressBar } from '../ProgressBar/ProgressBar'
 
 interface Props {
   url: string
   title?: string
 }
 
-const VideoPlayer: FC<Props> = ({ url, title }) => {
+export const VideoPlayer: FC<Props> = ({ url, title }) => {
   const [trackProgress, setTrackProgress] = useState(0)
   const [duration, setDuration] = useState(0)
   const [isPlaying, setIsPlaying] = useState(false)
@@ -180,5 +180,3 @@ const VideoPlayer: FC<Props> = ({ url, title }) => {
     </Box>
   )
 }
-
-export default VideoPlayer
