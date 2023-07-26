@@ -221,55 +221,71 @@ export class ApplicationController {
         >
       >
     > = {}
-    const templateTypeToIsReady: Partial<Record<ApplicationTypes, boolean>> = {}
+    const hasAccessToApplication: Partial<
+      Record<ApplicationTypes, boolean>
+    > = {}
     const filteredApplications: Application[] = []
+
     for (const application of applications) {
+      console.log(application.id)
+      console.log(application.typeId)
       const typeId = application.typeId
-      const isTemplateTypeReady = templateTypeToIsReady[typeId]
-      // We've already checked an application with this type and it is ready
-      // now we just need to check if it should be displayed for the user
+      const hasAccessToTemplate = hasAccessToApplication[typeId]
+      let template = templates[typeId]
+
+      if (hasAccessToTemplate === false) {
+        console.log('hasAccessToTemplate === false, skip')
+        continue
+      }
+
+      if (!template) {
+        template = await getApplicationTemplateByTypeId(typeId)
+        templates[typeId] = template
+      }
+
       if (
-        isTemplateTypeReady &&
-        templates[typeId] !== undefined &&
-        (await this.applicationAccessService.shouldShowApplicationOnOverview(
+        hasAccessToTemplate === true &&
+        this.applicationAccessService.evaluateIfRoleShouldBeListed(
           application as BaseApplication,
           user,
-          templates[typeId],
-          scopeCheck,
-        ))
+          template,
+        )
       ) {
+        console.log('hasAccessToTemplate === true, add')
         filteredApplications.push(application)
-        continue
-      } else if (isTemplateTypeReady === false) {
-        // We've already checked an application with this type
-        // and it is NOT ready so we will skip it
         continue
       }
 
       try {
-        const applicationTemplate = await getApplicationTemplateByTypeId(typeId)
-        // Add template to avoid fetching it again for the same types
-        templates[typeId] = applicationTemplate
+        console.log('getting template', typeId)
+        // If template isnt in cache, fetch it and add it, do we need to?
+        if (template) {
+          console.log('template in cache')
+        }
+
+        const hasAccess = await this.applicationAccessService.hasAccessToTemplate(
+          application as BaseApplication,
+          template,
+          user,
+          scopeCheck,
+        )
 
         if (
-          await this.validationService.isTemplateReady(
-            applicationTemplate,
+          hasAccess &&
+          this.applicationAccessService.evaluateIfRoleShouldBeListed(
+            application as BaseApplication,
             user,
+            template,
           )
         ) {
-          templateTypeToIsReady[typeId] = true
-          if (
-            await this.applicationAccessService.shouldShowApplicationOnOverview(
-              application as BaseApplication,
-              user,
-              applicationTemplate,
-              scopeCheck,
-            )
-          ) {
-            filteredApplications.push(application)
-          }
-        } else {
-          templateTypeToIsReady[typeId] = false
+          console.log('has access, add to cache and list')
+          hasAccessToApplication[typeId] = true
+          filteredApplications.push(application)
+        }
+
+        if (!hasAccess) {
+          console.log('does not have access, add to cache')
+          hasAccessToApplication[typeId] = false
         }
       } catch (e) {
         this.logger.info(
@@ -301,8 +317,6 @@ export class ApplicationController {
         `No application template exists for type: ${typeId}`,
       )
     }
-
-    // TODO: verify template is ready from https://github.com/island-is/island.is/pull/3297
 
     // TODO: initial state should be required
     const initialState =

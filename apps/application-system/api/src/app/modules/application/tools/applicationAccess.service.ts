@@ -28,8 +28,10 @@ import { AuthDelegationType } from '@island.is/shared/types'
 import {
   ActorDelegationsApi,
   ActorDelegationsControllerFindAllDirectionEnum,
+  MergedDelegationDTO,
 } from '@island.is/clients/auth/public-api'
 import { AuthMiddleware } from '@island.is/auth-nest-tools'
+import { ApplicationValidationService } from './applicationTemplateValidation.service'
 
 type config = {
   shouldThrowIfPruned?: boolean
@@ -41,6 +43,7 @@ export class ApplicationAccessService {
     private readonly applicationService: ApplicationService,
     private readonly featureFlagService: FeatureFlagService,
     private readonly actorDelegationsApi: ActorDelegationsApi,
+    private readonly validationService: ApplicationValidationService,
   ) {}
 
   async findOneByIdAndNationalId(id: string, user: User, config?: config) {
@@ -119,22 +122,83 @@ export class ApplicationAccessService {
     return role?.delete ?? false
   }
 
-  private evaluateIfRoleShouldBeListed = (
-    userRole: string | undefined,
-    templateHelper: ApplicationTemplateHelper<
+  evaluateIfRoleShouldBeListed = (
+    application: Application,
+    user: User,
+    template: ApplicationTemplate<
       ApplicationContext,
       ApplicationStateSchema<EventObject>,
       EventObject
     >,
   ) => {
-    if (userRole) {
-      const roleInState = templateHelper.getRoleInState(userRole)
+    const currentUserRole = template.mapUserToRole(user.nationalId, application)
+    if (currentUserRole) {
+      const templateHelper = new ApplicationTemplateHelper(
+        application,
+        template,
+      )
+      const roleInState = templateHelper.getRoleInState(currentUserRole)
       // if shouldBeListedForRole isnt defined it should show the application for backwards compatibility
       return roleInState?.shouldBeListedForRole === undefined
         ? true
         : roleInState?.shouldBeListedForRole
     }
     return true
+  }
+
+  private hasCustomDelegation(user: User): boolean {
+    const userDelegations = user.delegationType
+    if (userDelegations?.includes(AuthDelegationType.Custom)) {
+      return true
+    }
+    return false
+  }
+
+  private async checkDelegationScopes(
+    user: User,
+    template: ApplicationTemplate<
+      ApplicationContext,
+      ApplicationStateSchema<EventObject>,
+      EventObject
+    >,
+  ): Promise<boolean> {
+    try {
+      console.log('getting delegations')
+      const delegations = await this.fetchUserDelegations(user)
+      console.log('delegations', delegations)
+      return delegations.some((delegation) => {
+        if (!delegation.scopes) return false
+        return delegation.scopes.some(
+          (scopeObj) =>
+            template.requiredScopes &&
+            template.requiredScopes.includes(scopeObj.scopeName),
+        )
+      })
+    } catch (e) {
+      console.log('error', e)
+      return false
+    }
+  }
+
+  private async fetchUserDelegations(
+    user: User,
+  ): Promise<MergedDelegationDTO[]> {
+    const dels = await this.actorDelegationsApi
+      .withMiddleware(new AuthMiddleware(user))
+      .actorDelegationsControllerFindAll({
+        direction: ActorDelegationsControllerFindAllDirectionEnum.incoming,
+        delegationTypes: [AuthDelegationType.Custom],
+        otherUser: user.nationalId,
+      })
+    console.log('dels', dels)
+    return dels
+  }
+
+  private checkUserScopes(user: User, requiredScopes?: string[]): boolean {
+    if (!requiredScopes) {
+      return false
+    }
+    return user.scope.some((scope) => requiredScopes.includes(scope))
   }
 
   private async hasValidCustomDelegation(
@@ -144,61 +208,29 @@ export class ApplicationAccessService {
       ApplicationStateSchema<EventObject>,
       EventObject
     >,
-    scopeCheck?: boolean,
+    shouldCheckScope?: boolean,
   ): Promise<boolean> {
-    const userDelegations = user.delegationType
-    const requiredScopes = template.requiredScopes
-
-    // Must be a custom delegation
-    if (
-      !userDelegations ||
-      !userDelegations.includes(AuthDelegationType.Custom)
-    ) {
+    const bla = await this.checkDelegationScopes(user, template)
+    console.log('bla', bla)
+    const templateHasRequiredScope = template.requiredScopes !== undefined
+    if (!this.hasCustomDelegation(user) || !templateHasRequiredScope) {
       return false
     }
 
-    // Custom delegations must have required scopes on their template
-    if (!requiredScopes) {
-      return false
+    if (this.checkUserScopes(user, template.requiredScopes)) {
+      console.log('User has required scopes')
+      return true
     }
 
-    // If we dont have the scopes available like in service portal we need to fetch
-    // them for the user logged in
-    if (scopeCheck) {
-      try {
-        const delegations = await this.actorDelegationsApi
-          .withMiddleware(new AuthMiddleware(user))
-          .actorDelegationsControllerFindAll({
-            direction: ActorDelegationsControllerFindAllDirectionEnum.incoming,
-            delegationTypes: [AuthDelegationType.Custom],
-            otherUser: user.nationalId,
-          })
-        for (const delegation of delegations) {
-          if (!delegation.scopes) continue
-          for (const scopeObj of delegation.scopes) {
-            if (
-              template.requiredScopes &&
-              template.requiredScopes.includes(scopeObj.scopeName)
-            ) {
-              return true
-            }
-          }
-        }
-      } catch (e) {
-        return false
-      }
-      return false
-    } else {
-      for (const scope of user.scope) {
-        if (requiredScopes?.includes(scope)) {
-          return true
-        }
-      }
-      return false
+    if (shouldCheckScope) {
+      console.log('Checking delegation scopes')
+      return await this.checkDelegationScopes(user, template)
     }
+
+    return false
   }
 
-  async shouldShowApplicationOnOverview(
+  private async shouldShowApplicationOnOverview(
     application: Application,
     user: User,
     template?: ApplicationTemplate<
@@ -208,6 +240,7 @@ export class ApplicationAccessService {
     >,
     scopeCheck?: boolean,
   ): Promise<boolean> {
+    console.log('shouldShowApplicationOnOverview')
     if (template === undefined) {
       return false
     }
@@ -217,32 +250,20 @@ export class ApplicationAccessService {
     // if the user is acting on behalf we need to check if it has the allowed delegations for the template
     if (isUserActingOnBehalfOfApplicant) {
       const userDelegations = user.delegationType
+      console.log('userDelegations', userDelegations)
       if (template.allowedDelegations) {
+        console.log(template.allowedDelegations)
+        console.log(template.name)
         if (!userDelegations) {
           return false
         }
 
-        if (
-          !(await this.matchesAtLeastOneDelegation(
-            template.allowedDelegations,
-            user,
-            template,
-            scopeCheck,
-          ))
-        ) {
-          return false
-        }
-
-        if (userDelegations.includes(AuthDelegationType.Custom)) {
-          const isValidcustom = await this.hasValidCustomDelegation(
-            user,
-            template,
-            scopeCheck,
-          )
-          if (!isValidcustom) {
-            return false
-          }
-        }
+        return await this.matchesAtLeastOneDelegation(
+          template.allowedDelegations,
+          user,
+          template,
+          scopeCheck,
+        )
       }
       // application doesnt allow delegation and user is acting on behalf of applicant
       else {
@@ -250,9 +271,10 @@ export class ApplicationAccessService {
       }
     }
 
-    const currentUserRole = template.mapUserToRole(nationalId, application)
-    const templateHelper = new ApplicationTemplateHelper(application, template)
-    return this.evaluateIfRoleShouldBeListed(currentUserRole, templateHelper)
+    return true
+    // const currentUserRole = template.mapUserToRole(nationalId, application)
+    // const templateHelper = new ApplicationTemplateHelper(application, template)
+    // return this.evaluateIfRoleShouldBeListed(currentUserRole, templateHelper)
   }
 
   private async matchesAtLeastOneDelegation(
@@ -265,16 +287,16 @@ export class ApplicationAccessService {
     >,
     scopeCheck?: boolean,
   ): Promise<boolean> {
-    let matchesAtLeastOneDelegation = false
+    console.log('matchesAtLeastOneDelegation')
     for (const delegation of delegations) {
       if (
         await this.isDelegationAllowed(delegation, user, template, scopeCheck)
       ) {
-        matchesAtLeastOneDelegation = true
-        break
+        console.log(`User has allowed delegation, ${JSON.stringify(user)}`)
+        return true
       }
     }
-    return matchesAtLeastOneDelegation
+    return false
   }
 
   /**
@@ -299,6 +321,7 @@ export class ApplicationAccessService {
     // Check if feature flag is set for the delegation. If it is, we need to validate
     // if the feature is enabled for the user.
     let featureAllowed = true
+    console.log('delegation', delegation)
     if (delegation.featureFlag) {
       featureAllowed = await this.featureFlagService.getValue(
         delegation.featureFlag,
@@ -306,17 +329,46 @@ export class ApplicationAccessService {
         user,
       )
     }
-    // If the delegation type is "Custom", we need to verify if the user has the
-    // required scope as per the template.
-    if (delegation.type === AuthDelegationType.Custom) {
-      // The user can proceed if the custom delegation is valid and the feature (if flagged) is enabled.
+
+    // Check first if user has the required delegation type for a non custom delegation
+    if (delegation.type !== AuthDelegationType.Custom) {
+      // For non-custom delegation types, we simply check if the user's delegation type matches the
+      // required delegation type and that the feature (if flagged) is enabled.
+      return user.delegationType?.includes(delegation.type) && featureAllowed
+    } else {
+      // If the delegation type is "Custom", we need to verify if the user has the
+      // required scope as per the template.
       return (
         (await this.hasValidCustomDelegation(user, template, scopeCheck)) &&
         featureAllowed
       )
     }
-    // For non-custom delegation types, we simply check if the user's delegation type matches the
-    // required delegation type and that the feature (if flagged) is enabled.
-    return user.delegationType?.includes(delegation.type) && featureAllowed
+  }
+
+  async hasAccessToTemplate(
+    application: Application,
+    template: ApplicationTemplate<
+      ApplicationContext,
+      ApplicationStateSchema<EventObject>,
+      EventObject
+    >,
+    user: User,
+    scopeCheck?: boolean,
+  ): Promise<boolean> {
+    console.log('scopeCheck', scopeCheck)
+    // check if template is ready
+    if (!template) {
+      console.log('template not ready')
+      return false
+    }
+    if (await this.validationService.isTemplateReady(template, user)) {
+      return await this.shouldShowApplicationOnOverview(
+        application,
+        user,
+        template,
+        scopeCheck,
+      )
+    }
+    return false
   }
 }
