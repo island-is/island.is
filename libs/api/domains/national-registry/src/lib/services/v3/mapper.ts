@@ -22,6 +22,7 @@ import {
 import { NationalRegistryReligion } from '../../models/nationalRegistryReligion.model'
 import { NationalRegistrySpouse } from '../../models/nationalRegistrySpouse.model'
 import { NationalRegistryResidenceInfo } from '../../models/nationalRegistryResidenceInfo.model'
+import { mapGender, mapMaritalStatus } from '../../utils'
 
 export function formatPersonDiscriminated(
   individual: EinstaklingurDTOAllt | null | undefined,
@@ -49,7 +50,7 @@ export function formatPerson(
     fullName: individual.fulltNafn?.fulltNafn ?? null,
     nationalIdType: individual.tegundKennitolu ?? null,
     exceptionFromDirectMarketing: individual.bannmerking === 'true' ?? false,
-    gender: individual.kyn?.kynTexti,
+    gender: mapGender(individual.kyn?.kynKodi ?? ''),
     genderCode: individual.kyn?.kynKodi,
     fate: individual.afdrif ?? null,
   }
@@ -78,7 +79,7 @@ export function formatSpouse(
   return {
     nationalId: spouse.makiKennitala,
     name: spouse.makiNafn,
-    maritalStatus: spouse.hjuskaparstadaTexti ?? null,
+    maritalStatus: mapMaritalStatus(spouse.hjuskaparstadaKodi ?? ''),
     cohabitation: spouse.sambudTexti ?? null,
   }
 }

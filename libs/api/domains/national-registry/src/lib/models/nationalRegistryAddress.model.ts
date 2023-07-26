@@ -1,4 +1,3 @@
-import { EinstaklingurDTOHeimili } from '@island.is/clients/national-registry-v3'
 import { Field, ObjectType } from '@nestjs/graphql'
 
 @ObjectType()

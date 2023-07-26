@@ -1,12 +1,10 @@
 import {
   buildDescriptionField,
   buildMultiField,
-  buildKeyValueField,
   buildSelectField,
-  buildDividerField,
   buildSubSection,
 } from '@island.is/application/core'
-import { Juristiction, NationalRegistryUser } from '../../types/schema'
+import { Juristiction } from '../../types/schema'
 import { m } from '../../lib/messages'
 import {
   chooseDistrictCommissionerDescription,

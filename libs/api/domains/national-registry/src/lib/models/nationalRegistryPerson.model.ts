@@ -1,5 +1,5 @@
 import { EinstaklingurDTOAllt } from '@island.is/clients/national-registry-v3'
-import { Field, ID, ObjectType } from '@nestjs/graphql'
+import { Field, ID, ObjectType, registerEnumType } from '@nestjs/graphql'
 import { NationalRegistryBirthplace } from './nationalRegistryBirthplace.model'
 import { NationalRegistryCitizenship } from './nationalRegistryCitizenship.model'
 import { NationalRegistrySpouse } from './nationalRegistrySpouse.model'
@@ -8,6 +8,9 @@ import { NationalRegistryName } from './nationalRegistryName.model'
 import { NationalRegistryReligion } from './nationalRegistryReligion.model'
 import { NationalRegistryResidenceInfo } from './nationalRegistryResidenceInfo.model'
 import { NationalRegistryResidenceHistoryEntry } from './nationalRegistryResidenceHistoryEntry.model'
+import { NationalRegistryGender } from '../nationalRegistry.types'
+
+registerEnumType(NationalRegistryGender, { name: 'NationalRegistryGender' })
 
 type PersonV3 = NationalRegistryPerson & {
   api: 'v3'
@@ -28,8 +31,8 @@ export class NationalRegistryPerson {
   @Field(() => String, { nullable: true })
   fullName!: string | null
 
-  @Field(() => String, { nullable: true })
-  gender?: string | null
+  @Field(() => NationalRegistryGender, { nullable: true })
+  gender?: NationalRegistryGender | null
 
   @Field(() => String, { nullable: true })
   genderCode?: string | null

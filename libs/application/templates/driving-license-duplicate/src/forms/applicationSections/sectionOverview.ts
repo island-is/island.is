@@ -13,7 +13,7 @@ import { format as formatNationalId } from 'kennitala'
 import {
   DistrictCommissionerAgencies,
   Juristiction,
-  NationalRegistryUser,
+  NationalRegistryPerson,
 } from '@island.is/api/schema'
 import { m } from '../../lib/messages'
 import format from 'date-fns/format'
@@ -43,7 +43,7 @@ export const sectionOverview = buildSection({
           label: m.applicantsName,
           width: 'half',
           value: ({ externalData: { nationalRegistry } }) =>
-            (nationalRegistry.data as NationalRegistryUser).fullName,
+            (nationalRegistry.data as NationalRegistryPerson).fullName,
         }),
         buildKeyValueField({
           label: m.applicantsNationalId,

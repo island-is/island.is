@@ -14,6 +14,7 @@ import { NationalRegistryFamilyMember } from '../../models/nationalRegistryFamil
 import { NationalRegistrySpouse } from '../../models/nationalRegistrySpouse.model'
 import { NationalRegistryChildGuardianship } from '../../models/nationalRegistryChildGuardianship.model'
 import { NationalRegistryResidenceHistoryEntry } from '../../models/nationalRegistryResidenceHistoryEntry.model'
+import { mapMaritalStatus } from '../../utils'
 
 @Injectable()
 export class NationalRegistryXRoadService {
@@ -165,13 +166,12 @@ export class NationalRegistryXRoadService {
       nationalId,
     )
 
-    this.logger.debug(JSON.stringify(spouse))
-
     return (
       spouse && {
         nationalId: spouse.spouseNationalId,
         name: spouse.spouseName,
-        maritalStatus: spouse.cohabitationCode,
+        cohabitation: spouse.cohabitationCode,
+        maritalStatus: mapMaritalStatus(spouse.cohabitationCode),
       }
     )
   }
