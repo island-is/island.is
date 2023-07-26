@@ -4,6 +4,7 @@ import {
   AsyncSearchInput,
   Box,
   BoxProps,
+  Button,
   LoadingDots,
   Pagination,
   Table,
@@ -55,6 +56,7 @@ const AircraftSearch = ({ slice }: AircraftSearchProps) => {
   const router = useRouter()
   const [searchInputHasFocus, setSearchInputHasFocus] = useState(false)
   const [searchValue, setSearchValue] = useState('')
+  const [searchTerm, setSearchTerm] = useState('')
   const n = useNamespace(slice?.json ?? {})
   const searchValueHasBeenInitialized = useRef(false)
 
@@ -63,6 +65,7 @@ const AircraftSearch = ({ slice }: AircraftSearchProps) => {
       pathname: router.pathname,
       query: { ...router.query, aq: searchValue },
     })
+    setSearchTerm(searchValue)
   }
 
   useEffect(() => {
@@ -72,45 +75,63 @@ const AircraftSearch = ({ slice }: AircraftSearchProps) => {
       !searchValueHasBeenInitialized.current
     ) {
       setSearchValue(router.query.aq as string)
+      setSearchTerm(router.query.aq as string)
       searchValueHasBeenInitialized.current = true
     }
   }, [router?.query?.aq, searchValue])
 
   const shouldDisplayAircraftDetails = router?.isReady && router?.query?.aq
 
-  const shouldDisplaySearchInput =
-    slice?.configJson?.displaySearchInput ?? false
-
   return (
     <Box>
-      {shouldDisplaySearchInput && (
-        <Box marginTop={2} marginBottom={3}>
-          <AsyncSearchInput
-            buttonProps={{
-              onClick: handleSearch,
-              onFocus: () => setSearchInputHasFocus(true),
-              onBlur: () => setSearchInputHasFocus(false),
-            }}
-            inputProps={{
-              name: 'public-vehicle-search',
-              inputSize: 'large',
-              placeholder: n('inputPlaceholder', 'Númer eða eigandi'),
-              colored: true,
-              onChange: (ev) => setSearchValue(ev.target.value),
-              value: searchValue,
-              onKeyDown: (ev) => {
-                if (ev.key === 'Enter') {
-                  handleSearch()
-                }
-              },
-            }}
-            hasFocus={searchInputHasFocus}
-          />
-        </Box>
-      )}
+      <Box marginTop={2} marginBottom={3}>
+        <AsyncSearchInput
+          buttonProps={{
+            onClick: handleSearch,
+            onFocus: () => setSearchInputHasFocus(true),
+            onBlur: () => setSearchInputHasFocus(false),
+          }}
+          inputProps={{
+            onFocus: () => setSearchInputHasFocus(true),
+            onBlur: () => setSearchInputHasFocus(false),
+            name: 'public-vehicle-search',
+            inputSize: 'medium',
+            placeholder: n('inputPlaceholder', 'Númer eða eigandi'),
+            colored: true,
+            onChange: (ev) => setSearchValue(ev.target.value),
+            value: searchValue,
+            onKeyDown: (ev) => {
+              if (ev.key === 'Enter') {
+                handleSearch()
+              }
+            },
+          }}
+          hasFocus={searchInputHasFocus}
+        />
+      </Box>
 
       {shouldDisplayAircraftDetails && (
-        <AircraftDetails slice={slice} searchTerm={searchValue} />
+        <Box>
+          <Box marginBottom={3}>
+            <Button
+              size="small"
+              icon="reload"
+              onClick={() => {
+                const updatedQuery = { ...router.query }
+                delete updatedQuery['aq']
+                router.replace({
+                  pathname: router.pathname,
+                  query: updatedQuery,
+                })
+                setSearchValue('')
+              }}
+              variant="text"
+            >
+              {n('clearFilters', 'Núllstilla leit')}
+            </Button>
+          </Box>
+          <AircraftDetails slice={slice} searchTerm={searchTerm} />
+        </Box>
       )}
       {!shouldDisplayAircraftDetails && <AircraftTable slice={slice} />}
     </Box>
@@ -177,14 +198,17 @@ const AircraftDetails = ({ slice, searchTerm }: AircraftDetailsProps) => {
 
   return (
     <Box>
-      {displayedResults.map((aircraft) => {
+      {displayedResults.map((aircraft, index) => {
         const displayedOwner = getDisplayedOwner(aircraft)
         const displayedOwnerName = getDisplayedOwnerName(
           aircraft,
           n('andMore', 'ofl.'),
         )
         return (
-          <Box key={aircraft?.identifiers}>
+          <Box
+            key={aircraft?.identifiers}
+            marginTop={index > 0 ? 9 : undefined}
+          >
             <Table.Table>
               <Table.Body>
                 <Table.Row>
@@ -306,8 +330,6 @@ const AircraftTable = ({ slice }: AircraftSearchProps) => {
 
   const totalAircrafts = latestAircraftListResponse?.totalCount ?? 0
   const displayedAircraftList = latestAircraftListResponse?.aircrafts ?? []
-  const shouldDisplaySearchInput =
-    slice?.configJson?.displaySearchInput ?? false
 
   return (
     <Box>
@@ -342,33 +364,25 @@ const AircraftTable = ({ slice }: AircraftSearchProps) => {
                   n('andMore', 'ofl.'),
                 )
 
-                const boxProps: BoxProps = shouldDisplaySearchInput
-                  ? {
-                      cursor: 'pointer',
-                      onClick: () => {
-                        if (!aircraft?.identifiers) return
-                        router.replace({
-                          pathname: router.pathname,
-                          query: {
-                            ...router.query,
-                            aq: aircraft?.identifiers,
-                          },
-                        })
+                const boxProps: BoxProps = {
+                  cursor: 'pointer',
+                  onClick: () => {
+                    if (!aircraft?.identifiers) return
+                    router.replace({
+                      pathname: router.pathname,
+                      query: {
+                        ...router.query,
+                        aq: aircraft?.identifiers,
                       },
-                    }
-                  : {}
+                    })
+                  },
+                }
 
                 return (
                   <Table.Row key={aircraft?.identifiers}>
                     <Table.Data>
                       <Box {...boxProps}>
-                        <Text
-                          color={
-                            shouldDisplaySearchInput ? 'blue400' : undefined
-                          }
-                        >
-                          {aircraft?.identifiers}
-                        </Text>
+                        <Text color="blue400">{aircraft?.identifiers}</Text>
                       </Box>
                     </Table.Data>
                     <Table.Data>
