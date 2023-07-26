@@ -19,10 +19,8 @@ import {
 } from '@nestjs/graphql'
 import { ApiScope } from '@island.is/auth/scopes'
 import { Audit } from '@island.is/nest/audit'
-import {
-  NationalRegistryPersonDiscriminated,
-  NationalRegistryPerson,
-} from './models/nationalRegistryPerson.model'
+import { NationalRegistryPerson } from './models/nationalRegistryPerson.model'
+import type { NationalRegistryPersonDiscriminated } from './models/nationalRegistryPerson.model'
 import { NationalRegistrySpouse } from './models/nationalRegistrySpouse.model'
 import { NationalRegistryAddress } from './models/nationalRegistryAddress.model'
 import { NationalRegistryBirthplace } from './models/nationalRegistryBirthplace.model'
