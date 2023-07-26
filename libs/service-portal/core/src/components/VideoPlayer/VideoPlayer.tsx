@@ -15,9 +15,10 @@ import cn from 'classnames'
 
 interface Props {
   url: string
+  title?: string
 }
 
-const VideoPlayer: FC<Props> = ({ url }) => {
+const VideoPlayer: FC<Props> = ({ url, title }) => {
   const [trackProgress, setTrackProgress] = useState(0)
   const [duration, setDuration] = useState(0)
   const [isPlaying, setIsPlaying] = useState(false)
@@ -86,6 +87,7 @@ const VideoPlayer: FC<Props> = ({ url }) => {
         onDurationChange={(e) => setDuration(e.currentTarget.duration)}
         onTimeUpdate={(e) => setTrackProgress(e.currentTarget.currentTime)}
         onCanPlay={() => setIsReady(true)}
+        title={title}
       >
         <source type="video/mp4" src={url} />
       </video>

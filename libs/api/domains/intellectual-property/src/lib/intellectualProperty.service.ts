@@ -87,6 +87,8 @@ export class IntellectualPropertyService {
         ? TrademarkType.ANIMATION
         : trademark.type === 'hljóðmerki'
         ? TrademarkType.AUDIO
+        : trademark.type === 'orðmerki'
+        ? TrademarkType.TEXT
         : undefined
 
     return {

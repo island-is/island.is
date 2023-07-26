@@ -10,6 +10,7 @@ export enum TrademarkType {
   AUDIO = 'Audio',
   ANIMATION = 'Animation',
   MULTIMEDIA = 'Multimedia',
+  TEXT = 'Text',
 }
 
 registerEnumType(TrademarkType, { name: 'TrademarkType' })

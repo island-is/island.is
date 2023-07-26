@@ -12,9 +12,10 @@ import * as styles from './AudioPlayer.css'
 import ProgressBar from '../ProgressBar/ProgressBar'
 interface Props {
   url: string
+  title?: string
 }
 
-const AudioPlayer: FC<Props> = ({ url }) => {
+const AudioPlayer: FC<Props> = ({ url, title }) => {
   const [trackProgress, setTrackProgress] = useState(0)
   const [duration, setDuration] = useState(0)
   const [isPlaying, setIsPlaying] = useState(false)
@@ -72,6 +73,7 @@ const AudioPlayer: FC<Props> = ({ url }) => {
             onDurationChange={(e) => setDuration(e.currentTarget.duration)}
             onTimeUpdate={(e) => setTrackProgress(e.currentTarget.currentTime)}
             onCanPlay={() => setIsReady(true)}
+            title={title}
           >
             <source type="audio/mp3" src={url} />
           </audio>

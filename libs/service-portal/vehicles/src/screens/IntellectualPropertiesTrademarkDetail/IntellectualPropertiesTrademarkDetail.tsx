@@ -88,8 +88,11 @@ const IntellectualPropertiesTrademarkDetail = () => {
           </Inline>
         </Box>
 
+        {ip?.type === TrademarkType.TEXT && ip?.imagePath && (
+          <Image url={ip.imagePath} title={ip.text ?? ''} />
+        )}
         {ip?.type === TrademarkType.MULTIMEDIA && ip.media?.mediaPath && (
-          <VideoPlayer url={ip.media?.mediaPath} />
+          <VideoPlayer url={ip.media?.mediaPath} title={ip.text ?? ''} />
         )}
         {ip?.type === TrademarkType.ANIMATION && ip.media?.mediaPath && (
           <Image
@@ -98,10 +101,10 @@ const IntellectualPropertiesTrademarkDetail = () => {
             height="352px"
             width="352px"
             isAnimation
-          ></Image>
+          />
         )}
         {ip?.type === TrademarkType.AUDIO && ip.media?.mediaPath && (
-          <AudioPlayer url={ip.media?.mediaPath} />
+          <AudioPlayer url={ip.media?.mediaPath} title={ip.text ?? ''} />
         )}
         <Stack space="p2">
           <UserInfoLine
