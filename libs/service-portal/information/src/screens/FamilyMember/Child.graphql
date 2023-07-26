@@ -1,0 +1,40 @@
+query NationalRegistryChildren($input: String) {
+  nationalRegistryPerson(api: $input) {
+    nationalId
+    fullName
+    children {
+      nationalId
+      fullName
+      genderText
+      fate
+      otherParent {
+        nationalId
+        fullName
+      }
+      name {
+        givenName
+        middleName
+        lastName
+      }
+      citizenship {
+        name
+      }
+      address {
+        streetName
+      }
+      birthplace {
+        location
+      }
+      spouse {
+        maritalStatus
+      }
+      religion {
+        name
+      }
+      birthParents {
+        fullName
+        nationalId
+      }
+    }
+  }
+}

@@ -1,0 +1,37 @@
+query NationalRegistryPerson($input: String) {
+  nationalRegistryPerson(api: $input) {
+    nationalId
+    fullName
+    genderText
+    exceptionFromDirectMarketing
+    name {
+      givenName
+      middleName
+      lastName
+    }
+    citizenship {
+      name
+    }
+    address {
+      streetName
+      postalCode
+      city
+    }
+    birthplace {
+      location
+    }
+    spouse {
+      maritalStatus
+    }
+    religion {
+      name
+    }
+    livingArrangements {
+      domicileId
+      domicileInhabitants {
+        nationalId
+        fullName
+      }
+    }
+  }
+}

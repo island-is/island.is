@@ -2,8 +2,6 @@ import React from 'react'
 import { defineMessage } from 'react-intl'
 import { useParams } from 'react-router-dom'
 
-import { useQuery } from '@apollo/client'
-import { Query } from '@island.is/api/schema'
 import {
   Box,
   Divider,
@@ -20,8 +18,7 @@ import {
   NotFound,
   UserInfoLine,
 } from '@island.is/service-portal/core'
-
-import { NATIONAL_REGISTRY_USER } from '../../lib/queries/getNationalRegistryUser'
+import { useNationalRegistrySpouseQuery } from './Spouse.generated'
 
 const dataNotFoundMessage = defineMessage({
   id: 'sp.family:data-not-found',
@@ -41,14 +38,18 @@ const FamilyMember = () => {
   useNamespaces('sp.family')
   const { formatMessage } = useLocale()
 
-  const { data, loading, error } = useQuery<Query>(NATIONAL_REGISTRY_USER)
-  const { nationalRegistryUser } = data || {}
+  const { data, loading, error } = useNationalRegistrySpouseQuery({
+    variables: {
+      input: 'v3',
+    },
+  })
+  const { nationalRegistryPerson } = data || {}
 
   const { nationalId } = useParams() as UseParams
 
   const person =
-    nationalRegistryUser?.spouse?.nationalId === nationalId
-      ? nationalRegistryUser
+    nationalRegistryPerson?.spouse?.nationalId === nationalId
+      ? nationalRegistryPerson
       : null
 
   if (!nationalId || error || (!loading && !person))
@@ -73,9 +74,8 @@ const FamilyMember = () => {
         </Box>
       ) : (
         <IntroHeader
-          title={person?.spouse?.name || ''}
+          title={person?.spouse?.fullName || ''}
           intro={dataInfoSpouse}
-          marginBottom={2}
         />
       )}
 
@@ -83,7 +83,7 @@ const FamilyMember = () => {
         <UserInfoLine
           title={formatMessage(m.myRegistration)}
           label={defineMessage(m.fullName)}
-          content={person?.spouse?.name || '...'}
+          content={person?.spouse?.fullName || '...'}
           loading={loading}
           translate="no"
         />
@@ -102,7 +102,7 @@ const FamilyMember = () => {
           content={
             error
               ? formatMessage(dataNotFoundMessage)
-              : person?.spouse?.cohabitant || ''
+              : person?.spouse?.cohabitation || ''
           }
           loading={loading}
         />

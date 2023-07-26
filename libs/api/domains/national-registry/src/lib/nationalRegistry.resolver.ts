@@ -19,8 +19,12 @@ import {
 } from '@nestjs/graphql'
 import { ApiScope } from '@island.is/auth/scopes'
 import { Audit } from '@island.is/nest/audit'
-import { NationalRegistryPerson } from './models/nationalRegistryPerson.model'
-import type { NationalRegistryPersonDiscriminated } from './models/nationalRegistryPerson.model'
+import {
+  type PersonDiscriminated,
+  type NationalRegistryPersonV2,
+  NationalRegistryPerson,
+  NationalRegistryPersonV3,
+} from './models/nationalRegistryPerson.model'
 import { NationalRegistrySpouse } from './models/nationalRegistrySpouse.model'
 import { NationalRegistryAddress } from './models/nationalRegistryAddress.model'
 import { NationalRegistryBirthplace } from './models/nationalRegistryBirthplace.model'
@@ -36,14 +40,14 @@ import {
   formatAddress,
   formatName,
   formatReligion,
-  formatResidenceInfo,
+  formatLivingArrangements,
+  formatBirthParent,
 } from './services/v3/mapper'
-import { NationalRegistryChildGuardianship } from './models/nationalRegistryChildGuardianship.model'
-import { ChildGuardianshipInput } from './dto/ChildGuardianshipInput'
 import { ExcludesFalse } from './utils'
-import { NationalRegistryResidenceInfo } from './models/nationalRegistryResidenceInfo.model'
-import { NationalRegistryResidenceHistoryEntry } from './models/nationalRegistryResidenceHistoryEntry.model'
-
+import { NationalRegistryLivingArrangements } from './models/nationalRegistryLivingArrangements.model'
+import { NationalRegistryBasePerson } from './models/nationalRegistryBasePerson.model'
+import { NationalRegistryResidence } from './models/nationalRegistryResidence.model'
+import { NationalRegistryChild } from './models/nationalRegistryChild.model'
 @UseGuards(IdsAuthGuard, IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.meDetails)
 @Resolver(() => NationalRegistryPerson)
@@ -59,30 +63,15 @@ export class NationalRegistryResolver {
 
   @Query(() => NationalRegistryPerson, {
     nullable: true,
-    name: 'nationalRegistryUser',
   })
   @Audit()
   async nationalRegistryPerson(
     @CurrentUser() user: AuthUser,
     @Args('api', { nullable: true }) api?: 'v2' | 'v3',
-  ): Promise<NationalRegistryPersonDiscriminated | null> {
+  ): Promise<NationalRegistryPersonV2 | NationalRegistryPersonV3 | null> {
     const apiVersion = api === 'v3' ? 'v3' : 'v2'
     const service = this.dataService(apiVersion)
     return service.getNationalRegistryPerson(user.nationalId)
-  }
-
-  @Query(() => NationalRegistryChildGuardianship, {
-    nullable: true,
-  })
-  @Audit()
-  async childGuardianship(
-    @Context('req') { user }: { user: User },
-    @Args('input') input: ChildGuardianshipInput,
-    @Args('api', { nullable: true }) api?: 'v2' | 'v3',
-  ): Promise<NationalRegistryChildGuardianship | null> {
-    const apiVersion = api === 'v3' ? 'v3' : 'v2'
-    const service = this.dataService(apiVersion)
-    return service.getChildGuardianship(user, input.childNationalId)
   }
 
   @ResolveField('children', () => [NationalRegistryPerson], {
@@ -91,9 +80,9 @@ export class NationalRegistryResolver {
   @Audit()
   async resolveChildren(
     @Context('req') { user }: { user: User },
-    @Parent() person: NationalRegistryPersonDiscriminated,
-  ): Promise<Array<NationalRegistryPerson> | null> {
-    if (person.nationalId !== person.nationalId) {
+    @Parent() person: PersonDiscriminated,
+  ): Promise<NationalRegistryChild[] | NationalRegistryPersonV2[] | null> {
+    if (user.nationalId !== person.nationalId) {
       return null
     }
 
@@ -112,7 +101,7 @@ export class NationalRegistryResolver {
         )
       )
         .filter((Boolean as unknown) as ExcludesFalse)
-        .map((b) => b as NationalRegistryPerson)
+        .map((b) => b as NationalRegistryChild)
 
       return childData
     }
@@ -120,68 +109,61 @@ export class NationalRegistryResolver {
     return this.dataService(person.api).getChildrenCustodyInformation(user)
   }
 
-  @ResolveField('parents', () => [NationalRegistryPerson], {
+  @ResolveField('birthParents', () => [NationalRegistryBasePerson], {
     nullable: true,
   })
   @Audit()
-  async resolveParents(
-    @Parent() person: NationalRegistryPersonDiscriminated,
-  ): Promise<Array<NationalRegistryPerson> | null> {
-    if (person.nationalId !== person.nationalId || person.api === 'v2') {
+  async resolveBirthParents(
+    @Context('req') { user }: { user: User },
+    @Parent() person: PersonDiscriminated,
+  ): Promise<Array<NationalRegistryBasePerson> | null> {
+    if (user.nationalId !== person.nationalId || person.api === 'v2') {
       return null
     }
     if (person.api === 'v3' && person.rawData) {
-      const parents = person.rawData?.forsja?.forsjaradilar
-        ?.map((f) => f.forsjaAdiliKennitala)
-        .filter((Boolean as unknown) as ExcludesFalse)
-
-      if (!parents) {
+      if (!person.rawData?.logforeldrar?.logForeldrar) {
         return null
       }
 
-      const parentData = (
-        await Promise.all(
-          parents.map(async (b) => this.v3.getNationalRegistryPerson(b)),
-        )
-      )
+      return person.rawData.logforeldrar.logForeldrar
+        .map((l) => formatBirthParent(l))
         .filter((Boolean as unknown) as ExcludesFalse)
-        .map((b) => b as NationalRegistryPerson)
-
-      return parentData
     }
 
-    return this.v3.getCustodians(person.nationalId)
+    return this.v3.getParents(person.nationalId)
   }
 
-  @ResolveField(
-    'residenceHistory',
-    () => [NationalRegistryResidenceHistoryEntry],
-    {
-      nullable: true,
-    },
-  )
+  @ResolveField('residenceHistory', () => [NationalRegistryResidence], {
+    nullable: true,
+  })
   @Audit()
   async resolveResidenceHistory(
-    @Parent() person: NationalRegistryPersonDiscriminated,
-  ): Promise<NationalRegistryResidenceHistoryEntry[] | null> {
+    @Parent() person: PersonDiscriminated,
+  ): Promise<NationalRegistryResidence[] | null> {
     if (person.api === 'v2') {
       return this.v2.getNationalRegistryResidenceHistory(person.nationalId)
     }
     return null
   }
 
-  @ResolveField('residenceInfo', () => NationalRegistryResidenceInfo, {
-    nullable: true,
-  })
+  @ResolveField(
+    'nationalRegistryLivingArrangements',
+    () => NationalRegistryLivingArrangements,
+    {
+      nullable: true,
+    },
+  )
   @Audit()
-  async resolveResidenceInfo(
-    @Parent() person: NationalRegistryPersonDiscriminated,
-  ): Promise<NationalRegistryResidenceInfo | null> {
+  async resolveLivingArrangements(
+    @Parent() person: PersonDiscriminated,
+  ): Promise<NationalRegistryLivingArrangements | null> {
     if (person.api === 'v3') {
-      this.logger.debug(JSON.stringify(person.rawData))
       return person.rawData
-        ? formatResidenceInfo(person.rawData.itarupplysingar)
-        : this.v3.getNationalRegistryResidenceInfo(person.nationalId)
+        ? formatLivingArrangements(
+            person.rawData.itarupplysingar,
+            person.rawData.logheimilistengsl,
+          )
+        : this.v3.getNationalRegistryLivingArrangements(person.nationalId)
     }
     return null
   }
@@ -191,7 +173,7 @@ export class NationalRegistryResolver {
   })
   @Audit()
   async resolveBirthPlace(
-    @Parent() person: NationalRegistryPersonDiscriminated,
+    @Parent() person: PersonDiscriminated,
   ): Promise<NationalRegistryBirthplace | null> {
     if (person.api === 'v3' && person.rawData) {
       return formatBirthplace(person.rawData.faedingarstadur)
@@ -205,7 +187,7 @@ export class NationalRegistryResolver {
   })
   @Audit()
   async resolveCitizenship(
-    @Parent() person: NationalRegistryPersonDiscriminated,
+    @Parent() person: PersonDiscriminated,
   ): Promise<NationalRegistryCitizenship | null> {
     if (person.api === 'v3' && person.rawData) {
       return formatCitizenship(person.rawData.rikisfang)
@@ -217,7 +199,7 @@ export class NationalRegistryResolver {
   @ResolveField('spouse', () => NationalRegistrySpouse, { nullable: true })
   @Audit()
   async resolveSpouse(
-    @Parent() person: NationalRegistryPersonDiscriminated,
+    @Parent() person: PersonDiscriminated,
   ): Promise<NationalRegistrySpouse | null> {
     if (person.api === 'v3' && person.rawData) {
       return formatSpouse(person.rawData.hjuskaparstada)
@@ -229,7 +211,7 @@ export class NationalRegistryResolver {
   @ResolveField('address', () => NationalRegistryAddress, { nullable: true })
   @Audit()
   async resolveAddress(
-    @Parent() person: NationalRegistryPersonDiscriminated,
+    @Parent() person: PersonDiscriminated,
   ): Promise<NationalRegistryAddress | null> {
     if (person.api === 'v3') {
       return person.rawData
@@ -244,7 +226,7 @@ export class NationalRegistryResolver {
   @ResolveField('name', () => NationalRegistryName, { nullable: true })
   @Audit()
   async resolveName(
-    @Parent() person: NationalRegistryPersonDiscriminated,
+    @Parent() person: PersonDiscriminated,
   ): Promise<NationalRegistryName | null> {
     if (person.api === 'v3') {
       return person.rawData
@@ -260,7 +242,7 @@ export class NationalRegistryResolver {
   })
   @Audit()
   async resolveReligion(
-    @Parent() person: NationalRegistryPersonDiscriminated,
+    @Parent() person: PersonDiscriminated,
   ): Promise<Array<NationalRegistryReligion> | null> {
     if (person.api === 'v3') {
       const religion = person.rawData

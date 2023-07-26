@@ -1,9 +1,12 @@
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { formatNationalId, m } from '@island.is/service-portal/core'
+import {
+  formatNationalId,
+  ServicePortalPath,
+  m,
+} from '@island.is/service-portal/core'
 import React, { FC, useEffect, useState } from 'react'
 import { ActionCard } from '@island.is/service-portal/core'
 import { spmm } from '../../lib/messages'
-import { InformationPaths } from '../../lib/paths'
 
 interface Props {
   title: string
@@ -38,7 +41,7 @@ export const FamilyMemberCard: FC<Props> = ({
             id: 'sp.family:child',
             defaultMessage: 'Barn',
           }),
-          path: InformationPaths.Child.replace(':nationalId', nationalId),
+          path: ServicePortalPath.Child.replace(':nationalId', nationalId),
         }
       case 'spouse':
         return {
@@ -46,7 +49,7 @@ export const FamilyMemberCard: FC<Props> = ({
             id: 'sp.family:spouse',
             defaultMessage: 'Maki',
           }),
-          path: InformationPaths.Spouse.replace(':nationalId', nationalId),
+          path: ServicePortalPath.Spouse.replace(':nationalId', nationalId),
         }
       case 'child2':
         return {
@@ -54,7 +57,7 @@ export const FamilyMemberCard: FC<Props> = ({
             id: 'sp.family:child',
             defaultMessage: 'Barn',
           }),
-          path: InformationPaths.FamilyMember.replace(
+          path: ServicePortalPath.FamilyMember.replace(
             ':nationalId',
             nationalId,
           ),
@@ -65,7 +68,7 @@ export const FamilyMemberCard: FC<Props> = ({
             id: 'sp.family:family-member',
             defaultMessage: 'Fjölskyldumeðlimur',
           }),
-          path: InformationPaths.FamilyMember.replace(
+          path: ServicePortalPath.FamilyMember.replace(
             ':nationalId',
             nationalId,
           ),
@@ -75,10 +78,10 @@ export const FamilyMemberCard: FC<Props> = ({
 
   const getUrl = () => {
     return currentUser
-      ? InformationPaths.UserInfo
+      ? ServicePortalPath.UserInfo
       : nationalId
       ? familyRelationData?.path
-      : InformationPaths.UserInfo
+      : ServicePortalPath.UserInfo
   }
   return (
     <ActionCard

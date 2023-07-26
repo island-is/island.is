@@ -8,6 +8,7 @@ import {
   EinstaklingurDTOHju,
   EinstaklingurDTOItarAuka,
   EinstaklingurDTOLogforeldrar,
+  EinstaklingurDTOLoghTengsl,
   EinstaklingurDTONafnAllt,
   EinstaklingurDTORikisfang,
   EinstaklingurDTOTru,
@@ -93,6 +94,13 @@ export class NationalRegistryV3ClientService {
     nationalId: string,
   ): Promise<EinstaklingurDTOItarAuka | null> =>
     this.individualApi.midlunV02EinstaklingarNationalIdItarGet({
+      nationalId,
+    })
+
+  getDomicile = (
+    nationalId: string,
+  ): Promise<EinstaklingurDTOLoghTengsl | null> =>
+    this.individualApi.midlunV02EinstaklingarNationalIdLogheimilistengslGet({
       nationalId,
     })
 }

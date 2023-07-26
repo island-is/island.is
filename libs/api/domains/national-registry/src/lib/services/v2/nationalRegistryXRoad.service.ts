@@ -4,16 +4,15 @@ import { User } from '@island.is/auth-nest-tools'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import {
-  NationalRegistryPerson,
-  NationalRegistryPersonDiscriminated,
+  NationalRegistryPersonV2,
+  PersonV2,
 } from '../../models/nationalRegistryPerson.model'
 import { NationalRegistryReligion } from '../../models/nationalRegistryReligion.model'
 import { NationalRegistryCitizenship } from '../../models/nationalRegistryCitizenship.model'
 import { NationalRegistryBirthplace } from '../../models/nationalRegistryBirthplace.model'
 import { NationalRegistryFamilyMember } from '../../models/nationalRegistryFamilyMember.model'
 import { NationalRegistrySpouse } from '../../models/nationalRegistrySpouse.model'
-import { NationalRegistryChildGuardianship } from '../../models/nationalRegistryChildGuardianship.model'
-import { NationalRegistryResidenceHistoryEntry } from '../../models/nationalRegistryResidenceHistoryEntry.model'
+import { NationalRegistryResidence } from '../../models/nationalRegistryResidence.model'
 import { mapMaritalStatus } from '../../utils'
 
 @Injectable()
@@ -26,7 +25,7 @@ export class NationalRegistryXRoadService {
 
   async getNationalRegistryResidenceHistory(
     nationalId: string,
-  ): Promise<NationalRegistryResidenceHistoryEntry[] | null> {
+  ): Promise<NationalRegistryResidence[] | null> {
     const historyList = await this.nationalRegistryApi.getResidenceHistory(
       nationalId,
     )
@@ -45,6 +44,7 @@ export class NationalRegistryXRoadService {
     }))
   }
 
+  /*
   async getChildGuardianship(
     user: User,
     childNationalId: string,
@@ -75,11 +75,11 @@ export class NationalRegistryXRoadService {
       legalDomicileParent,
       residenceParent,
     }
-  }
+  }*/
 
   async getNationalRegistryPerson(
     nationalId: string,
-  ): Promise<NationalRegistryPersonDiscriminated | null> {
+  ): Promise<PersonV2 | null> {
     const person = await this.nationalRegistryApi.getIndividual(nationalId)
     return (
       person && {
@@ -100,7 +100,7 @@ export class NationalRegistryXRoadService {
 
   async getChildrenCustodyInformation(
     parentUser: User,
-  ): Promise<NationalRegistryPerson[]> {
+  ): Promise<NationalRegistryPersonV2[]> {
     const childrenNationalIds = await this.nationalRegistryApi.getCustodyChildren(
       parentUser,
     )
@@ -114,7 +114,7 @@ export class NationalRegistryXRoadService {
     )
     const parentAFamilyMembers = parentAFamily?.individuals ?? []
 
-    const children: Array<NationalRegistryPerson | null> = await Promise.all(
+    const children: Array<NationalRegistryPersonV2 | null> = await Promise.all(
       childrenNationalIds.map(async (childNationalId) => {
         const child = await this.nationalRegistryApi.getIndividual(
           childNationalId,
@@ -157,7 +157,7 @@ export class NationalRegistryXRoadService {
     )
 
     return children.filter(
-      (child): child is NationalRegistryPerson => child != null,
+      (child): child is NationalRegistryPersonV2 => child != null,
     )
   }
 
@@ -169,7 +169,7 @@ export class NationalRegistryXRoadService {
     return (
       spouse && {
         nationalId: spouse.spouseNationalId,
-        name: spouse.spouseName,
+        fullName: spouse.spouseName,
         cohabitation: spouse.cohabitationCode,
         maritalStatus: mapMaritalStatus(spouse.cohabitationCode),
       }

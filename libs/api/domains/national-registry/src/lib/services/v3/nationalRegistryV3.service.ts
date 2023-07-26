@@ -9,10 +9,7 @@ import { NationalRegistryBirthplace } from '../../models/nationalRegistryBirthpl
 import { NationalRegistryCitizenship } from '../../models/nationalRegistryCitizenship.model'
 import { NationalRegistryFamilyCorrectionResponse } from '../../models/nationalRegistryFamilyCorrection.model'
 import { NationalRegistryName } from '../../models/nationalRegistryName.model'
-import {
-  NationalRegistryPerson,
-  NationalRegistryPersonDiscriminated,
-} from '../../models/nationalRegistryPerson.model'
+import { PersonV3 } from '../../models/nationalRegistryPerson.model'
 import { NationalRegistryReligion } from '../../models/nationalRegistryReligion.model'
 import { NationalRegistrySpouse } from '../../models/nationalRegistrySpouse.model'
 import { ExcludesFalse } from '../../utils'
@@ -28,10 +25,14 @@ import {
   formatReligion,
   formatPerson,
   formatPersonDiscriminated,
-  formatResidenceInfo,
+  formatLivingArrangements,
+  formatBirthParent,
+  formatCustodian,
 } from './mapper'
-import { NationalRegistryChildGuardianship } from '../../models/nationalRegistryChildGuardianship.model'
-import { NationalRegistryResidenceInfo } from '../../models/nationalRegistryResidenceInfo.model'
+import { NationalRegistryLivingArrangements } from '../../models/nationalRegistryLivingArrangements.model'
+import { NationalRegistryBasePerson } from '../../models/nationalRegistryBasePerson.model'
+import { NationalRegistryCustodian } from '../../models/nationalRegistryCustodian.model'
+import { NationalRegistryChild } from '../../models/nationalRegistryChild.model'
 
 export class NationalRegistryV3Service {
   constructor(
@@ -78,7 +79,7 @@ export class NationalRegistryV3Service {
 
   async getNationalRegistryPerson(
     nationalId: string,
-  ): Promise<NationalRegistryPersonDiscriminated | null> {
+  ): Promise<PersonV3 | null> {
     const user = await this.nationalRegistryV3.getAllDataIndividual(nationalId)
 
     if (!user?.kennitala) {
@@ -98,60 +99,57 @@ export class NationalRegistryV3Service {
 
   async getParents(
     nationalId: string,
-  ): Promise<Array<NationalRegistryPerson> | null> {
+  ): Promise<Array<NationalRegistryBasePerson> | null> {
     const data = await this.nationalRegistryV3.getAllDataIndividual(nationalId)
 
     if (!data?.logforeldrar?.logForeldrar) {
       return null
     }
 
-    const parentData: Array<NationalRegistryPerson | null> =
-      (await Promise.all(
-        data.logforeldrar?.logForeldrar
-          .map(async (parent) => {
-            if (!parent.logForeldriKennitala || !parent.logForeldriNafn) {
-              return null
-            }
-            const personData = await this.nationalRegistryV3.getAllDataIndividual(
-              parent.logForeldriKennitala,
-            )
-            return formatPerson(personData)
-          })
-          .filter((Boolean as unknown) as ExcludesFalse),
-      )) ?? []
-
-    return parentData.filter(
-      (parent): parent is NationalRegistryPerson => parent != null,
-    )
+    return data.logforeldrar.logForeldrar
+      .map((l) => {
+        if (!l.logForeldriKennitala || !l.logForeldriNafn) {
+          return null
+        }
+        return {
+          nationalId: l.logForeldriKennitala,
+          fullName: l.logForeldriNafn,
+        }
+      })
+      .filter((Boolean as unknown) as ExcludesFalse)
   }
 
   async getCustodians(
     nationalId: string,
-  ): Promise<Array<NationalRegistryPerson> | null> {
-    const data = await this.nationalRegistryV3.getCustodians(nationalId)
+  ): Promise<Array<NationalRegistryCustodian> | null> {
+    const data = await this.nationalRegistryV3.getAllDataIndividual(nationalId)
 
     if (!data) {
       return null
     }
 
-    const custodians = await Promise.all(
-      data.map((custodian) => {
-        if (!custodian.forsjaAdiliKennitala) {
+    const custodians = data.forsja?.forsjaradilar
+      ?.map((custodian) => {
+        if (!custodian.forsjaAdiliNafn || !custodian.forsjaAdiliKennitala) {
           return null
         }
-        return this.nationalRegistryV3.getAllDataIndividual(
-          custodian.forsjaAdiliKennitala,
-        )
-      }) ?? null,
-    )
-
-    const persons = custodians
-      .map((p) => formatPerson(p))
+        return {
+          fullName: custodian.forsjaAdiliNafn,
+          nationalId: custodian.forsjaAdiliKennitala,
+          code: custodian.forsjaKodi ?? null,
+          text: custodian.forsjaTexti ?? null,
+          livesWithChild:
+            data.logheimilistengsl?.logheimilismedlimir?.some(
+              (l) => l.kennitala === custodian.forsjaAdiliKennitala,
+            ) ?? null,
+        } as NationalRegistryCustodian
+      })
       .filter((Boolean as unknown) as ExcludesFalse)
 
-    return persons
+    return custodians ?? null
   }
 
+  /*
   async getChildGuardianship(
     user: User,
     childNationalId: string,
@@ -177,7 +175,7 @@ export class NationalRegistryV3Service {
       legalDomicileParent: legalDomicileParent ? [legalDomicileParent] : null,
     }
   }
-
+´*/
   async getSpouse(nationalId: string): Promise<NationalRegistrySpouse | null> {
     const data = await this.nationalRegistryV3.getSpouse(nationalId)
 
@@ -194,7 +192,7 @@ export class NationalRegistryV3Service {
 
   async getChildrenCustodyInformation(
     parentUser: User,
-  ): Promise<Array<NationalRegistryPerson> | null> {
+  ): Promise<Array<NationalRegistryChild> | null> {
     const parentData = await this.nationalRegistryV3.getAllDataIndividual(
       parentUser.nationalId,
     )
@@ -207,7 +205,7 @@ export class NationalRegistryV3Service {
       ? parentData.forsja.born
       : []
 
-    const childDetails: Array<NationalRegistryPerson | null> = await Promise.all(
+    const childDetails: Array<NationalRegistryChild | null> = await Promise.all(
       children.map(async (child) => {
         if (!child.barnKennitala || !child.barnNafn) {
           return null
@@ -221,48 +219,22 @@ export class NationalRegistryV3Service {
           return null
         }
 
-        const otherParents =
-          childDetails.forsja?.forsjaradilar?.filter(
-            (f) => f.forsjaAdiliKennitala !== parentUser.nationalId,
-          ) ?? []
-
-        const otherParentsDetails = await Promise.all(
-          otherParents.map(async (p) => {
-            if (!p.forsjaAdiliKennitala) {
-              return null
-            }
-            return await this.nationalRegistryV3.getAllDataIndividual(
-              p.forsjaAdiliKennitala,
-            )
-          }),
-        )
-
-        const livesWithApplicant = childDetails.logheimilistengsl?.logheimilismedlimir
-          ?.map((l) => l.kennitala)
-          .includes(parentData.kennitala)
-
         return {
           ...formatPerson(childDetails),
           nationalId: child.barnKennitala,
           fullName: child.barnNafn,
-          livesWithApplicant,
-          livesWithBothParents:
-            livesWithApplicant &&
-            otherParentsDetails.every(
-              (o) =>
-                o?.logheimilistengsl?.logheimilistengsl ===
-                childDetails.logheimilistengsl?.logheimilistengsl,
-            ),
-          otherParent:
-            otherParentsDetails.length && otherParentsDetails[0]
-              ? formatPerson(otherParentsDetails[0])
-              : null,
+          custodians: childDetails.forsja?.forsjaradilar
+            ?.map((f) => formatCustodian(f, childDetails.logheimilistengsl))
+            .filter((Boolean as unknown) as ExcludesFalse),
+          birthParents: childDetails.logforeldrar?.logForeldrar
+            ?.map((p) => formatBirthParent(p))
+            .filter((Boolean as unknown) as ExcludesFalse),
         }
       }),
     )
 
     return childDetails.filter(
-      (child): child is NationalRegistryPerson => child != null,
+      (child): child is NationalRegistryChild => child != null,
     )
   }
 
@@ -295,13 +267,14 @@ export class NationalRegistryV3Service {
     return data && formatReligion(data)
   }
 
-  async getNationalRegistryResidenceInfo(
+  async getNationalRegistryLivingArrangements(
     nationalId: string,
-  ): Promise<NationalRegistryResidenceInfo | null> {
-    const data = await this.nationalRegistryV3.getResidence(nationalId)
+  ): Promise<NationalRegistryLivingArrangements | null> {
+    const response = await Promise.all([
+      this.nationalRegistryV3.getResidence(nationalId),
+      this.nationalRegistryV3.getDomicile(nationalId),
+    ])
 
-    this.logger.debug(JSON.stringify(data))
-
-    return data && formatResidenceInfo(data)
+    return response && formatLivingArrangements(...response)
   }
 }

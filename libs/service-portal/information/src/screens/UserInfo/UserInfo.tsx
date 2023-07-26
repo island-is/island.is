@@ -3,8 +3,6 @@ import { defineMessage } from 'react-intl'
 import { checkDelegation } from '@island.is/shared/utils'
 import { info } from 'kennitala'
 
-import { useQuery } from '@apollo/client'
-import { Query } from '@island.is/api/schema'
 import { Box, Divider, Stack } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
@@ -14,15 +12,13 @@ import {
   UserInfoLine,
 } from '@island.is/service-portal/core'
 import { useUserInfo } from '@island.is/auth/react'
-
-import {
-  natRegGenderMessageDescriptorRecord,
-  natRegMaritalStatusMessageDescriptorRecord,
-} from '../../helpers/localizationHelpers'
 import { spmm, urls } from '../../lib/messages'
-import { NATIONAL_REGISTRY_FAMILY } from '../../lib/queries/getNationalRegistryFamily'
-import { NATIONAL_REGISTRY_USER } from '../../lib/queries/getNationalRegistryUser'
-import { formatNameBreaks } from '../../helpers/formatting'
+import {
+  formatNameBreaks,
+  formatResidenceString,
+} from '../../helpers/formatting'
+import { useNationalRegistryPersonQuery } from './UserInfo.generated'
+import { natRegGenderMessageDescriptorRecord } from '../../helpers/localizationHelpers'
 
 const dataNotFoundMessage = defineMessage({
   id: 'sp.family:data-not-found',
@@ -33,35 +29,28 @@ const SubjectInfo = () => {
   useNamespaces('sp.family')
   const userInfo = useUserInfo()
   const { formatMessage } = useLocale()
-  const { data, loading, error } = useQuery<Query>(NATIONAL_REGISTRY_USER)
-  const { nationalRegistryUser } = data || {}
   const isDelegation = userInfo && checkDelegation(userInfo)
 
-  // User's Family members
-  const { data: famData, loading: familyLoading } = useQuery<Query>(
-    NATIONAL_REGISTRY_FAMILY,
-    {
-      skip: isDelegation,
+  const { data, loading, error } = useNationalRegistryPersonQuery({
+    variables: {
+      input: 'v3',
     },
-  )
-  const { nationalRegistryFamily } = famData || {}
+  })
+  const { nationalRegistryPerson: nationalRegistryUser } = data || {}
+
   const isUserAdult = info(userInfo.profile.nationalId).age >= 18
 
   return (
     <>
-      <IntroHeader
-        marginBottom={2}
-        title={userInfo.profile.name}
-        intro={spmm.userInfoDesc}
-      />
+      <IntroHeader title={userInfo.profile.name} intro={spmm.userInfoDesc} />
       <Stack space={2}>
         <UserInfoLine
           title={formatMessage(m.myRegistration)}
           label={m.fullName}
           loading={loading}
-          content={nationalRegistryUser?.fullName}
+          content={nationalRegistryUser?.fullName ?? ''}
           translate="no"
-          tooltip={formatNameBreaks(nationalRegistryUser ?? undefined, {
+          tooltip={formatNameBreaks(nationalRegistryUser?.name ?? undefined, {
             givenName: formatMessage(spmm.givenName),
             middleName: formatMessage(spmm.middleName),
             lastName: formatMessage(spmm.lastName),
@@ -85,7 +74,9 @@ const SubjectInfo = () => {
           content={
             error
               ? formatMessage(dataNotFoundMessage)
-              : nationalRegistryUser?.legalResidence || ''
+              : formatResidenceString(
+                  nationalRegistryUser?.address ?? undefined,
+                )
           }
           loading={loading}
           editLink={{
@@ -102,7 +93,7 @@ const SubjectInfo = () => {
           content={
             error
               ? formatMessage(dataNotFoundMessage)
-              : nationalRegistryUser?.birthPlace || ''
+              : nationalRegistryUser?.birthplace?.location || ''
           }
           loading={loading}
         />
@@ -112,7 +103,7 @@ const SubjectInfo = () => {
           content={
             error
               ? formatMessage(dataNotFoundMessage)
-              : nationalRegistryUser?.familyNr || ''
+              : nationalRegistryUser?.livingArrangements?.domicileId || ''
           }
           loading={loading}
           tooltip={formatMessage({
@@ -129,12 +120,8 @@ const SubjectInfo = () => {
               content={
                 error
                   ? formatMessage(dataNotFoundMessage)
-                  : nationalRegistryUser?.maritalStatus
-                  ? formatMessage(
-                      natRegMaritalStatusMessageDescriptorRecord[
-                        nationalRegistryUser?.maritalStatus
-                      ],
-                    )
+                  : nationalRegistryUser?.spouse?.maritalStatus
+                  ? formatMessage(nationalRegistryUser?.spouse?.maritalStatus)
                   : ''
               }
               loading={loading}
@@ -148,7 +135,7 @@ const SubjectInfo = () => {
           content={
             error
               ? formatMessage(dataNotFoundMessage)
-              : nationalRegistryUser?.religion || ''
+              : nationalRegistryUser?.religion?.name || ''
           }
           loading={loading}
           editLink={{
@@ -163,7 +150,7 @@ const SubjectInfo = () => {
           content={
             error
               ? formatMessage(dataNotFoundMessage)
-              : nationalRegistryUser?.banMarking?.banMarked
+              : nationalRegistryUser?.exceptionFromDirectMarketing
               ? formatMessage({
                   id: 'sp.family:yes',
                   defaultMessage: 'Já',
@@ -224,21 +211,23 @@ const SubjectInfo = () => {
               label={userInfo.profile.name}
               translateLabel="no"
               content={formatNationalId(userInfo.profile.nationalId)}
-              loading={loading || familyLoading}
+              loading={loading}
             />
             <Divider />
-            {nationalRegistryFamily && nationalRegistryFamily.length > 0
-              ? nationalRegistryFamily?.map((item) => (
-                  <React.Fragment key={item.nationalId}>
-                    <UserInfoLine
-                      translateLabel="no"
-                      label={item.fullName}
-                      content={formatNationalId(item.nationalId)}
-                      loading={loading}
-                    />
-                    <Divider />
-                  </React.Fragment>
-                ))
+            {nationalRegistryUser?.livingArrangements
+              ? nationalRegistryUser?.livingArrangements?.domicileInhabitants?.map(
+                  (item, index) => (
+                    <React.Fragment key={index}>
+                      <UserInfoLine
+                        translateLabel="no"
+                        label={item.fullName ?? ''}
+                        content={formatNationalId(item.nationalId)}
+                        loading={loading}
+                      />
+                      <Divider />
+                    </React.Fragment>
+                  ),
+                )
               : null}
           </>
         )}

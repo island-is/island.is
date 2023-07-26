@@ -9,6 +9,8 @@ import {
   EinstaklingurDTOLoghTengsl,
   EinstaklingurDTONafnAllt,
   EinstaklingurDTOItarAuka,
+  EinstaklingurDTOBase,
+  EinstaklingurDTOLogForeldriItem,
 } from '@island.is/clients/national-registry-v3'
 import { NationalRegistryAddress } from '../../models/nationalRegistryAddress.model'
 import { NationalRegistryBirthplace } from '../../models/nationalRegistryBirthplace.model'
@@ -16,17 +18,18 @@ import { NationalRegistryCitizenship } from '../../models/nationalRegistryCitize
 import { NationalRegistryCustodian } from '../../models/nationalRegistryCustodian.model'
 import { NationalRegistryName } from '../../models/nationalRegistryName.model'
 import {
-  NationalRegistryPerson,
-  NationalRegistryPersonDiscriminated,
+  NationalRegistryPersonV3,
+  PersonV3,
 } from '../../models/nationalRegistryPerson.model'
 import { NationalRegistryReligion } from '../../models/nationalRegistryReligion.model'
 import { NationalRegistrySpouse } from '../../models/nationalRegistrySpouse.model'
-import { NationalRegistryResidenceInfo } from '../../models/nationalRegistryResidenceInfo.model'
-import { mapGender, mapMaritalStatus } from '../../utils'
+import { NationalRegistryLivingArrangements } from '../../models/nationalRegistryLivingArrangements.model'
+import { ExcludesFalse, mapGender, mapMaritalStatus } from '../../utils'
+import { NationalRegistryBasePerson } from '../../models/nationalRegistryBasePerson.model'
 
 export function formatPersonDiscriminated(
   individual: EinstaklingurDTOAllt | null | undefined,
-): NationalRegistryPersonDiscriminated | null {
+): PersonV3 | null {
   const person = formatPerson(individual)
   if (!person) {
     return null
@@ -41,7 +44,7 @@ export function formatPersonDiscriminated(
 
 export function formatPerson(
   individual: EinstaklingurDTOAllt | null | undefined,
-): NationalRegistryPerson | null {
+): NationalRegistryPersonV3 | null {
   if (individual == null || !individual.kennitala || !individual.nafn) {
     return null
   }
@@ -51,6 +54,7 @@ export function formatPerson(
     nationalIdType: individual.tegundKennitolu ?? null,
     exceptionFromDirectMarketing: individual.bannmerking === 'true' ?? false,
     gender: mapGender(individual.kyn?.kynKodi ?? ''),
+    genderText: individual.kyn?.kynTexti ?? '',
     genderCode: individual.kyn?.kynKodi,
     fate: individual.afdrif ?? null,
   }
@@ -69,6 +73,33 @@ export function formatReligion(
   }
 }
 
+export function formatLivingArrangements(
+  residence: EinstaklingurDTOItarAuka | null | undefined,
+  domicile: EinstaklingurDTOLoghTengsl | null | undefined,
+): NationalRegistryLivingArrangements | null {
+  if (!residence || !domicile || !domicile.logheimilistengsl) {
+    return null
+  }
+
+  return {
+    domicileId: domicile.logheimilistengsl,
+    domicileIdLast1stOfDecember: residence.logheimiliskodi112 ?? null,
+    domicileIdPreviousIcelandResidence: residence.logheimiliskodiSIsl ?? null,
+    domicileInhabitants: domicile.logheimilismedlimir
+      ?.map((f) => {
+        if (!f.kennitala || !f.nafn) {
+          return null
+        }
+        return {
+          nationalId: f.kennitala,
+          fullName: f.nafn,
+        }
+      })
+      .filter((Boolean as unknown) as ExcludesFalse),
+    address: residence.adsetur ? formatAddress(residence.adsetur) : null,
+  }
+}
+
 export function formatSpouse(
   spouse: EinstaklingurDTOHju | null | undefined,
 ): NationalRegistrySpouse | null {
@@ -78,7 +109,7 @@ export function formatSpouse(
 
   return {
     nationalId: spouse.makiKennitala,
-    name: spouse.makiNafn,
+    fullName: spouse.makiNafn,
     maritalStatus: mapMaritalStatus(spouse.hjuskaparstadaKodi ?? ''),
     cohabitation: spouse.sambudTexti ?? null,
   }
@@ -96,6 +127,23 @@ export function formatAddress(
     postalCode: address.postnumer ?? null,
     city: address.poststod ?? null,
     municipalityText: address.sveitarfelag ?? null,
+  }
+}
+
+export function formatBirthParent(
+  individual: EinstaklingurDTOLogForeldriItem | null | undefined,
+): NationalRegistryBasePerson | null {
+  if (
+    !individual ||
+    !individual.logForeldriKennitala ||
+    !individual.logForeldriNafn
+  ) {
+    return null
+  }
+
+  return {
+    nationalId: individual.logForeldriKennitala,
+    fullName: individual.logForeldriNafn,
   }
 }
 
@@ -142,9 +190,9 @@ export function formatCustodian(
 
   return {
     nationalId: custodian.forsjaAdiliKennitala,
-    name: custodian.forsjaAdiliNafn,
-    custodyCode: custodian.forsjaKodi ?? null,
-    custodyText: custodian.forsjaTexti ?? null,
+    fullName: custodian.forsjaAdiliNafn,
+    code: custodian.forsjaKodi ?? null,
+    text: custodian.forsjaTexti ?? null,
     livesWithChild:
       childDomicileData?.logheimilismedlimir
         ?.map((l) => l.kennitala)
@@ -174,23 +222,6 @@ export function formatDomicilePopulace(
       .filter((Boolean as unknown) as ExcludesFalse),
   }
 }*/
-
-export function formatResidenceInfo(
-  info: EinstaklingurDTOItarAuka | null | undefined,
-): NationalRegistryResidenceInfo | null {
-  if (!info || !info.logheimiliskodi) {
-    return null
-  }
-
-  return {
-    domicileId: info.logheimiliskodi,
-    domicileIdLast1stOfDecember: info.logheimiliskodi112 ?? null,
-    domicileIdPreviousIcelandResidence: info.logheimiliskodiSIsl ?? null,
-    residence: info.heimilisfang ? formatAddress(info.heimilisfang) : null,
-    address: info.adsetur ? formatAddress(info.adsetur) : null,
-  }
-}
-
 export function formatName(
   name: EinstaklingurDTONafnAllt | null | undefined,
 ): NationalRegistryName | null {

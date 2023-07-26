@@ -1,22 +1,13 @@
-import {
-  EinstaklingurDTOForsjaItem,
-  EinstaklingurDTOLoghTengsl,
-} from '@island.is/clients/national-registry-v3'
-import { Field, ID, ObjectType } from '@nestjs/graphql'
+import { Field, ObjectType } from '@nestjs/graphql'
+import { NationalRegistryBasePerson } from './nationalRegistryBasePerson.model'
 
-@ObjectType()
-export class NationalRegistryCustodian {
-  @Field(() => ID)
-  nationalId!: string
+@ObjectType('NationalRegistryCustodian')
+export class NationalRegistryCustodian extends NationalRegistryBasePerson {
+  @Field(() => String, { nullable: true })
+  code?: string | null
 
   @Field(() => String, { nullable: true })
-  name?: string
-
-  @Field(() => String, { nullable: true })
-  custodyCode?: string | null
-
-  @Field(() => String, { nullable: true })
-  custodyText?: string | null
+  text?: string | null
 
   @Field(() => Boolean, { nullable: true })
   livesWithChild?: boolean | null
