@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common'
 import { logger } from '@island.is/logging'
-import differenceInMonths from 'date-fns/differenceInMonths'
 import { ApolloError, ForbiddenError } from 'apollo-server-express'
 import {
+  ActorLocaleLocaleEnum,
   ConfirmationDtoResponse,
   CreateUserProfileDto,
   UpdateUserProfileDto,
@@ -76,36 +76,15 @@ export class UserProfileService {
   }
 
   async getUserProfileLocale(user: User) {
-    /**
-     * The logged in user has no business using the locale of a delegated user,
-     * they will need to fetch their own locale.
-     */
-    const DEFAULT_LOCALE = 'is'
-    const nationalIdForLocale = user.actor?.nationalId ?? user.nationalId
+    const locale = await this.userProfileApiWithAuth(
+      user,
+    ).userProfileControllerGetActorLocale()
 
-    try {
-      const profile = await this.userProfileApiWithAuth(
-        user,
-      ).userProfileControllerFindOneByNationalId({
-        nationalId: nationalIdForLocale,
-        actorRequest: Boolean(user.actor?.nationalId),
-      })
-
-      return {
-        locale: profile.locale || DEFAULT_LOCALE,
-        nationalId: nationalIdForLocale,
-      }
-    } catch (error) {
-      if (error.status === 404) {
-        return {
-          locale: DEFAULT_LOCALE,
-          nationalId: nationalIdForLocale,
-        }
-      }
-      handleError(error, `getUserProfileLocale error`)
+    return {
+      nationalId: locale.nationalId,
+      locale: locale.locale === ActorLocaleLocaleEnum.En ? 'en' : 'is',
     }
   }
-
   async getUserProfile(user: User) {
     try {
       const profile = await this.userProfileApiWithAuth(

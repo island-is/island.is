@@ -5,6 +5,7 @@ import {
   Scopes,
   ScopesGuard,
   IdsUserGuard,
+  CurrentActor,
 } from '@island.is/auth-nest-tools'
 import { Audit, AuditService } from '@island.is/nest/audit'
 import {
@@ -48,6 +49,7 @@ import { UserProfile } from './userProfile.model'
 import { UserProfileService } from './userProfile.service'
 import { VerificationService } from './verification.service'
 import { DataStatus } from './types/dataStatusTypes'
+import { ActorLocale } from './dto/actorLocale'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('User Profile')
@@ -106,6 +108,29 @@ export class UserProfileController {
     }
 
     return userProfile
+  }
+
+  @Scopes(UserProfileScope.read)
+  @ApiSecurity('oauth2', [UserProfileScope.read])
+  @Get('actor/locale')
+  @ApiOkResponse({ type: ActorLocale })
+  @Audit<ActorLocale>({
+    resources: (profile) => profile.nationalId,
+  })
+  async getActorLocale(@CurrentActor() actor: User): Promise<ActorLocale> {
+    const userProfile = await this.userProfileService.findByNationalId(
+      actor.nationalId,
+    )
+    if (!userProfile) {
+      throw new NotFoundException(
+        `A user profile with nationalId ${actor.nationalId} does not exist`,
+      )
+    }
+
+    return {
+      nationalId: userProfile.nationalId,
+      locale: userProfile.locale,
+    }
   }
 
   @Scopes(UserProfileScope.write)
