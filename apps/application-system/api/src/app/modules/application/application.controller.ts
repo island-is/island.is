@@ -197,20 +197,47 @@ export class ApplicationController {
     @Query('status') status?: string,
     @Query('scopeCheck') scopeCheck?: boolean,
   ): Promise<ApplicationResponseDto[]> {
-    if (nationalId !== user.nationalId) {
-      this.logger.debug('User is not authorized to get applications')
-      throw new UnauthorizedException()
-    }
-
-    this.logger.debug(`Getting applications with status ${status}`)
-    const applications = await this.applicationService.findAllByNationalIdAndFilters(
+    this.verifyUserAccess(nationalId, user)
+    const applications = await this.fetchApplications(
       nationalId,
       typeId,
       status,
       user.actor?.nationalId,
     )
+    return this.filterApplicationsByAccess(
+      applications,
+      user,
+      scopeCheck ?? false,
+    )
+  }
 
-    // keep all templates that have been fetched in order to avoid fetching them again
+  private verifyUserAccess(nationalId: string, user: User): void {
+    if (nationalId !== user.nationalId) {
+      this.logger.debug('User is not authorized to get applications')
+      throw new UnauthorizedException()
+    }
+  }
+
+  private async fetchApplications(
+    nationalId: string,
+    typeId?: string,
+    status?: string,
+    actorNationalId?: string,
+  ): Promise<Application[]> {
+    this.logger.debug(`Getting applications with status ${status}`)
+    return this.applicationService.findAllByNationalIdAndFilters(
+      nationalId,
+      typeId,
+      status,
+      actorNationalId,
+    )
+  }
+
+  private async filterApplicationsByAccess(
+    applications: Application[],
+    user: User,
+    scopeCheck: boolean,
+  ): Promise<ApplicationResponseDto[]> {
     const templates: Partial<
       Record<
         ApplicationTypes,
@@ -221,72 +248,58 @@ export class ApplicationController {
         >
       >
     > = {}
-    const hasAccessToApplication: Partial<
-      Record<ApplicationTypes, boolean>
-    > = {}
+    const hasAccessCache: Record<string, boolean> = {}
+
     const filteredApplications: Application[] = []
 
     for (const application of applications) {
-      console.log(application.id)
-      console.log(application.typeId)
-      const typeId = application.typeId
-      const hasAccessToTemplate = hasAccessToApplication[typeId]
-      let template = templates[typeId]
-
-      if (hasAccessToTemplate === false) {
-        console.log('hasAccessToTemplate === false, skip')
-        continue
-      }
-
-      if (!template) {
-        template = await getApplicationTemplateByTypeId(typeId)
-        templates[typeId] = template
-      }
+      const template = await this.getOrFetchTemplate(
+        application.typeId,
+        templates,
+      )
+      const hasAccess = await this.hasUserAccessToApplication(
+        application as BaseApplication,
+        template,
+        user,
+        scopeCheck,
+        hasAccessCache,
+      )
 
       if (
-        hasAccessToTemplate === true &&
+        hasAccess &&
         this.applicationAccessService.evaluateIfRoleShouldBeListed(
           application as BaseApplication,
           user,
           template,
         )
       ) {
-        console.log('hasAccessToTemplate === true, add')
         filteredApplications.push(application)
-        continue
       }
+    }
 
+    return filteredApplications
+  }
+
+  private async getOrFetchTemplate(
+    typeId: ApplicationTypes,
+    cache: Record<
+      string,
+      ApplicationTemplate<
+        ApplicationContext,
+        ApplicationStateSchema<EventObject>,
+        EventObject
+      >
+    >,
+  ): Promise<
+    ApplicationTemplate<
+      ApplicationContext,
+      ApplicationStateSchema<EventObject>,
+      EventObject
+    >
+  > {
+    if (!cache[typeId]) {
       try {
-        console.log('getting template', typeId)
-        // If template isnt in cache, fetch it and add it, do we need to?
-        if (template) {
-          console.log('template in cache')
-        }
-
-        const hasAccess = await this.applicationAccessService.hasAccessToTemplate(
-          application as BaseApplication,
-          template,
-          user,
-          scopeCheck,
-        )
-
-        if (
-          hasAccess &&
-          this.applicationAccessService.evaluateIfRoleShouldBeListed(
-            application as BaseApplication,
-            user,
-            template,
-          )
-        ) {
-          console.log('has access, add to cache and list')
-          hasAccessToApplication[typeId] = true
-          filteredApplications.push(application)
-        }
-
-        if (!hasAccess) {
-          console.log('does not have access, add to cache')
-          hasAccessToApplication[typeId] = false
-        }
+        cache[typeId] = await getApplicationTemplateByTypeId(typeId)
       } catch (e) {
         this.logger.info(
           `Could not get application template for type ${typeId}`,
@@ -294,8 +307,33 @@ export class ApplicationController {
         )
       }
     }
+    return cache[typeId]
+  }
 
-    return filteredApplications
+  private async hasUserAccessToApplication(
+    application: BaseApplication,
+    template: ApplicationTemplate<
+      ApplicationContext,
+      ApplicationStateSchema<EventObject>,
+      EventObject
+    >,
+    user: User,
+    scopeCheck: boolean,
+    cache: Record<string, boolean>,
+  ): Promise<boolean> {
+    if (cache[application.typeId] !== undefined) {
+      return cache[application.typeId]
+    }
+
+    const hasAccess = await this.applicationAccessService.hasAccessToTemplate(
+      application,
+      template,
+      user,
+      scopeCheck,
+    )
+    cache[application.typeId] = hasAccess
+
+    return hasAccess
   }
 
   @Scopes(ApplicationScope.write)
