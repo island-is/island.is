@@ -1,10 +1,6 @@
-import {
-  AircraftDto,
-  AircraftRegistryApi,
-} from '@island.is/clients/aircraft-registry'
+import { AircraftRegistryApi } from '@island.is/clients/aircraft-registry'
 import { AllAircraftsResponse } from './dto/allAircraftsResponse'
 import { Injectable } from '@nestjs/common'
-import { AircraftsBySearchTermResponse } from './dto/aircraftsBySearchTermResponse'
 
 @Injectable()
 export class AircraftRegistryService {
@@ -13,26 +9,18 @@ export class AircraftRegistryService {
   async getAllAircrafts(
     pageNumber: number,
     pageSize: number,
+    searchTerm?: string,
   ): Promise<AllAircraftsResponse> {
     const response = await this.api.getAllAircraftsGet({
       pageNumber,
       pageSize,
+      searchTerm,
     })
     return {
       aircrafts: response.data,
       pageNumber: response.pageNumber,
       pageSize: response.pageSize,
       totalCount: response.totalCount,
-    }
-  }
-
-  async getAircraftBySearchTerm(
-    searchTerm: string,
-  ): Promise<AircraftsBySearchTermResponse> {
-    const response = await this.api.getAllAircraftsGet({ searchTerm })
-
-    return {
-      aircrafts: response.data,
     }
   }
 }
