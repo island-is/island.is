@@ -1,0 +1,46 @@
+{
+  "root": "libs/clients/national-registry/v3",
+  "sourceRoot": "libs/clients/national-registry/v3/src",
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["libs/clients/national-registry/v3/**/*.ts"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/clients/national-registry/v3"],
+      "options": {
+        "jestConfig": "libs/clients/national-registry/v3/jest.config.js",
+        "passWithNoTests": true
+      }
+    },
+    "update-openapi-document": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": [
+          "cat <<< $(jq '.components.schemas.ProblemDetails.additionalProperties = false' src/clientConfig.json) > src/clientConfig.json",
+          "prettier --write src/clientConfig.json"
+        ],
+        "parallel": false,
+        "cwd": "libs/clients/national-registry/v3"
+      }
+    },
+    "schemas/codegen": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "output": "libs/service-portal/sessions/src/**/*.generated.ts",
+        "command": "graphql-codegen --config libs/service-portal/sessions/codegen.yml"
+      }
+    },
+    "schemas/external-openapi-generator": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "yarn openapi-generator -o libs/clients/national-registry/v3/gen/fetch -i libs/clients/national-registry/v3/src/clientConfig.json"
+      }
+    }
+  },
+  "tags": ["lib:client", "scope:client"]
+}

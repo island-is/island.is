@@ -38,6 +38,7 @@ import {
   CommunicationsModule,
 } from '@island.is/api/domains/communications'
 import { IdentityModule } from '@island.is/api/domains/identity'
+import { NationalRegistryV3ClientConfig } from '@island.is/clients/national-registry-v3'
 import {
   GenericAdrLicenseConfig,
   GenericDisabilityLicenseConfig,
@@ -282,6 +283,7 @@ const environment = getConfig
         AirDiscountSchemeClientConfig,
         ConsultationPortalClientConfig,
         AssetsClientConfig,
+        NationalRegistryV3ClientConfig,
         FirearmLicenseClientConfig,
         DisabilityLicenseClientConfig,
         GenericFirearmLicenseConfig,

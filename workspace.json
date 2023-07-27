@@ -169,6 +169,7 @@
     "clients-municipalities-financial-aid": "libs/clients/municipalities-financial-aid",
     "clients-national-registry-v1": "libs/clients/national-registry/v1",
     "clients-national-registry-v2": "libs/clients/national-registry/v2",
+    "clients-national-registry-v3": "libs/clients/national-registry/v3",
     "clients-passports": "libs/clients/passports",
     "clients-payment-schedule": "libs/clients/payment-schedule",
     "clients-regulations": "libs/clients/regulations",
