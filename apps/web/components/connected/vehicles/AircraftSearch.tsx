@@ -12,11 +12,12 @@ import {
   AlertMessage,
   AsyncSearchInput,
   Box,
+  Button,
   Pagination,
   Table as T,
   Text,
 } from '@island.is/island-ui/core'
-import { useQuery } from '@apollo/client'
+import { useLazyQuery } from '@apollo/client'
 import { GET_ALL_AIRCRAFTS_QUERY } from '@island.is/web/screens/queries/AircraftSearch'
 
 const DEFAULT_PAGE_SIZE = 10
@@ -47,39 +48,45 @@ interface AircraftSearchProps {
 const AircraftSearch = ({ slice }: AircraftSearchProps) => {
   const router = useRouter()
   const [searchInputHasFocus, setSearchInputHasFocus] = useState(false)
-  const [searchValue, setSearchValue] = useState('')
   const [searchTerm, setSearchTerm] = useState('')
   const namespace = slice?.json ?? {}
   const n = useNamespace(namespace)
-  const searchValueHasBeenInitialized = useRef(false)
 
-  const handleSearch = () => {
-    setSelectedPage(1)
-    setSearchTerm(searchValue)
+  const handleSearch = (page = 1, searchValue?: string) => {
+    let searchString = searchTerm
+
+    if (typeof searchValue === 'string') {
+      searchString = searchValue
+      setSearchTerm(searchValue)
+    }
+
+    setSelectedPage(page)
     const updatedQuery = { ...router.query }
-    if (!searchValue) {
+    if (!searchString) {
       delete updatedQuery['aq']
     } else {
-      updatedQuery['aq'] = searchValue
+      updatedQuery['aq'] = searchString
     }
-    delete updatedQuery['page']
+    if (page === 1) {
+      delete updatedQuery['page']
+    } else {
+      updatedQuery['page'] = String(page)
+    }
+
     router.replace({
       pathname: router.pathname,
       query: updatedQuery,
     })
+    search({
+      variables: {
+        input: {
+          pageNumber: page,
+          pageSize: pageSize,
+          searchTerm: searchString,
+        },
+      },
+    })
   }
-
-  useEffect(() => {
-    if (
-      !searchValue &&
-      router?.query?.aq &&
-      !searchValueHasBeenInitialized.current
-    ) {
-      setSearchValue(router.query.aq as string)
-      setSearchTerm(router.query.aq as string)
-      searchValueHasBeenInitialized.current = true
-    }
-  }, [router?.query?.aq, searchValue])
 
   const [selectedPage, setSelectedPage] = useState(1)
   const pageSize = Number(slice?.configJson?.pageSize ?? DEFAULT_PAGE_SIZE)
@@ -88,17 +95,10 @@ const AircraftSearch = ({ slice }: AircraftSearchProps) => {
   >(null)
   const [errorOccurred, setErrorOccurred] = useState(false)
 
-  const { data, loading } = useQuery<
+  const [search, { data, loading, called }] = useLazyQuery<
     GetAllAircraftsQuery,
     GetAllAircraftsQueryVariables
   >(GET_ALL_AIRCRAFTS_QUERY, {
-    variables: {
-      input: {
-        pageNumber: selectedPage,
-        pageSize: pageSize,
-        searchTerm: searchTerm,
-      },
-    },
     onCompleted(data) {
       setLatestAircraftListResponse(data?.aircraftRegistryAllAircrafts)
       setErrorOccurred(false)
@@ -108,15 +108,54 @@ const AircraftSearch = ({ slice }: AircraftSearchProps) => {
     },
   })
 
+  useEffect(() => {
+    if (called || !router?.isReady) return
+
+    let searchTerm: string | undefined = undefined
+    if (typeof router.query?.aq === 'string') {
+      searchTerm = router.query.aq
+      setSearchTerm(router.query.aq)
+    }
+
+    let pageNumber = 1
+    if (typeof router?.query?.page === 'string') {
+      const pageQueryParam = Number(router.query.page)
+      if (!isNaN(pageQueryParam)) {
+        pageNumber = pageQueryParam
+        setSelectedPage(pageQueryParam)
+      }
+    }
+
+    search({
+      variables: {
+        input: {
+          pageNumber,
+          pageSize: pageSize,
+          searchTerm,
+        },
+      },
+    })
+  }, [
+    pageSize,
+    search,
+    called,
+    router.query.aq,
+    router?.isReady,
+    router.query.page,
+  ])
+
   const totalAircrafts = latestAircraftListResponse?.totalCount ?? 0
   const displayedAircraftList = latestAircraftListResponse?.aircrafts ?? []
 
+  const resetSearchText = n('resetSearch', 'Núllstilla leit')
+  const shouldDisplayResetButton = !!router?.query?.aq
+
   return (
     <Box>
-      <Box marginTop={2} marginBottom={3}>
+      <Box marginBottom={3}>
         <AsyncSearchInput
           buttonProps={{
-            onClick: handleSearch,
+            onClick: () => handleSearch(),
             onFocus: () => setSearchInputHasFocus(true),
             onBlur: () => setSearchInputHasFocus(false),
           }}
@@ -127,8 +166,8 @@ const AircraftSearch = ({ slice }: AircraftSearchProps) => {
             inputSize: 'medium',
             placeholder: n('inputPlaceholder', 'Númer eða eigandi'),
             colored: true,
-            onChange: (ev) => setSearchValue(ev.target.value),
-            value: searchValue,
+            onChange: (ev) => setSearchTerm(ev.target.value),
+            value: searchTerm,
             onKeyDown: (ev) => {
               if (ev.key === 'Enter') {
                 handleSearch()
@@ -140,6 +179,19 @@ const AircraftSearch = ({ slice }: AircraftSearchProps) => {
         />
       </Box>
 
+      {resetSearchText && !loading && shouldDisplayResetButton && (
+        <Box marginBottom={3}>
+          <Button
+            variant="text"
+            icon="reload"
+            size="small"
+            onClick={() => handleSearch(1, '')}
+          >
+            {resetSearchText}
+          </Button>
+        </Box>
+      )}
+
       {!loading && errorOccurred && (
         <AlertMessage
           type="error"
@@ -148,52 +200,48 @@ const AircraftSearch = ({ slice }: AircraftSearchProps) => {
         />
       )}
 
-      {!errorOccurred && displayedAircraftList.length === 1 && (
-        <AircraftDetails
-          namespace={namespace}
-          aircraft={displayedAircraftList[0]}
-        />
-      )}
-
-      {!loading && !errorOccurred && displayedAircraftList.length === 0 && (
-        <Text>{n('noResultFound', 'Ekkert loftfar fannst')}</Text>
-      )}
-
-      {!errorOccurred && displayedAircraftList.length > 1 && (
-        <Box>
-          <AircraftTable
+      {!errorOccurred &&
+        !loading &&
+        displayedAircraftList.length === 1 &&
+        selectedPage === 1 && (
+          <AircraftDetails
             namespace={namespace}
-            aircrafts={displayedAircraftList}
-            onAircraftClick={(identifier) => {
-              setSearchValue(identifier)
-              setSearchTerm(identifier)
-            }}
+            aircraft={displayedAircraftList[0]}
           />
-          {Math.ceil(totalAircrafts / pageSize) > 1 && (
-            <Box marginTop={3}>
-              <Pagination
-                variant="blue"
-                page={selectedPage}
-                itemsPerPage={pageSize}
-                totalItems={totalAircrafts}
-                renderLink={(page, className, children) => (
-                  <button
-                    onClick={() => {
-                      setSelectedPage(page)
-                      router.replace({
-                        pathname: router.pathname,
-                        query: { ...router.query, page: page },
-                      })
-                    }}
-                  >
-                    <span className={className}>{children}</span>
-                  </button>
-                )}
-              />
-            </Box>
-          )}
-        </Box>
-      )}
+        )}
+
+      {called &&
+        !loading &&
+        !errorOccurred &&
+        displayedAircraftList.length === 0 && (
+          <Text>{n('noResultFound', 'Ekkert loftfar fannst')}</Text>
+        )}
+
+      {!errorOccurred &&
+        (displayedAircraftList.length > 1 || selectedPage !== 1) && (
+          <Box>
+            <AircraftTable
+              namespace={namespace}
+              aircrafts={displayedAircraftList}
+              onAircraftClick={(identifier) => handleSearch(1, identifier)}
+            />
+            {Math.ceil(totalAircrafts / pageSize) > 1 && (
+              <Box marginTop={3}>
+                <Pagination
+                  variant="blue"
+                  page={selectedPage}
+                  itemsPerPage={pageSize}
+                  totalItems={totalAircrafts}
+                  renderLink={(page, className, children) => (
+                    <button onClick={() => handleSearch(page)}>
+                      <span className={className}>{children}</span>
+                    </button>
+                  )}
+                />
+              </Box>
+            )}
+          </Box>
+        )}
     </Box>
   )
 }
