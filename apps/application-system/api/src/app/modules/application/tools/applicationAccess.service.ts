@@ -147,11 +147,7 @@ export class ApplicationAccessService {
   }
 
   private hasCustomDelegation(user: User): boolean {
-    const userDelegations = user.delegationType
-    if (userDelegations?.includes(AuthDelegationType.Custom)) {
-      return true
-    }
-    return false
+    return user.delegationType?.includes(AuthDelegationType.Custom) ?? false
   }
 
   private async checkDelegationScopes(
@@ -163,19 +159,13 @@ export class ApplicationAccessService {
     >,
   ): Promise<boolean> {
     try {
-      console.log('getting delegations')
       const delegations = await this.fetchUserDelegations(user)
-      console.log('delegations', delegations)
-      return delegations.some((delegation) => {
-        if (!delegation.scopes) return false
-        return delegation.scopes.some(
-          (scopeObj) =>
-            template.requiredScopes &&
-            template.requiredScopes.includes(scopeObj.scopeName),
-        )
-      })
+      return delegations.some((delegation) =>
+        delegation.scopes?.some((scopeObj) =>
+          template.requiredScopes?.includes(scopeObj.scopeName),
+        ),
+      )
     } catch (e) {
-      console.log('error', e)
       return false
     }
   }
@@ -183,15 +173,13 @@ export class ApplicationAccessService {
   private async fetchUserDelegations(
     user: User,
   ): Promise<MergedDelegationDTO[]> {
-    const dels = await this.actorDelegationsApi
+    return await this.actorDelegationsApi
       .withMiddleware(new AuthMiddleware(user))
       .actorDelegationsControllerFindAll({
         direction: ActorDelegationsControllerFindAllDirectionEnum.incoming,
         delegationTypes: [AuthDelegationType.Custom],
         otherUser: user.nationalId,
       })
-    console.log('dels', dels)
-    return dels
   }
 
   private checkUserScopes(user: User, requiredScopes?: string[]): boolean {
@@ -210,20 +198,16 @@ export class ApplicationAccessService {
     >,
     shouldCheckScope?: boolean,
   ): Promise<boolean> {
-    const bla = await this.checkDelegationScopes(user, template)
-    console.log('bla', bla)
     const templateHasRequiredScope = template.requiredScopes !== undefined
     if (!this.hasCustomDelegation(user) || !templateHasRequiredScope) {
       return false
     }
 
     if (this.checkUserScopes(user, template.requiredScopes)) {
-      console.log('User has required scopes')
       return true
     }
 
     if (shouldCheckScope) {
-      console.log('Checking delegation scopes')
       return await this.checkDelegationScopes(user, template)
     }
 
@@ -240,7 +224,6 @@ export class ApplicationAccessService {
     >,
     scopeCheck?: boolean,
   ): Promise<boolean> {
-    console.log('shouldShowApplicationOnOverview')
     if (template === undefined) {
       return false
     }
@@ -250,10 +233,7 @@ export class ApplicationAccessService {
     // if the user is acting on behalf we need to check if it has the allowed delegations for the template
     if (isUserActingOnBehalfOfApplicant) {
       const userDelegations = user.delegationType
-      console.log('userDelegations', userDelegations)
       if (template.allowedDelegations) {
-        console.log(template.allowedDelegations)
-        console.log(template.name)
         if (!userDelegations) {
           return false
         }
@@ -272,9 +252,6 @@ export class ApplicationAccessService {
     }
 
     return true
-    // const currentUserRole = template.mapUserToRole(nationalId, application)
-    // const templateHelper = new ApplicationTemplateHelper(application, template)
-    // return this.evaluateIfRoleShouldBeListed(currentUserRole, templateHelper)
   }
 
   private async matchesAtLeastOneDelegation(
@@ -287,12 +264,10 @@ export class ApplicationAccessService {
     >,
     scopeCheck?: boolean,
   ): Promise<boolean> {
-    console.log('matchesAtLeastOneDelegation')
     for (const delegation of delegations) {
       if (
         await this.isDelegationAllowed(delegation, user, template, scopeCheck)
       ) {
-        console.log(`User has allowed delegation, ${JSON.stringify(user)}`)
         return true
       }
     }
@@ -321,7 +296,6 @@ export class ApplicationAccessService {
     // Check if feature flag is set for the delegation. If it is, we need to validate
     // if the feature is enabled for the user.
     let featureAllowed = true
-    console.log('delegation', delegation)
     if (delegation.featureFlag) {
       featureAllowed = await this.featureFlagService.getValue(
         delegation.featureFlag,
@@ -355,10 +329,8 @@ export class ApplicationAccessService {
     user: User,
     scopeCheck?: boolean,
   ): Promise<boolean> {
-    console.log('scopeCheck', scopeCheck)
     // check if template is ready
     if (!template) {
-      console.log('template not ready')
       return false
     }
     if (await this.validationService.isTemplateReady(template, user)) {
