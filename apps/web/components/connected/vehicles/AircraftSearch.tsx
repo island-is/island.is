@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, CSSProperties } from 'react'
 import { useRouter } from 'next/router'
 import {
   ConnectedComponent,
@@ -150,6 +150,19 @@ const AircraftSearch = ({ slice }: AircraftSearchProps) => {
   const resetSearchText = n('resetSearch', 'Núllstilla leit')
   const shouldDisplayResetButton = !!router?.query?.aq
 
+  const minHeightFromConfig = slice?.configJson?.minHeight
+  const tableContainerStyles: CSSProperties = {}
+  const totalPages = Math.ceil(totalAircrafts / pageSize)
+
+  if (totalPages > 1) {
+    /**
+     * Allow for a minimum height of the table, so that the pagination elements stay in the same
+     * location. E.g. when the last page has fewer items, then this will prevent the
+     * pagination elements from moving.
+     */
+    tableContainerStyles.minHeight = minHeightFromConfig ?? undefined
+  }
+
   return (
     <Box>
       <Box marginBottom={3}>
@@ -220,12 +233,14 @@ const AircraftSearch = ({ slice }: AircraftSearchProps) => {
       {!errorOccurred &&
         (displayedAircraftList.length > 1 || selectedPage !== 1) && (
           <Box>
-            <AircraftTable
-              namespace={namespace}
-              aircrafts={displayedAircraftList}
-              onAircraftClick={(identifier) => handleSearch(1, identifier)}
-            />
-            {Math.ceil(totalAircrafts / pageSize) > 1 && (
+            <Box style={tableContainerStyles}>
+              <AircraftTable
+                namespace={namespace}
+                aircrafts={displayedAircraftList}
+                onAircraftClick={(identifier) => handleSearch(1, identifier)}
+              />
+            </Box>
+            {totalPages > 1 && (
               <Box marginTop={3}>
                 <Pagination
                   variant="blue"
