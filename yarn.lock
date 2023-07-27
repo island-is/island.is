@@ -22577,9 +22577,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dd-trace@npm:4.8.1":
-  version: 4.8.1
-  resolution: "dd-trace@npm:4.8.1"
+"dd-trace@npm:3.29.1":
+  version: 3.29.1
+  resolution: "dd-trace@npm:3.29.1"
   dependencies:
     "@datadog/native-appsec": ^3.2.0
     "@datadog/native-iast-rewriter": 2.0.1
@@ -22612,7 +22612,7 @@ __metadata:
     protobufjs: ^7.2.4
     retry: ^0.10.1
     semver: ^7.3.8
-  checksum: 59f9a431013ade1faa176a4dd26bd197c9533fa8429fa335c9bf0bc2d618cd3a68839a323515381d79fd0b4edca0642a876128a422ded7a83793de0363c404a6
+  checksum: 840b6cc8b6f0a78329eae738217644757566c5e39d4b823f9be3586139fddf6532dec4c57f6f1102e83bceef32e8ddeb1949bf50e0761c73476a6fc69b9b520f
   languageName: node
   linkType: hard
 
@@ -30798,7 +30798,7 @@ __metadata:
     dataloader: 2.1.0
     date-fns: 2.28.0
     datebook: 7.0.8
-    dd-trace: 4.8.1
+    dd-trace: 3.29.1
     deepmerge: 4.2.2
     dotenv: 14.3.2
     downshift: 5.4.3
