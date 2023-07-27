@@ -28,7 +28,7 @@ export const messages = defineMessages({
     defaultMessage: 'Hver afsláttur nemur 40% af flugfargjaldi.',
   },
   discountTextSecond: {
-    id: 'sp.air-discount:discount-text',
+    id: 'sp.air-discount:discount-text-2',
     defaultMessage: 'Kóðinn virkjar afslátt í bókunarvél félagsins.',
   },
   attention: {

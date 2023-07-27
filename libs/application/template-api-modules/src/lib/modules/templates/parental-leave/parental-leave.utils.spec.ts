@@ -6,12 +6,14 @@ import {
   ApplicationTypes,
 } from '@island.is/application/types'
 import {
+  ADOPTION,
   getSelectedChild,
   NO,
   ParentalRelations,
   PARENTAL_GRANT,
   PARENTAL_GRANT_STUDENTS,
   PARENTAL_LEAVE,
+  PERMANENT_FOSTER_CARE,
   YES,
 } from '@island.is/application/templates/parental-leave'
 
@@ -326,6 +328,21 @@ describe('getRightsCode', () => {
 
     expect(result).toBe(expected)
   })
+
+  it('should return M-Æ-L-GR for a primary parent with employer', () => {
+    const base = createApplicationBase()
+    set(base, 'externalData.children.data.children', [
+      createExternalDataChild(true, '2022-03-01'),
+    ])
+    set(base, 'answers.selectedChild', '0')
+    set(base, 'answers.isSelfEmployed', 'no')
+    set(base, 'answers.noChildrenFound.typeOfApplication', ADOPTION)
+
+    const expected = 'M-Æ-L-GR'
+    const result = getRightsCode(base)
+
+    expect(result).toBe(expected)
+  })
   it('should return M-S-GR for a self employed primary parent', () => {
     const base = createApplicationBase()
     set(base, 'externalData.children.data.children', [
@@ -380,6 +397,42 @@ describe('getRightsCode', () => {
     expect(result).toBe(expected)
   })
 
+  it('should return FO-FÓ-FS for a secondary parent with same gender as primary parent (grant) and foster care', () => {
+    const primaryParentNationalRegistryId = '1111111119'
+    const base = createApplicationBase()
+    set(base, 'externalData.children.data.children', [
+      createExternalDataChild(
+        false,
+        '2022-03-01',
+        primaryParentNationalRegistryId,
+      ),
+    ])
+    set(
+      base,
+      'externalData.children.data.children[0].primaryParentGenderCode',
+      '1',
+    )
+    set(
+      base,
+      'externalData.children.data.children[0].primaryParentTypeOfApplication',
+      PERMANENT_FOSTER_CARE,
+    )
+    set(base, 'externalData.person.data', {
+      spouse: {
+        fullName: 'Spouse Spousson',
+        nationalId: primaryParentNationalRegistryId,
+      },
+      genderCode: '1',
+    })
+    set(base, 'answers.selectedChild', '0')
+    set(base, 'answers.applicationType.option', PARENTAL_GRANT)
+
+    const expected = 'FO-FÓ-FS'
+    const result = getRightsCode(base)
+
+    expect(result).toBe(expected)
+  })
+
   it('should return M-FSN for a primary parent (student grant)', () => {
     const base = createApplicationBase()
     set(base, 'externalData.children.data.children', [
@@ -389,6 +442,25 @@ describe('getRightsCode', () => {
     set(base, 'answers.applicationType.option', PARENTAL_GRANT_STUDENTS)
 
     const expected = 'M-FSN'
+    const result = getRightsCode(base)
+
+    expect(result).toBe(expected)
+  })
+
+  it('should return M-FÓ-FSN for a primary parent (student grant) and foster care', () => {
+    const base = createApplicationBase()
+    set(base, 'externalData.children.data.children', [
+      createExternalDataChild(true, '2022-03-01'),
+    ])
+    set(base, 'answers.selectedChild', '0')
+    set(base, 'answers.applicationType.option', PARENTAL_GRANT_STUDENTS)
+    set(
+      base,
+      'answers.noChildrenFound.typeOfApplication',
+      PERMANENT_FOSTER_CARE,
+    )
+
+    const expected = 'M-FÓ-FSN'
     const result = getRightsCode(base)
 
     expect(result).toBe(expected)
@@ -570,6 +642,45 @@ describe('getRightsCode', () => {
     set(base, 'answers.applicationType.option', PARENTAL_GRANT)
 
     const expected = 'F-FL-FS'
+    const result = getRightsCode(base)
+
+    expect(result).toBe(expected)
+  })
+
+  it('should return F-Æ-FL-FS for parent with no custody (grant) and adoption', () => {
+    const primaryParentNationalRegistryId = '1111111119'
+    const spouseNationalRegistryId = '1111111118'
+
+    const base = createApplicationBase()
+
+    set(base, 'externalData.children.data.children', [
+      createExternalDataChild(
+        false,
+        '2022-03-01',
+        primaryParentNationalRegistryId,
+      ),
+    ])
+    set(
+      base,
+      'externalData.children.data.children[0].primaryParentGenderCode',
+      '2',
+    )
+    set(
+      base,
+      'externalData.children.data.children[0].primaryParentTypeOfApplication',
+      ADOPTION,
+    )
+    set(base, 'externalData.person.data', {
+      spouse: {
+        fullName: 'Spouse Spousson',
+        nationalId: spouseNationalRegistryId,
+      },
+      genderCode: '1',
+    })
+    set(base, 'answers.selectedChild', '0')
+    set(base, 'answers.applicationType.option', PARENTAL_GRANT)
+
+    const expected = 'F-Æ-FL-FS'
     const result = getRightsCode(base)
 
     expect(result).toBe(expected)

@@ -1,32 +1,37 @@
-import { ref, service, ServiceBuilder } from '../../../infra/src/dsl/dsl'
+import { json, ref, service, ServiceBuilder } from '../../../infra/src/dsl/dsl'
+import { settings } from '../../../infra/src/dsl/settings'
 import {
+  AdrAndMachine,
   Base,
+  ChargeFjsV2,
   Client,
+  CriminalRecord,
+  Disability,
   DrivingLicense,
+  DrivingLicenseBook,
   Education,
   Finance,
+  Firearm,
+  FishingLicense,
   HealthInsurance,
+  JudicialAdministration,
   Labor,
+  MunicipalitiesFinancialAid,
   NationalRegistry,
   Passports,
   Payment,
-  Properties,
   PaymentSchedule,
-  CriminalRecord,
+  Properties,
   RskCompanyInfo,
-  DrivingLicenseBook,
-  FishingLicense,
-  MunicipalitiesFinancialAid,
-  Vehicles,
-  AdrAndMachine,
-  Firearm,
-  DisabilityLicense,
-  VehicleServiceFjsV1,
   TransportAuthority,
-  ChargeFjsV2,
+  UniversityOfIceland,
+  Vehicles,
+  VehicleServiceFjsV1,
+  WorkMachines,
+  IcelandicGovernmentInstitutionVacancies,
+  RskProcuring,
+  AircraftRegistry,
 } from '../../../infra/src/dsl/xroad'
-import { settings } from '../../../infra/src/dsl/settings'
-import { MissingSetting } from '../../../infra/src/dsl/types/input-types'
 
 export const serviceSetup = (services: {
   appSystemApi: ServiceBuilder<'application-system-api'>
@@ -34,8 +39,10 @@ export const serviceSetup = (services: {
   icelandicNameRegistryBackend: ServiceBuilder<'icelandic-names-registry-backend'>
   documentsService: ServiceBuilder<'services-documents'>
   servicesEndorsementApi: ServiceBuilder<'services-endorsement-api'>
+  regulationsAdminBackend: ServiceBuilder<'regulations-admin-backend'>
   airDiscountSchemeBackend: ServiceBuilder<'air-discount-scheme-backend'>
   sessionsApi: ServiceBuilder<'services-sessions'>
+  authAdminApi: ServiceBuilder<'services-auth-admin-api'>
 }): ServiceBuilder<'api'> => {
   return service('api')
     .namespace('islandis')
@@ -54,9 +61,9 @@ export const serviceSetup = (services: {
         (h) => `http://${h.svc(services.airDiscountSchemeBackend)}`,
       ),
       AIR_DISCOUNT_SCHEME_FRONTEND_HOSTNAME: {
-        dev: ref((h) => h.svc('loftbru.dev01.devland.is')),
-        staging: ref((h) => h.svc('loftbru.staging01.devland.is')),
-        prod: ref((h) => h.svc('loftbru.island.is')),
+        dev: 'loftbru.dev01.devland.is',
+        staging: 'loftbru.staging01.devland.is',
+        prod: 'loftbru.island.is',
       },
       FILE_STORAGE_UPLOAD_BUCKET: {
         dev: 'island-is-dev-upload-api',
@@ -121,10 +128,13 @@ export const serviceSetup = (services: {
       ENDORSEMENT_SYSTEM_BASE_API_URL: ref(
         (h) => `http://${h.svc(services.servicesEndorsementApi)}`,
       ),
+      REGULATIONS_ADMIN_URL: ref(
+        (h) => `http://${h.svc(services.regulationsAdminBackend)}`,
+      ),
       IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/api',
       AIR_DISCOUNT_SCHEME_CLIENT_TIMEOUT: '20000',
       XROAD_NATIONAL_REGISTRY_TIMEOUT: '20000',
-      XROAD_PROPERTIES_TIMEOUT: '20000',
+      XROAD_PROPERTIES_TIMEOUT: '35000',
       SYSLUMENN_TIMEOUT: '40000',
       XROAD_DRIVING_LICENSE_BOOK_TIMEOUT: '20000',
       XROAD_FINANCES_TIMEOUT: '20000',
@@ -165,6 +175,11 @@ export const serviceSetup = (services: {
         staging: 'https://api-staging.thinglysing.is/business/tolfraedi',
         prod: 'https://api.thinglysing.is/business/tolfraedi',
       },
+      CONSULTATION_PORTAL_CLIENT_BASE_PATH: {
+        dev: 'https://samradapi-test.devland.is',
+        staging: 'https://samradapi-test.devland.is',
+        prod: 'https://samradapi.island.is',
+      },
       NO_UPDATE_NOTIFIER: 'true',
       FISKISTOFA_ZENTER_CLIENT_ID: '1114',
       SOFFIA_SOAP_URL: {
@@ -175,9 +190,44 @@ export const serviceSetup = (services: {
       },
       HSN_WEB_FORM_ID: '1dimJFHLFYtnhoYEA3JxRK',
       SESSIONS_API_URL: ref((h) => `http://${h.svc(services.sessionsApi)}`),
+      AUTH_ADMIN_API_PATHS: {
+        dev: json({
+          development: 'https://identity-server.dev01.devland.is/backend',
+        }),
+        staging: json({
+          development: 'https://identity-server.dev01.devland.is/backend',
+          staging: 'https://identity-server.staging01.devland.is/backend',
+        }),
+        prod: json({
+          development: 'https://identity-server.dev01.devland.is/backend',
+          staging: 'https://identity-server.staging01.devland.is/backend',
+          production: 'https://innskra.island.is/backend',
+        }),
+      },
+      AUTH_IDS_API_URL: {
+        dev: 'https://identity-server.dev01.devland.is',
+        staging: 'https://identity-server.staging01.devland.is',
+        prod: 'https://innskra.island.is',
+      },
+      APOLLO_CACHE_REDIS_NODES: {
+        dev: json([
+          'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379',
+        ]),
+        staging: json([
+          'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379',
+        ]),
+        prod: json([
+          'clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379',
+        ]),
+      },
+      XROAD_RSK_PROCURING_SCOPE: json([
+        '@rsk.is/prokura',
+        '@rsk.is/prokura:admin',
+      ]),
     })
 
     .secrets({
+      APOLLO_BYPASS_CACHE_SECRET: '/k8s/api/APOLLO_BYPASS_CACHE_SECRET',
       DOCUMENT_PROVIDER_BASE_PATH: '/k8s/api/DOCUMENT_PROVIDER_BASE_PATH',
       DOCUMENT_PROVIDER_TOKEN_URL: '/k8s/api/DOCUMENT_PROVIDER_TOKEN_URL',
       DOCUMENT_PROVIDER_BASE_PATH_TEST:
@@ -186,6 +236,12 @@ export const serviceSetup = (services: {
         '/k8s/api/DOCUMENT_PROVIDER_TOKEN_URL_TEST',
       SYSLUMENN_HOST: '/k8s/api/SYSLUMENN_HOST',
       REGULATIONS_API_URL: '/k8s/api/REGULATIONS_API_URL',
+      REGULATIONS_FILE_UPLOAD_KEY_DRAFT:
+        '/k8s/api/REGULATIONS_FILE_UPLOAD_KEY_DRAFT',
+      REGULATIONS_FILE_UPLOAD_KEY_PUBLISH:
+        '/k8s/api/REGULATIONS_FILE_UPLOAD_KEY_PUBLISH',
+      REGULATIONS_FILE_UPLOAD_KEY_PRESIGNED:
+        '/k8s/api/REGULATIONS_FILE_UPLOAD_KEY_PRESIGNED',
       SOFFIA_HOST_URL: '/k8s/api/SOFFIA_HOST_URL',
       CONTENTFUL_ACCESS_TOKEN: '/k8s/api/CONTENTFUL_ACCESS_TOKEN',
       ZENDESK_CONTACT_FORM_EMAIL: '/k8s/api/ZENDESK_CONTACT_FORM_EMAIL',
@@ -224,6 +280,13 @@ export const serviceSetup = (services: {
       MACHINE_LICENSE_PASS_TEMPLATE_ID:
         '/k8s/api/MACHINE_LICENSE_PASS_TEMPLATE_ID',
       ADR_LICENSE_PASS_TEMPLATE_ID: '/k8s/api/ADR_LICENSE_PASS_TEMPLATE_ID',
+      ADR_LICENSE_FETCH_TIMEOUT: '/k8s/api/ADR_LICENSE_FETCH_TIMEOUT',
+      DRIVING_LICENSE_PASS_TEMPLATE_ID:
+        '/k8s/api/DRIVING_LICENSE_PASS_TEMPLATE_ID',
+      DRIVING_LICENSE_FETCH_TIMEOUT: '/k8s/api/DRIVING_LICENSE_FETCH_TIMEOUT',
+      FIREARM_LICENSE_FETCH_TIMEOUT: '/k8s/api/FIREARM_LICENSE_FETCH_TIMEOUT',
+      DISABILITY_LICENSE_FETCH_TIMEOUT:
+        '/k8s/api/DISABILITY_LICENSE_FETCH_TIMEOUT',
       ISLYKILL_SERVICE_PASSPHRASE: '/k8s/api/ISLYKILL_SERVICE_PASSPHRASE',
       ISLYKILL_SERVICE_BASEPATH: '/k8s/api/ISLYKILL_SERVICE_BASEPATH',
       IDENTITY_SERVER_CLIENT_SECRET: '/k8s/api/IDENTITY_SERVER_CLIENT_SECRET',
@@ -250,11 +313,18 @@ export const serviceSetup = (services: {
       FISKISTOFA_POWERBI_TENANT_ID: '/k8s/api/FISKISTOFA_POWERBI_TENANT_ID',
       HSN_WEB_FORM_RESPONSE_URL: '/k8s/api/HSN_WEB_FORM_RESPONSE_URL',
       HSN_WEB_FORM_RESPONSE_SECRET: '/k8s/api/HSN_WEB_FORM_RESPONSE_SECRET',
+      DIRECTORATE_OF_IMMIGRATION_WATSON_ASSISTANT_CHAT_PUBLIC_RSA_KEY:
+        '/k8s/api/DIRECTORATE_OF_IMMIGRATION_WATSON_ASSISTANT_CHAT_PUBLIC_RSA_KEY',
+      DIRECTORATE_OF_IMMIGRATION_WATSON_ASSISTANT_CHAT_PRIVATE_RSA_KEY:
+        '/k8s/api/DIRECTORATE_OF_IMMIGRATION_WATSON_ASSISTANT_CHAT_PRIVATE_RSA_KEY',
+      DIRECTORATE_OF_IMMIGRATION_WATSON_ASSISTANT_CHAT_PUBLIC_IBM_KEY:
+        '/k8s/api/DIRECTORATE_OF_IMMIGRATION_WATSON_ASSISTANT_CHAT_PUBLIC_IBM_KEY',
     })
     .xroad(
       AdrAndMachine,
+      JudicialAdministration,
       Firearm,
-      DisabilityLicense,
+      Disability,
       Base,
       Client,
       HealthInsurance,
@@ -276,8 +346,20 @@ export const serviceSetup = (services: {
       VehicleServiceFjsV1,
       TransportAuthority,
       ChargeFjsV2,
+      UniversityOfIceland,
+      WorkMachines,
+      IcelandicGovernmentInstitutionVacancies,
+      RskProcuring,
+      AircraftRegistry,
     )
     .files({ filename: 'islyklar.p12', env: 'ISLYKILL_CERT' })
+    .volumes({
+      name: 'islyklar.p12',
+      size: '1Gi',
+      accessModes: 'ReadWrite',
+      mountPath: '/etc/config/',
+      storageClass: 'efs-csi',
+    })
     .ingress({
       primary: {
         host: {
@@ -299,17 +381,18 @@ export const serviceSetup = (services: {
     .readiness('/health')
     .liveness('/liveness')
     .resources({
-      limits: { cpu: '800m', memory: '2048Mi' },
-      requests: { cpu: '200m', memory: '1024Mi' },
+      limits: { cpu: '400m', memory: '2048Mi' },
+      requests: { cpu: '150m', memory: '512Mi' },
     })
     .replicaCount({
-      default: 10,
+      default: 2,
       max: 50,
-      min: 10,
+      min: 2,
     })
     .grantNamespaces(
       'nginx-ingress-external',
       'api-catalogue',
       'application-system',
+      'consultation-portal',
     )
 }

@@ -30,22 +30,6 @@ export const IDENTITY_QUERY = `
   }
 `
 
-export const GET_CURRENT_VEHICLES_WITH_OPERATOR_CHANGE_CHECKS = `
-  query GetCurrentVehiclesWithOperatorChangeChecks($input: GetCurrentVehiclesInput!) {
-    currentVehiclesWithOperatorChangeChecks(input: $input) {
-      permno
-      make
-      color
-      role
-      isDebtLess
-      validationErrorMessages {
-        errorNo
-        defaultMessage
-      }
-    }
-  } 
-`
-
 export const GET_VEHICLE_OPERATOR_CHANGE_CHECKS_BY_PERMNO = `
   query GetVehicleOperatorChangeChecksByPermno($permno: String!) {
     vehicleOperatorChangeChecksByPermno(permno: $permno) {

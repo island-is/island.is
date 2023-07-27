@@ -19,10 +19,9 @@ import {
   IndividualDto,
   NationalRegistryClientService,
 } from '@island.is/clients/national-registry-v2'
-import { RskProcuringClient } from '@island.is/clients/rsk/procuring'
+import { RskRelationshipsClient } from '@island.is/clients-rsk-relationships'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
-import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 import { NoContentException } from '@island.is/nest/problem'
 import { isDefined } from '@island.is/shared/utils'
 
@@ -32,7 +31,7 @@ import type { PersonalRepresentativeDTO } from '../personal-representative/dto/p
 import { PersonalRepresentativeService } from '../personal-representative/services/personalRepresentative.service'
 import { ApiScope } from '../resources/models/api-scope.model'
 import { ResourcesService } from '../resources/resources.service'
-import { DEFAULT_DOMAIN } from '../types/defaultDomain'
+import { DEFAULT_DOMAIN } from '../types'
 import { DelegationConfig } from './DelegationConfig'
 import { DelegationScopeService } from './delegation-scope.service'
 import { UpdateDelegationScopeDTO } from './dto/delegation-scope.dto'
@@ -69,10 +68,9 @@ export class DelegationsService {
     private logger: Logger,
     @Inject(DelegationConfig.KEY)
     private delegationConfig: ConfigType<typeof DelegationConfig>,
-    private rskProcuringClient: RskProcuringClient,
+    private rskProcuringClient: RskRelationshipsClient,
     private nationalRegistryClient: NationalRegistryClientService,
     private delegationScopeService: DelegationScopeService,
-    private featureFlagService: FeatureFlagService,
     private prService: PersonalRepresentativeService,
     private resourcesService: ResourcesService,
     private readonly auditService: AuditService,
@@ -404,15 +402,6 @@ export class DelegationsService {
    */
   private async findAllWardsIncoming(user: User): Promise<DelegationDTO[]> {
     try {
-      const supported = await this.featureFlagService.getValue(
-        Features.legalGuardianDelegations,
-        false,
-        user,
-      )
-      if (!supported) {
-        return []
-      }
-
       const response = await this.nationalRegistryClient.getCustodyChildren(
         user,
       )
@@ -453,24 +442,17 @@ export class DelegationsService {
    */
   private async findAllCompaniesIncoming(user: User): Promise<DelegationDTO[]> {
     try {
-      const feature = await this.featureFlagService.getValue(
-        Features.companyDelegations,
-        false,
+      const person = await this.rskProcuringClient.getIndividualRelationships(
         user,
       )
-      if (!feature) {
-        return []
-      }
 
-      const person = await this.rskProcuringClient.getSimple(user)
-
-      if (person && person.companies) {
-        return person.companies.map(
-          (p) =>
+      if (person && person.relationships) {
+        return person.relationships.map(
+          (relationship) =>
             <DelegationDTO>{
               toNationalId: user.nationalId,
-              fromNationalId: p.nationalId,
-              fromName: p.name,
+              fromNationalId: relationship.nationalId,
+              fromName: relationship.name,
               type: DelegationType.ProcurationHolder,
               provider: DelegationProvider.CompanyRegistry,
             },
@@ -492,15 +474,6 @@ export class DelegationsService {
     user: User,
   ): Promise<DelegationDTO[]> {
     try {
-      const feature = await this.featureFlagService.getValue(
-        Features.personalRepresentativeDelegations,
-        false,
-        user,
-      )
-      if (!feature) {
-        return []
-      }
-
       const toDelegationDTO = (
         name: string,
         representative: PersonalRepresentativeDTO,
@@ -586,15 +559,6 @@ export class DelegationsService {
   private async findAllValidCustomIncoming(
     user: User,
   ): Promise<DelegationDTO[]> {
-    const feature = await this.featureFlagService.getValue(
-      Features.customDelegations,
-      false,
-      user,
-    )
-    if (!feature) {
-      return []
-    }
-
     const delegations = await this.delegationModel.findAll({
       where: {
         toNationalId: user.nationalId,

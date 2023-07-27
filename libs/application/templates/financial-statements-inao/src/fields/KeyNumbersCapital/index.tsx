@@ -18,7 +18,11 @@ import { getErrorViaPath } from '@island.is/application/core'
 export const KeyNumbersCapital = () => {
   const { formatMessage } = useLocale()
   const [totalCapital, setTotalCapital] = useState(0)
-  const { clearErrors, errors, getValues } = useFormContext()
+  const {
+    clearErrors,
+    formState: { errors },
+    getValues,
+  } = useFormContext()
 
   const getTotalCapital = () => {
     const values = getValues()

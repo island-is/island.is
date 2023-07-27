@@ -42,6 +42,14 @@ export const list = style({
   },
 })
 
+export const historyList = style({
+  display: 'flex',
+  flexDirection: 'column',
+  padding: 0,
+  backgroundColor: 'transparent',
+  overflowX: 'hidden',
+})
+
 export const listWithHead = style({
   '@media': {
     [`screen and (min-width: ${theme.breakpoints.md}px)`]: {

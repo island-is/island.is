@@ -2,9 +2,19 @@ import { defineMessages } from 'react-intl'
 
 export const m = defineMessages({
   /* Intro section */
+  passport: {
+    id: 'pa.application:passport',
+    defaultMessage: 'Vegabréf',
+    description: 'Some description',
+  },
   introTitle: {
-    id: 'pa.application:intro.title',
+    id: 'pa.application:introTitle',
     defaultMessage: 'Inngangur',
+    description: 'Some description',
+  },
+  introDescription: {
+    id: 'pa.application:introDescription#markdown',
+    defaultMessage: 'Í þessri umsókn...',
     description: 'Some description',
   },
 
@@ -175,12 +185,12 @@ export const m = defineMessages({
   },
   parent1: {
     id: 'pa.application:parent1',
-    defaultMessage: 'Forráðamaður 1',
+    defaultMessage: 'Forsjáraðili 1',
     description: 'Some description',
   },
   parent2: {
     id: 'pa.application:parent2',
-    defaultMessage: 'Forráðamaður 2',
+    defaultMessage: 'Forsjáraðili 2',
     description: 'Some description',
   },
 
@@ -212,12 +222,12 @@ export const m = defineMessages({
   },
   serviceTypeRegularPrice: {
     id: 'pa.application:service.type.regular.price',
-    defaultMessage: '13.000 kr.',
+    defaultMessage: '14.000 kr.',
     description: 'Some description',
   },
   serviceTypeRegularPriceWithDiscount: {
     id: 'pa.application:service.type.regular.price.withDiscount',
-    defaultMessage: '5.600kr',
+    defaultMessage: '6.000kr',
     description: 'Some description',
   },
   serviceTypeExpress: {
@@ -232,12 +242,12 @@ export const m = defineMessages({
   },
   serviceTypeExpressPrice: {
     id: 'pa.application:service.type.express.price',
-    defaultMessage: '26.000 kr.',
+    defaultMessage: '28.000 kr.',
     description: 'Some description',
   },
   serviceTypeExpressPriceWithDiscount: {
     id: 'pa.application:service.type.express.price.withDiscount',
-    defaultMessage: '11.000 kr.',
+    defaultMessage: '12.000 kr.',
     description: 'Some description',
   },
   dropLocation: {
@@ -405,5 +415,22 @@ export const m = defineMessages({
       'pa.application:complete.nextSteps.descriptionPersonalApplication#markdown',
     defaultMessage: `* Fara í myndatöku á næsta afgreiðslustað sýslumanns.\\n\\n * Þú færð senda tilkynningu á Mínar síður þegar vegabréfið er tilbúið og hægt er að sækja það á þann afhendingarstað sem þú valdir.`,
     description: 'Some description',
+  },
+
+  /* History logs */
+  waitingForConfirmationFromParentBTitle: {
+    id: 'pa.application:history.waitingForConfirmationFromParentBTitle',
+    defaultMessage: 'Staðfesting forsjáraðila',
+    description: '',
+  },
+  waitingForConfirmationFromParentBDescription: {
+    id: 'pa.application:history.waitingForConfirmationFromParentBDescription',
+    defaultMessage: 'Beðið eftir staðfestingu forsjáraðila',
+    description: '',
+  },
+  confirmedByParentB: {
+    id: 'pa.application:history.confirmedByParentB',
+    defaultMessage: 'Forsjáraðili hefur staðfest umsókn',
+    description: '',
   },
 })

@@ -25,8 +25,8 @@ const UsersList: React.FC = () => {
   const [id, setId] = useState<string>('')
   const [claimShow, setClaimShow] = useState<ClaimShow[]>([])
   const [showNotFound, setShowNotFound] = useState<boolean>(false)
-  const { handleSubmit, register, errors, formState } = useForm()
-  const { isSubmitting } = formState
+  const { handleSubmit, register, formState } = useForm()
+  const { isSubmitting, errors } = formState
   const [localization] = useState<ListControl>(
     LocalizationUtils.getListControl('UsersList'),
   )
@@ -99,13 +99,12 @@ const UsersList: React.FC = () => {
                   <input
                     id="search"
                     type="text"
-                    name="id"
-                    defaultValue={''}
-                    className="users__search__input"
-                    ref={register({
+                    {...register('id', {
                       required: true,
                       validate: ValidationUtils.validateIdentifier,
                     })}
+                    defaultValue={''}
+                    className="users__search__input"
                     placeholder={localization.search.placeholder}
                   />
                   <HelpBox helpText={localization.search.helpText} />

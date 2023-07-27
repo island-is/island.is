@@ -10,6 +10,7 @@ import { usePortalMeta, useQueryParam } from '@island.is/portals/core'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { isDefined, storageFactory } from '@island.is/shared/utils'
 import { useAuthDomainsQuery } from './useDomains.generated'
+import { m } from '../../lib/messages'
 
 const sessionStore = storageFactory(() => sessionStorage)
 
@@ -40,10 +41,7 @@ export const useDomains = (includeDefaultOption = true) => {
   const displayNameQueryParam = useQueryParam('domain')
   const [domainName, setDomainName] = useState<string | null>(null)
 
-  const defaultLabel = formatMessage({
-    id: 'sp.access-control-delegations:all-domains',
-    defaultMessage: 'Öll kerfi',
-  })
+  const defaultLabel = formatMessage(m.allDomains)
   const allDomainsOption = {
     label: defaultLabel,
     value: ALL_DOMAINS,

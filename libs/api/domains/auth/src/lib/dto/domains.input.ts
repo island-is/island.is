@@ -11,4 +11,7 @@ export class DomainsInput {
 
   @Field(() => DomainDirection, { nullable: true })
   direction?: DomainsControllerFindAllDirectionEnum
+
+  // Intentionally left out of GQL schema.
+  domainNames?: string[]
 }

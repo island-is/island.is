@@ -84,7 +84,7 @@ export class PublicDebtPaymentPlanTemplateService extends BaseTemplateApiService
       } = this.getValuesFromApplication(application)
 
       const schedules = paymentPlans.map((plan) => {
-        const distribution = JSON.parse(plan.distribution) as PaymentsDT[]
+        const distribution = plan.distribution
         return {
           organizationID: plan.organization,
           chargeTypes: plan.chargetypes?.map((chargeType) => ({

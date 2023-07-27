@@ -7,7 +7,6 @@ import React, {
 } from 'react'
 import { useIntl } from 'react-intl'
 import router from 'next/router'
-import { uuid } from 'uuidv4'
 
 import {
   ProsecutorCaseInfo,
@@ -16,29 +15,24 @@ import {
   PageLayout,
   FormContext,
   SectionHeading,
+  PdfButton,
 } from '@island.is/judicial-system-web/src/components'
-import {
-  IndictmentsProsecutorSubsections,
-  Sections,
-} from '@island.is/judicial-system-web/src/types'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import { errors, titles } from '@island.is/judicial-system-web/messages'
+import { titles } from '@island.is/judicial-system-web/messages'
 import {
   Box,
   InputFileUpload,
   Text,
-  toast,
   UploadFile,
 } from '@island.is/island-ui/core'
 import {
   TUploadFile,
   useS3Upload,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { CaseFileCategory, Feature } from '@island.is/judicial-system/types'
+import { CaseFileCategory } from '@island.is/judicial-system/types'
 import { mapCaseFileToUploadFile } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { fileExtensionWhitelist } from '@island.is/island-ui/core/types'
 import { isTrafficViolationCase } from '@island.is/judicial-system-web/src/utils/stepHelper'
-import { FeatureContext } from '@island.is/judicial-system-web/src/components/FeatureProvider/FeatureProvider'
 import * as constants from '@island.is/judicial-system/consts'
 
 import * as strings from './CaseFiles.strings'
@@ -49,11 +43,14 @@ const CaseFiles: React.FC = () => {
   )
   const [displayFiles, setDisplayFiles] = useState<TUploadFile[]>([])
   const { formatMessage } = useIntl()
-  const { upload, remove } = useS3Upload(workingCase.id)
-  const { features } = useContext(FeatureContext)
-  const isTrafficViolationCaseCheck =
-    features.includes(Feature.INDICTMENT_ROUTE) &&
-    isTrafficViolationCase(workingCase.indictmentSubtypes)
+  const {
+    handleChange,
+    handleRemove,
+    handleRetry,
+    generateSingleFileUpdate,
+  } = useS3Upload(workingCase.id)
+
+  const isTrafficViolationCaseCheck = isTrafficViolationCase(workingCase)
 
   useEffect(() => {
     if (workingCase.caseFiles) {
@@ -73,96 +70,24 @@ const CaseFiles: React.FC = () => {
     [workingCase.id],
   )
 
-  const setSingleFile = useCallback(
+  const handleUIUpdate = useCallback(
     (displayFile: TUploadFile, newId?: string) => {
-      setDisplayFiles((previous) => {
-        const index = previous.findIndex((f) => f.id === displayFile.id)
-        if (index === -1) {
-          return previous
-        }
-        const next = [...previous]
-        next[index] = { ...displayFile, id: newId ?? displayFile.id }
-        return next
-      })
-    },
-    [setDisplayFiles],
-  )
-
-  const handleChange = useCallback(
-    (files: File[], category: CaseFileCategory) => {
-      // We generate an id for each file so that we find the file again when
-      // updating the file's progress and onRetry.
-      // Also we cannot spread File since it contains read-only properties.
-      const filesWithId: Array<[File, string]> = files.map((file) => [
-        file,
-        `${file.name}-${uuid()}`,
-      ])
-      setDisplayFiles((previous) => [
-        ...filesWithId.map(
-          ([file, id]): TUploadFile => ({
-            status: 'uploading',
-            percent: 1,
-            name: file.name,
-            id: id,
-            type: file.type,
-            category,
-          }),
-        ),
-        ...previous,
-      ])
-      upload(filesWithId, setSingleFile, category)
-    },
-    [upload, setSingleFile],
-  )
-
-  const handleRemove = useCallback(
-    async (file: UploadFile) => {
-      try {
-        if (file.id) {
-          await remove(file.id)
-          setDisplayFiles((prev) => {
-            return prev.filter((caseFile) => caseFile.id !== file.id)
-          })
-        }
-      } catch {
-        toast.error(formatMessage(errors.general))
-      }
-    },
-    [formatMessage, remove, setDisplayFiles],
-  )
-
-  const handleRetry = useCallback(
-    (file: TUploadFile) => {
-      setSingleFile({
-        name: file.name,
-        id: file.id,
-        percent: 1,
-        status: 'uploading',
-        type: file.type,
-        category: file.category,
-      })
-      upload(
-        [
-          [
-            { name: file.name, type: file.type ?? '' } as File,
-            file.id ?? file.name,
-          ],
-        ],
-        setSingleFile,
-        file.category,
+      setDisplayFiles((previous) =>
+        generateSingleFileUpdate(previous, displayFile, newId),
       )
     },
-    [setSingleFile, upload],
+    [generateSingleFileUpdate],
   )
+
+  const removeFileCB = useCallback((file: UploadFile) => {
+    setDisplayFiles((previous) =>
+      previous.filter((caseFile) => caseFile.id !== file.id),
+    )
+  }, [])
 
   return (
     <PageLayout
       workingCase={workingCase}
-      activeSection={Sections.PROSECUTOR}
-      activeSubSection={
-        IndictmentsProsecutorSubsections.CASE_FILES +
-        (isTrafficViolationCaseCheck ? 1 : 0)
-      }
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
       isValid={stepIsValid}
@@ -180,81 +105,113 @@ const CaseFiles: React.FC = () => {
         <ProsecutorCaseInfo workingCase={workingCase} />
         <Box component="section" marginBottom={5}>
           <SectionHeading
-            title={formatMessage(strings.caseFiles.sections.coverLetter)}
+            title={formatMessage(strings.caseFiles.coverLetterSection)}
           />
           <InputFileUpload
             fileList={displayFiles.filter(
               (file) => file.category === CaseFileCategory.COVER_LETTER,
             )}
             accept={Object.values(fileExtensionWhitelist)}
-            header={formatMessage(strings.caseFiles.sections.inputFieldLabel)}
-            buttonLabel={formatMessage(strings.caseFiles.sections.buttonLabel)}
-            multiple={false}
+            header={formatMessage(strings.caseFiles.inputFieldLabel)}
+            buttonLabel={formatMessage(strings.caseFiles.buttonLabel)}
             onChange={(files) =>
-              handleChange(files, CaseFileCategory.COVER_LETTER)
+              handleChange(
+                files,
+                CaseFileCategory.COVER_LETTER,
+                setDisplayFiles,
+                handleUIUpdate,
+              )
             }
-            onRemove={handleRemove}
-            onRetry={handleRetry}
+            onRemove={(file) => handleRemove(file, removeFileCB)}
+            onRetry={(file) =>
+              handleRetry(file, handleUIUpdate, CaseFileCategory.COVER_LETTER)
+            }
           />
         </Box>
+        {!isTrafficViolationCaseCheck && (
+          <Box component="section" marginBottom={5}>
+            <SectionHeading
+              title={formatMessage(strings.caseFiles.indictmentSection)}
+            />
+            <InputFileUpload
+              fileList={displayFiles.filter(
+                (file) => file.category === CaseFileCategory.INDICTMENT,
+              )}
+              accept={Object.values(fileExtensionWhitelist)}
+              header={formatMessage(strings.caseFiles.inputFieldLabel)}
+              buttonLabel={formatMessage(strings.caseFiles.buttonLabel)}
+              onChange={(files) =>
+                handleChange(
+                  files,
+                  CaseFileCategory.INDICTMENT,
+                  setDisplayFiles,
+                  handleUIUpdate,
+                )
+              }
+              onRemove={(file) => handleRemove(file, removeFileCB)}
+              onRetry={(file) =>
+                handleRetry(file, handleUIUpdate, CaseFileCategory.INDICTMENT)
+              }
+            />
+          </Box>
+        )}
         <Box component="section" marginBottom={5}>
           <SectionHeading
-            title={formatMessage(strings.caseFiles.sections.indictment)}
-          />
-          <InputFileUpload
-            fileList={displayFiles.filter(
-              (file) => file.category === CaseFileCategory.INDICTMENT,
-            )}
-            accept={Object.values(fileExtensionWhitelist)}
-            header={formatMessage(strings.caseFiles.sections.inputFieldLabel)}
-            buttonLabel={formatMessage(strings.caseFiles.sections.buttonLabel)}
-            multiple={false}
-            onChange={(files) =>
-              handleChange(files, CaseFileCategory.INDICTMENT)
-            }
-            onRemove={handleRemove}
-            onRetry={handleRetry}
-          />
-        </Box>
-        <Box component="section" marginBottom={5}>
-          <SectionHeading
-            title={formatMessage(strings.caseFiles.sections.criminalRecord)}
+            title={formatMessage(strings.caseFiles.criminalRecordSection)}
           />
           <InputFileUpload
             fileList={displayFiles.filter(
               (file) => file.category === CaseFileCategory.CRIMINAL_RECORD,
             )}
             accept={Object.values(fileExtensionWhitelist)}
-            header={formatMessage(strings.caseFiles.sections.inputFieldLabel)}
-            buttonLabel={formatMessage(strings.caseFiles.sections.buttonLabel)}
+            header={formatMessage(strings.caseFiles.inputFieldLabel)}
+            buttonLabel={formatMessage(strings.caseFiles.buttonLabel)}
             onChange={(files) =>
-              handleChange(files, CaseFileCategory.CRIMINAL_RECORD)
+              handleChange(
+                files,
+                CaseFileCategory.CRIMINAL_RECORD,
+                setDisplayFiles,
+                handleUIUpdate,
+              )
             }
-            onRemove={handleRemove}
-            onRetry={handleRetry}
+            onRemove={(file) => handleRemove(file, removeFileCB)}
+            onRetry={(file) =>
+              handleRetry(
+                file,
+                handleUIUpdate,
+                CaseFileCategory.CRIMINAL_RECORD,
+              )
+            }
           />
         </Box>
         <Box component="section" marginBottom={5}>
           <SectionHeading
-            title={formatMessage(strings.caseFiles.sections.costBreakdown)}
+            title={formatMessage(strings.caseFiles.costBreakdownSection)}
           />
           <InputFileUpload
             fileList={displayFiles.filter(
               (file) => file.category === CaseFileCategory.COST_BREAKDOWN,
             )}
             accept={Object.values(fileExtensionWhitelist)}
-            header={formatMessage(strings.caseFiles.sections.inputFieldLabel)}
-            buttonLabel={formatMessage(strings.caseFiles.sections.buttonLabel)}
+            header={formatMessage(strings.caseFiles.inputFieldLabel)}
+            buttonLabel={formatMessage(strings.caseFiles.buttonLabel)}
             onChange={(files) =>
-              handleChange(files, CaseFileCategory.COST_BREAKDOWN)
+              handleChange(
+                files,
+                CaseFileCategory.COST_BREAKDOWN,
+                setDisplayFiles,
+                handleUIUpdate,
+              )
             }
-            onRemove={handleRemove}
-            onRetry={handleRetry}
+            onRemove={(file) => handleRemove(file, removeFileCB)}
+            onRetry={(file) =>
+              handleRetry(file, handleUIUpdate, CaseFileCategory.COST_BREAKDOWN)
+            }
           />
         </Box>
         <Box component="section" marginBottom={10}>
           <SectionHeading
-            title={formatMessage(strings.caseFiles.sections.otherDocuments)}
+            title={formatMessage(strings.caseFiles.otherDocumentsSection)}
           />
           <InputFileUpload
             fileList={displayFiles.filter(
@@ -263,18 +220,35 @@ const CaseFiles: React.FC = () => {
                 !file.policeCaseNumber,
             )}
             accept={Object.values(fileExtensionWhitelist)}
-            header={formatMessage(strings.caseFiles.sections.inputFieldLabel)}
-            buttonLabel={formatMessage(strings.caseFiles.sections.buttonLabel)}
+            header={formatMessage(strings.caseFiles.inputFieldLabel)}
+            buttonLabel={formatMessage(strings.caseFiles.buttonLabel)}
             onChange={(files) =>
-              handleChange(files, CaseFileCategory.CASE_FILE)
+              handleChange(
+                files,
+                CaseFileCategory.CASE_FILE,
+                setDisplayFiles,
+                handleUIUpdate,
+              )
             }
-            onRemove={handleRemove}
-            onRetry={handleRetry}
+            onRemove={(file) => handleRemove(file, removeFileCB)}
+            onRetry={(file) =>
+              handleRetry(file, handleUIUpdate, CaseFileCategory.CASE_FILE)
+            }
           />
         </Box>
+        {isTrafficViolationCaseCheck && (
+          <Box marginBottom={10}>
+            <PdfButton
+              caseId={workingCase.id}
+              title={formatMessage(strings.caseFiles.pdfButtonIndictment)}
+              pdfType="indictment"
+            />
+          </Box>
+        )}
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
+          nextButtonIcon="arrowForward"
           previousUrl={`${
             isTrafficViolationCaseCheck
               ? constants.INDICTMENTS_TRAFFIC_VIOLATION_ROUTE

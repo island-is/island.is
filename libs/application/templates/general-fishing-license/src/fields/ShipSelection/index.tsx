@@ -1,7 +1,7 @@
 import { getErrorViaPath, getValueViaPath } from '@island.is/application/core'
 import { FieldBaseProps } from '@island.is/application/types'
 import { Box, Stack, Tag } from '@island.is/island-ui/core'
-import React, { FC, useState } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import { ShipInformation } from '../components'
 import { RadioController } from '@island.is/shared/form-fields'
 import { FishingLicenseShip as Ship } from '@island.is/api/schema'
@@ -30,6 +30,10 @@ export const ShipSelection: FC<FieldBaseProps> = ({
     registrationNumberValue || '',
   )
 
+  useEffect(() => {
+    setValue(`${field.id}.registrationNumber`, registrationNumber)
+  }, [registrationNumber])
+
   const ships = getValueViaPath(
     application.externalData,
     'directoryOfFisheries.data.ships',
@@ -41,21 +45,19 @@ export const ShipSelection: FC<FieldBaseProps> = ({
       options.push({
         value: `${index}`,
         label: (
-          <>
-            <Box width="full" display="flex" justifyContent="spaceBetween">
-              <ShipInformation ship={ship} seaworthinessHasColor />
-              <Stack space={1} align="right">
-                {ship.fishingLicenses?.map((license) => {
-                  if (license.code === 'unknown') return null
-                  return (
-                    <Tag variant="blue" disabled key={`${license}`}>
-                      {license.name}
-                    </Tag>
-                  )
-                })}
-              </Stack>
-            </Box>
-          </>
+          <Box width="full" display="flex" justifyContent="spaceBetween">
+            <ShipInformation ship={ship} seaworthinessHasColor />
+            <Stack space={1} align="right">
+              {ship.fishingLicenses?.map((license) => {
+                if (license.code === 'unknown') return null
+                return (
+                  <Tag variant="blue" disabled key={`${license}`}>
+                    {license.name}
+                  </Tag>
+                )
+              })}
+            </Stack>
+          </Box>
         ),
       })
     }
@@ -86,9 +88,7 @@ export const ShipSelection: FC<FieldBaseProps> = ({
       />
       <input
         type="hidden"
-        value={registrationNumber}
-        ref={register({ required: true })}
-        name={`${field.id}.registrationNumber`}
+        {...register(`${field.id}.registrationNumber`, { required: true })}
       />
     </Box>
   )

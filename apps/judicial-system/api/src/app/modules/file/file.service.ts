@@ -4,6 +4,7 @@ import { Request, Response } from 'express'
 import { Inject, Injectable } from '@nestjs/common'
 
 import type { ConfigType } from '@island.is/nest/config'
+import { ProblemError } from '@island.is/nest/problem'
 import {
   AuditedAction,
   AuditTrailService,
@@ -11,7 +12,6 @@ import {
 
 import { FileExeption } from './file.exception'
 import { fileModuleConfig } from './file.config'
-import { ProblemError } from '@island.is/nest/problem'
 
 @Injectable()
 export class FileService {
@@ -23,7 +23,6 @@ export class FileService {
 
   private async getPdf(
     id: string,
-    useSigned: boolean,
     route: string,
     req: Request,
     res: Response,
@@ -34,7 +33,7 @@ export class FileService {
     headers.set('cookie', req.headers.cookie as string)
 
     const result = await fetch(
-      `${this.config.backendUrl}/api/case/${id}/${route}?useSigned=${useSigned}`,
+      `${this.config.backendUrl}/api/case/${id}/${route}`,
       { headers },
     ).then(async (res) => {
       if (res.ok) {
@@ -60,13 +59,12 @@ export class FileService {
     route: string,
     req: Request,
     res: Response,
-    useSigned = true,
   ): Promise<Response> {
     try {
       return this.auditTrailService.audit(
         userId,
         auditAction,
-        this.getPdf(id, useSigned, route, req, res),
+        this.getPdf(id, route, req, res),
         id,
       )
     } catch (error) {

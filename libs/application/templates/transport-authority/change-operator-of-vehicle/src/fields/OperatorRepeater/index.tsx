@@ -119,7 +119,9 @@ export const OperatorRepeater: FC<FieldBaseProps> = (props) => {
     ]
     return !!jointOperators.some((nationalId, index) => {
       return (
-        jointOperators.indexOf(nationalId) !== index && nationalId.length > 0
+        nationalId &&
+        nationalId.length > 0 &&
+        jointOperators.indexOf(nationalId) !== index
       )
     })
   }

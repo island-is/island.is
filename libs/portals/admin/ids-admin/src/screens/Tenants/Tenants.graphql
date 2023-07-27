@@ -1,0 +1,17 @@
+query Tenants {
+  authAdminTenants {
+    data {
+      id
+      availableEnvironments
+      defaultEnvironment {
+        id
+        name
+        environment
+        displayName {
+          locale
+          value
+        }
+      }
+    }
+  }
+}

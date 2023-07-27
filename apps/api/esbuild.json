@@ -21,6 +21,7 @@
     "graphql",
     "pg",
     "winston",
+    "util-deprecate",
     "source-map-resolve",
     "atob",
     "logform",

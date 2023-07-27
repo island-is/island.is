@@ -168,7 +168,7 @@ const EmbeddedVideo: FC<EmbeddedVideoProps> = ({ title, url, locale }) => {
                   defaultValue={false}
                   control={control}
                   rules={{ required: false }}
-                  render={({ value, onChange }) => (
+                  render={({ field: { onChange, value } }) => (
                     <Checkbox
                       label={texts.remember}
                       checked={value}

@@ -13,7 +13,6 @@ import type { Logger } from '@island.is/logging'
 import { TokenGuard } from '@island.is/judicial-system/auth'
 import { indictmentCases } from '@island.is/judicial-system/types'
 
-import { User, CurrentUser, UserExistsGuard } from '../user'
 import {
   Case,
   CaseExistsGuard,
@@ -37,7 +36,7 @@ export class InternalFileController {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  @UseGuards(CaseExistsGuard, CaseFileExistsGuard, UserExistsGuard)
+  @UseGuards(CaseExistsGuard, CaseFileExistsGuard)
   @Post('deliverToCourt')
   @ApiCreatedResponse({
     type: DeliverResponse,
@@ -46,17 +45,16 @@ export class InternalFileController {
   async deliverCaseFileToCourt(
     @Param('caseId') caseId: string,
     @Param('fileId') fileId: string,
-    @CurrentUser() user: User,
     @CurrentCase() theCase: Case,
     @CurrentCaseFile() caseFile: CaseFile,
-    @Body() _: DeliverDto,
+    @Body() deliverDto: DeliverDto,
   ): Promise<DeliverResponse> {
     this.logger.debug(`Delivering file ${fileId} of case ${caseId} to court`)
 
     const { success } = await this.fileService.uploadCaseFileToCourt(
       caseFile,
       theCase,
-      user,
+      deliverDto.user,
     )
 
     return { delivered: success }

@@ -23,7 +23,7 @@ describe('CaseController - Get all guards', () => {
       guard = new guards[0]()
     })
 
-    it('should have JwtAuthGuard as quard 1', () => {
+    it('should have JwtAuthGuard as guard 1', () => {
       expect(guard).toBeInstanceOf(JwtAuthGuard)
     })
   })
@@ -35,7 +35,7 @@ describe('CaseController - Get all guards', () => {
       guard = new guards[1]()
     })
 
-    it('should have RolesGuard as quard 2', () => {
+    it('should have RolesGuard as guard 2', () => {
       expect(guard).toBeInstanceOf(RolesGuard)
     })
   })

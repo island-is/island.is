@@ -20,6 +20,8 @@ export class SessionsService {
       before: input.before,
       limit: input.limit,
       order: input.order,
+      from: input.fromDate,
+      to: input.toDate,
     })
   }
 }

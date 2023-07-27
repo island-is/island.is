@@ -14,14 +14,9 @@ export const headerBg = style({
       backgroundSize: 'cover',
       backgroundImage: `linear-gradient(90deg, #00498E 0%, #3A81D8 100.87%)`,
     },
-    lg: {
-      backgroundPosition: 'bottom right',
-      backgroundSize: 'unset',
-      backgroundImage: `url(${illustrationUrl}), linear-gradient(90deg, #00498E 0%, #3A81D8 100.87%)`,
-    },
     xl: {
       backgroundPosition: 'bottom right',
-      backgroundSize: 'contain, contain',
+      backgroundSize: '570px, contain',
       backgroundImage: `url(${illustrationUrl}), linear-gradient(90deg, #00498E 0%, #3A81D8 100.87%)`,
     },
   }),
@@ -87,13 +82,7 @@ export const navigation = style({
 export const title = style({
   ...themeUtils.responsiveStyle({
     md: {
-      marginLeft: -300,
-    },
-    lg: {
-      marginLeft: -300,
-    },
-    xl: {
-      marginLeft: -180,
+      marginTop: '50px',
     },
   }),
 })

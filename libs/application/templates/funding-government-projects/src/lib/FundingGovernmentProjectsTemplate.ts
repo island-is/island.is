@@ -43,7 +43,6 @@ const FundingGovernmentProjectsTemplate: ApplicationTemplate<
   type: ApplicationTypes.FUNDING_GOVERNMENT_PROJECTS,
   name: application.name,
   institution: application.institutionName,
-  readyForProduction: true,
   translationNamespaces: [
     ApplicationConfigurations.FundingGovernmentProjects.translation,
   ],

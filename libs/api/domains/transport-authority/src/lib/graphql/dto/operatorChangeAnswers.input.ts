@@ -16,6 +16,9 @@ export class OperatorChangeAnswersUser {
 export class OperatorChangeAnswersOperators {
   @Field(() => String, { nullable: false })
   nationalId!: string
+
+  @Field(() => String, { nullable: true })
+  wasRemoved?: string
 }
 
 @InputType()
@@ -31,6 +34,9 @@ export class OperatorChangeAnswers {
 
   @Field(() => OperatorChangeAnswersUser, { nullable: false })
   owner!: OperatorChangeAnswersUser
+
+  @Field(() => [OperatorChangeAnswersOperators], { nullable: true })
+  oldOperators?: OperatorChangeAnswersOperators[]
 
   @Field(() => [OperatorChangeAnswersOperators], { nullable: true })
   operators?: OperatorChangeAnswersOperators[]

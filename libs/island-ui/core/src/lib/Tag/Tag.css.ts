@@ -162,3 +162,7 @@ export const focusable = style({
     color: theme.color.white,
   },
 })
+
+export const disabled = style({
+  cursor: 'default',
+})

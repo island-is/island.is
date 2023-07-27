@@ -18,6 +18,7 @@ import ContentWrapper from './../../components/Layout/ContentWrapper'
 import StepEnd from './../../components/common/StepEnd'
 import { ClientService } from './../../services/ClientService'
 import LocalizationUtils from '../../utils/localization.utils'
+import { LoadingScreen } from '../../components/common/LoadingScreen'
 
 const Index: React.FC = () => {
   const { query } = useRouter()
@@ -25,7 +26,7 @@ const Index: React.FC = () => {
   const stepQuery = query.step
 
   const [step, setStep] = useState(1)
-  const [client, setClient] = useState<Client>(new Client())
+  const [client, setClient] = useState<Client>()
   const router = useRouter()
 
   /** Load the client and set the step from query if there is one */
@@ -76,6 +77,16 @@ const Index: React.FC = () => {
       getClient(clientSaved.clientId)
       handleNext()
     }
+  }
+
+  if (!client) {
+    return (
+      <ContentWrapper>
+        <ClientStepNav handleStepChange={handleStepChange} activeStep={step}>
+          <LoadingScreen />
+        </ClientStepNav>
+      </ContentWrapper>
+    )
   }
 
   switch (step) {

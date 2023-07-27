@@ -27,14 +27,8 @@ export const sectionOverview = buildMultiField({
       id: 'overview.operationTitle',
       title: m.operationTitle,
       titleVariant: 'h3',
-      description: '',
       space: 'gutter',
-    }),
-    buildDescriptionField({
-      id: 'overview.space',
-      title: '',
-      description: '',
-      space: 'gutter',
+      marginBottom: 'gutter',
     }),
     buildKeyValueField({
       label: m.operationType,
@@ -60,11 +54,14 @@ export const sectionOverview = buildMultiField({
     buildDescriptionField({
       id: 'overview.space0',
       title: '',
-      description: '',
       space: 'gutter',
     }),
     buildKeyValueField({
-      label: m.typeHotel,
+      label: ({ answers }: Application) =>
+        (answers.applicationInfo as Operation)?.operation ===
+        APPLICATION_TYPES.HOTEL
+          ? m.typeHotel
+          : m.typeResturant,
       width: 'half',
       value: ({ answers }: Application) =>
         (answers.applicationInfo as Operation)?.operation ===
@@ -86,7 +83,6 @@ export const sectionOverview = buildMultiField({
     buildDescriptionField({
       id: 'overview.space1',
       title: '',
-      description: '',
       space: 'gutter',
     }),
     buildDividerField({}),
@@ -94,14 +90,8 @@ export const sectionOverview = buildMultiField({
       id: 'overview.info',
       title: m.operationInfoTitle,
       titleVariant: 'h3',
-      description: '',
       space: 'gutter',
-    }),
-    buildDescriptionField({
-      id: 'overview.space2',
-      title: '',
-      description: '',
-      space: 'gutter',
+      marginBottom: 'gutter',
     }),
     buildKeyValueField({
       label: m.operationName,
@@ -120,9 +110,8 @@ export const sectionOverview = buildMultiField({
         })?.vskNr,
     }),
     buildDescriptionField({
-      id: 'overview.space4',
+      id: 'overview.space2',
       title: '',
-      description: '',
       space: 'gutter',
     }),
     buildKeyValueField({
@@ -145,17 +134,16 @@ export const sectionOverview = buildMultiField({
       },
     }),
     buildDescriptionField({
-      id: 'overview.space2.2',
+      id: 'overview.space3',
       title: '',
-      description: '',
       space: 'gutter',
+      marginBottom: 'gutter',
     }),
     buildDividerField({}),
     buildDescriptionField({
       id: 'overview.spaceInfo',
       title: m.propertyInfoSubtitle,
       titleVariant: 'h3',
-      description: '',
       space: 'gutter',
     }),
     buildCustomField(
@@ -183,9 +171,8 @@ export const sectionOverview = buildMultiField({
       { id: 'properties.outside' },
     ),
     buildDescriptionField({
-      id: 'overview.space3',
+      id: 'overview.space4',
       title: '',
-      description: '',
       space: 'gutter',
     }),
     // TODO: map properties
@@ -194,29 +181,20 @@ export const sectionOverview = buildMultiField({
       id: 'overview.openingHours',
       title: m.openingHoursTitle,
       titleVariant: 'h3',
-      description: '',
       space: 'gutter',
-      condition: (answers) => displayOpeningHours(answers),
-    }),
-    buildDescriptionField({
-      id: 'overview.space8',
-      title: '',
-      description: '',
-      space: 'gutter',
+      marginBottom: 'gutter',
       condition: (answers) => displayOpeningHours(answers),
     }),
     buildDescriptionField({
       id: 'overview.openingHoursAlcohol',
       title: m.openingHoursAlcohol,
       titleVariant: 'h4',
-      description: '',
       space: 'gutter',
       condition: (answers) => displayOpeningHours(answers),
     }),
     buildDescriptionField({
-      id: 'overview.space6',
+      id: 'overview.space5',
       title: '',
-      description: '',
       space: 'gutter',
       condition: (answers) => displayOpeningHours(answers),
     }),
@@ -249,28 +227,17 @@ export const sectionOverview = buildMultiField({
       },
     }),
     buildDescriptionField({
-      id: 'overview.space9',
+      id: 'overview.space6',
       title: '',
-      description: '',
       space: 'gutter',
       condition: (answers) => displayOpeningHours(answers),
     }),
-
     buildDescriptionField({
       id: 'overview.openingHoursOutside',
       title: m.openingHoursOutsideTitle,
       titleVariant: 'h4',
-      description: '',
       space: 'gutter',
-      condition: (answers) =>
-        hasYes((answers.applicationInfo as Operation)?.willServe) &&
-        displayOpeningHours(answers),
-    }),
-    buildDescriptionField({
-      id: 'overview.space5',
-      title: '',
-      description: '',
-      space: 'gutter',
+      marginBottom: 'gutter',
       condition: (answers) =>
         hasYes((answers.applicationInfo as Operation)?.willServe) &&
         displayOpeningHours(answers),
@@ -312,14 +279,8 @@ export const sectionOverview = buildMultiField({
       id: 'overview.otherInfo',
       title: m.otherInfoTitle,
       titleVariant: 'h3',
-      description: '',
       space: 'gutter',
-    }),
-    buildDescriptionField({
-      id: 'overview.space7',
-      title: '',
-      description: '',
-      space: 'gutter',
+      marginBottom: 'gutter',
     }),
     buildKeyValueField({
       label: m.temporaryLicense,
@@ -343,19 +304,18 @@ export const sectionOverview = buildMultiField({
         application.answers.otherInfoText as string,
       condition: (answers) => !!answers.otherInfoText,
     }),
+    buildDescriptionField({
+      id: 'overview.space7',
+      title: '',
+      space: 'gutter',
+    }),
     buildDividerField({}),
     buildDescriptionField({
       id: 'overview.attachments',
       title: m.attachments,
       titleVariant: 'h3',
-      description: '',
       space: 'gutter',
-    }),
-    buildDescriptionField({
-      id: 'overview.space10',
-      title: '',
-      description: '',
-      space: 'gutter',
+      marginBottom: 'gutter',
     }),
     buildCustomField({
       id: 'overview.files',

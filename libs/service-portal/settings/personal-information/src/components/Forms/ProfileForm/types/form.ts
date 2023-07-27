@@ -1,4 +1,5 @@
-import { FieldValues, UseFormMethods } from 'react-hook-form/dist/types/form'
+import { UseFormReturn } from 'react-hook-form/dist/types/form'
+import { FieldValues } from 'react-hook-form/dist/types/fields'
 
 export interface FormValues {
   email?: string
@@ -16,7 +17,7 @@ export interface BankInfoTypes {
 export type DropModalType = 'tel' | 'mail' | 'all' | undefined
 export type DataLoadingType = 'EMAIL' | 'TEL' | 'BANKINFO' | 'NUDGE' | undefined
 
-export type HookFormType = UseFormMethods<FieldValues & FormValues>
+export type HookFormType = UseFormReturn<FieldValues & FormValues>
 
 export enum DataStatus {
   NOT_DEFINED = 'NOT_DEFINED',

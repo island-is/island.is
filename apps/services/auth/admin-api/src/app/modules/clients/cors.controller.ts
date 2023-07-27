@@ -11,8 +11,9 @@ import {
   Param,
   Post,
   UseGuards,
+  VERSION_NEUTRAL,
 } from '@nestjs/common'
-import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger'
+import { ApiCreatedResponse, ApiExcludeController } from '@nestjs/swagger'
 import type { User } from '@island.is/auth-nest-tools'
 import {
   IdsUserGuard,
@@ -27,8 +28,8 @@ import { environment } from '../../../environments/'
 const namespace = `${environment.audit.defaultNamespace}/cors`
 
 @UseGuards(IdsUserGuard, ScopesGuard)
-@ApiTags('cors')
-@Controller('backend/cors')
+@ApiExcludeController()
+@Controller({ path: 'cors', version: [VERSION_NEUTRAL, '1'] })
 @Audit({ namespace })
 export class CorsController {
   constructor(

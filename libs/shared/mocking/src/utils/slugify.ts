@@ -9,7 +9,9 @@ export const slugify = <T, K extends keyof T>(
   return function () {
     const value = this[fieldName]
     if (typeof value !== 'string') {
-      throw new Error(`Could not slugify field ${fieldName}. Wasn't string.`)
+      throw new Error(
+        `Could not slugify field ${String(fieldName)}. Wasn't string.`,
+      )
     }
     return faker.helpers.slugify(value).toLowerCase()
   }

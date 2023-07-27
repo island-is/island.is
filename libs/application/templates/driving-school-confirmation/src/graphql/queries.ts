@@ -23,6 +23,7 @@ export const ViewSingleStudentQuery = gql`
         }
         drivingSchoolExams {
           schoolTypeName
+          examDate
         }
         testResults {
           testTypeName

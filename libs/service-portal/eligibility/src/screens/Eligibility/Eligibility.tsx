@@ -45,7 +45,7 @@ const data: Data[] = [
   },
 ]
 
-function Eligibility(): JSX.Element {
+function Eligibility() {
   const { formatMessage } = useLocale()
   useNamespaces('sp.eligibility')
 

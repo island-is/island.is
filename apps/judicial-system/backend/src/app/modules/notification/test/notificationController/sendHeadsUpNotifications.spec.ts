@@ -58,7 +58,7 @@ describe('NotificationController - Send heads up notification', () => {
       expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
         {
           type: MessageType.SEND_HEADS_UP_NOTIFICATION,
-          userId,
+          user,
           caseId,
         },
       ])

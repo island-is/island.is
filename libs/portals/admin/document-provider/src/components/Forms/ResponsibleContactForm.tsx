@@ -16,7 +16,11 @@ export const ResponsibleContactForm: FC<Props> = ({
   organisationId,
   administrativeContact,
 }) => {
-  const { handleSubmit, control, errors } = useForm()
+  const {
+    handleSubmit,
+    control,
+    formState: { errors },
+  } = useForm<Contact>()
   const { formatMessage } = useLocale()
   const {
     updateAdministrativeContact,
@@ -47,7 +51,7 @@ export const ResponsibleContactForm: FC<Props> = ({
               ),
             },
           }}
-          render={({ onChange, name, value }) => (
+          render={({ field: { onChange, name, value } }) => (
             <Input
               size="xs"
               name={name}
@@ -55,7 +59,7 @@ export const ResponsibleContactForm: FC<Props> = ({
               label={formatMessage(m.SettingsEditResponsibleContactName)}
               placeholder={formatMessage(m.SettingsEditResponsibleContactName)}
               onChange={onChange}
-              hasError={errors.name}
+              hasError={!!errors.name}
               errorMessage={errors.name?.message}
             />
           )}
@@ -78,7 +82,7 @@ export const ResponsibleContactForm: FC<Props> = ({
               ),
             },
           }}
-          render={({ onChange, name, value }) => (
+          render={({ field: { onChange, name, value } }) => (
             <Input
               size="xs"
               name={name}
@@ -86,7 +90,7 @@ export const ResponsibleContactForm: FC<Props> = ({
               value={value}
               placeholder={formatMessage(m.SettingsEditResponsibleContactEmail)}
               onChange={onChange}
-              hasError={errors.email}
+              hasError={!!errors.email}
               errorMessage={errors.email?.message}
             />
           )}
@@ -109,7 +113,7 @@ export const ResponsibleContactForm: FC<Props> = ({
               ),
             },
           }}
-          render={({ onChange, name, value }) => (
+          render={({ field: { onChange, name, value } }) => (
             <Input
               size="xs"
               name={name}
@@ -117,7 +121,7 @@ export const ResponsibleContactForm: FC<Props> = ({
               value={value}
               placeholder={formatMessage(m.SettingsEditResponsibleContactTel)}
               onChange={onChange}
-              hasError={errors.phoneNumber}
+              hasError={!!errors.phoneNumber}
               errorMessage={errors.phoneNumber?.message}
             ></Input>
           )}

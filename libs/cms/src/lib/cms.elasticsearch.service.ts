@@ -26,6 +26,8 @@ import { SearchResponse } from 'elastic'
 import { MappedData } from '@island.is/content-search-indexer/types'
 import { SupportQNA } from './models/supportQNA.model'
 import { GetFeaturedSupportQNAsInput } from './dto/getFeaturedSupportQNAs.input'
+import { Vacancy } from './models/vacancy.model'
+import { ResponseError } from '@elastic/elasticsearch/lib/errors'
 
 @Injectable()
 export class CmsElasticsearchService {
@@ -95,7 +97,7 @@ export class CmsElasticsearchService {
 
   async getNews(
     index: string,
-    { size, page, order, month, year, tags }: GetNewsInput,
+    { size, page, order, month, year, tags, organization }: GetNewsInput,
   ): Promise<NewsList> {
     let dateQuery
     if (year) {
@@ -109,16 +111,32 @@ export class CmsElasticsearchService {
       dateQuery = {}
     }
 
+    const tagList: {
+      key: string
+      type: string
+    }[] = []
+
     let tagQuery
     if (tags) {
-      tagQuery = {
-        tags: tags.map((tag) => ({ key: tag, type: 'genericTag' })),
+      for (const tag of tags) {
+        tagList.push({ key: tag, type: 'genericTag' })
       }
+    }
+
+    if (organization) {
+      tagList.push({ key: organization, type: 'organization' })
+    }
+
+    if (tagList.length > 0) {
+      tagQuery = { tags: tagList }
     }
 
     const query = {
       types: ['webNews'],
-      sort: [{ dateCreated: { order } }] as sortRule[],
+      sort: [
+        { dateCreated: { order } },
+        { releaseDate: { order } },
+      ] as sortRule[],
       ...dateQuery,
       ...tagQuery,
       page,
@@ -140,17 +158,24 @@ export class CmsElasticsearchService {
 
   async getNewsDates(
     index: string,
-    { order, tag }: GetNewsDatesInput,
+    { order, tags, organization }: GetNewsDatesInput,
   ): Promise<string[]> {
+    const tagList: { key: string; type: string }[] = []
+
     let tagQuery
-    if (tag) {
+    if (tags) {
+      for (const tag of tags) {
+        tagList.push({ key: tag, type: 'genericTag' })
+      }
+    }
+
+    if (organization) {
+      tagList.push({ key: organization, type: 'organization' })
+    }
+
+    if (tagList.length > 0) {
       tagQuery = {
-        tags: [
-          {
-            key: tag,
-            type: 'genericTag',
-          },
-        ],
+        tags: tagList,
       }
     }
 
@@ -235,6 +260,33 @@ export class CmsElasticsearchService {
     const menuResponse = await this.elasticService.findById(index, id)
     const response = menuResponse.body?._source?.response
     return response ? JSON.parse(response) : null
+  }
+
+  async getSingleVacancy(index: string, id: string) {
+    try {
+      const vacancyResponse = await this.elasticService.findById(index, id)
+      const response = vacancyResponse.body?._source?.response
+      return response ? JSON.parse(response) : null
+    } catch (error) {
+      if (error instanceof ResponseError) {
+        if (error?.statusCode === 404) return null
+      }
+      throw error
+    }
+  }
+
+  async getVacancies(index: string) {
+    const vacanciesResponse = await this.elasticService.getDocumentsByMetaData(
+      index,
+      {
+        types: ['webVacancy'],
+      },
+    )
+    return vacanciesResponse.hits.hits
+      .map<Vacancy>((response) =>
+        JSON.parse(response._source.response ?? 'null'),
+      )
+      .filter(Boolean)
   }
 
   async getPublishedMaterial(

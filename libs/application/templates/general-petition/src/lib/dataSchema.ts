@@ -1,30 +1,36 @@
 import { z } from 'zod'
 import { m } from './messages'
+import { parsePhoneNumberFromString } from 'libphonenumber-js'
 
 const FileSchema = z.object({
   name: z.string(),
   key: z.string(),
 })
 
+const isValidPhoneNumber = (phoneNumber: string) => {
+  const phone = parsePhoneNumberFromString(phoneNumber, 'IS')
+  return phone && phone.isValid()
+}
+
+const emailRegex = /^[\w!#$%&'*+/=?`{|}~^-]+(?:\.[\w!#$%&'*+/=?`{|}~^-]+)*@(?:[A-Z0-9-]+\.)+[A-Z]{2,6}$/i
+export const isValidEmail = (value: string) => emailRegex.test(value)
+
 export const GeneralPetitionSchema = z.object({
   approveTermsAndConditions: z
     .boolean()
-    .refine(
-      (v) => v,
-      m.validationMessages.approveTerms.defaultMessage as string,
-    ),
+    .refine((v) => v, m.validationApproveTerms.defaultMessage as string),
   documents: z.array(FileSchema).optional(),
   listName: z
     .string()
     .refine(
       (p) => p.trim().length > 0,
-      m.validationMessages.listName.defaultMessage as string,
+      m.validationListName.defaultMessage as string,
     ),
   aboutList: z
     .string()
     .refine(
       (p) => p.trim().length > 0,
-      m.validationMessages.aboutList.defaultMessage as string,
+      m.validationAboutList.defaultMessage as string,
     ),
   dates: z
     .object({
@@ -32,23 +38,25 @@ export const GeneralPetitionSchema = z.object({
         .string()
         .refine(
           (p) => p.trim().length > 0,
-          m.validationMessages.selectDate.defaultMessage as string,
+          m.validationSelectDate.defaultMessage as string,
         ),
       dateTil: z
         .string()
         .refine(
           (p) => p.trim().length > 0,
-          m.validationMessages.selectDate.defaultMessage as string,
+          m.validationSelectDate.defaultMessage as string,
         ),
     })
     .refine(
       ({ dateFrom, dateTil }) =>
         !dateFrom || !dateTil || new Date(dateFrom) <= new Date(dateTil),
       {
-        message: m.validationMessages.tilBeforeFrom.defaultMessage as string,
+        message: m.validationTilBeforeFrom.defaultMessage as string,
         path: ['dateTil'],
       },
     ),
+  phone: z.string().refine((v) => isValidPhoneNumber(v)),
+  email: z.string().refine((v) => isValidEmail(v)),
 })
 
 export type File = z.TypeOf<typeof FileSchema>

@@ -38,3 +38,11 @@ export type Property = {
   spaceNumber: string
   customerCount: string
 }
+
+export interface BankruptcyHistoryResult {
+  bankruptcyStatus?: string
+  caseNumber?: string
+  status?: string
+  outcomeDate?: string
+  organizationName?: string
+}

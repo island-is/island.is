@@ -38,8 +38,8 @@ export class FinancialStatementsInaoResolver {
   }
 
   @Query(() => [Election], { nullable: true })
-  async financialStatementsInaoElections() {
-    return this.financialStatementsService.getElections()
+  async financialStatementsInaoElections(@CurrentUser() user: User) {
+    return this.financialStatementsService.getElections(user.nationalId)
   }
 
   @Query(() => Number, { nullable: true })

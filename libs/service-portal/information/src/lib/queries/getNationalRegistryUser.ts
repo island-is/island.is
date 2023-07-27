@@ -10,6 +10,9 @@ export const NATIONAL_REGISTRY_USER = gql`
       birthPlace
       familyNr
       fullName
+      firstName
+      middleName
+      lastName
       banMarking {
         banMarked
       }

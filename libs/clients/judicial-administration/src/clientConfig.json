@@ -1,0 +1,1131 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "description": "Provides access to Justice Portal rest service",
+    "version": "1.0.0",
+    "title": "GoPro.JusticePortal.Rest",
+    "termsOfService": "",
+    "contact": {
+      "name": "Gopro Support",
+      "url": "https://gopro.net/support/",
+      "email": "support@gopro.net"
+    },
+    "x-pricing": ["paid"],
+    "x-category": ["personal", "official", "financial"],
+    "x-links": {
+      "responsibleParty": "https://domstolasyslan.is/",
+      "bugReport": "https://gopro.net/support/",
+      "featureRequest": "https://gopro.net/support/"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://foris.gopro.net/hdrel/justiceportal"
+    }
+  ],
+  "paths": {
+    "/Authenticate": {
+      "get": {
+        "tags": ["Authenticate"],
+        "summary": "Deprecated method, use AuthenticateUser instead. Authenticate with username and password. Returns authenticationToken that is used when calling other API methods.",
+        "operationId": "Authenticate",
+        "parameters": [
+          {
+            "name": "username",
+            "in": "query",
+            "description": "The username",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "password",
+            "in": "query",
+            "description": "The password",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "deprecated": true
+      }
+    },
+    "/AuthenticateUser": {
+      "post": {
+        "tags": ["Authenticate"],
+        "summary": "Authenticate with username and password. Returns authenticationToken that is used when calling other API methods.",
+        "operationId": "AuthenticateUser",
+        "requestBody": {
+          "description": "Object containing username and password",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CredentialsData"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CredentialsData"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CredentialsData"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "x-codegen-request-body-name": "credentials"
+      }
+    },
+    "/CreateCase": {
+      "post": {
+        "tags": ["CreateCase"],
+        "summary": "Creates case and returns the case number.",
+        "operationId": "CreateCase",
+        "requestBody": {
+          "description": "Data needed for the creation of the case.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCaseData"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCaseData"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "x-codegen-request-body-name": "createCaseData"
+      }
+    },
+    "/CreateCustodyCase": {
+      "post": {
+        "tags": ["CreateCustodyCase"],
+        "summary": "Creates Custody case and returns the case number.",
+        "operationId": "CreateCustodyCase",
+        "parameters": [
+          {
+            "name": "basedOn",
+            "in": "query",
+            "description": "Possible values: 'Almannahagsmunir', 'Annað', 'Rannsóknarhagsmunir', 'Síbrotagæsla'",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sourceNumber",
+            "in": "query",
+            "description": "The source number",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "authenticationToken",
+            "in": "query",
+            "description": "Authentication token. Returned by AuthenticateUser",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/CreateDocument": {
+      "post": {
+        "tags": ["CreateDocument"],
+        "summary": "Creates document and returns document identificator (Guid)",
+        "operationId": "CreateDocument",
+        "requestBody": {
+          "description": "Data needed for the creation of the document",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateDocumentData"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateDocumentData"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid",
+                  "example": "00000000-0000-0000-0000-000000000000"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid",
+                  "example": "00000000-0000-0000-0000-000000000000"
+                }
+              }
+            }
+          }
+        },
+        "x-codegen-request-body-name": "createDocumentData"
+      }
+    },
+    "/CreateEmail": {
+      "post": {
+        "tags": ["CreateEmail"],
+        "summary": "Creates Email and returns email identificator (Guid). This method is saving the email (not sending it) - email is already sent with another system and is put in GoPro for archiving purposes",
+        "operationId": "CreateEmail",
+        "requestBody": {
+          "description": "Data needed for the creation of the email",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateEmailData"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateEmailData"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Returns the email identifier of the newly created email",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid",
+                  "example": "00000000-0000-0000-0000-000000000000"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid",
+                  "example": "00000000-0000-0000-0000-000000000000"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "If the method is called wtih wrong parameters (e.g. wrong/expired authentication token). In the responce body you will see the message with the exact error.",
+            "content": {}
+          }
+        },
+        "x-codegen-request-body-name": "createEmailData"
+      }
+    },
+    "/CreateThingbok": {
+      "post": {
+        "tags": ["CreateThingbok"],
+        "summary": "Creates Thingbok and returns document identificator (Guid)",
+        "operationId": "CreateThingbok",
+        "parameters": [
+          {
+            "name": "caseNumber",
+            "in": "query",
+            "description": "The case number.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "subject",
+            "in": "query",
+            "description": "The document subject.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "fileName",
+            "in": "query",
+            "description": "Name of the file.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "streamID",
+            "in": "query",
+            "description": "The container identifier. Returned by UploadStream",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "authenticationToken",
+            "in": "query",
+            "description": "Authentication token. Returned by AuthenticateUser",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid",
+                  "example": "00000000-0000-0000-0000-000000000000"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid",
+                  "example": "00000000-0000-0000-0000-000000000000"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/GetCaseSubtypes": {
+      "post": {
+        "tags": ["GetCaseSubtypes"],
+        "summary": "Returns the subtypes for given case type.",
+        "operationId": "GetCaseSubtypes",
+        "parameters": [
+          {
+            "name": "authenticationToken",
+            "in": "query",
+            "description": "Authentication token. Returned by AuthenticateUser",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "caseType",
+            "in": "query",
+            "description": "Possible values: 'A - Aðfarabeiðnir', 'Æ - Aðfinnslur við skiptastjóra', 'B - Bráðabirgðaforsjá og farbann', 'C - Beiðni um fjárhagslega endurskipulagningu', 'D - Opinber skipti', 'E - Einkamál', 'F - Beiðni um flýtimeðferð', 'G - Gjaldþrotaskipti', 'H - Horfnir menn', 'I - Beiðni um endurupptöku', 'J - Greiðslustöðvunarbeiðnir', 'K - Ágreiningsmál v/kyrrsetningar og lögbanns', 'L - Lögræðismál', 'M - Matsmál', 'N - Nauðasamningar', 'N - Nauðasamningsumleitanir', 'Ö - Annað', 'P - Sjópróf', 'Q - Ágreiningsmál v/ opinberra skipta', 'R - Rannsóknarmál', 'R - Rannsóknarmál önnur aðild', 'S - Ákærumál', 'S - Sektarboð', 'T - Ágreiningsmál v/þinglýsingar', 'U - Barnaverndarmál', 'V - Vitnamál', 'X - Ágreiningsmál v/gjaldþrotaskipta', 'Y - Ágreiningsmál v/aðfarargerða', 'Z - Ágreiningsmál v/nauðungarsölu'",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/LookupDataGDNJCases": {
+      "post": {
+        "tags": ["LookupDataGDNJCases"],
+        "summary": "When there are no matches returns empty array, otherwise array with matching results. If caseNumber is not specified, caseType must be specified. Returns max one year of results. Lookup allows for one case type at a time.",
+        "operationId": "LookupDataGDNJCases",
+        "requestBody": {
+          "description": "lookup parameters",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LookupGDNJCasesData"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LookupGDNJCasesData"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/LookupGDNJCasesResult"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/LookupGDNJCasesResult"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-codegen-request-body-name": "lookupParameters"
+      }
+    },
+    "/openapi3/docs/v1": {
+      "get": {
+        "tags": ["OpenApi"],
+        "summary": "Returns the JSON for OpenApi 3.",
+        "operationId": "OpenApi_GetOpenApi3Json",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/UpdateCaseWithProsecutor": {
+      "post": {
+        "tags": ["Participants"],
+        "summary": "Updates R and S cases prosecutor.",
+        "operationId": "UpdateCaseWithProsecutor",
+        "requestBody": {
+          "description": "Data needed for the creation of the case.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateCaseWithProsecutorData"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateCaseWithProsecutorData"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "x-codegen-request-body-name": "updateCaseData"
+      }
+    },
+    "/UpdateCaseWithPlaintiff": {
+      "post": {
+        "tags": ["Participants"],
+        "summary": "Updates cases with plaintiffs.",
+        "operationId": "UpdateCaseWithPlaintiff",
+        "requestBody": {
+          "description": "Data needed for the creation of the case.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateCaseWithPlaintiffData"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateCaseWithPlaintiffData"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "x-codegen-request-body-name": "updateCaseData"
+      }
+    },
+    "/UpdateCaseWithDefendant": {
+      "post": {
+        "tags": ["Participants"],
+        "summary": "Updates cases with defendants.",
+        "operationId": "UpdateCaseWithDefendant",
+        "requestBody": {
+          "description": "Data needed for the creation of the case.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateCaseWithDefendantData"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateCaseWithDefendantData"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "x-codegen-request-body-name": "updateCaseData"
+      }
+    },
+    "/SearchBankruptcyHistory": {
+      "post": {
+        "tags": ["SearchBankruptcyHistory"],
+        "summary": "bankruptcyStatus meaning: 1. Með forræði og enga sögu; 2. Með forræði og með sögu; 3. Ekki með forræði og með sögu; 0. Ekki með forræði og enga sögu. Note: bankruptcyStatus is the same for all elements in the returned collection, so you can make global conclusion by checking only the first one.",
+        "operationId": "SearchBankruptcyHistory",
+        "parameters": [
+          {
+            "name": "authenticationToken",
+            "in": "query",
+            "description": "Authentication token. Returned by AuthenticateUser",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "idNumber",
+            "in": "query",
+            "description": "Defendant SSN/Kennitala - 10 digit number",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/BankruptcyHistoryResult"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/BankruptcyHistoryResult"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/UploadStream": {
+      "post": {
+        "tags": ["UploadStream"],
+        "summary": "Uploads file stream and returns container identifier",
+        "operationId": "UploadStream",
+        "parameters": [
+          {
+            "name": "authenticationToken",
+            "in": "query",
+            "description": "Authentication token. Returned by AuthenticateUser",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/FileStream"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "FileStream": {
+        "required": ["File"],
+        "properties": {
+          "File": {
+            "type": "string",
+            "description": "Upload file",
+            "format": "binary"
+          }
+        }
+      },
+      "CredentialsData": {
+        "required": ["password", "userName"],
+        "type": "object",
+        "properties": {
+          "userName": {
+            "type": "string",
+            "description": "Name of the user."
+          },
+          "password": {
+            "type": "string",
+            "description": "Password of the user."
+          }
+        }
+      },
+      "CreateCaseData": {
+        "required": ["authenticationToken", "caseType", "receivalDate"],
+        "type": "object",
+        "properties": {
+          "authenticationToken": {
+            "type": "string",
+            "description": "Authentication token. Returned by AuthenticateUser"
+          },
+          "caseType": {
+            "type": "string",
+            "description": "Possible values: 'A - Aðfarabeiðnir', 'Æ - Aðfinnslur við skiptastjóra', 'B - Bráðabirgðaforsjá og farbann', 'C - Beiðni um fjárhagslega endurskipulagningu', 'D - Opinber skipti', 'E - Einkamál', 'F - Beiðni um flýtimeðferð', 'G - Gjaldþrotaskipti', 'H - Horfnir menn', 'I - Beiðni um endurupptöku', 'J - Greiðslustöðvunarbeiðnir', 'K - Ágreiningsmál v/kyrrsetningar og lögbanns', 'L - Lögræðismál', 'M - Matsmál', 'N - Nauðasamningar', 'N - Nauðasamningsumleitanir', 'Ö - Annað', 'P - Sjópróf', 'Q - Ágreiningsmál v/ opinberra skipta', 'R - Rannsóknarmál', 'R - Rannsóknarmál önnur aðild', 'S - Ákærumál', 'S - Sektarboð', 'T - Ágreiningsmál v/þinglýsingar', 'U - Barnaverndarmál', 'V - Vitnamál', 'X - Ágreiningsmál v/gjaldþrotaskipta', 'Y - Ágreiningsmál v/aðfarargerða', 'Z - Ágreiningsmál v/nauðungarsölu'"
+          },
+          "status": {
+            "type": "string",
+            "description": "All of the case types have the value 'Skráð' in the status list. E.g. possible values for case type 'D - Opinber skipti' are: 'Ágreiningur (Q mál)', 'Í fresti', 'Skráð', 'Tekið til úrskurðar'; possible values for case type 'H - Horfnir menn' are only these two: 'Í fresti', 'Skráð'"
+          },
+          "receivalDate": {
+            "type": "string",
+            "description": "Receival date"
+          },
+          "subtype": {
+            "type": "string",
+            "description": "Sub type. If you don't know what value to provide here - use GetCaseSubtypes method to see possible values"
+          },
+          "basedOn": {
+            "type": "string",
+            "description": "Only for 'R - Rannsóknarmál' and 'R - Rannsóknarmál önnur aðild' case types. Possible values: 'Almannahagsmunir', 'Annað', 'Rannsóknarhagsmunir', 'Síbrotagæsla'"
+          },
+          "sourceNumber": {
+            "type": "string",
+            "description": "The source number"
+          },
+          "defaultOrVerbal": {
+            "type": "string",
+            "description": "Only for 'E - Einkamál' case type. Possible values: 'Munnlegt' and 'Útivist'"
+          }
+        }
+      },
+      "CreateDocumentData": {
+        "required": [
+          "authenticationToken",
+          "caseFolder",
+          "caseNumber",
+          "fileName",
+          "streamID",
+          "subject"
+        ],
+        "type": "object",
+        "properties": {
+          "authenticationToken": {
+            "type": "string",
+            "description": "Authentication token. Returned by AuthenticateUser"
+          },
+          "caseNumber": {
+            "type": "string",
+            "description": "The case number"
+          },
+          "subject": {
+            "type": "string",
+            "description": "The document subject"
+          },
+          "fileName": {
+            "type": "string",
+            "description": "Name of the file"
+          },
+          "streamID": {
+            "type": "string",
+            "description": "The container identifier. Returned by UploadStream"
+          },
+          "caseFolder": {
+            "type": "string",
+            "description": "Folder name. If not exist it will be created."
+          }
+        }
+      },
+      "CreateEmailData": {
+        "required": [
+          "authenticationToken",
+          "body",
+          "caseNumber",
+          "fromEmail",
+          "recipients",
+          "subject"
+        ],
+        "type": "object",
+        "properties": {
+          "authenticationToken": {
+            "type": "string",
+            "description": "Authentication token. Returned by AuthenticateUser"
+          },
+          "caseNumber": {
+            "type": "string",
+            "description": "The case number"
+          },
+          "subject": {
+            "type": "string",
+            "description": "The subject"
+          },
+          "body": {
+            "type": "string",
+            "description": "HTML encoded email body"
+          },
+          "recipients": {
+            "type": "string",
+            "description": "Comma separated list of the recipients"
+          },
+          "fromEmail": {
+            "type": "string",
+            "description": "Email of the sender."
+          },
+          "fromName": {
+            "type": "string",
+            "description": "Name of the sender."
+          },
+          "folderName": {
+            "type": "string",
+            "description": "Folder name. If not exist it will be created. If empty then the email will be saved under Tölvupóstar folder."
+          }
+        }
+      },
+      "LookupGDNJCasesData": {
+        "required": ["authenticationToken", "dateFrom"],
+        "type": "object",
+        "properties": {
+          "authenticationToken": {
+            "type": "string",
+            "description": "Authentication token. Returned by AuthenticateUser"
+          },
+          "dateFrom": {
+            "type": "string",
+            "description": "DateFrom is a lower bound for Modified Date of cases in the result set. If case is NOT modified after its creation then Modified Date is equal to Creation Date"
+          },
+          "dateTo": {
+            "type": "string",
+            "description": "DateTo is an upper bound for Modified Date of cases in the result set. If empty, then will be \"today\""
+          },
+          "caseType": {
+            "type": "string",
+            "description": "Possible values: 'D - Opinber skipti', 'G - Gjaldþrotaskipti', 'J - Greiðslustöðvunarbeiðnir', 'N - Nauðasamningar'"
+          },
+          "caseNumber": {
+            "type": "string",
+            "description": "User can send one casenumber and get the results for only that case. If empty then CaseType will be used."
+          }
+        }
+      },
+      "LookupGDNJCasesResult": {
+        "type": "object",
+        "properties": {
+          "caseNumber": {
+            "type": "string"
+          },
+          "caseType": {
+            "type": "string"
+          },
+          "court": {
+            "type": "string"
+          },
+          "subject": {
+            "type": "string"
+          },
+          "plaintiff": {
+            "type": "array",
+            "description": "Sóknaraðili (t.d. Skiptabeiðandi)",
+            "items": {
+              "$ref": "#/components/schemas/BasePerson"
+            }
+          },
+          "defendant": {
+            "type": "array",
+            "description": "Varnaraðili (t.d. Skuldari)",
+            "items": {
+              "$ref": "#/components/schemas/BasePerson"
+            }
+          },
+          "liquidators": {
+            "type": "array",
+            "description": "Skiptastjórar",
+            "items": {
+              "$ref": "#/components/schemas/BasePerson"
+            }
+          },
+          "receivalDate": {
+            "type": "string",
+            "description": "Móttökudagur"
+          },
+          "adjudicationDate": {
+            "type": "string",
+            "description": "Tekið til úrskurðar"
+          },
+          "finalizationDate": {
+            "type": "string",
+            "description": "Skiptalok dags"
+          },
+          "reconsiderationDate": {
+            "type": "string",
+            "description": "Endurupptaka skipta"
+          },
+          "outcome": {
+            "type": "array",
+            "description": "Lyktir",
+            "items": {
+              "$ref": "#/components/schemas/BaseOutcome"
+            }
+          },
+          "outcomeHistory": {
+            "type": "array",
+            "description": "Fyrri lyktir (eingöngu ef mál var endurupptekið)",
+            "items": {
+              "$ref": "#/components/schemas/BaseOutcome"
+            }
+          },
+          "created": {
+            "type": "string"
+          },
+          "updated": {
+            "type": "string"
+          },
+          "resultDate": {
+            "type": "string"
+          }
+        }
+      },
+      "BasePerson": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "idNumber": {
+            "type": "string"
+          }
+        }
+      },
+      "BaseOutcome": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "outcome": {
+            "type": "string"
+          },
+          "date": {
+            "type": "string"
+          }
+        }
+      },
+      "UpdateCaseWithProsecutorData": {
+        "required": [
+          "authenticationToken",
+          "caseId",
+          "prosecutor",
+          "userIdNumber"
+        ],
+        "type": "object",
+        "properties": {
+          "authenticationToken": {
+            "type": "string",
+            "description": "Authentication token. Returned by AuthenticateUser"
+          },
+          "userIdNumber": {
+            "type": "string",
+            "description": "System User idNumber"
+          },
+          "caseId": {
+            "type": "string",
+            "description": "CaseID or Number"
+          },
+          "prosecutor": {
+            "$ref": "#/components/schemas/Prosecutor"
+          }
+        }
+      },
+      "Prosecutor": {
+        "required": ["companyIdNumber", "prosecutorIdNumber"],
+        "type": "object",
+        "properties": {
+          "companyIdNumber": {
+            "type": "string",
+            "description": "Prosecutor Company IdNumber"
+          },
+          "prosecutorIdNumber": {
+            "type": "string",
+            "description": "Prosecutor IdNumber"
+          }
+        }
+      },
+      "UpdateCaseWithPlaintiffData": {
+        "required": [
+          "authenticationToken",
+          "caseId",
+          "plaintiff",
+          "userIdNumber"
+        ],
+        "type": "object",
+        "properties": {
+          "authenticationToken": {
+            "type": "string",
+            "description": "Authentication token. Returned by AuthenticateUser"
+          },
+          "userIdNumber": {
+            "type": "string",
+            "description": "System User idNumber"
+          },
+          "caseId": {
+            "type": "string",
+            "description": "CaseID or Number"
+          },
+          "plaintiff": {
+            "$ref": "#/components/schemas/Plaintiff"
+          }
+        }
+      },
+      "Plaintiff": {
+        "required": ["idNumber"],
+        "type": "object",
+        "properties": {
+          "idNumber": {
+            "type": "string",
+            "description": "Plaintiff IdNumber"
+          },
+          "lawyerEmail": {
+            "type": "string",
+            "description": "Plaintiff lawyer Email"
+          }
+        }
+      },
+      "UpdateCaseWithDefendantData": {
+        "required": [
+          "authenticationToken",
+          "caseId",
+          "defendant",
+          "userIdNumber"
+        ],
+        "type": "object",
+        "properties": {
+          "authenticationToken": {
+            "type": "string",
+            "description": "Authentication token. Returned by AuthenticateUser"
+          },
+          "userIdNumber": {
+            "type": "string",
+            "description": "System User idNumber"
+          },
+          "caseId": {
+            "type": "string",
+            "description": "CaseID or Number"
+          },
+          "defendant": {
+            "$ref": "#/components/schemas/Defendant"
+          }
+        }
+      },
+      "Defendant": {
+        "required": ["idNumber"],
+        "type": "object",
+        "properties": {
+          "idNumber": {
+            "type": "string",
+            "description": "Defendant IdNumber"
+          },
+          "lawyerEmail": {
+            "type": "string",
+            "description": "Defendant lawyer Email"
+          }
+        }
+      },
+      "BankruptcyHistoryResult": {
+        "type": "object",
+        "properties": {
+          "bankruptcyStatus": {
+            "type": "string"
+          },
+          "caseNumber": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "outcomeDate": {
+            "type": "string"
+          },
+          "organizationName": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

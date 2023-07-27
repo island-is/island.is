@@ -5,6 +5,7 @@ import getYear from 'date-fns/getYear'
 import { BOARDMEMEBER, CARETAKER, TOTAL } from '../constants'
 import { BoardMember, FSIUSERTYPE } from '../../types'
 import { Config } from './types'
+import { FinancialStatementsInao } from './dataSchema'
 
 export const getTotal = (values: Record<string, string>, key: string) => {
   if (!values[key]) {
@@ -78,4 +79,27 @@ export const getBoardmembersAndCaretakers = (members: BoardMember[]) => {
     .map((member) => member.nationalId)
 
   return { careTakers, boardMembers }
+}
+
+export const isCemetryUnderFinancialLimit = (
+  answers: FormValue,
+  externalData: ExternalData,
+) => {
+  const userType = getCurrentUserType(answers, externalData)
+  const applicationAnswers = answers as FinancialStatementsInao
+  const careTakerLimit = applicationAnswers.cemetryOperation?.incomeLimit ?? '0'
+  const fixedAssetsTotal = applicationAnswers.cemetryAsset?.fixedAssetsTotal
+  const isCemetry = userType === FSIUSERTYPE.CEMETRY
+  const totalIncome = isCemetry ? applicationAnswers.cemetryIncome?.total : '0'
+  const longTermDebt = applicationAnswers.cemetryLiability?.longTerm
+  const isUnderLimit = currencyStringToNumber(totalIncome) < careTakerLimit
+  if (
+    isCemetry &&
+    isUnderLimit &&
+    fixedAssetsTotal === '0' &&
+    longTermDebt === '0'
+  ) {
+    return true
+  }
+  return false
 }

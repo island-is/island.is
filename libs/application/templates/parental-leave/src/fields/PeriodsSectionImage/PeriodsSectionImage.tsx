@@ -88,8 +88,8 @@ const PeriodsSectionImage: FC<PeriodsSectionImageProp> = ({
       justifyContent={justifyContent || 'flexEnd'}
       alignItems={alignItems || 'flexEnd'}
       height={height || 'full'}
-      marginRight={marginRight || 8}
-      marginTop={marginTop || 8}
+      marginRight={marginRight || 0}
+      marginTop={marginTop || 0}
     >
       <BackgroundImage>
         {children || <ManWithStrollerIllustration />}

@@ -32,6 +32,10 @@ Code and assets from [island.is](https://github.com/island-is/island.is) are pac
 
 When the CI process finishes successfully and has published assets, we trigger the Delivery pipeline to the Dev environment.
 
+## Merge queues
+
+[Kodiaq](https://app.kodiakhq.com) (our merge bot) applies first-come-first-served policy to all PRs. To merge code to `main`, developers add the `automerge` label to their PRs and Kodiaq will take care of the rest. Developers do not have privileges to merge/push manually to the main branch to prevent accidents from happening and maintain fairness, since merging manually to main would bypass the Kodiak merge queue.
+
 ## Configuration
 
 Our deployment platform is Kubernetes and our applications' deployment and configuration is specified using [Helm](https://helm.sh). Additionally, we have the configuration for our infrastructure in AWS specified using [Terraform](https://www.terraform.io). These two configuration sources are hosted in two separate git repositories with restricted access.

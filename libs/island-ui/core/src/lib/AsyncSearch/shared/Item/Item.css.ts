@@ -24,6 +24,10 @@ export const item = style({
   outline: 0,
 })
 
+export const disabled = style({
+  opacity: 0.5,
+})
+
 export const customItem = style({
   position: 'relative',
 })

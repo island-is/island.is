@@ -56,6 +56,13 @@ jobs:
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v3
+        if: ${{ github.event_name == 'pull_request' }}
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+
+      - uses: actions/checkout@v3
+        if: ${{ github.ref == 'ref/heads/main' }}
+
       - uses: actions/setup-node@v3
         with:
           node-version: '18'
@@ -83,7 +90,14 @@ jobs:
         run: ./infra/scripts/ci/test-unit.sh
 
       - name: Check chart values are up-to-date
+        if: ${{ github.ref == 'ref/heads/main' }}
         run: ./infra/scripts/ci/diff-chart-values-all-charts.sh
+
+      - name: Commit any changes to charts
+        if: ${{ github.event_name == 'pull_request' }}
+        run: |
+          ./infra/scripts/generate-chart-values.sh
+          ./infra/scripts/ci/git-check-dirty.sh "charts/" "charts"
 
   check-secrets:
     needs:

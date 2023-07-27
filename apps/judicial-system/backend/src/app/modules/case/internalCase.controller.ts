@@ -19,7 +19,6 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { CaseEvent, EventService } from '../event'
-import { User, CurrentUser, UserExistsGuard } from '../user'
 import { CaseExistsGuard } from './guards/caseExists.guard'
 import { CaseCompletedGuard } from './guards/caseCompleted.guard'
 import { CaseTypeGuard } from './guards/caseType.guard'
@@ -64,7 +63,7 @@ export class InternalCaseController {
     return this.internalCaseService.archive()
   }
 
-  @UseGuards(CaseExistsGuard, UserExistsGuard)
+  @UseGuards(CaseExistsGuard)
   @Post('case/:caseId/deliverProsecutorToCourt')
   @ApiOkResponse({
     type: DeliverResponse,
@@ -72,20 +71,18 @@ export class InternalCaseController {
   })
   deliverProsecutorToCourt(
     @Param('caseId') caseId: string,
-    @CurrentUser() user: User,
     @CurrentCase() theCase: Case,
-    @Body() _: DeliverDto,
+    @Body() deliverDto: DeliverDto,
   ): Promise<DeliverResponse> {
     this.logger.debug(`Delivering the prosecutor for case ${caseId} to court`)
 
-    return this.internalCaseService.deliverProsecutorToCourt(theCase, user)
+    return this.internalCaseService.deliverProsecutorToCourt(
+      theCase,
+      deliverDto.user,
+    )
   }
 
-  @UseGuards(
-    CaseExistsGuard,
-    new CaseTypeGuard(indictmentCases),
-    UserExistsGuard,
-  )
+  @UseGuards(CaseExistsGuard, new CaseTypeGuard(indictmentCases))
   @Post('case/:caseId/deliverCaseFilesRecordToCourt/:policeCaseNumber')
   @ApiOkResponse({
     type: DeliverResponse,
@@ -94,9 +91,8 @@ export class InternalCaseController {
   async deliverCaseFilesRecordToCourt(
     @Param('caseId') caseId: string,
     @Param('policeCaseNumber') policeCaseNumber: string,
-    @CurrentUser() user: User,
     @CurrentCase() theCase: Case,
-    @Body() _: DeliverDto,
+    @Body() deliverDto: DeliverDto,
   ): Promise<DeliverResponse> {
     this.logger.debug(
       `Delivering the case files record for case ${caseId} and police case ${policeCaseNumber} to court`,
@@ -111,14 +107,40 @@ export class InternalCaseController {
     return this.internalCaseService.deliverCaseFilesRecordToCourt(
       theCase,
       policeCaseNumber,
-      user,
+      deliverDto.user,
+    )
+  }
+
+  @UseGuards(CaseExistsGuard, new CaseTypeGuard(indictmentCases))
+  @Post('case/:caseId/archiveCaseFilesRecord/:policeCaseNumber')
+  @ApiOkResponse({
+    type: DeliverResponse,
+    description: 'Archives a case files record',
+  })
+  async archiveCaseFilesRecord(
+    @Param('caseId') caseId: string,
+    @Param('policeCaseNumber') policeCaseNumber: string,
+    @CurrentCase() theCase: Case,
+  ): Promise<DeliverResponse> {
+    this.logger.debug(
+      `Archiving the case files record for case ${caseId} and police case ${policeCaseNumber}`,
+    )
+
+    if (!theCase.policeCaseNumbers.includes(policeCaseNumber)) {
+      throw new BadRequestException(
+        `Case ${caseId} does not include police case number ${policeCaseNumber}`,
+      )
+    }
+
+    return this.internalCaseService.archiveCaseFilesRecord(
+      theCase,
+      policeCaseNumber,
     )
   }
 
   @UseGuards(
     CaseExistsGuard,
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
-    UserExistsGuard,
   )
   @Post('case/:caseId/deliverRequestToCourt')
   @ApiOkResponse({
@@ -127,20 +149,21 @@ export class InternalCaseController {
   })
   deliverRequestToCourt(
     @Param('caseId') caseId: string,
-    @CurrentUser() user: User,
     @CurrentCase() theCase: Case,
-    @Body() _: DeliverDto,
+    @Body() deliverDto: DeliverDto,
   ): Promise<DeliverResponse> {
     this.logger.debug(`Delivering the request for case ${caseId} to court`)
 
-    return this.internalCaseService.deliverRequestToCourt(theCase, user)
+    return this.internalCaseService.deliverRequestToCourt(
+      theCase,
+      deliverDto.user,
+    )
   }
 
   @UseGuards(
     CaseExistsGuard,
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
     CaseCompletedGuard,
-    UserExistsGuard,
   )
   @Post('case/:caseId/deliverCourtRecordToCourt')
   @ApiOkResponse({
@@ -149,20 +172,21 @@ export class InternalCaseController {
   })
   deliverCourtRecordToCourt(
     @Param('caseId') caseId: string,
-    @CurrentUser() user: User,
     @CurrentCase() theCase: Case,
-    @Body() _: DeliverDto,
+    @Body() deliverDto: DeliverDto,
   ): Promise<DeliverResponse> {
     this.logger.debug(`Delivering the court record for case ${caseId} to court`)
 
-    return this.internalCaseService.deliverCourtRecordToCourt(theCase, user)
+    return this.internalCaseService.deliverCourtRecordToCourt(
+      theCase,
+      deliverDto.user,
+    )
   }
 
   @UseGuards(
     CaseExistsGuard,
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
     CaseCompletedGuard,
-    UserExistsGuard,
   )
   @Post('case/:caseId/deliverSignedRulingToCourt')
   @ApiOkResponse({
@@ -171,20 +195,21 @@ export class InternalCaseController {
   })
   deliverSignedRulingToCourt(
     @Param('caseId') caseId: string,
-    @CurrentUser() user: User,
     @CurrentCase() theCase: Case,
-    @Body() _: DeliverDto,
+    @Body() deliverDto: DeliverDto,
   ): Promise<DeliverResponse> {
     this.logger.debug(`Delivering the court record for case ${caseId} to court`)
 
-    return this.internalCaseService.deliverSignedRulingToCourt(theCase, user)
+    return this.internalCaseService.deliverSignedRulingToCourt(
+      theCase,
+      deliverDto.user,
+    )
   }
 
   @UseGuards(
     CaseExistsGuard,
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
     CaseCompletedGuard,
-    UserExistsGuard,
   )
   @Post('case/:caseId/deliverCaseToPolice')
   @ApiOkResponse({
@@ -193,12 +218,14 @@ export class InternalCaseController {
   })
   deliverCaseToPolice(
     @Param('caseId') caseId: string,
-    @CurrentUser() user: User,
     @CurrentCase() theCase: Case,
-    @Body() _: DeliverDto,
+    @Body() deliverDto: DeliverDto,
   ): Promise<DeliverResponse> {
     this.logger.debug(`Delivering case ${caseId} to police`)
 
-    return this.internalCaseService.deliverCaseToPolice(theCase, user)
+    return this.internalCaseService.deliverCaseToPolice(
+      theCase,
+      deliverDto.user,
+    )
   }
 }

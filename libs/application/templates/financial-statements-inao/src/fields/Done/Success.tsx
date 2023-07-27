@@ -9,7 +9,10 @@ import { useLocale } from '@island.is/localization'
 import { CustomField, FieldBaseProps } from '@island.is/application/types'
 import format from 'date-fns/format'
 import { m } from '../../lib/messages'
-import { getCurrentUserType } from '../../lib/utils/helpers'
+import {
+  getCurrentUserType,
+  isCemetryUnderFinancialLimit,
+} from '../../lib/utils/helpers'
 import { FinancialStatementsInao } from '../../lib/utils/dataSchema'
 import { FSIUSERTYPE } from '../../types'
 
@@ -38,6 +41,21 @@ export const Success = ({ application }: PropTypes): JSX.Element => {
     }
   }
 
+  const shouldShowDigitalSigningMessage = () => {
+    if (
+      userType === FSIUSERTYPE.INDIVIDUAL &&
+      applicationAnswers.election.incomeLimit === 'less'
+    ) {
+      return true
+    }
+
+    if (userType === FSIUSERTYPE.CEMETRY) {
+      return isCemetryUnderFinancialLimit(answers, externalData)
+    }
+
+    return false
+  }
+
   return (
     <Box paddingTop={2}>
       <Box marginTop={2} marginBottom={5}>
@@ -48,6 +66,17 @@ export const Success = ({ application }: PropTypes): JSX.Element => {
             message={getDescriptionText()}
           />
         </ContentBlock>
+        {shouldShowDigitalSigningMessage() && (
+          <Box paddingTop={2}>
+            <AlertMessage
+              type="info"
+              title={formatMessage(m.digitalSignatureTitle)}
+              message={formatMessage(m.digitalSignatureMessage, {
+                email: applicationAnswers.about.email,
+              })}
+            />
+          </Box>
+        )}
         <Box paddingTop={2}>
           <ActionCard
             heading=""

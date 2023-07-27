@@ -17,6 +17,7 @@ import { GET_ORGANIZATION_SERVICES_QUERY } from '@island.is/web/screens/queries'
 import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import { useRouter } from 'next/router'
 import { useDebounce } from 'react-use'
+import { trackSearchQuery } from '@island.is/plausible'
 
 interface AsyncSearchOptionWithIsArticleField extends AsyncSearchOption {
   isArticle: boolean
@@ -88,6 +89,7 @@ export const SearchBox = ({
           role="button"
           background={active ? 'blue100' : 'white'}
           onClick={() => {
+            trackSearchQuery(value, 'Organization Sidebar Suggestion')
             setOptions([])
           }}
         >

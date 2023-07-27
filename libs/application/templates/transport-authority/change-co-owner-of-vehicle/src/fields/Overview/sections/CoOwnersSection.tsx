@@ -6,7 +6,7 @@ import { useLocale } from '@island.is/localization'
 import { overview, review } from '../../../lib/messages'
 import {
   OwnerCoOwnersInformation,
-  UserInformation,
+  CoOwnersInformation,
   ReviewScreenProps,
 } from '../../../shared'
 import { getValueViaPath } from '@island.is/application/core'
@@ -30,7 +30,7 @@ export const CoOwnersSection: FC<FieldBaseProps & ReviewScreenProps> = ({
     application.answers,
     'coOwners',
     [],
-  ) as UserInformation[]
+  ) as CoOwnersInformation[]
 
   const allCoOwners = [
     ...ownerCoOwners.map((coOwner) => {
@@ -60,7 +60,7 @@ export const CoOwnersSection: FC<FieldBaseProps & ReviewScreenProps> = ({
       <GridRow>
         {allCoOwners?.map(
           ({ name, nationalId, email, phone, wasRemoved }, index: number) => {
-            if (name.length === 0) return null
+            if (!name || name.length === 0) return null
             const isCoOwner = nationalId === reviewerNationalId
             return (
               <GridColumn
@@ -77,9 +77,9 @@ export const CoOwnersSection: FC<FieldBaseProps & ReviewScreenProps> = ({
                     {isCoOwner && `(${formatMessage(review.status.youLabel)})`}
                   </Text>
                   <Text>{name}</Text>
-                  <Text>{kennitala.format(nationalId, '-')}</Text>
+                  <Text>{kennitala.format(nationalId!, '-')}</Text>
                   <Text>{email}</Text>
-                  <Text>{formatPhoneNumber(phone)}</Text>
+                  <Text>{formatPhoneNumber(phone!)}</Text>
                 </Box>
               </GridColumn>
             )

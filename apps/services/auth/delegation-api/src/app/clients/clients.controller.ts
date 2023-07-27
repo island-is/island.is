@@ -1,13 +1,7 @@
-import {
-  Controller,
-  Get,
-  ParseArrayPipe,
-  Query,
-  UseGuards,
-} from '@nestjs/common'
+import { Controller, Get, Query, UseGuards } from '@nestjs/common'
 import { ApiSecurity, ApiTags } from '@nestjs/swagger'
 
-import { ClientsService, ResourcesService } from '@island.is/auth-api-lib'
+import { ClientsService } from '@island.is/auth-api-lib'
 import { IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
 import { AuthScope } from '@island.is/auth/scopes'
 import { Audit } from '@island.is/nest/audit'
@@ -25,10 +19,7 @@ import { ClientDto } from './client.dto'
 })
 @Audit({ namespace: '@island.is/auth/delegation-api/clients' })
 export class ClientsController {
-  constructor(
-    private readonly clientsService: ClientsService,
-    private readonly resourcesService: ResourcesService,
-  ) {}
+  constructor(private readonly clientsService: ClientsService) {}
 
   @Get()
   @Documentation({
@@ -40,16 +31,11 @@ export class ClientsController {
           required: false,
           type: 'string',
         },
-        clientIds: {
+        clientId: {
           description: 'List of clientIds to filter by.',
           required: false,
-          schema: {
-            type: 'array',
-            items: {
-              type: 'string',
-              example: ['@island.is/web', '@admin.island.is/web'],
-            },
-          },
+          isArray: true,
+          type: 'string',
         },
       },
     },
@@ -59,10 +45,7 @@ export class ClientsController {
   })
   async findAll(
     @Query('lang') lang?: string,
-    @Query(
-      'clientIds',
-      new ParseArrayPipe({ items: String, separator: ',', optional: true }),
-    )
+    @Query('clientId')
     clientIds?: string[],
   ): Promise<ClientDto[]> {
     const clients = await this.clientsService.findAllWithTranslation(
@@ -75,8 +58,8 @@ export class ClientsController {
     }
 
     return clients.map((client) => {
-      // Todo: This is a temporary solution until we have linked clients to domains
-      const domainName = client.clientId.split('/')[0]
+      // While we have clients without the domainName property set we have a fallback to parse it from the clientId
+      const domainName = client.domainName || client.clientId.split('/')[0]
 
       return {
         clientId: client.clientId,

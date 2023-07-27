@@ -16,7 +16,11 @@ interface Props {
 
 export const EndpointsForm: FC<Props> = ({ onSubmit }) => {
   const { formatMessage } = useLocale()
-  const { handleSubmit, control, errors } = useForm()
+  const {
+    handleSubmit,
+    control,
+    formState: { errors },
+  } = useForm()
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
@@ -43,14 +47,14 @@ export const EndpointsForm: FC<Props> = ({ onSubmit }) => {
             },
           }}
           defaultValue=""
-          render={({ onChange, value, name }) => (
+          render={({ field: { onChange, value, name } }) => (
             <Input
               size="xs"
               name={name}
               label={formatMessage(m.SettingsEditEndPointsUrl)}
               placeholder={formatMessage(m.SettingsEditEndPointsUrl)}
               value={value}
-              hasError={errors.endpoint}
+              hasError={errors.endpoint !== undefined}
               errorMessage={errors.endpoint?.message}
               onChange={onChange}
             />

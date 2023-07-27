@@ -13,14 +13,8 @@ import {
   PdfButton,
   PoliceRequestAccordionItem,
   RulingInput,
-  SigningModal,
-  useRequestRulingSignature,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import {
-  RestrictionCaseCourtSubsections,
-  Sections,
-} from '@island.is/judicial-system-web/src/types'
 import {
   useCase,
   useDeb,
@@ -28,7 +22,6 @@ import {
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   isAcceptingCaseDecision,
-  completedCaseStates,
   CaseDecision,
 } from '@island.is/judicial-system/types'
 import { formatDate } from '@island.is/judicial-system/formatters'
@@ -37,7 +30,6 @@ import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader
 import {
   Accordion,
   AccordionItem,
-  AlertMessage,
   Box,
   Input,
   Text,
@@ -68,21 +60,6 @@ const Ruling = () => {
   const [courtLegalArgumentsEM, setCourtLegalArgumentsEM] = useState<string>('')
   const [prosecutorDemandsEM, setProsecutorDemandsEM] = useState<string>('')
   const [introductionEM, setIntroductionEM] = useState<string>('')
-
-  const [modalVisible, setModalVisible] = useState<'NoModal' | 'SigningModal'>(
-    'NoModal',
-  )
-
-  const {
-    requestRulingSignature,
-    requestRulingSignatureResponse,
-    isRequestingRulingSignature,
-  } = useRequestRulingSignature(workingCase.id, () =>
-    setModalVisible('SigningModal'),
-  )
-  const isModifyingRuling = router.pathname.includes(
-    constants.INVESTIGATION_CASE_MODIFY_RULING_ROUTE,
-  )
 
   useDeb(workingCase, [
     'prosecutorDemands',
@@ -130,23 +107,15 @@ const Ruling = () => {
 
   const handleNavigationTo = useCallback(
     async (destination: string) => {
-      if (isModifyingRuling) {
-        requestRulingSignature()
-      } else {
-        router.push(`${destination}/${workingCase.id}`)
-      }
+      router.push(`${destination}/${workingCase.id}`)
     },
-    [isModifyingRuling, requestRulingSignature, workingCase.id],
+    [workingCase.id],
   )
   const stepIsValid = isRulingValidIC(workingCase)
 
   return (
     <PageLayout
       workingCase={workingCase}
-      activeSection={
-        workingCase?.parentCase ? Sections.JUDGE_EXTENSION : Sections.JUDGE
-      }
-      activeSubSection={RestrictionCaseCourtSubsections.RULING}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
       isValid={stepIsValid}
@@ -156,16 +125,6 @@ const Ruling = () => {
         title={formatMessage(titles.court.investigationCases.ruling)}
       />
       <FormContentContainer>
-        {isModifyingRuling && (
-          <Box marginBottom={3}>
-            <AlertMessage
-              type="warning"
-              title={formatMessage(m.sections.alertMessage.title)}
-              message={formatMessage(m.sections.alertMessage.message)}
-              testid="alertMessageModifyingRuling"
-            />
-          </Box>
-        )}
         <Box marginBottom={7}>
           <Text as="h1" variant="h1">
             {formatMessage(m.title)}
@@ -189,9 +148,6 @@ const Ruling = () => {
                   (workingCase.registrar !== null &&
                     workingCase.registrar?.id === user?.id)
                 }
-                isCaseCompleted={completedCaseStates.includes(
-                  workingCase.state,
-                )}
               />
             </AccordionItem>
           </Accordion>
@@ -407,7 +363,6 @@ const Ruling = () => {
               dismissLabelText={formatMessage(
                 ruling.investigationCases.sections.decision.dismissLabel,
               )}
-              disabled={isModifyingRuling}
               onChange={(decision) => {
                 setAndSendCaseToServer(
                   [
@@ -461,7 +416,6 @@ const Ruling = () => {
             rows={7}
             autoExpand={{ on: true, maxHeight: 300 }}
             textarea
-            disabled={isModifyingRuling}
           />
         </Box>
         <Box marginBottom={10}>
@@ -469,41 +423,19 @@ const Ruling = () => {
             caseId={workingCase.id}
             title={formatMessage(core.pdfButtonRuling)}
             pdfType="ruling"
-            useSigned={!isModifyingRuling}
           />
         </Box>
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={
-            isModifyingRuling
-              ? `${constants.SIGNED_VERDICT_OVERVIEW_ROUTE}/${workingCase.id}`
-              : `${constants.INVESTIGATION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`
-          }
-          nextButtonText={
-            isModifyingRuling
-              ? formatMessage(m.sections.formFooter.modifyRulingButtonLabel)
-              : undefined
-          }
-          nextIsLoading={
-            isModifyingRuling
-              ? isRequestingRulingSignature || isLoadingWorkingCase
-              : isLoadingWorkingCase
-          }
+          nextButtonIcon="arrowForward"
+          previousUrl={`${constants.INVESTIGATION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`}
           nextIsDisabled={!stepIsValid}
           onNextButtonClick={() =>
             handleNavigationTo(constants.INVESTIGATION_CASE_COURT_RECORD_ROUTE)
           }
         />
       </FormContentContainer>
-      {modalVisible === 'SigningModal' && (
-        <SigningModal
-          workingCase={workingCase}
-          requestRulingSignature={requestRulingSignature}
-          requestRulingSignatureResponse={requestRulingSignatureResponse}
-          onClose={() => setModalVisible('NoModal')}
-        />
-      )}
     </PageLayout>
   )
 }

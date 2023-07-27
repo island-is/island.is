@@ -47,7 +47,7 @@ function Filters({ onSubmit, defaultValues }: PropTypes) {
               <Controller
                 name="period.from"
                 defaultValue=""
-                render={({ onChange, value }) => (
+                render={({ field: { onChange, value } }) => (
                   <DatePicker
                     label="Frá"
                     placeholderText="Veldu dagsetningu"
@@ -60,7 +60,7 @@ function Filters({ onSubmit, defaultValues }: PropTypes) {
               <Controller
                 name="period.to"
                 defaultValue=""
-                render={({ onChange, value }) => (
+                render={({ field: { onChange, value } }) => (
                   <DatePicker
                     label="Til"
                     placeholderText="Veldu dagsetningu"
@@ -77,7 +77,7 @@ function Filters({ onSubmit, defaultValues }: PropTypes) {
               <Controller
                 name="airline"
                 defaultValue=""
-                render={({ onChange, value }) => {
+                render={({ field: { onChange, value } }) => {
                   return (
                     <Select
                       name="airline"
@@ -94,7 +94,7 @@ function Filters({ onSubmit, defaultValues }: PropTypes) {
               <Controller
                 name="flightLeg.from"
                 defaultValue=""
-                render={({ onChange, value }) => (
+                render={({ field: { onChange, value } }) => (
                   <Input
                     name="flightLeg.from"
                     placeholder="Brottfararstaður"
@@ -106,7 +106,7 @@ function Filters({ onSubmit, defaultValues }: PropTypes) {
               <Controller
                 name="flightLeg.to"
                 defaultValue=""
-                render={({ onChange, value }) => (
+                render={({ field: { onChange, value } }) => (
                   <Input
                     name="flightLeg.to"
                     placeholder="Áfangastaður"
@@ -122,7 +122,7 @@ function Filters({ onSubmit, defaultValues }: PropTypes) {
               <Controller
                 name="nationalId"
                 defaultValue=""
-                render={({ onChange, value }) => (
+                render={({ field: { onChange, value } }) => (
                   <Input
                     name="nationalId"
                     placeholder="Kennitala"
@@ -138,7 +138,7 @@ function Filters({ onSubmit, defaultValues }: PropTypes) {
               <Controller
                 name="postalCode"
                 defaultValue=""
-                render={({ onChange, value }) => (
+                render={({ field: { onChange, value } }) => (
                   <Input
                     name="postalCode"
                     placeholder="Póstnúmer"
@@ -150,7 +150,7 @@ function Filters({ onSubmit, defaultValues }: PropTypes) {
               <Controller
                 name="age.from"
                 defaultValue=""
-                render={({ onChange, value }) => (
+                render={({ field: { onChange, value } }) => (
                   <Input
                     name="age.from"
                     placeholder="Aldur frá"
@@ -162,7 +162,7 @@ function Filters({ onSubmit, defaultValues }: PropTypes) {
               <Controller
                 name="age.to"
                 defaultValue=""
-                render={({ onChange, value }) => (
+                render={({ field: { onChange, value } }) => (
                   <Input
                     name="age.to"
                     placeholder="Aldur til"

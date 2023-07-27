@@ -1,3 +1,4 @@
+import type { SettingValue, SettingTypeOf } from 'configcat-common'
 import { ServerSideFeature } from './features'
 
 export interface FeatureFlagUser {
@@ -6,11 +7,11 @@ export interface FeatureFlagUser {
 }
 
 export interface FeatureFlagClient {
-  getValue(
+  getValue<T extends SettingValue>(
     key: string,
-    defaultValue: boolean | string,
+    defaultValue: T,
     user?: FeatureFlagUser,
-  ): Promise<boolean | string>
+  ): Promise<SettingTypeOf<T>>
 
   dispose(): void
 }
@@ -23,3 +24,5 @@ export interface FeatureFlagClientProps {
 export interface ServerSideFeatureClientType {
   isOn(feature: ServerSideFeature): boolean
 }
+
+export type { SettingTypeOf, SettingValue }

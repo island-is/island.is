@@ -72,6 +72,11 @@ export const GET_PROJECT_PAGE_QUERY = gql`
         title
         slug
       }
+      secondaryNewsTags {
+        id
+        title
+        slug
+      }
       projectSubpages {
         id
         title
@@ -81,6 +86,11 @@ export const GET_PROJECT_PAGE_QUERY = gql`
         }
         renderSlicesAsTabs
         slices {
+          ...AllSlices
+          ...NestedOneColumnTextFields
+          ${nestedFields}
+        }
+        bottomSlices {
           ...AllSlices
           ...NestedOneColumnTextFields
           ${nestedFields}

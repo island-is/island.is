@@ -2,27 +2,28 @@ import { ForbiddenException, Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { isCompany } from 'kennitala'
 import { and, Op, or } from 'sequelize'
-import type { Attributes, WhereOptions } from 'sequelize'
 import { Includeable } from 'sequelize/types/model'
 
 import { User } from '@island.is/auth-nest-tools'
-import type { ConfigType } from '@island.is/nest/config'
 import { NoContentException } from '@island.is/nest/problem'
+import { AuthDelegationType } from '@island.is/shared/types'
 
 import { DelegationConfig } from '../delegations/DelegationConfig'
 import { DelegationScope } from '../delegations/models/delegation-scope.model'
 import { Delegation } from '../delegations/models/delegation.model'
 import { DelegationDirection } from '../delegations/types/delegationDirection'
 import { ApiScopeListDTO } from './dto/api-scope-list.dto'
-import { ApiScopeTreeDTO } from './dto/api-scope-tree.dto'
+import { ScopeTreeDTO } from './dto/scope-tree.dto'
 import { ApiScopeGroup } from './models/api-scope-group.model'
 import { ApiScopeUserAccess } from './models/api-scope-user-access.model'
 import { ApiScope } from './models/api-scope.model'
 import { Domain } from './models/domain.model'
 import { ResourceTranslationService } from './resource-translation.service'
 import { col } from './utils/col'
-import { AuthDelegationType } from '@island.is/shared/types'
+import { mapToScopeTree } from './utils/scope-tree.mapper'
 
+import type { Attributes, WhereOptions } from 'sequelize'
+import type { ConfigType } from '@island.is/nest/config'
 type DelegationConfigType = ConfigType<typeof DelegationConfig>
 type ScopeRule = DelegationConfigType['customScopeRules'] extends Array<
   infer ScopeRule
@@ -44,20 +45,43 @@ export class DelegationResourcesService {
 
   async findAllDomains(
     user: User,
-    language?: string,
-    direction?: DelegationDirection,
+    {
+      language,
+      direction,
+      domainNames,
+      supportsDelegations,
+    }: {
+      language?: string
+      direction?: DelegationDirection
+      domainNames?: string[]
+      supportsDelegations?: boolean
+    },
   ): Promise<Domain[]> {
+    const onlyDelegations =
+      supportsDelegations || direction === DelegationDirection.OUTGOING
+
+    const domainNameFilter: WhereOptions<Domain> = domainNames
+      ? { name: domainNames }
+      : {}
+
     const domains = await this.domainModel.findAll({
-      where: and(...this.apiScopeFilter({ user, prefix: 'scopes', direction })),
-      include: [
-        {
-          model: ApiScope,
-          attributes: [],
-          required: true,
-          duplicating: false,
-          include: [...this.apiScopeInclude(user, direction)],
-        },
-      ],
+      where: onlyDelegations
+        ? and(
+            ...this.apiScopeFilter({ user, prefix: 'scopes', direction }),
+            domainNameFilter,
+          )
+        : domainNameFilter,
+      include: onlyDelegations
+        ? [
+            {
+              model: ApiScope,
+              attributes: [],
+              required: true,
+              duplicating: false,
+              include: [...this.apiScopeInclude(user, direction)],
+            },
+          ]
+        : [],
     })
 
     if (language) {
@@ -122,7 +146,7 @@ export class DelegationResourcesService {
     domainName: string,
     language?: string,
     direction?: DelegationDirection,
-  ): Promise<ApiScopeTreeDTO[]> {
+  ): Promise<ScopeTreeDTO[]> {
     const scopes = await this.findScopesInternal({
       user,
       domainName,
@@ -130,29 +154,7 @@ export class DelegationResourcesService {
       language,
     })
 
-    const groupChildren = new Map<string, ApiScopeTreeDTO[]>()
-    const scopeTree: Array<ApiScope | ApiScopeGroup> = []
-
-    for (const scope of scopes) {
-      if (scope.group) {
-        let children = groupChildren.get(scope.group.name)
-        if (!children) {
-          scopeTree.push(scope.group)
-          children = []
-          groupChildren.set(scope.group.name, children)
-        }
-        children.push(new ApiScopeTreeDTO(scope))
-      } else {
-        scopeTree.push(scope)
-      }
-    }
-
-    return scopeTree
-      .sort((a, b) => a.order - b.order)
-      .map((node) => ({
-        ...new ApiScopeTreeDTO(node),
-        children: groupChildren.get(node.name),
-      }))
+    return mapToScopeTree(scopes)
   }
 
   async findScopeNames(

@@ -1,4 +1,5 @@
 import { createIntl } from 'react-intl'
+import { uuid } from 'uuidv4'
 
 import { CaseDecision, CaseState } from '@island.is/judicial-system/types'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
@@ -10,139 +11,50 @@ import {
 
 import {
   getExtensionInfoText,
-  rulingDateLabel,
   shouldHideNextButton,
-  titleForCase,
 } from './SignedVerdictOverview'
 
 window.scrollTo = jest.fn()
 
-describe('titleForCase', () => {
-  const formatMessage = createIntl({ locale: 'is', onError: jest.fn })
-    .formatMessage
-  const fn = (theCase: Case) => titleForCase(formatMessage, theCase)
-
-  test('should handle rejected investigation case', () => {
-    const theCase = {
-      state: CaseState.REJECTED,
-      type: CaseType.BodySearch,
-    } as Case
-    const res = fn(theCase)
-    expect(res).toEqual('Kröfu um rannsóknarheimild hafnað')
-  })
-
-  test('should handle rejected restriction case', () => {
-    const theCase = {
-      state: CaseState.REJECTED,
-      type: CaseType.Custody,
-    } as Case
-    const res = fn(theCase)
-    expect(res).toEqual('Kröfu hafnað')
-  })
-
-  test('should handle dismissed case', () => {
-    const theCase = { state: CaseState.DISMISSED } as Case
-    const res = fn(theCase)
-    expect(res).toEqual('Kröfu vísað frá')
-  })
-
-  test('should handle custody case with valid to date in past', () => {
-    const theCase = {
-      state: CaseState.ACCEPTED,
-      type: CaseType.Custody,
-      isValidToDateInThePast: true,
-    } as Case
-    const res = fn(theCase)
-    expect(res).toEqual('Gæsluvarðhaldi lokið')
-  })
-
-  test('should handle admission case with valid to date in past', () => {
-    const theCase = {
-      state: CaseState.ACCEPTED,
-      type: CaseType.AdmissionToFacility,
-      isValidToDateInThePast: true,
-    } as Case
-    const res = fn(theCase)
-    expect(res).toEqual('Vistun á viðeigandi stofnun lokið')
-  })
-
-  test('should handle travel ban case with valid to date in past', () => {
-    const theCase = {
-      state: CaseState.ACCEPTED,
-      type: CaseType.TravelBan,
-      isValidToDateInThePast: true,
-    } as Case
-    const res = fn(theCase)
-    expect(res).toEqual('Farbanni lokið')
-  })
-
-  test('should handle accepted investigation case', () => {
-    const theCase = {
-      state: CaseState.ACCEPTED,
-      type: CaseType.SearchWarrant,
-    } as Case
-    const res = fn(theCase)
-    expect(res).toEqual('Krafa um rannsóknarheimild samþykkt')
-  })
-
-  test('should handle active custody case', () => {
-    const theCase = {
-      state: CaseState.ACCEPTED,
-      type: CaseType.Custody,
-    } as Case
-    const res = fn(theCase)
-    expect(res).toEqual('Gæsluvarðhald virkt')
-  })
-
-  test('should handle active admission case', () => {
-    const theCase = {
-      state: CaseState.ACCEPTED,
-      type: CaseType.AdmissionToFacility,
-    } as Case
-    const res = fn(theCase)
-    expect(res).toEqual('Vistun á viðeigandi stofnun virk')
-  })
-
-  test('should handle active travel case', () => {
-    const theCase = {
-      state: CaseState.ACCEPTED,
-      type: CaseType.TravelBan,
-    } as Case
-    const res = fn(theCase)
-    expect(res).toEqual('Farbann virkt')
-  })
-})
-
-describe('rulingDateLabel', () => {
-  const formatMessage = createIntl({ locale: 'is', onError: jest.fn })
-    .formatMessage
-  test('should format correctly', () => {
-    const theCase = { courtEndTime: '2020-09-16T19:51:28.224Z' } as Case
-    expect(rulingDateLabel(formatMessage, theCase)).toEqual(
-      'Úrskurðað 16. september 2020 kl. 19:51',
-    )
-  })
-})
-
 describe('shouldHideNextButton', () => {
-  const prosecutor = { role: UserRole.Prosecutor } as User
+  const prosecutor = { id: uuid(), role: UserRole.PROSECUTOR } as User
 
   it.each`
     role
-    ${UserRole.Admin}
-    ${UserRole.Defender}
-    ${UserRole.Judge}
-    ${UserRole.Registrar}
-    ${UserRole.Staff}
+    ${UserRole.ADMIN}
+    ${UserRole.DEFENDER}
+    ${UserRole.JUDGE}
+    ${UserRole.REGISTRAR}
+    ${UserRole.STAFF}
   `('should hide next button for user role: $role', ({ role }) => {
     const theCase = {} as Case
-    const res = shouldHideNextButton(theCase, { role } as User)
+    const res = shouldHideNextButton(theCase, { id: uuid(), role } as User)
     expect(res).toEqual(true)
   })
 
   test('should show next button for user role: PROSECUTOR', () => {
     const theCase = {} as Case
     const res = shouldHideNextButton(theCase, prosecutor)
+    expect(res).toEqual(false)
+  })
+
+  test('should show next button for user role: REGISTRAR if user is assinged registrar', () => {
+    const userId = uuid()
+    const theCase = { registrar: { id: userId } } as Case
+    const res = shouldHideNextButton(theCase, {
+      id: userId,
+      role: UserRole.REGISTRAR,
+    } as User)
+    expect(res).toEqual(false)
+  })
+
+  test('should show next button for user role: JUDGE ig user is assigned judge', () => {
+    const userId = uuid()
+    const theCase = { judge: { id: userId } } as Case
+    const res = shouldHideNextButton(theCase, {
+      id: userId,
+      role: UserRole.JUDGE,
+    } as User)
     expect(res).toEqual(false)
   })
 
@@ -183,21 +95,21 @@ describe('getExtensionInfoText', () => {
   const formatMessage = createIntl({ locale: 'is', onError: jest.fn })
     .formatMessage
 
-  const prosecutor = { role: UserRole.Prosecutor } as User
+  const prosecutor = { role: UserRole.PROSECUTOR } as User
 
   const fn = (theCase: Case, user?: User) =>
     getExtensionInfoText(formatMessage, theCase, user)
 
   it.each`
     role
-    ${UserRole.Admin}
-    ${UserRole.Defender}
-    ${UserRole.Judge}
-    ${UserRole.Registrar}
-    ${UserRole.Staff}
+    ${UserRole.ADMIN}
+    ${UserRole.DEFENDER}
+    ${UserRole.JUDGE}
+    ${UserRole.REGISTRAR}
+    ${UserRole.STAFF}
   `('should return undefined for user role: $role', ({ role }) => {
     const theCase = {
-      type: CaseType.Custody,
+      type: CaseType.CUSTODY,
       state: CaseState.REJECTED,
     } as Case
     const res = fn(theCase, { role } as User)
@@ -207,7 +119,7 @@ describe('getExtensionInfoText', () => {
 
   test('should format for rejected custody case', () => {
     const theCase = {
-      type: CaseType.Custody,
+      type: CaseType.CUSTODY,
       state: CaseState.REJECTED,
     } as Case
     const res = fn(theCase, prosecutor)
@@ -217,7 +129,7 @@ describe('getExtensionInfoText', () => {
 
   test('should format for rejected admission case', () => {
     const theCase = {
-      type: CaseType.AdmissionToFacility,
+      type: CaseType.ADMISSION_TO_FACILITY,
       state: CaseState.REJECTED,
     } as Case
     const res = fn(theCase, prosecutor)
@@ -229,7 +141,7 @@ describe('getExtensionInfoText', () => {
 
   test('should format for rejected travel ban case', () => {
     const theCase = {
-      type: CaseType.TravelBan,
+      type: CaseType.TRAVEL_BAN,
       state: CaseState.REJECTED,
     } as Case
     const res = fn(theCase, prosecutor)
@@ -239,7 +151,7 @@ describe('getExtensionInfoText', () => {
 
   test('should format for rejected investigation case', () => {
     const theCase = {
-      type: CaseType.SearchWarrant,
+      type: CaseType.SEARCH_WARRANT,
       state: CaseState.REJECTED,
     } as Case
     const res = fn(theCase, prosecutor)
@@ -249,7 +161,7 @@ describe('getExtensionInfoText', () => {
 
   test('should format for dismissed investigation case', () => {
     const theCase = {
-      type: CaseType.SearchWarrant,
+      type: CaseType.SEARCH_WARRANT,
       state: CaseState.DISMISSED,
     } as Case
     const res = fn(theCase, prosecutor)
@@ -259,7 +171,7 @@ describe('getExtensionInfoText', () => {
 
   test('should format for custody case with valid to date in the past', () => {
     const theCase = {
-      type: CaseType.Custody,
+      type: CaseType.CUSTODY,
       isValidToDateInThePast: true,
     } as Case
     const res = fn(theCase, prosecutor)
@@ -269,7 +181,7 @@ describe('getExtensionInfoText', () => {
 
   test('should format for case with accepting alternative travel ban', () => {
     const theCase = {
-      type: CaseType.Custody,
+      type: CaseType.CUSTODY,
       decision: CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN,
     } as Case
     const res = fn(theCase, prosecutor)
@@ -281,7 +193,7 @@ describe('getExtensionInfoText', () => {
 
   test('should format for custody case with a child case', () => {
     const theCase = {
-      type: CaseType.Custody,
+      type: CaseType.CUSTODY,
       childCase: {} as Case,
     } as Case
     const res = fn(theCase, prosecutor)
@@ -291,7 +203,7 @@ describe('getExtensionInfoText', () => {
 
   test('should fallback to undefined', () => {
     const theCase = {
-      type: CaseType.Custody,
+      type: CaseType.CUSTODY,
     } as Case
     const res = fn(theCase, prosecutor)
 

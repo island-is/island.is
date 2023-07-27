@@ -26,6 +26,8 @@ import { PaymentModuleConfig } from '@island.is/application/api/payment'
 import { ChargeFjsV2ClientConfig } from '@island.is/clients/charge-fjs-v2'
 import { PassportsClientConfig } from '@island.is/clients/passports'
 import { PaymentScheduleClientConfig } from '@island.is/clients/payment-schedule'
+import { EhicClientConfig } from '@island.is/clients/ehic-client-v1'
+import { JudicialAdministrationClientConfig } from '@island.is/clients/judicial-administration'
 
 @Module({
   imports: [
@@ -55,6 +57,8 @@ import { PaymentScheduleClientConfig } from '@island.is/clients/payment-schedule
         ChargeFjsV2ClientConfig,
         PassportsClientConfig,
         PaymentScheduleClientConfig,
+        EhicClientConfig,
+        JudicialAdministrationClientConfig,
       ],
     }),
   ],

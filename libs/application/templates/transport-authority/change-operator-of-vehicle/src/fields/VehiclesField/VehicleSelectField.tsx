@@ -10,15 +10,15 @@ import {
   BulletList,
   InputError,
 } from '@island.is/island-ui/core'
-import { VehiclesCurrentVehicle } from '../../shared'
+import {
+  VehiclesCurrentVehicle,
+  VehiclesCurrentVehicleWithOperatorChangeChecks,
+} from '../../shared'
 import { information, applicationCheck, error } from '../../lib/messages'
 import { SelectController } from '@island.is/shared/form-fields'
 import { useFormContext } from 'react-hook-form'
 import { getValueViaPath } from '@island.is/application/core'
-import {
-  GetVehicleDetailInput,
-  VehiclesCurrentVehicleWithOperatorChangeChecks,
-} from '@island.is/api/schema'
+import { GetVehicleDetailInput } from '@island.is/api/schema'
 import { useLazyVehicleDetails } from '../../hooks/useLazyVehicleDetails'
 
 interface VehicleSearchFieldProps {
@@ -29,7 +29,7 @@ export const VehicleSelectField: FC<
   VehicleSearchFieldProps & FieldBaseProps
 > = ({ currentVehicleList, application, errors }) => {
   const { formatMessage } = useLocale()
-  const { register } = useFormContext()
+  const { setValue } = useFormContext()
 
   const vehicleValue = getValueViaPath(
     application.answers,
@@ -56,16 +56,6 @@ export const VehicleSelectField: FC<
   )
   const [plate, setPlate] = useState<string>(
     getValueViaPath(application.answers, 'pickVehicle.plate', '') as string,
-  )
-  const [color, setColor] = useState<string | undefined>(
-    getValueViaPath(application.answers, 'pickVehicle.color', undefined) as
-      | string
-      | undefined,
-  )
-  const [type, setType] = useState<string | undefined>(
-    getValueViaPath(application.answers, 'pickVehicle.type', undefined) as
-      | string
-      | undefined,
   )
 
   const getVehicleDetails = useLazyVehicleDetails()
@@ -104,8 +94,12 @@ export const VehicleSelectField: FC<
             !!response?.vehicleOperatorChangeChecksByPermno
               ?.validationErrorMessages?.length
           setPlate(disabled ? '' : currentVehicle.permno || '')
-          setColor(currentVehicle.color || undefined)
-          setType(currentVehicle.make || undefined)
+          setValue(
+            'pickVehicle.plate',
+            disabled ? '' : currentVehicle.permno || '',
+          )
+          setValue('pickVehicle.color', currentVehicle.color || undefined)
+          setValue('pickVehicle.type', currentVehicle.make || undefined)
           setIsLoading(false)
         })
         .catch((error) => console.error(error))
@@ -196,24 +190,6 @@ export const VehicleSelectField: FC<
           </Box>
         )}
       </Box>
-      <input
-        type="hidden"
-        value={plate}
-        ref={register({ required: true })}
-        name="pickVehicle.plate"
-      />
-      <input
-        type="hidden"
-        value={color}
-        ref={register({ required: true })}
-        name="pickVehicle.color"
-      />
-      <input
-        type="hidden"
-        value={type}
-        ref={register({ required: true })}
-        name="pickVehicle.type"
-      />
       {!isLoading && plate.length === 0 && errors && errors.pickVehicle && (
         <InputError errorMessage={formatMessage(error.requiredValidVehicle)} />
       )}

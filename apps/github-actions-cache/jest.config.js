@@ -1,13 +1,15 @@
 module.exports = {
   displayName: 'github-actions-cache',
-  preset: '../../jest.preset.js',
+  preset: './jest.preset.js',
+  rootDir: '../..',
+  roots: [__dirname],
   globals: {
-    'ts-jest': { tsconfig: '<rootDir>/tsconfig.spec.json' },
+    'ts-jest': { tsconfig: `${__dirname}/tsconfig.spec.json` },
   },
   transform: {
     '^.+\\.[tj]s$': 'ts-jest',
   },
   moduleFileExtensions: ['ts', 'js', 'html'],
-  coverageDirectory: '../../coverage/apps/github-actions-cache',
+  coverageDirectory: '<rootDir>/coverage/apps/github-actions-cache',
   testEnvironment: 'node',
 }

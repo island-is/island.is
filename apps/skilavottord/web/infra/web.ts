@@ -7,6 +7,16 @@ export const serviceSetup = (services: {
     .namespace('skilavottord')
     .liveness('/liveness')
     .readiness('/liveness')
+    .resources({
+      limits: {
+        cpu: '200m',
+        memory: '256Mi',
+      },
+      requests: {
+        cpu: '20m',
+        memory: '128Mi',
+      },
+    })
     .env({
       API_URL: ref((h) => `http://${h.svc(services.api)}`),
       ENVIRONMENT: ref((h) => h.env.type),

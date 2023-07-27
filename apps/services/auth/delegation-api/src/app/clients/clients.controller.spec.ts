@@ -3,14 +3,18 @@ import request from 'supertest'
 import { AuthScope } from '@island.is/auth/scopes'
 import { FixtureFactory } from '@island.is/services/auth/testing'
 import { createCurrentUser } from '@island.is/testing/fixtures'
-import { getRequestMethod, TestApp } from '@island.is/testing/nest'
+import { TestEndpointOptions } from '@island.is/testing/nest'
+import {
+  buildQueryString,
+  getRequestMethod,
+  TestApp,
+} from '@island.is/testing/nest'
 
 import {
   setupWithAuth,
   setupWithoutAuth,
   setupWithoutPermission,
 } from '../../../test/setup'
-import { TestEndpointOptions } from '../../../test/types'
 
 interface TestCase {
   domains: {
@@ -22,7 +26,7 @@ interface TestCase {
     clientName: string
   }[]
   filters?: {
-    clientIds?: string[]
+    clientId?: string[]
   }
   expected: {
     clientId: string
@@ -92,7 +96,7 @@ const getTestCases: Record<string, TestCase> = {
       },
     ],
     filters: {
-      clientIds: ['test-domain-1/test-client-1', 'test-domain-2/test-client-2'],
+      clientId: ['test-domain-1/test-client-1', 'test-domain-2/test-client-2'],
     },
     expected: [
       {
@@ -122,14 +126,6 @@ const getTestCases: Record<string, TestCase> = {
 const user = createCurrentUser({
   scope: [AuthScope.delegations],
 })
-
-const buildQueryString = (params: Record<string, string | string[]>) =>
-  `?${Object.entries(params)
-    .map(
-      ([key, value]) =>
-        `${key}=${Array.isArray(value) ? value.join(',') : value}`,
-    )
-    .join('&')}`
 
 describe('ClientsController', () => {
   describe('with auth', () => {
@@ -192,9 +188,10 @@ describe('ClientsController', () => {
         server = request(app.getHttpServer())
 
         const factory = new FixtureFactory(app)
-        const domain = await factory.createDomain({ name: domainName })
+        await factory.createDomain({ name: domainName })
         const client = await factory.createClient({
           clientId: `${domainName}/c1`,
+          domainName,
         })
 
         await factory.createTranslations(client, 'en', clientTranslations)

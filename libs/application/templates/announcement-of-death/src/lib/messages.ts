@@ -639,6 +639,16 @@ Ef ekkert á við sem hér að ofan er talið rennur arfur í ríkissjóð. Nán
       'Takk fyrir að gefa þér tíma til þess að sinna þessu ferli. Þegar tilkynningin hefur verið afgreidd færðu senda staðfestingu og heimildir í þitt pósthólf á Mínar síður á Ísland.is.',
     description: '',
   },
+  viewNextStepsButton: {
+    id: 'aod.application:viewNextStepsButton',
+    defaultMessage: 'Sjá næstu skréf',
+    description: '',
+  },
+  viewOverviewButton: {
+    id: 'aod.application:viewOverviewButton',
+    defaultMessage: 'Sjá yfirlit',
+    description: '',
+  },
 
   /* Error */
   errorUnknown: {
@@ -671,7 +681,14 @@ Ef ekkert á við sem hér að ofan er talið rennur arfur í ríkissjóð. Nán
   },
   submitApplication: {
     id: 'aod.application:submitApplication',
-    defaultMessage: 'Staðfesta andlátstilkynnningu',
+    defaultMessage: 'Staðfesta andlátstilkynningu',
     description: 'Submit announcement of death',
+  },
+
+  /* History logs */
+  logApplicationDelegated: {
+    id: 'aod.application:logApplicationDelegated',
+    defaultMessage: 'Umsókn sent á annan aðila',
+    description: '',
   },
 })

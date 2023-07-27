@@ -13,7 +13,7 @@ import { m } from '../../lib/messages'
 import { Total } from '../KeyNumbers'
 import { PartyIncome } from './partyIncome'
 import { PartyExpenses } from './partyExpenses'
-import { OPERATINGCOST, PARTYOPERATIONIDS } from '../../lib/constants'
+import { PARTYOPERATIONIDS, OPERATINGCOST } from '../../lib/constants'
 import { useTotals } from '../../hooks'
 import { TaxInfoQuery } from '../../graphql'
 import { getValueViaPath } from '@island.is/application/core'
@@ -30,7 +30,9 @@ export const PartyOperatingIncome = ({ application }: FieldBaseProps) => {
     variables: { year: operatingYear },
   })
 
-  const { errors } = useFormContext()
+  const {
+    formState: { errors },
+  } = useFormContext()
 
   const [getTotalIncome, totalIncome] = useTotals(
     PARTYOPERATIONIDS.incomePrefix,

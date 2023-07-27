@@ -33,6 +33,11 @@ const Sjukratryggingar = dynamic(
   { ssr: false },
 )
 
+const Utlendingastofnun = dynamic(
+  () => import('./Variations/Utlendingastofnun/Utlendingastofnun'),
+  { ssr: false },
+)
+
 export const Background = ({
   variation,
   small,
@@ -56,6 +61,10 @@ export const Background = ({
       case 'sjukratryggingar':
       case 'icelandic-health-insurance':
         setComponent(<Sjukratryggingar namespace={namespace} />)
+        break
+      case 'utlendingastofnun':
+      case 'directorate-of-immigration':
+        setComponent(<Utlendingastofnun namespace={namespace} />)
         break
       case 'default':
       default:

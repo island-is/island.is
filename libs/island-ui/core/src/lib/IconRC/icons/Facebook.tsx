@@ -1,5 +1,5 @@
 import React from 'react'
-import { SvgProps as SVGRProps } from '../Icon'
+import type { SvgProps as SVGRProps } from '../types'
 
 const Facebook = ({
   title,

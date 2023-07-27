@@ -6,7 +6,7 @@ import {
   GridColumn,
   GridRow,
   Input,
-  Link,
+  LinkContext,
   NavigationItem,
   Text,
 } from '@island.is/island-ui/core'
@@ -26,7 +26,7 @@ import {
   GET_ORGANIZATION_SUBPAGE_QUERY,
 } from '../../queries'
 import { Screen } from '../../../types'
-import { useFeatureFlag, useNamespace } from '@island.is/web/hooks'
+import { useNamespace } from '@island.is/web/hooks'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import {
   OrganizationWrapper,
@@ -34,6 +34,7 @@ import {
   Webreader,
 } from '@island.is/web/components'
 import { CustomNextError } from '@island.is/web/units/errors'
+import { theme } from '@island.is/island-ui/theme'
 import { SliceType } from '@island.is/island-ui/contentful'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import { useRouter } from 'next/router'
@@ -65,10 +66,6 @@ const Homestay: Screen<HomestayProps> = ({
   homestays,
   namespace,
 }) => {
-  const { value: isWebReaderEnabledForOrganizationPages } = useFeatureFlag(
-    'isWebReaderEnabledForOrganizationPages',
-    false,
-  )
   useContentfulId(organizationPage.id, subpage.id)
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
@@ -172,13 +169,11 @@ const Homestay: Screen<HomestayProps> = ({
         items: navList,
       }}
     >
-      <Box paddingBottom={isWebReaderEnabledForOrganizationPages ? 0 : 4}>
+      <Box paddingBottom={0}>
         <Text variant="h1" as="h2">
           {subpage.title}
         </Text>
-        {isWebReaderEnabledForOrganizationPages && (
-          <Webreader readId={null} readClass="rs_read" />
-        )}
+        <Webreader readId={null} readClass="rs_read" />
       </Box>
       {webRichText(subpage.description as SliceType[])}
       <Box marginTop={4} marginBottom={6}>
@@ -187,8 +182,7 @@ const Homestay: Screen<HomestayProps> = ({
           placeholder={n('homestayFilterSearch', 'Leita')}
           backgroundColor={['blue', 'blue', 'white']}
           size="sm"
-          icon="search"
-          iconType="outline"
+          icon={{ name: 'search', type: 'outline' }}
           value={query}
           onChange={(event) => setQuery(event.target.value)}
         />
@@ -242,14 +236,34 @@ const Homestay: Screen<HomestayProps> = ({
                 <Text>{homestay.manager}</Text>
               </GridColumn>
               <GridColumn span={['12/12', '12/12', '6/12']}>
-                <Text>
-                  Fasteignanúmer:{' '}
-                  <Link
-                    href={`https://leyfi.island.is/Home/OpenSkraFastNR?fastnr=${homestay.propertyId}`}
-                  >
-                    {homestay.propertyId}
-                  </Link>
-                </Text>
+                <LinkContext.Provider
+                  value={{
+                    linkRenderer: (href, children) => (
+                      <a
+                        style={{
+                          color: theme.color.blue400,
+                        }}
+                        href={href}
+                        rel="noopener noreferrer"
+                        target="_blank"
+                      >
+                        {children}
+                      </a>
+                    ),
+                  }}
+                >
+                  <Text>
+                    {n('homestayRealEstateNumberPrefix', 'Fasteign nr.')}{' '}
+                    <a
+                      href={(n(
+                        'realEstateRegistryLinkTemplate',
+                        'https://fasteignaskra.is/default.aspx?pageid=d5db1b6d-0650-11e6-943c-005056851dd2&selector=streetname&streetname={{ID}}&submitbutton=Leita',
+                      ) as string).replace('{{ID}}', homestay.propertyId)}
+                    >
+                      {homestay.propertyId}
+                    </a>
+                  </Text>
+                </LinkContext.Provider>
                 <Text>
                   {n('homestayApartmentNo', 'Íbúð')}: {homestay.apartmentId}
                 </Text>

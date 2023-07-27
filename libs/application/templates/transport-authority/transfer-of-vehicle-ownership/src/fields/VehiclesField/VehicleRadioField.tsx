@@ -3,18 +3,14 @@ import {
   Box,
   Bullet,
   BulletList,
-  SkeletonLoader,
   Text,
   InputError,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { FC, useState } from 'react'
-import { VehiclesCurrentVehicleWithOwnerchangeChecks } from '@island.is/api/schema'
-import { VehiclesCurrentVehicle } from '../../shared'
+import { VehiclesCurrentVehicleWithOwnerchangeChecks } from '../../shared'
 import { information, applicationCheck, error } from '../../lib/messages'
 import { RadioController } from '@island.is/shared/form-fields'
-import { gql, useQuery } from '@apollo/client'
-import { GET_CURRENT_VEHICLES_WITH_OWNERCHANGE_CHECKS } from '../../graphql/queries'
 import { useFormContext } from 'react-hook-form'
 import { getValueViaPath } from '@island.is/application/core'
 import { FieldBaseProps } from '@island.is/application/types'
@@ -26,46 +22,27 @@ interface Option {
 }
 
 interface VehicleSearchFieldProps {
-  currentVehicleList: VehiclesCurrentVehicle[]
+  currentVehicleList: VehiclesCurrentVehicleWithOwnerchangeChecks[]
 }
 
 export const VehicleRadioField: FC<
   VehicleSearchFieldProps & FieldBaseProps
 > = ({ currentVehicleList, application, errors }) => {
   const { formatMessage } = useLocale()
-  const { register, setValue } = useFormContext()
+  const { setValue } = useFormContext()
 
   const [plate, setPlate] = useState<string>(
     getValueViaPath(application.answers, 'pickVehicle.plate', '') as string,
-  )
-  const [color, setColor] = useState<string | undefined>(
-    getValueViaPath(application.answers, 'pickVehicle.color', undefined) as
-      | string
-      | undefined,
-  )
-
-  const { data, loading } = useQuery(
-    gql`
-      ${GET_CURRENT_VEHICLES_WITH_OWNERCHANGE_CHECKS}
-    `,
-    {
-      variables: {
-        input: {
-          showOwned: true,
-          showCoOwned: false,
-          showOperated: false,
-        },
-      },
-    },
   )
 
   const onRadioControllerSelect = (s: string) => {
     const currentVehicle = currentVehicleList[parseInt(s, 10)]
     setPlate(currentVehicle.permno || '')
-    setColor(currentVehicle.color || undefined)
     setValue('vehicle.plate', currentVehicle.permno)
     setValue('vehicle.type', currentVehicle.make)
     setValue('vehicle.date', new Date().toISOString().substring(0, 10))
+    setValue('pickVehicle.plate', currentVehicle.permno || '')
+    setValue('pickVehicle.color', currentVehicle.color || undefined)
   }
 
   const vehicleOptions = (
@@ -144,35 +121,14 @@ export const VehicleRadioField: FC<
 
   return (
     <div>
-      {loading ? (
-        <SkeletonLoader
-          height={100}
-          space={2}
-          repeat={currentVehicleList.length}
-          borderRadius="large"
-        />
-      ) : (
-        <RadioController
-          id="pickVehicle.vehicle"
-          largeButtons
-          backgroundColor="blue"
-          onSelect={onRadioControllerSelect}
-          options={vehicleOptions(
-            data.currentVehiclesWithOwnerchangeChecks as VehiclesCurrentVehicleWithOwnerchangeChecks[],
-          )}
-        />
-      )}
-      <input
-        type="hidden"
-        value={plate}
-        ref={register({ required: true })}
-        name="pickVehicle.plate"
-      />
-      <input
-        type="hidden"
-        value={color}
-        ref={register({ required: true })}
-        name="pickVehicle.color"
+      <RadioController
+        id="pickVehicle.vehicle"
+        largeButtons
+        backgroundColor="blue"
+        onSelect={onRadioControllerSelect}
+        options={vehicleOptions(
+          currentVehicleList as VehiclesCurrentVehicleWithOwnerchangeChecks[],
+        )}
       />
       {plate.length === 0 && errors && errors.pickVehicle && (
         <InputError errorMessage={formatMessage(error.requiredValidVehicle)} />

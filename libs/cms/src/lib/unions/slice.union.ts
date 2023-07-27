@@ -37,6 +37,7 @@ import {
   ITableSlice,
   IEmailSignup,
   IFeaturedSupportQnAs,
+  ISliceDropdown,
 } from '../generated/contentfulTypes'
 import { Image, mapImage } from '../models/image.model'
 import { Asset, mapAsset } from '../models/asset.model'
@@ -102,6 +103,7 @@ import {
   FeaturedSupportQNAs,
   mapFeaturedSupportQNAs,
 } from '../models/featuredSupportQNAs.model'
+import { mapSliceDropdown, SliceDropdown } from '../models/sliceDropdown.model'
 
 type SliceTypes =
   | ITimeline
@@ -138,6 +140,7 @@ type SliceTypes =
   | ITableSlice
   | IEmailSignup
   | IFeaturedSupportQnAs
+  | ISliceDropdown
 
 export const SliceUnion = createUnionType({
   name: 'Slice',
@@ -179,6 +182,7 @@ export const SliceUnion = createUnionType({
     TableSlice,
     EmailSignup,
     FeaturedSupportQNAs,
+    SliceDropdown,
   ],
   resolveType: (document) => document.typename, // typename is appended to request on indexing
 })
@@ -254,6 +258,8 @@ export const mapSliceUnion = (slice: SliceTypes): typeof SliceUnion => {
       return mapEmailSignup(slice as IEmailSignup)
     case 'featuredSupportQNAs':
       return mapFeaturedSupportQNAs(slice as IFeaturedSupportQnAs)
+    case 'sliceDropdown':
+      return mapSliceDropdown(slice as ISliceDropdown)
     default:
       throw new ApolloError(`Can not convert to slice: ${contentType}`)
   }
@@ -294,7 +300,7 @@ export const mapDocument = (
         slices.push(safelyMapSliceUnion(block.data.target))
         break
       case BLOCKS.EMBEDDED_ASSET:
-        if (block.data.target.fields?.file) {
+        if (block.data.target?.fields?.file) {
           block.data.target.fields.file.details?.image
             ? slices.push(mapImage(block.data.target))
             : slices.push(mapAsset(block.data.target))

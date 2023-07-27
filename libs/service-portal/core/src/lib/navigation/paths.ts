@@ -40,19 +40,21 @@ export enum ServicePortalPath {
   SettingsIslykill = '/stillingar/islykill',
 
   // Family
-  Child = '/min-gogn/barn/:nationalId',
-  FamilyMember = '/min-gogn/:nationalId',
-  Spouse = '/min-gogn/maki/:nationalId',
+  Child = '/min-gogn/yfirlit/barn/:nationalId',
+  FamilyMember = '/min-gogn/yfirlit/:nationalId',
+  Spouse = '/min-gogn/yfirlit/maki/:nationalId',
   MyInfoRoot = '/min-gogn',
-  UserInfo = '/min-gogn/minar-upplysingar',
-  Endorsements = '/min-gogn/medmaeli',
+  MyInfoRootOverview = '/min-gogn/yfirlit',
+  UserInfo = '/min-gogn/yfirlit/minar-upplysingar',
   Company = '/fyrirtaeki',
 
   // General Petitions
-  Petitions = '/medmaeli',
-  PetitionsAdminView = '/medmaeli-admin',
-  PetitionList = '/medmaeli/:listId',
-  PetitionListAdmin = '/medmaeli-admin/:listId',
+  Petitions = '/min-gogn/listar',
+  PetitionList = '/min-gogn/listar/:listId',
+  PetitionListOwned = '/min-gogn/listar/minn-listi/:listId',
+
+  PetitionsAdminView = '/min-gogn/listar-admin',
+  PetitionListAdmin = '/min-gogn/listar-admin/:listId',
 
   RealEstateExternal = 'https://minarsidur.island.is/minar-sidur/min-gogn/fasteignir',
 
@@ -73,6 +75,8 @@ export enum ServicePortalPath {
 
   // Heilsa
   HealthRoot = '/heilsa',
+  HealthTherapies = '/heilsa/thjalfun',
+  HealthAidsAndNutrition = '/heilsa/hjalpartaeki-og-naering',
 
   // Education
   EducationRoot = '/menntun',
@@ -80,6 +84,8 @@ export enum ServicePortalPath {
   EducationCareer = '/menntun/namsferill',
   EducationStudentAssessment = '/menntun/namsferill/:familyIndex/samraemd-prof',
   EducationExternal = 'https://minarsidur.island.is/minar-sidur/menntun/namsferill/',
+  EducationHaskoliGraduation = '/menntun/haskoli/brautskraning',
+  EducationHaskoliGraduationDetail = '/menntun/haskoli/brautskraning/:id',
 
   // Education License
   EducationLicense = '/leyfisbref',
@@ -93,6 +99,8 @@ export enum ServicePortalPath {
   AssetsVehiclesLookup = '/okutaeki/leit',
   AssetsVehiclesHistory = '/okutaeki/okutaekjaferill',
   AssetsVehiclesDrivingLessons = '/okutaeki/okunam',
+  AssetsWorkMachines = '/okutaeki/vinnuvelar',
+  AssetsWorkMachinesDetail = '/okutaeki/vinnuvelar/:regNumber/:id',
 
   // Messages
   MessagesRoot = '/skilabod',

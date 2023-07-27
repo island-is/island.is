@@ -34,7 +34,7 @@ export const FishingLicense: FC<FieldBaseProps> = ({
   const { register, getValues, setValue } = useFormContext()
   const selectedChargeType = getValueViaPath(
     application.answers,
-    'fishingLicense.license',
+    'fishingLicense.chargeType',
     '',
   ) as string
   const [chargeType, setChargeType] = useState<string>(selectedChargeType || '')
@@ -134,6 +134,7 @@ export const FishingLicense: FC<FieldBaseProps> = ({
     if (getValues(ATTACHMENTS_FIELD_ID) !== undefined) {
       setValue(ATTACHMENTS_FIELD_ID, undefined)
     }
+    setValue(`${field.id}.chargeType`, chargeType)
   }, [chargeType])
 
   return (
@@ -228,9 +229,8 @@ export const FishingLicense: FC<FieldBaseProps> = ({
         )}
         <input
           type="hidden"
-          ref={register({ required: true })}
           id={`${field.id}.chargeType`}
-          name={`${field.id}.chargeType`}
+          {...register(`${field.id}.chargeType`, { required: true })}
           value={chargeType}
         />
       </Box>

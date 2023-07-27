@@ -16,7 +16,7 @@ import {
 } from '@island.is/application/types'
 import {
   applicantInformationMultiField,
-  formConclusionSection,
+  buildFormConclusionSection,
 } from '@island.is/application/ui-forms'
 import { Logo } from '../assets'
 import {
@@ -81,7 +81,7 @@ export const PaymentPlanForm: Form = buildForm({
     buildSection({
       id: 'info',
       title: section.info,
-      children: [applicantInformationMultiField],
+      children: [applicantInformationMultiField()],
     }),
     buildSection({
       id: 'employer',
@@ -221,7 +221,7 @@ export const PaymentPlanForm: Form = buildForm({
         }),
       ],
     }),
-    formConclusionSection({
+    buildFormConclusionSection({
       alertMessage: conclusion.general.alertMessage,
       alertTitle: conclusion.general.alertTitle,
       expandableHeader: conclusion.information.title,

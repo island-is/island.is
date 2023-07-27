@@ -3,23 +3,35 @@ import { useIntl } from 'react-intl'
 import router from 'next/router'
 
 import {
+  Accordion,
+  AccordionItem,
+  AlertMessage,
+  Box,
+  Button,
+  Text,
+} from '@island.is/island-ui/core'
+import * as constants from '@island.is/judicial-system/consts'
+import { isAcceptingCaseDecision } from '@island.is/judicial-system/types'
+import {
+  formatDate,
+  caseTypes,
+  capitalize,
+} from '@island.is/judicial-system/formatters'
+import {
   AccordionListItem,
   CaseFilesAccordionItem,
   CommentsAccordionItem,
+  CourtCaseInfo,
   FormContentContainer,
   FormContext,
   FormFooter,
   InfoCard,
-  MarkdownWrapper,
   PageLayout,
   PdfButton,
   UserContext,
+  CaseResentExplanation,
+  PageHeader,
 } from '@island.is/judicial-system-web/src/components'
-import {
-  RestrictionCaseCourtSubsections,
-  Sections,
-} from '@island.is/judicial-system-web/src/types'
-import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import {
   useCase,
   useOnceOn,
@@ -31,25 +43,10 @@ import {
   ruling,
   titles,
 } from '@island.is/judicial-system-web/messages'
-import { isAcceptingCaseDecision } from '@island.is/judicial-system/types'
-import {
-  Accordion,
-  AccordionItem,
-  AlertMessage,
-  Box,
-  Button,
-  Text,
-} from '@island.is/island-ui/core'
 import {
   UploadState,
   useCourtUpload,
-} from '@island.is/judicial-system-web/src/utils/hooks/useCourtUpload'
-import {
-  formatDate,
-  caseTypes,
-  capitalize,
-} from '@island.is/judicial-system/formatters'
-import * as constants from '@island.is/judicial-system/consts'
+} from '@island.is/judicial-system-web/src/utils/hooks'
 
 import { DraftConclusionModal } from '../../components'
 
@@ -95,10 +92,6 @@ const Overview = () => {
   return (
     <PageLayout
       workingCase={workingCase}
-      activeSection={
-        workingCase?.parentCase ? Sections.JUDGE_EXTENSION : Sections.JUDGE
-      }
-      activeSubSection={RestrictionCaseCourtSubsections.JUDGE_OVERVIEW}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
       isValid={true}
@@ -109,35 +102,26 @@ const Overview = () => {
       />
       <FormContentContainer>
         {workingCase.caseResentExplanation && (
-          <Box marginBottom={workingCase.seenByDefender ? 3 : 5}>
-            <AlertMessage
-              title={formatMessage(
-                icCourtOverview.sections.caseResentExplanation.title,
-              )}
-              message={
-                <MarkdownWrapper
-                  markdown={workingCase.caseResentExplanation}
-                  textProps={{ variant: 'small' }}
-                />
-              }
-              type="warning"
+          <Box marginBottom={workingCase.openedByDefender ? 3 : 5}>
+            <CaseResentExplanation
+              explanation={workingCase.caseResentExplanation}
             />
           </Box>
         )}
-        {workingCase.seenByDefender && (
+        {workingCase.openedByDefender && (
           <Box marginBottom={5}>
             <AlertMessage
               title={formatMessage(
-                icCourtOverview.sections.seenByDefenderAlert.title,
+                icCourtOverview.sections.openedByDefenderAlert.title,
               )}
               message={formatMessage(
-                icCourtOverview.sections.seenByDefenderAlert.text,
+                icCourtOverview.sections.openedByDefenderAlert.text,
                 {
-                  when: formatDate(workingCase.seenByDefender, 'PPPp'),
+                  when: formatDate(workingCase.openedByDefender, 'PPPp'),
                 },
               )}
               type="info"
-              testid="alertMessageSeenByDefender"
+              testid="alertMessageOpenedByDefender"
             />
           </Box>
         )}
@@ -146,6 +130,8 @@ const Overview = () => {
             Yfirlit kröfu um rannsóknarheimild
           </Text>
         </Box>
+        <CourtCaseInfo workingCase={workingCase} />
+
         <Box component="section" marginBottom={5}>
           <InfoCard
             data={[
@@ -300,6 +286,7 @@ const Overview = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
+          nextButtonIcon="arrowForward"
           previousUrl={`${constants.INVESTIGATION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE}/${workingCase.id}`}
           nextIsLoading={isLoadingWorkingCase}
           onNextButtonClick={() =>

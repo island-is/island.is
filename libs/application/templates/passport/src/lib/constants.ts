@@ -51,7 +51,7 @@ export type DistrictCommissionerAgencies = {
   name: string
   place: string
   address: string
-  id: string
+  key: string
 }
 
 export type SubmitResponse = {

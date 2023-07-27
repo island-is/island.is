@@ -1,0 +1,80 @@
+{
+  "root": "apps/contentful-apps",
+  "sourceRoot": "apps/contentful-apps",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "outputPath": "dist/apps/contentful-apps",
+        "commands": [
+          "yarn nx build-next contentful-apps",
+          "yarn nx build-server contentful-apps"
+        ]
+      },
+      "configurations": {
+        "production": {
+          "args": "--prod"
+        }
+      }
+    },
+    "build-next": {
+      "executor": "@nrwl/next:build",
+      "options": {
+        "root": "apps/contentful-apps",
+        "outputPath": "dist/apps/contentful-apps"
+      },
+      "configurations": {
+        "production": {}
+      },
+      "outputs": ["{options.outputPath}"]
+    },
+    "build-server": {
+      "executor": "@nrwl/node:webpack",
+      "options": {
+        "outputPath": "dist/apps/contentful-apps",
+        "main": "apps/contentful-apps/server.ts",
+        "tsConfig": "apps/contentful-apps/tsconfig.json",
+        "maxWorkers": 2,
+        "assets": []
+      },
+      "configurations": {
+        "production": {
+          "optimization": true,
+          "extractLicenses": true,
+          "inspect": false
+        }
+      },
+      "outputs": ["{options.outputPath}"]
+    },
+    "serve": {
+      "executor": "@nrwl/node:node",
+      "options": {
+        "buildTarget": "contentful-apps:build-server"
+      }
+    },
+    "export": {
+      "executor": "@nrwl/next:export",
+      "options": {
+        "buildTarget": "contentful-apps:build:production"
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/apps/contentful-apps"],
+      "options": {
+        "jestConfig": "apps/contentful-apps/jest.config.js",
+        "passWithNoTests": true
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["apps/contentful-apps/**/*.{ts,tsx,js,jsx}"]
+      }
+    },
+    "docker-next": {}
+  },
+  "tags": ["scope:react-next"]
+}

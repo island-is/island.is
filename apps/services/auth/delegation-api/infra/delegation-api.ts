@@ -23,6 +23,7 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-delegation-api'> =
         prod: 'https://innskra.island.is',
       },
       XROAD_NATIONAL_REGISTRY_ACTOR_TOKEN: 'true',
+      XROAD_RSK_PROCURING_ACTOR_TOKEN: 'true',
       XROAD_NATIONAL_REGISTRY_SERVICE_PATH: {
         dev: 'IS-DEV/GOV/10001/SKRA-Protected/Einstaklingar-v1',
         staging: 'IS-TEST/GOV/6503760649/SKRA-Protected/Einstaklingar-v1',
@@ -61,7 +62,7 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-delegation-api'> =
       },
       requests: {
         cpu: '100m',
-        memory: '128Mi',
+        memory: '192Mi',
       },
     })
     .ingress({

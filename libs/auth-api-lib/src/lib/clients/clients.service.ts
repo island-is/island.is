@@ -1,6 +1,7 @@
 /* eslint-disable  @typescript-eslint/no-explicit-any */
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import { NoContentException } from '@island.is/nest/problem'
 import { BadRequestException, Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import sha256 from 'crypto-js/sha256'
@@ -26,6 +27,7 @@ import { ClientClaimDTO } from './dto/client-claim.dto'
 import { ClientPostLogoutRedirectUriDTO } from './dto/client-post-logout-redirect-uri.dto'
 import { ClientSecretDTO } from './dto/client-secret.dto'
 import { ClientsTranslationService } from './clients-translation.service'
+import { BulkCreateOptions, DestroyOptions } from 'sequelize'
 
 @Injectable()
 export class ClientsService {
@@ -79,7 +81,7 @@ export class ClientsService {
       where: {
         ...(clientIds && clientIds.length > 0 ? { clientId: clientIds } : {}),
       },
-      attributes: ['clientId', 'clientName'],
+      attributes: ['clientId', 'clientName', 'domainName'],
     })
 
     if (lang) {
@@ -94,7 +96,7 @@ export class ClientsService {
     page: number,
     count: number,
     includeArchived: boolean,
-  ): Promise<{ rows: Client[]; count: number } | null> {
+  ): Promise<{ rows: Client[]; count: number }> {
     page--
     const offset = page * count
     return this.clientModel.findAndCountAll({
@@ -247,21 +249,24 @@ export class ClientsService {
   }
 
   /** Updates an existing client */
-  async update(client: ClientUpdateDTO, id: string): Promise<Client | null> {
+  async update(clientData: ClientUpdateDTO, id: string): Promise<Client> {
     this.logger.debug('Updating client with id: ', id)
 
     if (!id) {
       throw new BadRequestException('id must be provided')
     }
 
-    await this.clientModel.update(
-      { ...client },
-      {
-        where: { clientId: id },
-      },
-    )
+    const client = await this.findClientById(id)
+    if (!client) {
+      throw new NoContentException()
+    }
 
-    return await this.findClientById(id)
+    const [_, clients] = await this.clientModel.update(clientData, {
+      where: { clientId: id },
+      returning: true,
+    })
+
+    return clients[0]
   }
 
   /** Soft delete on a client by id */
@@ -444,6 +449,32 @@ export class ClientsService {
     return await this.clientAllowedScope.create({ ...clientAllowedScope })
   }
 
+  /**
+   * Adds multiple allowed scopes to client
+   * @param scopeNames - Unique scope names
+   * @param clientId - Client ID
+   * @param options - Bulk create options
+   */
+  async addAllowedScopes(
+    scopeNames: string[],
+    clientId: string,
+    options: BulkCreateOptions = {},
+  ): Promise<ClientAllowedScope[]> {
+    this.logger.debug(
+      `Adding allowed scopes - [${scopeNames
+        .map((scopeName) => scopeName)
+        .join(', ')}] to client - "${clientId}"`,
+    )
+
+    return this.clientAllowedScope.bulkCreate(
+      scopeNames.map((scopeName) => ({
+        clientId,
+        scopeName,
+      })),
+      options,
+    )
+  }
+
   /** Removes an allowed scope from client */
   async removeAllowedScope(
     clientId: string,
@@ -457,8 +488,37 @@ export class ClientsService {
       throw new BadRequestException('scopeName and clientId must be provided')
     }
 
-    return await this.clientAllowedScope.destroy({
-      where: { clientId: clientId, scopeName: scopeName },
+    return this.clientAllowedScope.destroy({
+      where: {
+        clientId: clientId,
+        scopeName: scopeName,
+      },
+    })
+  }
+
+  /**
+   * Removes multiple allowed scopes from client
+   * @param scopeNames - Unique scope names
+   * @param clientId - Client ID
+   * @param options - Destroy options
+   */
+  async removeAllowedScopes(
+    scopeNames: string[],
+    clientId: string,
+    options: DestroyOptions = {},
+  ): Promise<number> {
+    this.logger.debug(
+      `Removing scopes - [${scopeNames
+        .map((scopeName) => scopeName)
+        .join(', ')}] from client - "${clientId}"`,
+    )
+
+    return this.clientAllowedScope.destroy({
+      where: {
+        clientId: clientId,
+        scopeName: scopeNames,
+      },
+      ...options,
     })
   }
 
@@ -475,7 +535,7 @@ export class ClientsService {
     return await this.clientClaim.create({ ...claim })
   }
 
-  /** Removes an claim from client */
+  /** Removes a claim from client */
   async removeClaim(
     clientId: string,
     claimType: string,

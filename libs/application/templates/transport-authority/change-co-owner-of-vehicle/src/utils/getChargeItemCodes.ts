@@ -7,9 +7,11 @@ export const getChargeItemCodes = (
   const coOwnerWasAdded =
     answers.coOwners?.filter(({ wasRemoved }) => wasRemoved !== 'true').length >
     0
-  const coOwnerWasRemoved = !!answers.ownerCoOwners?.find((x) => x.wasRemoved)
+  const coOwnerWasRemoved = !!answers.ownerCoOwners?.find(
+    (x) => x.wasRemoved === 'true',
+  )
 
-  const result = []
+  const result: Array<string> = []
 
   if (coOwnerWasAdded) {
     result.push(

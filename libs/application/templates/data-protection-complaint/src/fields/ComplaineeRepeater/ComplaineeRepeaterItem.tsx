@@ -18,17 +18,16 @@ import {
 import { useLocale } from '@island.is/localization'
 import { InputController, RadioController } from '@island.is/shared/form-fields'
 import React, { FC, useState, useEffect } from 'react'
-import { ArrayField } from 'react-hook-form'
+import { FieldArrayWithId } from 'react-hook-form'
 import { complaint, sharedFields } from '../../lib/messages'
 import { NO, YES } from '../../shared'
-import { ComplaineeField } from './ComplaineeRepeater'
 import * as styles from './ComplaineeRepeater.css'
 import { useFormContext } from 'react-hook-form'
 
 interface Props {
   id: string
   application: Application
-  field: Partial<ArrayField<ComplaineeField, 'id'>>
+  field: FieldArrayWithId
   answers: FormValue
   index: number
   handleRemoveComplainee: (index: number) => void

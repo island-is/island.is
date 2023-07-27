@@ -20,62 +20,99 @@ type Notifier = {
 
 type EstateMember = {
   name: string
-  ssn: string
-  relation: string
+  ssn?: string
+  nationalId?: string
+  relation?: string
   dateOfBirth?: string
   foreignCitizenShip?: 'yes' | 'no'
+  phone?: string
+  email?: string
+} & SystemMetadata
+
+type Representative = {
+  name: string
+  ssn: string
+  phoneNumber: string
+  email: string
 }
 
 type AssetFrame = {
-  assetNumber: string
-  description: string
-}
+  assetNumber?: string
+  description?: string
+  marketValue?: string | number
+} & SystemMetadata
 
 type BankAccount = {
-  accountNumber: string
-  balance: string | number
+  accountNumber?: string
+  balance?: string | number
 }
 
 type Stock = {
-  organization: string
-  ssn: string
-  faceValue: string | number
-  rateOfExchange: string | number
-  value: string | number
+  organization?: string
+  ssn?: string
+  nationalId?: string
+  faceValue?: string | number
+  rateOfExchange?: string | number
+  value?: string | number
 }
 
 type Debt = {
-  creditorName: string
-  ssn: string
-  balance: string | number
+  creditorName?: string
+  ssn?: string
+  nationalId?: string
+  balance?: string | number
+  loanIdentity?: string
 }
 
-export interface UploadData {
-  [key: string]:
-    | string
-    | Notifier
-    | EstateMember[]
-    | AssetFrame[]
-    | number
-    | BankAccount[]
-    | Stock[]
-    | Debt[]
-    | 'yes'
-    | 'no'
-  //caseNumber: string
+type InfoValueField = {
+  info?: string
+  value?: string
+}
+
+type Claim = {
+  publisher?: string
+  value?: string | number
+}
+
+type Deceased = {
+  name: string
+  ssn: string
+  dateOfDeath: string
+  address: string
+}
+
+type SpouseField = {
+  spouse: {
+    name: string
+    nationalId: string
+  }
+  selection: string
+}
+
+type SystemMetadata = {
+  enabled?: boolean
+}
+
+export type UploadData = {
+  applicationType: string
+  deceased: Deceased
+  claims: Claim[]
+  caseNumber: string
   notifier: Notifier
   estateMembers: EstateMember[]
   assets: AssetFrame[]
+  guns: AssetFrame[]
   vehicles: AssetFrame[]
-  inventory: string
-  inventoryValue: string | number
+  inventory: InfoValueField
   bankAccounts: BankAccount[]
   stocks: Stock[]
-  moneyAndDepositBoxesInfo: string
-  moneyAndDepositBoxesValue: string | number
-  otherAssets: string
-  otherAssetsValue: string
+  moneyAndDeposit: InfoValueField
+  otherAssets: InfoValueField
   debts: Debt[]
-  undividedEstateResidencePermission: 'yes' | 'no'
-  applicantHasLegalCustodyOverEstate: 'yes' | 'no'
+  representative?: Representative
+  districtCommissionerHasWill: string
+  settlement: string
+  remarksOnTestament: string
+  dividedEstate: string
+  deceasedWithUndividedEstate?: SpouseField
 }

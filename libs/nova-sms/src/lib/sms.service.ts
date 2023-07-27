@@ -1,11 +1,11 @@
+import { Inject, Injectable } from '@nestjs/common'
 import { DataSourceConfig } from 'apollo-datasource'
-import { RESTDataSource, RequestOptions } from 'apollo-datasource-rest'
+import { RequestOptions, RESTDataSource } from 'apollo-datasource-rest'
+import { Agent } from 'https'
 
-import { Injectable, Inject } from '@nestjs/common'
-
-import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
+import type { Logger } from '@island.is/logging'
 export interface NovaResponse {
   Code: number
   Message: string
@@ -43,6 +43,7 @@ export interface SmsServiceOptions {
   url: string
   username: string
   password: string
+  acceptUnauthorized?: boolean
 }
 
 interface SmsBody {
@@ -56,6 +57,8 @@ interface SmsBody {
 
 @Injectable()
 export class SmsService extends RESTDataSource {
+  private readonly agent: Agent
+
   constructor(
     @Inject(SMS_OPTIONS)
     private readonly options: SmsServiceOptions,
@@ -66,12 +69,16 @@ export class SmsService extends RESTDataSource {
 
     this.baseURL = `${this.options.url}/NovaSmsService/`
 
+    this.agent = new Agent({
+      rejectUnauthorized: !this.options.acceptUnauthorized,
+    })
     this.initialize({} as DataSourceConfig<void>)
   }
 
   willSendRequest(request: RequestOptions) {
     this.memoizedResults.clear()
     request.headers.set('Content-Type', 'application/json')
+    request.agent = this.agent
   }
 
   private async login(): Promise<string> {

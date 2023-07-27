@@ -8,9 +8,9 @@ import {
   buildSubmitField,
   buildTextField,
 } from '@island.is/application/core'
-import { formConclusionSection } from '@island.is/application/ui-forms'
 
 import { YES } from '../constants'
+import { buildFormConclusionSection } from '@island.is/application/ui-forms'
 import { institutionApplicationMessages as m } from '../lib/messages'
 
 export const application: Form = buildForm({
@@ -41,6 +41,7 @@ export const application: Form = buildForm({
               id: 'applicant.institution',
               title: m.applicant.institutionLabel,
               setLabelToDataSchema: true,
+              required: true,
             }),
 
             buildTextField({
@@ -177,7 +178,7 @@ export const application: Form = buildForm({
         }),
       ],
     }),
-    formConclusionSection({
+    buildFormConclusionSection({
       alertTitle: m.confirmation.sectionTitle,
       expandableHeader: m.confirmation.sectionInfoHeader,
       expandableDescription: m.confirmation.sectionInfoBulletPoints,

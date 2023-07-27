@@ -24,6 +24,10 @@ import {
   MarriageCondtionsFeatureFlags,
 } from './getApplicationFeatureFlags'
 import { MaritalStatusApi, ReligionCodesApi } from '../dataProviders'
+import {
+  coreHistoryMessages,
+  corePendingActionMessages,
+} from '@island.is/application/core'
 
 const pruneAfter = (time: number) => {
   return {
@@ -41,7 +45,6 @@ const MarriageConditionsTemplate: ApplicationTemplate<
   type: ApplicationTypes.MARRIAGE_CONDITIONS,
   name: m.applicationTitle,
   dataSchema: dataSchema,
-  readyForProduction: true,
   featureFlag: Features.marriageConditions,
   stateMachineConfig: {
     initial: States.DRAFT,
@@ -50,9 +53,6 @@ const MarriageConditionsTemplate: ApplicationTemplate<
         meta: {
           name: 'Draft',
           status: 'draft',
-          actionCard: {
-            title: m.applicationTitle,
-          },
           progress: 0.33,
           lifecycle: pruneAfter(twoDays),
           roles: [
@@ -89,6 +89,14 @@ const MarriageConditionsTemplate: ApplicationTemplate<
               delete: true,
             },
           ],
+          actionCard: {
+            historyLogs: [
+              {
+                logMessage: coreHistoryMessages.applicationStarted,
+                onEvent: DefaultEvents.PAYMENT,
+              },
+            ],
+          },
         },
         on: {
           [DefaultEvents.PAYMENT]: { target: States.PAYMENT },
@@ -122,6 +130,19 @@ const MarriageConditionsTemplate: ApplicationTemplate<
               delete: true,
             },
           ],
+          actionCard: {
+            historyLogs: [
+              {
+                logMessage: coreHistoryMessages.paymentAccepted,
+                onEvent: DefaultEvents.ASSIGN,
+              },
+            ],
+            pendingAction: {
+              title: corePendingActionMessages.paymentPendingTitle,
+              content: corePendingActionMessages.paymentPendingDescription,
+              displayStatus: 'warning',
+            },
+          },
         },
         on: {
           [DefaultEvents.ASSIGN]: { target: States.SPOUSE_CONFIRM },
@@ -174,6 +195,19 @@ const MarriageConditionsTemplate: ApplicationTemplate<
               ],
             },
           ],
+          actionCard: {
+            historyLogs: [
+              {
+                logMessage: m.confirmedBySpouse2,
+                onEvent: DefaultEvents.SUBMIT,
+              },
+            ],
+            pendingAction: {
+              title: m.waitingForConfirmationSpouse2Title,
+              content: m.waitingForConfirmationSpouse2Description,
+              displayStatus: 'warning',
+            },
+          },
         },
         on: {
           [DefaultEvents.SUBMIT]: { target: States.DONE },
@@ -185,11 +219,6 @@ const MarriageConditionsTemplate: ApplicationTemplate<
           status: 'completed',
           progress: 1,
           lifecycle: pruneAfter(sixtyDays),
-          actionCard: {
-            tag: {
-              label: m.actionCardDoneTag,
-            },
-          },
           onEntry: defineTemplateApi({
             action: ApiActions.submitApplication,
             shouldPersistToExternalData: true,
@@ -215,6 +244,13 @@ const MarriageConditionsTemplate: ApplicationTemplate<
               },
             },
           ],
+          actionCard: {
+            pendingAction: {
+              title: coreHistoryMessages.applicationReceived,
+              content: '',
+              displayStatus: 'success',
+            },
+          },
         },
       },
     },

@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react'
+import React, { FC, useCallback, useState } from 'react'
 import format from 'date-fns/format'
 import { useMutation } from '@apollo/client'
 import { MessageDescriptor } from '@formatjs/intl'
@@ -14,19 +14,24 @@ import ReviewSection, { ReviewSectionState } from './ReviewSection'
 import { Review } from '../Review/Review'
 import { parentalLeaveFormMessages } from '../../lib/messages'
 import {
-  getApplicationAnswers,
-  getExpectedDateOfBirth,
+  getExpectedDateOfBirthOrAdoptionDate,
+  isFosterCareAndAdoption,
   otherParentApprovalDescription,
   requiresOtherParentApproval,
 } from '../../lib/parentalLeaveUtils'
 import {
   NO,
+  PARENTAL_GRANT,
+  PARENTAL_GRANT_STUDENTS,
   PARENTAL_LEAVE,
   States as ApplicationStates,
+  States,
   YES,
 } from '../../constants'
 import { useApplicationAnswers } from '../../hooks/useApplicationAnswers'
 import { useRemainingRights } from '../../hooks/useRemainingRights'
+import { showResidenceGrant } from '../../lib/answerValidationSections/utils'
+import { PrintButton } from '../PrintButton'
 
 type StateMapEntry = { [key: string]: ReviewSectionState }
 
@@ -100,20 +105,27 @@ const InReviewSteps: FC<FieldBaseProps> = (props) => {
     isSelfEmployed,
     applicationType,
     isReceivingUnemploymentBenefits,
+    hasAppliedForReidenceGrant,
+    periods,
+    employerLastSixMonths,
+    employers,
   } = useApplicationAnswers(application)
+  const showResidenceGrantCard = showResidenceGrant(application)
   const oldApplication = applicationType === undefined // Added this check for applications that is in the db already
   const isBeneficiaries = !oldApplication
     ? applicationType === PARENTAL_LEAVE
       ? isReceivingUnemploymentBenefits === YES
       : false
     : false
+  const isStillEmployed = employers?.some(
+    (employer) => employer.stillEmployed === YES,
+  )
   const [submitApplication, { loading: loadingSubmit }] = useMutation(
     SUBMIT_APPLICATION,
     {
       onError: (e) => handleServerError(e, formatMessage),
     },
   )
-
   const { formatMessage } = useLocale()
   const [screenState, setScreenState] = useState<'steps' | 'viewApplication'>(
     'steps',
@@ -152,6 +164,21 @@ const InReviewSteps: FC<FieldBaseProps> = (props) => {
   }
 
   if (
+    (applicationType === PARENTAL_GRANT ||
+      applicationType === PARENTAL_GRANT_STUDENTS) &&
+    employerLastSixMonths === YES &&
+    isStillEmployed
+  ) {
+    steps.unshift({
+      state: statesMap['employer'][application.state],
+      title: formatMessage(
+        parentalLeaveFormMessages.reviewScreen.employerTitle,
+      ),
+      description: formatMessage(descKey[application.state]),
+    })
+  }
+
+  if (
     requiresOtherParentApproval(application.answers, application.externalData)
   ) {
     steps.unshift({
@@ -165,8 +192,38 @@ const InReviewSteps: FC<FieldBaseProps> = (props) => {
       ),
     })
   }
+  if (
+    (application.state === States.APPROVED ||
+      application.state === States.VINNUMALASTOFNUN_APPROVE_EDITS ||
+      application.state === States.VINNUMALASTOFNUN_APPROVAL) &&
+    showResidenceGrantCard
+  ) {
+    if (hasAppliedForReidenceGrant === YES) {
+      steps.push({
+        state: ReviewSectionState.complete,
+        title: formatMessage(
+          parentalLeaveFormMessages.residenceGrantMessage.residenceGrantTitle,
+        ),
+        description: formatMessage(
+          parentalLeaveFormMessages.residenceGrantMessage
+            .residenceGrantApplicationSendInformation,
+        ),
+      })
+    } else {
+      steps.push({
+        state: ReviewSectionState.prerequisites,
+        title: formatMessage(
+          parentalLeaveFormMessages.residenceGrantMessage.residenceGrantTitle,
+        ),
+        description: formatMessage(
+          parentalLeaveFormMessages.residenceGrantMessage
+            .residenceGrantClosedDescription,
+        ),
+      })
+    }
+  }
 
-  const dob = getExpectedDateOfBirth(application)
+  const dob = getExpectedDateOfBirthOrAdoptionDate(application)
   const dobDate = dob ? new Date(dob) : null
 
   const canBeEdited =
@@ -180,22 +237,53 @@ const InReviewSteps: FC<FieldBaseProps> = (props) => {
     application.state === ApplicationStates.EMPLOYER_APPROVE_EDITS ||
     application.state === ApplicationStates.VINNUMALASTOFNUN_APPROVE_EDITS
 
-  const { periods } = getApplicationAnswers(application.answers)
   const lastEndDate = new Date(periods[periods.length - 1].endDate)
+
   const isUsedAllRights =
     useRemainingRights(application) > 0 ||
     lastEndDate.getTime() > new Date().getTime()
+  const handleSubmit = useCallback(async (event: string) => {
+    const res = await submitApplication({
+      variables: {
+        input: {
+          id: application.id,
+          event,
+          answers: application.answers,
+        },
+      },
+    })
+    if (res?.data) {
+      // Takes them to the next state (which loads the relevant form)
+      refetch?.()
+    }
+  }, [])
   return (
     <Box marginBottom={10}>
+      {screenState === 'viewApplication' && <PrintButton />}
+      <Box marginBottom={2}>
+        <Text variant="h2">
+          {formatMessage(
+            application.state === States.VINNUMALASTOFNUN_APPROVAL
+              ? parentalLeaveFormMessages.reviewScreen.titleReceived
+              : application.state === States.APPROVED
+              ? parentalLeaveFormMessages.reviewScreen.titleApproved
+              : parentalLeaveFormMessages.reviewScreen.titleInReview,
+          )}
+        </Text>
+      </Box>
       <Box
         display={['block', 'block', 'block', 'flex']}
         justifyContent="spaceBetween"
       >
         {dobDate && (
           <Text variant="h4" color="blue400">
-            {formatMessage(
-              parentalLeaveFormMessages.reviewScreen.estimatedBirthDate,
-            )}
+            {isFosterCareAndAdoption(application)
+              ? formatMessage(
+                  parentalLeaveFormMessages.reviewScreen.adoptionDate,
+                )
+              : formatMessage(
+                  parentalLeaveFormMessages.reviewScreen.estimatedBirthDate,
+                )}
             <br />
             {format(dobDate, dateFormat.is)}
           </Text>
@@ -229,6 +317,7 @@ const InReviewSteps: FC<FieldBaseProps> = (props) => {
                 )}
             </Button>
           </Box>
+
           {canBeEdited && isUsedAllRights && (
             <Box display="inlineBlock">
               <Button
@@ -240,22 +329,7 @@ const InReviewSteps: FC<FieldBaseProps> = (props) => {
                 icon="pencil"
                 loading={loadingSubmit}
                 disabled={loadingSubmit}
-                onClick={async () => {
-                  const res = await submitApplication({
-                    variables: {
-                      input: {
-                        id: application.id,
-                        event: 'EDIT',
-                        answers: application.answers,
-                      },
-                    },
-                  })
-
-                  if (res?.data) {
-                    // Takes them to the next state (which loads the relevant form)
-                    refetch?.()
-                  }
-                }}
+                onClick={() => handleSubmit('EDIT')}
               >
                 {formatMessage(
                   parentalLeaveFormMessages.reviewScreen.buttonsEdit,
@@ -265,11 +339,16 @@ const InReviewSteps: FC<FieldBaseProps> = (props) => {
           )}
         </Box>
       </Box>
-
       {screenState === 'steps' ? (
         <Box marginTop={7} marginBottom={8}>
           {steps.map((step, index) => (
-            <ReviewSection key={index} index={index + 1} {...props} {...step} />
+            <ReviewSection
+              key={index}
+              application={application}
+              index={index + 1}
+              {...step}
+              notifyParentOnClickEvent={() => handleSubmit('SUBMIT')}
+            />
           ))}
         </Box>
       ) : (

@@ -1,9 +1,11 @@
 module.exports = {
   displayName: 'clients-smartsolutions',
-  preset: '../../../jest.preset.js',
+  preset: './jest.preset.js',
+  rootDir: '../../..',
+  roots: [__dirname],
   globals: {
     'ts-jest': {
-      tsconfig: '<rootDir>/tsconfig.spec.json',
+      tsconfig: `${__dirname}/tsconfig.spec.json`,
     },
   },
   testEnvironment: 'node',
@@ -11,5 +13,5 @@ module.exports = {
     '^.+\\.[tj]sx?$': 'ts-jest',
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
-  coverageDirectory: '../../../coverage/libs/clients/smartsolutions',
+  coverageDirectory: '<rootDir>/coverage/libs/clients/smartsolutions',
 }

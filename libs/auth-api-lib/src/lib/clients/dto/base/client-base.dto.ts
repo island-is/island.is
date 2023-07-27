@@ -22,6 +22,13 @@ export abstract class ClientBaseDTO {
   })
   readonly clientType!: string
 
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty({
+    example: '@island.is',
+  })
+  readonly domainName!: string
+
   @IsBoolean()
   @IsNotEmpty()
   @ApiProperty({

@@ -13,11 +13,7 @@ import {
   AlertBanner,
   AlertMessage,
 } from '@island.is/island-ui/core'
-import {
-  LinkResolver,
-  ServicePortalModuleComponent,
-  UserInfoLine,
-} from '@island.is/service-portal/core'
+import { LinkResolver, UserInfoLine } from '@island.is/service-portal/core'
 import { defineMessage } from 'react-intl'
 import { formatDate } from '../../utils/dateUtils'
 import { m } from '../../lib/messages'
@@ -28,7 +24,6 @@ import {
 } from '@island.is/service-portal/graphql'
 import * as styles from './PassportDetail.css'
 import { Gender, GenderType } from '../../types/passport.type'
-import { applyPassport, lostPassport } from '../../lib/constants'
 import { capitalizeEveryWord } from '../../utils/capitalize'
 
 const getCurrentPassport = (
@@ -47,8 +42,8 @@ const getCurrentPassport = (
   return pass
 }
 
-const NotifyLostLink = (text: string) => (
-  <LinkResolver href={lostPassport}>
+const NotifyLostLink = (text: string, link: string) => (
+  <LinkResolver href={link}>
     <Button
       as="span"
       variant="utility"
@@ -65,7 +60,7 @@ type UseParams = {
   id: string
 }
 
-const PassportDetail: ServicePortalModuleComponent = () => {
+const PassportDetail = () => {
   useNamespaces('sp.license')
   const { formatMessage, lang } = useLocale()
   const { id } = useParams() as UseParams
@@ -136,7 +131,7 @@ const PassportDetail: ServicePortalModuleComponent = () => {
 
                 <Box display="flex" flexDirection="row" alignItems="center">
                   <Box className={styles.renew}>
-                    <LinkResolver href={applyPassport}>
+                    <LinkResolver href={formatMessage(m.applyPassportUrl)}>
                       <Button
                         variant="utility"
                         size="small"
@@ -148,7 +143,10 @@ const PassportDetail: ServicePortalModuleComponent = () => {
                       </Button>
                     </LinkResolver>
                   </Box>
-                  {NotifyLostLink(formatMessage(m.passportNotifyLost))}
+                  {NotifyLostLink(
+                    formatMessage(m.passportNotifyLost),
+                    formatMessage(m.lostPassportUrl),
+                  )}
                 </Box>
               </GridColumn>
             </GridRow>
@@ -156,7 +154,10 @@ const PassportDetail: ServicePortalModuleComponent = () => {
             <GridRow marginBottom={2}>
               <GridColumn span={['12/12', '12/12', '5/8', '5/8']}>
                 <Box display="flex" flexDirection="row" alignItems="center">
-                  {NotifyLostLink(formatMessage(m.passportNotifyLost))}
+                  {NotifyLostLink(
+                    formatMessage(m.passportNotifyLost),
+                    formatMessage(m.lostPassportUrl),
+                  )}
                 </Box>
               </GridColumn>
             </GridRow>
@@ -171,6 +172,7 @@ const PassportDetail: ServicePortalModuleComponent = () => {
             paddingBottom={1}
             labelColumnSpan={['1/1', '6/12']}
             valueColumnSpan={['1/1', '6/12']}
+            translate="no"
           />
           <Divider />
           <UserInfoLine
@@ -180,6 +182,7 @@ const PassportDetail: ServicePortalModuleComponent = () => {
             paddingBottom={1}
             labelColumnSpan={['1/1', '6/12']}
             valueColumnSpan={['1/1', '6/12']}
+            translate="no"
           />
           <Divider />
           <UserInfoLine
@@ -189,6 +192,7 @@ const PassportDetail: ServicePortalModuleComponent = () => {
             paddingBottom={1}
             labelColumnSpan={['1/1', '6/12']}
             valueColumnSpan={['1/1', '6/12']}
+            translate="no"
           />
           <Divider />
           <UserInfoLine
@@ -238,6 +242,7 @@ const PassportDetail: ServicePortalModuleComponent = () => {
             paddingBottom={1}
             labelColumnSpan={['1/1', '6/12']}
             valueColumnSpan={['1/1', '6/12']}
+            translate="no"
           />
           <Divider />
           <UserInfoLine
@@ -247,6 +252,7 @@ const PassportDetail: ServicePortalModuleComponent = () => {
             paddingBottom={1}
             labelColumnSpan={['1/1', '6/12']}
             valueColumnSpan={['1/1', '6/12']}
+            translate="no"
           />
           <Divider />
           <UserInfoLine

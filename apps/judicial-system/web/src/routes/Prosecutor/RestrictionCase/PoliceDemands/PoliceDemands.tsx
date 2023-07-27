@@ -13,10 +13,6 @@ import {
   ProsecutorCaseInfo,
 } from '@island.is/judicial-system-web/src/components'
 import {
-  RestrictionCaseProsecutorSubsections,
-  Sections,
-} from '@island.is/judicial-system-web/src/types'
-import {
   useCase,
   useDeb,
   useOnceOn,
@@ -183,10 +179,6 @@ export const PoliceDemands: React.FC = () => {
   return (
     <PageLayout
       workingCase={workingCase}
-      activeSection={
-        workingCase?.parentCase ? Sections.EXTENSION : Sections.PROSECUTOR
-      }
-      activeSubSection={RestrictionCaseProsecutorSubsections.POLICE_DEMANDS}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
       isValid={stepIsValid}
@@ -224,7 +216,9 @@ export const PoliceDemands: React.FC = () => {
             )}
           </Box>
           <BlueBox>
-            <Box marginBottom={workingCase.type !== CaseType.TravelBan ? 2 : 0}>
+            <Box
+              marginBottom={workingCase.type !== CaseType.TRAVEL_BAN ? 2 : 0}
+            >
               <DateTime
                 name="reqValidToDate"
                 datepickerLabel={formatMessage(
@@ -250,7 +244,7 @@ export const PoliceDemands: React.FC = () => {
                 blueBox={false}
               />
             </Box>
-            {workingCase.type !== CaseType.TravelBan && (
+            {workingCase.type !== CaseType.TRAVEL_BAN && (
               <div className={styles.grid}>
                 <Checkbox
                   name="isIsolation"
@@ -286,15 +280,15 @@ export const PoliceDemands: React.FC = () => {
                   label={formatMessage(
                     rcDemands.sections.demands.admissionToAppropriateFacility,
                   )}
-                  checked={workingCase.type === CaseType.AdmissionToFacility}
+                  checked={workingCase.type === CaseType.ADMISSION_TO_FACILITY}
                   onChange={(event) => {
                     if (workingCase.parentCase) {
                       return
                     }
 
                     const nextCaseType = event.target.checked
-                      ? CaseType.AdmissionToFacility
-                      : CaseType.Custody
+                      ? CaseType.ADMISSION_TO_FACILITY
+                      : CaseType.CUSTODY
                     onDemandsChange(
                       {
                         type: nextCaseType,
@@ -378,8 +372,8 @@ export const PoliceDemands: React.FC = () => {
             <Box marginBottom={2}>
               <CheckboxList
                 checkboxes={
-                  workingCase.type === CaseType.Custody ||
-                  workingCase.type === CaseType.AdmissionToFacility
+                  workingCase.type === CaseType.CUSTODY ||
+                  workingCase.type === CaseType.ADMISSION_TO_FACILITY
                     ? legalProvisions
                     : travelBanProvisions
                 }
@@ -429,8 +423,8 @@ export const PoliceDemands: React.FC = () => {
             />
           </BlueBox>
         </Box>
-        {(workingCase.type === CaseType.Custody ||
-          workingCase.type === CaseType.AdmissionToFacility) && (
+        {(workingCase.type === CaseType.CUSTODY ||
+          workingCase.type === CaseType.ADMISSION_TO_FACILITY) && (
           <Box
             component="section"
             marginBottom={10}
@@ -473,7 +467,7 @@ export const PoliceDemands: React.FC = () => {
             </BlueBox>
           </Box>
         )}
-        {workingCase.type === CaseType.TravelBan && (
+        {workingCase.type === CaseType.TRAVEL_BAN && (
           <Box
             component="section"
             marginBottom={4}
@@ -552,6 +546,7 @@ export const PoliceDemands: React.FC = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
+          nextButtonIcon="arrowForward"
           previousUrl={`${constants.RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`}
           onNextButtonClick={() =>
             handleNavigationTo(constants.RESTRICTION_CASE_POLICE_REPORT_ROUTE)

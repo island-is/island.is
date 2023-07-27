@@ -58,7 +58,7 @@ describe('NotificationController - Send court date notification', () => {
       expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
         {
           type: MessageType.SEND_COURT_DATE_NOTIFICATION,
-          userId,
+          user,
           caseId,
         },
       ])

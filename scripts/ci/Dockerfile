@@ -1,4 +1,5 @@
 # This is a multi-stage Dockerfile which contains all CI-related operations as well as images to be deployed in production
+ARG PLAYWRIGHT_VERSION
 ARG DOCKER_IMAGE_REGISTRY=public.ecr.aws
 FROM $DOCKER_IMAGE_REGISTRY/docker/library/node:18-alpine3.15 as deps
 
@@ -8,6 +9,7 @@ WORKDIR /build
 
 # Adding and installing packages
 ADD package.json yarn.lock .yarnrc.yml ./
+ADD apps/native/app/package.json ./apps/native/app/
 COPY .yarn/ ./.yarn
 RUN apk add --update --no-cache python3 build-base gcc && ln -sf /usr/bin/python3 /usr/bin/python
 RUN CI=true yarn install --immutable
@@ -112,32 +114,39 @@ USER runner
 
 CMD [ "jest", "main.spec.js" ]
 
-FROM mcr.microsoft.com/playwright:v1.25.2-focal as playwright-base
+
+
+FROM mcr.microsoft.com/playwright:v${PLAYWRIGHT_VERSION}-focal as playwright-base
+
+
+
 
 
 
 FROM playwright-base as output-playwright
+# TODO: remove awscli dependency (157 MB extra)
+RUN apt-get update -y && apt-get install -y zip awscli && apt-get purge
 
 ARG APP_HOME
 ARG APP_DIST_HOME
 
 WORKDIR ${APP_DIST_HOME}
-ENV APP_DIST_HOME=${APP_DIST_HOME}
 
-RUN mkdir -p /${APP_DIST_HOME} \
-  && chown pwuser:pwuser /${APP_DIST_HOME}
+COPY --from=builder /build/${APP_DIST_HOME} .
+COPY ${APP_HOME}/package.json .
+RUN chown -R pwuser:pwuser .
 
-RUN chown -R pwuser:pwuser /tmp
-RUN apt-get update && apt-get install -y vim
-RUN apt-get -y install libnss3 libatk-bridge2.0-0 libdrm-dev libxkbcommon-dev libgbm-dev libasound-dev libatspi2.0-0 libxshmfence-dev
-RUN apt-get -y install awscli zip
-
-COPY --chown=pwuser:pwuser ${APP_HOME}/package.json .
-RUN yarn install
-COPY --chown=pwuser:pwuser --from=builder /build/${APP_DIST_HOME} /${APP_DIST_HOME}/
-COPY --chown=pwuser:pwuser ${APP_HOME}/entrypoint.sh .
 USER pwuser
+RUN yarn set version berry
+RUN yarn install
+
+ENV PLAYWRIGHT_BROWSER=chromium
+RUN yarn playwright install ${PLAYWRIGHT_BROWSER}
+
+COPY --chown=pwuser:pwuser ${APP_HOME}/entrypoint.sh .
+
 ENTRYPOINT ["./entrypoint.sh"]
+
 
 FROM playwright-base as output-local
 ARG APP_HOME
@@ -152,3 +161,6 @@ COPY --chown=pwuser:pwuser ${APP_HOME}/entrypoint.sh .
 USER pwuser
 
 ENTRYPOINT ["./entrypoint.sh"]
+
+FROM output-base as output-native
+RUN echo "not-implemented"

@@ -1,7 +1,6 @@
 import React, { FC, useState, useEffect } from 'react'
 import {
   Box,
-  Button,
   Columns,
   Column,
   Icon,
@@ -30,7 +29,7 @@ interface Props {
 export const Nudge: FC<Props> = ({ refuseMail }) => {
   useNamespaces('sp.settings')
   const { formatMessage } = useLocale()
-  const { control, handleSubmit, getValues } = useForm()
+  const { control, handleSubmit, getValues } = useForm<Props>()
   const [inputPristine, setInputPristine] = useState<boolean>(false)
   const [submitError, setSubmitError] = useState<string>()
 
@@ -71,7 +70,7 @@ export const Nudge: FC<Props> = ({ refuseMail }) => {
               name="refuseMail"
               control={control}
               defaultValue={refuseMail}
-              render={({ onChange, value }) => (
+              render={({ field: { onChange, value } }) => (
                 <Checkbox
                   name="refuseMail"
                   onChange={(e) => {

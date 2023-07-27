@@ -1,6 +1,6 @@
 import faker from 'faker'
 import {
-  INVESTIGATION_CASE_MODIFY_RULING_ROUTE,
+  INVESTIGATION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE,
   SIGNED_VERDICT_OVERVIEW_ROUTE,
 } from '@island.is/judicial-system/consts'
 import {
@@ -20,7 +20,7 @@ import {
 
 describe('Signed verdict overview - Court - Investigation case', () => {
   const conclusion = faker.lorem.paragraph(1)
-  const caseFile = makeCaseFile('caseId', 'caseFileName')
+  const caseFile = makeCaseFile({ caseId: 'caseId', name: 'caseFileName' })
 
   beforeEach(() => {
     const caseData = mockCase(CaseType.INTERNET_USAGE)
@@ -48,36 +48,7 @@ describe('Signed verdict overview - Court - Investigation case', () => {
     cy.contains(conclusion)
   })
 
-  it('should have a button for modifying the ruling that navigates to a modify ruling page', () => {
-    cy.get('[data-testid="modifyRulingButton"]').should('exist').click()
-    cy.url().should('include', INVESTIGATION_CASE_MODIFY_RULING_ROUTE)
-  })
-
   it('should be able to sign the court record', () => {
     cy.get('[data-testid="signCourtRecordButton"]').should('exist')
-  })
-})
-
-describe('Signed verdict overview - Court - Not the assigned judge', () => {
-  beforeEach(() => {
-    const caseData = mockCase(CaseType.INTERNET_USAGE)
-    const caseDataAddition: Case = {
-      ...caseData,
-      court: makeCourt(),
-      state: CaseState.ACCEPTED,
-      isValidToDateInThePast: false,
-      validToDate: '2022-06-13T19:51:39.466Z',
-      isolationToDate: '2022-06-13T19:51:39.466Z',
-      judge: { ...makeJudge(), id: 'some_other_judge_id' },
-    }
-
-    cy.login(UserRole.JUDGE)
-    cy.stubAPIResponses()
-    intercept(caseDataAddition)
-    cy.visit(`${SIGNED_VERDICT_OVERVIEW_ROUTE}/test_id`)
-  })
-
-  it('should not have a button for modifying the ruling', () => {
-    cy.get('[data-testid="modifyRulingButton"]').should('not.exist')
   })
 })

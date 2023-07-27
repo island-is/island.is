@@ -16,7 +16,6 @@ import { DocumentProviderAdministrativeContactForm } from './DocumentProviderAdm
 import { DocumentProviderHelpDeskForm } from './DocumentProviderHelpDeskForm'
 import { DocumentProviderDashboard } from './DocumentProviderDashboard'
 import { useGetOrganisation } from '../../shared/useGetOrganisation'
-import { PortalModuleComponent } from '@island.is/portals/core'
 //TODO fix breadcrumbs so you can go back to DocmentProviders site
 export const IsFetchingProviderOrganisationContext = React.createContext(false)
 
@@ -24,7 +23,7 @@ type UseParams = {
   nationalId: string
 }
 
-const SingleDocumentProvider: PortalModuleComponent = ({ userInfo }) => {
+const SingleDocumentProvider = () => {
   const [fromDate, setFromDate] = useState<Date | undefined>(undefined)
   const [toDate, setToDate] = useState<Date | undefined>(undefined)
   const { nationalId } = useParams() as UseParams

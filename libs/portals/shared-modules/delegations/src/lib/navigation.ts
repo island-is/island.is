@@ -1,12 +1,11 @@
-import { PortalNavigationItem } from '@island.is/portals/core'
+import { PortalNavigationItem, m } from '@island.is/portals/core'
 import { DelegationPaths } from './paths'
-import { m } from './messages'
 
 export const delegationsNavigationChildren: PortalNavigationItem[] = [
   {
     name: m.accessControlDelegations,
     path: DelegationPaths.Delegations,
-    navHide: false,
+    breadcrumbHide: true,
     children: [
       {
         name: m.accessControlGrant,

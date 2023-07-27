@@ -1,5 +1,5 @@
 import {
-  ReviewCoOwnerAndOperatorField,
+  CoOwnerAndOperator,
   ReviewSectionProps,
   UserInformation,
 } from '../shared'
@@ -10,7 +10,7 @@ import { States } from '../lib/constants'
 
 export const getReviewSteps = (
   application: Application,
-  coOwnersAndOperators: ReviewCoOwnerAndOperatorField[],
+  coOwnersAndOperators: CoOwnerAndOperator[],
 ) => {
   const vehiclePlate = getValueViaPath(
     application.answers,

@@ -1,8 +1,8 @@
 import type { Defendant } from './defendant'
 import type { Institution } from './institution'
 import type { Notification } from './notification'
-import type { CaseFile } from './file'
-import type { User } from './user'
+import { CaseFile } from './file'
+import { User, UserRole } from './user'
 import type { CourtDocument } from './courtDocument'
 
 export enum CaseOrigin {
@@ -73,6 +73,7 @@ export enum IndictmentSubtype {
   UTILITY_THEFT = 'UTILITY_THEFT',
   WEPONS_VIOLATION = 'WEPONS_VIOLATION',
 }
+
 export interface IndictmentSubtypeMap {
   [key: string]: IndictmentSubtype[]
 }
@@ -97,6 +98,12 @@ export enum CaseState {
   DISMISSED = 'DISMISSED',
 }
 
+export enum CaseAppealState {
+  APPEALED = 'APPEALED',
+  RECEIVED = 'RECEIVED',
+  COMPLETED = 'COMPLETED',
+}
+
 export enum CaseTransition {
   OPEN = 'OPEN',
   SUBMIT = 'SUBMIT',
@@ -105,6 +112,10 @@ export enum CaseTransition {
   REJECT = 'REJECT',
   DELETE = 'DELETE',
   DISMISS = 'DISMISS',
+  REOPEN = 'REOPEN',
+  APPEAL = 'APPEAL',
+  RECEIVE_APPEAL = 'RECEIVE_APPEAL',
+  COMPLETE_APPEAL = 'COMPLETE_APPEAL',
 }
 
 /* eslint-disable @typescript-eslint/naming-convention */
@@ -144,15 +155,20 @@ export enum CaseDecision {
   DISMISSING = 'DISMISSING',
 }
 
+export enum CaseAppealRulingDecision {
+  ACCEPTING = 'ACCEPTING',
+  REPEAL = 'REPEAL',
+  CHANGED = 'CHANGED',
+  DISMISSED_FROM_COURT_OF_APPEAL = 'DISMISSED_FROM_COURT_OF_APPEAL',
+  DISMISSED_FROM_COURT = 'DISMISSED_FROM_COURT',
+  REMAND = 'REMAND',
+}
+
 export enum SessionArrangements {
   ALL_PRESENT = 'ALL_PRESENT',
   ALL_PRESENT_SPOKESPERSON = 'ALL_PRESENT_SPOKESPERSON',
   PROSECUTOR_PRESENT = 'PROSECUTOR_PRESENT',
-}
-
-export enum SubpoenaType {
-  ARREST_SUMMONS = 'ARREST_SUMMONS',
-  ABSENCE_SUMMONS = 'ABSENCE_SUMMONS',
+  NONE_PRESENT = 'NONE_PRESENT',
 }
 
 export interface Case {
@@ -225,6 +241,7 @@ export interface Case {
   isAppealDeadlineExpired?: boolean
   isAppealGracePeriodExpired?: boolean
   rulingDate?: string
+  rulingSignatureDate?: string
   initialRulingDate?: string
   registrar?: User
   judge?: User
@@ -237,11 +254,29 @@ export interface Case {
   caseModifiedExplanation?: string
   rulingModifiedHistory?: string
   caseResentExplanation?: string
-  seenByDefender?: string
-  subpoenaType?: SubpoenaType
+  openedByDefender?: string
   defendantWaivesRightToCounsel?: boolean
   crimeScenes?: CrimeSceneMap
   indictmentIntroduction?: string
+  requestDriversLicenseSuspension?: boolean
+  appealState?: CaseAppealState
+  isStatementDeadlineExpired?: boolean
+  canBeAppealed?: boolean
+  hasBeenAppealed?: boolean
+  appealDeadline?: string
+  appealedByRole?: UserRole
+  appealedDate?: string
+  statementDeadline?: string
+  prosecutorStatementDate?: string
+  defendantStatementDate?: string
+  appealCaseNumber?: string
+  appealAssistant?: User
+  appealJudge1?: User
+  appealJudge2?: User
+  appealJudge3?: User
+  appealReceivedByCourtDate?: string
+  appealConclusion?: string
+  appealRulingDecision?: CaseAppealRulingDecision
 }
 
 export interface CaseListEntry
@@ -260,6 +295,7 @@ export interface CaseListEntry
     | 'courtDate'
     | 'initialRulingDate'
     | 'rulingDate'
+    | 'rulingSignatureDate'
     | 'courtEndTime'
     | 'prosecutorAppealDecision'
     | 'accusedAppealDecision'
@@ -269,6 +305,10 @@ export interface CaseListEntry
     | 'prosecutor'
     | 'registrar'
     | 'creatingProsecutor'
+    | 'appealState'
+    | 'appealedDate'
+    | 'appealCaseNumber'
+    | 'appealRulingDecision'
   > {
   parentCaseId?: string
 }
@@ -347,11 +387,17 @@ export interface UpdateCase
     | 'caseModifiedExplanation'
     | 'rulingModifiedHistory'
     | 'caseResentExplanation'
-    | 'seenByDefender'
-    | 'subpoenaType'
+    | 'openedByDefender'
     | 'defendantWaivesRightToCounsel'
     | 'crimeScenes'
     | 'indictmentIntroduction'
+    | 'requestDriversLicenseSuspension'
+    | 'appealState'
+    | 'prosecutorStatementDate'
+    | 'defendantStatementDate'
+    | 'appealCaseNumber'
+    | 'appealConclusion'
+    | 'appealRulingDecision'
   > {
   type?: CaseType
   policeCaseNumbers?: string[]
@@ -360,6 +406,10 @@ export interface UpdateCase
   sharedWithProsecutorsOfficeId?: string | null
   registrarId?: string | null
   judgeId?: string
+  appealAssistantId?: string
+  appealJudge1Id?: string
+  appealJudge2Id?: string
+  appealJudge3Id?: string
 }
 
 export interface TransitionCase {
@@ -442,4 +492,65 @@ export function hasCaseBeenAppealed(theCase: Case): boolean {
       Boolean(theCase.accusedPostponedAppealDate) ||
       Boolean(theCase.prosecutorPostponedAppealDate))
   )
+}
+
+export function getAppealInfo(theCase: Case): Case {
+  const {
+    rulingDate,
+    appealState,
+    accusedAppealDecision,
+    prosecutorAppealDecision,
+    prosecutorPostponedAppealDate,
+    accusedPostponedAppealDate,
+    appealReceivedByCourtDate,
+  } = theCase
+
+  const appealInfo = {} as Case
+
+  if (!rulingDate) return appealInfo
+
+  appealInfo.canBeAppealed = Boolean(
+    !appealState &&
+      (accusedAppealDecision === CaseAppealDecision.POSTPONE ||
+        prosecutorAppealDecision === CaseAppealDecision.POSTPONE),
+  )
+
+  appealInfo.hasBeenAppealed = Boolean(appealState)
+
+  appealInfo.appealedByRole = prosecutorPostponedAppealDate
+    ? UserRole.PROSECUTOR
+    : accusedPostponedAppealDate
+    ? UserRole.DEFENDER
+    : undefined
+
+  appealInfo.appealedDate =
+    appealInfo.appealedByRole === UserRole.PROSECUTOR
+      ? prosecutorPostponedAppealDate ?? undefined
+      : accusedPostponedAppealDate ?? undefined
+
+  const theRulingDate = new Date(rulingDate)
+  appealInfo.appealDeadline = new Date(
+    theRulingDate.setDate(theRulingDate.getDate() + 3),
+  ).toISOString()
+
+  if (appealReceivedByCourtDate) {
+    appealInfo.statementDeadline = getStatementDeadline(
+      new Date(appealReceivedByCourtDate),
+    )
+  }
+
+  return appealInfo
+}
+
+export function getStatementDeadline(appealReceived: Date) {
+  return new Date(
+    new Date(appealReceived).setDate(appealReceived.getDate() + 1),
+  ).toISOString()
+}
+
+export function getAppealedDate(
+  prosecutorPostponedAppealDate?: string,
+  accusedPostponedAppealDate?: string,
+): string | undefined {
+  return prosecutorPostponedAppealDate ?? accusedPostponedAppealDate
 }

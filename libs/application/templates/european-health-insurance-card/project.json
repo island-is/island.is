@@ -1,0 +1,33 @@
+{
+  "root": "libs/application/templates/european-health-insurance-card",
+  "sourceRoot": "libs/application/templates/european-health-insurance-card/src",
+  "projectType": "library",
+  "tags": ["lib:application-system", "scope:application-system"],
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": [
+          "libs/application/templates/european-health-insurance-card/**/*.{ts,tsx,js,jsx}"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": [
+        "coverage/libs/application/templates/european-health-insurance-card"
+      ],
+      "options": {
+        "jestConfig": "libs/application/templates/european-health-insurance-card/jest.config.js",
+        "passWithNoTests": true
+      }
+    },
+    "extract-strings": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/european-health-insurance-card/src/lib/messages.ts'"
+      }
+    }
+  }
+}

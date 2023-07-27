@@ -56,6 +56,11 @@ export const prerequisites: Form = buildForm({
               title: m.settingsInfoProviderTitle,
               subTitle: m.settingsInfoProviderSubtitle,
             }),
+            buildDataProviderItem({
+              //TODO: provider: TBD,
+              title: m.funeralExpensesTitle,
+              subTitle: m.funeralExpensesSubtitle,
+            }),
           ],
         }),
       ],

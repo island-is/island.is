@@ -2,8 +2,10 @@ export interface FamilyChild {
   nationalId: string // Barn
   fullName: string // FulltNafn
   displayName?: string // BirtNafn
+  firstName?: string // Eiginnafn
   middleName?: string // Millinafn
   surname?: string // Kenninafn
+  lastName?: string // Kenninafn
   gender?: string // Kyn
   genderDisplay?: string // Kynheiti
   birthday?: string // Faedingardagur

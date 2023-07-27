@@ -85,6 +85,7 @@ export class AnnouncementOfDeathService extends BaseTemplateApiService {
       estates[estate].assets.unshift(dummyAsset as EstateAsset)
       estates[estate].vehicles.unshift(dummyAsset as EstateAsset)
       estates[estate].estateMembers.unshift(dummyMember as EstateMember)
+      estates[estate].guns.unshift(dummyAsset as EstateAsset)
     }
 
     const relationOptions = (await this.syslumennService.getEstateRelations())

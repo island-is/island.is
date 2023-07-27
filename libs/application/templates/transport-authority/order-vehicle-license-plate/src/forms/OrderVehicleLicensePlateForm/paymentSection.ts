@@ -6,6 +6,8 @@ import {
 } from '@island.is/application/core'
 import { DefaultEvents } from '@island.is/application/types'
 import { payment } from '../../lib/messages'
+import { getChargeItemCodes } from '../../utils'
+import { OrderVehicleLicensePlate } from '../../lib/dataSchema'
 
 export const paymentSection = buildSection({
   id: 'payment',
@@ -31,6 +33,24 @@ export const paymentSection = buildSection({
               event: DefaultEvents.SUBMIT,
               name: payment.confirmation.confirm,
               type: 'primary',
+              condition: (formValue, externalData) => {
+                const chargeItemCodes = getChargeItemCodes(
+                  formValue as OrderVehicleLicensePlate,
+                )
+                const allItems = externalData?.payment?.data as [
+                  {
+                    priceAmount: number
+                    chargeItemName: string
+                    chargeItemCode: string
+                  },
+                ]
+                const items = chargeItemCodes.map((chargeItemCode) => {
+                  return allItems.find(
+                    (item) => item.chargeItemCode === chargeItemCode,
+                  )
+                })
+                return items.length > 0
+              },
             },
           ],
         }),

@@ -13,6 +13,7 @@ import { getSessionType } from '../../utils/utils'
 import * as styles from '../LogTable/LogTable.css'
 import Person from '../PersonIcon/PersonIcon'
 import { Client } from '../Client/Client'
+import { getCountryByCode, Country } from '@island.is/shared/utils'
 
 interface LogTableProps {
   data: SessionsSession[]
@@ -51,6 +52,7 @@ const LogTable: React.FC<LogTableProps> = ({ data }) => {
             session,
             userInfo?.profile.nationalId ?? '',
           )
+          const country = getCountryByCode(session?.ipLocation ?? '') as Country
 
           return (
             <Table.Row key={session.id}>
@@ -76,8 +78,12 @@ const LogTable: React.FC<LogTableProps> = ({ data }) => {
                 <div className={styles.textEllipsis}>{session.device}</div>
                 {!session.ipLocation && <div>{session.ip}</div>}
                 {session.ipLocation && (
-                  <Tooltip text={formatMessage(m.ipLocation)}>
-                    <div>{session.ipLocation}</div>
+                  <Tooltip
+                    text={formatMessage(m.ipLocation) + ' ' + session.ip}
+                  >
+                    <div style={{ width: 'fit-content' }}>
+                      {country?.name ?? session.ipLocation}
+                    </div>
                   </Tooltip>
                 )}
               </Table.Data>
@@ -88,7 +94,7 @@ const LogTable: React.FC<LogTableProps> = ({ data }) => {
                 <Box display="flex" alignItems="center" columnGap="gutter">
                   <Person sessionType={type} />
 
-                  <Box style={{ minWidth: 'fit-content' }}>
+                  <Box className={styles.fitContent}>
                     <Text variant="eyebrow">
                       {type === SessionType.myBehalf ||
                       type === SessionType.company

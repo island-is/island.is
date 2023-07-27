@@ -18,17 +18,18 @@ import {
 } from '@island.is/judicial-system/types'
 
 export enum Operation {
-  CaseQuery = 'CaseQuery',
-  CaseListQuery = 'CaseListQuery',
-  CurrentUserQuery = 'CurrentUserQuery',
-  UploadFileToCourtMutation = 'UploadFileToCourtMutation',
-  UpdateCaseMutation = 'UpdateCaseMutation',
-  SendNotificationMutation = 'SendNotificationMutation',
-  CreatePresignedPostMutation = 'CreatePresignedPostMutation',
-  CreateFileMutation = 'CreateFileMutation',
-  UpdateDefendantMutation = 'UpdateDefendantMutation',
+  CaseQuery = 'Case',
+  CaseListQuery = 'CaseList',
+  CurrentUserQuery = 'CurrentUser',
+  UploadFileToCourtMutation = 'UploadFileToCourt',
+  UpdateCaseMutation = 'UpdateCase',
+  SendNotificationMutation = 'SendNotification',
+  CreatePresignedPostMutation = 'CreatePresignedPost',
+  CreateFileMutation = 'CreateFile',
+  UpdateDefendantMutation = 'UpdateDefendant',
   LimitedAccessCaseQuery = 'LimitedAccessCase',
-  ProsecutorSelectionUsersQuery = 'ProsecutorSelectionUsersQuery',
+  ProsecutorSelectionUsersQuery = 'ProsecutorSelectionUsers',
+  TransitionCaseMutation = 'TransitionCase',
 }
 
 export const intercept = (res: Case, forceFail?: Operation) => {
@@ -92,6 +93,15 @@ export const intercept = (res: Case, forceFail?: Operation) => {
       req.alias = 'gqlProsecutorSelectionUsersQuery'
       req.reply({
         fixture: 'prosecutorUsers',
+      })
+    } else if (hasOperationName(req, Operation.TransitionCaseMutation)) {
+      req.alias = 'TransitionCaseMutation'
+      req.reply({
+        fixture: 'transitionCaseMutationResponse',
+      })
+    } else if (hasOperationName(req, Operation.CaseListQuery)) {
+      req.reply({
+        fixture: 'cases',
       })
     }
   })

@@ -1,4 +1,5 @@
 import {
+  AlcoholLicence,
   SyslumennAuction,
   Homestay,
   PaginatedOperatingLicenses,
@@ -17,7 +18,9 @@ import {
   EstateInfo,
   RealEstateAgent,
   Lawyer,
+  Broker,
   PropertyDetail,
+  TemporaryEventLicence,
 } from './syslumennClient.types'
 import {
   mapSyslumennAuction,
@@ -33,7 +36,10 @@ import {
   mapEstateInfo,
   mapRealEstateAgent,
   mapLawyer,
+  mapBroker,
+  mapAlcoholLicence,
   cleanPropertyNumber,
+  mapTemporaryEventLicence,
 } from './syslumennClient.utils'
 import { Injectable, Inject } from '@nestjs/common'
 import {
@@ -43,6 +49,7 @@ import {
   VirkLeyfiGetRequest,
   TegundAndlags,
   VedbandayfirlitReguverkiSvarSkeyti,
+  VedbondTegundAndlags,
 } from '../../gen/fetch'
 import { SyslumennClientConfig } from './syslumennClient.config'
 import type { ConfigType } from '@island.is/nest/config'
@@ -133,6 +140,14 @@ export class SyslumennService {
     return (lawyers ?? []).map(mapLawyer)
   }
 
+  async getBrokers(): Promise<Broker[]> {
+    const { id, api } = await this.createApi()
+    const brokers = await api.verdbrefamidlararGet({
+      audkenni: id,
+    })
+    return (brokers ?? []).map(mapBroker)
+  }
+
   async getOperatingLicenses(
     searchQuery?: string,
     pageNumber?: number,
@@ -193,6 +208,26 @@ export class SyslumennService {
         audkenni: id,
       })
     return mapOperatingLicensesCSV(csv)
+  }
+
+  async getAlcoholLicences(): Promise<AlcoholLicence[]> {
+    const { id, api } = await this.createApi()
+
+    const alcoholLicences = await api.afengisleyfiGet({
+      audkenni: id,
+    })
+
+    return (alcoholLicences ?? []).map(mapAlcoholLicence)
+  }
+
+  async getTemporaryEventLicences(): Promise<TemporaryEventLicence[]> {
+    const { id, api } = await this.createApi()
+
+    const temporaryEventLicences = await api.taekifaerisleyfiGet({
+      audkenni: id,
+    })
+
+    return (temporaryEventLicences ?? []).map(mapTemporaryEventLicence)
   }
 
   async sealDocument(document: string): Promise<SvarSkeyti> {
@@ -292,7 +327,11 @@ export class SyslumennService {
   }
 
   async getRealEstateAddress(realEstateId: string): Promise<Array<AssetName>> {
-    return await this.getAsset(realEstateId, AssetType.RealEstate, mapAssetName)
+    return await this.getAsset(
+      realEstateId.toUpperCase(),
+      AssetType.RealEstate,
+      mapAssetName,
+    )
   }
 
   async getVehicleType(vehicleId: string): Promise<Array<AssetName>> {
@@ -308,7 +347,7 @@ export class SyslumennService {
       skilabod: {
         audkenni: id,
         fastanumer: cleanPropertyNumber(propertyNumber),
-        tegundAndlags: TegundAndlags.NUMBER_0, // 0 = Real estate
+        tegundAndlags: VedbondTegundAndlags.NUMBER_0, // 0 = Real estate
       },
     })
     const contentBase64 = res.vedbandayfirlitPDFSkra || ''
@@ -358,7 +397,7 @@ export class SyslumennService {
       skilabod: {
         audkenni: id,
         fastanumer: cleanPropertyNumber(propertyNumber),
-        tegundAndlags: TegundAndlags.NUMBER_0, // 0 = Real estate
+        tegundAndlags: VedbondTegundAndlags.NUMBER_0, // 0 = Real estate
       },
     })
     if (res.length > 0) {

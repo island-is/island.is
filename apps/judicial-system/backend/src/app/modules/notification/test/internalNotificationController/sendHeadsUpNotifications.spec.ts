@@ -1,9 +1,12 @@
 import { uuid } from 'uuidv4'
 
-import { CaseType, NotificationType } from '@island.is/judicial-system/types'
 import { SmsService } from '@island.is/nova-sms'
+import {
+  CaseType,
+  NotificationType,
+  User,
+} from '@island.is/judicial-system/types'
 
-import { User } from '../../../user'
 import { Case } from '../../../case'
 import { DeliverResponse } from '../../models/deliver.response'
 import { createTestingNotificationModule } from '../createTestingNotificationModule'
@@ -37,8 +40,8 @@ describe('InternalNotificationController - Send heads up notifications', () => {
       const then = {} as Then
 
       await internalNotificationController
-        .sendCaseNotification(caseId, { id: userId } as User, theCase, {
-          userId,
+        .sendCaseNotification(caseId, theCase, {
+          user: { id: userId } as User,
           type: NotificationType.HEADS_UP,
         })
         .then((result) => (then.result = result))

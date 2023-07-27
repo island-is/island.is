@@ -1,82 +1,85 @@
-import { defineMessage, defineMessages } from 'react-intl'
+import { defineMessages } from 'react-intl'
 
 // Strings on signed verdict overview screen
-export const defenderCaseOverview = {
-  title: defineMessages({
-    investigationCaseRejected: defineMessage({
-      id:
-        'judicial.system.core:defender_case_overview.title.investigation_case_rejected',
-      defaultMessage: 'Kröfu um rannsóknarheimild hafnað',
-      description:
-        'Notaður sem titil á yfirlitsskjá verjanda þegar kröfu um rannsóknarheimild hefur verið hafnað.',
-    }),
-    restrictionCaseRejected: defineMessage({
-      id:
-        'judicial.system.core:defender_case_overview.title.restriction_case_rejected',
-      defaultMessage: 'Kröfu hafnað',
-      description:
-        'Notaður sem titil á yfirlitsskjá verjanda þegar kröfu um gæslu/vistun/farbann hefur verið hafnað.',
-    }),
-    caseDismissed: defineMessage({
-      id: 'judicial.system.core:defender_case_overview.title.case_dismissed',
-      defaultMessage: 'Kröfu vísað frá',
-      description:
-        'Notaður sem titill á yfirlitsskjá verjanda þegar kröfu hefur verið vísað frá.',
-    }),
-    investigationCaseAccepted: defineMessage({
-      id:
-        'judicial.system.core:defender_case_overview.title.investigation_case_accepted',
-      defaultMessage: 'Krafa um rannsóknarheimild samþykkt',
-      description:
-        'Notaður sem titil á yfirlitsskjá verjanda þegar krafa um rannsóknarheimild hefur verið samþykkt.',
-    }),
-    restrictionCaseExpired: defineMessage({
-      id:
-        'judicial.system.core:defender_case_overview.title.restriction_case_expired',
-      defaultMessage:
-        '{caseType, select, ADMISSION_TO_FACILITY {Vistun á viðeigandi stofnun} TRAVEL_BAN {Farbanni} other {Gæsluvarðhaldi}} lokið',
-      description:
-        'Notaður sem titil á yfirlitsskjá verjanda þegar gæslu/vistun/farbanni er lokið.',
-    }),
-    restrictionCaseActive: defineMessage({
-      id:
-        'judicial.system.core:defender_case_overview.title.restriction_case_active',
-      defaultMessage:
-        '{caseType, select, ADMISSION_TO_FACILITY {Vistun á viðeigandi stofnun virk} TRAVEL_BAN {Farbann virkt} other {Gæsluvarðhald virkt}}',
-      description:
-        'Notaður sem titil á yfirlitsskjá verjanda þegar gæsla/vistun/farbann er ekki lokið.',
-    }),
-    restrictionCaseScheduled: defineMessage({
-      id:
-        'judicial.system.core:defender_case_overview.title.restriction_case_scheduled',
-      defaultMessage:
-        'Krafa um {caseType, select, ADMISSION_TO_FACILITY {{isExtended, select, true {framlengingu á } other {}}vistun á viðeigandi stofnun} TRAVEL_BAN {{isExtended, select, true {framlengingu á farbanni} other {farbann}}} other {{isExtended, select, true {framlengingu á gæsluvarðhaldi} other {gæsluvarðhald}}}}',
-      description:
-        'Notaður sem titill á yfirlitsskjá verjanda þegar kröfu um gæslu/vistun/farbann hefur verið úthlutað fyrirtökutíma.',
-    }),
-  }),
-  rulingDate: defineMessage({
-    id: 'judicial.system.core:defender_case_overview.ruling_date',
-    defaultMessage: 'Úrskurðað {courtEndTime}',
+export const strings = defineMessages({
+  rulingDate: {
+    id: 'judicial.system.core:defender_case_overview.ruling_date_v2',
+    defaultMessage: 'Úrskurðað {rulingDate}',
     description: 'Notaður fyrir tíma úrskurðar á yfirlitsskjá verjanda.',
-  }),
-  modifiedDatesHeading: defineMessage({
+  },
+  modifiedDatesHeading: {
     id: 'judicial.system.core:defender_case_overview.modified_dates_heading',
     defaultMessage:
       'Lengd {caseType, select, ADMISSION_TO_FACILITY {vistunar} other {gæslu}} uppfærð',
     description:
       'Notaður sem titill í upplýsingaboxi um uppfærða lengd gæslu á yfirlitsskjá verjanda.',
-  }),
-  conclusionHeading: defineMessage({
-    id: 'judicial.system.core:defender_case_overview.conclusion_heading',
-    defaultMessage: 'Úrskurðarorð',
-    description:
-      'Notaður sem titill fyrir úrskurðarorð á yfirlitsskjá verjanda.',
-  }),
-  documentHeading: defineMessage({
+  },
+  documentHeading: {
     id: 'judicial.system.core:defender_case_overview.document_heading',
     defaultMessage: 'Skjöl málsins',
     description:
       'Notaður sem titill fyrir skjöl málsins á yfirlitsskjá verjanda.',
-  }),
-}
+  },
+  unsignedRuling: {
+    id: 'judicial.system.core:defender_case_overview.unsigned_ruling',
+    defaultMessage: 'Úrskurður ekki undirritaður',
+    description:
+      'Texti sem birtist ef úrskurður er ekki undirritaður á yfirlitsskjá verjanda',
+  },
+  confirmAppealAfterDeadlineModalTitle: {
+    id:
+      'judicial.system.core:defender_case_overview.confirm_appeal_after_deadline_modal_title',
+    defaultMessage: 'Kærufrestur er liðinn',
+    description:
+      'Notaður sem titill modal glugga þegar kært er eftir að kærufrestur rennur út.',
+  },
+  confirmAppealAfterDeadlineModalText: {
+    id:
+      'judicial.system.core:defender_case_overview.confirm_appeal_after_deadline_modal_text',
+    defaultMessage: 'Viltu halda áfram og senda kæru?',
+    description:
+      'Notaður sem texti í modal glugga þegar kært er eftir að kærufrestur rennur út.',
+  },
+  confirmAppealAfterDeadlineModalPrimaryButtonText: {
+    id:
+      'judicial.system.core:defender_case_overview.confirm_appeal_after_deadline_modal_primary_button_text',
+    defaultMessage: 'Já, senda kæru',
+    description:
+      'Notaður sem texti í staðfesta takka í modal glugga þegar kært er eftir að kærufrestur rennur út.',
+  },
+  confirmAppealAfterDeadlineModalSecondaryButtonText: {
+    id:
+      'judicial.system.core:defender_case_overview.confirm_appeal_after_deadline_modal_secondary_button_text',
+    defaultMessage: 'Hætta við',
+    description:
+      'Notaður sem texti í Hætta við takka í modal glugga þegar kært er eftir að kærufrestur rennur út.',
+  },
+  confirmStatementAfterDeadlineModalTitle: {
+    id:
+      'judicial.system.core:case_overview.confirm_statement_after_deadline_modal_title',
+    defaultMessage: 'Frestur til að skila greinargerð er liðinn',
+    description:
+      'Notaður sem titill í modal glugga hjá sækjanda þegar frestur til greinargerðar er liðinn.',
+  },
+  confirmStatementAfterDeadlineModalText: {
+    id:
+      'judicial.system.core:case_overview.confirm_statement_after_deadline_modal_text',
+    defaultMessage: 'Viltu halda áfram og senda greinargerð?',
+    description:
+      'Notaður sem texti í modal glugga hjá sækjanda þegar frestur til greinargerðar er liðinn.',
+  },
+  confirmStatementAfterDeadlineModalPrimaryButtonText: {
+    id:
+      'judicial.system.core:case_overview.confirm_statement_after_deadline_modal_primary_button_text',
+    defaultMessage: 'Já, senda greinargerð',
+    description:
+      'Notaður sem texti í staðfesta takka í modal glugga hjá verjanda þegar frestur til greinargerðar er liðinn.',
+  },
+  confirmStatementAfterDeadlineModalSecondaryButtonText: {
+    id:
+      'judicial.system.core:case_overview.confirm_statement_after_deadline_modal_secondary_button_text',
+    defaultMessage: 'Hætta við',
+    description:
+      'Notaður sem texti í Hætta við takka í modal glugga hjá verjanda þegar frestur til greinargerðar er liðinn.',
+  },
+})

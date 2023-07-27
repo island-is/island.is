@@ -12,7 +12,10 @@ import {
 import ContentBreadcrumbs from '../../components/ContentBreadcrumbs/ContentBreadcrumbs'
 import * as styles from './Layout.css'
 import AuthOverlay from '../Loaders/AuthOverlay/AuthOverlay'
-import { useScrollTopOnUpdate } from '@island.is/service-portal/core'
+import {
+  ModuleAlertBannerSection,
+  useScrollTopOnUpdate,
+} from '@island.is/service-portal/core'
 import { useLocation } from 'react-router-dom'
 import MobileMenu from '../MobileMenu/MobileMenu'
 import { useNamespaces } from '@island.is/localization'
@@ -22,7 +25,7 @@ import { useAlertBanners } from '@island.is/service-portal/graphql'
 import { useMeasure } from 'react-use'
 
 export const Layout: FC = ({ children }) => {
-  useNamespaces(['service.portal', 'global'])
+  useNamespaces(['service.portal', 'global', 'portals'])
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const { pathname } = useLocation()
   useScrollTopOnUpdate([pathname])
@@ -70,7 +73,8 @@ export const Layout: FC = ({ children }) => {
                 <Hidden print>
                   <ContentBreadcrumbs />
                 </Hidden>
-                <div>{children}</div>
+                <ModuleAlertBannerSection />
+                {children}
               </GridColumn>
             </GridRow>
           </GridContainer>

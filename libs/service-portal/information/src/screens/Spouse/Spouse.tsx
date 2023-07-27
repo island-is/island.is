@@ -18,7 +18,6 @@ import {
   IntroHeader,
   m,
   NotFound,
-  ServicePortalModuleComponent,
   UserInfoLine,
 } from '@island.is/service-portal/core'
 
@@ -38,7 +37,7 @@ type UseParams = {
   nationalId: string
 }
 
-const FamilyMember: ServicePortalModuleComponent = () => {
+const FamilyMember = () => {
   useNamespaces('sp.family')
   const { formatMessage } = useLocale()
 
@@ -76,6 +75,7 @@ const FamilyMember: ServicePortalModuleComponent = () => {
         <IntroHeader
           title={person?.spouse?.name || ''}
           intro={dataInfoSpouse}
+          marginBottom={2}
         />
       )}
 
@@ -85,6 +85,7 @@ const FamilyMember: ServicePortalModuleComponent = () => {
           label={defineMessage(m.fullName)}
           content={person?.spouse?.name || '...'}
           loading={loading}
+          translate="no"
         />
         <Divider />
         <UserInfoLine

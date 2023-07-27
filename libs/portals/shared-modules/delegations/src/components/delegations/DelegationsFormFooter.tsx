@@ -38,7 +38,7 @@ export const DelegationsFormFooter = ({
 
   return (
     <Box position="relative" className={styles.container}>
-      {showShadow && <div className={styles.shadow} />}
+      <div className={styles.shadow({ showShadow })} />
       <div className={styles.dividerContainer}>
         <Divider />
       </div>

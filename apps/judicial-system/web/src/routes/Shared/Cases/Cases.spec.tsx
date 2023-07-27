@@ -59,7 +59,7 @@ const mockCasesQuery = [
             defendants: [{ nationalId: '012345-6789', name: 'Mikki Refur' }],
             validToDate: '2020-11-11T12:31:00.000Z',
             accusedAppealDecision: CaseAppealDecision.APPEAL,
-            rulingDate: '2020-09-16T19:51:39.466Z',
+            rulingSignatureDate: '2020-09-16T19:51:39.466Z',
           },
           {
             id: 'test_id_4',
@@ -145,7 +145,7 @@ const mockCourtCasesQuery = [
             defendants: [{ nationalId: '012345-6789', name: 'Mikki Refur' }],
             validToDate: '2020-11-11T12:31:00.000Z',
             accusedAppealDecision: CaseAppealDecision.APPEAL,
-            rulingDate: '2020-09-16T19:51:39.466Z',
+            rulingSignatureDate: '2020-09-16T19:51:39.466Z',
           },
           {
             id: 'test_id_5',
@@ -199,7 +199,7 @@ const mockPrisonUserCasesQuery = [
             policeCaseNumbers: ['008-2020-X'],
             defendants: [{ nationalId: '012345-6789', name: 'Mikki Refur' }],
             isValidToDateInThePast: true,
-            rulingDate: '2020-09-16T19:51:39.466Z',
+            rulingSignatureDate: '2020-09-16T19:51:39.466Z',
           },
           {
             id: 'test_id_2',
@@ -210,7 +210,7 @@ const mockPrisonUserCasesQuery = [
             policeCaseNumbers: ['008-2020-X'],
             defendants: [{ nationalId: '012345-6789', name: 'Mikki Refur' }],
             isValidToDateInThePast: false,
-            rulingDate: '2020-09-16T19:51:39.466Z',
+            rulingSignatureDate: '2020-09-16T19:51:39.466Z',
           },
         ],
       },
@@ -220,7 +220,7 @@ const mockPrisonUserCasesQuery = [
 
 describe('Cases', () => {
   describe('Prosecutor users', () => {
-    test('should not display a button to delete a case that do not have a NEW or DRAFT or SUBMITTED or RECEIVED state', async () => {
+    test('should not display a button to delete a case that does not have a NEW or DRAFT or SUBMITTED or RECEIVED state', async () => {
       render(
         <MockedProvider
           mocks={[...mockCasesQuery, ...mockProsecutorQuery]}
@@ -486,7 +486,7 @@ describe('Cases', () => {
         </MockedProvider>,
       )
 
-      userEvent.click(await screen.findByText('Stofnað/Fyrirtaka'))
+      userEvent.click(await screen.findByTestId('createdAtSortButton'))
 
       const tableRows = await screen.findAllByTestId('custody-cases-table-row')
 
@@ -511,7 +511,7 @@ describe('Cases', () => {
         </MockedProvider>,
       )
 
-      userEvent.dblClick(await screen.findByText('Stofnað/Fyrirtaka'))
+      userEvent.dblClick(await screen.findByTestId('createdAtSortButton'))
 
       const tableRows = await screen.findAllByTestId('custody-cases-table-row')
 

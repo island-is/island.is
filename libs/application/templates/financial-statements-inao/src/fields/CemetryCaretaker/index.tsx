@@ -173,7 +173,7 @@ export const CemetryCaretaker: FC<FieldBaseProps<FinancialStatementsInao>> = ({
   const values = getValues()
 
   const { fields, append, remove } = useFieldArray({
-    name: `${id}.caretakers`,
+    name: `${id}`,
   })
 
   const handleAddCaretaker = useCallback(() => {

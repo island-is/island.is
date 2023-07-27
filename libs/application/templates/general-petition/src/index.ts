@@ -1,6 +1,6 @@
-import GeneralPetitionsApplicationTemplate from './lib/generalPetitionApplicationTemplate'
+import GeneralPetitionTemplate from './lib/GeneralPetitionTemplate'
 
 export const getDataProviders = () => import('./dataProviders/')
 export const getFields = () => import('./fields/')
 
-export default GeneralPetitionsApplicationTemplate
+export default GeneralPetitionTemplate

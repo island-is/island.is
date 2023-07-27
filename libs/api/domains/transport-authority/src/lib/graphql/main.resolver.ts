@@ -12,7 +12,6 @@ import { TransportAuthorityApi } from '../transportAuthority.service'
 import {
   OwnerChangeAnswers,
   CheckTachoNetInput,
-  GetCurrentVehiclesInput,
   OperatorChangeAnswers,
 } from './dto'
 import {
@@ -22,10 +21,9 @@ import {
   VehicleOperatorChangeChecksByPermno,
   VehicleOwnerchangeChecksByPermno,
   VehiclePlateOrderChecksByPermno,
-  VehiclesCurrentVehicleWithPlateOrderChecks,
-  VehiclesCurrentVehicleWithOperatorChangeChecks,
-  VehiclesCurrentVehicleWithOwnerchangeChecks,
+  MyPlateOwnershipChecksByRegno,
 } from './models'
+import { CoOwnerChangeAnswers } from './dto/coOwnerChangeAnswers.input'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
@@ -39,23 +37,6 @@ export class MainResolver {
     @Args('input') input: CheckTachoNetInput,
   ) {
     return this.transportAuthorityApi.checkTachoNet(user, input)
-  }
-
-  @Scopes(ApiScope.internal, ApiScope.internalProcuring)
-  @Query(() => [VehiclesCurrentVehicleWithOwnerchangeChecks], {
-    name: 'currentVehiclesWithOwnerchangeChecks',
-    nullable: true,
-  })
-  async getCurrentVehiclesWithOwnerchangeChecks(
-    @Args('input') input: GetCurrentVehiclesInput,
-    @CurrentUser() user: User,
-  ) {
-    return await this.transportAuthorityApi.getCurrentVehiclesWithOwnerchangeChecks(
-      user,
-      input.showOwned,
-      input.showCoOwned,
-      input.showOperated,
-    )
   }
 
   @Scopes(ApiScope.internal, ApiScope.internalProcuring)
@@ -86,19 +67,14 @@ export class MainResolver {
   }
 
   @Scopes(ApiScope.internal, ApiScope.internalProcuring)
-  @Query(() => [VehiclesCurrentVehicleWithOperatorChangeChecks], {
-    name: 'currentVehiclesWithOperatorChangeChecks',
-    nullable: true,
-  })
-  async getCurrentVehiclesWithOperatorChangeChecks(
-    @Args('input') input: GetCurrentVehiclesInput,
+  @Query(() => OwnerChangeValidation, { nullable: true })
+  vehicleCoOwnerChangeValidation(
     @CurrentUser() user: User,
+    @Args('answers') answers: CoOwnerChangeAnswers,
   ) {
-    return await this.transportAuthorityApi.getCurrentVehiclesWithOperatorChangeChecks(
+    return this.transportAuthorityApi.validateApplicationForCoOwnerChange(
       user,
-      input.showOwned,
-      input.showCoOwned,
-      input.showOperated,
+      answers,
     )
   }
 
@@ -130,23 +106,6 @@ export class MainResolver {
   }
 
   @Scopes(ApiScope.internal, ApiScope.internalProcuring)
-  @Query(() => [VehiclesCurrentVehicleWithPlateOrderChecks], {
-    name: 'currentVehiclesWithPlateOrderChecks',
-    nullable: true,
-  })
-  async getCurrentVehiclesWithPlateOrderChecks(
-    @Args('input') input: GetCurrentVehiclesInput,
-    @CurrentUser() user: User,
-  ) {
-    return await this.transportAuthorityApi.getCurrentVehiclesWithPlateOrderChecks(
-      user,
-      input.showOwned,
-      input.showCoOwned,
-      input.showOperated,
-    )
-  }
-
-  @Scopes(ApiScope.internal, ApiScope.internalProcuring)
   @Query(() => VehiclePlateOrderChecksByPermno, {
     name: 'vehiclePlateOrderChecksByPermno',
     nullable: true,
@@ -158,6 +117,21 @@ export class MainResolver {
     return await this.transportAuthorityApi.getVehiclePlateOrderChecksByPermno(
       user,
       permno,
+    )
+  }
+
+  @Scopes(ApiScope.internal)
+  @Query(() => MyPlateOwnershipChecksByRegno, {
+    name: 'myPlateOwnershipChecksByRegno',
+    nullable: true,
+  })
+  async getMyPlateOwnershipChecksByRegno(
+    @Args('regno', { type: () => String }) regno: string,
+    @CurrentUser() user: User,
+  ) {
+    return await this.transportAuthorityApi.getMyPlateOwnershipChecksByRegno(
+      user,
+      regno,
     )
   }
 }

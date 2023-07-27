@@ -72,10 +72,12 @@ describe('PoliceController - Get all', () => {
       const mockFetch = fetch as jest.Mock
       mockFetch.mockResolvedValueOnce({
         ok: true,
-        json: () => [
-          { rvMalSkjolMals_ID: 'Id 1', heitiSkjals: 'Name 1.pdf' },
-          { rvMalSkjolMals_ID: 'Id 2', heitiSkjals: 'Name 2' },
-        ],
+        json: async () => ({
+          skjol: [
+            { rvMalSkjolMals_ID: 'Id 1', heitiSkjals: 'Name 1.pdf' },
+            { rvMalSkjolMals_ID: 'Id 2', heitiSkjals: 'Name 2' },
+          ],
+        }),
       })
 
       then = await givenWhenThen(uuid(), theUser, theCase)

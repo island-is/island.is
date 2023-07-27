@@ -3,9 +3,9 @@ import { render, screen } from '@testing-library/react'
 import { MockedProvider } from '@apollo/client/testing'
 
 import { LocaleProvider } from '@island.is/localization'
-import { SessionArrangements } from '@island.is/judicial-system/types'
 
 import InfoCard from './InfoCard'
+import { SessionArrangements } from '@island.is/judicial-system-web/src/graphql/schema'
 
 describe('InfoCard', () => {
   test('should display the assigned defender name if that info is provided even though the defender email is not', async () => {

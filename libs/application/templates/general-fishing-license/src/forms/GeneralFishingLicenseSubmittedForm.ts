@@ -1,6 +1,6 @@
 import { buildForm } from '@island.is/application/core'
 import { Form } from '@island.is/application/types'
-import { formConclusionSection } from '@island.is/application/ui-forms'
+import { buildFormConclusionSection } from '@island.is/application/ui-forms'
 import { Logo } from '../assets'
 import { conclusion } from '../lib/messages'
 
@@ -9,7 +9,7 @@ export const GeneralFishingLicenseSubmittedForm: Form = buildForm({
   title: '',
   logo: Logo,
   children: [
-    formConclusionSection({
+    buildFormConclusionSection({
       alertTitle: conclusion.general.title,
       expandableHeader: conclusion.information.title,
       expandableDescription: conclusion.information.bulletList,

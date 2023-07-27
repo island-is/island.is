@@ -27,6 +27,11 @@ export const textEllipsis = style({
 export const logo = style({
   backgroundSize: 'contain',
   backgroundRepeat: 'no-repeat',
+  backgroundPosition: 'center',
   width: '16px',
   height: '16px',
+})
+
+export const fitContent = style({
+  width: 'fit-content',
 })

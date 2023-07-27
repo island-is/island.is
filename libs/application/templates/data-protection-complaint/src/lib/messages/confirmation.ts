@@ -25,7 +25,7 @@ export const confirmation = {
     },
     pdfLink: {
       id: 'dpac.application:section.overview.labels.pdfLink',
-      defaultMessage: `Hlaða niður kvörtun á PDF`,
+      defaultMessage: `Sækja PDF`,
       description: 'Link inside description',
     },
   }),

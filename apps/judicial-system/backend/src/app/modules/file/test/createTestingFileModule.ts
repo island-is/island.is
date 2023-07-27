@@ -1,6 +1,8 @@
+import { Sequelize } from 'sequelize-typescript'
+import { mock } from 'jest-mock-extended'
+
 import { getModelToken } from '@nestjs/sequelize'
 import { Test } from '@nestjs/testing'
-import { mock } from 'jest-mock-extended'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { IntlService } from '@island.is/cms-translations'
@@ -15,7 +17,7 @@ import { CaseFile } from '../models/file.model'
 import { FileService } from '../file.service'
 import { FileController } from '../file.controller'
 import { InternalFileController } from '../internalFile.controller'
-import { Sequelize } from 'sequelize-typescript'
+import { LimitedAccessFileController } from '../limitedAccessFile.controller'
 
 jest.mock('../../aws-s3/awsS3.service.ts')
 jest.mock('../../court/court.service.ts')
@@ -29,7 +31,11 @@ export const createTestingFileModule = async () => {
         secretToken: environment.auth.secretToken,
       }),
     ],
-    controllers: [FileController, InternalFileController],
+    controllers: [
+      FileController,
+      InternalFileController,
+      LimitedAccessFileController,
+    ],
     providers: [
       CaseService,
       CourtService,
@@ -89,15 +95,20 @@ export const createTestingFileModule = async () => {
     InternalFileController,
   )
 
+  const limitedAccessFileController = fileModule.get<LimitedAccessFileController>(
+    LimitedAccessFileController,
+  )
+
   const sequelize = fileModule.get<Sequelize>(Sequelize)
 
   return {
+    sequelize,
     awsS3Service,
     courtService,
     fileModel,
     fileService,
     fileController,
     internalFileController,
-    sequelize,
+    limitedAccessFileController,
   }
 }

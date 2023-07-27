@@ -7,6 +7,7 @@ import { CmsTranslationsModule } from '@island.is/cms-translations'
 import { SigningModule } from '@island.is/dokobit-signing'
 import { AuditModule } from '@island.is/nest/audit'
 
+import { AdminController } from './admin.controller'
 import { ApplicationController } from './application.controller'
 import { environment } from '../../../environments'
 
@@ -22,7 +23,7 @@ import { TemplateApiActionRunner } from './tools/templateApiActionRunner.service
 import { ApplicationChargeModule } from './charge/application-charge.module'
 import { ApplicationFilesModule } from '@island.is/application/api/files'
 import { PaymentModule } from '@island.is/application/api/payment'
-
+import { HistoryModule } from '@island.is/application/api/history'
 @Module({
   imports: [
     PaymentModule,
@@ -39,10 +40,11 @@ import { PaymentModule } from '@island.is/application/api/payment'
     SigningModule,
     CmsTranslationsModule,
     FeatureFlagModule,
+    HistoryModule,
     LoggingModule,
     ApplicationChargeModule,
   ],
-  controllers: [ApplicationController],
+  controllers: [ApplicationController, AdminController],
   providers: [
     ApplicationAccessService,
     ApplicationValidationService,

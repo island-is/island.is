@@ -1,27 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 
 @ObjectType()
-export class VehiclesCurrentVehicleWithOwnerchangeChecks {
-  @Field({ nullable: true })
-  permno?: string
-
-  @Field({ nullable: true })
-  make?: string
-
-  @Field({ nullable: true })
-  color?: string
-
-  @Field({ nullable: true })
-  role?: string
-
-  @Field(() => Boolean, { nullable: true })
-  isDebtLess?: boolean
-
-  @Field(() => [VehicleValidationErrorMessage], { nullable: true })
-  validationErrorMessages?: VehicleValidationErrorMessage[] | null
-}
-
-@ObjectType()
 export class VehicleValidationErrorMessage {
   @Field(() => String, { nullable: true })
   errorNo?: string | null
@@ -40,31 +19,22 @@ export class VehicleOwnerchangeChecksByPermno {
 }
 
 @ObjectType()
-export class VehiclesCurrentVehicleWithOperatorChangeChecks extends VehiclesCurrentVehicleWithOwnerchangeChecks {}
-
-@ObjectType()
-export class VehicleOperatorChangeChecksByPermno extends VehicleOwnerchangeChecksByPermno {}
-
-@ObjectType()
-export class VehiclesCurrentVehicleWithPlateOrderChecks {
-  @Field({ nullable: true })
-  permno?: string
-
-  @Field({ nullable: true })
-  make?: string
-
-  @Field({ nullable: true })
-  color?: string
-
-  @Field({ nullable: true })
-  role?: string
-
+export class VehicleOperatorChangeChecksByPermno {
   @Field(() => Boolean, { nullable: true })
-  duplicateOrderExists?: boolean
+  isDebtLess?: boolean
+
+  @Field(() => [VehicleValidationErrorMessage], { nullable: true })
+  validationErrorMessages?: VehicleValidationErrorMessage[] | null
 }
 
 @ObjectType()
 export class VehiclePlateOrderChecksByPermno {
-  @Field(() => Boolean, { nullable: true })
-  duplicateOrderExists?: boolean
+  @Field(() => [VehicleValidationErrorMessage], { nullable: true })
+  validationErrorMessages?: VehicleValidationErrorMessage[] | null
+}
+
+@ObjectType()
+export class MyPlateOwnershipChecksByRegno {
+  @Field(() => [VehicleValidationErrorMessage], { nullable: true })
+  validationErrorMessages?: VehicleValidationErrorMessage[] | null
 }

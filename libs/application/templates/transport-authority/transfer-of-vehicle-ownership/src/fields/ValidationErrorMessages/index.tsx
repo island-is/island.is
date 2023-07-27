@@ -40,9 +40,10 @@ export const ValidationErrorMessages: FC<FieldBaseProps> = (props) => {
           },
           buyerCoOwnerAndOperator: answers?.buyerCoOwnerAndOperator?.map(
             (x) => ({
-              email: x.email,
               nationalId: x.nationalId,
+              email: x.email,
               type: x.type,
+              wasRemoved: x.wasRemoved,
             }),
           ),
           buyerMainOperator: answers?.buyerMainOperator
@@ -59,10 +60,8 @@ export const ValidationErrorMessages: FC<FieldBaseProps> = (props) => {
   )
 
   useEffect(() => {
-    setFieldLoadingState?.(
-      loading || data?.vehicleOwnerChangeValidation?.hasError,
-    )
-  }, [loading, data?.vehicleOwnerChangeValidation?.hasError])
+    setFieldLoadingState?.(loading)
+  }, [loading])
 
   return data?.vehicleOwnerChangeValidation?.hasError &&
     data.vehicleOwnerChangeValidation.errorMessages.length > 0 ? (

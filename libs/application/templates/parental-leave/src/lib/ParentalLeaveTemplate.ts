@@ -4,6 +4,7 @@ import unset from 'lodash/unset'
 import cloneDeep from 'lodash/cloneDeep'
 
 import {
+  coreMessages,
   EphemeralStateLifeCycle,
   pruneAfterDays,
 } from '@island.is/application/core'
@@ -32,6 +33,7 @@ import {
   NO_UNION,
   TransferRightsOption,
   SINGLE,
+  FileType,
 } from '../constants'
 import { dataSchema } from './dataSchema'
 import { answerValidators } from './answerValidators'
@@ -39,6 +41,8 @@ import { parentalLeaveFormMessages, statesMessages } from './messages'
 import {
   allEmployersHaveApproved,
   findActionName,
+  goToState,
+  hasDateOfBirth,
   hasEmployer,
   needsOtherParentApproval,
 } from './parentalLeaveTemplateUtils'
@@ -63,15 +67,14 @@ type Events =
   | { type: DefaultEvents.ABORT }
   | { type: DefaultEvents.EDIT }
   | { type: 'MODIFY' } // Ex: The user might modify their 'edits'.
-  | { type: 'ADDITIONALDOCUMENTSREQUIRED' } // Ex: VMST ask for more documents
   | { type: 'CLOSED' } // Ex: Close application
+  | { type: 'ADDITIONALDOCUMENTSREQUIRED' } // Ex: VMST ask for more documents
 
 enum Roles {
   APPLICANT = 'applicant',
   ASSIGNEE = 'assignee',
   ORGINISATION_REVIEWER = 'vmst',
 }
-
 const determineNameFromApplicationAnswers = (application: Application) => {
   if (isParentalGrant(application)) {
     return parentalLeaveFormMessages.shared.nameGrant
@@ -88,7 +91,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
   type: ApplicationTypes.PARENTAL_LEAVE,
   name: determineNameFromApplicationAnswers,
   institution: parentalLeaveFormMessages.shared.institution,
-  readyForProduction: true,
   translationNamespaces: [ApplicationConfigurations.ParentalLeave.translation],
   dataSchema,
   stateMachineConfig: {
@@ -106,11 +108,11 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         meta: {
           name: States.PREREQUISITES,
           status: 'draft',
-          lifecycle: EphemeralStateLifeCycle,
+          lifecycle: pruneAfterDays(9),
           progress: 0.25,
           onExit: defineTemplateApi({
-            action: ApiModuleActions.setBirthDateForNoPrimaryParent,
-            externalDataId: 'noPrimaryChildren',
+            action: ApiModuleActions.setChildrenInformation,
+            externalDataId: 'children',
             throwOnError: true,
           }),
           roles: [
@@ -138,7 +140,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
       [States.DRAFT]: {
-        entry: ['clearAssignees', 'clearEmployers'],
+        entry: 'clearAssignees',
         exit: [
           'clearOtherParentDataIfSelectedNo',
           'setOtherParentIdIfSelectedSpouse',
@@ -151,6 +153,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           'removeNullPeriod',
           'setNavId',
           'correctTransferRights',
+          'clearEmployers',
         ],
         meta: {
           name: States.DRAFT,
@@ -158,7 +161,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           actionCard: {
             description: statesMessages.draftDescription,
           },
-          lifecycle: pruneAfterDays(365),
+          lifecycle: pruneAfterDays(970),
           progress: 0.25,
           onExit: defineTemplateApi({
             action: ApiModuleActions.validateApplication,
@@ -205,7 +208,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           actionCard: {
             description: statesMessages.otherParentApprovalDescription,
           },
-          lifecycle: pruneAfterDays(365),
+          lifecycle: pruneAfterDays(970),
           progress: 0.4,
           onEntry: defineTemplateApi({
             action: ApiModuleActions.assignOtherParent,
@@ -277,7 +280,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           actionCard: {
             description: statesMessages.otherParentActionDescription,
           },
-          lifecycle: pruneAfterDays(365),
+          lifecycle: pruneAfterDays(970),
           progress: 0.4,
           onEntry: defineTemplateApi({
             action: ApiModuleActions.notifyApplicantOfRejectionFromOtherParent,
@@ -308,7 +311,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           actionCard: {
             description: statesMessages.employerWaitingToAssignDescription,
           },
-          lifecycle: pruneAfterDays(365),
+          lifecycle: pruneAfterDays(970),
           progress: 0.4,
           onEntry: defineTemplateApi({
             action: ApiModuleActions.assignEmployer,
@@ -342,7 +345,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           actionCard: {
             description: statesMessages.employerApprovalDescription,
           },
-          lifecycle: pruneAfterDays(365),
+          lifecycle: pruneAfterDays(970),
           progress: 0.5,
           roles: [
             {
@@ -358,12 +361,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                   'payments',
                   'firstPeriodStart',
                 ],
-                externalData: [
-                  'children',
-                  'noPrimaryChildren',
-                  'navId',
-                  'sendApplication',
-                ],
+                externalData: ['children', 'navId', 'sendApplication'],
               },
               write: {
                 answers: [
@@ -371,6 +369,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                   'periods',
                   'selectedChild',
                   'payments',
+                  'employers',
                 ],
               },
               actions: [
@@ -415,7 +414,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           actionCard: {
             description: statesMessages.employerActionDescription,
           },
-          lifecycle: pruneAfterDays(365),
+          lifecycle: pruneAfterDays(970),
           progress: 0.5,
           onEntry: defineTemplateApi({
             action: ApiModuleActions.notifyApplicantOfRejectionFromEmployer,
@@ -440,7 +439,12 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       },
       [States.VINNUMALASTOFNUN_APPROVAL]: {
         entry: ['assignToVMST', 'setNavId', 'removeNullPeriod'],
-        exit: ['clearAssignees', 'setNavId', 'resetAdditionalDocumentsArray'],
+        exit: [
+          'clearAssignees',
+          'setNavId',
+          'resetAdditionalDocumentsArray',
+          'setPreviousState',
+        ],
         meta: {
           name: States.VINNUMALASTOFNUN_APPROVAL,
           status: 'inprogress',
@@ -481,6 +485,15 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           },
           [DefaultEvents.REJECT]: { target: States.VINNUMALASTOFNUN_ACTION },
           [DefaultEvents.EDIT]: { target: States.EDIT_OR_ADD_PERIODS },
+          SUBMIT: [
+            {
+              cond: hasDateOfBirth,
+              target: States.RESIDENCE_GRAND_APPLICATION,
+            },
+            {
+              target: States.RESIDENCE_GRAND_APPLICATION_NO_BIRTH_DATE,
+            },
+          ],
         },
       },
       [States.VINNUMALASTOFNUN_ACTION]: {
@@ -562,6 +575,10 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           name: States.ADDITIONAL_DOCUMENTS_REQUIRED,
           actionCard: {
             description: statesMessages.additionalDocumentRequiredDescription,
+            tag: {
+              label: coreMessages.tagsRequiresAction,
+              variant: 'red',
+            },
           },
           lifecycle: pruneAfterDays(970),
           progress: 0.5,
@@ -589,6 +606,106 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           [DefaultEvents.APPROVE]: {
             target: States.VINNUMALASTOFNUN_APPROVE_EDITS,
           },
+        },
+      },
+      [States.RESIDENCE_GRAND_APPLICATION_NO_BIRTH_DATE]: {
+        entry: ['setPreviousState', 'assignToVMST'],
+        exit: 'setPreviousState',
+        meta: {
+          status: 'inprogress',
+          name: States.RESIDENCE_GRAND_APPLICATION_NO_BIRTH_DATE,
+          lifecycle: pruneAfterDays(970),
+          onEntry: defineTemplateApi({
+            action: ApiModuleActions.setBirthDate,
+            externalDataId: 'dateOfBirth',
+            throwOnError: true,
+          }),
+          progress: 1,
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/ResidenceGrantNoBirthDate').then((val) =>
+                  Promise.resolve(val.ResidenceGrantNoBirthDate),
+                ),
+              read: 'all',
+              write: 'all',
+            },
+          ],
+        },
+        on: {
+          [DefaultEvents.REJECT]: [
+            {
+              cond: (application) => goToState(application, States.APPROVED),
+              target: States.APPROVED,
+            },
+            {
+              cond: (application) =>
+                goToState(application, States.VINNUMALASTOFNUN_APPROVAL),
+              target: States.VINNUMALASTOFNUN_APPROVAL,
+            },
+            {
+              target: States.VINNUMALASTOFNUN_APPROVE_EDITS,
+            },
+          ],
+          APPROVE: {
+            target: States.RESIDENCE_GRAND_APPLICATION,
+          },
+        },
+      },
+      [States.RESIDENCE_GRAND_APPLICATION]: {
+        entry: ['assignToVMST', 'setResidenceGrant'],
+        exit: [
+          'setParam',
+          'setResidenceGrantPeriod',
+          'setPreviousState',
+          'setHasAppliedForReidenceGrant',
+        ],
+        meta: {
+          status: 'inprogress',
+          name: States.RESIDENCE_GRAND_APPLICATION,
+          actionCard: {
+            description: statesMessages.residenceGrantInProgress,
+          },
+          lifecycle: pruneAfterDays(970),
+          progress: 1,
+          onExit: defineTemplateApi({
+            action: ApiModuleActions.validateApplication,
+            params: FileType.DOCUMENTPERIOD,
+            throwOnError: true,
+          }),
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/ResidenceGrant').then((val) =>
+                  Promise.resolve(val.ResidenceGrant),
+                ),
+              read: 'all',
+              write: 'all',
+            },
+          ],
+        },
+        on: {
+          APPROVE: [
+            {
+              target: States.VINNUMALASTOFNUN_APPROVE_EDITS,
+            },
+          ],
+          REJECT: [
+            {
+              cond: (application) => goToState(application, States.APPROVED),
+              target: States.APPROVED,
+            },
+            {
+              cond: (application) =>
+                goToState(application, States.VINNUMALASTOFNUN_APPROVAL),
+              target: States.VINNUMALASTOFNUN_APPROVAL,
+            },
+            {
+              target: States.VINNUMALASTOFNUN_APPROVE_EDITS,
+            },
+          ],
         },
       },
       // [States.RECEIVED]: {
@@ -626,7 +743,8 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       //   },
       // },
       [States.APPROVED]: {
-        entry: 'assignToVMST',
+        entry: ['assignToVMST', 'removePreviousState'],
+        exit: 'setPreviousState',
         meta: {
           name: States.APPROVED,
           status: 'inprogress',
@@ -658,6 +776,15 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         on: {
           CLOSED: { target: States.CLOSED },
           [DefaultEvents.EDIT]: { target: States.EDIT_OR_ADD_PERIODS },
+          SUBMIT: [
+            {
+              target: States.RESIDENCE_GRAND_APPLICATION,
+              cond: hasDateOfBirth,
+            },
+            {
+              target: States.RESIDENCE_GRAND_APPLICATION_NO_BIRTH_DATE,
+            },
+          ],
         },
       },
       [States.CLOSED]: {
@@ -668,7 +795,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           actionCard: {
             description: statesMessages.closedDescription,
           },
-          lifecycle: pruneAfterDays(730),
+          lifecycle: EphemeralStateLifeCycle,
           progress: 1,
           roles: [
             {
@@ -689,8 +816,8 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           'restorePeriodsFromTemp',
           'removeNullPeriod',
           'setNavId',
-          'clearEmployers',
           'setActionName',
+          'clearEmployers',
         ],
         meta: {
           name: States.EDIT_OR_ADD_PERIODS,
@@ -714,14 +841,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               read: 'all',
               write: 'all',
             },
-            {
-              id: Roles.ORGINISATION_REVIEWER,
-              formLoader: () =>
-                import('../forms/InReview').then((val) =>
-                  Promise.resolve(val.InReview),
-                ),
-              write: 'all',
-            },
           ],
         },
         on: {
@@ -736,13 +855,25 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           ],
           [DefaultEvents.ABORT]: [
             {
+              cond: (application) => goToState(application, States.APPROVED),
               target: States.APPROVED,
+            },
+            {
+              cond: (application) =>
+                goToState(application, States.VINNUMALASTOFNUN_APPROVAL),
+              target: States.VINNUMALASTOFNUN_APPROVAL,
+            },
+            {
+              target: States.VINNUMALASTOFNUN_APPROVE_EDITS,
             },
           ],
         },
       },
       [States.EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS]: {
-        exit: 'setEmployerReviewerNationalRegistryId',
+        exit: [
+          'setEmployerReviewerNationalRegistryId',
+          'restorePeriodsFromTemp',
+        ],
         meta: {
           name: States.EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS,
           status: 'inprogress',
@@ -766,14 +897,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               read: 'all',
               write: 'all',
             },
-            {
-              id: Roles.ORGINISATION_REVIEWER,
-              formLoader: () =>
-                import('../forms/InReview').then((val) =>
-                  Promise.resolve(val.InReview),
-                ),
-              write: 'all',
-            },
           ],
         },
         on: {
@@ -784,7 +907,11 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       },
       [States.EMPLOYER_APPROVE_EDITS]: {
         entry: ['assignToVMST', 'removeNullPeriod'],
-        exit: ['clearAssignees', 'setIsApprovedOnEmployer'],
+        exit: [
+          'clearAssignees',
+          'setIsApprovedOnEmployer',
+          'restorePeriodsFromTemp',
+        ],
         meta: {
           name: States.EMPLOYER_APPROVE_EDITS,
           status: 'inprogress',
@@ -807,12 +934,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                   'payments',
                   'firstPeriodStart',
                 ],
-                externalData: [
-                  'children',
-                  'noPrimaryChildren',
-                  'navId',
-                  'sendApplication',
-                ],
+                externalData: ['children', 'navId', 'sendApplication'],
               },
               write: {
                 answers: [
@@ -820,6 +942,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                   'periods',
                   'selectedChild',
                   'payments',
+                  'employers',
                 ],
               },
               actions: [
@@ -838,14 +961,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                   Promise.resolve(val.EditsInReview),
                 ),
               read: 'all',
-              write: 'all',
-            },
-            {
-              id: Roles.ORGINISATION_REVIEWER,
-              formLoader: () =>
-                import('../forms/InReview').then((val) =>
-                  Promise.resolve(val.InReview),
-                ),
               write: 'all',
             },
           ],
@@ -888,14 +1003,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               read: 'all',
               write: 'all',
             },
-            {
-              id: Roles.ORGINISATION_REVIEWER,
-              formLoader: () =>
-                import('../forms/InReview').then((val) =>
-                  Promise.resolve(val.InReview),
-                ),
-              write: 'all',
-            },
           ],
         },
         on: {
@@ -906,8 +1013,17 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
       [States.VINNUMALASTOFNUN_APPROVE_EDITS]: {
-        entry: ['assignToVMST', 'removeNullPeriod'],
-        exit: ['clearTemp', 'resetAdditionalDocumentsArray', 'clearAssignees'],
+        entry: [
+          'assignToVMST',
+          'removeNullPeriod',
+          'setHasAppliedForReidenceGrant',
+        ],
+        exit: [
+          'clearTemp',
+          'resetAdditionalDocumentsArray',
+          'clearAssignees',
+          'setPreviousState',
+        ],
         meta: {
           name: States.VINNUMALASTOFNUN_APPROVE_EDITS,
           status: 'inprogress',
@@ -916,11 +1032,15 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           },
           lifecycle: pruneAfterDays(970),
           progress: 0.75,
-          onEntry: defineTemplateApi({
-            action: ApiModuleActions.sendApplication,
-            shouldPersistToExternalData: true,
-            throwOnError: true,
-          }),
+
+          onEntry: [
+            defineTemplateApi({
+              action: ApiModuleActions.sendApplication,
+              params: FileType.DOCUMENTPERIOD,
+              shouldPersistToExternalData: true,
+              throwOnError: true,
+            }),
+          ],
           roles: [
             {
               id: Roles.APPLICANT,
@@ -950,6 +1070,15 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           [DefaultEvents.REJECT]: {
             target: States.VINNUMALASTOFNUN_EDITS_ACTION,
           },
+          SUBMIT: [
+            {
+              cond: hasDateOfBirth,
+              target: States.RESIDENCE_GRAND_APPLICATION,
+            },
+            {
+              target: States.RESIDENCE_GRAND_APPLICATION_NO_BIRTH_DATE,
+            },
+          ],
         },
       },
       [States.VINNUMALASTOFNUN_EDITS_ACTION]: {
@@ -1014,7 +1143,12 @@ const ParentalLeaveTemplate: ApplicationTemplate<
        * Restore the periods to their original state from temp.
        */
       restorePeriodsFromTemp: assign((context, event) => {
-        if (event.type !== DefaultEvents.ABORT) {
+        if (
+          !(
+            event.type === DefaultEvents.ABORT ||
+            event.type === DefaultEvents.EDIT
+          )
+        ) {
           return context
         }
 
@@ -1029,18 +1163,49 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       clearEmployers: assign((context) => {
         const { application } = context
         const { answers } = application
-        const { employers, isSelfEmployed } = getApplicationAnswers(answers)
+        const {
+          employers,
+          isSelfEmployed,
+          employerLastSixMonths,
+        } = getApplicationAnswers(answers)
 
         if (isSelfEmployed === NO) {
           employers?.forEach((val, i) => {
             if (val.phoneNumber) {
               set(answers, `employers[${i}].phoneNumber`, val.phoneNumber)
             }
+            if (val.phoneNumber === '') {
+              unset(answers, `employers[${i}].phoneNumber`)
+            }
+            set(answers, `employers[${i}].ratio`, val.ratio)
+            set(answers, `employers[${i}].email`, val.email)
+            set(answers, `employers[${i}].reviewerNationalRegistryId`, '')
+            set(
+              answers,
+              `employers[${i}].companyNationalRegistryId`,
+              val.companyNationalRegistryId,
+            )
+            set(answers, `employers[${i}].isApproved`, false)
+          })
+        }
+
+        if (employerLastSixMonths === YES) {
+          employers?.forEach((val, i) => {
+            if (val.phoneNumber) {
+              set(answers, `employers[${i}].phoneNumber`, val.phoneNumber)
+            }
+            if (val.stillEmployed) {
+              set(answers, `employers[${i}].stillEmployed`, val.stillEmployed)
+              if (val.stillEmployed === YES) {
+                set(answers, `employers[${i}].isApproved`, false)
+              } else {
+                set(answers, `employers[${i}].isApproved`, true)
+              }
+            }
             set(answers, `employers[${i}].ratio`, val.ratio)
             set(answers, `employers[${i}].email`, val.email)
             set(answers, `employers[${i}].reviewerNationalRegistryId`, '')
             set(answers, `employers[${i}].companyNationalRegistryId`, '')
-            set(answers, `employers[${i}].isApproved`, false)
           })
         }
 
@@ -1223,6 +1388,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           set(application.answers, 'personalAllowance', {
             useAsMuchAsPossible: YES,
             usage: '100',
+            usePersonalAllowance: YES,
           })
         }
 
@@ -1240,6 +1406,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           set(application.answers, 'personalAllowanceFromSpouse', {
             useAsMuchAsPossible: YES,
             usage: '100',
+            usePersonalAllowance: YES,
           })
         }
 
@@ -1420,11 +1587,59 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           assignees: [],
         },
       })),
+      removePreviousState: assign((context) => {
+        const { application } = context
+
+        unset(application.answers, 'previousState')
+        return context
+      }),
+      setPreviousState: assign((context, event) => {
+        const { application } = context
+        const { state } = application
+        const { answers } = application
+        const e = (event.type as unknown) as any
+        if (e === 'xstate.init') {
+          return context
+        }
+        if (
+          e === 'APPROVE' &&
+          state === 'residenceGrantApplicationNoBirthDate'
+        ) {
+          return context
+        }
+        if (e === 'REJECT' && state === 'residenceGrantApplication') {
+          set(answers, 'previousState', 'residenceGrantApplicationNoBirthDate')
+          return context
+        }
+
+        set(answers, 'previousState', state)
+        return context
+      }),
+      setHasAppliedForReidenceGrant: assign((context, event) => {
+        const { application } = context
+        const { state, answers } = application
+        const e = (event.type as unknown) as any
+        if (
+          state === States.RESIDENCE_GRAND_APPLICATION &&
+          e === DefaultEvents.APPROVE
+        ) {
+          set(answers, 'hasAppliedForReidenceGrant', YES)
+        }
+        return context
+      }),
       setActionName: assign((context) => {
         const { application } = context
         const { answers } = application
         const actionName = findActionName(context)
         set(answers, 'actionName', actionName)
+        return context
+      }),
+      setResidenceGrant: assign((context) => {
+        const { application } = context
+        const { answers } = application
+
+        set(answers, 'isResidenceGrant', YES)
+
         return context
       }),
     },

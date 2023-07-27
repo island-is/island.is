@@ -82,18 +82,6 @@ export const CoOwner: FC<FieldBaseProps> = (props) => {
             <GridRow>
               <GridColumn span={['1/1', '1/1', '1/2']} paddingTop={2}>
                 <InputController
-                  id={`${id}[${index}].name`}
-                  name={`${id}[${index}].name`}
-                  defaultValue={coOwner.owner || ''}
-                  label={formatMessage(information.labels.coOwner.name)}
-                  error={
-                    errors && getErrorViaPath(errors, `${id}[${index}].name`)
-                  }
-                  readOnly
-                />
-              </GridColumn>
-              <GridColumn span={['1/1', '1/1', '1/2']} paddingTop={2}>
-                <InputController
                   id={`${id}[${index}].nationalId`}
                   name={`${id}[${index}].nationalId`}
                   defaultValue={coOwner.nationalId || ''}
@@ -101,6 +89,19 @@ export const CoOwner: FC<FieldBaseProps> = (props) => {
                   error={
                     errors &&
                     getErrorViaPath(errors, `${id}[${index}].nationalId`)
+                  }
+                  format="######-####"
+                  readOnly
+                />
+              </GridColumn>
+              <GridColumn span={['1/1', '1/1', '1/2']} paddingTop={2}>
+                <InputController
+                  id={`${id}[${index}].name`}
+                  name={`${id}[${index}].name`}
+                  defaultValue={coOwner.owner || ''}
+                  label={formatMessage(information.labels.coOwner.name)}
+                  error={
+                    errors && getErrorViaPath(errors, `${id}[${index}].name`)
                   }
                   readOnly
                 />
@@ -137,6 +138,7 @@ export const CoOwner: FC<FieldBaseProps> = (props) => {
                       '',
                     ) as string
                   }
+                  format="###-####"
                   type="tel"
                   backgroundColor="blue"
                   error={

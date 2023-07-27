@@ -138,7 +138,7 @@ const MissingFiles = ({
           <Controller
             name={commentType}
             defaultValue={''}
-            render={({ value, onChange }) => {
+            render={({ field: { onChange, value } }) => {
               return (
                 <Input
                   id={commentType}

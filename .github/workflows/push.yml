@@ -49,7 +49,7 @@ jobs:
         id: git-branch
         run: |
           GIT_BRANCH="${GITHUB_HEAD_REF:-${GITHUB_REF/refs\/heads\//}}"
-          echo "::set-output name=GIT_BRANCH::${GIT_BRANCH}"
+          echo "GIT_BRANCH=${GIT_BRANCH}" >> $GITHUB_OUTPUT
           echo "GIT_BRANCH=$GIT_BRANCH" >> $GITHUB_ENV
       - name: Generate deployment branch name
         id: git-branch-deploy
@@ -63,9 +63,9 @@ jobs:
             # Avoid too long resource names
             GIT_BRANCH_DEPLOY=${GIT_BRANCH_DEPLOY:0:50}
           fi
-          echo "::set-output name=GIT_BRANCH_DEPLOY::${GIT_BRANCH_DEPLOY}"
+          echo "GIT_BRANCH_DEPLOY=${GIT_BRANCH_DEPLOY}" >> $GITHUB_OUTPUT
           echo "GIT_BRANCH_DEPLOY=$GIT_BRANCH_DEPLOY" >> $GITHUB_ENV
-          echo "::set-output name=FEATURE_NAME::$(echo $GIT_BRANCH_DEPLOY | cut -d"/" -f2- | tr -cd '[:alnum:]-' | tr '[:upper:]' '[:lower:]' | cut -c1-50)"
+          echo "FEATURE_NAME=$(echo $GIT_BRANCH_DEPLOY | cut -d"/" -f2- | tr -cd '[:alnum:]-' | tr '[:upper:]' '[:lower:]' | cut -c1-50)" >> $GITHUB_OUTPUT
 
       - name: Check if we want to run workflow
         id: should-run
@@ -73,7 +73,7 @@ jobs:
           SPINNAKER_WEBHOOK_TOKEN: ${{ secrets.SPINNAKER_WEBHOOK_TOKEN }}
         run: |
           echo "GITHUB_EVENT_NAME is '$GITHUB_EVENT_NAME'"
-          echo "::set-output name=PRE_RELEASE::false"
+          echo "PRE_RELEASE=false" >> $GITHUB_OUTPUT
 
           if [[ "$GITHUB_EVENT_NAME" == "create" ]]; then
             echo "Workflow was created because of branch creation. Branch name is '$GIT_BRANCH'"
@@ -84,8 +84,8 @@ jobs:
                 echo "Check if this is a pre-release and if it should generate a feature-deploy"
                 if [[ "$GIT_BRANCH" =~ $pre_pattern ]]; then
                   echo "'$GIT_BRANCH' matches 'pre_$pattern', continuing with build"
-                  echo "::set-output name=PRE_CHECK::feature-deploy"
-                  echo "::set-output name=PRE_RELEASE::true"
+                  echo "PRE_CHECK=feature-deploy" >> $GITHUB_OUTPUT
+                  echo "PRE_RELEASE=true" >> $GITHUB_OUTPUT
                   exit 0
                 fi
             done
@@ -95,7 +95,7 @@ jobs:
                 echo "Checking branch against pattern '$pattern'"
                 if [[ "$GIT_BRANCH" =~ $pattern ]]; then
                   echo "'$GIT_BRANCH' matches '$pattern', continuing with build"
-                  echo "::set-output name=PRE_CHECK::push"
+                  echo "PRE_CHECK=push" >> $GITHUB_OUTPUT
                   exit 0
                 fi
             done
@@ -112,7 +112,7 @@ jobs:
             fi
             if [[ "$deployFeature" == "true" ]]; then
               echo "Pull request contains deploy-feature label, continuing with feature deployment"
-              echo "::set-output name=PRE_CHECK::feature-deploy"
+              echo "PRE_CHECK=feature-deploy" >> $GITHUB_OUTPUT
               exit 0
             fi
             echo "Pull request does not have deploy-feature label, exiting..."
@@ -124,12 +124,12 @@ jobs:
                 echo "Check if this is a pre-release and if it should generate a feature-deploy"
                 if [[ "$GIT_BRANCH" =~ $pre_pattern ]]; then
                   echo "'$GIT_BRANCH' matches 'pre_$pattern', continuing with build"
-                  echo "::set-output name=PRE_CHECK::feature-deploy"
-                  echo "::set-output name=PRE_RELEASE::true"
+                  echo "PRE_CHECK=feature-deploy" >> $GITHUB_OUTPUT
+                  echo "PRE_RELEASE=true" >> $GITHUB_OUTPUT
                   exit 0
                 fi
             done
-          echo "::set-output name=PRE_CHECK::push"
+          echo "PRE_CHECK=push" >> $GITHUB_OUTPUT
 
   prepare:
     runs-on: ec2-runners
@@ -237,9 +237,9 @@ jobs:
             echo "SHA='$SHA', retrived from action environment"
           fi
           echo "Using SHA='$SHA' as docker tag sha"
-          export DOCKER_TAG=${GITHUB_RUN_NUMBER}_${DOCKER_BRANCH_TAG}_${SHA:0:7}
+          export DOCKER_TAG=${DOCKER_BRANCH_TAG}_${SHA:0:7}_${GITHUB_RUN_NUMBER}
           echo "Docker tag will be ${DOCKER_TAG}"
-          echo "::set-output name=DOCKER_TAG::${DOCKER_TAG}"
+          echo "DOCKER_TAG=${DOCKER_TAG}" >> $GITHUB_OUTPUT
           echo "DOCKER_TAG=$DOCKER_TAG" >> $GITHUB_ENV
 
       - name: Send Slack notification
@@ -271,7 +271,7 @@ jobs:
           echo "PACKAGE_JSON_HASH: $PACKAGE_JSON_HASH"
           export NODE_MODULES_HASH=${{ runner.os }}-${{ hashFiles('yarn.lock') }}-$PACKAGE_JSON_HASH
           echo "NODE_MODULES_HASH: $NODE_MODULES_HASH"
-          echo "::set-output name=node-modules-hash::$NODE_MODULES_HASH"
+          echo "node-modules-hash=$NODE_MODULES_HASH" >> $GITHUB_OUTPUT
 
       - name: Calculate cache keys for generated files
         id: calculate_generated_files_cache_key
@@ -279,7 +279,7 @@ jobs:
           export HASH=${{ hashFiles('scripts/schemas.js', 'libs/cms/src/lib/generated/contentfulTypes.d.ts', 'apps/air-discount-scheme/web/i18n/withLocale.tsx', 'apps/air-discount-scheme/web/components/AppLayout/AppLayout.tsx', 'apps/air-discount-scheme/web/components/Header/Header.tsx', 'apps/air-discount-scheme/web/screens/**.tsx', 'apps/**/codegen.yml', 'libs/**/codegen.yml', 'apps/**/*.model.ts', 'libs/**/*.model.ts', 'apps/**/*.enum.ts', 'libs/**/*.enum.ts', 'apps/**/queries/**/*.tsx?', 'libs/**/queries/**/*.tsx?', 'libs/**/mutations/**/*.tsx?', 'libs/**/fragments/**/*.tsx?' , 'apps/**/*.resolver.ts', 'libs/**/*.resolver.ts', 'apps/**/*.service.ts', 'libs/**/*.service.ts', 'apps/**/*.dto.ts', 'libs/**/*.dto.ts', 'apps/**/*.input.ts', 'libs/**/*.input.ts', 'apps/**/*.module.ts', 'libs/**/*.module.ts', 'apps/**/*.controller.ts', 'libs/**/*.controller.ts', 'apps/**/*.union.ts', 'libs/**/*.union.ts', 'apps/**/*.graphql.ts', 'libs/**/*.graphql.ts', 'libs/**/*.graphql') }}
           export GENERATED_FILES_KEY=${{ runner.os }}-$HASH-files-generated
           echo "GENERATED_FILES_KEY: $GENERATED_FILES_KEY"
-          echo "::set-output name=generated-files-cache-key::$GENERATED_FILES_KEY"
+          echo "generated-files-cache-key=$GENERATED_FILES_KEY" >> $GITHUB_OUTPUT
 
       - name: Cache for NodeJS dependencies - host OS
         id: node-modules
@@ -314,10 +314,10 @@ jobs:
           fi
           export WORKFLOW_ID=push
           export SHELL=/usr/bin/bash
-          source ./scripts/ci/00_prepare-base-tags.sh
+          source ./scripts/ci/00_prepare-base-tags.sh $(git merge-base HEAD $GITHUB_BASE_REF)
           git checkout $GITHUB_SHA
           echo "BASE=$BASE" >> $GITHUB_ENV
-          echo "::set-output name=LAST_GOOD_BUILD_DOCKER_TAG::${LAST_GOOD_BUILD_DOCKER_TAG}"
+          echo "LAST_GOOD_BUILD_DOCKER_TAG=${LAST_GOOD_BUILD_DOCKER_TAG}" >> $GITHUB_OUTPUT
 
       - name: Docker login to ECR repo
         run: ./scripts/ci/docker-login-ecr.sh
@@ -383,7 +383,7 @@ jobs:
         run: |
           CHUNKS=$(./scripts/ci/generate-chunks.sh test)
           if [[ $CHUNKS != "[]" ]]; then
-            echo "::set-output name=CHUNKS::{\"projects\":$CHUNKS}"
+            echo "CHUNKS={\"projects\":$CHUNKS}" >> $GITHUB_OUTPUT
           fi
         env:
           SKIP_TESTS_ON_BRANCH: ${{ secrets.SKIP_TESTS_ON_BRANCH }}
@@ -394,14 +394,14 @@ jobs:
           CHUNKS=$(./scripts/ci/generate-build-chunks.sh docker-express docker-next docker-static docker-playwright docker-jest)
           echo "CHUNKS: '$CHUNKS'"
           if [[ $CHUNKS != "[]" ]]; then
-            echo "::set-output name=BUILD_CHUNKS::$CHUNKS"
+            echo "BUILD_CHUNKS=$CHUNKS" >> $GITHUB_OUTPUT
           fi
 
       - name: Gather unaffected docker images
         id: unaffected
         run: |
           UNAFFECTED=$(./scripts/ci/list-unaffected.sh docker-next docker-express docker-static docker-playwright docker-jest)
-          echo "::set-output name=UNAFFECTED::$UNAFFECTED"
+          echo "UNAFFECTED=$UNAFFECTED" >> $GITHUB_OUTPUT
 
       - name: check pre-release
         if: needs.pre-checks.outputs.PRE_RELEASE == 'true'
@@ -416,7 +416,7 @@ jobs:
           CHUNKS=$(./scripts/ci/generate-build-chunks.sh docker-express docker-next docker-static docker-playwright docker-jest)
           echo "CHUNKS: '$CHUNKS'"
           if [[ $CHUNKS != "[]" ]]; then
-            echo "::set-output name=IMAGES::$(echo $CHUNKS | jq '.[] | fromjson | .projects' -r | tr '\n' ',')"
+            echo "IMAGES=$(echo $CHUNKS | jq '.[] | fromjson | .projects' -r | tr '\n' ',')" >> $GITHUB_OUTPUT
           fi
 
   tests:
@@ -623,7 +623,7 @@ jobs:
         run: |
           ./scripts/build-docker-container.sh $DOCKER_TAG
           echo "COMMENT<<EOF" >> $GITHUB_ENV
-          printf "Affected services are: ${{needs.prepare.outputs.IMAGES}}\n" >> $GITHUB_ENV
+          echo "Affected services are: ${{needs.prepare.outputs.IMAGES}}" >> $GITHUB_ENV
           docker run --rm ${DOCKER_REGISTRY}helm-config:$DOCKER_TAG ingress-comment --images=${{needs.prepare.outputs.IMAGES}} --chart=islandis --feature=$FEATURE_NAME >> $GITHUB_ENV
           echo 'EOF' >> $GITHUB_ENV
         env:
@@ -721,7 +721,7 @@ jobs:
           GH_PRIVATE_REPO_TOKEN: ${{secrets.GH_PRIVATE_REPO_TOKEN}}
         run: |
           if read -d "\n" IDENTITY_SERVER_HEAD_SHA IDENTITY_SERVER_RUN_NUMBER; then :; fi <<<$(curl -H "Authorization: token $GH_PRIVATE_REPO_TOKEN" -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/island-is/identity-server.web/actions/workflows/build.yml/runs\?branch\=main\&status\=success\&per_page\=1\&event\=push | jq '.workflow_runs[] | .head_sha, .run_number' | tr -d \")
-          export IDENTITY_SERVER_DOCKER_TAG=${IDENTITY_SERVER_RUN_NUMBER}_main_${IDENTITY_SERVER_HEAD_SHA:0:7}
+          export IDENTITY_SERVER_DOCKER_TAG=main_${IDENTITY_SERVER_HEAD_SHA:0:7}_${IDENTITY_SERVER_RUN_NUMBER}
           echo "Deploying with identity-server docker tag: '$IDENTITY_SERVER_DOCKER_TAG'"
           echo "Sending webhook with branch: '$GIT_BRANCH_DEPLOY'"
           curl $SPINNAKER_URL/webhooks/webhook/ids-dev -H "content-type: application/json" --data-binary @- <<BODY

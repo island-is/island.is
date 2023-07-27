@@ -20,8 +20,12 @@ import {
   SessionArrangements,
 } from '@island.is/judicial-system/types'
 import type { Gender } from '@island.is/judicial-system/types'
+import {
+  DEFENDER_INDICTMENT_ROUTE,
+  DEFENDER_ROUTE,
+} from '@island.is/judicial-system/consts'
 
-import { core, notifications, custodyNotice, courtUpload } from '../messages'
+import { core, notifications, custodyNotice } from '../messages'
 import { Case } from '../modules/case'
 
 type SubjectAndBody = {
@@ -251,6 +255,7 @@ export function formatProsecutorCourtDateEmailNotification(
   const courtRoomText = formatMessage(notifications.courtRoom, {
     courtRoom: courtRoom || 'NONE',
   })
+
   const judgeText = formatMessage(notifications.judge, {
     judgeName: judgeName || 'NONE',
   })
@@ -432,19 +437,6 @@ export function formatDefenderCourtDateLinkEmailNotification(
   return `${body}${link}`
 }
 
-// This function is only intended for case type CUSTODY and
-// ADMISSION_TO_FACILITY
-export function formatPrisonRulingEmailNotification(
-  formatMessage: FormatMessage,
-  type: CaseType,
-  courtEndTime?: Date,
-): string {
-  return formatMessage(notifications.prisonRulingEmail.body, {
-    courtEndTime: courtEndTime ? formatDate(courtEndTime, 'PPP') : 'NONE',
-    caseType: type,
-  })
-}
-
 export function formatPrisonAdministrationRulingNotification(
   formatMessage: FormatMessage,
   courtCaseNumber: string | undefined,
@@ -623,28 +615,6 @@ export function formatCustodyRestrictions(
   })
 }
 
-export function formatRulingModifiedHistory(
-  rulingModifiedHistory: string | undefined,
-  newRulingDate: Date,
-  judgeName?: string,
-  judgeTitle?: string,
-): string {
-  const history = rulingModifiedHistory ? `${rulingModifiedHistory}\n\n` : ''
-  const dateFormated = capitalize(formatDate(newRulingDate, 'PPPPp') || '')
-  return `${history}${dateFormated} - ${judgeName} ${judgeTitle}`
-}
-
-export function formatCourtUploadRulingTitle(
-  formatMessage: FormatMessage,
-  courtCaseNumber: string | undefined,
-  isModifyingRuling: boolean,
-) {
-  return formatMessage(courtUpload.ruling, {
-    courtCaseNumber: courtCaseNumber ?? '',
-    isModifyingRuling,
-  })
-}
-
 export function formatDefenderAssignedEmailNotification(
   formatMessage: FormatMessage,
   theCase: Case,
@@ -689,4 +659,15 @@ export function formatCourtIndictmentReadyForCourtEmailNotification(
   })
 
   return { body, subject }
+}
+
+export const formatDefenderRoute = (
+  baseUrl: string,
+  type: string,
+  id: string,
+) => {
+  const caseType = type as CaseType
+  return `${baseUrl}${
+    isIndictmentCase(caseType) ? DEFENDER_INDICTMENT_ROUTE : DEFENDER_ROUTE
+  }/${id}`
 }

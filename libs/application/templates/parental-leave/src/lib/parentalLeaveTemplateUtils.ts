@@ -8,9 +8,14 @@ import {
   PARENTAL_GRANT_STUDENTS,
   States,
 } from '../constants'
-import { requiresOtherParentApproval } from '../lib/parentalLeaveUtils'
+import {
+  getApplicationAnswers,
+  getApplicationExternalData,
+  requiresOtherParentApproval,
+} from '../lib/parentalLeaveUtils'
 import { EmployerRow } from '../types'
 import { getValueViaPath } from '@island.is/application/core'
+import { disableResidenceGrantApplication } from './answerValidationSections/utils'
 
 export function allEmployersHaveApproved(context: ApplicationContext) {
   const employers = getValueViaPath<EmployerRow[]>(
@@ -33,6 +38,11 @@ export function hasEmployer(context: ApplicationContext) {
         | typeof PARENTAL_GRANT_STUDENTS
     }
     isSelfEmployed: typeof YES | typeof NO
+    employers: [
+      {
+        stillEmployed: typeof YES | typeof NO
+      },
+    ]
   }
   const oldApplicationAnswers = context.application.answers as {
     isRecivingUnemploymentBenefits: typeof YES | typeof NO
@@ -58,10 +68,22 @@ export function hasEmployer(context: ApplicationContext) {
     }
 
     return selfEmployed
-  } else
-    return currentApplicationAnswers.applicationType.option === PARENTAL_LEAVE
-      ? selfEmployed && receivingUnemploymentBenefits
-      : false
+  } else {
+    if (currentApplicationAnswers.applicationType.option === PARENTAL_LEAVE) {
+      return selfEmployed && receivingUnemploymentBenefits
+    } else if (
+      (currentApplicationAnswers.applicationType.option === PARENTAL_GRANT ||
+        currentApplicationAnswers.applicationType.option ===
+          PARENTAL_GRANT_STUDENTS) &&
+      currentApplicationAnswers.employers !== undefined
+    ) {
+      return currentApplicationAnswers.employers.some(
+        (employer) => employer.stillEmployed === YES,
+      )
+    } else {
+      return false
+    }
+  }
 }
 
 export function needsOtherParentApproval(context: ApplicationContext) {
@@ -79,8 +101,30 @@ export function currentDateStartTime() {
 export function findActionName(context: ApplicationContext) {
   const { application } = context
   const { state } = application
+  if (
+    state === States.RESIDENCE_GRAND_APPLICATION_NO_BIRTH_DATE ||
+    state === States.RESIDENCE_GRAND_APPLICATION
+  )
+    return 'documentPeriod'
   if (state === States.ADDITIONAL_DOCUMENTS_REQUIRED) return 'document'
   if (state === States.EDIT_OR_ADD_PERIODS) return 'period'
 
   return 'period' // Have default on period so we always reset actionName
+}
+
+export function hasDateOfBirth(context: ApplicationContext) {
+  const { application } = context
+  const { dateOfBirth } = getApplicationExternalData(application.externalData)
+  return disableResidenceGrantApplication(dateOfBirth?.data?.dateOfBirth || '')
+}
+
+export function goToState(
+  applicationContext: ApplicationContext,
+  state: States,
+) {
+  const { previousState } = getApplicationAnswers(
+    applicationContext.application.answers,
+  )
+  if (previousState === state) return true
+  return false
 }

@@ -4,7 +4,7 @@ import { LoggingModule } from '@island.is/logging'
 import { logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { HnippTemplate } from './dto/hnippTemplate.response'
 import { CreateHnippNotificationDto } from './dto/createHnippNotification.dto'
-import { CacheModule } from '@nestjs/common'
+import { CacheModule } from '@island.is/cache'
 
 const mockHnippTemplate: HnippTemplate = {
   templateId: 'HNIPP.DEMO.ID',
@@ -20,7 +20,10 @@ const mockTemplates = [mockHnippTemplate, mockHnippTemplate, mockHnippTemplate]
 const mockCreateHnippNotificationDto: CreateHnippNotificationDto = {
   recipient: '1234567890',
   templateId: 'HNIPP.DEMO.ID',
-  args: ['asdf', 'qwer'],
+  args: [
+    { key: 'arg1', value: 'hello' },
+    { key: 'arg2', value: 'world' },
+  ],
 }
 
 describe('NotificationsService', () => {
@@ -73,7 +76,11 @@ describe('NotificationsService', () => {
   })
 
   it('should validate false on argument count mismatch +', () => {
-    mockCreateHnippNotificationDto.args = ['arg1', 'arg2', 'arg3']
+    mockCreateHnippNotificationDto.args = [
+      { key: 'arg1', value: 'hello' },
+      { key: 'arg2', value: 'world' },
+      { key: 'arg3', value: 'extra' },
+    ]
     const counts = service.validateArgCounts(
       mockCreateHnippNotificationDto,
       mockHnippTemplate,
@@ -82,7 +89,7 @@ describe('NotificationsService', () => {
     expect(counts).toBe(false)
   })
   it('should validate false on argument count mismatch -', () => {
-    mockCreateHnippNotificationDto.args = ['arg1']
+    mockCreateHnippNotificationDto.args = [{ key: 'arg2', value: 'world' }]
     const counts = service.validateArgCounts(
       mockCreateHnippNotificationDto,
       mockHnippTemplate,
@@ -102,19 +109,15 @@ describe('NotificationsService', () => {
   })
 
   it('should replace template {{placeholders}} with args', () => {
-    mockCreateHnippNotificationDto.args = ['hello', 'world']
+    mockCreateHnippNotificationDto.args = [
+      { key: 'arg1', value: 'hello' },
+      { key: 'arg2', value: 'world' },
+    ]
     const template = service.formatArguments(
       mockCreateHnippNotificationDto,
       mockHnippTemplate,
     )
-    expect(template.notificationBody).toEqual('Demo body hello') // replaced "Demo body {{arg1}}"
-    expect(template.clickAction).toEqual('Demo click action world') // replaced "Demo click action {{arg2}}"
-  })
-
-  it('should throw error on args mismatch', () => {
-    mockCreateHnippNotificationDto.args = ['hello', 'world', 'asdf']
-    expect(() => {
-      service.formatArguments(mockCreateHnippNotificationDto, mockHnippTemplate)
-    }).toThrow('Argument count mismatch')
+    expect(template.notificationBody).toEqual('Demo body hello')
+    expect(template.clickAction).toEqual('Demo click action world')
   })
 })

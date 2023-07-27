@@ -9,6 +9,7 @@ import {
   DefendantModule,
   UserModule,
   FileModule,
+  IndictmentCountModule,
   CourtModule,
   AwsS3Module,
   EventModule,
@@ -31,6 +32,7 @@ import { LimitedAccessCaseService } from './limitedAccessCase.service'
     forwardRef(() => DefendantModule),
     forwardRef(() => UserModule),
     forwardRef(() => FileModule),
+    forwardRef(() => IndictmentCountModule),
     forwardRef(() => CourtModule),
     forwardRef(() => AwsS3Module),
     forwardRef(() => EventModule),
@@ -43,6 +45,6 @@ import { LimitedAccessCaseService } from './limitedAccessCase.service'
     InternalCaseController,
     LimitedAccessCaseController,
   ],
-  exports: [CaseService],
+  exports: [CaseService, LimitedAccessCaseService],
 })
 export class CaseModule {}

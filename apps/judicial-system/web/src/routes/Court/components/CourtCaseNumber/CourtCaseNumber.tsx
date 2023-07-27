@@ -103,6 +103,7 @@ const CourtCaseNumber: React.FC<Props> = (props) => {
                 label={formatMessage(courtCaseNumber.label)}
                 placeholder={formatMessage(courtCaseNumber.placeholder, {
                   isIndictment: isIndictmentCase(workingCase.type),
+                  year: new Date().getFullYear(),
                 })}
                 autoComplete="off"
                 size="sm"
@@ -110,7 +111,7 @@ const CourtCaseNumber: React.FC<Props> = (props) => {
                 value={workingCase.courtCaseNumber ?? ''}
                 icon={
                   workingCase.courtCaseNumber && createCourtCaseSuccess
-                    ? 'checkmark'
+                    ? { name: 'checkmark' }
                     : undefined
                 }
                 errorMessage={courtCaseNumberEM}

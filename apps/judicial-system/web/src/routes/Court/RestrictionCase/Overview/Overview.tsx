@@ -3,6 +3,20 @@ import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
 import {
+  Text,
+  Accordion,
+  AccordionItem,
+  Box,
+  Button,
+  AlertMessage,
+} from '@island.is/island-ui/core'
+import {
+  CaseLegalProvisions,
+  isAcceptingCaseDecision,
+} from '@island.is/judicial-system/types'
+import * as constants from '@island.is/judicial-system/consts'
+import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
+import {
   FormFooter,
   PageLayout,
   FormContentContainer,
@@ -12,18 +26,17 @@ import {
   AccordionListItem,
   InfoCard,
   FormContext,
-  MarkdownWrapper,
   UserContext,
+  CourtCaseInfo,
+  CaseResentExplanation,
+  PageHeader,
 } from '@island.is/judicial-system-web/src/components'
-import {
-  RestrictionCaseCourtSubsections,
-  Sections,
-} from '@island.is/judicial-system-web/src/types'
 import {
   UploadState,
   useCourtUpload,
-} from '@island.is/judicial-system-web/src/utils/hooks/useCourtUpload'
-import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
+  useCase,
+  useOnceOn,
+} from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   titles,
   ruling,
@@ -33,25 +46,7 @@ import {
   requestCourtDate,
   restrictionsV2,
 } from '@island.is/judicial-system-web/messages'
-import {
-  CaseLegalProvisions,
-  isAcceptingCaseDecision,
-} from '@island.is/judicial-system/types'
-import {
-  useCase,
-  useOnceOn,
-} from '@island.is/judicial-system-web/src/utils/hooks'
-import {
-  Text,
-  Accordion,
-  AccordionItem,
-  Box,
-  Button,
-  AlertMessage,
-} from '@island.is/island-ui/core'
 import { formatRequestedCustodyRestrictions } from '@island.is/judicial-system-web/src/utils/restrictions'
-import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
-import * as constants from '@island.is/judicial-system/consts'
 
 import { DraftConclusionModal } from '../../components'
 
@@ -101,10 +96,6 @@ export const JudgeOverview: React.FC = () => {
   return (
     <PageLayout
       workingCase={workingCase}
-      activeSection={
-        workingCase?.parentCase ? Sections.JUDGE_EXTENSION : Sections.JUDGE
-      }
-      activeSubSection={RestrictionCaseCourtSubsections.JUDGE_OVERVIEW}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
       isValid={true}
@@ -115,33 +106,24 @@ export const JudgeOverview: React.FC = () => {
       />
       <FormContentContainer>
         {workingCase.caseResentExplanation && (
-          <Box marginBottom={workingCase.seenByDefender ? 3 : 5}>
-            <AlertMessage
-              title={formatMessage(
-                rcCourtOverview.sections.caseResentExplanation.title,
-              )}
-              message={
-                <MarkdownWrapper
-                  markdown={workingCase.caseResentExplanation}
-                  textProps={{ variant: 'small' }}
-                />
-              }
-              type="warning"
+          <Box marginBottom={workingCase.openedByDefender ? 3 : 5}>
+            <CaseResentExplanation
+              explanation={workingCase.caseResentExplanation}
             />
           </Box>
         )}
-        {workingCase.seenByDefender && (
+        {workingCase.openedByDefender && (
           <Box marginBottom={5}>
             <AlertMessage
               title={formatMessage(
-                rcCourtOverview.sections.seenByDefenderAlert.title,
+                rcCourtOverview.sections.openedByDefenderAlert.title,
               )}
               message={formatMessage(
-                rcCourtOverview.sections.seenByDefenderAlert.text,
-                { when: formatDate(workingCase.seenByDefender, 'PPPp') },
+                rcCourtOverview.sections.openedByDefenderAlert.text,
+                { when: formatDate(workingCase.openedByDefender, 'PPPp') },
               )}
               type="info"
-              testid="alertMessageSeenByDefender"
+              testid="alertMessageOpenedByDefender"
             />
           </Box>
         )}
@@ -152,6 +134,7 @@ export const JudgeOverview: React.FC = () => {
             })}
           </Text>
         </Box>
+        <CourtCaseInfo workingCase={workingCase} />
         <Box component="section" marginBottom={5}>
           <InfoCard
             data={[
@@ -345,6 +328,7 @@ export const JudgeOverview: React.FC = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
+          nextButtonIcon="arrowForward"
           previousUrl={`${constants.RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE}/${id}`}
           onNextButtonClick={() =>
             handleNavigationTo(

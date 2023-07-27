@@ -4,7 +4,7 @@ import { Box } from '@island.is/island-ui/core'
 
 import { useLocale } from '@island.is/localization'
 import { formatNationalId } from '@island.is/portals/core'
-import { Modal, ModalProps } from '../../../Modal/Modal'
+import { Modal, ModalProps } from '@island.is/react/components'
 import { IdentityCard } from '../../../IdentityCard/IdentityCard'
 import { AccessListContainer } from '../../../access/AccessList/AccessListContainer/AccessListContainer'
 import { useAuthScopeTreeLazyQuery } from '../../../access/AccessList/AccessListContainer/AccessListContainer.generated'
@@ -49,10 +49,12 @@ export const DelegationIncomingModal = ({
   return (
     <Modal
       id={`delegation-incoming-view-modal-${delegation?.id}`}
-      label={formatMessage(m.accessControl)}
+      eyebrow={formatMessage(m.accessControl)}
       title={formatMessage(m.accessControlAccess)}
+      label={formatMessage(m.accessControlAccess)}
       {...rest}
       onClose={onClose}
+      closeButtonLabel={formatMessage(m.closeModal)}
     >
       <Box
         marginTop={[4, 4, 8]}
@@ -69,10 +71,7 @@ export const DelegationIncomingModal = ({
         >
           {fromName && fromNationalId && (
             <IdentityCard
-              label={formatMessage({
-                id: 'sp.access-control-delegations:delegation-to',
-                defaultMessage: 'Aðgangsveitandi',
-              })}
+              label={formatMessage(m.accessOwner)}
               title={fromName}
               description={formatNationalId(fromNationalId)}
               color="blue"
@@ -80,10 +79,7 @@ export const DelegationIncomingModal = ({
           )}
           {toName && toNationalId && (
             <IdentityCard
-              label={formatMessage({
-                id: 'sp.access-control-delegations:access-holder',
-                defaultMessage: 'Aðgangshafi',
-              })}
+              label={formatMessage(m.accessHolder)}
               title={toName}
               description={formatNationalId(toNationalId)}
               color="purple"
@@ -92,10 +88,7 @@ export const DelegationIncomingModal = ({
         </Box>
         {delegation?.domain && (
           <IdentityCard
-            label={formatMessage({
-              id: 'sp.access-control-delegations:domain',
-              defaultMessage: 'Kerfi',
-            })}
+            label={formatMessage(m.domain)}
             title={delegation.domain.displayName}
             imgSrc={delegation.domain.organisationLogoUrl}
           />

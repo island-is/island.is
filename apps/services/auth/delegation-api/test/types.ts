@@ -6,11 +6,6 @@ import {
   CreateDomain,
 } from '@island.is/services/auth/testing'
 
-export interface TestEndpointOptions {
-  method: string
-  endpoint: string
-}
-
 export interface DomainAssertion {
   name: string
   scopes: Array<{ name: string }>
@@ -23,4 +18,5 @@ export interface TestCase {
   accessTo?: string[]
   domains: CreateDomain[]
   expected: DomainAssertion[]
+  query?: Record<string, string | string[]>
 }

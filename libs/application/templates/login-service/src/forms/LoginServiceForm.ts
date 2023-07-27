@@ -15,7 +15,7 @@ import {
   DefaultEvents,
   Application,
 } from '@island.is/application/types'
-import { formConclusionSection } from '@island.is/application/ui-forms'
+import { buildFormConclusionSection } from '@island.is/application/ui-forms'
 import {
   section,
   application,
@@ -267,7 +267,7 @@ export const LoginServiceForm: Form = buildForm({
         }),
       ],
     }),
-    formConclusionSection({
+    buildFormConclusionSection({
       alertTitle: submitted.general.pageTitle,
       expandableHeader: submitted.general.expandableTitle,
       expandableDescription: submitted.labels.desceriptionBulletPoints,

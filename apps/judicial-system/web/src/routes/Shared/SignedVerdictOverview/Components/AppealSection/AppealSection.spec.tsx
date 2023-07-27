@@ -5,11 +5,13 @@ import { MockedProvider } from '@apollo/client/testing'
 
 import {
   CaseAppealDecision,
-  CaseOrigin,
   CaseState,
   Defendant,
 } from '@island.is/judicial-system/types'
-import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  CaseType,
+  CaseOrigin,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 
 import AppealSection from './AppealSection'
 
@@ -18,7 +20,7 @@ describe('Appeal section component', () => {
     id: 'test',
     created: new Date().toString(),
     modified: new Date().toString(),
-    type: CaseType.Custody,
+    type: CaseType.CUSTODY,
     state: CaseState.ACCEPTED,
     policeCaseNumbers: ['000'],
     defendants: [{ nationalId: '000000-0000' }] as Defendant[],
@@ -34,7 +36,7 @@ describe('Appeal section component', () => {
             workingCase={{
               ...baseWorkingCase,
               isAppealDeadlineExpired: true,
-              courtEndTime: '2020-09-16T19:50:00.000Z',
+              rulingDate: '2020-09-16T19:50:00.000Z',
               accusedAppealDecision: CaseAppealDecision.POSTPONE,
             }}
             setAccusedAppealDate={() => null}
@@ -64,7 +66,7 @@ describe('Appeal section component', () => {
             workingCase={{
               ...baseWorkingCase,
               isAppealDeadlineExpired: false,
-              courtEndTime: `${dd}T19:50:00.000Z`,
+              rulingDate: `${dd}T19:50:00.000Z`,
               prosecutorAppealDecision: CaseAppealDecision.POSTPONE,
             }}
             setAccusedAppealDate={() => null}
@@ -98,7 +100,7 @@ describe('Appeal section component', () => {
             workingCase={{
               ...baseWorkingCase,
               isAppealDeadlineExpired: false,
-              courtEndTime: `${dd}T19:50:00.000Z`,
+              rulingDate: `${dd}T19:50:00.000Z`,
             }}
             setAccusedAppealDate={() => null}
             setProsecutorAppealDate={() => null}

@@ -1,11 +1,13 @@
 module.exports = {
-  preset: '../../../../jest.preset.js',
+  preset: './jest.preset.js',
+  rootDir: '../../../..',
+  roots: [__dirname],
   transform: {
     '^.+\\.[tj]sx?$': 'ts-jest',
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'html'],
   coverageDirectory:
-    '../../../../coverage/libs/api/domains/icelandic-names-registry',
+    '<rootDir>/coverage/libs/api/domains/icelandic-names-registry',
   displayName: 'api-domains-icelandic-names-registry',
   testEnvironment: 'node',
 }

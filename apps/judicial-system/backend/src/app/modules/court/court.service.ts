@@ -9,17 +9,17 @@ import {
   IndictmentSubtypeMap,
   isIndictmentCase,
 } from '@island.is/judicial-system/types'
-import type { User as TUser } from '@island.is/judicial-system/types'
+import type { User } from '@island.is/judicial-system/types'
 
 import { nowFactory } from '../../factories'
 import { EventService } from '../event'
-import { User } from '../user'
 
 export enum CourtDocumentFolder {
   REQUEST_DOCUMENTS = 'Krafa og greinargerð',
   INDICTMENT_DOCUMENTS = 'Ákæra og greinargerð',
   CASE_DOCUMENTS = 'Gögn málsins',
   COURT_DOCUMENTS = 'Dómar, úrskurðir og Þingbók',
+  APPEAL_DOCUMENTS = 'Kæra til Landsréttar',
 }
 
 export type Subtype = Exclude<CaseType, CaseType.INDICTMENT> | IndictmentSubtype
@@ -159,7 +159,7 @@ export class CourtService {
   }
 
   async createDocument(
-    user: TUser | User,
+    user: User,
     caseId: string,
     courtId = '',
     courtCaseNumber = '',
@@ -258,7 +258,7 @@ export class CourtService {
   }
 
   async createCourtCase(
-    user: TUser,
+    user: User,
     caseId: string,
     courtId = '',
     type: CaseType,
@@ -276,7 +276,7 @@ export class CourtService {
 
       const isIndictment = isIndictmentCase(type)
 
-      return this.courtClientService.createCase(courtId, {
+      return await this.courtClientService.createCase(courtId, {
         caseType: isIndictment ? 'S - Ákærumál' : 'R - Rannsóknarmál',
         subtype: courtSubtype as string,
         status: 'Skráð',
@@ -288,7 +288,7 @@ export class CourtService {
     } catch (reason) {
       if (reason instanceof ServiceUnavailableException) {
         // Act as if the court case was created successfully
-        return 'R-9999/9999'
+        return isIndictmentCase(type) ? 'S-9999/9999' : 'R-9999/9999'
       }
 
       this.eventService.postErrorEvent(
@@ -310,7 +310,7 @@ export class CourtService {
   }
 
   async createEmail(
-    user: TUser | User,
+    user: User,
     caseId: string,
     courtId: string,
     courtCaseNumber: string,

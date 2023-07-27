@@ -11,6 +11,8 @@ import {
   OpsEnvWithLocal,
   PostgresInfo,
   PostgresInfoForEnv,
+  RedisInfo,
+  RedisInfoForEnv,
   ServiceDefinition,
   ServiceDefinitionForEnv,
   ValueType,
@@ -116,7 +118,9 @@ export const prepareServiceForEnv = (
   if (serviceDef.postgres) {
     result.postgres = getEnvPostgres(serviceDef.postgres!, env)
   }
-
+  if (serviceDef.redis) {
+    result.redis = getEnvRedis(serviceDef.redis, env)
+  }
   // extra attributes
   if (serviceDef.extraAttributes) {
     const { errors, envs } = getEnvExtraValues(
@@ -182,7 +186,6 @@ export const prepareServiceForEnv = (
           env,
           `${serviceDef.name}-initContainers`,
         )
-
         mergeObjects(result.initContainers.envs, featureEnvs)
         addToErrors(featureErrors)
         mergeObjects(result.initContainers.secrets, featureSecrets)
@@ -276,7 +279,6 @@ function getEnvExtraValues(
     return { errors: [], envs: extraEnvsForType }
   }
 }
-
 function getEnvPostgres(
   postgres: PostgresInfo,
   env: EnvironmentConfig,
@@ -285,6 +287,15 @@ function getEnvPostgres(
   return {
     ...rest,
     host: postgres.host?.[localFromDev(env.type)],
+  }
+}
+
+function getEnvRedis(
+  redis: RedisInfo,
+  env: EnvironmentConfig,
+): RedisInfoForEnv {
+  return {
+    host: redis.host?.[localFromDev(env.type)],
   }
 }
 

@@ -4,7 +4,6 @@ import { Sequelize } from 'sequelize-typescript'
 import format from 'date-fns/format'
 
 import {
-  BadRequestException,
   forwardRef,
   Inject,
   Injectable,
@@ -21,17 +20,21 @@ import {
   CaseFileCategory,
   CaseOrigin,
   CaseState,
+  CaseType,
+  completedCaseStates,
   isIndictmentCase,
   UserRole,
 } from '@island.is/judicial-system/types'
+import type { User as TUser } from '@island.is/judicial-system/types'
 
 import { uuidFactory, nowFactory } from '../../factories'
 import {
   getCourtRecordPdfAsBuffer,
   getCourtRecordPdfAsString,
-  formatCourtUploadRulingTitle,
   getRequestPdfAsBuffer,
   createCaseFilesRecord,
+  getRequestPdfAsString,
+  getCustodyNoticePdfAsString,
 } from '../../formatters'
 import { courtUpload } from '../../messages'
 import { CaseEvent, EventService } from '../event'
@@ -41,10 +44,10 @@ import { PoliceService } from '../police'
 import { Institution } from '../institution'
 import { User, UserService } from '../user'
 import { Defendant, DefendantService } from '../defendant'
-import { IndictmentCount } from '../indictment-count'
+import { IndictmentCount, IndictmentCountService } from '../indictment-count'
 import { CaseFile, FileService } from '../file'
 import { InternalCreateCaseDto } from './dto/internalCreateCase.dto'
-import { oldFilter } from './filters/case.filters'
+import { archiveFilter } from './filters/case.archiveFilter'
 import { Case } from './models/case.model'
 import { CaseArchive } from './models/caseArchive.model'
 import { ArchiveResponse } from './models/archive.response'
@@ -77,6 +80,8 @@ const caseEncryptionProperties: (keyof Case)[] = [
   'caseModifiedExplanation',
   'caseResentExplanation',
   'crimeScenes',
+  'indictmentIntroduction',
+  'appealConclusion',
 ]
 
 const defendantEncryptionProperties: (keyof Defendant)[] = [
@@ -89,6 +94,12 @@ const caseFileEncryptionProperties: (keyof CaseFile)[] = [
   'name',
   'key',
   'userGeneratedFilename',
+]
+
+const indictmentCountEncryptionProperties: (keyof IndictmentCount)[] = [
+  'vehicleRegistrationNumber',
+  'incidentDescription',
+  'legalArguments',
 ]
 
 function collectEncryptionProperties(
@@ -112,6 +123,8 @@ function collectEncryptionProperties(
 
 @Injectable()
 export class InternalCaseService {
+  private throttle = Promise.resolve(false)
+
   constructor(
     @InjectConnection() private readonly sequelize: Sequelize,
     @InjectModel(Case) private readonly caseModel: typeof Case,
@@ -131,6 +144,8 @@ export class InternalCaseService {
     private readonly policeService: PoliceService,
     @Inject(forwardRef(() => UserService))
     private readonly userService: UserService,
+    @Inject(forwardRef(() => IndictmentCountService))
+    private readonly indictmentCountService: IndictmentCountService,
     @Inject(forwardRef(() => FileService))
     private readonly fileService: FileService,
     @Inject(forwardRef(() => DefendantService))
@@ -156,13 +171,12 @@ export class InternalCaseService {
   private async uploadSignedRulingPdfToCourt(
     theCase: Case,
     buffer: Buffer,
-    user: User,
+    user: TUser,
   ): Promise<boolean> {
-    const fileName = formatCourtUploadRulingTitle(
-      this.formatMessage,
-      theCase.courtCaseNumber,
-      Boolean(theCase.rulingModifiedHistory),
-    )
+    const fileName = this.formatMessage(courtUpload.ruling, {
+      courtCaseNumber: theCase.courtCaseNumber,
+      date: format(nowFactory(), 'yyyy-MM-dd HH:mm'),
+    })
 
     try {
       await this.courtService.createDocument(
@@ -190,13 +204,14 @@ export class InternalCaseService {
 
   private async uploadCourtRecordPdfToCourt(
     theCase: Case,
-    user: User,
+    user: TUser,
   ): Promise<boolean> {
     try {
       const pdf = await getCourtRecordPdfAsBuffer(theCase, this.formatMessage)
 
       const fileName = this.formatMessage(courtUpload.courtRecord, {
         courtCaseNumber: theCase.courtCaseNumber,
+        date: format(nowFactory(), 'yyyy-MM-dd HH:mm'),
       })
 
       await this.courtService.createCourtRecord(
@@ -224,13 +239,13 @@ export class InternalCaseService {
 
   private async upploadRequestPdfToCourt(
     theCase: Case,
-    user: User,
+    user: TUser,
   ): Promise<boolean> {
     return getRequestPdfAsBuffer(theCase, this.formatMessage)
       .then((pdf) => {
         const fileName = this.formatMessage(courtUpload.request, {
           caseType: caseTypes[theCase.type],
-          date: ` ${format(nowFactory(), 'yyyy-MM-dd HH:mm')}`,
+          date: format(nowFactory(), 'yyyy-MM-dd HH:mm'),
         })
 
         return this.courtService.createDocument(
@@ -259,11 +274,28 @@ export class InternalCaseService {
       })
   }
 
-  private async uploadCaseFilesRecordPdfToCourt(
+  private async getCaseFilesRecordPdf(
     theCase: Case,
     policeCaseNumber: string,
-    user: User,
-  ): Promise<boolean> {
+  ): Promise<Buffer> {
+    if (completedCaseStates.includes(theCase.state)) {
+      try {
+        return await this.awsS3Service.getObject(
+          `indictments/completed/${theCase.id}/${policeCaseNumber}/caseFilesRecord.pdf`,
+        )
+      } catch {
+        // Ignore the error and try the original key
+      }
+    }
+
+    try {
+      return await this.awsS3Service.getObject(
+        `indictments/${theCase.id}/${policeCaseNumber}/caseFilesRecord.pdf`,
+      )
+    } catch {
+      // Ignore the error and generate the pdf
+    }
+
     const caseFiles = theCase.caseFiles
       ?.filter(
         (caseFile) =>
@@ -299,12 +331,45 @@ export class InternalCaseService {
         }
       })
 
-    return createCaseFilesRecord(
+    const pdf = await createCaseFilesRecord(
       theCase,
       policeCaseNumber,
       caseFiles ?? [],
       this.formatMessage,
     )
+
+    await this.awsS3Service
+      .putObject(
+        `indictments/${
+          completedCaseStates.includes(theCase.state) ? 'completed/' : ''
+        }${theCase.id}/${policeCaseNumber}/caseFilesRecord.pdf`,
+        pdf.toString('binary'),
+      )
+      .catch((reason) => {
+        this.logger.error(
+          `Failed to upload case files record pdf to AWS S3 for case ${theCase.id} and police case ${policeCaseNumber}`,
+          { reason },
+        )
+      })
+
+    return pdf
+  }
+
+  private async throttleUploadCaseFilesRecordPdfToCourt(
+    theCase: Case,
+    policeCaseNumber: string,
+    user: TUser,
+  ): Promise<boolean> {
+    // Serialize all case files pdf uploads in this process
+    await this.throttle.catch((reason) => {
+      this.logger.info('Previous case files pdf generation failed', { reason })
+    })
+
+    await this.refreshFormatMessage()
+
+    const pdfPromise = this.getCaseFilesRecordPdf(theCase, policeCaseNumber)
+
+    return pdfPromise
       .then((pdf) => {
         const fileName = this.formatMessage(courtUpload.caseFilesRecord, {
           policeCaseNumber,
@@ -328,7 +393,7 @@ export class InternalCaseService {
       .catch((error) => {
         // Tolerate failure, but log error
         this.logger.error(
-          `Failed to upload request pdf to court for case ${theCase.id}`,
+          `Failed to upload case files record pdf to court for case ${theCase.id}`,
           { error },
         )
 
@@ -336,12 +401,15 @@ export class InternalCaseService {
       })
   }
 
+  private getSignedRulingPdf(theCase: Case) {
+    return this.awsS3Service.getObject(`generated/${theCase.id}/ruling.pdf`)
+  }
+
   private async deliverSignedRulingPdfToCourt(
     theCase: Case,
-    user: User,
+    user: TUser,
   ): Promise<boolean> {
-    return this.awsS3Service
-      .getObject(`generated/${theCase.id}/ruling.pdf`)
+    return this.getSignedRulingPdf(theCase)
       .then((pdf) => this.uploadSignedRulingPdfToCourt(theCase, pdf, user))
       .catch((reason) => {
         this.logger.error(
@@ -358,20 +426,21 @@ export class InternalCaseService {
     let courtId: string | undefined
 
     if (caseToCreate.prosecutorNationalId) {
-      const prosecutor = await this.userService.findByNationalId(
-        caseToCreate.prosecutorNationalId,
-      )
+      const prosecutor = await this.userService
+        .findByNationalId(caseToCreate.prosecutorNationalId)
+        .catch(() => undefined) // Tolerate failure
 
       if (!prosecutor || prosecutor.role !== UserRole.PROSECUTOR) {
-        throw new BadRequestException(
+        // Tolerate failure, but log error
+        this.logger.error(
           `User ${
             prosecutor?.id ?? 'unknown'
           } is not registered as a prosecutor`,
         )
+      } else {
+        prosecutorId = prosecutor.id
+        courtId = prosecutor.institution?.defaultCourtId
       }
-
-      prosecutorId = prosecutor.id
-      courtId = prosecutor.institution?.defaultCourtId
     }
 
     return this.sequelize.transaction(async (transaction) => {
@@ -390,13 +459,14 @@ export class InternalCaseService {
           { transaction },
         )
         .then((theCase) =>
-          this.defendantService.create(
+          this.defendantService.createForNewCase(
             theCase.id,
             {
               nationalId: caseToCreate.accusedNationalId,
               name: caseToCreate.accusedName,
               gender: caseToCreate.accusedGender,
               address: caseToCreate.accusedAddress,
+              citizenship: caseToCreate.citizenship,
             },
             transaction,
           ),
@@ -437,7 +507,7 @@ export class InternalCaseService {
       ],
       where: {
         isArchived: false,
-        [Op.or]: [{ state: CaseState.DELETED }, oldFilter],
+        [Op.or]: [{ state: CaseState.DELETED }, archiveFilter],
       },
     })
 
@@ -462,7 +532,7 @@ export class InternalCaseService {
         )
         defendantsArchive.push(defendantArchive)
 
-        await this.defendantService.update(
+        await this.defendantService.updateForArcive(
           theCase.id,
           defendant.id,
           clearedDefendantProperties,
@@ -486,6 +556,25 @@ export class InternalCaseService {
         )
       }
 
+      const indictmentCountsArchive = []
+      for (const count of theCase.indictmentCounts ?? []) {
+        const [
+          clearedIndictmentCountProperties,
+          indictmentCountArchive,
+        ] = collectEncryptionProperties(
+          indictmentCountEncryptionProperties,
+          count,
+        )
+        indictmentCountsArchive.push(indictmentCountArchive)
+
+        await this.indictmentCountService.update(
+          theCase.id,
+          count.id,
+          clearedIndictmentCountProperties,
+          transaction,
+        )
+      }
+
       await this.caseArchiveModel.create(
         {
           caseId: theCase.id,
@@ -494,6 +583,7 @@ export class InternalCaseService {
               ...caseArchive,
               defendants: defendantsArchive,
               caseFiles: caseFilesArchive,
+              indictmentCounts: indictmentCountsArchive,
             }),
             this.config.archiveEncryptionKey,
             { iv: CryptoJS.enc.Hex.parse(uuidFactory()) },
@@ -515,7 +605,7 @@ export class InternalCaseService {
 
   async deliverProsecutorToCourt(
     theCase: Case,
-    user: User,
+    user: TUser,
   ): Promise<DeliverResponse> {
     return this.courtService
       .updateCaseWithProsecutor(
@@ -528,7 +618,7 @@ export class InternalCaseService {
       )
       .then(() => ({ delivered: true }))
       .catch((reason) => {
-        this.logger.error('Failed to update case with defendant', { reason })
+        this.logger.error('Failed to update case with prosecutor', { reason })
 
         return { delivered: false }
       })
@@ -537,22 +627,57 @@ export class InternalCaseService {
   async deliverCaseFilesRecordToCourt(
     theCase: Case,
     policeCaseNumber: string,
-    user: User,
+    user: TUser,
   ): Promise<DeliverResponse> {
-    await this.refreshFormatMessage()
-
-    const delivered = await this.uploadCaseFilesRecordPdfToCourt(
+    this.throttle = this.throttleUploadCaseFilesRecordPdfToCourt(
       theCase,
       policeCaseNumber,
       user,
     )
 
+    const delivered = await this.throttle
+
     return { delivered }
+  }
+
+  async archiveCaseFilesRecord(
+    theCase: Case,
+    policeCaseNumber: string,
+  ): Promise<DeliverResponse> {
+    return this.awsS3Service
+      .copyObject(
+        `indictments/${theCase.id}/${policeCaseNumber}/caseFilesRecord.pdf`,
+        `indictments/completed/${theCase.id}/${policeCaseNumber}/caseFilesRecord.pdf`,
+      )
+      .then(() => {
+        // Fire and forget, no need to wait for the result
+        this.awsS3Service
+          .deleteObject(
+            `indictments/${theCase.id}/${policeCaseNumber}/caseFilesRecord.pdf`,
+          )
+          .catch((reason) => {
+            // Tolerate failure, but log what happened
+            this.logger.error(
+              `Could not delete case files record for case ${theCase.id} and police case ${policeCaseNumber} from AWS S3`,
+              { reason },
+            )
+          })
+
+        return { delivered: true }
+      })
+      .catch((reason) => {
+        this.logger.error(
+          `Failed to archive case files record for case ${theCase.id} and police case ${policeCaseNumber}`,
+          { reason },
+        )
+
+        return { delivered: false }
+      })
   }
 
   async deliverRequestToCourt(
     theCase: Case,
-    user: User,
+    user: TUser,
   ): Promise<DeliverResponse> {
     await this.refreshFormatMessage()
 
@@ -563,7 +688,7 @@ export class InternalCaseService {
 
   async deliverCourtRecordToCourt(
     theCase: Case,
-    user: User,
+    user: TUser,
   ): Promise<DeliverResponse> {
     await this.refreshFormatMessage()
 
@@ -574,7 +699,7 @@ export class InternalCaseService {
 
   async deliverSignedRulingToCourt(
     theCase: Case,
-    user: User,
+    user: TUser,
   ): Promise<DeliverResponse> {
     await this.refreshFormatMessage()
 
@@ -585,12 +710,27 @@ export class InternalCaseService {
 
   async deliverCaseToPolice(
     theCase: Case,
-    user: User,
+    user: TUser,
   ): Promise<DeliverResponse> {
-    await this.refreshFormatMessage()
-
-    return getCourtRecordPdfAsString(theCase, this.formatMessage)
-      .then(async (courtRecord) => {
+    return this.refreshFormatMessage()
+      .then(async () => {
+        const requestPdf = await getRequestPdfAsString(
+          theCase,
+          this.formatMessage,
+        )
+        const courtRecordPdf = await getCourtRecordPdfAsString(
+          theCase,
+          this.formatMessage,
+        )
+        const rulingPdf = await this.getSignedRulingPdf(theCase).then((pdf) =>
+          pdf.toString('binary'),
+        )
+        const custodyNoticePdf =
+          [CaseType.CUSTODY, CaseType.ADMISSION_TO_FACILITY].includes(
+            theCase.type,
+          ) && theCase.state === CaseState.ACCEPTED
+            ? await getCustodyNoticePdfAsString(theCase, this.formatMessage)
+            : undefined
         const defendantNationalIds = theCase.defendants?.reduce<string[]>(
           (ids, defendant) =>
             !defendant.noNationalId && defendant.nationalId
@@ -598,18 +738,33 @@ export class InternalCaseService {
               : ids,
           [],
         )
+        const validToDate =
+          ([
+            CaseType.CUSTODY,
+            CaseType.ADMISSION_TO_FACILITY,
+            CaseType.TRAVEL_BAN,
+          ].includes(theCase.type) &&
+            theCase.state === CaseState.ACCEPTED &&
+            theCase.validToDate) ||
+          new Date() // The API requires a date so we send 1970-01-01T00:00:00.000Z as a dummy date
 
         const delivered = await this.policeService.updatePoliceCase(
           user,
           theCase.id,
           theCase.type,
           theCase.state,
-          courtRecord,
           theCase.policeCaseNumbers.length > 0
             ? theCase.policeCaseNumbers[0]
             : '',
-          defendantNationalIds,
-          theCase.conclusion,
+          defendantNationalIds && defendantNationalIds[0]
+            ? defendantNationalIds[0].replace('-', '')
+            : '',
+          validToDate,
+          theCase.conclusion ?? '',
+          requestPdf as string,
+          courtRecordPdf as string,
+          rulingPdf as string,
+          custodyNoticePdf,
         )
 
         return { delivered }

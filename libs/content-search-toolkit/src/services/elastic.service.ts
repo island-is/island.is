@@ -37,6 +37,7 @@ import { typeAggregationQuery } from '../queries/typeAggregation'
 import { rankEvaluationQuery } from '../queries/rankEvaluation'
 import { filterDoc, getValidBulkRequestChunk } from './utils'
 
+type RequestBodyType<T = Record<string, any>> = T | string | Buffer
 type RankResultMap<T extends string> = Record<string, RankEvaluationResponse<T>>
 
 const { elastic } = environment
@@ -139,7 +140,7 @@ export class ElasticService {
     }
   }
 
-  async findByQuery<ResponseBody, RequestBody>(
+  async findByQuery<ResponseBody, RequestBody extends RequestBodyType>(
     index: string,
     query: RequestBody,
   ) {
@@ -171,7 +172,7 @@ export class ElasticService {
     }
   }
 
-  async rankEvaluation<ResponseBody, RequestBody>(
+  async rankEvaluation<ResponseBody, RequestBody extends RequestBodyType>(
     index: string,
     body: RequestBody,
   ) {
@@ -326,7 +327,7 @@ export class ElasticService {
       body: {
         query: {
           bool: {
-            must: ids.map((id) => ({ match: { _id: id } })),
+            should: ids.map((id) => ({ match: { _id: id } })),
           },
         },
       },

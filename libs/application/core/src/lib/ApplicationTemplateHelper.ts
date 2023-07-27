@@ -20,6 +20,7 @@ import {
   ReadWriteValues,
   RoleInState,
   TemplateApi,
+  PendingAction,
 } from '@island.is/application/types'
 
 export class ApplicationTemplateHelper<
@@ -257,5 +258,59 @@ export class ApplicationTemplateHelper<
   getApisFromRoleInState(role: ApplicationRole): TemplateApi[] {
     const roleInState = this.getRoleInState(role)
     return roleInState?.api ?? []
+  }
+
+  getCurrentStatePendingAction(
+    application: Application,
+    currentRole: ApplicationRole,
+    formatMessage: FormatMessage,
+    nationalId: string,
+    stateKey: string = this.application.state,
+  ): PendingAction {
+    const stateInfo = this.getApplicationStateInformation(stateKey)
+
+    const pendingAction = stateInfo?.actionCard?.pendingAction
+
+    if (!pendingAction) {
+      return {
+        displayStatus: 'warning',
+      }
+    }
+
+    if (typeof pendingAction === 'function') {
+      const action = pendingAction(application, currentRole, nationalId)
+      return {
+        displayStatus: action.displayStatus,
+        content: action.content ? formatMessage(action.content) : undefined,
+        title: action.title ? formatMessage(action.title) : undefined,
+      }
+    }
+    return {
+      displayStatus: pendingAction.displayStatus,
+      title: pendingAction.title
+        ? formatMessage(pendingAction.title)
+        : undefined,
+      content: pendingAction.content
+        ? formatMessage(pendingAction.content)
+        : undefined,
+    }
+  }
+
+  getHistoryLogs(
+    stateKey: string = this.application.state,
+    event: Event<TEvents>,
+  ): StaticText | undefined {
+    const stateInfo = this.getApplicationStateInformation(stateKey)
+
+    const historyLogs = stateInfo?.actionCard?.historyLogs
+
+    if (Array.isArray(historyLogs)) {
+      return historyLogs?.find((historyLog) => historyLog.onEvent === event)
+        ?.logMessage
+    } else {
+      return historyLogs?.onEvent === event
+        ? historyLogs?.logMessage
+        : undefined
+    }
   }
 }

@@ -148,7 +148,12 @@ export const TellUsAStoryForm: React.FC<TellUsAStoryFormProps> = ({
     setIsTablet(false)
   }, [width])
 
-  const { handleSubmit, register, control, errors } = methods
+  const {
+    handleSubmit,
+    register,
+    control,
+    formState: { errors },
+  } = methods
 
   useEffect(() => {
     if (state === 'error') {
@@ -223,19 +228,19 @@ export const TellUsAStoryForm: React.FC<TellUsAStoryFormProps> = ({
                     defaultValue={''}
                     control={control}
                     rules={{ required: true }}
-                    render={({ onChange }) => (
+                    render={({ field: { onChange } }) => (
                       <Select
                         name="organization"
                         label={organizationLabel}
                         placeholder={organizationPlaceholder}
                         options={options}
                         errorMessage={
-                          errors.organization
+                          errors?.organization
                             ? organizationInputErrorMessage
                             : null
                         }
                         required
-                        hasError={errors.organization}
+                        hasError={errors?.organization !== undefined}
                         disabled={
                           Boolean(error || loading) || state === 'submitting'
                         }
@@ -252,7 +257,7 @@ export const TellUsAStoryForm: React.FC<TellUsAStoryFormProps> = ({
                     defaultValue={false}
                     control={control}
                     rules={{ required: true }}
-                    render={({ onChange, value }) => (
+                    render={({ field: { onChange, value } }) => (
                       <DatePicker
                         label={dateOfStoryLabel}
                         placeholderText={dateOfStoryPlaceholder}
@@ -264,7 +269,7 @@ export const TellUsAStoryForm: React.FC<TellUsAStoryFormProps> = ({
                             ? dateOfStoryInputErrorMessage
                             : null
                         }
-                        hasError={errors.dateOfStory}
+                        hasError={errors?.dateOfStory !== undefined}
                         disabled={state === 'submitting'}
                         handleChange={onChange}
                       />
@@ -323,7 +328,7 @@ export const TellUsAStoryForm: React.FC<TellUsAStoryFormProps> = ({
                       placeholder={subjectPlaceholder}
                       defaultValue=""
                       disabled={state === 'submitting'}
-                      ref={register({
+                      {...register('subject', {
                         required: false,
                       })}
                     />
@@ -335,9 +340,9 @@ export const TellUsAStoryForm: React.FC<TellUsAStoryFormProps> = ({
                       textarea
                       rows={isTablet ? 8 : showIntro ? 14 : 18}
                       required
-                      errorMessage={errors.message?.message}
+                      errorMessage={errors?.message?.message as string}
                       disabled={state === 'submitting'}
-                      ref={register({
+                      {...register('message', {
                         required: messageInputErrorMessage,
                       })}
                     />
@@ -357,9 +362,9 @@ export const TellUsAStoryForm: React.FC<TellUsAStoryFormProps> = ({
                     placeholder={namePlaceholder}
                     defaultValue=""
                     required
-                    errorMessage={errors.name?.message}
+                    errorMessage={errors?.name?.message as string}
                     disabled={state === 'submitting'}
-                    ref={register({
+                    {...register('name', {
                       required: nameInputErrorMessage,
                     })}
                   />
@@ -372,9 +377,9 @@ export const TellUsAStoryForm: React.FC<TellUsAStoryFormProps> = ({
                     placeholder={emailPlaceholder}
                     defaultValue=""
                     required
-                    errorMessage={errors.email?.message}
+                    errorMessage={errors?.email?.message as string}
                     disabled={state === 'submitting'}
-                    ref={register({
+                    {...register('email', {
                       required: emailInputErrorMessage,
                       pattern: {
                         value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
@@ -390,12 +395,12 @@ export const TellUsAStoryForm: React.FC<TellUsAStoryFormProps> = ({
                 defaultValue={false}
                 control={control}
                 rules={{ required: false }}
-                render={(props) => (
+                render={({ field: { onChange, value } }) => (
                   <Checkbox
                     label={publicationAllowedLabel}
-                    checked={props.value}
+                    checked={value}
                     disabled={state === 'submitting'}
-                    onChange={(e) => props.onChange(e.target.checked)}
+                    onChange={(e) => onChange(e.target.checked)}
                   />
                 )}
               />

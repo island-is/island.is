@@ -13,6 +13,7 @@ import {
 } from '@aws-sdk/client-ses'
 import { join } from 'path'
 import { sessionsPath } from './session'
+import { debug } from './utils'
 
 /**
  * Register the email address with AWS SES, so we can send emails to it
@@ -34,7 +35,7 @@ async function registerEmailAddressWithSES(emailAccount: {
   )
   const verifyMsg = await emailAccount.getLastEmail(4)
   if (verifyMsg && verifyMsg.text) {
-    console.log(`Verify message is ${verifyMsg.subject}: ${verifyMsg.text}`)
+    debug(`Verify message is ${verifyMsg.subject}: ${verifyMsg.text}`)
     const verifyUrl = verifyMsg.text.match(/https:\/\/email-verification.+/)
     if (!verifyUrl || verifyUrl.length !== 1) {
       throw new Error(
@@ -93,8 +94,8 @@ const makeEmailAccount = async (name: string): Promise<EmailAccount> => {
       authTimeout: 10000,
     },
   }
-  console.log('created new email account %s', testAccount.user)
-  console.log('for debugging, the password is %s', testAccount.pass)
+  debug('created new email account %s', testAccount.user)
+  debug('for debugging, the password is %s', testAccount.pass)
   const userEmail: EmailAccount = {
     email: testAccount.user,
 
@@ -110,28 +111,28 @@ const makeEmailAccount = async (name: string): Promise<EmailAccount> => {
       html: string | false
     }> {
       // makes debugging very simple
-      console.log('getting the last email')
-      console.log(emailConfig)
+      debug('getting the last email')
+      debug(emailConfig)
 
-      console.log('connecting to mail server...')
+      debug('connecting to mail server...')
       const connection = await connect(emailConfig)
-      console.log('connected')
+      debug('connected')
       try {
         // grab up to 50 emails from the inbox
-        console.log('Opening inbox...')
+        debug('Opening inbox...')
         await connection.openBox('INBOX')
-        console.log('Opened inbox.')
+        debug('Opened inbox.')
         const searchCriteria = ['UNSEEN']
         const fetchOptions = {
           bodies: [''],
           markSeen: true,
         }
-        console.log('Starting search for new messages...')
+        debug('Starting search for new messages...')
         const messages = await connection.search(searchCriteria, fetchOptions)
-        console.log('Search finished')
+        debug('Search finished')
 
         if (!messages.length) {
-          console.log('cannot find any emails')
+          debug('cannot find any emails')
           if (retries <= 0) {
             return null
           } else {
@@ -139,13 +140,13 @@ const makeEmailAccount = async (name: string): Promise<EmailAccount> => {
             return userEmail.getLastEmail(retries - 1)
           }
         } else {
-          console.log('there are %d messages', messages.length)
+          debug('there are %d messages', messages.length)
           // grab the last email
           const mail = await simpleParser(
             messages[messages.length - 1].parts[0].body,
           )
-          console.log(mail.subject)
-          console.log(mail.text)
+          debug(mail.subject)
+          debug(mail.text)
 
           // and returns the main fields
           return {

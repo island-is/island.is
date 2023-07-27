@@ -11,4 +11,14 @@ export const error = defineMessages({
     defaultMessage: 'Reyndu aftur síðar',
     description: 'Unhandled error in data provider',
   },
+  validationAlertTitle: {
+    id: 'ta.ovlp.application:error.validationAlertTitle',
+    defaultMessage: 'Það kom upp villa',
+    description: 'Application check validation alert title',
+  },
+  validationFallbackErrorMessage: {
+    id: 'ta.ovlp.application:error.validationFallbackErrorMessage',
+    defaultMessage: 'Það kom upp villa við að sannreyna gögn',
+    description: 'Fallback error message for validation',
+  },
 })

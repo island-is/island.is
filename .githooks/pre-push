@@ -1,0 +1,15 @@
+#!/bin/bash
+set -euo pipefail
+
+: "${GIT_ROOT:="$(git rev-parse --show-toplevel)"}"
+BRANCH="$(git rev-parse --abbrev-ref HEAD)"
+PROTECTED="main"
+
+
+if [[ "$BRANCH" == "$PROTECTED" ]]; then
+	echo "HOOK: Pushing to protected branch ($PROTECTED) 🙊"
+	echo "HOOK: Use git push --no-verify to force this operation."
+	exit 1
+fi
+
+exec "$GIT_ROOT/.githooks/defaulthook" pre-push

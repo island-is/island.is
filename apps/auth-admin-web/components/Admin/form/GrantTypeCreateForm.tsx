@@ -21,8 +21,8 @@ interface FormOutput {
 }
 
 const GrantTypeCreateForm: React.FC<Props> = (props: Props) => {
-  const { register, handleSubmit, errors, formState } = useForm<FormOutput>()
-  const { isSubmitting } = formState
+  const { register, handleSubmit, formState } = useForm<FormOutput>()
+  const { isSubmitting, errors } = formState
   const [isEditing, setIsEditing] = useState<boolean>(false)
   const grantType = props.grantType
   const [localization] = useState<FormControl>(
@@ -97,9 +97,11 @@ const GrantTypeCreateForm: React.FC<Props> = (props: Props) => {
                   <input
                     type="text"
                     id="grantType.name"
-                    name="grantType.name"
-                    ref={register({
+                    {...register('grantType.name', {
                       required: true,
+                      onBlur: () => setNameHintVisible(false),
+                      onChange: (e) => onNameChange(e.target.value),
+
                       validate: isEditing
                         ? () => {
                             return true
@@ -111,9 +113,7 @@ const GrantTypeCreateForm: React.FC<Props> = (props: Props) => {
                     placeholder={localization.fields['name'].placeholder}
                     title={localization.fields['name'].helpText}
                     readOnly={isEditing}
-                    onBlur={() => setNameHintVisible(false)}
                     onFocus={(e) => onNameChange(e.target.value)}
-                    onChange={(e) => onNameChange(e.target.value)}
                   />
                   <HintBox
                     helpText={nameHintMessage}
@@ -142,11 +142,10 @@ const GrantTypeCreateForm: React.FC<Props> = (props: Props) => {
                   <input
                     id="grantType.description"
                     type="text"
-                    ref={register({
+                    {...register('grantType.description', {
                       required: true,
                       validate: ValidationUtils.validateDescription,
                     })}
-                    name="grantType.description"
                     defaultValue={grantType.description ?? ''}
                     className="grant-type-create-form__input"
                     title={localization.fields['description'].helpText}

@@ -1,10 +1,11 @@
-import { style, styleVariants, keyframes } from '@vanilla-extract/css'
+import { keyframes, style, styleVariants } from '@vanilla-extract/css'
 import { theme, themeUtils } from '@island.is/island-ui/theme'
 
 export const wrapper = style({
   display: 'inline-block',
   position: 'relative',
   width: '100%',
+  borderRadius: '8px',
   ':after': {
     content: '""',
     position: 'absolute',
@@ -34,6 +35,10 @@ export const focused = style({
   ':after': {
     opacity: 1,
   },
+})
+
+export const hasError = style({
+  boxShadow: `inset 0 0 0 1px ${theme.color.red600}`,
 })
 
 export const open = style({

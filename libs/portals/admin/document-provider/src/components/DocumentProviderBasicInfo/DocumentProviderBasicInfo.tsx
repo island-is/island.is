@@ -7,10 +7,9 @@ import {
   Button,
   SkeletonLoader,
 } from '@island.is/island-ui/core'
-import { useForm, Controller } from 'react-hook-form'
+import { useForm, Controller, SubmitHandler } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
-import { AdminPortalCorePaths } from '@island.is/portals/admin/core'
 import { DocumentProviderPaths } from '../../lib/paths'
 
 //Interface will be deleted, when graphql is ready.
@@ -45,13 +44,19 @@ export interface FormData {
   administrativeContact: AdministrativeContact
   technicalContact: TechnicalContact
   helpDeskContact: HelpDeskContact
-  id: string
 }
 
 interface Props {
   data: FormData
-  onSubmit: (data: FormData) => void
+  onSubmit: SubmitHandler<UseFormProps>
   isFetching: boolean
+}
+
+interface UseFormProps {
+  applicant: Applicant
+  administrativeContact: AdministrativeContact
+  technicalContact: TechnicalContact
+  helpDeskContact: HelpDeskContact
 }
 
 export const DocumentProviderBasicInfo: FC<Props> = ({
@@ -60,7 +65,12 @@ export const DocumentProviderBasicInfo: FC<Props> = ({
   isFetching,
 }) => {
   const { formatMessage } = useLocale()
-  const { handleSubmit, control, errors } = useForm()
+  const {
+    handleSubmit,
+    control,
+    formState: { errors },
+  } = useForm<UseFormProps>()
+
   return (
     <Box marginY={3}>
       <form onSubmit={handleSubmit(onSubmit)}>
@@ -86,7 +96,7 @@ export const DocumentProviderBasicInfo: FC<Props> = ({
                     ),
                   },
                 }}
-                render={({ onChange, value, name }) => (
+                render={({ field: { onChange, value, name } }) => (
                   <Input
                     size="xs"
                     name={name}
@@ -96,8 +106,8 @@ export const DocumentProviderBasicInfo: FC<Props> = ({
                     placeholder={formatMessage(
                       m.SingleProviderInstitutionNamePlaceholder,
                     )}
-                    hasError={errors.applicant?.name}
-                    errorMessage={errors.applicant?.name?.message}
+                    hasError={errors?.applicant?.name !== undefined}
+                    errorMessage={errors?.applicant?.name?.message}
                   />
                 )}
               />
@@ -122,7 +132,7 @@ export const DocumentProviderBasicInfo: FC<Props> = ({
                   ),
                 },
               }}
-              render={({ onChange, value, name }) => (
+              render={({ field: { onChange, value, name } }) => (
                 <Input
                   size="xs"
                   name={name}
@@ -134,8 +144,8 @@ export const DocumentProviderBasicInfo: FC<Props> = ({
                   placeholder={formatMessage(
                     m.SingleProviderInstitutionNationalIdPlaceholder,
                   )}
-                  hasError={errors.applicant?.nationalId}
-                  errorMessage={errors.applicant?.nationalId?.message}
+                  hasError={errors?.applicant?.nationalId !== undefined}
+                  errorMessage={errors?.applicant?.nationalId?.message ?? ''}
                 />
               )}
             />
@@ -157,7 +167,7 @@ export const DocumentProviderBasicInfo: FC<Props> = ({
                   ),
                 },
               }}
-              render={({ onChange, value, name }) => (
+              render={({ field: { onChange, value, name } }) => (
                 <Input
                   size="xs"
                   name={name}
@@ -167,8 +177,8 @@ export const DocumentProviderBasicInfo: FC<Props> = ({
                   placeholder={formatMessage(
                     m.SingleProviderInstitutionEmailPlaceholder,
                   )}
-                  hasError={errors.applicant?.email}
-                  errorMessage={errors.applicant?.email?.message}
+                  hasError={errors?.applicant?.email !== undefined}
+                  errorMessage={errors?.applicant?.email?.message ?? ''}
                 />
               )}
             />
@@ -204,7 +214,7 @@ export const DocumentProviderBasicInfo: FC<Props> = ({
                   ),
                 },
               }}
-              render={({ onChange, value, name }) => (
+              render={({ field: { onChange, value, name } }) => (
                 <Input
                   size="xs"
                   name={name}
@@ -216,8 +226,8 @@ export const DocumentProviderBasicInfo: FC<Props> = ({
                   placeholder={formatMessage(
                     m.SingleProviderInstitutionPhonenumberPlaceholder,
                   )}
-                  hasError={errors.applicant?.phoneNumber}
-                  errorMessage={errors.applicant?.phoneNumber?.message}
+                  hasError={errors?.applicant?.phoneNumber !== undefined}
+                  errorMessage={errors?.applicant?.phoneNumber?.message}
                 />
               )}
             />
@@ -235,7 +245,7 @@ export const DocumentProviderBasicInfo: FC<Props> = ({
                   ),
                 },
               }}
-              render={({ onChange, value, name }) => (
+              render={({ field: { onChange, value, name } }) => (
                 <Input
                   size="xs"
                   name={name}
@@ -245,8 +255,8 @@ export const DocumentProviderBasicInfo: FC<Props> = ({
                   placeholder={formatMessage(
                     m.SingleProviderInstitutionAddressPlaceholder,
                   )}
-                  hasError={errors.applicant?.address}
-                  errorMessage={errors.applicant?.address?.message}
+                  hasError={errors?.applicant?.address !== undefined}
+                  errorMessage={errors?.applicant?.address?.message}
                 />
               )}
             />
@@ -262,7 +272,7 @@ export const DocumentProviderBasicInfo: FC<Props> = ({
                   message: formatMessage(m.DashBoardDescription),
                 },
               }}
-              render={({ onChange, value, name }) => (
+              render={({ field: { onChange, value, name } }) => (
                 <Input
                   size="xs"
                   name={name}
@@ -270,8 +280,8 @@ export const DocumentProviderBasicInfo: FC<Props> = ({
                   onChange={onChange}
                   label={formatMessage(m.DashBoardDescription)}
                   placeholder={formatMessage(m.DashBoardDescription)}
-                  hasError={errors.applicant?.zipCode}
-                  errorMessage={errors.applicant?.zipCode?.message}
+                  hasError={errors?.applicant?.zipCode !== undefined}
+                  errorMessage={errors?.applicant?.zipCode?.message}
                 />
               )}
             />
@@ -296,7 +306,7 @@ export const DocumentProviderBasicInfo: FC<Props> = ({
                   ),
                 },
               }}
-              render={({ onChange, value, name }) => (
+              render={({ field: { onChange, value, name } }) => (
                 <Input
                   size="xs"
                   name={name}
@@ -308,8 +318,8 @@ export const DocumentProviderBasicInfo: FC<Props> = ({
                   placeholder={formatMessage(
                     m.SingleProviderResponsibleContactNamePlaceholder,
                   )}
-                  hasError={errors.administrativeContact?.name}
-                  errorMessage={errors.administrativeContact?.name?.message}
+                  hasError={errors?.administrativeContact?.name !== undefined}
+                  errorMessage={errors?.administrativeContact?.name?.message}
                 />
               )}
             />
@@ -331,7 +341,7 @@ export const DocumentProviderBasicInfo: FC<Props> = ({
                   ),
                 },
               }}
-              render={({ onChange, value, name }) => (
+              render={({ field: { onChange, value, name } }) => (
                 <Input
                   size="xs"
                   name={name}
@@ -343,8 +353,8 @@ export const DocumentProviderBasicInfo: FC<Props> = ({
                   placeholder={formatMessage(
                     m.SingleProviderResponsibleContactEmailPlaceholder,
                   )}
-                  hasError={errors.administrativeContact?.email}
-                  errorMessage={errors.administrativeContact?.email?.message}
+                  hasError={errors?.administrativeContact?.email !== undefined}
+                  errorMessage={errors?.administrativeContact?.email?.message}
                 />
               )}
             />
@@ -380,7 +390,7 @@ export const DocumentProviderBasicInfo: FC<Props> = ({
                   ),
                 },
               }}
-              render={({ onChange, value, name }) => (
+              render={({ field: { onChange, value, name } }) => (
                 <Input
                   size="xs"
                   name={name}
@@ -392,9 +402,11 @@ export const DocumentProviderBasicInfo: FC<Props> = ({
                   placeholder={formatMessage(
                     m.SingleProviderResponsibleContactPhoneNumberPlaceholder,
                   )}
-                  hasError={errors.administrativeContact?.phoneNumber}
+                  hasError={
+                    errors?.administrativeContact?.phoneNumber !== undefined
+                  }
                   errorMessage={
-                    errors.administrativeContact?.phoneNumber?.message
+                    errors?.administrativeContact?.phoneNumber?.message
                   }
                 />
               )}
@@ -420,7 +432,7 @@ export const DocumentProviderBasicInfo: FC<Props> = ({
                   ),
                 },
               }}
-              render={({ onChange, value, name }) => (
+              render={({ field: { onChange, value, name } }) => (
                 <Input
                   size="xs"
                   name={name}
@@ -432,8 +444,8 @@ export const DocumentProviderBasicInfo: FC<Props> = ({
                   placeholder={formatMessage(
                     m.SingleProviderTechnicalContactNamePlaceholder,
                   )}
-                  hasError={errors.technicalContact?.name}
-                  errorMessage={errors.technicalContact?.name?.message}
+                  hasError={errors?.technicalContact?.name !== undefined}
+                  errorMessage={errors?.technicalContact?.name?.message ?? ''}
                 />
               )}
             />
@@ -457,7 +469,7 @@ export const DocumentProviderBasicInfo: FC<Props> = ({
                   ),
                 },
               }}
-              render={({ onChange, value, name }) => (
+              render={({ field: { onChange, value, name } }) => (
                 <Input
                   size="xs"
                   name={name}
@@ -469,8 +481,8 @@ export const DocumentProviderBasicInfo: FC<Props> = ({
                   placeholder={formatMessage(
                     m.SingleProviderTechnicalContactEmailPlaceholder,
                   )}
-                  hasError={errors.technicalContact?.email}
-                  errorMessage={errors.technicalContact?.email?.message}
+                  hasError={errors?.technicalContact?.email !== undefined}
+                  errorMessage={errors?.technicalContact?.email?.message ?? ''}
                 />
               )}
             />
@@ -506,7 +518,7 @@ export const DocumentProviderBasicInfo: FC<Props> = ({
                   ),
                 },
               }}
-              render={({ onChange, value, name }) => (
+              render={({ field: { onChange, value, name } }) => (
                 <Input
                   size="xs"
                   name={name}
@@ -518,8 +530,10 @@ export const DocumentProviderBasicInfo: FC<Props> = ({
                   placeholder={formatMessage(
                     m.SingleProviderTechnicalContactPhoneNumberPlaceholder,
                   )}
-                  hasError={errors.technicalContact?.phoneNumber}
-                  errorMessage={errors.technicalContact?.phoneNumber?.message}
+                  hasError={errors?.technicalContact?.phoneNumber !== undefined}
+                  errorMessage={
+                    errors?.technicalContact?.phoneNumber?.message ?? ''
+                  }
                 />
               )}
             />
@@ -548,7 +562,7 @@ export const DocumentProviderBasicInfo: FC<Props> = ({
                   ),
                 },
               }}
-              render={({ onChange, value, name }) => (
+              render={({ field: { onChange, value, name } }) => (
                 <Input
                   size="xs"
                   name={name}
@@ -560,8 +574,8 @@ export const DocumentProviderBasicInfo: FC<Props> = ({
                   placeholder={formatMessage(
                     m.SingleProviderUserHelpContactEmailPlaceholder,
                   )}
-                  hasError={errors.helpDeskContact?.email}
-                  errorMessage={errors.helpDeskContact?.email?.message}
+                  hasError={errors?.helpDeskContact?.email !== undefined}
+                  errorMessage={errors?.helpDeskContact?.email?.message ?? ''}
                 />
               )}
             />
@@ -597,7 +611,7 @@ export const DocumentProviderBasicInfo: FC<Props> = ({
                   ),
                 },
               }}
-              render={({ onChange, value, name }) => (
+              render={({ field: { onChange, value, name } }) => (
                 <Input
                   size="xs"
                   name={name}
@@ -609,8 +623,10 @@ export const DocumentProviderBasicInfo: FC<Props> = ({
                   placeholder={formatMessage(
                     m.SingleProviderUserHelpContactPhoneNumberPlaceholder,
                   )}
-                  hasError={errors.helpDeskContact?.phoneNumber}
-                  errorMessage={errors.helpDeskContact?.phoneNumber?.message}
+                  hasError={errors?.helpDeskContact?.phoneNumber !== undefined}
+                  errorMessage={
+                    errors?.helpDeskContact?.phoneNumber?.message ?? ''
+                  }
                 />
               )}
             />

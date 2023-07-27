@@ -1,3 +1,5 @@
+import { Transaction } from 'sequelize/types'
+
 import {
   Inject,
   Injectable,
@@ -27,14 +29,20 @@ export class IndictmentCountService {
     caseId: string,
     indictmentCountId: string,
     update: UpdateIndictmentCountDto,
+    transaction?: Transaction,
   ): Promise<IndictmentCount> {
-    const [
-      numberOfAffectedRows,
-      indictmentCounts,
-    ] = await this.indictmentCountModel.update(update, {
-      where: { id: indictmentCountId, caseId },
-      returning: true,
-    })
+    const promisedUpdate = transaction
+      ? this.indictmentCountModel.update(update, {
+          where: { id: indictmentCountId, caseId },
+          returning: true,
+          transaction,
+        })
+      : this.indictmentCountModel.update(update, {
+          where: { id: indictmentCountId, caseId },
+          returning: true,
+        })
+
+    const [numberOfAffectedRows, indictmentCounts] = await promisedUpdate
 
     if (numberOfAffectedRows > 1) {
       // Tolerate failure, but log error

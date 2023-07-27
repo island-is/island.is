@@ -274,6 +274,79 @@ stateMachineConfig: {
 },
 ```
 
+### Pending Action
+
+![image](../../../handbook/misc/assets/application-pending-action.jpeg)
+
+For each state, you have the option to set a "pendingAction". This will appear as the top item in the application history logs, along with a user prompt. This is not persisted between states.
+
+```ts
+[States.waitingToAssign]: {
+  meta: {
+    name: 'Waiting to assign',
+    ...
+    actionCard: {
+      pendingAction: {
+        title: 'Skráning yfirferðaraðila',
+        content:
+          'Umsóknin bíður nú þess að yfirferðaraðili sé skráður á umsóknina. Þú getur líka skráð þig sjálfur inn og farið yfir umsóknina.',
+        displayStatus: 'warning',
+      },
+      ...
+    },
+```
+
+You can pass a function that uses the application answers and the user's role to determine the color, content, and title of the box to display to the user.
+
+```ts
+  ...
+    actionCard: {
+      pendingAction: (answers, role) => {
+        let title, content, displayStatus
+        if (role === 'applicant') {
+          title = 'Waiting for Reviewer'
+          content =
+            'Your application is waiting for a reviewer to be assigned.'
+          displayStatus = 'info'
+        } else if (role === 'reviewer') {
+          title = 'Applications to Review'
+          content = 'You have applications waiting to be reviewed.'
+          displayStatus = 'warning'
+        } else {
+          //display something else
+          ...
+        }
+        return { title, content, displayStatus }
+      },
+  ...
+```
+
+### Application History
+
+You can display a history log for each event that can be triggered within each state. The logs will be ordered below the current [Pending Action](###-Pending-Action) (if present) with the most recent entries at the top.
+
+The events are stored and recorded in db seperately so the log messages can be added later or updated.
+
+```ts
+[States.inReview]: {
+  meta: {
+    name: 'In review',
+    ...
+    actionCard: {
+      ...
+      historyLogs: [
+        {
+          onEvent: DefaultEvents.SUBMIT,
+          logMessage: application.applicationSubmitted,
+        }
+      ],
+      ...
+    },
+```
+
+An example of a history log (with no [Pending Action](###-Pending-Action) present)
+![image](../../../handbook/misc/assets/application-history.jpeg)
+
 ### Delete Application
 
 In order to enable users to delete applications within a state simply add `delete: true` to the desired role and state.
@@ -303,8 +376,7 @@ stateMachineConfig: {
 ```
 
 This will add a delete button in the Draft state available only to the `Applicant` role like so:
-
-![image](https://user-images.githubusercontent.com/2643113/165759979-a267dd6f-dbe4-4bc9-b2b8-dad5508a44c0.png)
+application-pending-action.jpeg
 
 ## Form
 
@@ -525,4 +597,4 @@ The reason default behavior does not work for all applications is because it cou
 
 ## Code owners and maintainers
 
-- [Sendiradid](https://github.com/orgs/island-is/teams/sendiradid-applications/members)
+- [Norda](https://github.com/orgs/island-is/teams/norda-applications/members)

@@ -85,4 +85,4 @@ A sentry project is available [here](https://sentry.io/organizations/island_is/i
 ## Code owners and maintainers
 
 - [Hugsmiðjan](https://github.com/orgs/island-is/teams/hugsmidjan)
-- [Sendiráðið](https://github.com/orgs/island-is/teams/sendiradid/members)
+- [Norda](https://github.com/orgs/island-is/teams/norda/members)

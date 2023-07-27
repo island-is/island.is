@@ -184,11 +184,6 @@ export const m = defineMessages({
     defaultMessage: 'Þú getur einning fundið sakavottorðið í pósthólfinu þínu',
     description: 'You can also find the criminal record in your inbox',
   },
-  criminalRecordInboxLink: {
-    id: 'cr.application:criminalRecordInboxLink',
-    defaultMessage: 'https://island.is/minarsidur/postholf',
-    description: 'Link to the island.is inbox',
-  },
   downloadCriminalRecord: {
     id: 'cr.application:downloadCriminalRecord',
     defaultMessage: 'Hlaða niður sakavottorði',
@@ -221,5 +216,11 @@ export const m = defineMessages({
     id: 'cr.application:tryAgain',
     defaultMessage: 'Reyna aftur',
     description: '',
+  },
+  pendingActionApplicationCompletedTitle: {
+    id: 'cr.application:pendingActionApplicationCompletedTitle',
+    defaultMessage:
+      'Umsókn þín hefur verið móttekin og er vottorðið aðgengilegt í stafrænu pósthólfi á Ísland.is.',
+    description: 'Title of pending action',
   },
 })

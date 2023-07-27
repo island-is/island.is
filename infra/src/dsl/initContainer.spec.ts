@@ -11,6 +11,7 @@ import { generateOutputOne } from './processing/rendering-pipeline'
 
 const Staging: EnvironmentConfig = {
   auroraHost: 'a',
+  redisHost: 'b',
   domain: 'staging01.devland.is',
   type: 'staging',
   featuresOn: [],
@@ -52,7 +53,9 @@ describe('Init-container definitions', () => {
       secrets: {
         S1: '/as/dfadf',
       },
-      postgres: {},
+      postgres: {
+        extensions: ['foo', 'bar'],
+      },
     })
     const result = (await generateOutputOne({
       outputFormat: renderers.helm,
@@ -83,13 +86,14 @@ describe('Init-container definitions', () => {
           name: 'seedation',
           resources: {
             limits: { cpu: '200m', memory: '256Mi' },
-            requests: { cpu: '100m', memory: '128Mi' },
+            requests: { cpu: '50m', memory: '128Mi' },
           },
         },
       ],
       env: {
         A: 'B',
         B: 'b',
+        DB_EXTENSIONS: 'foo,bar',
         DB_USER: 'api',
         DB_NAME: 'api',
         DB_HOST: 'a',

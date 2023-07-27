@@ -1,11 +1,13 @@
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { Injectable } from '@nestjs/common'
+import { ReturnTypeMessage } from '../../gen/fetch'
 import { PlateOrderingApi } from '../../gen/fetch/apis'
 import {
   DeliveryStation,
   SGS_DELIVERY_STATION_CODE,
   SGS_DELIVERY_STATION_TYPE,
   PlateOrder,
+  PlateOrderValidation,
 } from './vehiclePlateOrderingClient.types'
 
 @Injectable()
@@ -33,12 +35,14 @@ export class VehiclePlateOrderingClient {
     }))
   }
 
-  public async checkIfPlateOrderExists(
+  public async validatePlateOrder(
     auth: User,
     permno: string,
     frontType: string,
     rearType: string,
-  ): Promise<boolean> {
+  ): Promise<PlateOrderValidation> {
+    let errorList: ReturnTypeMessage[] | undefined
+
     try {
       // Dummy values
       // Note: option "Pick up at Samgöngustofa" which is always valid
@@ -60,10 +64,37 @@ export class VehiclePlateOrderingClient {
         },
       })
     } catch (e) {
-      return true
+      // Note: We need to wrap in try-catch to get the error messages, because if this action results in error,
+      // we get 4xx error (instead of 200 with error messages) with the errorList in this field
+      // ("body.Errors" for input validation, and "body" for data validation (in database)),
+      // that is of the same class as 200 result schema
+      if (e?.body?.Errors && Array.isArray(e.body.Errors)) {
+        errorList = e.body.Errors as ReturnTypeMessage[]
+      } else if (e?.body && Array.isArray(e.body)) {
+        errorList = e.body as ReturnTypeMessage[]
+      } else {
+        throw e
+      }
     }
 
-    return false
+    const warnSeverityError = 'E'
+    const warnSeverityWarning = 'W'
+    errorList = errorList?.filter(
+      (x) =>
+        x.errorMess &&
+        (x.warnSever === warnSeverityError ||
+          x.warnSever === warnSeverityWarning),
+    )
+
+    return {
+      hasError: !!errorList?.length,
+      errorMessages: errorList?.map((item) => {
+        return {
+          errorNo: (item.warnSever || '_') + item.warningSerialNumber,
+          defaultMessage: item.errorMess,
+        }
+      }),
+    }
   }
 
   public async savePlateOrders(
@@ -76,7 +107,7 @@ export class VehiclePlateOrderingClient {
       postOrderPlatesModel: {
         permno: plateOrder.permno,
         frontType: plateOrder.frontType,
-        rearType: plateOrder.rearType,
+        rearType: plateOrder.rearType || null,
         stationToDeliverTo: plateOrder.deliveryStationCode || '',
         stationType: plateOrder.deliveryStationType || '',
         expressOrder: plateOrder.expressOrder,

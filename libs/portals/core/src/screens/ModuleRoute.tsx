@@ -1,54 +1,42 @@
 import React, { Suspense, useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
-import { User } from '@island.is/shared/types'
-import { ModuleErrorScreen, ModuleErrorBoundary } from './ModuleErrorScreen'
 import { PortalRoute } from '../types/portalCore'
 import { usePortalMeta } from '../components/PortalProvider'
 import { plausiblePageviewDetail } from '../utils/plausible'
 import { Box } from '@island.is/island-ui/core'
+import { useAuth } from '@island.is/auth/react'
 
 type ModuleRouteProps = {
   route: PortalRoute
-  userInfo: User
 }
 
-export const ModuleRoute = React.memo(
-  ({ route, userInfo }: ModuleRouteProps) => {
-    const location = useLocation()
-    const { basePath } = usePortalMeta()
+export const ModuleRoute = React.memo(({ route }: ModuleRouteProps) => {
+  const location = useLocation()
+  const { basePath } = usePortalMeta()
+  const { userInfo } = useAuth()
 
-    useEffect(() => {
-      if (route.render !== undefined) {
-        plausiblePageviewDetail({
-          basePath,
-          path: route.path,
-        })
-      }
-    }, [basePath, location, route.path, route.render])
-
-    if (route.render === undefined) {
-      return null
+  useEffect(() => {
+    if (route.element !== undefined) {
+      plausiblePageviewDetail({
+        basePath,
+        path: route.path,
+        entity:
+          userInfo?.profile?.subjectType === 'legalEntity'
+            ? 'company'
+            : 'person',
+      })
     }
+  }, [basePath, location, route.path, route.element])
 
-    const Module = route.render({
-      userInfo,
-    })
+  const module = route.element
 
-    if (Module)
-      return (
-        <Suspense fallback={null}>
-          <Box paddingY={1}>
-            <ModuleErrorBoundary name={route.name}>
-              <Module userInfo={userInfo} />
-            </ModuleErrorBoundary>
-          </Box>
-        </Suspense>
-      )
-
+  if (module) {
     return (
-      <Box paddingY={1}>
-        <ModuleErrorScreen name={route.name} />
-      </Box>
+      <Suspense fallback={null}>
+        <Box paddingY={1}>{module}</Box>
+      </Suspense>
     )
-  },
-)
+  }
+
+  return null
+})

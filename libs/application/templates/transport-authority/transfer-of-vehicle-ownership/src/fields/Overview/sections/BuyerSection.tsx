@@ -41,7 +41,7 @@ export const BuyerSection: FC<FieldBaseProps & ReviewScreenProps> = ({
       handleClick={onButtonClick}
     >
       <GridRow>
-        <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
+        <GridColumn span={['6/12']}>
           <Text variant="h4">
             {formatMessage(information.labels.buyer.title)}{' '}
             {isBuyer && `(${formatMessage(review.status.youLabel)})`}

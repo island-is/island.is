@@ -44,6 +44,7 @@ interface Props {
     setWorkingCase: React.Dispatch<React.SetStateAction<Case>>,
   ) => void
   onDelete?: (defendant: Defendant) => Promise<void>
+  nationalIdImmutable: boolean
 }
 
 const DefendantInfo: React.FC<Props> = (props) => {
@@ -54,6 +55,7 @@ const DefendantInfo: React.FC<Props> = (props) => {
     onDelete,
     onChange,
     updateDefendantState,
+    nationalIdImmutable = false,
   } = props
   const { formatMessage } = useIntl()
   const {
@@ -185,6 +187,7 @@ const DefendantInfo: React.FC<Props> = (props) => {
           }}
           filled
           large
+          disabled={nationalIdImmutable}
         />
       </Box>
       <Box marginBottom={2}>
@@ -225,6 +228,7 @@ const DefendantInfo: React.FC<Props> = (props) => {
               nationalId: evt.target.value,
             })
           }}
+          disabled={nationalIdImmutable}
         >
           <Input
             data-testid="nationalId"

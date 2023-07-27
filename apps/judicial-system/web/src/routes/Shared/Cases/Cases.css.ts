@@ -1,10 +1,6 @@
 import { style } from '@vanilla-extract/css'
 import { theme } from '@island.is/island-ui/theme'
 
-export const casesContainer = style({
-  maxWidth: '1440px',
-})
-
 export const logoContainer = style({
   display: 'flex',
   justifyContent: 'space-between',

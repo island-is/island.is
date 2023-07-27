@@ -1,9 +1,13 @@
 import React, { FC, useMemo, useState } from 'react'
-import { FieldErrors, FieldValues } from 'react-hook-form/dist/types/form'
+import { FieldValues } from 'react-hook-form/dist/types/fields'
+import { FieldErrors } from 'react-hook-form/dist/types/errors'
 import parseISO from 'date-fns/parseISO'
 import { useFormContext } from 'react-hook-form'
 
-import { extractRepeaterIndexFromField } from '@island.is/application/core'
+import {
+  extractRepeaterIndexFromField,
+  getErrorViaPath,
+} from '@island.is/application/core'
 import {
   FieldBaseProps,
   FieldComponents,
@@ -55,13 +59,9 @@ export const PeriodPercentage: FC<PeriodPercentageField> = ({
 
   const fieldId = `periods[${currentIndex}].ratio`
 
-  let error
-
-  if (errors?.periods?.[currentIndex]?.ratio?.message) {
-    error = errors?.periods?.[currentIndex]?.ratio?.message
-  } else if (errors?.[fieldId]) {
-    error = errors?.[fieldId]
-  }
+  const error =
+    getErrorViaPath(errors, `periods.[${currentIndex}].ratio?.message`) ??
+    getErrorViaPath(errors, fieldId)
 
   const options: SelectOption<string>[] = useMemo(() => {
     const start = parseISO(currentPeriod.startDate)
@@ -172,17 +172,12 @@ export const PeriodPercentage: FC<PeriodPercentageField> = ({
         }}
       />
 
-      <input
-        type="hidden"
-        ref={register}
-        name={`periods[${currentIndex}].ratio`}
-      />
+      <input type="hidden" {...register(`periods[${currentIndex}].ratio`)} />
 
       {currentPeriod.firstPeriodStart === undefined && (
         <input
           type="hidden"
-          ref={register}
-          name={`periods[${currentIndex}].firstPeriodStart`}
+          {...register(`periods[${currentIndex}].firstPeriodStart`)}
           value={StartDateOptions.SPECIFIC_DATE}
         />
       )}
@@ -190,8 +185,7 @@ export const PeriodPercentage: FC<PeriodPercentageField> = ({
       {isUsingAllRemainingDays && (
         <input
           type="hidden"
-          ref={register}
-          name={`periods[${currentIndex}].daysToUse`}
+          {...register(`periods[${currentIndex}].daysToUse`)}
           value={remainingRights}
         />
       )}

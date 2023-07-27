@@ -30,3 +30,12 @@ export const trackSearchQuery = (query: string, source: string) => {
   }
   plausibleCustomEvent(event)
 }
+
+export const webMenuButtonClicked = () => {
+  const event: BaseEvent = {
+    eventName: 'Menu button',
+    featureName: 'web',
+    params: {},
+  }
+  plausibleCustomEvent(event)
+}

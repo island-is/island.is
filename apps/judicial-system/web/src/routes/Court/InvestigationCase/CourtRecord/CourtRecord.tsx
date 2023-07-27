@@ -14,12 +14,7 @@ import {
   CourtDocuments,
   FormContext,
 } from '@island.is/judicial-system-web/src/components'
-import { SessionArrangements } from '@island.is/judicial-system/types'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
-import {
-  RestrictionCaseCourtSubsections,
-  Sections,
-} from '@island.is/judicial-system-web/src/types'
 import {
   useCase,
   useDeb,
@@ -46,7 +41,10 @@ import {
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { isCourtRecordStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
-import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  CaseType,
+  SessionArrangements,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 import * as constants from '@island.is/judicial-system/consts'
 
@@ -116,42 +114,48 @@ const CourtRecord = () => {
   const initialize = useCallback(() => {
     const autofillAttendees = []
 
-    if (workingCase.prosecutor) {
-      autofillAttendees.push(
-        `${workingCase.prosecutor.name} ${workingCase.prosecutor.title}`,
-      )
-    }
+    if (workingCase.sessionArrangements === SessionArrangements.NONE_PRESENT) {
+      autofillAttendees.push(formatMessage(core.sessionArrangementsNonePresent))
+    } else {
+      if (workingCase.prosecutor) {
+        autofillAttendees.push(
+          `${workingCase.prosecutor.name} ${workingCase.prosecutor.title}`,
+        )
+      }
 
-    if (
-      workingCase.defenderName &&
-      workingCase.sessionArrangements !== SessionArrangements.PROSECUTOR_PRESENT
-    ) {
-      autofillAttendees.push(
-        `\n${workingCase.defenderName} skipaður ${
-          workingCase.sessionArrangements ===
-          SessionArrangements.ALL_PRESENT_SPOKESPERSON
-            ? 'talsmaður'
-            : 'verjandi'
-        } ${formatMessage(core.defendant, { suffix: 'a' })}`,
-      )
-    }
+      if (
+        workingCase.defenderName &&
+        workingCase.sessionArrangements !==
+          SessionArrangements.PROSECUTOR_PRESENT
+      ) {
+        autofillAttendees.push(
+          `\n${workingCase.defenderName} skipaður ${
+            workingCase.sessionArrangements ===
+            SessionArrangements.ALL_PRESENT_SPOKESPERSON
+              ? 'talsmaður'
+              : 'verjandi'
+          } ${formatMessage(core.defendant, { suffix: 'a' })}`,
+        )
+      }
 
-    if (workingCase.translator) {
-      autofillAttendees.push(`\n${workingCase.translator} túlkur`)
-    }
+      if (workingCase.translator) {
+        autofillAttendees.push(`\n${workingCase.translator} túlkur`)
+      }
 
-    if (workingCase.defendants && workingCase.defendants.length > 0) {
-      if (workingCase.sessionArrangements === SessionArrangements.ALL_PRESENT) {
-        workingCase.defendants.forEach((defendant) => {
-          autofillAttendees.push(
-            `\n${defendant.name} ${formatMessage(core.defendant, {
-              suffix: 'i',
-            })}`,
-          )
-        })
+      if (workingCase.defendants && workingCase.defendants.length > 0) {
+        if (
+          workingCase.sessionArrangements === SessionArrangements.ALL_PRESENT
+        ) {
+          workingCase.defendants.forEach((defendant) => {
+            autofillAttendees.push(
+              `\n${defendant.name} ${formatMessage(core.defendant, {
+                suffix: 'i',
+              })}`,
+            )
+          })
+        }
       }
     }
-
     setAndSendCaseToServer(
       [
         {
@@ -168,16 +172,17 @@ const CourtRecord = () => {
               ? autofillAttendees.join('')
               : undefined,
           sessionBookings:
-            workingCase.type === CaseType.RestrainingOrder ||
-            workingCase.type === CaseType.RestrainingOrderAndExpulsionFromHome
+            workingCase.type === CaseType.RESTRAINING_ORDER ||
+            workingCase.type ===
+              CaseType.RESTRAINING_ORDER_AND_EXPULSION_FROM_HOME
               ? formatMessage(
                   m.sections.sessionBookings.autofillRestrainingOrder,
                 )
-              : workingCase.type === CaseType.ExpulsionFromHome
+              : workingCase.type === CaseType.EXPULSION_FROM_HOME
               ? formatMessage(
                   m.sections.sessionBookings.autofillExpulsionFromHome,
                 )
-              : workingCase.type === CaseType.Autopsy
+              : workingCase.type === CaseType.AUTOPSY
               ? formatMessage(m.sections.sessionBookings.autofillAutopsy)
               : workingCase.sessionArrangements ===
                 SessionArrangements.ALL_PRESENT
@@ -188,6 +193,9 @@ const CourtRecord = () => {
               : workingCase.sessionArrangements ===
                 SessionArrangements.PROSECUTOR_PRESENT
               ? formatMessage(m.sections.sessionBookings.autofillProsecutor)
+              : workingCase.sessionArrangements ===
+                SessionArrangements.NONE_PRESENT
+              ? formatMessage(m.sections.sessionBookings.autofillNonePresent)
               : undefined,
         },
       ],
@@ -207,10 +215,6 @@ const CourtRecord = () => {
   return (
     <PageLayout
       workingCase={workingCase}
-      activeSection={
-        workingCase?.parentCase ? Sections.JUDGE_EXTENSION : Sections.JUDGE
-      }
-      activeSubSection={RestrictionCaseCourtSubsections.COURT_RECORD}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
       isValid={stepIsValid}
@@ -498,6 +502,7 @@ const CourtRecord = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
+          nextButtonIcon="arrowForward"
           previousUrl={`${constants.INVESTIGATION_CASE_RULING_ROUTE}/${workingCase.id}`}
           nextIsLoading={isLoadingWorkingCase}
           onNextButtonClick={() =>

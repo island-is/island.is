@@ -57,18 +57,6 @@ export const conclusion = {
       defaultMessage: 'Afrita hlekk',
       description: 'Copy link label on conclusion screen',
     },
-    servicePortalButtonTitle: {
-      id: 'ta.tvo.application:conclusion.default.servicePortalButtonTitle',
-      defaultMessage: 'Áfram',
-      description: 'Button text for button to go to service portal',
-    },
-    servicePortalMessage: {
-      id: 'ta.tvo.application:conclusion.default.servicePortalMessage',
-      defaultMessage:
-        'Upplýsingar í mínum síðum og í appi hefur þú aðgang að margvíslegum upplýsingum s.s stafrænt pósthólf, þínar upplýsingar, fjármál, umsóknir, menntun, fasteignir, ökutæki, skírteini, starfsleyfi ofl.',
-      description:
-        'Text for the left side of button to go to the service portal',
-    },
   }),
   review: defineMessages({
     accordionText: {

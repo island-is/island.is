@@ -3,7 +3,7 @@ import { JwtStrategy } from './jwt.strategy'
 
 export interface AuthConfig {
   audience: string | string[]
-  issuer: string
+  issuer: string | string[]
   allowClientNationalId?: boolean
 }
 

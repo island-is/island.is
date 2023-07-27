@@ -2,7 +2,6 @@ import format from 'date-fns/format'
 import sub from 'date-fns/sub'
 import sortBy from 'lodash/sortBy'
 import React, { FC, useEffect, useState } from 'react'
-import cn from 'classnames'
 
 import { gql, useLazyQuery } from '@apollo/client'
 import {
@@ -42,8 +41,6 @@ import { exportGeneralDocuments } from '../../utils/filesGeneral'
 
 const ITEMS_ON_PAGE = 20
 
-const defaultCalState = { top: false, lower: false }
-
 interface Props {
   title: string
   intro: string
@@ -79,9 +76,6 @@ const DocumentScreen: FC<Props> = ({
   const [page, setPage] = useState(1)
   const [fromDate, setFromDate] = useState<Date>()
   const [toDate, setToDate] = useState<Date>()
-  const [openCal, setOpenCal] = useState<{ top: boolean; lower: boolean }>(
-    defaultCalState,
-  )
   const [q, setQ] = useState<string>('')
   const backInTheDay = sub(new Date(), {
     months: defaultDateRangeMonths,
@@ -211,12 +205,10 @@ const DocumentScreen: FC<Props> = ({
                       labelUse="h5"
                       labelVariant="h5"
                       iconVariant="small"
+                      startExpanded
                     >
                       <Box
-                        className={cn(styles.accordionBoxSingle, {
-                          [styles.openCal]: openCal?.top,
-                          [styles.openLowerCal]: openCal?.lower,
-                        })}
+                        className={styles.accordionBoxSingle}
                         display="flex"
                         flexDirection="column"
                       >
@@ -227,13 +219,8 @@ const DocumentScreen: FC<Props> = ({
                           backgroundColor="blue"
                           size="xs"
                           handleChange={(d) => setFromDate(d)}
-                          handleOpenCalendar={() =>
-                            setOpenCal({ top: true, lower: false })
-                          }
-                          handleCloseCalendar={() =>
-                            setOpenCal(defaultCalState)
-                          }
                           selected={fromDate}
+                          appearInline
                         />
                         <Box marginTop={3}>
                           <DatePicker
@@ -243,13 +230,8 @@ const DocumentScreen: FC<Props> = ({
                             backgroundColor="blue"
                             size="xs"
                             handleChange={(d) => setToDate(d)}
-                            handleOpenCalendar={() =>
-                              setOpenCal({ top: false, lower: true })
-                            }
-                            handleCloseCalendar={() =>
-                              setOpenCal(defaultCalState)
-                            }
                             selected={toDate}
+                            appearInline
                           />
                         </Box>
                       </Box>

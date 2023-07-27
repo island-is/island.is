@@ -1,9 +1,11 @@
 module.exports = {
   displayName: 'api-domains-transport-authority',
-  preset: '../../../../jest.preset.js',
+  preset: './jest.preset.js',
+  rootDir: '../../../..',
+  roots: [__dirname],
   globals: {
     'ts-jest': {
-      tsconfig: '<rootDir>/tsconfig.spec.json',
+      tsconfig: `${__dirname}/tsconfig.spec.json`,
     },
   },
   testEnvironment: 'node',
@@ -11,6 +13,5 @@ module.exports = {
     '^.+\\.[tj]sx?$': 'ts-jest',
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
-  coverageDirectory:
-    '../../../../coverage/libs/api/domains/transport-authority',
+  coverageDirectory: '<rootDir>/coverage/libs/api/domains/transport-authority',
 }

@@ -29,9 +29,9 @@ const SelectCourtOfficials: React.FC<Props> = (props) => {
   const judges = (users ?? [])
     .filter(
       (user: User) =>
-        (user.role === UserRole.Judge ||
-          (workingCase.type === CaseType.Indictment &&
-            user.role === UserRole.Assistant)) &&
+        (user.role === UserRole.JUDGE ||
+          (workingCase.type === CaseType.INDICTMENT &&
+            user.role === UserRole.ASSISTANT)) &&
         user.institution?.id === workingCase.court?.id,
     )
     .map((judge: User) => {
@@ -41,19 +41,19 @@ const SelectCourtOfficials: React.FC<Props> = (props) => {
   const registrars = (users ?? [])
     .filter(
       (user: User) =>
-        user.role === UserRole.Registrar &&
-        user.institution?.id === workingCase?.court?.id,
+        user.role === UserRole.REGISTRAR &&
+        user.institution?.id === workingCase.court?.id,
     )
     .map((registrar: User) => {
       return { label: registrar.name, value: registrar.id, registrar }
     })
 
   const defaultJudge = judges?.find(
-    (judge: Option) => judge.value === workingCase?.judge?.id,
+    (judge: Option) => judge.value === workingCase.judge?.id,
   )
 
   const defaultRegistrar = registrars?.find(
-    (registrar: Option) => registrar.value === workingCase?.registrar?.id,
+    (registrar: Option) => registrar.value === workingCase.registrar?.id,
   )
 
   return (

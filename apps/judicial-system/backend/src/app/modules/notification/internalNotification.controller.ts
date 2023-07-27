@@ -12,13 +12,12 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { TokenGuard } from '@island.is/judicial-system/auth'
 
-import { CurrentUser, User, UserExistsGuard } from '../user'
 import { Case, CaseHasExistedGuard, CurrentCase } from '../case'
 import { SendInternalNotificationDto } from './dto/sendInternalNotification.dto'
 import { DeliverResponse } from './models/deliver.response'
 import { NotificationService } from './notification.service'
 
-@UseGuards(TokenGuard, CaseHasExistedGuard, UserExistsGuard)
+@UseGuards(TokenGuard, CaseHasExistedGuard)
 @Controller('api/internal/case/:caseId')
 @ApiTags('internal notifications')
 export class InternalNotificationController {
@@ -34,20 +33,19 @@ export class InternalNotificationController {
   })
   async sendCaseNotification(
     @Param('caseId') caseId: string,
-    @CurrentUser() user: User,
     @CurrentCase() theCase: Case,
-    @Body() notification: SendInternalNotificationDto,
+    @Body() notificationDto: SendInternalNotificationDto,
   ): Promise<DeliverResponse> {
     this.logger.debug(
-      `Sending ${notification.type} notification for case ${caseId}`,
+      `Sending ${notificationDto.type} notification for case ${caseId}`,
     )
 
     const {
       notificationSent,
     } = await this.notificationService.sendCaseNotification(
-      notification,
+      notificationDto.type,
       theCase,
-      user,
+      notificationDto.user,
     )
 
     return { delivered: notificationSent }

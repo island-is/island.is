@@ -68,6 +68,7 @@ export const serviceSetup = (services: {
         staging: 'true',
         prod: 'true',
       },
+      IdentityServer__ConsentsScope: '@island.is/auth/consents',
       PersistenceSettings__BaseAddress: ref(
         (h) => `http://${h.svc(services.authIdsApi)}`,
       ),
@@ -77,8 +78,18 @@ export const serviceSetup = (services: {
           'http://web-services-sessions.services-sessions.svc.cluster.local',
         prod: 'https://sessions-api.internal.island.is',
       },
+      PersistenceSettings__DelegationsCacheEnabled: {
+        dev: 'false',
+        staging: 'false',
+        prod: 'true',
+      },
       Application__MinCompletionPortThreads: '10',
       NO_UPDATE_NOTIFIER: 'true',
+      ContentfulSettings__BaseAddress: {
+        dev: 'https://preview.contentful.com',
+        staging: 'https://cdn.contentful.com',
+        prod: 'https://cdn.contentful.com',
+      },
     })
     .secrets({
       IdentityServer__LicenseKey: '/k8s/identity-server/LicenseKey',
@@ -92,6 +103,8 @@ export const serviceSetup = (services: {
         '/k8s/identity-server/ClientSecret',
       Scopes__Admin__RootAccessList: '/k8s/identity-server/AdminRootAccessList',
       FeatureFlags__ConfigCatSdkKey: '/k8s/configcat/CONFIGCAT_SDK_KEY',
+      ContentfulSettings__AccessToken:
+        '/k8s/identity-server/CONTENTFUL_ACCESS_TOKEN',
     })
     .ingress({
       primary: {

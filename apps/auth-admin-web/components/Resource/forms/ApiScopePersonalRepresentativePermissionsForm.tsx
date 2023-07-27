@@ -32,7 +32,12 @@ const ApiScopePersonalRepresentativePermissionsForm = (props: Props) => {
       'ApiScopePersonalRepresentativePermissions',
     ),
   )
-  const { register, handleSubmit, errors, watch } = useForm<Inputs>()
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm<Inputs>()
   const selectedItem = watch('permissionType')
 
   useEffect(() => {
@@ -119,9 +124,10 @@ const ApiScopePersonalRepresentativePermissionsForm = (props: Props) => {
                   <select
                     id="permissionType"
                     className="personal-representative-permissions-form__select"
-                    name="permissionType"
+                    {...register('permissionType', {
+                      required: 'Permission type is required',
+                    })}
                     title={localization.fields['permissionType'].helpText}
-                    ref={register({ required: 'Permission type is required' })}
                   >
                     {permissionTypes &&
                       permissionTypes.map((option) => {
@@ -143,7 +149,6 @@ const ApiScopePersonalRepresentativePermissionsForm = (props: Props) => {
                     as="span"
                     errors={errors}
                     name="permissionType"
-                    message={errors.permissionType}
                   />
                   <input
                     type="submit"

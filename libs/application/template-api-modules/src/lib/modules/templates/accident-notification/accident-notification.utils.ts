@@ -25,6 +25,7 @@ import {
 } from './types/applicationSubmit'
 import { AccidentNotificationAttachment } from './types/attachments'
 import { objectToXML } from '../../shared/shared.utils'
+import { parse } from 'libphonenumber-js'
 
 export const pathToAsset = (file: string) => {
   if (isRunningOnEnvironment('local')) {
@@ -61,6 +62,9 @@ export const applictionAnswersToXml = (
     },
   }
 
+  const phone = getValueViaPath(answers, 'applicant.phoneNumber') as string
+  const parsedPhone = parse(phone ?? '')
+
   const applicationJson: ApplicationSubmit = {
     slysatilkynning: {
       tilkynnandi: {
@@ -76,7 +80,7 @@ export const applictionAnswersToXml = (
             'whoIsTheNotificationFor.answer',
           ) as WhoIsTheNotificationForEnum,
         ),
-        simi: getValueViaPath(answers, 'applicant.phoneNumber') as string,
+        simi: parsedPhone.phone?.toString() || phone,
       },
       slasadi: injuredPerson(answers),
       slys: accident(answers),

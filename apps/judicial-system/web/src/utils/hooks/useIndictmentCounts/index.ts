@@ -14,6 +14,7 @@ import {
 import { UpdateIndictmentCountMutation } from './updateIndictmentCount.graphql'
 import { CreateIndictmentCountMutation } from './createIndictmentCount.graphql'
 import { DeleteIndictmentCountMutation } from './deleteIndictmentCount.graphql'
+import { SubstanceMap } from '@island.is/judicial-system/types'
 interface CreateIndictmentCountMutationResponse {
   createIndictmentCount: IndictmentCount
 }
@@ -28,10 +29,13 @@ interface DeleteIndictmentCountMutationResponse {
   }
 }
 
-export type UpdateIndictmentCount = Omit<
-  UpdateIndictmentCountInput,
-  'caseId' | 'indictmentCountId' | 'created' | 'modified'
->
+export interface UpdateIndictmentCount
+  extends Omit<
+    UpdateIndictmentCountInput,
+    'caseId' | 'indictmentCountId' | 'substances'
+  > {
+  substances?: SubstanceMap
+}
 
 const useIndictmentCounts = () => {
   const { formatMessage } = useIntl()

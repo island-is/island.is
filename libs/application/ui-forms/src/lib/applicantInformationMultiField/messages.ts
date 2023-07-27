@@ -48,8 +48,8 @@ export const applicantInformation = {
   error: defineMessages({
     phoneNumber: {
       id: 'uiForms.application:applicantInfo.error.phoneNumber',
-      defaultMessage: 'Símanúmer verður að vera 7 stafir',
-      description: 'Phone number must be 7 digits',
+      defaultMessage: 'Símanúmerið þarf að vera gilt.',
+      description: 'Phone number is not valid',
     },
     email: {
       id: 'uiForms.application:applicantInfo.error.email',

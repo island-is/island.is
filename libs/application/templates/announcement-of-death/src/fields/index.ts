@@ -1,5 +1,6 @@
 export { ElectPerson } from './ElectPerson/index'
 export { Done } from './Done'
+export { ViewOverviewInDone } from './ViewOverviewInDone'
 export { EstateMemberRepeater } from './EstateMemberRepeater'
 export { RealEstateRepeater } from './RealEstateRepeater'
 export { VehiclesRepeater } from './VehiclesRepeater'

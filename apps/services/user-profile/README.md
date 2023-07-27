@@ -50,5 +50,5 @@ yarn start services-user-profile
 
 ## Code owners and maintainers
 
-- [Sendiráðið](https://github.com/orgs/island-is/teams/sendiradid/members)
+- [Norda](https://github.com/orgs/island-is/teams/norda/members)
 - [Júní](https://github.com/orgs/island-is/teams/juni/members)

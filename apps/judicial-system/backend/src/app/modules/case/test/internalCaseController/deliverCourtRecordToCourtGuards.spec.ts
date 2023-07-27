@@ -5,7 +5,6 @@ import {
   restrictionCases,
 } from '@island.is/judicial-system/types'
 
-import { UserExistsGuard } from '../../../user'
 import { CaseExistsGuard } from '../../guards/caseExists.guard'
 import { CaseCompletedGuard } from '../../guards/caseCompleted.guard'
 import { CaseTypeGuard } from '../../guards/caseType.guard'
@@ -22,8 +21,8 @@ describe('InternalCaseController - Deliver court record to court guards', () => 
     )
   })
 
-  it('should have four guards', () => {
-    expect(guards).toHaveLength(4)
+  it('should have three guards', () => {
+    expect(guards).toHaveLength(3)
   })
 
   describe('CaseExistsGuard', () => {
@@ -33,19 +32,19 @@ describe('InternalCaseController - Deliver court record to court guards', () => 
       guard = new guards[0]()
     })
 
-    it('should have CaseExistsGuard as quard 1', () => {
+    it('should have CaseExistsGuard as guard 1', () => {
       expect(guard).toBeInstanceOf(CaseExistsGuard)
     })
   })
 
-  describe('CaseTypeGuerd', () => {
+  describe('CaseTypeGuard', () => {
     let guard: CanActivate
 
     beforeEach(() => {
       guard = guards[1]
     })
 
-    it('should have CaseTypeGuard as quard 2', () => {
+    it('should have CaseTypeGuard as guard 2', () => {
       expect(guard).toBeInstanceOf(CaseTypeGuard)
       expect(guard).toEqual({
         allowedCaseTypes: [...restrictionCases, ...investigationCases],
@@ -60,20 +59,8 @@ describe('InternalCaseController - Deliver court record to court guards', () => 
       guard = new guards[2]()
     })
 
-    it('should have CaseCompletedGuard as quard 3', () => {
+    it('should have CaseCompletedGuard as guard 3', () => {
       expect(guard).toBeInstanceOf(CaseCompletedGuard)
-    })
-  })
-
-  describe('UserExistsGuard', () => {
-    let guard: CanActivate
-
-    beforeEach(() => {
-      guard = new guards[3]()
-    })
-
-    it('should have UserExistsGuard as guard 4', () => {
-      expect(guard).toBeInstanceOf(UserExistsGuard)
     })
   })
 })

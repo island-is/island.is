@@ -3,6 +3,8 @@ import { uuid } from 'uuidv4'
 import { Transaction } from 'sequelize'
 
 import {
+  CaseAppealState,
+  CaseFileCategory,
   CaseFileState,
   CaseState,
   CaseTransition,
@@ -38,7 +40,7 @@ type GivenWhenThen = (
 describe('CaseController - Transition', () => {
   const date = randomDate()
   const userId = uuid()
-  const user = { id: userId } as User
+  const defaultUser = { id: userId } as User
 
   let mockMessageService: MessageService
   let transaction: Transaction
@@ -63,7 +65,7 @@ describe('CaseController - Transition', () => {
     )
 
     const mockToday = nowFactory as jest.Mock
-    mockToday.mockReturnValueOnce(date)
+    mockToday.mockReturnValue(date)
     const mockUpdate = mockCaseModel.update as jest.Mock
     mockUpdate.mockResolvedValue([1])
 
@@ -77,7 +79,7 @@ describe('CaseController - Transition', () => {
       try {
         then.result = await caseController.transition(
           caseId,
-          user,
+          defaultUser,
           theCase,
           transition,
         )
@@ -112,33 +114,40 @@ describe('CaseController - Transition', () => {
         const caseId = uuid()
         const caseFileId1 = uuid()
         const caseFileId2 = uuid()
+        const caseFiles = [
+          {
+            id: caseFileId1,
+            key: uuid(),
+            state: CaseFileState.STORED_IN_RVG,
+          },
+          {
+            id: caseFileId2,
+            key: uuid(),
+            state: CaseFileState.STORED_IN_COURT,
+          },
+        ]
+        const courtEndTime = randomDate()
         const theCase = {
           id: caseId,
           type,
           state: oldState,
-          caseFiles: [
-            {
-              id: caseFileId1,
-              key: uuid(),
-              state: CaseFileState.STORED_IN_RVG,
-            },
-            {
-              id: caseFileId2,
-              key: uuid(),
-              state: CaseFileState.STORED_IN_COURT,
-            },
-          ],
+          caseFiles,
+          courtEndTime,
         } as Case
-        const updatedCase = { id: caseId, type, state: newState } as Case
+        const updatedCase = {
+          id: caseId,
+          type,
+          state: newState,
+          caseFiles,
+          courtEndTime,
+        } as Case
         let then: Then
 
         beforeEach(async () => {
           const mockFindOne = mockCaseModel.findOne as jest.Mock
           mockFindOne.mockResolvedValueOnce(updatedCase)
 
-          then = await givenWhenThen(caseId, theCase, {
-            transition,
-          })
+          then = await givenWhenThen(caseId, theCase, { transition })
         })
 
         it('should transition the case', () => {
@@ -147,10 +156,23 @@ describe('CaseController - Transition', () => {
               state: newState,
               parentCaseId:
                 transition === CaseTransition.DELETE ? null : undefined,
-              rulingDate:
-                isIndictmentCase(type) && completedCaseStates.includes(newState)
+              rulingDate: [
+                CaseTransition.ACCEPT,
+                CaseTransition.REJECT,
+                CaseTransition.DISMISS,
+              ].includes(transition)
+                ? isIndictmentCase(type)
                   ? date
-                  : undefined,
+                  : courtEndTime
+                : transition === CaseTransition.REOPEN
+                ? null
+                : undefined,
+              rulingSignatureDate:
+                transition === CaseTransition.REOPEN ? null : undefined,
+              courtRecordSignatoryId:
+                transition === CaseTransition.REOPEN ? null : undefined,
+              courtRecordSignatureDate:
+                transition === CaseTransition.REOPEN ? null : undefined,
             },
             { where: { id: caseId }, transaction },
           )
@@ -163,17 +185,21 @@ describe('CaseController - Transition', () => {
               [
                 {
                   type: MessageType.ARCHIVE_CASE_FILE,
-                  userId,
+                  user: defaultUser,
                   caseId,
                   caseFileId: caseFileId1,
                 },
                 {
                   type: MessageType.ARCHIVE_CASE_FILE,
-                  userId,
+                  user: defaultUser,
                   caseId,
                   caseFileId: caseFileId2,
                 },
-                { type: MessageType.SEND_RULING_NOTIFICATION, userId, caseId },
+                {
+                  type: MessageType.SEND_RULING_NOTIFICATION,
+                  user: defaultUser,
+                  caseId,
+                },
               ],
             )
           } else if (isIndictmentCase(type) && newState === CaseState.DELETED) {
@@ -181,18 +207,18 @@ describe('CaseController - Transition', () => {
               [
                 {
                   type: MessageType.SEND_REVOKED_NOTIFICATION,
-                  userId,
+                  user: defaultUser,
                   caseId,
                 },
                 {
                   type: MessageType.ARCHIVE_CASE_FILE,
-                  userId,
+                  user: defaultUser,
                   caseId,
                   caseFileId: caseFileId1,
                 },
                 {
                   type: MessageType.ARCHIVE_CASE_FILE,
-                  userId,
+                  user: defaultUser,
                   caseId,
                   caseFileId: caseFileId2,
                 },
@@ -206,7 +232,7 @@ describe('CaseController - Transition', () => {
               [
                 {
                   type: MessageType.SEND_READY_FOR_COURT_NOTIFICATION,
-                  userId,
+                  user: defaultUser,
                   caseId,
                 },
               ],
@@ -216,7 +242,7 @@ describe('CaseController - Transition', () => {
               [
                 {
                   type: MessageType.SEND_RECEIVED_BY_COURT_NOTIFICATION,
-                  userId,
+                  user: defaultUser,
                   caseId,
                 },
               ],
@@ -226,7 +252,7 @@ describe('CaseController - Transition', () => {
               [
                 {
                   type: MessageType.SEND_REVOKED_NOTIFICATION,
-                  userId,
+                  user: defaultUser,
                   caseId,
                 },
               ],
@@ -252,6 +278,161 @@ describe('CaseController - Transition', () => {
           }
         })
       })
+    },
+  )
+
+  each`
+      transition                        | caseState                    | currentAppealState           | newAppealState
+      ${CaseTransition.APPEAL}          | ${CaseState.ACCEPTED}        | ${undefined}                 | ${CaseAppealState.APPEALED}
+      ${CaseTransition.RECEIVE_APPEAL}  | ${CaseState.ACCEPTED}        | ${CaseAppealState.APPEALED}  | ${CaseAppealState.RECEIVED}
+      ${CaseTransition.COMPLETE_APPEAL} | ${CaseState.ACCEPTED}        | ${CaseAppealState.RECEIVED}  | ${CaseAppealState.COMPLETED}
+    `.describe(
+    '$transition $caseState case transitioning from $currentAppealState to $newAppealState appeal state',
+    ({ transition, caseState, currentAppealState, newAppealState }) => {
+      each([...restrictionCases, ...investigationCases]).describe(
+        '%s case',
+        (type) => {
+          const caseId = uuid()
+          const prosecutorAppealBriefId = uuid()
+          const prosecutorAppealBriefCaseFileId1 = uuid()
+          const prosecutorAppealBriefCaseFileId2 = uuid()
+          const appealRulingId = uuid()
+          const caseFiles = [
+            {
+              id: prosecutorAppealBriefId,
+              key: uuid(),
+              state: CaseFileState.STORED_IN_RVG,
+              category: CaseFileCategory.PROSECUTOR_APPEAL_BRIEF,
+            },
+            {
+              id: prosecutorAppealBriefCaseFileId1,
+              key: uuid(),
+              state: CaseFileState.STORED_IN_RVG,
+              category: CaseFileCategory.PROSECUTOR_APPEAL_BRIEF_CASE_FILE,
+            },
+            {
+              id: prosecutorAppealBriefCaseFileId2,
+              key: uuid(),
+              state: CaseFileState.STORED_IN_RVG,
+              category: CaseFileCategory.PROSECUTOR_APPEAL_BRIEF_CASE_FILE,
+            },
+            {
+              id: appealRulingId,
+              key: uuid(),
+              state: CaseFileState.STORED_IN_RVG,
+              category: CaseFileCategory.APPEAL_RULING,
+            },
+          ]
+          const theCase = {
+            id: caseId,
+            type,
+            state: caseState,
+            caseFiles,
+            appealState: currentAppealState,
+          } as Case
+
+          const updatedCase = {
+            id: caseId,
+            type,
+            state: caseState,
+            caseFiles,
+            appealState: newAppealState,
+          } as Case
+
+          beforeEach(async () => {
+            const mockFindOne = mockCaseModel.findOne as jest.Mock
+            mockFindOne.mockResolvedValueOnce(updatedCase)
+
+            await givenWhenThen(caseId, theCase, {
+              transition,
+            })
+          })
+
+          it('should transition the case', () => {
+            expect(mockCaseModel.update).toHaveBeenCalledWith(
+              {
+                appealState: newAppealState,
+                prosecutorPostponedAppealDate:
+                  newAppealState === CaseAppealState.APPEALED
+                    ? date
+                    : undefined,
+                appealReceivedByCourtDate:
+                  newAppealState === CaseAppealState.RECEIVED
+                    ? date
+                    : undefined,
+              },
+              { where: { id: caseId }, transaction },
+            )
+          })
+
+          it('should send notifications to queue when case is appealed', () => {
+            if (transition === CaseTransition.APPEAL) {
+              expect(
+                mockMessageService.sendMessagesToQueue,
+              ).toHaveBeenCalledWith([
+                {
+                  type: MessageType.DELIVER_CASE_FILE_TO_COURT,
+                  user: defaultUser,
+                  caseId,
+                  caseFileId: prosecutorAppealBriefId,
+                },
+                {
+                  type: MessageType.DELIVER_CASE_FILE_TO_COURT,
+                  user: defaultUser,
+                  caseId,
+                  caseFileId: prosecutorAppealBriefCaseFileId1,
+                },
+                {
+                  type: MessageType.DELIVER_CASE_FILE_TO_COURT,
+                  user: defaultUser,
+                  caseId,
+                  caseFileId: prosecutorAppealBriefCaseFileId2,
+                },
+                {
+                  type:
+                    MessageType.SEND_APPEAL_TO_COURT_OF_APPEALS_NOTIFICATION,
+                  user: defaultUser,
+                  caseId,
+                },
+              ])
+            }
+          })
+
+          it('should send notifications to queue when appeal is received', () => {
+            if (transition === CaseTransition.RECEIVE_APPEAL) {
+              expect(
+                mockMessageService.sendMessagesToQueue,
+              ).toHaveBeenCalledWith([
+                {
+                  type: MessageType.SEND_APPEAL_RECEIVED_BY_COURT_NOTIFICATION,
+                  user: defaultUser,
+                  caseId,
+                },
+              ])
+            }
+          })
+
+          it('should send notifications to queue when appeal is completed', () => {
+            if (transition === CaseTransition.COMPLETE_APPEAL) {
+              expect(
+                mockMessageService.sendMessagesToQueue,
+              ).toHaveBeenCalledWith([
+                {
+                  type: MessageType.DELIVER_CASE_FILE_TO_COURT,
+                  user: defaultUser,
+                  caseId,
+                  caseFileId: appealRulingId,
+                },
+                {
+                  type: MessageType.SEND_APPEAL_COMPLETED_NOTIFICATION,
+                  user: defaultUser,
+                  caseId,
+                },
+              ])
+            }
+          })
+        },
+      )
     },
   )
 })

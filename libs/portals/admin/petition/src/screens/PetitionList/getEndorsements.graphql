@@ -1,0 +1,14 @@
+query endorsementSystemGetEndorsements($input: PaginatedEndorsementInput!) {
+  endorsementSystemGetEndorsements(input: $input) {
+    totalCount
+    data {
+      id
+      endorser
+      created
+      meta {
+        fullName
+        locality
+      }
+    }
+  }
+}

@@ -39,6 +39,8 @@ import type {
 
 import { environment } from '../../environments'
 import { UpdateFilesResponse } from '../modules/file'
+import { PoliceCaseInfo } from '../modules/police'
+
 import {
   CreateIndictmentCountInput,
   DeleteIndictmentCountInput,
@@ -229,6 +231,10 @@ export class BackendApi extends DataSource<{ req: Request }> {
     return this.get(`case/${caseId}/policeFiles`)
   }
 
+  getPoliceCaseInfo(caseId: string): Promise<PoliceCaseInfo[]> {
+    return this.get(`case/${caseId}/policeCaseInfo`)
+  }
+
   uploadPoliceFile(
     caseId: string,
     uploadPoliceCaseFile: UploadPoliceCaseFile,
@@ -288,8 +294,47 @@ export class BackendApi extends DataSource<{ req: Request }> {
     return this.delete(`case/${caseId}/indictmentCount/${indictmentCountId}`)
   }
 
-  getLimitedAccessCase(id: string): Promise<Case> {
+  limitedAccessGetCase(id: string): Promise<Case> {
     return this.get(`case/${id}/limitedAccess`)
+  }
+
+  limitedAccessUpdateCase(id: string, updateCase: UpdateCase): Promise<Case> {
+    return this.patch(`case/${id}/limitedAccess`, updateCase)
+  }
+
+  limitedAccessTransitionCase(
+    id: string,
+    transitionCase: TransitionCase,
+  ): Promise<Case> {
+    return this.patch(`case/${id}/limitedAccess/state`, transitionCase)
+  }
+
+  limitedAccessCreateCasePresignedPost(
+    id: string,
+    createPresignedPost: CreatePresignedPost,
+  ): Promise<PresignedPost> {
+    return this.post(`case/${id}/limitedAccess/file/url`, createPresignedPost)
+  }
+
+  limitedAccessCreateCaseFile(
+    id: string,
+    createFile: CreateFile,
+  ): Promise<CaseFile> {
+    return this.post(`case/${id}/limitedAccess/file`, createFile)
+  }
+
+  limitedAccessGetCaseFileSignedUrl(
+    caseId: string,
+    id: string,
+  ): Promise<SignedUrl> {
+    return this.get(`case/${caseId}/limitedAccess/file/${id}/url`)
+  }
+
+  limitedAccessDeleteCaseFile(
+    caseId: string,
+    id: string,
+  ): Promise<DeleteFileResponse> {
+    return this.delete(`case/${caseId}/limitedAccess/file/${id}`)
   }
 }
 

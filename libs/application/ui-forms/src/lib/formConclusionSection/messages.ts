@@ -14,18 +14,42 @@ export const conclusion = {
       description:
         'The title of the form conclusion section for all applications (in the form it self)',
     },
-    messageText: {
-      id: 'uiForms.application:messages.information.text',
-      defaultMessage:
-        'Upplýsingar í mínum síðum og í appi hefur þú aðgang að margvíslegum upplýsingum s.s stafrænt pósthólf, þínar upplýsingar, fjármál, umsóknir, menntun, fasteignir, ökutæki, skírteini, starfsleyfi ofl.',
+  }),
+  alertMessageField: defineMessages({
+    title: {
+      id: 'uiForms.application:conclusion.alertMessageField.title',
+      defaultMessage: 'Umsókn móttekin!',
       description:
-        'Text for form builder component left side of button to go to the service portal',
+        'The title of the alert message field in the conclusion section',
     },
-    buttonTitle: {
-      id: 'uiForms.application:messages.information.buttonText',
-      defaultMessage: 'Áfram',
+    message: {
+      id: 'uiForms.application:conclusion.alertMessageField.message',
+      defaultMessage: 'Takk fyrir umsóknina!',
       description:
-        'Button text for form builder component, go to service portal',
+        'The message of the alert message field in the conclusion section',
+    },
+  }),
+  expandableDescriptionField: defineMessages({
+    title: {
+      id: 'uiForms.application:conclusion.expandableDescriptionField.title',
+      defaultMessage: 'Hvað gerist næst?',
+      description:
+        'The title of the expandable description field in the conclusion section',
+    },
+    introText: {
+      id:
+        'uiForms.application:conclusion.expandableDescriptionField.introText#markdown',
+      defaultMessage: 'Umsókn þín hefur verið móttekin og verður skoðuð.',
+      description:
+        'The intro text of the expandable description field in the conclusion section',
+    },
+    description: {
+      id:
+        'uiForms.application:conclusion.expandableDescriptionField.description#markdown',
+      defaultMessage:
+        '* Þú getur nálgast þínar umsóknir á mínum síðum á island.is.\n',
+      description:
+        'The description of the expandable description field in the conclusion section',
     },
   }),
 }

@@ -1,0 +1,22 @@
+{
+  "root": "libs/api/domains/auth-admin",
+  "sourceRoot": "libs/api/domains/auth-admin/src",
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["libs/api/domains/auth-admin/**/*.ts"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/api/domains/auth-admin"],
+      "options": {
+        "jestConfig": "libs/api/domains/auth-admin/jest.config.js",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": ["lib:api"]
+}

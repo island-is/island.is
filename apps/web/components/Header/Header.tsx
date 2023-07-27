@@ -1,25 +1,26 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { FC, useContext } from 'react'
 import {
-  Logo,
-  Columns,
-  Column,
   Box,
-  Hidden,
-  ResponsiveSpace,
-  GridContainer,
-  GridColumn,
-  GridRow,
-  ColorSchemeContext,
-  FocusableBox,
   ButtonTypes,
-  DropdownMenu,
+  ColorSchemeContext,
+  Column,
+  Columns,
+  FocusableBox,
+  GridColumn,
+  GridContainer,
+  GridRow,
+  Hidden,
+  Logo,
+  ResponsiveSpace,
 } from '@island.is/island-ui/core'
-import { useI18n } from '@island.is/web/i18n'
 import { FixedNav, SearchInput } from '@island.is/web/components'
+import { LoginButton } from './LoginButton'
+import { useI18n } from '@island.is/web/i18n'
+import { LayoutProps } from '@island.is/web/layouts/main'
+import React, { FC, useContext } from 'react'
 import { LanguageToggler } from '../LanguageToggler'
 import { Menu } from '../Menu/Menu'
-import { LayoutProps } from '@island.is/web/layouts/main'
+import { webMenuButtonClicked } from '@island.is/plausible'
 
 interface HeaderProps {
   showSearchInHeader?: boolean
@@ -29,8 +30,6 @@ interface HeaderProps {
 }
 
 const marginLeft = [1, 1, 1, 2] as ResponsiveSpace
-const minarsidurLink = '/minarsidur/'
-const minarsidurDelegationsLink = '/minarsidur/login?prompt=select_account'
 
 export const Header: FC<HeaderProps> = ({
   showSearchInHeader = true,
@@ -95,42 +94,9 @@ export const Header: FC<HeaderProps> = ({
                       </Box>
                     )}
 
-                    <Hidden below="lg">
-                      <Box marginLeft={marginLeft}>
-                        <DropdownMenu
-                          icon="person"
-                          items={[
-                            {
-                              href: minarsidurLink,
-                              title: t.loginIndividuals,
-                            },
-                            {
-                              href: minarsidurDelegationsLink,
-                              title: t.loginDelegations,
-                            },
-                          ]}
-                          title={t.login}
-                        />
-                      </Box>
-                    </Hidden>
-
-                    <Hidden above="md">
-                      <Box marginLeft={marginLeft}>
-                        <DropdownMenu
-                          icon="person"
-                          items={[
-                            {
-                              href: minarsidurLink,
-                              title: t.loginIndividuals,
-                            },
-                            {
-                              href: minarsidurDelegationsLink,
-                              title: t.loginDelegations,
-                            },
-                          ]}
-                        />
-                      </Box>
-                    </Hidden>
+                    <Box marginLeft={marginLeft}>
+                      <LoginButton colorScheme={buttonColorScheme} />
+                    </Box>
 
                     <Box
                       marginLeft={marginLeft}
@@ -145,6 +111,7 @@ export const Header: FC<HeaderProps> = ({
                       <Menu
                         {...megaMenuData}
                         buttonColorScheme={buttonColorScheme}
+                        onMenuOpen={webMenuButtonClicked}
                       />
                     </Box>
                   </Box>

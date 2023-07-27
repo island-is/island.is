@@ -4,6 +4,16 @@ export interface DeliveryStation {
   code: string
 }
 
+export interface PlateOrderValidation {
+  hasError: boolean
+  errorMessages?: Array<PlateOrderValidationMessage> | null
+}
+
+export interface PlateOrderValidationMessage {
+  errorNo?: string | null
+  defaultMessage?: string | null
+}
+
 export interface PlateOrder {
   permno: string
   frontType?: string | null

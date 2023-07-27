@@ -3,7 +3,6 @@ import { useLazyQuery } from '@apollo/client'
 import {
   useForm,
   Controller,
-  ValidationRules,
   useFormContext,
   FormProvider,
 } from 'react-hook-form'
@@ -38,11 +37,14 @@ import {
   SearchableTags,
   SupportQna,
 } from '@island.is/web/graphql/schema'
-import orderBy from 'lodash/orderBy'
 import { useNamespace } from '@island.is/web/hooks'
 import slugify from '@sindresorhus/slugify'
 import { FormNamespace } from '../../types'
 import { useI18n } from '@island.is/web/i18n'
+import { CategoryId, SyslumennCategories } from './types'
+import { SjukratryggingarCategories } from '@island.is/web/screens/ServiceWeb/Forms/utils'
+import { getServiceWebSearchTagQuery } from '@island.is/web/screens/ServiceWeb/utils'
+import { sortAlpha } from '@island.is/shared/utils'
 
 type FormState = {
   message: string
@@ -64,52 +66,6 @@ interface StandardFormProps {
   stateEntities: string[]
   formNamespace: FormNamespace
 }
-
-type CategoryId =
-  /**
-   * Fjölskyldumál
-   */
-  | '4vQ4htPOAZvzcXBcjx06SH'
-  /**
-   * Skírteini
-   */
-  | '7nWhQCER920RakQ7BZpEmV'
-  /**
-   * Andlát og dánarbú
-   */
-  | '2TkJynZlamqTHdjUziXDG0'
-  /**
-   * Þinglýsingar, staðfestingar og skráningar
-   */
-  | '6K9stHLAB2mEyGqtqjnXxf'
-  /**
-   * Gjöld og innheimta
-   */
-  | '5u2M09Kw3p1Spva1GSuAzB'
-  /**
-   * Löggildingar
-   */
-  | 'WrQIftmx61sHJMoIr1QRW'
-  /**
-   * Vottorð
-   */
-  | '76Expbwtudon1Gz5lrKOit'
-  /**
-   * Lögráðamál
-   */
-  | '4tvRkPgKP3kerbyRJDvaWF'
-  /**
-   * Önnur þjónusta sýslumanna
-   */
-  | '4LNbNB3GvH3RcoIGpuZKhG'
-  /**
-   * Leyfi
-   */
-  | '7HbSNTUHJReJ2GPeT1ni1C'
-  /**
-   * Fullnustugerðir
-   */
-  | '7LkzuYSzqwM7k8fJyeRbm6'
 
 const mannaudstorgTag = [
   { key: 'mannaudstorg', type: SearchableTags.Organization },
@@ -135,6 +91,8 @@ const labels: Record<string, string> = {
   vidfangsefni: 'Viðfangsefni',
   starfsheiti: 'Starfsheiti',
   rikisadili: 'Ríkisaðili',
+  kennitala: 'Kennitala',
+  malsnumer_ef_til_stadar: 'Málsnúmer (ef til staðar)',
 }
 
 // these should be skipped in the message itself
@@ -165,7 +123,10 @@ const BasicInput = ({
   format,
   label,
 }: BasicInputProps) => {
-  const { errors, register } = useFormContext()
+  const {
+    formState: { errors },
+    register,
+  } = useFormContext()
 
   return (
     <InputController
@@ -173,7 +134,7 @@ const BasicInput = ({
       id={name}
       name={name}
       label={label}
-      error={errors?.[name]?.message}
+      error={errors?.[name]?.message as string}
       required={!!requiredMessage}
       format={format}
       rules={{
@@ -184,7 +145,9 @@ const BasicInput = ({
           },
         }),
       }}
-      {...register(name)}
+      // The docs tell us to spread the response of the register function even though it's return type is void
+      // https://react-hook-form.com/api/useformcontext/
+      {...((register(name) as unknown) as object)}
     />
   )
 }
@@ -202,15 +165,14 @@ export const StandardForm = ({
   formNamespace,
 }: StandardFormProps) => {
   const { activeLocale } = useI18n()
-  const useFormMethods = useForm({})
+  const useFormMethods = useForm()
   const n = useNamespace(namespace)
   const fn = useFormNamespace(formNamespace)
   const {
     handleSubmit,
     getValues,
     control,
-    errors,
-    formState: { isSubmitting },
+    formState: { isSubmitting, errors },
   } = useFormMethods
   const { linkResolver } = useLinkResolver()
   const [syslumadurId, setSyslumadurId] = useState<string>('')
@@ -272,9 +234,7 @@ export const StandardForm = ({
                 queryString,
                 size: 10,
                 types: [SearchableContentTypes['WebQna']],
-                [institutionSlugBelongsToMannaudstorg
-                  ? 'tags'
-                  : 'excludedTags']: mannaudstorgTag,
+                ...getServiceWebSearchTagQuery(institutionSlug),
               },
             },
           })
@@ -302,7 +262,7 @@ export const StandardForm = ({
     let fields = null
 
     switch (categoryId as CategoryId) {
-      case '6K9stHLAB2mEyGqtqjnXxf':
+      case SyslumennCategories.THINGLYSINGAR:
         fields = (
           <>
             <GridColumn span={['12/12', '12/12', '4/12']} paddingBottom={3}>
@@ -335,7 +295,7 @@ export const StandardForm = ({
           </>
         )
         break
-      case '7HbSNTUHJReJ2GPeT1ni1C':
+      case SyslumennCategories.LEYFI:
         fields = (
           <>
             <GridColumn span="12/12" paddingBottom={3}>
@@ -364,8 +324,8 @@ export const StandardForm = ({
           </>
         )
         break
-      case '5u2M09Kw3p1Spva1GSuAzB':
-      case '7nWhQCER920RakQ7BZpEmV':
+      case SyslumennCategories.GJOLD_OG_INNHEIMTA:
+      case SyslumennCategories.SKIRTEINI:
         fields = (
           <GridColumn span={['12/12', '6/12']} paddingBottom={3}>
             <BasicInput
@@ -377,9 +337,9 @@ export const StandardForm = ({
           </GridColumn>
         )
         break
-      case '7LkzuYSzqwM7k8fJyeRbm6':
-      case '4tvRkPgKP3kerbyRJDvaWF':
-      case '4vQ4htPOAZvzcXBcjx06SH':
+      case SyslumennCategories.FULLNUSTUGERDIR:
+      case SyslumennCategories.LOGRADAMAL:
+      case SyslumennCategories.FJOLSKYLDUMAL:
         fields = (
           <>
             <GridColumn span="12/12" paddingBottom={3}>
@@ -413,7 +373,7 @@ export const StandardForm = ({
           </>
         )
         break
-      case '2TkJynZlamqTHdjUziXDG0':
+      case SyslumennCategories.ANDLAT_OG_DANARBU:
         fields = (
           <>
             <GridColumn span="12/12" paddingBottom={3}>
@@ -450,6 +410,56 @@ export const StandardForm = ({
           </>
         )
         break
+      case SjukratryggingarCategories.FERDAKOSTNADUR:
+      case SjukratryggingarCategories.HEILBRIGDISSTARFSFOLK:
+      case SjukratryggingarCategories.HEILBRIGDISTHJONUSTA:
+      case SjukratryggingarCategories.RETTINDI_MILLI_LANDA:
+      case SjukratryggingarCategories.SJUKRADAGPENINGAR:
+      case SjukratryggingarCategories.SLYS_OG_SJUKLINGATRYGGING:
+      case SjukratryggingarCategories.SJUKLINGATRYGGING:
+      case SjukratryggingarCategories.SLYSATRYGGING:
+      case SjukratryggingarCategories.TANNLAEKNINGAR:
+      case SjukratryggingarCategories.VEFGATTIR:
+      case SjukratryggingarCategories.THJALFUN:
+      case SjukratryggingarCategories.ONNUR_THJONUSTA_SJUKRATRYGGINGA:
+      case SjukratryggingarCategories.HJUKRUNARHEIMILI:
+      case SjukratryggingarCategories.TULKATHJONUSTA:
+        fields = (
+          <GridColumn span="12/12" paddingBottom={3}>
+            <BasicInput
+              name="kennitala"
+              format="######-####"
+              label={fn('kennitala', 'label', 'Kennitala')}
+            />
+          </GridColumn>
+        )
+        break
+      case SjukratryggingarCategories.HJALPARTAEKI:
+      case SjukratryggingarCategories.HJALPARTAEKI_OG_NAERING:
+      case SjukratryggingarCategories.NAERING:
+      case SjukratryggingarCategories.LYF_OG_LYFJAKOSTNADUR:
+        fields = (
+          <>
+            <GridColumn paddingBottom={3}>
+              <BasicInput
+                name="kennitala"
+                format="######-####"
+                label={fn('kennitala', 'label', 'Kennitala')}
+              />
+            </GridColumn>
+            <GridColumn span="12/12" paddingBottom={3}>
+              <BasicInput
+                name="malsnumer"
+                label={fn(
+                  'malsnumer_ef_til_stadar',
+                  'label',
+                  'Málsnúmer (ef til staðar)',
+                )}
+              />
+            </GridColumn>
+          </>
+        )
+        break
       default:
         break
     }
@@ -457,7 +467,11 @@ export const StandardForm = ({
     if (institutionSlugBelongsToMannaudstorg) {
       fields = (
         <GridColumn span="12/12">
-          <BasicInput name="starfsheiti" requiredMessage="Starfsheiti vantar" />
+          <BasicInput
+            label={fn('starfsheiti', 'label', 'Starfsheiti')}
+            name="starfsheiti"
+            requiredMessage={n('jobTitleMissing', 'Starfsheiti vantar')}
+          />
         </GridColumn>
       )
     }
@@ -513,6 +527,13 @@ export const StandardForm = ({
 
   const isBusy = loadingSuggestions || isChangingSubject
 
+  const categoryOptions = supportCategories
+    .map((x) => ({
+      label: x.title?.trim(),
+      value: x.id,
+    }))
+    .sort(sortAlpha('label'))
+
   return (
     <>
       <GridContainer>
@@ -528,10 +549,7 @@ export const StandardForm = ({
                 setCategoryLabel(label as string)
                 setCategoryId(value as string)
               }}
-              options={orderBy(supportCategories, 'title', 'asc').map((x) => ({
-                label: x.title,
-                value: x.id,
-              }))}
+              options={categoryOptions}
               placeholder={fn('malaflokkur', 'placeholder', 'Veldu flokk')}
               size="md"
             />
@@ -552,7 +570,7 @@ export const StandardForm = ({
                 id="vidfangsefni"
                 name="vidfangsefni"
                 label={fn('vidfangsefni', 'label', 'Viðfangsefni')}
-                error={errors?.vidfangsefni?.message}
+                error={errors?.vidfangsefni?.message as string}
                 onChange={(e) => {
                   if (e?.target?.value?.length > MIN_SEARCH_QUERY_LENGTH) {
                     setIsChangingSubject(true)
@@ -663,7 +681,6 @@ export const StandardForm = ({
                   >
                     <Controller
                       control={control}
-                      id="rikisadili"
                       name="rikisadili"
                       defaultValue=""
                       rules={{
@@ -676,7 +693,7 @@ export const StandardForm = ({
                           ),
                         },
                       }}
-                      render={({ onChange }) => (
+                      render={({ field: { onChange } }) => (
                         <Select
                           backgroundColor="blue"
                           icon="chevronDown"
@@ -686,8 +703,8 @@ export const StandardForm = ({
                           onChange={({ label }: Option) => {
                             onChange(label)
                           }}
-                          hasError={errors.rikisadili}
-                          errorMessage={errors.rikisadili?.message}
+                          hasError={errors?.rikisadili !== undefined}
+                          errorMessage={errors?.rikisadili?.message.toString()}
                           options={stateEntityOptions}
                           placeholder={fn(
                             'rikisadili',
@@ -711,23 +728,21 @@ export const StandardForm = ({
                     control={control}
                     name="nafn"
                     defaultValue=""
-                    rules={
-                      {
-                        required: {
-                          value: true,
-                          message: fn('nafn', 'requiredMessage', 'Nafn vantar'),
-                        },
-                      } as ValidationRules
-                    }
-                    render={({ onChange, onBlur, value, name }) => (
+                    rules={{
+                      required: {
+                        value: true,
+                        message: fn('nafn', 'requiredMessage', 'Nafn vantar'),
+                      },
+                    }}
+                    render={({ field: { onChange, onBlur, value, name } }) => (
                       <Input
                         backgroundColor="blue"
                         name={name}
                         onBlur={onBlur}
                         label={fn('nafn', 'label', 'Nafn')}
                         value={value}
-                        hasError={errors.nafn}
-                        errorMessage={errors.nafn?.message}
+                        hasError={errors?.nafn !== undefined}
+                        errorMessage={errors?.nafn?.message as string}
                         onChange={onChange}
                         required
                       />
@@ -739,7 +754,6 @@ export const StandardForm = ({
                     <GridColumn paddingBottom={3} span="12/12">
                       <Controller
                         control={useFormMethods.control}
-                        id="email"
                         name="email"
                         defaultValue=""
                         rules={{
@@ -760,15 +774,17 @@ export const StandardForm = ({
                             ),
                           },
                         }}
-                        render={({ onChange, onBlur, value, name }) => (
+                        render={({
+                          field: { onChange, onBlur, value, name },
+                        }) => (
                           <Input
                             backgroundColor="blue"
                             name={name}
                             onBlur={onBlur}
                             label={fn('email', 'label', 'Tölvupóstfang')}
                             value={value}
-                            hasError={errors.email}
-                            errorMessage={errors.email?.message}
+                            hasError={errors?.email !== undefined}
+                            errorMessage={errors?.email?.message as string}
                             onChange={onChange}
                             required
                           />
@@ -781,7 +797,6 @@ export const StandardForm = ({
                     <GridColumn span="12/12" paddingTop={5}>
                       <Controller
                         control={control}
-                        id="erindi"
                         name="erindi"
                         defaultValue=""
                         rules={{
@@ -794,15 +809,17 @@ export const StandardForm = ({
                             ),
                           },
                         }}
-                        render={({ onChange, onBlur, value, name }) => (
+                        render={({
+                          field: { onChange, onBlur, value, name },
+                        }) => (
                           <Input
                             backgroundColor="blue"
                             name={name}
                             onBlur={onBlur}
                             label={fn('erindi', 'label', 'Erindi')}
                             value={value}
-                            hasError={errors.erindi}
-                            errorMessage={errors.erindi?.message}
+                            hasError={errors?.erindi !== undefined}
+                            errorMessage={errors?.erindi?.message as string}
                             onChange={onChange}
                             rows={10}
                             textarea
@@ -819,15 +836,15 @@ export const StandardForm = ({
                         defaultValue={false}
                         control={control}
                         rules={{ required: true }}
-                        render={(props) => (
+                        render={({ field: { onChange, value } }) => (
                           <Checkbox
                             label={n(
                               'serviceWebFormStorageAllowedCheckboxText',
                               'Ég gef leyfi fyrir því að erindi mitt sé vistað í póstumsjónarkerfi',
                             )}
-                            checked={props.value}
-                            onChange={(e) => props.onChange(e.target.checked)}
-                            hasError={errors.storageAllowed}
+                            checked={value}
+                            onChange={(e) => onChange(e.target.checked)}
+                            hasError={errors?.storageAllowed !== undefined}
                           />
                         )}
                       />
@@ -841,7 +858,6 @@ export const StandardForm = ({
                       {institutionSlug === 'syslumenn' && (
                         <Controller
                           control={control}
-                          id="syslumadur"
                           name="syslumadur"
                           defaultValue=""
                           rules={{
@@ -854,7 +870,7 @@ export const StandardForm = ({
                               ),
                             },
                           }}
-                          render={({ onChange }) => (
+                          render={({ field: { onChange } }) => (
                             <Select
                               backgroundColor="blue"
                               icon="chevronDown"
@@ -869,8 +885,10 @@ export const StandardForm = ({
                                 onChange(label)
                                 setSyslumadurId(value as string)
                               }}
-                              hasError={errors.syslumadur}
-                              errorMessage={errors.syslumadur?.message}
+                              hasError={errors?.syslumadur !== undefined}
+                              errorMessage={
+                                errors?.syslumadur?.message as string
+                              }
                               options={syslumenn.map((x) => ({
                                 label: x.title,
                                 value: x.id,

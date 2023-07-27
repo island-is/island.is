@@ -4,7 +4,6 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   ErrorScreen,
   IntroHeader,
-  ServicePortalModuleComponent,
   m as coreMessage,
 } from '@island.is/service-portal/core'
 import { m } from '../../lib/messages'
@@ -81,14 +80,14 @@ const GenericLicensesQuery = gql`
   ${dataFragment}
 `
 
-export const LicensesOverview: ServicePortalModuleComponent = () => {
+export const LicensesOverview = () => {
   useNamespaces('sp.license')
   const { formatMessage } = useLocale()
   const { data: userProfile } = useUserProfile()
   const locale = (userProfile?.locale as Locale) ?? 'is'
   /**
    * Get all licenses is feature flagged
-   * If off, all licenses fetched, if on only drivers license is fetched
+   * If off, all licenses fetched, if on only driver's license is fetched
    * Please remove all code when fully released.
    */
   const featureFlagClient: FeatureFlagClient = useFeatureFlagClient()

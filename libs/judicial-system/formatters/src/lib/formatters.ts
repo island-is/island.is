@@ -9,11 +9,9 @@ import {
   Gender,
   CaseType,
   isRestrictionCase,
-  isIndictmentCase,
   IndictmentSubtype,
   IndictmentSubtypeMap,
 } from '@island.is/judicial-system/types'
-import { DEFENDER_ROUTE } from '@island.is/judicial-system/consts'
 
 const getAsDate = (date: Date | string | undefined | null): Date => {
   if (typeof date === 'string' || date instanceof String) {
@@ -276,8 +274,8 @@ export function formatRequestCaseType(type: string): string {
 }
 
 export const formatDOB = (
-  nationalId?: string,
-  noNationalId?: boolean,
+  nationalId?: string | null,
+  noNationalId?: boolean | null,
   fallback = '-',
 ) => {
   if (!nationalId) {
@@ -305,17 +303,6 @@ export const displayFirstPlusRemaining = (
   }
 
   return `${list[0]} +${list.length - 1}`
-}
-
-export const formatDefenderRoute = (
-  baseUrl: string,
-  type: string,
-  id: string,
-) => {
-  const caseType = type as CaseType
-  return `${baseUrl}${DEFENDER_ROUTE}${
-    isIndictmentCase(caseType) ? '/akaera' : ''
-  }/${id}`
 }
 
 export const splitStringByComma = (str?: string): string[] => {

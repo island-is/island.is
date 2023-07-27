@@ -1,7 +1,11 @@
 import React, { FC, useState } from 'react'
 import { gql, useMutation } from '@apollo/client'
 import { useFormContext, Controller } from 'react-hook-form'
-import { formatText, getValueViaPath } from '@island.is/application/core'
+import {
+  formatText,
+  getErrorViaPath,
+  getValueViaPath,
+} from '@island.is/application/core'
 import { FieldBaseProps } from '@island.is/application/types'
 import { Box, Button, Input, Text } from '@island.is/island-ui/core'
 import { FieldDescription } from '@island.is/shared/form-fields'
@@ -28,7 +32,13 @@ const ProdEndPoint: FC<FieldBaseProps> = ({ application }) => {
     value: string
   }
 
-  const { register, clearErrors, errors, trigger, getValues } = useFormContext()
+  const {
+    register,
+    clearErrors,
+    formState: { errors },
+    trigger,
+    getValues,
+  } = useFormContext()
   const { answers: formValue } = application
   const [prodEndPointError, setprodEndPointError] = useState<string | null>(
     null,
@@ -117,9 +127,8 @@ const ProdEndPoint: FC<FieldBaseProps> = ({ application }) => {
                   application,
                   formatMessage,
                 )}
-                name={'productionEndPointObject.prodEndPoint'}
+                {...register('productionEndPointObject.prodEndPoint')}
                 id={'productionEndPointObject.prodEndPoint'}
-                ref={register}
                 defaultValue=""
                 placeholder={formatText(
                   m.prodEndpointPlaceholder,
@@ -127,7 +136,11 @@ const ProdEndPoint: FC<FieldBaseProps> = ({ application }) => {
                   formatMessage,
                 )}
                 hasError={
-                  errors.productionEndPointObject?.prodEndPoint !== undefined
+                  errors &&
+                  getErrorViaPath(
+                    errors,
+                    'productionEndPointObject.prodEndPoint',
+                  ) !== undefined
                 }
                 errorMessage={formatText(
                   m.prodEndpointInputErrorMessage,
@@ -160,8 +173,9 @@ const ProdEndPoint: FC<FieldBaseProps> = ({ application }) => {
         <input
           type="hidden"
           value={prodEndPointExists}
-          ref={register({ required: true })}
-          name={'productionEndPointObject.prodEndPointExists'}
+          {...register('productionEndPointObject.prodEndPointExists', {
+            required: true,
+          })}
         />
 
         {errors['productionEndPointObject.prodEndPointExists'] && (

@@ -1,4 +1,6 @@
 import { theme, themeUtils } from '@island.is/island-ui/theme'
+import type { StyleRule } from '@vanilla-extract/css'
+import omit from 'lodash/omit'
 
 const inputPadding = `0 ${theme.spacing[2]}px`
 const mobileInputPadding = `0 ${theme.spacing[1]}px`
@@ -60,6 +62,22 @@ export const container = {
   borderRadius: inputBorderRadius,
   cursor: 'text',
   transition: 'box-shadow 0.3s',
+}
+
+export const containerWithBefore: StyleRule = {
+  ...omit(container, ['boxShadow', 'transition', 'backgroundColor']),
+
+  // This is only for displaying the border.
+  '::before': {
+    content: '""',
+    position: 'absolute',
+    inset: 0,
+    zIndex: 1,
+    borderRadius: 'inherit',
+    pointerEvents: 'none',
+    transition: 'box-shadow 0.2s',
+    boxShadow: container.boxShadow,
+  },
 }
 
 export const containerSizes = {
@@ -202,6 +220,15 @@ export const inputErrorState = {
   boxShadow: `inset 0 0 0 1px ${theme.color.red600}`,
 }
 
+// For elements where the
+export const inputErrorStateWithBefore: StyleRule = {
+  backgroundColor: theme.color.red100,
+
+  '::before': {
+    ...inputErrorState,
+  },
+}
+
 export const labelErrorState = {
   color: theme.color.red600,
 }
@@ -210,6 +237,14 @@ export const labelErrorState = {
 export const containerFocus = {
   outline: 'none',
   boxShadow: `inset 0 0 0 3px ${theme.color.mint400}`,
+}
+
+export const containerFocusWithBefore: StyleRule = {
+  outline: 'none',
+
+  '::before': {
+    boxShadow: containerFocus.boxShadow,
+  },
 }
 
 export const inputFocus = {

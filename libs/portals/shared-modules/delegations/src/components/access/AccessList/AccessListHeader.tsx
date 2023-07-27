@@ -1,5 +1,6 @@
 import { useLocale } from '@island.is/localization'
 import { Text, Box, TextProps, BoxProps } from '@island.is/island-ui/core'
+import { m } from '../../../lib/messages'
 import { formatDelegationDate } from '../access.utils'
 
 const commonTextProps: Partial<TextProps> = {
@@ -27,12 +28,7 @@ export const AccessListHeader = ({ validityPeriod }: AccessListHeaderProps) => {
   return (
     <>
       <Box {...commonItemProps} paddingLeft={2}>
-        <Text {...commonTextProps}>
-          {formatMessage({
-            id: 'sp.settings-access-control:access-access',
-            defaultMessage: 'Flokkur',
-          })}
-        </Text>
+        <Text {...commonTextProps}>{formatMessage(m.category)}</Text>
       </Box>
       <Box
         display="flex"
@@ -41,12 +37,7 @@ export const AccessListHeader = ({ validityPeriod }: AccessListHeaderProps) => {
         {...commonItemProps}
         {...(validityPeriod && { paddingRight: 2 })}
       >
-        <Text {...commonTextProps}>
-          {formatMessage({
-            id: 'sp.settings-access-control:access-explanation',
-            defaultMessage: 'Heimild',
-          })}
-        </Text>
+        <Text {...commonTextProps}>{formatMessage(m.permission)}</Text>
         {validityPeriod && (
           <Box textAlign="right">
             <Text {...commonTextProps}>

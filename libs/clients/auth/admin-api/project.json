@@ -1,0 +1,30 @@
+{
+  "root": "libs/clients/auth/admin-api",
+  "sourceRoot": "libs/clients/auth/admin-api/src",
+  "projectType": "library",
+  "tags": ["lib:client"],
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["libs/clients/auth/admin-api/**/*.ts"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/clients/auth/admin-api"],
+      "options": {
+        "jestConfig": "libs/clients/auth/admin-api/jest.config.js",
+        "passWithNoTests": true
+      }
+    },
+    "schemas/openapi-generator": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "outputPath": "libs/clients/auth/admin-api/gen",
+        "command": "yarn openapi-generator -o libs/clients/auth/admin-api/gen/fetch -i apps/services/auth/admin-api/src/openapi.yaml --additional-properties=enumPropertyNaming=original"
+      }
+    }
+  }
+}

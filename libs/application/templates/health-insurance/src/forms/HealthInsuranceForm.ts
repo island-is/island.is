@@ -27,7 +27,7 @@ import {
 import { Countries } from '../lib/Countries'
 import {
   applicantInformationMultiField,
-  formConclusionSection,
+  buildFormConclusionSection,
 } from '@island.is/application/ui-forms'
 
 export const HealthInsuranceForm: Form = buildForm({
@@ -39,7 +39,7 @@ export const HealthInsuranceForm: Form = buildForm({
     buildSection({
       id: 'applicantInfoSection',
       title: m.applicantInfoSection,
-      children: [applicantInformationMultiField],
+      children: [applicantInformationMultiField()],
     }),
     buildSection({
       id: 'statusAndChildrenSection',
@@ -343,7 +343,7 @@ export const HealthInsuranceForm: Form = buildForm({
         }),
       ],
     }),
-    formConclusionSection({
+    buildFormConclusionSection({
       alertTitle: m.successfulSubmissionTitle,
       alertMessage: m.successfulSubmissionMessage,
       expandableHeader: m.successfulExpendableHeader,

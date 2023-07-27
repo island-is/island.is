@@ -30,6 +30,10 @@ export class ParentalLeave {
   @IsOptional()
   dateOfBirth?: string
 
+  @Field(() => String, { nullable: true })
+  @IsOptional()
+  adoptionDate?: string
+
   @Field(() => String)
   email!: string
 

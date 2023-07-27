@@ -8,23 +8,6 @@ export const rcRuling = {
       'Notaður sem titill á úrskurðar skrefi í gæsluvarðhalds- og farbannsmálum.',
   }),
   sections: {
-    alertMessage: defineMessages({
-      title: {
-        id:
-          'judicial.system.core:restriction_cases.ruling.sections.alert_message.title',
-        defaultMessage: 'Leiðrétting úrskurðar',
-        description:
-          'Notaður sem titill í viðvörunarboxi þegar verið er að leiðrétta úrskurð',
-      },
-      message: {
-        id:
-          'judicial.system.core:restriction_cases.ruling.sections.alert_message.message',
-        defaultMessage:
-          'Hægt er að leiðrétta textann í úrskurðarskjalinu og undirrita það aftur, og vistast þá ný útgáfa í málaskrá dómsins auk þess sem málflytjendur fá tilkynningu um nýtt skjal. Athugið að allar breytingar á textum verða sýnilegar í yfirliti málsins, hvort sem nýr úrskurður er undirritaður eða ekki.',
-        description:
-          'Notaður sem texti í viðvörunarboxi þegar verið er að leiðrétta úrskurð',
-      },
-    }),
     conclusion: defineMessages({
       dismissingAutofill: {
         id:
@@ -164,15 +147,6 @@ export const rcRuling = {
         defaultMessage: '{caseType} til',
         description:
           'Notaður sem titill fyrir "Úrskurður gildir til" innsláttarsvæðið á úrskurðar skrefi í gæsluvarðhalds-, vistunar- og farbannsmálum.',
-      },
-    }),
-    formFooter: defineMessages({
-      modifyRulingButtonLabel: {
-        id:
-          'judicial.system.core:restriction_cases.ruling.form_footer.modify_ruling_button_label',
-        defaultMessage: 'Undirrita nýjan úrskurð',
-        description:
-          'Notaður sem label á hnappinn "Halda áfram" í úrskurðar skrefi þegar úrskuður er leiðréttur.',
       },
     }),
     introduction: defineMessages({

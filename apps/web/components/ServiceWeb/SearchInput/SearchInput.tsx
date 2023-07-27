@@ -17,23 +17,14 @@ import {
   GetSupportSearchResultsQuery,
   GetSupportSearchResultsQueryVariables,
   SearchableContentTypes,
-  SearchableTags,
   SupportQna,
 } from '@island.is/web/graphql/schema'
-import { getSlugPart } from '@island.is/web/screens/ServiceWeb/utils'
+import {
+  getSlugPart,
+  getServiceWebSearchTagQuery,
+} from '@island.is/web/screens/ServiceWeb/utils'
 import { useI18n } from '@island.is/web/i18n'
 import { trackSearchQuery } from '@island.is/plausible'
-
-interface SearchInputProps {
-  title?: string
-  size?: AsyncSearchProps['size']
-  logoTitle?: string
-  logoUrl?: string
-  colored?: boolean
-  initialInputValue?: string
-  placeholder?: string
-  nothingFoundText?: string
-}
 
 const unused = ['.', '?', ':', ',', ';', '!', '-', '_', '#', '~', '|']
 
@@ -49,6 +40,17 @@ export const ModifySearchTerms = (searchTerms: string) =>
       const add = s ? `${s}~${f}|${s}` : ''
       return sum ? `${sum}|${add}` : add
     }, '')
+
+interface SearchInputProps {
+  title?: string
+  size?: AsyncSearchProps['size']
+  logoTitle?: string
+  logoUrl?: string
+  colored?: boolean
+  initialInputValue?: string
+  placeholder?: string
+  nothingFoundText?: string
+}
 
 export const SearchInput = ({
   colored = false,
@@ -80,13 +82,6 @@ export const SearchInput = ({
     },
   })
 
-  const institutionSlugBelongsToMannaudstorg = institutionSlug.includes(
-    'mannaudstorg',
-  )
-  const mannaudstorgTag = [
-    { key: 'mannaudstorg', type: SearchableTags.Organization },
-  ]
-
   useDebounce(
     () => {
       if (searchTerms) {
@@ -98,12 +93,12 @@ export const SearchInput = ({
           fetch({
             variables: {
               query: {
+                highlightResults: true,
+                useQuery: 'suggestions',
                 language: activeLocale as ContentLanguage,
                 queryString,
                 types: [SearchableContentTypes['WebQna']],
-                [institutionSlugBelongsToMannaudstorg
-                  ? 'tags'
-                  : 'excludedTags']: mannaudstorgTag,
+                ...getServiceWebSearchTagQuery(institutionSlug),
               },
             },
           })
@@ -165,7 +160,7 @@ export const SearchInput = ({
                 onSelect(item)
               }}
             >
-              <Text as="span">{item.title}</Text>
+              <span dangerouslySetInnerHTML={{ __html: item.title }} />
             </Box>
           )
         },

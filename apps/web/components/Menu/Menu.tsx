@@ -24,6 +24,7 @@ interface Props {
   asideBottomLinks: MegaMenuLink[]
   mainLinks: MegaMenuLink[]
   buttonColorScheme?: ButtonTypes['colorScheme']
+  onMenuOpen?: () => void
 }
 
 const minarsidurLink = '/minarsidur/'
@@ -34,6 +35,7 @@ export const Menu = ({
   asideBottomLinks,
   mainLinks,
   buttonColorScheme = 'default',
+  onMenuOpen,
 }: Props) => {
   const searchInput = useRef<HTMLInputElement>()
   const { activeLocale, t } = useI18n()
@@ -62,6 +64,7 @@ export const Menu = ({
                 colorScheme={buttonColorScheme}
                 variant="utility"
                 icon="search"
+                value={t.search}
                 onClick={(e) => {
                   onClick(e)
                   setTimeout(() => {
@@ -92,6 +95,7 @@ export const Menu = ({
           icon="menu"
           colorScheme={buttonColorScheme}
           data-testid="frontpage-burger-button"
+          onClick={onMenuOpen}
         >
           {t.menuCaption}
         </Button>

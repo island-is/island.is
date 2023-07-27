@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
+import addDays from 'date-fns/addDays'
 import { lookup } from 'geoip-lite'
 import { Op, WhereOptions } from 'sequelize'
 import uaParser from 'ua-parser-js'
@@ -7,6 +8,7 @@ import uaParser from 'ua-parser-js'
 import { User } from '@island.is/auth-nest-tools'
 import { paginate } from '@island.is/nest/pagination'
 
+import { CreateSessionDto } from './create-session.dto'
 import { Session } from './session.model'
 import { SessionsQueryDto } from './sessions-query.dto'
 import { SessionsResultDto } from './sessions-result.dto'
@@ -50,8 +52,26 @@ export class SessionsService {
 
     whereOptions = {
       ...whereOptions,
-      ...(query.from && { timestamp: { [Op.gte]: query.from } }),
-      ...(query.to && { timestamp: { [Op.lte]: query.to } }),
+      ...(query.to && query.from
+        ? {
+            [Op.and]: [
+              { timestamp: { [Op.gte]: query.from } },
+              {
+                timestamp: {
+                  [Op.lt]: addDays(new Date(query.to), 1),
+                },
+              },
+            ],
+          }
+        : query.from
+        ? { timestamp: { [Op.gte]: query.from } }
+        : query.to
+        ? {
+            timestamp: {
+              [Op.lte]: query.to,
+            },
+          }
+        : {}),
     }
 
     return paginate({
@@ -65,9 +85,19 @@ export class SessionsService {
     })
   }
 
-  create(session: Session): Promise<Session> {
+  create(session: CreateSessionDto): Promise<Session> {
+    const { id, sessionId, ...rest } = session
+
+    // Todo: Remove this when we have migrated IDS to use sessionId
+    const sid = sessionId || id
+
+    if (!sid) {
+      throw new Error('Missing sessionId.')
+    }
+
     return this.sessionModel.create({
-      ...session,
+      ...rest,
+      sessionId: sid,
       device: this.formatUserAgent(session.userAgent),
       ipLocation: this.formatIp(session.ip),
     })
@@ -77,20 +107,14 @@ export class SessionsService {
     const ua = uaParser(userAgent)
     const browser = ua.browser.name || ''
     const os = ua.os.name || ''
-    const device =
-      browser || os ? `${browser}${browser && os ? ` (${os})` : os}` : undefined
 
-    return device
+    return browser || os
+      ? `${browser}${browser && os ? ` (${os})` : os}`
+      : undefined
   }
 
   private formatIp(ip: string): string | undefined {
     const geoLocation = lookup(ip)
-    const ipLocation = geoLocation
-      ? geoLocation.city
-        ? `${geoLocation.city}, ${geoLocation.country}`
-        : geoLocation.country
-      : undefined
-
-    return ipLocation
+    return geoLocation?.country ?? undefined
   }
 }

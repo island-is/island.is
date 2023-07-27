@@ -2,6 +2,11 @@ import { createContext, useContext, useMemo } from 'react'
 import { useLocation, matchPath, Outlet } from 'react-router-dom'
 import { PortalModule, PortalRoute, PortalType } from '../types/portalCore'
 import { useAuth } from '@island.is/auth/react'
+import {
+  ApolloClient,
+  useApolloClient,
+  NormalizedCacheObject,
+} from '@apollo/client'
 
 export type PortalMeta = {
   portalType: PortalType
@@ -21,6 +26,16 @@ export const PortalContext = createContext<PortalContextProps | undefined>(
 
 type PortalProviderProps = Omit<PortalContextProps, 'activeModule'>
 
+const spreadRoutsChildren = (routes: PortalRoute[]) => {
+  const children = routes.map((route) => {
+    if (route.children) {
+      return [route, ...spreadRoutsChildren(route.children)]
+    }
+    return route
+  }) as PortalRoute[]
+  return children.flat()
+}
+
 export const PortalProvider = ({
   meta,
   modules,
@@ -28,21 +43,20 @@ export const PortalProvider = ({
 }: PortalProviderProps) => {
   const { pathname } = useLocation()
   const { userInfo } = useAuth()
+  const client = useApolloClient() as ApolloClient<NormalizedCacheObject>
 
   const activeModule = useMemo(
     () =>
       userInfo
-        ? modules.find((module) =>
-            module
-              // Get all routes for the module
-              .routes({
-                userInfo,
-              })
-              // Extract the path from each route
-              .map(({ path }) => path)
-              // Find the route path that matches the current pathname
-              .find((path) => matchPath(path, pathname)),
-          )
+        ? modules.find((module) => {
+            return (
+              spreadRoutsChildren(module.routes({ userInfo, client }))
+                // Extract the path from each route
+                .map(({ path }) => path)
+                // Find the route path that matches the current pathname
+                .find((path) => path && matchPath(path, pathname))
+            )
+          })
         : undefined,
     [modules, pathname, userInfo],
   )

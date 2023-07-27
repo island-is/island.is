@@ -1,10 +1,12 @@
 module.exports = {
-  preset: '../../../jest.preset.js',
+  preset: './jest.preset.js',
+  rootDir: '../../..',
+  roots: [__dirname],
   transform: {
     '^.+\\.[tj]sx?$': 'ts-jest',
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'html'],
-  coverageDirectory: '../../../coverage/libs/island-ui/contentful',
-  globals: { 'ts-jest': { tsconfig: '<rootDir>/tsconfig.spec.json' } },
+  coverageDirectory: '<rootDir>/coverage/libs/island-ui/contentful',
+  globals: { 'ts-jest': { tsconfig: `${__dirname}/tsconfig.spec.json` } },
   displayName: 'island-ui-contentful',
 }

@@ -20,7 +20,7 @@ export const CoOwnersSection: FC<FieldBaseProps & ReviewScreenProps> = ({
     <ReviewGroup isLast>
       <GridRow>
         {coOwners?.map(({ name, nationalId, email, phone }, index: number) => {
-          if (name.length === 0) return null
+          if (!name || name.length === 0) return null
           const isCoOwner = nationalId === reviewerNationalId
           return (
             <GridColumn
@@ -34,9 +34,9 @@ export const CoOwnersSection: FC<FieldBaseProps & ReviewScreenProps> = ({
                   {isCoOwner && `(${formatMessage(review.status.youLabel)})`}
                 </Text>
                 <Text>{name}</Text>
-                <Text>{kennitala.format(nationalId, '-')}</Text>
+                <Text>{kennitala.format(nationalId!, '-')}</Text>
                 <Text>{email}</Text>
-                <Text>{formatPhoneNumber(phone)}</Text>
+                <Text>{formatPhoneNumber(phone!)}</Text>
               </Box>
             </GridColumn>
           )

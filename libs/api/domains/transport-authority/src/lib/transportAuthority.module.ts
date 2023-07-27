@@ -19,6 +19,10 @@ import {
   VehiclePlateOrderingClientConfig,
 } from '@island.is/clients/transport-authority/vehicle-plate-ordering'
 import {
+  VehiclePlateRenewalClientModule,
+  VehiclePlateRenewalClientConfig,
+} from '@island.is/clients/transport-authority/vehicle-plate-renewal'
+import {
   VehicleServiceFjsV1ClientConfig,
   VehicleServiceFjsV1ClientModule,
 } from '@island.is/clients/vehicle-service-fjs-v1'
@@ -33,6 +37,7 @@ import {
     DigitalTachographDriversCardClientModule,
     VehicleOperatorsClientModule,
     VehiclePlateOrderingClientModule,
+    VehiclePlateRenewalClientModule,
     VehicleServiceFjsV1ClientModule,
     VehiclesClientModule,
     ConfigModule.forRoot({
@@ -42,6 +47,7 @@ import {
         DigitalTachographDriversCardClientConfig,
         VehicleOperatorsClientConfig,
         VehiclePlateOrderingClientConfig,
+        VehiclePlateRenewalClientConfig,
         VehicleServiceFjsV1ClientConfig,
         VehiclesClientConfig,
       ],

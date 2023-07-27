@@ -18,7 +18,10 @@ export const UnEmploymentBenefits: FC<FieldBaseProps> = ({
   application,
   field,
 }) => {
-  const { errors, setValue } = useFormContext()
+  const {
+    formState: { errors },
+    setValue,
+  } = useFormContext()
   const { formatMessage } = useLocale()
   const { id, title, description } = field
 

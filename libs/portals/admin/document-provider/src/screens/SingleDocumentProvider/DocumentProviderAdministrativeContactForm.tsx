@@ -9,8 +9,15 @@ import { useUpdateAdministrativeContact } from '../../shared/useUpdateAdministra
 import { useCreateAdministrativeContact } from '../../shared/useCreateAdministrativeContact'
 import { ContactInput } from '../../shared/useUpdateTechnicalContact'
 import { CreateContactInput } from '../../shared/useCreateTechnicalContact'
+
 interface Props {
   administrativeContact?: Contact | null
+  organisationId: string
+  organisationNationalId: string
+}
+
+interface UseFormProps {
+  administrativeContact: Contact
   organisationId: string
   organisationNationalId: string
 }
@@ -21,7 +28,11 @@ export const DocumentProviderAdministrativeContactForm: FC<Props> = ({
   organisationNationalId,
 }) => {
   const { formatMessage } = useLocale()
-  const { handleSubmit, control, errors } = useForm()
+  const {
+    handleSubmit,
+    control,
+    formState: { errors },
+  } = useForm<UseFormProps>()
   const {
     updateAdministrativeContact,
     loading: loadingUpdate,
@@ -69,8 +80,8 @@ export const DocumentProviderAdministrativeContactForm: FC<Props> = ({
             placeholder={formatMessage(
               m.SingleProviderResponsibleContactNamePlaceholder,
             )}
-            hasError={errors.administrativeContact?.name}
-            errorMessage={errors.administrativeContact?.name?.message}
+            hasError={errors?.administrativeContact !== undefined}
+            errorMessage={errors?.administrativeContact?.message ?? ''}
           />
           <DocumentProviderInput
             control={control}
@@ -92,8 +103,8 @@ export const DocumentProviderAdministrativeContactForm: FC<Props> = ({
             placeholder={formatMessage(
               m.SingleProviderResponsibleContactEmailPlaceholder,
             )}
-            hasError={errors.administrativeContact?.email}
-            errorMessage={errors.administrativeContact?.email?.message}
+            hasError={!!errors?.administrativeContact?.email?.message}
+            errorMessage={errors?.administrativeContact?.email?.message ?? ''}
           />
           <DocumentProviderInput
             control={control}
@@ -131,8 +142,10 @@ export const DocumentProviderAdministrativeContactForm: FC<Props> = ({
             placeholder={formatMessage(
               m.SingleProviderResponsibleContactPhoneNumberPlaceholder,
             )}
-            hasError={errors.administrativeContact?.phoneNumber}
-            errorMessage={errors.administrativeContact?.phoneNumber?.message}
+            hasError={errors?.administrativeContact?.phoneNumber !== undefined}
+            errorMessage={
+              errors?.administrativeContact?.phoneNumber?.message ?? ''
+            }
           />
           <Box
             display="flex"

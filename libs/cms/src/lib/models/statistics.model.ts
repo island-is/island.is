@@ -1,6 +1,7 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
-import { IStatistics } from '../generated/contentfulTypes'
+import { CacheField } from '@island.is/nest/graphql'
 import { SystemMetadata } from '@island.is/shared/types'
+import { IStatistics } from '../generated/contentfulTypes'
 import { Statistic, mapStatistic } from './statistic.model'
 
 @ObjectType()
@@ -11,7 +12,7 @@ export class Statistics {
   @Field()
   title?: string
 
-  @Field(() => [Statistic])
+  @CacheField(() => [Statistic])
   statistics!: Statistic[]
 }
 

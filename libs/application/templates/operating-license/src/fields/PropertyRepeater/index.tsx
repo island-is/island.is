@@ -11,7 +11,6 @@ import {
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import {
-  ArrayField,
   Controller,
   useFieldArray,
   useFormContext,
@@ -20,19 +19,28 @@ import {
 import { useLazyQuery } from '@apollo/client'
 import { Query } from '@island.is/api/schema'
 import { GET_REAL_ESTATE_ADDRESS } from '../../graphql'
-import { Property } from '../../lib/constants'
+import { PropertyField } from '../../lib/constants'
 import * as styles from './PropertyRepeater.css'
-import { formatText } from '@island.is/application/core'
+import { formatText, getValueViaPath } from '@island.is/application/core'
+import { error as errorMsg } from '../../lib/error'
 
 export const PropertyRepeater: FC<FieldBaseProps> = ({
   field,
   application,
+  errors,
 }) => {
   const { formatMessage } = useLocale()
   const { id, title } = field
-  const { fields, append, remove } = useFieldArray<Property>({
+  const { fields, append, remove } = useFieldArray({
     name: `${id}`,
   })
+
+  // Errors come in with `properties.id` as the key
+  // We need to get the last part of the id to get the correct error for the fields
+  let error: undefined | string = undefined
+  if (errors) {
+    error = getValueViaPath(errors, `properties.${id.split('.').pop() ?? ''}`)
+  }
 
   const repeaterTitle = formatText(title, application, formatMessage)
   const handleAddProperty = () =>
@@ -53,6 +61,7 @@ export const PropertyRepeater: FC<FieldBaseProps> = ({
     <Box>
       {fields.map((item, index) => (
         <PropertyItem
+          error={error}
           field={item}
           fieldName={id}
           index={index}
@@ -84,7 +93,7 @@ const PropertyItem = ({
   error,
   title,
 }: {
-  field: Partial<ArrayField<Property, 'id'>>
+  field: PropertyField
   fieldName: string
   index: number
   remove: (index: number) => void
@@ -96,21 +105,28 @@ const PropertyItem = ({
   const addressField = `${fieldIndex}.address`
   const spaceNumberField = `${fieldIndex}.spaceNumber`
   const customerCountField = `${fieldIndex}.customerCount`
+
   const propertyNumberInput = useWatch({
     name: propertyNumberField,
     defaultValue: '',
   })
-
   const address = useWatch({ name: addressField, defaultValue: '' })
+  const spaceNumber = useWatch({ name: spaceNumberField })
+  const customerCount = useWatch({ name: customerCountField })
+
   const { control, setValue } = useFormContext()
   const { formatMessage } = useLocale()
 
   const [
     getProperty,
-    { loading: _queryLoading, error: _queryError },
+    { loading: queryLoading, error: _queryError },
   ] = useLazyQuery<Query, { input: string }>(GET_REAL_ESTATE_ADDRESS, {
     onCompleted: (data) => {
-      setValue(addressField, data.getRealEstateAddress[0].name ?? '')
+      setValue(
+        addressField,
+        data.getRealEstateAddress[0]?.name ??
+          formatMessage(m.propertyNameNotFound),
+      )
     },
   })
 
@@ -119,18 +135,25 @@ const PropertyItem = ({
     // https://www.skra.is/um-okkur/frettir/frett/2018/03/01/Nytt-fasteignanumer-og-itarlegri-skraning-stadfanga/
     // The property number is a seven digit informationless sequence.
     // Has the prefix F.
-    if (/F\d{7}$/.test(propertyNumberInput.trim().toUpperCase())) {
+    if (/^[Ff]?\d{7}$/.test(propertyNumberInput.trim())) {
       getProperty({
         variables: {
           input: propertyNumberInput,
         },
       })
+    } else {
+      setValue(addressField, '')
     }
   }, [getProperty, address, addressField, propertyNumberInput, setValue])
+  const hasPropertyNumberButEmptyAddress = propertyNumberInput && !address
 
   return (
     <Box position="relative" marginTop={2}>
-      <Controller name={fieldIndex} control={control} />
+      <Controller
+        name={fieldIndex}
+        control={control}
+        render={() => <input type="hidden" />}
+      />
       <Text variant="h5" as="h5" paddingBottom={2}>
         {title} {index + 1}
       </Text>
@@ -157,7 +180,15 @@ const PropertyItem = ({
             label={formatMessage(m.propertyNumber)}
             backgroundColor="blue"
             defaultValue={field.propertyNumber}
-            error={error?.assetNumber ?? undefined}
+            loading={queryLoading}
+            error={
+              hasPropertyNumberButEmptyAddress && !queryLoading
+                ? formatMessage(errorMsg.missingAddressForPropertyNumber)
+                : !propertyNumberInput
+                ? error
+                : undefined
+            }
+            placeholder="F1234567"
           />
         </GridColumn>
         <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
@@ -179,6 +210,7 @@ const PropertyItem = ({
             backgroundColor="blue"
             format="#########"
             defaultValue={field.spaceNumber?.toString()}
+            error={(error && !spaceNumber) ?? error}
           />
         </GridColumn>
         <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
@@ -189,6 +221,7 @@ const PropertyItem = ({
             backgroundColor="blue"
             format="#########"
             defaultValue={field.customerCount?.toString()}
+            error={(error && !customerCount) ?? error}
           />
         </GridColumn>
       </GridRow>

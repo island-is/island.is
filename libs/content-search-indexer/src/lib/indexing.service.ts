@@ -12,6 +12,7 @@ import {
   getElasticsearchIndex,
 } from '@island.is/content-search-index-manager'
 import { environment } from '../environments/environment'
+import { Entry } from 'contentful'
 
 type SyncStatus = {
   running?: boolean
@@ -83,7 +84,7 @@ export class IndexingService {
 
     // wait for all importers to finish
     await Promise.all(importPromises).catch((error) => {
-      logger.debug('Importer faliure error', error)
+      logger.debug('Importer failure error', error)
       logger.error('Importer failed', {
         message: error.message,
         index: elasticIndex,
@@ -161,5 +162,13 @@ export class IndexingService {
     } catch {
       return { error: true }
     }
+  }
+
+  async deleteDocument(
+    locale: ElasticsearchIndexLocale,
+    document: Pick<Entry<unknown>, 'sys'>,
+  ) {
+    const elasticIndex = getElasticsearchIndex(locale)
+    return this.cmsSyncService.handleDocumentDeletion(elasticIndex, document)
   }
 }

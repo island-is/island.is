@@ -24,6 +24,7 @@ import { subSectionOpeningHours } from './subSectionOpeningHours'
 import { subSectionOtherInfo } from './subSectionOtherInfo'
 import { sectionOverview } from './sectionOverview'
 import {
+  JudicialAdministrationApi,
   CriminalRecordApi,
   NoDebtCertificateApi,
   SyslumadurPaymentCatalogApi,
@@ -33,7 +34,7 @@ import { fakeDataSection } from './fakeDataSection'
 export const getApplication = ({ allowFakeData = false }): Form => {
   return buildForm({
     id: 'OperatingLicenseApplicationDraftForm',
-    title: m.formName,
+    title: '',
     mode: FormModes.DRAFT,
     renderLastScreenButton: true,
     renderLastScreenBackButton: true,
@@ -60,8 +61,7 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                 subTitle: m.dataCollectionDebtStatusSubtitle,
               }),
               buildDataProviderItem({
-                id: 'courtBankruptcyCertificate',
-                type: '',
+                provider: JudicialAdministrationApi,
                 title: m.dataCollectionNonBankruptcyDisclosureTitle,
                 subTitle: m.dataCollectionNonBankruptcyDisclosureSubtitle,
               }),
@@ -103,10 +103,24 @@ export const getApplication = ({ allowFakeData = false }): Form => {
             description: m.attachmentsDescription,
             children: [
               buildDescriptionField({
+                id: 'overview.attachments.three',
+                title: attachmentNames.three,
+                titleVariant: 'h4',
+                space: 'gutter',
+              }),
+              buildFileUploadField({
+                id: 'attachments.houseBlueprints.file',
+                title: '',
+                uploadAccept: UPLOAD_ACCEPT,
+                uploadHeader: m.uploadHeader,
+                uploadDescription: m.uploadDescription,
+                uploadButtonLabel: m.uploadButtonLabel,
+              }),
+              buildDescriptionField({
                 id: 'overview.attachments.one',
                 title: attachmentNames.one,
-                titleVariant: 'h3',
-                space: 'gutter',
+                titleVariant: 'h4',
+                space: 'containerGutter',
               }),
               buildFileUploadField({
                 id: 'attachments.healthLicense.file',
@@ -119,8 +133,8 @@ export const getApplication = ({ allowFakeData = false }): Form => {
               buildDescriptionField({
                 id: 'overview.attachments.two',
                 title: attachmentNames.two,
-                titleVariant: 'h3',
-                space: 'gutter',
+                titleVariant: 'h4',
+                space: 'containerGutter',
               }),
               buildFileUploadField({
                 id: 'attachments.formerLicenseHolderConfirmation.file',
@@ -131,24 +145,10 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                 uploadButtonLabel: m.uploadButtonLabel,
               }),
               buildDescriptionField({
-                id: 'overview.attachments.three',
-                title: attachmentNames.three,
-                titleVariant: 'h3',
-                space: 'gutter',
-              }),
-              buildFileUploadField({
-                id: 'attachments.houseBlueprints.file',
-                title: '',
-                uploadAccept: UPLOAD_ACCEPT,
-                uploadHeader: m.uploadHeader,
-                uploadDescription: m.uploadDescription,
-                uploadButtonLabel: m.uploadButtonLabel,
-              }),
-              buildDescriptionField({
                 id: 'overview.attachments.four',
                 title: attachmentNames.four,
-                titleVariant: 'h3',
-                space: 'gutter',
+                titleVariant: 'h4',
+                space: 'containerGutter',
               }),
               buildFileUploadField({
                 id: 'attachments.outsideBlueprints.file',
@@ -160,9 +160,9 @@ export const getApplication = ({ allowFakeData = false }): Form => {
               }),
               buildDescriptionField({
                 id: 'overview.attachments.five',
-                title: attachmentNames.four,
-                titleVariant: 'h3',
-                space: 'gutter',
+                title: attachmentNames.five,
+                titleVariant: 'h4',
+                space: 'containerGutter',
               }),
               buildFileUploadField({
                 id: 'attachments.otherFiles.file',

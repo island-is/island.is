@@ -1,4 +1,19 @@
 generates:
+  ./apps/judicial-system/web/src/:
+    schema:
+      - ./apps/judicial-system/api.graphql
+    documents: apps/judicial-system/web/src/**/*.graphql
+    preset: 'near-operation-file'
+    presetConfig:
+      baseTypesPath: '~@island.is/judicial-system-web/src/graphql/schema'
+    plugins:
+      - typescript-operations
+      - typescript-react-apollo
+    config:
+      withComponent: false
+      avoidOptionals:
+        object: true
+
   ./apps/judicial-system/web/src/graphql/schema.tsx:
     schema:
       - ./apps/judicial-system/api.graphql
@@ -14,6 +29,8 @@ generates:
       withComponent: false
       avoidOptionals:
         object: true
+      namingConvention:
+        enumValues: 'change-case-all#upperCase'
   ./apps/judicial-system/web-e2e-regression/src/graphql/schema.ts:
     schema:
       - ./apps/judicial-system/api.graphql

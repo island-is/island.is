@@ -1,0 +1,12 @@
+{
+  "emailVerified": {
+    "seo": {
+      "title": "Netfang staðfest",
+      "url": "/user/email-verified"
+    },
+    "successText": "Aðgerð tókst",
+    "emailVerifiedText": "Netfang staðfest",
+    "text": "Nú geturu skráð þig í áskrift á hinum ýmsum málum",
+    "arrowLinkText": "Aftur á forsíðu"
+  }
+}

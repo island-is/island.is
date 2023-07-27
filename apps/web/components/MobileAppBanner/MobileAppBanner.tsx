@@ -1,9 +1,16 @@
 import React, { useEffect, useState } from 'react'
+import Cookies from 'js-cookie'
 
 import { Box, Text, Button, Logo, Icon, Link } from '@island.is/island-ui/core'
-import * as style from './MobileAppBanner.css'
-import Cookies from 'js-cookie'
 import { useNamespace } from '@island.is/web/hooks'
+
+import * as style from './MobileAppBanner.css'
+
+declare global {
+  interface Window {
+    MSStream: unknown
+  }
+}
 
 interface MobileAppBannerProps {
   namespace: Record<string, string | string[]>

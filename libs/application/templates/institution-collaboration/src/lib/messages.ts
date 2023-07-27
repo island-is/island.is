@@ -321,6 +321,11 @@ export const institutionApplicationMessages = {
       description: 'Section description',
     },
 
+    constraintsReqSubLabel: {
+      id: 'ia.application:applicant.constraints.req.label',
+      defaultMessage: 'Öll gagnasamskipti fara í gegnum Strauminn',
+      description: 'Form label for constraints technical formfield',
+    },
     constraintsMailLabel: {
       id: 'ia.application:applicant.constraints.mail.label',
       defaultMessage: 'Stafrænt Pósthólf',
@@ -404,6 +409,22 @@ export const institutionApplicationMessages = {
     },
     constraintsConsultPlaceholder: {
       id: 'ia.application:applicant.constraints.consult.placeholder',
+      defaultMessage: 'Stutt lýsing',
+      description: 'Form placeholder for constraints other formfield',
+    },
+
+    constraintRobotLabel: {
+      id: 'ia.application:applicant.constraints.robot.placeholder',
+      defaultMessage: 'Spjallmenni',
+      description: 'Form placeholder for constraints other formfield',
+    },
+    constraintLegacyLabel: {
+      id: 'ia.application:applicant.constraints.legacy.label',
+      defaultMessage: 'Arfleifðarkerfi (e. legacy system)',
+      description: 'Form placeholder for constraints other formfield',
+    },
+    constraintLegacyPlaceholder: {
+      id: 'ia.application:applicant.constraints.legacy.placeholder',
       defaultMessage: 'Stutt lýsing',
       description: 'Form placeholder for constraints other formfield',
     },

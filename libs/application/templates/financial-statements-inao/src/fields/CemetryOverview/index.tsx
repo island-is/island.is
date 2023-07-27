@@ -34,7 +34,11 @@ export const CemetryOverview = ({
   goToScreen,
   refetch,
 }: FieldBaseProps) => {
-  const { errors, setError, setValue } = useFormContext()
+  const {
+    formState: { errors },
+    setError,
+    setValue,
+  } = useFormContext()
   const { formatMessage } = useLocale()
   const [approveOverview, setApproveOverview] = useState(false)
 
@@ -54,6 +58,7 @@ export const CemetryOverview = ({
   const fixedAssetsTotal = answers.cemetryAsset?.fixedAssetsTotal
   const longTermDebt = answers.cemetryLiability?.longTerm
   const email = getValueViaPath(answers, 'about.email')
+  const cemeteryCaretakers = answers.cemetryCaretaker
 
   const onBackButtonClick = () => {
     if (
@@ -259,47 +264,45 @@ export const CemetryOverview = ({
       </Box>
       <Divider />
       {parseInt(answers.cemetryIncome?.total, 10) < Number(careTakerLimit) &&
-      answers.cemetryCaretaker?.length > 0 ? (
+      cemeteryCaretakers?.length > 0 ? (
         <Fragment>
           <Box className={starterColumnStyle}>
             <Text variant="h3" as="h3">
               {formatMessage(m.cemeteryBoardmembers)}
             </Text>
           </Box>
-          {answers.cemetryCaretaker.map((careTaker) => {
-            return (
-              <Fragment>
-                <Box className={columnStyle}>
-                  <GridRow>
-                    <GridColumn span={['12/12', '6/12']}>
-                      <ValueLine label={m.fullName} value={careTaker.name} />
-                    </GridColumn>
-                    <GridColumn span={['12/12', '6/12']}>
-                      <ValueLine
-                        label={m.nationalId}
-                        value={formatNationalId(careTaker.nationalId)}
-                      />
-                    </GridColumn>
-                  </GridRow>
-                </Box>
-                <Box className={columnStyle}>
-                  <GridRow>
-                    <GridColumn span={['12/12', '6/12']}>
-                      <ValueLine
-                        label={m.role}
-                        value={
-                          careTaker.role === BOARDMEMEBER
-                            ? m.cemeteryBoardMember
-                            : m.cemeteryInspector
-                        }
-                      />
-                    </GridColumn>
-                  </GridRow>
-                </Box>
-                <Divider />
-              </Fragment>
-            )
-          })}
+          {cemeteryCaretakers.map((careTaker) => (
+            <Fragment>
+              <Box className={columnStyle}>
+                <GridRow>
+                  <GridColumn span={['12/12', '6/12']}>
+                    <ValueLine label={m.fullName} value={careTaker.name} />
+                  </GridColumn>
+                  <GridColumn span={['12/12', '6/12']}>
+                    <ValueLine
+                      label={m.nationalId}
+                      value={formatNationalId(careTaker.nationalId)}
+                    />
+                  </GridColumn>
+                </GridRow>
+              </Box>
+              <Box className={columnStyle}>
+                <GridRow>
+                  <GridColumn span={['12/12', '6/12']}>
+                    <ValueLine
+                      label={m.role}
+                      value={
+                        careTaker.role === BOARDMEMEBER
+                          ? formatMessage(m.cemeteryBoardMember)
+                          : formatMessage(m.cemeteryInspector)
+                      }
+                    />
+                  </GridColumn>
+                </GridRow>
+              </Box>
+              <Divider />
+            </Fragment>
+          ))}
         </Fragment>
       ) : null}
       {fileName ? (
@@ -319,7 +322,7 @@ export const CemetryOverview = ({
           name="applicationApprove"
           defaultValue={approveOverview}
           rules={{ required: true }}
-          render={({ value, onChange }) => {
+          render={({ field: { onChange, value } }) => {
             return (
               <Checkbox
                 onChange={(e) => {

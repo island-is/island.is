@@ -9,16 +9,17 @@ import {
   EmptyState,
   IntroHeader,
   m,
-  ServicePortalModuleComponent,
 } from '@island.is/service-portal/core'
+import { useUserInfo } from '@island.is/auth/react'
 
 import { FamilyMemberCard } from '../../components/FamilyMemberCard/FamilyMemberCard'
 import { spmm } from '../../lib/messages'
 import { NATIONAL_REGISTRY_CHILDREN } from '../../lib/queries/getNationalChildren'
 import { NATIONAL_REGISTRY_USER } from '../../lib/queries/getNationalRegistryUser'
 
-const UserInfoOverview: ServicePortalModuleComponent = ({ userInfo }) => {
+const UserInfoOverview = () => {
   useNamespaces('sp.family')
+  const userInfo = useUserInfo()
 
   // Current User
   const { data, loading, error, called } = useQuery<Query>(
@@ -36,7 +37,11 @@ const UserInfoOverview: ServicePortalModuleComponent = ({ userInfo }) => {
 
   return (
     <>
-      <IntroHeader title={m.myInfo} intro={spmm.userInfoDesc} />
+      <IntroHeader
+        marginBottom={2}
+        title={m.myInfo}
+        intro={spmm.userInfoDesc}
+      />
 
       <Stack space={2}>
         {called && !loading && !error && !nationalRegistryUser ? (

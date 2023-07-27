@@ -62,9 +62,11 @@ export const ChangeCoOwnerOfVehicleForm: Form = buildForm({
                         chargeItemCode: string
                       },
                     ]
-                    const items = allItems.filter(({ chargeItemCode }) =>
-                      chargeItemCodes.includes(chargeItemCode),
-                    )
+                    const items = chargeItemCodes.map((chargeItemCode) => {
+                      return allItems.find(
+                        (item) => item.chargeItemCode === chargeItemCode,
+                      )
+                    })
                     return items.length > 0
                   },
                 },

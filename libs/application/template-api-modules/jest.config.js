@@ -1,12 +1,15 @@
 module.exports = {
-  preset: '../../../jest.preset.js',
+  preset: './jest.preset.js',
+  rootDir: '../../..',
+  roots: [__dirname],
   globals: {
-    'ts-jest': { tsconfig: '<rootDir>/tsconfig.spec.json' },
+    'ts-jest': { tsconfig: `${__dirname}/tsconfig.spec.json` },
   },
   transform: {
     '^.+\\.[tj]sx?$': 'ts-jest',
   },
+  testEnvironment: 'node',
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
-  coverageDirectory: '../../../coverage/libs/template-api-modules',
+  coverageDirectory: '<rootDir>/coverage/libs/application/template-api-modules',
   displayName: 'application-template-api-modules',
 }

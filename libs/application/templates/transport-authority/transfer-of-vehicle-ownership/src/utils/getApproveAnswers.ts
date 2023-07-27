@@ -8,12 +8,19 @@ export const getApproveAnswers = (
 ) => {
   const returnAnswers = {}
   // If reviewer is buyer
+  const buyerNationalId = getValueViaPath(
+    answers,
+    'buyer.nationalId',
+    '',
+  ) as string
+  const buyerApproved = getValueViaPath(
+    answers,
+    'buyer.approved',
+    undefined,
+  ) as boolean | undefined
   if (
-    (getValueViaPath(answers, 'buyer.nationalId', '') as string) ===
-      reviewerNationalId &&
-    (getValueViaPath(answers, 'buyer.approved', undefined) as
-      | boolean
-      | undefined) === undefined
+    buyerNationalId === reviewerNationalId &&
+    (buyerApproved === undefined || buyerApproved === false)
   ) {
     Object.assign(returnAnswers, {
       buyer: {
@@ -32,12 +39,16 @@ export const getApproveAnswers = (
     'buyerCoOwnerAndOperator',
     [],
   ) as CoOwnerAndOperator[]
-  const buyerCoOwnerAndOperator = buyerCoOwnersAndOperators.find(
-    (coOwnerOrOperator) => coOwnerOrOperator.nationalId === reviewerNationalId,
-  )
+  const buyerCoOwnerAndOperator = buyerCoOwnersAndOperators
+    .filter(({ wasRemoved }) => wasRemoved !== 'true')
+    .find(
+      (coOwnerOrOperator) =>
+        coOwnerOrOperator.nationalId === reviewerNationalId,
+    )
   if (
     buyerCoOwnerAndOperator &&
-    buyerCoOwnerAndOperator.approved === undefined
+    (buyerCoOwnerAndOperator.approved === undefined ||
+      buyerCoOwnerAndOperator.approved === false)
   ) {
     Object.assign(returnAnswers, {
       buyerCoOwnerAndOperator: buyerCoOwnersAndOperators.map(
@@ -48,6 +59,7 @@ export const getApproveAnswers = (
             email: coOwnerOrOperator.email,
             phone: coOwnerOrOperator.phone,
             type: coOwnerOrOperator.type,
+            wasRemoved: coOwnerOrOperator.wasRemoved,
             approved:
               coOwnerOrOperator.nationalId === reviewerNationalId
                 ? true
@@ -67,7 +79,10 @@ export const getApproveAnswers = (
   const sellerCoOwner = sellerCoOwners.find(
     (coOwner) => coOwner.nationalId === reviewerNationalId,
   )
-  if (sellerCoOwner && sellerCoOwner.approved === undefined) {
+  if (
+    sellerCoOwner &&
+    (sellerCoOwner.approved === undefined || sellerCoOwner.approved === false)
+  ) {
     Object.assign(returnAnswers, {
       sellerCoOwner: sellerCoOwners.map((coOwner) => {
         return {
@@ -75,7 +90,6 @@ export const getApproveAnswers = (
           name: coOwner.name,
           email: coOwner.email,
           phone: coOwner.phone,
-          type: coOwner.type,
           approved:
             coOwner.nationalId === reviewerNationalId
               ? true

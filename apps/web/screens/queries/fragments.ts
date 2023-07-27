@@ -236,6 +236,9 @@ export const slices = gql`
       image {
         ...ImageFields
       }
+      imageOnSelect {
+        ...ImageFields
+      }
     }
   }
 
@@ -586,6 +589,10 @@ export const slices = gql`
     workspaceId
     reportId
     owner
+    powerBiEmbedPropsFromServer {
+      accessToken
+      embedUrl
+    }
   }
 
   fragment TableSliceFields on TableSlice {
@@ -611,6 +618,15 @@ export const slices = gql`
       informationText
     }
     translations
+  }
+
+  fragment SliceDropdownFields on SliceDropdown {
+    __typename
+    id
+    dropdownLabel
+    slices {
+      ...OneColumnTextFields
+    }
   }
 
   fragment FeaturedSupportQNAsFields on FeaturedSupportQNAs {
@@ -705,6 +721,7 @@ export const slices = gql`
     ...PowerBiSliceFields
     ...TableSliceFields
     ...EmailSignupFields
+    ...SliceDropdownFields
   }
 
   fragment AllSlices on Slice {
@@ -756,6 +773,17 @@ const nestedContainerFields = `
       }
       body {
         ...AllSlices
+      }
+    }
+  }
+  ... on SliceDropdown {
+    ...SliceDropdownFields
+    slices {
+      ... on OneColumnText {
+        ...OneColumnTextFields
+        content {
+          ...AllSlices
+        }
       }
     }
   }

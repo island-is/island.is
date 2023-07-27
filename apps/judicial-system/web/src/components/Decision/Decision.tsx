@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Box, RadioButton } from '@island.is/island-ui/core'
 import { CaseDecision } from '@island.is/judicial-system/types'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
@@ -27,6 +27,8 @@ const Decision: React.FC<Props> = ({
   onChange,
   disabled = false,
 }) => {
+  const [checkedRadio, setCheckedRadio] = useState<CaseDecision>()
+
   return (
     <BlueBox>
       <Box marginBottom={2}>
@@ -34,8 +36,12 @@ const Decision: React.FC<Props> = ({
           name="case-decision"
           id="case-decision-accepting"
           label={acceptedLabelText}
-          checked={workingCase.decision === CaseDecision.ACCEPTING}
+          checked={
+            checkedRadio === CaseDecision.ACCEPTING ||
+            (!checkedRadio && workingCase.decision === CaseDecision.ACCEPTING)
+          }
           onChange={() => {
+            setCheckedRadio(CaseDecision.ACCEPTING)
             onChange(CaseDecision.ACCEPTING)
           }}
           large
@@ -43,14 +49,19 @@ const Decision: React.FC<Props> = ({
           disabled={disabled}
         />
       </Box>
-      {workingCase.type !== CaseType.TravelBan && (
+      {workingCase.type !== CaseType.TRAVEL_BAN && (
         <Box marginTop={2}>
           <RadioButton
             name="case-decision"
             id="case-decision-accepting-partially"
             label={partiallyAcceptedLabelText}
-            checked={workingCase.decision === CaseDecision.ACCEPTING_PARTIALLY}
+            checked={
+              checkedRadio === CaseDecision.ACCEPTING_PARTIALLY ||
+              (!checkedRadio &&
+                workingCase.decision === CaseDecision.ACCEPTING_PARTIALLY)
+            }
             onChange={() => {
+              setCheckedRadio(CaseDecision.ACCEPTING_PARTIALLY)
               onChange(CaseDecision.ACCEPTING_PARTIALLY)
             }}
             large
@@ -64,8 +75,12 @@ const Decision: React.FC<Props> = ({
           name="case-decision"
           id="case-decision-rejecting"
           label={rejectedLabelText}
-          checked={workingCase.decision === CaseDecision.REJECTING}
+          checked={
+            checkedRadio === CaseDecision.REJECTING ||
+            (!checkedRadio && workingCase.decision === CaseDecision.REJECTING)
+          }
           onChange={() => {
+            setCheckedRadio(CaseDecision.REJECTING)
             onChange(CaseDecision.REJECTING)
           }}
           large
@@ -73,18 +88,21 @@ const Decision: React.FC<Props> = ({
           disabled={disabled}
         />
       </Box>
-      {(workingCase.type === CaseType.Custody ||
-        workingCase.type === CaseType.AdmissionToFacility) && (
+      {(workingCase.type === CaseType.CUSTODY ||
+        workingCase.type === CaseType.ADMISSION_TO_FACILITY) && (
         <Box marginTop={2}>
           <RadioButton
             name="case-decision"
             id="case-decision-accepting-alternative-travel-ban"
             label={acceptingAlternativeTravelBanLabelText}
             checked={
-              workingCase.decision ===
-              CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
+              checkedRadio === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN ||
+              (!checkedRadio &&
+                workingCase.decision ===
+                  CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN)
             }
             onChange={() => {
+              setCheckedRadio(CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN)
               onChange(CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN)
             }}
             large
@@ -98,8 +116,12 @@ const Decision: React.FC<Props> = ({
           name="case-decision"
           id="case-decision-dismissing"
           label={dismissLabelText}
-          checked={workingCase.decision === CaseDecision.DISMISSING}
+          checked={
+            checkedRadio === CaseDecision.DISMISSING ||
+            (!checkedRadio && workingCase.decision === CaseDecision.DISMISSING)
+          }
           onChange={() => {
+            setCheckedRadio(CaseDecision.DISMISSING)
             onChange(CaseDecision.DISMISSING)
           }}
           large

@@ -9,21 +9,13 @@ import {
   PageLayout,
   ProsecutorCaseInfo,
 } from '@island.is/judicial-system-web/src/components'
-import {
-  IndictmentsProsecutorSubsections,
-  Sections,
-} from '@island.is/judicial-system-web/src/types'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import {
   titles,
   processing as m,
 } from '@island.is/judicial-system-web/messages'
 import { Box, Text } from '@island.is/island-ui/core'
-import {
-  CaseState,
-  CaseTransition,
-  Feature,
-} from '@island.is/judicial-system/types'
+import { CaseState, CaseTransition } from '@island.is/judicial-system/types'
 import {
   useCase,
   useInstitution,
@@ -31,7 +23,6 @@ import {
 import CommentsInput from '@island.is/judicial-system-web/src/components/CommentsInput/CommentsInput'
 import { isProcessingStepValidIndictments } from '@island.is/judicial-system-web/src/utils/validate'
 import { Institution } from '@island.is/judicial-system-web/src/graphql/schema'
-import { FeatureContext } from '@island.is/judicial-system-web/src/components/FeatureProvider/FeatureProvider'
 import { isTrafficViolationCase } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import * as constants from '@island.is/judicial-system/consts'
 
@@ -48,10 +39,8 @@ const Processing: React.FC = () => {
   const { formatMessage } = useIntl()
   const { courts } = useInstitution()
   const router = useRouter()
-  const { features } = useContext(FeatureContext)
-  const isTrafficViolationCaseCheck =
-    features.includes(Feature.INDICTMENT_ROUTE) &&
-    isTrafficViolationCase(workingCase.indictmentSubtypes)
+
+  const isTrafficViolationCaseCheck = isTrafficViolationCase(workingCase)
 
   const handleCourtChange = (court: Institution) => {
     if (workingCase) {
@@ -91,8 +80,6 @@ const Processing: React.FC = () => {
   return (
     <PageLayout
       workingCase={workingCase}
-      activeSection={Sections.PROSECUTOR}
-      activeSubSection={IndictmentsProsecutorSubsections.PROCESSING}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
       onNavigationTo={handleNavigationTo}
@@ -125,6 +112,7 @@ const Processing: React.FC = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
+          nextButtonIcon="arrowForward"
           previousUrl={`${constants.INDICTMENTS_CASE_FILE_ROUTE}/${workingCase.id}`}
           nextIsDisabled={!stepIsValid}
           onNextButtonClick={() =>

@@ -1,7 +1,17 @@
-import { IsArray, IsString } from 'class-validator'
+import { IsArray, IsString, ValidateNested } from 'class-validator'
 import { ApiProperty } from '@nestjs/swagger'
-import { IsNationalId } from '@island.is/nest/validators'
+import { IsNationalId } from '@island.is/nest/core'
+import { Type } from 'class-transformer'
 
+class ArgumentDto {
+  @IsString()
+  @ApiProperty({ example: 'key' })
+  key!: string
+
+  @IsString()
+  @ApiProperty({ example: 'value' })
+  value!: string
+}
 export class CreateHnippNotificationDto {
   @IsNationalId()
   @ApiProperty({ example: '1234567890' })
@@ -12,6 +22,13 @@ export class CreateHnippNotificationDto {
   templateId!: string
 
   @IsArray()
-  @ApiProperty({ example: ['arg1', 'arg2'] })
-  args!: string[]
+  @Type(() => ArgumentDto)
+  @ValidateNested({ each: true })
+  @ApiProperty({
+    example: [
+      { key: 'organization', value: 'Hnipp Test Crew' },
+      { key: 'documentId', value: 'abcd-abcd-abcd-abcd' },
+    ],
+  })
+  args!: ArgumentDto[]
 }

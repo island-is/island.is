@@ -128,6 +128,63 @@ export const assets = buildSection({
       ],
     }),
     buildSubSection({
+      id: 'assets.guns',
+      title: m.guns,
+      children: [
+        buildMultiField({
+          id: 'guns',
+          title: m.propertiesTitle,
+          description:
+            m.propertiesDescription.defaultMessage +
+            ' ' +
+            m.continueWithoutGuns.defaultMessage,
+          children: [
+            buildDescriptionField({
+              id: 'gunsTitle',
+              title: m.guns,
+              description: m.gunsDescription,
+              titleVariant: 'h3',
+            }),
+            buildDescriptionField({
+              id: 'assets.guns.total',
+              title: '',
+            }),
+            buildCustomField(
+              {
+                title: '',
+                id: 'assets.guns.data',
+                doesNotRequireAnswer: true,
+                component: 'ReportFieldsRepeater',
+              },
+              {
+                fields: [
+                  {
+                    title: m.assetNumber.defaultMessage,
+                    id: 'assetNumber',
+                  },
+                  {
+                    title: m.gunType.defaultMessage,
+                    id: 'description',
+                  },
+                  {
+                    title: m.gunValuation.defaultMessage,
+                    id: 'propertyValuation',
+                    required: true,
+                    currency: true,
+                  },
+                ],
+                repeaterButtonText: m.addGun.defaultMessage,
+                repeaterHeaderText: m.guns.defaultMessage,
+                fromExternalData: 'guns',
+                sumField: 'propertyValuation',
+              },
+            ),
+          ],
+        }),
+      ],
+    }),
+
+    buildSubSection({
       id: 'inventory',
       title: m.inventoryTitle,
       children: [
@@ -490,6 +547,22 @@ export const assets = buildSection({
               display: 'flex',
               value: ({ answers }) => {
                 const total = getValueViaPath(answers, 'assets.vehicles.total')
+                return formatCurrency(String(total))
+              },
+            }),
+            buildDividerField({}),
+            buildDescriptionField({
+              id: 'overviewGuns',
+              title: m.guns,
+              titleVariant: 'h3',
+              marginBottom: 'gutter',
+              space: 'gutter',
+            }),
+            buildKeyValueField({
+              label: m.marketValue,
+              display: 'flex',
+              value: ({ answers }) => {
+                const total = getValueViaPath(answers, 'assets.guns.total')
                 return formatCurrency(String(total))
               },
             }),

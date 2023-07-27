@@ -1,10 +1,10 @@
 import { Allow } from 'class-validator'
-import { Field, InputType } from '@nestjs/graphql'
+import { Field, InputType, registerEnumType } from '@nestjs/graphql'
 
-import type {
-  CaseFileCategory,
-  CreateFile,
-} from '@island.is/judicial-system/types'
+import type { CreateFile } from '@island.is/judicial-system/types'
+import { CaseFileCategory } from '@island.is/judicial-system/types'
+
+registerEnumType(CaseFileCategory, { name: 'CaseFileCategory' })
 
 @InputType()
 export class CreateFileInput implements CreateFile {

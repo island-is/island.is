@@ -34,6 +34,9 @@ export class OwnerChangeAnswersBuyerOrCoOwner {
 
   @Field(() => String, { nullable: false })
   type!: string
+
+  @Field(() => String, { nullable: true })
+  wasRemoved?: string
 }
 
 @InputType()

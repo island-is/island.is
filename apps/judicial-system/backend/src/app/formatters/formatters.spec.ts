@@ -23,7 +23,6 @@ import {
   formatPrisonCourtDateEmailNotification,
   stripHtmlTags,
   formatDefenderCourtDateEmailNotification,
-  formatPrisonRulingEmailNotification,
   formatCourtRevokedSmsNotification,
   formatPrisonRevokedEmailNotification,
   formatDefenderRevokedEmailNotification,
@@ -31,8 +30,6 @@ import {
   formatCourtResubmittedToCourtSmsNotification,
   formatProsecutorReadyForCourtEmailNotification,
   formatCustodyRestrictions,
-  formatRulingModifiedHistory,
-  formatCourtUploadRulingTitle,
   formatPrisonAdministrationRulingNotification,
   formatDefenderCourtDateLinkEmailNotification,
   formatDefenderResubmittedToCourtEmailNotification,
@@ -1381,68 +1378,6 @@ describe('formatDefenderCourtDateLinkEmailNotification', () => {
   })
 })
 
-describe('formatPrisonRulingEmailNotification', () => {
-  let formatMessage: FormatMessage
-  beforeAll(() => {
-    formatMessage = createTestIntl({ locale: 'is', onError: jest.fn() })
-      .formatMessage
-  })
-
-  test('should format prison ruling notification for custody', () => {
-    // Arrange
-    const courtEndTime = new Date('2020-12-20T13:32')
-    const caseType = CaseType.CUSTODY
-
-    // Act
-    const res = formatPrisonRulingEmailNotification(
-      formatMessage,
-      caseType,
-      courtEndTime,
-    )
-
-    // Assert
-    expect(res).toBe(
-      'Meðfylgjandi er vistunarseðill aðila sem var úrskurðaður í gæsluvarðhald í héraðsdómi 20. desember 2020, auk þingbókar þar sem úrskurðarorðin koma fram.',
-    )
-  })
-
-  test('should format prison ruling notification when date is missing', () => {
-    // Arrange
-    const courtEndTime = undefined
-    const caseType = CaseType.ADMISSION_TO_FACILITY
-
-    // Act
-    const res = formatPrisonRulingEmailNotification(
-      formatMessage,
-      caseType,
-      courtEndTime,
-    )
-
-    // Assert
-    expect(res).toBe(
-      'Meðfylgjandi er vistunarseðill aðila sem var úrskurðaður í vistun á viðeigandi stofnun í héraðsdómi á ótilgreindum tíma, auk þingbókar þar sem úrskurðarorðin koma fram.',
-    )
-  })
-
-  test('should format prison ruling notification for admission to facility', () => {
-    // Arrange
-    const courtEndTime = new Date('2020-12-20T13:32')
-    const caseType = CaseType.ADMISSION_TO_FACILITY
-
-    // Act
-    const res = formatPrisonRulingEmailNotification(
-      formatMessage,
-      caseType,
-      courtEndTime,
-    )
-
-    // Assert
-    expect(res).toBe(
-      'Meðfylgjandi er vistunarseðill aðila sem var úrskurðaður í vistun á viðeigandi stofnun í héraðsdómi 20. desember 2020, auk þingbókar þar sem úrskurðarorðin koma fram.',
-    )
-  })
-})
-
 describe('formatCourtRevokedSmsNotification', () => {
   let formatMessage: FormatMessage
   beforeAll(() => {
@@ -1918,69 +1853,6 @@ describe('formatCustodyRestrictions', () => {
     expect(res).toBe(
       'Sækjandi tekur fram að gæsluvarðhaldið verði með banni við útvegun persónulegra nauðsynja, bréfaskoðun og símabanni og vinnubanni skv. 99. gr. laga nr. 88/2008.',
     )
-  })
-})
-
-describe('formatRulingModifiedHistory', () => {
-  const fn = formatRulingModifiedHistory
-
-  test('should format ruling modified history', () => {
-    const rulingModifiedHistory = undefined
-    const newRulingDate = new Date('2020-01-01')
-    const judgeName = 'Test Judge'
-    const judgeTitle = 'Title'
-
-    const r = fn(rulingModifiedHistory, newRulingDate, judgeName, judgeTitle)
-
-    expect(r).toEqual(
-      'Miðvikudagur, 1. janúar 2020 kl. 00:00 - Test Judge Title',
-    )
-  })
-
-  test('should append to existing history', () => {
-    const rulingModifiedHistory = 'Some history'
-    const newRulingDate = new Date('2020-01-01')
-    const judgeName = 'Test Judge'
-    const judgeTitle = 'Title'
-
-    const r = fn(rulingModifiedHistory, newRulingDate, judgeName, judgeTitle)
-
-    expect(r).toEqual(
-      'Some history\n\nMiðvikudagur, 1. janúar 2020 kl. 00:00 - Test Judge Title',
-    )
-  })
-})
-
-describe('formatCourtUploadRulingTitle', () => {
-  const formatMessage = createTestIntl({ locale: 'is', onError: jest.fn() })
-    .formatMessage
-
-  const fn = (
-    courtCaseNumber: string | undefined,
-    isModifyingRuling: boolean,
-  ) =>
-    formatCourtUploadRulingTitle(
-      formatMessage,
-      courtCaseNumber,
-      isModifyingRuling,
-    )
-
-  test('should format court upload ruling', () => {
-    const courtCaseNumber = '12345'
-    const isModifyingRuling = false
-
-    const r = fn(courtCaseNumber, isModifyingRuling)
-
-    expect(r).toEqual('Úrskurður 12345')
-  })
-
-  test('should format court upload ruling when modifying ruling', () => {
-    const courtCaseNumber = '12345'
-    const isModifyingRuling = true
-
-    const r = fn(courtCaseNumber, isModifyingRuling)
-
-    expect(r).toEqual('Úrskurður 12345 leiðrétt')
   })
 })
 

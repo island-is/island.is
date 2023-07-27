@@ -16,7 +16,7 @@ function CheckBox({ options, name }: PropTypes) {
     <Controller
       defaultValue=""
       name={name}
-      render={({ onChange, value }) => (
+      render={({ field: { onChange, value } }) => (
         <Box display="flex" flexWrap="wrap">
           {options.map((option, i) => (
             <Box

@@ -11,6 +11,7 @@ import {
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
 import { IndictmentCountOffense } from '@island.is/judicial-system/types'
+import type { SubstanceMap } from '@island.is/judicial-system/types'
 
 import { Case } from '../../case/models/case.model'
 
@@ -37,52 +38,35 @@ export class IndictmentCount extends Model {
   modified!: Date
 
   @ForeignKey(() => Case)
-  @Column({
-    type: DataType.UUID,
-    allowNull: false,
-  })
+  @Column({ type: DataType.UUID, allowNull: false })
   @ApiProperty()
   caseId!: string
 
-  @Column({
-    type: DataType.STRING,
-    allowNull: true,
-  })
+  @Column({ type: DataType.STRING, allowNull: true })
   @ApiPropertyOptional()
   policeCaseNumber?: string
 
-  @Column({
-    type: DataType.STRING,
-    allowNull: true,
-  })
+  @Column({ type: DataType.STRING, allowNull: true })
   @ApiPropertyOptional()
   vehicleRegistrationNumber?: string
 
-  @Column({
-    type: DataType.JSONB,
-    allowNull: true,
-  })
+  @Column({ type: DataType.JSONB, allowNull: true })
   @ApiPropertyOptional({ enum: IndictmentCountOffense, isArray: true })
   offenses?: IndictmentCountOffense[]
 
-  @Column({
-    type: DataType.JSONB,
-    allowNull: true,
-  })
+  @Column({ type: DataType.JSONB, allowNull: true })
+  @ApiPropertyOptional()
+  substances?: SubstanceMap
+
+  @Column({ type: DataType.JSONB, allowNull: true })
   @ApiPropertyOptional({ type: [[Number, Number]], isArray: true })
   lawsBroken?: [number, number][]
 
-  @Column({
-    type: DataType.TEXT,
-    allowNull: true,
-  })
+  @Column({ type: DataType.TEXT, allowNull: true })
   @ApiPropertyOptional()
   incidentDescription?: string
 
-  @Column({
-    type: DataType.TEXT,
-    allowNull: true,
-  })
+  @Column({ type: DataType.TEXT, allowNull: true })
   @ApiPropertyOptional()
   legalArguments?: string
 }

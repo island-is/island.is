@@ -32,10 +32,16 @@ export class NotificationsService {
     return await this.cacheManager.get(key)
   }
 
-  async getTemplates(locale?: string): Promise<HnippTemplate[]> {
-    if (locale == 'is' || locale === undefined) {
-      locale = 'is-IS'
+  async mapLocale(locale: string | null | undefined): Promise<string> {
+    if (locale === 'en') {
+      return 'en'
     }
+    return 'is-IS'
+  }
+  async getTemplates(
+    locale?: string | null | undefined,
+  ): Promise<HnippTemplate[]> {
+    locale = await this.mapLocale(locale)
 
     this.logger.info(
       'Fetching templates from Contentful GQL for locale: ' + locale,
@@ -84,11 +90,9 @@ export class NotificationsService {
 
   async getTemplate(
     templateId: string,
-    locale?: string,
+    locale?: string | null | undefined,
   ): Promise<HnippTemplate> {
-    if (locale == 'is') {
-      locale = 'is-IS'
-    }
+    locale = await this.mapLocale(locale)
     //check cache
     const cacheKey = templateId + '-' + locale
     const cachedTemplate = await this.getFromCache(cacheKey)
@@ -114,16 +118,13 @@ export class NotificationsService {
     body: CreateHnippNotificationDto,
     template: HnippTemplate,
   ): boolean {
-    return template.args.length == body.args.length
+    return body.args.length == template.args.length
   }
 
   formatArguments(
     body: CreateHnippNotificationDto,
     template: HnippTemplate,
   ): HnippTemplate {
-    if (template.args.length != body.args.length) {
-      throw new BadRequestException('Argument count mismatch')
-    }
     if (template.args.length > 0) {
       const allowedReplaceProperties = [
         'notificationTitle',
@@ -131,16 +132,17 @@ export class NotificationsService {
         'notificationDataCopy',
         'clickAction',
       ]
-      const regex = /{{[^{}]*}}/ // "finds {{placholder}} in string"
+      // find {{arg.key}} in string and replace with arg.value
+      const regex = new RegExp(/{{[^{}]*}}/)
       Object.keys(template).forEach((key) => {
         if (allowedReplaceProperties.includes(key)) {
-          if (template[key as keyof HnippTemplate]) {
-            if (regex.test(template[key as keyof HnippTemplate] as string)) {
-              const element = body.args.shift()
-              if (element) {
-                template[key as keyof Omit<HnippTemplate, 'args'>] = (template[
-                  key as keyof Omit<HnippTemplate, 'args'>
-                ] as string).replace(regex, element)
+          let value = template[key as keyof HnippTemplate] as string
+          if (value) {
+            if (regex.test(value)) {
+              for (const arg of body.args) {
+                const regexTarget = new RegExp('{{' + arg.key + '}}', 'g')
+                value = value.replace(regexTarget, arg.value)
+                template[key as keyof Omit<HnippTemplate, 'args'>] = value
               }
             }
           }

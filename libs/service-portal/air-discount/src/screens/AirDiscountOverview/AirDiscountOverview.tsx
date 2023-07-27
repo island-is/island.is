@@ -24,7 +24,6 @@ import {
 } from '@island.is/island-ui/core'
 import { messages as m } from '../../lib/messages'
 import copyToClipboard from 'copy-to-clipboard'
-import { ModuleAlertBannerSection } from '@island.is/service-portal/core'
 import UsageTable from '../../components/UsageTable'
 import { formatDateWithTime } from '@island.is/service-portal/core'
 import { AirDiscountSchemeDiscount } from '@island.is/service-portal/graphql'
@@ -72,7 +71,7 @@ type CopiedCode = {
   copied: boolean
 }
 
-export const AirDiscountOverview: ServicePortalModuleComponent = () => {
+export const AirDiscountOverview = () => {
   useNamespaces('sp.air-discount')
   const { formatMessage } = useLocale()
   const { data, loading, error } = useQuery<Query>(AirDiscountQuery)
@@ -154,9 +153,6 @@ export const AirDiscountOverview: ServicePortalModuleComponent = () => {
               <Bullet>{formatMessage(m.discountTextFirst)}</Bullet>
               <Bullet>{formatMessage(m.discountTextSecond)}</Bullet>
             </BulletList>
-          </GridColumn>
-          <GridColumn span={['12/12', '12/12', '6/8']} order={3} paddingTop={4}>
-            <ModuleAlertBannerSection />
           </GridColumn>
         </GridRow>
 

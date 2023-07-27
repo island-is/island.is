@@ -11,6 +11,7 @@ import { AccessDate } from '../AccessDate/AccessDate'
 
 import * as styles from './AccessHeader.css'
 import { AuthCustomDelegationOutgoing } from '../../../types/customDelegation'
+import { m } from '../../../lib/messages'
 
 interface AccessHeaderProps {
   delegation?: AuthCustomDelegationOutgoing
@@ -47,10 +48,7 @@ export const AccessHeader = ({
           columnGap={1}
         >
           <Text variant="h3" as="h1">
-            {formatMessage({
-              id: 'sp.access-control-delegations:access-title',
-              defaultMessage: 'Réttindi',
-            })}
+            {formatMessage(m.accessScopes)}
           </Text>
           <Hidden above="md">
             {showValidityPeriodMobile && delegation?.validTo && (
@@ -63,13 +61,7 @@ export const AccessHeader = ({
         ) : (
           <SkeletonLoader width="60%" height={21} />
         )}
-        <Text variant="default">
-          {formatMessage({
-            id: 'sp.settings-access-control:access-intro',
-            defaultMessage:
-              'Reyndu að lágmarka þau réttindi sem þú vilt veita viðkomandi eins mikið og mögulegt er.',
-          })}
-        </Text>
+        <Text variant="default">{formatMessage(m.accessScopesIntro)}</Text>
       </Box>
       <div className={styles.secondColumn}>{children}</div>
     </Box>

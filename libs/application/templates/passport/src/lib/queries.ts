@@ -1,5 +1,3 @@
-import { gql } from '@apollo/client'
-
 export const getSyslumennDistrictCommissionersAgencies = `
   query getSyslumennDistrictCommissionersAgencies {
     getSyslumennDistrictCommissionersAgencies {

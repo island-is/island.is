@@ -79,10 +79,9 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
             navHide: true,
             path: ServicePortalPath.Child,
           },
-
           {
             // Petitions
-            name: m.endorsements,
+            name: m.petitions,
             path: ServicePortalPath.Petitions,
           },
           {
@@ -146,6 +145,15 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
           icon: 'school',
         },
         description: m.educationDescription,
+      },
+      // Heilsa
+      {
+        name: m.health,
+        path: ServicePortalPath.HealthRoot,
+        icon: {
+          icon: 'heart',
+        },
+        description: m.healthDescription,
       },
 
       // Fasteignir

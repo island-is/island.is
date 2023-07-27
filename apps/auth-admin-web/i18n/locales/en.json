@@ -1669,6 +1669,12 @@
         }
       },
       "fields": {
+        "domainName": {
+          "label": "Domain",
+          "placeholder": "Please select the client domain",
+          "helpText": "The domain associated with this client.",
+          "errorMessage": "Domain is required "
+        },
         "clientType": {
           "label": "Client Type",
           "placeholder": "",

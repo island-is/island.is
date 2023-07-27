@@ -1,5 +1,9 @@
 import React, { FC } from 'react'
-import { getValueViaPath, formatText } from '@island.is/application/core'
+import {
+  getValueViaPath,
+  formatText,
+  getErrorViaPath,
+} from '@island.is/application/core'
 import { FieldBaseProps } from '@island.is/application/types'
 import { m } from '../../../forms/messages'
 import { useFormContext, Controller } from 'react-hook-form'
@@ -15,7 +19,11 @@ const TestPhaseInfoScreen: FC<FieldBaseProps> = ({ application }) => {
     'technicalAnswer' as string,
     false,
   ) as boolean
-  const { setValue, errors, getValues } = useFormContext()
+  const {
+    setValue,
+    formState: { errors },
+    getValues,
+  } = useFormContext()
 
   return (
     <Box>
@@ -53,7 +61,7 @@ const TestPhaseInfoScreen: FC<FieldBaseProps> = ({ application }) => {
           name="technicalAnswer"
           defaultValue={currentAnswer}
           rules={{ required: true }}
-          render={({ value, onChange }) => {
+          render={({ field: { value, onChange } }) => {
             return (
               <Checkbox
                 onChange={(e) => {
@@ -72,7 +80,9 @@ const TestPhaseInfoScreen: FC<FieldBaseProps> = ({ application }) => {
                   errors.technicalAnswer &&
                   getValues('technicalAnswer') === false
                 }
-                errorMessage={errors.technicalAnswer}
+                errorMessage={
+                  errors && getErrorViaPath(errors, 'technicalAnswer')
+                }
               />
             )
           }}

@@ -1,7 +1,5 @@
 export default {
   production: false,
-  bypassCacheKey: process.env.BYPASS_CACHE_KEY,
-  cacheTime: process.env.CACHE_TIME || 300,
   indexableTypes: [
     'article',
     'subArticle',
@@ -19,6 +17,7 @@ export default {
     'link',
     'frontpage',
     'enhancedAsset',
+    'vacancy',
   ],
   nestedContentTypes: [
     'alertBanner',
@@ -67,7 +66,24 @@ export default {
     'tabContent',
     'footerItem',
     'featuredSupportQNAs',
+    'uiConfiguration',
+    'organizationTag',
+    'logoListSlice',
+    'article',
+    'overviewLinks',
+    'introLinkImage',
+    'price',
+    'teamList',
+    'teamMember',
+    'sliceDropdown',
+    'sidebarCard',
+    'genericTag',
+    'latestNewsSlice',
+    'supportCategory',
+    'supportSubCategory',
   ],
+  // Content types that have the 'activeTranslations' JSON field
+  localizedContentTypes: ['article'],
   contentful: {
     space: process.env.CONTENTFUL_SPACE || '8k0h54kbe6bj',
     accessToken: process.env.CONTENTFUL_ACCESS_TOKEN || 'test',

@@ -1,12 +1,14 @@
 module.exports = {
   displayName: 'auth-scopes',
-  preset: '../../../jest.preset.js',
+  preset: './jest.preset.js',
+  rootDir: '../../..',
+  roots: [__dirname],
   globals: {
-    'ts-jest': { tsconfig: '<rootDir>/tsconfig.spec.json' },
+    'ts-jest': { tsconfig: `${__dirname}/tsconfig.spec.json` },
   },
   transform: {
     '^.+\\.[tj]sx?$': 'ts-jest',
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
-  coverageDirectory: '../../../coverage/libs/auth/scopes',
+  coverageDirectory: '<rootDir>/coverage/libs/auth/scopes',
 }

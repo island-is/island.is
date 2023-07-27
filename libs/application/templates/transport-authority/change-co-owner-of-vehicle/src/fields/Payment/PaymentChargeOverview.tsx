@@ -20,9 +20,9 @@ export const PaymentChargeOverview: FC<FieldBaseProps> = ({ application }) => {
       chargeItemCode: string
     },
   ]
-  const items = allItems.filter(({ chargeItemCode }) =>
-    chargeItemCodes.includes(chargeItemCode),
-  )
+  const items = chargeItemCodes.map((chargeItemCode) => {
+    return allItems.find((item) => item.chargeItemCode === chargeItemCode)
+  })
 
   const totalPrice = items.reduce(
     (sum, item) => sum + (item?.priceAmount || 0),
@@ -39,7 +39,7 @@ export const PaymentChargeOverview: FC<FieldBaseProps> = ({ application }) => {
           <Box
             paddingTop={1}
             display="flex"
-            key={item.chargeItemCode}
+            key={item?.chargeItemCode}
             justifyContent="spaceBetween"
           >
             <Text>{item?.chargeItemName}</Text>

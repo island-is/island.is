@@ -1,12 +1,14 @@
 module.exports = {
   displayName: 'service-portal-licenses',
-  preset: '../../../jest.preset.js',
+  preset: './jest.preset.js',
+  rootDir: '../../..',
+  roots: [__dirname],
   transform: {
     '^.+\\.[tj]sx?$': [
       'babel-jest',
-      { cwd: __dirname, configFile: './babel-jest.config.json' },
+      { cwd: __dirname, configFile: `${__dirname}/babel-jest.config.json` },
     ],
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
-  coverageDirectory: '../../../coverage/libs/service-portal/licenses',
+  coverageDirectory: '<rootDir>/coverage/libs/service-portal/licenses',
 }

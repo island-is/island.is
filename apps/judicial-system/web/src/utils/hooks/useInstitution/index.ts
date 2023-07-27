@@ -29,29 +29,30 @@ const institutions: {
 const useInstitution = (skip = false) => {
   const { data, loading } = useQuery<InstitutionData>(InstitutionsQuery, {
     skip: skip || Boolean(rawInstitutions),
+    errorPolicy: 'all',
   })
 
   if (data && data.institutions && !rawInstitutions) {
     rawInstitutions = data.institutions
 
     institutions.courts = rawInstitutions.filter(
-      (institution) => institution.type === InstitutionType.Court,
+      (institution) => institution.type === InstitutionType.COURT,
     )
 
     institutions.allCourts = rawInstitutions.filter(
       (institution) =>
-        institution.type === InstitutionType.Court ||
-        institution.type === InstitutionType.HighCourt,
+        institution.type === InstitutionType.COURT ||
+        institution.type === InstitutionType.HIGH_COURT,
     )
 
     institutions.prosecutorsOffices = rawInstitutions.filter(
-      (institution) => institution.type === InstitutionType.ProsecutorsOffice,
+      (institution) => institution.type === InstitutionType.PROSECUTORS_OFFICE,
     )
 
     institutions.prisonInstitutions = rawInstitutions.filter(
       (institution) =>
-        institution.type === InstitutionType.Prison ||
-        institution.type === InstitutionType.PrisonAdmin,
+        institution.type === InstitutionType.PRISON ||
+        institution.type === InstitutionType.PRISON_ADMIN,
     )
     institutions.loaded = true
   }

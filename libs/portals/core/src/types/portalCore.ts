@@ -1,4 +1,5 @@
-import { FC, LazyExoticComponent } from 'react'
+import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
+import { FC } from 'react'
 import { MessageDescriptor } from 'react-intl'
 import { RouteObject } from 'react-router-dom'
 
@@ -64,6 +65,10 @@ export interface PortalModuleProps {
   userInfo: User
 }
 
+export interface PortalModuleRoutesProps extends PortalModuleProps {
+  client: ApolloClient<NormalizedCacheObject>
+}
+
 /**
  * A rendered out by the render value of a  portal route
  */
@@ -72,16 +77,9 @@ export type PortalModuleComponent<Props = Record<string, unknown>> = FC<
 >
 
 /**
- * The render value of a  portal route
- */
-export type PortalModuleRenderValue<
-  Props = Record<string, unknown>
-> = LazyExoticComponent<PortalModuleComponent<Props>>
-
-/**
  * A route defined by a portal module. Note that we are extending the React router RouteObject
  */
-export type PortalRoute = RouteObject & {
+export type PortalRoute = Omit<RouteObject, 'children'> & {
   /**
    * The title of this route
    */
@@ -113,9 +111,9 @@ export type PortalRoute = RouteObject & {
   key?: string
 
   /**
-   * The render value of this component
+   * Child routes of this route
    */
-  render?: (props: PortalModuleProps) => PortalModuleRenderValue
+  children?: PortalRoute[]
 }
 
 export type PortalType = 'admin' | 'my-pages'
@@ -131,7 +129,7 @@ export interface PortalModule {
    * The  portal shell will define these as routes
    * within itself and use the provided render function to render out the component
    */
-  routes: (props: PortalModuleProps) => PortalRoute[]
+  routes: (props: PortalModuleRoutesProps) => PortalRoute[]
 
   /**
    * Works the same way as routes.

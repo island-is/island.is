@@ -1,4 +1,7 @@
-import { EphemeralStateLifeCycle } from '@island.is/application/core'
+import {
+  coreHistoryMessages,
+  EphemeralStateLifeCycle,
+} from '@island.is/application/core'
 import {
   Application,
   ApplicationContext,
@@ -13,9 +16,8 @@ import {
   IdentityApi,
 } from '@island.is/application/types'
 import { PaymentPlanPrerequisitesApi } from '../dataProviders'
-import { Features } from '@island.is/feature-flags'
 import { PublicDebtPaymentPlanSchema } from './dataSchema'
-import { application } from './messages'
+import { application, conclusion } from './messages'
 import { AuthDelegationType } from 'delegation'
 
 const States = {
@@ -45,14 +47,7 @@ const PublicDebtPaymentPlanTemplate: ApplicationTemplate<
   type: ApplicationTypes.PUBLIC_DEBT_PAYMENT_PLAN,
   name: application.name,
   institution: application.institutionName,
-  readyForProduction: true,
-  allowedDelegations: [
-    {
-      type: AuthDelegationType.ProcurationHolder,
-      featureFlag:
-        Features.applicationTemplatePublicDeptPaymentPlanAllowDelegation,
-    },
-  ],
+  allowedDelegations: [{ type: AuthDelegationType.ProcurationHolder }],
   translationNamespaces: [
     ApplicationConfigurations.PublicDebtPaymentPlan.translation,
   ],
@@ -67,9 +62,14 @@ const PublicDebtPaymentPlanTemplate: ApplicationTemplate<
           actionCard: {
             title: application.name,
             description: application.description,
+            historyLogs: {
+              logMessage: coreHistoryMessages.applicationStarted,
+              onEvent: DefaultEvents.SUBMIT,
+            },
           },
           progress: 0.5,
           lifecycle: EphemeralStateLifeCycle,
+
           roles: [
             {
               id: Roles.APPLICANT,
@@ -101,6 +101,16 @@ const PublicDebtPaymentPlanTemplate: ApplicationTemplate<
           actionCard: {
             title: application.name,
             description: application.description,
+            historyLogs: [
+              {
+                logMessage: coreHistoryMessages.applicationSent,
+                onEvent: DefaultEvents.SUBMIT,
+              },
+              {
+                logMessage: coreHistoryMessages.applicationAborted,
+                onEvent: DefaultEvents.ABORT,
+              },
+            ],
           },
           progress: 0.5,
           // Application is only suppose to live for an hour
@@ -155,7 +165,11 @@ const PublicDebtPaymentPlanTemplate: ApplicationTemplate<
           status: 'completed',
           actionCard: {
             title: application.name,
-            description: application.description,
+            pendingAction: {
+              title: conclusion.general.alertTitle,
+              content: conclusion.general.alertMessage,
+              displayStatus: 'success',
+            },
           },
           onEntry: defineTemplateApi({
             action: API_MODULE_ACTIONS.sendApplication,

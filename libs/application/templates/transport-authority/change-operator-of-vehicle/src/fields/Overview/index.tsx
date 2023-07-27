@@ -1,9 +1,15 @@
 import { DefaultEvents, FieldBaseProps } from '@island.is/application/types'
 import { FC, useState } from 'react'
-import { Box, Text, Divider, Button } from '@island.is/island-ui/core'
+import {
+  Box,
+  Text,
+  Divider,
+  Button,
+  InputError,
+} from '@island.is/island-ui/core'
 import { ReviewScreenProps } from '../../shared'
 import { useLocale } from '@island.is/localization'
-import { overview, review } from '../../lib/messages'
+import { overview, review, error as errorMsg } from '../../lib/messages'
 import {
   VehicleSection,
   OwnerSection,
@@ -30,19 +36,23 @@ export const Overview: FC<FieldBaseProps & ReviewScreenProps> = ({
   const [rejectModalVisibility, setRejectModalVisibility] = useState<boolean>(
     false,
   )
-  const [submitApplication] = useMutation(SUBMIT_APPLICATION, {
+  const [submitApplication, { error }] = useMutation(SUBMIT_APPLICATION, {
     onError: (e) => {
       console.error(e, e.message)
       return
     },
   })
+
   const [loading, setLoading] = useState<boolean>(false)
+
   const onBackButtonClick = () => {
     setStep && setStep('states')
   }
+
   const onRejectButtonClick = () => {
     setRejectModalVisibility(true)
   }
+
   const onApproveButtonClick = async () => {
     setLoading(true)
     const res = await submitApplication({
@@ -75,6 +85,13 @@ export const Overview: FC<FieldBaseProps & ReviewScreenProps> = ({
         <OwnerSection {...props} reviewerNationalId={reviewerNationalId} />
         <CoOwnersSection {...props} reviewerNationalId={reviewerNationalId} />
         <OperatorSection {...props} reviewerNationalId={reviewerNationalId} />
+
+        {error && (
+          <InputError
+            errorMessage={errorMsg.submitApplicationError.defaultMessage}
+          />
+        )}
+
         <Box marginTop={14}>
           <Divider />
           <Box display="flex" justifyContent="spaceBetween" paddingY={5}>

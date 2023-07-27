@@ -16,7 +16,11 @@ interface Props {
 }
 
 const ApiScopeResourceForm: React.FC<Props> = (props) => {
-  const { register, handleSubmit, errors } = useForm<ApiResourceScopeDTO>()
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<ApiResourceScopeDTO>()
   const [apiResources, setApiResources] = useState<ApiResource[]>([])
   const [selectedApiResource, setSelectedApiResource] = useState<ApiResource>(
     new ApiResource(),
@@ -105,10 +109,10 @@ const ApiScopeResourceForm: React.FC<Props> = (props) => {
                   <select
                     id="apiResourceName"
                     className="api-resource-scope-form__select"
-                    name="apiResourceName"
+                    {...register('apiResourceName', {
+                      onChange: (e) => setSelectedItem(e.target.value),
+                    })}
                     title={localization.fields['apiResourceName'].helpText}
-                    ref={register()}
-                    onChange={(e) => setSelectedItem(e.target.value)}
                   >
                     <option value={'null'} selected={activeResource === 'null'}>
                       {localization.fields['apiResourceName'].selectAnItem}

@@ -12,16 +12,6 @@ export const payment = {
       defaultMessage: 'Greiðsla',
       description: 'Title of for payment page',
     },
-    tryAgain: {
-      id: 'ta.tvo.application:payment.general.tryAgain',
-      defaultMessage: 'Reyna aftur',
-      description: '',
-    },
-    forwardingToPayment: {
-      id: 'ta.tvo.application:payment.general.forwardingToPayment',
-      defaultMessage: 'Sendi þig áfram á greiðsluveitu...',
-      description: 'Forwarding you to payment handler...',
-    },
   }),
   paymentChargeOverview: defineMessages({
     forPayment: {

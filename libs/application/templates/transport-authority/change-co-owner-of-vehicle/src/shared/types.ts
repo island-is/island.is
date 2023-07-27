@@ -2,6 +2,7 @@ import { z } from 'zod'
 import {
   RejecterSchema,
   UserInformationSchema,
+  CoOwnersSchema,
   OwnerCoOwnersSchema,
 } from '../lib/dataSchema'
 import { MessageDescriptor } from '@formatjs/intl'
@@ -12,6 +13,20 @@ export type VehiclesCurrentVehicle = {
   make?: string
   color?: string
   role?: string
+}
+
+type VehicleValidationErrorMessage = {
+  errorNo?: string | null
+  defaultMessage?: string | null
+}
+
+export type VehiclesCurrentVehicleWithOwnerchangeChecks = {
+  permno?: string
+  make?: string
+  color?: string
+  role?: string
+  isDebtLess?: boolean | null
+  validationErrorMessages?: VehicleValidationErrorMessage[] | null
 }
 
 interface ReviewerProps {
@@ -38,5 +53,6 @@ export interface ReviewScreenProps {
 export type ReviewState = 'states' | 'overview' | 'conclusion'
 
 export type UserInformation = z.TypeOf<typeof UserInformationSchema>
+export type CoOwnersInformation = z.TypeOf<typeof CoOwnersSchema>
 export type OwnerCoOwnersInformation = z.TypeOf<typeof OwnerCoOwnersSchema>
 export type Rejecter = z.TypeOf<typeof RejecterSchema>

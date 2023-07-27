@@ -4,6 +4,14 @@ export interface DriversLicenseCategory {
   issued: Date | null
   expires: Date | null
   comments: string | null
+  validToText?: string | null
+  validToCode?: number | null
+  nr?: string | null
+}
+
+export interface Disqualification {
+  to: Date
+  from: Date
 }
 
 export interface DriversLicense {
@@ -13,12 +21,24 @@ export interface DriversLicense {
   expires?: Date | null
   categories: DriversLicenseCategory[]
   healthRemarks?: string[]
+  disqualification?: Disqualification | null
   birthCountry?: string | null
+}
+
+export interface RemarkCode {
+  index: string
+  name: string
 }
 
 export interface Teacher {
   nationalId: string
   name: string
+}
+
+export interface TeacherV4 {
+  name: string
+  nationalId: string
+  driverLicenseId: number | null | undefined
 }
 
 export interface Juristiction {

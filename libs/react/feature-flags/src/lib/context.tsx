@@ -3,11 +3,14 @@ import {
   createClient,
   FeatureFlagClient,
   FeatureFlagUser,
+  SettingValue,
+  SettingTypeOf,
 } from '@island.is/feature-flags'
 import { useAuth } from '@island.is/auth/react'
 
 const FeatureFlagContext = createContext<FeatureFlagClient>({
-  getValue: (_, defaultValue) => Promise.resolve(defaultValue),
+  getValue: <T extends SettingValue>(_: string, defaultValue: T) =>
+    Promise.resolve(defaultValue as SettingTypeOf<T>),
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   dispose() {},
 })
@@ -41,9 +44,9 @@ export const FeatureFlagProvider: FC<FeatureFlagContextProviderProps> = ({
     const defaultUser = userProp ?? userAuth
 
     return {
-      getValue(
+      getValue<T extends SettingValue>(
         key: string,
-        defaultValue: boolean | string,
+        defaultValue: T,
         user: FeatureFlagUser | undefined = defaultUser,
       ) {
         return featureFlagClient.getValue(key, defaultValue, user)
@@ -77,8 +80,11 @@ export const MockedFeatureFlagProvider: FC<MockedFeatureFlagProviderProps> = ({
         }, {})
       : flags
     return {
-      getValue: async (key, defaultValue) => {
-        return cleanFlags[key] ?? defaultValue
+      getValue: async function <T extends SettingValue>(
+        key: string,
+        defaultValue: T,
+      ) {
+        return (cleanFlags[key] ?? defaultValue) as SettingTypeOf<T>
       },
       // eslint-disable-next-line @typescript-eslint/no-empty-function
       dispose() {},

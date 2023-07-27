@@ -36,7 +36,7 @@ export const GeneralFishingLicenseSchema = z.object({
       }),
     }),
   }),
-  applicant: applicantInformationSchema,
+  applicant: applicantInformationSchema({ phoneRequired: true }),
   shipSelection: z.object({
     ship: z.enum(['0', '1', '2', '3', '4', '5']).refine((x) => x, {
       params: error.requiredRadioField,
@@ -75,7 +75,10 @@ export const GeneralFishingLicenseSchema = z.object({
     attachments: z
       .array(FileSchema)
       .optional()
-      .refine((x) => x === undefined || x.length > 0),
+      .refine((x) => x === undefined || (x.length > 0 && x.length < 3), {
+        params:
+          fishingLicenseFurtherInformation.errorMessages.attachmentLimitError,
+      }),
     railAndRoeNet: z
       .object({
         railnet: z.string().optional(),

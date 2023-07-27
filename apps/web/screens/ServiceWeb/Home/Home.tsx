@@ -28,6 +28,7 @@ import {
   Text,
   TopicCard,
 } from '@island.is/island-ui/core'
+import { sortAlpha } from '@island.is/shared/utils'
 
 import { CustomNextError } from '@island.is/web/units/errors'
 import {
@@ -43,7 +44,6 @@ import {
 } from '@island.is/web/hooks'
 import ContactBanner from '../ContactBanner/ContactBanner'
 import { getSlugPart } from '../utils'
-import sortAlpha from '@island.is/web/utils/sortAlpha'
 import { Locale } from 'locale'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import useLocalLinkTypeResolver from '@island.is/web/hooks/useLocalLinkTypeResolver'
@@ -124,6 +124,7 @@ const Home: Screen<HomeProps> = ({
       )}
       showLogoTitle={!institutionSlugBelongsToMannaudstorg}
       indexableBySearchEngine={institutionSlugBelongsToMannaudstorg}
+      showLogoOnMobileDisplays={!institutionSlugBelongsToMannaudstorg}
     >
       {hasContent && (
         <ServiceWebContext.Consumer>

@@ -7,7 +7,6 @@ import { ReviewGroupProps } from './props'
 import { useLocale } from '@island.is/localization'
 import { useStatefulAnswers } from '../../../hooks/useStatefulAnswers'
 import { NO, YES, parentalLeaveFormMessages } from '../../..'
-import { useFormContext } from 'react-hook-form'
 import { GridColumn, GridRow } from '@island.is/island-ui/core'
 
 export const PersonalAllowance = ({
@@ -16,7 +15,6 @@ export const PersonalAllowance = ({
   goToScreen,
 }: ReviewGroupProps) => {
   const { formatMessage } = useLocale()
-  const { setValue } = useFormContext()
   const [
     { usePersonalAllowance, personalUseAsMuchAsPossible, personalUsage },
   ] = useStatefulAnswers(application)

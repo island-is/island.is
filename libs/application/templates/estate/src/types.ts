@@ -19,7 +19,9 @@ export enum OtherPropertiesEnum {
   ASSETS_ABROAD = 'assetsAbroad',
 }
 
-export type Asset = Partial<EstateAsset & { initial: boolean; dummy?: boolean }>
+export type Asset = Partial<EstateAsset & { initial: boolean }>
+
+export type AssetFormField = Asset & { id: string }
 
 export type Answers = {
   additionalInfo: string
@@ -55,13 +57,6 @@ export type Answers = {
   }
 } & FormValue
 
-export interface ElectPersonType {
-  roleConfirmation: RoleConfirmationEnum
-  electedPersonName?: string
-  electedPersonNationalId?: string
-  lookupError?: boolean
-}
-
 export interface EstateMember {
   name: string
   nationalId: string
@@ -70,31 +65,7 @@ export interface EstateMember {
   dateOfBirth?: string
   custodian?: string
   foreignCitizenship?: ('yes' | 'no')[]
-  dummy: boolean
   enabled?: boolean
-}
-
-export interface Property {
-  propertyNumber: string
-  address?: string
-  initial?: boolean
-}
-
-export interface Vehicle {
-  plateNumber: string
-  numberOfWheels: number
-  weight: number
-  year: number
-  initial?: boolean
-}
-
-export interface Will {
-  nationalId: string
-  hasWill: boolean
-}
-
-export interface Prenup {
-  hasPrenup: boolean
-  nationalId: string
-  partnerNationalId?: string
+  phone?: string
+  email?: string
 }

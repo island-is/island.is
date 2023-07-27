@@ -8,7 +8,7 @@ export const createTerms = (termStrings: string[]): string[] => {
       .split(/\s+/)
     return words
   })
-  return flatten(singleWords).filter((word) => word.length > 1) // fitler out 1 letter words and empty string
+  return flatten(singleWords).filter((word) => word.length > 1) // filter out 1 letter words and empty string
 }
 
 export const extractStringsFromObject = (
@@ -58,7 +58,7 @@ const getProcessEntries = (contentList: object[]) =>
 
 export const numberOfLinks = (contentList: object[]) => {
   const processLinks = getProcessEntries(contentList).map(
-    (entry) => new URL(entry.processLink),
+    (entry) => new URL(entry.processLink, 'https://island.is'),
   )
   const fillAndSignProcessLinks = processLinks.filter((url) =>
     url.hostname.includes('dropandsign.is'),

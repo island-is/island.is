@@ -62,7 +62,7 @@ describe('NotificationController - Send ready for court notification', () => {
       expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
         {
           type: MessageType.SEND_READY_FOR_COURT_NOTIFICATION,
-          userId,
+          user,
           caseId,
         },
       ])
@@ -85,10 +85,10 @@ describe('NotificationController - Send ready for court notification', () => {
       expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
         {
           type: MessageType.SEND_READY_FOR_COURT_NOTIFICATION,
-          userId,
+          user,
           caseId,
         },
-        { type: MessageType.DELIVER_REQUEST_TO_COURT, userId, caseId },
+        { type: MessageType.DELIVER_REQUEST_TO_COURT, user, caseId },
       ])
       expect(then.result).toEqual({ notificationSent: true })
     })

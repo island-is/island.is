@@ -46,7 +46,6 @@ import {
 import { CaseFileExistsGuard } from './guards/caseFileExists.guard'
 import { CurrentCaseFile } from './guards/caseFile.decorator'
 import { ViewCaseFileGuard } from './guards/viewCaseFile.guard'
-import { defenderFileRule } from './guards/rolesRules'
 import { CreateFileDto } from './dto/createFile.dto'
 import { CreatePresignedPostDto } from './dto/createPresignedPost.dto'
 import { UpdateFilesDto } from './dto/updateFile.dto'
@@ -66,7 +65,7 @@ export class FileController {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  @UseGuards(RolesGuard, CaseExistsGuard, CaseWriteGuard, CaseNotCompletedGuard)
+  @UseGuards(RolesGuard, CaseExistsGuard, CaseWriteGuard)
   @RolesRules(
     prosecutorRule,
     representativeRule,
@@ -89,7 +88,7 @@ export class FileController {
     return this.fileService.createPresignedPost(theCase, createPresignedPost)
   }
 
-  @UseGuards(RolesGuard, CaseExistsGuard, CaseWriteGuard, CaseNotCompletedGuard)
+  @UseGuards(RolesGuard, CaseExistsGuard, CaseWriteGuard)
   @RolesRules(
     prosecutorRule,
     representativeRule,
@@ -113,10 +112,10 @@ export class FileController {
   }
 
   @UseGuards(
-    CaseFileExistsGuard,
     RolesGuard,
     CaseExistsGuard,
     CaseReadGuard,
+    CaseFileExistsGuard,
     ViewCaseFileGuard,
   )
   @RolesRules(
@@ -125,11 +124,10 @@ export class FileController {
     judgeRule,
     registrarRule,
     assistantRule,
-    defenderFileRule,
   )
   @Get('file/:fileId/url')
   @ApiOkResponse({
-    type: PresignedPost,
+    type: SignedUrl,
     description: 'Gets a signed url for a case file',
   })
   getCaseFileSignedUrl(
@@ -144,13 +142,7 @@ export class FileController {
     return this.fileService.getCaseFileSignedUrl(caseFile)
   }
 
-  @UseGuards(
-    RolesGuard,
-    CaseExistsGuard,
-    CaseWriteGuard,
-    CaseNotCompletedGuard,
-    CaseFileExistsGuard,
-  )
+  @UseGuards(RolesGuard, CaseExistsGuard, CaseWriteGuard, CaseFileExistsGuard)
   @RolesRules(prosecutorRule, representativeRule, registrarRule, judgeRule)
   @Delete('file/:fileId')
   @ApiOkResponse({
@@ -203,7 +195,8 @@ export class FileController {
   @RolesRules(prosecutorRule, representativeRule)
   @Patch('files')
   @ApiOkResponse({
-    type: Boolean,
+    type: CaseFile,
+    isArray: true,
     description: 'Updates multiple files of the case',
   })
   updateFiles(

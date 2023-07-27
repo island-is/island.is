@@ -36,11 +36,18 @@ export type {
 
 export {
   UserRole,
-  isExtendedCourtRole,
-  isCourtRole,
-  courtRoles,
-  isProsecutionRole,
   prosecutionRoles,
+  isProsecutionRole,
+  isProsecutionUser,
+  courtRoles,
+  isCourtRole,
+  extendedCourtRoles,
+  isExtendedCourtRole,
+  isDistrictCourtUser,
+  appealsCourtRoles,
+  isAppealsCourtUser,
+  isPrisonSystemUser,
+  isDefenceUser,
 } from './lib/user'
 export type { User, CreateUser, UpdateUser } from './lib/user'
 
@@ -54,6 +61,7 @@ export {
   CaseCustodyRestrictions,
   CaseAppealDecision,
   CaseDecision,
+  CaseAppealRulingDecision,
   SessionArrangements,
   restrictionCases,
   investigationCases,
@@ -64,7 +72,10 @@ export {
   isAcceptingCaseDecision,
   completedCaseStates,
   hasCaseBeenAppealed,
-  SubpoenaType,
+  CaseAppealState,
+  getAppealInfo,
+  getStatementDeadline,
+  getAppealedDate,
 } from './lib/case'
 export type {
   Case,
@@ -85,6 +96,11 @@ export type {
   UploadPoliceCaseFileResponse,
 } from './lib/policeFile'
 
-export { IndictmentCountOffense } from './lib/indictmentCount'
+export {
+  IndictmentCountOffense,
+  Substance,
+  offenseSubstances,
+} from './lib/indictmentCount'
+export type { SubstanceMap } from './lib/indictmentCount'
 
 export type { CourtDocument } from './lib/courtDocument'

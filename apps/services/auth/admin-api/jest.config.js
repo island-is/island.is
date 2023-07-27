@@ -1,12 +1,12 @@
 module.exports = {
-  preset: '../../../../jest.preset.js',
-  coverageDirectory: '../../../../coverage/apps/services/auth/admin-api',
-  setupFiles: ['./test/environment.jest.ts'],
-  setupFilesAfterEnv: ['./test/setup.ts'],
-  moduleFileExtensions: ['ts', 'js', 'html', 'json'],
+  preset: './jest.preset.js',
+  rootDir: '../../../..',
+  roots: [__dirname],
+  coverageDirectory: '<rootDir>/coverage/apps/services/auth/admin-api',
   globals: {
-    'ts-jest': { tsconfig: '<rootDir>/tsconfig.spec.json' },
+    'ts-jest': { tsconfig: `${__dirname}/tsconfig.spec.json` },
   },
+  testTimeout: 10000,
   displayName: 'services-auth-admin-api',
   testEnvironment: 'node',
 }

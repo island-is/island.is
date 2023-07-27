@@ -10,11 +10,12 @@ import {
   UseGuards,
   Delete,
   Body,
+  VERSION_NEUTRAL,
 } from '@nestjs/common'
 import {
+  ApiExcludeController,
   ApiOkResponse,
   ApiQuery,
-  ApiTags,
   getSchemaPath,
 } from '@nestjs/swagger'
 import {
@@ -37,8 +38,8 @@ import { environment } from '../../../environments/'
 const namespace = `${environment.audit.defaultNamespace}/grant-type`
 
 @UseGuards(IdsUserGuard, ScopesGuard)
-@ApiTags('grants')
-@Controller('backend/grants')
+@ApiExcludeController()
+@Controller({ path: 'grants', version: [VERSION_NEUTRAL, '1'] })
 @Audit({ namespace })
 export class GrantTypeController {
   constructor(

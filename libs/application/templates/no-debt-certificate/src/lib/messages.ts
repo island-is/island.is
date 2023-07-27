@@ -143,11 +143,6 @@ export const m = defineMessages({
     description:
       'You can also find the no debt certificate for companies in your inbox',
   },
-  noDebtCertificateInboxLink: {
-    id: 'ndc.application:noDebtCertificateInboxLink',
-    defaultMessage: 'https://island.is/minarsidur/postholf',
-    description: 'Link to the island.is inbox',
-  },
   downloadNoDebtCertificate: {
     id: 'ndc.application:downloadNoDebtCertificate',
     defaultMessage: 'Hlaða niður skuldleysisvottorði',
@@ -179,5 +174,11 @@ export const m = defineMessages({
     defaultMessage:
       'Staðfesting á skuldleysi fékkst ekki úr gagnagrunni Fjársýslu ríkisins',
     description: '',
+  },
+  pendingActionApplicationCompletedTitle: {
+    id: 'ndc.application:pendingActionApplicationCompletedTitle',
+    defaultMessage:
+      'Umsókn þín hefur verið móttekin og er vottorðið aðgengilegt í stafrænu pósthólfi á Ísland.is.',
+    description: 'Title of pending action',
   },
 })

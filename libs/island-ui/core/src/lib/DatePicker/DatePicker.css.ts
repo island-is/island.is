@@ -94,11 +94,21 @@ export const value = style({
 export const customHeaderContainer = style({
   display: 'flex',
   justifyContent: 'space-between',
-  borderTop: `1px solid ${theme.color.blue200}`,
   borderBottom: `1px solid ${theme.color.blue200}`,
   paddingTop: theme.spacing[2],
   paddingBottom: theme.spacing[2],
   marginBottom: theme.spacing[2],
+  position: 'relative',
+  '::before': {
+    content: '""',
+    display: 'block',
+    position: 'absolute',
+    top: 0,
+    height: '1px',
+    left: `-${theme.spacing[3] - 3}px`,
+    right: `-${theme.spacing[3] - 3}px`,
+    background: theme.color.blue200,
+  },
 })
 
 export const headerSelect = style({
@@ -140,7 +150,7 @@ export const popper = style({
   right: '0',
   width: '100%',
   top: '65px !important',
-  margin: '0 !important',
+  padding: '0 !important',
   ...themeUtils.responsiveStyle({
     md: {
       top: '70px !important',
@@ -184,6 +194,12 @@ export const popperWithoutLabel = style({
   }),
 })
 
+export const popperInline = style({
+  position: `relative !important` as never,
+  transform: 'none !important',
+  marginBottom: '-7px',
+})
+
 // Overwrite default ReactDatepicker styles
 globalStyle(`${root}.island-ui-datepicker .react-datepicker`, {
   display: 'block',
@@ -209,6 +225,7 @@ globalStyle(
     fontWeight: 600,
     backgroundColor: `${theme.color.transparent}`,
     borderBottom: 'none',
+    paddingBottom: '0',
   },
 )
 
@@ -216,7 +233,7 @@ globalStyle(`${root}.island-ui-datepicker .react-datepicker__month-container`, {
   float: 'none',
 })
 globalStyle(`${root}.island-ui-datepicker .react-datepicker__month`, {
-  margin: `0 0 ${theme.spacing[2]}px 0`,
+  margin: `0`,
 })
 globalStyle(`${root}.island-ui-datepicker .react-datepicker__day-names`, {
   marginBottom: '3px',

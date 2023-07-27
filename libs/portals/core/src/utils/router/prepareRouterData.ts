@@ -1,3 +1,4 @@
+import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
 import { arrangeRoutes, filterEnabledModules } from '../modules'
 import { FeatureFlagClient } from '@island.is/feature-flags'
 import { User } from '@island.is/shared/types'
@@ -7,6 +8,7 @@ export type PrepareRouterDataProps = {
   userInfo: User
   featureFlagClient: FeatureFlagClient
   modules: PortalModule[]
+  client: ApolloClient<NormalizedCacheObject>
 }
 
 export type PrepareRouterDataReturnType = {
@@ -20,6 +22,7 @@ export type PrepareRouterDataReturnType = {
  */
 export const prepareRouterData = async ({
   modules: initialModules,
+  client,
   ...rest
 }: PrepareRouterDataProps): Promise<PrepareRouterDataReturnType> => {
   const modules = await filterEnabledModules({
@@ -29,6 +32,7 @@ export const prepareRouterData = async ({
 
   const routes = await arrangeRoutes({
     modules: Object.values(modules),
+    client,
     ...rest,
   })
 

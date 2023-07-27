@@ -10,15 +10,15 @@ import {
   InputError,
   SkeletonLoader,
 } from '@island.is/island-ui/core'
-import { VehiclesCurrentVehicle } from '../../shared'
+import {
+  VehiclesCurrentVehicle,
+  VehiclesCurrentVehicleWithPlateOrderChecks,
+} from '../../shared'
 import { error, information } from '../../lib/messages'
 import { SelectController } from '@island.is/shared/form-fields'
 import { useFormContext } from 'react-hook-form'
 import { getValueViaPath } from '@island.is/application/core'
-import {
-  GetVehicleDetailInput,
-  VehiclesCurrentVehicleWithPlateOrderChecks,
-} from '@island.is/api/schema'
+import { GetVehicleDetailInput } from '@island.is/api/schema'
 import { useLazyVehicleDetails } from '../../hooks/useLazyVehicleDetails'
 
 interface VehicleSearchFieldProps {
@@ -29,7 +29,7 @@ export const VehicleSelectField: FC<
   VehicleSearchFieldProps & FieldBaseProps
 > = ({ currentVehicleList, application, errors }) => {
   const { formatMessage } = useLocale()
-  const { register } = useFormContext()
+  const { setValue } = useFormContext()
 
   const vehicleValue = getValueViaPath(
     application.answers,
@@ -49,7 +49,7 @@ export const VehicleSelectField: FC<
           make: currentVehicle?.make || '',
           color: currentVehicle?.color || '',
           role: currentVehicle?.role,
-          duplicateOrderExists: false,
+          validationErrorMessages: [],
         }
       : null,
   )
@@ -81,20 +81,26 @@ export const VehicleSelectField: FC<
             make: currentVehicle?.make || '',
             color: currentVehicle?.color || '',
             role: currentVehicle?.role,
-            duplicateOrderExists:
-              response?.vehiclePlateOrderChecksByPermno?.duplicateOrderExists,
+            validationErrorMessages:
+              response?.vehiclePlateOrderChecksByPermno
+                ?.validationErrorMessages,
           })
 
-          const disabled =
-            response?.vehiclePlateOrderChecksByPermno?.duplicateOrderExists
+          const disabled = !!response?.vehiclePlateOrderChecksByPermno
+            ?.validationErrorMessages?.length
           setPlate(disabled ? '' : currentVehicle.permno || '')
+          setValue(
+            'pickVehicle.plate',
+            disabled ? '' : currentVehicle.permno || '',
+          )
           setIsLoading(false)
         })
         .catch((error) => console.error(error))
     }
   }
 
-  const disabled = selectedVehicle && selectedVehicle.duplicateOrderExists
+  const disabled =
+    selectedVehicle && !!selectedVehicle.validationErrorMessages?.length
 
   return (
     <Box>
@@ -134,14 +140,24 @@ export const VehicleSelectField: FC<
                   message={
                     <Box>
                       <BulletList>
-                        {selectedVehicle.duplicateOrderExists && (
-                          <Bullet>
-                            {formatMessage(
-                              information.labels.pickVehicle
-                                .duplicateOrderExistsTag,
-                            )}
-                          </Bullet>
-                        )}
+                        {!!selectedVehicle.validationErrorMessages?.length &&
+                          selectedVehicle.validationErrorMessages?.map(
+                            (err) => {
+                              const defaultMessage = err.defaultMessage
+                              const fallbackMessage =
+                                formatMessage(
+                                  error.validationFallbackErrorMessage,
+                                ) +
+                                ' - ' +
+                                err.errorNo
+
+                              return (
+                                <Bullet>
+                                  {defaultMessage || fallbackMessage}
+                                </Bullet>
+                              )
+                            },
+                          )}
                       </BulletList>
                     </Box>
                   }
@@ -151,12 +167,6 @@ export const VehicleSelectField: FC<
           </Box>
         )}
       </Box>
-      <input
-        type="hidden"
-        value={plate}
-        ref={register({ required: true })}
-        name="pickVehicle.plate"
-      />
       {!isLoading && plate.length === 0 && errors && errors.pickVehicle && (
         <InputError errorMessage={formatMessage(error.requiredValidVehicle)} />
       )}

@@ -238,6 +238,7 @@ export class CaseResolver {
   }
 
   @Mutation(() => Case, { nullable: true })
+  @UseInterceptors(CaseInterceptor)
   createCourtCase(
     @Args('input', { type: () => CreateCourtCaseInput })
     input: CreateCourtCaseInput,
@@ -260,6 +261,8 @@ export class CaseResolver {
     @Context('dataSources') { backendApi }: { backendApi: BackendApi },
   ): Promise<Notification[]> {
     const { id } = theCase
+
+    this.logger.debug(`Resolving notifications for case ${id}`)
 
     return backendApi
       .getCaseNotifications(id)

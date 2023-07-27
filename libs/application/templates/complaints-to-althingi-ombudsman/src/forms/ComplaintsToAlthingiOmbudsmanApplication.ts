@@ -6,6 +6,7 @@ import {
   buildFileUploadField,
   buildForm,
   buildMultiField,
+  buildPhoneField,
   buildRadioField,
   buildSection,
   buildSubmitField,
@@ -21,7 +22,7 @@ import {
 } from '@island.is/application/types'
 import {
   applicantInformationMultiField,
-  formConclusionSection,
+  buildFormConclusionSection,
 } from '@island.is/application/ui-forms'
 
 import Logo from '../assets/Logo'
@@ -92,7 +93,7 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
     buildSection({
       id: 'information',
       title: section.information,
-      children: [applicantInformationMultiField],
+      children: [applicantInformationMultiField({ phoneRequired: true })],
     }),
     buildSection({
       id: 'section.complainedFor',
@@ -153,6 +154,7 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
             buildTextField({
               id: 'complainedForInformation.postcode',
               title: information.aboutTheComplainer.postcode,
+              format: '###',
               backgroundColor: 'blue',
               required: true,
               width: 'half',
@@ -168,18 +170,15 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
               id: 'complainedForInformation.email',
               title: information.aboutTheComplainer.email,
               backgroundColor: 'blue',
-              required: true,
               width: 'half',
               variant: 'email',
             }),
-            buildTextField({
+            buildPhoneField({
               id: 'complainedForInformation.phone',
               title: information.aboutTheComplainer.phone,
-              format: '###-####',
-              backgroundColor: 'blue',
-              required: true,
               width: 'half',
-              variant: 'tel',
+              backgroundColor: 'blue',
+              defaultValue: '',
             }),
             buildCustomField(
               {
@@ -362,19 +361,19 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
             }),
           ],
         }),
-        buildSubSection({
-          id: 'complaint.section.appeals',
-          title: complaintInformation.appealsSectionTitle,
-          children: [
-            buildRadioField({
-              id: 'appeals',
-              title: complaintInformation.appealsHeader,
-              width: 'half',
-              options: [
-                { label: shared.general.yes, value: YES },
-                { label: shared.general.no, value: NO },
-              ],
-            }),
+      ],
+    }),
+    buildSection({
+      id: 'complaint.section.appeals',
+      title: complaintInformation.appealsSectionTitle,
+      children: [
+        buildRadioField({
+          id: 'appeals',
+          title: complaintInformation.appealsHeader,
+          width: 'half',
+          options: [
+            { label: shared.general.yes, value: YES },
+            { label: shared.general.no, value: NO },
           ],
         }),
       ],
@@ -405,6 +404,17 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
               doesNotRequireAnswer: true,
               condition: (answers: FormValue) =>
                 answers.preexistingComplaint === YES,
+            }),
+            buildCustomField({
+              id:
+                'preexistingComplaint.preexistingComplaintAlternativeAlertMessage',
+              title: preexistingComplaint.alternativeAlertMessage.title,
+              component: 'FieldAlertMessage',
+              description:
+                preexistingComplaint.alternativeAlertMessage.description,
+              doesNotRequireAnswer: true,
+              condition: (answers: FormValue) =>
+                answers.preexistingComplaint === NO,
             }),
           ],
         }),
@@ -480,11 +490,12 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
         }),
       ],
     }),
-    formConclusionSection({
+    buildFormConclusionSection({
       alertTitle: confirmation.general.alertTitle,
       expandableHeader: confirmation.information.title,
       expandableIntro: confirmation.information.intro,
       expandableDescription: confirmation.information.bulletList,
+      sectionTitle: confirmation.general.title,
     }),
   ],
 })
