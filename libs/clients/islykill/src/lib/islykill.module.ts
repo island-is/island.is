@@ -16,7 +16,7 @@ export class IslykillApiModule {
     function lykillError(errorMsg: any) {
       logger.error(errorMsg)
     }
-    
+
     let cert: Buffer | undefined
     try {
       if (!config.cert) {
