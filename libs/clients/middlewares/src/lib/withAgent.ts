@@ -6,8 +6,7 @@ export type AgentOptions = HttpsOptions
 
 // Cherry-pick the supported types of certs from TLS
 export interface ClientCertificateOptions {
-  pfx: NonNullable<SecureContextOptions['pfx']>
-  passphrase?: SecureContextOptions['passphrase']
+  cert: SecureContextOptions['cert']
 }
 
 export interface AgentMiddlewareOptions extends FetchMiddlewareOptions {

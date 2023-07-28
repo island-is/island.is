@@ -8,7 +8,6 @@ import { Configuration, IslyklarApi } from '../../gen/fetch'
 
 export interface IslykillApiModuleConfig {
   cert: string
-  passphrase: string
   basePath: string
 }
 
@@ -17,8 +16,8 @@ export class IslykillApiModule {
     function lykillError(errorMsg: any) {
       logger.error(errorMsg)
     }
-
-    let pfx: Buffer | undefined
+    
+    let cert: Buffer | undefined
     try {
       if (!config.cert) {
         throw Error('IslykillApiModule certificate not provided')
@@ -28,15 +27,10 @@ export class IslykillApiModule {
         encoding: 'base64',
       })
 
-      pfx = Buffer.from(data, 'base64')
+      cert = Buffer.from(data, 'base64')
     } catch (err) {
       lykillError(err)
     }
-
-    if (!config.passphrase) {
-      logger.error('IslykillApiModule secret not provided.')
-    }
-    const passphrase = config.passphrase
 
     return {
       module: IslykillApiModule,
@@ -50,9 +44,8 @@ export class IslykillApiModule {
                 fetchApi: createEnhancedFetch({
                   name: 'clients-islykill',
                   timeout: 20000,
-                  clientCertificate: pfx && {
-                    pfx,
-                    passphrase,
+                  clientCertificate: cert && {
+                    cert,
                   },
                 }),
               }),
