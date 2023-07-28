@@ -13,8 +13,12 @@ import { AuthDelegationType } from '@island.is/shared/types'
 import { createCurrentUser } from '@island.is/testing/fixtures'
 import {
   ActorDelegationsApi,
+  AuthPublicApiClientConfig,
   AuthPublicApiClientModule,
 } from '@island.is/clients/auth/public-api'
+import { ConfigModule } from '@island.is/nest/config'
+import { ApplicationValidationService } from '../tools/applicationTemplateValidation.service'
+import { LoggingModule } from '@island.is/logging'
 
 const testApplicationTemplate = createApplicationTemplate()
 
@@ -75,6 +79,7 @@ describe('ApplicationAccesService', () => {
           provide: ApplicationService,
           useValue: {},
         },
+        ApplicationValidationService,
         {
           provide: FeatureFlagService,
           useClass: jest.fn(() => ({
@@ -101,7 +106,14 @@ describe('ApplicationAccesService', () => {
         },
         { provide: ActorDelegationsApi, useValue: actorDelegationsApiMock }, // provide the mock
       ],
-      imports: [AuthPublicApiClientModule],
+      imports: [
+        ConfigModule.forRoot({
+          isGlobal: true,
+          load: [AuthPublicApiClientConfig],
+        }),
+        AuthPublicApiClientModule,
+        LoggingModule,
+      ],
     }).compile()
 
     applicationAccessService = moduleRef.get<ApplicationAccessService>(
@@ -257,25 +269,20 @@ describe('ApplicationAccesService', () => {
     })
   })
 
-  describe('shouldShowApplicationOnOverview', () => {
+  describe('hasAccessToTemplate', () => {
     it('should show on Overview if delegations and flags are correct', async () => {
       const allowedDelegation: AllowedDelegation = {
         type: AuthDelegationType.ProcurationHolder,
         featureFlag: Features.testing,
       }
-      const applicationInDraft = createApplication({
-        state: 'draft',
-        applicant: procurationHolderUser.nationalId,
-      })
 
       const template = createApplicationTemplate({
         allowedDelegations: [allowedDelegation],
       })
 
-      const results = await applicationAccessService.shouldShowApplicationOnOverview(
-        applicationInDraft,
-        procurationHolderUser,
+      const results = await applicationAccessService.hasAccessToTemplate(
         template,
+        procurationHolderUser,
       )
 
       expect(results).toBe(true)
@@ -287,19 +294,13 @@ describe('ApplicationAccesService', () => {
         featureFlag: Features.testing,
       }
 
-      const applicationInDraft = createApplication({
-        state: 'draft',
-        applicant: procurationHolderUser.nationalId,
-      })
-
       const template = createApplicationTemplate({
         allowedDelegations: [allowedDelegation],
       })
 
-      const results = await applicationAccessService.shouldShowApplicationOnOverview(
-        applicationInDraft,
-        procurationHolderUser,
+      const results = await applicationAccessService.hasAccessToTemplate(
         template,
+        procurationHolderUser,
       )
 
       expect(results).toBe(false)
@@ -311,48 +312,30 @@ describe('ApplicationAccesService', () => {
         featureFlag: Features.testing,
       }
 
-      const applicationInDraft = createApplication({
-        state: 'draft',
-        applicant: legalGuardianUser.nationalId,
-      })
-
       const template = createApplicationTemplate({
         allowedDelegations: [allowedDelegation],
       })
 
-      const results = await applicationAccessService.shouldShowApplicationOnOverview(
-        applicationInDraft,
-        procurationHolderUser,
+      const results = await applicationAccessService.hasAccessToTemplate(
         template,
+        procurationHolderUser,
       )
 
       expect(results).toBe(false)
     })
 
     it('should return true when application is in draft and user is applicant, shouldBeListedForRole defined as true for applicant', async () => {
-      const applicationInDraft = createApplication({
-        state: 'draft',
-        applicant: '111111-3000',
-      })
-
-      const results = await applicationAccessService.shouldShowApplicationOnOverview(
-        applicationInDraft,
-        createMockUser(),
+      const results = await applicationAccessService.hasAccessToTemplate(
         testApplicationTemplate,
+        createMockUser(),
       )
       expect(results).toBe(true)
     })
 
     it('should return true when application is in draft and user is reviewer, shouldBeListedForRole is undefined for reviewer', async () => {
-      const applicationInDraft = createApplication({
-        state: 'draft',
-        applicant: '111111-3000',
-      })
-
-      const results = await applicationAccessService.shouldShowApplicationOnOverview(
-        applicationInDraft,
-        createMockUser(),
+      const results = await applicationAccessService.hasAccessToTemplate(
         testApplicationTemplate,
+        createMockUser(),
       )
       expect(results).toBe(true)
     })
@@ -362,7 +345,7 @@ describe('ApplicationAccesService', () => {
         state: 'inReview',
         applicant: '111111-3000',
       })
-      const results = await applicationAccessService.shouldShowApplicationOnOverview(
+      const results = applicationAccessService.evaluateIfRoleShouldBeListed(
         applicationInReview,
         createMockUser('111111-3001'),
         testApplicationTemplate,
@@ -371,24 +354,18 @@ describe('ApplicationAccesService', () => {
     })
 
     it('should return true when application is in review and user is applicant, shouldBeListed defined as true', async () => {
-      const applicationInReview = createApplication({
-        state: 'inReview',
-        applicant: '111111-3000',
-      })
-      const results = await applicationAccessService.shouldShowApplicationOnOverview(
-        applicationInReview,
-        createMockUser(),
+      const results = await applicationAccessService.hasAccessToTemplate(
         testApplicationTemplate,
+        createMockUser(),
       )
       expect(results).toBe(true)
     })
 
     it('should return false for shouldShowOnOverview if no template provided', async () => {
-      const application = createApplication()
       const user = createCurrentUser()
 
-      const results = await applicationAccessService.shouldShowApplicationOnOverview(
-        application,
+      const results = await applicationAccessService.hasAccessToTemplate(
+        undefined,
         user,
       )
 
@@ -396,21 +373,18 @@ describe('ApplicationAccesService', () => {
     })
 
     it('should return false for shouldShowOnOverview if user is acting on behalf but application doesnt allow delegation', async () => {
-      const application = createApplication()
       const user = createCurrentUser({ actor: { nationalId: '111111111111' } })
       const template = createApplicationTemplate()
 
-      const results = await applicationAccessService.shouldShowApplicationOnOverview(
-        application,
-        user,
+      const results = await applicationAccessService.hasAccessToTemplate(
         template,
+        user,
       )
 
       expect(results).toBe(false)
     })
 
     it('should return false for shouldShowOnOverview if user has no delegations but application requires them', async () => {
-      const application = createApplication()
       const user = createCurrentUser({ actor: { nationalId: '111111111111' } })
       const allowedDelegation: AllowedDelegation = {
         type: AuthDelegationType.ProcurationHolder,
@@ -419,17 +393,15 @@ describe('ApplicationAccesService', () => {
         allowedDelegations: [allowedDelegation],
       })
 
-      const results = await applicationAccessService.shouldShowApplicationOnOverview(
-        application,
-        user,
+      const results = await applicationAccessService.hasAccessToTemplate(
         template,
+        user,
       )
 
       expect(results).toBe(false)
     })
 
     it('should return false for shouldShowOnOverview if user has custom delegation but it is not valid', async () => {
-      const application = createApplication()
       const user = createCurrentUser({
         actor: { nationalId: '111111111111' },
         delegationType: AuthDelegationType.Custom,
@@ -443,17 +415,15 @@ describe('ApplicationAccesService', () => {
         requiredScopes: ['correctScope'],
       })
 
-      const results = await applicationAccessService.shouldShowApplicationOnOverview(
-        application,
-        user,
+      const results = await applicationAccessService.hasAccessToTemplate(
         template,
+        user,
       )
 
       expect(results).toBe(false)
     })
 
     it('should return true if user has correct custom delegation and correct scope', async () => {
-      const application = createApplication()
       const user = createCurrentUser({
         actor: { nationalId: '111111111111' },
         delegationType: AuthDelegationType.Custom,
@@ -467,34 +437,30 @@ describe('ApplicationAccesService', () => {
         requiredScopes: ['correctScope'],
       })
 
-      const results = await applicationAccessService.shouldShowApplicationOnOverview(
-        application,
-        user,
+      const results = await applicationAccessService.hasAccessToTemplate(
         template,
+        user,
       )
 
       expect(results).toBe(true)
     })
 
     it('should return true if user is not acting on behalf and is the applicant', async () => {
-      const application = createApplication()
       const user = createCurrentUser({ nationalId: '1234567890' })
       const template = createApplicationTemplate({
         mapUserToRole: (nationalId) =>
           nationalId === '1234567890' ? 'Applicant' : 'Other',
       })
 
-      const results = await applicationAccessService.shouldShowApplicationOnOverview(
-        application,
-        user,
+      const results = await applicationAccessService.hasAccessToTemplate(
         template,
+        user,
       )
 
       expect(results).toBe(true)
     })
 
     it('should return true if user has correct custom delegation, correct scope, and scopeCheck is true', async () => {
-      const application = createApplication()
       const user = createCurrentUser({
         actor: { nationalId: '111111111111' },
         delegationType: AuthDelegationType.Custom,
@@ -510,10 +476,9 @@ describe('ApplicationAccesService', () => {
         requiredScopes: ['correctScope'],
       })
 
-      const results = await applicationAccessService.shouldShowApplicationOnOverview(
-        application,
-        user,
+      const results = await applicationAccessService.hasAccessToTemplate(
         template,
+        user,
         true,
       )
 
@@ -521,7 +486,6 @@ describe('ApplicationAccesService', () => {
     })
 
     it('should return false if user has correct custom delegation, incorrect scope, and scopeCheck is true', async () => {
-      const application = createApplication()
       actorDelegationsApiMock.actorDelegationsControllerFindAll.mockRejectedValue(
         new Error('Error'),
       )
@@ -540,10 +504,9 @@ describe('ApplicationAccesService', () => {
         requiredScopes: ['correctScope'],
       })
 
-      const results = await applicationAccessService.shouldShowApplicationOnOverview(
-        application,
-        user,
+      const results = await applicationAccessService.hasAccessToTemplate(
         template,
+        user,
         true,
       )
 
@@ -554,7 +517,6 @@ describe('ApplicationAccesService', () => {
       actorDelegationsApiMock.actorDelegationsControllerFindAll.mockRejectedValueOnce(
         new Error('Error'),
       )
-      const application = createApplication()
       const user = createCurrentUser({
         actor: { nationalId: '111111111111' },
         delegationType: AuthDelegationType.Custom,
@@ -570,10 +532,9 @@ describe('ApplicationAccesService', () => {
         requiredScopes: ['correctScope'],
       })
 
-      const results = await applicationAccessService.shouldShowApplicationOnOverview(
-        application,
-        user,
+      const results = await applicationAccessService.hasAccessToTemplate(
         template,
+        user,
         true,
       )
 

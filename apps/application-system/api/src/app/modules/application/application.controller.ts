@@ -326,7 +326,6 @@ export class ApplicationController {
     }
 
     const hasAccess = await this.applicationAccessService.hasAccessToTemplate(
-      application,
       template,
       user,
       scopeCheck,

@@ -215,7 +215,6 @@ export class ApplicationAccessService {
   }
 
   private async shouldShowApplicationOnOverview(
-    application: Application,
     user: User,
     template?: ApplicationTemplate<
       ApplicationContext,
@@ -227,7 +226,6 @@ export class ApplicationAccessService {
     if (template === undefined) {
       return false
     }
-    const nationalId = user.nationalId
     const isUserActingOnBehalfOfApplicant = !!user.actor
 
     // if the user is acting on behalf we need to check if it has the allowed delegations for the template
@@ -320,12 +318,13 @@ export class ApplicationAccessService {
   }
 
   async hasAccessToTemplate(
-    application: Application,
-    template: ApplicationTemplate<
-      ApplicationContext,
-      ApplicationStateSchema<EventObject>,
-      EventObject
-    >,
+    template:
+      | ApplicationTemplate<
+          ApplicationContext,
+          ApplicationStateSchema<EventObject>,
+          EventObject
+        >
+      | undefined,
     user: User,
     scopeCheck?: boolean,
   ): Promise<boolean> {
@@ -335,7 +334,6 @@ export class ApplicationAccessService {
     }
     if (await this.validationService.isTemplateReady(template, user)) {
       return await this.shouldShowApplicationOnOverview(
-        application,
         user,
         template,
         scopeCheck,
