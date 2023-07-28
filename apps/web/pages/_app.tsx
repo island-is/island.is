@@ -1,7 +1,14 @@
 import '@island.is/api/mocks'
+import type { AppProps } from 'next/app'
 import { globalStyles } from '@island.is/island-ui/core'
-import App from 'next/app'
+import { ErrorBoundary } from '@island.is/web/components'
 
 globalStyles()
 
-export default App
+export default function ({ Component, pageProps }: AppProps) {
+  return (
+    <ErrorBoundary>
+      <Component {...pageProps} />
+    </ErrorBoundary>
+  )
+}
