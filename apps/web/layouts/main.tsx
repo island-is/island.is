@@ -43,7 +43,7 @@ import {
 } from '../graphql/schema'
 import { GlobalContextProvider } from '../context'
 import { MenuTabsContext } from '../context/MenuTabsContext/MenuTabsContext'
-import { useI18n } from '../i18n'
+import { getLocaleFromPath, useI18n } from '../i18n'
 import { GET_ALERT_BANNER_QUERY } from '../screens/queries/AlertBanner'
 import { useNamespace } from '../hooks'
 import {
@@ -149,8 +149,8 @@ const Layout: Screen<LayoutProps> = ({
   const { activeLocale, t } = useI18n()
   const { linkResolver } = useLinkResolver()
   const n = useNamespace(namespace)
-  const { asPath } = useRouter()
-  const fullUrl = `${respOrigin}${asPath}`
+  const router = useRouter()
+  const fullUrl = `${respOrigin}${router.asPath}`
 
   const menuTabs = [
     {
@@ -204,6 +204,18 @@ const Layout: Screen<LayoutProps> = ({
     organizationAlertBannerContent,
   ])
 
+  // Update html lang in case a route change leads us to a new locale
+  useEffect(() => {
+    const handleRouteChange = () => {
+      const language = getLocaleFromPath(router.asPath)
+      document.documentElement.lang = language
+    }
+    router.events.on('routeChangeComplete', handleRouteChange)
+    return () => {
+      router.events.off('routeChangeComplete', handleRouteChange)
+    }
+  }, [router.asPath, router.events])
+
   const preloadedFonts = [
     '/fonts/ibm-plex-sans-v7-latin-300.woff2',
     '/fonts/ibm-plex-sans-v7-latin-regular.woff2',
@@ -212,7 +224,7 @@ const Layout: Screen<LayoutProps> = ({
     '/fonts/ibm-plex-sans-v7-latin-600.woff2',
   ]
 
-  const isServiceWeb = pathIsRoute(asPath, 'serviceweb', activeLocale)
+  const isServiceWeb = pathIsRoute(router.asPath, 'serviceweb', activeLocale)
 
   return (
     <GlobalContextProvider namespace={namespace} isServiceWeb={isServiceWeb}>
