@@ -8,7 +8,6 @@
       "executor": "@nx/cypress:cypress",
       "options": {
         "cypressConfig": "apps/judicial-system/web-e2e/cypress.config.ts",
-        "tsConfig": "apps/judicial-system/web-e2e/tsconfig.e2e.json",
         "devServerTarget": "",
         "baseUrl": "http://localhost:4200"
       },
