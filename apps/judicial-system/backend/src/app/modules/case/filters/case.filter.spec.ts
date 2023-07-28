@@ -76,7 +76,7 @@ describe('canUserAccessCase', () => {
         ${CaseState.DISMISSED} | ${UserRole.STAFF}          | ${InstitutionType.PRISON}
         ${CaseState.DISMISSED} | ${UserRole.STAFF}          | ${InstitutionType.PRISON_ADMIN}
       `.it(
-        `should block $state $caseType case from $role at $institutionType`,
+        'should block $state $caseType case from $role at $institutionType',
         ({ state, role, institutionType }) => {
           // Arrange
           const theCase = { state, type: caseType } as Case
@@ -84,6 +84,7 @@ describe('canUserAccessCase', () => {
             role,
             institution: { type: institutionType },
           } as User
+
           // Act
           const isWriteBlocked = !canUserAccessCase(theCase, user)
           const isReadBlocked = !canUserAccessCase(theCase, user, false)
@@ -142,7 +143,7 @@ describe('canUserAccessCase', () => {
       ${CaseState.DISMISSED} | ${UserRole.STAFF}          | ${InstitutionType.PRISON}
       ${CaseState.DISMISSED} | ${UserRole.STAFF}          | ${InstitutionType.PRISON_ADMIN}
     `.it(
-      `should block $state $caseType case from $role at $institutionType`,
+      'should block $state $caseType case from $role at $institutionType',
       ({ state, role, institutionType }) => {
         // Arrange
         const theCase = { state, type: caseType } as Case
@@ -163,7 +164,7 @@ describe('canUserAccessCase', () => {
   })
 
   describe.each([...restrictionCases, ...investigationCases])(
-    'given %s case',
+    'geven %s case',
     (type) => {
       each`
         state
@@ -355,7 +356,7 @@ describe('canUserAccessCase', () => {
         ${CaseState.REJECTED}  | ${UserRole.JUDGE}
         ${CaseState.DISMISSED} | ${UserRole.REGISTRAR}
         ${CaseState.DISMISSED} | ${UserRole.JUDGE}
-      `.describe(`given $state case and $role role`, ({ state, role }) => {
+      `.describe('given $state case and $role role', ({ state, role }) => {
         it('should block the case from the role at other courts', () => {
           // Arrange
           const theCase = {
@@ -501,7 +502,7 @@ describe('canUserAccessCase', () => {
     },
   )
 
-  describe.each(indictmentCases)('given %s case', (type) => {
+  describe.each(indictmentCases)('geven %s case', (type) => {
     each`
         state
         ${CaseState.NEW}
@@ -511,7 +512,7 @@ describe('canUserAccessCase', () => {
         ${CaseState.ACCEPTED}
         ${CaseState.REJECTED}
         ${CaseState.DISMISSED}
-      `.describe(`given $state case`, ({ state }) => {
+      `.describe('given $state case', ({ state }) => {
       it.each(prosecutionRoles)(
         'should block the case from other prosecutors offices',
         (role) => {
@@ -790,7 +791,7 @@ describe('canUserAccessCase', () => {
         ${CaseState.DISMISSED} | ${UserRole.JUDGE}
         ${CaseState.DISMISSED} | ${UserRole.ASSISTANT}
       `.describe(
-      `given a $state case and $role at high court`,
+      'given a $state case and $role at high court',
       ({ state, role }) => {
         it('should block the case if the accused appealed in court', () => {
           // Arrange
@@ -943,7 +944,7 @@ describe('canUserAccessCase', () => {
       ${InstitutionType.PRISON}
       ${InstitutionType.PRISON_ADMIN}
     `.it(
-      `it should block the case from staff at $institutionType`,
+      'it should block the case from staff at $institutionType',
       ({ institutionType }) => {
         // Arrange
         const theCase = {

@@ -27,7 +27,9 @@ describe('MeDelegationsController', () => {
       let factory: FixtureFactory
       let delegations: Delegation[] = []
       const fromName = faker.name.findName()
+
       beforeAll(async () => {
+        // Arrange
         app = await setupWithAuth({
           user: testCase.user,
           customScopeRules: testCase.customScopeRules,
@@ -85,6 +87,7 @@ describe('MeDelegationsController', () => {
           delegations,
           testCase.expected,
         )
+
         // Act
         const res = await server.get('/v1/me/delegations?direction=incoming')
 
