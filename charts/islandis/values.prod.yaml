@@ -299,6 +299,7 @@ api:
     SYSLUMENN_TIMEOUT: '40000'
     TELL_US_A_STORY_EMAIL: 'sogur@island.is'
     XROAD_ADR_MACHINE_LICENSE_PATH: 'IS/GOV/4201810439/Vinnueftirlitid-Protected/rettindi-token-v1'
+    XROAD_AIRCRAFT_REGISTRY_PATH: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Loftfaraskra-V1'
     XROAD_BASE_PATH: 'http://securityserver.island.is'
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.island.is/r1/IS'
     XROAD_CHARGE_FJS_V2_PATH: 'IS/GOV/5402697509/FJS-Public/chargeFJS_v2'
@@ -395,7 +396,12 @@ api:
   namespace: 'islandis'
   podSecurityContext:
     fsGroup: 65534
-  pvcs: []
+  pvcs:
+    - accessModes: 'ReadWriteMany'
+      mountPath: '/etc/config/'
+      name: 'islyklar.p12'
+      size: '1Gi'
+      storageClass: 'efs-csi'
   replicaCount:
     default: 2
     max: 50
@@ -651,7 +657,12 @@ application-system-api:
   namespace: 'application-system'
   podSecurityContext:
     fsGroup: 65534
-  pvcs: []
+  pvcs:
+    - accessModes: 'ReadWriteMany'
+      mountPath: '/etc/config/'
+      name: 'islyklar.p12'
+      size: '1Gi'
+      storageClass: 'efs-csi'
   replicaCount:
     default: 2
     max: 60
@@ -1598,6 +1609,7 @@ search-indexer-service:
     ELASTIC_NODE: 'https://vpc-search-mw4w5c2m2g5edjrtvwbpzhkw24.eu-west-1.es.amazonaws.com'
     NODE_OPTIONS: '--max-old-space-size=2000'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
+    SHOULD_SEARCH_INDEXER_RESOLVE_NESTED_ENTRIES: 'false'
   grantNamespaces: []
   grantNamespacesEnabled: false
   healthCheck:
@@ -1649,11 +1661,11 @@ search-indexer-service:
         name: 'migrate-elastic'
         resources:
           limits:
-            cpu: '400m'
+            cpu: '700m'
             memory: '2048Mi'
           requests:
-            cpu: '100m'
-            memory: '512Mi'
+            cpu: '300m'
+            memory: '1536Mi'
       - args:
           - '/webapp/migrateKibana.js'
         command:
@@ -1679,6 +1691,7 @@ search-indexer-service:
       NODE_OPTIONS: '--max-old-space-size=2048'
       S3_BUCKET: 'prod-es-custom-packages'
       SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
+      SHOULD_SEARCH_INDEXER_RESOLVE_NESTED_ENTRIES: 'false'
     secrets:
       CONTENTFUL_ACCESS_TOKEN: '/k8s/search-indexer/CONTENTFUL_ACCESS_TOKEN'
   namespace: 'search-indexer'
@@ -1692,11 +1705,11 @@ search-indexer-service:
     min: 1
   resources:
     limits:
-      cpu: '400m'
+      cpu: '800m'
       memory: '2048Mi'
     requests:
-      cpu: '100m'
-      memory: '512Mi'
+      cpu: '400m'
+      memory: '1536Mi'
   secrets:
     API_CMS_DELETION_TOKEN: '/k8s/search-indexer/API_CMS_DELETION_TOKEN'
     API_CMS_SYNC_TOKEN: '/k8s/search-indexer/API_CMS_SYNC_TOKEN'

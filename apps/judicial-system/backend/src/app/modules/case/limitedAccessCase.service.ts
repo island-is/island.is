@@ -59,6 +59,7 @@ export const attributes: (keyof Case)[] = [
   'isolationToDate',
   'conclusion',
   'rulingDate',
+  'rulingSignatureDate',
   'registrarId',
   'judgeId',
   'courtRecordSignatoryId',
@@ -82,7 +83,6 @@ export const attributes: (keyof Case)[] = [
   'appealConclusion',
   'appealRulingDecision',
   'appealReceivedByCourtDate',
-  'openedByDefender',
 ]
 
 export interface LimitedAccessUpdateCase

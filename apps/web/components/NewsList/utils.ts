@@ -1,5 +1,5 @@
 export const makeHref = (
-  selectedTag: string,
+  selectedTag: string | string[],
   newsOverviewUrl: string,
   y: number | string,
   m?: number | string,
