@@ -1,15 +1,19 @@
 import * as kennitala from 'kennitala'
 import some from 'lodash/some'
-import { Injectable, ForbiddenException } from '@nestjs/common'
+import { Injectable, ForbiddenException, Inject } from '@nestjs/common'
 
 import { FamilyMember, FamilyChild, User, Gender, MaritalStatus } from './types'
 import { NationalRegistryApi } from '@island.is/clients/national-registry-v1'
 import { FamilyCorrectionInput } from './dto/FamilyCorrectionInput.input'
 import { FamilyCorrectionResponse } from './graphql/models/familyCorrection.model'
+import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 
 @Injectable()
 export class NationalRegistryService {
-  constructor(private nationalRegistryApi: NationalRegistryApi) {}
+  constructor(
+    private nationalRegistryApi: NationalRegistryApi,
+    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
+  ) {}
 
   async getUser(nationalId: User['nationalId']): Promise<User> {
     const user = await this.nationalRegistryApi.getUser(nationalId)

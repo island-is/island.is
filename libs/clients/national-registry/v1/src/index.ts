@@ -3,3 +3,4 @@ export {
   NationalRegistryApi,
   NationalRegistryConfig,
 } from './lib/nationalRegistryApi'
+export { NationalRegistrySoffiaClientConfig } from './lib/soffiaClient.config'
