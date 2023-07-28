@@ -19,35 +19,6 @@ import { randomDate } from '../../../test'
 import { Case } from '../models/case.model'
 import { canUserAccessCase } from './case.filter'
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const freezeObject = (T: any) => {
-  if (T == null) {
-    return
-  }
-  Object.freeze(T)
-  if (Array.isArray(T)) {
-    for (const item of T) {
-      freezeObject(item)
-    }
-  }
-  if (typeof T !== 'object') {
-    return
-  }
-  for (const key of Object.keys(T)) {
-    if (typeof T[key] === 'object') {
-      freezeObject(T[key])
-    }
-  }
-}
-freezeObject([
-  CaseType,
-  indictmentCases,
-  InstitutionType,
-  prosecutionRoles,
-  UserRole,
-  Case,
-])
-
 describe('canUserAccessCase', () => {
   describe.each([...restrictionCases, investigationCases])(
     'given %s case',

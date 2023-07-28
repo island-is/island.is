@@ -17,28 +17,17 @@ import { accessIncomingTestCases } from '../../../../test/access-incoming-test-c
 import { setupWithAuth } from '../../../../test/setup'
 import { filterExpectedDelegations } from './utils'
 
-/**
- * The variable gets rewritten by the test.each loop
- * Quick hack.
- */
-const getTestCase = (value: keyof typeof accessIncomingTestCases) => {
-  return JSON.parse(
-    JSON.stringify(accessIncomingTestCases[value]),
-  ) as typeof accessIncomingTestCases[string]
-}
-
 describe('MeDelegationsController', () => {
   describe.each(Object.keys(accessIncomingTestCases))(
     'Incoming Access with test case: %s',
     (caseName) => {
-      let testCase = getTestCase(caseName)
+      const testCase = accessIncomingTestCases[caseName]
       let app: TestApp
       let server: request.SuperTest<request.Test>
       let factory: FixtureFactory
       let delegations: Delegation[] = []
       const fromName = faker.name.findName()
       beforeAll(async () => {
-        testCase = getTestCase(caseName)
         app = await setupWithAuth({
           user: testCase.user,
           customScopeRules: testCase.customScopeRules,
