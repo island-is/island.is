@@ -223,7 +223,6 @@ const environment = getConfig
         .userProfileServiceBasePath!,
       islykill: {
         cert: environment.islykill.cert!,
-        passphrase: environment.islykill.passphrase!,
         basePath: environment.islykill.basePath!,
       },
     }),
