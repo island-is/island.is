@@ -6,6 +6,7 @@ import { ErrorBoundary } from '@island.is/web/components'
 globalStyles()
 
 export default function ({ Component, pageProps }: AppProps) {
+  // Wrap the app with an error boundary to handle client side errors
   return (
     <ErrorBoundary>
       <Component {...pageProps} />
