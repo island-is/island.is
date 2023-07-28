@@ -22618,7 +22618,7 @@ __metadata:
 
 "dd-trace@patch:dd-trace@npm%3A3.29.1#./.yarn/patches/dd-trace-npm-3.29.1-4e4e5d3a0c.patch::locator=island.is%40workspace%3A.":
   version: 3.29.1
-  resolution: "dd-trace@patch:dd-trace@npm%3A3.29.1#./.yarn/patches/dd-trace-npm-3.29.1-4e4e5d3a0c.patch::version=3.29.1&hash=39a05e&locator=island.is%40workspace%3A."
+  resolution: "dd-trace@patch:dd-trace@npm%3A3.29.1#./.yarn/patches/dd-trace-npm-3.29.1-4e4e5d3a0c.patch::version=3.29.1&hash=c6fa1b&locator=island.is%40workspace%3A."
   dependencies:
     "@datadog/native-appsec": ^3.2.0
     "@datadog/native-iast-rewriter": 2.0.1
@@ -22651,7 +22651,7 @@ __metadata:
     protobufjs: ^7.2.4
     retry: ^0.10.1
     semver: ^7.3.8
-  checksum: 0688c92d7cea24a5ab1d6bc84591223ba3f103e9aba60dd2b4d0fd64844a9b9408e5c2b720f9b84038a7657b6b7779fb55d84431854dce100fcdb481bdb79277
+  checksum: 3a493d359fe0b35ad1fc9e6addbab4ffa5648f8981cd7599ea1502c10d2669d1433e8d1aebd2caf9e0b6458f815cc3c92852a0cc2a00833ebc0544ad0cbff35c
   languageName: node
   linkType: hard
 
