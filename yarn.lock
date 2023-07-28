@@ -37550,7 +37550,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"node-request-interceptor@npm:^0.5.1":
+"node-request-interceptor@npm:0.5.9":
   version: 0.5.9
   resolution: "node-request-interceptor@npm:0.5.9"
   dependencies:
@@ -37558,6 +37558,17 @@ __metadata:
     debug: ^4.3.0
     headers-utils: ^1.2.0
   checksum: 1fbe81d08e3f169d2ca8b7c69335e66b25d78a75d61f299f842eb280affbe8ffc435e462f6de509191aaea4c837b3f5e4396a84ef5e832a0a4bb688bef990fd2
+  languageName: node
+  linkType: hard
+
+"node-request-interceptor@patch:node-request-interceptor@npm%3A0.5.9#./.yarn/patches/node-request-interceptor-npm-0.5.9-77e9d9c058.patch::locator=island.is%40workspace%3A.":
+  version: 0.5.9
+  resolution: "node-request-interceptor@patch:node-request-interceptor@npm%3A0.5.9#./.yarn/patches/node-request-interceptor-npm-0.5.9-77e9d9c058.patch::version=0.5.9&hash=a2d577&locator=island.is%40workspace%3A."
+  dependencies:
+    "@open-draft/until": ^1.0.3
+    debug: ^4.3.0
+    headers-utils: ^1.2.0
+  checksum: 64844ba0a0cf2b88ed136d9b1311801abedfeb0641505f36545f80f3d2fdf89580a157eeff5da4810ce28a00b33e99aa62b1602588de623e4e486f1fa6c1a1fb
   languageName: node
   linkType: hard
 
