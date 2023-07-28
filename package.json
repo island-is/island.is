@@ -19,7 +19,7 @@
     "start": "nx serve",
     "build": "nx build",
     "deploy": "nx deploy",
-    "test": "nx test",
+    "test": "cross-env NODE_OPTIONS=\"-r ./local-test.js ${NODE_OPTIONS:-}\" nx test",
     "lint": "nx workspace-lint && nx lint",
     "clean": "./scripts/clean.sh",
     "dev-services": "nx dev-services",
