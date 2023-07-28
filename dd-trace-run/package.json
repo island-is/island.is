@@ -1,0 +1,6 @@
+{
+  "name": "dd-trace-run",
+  "version": "0.0.0.1",
+  "packageManager": "yarn@3.2.3",
+  "main"  : "./run.js"
+}

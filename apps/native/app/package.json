@@ -87,6 +87,7 @@
     "babel-jest": "^29.2.1",
     "babel-loader": "^8.3.0",
     "babel-plugin-formatjs": "10.3.9",
+    "dd-trace-run": "../../../dd-trace-run",
     "jest": "^29.2.1",
     "metro-react-native-babel-preset": "0.72.3",
     "react-dom": "18.2.0",

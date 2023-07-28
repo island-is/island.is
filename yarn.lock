@@ -7702,6 +7702,7 @@ __metadata:
     babel-loader: ^8.3.0
     babel-plugin-formatjs: 10.3.9
     configcat-js: 7.0.0
+    dd-trace-run: ../../../dd-trace-run
     dynamic-color: 0.3.0
     expo: 47.0.13
     expo-barcode-scanner: 12.1.0
@@ -22577,6 +22578,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"dd-trace-run@file:../../../dd-trace-run::locator=%40island.is%2Fnative-app%40workspace%3Aapps%2Fnative%2Fapp":
+  version: 0.0.0.1
+  resolution: "dd-trace-run@file:../../../dd-trace-run#../../../dd-trace-run::hash=56ee3f&locator=%40island.is%2Fnative-app%40workspace%3Aapps%2Fnative%2Fapp"
+  checksum: 74eb77a3e2c44e05c46bd304331499cb568c89618e44c54b0618b89ecf2bdc69cf0c2ebf107b267090fc73f89c0c37c1f0f6689a6558b23ededff3a4b9628655
+  languageName: node
+  linkType: hard
+
+"dd-trace-run@file:./dd-trace-run::locator=island.is%40workspace%3A.":
+  version: 0.0.0.1
+  resolution: "dd-trace-run@file:./dd-trace-run#./dd-trace-run::hash=56ee3f&locator=island.is%40workspace%3A."
+  checksum: 74eb77a3e2c44e05c46bd304331499cb568c89618e44c54b0618b89ecf2bdc69cf0c2ebf107b267090fc73f89c0c37c1f0f6689a6558b23ededff3a4b9628655
+  languageName: node
+  linkType: hard
+
 "dd-trace@npm:3.29.1":
   version: 3.29.1
   resolution: "dd-trace@npm:3.29.1"
@@ -30838,6 +30853,7 @@ __metadata:
     date-fns: 2.28.0
     datebook: 7.0.8
     dd-trace: 3.29.1
+    dd-trace-run: ./dd-trace-run
     deepmerge: 4.2.2
     dotenv: 14.3.2
     downshift: 5.4.3
