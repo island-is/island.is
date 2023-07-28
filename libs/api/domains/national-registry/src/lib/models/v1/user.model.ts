@@ -1,6 +1,6 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql'
 
-import { Gender, MaritalStatus } from '../../types'
+import { Gender, MaritalStatus } from '../types'
 import { BanMarking } from './banMarking.model'
 import { Address } from './address.model'
 import { Citizenship } from './citizenship.model'

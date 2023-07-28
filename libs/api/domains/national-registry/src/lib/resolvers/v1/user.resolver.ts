@@ -12,7 +12,7 @@ import {
 } from '@island.is/auth-nest-tools'
 import { Audit } from '@island.is/nest/audit'
 
-import { NationalRegistryUser, Citizenship } from './models'
+import { NationalRegistryUser, Citizenship } from '../models'
 import { NationalRegistryService } from '../nationalRegistry.service'
 import { User } from '../types'
 

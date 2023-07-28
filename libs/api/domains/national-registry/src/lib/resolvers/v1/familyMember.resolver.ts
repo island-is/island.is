@@ -11,7 +11,7 @@ import {
 } from '@island.is/auth-nest-tools'
 import { Audit } from '@island.is/nest/audit'
 
-import { NationalRegistryChild, NationalRegistryFamilyMember } from './models'
+import { NationalRegistryChild, NationalRegistryFamilyMember } from '../models'
 import { NationalRegistryService } from '../nationalRegistry.service'
 import { FamilyMember, FamilyChild } from '../types'
 import { GetFamilyInfoInput } from '../dto/getFamilyDetailInput'

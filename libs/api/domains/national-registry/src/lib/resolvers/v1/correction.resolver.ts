@@ -13,7 +13,7 @@ import { Audit } from '@island.is/nest/audit'
 
 import { NationalRegistryService } from '../nationalRegistry.service'
 import { FamilyCorrectionInput } from '../dto/FamilyCorrectionInput.input'
-import { FamilyCorrectionResponse } from './models/familyCorrection.model'
+import { FamilyCorrectionResponse } from '../models/familyCorrection.model'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.meDetails)

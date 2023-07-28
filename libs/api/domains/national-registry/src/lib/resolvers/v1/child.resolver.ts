@@ -11,9 +11,9 @@ import {
 } from '@island.is/auth-nest-tools'
 import { Audit } from '@island.is/nest/audit'
 
-import { NationalRegistryChild } from './models'
-import { NationalRegistryService } from '../nationalRegistry.service'
-import { FamilyChild } from '../types'
+import { NationalRegistryChild } from '../../models'
+import { NationalRegistryService } from '../../nationalRegistry.service'
+import { FamilyChild } from '../../types'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.meDetails)

@@ -5,7 +5,7 @@ import {
   UserResolver,
   ChildResolver,
   CorrectionResolver,
-} from './graphql'
+} from './resolvers'
 import {
   NationalRegistryApi,
   NationalRegistrySoffiaClientConfig,
@@ -13,15 +13,11 @@ import {
 import { NationalRegistryService } from './nationalRegistry.service'
 import { NationalRegistryV3ClientModule } from '@island.is/clients/national-registry-v3'
 import { ConfigType } from '@nestjs/config'
+import { SoffiaService } from './services/v1/soffia.service'
 
 @Module({
   imports: [NationalRegistryV3ClientModule],
   providers: [
-    NationalRegistryService,
-    UserResolver,
-    FamilyMemberResolver,
-    ChildResolver,
-    CorrectionResolver,
     {
       provide: NationalRegistryApi,
       useFactory(
@@ -31,7 +27,13 @@ import { ConfigType } from '@nestjs/config'
       },
       inject: [NationalRegistrySoffiaClientConfig.KEY],
     },
+    NationalRegistryService,
+    UserResolver,
+    FamilyMemberResolver,
+    ChildResolver,
+    CorrectionResolver,
+    SoffiaService,
+    NationalRegistryService,
   ],
-  exports: [NationalRegistryService],
 })
 export class NationalRegistryModule {}
