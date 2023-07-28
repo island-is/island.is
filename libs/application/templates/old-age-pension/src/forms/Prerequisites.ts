@@ -122,6 +122,7 @@ export const PrerequisitesForm: Form = buildForm({
               options: [
                 {
                   value: ApplicationType.OLD_AGE_PENSION,
+                  dataTestId: 'old-age-pension',
                   label: oldAgePensionFormMessage.shared.applicationTitle,
                   subLabel:
                     oldAgePensionFormMessage.pre
@@ -129,6 +130,7 @@ export const PrerequisitesForm: Form = buildForm({
                 },
                 {
                   value: ApplicationType.HALF_OLD_AGE_PENSION,
+                  dataTestId: 'half-old-age-pension',
                   label:
                     oldAgePensionFormMessage.pre
                       .halfRetirementPensionApplicationTitle,
@@ -138,6 +140,7 @@ export const PrerequisitesForm: Form = buildForm({
                 },
                 {
                   value: ApplicationType.SAILOR_PENSION,
+                  dataTestId: 'sailor-pension',
                   label: oldAgePensionFormMessage.pre.fishermenApplicationTitle,
                   subLabel:
                     oldAgePensionFormMessage.pre

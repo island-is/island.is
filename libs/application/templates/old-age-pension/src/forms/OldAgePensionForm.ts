@@ -287,6 +287,7 @@ export const OldAgePensionForm: Form = buildForm({
                     oldAgePensionFormMessage.payment
                       .personalAllowancePercentage,
                   suffix: '%',
+                  dataTestId: 'personal-allowance-usage',
                   condition: (answers) => {
                     const { personalAllowance } = getApplicationAnswers(answers)
                     return personalAllowance === YES
@@ -317,6 +318,7 @@ export const OldAgePensionForm: Form = buildForm({
                     oldAgePensionFormMessage.payment
                       .personalAllowancePercentage,
                   suffix: '%',
+                  dataTestId: 'spouse-allowance-usage',
                   condition: (answers, externalData) => {
                     const { spouseAllowance } = getApplicationAnswers(answers)
                     const { hasSpouse } = getApplicationExternalData(
