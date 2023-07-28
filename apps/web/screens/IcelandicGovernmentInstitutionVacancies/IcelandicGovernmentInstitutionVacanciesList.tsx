@@ -600,7 +600,7 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<IcelandicGovernmentIns
   )
 }
 
-IcelandicGovernmentInstitutionVacanciesList.getInitialProps = async ({
+IcelandicGovernmentInstitutionVacanciesList.getProps = async ({
   apolloClient,
   locale,
 }) => {
