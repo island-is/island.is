@@ -404,7 +404,7 @@ const Auctions: Screen<AuctionsProps> = ({
   const Router = useRouter()
   const auctionDataFetched = new Date()
 
-  useContentfulId(organizationPage.id, subpage.id)
+  useContentfulId(organizationPage.id, subpage?.id)
 
   const pageUrl = Router.pathname
 
