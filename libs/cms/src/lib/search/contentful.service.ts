@@ -84,7 +84,7 @@ export class ContentfulService {
 
     // we dont want the importer to exceed the contentful max requests per second so we cap the request count
     this.limiter = new Bottleneck({
-      minTime: 200, //limit to 5 requests a second
+      maxTime: 200, //limit to 5 requests a second
       maxConcurrent: 10, // only allow 10 concurrent requests at a time
     })
   }
