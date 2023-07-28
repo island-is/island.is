@@ -41,7 +41,6 @@
 /libs/service-portal/education-degree/                                                                   @island-is/juni
 /libs/service-portal/education-license/                                                                  @island-is/juni
 /libs/service-portal/education-student-assessment/                                                       @island-is/juni @island-is/norda
-/libs/contentful-extensions/parent-slug/                                                                 @island-is/juni
 /libs/clients/driving-license/                                                                           @island-is/juni
 /libs/clients/judicial-administration/                                                                   @island-is/juni
 /libs/application/templates/announcement-of-death/                                                       @island-is/juni
@@ -59,8 +58,8 @@
 /libs/shared/connected/src/lib/generalPetition/GeneralPetitionLists                                      @island-is/juni
 /libs/api/domains/communications/                                                                        @island-is/juni @island-is/stefna
 /apps/services/user-notification/                                                                        @island-is/juni
-/apps/air-discount-scheme/                                                                               @island-is/juni @island-is/aranja
-/libs/air-discount-scheme/                                                                               @island-is/juni
+/apps/air-discount-scheme/                                                                               @island-is/juni @island-is/aranja @island-is/hugsmidjan
+/libs/air-discount-scheme/                                                                               @island-is/juni @island-is/hugsmidjan
 /libs/application/templates/p-sign/                                                                      @island-is/juni
 /libs/application/template-api-modules/src/lib/modules/templates/p-sign-submission                       @island-is/juni
 /libs/application/templates/marriage-conditions/                                                         @island-is/juni
@@ -82,6 +81,7 @@
 /libs/application/templates/inheritance-report/                                                          @island-is/juni
 /libs/application/template-api-modules/src/lib/modules/templates/inheritance-report                      @island-is/juni
 /libs/api/domains/disability-license                                                                     @island-is/juni
+/libs/portals/admin/petition                                                                             @island-is/juni
 
 /apps/portals/admin/                                                                                     @island-is/aranja
 /libs/api/domains/auth-admin/                                                                            @island-is/aranja
@@ -93,6 +93,7 @@
 /libs/portals/admin/ids-admin                                                                            @island-is/aranja
 /libs/service-portal/consent                                                                             @island-is/aranja
 /libs/service-portal/sessions                                                                            @island-is/aranja
+/apps/native/app/                                                                                        @island-is/aranja-enum-app
 
 /apps/judicial-system/                                                                                   @island-is/kolibri-justice-league
 /libs/judicial-system/                                                                                   @island-is/kolibri-justice-league
@@ -115,18 +116,24 @@
 /apps/services/user-profile/                                                                             @island-is/hugsmidjan @island-is/juni
 /apps/web/screens/Regulations/                                                                           @island-is/hugsmidjan
 /apps/web/components/Regulations/                                                                        @island-is/hugsmidjan
+/libs/api/domains/air-discount-scheme                                                                    @island-is/hugsmidjan
 /libs/api/domains/documents/                                                                             @island-is/hugsmidjan
 /libs/api/domains/finance/                                                                               @island-is/hugsmidjan
 /libs/api/domains/assets/                                                                                @island-is/hugsmidjan
 /libs/api/domains/license-service/                                                                       @island-is/hugsmidjan
+/libs/api/domains/work-machines/                                                                         @island-is/hugsmidjan
 /libs/api/domains/national-registry/                                                                     @island-is/hugsmidjan
 /libs/api/domains/user-profile/                                                                          @island-is/hugsmidjan @island-is/juni
 /libs/api/domains/passport/                                                                              @island-is/hugsmidjan
 /libs/api/domains/vehicles/                                                                              @island-is/hugsmidjan
 /libs/api/domains/university-of-iceland/                                                                 @island-is/hugsmidjan
+/libs/api/domains/regulations/                                                                           @island-is/hugsmidjan
+/libs/api/domains/regulations-admin/                                                                     @island-is/hugsmidjan
+/libs/api/domains/rights-portal                                                                          @island-is/hugsmidjan
 /libs/clients/documents/                                                                                 @island-is/hugsmidjan
 /libs/clients/finance/                                                                                   @island-is/hugsmidjan
 /libs/clients/adr-and-machine-license/                                                                   @island-is/hugsmidjan
+/libs/clients/work-machines/                                                                             @island-is/hugsmidjan
 /libs/clients/disability-license/                                                                        @island-is/hugsmidjan
 /libs/clients/firearm-license/                                                                           @island-is/hugsmidjan
 /libs/clients/smartsolutions/                                                                            @island-is/hugsmidjan
@@ -137,10 +144,12 @@
 /libs/clients/passports/                                                                                 @island-is/hugsmidjan
 /libs/clients/assets/                                                                                    @island-is/hugsmidjan
 /libs/clients/university-of-iceland/                                                                     @island-is/hugsmidjan
+/libs/clients/regulations-admin/                                                                         @island-is/hugsmidjan
+/libs/clients/inna/                                                                                      @island-is/hugsmidjan
 /apps/services/license-api/                                                                              @island-is/hugsmidjan
-/libs/api/domains/regulations/                                                                           @island-is/hugsmidjan
 /libs/regulations/                                                                                       @island-is/hugsmidjan
 /libs/portals/admin/regulations-admin/                                                                   @island-is/hugsmidjan
+/libs/clients/icelandic-health-insurance/rights-portal/                                                  @island-is/hugsmidjan
 
 /libs/application/templates/data-protection-complaint/                                                   @island-is/norda
 /libs/application/templates/institution-collaboration/                                                   @island-is/norda @island-is/fuglar
@@ -162,7 +171,7 @@
 /libs/application/templates/health-insurance/                                                            @island-is/norda
 /libs/clients/rsk/company-registry                                                                       @island-is/norda
 /libs/api/domains/company-registry                                                                       @island-is/norda
-/libs/clients/health-insurance-v2/                                                                       @island-is/norda
+/libs/clients/icelandic-health-insurance/health-insurance/                                               @island-is/norda                                                                       @island-is/norda
 /libs/clients/data-protection-complaint/                                                                 @island-is/norda
 /libs/clients/fishing-license/                                                                           @island-is/norda
 /libs/api/domains/fishing-license/                                                                       @island-is/norda
@@ -194,7 +203,6 @@
 /libs/api/domains/content-search/                                                                        @island-is/stefna @island-is/juni
 /libs/api/domains/syslumenn/                                                                             @island-is/stefna
 /libs/api/domains/email-signup/                                                                          @island-is/stefna
-/libs/api/domains/powerbi/                                                                               @island-is/stefna
 /libs/api/domains/electronic-registration-statistics/                                                    @island-is/stefna
 /libs/clients/electronic-registration-statistics/                                                        @island-is/stefna
 /libs/api/domains/fiskistofa/                                                                            @island-is/stefna
@@ -202,6 +210,8 @@
 /libs/clients/syslumenn/                                                                                 @island-is/stefna @island-is/juni
 /libs/shared/connected/                                                                                  @island-is/stefna
 /libs/api/domains/watson-assistant-chat/                                                                 @island-is/stefna
+/libs/clients/icelandic-government-institution-vacancies/                                                @island-is/stefna
+/libs/api/domains/icelandic-government-institution-vacancies/                                            @island-is/stefna
 
 /libs/island-ui/                                                                                         @island-is/island-ui
 
@@ -223,6 +233,9 @@
 /apps/auth-admin-web/                                                                                    @island-is/fuglar @island-is/aranja
 /libs/auth-api-lib/                                                                                      @island-is/fuglar @island-is/aranja
 /libs/auth-nest-tools/                                                                                   @island-is/fuglar @island-is/aranja
+/libs/application/templates/european-health-insurance-card/                                              @island-is/fuglar
+/libs/application/template-api-modules/src/lib/modules/templates/european-health-insurance-card/         @island-is/fuglar
+/libs/clients/ehic-client-v1                                                                             @island-is/fuglar
 
 /apps/services/auth/personal-representative/                                                             @island-is/programm @island-is/aranja
 /apps/services/auth/personal-representative-public/                                                      @island-is/programm @island-is/aranja

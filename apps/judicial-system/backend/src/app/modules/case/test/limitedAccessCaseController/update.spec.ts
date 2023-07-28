@@ -109,18 +109,6 @@ describe('LimitedAccessCaseController - Update', () => {
     it('should queue messages', () => {
       expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
         {
-          caseFileId: statementId,
-          type: MessageType.DELIVER_CASE_FILE_TO_COURT,
-          user,
-          caseId,
-        },
-        {
-          caseFileId: fileId,
-          type: MessageType.DELIVER_CASE_FILE_TO_COURT,
-          user,
-          caseId,
-        },
-        {
           type: MessageType.SEND_APPEAL_STATEMENT_NOTIFICATION,
           user,
           caseId,

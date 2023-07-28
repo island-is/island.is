@@ -23,6 +23,7 @@ import {
   DrivingAssessment,
   DrivingLicenseApi,
   Teacher,
+  TeacherV4,
 } from '@island.is/clients/driving-license'
 import {
   BLACKLISTED_JURISTICTION,
@@ -50,12 +51,24 @@ export class DrivingLicenseService {
     private nationalRegistryXRoadService: NationalRegistryXRoadService,
   ) {}
 
-  async getDrivingLicense(
-    nationalId: User['nationalId'],
-  ): Promise<DriversLicense | null> {
+  async getDrivingLicense(token: string): Promise<DriversLicense | null> {
     try {
       return await this.drivingLicenseApi.getCurrentLicense({
+        token,
+      })
+    } catch (e) {
+      return this.handleGetLicenseError(e)
+    }
+  }
+
+  async legacyGetDrivingLicense(
+    nationalId: User['nationalId'],
+    token?: string,
+  ): Promise<DriversLicense | null> {
+    try {
+      return await this.drivingLicenseApi.legacyGetCurrentLicense({
         nationalId,
+        token,
       })
     } catch (e) {
       return this.handleGetLicenseError(e)
@@ -74,6 +87,33 @@ export class DrivingLicenseService {
     }
 
     throw e
+  }
+
+  // Disqualification is a bit tricky
+  // You're not allowed to have had a disqualification in the last 12 months
+  // You're not allowed to have an active disqualification
+  // Some disqualifications do not have an end date, so we have to assume they're still active
+  private isDisqualified(from?: Date, to?: Date): boolean {
+    if (!from) {
+      return false
+    }
+
+    if (!to && from) {
+      return true
+    }
+
+    const now = Date.now()
+    const year = 1000 * 3600 * 24 * 365.25
+    const twelveMonthsAgo = new Date(Date.now() - year)
+
+    // With the two checks above, 'to' is guaranteed to be defined
+    // Either !from returns or !to returns since '!from || from' is a tautology
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    const activeDisqualification = from.getTime() < now && now < to!.getTime()
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    const disqualificationInTheLastTwelveMonths = to! > twelveMonthsAgo
+
+    return activeDisqualification || disqualificationInTheLastTwelveMonths
   }
 
   async getStudentInformation(
@@ -100,6 +140,12 @@ export class DrivingLicenseService {
 
   async getTeachers(): Promise<Teacher[]> {
     const teachers = await this.drivingLicenseApi.getTeachers()
+
+    return teachers.sort(sortTeachers)
+  }
+
+  async getTeachersV4(): Promise<TeacherV4[]> {
+    const teachers = await this.drivingLicenseApi.getTeachersV4()
 
     return teachers.sort(sortTeachers)
   }
@@ -143,15 +189,12 @@ export class DrivingLicenseService {
     user: User,
     nationalId: string,
   ): Promise<ApplicationEligibility> {
-    const license = await this.getDrivingLicense(nationalId)
-    const residenceHistory = await this.nationalRegistryXRoadService.getNationalRegistryResidenceHistory(
+    const license = await this.legacyGetDrivingLicense(
       nationalId,
+      user.authorization.split(' ')[1] ?? '', // removes the Bearer prefix,
     )
 
-    const localRecidency = hasLocalResidence(residenceHistory)
-
     const year = 1000 * 3600 * 24 * 365.25
-    const twelveMonthsAgo = new Date(Date.now() - year)
     const fiveYearsAgo = new Date(Date.now() - year * 5)
 
     const categoryB = license?.categories
@@ -160,24 +203,15 @@ export class DrivingLicenseService {
         )
       : undefined
 
-    const activeDisqualification = license?.disqualification?.to
-      ? Date.now() < license.disqualification.to.getTime()
-      : false
-    const disqualificationInTheLastTwelveMonths = license?.disqualification
-      ?.from
-      ? license.disqualification.from > twelveMonthsAgo
-      : false
+    const isDisqualified = this.isDisqualified(
+      license?.disqualification?.from,
+      license?.disqualification?.to,
+    )
 
     const requirements: ApplicationEligibilityRequirement[] = [
       {
         key: RequirementKey.hasDeprivation,
-        requirementMet: !(
-          activeDisqualification || disqualificationInTheLastTwelveMonths
-        ),
-      },
-      {
-        key: RequirementKey.currentLocalResidency,
-        requirementMet: localRecidency,
+        requirementMet: !isDisqualified,
       },
       {
         key: RequirementKey.personNotAtLeast24YearsOld,
@@ -325,6 +359,19 @@ export class DrivingLicenseService {
     })
   }
 
+  async drivingLicenseDuplicateSubmission(params: {
+    districtId: number
+    token: string
+    stolenOrLost: boolean
+  }): Promise<number> {
+    const { districtId, token, stolenOrLost } = params
+    return await this.drivingLicenseApi.postApplicationNewCollaborative({
+      districtId,
+      stolenOrLost,
+      token,
+    })
+  }
+
   async newDrivingAssessment(
     nationalIdStudent: string,
     nationalIdTeacher: User['nationalId'],
@@ -449,7 +496,7 @@ export class DrivingLicenseService {
 
     let teacherName: string | null
     if (assessment.nationalIdTeacher) {
-      const teacherLicense = await this.getDrivingLicense(
+      const teacherLicense = await this.legacyGetDrivingLicense(
         assessment.nationalIdTeacher,
       )
       teacherName = teacherLicense?.name || null

@@ -2,10 +2,13 @@ import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
 import {
+  CaseAppealState,
   CaseState,
   completedCaseStates,
+  Feature,
   Gender,
   isCourtRole,
+  isExtendedCourtRole,
   isIndictmentCase,
   isInvestigationCase,
   isRestrictionCase,
@@ -14,6 +17,8 @@ import { core, sections } from '@island.is/judicial-system-web/messages'
 import { caseResult } from '@island.is/judicial-system-web/src/components/PageLayout/utils'
 import { capitalize } from '@island.is/judicial-system/formatters'
 import { RouteSection } from '@island.is/judicial-system-web/src/components/PageLayout/PageLayout'
+import { FeatureContext } from '@island.is/judicial-system-web/src/components/FeatureProvider/FeatureProvider'
+
 import {
   CaseType,
   InstitutionType,
@@ -34,6 +39,7 @@ import * as constants from '@island.is/judicial-system/consts'
 
 import { stepValidations, stepValidationsType } from '../../formHelper'
 import { isTrafficViolationCase } from '../../stepHelper'
+import { useContext } from 'react'
 
 const validateFormStepper = (
   isActiveSubSectionValid: boolean,
@@ -61,6 +67,7 @@ const useSections = (
 ) => {
   const { formatMessage } = useIntl()
   const router = useRouter()
+  const { features } = useContext(FeatureContext)
 
   const getRestrictionCaseProsecutorSection = (
     workingCase: Case,
@@ -84,12 +91,12 @@ const useSections = (
         caseType: type,
       }),
       isActive:
-        user?.role === UserRole.Prosecutor &&
+        user?.role === UserRole.PROSECUTOR &&
         isRestrictionCase(type) &&
         !completedCaseStates.includes(workingCase.state) &&
         !parentCase,
       children:
-        user?.institution?.type !== InstitutionType.ProsecutorsOffice
+        user?.institution?.type !== InstitutionType.PROSECUTORS_OFFICE
           ? []
           : [
               {
@@ -111,7 +118,7 @@ const useSections = (
                   validateFormStepper(
                     isValid,
                     [
-                      workingCase.type === CaseType.Custody
+                      workingCase.type === CaseType.CUSTODY
                         ? constants.RESTRICTION_CASE_DEFENDANT_ROUTE
                         : constants.CREATE_TRAVEL_BAN_ROUTE,
                     ],
@@ -237,12 +244,12 @@ const useSections = (
     return {
       name: formatMessage(sections.investigationCaseProsecutorSection.title),
       isActive:
-        user?.role === UserRole.Prosecutor &&
+        user?.role === UserRole.PROSECUTOR &&
         isInvestigationCase(type) &&
         !completedCaseStates.includes(workingCase.state) &&
         !parentCase,
       children:
-        user?.institution?.type !== InstitutionType.ProsecutorsOffice
+        user?.institution?.type !== InstitutionType.PROSECUTORS_OFFICE
           ? []
           : [
               {
@@ -371,7 +378,7 @@ const useSections = (
   ): RouteSection => {
     const { id, type } = workingCase
     const caseHasBeenReceivedByCourt = workingCase.state === CaseState.RECEIVED
-    const isTrafficViolation = isTrafficViolationCase(workingCase, user)
+    const isTrafficViolation = isTrafficViolationCase(workingCase)
 
     const routes = prosecutorIndictmentRoutes(isTrafficViolation)
 
@@ -386,11 +393,10 @@ const useSections = (
            */
           (route) => route === router.pathname.slice(0, -5),
         )
-
     return {
       name: formatMessage(sections.indictmentCaseProsecutorSection.title),
       isActive:
-        user?.role === UserRole.Prosecutor &&
+        user?.role === UserRole.PROSECUTOR &&
         isIndictmentCase(type) &&
         !completedCaseStates.includes(workingCase.state),
       // Prosecutor can only view the overview when case has been received by court
@@ -576,7 +582,7 @@ const useSections = (
         !completedCaseStates.includes(workingCase.state) &&
         !parentCase,
       children:
-        user?.institution?.type !== InstitutionType.Court
+        user?.institution?.type !== InstitutionType.COURT
           ? []
           : [
               {
@@ -709,7 +715,7 @@ const useSections = (
         !completedCaseStates.includes(workingCase.state) &&
         !parentCase,
       children:
-        user?.institution?.type !== InstitutionType.Court
+        user?.institution?.type !== InstitutionType.COURT
           ? []
           : [
               {
@@ -846,13 +852,13 @@ const useSections = (
     return {
       name: formatMessage(sections.indictmentsCourtSection.title),
       isActive:
-        isCourtRole(user?.role) &&
+        isExtendedCourtRole(user?.role) &&
         isIndictmentCase(type) &&
         !completedCaseStates.includes(workingCase.state),
       children: [
         {
           name: formatMessage(sections.indictmentsCourtSection.overview),
-          isActive: user?.role === UserRole.Defender ? false : routeIndex === 0,
+          isActive: user?.role === UserRole.DEFENDER ? false : routeIndex === 0,
           href: `${constants.INDICTMENTS_COURT_OVERVIEW_ROUTE}/${id}`,
         },
         {
@@ -887,11 +893,9 @@ const useSections = (
               : undefined,
         },
         {
-          name: formatMessage(
-            sections.indictmentsCourtSection.prosecutorAndDefender,
-          ),
+          name: formatMessage(sections.indictmentsCourtSection.defender),
           isActive: routeIndex === 3,
-          href: `${constants.INDICTMENTS_PROSECUTOR_AND_DEFENDER_ROUTE}/${workingCase.id}`,
+          href: `${constants.INDICTMENTS_DEFENDER_ROUTE}/${workingCase.id}`,
           onClick:
             validateFormStepper(
               isValid,
@@ -903,9 +907,7 @@ const useSections = (
               workingCase,
             ) && onNavigationTo
               ? async () =>
-                  await onNavigationTo(
-                    constants.INDICTMENTS_PROSECUTOR_AND_DEFENDER_ROUTE,
-                  )
+                  await onNavigationTo(constants.INDICTMENTS_DEFENDER_ROUTE)
               : undefined,
         },
         {
@@ -919,7 +921,7 @@ const useSections = (
                 constants.INDICTMENTS_OVERVIEW_ROUTE,
                 constants.INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE,
                 constants.INDICTMENTS_SUBPOENA_ROUTE,
-                constants.INDICTMENTS_PROSECUTOR_AND_DEFENDER_ROUTE,
+                constants.INDICTMENTS_DEFENDER_ROUTE,
               ],
               workingCase,
             ) && onNavigationTo
@@ -948,11 +950,11 @@ const useSections = (
     return {
       name: formatMessage(sections.extensionSection.title),
       isActive:
-        user?.role === UserRole.Prosecutor &&
+        user?.role === UserRole.PROSECUTOR &&
         isRestrictionCase(type) &&
         parentCase !== undefined,
       children:
-        user?.institution?.type !== InstitutionType.ProsecutorsOffice
+        user?.institution?.type !== InstitutionType.PROSECUTORS_OFFICE
           ? []
           : [
               {
@@ -1042,11 +1044,11 @@ const useSections = (
     return {
       name: formatMessage(sections.investigationCaseExtensionSection.title),
       isActive:
-        user?.role === UserRole.Prosecutor &&
+        user?.role === UserRole.PROSECUTOR &&
         isInvestigationCase(type) &&
         parentCase !== undefined,
       children:
-        user?.institution?.type !== InstitutionType.ProsecutorsOffice
+        user?.institution?.type !== InstitutionType.PROSECUTORS_OFFICE
           ? []
           : [
               {
@@ -1122,16 +1124,19 @@ const useSections = (
        */
       (route) => route === router.pathname.slice(0, -5),
     )
-
     return [
       {
         name: formatMessage(sections.courtOfAppealSection.appealed),
-        isActive: user?.institution?.type !== InstitutionType.HighCourt,
+        isActive:
+          user?.institution?.type !== InstitutionType.HIGH_COURT &&
+          workingCase.appealState === CaseAppealState.RECEIVED,
         children: [],
       },
       {
         name: formatMessage(sections.courtOfAppealSection.result),
-        isActive: user?.institution?.type === InstitutionType.HighCourt,
+        isActive:
+          user?.institution?.type === InstitutionType.HIGH_COURT &&
+          routeIndex !== 3,
         children: [
           {
             name: formatMessage(sections.courtOfAppealSection.overview),
@@ -1156,12 +1161,26 @@ const useSections = (
             name: formatMessage(sections.courtOfAppealSection.ruling),
             isActive: routeIndex === 2,
             href: `${constants.COURT_OF_APPEAL_RULING_ROUTE}/${workingCase.id}`,
+            onClick:
+              validateFormStepper(
+                isValid,
+                [
+                  constants.COURT_OF_APPEAL_OVERVIEW_ROUTE,
+                  constants.COURT_OF_APPEAL_CASE_ROUTE,
+                ],
+                workingCase,
+              ) && onNavigationTo
+                ? async () =>
+                    await onNavigationTo(constants.COURT_OF_APPEAL_RULING_ROUTE)
+                : undefined,
           },
         ],
       },
       {
         name: formatMessage(sections.caseResults.result),
-        isActive: false,
+        isActive:
+          routeIndex === 3 ||
+          workingCase.appealState === CaseAppealState.COMPLETED,
         children: [],
       },
     ]
@@ -1208,10 +1227,15 @@ const useSections = (
         isActive:
           completedCaseStates.includes(workingCase.state) &&
           !workingCase.prosecutorPostponedAppealDate &&
-          !workingCase.accusedPostponedAppealDate,
+          !workingCase.accusedPostponedAppealDate &&
+          workingCase.appealState !== CaseAppealState.COMPLETED,
         children: [],
       },
-      ...(isRestrictionCase(workingCase.type) && workingCase.appealState
+      ...(!features.includes(Feature.APPEAL_TO_COURT_OF_APPEALS)
+        ? []
+        : isRestrictionCase(workingCase.type) && workingCase.appealState
+        ? getCourtOfAppealSections(workingCase, user)
+        : isInvestigationCase(workingCase.type) && workingCase.appealState
         ? getCourtOfAppealSections(workingCase, user)
         : []),
       ...(workingCase.parentCase

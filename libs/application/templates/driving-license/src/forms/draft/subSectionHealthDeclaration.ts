@@ -15,7 +15,7 @@ export const subSectionHealthDeclaration = buildSubSection({
     buildMultiField({
       id: 'overview',
       title: m.healthDeclarationMultiFieldTitle,
-      space: 1,
+      space: 2,
       children: [
         buildCustomField({
           id: 'remarks',

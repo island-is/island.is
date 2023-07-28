@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import { Sequelize } from 'sequelize-typescript'
 import { History } from './history.model'
 
 @Injectable()
@@ -8,7 +7,6 @@ export class HistoryService {
   constructor(
     @InjectModel(History)
     private historyModel: typeof History,
-    private sequelize: Sequelize,
   ) {}
 
   async getStateHistory(applicationIds: string[]): Promise<History[]> {
@@ -22,8 +20,9 @@ export class HistoryService {
   async saveStateTransition(
     applicationId: string,
     newStateKey: string,
+    exitEvent?: string,
   ): Promise<History> {
-    // Look for a state that has not been exited.
+    //Do we have a current state to move from. Look for a state that has not been exited.
     const lastState = (await this.getStateHistory([applicationId])).find(
       (x) => x.exitTimestamp === null,
     )
@@ -34,6 +33,7 @@ export class HistoryService {
         {
           ...lastState,
           exitTimestamp: new Date(),
+          exitEvent,
         },
         { where: { id: lastState.id } },
       )
@@ -43,6 +43,7 @@ export class HistoryService {
       application_id: applicationId,
       stateKey: newStateKey,
       entryTimestamp: new Date(),
+      previousState: lastState ? lastState.id : null,
     })
   }
 

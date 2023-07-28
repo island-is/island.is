@@ -84,7 +84,7 @@ const CaseFile = () => {
                 title={formatMessage(m.pdfButtonText, {
                   policeCaseNumber: policeCaseNumber,
                 })}
-                pdfType="caseFiles"
+                pdfType="caseFilesRecord"
                 policeCaseNumber={policeCaseNumber}
               />
             </Box>

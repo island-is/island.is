@@ -21,13 +21,15 @@ type GivenWhenThen = (
   defenderNationalId?: string,
 ) => Promise<Then>
 
-describe('InternalNotificationController - Send appeal to court of appeals notification', () => {
+describe('InternalNotificationController - Send appeal to court of appeals notifications', () => {
   const userId = uuid()
   const caseId = uuid()
   const prosecutorName = uuid()
   const prosecutorEmail = uuid()
   const judgeName = uuid()
   const judgeEmail = uuid()
+  const registrarName = uuid()
+  const registrarEmail = uuid()
   const defenderName = uuid()
   const defenderEmail = uuid()
   const courtCaseNumber = uuid()
@@ -54,6 +56,7 @@ describe('InternalNotificationController - Send appeal to court of appeals notif
             id: caseId,
             prosecutor: { name: prosecutorName, email: prosecutorEmail },
             judge: { name: judgeName, email: judgeEmail },
+            registrar: { name: registrarName, email: registrarEmail },
             court: { name: 'Héraðsdómur Reykjavíkur' },
             defenderNationalId,
             defenderName: defenderName,
@@ -88,9 +91,16 @@ describe('InternalNotificationController - Send appeal to court of appeals notif
       )
       expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
         expect.objectContaining({
+          to: [{ name: registrarName, address: registrarEmail }],
+          subject: `Kæra í máli ${courtCaseNumber}`,
+          html: `Úrskurður hefur verið kærður í máli ${courtCaseNumber}. Hægt er að nálgast gögn málsins í <a href="http://localhost:4200/krafa/yfirlit/${caseId}">Réttarvörslugátt</a> með rafrænum skilríkjum.`,
+        }),
+      )
+      expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
+        expect.objectContaining({
           to: [{ name: defenderName, address: defenderEmail }],
           subject: `Kæra í máli ${courtCaseNumber}`,
-          html: `Úrskurður hefur verið kærður í máli ${courtCaseNumber}. Hægt er að nálgast gögn málsins í <a href="http://localhost:4200/verjandi/${caseId}">Réttarvörslugátt</a> með rafrænum skilríkjum.`,
+          html: `Úrskurður hefur verið kærður í máli ${courtCaseNumber}. Hægt er að nálgast gögn málsins í <a href="http://localhost:4200/verjandi/krafa/${caseId}">Réttarvörslugátt</a> með rafrænum skilríkjum.`,
         }),
       )
       expect(then.result).toEqual({ delivered: true })

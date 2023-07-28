@@ -1,5 +1,4 @@
-import { service, ServiceBuilder } from '../../../../../infra/src/dsl/dsl'
-import { json } from '../../../../../infra/src/dsl/dsl'
+import { json, service, ServiceBuilder } from '../../../../../infra/src/dsl/dsl'
 import { Base, Client, RskProcuring } from '../../../../../infra/src/dsl/xroad'
 
 const postgresInfo = {
@@ -69,10 +68,18 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-ids-api'> => {
         dev: '10001',
         staging: '6503760649',
       },
+      NOVA_ACCEPT_UNAUTHORIZED: {
+        dev: 'true',
+        staging: 'false',
+        prod: 'false',
+      },
     })
     .secrets({
       IDENTITY_SERVER_CLIENT_SECRET:
         '/k8s/services-auth/IDENTITY_SERVER_CLIENT_SECRET',
+      NOVA_URL: '/k8s/services-auth/NOVA_URL',
+      NOVA_USERNAME: '/k8s/services-auth/NOVA_USERNAME',
+      NOVA_PASSWORD: '/k8s/services-auth/NOVA_PASSWORD',
     })
     .xroad(Base, Client, RskProcuring)
     .readiness('/liveness')
@@ -95,11 +102,11 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-ids-api'> => {
     .resources({
       limits: {
         cpu: '800m',
-        memory: '512Mi',
+        memory: '768Mi',
       },
       requests: {
-        cpu: '100m',
-        memory: '256Mi',
+        cpu: '400m',
+        memory: '512Mi',
       },
     })
     .replicaCount({

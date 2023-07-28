@@ -215,7 +215,7 @@ function remainingJudgeCaseData() {
     validToDate: '2021-09-28T12:00:00.000Z',
     isolationToDate: '2021-09-10T12:00:00.000Z',
     conclusion: 'Addition to Conclusion',
-    accusedAppealDecision: CaseAppealDecision.APPEAL,
+    accusedAppealDecision: CaseAppealDecision.ACCEPT,
     accusedAppealAnnouncement: 'Accused Appeal Announcement',
     prosecutorAppealDecision: CaseAppealDecision.ACCEPT,
     prosecutorAppealAnnouncement: 'Prosecutor Appeal Announcement',
@@ -300,7 +300,8 @@ function caseToCCase(dbCase: Case): CCase {
     validToDate: theCase.validToDate && theCase.validToDate.toISOString(),
     isolationToDate:
       theCase.isolationToDate && theCase.isolationToDate.toISOString(),
-    rulingDate: theCase.rulingDate && theCase.rulingDate.toISOString(),
+    rulingSignatureDate:
+      theCase.rulingSignatureDate && theCase.rulingSignatureDate.toISOString(),
     accusedPostponedAppealDate:
       theCase.accusedPostponedAppealDate &&
       theCase.accusedPostponedAppealDate.toISOString(),
@@ -451,7 +452,9 @@ function expectCasesToMatch(caseOne: CCase, caseTwo: CCase) {
   expect(caseOne.prosecutorAppealAnnouncement ?? null).toBe(
     caseTwo.prosecutorAppealAnnouncement ?? null,
   )
-  expect(caseOne.rulingDate ?? null).toBe(caseTwo.rulingDate ?? null)
+  expect(caseOne.rulingSignatureDate ?? null).toBe(
+    caseTwo.rulingSignatureDate ?? null,
+  )
   expect(caseOne.accusedPostponedAppealDate ?? null).toBe(
     caseTwo.accusedPostponedAppealDate ?? null,
   )
@@ -472,7 +475,9 @@ function expectCasesToMatch(caseOne: CCase, caseTwo: CCase) {
   expect(caseOne.caseResentExplanation ?? null).toBe(
     caseTwo.caseResentExplanation ?? null,
   )
-  expect(caseOne.seenByDefender ?? null).toBe(caseTwo.seenByDefender ?? null)
+  expect(caseOne.openedByDefender ?? null).toBe(
+    caseTwo.openedByDefender ?? null,
+  )
   if (caseOne.parentCase || caseTwo.parentCase) {
     expectCasesToMatch(caseOne.parentCase, caseTwo.parentCase)
   }
@@ -511,7 +516,7 @@ describe('Institution', () => {
       .send()
       .expect(200)
       .then((response) => {
-        expect(response.body.length).toBe(18)
+        expect(response.body.length).toBe(20)
       })
   })
 })
@@ -721,6 +726,7 @@ describe('Case', () => {
       ...getCaseData(),
       origin: CaseOrigin.RVG,
       state: CaseState.DRAFT,
+      courtId: judge.institution?.id,
     })
       .then((value) => {
         dbCase = caseToCCase(value)
@@ -742,6 +748,7 @@ describe('Case', () => {
           ...judgeCaseData,
           judge,
           registrar,
+          court,
         } as CCase)
 
         // Check the data in the database

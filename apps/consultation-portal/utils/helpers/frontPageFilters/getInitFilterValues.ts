@@ -1,5 +1,6 @@
-import { CaseSortOptions } from '../../../types/enums'
+import { CaseSortOptions, MapCaseStatuses } from '../../../types/enums'
 import { ArrOfTypes } from '../../../types/interfaces'
+import { TYPES_ORDER } from '../../consts/consts'
 
 const TODAY = new Date()
 
@@ -13,14 +14,18 @@ export const getInitFilterValues = ({ types }: Props) => {
       value,
       label,
     }))
-    .map((item) => ({ ...item, checked: true }))
+    .map((item) => ({
+      ...item,
+      label: MapCaseStatuses[item.label],
+      checked: false,
+    }))
 
   const caseTypes = Object.entries(types.caseTypes)
     .map(([value, label]) => ({
       value,
       label,
     }))
-    .map((item) => ({ ...item, checked: true }))
+    .map((item) => ({ ...item, checked: false }))
 
   const Institutions = Object.entries(types.institutions).map(
     ([value, label]) => ({
@@ -59,20 +64,11 @@ export const getInitFilterValues = ({ types }: Props) => {
   ]
 
   const period = {
-    from: new Date(2018, 1, 2),
+    from: new Date(2018, 1, 1),
     to: new Date(TODAY.getFullYear(), TODAY.getMonth(), TODAY.getDate()),
   }
 
-  const typesOrder = [
-    'Áform um lagasetningu',
-    'Drög að frumvarpi til laga',
-    'Drög að reglugerð',
-    'Drög að stefnu',
-    'Stöðumat og valkostir',
-    'Annað',
-  ]
-
-  const sortByObject = typesOrder.reduce((obj, item, index) => {
+  const sortByObject = TYPES_ORDER.reduce((obj, item, index) => {
     return {
       ...obj,
       [item]: index,

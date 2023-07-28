@@ -1,19 +1,21 @@
 import { toast } from '@island.is/island-ui/core'
 import { useState } from 'react'
-import { Area, SubscriptionTypeKey } from '../../types/enums'
+import { Area, SubscriptionTypes } from '../../types/enums'
 import {
   ArrOfTypesForSubscriptions,
   CaseForSubscriptions,
 } from '../../types/interfaces'
-import { useLogIn, useSearchSubscriptions, useUser } from '../../utils/helpers'
-import usePostSubscription from '../../utils/helpers/api/usePostSubscription'
-import SubscriptionsSkeleton from '../../components/SubscriptionsSkeleton/SubscriptionsSkeleton'
-import ChosenSubscriptions from '../../components/ChosenSubscriptions/ChosenSubscriptions'
-import { useFetchSubscriptions } from '../../utils/helpers/api/useFetchSubscriptions'
 import {
+  useLogIn,
+  useSearchSubscriptions,
+  useUser,
   useSubscriptions,
-  filterSubscriptions as F,
-} from '../../utils/helpers/subscriptions'
+  useFetchSubscriptions,
+  usePostSubscription,
+} from '../../hooks'
+import { SubscriptionsSkeleton, ChosenSubscriptions } from './components'
+import { filterSubscriptions as F } from '../../utils/helpers/subscriptions'
+import localization from './Subscriptions.json'
 
 interface SubProps {
   cases: CaseForSubscriptions[]
@@ -21,7 +23,8 @@ interface SubProps {
 }
 
 const SubscriptionsScreen = ({ cases, types }: SubProps) => {
-  const { isAuthenticated, userLoading } = useUser()
+  const loc = localization['subscriptions']
+  const { isAuthenticated } = useUser()
   const [currentTab, setCurrentTab] = useState<Area>(Area.case)
   const {
     initSubs,
@@ -34,7 +37,7 @@ const SubscriptionsScreen = ({ cases, types }: SubProps) => {
   const [submitSubsIsLoading, setSubmitSubsIsLoading] = useState(false)
   const LogIn = useLogIn()
 
-  const { userSubscriptions } = useFetchSubscriptions({
+  const { userSubscriptions, getUserSubsLoading } = useFetchSubscriptions({
     isAuthenticated: isAuthenticated,
   })
 
@@ -94,8 +97,8 @@ const SubscriptionsScreen = ({ cases, types }: SubProps) => {
         : preSubscribedToAll
     const _subscribedToAllType = _subscribedToAll
       ? subSubscribedToAllNewObj.checked
-        ? 'OnlyNew'
-        : 'AllChanges'
+        ? SubscriptionTypes.OnlyNew
+        : SubscriptionTypes.AllChanges
       : preSubscribedToAllType
 
     const objToSend = {
@@ -114,12 +117,12 @@ const SubscriptionsScreen = ({ cases, types }: SubProps) => {
       .then(() => {
         onClear()
         setSubmitSubsIsLoading(false)
-        toast.success('Áskrift skráð')
+        toast.success(loc.postSubsMutationToasts.success)
       })
       .catch((e) => {
         setSubmitSubsIsLoading(false)
         console.error(e)
-        toast.error('Ekki tókst að skrá áskriftir')
+        toast.error(loc.postSubsMutationToasts.failure)
       })
     setSubmitSubsIsLoading(false)
   }
@@ -133,13 +136,14 @@ const SubscriptionsScreen = ({ cases, types }: SubProps) => {
       currentTab={currentTab}
       setCurrentTab={setCurrentTab}
       tabs={tabs}
+      getUserSubsLoading={getUserSubsLoading}
     >
       <ChosenSubscriptions
         subscriptionArray={subscriptionArray}
         setSubscriptionArray={setSubscriptionArray}
         onSubmit={onSubmit}
         onClear={onClear}
-        buttonText="Skrá í áskrift"
+        buttonText={loc.chosenSubscriptions.buttonText}
         submitSubsIsLoading={submitSubsIsLoading}
       />
     </SubscriptionsSkeleton>

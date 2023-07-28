@@ -22,7 +22,7 @@ type GivenWhenThen = (
   appealsCourtNumber?: string,
 ) => Promise<Then>
 
-describe('InternalNotificationController - Send appeal statement notification', () => {
+describe('InternalNotificationController - Send appeal statement notifications', () => {
   const userId = uuid()
   const caseId = uuid()
   const prosecutorName = uuid()
@@ -111,7 +111,7 @@ describe('InternalNotificationController - Send appeal statement notification', 
         expect.objectContaining({
           to: [{ name: defenderName, address: defenderEmail }],
           subject: `Ný greinargerð í máli ${courtCaseNumber} (${appealCaseNumber})`,
-          html: `Greinargerð hefur borist vegna kæru í máli ${courtCaseNumber} (Landsréttarmál nr. ${appealCaseNumber}). Hægt er að nálgast gögn málsins í <a href="http://localhost:4200/verjandi/${caseId}">Réttarvörslugátt</a> með rafrænum skilríkjum.`,
+          html: `Greinargerð hefur borist vegna kæru í máli ${courtCaseNumber} (Landsréttarmál nr. ${appealCaseNumber}). Hægt er að nálgast gögn málsins í <a href="http://localhost:4200/verjandi/krafa/${caseId}">Réttarvörslugátt</a> með rafrænum skilríkjum.`,
         }),
       )
       expect(then.result).toEqual({ delivered: true })
@@ -180,7 +180,7 @@ describe('InternalNotificationController - Send appeal statement notification', 
         expect.objectContaining({
           to: [{ name: defenderName, address: defenderEmail }],
           subject: `Ný greinargerð í máli ${courtCaseNumber}`,
-          html: `Greinargerð hefur borist vegna kæru í máli ${courtCaseNumber}. Hægt er að nálgast gögn málsins í <a href="http://localhost:4200/verjandi/${caseId}">Réttarvörslugátt</a> með rafrænum skilríkjum.`,
+          html: `Greinargerð hefur borist vegna kæru í máli ${courtCaseNumber}. Hægt er að nálgast gögn málsins í <a href="http://localhost:4200/verjandi/krafa/${caseId}">Réttarvörslugátt</a> með rafrænum skilríkjum.`,
         }),
       )
       expect(then.result).toEqual({ delivered: true })

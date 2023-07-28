@@ -15,7 +15,7 @@ import {
 
 import { DelegationScope } from '../../delegations/models/delegation-scope.model'
 import { PersonalRepresentativeScopePermission } from '../../personal-representative/models/personal-representative-scope-permission.model'
-import { ApiScopesDTO } from '../dto/api-scopes.dto'
+import { ApiScopeDTO } from '../dto/api-scope.dto'
 import { ApiScopeGroup } from './api-scope-group.model'
 import { ApiScopeUserAccess } from './api-scope-user-access.model'
 import { ApiScopeUserClaim } from './api-scope-user-claim.model'
@@ -258,7 +258,7 @@ export class ApiScope extends Model<ModelAttributes, CreationAttributes> {
   @ApiPropertyOptional({ type: () => Domain })
   domain?: Domain
 
-  toDTO(): ApiScopesDTO {
+  toDTO(): ApiScopeDTO {
     return {
       name: this.name,
       enabled: this.enabled,
@@ -276,6 +276,7 @@ export class ApiScope extends Model<ModelAttributes, CreationAttributes> {
       required: this.required,
       emphasize: this.emphasize,
       domainName: this.domainName,
+      isAccessControlled: this.isAccessControlled ?? undefined,
     }
   }
 }

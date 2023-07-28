@@ -33,7 +33,7 @@ import {
   GET_SYSLUMENN_AUCTIONS_QUERY,
 } from '../../queries'
 import { Screen } from '../../../types'
-import { useFeatureFlag, useNamespace } from '@island.is/web/hooks'
+import { useNamespace } from '@island.is/web/hooks'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import { OrganizationWrapper, Webreader } from '@island.is/web/components'
 import { useQuery } from '@apollo/client'
@@ -398,10 +398,6 @@ const Auctions: Screen<AuctionsProps> = ({
   namespace,
   subpage,
 }) => {
-  const { value: isWebReaderEnabledForOrganizationPages } = useFeatureFlag(
-    'isWebReaderEnabledForOrganizationPages',
-    false,
-  )
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
   const { format } = useDateUtils()
@@ -663,9 +659,7 @@ const Auctions: Screen<AuctionsProps> = ({
         <Text variant="h1" as="h2">
           {subpage?.title ?? n('auctions', 'Uppboð')}
         </Text>
-        {isWebReaderEnabledForOrganizationPages && (
-          <Webreader readId={null} readClass="rs_read" />
-        )}
+        <Webreader readId={null} readClass="rs_read" />
       </Box>
       <GridContainer>
         <GridRow>

@@ -87,7 +87,7 @@ const AppealSections: React.FC<Props> = (props) => {
                       {
                         accusedAppealAnnouncement:
                           workingCase.sessionArrangements ===
-                          SessionArrangements.AllPresentSpokesperson
+                          SessionArrangements.ALL_PRESENT_SPOKESPERSON
                             ? formatMessage(
                                 m.defendantAnnouncementAutofillSpokespersonAppealV2,
                               )

@@ -116,7 +116,7 @@ export const AlertBanner: FC<AlertBannerProps> = ({
         </Box>
       )}
       {description && (
-        <Box marginRight={[0, 0, 0, 2]}>
+        <Box marginRight={2}>
           <Text>{description}</Text>
         </Box>
       )}

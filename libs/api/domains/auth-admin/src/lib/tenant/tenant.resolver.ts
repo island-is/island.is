@@ -1,8 +1,8 @@
 import { UseGuards } from '@nestjs/common'
 import { Args, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
 
-import { CurrentUser, IdsUserGuard } from '@island.is/auth-nest-tools'
 import type { User } from '@island.is/auth-nest-tools'
+import { CurrentUser, IdsUserGuard } from '@island.is/auth-nest-tools'
 import { Environment } from '@island.is/shared/types'
 
 import { TenantsPayload } from './dto/tenants.payload'

@@ -15,7 +15,6 @@ import {
   CaseFileCategory,
   CaseFileState,
   CaseState,
-  isIndictmentCase,
   UserRole,
 } from '@island.is/judicial-system/types'
 import type { User as TUser } from '@island.is/judicial-system/types'
@@ -26,7 +25,7 @@ import {
 } from '@island.is/judicial-system/message'
 
 import { nowFactory, uuidFactory } from '../../factories'
-import { Defendant } from '../defendant'
+import { Defendant, DefendantService } from '../defendant'
 import { Institution } from '../institution'
 import { User } from '../user'
 import { CaseFile } from '../file'
@@ -45,6 +44,7 @@ export const attributes: (keyof Case)[] = [
   'defenderNationalId',
   'defenderEmail',
   'defenderPhoneNumber',
+  'sendRequestToDefender',
   'courtId',
   'leadInvestigator',
   'requestedCustodyRestrictions',
@@ -59,13 +59,14 @@ export const attributes: (keyof Case)[] = [
   'isolationToDate',
   'conclusion',
   'rulingDate',
+  'rulingSignatureDate',
   'registrarId',
   'judgeId',
   'courtRecordSignatoryId',
   'courtRecordSignatureDate',
   'parentCaseId',
   'caseModifiedExplanation',
-  'seenByDefender',
+  'openedByDefender',
   'caseResentExplanation',
   'appealState',
   'accusedAppealDecision',
@@ -81,12 +82,16 @@ export const attributes: (keyof Case)[] = [
   'appealJudge3Id',
   'appealConclusion',
   'appealRulingDecision',
+  'appealReceivedByCourtDate',
 ]
 
 export interface LimitedAccessUpdateCase
   extends Pick<
     Case,
-    'accusedPostponedAppealDate' | 'appealState' | 'defendantStatementDate'
+    | 'accusedPostponedAppealDate'
+    | 'appealState'
+    | 'defendantStatementDate'
+    | 'openedByDefender'
   > {}
 
 export const include: Includeable[] = [
@@ -133,8 +138,35 @@ export const include: Includeable[] = [
         CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE,
         CaseFileCategory.DEFENDANT_APPEAL_STATEMENT,
         CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE,
+        CaseFileCategory.APPEAL_RULING,
+        CaseFileCategory.COURT_RECORD,
+        CaseFileCategory.COVER_LETTER,
+        CaseFileCategory.INDICTMENT,
+        CaseFileCategory.CRIMINAL_RECORD,
+        CaseFileCategory.COST_BREAKDOWN,
+        CaseFileCategory.CASE_FILE,
       ],
     },
+  },
+  {
+    model: User,
+    as: 'appealAssistant',
+    include: [{ model: Institution, as: 'institution' }],
+  },
+  {
+    model: User,
+    as: 'appealJudge1',
+    include: [{ model: Institution, as: 'institution' }],
+  },
+  {
+    model: User,
+    as: 'appealJudge2',
+    include: [{ model: Institution, as: 'institution' }],
+  },
+  {
+    model: User,
+    as: 'appealJudge3',
+    include: [{ model: Institution, as: 'institution' }],
   },
 ]
 
@@ -146,6 +178,7 @@ export const order: OrderItem[] = [
 export class LimitedAccessCaseService {
   constructor(
     private readonly messageService: MessageService,
+    private readonly defendantService: DefendantService,
     @InjectModel(Case) private readonly caseModel: typeof Case,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
@@ -164,13 +197,6 @@ export class LimitedAccessCaseService {
 
     if (!theCase) {
       throw new NotFoundException(`Case ${caseId} does not exist`)
-    }
-
-    if (!theCase.seenByDefender) {
-      await this.caseModel.update(
-        { ...theCase, seenByDefender: nowFactory() },
-        { where: { id: caseId } },
-      )
     }
 
     return theCase
@@ -231,28 +257,10 @@ export class LimitedAccessCaseService {
     // Return limited access case
     const updatedCase = await this.findById(theCase.id)
 
-    if (updatedCase.defendantStatementDate !== theCase.defendantStatementDate) {
-      theCase.caseFiles
-        ?.filter(
-          (caseFile) =>
-            caseFile.state === CaseFileState.STORED_IN_RVG &&
-            caseFile.key &&
-            caseFile.category &&
-            [
-              CaseFileCategory.DEFENDANT_APPEAL_STATEMENT,
-              CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE,
-            ].includes(caseFile.category),
-        )
-        .forEach((caseFile) => {
-          const message = {
-            type: MessageType.DELIVER_CASE_FILE_TO_COURT,
-            user,
-            caseId: theCase.id,
-            caseFileId: caseFile.id,
-          }
-          messages.push(message)
-        })
-
+    if (
+      updatedCase.defendantStatementDate?.getTime() !==
+      theCase.defendantStatementDate?.getTime()
+    ) {
       messages.push({
         type: MessageType.SEND_APPEAL_STATEMENT_NOTIFICATION,
         user,
@@ -260,60 +268,69 @@ export class LimitedAccessCaseService {
       })
     }
 
-    await this.messageService.sendMessagesToQueue(messages)
+    if (messages.length > 0) {
+      await this.messageService.sendMessagesToQueue(messages)
+    }
 
     return updatedCase
   }
 
-  findDefenderNationalId(theCase: Case, nationalId: string): User {
-    let defender:
-      | {
-          nationalId: string
-          name?: string
-          phoneNumber?: string
-          email?: string
-        }
-      | undefined
-
-    if (isIndictmentCase(theCase.type)) {
-      const defendant = theCase.defendants?.find(
-        (defendant) => defendant.defenderNationalId === nationalId,
-      )
-
-      if (defendant) {
-        defender = {
-          nationalId: defendant.defenderNationalId as string,
-          name: defendant.defenderName,
-          phoneNumber: defendant.defenderPhoneNumber,
-          email: defendant.defenderEmail,
-        }
-      }
-    } else if (theCase.defenderNationalId === nationalId) {
-      defender = {
-        nationalId: theCase.defenderNationalId,
-        name: theCase.defenderName,
-        phoneNumber: theCase.defenderPhoneNumber,
-        email: theCase.defenderEmail,
-      }
-    }
-
-    if (!defender) {
-      throw new NotFoundException('Defender not found')
-    }
-
+  private constructDefender(
+    nationalId: string,
+    name?: string,
+    mobileNumber?: string,
+    email?: string,
+  ): User {
     const now = nowFactory()
 
     return {
       id: uuidFactory(),
       created: now,
       modified: now,
-      nationalId: defender.nationalId,
-      name: defender.name ?? '',
+      nationalId,
+      name: name ?? '',
       title: 'verjandi',
-      mobileNumber: defender.phoneNumber ?? '',
-      email: defender.email ?? '',
+      mobileNumber: mobileNumber ?? '',
+      email: email ?? '',
       role: UserRole.DEFENDER,
       active: true,
     } as User
+  }
+
+  async findDefenderByNationalId(nationalId: string): Promise<User> {
+    return this.caseModel
+      .findOne({
+        where: {
+          defenderNationalId: nationalId,
+          state: { [Op.not]: CaseState.DELETED },
+          isArchived: false,
+        },
+        order: [['created', 'DESC']],
+      })
+      .then((theCase) => {
+        if (theCase) {
+          return this.constructDefender(
+            nationalId,
+            theCase.defenderName,
+            theCase.defenderPhoneNumber,
+            theCase.defenderEmail,
+          )
+        }
+
+        return this.defendantService
+          .findLatestDefendantByDefenderNationalId(nationalId)
+          .then((defendant) => {
+            if (defendant) {
+              return this.constructDefender(
+                nationalId,
+                defendant.defenderName,
+                defendant.defenderPhoneNumber,
+                defendant.defenderEmail,
+              )
+            }
+
+            throw new NotFoundException('Defender not found')
+          })
+      })
   }
 }

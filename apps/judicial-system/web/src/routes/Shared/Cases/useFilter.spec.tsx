@@ -8,7 +8,7 @@ import {
 import { filterCases, FilterOption, filterOptionsForUser } from './useFilter'
 
 describe('useFilter - filterOptionsForUser', () => {
-  test.each([UserRole.Assistant, UserRole.Representative])(
+  test.each([UserRole.ASSISTANT, UserRole.REPRESENTATIVE])(
     'should filter out investigation option for %s',
     (role) => {
       const user = { role: role } as User
@@ -81,7 +81,7 @@ describe('useFilter - filterCases', () => {
     const user = {} as User
     const cases = [
       { id: '1' },
-      { id: '2', type: CaseType.Indictment },
+      { id: '2', type: CaseType.INDICTMENT },
     ] as Case[]
 
     const result = filterCases('INDICTMENT', cases, user)
@@ -94,8 +94,8 @@ describe('useFilter - filterCases', () => {
   test('should return investigation cases', async () => {
     const user = {} as User
     const cases = [
-      { id: '1', type: CaseType.Custody },
-      { id: '2', type: CaseType.Indictment },
+      { id: '1', type: CaseType.CUSTODY },
+      { id: '2', type: CaseType.INDICTMENT },
     ] as Case[]
 
     const result = filterCases('INVESTIGATION', cases, user)

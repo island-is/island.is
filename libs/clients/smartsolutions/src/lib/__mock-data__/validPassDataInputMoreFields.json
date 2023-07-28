@@ -1,0 +1,26 @@
+{
+  "id": "2ef92dea-2e9c-40b6-adda-57bccfb16c0b",
+  "expirationDate": "2028-01-01T12:00:00Z",
+  "inputFieldValues": [
+    {
+      "identifier": "gildir",
+      "value": "9908.789.2024"
+    },
+    {
+      "identifier": "name",
+      "value": "TESTI MANNI"
+    },
+    {
+      "identifier": "kennitala",
+      "value": "TEST"
+    },
+    {
+      "identifier": "nickname",
+      "value": "NIKKI MANNI"
+    },
+    {
+      "identifier": "testField",
+      "value": "bing bongds"
+    }
+  ]
+}

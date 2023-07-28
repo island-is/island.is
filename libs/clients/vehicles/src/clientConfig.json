@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "Samgöngustofa",
-    "description": "Leitar eftir ökutækjum út frá fastanúmeri, skr�ningarnúmeri eða verksmiðjunúmeri",
+    "description": "Leitar eftir ökutækjum út frá fastanúmeri, skr�ningarnúmeri eða verksmiðjunúmeri - Release-2 : 20230516.1",
     "contact": {
       "name": "Samgongustofa",
       "url": "https://www.samgongustofa.is/",
@@ -18,86 +18,84 @@
       ["featureRequest", "https://www.samgongustofa.is/"]
     ]
   },
-  "servers": [
-    {
-      "url": "/vehicle/vehiclesearch"
-    }
-  ],
+  "servers": [{ "url": "/vehicle/vehiclesearch" }],
   "paths": {
     "/VehicleReportPdf": {
       "get": {
         "tags": ["Pdf"],
         "parameters": [
-          {
-            "name": "permno",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          }
+          { "name": "permno", "in": "query", "schema": { "type": "string" } }
         ],
         "responses": {
           "200": {
             "description": "Success",
             "content": {
               "application/pdf": {
-                "schema": {
-                  "type": "string",
-                  "format": "binary"
-                }
+                "schema": { "type": "string", "format": "binary" }
               }
             }
           },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "403": {
-            "description": "Forbidden"
-          }
+          "401": { "description": "Unauthorized" },
+          "403": { "description": "Forbidden" }
         },
-        "security": [
-          {
-            "OAuth2": ["OAuth2"]
-          }
-        ]
+        "security": [{ "OAuth2": ["OAuth2"] }]
       }
     },
     "/OwnershipReportPdf": {
       "get": {
         "tags": ["Pdf"],
         "parameters": [
-          {
-            "name": "ssn",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          }
+          { "name": "ssn", "in": "query", "schema": { "type": "string" } }
         ],
         "responses": {
           "200": {
             "description": "Success",
             "content": {
               "application/pdf": {
+                "schema": { "type": "string", "format": "binary" }
+              }
+            }
+          },
+          "401": { "description": "Unauthorized" },
+          "403": { "description": "Forbidden" }
+        },
+        "security": [{ "OAuth2": ["OAuth2"] }]
+      }
+    },
+    "/PublicVehicleSearch": {
+      "get": {
+        "tags": ["PublicVehicleSearch"],
+        "parameters": [
+          { "name": "search", "in": "query", "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
                 "schema": {
-                  "type": "string",
-                  "format": "binary"
+                  "$ref": "#/components/schemas/PublicVehicleInfoDto"
                 }
               }
             }
           },
-          "401": {
-            "description": "Unauthorized"
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
           },
-          "403": {
-            "description": "Forbidden"
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
           }
-        },
-        "security": [
-          {
-            "OAuth2": ["OAuth2"]
-          }
-        ]
+        }
       }
     },
     "/SearchesRemaining": {
@@ -108,53 +106,26 @@
             "description": "Success",
             "content": {
               "application/json": {
-                "schema": {
-                  "type": "integer",
-                  "format": "int32"
-                }
+                "schema": { "type": "integer", "format": "int32" }
               }
             }
           },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "403": {
-            "description": "Forbidden"
-          }
+          "401": { "description": "Unauthorized" },
+          "403": { "description": "Forbidden" }
         },
-        "security": [
-          {
-            "OAuth2": ["OAuth2"]
-          }
-        ]
+        "security": [{ "OAuth2": ["OAuth2"] }]
       }
     },
     "/VehicleSearch": {
       "get": {
         "tags": ["VehicleSearch"],
         "parameters": [
-          {
-            "name": "search",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "cursor",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          },
+          { "name": "search", "in": "query", "schema": { "type": "string" } },
+          { "name": "cursor", "in": "query", "schema": { "type": "string" } },
           {
             "name": "limit",
             "in": "query",
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "default": 50
-            }
+            "schema": { "type": "integer", "format": "int32", "default": 50 }
           }
         ],
         "responses": {
@@ -172,24 +143,14 @@
             "description": "Not Found",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "403": {
-            "description": "Forbidden"
-          }
+          "401": { "description": "Unauthorized" },
+          "403": { "description": "Forbidden" }
         },
-        "security": [
-          {
-            "OAuth2": ["OAuth2"]
-          }
-        ]
+        "security": [{ "OAuth2": ["OAuth2"] }]
       }
     },
     "/BasicVehicleInformation": {
@@ -199,38 +160,15 @@
           {
             "name": "clientPersidno",
             "in": "query",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           },
-          {
-            "name": "permno",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "regno",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "vin",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          },
+          { "name": "permno", "in": "query", "schema": { "type": "string" } },
+          { "name": "regno", "in": "query", "schema": { "type": "string" } },
+          { "name": "vin", "in": "query", "schema": { "type": "string" } },
           {
             "name": "getFees",
             "in": "query",
-            "schema": {
-              "type": "boolean",
-              "default": true
-            }
+            "schema": { "type": "boolean", "default": true }
           }
         ],
         "responses": {
@@ -248,24 +186,14 @@
             "description": "Not Found",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "403": {
-            "description": "Forbidden"
-          }
+          "401": { "description": "Unauthorized" },
+          "403": { "description": "Forbidden" }
         },
-        "security": [
-          {
-            "OAuth2": ["OAuth2"]
-          }
-        ]
+        "security": [{ "OAuth2": ["OAuth2"] }]
       }
     },
     "/VehicleHistory": {
@@ -275,49 +203,28 @@
           {
             "name": "requestedPersidno",
             "in": "query",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           },
           {
             "name": "showDeregistered",
             "in": "query",
-            "schema": {
-              "type": "boolean",
-              "default": false
-            }
+            "schema": { "type": "boolean", "default": false }
           },
           {
             "name": "showHistory",
             "in": "query",
-            "schema": {
-              "type": "boolean",
-              "default": false
-            }
+            "schema": { "type": "boolean", "default": false }
           },
           {
             "name": "dtFrom",
             "in": "query",
-            "schema": {
-              "type": "string",
-              "format": "date-time"
-            }
+            "schema": { "type": "string", "format": "date-time" }
           },
-          {
-            "name": "cursor",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          },
+          { "name": "cursor", "in": "query", "schema": { "type": "string" } },
           {
             "name": "limit",
             "in": "query",
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "default": 50
-            }
+            "schema": { "type": "integer", "format": "int32", "default": 50 }
           }
         ],
         "responses": {
@@ -335,57 +242,35 @@
             "description": "Not Found",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "403": {
-            "description": "Forbidden"
-          }
+          "401": { "description": "Unauthorized" },
+          "403": { "description": "Forbidden" }
         },
-        "security": [
-          {
-            "OAuth2": ["OAuth2"]
-          }
-        ]
+        "security": [{ "OAuth2": ["OAuth2"] }]
       }
     },
     "/CurrentVehicles": {
       "get": {
         "tags": ["VehicleSearch"],
         "parameters": [
-          {
-            "name": "persidNo",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          },
+          { "name": "persidNo", "in": "query", "schema": { "type": "string" } },
           {
             "name": "showOwned",
             "in": "query",
-            "schema": {
-              "type": "boolean"
-            }
+            "schema": { "type": "boolean" }
           },
           {
             "name": "showCoowned",
             "in": "query",
-            "schema": {
-              "type": "boolean"
-            }
+            "schema": { "type": "boolean" }
           },
           {
             "name": "showOperated",
             "in": "query",
-            "schema": {
-              "type": "boolean"
-            }
+            "schema": { "type": "boolean" }
           }
         ],
         "responses": {
@@ -395,25 +280,15 @@
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/VehicleMiniDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/VehicleMiniDto" }
                 }
               }
             }
           },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "403": {
-            "description": "Forbidden"
-          }
+          "401": { "description": "Unauthorized" },
+          "403": { "description": "Forbidden" }
         },
-        "security": [
-          {
-            "OAuth2": ["OAuth2"]
-          }
-        ]
+        "security": [{ "OAuth2": ["OAuth2"] }]
       }
     },
     "/AdditionalVehicleInformation": {
@@ -423,31 +298,11 @@
           {
             "name": "clientPersidno",
             "in": "query",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           },
-          {
-            "name": "permno",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "regno",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "vin",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          }
+          { "name": "permno", "in": "query", "schema": { "type": "string" } },
+          { "name": "regno", "in": "query", "schema": { "type": "string" } },
+          { "name": "vin", "in": "query", "schema": { "type": "string" } }
         ],
         "responses": {
           "200": {
@@ -464,37 +319,21 @@
             "description": "Not Found",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "403": {
-            "description": "Forbidden"
-          }
+          "401": { "description": "Unauthorized" },
+          "403": { "description": "Forbidden" }
         },
-        "security": [
-          {
-            "OAuth2": ["OAuth2"]
-          }
-        ]
+        "security": [{ "OAuth2": ["OAuth2"] }]
       }
     },
     "/OwnershipReportData": {
       "get": {
         "tags": ["VehicleSearch"],
         "parameters": [
-          {
-            "name": "ssn",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          }
+          { "name": "ssn", "in": "query", "schema": { "type": "string" } }
         ],
         "responses": {
           "200": {
@@ -507,18 +346,10 @@
               }
             }
           },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "403": {
-            "description": "Forbidden"
-          }
+          "401": { "description": "Unauthorized" },
+          "403": { "description": "Forbidden" }
         },
-        "security": [
-          {
-            "OAuth2": ["OAuth2"]
-          }
-        ]
+        "security": [{ "OAuth2": ["OAuth2"] }]
       }
     }
   },
@@ -527,85 +358,33 @@
       "AdditionalVehicleInformationAaetludBifreidagjold": {
         "type": "object",
         "properties": {
-          "timabil1": {
-            "type": "string",
-            "nullable": true
-          },
-          "btGjald1": {
-            "type": "string",
-            "nullable": true
-          },
-          "bkGjald1": {
-            "type": "string",
-            "nullable": true
-          },
-          "timabil2": {
-            "type": "string",
-            "nullable": true
-          },
-          "btGjald2": {
-            "type": "string",
-            "nullable": true
-          },
-          "bkGjald2": {
-            "type": "string",
-            "nullable": true
-          }
+          "timabil1": { "type": "string", "nullable": true },
+          "btGjald1": { "type": "string", "nullable": true },
+          "bkGjald1": { "type": "string", "nullable": true },
+          "timabil2": { "type": "string", "nullable": true },
+          "btGjald2": { "type": "string", "nullable": true },
+          "bkGjald2": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
       "AdditionalVehicleInformationAlestur": {
         "type": "object",
         "properties": {
-          "skfl": {
-            "type": "string",
-            "nullable": true
-          },
+          "skfl": { "type": "string", "nullable": true },
           "aldags": {
             "type": "string",
             "format": "date-time",
             "nullable": true
           },
-          "stMael": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
-          },
-          "gjth": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
-          },
-          "stat": {
-            "type": "string",
-            "nullable": true
-          },
-          "nrMael": {
-            "type": "string",
-            "nullable": true
-          },
-          "marg": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
-          },
-          "vath": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
-          },
-          "nofl": {
-            "type": "string",
-            "nullable": true
-          },
-          "uppr": {
-            "type": "string",
-            "nullable": true
-          },
-          "brst": {
-            "type": "string",
-            "nullable": true
-          }
+          "stMael": { "type": "number", "format": "double", "nullable": true },
+          "gjth": { "type": "number", "format": "double", "nullable": true },
+          "stat": { "type": "string", "nullable": true },
+          "nrMael": { "type": "string", "nullable": true },
+          "marg": { "type": "number", "format": "double", "nullable": true },
+          "vath": { "type": "number", "format": "double", "nullable": true },
+          "nofl": { "type": "string", "nullable": true },
+          "uppr": { "type": "string", "nullable": true },
+          "brst": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
@@ -639,31 +418,16 @@
           "aaetludBifreidagjold": {
             "$ref": "#/components/schemas/AdditionalVehicleInformationAaetludBifreidagjold"
           },
-          "hasEncumbrances": {
-            "type": "integer",
-            "format": "int32"
-          },
+          "hasEncumbrances": { "type": "integer", "format": "int32" },
           "inspectionfine": {
             "type": "number",
             "format": "double",
             "nullable": true
           },
-          "message": {
-            "type": "string",
-            "nullable": true
-          },
-          "permno": {
-            "type": "string",
-            "nullable": true
-          },
-          "regno": {
-            "type": "string",
-            "nullable": true
-          },
-          "vin": {
-            "type": "string",
-            "nullable": true
-          }
+          "message": { "type": "string", "nullable": true },
+          "permno": { "type": "string", "nullable": true },
+          "regno": { "type": "string", "nullable": true },
+          "vin": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
@@ -715,11 +479,7 @@
             "format": "double",
             "nullable": true
           },
-          "total": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
-          }
+          "total": { "type": "number", "format": "double", "nullable": true }
         },
         "additionalProperties": false
       },
@@ -761,24 +521,15 @@
             "format": "double",
             "nullable": true
           },
-          "gjaldfl": {
-            "type": "string",
-            "nullable": true
-          },
-          "kennitala": {
-            "type": "string",
-            "nullable": true
-          }
+          "gjaldfl": { "type": "string", "nullable": true },
+          "kennitala": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
       "AdditionalVehicleInformationVorugjald": {
         "type": "object",
         "properties": {
-          "kennitala": {
-            "type": "string",
-            "nullable": true
-          },
+          "kennitala": { "type": "string", "nullable": true },
           "innflutn": {
             "type": "number",
             "format": "double",
@@ -789,50 +540,37 @@
             "format": "double",
             "nullable": true
           },
-          "vextir": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
-          },
-          "kostnad": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
-          },
-          "ogjaldf": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
-          },
-          "hrdags": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "abending": {
-            "type": "string",
-            "nullable": true
-          }
+          "vextir": { "type": "number", "format": "double", "nullable": true },
+          "kostnad": { "type": "number", "format": "double", "nullable": true },
+          "ogjaldf": { "type": "number", "format": "double", "nullable": true },
+          "hrdags": { "type": "integer", "format": "int32" },
+          "abending": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
       "BasicVehicleInformationAddonsChangeDto": {
         "type": "object",
         "properties": {
-          "date": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "type": {
-            "type": "string",
+          "date": { "type": "string", "format": "date-time" },
+          "type": { "type": "string", "nullable": true },
+          "description": { "type": "string", "nullable": true },
+          "invalidDate": { "type": "string", "format": "date-time" }
+        },
+        "additionalProperties": false
+      },
+      "BasicVehicleInformationAdrAlterationDto": {
+        "type": "object",
+        "properties": {
+          "date": { "type": "string", "format": "date-time" },
+          "exii": { "type": "boolean", "nullable": true },
+          "exiii": { "type": "boolean", "nullable": true },
+          "fl": { "type": "boolean", "nullable": true },
+          "memu": { "type": "boolean", "nullable": true },
+          "at": { "type": "boolean", "nullable": true },
+          "massOfComb": {
+            "type": "integer",
+            "format": "int32",
             "nullable": true
-          },
-          "description": {
-            "type": "string",
-            "nullable": true
-          },
-          "invalidDate": {
-            "type": "string",
-            "format": "date-time"
           }
         },
         "additionalProperties": false
@@ -840,88 +578,39 @@
       "BasicVehicleInformationAdrDto": {
         "type": "object",
         "properties": {
-          "date": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "expires": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "exii": {
-            "type": "boolean",
-            "nullable": true
-          },
-          "exiii": {
-            "type": "boolean",
-            "nullable": true
-          },
-          "fl": {
-            "type": "boolean",
-            "nullable": true
-          },
-          "ox": {
-            "type": "boolean",
-            "nullable": true
-          },
-          "at": {
-            "type": "boolean",
-            "nullable": true
-          },
-          "pressexpires": {
-            "type": "string",
-            "nullable": true
-          },
-          "invaliddate": {
-            "type": "string",
-            "format": "date-time"
-          }
+          "date": { "type": "string", "format": "date-time" },
+          "expires": { "type": "string", "format": "date-time" },
+          "exii": { "type": "boolean", "nullable": true },
+          "exiii": { "type": "boolean", "nullable": true },
+          "fl": { "type": "boolean", "nullable": true },
+          "ox": { "type": "boolean", "nullable": true },
+          "at": { "type": "boolean", "nullable": true },
+          "pressexpires": { "type": "string", "nullable": true },
+          "invaliddate": { "type": "string", "format": "date-time" }
         },
         "additionalProperties": false
       },
       "BasicVehicleInformationDisasterDto": {
         "type": "object",
         "properties": {
-          "date": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true
-          },
+          "date": { "type": "string", "format": "date-time", "nullable": true },
           "invaliddate": {
             "type": "string",
             "format": "date-time",
             "nullable": true
           },
-          "disastertype": {
-            "type": "string",
-            "nullable": true
-          }
+          "disastertype": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
       "BasicVehicleInformationDto": {
         "type": "object",
         "properties": {
-          "message": {
-            "type": "string",
-            "nullable": true
-          },
-          "permno": {
-            "type": "string",
-            "nullable": true
-          },
-          "regno": {
-            "type": "string",
-            "nullable": true
-          },
-          "vin": {
-            "type": "string",
-            "nullable": true
-          },
-          "typeno": {
-            "type": "string",
-            "nullable": true
-          },
+          "message": { "type": "string", "nullable": true },
+          "permno": { "type": "string", "nullable": true },
+          "regno": { "type": "string", "nullable": true },
+          "vin": { "type": "string", "nullable": true },
+          "typeno": { "type": "string", "nullable": true },
           "typeapproval": {
             "type": "integer",
             "format": "int32",
@@ -932,38 +621,14 @@
             "format": "int32",
             "nullable": true
           },
-          "eutypeapproval": {
-            "type": "string",
-            "nullable": true
-          },
-          "variant": {
-            "type": "string",
-            "nullable": true
-          },
-          "version": {
-            "type": "string",
-            "nullable": true
-          },
-          "modelcode": {
-            "type": "string",
-            "nullable": true
-          },
-          "make": {
-            "type": "string",
-            "nullable": true
-          },
-          "vehcom": {
-            "type": "string",
-            "nullable": true
-          },
-          "speccom": {
-            "type": "string",
-            "nullable": true
-          },
-          "color": {
-            "type": "string",
-            "nullable": true
-          },
+          "eutypeapproval": { "type": "string", "nullable": true },
+          "variant": { "type": "string", "nullable": true },
+          "version": { "type": "string", "nullable": true },
+          "modelcode": { "type": "string", "nullable": true },
+          "make": { "type": "string", "nullable": true },
+          "vehcom": { "type": "string", "nullable": true },
+          "speccom": { "type": "string", "nullable": true },
+          "color": { "type": "string", "nullable": true },
           "productyear": {
             "type": "integer",
             "format": "int32",
@@ -1009,78 +674,25 @@
             "format": "date-time",
             "nullable": true
           },
-          "manufacturer": {
-            "type": "string",
-            "nullable": true
-          },
-          "country": {
-            "type": "string",
-            "nullable": true
-          },
-          "formercountry": {
-            "type": "string",
-            "nullable": true
-          },
-          "importerpersidno": {
-            "type": "string",
-            "nullable": true
-          },
-          "importername": {
-            "type": "string",
-            "nullable": true
-          },
-          "import": {
-            "type": "string",
-            "nullable": true
-          },
-          "vehiclestatus": {
-            "type": "string",
-            "nullable": true
-          },
-          "disastertype": {
-            "type": "string",
-            "nullable": true
-          },
-          "hasdisasters": {
-            "type": "boolean"
-          },
-          "fixed": {
-            "type": "boolean"
-          },
-          "hasaccidents": {
-            "type": "boolean"
-          },
-          "usegroup": {
-            "type": "string",
-            "nullable": true
-          },
-          "regtype": {
-            "type": "string",
-            "nullable": true
-          },
-          "platetypefront": {
-            "type": "string",
-            "nullable": true
-          },
-          "platetyperear": {
-            "type": "string",
-            "nullable": true
-          },
-          "platestatus": {
-            "type": "string",
-            "nullable": true
-          },
-          "platestoragelocation": {
-            "type": "string",
-            "nullable": true
-          },
-          "insurancecompany": {
-            "type": "string",
-            "nullable": true
-          },
-          "insurancestatus": {
-            "type": "boolean"
-          },
+          "manufacturer": { "type": "string", "nullable": true },
+          "country": { "type": "string", "nullable": true },
+          "formercountry": { "type": "string", "nullable": true },
+          "importerpersidno": { "type": "string", "nullable": true },
+          "importername": { "type": "string", "nullable": true },
+          "import": { "type": "string", "nullable": true },
+          "vehiclestatus": { "type": "string", "nullable": true },
+          "disastertype": { "type": "string", "nullable": true },
+          "hasdisasters": { "type": "boolean" },
+          "fixed": { "type": "boolean" },
+          "hasaccidents": { "type": "boolean" },
+          "usegroup": { "type": "string", "nullable": true },
+          "regtype": { "type": "string", "nullable": true },
+          "platetypefront": { "type": "string", "nullable": true },
+          "platetyperear": { "type": "string", "nullable": true },
+          "platestatus": { "type": "string", "nullable": true },
+          "platestoragelocation": { "type": "string", "nullable": true },
+          "insurancecompany": { "type": "string", "nullable": true },
+          "insurancestatus": { "type": "boolean" },
           "nextinspectiondate": {
             "type": "string",
             "format": "date-time",
@@ -1091,18 +703,9 @@
             "format": "date-time",
             "nullable": true
           },
-          "rebuilt": {
-            "type": "boolean",
-            "nullable": true
-          },
-          "offroad": {
-            "type": "boolean",
-            "nullable": true
-          },
-          "taxgroup": {
-            "type": "string",
-            "nullable": true
-          },
+          "rebuilt": { "type": "boolean", "nullable": true },
+          "offroad": { "type": "boolean", "nullable": true },
+          "taxgroup": { "type": "string", "nullable": true },
           "technical": {
             "$ref": "#/components/schemas/BasicVehicleInformationTechnicalDto"
           },
@@ -1225,43 +828,54 @@
             },
             "nullable": true
           },
-          "fees": {
-            "$ref": "#/components/schemas/OutstandingFees"
-          }
+          "adr": {
+            "$ref": "#/components/schemas/BasicVehicleInformationAdrAlterationDto"
+          },
+          "fees": { "$ref": "#/components/schemas/OutstandingFees" },
+          "euGroup": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
       "BasicVehicleInformationInspectionDto": {
         "type": "object",
         "properties": {
-          "date": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true
-          },
+          "date": { "type": "string", "format": "date-time", "nullable": true },
           "reinspectiondate": {
             "type": "string",
             "format": "date-time",
             "nullable": true
           },
-          "station": {
-            "type": "string",
+          "station": { "type": "string", "nullable": true },
+          "type": { "type": "string", "nullable": true },
+          "officer": { "type": "string", "nullable": true },
+          "result": { "type": "string", "nullable": true },
+          "odometer": { "type": "string", "nullable": true },
+          "explanation": { "type": "string", "nullable": true },
+          "addinResult": { "type": "string", "nullable": true },
+          "coResult": {
+            "type": "number",
+            "format": "double",
             "nullable": true
           },
-          "type": {
-            "type": "string",
+          "noxResult": {
+            "type": "number",
+            "format": "double",
             "nullable": true
           },
-          "officer": {
-            "type": "string",
+          "hcResult": {
+            "type": "integer",
+            "format": "int32",
             "nullable": true
           },
-          "result": {
-            "type": "string",
+          "co2000": { "type": "number", "format": "double", "nullable": true },
+          "lambda2000": {
+            "type": "number",
+            "format": "double",
             "nullable": true
           },
-          "odometer": {
-            "type": "string",
+          "priority": {
+            "type": "integer",
+            "format": "int32",
             "nullable": true
           },
           "remarks": {
@@ -1270,146 +884,73 @@
               "$ref": "#/components/schemas/BasicVehicleInformationInspectionRemarkDto"
             },
             "nullable": true
-          }
+          },
+          "report": { "type": "integer", "format": "int32" },
+          "stationType": { "type": "string", "nullable": true },
+          "stationId": { "type": "string", "nullable": true },
+          "permno": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
       "BasicVehicleInformationInspectionRemarkDto": {
         "type": "object",
         "properties": {
-          "itemcode": {
-            "type": "string",
-            "nullable": true
-          },
-          "itemname": {
-            "type": "string",
-            "nullable": true
-          },
-          "resultcode": {
-            "type": "string",
-            "nullable": true
-          },
-          "resultname": {
-            "type": "string",
-            "nullable": true
-          }
+          "itemcode": { "type": "string", "nullable": true },
+          "itemname": { "type": "string", "nullable": true },
+          "resultcode": { "type": "string", "nullable": true },
+          "resultname": { "type": "string", "nullable": true },
+          "nr": { "type": "string", "nullable": true },
+          "inspectionItemDescription": { "type": "string", "nullable": true },
+          "explanation": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
       "BasicVehicleInformationOperatorDto": {
         "type": "object",
         "properties": {
-          "current": {
-            "type": "boolean"
-          },
-          "mainoperator": {
-            "type": "boolean",
-            "nullable": true
-          },
-          "serial": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
-          "startdate": {
-            "type": "string",
-            "format": "date-time"
-          },
+          "current": { "type": "boolean" },
+          "mainoperator": { "type": "boolean", "nullable": true },
+          "serial": { "type": "integer", "format": "int32", "nullable": true },
+          "startdate": { "type": "string", "format": "date-time" },
           "enddate": {
             "type": "string",
             "format": "date-time",
             "nullable": true
           },
-          "persidno": {
-            "type": "string",
-            "nullable": true
-          },
-          "fullname": {
-            "type": "string",
-            "nullable": true
-          },
-          "address": {
-            "type": "string",
-            "nullable": true
-          },
-          "postalcode": {
-            "type": "string",
-            "nullable": true
-          },
-          "city": {
-            "type": "string",
-            "nullable": true
-          }
+          "persidno": { "type": "string", "nullable": true },
+          "fullname": { "type": "string", "nullable": true },
+          "address": { "type": "string", "nullable": true },
+          "postalcode": { "type": "string", "nullable": true },
+          "city": { "type": "string", "nullable": true },
+          "permno": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
       "BasicVehicleInformationOutofuseDto": {
         "type": "object",
         "properties": {
-          "date": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "type": {
-            "type": "string",
-            "nullable": true
-          },
-          "station": {
-            "type": "string",
-            "nullable": true
-          }
+          "date": { "type": "string", "format": "date-time" },
+          "type": { "type": "string", "nullable": true },
+          "station": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
       "BasicVehicleInformationOwnerDto": {
         "type": "object",
         "properties": {
-          "current": {
-            "type": "boolean"
-          },
-          "anonymous": {
-            "type": "boolean"
-          },
-          "purchasedate": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "ownregdate": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "receptiondate": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "persidno": {
-            "type": "string",
-            "nullable": true
-          },
-          "fullname": {
-            "type": "string",
-            "nullable": true
-          },
-          "address": {
-            "type": "string",
-            "nullable": true
-          },
-          "postalcode": {
-            "type": "string",
-            "nullable": true
-          },
-          "city": {
-            "type": "string",
-            "nullable": true
-          },
-          "ownerinsurancecode": {
-            "type": "string",
-            "nullable": true
-          },
-          "ownerChangeSerialNumber": {
-            "type": "integer",
-            "format": "int32"
-          },
+          "current": { "type": "boolean" },
+          "anonymous": { "type": "boolean" },
+          "purchasedate": { "type": "string", "format": "date-time" },
+          "ownregdate": { "type": "string", "format": "date-time" },
+          "receptiondate": { "type": "string", "format": "date-time" },
+          "persidno": { "type": "string", "nullable": true },
+          "fullname": { "type": "string", "nullable": true },
+          "address": { "type": "string", "nullable": true },
+          "postalcode": { "type": "string", "nullable": true },
+          "city": { "type": "string", "nullable": true },
+          "ownerinsurancecode": { "type": "string", "nullable": true },
+          "ownerChangeSerialNumber": { "type": "integer", "format": "int32" },
+          "permno": { "type": "string", "nullable": true },
           "coOwners": {
             "type": "array",
             "items": {
@@ -1423,207 +964,100 @@
       "BasicVehicleInformationOwnerRegistrationErrorDto": {
         "type": "object",
         "properties": {
-          "purchasedate": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "persidno": {
-            "type": "string",
-            "nullable": true
-          },
-          "ownerinsurancecode": {
-            "type": "string",
-            "nullable": true
-          }
+          "purchasedate": { "type": "string", "format": "date-time" },
+          "persidno": { "type": "string", "nullable": true },
+          "ownerinsurancecode": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
       "BasicVehicleInformationOwnersCoOwnerDto": {
         "type": "object",
         "properties": {
-          "persidno": {
-            "type": "string",
-            "nullable": true
-          },
-          "fullname": {
-            "type": "string",
-            "nullable": true
-          },
-          "address": {
-            "type": "string",
-            "nullable": true
-          },
-          "postalcode": {
-            "type": "string",
-            "nullable": true
-          },
-          "city": {
-            "type": "string",
-            "nullable": true
-          }
+          "persidno": { "type": "string", "nullable": true },
+          "fullname": { "type": "string", "nullable": true },
+          "address": { "type": "string", "nullable": true },
+          "postalcode": { "type": "string", "nullable": true },
+          "city": { "type": "string", "nullable": true },
+          "permno": { "type": "string", "nullable": true },
+          "ownerChangeSerialNumber": { "type": "integer", "format": "int32" }
         },
         "additionalProperties": false
       },
       "BasicVehicleInformationPlateDto": {
         "type": "object",
         "properties": {
-          "date": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "regno": {
-            "type": "string",
-            "nullable": true
-          },
-          "reggroup": {
-            "type": "string",
-            "nullable": true
-          },
-          "reggroupname": {
-            "type": "string",
-            "nullable": true
-          }
+          "date": { "type": "string", "format": "date-time" },
+          "regno": { "type": "string", "nullable": true },
+          "reggroup": { "type": "string", "nullable": true },
+          "reggroupname": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
       "BasicVehicleInformationRegistrationDto": {
         "type": "object",
         "properties": {
-          "date": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "type": {
-            "type": "string",
-            "nullable": true
-          },
-          "subtype": {
-            "type": "string",
-            "nullable": true
-          }
+          "date": { "type": "string", "format": "date-time" },
+          "type": { "type": "string", "nullable": true },
+          "subtype": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
       "BasicVehicleInformationRemarkDto": {
         "type": "object",
         "properties": {
-          "date": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "text": {
-            "type": "string",
-            "nullable": true
-          },
-          "invaliddate": {
-            "type": "string",
-            "nullable": true
-          }
+          "date": { "type": "string", "format": "date-time" },
+          "text": { "type": "string", "nullable": true },
+          "invaliddate": { "type": "string", "nullable": true },
+          "temporary": { "type": "boolean", "nullable": true },
+          "standardRemarkCode": { "type": "string", "nullable": true },
+          "standardRemark": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
       "BasicVehicleInformationSpecialEquipmentChangeDto": {
         "type": "object",
         "properties": {
-          "date": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "description": {
-            "type": "string",
-            "nullable": true
-          },
-          "invalidDate": {
-            "type": "string",
-            "format": "date-time"
-          }
+          "date": { "type": "string", "format": "date-time" },
+          "description": { "type": "string", "nullable": true },
+          "invalidDate": { "type": "string", "format": "date-time" }
         },
         "additionalProperties": false
       },
       "BasicVehicleInformationStolenDto": {
         "type": "object",
         "properties": {
-          "startdate": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "enddate": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "explanation": {
-            "type": "string",
-            "nullable": true
-          }
+          "startdate": { "type": "string", "format": "date-time" },
+          "enddate": { "type": "string", "format": "date-time" },
+          "explanation": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
       "BasicVehicleInformationSuperstructureChangeDto": {
         "type": "object",
         "properties": {
-          "date": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "type": {
-            "type": "string",
-            "nullable": true
-          },
-          "length": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
-          "width": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
-          "mass": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
-          "invalidDate": {
-            "type": "string",
-            "format": "date-time"
-          }
+          "date": { "type": "string", "format": "date-time" },
+          "type": { "type": "string", "nullable": true },
+          "length": { "type": "integer", "format": "int32", "nullable": true },
+          "width": { "type": "integer", "format": "int32", "nullable": true },
+          "mass": { "type": "integer", "format": "int32", "nullable": true },
+          "invalidDate": { "type": "string", "format": "date-time" }
         },
         "additionalProperties": false
       },
       "BasicVehicleInformationTechnicalAxleDto": {
         "type": "object",
         "properties": {
-          "axleno": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
+          "axleno": { "type": "integer", "format": "int32", "nullable": true },
           "wheelsno": {
             "type": "integer",
             "format": "int32",
             "nullable": true
           },
-          "axlepow1": {
-            "type": "boolean",
-            "nullable": true
-          },
-          "axlepow2": {
-            "type": "boolean",
-            "nullable": true
-          },
-          "axlepow3": {
-            "type": "boolean",
-            "nullable": true
-          },
-          "axlepow4": {
-            "type": "boolean",
-            "nullable": true
-          },
-          "axlepow5": {
-            "type": "boolean",
-            "nullable": true
-          },
+          "axlepow1": { "type": "boolean", "nullable": true },
+          "axlepow2": { "type": "boolean", "nullable": true },
+          "axlepow3": { "type": "boolean", "nullable": true },
+          "axlepow4": { "type": "boolean", "nullable": true },
+          "axlepow5": { "type": "boolean", "nullable": true },
           "wheelbase": {
             "type": "integer",
             "format": "int32",
@@ -1654,78 +1088,36 @@
             "format": "int32",
             "nullable": true
           },
-          "wheelaxle1": {
-            "type": "string",
-            "nullable": true
-          },
-          "wheelaxle2": {
-            "type": "string",
-            "nullable": true
-          },
-          "wheelaxle3": {
-            "type": "string",
-            "nullable": true
-          },
-          "wheelaxle4": {
-            "type": "string",
-            "nullable": true
-          },
-          "wheelaxle5": {
-            "type": "string",
-            "nullable": true
-          }
+          "wheelaxle1": { "type": "string", "nullable": true },
+          "wheelaxle2": { "type": "string", "nullable": true },
+          "wheelaxle3": { "type": "string", "nullable": true },
+          "wheelaxle4": { "type": "string", "nullable": true },
+          "wheelaxle5": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
       "BasicVehicleInformationTechnicalDto": {
         "type": "object",
         "properties": {
-          "vehgroup": {
-            "type": "string",
-            "nullable": true
-          },
-          "vehsubgroup": {
-            "type": "string",
-            "nullable": true
-          },
-          "engine": {
-            "type": "string",
-            "nullable": true
-          },
-          "pass": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
+          "vehgroup": { "type": "string", "nullable": true },
+          "vehgroupCode": { "type": "string", "nullable": true },
+          "vehsubgroup": { "type": "string", "nullable": true },
+          "engine": { "type": "string", "nullable": true },
+          "pass": { "type": "integer", "format": "int32", "nullable": true },
           "passbydr": {
             "type": "boolean",
             "nullable": true
           },
-          "engingemanuf": {
-            "type": "string",
-            "nullable": true
-          },
-          "enginecode": {
-            "type": "string",
-            "nullable": true
-          },
-          "workingpr": {
-            "type": "string",
-            "nullable": true
-          },
-          "directinj": {
-            "type": "boolean",
-            "nullable": true
-          },
+          "engingemanuf": { "type": "string", "nullable": true },
+          "enginecode": { "type": "string", "nullable": true },
+          "workingpr": { "type": "string", "nullable": true },
+          "directinj": { "type": "boolean", "nullable": true },
           "nocylinders": {
             "type": "integer",
             "format": "int32",
             "nullable": true
           },
-          "arrcylinders": {
-            "type": "string",
-            "nullable": true
-          },
+          "arrcylinders": { "type": "string", "nullable": true },
           "capacity": {
             "type": "integer",
             "format": "int32",
@@ -1736,19 +1128,9 @@
             "format": "double",
             "nullable": true
           },
-          "atmin": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
-          "clutchtype": {
-            "type": "string",
-            "nullable": true
-          },
-          "gearbox": {
-            "type": "string",
-            "nullable": true
-          },
+          "atmin": { "type": "integer", "format": "int32", "nullable": true },
+          "clutchtype": { "type": "string", "nullable": true },
+          "gearbox": { "type": "string", "nullable": true },
           "gearratio1": {
             "type": "number",
             "format": "double",
@@ -1784,24 +1166,10 @@
             "format": "double",
             "nullable": true
           },
-          "steermeth": {
-            "type": "boolean",
-            "nullable": true
-          },
-          "typeofbody": {
-            "type": "string",
-            "nullable": true
-          },
-          "doorsno": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
-          "seatno": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
+          "steermeth": { "type": "boolean", "nullable": true },
+          "typeofbody": { "type": "string", "nullable": true },
+          "doorsno": { "type": "integer", "format": "int32", "nullable": true },
+          "seatno": { "type": "integer", "format": "int32", "nullable": true },
           "standingno": {
             "type": "integer",
             "format": "int32",
@@ -1822,30 +1190,11 @@
             "format": "double",
             "nullable": true
           },
-          "co": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
-          },
-          "hc": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
-          },
-          "nox": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
-          },
-          "hcnox": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
-          },
-          "remark": {
-            "type": "string",
-            "nullable": true
-          },
+          "co": { "type": "number", "format": "double", "nullable": true },
+          "hc": { "type": "number", "format": "double", "nullable": true },
+          "nox": { "type": "number", "format": "double", "nullable": true },
+          "hcnox": { "type": "number", "format": "double", "nullable": true },
+          "remark": { "type": "string", "nullable": true },
           "roofload": {
             "type": "integer",
             "format": "int32",
@@ -1866,11 +1215,7 @@
             "format": "double",
             "nullable": true
           },
-          "urban": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
-          },
+          "urban": { "type": "number", "format": "double", "nullable": true },
           "extraurban": {
             "type": "number",
             "format": "double",
@@ -1881,34 +1226,20 @@
             "format": "double",
             "nullable": true
           },
-          "co2": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
-          },
+          "co2": { "type": "number", "format": "double", "nullable": true },
           "weightedCo2": {
             "type": "number",
             "format": "double",
             "nullable": true
           },
-          "co2Wltp": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
-          },
+          "co2Wltp": { "type": "number", "format": "double", "nullable": true },
           "weightedco2Wltp": {
             "type": "number",
             "format": "double",
             "nullable": true
           },
-          "brakedevice": {
-            "type": "string",
-            "nullable": true
-          },
-          "snumber": {
-            "type": "string",
-            "nullable": true
-          },
+          "brakedevice": { "type": "string", "nullable": true },
+          "snumber": { "type": "string", "nullable": true },
           "tMassoftrbr": {
             "type": "integer",
             "format": "int32",
@@ -2033,76 +1364,36 @@
       "BasicVehicleInformationTechnicalSizeDto": {
         "type": "object",
         "properties": {
-          "length": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
-          "width": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
-          "height": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          }
+          "length": { "type": "integer", "format": "int32", "nullable": true },
+          "width": { "type": "integer", "format": "int32", "nullable": true },
+          "height": { "type": "integer", "format": "int32", "nullable": true }
         },
         "additionalProperties": false
       },
       "BasicVehicleInformationTechnicalTyreDto": {
         "type": "object",
         "properties": {
-          "tyreaxle1": {
-            "type": "string",
-            "nullable": true
-          },
-          "tyreaxle2": {
-            "type": "string",
-            "nullable": true
-          },
-          "tyreaxle3": {
-            "type": "string",
-            "nullable": true
-          },
-          "tyreaxle4": {
-            "type": "string",
-            "nullable": true
-          },
-          "tyreaxle5": {
-            "type": "string",
-            "nullable": true
-          }
+          "tyreaxle1": { "type": "string", "nullable": true },
+          "tyreaxle2": { "type": "string", "nullable": true },
+          "tyreaxle3": { "type": "string", "nullable": true },
+          "tyreaxle4": { "type": "string", "nullable": true },
+          "tyreaxle5": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
       "BasicVehicleInformationTypeChangeChangeDto": {
         "type": "object",
         "properties": {
-          "fieldName": {
-            "type": "string",
-            "nullable": true
-          },
-          "oldValue": {
-            "type": "string",
-            "nullable": true
-          },
-          "newValue": {
-            "type": "string",
-            "nullable": true
-          }
+          "fieldName": { "type": "string", "nullable": true },
+          "oldValue": { "type": "string", "nullable": true },
+          "newValue": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
       "BasicVehicleInformationTypeChangeDto": {
         "type": "object",
         "properties": {
-          "date": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true
-          },
+          "date": { "type": "string", "format": "date-time", "nullable": true },
           "changes": {
             "type": "array",
             "items": {
@@ -2116,47 +1407,25 @@
       "BasicVehicleInformationUpdatelockDto": {
         "type": "object",
         "properties": {
-          "startdate": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "enddate": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "type": {
-            "type": "string",
-            "nullable": true
-          }
+          "startdate": { "type": "string", "format": "date-time" },
+          "enddate": { "type": "string", "format": "date-time" },
+          "type": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
       "BasicVehicleInformationVehicleChangeChangeDto": {
         "type": "object",
         "properties": {
-          "fieldName": {
-            "type": "string",
-            "nullable": true
-          },
-          "oldValue": {
-            "type": "string",
-            "nullable": true
-          },
-          "newValue": {
-            "type": "string",
-            "nullable": true
-          }
+          "fieldName": { "type": "string", "nullable": true },
+          "oldValue": { "type": "string", "nullable": true },
+          "newValue": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
       "BasicVehicleInformationVehicleChangeDto": {
         "type": "object",
         "properties": {
-          "date": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true
-          },
+          "date": { "type": "string", "format": "date-time", "nullable": true },
           "changes": {
             "type": "array",
             "items": {
@@ -2197,10 +1466,7 @@
           "aaetludBifreidagjold": {
             "$ref": "#/components/schemas/AdditionalVehicleInformationAaetludBifreidagjold"
           },
-          "hasEncumbrances": {
-            "type": "integer",
-            "format": "int32"
-          },
+          "hasEncumbrances": { "type": "integer", "format": "int32" },
           "inspectionfine": {
             "type": "number",
             "format": "double",
@@ -2212,14 +1478,8 @@
       "OwnershipReportDataDto": {
         "type": "object",
         "properties": {
-          "name": {
-            "type": "string",
-            "nullable": true
-          },
-          "persidno": {
-            "type": "string",
-            "nullable": true
-          },
+          "name": { "type": "string", "nullable": true },
+          "persidno": { "type": "string", "nullable": true },
           "vehicles": {
             "type": "array",
             "items": {
@@ -2233,123 +1493,100 @@
       "PersidnoLookupDto": {
         "type": "object",
         "properties": {
-          "persidno": {
-            "type": "string",
-            "nullable": true
-          },
-          "name": {
-            "type": "string",
-            "nullable": true
-          },
-          "address": {
-            "type": "string",
-            "nullable": true
-          },
-          "zipCode": {
-            "type": "string",
-            "nullable": true
-          },
+          "persidno": { "type": "string", "nullable": true },
+          "name": { "type": "string", "nullable": true },
+          "address": { "type": "string", "nullable": true },
+          "zipCode": { "type": "string", "nullable": true },
           "vehicleList": {
             "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/VehicleDto"
-            },
+            "items": { "$ref": "#/components/schemas/VehicleDto" },
             "nullable": true
           },
-          "createdTimestamp": {
-            "type": "string",
-            "nullable": true
-          }
+          "createdTimestamp": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
       "PersidnoLookupResultDto": {
         "type": "object",
         "properties": {
-          "data": {
-            "$ref": "#/components/schemas/PersidnoLookupDto"
-          },
-          "nextCursor": {
-            "type": "string",
-            "nullable": true
-          }
+          "data": { "$ref": "#/components/schemas/PersidnoLookupDto" },
+          "nextCursor": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
       "ProblemDetails": {
         "type": "object",
         "properties": {
-          "type": {
+          "type": { "type": "string", "nullable": true },
+          "title": { "type": "string", "nullable": true },
+          "status": { "type": "integer", "format": "int32", "nullable": true },
+          "detail": { "type": "string", "nullable": true },
+          "instance": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "PublicVehicleInfoDto": {
+        "type": "object",
+        "properties": {
+          "permno": { "type": "string", "nullable": true },
+          "regno": { "type": "string", "nullable": true },
+          "vin": { "type": "string", "nullable": true },
+          "make": { "type": "string", "nullable": true },
+          "vehicleCommercialName": { "type": "string", "nullable": true },
+          "color": { "type": "string", "nullable": true },
+          "newRegDate": {
             "type": "string",
+            "format": "date-time",
             "nullable": true
           },
-          "title": {
+          "vehicleStatus": { "type": "string", "nullable": true },
+          "nextVehicleMainInspection": {
             "type": "string",
+            "format": "date-time",
             "nullable": true
           },
-          "status": {
+          "co2": { "type": "number", "format": "double", "nullable": true },
+          "weightedCo2": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "co2WLTP": { "type": "number", "format": "double", "nullable": true },
+          "weightedCo2WLTP": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "massLaden": {
             "type": "integer",
             "format": "int32",
             "nullable": true
           },
-          "detail": {
-            "type": "string",
-            "nullable": true
-          },
-          "instance": {
-            "type": "string",
-            "nullable": true
-          }
+          "mass": { "type": "integer", "format": "int32", "nullable": true },
+          "co": { "type": "number", "format": "double", "nullable": true },
+          "typeNumber": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
       "VehicleDto": {
         "type": "object",
         "properties": {
-          "isCurrent": {
-            "type": "boolean"
-          },
-          "permno": {
-            "type": "string",
-            "nullable": true
-          },
-          "regno": {
-            "type": "string",
-            "nullable": true
-          },
-          "vin": {
-            "type": "string",
-            "nullable": true
-          },
-          "type": {
-            "type": "string",
-            "nullable": true
-          },
-          "color": {
-            "type": "string",
-            "nullable": true
-          },
+          "isCurrent": { "type": "boolean" },
+          "permno": { "type": "string", "nullable": true },
+          "regno": { "type": "string", "nullable": true },
+          "vin": { "type": "string", "nullable": true },
+          "type": { "type": "string", "nullable": true },
+          "color": { "type": "string", "nullable": true },
+          "colorCode": { "type": "string", "nullable": true },
           "firstRegDate": {
             "type": "string",
             "format": "date-time",
             "nullable": true
           },
-          "modelYear": {
-            "type": "string",
-            "nullable": true
-          },
-          "productYear": {
-            "type": "string",
-            "nullable": true
-          },
-          "registrationType": {
-            "type": "string",
-            "nullable": true
-          },
-          "role": {
-            "type": "string",
-            "nullable": true
-          },
+          "modelYear": { "type": "string", "nullable": true },
+          "productYear": { "type": "string", "nullable": true },
+          "registrationType": { "type": "string", "nullable": true },
+          "role": { "type": "string", "nullable": true },
           "operatorStartDate": {
             "type": "string",
             "format": "date-time",
@@ -2360,40 +1597,16 @@
             "format": "date-time",
             "nullable": true
           },
-          "outOfUse": {
-            "type": "boolean"
-          },
-          "otherOwners": {
-            "type": "boolean"
-          },
-          "termination": {
-            "type": "string",
-            "nullable": true
-          },
-          "buyerPersidno": {
-            "type": "string",
-            "nullable": true
-          },
-          "ownerPersidno": {
-            "type": "string",
-            "nullable": true
-          },
-          "vehicleStatus": {
-            "type": "string",
-            "nullable": true
-          },
-          "useGroup": {
-            "type": "string",
-            "nullable": true
-          },
-          "vehGroup": {
-            "type": "string",
-            "nullable": true
-          },
-          "plateStatus": {
-            "type": "string",
-            "nullable": true
-          },
+          "outOfUse": { "type": "boolean" },
+          "otherOwners": { "type": "boolean" },
+          "termination": { "type": "string", "nullable": true },
+          "buyerPersidno": { "type": "string", "nullable": true },
+          "ownerPersidno": { "type": "string", "nullable": true },
+          "vehicleStatus": { "type": "string", "nullable": true },
+          "useGroup": { "type": "string", "nullable": true },
+          "vehGroup": { "type": "string", "nullable": true },
+          "vehGroupCode": { "type": "string", "nullable": true },
+          "plateStatus": { "type": "string", "nullable": true },
           "nextInspection": {
             "$ref": "#/components/schemas/VehicleNextInspectionDto"
           },
@@ -2417,56 +1630,27 @@
             "format": "double",
             "nullable": true
           },
-          "primaryOperator": {
-            "type": "boolean",
-            "nullable": true
-          },
-          "ownerSsid": {
-            "type": "string",
-            "nullable": true
-          },
-          "ownerName": {
-            "type": "string",
-            "nullable": true
-          },
-          "lastInspectionResult": {
-            "type": "string",
-            "nullable": true
-          },
+          "primaryOperator": { "type": "boolean", "nullable": true },
+          "ownerSsid": { "type": "string", "nullable": true },
+          "ownerName": { "type": "string", "nullable": true },
+          "lastInspectionResult": { "type": "string", "nullable": true },
           "lastInspectionDate": {
             "type": "string",
             "format": "date-time",
             "nullable": true
           },
-          "lastInspectionType": {
-            "type": "string",
-            "nullable": true
-          }
+          "lastInspectionType": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
       "VehicleMiniDto": {
         "type": "object",
         "properties": {
-          "permno": {
-            "type": "string",
-            "nullable": true
-          },
-          "make": {
-            "type": "string",
-            "nullable": true
-          },
-          "color": {
-            "type": "string",
-            "nullable": true
-          },
-          "role": {
-            "type": "string",
-            "nullable": true
-          },
-          "stolen": {
-            "type": "boolean"
-          }
+          "permno": { "type": "string", "nullable": true },
+          "make": { "type": "string", "nullable": true },
+          "color": { "type": "string", "nullable": true },
+          "role": { "type": "string", "nullable": true },
+          "stolen": { "type": "boolean" }
         },
         "additionalProperties": false
       },
@@ -2489,81 +1673,35 @@
       "VehicleSearchDto": {
         "type": "object",
         "properties": {
-          "permno": {
-            "type": "string",
-            "nullable": true
-          },
-          "regno": {
-            "type": "string",
-            "nullable": true
-          },
-          "vin": {
-            "type": "string",
-            "nullable": true
-          },
-          "type": {
-            "type": "string",
-            "nullable": true
-          },
-          "color": {
-            "type": "string",
-            "nullable": true
-          },
+          "permno": { "type": "string", "nullable": true },
+          "regno": { "type": "string", "nullable": true },
+          "vin": { "type": "string", "nullable": true },
+          "type": { "type": "string", "nullable": true },
+          "color": { "type": "string", "nullable": true },
           "firstregdate": {
             "type": "string",
             "format": "date-time",
             "nullable": true
           },
-          "latestregistration": {
-            "type": "string",
-            "nullable": true
-          },
+          "latestregistration": { "type": "string", "nullable": true },
           "nextInspection": {
             "$ref": "#/components/schemas/VehicleNextInspectionDto"
           },
-          "currentOwner": {
-            "type": "string",
-            "nullable": true
-          },
-          "currentOwnerAddress": {
-            "type": "string",
-            "nullable": true
-          },
-          "currentOwnerIsAnonymous": {
-            "type": "boolean"
-          },
-          "useGroup": {
-            "type": "string",
-            "nullable": true
-          },
-          "regtype": {
-            "type": "string",
-            "nullable": true
-          },
-          "mass": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
+          "currentOwner": { "type": "string", "nullable": true },
+          "currentOwnerPersidno": { "type": "string", "nullable": true },
+          "currentOwnerAddress": { "type": "string", "nullable": true },
+          "currentOwnerIsAnonymous": { "type": "boolean" },
+          "useGroup": { "type": "string", "nullable": true },
+          "regtype": { "type": "string", "nullable": true },
+          "mass": { "type": "integer", "format": "int32", "nullable": true },
           "massLaden": {
             "type": "integer",
             "format": "int32",
             "nullable": true
           },
-          "vehicleStatus": {
-            "type": "string",
-            "nullable": true
-          },
-          "co": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
-          },
-          "co2Wltp": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
-          },
+          "vehicleStatus": { "type": "string", "nullable": true },
+          "co": { "type": "number", "format": "double", "nullable": true },
+          "co2Wltp": { "type": "number", "format": "double", "nullable": true },
           "weightedco2Wltp": {
             "type": "number",
             "format": "double",
@@ -2577,15 +1715,10 @@
         "properties": {
           "data": {
             "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/VehicleSearchDto"
-            },
+            "items": { "$ref": "#/components/schemas/VehicleSearchDto" },
             "nullable": true
           },
-          "nextCursor": {
-            "type": "string",
-            "nullable": true
-          }
+          "nextCursor": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       }

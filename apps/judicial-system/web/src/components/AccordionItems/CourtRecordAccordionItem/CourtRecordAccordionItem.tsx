@@ -133,7 +133,7 @@ const CourtRecordAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
           <AccordionListItem title="Ákvörðun um kæru">
             {(isRestrictionCase(workingCase.type) ||
               workingCase.sessionArrangements ===
-                SessionArrangements.AllPresent) && (
+                SessionArrangements.ALL_PRESENT) && (
               <Box marginBottom={2}>
                 <Text>
                   {formatMessage(m.sections.appealDecision.disclaimer)}

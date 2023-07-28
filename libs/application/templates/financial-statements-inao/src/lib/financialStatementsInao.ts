@@ -27,7 +27,7 @@ import {
   CurrentUserTypeProvider,
   IndentityApiProvider,
   NationalRegistryUserApi,
-  UserProfileApi,
+  UserInfoApi,
 } from '../dataProviders'
 
 const FinancialStatementInaoApplication: ApplicationTemplate<
@@ -91,7 +91,7 @@ const FinancialStatementInaoApplication: ApplicationTemplate<
                 CurrentUserTypeProvider,
                 IndentityApiProvider,
                 NationalRegistryUserApi,
-                UserProfileApi,
+                UserInfoApi,
               ],
             },
           ],

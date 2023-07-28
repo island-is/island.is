@@ -2,27 +2,43 @@ import {
   CaseDecision,
   CaseState,
   CaseType,
-  hasCaseBeenAppealed,
   indictmentCases,
   InstitutionType,
-  investigationCases,
   isIndictmentCase,
-  restrictionCases,
   UserRole,
-  isExtendedCourtRole,
   isProsecutionUser,
+  isDistrictCourtUser,
+  isAppealsCourtUser,
+  isPrisonSystemUser,
+  isRestrictionCase,
+  isInvestigationCase,
+  CaseAppealState,
 } from '@island.is/judicial-system/types'
-import type { User, Case as TCase } from '@island.is/judicial-system/types'
+import type { User } from '@island.is/judicial-system/types'
 
 import { Case } from '../models/case.model'
 
-function getAllowedStates(
+function canProsecutionUserAccessCase(
+  theCase: Case,
   user: User,
-  institutionType?: InstitutionType,
-  caseType?: CaseType,
-): CaseState[] {
-  if (isProsecutionUser(user)) {
-    return [
+  forUpdate = true,
+): boolean {
+  // Check case type access
+  if (user.role === UserRole.PROSECUTOR) {
+    if (
+      !isRestrictionCase(theCase.type) &&
+      !isInvestigationCase(theCase.type) &&
+      !isIndictmentCase(theCase.type)
+    ) {
+      return false
+    }
+  } else if (!isIndictmentCase(theCase.type)) {
+    return false
+  }
+
+  // Check case state access
+  if (
+    ![
       CaseState.NEW,
       CaseState.DRAFT,
       CaseState.SUBMITTED,
@@ -30,200 +46,163 @@ function getAllowedStates(
       CaseState.ACCEPTED,
       CaseState.REJECTED,
       CaseState.DISMISSED,
-    ]
+    ].includes(theCase.state)
+  ) {
+    return false
   }
 
-  if (institutionType === InstitutionType.COURT) {
+  // Check prosecutors office access
+  if (
+    theCase.creatingProsecutor?.institutionId &&
+    user.institution?.id !== theCase.creatingProsecutor?.institutionId &&
+    (forUpdate ||
+      user.institution?.id !== theCase.sharedWithProsecutorsOfficeId)
+  ) {
+    return false
+  }
+
+  // Check heightened security level access
+  if (
+    theCase.isHeightenedSecurityLevel &&
+    user.id !== theCase.creatingProsecutorId &&
+    user.id !== theCase.prosecutorId
+  ) {
+    return false
+  }
+
+  return true
+}
+
+function canDistrictCourtUserAccessCase(theCase: Case, user: User): boolean {
+  // Check case type access
+  if ([UserRole.JUDGE, UserRole.REGISTRAR].includes(user.role)) {
     if (
-      user.role === UserRole.ASSISTANT ||
-      (caseType && isIndictmentCase(caseType))
+      !isRestrictionCase(theCase.type) &&
+      !isInvestigationCase(theCase.type) &&
+      !isIndictmentCase(theCase.type)
     ) {
-      return [
+      return false
+    }
+  } else if (!indictmentCases.includes(theCase.type)) {
+    return false
+  }
+
+  // Check case state access
+  if (isRestrictionCase(theCase.type) || isInvestigationCase(theCase.type)) {
+    if (
+      ![
+        CaseState.DRAFT,
         CaseState.SUBMITTED,
         CaseState.RECEIVED,
         CaseState.ACCEPTED,
         CaseState.REJECTED,
         CaseState.DISMISSED,
-      ]
+      ].includes(theCase.state)
+    ) {
+      return false
     }
-
-    return [
-      CaseState.DRAFT,
+  } else if (
+    ![
       CaseState.SUBMITTED,
       CaseState.RECEIVED,
       CaseState.ACCEPTED,
       CaseState.REJECTED,
       CaseState.DISMISSED,
-    ]
-  }
-
-  if (institutionType === InstitutionType.HIGH_COURT) {
-    return [CaseState.ACCEPTED, CaseState.REJECTED, CaseState.DISMISSED]
-  }
-
-  return [CaseState.ACCEPTED]
-}
-
-function getBlockedStates(
-  user: User,
-  institutionType?: InstitutionType,
-  caseType?: CaseType,
-): CaseState[] {
-  const allowedStates = getAllowedStates(user, institutionType, caseType)
-
-  return Object.values(CaseState).filter(
-    (state) => !allowedStates.includes(state as CaseState),
-  )
-}
-
-function prosecutorsOfficeMustMatchUserInstitution(user: User): boolean {
-  return isProsecutionUser(user)
-}
-
-function courtMustMatchUserInstitution(role: UserRole): boolean {
-  return isExtendedCourtRole(role)
-}
-
-function isStateHiddenFromRole(
-  state: CaseState,
-  user: User,
-  caseType: CaseType,
-  institutionType?: InstitutionType,
-): boolean {
-  return getBlockedStates(user, institutionType, caseType).includes(state)
-}
-
-function getAllowedTypes(
-  role: UserRole,
-  forUpdate: boolean,
-  institutionType?: InstitutionType,
-): CaseType[] {
-  if (role === UserRole.ADMIN) {
-    return [] // admins should only handle user management
-  }
-
-  if (role === UserRole.REPRESENTATIVE || role === UserRole.ASSISTANT) {
-    return indictmentCases
-  }
-
-  if (
-    [UserRole.JUDGE, UserRole.REGISTRAR, UserRole.PROSECUTOR].includes(role)
+    ].includes(theCase.state)
   ) {
-    return [...indictmentCases, ...investigationCases, ...restrictionCases]
+    return false
   }
 
-  if (institutionType === InstitutionType.PRISON_ADMIN) {
-    return [
-      CaseType.CUSTODY,
-      CaseType.ADMISSION_TO_FACILITY,
-      ...(forUpdate ? [] : [CaseType.TRAVEL_BAN]),
-    ]
+  // Check court access
+  if (user.institution?.id !== theCase.courtId) {
+    return false
   }
 
-  return forUpdate ? [] : [CaseType.CUSTODY, CaseType.ADMISSION_TO_FACILITY]
+  return true
 }
 
-function isTypeHiddenFromRole(
-  type: CaseType,
-  role: UserRole,
-  forUpdate: boolean,
-  institutionType?: InstitutionType,
-): boolean {
-  return !getAllowedTypes(role, forUpdate, institutionType).includes(type)
+function canAppealsCourtUserAccessCase(theCase: Case): boolean {
+  // Check case type access
+  if (!isRestrictionCase(theCase.type) && !isInvestigationCase(theCase.type)) {
+    return false
+  }
+
+  // Check case state access
+  if (
+    ![CaseState.ACCEPTED, CaseState.REJECTED, CaseState.DISMISSED].includes(
+      theCase.state,
+    )
+  ) {
+    return false
+  }
+
+  // Check appeal state access
+  if (
+    !theCase.appealState ||
+    ![CaseAppealState.RECEIVED, CaseAppealState.COMPLETED].includes(
+      theCase.appealState,
+    )
+  ) {
+    return false
+  }
+
+  return true
 }
 
-function isDecisionHiddenFromInstitution(
-  decision?: CaseDecision,
-  institutionType?: InstitutionType,
-): boolean {
-  return (
-    institutionType === InstitutionType.PRISON &&
-    decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-  )
-}
-
-function isProsecutorsOfficeCaseHiddenFromUser(
-  user: User,
-  forUpdate: boolean,
-  prosecutorInstitutionId?: string,
-  sharedWithProsecutorsOfficeId?: string,
-): boolean {
-  return (
-    prosecutorsOfficeMustMatchUserInstitution(user) &&
-    Boolean(prosecutorInstitutionId) &&
-    prosecutorInstitutionId !== user.institution?.id &&
-    (forUpdate ||
-      !sharedWithProsecutorsOfficeId ||
-      sharedWithProsecutorsOfficeId !== user.institution?.id)
-  )
-}
-
-function isCourtCaseHiddenFromUser(
-  user: User,
-  forUpdate: boolean,
-  hasCaseBeenAppealed: boolean,
-  courtId?: string,
-): boolean {
-  return (
-    courtMustMatchUserInstitution(user.role) &&
-    Boolean(courtId) &&
-    courtId !== user.institution?.id &&
-    (forUpdate ||
-      !hasCaseBeenAppealed ||
-      user.institution?.type !== InstitutionType.HIGH_COURT)
-  )
-}
-
-function isHightenedSecurityCaseHiddenFromUser(
-  user: User,
-  isHeightenedSecurityLevel?: boolean,
-  creatingProsecutorId?: string,
-  prosecutorId?: string,
-): boolean {
-  return (
-    isProsecutionUser(user) &&
-    Boolean(isHeightenedSecurityLevel) &&
-    user.id !== creatingProsecutorId &&
-    user.id !== prosecutorId
-  )
-}
-
-export function isCaseBlockedFromUser(
+function canPrisonSystemUserAccessCase(
   theCase: Case,
   user: User,
   forUpdate = true,
 ): boolean {
-  return (
-    isStateHiddenFromRole(
-      theCase.state,
-      user,
-      theCase.type,
-      user.institution?.type,
-    ) ||
-    isTypeHiddenFromRole(
-      theCase.type,
-      user.role,
-      forUpdate,
-      user.institution?.type,
-    ) ||
-    isDecisionHiddenFromInstitution(theCase.decision, user.institution?.type) ||
-    isProsecutorsOfficeCaseHiddenFromUser(
-      user,
-      forUpdate,
-      theCase.creatingProsecutor?.institutionId,
-      theCase.sharedWithProsecutorsOfficeId,
-    ) ||
-    isCourtCaseHiddenFromUser(
-      user,
-      forUpdate,
-      hasCaseBeenAppealed((theCase as unknown) as TCase),
-      theCase.courtId,
-    ) ||
-    isHightenedSecurityCaseHiddenFromUser(
-      user,
-      theCase.isHeightenedSecurityLevel,
-      theCase.creatingProsecutor?.id,
-      theCase.prosecutor?.id,
-    )
-  )
+  // Prison system users cannot update cases
+  if (forUpdate) {
+    return false
+  }
+
+  // Check case type access
+  if (user.institution?.type === InstitutionType.PRISON_ADMIN) {
+    if (!isRestrictionCase(theCase.type)) {
+      return false
+    }
+  } else if (
+    ![CaseType.CUSTODY, CaseType.ADMISSION_TO_FACILITY].includes(theCase.type)
+  ) {
+    return false
+  }
+
+  // Check case state access
+  if (
+    theCase.state !== CaseState.ACCEPTED ||
+    (user.institution?.type !== InstitutionType.PRISON_ADMIN &&
+      theCase.decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN)
+  ) {
+    return false
+  }
+
+  return true
+}
+
+export function canUserAccessCase(
+  theCase: Case,
+  user: User,
+  forUpdate = true,
+): boolean {
+  if (isProsecutionUser(user)) {
+    return canProsecutionUserAccessCase(theCase, user, forUpdate)
+  }
+
+  if (isDistrictCourtUser(user)) {
+    return canDistrictCourtUserAccessCase(theCase, user)
+  }
+
+  if (isAppealsCourtUser(user)) {
+    return canAppealsCourtUserAccessCase(theCase)
+  }
+
+  if (isPrisonSystemUser(user)) {
+    return canPrisonSystemUserAccessCase(theCase, user, forUpdate)
+  }
+
+  // Other users cannot access cases
+  return false
 }

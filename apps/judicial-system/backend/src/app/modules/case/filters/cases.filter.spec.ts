@@ -6,6 +6,7 @@ import {
   CaseDecision,
   CaseState,
   CaseType,
+  completedCaseStates,
   courtRoles,
   indictmentCases,
   InstitutionType,
@@ -60,6 +61,13 @@ describe('getCasesQueryFilter', () => {
             { is_heightened_security_level: false },
             { creating_prosecutor_id: 'Prosecutor Id' },
             { prosecutor_id: 'Prosecutor Id' },
+          ],
+        },
+        {
+          type: [
+            ...restrictionCases,
+            ...investigationCases,
+            ...indictmentCases,
           ],
         },
       ],
@@ -292,6 +300,55 @@ describe('getCasesQueryFilter', () => {
             CaseType.ADMISSION_TO_FACILITY,
             CaseType.CUSTODY,
             CaseType.TRAVEL_BAN,
+          ],
+        },
+      ],
+    })
+  })
+
+  it('should get defender filter', () => {
+    // Arrange
+    const user = {
+      id: 'Defender Id',
+      nationalId: 'Defender National Id',
+      role: UserRole.DEFENDER,
+    }
+
+    // Act
+    const res = getCasesQueryFilter(user as User)
+
+    // Assert
+    expect(res).toStrictEqual({
+      [Op.and]: [
+        { isArchived: false },
+        {
+          [Op.or]: [
+            {
+              [Op.and]: [
+                { type: [...restrictionCases, ...investigationCases] },
+                {
+                  [Op.or]: [
+                    {
+                      [Op.and]: [
+                        { state: CaseState.RECEIVED },
+                        { court_date: { [Op.not]: null } },
+                      ],
+                    },
+                    { state: completedCaseStates },
+                  ],
+                },
+                { defender_national_id: user.nationalId },
+              ],
+            },
+            {
+              [Op.and]: [
+                { type: indictmentCases },
+                { state: [CaseState.RECEIVED, ...completedCaseStates] },
+                {
+                  '$defendants.defender_national_id$': user.nationalId,
+                },
+              ],
+            },
           ],
         },
       ],

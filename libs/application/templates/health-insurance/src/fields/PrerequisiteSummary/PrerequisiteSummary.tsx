@@ -49,7 +49,7 @@ const PrerequisiteSummary: FC<FieldBaseProps> = ({ application }) => {
             ? requiresActionTagString
             : completeTagString,
         }
-      case 'healthInsurance':
+      case 'isHealthInsured':
         return {
           prerequisiteMet: !hasHealthInsuranceCheck,
           title: formatMessage(m.prerequisiteHealthInsuranceTitle),

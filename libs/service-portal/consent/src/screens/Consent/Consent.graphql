@@ -1,4 +1,4 @@
-fragment AuthConsentScope on AuthConsentScope {
+fragment AuthConsentScopeNode on AuthConsentScopeNode {
   displayName
   name
   description
@@ -20,8 +20,8 @@ query GetConsentList {
           organisationLogoUrl
         }
       }
-      permissions {
-        owner {
+      tenants {
+        tenant {
           name
           displayName
           description
@@ -29,20 +29,24 @@ query GetConsentList {
           organisationLogoUrl
         }
         scopes {
-          ... on AuthConsentScope {
-            ...AuthConsentScope
+          ... on AuthConsentScopeNode {
+            ...AuthConsentScopeNode
           }
 
-          ... on AuthConsentScopeGroup {
+          ... on AuthConsentScopeNode {
             name
             displayName
             description
             children {
-              ...AuthConsentScope
+              ...AuthConsentScopeNode
             }
           }
         }
       }
     }
   }
+}
+
+mutation PatchConsent($input: PatchAuthConsentInput!) {
+  patchAuthConsent(input: $input)
 }

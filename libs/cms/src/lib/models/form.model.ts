@@ -1,7 +1,8 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql'
+import { CacheField } from '@island.is/nest/graphql'
+import { SystemMetadata } from '@island.is/shared/types'
 import { IForm } from '../generated/contentfulTypes'
 import { FormField, mapFormField } from './formField.model'
-import { SystemMetadata } from 'api-cms-domain'
 
 @ObjectType()
 export class Form {
@@ -14,7 +15,7 @@ export class Form {
   @Field()
   intro!: string
 
-  @Field(() => [FormField])
+  @CacheField(() => [FormField])
   fields?: Array<FormField>
 
   @Field()
@@ -26,7 +27,7 @@ export class Form {
   @Field()
   questionsHeadingText?: string
 
-  @Field(() => FormField, { nullable: true })
+  @CacheField(() => FormField, { nullable: true })
   recipientFormFieldDecider?: FormField
 
   @Field(() => [String], { nullable: true })

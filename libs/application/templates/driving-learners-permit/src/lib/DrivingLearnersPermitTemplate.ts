@@ -1,4 +1,7 @@
-import { EphemeralStateLifeCycle } from '@island.is/application/core'
+import {
+  EphemeralStateLifeCycle,
+  coreHistoryMessages,
+} from '@island.is/application/core'
 import {
   ApplicationTemplate,
   ApplicationTypes,
@@ -10,12 +13,17 @@ import {
   defineTemplateApi,
   DefaultEvents,
 } from '@island.is/application/types'
-import { FeatureFlagClient, Features } from '@island.is/feature-flags'
-import { DrivingLearnersPermitTemplateEvent, Roles, States } from './constants'
-import { ApiActions, FakeDataFeature } from '../shared/constants'
+import { FeatureFlagClient } from '@island.is/feature-flags'
+import {
+  ApiActions,
+  DrivingLearnersPermitTemplateEvent,
+  FakeDataFeature,
+  Roles,
+  States,
+} from './constants'
 import { m } from './messages'
 import { dataSchema } from './dataSchema'
-import { truthyFeatureFromClient } from '../shared/utils'
+import { truthyFeatureFromClient } from './utils'
 
 const DrivingLearnersPermitTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -26,7 +34,6 @@ const DrivingLearnersPermitTemplate: ApplicationTemplate<
   name: m.name,
   institution: m.institutionName,
   dataSchema: dataSchema,
-  featureFlag: Features.drivingLearnersPermit,
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {
@@ -36,6 +43,14 @@ const DrivingLearnersPermitTemplate: ApplicationTemplate<
           name: 'Prerequisites',
           progress: 0.33,
           lifecycle: EphemeralStateLifeCycle,
+          actionCard: {
+            historyLogs: [
+              {
+                logMessage: coreHistoryMessages.applicationStarted,
+                onEvent: DefaultEvents.SUBMIT,
+              },
+            ],
+          },
           roles: [
             {
               id: Roles.APPLICANT,
@@ -53,7 +68,13 @@ const DrivingLearnersPermitTemplate: ApplicationTemplate<
                   allowFakeData,
                 })
               },
-              api: [CurrentLicenseApi],
+              api: [
+                CurrentLicenseApi.configure({
+                  params: {
+                    useLegacyVersion: true,
+                  },
+                }),
+              ],
               actions: [
                 {
                   event: DefaultEvents.SUBMIT,
@@ -78,11 +99,17 @@ const DrivingLearnersPermitTemplate: ApplicationTemplate<
             action: ApiActions.completeApplication,
             shouldPersistToExternalData: true,
           }),
+          actionCard: {
+            pendingAction: {
+              displayStatus: 'success',
+              title: coreHistoryMessages.applicationReceived,
+            },
+          },
           status: 'approved',
           name: 'Approved',
           progress: 1,
           lifecycle: {
-            shouldBeListed: false,
+            shouldBeListed: true,
             shouldBePruned: true,
             whenToPrune: 31 * 24 * 3600 * 1000,
           },

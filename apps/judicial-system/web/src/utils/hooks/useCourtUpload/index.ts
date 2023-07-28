@@ -15,8 +15,8 @@ import {
 export enum UploadState {
   ALL_UPLOADED = 'ALL_UPLOADED',
   ALL_UPLOADED_NONE_AVAILABLE = 'ALL_UPLOADED_NONE_AVAILABLE',
-  NONE_AVAILABLE = 'NONE_AVAILABLE',
-  NONE_CAN_BE_UPLOADED = 'NONE_CAN_BE_UPLOADED',
+  SOME_NOT_UPLOADED_NONE_AVAILABLE = 'SOME_NOT_UPLOADED_NONE_AVAILABLE',
+  ALL_UPLOADED_OR_NOT_AVAILABLE = 'ALL_UPLOADED_OR_NOT_AVAILABLE',
   SOME_NOT_UPLOADED = 'SOME_NOT_UPLOADED',
   UPLOAD_ERROR = 'UPLOAD_ERROR',
   UPLOADING = 'UPLOADING',
@@ -100,8 +100,8 @@ export const useCourtUpload = (
         : files?.every(
             (file) => file.status === 'broken' || file.status === 'done-broken',
           )
-        ? UploadState.NONE_AVAILABLE
-        : UploadState.NONE_CAN_BE_UPLOADED,
+        ? UploadState.SOME_NOT_UPLOADED_NONE_AVAILABLE
+        : UploadState.ALL_UPLOADED_OR_NOT_AVAILABLE,
     )
   }, [setFileUploadStatus, workingCase])
 

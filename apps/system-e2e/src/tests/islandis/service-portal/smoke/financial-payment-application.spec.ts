@@ -1,11 +1,12 @@
 import { test, BrowserContext, expect } from '@playwright/test'
-import { urls } from '../../../../support/urls'
+import { icelandicAndNoPopupUrl, urls } from '../../../../support/urls'
 import { session } from '../../../../support/session'
 import { label } from '../../../../support/i18n'
 import { m } from '@island.is/service-portal/finance/messages'
 import { disableI18n } from '../../../../support/disablers'
 
 test.use({ baseURL: urls.islandisBaseUrl })
+
 test.describe('MS - Fjármál overview', () => {
   let context: BrowserContext
 
@@ -29,7 +30,9 @@ test.describe('MS - Fjármál overview', () => {
 
     await test.step('Application button is visible', async () => {
       // Arrange
-      await page.goto('/minarsidur/fjarmal/greidsluaetlanir')
+      await page.goto(
+        icelandicAndNoPopupUrl('/minarsidur/fjarmal/greidsluaetlanir'),
+      )
 
       // Act
       const applicationButton = page.locator(
@@ -42,48 +45,48 @@ test.describe('MS - Fjármál overview', () => {
 
     await test.step('Application opens', async () => {
       // Arrange
-      await page.goto('/minarsidur/fjarmal/greidsluaetlanir')
+      await page.goto(
+        icelandicAndNoPopupUrl('/minarsidur/fjarmal/greidsluaetlanir'),
+      )
 
       // Act
       const applicationButton = page.locator(
         `role=button[name="${label(m.scheduleApplication)}"]`,
       )
 
-      const pagePromise = context.waitForEvent('page')
-      applicationButton.click()
-      const newPage = await pagePromise
-      await newPage.waitForLoadState()
+      const [delegationPopup] = await Promise.all([
+        page.waitForEvent('popup'),
+        // Click - Open Link in Popup
+        applicationButton.click(),
+      ])
 
+      // Choose delegation
+      await delegationPopup
+        .getByRole('button', { name: 'Gervimaður Færeyjar' })
+        .click()
       // Assert
-      expect(newPage.url()).toContain('umsoknir/greidsluaaetlun')
+      await expect(
+        delegationPopup.getByText('Viltu nota gervigögn?'),
+      ).toBeVisible()
+      expect(delegationPopup.url()).toContain('umsoknir/greidsluaaetlun')
     })
 
-    await test.step('Table contains data', async () => {
-      // Arrange
-      await page.goto('/minarsidur/fjarmal/greidsluaetlanir')
+    //Disabling the following section of the test due to the service not returning data on Dev
 
-      // Assert
-      await expect(page.locator('role=table')).toContainText(
-        label(m.createdDate),
-      )
-      await expect(page.locator('role=table')).toContainText(
-        label(m.financeStatusValid),
-      )
-
-      // "Skattar og gjöld" comes from the api - not translateable
-      await expect(page.locator('role=table')).toContainText('Skattar og gjöld')
-    })
+    // await test.step('Table contains data', async () => {
+    //   // Arrange
+    //   await page.goto(icelandicAndNoPopupUrl('/minarsidur/fjarmal/greidsluaetlanir'))
+    //
+    //   // Assert
+    //   await expect(page.locator('role=table')).toContainText(
+    //     label(m.createdDate),
+    //   )
+    //   await expect(page.locator('role=table')).toContainText(
+    //     label(m.financeStatusValid),
+    //   )
+    //
+    //   // "Skattar og gjöld" comes from the api - not translateable
+    //   await expect(page.locator('role=table')).toContainText('Skattar og gjöld')
+    // })
   })
-})
-
-test.describe.skip('Fjármál', () => {
-  for (const { testCase } of [
-    { testCase: 'Fjármál Greiðslukvittanir - sjá pdf' },
-    { testCase: 'Fjármál Launagreidendakröfur - birtist' },
-    { testCase: 'Fjármál Útsvar sveitafélaga - birtist ???' },
-  ]) {
-    test(testCase, () => {
-      return
-    })
-  }
 })

@@ -72,8 +72,9 @@ const UploadFilesToPoliceCase: React.FC<{
     error: policeDataError,
   } = useQuery<GetPoliceCaseFilesQuery>(PoliceCaseFilesQuery, {
     variables: { input: { caseId } },
+    skip: caseOrigin !== CaseOrigin.LOKE,
     fetchPolicy: 'no-cache',
-    skip: caseOrigin !== CaseOrigin.Loke,
+    errorPolicy: 'all',
   })
 
   const [displayFiles, setDisplayFiles] = useState<UploadFile[]>(
@@ -106,7 +107,7 @@ const UploadFilesToPoliceCase: React.FC<{
   }, [setAllUploaded, displayFiles])
 
   useEffect(() => {
-    if (caseOrigin !== CaseOrigin.Loke) {
+    if (caseOrigin !== CaseOrigin.LOKE) {
       setPoliceCaseFiles({
         files: [],
         isLoading: false,
@@ -253,7 +254,14 @@ const UploadFilesToPoliceCase: React.FC<{
           )
         }
         onRemove={(file) => handleRemove(file, removeFileCB)}
-        onRetry={(file) => handleRetry(file, handleUIUpdate)}
+        onRetry={(file) =>
+          handleRetry(
+            file,
+            handleUIUpdate,
+            CaseFileCategory.CASE_FILE,
+            policeCaseNumber,
+          )
+        }
         errorMessage={errorMessage}
         disabled={isUploading}
         showFileSize

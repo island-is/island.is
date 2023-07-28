@@ -78,6 +78,7 @@ export const Applications: FC = () => {
       input: { typeId: type },
     },
     skip: !type && !delegationsChecked,
+    fetchPolicy: 'cache-and-network',
   })
 
   const [createApplicationMutation, { error: createError }] = useMutation(

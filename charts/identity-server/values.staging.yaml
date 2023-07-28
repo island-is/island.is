@@ -62,7 +62,7 @@ auth-admin-web:
       memory: '256Mi'
     requests:
       cpu: '200m'
-      memory: '128Mi'
+      memory: '192Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     IDENTITYSERVER_SECRET: '/k8s/auth-admin-web/IDENTITYSERVER_SECRET'
@@ -106,6 +106,7 @@ identity-server:
     DD_DOTNET_TRACER_HOME: '/opt/datadog'
     DD_INTEGRATIONS: '/opt/datadog/integrations.json'
     Datadog__Metrics__Port: '5003'
+    IdentityServer__ConsentsScope: '@island.is/auth/consents'
     IdentityServer__EnableFakeLogin: 'true'
     IdentityServer__EnableFeatureDeploymentWildcards: 'true'
     IdentityServer__KeyManagement__Enabled: 'true'
@@ -113,6 +114,7 @@ identity-server:
     NODE_OPTIONS: '--max-old-space-size=2000'
     NO_UPDATE_NOTIFIER: 'true'
     PersistenceSettings__BaseAddress: 'http://web-services-auth-ids-api'
+    PersistenceSettings__DelegationsCacheEnabled: 'false'
     PersistenceSettings__SessionsBaseAddress: 'http://web-services-sessions.services-sessions.svc.cluster.local'
     SERVERSIDE_FEATURES_ON: ''
   files:
@@ -207,7 +209,7 @@ services-auth-admin-api:
     DB_USER: 'servicesauth'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
     IDENTITY_SERVER_ISSUER_URL_LIST: '["https://identity-server.staging01.devland.is","https://innskra.island.is"]'
-    NODE_OPTIONS: '--max-old-space-size=336'
+    NODE_OPTIONS: '--max-old-space-size=720'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
     - 'nginx-ingress-external'
@@ -251,10 +253,10 @@ services-auth-admin-api:
   resources:
     limits:
       cpu: '400m'
-      memory: '384Mi'
+      memory: '768Mi'
     requests:
       cpu: '100m'
-      memory: '256Mi'
+      memory: '512Mi'
   secrets:
     CLIENT_SECRET_ENCRYPTION_KEY: '/k8s/services-auth/admin-api/CLIENT_SECRET_ENCRYPTION_KEY'
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
@@ -279,7 +281,8 @@ services-auth-delegation-api:
     XROAD_NATIONAL_REGISTRY_ACTOR_TOKEN: 'true'
     XROAD_NATIONAL_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
     XROAD_NATIONAL_REGISTRY_SERVICE_PATH: 'IS-TEST/GOV/6503760649/SKRA-Protected/Einstaklingar-v1'
-    XROAD_RSK_PROCURING_PATH: 'IS-TEST/GOV/5402696029/Skatturinn/prokura-v1'
+    XROAD_RSK_PROCURING_ACTOR_TOKEN: 'true'
+    XROAD_RSK_PROCURING_PATH: 'IS-TEST/GOV/5402696029/Skatturinn/relationships-v1'
     XROAD_RSK_PROCURING_REDIS_NODES: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
     XROAD_TLS_BASE_PATH: 'https://securityserver.staging01.devland.is'
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.staging01.devland.is/r1/IS-TEST'
@@ -349,7 +352,8 @@ services-auth-ids-api:
     DB_USER: 'servicesauth'
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/auth-api'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
-    NODE_OPTIONS: '--max-old-space-size=464'
+    NODE_OPTIONS: '--max-old-space-size=720'
+    NOVA_ACCEPT_UNAUTHORIZED: 'false'
     PUBLIC_URL: 'https://identity-server.staging01.devland.is/api'
     SERVERSIDE_FEATURES_ON: ''
     USER_PROFILE_CLIENT_URL: 'http://web-service-portal-api.service-portal.svc.cluster.local'
@@ -358,7 +362,7 @@ services-auth-ids-api:
     XROAD_CLIENT_ID: 'IS-TEST/GOV/5501692829/island-is-client'
     XROAD_NATIONAL_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
     XROAD_NATIONAL_REGISTRY_SERVICE_PATH: 'IS-TEST/GOV/6503760649/SKRA-Protected/Einstaklingar-v1'
-    XROAD_RSK_PROCURING_PATH: 'IS-TEST/GOV/5402696029/Skatturinn/prokura-v1'
+    XROAD_RSK_PROCURING_PATH: 'IS-TEST/GOV/5402696029/Skatturinn/relationships-v1'
     XROAD_RSK_PROCURING_REDIS_NODES: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
     XROAD_TJODSKRA_API_PATH: '/SKRA-Protected/Einstaklingar-v1'
     XROAD_TJODSKRA_MEMBER_CODE: '6503760649'
@@ -431,14 +435,17 @@ services-auth-ids-api:
   resources:
     limits:
       cpu: '800m'
-      memory: '512Mi'
+      memory: '768Mi'
     requests:
-      cpu: '100m'
-      memory: '256Mi'
+      cpu: '400m'
+      memory: '512Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     DB_PASS: '/k8s/services-auth/api/DB_PASSWORD'
     IDENTITY_SERVER_CLIENT_SECRET: '/k8s/services-auth/IDENTITY_SERVER_CLIENT_SECRET'
+    NOVA_PASSWORD: '/k8s/services-auth/NOVA_PASSWORD'
+    NOVA_URL: '/k8s/services-auth/NOVA_URL'
+    NOVA_USERNAME: '/k8s/services-auth/NOVA_USERNAME'
     RSK_PASSWORD: '/k8s/xroad/client/RSK/PASSWORD'
     RSK_USERNAME: '/k8s/xroad/client/RSK/USERNAME'
   securityContext:
@@ -585,7 +592,8 @@ services-auth-public-api:
     XROAD_NATIONAL_REGISTRY_ACTOR_TOKEN: 'true'
     XROAD_NATIONAL_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
     XROAD_NATIONAL_REGISTRY_SERVICE_PATH: 'IS-TEST/GOV/6503760649/SKRA-Protected/Einstaklingar-v1'
-    XROAD_RSK_PROCURING_PATH: 'IS-TEST/GOV/5402696029/Skatturinn/prokura-v1'
+    XROAD_RSK_PROCURING_ACTOR_TOKEN: 'true'
+    XROAD_RSK_PROCURING_PATH: 'IS-TEST/GOV/5402696029/Skatturinn/relationships-v1'
     XROAD_RSK_PROCURING_REDIS_NODES: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
     XROAD_TJODSKRA_API_PATH: '/SKRA-Protected/Einstaklingar-v1'
     XROAD_TJODSKRA_MEMBER_CODE: '6503760649'

@@ -3,6 +3,7 @@ import { m } from './messages'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { customZodError } from './utils/customZodError'
 import { EstateTypes, YES, NO } from './constants'
+import * as kennitala from 'kennitala'
 
 const isValidPhoneNumber = (phoneNumber: string) => {
   const phone = parsePhoneNumberFromString(phoneNumber, 'IS')
@@ -13,9 +14,9 @@ const emailRegex = /^[\w!#$%&'*+/=?`{|}~^-]+(?:\.[\w!#$%&'*+/=?`{|}~^-]+)*@(?:[A
 export const isValidEmail = (value: string) => emailRegex.test(value)
 
 const checkIfFilledOut = (arr: Array<string | undefined>) => {
-  if (arr.every((v) => v === '')) {
+  if (arr.every((v) => v === '' || v === undefined)) {
     return true
-  } else if (arr.every((v) => v !== '')) {
+  } else if (arr.every((v) => v !== '' && v !== undefined)) {
     return true
   } else {
     return false
@@ -24,24 +25,29 @@ const checkIfFilledOut = (arr: Array<string | undefined>) => {
 
 const asset = z
   .object({
-    assetNumber: z.string().optional(),
-    description: z.string().optional(),
-    marketValue: z.string().optional(),
+    assetNumber: z.string(),
+    description: z.string(),
+    marketValue: z.string(),
     initial: z.boolean(),
     enabled: z.boolean(),
     share: z.number().optional(),
   })
   .refine(
-    ({ assetNumber, description }) => {
-      return checkIfFilledOut([assetNumber, description])
+    ({ enabled, marketValue }) => {
+      return enabled ? marketValue !== '' : true
     },
     {
-      params: m.fillOutRates,
-      path: ['assetNumber'],
+      path: ['marketValue'],
     },
   )
   .array()
   .optional()
+
+const FileSchema = z.object({
+  name: z.string(),
+  key: z.string(),
+  url: z.string().optional(),
+})
 
 export const estateSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
@@ -58,9 +64,9 @@ export const estateSchema = z.object({
   }),
 
   selectedEstate: z.enum([
-    EstateTypes.divisionOfEstate,
+    EstateTypes.officialDivision,
     EstateTypes.estateWithoutAssets,
-    EstateTypes.permitToPostponeEstateDivision,
+    EstateTypes.permitForUndividedEstate,
     EstateTypes.divisionOfEstateByHeirs,
   ]),
 
@@ -70,10 +76,10 @@ export const estateSchema = z.object({
       .object({
         name: z.string(),
         relation: customZodError(z.string().min(1), m.errorRelation),
-        nationalId: z.string().length(10).optional(),
+        nationalId: z.string().optional(),
         custodian: z.string().length(10).optional(),
         foreignCitizenship: z.string().array().min(0).max(1).optional(),
-        dateOfBirth: z.string().min(1).optional(),
+        dateOfBirth: z.string().optional(),
         initial: z.boolean(),
         enabled: z.boolean(),
         phone: z
@@ -84,7 +90,30 @@ export const estateSchema = z.object({
           .string()
           .refine((v) => isValidEmail(v) || v === '')
           .optional(),
+        // Málsvari
+        advocate: z
+          .object({
+            name: z.string(),
+            nationalId: z.string(),
+            phone: z
+              .string()
+              .refine((v) => isValidPhoneNumber(v) || v === '')
+              .optional(),
+            email: z
+              .string()
+              .refine((v) => isValidEmail(v) || v === '')
+              .optional(),
+          })
+          .optional(),
       })
+      .refine(
+        ({ nationalId, advocate }) => {
+          return kennitala.info(nationalId as string).age < 18 ? advocate : true
+        },
+        {
+          path: ['nationalId'],
+        },
+      )
       .array()
       .optional(),
     assets: asset,
@@ -93,6 +122,7 @@ export const estateSchema = z.object({
     ships: asset,
     guns: asset,
     knowledgeOfOtherWills: z.enum([YES, NO]).optional(),
+    addressOfDeceased: z.string().optional(),
     caseNumber: z.string().min(1).optional(),
     dateOfDeath: z.date().optional(),
     nameOfDeceased: z.string().min(1).optional(),
@@ -107,6 +137,26 @@ export const estateSchema = z.object({
       })
       .optional(),
   }),
+
+  // is: Maki hins látna
+  deceasedWithUndividedEstate: z
+    .object({
+      selection: z.enum([YES, NO]),
+      spouse: z
+        .object({
+          name: z.string().optional(),
+          nationalId: z.string().optional(),
+        })
+        .optional(),
+    })
+    .refine(
+      ({ selection, spouse }) => {
+        return selection === YES ? !!spouse?.nationalId : true
+      },
+      {
+        path: ['spouse', 'nationalId'],
+      },
+    ),
 
   // is: Innbú
   inventory: z
@@ -179,6 +229,17 @@ export const estateSchema = z.object({
         path: ['value'],
       },
     )
+    .refine(
+      ({ nationalId }) => {
+        return nationalId === ''
+          ? true
+          : nationalId && kennitala.isValid(nationalId)
+      },
+      {
+        params: m.errorNationalIdIncorrect,
+        path: ['nationalId'],
+      },
+    )
     .array()
     .optional(),
 
@@ -222,14 +283,17 @@ export const estateSchema = z.object({
       creditorName: z.string().optional(),
       nationalId: z.string().optional(),
       balance: z.string().optional(),
+      loanIdentity: z.string().optional(),
     })
     .refine(
-      ({ creditorName, nationalId, balance }) => {
-        return checkIfFilledOut([creditorName, nationalId, balance])
+      ({ nationalId }) => {
+        return nationalId === ''
+          ? true
+          : nationalId && kennitala.isValid(nationalId)
       },
       {
-        params: m.fillOutRates,
-        path: ['balance'],
+        params: m.errorNationalIdIncorrect,
+        path: ['nationalId'],
       },
     )
     .array()
@@ -239,45 +303,53 @@ export const estateSchema = z.object({
   // is: Umboðsmaður
   representative: z
     .object({
-      representativeName: z.string().min(1).optional(),
-      representativeNationalId: z.string().length(10).optional(),
-      representativePhoneNumber: z
-        .string()
-        .refine((v) => isValidPhoneNumber(v), {
-          params: m.errorPhoneNumber,
-        })
-        .optional(),
-      representativeEmail: customZodError(
-        z.string().email(),
-        m.errorEmail,
-      ).optional(),
+      name: z.string().or(z.undefined()),
+      nationalId: z.string().or(z.undefined()),
+      phone: z.string(),
+      email: z.string(),
     })
     .refine(
-      ({
-        representativeName,
-        representativeNationalId,
-        representativePhoneNumber,
-        representativeEmail,
-      }) => {
-        return checkIfFilledOut([
-          representativeName,
-          representativeNationalId,
-          representativePhoneNumber,
-          representativeEmail,
-        ])
+      ({ name, nationalId, phone, email }) => {
+        const isAllEmpty = checkIfFilledOut([name, nationalId, phone, email])
+        return isAllEmpty ? true : name && name.length > 1
       },
       {
-        params: m.fillOutRates,
-        path: ['balance'],
+        path: ['name'],
+      },
+    )
+    .refine(
+      ({ name, nationalId, phone, email }) => {
+        const isAllEmpty = checkIfFilledOut([name, nationalId, phone, email])
+        return isAllEmpty ? true : nationalId && kennitala.isPerson(nationalId)
+      },
+      {
+        path: ['nationalId'],
       },
     )
     .optional(),
 
-  // is: Heimild til setu í óskiptu búi skv. erfðaskrá
-  undividedEstateResidencePermission: z.enum([YES, NO]),
+  estateAttachments: z.object({
+    attached: z.object({
+      file: z.array(FileSchema),
+    }),
+  }),
 
-  // is: Hefur umsækjandi forræði á búi?
-  applicantHasLegalCustodyOverEstate: z.enum([YES, NO]),
+  // is: Eignalaust bú
+  estateWithoutAssets: z
+    .object({
+      estateAssetsExist: z.enum([YES, NO]),
+      estateDebtsExist: z.enum([YES, NO]).optional(),
+    })
+    .refine(
+      ({ estateAssetsExist, estateDebtsExist }) => {
+        return estateAssetsExist === YES
+          ? estateDebtsExist === YES || estateDebtsExist === NO
+          : true
+      },
+      {
+        path: ['estateDebtsExist'],
+      },
+    ),
 
-  readTerms: z.array(z.enum([YES])).length(1),
+  confirmAction: z.array(z.enum([YES])).length(1),
 })

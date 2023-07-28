@@ -1,4 +1,5 @@
 import { Response } from 'express'
+
 import {
   Body,
   Controller,
@@ -25,12 +26,15 @@ import {
   SigningServiceResponse,
 } from '@island.is/dokobit-signing'
 import {
-  CaseAppealState,
+  CaseAppealDecision,
   CaseState,
   CaseTransition,
   CaseType,
   indictmentCases,
+  InstitutionType,
   investigationCases,
+  isCourtRole,
+  isIndictmentCase,
   restrictionCases,
   UserRole,
 } from '@island.is/judicial-system/types'
@@ -50,6 +54,7 @@ import {
   representativeRule,
   staffRule,
   assistantRule,
+  defenderRule,
 } from '../../guards'
 import { nowFactory } from '../../factories'
 import { UserService } from '../user'
@@ -60,7 +65,6 @@ import { CaseWriteGuard } from './guards/caseWrite.guard'
 import { CaseTypeGuard } from './guards/caseType.guard'
 import { CurrentCase } from './guards/case.decorator'
 import {
-  staffUpdateRule,
   judgeTransitionRule,
   judgeUpdateRule,
   prosecutorTransitionRule,
@@ -94,7 +98,8 @@ export class CaseController {
   private async validateAssignedUser(
     assignedUserId: string,
     assignedUserRole: UserRole[],
-    institutionId: string | undefined,
+    institutionType: InstitutionType,
+    institutionId?: string,
   ) {
     const assignedUser = await this.userService.findById(assignedUserId)
 
@@ -104,7 +109,10 @@ export class CaseController {
       )
     }
 
-    if (institutionId && assignedUser.institutionId !== institutionId) {
+    if (
+      assignedUser.institution?.type !== institutionType ||
+      (institutionId && assignedUser.institutionId !== institutionId)
+    ) {
       throw new ForbiddenException(
         `User ${assignedUserId} belongs to the wrong institution`,
       )
@@ -135,7 +143,6 @@ export class CaseController {
     judgeUpdateRule,
     registrarUpdateRule,
     assistantUpdateRule,
-    staffUpdateRule,
   )
   @Patch('case/:caseId')
   @ApiOkResponse({ type: Case, description: 'Updates an existing case' })
@@ -154,6 +161,7 @@ export class CaseController {
       await this.validateAssignedUser(
         update.prosecutorId,
         [UserRole.PROSECUTOR],
+        InstitutionType.PROSECUTORS_OFFICE,
         theCase.creatingProsecutor?.institutionId,
       )
 
@@ -167,6 +175,7 @@ export class CaseController {
       await this.validateAssignedUser(
         update.judgeId,
         [UserRole.JUDGE, UserRole.ASSISTANT],
+        InstitutionType.COURT,
         theCase.courtId,
       )
     }
@@ -175,7 +184,40 @@ export class CaseController {
       await this.validateAssignedUser(
         update.registrarId,
         [UserRole.REGISTRAR],
+        InstitutionType.COURT,
         theCase.courtId,
+      )
+    }
+
+    if (update.appealAssistantId) {
+      await this.validateAssignedUser(
+        update.appealAssistantId,
+        [UserRole.ASSISTANT],
+        InstitutionType.HIGH_COURT,
+      )
+    }
+
+    if (update.appealJudge1Id) {
+      await this.validateAssignedUser(
+        update.appealJudge1Id,
+        [UserRole.JUDGE],
+        InstitutionType.HIGH_COURT,
+      )
+    }
+
+    if (update.appealJudge2Id) {
+      await this.validateAssignedUser(
+        update.appealJudge2Id,
+        [UserRole.JUDGE],
+        InstitutionType.HIGH_COURT,
+      )
+    }
+
+    if (update.appealJudge3Id) {
+      await this.validateAssignedUser(
+        update.appealJudge3Id,
+        [UserRole.JUDGE],
+        InstitutionType.HIGH_COURT,
       )
     }
 
@@ -221,25 +263,57 @@ export class CaseController {
       theCase.appealState,
     )
 
-    const update: UpdateCase = states
+    let update: UpdateCase = states
 
-    if (transition.transition === CaseTransition.DELETE) {
-      update.parentCaseId = null
-    }
+    switch (transition.transition) {
+      case CaseTransition.DELETE:
+        update.parentCaseId = null
+        break
+      case CaseTransition.ACCEPT:
+      case CaseTransition.REJECT:
+      case CaseTransition.DISMISS:
+        update.rulingDate = isIndictmentCase(theCase.type)
+          ? nowFactory()
+          : theCase.courtEndTime
 
-    if (transition.transition === CaseTransition.REOPEN) {
-      update.rulingDate = null
-      update.courtRecordSignatoryId = null
-      update.courtRecordSignatureDate = null
-    }
+        // Handle appealed in court
+        if (
+          !theCase.appealState && // don't appeal twice
+          (theCase.prosecutorAppealDecision === CaseAppealDecision.APPEAL ||
+            theCase.accusedAppealDecision === CaseAppealDecision.APPEAL)
+        ) {
+          if (theCase.prosecutorAppealDecision === CaseAppealDecision.APPEAL) {
+            update.prosecutorPostponedAppealDate = nowFactory()
+          } else {
+            update.accusedPostponedAppealDate = nowFactory()
+          }
 
-    // The only roles that can appeal a case are prosecutor roles
-    if (states.appealState === CaseAppealState.APPEALED) {
-      update.prosecutorPostponedAppealDate = nowFactory()
-    }
+          update = {
+            ...update,
+            ...transitionCase(
+              CaseTransition.APPEAL,
+              states.state ?? theCase.state,
+              states.appealState ?? theCase.appealState,
+            ),
+          }
+        }
 
-    if (states.appealState === CaseAppealState.RECEIVED) {
-      update.appealReceivedByCourtDate = nowFactory()
+        break
+      case CaseTransition.REOPEN:
+        update.rulingDate = null
+        update.rulingSignatureDate = null
+        update.courtRecordSignatoryId = null
+        update.courtRecordSignatureDate = null
+        break
+      // TODO: Consider changing the names of the postponed appeal date variables
+      // as they are now also used when the case is appealed in court
+      case CaseTransition.APPEAL:
+        // The only roles that can appeal a case here are prosecutor roles
+        update.prosecutorPostponedAppealDate = nowFactory()
+        break
+      case CaseTransition.RECEIVE_APPEAL:
+        update.appealReceivedByCourtDate = nowFactory()
+        break
     }
 
     const updatedCase = await this.caseService.update(
@@ -266,6 +340,7 @@ export class CaseController {
     registrarRule,
     assistantRule,
     staffRule,
+    defenderRule,
   )
   @Get('cases')
   @ApiOkResponse({
@@ -339,19 +414,20 @@ export class CaseController {
     registrarRule,
     assistantRule,
   )
-  @Get('case/:caseId/caseFiles/:policeCaseNumber')
+  @Get('case/:caseId/caseFilesRecord/:policeCaseNumber')
   @ApiOkResponse({
     content: { 'application/pdf': {} },
-    description: 'Gets the case files for an existing case as a pdf document',
+    description:
+      'Gets the case files record for an existing case as a pdf document',
   })
-  async getCaseFilesPdf(
+  async getCaseFilesRecordPdf(
     @Param('caseId') caseId: string,
     @Param('policeCaseNumber') policeCaseNumber: string,
     @CurrentCase() theCase: Case,
     @Res() res: Response,
   ): Promise<void> {
     this.logger.debug(
-      `Getting the case files for police case number ${policeCaseNumber} in case ${caseId} as a pdf document`,
+      `Getting the case files record for case ${caseId} and police case ${policeCaseNumber} as a pdf document`,
     )
 
     if (!theCase.policeCaseNumbers.includes(policeCaseNumber)) {
@@ -360,7 +436,7 @@ export class CaseController {
       )
     }
 
-    const pdf = await this.caseService.getCaseFilesPdf(
+    const pdf = await this.caseService.getCaseFilesRecordPdf(
       theCase,
       policeCaseNumber,
     )
@@ -461,7 +537,7 @@ export class CaseController {
     JwtAuthGuard,
     RolesGuard,
     CaseExistsGuard,
-    new CaseTypeGuard([...indictmentCases]),
+    new CaseTypeGuard(indictmentCases),
     CaseReadGuard,
   )
   @RolesRules(
@@ -513,9 +589,9 @@ export class CaseController {
       `Requesting a signature for the court record of case ${caseId}`,
     )
 
-    if (user.id !== theCase.judgeId && user.id !== theCase.registrarId) {
+    if (!isCourtRole(user.role)) {
       throw new ForbiddenException(
-        'A court record must be signed by the assigned judge or registrar',
+        'A court record must be a judge or a registrar',
       )
     }
 
@@ -562,9 +638,9 @@ export class CaseController {
       `Confirming a signature for the court record of case ${caseId}`,
     )
 
-    if (user.id !== theCase.judgeId && user.id !== theCase.registrarId) {
+    if (!isCourtRole(user.role)) {
       throw new ForbiddenException(
-        'A court record must be signed by the assigned judge or registrar',
+        'A court record must be a judge or a registrar',
       )
     }
 

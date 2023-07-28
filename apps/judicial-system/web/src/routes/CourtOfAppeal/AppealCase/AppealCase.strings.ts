@@ -6,30 +6,20 @@ export const appealCase = defineMessages({
     defaultMessage: 'Skráning',
     description: 'Titill á skráningarsíðu Landsréttar',
   },
-  caseNumberHeading: {
-    id: 'judicial.system.core:appeal_case.case_number_heading',
-    defaultMessage: 'Málsnúmer Landsréttar',
-    description: 'Titill á málsnúmeri á skráningarsíðu Landsréttar',
-  },
   caseNumberLabel: {
     id: 'judicial.system.core:appeal_case.case_number_label',
     defaultMessage: 'Mál nr.',
     description: 'Lýsitexti á málsnúmeri á skráningarsíðu Landsréttar',
   },
   caseNumberPlaceholder: {
-    id: 'judicial.system.core:appeal_case.case_number_placeholder',
-    defaultMessage: 'Skráðu inn málsnúmer',
+    id: 'judicial.system.core:appeal_case.case_number_placeholder_v3',
+    defaultMessage: 'X/{year}',
     description: 'Gildistexti á málsnúmeri á skráningarsíðu Landsréttar',
   },
   nextButtonText: {
     id: 'judicial.system.core:appeal_case.next_button_text',
     defaultMessage: 'Halda áfram',
     description: 'Texti á Áfram takka á skráningarsíðu Landsréttar',
-  },
-  assistantHeading: {
-    id: 'judicial.system.core:appeal_case.assistant_heading',
-    defaultMessage: 'Aðstoðarmaður',
-    description: 'Titill á aðstoðrarmanni á skráningarsíðu Landsréttar',
   },
   assistantLabel: {
     id: 'judicial.system.core:appeal_case.assistant_label',
@@ -42,11 +32,6 @@ export const appealCase = defineMessages({
     defaultMessage: 'Velja aðstoðarmann',
     description:
       'Lýsitexti á dropdown til að velja aðstoðrmann á skráningarsíðu Landsréttar',
-  },
-  judgesHeading: {
-    id: 'judicial.system.core:appeal_case.judges_heading',
-    defaultMessage: 'Dómarar',
-    description: 'Titill dómara á skráningarsíðu Landsréttar',
   },
   judgeLabel: {
     id: 'judicial.system.core:appeal_case.judge_label',

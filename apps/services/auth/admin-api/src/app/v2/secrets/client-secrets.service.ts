@@ -48,6 +48,8 @@ export class ClientSecretsService {
           attributes: [],
         },
       ],
+      // The secret considered active is the one with the latest created date if there are two or more of the new version (contain encrypted value)
+      order: [['created', 'DESC']],
     })
 
     return secrets.map((secret) => this.formatSecret(secret))
@@ -128,7 +130,7 @@ export class ClientSecretsService {
       '0123456789' +
       'abcdefghijklmnopqrstuvwxyz' +
       'ABCDEFGHIJKLMNOPQRSTUVWXYZ' +
-      ',.-{}+!"#$%/()=?'
+      '.-+!#$%'
 
     for (let i = 0; i < length; i++) {
       generatedSecret += validChars[randomInt(0, validChars.length)]

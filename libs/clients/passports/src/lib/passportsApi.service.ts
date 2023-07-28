@@ -223,8 +223,16 @@ export class PassportsService {
     const userPassports = await this.getIdentityDocument(user)
     const childPassports = await this.getIdentityDocumentChildren(user)
 
+    const userPassport = userPassports
+      ? userPassports.sort((a, b) =>
+          a?.expirationDate && b?.expirationDate
+            ? Number(b.expirationDate) - Number(a.expirationDate)
+            : 0,
+        )[0]
+      : undefined
+
     return {
-      userPassport: userPassports ? userPassports[0] : undefined,
+      userPassport,
       childPassports: childPassports,
     }
   }

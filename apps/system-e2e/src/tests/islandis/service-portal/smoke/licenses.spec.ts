@@ -1,5 +1,5 @@
 import { test, BrowserContext, expect } from '@playwright/test'
-import { urls } from '../../../../support/urls'
+import { icelandicAndNoPopupUrl, urls } from '../../../../support/urls'
 import { session } from '../../../../support/session'
 import { label } from '../../../../support/i18n'
 import { m } from '@island.is/service-portal/licenses/messages'
@@ -9,29 +9,39 @@ const homeUrl = `${urls.islandisBaseUrl}/minarsidur`
 test.use({ baseURL: urls.islandisBaseUrl })
 
 test.describe('MS - Skírteini', () => {
-  let context: BrowserContext
+  let contextFaereyjar: BrowserContext
+  let contextAmerika: BrowserContext
+  const contexts: BrowserContext[] = []
 
   test.beforeAll(async ({ browser }) => {
-    context = await session({
+    contextAmerika = await session({
       browser: browser,
       storageState: 'service-portal-amerika.json',
       homeUrl,
       phoneNumber: '0102989',
       idsLoginOn: true,
     })
+    contextFaereyjar = await session({
+      browser: browser,
+      storageState: 'service-portal-faereyjar.json',
+      homeUrl,
+      phoneNumber: '0102399',
+      idsLoginOn: true,
+    })
+    contexts.push(contextAmerika, contextFaereyjar)
   })
 
   test.afterAll(async () => {
-    await context.close()
+    for (const context of contexts) await context.close()
   })
 
   test('License overview', async () => {
-    const page = await context.newPage()
+    const page = await contextFaereyjar.newPage()
     await disableI18n(page)
 
     await test.step('Renders the page', async () => {
       // Arrange
-      await page.goto('/minarsidur/skirteini')
+      await page.goto(icelandicAndNoPopupUrl('/minarsidur/skirteini'))
 
       // Assert
       const headline = page.getByRole('heading', { name: label(m.title) })
@@ -40,9 +50,9 @@ test.describe('MS - Skírteini', () => {
   })
 
   test('should display passport in overview', async () => {
-    const page = await context.newPage()
+    const page = await contextFaereyjar.newPage()
     await disableI18n(page)
-    await page.goto('/minarsidur/skirteini')
+    await page.goto(icelandicAndNoPopupUrl('/minarsidur/skirteini'))
     await page.waitForLoadState('networkidle')
 
     // Act
@@ -60,9 +70,9 @@ test.describe('MS - Skírteini', () => {
   })
 
   test('should display child passports', async () => {
-    const page = await context.newPage()
+    const page = await contextAmerika.newPage()
     await disableI18n(page)
-    await page.goto('/minarsidur/skirteini')
+    await page.goto(icelandicAndNoPopupUrl('/minarsidur/skirteini'))
     await page.waitForLoadState('networkidle')
 
     // Act
@@ -83,25 +93,4 @@ test.describe('MS - Skírteini', () => {
     )
     await expect(title1).toBeVisible()
   })
-})
-
-test.describe.skip('Skírteini', () => {
-  for (const { testCase } of [
-    { testCase: 'Skírteini fá upp QR kóða ADR' },
-    { testCase: 'Skírteini fá upp QR kóða skotvopnaleyfi' },
-    { testCase: 'Skírteini fá upp QR kóða vinnuvéla' },
-    { testCase: 'Skírteini fá upp QR kóða ökuskírteinis' },
-    { testCase: 'Skírteini sjá ADR detail' },
-    { testCase: 'Skírteini sjá ADR skírteini' },
-    { testCase: 'Skírteini sjá Skotvopna detail + byssueign' },
-    { testCase: 'Skírteini sjá Skotvopna skírteini' },
-    { testCase: 'Skírteini sjá Vinnuvéla detail' },
-    { testCase: 'Skírteini sjá Vinnuvéla skírteini' },
-    { testCase: 'Skírteini sjá Ökuskírteini detail' },
-    { testCase: 'Skírteini sjá Ökuskírteini' },
-  ]) {
-    test(testCase, () => {
-      return
-    })
-  }
 })

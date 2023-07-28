@@ -26,7 +26,7 @@ import {
   GET_ORGANIZATION_SUBPAGE_QUERY,
 } from '../queries'
 import { Screen } from '../../types'
-import { useFeatureFlag, useNamespace } from '@island.is/web/hooks'
+import { useNamespace } from '@island.is/web/hooks'
 import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import {
   getThemeConfig,
@@ -88,10 +88,6 @@ const SubPage: Screen<SubPageProps> = ({
   namespace,
   locale,
 }) => {
-  const { value: isWebReaderEnabledForOrganizationPages } = useFeatureFlag(
-    'isWebReaderEnabledForOrganizationPages',
-    false,
-  )
   const router = useRouter()
   const { activeLocale } = useI18n()
 
@@ -164,13 +160,11 @@ const SubPage: Screen<SubPageProps> = ({
                         {subpage.title}
                       </Text>
                     </Box>
-                    {isWebReaderEnabledForOrganizationPages && (
-                      <Webreader
-                        marginTop={0}
-                        readId={null}
-                        readClass="rs_read"
-                      />
-                    )}
+                    <Webreader
+                      marginTop={0}
+                      readId={null}
+                      readClass="rs_read"
+                    />
                   </GridColumn>
                 </GridRow>
                 {subpage.showTableOfContents && (

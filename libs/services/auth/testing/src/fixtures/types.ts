@@ -1,7 +1,7 @@
 import { Optional } from 'sequelize'
 
 import {
-  ApiScopesDTO,
+  ApiScopeDTO,
   ApiScopeUserAccessDTO,
   ClientClaim,
   ClientGrantType,
@@ -21,7 +21,7 @@ export type CreateClientGrantType = Optional<
 >
 export type CreateClientUri = { clientId: string; uri?: string }
 export type CreateIdentityResource = Partial<IdentityResource>
-export type CreateApiScope = Partial<ApiScopesDTO>
+export type CreateApiScope = Partial<ApiScopeDTO>
 export type CreateApiScopeUserAccess = ApiScopeUserAccessDTO
 export type CreateCustomDelegationScope = Optional<
   Pick<DelegationScopeDTO, 'scopeName' | 'validFrom' | 'validTo'>,

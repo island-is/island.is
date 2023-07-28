@@ -10,7 +10,7 @@ export const getDraftApplications = (applications: Applications[]) => {
 }
 
 export const hasHealthInsurance = (externalData: ExternalData) => {
-  const isInsured = externalData?.healthInsurance?.data
+  const isInsured = externalData?.isHealthInsured?.data
   return isInsured === true
 }
 

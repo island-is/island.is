@@ -40,11 +40,10 @@ export const InstitutionPanel = ({
           style={{ flex: '0 0 64px' }}
           marginRight={3}
         >
-          <Box
-            component="img"
-            alt=""
+          <img
+            width={64}
             src={img ? img : '/assets/skjaldarmerki.svg'}
-            width="full"
+            alt=""
           />
         </Box>
         <Box>

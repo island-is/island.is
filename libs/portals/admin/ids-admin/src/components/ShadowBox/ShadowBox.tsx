@@ -3,7 +3,7 @@ import { Box } from '@island.is/island-ui/core'
 import {
   useDynamicShadow,
   UseDynamicShadowOptions,
-} from '../forms/AddPermissions/useDynamicShadow'
+} from '../../hooks/useDynamicShadow'
 import * as styles from './ShadowBox.css'
 
 interface ShadowBoxProps

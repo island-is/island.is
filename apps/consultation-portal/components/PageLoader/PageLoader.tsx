@@ -3,7 +3,7 @@ import { useRouter } from 'next/router'
 import { LoadingBarRef } from 'react-top-loading-bar'
 import { PageLoader as PageLoaderUI } from '@island.is/island-ui/core'
 
-export const PageLoader = () => {
+const PageLoader = () => {
   const router = useRouter()
   const ref = useRef<LoadingBarRef>(null)
 

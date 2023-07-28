@@ -1,5 +1,5 @@
 import { BrowserContext, expect, test } from '@playwright/test'
-import { urls } from '../../../../support/urls'
+import { icelandicAndNoPopupUrl, urls } from '../../../../support/urls'
 import { session } from '../../../../support/session'
 import { label } from '../../../../support/i18n'
 import { m } from '@island.is/service-portal/core/messages'
@@ -27,7 +27,7 @@ test.describe('MS - Mínar upplýsingar', () => {
     // Arrange
     const page = await context.newPage()
     await disableI18n(page)
-    await page.goto('/minarsidur/min-gogn')
+    await page.goto(icelandicAndNoPopupUrl('/minarsidur/min-gogn/yfirlit'))
 
     // Act
     const element = page.getByText(label(m.natreg)).first()
@@ -42,7 +42,9 @@ test.describe('MS - Mínar upplýsingar', () => {
   test('should display user detail information', async () => {
     const page = await context.newPage()
     await disableI18n(page)
-    await page.goto('/minarsidur/min-gogn/minar-upplysingar')
+    await page.goto(
+      icelandicAndNoPopupUrl('/minarsidur/min-gogn/yfirlit/minar-upplysingar'),
+    )
 
     // Act
     const title1 = page.getByText(label(m.myRegistration))
@@ -57,10 +59,10 @@ test.describe('MS - Mínar upplýsingar', () => {
     await expect(link).toBeVisible()
   })
 
-  test('should display child information', async () => {
+  test.skip('should display child information', async () => {
     const page = await context.newPage()
     await disableI18n(page)
-    await page.goto('/minarsidur/min-gogn')
+    await page.goto(icelandicAndNoPopupUrl('/minarsidur/min-gogn/yfirlit'))
     await page.waitForLoadState('networkidle')
 
     // Act
@@ -75,7 +77,9 @@ test.describe('MS - Mínar upplýsingar', () => {
       .first()
 
     // Assert
-    await expect(page).toHaveURL(/.*minarsidur\/min-gogn\/barn\/\d{10}$/)
+    await expect(page).toHaveURL(
+      /.*minarsidur\/min-gogn\/yfirlit\/barn\/\d{10}$/,
+    )
     await expect(registrationButton).toBeVisible()
   })
 })

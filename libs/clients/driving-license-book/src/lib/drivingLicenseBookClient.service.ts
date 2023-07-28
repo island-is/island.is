@@ -227,7 +227,7 @@ export class DrivingLicenseBookClientApiFactory {
     const api = await this.create()
     const { data } = await api.apiStudentGetStudentOverviewSsnGet({
       ssn: nationalId,
-      showInactiveBooks: true,
+      showInactiveBooks: false,
     })
     if (data?.books) {
       const book = data.books

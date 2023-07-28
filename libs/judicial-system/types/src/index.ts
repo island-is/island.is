@@ -46,6 +46,8 @@ export {
   isDistrictCourtUser,
   appealsCourtRoles,
   isAppealsCourtUser,
+  isPrisonSystemUser,
+  isDefenceUser,
 } from './lib/user'
 export type { User, CreateUser, UpdateUser } from './lib/user'
 
@@ -70,7 +72,6 @@ export {
   isAcceptingCaseDecision,
   completedCaseStates,
   hasCaseBeenAppealed,
-  SubpoenaType,
   CaseAppealState,
   getAppealInfo,
   getStatementDeadline,

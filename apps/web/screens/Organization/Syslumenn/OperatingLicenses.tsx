@@ -29,7 +29,7 @@ import {
   GET_OPERATING_LICENSES_CSV_QUERY,
 } from '../../queries'
 import { Screen } from '../../../types'
-import { useFeatureFlag, useNamespace } from '@island.is/web/hooks'
+import { useNamespace } from '@island.is/web/hooks'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import {
   OrganizationWrapper,
@@ -241,10 +241,6 @@ const OperatingLicenses: Screen<OperatingLicensesProps> = ({
   subpage,
   namespace,
 }) => {
-  const { value: isWebReaderEnabledForOrganizationPages } = useFeatureFlag(
-    'isWebReaderEnabledForOrganizationPages',
-    false,
-  )
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
   const Router = useRouter()
@@ -368,13 +364,11 @@ const OperatingLicenses: Screen<OperatingLicensesProps> = ({
         items: navList,
       }}
     >
-      <Box paddingBottom={isWebReaderEnabledForOrganizationPages ? 0 : 2}>
+      <Box paddingBottom={0}>
         <Text variant="h1" as="h2">
           {subpage.title}
         </Text>
-        {isWebReaderEnabledForOrganizationPages && (
-          <Webreader readId={null} readClass="rs_read" />
-        )}
+        <Webreader readId={null} readClass="rs_read" />
       </Box>
       {webRichText(subpage.description as SliceType[])}
       <Box marginBottom={3}>

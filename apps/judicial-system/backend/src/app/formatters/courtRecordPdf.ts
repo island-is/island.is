@@ -152,6 +152,7 @@ function constructRestrictionCourtRecordPdf(
       'Times-Bold',
     )
     addEmptyLines(doc)
+
     addNormalJustifiedText(doc, theCase.courtAttendees, 'Times-Roman')
   }
 
@@ -394,6 +395,7 @@ function constructInvestigationCourtRecordPdf(
       'Times-Bold',
     )
     addEmptyLines(doc)
+
     addNormalJustifiedText(doc, theCase.courtAttendees, 'Times-Roman')
   }
 

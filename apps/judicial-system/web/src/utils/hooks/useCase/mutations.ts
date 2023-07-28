@@ -28,15 +28,6 @@ export const ExtendCaseMutation = gql`
   }
 `
 
-export const RequestCourtRecordSignatureMutation = gql`
-  mutation RequestCourtRecordSignature($input: RequestSignatureInput!) {
-    requestCourtRecordSignature(input: $input) {
-      controlCode
-      documentToken
-    }
-  }
-`
-
 export const SendNotificationMutation = gql`
   mutation SendNotification($input: SendNotificationInput!) {
     sendNotification(input: $input) {
@@ -51,6 +42,7 @@ export const TransitionCaseMutation = gql`
       state
       appealState
       appealReceivedByCourtDate
+      statementDeadline
     }
   }
 `
@@ -171,6 +163,7 @@ export const UpdateCaseMutation = gql`
       accusedPostponedAppealDate
       prosecutorPostponedAppealDate
       rulingDate
+      rulingSignatureDate
       judge {
         id
         name
@@ -234,8 +227,7 @@ export const UpdateCaseMutation = gql`
       rulingModifiedHistory
       caseResentExplanation
       origin
-      seenByDefender
-      subpoenaType
+      openedByDefender
       defendantWaivesRightToCounsel
       crimeScenes
       indictmentIntroduction
@@ -301,6 +293,9 @@ export const LimitedAccessUpdateCaseMutation = gql`
         id
         name
         category
+        created
+        key
+        policeCaseNumber
       }
       defendants {
         id
@@ -320,6 +315,7 @@ export const LimitedAccessUpdateCaseMutation = gql`
       defenderNationalId
       defenderEmail
       defenderPhoneNumber
+      sendRequestToDefender
       court {
         id
         name
@@ -354,6 +350,7 @@ export const LimitedAccessUpdateCaseMutation = gql`
       isolationToDate
       conclusion
       rulingDate
+      rulingSignatureDate
       registrar {
         id
         name

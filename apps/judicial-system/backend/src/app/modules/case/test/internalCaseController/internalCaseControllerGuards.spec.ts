@@ -23,7 +23,7 @@ describe('InternalCaseController - guards', () => {
       guard = new guards[0]()
     })
 
-    it('should have TokenGuard as quard 1', () => {
+    it('should have TokenGuard as guard 1', () => {
       expect(guard).toBeInstanceOf(TokenGuard)
     })
   })

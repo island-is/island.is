@@ -1,0 +1,26 @@
+{
+  "root": "libs/api/domains/icelandic-government-institution-vacancies",
+  "sourceRoot": "libs/api/domains/icelandic-government-institution-vacancies/src",
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": [
+          "libs/api/domains/icelandic-government-institution-vacancies/**/*.ts"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": [
+        "coverage/libs/api/domains/icelandic-government-institution-vacancies"
+      ],
+      "options": {
+        "jestConfig": "libs/api/domains/icelandic-government-institution-vacancies/jest.config.js",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": ["lib:api", "scope:api"]
+}

@@ -1,8 +1,6 @@
 import { uuid } from 'uuidv4'
 import { Transaction } from 'sequelize/types'
 
-import { BadRequestException } from '@nestjs/common'
-
 import {
   Gender,
   CaseType,
@@ -46,7 +44,7 @@ describe('InternalCaseController - Create', () => {
     mockDefendantService = defendantService
     mockCaseModel = caseModel
 
-    const mockDefendantCreate = mockDefendantService.create as jest.Mock
+    const mockDefendantCreate = mockDefendantService.createForNewCase as jest.Mock
     mockDefendantCreate.mockResolvedValue({ caseId } as Defendant)
 
     const mockTransaction = sequelize.transaction as jest.Mock
@@ -184,7 +182,7 @@ describe('InternalCaseController - Create', () => {
     })
 
     it('should create a defendant', () => {
-      expect(mockDefendantService.create).toHaveBeenCalledWith(
+      expect(mockDefendantService.createForNewCase).toHaveBeenCalledWith(
         caseId,
         {
           nationalId: accusedNationalId,
@@ -321,7 +319,7 @@ describe('InternalCaseController - Create', () => {
     beforeEach(async () => {
       const mockCreate = mockCaseModel.create as jest.Mock
       mockCreate.mockResolvedValueOnce(createdCase)
-      const mockDefendantCreate = mockDefendantService.create as jest.Mock
+      const mockDefendantCreate = mockDefendantService.createForNewCase as jest.Mock
       mockDefendantCreate.mockRejectedValueOnce(new Error('Some error'))
 
       then = await givenWhenThen(caseToCreate)

@@ -2,6 +2,7 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
 import {
   CaseAppealDecision,
+  CaseAppealRulingDecision,
   CaseAppealState,
   CaseDecision,
   CaseState,
@@ -52,6 +53,9 @@ export class CaseListEntry {
   rulingDate?: Date
 
   @ApiPropertyOptional()
+  rulingSignatureDate?: Date
+
+  @ApiPropertyOptional()
   courtEndTime?: Date
 
   @ApiPropertyOptional({ enum: CaseAppealDecision })
@@ -95,4 +99,10 @@ export class CaseListEntry {
 
   @ApiPropertyOptional()
   appealState?: CaseAppealState
+
+  @ApiPropertyOptional()
+  appealCaseNumber?: string
+
+  @ApiPropertyOptional()
+  appealRulingDecision?: CaseAppealRulingDecision
 }

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { defineMessage } from 'react-intl'
 import { checkDelegation } from '@island.is/shared/utils'
 import { info } from 'kennitala'
@@ -23,10 +23,6 @@ import { spmm, urls } from '../../lib/messages'
 import { NATIONAL_REGISTRY_FAMILY } from '../../lib/queries/getNationalRegistryFamily'
 import { NATIONAL_REGISTRY_USER } from '../../lib/queries/getNationalRegistryUser'
 import { formatNameBreaks } from '../../helpers/formatting'
-import {
-  FeatureFlagClient,
-  useFeatureFlagClient,
-} from '@island.is/react/feature-flags'
 
 const dataNotFoundMessage = defineMessage({
   id: 'sp.family:data-not-found',
@@ -37,9 +33,7 @@ const SubjectInfo = () => {
   useNamespaces('sp.family')
   const userInfo = useUserInfo()
   const { formatMessage } = useLocale()
-  const [showTooltip, setShowTooltip] = useState(false)
   const { data, loading, error } = useQuery<Query>(NATIONAL_REGISTRY_USER)
-  const featureFlagClient: FeatureFlagClient = useFeatureFlagClient()
   const { nationalRegistryUser } = data || {}
   const isDelegation = userInfo && checkDelegation(userInfo)
 
@@ -53,38 +47,25 @@ const SubjectInfo = () => {
   const { nationalRegistryFamily } = famData || {}
   const isUserAdult = info(userInfo.profile.nationalId).age >= 18
 
-  /* Should show name breakdown tooltip? */
-  useEffect(() => {
-    const isFlagEnabled = async () => {
-      const ffEnabled = await featureFlagClient.getValue(
-        `isServicePortalNameBreakdownEnabled`,
-        false,
-      )
-      if (ffEnabled) {
-        setShowTooltip(ffEnabled as boolean)
-      }
-    }
-    isFlagEnabled()
-  }, [])
-
   return (
     <>
-      <IntroHeader title={userInfo.profile.name} intro={spmm.userInfoDesc} />
+      <IntroHeader
+        marginBottom={2}
+        title={userInfo.profile.name}
+        intro={spmm.userInfoDesc}
+      />
       <Stack space={2}>
         <UserInfoLine
           title={formatMessage(m.myRegistration)}
           label={m.fullName}
           loading={loading}
           content={nationalRegistryUser?.fullName}
-          tooltip={
-            showTooltip
-              ? formatNameBreaks(nationalRegistryUser ?? undefined, {
-                  givenName: formatMessage(spmm.givenName),
-                  middleName: formatMessage(spmm.middleName),
-                  lastName: formatMessage(spmm.lastName),
-                })
-              : undefined
-          }
+          translate="no"
+          tooltip={formatNameBreaks(nationalRegistryUser ?? undefined, {
+            givenName: formatMessage(spmm.givenName),
+            middleName: formatMessage(spmm.middleName),
+            lastName: formatMessage(spmm.lastName),
+          })}
           editLink={{
             external: true,
             title: spmm.changeInNationalReg,
@@ -241,6 +222,7 @@ const SubjectInfo = () => {
             <UserInfoLine
               title={formatMessage(spmm.userFamilyMembersOnNumber)}
               label={userInfo.profile.name}
+              translateLabel="no"
               content={formatNationalId(userInfo.profile.nationalId)}
               loading={loading || familyLoading}
             />
@@ -249,6 +231,7 @@ const SubjectInfo = () => {
               ? nationalRegistryFamily?.map((item) => (
                   <React.Fragment key={item.nationalId}>
                     <UserInfoLine
+                      translateLabel="no"
                       label={item.fullName}
                       content={formatNationalId(item.nationalId)}
                       loading={loading}

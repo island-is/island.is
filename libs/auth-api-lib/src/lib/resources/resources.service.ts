@@ -17,7 +17,7 @@ import { ApiResourceAllowedScopeDTO } from './dto/api-resource-allowed-scope.dto
 import { ApiResourceSecretDTO } from './dto/api-resource-secret.dto'
 import { ApiResourcesDTO } from './dto/api-resources.dto'
 import { ApiScopeGroupDTO } from './dto/api-scope-group.dto'
-import { ApiScopesDTO } from './dto/api-scopes.dto'
+import { ApiScopeDTO } from './dto/api-scope.dto'
 import { DomainDTO } from './dto/domain.dto'
 import { IdentityResourcesDTO } from './dto/identity-resources.dto'
 import { UserClaimDTO } from './dto/user-claim.dto'
@@ -516,7 +516,7 @@ export class ResourcesService {
   }
 
   /** Creates a new Api Scope */
-  async createApiScope(apiScope: ApiScopesDTO): Promise<ApiScope> {
+  async createApiScope(apiScope: ApiScopeDTO): Promise<ApiScope> {
     this.logger.debug('Creating a new api scope')
 
     await this.assertSameAsGroup(apiScope)
@@ -526,7 +526,7 @@ export class ResourcesService {
 
   /** Updates an existing API scope */
   async updateApiScope(
-    apiScopeData: ApiScopesDTO,
+    apiScopeData: ApiScopeDTO,
     name: string,
   ): Promise<ApiScope> {
     this.logger.debug('Updating api scope with name: ', name)
@@ -959,7 +959,7 @@ export class ResourcesService {
 
   // #endregion Domain
 
-  private async assertSameAsGroup(apiScope: ApiScopesDTO) {
+  private async assertSameAsGroup(apiScope: ApiScopeDTO) {
     if (apiScope.groupId) {
       const scopeGroup = await this.apiScopeGroupModel.findByPk(
         apiScope.groupId,

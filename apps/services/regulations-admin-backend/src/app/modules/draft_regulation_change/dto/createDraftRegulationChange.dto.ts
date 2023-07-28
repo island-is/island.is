@@ -1,13 +1,8 @@
-import { IsArray, IsDate, IsOptional, IsString, IsUUID } from 'class-validator'
+import { IsArray, IsOptional, IsString, IsUUID } from 'class-validator'
 
-import { ApiProperty } from '@nestjs/swagger'
-import {
-  Appendix,
-  HTMLText,
-  ISODate,
-  PlainText,
-  RegName,
-} from '@island.is/regulations'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
+import { HTMLText, ISODate, PlainText, RegName } from '@island.is/regulations'
+import { AppendixModel } from '../../draft_regulation/models/appendix.model'
 
 export class CreateDraftRegulationChangeDto {
   @IsUUID()
@@ -32,16 +27,16 @@ export class CreateDraftRegulationChangeDto {
 
   @IsOptional()
   @IsArray()
-  @ApiProperty()
-  readonly appendixes?: Appendix[]
+  @ApiPropertyOptional({ type: [AppendixModel] })
+  readonly appendixes?: AppendixModel[]
 
   @IsOptional()
   @IsString()
-  @ApiProperty()
+  @ApiPropertyOptional()
   readonly comments?: HTMLText
 
   @IsOptional()
   @IsString()
-  @ApiProperty()
+  @ApiPropertyOptional()
   readonly diff?: HTMLText
 }

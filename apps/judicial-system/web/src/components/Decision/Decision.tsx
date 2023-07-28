@@ -49,7 +49,7 @@ const Decision: React.FC<Props> = ({
           disabled={disabled}
         />
       </Box>
-      {workingCase.type !== CaseType.TravelBan && (
+      {workingCase.type !== CaseType.TRAVEL_BAN && (
         <Box marginTop={2}>
           <RadioButton
             name="case-decision"
@@ -88,8 +88,8 @@ const Decision: React.FC<Props> = ({
           disabled={disabled}
         />
       </Box>
-      {(workingCase.type === CaseType.Custody ||
-        workingCase.type === CaseType.AdmissionToFacility) && (
+      {(workingCase.type === CaseType.CUSTODY ||
+        workingCase.type === CaseType.ADMISSION_TO_FACILITY) && (
         <Box marginTop={2}>
           <RadioButton
             name="case-decision"

@@ -33,7 +33,7 @@ interface Arguments {
   chart: ChartName
   output?: string
   jobImage?: string
-  withMocks?: boolean
+  withMocks?: 'true' | 'false'
 }
 
 const writeToOutput = async (data: string, output?: string) => {
@@ -131,7 +131,7 @@ yargs(process.argv.slice(2))
           env,
           habitat,
           featureYaml,
-          argv.withMocks ?? false ? 'with-mocks' : 'no-mocks',
+          (argv.withMocks ?? 'false') === 'true' ? 'with-mocks' : 'no-mocks',
         ),
         argv.output,
       )

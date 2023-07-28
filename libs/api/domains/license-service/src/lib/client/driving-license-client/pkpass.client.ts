@@ -5,8 +5,6 @@ import { Cache as CacheManager } from 'cache-manager'
 import type { Logger } from '@island.is/logging'
 
 import {
-  PkPassPayload,
-  PkPassServiceDriversLicenseResponse,
   PkPassServiceErrorResponse,
   PkPassServiceTokenResponse,
   PkPassServiceVerifyDriversLicenseResponse,
@@ -95,29 +93,23 @@ export class PkPassClient {
       return null
     }
 
-    const cached = await this.cacheManager.get(this.pkpassCacheKey)
+    let cached
+
+    try {
+      cached = await this.cacheManager.get(this.pkpassCacheKey)
+    } catch (e) {
+      this.logger.warn({
+        exception: e.message,
+        category: LOG_CATEGORY,
+      })
+      return null
+    }
 
     if (cached && typeof cached === 'string') {
       return cached
     }
 
     return null
-  }
-
-  private urlFetch(
-    payload: PkPassPayload,
-  ): (accessToken: string) => Promise<Response> {
-    return (accessToken: string): Promise<Response> => {
-      return fetch(`${this.pkpassApiUrl}/v2/driversLicense`, {
-        method: 'POST',
-        headers: {
-          apiKey: this.pkpassApiKey,
-          accessToken: `smart ${accessToken}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(payload),
-      })
-    }
   }
 
   private async fetchRetried(
@@ -217,7 +209,7 @@ export class PkPassClient {
       const ttl = this.parseTtlFromTokenExpiry(response.data?.EXPIRED_ON)
       if (this.cacheManager && ttl) {
         try {
-          await this.cacheManager.set(this.pkpassCacheKey, token, { ttl })
+          await this.cacheManager.set(this.pkpassCacheKey, token, ttl)
         } catch (e) {
           this.logger.warn('Unable to cache token for pkpass service', {
             category: LOG_CATEGORY,
@@ -231,111 +223,6 @@ export class PkPassClient {
     this.logger.warn('pkpass service response does not include access token', {
       serviceStatus: response.status,
       serviceMessage: response.message,
-      category: LOG_CATEGORY,
-    })
-
-    return null
-  }
-
-  async getPkPass(
-    payload: PkPassPayload,
-  ): Promise<PkPassServiceDriversLicenseResponse | null> {
-    let res: Response | null = null
-
-    try {
-      res = await this.fetchRetried(
-        this.urlFetch(payload),
-        this.pkpassAuthRetries,
-      )
-    } catch (e) {
-      this.logger.warn('Unable to get pkpass drivers license', {
-        exception: e,
-        category: LOG_CATEGORY,
-      })
-      return null
-    }
-
-    if (!res) {
-      this.logger.warn(
-        'Unable to get pkpass drivers license, null from fetch',
-        {
-          category: LOG_CATEGORY,
-        },
-      )
-      return null
-    }
-
-    if (!res.ok) {
-      const responseErrors: PkPassServiceErrorResponse = {}
-      try {
-        const json = await res.json()
-        responseErrors.message = json?.message ?? undefined
-        responseErrors.status = json?.status ?? undefined
-        responseErrors.data = json?.data ?? undefined
-      } catch {
-        // noop
-      }
-
-      this.logger.warn(
-        'Expected 200 status for pkpass drivers license service',
-        {
-          status: res.status,
-          statusText: res.statusText,
-          category: LOG_CATEGORY,
-          ...responseErrors,
-        },
-      )
-      return null
-    }
-
-    let json: unknown
-    try {
-      json = await res.json()
-    } catch (e) {
-      this.logger.warn('Unable to parse JSON for pkpass service', {
-        exception: e,
-        category: LOG_CATEGORY,
-      })
-      return null
-    }
-
-    const response = json as PkPassServiceDriversLicenseResponse
-
-    if (response.status === 1 && response.data) {
-      return response as PkPassServiceDriversLicenseResponse
-    }
-
-    return null
-  }
-
-  async getPkPassUrl(payload: PkPassPayload): Promise<string | null> {
-    const response: PkPassServiceDriversLicenseResponse | null = await this.getPkPass(
-      payload,
-    )
-    if (response?.data?.pass_url) {
-      return response.data?.pass_url
-    }
-
-    this.logger.warn('pkpass service response does not include pass_url', {
-      serviceStatus: response?.status,
-      serviceMessage: response?.message,
-      category: LOG_CATEGORY,
-    })
-
-    return null
-  }
-
-  async getPkPassQRCode(payload: PkPassPayload): Promise<string | null> {
-    const response: PkPassServiceDriversLicenseResponse | null = await this.getPkPass(
-      payload,
-    )
-    if (response?.data?.pass_qrcode) {
-      return response.data?.pass_qrcode
-    }
-
-    this.logger.warn('pkpass service response does not include pass_qrcode', {
-      serviceStatus: response?.status,
-      serviceMessage: response?.message,
       category: LOG_CATEGORY,
     })
 

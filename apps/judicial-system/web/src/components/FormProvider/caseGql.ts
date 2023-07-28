@@ -106,6 +106,7 @@ const CaseQuery = gql`
       accusedPostponedAppealDate
       prosecutorPostponedAppealDate
       rulingDate
+      rulingSignatureDate
       judge {
         id
         name
@@ -169,8 +170,7 @@ const CaseQuery = gql`
       rulingModifiedHistory
       caseResentExplanation
       origin
-      seenByDefender
-      subpoenaType
+      openedByDefender
       defendantWaivesRightToCounsel
       crimeScenes
       indictmentIntroduction

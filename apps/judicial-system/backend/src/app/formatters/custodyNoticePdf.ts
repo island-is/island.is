@@ -101,7 +101,7 @@ function constructCustodyNoticePdf(
   addNormalText(
     doc,
     `Úrskurður kveðinn upp ${
-      formatDate(theCase.courtEndTime, 'PPPp')?.replace(' kl.', ', kl.') ?? '?'
+      formatDate(theCase.rulingDate, 'PPPp')?.replace(' kl.', ', kl.') ?? '?'
     }`,
   )
   addNormalText(
@@ -178,6 +178,20 @@ function constructCustodyNoticePdf(
   doc.end()
 
   return stream
+}
+
+export function getCustodyNoticePdfAsString(
+  theCase: Case,
+  formatMessage: FormatMessage,
+): Promise<string> {
+  const stream = constructCustodyNoticePdf(theCase, formatMessage)
+
+  // wait for the writing to finish
+  return new Promise<string>(function (resolve) {
+    stream.on('finish', () => {
+      resolve(stream.getContentsAsString('binary') as string)
+    })
+  })
 }
 
 export function getCustodyNoticePdfAsBuffer(

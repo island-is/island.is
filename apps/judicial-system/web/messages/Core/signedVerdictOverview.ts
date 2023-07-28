@@ -2,33 +2,6 @@ import { defineMessage, defineMessages } from 'react-intl'
 
 // Strings on signed verdict overview screen
 export const signedVerdictOverview = {
-  dismissedTitle: defineMessage({
-    id: 'judicial.system.core:signed_verdict_overview.dismissed_title',
-    defaultMessage: 'Kröfu vísað frá',
-    description:
-      'Notaður sem titill á yfirlitsskjá afgreiddra mála þegar máli er vísað frá.',
-  }),
-  validToDateInThePast: defineMessage({
-    id:
-      'judicial.system.core:signed_verdict_overview.valid_to_date_in_the_past',
-    defaultMessage:
-      '{caseType, select, ADMISSION_TO_FACILITY {Vistun á viðeigandi stofnun} TRAVEL_BAN {Farbanni} other {Gæsluvarðhaldi}} lokið',
-    description:
-      'Notaður sem titil á yfirlitsskjá afreiddra mála þegar dagsetning gæslu/vistunar/farbanni er liðin.',
-  }),
-  restrictionActive: defineMessage({
-    id: 'judicial.system.core:signed_verdict_overview.restriction_active',
-    defaultMessage:
-      '{caseType, select, ADMISSION_TO_FACILITY {Vistun á viðeigandi stofnun virk} TRAVEL_BAN {Farbann virkt} other {Gæsluvarðhald virkt}}',
-    description:
-      'Notaður sem titil á yfirlitsskjá afreiddra mála þegar dagsetning gæslu/vistunar/farbanni er liðin.',
-  }),
-  investigationAccepted: defineMessage({
-    id: 'judicial.system.core:signed_verdict_overview.investigation_accepted',
-    defaultMessage: 'Krafa um rannsóknarheimild samþykkt',
-    description:
-      'Notaður sem titil á yfirlitsskjá afreiddra mála krafa um rannsóknarheimild samþykkt.',
-  }),
   caseDocuments: defineMessage({
     id: 'judicial.system.core:signed_verdict_overview.case_documents',
     defaultMessage: 'Skjöl málsins',
@@ -411,17 +384,17 @@ export const signedVerdictOverview = {
       },
       defendantAppealed: {
         id:
-          'judicial.system.core:signed_verdict_overview.appeal.defendant_appealed',
+          'judicial.system.core:signed_verdict_overview.appeal.defendant_appealed_v2',
         defaultMessage:
-          'Varnaraðili hefur kært úrskurðinn í þinghaldi sem lauk {courtEndTime}',
+          'Varnaraðili hefur kært úrskurðinn í þinghaldi sem lauk {rulingDate}',
         description:
           'Notaður sem upplýsingatexti sem útskýrir að varnaraðili kærði úrskurðinn í þinghaldi á yfirlitsskjá afgreiddra mála.',
       },
       prosecutorAppealed: {
         id:
-          'judicial.system.core:signed_verdict_overview.appeal.prosecutor_appealed',
+          'judicial.system.core:signed_verdict_overview.appeal.prosecutor_appealed_v2',
         defaultMessage:
-          'Sækjandi hefur kært úrskurðinn í þinghaldi sem lauk {courtEndTime}',
+          'Sækjandi hefur kært úrskurðinn í þinghaldi sem lauk {rulingDate}',
         description:
           'Notaður sem upplýsingatexti sem útskýrir að sækjandi kærði úrskurðinn í þinghaldi á yfirlitsskjá afgreiddra mála.',
       },

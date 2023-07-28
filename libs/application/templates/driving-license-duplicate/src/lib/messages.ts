@@ -1,31 +1,4 @@
 import { defineMessages } from 'react-intl'
-export const applicationForMessages = {
-  B_TEMP: defineMessages({
-    title: {
-      id: 'dl.application:shared.temp',
-      defaultMessage: 'Almenn ökuréttindi',
-      description: 'B-temp',
-    },
-    rightsDescription: {
-      id: 'dl.application:shared.temp.rightDescription',
-      defaultMessage: 'B flokki (fólksbifreið)',
-      description: 'Temp license rights description',
-    },
-  }),
-  B_FULL: defineMessages({
-    title: {
-      id: 'dl.application:shared.full',
-      defaultMessage: 'Fullnaðarréttindi',
-      description: 'B-full',
-    },
-    rightsDescription: {
-      id: 'dl.application:shared.full.rightDescription',
-      defaultMessage: 'B flokki (fólksbifreið)',
-      description: 'Full license rights description',
-    },
-  }),
-}
-
 export const m = defineMessages({
   applicationTitle: {
     id: 'dld.application:applicationTitle',
@@ -76,7 +49,7 @@ export const m = defineMessages({
     description: 'Info from drivers license subtitle',
   },
   dataCollectionUserProfileTitle: {
-    id: 'cr.application:dataCollectionUserProfileTitle',
+    id: 'dld.application:dataCollectionUserProfileTitle',
     defaultMessage: 'Mínar síður á Ísland.is/stillingar',
     description: 'Your user profile information',
   },
@@ -92,7 +65,7 @@ export const m = defineMessages({
   informationSubtitle: {
     id: 'dld.application:information.sectionSubtitle',
     defaultMessage:
-      'Hér fyrir neðan eru  upplýsingar um þig og þín ökuréttindi, sem koma fram á ökuskírteini þínu.',
+      'Hér fyrir neðan eru upplýsingar um þig og þín ökuréttindi, sem koma fram á ökuskírteini þínu.',
     description: 'Information section title',
   },
   informationTitle: {
@@ -113,7 +86,7 @@ export const m = defineMessages({
   signatureAndImageAlert: {
     id: 'dld.application:information.signatureAndImageAlert',
     defaultMessage:
-      'Ef þú þarft að uppfæra mynd eða undirskrift að þá þarft þú að fara til Sýslumanns til þess að gera það.',
+      'Ef þú þarft að uppfæra mynd eða undirskrift, þá þarft þú að fara til Sýslumanns til þess að gera það.',
     description: 'Some description',
   },
   signatureAndImage: {
@@ -189,6 +162,39 @@ export const m = defineMessages({
     description: 'National id label',
   },
 
+  /* Reason Section */
+  reasonSectionTitle: {
+    id: 'dld.application:reasonSectionTitle',
+    defaultMessage: 'Ástæða umsóknar',
+    description: 'Title for reason section',
+  },
+  reasonTitle: {
+    id: 'dld.application:reasonTtitle',
+    defaultMessage: 'Ástæða',
+    description: 'Title for reason section',
+  },
+  reasonDescription: {
+    id: 'dld.application:reasonDescription#markdown',
+    defaultMessage:
+      '**Vinsamlegast tilgreinið ástæðu umsóknarinnar.**\n\nAthugið: Saknæmt er að gefa rangar eða ósannar upplýsingar um að ökuskírteini hafi skemmst eða glatast. Finnist glataða skírteinið skal skila því inn til sýslumanns eða lögreglu. Afhenda skal lögreglu eða sýslumanni ökuskírteini sem eru skemmd, af eldri gerð eða EES gerð þegar óskað er eftir samriti.',
+    description: 'Description for reason section',
+  },
+  confirmReason: {
+    id: 'dld.application:confirmReason',
+    defaultMessage: 'Ég staðfesti að ökuskírteinið hafi skemmst eða glatast',
+    description: 'Confirm reason text',
+  },
+  reasonLostOption: {
+    id: 'dld.application:reasonLostOption',
+    defaultMessage: 'Glatað ökuskírteini',
+    description: 'Lost option',
+  },
+  reasonStolenOption: {
+    id: 'dld.application:reasonStolenOption',
+    defaultMessage: 'Stolið ökuskírteini',
+    description: 'Stolen option',
+  },
+
   /* Quality Photo Section */
   qualityPhotoTitle: {
     id: 'dld.application:qualityPhotoSectionTitle',
@@ -226,7 +232,7 @@ export const m = defineMessages({
   /* Delivery method Section */
   deliveryMethodSectionTitle: {
     id: 'dld.application:deliveryMethodSectionTitle',
-    defaultMessage: 'Afhending',
+    defaultMessage: 'Afhendingarstaður',
     description: 'Title for delivery method section',
   },
   deliveryMethodTitle: {
@@ -235,7 +241,7 @@ export const m = defineMessages({
     description: 'Title for delivery method section',
   },
   deliveryMethodDescription: {
-    id: 'dld.application:deliveryMethodDescription',
+    id: 'dld.application:deliveryMethodDescription#markdown',
     defaultMessage:
       'Fljótlegast er að sækja samrit hjá Þjóðskrá Íslands í Borgartúni 21, 105 Reykjavík. Á öðrum afhendingarstöðum getur afhending tekið allt að 6 til 10 daga. Sjá afgreiðslutíma.',
     description: 'Description for delivery method section',
@@ -273,7 +279,31 @@ export const m = defineMessages({
     defaultMessage: 'Gildistími ökuskírteinis',
     description: 'Some description',
   },
-
+  notFilledOut: {
+    id: 'dld.application:notFilledOut',
+    defaultMessage: 'Ekki fyllt út',
+    description: '',
+  },
+  confirmTitle: {
+    id: 'dld.application:confirm.title',
+    defaultMessage: 'Staðfesta',
+    description: 'Title for confirm section',
+  },
+  confirmDescription: {
+    id: 'dld.application:confirm.description',
+    defaultMessage:
+      'Vinsamlegast farið yfir undirskrift og mynd. Ef nafn hefur breyst frá því að síðast var sótt um skírteini mun það stöðva umsókn. Fara þarf með nýja mynd eða veita nýja undirskrift hjá Sýslumanni ef svo ber undir.',
+  },
+  confirmSignatureAndPhoto: {
+    id: 'dld.application:confirmSignatureAndPhoto',
+    defaultMessage: 'Ég staðfesti að ofangreindar upplýsingar séu réttar.',
+    description: 'Text for confirmation of signature and photo',
+  },
+  requiredCheckmark: {
+    id: 'dld.application:requiredCheckmark',
+    defaultMessage: 'Skylda er að haka við þennan reit',
+    description: 'Text for required checkmark',
+  },
   /*Payment Section*/
   proceedToPayment: {
     id: 'dld.application:payment.proceedToPayment',
@@ -315,7 +345,7 @@ export const m = defineMessages({
   congratulationsTitleSuccess: {
     id: 'dld.application:congratulationsTitleSuccess',
     defaultMessage:
-      'Umsókn þín um samrit af ökuskírteini hefur verið móttekin og skírteinið pantað. ',
+      'Umsókn þín um samrit af ökuskírteini hefur verið móttekin og skírteini pantað.',
     description: 'Your application for P-sign was successful.',
   },
   congratulationsTitle: {
@@ -336,7 +366,7 @@ export const m = defineMessages({
   congratulationsNextStepsDescription: {
     id: 'dld.application:congratulations.nextSteps.description#markdown',
     defaultMessage:
-      '* Þú færð senda tilkynningu á Mínar síður þegar samrit ökuskírteinis er tilbúið og hvenær hægt verður að sækja það á þann afhendingarstað sem þú valdir. \\n\\n * Mundu að hafa meðferðis löggild skilríki með mynd við afhendingu.',
+      '* Ökuskírteinið verður tilbúið til afhendingar eftir þrjár vikur hjá því sýslumannsembætti sem þú valdir í umsókninni.\n\n* Á meðan getur þú notað [ökuskírteini í símanum](https://island.is/okuskirteini). Athugið að uppfæra þarf stafræna skírteinið ef þú ert þegar með það í símanum.',
     description: 'Congratulations Next steps title',
   },
   errorDataProvider: {
@@ -352,8 +382,37 @@ export const m = defineMessages({
     description: 'Validation error for attachment',
   },
   missingDistrictValidationError: {
-    id: 'dld.application:error.missingAttachment',
+    id: 'dld.application:error.missingAttachmentDistrict',
     defaultMessage: 'Vinsamlegast veldu embætti',
     description: 'Validation error for district',
+  },
+
+  /* Category Section */
+  categorySectionTitle: {
+    id: 'dld.application:categorySectionTitle',
+    defaultMessage: 'Réttindi',
+    description: 'text for category section after NR',
+  },
+  noExpirationDate: {
+    id: 'dld.application:noExpirationDate',
+    defaultMessage: 'Villa: Enginn gildistími skilgreindur',
+    description: 'text for when no expiration date is set on license',
+  },
+  generalLicense: {
+    id: 'dld.application:generalLicense',
+    defaultMessage: 'Almenn ökuréttindi',
+    description: 'text for general license',
+  },
+  temporaryLicense: {
+    id: 'dld.application:temporaryLicense',
+    defaultMessage: 'Bráðabirgðaskírteini',
+    description: 'text for temporary license',
+  },
+
+  /* Application log */
+  pendingActionApplicationCompletedTitle: {
+    id: 'dld.application:pendingActionApplicationCompletedTitle',
+    defaultMessage: 'Umsókn þín hefur verið móttekin og skírteini pantað',
+    description: 'text for pending action application completed title',
   },
 })

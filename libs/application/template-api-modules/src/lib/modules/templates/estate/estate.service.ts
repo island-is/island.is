@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { NationalRegistry, UploadData } from './types'
 import {
+  Attachment,
   DataUploadResponse,
   EstateInfo,
   Person,
@@ -11,28 +12,45 @@ import {
 } from '@island.is/clients/syslumenn'
 import { infer as zinfer } from 'zod'
 import { estateSchema } from '@island.is/application/templates/estate'
-import { estateTransformer, filterAndRemoveRepeaterMetadata } from './utils'
+import {
+  estateTransformer,
+  filterAndRemoveRepeaterMetadata,
+  transformUploadDataToPDFStream,
+} from './utils'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { ApplicationTypes } from '@island.is/application/types'
 import { TemplateApiError } from '@island.is/nest/problem'
-import { coreErrorMessages } from '@island.is/application/core'
+import { coreErrorMessages, getValueViaPath } from '@island.is/application/core'
+import {
+  ApplicationAttachments,
+  AttachmentPaths,
+  ApplicationFile,
+} from './types/attachments'
+import AmazonS3Uri from 'amazon-s3-uri'
+import { S3 } from 'aws-sdk'
+import kennitala from 'kennitala'
+import { EstateTypes } from './consts'
 
 type EstateSchema = zinfer<typeof estateSchema>
 
 @Injectable()
 export class EstateTemplateService extends BaseTemplateApiService {
+  s3: S3
   constructor(private readonly syslumennService: SyslumennService) {
     super(ApplicationTypes.ESTATE)
+    this.s3 = new S3()
   }
 
   async estateProvider({
     application,
   }: TemplateApiModuleActionProps): Promise<boolean> {
-    const applicationData: any =
-      application.externalData?.syslumennOnEntry?.data
+    const applicationData = (application.externalData?.syslumennOnEntry
+      ?.data as { estate: EstateInfo }).estate
+
+    const applicationAnswers = (application.answers as unknown) as EstateSchema
     if (
-      !applicationData?.estate?.caseNumber?.length ||
-      applicationData.estate?.caseNumber.length === 0
+      !applicationData?.caseNumber?.length ||
+      applicationData?.caseNumber.length === 0
     ) {
       throw new TemplateApiError(
         {
@@ -42,12 +60,38 @@ export class EstateTemplateService extends BaseTemplateApiService {
         400,
       )
     }
+
+    const youngheirs = applicationData.estateMembers.filter(
+      (heir) => kennitala.info(heir.nationalId).age < 18,
+    )
+    // Requirements:
+    //   Flag if any heir is under 18 years old without an advocate/defender
+    //   Unless official division of estate is taking place, then the incoming data need not be validated
+    if (youngheirs.length > 0) {
+      if (youngheirs.some((heir) => !heir.advocate)) {
+        if (
+          applicationAnswers.selectedEstate === EstateTypes.officialDivision
+        ) {
+          return true
+        }
+        throw new TemplateApiError(
+          {
+            title:
+              coreErrorMessages.errorDataProviderEstateHeirsWithoutAdvocate,
+            summary: coreErrorMessages.drivingLicenseNoTeachingRightsSummary,
+          },
+          400,
+        )
+      }
+    }
+
     return true
   }
 
-  stringifyObject(obj: Record<string, unknown>): Record<string, string> {
+  stringifyObject(obj: UploadData): Record<string, string> {
     const result: Record<string, string> = {}
-    for (const key in obj) {
+    // Curiously: https://github.com/Microsoft/TypeScript/issues/12870
+    for (const key of Object.keys(obj) as Array<keyof typeof obj>) {
       if (typeof obj[key] === 'string') {
         result[key] = obj[key] as string
       } else {
@@ -58,11 +102,12 @@ export class EstateTemplateService extends BaseTemplateApiService {
     return result
   }
 
-  async syslumennOnEntry({ application, auth }: TemplateApiModuleActionProps) {
+  async syslumennOnEntry({ application }: TemplateApiModuleActionProps) {
     let estateResponse: EstateInfo
     if (
       application.applicant.startsWith('010130') &&
-      application.applicant.endsWith('2399')
+      (application.applicant.endsWith('2399') ||
+        application.applicant.endsWith('7789'))
     ) {
       estateResponse = {
         addressOfDeceased: 'Gerviheimili 123, 600 Feneyjar',
@@ -109,9 +154,9 @@ export class EstateTemplateService extends BaseTemplateApiService {
         ],
         estateMembers: [
           {
-            name: 'Stúfur Mack',
+            name: 'Gervimaður Afríka',
             relation: 'Sonur',
-            nationalId: '2222222229',
+            nationalId: '0101303019',
           },
           {
             name: 'Gervimaður Færeyja',
@@ -129,6 +174,31 @@ export class EstateTemplateService extends BaseTemplateApiService {
         nameOfDeceased: 'Lizzy B. Gone',
         nationalIdOfDeceased: '0101301234',
         districtCommissionerHasWill: true,
+      }
+
+      const fakeAdvocate = {
+        name: 'Gervimaður Evrópa',
+        address: 'Gerviheimili 123, 600 Feneyjar',
+        nationalId: '0101302719',
+        email: 'evropa@gervi.com',
+      }
+
+      const fakeChild = {
+        name: 'Gervimaður Undir 18 án málsvara',
+        relation: 'Barn',
+        // This kennitala is for Gervimaður Ísak Miri ÞÍ Jarrah
+        // This test will stop serving its purpose on the 24th of September 2034
+        // eslint-disable-next-line local-rules/disallow-kennitalas
+        nationalId: '2409151460',
+      }
+
+      if (application.applicant.endsWith('7789')) {
+        estateResponse.estateMembers.push(fakeChild)
+      } else {
+        estateResponse.estateMembers.push({
+          ...fakeChild,
+          advocate: fakeAdvocate,
+        })
       }
     } else {
       estateResponse = (
@@ -148,10 +218,7 @@ export class EstateTemplateService extends BaseTemplateApiService {
     }
   }
 
-  async completeApplication({
-    application,
-    auth,
-  }: TemplateApiModuleActionProps) {
+  async completeApplication({ application }: TemplateApiModuleActionProps) {
     const nationalRegistryData = application.externalData.nationalRegistry
       ?.data as NationalRegistry
 
@@ -197,6 +264,17 @@ export class EstateTemplateService extends BaseTemplateApiService {
     )
 
     const uploadData: UploadData = {
+      deceased: {
+        name: externalData.estate.nameOfDeceased ?? '',
+        ssn: externalData.estate.nationalIdOfDeceased ?? '',
+        dateOfDeath: externalData.estate.dateOfDeath?.toString() ?? '',
+        address: externalData.estate.addressOfDeceased ?? '',
+      },
+      districtCommissionerHasWill: answers.estate?.testament?.wills ?? '',
+      settlement: answers.estate?.testament?.agreement ?? '',
+      dividedEstate: answers.estate?.testament?.dividedEstate ?? '',
+      remarksOnTestament: answers.estate?.testament?.additionalInfo ?? '',
+      guns: answers.estate?.guns ?? [],
       applicationType: answers.selectedEstate,
       caseNumber: externalData?.estate?.caseNumber ?? '',
       assets: processedAssets,
@@ -225,23 +303,66 @@ export class EstateTemplateService extends BaseTemplateApiService {
       },
       stocks: answers.stocks ?? [],
       vehicles: processedVehicles,
-      ...(answers.representative?.representativeName
+      ...(answers.representative?.name
         ? {
             representative: {
-              email: answers.representative.representativeEmail ?? '',
-              name: answers.representative.representativeName ?? '',
-              phoneNumber:
-                answers.representative.representativePhoneNumber ?? '',
-              ssn: answers.representative.representativeNationalId ?? '',
+              email: answers.representative.email ?? '',
+              name: answers.representative.name,
+              phoneNumber: answers.representative.phone ?? '',
+              ssn: answers.representative.nationalId ?? '',
             },
           }
-        : {}),
+        : { representative: undefined }),
+      ...(answers.deceasedWithUndividedEstate?.spouse?.nationalId
+        ? {
+            deceasedWithUndividedEstate: {
+              spouse: {
+                name: answers.deceasedWithUndividedEstate.spouse.name ?? '',
+                nationalId:
+                  answers.deceasedWithUndividedEstate.spouse.nationalId,
+              },
+              selection: answers.deceasedWithUndividedEstate.selection ?? '',
+            },
+          }
+        : { deceasedWithUndividedEstate: undefined }),
+    }
+
+    const attachments: Attachment[] = []
+
+    // Convert form data to a PDF backup for syslumenn
+    const pdfBuffer = await transformUploadDataToPDFStream(
+      uploadData,
+      application.id,
+    )
+    attachments.push({
+      name: `Form_data_${uploadData.caseNumber}.pdf`,
+      content: pdfBuffer.toString('base64'),
+    })
+
+    // Retrieve attachments from the application and attach them to the upload data
+    const dateStr = new Date(Date.now()).toISOString().substring(0, 10)
+    for (let i = 0; i < AttachmentPaths.length; i++) {
+      const { path, prefix } = AttachmentPaths[i]
+      const attachmentAnswerData =
+        getValueViaPath<ApplicationFile[]>(application.answers, path) ?? []
+
+      for (let index = 0; index < attachmentAnswerData.length; index++) {
+        if (attachmentAnswerData[index]) {
+          const fileType = attachmentAnswerData[index].name?.split('.').pop()
+          const name = `${prefix}_${index}.${dateStr}.${fileType}`
+          const fileName = (application.attachments as ApplicationAttachments)[
+            attachmentAnswerData[index]?.key
+          ]
+          const content = await this.getFileContentBase64(fileName)
+          attachments.push({ name, content })
+        }
+      }
     }
 
     const result: DataUploadResponse = await this.syslumennService
       .uploadData(
         [person],
-        undefined,
+        attachments,
         this.stringifyObject(uploadData),
         uploadDataName,
         uploadDataId,
@@ -257,5 +378,22 @@ export class EstateTemplateService extends BaseTemplateApiService {
       throw new Error('Application submission failed on syslumadur upload data')
     }
     return { sucess: result.success, id: result.caseNumber }
+  }
+  private async getFileContentBase64(fileName: string): Promise<string> {
+    const { bucket, key } = AmazonS3Uri(fileName)
+
+    const uploadBucket = bucket
+    try {
+      const file = await this.s3
+        .getObject({
+          Bucket: uploadBucket,
+          Key: key,
+        })
+        .promise()
+      const fileContent = file.Body as Buffer
+      return fileContent?.toString('base64') || ''
+    } catch (e) {
+      return 'err'
+    }
   }
 }

@@ -79,6 +79,11 @@ export type PendingAction = {
   content?: StaticText
 }
 
+export type HistoryEventMessage<T extends EventObject = AnyEventObject> = {
+  onEvent: Event<T> | string
+  logMessage: StaticText
+}
+
 export interface ApplicationStateMeta<
   T extends EventObject = AnyEventObject,
   R = unknown
@@ -90,11 +95,28 @@ export interface ApplicationStateMeta<
     title?: StaticText
     /** @deprecated use pendingAction field instead */
     description?: StaticText
-    onExitHistoryLog?: StaticText
-    onEntryHistoryLog?: StaticText
+    /**
+     * Configures which messages should be displayed to the user when presenting the
+     * application's history.
+     * Each `HistoryEventMessage` object maps an event to its corresponding user-friendly log message.
+     * The `historyLogs` field can either be an array of `HistoryEventMessage` objects
+     * or a single `HistoryEventMessage` object.
+     */
+
+    historyLogs?: HistoryEventMessage[] | HistoryEventMessage
+    /**
+     * Represents an action that is pending or required to be performed
+     * in the current state of the application by a user in a role. The `pendingAction` field
+     * can be either a `PendingAction` object or a function that returns
+     * a `PendingAction` object based on the application and role.
+     */
     pendingAction?:
       | PendingAction
-      | ((application: Application, role: ApplicationRole) => PendingAction)
+      | ((
+          application: Application,
+          role: ApplicationRole,
+          nationalId: string,
+        ) => PendingAction)
     /** @deprecated is generated from status of current state */
     tag?: { label?: StaticText; variant?: ActionCardTag }
   }

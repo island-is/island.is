@@ -1,0 +1,31 @@
+{
+  "advices": {
+    "seo": {
+      "title": "Mínar umsagnir",
+      "url": "/umsagnir",
+      "description": "Mínar umsagnir í Samráðsgátt"
+    },
+    "breadcrumbs": [
+      {
+        "title": "Samráðsgátt",
+        "href": "/samradsgatt"
+      },
+      {
+        "title": "Mínar umsagnir"
+      }
+    ],
+    "intro": {
+      "title": "Mínar umsagnir",
+      "text": "Hér geturðu skoðað allar umsagnir sem þú hefur sent inn."
+    },
+    "subscriptionActionCard": {
+      "heading": "Mínar umsagnir",
+      "text": "Þú verður að vera skráð(ur) inn til þess að geta séð þínar umsagnir.",
+      "buttonLabel": "Skrá mig inn"
+    },
+    "card": {
+      "dropdownMenuTitle": "Viðhengi",
+      "eyebrowText": "Þín umsögn"
+    }
+  }
+}

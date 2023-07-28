@@ -1,6 +1,6 @@
 import { Test } from '@nestjs/testing'
 
-import { ConfigModule } from '@island.is/nest/config'
+import { ConfigModule, ConfigType } from '@island.is/nest/config'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { SharedAuthModule } from '@island.is/judicial-system/auth'
 
@@ -42,9 +42,15 @@ export const createTestingPoliceModule = async () => {
     ],
   }).compile()
 
+  const config = policeModule.get<ConfigType<typeof policeModuleConfig>>(
+    policeModuleConfig.KEY,
+  )
+
   const awsS3Service = policeModule.get<AwsS3Service>(AwsS3Service)
+
+  const policeService = policeModule.get<PoliceService>(PoliceService)
 
   const policeController = policeModule.get<PoliceController>(PoliceController)
 
-  return { awsS3Service, policeController }
+  return { config, awsS3Service, policeService, policeController }
 }

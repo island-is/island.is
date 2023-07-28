@@ -17,6 +17,7 @@ import {
   addNormalPlusCenteredText,
   addNormalPlusJustifiedText,
   addNormalPlusText,
+  addNormalText,
   setTitle,
 } from './pdfHelpers'
 import { setLineCap } from 'pdf-lib'
@@ -93,13 +94,13 @@ export const createIndictment = async (
     }
     addEmptyLines(doc)
     addNormalPlusJustifiedText(doc, count.legalArguments || '')
-    addNormalPlusText(doc, `M: ${count.policeCaseNumber || ''}`)
+    addNormalText(doc, `M: ${count.policeCaseNumber || ''}`)
   })
 
   addEmptyLines(doc, 2)
   addNormalPlusJustifiedText(doc, theCase.demands || '')
   addEmptyLines(doc, 2)
-  addNormalPlusText(
+  addNormalPlusCenteredText(
     doc,
     formatMessage(
       indictment.signature,

@@ -37,8 +37,9 @@ export const UserProvider: React.FC<Props> = ({
   const { data } = useQuery<CurrentUserQuery, CurrentUserQueryVariables>(
     CurrentUserDocument,
     {
-      fetchPolicy: 'no-cache',
       skip: !isAuthenticated || Boolean(user),
+      fetchPolicy: 'no-cache',
+      errorPolicy: 'all',
     },
   )
 
@@ -54,7 +55,7 @@ export const UserProvider: React.FC<Props> = ({
     <UserContext.Provider
       value={{
         isAuthenticated,
-        limitedAccess: user?.role === UserRole.Defender,
+        limitedAccess: user?.role === UserRole.DEFENDER,
         user,
       }}
     >

@@ -1,7 +1,5 @@
 export default {
   production: false,
-  bypassCacheKey: process.env.BYPASS_CACHE_KEY,
-  cacheTime: process.env.CACHE_TIME || 300,
   indexableTypes: [
     'article',
     'subArticle',
@@ -19,6 +17,7 @@ export default {
     'link',
     'frontpage',
     'enhancedAsset',
+    'vacancy',
   ],
   nestedContentTypes: [
     'alertBanner',
@@ -77,6 +76,11 @@ export default {
     'teamList',
     'teamMember',
     'sliceDropdown',
+    'sidebarCard',
+    'genericTag',
+    'latestNewsSlice',
+    'supportCategory',
+    'supportSubCategory',
   ],
   // Content types that have the 'activeTranslations' JSON field
   localizedContentTypes: ['article'],

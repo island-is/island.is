@@ -1,34 +1,37 @@
 import { json, ref, service, ServiceBuilder } from '../../../infra/src/dsl/dsl'
+import { settings } from '../../../infra/src/dsl/settings'
 import {
+  AdrAndMachine,
   Base,
+  ChargeFjsV2,
   Client,
+  CriminalRecord,
+  Disability,
   DrivingLicense,
+  DrivingLicenseBook,
   Education,
   Finance,
+  Firearm,
+  FishingLicense,
   HealthInsurance,
+  JudicialAdministration,
   Labor,
+  MunicipalitiesFinancialAid,
   NationalRegistry,
   Passports,
   Payment,
-  Properties,
   PaymentSchedule,
-  CriminalRecord,
+  Properties,
   RskCompanyInfo,
-  DrivingLicenseBook,
-  FishingLicense,
-  MunicipalitiesFinancialAid,
-  Vehicles,
-  AdrAndMachine,
-  JudicialAdministration,
-  Firearm,
-  Disability,
-  VehicleServiceFjsV1,
   TransportAuthority,
-  ChargeFjsV2,
   UniversityOfIceland,
+  Vehicles,
+  VehicleServiceFjsV1,
+  WorkMachines,
+  IcelandicGovernmentInstitutionVacancies,
+  RskProcuring,
+  AircraftRegistry,
 } from '../../../infra/src/dsl/xroad'
-import { settings } from '../../../infra/src/dsl/settings'
-import { MissingSetting } from '../../../infra/src/dsl/types/input-types'
 
 export const serviceSetup = (services: {
   appSystemApi: ServiceBuilder<'application-system-api'>
@@ -126,12 +129,12 @@ export const serviceSetup = (services: {
         (h) => `http://${h.svc(services.servicesEndorsementApi)}`,
       ),
       REGULATIONS_ADMIN_URL: ref(
-        (h) => `http://${h.svc(services.regulationsAdminBackend)}/api`,
+        (h) => `http://${h.svc(services.regulationsAdminBackend)}`,
       ),
       IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/api',
       AIR_DISCOUNT_SCHEME_CLIENT_TIMEOUT: '20000',
       XROAD_NATIONAL_REGISTRY_TIMEOUT: '20000',
-      XROAD_PROPERTIES_TIMEOUT: '20000',
+      XROAD_PROPERTIES_TIMEOUT: '35000',
       SYSLUMENN_TIMEOUT: '40000',
       XROAD_DRIVING_LICENSE_BOOK_TIMEOUT: '20000',
       XROAD_FINANCES_TIMEOUT: '20000',
@@ -175,7 +178,7 @@ export const serviceSetup = (services: {
       CONSULTATION_PORTAL_CLIENT_BASE_PATH: {
         dev: 'https://samradapi-test.devland.is',
         staging: 'https://samradapi-test.devland.is',
-        prod: 'https://samradapi-test.devland.is',
+        prod: 'https://samradapi.island.is',
       },
       NO_UPDATE_NOTIFIER: 'true',
       FISKISTOFA_ZENTER_CLIENT_ID: '1114',
@@ -201,9 +204,30 @@ export const serviceSetup = (services: {
           production: 'https://innskra.island.is/backend',
         }),
       },
+      AUTH_IDS_API_URL: {
+        dev: 'https://identity-server.dev01.devland.is',
+        staging: 'https://identity-server.staging01.devland.is',
+        prod: 'https://innskra.island.is',
+      },
+      APOLLO_CACHE_REDIS_NODES: {
+        dev: json([
+          'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379',
+        ]),
+        staging: json([
+          'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379',
+        ]),
+        prod: json([
+          'clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379',
+        ]),
+      },
+      XROAD_RSK_PROCURING_SCOPE: json([
+        '@rsk.is/prokura',
+        '@rsk.is/prokura:admin',
+      ]),
     })
 
     .secrets({
+      APOLLO_BYPASS_CACHE_SECRET: '/k8s/api/APOLLO_BYPASS_CACHE_SECRET',
       DOCUMENT_PROVIDER_BASE_PATH: '/k8s/api/DOCUMENT_PROVIDER_BASE_PATH',
       DOCUMENT_PROVIDER_TOKEN_URL: '/k8s/api/DOCUMENT_PROVIDER_TOKEN_URL',
       DOCUMENT_PROVIDER_BASE_PATH_TEST:
@@ -257,6 +281,8 @@ export const serviceSetup = (services: {
         '/k8s/api/MACHINE_LICENSE_PASS_TEMPLATE_ID',
       ADR_LICENSE_PASS_TEMPLATE_ID: '/k8s/api/ADR_LICENSE_PASS_TEMPLATE_ID',
       ADR_LICENSE_FETCH_TIMEOUT: '/k8s/api/ADR_LICENSE_FETCH_TIMEOUT',
+      DRIVING_LICENSE_PASS_TEMPLATE_ID:
+        '/k8s/api/DRIVING_LICENSE_PASS_TEMPLATE_ID',
       DRIVING_LICENSE_FETCH_TIMEOUT: '/k8s/api/DRIVING_LICENSE_FETCH_TIMEOUT',
       FIREARM_LICENSE_FETCH_TIMEOUT: '/k8s/api/FIREARM_LICENSE_FETCH_TIMEOUT',
       DISABILITY_LICENSE_FETCH_TIMEOUT:
@@ -321,8 +347,19 @@ export const serviceSetup = (services: {
       TransportAuthority,
       ChargeFjsV2,
       UniversityOfIceland,
+      WorkMachines,
+      IcelandicGovernmentInstitutionVacancies,
+      RskProcuring,
+      AircraftRegistry,
     )
     .files({ filename: 'islyklar.p12', env: 'ISLYKILL_CERT' })
+    .volumes({
+      name: 'islyklar.p12',
+      size: '1Gi',
+      accessModes: 'ReadWrite',
+      mountPath: '/etc/config/',
+      storageClass: 'efs-csi',
+    })
     .ingress({
       primary: {
         host: {

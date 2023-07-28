@@ -29,6 +29,11 @@ export const attachmentNames = defineMessages({
 })
 
 export const m = defineMessages({
+  institution: {
+    id: 'ol.application:institution',
+    defaultMessage: 'Sýslumenn',
+    description: '',
+  },
   introTitle: {
     id: 'ol.application:intro.title',
     defaultMessage: 'Inngangur',
@@ -309,6 +314,11 @@ export const m = defineMessages({
   propertyNumber: {
     id: 'ol.application:propertyInfo.propertyNumber',
     defaultMessage: 'Fasteignanúmer',
+    description: 'Some description',
+  },
+  propertyNameNotFound: {
+    id: 'ol.application:propertyInfo.propertyNameNotFound',
+    defaultMessage: 'Heimilisfang fannst ekki',
     description: 'Some description',
   },
   space: {

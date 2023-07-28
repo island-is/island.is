@@ -8,8 +8,6 @@ import { PetitionPaths } from './lib/paths'
 const Petitions = lazy(() => import('./screens/Petitions'))
 const ViewSignedPetition = lazy(() => import('./screens/ViewSignedList'))
 const ViewOwnedPetition = lazy(() => import('./screens/ViewOwnedList'))
-const PetitionsAdmin = lazy(() => import('./screens/PetitionsAdmin'))
-const ViewPetitionAdmin = lazy(() => import('./screens/ViewPetitionAdmin'))
 
 export const petitionsModule: PortalModule = {
   name: 'Undirskriftalistar',
@@ -36,21 +34,6 @@ export const petitionsModule: PortalModule = {
         element: <ViewOwnedPetition />,
       },
     ]
-
-    if (userInfo.scopes.includes(EndorsementsScope.admin)) {
-      applicationRoutes.push(
-        {
-          name: m.endorsementsAdmin,
-          path: PetitionPaths.PetitionsAdminView,
-          element: <PetitionsAdmin />,
-        },
-        {
-          name: m.endorsementsAdmin,
-          path: PetitionPaths.PetitionListAdmin,
-          element: <ViewPetitionAdmin />,
-        },
-      )
-    }
 
     return applicationRoutes
   },

@@ -36,7 +36,7 @@ import {
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { GET_ARTICLE_QUERY, GET_NAMESPACE_QUERY } from '../queries'
 import { Screen } from '@island.is/web/types'
-import { useNamespace } from '@island.is/web/hooks'
+import { useNamespace, usePlausiblePageview } from '@island.is/web/hooks'
 import { useI18n } from '@island.is/web/i18n'
 import { CustomNextError } from '@island.is/web/units/errors'
 import {
@@ -332,6 +332,8 @@ const ArticleScreen: Screen<ArticleProps> = ({
   })
 
   useContentfulId(article.id, subArticle?.id)
+
+  usePlausiblePageview(article.organization?.[0]?.trackingDomain)
 
   useScrollPosition(
     ({ currPos }) => {

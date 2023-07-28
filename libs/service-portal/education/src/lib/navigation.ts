@@ -25,5 +25,27 @@ export const educationNavigation: PortalNavigationItem = {
         },
       ],
     },
+    {
+      name: m.educationFramhskoliCareer,
+      breadcrumbHide: false,
+      path: EducationPaths.EducationFramhskoliCareer,
+    },
+    {
+      name: m.educationFramhskoliGraduation,
+      breadcrumbHide: false,
+      path: EducationPaths.EducationFramhskoliGraduationOverview,
+      children: [
+        {
+          name: m.educationFramhskoliGraduation,
+          breadcrumbHide: true,
+          path: EducationPaths.EducationFramhskoliGraduationSingle,
+        },
+        {
+          name: m.educationFramhskoliGraduation,
+          breadcrumbHide: true,
+          path: EducationPaths.EducationFramhskoliGraduationDetail,
+        },
+      ],
+    },
   ],
 }

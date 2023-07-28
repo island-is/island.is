@@ -5,8 +5,10 @@ import { MessageService, MessageType } from '@island.is/judicial-system/message'
 import {
   CaseFileCategory,
   CaseFileState,
+  CaseOrigin,
   CaseState,
   indictmentCases,
+  InstitutionType,
   investigationCases,
   restrictionCases,
   User,
@@ -288,6 +290,7 @@ describe('CaseController - Update', () => {
       mockFindById.mockResolvedValueOnce({
         id: prosecutorId,
         role: UserRole.PROSECUTOR,
+        institution: { type: InstitutionType.PROSECUTORS_OFFICE },
       })
       const mockFindOne = mockCaseModel.findOne as jest.Mock
       mockFindOne.mockResolvedValueOnce(updatedCase)
@@ -378,6 +381,18 @@ describe('CaseController - Update', () => {
             caseId,
           },
           {
+            type: MessageType.DELIVER_DEFENDANT_TO_COURT,
+            user,
+            caseId,
+            defendantId: defendantId1,
+          },
+          {
+            type: MessageType.DELIVER_DEFENDANT_TO_COURT,
+            user,
+            caseId,
+            defendantId: defendantId2,
+          },
+          {
             type: MessageType.DELIVER_CASE_FILES_RECORD_TO_COURT,
             user,
             caseId,
@@ -432,6 +447,7 @@ describe('CaseController - Update', () => {
       const updatedCase = {
         ...theCase,
         type,
+        origin: CaseOrigin.LOKE,
         caseModifiedExplanation: 'some explanation',
       }
 
@@ -449,6 +465,7 @@ describe('CaseController - Update', () => {
             user,
             caseId,
           },
+          { type: MessageType.DELIVER_CASE_TO_POLICE, user, caseId },
         ])
       })
     },
@@ -499,18 +516,6 @@ describe('CaseController - Update', () => {
 
       it('should queue messages', () => {
         expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
-          {
-            caseFileId: statementId,
-            type: MessageType.DELIVER_CASE_FILE_TO_COURT,
-            user,
-            caseId,
-          },
-          {
-            caseFileId: fileId,
-            type: MessageType.DELIVER_CASE_FILE_TO_COURT,
-            user,
-            caseId,
-          },
           {
             type: MessageType.SEND_APPEAL_STATEMENT_NOTIFICATION,
             user,

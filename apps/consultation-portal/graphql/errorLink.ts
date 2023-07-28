@@ -1,8 +1,6 @@
 import { onError, ErrorResponse } from '@apollo/client/link/error'
 import { signIn } from 'next-auth/client'
 
-import { toast } from '@island.is/island-ui/core'
-
 export default onError(({ graphQLErrors, networkError }: ErrorResponse) => {
   if (networkError) {
     return

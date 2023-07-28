@@ -45,7 +45,7 @@ export const PoliceCaseNumbers: React.FC<Props> = (props) => {
   const { user } = useContext(UserContext)
   const { setAndSendCaseToServer } = useCase()
   const { formatMessage } = useIntl()
-  const isLOKECase = workingCase.origin === CaseOrigin.Loke
+  const isLOKECase = workingCase.origin === CaseOrigin.LOKE
 
   const [hasError, setHasError] = useState(false)
   const updatePoliceNumbers = useCallback(

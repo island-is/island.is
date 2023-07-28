@@ -15,6 +15,7 @@ export const institutionMapper = {
   [ApplicationTypes.HEALTH_INSURANCE]:
     InstitutionTypes.SJUKRATRYGGINGAR_ISLANDS,
   [ApplicationTypes.CHILDREN_RESIDENCE_CHANGE]: InstitutionTypes.SYSLUMENN,
+  [ApplicationTypes.CHILDREN_RESIDENCE_CHANGE_V2]: InstitutionTypes.SYSLUMENN,
   [ApplicationTypes.DATA_PROTECTION_AUTHORITY_COMPLAINT]:
     InstitutionTypes.PERSONUVERND,
   [ApplicationTypes.LOGIN_SERVICE]: InstitutionTypes.STAFRAENT_ISLAND,
@@ -27,6 +28,8 @@ export const institutionMapper = {
   [ApplicationTypes.COMPLAINTS_TO_ALTHINGI_OMBUDSMAN]:
     InstitutionTypes.UMBODSMADUR_ALTHINGIS,
   [ApplicationTypes.ACCIDENT_NOTIFICATION]:
+    InstitutionTypes.SJUKRATRYGGINGAR_ISLANDS,
+  [ApplicationTypes.EUROPEAN_HEALTH_INSURANCE_CARD]:
     InstitutionTypes.SJUKRATRYGGINGAR_ISLANDS,
   [ApplicationTypes.GENERAL_PETITION]: InstitutionTypes.THJODSKRA,
   [ApplicationTypes.GENERAL_FISHING_LICENSE]: InstitutionTypes.FISKISTOFA,

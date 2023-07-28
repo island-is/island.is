@@ -6,6 +6,7 @@ import {
   Patch,
   Post,
   UseGuards,
+  Delete,
 } from '@nestjs/common'
 import { ApiSecurity, ApiTags } from '@nestjs/swagger'
 
@@ -73,8 +74,13 @@ export class MeClientsController {
     @CurrentUser() user: User,
     @Param('tenantId') tenantId: string,
     @Param('clientId') clientId: string,
+    @Param('includeArchived') includeArchived?: boolean,
   ): Promise<AdminClientDto> {
-    return this.clientsService.findByTenantIdAndClientId(tenantId, clientId)
+    return this.clientsService.findByTenantIdAndClientId(
+      tenantId,
+      clientId,
+      includeArchived,
+    )
   }
 
   @Post()
@@ -119,6 +125,28 @@ export class MeClientsController {
         },
       },
       this.clientsService.update(user, tenantId, clientId, input),
+    )
+  }
+
+  @Delete(':clientId')
+  @Documentation({
+    description: 'Delete a client.',
+    response: { status: 204 },
+  })
+  async delete(
+    @CurrentUser() user: User,
+    @Param('clientId') clientId: string,
+    @Param('tenantId') tenantId: string,
+  ): Promise<void> {
+    return this.auditService.auditPromise(
+      {
+        auth: user,
+        namespace,
+        action: 'delete',
+        resources: clientId,
+        meta: { tenantId },
+      },
+      this.clientsService.delete(clientId, tenantId),
     )
   }
 }

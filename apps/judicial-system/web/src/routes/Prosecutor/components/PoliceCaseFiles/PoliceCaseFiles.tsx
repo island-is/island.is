@@ -133,7 +133,7 @@ const PoliceCaseFiles: React.FC<Props> = ({
 
   return (
     <Box marginBottom={5}>
-      {workingCase.origin === CaseOrigin.Loke && (
+      {workingCase.origin === CaseOrigin.LOKE && (
         <LayoutGroup>
           <motion.div layout className={styles.policeCaseFilesContainer}>
             <motion.ul layout>
@@ -211,7 +211,7 @@ const PoliceCaseFiles: React.FC<Props> = ({
           </motion.div>
         </LayoutGroup>
       )}
-      {workingCase.origin !== CaseOrigin.Loke && (
+      {workingCase.origin !== CaseOrigin.LOKE && (
         <AlertMessage
           type="info"
           title={formatMessage(m.originNotLokeTitle, {

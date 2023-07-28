@@ -26,7 +26,7 @@ describe('LimitedAccessFileController - Get case file signed url guards', () => 
       guard = new guards[0]()
     })
 
-    it('should have CaseFileExistsGuard as quard 1', () => {
+    it('should have CaseFileExistsGuard as guard 1', () => {
       expect(guard).toBeInstanceOf(CaseFileExistsGuard)
     })
   })
@@ -38,7 +38,7 @@ describe('LimitedAccessFileController - Get case file signed url guards', () => 
       guard = new guards[1]()
     })
 
-    it('should have LimitedAccessViewCaseFileGuard as quard 2', () => {
+    it('should have LimitedAccessViewCaseFileGuard as guard 2', () => {
       expect(guard).toBeInstanceOf(LimitedAccessViewCaseFileGuard)
     })
   })

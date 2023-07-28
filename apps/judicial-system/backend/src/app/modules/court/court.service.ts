@@ -276,7 +276,7 @@ export class CourtService {
 
       const isIndictment = isIndictmentCase(type)
 
-      return this.courtClientService.createCase(courtId, {
+      return await this.courtClientService.createCase(courtId, {
         caseType: isIndictment ? 'S - Ákærumál' : 'R - Rannsóknarmál',
         subtype: courtSubtype as string,
         status: 'Skráð',
@@ -288,7 +288,7 @@ export class CourtService {
     } catch (reason) {
       if (reason instanceof ServiceUnavailableException) {
         // Act as if the court case was created successfully
-        return 'R-9999/9999'
+        return isIndictmentCase(type) ? 'S-9999/9999' : 'R-9999/9999'
       }
 
       this.eventService.postErrorEvent(

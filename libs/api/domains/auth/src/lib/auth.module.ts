@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common'
 
 import { AuthDelegationApiClientModule } from '@island.is/clients/auth/delegation-api'
+import { AuthIdsApiClientModule } from '@island.is/clients/auth/ids-api'
 import { AuthPublicApiClientModule } from '@island.is/clients/auth/public-api'
 import { IdentityClientModule } from '@island.is/clients/identity'
 import { CmsModule } from '@island.is/cms'
@@ -19,14 +20,14 @@ import {
   DomainResolver,
   MergedDelegationResolver,
 } from './resolvers'
-import { ScopePermissionsResolver } from './resolvers/scopePermissions.resolver'
+import { ConsentTenantsResolver } from './resolvers/consentTenants.resolver'
 import { ActorDelegationsService } from './services/actorDelegations.service'
 import { ApiScopeService } from './services/apiScope.service'
 import { ClientsService } from './services/clients.service'
 import { ConsentService } from './services/consent.service'
+import { ConsentTenantsService } from './services/consentTenants.service'
 import { DomainService } from './services/domain.service'
 import { MeDelegationsService } from './services/meDelegations.service'
-import { ScopePermissionsService } from './services/scopePermissions.service'
 
 @Module({
   providers: [
@@ -48,14 +49,15 @@ import { ScopePermissionsService } from './services/scopePermissions.service'
     ClientsService,
     ConsentResolver,
     ConsentService,
-    ScopePermissionsResolver,
-    ScopePermissionsService,
+    ConsentTenantsResolver,
+    ConsentTenantsService,
   ],
   imports: [
     AuthPublicApiClientModule,
     AuthDelegationApiClientModule,
     FeatureFlagModule,
     IdentityClientModule,
+    AuthIdsApiClientModule,
   ],
 })
 export class AuthModule {}

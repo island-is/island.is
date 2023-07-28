@@ -1440,6 +1440,9 @@ export interface ILatestNewsSliceFields {
   /** News tag */
   newsTag?: IGenericTag | undefined
 
+  /** Organization */
+  organization?: IOrganization | undefined
+
   /** Read more text */
   readMoreText?: string | undefined
 
@@ -1929,6 +1932,9 @@ export interface INamespace extends Entry<INamespaceFields> {
 }
 
 export interface INewsFields {
+  /** Organization */
+  organization: IOrganization
+
   /** Content status */
   contentStatus?: 'Undefined' | 'Needs work' | 'In review' | 'Done' | undefined
 
@@ -1967,6 +1973,9 @@ export interface INewsFields {
 
   /** Initial Publish Date */
   initialPublishDate?: string | undefined
+
+  /** og:image */
+  featuredImage?: Asset | undefined
 }
 
 export interface INews extends Entry<INewsFields> {
@@ -2227,6 +2236,12 @@ export interface IOrganizationFields {
 
   /** Has A Landing Page */
   hasALandingPage?: boolean | undefined
+
+  /** Plausible Tracking Domain */
+  trackingDomain?: string | undefined
+
+  /** Name In Vacancy List */
+  nameInVacancyList?: string | undefined
 }
 
 export interface IOrganization extends Entry<IOrganizationFields> {
@@ -2323,8 +2338,11 @@ export interface IOrganizationPageFields {
   /** Organization */
   organization: IOrganization
 
-  /** News tag */
+  /** Primary news tag */
   newsTag?: IGenericTag | undefined
+
+  /** Secondary news tags */
+  secondaryNewsTags?: IGenericTag[] | undefined
 
   /** Slug */
   slug: string
@@ -2350,6 +2368,11 @@ export interface IOrganizationPageFields {
     | 'sak'
     | 'gev'
     | 'hve'
+    | 'shh'
+    | 'hsa'
+    | 'haskolanam'
+    | 'nti'
+    | 'samgongustofa'
 
   /** Theme Properties */
   themeProperties?: Record<string, any> | undefined
@@ -2697,8 +2720,11 @@ export interface IProjectPageFields {
       )[]
     | undefined
 
-  /** News Tag */
+  /** Primary news tag */
   newsTag?: IGenericTag | undefined
+
+  /** Secondary news tags */
+  secondaryNewsTags?: IGenericTag[] | undefined
 
   /** Project Subpages */
   projectSubpages?: IProjectSubpage[] | undefined
@@ -2723,6 +2749,8 @@ export interface IProjectPageFields {
         | IOneColumnText
         | ITimeline
         | ITwoColumnText
+        | ITabSection
+        | ISliceConnectedComponent
       )[]
     | undefined
 
@@ -2790,6 +2818,9 @@ export interface IProjectSubpageFields {
         | ITwoColumnText
       )[]
     | undefined
+
+  /** Bottom Slices */
+  bottomSlices?: (IPowerBiSlice | IOneColumnText)[] | undefined
 }
 
 export interface IProjectSubpage extends Entry<IProjectSubpageFields> {
@@ -2959,6 +2990,7 @@ export interface ISliceConnectedComponentFields {
     | 'Tækifærisleyfi/TemporaryEventLicences'
     | 'OrganizationSearchBox'
     | 'Verðbréfamiðlarar/Brokers'
+    | 'PublicVehicleSearch'
     | undefined
 
   /** Localized JSON */
@@ -3867,6 +3899,87 @@ export interface IUrl extends Entry<IUrlFields> {
   }
 }
 
+export interface IVacancyFields {
+  /** Title */
+  title: string
+
+  /** Intro */
+  intro?: Document | undefined
+
+  /** Job Listed */
+  applicationDeadlineFrom: string
+
+  /** Application Deadline */
+  applicationDeadlineTo: string
+
+  /** Category */
+  fieldOfWork:
+    | 'Stjórnunarstörf'
+    | 'Sérfræðistörf'
+    | 'Kennsla og rannsóknir'
+    | 'Heilbrigðisþjónusta'
+    | 'Löggæslustörf'
+    | 'Tæknistörf'
+    | 'Önnur störf'
+    | 'Skrifstofustörf'
+    | 'Sumarstörf'
+
+  /** Organization */
+  organization: IOrganization
+
+  /** Locations */
+  locations: (
+    | 'Án staðsetningar'
+    | 'Höfuðborgarsvæðið'
+    | 'Norðurland'
+    | 'Vesturland'
+    | 'Austurland'
+    | 'Suðurland'
+    | 'Vestfirðir'
+    | 'Suðurnes'
+  )[]
+
+  /** Job Percentage */
+  jobPercentage?: string | undefined
+
+  /** Application Link Url */
+  applicationHref?: string | undefined
+
+  /** Requirements */
+  qualificationRequirements?: Document | undefined
+
+  /** Responsibilities */
+  tasksAndResponsibilities?: Document | undefined
+
+  /** Description */
+  description?: Document | undefined
+
+  /** Salary Terms */
+  salaryTerms?: Document | undefined
+
+  /** Contacts */
+  contacts?: Record<string, any> | undefined
+}
+
+/** Icelandic Government Institution Vacancy that appears on island.is/starfatorg */
+
+export interface IVacancy extends Entry<IVacancyFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'vacancy'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface IVidspyrnaFrontpageFields {
   /** Title */
   title: string
@@ -4147,6 +4260,7 @@ export type CONTENT_TYPE =
   | 'twoColumnText'
   | 'uiConfiguration'
   | 'url'
+  | 'vacancy'
   | 'vidspyrna-frontpage'
   | 'vidspyrnaFeaturedNews'
   | 'vidspyrnaFlokkur'

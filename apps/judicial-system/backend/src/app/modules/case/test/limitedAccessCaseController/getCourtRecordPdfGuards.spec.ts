@@ -34,7 +34,7 @@ describe('LimitedAccessCaseController - Get court record pdf guards', () => {
       guard = new guards[0]()
     })
 
-    it('should have JwtAuthGuard as quard 1', () => {
+    it('should have JwtAuthGuard as guard 1', () => {
       expect(guard).toBeInstanceOf(JwtAuthGuard)
     })
   })
@@ -46,7 +46,7 @@ describe('LimitedAccessCaseController - Get court record pdf guards', () => {
       guard = new guards[1]()
     })
 
-    it('should have RolesGuard as quard 2', () => {
+    it('should have RolesGuard as guard 2', () => {
       expect(guard).toBeInstanceOf(RolesGuard)
     })
   })
@@ -58,7 +58,7 @@ describe('LimitedAccessCaseController - Get court record pdf guards', () => {
       guard = new guards[2]()
     })
 
-    it('should have CaseExistsGuard as quard 3', () => {
+    it('should have CaseExistsGuard as guard 3', () => {
       expect(guard).toBeInstanceOf(CaseExistsGuard)
     })
   })
@@ -70,7 +70,7 @@ describe('LimitedAccessCaseController - Get court record pdf guards', () => {
       guard = guards[3]
     })
 
-    it('should have CaseTypeGuard as quard 4', () => {
+    it('should have CaseTypeGuard as guard 4', () => {
       expect(guard).toBeInstanceOf(CaseTypeGuard)
       expect(guard).toEqual({
         allowedCaseTypes: [...restrictionCases, ...investigationCases],
@@ -85,7 +85,7 @@ describe('LimitedAccessCaseController - Get court record pdf guards', () => {
       guard = new guards[4]()
     })
 
-    it('should have CaseCompletedGuard as quard 5', () => {
+    it('should have CaseCompletedGuard as guard 5', () => {
       expect(guard).toBeInstanceOf(CaseCompletedGuard)
     })
   })
@@ -97,7 +97,7 @@ describe('LimitedAccessCaseController - Get court record pdf guards', () => {
       guard = new guards[5]()
     })
 
-    it('should have CaseDefenderGuard as quard 6', () => {
+    it('should have CaseDefenderGuard as guard 6', () => {
       expect(guard).toBeInstanceOf(CaseDefenderGuard)
     })
   })

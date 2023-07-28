@@ -30,6 +30,12 @@ export class AdviceResult {
   @Field(() => String, { nullable: true })
   content?: string | null
 
+  @Field(() => Boolean, { nullable: true })
+  isPrivate?: boolean
+
+  @Field(() => Boolean, { nullable: true })
+  isHidden?: boolean
+
   @Field(() => Date, { nullable: true })
   created?: Date
 

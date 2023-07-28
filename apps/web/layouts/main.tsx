@@ -15,6 +15,7 @@ import {
 import getConfig from 'next/config'
 import { Screen } from '../types'
 import Cookies from 'js-cookie'
+import { CACHE_CONTROL_HEADER } from '@island.is/shared/constants'
 import { userMonitoring } from '@island.is/user-monitoring'
 import { useRouter } from 'next/router'
 import {
@@ -211,7 +212,7 @@ const Layout: Screen<LayoutProps> = ({
     '/fonts/ibm-plex-sans-v7-latin-600.woff2',
   ]
 
-  const isServiceWeb = pathIsRoute(asPath, 'serviceweb')
+  const isServiceWeb = pathIsRoute(asPath, 'serviceweb', activeLocale)
 
   return (
     <GlobalContextProvider namespace={namespace} isServiceWeb={isServiceWeb}>
@@ -612,6 +613,11 @@ export const withMainLayout = <T,>(
   }
 
   WithMainLayout.getProps = async (ctx) => {
+    // Configure default full-page caching.
+    if (ctx.res) {
+      ctx.res.setHeader('Cache-Control', CACHE_CONTROL_HEADER)
+    }
+
     const getLayoutProps = Layout.getProps as Exclude<
       typeof Layout.getProps,
       undefined

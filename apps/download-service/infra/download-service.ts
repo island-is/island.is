@@ -5,6 +5,7 @@ import {
   Finance,
   UniversityOfIceland,
   Vehicles,
+  WorkMachines,
 } from '../../../infra/src/dsl/xroad'
 
 export const serviceSetup = (services: {
@@ -21,7 +22,7 @@ export const serviceSetup = (services: {
       },
       IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/download-service',
       REGULATIONS_ADMIN_URL: ref(
-        (h) => `http://${h.svc(services.regulationsAdminBackend)}/api`,
+        (h) => `http://${h.svc(services.regulationsAdminBackend)}`,
       ),
     })
     .secrets({
@@ -39,7 +40,7 @@ export const serviceSetup = (services: {
       REGULATIONS_FILE_UPLOAD_KEY_PUBLISH:
         '/k8s/api/REGULATIONS_FILE_UPLOAD_KEY_PUBLISH',
     })
-    .xroad(Base, Client, Finance, Vehicles, UniversityOfIceland)
+    .xroad(Base, Client, Finance, Vehicles, UniversityOfIceland, WorkMachines)
     .ingress({
       primary: {
         host: {

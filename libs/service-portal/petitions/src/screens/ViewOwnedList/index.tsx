@@ -14,10 +14,6 @@ import {
 import { useLocale, useNamespaces } from '@island.is/localization'
 
 import { m } from '../../lib/messages'
-import {
-  EndorsementList,
-  PaginatedEndorsementResponse,
-} from '../../types/schema'
 import PetitionsTable from '../PetitionsTable'
 import { CloseList, OpenList } from '../queries'
 
@@ -27,12 +23,16 @@ import {
   useGetSinglePetition,
   useGetSinglePetitionEndorsements,
 } from '../hooks'
+import {
+  PaginatedEndorsementResponse,
+  EndorsementList,
+} from '@island.is/api/schema'
 
 const ViewOwnedList = () => {
   useNamespaces('sp.petitions')
   const { formatMessage } = useLocale()
-  const location: any = useLocation()
-  const listId = location.pathname.replace('/min-gogn/listar/minn-listi/', '')
+  const { pathname } = useLocation()
+  const listId = pathname.replace('/min-gogn/listar/minn-listi/', '')
 
   const { petitionData, refetchSinglePetition } = useGetSinglePetition(listId)
 
@@ -126,7 +126,7 @@ const ViewOwnedList = () => {
                     <Text variant="h4">{formatMessage(m.listOwner)}</Text>
                     <Text variant="default">{petition?.ownerName}</Text>
                   </Box>
-                  <Box>
+                  <Box marginTop={[2, 0]}>
                     <Text variant="h4">
                       {formatMessage(m.listHowManySigned)}
                     </Text>
@@ -151,8 +151,13 @@ const ViewOwnedList = () => {
                   </Text>
                 </Box>
 
-                <Box display="flex" marginBottom={8} alignItems="center">
+                <Box
+                  display={['block', 'flex']}
+                  marginBottom={8}
+                  alignItems="center"
+                >
                   <DatePicker
+                    appearInline
                     label={formatMessage(m.changeCloseDate)}
                     locale="is"
                     placeholderText={formatMessage(m.selectDate)}
@@ -160,8 +165,12 @@ const ViewOwnedList = () => {
                     handleChange={(date) => setSelectedDateToOpenList(date)}
                     minDate={new Date()}
                   />
-                  <Box display={'flex'}>
-                    <Box marginX={3}>
+                  <Box
+                    display={'flex'}
+                    marginTop={[3, 0]}
+                    justifyContent={['spaceBetween']}
+                  >
+                    <Box marginX={[0, 3]}>
                       <Button
                         iconType="outline"
                         onClick={() => {
@@ -188,7 +197,7 @@ const ViewOwnedList = () => {
                         </Button>
                       }
                     >
-                      <Text variant="h1" paddingBottom={3}>
+                      <Text variant="h1" paddingTop={5}>
                         {formatMessage(m.modalStopCollection)}
                       </Text>
                       <Box
@@ -242,13 +251,14 @@ const ViewOwnedList = () => {
                       }
                     >
                       <Box>
-                        <Text variant="h1" paddingBottom={3}>
+                        <Text variant="h1" paddingTop={5} paddingBottom={2}>
                           {formatMessage(m.modalStartCollection)}
                         </Text>
                         <Text paddingBottom={3}>
                           {formatMessage(m.modalStartCollectionDescription)}
                         </Text>
                         <DatePicker
+                          appearInline
                           label={formatMessage(m.date)}
                           locale="is"
                           minDate={new Date()}
@@ -285,7 +295,10 @@ const ViewOwnedList = () => {
           </Box>
 
           <PetitionsTable
-            petitions={petitionEndorsements}
+            petition={petition}
+            petitionSigners={
+              petitionEndorsements as PaginatedEndorsementResponse
+            }
             listId={listId}
             canEdit={true}
           />

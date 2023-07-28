@@ -38,6 +38,7 @@ export interface DropdownMenuProps {
    * Utility button icon
    */
   icon?: ButtonProps['icon']
+  iconType?: ButtonProps['iconType']
   disclosure?: ReactElement
   menuClassName?: string
   openOnHover?: boolean
@@ -48,6 +49,7 @@ export const DropdownMenu = ({
   items,
   title,
   icon,
+  iconType,
   disclosure,
   menuClassName,
   openOnHover = false,
@@ -85,6 +87,7 @@ export const DropdownMenu = ({
           as={Button}
           variant="utility"
           icon={icon}
+          iconType={iconType}
           {...menu}
           {...hoverProps}
         >

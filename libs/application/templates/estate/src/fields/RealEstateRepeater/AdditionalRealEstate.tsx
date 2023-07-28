@@ -42,7 +42,7 @@ export const AdditionalRealEstate = ({
   const shareField = `${fieldIndex}.share`
   const marketValueField = `${fieldIndex}.marketValue`
 
-  const { control, setValue } = useFormContext()
+  const { control, setValue, clearErrors } = useFormContext()
   const { formatMessage } = useLocale()
 
   const [
@@ -52,6 +52,7 @@ export const AdditionalRealEstate = ({
     SEARCH_FOR_PROPERTY_QUERY,
     {
       onCompleted: (data) => {
+        clearErrors(addressField)
         setValue(
           addressField,
           data.searchForProperty?.defaultAddress?.display ?? '',
@@ -115,7 +116,8 @@ export const AdditionalRealEstate = ({
             label={formatMessage(m.propertyNumber)}
             backgroundColor="blue"
             defaultValue={field.assetNumber}
-            error={error?.assetNumber ?? undefined}
+            error={error?.assetNumber}
+            required
           />
         </GridColumn>
         <GridColumn span={['1/1', '1/2']} paddingBottom={2} paddingTop={2}>
@@ -126,17 +128,20 @@ export const AdditionalRealEstate = ({
             loading={queryLoading}
             readOnly
             defaultValue={field.description}
+            error={error?.description}
           />
         </GridColumn>
         <GridColumn span={['1/1', '1/2']}>
           <InputController
             id={marketValueField}
             name={marketValueField}
-            label={formatMessage(m.marketValueTitle)}
-            defaultValue={(field as any).marketValue}
+            label={formatMessage(m.realEstateValueTitle)}
+            defaultValue={field.marketValue}
             placeholder={'0 kr.'}
+            error={error?.marketValue}
             currency
             size="sm"
+            required
           />
         </GridColumn>
       </GridRow>

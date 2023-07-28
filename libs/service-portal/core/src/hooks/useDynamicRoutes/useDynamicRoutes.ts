@@ -36,24 +36,15 @@ export const useDynamicRoutes = () => {
   const [activeDynamicRoutes, setActiveDynamicRoutes] = useState<string[]>([])
   const featureFlagClient: FeatureFlagClient = useFeatureFlagClient()
   const [
-    drivingLessonsFlagEnabled,
-    setDrivingLessonsFlagEnabled,
-  ] = useState<boolean>(false)
-  const [
     educationGraduationFlagEnabled,
     setEducationGraduationFlagEnabled,
   ] = useState<boolean>(false)
   useEffect(() => {
     const isFlagEnabled = async () => {
-      const ffEnabled = await featureFlagClient.getValue(
-        Features.servicePortalDrivingLessonsBookModule,
-        false,
-      )
       const eduFfEnabled = await featureFlagClient.getValue(
         Features.servicePortalEducationGraduation,
         false,
       )
-      setDrivingLessonsFlagEnabled(ffEnabled as boolean)
       setEducationGraduationFlagEnabled(eduFfEnabled as boolean)
     }
     isFlagEnabled()
@@ -92,7 +83,7 @@ export const useDynamicRoutes = () => {
      * Tabs control for driving lessons.
      */
     const licenseBookData = licenseBook?.drivingLicenseBookUserBook
-    if (drivingLessonsFlagEnabled && licenseBookData?.book?.id) {
+    if (licenseBookData?.book?.id) {
       dynamicPathArray.push(ServicePortalPath.AssetsVehiclesDrivingLessons)
     }
 

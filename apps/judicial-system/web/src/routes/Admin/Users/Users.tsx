@@ -19,7 +19,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/mutations'
 import { formatNationalId } from '@island.is/judicial-system/formatters'
 import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
-import { titles } from '@island.is/judicial-system-web/messages'
+import { titles, errors } from '@island.is/judicial-system-web/messages'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import {
   Institution,
@@ -66,17 +66,17 @@ export const Users: React.FC = () => {
 
   const userRoleToString = (userRole: UserRole) => {
     switch (userRole) {
-      case UserRole.Prosecutor:
+      case UserRole.PROSECUTOR:
         return 'Saksóknari'
-      case UserRole.Representative:
+      case UserRole.REPRESENTATIVE:
         return 'Fulltrúi'
-      case UserRole.Judge:
+      case UserRole.JUDGE:
         return 'Dómari'
-      case UserRole.Registrar:
+      case UserRole.REGISTRAR:
         return 'Dómritari'
-      case UserRole.Assistant:
+      case UserRole.ASSISTANT:
         return 'Aðstoðarmaður dómara'
-      case UserRole.Staff:
+      case UserRole.STAFF:
         return 'Starfsmaður'
     }
   }
@@ -203,8 +203,8 @@ export const Users: React.FC = () => {
       {error && (
         <div data-testid="users-error">
           <AlertMessage
-            title="Ekki tókst að sækja gögn úr gagnagrunni"
-            message="Ekki tókst að ná sambandi við gagnagrunn. Málið hefur verið skráð og viðeigandi aðilar látnir vita. Vinsamlega reynið aftur síðar."
+            title={formatMessage(errors.failedToFetchDataFromDbTitle)}
+            message={formatMessage(errors.failedToFetchDataFromDbMessage)}
             type="error"
           />
         </div>

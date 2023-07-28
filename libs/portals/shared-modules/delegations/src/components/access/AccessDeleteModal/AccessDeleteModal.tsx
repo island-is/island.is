@@ -9,7 +9,7 @@ import { useLocale } from '@island.is/localization'
 import { formatNationalId } from '@island.is/portals/core'
 import { useEffect, useState } from 'react'
 import { DelegationsFormFooter } from '../../delegations/DelegationsFormFooter'
-import { Modal, ModalProps } from '../../Modal/Modal'
+import { Modal, ModalProps } from '@island.is/react/components'
 import { IdentityCard } from '../../IdentityCard/IdentityCard'
 import { AccessListContainer } from '../AccessList/AccessListContainer/AccessListContainer'
 import { useAuthScopeTreeLazyQuery } from '../AccessList/AccessListContainer/AccessListContainer.generated'
@@ -101,6 +101,8 @@ export const AccessDeleteModal = ({
       label={formatMessage(m.accessRemoveModalTitle)}
       onClose={onClose}
       noPaddingBottom
+      scrollType="inside"
+      closeButtonLabel={formatMessage(m.closeModal)}
       {...rest}
     >
       <Box
@@ -161,7 +163,7 @@ export const AccessDeleteModal = ({
           confirmButtonColorScheme="destructive"
           onCancel={onClose}
           onConfirm={onDeleteHandler}
-          containerPaddingBottom={[3, 3, 6]}
+          containerPaddingBottom={[3, 3, 4]}
           confirmLabel={formatMessage(m.deleteAccess)}
         />
       </Box>

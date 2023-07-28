@@ -1,27 +1,39 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { IsString } from 'class-validator'
-import { ApiScope } from '../../models/api-scope.model'
 
-export class AdminScopeDTO {
-  constructor(apiScope: ApiScope) {
-    this.name = apiScope.name
-    this.displayName = apiScope.displayName
-    this.description = apiScope.description
-  }
+import { ApiScopeBaseDTO } from '../../dto/base/api-scope-base.dto'
+import { TranslatedValueDto } from '../../../translation/dto/translated-value.dto'
 
-  @IsString()
-  @ApiProperty({ example: '@island.is' })
-  name!: string
-
-  @IsString()
+export class AdminScopeDTO extends ApiScopeBaseDTO {
   @ApiProperty({
-    example: 'Ísland.is mínar síður',
+    type: [TranslatedValueDto],
+    example: [
+      {
+        locale: 'is',
+        value: 'Samnefni á umfangi',
+      },
+      {
+        locale: 'en',
+        value: 'Scope alias name',
+      },
+    ],
   })
-  displayName!: string
+  displayName!: TranslatedValueDto[]
 
-  @IsString()
   @ApiProperty({
-    example: 'Description about the scope',
+    type: [TranslatedValueDto],
+    example: [
+      {
+        locale: 'is',
+        value: 'Lýsing á umfangi',
+      },
+      {
+        locale: 'en',
+        value: 'Scope description',
+      },
+    ],
   })
-  description!: string
+  description!: TranslatedValueDto[]
+
+  @ApiProperty({ type: String, example: '@island.is' })
+  domainName!: string
 }

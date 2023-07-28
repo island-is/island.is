@@ -182,7 +182,14 @@ Home.getProps = async ({ apolloClient, locale }) => {
   ])
 
   return {
-    news,
+    news:
+      news?.map((item) => ({
+        ...item,
+        genericTags:
+          item?.genericTags?.filter(
+            (tag) => tag.slug !== FRONTPAGE_NEWS_TAG_ID,
+          ) ?? [],
+      })) ?? [],
     categories: getArticleCategories,
     page: getFrontpage,
     showSearchInHeader: false,

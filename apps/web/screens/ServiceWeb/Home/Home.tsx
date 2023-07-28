@@ -124,6 +124,7 @@ const Home: Screen<HomeProps> = ({
       )}
       showLogoTitle={!institutionSlugBelongsToMannaudstorg}
       indexableBySearchEngine={institutionSlugBelongsToMannaudstorg}
+      showLogoOnMobileDisplays={!institutionSlugBelongsToMannaudstorg}
     >
       {hasContent && (
         <ServiceWebContext.Consumer>

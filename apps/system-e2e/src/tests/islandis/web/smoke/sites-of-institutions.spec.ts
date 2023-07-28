@@ -1,4 +1,4 @@
-import { BrowserContext, Page, expect, test } from '@playwright/test'
+import { BrowserContext, expect, Page, test } from '@playwright/test'
 import { urls } from '../../../../support/urls'
 import slugify from 'slugify'
 import { session } from '../../../../support/session'
@@ -22,7 +22,7 @@ const orgs: Orgs[] = [
   },
   { organisationName: 'Sjúkratryggingar', target: { role: 'link' } },
   { organisationName: 'Ríkislögmaður' },
-  { organisationName: 'Landskjörstjórn' },
+  { organisationName: 'Landskjörstjórn', target: { role: 'link' } },
   { organisationName: 'Opinber nýsköpun', enabled: true },
   { organisationName: 'Sýslumenn' },
   { organisationName: 'Fjársýslan' },
@@ -30,7 +30,10 @@ const orgs: Orgs[] = [
     organisationName: 'Heilbrigðisstofnun Suðurlands',
     organisationHome: '/hsu',
   },
-  { organisationName: 'Landlæknir', target: { role: 'link' } },
+  {
+    organisationName: 'Landlæknir',
+    target: { role: 'link', options: { name: 'Eyðublöð' } },
+  },
   { organisationName: 'Útlendingastofnun', target: { role: 'link' } },
 ]
 

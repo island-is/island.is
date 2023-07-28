@@ -1,16 +1,6 @@
 import { gql } from '@apollo/client'
 
-export const RulingSignatureConfirmationQuery = gql`
-  query RulingSignatureConfirmation($input: SignatureConfirmationQueryInput!) {
-    rulingSignatureConfirmation(input: $input) {
-      documentSigned
-      code
-      message
-    }
-  }
-`
-
-export const coreCaseListFields = gql`
+const coreCaseListFields = gql`
   fragment CoreCaseListFields on CaseListEntry {
     id
     type
@@ -25,6 +15,9 @@ export const coreCaseListFields = gql`
     validToDate
     policeCaseNumbers
     parentCaseId
+    appealCaseNumber
+    appealState
+    appealRulingDecision
     defendants {
       id
       nationalId
@@ -43,6 +36,7 @@ export const CasesQuery = gql`
       isValidToDateInThePast
       initialRulingDate
       rulingDate
+      rulingSignatureDate
       judge {
         id
       }
@@ -64,10 +58,6 @@ export const AppealedCasesQuery = gql`
   ${coreCaseListFields}
   query AppealedCases($input: CaseListQueryInput) {
     cases(input: $input) {
-      defendants {
-        name
-      }
-      appealState
       appealedDate
       ...CoreCaseListFields
     }

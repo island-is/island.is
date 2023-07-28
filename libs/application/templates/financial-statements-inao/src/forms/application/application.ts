@@ -6,7 +6,7 @@ import {
   buildDataProviderItem,
   getValueViaPath,
 } from '@island.is/application/core'
-import { Form, FormModes } from '@island.is/application/types'
+import { Form, FormModes, Application } from '@island.is/application/types'
 import { FinancialStatementsInao } from '../../lib/utils/dataSchema'
 import { clientInfoSection } from './shared/about/clientInfoSection'
 import { m } from '../../lib/messages'
@@ -24,7 +24,7 @@ import {
 import {
   CurrentUserTypeProvider,
   IndentityApiProvider,
-  UserProfileApi,
+  UserInfoApi,
 } from '../../dataProviders'
 import { FSIUSERTYPE, LESS } from '../../types'
 
@@ -43,7 +43,19 @@ export const getApplication = (allowFakeData = false): Form => {
         children: [
           buildExternalDataProvider({
             id: 'approveExternalData',
-            title: m.dataCollectionTitle,
+            title: (application: Application) => {
+              const { answers, externalData } = application
+              const clientType = getCurrentUserType(answers, externalData)
+
+              const dataCollectionTranslation =
+                clientType === FSIUSERTYPE.INDIVIDUAL
+                  ? m.dataCollectionTitleUserIndividual
+                  : clientType === FSIUSERTYPE.CEMETRY
+                  ? m.dataCollectionTitleUserCemetry
+                  : m.dataCollectionTitleUserParty
+
+              return dataCollectionTranslation
+            },
             checkboxLabel: m.dataCollectionCheckboxLabel,
             dataProviders: [
               buildDataProviderItem({
@@ -52,7 +64,7 @@ export const getApplication = (allowFakeData = false): Form => {
                 subTitle: m.dataCollectionNationalRegistrySubtitle,
               }),
               buildDataProviderItem({
-                provider: UserProfileApi,
+                provider: UserInfoApi,
                 title: m.dataCollectionUserProfileTitle,
                 subTitle: m.dataCollectionUserProfileSubtitle,
               }),

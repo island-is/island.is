@@ -32,7 +32,10 @@ export const Dashboard: FC<{}> = () => {
   const IS_COMPANY = userInfo?.profile?.subjectType === 'legalEntity'
 
   useEffect(() => {
-    PlausiblePageviewDetail(ServicePortalPath.MinarSidurRoot)
+    PlausiblePageviewDetail(
+      ServicePortalPath.MinarSidurRoot,
+      IS_COMPANY ? 'company' : 'person',
+    )
   }, [location])
 
   const onHover = (id: string) => {
@@ -85,7 +88,14 @@ export const Dashboard: FC<{}> = () => {
                                 color="blue400"
                               />
                             ) : (
-                              iconTypeToSVG(navRoot.icon?.icon ?? '', '')
+                              iconTypeToSVG(navRoot.icon?.icon ?? '', '') ??
+                              (navRoot.icon ? (
+                                <Icon
+                                  icon={navRoot.icon.icon}
+                                  type="outline"
+                                  color="blue400"
+                                />
+                              ) : undefined)
                             )
                           }
                           heading={formatMessage(navRoot.name)}

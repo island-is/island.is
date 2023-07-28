@@ -9,17 +9,18 @@ import { conclusion as strings } from './Conclusion.strings'
 interface Props {
   conclusionText?: string
   judgeName?: string
+  title?: string
 }
 
 const Conclusion: React.FC<Props> = (props) => {
   const { formatMessage } = useIntl()
-  const { conclusionText, judgeName } = props
+  const { conclusionText, judgeName, title } = props
 
   return conclusionText ? (
     <BlueBox>
       <Box marginBottom={2} textAlign="center">
         <Text as="h3" variant="h3">
-          {formatMessage(strings.title)}
+          {formatMessage(strings.title)} {title}
         </Text>
       </Box>
       <Box marginBottom={3}>

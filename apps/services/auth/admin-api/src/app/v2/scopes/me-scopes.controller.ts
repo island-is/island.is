@@ -1,16 +1,30 @@
-import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common'
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Patch,
+  Post,
+  UseGuards,
+} from '@nestjs/common'
 import { ApiSecurity, ApiTags } from '@nestjs/swagger'
 
 import {
   AdminScopeService,
   AdminScopeDTO,
   MeTenantGuard,
-  ClientCreateScopeDTO,
-  ApiScopesDTO,
+  AdminCreateScopeDto,
+  AdminPatchScopeDto,
 } from '@island.is/auth-api-lib'
-import { IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
+import {
+  CurrentUser,
+  IdsUserGuard,
+  Scopes,
+  ScopesGuard,
+  User,
+} from '@island.is/auth-nest-tools'
 import { idsAdminScopes } from '@island.is/auth/scopes'
-import { Audit } from '@island.is/nest/audit'
+import { Audit, AuditService } from '@island.is/nest/audit'
 import { Documentation } from '@island.is/nest/swagger'
 
 const namespace = '@island.is/auth/admin-api/v2/scopes'
@@ -25,7 +39,10 @@ const namespace = '@island.is/auth/admin-api/v2/scopes'
 })
 @Audit({ namespace })
 export class MeScopesController {
-  constructor(private readonly adminScopeService: AdminScopeService) {}
+  constructor(
+    private readonly auditService: AuditService,
+    private readonly adminScopeService: AdminScopeService,
+  ) {}
 
   @Get()
   @Documentation({
@@ -35,8 +52,26 @@ export class MeScopesController {
   @Audit<AdminScopeDTO[]>({
     resources: (scopes) => scopes.map((scope) => scope.name),
   })
-  findAll(@Param('tenantId') id: string): Promise<AdminScopeDTO[]> {
-    return this.adminScopeService.findApiScopesByTenantId(id)
+  findAllByTenantId(@Param('tenantId') id: string): Promise<AdminScopeDTO[]> {
+    return this.adminScopeService.findAllByTenantId(id)
+  }
+
+  @Get(':scopeName')
+  @Documentation({
+    description: 'Get scope by name and tenant id.',
+    response: { status: 200, type: AdminScopeDTO },
+  })
+  @Audit<AdminScopeDTO>({
+    resources: (scope) => scope.name,
+  })
+  findByTenantIdAndScopeName(
+    @Param('tenantId') tenantId: string,
+    @Param('scopeName') scopeName: string,
+  ): Promise<AdminScopeDTO> {
+    return this.adminScopeService.findByTenantIdAndScopeName({
+      scopeName,
+      tenantId,
+    })
   }
 
   @Post()
@@ -49,8 +84,38 @@ export class MeScopesController {
   })
   create(
     @Param('tenantId') tenantId: string,
-    @Body() input: ClientCreateScopeDTO,
-  ): Promise<ApiScopesDTO> {
+    @Body() input: AdminCreateScopeDto,
+  ): Promise<AdminScopeDTO> {
     return this.adminScopeService.createScope(tenantId, input)
+  }
+
+  @Patch(':scopeName')
+  @Documentation({
+    description: 'Update a scope with partial set of properties.',
+    response: { status: 200, type: AdminScopeDTO },
+  })
+  update(
+    @CurrentUser() user: User,
+    @Param('tenantId') tenantId: string,
+    @Param('scopeName') scopeName: string,
+    @Body() input: AdminPatchScopeDto,
+  ): Promise<AdminScopeDTO> {
+    return this.auditService.auditPromise<AdminScopeDTO>(
+      {
+        namespace,
+        auth: user,
+        action: 'update',
+        resources: (scope) => scope.name,
+        meta: {
+          fields: Object.keys(input),
+        },
+      },
+      this.adminScopeService.updateScope({
+        tenantId,
+        scopeName,
+        input,
+        user,
+      }),
+    )
   }
 }

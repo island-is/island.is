@@ -16,7 +16,6 @@ import {
   FormContext,
   SectionHeading,
   PdfButton,
-  UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import { titles } from '@island.is/judicial-system-web/messages'
@@ -50,9 +49,8 @@ const CaseFiles: React.FC = () => {
     handleRetry,
     generateSingleFileUpdate,
   } = useS3Upload(workingCase.id)
-  const { user } = useContext(UserContext)
 
-  const isTrafficViolationCaseCheck = isTrafficViolationCase(workingCase, user)
+  const isTrafficViolationCaseCheck = isTrafficViolationCase(workingCase)
 
   useEffect(() => {
     if (workingCase.caseFiles) {
@@ -116,7 +114,6 @@ const CaseFiles: React.FC = () => {
             accept={Object.values(fileExtensionWhitelist)}
             header={formatMessage(strings.caseFiles.inputFieldLabel)}
             buttonLabel={formatMessage(strings.caseFiles.buttonLabel)}
-            multiple={false}
             onChange={(files) =>
               handleChange(
                 files,
@@ -126,7 +123,9 @@ const CaseFiles: React.FC = () => {
               )
             }
             onRemove={(file) => handleRemove(file, removeFileCB)}
-            onRetry={(file) => handleRetry(file, handleUIUpdate)}
+            onRetry={(file) =>
+              handleRetry(file, handleUIUpdate, CaseFileCategory.COVER_LETTER)
+            }
           />
         </Box>
         {!isTrafficViolationCaseCheck && (
@@ -141,7 +140,6 @@ const CaseFiles: React.FC = () => {
               accept={Object.values(fileExtensionWhitelist)}
               header={formatMessage(strings.caseFiles.inputFieldLabel)}
               buttonLabel={formatMessage(strings.caseFiles.buttonLabel)}
-              multiple={false}
               onChange={(files) =>
                 handleChange(
                   files,
@@ -151,7 +149,9 @@ const CaseFiles: React.FC = () => {
                 )
               }
               onRemove={(file) => handleRemove(file, removeFileCB)}
-              onRetry={(file) => handleRetry(file, handleUIUpdate)}
+              onRetry={(file) =>
+                handleRetry(file, handleUIUpdate, CaseFileCategory.INDICTMENT)
+              }
             />
           </Box>
         )}
@@ -175,7 +175,13 @@ const CaseFiles: React.FC = () => {
               )
             }
             onRemove={(file) => handleRemove(file, removeFileCB)}
-            onRetry={(file) => handleRetry(file, handleUIUpdate)}
+            onRetry={(file) =>
+              handleRetry(
+                file,
+                handleUIUpdate,
+                CaseFileCategory.CRIMINAL_RECORD,
+              )
+            }
           />
         </Box>
         <Box component="section" marginBottom={5}>
@@ -198,7 +204,9 @@ const CaseFiles: React.FC = () => {
               )
             }
             onRemove={(file) => handleRemove(file, removeFileCB)}
-            onRetry={(file) => handleRetry(file, handleUIUpdate)}
+            onRetry={(file) =>
+              handleRetry(file, handleUIUpdate, CaseFileCategory.COST_BREAKDOWN)
+            }
           />
         </Box>
         <Box component="section" marginBottom={10}>
@@ -223,7 +231,9 @@ const CaseFiles: React.FC = () => {
               )
             }
             onRemove={(file) => handleRemove(file, removeFileCB)}
-            onRetry={(file) => handleRetry(file, handleUIUpdate)}
+            onRetry={(file) =>
+              handleRetry(file, handleUIUpdate, CaseFileCategory.CASE_FILE)
+            }
           />
         </Box>
         {isTrafficViolationCaseCheck && (

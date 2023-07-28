@@ -24,6 +24,10 @@ import {
   SyslumadurPaymentCatalogApi,
 } from '../dataProviders'
 import { AuthDelegationType } from '@island.is/shared/types'
+import {
+  coreHistoryMessages,
+  corePendingActionMessages,
+} from '@island.is/application/core'
 
 const oneDay = 24 * 3600 * 1000
 const thirtyDays = 24 * 3600 * 1000 * 30
@@ -43,6 +47,7 @@ const OperatingLicenseTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.OPERATING_LCENSE,
   name: m.formName.defaultMessage,
+  institution: m.institution,
   featureFlag: Features.operatingLicense,
   allowedDelegations: [{ type: AuthDelegationType.ProcurationHolder }],
   dataSchema,
@@ -51,7 +56,7 @@ const OperatingLicenseTemplate: ApplicationTemplate<
     states: {
       [States.DRAFT]: {
         meta: {
-          name: m.formName.defaultMessage,
+          name: '',
           status: 'draft',
           progress: 0.33,
           lifecycle: pruneAfter(oneDay),
@@ -71,7 +76,6 @@ const OperatingLicenseTemplate: ApplicationTemplate<
                   ),
                 )
               },
-
               actions: [
                 {
                   event: DefaultEvents.PAYMENT,
@@ -90,6 +94,14 @@ const OperatingLicenseTemplate: ApplicationTemplate<
               ],
             },
           ],
+          actionCard: {
+            historyLogs: [
+              {
+                logMessage: coreHistoryMessages.applicationStarted,
+                onEvent: DefaultEvents.PAYMENT,
+              },
+            ],
+          },
         },
         on: {
           [DefaultEvents.PAYMENT]: { target: States.PAYMENT },
@@ -99,11 +111,8 @@ const OperatingLicenseTemplate: ApplicationTemplate<
         meta: {
           name: 'Payment state',
           status: 'inprogress',
-          actionCard: {
-            description: m.payment,
-          },
           progress: 0.9,
-          lifecycle: pruneAfter(thirtyDays),
+          lifecycle: { shouldBeListed: true, shouldBePruned: false },
           onEntry: defineTemplateApi({
             action: ApiActions.createCharge,
           }),
@@ -121,6 +130,19 @@ const OperatingLicenseTemplate: ApplicationTemplate<
               delete: true,
             },
           ],
+          actionCard: {
+            historyLogs: [
+              {
+                logMessage: coreHistoryMessages.paymentAccepted,
+                onEvent: DefaultEvents.SUBMIT,
+              },
+            ],
+            pendingAction: {
+              title: corePendingActionMessages.paymentPendingTitle,
+              content: corePendingActionMessages.paymentPendingDescription,
+              displayStatus: 'warning',
+            },
+          },
         },
         on: {
           [DefaultEvents.SUBMIT]: { target: States.DONE },
@@ -147,6 +169,13 @@ const OperatingLicenseTemplate: ApplicationTemplate<
               },
             },
           ],
+          actionCard: {
+            pendingAction: {
+              title: coreHistoryMessages.applicationReceived,
+              content: '',
+              displayStatus: 'success',
+            },
+          },
         },
       },
     },

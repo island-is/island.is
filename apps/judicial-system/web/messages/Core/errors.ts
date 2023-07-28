@@ -92,12 +92,6 @@ export const errors = defineMessages({
     defaultMessage: 'Ekki tókst að eyða skrá',
     description: 'Notaður sem villuskilaboð þegar ekki gengur að eyða skrá',
   },
-  fileNotFoundModalTitle: {
-    id: 'judicial.system.core:errors.file_not_found_modal_title',
-    defaultMessage: 'Skjalið er ekki lengur aðgengilegt í Réttarvörslugátt',
-    description:
-      'Notaður sem titill fyrir popup glugga sem segir að skjal sé ekki lengur aðgengilegt í RVG þegar reynt er að opna það',
-  },
   createIndictmentCount: {
     id: 'judicial.system.core:errors.create_indictment_count',
     defaultMessage: 'Upp kom villa við að stofna nýjan ákærulið',
@@ -120,5 +114,18 @@ export const errors = defineMessages({
     defaultMessage: 'Upp kom villa við að sækja mál',
     description:
       'Notaður sem villuskilaboð þegar mistekst að opna mál úr málalista',
+  },
+  failedToFetchDataFromDbTitle: {
+    id: 'judicial.system.core:errors.failed_to_fetch_data_from_db_title',
+    defaultMessage: 'Ekki tókst að sækja gögn úr gagnagrunni',
+    description:
+      'Notaður sem titill þegar ekki tókst að sækja gögn úr gagnagrunni',
+  },
+  failedToFetchDataFromDbMessage: {
+    id: 'judicial.system.core:errors.failed_to_fetch_data_from_db_message',
+    defaultMessage:
+      'Ekki tókst að ná sambandi við gagnagrunn. Málið hefur verið skráð og viðeigandi aðilar látnir vita. Vinsamlega reynið aftur síðar.',
+    description:
+      'Notaður sem skilaboð þegar ekki tókst að sækja gögn úr gagnagrunni',
   },
 })
