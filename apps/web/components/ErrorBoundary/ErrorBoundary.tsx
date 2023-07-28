@@ -2,7 +2,7 @@ import React from 'react'
 import { ErrorPage } from '@island.is/web/screens/Error'
 
 export class ErrorBoundary extends React.Component {
-  public state: { hasError: boolean }
+  state: { hasError: boolean }
 
   constructor(props) {
     super(props)
