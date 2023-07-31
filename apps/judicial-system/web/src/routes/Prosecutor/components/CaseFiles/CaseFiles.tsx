@@ -101,7 +101,7 @@ export const CaseFiles: React.FC = () => {
 
   const {
     upload,
-    uploadPoliceCaseFile,
+    uploadFromPolice,
     handleRemove,
     handleRetry,
     generateSingleFileUpdate,
@@ -239,7 +239,7 @@ export const CaseFiles: React.FC = () => {
         state: CaseFileState.STORED_IN_RVG,
       } as UploadFile
 
-      await uploadPoliceCaseFile(fileToUpload, uploadPoliceCaseFileCallback)
+      await uploadFromPolice(fileToUpload, uploadPoliceCaseFileCallback)
 
       setPoliceCaseFileList((previous) => previous.filter((p) => p.id !== f.id))
 
@@ -247,7 +247,7 @@ export const CaseFiles: React.FC = () => {
         setIsUploading(false)
       }
     })
-  }, [policeCaseFileList, uploadPoliceCaseFile, uploadPoliceCaseFileCallback])
+  }, [policeCaseFileList, uploadFromPolice, uploadPoliceCaseFileCallback])
 
   const removeFileCB = useCallback(
     (file: UploadFile) => {

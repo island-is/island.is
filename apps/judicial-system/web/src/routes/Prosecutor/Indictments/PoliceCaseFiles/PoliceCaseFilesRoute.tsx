@@ -63,7 +63,7 @@ const UploadFilesToPoliceCase: React.FC<{
     handleChange,
     handleRemove,
     handleRetry,
-    uploadPoliceCaseFile,
+    uploadFromPolice,
     generateSingleFileUpdate,
   } = useS3Upload(caseId)
   const {
@@ -217,7 +217,7 @@ const UploadFilesToPoliceCase: React.FC<{
         category: CaseFileCategory.CASE_FILE,
       } as UploadFile
 
-      await uploadPoliceCaseFile(fileToUpload, uploadPoliceCaseFileCallback)
+      await uploadFromPolice(fileToUpload, uploadPoliceCaseFileCallback)
 
       setPoliceCaseFileList((previous) => previous.filter((p) => p.id !== f.id))
 
@@ -225,7 +225,7 @@ const UploadFilesToPoliceCase: React.FC<{
         setIsUploading(false)
       }
     })
-  }, [policeCaseFileList, uploadPoliceCaseFile, uploadPoliceCaseFileCallback])
+  }, [policeCaseFileList, uploadFromPolice, uploadPoliceCaseFileCallback])
 
   return (
     <>
