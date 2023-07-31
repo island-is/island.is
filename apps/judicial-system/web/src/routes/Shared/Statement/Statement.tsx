@@ -125,8 +125,8 @@ const Statement = () => {
           </Text>
         </Box>
         <Box marginBottom={7}>
-          {workingCase.courtEndTime && (
-            <RulingDateLabel courtEndTime={workingCase.courtEndTime} />
+          {workingCase.rulingDate && (
+            <RulingDateLabel rulingDate={workingCase.rulingDate} />
           )}
           {(workingCase.prosecutorPostponedAppealDate ||
             workingCase.accusedPostponedAppealDate) && (

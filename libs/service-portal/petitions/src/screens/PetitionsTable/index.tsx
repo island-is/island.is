@@ -15,7 +15,6 @@ import {
   EndorsementList,
   PaginatedEndorsementResponse,
 } from '@island.is/api/schema'
-import { hideInMobile } from './styles.css'
 
 const PetitionsTable = (data: {
   canEdit: boolean
@@ -44,13 +43,9 @@ const PetitionsTable = (data: {
 
   return (
     <Box>
-      <Box
-        display={['block', 'flex']}
-        justifyContent="spaceBetween"
-        marginBottom={2}
-      >
+      <Box display="flex" justifyContent="spaceBetween" marginBottom={2}>
         <Text variant="h3">{formatMessage(m.petitionsOverview)}</Text>
-        <Box className={hideInMobile}>
+        <Box>
           {data.canEdit && (
             <DropdownExport
               petition={data.petition}
