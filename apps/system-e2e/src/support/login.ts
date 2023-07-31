@@ -83,10 +83,10 @@ export const switchUser = async (
   name?: string,
 ) => {
   await page.locator('data-testid=user-menu >> visible=true').click()
-  await page.locator('role=button[name="Skipta um notanda"]').click()
+  await page.getByRole('button', { name: 'Skipta um notanda' }).click()
 
   if (name) {
-    await page.locator(`role=button[name*="${name}"]`).click()
+    await page.getByRole('button', { name: name }).click()
     await page.waitForURL(new RegExp(homeUrl), {
       waitUntil: 'domcontentloaded',
     })

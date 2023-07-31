@@ -33,9 +33,15 @@ applicationTest.describe('Data protection complaint application', () => {
     async ({ applicationPage }) => {
       const page = applicationPage
 
-      await applicationTest.step('Switch user', async () => {
-        await switchUser(page, homeUrl, 'Icelandic Offshore ehf')
-      })
+      await applicationTest.step(
+        'Select delegation on modal popup',
+        async () => {
+          await page.getByRole('button', { name: 'Alla leið ehf' }).click()
+          await page.waitForURL(new RegExp(homeUrl), {
+            waitUntil: 'domcontentloaded',
+          })
+        },
+      )
 
       await applicationTest.step('Create application', async () => {
         await createApplication(page)
