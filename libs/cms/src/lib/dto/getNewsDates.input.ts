@@ -14,8 +14,11 @@ export class GetNewsDatesInput {
   @IsOptional()
   order?: 'asc' | 'desc' = 'desc'
 
-  @Field({ nullable: true })
-  @IsString()
+  @Field(() => [String], { nullable: true })
   @IsOptional()
-  tag?: string
+  tags?: string[]
+
+  @Field(() => String, { nullable: true })
+  @IsOptional()
+  organization?: string
 }
