@@ -213,8 +213,8 @@ const Indictment: React.FC = () => {
         `\n\n${formatMessage(strings.indictmentIntroductionAutofillCourt, {
           court: workingCase.court?.name?.replace('dómur', 'dómi'),
         })}`,
-        `\n\n ${workingCase.defendants.map((defendant) => {
-          return `\n${formatMessage(
+        `\n\n${workingCase.defendants.map((defendant) => {
+          return `\n          ${formatMessage(
             strings.indictmentIntroductionAutofillDefendant,
             {
               defendantName: defendant.name
@@ -224,7 +224,7 @@ const Indictment: React.FC = () => {
                 ? formatNationalId(defendant.nationalId)
                 : 'Ekki skráð',
             },
-          )} \n ${defendant.address}`
+          )}\n          ${defendant.address}`
         })}
         `,
       ]

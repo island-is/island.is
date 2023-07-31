@@ -1,7 +1,13 @@
 import React, { useState, useContext, useEffect } from 'react'
 import { useIntl } from 'react-intl'
 
-import { Box, Button, Checkbox, LoadingDots } from '@island.is/island-ui/core'
+import {
+  Box,
+  Button,
+  Checkbox,
+  LoadingDots,
+  Text,
+} from '@island.is/island-ui/core'
 import { FormContext } from '@island.is/judicial-system-web/src/components'
 import { PoliceCaseInfo } from '@island.is/judicial-system-web/src/graphql/schema'
 import { PoliceCaseFilesMessageBox } from '@island.is/judicial-system-web/src/routes/Prosecutor/components'
@@ -38,6 +44,8 @@ export const LokeNumberList: React.FC<Props> = (props) => {
   const { workingCase } = useContext(FormContext)
 
   const [isLoading, setIsLoading] = useState<boolean>(true)
+  const [hasError, setHasError] = useState<boolean>(false)
+
   const [policeCaseInfoResponse, setPoliceCaseInfoResponse] = useState<
     PoliceCaseInfo[]
   >([])
@@ -68,8 +76,8 @@ export const LokeNumberList: React.FC<Props> = (props) => {
       setIsLoading(false)
       setPoliceCaseInfoResponse(data.policeCaseInfo as PoliceCaseInfo[])
     },
-    onError: (error) => {
-      // TODO
+    onError: () => {
+      setHasError(true)
     },
   })
 
@@ -97,6 +105,23 @@ export const LokeNumberList: React.FC<Props> = (props) => {
     setSelectedPoliceCases([])
   }
 
+  if (hasError) {
+    return (
+      <Box
+        marginBottom={6}
+        borderColor="red600"
+        borderWidth="standard"
+        paddingX={4}
+        paddingY={1}
+        borderRadius="standard"
+      >
+        <Text fontWeight="semiBold" color="red600">
+          {formatMessage(strings.errorMessage)}
+        </Text>
+      </Box>
+    )
+  }
+
   return (
     <>
       <Box
@@ -107,55 +132,59 @@ export const LokeNumberList: React.FC<Props> = (props) => {
         paddingY={1}
         borderRadius="standard"
       >
-        <Box paddingX={3} paddingY={2}>
-          <Checkbox
-            label={formatMessage(strings.selectAllCheckbox)}
-            name="Velja öll"
-            checked={
-              selectedPoliceCases.length > 0 &&
-              selectedPoliceCases.length === availablePoliceCases.length
-            }
-            disabled={availablePoliceCases.length === 0}
-            onChange={(event) => {
-              setSelectedPoliceCases(
-                event.target.checked ? availablePoliceCases : [],
-              )
-            }}
-          />
-        </Box>
         {isLoading ? (
           <Box textAlign="center" paddingY={2} paddingX={3} marginBottom={2}>
             <LoadingDots />
           </Box>
-        ) : availablePoliceCases && availablePoliceCases.length > 0 ? (
-          availablePoliceCases.map((info) => (
-            <CheckBoxContainer key={info.policeCaseNumber}>
+        ) : (
+          <>
+            <Box paddingX={3} paddingY={2}>
               <Checkbox
-                label={info.policeCaseNumber}
-                name={info.policeCaseNumber}
+                label={formatMessage(strings.selectAllCheckbox)}
+                name="Velja öll"
                 checked={
-                  selectedPoliceCases.find(
-                    (c) => c.policeCaseNumber === info.policeCaseNumber,
-                  )
-                    ? true
-                    : false
+                  selectedPoliceCases.length > 0 &&
+                  selectedPoliceCases.length === availablePoliceCases.length
                 }
-                backgroundColor="blue"
-                onChange={(e) => {
-                  handleSelectedPoliceCases(
-                    e.target.checked,
-                    info as PoliceCaseInfo,
+                disabled={availablePoliceCases.length === 0}
+                onChange={(event) => {
+                  setSelectedPoliceCases(
+                    event.target.checked ? availablePoliceCases : [],
                   )
                 }}
               />
-            </CheckBoxContainer>
-          ))
-        ) : (
-          <PoliceCaseFilesMessageBox
-            icon="checkmark"
-            iconColor="blue400"
-            message={formatMessage(strings.allNumbersSelected)}
-          />
+            </Box>
+            {availablePoliceCases && availablePoliceCases.length > 0 ? (
+              availablePoliceCases.map((info) => (
+                <CheckBoxContainer key={info.policeCaseNumber}>
+                  <Checkbox
+                    label={info.policeCaseNumber}
+                    name={info.policeCaseNumber}
+                    checked={
+                      selectedPoliceCases.find(
+                        (c) => c.policeCaseNumber === info.policeCaseNumber,
+                      )
+                        ? true
+                        : false
+                    }
+                    backgroundColor="blue"
+                    onChange={(e) => {
+                      handleSelectedPoliceCases(
+                        e.target.checked,
+                        info as PoliceCaseInfo,
+                      )
+                    }}
+                  />
+                </CheckBoxContainer>
+              ))
+            ) : (
+              <PoliceCaseFilesMessageBox
+                icon="checkmark"
+                iconColor="blue400"
+                message={formatMessage(strings.allNumbersSelected)}
+              />
+            )}
+          </>
         )}
       </Box>
       <Box

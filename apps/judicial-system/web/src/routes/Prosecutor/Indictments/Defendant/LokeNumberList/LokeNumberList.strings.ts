@@ -24,4 +24,10 @@ export const lokeNumberList = defineMessages({
     defaultMessage: 'Öll númer hafa verið valin',
     description: 'Textinn sem kemur þegar öll númer hafa verið valin',
   },
+  errorMessage: {
+    id: 'judicial.system.core:loke_number_list.error_message',
+    defaultMessage: 'Ekki tókst að sækja Löke númer',
+    description:
+      'Villuskilaboðin sem koma þegar tekst ekki að sækja Löke númerin',
+  },
 })

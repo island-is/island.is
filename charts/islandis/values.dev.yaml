@@ -406,7 +406,12 @@ api:
   namespace: 'islandis'
   podSecurityContext:
     fsGroup: 65534
-  pvcs: []
+  pvcs:
+    - accessModes: 'ReadWriteMany'
+      mountPath: '/etc/config/'
+      name: 'islyklar.p12'
+      size: '1Gi'
+      storageClass: 'efs-csi'
   replicaCount:
     default: 2
     max: 50
@@ -662,7 +667,12 @@ application-system-api:
   namespace: 'application-system'
   podSecurityContext:
     fsGroup: 65534
-  pvcs: []
+  pvcs:
+    - accessModes: 'ReadWriteMany'
+      mountPath: '/etc/config/'
+      name: 'islyklar.p12'
+      size: '1Gi'
+      storageClass: 'efs-csi'
   replicaCount:
     default: 2
     max: 60
@@ -1852,7 +1862,7 @@ search-indexer-service:
     ELASTIC_NODE: 'https://vpc-search-njkekqydiegezhr4vqpkfnw5la.eu-west-1.es.amazonaws.com'
     NODE_OPTIONS: '--max-old-space-size=2000'
     SERVERSIDE_FEATURES_ON: ''
-    SHOULD_SEARCH_INDEXER_RESOLVE_NESTED_ENTRIES: 'false'
+    SHOULD_SEARCH_INDEXER_RESOLVE_NESTED_ENTRIES: 'true'
   grantNamespaces: []
   grantNamespacesEnabled: false
   healthCheck:
@@ -1934,7 +1944,7 @@ search-indexer-service:
       NODE_OPTIONS: '--max-old-space-size=2048'
       S3_BUCKET: 'dev-es-custom-packages'
       SERVERSIDE_FEATURES_ON: ''
-      SHOULD_SEARCH_INDEXER_RESOLVE_NESTED_ENTRIES: 'false'
+      SHOULD_SEARCH_INDEXER_RESOLVE_NESTED_ENTRIES: 'true'
     secrets:
       CONTENTFUL_ACCESS_TOKEN: '/k8s/search-indexer/CONTENTFUL_ACCESS_TOKEN'
   namespace: 'search-indexer'
