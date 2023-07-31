@@ -11,9 +11,9 @@ import {
 import { FormContext } from '@island.is/judicial-system-web/src/components'
 import { PoliceCaseInfo } from '@island.is/judicial-system-web/src/graphql/schema'
 import { PoliceCaseFilesMessageBox } from '@island.is/judicial-system-web/src/routes/Prosecutor/components'
-import { useGetPoliceCaseInfoQuery } from '@island.is/judicial-system-web/src/routes/Prosecutor/graphql/PoliceCaseInfo.generated'
 
 import { PoliceCase } from '../Defendant'
+import { useGetPoliceCaseInfoQuery } from './PoliceCaseInfo.generated'
 import { lokeNumberList as strings } from './LokeNumberList.strings'
 
 interface Props {
