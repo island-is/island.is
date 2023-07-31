@@ -1,10 +1,4 @@
-import React, { ReactNode, Fragment, useEffect, useRef, useState } from 'react'
-import {
-  ApolloClient,
-  NormalizedCacheObject,
-  useApolloClient,
-  useQuery,
-} from '@apollo/client'
+import React, { ReactNode, Fragment } from 'react'
 import { useRouter } from 'next/router'
 import { Document } from '@contentful/rich-text-types'
 
@@ -17,18 +11,7 @@ import {
 } from '@island.is/island-ui/core'
 import { Slice as SliceType, richText } from '@island.is/island-ui/contentful'
 import { nlToBr } from '@island.is/web/utils/nlToBr'
-import {
-  GetUrlQuery,
-  QueryGetUrlArgs,
-  ErrorPageQuery,
-  QueryGetErrorPageArgs,
-} from '@island.is/web/graphql/schema'
-import { getLocaleFromPath } from '@island.is/web/i18n'
-import { LinkType, useLinkResolver } from '@island.is/web/hooks'
-import Layout, { LayoutProps } from '@island.is/web/layouts/main'
-
-import { GET_ERROR_PAGE, GET_URL_QUERY } from '../queries'
-import I18n from '@island.is/web/i18n/I18n'
+import { ErrorPageQuery } from '@island.is/web/graphql/schema'
 
 type MessageType = {
   title: string
@@ -62,135 +45,50 @@ interface ErrorProps {
   statusCode: number
 }
 
-export const ErrorPage: React.FC<ErrorProps> = ({ statusCode }) => {
-  const { asPath, push, query } = useRouter()
-  const activeLocale = getLocaleFromPath(asPath)
-  const isRedirecting = useRef(false)
-  const { linkResolver } = useLinkResolver()
-  const [layoutProps, setLayoutProps] = useState<LayoutProps>(null)
+export const ErrorScreen: React.FC<ErrorProps> = ({ statusCode, errPage }) => {
+  const { asPath } = useRouter()
 
-  const apolloClient = useApolloClient()
-
-  const { data: urlData, loading: urlDataLoading } = useQuery<
-    GetUrlQuery,
-    QueryGetUrlArgs
-  >(GET_URL_QUERY, {
-    variables: {
-      input: {
-        slug: asPath,
-        lang: activeLocale,
-      },
-    },
-  })
-
-  const { data: errorPageData, loading: errorPageDataLoading } = useQuery<
-    ErrorPageQuery,
-    QueryGetErrorPageArgs
-  >(GET_ERROR_PAGE, {
-    variables: {
-      input: {
-        lang: activeLocale,
-        errorCode: statusCode?.toString() ?? '500',
-      },
-    },
-  })
-
-  const errorMessages: MessageType = errorPageData?.getErrorPage
+  const errorMessages: MessageType = errPage
     ? {
-        ...errorPageData.getErrorPage,
+        ...errPage,
       }
     : fallbackMessage[statusCode]
 
-  // Temporary "fix", see https://github.com/vercel/next.js/issues/16931 for details
-  useEffect(() => {
-    const els = document.querySelectorAll('link[href*=".css"]')
-    Array.prototype.forEach.call(els, (el) => {
-      el.setAttribute('rel', 'stylesheet')
-    })
-  }, [])
-
-  useEffect(() => {
-    if (!activeLocale || !apolloClient) {
-      return null
-    }
-
-    Layout.getProps({
-      apolloClient: apolloClient as ApolloClient<NormalizedCacheObject>,
-      locale: activeLocale,
-      query,
-      req: undefined,
-      res: undefined,
-    }).then((props) => setLayoutProps(props))
-  }, [activeLocale, apolloClient, query])
-
-  if (statusCode === 404) {
-    if (urlDataLoading) {
-      return null
-    }
-
-    if (urlData?.getUrl) {
-      const page = urlData.getUrl?.page
-      const explicitRedirect = urlData.getUrl?.explicitRedirect
-
-      if (!page && explicitRedirect) {
-        if (!isRedirecting.current) {
-          isRedirecting.current = true
-          push(explicitRedirect)
-        }
-      } else if (page) {
-        if (!isRedirecting.current) {
-          isRedirecting.current = true
-          push(linkResolver(page.type as LinkType, [page.slug]).href)
-        }
-      }
-
-      if (isRedirecting.current) {
-        return null
-      }
-    }
-  }
-
-  const Wrapper = layoutProps ? Layout : Box
-
   return (
-    <I18n locale={activeLocale} translations={layoutProps?.namespace ?? {}}>
-      <Wrapper {...layoutProps}>
-        <GridContainer>
-          <GridRow>
-            <GridColumn span={'12/12'} paddingBottom={10} paddingTop={8}>
-              <Box
-                display="flex"
-                flexDirection="column"
-                width="full"
-                alignItems="center"
-              >
-                <Text
-                  variant="eyebrow"
-                  as="div"
-                  paddingBottom={2}
-                  color="purple400"
-                >
-                  {statusCode}
+    <GridContainer>
+      <GridRow>
+        <GridColumn span={'12/12'} paddingBottom={10} paddingTop={8}>
+          <Box
+            display="flex"
+            flexDirection="column"
+            width="full"
+            alignItems="center"
+          >
+            <Text
+              variant="eyebrow"
+              as="div"
+              paddingBottom={2}
+              color="purple400"
+            >
+              {statusCode}
+            </Text>
+            {errorMessages?.title && (
+              <>
+                <Text variant="h1" as="h1" paddingBottom={3}>
+                  {errorMessages.title}
                 </Text>
-                {!errorPageDataLoading && (
-                  <>
-                    <Text variant="h1" as="h1" paddingBottom={3}>
-                      {errorMessages.title}
-                    </Text>
-                    <Text variant="intro" as="div">
-                      {errorMessages.description
-                        ? richText([errorMessages.description] as SliceType[])
-                        : formatBody(errorMessages.body, asPath)}
-                    </Text>
-                  </>
-                )}
-              </Box>
-            </GridColumn>
-          </GridRow>
-        </GridContainer>
-      </Wrapper>
-    </I18n>
+                <Text variant="intro" as="div">
+                  {errorMessages.description
+                    ? richText([errorMessages.description] as SliceType[])
+                    : formatBody(errorMessages.body, asPath)}
+                </Text>
+              </>
+            )}
+          </Box>
+        </GridColumn>
+      </GridRow>
+    </GridContainer>
   )
 }
 
-export default ErrorPage
+export default ErrorScreen
