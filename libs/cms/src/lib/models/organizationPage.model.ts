@@ -101,5 +101,4 @@ export const mapOrganizationPage = ({
   defaultHeaderImage: fields.defaultHeaderImage
     ? mapImage(fields.defaultHeaderImage)
     : undefined,
-  secondaryNewsTags: (fields.secondaryNewsTags ?? []).map(mapGenericTag),
 })
