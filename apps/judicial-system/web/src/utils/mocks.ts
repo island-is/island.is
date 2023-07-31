@@ -6,8 +6,8 @@ import {
   UserRole,
   CaseType,
   CaseOrigin,
-  CurrentUserDocument,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { CurrentUserDocument } from '@island.is/judicial-system-web/src/components/UserProvider/currentUser.generated'
 
 export const mockCourt = {
   id: 'court_id',
