@@ -53,6 +53,9 @@ export class CaseListEntry {
   rulingDate?: Date
 
   @ApiPropertyOptional()
+  rulingSignatureDate?: Date
+
+  @ApiPropertyOptional()
   courtEndTime?: Date
 
   @ApiPropertyOptional({ enum: CaseAppealDecision })

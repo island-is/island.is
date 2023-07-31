@@ -32,8 +32,9 @@ export const UserProvider: React.FC<Props> = ({
     authenticated || Boolean(Cookies.get(CSRF_COOKIE_NAME))
 
   const { data } = useCurrentUserQuery({
-    fetchPolicy: 'no-cache',
     skip: !isAuthenticated || Boolean(user),
+    fetchPolicy: 'no-cache',
+    errorPolicy: 'all',
   })
 
   const loggedInUser = data?.currentUser

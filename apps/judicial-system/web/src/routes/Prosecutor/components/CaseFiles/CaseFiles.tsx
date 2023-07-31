@@ -85,8 +85,9 @@ export const CaseFiles: React.FC = () => {
     error: policeDataError,
   } = useQuery<GetPoliceCaseFilesQuery>(PoliceCaseFilesQuery, {
     variables: { input: { caseId: workingCase.id } },
-    fetchPolicy: 'no-cache',
     skip: workingCase.origin !== CaseOrigin.LOKE,
+    fetchPolicy: 'no-cache',
+    errorPolicy: 'all',
   })
   const router = useRouter()
   const { formatMessage } = useIntl()

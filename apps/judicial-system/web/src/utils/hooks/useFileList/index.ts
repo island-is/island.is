@@ -23,6 +23,7 @@ const useFileList = ({ caseId }: Parameters) => {
     { error: fullAccessError, variables: fullAccessVariables },
   ] = useGetSignedUrlLazyQuery({
     fetchPolicy: 'no-cache',
+    errorPolicy: 'all',
     onCompleted(data) {
       if (data?.getSignedUrl?.url) {
         window.open(data.getSignedUrl.url, '_blank')
@@ -35,6 +36,7 @@ const useFileList = ({ caseId }: Parameters) => {
     { error: limitedAccessError, variables: limitedAccessVariables },
   ] = useLimitedAccessGetSignedUrlLazyQuery({
     fetchPolicy: 'no-cache',
+    errorPolicy: 'all',
     onCompleted(data) {
       if (data?.limitedAccessGetSignedUrl?.url) {
         window.open(data.limitedAccessGetSignedUrl.url, '_blank')

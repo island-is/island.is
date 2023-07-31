@@ -72,8 +72,9 @@ const UploadFilesToPoliceCase: React.FC<{
     error: policeDataError,
   } = useQuery<GetPoliceCaseFilesQuery>(PoliceCaseFilesQuery, {
     variables: { input: { caseId } },
-    fetchPolicy: 'no-cache',
     skip: caseOrigin !== CaseOrigin.LOKE,
+    fetchPolicy: 'no-cache',
+    errorPolicy: 'all',
   })
 
   const [displayFiles, setDisplayFiles] = useState<UploadFile[]>(
