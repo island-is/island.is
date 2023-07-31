@@ -101,14 +101,6 @@ export const ErrorPage: React.FC<ErrorProps> = ({ statusCode }) => {
       }
     : fallbackMessage[statusCode]
 
-  // Temporary "fix", see https://github.com/vercel/next.js/issues/16931 for details
-  useEffect(() => {
-    const els = document.querySelectorAll('link[href*=".css"]')
-    Array.prototype.forEach.call(els, (el) => {
-      el.setAttribute('rel', 'stylesheet')
-    })
-  }, [])
-
   useEffect(() => {
     if (!activeLocale || !apolloClient) {
       return null
