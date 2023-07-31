@@ -1,11 +1,9 @@
-import { BrowserContext, expect, Page, test } from '@playwright/test'
-import { icelandicAndNoPopupUrl, urls } from '../../../../support/urls'
+import { BrowserContext, expect, test } from '@playwright/test'
+import { icelandicAndNoPopupUrl } from '../../../../support/urls'
 import { session } from '../../../../support/session'
-import { sleep } from '../../../../support/utils'
 
 test.describe('Consultation portal authenticated', () => {
   let context: BrowserContext
-  let consultationContext: BrowserContext
   const homeUrl = '/samradsgatt'
 
   test.beforeAll(async ({ browser }) => {
