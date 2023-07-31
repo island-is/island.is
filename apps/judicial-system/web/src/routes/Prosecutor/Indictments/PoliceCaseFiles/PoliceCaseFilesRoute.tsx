@@ -11,6 +11,15 @@ import { useIntl } from 'react-intl'
 import _isEqual from 'lodash/isEqual'
 import { useQuery } from '@apollo/client'
 
+import { Box, InputFileUpload, UploadFile } from '@island.is/island-ui/core'
+import {
+  CaseFile,
+  CaseFileCategory,
+  CaseFileState,
+  CrimeSceneMap,
+  IndictmentSubtypeMap,
+} from '@island.is/judicial-system/types'
+import * as constants from '@island.is/judicial-system/consts'
 import {
   FormContentContainer,
   FormContext,
@@ -27,14 +36,6 @@ import {
   titles,
   errors as errorMessages,
 } from '@island.is/judicial-system-web/messages'
-import { Box, InputFileUpload, UploadFile } from '@island.is/island-ui/core'
-import {
-  CaseFile,
-  CaseFileCategory,
-  CaseFileState,
-  CrimeSceneMap,
-  IndictmentSubtypeMap,
-} from '@island.is/judicial-system/types'
 import { useS3Upload } from '@island.is/judicial-system-web/src/utils/hooks'
 import { mapCaseFileToUploadFile } from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
@@ -42,13 +43,13 @@ import {
   CaseOrigin,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { PoliceCaseFilesQuery } from '@island.is/judicial-system-web/graphql'
-import * as constants from '@island.is/judicial-system/consts'
 
-import { PoliceCaseFileCheck, PoliceCaseFiles } from '../../components'
 import {
+  PoliceCaseFileCheck,
+  PoliceCaseFiles,
   mapPoliceCaseFileToPoliceCaseFileCheck,
   PoliceCaseFilesData,
-} from '../../components/CaseFiles/CaseFiles'
+} from '../../components'
 import { policeCaseFiles as m } from './PoliceCaseFilesRoute.strings'
 
 const UploadFilesToPoliceCase: React.FC<{
