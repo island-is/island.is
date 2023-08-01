@@ -3,11 +3,9 @@ import { Injectable, Inject } from '@nestjs/common'
 import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 import { SoffiaService } from './v1/soffia.service'
 import { BrokerService } from './v3/broker.service'
-import { PersonV3, SharedPerson } from './shared/types'
-import { Birthplace, Citizenship, LivingArrangement, Religion, Spouse } from './shared/models'
-import { userInfo } from 'os'
+import { SharedPerson } from './shared/types'
+import { Birthplace, Citizenship, Religion, Spouse, Housing } from './shared/models'
 import { mapMaritalStatus } from './shared/mapper'
-import { Housing } from './shared/models/housing.model'
 
 @Injectable()
 export class NationalRegistryService {
@@ -103,7 +101,7 @@ export class NationalRegistryService {
             },
           } : null
       }
-      return await this.v3.getLivingArrangement(nationalId, data?.rawData)
+      return await this.v3.getHousing(nationalId, data?.rawData)
     }
 
     getSpouse(nationalId: string, data?: SharedPerson): Spouse| null {

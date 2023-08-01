@@ -4,15 +4,6 @@ import {
   EinstaklingurDTOLoghTengsl,
   NationalRegistryV3ClientService,
 } from '@island.is/clients/national-registry-v3'
-import { LOGGER_PROVIDER } from '@island.is/logging'
-import type { Logger } from '@island.is/logging'
-import { Inject } from '@nestjs/common'
-import { Birthplace } from '../shared/models/birthplace.model'
-import { Custodian } from '../shared/models/custodian.model'
-import { LivingArrangement } from '../shared/models/housing.model'
-import { PersonBase } from '../shared/models/personBase.model'
-import { Religion } from '../shared/models/religion.model'
-import { Spouse } from '../shared/models/spouse.model'
 import {
   formatPersonDiscriminated,
   formatAddress,
@@ -22,23 +13,25 @@ import {
   formatBirthParent,
   formatBirthplace,
   formatReligion,
-  formatLivingArrangements,
+  formatHousing,
 } from './mapper'
 
-import { ExcludesFalse } from '../shared/utils'
-import { User } from '@island.is/auth-nest-tools'
-import { Address } from '../shared/models/address.model'
-import { Citizenship } from '../shared/models/citizenship.model'
-import { ChildCustody } from '../shared/models/childCustody.model'
 import { PersonV3 } from '../shared/types'
-import { Person } from '../shared/models'
+import { ExcludesFalse } from '../shared/utils'
+import { Address } from 'aws-sdk/clients/ec2'
+import {
+  PersonBase,
+  Custodian,
+  Spouse,
+  Citizenship,
+  ChildCustody,
+  Birthplace,
+  Religion,
+  Housing,
+} from '../shared/models'
 
 export class BrokerService {
-  constructor(
-    private nationalRegistryV3: NationalRegistryV3ClientService,
-    @Inject(LOGGER_PROVIDER)
-    private logger: Logger,
-  ) {}
+  constructor(private nationalRegistryV3: NationalRegistryV3ClientService) {}
 
   async getPerson(
     nationalId: string,
@@ -214,10 +207,10 @@ export class BrokerService {
     return data && formatReligion(data)
   }
 
-  async getLivingArrangement(
+  async getHousing(
     nationalId: string,
     rawData?: EinstaklingurDTOAllt | null,
-  ): Promise<LivingArrangement | null> {
+  ): Promise<Housing | null> {
     const data: [
       EinstaklingurDTOItarAuka | null,
       EinstaklingurDTOLoghTengsl | null,
@@ -228,6 +221,6 @@ export class BrokerService {
           this.nationalRegistryV3.getDomicile(nationalId),
         ])
 
-    return data && formatLivingArrangements(...data)
+    return data && formatHousing(...data)
   }
 }
