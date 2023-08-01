@@ -48,7 +48,7 @@ export function formatPerson(
   }
   return {
     nationalId: individual.kennitala,
-    fullName: individual.nafn,
+    name: individual.nafn,
     firstName: individual.fulltNafn?.eiginNafn ?? null,
     middleName: individual.fulltNafn?.milliNafn ?? null,
     lastName: individual.fulltNafn?.kenniNafn ?? null,
@@ -93,7 +93,7 @@ export function formatHousing(
         }
         return {
           nationalId: f.kennitala,
-          fullName: f.nafn,
+          name: f.nafn,
         }
       })
       .filter((Boolean as unknown) as ExcludesFalse),
@@ -113,7 +113,7 @@ export function formatSpouse(
 
   return {
     nationalId: spouse.makiKennitala,
-    fullName: spouse.makiNafn,
+    name: spouse.makiNafn,
     maritalStatus: mapMaritalStatus(spouse.hjuskaparstadaKodi ?? ''),
     cohabitationWithSpouse: spouse.sambudTexti ?? null,
   }
@@ -148,7 +148,7 @@ export function formatBirthParent(
 
   return {
     nationalId: individual.logForeldriKennitala,
-    fullName: individual.logForeldriNafn,
+    name: individual.logForeldriNafn,
   }
 }
 
@@ -195,7 +195,7 @@ export function formatCustodian(
 
   return {
     nationalId: custodian.forsjaAdiliKennitala,
-    fullName: custodian.forsjaAdiliNafn,
+    name: custodian.forsjaAdiliNafn,
     code: custodian.forsjaKodi ?? null,
     text: custodian.forsjaTexti ?? null,
     livesWithChild:

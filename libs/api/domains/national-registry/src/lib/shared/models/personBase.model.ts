@@ -12,5 +12,5 @@ export class PersonBase {
   fate?: string | null
 
   @Field(() => String, { nullable: true })
-  fullName!: string | null
+  name!: string | null
 }

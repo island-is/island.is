@@ -68,7 +68,7 @@ export class SoffiaService {
       api: 'v1',
       rawData: user,
       nationalId: user.Kennitala,
-      fullName: user.nafn1,
+      name: user.nafn1,
       firstName: user.Eiginnafn,
       middleName: user.Millinafn,
       lastName: user.Kenninafn,

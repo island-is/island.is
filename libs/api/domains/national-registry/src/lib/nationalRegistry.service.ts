@@ -134,7 +134,7 @@ export class NationalRegistryService {
     if (data?.api === 'v1') {
       return data.rawData
         ? {
-            fullName: data.rawData?.nafnmaka,
+            name: data.rawData?.nafnmaka,
             nationalId: data.rawData?.MakiKt,
             maritalStatus: mapMaritalStatus(data.rawData?.hju),
             cohabitant: data.rawData?.Sambudarmaki,

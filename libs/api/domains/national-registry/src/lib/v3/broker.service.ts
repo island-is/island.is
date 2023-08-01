@@ -79,7 +79,7 @@ export class BrokerService {
         }
         return {
           nationalId: l.logForeldriKennitala,
-          fullName: l.logForeldriNafn,
+          name: l.logForeldriNafn,
         }
       })
       .filter((Boolean as unknown) as ExcludesFalse)
@@ -103,7 +103,7 @@ export class BrokerService {
           return null
         }
         return {
-          fullName: custodian.forsjaAdiliNafn,
+          name: custodian.forsjaAdiliNafn,
           nationalId: custodian.forsjaAdiliKennitala,
           code: custodian.forsjaKodi ?? null,
           text: custodian.forsjaTexti ?? null,
@@ -172,7 +172,7 @@ export class BrokerService {
 
         return {
           nationalId: child.barnKennitala,
-          fullName: child.barnNafn,
+          name: child.barnNafn,
           custodians: childDetails.forsja?.forsjaradilar
             ?.map((f) => formatCustodian(f, childDetails.logheimilistengsl))
             .filter((Boolean as unknown) as ExcludesFalse),
