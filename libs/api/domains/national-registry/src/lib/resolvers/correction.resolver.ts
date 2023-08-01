@@ -10,10 +10,9 @@ import {
   CurrentUser,
 } from '@island.is/auth-nest-tools'
 import { Audit } from '@island.is/nest/audit'
-
-import { SoffiaService } from '../soffia.service'
-import { FamilyCorrectionInput } from '../dto/FamilyCorrectionInput.input'
-import { FamilyCorrectionResponse } from '../models/familyCorrection.model'
+import { FamilyCorrectionResponse } from '../shared/models'
+import { FamilyCorrectionInput } from '../v1/dto/FamilyCorrectionInput.input'
+import { SoffiaService } from '../v1/soffia.service'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.meDetails)

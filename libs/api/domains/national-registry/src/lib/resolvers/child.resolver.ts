@@ -11,9 +11,9 @@ import {
 } from '@island.is/auth-nest-tools'
 import { Audit } from '@island.is/nest/audit'
 
-import { SoffiaService } from '../soffia.service'
-import { FamilyChild } from '../types'
-import { Child } from '../../shared/models'
+import { SoffiaService } from '../v1/soffia.service'
+import { FamilyChild } from '../v1/types'
+import { Child } from '../shared/models'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.meDetails)

@@ -1,10 +1,10 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql'
 
-import { Gender, MaritalStatus } from '../../v1/types'
 import { BanMarking } from './banMarking.model'
 import { Citizenship } from './citizenship.model'
 import { Address } from './address.model'
 import { Spouse } from './spouse.model'
+import { Gender, MaritalStatus } from '../types'
 
 //DEPRECATE
 

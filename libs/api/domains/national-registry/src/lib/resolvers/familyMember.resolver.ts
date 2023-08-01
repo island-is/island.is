@@ -10,20 +10,19 @@ import {
   Scopes,
 } from '@island.is/auth-nest-tools'
 import { Audit } from '@island.is/nest/audit'
-
-import { FamilyMember, FamilyChild } from '../types'
-import { GetFamilyInfoInput } from '../dto/getFamilyDetailInput'
-import { SoffiaService } from '../soffia.service'
-import { Child, FamilyMember as FamilyMemberModel } from '../../shared/models'
+import { FamilyMember, Child } from '../shared/models'
+import { GetFamilyInfoInput } from '../v1/dto/getFamilyDetailInput'
+import { SoffiaService } from '../v1/soffia.service'
+import { FamilyChild } from '../v1/types'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.meDetails)
-@Resolver(() => FamilyMemberModel)
+@Resolver(() => FamilyMember)
 @Audit({ namespace: '@island.is/api/national-registry' })
 export class FamilyMemberResolver {
   constructor(private readonly nationalRegistryService: SoffiaService) {}
 
-  @Query(() => [FamilyMemberModel], {
+  @Query(() => [FamilyMember], {
     name: 'nationalRegistryFamily',
     nullable: true,
   })

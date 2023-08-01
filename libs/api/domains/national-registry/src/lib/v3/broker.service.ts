@@ -18,8 +18,8 @@ import {
 
 import { PersonV3 } from '../shared/types'
 import { ExcludesFalse } from '../shared/utils'
-import { Address } from 'aws-sdk/clients/ec2'
 import {
+  Address,
   PersonBase,
   Custodian,
   Spouse,

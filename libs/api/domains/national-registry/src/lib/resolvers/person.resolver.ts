@@ -34,11 +34,12 @@ import { Housing } from '../shared/models/housing.model'
 @Scopes(ApiScope.meDetails)
 @Resolver(() => Person)
 @Audit({ namespace: '@island.is/api/national-registry' })
-export class NationalRegistryPersonResolver {
+export class PersonResolver {
   constructor(private service: NationalRegistryService) {}
 
   @Query(() => Person, {
     nullable: true,
+    name: 'nationalRegistryPerson',
   })
   @Audit()
   async nationalRegistryPerson(
