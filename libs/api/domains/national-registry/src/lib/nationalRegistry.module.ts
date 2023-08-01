@@ -14,6 +14,7 @@ import {
   FamilyMemberResolver,
   ChildResolver,
   CorrectionResolver,
+  PersonResolver,
 } from './resolvers'
 
 @Module({
@@ -24,17 +25,21 @@ import {
       useFactory(
         config: ConfigType<typeof NationalRegistrySoffiaClientConfig>,
       ) {
-        return NationalRegistryApi.instantiateClass(config)
+        if (config) {
+          const api = NationalRegistryApi.instantiateClass(config)
+          return api
+        }
       },
       inject: [NationalRegistrySoffiaClientConfig.KEY],
     },
+    SoffiaService,
+    BrokerService,
     NationalRegistryService,
     UserResolver,
+    PersonResolver,
     FamilyMemberResolver,
     ChildResolver,
     CorrectionResolver,
-    SoffiaService,
-    BrokerService,
   ],
 })
 export class NationalRegistryModule {}

@@ -90,14 +90,12 @@ export class NationalRegistryV3ClientService {
       nationalId,
     })
 
-  getResidence = (
-    nationalId: string,
-  ): Promise<EinstaklingurDTOItarAuka | null> =>
+  getHousing = (nationalId: string): Promise<EinstaklingurDTOItarAuka | null> =>
     this.individualApi.midlunV02EinstaklingarNationalIdItarGet({
       nationalId,
     })
 
-  getDomicile = (
+  getDomicileData = (
     nationalId: string,
   ): Promise<EinstaklingurDTOLoghTengsl | null> =>
     this.individualApi.midlunV02EinstaklingarNationalIdLogheimilistengslGet({

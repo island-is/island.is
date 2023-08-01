@@ -73,7 +73,7 @@ const FamilyMember = () => {
         </Box>
       ) : (
         <IntroHeader
-          title={person?.spouse?.name || ''}
+          title={person?.spouse?.fullName || ''}
           intro={dataInfoSpouse}
           marginBottom={2}
         />
@@ -83,7 +83,7 @@ const FamilyMember = () => {
         <UserInfoLine
           title={formatMessage(m.myRegistration)}
           label={defineMessage(m.fullName)}
-          content={person?.spouse?.name || '...'}
+          content={person?.spouse?.fullName || '...'}
           loading={loading}
           translate="no"
         />

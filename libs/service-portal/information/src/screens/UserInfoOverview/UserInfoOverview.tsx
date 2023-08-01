@@ -57,7 +57,7 @@ const UserInfoOverview = () => {
         {spouseData?.nationalId && (
           <FamilyMemberCard
             key={spouseData.nationalId}
-            title={spouseData?.name || ''}
+            title={spouseData?.fullName || ''}
             nationalId={spouseData.nationalId}
             familyRelation="spouse"
           />

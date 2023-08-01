@@ -1,14 +1,14 @@
 import * as kennitala from 'kennitala'
 import some from 'lodash/some'
-import { Injectable, ForbiddenException, Inject } from '@nestjs/common'
+import { Injectable, ForbiddenException, Inject, } from '@nestjs/common'
 
 import { FamilyMember, FamilyChild, User } from './types'
 import { NationalRegistryApi } from '@island.is/clients/national-registry-v1'
 import { FamilyCorrectionInput } from './dto/FamilyCorrectionInput.input'
-import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 import { PersonV1 } from '../shared/types'
 import { mapGender, mapMaritalStatus } from '../shared/mapper'
 import { FamilyCorrectionResponse } from '../shared/models'
+import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 
 @Injectable()
 export class SoffiaService {
@@ -19,6 +19,7 @@ export class SoffiaService {
 
   async getUser(nationalId: User['nationalId']): Promise<User> {
     const user = await this.nationalRegistryApi.getUser(nationalId)
+    this.logger.debug(JSON.stringify(user))
     return {
       nationalId: user.Kennitala,
       name: user.Birtnafn,
@@ -63,12 +64,12 @@ export class SoffiaService {
   }
   async getPerson(nationalId: string): Promise<PersonV1> {
     const user = await this.nationalRegistryApi.getUser(nationalId)
-
+    this.logger.debug(JSON.stringify(user))
     return {
       api: 'v1',
       rawData: user,
       nationalId: user.Kennitala,
-      name: user.nafn1,
+      fullName: user.Fulltnafn,
       firstName: user.Eiginnafn,
       middleName: user.Millinafn,
       lastName: user.Kenninafn,
@@ -76,7 +77,8 @@ export class SoffiaService {
       legalResidence: user.Logheimili,
       gender: mapGender(user.Kyn),
       religion: user.Trufelag,
-      exceptionFromDirectMarketing: user.Bannmerking === '1' || user.Bannmerking?.toLowerCase() === 'já',
+      exceptionFromDirectMarketing:
+        user.Bannmerking === '1' || user.Bannmerking?.toLowerCase() === 'já',
       fate: user.Afdrif1 || user.Afdrif2,
     }
   }
@@ -230,7 +232,4 @@ export class SoffiaService {
 
     return userCorrectionResponse
   }
-
-
 }
-

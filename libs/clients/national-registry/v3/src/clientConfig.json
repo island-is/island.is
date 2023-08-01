@@ -113,7 +113,6 @@
                           "hjuskaparstada": {
                             "hjuskaparstadaKodi": "3",
                             "hjuskaparstadaTexti": "Gift(ur) eða staðfest samvist",
-                            "sambudKodi": null,
                             "sambudTexti": null,
                             "makiKennitala": "0987654321",
                             "makiNafn": "Anna Önnudóttir"
@@ -158,7 +157,9 @@
                                 "barnNafn": "Jón Jónsson",
                                 "logForeldriKennitala": "0101226789",
                                 "logForeldriNafn": "Jón Sigurðsson",
-                                "logForeldriFaedingardagur": "1922-01-01T00:00:00"
+                                "logForeldriFaedingardagur": "1922-01-01T00:00:00",
+                                "logForeldriAfdrif": "LÉST",
+                                "barnAfdrif": null
                               }
                             ],
                             "born": [
@@ -167,14 +168,18 @@
                                 "barnNafn": "Stúlka Jónsdóttir",
                                 "logForeldriKennitala": "1234567890",
                                 "logForeldriNafn": "Jón Jónsson",
-                                "logForeldriFaedingardagur": "1956-01-01T00:00:00"
+                                "logForeldriFaedingardagur": "1956-01-01T00:00:00",
+                                "logForeldriAfdrif": null,
+                                "barnAfdrif": null
                               },
                               {
                                 "barnKennitala": "0011221500",
                                 "barnNafn": "Drengur Jónsson",
                                 "logForeldriKennitala": "1234567890",
                                 "logForeldriNafn": "Jón Jónsson",
-                                "logForeldriFaedingardagur": "1956-01-01T00:00:00"
+                                "logForeldriFaedingardagur": "1956-01-01T00:00:00",
+                                "logForeldriAfdrif": null,
+                                "barnAfdrif": null
                               }
                             ]
                           },
@@ -325,7 +330,6 @@
                       "hjuskaparstada": {
                         "hjuskaparstadaKodi": "3",
                         "hjuskaparstadaTexti": "Gift(ur) eða staðfest samvist",
-                        "sambudKodi": null,
                         "sambudTexti": null,
                         "makiKennitala": "0987654321",
                         "makiNafn": "Anna Önnudóttir"
@@ -370,7 +374,9 @@
                             "barnNafn": "Jón Jónsson",
                             "logForeldriKennitala": "0101226789",
                             "logForeldriNafn": "Jón Sigurðsson",
-                            "logForeldriFaedingardagur": "1922-01-01T00:00:00"
+                            "logForeldriFaedingardagur": "1922-01-01T00:00:00",
+                            "logForeldriAfdrif": "LÉST",
+                            "barnAfdrif": null
                           }
                         ],
                         "born": [
@@ -379,14 +385,18 @@
                             "barnNafn": "Stúlka Jónsdóttir",
                             "logForeldriKennitala": "1234567890",
                             "logForeldriNafn": "Jón Jónsson",
-                            "logForeldriFaedingardagur": "1956-01-01T00:00:00"
+                            "logForeldriFaedingardagur": "1956-01-01T00:00:00",
+                            "logForeldriAfdrif": null,
+                            "barnAfdrif": null
                           },
                           {
                             "barnKennitala": "0011221500",
                             "barnNafn": "Drengur Jónsson",
                             "logForeldriKennitala": "1234567890",
                             "logForeldriNafn": "Jón Jónsson",
-                            "logForeldriFaedingardagur": "1956-01-01T00:00:00"
+                            "logForeldriFaedingardagur": "1956-01-01T00:00:00",
+                            "logForeldriAfdrif": null,
+                            "barnAfdrif": null
                           }
                         ]
                       },
@@ -442,6 +452,59 @@
                         "andlatLoghTengsl": "1122335678",
                         "andlatFaedingarStadurKodi": "0000",
                         "andlatFaedingarStadurHeiti": "Reykjavík"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "204": { "description": "No Content" },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Midlun/v0.2/Einstaklingar/{nationalId}/Grunn": {
+      "get": {
+        "tags": ["Einstaklingar"],
+        "parameters": [
+          {
+            "name": "nationalId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EinstaklingurDTOGrunn"
+                },
+                "examples": {
+                  "Grunnpakki": {
+                    "value": {
+                      "nafn": "Jón Jónsson",
+                      "kennitala": "1234567890",
+                      "tegundKennitolu": "Einstaklingur",
+                      "bannmerking": "false",
+                      "afdrif": null,
+                      "heimilisfang": {
+                        "husHeiti": "Aðalgata 1",
+                        "ibud": "0101",
+                        "postnumer": "101",
+                        "poststod": "Reykjavík",
+                        "sveitarfelag": "Reykjavík",
+                        "tegundHeimilisfangs": "Lögheimili"
                       }
                     }
                   }
@@ -642,7 +705,6 @@
                     "value": {
                       "hjuskaparstadaKodi": "3",
                       "hjuskaparstadaTexti": "Gift(ur) eða staðfest samvist",
-                      "sambudKodi": null,
                       "sambudTexti": null,
                       "makiKennitala": "0987654321",
                       "makiNafn": "Anna Önnudóttir"
@@ -982,7 +1044,9 @@
                           "barnNafn": "Jón Jónsson",
                           "logForeldriKennitala": "0101226789",
                           "logForeldriNafn": "Jón Sigurðsson",
-                          "logForeldriFaedingardagur": "1922-01-01T00:00:00"
+                          "logForeldriFaedingardagur": "1922-01-01T00:00:00",
+                          "logForeldriAfdrif": "LÉST",
+                          "barnAfdrif": null
                         }
                       ],
                       "born": [
@@ -991,14 +1055,18 @@
                           "barnNafn": "Stúlka Jónsdóttir",
                           "logForeldriKennitala": "1234567890",
                           "logForeldriNafn": "Jón Jónsson",
-                          "logForeldriFaedingardagur": "1956-01-01T00:00:00"
+                          "logForeldriFaedingardagur": "1956-01-01T00:00:00",
+                          "logForeldriAfdrif": null,
+                          "barnAfdrif": null
                         },
                         {
                           "barnKennitala": "0011221500",
                           "barnNafn": "Drengur Jónsson",
                           "logForeldriKennitala": "1234567890",
                           "logForeldriNafn": "Jón Jónsson",
-                          "logForeldriFaedingardagur": "1956-01-01T00:00:00"
+                          "logForeldriFaedingardagur": "1956-01-01T00:00:00",
+                          "logForeldriAfdrif": null,
+                          "barnAfdrif": null
                         }
                       ]
                     }
@@ -1275,171 +1343,6 @@
                         "tegundHeimilisfangs": "Lögheimili"
                       }
                     }
-                  },
-                  "Allir pakkar": {
-                    "value": {
-                      "nafn": "Jón Jónsson",
-                      "kennitala": "1234567890",
-                      "tegundKennitolu": "Einstaklingur",
-                      "bannmerking": "false",
-                      "afdrif": null,
-                      "heimilisfang": {
-                        "husHeiti": "Aðalgata 1",
-                        "ibud": "0101",
-                        "postnumer": "101",
-                        "poststod": "Reykjavík",
-                        "sveitarfelag": "Reykjavík",
-                        "tegundHeimilisfangs": "Lögheimili"
-                      },
-                      "logheimilistengsl": {
-                        "logheimilistengsl": "1234567890",
-                        "logheimilismedlimir": [
-                          {
-                            "kennitala": "0011221400",
-                            "nafn": "Stúlka Jónsdóttir"
-                          },
-                          {
-                            "kennitala": "0011221500",
-                            "nafn": "Drengur Jónsson"
-                          },
-                          { "kennitala": "1234567890", "nafn": "Jón Jónsson" }
-                        ]
-                      },
-                      "itarupplysingar": {
-                        "logheimiliskodi": "000000100010",
-                        "logheimiliskodi112": "000000100010",
-                        "logheimiliskodiSIsl": null,
-                        "adsetur": {
-                          "husHeiti": "Aðalstræti 1",
-                          "ibud": null,
-                          "postnumer": "800",
-                          "poststod": "Selfoss",
-                          "sveitarfelag": "Sveitarfélagið Árborg",
-                          "tegundHeimilisfangs": "Aðsetur"
-                        }
-                      },
-                      "hjuskaparstada": {
-                        "hjuskaparstadaKodi": "3",
-                        "hjuskaparstadaTexti": "Gift(ur) eða staðfest samvist",
-                        "sambudKodi": null,
-                        "sambudTexti": null,
-                        "makiKennitala": "0987654321",
-                        "makiNafn": "Anna Önnudóttir"
-                      },
-                      "kyn": { "kynKodi": "1", "kynTexti": "Karl" },
-                      "rikisfang": {
-                        "rikisfangKodi": "IS",
-                        "rikisfangLand": "Ísland"
-                      },
-                      "forsja": {
-                        "born": [
-                          {
-                            "barnKennitala": "0011221400",
-                            "barnNafn": "Stúlka Jónsdóttir",
-                            "forsjaAdiliKennitala": "1234567890",
-                            "forsjaAdiliNafn": "Jón Jónsson",
-                            "forsjaKodi": "18",
-                            "forsjaTexti": "Sameiginleg forsjá",
-                            "forsjaAdiliFaedingardagur": "1956-01-01T00:00:00"
-                          },
-                          {
-                            "barnKennitala": "0011221500",
-                            "barnNafn": "Drengur Jónsson",
-                            "forsjaAdiliKennitala": "1234567890",
-                            "forsjaAdiliNafn": "Jón Jónsson",
-                            "forsjaKodi": "18",
-                            "forsjaTexti": "Sameiginleg forsjá",
-                            "forsjaAdiliFaedingardagur": "1956-01-01T00:00:00"
-                          }
-                        ],
-                        "forsjaradilar": []
-                      },
-                      "faedingarstadur": {
-                        "faedingarDagur": "1956-01-01T00:00:00",
-                        "faedingarStadurKodi": "0000",
-                        "faedingarStadurHeiti": "Reykjavík"
-                      },
-                      "logforeldrar": {
-                        "logForeldrar": [
-                          {
-                            "barnKennitala": "1234567890",
-                            "barnNafn": "Jón Jónsson",
-                            "logForeldriKennitala": "0101226789",
-                            "logForeldriNafn": "Jón Sigurðsson",
-                            "logForeldriFaedingardagur": "1922-01-01T00:00:00"
-                          }
-                        ],
-                        "born": [
-                          {
-                            "barnKennitala": "0011221400",
-                            "barnNafn": "Stúlka Jónsdóttir",
-                            "logForeldriKennitala": "1234567890",
-                            "logForeldriNafn": "Jón Jónsson",
-                            "logForeldriFaedingardagur": "1956-01-01T00:00:00"
-                          },
-                          {
-                            "barnKennitala": "0011221500",
-                            "barnNafn": "Drengur Jónsson",
-                            "logForeldriKennitala": "1234567890",
-                            "logForeldriNafn": "Jón Jónsson",
-                            "logForeldriFaedingardagur": "1956-01-01T00:00:00"
-                          }
-                        ]
-                      },
-                      "fulltNafn": {
-                        "eiginNafn": "Jón Þór",
-                        "milliNafn": null,
-                        "kenniNafn": "Jónsson",
-                        "fulltNafn": "Jón Þór Jónsson",
-                        "nafnStadfest": "true"
-                      },
-                      "trufelag": {
-                        "trufelagKodi": "1",
-                        "trufelagHeiti": "Þjóðkirkjan"
-                      }
-                    }
-                  },
-                  "Látnir - grunnpakki": {
-                    "value": {
-                      "nafn": "Jóna Jónsdóttir",
-                      "kennitala": "1122335678",
-                      "tegundKennitolu": "Einstaklingur",
-                      "bannmerking": null,
-                      "afdrif": "LÉST",
-                      "heimilisfang": null
-                    }
-                  },
-                  "Látnir - allir pakkar": {
-                    "value": {
-                      "nafn": "Jóna Jónsdóttir",
-                      "kennitala": "1122335678",
-                      "tegundKennitolu": "Einstaklingur",
-                      "bannmerking": null,
-                      "afdrif": "LÉST",
-                      "heimilisfang": null,
-                      "latnir": {
-                        "andlatsDagur": "1992-01-01T00:00:00",
-                        "andlatsStadur": {
-                          "husHeiti": "Aðalgata 2",
-                          "ibud": "0101",
-                          "postnumer": "101",
-                          "poststod": "Reykjavík",
-                          "sveitarfelag": "Reykjavík",
-                          "tegundHeimilisfangs": "Andlátsstaður"
-                        }
-                      },
-                      "latnirItar": {
-                        "andlatKynKodi": "2",
-                        "andlatKynTexti": "Kona",
-                        "andlatHjuKodi": "6",
-                        "andlatHjuTexti": "Skilin(n) að lögum",
-                        "andlatMakiKennitala": null,
-                        "andlatMakiNafn": null,
-                        "andlatLoghTengsl": "1122335678",
-                        "andlatFaedingarStadurKodi": "0000",
-                        "andlatFaedingarStadurHeiti": "Reykjavík"
-                      }
-                    }
                   }
                 }
               }
@@ -1623,7 +1526,6 @@
                           "hjuskaparstada": {
                             "hjuskaparstadaKodi": "3",
                             "hjuskaparstadaTexti": "Gift(ur) eða staðfest samvist",
-                            "sambudKodi": null,
                             "sambudTexti": null,
                             "makiKennitala": "0987654321",
                             "makiNafn": "Anna Önnudóttir"
@@ -1668,7 +1570,9 @@
                                 "barnNafn": "Jón Jónsson",
                                 "logForeldriKennitala": "0101226789",
                                 "logForeldriNafn": "Jón Sigurðsson",
-                                "logForeldriFaedingardagur": "1922-01-01T00:00:00"
+                                "logForeldriFaedingardagur": "1922-01-01T00:00:00",
+                                "logForeldriAfdrif": "LÉST",
+                                "barnAfdrif": null
                               }
                             ],
                             "born": [
@@ -1677,14 +1581,18 @@
                                 "barnNafn": "Stúlka Jónsdóttir",
                                 "logForeldriKennitala": "1234567890",
                                 "logForeldriNafn": "Jón Jónsson",
-                                "logForeldriFaedingardagur": "1956-01-01T00:00:00"
+                                "logForeldriFaedingardagur": "1956-01-01T00:00:00",
+                                "logForeldriAfdrif": null,
+                                "barnAfdrif": null
                               },
                               {
                                 "barnKennitala": "0011221500",
                                 "barnNafn": "Drengur Jónsson",
                                 "logForeldriKennitala": "1234567890",
                                 "logForeldriNafn": "Jón Jónsson",
-                                "logForeldriFaedingardagur": "1956-01-01T00:00:00"
+                                "logForeldriFaedingardagur": "1956-01-01T00:00:00",
+                                "logForeldriAfdrif": null,
+                                "barnAfdrif": null
                               }
                             ]
                           },
@@ -1900,6 +1808,20 @@
         },
         "additionalProperties": false
       },
+      "EinstaklingurDTOGrunn": {
+        "type": "object",
+        "properties": {
+          "kennitala": { "type": "string", "nullable": true },
+          "nafn": { "type": "string", "nullable": true },
+          "tegundKennitolu": { "type": "string", "nullable": true },
+          "bannmerking": { "type": "string", "nullable": true },
+          "afdrif": { "type": "string", "nullable": true },
+          "heimilisfang": {
+            "$ref": "#/components/schemas/EinstaklingurDTOHeimili"
+          }
+        },
+        "additionalProperties": false
+      },
       "EinstaklingurDTOHeimili": {
         "type": "object",
         "properties": {
@@ -1917,7 +1839,6 @@
         "properties": {
           "hjuskaparstadaKodi": { "type": "string", "nullable": true },
           "hjuskaparstadaTexti": { "type": "string", "nullable": true },
-          "sambudKodi": { "type": "string", "nullable": true },
           "sambudTexti": { "type": "string", "nullable": true },
           "makiKennitala": { "type": "string", "nullable": true },
           "makiNafn": { "type": "string", "nullable": true }
@@ -2018,7 +1939,9 @@
             "type": "string",
             "format": "date-time",
             "nullable": true
-          }
+          },
+          "logForeldriAfdrif": { "type": "string", "nullable": true },
+          "barnAfdrif": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },

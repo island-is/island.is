@@ -1,5 +1,7 @@
+import { Inject, Injectable} from '@nestjs/common'
 import {
   EinstaklingurDTOAllt,
+  EinstaklingurDTOHeimili,
   EinstaklingurDTOItarAuka,
   EinstaklingurDTOLoghTengsl,
   NationalRegistryV3ClientService,
@@ -15,7 +17,6 @@ import {
   formatReligion,
   formatHousing,
 } from './mapper'
-
 import { PersonV3 } from '../shared/types'
 import { ExcludesFalse } from '../shared/utils'
 import {
@@ -29,9 +30,14 @@ import {
   Religion,
   Housing,
 } from '../shared/models'
+import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 
+@Injectable()
 export class BrokerService {
-  constructor(private nationalRegistryV3: NationalRegistryV3ClientService) {}
+  constructor(
+    private readonly nationalRegistryV3: NationalRegistryV3ClientService,
+    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
+  ) {}
 
   async getPerson(
     nationalId: string,
@@ -79,7 +85,7 @@ export class BrokerService {
         }
         return {
           nationalId: l.logForeldriKennitala,
-          name: l.logForeldriNafn,
+          fullName: l.logForeldriNafn,
         }
       })
       .filter((Boolean as unknown) as ExcludesFalse)
@@ -103,7 +109,7 @@ export class BrokerService {
           return null
         }
         return {
-          name: custodian.forsjaAdiliNafn,
+          fullName: custodian.forsjaAdiliNafn,
           nationalId: custodian.forsjaAdiliKennitala,
           code: custodian.forsjaKodi ?? null,
           text: custodian.forsjaTexti ?? null,
@@ -172,7 +178,7 @@ export class BrokerService {
 
         return {
           nationalId: child.barnKennitala,
-          name: child.barnNafn,
+          fullName: child.barnNafn,
           custodians: childDetails.forsja?.forsjaradilar
             ?.map((f) => formatCustodian(f, childDetails.logheimilistengsl))
             .filter((Boolean as unknown) as ExcludesFalse),
@@ -214,12 +220,16 @@ export class BrokerService {
     const data: [
       EinstaklingurDTOItarAuka | null,
       EinstaklingurDTOLoghTengsl | null,
+      EinstaklingurDTOHeimili | null
     ] = rawData
-      ? [rawData?.itarupplysingar ?? null, rawData?.logheimilistengsl ?? null]
+      ? [rawData?.itarupplysingar ?? null, rawData?.logheimilistengsl ?? null, rawData.heimilisfang ?? null]
       : await Promise.all([
-          this.nationalRegistryV3.getResidence(nationalId),
-          this.nationalRegistryV3.getDomicile(nationalId),
+          this.nationalRegistryV3.getHousing(nationalId),
+          this.nationalRegistryV3.getDomicileData(nationalId),
+          this.nationalRegistryV3.getAddress(nationalId),
         ])
+
+        this.logger.debug(JSON.stringify(data))
 
     return data && formatHousing(...data)
   }

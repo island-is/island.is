@@ -4,10 +4,12 @@ import { BrokerService } from './v3/broker.service'
 import { SharedPerson } from './shared/types'
 import { Birthplace, Citizenship, Spouse, Housing } from './shared/models'
 import { mapMaritalStatus } from './shared/mapper'
-
 @Injectable()
 export class NationalRegistryService {
-  constructor(private v1: SoffiaService, private v3: BrokerService) {}
+  constructor(
+    private readonly v1: SoffiaService,
+    private readonly v3: BrokerService,
+  ) {}
   async getUser(nationalId: string, api: 'v1' | 'v3') {
     if (api === 'v3') {
       return null
@@ -134,7 +136,7 @@ export class NationalRegistryService {
     if (data?.api === 'v1') {
       return data.rawData
         ? {
-            name: data.rawData?.nafnmaka,
+            fullName: data.rawData?.nafnmaka,
             nationalId: data.rawData?.MakiKt,
             maritalStatus: mapMaritalStatus(data.rawData?.hju),
             cohabitant: data.rawData?.Sambudarmaki,

@@ -48,7 +48,7 @@ export function formatPerson(
   }
   return {
     nationalId: individual.kennitala,
-    name: individual.nafn,
+    fullName: individual.nafn,
     firstName: individual.fulltNafn?.eiginNafn ?? null,
     middleName: individual.fulltNafn?.milliNafn ?? null,
     lastName: individual.fulltNafn?.kenniNafn ?? null,
@@ -75,32 +75,35 @@ export function formatReligion(
 }
 
 export function formatHousing(
-  residence: EinstaklingurDTOItarAuka | null | undefined,
-  domicile: EinstaklingurDTOLoghTengsl | null | undefined,
+  housing: EinstaklingurDTOItarAuka | null | undefined,
+  domicileData: EinstaklingurDTOLoghTengsl | null | undefined,
+  address: EinstaklingurDTOHeimili | null | undefined,
 ): Housing | null {
-  if (!residence || !domicile || !domicile.logheimilistengsl) {
+  const addressData = housing?.heimilisfang ?? address
+
+  const domicileId = domicileData?.logheimilistengsl ?? housing?.logheimiliskodi
+
+  if (!domicileId) {
     return null
   }
 
   return {
-    domicileId: domicile.logheimilistengsl,
-    domicileIdLast1stOfDecember: residence.logheimiliskodi112 ?? null,
-    domicileIdPreviousIcelandResidence: residence.logheimiliskodiSIsl ?? null,
-    domicileInhabitants: domicile.logheimilismedlimir
+    domicileId,
+    domicileIdLast1stOfDecember: housing?.logheimiliskodi112 ?? null,
+    domicileIdPreviousIcelandResidence: housing?.logheimiliskodiSIsl ?? null,
+    domicileInhabitants: domicileData?.logheimilismedlimir
       ?.map((f) => {
         if (!f.kennitala || !f.nafn) {
           return null
         }
         return {
           nationalId: f.kennitala,
-          name: f.nafn,
+          fullName: f.nafn,
         }
       })
       .filter((Boolean as unknown) as ExcludesFalse),
-    residence: residence.adsetur ? formatAddress(residence.adsetur) : null,
-    address: residence.heimilisfang
-      ? formatAddress(residence.heimilisfang)
-      : null,
+    residence: housing?.adsetur ? formatAddress(housing?.adsetur) : null,
+    address: addressData ? formatAddress(addressData) : null,
   }
 }
 
@@ -113,7 +116,7 @@ export function formatSpouse(
 
   return {
     nationalId: spouse.makiKennitala,
-    name: spouse.makiNafn,
+    fullName: spouse.makiNafn,
     maritalStatus: mapMaritalStatus(spouse.hjuskaparstadaKodi ?? ''),
     cohabitationWithSpouse: spouse.sambudTexti ?? null,
   }
@@ -148,7 +151,7 @@ export function formatBirthParent(
 
   return {
     nationalId: individual.logForeldriKennitala,
-    name: individual.logForeldriNafn,
+    fullName: individual.logForeldriNafn,
   }
 }
 
@@ -195,7 +198,7 @@ export function formatCustodian(
 
   return {
     nationalId: custodian.forsjaAdiliKennitala,
-    name: custodian.forsjaAdiliNafn,
+    fullName: custodian.forsjaAdiliNafn,
     code: custodian.forsjaKodi ?? null,
     text: custodian.forsjaTexti ?? null,
     livesWithChild:

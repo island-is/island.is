@@ -6,7 +6,7 @@ import {
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
 import type { User as AuthUser, User } from '@island.is/auth-nest-tools'
-import { UseGuards } from '@nestjs/common'
+import { Inject, UseGuards } from '@nestjs/common'
 import {
   Args,
   Context,
@@ -29,13 +29,17 @@ import {
 import { NationalRegistryService } from '../nationalRegistry.service'
 import { SharedPerson } from '../shared/types'
 import { Housing } from '../shared/models/housing.model'
+import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 
 @UseGuards(IdsAuthGuard, IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.meDetails)
 @Resolver(() => Person)
 @Audit({ namespace: '@island.is/api/national-registry' })
 export class PersonResolver {
-  constructor(private service: NationalRegistryService) {}
+  constructor(
+    private service: NationalRegistryService,
+    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
+  ) {}
 
   @Query(() => Person, {
     nullable: true,
@@ -46,7 +50,8 @@ export class PersonResolver {
     @CurrentUser() user: AuthUser,
     @Args('api', { nullable: true }) api?: 'v1' | 'v3',
   ): Promise<Person | null> {
-    return this.service.getPerson(user.nationalId, api ?? 'v1')
+    const person = await this.service.getPerson(user.nationalId, api ?? 'v1')
+    return person
   }
 
   @ResolveField('custodians', () => [Custodian], {
@@ -61,7 +66,7 @@ export class PersonResolver {
       return null
     }
 
-    return this.service.getCustodians(person.nationalId)
+    return this.service.getCustodians(person.nationalId, person)
   }
 
   @ResolveField('birthParents', () => [PersonBase], {
@@ -76,7 +81,7 @@ export class PersonResolver {
       return null
     }
 
-    return this.service.getParents(person.nationalId)
+    return this.service.getParents(person.nationalId, person)
   }
 
   @ResolveField('childCustody', () => [ChildCustody], {
@@ -101,7 +106,7 @@ export class PersonResolver {
   async resolveBirthPlace(
     @Parent() person: SharedPerson,
   ): Promise<Birthplace | null> {
-    return this.service.getBirthplace(person.nationalId)
+    return this.service.getBirthplace(person.nationalId, person)
   }
 
   @ResolveField('housing', () => Housing, {
@@ -111,7 +116,7 @@ export class PersonResolver {
   async resolveHousing(
     @Parent() person: SharedPerson,
   ): Promise<Housing | null> {
-    return this.service.getHousing(person.nationalId)
+    return this.service.getHousing(person.nationalId, person)
   }
 
   @ResolveField('citizenship', () => Citizenship, {
@@ -121,12 +126,12 @@ export class PersonResolver {
   async resolveCitizenship(
     @Parent() person: SharedPerson,
   ): Promise<Citizenship | null> {
-    return this.service.getCitizenship(person.nationalId)
+    return this.service.getCitizenship(person.nationalId, person)
   }
 
   @ResolveField('spouse', () => Spouse, { nullable: true })
   @Audit()
   async resolveSpouse(@Parent() person: SharedPerson): Promise<Spouse | null> {
-    return this.service.getSpouse(person.nationalId)
+    return this.service.getSpouse(person.nationalId, person)
   }
 }
