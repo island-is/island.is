@@ -1,5 +1,5 @@
 import React from 'react'
-import type { NextPageContext } from 'next'
+import type { GetServerSidePropsContext, NextPageContext } from 'next'
 import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
 import {
   ErrorPageQuery,
@@ -59,7 +59,7 @@ class ErrorPage extends React.Component<ErrorPageProps> {
     return <ErrorScreen errPage={errorPage} statusCode={statusCode} />
   }
 
-  static async getInitialProps(props: ErrorPageInitialProps) {
+  static async getProps(props: ErrorPageInitialProps) {
     const { err, res, asPath = '' } = props
     const statusCode = err?.statusCode ?? res?.statusCode ?? 500
     const locale = getLocaleFromPath(asPath)
@@ -123,8 +123,8 @@ class ErrorPage extends React.Component<ErrorPageProps> {
       const [layoutPropsResponse, pagePropsResponse] = await Promise.all([
         Layout.getProps({
           ...props,
-          res: undefined,
-          req: undefined,
+          res: props.res,
+          req: (props.req as unknown) as GetServerSidePropsContext['req'],
           locale,
         }),
         props.apolloClient.query<ErrorPageQuery, ErrorPageQueryVariables>({
@@ -154,4 +154,12 @@ class ErrorPage extends React.Component<ErrorPageProps> {
   }
 }
 
-export default withApollo(ErrorPage)
+const Screen = withApollo(ErrorPage)
+
+const ScreenWithGetInitialProps: typeof Screen & {
+  getInitialProps?: typeof Screen.getProps
+} = Screen
+
+ScreenWithGetInitialProps.getInitialProps = Screen.getProps
+
+export default ScreenWithGetInitialProps
