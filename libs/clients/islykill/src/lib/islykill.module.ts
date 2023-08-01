@@ -8,6 +8,8 @@ import { Configuration, IslyklarApi } from '../../gen/fetch'
 
 export interface IslykillApiModuleConfig {
   cert: string
+  ca: string
+  key: string
   passphrase: string
   basePath: string
 }
@@ -18,23 +20,28 @@ export class IslykillApiModule {
       logger.error(errorMsg)
     }
 
-    let pfx: Buffer | undefined
+    let cert: Buffer | undefined
+    let ca: Buffer | undefined
+    let key: Buffer | undefined
+
+    console.log('islykill config', config)
     try {
-      if (!config.cert) {
+      if (!config.cert || !config.key) {
         throw Error('IslykillApiModule certificate not provided')
       }
 
-      const data = fs.readFileSync(config.cert, {
-        encoding: 'base64',
-      })
+      cert = fs.readFileSync(config.cert)
+      ca = fs.readFileSync(config.ca)
+      key = fs.readFileSync(config.key)
 
-      pfx = Buffer.from(data, 'base64')
+      console.log('loading islyklar cert and key', { cert, ca, key })
     } catch (err) {
       lykillError(err)
     }
 
     if (!config.passphrase) {
-      logger.error('IslykillApiModule secret not provided.')
+      //logger.error('IslykillApiModule secret not provided.')
+        logger.warn('IslykillApiModule secret not provided. Are you using unsecure private key?')
     }
     const passphrase = config.passphrase
 
@@ -50,10 +57,15 @@ export class IslykillApiModule {
                 fetchApi: createEnhancedFetch({
                   name: 'clients-islykill',
                   timeout: 20000,
-                  clientCertificate: pfx && {
-                    pfx,
+                  clientCertificate: cert && {
+                    cert,
+                    ca,
+                    key,
                     passphrase,
                   },
+                  // agentOptions: {
+                  //   rejectUnauthorized: false,
+                  // }
                 }),
               }),
             ),

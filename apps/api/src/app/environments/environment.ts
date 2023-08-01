@@ -112,6 +112,8 @@ const prodConfig = () => ({
   },
   islykill: {
     cert: process.env.ISLYKILL_CERT,
+    ca: process.env.ISLYKILL_CA,
+    key: process.env.ISLYKILL_KEY,
     passphrase: process.env.ISLYKILL_SERVICE_PASSPHRASE,
     basePath: process.env.ISLYKILL_SERVICE_BASEPATH,
   },
@@ -246,6 +248,8 @@ const devConfig = () => ({
   },
   islykill: {
     cert: process.env.ISLYKILL_CERT,
+    ca: process.env.ISLYKILL_CA,
+    key: process.env.ISLYKILL_KEY,
     passphrase: process.env.ISLYKILL_SERVICE_PASSPHRASE,
     basePath: process.env.ISLYKILL_SERVICE_BASEPATH,
   },

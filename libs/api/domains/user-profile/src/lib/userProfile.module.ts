@@ -35,6 +35,8 @@ export class UserProfileModule {
       imports: [
         IslykillApiModule.register({
           cert: config.islykill.cert,
+          ca: config.islykill.ca,
+          key: config.islykill.key,
           passphrase: config.islykill.passphrase,
           basePath: config.islykill.basePath,
         }),
