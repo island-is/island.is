@@ -79,6 +79,32 @@ Disabled.args = {
   disabled: true,
 }
 
+export const WithCreatableOption = Template.bind({})
+WithCreatableOption.args = {
+  name: 'creatableSelect',
+  label: 'Color',
+  placeholder: 'Choose a color',
+  isCreatable: true,
+  options: [
+    {
+      label: 'Yellow',
+      value: 'yellow',
+    },
+    {
+      label: 'Red',
+      value: 'red',
+    },
+    {
+      label: 'Green',
+      value: 'green',
+    },
+    {
+      label: 'Blue',
+      value: 'blue',
+    },
+  ],
+}
+
 export const TempTest = () => (
   <div style={{ height: 900 }}>
     <h1>WIP</h1>

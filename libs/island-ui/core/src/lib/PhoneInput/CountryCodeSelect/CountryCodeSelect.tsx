@@ -76,6 +76,7 @@ export const CountryCodeSelect = <
         defaultValue={defaultValue}
         inputHasLabel={inputHasLabel}
         size={size}
+        unstyled
         components={{
           Control,
           Input,

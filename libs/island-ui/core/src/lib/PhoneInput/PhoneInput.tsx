@@ -69,7 +69,7 @@ const getDefaultCountryCode = (phoneNumber?: string) => {
   return DEFAULT_COUNTRY_CODE
 }
 
-type PhoneInputProps = Omit<
+export type PhoneInputProps = Omit<
   InputProps,
   | 'rows'
   | 'type'

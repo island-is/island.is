@@ -114,9 +114,7 @@ export const SingleValue = (
     | null
   return (
     <components.SingleValue
-      className={cn(styles.singleValue, styles.singleValueSizes[size], {
-        [styles.singleValuePushTop]: !!inputHasLabel,
-      })}
+      className={cn(styles.singleValue, styles.singleValueSizes[size])}
       {...props}
     >
       {value ? value[0].value : ''}
@@ -131,10 +129,13 @@ export const ValueContainer = (
     GroupBase<ReactSelectOption>
   >,
 ) => {
-  const { inputHasLabel } = props.selectProps
+  const { inputHasLabel, size } = props.selectProps
   return (
     <components.ValueContainer
-      className={cn({ [styles.valueContainer]: !!inputHasLabel })}
+      className={cn({
+        [styles.valueContainer]: !!inputHasLabel,
+        [styles.valueContainerSmall]: size === 'sm',
+      })}
       {...props}
     >
       {props.children}
@@ -170,7 +171,8 @@ export const Input = (
   const { size = 'md', ariaError } = props.selectProps
   return (
     <components.Input
-      className={cn(styles.input, styles.inputSize[size])}
+      className={styles.inputContainer}
+      inputClassName={styles.input}
       {...props}
       {...ariaError}
       data-testid={props?.selectProps?.dataTestId}
