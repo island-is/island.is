@@ -5,7 +5,7 @@ import {
   UserResolver,
   ChildResolver,
   CorrectionResolver,
-} from './resolvers'
+} from './v1/resolvers'
 import {
   NationalRegistryApi,
   NationalRegistrySoffiaClientConfig,
@@ -13,7 +13,8 @@ import {
 import { NationalRegistryService } from './nationalRegistry.service'
 import { NationalRegistryV3ClientModule } from '@island.is/clients/national-registry-v3'
 import { ConfigType } from '@nestjs/config'
-import { SoffiaService } from './services/v1/soffia.service'
+import { SoffiaService } from './v1/soffia.service'
+import { BrokerService } from './v3/broker.service'
 
 @Module({
   imports: [NationalRegistryV3ClientModule],
@@ -33,7 +34,7 @@ import { SoffiaService } from './services/v1/soffia.service'
     ChildResolver,
     CorrectionResolver,
     SoffiaService,
-    NationalRegistryService,
+    BrokerService,
   ],
 })
 export class NationalRegistryModule {}

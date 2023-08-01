@@ -1,4 +1,4 @@
-export { ISLFjolskyldan } from './lib/dto'
+export { ISLFjolskyldan, ISLEinstaklingur } from './lib/dto'
 export {
   NationalRegistryApi,
   NationalRegistryConfig,

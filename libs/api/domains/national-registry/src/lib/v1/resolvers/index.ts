@@ -1,0 +1,5 @@
+export { FamilyMemberResolver } from './familyMember.resolver'
+export { UserResolver } from '../../resolvers/user.resolver'
+export { ChildResolver } from './child.resolver'
+export { CorrectionResolver } from './correction.resolver'
+export * from './scalars'
