@@ -20,7 +20,7 @@ type MessageType = {
 }
 
 const formatBody = (body: string, path: string): ReactNode =>
-  body.split('{PATH}').map((s, i) => (
+  body?.split('{PATH}').map((s, i) => (
     <Fragment key={i}>
       {i > 0 && <i>{path}</i>}
       {nlToBr(s)}
