@@ -16,7 +16,7 @@ import { PLATE_AVAILABLE_SEARCH_QUERY } from '@island.is/web/screens/queries/Pub
 
 import * as styles from './PlateAvailableSearch.css'
 
-const REPLACEMENT_KEY = '{{USER_INPUT}}'
+const PLATE_NUMBER_REPLACEMENT_KEY = '{{USER_INPUT}}'
 
 interface Props {
   text: string
@@ -136,8 +136,11 @@ const PlateAvailableSearch = ({ slice }: PlateAvailableSearchProps) => {
         data.plateAvailable?.regno &&
         data.plateAvailable.available && (
           <TextWithReplacedBoldValue
-            text={n('plateAvailableText', `Merkið ${REPLACEMENT_KEY} er laust`)}
-            replacementKey={REPLACEMENT_KEY}
+            text={n(
+              'plateAvailableText',
+              `Merkið ${PLATE_NUMBER_REPLACEMENT_KEY} er laust`,
+            )}
+            replacementKey={PLATE_NUMBER_REPLACEMENT_KEY}
             replacementValue={data.plateAvailable.regno}
           />
         )}
@@ -149,9 +152,9 @@ const PlateAvailableSearch = ({ slice }: PlateAvailableSearchProps) => {
           <TextWithReplacedBoldValue
             text={n(
               'plateUnavailableText',
-              `Merkið ${REPLACEMENT_KEY} er í notkun og ekki laust til úthlutunar`,
+              `Merkið ${PLATE_NUMBER_REPLACEMENT_KEY} er í notkun og ekki laust til úthlutunar`,
             )}
-            replacementKey={REPLACEMENT_KEY}
+            replacementKey={PLATE_NUMBER_REPLACEMENT_KEY}
             replacementValue={data.plateAvailable.regno}
           />
         )}
