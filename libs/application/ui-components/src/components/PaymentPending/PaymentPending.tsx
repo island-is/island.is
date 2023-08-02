@@ -27,6 +27,8 @@ export const PaymentPending: FC<PaymentPendingProps> = ({
     application.id,
   )
 
+  console.log('application', application)
+
   const shouldRedirect = !isComingFromRedirect() && paymentStatus.paymentUrl
 
   const [submitApplication, { error: submitError }] = useSubmitApplication({
