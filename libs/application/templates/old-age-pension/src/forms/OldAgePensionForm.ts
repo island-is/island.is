@@ -221,13 +221,14 @@ export const OldAgePensionForm: Form = buildForm({
                 buildTextField({
                   id: 'applicantInfo.spouseID',
                   title: oldAgePensionFormMessage.applicant.applicantInfoId,
+                  format: '######-####',
                   width: 'half',
                   backgroundColor: 'white',
                   disabled: true,
                   defaultValue: (application: Application) => {
                     const data = application.externalData.nationalRegistrySpouse
                       .data as NationalRegistrySpouse
-                    return data.nationalId
+                    return kennitala.format(data.nationalId)
                   },
                   condition: (answers, externalData) => {
                     const { spouseNationalId } = getApplicationExternalData(
