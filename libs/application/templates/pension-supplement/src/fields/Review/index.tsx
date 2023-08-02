@@ -82,35 +82,50 @@ export const Review: FC<ReviewScreenProps> = ({
   return (
     <>
       {state === `${States.DRAFT}` && (
-        <Box>
-          <Box marginBottom={2}>
-            <Text variant="h2">
-              {formatMessage(pensionSupplementFormMessage.confirm.title)}
-            </Text>
+        <Box display="flex" justifyContent="spaceBetween">
+          <Box>
+            <Box marginBottom={2}>
+              <Text variant="h2">
+                {formatMessage(pensionSupplementFormMessage.confirm.title)}
+              </Text>
+            </Box>
+            <Box marginBottom={10}>
+              <Text variant="default">
+                {formatMessage(
+                  pensionSupplementFormMessage.confirm.description,
+                )}
+              </Text>
+            </Box>
           </Box>
-          <Box marginBottom={10}>
-            <Text variant="default">
-              {formatMessage(pensionSupplementFormMessage.confirm.description)}
-            </Text>
+          <Box>
+            <Button
+              variant="utility"
+              icon="print"
+              onClick={(e) => {
+                e.preventDefault()
+                window.print()
+              }}
+            />
           </Box>
         </Box>
       )}
 
       {canView && (
         <Box
-          display={['block', 'block', 'block', 'flex']}
+          display="flex"
           justifyContent="spaceBetween"
+          marginTop={5}
+          marginBottom={10}
         >
-          <Box marginBottom={2}>
+          <Box>
             <Text variant="h2">
               {formatMessage(
                 pensionSupplementFormMessage.confirm.overviewTitle,
               )}
             </Text>
           </Box>
-
-          {state === `${States.TRYGGINGASTOFNUN_SUBMITTED}` && (
-            <Box>
+          <Box display="flex" columnGap={2} alignItems="center">
+            {state === `${States.TRYGGINGASTOFNUN_SUBMITTED}` && (
               <Button
                 colorScheme="default"
                 iconType="filled"
@@ -126,8 +141,16 @@ export const Review: FC<ReviewScreenProps> = ({
                   pensionSupplementFormMessage.confirm.buttonsEdit,
                 )}
               </Button>
-            </Box>
-          )}
+            )}
+            <Button
+              variant="utility"
+              icon="print"
+              onClick={(e) => {
+                e.preventDefault()
+                window.print()
+              }}
+            />
+          </Box>
         </Box>
       )}
       <BaseInformation {...childProps} />
