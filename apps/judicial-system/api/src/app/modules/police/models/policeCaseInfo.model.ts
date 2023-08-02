@@ -7,6 +7,7 @@ export class PoliceCaseInfo {
 
   @Field(() => String, { nullable: true })
   readonly place?: string
+
   @Field(() => String, { nullable: true })
   readonly date?: string
 }
