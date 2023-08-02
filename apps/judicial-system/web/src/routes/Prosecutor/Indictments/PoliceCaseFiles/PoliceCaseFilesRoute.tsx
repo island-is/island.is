@@ -9,7 +9,6 @@ import React, {
 import router from 'next/router'
 import { useIntl } from 'react-intl'
 import _isEqual from 'lodash/isEqual'
-import { useQuery } from '@apollo/client'
 
 import { Box, InputFileUpload, UploadFile } from '@island.is/island-ui/core'
 import {
@@ -38,11 +37,7 @@ import {
 } from '@island.is/judicial-system-web/messages'
 import { useS3Upload } from '@island.is/judicial-system-web/src/utils/hooks'
 import { mapCaseFileToUploadFile } from '@island.is/judicial-system-web/src/utils/formHelper'
-import {
-  GetPoliceCaseFilesQuery,
-  CaseOrigin,
-} from '@island.is/judicial-system-web/src/graphql/schema'
-import { PoliceCaseFilesQuery } from '@island.is/judicial-system-web/graphql'
+import { CaseOrigin } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import {
   PoliceCaseFileCheck,
@@ -51,6 +46,7 @@ import {
   PoliceCaseFilesData,
 } from '../../components'
 import { policeCaseFiles as m } from './PoliceCaseFilesRoute.strings'
+import { useGetIndictmentPoliceCaseFilesQuery } from './getIndictmentPoliceCaseFiles.generated'
 
 const UploadFilesToPoliceCase: React.FC<{
   caseId: string
@@ -71,7 +67,7 @@ const UploadFilesToPoliceCase: React.FC<{
     data: policeData,
     loading: policeDataLoading,
     error: policeDataError,
-  } = useQuery<GetPoliceCaseFilesQuery>(PoliceCaseFilesQuery, {
+  } = useGetIndictmentPoliceCaseFilesQuery({
     variables: { input: { caseId } },
     skip: caseOrigin !== CaseOrigin.LOKE,
     fetchPolicy: 'no-cache',

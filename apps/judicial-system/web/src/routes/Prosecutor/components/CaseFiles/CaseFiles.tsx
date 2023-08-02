@@ -8,7 +8,6 @@ import React, {
 import { useIntl } from 'react-intl'
 import { uuid } from 'uuidv4'
 import { useRouter } from 'next/router'
-import { useQuery } from '@apollo/client'
 
 import {
   ProsecutorCaseInfo,
@@ -45,15 +44,12 @@ import {
   isRestrictionCase,
   PoliceCaseFile,
 } from '@island.is/judicial-system/types'
-import { PoliceCaseFilesQuery } from '@island.is/judicial-system-web/graphql'
-import {
-  GetPoliceCaseFilesQuery,
-  CaseOrigin,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+import { CaseOrigin } from '@island.is/judicial-system-web/src/graphql/schema'
 import { fileExtensionWhitelist } from '@island.is/island-ui/core/types'
 import * as constants from '@island.is/judicial-system/consts'
 
 import { PoliceCaseFileCheck, PoliceCaseFiles } from '../../components'
+import { useGetPoliceCaseFilesQuery } from './getPoliceCaseFiles.generated'
 import { caseFiles as strings } from './CaseFiles.strings'
 
 export interface PoliceCaseFilesData {
@@ -83,7 +79,7 @@ export const CaseFiles: React.FC = () => {
     data: policeData,
     loading: policeDataLoading,
     error: policeDataError,
-  } = useQuery<GetPoliceCaseFilesQuery>(PoliceCaseFilesQuery, {
+  } = useGetPoliceCaseFilesQuery({
     variables: { input: { caseId: workingCase.id } },
     skip: workingCase.origin !== CaseOrigin.LOKE,
     fetchPolicy: 'no-cache',
