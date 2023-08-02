@@ -1,4 +1,4 @@
-query CurrentUser {
+query GetCurrentUser {
   currentUser {
     id
     created

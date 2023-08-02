@@ -7,7 +7,7 @@ import {
   User,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { useCurrentUserQuery } from './currentUser.generated'
+import { useGetCurrentUserQuery } from './getCurrentUser.generated'
 
 interface UserProvider {
   isAuthenticated?: boolean
@@ -31,7 +31,7 @@ export const UserProvider: React.FC<Props> = ({
   const isAuthenticated =
     authenticated || Boolean(Cookies.get(CSRF_COOKIE_NAME))
 
-  const { data } = useCurrentUserQuery({
+  const { data } = useGetCurrentUserQuery({
     skip: !isAuthenticated || Boolean(user),
     fetchPolicy: 'no-cache',
     errorPolicy: 'all',
