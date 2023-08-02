@@ -19,7 +19,6 @@ export class SoffiaService {
 
   async getUser(nationalId: User['nationalId']): Promise<User> {
     const user = await this.nationalRegistryApi.getUser(nationalId)
-    this.logger.debug(JSON.stringify(user))
     return {
       nationalId: user.Kennitala,
       name: user.Birtnafn,
@@ -64,7 +63,6 @@ export class SoffiaService {
   }
   async getPerson(nationalId: string): Promise<PersonV1> {
     const user = await this.nationalRegistryApi.getUser(nationalId)
-    this.logger.debug(JSON.stringify(user))
     return {
       api: 'v1',
       rawData: user,

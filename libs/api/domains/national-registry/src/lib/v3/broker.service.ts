@@ -228,9 +228,6 @@ export class BrokerService {
           this.nationalRegistryV3.getDomicileData(nationalId),
           this.nationalRegistryV3.getAddress(nationalId),
         ])
-
-        this.logger.debug(JSON.stringify(data))
-
     return data && formatHousing(...data)
   }
 }
