@@ -1,6 +1,6 @@
 import { ApolloError } from '@apollo/client'
 
-import { RulingSignatureConfirmationQuery } from '@island.is/judicial-system-web/src/components/SigningModal/RulingSignature.generated'
+import { RulingSignatureConfirmationQuery } from './getRulingSignatureConfirmation.generated'
 import { getSigningProgress } from './SigningModal'
 
 type SignatureConfirmation = RulingSignatureConfirmationQuery['rulingSignatureConfirmation']

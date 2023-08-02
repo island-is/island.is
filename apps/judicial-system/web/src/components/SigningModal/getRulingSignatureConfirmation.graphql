@@ -1,10 +1,3 @@
-mutation RequestRulingSignature($input: RequestSignatureInput!) {
-  requestRulingSignature(input: $input) {
-    controlCode
-    documentToken
-  }
-}
-
 query RulingSignatureConfirmation($input: SignatureConfirmationQueryInput!) {
   rulingSignatureConfirmation(input: $input) {
     documentSigned

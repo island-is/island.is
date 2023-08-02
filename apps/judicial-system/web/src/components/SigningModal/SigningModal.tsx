@@ -25,9 +25,11 @@ import MarkdownWrapper from '../MarkdownWrapper/MarkdownWrapper'
 import {
   RequestRulingSignatureMutation,
   useRequestRulingSignatureMutation,
+} from './requestRulingSignature.generated'
+import {
   useRulingSignatureConfirmationQuery,
   RulingSignatureConfirmationQuery,
-} from './RulingSignature.generated'
+} from './getRulingSignatureConfirmation.generated'
 import { signingModal as m } from './SigningModal.strings'
 
 const ControlCode: React.FC<{ controlCode?: string }> = ({ controlCode }) => {
