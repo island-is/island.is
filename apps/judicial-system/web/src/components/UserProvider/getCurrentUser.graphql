@@ -2,14 +2,14 @@ query GetCurrentUser {
   currentUser {
     id
     created
+    modified
     active
     name
-    nationalId
     title
     role
     email
-    modified
     mobileNumber
+    nationalId
     institution {
       id
       created
