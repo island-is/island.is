@@ -1,7 +1,7 @@
 query GetCurrentUser {
   currentUser {
-    id
     created
+    id
     modified
     active
     name
