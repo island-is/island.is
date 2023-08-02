@@ -22,6 +22,7 @@ import {
   Accordion,
   AccordionItem,
   Pagination,
+  LinkV2,
 } from '@island.is/island-ui/core'
 import { Screen } from '@island.is/web/types'
 import { withMainLayout } from '@island.is/web/layouts/main'
@@ -36,6 +37,7 @@ const ITEMS_PER_PAGE = 8
 
 interface UniversitySearchProps {
   mockData: any
+  data: any
 }
 
 interface FilterProps {
@@ -64,7 +66,11 @@ const intialFilters = {
   tags: [],
 }
 
-const UniversitySearch: Screen<UniversitySearchProps> = ({ mockData }) => {
+const UniversitySearch: Screen<UniversitySearchProps> = ({
+  mockData,
+  data,
+}) => {
+  console.log('data here', data)
   // const n = useNamespace(namespace)
   console.log('mockData', mockData)
   const [searchTerm, setSearchTerm] = useState('')
@@ -597,6 +603,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({ mockData }) => {
           </Box>
         </Box>
       </Box>
+      <LinkV2 href="/comparison">Samanburður </LinkV2>
     </GridContainer>
   )
 }
@@ -655,19 +662,22 @@ UniversitySearch.getInitialProps = async ({ apolloClient, locale }) => {
 
   const api = `${UNIVERSITY_GATEWAY_BASE_URL}`
   let response
+  let data
 
   try {
     response = await axios.get(`${api}/programs`)
     console.log('response', response)
+    data = response?.data?.data
+    console.log('data', data)
   } catch (e) {
     const errMsg = 'Failed to retrieve program'
-    const description = e.response.data.description
+    // const description = e.response.data.description
 
     //   this.logger.error(errMsg, {
     //     message: description,
     //   })
 
-    throw new Error(`${errMsg}: ${description}`)
+    throw new Error(`${errMsg}:`)
   }
 
   // if (response.data.results.length > 0) {
@@ -707,6 +717,7 @@ UniversitySearch.getInitialProps = async ({ apolloClient, locale }) => {
 
   return {
     mockData,
+    data,
   }
 }
 
