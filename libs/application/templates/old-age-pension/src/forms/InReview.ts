@@ -8,7 +8,7 @@ import Logo from '../assets/Logo'
 import { inReviewFormMessages } from '../lib/messages'
 
 export const InReview: Form = buildForm({
-  id: 'ParentalLeaveInReview',
+  id: 'OldAgePensionInReview',
   title: inReviewFormMessages.formTitle,
   logo: Logo,
   children: [
