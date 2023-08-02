@@ -36,7 +36,7 @@ export const ApplicationReason = ({
       isEditable={editable}
       editAction={() => goToScreen?.('applicationReason')}
     >
-      <GridRow marginBottom={3}>
+      <GridRow>
         <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
           <Label>
             {formatMessage(

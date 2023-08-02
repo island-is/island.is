@@ -110,7 +110,7 @@ export const BaseInformation = ({
         </GridRow>
       )}
 
-      <GridRow marginBottom={3}>
+      <GridRow>
         <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
           <DataValue
             label={formatMessage(pensionSupplementFormMessage.confirm.email)}
