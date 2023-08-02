@@ -29,6 +29,8 @@ import { useLinkResolver, useNamespace } from '@island.is/web/hooks'
 import { useEffect, useRef, useState } from 'react'
 import * as styles from './UniversitySearch.css'
 import { ListViewCard } from '@island.is/web/components'
+import { UNIVERSITY_GATEWAY_BASE_URL } from '@island.is/web/constants'
+import axios from 'axios'
 
 const ITEMS_PER_PAGE = 8
 
@@ -151,7 +153,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({ mockData }) => {
               startExpanded
             >
               <Stack space={[1, 1, 2]}>
-                <Checkbox label="Opið fyrir umsóknir" />
+                <Checkbox label="Opið fyrir umsóknir" value="open" />
               </Stack>
               <Box
                 display="flex"
@@ -175,11 +177,11 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({ mockData }) => {
               startExpanded
             >
               <Stack space={[1, 1, 1]}>
-                <Checkbox label="Grunndiplóma" />
-                <Checkbox label="Grunnnám" />
-                <Checkbox label="Viðbótardiplóma" />
-                <Checkbox label="Meistaranám" />
-                <Checkbox label="Doktorsnám" />
+                <Checkbox label="Grunndiplóma" value="diploma" />
+                <Checkbox label="Grunnnám" value="undergrad" />
+                <Checkbox label="Viðbótardiplóma" value="additionalDiploma" />
+                <Checkbox label="Meistaranám" value="masters" />
+                <Checkbox label="Doktorsnám" value="doctors" />
               </Stack>
               <Box
                 display="flex"
@@ -227,6 +229,31 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({ mockData }) => {
               iconVariant="small"
             >
               <Stack space={[1, 1, 2]}>
+                <Checkbox label="Staðnám" value="onSite" />
+                <Checkbox label="Fjarnám" value="away" />
+                <Checkbox label="Blandað nám" value="mixed" />
+                <Checkbox label="Dreifinám" value="spread" />
+              </Stack>
+              <Box
+                display="flex"
+                width="full"
+                flexDirection="row"
+                justifyContent="flexEnd"
+                marginTop={1}
+              >
+                <Button variant="text" icon="reload" size="small">
+                  Hreinsa val
+                </Button>
+              </Box>
+            </AccordionItem>
+            <AccordionItem
+              id="mini_accordion6"
+              label="Námssvið"
+              labelUse="h5"
+              labelVariant="h5"
+              iconVariant="small"
+            >
+              <Stack space={[1, 1, 2]}>
                 <Checkbox label="Grunndiplóma" />
                 <Checkbox label="Grunnnám" />
                 <Checkbox label="Viðbótardiplóma" />
@@ -245,7 +272,6 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({ mockData }) => {
                 </Button>
               </Box>
             </AccordionItem>
-
             <AccordionItem
               id="mini_accordion5"
               label="Háskólar"
@@ -626,6 +652,28 @@ UniversitySearch.getInitialProps = async ({ apolloClient, locale }) => {
   //     },
   //   },
   // })
+
+  const api = `${UNIVERSITY_GATEWAY_BASE_URL}`
+  let response
+
+  try {
+    response = await axios.get(`${api}/programs`)
+    console.log('response', response)
+  } catch (e) {
+    const errMsg = 'Failed to retrieve program'
+    const description = e.response.data.description
+
+    //   this.logger.error(errMsg, {
+    //     message: description,
+    //   })
+
+    throw new Error(`${errMsg}: ${description}`)
+  }
+
+  // if (response.data.results.length > 0) {
+  //   console.log('response', response.data.results)
+  //   return response.data.results[0]
+  // }
 
   const mockData = [
     {
