@@ -27,8 +27,8 @@ import {
   useRequestRulingSignatureMutation,
 } from './requestRulingSignature.generated'
 import {
-  useRulingSignatureConfirmationQuery,
-  RulingSignatureConfirmationQuery,
+  useGetRulingSignatureConfirmationQuery,
+  GetRulingSignatureConfirmationQuery,
 } from './getRulingSignatureConfirmation.generated'
 import { signingModal as m } from './SigningModal.strings'
 
@@ -100,7 +100,7 @@ type signingProgress = 'inProgress' | 'success' | 'error' | 'canceled'
 
 export const getSigningProgress = (
   rulingSignatureConfirmation:
-    | RulingSignatureConfirmationQuery['rulingSignatureConfirmation']
+    | GetRulingSignatureConfirmationQuery['rulingSignatureConfirmation']
     | undefined,
   error: ApolloError | undefined,
 ): signingProgress => {
@@ -123,7 +123,7 @@ export const SigningModal: React.FC<SigningModalProps> = ({
   const router = useRouter()
   const { formatMessage } = useIntl()
 
-  const { data, error } = useRulingSignatureConfirmationQuery({
+  const { data, error } = useGetRulingSignatureConfirmationQuery({
     variables: {
       input: {
         documentToken: requestRulingSignatureResponse?.documentToken || '',

@@ -27,7 +27,7 @@ import {
 import { RequestRulingSignatureMutation } from '@island.is/judicial-system-web/src/components/SigningModal/requestRulingSignature.generated'
 import { RequestSignatureInput } from '@island.is/judicial-system-web/src/graphql/schema'
 
-import { RequestCourtRecordSignatureMutation } from '../../CourtRecordSignature.generated'
+import { RequestCourtRecordSignatureMutation } from '../../requestCourtRecordSignature.generated'
 
 function showCustodyNotice(
   type: CaseType,

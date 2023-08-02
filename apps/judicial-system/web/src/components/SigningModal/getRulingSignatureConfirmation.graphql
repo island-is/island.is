@@ -1,4 +1,4 @@
-query RulingSignatureConfirmation($input: SignatureConfirmationQueryInput!) {
+query GetRulingSignatureConfirmation($input: SignatureConfirmationQueryInput!) {
   rulingSignatureConfirmation(input: $input) {
     documentSigned
     code
