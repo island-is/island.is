@@ -13,7 +13,7 @@ import { PoliceCaseInfo } from '@island.is/judicial-system-web/src/graphql/schem
 import { PoliceCaseFilesMessageBox } from '@island.is/judicial-system-web/src/routes/Prosecutor/components'
 
 import { PoliceCase } from '../Defendant'
-import { useGetPoliceCaseInfoQuery } from './PoliceCaseInfo.generated'
+import { useGetPoliceCaseInfoQuery } from './getPoliceCaseInfo.generated'
 import { lokeNumberList as strings } from './LokeNumberList.strings'
 
 interface Props {
