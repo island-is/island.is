@@ -2,6 +2,33 @@ import { getValueViaPath } from '@island.is/application/core'
 import { FormValue } from '@island.is/application/types'
 import { CoOwnerAndOperator } from '../shared'
 
+export type ApproveAnswersProps = {
+  buyer: {
+    nationalId: string
+    name: string
+    email: string
+    phone: string
+    approved: boolean
+  }
+  buyerCoOwnerAndOperator: {
+    nationalId: string
+    name: string
+    email: string
+    phone: string
+    type: string
+    wasRemoved: string
+    approved: boolean
+  }[]
+  sellerCoOwner: {
+    nationalId: string
+    name: string
+    email: string
+    phone: string
+    type: string
+    approved: boolean
+  }[]
+}
+
 export const getApproveAnswers = (
   reviewerNationalId: string,
   answers: FormValue,
@@ -90,6 +117,7 @@ export const getApproveAnswers = (
           name: coOwner.name,
           email: coOwner.email,
           phone: coOwner.phone,
+          type: coOwner.type,
           approved:
             coOwner.nationalId === reviewerNationalId
               ? true
