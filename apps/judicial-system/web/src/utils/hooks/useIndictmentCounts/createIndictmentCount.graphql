@@ -6,10 +6,10 @@ mutation CreateIndictmentCount($input: CreateIndictmentCountInput!) {
     caseId
     policeCaseNumber
     vehicleRegistrationNumber
+    legalArguments
     offenses
     substances
     lawsBroken
     incidentDescription
-    legalArguments
   }
 }
