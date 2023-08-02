@@ -2,6 +2,9 @@ import React, { useCallback, useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
+import { Box } from '@island.is/island-ui/core'
+import { completedCaseStates } from '@island.is/judicial-system/types'
+import * as constants from '@island.is/judicial-system/consts'
 import {
   CourtCaseInfo,
   FormContentContainer,
@@ -15,14 +18,11 @@ import {
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import { titles, core } from '@island.is/judicial-system-web/messages'
-import { Box } from '@island.is/island-ui/core'
-import { completedCaseStates } from '@island.is/judicial-system/types'
 import IndictmentCaseFilesList from '@island.is/judicial-system-web/src/components/IndictmentCaseFilesList/IndictmentCaseFilesList'
-import * as constants from '@island.is/judicial-system/consts'
 
-import { overview as m } from './Overview.strings'
+import { strings } from './IndictmentOverview.strings'
 
-const Overview = () => {
+const IndictmentOverview = () => {
   const router = useRouter()
   const { limitedAccess } = useContext(UserContext)
   const { workingCase, isLoadingWorkingCase, caseNotFound } = useContext(
@@ -47,7 +47,7 @@ const Overview = () => {
     >
       <PageHeader
         title={
-          completedCaseStates.includes(workingCase.state)
+          caseIsClosed
             ? formatMessage(titles.shared.closedCaseOverview, {
                 courtCaseNumber: workingCase.courtCaseNumber,
               })
@@ -55,7 +55,11 @@ const Overview = () => {
         }
       />
       <FormContentContainer>
-        <PageTitle>{formatMessage(m.title)}</PageTitle>
+        <PageTitle>
+          {caseIsClosed
+            ? formatMessage(strings.completedTitle)
+            : formatMessage(strings.inProgressTitle)}
+        </PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
         <Box component="section" marginBottom={5}>
           {caseIsClosed ? (
@@ -89,4 +93,4 @@ const Overview = () => {
   )
 }
 
-export default Overview
+export default IndictmentOverview
