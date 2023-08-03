@@ -4,8 +4,6 @@ import {
   EinstaklingurDTOHeimili,
   EinstaklingurDTOItarAuka,
   EinstaklingurDTOLoghTengsl,
-  EinstaklingurDTONafn,
-  EinstaklingurDTONafnAllt,
   NationalRegistryV3ClientService,
 } from '@island.is/clients/national-registry-v3'
 import {
@@ -101,7 +99,7 @@ export class BrokerService {
       rawData ??
       (await this.nationalRegistryV3.getAllDataIndividual(nationalId))
 
-    if (!data?.forsja || !data.logheimilistengsl) {
+    if (!data?.forsja) {
       return null
     }
 

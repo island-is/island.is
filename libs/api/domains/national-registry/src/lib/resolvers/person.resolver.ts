@@ -59,13 +59,8 @@ export class PersonResolver {
   })
   @Audit()
   async resolveCustodians(
-    @Context('req') { user }: { user: User },
     @Parent() person: SharedPerson,
   ): Promise<Array<Custodian> | null> {
-    if (user.nationalId !== person.nationalId) {
-      return null
-    }
-
     return this.service.getCustodians(person.nationalId, person)
   }
 
@@ -74,13 +69,8 @@ export class PersonResolver {
   })
   @Audit()
   async resolveBirthParents(
-    @Context('req') { user }: { user: User },
     @Parent() person: SharedPerson,
   ): Promise<Array<PersonBase> | null> {
-    if (user.nationalId !== person.nationalId) {
-      return null
-    }
-
     return this.service.getParents(person.nationalId, person)
   }
 

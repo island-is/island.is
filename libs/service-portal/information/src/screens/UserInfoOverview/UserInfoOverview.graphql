@@ -1,5 +1,5 @@
-query UserInfoOverview($input: String) {
-  nationalRegistryPerson(api: $input) {
+query UserInfoOverview($api: String) {
+  nationalRegistryPerson(api: $api) {
     spouse {
       nationalId
       fullName

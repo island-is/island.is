@@ -1,9 +1,6 @@
-import React from 'react'
 import { defineMessage } from 'react-intl'
 import { useParams } from 'react-router-dom'
 
-import { useQuery } from '@apollo/client'
-import { Query } from '@island.is/api/schema'
 import {
   Box,
   Divider,
@@ -20,8 +17,8 @@ import {
   NotFound,
   UserInfoLine,
 } from '@island.is/service-portal/core'
-
-import { NATIONAL_REGISTRY_USER } from '../../lib/queries/getNationalRegistryUser'
+import { useNationalRegistrySpouseQuery } from './Spouse.generated'
+import { natRegMaritalStatusMessageDescriptorRecord } from '../../helpers/localizationHelpers'
 
 const dataNotFoundMessage = defineMessage({
   id: 'sp.family:data-not-found',
@@ -41,17 +38,15 @@ const FamilyMember = () => {
   useNamespaces('sp.family')
   const { formatMessage } = useLocale()
 
-  const { data, loading, error } = useQuery<Query>(NATIONAL_REGISTRY_USER)
-  const { nationalRegistryUser } = data || {}
+  const { data, loading, error } = useNationalRegistrySpouseQuery({
+    variables: {
+      api: 'v3',
+    },
+  })
 
   const { nationalId } = useParams() as UseParams
 
-  const person =
-    nationalRegistryUser?.spouse?.nationalId === nationalId
-      ? nationalRegistryUser
-      : null
-
-  if (!nationalId || error || (!loading && !person))
+  if (!nationalId || error || (!loading && !data?.nationalRegistryPerson))
     return (
       <NotFound
         title={defineMessage({
@@ -73,7 +68,7 @@ const FamilyMember = () => {
         </Box>
       ) : (
         <IntroHeader
-          title={person?.spouse?.fullName || ''}
+          title={data?.nationalRegistryPerson?.spouse?.fullName || ''}
           intro={dataInfoSpouse}
           marginBottom={2}
         />
@@ -83,7 +78,7 @@ const FamilyMember = () => {
         <UserInfoLine
           title={formatMessage(m.myRegistration)}
           label={defineMessage(m.fullName)}
-          content={person?.spouse?.fullName || '...'}
+          content={data?.nationalRegistryPerson?.spouse?.fullName || '...'}
           loading={loading}
           translate="no"
         />
@@ -102,7 +97,13 @@ const FamilyMember = () => {
           content={
             error
               ? formatMessage(dataNotFoundMessage)
-              : person?.spouse?.cohabitant || ''
+              : data?.nationalRegistryPerson?.spouse?.maritalStatus
+              ? formatMessage(
+                  natRegMaritalStatusMessageDescriptorRecord[
+                    data?.nationalRegistryPerson?.spouse?.maritalStatus
+                  ],
+                )
+              : ''
           }
           loading={loading}
         />

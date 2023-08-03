@@ -37,7 +37,7 @@ const SubjectInfo = () => {
 
   const { data, loading, error } = useNationalRegistryPersonQuery({
     variables: {
-      input: 'v3',
+      api: 'v3',
     },
   })
 

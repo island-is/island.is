@@ -1,5 +1,5 @@
-query NationalRegistryPerson($input: String) {
-  nationalRegistryPerson(api: $input) {
+query NationalRegistryPerson($api: String) {
+  nationalRegistryPerson(api: $api) {
     nationalId
     fullName
     gender
