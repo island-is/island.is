@@ -247,7 +247,7 @@ export const oldAgePensionFormMessage: MessageDir = {
     alertMessage: {
       id: 'oap.application:payment.alert.message',
       defaultMessage:
-        'Allar þínar greiðslur frá Tryggingastofnun eru greiddar inná bankareikninginn hér að neðan. Ef þú breytir bankaupplýsingunum þínum munu allar þínar greiðslur frá Tryggingastofnun verða greiddar inná þann reiking.',
+        'Allar þínar greiðslur frá Tryggingastofnun eru greiddar inná bankareikninginn hér að neðan. Ef þú breytir bankaupplýsingunum þínum munu allar þínar greiðslur frá Tryggingastofnun verða greiddar inná þann reikning.',
       description:
         'All your payments from TR are paid into the bank account below. If you change your bank details, all your payments from the TR will be paid into that account.',
     },
