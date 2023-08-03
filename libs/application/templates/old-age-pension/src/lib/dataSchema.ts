@@ -77,7 +77,7 @@ export const dataSchema = z.object({
       },
       { params: errorMessages.bank },
     ),
-    spouseAllowance: z.enum([YES, NO]),
+    spouseAllowance: z.enum([YES, NO]).optional(),
     spouseAllownaceUsage: z.string().optional(),
     personalAllowance: z.enum([YES, NO]),
     personalAllowanceUsage: z.string().optional(),

@@ -301,6 +301,7 @@ export const OldAgePensionForm: Form = buildForm({
                   id: 'paymentInfo.spouseAllowance',
                   title: oldAgePensionFormMessage.payment.spouseAllowance,
                   options: getYesNOOptions(),
+                  required: true,
                   width: 'half',
                   largeButtons: true,
                   space: 'containerGutter',
