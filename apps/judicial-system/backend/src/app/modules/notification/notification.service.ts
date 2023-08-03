@@ -452,7 +452,7 @@ export class NotificationService {
       this.eventService.postEvent(CaseEvent.RESUBMIT, theCase)
     }
 
-    if (theCase.state === CaseState.RECEIVED) {
+    if (theCase.state === CaseState.RECEIVED && theCase.sendRequestToDefender) {
       const defendantHasBeenNotified = await this.hasReceivedNotification(
         theCase.id,
         NotificationType.COURT_DATE,
