@@ -1,9 +1,9 @@
 import { Inject, Injectable} from '@nestjs/common'
 import { SoffiaService } from './v1/soffia.service'
 import { BrokerService } from './v3/broker.service'
-import { SharedPerson } from './shared/types'
+import { PersonV1, SharedPerson } from './shared/types'
 import { Birthplace, Citizenship, Spouse, Housing } from './shared/models'
-import { mapMaritalStatus } from './shared/mapper'
+import { mapGender, mapMaritalStatus } from './shared/mapper'
 import { LOGGER_PROVIDER, type Logger  } from '@island.is/logging'
 import { Name } from './shared/models/name.model'
 
@@ -57,7 +57,8 @@ export class NationalRegistryService {
 
   async getChildCustody(nationalId: string, data?: SharedPerson) {
     if (data?.api === 'v1') {
-      return null
+      const children = await this.v1.getChildren(nationalId)
+      return await Promise.all(children.map(c => this.v1.getPerson(c.nationalId)))
     }
     return await this.v3.getChildrenCustodyInformation(
       nationalId,
@@ -148,9 +149,7 @@ export class NationalRegistryService {
 
       return null
     }
-    const dataData = await this.v3.getName(nationalId, data?.rawData)
-
-    return dataData
+    return await this.v3.getName(nationalId, data?.rawData)
   }
 
   async getSpouse(
@@ -169,8 +168,8 @@ export class NationalRegistryService {
 
       return null
     }
-    const dataData = await this.v3.getSpouse(nationalId, data?.rawData)
 
-    return dataData
+
+    return this.v3.getSpouse(nationalId, data?.rawData)
   }
 }

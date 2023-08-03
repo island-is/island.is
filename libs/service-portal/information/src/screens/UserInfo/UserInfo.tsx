@@ -19,10 +19,7 @@ import {
 } from '../../helpers/localizationHelpers'
 import { spmm, urls } from '../../lib/messages'
 import { formatAddress, formatNameBreaks } from '../../helpers/formatting'
-import {
-  NationalRegistryPersonDocument,
-  useNationalRegistryPersonQuery,
-} from './UserInfo.generated'
+import { useNationalRegistryPersonQuery } from './UserInfo.generated'
 import { NationalRegistryName } from '@island.is/api/schema'
 
 const dataNotFoundMessage = defineMessage({

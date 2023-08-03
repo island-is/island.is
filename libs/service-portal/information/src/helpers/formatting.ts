@@ -34,5 +34,9 @@ export const formatAddress = (
 ): string | undefined => {
   if (!address) return undefined
 
+  if (address.streetAddress === address.city) {
+    return address.streetAddress
+  }
+
   return `${address.streetAddress}, ${address.postalCode} ${address.city}`
 }
