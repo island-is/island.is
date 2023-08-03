@@ -1,8 +1,4 @@
-import {
-  DefaultEvents,
-  FieldBaseProps,
-  FormValue,
-} from '@island.is/application/types'
+import { DefaultEvents, FieldBaseProps } from '@island.is/application/types'
 import { FC, useState } from 'react'
 import {
   Box,
@@ -44,7 +40,6 @@ import {
 } from '@island.is/api/schema'
 import { VALIDATE_VEHICLE_OWNER_CHANGE } from '../../graphql/queries'
 import { TransferOfVehicleOwnershipAnswers } from '../..'
-import { ApproveAnswersProps } from '../../utils/getApproveAnswers'
 
 export const Overview: FC<FieldBaseProps & ReviewScreenProps> = ({
   setStep,
@@ -69,62 +64,33 @@ export const Overview: FC<FieldBaseProps & ReviewScreenProps> = ({
     },
   })
 
-  const [loading, setLoading] = useState(false)
-
   const isBuyer =
     (getValueViaPath(answers, 'buyer.nationalId', '') as string) ===
     reviewerNationalId
 
-  const doSubmitApproval = async () => {
-    const approveAnswers = getApproveAnswers(
-      reviewerNationalId,
-      application.answers,
-    ) as ApproveAnswersProps
-
+  const doSubmitApplication = async () => {
     const res = await submitApplication({
       variables: {
         input: {
           id: application.id,
-          event: DefaultEvents.APPROVE,
-          answers: approveAnswers,
+          event: isLastReviewer(
+            reviewerNationalId,
+            application.answers,
+            coOwnersAndOperators,
+          )
+            ? DefaultEvents.SUBMIT
+            : DefaultEvents.APPROVE,
+          answers: getApproveAnswers(reviewerNationalId, application.answers),
         },
       },
     })
 
     if (res?.data) {
-      const isLast = isLastReviewer(
-        reviewerNationalId,
-        res.data.submitApplication.answers,
-        coOwnersAndOperators,
-      )
-
-      if (isLast) {
-        await doSubmitApplication(res.data.submitApplication.answer)
-      } else {
-        setLoading(false)
-        setStep && setStep('conclusion')
-      }
-    }
-  }
-
-  const doSubmitApplication = async (answers: FormValue) => {
-    const res = await submitApplication({
-      variables: {
-        input: {
-          id: application.id,
-          event: DefaultEvents.SUBMIT,
-          answers: getApproveAnswers(reviewerNationalId, answers),
-        },
-      },
-    })
-
-    if (res?.data) {
-      setLoading(false)
       setStep && setStep('conclusion')
     }
   }
 
-  const [validateVehicleThenSubmit, { data }] = useLazyQuery<
+  const [validateVehicleThenSubmit, { data, loading }] = useLazyQuery<
     any,
     { answers: OwnerChangeAnswers }
   >(
@@ -134,7 +100,7 @@ export const Overview: FC<FieldBaseProps & ReviewScreenProps> = ({
     {
       onCompleted: async (data) => {
         if (!data?.vehicleOwnerChangeValidation?.hasError) {
-          await doSubmitApproval()
+          await doSubmitApplication()
         }
       },
     },
@@ -149,7 +115,6 @@ export const Overview: FC<FieldBaseProps & ReviewScreenProps> = ({
   }
 
   const onApproveButtonClick = async () => {
-    setLoading(true)
     if (isBuyer && !insurance) {
       setNoInsuranceError(true)
     } else {
@@ -191,7 +156,7 @@ export const Overview: FC<FieldBaseProps & ReviewScreenProps> = ({
           },
         })
       } else {
-        await doSubmitApproval()
+        await doSubmitApplication()
       }
     }
   }
