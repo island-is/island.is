@@ -31,8 +31,7 @@ TODO
 *.todo
 .env
 .env.*
-.envrc
-*.envrc
+.envrc.private
 .nvmrc
 .node-version
 # IDE - VSCode
