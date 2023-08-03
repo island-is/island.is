@@ -17,7 +17,7 @@ type InfoItems = {
 
 type CardProps = {
   infoItems: Array<InfoItems>
-  onCheck?: () => void
+  onCheck?: (e) => void
   buttonLabel?: string
   checkboxLabel?: string
   cta: CTAProps

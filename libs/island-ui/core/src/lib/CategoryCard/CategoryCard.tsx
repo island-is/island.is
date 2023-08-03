@@ -45,7 +45,7 @@ type SidePanelItems = {
 }
 
 type SidePanelConfigProps = {
-  onCheck?: () => void
+  onCheck?: (e: any) => void
   buttonLabel?: string
   checkboxLabel?: string
   items?: Array<SidePanelItems>

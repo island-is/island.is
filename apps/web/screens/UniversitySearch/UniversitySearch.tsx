@@ -75,6 +75,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
   console.log('mockData', mockData)
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedPage, setSelectedPage] = useState(1)
+  const [selectedComparison, setSelectedComparison] = useState([])
   const searchTermHasBeenInitialized = useRef(false)
 
   const [filters, setFilters] = useState<FilterProps>(intialFilters)
@@ -121,6 +122,23 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
   useEffect(() => {
     console.log('filters', filters)
   }, [filters])
+
+  const handleCheckbox = (e, id) => {
+    console.log('e', e)
+    e.preventDefault()
+    if (selectedComparison.indexOf(id) === -1) {
+      setSelectedComparison([...selectedComparison, id])
+    } else {
+      setSelectedComparison(
+        selectedComparison.filter((item) => {
+          if (item !== id) {
+            return true
+          }
+          return false
+        }),
+      )
+    }
+  }
 
   return (
     <GridContainer>
@@ -424,7 +442,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                         icon={<img src={dataItem.iconSrc} />}
                         sidePanelConfig={{
                           cta: createPrimaryCTA(),
-                          onCheck: () => console.log('onCheck'),
+                          onCheck: (e) => handleCheckbox(e, dataItem.id),
                           buttonLabel: 'Sækja um',
                           checkboxLabel: 'Setja í samanburð',
                           items: [
@@ -508,7 +526,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                           iconText="Háskólinn í Reykjavík"
                           heading={dataItem.heading}
                           icon={<img src={dataItem.iconSrc} />}
-                          onCheck={() => console.log('onCheck')}
+                          onCheck={(e) => handleCheckbox(e, dataItem.id)}
                           buttonLabel="Sækja um"
                           checkboxLabel="Setja í samanburð"
                           cta={createPrimaryCTA()}
@@ -603,7 +621,14 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
           </Box>
         </Box>
       </Box>
-      <LinkV2 href="/comparison">Samanburður </LinkV2>
+      <LinkV2
+        href={{
+          pathname: '/haskolanam/samanburdur',
+          query: { items: JSON.stringify(selectedComparison) },
+        }}
+      >
+        Samanburður{' '}
+      </LinkV2>
     </GridContainer>
   )
 }
@@ -687,18 +712,21 @@ UniversitySearch.getInitialProps = async ({ apolloClient, locale }) => {
 
   const mockData = [
     {
+      id: '1234',
       heading: 'Viðskiptafræði með lögfræði sem aukagrein',
       text:
         'Enim nulla nunc pharetra nisi libero. Ipsum faucibus tortor bibendum massa. Nisl facilisi varius lacus neque purus consequat. Egestas sed lacinia in aliquet praesent mus diam...',
       iconSrc: 'https://www.ru.is/media/HR_logo_hringur_hires.jpg',
     },
     {
+      id: '235345',
       heading: 'Viðskiptafræði',
       text:
         'Enim nulla nunc pharetra nisi libero. Ipsum faucibus tortor bibendum massa. Nisl facilisi varius lacus neque purus consequat. Egestas sed lacinia in aliquet praesent mus diam...',
       iconSrc: 'https://www.ru.is/media/HR_logo_hringur_hires.jpg',
     },
     {
+      id: '56456',
       heading: 'Lögfræði',
       text:
         'Enim nulla nunc pharetra nisi libero. Ipsum faucibus tortor bibendum massa. Nisl facilisi varius lacus neque purus consequat. Egestas sed lacinia in aliquet praesent mus diam...',
@@ -706,6 +734,7 @@ UniversitySearch.getInitialProps = async ({ apolloClient, locale }) => {
         'https://zeroheight-uploads.s3.eu-west-1.amazonaws.com/6b8ae3f96a2d0e1ae883d0?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3AVNYHQKTB7DNOEL%2F20230719%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20230719T145800Z&X-Amz-Expires=86400&X-Amz-SignedHeaders=host&X-Amz-Signature=774db23aca012063927fe8b62fc9b072d434deec186c37b2cd64621f1ecb08ca',
     },
     {
+      id: '678687',
       heading: 'Tölvunarfræði',
       text:
         'Enim nulla nunc pharetra nisi libero. Ipsum faucibus tortor bibendum massa. Nisl facilisi varius lacus neque purus consequat. Egestas sed lacinia in aliquet praesent mus diam...',
