@@ -127,7 +127,7 @@ export const BaseInformation = ({
         </GridColumn>
       </GridRow>
 
-      <GridRow marginBottom={3}>
+      <GridRow>
         <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
           <DataValue
             label={formatMessage(oldAgePensionFormMessage.review.email)}
@@ -146,7 +146,7 @@ export const BaseInformation = ({
       </GridRow>
 
       {spouseName && (
-        <GridRow>
+        <GridRow marginTop={3}>
           <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
             <DataValue
               label={formatMessage(oldAgePensionFormMessage.review.spouseName)}

@@ -20,7 +20,7 @@ export const OnePaymentPerYear = ({
       isEditable={editable}
       editAction={() => goToScreen?.('onePaymentPerYear')}
     >
-      <GridRow marginBottom={3}>
+      <GridRow>
         <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
           <RadioValue
             label={formatMessage(

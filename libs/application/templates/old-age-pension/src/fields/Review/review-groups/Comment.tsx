@@ -20,7 +20,7 @@ export const Comment = ({
       isEditable={editable}
       editAction={() => goToScreen?.('comment')}
     >
-      <GridRow marginBottom={3}>
+      <GridRow>
         <GridColumn span={['10/12', '10/12', '10/12', '10/12']}>
           <DataValue
             label={formatMessage(

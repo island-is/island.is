@@ -32,7 +32,7 @@ export const ConnectedApplications = ({
       isEditable={editable}
       editAction={() => goToScreen?.('connectedApplications')}
     >
-      <GridRow marginBottom={3}>
+      <GridRow>
         <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
           <Label>
             {formatMessage(

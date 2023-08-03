@@ -24,12 +24,9 @@ export const ResidenceHistory = ({
       editAction={() => goToScreen?.('residenceHistory')}
       isLast={true}
     >
-      <GridRow marginBottom={3}>
+      <GridRow>
         {!residenceHistoryQuestion && (
-          <GridColumn
-            span={['12/12', '12/12', '12/12', '12/12']}
-            paddingBottom={3}
-          >
+          <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
             <Label>
               {formatMessage(
                 oldAgePensionFormMessage.residence.residenceHistoryTitle,

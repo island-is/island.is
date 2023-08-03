@@ -161,7 +161,7 @@ export const Review: FC<ReviewScreenProps> = ({
       <Period {...childProps} />
       {applicationType === ApplicationType.SAILOR_PENSION && (
         <ReviewGroup>
-          <GridRow marginBottom={3}>
+          <GridRow>
             <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
               <RadioValue
                 label={formatMessage(oldAgePensionFormMessage.review.fishermen)}
