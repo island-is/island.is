@@ -39,10 +39,15 @@ export const SectionWithVideo: FC<SectionWithVideoProps> = ({
   return (
     <Box>
       <GridRow>
-        <GridColumn span={COLUMN_SPAN}>
-          <EmbeddedVideo url={video.url} locale={locale} title={title} />
-        </GridColumn>
-        <GridColumn span={COLUMN_SPAN} paddingTop={[2, 2, 2, 2, 0]}>
+        {video?.url && (
+          <GridColumn span={COLUMN_SPAN}>
+            <EmbeddedVideo url={video.url} locale={locale} title={title} />
+          </GridColumn>
+        )}
+        <GridColumn
+          span={video?.url ? COLUMN_SPAN : '12/12'}
+          paddingTop={video?.url ? [2, 2, 2, 2, 0] : 0}
+        >
           {title && <Text variant="h2">{title}</Text>}
           {html?.document && richText([html] as SliceType[])}
           {link && link.url && (
