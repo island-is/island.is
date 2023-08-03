@@ -32,6 +32,7 @@ import {
   Stepper,
   stepperUtils,
   Form,
+  SignLanguageButton,
 } from '@island.is/web/components'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { GET_ARTICLE_QUERY, GET_NAMESPACE_QUERY } from '../queries'
@@ -532,7 +533,18 @@ const ArticleScreen: Screen<ArticleProps> = ({
               webReaderClassName="rs_read"
             />
           )}
-          {!inStepperView && <Webreader readId={null} readClass="rs_read" />}
+          {!inStepperView && (
+            <Box display="flex" columnGap={3}>
+              {!inStepperView && (
+                <Webreader readId={null} readClass="rs_read" />
+              )}
+              <SignLanguageButton
+                videoUrl="https://www.youtube.com/watch?v=T-bpQ-rx4pU"
+                content={<div>Hello</div>}
+              />
+            </Box>
+          )}
+
           <Box marginTop={3} display={['block', 'block', 'none']} printHidden>
             <ArticleNavigation
               article={article}
