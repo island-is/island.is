@@ -19,7 +19,11 @@ import {
 } from '../../helpers/localizationHelpers'
 import { spmm, urls } from '../../lib/messages'
 import { formatAddress, formatNameBreaks } from '../../helpers/formatting'
-import { useNationalRegistryPersonQuery } from './UserInfo.generated'
+import {
+  NationalRegistryPersonDocument,
+  useNationalRegistryPersonQuery,
+} from './UserInfo.generated'
+import { NationalRegistryName } from '@island.is/api/schema'
 
 const dataNotFoundMessage = defineMessage({
   id: 'sp.family:data-not-found',
@@ -56,11 +60,14 @@ const SubjectInfo = () => {
           loading={loading}
           content={nationalRegistryPerson?.fullName ?? ''}
           translate="no"
-          tooltip={formatNameBreaks(nationalRegistryPerson ?? undefined, {
-            givenName: formatMessage(spmm.givenName),
-            middleName: formatMessage(spmm.middleName),
-            lastName: formatMessage(spmm.lastName),
-          })}
+          tooltip={formatNameBreaks(
+            (nationalRegistryPerson as NationalRegistryName) ?? undefined,
+            {
+              givenName: formatMessage(spmm.givenName),
+              middleName: formatMessage(spmm.middleName),
+              lastName: formatMessage(spmm.lastName),
+            },
+          )}
           editLink={{
             external: true,
             title: spmm.changeInNationalReg,

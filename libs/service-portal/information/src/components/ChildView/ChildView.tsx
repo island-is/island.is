@@ -21,6 +21,7 @@ import {
 } from '@island.is/island-ui/core'
 import {
   NationalRegistryChild,
+  NationalRegistryName,
   NationalRegistryXRoadChildGuardianship,
 } from '@island.is/api/schema'
 
@@ -162,11 +163,14 @@ const ChildView: FC<Props> = ({
             label={formatMessage(m.fullName)}
             translate="no"
             content={person?.fullName || '...'}
-            tooltip={formatNameBreaks(person ?? undefined, {
-              givenName: formatMessage(spmm.givenName),
-              middleName: formatMessage(spmm.middleName),
-              lastName: formatMessage(spmm.lastName),
-            })}
+            tooltip={formatNameBreaks(
+              (person as NationalRegistryName) ?? undefined,
+              {
+                givenName: formatMessage(spmm.givenName),
+                middleName: formatMessage(spmm.middleName),
+                lastName: formatMessage(spmm.lastName),
+              },
+            )}
             loading={loading}
             editLink={
               !isChild

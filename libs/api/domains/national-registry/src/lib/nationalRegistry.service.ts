@@ -5,6 +5,7 @@ import { SharedPerson } from './shared/types'
 import { Birthplace, Citizenship, Spouse, Housing } from './shared/models'
 import { mapMaritalStatus } from './shared/mapper'
 import { LOGGER_PROVIDER, type Logger  } from '@island.is/logging'
+import { Name } from './shared/models/name.model'
 
 @Injectable()
 export class NationalRegistryService {
@@ -130,6 +131,26 @@ export class NationalRegistryService {
         : null
     }
     return await this.v3.getHousing(nationalId, data?.rawData)
+  }
+
+  async getName(
+    nationalId: string,
+    data?: SharedPerson,
+  ): Promise<Name | null> {
+    if (data?.api === 'v1') {
+      if (data.rawData) {
+        return {
+            firstName: data.rawData.Eiginnafn,
+            middleName: data.rawData.Millinafn,
+            lastName: data.rawData.Kenninafn
+          }
+        }
+
+      return null
+    }
+    const dataData = await this.v3.getName(nationalId, data?.rawData)
+
+    return dataData
   }
 
   async getSpouse(

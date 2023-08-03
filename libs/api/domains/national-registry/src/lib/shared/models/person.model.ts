@@ -6,16 +6,29 @@ import { Spouse } from './spouse.model'
 import { Housing } from './housing.model'
 import { Custodian } from '../../shared/models/custodian.model'
 import { PersonBase } from './personBase.model'
+import { Name } from './name.model'
 
 @ObjectType('NationalRegistryPerson')
 export class Person extends PersonBase {
-  @Field(() => String, { nullable: true })
+  @Field(() => Name, { nullable: true })
+  name?: Name | null
+
+  @Field(() => String, {
+    nullable: true,
+    deprecationReason: 'use name object property for name data',
+  })
   firstName?: string | null
 
-  @Field(() => String, { nullable: true })
+  @Field(() => String, {
+    nullable: true,
+    deprecationReason: 'use name object property for name data',
+  })
   lastName?: string | null
 
-  @Field(() => String, { nullable: true })
+  @Field(() => String, {
+    nullable: true,
+    deprecationReason: 'use name object property for name data',
+  })
   middleName?: string | null
 
   @Field(() => Gender, { nullable: true })

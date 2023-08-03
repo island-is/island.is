@@ -4,6 +4,8 @@ import {
   EinstaklingurDTOHeimili,
   EinstaklingurDTOItarAuka,
   EinstaklingurDTOLoghTengsl,
+  EinstaklingurDTONafn,
+  EinstaklingurDTONafnAllt,
   NationalRegistryV3ClientService,
 } from '@island.is/clients/national-registry-v3'
 import {
@@ -14,6 +16,7 @@ import {
   formatBirthplace,
   formatReligion,
   formatHousing,
+  formatName,
 } from './mapper'
 import { PersonV3 } from '../shared/types'
 import { ExcludesFalse } from '../shared/utils'
@@ -29,6 +32,7 @@ import {
   Person,
 } from '../shared/models'
 import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
+import { Name } from '../shared/models/name.model'
 
 @Injectable()
 export class BrokerService {
@@ -200,6 +204,17 @@ export class BrokerService {
       (await this.nationalRegistryV3.getReligion(nationalId))
 
     return data && formatReligion(data)
+  }
+
+  async getName(
+    nationalId: string,
+    rawData?: EinstaklingurDTOAllt | null,
+  ): Promise<Name | null> {
+    const data =
+      rawData?.fulltNafn ??
+      (await this.nationalRegistryV3.getName(nationalId))
+
+    return data && formatName(data)
   }
 
   async getHousing(

@@ -29,6 +29,7 @@ import { NationalRegistryService } from '../nationalRegistry.service'
 import { SharedPerson } from '../shared/types'
 import { Housing } from '../shared/models/housing.model'
 import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
+import { Name } from '../shared/models/name.model'
 
 @UseGuards(IdsAuthGuard, IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.meDetails)
@@ -132,5 +133,11 @@ export class PersonResolver {
   @Audit()
   async resolveSpouse(@Parent() person: SharedPerson): Promise<Spouse | null> {
     return this.service.getSpouse(person.nationalId, person)
+  }
+
+  @ResolveField('name', () => Name, { nullable: true })
+  @Audit()
+  async resolveName(@Parent() person: SharedPerson): Promise<Name| null> {
+    return this.service.getName(person.nationalId, person)
   }
 }

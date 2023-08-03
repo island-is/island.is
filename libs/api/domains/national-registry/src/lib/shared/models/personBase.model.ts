@@ -6,11 +6,11 @@ export class PersonBase {
   nationalId!: string
 
   @Field(() => String, { nullable: true })
+  fullName!: string | null
+
+  @Field(() => String, { nullable: true })
   nationalIdType?: string | null
 
   @Field(() => String, { nullable: true })
   fate?: string | null
-
-  @Field(() => String, { nullable: true })
-  fullName!: string | null
 }

@@ -9,6 +9,8 @@ import {
   EinstaklingurDTOLoghTengsl,
   EinstaklingurDTOItarAuka,
   EinstaklingurDTOLogForeldriItem,
+  EinstaklingurDTONafn,
+  EinstaklingurDTONafnAllt,
 } from '@island.is/clients/national-registry-v3'
 import { mapGender, mapMaritalStatus } from '../shared/mapper'
 import {
@@ -24,6 +26,7 @@ import {
 import { PersonV3 } from '../shared/types'
 import { ExcludesFalse } from '../shared/utils'
 import { Housing } from '../shared/models/housing.model'
+import { Name } from '../shared/models/name.model'
 
 export function formatPersonDiscriminated(
   individual: EinstaklingurDTOAllt | null | undefined,
@@ -181,6 +184,20 @@ export function formatCitizenship(
   return {
     name: citizenship.rikisfangLand,
     code: citizenship.rikisfangKodi ?? '',
+  }
+}
+
+export function formatName(
+  name: EinstaklingurDTONafnAllt | null | undefined,
+): Name | null {
+  if (!name) {
+    return null
+  }
+
+  return {
+    firstName: name.eiginNafn ?? '',
+    middleName: name.milliNafn ?? '',
+    lastName: name.kenniNafn ?? '',
   }
 }
 
