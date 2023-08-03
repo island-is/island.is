@@ -211,6 +211,22 @@ export const slices = gql`
     }
   }
 
+  fragment SectionWithVideoFields on SectionWithVideo {
+    __typename
+    id
+    title
+    video {
+      ...EmbeddedVideoFields
+    }
+    html {
+      ...HtmlFields
+    }
+    link {
+      text
+      url
+    }
+  }
+
   fragment TabSectionFields on TabSection {
     __typename
     id
@@ -700,6 +716,7 @@ export const slices = gql`
     ...AssetFields
     ...EmbeddedVideoFields
     ...SectionWithImageFields
+    ...SectionWithVideoFields
     ...TabSectionFields
     ...TeamListFields
     ...ContactUsFields
