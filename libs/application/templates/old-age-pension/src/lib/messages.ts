@@ -920,13 +920,13 @@ export const oldAgePensionFormMessage: MessageDir = {
     },
     additionalFileTitle: {
       id: 'oap.application:fileUpload.additionalFile.title',
-      defaultMessage: 'Fylgiskjöl viðbótagögn',
+      defaultMessage: 'Viðbótagögn',
       description: 'Additional attachments',
     },
     additionalFileDescription: {
       id: 'oap.application:fileUpload.additionalFile.description',
       defaultMessage:
-        'Hér getur þú skilað viðbótargögnum til Tryggingastofnunar. Til dæmis staðfestingu frá Þjóðskrá vegna rangar upplýsingar. Athugaðu að skjalið þarf að vera á .pdf formi.',
+        'Hér getur þú skilað viðbótargögnum til Tryggingastofnunar. Til dæmis staðfestingu frá Þjóðskrá vegna rangra upplýsinga. Athugaðu að skjalið þarf að vera á .pdf formi.',
       description:
         'Here you can submit additional data to TR. For example, confirmation from the National Registry due to incorrect information. Note that the document must be in .pdf format.',
     },

@@ -102,6 +102,8 @@ export function getApplicationAnswers(answers: Application['answers']) {
     'applicantInfo.phonenumber',
   ) as string
 
+  const bank = getValueViaPath(answers, 'paymentInfo.bank') as string
+
   const residenceHistoryQuestion = getValueViaPath(
     answers,
     'residenceHistory.question',
@@ -175,6 +177,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
     selectedMonth,
     applicantEmail,
     applicantPhonenumber,
+    bank,
     residenceHistoryQuestion,
     onePaymentPerYear,
     comment,

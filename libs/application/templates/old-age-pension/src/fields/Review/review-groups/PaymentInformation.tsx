@@ -2,11 +2,11 @@ import {
   DataValue,
   RadioValue,
   ReviewGroup,
+  formatBankInfo,
 } from '@island.is/application/ui-components'
 import { GridColumn, GridRow } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 
-import { getApplicationExternalData } from '../../../lib/oldAgePensionUtils'
 import { oldAgePensionFormMessage } from '../../../lib/messages'
 import { ReviewGroupProps } from './props'
 import { useStatefulAnswers } from '../../../hooks/useStatefulAnswers'
@@ -25,10 +25,9 @@ export const PaymentInformation = ({
       spouseAllowance,
       personalAllowanceUsage,
       spouseAllowanceUsage,
+      bank,
     },
   ] = useStatefulAnswers(application)
-
-  const { bank } = getApplicationExternalData(application.externalData)
 
   const { formatMessage } = useLocale()
 
@@ -42,7 +41,7 @@ export const PaymentInformation = ({
         <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
           <DataValue
             label={formatMessage(oldAgePensionFormMessage.review.bank)}
-            value={bank}
+            value={formatBankInfo(bank)}
           />
         </GridColumn>
       </GridRow>
