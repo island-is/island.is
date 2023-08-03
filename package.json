@@ -407,7 +407,6 @@
     "csv-parse": "4.16.0",
     "cypress": "10.6.0",
     "cypress-file-upload": "5.0.8",
-    "dd-trace-run": "./dd-trace-run",
     "dotenv": "14.3.2",
     "esbuild": "0.15.7",
     "eslint": "8.12.0",
@@ -477,8 +476,7 @@
     "path-parse": "1.0.7",
     "@anatine/esbuildnx@0.2.0": "patch:@anatine/esbuildnx@npm%3A0.2.0#./.yarn/patches/@anatine-esbuildnx-npm-0.2.0-b2ba626748.patch",
     "cache-manager-ioredis-yet@1.1.0": "patch:cache-manager-ioredis-yet@npm%3A1.1.0#./.yarn/patches/cache-manager-ioredis-yet-npm-1.1.0-da7d1a9865.patch",
-    "dd-trace@3.29.1": "patch:dd-trace@npm%3A3.29.1#./.yarn/patches/dd-trace-npm-3.29.1-4e4e5d3a0c.patch",
-    "node-request-interceptor@^0.5.1": "patch:node-request-interceptor@npm%3A0.5.9#./.yarn/patches/node-request-interceptor-npm-0.5.9-77e9d9c058.patch"
+    "dd-trace@3.29.1": "patch:dd-trace@npm%3A3.29.1#./.yarn/patches/dd-trace-npm-3.29.1-4e4e5d3a0c.patch"
   },
   "volta": {
     "node": "18.8.0"
