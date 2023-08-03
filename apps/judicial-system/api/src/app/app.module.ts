@@ -5,7 +5,10 @@ import { ApolloDriver } from '@nestjs/apollo'
 import { CmsTranslationsModule } from '@island.is/cms-translations'
 import { ProblemModule } from '@island.is/nest/problem'
 import { SharedAuthModule } from '@island.is/judicial-system/auth'
-import { AuditTrailModule } from '@island.is/judicial-system/audit-trail'
+import {
+  AuditTrailModule,
+  auditTrailModuleConfig,
+} from '@island.is/judicial-system/audit-trail'
 
 import { environment } from '../environments'
 import { BackendApi } from './data-sources/backend'
@@ -46,7 +49,7 @@ const autoSchemaFile = environment.production
       jwtSecret: environment.auth.jwtSecret,
       secretToken: environment.auth.secretToken,
     }),
-    AuditTrailModule.register(environment.auditTrail),
+    AuditTrailModule,
     AuthModule,
     UserModule,
     CaseModule,
@@ -59,7 +62,10 @@ const autoSchemaFile = environment.production
     CmsTranslationsModule,
     PoliceModule,
     ProblemModule.forRoot({ logAllErrors: true }),
-    ConfigModule.forRoot({ isGlobal: true, load: [fileModuleConfig] }),
+    ConfigModule.forRoot({
+      isGlobal: true,
+      load: [fileModuleConfig, auditTrailModuleConfig],
+    }),
   ],
 })
 export class AppModule {}
