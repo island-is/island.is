@@ -19,7 +19,6 @@ import { ApiScope } from '@island.is/auth/scopes'
 import { Audit } from '@island.is/nest/audit'
 import {
   Birthplace,
-  ChildCustody,
   Citizenship,
   Custodian,
   Person,
@@ -84,14 +83,14 @@ export class PersonResolver {
     return this.service.getParents(person.nationalId, person)
   }
 
-  @ResolveField('childCustody', () => [ChildCustody], {
+  @ResolveField('childCustody', () => [Person], {
     nullable: true,
   })
   @Audit()
   async resolveChildCustody(
     @Context('req') { user }: { user: User },
     @Parent() person: SharedPerson,
-  ): Promise<Array<ChildCustody> | null> {
+  ): Promise<Array<SharedPerson> | null> {
     if (user.nationalId !== person.nationalId) {
       return null
     }

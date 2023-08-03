@@ -28,16 +28,19 @@ export class NationalRegistryV3ClientService {
       nationalId,
     })
 
-  getAllDataIndividual = (
+  async getAllDataIndividual(
     nationalId: string,
-  ): Promise<EinstaklingurDTOAllt | null> =>
-    process.env.NODE_ENV !== 'production'
-      ? this.fakeApi.midlunV02GerviEinstaklingarNationalIdGet({
-          nationalId,
-        })
-      : this.individualApi.midlunV02EinstaklingarNationalIdGet({
-          nationalId,
-        })
+  ): Promise<EinstaklingurDTOAllt | null> {
+    const data =
+      process.env.NODE_ENV !== 'production'
+        ? await this.fakeApi.midlunV02GerviEinstaklingarNationalIdGet({
+            nationalId,
+          })
+        : await this.individualApi.midlunV02EinstaklingarNationalIdGet({
+            nationalId,
+          })
+    return data ?? null
+  }
 
   getFamily = (
     nationalId: string,

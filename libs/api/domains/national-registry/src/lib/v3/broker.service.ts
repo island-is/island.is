@@ -11,8 +11,6 @@ import {
   formatAddress,
   formatSpouse,
   formatCitizenship,
-  formatCustodian,
-  formatBirthParent,
   formatBirthplace,
   formatReligion,
   formatHousing,
@@ -25,10 +23,10 @@ import {
   Custodian,
   Spouse,
   Citizenship,
-  ChildCustody,
   Birthplace,
   Religion,
   Housing,
+  Person,
 } from '../shared/models'
 import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 
@@ -131,7 +129,6 @@ export class BrokerService {
     const data =
       rawData?.hjuskaparstada ??
       (await this.nationalRegistryV3.getSpouse(nationalId))
-
     return data && formatSpouse(data)
   }
 
@@ -149,7 +146,7 @@ export class BrokerService {
   async getChildrenCustodyInformation(
     parentNationalId: string,
     rawData?: EinstaklingurDTOAllt | null,
-  ): Promise<Array<ChildCustody> | null> {
+  ): Promise<Array<PersonV3> | null> {
     const parentData =
       rawData ??
       (await this.nationalRegistryV3.getAllDataIndividual(parentNationalId))
@@ -162,34 +159,26 @@ export class BrokerService {
       ? parentData.forsja.born
       : []
 
-    const childDetails: Array<ChildCustody | null> = await Promise.all(
+    const childDetails: Array<Person | null> = await Promise.all(
       children.map(async (child) => {
         if (!child.barnKennitala || !child.barnNafn) {
           return null
         }
 
-        const childDetails = await this.nationalRegistryV3.getAllDataIndividual(
+        const childData = await this.nationalRegistryV3.getAllDataIndividual(
           child.barnKennitala,
         )
 
-        if (!childDetails) {
+
+        if (!childData) {
           return null
         }
 
-        return {
-          nationalId: child.barnKennitala,
-          fullName: child.barnNafn,
-          custodians: childDetails.forsja?.forsjaradilar
-            ?.map((f) => formatCustodian(f, childDetails.logheimilistengsl))
-            .filter((Boolean as unknown) as ExcludesFalse),
-          birthParents: childDetails.logforeldrar?.logForeldrar
-            ?.map((p) => formatBirthParent(p))
-            .filter((Boolean as unknown) as ExcludesFalse),
-        }
+        return formatPersonDiscriminated(childData)
+
       }),
     )
-
-    return childDetails.filter((child): child is ChildCustody => child != null)
+    return childDetails.filter((child): child is PersonV3 => child != null)
   }
 
   async getBirthplace(

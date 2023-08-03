@@ -7,6 +7,14 @@ query UserInfoOverview($input: String) {
     childCustody {
       nationalId
       fullName
+      custodians {
+        fullName
+        nationalId
+      }
+      birthParents {
+        fullName
+        nationalId
+      }
     }
   }
 }

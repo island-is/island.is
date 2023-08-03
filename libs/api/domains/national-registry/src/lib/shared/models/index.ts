@@ -1,7 +1,6 @@
 export { Address } from './address.model'
 export { Birthplace } from './birthplace.model'
 export { Child } from './child.model'
-export { ChildCustody } from './childCustody.model'
 export { Citizenship } from './citizenship.model'
 export { Custodian } from './custodian.model'
 export { FamilyCorrectionResponse } from './familyCorrection.model'

@@ -1,14 +1,17 @@
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable} from '@nestjs/common'
 import { SoffiaService } from './v1/soffia.service'
 import { BrokerService } from './v3/broker.service'
 import { SharedPerson } from './shared/types'
 import { Birthplace, Citizenship, Spouse, Housing } from './shared/models'
 import { mapMaritalStatus } from './shared/mapper'
+import { LOGGER_PROVIDER, type Logger  } from '@island.is/logging'
+
 @Injectable()
 export class NationalRegistryService {
   constructor(
     private readonly v1: SoffiaService,
     private readonly v3: BrokerService,
+    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
   async getUser(nationalId: string, api: 'v1' | 'v3') {
     if (api === 'v3') {
@@ -134,15 +137,19 @@ export class NationalRegistryService {
     data?: SharedPerson,
   ): Promise<Spouse | null> {
     if (data?.api === 'v1') {
-      return data.rawData
-        ? {
+      if (data.rawData?.nafnmaka && data.rawData?.MakiKt) {
+        return {
             fullName: data.rawData?.nafnmaka,
             nationalId: data.rawData?.MakiKt,
             maritalStatus: mapMaritalStatus(data.rawData?.hju),
             cohabitant: data.rawData?.Sambudarmaki,
           }
-        : null
+        }
+
+      return null
     }
-    return await this.v3.getSpouse(nationalId, data?.rawData)
+    const dataData = await this.v3.getSpouse(nationalId, data?.rawData)
+
+    return dataData
   }
 }

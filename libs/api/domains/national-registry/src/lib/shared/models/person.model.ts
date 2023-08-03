@@ -1,7 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 import { Gender } from '../types'
 import { Birthplace } from './birthplace.model'
-import { ChildCustody } from './childCustody.model'
 import { Citizenship } from './citizenship.model'
 import { Spouse } from './spouse.model'
 import { Housing } from './housing.model'
@@ -37,8 +36,8 @@ export class Person extends PersonBase {
   @Field(() => [PersonBase], { nullable: true })
   birthParents?: Array<PersonBase> | null
 
-  @Field(() => [ChildCustody], { nullable: true })
-  childCustody?: Array<ChildCustody> | null
+  @Field(() => [Person], { nullable: true })
+  childCustody?: Array<Person> | null
 
   @Field(() => Birthplace, { nullable: true })
   birthplace?: Birthplace | null

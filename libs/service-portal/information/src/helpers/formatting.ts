@@ -1,9 +1,9 @@
 import {
   NationalRegistryAddress,
   NationalRegistryChild,
-  NationalRegistryPerson,
 } from '@island.is/api/schema'
 import { ExcludesFalse } from '@island.is/service-portal/core'
+import { NationalRegistryPerson } from '@island.is/service-portal/graphql'
 
 export const formatNameBreaks = (
   user: NationalRegistryPerson | NationalRegistryChild | undefined,
