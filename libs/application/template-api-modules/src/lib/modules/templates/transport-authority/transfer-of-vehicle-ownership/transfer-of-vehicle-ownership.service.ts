@@ -342,10 +342,10 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
         })
         const emailChanged = oldEntry
           ? oldEntry.email !== buyerCoOwners[i].email
-          : false
+          : true
         const phoneChanged = oldEntry
           ? oldEntry.phone !== buyerCoOwners[i].phone
-          : false
+          : true
         if (!oldEntry || emailChanged || phoneChanged) {
           newlyAddedRecipientList.push({
             ssn: buyerCoOwners[i].nationalId!,
@@ -370,10 +370,10 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
         })
         const emailChanged = oldEntry
           ? oldEntry.email !== buyerOperators[i].email
-          : false
+          : true
         const phoneChanged = oldEntry
           ? oldEntry.phone !== buyerOperators[i].phone
-          : false
+          : true
         if (!oldEntry || emailChanged || phoneChanged) {
           newlyAddedRecipientList.push({
             ssn: buyerOperators[i].nationalId!,
