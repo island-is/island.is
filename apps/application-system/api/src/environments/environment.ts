@@ -18,7 +18,7 @@ const devConfig = {
       process.env.WEB_FRONTEND_PORT ?? '4242'
     }/umsoknir`,
     emailOptions: {
-      useTestAccount: !(process.env.USE_SES === 'true'),
+      useTestAccount: process.env.EMAIL_USE_TEST_ACCOUNT === 'true' ?? false,
       useNodemailerApp: process.env.USE_NODEMAILER_APP === 'true' ?? false,
       options: {
         region: process.env.EMAIL_REGION ?? 'eu-west-1',
