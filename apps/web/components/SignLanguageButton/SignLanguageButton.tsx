@@ -3,8 +3,14 @@ import { useState, ReactNode } from 'react'
 import { EmbeddedVideo } from '@island.is/island-ui/contentful'
 import { useI18n } from '@island.is/web/i18n'
 import { Modal } from '@island.is/react/components'
+import type { Locale } from 'locale'
 
 import * as styles from './SignLanguageButton.css'
+
+const BUTTON_TEXT: Record<Locale, string> = {
+  is: 'Táknmál',
+  en: 'Sign language',
+}
 
 const SignLanguageIcon = () => (
   <svg
@@ -35,7 +41,6 @@ export const SignLanguageButton = ({
   content,
 }: SignLanguageButtonProps) => {
   const { activeLocale } = useI18n()
-
   const [isModalVisible, setIsModalVisible] = useState(false)
 
   return (
@@ -49,7 +54,7 @@ export const SignLanguageButton = ({
         scrollType="inside"
         noPaddingBottom={true}
       >
-        <Hidden below="xl">
+        <Hidden below="lg">
           <Box display="flex" columnGap={3}>
             <Box className={styles.leftColumn}>
               <Box position="sticky" top={0} left={0}>
@@ -59,7 +64,7 @@ export const SignLanguageButton = ({
             <Box className={styles.rightColumn}>{content}</Box>
           </Box>
         </Hidden>
-        <Hidden above="lg">
+        <Hidden above="md">
           <Box>
             <Box
               position="sticky"
@@ -76,7 +81,7 @@ export const SignLanguageButton = ({
         </Hidden>
       </Modal>
 
-      <Box marginBottom={2}>
+      <Box marginBottom={1}>
         <Box
           cursor="pointer"
           display="flex"
@@ -88,7 +93,7 @@ export const SignLanguageButton = ({
         >
           <SignLanguageIcon />
           <Text color="blueberry400" fontWeight="semiBold">
-            Sign language
+            {BUTTON_TEXT[activeLocale || 'is']}
           </Text>
         </Box>
       </Box>

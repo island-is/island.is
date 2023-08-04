@@ -8,4 +8,5 @@ export const leftColumn = style({
 export const rightColumn = style({
   flex: 1,
   overflowY: 'scroll',
+  overflowX: 'hidden',
 })

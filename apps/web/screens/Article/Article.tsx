@@ -620,24 +620,28 @@ const ArticleScreen: Screen<ArticleProps> = ({
               {!inStepperView && (
                 <Webreader readId={null} readClass="rs_read" />
               )}
-              <SignLanguageButton
-                videoUrl="https://www.youtube.com/watch?v=T-bpQ-rx4pU"
-                content={
-                  <>
-                    {!inStepperView && (
-                      <Text variant="h2">
-                        <span
-                          id={slugify((subArticle ?? article).title)}
-                          className="rs_read"
-                        >
-                          {(subArticle ?? article).title}
-                        </span>
-                      </Text>
-                    )}
-                    {content}
-                  </>
-                }
-              />
+              {(subArticle
+                ? subArticle.signLanguageVideo?.url
+                : article.signLanguageVideo?.url) && (
+                <SignLanguageButton
+                  videoUrl={(subArticle ?? article).signLanguageVideo.url}
+                  content={
+                    <>
+                      {!inStepperView && (
+                        <Text variant="h2">
+                          <span
+                            id={slugify((subArticle ?? article).title)}
+                            className="rs_read"
+                          >
+                            {(subArticle ?? article).title}
+                          </span>
+                        </Text>
+                      )}
+                      {content}
+                    </>
+                  }
+                />
+              )}
             </Box>
           )}
 
