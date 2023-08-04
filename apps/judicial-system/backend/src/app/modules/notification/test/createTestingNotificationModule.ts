@@ -4,11 +4,11 @@ import { mock } from 'jest-mock-extended'
 import { uuid } from 'uuidv4'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { EmailService } from '@island.is/email-service'
+import { ConfigModule, ConfigType } from '@island.is/nest/config'
 import { IntlService } from '@island.is/cms-translations'
 import { createTestIntl } from '@island.is/cms-translations/test'
+import { EmailService } from '@island.is/email-service'
 import { SmsService } from '@island.is/nova-sms'
-import { ConfigModule, ConfigType } from '@island.is/nest/config'
 import { SharedAuthModule } from '@island.is/judicial-system/auth'
 import { MessageService } from '@island.is/judicial-system/message'
 
