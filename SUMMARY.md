@@ -96,7 +96,6 @@
 - [Defining Monorepo Boundaries With Tags](handbook/repository/nx-tags.md)
 - [OpenAPI](handbook/repository/openapi.md)
 - [Auto Generated Schemas](handbook/repository/schemas.md)
-- [Testing](handbook/repository/system-e2e.md)
 - [Workspace Settings](handbook/repository/workspace-settings.md)
 
 ## Apps
@@ -134,6 +133,7 @@
   - [User Profile](apps/services/user-profile/README.md)
   - [X-Road Collector](apps/services/xroad-collector/README.md)
 - [Car Recycling - Skilavottorð](apps/skilavottord/README.md)
+- [System Testing](apps/system-e2e/README.md)
 - [Web](apps/web/README.md)
   - [Subpages](apps/web/docs/subpages.md)
 

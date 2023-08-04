@@ -362,6 +362,7 @@ function serializeVolumes(
   const mapping: {
     [mode in AccessModes]: OutputPersistentVolumeClaim['accessModes']
   } = {
+    ReadOnly: 'ReadOnlyMany',
     ReadWrite: 'ReadWriteMany',
   }
   if (volumes.some((v) => typeof v.name === undefined) && volumes.length > 1) {
