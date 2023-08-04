@@ -1,14 +1,10 @@
-import {
-  Box,
-  Button,
-  GridColumn,
-  GridRow,
-  Icon,
-} from '@island.is/island-ui/core'
+import { Box, Button, Hidden } from '@island.is/island-ui/core'
 import { useState, ReactNode } from 'react'
-import { ModalBase } from '@island.is/island-ui/core'
 import { EmbeddedVideo } from '@island.is/island-ui/contentful'
 import { useI18n } from '@island.is/web/i18n'
+import { Modal } from '@island.is/react/components'
+
+import * as styles from './SignLanguageButton.css'
 
 interface SignLanguageButtonProps {
   videoUrl: string
@@ -25,27 +21,37 @@ export const SignLanguageButton = ({
 
   return (
     <>
-      <ModalBase
-        baseId="sign-language-modal"
+      <Modal
+        closeButtonLabel="Close"
+        label="sign-language-modal"
+        id="sign-language-modal"
         isVisible={isModalVisible}
-        onVisibilityChange={setIsModalVisible}
+        onClose={() => setIsModalVisible(false)}
+        scrollType="inside"
       >
-        <Box padding="p3" background="white">
-          <Box display="flex" justifyContent="flexEnd">
-            <Box cursor="pointer" onClick={() => setIsModalVisible(false)}>
-              <Icon icon="close" />
+        <Hidden below="xl">
+          <Box display="flex" columnGap={3}>
+            <Box className={styles.leftColumn}>
+              <Box position="sticky" top={0} left={0}>
+                <EmbeddedVideo url={videoUrl} locale={activeLocale} />
+              </Box>
+            </Box>
+            <Box marginTop={[3, 3, 3, 3, 0]} className={styles.rightColumn}>
+              {content}
             </Box>
           </Box>
-          <GridRow>
-            <GridColumn span={['12/12', '12/12', '12/12', '12/12', '6/12']}>
+        </Hidden>
+        <Hidden above="lg">
+          <Box>
+            <Box position="sticky" top={0} left={0}>
               <EmbeddedVideo url={videoUrl} locale={activeLocale} />
-            </GridColumn>
-            <GridColumn span={['12/12', '12/12', '12/12', '12/12', '6/12']}>
+            </Box>
+            <Box marginTop={[3, 3, 3, 3, 0]} className={styles.rightColumn}>
               {content}
-            </GridColumn>
-          </GridRow>
-        </Box>
-      </ModalBase>
+            </Box>
+          </Box>
+        </Hidden>
+      </Modal>
       <Button onClick={() => setIsModalVisible(true)}>Sign language</Button>
     </>
   )
