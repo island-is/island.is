@@ -17,7 +17,7 @@ export type ContainerRunHelm = {
     }
   }
 }
-export type OutputAccessModes = 'ReadWriteMany'
+export type OutputAccessModes = 'ReadWriteMany' | 'ReadOnlyMany'
 export type OutputPersistentVolumeClaim = {
   name?: string
   size: string
