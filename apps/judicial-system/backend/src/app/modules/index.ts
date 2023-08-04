@@ -1,6 +1,7 @@
 export { caseModuleConfig } from './case/case.config'
 export { notificationModuleConfig } from './notification/notification.config'
 export { policeModuleConfig } from './police/police.config'
+export { userModuleConfig } from './user/user.config'
 export { CaseModule } from './case/case.module'
 export { DefendantModule } from './defendant/defendant.module'
 export { IndictmentCountModule } from './indictment-count/indictmentCount.module'

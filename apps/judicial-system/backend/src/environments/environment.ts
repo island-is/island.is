@@ -15,10 +15,6 @@ const devConfig = {
       region: process.env.EMAIL_REGION ?? '',
     },
   },
-  admin: {
-    users:
-      '[{"id":"8f8f6522-95c8-46dd-98ef-cbc198544871","nationalId":"3333333333","name":"Addi Admin","title":"notendaumsjón"},{"id":"66430be4-a662-442b-bf97-1858a64ab685","nationalId":"4444444444","name":"Solla Sýsla","title":"notendaumsjón"}]',
-  },
   files: {
     region: 'eu-west-1',
     bucket: 'island-is-dev-upload-judicial-system',
@@ -50,9 +46,6 @@ if (process.env.NODE_ENV === 'production') {
   if (!process.env.EMAIL_REGION) {
     throw new Error('Missing EMAIL_REGION environment.')
   }
-  if (!process.env.ADMIN_USERS) {
-    throw new Error('Missing ADMIN_USERS environment.')
-  }
   if (!process.env.S3_REGION) {
     throw new Error('Missing S3_REGION environment.')
   }
@@ -83,9 +76,6 @@ const prodConfig = {
     options: {
       region: process.env.EMAIL_REGION ?? '',
     },
-  },
-  admin: {
-    users: process.env.ADMIN_USERS ?? '',
   },
   files: {
     region: process.env.S3_REGION,
