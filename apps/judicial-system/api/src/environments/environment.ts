@@ -42,9 +42,6 @@ const prodConfig = {
   backend: {
     url: process.env.BACKEND_URL,
   },
-  features: {
-    hidden: process.env.HIDDEN_FEATURES,
-  },
 }
 
 export default process.env.NODE_ENV === 'production' ? prodConfig : devConfig
