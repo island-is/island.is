@@ -1,6 +1,6 @@
+import { lazy } from 'react'
 import { PortalModule } from '@island.is/portals/core'
 import { OccupationalLicensesPaths } from './lib/paths'
-import { lazy } from 'react'
 
 const OccupationalLicensesOverview = lazy(() =>
   import('./screens/OccupationalLicensesOverview/OccupationalLicensesOverview'),
