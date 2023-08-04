@@ -793,6 +793,9 @@
       "@island.is/service-portal/modules": [
         "libs/service-portal/modules/src/index.ts"
       ],
+      "@island.is/service-portal/occupational-licenses": [
+        "libs/service-portal/occupational-licenses/src/index.ts"
+      ],
       "@island.is/service-portal/petitions": [
         "libs/service-portal/petitions/src/index.ts"
       ],

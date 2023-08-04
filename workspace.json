@@ -306,6 +306,7 @@
     "service-portal-health": "libs/service-portal/health",
     "service-portal-information": "libs/service-portal/information",
     "service-portal-licenses": "libs/service-portal/licenses",
+    "service-portal-occupational-licenses": "libs/service-portal/occupational-licenses",
     "service-portal-petitions": "libs/service-portal/petitions",
     "service-portal-sessions": "libs/service-portal/sessions",
     "service-portal-settings-personal-information": "libs/service-portal/settings/personal-information",
