@@ -14,8 +14,8 @@ import { MessageService } from '@island.is/judicial-system/message'
 
 import { environment } from '../../../../environments'
 import { CourtService } from '../../court'
-import { AwsS3Service } from '../../aws-s3'
-import { EventService } from '../../event'
+import { awsS3ModuleConfig, AwsS3Service } from '../../aws-s3'
+import { eventModuleConfig, EventService } from '../../event'
 import { InternalNotificationController } from '../internalNotification.controller'
 import { notificationModuleConfig } from '../notification.config'
 import { Notification } from '../models/notification.model'
@@ -35,7 +35,9 @@ export const createTestingNotificationModule = async () => {
         jwtSecret: environment.auth.jwtSecret,
         secretToken: environment.auth.secretToken,
       }),
-      ConfigModule.forRoot({ load: [notificationModuleConfig] }),
+      ConfigModule.forRoot({
+        load: [awsS3ModuleConfig, eventModuleConfig, notificationModuleConfig],
+      }),
     ],
     controllers: [NotificationController, InternalNotificationController],
     providers: [
