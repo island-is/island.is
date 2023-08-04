@@ -1,0 +1,39 @@
+{
+  "root": "libs/clients/health-directorate",
+  "sourceRoot": "libs/clients/health-directorate/src",
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["libs/clients/health-directorate/**/*.ts"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/clients/health-directorate"],
+      "options": {
+        "jestConfig": "libs/clients/health-directorate/jest.config.js",
+        "passWithNoTests": true
+      }
+    },
+    "update-openapi-document": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": [
+          "curl -H 'X-Road-Client: IS-DEV/GOV/10000/island-is-client' http://localhost:8081/r1/IS-DEV/GOV/10015/EmbaettiLandlaeknis-Protected/getOpenAPI?serviceCode=landlaeknir > src/clientConfig.json",
+          "prettier --write src/clientConfig.json"
+        ],
+        "parallel": false,
+        "cwd": "libs/clients/health-directorate"
+      }
+    },
+    "schemas/external-openapi-generator": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "yarn openapi-generator -o libs/clients/health-directorate/gen/fetch -i libs/clients/health-directorate/src/clientConfig.json"
+      }
+    }
+  },
+  "tags": []
+}

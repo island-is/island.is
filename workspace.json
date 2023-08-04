@@ -158,6 +158,7 @@
     "clients-firearm-license": "libs/clients/firearm-license",
     "clients-fishing-license": "libs/clients/fishing-license",
     "clients-fiskistofa": "libs/clients/fiskistofa",
+    "clients-health-directorate": "libs/clients/health-directorate",
     "clients-health-insurance": "libs/clients/icelandic-health-insurance/health-insurance",
     "clients-icelandic-government-institution-vacancies": "libs/clients/icelandic-government-institution-vacancies",
     "clients-identity": "libs/clients/identity",
