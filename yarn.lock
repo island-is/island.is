@@ -152,9 +152,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@apollo/client@npm:3.7.15":
-  version: 3.7.15
-  resolution: "@apollo/client@npm:3.7.15"
+"@apollo/client@npm:3.7.17":
+  version: 3.7.17
+  resolution: "@apollo/client@npm:3.7.17"
   dependencies:
     "@graphql-typed-document-node/core": ^3.1.1
     "@wry/context": ^0.7.0
@@ -184,43 +184,7 @@ __metadata:
       optional: true
     subscriptions-transport-ws:
       optional: true
-  checksum: a33e56847dfb7d6176ffb3cd4d3ff2c548826ce51280a6c8f70e3d75daf9d3a287e79bf3d86ea0b16e39218c90d8a7b4f528eb340055387cf9137705970c0f59
-  languageName: node
-  linkType: hard
-
-"@apollo/client@npm:3.7.7":
-  version: 3.7.7
-  resolution: "@apollo/client@npm:3.7.7"
-  dependencies:
-    "@graphql-typed-document-node/core": ^3.1.1
-    "@wry/context": ^0.7.0
-    "@wry/equality": ^0.5.0
-    "@wry/trie": ^0.3.0
-    graphql-tag: ^2.12.6
-    hoist-non-react-statics: ^3.3.2
-    optimism: ^0.16.1
-    prop-types: ^15.7.2
-    response-iterator: ^0.2.6
-    symbol-observable: ^4.0.0
-    ts-invariant: ^0.10.3
-    tslib: ^2.3.0
-    zen-observable-ts: ^1.2.5
-  peerDependencies:
-    graphql: ^14.0.0 || ^15.0.0 || ^16.0.0
-    graphql-ws: ^5.5.5
-    react: ^16.8.0 || ^17.0.0 || ^18.0.0
-    react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
-    subscriptions-transport-ws: ^0.9.0 || ^0.11.0
-  peerDependenciesMeta:
-    graphql-ws:
-      optional: true
-    react:
-      optional: true
-    react-dom:
-      optional: true
-    subscriptions-transport-ws:
-      optional: true
-  checksum: 4f061c663505dbbabe0e5c00f914dbb3ac1cb2a79beb1de49a6bb1cc299c66536ea076d3c30f579c7f9558efe710105f385cc7f69b247f2d198427d5a8f38eb6
+  checksum: d25e955f3c409885185405ca5876cb74538becafa202257a27483c07d7faa9ce83b34d4cab4b7fd9ad217f80d768e651881292c406dbbca221c91013917890d7
   languageName: node
   linkType: hard
 
@@ -7670,7 +7634,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@island.is/native-app@workspace:apps/native/app"
   dependencies:
-    "@apollo/client": 3.7.7
+    "@apollo/client": 3.7.17
     "@babel/core": ^7.20.0
     "@babel/preset-env": ^7.20.0
     "@babel/runtime": ^7.20.0
@@ -30636,7 +30600,7 @@ __metadata:
     "@anatine/esbuild-decorators": 0.2.4
     "@anatine/esbuildnx": 0.2.0
     "@anev/ts-mountebank": ^1.6.0
-    "@apollo/client": 3.7.15
+    "@apollo/client": 3.7.17
     "@apollo/gateway": 2.1.1
     "@apollo/subgraph": 2.1.1
     "@apollo/utils.keyvadapter": 3.0.0
@@ -38460,7 +38424,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"optimism@npm:^0.16.1, optimism@npm:^0.16.2":
+"optimism@npm:^0.16.2":
   version: 0.16.2
   resolution: "optimism@npm:0.16.2"
   dependencies:
