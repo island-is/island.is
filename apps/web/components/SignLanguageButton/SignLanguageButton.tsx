@@ -36,17 +36,20 @@ export const SignLanguageButton = ({
                 <EmbeddedVideo url={videoUrl} locale={activeLocale} />
               </Box>
             </Box>
-            <Box marginTop={[3, 3, 3, 3, 0]} className={styles.rightColumn}>
-              {content}
-            </Box>
+            <Box className={styles.rightColumn}>{content}</Box>
           </Box>
         </Hidden>
         <Hidden above="lg">
           <Box>
-            <Box position="sticky" top={0} left={0}>
+            <Box
+              position="sticky"
+              top={0}
+              left={0}
+              className={styles.leftColumn}
+            >
               <EmbeddedVideo url={videoUrl} locale={activeLocale} />
             </Box>
-            <Box marginTop={[3, 3, 3, 3, 0]} className={styles.rightColumn}>
+            <Box marginTop={3} className={styles.rightColumn}>
               {content}
             </Box>
           </Box>
