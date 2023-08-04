@@ -41,7 +41,7 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 
 import { indictmentsCaseFilesAccordionItem as m } from './IndictmentsCaseFilesAccordionItem.strings'
-import { UpdateFileMutation } from './UpdateFiles.gql'
+import { useUpdateFilesMutation } from './updateFiles.generated'
 import * as styles from './IndictmentsCaseFilesAccordionItem.css'
 
 const DDMMYYYY = 'dd.MM.yyyy'
@@ -407,9 +407,7 @@ const IndictmentsCaseFilesAccordionItem: React.FC<Props> = (props) => {
     crimeScenes,
   } = props
   const { formatMessage } = useIntl()
-  const [updateFilesMutation] = useMutation<UpdateFilesMutationResponse>(
-    UpdateFileMutation,
-  )
+  const [updateFiles] = useUpdateFilesMutation()
 
   const { onOpen, fileNotFound, dismissFileNotFound } = useFileList({ caseId })
   const { remove } = useS3Upload(caseId)
@@ -492,7 +490,7 @@ const IndictmentsCaseFilesAccordionItem: React.FC<Props> = (props) => {
     )
     const filesBelowInChapter = getFilesBelowInChapter(fileId, reorderableItems)
 
-    const { errors } = await updateFilesMutation({
+    const { errors } = await updateFiles({
       variables: {
         input: {
           caseId,
@@ -558,7 +556,7 @@ const IndictmentsCaseFilesAccordionItem: React.FC<Props> = (props) => {
       return newReorderableItems
     })
 
-    const { errors } = await updateFilesMutation({
+    const { errors } = await updateFiles({
       variables: {
         input: {
           caseId,
