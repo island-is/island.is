@@ -16,7 +16,7 @@ import {
 describe('Signed verdict overview - Prosecutor - Restriction cases', () => {
   const caseFile = makeCaseFile({ name: 'caseFileName' })
   beforeEach(() => {
-    const caseData = { ...mockCase(CaseType.CUSTODY), category: undefined }
+    const caseData = mockCase(CaseType.CUSTODY)
     const prosecutor = makeProsecutor()
     const caseDataAddition: Case = {
       ...caseData,
@@ -35,7 +35,7 @@ describe('Signed verdict overview - Prosecutor - Restriction cases', () => {
 
   it('should display appropriate components on the page', () => {
     cy.getByTestid('caseDates').should('exist')
-    cy.get('[data-testid="modifyRulingButton"]').should('not.exist')
+    cy.get('[data-testid="modfyRulingButton"]').should('not.exist')
 
     cy.get('input[name="sharedWithProsecutorsOfficeId"]')
     cy.get('[aria-controls="caseFilesAccordionItem"]').click()
