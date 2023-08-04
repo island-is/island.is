@@ -25,9 +25,11 @@ import MarkdownWrapper from '../MarkdownWrapper/MarkdownWrapper'
 import {
   RequestRulingSignatureMutation,
   useRequestRulingSignatureMutation,
-  useRulingSignatureConfirmationQuery,
-  RulingSignatureConfirmationQuery,
-} from './RulingSignature.generated'
+} from './requestRulingSignature.generated'
+import {
+  useGetRulingSignatureConfirmationQuery,
+  GetRulingSignatureConfirmationQuery,
+} from './getRulingSignatureConfirmation.generated'
 import { signingModal as m } from './SigningModal.strings'
 
 const ControlCode: React.FC<
@@ -100,7 +102,7 @@ type signingProgress = 'inProgress' | 'success' | 'error' | 'canceled'
 
 export const getSigningProgress = (
   rulingSignatureConfirmation:
-    | RulingSignatureConfirmationQuery['rulingSignatureConfirmation']
+    | GetRulingSignatureConfirmationQuery['rulingSignatureConfirmation']
     | undefined,
   error: ApolloError | undefined,
 ): signingProgress => {
@@ -125,7 +127,7 @@ export const SigningModal: React.FC<
   const router = useRouter()
   const { formatMessage } = useIntl()
 
-  const { data, error } = useRulingSignatureConfirmationQuery({
+  const { data, error } = useGetRulingSignatureConfirmationQuery({
     variables: {
       input: {
         documentToken: requestRulingSignatureResponse?.documentToken || '',

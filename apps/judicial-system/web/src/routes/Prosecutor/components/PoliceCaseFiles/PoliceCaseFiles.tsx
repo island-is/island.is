@@ -118,12 +118,7 @@ const PoliceCaseFiles: React.FC<React.PropsWithChildren<Props>> = ({
       setCheckAllChecked(!checkAllChecked)
       setPoliceCaseFileList(
         policeCaseFileList.map((l) => {
-          return {
-            id: l.id,
-            name: l.name,
-            policeCaseNumber: l.policeCaseNumber,
-            checked: evt.target.checked,
-          }
+          return { ...l, checked: evt.target.checked }
         }),
       )
     } else {

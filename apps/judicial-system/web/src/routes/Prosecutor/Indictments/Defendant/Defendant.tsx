@@ -131,6 +131,38 @@ const Defendant: React.FC<React.PropsWithChildren<unknown>> = () => {
     )
   }
 
+  const handleCreatePoliceCases = (policeCases: PoliceCase[]) => {
+    const cases = getPoliceCases(workingCase)
+    const allCases = [...cases, ...policeCases]
+
+    setAndSendCaseToServer(
+      [
+        {
+          policeCaseNumbers: [
+            ...allCases.map((policeCase) => policeCase.number),
+          ],
+          indictmentSubtypes: allCases.reduce<IndictmentSubtypeMap>(
+            (acc, policeCase) => ({ ...acc, [policeCase.number]: [] }),
+            {},
+          ),
+          crimeScenes: allCases.reduce<CrimeSceneMap>(
+            (acc, policeCase) => ({
+              ...acc,
+              [policeCase.number]: {
+                place: policeCase.place,
+                date: policeCase.date,
+              },
+            }),
+            {},
+          ),
+          force: true,
+        },
+      ],
+      workingCase,
+      setWorkingCase,
+    )
+  }
+
   const handleSetPoliceCase = (
     index: number,
     update: {
@@ -355,8 +387,7 @@ const Defendant: React.FC<React.PropsWithChildren<unknown>> = () => {
           {workingCase.origin === CaseOrigin.LOKE && (
             <LokeNumberList
               caseId={workingCase.id}
-              onAddPoliceCaseNumber={handleCreatePoliceCase}
-              onRemovePoliceCaseNumber={handleDeletePoliceCase}
+              addPoliceCaseNumbers={handleCreatePoliceCases}
             />
           )}
           <AnimatePresence>

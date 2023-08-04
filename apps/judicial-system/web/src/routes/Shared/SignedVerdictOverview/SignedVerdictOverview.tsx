@@ -83,10 +83,8 @@ import ReopenModal from './Components/ReopenModal/ReopenModal'
 import CaseDocuments from './Components/CaseDocuments/CaseDocuments'
 import ShareCase from './Components/ShareCase/ShareCase'
 
-import {
-  useCourtRecordSignatureConfirmationLazyQuery,
-  useRequestCourtRecordSignatureMutation,
-} from './CourtRecordSignature.generated'
+import { useGetCourtRecordSignatureConfirmationLazyQuery } from './getCourtRecordSignatureConfirmation.generated'
+import { useRequestCourtRecordSignatureMutation } from './requestCourtRecordSignature.generated'
 import { strings } from './SignedVerdictOverview.strings'
 
 interface ModalControls {
@@ -179,9 +177,7 @@ type availableModals =
   | 'ConfirmStatementAfterDeadline'
   | 'AppealReceived'
 
-export const SignedVerdictOverview: React.FC<
-  React.PropsWithChildren<unknown>
-> = () => {
+export const SignedVerdictOverview: React.FC = () => {
   const {
     workingCase,
     setWorkingCase,
@@ -256,7 +252,7 @@ export const SignedVerdictOverview: React.FC<
   }, [workingCase.type, user])
 
   const [getCourtRecordSignatureConfirmation] =
-    useCourtRecordSignatureConfirmationLazyQuery({
+    useGetCourtRecordSignatureConfirmationLazyQuery({
       fetchPolicy: 'no-cache',
       errorPolicy: 'all',
       onCompleted: (courtRecordSignatureConfirmationData) => {
