@@ -1,5 +1,4 @@
 const devConfig = {
-  production: false,
   auth: {
     jwtSecret: 'jwt-secret',
     secretToken: 'secret-backend-api-token',
@@ -69,7 +68,6 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 const prodConfig = {
-  production: true,
   auth: {
     jwtSecret: process.env.AUTH_JWT_SECRET ?? '',
     secretToken: process.env.BACKEND_ACCESS_TOKEN ?? '',
