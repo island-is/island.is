@@ -22,6 +22,7 @@ import {
   policeModuleConfig,
   IndictmentCountModule,
   userModuleConfig,
+  awsS3ModuleConfig,
 } from './modules'
 import { SequelizeConfigService } from './sequelizeConfig.service'
 
@@ -53,6 +54,7 @@ import { SequelizeConfigService } from './sequelizeConfig.service'
         notificationModuleConfig,
         policeModuleConfig,
         userModuleConfig,
+        awsS3ModuleConfig,
       ],
     }),
   ],

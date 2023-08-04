@@ -15,12 +15,6 @@ const devConfig = {
       region: process.env.EMAIL_REGION ?? '',
     },
   },
-  files: {
-    region: 'eu-west-1',
-    bucket: 'island-is-dev-upload-judicial-system',
-    timeToLivePost: '15',
-    timeToLiveGet: '5',
-  },
   events: {
     url: process.env.EVENT_URL,
     errorUrl: process.env.ERROR_EVENT_URL,
@@ -46,18 +40,6 @@ if (process.env.NODE_ENV === 'production') {
   if (!process.env.EMAIL_REGION) {
     throw new Error('Missing EMAIL_REGION environment.')
   }
-  if (!process.env.S3_REGION) {
-    throw new Error('Missing S3_REGION environment.')
-  }
-  if (!process.env.S3_BUCKET) {
-    throw new Error('Missing S3_BUCKET environment.')
-  }
-  if (!process.env.S3_TIME_TO_LIVE_POST) {
-    throw new Error('Missing S3_TIME_TO_LIVE_POST environment.')
-  }
-  if (!process.env.S3_TIME_TO_LIVE_GET) {
-    throw new Error('Missing S3_TIME_TO_LIVE_GET environment.')
-  }
 }
 
 const prodConfig = {
@@ -76,12 +58,6 @@ const prodConfig = {
     options: {
       region: process.env.EMAIL_REGION ?? '',
     },
-  },
-  files: {
-    region: process.env.S3_REGION,
-    bucket: process.env.S3_BUCKET ?? '',
-    timeToLivePost: process.env.S3_TIME_TO_LIVE_POST ?? '',
-    timeToLiveGet: process.env.S3_TIME_TO_LIVE_GET ?? '',
   },
   events: {
     url: process.env.EVENT_URL,
