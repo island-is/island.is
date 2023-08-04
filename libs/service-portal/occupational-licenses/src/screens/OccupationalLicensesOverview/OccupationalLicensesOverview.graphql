@@ -1,0 +1,24 @@
+query getHealthDirectorateOccupationaLicenses {
+  healthDirectorateOccupationalLicenses {
+    legalEntityId
+    nationalId
+    name
+    profession
+    license
+    licenseNumber
+    validFrom
+    validTo
+  }
+  getOrganizations {
+    items {
+      id
+      title
+      slug
+      logo {
+        id
+        url
+        title
+      }
+    }
+  }
+}

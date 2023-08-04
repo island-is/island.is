@@ -497,6 +497,15 @@ export const m = defineMessages({
     id: 'service.portal:licenses-description',
     defaultMessage: 'Upplýsingar um skírteini og réttindi sem þeim fylgja',
   },
+  occupationalLicenses: {
+    id: 'service.portal:occupationalLicenses',
+    defaultMessage: 'Starfsleyfi',
+  },
+  occupationalLicensesDescription: {
+    id: 'service.portal:occupationalLicensesDescription',
+    defaultMessage:
+      'Hér er markmiðið að þú getir fundið yfirlit yfir leyfisbréf og vottorð til starfsréttinda. Unnið er að því að koma öllum leyfisbréfum og vottorðum um starfsréttindi á einn stað. Núna birtast leyfisbréf kennara sem hafa verið útskrifaðir frá 1988 sem sótt eru til Menntamálastofnunar.',
+  },
   finance: {
     id: 'service.portal:finance',
     defaultMessage: 'Fjármál',
@@ -561,6 +570,10 @@ export const m = defineMessages({
   delegation: {
     id: 'service.portal:delegation',
     defaultMessage: 'Mín réttindi',
+  },
+  occupationaLicenses: {
+    id: 'service.portal:occupational-licenses',
+    defaultMessage: 'Starfsleyfi',
   },
   parentalLeave: {
     id: 'service.portal:parentalLeave',
@@ -939,7 +952,6 @@ export const m = defineMessages({
     id: 'service.portal:sessions',
     defaultMessage: 'Notkun',
   },
-
   therapies: {
     id: 'service.portal:therapies',
     defaultMessage: 'Þjálfun',
