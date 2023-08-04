@@ -2452,6 +2452,9 @@ export interface IOrganizationSubpageFields {
 
   /** Featured Image */
   featuredImage?: Asset | undefined
+
+  /** Sign Language Video */
+  signLanguageVideo?: IEmbeddedVideo | undefined
 }
 
 export interface IOrganizationSubpage

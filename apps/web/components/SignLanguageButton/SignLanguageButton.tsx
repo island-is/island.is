@@ -52,7 +52,6 @@ export const SignLanguageButton = ({
         isVisible={isModalVisible}
         onClose={() => setIsModalVisible(false)}
         scrollType="inside"
-        noPaddingBottom={true}
       >
         <Hidden below="lg">
           <Box display="flex" columnGap={3}>

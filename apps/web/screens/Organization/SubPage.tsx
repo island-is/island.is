@@ -35,6 +35,7 @@ import {
   SliceDropdown,
   Form,
   Webreader,
+  SignLanguageButton,
 } from '@island.is/web/components'
 import { CustomNextError } from '@island.is/web/units/errors'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
@@ -112,6 +113,48 @@ const SubPage: Screen<SubPageProps> = ({
     }),
   )
 
+  const content = (
+    <>
+      {subpage.showTableOfContents && (
+        <TOC
+          slices={subpage.slices}
+          title={n('navigationTitle', 'Efnisyfirlit')}
+        />
+      )}
+      <GridRow className="rs_read">
+        <GridColumn
+          span={['12/12', '12/12', subpage.links.length ? '7/12' : '12/12']}
+        >
+          {webRichText(
+            subpage.description as SliceType[],
+            {
+              renderComponent: {
+                Form: (slice) => <Form form={slice} namespace={namespace} />,
+              },
+            },
+            activeLocale,
+          )}
+        </GridColumn>
+        {subpage.links.length > 0 && (
+          <GridColumn
+            span={['12/12', '12/12', '4/12']}
+            offset={[null, null, '1/12']}
+          >
+            <Stack space={2}>
+              {subpage.links.map((link) => (
+                <Link href={link.url} underline="small">
+                  <Text fontWeight="light" color="blue400">
+                    {link.text}
+                  </Text>
+                </Link>
+              ))}
+            </Stack>
+          </GridColumn>
+        )}
+      </GridRow>
+    </>
+  )
+
   return (
     <OrganizationWrapper
       showExternalLinks={true}
@@ -159,56 +202,43 @@ const SubPage: Screen<SubPageProps> = ({
                         {subpage.title}
                       </Text>
                     </Box>
-                    <Webreader
-                      marginTop={0}
-                      readId={null}
-                      readClass="rs_read"
-                    />
-                  </GridColumn>
-                </GridRow>
-                {subpage.showTableOfContents && (
-                  <TOC
-                    slices={subpage.slices}
-                    title={n('navigationTitle', 'Efnisyfirlit')}
-                  />
-                )}
-                <GridRow className="rs_read">
-                  <GridColumn
-                    span={[
-                      '12/12',
-                      '12/12',
-                      subpage.links.length ? '7/12' : '12/12',
-                    ]}
-                  >
-                    {webRichText(
-                      subpage.description as SliceType[],
-                      {
-                        renderComponent: {
-                          Form: (slice) => (
-                            <Form form={slice} namespace={namespace} />
-                          ),
-                        },
-                      },
-                      activeLocale,
-                    )}
-                  </GridColumn>
-                  {subpage.links.length > 0 && (
-                    <GridColumn
-                      span={['12/12', '12/12', '4/12']}
-                      offset={[null, null, '1/12']}
+                    <Box
+                      display="flex"
+                      alignItems="center"
+                      columnGap={2}
+                      marginBottom={3}
                     >
-                      <Stack space={2}>
-                        {subpage.links.map((link) => (
-                          <Link href={link.url} underline="small">
-                            <Text fontWeight="light" color="blue400">
-                              {link.text}
-                            </Text>
-                          </Link>
-                        ))}
-                      </Stack>
-                    </GridColumn>
-                  )}
+                      <Webreader
+                        marginTop={0}
+                        marginBottom={0}
+                        readId={null}
+                        readClass="rs_read"
+                      />
+                      {subpage.signLanguageVideo?.url && (
+                        <SignLanguageButton
+                          videoUrl={subpage.signLanguageVideo.url}
+                          content={
+                            <>
+                              <Box className="rs_read" marginBottom={2}>
+                                <Text variant="h2">{subpage.title}</Text>
+                              </Box>
+                              {content}
+                              {renderSlices(
+                                subpage.slices,
+                                subpage.sliceCustomRenderer,
+                                subpage.sliceExtraText,
+                                namespace,
+                                organizationPage.slug,
+                                organizationPage,
+                              )}
+                            </>
+                          }
+                        />
+                      )}
+                    </Box>
+                  </GridColumn>
                 </GridRow>
+                {content}
               </GridContainer>
             </GridColumn>
           </GridRow>
