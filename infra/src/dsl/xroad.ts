@@ -266,6 +266,16 @@ export const JudicialAdministration = new XroadConf({
   },
 })
 
+export const HealthDirectorate = new XroadConf({
+  env: {
+    XROAD_HEALTH_DIRECTORATE_PATH: {
+      dev: 'IS-DEV/GOV/10015/EmbaettiLandlaeknis-Protected/landlaeknir',
+      staging: 'IS-DEV/GOV/10015/EmbaettiLandlaeknis-Protected/landlaeknir',
+      prod: 'IS-DEV/GOV/10015/EmbaettiLandlaeknis-Protected/landlaeknir',
+    },
+  },
+})
+
 export const Firearm = new XroadConf({
   env: {
     XROAD_FIREARM_LICENSE_PATH: {

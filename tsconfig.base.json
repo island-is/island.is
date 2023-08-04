@@ -119,6 +119,9 @@
       "@island.is/api/domains/fiskistofa": [
         "libs/api/domains/fiskistofa/src/index.ts"
       ],
+      "@island.is/api/domains/health-directorate": [
+        "libs/api/domains/health-directorate/src/index.ts"
+      ],
       "@island.is/api/domains/health-insurance": [
         "libs/api/domains/health-insurance/src/index.ts"
       ],

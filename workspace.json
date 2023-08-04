@@ -38,6 +38,7 @@
     "api-domains-financial-statements-inao": "libs/api/domains/financial-statements-inao",
     "api-domains-fishing-license": "libs/api/domains/fishing-license",
     "api-domains-fiskistofa": "libs/api/domains/fiskistofa",
+    "api-domains-health-directorate": "libs/api/domains/health-directorate",
     "api-domains-health-insurance": "libs/api/domains/health-insurance",
     "api-domains-icelandic-government-institution-vacancies": "libs/api/domains/icelandic-government-institution-vacancies",
     "api-domains-icelandic-names-registry": "libs/api/domains/icelandic-names-registry",

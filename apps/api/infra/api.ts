@@ -31,6 +31,7 @@ import {
   IcelandicGovernmentInstitutionVacancies,
   RskProcuring,
   AircraftRegistry,
+  HealthDirectorate,
 } from '../../../infra/src/dsl/xroad'
 
 export const serviceSetup = (services: {
@@ -327,6 +328,7 @@ export const serviceSetup = (services: {
       Disability,
       Base,
       Client,
+      HealthDirectorate,
       HealthInsurance,
       Labor,
       DrivingLicense,
