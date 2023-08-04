@@ -616,7 +616,7 @@ const ArticleScreen: Screen<ArticleProps> = ({
             />
           )}
           {!inStepperView && (
-            <Box display="flex" columnGap={3}>
+            <Box display="flex" alignItems="center" columnGap={2}>
               {!inStepperView && (
                 <Webreader readId={null} readClass="rs_read" />
               )}
