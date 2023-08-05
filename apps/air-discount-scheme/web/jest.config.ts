@@ -6,8 +6,8 @@ export default {
   transform: {
     '^(?!.*\\.(js|jsx|ts|tsx|css|json)$)': '@nx/react/plugins/jest',
     '^.+\\.[tj]sx?$': [
-      'ts-jest',
-      { tsconfig: `${__dirname}/tsconfig.spec.json` },
+      'babel-jest',
+      { cwd: __dirname, configFile: `${__dirname}/babel-jest.config.json` },
     ],
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'html'],
