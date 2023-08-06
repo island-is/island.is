@@ -13,6 +13,7 @@
           "esbuild --bundle $(find apps/system-e2e -name '*.ts' -not -path '*/node_modules/*') --outdir=dist/apps/system-e2e --tsconfig=apps/system-e2e/tsconfig.json --platform=node $(jq -r '.dependencies|keys[]|(\"--external:\"+.)' apps/system-e2e/package.json | xargs) --external:@nestjs/microservices --external:@nestjs/websockets --external:fsevents --external:class-transformer",
           "cp apps/system-e2e/package.json dist/apps/system-e2e/"
         ],
+        "outputPath": "dist/apps/system-e2e",
         "parallel": false
       },
       "configurations": {
