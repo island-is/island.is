@@ -20,10 +20,14 @@
         "passWithNoTests": true
       }
     },
-    "schemas/openapi-generator": {
+    "schemas/external-openapi-generator": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "yarn openapi-generator -o libs/clients/auth/public-api/gen/fetch -i apps/services/auth/public-api/src/openapi.yaml --additional-properties=enumPropertyNaming=original"
+        "commands": [
+          "nx run services-auth-public-api:schemas/build-openapi $NX_OPTIONS",
+          "yarn openapi-generator -o libs/clients/auth/public-api/gen/fetch -i apps/services/auth/public-api/src/openapi.yaml --additional-properties=enumPropertyNaming=original"
+        ],
+        "parallel": false
       },
       "outputs": ["{workspaceRoot}/libs/clients/auth/public-api/gen"]
     }

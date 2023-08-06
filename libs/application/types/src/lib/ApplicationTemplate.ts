@@ -33,6 +33,7 @@ export interface ApplicationTemplate<
   readonly translationNamespaces?: string[]
   readonly allowMultipleApplicationsInDraft?: boolean
   readonly allowedDelegations?: AllowedDelegation[]
+  readonly requiredScopes?: string[]
   readonly dataSchema: Schema
   readonly stateMachineConfig: MachineConfig<
     TContext,
