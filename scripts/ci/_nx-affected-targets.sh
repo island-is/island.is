@@ -11,10 +11,11 @@ export BASE=${BASE:-main}
 
 AFFECTED_ALL=${AFFECTED_ALL:-} # Could be used for forcing all projects to be affected (set or create `secret` in GitHub with the name of this variable set to the name of the branch that should be affected, prefixed with the magic string `7913-`)
 BRANCH=${BRANCH:-$GITHUB_HEAD_REF}
+
 if [[ -n "$BRANCH" && -n "$AFFECTED_ALL" && "$AFFECTED_ALL" == "7913-$BRANCH" ]]; then
-  EXTRA_ARGS=(--all)
+  # show all projects with target.
 else
-  EXTRA_ARGS=(--base "$BASE" --head "$HEAD")
+  EXTRA_ARGS=(--affected --base "$BASE" --head "$HEAD")
 fi
 
-npx nx print-affected --target="$1" --select=tasks.target.project "${EXTRA_ARGS[@]}"
+npx nx show projects --withTarget="$1" "${EXTRA_ARGS[@]}" --json | jq -r 'join(", ")'
