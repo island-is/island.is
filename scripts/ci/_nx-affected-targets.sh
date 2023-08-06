@@ -13,7 +13,7 @@ AFFECTED_ALL=${AFFECTED_ALL:-} # Could be used for forcing all projects to be af
 BRANCH=${BRANCH:-$GITHUB_HEAD_REF}
 
 if [[ -n "$BRANCH" && -n "$AFFECTED_ALL" && "$AFFECTED_ALL" == "7913-$BRANCH" ]]; then
-  # show all projects with target.
+  EXTRA_ARGS=""
 else
   EXTRA_ARGS=(--affected --base "$BASE" --head "$HEAD")
 fi
