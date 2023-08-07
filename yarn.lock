@@ -83,7 +83,7 @@ __metadata:
 
 "@anatine/esbuildnx@patch:@anatine/esbuildnx@npm%3A0.2.0#./.yarn/patches/@anatine-esbuildnx-npm-0.2.0-b2ba626748.patch::version=0.2.0&hash=9054d7&locator=island.is%40workspace%3A.":
   version: 0.2.0
-  resolution: "@anatine/esbuildnx@patch:@anatine/esbuildnx@npm%3A0.2.0#./.yarn/patches/@anatine-esbuildnx-npm-0.2.0-b2ba626748.patch::version=0.2.0&hash=9054d7&locator=island.is%40workspace%3A."
+  resolution: "@anatine/esbuildnx@patch:@anatine/esbuildnx@npm%3A0.2.0#./.yarn/patches/@anatine-esbuildnx-npm-0.2.0-b2ba626748.patch::version=0.2.0&hash=b99ee9&locator=island.is%40workspace%3A."
   dependencies:
     "@anatine/esbuild-decorators": ^0.2.18
     "@nrwl/devkit": ^12.9.0
@@ -97,13 +97,13 @@ __metadata:
     rxjs-for-await: ^0.0.2
   peerDependencies:
     esbuild: ~0.14.29
-  checksum: d312884e34798dace3dfe032b5fe2dd53412eb5aa42f885b386080a0d1b7c88aa95b239319eb69274a138eb98e7491cf7791b4809a94fea51f44a9cb3e61302b
+  checksum: d0ea41806262f6a5fe06268e4fa4c13c65f6931d0a5c99a0d3415adf935087752882238cd0fbb087de435b6c045f68258dc54990b0974905ca9b34538f9cb78c
   languageName: node
   linkType: hard
 
 "@anatine/esbuildnx@patch:@anatine/esbuildnx@patch%3A@anatine/esbuildnx@npm%253A0.2.0%23./.yarn/patches/@anatine-esbuildnx-npm-0.2.0-b2ba626748.patch%3A%3Aversion=0.2.0&hash=9054d7&locator=island.is%2540workspace%253A.#./.yarn/patches/@anatine-esbuildnx-patch-9f523e0a95.patch::locator=island.is%40workspace%3A.":
   version: 0.2.0
-  resolution: "@anatine/esbuildnx@patch:@anatine/esbuildnx@patch%3A@anatine/esbuildnx@npm%253A0.2.0%23./.yarn/patches/@anatine-esbuildnx-npm-0.2.0-b2ba626748.patch%3A%3Aversion=0.2.0&hash=9054d7&locator=island.is%2540workspace%253A.#./.yarn/patches/@anatine-esbuildnx-patch-9f523e0a95.patch::version=0.2.0&hash=48935c&locator=island.is%40workspace%3A."
+  resolution: "@anatine/esbuildnx@patch:@anatine/esbuildnx@patch%3A@anatine/esbuildnx@npm%253A0.2.0%23./.yarn/patches/@anatine-esbuildnx-npm-0.2.0-b2ba626748.patch%3A%3Aversion=0.2.0&hash=b99ee9&locator=island.is%2540workspace%253A.#./.yarn/patches/@anatine-esbuildnx-patch-9f523e0a95.patch::version=0.2.0&hash=48935c&locator=island.is%40workspace%3A."
   dependencies:
     "@anatine/esbuild-decorators": ^0.2.18
     "@nrwl/devkit": ^12.9.0
@@ -117,7 +117,7 @@ __metadata:
     rxjs-for-await: ^0.0.2
   peerDependencies:
     esbuild: ~0.14.29
-  checksum: 8c7bc6b6e9fc45c2361889967a53f5d487fbf27b268b1f89a03f82efde954e819819dbc93290ce907090e69c871f4051ee305b8f86c3144bce80e989b22549fa
+  checksum: 283754a851d5eaf92920c33f940dad9595fbbb07bfbeca94d3698113bbc1ca5d23a07fa7251a5e96a1cdb41357824e0a5081aff892b655449a99a9450d6bcf74
   languageName: node
   linkType: hard
 
