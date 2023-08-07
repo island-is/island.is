@@ -15,6 +15,7 @@
     "fastify-swagger",
     "@nestjs/mongoose",
     "@nestjs/typeorm",
+    "@nestjs/common",
     "@nestjs/axios",
     "dd-trace",
     "express",
