@@ -1,33 +1,15 @@
 import React, { useCallback } from 'react'
 import { useIntl } from 'react-intl'
-import { useMutation } from '@apollo/client'
 
 import { toast } from '@island.is/island-ui/core'
+import { SubstanceMap } from '@island.is/judicial-system/types'
 import { errors } from '@island.is/judicial-system-web/messages'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
+import { UpdateIndictmentCountInput } from '@island.is/judicial-system-web/src/graphql/schema'
 
-import {
-  IndictmentCount,
-  UpdateIndictmentCountInput,
-} from '@island.is/judicial-system-web/src/graphql/schema'
-
-import { UpdateIndictmentCountMutation } from './updateIndictmentCount.graphql'
-import { CreateIndictmentCountMutation } from './createIndictmentCount.graphql'
-import { DeleteIndictmentCountMutation } from './deleteIndictmentCount.graphql'
-import { SubstanceMap } from '@island.is/judicial-system/types'
-interface CreateIndictmentCountMutationResponse {
-  createIndictmentCount: IndictmentCount
-}
-
-interface UpdateIndictmentCountMutationResponse {
-  updateIndictmentCount: IndictmentCount
-}
-
-interface DeleteIndictmentCountMutationResponse {
-  deleteIndictmentCount: {
-    deleted: boolean
-  }
-}
+import { useCreateIndictmentCountMutation } from './createIndictmentCount.generated'
+import { useUpdateIndictmentCountMutation } from './updateIndictmentCount.generated'
+import { useDeleteIndictmentCountMutation } from './deleteIndictmentCount.generated'
 
 export interface UpdateIndictmentCount
   extends Omit<
@@ -40,22 +22,9 @@ export interface UpdateIndictmentCount
 const useIndictmentCounts = () => {
   const { formatMessage } = useIntl()
 
-  const [
-    createIndictmentCountMutation,
-  ] = useMutation<CreateIndictmentCountMutationResponse>(
-    CreateIndictmentCountMutation,
-  )
-  const [
-    updateIndictmentCountMutation,
-  ] = useMutation<UpdateIndictmentCountMutationResponse>(
-    UpdateIndictmentCountMutation,
-  )
-
-  const [
-    deleteIndictmentCountMutation,
-  ] = useMutation<DeleteIndictmentCountMutationResponse>(
-    DeleteIndictmentCountMutation,
-  )
+  const [createIndictmentCountMutation] = useCreateIndictmentCountMutation()
+  const [updateIndictmentCountMutation] = useUpdateIndictmentCountMutation()
+  const [deleteIndictmentCountMutation] = useDeleteIndictmentCountMutation()
 
   const createIndictmentCount = useCallback(
     async (caseId: string) => {
@@ -92,7 +61,7 @@ const useIndictmentCounts = () => {
           },
         })
 
-        return data?.deleteIndictmentCount.deleted
+        return data?.deleteIndictmentCount?.deleted
       } catch (e) {
         toast.error(formatMessage(errors.deleteIndictmentCount))
       }
