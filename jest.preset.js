@@ -20,6 +20,11 @@ module.exports = {
     '!**/seeders/*',
     '!**/migrations/*',
   ],
+  moduleNameMapper: {
+    // Axios and Jest aren't best friends right now:
+    // https://github.com/axios/axios/issues/5101
+    '^axios$': require.resolve('axios'),
+  },
   /* TODO: Update to latest Jest snapshotFormat
    * By default Nx has kept the older style of Jest Snapshot formats
    * to prevent breaking of any existing tests with snapshots.
