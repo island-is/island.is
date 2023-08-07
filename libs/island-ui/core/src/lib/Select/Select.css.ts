@@ -44,11 +44,14 @@ export const placeholderPadding = style({
 })
 export const placeholderSizes = styleVariants(inputMixins.inputSizes)
 
-export const inputContainer = style({
-  ...inputMixins.input,
-  padding: 0,
-  margin: 0,
-}, 'input-container')
+export const inputContainer = style(
+  {
+    ...inputMixins.input,
+    padding: 0,
+    margin: 0,
+  },
+  'input-container',
+)
 
 export const input = style(
   {
