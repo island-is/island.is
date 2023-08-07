@@ -145,7 +145,7 @@
     "classnames": "2.2.6",
     "configcat-js": "7.0.1",
     "configcat-node": "9.1.1",
-    "contentful": "7.14.6",
+    "contentful": "8.2.0",
     "contentful-management": "10.12.0",
     "contentful-ui-extensions-sdk": "3.32.0",
     "cookie-parser": "1.4.5",
@@ -449,7 +449,6 @@
   },
   "resolutions": {
     "@graphql-tools/git-loader": "6.2.6",
-    "axios": "0.21.4",
     "immer": "9.0.6",
     "marked": "2.0.0",
     "serialize-javascript": "4.0.0",

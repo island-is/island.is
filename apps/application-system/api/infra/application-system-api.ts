@@ -224,6 +224,11 @@ export const serviceSetup = (services: {
         staging: 'false',
         prod: 'false',
       },
+      AUTH_PUBLIC_API_URL: {
+        dev: 'https://identity-server.dev01.devland.is/api',
+        staging: 'https://identity-server.staging01.devland.is/api',
+        prod: 'https://innskra.island.is/api',
+      },
     })
     .xroad(
       Base,
