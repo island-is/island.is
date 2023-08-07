@@ -44,21 +44,24 @@ export const placeholderPadding = style({
 })
 export const placeholderSizes = styleVariants(inputMixins.inputSizes)
 
-export const input = style(inputMixins.input, 'input')
-export const inputSize = styleVariants(
+export const inputContainer = style({
+  ...inputMixins.input,
+  padding: 0,
+  margin: 0,
+}, 'input-container')
+
+export const input = style(
   {
-    xs: wrapMedia(inputMixins.inputSizes.xs, `${wrapper} &`),
-    sm: wrapMedia(inputMixins.inputSizes.sm, `${wrapper} &`),
-    md: wrapMedia(inputMixins.inputSizes.md, `${wrapper} &`),
+    ...inputMixins.input,
+    ':focus': inputMixins.inputFocus,
+    ...themeUtils.responsiveStyle({
+      xs: inputMixins.inputSizes.xs,
+      sm: inputMixins.inputSizes.sm,
+      md: inputMixins.inputSizes.md,
+    }),
   },
-  'inputSizes',
+  'input',
 )
-
-globalStyle(`${wrapper} ${input} input`, inputMixins.input)
-globalStyle(`${wrapper} ${inputSize.sm} input`, inputMixins.inputSizes.sm)
-globalStyle(`${wrapper} ${inputSize.md} input`, inputMixins.inputSizes.md)
-
-globalStyle(`${wrapper} ${input} input:focus`, inputMixins.inputFocus)
 
 export const errorMessage = style(inputMixins.errorMessage)
 export const hasError = style({})
@@ -69,9 +72,6 @@ export const containerDisabled = style({
 export const container = style({}, 'container')
 export const containerSizes = styleVariants(inputMixins.containerSizes)
 
-globalStyle(`${wrapper} .css-1uccc91-singleValue`, {
-  color: theme.color.dark400,
-})
 globalStyle(`${wrapper} .css-1g6gooi`, {
   padding: 0,
   margin: 0,
@@ -155,6 +155,7 @@ export const singleValue = style(
     marginRight: 0,
     paddingRight: 0,
     ...inputMixins.input,
+    color: theme.color.dark400,
   },
   'singleValue',
 )

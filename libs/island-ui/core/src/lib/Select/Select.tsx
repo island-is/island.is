@@ -111,6 +111,7 @@ export const Select = <Opt extends OptionType, Value extends OptionValue>({
         }}
         isClearable
         backspaceRemovesValue
+        menuShouldScrollIntoView={false}
       />
       {hasError && errorMessage && (
         <div id={errorId} className={styles.errorMessage} aria-live="assertive">
@@ -165,6 +166,7 @@ export const Select = <Opt extends OptionType, Value extends OptionValue>({
         }}
         isClearable={isClearable}
         backspaceRemovesValue={isClearable}
+        menuShouldScrollIntoView={false}
       />
       {hasError && errorMessage && (
         <div id={errorId} className={styles.errorMessage} aria-live="assertive">

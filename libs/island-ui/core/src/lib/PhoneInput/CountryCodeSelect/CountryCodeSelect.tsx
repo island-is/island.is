@@ -77,6 +77,7 @@ export const CountryCodeSelect = <
         inputHasLabel={inputHasLabel}
         size={size}
         unstyled
+        menuShouldScrollIntoView={false}
         components={{
           Control,
           Input,

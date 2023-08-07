@@ -165,7 +165,8 @@ export const Input = (
   const { size = 'md', ariaError } = props.selectProps
   return (
     <components.Input
-      className={cn(styles.input, styles.inputSize[size])}
+      className={styles.inputContainer}
+      inputClassName={styles.input}
       {...props}
       {...ariaError}
       data-testid={props?.selectProps?.dataTestId}
