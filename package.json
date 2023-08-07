@@ -159,7 +159,7 @@
     "dataloader": "2.1.0",
     "date-fns": "2.28.0",
     "datebook": "7.0.8",
-    "dd-trace": "3.15.0",
+    "dd-trace": "3.29.1",
     "deepmerge": "4.2.2",
     "downshift": "5.4.3",
     "entropy-string": "4.2.0",
@@ -474,7 +474,8 @@
     "url-parse": "1.5.2",
     "path-parse": "1.0.7",
     "@anatine/esbuildnx@0.2.0": "patch:@anatine/esbuildnx@npm%3A0.2.0#./.yarn/patches/@anatine-esbuildnx-npm-0.2.0-b2ba626748.patch",
-    "cache-manager-ioredis-yet@1.1.0": "patch:cache-manager-ioredis-yet@npm%3A1.1.0#./.yarn/patches/cache-manager-ioredis-yet-npm-1.1.0-da7d1a9865.patch"
+    "cache-manager-ioredis-yet@1.1.0": "patch:cache-manager-ioredis-yet@npm%3A1.1.0#./.yarn/patches/cache-manager-ioredis-yet-npm-1.1.0-da7d1a9865.patch",
+    "dd-trace@3.29.1": "patch:dd-trace@npm%3A3.29.1#./.yarn/patches/dd-trace-npm-3.29.1-4e4e5d3a0c.patch"
   },
   "volta": {
     "node": "18.8.0"
