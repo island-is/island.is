@@ -447,7 +447,7 @@ const Results = ({
                     onClick={(e) => {
                       trackSearchQuery(search.term, 'Web Suggestion')
                       onClick(e)
-                      onRouting()
+                      onRouting?.()
                     }}
                     color="blue400"
                     underline="normal"
