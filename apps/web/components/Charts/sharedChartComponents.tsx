@@ -69,7 +69,7 @@ export const RenderLegend = (props: CustomLegendProps) => {
     <div className={cn(styles.wrapper)}>
       <p className={cn(styles.title)}>{title}</p>
       <ul className={cn(styles.listWrapper)}>
-        {payload.map((entry, index) => (
+        {payload ? payload.map((entry, index) => (
           <li className={cn(styles.list)} key={`item-${index}`}>
             <div
               className={cn(styles.dot)}
@@ -79,7 +79,7 @@ export const RenderLegend = (props: CustomLegendProps) => {
             />
             {entry.value}
           </li>
-        ))}
+        )) : null}
       </ul>
     </div>
   )
