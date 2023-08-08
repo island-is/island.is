@@ -31,7 +31,7 @@ const DigitalIcelandHeader: React.FC<HeaderProps> = ({ organizationPage }) => {
             <GridColumn span={'9/12'} className={styles.imageBg}>
               <SidebarLayout
                 sidebarContent={
-                  !!organizationPage.organization.logo && (
+                  !!organizationPage.organization?.logo && (
                     <Link
                       href={
                         linkResolver('organizationpage', [
@@ -67,7 +67,7 @@ const DigitalIcelandHeader: React.FC<HeaderProps> = ({ organizationPage }) => {
       </Box>
 
       <Box display={['block', 'block', 'none']} textAlign="center">
-        {!!organizationPage.organization.logo && (
+        {!!organizationPage.organization?.logo && (
           <Link
             href={
               linkResolver('organizationpage', [organizationPage.slug]).href

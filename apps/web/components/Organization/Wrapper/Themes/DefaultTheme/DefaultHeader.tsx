@@ -43,7 +43,7 @@ const DefaultHeader: React.FC<HeaderProps> = ({ organizationPage }) => {
                 >
                   <img
                     className={styles.logo}
-                    src={organizationPage.organization.logo.url}
+                    src={organizationPage.organization?.logo?.url}
                     alt=""
                   />
                 </Box>
@@ -75,7 +75,7 @@ const DefaultHeader: React.FC<HeaderProps> = ({ organizationPage }) => {
                   >
                     <img
                       className={styles.logo}
-                      src={organizationPage.organization.logo.url}
+                      src={organizationPage.organization?.logo?.url}
                       alt=""
                     />
                   </Box>
@@ -95,7 +95,7 @@ const DefaultHeader: React.FC<HeaderProps> = ({ organizationPage }) => {
         {imageProvided && (
           <img
             className={styles.headerImage}
-            src={organizationPage.defaultHeaderImage.url}
+            src={organizationPage.defaultHeaderImage?.url}
             alt="header"
           ></img>
         )}
