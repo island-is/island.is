@@ -206,7 +206,9 @@ const SubPage: Screen<SubPageProps> = ({
                       display="flex"
                       alignItems="center"
                       columnGap={2}
+                      rowGap={2}
                       marginBottom={3}
+                      flexWrap="wrap"
                     >
                       <Webreader
                         marginTop={0}
