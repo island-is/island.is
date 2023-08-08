@@ -111,7 +111,7 @@ const useSearch = (
           query: GET_SEARCH_RESULTS_QUERY,
           variables: {
             query: {
-              queryString: term.trim(),
+              queryString: term?.trim() ?? '',
               language: locale as ContentLanguage,
               types: [
                 // RÁ suggestions has only been searching particular types for some time - SYNC SUGGESTIONS SCOPE WITH DEFAULT - keep it in sync
@@ -135,10 +135,10 @@ const useSearch = (
         })
 
       // the api only completes single terms get only single terms
-      const indexOfLastSpace = term.lastIndexOf(' ')
+      const indexOfLastSpace = term?.lastIndexOf(' ')
       const hasSpace = indexOfLastSpace !== -1
-      const prefix = hasSpace ? term.slice(0, indexOfLastSpace) : ''
-      const queryString = hasSpace ? term.slice(indexOfLastSpace) : term
+      const prefix = hasSpace ? term?.slice(0, indexOfLastSpace) : ''
+      const queryString = hasSpace ? term?.slice(indexOfLastSpace) : term
       dispatch({
         type: 'searchString',
         term,
