@@ -8,9 +8,7 @@ import { isAuthenticated } from '../utils/helpers'
 const ConsultationPortalApplication: any = ({ Component, pageProps }) => {
   return (
     <ApolloProvider client={initApollo(pageProps.apolloState)}>
-      <Provider
-        session={pageProps.session}
-      >
+      <Provider session={pageProps.session}>
         <AuthProvider>
           <AppLayout>
             <PageLoader />
