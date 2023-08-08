@@ -69,23 +69,30 @@ const getUserInformation = async (instance, callback) => {
   )
   const nameInputErrorMessage = document.getElementById(`${nameInputId}-error`)
 
-  submitButton.onclick = () => {
-    const email = emailInput?.value ?? ''
-    const name = nameInput?.value ?? ''
+  if (submitButton) {
+    submitButton.onclick = () => {
+      const email = emailInput?.value ?? ''
+      const name = nameInput?.value ?? ''
 
-    emailInputErrorMessage.innerText = !email ? 'Email is missing' : ''
-    nameInputErrorMessage.innerText = !name ? 'Name is missing' : ''
+      if(emailInputErrorMessage) {
+        emailInputErrorMessage.innerText = !email ? 'Email is missing' : ''
+      }
 
-    if (!email || !name) {
-      return
+      if(nameInputErrorMessage) {
+        nameInputErrorMessage.innerText = !name ? 'Name is missing' : ''
+      }
+
+      if (!email || !name) {
+        return
+      }
+
+      storage.setItem(emailInputId, email)
+      storage.setItem(nameInputId, name)
+
+      callback({ email, name })
+
+      customPanel.close()
     }
-
-    storage.setItem(emailInputId, email)
-    storage.setItem(nameInputId, name)
-
-    callback({ email, name })
-
-    customPanel.close()
   }
 }
 
