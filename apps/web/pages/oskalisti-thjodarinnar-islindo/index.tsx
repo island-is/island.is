@@ -4,7 +4,7 @@ import React from 'react'
 import { withMainLayout } from '@island.is/web/layouts/main'
 
 const title = 'Óskalisti þjóðarinnar'
-
+// todo heading and breadcrumbs
 function Stuff() {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
@@ -16,7 +16,7 @@ function Stuff() {
           height: 'calc(100% - 0px)', // adjust this value to match the height of your header
           border: 'none',
           overflowY: 'scroll',
-          textAlign: 'center',
+          // textAlign: 'center',
         }}
       />
     </div>
