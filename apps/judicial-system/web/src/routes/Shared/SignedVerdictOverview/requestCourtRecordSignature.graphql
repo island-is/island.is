@@ -1,0 +1,6 @@
+mutation RequestCourtRecordSignature($input: RequestSignatureInput!) {
+  requestCourtRecordSignature(input: $input) {
+    controlCode
+    documentToken
+  }
+}

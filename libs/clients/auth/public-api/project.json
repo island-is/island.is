@@ -19,11 +19,15 @@
         "passWithNoTests": true
       }
     },
-    "schemas/openapi-generator": {
+    "schemas/external-openapi-generator": {
       "executor": "@nrwl/workspace:run-commands",
       "options": {
         "outputPath": "libs/clients/auth/public-api/gen",
-        "command": "yarn openapi-generator -o libs/clients/auth/public-api/gen/fetch -i apps/services/auth/public-api/src/openapi.yaml --additional-properties=enumPropertyNaming=original"
+        "commands": [
+          "nx run services-auth-public-api:schemas/build-openapi $NX_OPTIONS",
+          "yarn openapi-generator -o libs/clients/auth/public-api/gen/fetch -i apps/services/auth/public-api/src/openapi.yaml --additional-properties=enumPropertyNaming=original"
+        ],
+        "parallel": false
       }
     }
   },
