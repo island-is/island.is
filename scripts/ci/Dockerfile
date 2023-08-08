@@ -138,7 +138,8 @@ RUN chown -R pwuser:pwuser .
 
 USER pwuser
 ADD .yarnrc.yml ./
-COPY .yarn .yarn
+RUN mkdir ./.yarn
+COPY .yarn/releases ./.yarn/releases
 RUN yarn install
 
 ENV PLAYWRIGHT_BROWSER=chromium
