@@ -11,7 +11,6 @@ import { financeModule } from '@island.is/service-portal/finance'
 import { petitionsModule } from '@island.is/service-portal/petitions'
 import { informationModule } from '@island.is/service-portal/information'
 import { licensesModule } from '@island.is/service-portal/licenses'
-import { personalInformationModule } from '@island.is/service-portal/settings/personal-information'
 import { airDiscountModule } from '@island.is/service-portal/air-discount'
 import { delegationsModule } from '@island.is/portals/shared-modules/delegations'
 import { healthModule } from '@island.is/service-portal/health'
@@ -34,7 +33,6 @@ export const modules: PortalModule[] = [
   delegationsModule,
   financeModule,
   informationModule,
-  personalInformationModule,
   petitionsModule,
   airDiscountModule,
   licensesModule,

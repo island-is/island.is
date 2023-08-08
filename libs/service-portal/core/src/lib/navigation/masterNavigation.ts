@@ -315,22 +315,6 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
             name: m.mySettings,
             path: ServicePortalPath.SettingsPersonalInformation,
           },
-          {
-            name: m.email,
-            path: ServicePortalPath.SettingsPersonalInformationEditEmail,
-          },
-          {
-            name: m.phone,
-            path: ServicePortalPath.SettingsPersonalInformationEditPhoneNumber,
-          },
-          {
-            name: m.nudge,
-            path: ServicePortalPath.SettingsPersonalInformationEditNudge,
-          },
-          {
-            name: m.language,
-            path: ServicePortalPath.SettingsPersonalInformationEditLanguage,
-          },
         ],
       },
       {

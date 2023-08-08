@@ -167,7 +167,9 @@ export const Layout: FC = ({ children }) => {
       )}
       {(isFullwidth || !activeParent) && (
         <FullWidthLayout activeParent={activeParent} height={height}>
-          <ModuleAlertBannerSection />
+          <Box paddingTop={4} width="full">
+            <ModuleAlertBannerSection />
+          </Box>
           {children}
         </FullWidthLayout>
       )}

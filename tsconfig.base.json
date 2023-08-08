@@ -805,9 +805,6 @@
       "@island.is/service-portal/settings/islykill": [
         "libs/service-portal/settings/islykill/src/index.ts"
       ],
-      "@island.is/service-portal/settings/personal-information": [
-        "libs/service-portal/settings/personal-information/src/index.ts"
-      ],
       "@island.is/services/auth/testing": [
         "libs/services/auth/testing/src/index.ts"
       ],

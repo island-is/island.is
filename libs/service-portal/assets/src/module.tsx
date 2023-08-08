@@ -69,7 +69,7 @@ export const assetsModule: PortalModule = {
         name: m.myVehicles,
         path: AssetsPaths.AssetsVehicles,
         enabled: userInfo.scopes.includes(ApiScope.vehicles),
-        element: <Overview />,
+        element: <Navigate to={AssetsPaths.AssetsMyVehicles} replace />,
       },
       {
         name: m.myVehicles,
