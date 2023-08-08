@@ -82,7 +82,7 @@ interface StateMeta {
 }
 
 const getStepBySlug = (stepper: Stepper, slug: string): Step => {
-  return stepper.steps.find((step) => step.slug === slug)
+  return stepper.steps?.find((step) => step.slug === slug)
 }
 
 // The following code discards the state node ID keys and merges the meta data, as

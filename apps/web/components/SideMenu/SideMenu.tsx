@@ -109,7 +109,7 @@ export const SideMenu = ({
   }, [])
 
   useEffect(() => {
-    tabRefs.current[activeTab].focus()
+    tabRefs.current[activeTab]?.focus()
   }, [activeTab])
 
   useEffect(() => {

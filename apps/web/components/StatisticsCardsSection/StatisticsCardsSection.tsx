@@ -49,7 +49,7 @@ export const StatisticsCardsSection = ({
               slideCount: 3,
             },
           }}
-          items={cards.map(({ title, statistic, image }, index) => {
+          items={(cards ?? []).map(({ title, statistic, image }, index) => {
             return (
               <StatisticsCard
                 key={index}

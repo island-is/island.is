@@ -21,7 +21,7 @@ export const StatisticsCard = ({
   const [ref, { width }] = useMeasure()
 
   const shouldStack = width < 370
-  const hasImage = image?.title.length > 0
+  const hasImage = image?.title && image?.title.length > 0
 
   const items = (
     <Box
