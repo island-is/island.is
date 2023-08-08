@@ -56,7 +56,7 @@ export const jwt = async (
 }
 
 export const session = (session: AuthSession, user: AuthUser) => {
-  console.log("SESSION IN CALLBACKS", session)
+  console.log('SESSION IN CALLBACKS', session)
   session.accessToken = user.accessToken
   session.idToken = user.idToken
   const decoded = decode(user.accessToken)

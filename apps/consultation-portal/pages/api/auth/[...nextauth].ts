@@ -36,7 +36,6 @@ async function signIn(
   account: Record<string, unknown>,
   profile: Record<string, unknown>,
 ): Promise<boolean> {
-
   return handleSignIn(user, account, profile, identityServerConfig.id)
 }
 
