@@ -1,5 +1,7 @@
-import React, { ReactNode, Fragment, useEffect } from 'react'
-import { ErrorPageQuery } from '@island.is/web/graphql/schema'
+import React, { ReactNode, Fragment } from 'react'
+import { useRouter } from 'next/router'
+import { Document } from '@contentful/rich-text-types'
+
 import {
   Text,
   Box,
@@ -8,9 +10,8 @@ import {
   GridColumn,
 } from '@island.is/island-ui/core'
 import { Slice as SliceType, richText } from '@island.is/island-ui/contentful'
-import { Document } from '@contentful/rich-text-types'
-import { useRouter } from 'next/router'
 import { nlToBr } from '@island.is/web/utils/nlToBr'
+import { ErrorPageQuery } from '@island.is/web/graphql/schema'
 
 type MessageType = {
   title: string
@@ -19,7 +20,7 @@ type MessageType = {
 }
 
 const formatBody = (body: string, path: string): ReactNode =>
-  body.split('{PATH}').map((s, i) => (
+  body?.split('{PATH}').map((s, i) => (
     <Fragment key={i}>
       {i > 0 && <i>{path}</i>}
       {nlToBr(s)}
@@ -44,7 +45,7 @@ interface ErrorProps {
   statusCode: number
 }
 
-export const ErrorPage: React.FC<ErrorProps> = ({ errPage, statusCode }) => {
+export const ErrorScreen: React.FC<ErrorProps> = ({ statusCode, errPage }) => {
   const { asPath } = useRouter()
 
   const errorMessages: MessageType = errPage
@@ -52,14 +53,6 @@ export const ErrorPage: React.FC<ErrorProps> = ({ errPage, statusCode }) => {
         ...errPage,
       }
     : fallbackMessage[statusCode]
-
-  // Temporary "fix", see https://github.com/vercel/next.js/issues/16931 for details
-  useEffect(() => {
-    const els = document.querySelectorAll('link[href*=".css"]')
-    Array.prototype.forEach.call(els, (el) => {
-      el.setAttribute('rel', 'stylesheet')
-    })
-  }, [])
 
   return (
     <GridContainer>
@@ -79,14 +72,18 @@ export const ErrorPage: React.FC<ErrorProps> = ({ errPage, statusCode }) => {
             >
               {statusCode}
             </Text>
-            <Text variant="h1" as="h1" paddingBottom={3}>
-              {errorMessages.title}
-            </Text>
-            <Text variant="intro" as="p">
-              {errorMessages.description
-                ? richText([errorMessages.description] as SliceType[])
-                : formatBody(errorMessages.body, asPath)}
-            </Text>
+            {errorMessages?.title && (
+              <>
+                <Text variant="h1" as="h1" paddingBottom={3}>
+                  {errorMessages.title}
+                </Text>
+                <Text variant="intro" as="div">
+                  {errorMessages.description
+                    ? richText([errorMessages.description] as SliceType[])
+                    : formatBody(errorMessages.body, asPath)}
+                </Text>
+              </>
+            )}
           </Box>
         </GridColumn>
       </GridRow>
@@ -94,4 +91,4 @@ export const ErrorPage: React.FC<ErrorProps> = ({ errPage, statusCode }) => {
   )
 }
 
-export default ErrorPage
+export default ErrorScreen

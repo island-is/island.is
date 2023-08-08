@@ -28,7 +28,7 @@ const Categories: Screen<CategoriesProps> = ({ categories, namespace }) => {
   )
 }
 
-Categories.getInitialProps = async ({ apolloClient, locale }) => {
+Categories.getProps = async ({ apolloClient, locale }) => {
   const [
     {
       data: { getArticleCategories },

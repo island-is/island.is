@@ -176,7 +176,7 @@ const AdgerdirArticle: Screen<AdgerdirArticleProps> = ({
   )
 }
 
-AdgerdirArticle.getInitialProps = async ({ apolloClient, query, locale }) => {
+AdgerdirArticle.getProps = async ({ apolloClient, query, locale }) => {
   const slug = query.slug as string
   const [
     {

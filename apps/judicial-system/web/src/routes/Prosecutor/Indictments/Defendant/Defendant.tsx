@@ -138,6 +138,38 @@ const Defendant: React.FC = () => {
     )
   }
 
+  const handleCreatePoliceCases = (policeCases: PoliceCase[]) => {
+    const cases = getPoliceCases(workingCase)
+    const allCases = [...cases, ...policeCases]
+
+    setAndSendCaseToServer(
+      [
+        {
+          policeCaseNumbers: [
+            ...allCases.map((policeCase) => policeCase.number),
+          ],
+          indictmentSubtypes: allCases.reduce<IndictmentSubtypeMap>(
+            (acc, policeCase) => ({ ...acc, [policeCase.number]: [] }),
+            {},
+          ),
+          crimeScenes: allCases.reduce<CrimeSceneMap>(
+            (acc, policeCase) => ({
+              ...acc,
+              [policeCase.number]: {
+                place: policeCase.place,
+                date: policeCase.date,
+              },
+            }),
+            {},
+          ),
+          force: true,
+        },
+      ],
+      workingCase,
+      setWorkingCase,
+    )
+  }
+
   const handleSetPoliceCase = (
     index: number,
     update: {
@@ -368,12 +400,10 @@ const Defendant: React.FC = () => {
               formatMessage(defendant.policeCaseNumbersDescription)
             }
           />
-          {/* TODO Add when feature is ready */}
           {workingCase.origin === CaseOrigin.LOKE && (
             <LokeNumberList
               caseId={workingCase.id}
-              onAddPoliceCaseNumber={handleCreatePoliceCase}
-              onRemovePoliceCaseNumber={handleDeletePoliceCase}
+              addPoliceCaseNumbers={handleCreatePoliceCases}
             />
           )}
           <AnimatePresence>
@@ -409,7 +439,7 @@ const Defendant: React.FC = () => {
                     }
                     updatePoliceCases={handleUpdatePoliceCases}
                     policeCaseNumberImmutable={
-                      workingCase.origin === CaseOrigin.LOKE && index === 0
+                      workingCase.origin === CaseOrigin.LOKE
                     }
                   />
                 </Box>

@@ -680,7 +680,7 @@ const ArticleScreen: Screen<ArticleProps> = ({
   )
 }
 
-ArticleScreen.getInitialProps = async ({ apolloClient, query, locale }) => {
+ArticleScreen.getProps = async ({ apolloClient, query, locale }) => {
   const slug = query.slug as string
 
   const [article, namespace, stepperNamespace] = await Promise.all([

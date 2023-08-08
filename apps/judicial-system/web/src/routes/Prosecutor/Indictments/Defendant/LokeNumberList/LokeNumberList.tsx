@@ -1,20 +1,24 @@
-import React, { useState, useContext } from 'react'
+import React, { useState, useContext, useEffect } from 'react'
 import { useIntl } from 'react-intl'
-import parseISO from 'date-fns/parseISO'
 
-import { Box, Button, Checkbox, LoadingDots } from '@island.is/island-ui/core'
-
-import { useGetPoliceCaseInfoQuery } from '../../../graphql/PoliceCaseInfo.generated'
-import { PoliceCaseInfo } from '@island.is/judicial-system-web/src/graphql/schema'
-
-import { lokeNumberList as strings } from './LokeNumberList.strings'
+import {
+  Box,
+  Button,
+  Checkbox,
+  LoadingDots,
+  Text,
+} from '@island.is/island-ui/core'
 import { FormContext } from '@island.is/judicial-system-web/src/components'
+import { PoliceCaseInfo } from '@island.is/judicial-system-web/src/graphql/schema'
+import { PoliceCaseFilesMessageBox } from '@island.is/judicial-system-web/src/routes/Prosecutor/components'
+
 import { PoliceCase } from '../Defendant'
+import { useGetPoliceCaseInfoQuery } from './getPoliceCaseInfo.generated'
+import { lokeNumberList as strings } from './LokeNumberList.strings'
 
 interface Props {
   caseId: string
-  onAddPoliceCaseNumber: (policeCaseInfo: PoliceCase) => void
-  onRemovePoliceCaseNumber: (index: number) => void
+  addPoliceCaseNumbers: (policeCases: PoliceCase[]) => void
 }
 interface CheckBoxContainerProps {
   children: React.ReactNode
@@ -35,14 +39,31 @@ const CheckBoxContainer: React.FC<CheckBoxContainerProps> = (props) => {
 }
 
 export const LokeNumberList: React.FC<Props> = (props) => {
-  const { caseId, onAddPoliceCaseNumber, onRemovePoliceCaseNumber } = props
+  const { caseId, addPoliceCaseNumbers } = props
   const { formatMessage } = useIntl()
-
   const { workingCase } = useContext(FormContext)
+
   const [isLoading, setIsLoading] = useState<boolean>(true)
+  const [hasError, setHasError] = useState<boolean>(false)
+
   const [policeCaseInfoResponse, setPoliceCaseInfoResponse] = useState<
     PoliceCaseInfo[]
-  >()
+  >([])
+
+  const [availablePoliceCases, setAvailablePoliceCases] = useState<
+    PoliceCaseInfo[]
+  >([])
+  const [selectedPoliceCases, setSelectedPoliceCases] = useState<
+    PoliceCaseInfo[]
+  >([])
+
+  useEffect(() => {
+    const available = policeCaseInfoResponse.filter(
+      (caseInfo) =>
+        !workingCase.policeCaseNumbers.includes(caseInfo.policeCaseNumber),
+    )
+    setAvailablePoliceCases(available)
+  }, [workingCase, policeCaseInfoResponse])
 
   useGetPoliceCaseInfoQuery({
     variables: {
@@ -55,37 +76,50 @@ export const LokeNumberList: React.FC<Props> = (props) => {
       setIsLoading(false)
       setPoliceCaseInfoResponse(data.policeCaseInfo as PoliceCaseInfo[])
     },
-    onError: (error) => {
-      // TODO
+    onError: () => {
+      setHasError(true)
     },
   })
 
-  function handlePoliceCaseChange(policeCaseNumber: string) {
-    if (!policeCaseInfoResponse) {
-      return
-    }
-
-    if (
-      workingCase?.policeCaseNumbers &&
-      !workingCase.policeCaseNumbers.find(
-        (number) => number === policeCaseNumber,
-      )
-    ) {
-      const caseInfo = policeCaseInfoResponse.find(
-        (info) => info.policeCaseNumber === policeCaseNumber,
-      )
-      onAddPoliceCaseNumber({
-        number: caseInfo?.policeCaseNumber || '',
-        place: caseInfo?.place || undefined,
-        date: caseInfo?.date ? parseISO(caseInfo?.date) : undefined,
-      })
+  function handleSelectedPoliceCases(
+    selected: boolean,
+    policeCase: PoliceCaseInfo,
+  ) {
+    if (selected) {
+      setSelectedPoliceCases([...selectedPoliceCases, policeCase])
     } else {
-      const policeCaseIndex = workingCase?.policeCaseNumbers?.findIndex(
-        (c) => c === policeCaseNumber,
+      setSelectedPoliceCases(
+        selectedPoliceCases.filter((item) => item !== policeCase),
       )
-
-      onRemovePoliceCaseNumber(policeCaseIndex + 1)
     }
+  }
+
+  const handleCreatePoliceCases = () => {
+    const policeCases = selectedPoliceCases.map((policeCase) => ({
+      number: policeCase.policeCaseNumber,
+      place: policeCase.place || undefined,
+      date: policeCase.date ? new Date(policeCase.date) : undefined,
+    }))
+
+    addPoliceCaseNumbers(policeCases)
+    setSelectedPoliceCases([])
+  }
+
+  if (hasError) {
+    return (
+      <Box
+        marginBottom={6}
+        borderColor="red600"
+        borderWidth="standard"
+        paddingX={4}
+        paddingY={1}
+        borderRadius="standard"
+      >
+        <Text fontWeight="semiBold" color="red600">
+          {formatMessage(strings.errorMessage)}
+        </Text>
+      </Box>
+    )
   }
 
   return (
@@ -98,35 +132,59 @@ export const LokeNumberList: React.FC<Props> = (props) => {
         paddingY={1}
         borderRadius="standard"
       >
-        <Box paddingX={3} paddingY={2}>
-          <Checkbox
-            label={formatMessage(strings.selectAllCheckbox)}
-            name="Velja öll"
-          />
-        </Box>
         {isLoading ? (
           <Box textAlign="center" paddingY={2} paddingX={3} marginBottom={2}>
             <LoadingDots />
           </Box>
         ) : (
-          policeCaseInfoResponse &&
-          policeCaseInfoResponse.slice(1).map((info) => (
-            <CheckBoxContainer key={info.policeCaseNumber}>
+          <>
+            <Box paddingX={3} paddingY={2}>
               <Checkbox
-                label={info.policeCaseNumber}
-                name={info.policeCaseNumber}
+                label={formatMessage(strings.selectAllCheckbox)}
+                name="Velja öll"
                 checked={
-                  workingCase?.policeCaseNumbers?.find(
-                    (n) => n === info.policeCaseNumber,
-                  ) !== undefined
+                  selectedPoliceCases.length > 0 &&
+                  selectedPoliceCases.length === availablePoliceCases.length
                 }
-                backgroundColor="blue"
-                onChange={() => {
-                  handlePoliceCaseChange(info.policeCaseNumber)
+                disabled={availablePoliceCases.length === 0}
+                onChange={(event) => {
+                  setSelectedPoliceCases(
+                    event.target.checked ? availablePoliceCases : [],
+                  )
                 }}
               />
-            </CheckBoxContainer>
-          ))
+            </Box>
+            {availablePoliceCases && availablePoliceCases.length > 0 ? (
+              availablePoliceCases.map((info) => (
+                <CheckBoxContainer key={info.policeCaseNumber}>
+                  <Checkbox
+                    label={info.policeCaseNumber}
+                    name={info.policeCaseNumber}
+                    checked={
+                      selectedPoliceCases.find(
+                        (c) => c.policeCaseNumber === info.policeCaseNumber,
+                      )
+                        ? true
+                        : false
+                    }
+                    backgroundColor="blue"
+                    onChange={(e) => {
+                      handleSelectedPoliceCases(
+                        e.target.checked,
+                        info as PoliceCaseInfo,
+                      )
+                    }}
+                  />
+                </CheckBoxContainer>
+              ))
+            ) : (
+              <PoliceCaseFilesMessageBox
+                icon="checkmark"
+                iconColor="blue400"
+                message={formatMessage(strings.allNumbersSelected)}
+              />
+            )}
+          </>
         )}
       </Box>
       <Box
@@ -136,11 +194,10 @@ export const LokeNumberList: React.FC<Props> = (props) => {
         marginBottom={5}
       >
         <Button
-          onClick={() => {
-            // TODO
-          }}
+          onClick={handleCreatePoliceCases}
+          disabled={selectedPoliceCases.length === 0}
         >
-          Velja númer
+          {formatMessage(strings.selectNumbersButton)}
         </Button>
       </Box>
     </>
