@@ -10,7 +10,9 @@ export const useLogOut = () => {
   const logOut = () => {
     setUser && setUser(undefined)
     setIsAuthenticated && setIsAuthenticated(false)
-    sessionStorage.clear()
+    if (typeof window !== 'undefined') {
+      sessionStorage.clear()
+    }
 
     signOut({
       callbackUrl: signOutUrl(window, session?.idToken),
