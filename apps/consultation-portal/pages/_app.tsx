@@ -10,6 +10,7 @@ const ConsultationPortalApplication: any = ({ Component, pageProps }) => {
     <ApolloProvider client={initApollo(pageProps.apolloState)}>
       <Provider
         session={pageProps.session}
+        options={{ basePath: '/samradsgatt/api/auth' }}
       >
         <AuthProvider>
           <AppLayout>
