@@ -10,7 +10,6 @@ const ConsultationPortalApplication: any = ({ Component, pageProps }) => {
     <ApolloProvider client={initApollo(pageProps.apolloState)}>
       <Provider
         session={pageProps.session}
-        options={{ clientMaxAge: 120, basePath: '/samradsgatt/api/auth' }}
       >
         <AuthProvider>
           <AppLayout>
@@ -37,11 +36,12 @@ ConsultationPortalApplication.getInitialProps = async (
     pageProps = (await Component.getInitialProps(customContext)) as any
   }
   const apolloState = apolloClient.cache.extract()
-  const session = await getSession(customContext)
+  const session = await getSession()
   return {
     pageProps: {
+      pageProps: pageProps,
       session: session,
-      isAuthenticated: isAuthenticated(customContext),
+      isAuthenticated: isAuthenticated(appContext.ctx),
       apolloState: apolloState,
     },
   }
