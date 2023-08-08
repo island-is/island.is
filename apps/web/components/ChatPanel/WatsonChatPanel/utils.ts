@@ -74,11 +74,11 @@ const getUserInformation = async (instance, callback) => {
       const email = emailInput?.value ?? ''
       const name = nameInput?.value ?? ''
 
-      if(emailInputErrorMessage) {
+      if (emailInputErrorMessage) {
         emailInputErrorMessage.innerText = !email ? 'Email is missing' : ''
       }
 
-      if(nameInputErrorMessage) {
+      if (nameInputErrorMessage) {
         nameInputErrorMessage.innerText = !name ? 'Name is missing' : ''
       }
 
