@@ -1,0 +1,21 @@
+{
+  "licenseNumber": "000-1111-222",
+  "properties": [
+    {
+      "category": "Í notkun eiganda",
+      "typeOfFirearm": "Skammbyssa",
+      "name": "SMITH & WESSON",
+      "serialNumber": "O12345",
+      "caliber": ".38",
+      "landsnumer": "111-2222-333"
+    },
+    {
+      "category": "Í notkun eiganda",
+      "typeOfFirearm": "Haglabyssa",
+      "name": "REMINGTON",
+      "serialNumber": "U12345",
+      "caliber": "12/76",
+      "landsnumer": "444-5555-666"
+    }
+  ]
+}

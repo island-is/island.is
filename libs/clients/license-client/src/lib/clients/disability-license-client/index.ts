@@ -1,0 +1,5 @@
+export { DisabilityLicenseClient } from './services/disabilityLicenseClient.service'
+export { DisabilityLicenseUpdateClient } from './services/disabilityLicenseUpdateClient.service'
+export { DisabilityDigitalLicenseClientConfig } from './disabilityLicenseClient.config'
+export { DisabilityClientModule } from './modules/disabilityLicenseClient.module'
+export { DisabilityUpdateClientModule } from './modules/disabilityLicenseUpdateClient.module'
