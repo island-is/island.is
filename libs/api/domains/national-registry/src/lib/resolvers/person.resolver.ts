@@ -26,7 +26,7 @@ import {
   Spouse,
 } from '../shared/models'
 import { NationalRegistryService } from '../nationalRegistry.service'
-import { SharedPerson } from '../shared/types'
+import type { SharedPerson } from '../shared/types'
 import { Housing } from '../shared/models/housing.model'
 import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 import { Name } from '../shared/models/name.model'
