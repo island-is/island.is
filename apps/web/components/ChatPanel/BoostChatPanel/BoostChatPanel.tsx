@@ -28,9 +28,9 @@ export const BoostChatPanel: React.FC<BoostChatPanelProps> = ({
           chatPanel: {
             ...config.chatPanel,
             styling: {
-              ...config.chatPanel.styling,
+              ...config?.chatPanel?.styling,
               settings: {
-                ...config.chatPanel.styling.settings,
+                ...config?.chatPanel?.styling?.settings,
                 conversationId:
                   window.sessionStorage.getItem(
                     boostChatPanelEndpoints[endpoint].conversationKey,
