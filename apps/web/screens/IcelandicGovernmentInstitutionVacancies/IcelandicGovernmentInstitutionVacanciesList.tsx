@@ -271,7 +271,7 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<IcelandicGovernmentIns
 
     let shouldScroll = false
 
-    if (!selectedPage) {
+    if (selectedPage === 1) {
       if ('page' in updatedQuery) delete updatedQuery['page']
     } else {
       shouldScroll = updatedQuery.page !== selectedPage.toString()
