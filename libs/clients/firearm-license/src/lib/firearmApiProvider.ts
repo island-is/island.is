@@ -10,7 +10,7 @@ import { Configuration, FirearmApplicationApi } from '../../gen/fetch'
 import { Provider } from '@nestjs/common'
 import { FirearmApi } from './firearmApi.services'
 
-export const FirearmLicenseApiProvider: Provider<FirearmApi> = {
+export const FirearmApiProvider: Provider<FirearmApi> = {
   provide: FirearmApi,
   scope: LazyDuringDevScope,
   useFactory: (

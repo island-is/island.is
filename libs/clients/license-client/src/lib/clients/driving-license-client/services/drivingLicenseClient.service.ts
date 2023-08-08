@@ -3,10 +3,12 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Inject, Injectable } from '@nestjs/common'
 import { User } from '@island.is/auth-nest-tools'
 import { FetchError } from '@island.is/clients/middlewares'
-import { format as formatNationalId } from 'kennitala'
+import { format, format as formatNationalId } from 'kennitala'
 import {
+  DriverLicenseDto,
   DriversLicense,
   DrivingLicenseApi,
+  RemarkCode,
 } from '@island.is/clients/driving-license'
 import {
   LicenseClient,
@@ -14,6 +16,7 @@ import {
   PkPassVerification,
   PkPassVerificationInputData,
   Result,
+  ServiceError,
 } from '../../../licenseClient.type'
 import {
   Pass,
@@ -25,7 +28,7 @@ import { createPkPassDataInput } from '../drivingLicenseMapper'
 const LOG_CATEGORY = 'drivinglicense-service'
 
 @Injectable()
-export class DrivingLicenseClient implements LicenseClient<DriversLicense> {
+export class DrivingLicenseClient implements LicenseClient<DriverLicenseDto> {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private drivingApi: DrivingLicenseApi,
@@ -33,7 +36,7 @@ export class DrivingLicenseClient implements LicenseClient<DriversLicense> {
   ) {}
 
   private checkLicenseValidity(
-    license: DriversLicense,
+    license: DriverLicenseDto,
   ): LicensePkPassAvailability {
     if (
       !license // || license.photo === undefined
@@ -51,108 +54,115 @@ export class DrivingLicenseClient implements LicenseClient<DriversLicense> {
   }
 
   licenseIsValidForPkPass(payload: unknown): LicensePkPassAvailability {
-    return this.checkLicenseValidity(payload as DriversLicense)
+    return this.checkLicenseValidity(payload as DriverLicenseDto)
   }
 
-  private async fetchLicense(
-    user: User,
-  ): Promise<Result<DriversLicense | null>> {
-    try {
-      const licenseInfo = await this.drivingApi.getCurrentLicense({
-        nationalId: user.nationalId,
-      })
-      return { ok: true, data: licenseInfo }
-    } catch (e) {
-      let error
-      if (e instanceof FetchError) {
-        //404 - no license for user, still ok!
-        error = {
-          code: 13,
-          message: 'Service failure',
-          data: JSON.stringify(e.body),
-        }
-        this.logger.warn('Expected 200 status', {
-          status: e.status,
-          statusText: e.statusText,
-          category: LOG_CATEGORY,
-        })
-      } else {
-        const unknownError = e as Error
-        error = {
-          code: 99,
-          message: 'Unknown error',
-          data: JSON.stringify(unknownError),
-        }
-        this.logger.warn('Unable to query data', {
-          status: e.status,
-          statusText: e.statusText,
-          category: LOG_CATEGORY,
-        })
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private parseError(e: any): ServiceError {
+    let error
+    if (e instanceof FetchError) {
+      //404 - no license for user, still ok!
+      error = {
+        code: 13,
+        message: 'Service failure',
+        data: JSON.stringify(e.body),
       }
+      this.logger.warn('Expected 200 status', {
+        status: e.status,
+        statusText: e.statusText,
+        category: LOG_CATEGORY,
+      })
+    } else {
+      const unknownError = e as Error
+      error = {
+        code: 99,
+        message: 'Unknown error',
+        data: JSON.stringify(unknownError),
+      }
+      this.logger.warn('Unable to query data', {
+        status: e.status,
+        statusText: e.statusText,
+        category: LOG_CATEGORY,
+      })
+    }
+    return error
+  }
 
+  private createPkPassPayload(
+    data: DriverLicenseDto,
+    codes: Array<RemarkCode>,
+  ): PassDataInput | null {
+    const inputValues = createPkPassDataInput(data, codes)
+
+    if (!inputValues) {
+      this.logger.warn('PkPassDataInput creation failed', {
+        category: LOG_CATEGORY,
+      })
+      return null
+    }
+
+    //slice out headers from base64 image string
+    const image = data?.photo?.image
+
+    const payload: PassDataInput = {
+      inputFieldValues: inputValues,
+      expirationDate: data?.dateValidTo?.toISOString(),
+      thumbnail: image
+        ? {
+            imageBase64String: image.substring(image.indexOf(',') + 1).trim(),
+          }
+        : null,
+    }
+
+    return payload
+  }
+
+  async getLicense(user: User): Promise<Result<DriverLicenseDto | null>> {
+    let licenseData
+    try {
+      licenseData = await this.drivingApi.getCurrentLicenseV5({
+        nationalId: user.nationalId,
+        token: user.authorization.replace(/^bearer /i, ''),
+      })
+    } catch (e) {
+      this.logger.warning(`Drivers license data fetch failed`)
+      const error = this.parseError(e)
       return {
         ok: false,
         error,
       }
     }
+
+    return {
+      ok: true,
+      data: licenseData,
+    }
   }
 
-  private async createPkPassPayload(
-    data: DriversLicense,
-    nationalId: string,
-  ): Promise<PassDataInput | null> {
-    const inputValues = createPkPassDataInput(data, nationalId)
-
-    //slice out headers from base64 image string
-    //const image = data.photo?.image
-    const image = undefined
-
-    if (!inputValues) return null
-    //Fetch template from api?
-    const payload: PassDataInput = {
-      inputFieldValues: inputValues,
-      expirationDate: data.expires?.toISOString(),
-      thumbnail: image
-        ? {
-            imageBase64String: image ?? '',
-          }
-        : null,
-    }
-    return payload
-  }
-
-  async getLicense(user: User): Promise<Result<DriversLicense | null>> {
-    const licenseData = await this.fetchLicense(user)
-    if (!licenseData.ok) {
-      this.logger.info(`Drivers license data fetch failed`)
-      return {
-        ok: false,
-        error: {
-          code: 13,
-          message: 'Service error',
-        },
-      }
-    }
-
-    //the user ain't got no license
-    if (!licenseData.data) {
-      return {
-        ok: true,
-        data: null,
-      }
-    }
-
-    return licenseData
-  }
-
-  async getLicenseDetail(user: User): Promise<Result<DriversLicense | null>> {
+  async getLicenseDetail(user: User): Promise<Result<DriverLicenseDto | null>> {
     return this.getLicense(user)
   }
 
   async getPkPass(user: User): Promise<Result<Pass>> {
-    const license = await this.fetchLicense(user)
+    let licenseData
+    try {
+      licenseData = await Promise.all([
+        this.drivingApi.getCurrentLicenseV5({
+          nationalId: user.nationalId,
+          token: user.authorization.replace(/^bearer /i, ''),
+        }),
+        this.drivingApi.getRemarksCodeTable(),
+      ])
+    } catch (e) {
+      this.logger.warning(`Drivers license data or category fetch failed`)
+      const error = this.parseError(e)
+      return {
+        ok: false,
+        error,
+      }
+    }
 
-    if (!license.ok || !license.data) {
+    if (!licenseData[0]) {
       this.logger.info(
         `No license data found for user, no pkpass payload to create`,
         { LOG_CATEGORY },
@@ -166,7 +176,18 @@ export class DrivingLicenseClient implements LicenseClient<DriversLicense> {
       }
     }
 
-    const valid = this.licenseIsValidForPkPass(license.data)
+    if (!licenseData[1]) {
+      this.logger.error('No remark codes found', { LOG_CATEGORY })
+      return {
+        ok: false,
+        error: {
+          code: 3,
+          message: 'No remark codes found',
+        },
+      }
+    }
+
+    const valid = this.licenseIsValidForPkPass(licenseData[0])
 
     if (!valid) {
       return {
@@ -178,27 +199,35 @@ export class DrivingLicenseClient implements LicenseClient<DriversLicense> {
       }
     }
 
-    const payload = await this.createPkPassPayload(
-      license.data,
-      user.nationalId,
-    )
+    const payload = this.createPkPassPayload(licenseData[0], licenseData[1])
 
     if (!payload) {
       return {
         ok: false,
         error: {
-          code: 3,
-          message: 'Missing payload',
+          code: 13,
+          message: 'Payload creation failed',
         },
       }
     }
-
-    const pass = await this.smartApi.generatePkPass(
+    const result = await this.smartApi.generatePkPass(
       payload,
-      formatNationalId(user.nationalId),
+      format(user.nationalId),
+      () =>
+        this.drivingApi.notifyOnPkPassCreation({
+          nationalId: user.nationalId,
+          token: user.authorization.replace(/^bearer /i, ''),
+        }),
     )
 
-    return pass
+    if (!result.ok) {
+      this.logger.warn('PkPass creation failed', {
+        category: LOG_CATEGORY,
+        ...result.error,
+      })
+    }
+
+    return result
   }
 
   async getPkPassQRCode(user: User): Promise<Result<string>> {

@@ -61,7 +61,7 @@ export class FirearmLicenseClient implements LicenseClient<FirearmLicenseDto> {
           propertyInfo: promises[2],
         }
       })
-      .catch(() => {
+      .catch((e) => {
         //unexpected error
         return null
       })
@@ -76,42 +76,12 @@ export class FirearmLicenseClient implements LicenseClient<FirearmLicenseDto> {
       }
     }
 
-    const data: FirearmLicenseDto = {
-      licenseInfo: null,
-      categories: null,
-      properties: null,
-    }
-    let error = null
-
-    //i hate this
-    if (responses.licenseInfo.ok) {
-      data.licenseInfo = responses.licenseInfo.data
-    } else {
-      error = responses.licenseInfo.error
-    }
-
-    if (responses.categories.ok) {
-      data.categories = responses.categories.data
-    } else {
-      error = responses.categories.error
-    }
-
-    if (responses.propertyInfo.ok) {
-      data.properties = responses.propertyInfo.data
-    } else {
-      error = responses.propertyInfo.error
-    }
-
-    if (error) {
-      return {
-        ok: false,
-        error,
-      }
-    }
-
     return {
       ok: true,
-      data,
+      data: {
+        ...responses,
+        properties: responses.propertyInfo,
+      },
     }
   }
 

@@ -1,5 +1,5 @@
 import {
-  FirearmLicenseApiProvider,
+  FirearmApi,
   FirearmLicenseClientModule,
 } from '@island.is/clients/firearm-license'
 import {
@@ -26,7 +26,7 @@ import { GenericFirearmLicenseConfig } from './genericFirearmLicense.config'
       inject: [GenericFirearmLicenseConfig.KEY],
     }),
   ],
-  providers: [GenericFirearmLicenseService, FirearmLicenseApiProvider],
+  providers: [GenericFirearmLicenseService],
   exports: [GenericFirearmLicenseService],
 })
 export class GenericFirearmLicenseModule {}

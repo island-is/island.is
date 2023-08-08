@@ -9,7 +9,7 @@ import { Provider } from '@nestjs/common'
 import { OpenFirearmApi } from './openFirearmApi.services'
 import { OpenFirearmLicenseClientConfig } from './openFirearmLicenseClient.config'
 
-export const OpenFirearmLicenseApiProvider: Provider<OpenFirearmApi> = {
+export const OpenFirearmApiProvider: Provider<OpenFirearmApi> = {
   provide: OpenFirearmApi,
   scope: LazyDuringDevScope,
   useFactory: (
