@@ -32,9 +32,9 @@ export const Section: React.FC<SectionProps> = ({
 }) => {
   const { width } = useWindowSize()
 
-  const hasMobileBleedAmount = backgroundBleed?.mobileBleedAmount >= 0
+  const hasMobileBleedAmount = (backgroundBleed?.mobileBleedAmount ?? -1) >= 0
   const hasBleedAmount =
-    backgroundBleed?.bleedAmount >= 0 || hasMobileBleedAmount
+    (backgroundBleed?.bleedAmount ?? -1) >= 0 || hasMobileBleedAmount
 
   const generateBackgroundBleed = () => {
     if (hasBleedAmount) {
