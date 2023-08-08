@@ -22,6 +22,13 @@ const useSortAppealCases = (
     setSortConfig({ column, direction })
   }
 
+  const isActiveColumn = (column: string) => {
+    if (!sortConfig) {
+      return false
+    }
+    return sortConfig.column === column
+  }
+
   const getClassNamesFor = (column: string) => {
     if (!sortConfig) {
       return
@@ -52,7 +59,7 @@ const useSortAppealCases = (
     return data
   }, [data, sortConfig])
 
-  return { sortedData, requestSort, getClassNamesFor }
+  return { sortedData, requestSort, getClassNamesFor, isActiveColumn }
 }
 
 export default useSortAppealCases

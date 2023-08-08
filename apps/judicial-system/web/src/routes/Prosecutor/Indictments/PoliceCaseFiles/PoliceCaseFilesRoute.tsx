@@ -9,8 +9,16 @@ import React, {
 import router from 'next/router'
 import { useIntl } from 'react-intl'
 import _isEqual from 'lodash/isEqual'
-import { useQuery } from '@apollo/client'
 
+import { Box, InputFileUpload, UploadFile } from '@island.is/island-ui/core'
+import {
+  CaseFile,
+  CaseFileCategory,
+  CaseFileState,
+  CrimeSceneMap,
+  IndictmentSubtypeMap,
+} from '@island.is/judicial-system/types'
+import * as constants from '@island.is/judicial-system/consts'
 import {
   FormContentContainer,
   FormContext,
@@ -27,29 +35,18 @@ import {
   titles,
   errors as errorMessages,
 } from '@island.is/judicial-system-web/messages'
-import { Box, InputFileUpload, UploadFile } from '@island.is/island-ui/core'
-import {
-  CaseFile,
-  CaseFileCategory,
-  CaseFileState,
-  CrimeSceneMap,
-  IndictmentSubtypeMap,
-} from '@island.is/judicial-system/types'
 import { useS3Upload } from '@island.is/judicial-system-web/src/utils/hooks'
 import { mapCaseFileToUploadFile } from '@island.is/judicial-system-web/src/utils/formHelper'
-import {
-  GetPoliceCaseFilesQuery,
-  CaseOrigin,
-} from '@island.is/judicial-system-web/src/graphql/schema'
-import { PoliceCaseFilesQuery } from '@island.is/judicial-system-web/graphql'
-import * as constants from '@island.is/judicial-system/consts'
+import { CaseOrigin } from '@island.is/judicial-system-web/src/graphql/schema'
 
-import { PoliceCaseFileCheck, PoliceCaseFiles } from '../../components'
 import {
+  PoliceCaseFileCheck,
+  PoliceCaseFiles,
   mapPoliceCaseFileToPoliceCaseFileCheck,
   PoliceCaseFilesData,
-} from '../../components/CaseFiles/CaseFiles'
+} from '../../components'
 import { policeCaseFiles as m } from './PoliceCaseFilesRoute.strings'
+import { useGetIndictmentPoliceCaseFilesQuery } from './getIndictmentPoliceCaseFiles.generated'
 
 const UploadFilesToPoliceCase: React.FC<{
   caseId: string
@@ -63,17 +60,18 @@ const UploadFilesToPoliceCase: React.FC<{
     handleChange,
     handleRemove,
     handleRetry,
-    uploadPoliceCaseFile,
+    uploadFromPolice,
     generateSingleFileUpdate,
   } = useS3Upload(caseId)
   const {
     data: policeData,
     loading: policeDataLoading,
     error: policeDataError,
-  } = useQuery<GetPoliceCaseFilesQuery>(PoliceCaseFilesQuery, {
+  } = useGetIndictmentPoliceCaseFilesQuery({
     variables: { input: { caseId } },
-    fetchPolicy: 'no-cache',
     skip: caseOrigin !== CaseOrigin.LOKE,
+    fetchPolicy: 'no-cache',
+    errorPolicy: 'all',
   })
 
   const [displayFiles, setDisplayFiles] = useState<UploadFile[]>(
@@ -217,7 +215,7 @@ const UploadFilesToPoliceCase: React.FC<{
         category: CaseFileCategory.CASE_FILE,
       } as UploadFile
 
-      await uploadPoliceCaseFile(fileToUpload, uploadPoliceCaseFileCallback)
+      await uploadFromPolice(fileToUpload, uploadPoliceCaseFileCallback)
 
       setPoliceCaseFileList((previous) => previous.filter((p) => p.id !== f.id))
 
@@ -225,7 +223,7 @@ const UploadFilesToPoliceCase: React.FC<{
         setIsUploading(false)
       }
     })
-  }, [policeCaseFileList, uploadPoliceCaseFile, uploadPoliceCaseFileCallback])
+  }, [policeCaseFileList, uploadFromPolice, uploadPoliceCaseFileCallback])
 
   return (
     <>
