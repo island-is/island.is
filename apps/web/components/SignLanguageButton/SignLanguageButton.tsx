@@ -1,13 +1,17 @@
+import { useState, ReactNode, useMemo } from 'react'
+import { useQuery } from '@apollo/client'
+import type { Locale } from 'locale'
 import { Box, Text, Hidden } from '@island.is/island-ui/core'
-import { useState, ReactNode } from 'react'
 import { EmbeddedVideo } from '@island.is/island-ui/contentful'
 import { useI18n } from '@island.is/web/i18n'
 import { Modal } from '@island.is/react/components'
-import type { Locale } from 'locale'
+import { Query, QueryGetNamespaceArgs } from '@island.is/web/graphql/schema'
+import { GET_NAMESPACE_QUERY } from '@island.is/web/screens/queries'
+import { useNamespace } from '@island.is/web/hooks'
 
 import * as styles from './SignLanguageButton.css'
 
-const BUTTON_TEXT: Record<Locale, string> = {
+const DEFAULT_BUTTON_TEXT: Record<Locale, string> = {
   is: 'Táknmál',
   en: 'Sign language',
 }
@@ -42,6 +46,25 @@ export const SignLanguageButton = ({
 }: SignLanguageButtonProps) => {
   const { activeLocale } = useI18n()
   const [isModalVisible, setIsModalVisible] = useState(false)
+
+  const { data, loading } = useQuery<Query, QueryGetNamespaceArgs>(
+    GET_NAMESPACE_QUERY,
+    {
+      variables: {
+        input: {
+          lang: activeLocale,
+          namespace: 'Global',
+        },
+      },
+    },
+  )
+
+  const namespace = useMemo(
+    () => JSON.parse(data?.getNamespace?.fields ?? '{}'),
+    [data?.getNamespace?.fields],
+  )
+
+  const n = useNamespace(namespace)
 
   return (
     <>
@@ -80,22 +103,24 @@ export const SignLanguageButton = ({
         </Hidden>
       </Modal>
 
-      <Box marginBottom={1}>
-        <Box
-          cursor="pointer"
-          display="flex"
-          flexWrap="nowrap"
-          columnGap={1}
-          borderBottomWidth="large"
-          borderColor="mint400"
-          onClick={() => setIsModalVisible(true)}
-        >
-          <SignLanguageIcon />
-          <Text color="blueberry400" fontWeight="semiBold">
-            {BUTTON_TEXT[activeLocale || 'is']}
-          </Text>
+      {!loading && (
+        <Box marginBottom={1}>
+          <Box
+            cursor="pointer"
+            display="flex"
+            flexWrap="nowrap"
+            columnGap={1}
+            borderBottomWidth="large"
+            borderColor="mint400"
+            onClick={() => setIsModalVisible(true)}
+          >
+            <SignLanguageIcon />
+            <Text color="blueberry400" fontWeight="semiBold">
+              {n('signLanguage', DEFAULT_BUTTON_TEXT[activeLocale || 'is'])}
+            </Text>
+          </Box>
         </Box>
-      </Box>
+      )}
     </>
   )
 }
