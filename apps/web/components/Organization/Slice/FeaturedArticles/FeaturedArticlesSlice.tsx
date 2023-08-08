@@ -28,15 +28,19 @@ export const FeaturedArticlesSlice: React.FC<SliceProps> = ({
 
   const sortedArticles =
     slice.sortBy === 'importance'
-      ? slice.resolvedArticles
-          .slice()
-          .sort((a, b) =>
-            a.importance > b.importance
-              ? -1
-              : a.importance === b.importance
-              ? a.title.localeCompare(b.title)
-              : 1,
-          )
+      ? slice.resolvedArticles.slice().sort((a, b) => {
+          if (
+            typeof a.importance !== 'number' ||
+            typeof b.importance !== 'number'
+          ) {
+            return a.title.localeCompare(b.title)
+          }
+          return a.importance > b.importance
+            ? -1
+            : a.importance === b.importance
+            ? a.title.localeCompare(b.title)
+            : 1
+        })
       : slice.resolvedArticles
 
   const borderProps: BoxProps = slice.hasBorderAbove

@@ -204,7 +204,7 @@ export const TimelineSlice: React.FC<SliceProps> = ({ slice, namespace }) => {
     return Math.min(...futureMonths)
   })
 
-  const monthEvents = eventMap.get(months[month].year).get(months[month].month)
+  const monthEvents = eventMap.get(months[month].year)?.get(months[month].month)
 
   const borderProps: BoxProps = slice.hasBorderAbove
     ? {

@@ -90,8 +90,8 @@ export const OverviewLinksSlice: React.FC<SliceProps> = ({ slice }) => {
                                 [
                                   {
                                     __typename: 'Html',
-                                    id: intro.id,
-                                    document: intro.document,
+                                    id: intro?.id,
+                                    document: intro?.document,
                                   },
                                 ] as SliceType[],
                                 undefined,
