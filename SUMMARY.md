@@ -200,6 +200,7 @@
   - [Identity](libs/clients/identity/README.md)
   - [INNA](libs/clients/inna/README.md)
   - [Islykill](libs/clients/islykill/README.md)
+  - [License Client](libs/clients/license-client/README.md)
   - [Enhanced Fetch](libs/clients/middlewares/README.md)
   - [MMS](libs/clients/mms/README.md)
   - [Financial Aid](libs/clients/municipalities-financial-aid/README.md)

@@ -39,6 +39,13 @@ import {
 } from '@island.is/api/domains/communications'
 import { IdentityModule } from '@island.is/api/domains/identity'
 import {
+  AdrDigitalLicenseClientConfig,
+  DisabilityDigitalLicenseClientConfig,
+  FirearmDigitalLicenseClientConfig,
+  MachineDigitalLicenseClientConfig,
+  DrivingDigitalLicenseClientConfig,
+} from '@island.is/clients/license-client'
+import {
   GenericAdrLicenseConfig,
   GenericDisabilityLicenseConfig,
   GenericDrivingLicenseConfig,
@@ -306,6 +313,12 @@ const environment = getConfig
         ElectronicRegistrationsClientConfig,
         FeatureFlagConfig,
         XRoadConfig,
+        FirearmDigitalLicenseClientConfig,
+        DisabilityLicenseClientConfig,
+        DisabilityDigitalLicenseClientConfig,
+        DrivingDigitalLicenseClientConfig,
+        AdrDigitalLicenseClientConfig,
+        MachineDigitalLicenseClientConfig,
         MunicipalitiesFinancialAidConfig,
         CompanyRegistryConfig,
         FishingLicenseClientConfig,

@@ -164,6 +164,7 @@
     "clients-inna": "libs/clients/inna",
     "clients-islykill": "libs/clients/islykill",
     "clients-judicial-administration": "libs/clients/judicial-administration",
+    "clients-license-client": "libs/clients/license-client",
     "clients-middlewares": "libs/clients/middlewares",
     "clients-mms": "libs/clients/mms",
     "clients-municipalities-financial-aid": "libs/clients/municipalities-financial-aid",
