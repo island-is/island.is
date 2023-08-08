@@ -137,7 +137,8 @@ COPY ${APP_HOME}/package.json .
 RUN chown -R pwuser:pwuser .
 
 USER pwuser
-RUN yarn set version berry
+ADD .yarnrc.yml ./
+COPY .yarn .yarn
 RUN yarn install
 
 ENV PLAYWRIGHT_BROWSER=chromium
