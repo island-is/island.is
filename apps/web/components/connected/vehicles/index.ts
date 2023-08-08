@@ -8,3 +8,7 @@ export const PublicVehicleSearch = dynamic(
 export const AircraftSearch = dynamic(() => import('./AircraftSearch'), {
   ssr: true,
 })
+export const PlateAvailableSearch = dynamic(
+  () => import('./PlateAvailableSearch'),
+  { ssr: false },
+)
