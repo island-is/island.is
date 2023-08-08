@@ -501,7 +501,7 @@ export const Form = ({ form, namespace }: FormProps) => {
                 JSON.stringify(
                   (files as string[][]).find(
                     (file) => file[0] === slugify(field.title),
-                  )[1],
+                  )?.[1],
                 ),
               ]),
           ),
