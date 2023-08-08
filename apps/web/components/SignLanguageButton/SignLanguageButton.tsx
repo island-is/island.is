@@ -91,12 +91,15 @@ export const SignLanguageButton = ({
             display="flex"
             flexWrap="nowrap"
             columnGap={1}
-            borderBottomWidth="large"
-            borderColor="mint400"
+            borderBottomWidth={isModalVisible ? 'large' : undefined}
+            borderColor={isModalVisible ? 'mint400' : undefined}
             onClick={() => setIsModalVisible(true)}
           >
             <Icon icon="signLanguage" />
-            <Text color="blueberry400" fontWeight="semiBold">
+            <Text
+              color={isModalVisible ? 'blueberry400' : undefined}
+              fontWeight="semiBold"
+            >
               {n('signLanguage', DEFAULT_BUTTON_TEXT[activeLocale || 'is'])}
             </Text>
           </Box>
