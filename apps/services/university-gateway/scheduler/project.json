@@ -1,0 +1,49 @@
+{
+  "root": "apps/services/university-gateway/scheduler",
+  "sourceRoot": "apps/services/university-gateway/scheduler/src",
+  "projectType": "application",
+  "prefix": "university-gateway-scheduler",
+  "targets": {
+    "build": {
+      "executor": "./tools/executors/node:build",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/apps/services/university-gateway/scheduler",
+        "main": "apps/services/university-gateway/scheduler/src/main.ts",
+        "tsConfig": "apps/services/university-gateway/scheduler/tsconfig.app.json",
+        "maxWorkers": 2
+      },
+      "configurations": {
+        "production": {
+          "optimization": true,
+          "extractLicenses": true,
+          "inspect": false
+        }
+      }
+    },
+    "serve": {
+      "executor": "@nrwl/node:node",
+      "options": {
+        "buildTarget": "university-gateway-scheduler:build"
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "apps/services/university-gateway/scheduler/**/*.{ts,tsx,js,jsx}"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/apps/services/university-gateway/scheduler"],
+      "options": {
+        "jestConfig": "apps/services/university-gateway/scheduler/jest.config.js",
+        "passWithNoTests": true
+      }
+    },
+    "docker-express": {}
+  },
+  "tags": ["scope:university-gateway-api"]
+}

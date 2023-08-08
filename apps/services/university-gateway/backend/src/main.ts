@@ -1,0 +1,12 @@
+import { bootstrap } from '@island.is/infra-nest-server'
+
+import { AppModule } from './app/app.module'
+import { openApi } from './openApi'
+
+bootstrap({
+  appModule: AppModule,
+  name: 'university-gateway-backend',
+  port: 3380,
+  swaggerPath: '/swagger',
+  openApi,
+})

@@ -331,6 +331,8 @@
     "services-search-indexer": "apps/services/search-indexer",
     "services-sessions": "apps/services/sessions",
     "services-university-gateway": "apps/services/university-gateway",
+    "services-university-gateway-backend": "apps/services/university-gateway/backend",
+    "university-gateway-scheduler": "apps/services/university-gateway/scheduler",
     "services-user-notification": "apps/services/user-notification",
     "services-user-profile": "apps/services/user-profile",
     "services-xroad-collector": "apps/services/xroad-collector",
