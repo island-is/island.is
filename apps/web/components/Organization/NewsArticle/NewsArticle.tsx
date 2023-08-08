@@ -16,7 +16,7 @@ interface NewsArticleProps {
 export const NewsArticle: React.FC<NewsArticleProps> = ({ newsItem }) => {
   const { format } = useDateUtils()
 
-  const formattedDate = newsItem.date
+  const formattedDate = newsItem?.date
     ? format(new Date(newsItem.date), 'do MMMM yyyy')
     : ''
 
@@ -24,7 +24,7 @@ export const NewsArticle: React.FC<NewsArticleProps> = ({ newsItem }) => {
     <Box paddingBottom={[0, 0, 4]}>
       <Box className="rs_read">
         <Text variant="h1" as="h1" paddingBottom={2}>
-          {newsItem.title}
+          {newsItem?.title}
         </Text>
       </Box>
 
@@ -37,25 +37,25 @@ export const NewsArticle: React.FC<NewsArticleProps> = ({ newsItem }) => {
       </Box>
       <Box className="rs_read">
         <Text variant="intro" as="p" paddingBottom={2}>
-          {newsItem.intro}
+          {newsItem?.intro}
         </Text>
       </Box>
-      {Boolean(newsItem.image) && (
+      {Boolean(newsItem?.image) && (
         <Box
           paddingY={2}
           className={cn({
-            [styles.floatedImage]: newsItem.fullWidthImageInContent === false,
+            [styles.floatedImage]: newsItem?.fullWidthImageInContent === false,
           })}
         >
           <Image
-            {...newsItem.image}
-            url={newsItem.image.url + '?w=774&fm=webp&q=80'}
-            thumbnail={newsItem.image.url + '?w=50&fm=webp&q=80'}
+            {...newsItem?.image}
+            url={newsItem?.image?.url + '?w=774&fm=webp&q=80'}
+            thumbnail={newsItem?.image?.url + '?w=50&fm=webp&q=80'}
           />
         </Box>
       )}
       <Box className="rs_read" paddingBottom={4} width="full">
-        {webRichText(newsItem.content as SliceType[], {
+        {webRichText(newsItem?.content as SliceType[], {
           renderComponent: {
             // Make sure that images in the content are full width
             Image: (slice) => (

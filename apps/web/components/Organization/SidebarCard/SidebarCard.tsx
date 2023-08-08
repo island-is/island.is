@@ -44,7 +44,7 @@ export const SidebarCard: React.FC<SidebarCardProps> = ({ sidebarCard }) => (
                 variant="text"
                 size="small"
               >
-                {sidebarCard.link.text}
+                {sidebarCard?.link?.text}
               </Button>
             </Link>
           </Box>
