@@ -180,7 +180,7 @@ const OpenDataSubPage: Screen<OpenDataSubpageProps> = ({ page }) => {
   )
 }
 
-OpenDataSubPage.getInitialProps = async ({ apolloClient, locale }) => {
+OpenDataSubPage.getProps = async ({ apolloClient, locale }) => {
   const [
     {
       data: { getOpenDataSubpage: page },

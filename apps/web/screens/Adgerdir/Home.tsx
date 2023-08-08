@@ -257,7 +257,7 @@ const Home: Screen<HomeProps> = ({
   )
 }
 
-Home.getInitialProps = async ({ apolloClient, locale }) => {
+Home.getProps = async ({ apolloClient, locale }) => {
   const [
     {
       data: { getAdgerdirFrontpage },
