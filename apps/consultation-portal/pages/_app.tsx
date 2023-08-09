@@ -15,7 +15,7 @@ const ConsultationPortalApplication: any = ({ Component, pageProps }) => {
         <AuthProvider>
           <AppLayout>
             <PageLoader />
-            <Component {...pageProps.pageProps} />
+            <Component {...pageProps} />
           </AppLayout>
         </AuthProvider>
       </Provider>
