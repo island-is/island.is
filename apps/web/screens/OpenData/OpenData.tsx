@@ -171,7 +171,7 @@ const OpenDataPage: Screen<OpenDataProps> = ({ page, megaMenuData }) => {
   )
 }
 
-OpenDataPage.getInitialProps = async ({ apolloClient, locale }) => {
+OpenDataPage.getProps = async ({ apolloClient, locale }) => {
   const [
     {
       data: { getOpenDataPage: page },

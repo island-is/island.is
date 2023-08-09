@@ -39,6 +39,7 @@ import { SliceType } from '@island.is/island-ui/contentful'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import { useRouter } from 'next/router'
 import { webRichText } from '@island.is/web/utils/richText'
+import { safelyExtractPathnameFromUrl } from '@island.is/web/utils/safelyExtractPathnameFromUrl'
 
 const PAGE_SIZE = 10
 const CSV_COLUMN_SEPARATOR = ','
@@ -294,7 +295,8 @@ const Homestay: Screen<HomestayProps> = ({
   )
 }
 
-Homestay.getInitialProps = async ({ apolloClient, locale, pathname }) => {
+Homestay.getProps = async ({ apolloClient, locale, req }) => {
+  const pathname = safelyExtractPathnameFromUrl(req.url)
   const path = pathname?.split('/') ?? []
   const slug = path?.[path.length - 2] ?? 'syslumenn'
   const subSlug = path.pop() ?? 'heimagisting'

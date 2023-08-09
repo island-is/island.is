@@ -1,9 +1,10 @@
 import React from 'react'
 import { useRouter } from 'next/router'
-import { NextPageContext } from 'next'
 import { ApolloProvider } from '@apollo/client/react'
 import { getLocaleFromPath } from '@island.is/web/i18n/withLocale'
 import initApollo from './client'
+import { ScreenContext } from '../types'
+import { safelyExtractPathnameFromUrl } from '../utils/safelyExtractPathnameFromUrl'
 
 export const withApollo = (Component) => {
   const NewComponent = ({ apolloState, pageProps }) => {
@@ -16,13 +17,13 @@ export const withApollo = (Component) => {
     )
   }
 
-  NewComponent.getInitialProps = async (ctx: NextPageContext) => {
-    const clientLocale = getLocaleFromPath(ctx.asPath)
-    const apolloClient = initApollo({}, clientLocale, ctx)
+  NewComponent.getProps = async (ctx: Partial<ScreenContext>) => {
+    const clientLocale = getLocaleFromPath(
+      safelyExtractPathnameFromUrl(ctx.req?.url),
+    )
+    const apolloClient = initApollo({}, clientLocale)
     const newContext = { ...ctx, apolloClient }
-    const props = Component.getInitialProps
-      ? await Component.getInitialProps(newContext)
-      : {}
+    const props = Component.getProps ? await Component.getProps(newContext) : {}
     const cache = apolloClient.cache.extract()
     return {
       pageProps: props,

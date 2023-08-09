@@ -349,4 +349,8 @@ export class TransportAuthorityApi {
         : null,
     }
   }
+
+  async getPlateAvailability(regno: string) {
+    return this.vehiclePlateRenewalClient.getPlateAvailability(regno)
+  }
 }
