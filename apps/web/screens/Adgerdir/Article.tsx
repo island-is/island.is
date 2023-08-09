@@ -68,13 +68,13 @@ const AdgerdirArticle: Screen<AdgerdirArticleProps> = ({
   const { items: pagesItems } = pages
   const { items: tagsItems } = tags
 
-  const processEntry = article.processEntry
+  const processEntry = article?.processEntry
 
   return (
     <>
       <HeadWithSocialSharing
-        title={`${article.title} | Viðspyrna fyrir Ísland`}
-        description={article.description}
+        title={`${article?.title} | Viðspyrna fyrir Ísland`}
+        description={article?.description}
       />
       <SidebarLayout
         sidebarContent={
@@ -87,7 +87,7 @@ const AdgerdirArticle: Screen<AdgerdirArticleProps> = ({
                   </span>
                 </Text>
                 <Inline space={2} alignY="center">
-                  {article.tags.map(({ title }, index) => {
+                  {article?.tags.map(({ title }, index) => {
                     return (
                       <Tag key={index} variant="green" label>
                         {title}
@@ -131,7 +131,7 @@ const AdgerdirArticle: Screen<AdgerdirArticleProps> = ({
 
         <Stack space={2}>
           <Text variant="h1" as="h1">
-            {article.title}
+            {article?.title}
           </Text>
           {processEntry?.processLink && (
             <Box marginTop={3} display={['none', 'none', 'block']} printHidden>
@@ -140,7 +140,7 @@ const AdgerdirArticle: Screen<AdgerdirArticleProps> = ({
           )}
         </Stack>
         {richText(
-          (article ?? article).content as SliceType[],
+          (article?.content ?? []) as SliceType[],
           undefined,
           activeLocale,
         )}

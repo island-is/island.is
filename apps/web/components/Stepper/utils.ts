@@ -380,7 +380,7 @@ const stepContainsQuestion = (step: Step) => {
 }
 
 const getStepQuestion = (step: Step): string => {
-  if (stepContainsQuestion(step) && step.subtitle[0].__typename === 'Html') {
+  if (stepContainsQuestion(step) && step.subtitle?.[0].__typename === 'Html') {
     return step.subtitle[0].document.content[0].content[0].value
   }
   return ''
@@ -396,7 +396,7 @@ const getStepOptionsFromUIConfiguration = async (
     slug: string
   }[] = []
 
-  const queries = stepper.steps.map((step) => {
+  const queries = (stepper.steps ?? []).map((step) => {
     const stepOptionsNameSpace = getStepOptionsSourceNamespace(step as Step)
     if (!stepOptionsNameSpace) return null
     return apolloClient
@@ -419,7 +419,7 @@ const getStepOptionsFromUIConfiguration = async (
 
   for (let i = 0; i < dataArray.length; i += 1) {
     stepOptions.push({
-      slug: stepper.steps[i].slug,
+      slug: stepper.steps?.[i].slug ?? '',
       data: dataArray[i],
     })
   }

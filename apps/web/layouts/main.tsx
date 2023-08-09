@@ -508,7 +508,7 @@ Layout.getInitialProps = async ({ apolloClient, locale, req }) => {
   const mapLinks = (item: Menu) =>
     item.menuLinks.map((x) => {
       const href = LinkResolver(
-        x.link.type as LinkType,
+        x.link?.type as LinkType,
         [x.link.slug],
         lang as Locale,
       ).href.trim()
@@ -529,7 +529,7 @@ Layout.getInitialProps = async ({ apolloClient, locale, req }) => {
     footerMiddleMenu: [],
   }
 
-  const footerMenu = footerMenuData.menus.reduce((menus, menu, idx) => {
+  const footerMenu = footerMenuData?.menus.reduce((menus, menu, idx) => {
     if (IS_MOCK) {
       const key = Object.keys(menus)[idx]
       if (key) {
@@ -571,7 +571,7 @@ Layout.getInitialProps = async ({ apolloClient, locale, req }) => {
     alertBannerContent: {
       ...alertBanner,
       showAlertBanner:
-        alertBanner.showAlertBanner &&
+        alertBanner?.showAlertBanner &&
         (!req?.headers.cookie ||
           req.headers.cookie?.indexOf(alertBannerId) === -1),
     },
