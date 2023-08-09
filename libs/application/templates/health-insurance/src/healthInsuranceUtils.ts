@@ -1,5 +1,5 @@
 import { ExternalData } from '@island.is/application/types'
-import { Address } from '@island.is/api/schema'
+import { NationalRegistryAddress as Address } from '@island.is/api/schema'
 import { Applications } from './dataProviders/APIDataTypes'
 import { NordicCountriesCountryCode } from './shared'
 import { EU } from './lib/EU'
