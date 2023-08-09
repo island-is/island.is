@@ -209,18 +209,27 @@ export class ContentfulService {
       ...typeOfSync,
     })
 
-    // Return the sync data with just the sys objects since otherwise we are using unnecessarily much memory since we won't be using the fields properties for the most part
-    return {
-      entries: syncData.entries.map((e) => ({
-        sys: e.sys,
+    // Remove unnecessary fields to save memory
+    for (let i = 0; i < syncData.entries.length; i += 1) {
+      syncData.entries[i] = {
+        ...syncData.entries[i],
         // In case the entry can be turned off via activeTranslations toggle we want to keep that information
-        fields: { activeTranslations: e.fields?.activeTranslations },
-      })),
-      deletedEntries: syncData.deletedEntries.map((e) => ({ sys: e.sys })),
-      nextSyncToken: syncData.nextSyncToken,
-      assets: syncData.assets.map((a) => ({ sys: a.sys })),
-      deletedAssets: syncData.deletedAssets.map((a) => ({ sys: a.sys })),
+        fields: syncData.entries[i].fields?.activeTranslations,
+      }
     }
+
+    // Remove unnecessary fields to save memory
+    const keys = ['deletedEntries', 'assets', 'deletedAssets'] as const
+    for (const key of keys) {
+      for (let i = 0; i < syncData[key].length; i += 1) {
+        syncData[key][i] = {
+          ...syncData.entries[i],
+          fields: null,
+        }
+      }
+    }
+
+    return syncData
   }
 
   private async getPopulatedContentulEntries(
