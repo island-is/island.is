@@ -1,9 +1,10 @@
 import React, { FC } from 'react'
 import { useLocale } from '@island.is/localization'
-import { ServicePortalPath, m } from '@island.is/service-portal/core'
+import { m } from '@island.is/service-portal/core'
 import { Box, Button } from '@island.is/island-ui/core'
 import { PropertyOverview } from '@island.is/api/schema'
 import { ActionCard } from '@island.is/service-portal/core'
+import { AssetsPaths } from '../../lib/paths'
 
 interface Props {
   assets?: PropertyOverview
@@ -31,7 +32,7 @@ const AssetListCards: FC<Props> = ({ assets, paginateCallback }) => {
               variant: 'text',
               size: 'small',
               icon: 'arrowForward',
-              url: ServicePortalPath.AssetsRealEstateDetail.replace(
+              url: AssetsPaths.AssetsRealEstateDetail.replace(
                 ':id',
                 asset.propertyNumber as string,
               ),

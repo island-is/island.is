@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   useGetWorkMachineDocumentLazyQuery,
-  useGetWorkMachineDocumentQuery,
   useGetWorkMachinesQuery,
 } from './WorkMachinesOverview.generated'
 import {
@@ -10,7 +9,6 @@ import {
   ErrorScreen,
   EmptyState,
   CardLoader,
-  ServicePortalPath,
   ActionCard,
   formSubmit,
 } from '@island.is/service-portal/core'
@@ -31,6 +29,7 @@ import {
 import { messages } from '../../lib/messages'
 import { useDebounce } from 'react-use'
 import { WorkMachinesFileType } from '@island.is/api/schema'
+import { AssetsPaths } from '../../lib/paths'
 
 type FilterValue = {
   label: string
@@ -259,7 +258,7 @@ const WorkMachinesOverview = () => {
                   variant: 'text',
                   url:
                     wm.id && wm.registrationNumber
-                      ? ServicePortalPath.AssetsWorkMachinesDetail.replace(
+                      ? AssetsPaths.AssetsWorkMachinesDetail.replace(
                           ':regNumber',
                           wm.registrationNumber,
                         ).replace(':id', wm.id)

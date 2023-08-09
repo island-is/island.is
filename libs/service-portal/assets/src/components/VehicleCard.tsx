@@ -1,11 +1,11 @@
 import { VehiclesVehicle } from '@island.is/api/schema'
 import { useLocale } from '@island.is/localization'
-import { ServicePortalPath } from '@island.is/service-portal/core'
 import React, { FC } from 'react'
 import { formatDate } from '@island.is/service-portal/core'
 import differenceInMonths from 'date-fns/differenceInMonths'
 import { messages, vehicleMessage } from '../lib/messages'
 import { ActionCard } from '@island.is/service-portal/core'
+import { AssetsPaths } from '../lib/paths'
 
 interface Props {
   vehicle: VehiclesVehicle
@@ -47,10 +47,7 @@ export const VehicleCard: FC<Props> = ({ vehicle }) => {
         label: formatMessage(messages.seeInfo),
         variant: 'text',
         url: vehicle.permno
-          ? ServicePortalPath.TransportVehiclesDetail.replace(
-              ':id',
-              vehicle.permno,
-            )
+          ? AssetsPaths.AssetsVehiclesDetail.replace(':id', vehicle.permno)
           : undefined,
       }}
     />
