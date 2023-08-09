@@ -46,10 +46,8 @@ export class CmsHealthIndicator extends HealthIndicator {
     }
 
     const response = await this.health.check(
-      Object.entries(requiredUrls).map(
-        ([key, url]) =>
-          () =>
-            this.canUrlBeResolved(key, url),
+      Object.entries(requiredUrls).map(([key, url]) => () =>
+        this.canUrlBeResolved(key, url),
       ),
     )
 

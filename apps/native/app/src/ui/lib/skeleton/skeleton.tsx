@@ -123,7 +123,8 @@ export function Skeleton(props: SkeletonProps) {
     <Host
       onLayout={onLayout}
       error={error}
-      style={[style as any, {height, backgroundColor}]}>
+      style={[style as any, {height, backgroundColor}]}
+    >
       <Swoosh
         style={{
           height,

@@ -57,8 +57,7 @@ interface ExplicitCodeCreationAttributes
 @Table({ tableName: 'explicit_code' })
 export class ExplicitCode
   extends Model<TExplicitCode, ExplicitCodeCreationAttributes>
-  implements TExplicitCode
-{
+  implements TExplicitCode {
   @Column({
     type: DataType.UUID,
     primaryKey: true,

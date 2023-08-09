@@ -90,8 +90,9 @@ export class ApplicationController {
 
     let currentApplicationId
     try {
-      currentApplicationId =
-        await this.applicationService.getCurrentApplicationId(user.nationalId)
+      currentApplicationId = await this.applicationService.getCurrentApplicationId(
+        user.nationalId,
+      )
     } catch (e) {
       this.logger.error(
         'Application controller: Failed getting current application',

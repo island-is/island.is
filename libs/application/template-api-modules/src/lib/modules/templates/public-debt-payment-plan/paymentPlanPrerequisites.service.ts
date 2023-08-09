@@ -202,7 +202,7 @@ export class PrerequisitesService {
 
     return deptAndSchedules.map((debt) => {
       const indexOfS = Object.values(ScheduleType).indexOf(
-        debt.type as unknown as ScheduleType,
+        (debt.type as unknown) as ScheduleType,
       )
       const key = Object.keys(ScheduleType)[indexOfS]
       return {
@@ -221,15 +221,17 @@ export class PrerequisitesService {
     const indexOfScheduleType = Object.keys(ScheduleType).indexOf(scheduleType)
     const scheduleTypeValue = Object.values(ScheduleType)[indexOfScheduleType]
 
-    const { distributionInitialPosition, error } =
-      await this.paymentScheduleApiWithAuth(
-        user,
-      ).distributionInitialPositionnationalIdscheduleTypeGET4({
-        disposableIncome,
-        nationalId: user.nationalId,
-        scheduleType: scheduleTypeValue,
-        totalAmount: totalDebtAmount,
-      })
+    const {
+      distributionInitialPosition,
+      error,
+    } = await this.paymentScheduleApiWithAuth(
+      user,
+    ).distributionInitialPositionnationalIdscheduleTypeGET4({
+      disposableIncome,
+      nationalId: user.nationalId,
+      scheduleType: scheduleTypeValue,
+      totalAmount: totalDebtAmount,
+    })
 
     if (error) {
       this.logger.error('Error getting initial schedule', error)
@@ -242,7 +244,9 @@ export class PrerequisitesService {
     }
   }
 
-  private async getCurrentEmployer(auth: User): Promise<{
+  private async getCurrentEmployer(
+    auth: User,
+  ): Promise<{
     name: string
     nationalId: string
   }> {

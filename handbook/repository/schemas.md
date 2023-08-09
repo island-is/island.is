@@ -65,7 +65,12 @@ First, we need to create an `openApi.ts` file to define the document builder. Ad
 ```typescript
 import { DocumentBuilder } from '@nestjs/swagger'
 
-export const openApi = new DocumentBuilder().setTitle('title').setDescription('description').setVersion('version').addTag('application').build()
+export const openApi = new DocumentBuilder()
+  .setTitle('title')
+  .setDescription('description')
+  .setVersion('version')
+  .addTag('application')
+  .build()
 ```
 
 Next, we need to create an `buildOpenApi.ts` that will consume the previous file and generate the `openapi.yaml` file.

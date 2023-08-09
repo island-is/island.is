@@ -21,8 +21,12 @@ describe('MessageService - Send messages to queue', () => {
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { setSendMocks, queueUrl, sqs, messageService } =
-      await createTestingMessageModule()
+    const {
+      setSendMocks,
+      queueUrl,
+      sqs,
+      messageService,
+    } = await createTestingMessageModule()
     setMocks = setSendMocks
 
     mockQueueUrl = queueUrl

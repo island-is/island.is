@@ -5,8 +5,13 @@ import { createEnhancedFetch } from '@island.is/clients/middlewares'
 
 export class HealthInsuranceV2Client {
   static register(options: HealthInsuranceV2Options): DynamicModule {
-    const { password, username, xRoadBaseUrl, xRoadClientId, xRoadProviderId } =
-      options
+    const {
+      password,
+      username,
+      xRoadBaseUrl,
+      xRoadClientId,
+      xRoadProviderId,
+    } = options
     const basePath = `${xRoadBaseUrl}/r1/${xRoadProviderId}/islandis`
 
     const configuration = new Configuration({

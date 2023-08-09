@@ -48,10 +48,11 @@ export class DigitalTachographDriversCardService extends BaseTemplateApiService 
     const hasQualityPhotoRLS = await this.drivingLicenseApi.getHasQualityPhoto({
       nationalId: auth.nationalId,
     })
-    const hasQualitySignatureRLS =
-      await this.drivingLicenseApi.getHasQualitySignature({
+    const hasQualitySignatureRLS = await this.drivingLicenseApi.getHasQualitySignature(
+      {
         nationalId: auth.nationalId,
-      })
+      },
+    )
 
     // First we'll try to use photo and signature from the RLS database
     if (hasQualityPhotoRLS && hasQualitySignatureRLS) {
@@ -70,8 +71,9 @@ export class DigitalTachographDriversCardService extends BaseTemplateApiService 
       }
     } else {
       // If not exists in RLS, then we need to check the SGS database and use that
-      const qualityPhotoAndSignatureSGS =
-        await this.digitalTachographDriversCardClient.getPhotoAndSignature(auth)
+      const qualityPhotoAndSignatureSGS = await this.digitalTachographDriversCardClient.getPhotoAndSignature(
+        auth,
+      )
       if (
         qualityPhotoAndSignatureSGS?.photo &&
         qualityPhotoAndSignatureSGS?.signature
@@ -135,8 +137,12 @@ export class DigitalTachographDriversCardService extends BaseTemplateApiService 
       )
     }
 
-    const isPayment: { fulfilled: boolean } | undefined =
-      await this.sharedTemplateAPIService.getPaymentStatus(auth, application.id)
+    const isPayment:
+      | { fulfilled: boolean }
+      | undefined = await this.sharedTemplateAPIService.getPaymentStatus(
+      auth,
+      application.id,
+    )
 
     if (!isPayment?.fulfilled) {
       throw new Error(

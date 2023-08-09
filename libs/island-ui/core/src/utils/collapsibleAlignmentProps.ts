@@ -31,10 +31,14 @@ export function resolveCollapsibleAlignmentProps({
   collapseBelow,
   reverse,
 }: CollapsibleAlignmentProps) {
-  const [collapseXs, collapseSm, collapseMd, collapseLg] =
-    resolveResponsiveRangeProps({
-      below: collapseBelow,
-    })
+  const [
+    collapseXs,
+    collapseSm,
+    collapseMd,
+    collapseLg,
+  ] = resolveResponsiveRangeProps({
+    below: collapseBelow,
+  })
 
   const rowReverseSm = collapseXs && reverse
   const rowReverseMd = (collapseXs || collapseSm) && reverse

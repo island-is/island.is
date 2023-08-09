@@ -62,8 +62,7 @@ export class PermissionsController {
   @Get('access-controlled-scopes')
   @ApiOkResponse({ type: [ApiScope] })
   async findAllAccessControlledApiScopes(): Promise<ApiScope[] | null> {
-    const accessControlledScopes =
-      this.resourcesService.findAllAccessControlledApiScopes()
+    const accessControlledScopes = this.resourcesService.findAllAccessControlledApiScopes()
     return accessControlledScopes
   }
 }

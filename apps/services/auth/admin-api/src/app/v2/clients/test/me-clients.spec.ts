@@ -401,10 +401,9 @@ describe('MeClientsController with auth', () => {
         supportsLegalGuardians: typeSpecificDefaults.supportsLegalGuardians
           ? typeSpecificDefaults.supportsLegalGuardians
           : false,
-        supportsPersonalRepresentatives:
-          typeSpecificDefaults.supportsPersonalRepresentatives
-            ? typeSpecificDefaults.supportsPersonalRepresentatives
-            : false,
+        supportsPersonalRepresentatives: typeSpecificDefaults.supportsPersonalRepresentatives
+          ? typeSpecificDefaults.supportsPersonalRepresentatives
+          : false,
         supportsProcuringHolders: typeSpecificDefaults.supportsProcuringHolders
           ? typeSpecificDefaults.supportsProcuringHolders
           : false,

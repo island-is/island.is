@@ -76,14 +76,10 @@ export const numberOfLinks = (contentList: object[]) => {
     return !url.hostname.includes('island.is')
   }).length
 
-  const pdfAssets = getAssetsByContentType(
-    contentList,
-    'application/pdf',
-  ).length
-  const wordAssets = getAssetsByContentType(
-    contentList,
-    'application/msword',
-  ).length
+  const pdfAssets = getAssetsByContentType(contentList, 'application/pdf')
+    .length
+  const wordAssets = getAssetsByContentType(contentList, 'application/msword')
+    .length
 
   return {
     fillAndSignLinks: fillAndSignProcessLinks,

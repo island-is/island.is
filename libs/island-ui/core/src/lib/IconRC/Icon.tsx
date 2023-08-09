@@ -40,10 +40,9 @@ export const Icon = ({
   ariaHidden,
 }: IconProps) => {
   const path = iconMap[type][icon]
-  const IconSvg = useMemo(
-    () => React.lazy(() => import('./icons/' + path)),
-    [path],
-  )
+  const IconSvg = useMemo(() => React.lazy(() => import('./icons/' + path)), [
+    path,
+  ])
   if (typeof window === 'undefined') {
     return (
       <Placeholder

@@ -11,7 +11,7 @@ import {
 import * as styles from './GridColumn.css'
 import { resolveResponsiveRangeProps } from '../../../utils/responsiveRangeProps'
 
-type Breakpoint = keyof (typeof theme)['breakpoints']
+type Breakpoint = keyof typeof theme['breakpoints']
 type position = 'relative' | 'fixed' | 'absolute' | 'static'
 
 export interface GridColumnProps {
@@ -44,8 +44,13 @@ export const GridColumn: FC<React.PropsWithChildren<GridColumnProps>> = ({
     pos.position = position
   }
 
-  const [hiddenOnXs, hiddenOnSm, hiddenOnMd, hiddenOnLg, hiddenOnXl] =
-    resolveResponsiveRangeProps({ above, below })
+  const [
+    hiddenOnXs,
+    hiddenOnSm,
+    hiddenOnMd,
+    hiddenOnLg,
+    hiddenOnXl,
+  ] = resolveResponsiveRangeProps({ above, below })
 
   return (
     <Box

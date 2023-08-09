@@ -48,8 +48,12 @@ describe('CaseController - Transition', () => {
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { messageService, sequelize, caseModel, caseController } =
-      await createTestingCaseModule()
+    const {
+      messageService,
+      sequelize,
+      caseModel,
+      caseController,
+    } = await createTestingCaseModule()
 
     mockMessageService = messageService
     mockCaseModel = caseModel
@@ -385,7 +389,8 @@ describe('CaseController - Transition', () => {
                   caseFileId: prosecutorAppealBriefCaseFileId2,
                 },
                 {
-                  type: MessageType.SEND_APPEAL_TO_COURT_OF_APPEALS_NOTIFICATION,
+                  type:
+                    MessageType.SEND_APPEAL_TO_COURT_OF_APPEALS_NOTIFICATION,
                   user: defaultUser,
                   caseId,
                 },

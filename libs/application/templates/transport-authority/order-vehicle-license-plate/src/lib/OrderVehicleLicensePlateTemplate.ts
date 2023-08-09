@@ -82,9 +82,10 @@ const template: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/OrderVehicleLicensePlateForm/index').then(
-                  (module) =>
-                    Promise.resolve(module.OrderVehicleLicensePlateForm),
+                import(
+                  '../forms/OrderVehicleLicensePlateForm/index'
+                ).then((module) =>
+                  Promise.resolve(module.OrderVehicleLicensePlateForm),
                 ),
               actions: [
                 {

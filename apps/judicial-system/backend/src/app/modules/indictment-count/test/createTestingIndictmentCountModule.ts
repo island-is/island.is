@@ -55,8 +55,9 @@ export const createTestingIndictmentCountModule = async () => {
     IndictmentCountService,
   )
 
-  const indictmentCountController =
-    defendantModule.get<IndictmentCountController>(IndictmentCountController)
+  const indictmentCountController = defendantModule.get<IndictmentCountController>(
+    IndictmentCountController,
+  )
 
   return {
     indictmentCountModel,

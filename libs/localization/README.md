@@ -172,7 +172,8 @@ There is only one way to do line breaks for the markdown messages. It has to be 
 const message = defineMessage({
   id: 'global:title#markdown',
   defaultMessage: 'Some copy with **markdown** in it.',
-  description: '## Heading followed by a new line.\\n\\nIt will be rendered as _markdown_ in the Contentful UI extension as well',
+  description:
+    '## Heading followed by a new line.\\n\\nIt will be rendered as _markdown_ in the Contentful UI extension as well',
 })
 ```
 

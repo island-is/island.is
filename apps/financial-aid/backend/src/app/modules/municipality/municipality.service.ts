@@ -242,11 +242,13 @@ export class MunicipalityService {
     numberOfAffectedRows: number
     updatedMunicipality: MunicipalityModel
   }> {
-    const [numberOfAffectedRows, [updatedMunicipality]] =
-      await this.municipalityModel.update(update, {
-        where: { id },
-        returning: true,
-      })
+    const [
+      numberOfAffectedRows,
+      [updatedMunicipality],
+    ] = await this.municipalityModel.update(update, {
+      where: { id },
+      returning: true,
+    })
 
     return { numberOfAffectedRows, updatedMunicipality }
   }

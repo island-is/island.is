@@ -44,11 +44,10 @@ export class EstateTemplateService extends BaseTemplateApiService {
   async estateProvider({
     application,
   }: TemplateApiModuleActionProps): Promise<boolean> {
-    const applicationData = (
-      application.externalData?.syslumennOnEntry?.data as { estate: EstateInfo }
-    ).estate
+    const applicationData = (application.externalData?.syslumennOnEntry
+      ?.data as { estate: EstateInfo }).estate
 
-    const applicationAnswers = application.answers as unknown as EstateSchema
+    const applicationAnswers = (application.answers as unknown) as EstateSchema
     if (
       !applicationData?.caseNumber?.length ||
       applicationData?.caseNumber.length === 0
@@ -241,7 +240,7 @@ export class EstateTemplateService extends BaseTemplateApiService {
     const uploadDataName = 'danarbusskipti1.0'
     const uploadDataId = 'danarbusskipti1.0'
 
-    const answers = application.answers as unknown as EstateSchema
+    const answers = (application.answers as unknown) as EstateSchema
 
     const relation =
       externalData?.estate.estateMembers?.find(

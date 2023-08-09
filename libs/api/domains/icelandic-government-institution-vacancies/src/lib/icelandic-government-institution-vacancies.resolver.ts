@@ -45,10 +45,9 @@ export class IcelandicGovernmentInstitutionVacanciesResolver {
       stofnun: input.institution,
     })) as DefaultApiVacanciesListItem[]
 
-    const mappedVacanciesFromExternalSystem =
-      await mapIcelandicGovernmentInstitutionVacanciesFromExternalSystem(
-        vacanciesFromExternalSystem,
-      )
+    const mappedVacanciesFromExternalSystem = await mapIcelandicGovernmentInstitutionVacanciesFromExternalSystem(
+      vacanciesFromExternalSystem,
+    )
 
     const vacanciesFromCms = await this.cmsElasticService.getVacancies(
       getElasticsearchIndex('is'),
@@ -74,8 +73,9 @@ export class IcelandicGovernmentInstitutionVacanciesResolver {
       return { vacancy: null }
     }
     return {
-      vacancy:
-        mapIcelandicGovernmentInstitutionVacancyByIdResponseFromCms(item),
+      vacancy: mapIcelandicGovernmentInstitutionVacancyByIdResponseFromCms(
+        item,
+      ),
     }
   }
 
@@ -92,10 +92,9 @@ export class IcelandicGovernmentInstitutionVacanciesResolver {
       return { vacancy: null }
     }
     return {
-      vacancy:
-        await mapIcelandicGovernmentInstitutionVacancyByIdResponseFromExternalSystem(
-          item,
-        ),
+      vacancy: await mapIcelandicGovernmentInstitutionVacancyByIdResponseFromExternalSystem(
+        item,
+      ),
     }
   }
 

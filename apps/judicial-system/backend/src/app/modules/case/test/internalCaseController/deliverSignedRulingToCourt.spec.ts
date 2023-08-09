@@ -29,8 +29,11 @@ describe('InternalCaseController - Deliver signed ruling to court', () => {
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { courtService, awsS3Service, internalCaseController } =
-      await createTestingCaseModule()
+    const {
+      courtService,
+      awsS3Service,
+      internalCaseController,
+    } = await createTestingCaseModule()
 
     mockCourtService = courtService
     const mockCreateDocument = mockCourtService.createDocument as jest.Mock

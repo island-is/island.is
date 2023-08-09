@@ -52,11 +52,13 @@ export class UserProfileService {
   }> {
     this.logger.debug(`Updating user profile with id "${nationalId}"`)
 
-    const [numberOfAffectedRows, [updatedUserProfile]] =
-      await this.userProfileModel.update(userProfileToUpdate, {
-        where: { nationalId },
-        returning: true,
-      })
+    const [
+      numberOfAffectedRows,
+      [updatedUserProfile],
+    ] = await this.userProfileModel.update(userProfileToUpdate, {
+      where: { nationalId },
+      returning: true,
+    })
 
     return { numberOfAffectedRows, updatedUserProfile }
   }

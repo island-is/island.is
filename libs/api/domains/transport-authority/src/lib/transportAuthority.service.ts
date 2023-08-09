@@ -43,11 +43,10 @@ export class TransportAuthorityApi {
     user: User,
     input: CheckTachoNetInput,
   ): Promise<CheckTachoNetExists> {
-    const hasActiveCard =
-      await this.digitalTachographDriversCardClient.checkIfHasActiveCardInTachoNet(
-        user,
-        input,
-      )
+    const hasActiveCard = await this.digitalTachographDriversCardClient.checkIfHasActiveCardInTachoNet(
+      user,
+      input,
+    )
 
     return { exists: hasActiveCard }
   }
@@ -74,15 +73,16 @@ export class TransportAuthorityApi {
     }
 
     // Get debt status
-    const debtStatus =
-      await this.vehicleServiceFjsV1Client.getVehicleDebtStatus(auth, permno)
+    const debtStatus = await this.vehicleServiceFjsV1Client.getVehicleDebtStatus(
+      auth,
+      permno,
+    )
 
     // Get owner change validation
-    const ownerChangeValidation =
-      await this.vehicleOwnerChangeClient.validateVehicleForOwnerChange(
-        auth,
-        permno,
-      )
+    const ownerChangeValidation = await this.vehicleOwnerChangeClient.validateVehicleForOwnerChange(
+      auth,
+      permno,
+    )
 
     return {
       isDebtLess: debtStatus.isDebtLess,
@@ -111,10 +111,9 @@ export class TransportAuthorityApi {
       return null
     }
 
-    const filteredBuyerCoOwnerAndOperator =
-      answers?.buyerCoOwnerAndOperator?.filter(
-        ({ wasRemoved }) => wasRemoved !== 'true',
-      )
+    const filteredBuyerCoOwnerAndOperator = answers?.buyerCoOwnerAndOperator?.filter(
+      ({ wasRemoved }) => wasRemoved !== 'true',
+    )
     const buyerCoOwners = filteredBuyerCoOwnerAndOperator?.filter(
       (x) => x.type === 'coOwner',
     )
@@ -122,8 +121,9 @@ export class TransportAuthorityApi {
       (x) => x.type === 'operator',
     )
 
-    const result =
-      await this.vehicleOwnerChangeClient.validateAllForOwnerChange(user, {
+    const result = await this.vehicleOwnerChangeClient.validateAllForOwnerChange(
+      user,
+      {
         permno: answers?.pickVehicle?.plate,
         seller: {
           ssn: sellerSsn,
@@ -149,7 +149,8 @@ export class TransportAuthorityApi {
               ? operator.nationalId === answers?.buyerMainOperator?.nationalId
               : true,
         })),
-      })
+      },
+    )
 
     return result
   }
@@ -171,8 +172,10 @@ export class TransportAuthorityApi {
       permno,
     )
 
-    const currentOwnerChange =
-      await this.vehicleOwnerChangeClient.getNewestOwnerChange(user, permno)
+    const currentOwnerChange = await this.vehicleOwnerChangeClient.getNewestOwnerChange(
+      user,
+      permno,
+    )
 
     const filteredOldCoOwners = answers?.ownerCoOwners?.filter(
       ({ wasRemoved }) => wasRemoved !== 'true',
@@ -185,8 +188,9 @@ export class TransportAuthorityApi {
       ...(filteredNewCoOwners ? filteredNewCoOwners : []),
     ]
 
-    const result =
-      await this.vehicleOwnerChangeClient.validateAllForOwnerChange(user, {
+    const result = await this.vehicleOwnerChangeClient.validateAllForOwnerChange(
+      user,
+      {
         permno: permno,
         seller: {
           ssn: ownerSsn,
@@ -212,7 +216,8 @@ export class TransportAuthorityApi {
           ssn: x.nationalId,
           email: x.email,
         })),
-      })
+      },
+    )
 
     return result
   }
@@ -239,15 +244,16 @@ export class TransportAuthorityApi {
     }
 
     // Get debt status
-    const debtStatus =
-      await this.vehicleServiceFjsV1Client.getVehicleDebtStatus(auth, permno)
+    const debtStatus = await this.vehicleServiceFjsV1Client.getVehicleDebtStatus(
+      auth,
+      permno,
+    )
 
     // Get owner change validation
-    const operatorChangeValidation =
-      await this.vehicleOperatorsClient.validateVehicleForOperatorChange(
-        auth,
-        permno,
-      )
+    const operatorChangeValidation = await this.vehicleOperatorsClient.validateVehicleForOperatorChange(
+      auth,
+      permno,
+    )
 
     return {
       isDebtLess: debtStatus.isDebtLess,
@@ -289,12 +295,11 @@ export class TransportAuthorityApi {
           : true,
     }))
 
-    const result =
-      await this.vehicleOperatorsClient.validateAllForOperatorChange(
-        user,
-        permno,
-        operators,
-      )
+    const result = await this.vehicleOperatorsClient.validateAllForOperatorChange(
+      user,
+      permno,
+      operators,
+    )
 
     return result
   }
@@ -333,8 +338,10 @@ export class TransportAuthorityApi {
     regno: string,
   ): Promise<VehicleOperatorChangeChecksByPermno | null | ApolloError> {
     // Get validation
-    const validation =
-      await this.vehiclePlateRenewalClient.validatePlateOwnership(auth, regno)
+    const validation = await this.vehiclePlateRenewalClient.validatePlateOwnership(
+      auth,
+      regno,
+    )
 
     return {
       validationErrorMessages: validation?.hasError

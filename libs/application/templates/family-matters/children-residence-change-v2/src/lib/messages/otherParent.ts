@@ -4,7 +4,8 @@ import { defineMessages } from 'react-intl'
 export const otherParent = {
   general: defineMessages({
     sectionTitle: {
-      id: 'crc.application:section.backgroundInformation.otherParent.sectionTitle',
+      id:
+        'crc.application:section.backgroundInformation.otherParent.sectionTitle',
       defaultMessage: 'Staðfesta foreldri',
       description: 'Other parent section title',
     },
@@ -19,7 +20,8 @@ export const otherParent = {
       description: 'Other parent page intro',
     },
     description: {
-      id: 'crc.application:section.backgroundInformation.otherParent.description',
+      id:
+        'crc.application:section.backgroundInformation.otherParent.description',
       defaultMessage:
         'Til að afla samþykkis hins foreldrisins þurfum við að fá netfang og símanúmer viðkomandi.',
       description: 'Other parent page description',
@@ -27,12 +29,14 @@ export const otherParent = {
   }),
   inputs: defineMessages({
     emailLabel: {
-      id: 'crc.application:section.backgroundInformation.otherParent.inputs.emailLabel',
+      id:
+        'crc.application:section.backgroundInformation.otherParent.inputs.emailLabel',
       defaultMessage: 'Netfang',
       description: 'Email label',
     },
     phoneNumberLabel: {
-      id: 'crc.application:section.backgroundInformation.otherParent.inputs.phoneNumberLabel',
+      id:
+        'crc.application:section.backgroundInformation.otherParent.inputs.phoneNumberLabel',
       defaultMessage: 'Símanúmer',
       description: 'Phone number label',
     },

@@ -108,7 +108,7 @@ const WorkMachinesDetail = () => {
     const buttons: Array<React.ReactNode> = []
     const keys = links
       .map((l) => l.rel)
-      .filter(Boolean as unknown as ExcludesFalse)
+      .filter((Boolean as unknown) as ExcludesFalse)
 
     OrderedLinks.forEach((ol, index) => {
       if (keys.includes(ol)) {
@@ -241,7 +241,7 @@ const WorkMachinesDetail = () => {
                 title: labels.registrationDate,
                 value: formatDate(workMachine.registrationDate),
               },
-            ].filter(Boolean as unknown as ExcludesFalse),
+            ].filter((Boolean as unknown) as ExcludesFalse),
             2,
           )}
           mt

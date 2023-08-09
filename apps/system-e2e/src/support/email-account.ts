@@ -20,7 +20,9 @@ import { debug } from './utils'
  * @param emailAccount
  */
 async function registerEmailAddressWithSES(emailAccount: {
-  getLastEmail(retries: number): Promise<{
+  getLastEmail(
+    retries: number,
+  ): Promise<{
     subject: string | undefined
     text: string | undefined
     html: string | false
@@ -63,7 +65,9 @@ async function registerEmailAddressWithSES(emailAccount: {
 }
 
 export type EmailAccount = {
-  getLastEmail(retries: number): Promise<{
+  getLastEmail(
+    retries: number,
+  ): Promise<{
     subject: string | undefined
     text: string | undefined
     html: string | false
@@ -99,7 +103,9 @@ const makeEmailAccount = async (name: string): Promise<EmailAccount> => {
      * Utility method for getting the last email
      * for the Ethereal email account created above.
      */
-    async getLastEmail(retries: number): Promise<null | {
+    async getLastEmail(
+      retries: number,
+    ): Promise<null | {
       subject: string | undefined
       text: string | undefined
       html: string | false

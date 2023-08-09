@@ -183,7 +183,8 @@ export function TabSettings() {
       <TableViewGroup
         header={intl.formatMessage({
           id: 'settings.usersettings.groupTitle',
-        })}>
+        })}
+      >
         <TableViewCell
           title={intl.formatMessage({
             id: 'settings.usersettings.telephone',
@@ -198,7 +199,8 @@ export function TabSettings() {
                 paddingTop: 10,
                 paddingRight: 16,
                 marginRight: -16,
-              }}>
+              }}
+            >
               <Image source={editIcon as any} style={{width: 19, height: 19}} />
             </TouchableOpacity>
           }
@@ -217,7 +219,8 @@ export function TabSettings() {
                 paddingTop: 10,
                 paddingRight: 16,
                 marginRight: -16,
-              }}>
+              }}
+            >
               <Image source={editIcon as any} style={{width: 19, height: 19}} />
             </TouchableOpacity>
           }
@@ -236,7 +239,8 @@ export function TabSettings() {
                 paddingTop: 10,
                 paddingRight: 16,
                 marginRight: -16,
-              }}>
+              }}
+            >
               <Image source={editIcon as any} style={{width: 19, height: 19}} />
             </TouchableOpacity>
           }
@@ -245,7 +249,8 @@ export function TabSettings() {
       <TableViewGroup
         header={intl.formatMessage({
           id: 'settings.communication.groupTitle',
-        })}>
+        })}
+      >
         <TableViewCell
           title={intl.formatMessage({
             id: 'settings.communication.newDocumentsNotifications',
@@ -284,7 +289,8 @@ export function TabSettings() {
       <TableViewGroup
         header={intl.formatMessage({
           id: 'settings.accessibilityLayout.groupTitle',
-        })}>
+        })}
+      >
         <TableViewCell
           title={intl.formatMessage({
             id: 'settings.accessibilityLayout.sytemDarkMode',
@@ -313,7 +319,8 @@ export function TabSettings() {
             efficient.ts = setTimeout(() => {
               efficient.count = 0;
             }, 500);
-          }}>
+          }}
+        >
           <TableViewCell
             title={intl.formatMessage({
               id: 'settings.accessibilityLayout.darkMode',
@@ -349,7 +356,8 @@ export function TabSettings() {
       <TableViewGroup
         header={intl.formatMessage({
           id: 'settings.security.groupTitle',
-        })}>
+        })}
+      >
         <PressableHighlight
           onPress={() => {
             Navigation.showModal({
@@ -366,7 +374,8 @@ export function TabSettings() {
                 ],
               },
             });
-          }}>
+          }}
+        >
           <TableViewCell
             title={intl.formatMessage({
               id: 'settings.security.changePinLabel',
@@ -467,7 +476,8 @@ export function TabSettings() {
                 preferencesStore.setState({appLockTimeout});
               }
             });
-          }}>
+          }}
+        >
           <TableViewCell
             title={intl.formatMessage({
               id: 'settings.security.appLockTimeoutLabel',
@@ -492,7 +502,8 @@ export function TabSettings() {
             Linking.openURL(
               'https://island.is/personuverndarstefna-stafraent-islands',
             );
-          }}>
+          }}
+        >
           <TableViewCell
             title={intl.formatMessage({id: 'settings.security.privacyTitle'})}
             subtitle={intl.formatMessage({
@@ -502,7 +513,8 @@ export function TabSettings() {
         </PressableHighlight>
       </TableViewGroup>
       <TableViewGroup
-        header={intl.formatMessage({id: 'settings.about.groupTitle'})}>
+        header={intl.formatMessage({id: 'settings.about.groupTitle'})}
+      >
         <TableViewCell
           title={intl.formatMessage({id: 'settings.about.versionLabel'})}
           subtitle={`${DeviceInfo.getVersion()} build ${DeviceInfo.getBuildNumber()}`}
@@ -538,7 +550,8 @@ export function TabSettings() {
             ).finally(() => {
               setLoadingCP(false);
             });
-          }}>
+          }}
+        >
           <TableViewCell
             title={intl.formatMessage({id: 'settings.about.codePushLabel'})}
             subtitle={
@@ -552,7 +565,8 @@ export function TabSettings() {
         </PressableHighlight>
         <PressableHighlight
           onPress={onLogoutPress}
-          testID={testIDs.USER_SETTINGS_LOGOUT_BUTTON}>
+          testID={testIDs.USER_SETTINGS_LOGOUT_BUTTON}
+        >
           <TableViewCell
             title={intl.formatMessage({id: 'settings.about.logoutLabel'})}
             subtitle={intl.formatMessage({

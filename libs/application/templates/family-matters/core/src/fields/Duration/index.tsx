@@ -40,8 +40,9 @@ const Duration = ({
   const durationTypeError = typeInput.error
   const durationDateError = dateInput.error
 
-  const [statefulAnswer, setStatefulAnswer] =
-    useState<ValidAnswers>(currentAnswer)
+  const [statefulAnswer, setStatefulAnswer] = useState<ValidAnswers>(
+    currentAnswer,
+  )
   return (
     <>
       <Box marginTop={3}>

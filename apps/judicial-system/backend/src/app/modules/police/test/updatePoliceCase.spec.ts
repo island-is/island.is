@@ -42,7 +42,7 @@ describe('PoliceController - Update Police Case', () => {
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const mockFetch = fetch as unknown as jest.Mock
+    const mockFetch = (fetch as unknown) as jest.Mock
     mockFetch.mockResolvedValueOnce({
       ok: true,
       json: jest.fn().mockResolvedValueOnce({ ok: true }),

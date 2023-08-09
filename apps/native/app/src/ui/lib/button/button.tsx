@@ -90,13 +90,15 @@ export function Button({
       }
       isTransparent={isTransparent}
       isOutlined={isOutlined}
-      {...rest}>
+      {...rest}
+    >
       <>
         <Text
           isTransparent={isTransparent}
           isOutlined={isOutlined}
           disabled={rest.disabled}
-          style={textStyle}>
+          style={textStyle}
+        >
           {title}
         </Text>
         {icon && <Icon source={icon as any} resizeMode="center" />}

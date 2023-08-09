@@ -14,7 +14,8 @@ export type TSummary = {
   cancelled: TItem
 }
 
-export type FlightLeg =
-  FlightLegsQuery['airDiscountSchemeFlightLegs'] extends Array<infer Item>
-    ? Item
-    : never
+export type FlightLeg = FlightLegsQuery['airDiscountSchemeFlightLegs'] extends Array<
+  infer Item
+>
+  ? Item
+  : never

@@ -177,8 +177,9 @@ const ChildSelector: FC<React.PropsWithChildren<FieldBaseProps>> = ({
                           : formatMessage(
                               parentalLeaveFormMessages.selectChild.baby,
                               {
-                                dateOfBirth:
-                                  formatDateOfBirth(expectedDateOfBirth),
+                                dateOfBirth: formatDateOfBirth(
+                                  expectedDateOfBirth,
+                                ),
                               },
                             )}
                       </Text>

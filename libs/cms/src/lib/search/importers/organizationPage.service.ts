@@ -8,8 +8,7 @@ import { mapOrganizationPage } from '../../models/organizationPage.model'
 
 @Injectable()
 export class OrganizationPageSyncService
-  implements CmsSyncProvider<IOrganizationPage>
-{
+  implements CmsSyncProvider<IOrganizationPage> {
   processSyncData(entries: processSyncDataInput<IOrganizationPage>) {
     return entries.filter(
       (entry: Entry<any>): entry is IOrganizationPage =>

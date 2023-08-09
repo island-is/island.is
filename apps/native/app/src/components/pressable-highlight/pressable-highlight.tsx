@@ -30,7 +30,8 @@ export function PressableHighlight({
     return (
       <TouchableHighlight
         underlayColor={color}
-        {...(rest as TouchableHighlightProps)}>
+        {...(rest as TouchableHighlightProps)}
+      >
         {children}
       </TouchableHighlight>
     );
@@ -41,7 +42,8 @@ export function PressableHighlight({
       android_ripple={{
         color,
       }}
-      {...rest}>
+      {...rest}
+    >
       {children}
     </Pressable>
   );

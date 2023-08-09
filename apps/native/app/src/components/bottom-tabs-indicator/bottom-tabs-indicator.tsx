@@ -61,13 +61,15 @@ export function BottomTabsIndicator({
         shadowOpacity: 0.08,
         shadowRadius: 12.0,
         elevation: 1,
-      }}>
+      }}
+    >
       <SafeAreaView>
         <View
           style={{}}
           onLayout={e => {
             setWidth(e.nativeEvent.layout.width);
-          }}>
+          }}
+        >
           <Active
             style={{
               zIndex: 102,

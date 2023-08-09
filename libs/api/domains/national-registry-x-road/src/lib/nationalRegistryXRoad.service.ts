@@ -46,8 +46,9 @@ export class NationalRegistryXRoadService {
     user: User,
     childNationalId: string,
   ): Promise<ChildGuardianship | null> {
-    const childrenNationalIds =
-      await this.nationalRegistryApi.getCustodyChildren(user)
+    const childrenNationalIds = await this.nationalRegistryApi.getCustodyChildren(
+      user,
+    )
 
     const isChildOfUser = childrenNationalIds.some(
       (childId) => childId === childNationalId,
@@ -57,16 +58,14 @@ export class NationalRegistryXRoadService {
       return null
     }
 
-    const residenceParent =
-      await this.nationalRegistryApi.getChildResidenceParent(
-        user,
-        childNationalId,
-      )
-    const legalDomicileParent =
-      await this.nationalRegistryApi.getChildDomicileParent(
-        user,
-        childNationalId,
-      )
+    const residenceParent = await this.nationalRegistryApi.getChildResidenceParent(
+      user,
+      childNationalId,
+    )
+    const legalDomicileParent = await this.nationalRegistryApi.getChildDomicileParent(
+      user,
+      childNationalId,
+    )
 
     return {
       childNationalId,
@@ -98,8 +97,9 @@ export class NationalRegistryXRoadService {
   async getChildrenCustodyInformation(
     parentUser: User,
   ): Promise<NationalRegistryPerson[]> {
-    const childrenNationalIds =
-      await this.nationalRegistryApi.getCustodyChildren(parentUser)
+    const childrenNationalIds = await this.nationalRegistryApi.getCustodyChildren(
+      parentUser,
+    )
 
     if (childrenNationalIds.length === 0) {
       return []

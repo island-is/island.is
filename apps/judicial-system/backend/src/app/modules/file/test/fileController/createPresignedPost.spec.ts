@@ -59,11 +59,11 @@ describe('FileController - Create presigned post', () => {
       let then: Then
 
       beforeEach(async () => {
-        const mockCreatePresignedPost =
-          mockAwsS3Service.createPresignedPost as jest.Mock
+        const mockCreatePresignedPost = mockAwsS3Service.createPresignedPost as jest.Mock
         mockCreatePresignedPost.mockImplementationOnce((key: string) =>
           Promise.resolve({
-            url: 'https://s3.eu-west-1.amazonaws.com/island-is-dev-upload-judicial-system',
+            url:
+              'https://s3.eu-west-1.amazonaws.com/island-is-dev-upload-judicial-system',
             fields: {
               key,
               bucket: 'island-is-dev-upload-judicial-system',
@@ -91,7 +91,8 @@ describe('FileController - Create presigned post', () => {
 
       it('should return a presigned post', () => {
         expect(then.result).toEqual({
-          url: 'https://s3.eu-west-1.amazonaws.com/island-is-dev-upload-judicial-system',
+          url:
+            'https://s3.eu-west-1.amazonaws.com/island-is-dev-upload-judicial-system',
           fields: {
             key: then.result.fields.key,
             bucket: 'island-is-dev-upload-judicial-system',
@@ -123,11 +124,11 @@ describe('FileController - Create presigned post', () => {
       let then: Then
 
       beforeEach(async () => {
-        const mockCreatePresignedPost =
-          mockAwsS3Service.createPresignedPost as jest.Mock
+        const mockCreatePresignedPost = mockAwsS3Service.createPresignedPost as jest.Mock
         mockCreatePresignedPost.mockImplementationOnce((key: string) =>
           Promise.resolve({
-            url: 'https://s3.eu-west-1.amazonaws.com/island-is-dev-upload-judicial-system',
+            url:
+              'https://s3.eu-west-1.amazonaws.com/island-is-dev-upload-judicial-system',
             fields: {
               key,
               bucket: 'island-is-dev-upload-judicial-system',
@@ -155,7 +156,8 @@ describe('FileController - Create presigned post', () => {
 
       it('should return a presigned post', () => {
         expect(then.result).toEqual({
-          url: 'https://s3.eu-west-1.amazonaws.com/island-is-dev-upload-judicial-system',
+          url:
+            'https://s3.eu-west-1.amazonaws.com/island-is-dev-upload-judicial-system',
           fields: {
             key: then.result.fields.key,
             bucket: 'island-is-dev-upload-judicial-system',
@@ -185,8 +187,7 @@ describe('FileController - Create presigned post', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockCreatePresignedPost =
-        mockAwsS3Service.createPresignedPost as jest.Mock
+      const mockCreatePresignedPost = mockAwsS3Service.createPresignedPost as jest.Mock
       mockCreatePresignedPost.mockRejectedValueOnce(new Error('Some error'))
 
       then = await givenWhenThen(caseId, createPresignedPost, theCase)

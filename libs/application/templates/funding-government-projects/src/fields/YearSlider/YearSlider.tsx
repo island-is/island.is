@@ -21,8 +21,9 @@ export const YearSlider = ({ field, application }: FieldBaseProps) => {
   ) as number
 
   const { clearErrors } = useFormContext()
-  const [chosenGivenYears, setChosenGivenYears] =
-    useState<number>(currentAnswer)
+  const [chosenGivenYears, setChosenGivenYears] = useState<number>(
+    currentAnswer,
+  )
 
   return (
     <Box marginBottom={6} marginTop={6}>

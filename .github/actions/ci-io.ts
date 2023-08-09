@@ -15,10 +15,8 @@ const app = Debug('change-detection:io')
 
 const repository = process.env.GITHUB_REPOSITORY || 'island-is/island.is'
 const [owner, repo] = repository.split('/')
-export type ActionsListWorkflowRunsForRepoResponseData =
-  Endpoints['GET /repos/{owner}/{repo}/actions/workflows/{workflow_id}/runs']['response']['data']
-export type ActionsListJobsForWorkflowRunResponseData =
-  Endpoints['GET /repos/{owner}/{repo}/actions/runs/{run_id}/jobs']['response']['data']
+export type ActionsListWorkflowRunsForRepoResponseData = Endpoints['GET /repos/{owner}/{repo}/actions/workflows/{workflow_id}/runs']['response']['data']
+export type ActionsListJobsForWorkflowRunResponseData = Endpoints['GET /repos/{owner}/{repo}/actions/runs/{run_id}/jobs']['response']['data']
 
 const hasFinishedSuccessfulJob = (
   run: ActionsListJobsForWorkflowRunResponseData['jobs'],
@@ -144,8 +142,7 @@ export class LocalRunner implements GitActionStatus {
       },
     )
 
-    const workflowRuns: ActionsListWorkflowRunsForRepoResponseData['workflow_runs'] =
-      []
+    const workflowRuns: ActionsListWorkflowRunsForRepoResponseData['workflow_runs'] = []
     for await (const workflow_runs of runsIterator) {
       app(`Retrieved ${workflow_runs.data.length} workflow runs`)
       workflowRuns.push(
@@ -243,8 +240,7 @@ export class LocalRunner implements GitActionStatus {
       },
     )
 
-    const workflowRuns: ActionsListWorkflowRunsForRepoResponseData['workflow_runs'] =
-      []
+    const workflowRuns: ActionsListWorkflowRunsForRepoResponseData['workflow_runs'] = []
     for await (const workflow_runs of runsIterator) {
       app(`Retrieved ${workflow_runs.data.length} workflow runs`)
       workflowRuns.push(...workflow_runs.data)

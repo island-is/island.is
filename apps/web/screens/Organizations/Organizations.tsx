@@ -94,8 +94,10 @@ const OrganizationPage: Screen<OrganizationProps> = ({
     [],
   )
 
-  const [selectedTitleSortOption, setSelectedTitleSortOption] =
-    useState<TitleSortOption>(titleSortOptions[0])
+  const [
+    selectedTitleSortOption,
+    setSelectedTitleSortOption,
+  ] = useState<TitleSortOption>(titleSortOptions[0])
 
   const organizationsItems = useMemo(() => {
     const items = [...organizations.items]

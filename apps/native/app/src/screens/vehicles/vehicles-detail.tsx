@@ -9,12 +9,14 @@ import {GET_USERS_VEHICLE_DETAIL} from '../../graphql/queries/get-users-vehicles
 import {useQuery} from '@apollo/client';
 import {client} from '../../graphql/client';
 
-const {getNavigationOptions, useNavigationOptions} =
-  createNavigationOptionHooks(() => ({
-    topBar: {
-      visible: false,
-    },
-  }));
+const {
+  getNavigationOptions,
+  useNavigationOptions,
+} = createNavigationOptionHooks(() => ({
+  topBar: {
+    visible: false,
+  },
+}));
 
 export const VehicleDetailScreen: NavigationFunctionComponent<{
   title?: string;

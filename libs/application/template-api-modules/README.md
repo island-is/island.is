@@ -58,7 +58,9 @@ import { generateApplicationApprovedEmail } from './emailGenerators'
 
 @Injectable()
 export class ReferenceTemplateService extends BaseTemplateApiService {
-  constructor(private readonly sharedTemplateAPIService: SharedTemplateApiService) {
+  constructor(
+    private readonly sharedTemplateAPIService: SharedTemplateApiService,
+  ) {
     super(ApplicationTypes.EXAMPLE)
   }
 
@@ -67,7 +69,10 @@ export class ReferenceTemplateService extends BaseTemplateApiService {
     await new Promise((resolve) => setTimeout(resolve, 2000))
 
     // Use the shared service to send an email using a custom email generator
-    await this.sharedTemplateAPIService.sendEmail(generateApplicationApprovedEmail, application)
+    await this.sharedTemplateAPIService.sendEmail(
+      generateApplicationApprovedEmail,
+      application,
+    )
   }
 }
 ```
@@ -274,7 +279,9 @@ export class SomeService extends BaseTemplateApiService {
     super(ApplicationTypes.SOME_APPLICATION)
   }
 
-  async someAction({ params }: TemplateApiModuleActionProps<MyParameterType>): Promise<SomeData> {
+  async someAction({
+    params,
+  }: TemplateApiModuleActionProps<MyParameterType>): Promise<SomeData> {
     const myId = params?.id
 
     const data = await this.someApi.get(myId)

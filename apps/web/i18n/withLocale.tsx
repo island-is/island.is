@@ -19,42 +19,42 @@ interface NewComponentProps<T> {
   translations: { [k: string]: string }
 }
 
-export const withLocale =
-  <Props,>(locale?: Locale) =>
-  (Component: NextPage<Props>): NextComponentType => {
-    const getInitialProps = Component.getInitialProps
-    if (!getInitialProps) {
-      return Component
-    }
+export const withLocale = <Props,>(locale?: Locale) => (
+  Component: NextPage<Props>,
+): NextComponentType => {
+  const getInitialProps = Component.getInitialProps
+  if (!getInitialProps) {
+    return Component
+  }
 
-    const NewComponent: NextPage<NewComponentProps<Props>> = ({
-      pageProps,
+  const NewComponent: NextPage<NewComponentProps<Props>> = ({
+    pageProps,
+    locale,
+    translations,
+  }) => (
+    <I18n locale={locale} translations={translations}>
+      <Component {...pageProps} />
+    </I18n>
+  )
+
+  NewComponent.getInitialProps = async (ctx: NextPageContext) => {
+    const newContext = {
+      ...ctx,
+      locale: locale || getLocaleFromPath(ctx.asPath),
+    } as any
+    const [props, translations] = await Promise.all([
+      getInitialProps(newContext),
+      getGlobalStrings(newContext),
+    ])
+    return {
+      pageProps: props,
       locale,
       translations,
-    }) => (
-      <I18n locale={locale} translations={translations}>
-        <Component {...pageProps} />
-      </I18n>
-    )
-
-    NewComponent.getInitialProps = async (ctx: NextPageContext) => {
-      const newContext = {
-        ...ctx,
-        locale: locale || getLocaleFromPath(ctx.asPath),
-      } as any
-      const [props, translations] = await Promise.all([
-        getInitialProps(newContext),
-        getGlobalStrings(newContext),
-      ])
-      return {
-        pageProps: props,
-        locale,
-        translations,
-      }
     }
-
-    return NewComponent
   }
+
+  return NewComponent
+}
 
 const getGlobalStrings = async ({
   apolloClient,

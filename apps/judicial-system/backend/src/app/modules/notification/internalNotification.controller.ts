@@ -40,12 +40,13 @@ export class InternalNotificationController {
       `Sending ${notificationDto.type} notification for case ${caseId}`,
     )
 
-    const { notificationSent } =
-      await this.notificationService.sendCaseNotification(
-        notificationDto.type,
-        theCase,
-        notificationDto.user,
-      )
+    const {
+      notificationSent,
+    } = await this.notificationService.sendCaseNotification(
+      notificationDto.type,
+      theCase,
+      notificationDto.user,
+    )
 
     return { delivered: notificationSent }
   }

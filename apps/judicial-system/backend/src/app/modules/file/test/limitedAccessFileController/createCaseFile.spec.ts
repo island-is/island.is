@@ -31,8 +31,10 @@ describe('limitedAccessFileController - Create case file', () => {
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { fileModel, limitedAccessFileController } =
-      await createTestingFileModule()
+    const {
+      fileModel,
+      limitedAccessFileController,
+    } = await createTestingFileModule()
 
     mockFileModel = fileModel
 

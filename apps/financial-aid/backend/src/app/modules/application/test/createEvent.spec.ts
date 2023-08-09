@@ -31,8 +31,11 @@ describe('ApplicationController - Create event', () => {
   let mockApplicationModel: typeof ApplicationModel
 
   beforeEach(async () => {
-    const { applicationModel, applicationEventService, applicationController } =
-      await createTestingApplicationModule()
+    const {
+      applicationModel,
+      applicationEventService,
+      applicationController,
+    } = await createTestingApplicationModule()
 
     mockApplicationEventService = applicationEventService
     mockApplicationModel = applicationModel
@@ -81,8 +84,7 @@ describe('ApplicationController - Create event', () => {
     let then: Then
 
     beforeEach(async () => {
-      const createApplicationEvent =
-        mockApplicationEventService.create as jest.Mock
+      const createApplicationEvent = mockApplicationEventService.create as jest.Mock
       createApplicationEvent.mockReturnValueOnce(Promise.resolve())
       const findApplicationById = mockApplicationModel.findOne as jest.Mock
       findApplicationById.mockReturnValueOnce(application)
@@ -112,8 +114,7 @@ describe('ApplicationController - Create event', () => {
     let then: Then
 
     beforeEach(async () => {
-      const createApplicationEvent =
-        mockApplicationEventService.create as jest.Mock
+      const createApplicationEvent = mockApplicationEventService.create as jest.Mock
       createApplicationEvent.mockReturnValueOnce(Promise.resolve())
       const findApplicationById = mockApplicationModel.findOne as jest.Mock
       findApplicationById.mockReturnValueOnce(application)

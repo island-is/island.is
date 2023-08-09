@@ -6,8 +6,7 @@ import { ApplicationFiltersModel } from './applicationFilter.model'
 
 @ObjectType()
 export class UpdateApplicationTableResponse
-  implements UpdateApplicationTableResponseType
-{
+  implements UpdateApplicationTableResponseType {
   @Field(() => [ApplicationModel])
   readonly applications!: [ApplicationModel]
 

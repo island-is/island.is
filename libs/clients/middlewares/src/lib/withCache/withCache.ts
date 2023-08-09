@@ -197,15 +197,17 @@ export function withCache({
       }
     }
 
-    const { modified, policy: revalidatedPolicy } =
-      cacheResponse.policy.revalidatedPolicy(
-        policyRequestFrom(revalidationRequest),
-        policyResponseFrom(
-          revalidationResponse,
-          revalidationRequest,
-          await getCacheControl(revalidationRequest, revalidationResponse),
-        ),
-      )
+    const {
+      modified,
+      policy: revalidatedPolicy,
+    } = cacheResponse.policy.revalidatedPolicy(
+      policyRequestFrom(revalidationRequest),
+      policyResponseFrom(
+        revalidationResponse,
+        revalidationRequest,
+        await getCacheControl(revalidationRequest, revalidationResponse),
+      ),
+    )
 
     // Working around a bug where the revalidated policy does not inherit the
     // parent's _isShared value.

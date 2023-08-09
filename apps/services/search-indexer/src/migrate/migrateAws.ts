@@ -13,8 +13,9 @@ class App {
       version: dictionaryVersion,
     })
 
-    const versionsDictionaryFiles =
-      await dictionary.getDictionaryFilesForVersion(dictionaryVersion)
+    const versionsDictionaryFiles = await dictionary.getDictionaryFilesForVersion(
+      dictionaryVersion,
+    )
 
     // we will always validate packages against (s3 -> AWS ES -> AWS ES search domain) to ensure we don't have partial updates
     logger.info('Starting validation of S3 and AWS packages')

@@ -22,21 +22,25 @@ const useNationalRegistry = (nationalId?: string) => {
 
   const fetcher = (url: string) => fetch(url).then((res) => res.json())
 
-  const { data: personData, error: personError } =
-    useSWR<NationalRegistryResponsePerson>(
-      shouldFetch && nationalId && isValidNationalId && !isBusiness(nationalId)
-        ? `/api/nationalRegistry/getPersonByNationalId?nationalId=${nationalId}`
-        : null,
-      fetcher,
-    )
+  const {
+    data: personData,
+    error: personError,
+  } = useSWR<NationalRegistryResponsePerson>(
+    shouldFetch && nationalId && isValidNationalId && !isBusiness(nationalId)
+      ? `/api/nationalRegistry/getPersonByNationalId?nationalId=${nationalId}`
+      : null,
+    fetcher,
+  )
 
-  const { data: businessData, error: businessError } =
-    useSWR<NationalRegistryResponseBusiness>(
-      shouldFetch && nationalId && isValidNationalId && isBusiness(nationalId)
-        ? `/api/nationalRegistry/getBusinessesByNationalId?nationalId=${nationalId}`
-        : null,
-      fetcher,
-    )
+  const {
+    data: businessData,
+    error: businessError,
+  } = useSWR<NationalRegistryResponseBusiness>(
+    shouldFetch && nationalId && isValidNationalId && isBusiness(nationalId)
+      ? `/api/nationalRegistry/getBusinessesByNationalId?nationalId=${nationalId}`
+      : null,
+    fetcher,
+  )
 
   useEffect(() => {
     if (shouldFetch) {

@@ -36,13 +36,14 @@ export const resolveBreakpoints = (variant: any, attr: any, acc: any) => {
               `(min-width: ${theme.breakpoints[breakpointKey]}px)`
             ] = {}
           }
-          acc['@media'][`(min-width: ${theme.breakpoints[breakpointKey]}px)`] =
-            {
-              ...acc['@media'][
-                `(min-width: ${theme.breakpoints[breakpointKey]}px)`
-              ],
-              [attr]: variant[attr][breakpointKey],
-            }
+          acc['@media'][
+            `(min-width: ${theme.breakpoints[breakpointKey]}px)`
+          ] = {
+            ...acc['@media'][
+              `(min-width: ${theme.breakpoints[breakpointKey]}px)`
+            ],
+            [attr]: variant[attr][breakpointKey],
+          }
         }
         return acc
       },

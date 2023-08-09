@@ -87,28 +87,27 @@ const AppealCaseFilesOverview: React.FC<
             disabled={!file.key}
             handleClick={() => onOpen(file.id)}
           >
-            {file.category &&
-              file.category !== CaseFileCategory.APPEAL_RULING && (
-                <Box display="flex" alignItems="flexEnd" flexDirection="column">
-                  <Text>
-                    {`
+            {file.category && file.category !== CaseFileCategory.APPEAL_RULING && (
+              <Box display="flex" alignItems="flexEnd" flexDirection="column">
+                <Text>
+                  {`
                        ${formatDate(
                          file.created,
                          'dd.MM.y',
                        )}   kl. ${formatDate(
-                      file.created,
-                      constants.TIME_FORMAT,
-                    )}
+                    file.created,
+                    constants.TIME_FORMAT,
+                  )}
                     `}
-                  </Text>
+                </Text>
 
-                  <Text variant="small">
-                    {formatMessage(strings.submittedBy, {
-                      filesCategory: file.category?.includes('PROSECUTOR'),
-                    })}
-                  </Text>
-                </Box>
-              )}
+                <Text variant="small">
+                  {formatMessage(strings.submittedBy, {
+                    filesCategory: file.category?.includes('PROSECUTOR'),
+                  })}
+                </Text>
+              </Box>
+            )}
           </PdfButton>
         ))}
       </Box>

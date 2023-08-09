@@ -123,14 +123,22 @@ export const Ruling: React.FC<React.PropsWithChildren<unknown>> = () => {
     isCaseUpToDate,
   } = useContext(FormContext)
 
-  const [introductionErrorMessage, setIntroductionErrorMessage] =
-    useState<string>('')
-  const [courtCaseFactsErrorMessage, setCourtCaseFactsErrorMessage] =
-    useState<string>('')
-  const [courtLegalArgumentsErrorMessage, setCourtLegalArgumentsErrorMessage] =
-    useState<string>('')
-  const [prosecutorDemandsErrorMessage, setProsecutorDemandsMessage] =
-    useState<string>('')
+  const [
+    introductionErrorMessage,
+    setIntroductionErrorMessage,
+  ] = useState<string>('')
+  const [
+    courtCaseFactsErrorMessage,
+    setCourtCaseFactsErrorMessage,
+  ] = useState<string>('')
+  const [
+    courtLegalArgumentsErrorMessage,
+    setCourtLegalArgumentsErrorMessage,
+  ] = useState<string>('')
+  const [
+    prosecutorDemandsErrorMessage,
+    setProsecutorDemandsMessage,
+  ] = useState<string>('')
 
   const router = useRouter()
 

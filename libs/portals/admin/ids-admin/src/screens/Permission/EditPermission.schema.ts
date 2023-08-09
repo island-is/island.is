@@ -65,6 +65,5 @@ export const schema = {
   [PermissionFormTypes.ACCESS_CONTROL]: accessControlSchema,
 }
 
-export type MergedFormDataSchema =
-  (typeof schema)[PermissionFormTypes.CONTENT] &
-    (typeof schema)[PermissionFormTypes.ACCESS_CONTROL]
+export type MergedFormDataSchema = typeof schema[PermissionFormTypes.CONTENT] &
+  typeof schema[PermissionFormTypes.ACCESS_CONTROL]

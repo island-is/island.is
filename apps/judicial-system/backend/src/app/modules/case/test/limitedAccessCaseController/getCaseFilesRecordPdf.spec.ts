@@ -42,14 +42,16 @@ describe('LimitedAccessCaseController - Get case files record pdf', () => {
     caseFiles,
   } as Case
   const pdf = uuid()
-  const res = { end: jest.fn() } as unknown as Response
+  const res = ({ end: jest.fn() } as unknown) as Response
 
   let mockawsS3Service: AwsS3Service
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { awsS3Service, limitedAccessCaseController } =
-      await createTestingCaseModule()
+    const {
+      awsS3Service,
+      limitedAccessCaseController,
+    } = await createTestingCaseModule()
 
     mockawsS3Service = awsS3Service
     const mockGetObject = mockawsS3Service.getObject as jest.Mock

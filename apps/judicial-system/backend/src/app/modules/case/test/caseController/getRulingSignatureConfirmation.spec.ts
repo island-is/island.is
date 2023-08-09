@@ -67,8 +67,7 @@ describe('CaseController - Get ruling signature confirmation', () => {
     mockPutObject.mockResolvedValue(uuid())
     const mockUpdate = mockCaseModel.update as jest.Mock
     mockUpdate.mockResolvedValue([1])
-    const mockPostMessageToQueue =
-      mockMessageService.sendMessagesToQueue as jest.Mock
+    const mockPostMessageToQueue = mockMessageService.sendMessagesToQueue as jest.Mock
     mockPostMessageToQueue.mockResolvedValue(undefined)
 
     givenWhenThen = async (

@@ -32,8 +32,11 @@ export class SubArticleSyncService implements CmsSyncProvider<ISubArticle> {
       (processedEntries: ISubArticle[], entry: Entry<any>) => {
         if (this.validateSubArticle(entry)) {
           // remove nested subArticles from parent article
-          const { subArticles, relatedArticles, ...prunedArticleFields } =
-            entry.fields.parent.fields
+          const {
+            subArticles,
+            relatedArticles,
+            ...prunedArticleFields
+          } = entry.fields.parent.fields
 
           const processedArticle = {
             ...entry.fields.parent,

@@ -20,9 +20,8 @@ export const getChildPassport = (
   answers: FormValue,
   externalData: ExternalData,
 ) => {
-  return (
-    externalData.identityDocument?.data as IdentityDocumentData
-  )?.childPassports.find((child) => {
+  return (externalData.identityDocument
+    ?.data as IdentityDocumentData)?.childPassports.find((child) => {
     return (
       child.childNationalId === (answers.passport as Passport)?.childPassport
     )
@@ -41,11 +40,9 @@ export const hasDiscount = (answers: FormValue, externalData: ExternalData) => {
   const hasDisabilityDiscount =
     (answers.passport as Passport)?.userPassport !== '' &&
     (answers.personalInfo as PersonalInfo)?.hasDisabilityDiscountChecked
-  const age = (
-    externalData.nationalRegistry?.data as {
-      age?: number
-    }
-  )?.age
+  const age = (externalData.nationalRegistry?.data as {
+    age?: number
+  })?.age
   const isElder = age ? age >= 67 : false
   return hasDisabilityDiscount || isChildPassport || isElder
 }

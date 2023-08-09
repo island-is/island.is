@@ -107,10 +107,11 @@ describe('DiscountController', () => {
         .spyOn(discountService, 'getDiscountByNationalId')
         .mockImplementation(() => Promise.resolve(discount))
 
-      const result =
-        await privateDiscountController.getCurrentDiscountByNationalId({
+      const result = await privateDiscountController.getCurrentDiscountByNationalId(
+        {
           nationalId,
-        })
+        },
+      )
 
       expect(getDiscountByNationalIdSpy).toHaveBeenCalledWith(nationalId)
       expect(result).toEqual(discount)
@@ -234,16 +235,15 @@ describe('DiscountController', () => {
         .spyOn(discountService, 'createExplicitDiscountCode')
         .mockImplementation(() => Promise.resolve(discount))
 
-      const result =
-        await privateDiscountAdminController.createExplicitDiscountCode(
-          {
-            comment,
-            nationalId,
-            postalcode,
-            numberOfDaysUntilExpiration,
-          },
-          auth,
-        )
+      const result = await privateDiscountAdminController.createExplicitDiscountCode(
+        {
+          comment,
+          nationalId,
+          postalcode,
+          numberOfDaysUntilExpiration,
+        },
+        auth,
+      )
 
       expect(createExplicitDiscountCodeSpy).toHaveBeenCalledWith(
         auth,

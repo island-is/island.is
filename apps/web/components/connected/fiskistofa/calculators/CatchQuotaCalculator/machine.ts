@@ -379,14 +379,13 @@ export const machine = createMachine<Context, Event, State>(
         context: Context,
         event: UpdateGeneralDataEvent,
       ) => {
-        const fiskistofaUpdateShipStatusForTimePeriodResponse =
-          await context.apolloClient?.query<{
-            fiskistofaUpdateShipStatusForTimePeriod: FiskistofaExtendedShipStatusInformationUpdateResponse
-          }>({
-            query: UPDATE_SHIP_STATUS_FOR_TIME_PERIOD,
-            variables: event.variables,
-            fetchPolicy: 'no-cache',
-          })
+        const fiskistofaUpdateShipStatusForTimePeriodResponse = await context.apolloClient?.query<{
+          fiskistofaUpdateShipStatusForTimePeriod: FiskistofaExtendedShipStatusInformationUpdateResponse
+        }>({
+          query: UPDATE_SHIP_STATUS_FOR_TIME_PERIOD,
+          variables: event.variables,
+          fetchPolicy: 'no-cache',
+        })
 
         const fiskistofaShipStatus =
           fiskistofaUpdateShipStatusForTimePeriodResponse?.data
@@ -395,10 +394,9 @@ export const machine = createMachine<Context, Event, State>(
         const categories: ContextData['catchQuotaCategories'] = []
         // We want to keep the ordering of the categories the user has added
         for (const category of context.data?.catchQuotaCategories ?? []) {
-          const categoryFromServer =
-            fiskistofaShipStatus?.catchQuotaCategories?.find(
-              (c) => c.id === category.id,
-            )
+          const categoryFromServer = fiskistofaShipStatus?.catchQuotaCategories?.find(
+            (c) => c.id === category.id,
+          )
           if (categoryFromServer) {
             categories.push({
               ...category,
@@ -426,13 +424,12 @@ export const machine = createMachine<Context, Event, State>(
         context: Context,
         event: UpdateQuotaDataEvent,
       ) => {
-        const fiskistofaUpdateShipQuotaStatusForTimePeriodResponse =
-          await context.apolloClient?.query<{
-            fiskistofaUpdateShipQuotaStatusForTimePeriod: FiskistofaQuotaStatusResponse
-          }>({
-            query: UPDATE_SHIP_QUOTA_STATUS_FOR_TIME_PERIOD,
-            variables: event.variables,
-          })
+        const fiskistofaUpdateShipQuotaStatusForTimePeriodResponse = await context.apolloClient?.query<{
+          fiskistofaUpdateShipQuotaStatusForTimePeriod: FiskistofaQuotaStatusResponse
+        }>({
+          query: UPDATE_SHIP_QUOTA_STATUS_FOR_TIME_PERIOD,
+          variables: event.variables,
+        })
 
         const serverQuotaData =
           fiskistofaUpdateShipQuotaStatusForTimePeriodResponse?.data

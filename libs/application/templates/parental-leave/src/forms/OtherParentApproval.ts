@@ -28,8 +28,10 @@ export const OtherParentApproval: Form = buildForm({
         buildMultiField({
           id: 'multi',
           title: (application: Application) => {
-            const { isRequestingRights, usePersonalAllowanceFromSpouse } =
-              getApplicationAnswers(application.answers)
+            const {
+              isRequestingRights,
+              usePersonalAllowanceFromSpouse,
+            } = getApplicationAnswers(application.answers)
 
             if (
               isRequestingRights === YES &&
@@ -45,8 +47,10 @@ export const OtherParentApproval: Form = buildForm({
             return otherParentApprovalFormMessages.requestAllowance
           },
           description: (application: Application) => {
-            const { isRequestingRights, usePersonalAllowanceFromSpouse } =
-              getApplicationAnswers(application.answers)
+            const {
+              isRequestingRights,
+              usePersonalAllowanceFromSpouse,
+            } = getApplicationAnswers(application.answers)
 
             if (
               isRequestingRights === YES &&
@@ -79,8 +83,10 @@ export const OtherParentApproval: Form = buildForm({
                 getApplicationAnswers(answers)
                   .usePersonalAllowanceFromSpouse === YES,
               value: (application: Application) => {
-                const { spouseUseAsMuchAsPossible, spouseUsage } =
-                  getApplicationAnswers(application.answers)
+                const {
+                  spouseUseAsMuchAsPossible,
+                  spouseUsage,
+                } = getApplicationAnswers(application.answers)
 
                 if (spouseUseAsMuchAsPossible === YES) {
                   return '100%'

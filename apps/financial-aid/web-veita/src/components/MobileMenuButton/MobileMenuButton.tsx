@@ -22,8 +22,7 @@ const MobileMenuButton = ({ showNav, onClick, className }: PageProps) => {
       <span
         className={cn({
           [`${styles.burgerLines} ${styles.burgerMenuFirstChild}`]: true,
-          [`${styles.openBurgerLines} ${styles.openBurgerLineFirstChild}`]:
-            showNav,
+          [`${styles.openBurgerLines} ${styles.openBurgerLineFirstChild}`]: showNav,
         })}
       ></span>
       <span
@@ -35,8 +34,7 @@ const MobileMenuButton = ({ showNav, onClick, className }: PageProps) => {
       <span
         className={cn({
           [`${styles.burgerLines} ${styles.burgerMenuLastChilde}`]: true,
-          [`${styles.openBurgerLines}  ${styles.openBurgerLineLastChild}`]:
-            showNav,
+          [`${styles.openBurgerLines}  ${styles.openBurgerLineLastChild}`]: showNav,
         })}
       ></span>
     </button>

@@ -37,8 +37,10 @@ export const RotateSecret = ({
     false,
   )
   const secretRef = useRef<HTMLInputElement>(null)
-  const [rotateSecretMutation, { loading, error: mutationError }] =
-    useRotateSecretMutation()
+  const [
+    rotateSecretMutation,
+    { loading, error: mutationError },
+  ] = useRotateSecretMutation()
   const [newSecret, setNewSecret] = useState('')
 
   const modalTitle = newSecret

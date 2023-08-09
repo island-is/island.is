@@ -46,9 +46,8 @@ const serviceIds: { [key: string]: ServiceId } = {
   },
 }
 
-const mockGetOpenApi = jest
-  .fn()
-  .mockImplementation((req: GetOpenAPIRequest): Promise<string> => {
+const mockGetOpenApi = jest.fn().mockImplementation(
+  (req: GetOpenAPIRequest): Promise<string> => {
     const openapidocs: { [key: string]: string } = {
       'basic-v1': `openapi: '3.0.3'
 info:
@@ -199,18 +198,19 @@ components:
     }
 
     return Promise.resolve(req.serviceCode ? openapidocs[req.serviceCode] : '')
-  })
+  },
+)
 
-const mockListMethods = jest
-  .fn()
-  .mockImplementation((): Promise<MethodList> => {
+const mockListMethods = jest.fn().mockImplementation(
+  (): Promise<MethodList> => {
     return Promise.resolve({
       service: [
         serviceIds['StafIsl-Protected-Basic'],
         serviceIds['StafIsl-Protected-OptOut'],
       ] as ServiceId[],
     })
-  })
+  },
+)
 
 jest.mock('../../gen/fetch/xrd-rest', () => {
   return {

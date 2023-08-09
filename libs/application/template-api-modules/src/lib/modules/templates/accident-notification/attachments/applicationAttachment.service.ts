@@ -51,11 +51,9 @@ export class ApplicationAttachmentService {
   ): Promise<AttachmentData[]> {
     return await Promise.all(
       answers.map(async ({ key, name }) => {
-        const url = (
-          application.attachments as {
-            [key: string]: string
-          }
-        )[key]
+        const url = (application.attachments as {
+          [key: string]: string
+        })[key]
 
         if (!url) {
           logger.info('Failed to get url from application state')

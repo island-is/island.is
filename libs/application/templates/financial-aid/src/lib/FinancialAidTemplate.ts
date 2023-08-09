@@ -261,8 +261,10 @@ const FinancialAidTemplate: ApplicationTemplate<
   stateMachineOptions: {
     actions: {
       assignToSpouse: assign((context) => {
-        const { externalData, answers } =
-          context.application as unknown as FAApplication
+        const {
+          externalData,
+          answers,
+        } = (context.application as unknown) as FAApplication
         const spouse =
           externalData.nationalRegistrySpouse.data?.nationalId ||
           answers.relationshipStatus.spouseNationalId

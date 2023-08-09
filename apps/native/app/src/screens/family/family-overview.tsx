@@ -28,14 +28,16 @@ import {createNavigationOptionHooks} from '../../hooks/create-navigation-option-
 import {FAMILY_QUERY} from '../../graphql/queries/list-family-query';
 import {formatNationalId} from '../profile/tab-personal-info';
 
-const {useNavigationOptions, getNavigationOptions} =
-  createNavigationOptionHooks((theme, intl) => ({
-    topBar: {
-      title: {
-        text: intl.formatMessage({id: 'family.screenTitle'}),
-      },
+const {
+  useNavigationOptions,
+  getNavigationOptions,
+} = createNavigationOptionHooks((theme, intl) => ({
+  topBar: {
+    title: {
+      text: intl.formatMessage({id: 'family.screenTitle'}),
     },
-  }));
+  },
+}));
 
 const FamilyMember = React.memo(({item}: {item: any}) => {
   const theme = useTheme();
@@ -49,7 +51,8 @@ const FamilyMember = React.memo(({item}: {item: any}) => {
           navigateTo(`/family/${item.type}/${item.nationalId}`, {
             id: item?.nationalId,
           });
-        }}>
+        }}
+      >
         <SafeAreaView>
           <FamilyMemberCard
             name={item?.name || item?.displayName}

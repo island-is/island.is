@@ -19,7 +19,7 @@ import { webRichText } from '@island.is/web/utils/richText'
 import * as styles from './AccordionSlice.css'
 
 const headingLevels = ['h2', 'h3', 'h4', 'h5'] as const
-type HeadingType = (typeof headingLevels)[number]
+type HeadingType = typeof headingLevels[number]
 
 export const extractHeadingLevels = (slice: AccordionSliceSchema) => {
   let titleHeading: HeadingType = 'h2'

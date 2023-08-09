@@ -26,7 +26,8 @@ export const accidentLocation = {
         'Label for the at the workplace option in general accident location',
     },
     toOrFromTheWorkplace: {
-      id: 'an.application:accidentLocation.generalWorkAccident.toOrFromTheWorkplace',
+      id:
+        'an.application:accidentLocation.generalWorkAccident.toOrFromTheWorkplace',
       defaultMessage: 'Á leið til eða frá vinnustað',
       description:
         'Label for the to or from the workplace option in general accident location',
@@ -51,7 +52,8 @@ export const accidentLocation = {
         'Label for the on the ship option in fisherman accident location',
     },
     toOrFromTheWorkplace: {
-      id: 'an.application:accidentLocation.fishermanAccident.toOrFromTheWorkplace',
+      id:
+        'an.application:accidentLocation.fishermanAccident.toOrFromTheWorkplace',
       defaultMessage: 'Á leið til eða frá vinnu',
       description:
         'Label for the to or from the workplace option in fisherman accident location',
@@ -69,13 +71,15 @@ export const accidentLocation = {
   }),
   professionalAthleteAccident: defineMessages({
     atTheClubsSportsFacilites: {
-      id: 'an.application:accidentLocation.professionalAth.atTheClubsSportsFacilites',
+      id:
+        'an.application:accidentLocation.professionalAth.atTheClubsSportsFacilites',
       defaultMessage: 'Á skipulagðri æfingu, sýningu eða keppni.',
       description:
         'Label for the at the sports facilities option in sports accident location',
     },
     toOrFromTheSportsFacilites: {
-      id: 'an.application:accidentLocation.professionalAth.toOrFromTheSportsFacilites',
+      id:
+        'an.application:accidentLocation.professionalAth.toOrFromTheSportsFacilites',
       defaultMessage: 'Á leið til eða frá æfingu, sýningu eða keppni',
       description:
         'Label for the to or from the sports facilities option in sports accident location',
@@ -99,7 +103,8 @@ export const accidentLocation = {
         'Label for the at the workplace option in agriculture accident location',
     },
     toOrFromTheWorkplace: {
-      id: 'an.application:accidentLocation.agricultureAccident.toOrFromTheWorkplace',
+      id:
+        'an.application:accidentLocation.agricultureAccident.toOrFromTheWorkplace',
       defaultMessage: 'Á leið til eða frá vinnustað',
       description:
         'Label for the to or from the workplace option in agriculture accident location',
@@ -165,13 +170,15 @@ export const accidentLocation = {
   }),
   fishermanAccidentLocation: defineMessages({
     whileSailing: {
-      id: 'an.application:accidentLocation.fishermanAccidentLocation.whileSailing',
+      id:
+        'an.application:accidentLocation.fishermanAccidentLocation.whileSailing',
       defaultMessage: 'Á siglingu / á veiðum',
       description:
         'Label for the while sailing or fishing option in fisherman accident location',
     },
     inTheHarbor: {
-      id: 'an.application:accidentLocation.fishermanAccidentLocation.inTheHarbor',
+      id:
+        'an.application:accidentLocation.fishermanAccidentLocation.inTheHarbor',
       defaultMessage: 'Í heimahöfn',
       description:
         'Label for the in the harbor option in fisherman accident location',
@@ -187,7 +194,8 @@ export const accidentLocation = {
       description: 'Fisherman accident location heading',
     },
     description: {
-      id: 'an.application:accidentLocation.fishermanAccidentLocation.description',
+      id:
+        'an.application:accidentLocation.fishermanAccidentLocation.description',
       defaultMessage:
         'Vinsamlegast tilgreindu staðsetningu skips þegar slysið átti sér stað',
       description: 'Fisherman accident location description',
@@ -211,7 +219,8 @@ export const accidentLocation = {
       description: 'Home accident location address input field',
     },
     postalCode: {
-      id: 'an.application:accidentLocation.fishermanAccidentLocation.postalCode',
+      id:
+        'an.application:accidentLocation.fishermanAccidentLocation.postalCode',
       defaultMessage: 'Póstnúmer',
       description: 'Home accident location postal code input field',
     },
@@ -226,7 +235,8 @@ export const accidentLocation = {
       description: 'Home accident location more details textarea field',
     },
     moreDetailsPlaceholder: {
-      id: 'an.application:accidentLocation.homeAccidentLocation.moreDetailsPlaceholder',
+      id:
+        'an.application:accidentLocation.homeAccidentLocation.moreDetailsPlaceholder',
       defaultMessage: 'T.d. inn á heimili, innan lóðamarka eða í sumarbústað',
       description:
         'Home accident location more details placeholder in textarea field',

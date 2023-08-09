@@ -3,8 +3,7 @@ import { GetClientQuery, GetClientDocument } from './Client.generated'
 
 export type AuthAdminClient = NonNullable<GetClientQuery['authAdminClient']>
 export type AuthAdminClientEnvironment = AuthAdminClient['environments'][0]
-export type AuthAdminClientTranslation =
-  AuthAdminClientEnvironment['displayName'][0]
+export type AuthAdminClientTranslation = AuthAdminClientEnvironment['displayName'][0]
 export type AuthAdminClientSecret = AuthAdminClientEnvironment['secrets']
 
 export const clientLoader: WrappedLoaderFn = ({ client }) => {

@@ -35,9 +35,9 @@ describe('Case File Exists Guard', () => {
       const then = {} as Then
 
       try {
-        then.result = await guard.canActivate({
+        then.result = await guard.canActivate(({
           switchToHttp: () => ({ getRequest: mockRequest }),
-        } as unknown as ExecutionContext)
+        } as unknown) as ExecutionContext)
       } catch (error) {
         then.error = error as Error
       }

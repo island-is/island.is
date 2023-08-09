@@ -26,10 +26,14 @@ const AppealSections: React.FC<React.PropsWithChildren<Props>> = (props) => {
   const { workingCase, setWorkingCase } = props
   const { formatMessage } = useIntl()
   const { setAndSendCaseToServer, updateCase } = useCase()
-  const [checkedAccusedRadio, setCheckedAccusedRadio] =
-    useState<CaseAppealDecision>()
-  const [checkedProsecutorRadio, setCheckedProsecutorRadio] =
-    useState<CaseAppealDecision>()
+  const [
+    checkedAccusedRadio,
+    setCheckedAccusedRadio,
+  ] = useState<CaseAppealDecision>()
+  const [
+    checkedProsecutorRadio,
+    setCheckedProsecutorRadio,
+  ] = useState<CaseAppealDecision>()
 
   return (
     <>

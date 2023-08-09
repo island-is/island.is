@@ -130,7 +130,10 @@ export const useFilter = (
     [setFilter],
   )
 
-  const [activeCases, pastCases]: [CaseListEntry[], CaseListEntry[]] = useMemo(
+  const [activeCases, pastCases]: [
+    CaseListEntry[],
+    CaseListEntry[],
+  ] = useMemo(
     () => [
       filterCases(filter.value, allActiveCases, user),
       filterCases(filter.value, allPastCases, user),

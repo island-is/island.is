@@ -13,8 +13,8 @@ interface TranslationsContextType {
   default: Translation
 }
 
-export const TranslationsContext =
-  createContext<TranslationsContextType | null>({
+export const TranslationsContext = createContext<TranslationsContextType | null>(
+  {
     is: icelandicTranslations as Translation,
     en: englishTranslations as Translation,
     default: {
@@ -34,7 +34,8 @@ export const TranslationsContext =
         contents: [],
       },
     } as Translation,
-  })
+  },
+)
 
 const appWithTranslation = (WrappedComponent) => {
   const AppWithTranslation = (props) => {

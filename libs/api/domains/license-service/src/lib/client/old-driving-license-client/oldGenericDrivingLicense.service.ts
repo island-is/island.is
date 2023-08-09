@@ -47,8 +47,7 @@ const dateToPkpassDate = (date: string): string => {
 
 @Injectable()
 export class OldGenericDrivingLicenseApi
-  implements GenericLicenseClient<OldGenericDrivingLicenseResponse>
-{
+  implements GenericLicenseClient<OldGenericDrivingLicenseResponse> {
   private readonly xroadApiUrl: string
   private readonly xroadClientId: string
   private readonly xroadPath: string

@@ -8,12 +8,14 @@ import {testIDs} from '../../utils/test-ids';
 
 import {TabSettings} from './tab-settings';
 
-const {getNavigationOptions, useNavigationOptions} =
-  createNavigationOptionHooks(() => ({
-    topBar: {
-      visible: false,
-    },
-  }));
+const {
+  getNavigationOptions,
+  useNavigationOptions,
+} = createNavigationOptionHooks(() => ({
+  topBar: {
+    visible: false,
+  },
+}));
 
 export const SettingsScreen: NavigationFunctionComponent = ({componentId}) => {
   useNavigationOptions(componentId);

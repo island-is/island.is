@@ -25,7 +25,11 @@ Example:
 
 ```ts
 // myCustomImporter.service.ts
-import { ContentSearchImporter, SyncOptions, SyncResponse } from '@island.is/content-search-indexer/types'
+import {
+  ContentSearchImporter,
+  SyncOptions,
+  SyncResponse,
+} from '@island.is/content-search-indexer/types'
 
 export class MyCustomImporterService implements ContentSearchImporter {
   doSync(options: SyncOptions): Promise<SyncResponse | null> {

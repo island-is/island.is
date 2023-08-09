@@ -62,8 +62,9 @@ export const Columns = ({
   align,
   alignY,
 }: ColumnsProps) => {
-  const [xsSpace, smSpace, mdSpace, lgSpace, xlSpace] =
-    normaliseResponsiveProp(space)
+  const [xsSpace, smSpace, mdSpace, lgSpace, xlSpace] = normaliseResponsiveProp(
+    space,
+  )
 
   const {
     collapsibleAlignmentProps,

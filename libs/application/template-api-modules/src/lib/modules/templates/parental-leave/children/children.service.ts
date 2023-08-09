@@ -57,10 +57,9 @@ export class ChildrenService {
     application: Application,
     nationalId: string,
   ): Promise<ChildrenAndExistingApplications> {
-    const customTemplateFindQuery =
-      this.applicationApiService.customTemplateFindQuery(
-        application.typeId,
-      ) as CustomTemplateFindQuery
+    const customTemplateFindQuery = this.applicationApiService.customTemplateFindQuery(
+      application.typeId,
+    ) as CustomTemplateFindQuery
     const useMockData =
       getValueViaPath<string>(application.answers, 'mock.useMockData', NO) ===
       YES
@@ -70,24 +69,26 @@ export class ChildrenService {
       return await this.getMockData(application, customTemplateFindQuery)
     }
 
-    const parentalLeavesAndPregnancyStatus =
-      await this.queryParentalLeavesAndPregnancyStatus(nationalId)
+    const parentalLeavesAndPregnancyStatus = await this.queryParentalLeavesAndPregnancyStatus(
+      nationalId,
+    )
 
-    const { children, existingApplications } =
-      await this.childrenAndExistingApplications(
-        application,
-        customTemplateFindQuery,
-        parentalLeavesAndPregnancyStatus.getPregnancyStatus,
-      )
+    const {
+      children,
+      existingApplications,
+    } = await this.childrenAndExistingApplications(
+      application,
+      customTemplateFindQuery,
+      parentalLeavesAndPregnancyStatus.getPregnancyStatus,
+    )
 
     const childrenResult: ChildInformation[] = []
 
     for (const child of children) {
-      const parentalLeavesEntitlements =
-        await this.getParentalLeavesEntitlements(
-          new Date(child.expectedDateOfBirth),
-          nationalId,
-        )
+      const parentalLeavesEntitlements = await this.getParentalLeavesEntitlements(
+        new Date(child.expectedDateOfBirth),
+        nationalId,
+      )
 
       if (
         child.parentalRelation === ParentalRelations.secondary &&
@@ -284,8 +285,8 @@ export class ChildrenService {
         'answers.otherParentId': application.applicant,
       })
     }
-    const applicationsWhereOtherParentHasApplied =
-      getAppsWhereOtherParentHasApplied.filter((application) => {
+    const applicationsWhereOtherParentHasApplied = getAppsWhereOtherParentHasApplied.filter(
+      (application) => {
         const { state } = application
         const { applicationFundId } = getApplicationExternalData(
           application.externalData,
@@ -321,7 +322,8 @@ export class ChildrenService {
         }
 
         return true
-      })
+      },
+    )
 
     return getChildrenAndExistingApplications(
       applicationsWhereApplicant,
@@ -330,7 +332,9 @@ export class ChildrenService {
     )
   }
 
-  async queryParentalLeavesAndPregnancyStatus(nationalId: string): Promise<{
+  async queryParentalLeavesAndPregnancyStatus(
+    nationalId: string,
+  ): Promise<{
     getParentalLeaves: ParentalLeave[] | null
     getPregnancyStatus: PregnancyStatus | null
   }> {
@@ -349,10 +353,11 @@ export class ChildrenService {
     }
 
     try {
-      const results =
-        await this.parentalLeaveApi.parentalLeaveGetParentalLeaves({
+      const results = await this.parentalLeaveApi.parentalLeaveGetParentalLeaves(
+        {
           nationalRegistryId: nationalId,
-        })
+        },
+      )
 
       return results.parentalLeaves ?? []
     } catch (e) {
@@ -385,10 +390,11 @@ export class ChildrenService {
     }
 
     try {
-      const pregnancyStatus =
-        await this.pregnancyApi.pregnancyGetPregnancyStatus({
+      const pregnancyStatus = await this.pregnancyApi.pregnancyGetPregnancyStatus(
+        {
           nationalRegistryId: nationalId,
-        })
+        },
+      )
 
       if (pregnancyStatus.hasError) {
         throw new Error(

@@ -30,9 +30,9 @@ describe('Case Defender Guard', () => {
       const then = {} as Then
 
       try {
-        then.result = guard.canActivate({
+        then.result = guard.canActivate(({
           switchToHttp: () => ({ getRequest: mockRequest }),
-        } as unknown as ExecutionContext)
+        } as unknown) as ExecutionContext)
       } catch (error) {
         then.error = error as Error
       }

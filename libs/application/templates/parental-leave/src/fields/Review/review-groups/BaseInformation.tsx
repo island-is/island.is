@@ -18,8 +18,10 @@ export const BaseInformation = ({
   groupHasNoErrors,
   hasError,
 }: ReviewGroupProps) => {
-  const [{ applicantEmail, applicantPhoneNumber }, setStateful] =
-    useStatefulAnswers(application)
+  const [
+    { applicantEmail, applicantPhoneNumber },
+    setStateful,
+  ] = useStatefulAnswers(application)
 
   const { applicantName } = getApplicationExternalData(application.externalData)
 

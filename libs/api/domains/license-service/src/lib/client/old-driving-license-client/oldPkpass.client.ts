@@ -319,8 +319,9 @@ export class OldPkPassClient {
   }
 
   async getPkPassUrl(payload: OldPkPassPayload): Promise<string | null> {
-    const response: OldPkPassServiceDriversLicenseResponse | null =
-      await this.getPkPass(payload)
+    const response: OldPkPassServiceDriversLicenseResponse | null = await this.getPkPass(
+      payload,
+    )
     if (response?.data?.pass_url) {
       return response.data?.pass_url
     }
@@ -335,8 +336,9 @@ export class OldPkPassClient {
   }
 
   async getPkPassQRCode(payload: OldPkPassPayload): Promise<string | null> {
-    const response: OldPkPassServiceDriversLicenseResponse | null =
-      await this.getPkPass(payload)
+    const response: OldPkPassServiceDriversLicenseResponse | null = await this.getPkPass(
+      payload,
+    )
     if (response?.data?.pass_qrcode) {
       return response.data?.pass_qrcode
     }

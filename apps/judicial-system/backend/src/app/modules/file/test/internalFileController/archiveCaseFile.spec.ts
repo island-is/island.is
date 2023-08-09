@@ -22,8 +22,11 @@ describe('InternalFileController - Archive case files', () => {
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { awsS3Service, fileModel, internalFileController } =
-      await createTestingFileModule()
+    const {
+      awsS3Service,
+      fileModel,
+      internalFileController,
+    } = await createTestingFileModule()
 
     mockAwsS3Service = awsS3Service
     mockFileModel = fileModel

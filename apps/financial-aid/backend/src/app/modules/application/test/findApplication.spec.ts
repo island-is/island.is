@@ -21,8 +21,10 @@ describe('ApplicationController - find application', () => {
   let mockApplicationModel: typeof ApplicationModel
 
   beforeEach(async () => {
-    const { applicationController, applicationModel } =
-      await createTestingApplicationModule()
+    const {
+      applicationController,
+      applicationModel,
+    } = await createTestingApplicationModule()
 
     mockApplicationModel = applicationModel
 

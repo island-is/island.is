@@ -26,8 +26,10 @@ export const RevokeSecrets = ({
     tenant: string
     client: string
   }
-  const [revokeSecretsMutation, { loading, error: mutationError }] =
-    useRevokeSecretsMutation()
+  const [
+    revokeSecretsMutation,
+    { loading, error: mutationError },
+  ] = useRevokeSecretsMutation()
   const { revalidate } = useRevalidator()
 
   const handleSubmit = async () => {

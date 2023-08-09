@@ -24,8 +24,11 @@ describe('LimitedAccessFileController - Get case file signed url', () => {
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { awsS3Service, fileModel, limitedAccessFileController } =
-      await createTestingFileModule()
+    const {
+      awsS3Service,
+      fileModel,
+      limitedAccessFileController,
+    } = await createTestingFileModule()
 
     mockAwsS3Service = awsS3Service
     mockFileModel = fileModel

@@ -21,14 +21,16 @@ import {navigateTo} from '../../lib/deep-linking';
 import {GET_REAL_ESTATE_QUREY} from '../../graphql/queries/get-real-estate-query';
 import {createNavigationOptionHooks} from '../../hooks/create-navigation-option-hooks';
 
-const {useNavigationOptions, getNavigationOptions} =
-  createNavigationOptionHooks((theme, intl) => ({
-    topBar: {
-      title: {
-        text: intl.formatMessage({id: 'assetsOvervies.screenTitle'}),
-      },
+const {
+  useNavigationOptions,
+  getNavigationOptions,
+} = createNavigationOptionHooks((theme, intl) => ({
+  topBar: {
+    title: {
+      text: intl.formatMessage({id: 'assetsOvervies.screenTitle'}),
     },
-  }));
+  },
+}));
 
 const AssetItem = React.memo(({item}: {item: any}) => {
   const theme = useTheme();
@@ -46,7 +48,8 @@ const AssetItem = React.memo(({item}: {item: any}) => {
           navigateTo(`/asset/${item.propertyNumber}`, {
             item,
           });
-        }}>
+        }}
+      >
         <SafeAreaView>
           <AssetCard
             address={item?.defaultAddress?.displayShort}

@@ -117,10 +117,9 @@ const Editor = () => {
           variables,
           query: GET_ICELANDIC_NAME_BY_SEARCH,
           data: {
-            getIcelandicNameBySearch:
-              existingNames?.getIcelandicNameBySearch.filter(
-                (x) => x.id !== nameToDelete.id,
-              ),
+            getIcelandicNameBySearch: existingNames?.getIcelandicNameBySearch.filter(
+              (x) => x.id !== nameToDelete.id,
+            ),
           },
         })
       }

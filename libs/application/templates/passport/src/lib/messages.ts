@@ -35,12 +35,14 @@ export const m = defineMessages({
     description: 'Some description',
   },
   dataCollectionDistrictCommissionersTitle: {
-    id: 'pa.application:dataCollection.dataCollectionDistrictCommissionersTitle',
+    id:
+      'pa.application:dataCollection.dataCollectionDistrictCommissionersTitle',
     defaultMessage: 'Persónuupplýsingar úr Sýslumenn',
     description: 'Some description',
   },
   dataCollectionDistrictCommissionersSubitle: {
-    id: 'pa.application:dataCollection.dataCollectionDistrictCommissionersSubitle',
+    id:
+      'pa.application:dataCollection.dataCollectionDistrictCommissionersSubitle',
     defaultMessage:
       'Til þess að auðvelda fyrir sækjum við persónuupplýsingar úr Sýslumenn til þess að fylla út umsóknina.',
     description: 'Some description',
@@ -409,7 +411,8 @@ export const m = defineMessages({
     description: 'Some description',
   },
   applicationCompleteNextStepsDescriptionPersonalApplication: {
-    id: 'pa.application:complete.nextSteps.descriptionPersonalApplication#markdown',
+    id:
+      'pa.application:complete.nextSteps.descriptionPersonalApplication#markdown',
     defaultMessage: `* Fara í myndatöku á næsta afgreiðslustað sýslumanns.\\n\\n * Þú færð senda tilkynningu á Mínar síður þegar vegabréfið er tilbúið og hægt er að sækja það á þann afhendingarstað sem þú valdir.`,
     description: 'Some description',
   },

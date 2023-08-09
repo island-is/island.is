@@ -32,8 +32,10 @@ interface MonthlyStatisticsProps {
 }
 
 export const MonthlyStatistics = ({ slice }: MonthlyStatisticsProps) => {
-  const [selectedRegistrationTypeOption, setSelectedRegistrationTypeOption] =
-    useState(defaultSelection)
+  const [
+    selectedRegistrationTypeOption,
+    setSelectedRegistrationTypeOption,
+  ] = useState(defaultSelection)
 
   const n = useNamespace(slice?.json ?? {})
 
@@ -150,12 +152,10 @@ export const MonthlyStatistics = ({ slice }: MonthlyStatisticsProps) => {
             width={800}
             height={400}
             data={data.map((item) => ({
-              name: (
-                n(
-                  item.periodIntervalName?.split(' ')?.[0]?.trim() ?? '',
-                  item.periodIntervalName,
-                ) as string
-              ).slice(0, 3),
+              name: (n(
+                item.periodIntervalName?.split(' ')?.[0]?.trim() ?? '',
+                item.periodIntervalName,
+              ) as string).slice(0, 3),
               [paper]:
                 selectedRegistrationTypeOption.value === defaultSelection.value
                   ? item.totalPaperRegistrationsForCurrentPeriodInterval

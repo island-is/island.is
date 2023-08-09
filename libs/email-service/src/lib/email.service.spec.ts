@@ -20,13 +20,11 @@ const mockSendMail = jest.fn(() => ({
   messageId: testMessageId,
 }))
 
-const mockCreateTransport = jest.fn(
-  (
-    account, // eslint-disable-line @typescript-eslint/no-unused-vars
-  ) => ({
-    sendMail: mockSendMail,
-  }),
-)
+const mockCreateTransport = jest.fn((
+  account, // eslint-disable-line @typescript-eslint/no-unused-vars
+) => ({
+  sendMail: mockSendMail,
+}))
 
 jest.mock('nodemailer', () => ({
   createTestAccount: () => {

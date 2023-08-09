@@ -25,8 +25,9 @@ import { overview as m } from './Overview.strings'
 const Overview = () => {
   const router = useRouter()
   const { limitedAccess } = useContext(UserContext)
-  const { workingCase, isLoadingWorkingCase, caseNotFound } =
-    useContext(FormContext)
+  const { workingCase, isLoadingWorkingCase, caseNotFound } = useContext(
+    FormContext,
+  )
   const { formatMessage } = useIntl()
 
   const caseIsClosed = completedCaseStates.includes(workingCase.state)

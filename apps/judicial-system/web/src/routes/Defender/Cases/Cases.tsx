@@ -46,14 +46,16 @@ export const Cases: React.FC<React.PropsWithChildren<unknown>> = () => {
 
   const cases = data?.cases
 
-  const [activeCases, completedCases]: [CaseListEntry[], CaseListEntry[]] =
-    useMemo(() => {
-      if (!cases) {
-        return [[], []]
-      }
+  const [activeCases, completedCases]: [
+    CaseListEntry[],
+    CaseListEntry[],
+  ] = useMemo(() => {
+    if (!cases) {
+      return [[], []]
+    }
 
-      return partition(cases, (c) => !completedCaseStates.includes(c.state))
-    }, [cases])
+    return partition(cases, (c) => !completedCaseStates.includes(c.state))
+  }, [cases])
 
   const {
     filteredCases: activeFilteredCases,

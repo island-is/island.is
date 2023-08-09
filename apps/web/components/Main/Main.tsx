@@ -5,8 +5,8 @@ export const Main: React.FC<React.PropsWithChildren<unknown>> = ({
   children,
 }) => {
   const mainRef = useRef<HTMLDivElement>(null)
-  const shouldAddLandmark =
-    !mainRef?.current?.querySelectorAll('#main-content').length
+  const shouldAddLandmark = !mainRef?.current?.querySelectorAll('#main-content')
+    .length
   const boxProps: BoxProps = shouldAddLandmark
     ? {
         component: 'main',

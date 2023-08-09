@@ -84,10 +84,9 @@ export class PersonalRepresentativeTypesController {
       throw new BadRequestException('Code needs to be provided')
     }
 
-    const personalRepresentativeType =
-      await this.personalRepresentativeTypesService.getPersonalRepresentativeType(
-        code,
-      )
+    const personalRepresentativeType = await this.personalRepresentativeTypesService.getPersonalRepresentativeType(
+      code,
+    )
 
     if (!personalRepresentativeType) {
       throw new NotFoundException("This particular right type doesn't exist")

@@ -102,15 +102,13 @@ const skippedLabelsInMessage: Array<keyof typeof labels> = [
   'erindi',
 ]
 
-const useFormNamespace =
-  (namespace: FormNamespace) =>
-  (
-    key: string,
-    type: 'label' | 'requiredMessage' | 'placeholder' | 'patternMessage',
-    fallback?: string,
-  ) => {
-    return namespace?.[key]?.[type] ?? fallback
-  }
+const useFormNamespace = (namespace: FormNamespace) => (
+  key: string,
+  type: 'label' | 'requiredMessage' | 'placeholder' | 'patternMessage',
+  fallback?: string,
+) => {
+  return namespace?.[key]?.[type] ?? fallback
+}
 
 interface BasicInputProps {
   name: keyof typeof labels
@@ -149,7 +147,7 @@ const BasicInput = ({
       }}
       // The docs tell us to spread the response of the register function even though it's return type is void
       // https://react-hook-form.com/api/useformcontext/
-      {...(register(name) as unknown as object)}
+      {...((register(name) as unknown) as object)}
     />
   )
 }
@@ -207,8 +205,9 @@ export const StandardForm = ({
     },
   })
 
-  const institutionSlugBelongsToMannaudstorg =
-    institutionSlug.includes('mannaudstorg')
+  const institutionSlugBelongsToMannaudstorg = institutionSlug.includes(
+    'mannaudstorg',
+  )
 
   useDebounce(
     () => {

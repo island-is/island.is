@@ -53,43 +53,43 @@ export type CreateScopeResult = ValidateFormDataResult<typeof schema> & {
   globalError?: boolean
 }
 
-export const createPermissionAction: WrappedActionFn =
-  ({ client }) =>
-  async ({ request }): Promise<CreateScopeResult | Response> => {
-    const formData = await request.formData()
-    const result = await validateFormData({ formData, schema })
+export const createPermissionAction: WrappedActionFn = ({ client }) => async ({
+  request,
+}): Promise<CreateScopeResult | Response> => {
+  const formData = await request.formData()
+  const result = await validateFormData({ formData, schema })
 
-    if (result.errors || !result.data) {
-      return result
-    }
+  if (result.errors || !result.data) {
+    return result
+  }
 
-    const { data } = result
+  const { data } = result
 
-    try {
-      await client.mutate<
-        CreateAuthAdminScopeMutation,
-        CreateAuthAdminScopeMutationVariables
-      >({
-        mutation: CreateAuthAdminScopeDocument,
-        variables: {
-          input: data,
+  try {
+    await client.mutate<
+      CreateAuthAdminScopeMutation,
+      CreateAuthAdminScopeMutationVariables
+    >({
+      mutation: CreateAuthAdminScopeDocument,
+      variables: {
+        input: data,
+      },
+    })
+
+    return redirect(
+      replaceParams({
+        href: IDSAdminPaths.IDSAdminPermission,
+        params: {
+          tenant: data?.tenantId,
+          permission: data?.name,
         },
-      })
-
-      return redirect(
-        replaceParams({
-          href: IDSAdminPaths.IDSAdminPermission,
-          params: {
-            tenant: data?.tenantId,
-            permission: data?.name,
-          },
-        }),
-      )
-    } catch (e) {
-      return {
-        errors: null,
-        data: null,
-        globalError: true,
-      }
+      }),
+    )
+  } catch (e) {
+    return {
+      errors: null,
+      data: null,
+      globalError: true,
     }
   }
+}

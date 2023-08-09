@@ -31,8 +31,11 @@ import {
 import { EndorsementList as EndorsementListLoaderType } from '../../lib/utils/types'
 
 const PetitionList = () => {
-  const { listId, petition, endorsements } =
-    useLoaderData() as EndorsementListLoaderType
+  const {
+    listId,
+    petition,
+    endorsements,
+  } = useLoaderData() as EndorsementListLoaderType
   const { formatMessage } = useLocale()
   const navigation = useNavigation()
   const navigate = useNavigate()
@@ -52,8 +55,9 @@ const PetitionList = () => {
   const actionData = useActionData() as UpdateListMutation
 
   const [isLockListModalVisible, setIsLockListModalVisible] = useState(false)
-  const [isUnlockListModalVisible, setIsUnlockListModalVisible] =
-    useState(false)
+  const [isUnlockListModalVisible, setIsUnlockListModalVisible] = useState(
+    false,
+  )
 
   useEffect(() => {
     if (actionData) {

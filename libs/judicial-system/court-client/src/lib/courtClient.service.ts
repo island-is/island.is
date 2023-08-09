@@ -529,8 +529,7 @@ export class CourtClientServiceImplementation implements CourtClientService {
 
 @Injectable()
 export class CourtClientServiceUnavailableImplementation
-  implements CourtClientService
-{
+  implements CourtClientService {
   async createCase(_courtId: string, _args: CreateCaseArgs): Promise<string> {
     throw new ServiceUnavailableException('Court API is not available')
   }

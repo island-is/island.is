@@ -23,8 +23,10 @@ export const PublishPermission = () => {
     updatePublishData,
     changeEnvironment,
   } = usePermission()
-  const [publishPermission, { data, loading, error: publishError }] =
-    usePublishPermissionMutation()
+  const [
+    publishPermission,
+    { data, loading, error: publishError },
+  ] = usePublishPermissionMutation()
   const [error, setError] = useState(false)
   const [isVisible, setIsVisible] = useState(false)
 

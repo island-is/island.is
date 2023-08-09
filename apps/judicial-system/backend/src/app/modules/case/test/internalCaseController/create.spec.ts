@@ -44,8 +44,7 @@ describe('InternalCaseController - Create', () => {
     mockDefendantService = defendantService
     mockCaseModel = caseModel
 
-    const mockDefendantCreate =
-      mockDefendantService.createForNewCase as jest.Mock
+    const mockDefendantCreate = mockDefendantService.createForNewCase as jest.Mock
     mockDefendantCreate.mockResolvedValue({ caseId } as Defendant)
 
     const mockTransaction = sequelize.transaction as jest.Mock
@@ -320,8 +319,7 @@ describe('InternalCaseController - Create', () => {
     beforeEach(async () => {
       const mockCreate = mockCaseModel.create as jest.Mock
       mockCreate.mockResolvedValueOnce(createdCase)
-      const mockDefendantCreate =
-        mockDefendantService.createForNewCase as jest.Mock
+      const mockDefendantCreate = mockDefendantService.createForNewCase as jest.Mock
       mockDefendantCreate.mockRejectedValueOnce(new Error('Some error'))
 
       then = await givenWhenThen(caseToCreate)

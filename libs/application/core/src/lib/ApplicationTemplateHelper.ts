@@ -26,7 +26,7 @@ import {
 export class ApplicationTemplateHelper<
   TContext extends ApplicationContext,
   TStateSchema extends ApplicationStateSchema<TEvents>,
-  TEvents extends EventObject,
+  TEvents extends EventObject
 > {
   private readonly application: Application
   private template: ApplicationTemplate<TContext, TStateSchema, TEvents>
@@ -58,8 +58,9 @@ export class ApplicationTemplateHelper<
 
   getApplicationStatus(): ApplicationStatus {
     const { state } = this.application
-    const applicationTemplateState =
-      this.template.stateMachineConfig.states[state]
+    const applicationTemplateState = this.template.stateMachineConfig.states[
+      state
+    ]
     if (applicationTemplateState.meta?.status) {
       return applicationTemplateState.meta.status as ApplicationStatus
     } else {
@@ -67,13 +68,15 @@ export class ApplicationTemplateHelper<
     }
   }
 
-  getApplicationActionCardMeta(stateKey: string = this.application.state): {
+  getApplicationActionCardMeta(
+    stateKey: string = this.application.state,
+  ): {
     title?: StaticText
     description?: StaticText
     tag: { variant?: string; label?: StaticText }
   } {
-    const actionCard =
-      this.template.stateMachineConfig.states[stateKey]?.meta?.actionCard
+    const actionCard = this.template.stateMachineConfig.states[stateKey]?.meta
+      ?.actionCard
 
     return {
       title: actionCard?.title,
@@ -159,7 +162,9 @@ export class ApplicationTemplateHelper<
     ]
   }
 
-  getReadableAnswersAndExternalData(role: ApplicationRole): {
+  getReadableAnswersAndExternalData(
+    role: ApplicationRole,
+  ): {
     answers: FormValue
     externalData: ExternalData
   } {

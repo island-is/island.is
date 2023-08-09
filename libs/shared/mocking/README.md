@@ -5,7 +5,15 @@ This library provides helpers to set up API mocking in Node.JS and browser proje
 ## Quick Start
 
 ```typescript
-import { factory, createStore, createResolvers, createGraphqlHandler, startMocking, slugify, faker } from '@island.is/shared/mocking'
+import {
+  factory,
+  createStore,
+  createResolvers,
+  createGraphqlHandler,
+  startMocking,
+  slugify,
+  faker,
+} from '@island.is/shared/mocking'
 import schema from './schema'
 import { Article, User, Resolvers } from './types'
 
@@ -89,7 +97,10 @@ export interface Resolvers {
     author?: () => User
   }
   Query?: {
-    articles?: (obj: any, input: { page?: number; perPage?: number }) => Article[]
+    articles?: (
+      obj: any,
+      input: { page?: number; perPage?: number },
+    ) => Article[]
   }
 }
 ```
@@ -396,7 +407,9 @@ Wraps a normal factory function and provides a #list helper to run it multiple t
 
 ```typescript
 import { simpleFactory } from '@island.is/shared/mocking'
-const slice = simpleFactory(() => (Math.random() > 0.5 ? contentSlice() : imageSlice()))
+const slice = simpleFactory(() =>
+  Math.random() > 0.5 ? contentSlice() : imageSlice(),
+)
 slice() // ContentSlice | ImageSlice
 slice.list(3) // Array<ContentSlice | ImageSlice>
 ```

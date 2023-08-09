@@ -66,16 +66,17 @@ export const createTestingDefendantModule = async () => {
     getModelToken(Defendant),
   )
 
-  const defendantService =
-    defendantModule.get<DefendantService>(DefendantService)
+  const defendantService = defendantModule.get<DefendantService>(
+    DefendantService,
+  )
 
-  const defendantController =
-    defendantModule.get<DefendantController>(DefendantController)
+  const defendantController = defendantModule.get<DefendantController>(
+    DefendantController,
+  )
 
-  const internalDefendantController =
-    defendantModule.get<InternalDefendantController>(
-      InternalDefendantController,
-    )
+  const internalDefendantController = defendantModule.get<InternalDefendantController>(
+    InternalDefendantController,
+  )
 
   return {
     messageService,

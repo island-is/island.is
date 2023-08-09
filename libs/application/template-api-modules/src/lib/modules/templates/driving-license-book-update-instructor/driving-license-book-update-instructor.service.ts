@@ -15,10 +15,9 @@ export class DrivingLicenseBookUpdateInstructorService extends BaseTemplateApiSe
   }
 
   async getCurrentInstructor({ auth }: TemplateApiModuleActionProps) {
-    const overview =
-      await this.drivingLicenseBookClientApiFactory.getMostRecentStudentBook(
-        auth,
-      )
+    const overview = await this.drivingLicenseBookClientApiFactory.getMostRecentStudentBook(
+      auth,
+    )
 
     if (!overview?.active) {
       throw new Error('Did not find active student book')
@@ -39,8 +38,7 @@ export class DrivingLicenseBookUpdateInstructorService extends BaseTemplateApiSe
     application,
     auth,
   }: TemplateApiModuleActionProps): Promise<void> {
-    const answers =
-      application.answers as DrivingLicenseBookUpdateInstructorAnswers
+    const answers = application.answers as DrivingLicenseBookUpdateInstructorAnswers
 
     const newInstructorSsn = answers?.newInstructor?.nationalId
 
@@ -48,11 +46,12 @@ export class DrivingLicenseBookUpdateInstructorService extends BaseTemplateApiSe
       throw new Error('New instructor national id is empty')
     }
 
-    const { success } =
-      await this.drivingLicenseBookClientApiFactory.updateActiveStudentBookInstructor(
-        auth,
-        newInstructorSsn,
-      )
+    const {
+      success,
+    } = await this.drivingLicenseBookClientApiFactory.updateActiveStudentBookInstructor(
+      auth,
+      newInstructorSsn,
+    )
 
     if (!success) {
       throw new Error('Error updating driving license book instructor')

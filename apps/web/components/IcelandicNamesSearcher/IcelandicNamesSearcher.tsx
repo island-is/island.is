@@ -84,8 +84,9 @@ export const IcelandicNamesSearcher = () => {
     GetIcelandicNameByInitialLetterQueryVariables
   >(GET_ICELANDIC_NAME_BY_INITIAL_LETTER)
 
-  const [filteredNamesList, setFilteredNamesList] =
-    useState<NameType[]>(tableData)
+  const [filteredNamesList, setFilteredNamesList] = useState<NameType[]>(
+    tableData,
+  )
 
   useMemo(() => {
     if (searchData?.getIcelandicNameBySearch) {

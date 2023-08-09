@@ -76,8 +76,9 @@ export class OperatingLicenseService extends BaseTemplateApiService {
         application.applicantActors.length > 0
           ? application.applicantActors[0]
           : application.applicant
-      const hasCriminalRecord =
-        await this.criminalRecordService.validateCriminalRecord(applicantSsn)
+      const hasCriminalRecord = await this.criminalRecordService.validateCriminalRecord(
+        applicantSsn,
+      )
       if (hasCriminalRecord) {
         return { success: true }
       }

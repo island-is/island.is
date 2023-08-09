@@ -19,7 +19,7 @@ type GivenWhenThen = () => Promise<Then>
 describe('AppService - Run', () => {
   const mockError = logger.error as jest.Mock
   const mockNow = now as jest.Mock
-  const mockFetch = fetch as unknown as jest.Mock
+  const mockFetch = (fetch as unknown) as jest.Mock
   let givenWhenThen: GivenWhenThen
 
   beforeEach(() => {

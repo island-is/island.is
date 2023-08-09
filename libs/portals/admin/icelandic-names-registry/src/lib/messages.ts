@@ -64,7 +64,8 @@ export const m = defineMessages({
     defaultMessage: 'Nafnaleit',
   },
   searchForNameOrPartOfName: {
-    id: 'portals-admin.icelandic-names-registry:search-for-name-or-part-of-name',
+    id:
+      'portals-admin.icelandic-names-registry:search-for-name-or-part-of-name',
     defaultMessage: 'Leitaðu að nafni eða hluta af nafni',
   },
   searchNothingFound: {

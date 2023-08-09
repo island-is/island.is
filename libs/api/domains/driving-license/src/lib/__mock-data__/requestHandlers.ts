@@ -65,8 +65,7 @@ export const XROAD_DRIVING_LICENSE_V2_PATH =
 
 // At the time of implementation, the v5 path is case sensitive depending on the environment
 // and as such Okuskirteini and okuskirteini are considered paths
-export const XROAD_DRIVING_LICENSE_V5_PATH =
-  /\/r1\/IS-DEV\/GOV\/10005\/Logreglan-Protected\/[Oo]kuskirteini-v5/
+export const XROAD_DRIVING_LICENSE_V5_PATH = /\/r1\/IS-DEV\/GOV\/10005\/Logreglan-Protected\/[Oo]kuskirteini-v5/
 
 const url = (path: string) => {
   return new URL(path, XROAD_BASE_PATH).toString()

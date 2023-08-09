@@ -72,11 +72,13 @@ export class DraftRegulationChangeController {
     @Body() draftRegulationChangeToUpdate: UpdateDraftRegulationChangeDto,
     @CurrentUser() user: User,
   ): Promise<DraftRegulationChange> {
-    const { numberOfAffectedRows, updatedDraftRegulationChange } =
-      await this.draftRegulationChangeService.update(
-        id,
-        draftRegulationChangeToUpdate,
-      )
+    const {
+      numberOfAffectedRows,
+      updatedDraftRegulationChange,
+    } = await this.draftRegulationChangeService.update(
+      id,
+      draftRegulationChangeToUpdate,
+    )
 
     if (numberOfAffectedRows === 0) {
       throw new NotFoundException(`DraftRegulationChange ${id} does not exist`)

@@ -280,8 +280,9 @@ const AircraftTable = ({ slice }: AircraftSearchProps) => {
   const pageSize = Number(slice?.configJson?.pageSize ?? DEFAULT_PAGE_SIZE)
   const router = useRouter()
 
-  const [latestAircraftListResponse, setLatestAircraftListResponse] =
-    useState<typeof data.aircraftRegistryAllAircrafts>(null)
+  const [latestAircraftListResponse, setLatestAircraftListResponse] = useState<
+    typeof data.aircraftRegistryAllAircrafts
+  >(null)
   const [errorOccurred, setErrorOccurred] = useState(false)
 
   const { data } = useQuery<

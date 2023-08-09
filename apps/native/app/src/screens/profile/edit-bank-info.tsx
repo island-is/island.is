@@ -8,12 +8,14 @@ import {bankInfoObject, stringifyBankData} from '../../lib/bank-info-helper';
 import {testIDs} from '../../utils/test-ids';
 import {useUpdateUserProfile, useUserProfile} from './profile-queries';
 
-const {getNavigationOptions, useNavigationOptions} =
-  createNavigationOptionHooks(() => ({
-    topBar: {
-      visible: false,
-    },
-  }));
+const {
+  getNavigationOptions,
+  useNavigationOptions,
+} = createNavigationOptionHooks(() => ({
+  topBar: {
+    visible: false,
+  },
+}));
 
 export const EditBankInfoScreen: NavigationFunctionComponent<any> = ({
   componentId,

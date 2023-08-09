@@ -60,8 +60,13 @@ const calculateHiddenStackItemProps = (
     [boolean, boolean, boolean, boolean, boolean]
   >,
 ) => {
-  const [displayXs, displaySm, displayMd, displayLg, displayXl] =
-    normaliseResponsiveProp(stackItemProps?.display || 'block')
+  const [
+    displayXs,
+    displaySm,
+    displayMd,
+    displayLg,
+    displayXl,
+  ] = normaliseResponsiveProp(stackItemProps?.display || 'block')
 
   return {
     ...stackItemProps,
@@ -76,7 +81,7 @@ const calculateHiddenStackItemProps = (
 }
 
 export interface StackProps {
-  component?: (typeof validStackComponents)[number]
+  component?: typeof validStackComponents[number]
   children: ReactNodeNoStrings
   space: BoxProps['paddingTop']
   align?: ResponsiveProp<Align>
@@ -128,8 +133,13 @@ export const Stack = ({
         const hidden = hiddenProps
           ? resolveHiddenProps(hiddenProps)
           : ([false, false, false, false, false] as const)
-        const [hiddenOnXs, hiddenOnSm, hiddenOnMd, hiddenOnLg, hiddenOnXl] =
-          hidden
+        const [
+          hiddenOnXs,
+          hiddenOnSm,
+          hiddenOnMd,
+          hiddenOnLg,
+          hiddenOnXl,
+        ] = hidden
 
         if (firstItemOnXs === null && !hiddenOnXs) {
           firstItemOnXs = index

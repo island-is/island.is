@@ -23,8 +23,9 @@ const GiveRights: FC<React.PropsWithChildren<FieldBaseProps>> = ({
 
   const { formatMessage } = useLocale()
 
-  const [statefulAnswer, setStatefulAnswer] =
-    useState<ValidAnswers>(currentAnswer)
+  const [statefulAnswer, setStatefulAnswer] = useState<ValidAnswers>(
+    currentAnswer,
+  )
 
   const boxChartKeys = [
     {

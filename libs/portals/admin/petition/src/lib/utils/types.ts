@@ -2,8 +2,7 @@ import { EndorsementSystemFindEndorsementListsQuery } from '../../screens/Overvi
 import { EndorsementSystemGetEndorsementsQuery } from '../../screens/PetitionList/getEndorsements.generated'
 import { EndorsementSystemGetSingleEndorsementListQuery } from '../../screens/PetitionList/getSinglePetitionList.generated'
 
-export type EndorsementLists =
-  EndorsementSystemFindEndorsementListsQuery['endorsementSystemFindEndorsementLists']['data']
+export type EndorsementLists = EndorsementSystemFindEndorsementListsQuery['endorsementSystemFindEndorsementLists']['data']
 
 export type FilteredPetitions = {
   active: EndorsementLists

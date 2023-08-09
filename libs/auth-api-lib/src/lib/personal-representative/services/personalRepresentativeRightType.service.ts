@@ -105,8 +105,9 @@ export class PersonalRepresentativeRightTypeService {
     if (code !== personalRepresentativeRightType.code) {
       throw new BadRequestException('data descreptancy')
     }
-    const currentData =
-      await this.personalRepresentativeRightTypeModel.findByPk(code)
+    const currentData = await this.personalRepresentativeRightTypeModel.findByPk(
+      code,
+    )
     if (!currentData) {
       throw new NotFoundException()
     }

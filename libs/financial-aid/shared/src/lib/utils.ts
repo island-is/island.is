@@ -62,8 +62,7 @@ export const sanitizeOnlyNumbers = (value: string) =>
 
 export const isEmailValid = (emailAddress?: string) => {
   if (emailAddress) {
-    const emailRegex =
-      /^[\w!#$%&'*+/=?`{|}~^-]+(?:\.[\w!#$%&'*+/=?`{|}~^-]+)*@(?:[A-Z0-9-]+\.)+[A-Z]{2,6}$/i
+    const emailRegex = /^[\w!#$%&'*+/=?`{|}~^-]+(?:\.[\w!#$%&'*+/=?`{|}~^-]+)*@(?:[A-Z0-9-]+\.)+[A-Z]{2,6}$/i
     return emailRegex.test(emailAddress)
   }
   return false

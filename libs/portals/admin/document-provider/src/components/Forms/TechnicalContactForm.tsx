@@ -29,8 +29,9 @@ export const TechnicalContactForm: FC<React.PropsWithChildren<Props>> = ({
     formState: { errors },
   } = useForm()
   const { formatMessage } = useLocale()
-  const { updateTechnicalContact, loading } =
-    useUpdateTechnicalContact(organisationId)
+  const { updateTechnicalContact, loading } = useUpdateTechnicalContact(
+    organisationId,
+  )
 
   const onSubmit: SubmitHandler<any> = (contact: Contact) => {
     if (contact) {

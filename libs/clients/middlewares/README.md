@@ -226,7 +226,8 @@ const enhancedFetch = createEnhancedFetch({
   name: 'my-fetch',
   cache: {
     cacheManager,
-    overrideCacheControl: (request, response) => buildCacheControl({ maxAge: 60 }),
+    overrideCacheControl: (request, response) =>
+      buildCacheControl({ maxAge: 60 }),
   },
 })
 ```

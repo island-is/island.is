@@ -94,7 +94,8 @@ export function TabBar(props: TabBarProps) {
       onLayout={(e: LayoutChangeEvent) => {
         setWidth(e.nativeEvent.layout.width);
       }}
-      accessibilityRole="tablist">
+      accessibilityRole="tablist"
+    >
       <Tabs>
         {values.map((item, i) => {
           let currentIdx = indexes.current.get(i);
@@ -114,7 +115,8 @@ export function TabBar(props: TabBarProps) {
                 selectionAsync();
               }}
               testID={item.testID}
-              accessibilityRole="tab">
+              accessibilityRole="tab"
+            >
               <TabTitle
                 accessibilityLabel=""
                 style={{
@@ -122,7 +124,8 @@ export function TabBar(props: TabBarProps) {
                     animatedIndex.current ?? 1,
                     currentIdx,
                   ).interpolate({inputRange, outputRange: [1, 0, 1]}),
-                }}>
+                }}
+              >
                 {item.label}
               </TabTitle>
               <TabTitle
@@ -136,7 +139,8 @@ export function TabBar(props: TabBarProps) {
                     inputRange,
                     outputRange: [0, 1, 0],
                   }),
-                }}>
+                }}
+              >
                 {item.label}
               </TabTitle>
             </Tab>

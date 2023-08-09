@@ -84,9 +84,10 @@ const ComplaintsToAlthingiOmbudsmanTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/ComplaintsToAlthingiOmbudsmanSubmitted').then(
-                  (val) =>
-                    Promise.resolve(val.ComplaintsToAlthingiOmbudsmanSubmitted),
+                import(
+                  '../forms/ComplaintsToAlthingiOmbudsmanSubmitted'
+                ).then((val) =>
+                  Promise.resolve(val.ComplaintsToAlthingiOmbudsmanSubmitted),
                 ),
             },
           ],
