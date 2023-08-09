@@ -1,3 +1,5 @@
+import { ISLBorninMin } from '@island.is/clients/national-registry-v1'
+
 export interface FamilyChild {
   nationalId: string // Barn
   fullName: string // FulltNafn
@@ -26,4 +28,41 @@ export interface FamilyChild {
   municipality?: string // Sveitarfelag
   postal?: string // Postaritun
   fate?: string // Afdrif
+}
+export function formatFamilyChild(
+  familyChild: ISLBorninMin | null | undefined,
+): FamilyChild | null {
+  if (!familyChild) {
+    return null
+  }
+
+  return {
+    fullName: familyChild.FulltNafn,
+    nationalId: familyChild.Barn,
+    gender: familyChild.Kyn,
+    displayName: familyChild.BirtNafn,
+    firstName: familyChild.Eiginnafn,
+    lastName: familyChild.Kenninafn,
+    middleName: familyChild.Millinafn,
+    surname: familyChild.Kenninafn,
+    genderDisplay: familyChild.Kynheiti,
+    birthday: familyChild.Faedingardagur,
+    parent1: familyChild.Foreldri1,
+    nameParent1: familyChild.NafnForeldri1,
+    parent2: familyChild.Foreldri2,
+    nameParent2: familyChild.NafnForeldri2,
+    custody1: familyChild.Forsja1,
+    nameCustody1: familyChild.NafnForsja1,
+    custodyText1: familyChild.Forsjatxt1,
+    custody2: familyChild.Forsja2,
+    nameCustody2: familyChild.NafnForsja2,
+    custodyText2: familyChild.Forsjatxt2,
+    birthplace: familyChild.Faedingarstadur,
+    religion: familyChild.Trufelag,
+    nationality: familyChild.Rikisfang,
+    homeAddress: familyChild.Logheimili,
+    municipality: familyChild.Sveitarfelag,
+    postal: familyChild.Postaritun,
+    fate: familyChild.Afdrif,
+  }
 }

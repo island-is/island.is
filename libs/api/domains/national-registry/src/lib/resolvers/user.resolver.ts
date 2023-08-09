@@ -27,6 +27,7 @@ export class UserResolver {
   @Query(() => NationalRegistryUser, {
     name: 'nationalRegistryUser',
     nullable: true,
+    deprecationReason: 'Moving to NationalRegistryPerson',
   })
   @Audit()
   user(@CurrentUser() user: AuthUser): Promise<User> {

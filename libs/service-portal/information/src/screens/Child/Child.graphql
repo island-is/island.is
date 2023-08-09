@@ -23,7 +23,6 @@ query NationalRegistryChildCustody($api: String) {
       custodians {
         fullName
         nationalId
-        code
         text
       }
       birthParents {
@@ -32,8 +31,6 @@ query NationalRegistryChildCustody($api: String) {
       }
       birthplace {
         location
-        municipalityCode
-        dateOfBirth
       }
       citizenship {
         code

@@ -1,4 +1,4 @@
-export { ISLFjolskyldan, ISLEinstaklingur } from './lib/dto'
+export { ISLFjolskyldan, ISLEinstaklingur, ISLBorninMin } from './lib/dto'
 export {
   NationalRegistryApi,
   NationalRegistryConfig,

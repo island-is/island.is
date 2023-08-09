@@ -40,7 +40,7 @@ const FamilyMember = () => {
 
   const { data, loading, error } = useNationalRegistrySpouseQuery({
     variables: {
-      api: 'v3',
+      api: 'v1',
     },
   })
 
@@ -97,10 +97,10 @@ const FamilyMember = () => {
           content={
             error
               ? formatMessage(dataNotFoundMessage)
-              : data?.nationalRegistryPerson?.spouse?.maritalStatus
+              : data?.nationalRegistryPerson?.maritalStatus
               ? formatMessage(
                   natRegMaritalStatusMessageDescriptorRecord[
-                    data?.nationalRegistryPerson?.spouse?.maritalStatus
+                    data?.nationalRegistryPerson?.maritalStatus
                   ],
                 )
               : ''

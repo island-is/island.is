@@ -1,8 +1,8 @@
 query NationalRegistrySpouse($api: String) {
   nationalRegistryPerson(api: $api) {
+    maritalStatus
     spouse {
       nationalId
-      maritalStatus
       cohabitationWithSpouse
       cohabitant
       fullName

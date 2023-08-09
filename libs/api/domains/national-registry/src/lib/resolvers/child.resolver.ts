@@ -25,6 +25,8 @@ export class ChildResolver {
   @Query(() => [Child], {
     name: 'nationalRegistryChildren',
     nullable: true,
+    deprecationReason:
+      'Up for removal. Query children/childCustody for authenticated user instead',
   })
   @Audit()
   getMyChildren(@CurrentUser() user: AuthUser): Promise<FamilyChild[]> {

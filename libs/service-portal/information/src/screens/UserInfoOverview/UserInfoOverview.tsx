@@ -18,7 +18,7 @@ const UserInfoOverview = () => {
 
   const { data, loading, error } = useUserInfoOverviewQuery({
     variables: {
-      api: 'v3',
+      api: 'v1',
     },
   })
 

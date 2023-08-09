@@ -130,10 +130,10 @@ const SubjectInfo = () => {
               content={
                 error
                   ? formatMessage(dataNotFoundMessage)
-                  : nationalRegistryPerson?.spouse?.maritalStatus
+                  : nationalRegistryPerson?.maritalStatus
                   ? formatMessage(
                       natRegMaritalStatusMessageDescriptorRecord[
-                        nationalRegistryPerson?.spouse?.maritalStatus
+                        nationalRegistryPerson?.maritalStatus
                       ],
                     )
                   : ''

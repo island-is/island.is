@@ -47,7 +47,7 @@ const Child = () => {
 
   const { data, loading, error } = useNationalRegistryChildCustodyQuery({
     variables: {
-      api: 'v3',
+      api: 'v1',
     },
   })
 
@@ -65,6 +65,8 @@ const Child = () => {
     data?.nationalRegistryPerson?.childCustody?.find(
       (x) => x.nationalId === nationalId,
     ) || null
+
+  console.log(JSON.stringify(data?.nationalRegistryPerson))
 
   const parent1 = child?.birthParents ? child.birthParents[0] : undefined
   const parent2 = child?.birthParents ? child.birthParents[1] : undefined

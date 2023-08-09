@@ -25,6 +25,8 @@ export class FamilyMemberResolver {
   @Query(() => [FamilyMember], {
     name: 'nationalRegistryFamily',
     nullable: true,
+    deprecationReason:
+      'Up for removal. Query for custodians/parents/children/custodyinfo for the authenticated user instead of this.',
   })
   @Audit()
   getMyFamily(@CurrentUser() user: AuthUser): Promise<FamilyMember[]> {

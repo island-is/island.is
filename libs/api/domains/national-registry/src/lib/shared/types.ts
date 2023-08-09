@@ -1,7 +1,10 @@
 import { EinstaklingurDTOAllt } from '@island.is/clients/national-registry-v3'
 import { registerEnumType } from '@nestjs/graphql'
 import { Person } from './models'
-import { ISLEinstaklingur } from '@island.is/clients/national-registry-v1'
+import {
+  ISLBorninMin,
+  ISLEinstaklingur,
+} from '@island.is/clients/national-registry-v1'
 
 export enum Gender {
   MALE = 'male',
@@ -37,7 +40,11 @@ export type PersonV3 = Person & {
 
 export type PersonV1 = Person & {
   api: 'v1'
-  rawData?: ISLEinstaklingur | null
+  rawData?:
+    | (ISLEinstaklingur & {
+        children: Array<ISLBorninMin> | null
+      })
+    | null
 }
 
 export type SharedPerson = PersonV1 | PersonV3

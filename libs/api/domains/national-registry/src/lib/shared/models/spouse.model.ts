@@ -12,4 +12,10 @@ export class Spouse extends PersonBase {
 
   @Field(() => String, { nullable: true })
   cohabitant?: string | null
+
+  @Field(() => String, {
+    nullable: true,
+    deprecationReason: 'Renaming to fullName',
+  })
+  name?: string | null
 }

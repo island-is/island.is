@@ -4,10 +4,8 @@ query NationalRegistryPerson($api: String) {
     fullName
     gender
     exceptionFromDirectMarketing
-    firstName
-    middleName
-    lastName
     religion
+    maritalStatus
     citizenship {
       code
       name
@@ -18,7 +16,6 @@ query NationalRegistryPerson($api: String) {
     spouse {
       nationalId
       fullName
-      maritalStatus
     }
     housing {
       domicileId

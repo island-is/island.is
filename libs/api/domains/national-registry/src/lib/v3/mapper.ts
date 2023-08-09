@@ -9,7 +9,6 @@ import {
   EinstaklingurDTOLoghTengsl,
   EinstaklingurDTOItarAuka,
   EinstaklingurDTOLogForeldriItem,
-  EinstaklingurDTONafn,
   EinstaklingurDTONafnAllt,
 } from '@island.is/clients/national-registry-v3'
 import { mapGender, mapMaritalStatus } from '../shared/mapper'
@@ -27,6 +26,7 @@ import { PersonV3 } from '../shared/types'
 import { ExcludesFalse } from '../shared/utils'
 import { Housing } from '../shared/models/housing.model'
 import { Name } from '../shared/models/name.model'
+import * as kennitala from 'kennitala'
 
 export function formatPersonDiscriminated(
   individual: EinstaklingurDTOAllt | null | undefined,
@@ -49,18 +49,43 @@ export function formatPerson(
   if (individual == null || !individual.kennitala || !individual.nafn) {
     return null
   }
+
+  let legalResidence = ''
+  if (
+    individual.heimilisfang?.husHeiti &&
+    individual.heimilisfang.postnumer &&
+    individual.heimilisfang.poststod
+  ) {
+    legalResidence = `${individual.heimilisfang?.husHeiti}, ${individual.heimilisfang.postnumer} ${individual.heimilisfang.poststod}`
+  }
+
   return {
     nationalId: individual.kennitala,
     fullName: individual.nafn,
-    firstName: individual.fulltNafn?.eiginNafn ?? null,
-    middleName: individual.fulltNafn?.milliNafn ?? null,
-    lastName: individual.fulltNafn?.kenniNafn ?? null,
     nationalIdType: individual.tegundKennitolu ?? null,
     exceptionFromDirectMarketing: individual.bannmerking === 'true' ?? false,
     gender: mapGender(individual.kyn?.kynKodi ?? ''),
-    legalResidence: individual.heimilisfang?.husHeiti ?? null,
     religion: individual.trufelag?.trufelagHeiti ?? null,
     fate: individual.afdrif ?? null,
+    maritalStatus: mapMaritalStatus(
+      individual.hjuskaparstada?.hjuskaparstadaKodi ?? '',
+    ),
+
+    //DEPRECATION LINE -- below shall be removed
+    legalResidence: legalResidence ?? null,
+    banMarking: {
+      banMarked: individual.bannmerking === 'true' ?? false,
+    },
+    firstName: individual.fulltNafn?.eiginNafn ?? null,
+    middleName: individual.fulltNafn?.milliNafn ?? null,
+    lastName: individual.fulltNafn?.kenniNafn ?? null,
+    birthPlace: individual.faedingarstadur?.faedingarStadurHeiti ?? null,
+    familyNr: individual.logheimilistengsl?.logheimilistengsl,
+    age: kennitala.info(individual.kennitala).age,
+    birthday: kennitala.info(individual.kennitala).birthday,
+    address: individual.heimilisfang
+      ? formatAddress(individual.heimilisfang)
+      : null,
   }
 }
 
@@ -78,6 +103,7 @@ export function formatReligion(
 }
 
 export function formatHousing(
+  nationalId: string,
   housing: EinstaklingurDTOItarAuka | null | undefined,
   domicileData: EinstaklingurDTOLoghTengsl | null | undefined,
   address: EinstaklingurDTOHeimili | null | undefined,
@@ -95,6 +121,7 @@ export function formatHousing(
     domicileIdLast1stOfDecember: housing?.logheimiliskodi112 ?? null,
     domicileIdPreviousIcelandResidence: housing?.logheimiliskodiSIsl ?? null,
     domicileInhabitants: domicileData?.logheimilismedlimir
+      ?.filter((f) => f.kennitala !== nationalId)
       ?.map((f) => {
         if (!f.kennitala || !f.nafn) {
           return null
@@ -120,7 +147,6 @@ export function formatSpouse(
   return {
     nationalId: spouse.makiKennitala,
     fullName: spouse.makiNafn,
-    maritalStatus: mapMaritalStatus(spouse.hjuskaparstadaKodi ?? ''),
     cohabitationWithSpouse: spouse.sambudTexti ?? null,
   }
 }

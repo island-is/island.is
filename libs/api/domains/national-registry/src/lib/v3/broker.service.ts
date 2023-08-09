@@ -230,6 +230,6 @@ export class BrokerService {
           this.nationalRegistryV3.getDomicileData(nationalId),
           this.nationalRegistryV3.getAddress(nationalId),
         ])
-    return data && formatHousing(...data)
+    return data && formatHousing(nationalId, ...data)
   }
 }

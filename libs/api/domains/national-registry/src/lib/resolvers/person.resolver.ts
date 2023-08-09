@@ -31,6 +31,7 @@ import { Housing } from '../shared/models/housing.model'
 import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 import { Name } from '../shared/models/name.model'
 
+
 @UseGuards(IdsAuthGuard, IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.meDetails)
 @Resolver(() => Person)
@@ -41,11 +42,12 @@ export class PersonResolver {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
+  @UseGuards(IdsUserGuard, ScopesGuard)
+  @Scopes(ApiScope.meDetails)
   @Query(() => Person, {
-    nullable: true,
-    name: 'nationalRegistryPerson',
+    nullable: true
   })
-  @Audit()
+  @Audit({ namespace: '@island.is/api/national-registry' })
   async nationalRegistryPerson(
     @CurrentUser() user: AuthUser,
     @Args('api', { nullable: true }) api?: 'v1' | 'v3',
@@ -59,9 +61,10 @@ export class PersonResolver {
   })
   @Audit()
   async resolveCustodians(
+    @Context('req') { user }: { user: User },
     @Parent() person: SharedPerson,
   ): Promise<Array<Custodian> | null> {
-    return this.service.getCustodians(person.nationalId, person)
+    return this.service.getCustodians(person.nationalId, person, user.nationalId)
   }
 
   @ResolveField('birthParents', () => [PersonBase], {
@@ -69,9 +72,10 @@ export class PersonResolver {
   })
   @Audit()
   async resolveBirthParents(
+    @Context('req') { user }: { user: User },
     @Parent() person: SharedPerson,
   ): Promise<Array<PersonBase> | null> {
-    return this.service.getParents(person.nationalId, person)
+    return this.service.getParents(person.nationalId, person, user.nationalId)
   }
 
   @ResolveField('childCustody', () => [Person], {

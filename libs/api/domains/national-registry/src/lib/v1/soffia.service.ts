@@ -9,6 +9,8 @@ import { PersonV1 } from '../shared/types'
 import { mapGender, mapMaritalStatus } from '../shared/mapper'
 import { FamilyCorrectionResponse } from '../shared/models'
 import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
+import { formatFamilyChild } from './types/child.type'
+import { ExcludesFalse } from '../shared/utils'
 
 @Injectable()
 export class SoffiaService {
@@ -63,21 +65,49 @@ export class SoffiaService {
   }
   async getPerson(nationalId: string): Promise<PersonV1> {
     const user = await this.nationalRegistryApi.getUser(nationalId)
+
+    let children = null
+    try {
+      children = await this.nationalRegistryApi.getMyChildren(nationalId)
+    }
+    catch {
+      //nothing
+    }
+
     return {
       api: 'v1',
-      rawData: user,
+      rawData: {...user, children},
       nationalId: user.Kennitala,
-      firstName: user.Eiginnafn,
-      middleName: user.Millinafn,
-      lastName: user.Kenninafn,
       fullName: user.Fulltnafn,
       nationalIdType: null,
-      legalResidence: user.Logheimili,
       gender: mapGender(user.Kyn),
       religion: user.Trufelag,
       exceptionFromDirectMarketing:
         user.Bannmerking === '1' || user.Bannmerking?.toLowerCase() === 'já',
       fate: user.Afdrif1 || user.Afdrif2,
+      maritalStatus: mapMaritalStatus(user.hju),
+
+      //Deprecate below
+      familyNr: user.Fjolsknr,
+      firstName: user.Eiginnafn,
+      middleName: user.Millinafn,
+      lastName: user.Kenninafn,
+      banMarking: {
+        banMarked:
+          user.Bannmerking === '1' || user.Bannmerking?.toLowerCase() === 'já',
+        startDate: user.BannmerkingBreytt,
+      },
+      birthPlace: user.Faedingarstadur,
+      age: kennitala.info(user.Kennitala).age,
+      birthday: kennitala.info(user.Kennitala).birthday,
+      legalResidence: `${user.Logheimili}, ${user.Postnr} ${user.LogheimiliSveitarfelag}`,
+      address: {
+        code: user.LoghHusk,
+        lastUpdated: user.LoghHuskBreytt,
+        streetAddress: user.Logheimili,
+        city: user.LogheimiliSveitarfelag,
+        postalCode: user.Postnr,
+      },
     }
   }
 
@@ -162,35 +192,8 @@ export class SoffiaService {
 
         return isNotUser && isUnderEighteen
       })
-      .map((familyChild) => ({
-        fullName: familyChild.FulltNafn,
-        nationalId: familyChild.Barn,
-        gender: familyChild.Kyn,
-        displayName: familyChild.BirtNafn,
-        firstName: familyChild.Eiginnafn,
-        lastName: familyChild.Kenninafn,
-        middleName: familyChild.Millinafn,
-        surname: familyChild.Kenninafn,
-        genderDisplay: familyChild.Kynheiti,
-        birthday: familyChild.Faedingardagur,
-        parent1: familyChild.Foreldri1,
-        nameParent1: familyChild.NafnForeldri1,
-        parent2: familyChild.Foreldri2,
-        nameParent2: familyChild.NafnForeldri2,
-        custody1: familyChild.Forsja1,
-        nameCustody1: familyChild.NafnForsja1,
-        custodyText1: familyChild.Forsjatxt1,
-        custody2: familyChild.Forsja2,
-        nameCustody2: familyChild.NafnForsja2,
-        custodyText2: familyChild.Forsjatxt2,
-        birthplace: familyChild.Faedingarstadur,
-        religion: familyChild.Trufelag,
-        nationality: familyChild.Rikisfang,
-        homeAddress: familyChild.Logheimili,
-        municipality: familyChild.Sveitarfelag,
-        postal: familyChild.Postaritun,
-        fate: familyChild.Afdrif,
-      }))
+      .map((familyChild) => formatFamilyChild(familyChild))
+      .filter((Boolean as unknown) as ExcludesFalse)
       .sort((a, b) => {
         return (
           kennitala.info(b.nationalId).age - kennitala.info(a.nationalId).age
