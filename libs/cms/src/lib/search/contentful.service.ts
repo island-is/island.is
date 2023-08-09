@@ -5,7 +5,7 @@ import {
   CreateClientParams,
   Entry,
   EntryCollection,
-  SyncCollection,
+  Sys,
 } from 'contentful'
 import Bottleneck from 'bottleneck'
 import environment from '../environments/environment'
@@ -89,7 +89,7 @@ export class ContentfulService {
     })
   }
 
-  private getFilteredIds(chunkToProcess: Entry<unknown>[]): string[] {
+  private getFilteredIds(chunkToProcess: { sys: Sys }[]): string[] {
     return chunkToProcess.reduce((csvIds: string[], entry) => {
       // contentful sync api does not support limiting the sync to a single content type we filter here to reduce subsequent calls to Contentful
       if (environment.indexableTypes.includes(entry.sys.contentType.sys.id)) {
@@ -204,15 +204,27 @@ export class ContentfulService {
     }
   }
 
-  private getSyncData(typeOfSync: typeOfSync): Promise<SyncCollection> {
-    return this.contentfulClient.sync({
-      resolveLinks: true,
+  private async getSyncData(typeOfSync: typeOfSync) {
+    const syncData = await this.contentfulClient.sync({
       ...typeOfSync,
     })
+
+    // Return the sync data with just the sys objects since otherwise we are using unnecessarily much memory since we won't be using the fields properties for the most part
+    return {
+      entries: syncData.entries.map((e) => ({
+        sys: e.sys,
+        // In case the entry can be turned off via activeTranslations toggle we want to keep that information
+        fields: { activeTranslations: e.fields?.activeTranslations },
+      })),
+      deletedEntries: syncData.deletedEntries.map((e) => ({ sys: e.sys })),
+      nextSyncToken: syncData.nextSyncToken,
+      assets: syncData.assets.map((a) => ({ sys: a.sys })),
+      deletedAssets: syncData.deletedAssets.map((a) => ({ sys: a.sys })),
+    }
   }
 
   private async getPopulatedContentulEntries(
-    entries: Entry<unknown>[],
+    entries: { sys: Sys }[],
     locale: ElasticsearchIndexLocale,
     chunkSize: number,
   ): Promise<Entry<unknown>[]> {
