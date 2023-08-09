@@ -5,8 +5,7 @@ import {
 } from '../../../../support/disablers'
 import { session } from '../../../../support/session'
 import { helpers } from '../../../../support/locator-helpers'
-import { householdSupplementFormMessage } from '@island.is/application/templates/household-supplement'
-// import { householdSupplementFormMessage } from '@island.is/application/templates/household-supplement/messages'
+import { householdSupplementFormMessage } from '@island.is/application/templates/household-supplement/messages'
 import { label } from '../../../../support/i18n'
 
 const homeUrl = '/umsoknir/heimilisuppbot'
@@ -69,6 +68,7 @@ applicationTest.describe('Household Supplement', () => {
       // TODO: Do we need to create a test email and add it here like in the parental leave application?
       await emailBox.type('mockEmail@island.is')
 
+      // TODO: Should we select country code?
       const phoneNumber = page.getByRole('textbox', {
         name: label(householdSupplementFormMessage.info.applicantPhonenumber),
       })
@@ -112,11 +112,6 @@ applicationTest.describe('Household Supplement', () => {
         })
         .click()
 
-      // await page
-      // .getByRole('radio', {
-      //   name: label(householdSupplementFormMessage.shared.no),
-      // })
-      // .click()
       await page
         .getByRole('region', {
           name: label(
