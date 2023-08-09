@@ -124,7 +124,7 @@ export const Pagination: FC<PaginationProps> = ({
       <div>
         {renderEdgeLink({
           page: page + 1,
-          isActive: page < totalPages,
+          isActive: page < calculatedTotalPages,
           iconType: 'arrowRight',
         })}
       </div>

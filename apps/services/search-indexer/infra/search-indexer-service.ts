@@ -24,7 +24,7 @@ const envs = {
     prod: '40',
   },
   SHOULD_SEARCH_INDEXER_RESOLVE_NESTED_ENTRIES: {
-    dev: 'true',
+    dev: 'false',
     staging: 'true',
     prod: 'true',
   },

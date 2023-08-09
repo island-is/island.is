@@ -13,8 +13,7 @@ import {
   ColorSchemes,
 } from '@island.is/island-ui/core'
 import getConfig from 'next/config'
-import { NextComponentType, NextPageContext } from 'next'
-import { Screen, GetInitialPropsContext } from '../types'
+import { Screen } from '../types'
 import Cookies from 'js-cookie'
 import { CACHE_CONTROL_HEADER } from '@island.is/shared/constants'
 import { userMonitoring } from '@island.is/user-monitoring'
@@ -44,7 +43,7 @@ import {
 } from '../graphql/schema'
 import { GlobalContextProvider } from '../context'
 import { MenuTabsContext } from '../context/MenuTabsContext/MenuTabsContext'
-import { useI18n } from '../i18n'
+import { getLocaleFromPath, useI18n } from '../i18n'
 import { GET_ALERT_BANNER_QUERY } from '../screens/queries/AlertBanner'
 import { useNamespace } from '../hooks'
 import {
@@ -123,11 +122,7 @@ if (
   })
 }
 
-const Layout: NextComponentType<
-  GetInitialPropsContext<NextPageContext>,
-  LayoutProps,
-  LayoutProps
-> = ({
+const Layout: Screen<LayoutProps> = ({
   showSearchInHeader = true,
   wrapContent = true,
   showHeader = true,
@@ -154,8 +149,8 @@ const Layout: NextComponentType<
   const { activeLocale, t } = useI18n()
   const { linkResolver } = useLinkResolver()
   const n = useNamespace(namespace)
-  const { asPath } = useRouter()
-  const fullUrl = `${respOrigin}${asPath}`
+  const router = useRouter()
+  const fullUrl = `${respOrigin}${router.asPath}`
 
   const menuTabs = [
     {
@@ -209,6 +204,18 @@ const Layout: NextComponentType<
     organizationAlertBannerContent,
   ])
 
+  // Update html lang in case a route change leads us to a new locale
+  useEffect(() => {
+    const handleRouteChange = () => {
+      const language = getLocaleFromPath(router.asPath)
+      document.documentElement.lang = language
+    }
+    router.events.on('routeChangeComplete', handleRouteChange)
+    return () => {
+      router.events.off('routeChangeComplete', handleRouteChange)
+    }
+  }, [router.asPath, router.events])
+
   const preloadedFonts = [
     '/fonts/ibm-plex-sans-v7-latin-300.woff2',
     '/fonts/ibm-plex-sans-v7-latin-regular.woff2',
@@ -217,7 +224,7 @@ const Layout: NextComponentType<
     '/fonts/ibm-plex-sans-v7-latin-600.woff2',
   ]
 
-  const isServiceWeb = pathIsRoute(asPath, 'serviceweb', activeLocale)
+  const isServiceWeb = pathIsRoute(router.asPath, 'serviceweb', activeLocale)
 
   return (
     <GlobalContextProvider namespace={namespace} isServiceWeb={isServiceWeb}>
@@ -440,7 +447,7 @@ const Layout: NextComponentType<
   )
 }
 
-Layout.getInitialProps = async ({ apolloClient, locale, req }) => {
+Layout.getProps = async ({ apolloClient, locale, req }) => {
   const lang = locale ?? 'is' // Defaulting to is when locale is undefined
 
   const { origin } = absoluteUrl(req, 'localhost:4200')
@@ -593,11 +600,7 @@ Layout.getInitialProps = async ({ apolloClient, locale, req }) => {
   }
 }
 
-type LayoutWrapper<T> = NextComponentType<
-  GetInitialPropsContext<NextPageContext>,
-  { layoutProps: LayoutProps; componentProps: T },
-  { layoutProps: LayoutProps; componentProps: T }
->
+type LayoutWrapper<T> = Screen<{ layoutProps: LayoutProps; componentProps: T }>
 
 interface LayoutComponentProps {
   themeConfig?: Partial<LayoutProps>
@@ -621,20 +624,20 @@ export const withMainLayout = <T,>(
     )
   }
 
-  WithMainLayout.getInitialProps = async (ctx) => {
+  WithMainLayout.getProps = async (ctx) => {
     // Configure default full-page caching.
     if (ctx.res) {
       ctx.res.setHeader('Cache-Control', CACHE_CONTROL_HEADER)
     }
 
-    const getLayoutInitialProps = Layout.getInitialProps as Exclude<
-      typeof Layout.getInitialProps,
+    const getLayoutProps = Layout.getProps as Exclude<
+      typeof Layout.getProps,
       undefined
     >
 
     const [layoutProps, componentProps] = await Promise.all([
-      getLayoutInitialProps(ctx),
-      Component.getInitialProps ? Component.getInitialProps(ctx) : ({} as T),
+      getLayoutProps(ctx),
+      Component.getProps ? Component.getProps(ctx) : ({} as T),
     ])
     const layoutComponentProps = componentProps as LayoutComponentProps
 

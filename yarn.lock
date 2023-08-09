@@ -22577,9 +22577,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dd-trace@npm:3.29.1":
-  version: 3.29.1
-  resolution: "dd-trace@npm:3.29.1"
+"dd-trace@npm:3.32.1":
+  version: 3.32.1
+  resolution: "dd-trace@npm:3.32.1"
   dependencies:
     "@datadog/native-appsec": ^3.2.0
     "@datadog/native-iast-rewriter": 2.0.1
@@ -22591,10 +22591,10 @@ __metadata:
     "@opentelemetry/core": ^1.14.0
     crypto-randomuuid: ^1.0.0
     diagnostics_channel: ^1.1.0
-    ignore: ^5.2.0
-    import-in-the-middle: ^1.3.5
+    ignore: ^5.2.4
+    import-in-the-middle: ^1.4.2
     int64-buffer: ^0.1.9
-    ipaddr.js: ^2.0.1
+    ipaddr.js: ^2.1.0
     istanbul-lib-coverage: 3.2.0
     koalas: ^1.0.2
     limiter: ^1.1.4
@@ -22606,19 +22606,19 @@ __metadata:
     methods: ^1.1.2
     module-details-from-path: ^1.0.3
     msgpack-lite: ^0.1.26
-    node-abort-controller: ^3.0.1
+    node-abort-controller: ^3.1.1
     opentracing: ">=0.12.1"
     path-to-regexp: ^0.1.2
     protobufjs: ^7.2.4
-    retry: ^0.10.1
-    semver: ^7.3.8
-  checksum: 840b6cc8b6f0a78329eae738217644757566c5e39d4b823f9be3586139fddf6532dec4c57f6f1102e83bceef32e8ddeb1949bf50e0761c73476a6fc69b9b520f
+    retry: ^0.13.1
+    semver: ^7.5.4
+  checksum: 161b337a561e9ae457d4e5896664e275c3c8494098b5caaa231c8fb2c7c5b3dde9f3c5a2d7c1ef417a7b7991c1fb5021213af9e9231525bd1d315dad4a99b542
   languageName: node
   linkType: hard
 
-"dd-trace@patch:dd-trace@npm%3A3.29.1#./.yarn/patches/dd-trace-npm-3.29.1-4e4e5d3a0c.patch::locator=island.is%40workspace%3A.":
-  version: 3.29.1
-  resolution: "dd-trace@patch:dd-trace@npm%3A3.29.1#./.yarn/patches/dd-trace-npm-3.29.1-4e4e5d3a0c.patch::version=3.29.1&hash=c6fa1b&locator=island.is%40workspace%3A."
+"dd-trace@patch:dd-trace@npm%3A3.32.1#./.yarn/patches/dd-trace-npm-3.29.1-4e4e5d3a0c.patch::locator=island.is%40workspace%3A.":
+  version: 3.32.1
+  resolution: "dd-trace@patch:dd-trace@npm%3A3.32.1#./.yarn/patches/dd-trace-npm-3.29.1-4e4e5d3a0c.patch::version=3.32.1&hash=c6fa1b&locator=island.is%40workspace%3A."
   dependencies:
     "@datadog/native-appsec": ^3.2.0
     "@datadog/native-iast-rewriter": 2.0.1
@@ -22630,10 +22630,10 @@ __metadata:
     "@opentelemetry/core": ^1.14.0
     crypto-randomuuid: ^1.0.0
     diagnostics_channel: ^1.1.0
-    ignore: ^5.2.0
-    import-in-the-middle: ^1.3.5
+    ignore: ^5.2.4
+    import-in-the-middle: ^1.4.2
     int64-buffer: ^0.1.9
-    ipaddr.js: ^2.0.1
+    ipaddr.js: ^2.1.0
     istanbul-lib-coverage: 3.2.0
     koalas: ^1.0.2
     limiter: ^1.1.4
@@ -22645,13 +22645,13 @@ __metadata:
     methods: ^1.1.2
     module-details-from-path: ^1.0.3
     msgpack-lite: ^0.1.26
-    node-abort-controller: ^3.0.1
+    node-abort-controller: ^3.1.1
     opentracing: ">=0.12.1"
     path-to-regexp: ^0.1.2
     protobufjs: ^7.2.4
-    retry: ^0.10.1
-    semver: ^7.3.8
-  checksum: 3a493d359fe0b35ad1fc9e6addbab4ffa5648f8981cd7599ea1502c10d2669d1433e8d1aebd2caf9e0b6458f815cc3c92852a0cc2a00833ebc0544ad0cbff35c
+    retry: ^0.13.1
+    semver: ^7.5.4
+  checksum: 569887dffe183aab2082cfa12e5aef56a61809d256dee4d488e53c7738af84ee5b32d90391da1d3fbfe6475c19e11fe1d482573bd8988f1fcec5a12f71d13039
   languageName: node
   linkType: hard
 
@@ -29156,6 +29156,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"ignore@npm:^5.2.4":
+  version: 5.2.4
+  resolution: "ignore@npm:5.2.4"
+  checksum: 3d4c309c6006e2621659311783eaea7ebcd41fe4ca1d78c91c473157ad6666a57a2df790fe0d07a12300d9aac2888204d7be8d59f9aaf665b1c7fcdb432517ef
+  languageName: node
+  linkType: hard
+
 "image-size@npm:^0.6.0":
   version: 0.6.3
   resolution: "image-size@npm:0.6.3"
@@ -29264,15 +29271,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"import-in-the-middle@npm:^1.3.5":
-  version: 1.4.1
-  resolution: "import-in-the-middle@npm:1.4.1"
+"import-in-the-middle@npm:^1.4.2":
+  version: 1.4.2
+  resolution: "import-in-the-middle@npm:1.4.2"
   dependencies:
     acorn: ^8.8.2
     acorn-import-assertions: ^1.9.0
     cjs-module-lexer: ^1.2.2
     module-details-from-path: ^1.0.3
-  checksum: 39cf8ba24f660dfd7f57cd871ea39b0162cb80d6fefd9150988b8836e50c3c64d9ea8793777f631730de929e90d8bd5cf18bcb65338d05e810c8d26075cddb26
+  checksum: 52971f821e9a3c94834cd5cf0ab5178321c07d4f4babd547b3cb24c4de21670d05b42ca1523890e7e90525c3bba6b7db7e54cf45421919b0b2712a34faa96ea5
   languageName: node
   linkType: hard
 
@@ -29702,6 +29709,13 @@ __metadata:
   version: 2.0.1
   resolution: "ipaddr.js@npm:2.0.1"
   checksum: dd194a394a843d470f88d17191b0948f383ed1c8e320813f850c336a0fcb5e9215d97ec26ca35ab4fbbd31392c8b3467f3e8344628029ed3710b2ff6b5d1034e
+  languageName: node
+  linkType: hard
+
+"ipaddr.js@npm:^2.1.0":
+  version: 2.1.0
+  resolution: "ipaddr.js@npm:2.1.0"
+  checksum: 807a054f2bd720c4d97ee479d6c9e865c233bea21f139fb8dabd5a35c4226d2621c42e07b4ad94ff3f82add926a607d8d9d37c625ad0319f0e08f9f2bd1968e2
   languageName: node
   linkType: hard
 
@@ -30837,7 +30851,7 @@ __metadata:
     dataloader: 2.1.0
     date-fns: 2.28.0
     datebook: 7.0.8
-    dd-trace: 3.29.1
+    dd-trace: 3.32.1
     deepmerge: 4.2.2
     dotenv: 14.3.2
     downshift: 5.4.3
@@ -37251,6 +37265,13 @@ __metadata:
   version: 3.0.1
   resolution: "node-abort-controller@npm:3.0.1"
   checksum: 2b3d75c65249fea99e8ba22da3a8bc553f034f44dd12f5f4b38b520f718b01c88718c978f0c24c2a460fc01de9a80b567028f547b94440cb47adeacfeb82c2ee
+  languageName: node
+  linkType: hard
+
+"node-abort-controller@npm:^3.1.1":
+  version: 3.1.1
+  resolution: "node-abort-controller@npm:3.1.1"
+  checksum: 2c340916af9710328b11c0828223fc65ba320e0d082214a211311bf64c2891028e42ef276b9799188c4ada9e6e1c54cf7a0b7c05dd9d59fcdc8cd633304c8047
   languageName: node
   linkType: hard
 
@@ -44028,13 +44049,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"retry@npm:^0.10.1":
-  version: 0.10.1
-  resolution: "retry@npm:0.10.1"
-  checksum: 133ef7c2028bcb09544a6fb9bed9f8266fffeaf72c855f73c2918ace9ef2abd7ccba03744564bcd1a8e948ed70518f8970852f46e649f9e3db6fefb0148cda35
-  languageName: node
-  linkType: hard
-
 "retry@npm:^0.12.0":
   version: 0.12.0
   resolution: "retry@npm:0.12.0"
@@ -44749,6 +44763,17 @@ __metadata:
   bin:
     semver: bin/semver.js
   checksum: ba9c7cbbf2b7884696523450a61fee1a09930d888b7a8d7579025ad93d459b2d1949ee5bbfeb188b2be5f4ac163544c5e98491ad6152df34154feebc2cc337c1
+  languageName: node
+  linkType: hard
+
+"semver@npm:^7.5.4":
+  version: 7.5.4
+  resolution: "semver@npm:7.5.4"
+  dependencies:
+    lru-cache: ^6.0.0
+  bin:
+    semver: bin/semver.js
+  checksum: 12d8ad952fa353b0995bf180cdac205a4068b759a140e5d3c608317098b3575ac2f1e09182206bf2eb26120e1c0ed8fb92c48c592f6099680de56bb071423ca3
   languageName: node
   linkType: hard
 

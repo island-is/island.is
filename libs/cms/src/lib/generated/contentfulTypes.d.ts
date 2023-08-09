@@ -2991,6 +2991,7 @@ export interface ISliceConnectedComponentFields {
     | 'OrganizationSearchBox'
     | 'Verðbréfamiðlarar/Brokers'
     | 'PublicVehicleSearch'
+    | 'PlateAvailableSearch'
     | undefined
 
   /** Localized JSON */

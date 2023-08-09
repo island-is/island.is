@@ -1,5 +1,10 @@
 import withApollo from '@island.is/web/graphql/withApollo'
 import { withLocale } from '@island.is/web/i18n'
 import homeScreen from '@island.is/web/screens/Home/Home'
+import { getServerSidePropsWrapper } from '@island.is/web/utils/getServerSidePropsWrapper'
 
-export default withApollo(withLocale('en')(homeScreen))
+const Screen = withApollo(withLocale('en')(homeScreen))
+
+export default Screen
+
+export const getServerSideProps = getServerSidePropsWrapper(Screen)

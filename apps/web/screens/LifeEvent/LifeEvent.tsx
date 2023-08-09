@@ -201,7 +201,7 @@ export const LifeEvent: Screen<LifeEventProps> = ({
   )
 }
 
-LifeEvent.getInitialProps = async ({ apolloClient, locale, query }) => {
+LifeEvent.getProps = async ({ apolloClient, locale, query }) => {
   const [
     {
       data: { getLifeEventPage: lifeEvent },
