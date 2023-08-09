@@ -119,13 +119,14 @@ const Category: Screen<CategoryProps> = ({
   const { groups, cards, otherArticles } = articles.reduce(
     (content, article) => {
       // check if this is not the main category for this article
-      if (article?.category?.title !== getCurrentCategory().title) {
+      if (article?.category?.title !== getCurrentCategory()?.title) {
         content.otherArticles.push(article)
         return content
       }
       // Check if article belongs to multiple groups in this category
       else if (
-        article?.otherCategories
+        article?.otherCategories &&
+        article.otherCategories
           .map((category) => category.title)
           .includes(getCurrentCategory().title)
       ) {
@@ -153,7 +154,7 @@ const Category: Screen<CategoryProps> = ({
     {
       groups: {},
       cards: [],
-      otherArticles: [],
+      otherArticles: [] as Articles,
     },
   )
 
@@ -187,7 +188,7 @@ const Category: Screen<CategoryProps> = ({
   const sidebarCategoryLinks = categories
     .filter(
       (item) =>
-        category.id === item.id ||
+        category?.id === item.id ||
         (item?.slug !== 'thjonusta-island-is' &&
           item?.slug !== 'services-on-island-is'),
     )
@@ -212,14 +213,14 @@ const Category: Screen<CategoryProps> = ({
 
     // add "other" articles as well
     const articlesBySubgroup = otherArticles.reduce((result, item) => {
-      const titles = item.otherSubgroups.map((x) => x.title)
+      const titles = item.otherSubgroups?.map((x) => x.title)
       const subgroupsFound = intersection(Object.keys(result), titles)
       const key = 'unknown'
 
       // if there is no sub group found then at least show it in the group
       if (
         !subgroupsFound.length &&
-        item.otherGroups.find((x) => x.slug === groupSlug)
+        item.otherGroups?.find((x) => x.slug === groupSlug)
       ) {
         return {
           ...result,
@@ -247,13 +248,17 @@ const Category: Screen<CategoryProps> = ({
   const sortArticles = (articles: Articles) => {
     // Sort articles by importance (which defaults to 0).
     // If both articles being compared have the same importance we sort by comparing their titles.
-    const sortedArticles = articles.sort((a, b) =>
-      a.importance > b.importance
+    const sortedArticles = articles.sort((a, b) => {
+      if (!a.importance || !b.importance) {
+        return a.importance ? -1 : b.importance ? 1 : sortAlpha('title')(a, b)
+      }
+
+      return a.importance > b.importance
         ? -1
         : a.importance === b.importance
         ? sortAlpha('title')(a, b)
-        : 1,
-    )
+        : 1
+    })
 
     // If it's sorted alphabetically we need to be able to communicate that.
     const isSortedAlphabetically =
@@ -274,10 +279,14 @@ const Category: Screen<CategoryProps> = ({
 
       // Look up the subgroups being sorted and find+compare their importance.
       // If their importance is equal we sort alphabetically.
-      const foundA = availableSubgroups.find((subgroup) => subgroup.title === a)
-      const foundB = availableSubgroups.find((subgroup) => subgroup.title === b)
+      const foundA = availableSubgroups.find(
+        (subgroup) => subgroup?.title === a,
+      )
+      const foundB = availableSubgroups.find(
+        (subgroup) => subgroup?.title === b,
+      )
 
-      if (foundA && foundB) {
+      if (foundA?.importance && foundB?.importance) {
         return foundA.importance > foundB.importance
           ? -1
           : foundA.importance === foundB.importance
@@ -288,13 +297,16 @@ const Category: Screen<CategoryProps> = ({
       return a.localeCompare(b)
     })
 
-  const sortedGroups = Object.values(
-    groups,
-  ).sort((a: ArticleGroup, b: ArticleGroup) =>
-    a.importance > b.importance
+  const sortedGroups = Object.values<ArticleGroup>(groups).sort((a, b) => {
+    if (!a.importance || !b.importance) {
+      return a.importance ? -1 : b.importance ? 1 : sortAlpha('title')(a, b)
+    }
+    return a.importance > b.importance
       ? -1
-      : a.importance === b.importance && sortAlpha('title')(a, b),
-  )
+      : a.importance === b.importance
+      ? sortAlpha('title')(a, b)
+      : 1
+  })
 
   const ArticleGroupComponent = ({
     groupSlug,
@@ -368,7 +380,7 @@ const Category: Screen<CategoryProps> = ({
                             <TopicCard
                               href={
                                 linkResolver(
-                                  typename.toLowerCase() as LinkType,
+                                  typename?.toLowerCase() as LinkType,
                                   [slug],
                                 ).href
                               }
@@ -399,7 +411,7 @@ const Category: Screen<CategoryProps> = ({
   return (
     <>
       <Head>
-        <title>{category.title} | Ísland.is</title>
+        <title>{category?.title} | Ísland.is</title>
       </Head>
       <SidebarLayout
         isSticky={false}
@@ -500,15 +512,15 @@ const Category: Screen<CategoryProps> = ({
             }}
             items={sidebarCategoryLinks}
             title={n('sidebarHeader')}
-            activeItemTitle={category.title}
+            activeItemTitle={category?.title}
           />
         </Box>
         <Box paddingBottom={[5, 5, 10]}>
           <Text variant="h1" as="h1" paddingTop={[4, 4, 0]} paddingBottom={2}>
-            {category.title}
+            {category?.title}
           </Text>
           <Text variant="intro" as="p">
-            {category.description}
+            {category?.description}
           </Text>
         </Box>
         <Stack space={2}>

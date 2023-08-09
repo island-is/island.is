@@ -159,22 +159,30 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<IcelandicGovernmentIns
     let shouldBeShown = searchTermMatches
 
     if (parameters.fieldOfWork.length > 0) {
-      shouldBeShown =
-        shouldBeShown && parameters.fieldOfWork.includes(vacancy.fieldOfWork)
+      shouldBeShown = Boolean(
+        shouldBeShown &&
+          vacancy.fieldOfWork &&
+          parameters.fieldOfWork.includes(vacancy.fieldOfWork),
+      )
     }
 
     if (parameters.location.length > 0) {
       shouldBeShown =
         shouldBeShown &&
-        vacancy.locations.some((location) =>
-          parameters.location.includes(location?.title),
+        Boolean(
+          vacancy.locations?.some(
+            (location) =>
+              location?.title && parameters.location.includes(location?.title),
+          ),
         )
     }
 
     if (parameters.institution.length > 0) {
-      shouldBeShown =
+      shouldBeShown = Boolean(
         shouldBeShown &&
-        parameters.institution.includes(vacancy.institutionName)
+          vacancy.institutionName &&
+          parameters.institution.includes(vacancy.institutionName),
+      )
     }
 
     return shouldBeShown
