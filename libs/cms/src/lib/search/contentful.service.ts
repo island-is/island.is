@@ -213,8 +213,10 @@ export class ContentfulService {
     for (let i = 0; i < syncData.entries.length; i += 1) {
       syncData.entries[i] = {
         ...syncData.entries[i],
-        // In case the entry can be turned off via activeTranslations toggle we want to keep that information
-        fields: syncData.entries[i].fields?.activeTranslations,
+        fields: {
+          // In case the entry can be turned off via activeTranslations toggle we want to keep that information
+          activeTranslations: syncData.entries[i].fields?.activeTranslations,
+        },
       }
     }
 
