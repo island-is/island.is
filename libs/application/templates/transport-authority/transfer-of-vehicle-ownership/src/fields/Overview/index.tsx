@@ -76,6 +76,7 @@ export const Overview: FC<FieldBaseProps & ReviewScreenProps> = ({
     reviewerNationalId
 
   const doSubmitApproval = async () => {
+    console.log('submittingapproval - for dev development')
     const approveAnswers = getApproveAnswers(
       reviewerNationalId,
       application.answers,
@@ -108,6 +109,7 @@ export const Overview: FC<FieldBaseProps & ReviewScreenProps> = ({
   }
 
   const doSubmitApplication = async (answers: FormValue) => {
+    console.log('submittingapplication - for dev development')
     const res = await submitApplication({
       variables: {
         input: {
