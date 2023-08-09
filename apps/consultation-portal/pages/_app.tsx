@@ -15,7 +15,7 @@ const ConsultationPortalApplication: any = ({ Component, pageProps }) => {
         <AuthProvider>
           <AppLayout>
             <PageLoader />
-            <Component {...pageProps} />
+            <Component {...pageProps.pageProps} />
           </AppLayout>
         </AuthProvider>
       </Provider>
@@ -47,3 +47,5 @@ ConsultationPortalApplication.getInitialProps = async (
     },
   }
 }
+
+export default ConsultationPortalApplication
