@@ -2,7 +2,7 @@ import {
   CurrentUser,
   IdsAuthGuard,
   IdsUserGuard,
-  User,
+  type User,
 } from '@island.is/auth-nest-tools'
 import { Audit } from '@island.is/nest/audit'
 import { HealthDirectorateClientService } from '@island.is/clients/health-directorate'
