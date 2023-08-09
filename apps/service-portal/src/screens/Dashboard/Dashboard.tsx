@@ -72,37 +72,48 @@ export const Dashboard: FC<{}> = () => {
                 >
                   {navRoot.path && (
                     <>
-                      <CategoryCard
-                        autoStack
-                        hyphenate
-                        truncateHeading
-                        component={Link}
-                        to={navRoot.path}
-                        icon={
-                          isMobile && navRoot.icon ? (
-                            <Icon
-                              icon={navRoot.icon.icon}
-                              type="outline"
-                              color="blue400"
-                            />
-                          ) : (
-                            iconTypeToSVG(navRoot.icon?.icon ?? '', '') ??
-                            (navRoot.icon ? (
+                      <Box position="relative">
+                        {navRoot.enabled === false && (
+                          <Icon
+                            color="blue600"
+                            type="outline"
+                            icon="lockClosed"
+                            size="small"
+                            className={styles.lock}
+                          />
+                        )}
+                        <CategoryCard
+                          autoStack
+                          hyphenate
+                          truncateHeading
+                          component={Link}
+                          to={navRoot.path}
+                          icon={
+                            isMobile && navRoot.icon ? (
                               <Icon
                                 icon={navRoot.icon.icon}
                                 type="outline"
                                 color="blue400"
                               />
-                            ) : undefined)
-                          )
-                        }
-                        heading={formatMessage(navRoot.name)}
-                        text={
-                          navRoot.description
-                            ? formatMessage(navRoot.description)
-                            : formatMessage(navRoot.name)
-                        }
-                      />
+                            ) : (
+                              iconTypeToSVG(navRoot.icon?.icon ?? '', '') ??
+                              (navRoot.icon ? (
+                                <Icon
+                                  icon={navRoot.icon.icon}
+                                  type="outline"
+                                  color="blue400"
+                                />
+                              ) : undefined)
+                            )
+                          }
+                          heading={formatMessage(navRoot.name)}
+                          text={
+                            navRoot.description
+                              ? formatMessage(navRoot.description)
+                              : formatMessage(navRoot.name)
+                          }
+                        />
+                      </Box>
                       {navRoot.subscribesTo === 'documents' && (
                         <Box
                           borderRadius="circle"

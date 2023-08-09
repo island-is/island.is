@@ -5,6 +5,7 @@ import {
   ToastContainer,
   Navigation,
   NavigationItem,
+  Icon,
 } from '@island.is/island-ui/core'
 import ContentBreadcrumbs from '../../components/ContentBreadcrumbs/ContentBreadcrumbs'
 import AuthOverlay from '../Loaders/AuthOverlay/AuthOverlay'
@@ -28,6 +29,9 @@ import { MAIN_NAVIGATION } from '../../lib/masterNavigation'
 import { theme } from '@island.is/island-ui/theme'
 import FullWidthLayout from './FullWidthLayout'
 import { fwPaths } from '../../lib/fullWidthPaths'
+import * as styles from './Layout.css'
+
+export type SubNavItemType = NavigationItem & { enabled?: boolean }
 
 export const Layout: FC = ({ children }) => {
   useNamespaces(['service.portal', 'global', 'portals'])
@@ -63,17 +67,19 @@ export const Layout: FC = ({ children }) => {
             return mapChildren(child)
           }),
         accordion: true,
+        enabled: item.enabled,
       }
     } else {
       return {
         title: formatMessage(item.name),
         href: item.path,
         active: pathname === item.path,
+        enabled: item.enabled,
       }
     }
   }
 
-  const subNavItems: NavigationItem[] | undefined = activeParent?.children
+  const subNavItems: SubNavItemType[] | undefined = activeParent?.children
     ?.filter((item) => !item.navHide)
     ?.map((item: ServicePortalNavigationItem) => {
       return mapChildren(item)
@@ -108,9 +114,20 @@ export const Layout: FC = ({ children }) => {
                 {subNavItems && subNavItems.length > 0 && (
                   <Box borderRadius="large" background="blue100">
                     <Navigation
-                      renderLink={(link, item) => {
+                      renderLink={(link, item: SubNavItemType | undefined) => {
                         return item?.href ? (
-                          <ReactLink to={item?.href}>{link}</ReactLink>
+                          <ReactLink to={item?.href}>
+                            {link}
+                            {item.enabled === false && !item.items?.length && (
+                              <Icon
+                                color="blue600"
+                                type="filled"
+                                icon="lockClosed"
+                                size="small"
+                                className={styles.lock}
+                              />
+                            )}
+                          </ReactLink>
                         ) : (
                           link
                         )
@@ -142,7 +159,7 @@ export const Layout: FC = ({ children }) => {
                 <Navigation
                   renderLink={(link, item) => {
                     return item?.href ? (
-                      <ReactLink to={item?.href}>{link}</ReactLink>
+                      <ReactLink to={item?.href}>{link}x</ReactLink>
                     ) : (
                       link
                     )

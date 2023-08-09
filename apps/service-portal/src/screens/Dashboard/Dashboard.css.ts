@@ -22,6 +22,13 @@ export const badge = styleVariants({
   },
 })
 
+export const lock = style({
+  position: 'absolute',
+  zIndex: 1,
+  top: 8,
+  right: 8,
+})
+
 export const svgOutline = style({})
 
 globalStyle(`${svgOutline} svg path`, {

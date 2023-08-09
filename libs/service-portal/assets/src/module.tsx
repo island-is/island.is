@@ -36,7 +36,13 @@ export const assetsModule: PortalModule = {
       {
         name: m.assets,
         path: AssetsPaths.AssetsRoot,
-        enabled: userInfo.scopes.includes(ApiScope.assets),
+        enabled: [
+          ApiScope.assets,
+          ApiScope.workMachines,
+          ApiScope.vehicles,
+          ApiScope.internal,
+          ApiScope.internalProcuring,
+        ].some((scope) => userInfo.scopes.includes(scope)),
         element: <Navigate to={AssetsPaths.AssetsRealEstate} replace />,
       },
       {

@@ -49,7 +49,9 @@ export const educationModule: PortalModule = {
     {
       name: 'Menntun',
       path: EducationPaths.EducationRoot,
-      enabled: userInfo.scopes.includes(ApiScope.education),
+      enabled:
+        userInfo.scopes.includes(ApiScope.education) ||
+        userInfo.scopes.includes(ApiScope.vehicles),
       element: <Navigate to={EducationPaths.EducationAssessment} replace />,
     },
 

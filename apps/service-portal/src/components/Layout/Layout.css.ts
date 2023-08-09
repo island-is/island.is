@@ -11,6 +11,14 @@ export const breadIcon = style({
   top: '3px',
 })
 
+export const lock = style({
+  position: 'absolute',
+  margin: 'auto',
+  right: 20,
+  top: 0,
+  bottom: 0,
+})
+
 export const btn = style({})
 
 globalStyle(`${btn} > span`, {
