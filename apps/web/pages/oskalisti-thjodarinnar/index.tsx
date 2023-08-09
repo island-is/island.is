@@ -21,7 +21,6 @@ function displayFeatureUpvote() {
   )
 }
 
-
 const Screen = withApollo(
   withLocale('is')(
     withMainLayout(displayFeatureUpvote, {
@@ -34,14 +33,3 @@ const Screen = withApollo(
 export default Screen
 
 export const getServerSideProps = getServerSidePropsWrapper(Screen)
-
-
-
-// export default withApollo(
-//   withLocale('is')(
-//     withMainLayout(displayFeatureUpvote, {
-//       showHeader: true,
-//       showFooter: false,
-//     }),
-//   ),
-// )
