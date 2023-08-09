@@ -2,7 +2,7 @@ import React, { FC } from 'react'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { m } from '@island.is/service-portal/core'
 import { Text, Divider, Box } from '@island.is/island-ui/core'
-import { msg } from '@island.is/service-portal/information/messages'
+import { msg } from '../../../../../lib/messages'
 
 interface Props {
   name: string

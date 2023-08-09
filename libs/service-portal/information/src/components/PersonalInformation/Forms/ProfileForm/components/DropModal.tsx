@@ -9,7 +9,7 @@ import {
   GridRow,
   Hidden,
 } from '@island.is/island-ui/core'
-import { msg } from '@island.is/service-portal/information/messages'
+import { msg } from '../../../../../lib/messages'
 
 interface Props {
   onClose: () => void
