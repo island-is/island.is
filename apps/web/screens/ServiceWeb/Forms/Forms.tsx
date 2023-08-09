@@ -299,11 +299,7 @@ const ServiceWebFormsPage: Screen<ServiceWebFormsPageProps> = ({
   )
 }
 
-ServiceWebFormsPage.getInitialProps = async ({
-  apolloClient,
-  locale,
-  query,
-}) => {
+ServiceWebFormsPage.getProps = async ({ apolloClient, locale, query }) => {
   const defaultSlug = locale === 'is' ? 'stafraent-island' : 'digital-iceland'
   const slug = query.slug ? (query.slug as string) : defaultSlug
 

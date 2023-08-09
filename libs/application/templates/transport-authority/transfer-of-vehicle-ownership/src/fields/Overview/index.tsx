@@ -78,6 +78,7 @@ export const Overview: FC<
     reviewerNationalId
 
   const doSubmitApproval = async () => {
+    console.log('submittingapproval - for dev development')
     const approveAnswers = getApproveAnswers(
       reviewerNationalId,
       application.answers,
@@ -110,6 +111,7 @@ export const Overview: FC<
   }
 
   const doSubmitApplication = async (answers: FormValue) => {
+    console.log('submittingapplication - for dev development')
     const res = await submitApplication({
       variables: {
         input: {

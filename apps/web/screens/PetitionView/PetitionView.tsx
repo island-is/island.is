@@ -262,7 +262,7 @@ const PetitionView: Screen<PetitionViewProps> = ({ namespace }) => {
   )
 }
 
-PetitionView.getInitialProps = async ({ apolloClient, locale }) => {
+PetitionView.getProps = async ({ apolloClient, locale }) => {
   const [namespace] = await Promise.all([
     apolloClient
       .query<GetNamespaceQuery, QueryGetNamespaceArgs>({

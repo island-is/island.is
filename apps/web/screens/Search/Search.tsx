@@ -699,7 +699,7 @@ const Search: Screen<CategoryProps> = ({
 
 const single = <T,>(x: T | T[]): T => (Array.isArray(x) ? x[0] : x)
 
-Search.getInitialProps = async ({ apolloClient, locale, query }) => {
+Search.getProps = async ({ apolloClient, locale, query }) => {
   const queryString = single(query.q) || ''
   const page = Number(single(query.page)) || 1
   const category = query.category ?? ''

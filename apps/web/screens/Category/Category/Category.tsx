@@ -522,7 +522,7 @@ const Category: Screen<CategoryProps> = ({
   )
 }
 
-Category.getInitialProps = async ({ apolloClient, locale, query }) => {
+Category.getProps = async ({ apolloClient, locale, query }) => {
   const slug = query.slug as string
 
   const [

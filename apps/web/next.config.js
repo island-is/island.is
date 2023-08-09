@@ -38,6 +38,40 @@ const nextConfig = {
       },
     ]
   },
+  async redirects() {
+    return [
+      {
+        source: '/en/organizations',
+        destination: '/en/o',
+        permanent: true,
+      },
+      {
+        source: '/en/organizations/:slug',
+        destination: '/en/o/:slug',
+        permanent: true,
+      },
+      {
+        source: '/en/organizations/:slug/:subSlug',
+        destination: '/en/o/:slug/:subSlug',
+        permanent: true,
+      },
+      {
+        source: '/stofnanir',
+        destination: '/s',
+        permanent: true,
+      },
+      {
+        source: '/stofnanir/:slug',
+        destination: '/s/:slug',
+        permanent: true,
+      },
+      {
+        source: '/stofnanir/:slug/:subSlug',
+        destination: '/s/:slug/:subSlug',
+        permanent: true,
+      },
+    ]
+  },
   webpack: (config, { isServer }) => {
     if (process.env.ANALYZE === 'true' && !isServer) {
       config.plugins.push(

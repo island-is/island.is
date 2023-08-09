@@ -238,7 +238,7 @@ const Home: Screen<HomeProps> = ({
   )
 }
 
-Home.getInitialProps = async ({ apolloClient, locale, query }) => {
+Home.getProps = async ({ apolloClient, locale, query }) => {
   const [
     {
       data: { getOrganizationPage },
