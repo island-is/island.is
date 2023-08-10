@@ -55,6 +55,7 @@ import { SyslumennClientConfig } from './syslumennClient.config'
 import type { ConfigType } from '@island.is/nest/config'
 import { AuthHeaderMiddleware } from '@island.is/auth-nest-tools'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
+import { logger } from '@island.is/logging'
 
 const UPLOAD_DATA_SUCCESS = 'Gögn móttekin'
 
@@ -226,6 +227,8 @@ export class SyslumennService {
     const temporaryEventLicences = await api.taekifaerisleyfiGet({
       audkenni: id,
     })
+
+    logger.info('TEMPORARY_EVENT_LICENSES', temporaryEventLicences)
 
     return (temporaryEventLicences ?? []).map(mapTemporaryEventLicence)
   }
