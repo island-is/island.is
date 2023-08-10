@@ -12,7 +12,7 @@ interface Props {
   onContinue: (permno: string, actionType: RecycleActionTypes) => void
 }
 
-export const ProgressCardContainer: FC<Props> = ({
+export const ProgressCardContainer: FC<React.PropsWithChildren<Props>> = ({
   title,
   cars,
   actionType,

@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common'
-import { CacheModule } from '@island.is/cache'
+import { CacheModule } from '@nestjs/cache-manager'
 import { buildOpenApi } from '@island.is/infra-nest-server'
 import { QueueModule } from '@island.is/message-queue'
 import { openApi } from './openApi'

@@ -1,26 +1,27 @@
 {
-  "root": "libs/portals/admin/core",
+  "name": "portals-admin-core",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/portals/admin/core/src",
   "projectType": "library",
   "tags": ["lib:portals-admin", "scope:portals-admin"],
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": ["libs/portals/admin/core/**/*.{ts,tsx,js,jsx}"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/portals/admin/core"],
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/libs/portals/admin/core"],
       "options": {
-        "jestConfig": "libs/portals/admin/core/jest.config.js",
+        "jestConfig": "libs/portals/admin/core/jest.config.ts",
         "passWithNoTests": true
       }
     },
     "extract-strings": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/portals/core/src/{screens,components,lib}/**/*.{js,ts,tsx}'"
       }

@@ -136,7 +136,9 @@ export const generateApplicationApprovedByEmployerToEmployerEmail: EmployerRejec
         },
         {
           component: 'Copy',
-          context: { copy: 'Kærar þakkir,<br/>Starfsfólk Fæðingarorlofssjóðs' },
+          context: {
+            copy: 'Kærar þakkir,<br/>Starfsfólk Fæðingarorlofssjóðs',
+          },
         },
       ],
     },

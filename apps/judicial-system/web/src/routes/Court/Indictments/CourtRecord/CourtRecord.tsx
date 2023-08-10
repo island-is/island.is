@@ -44,7 +44,7 @@ import * as constants from '@island.is/judicial-system/consts'
 
 import { courtRecord as m } from './CourtRecord.strings'
 
-const CourtRecord: React.FC = () => {
+const CourtRecord: React.FC<React.PropsWithChildren<unknown>> = () => {
   const { workingCase, isLoadingWorkingCase, caseNotFound } = useContext(
     FormContext,
   )

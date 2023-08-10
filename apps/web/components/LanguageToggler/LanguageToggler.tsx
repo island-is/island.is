@@ -195,7 +195,9 @@ type ButtonElementProps = {
   onClick: () => void
 }
 
-const ButtonElement: FC<ButtonElementProps & ButtonProps> = ({
+const ButtonElement: FC<
+  React.PropsWithChildren<ButtonElementProps & ButtonProps>
+> = ({
   buttonColorScheme = 'default',
   otherLanguage,
   otherLanguageAria,

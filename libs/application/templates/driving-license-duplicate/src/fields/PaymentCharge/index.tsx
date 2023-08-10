@@ -12,7 +12,9 @@ import { YES } from '../../lib/constants'
 import { info } from 'kennitala'
 import { DriversLicense } from '@island.is/clients/driving-license'
 
-export const PaymentCharge: FC<FieldBaseProps> = ({ application }) => {
+export const PaymentCharge: FC<React.PropsWithChildren<FieldBaseProps>> = ({
+  application,
+}) => {
   const { formatMessage } = useLocale()
   const { setValue } = useFormContext()
 

@@ -179,7 +179,7 @@ const SubPage: Screen<SubPageProps> = ({
                         )}
                         renderLink={(link, { href }) => {
                           return (
-                            <NextLink href={href} passHref>
+                            <NextLink href={href} passHref legacyBehavior>
                               {link}
                             </NextLink>
                           )

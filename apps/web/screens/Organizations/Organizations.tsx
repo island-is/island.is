@@ -192,7 +192,11 @@ const OrganizationPage: Screen<OrganizationProps> = ({
                   ]}
                   renderLink={(link) => {
                     return (
-                      <NextLink {...linkResolver('homepage')} passHref>
+                      <NextLink
+                        {...linkResolver('homepage')}
+                        passHref
+                        legacyBehavior
+                      >
                         {link}
                       </NextLink>
                     )

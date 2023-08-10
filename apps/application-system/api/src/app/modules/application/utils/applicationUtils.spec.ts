@@ -87,7 +87,7 @@ it('Should return name of the application according to applicant age', () => {
     getApplicationNameTranslationString(
       createApplicationTemplate({
         name: (application) =>
-          application.answers.age >= 20
+          Number(application.answers.age) >= 20
             ? 'Adult Application'
             : 'Child Application',
       }),

@@ -135,7 +135,11 @@ export const WalletPassportScreen: NavigationFunctionComponent<{
 
           {expireWarning ? (
             <View
-              style={{paddingTop: 16, paddingHorizontal: 16, paddingBottom: 10}}
+              style={{
+                paddingTop: 16,
+                paddingHorizontal: 16,
+                paddingBottom: 10,
+              }}
             >
               <Alert
                 title={intl.formatMessage({id: 'walletPassport.warningTitle'})}

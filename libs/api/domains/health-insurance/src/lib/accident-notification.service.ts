@@ -65,7 +65,9 @@ export class AccidentNotificationService {
   ): Promise<AccidentNotificationStatus | null> {
     this.logger.log('starting call to get accident', ihiDocumentID)
     const accidentStatus = await this.accidentNotificationApi.documentGetAccidentStatus(
-      { ihiDocumentID: ihiDocumentID },
+      {
+        ihiDocumentID: ihiDocumentID,
+      },
     )
     if (!accidentStatus) return null
     return {

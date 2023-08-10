@@ -17,7 +17,9 @@ interface SliceProps {
   slice: EventSliceProps
 }
 
-export const EventSlice: React.FC<SliceProps> = ({ slice }) => {
+export const EventSlice: React.FC<React.PropsWithChildren<SliceProps>> = ({
+  slice,
+}) => {
   const date = slice.date.split('-')
 
   return (

@@ -7,18 +7,18 @@ import DateTime from '@island.is/judicial-system-web/src/components/DateTime/Dat
 describe('DateTime component', () => {
   test('Should return a valid date and time', async () => {
     // const selectedDate = new Date(2021, 3, 24)
-
+    const user = userEvent.setup()
     const onChangeMock = jest.fn()
 
     render(<DateTime name="test1" onChange={onChangeMock} />)
 
-    userEvent.click(screen.getByText('Veldu dagsetningu'))
+    await user.click(screen.getByText('Veldu dagsetningu'))
 
-    userEvent.click(screen.getByText('15'))
+    await user.click(screen.getByText('15'))
 
     expect(onChangeMock.mock.calls).toEqual([[undefined, false]])
 
-    userEvent.type(await screen.findByTestId('test1-time'), '13:37')
+    await user.type(await screen.findByTestId('test1-time'), '13:37')
 
     const lastMockCall =
       onChangeMock.mock.calls[onChangeMock.mock.calls.length - 1]
@@ -29,7 +29,7 @@ describe('DateTime component', () => {
 
   test('Should only change date when date is changed, time stays the same', async () => {
     const selectedDate = new Date(2021, 3, 24, 13, 37)
-
+    const user = userEvent.setup()
     const onChangeMock = jest.fn()
 
     render(
@@ -40,9 +40,9 @@ describe('DateTime component', () => {
       />,
     )
 
-    userEvent.click(screen.getByText('Veldu dagsetningu'))
+    await user.click(screen.getByText('Veldu dagsetningu'))
 
-    userEvent.click(screen.getByText('15'))
+    await user.click(screen.getByText('15'))
 
     const lastMockCall =
       onChangeMock.mock.calls[onChangeMock.mock.calls.length - 1]
