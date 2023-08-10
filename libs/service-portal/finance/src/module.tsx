@@ -5,9 +5,6 @@ import { PortalModule } from '@island.is/portals/core'
 import { FinancePaths } from './lib/paths'
 import { Navigate } from 'react-router-dom'
 
-const FinanceOverview = lazy(() =>
-  import('./screens/FinanceOverview/FinanceOverview'),
-)
 const FinanceStatus = lazy(() => import('./screens/FinanceStatus'))
 const FinanceBills = lazy(() => import('./screens/FinanceBills'))
 const FinanceTransactions = lazy(() => import('./screens/FinanceTransactions'))
@@ -19,6 +16,7 @@ const FinanceSchedule = lazy(() => import('./screens/FinanceSchedule'))
 
 export const financeModule: PortalModule = {
   name: 'Fjármál',
+  layout: 'full',
   routes: ({ userInfo }) => [
     {
       name: m.finance,

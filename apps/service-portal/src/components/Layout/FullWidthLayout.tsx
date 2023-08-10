@@ -1,4 +1,4 @@
-import React, { FC, ReactNode } from 'react'
+import React, { FC, useEffect, useState, ReactNode } from 'react'
 import {
   Box,
   GridContainer,
@@ -9,7 +9,7 @@ import {
   Icon,
   Button,
 } from '@island.is/island-ui/core'
-import { m } from '@island.is/service-portal/core'
+import { m, ModuleAlertBannerSection } from '@island.is/service-portal/core'
 import * as styles from './Layout.css'
 import { useLocale } from '@island.is/localization'
 import { PortalNavigationItem } from '@island.is/portals/core'
@@ -20,27 +20,34 @@ import { ServicePortalPaths } from '../../lib/paths'
 interface FullWidthLayoutProps {
   activeParent?: PortalNavigationItem
   height: number
+  pathname: string
 }
 
 export const FullWidthLayout: FC<FullWidthLayoutProps> = ({
   activeParent,
   height,
+  pathname,
   children,
 }) => {
   const navigate = useNavigate()
-  const location = useLocation()
   const { formatMessage } = useLocale()
+  const [navItems, setNavItems] = useState<PortalNavigationItem[] | undefined>()
+
+  useEffect(() => {
+    setNavItems(
+      activeParent?.children?.filter((item) => !item.navHide) || undefined,
+    )
+  }, [activeParent?.children])
+
   const isDashboard = Object.values(ServicePortalPaths).find((route) =>
-    matchPath(route, location.pathname),
+    matchPath(route, pathname),
   )
 
   const tabChangeHandler = (id: string) => {
-    if (id !== location.pathname) {
+    if (id !== pathname) {
       navigate(id)
     }
   }
-
-  const navItems = activeParent?.children?.filter((item) => !item.navHide) || []
 
   return (
     <Box as="main" component="main" style={{ marginTop: height }}>
@@ -98,13 +105,13 @@ export const FullWidthLayout: FC<FullWidthLayoutProps> = ({
             </Box>
           </>
         )}
-        {navItems.length > 0 ? (
+        {navItems && navItems?.length > 0 ? (
           <Box paddingTop={4}>
             <GridContainer position="none">
               <GridRow>
                 <GridColumn span="12/12">
                   <Tabs
-                    selected={location.pathname}
+                    selected={pathname}
                     onChange={tabChangeHandler}
                     label={
                       activeParent?.name ? formatMessage(activeParent.name) : ''
@@ -132,4 +139,15 @@ export const FullWidthLayout: FC<FullWidthLayoutProps> = ({
   )
 }
 
-export default FullWidthLayout
+const FullWidthLayoutWrapper: FC<FullWidthLayoutProps> = (props) => {
+  return (
+    <FullWidthLayout {...props}>
+      <Box paddingTop={4} width="full">
+        <ModuleAlertBannerSection />
+      </Box>
+      {props.children}
+    </FullWidthLayout>
+  )
+}
+
+export default FullWidthLayoutWrapper

@@ -25,8 +25,8 @@ export const badge = styleVariants({
 export const lock = style({
   position: 'absolute',
   zIndex: 1,
-  top: 8,
-  right: 8,
+  top: theme.spacing[2],
+  right: theme.spacing[3],
 })
 
 export const svgOutline = style({})
