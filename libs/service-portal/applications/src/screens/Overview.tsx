@@ -18,7 +18,6 @@ import { useLocation } from 'react-router-dom'
 import { useGetOrganizationsQuery } from '../../../graphql/src/schema'
 import { m } from '../lib/messages'
 import { m as coreMessage } from '@island.is/service-portal/core'
-import { ValueType } from 'react-select'
 import {
   getFilteredApplicationsByStatus,
   getInstitutions,
@@ -58,10 +57,10 @@ const Overview = () => {
     }))
   }
 
-  const handleInstitutionChange = (newInstitution: ValueType<Option>) => {
+  const handleInstitutionChange = (newInstitution: Option) => {
     setFilterValue((oldFilter) => ({
       ...oldFilter,
-      activeInstitution: newInstitution as Option,
+      activeInstitution: newInstitution,
     }))
   }
 

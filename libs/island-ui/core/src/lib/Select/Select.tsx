@@ -1,9 +1,7 @@
 import React from 'react'
 import cn from 'classnames'
-import ReactSelect, { createFilter } from 'react-select'
+import ReactSelect, { createFilter, GroupBase, Props } from 'react-select'
 import CreatableReactSelect from 'react-select/creatable'
-
-import { TestSupport } from '@island.is/island-ui/utils'
 
 import {
   Option,
@@ -17,19 +15,18 @@ import {
   ValueContainer,
   customStyles,
 } from './Components'
-import {
-  OptionValue,
-  Option as OptionType,
-  SelectProps,
-  ReactSelectProps,
-  AriaError,
-} from './Select.types'
+import { Option as OptionType } from './Select.types'
+
 import * as styles from './Select.css'
 
-export const Select = <Opt extends OptionType, Value extends OptionValue>({
+export const Select = <
+  Value,
+  IsMulti extends boolean = false,
+  Group extends GroupBase<OptionType<Value>> = GroupBase<OptionType<Value>>
+>({
   name,
   id = name,
-  disabled,
+  isDisabled,
   noOptionsMessage,
   options,
   onChange,
@@ -49,38 +46,36 @@ export const Select = <Opt extends OptionType, Value extends OptionValue>({
   isClearable,
   dataTestId,
   filterConfig,
-}: SelectProps<Opt, Value> & TestSupport) => {
+}: Props<OptionType<Value>, IsMulti, Group>) => {
   const errorId = `${id}-error`
   const ariaError = hasError
     ? {
         'aria-invalid': true,
         'aria-describedby': errorId,
       }
-    : {}
+    : undefined
   const [currentValue, setCurrentValue] = React.useState('')
 
   return isCreatable ? (
     <div
       className={cn(styles.wrapper, {
-        [styles.wrapperColor[backgroundColor]]: !disabled,
-        [styles.containerDisabled]: disabled,
+        [styles.wrapperColor[backgroundColor]]: !isDisabled,
+        [styles.containerDisabled]: isDisabled,
       })}
       data-testid={`creatable-select-${name}`}
     >
-      <CreatableReactSelect
+      <CreatableReactSelect<OptionType<Value>, IsMulti, Group>
         instanceId={id}
         aria-labelledby={id}
+        ariaError={ariaError}
         noOptionsMessage={() => noOptionsMessage || null}
         id={id}
         name={name}
-        isDisabled={disabled}
-        styles={customStyles}
+        isDisabled={isDisabled}
+        styles={customStyles()}
         classNamePrefix="island-select"
-        isMulti={false}
-        // We need to cast the onChange and options to the correct type
-        // because we are not using multi select and that is a part of the onChange and options type
-        onChange={onChange as ReactSelectProps['onChange']}
-        options={options as ReactSelectProps['options']}
+        onChange={onChange}
+        options={options}
         label={label}
         value={value}
         icon={icon}
@@ -92,7 +87,6 @@ export const Select = <Opt extends OptionType, Value extends OptionValue>({
         isSearchable={isSearchable}
         size={size}
         required={required}
-        ariaError={ariaError as AriaError}
         formatGroupLabel={formatGroupLabel}
         formatCreateLabel={() => currentValue}
         createOptionPosition="first"
@@ -122,23 +116,23 @@ export const Select = <Opt extends OptionType, Value extends OptionValue>({
   ) : (
     <div
       className={cn(styles.wrapper, {
-        [styles.wrapperColor[backgroundColor]]: !disabled,
-        [styles.containerDisabled]: disabled,
+        [styles.wrapperColor[backgroundColor]]: !isDisabled,
+        [styles.containerDisabled]: isDisabled,
       })}
       data-testid={`select-${name}`}
     >
-      <ReactSelect
+      <ReactSelect<OptionType<Value>, IsMulti, Group>
         instanceId={id}
         aria-labelledby={id}
+        ariaError={ariaError}
         noOptionsMessage={() => noOptionsMessage || null}
         id={id}
         name={name}
-        isDisabled={disabled}
-        styles={customStyles}
+        isDisabled={isDisabled}
+        styles={customStyles()}
         classNamePrefix="island-select"
-        isMulti={false}
-        onChange={onChange as ReactSelectProps['onChange']}
-        options={options as ReactSelectProps['options']}
+        onChange={onChange}
+        options={options}
         label={label}
         value={value}
         dataTestId={dataTestId}
@@ -150,7 +144,6 @@ export const Select = <Opt extends OptionType, Value extends OptionValue>({
         isSearchable={isSearchable}
         size={size}
         required={required}
-        ariaError={ariaError as AriaError}
         formatGroupLabel={formatGroupLabel}
         filterOption={createFilter(filterConfig)}
         components={{

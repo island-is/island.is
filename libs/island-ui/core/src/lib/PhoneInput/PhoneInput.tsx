@@ -8,7 +8,7 @@ import { UseBoxStylesProps } from '../Box/useBoxStyles'
 import { resolveResponsiveProp } from '../../utils/responsiveProp'
 import { useMergeRefs } from '../../hooks/useMergeRefs'
 import { Icon } from '../IconRC/Icon'
-import { Option } from '../Select/Select.types'
+import { StringOption } from '../Select/Select.types'
 import { CountryCodeSelect } from './CountryCodeSelect/CountryCodeSelect'
 import NumberFormat, { NumberFormatValues } from 'react-number-format'
 import { countryCodes as countryCodeList } from './countryCodes'
@@ -17,7 +17,7 @@ import { useEffectOnce } from 'react-use'
 
 const DEFAULT_COUNTRY_CODE = '+354'
 
-const getCountryCodes = (allowedCountryCodes?: string[]): Option[] => {
+const getCountryCodes = (allowedCountryCodes?: string[]): StringOption[] => {
   return countryCodeList
     .filter((x) =>
       allowedCountryCodes ? allowedCountryCodes.includes(x.code) : true,
@@ -133,12 +133,12 @@ export const PhoneInput = forwardRef(
     const defaultCountryCode = getDefaultCountryCode(value || defaultValue)
     const countryCodes = getCountryCodes(allowedCountryCodes)
 
-    const selected = countryCodes.find((x) => x.value === defaultCountryCode)
+    const selected = countryCodes.find(
+      (x) => x.value === defaultCountryCode,
+    ) as StringOption
 
-    const [selectedCountryCode, setSelectedCountryCode] = useState<
-      Option | undefined
-    >(selected)
-    const cc = (selectedCountryCode as Option)?.value
+    const [selectedCountryCode, setSelectedCountryCode] = useState(selected)
+    const cc = selectedCountryCode?.value
 
     const errorId = `${id}-error`
     const selectId = `country-code-select-${id}`
@@ -168,7 +168,7 @@ export const PhoneInput = forwardRef(
         e.currentTarget.value = e.currentTarget.value.replace(updatedCC, '')
         if (!disableDropdown) {
           setSelectedCountryCode(
-            countryCodes.find((x) => x.value === updatedCC),
+            countryCodes.find((x) => x.value === updatedCC) as StringOption,
           )
         }
       }
@@ -256,19 +256,21 @@ export const PhoneInput = forwardRef(
                   id={selectId}
                   name={selectId}
                   onChange={(option) => {
-                    const newCc = option?.value?.toString()
-                    setSelectedCountryCode(option)
-                    onFormatValueChange?.(value?.replace(cc, newCc))
-                    if (inputRef.current) {
-                      inputRef.current.focus()
+                    if (option) {
+                      const newCc = option.value
+                      setSelectedCountryCode(option)
+                      onFormatValueChange?.(value?.replace(cc, newCc))
+                      if (inputRef.current) {
+                        inputRef.current.focus()
+                      }
                     }
                   }}
-                  value={selectedCountryCode as Option}
+                  value={selectedCountryCode as StringOption}
                   defaultValue={countryCodes.find(
                     (x) => x.value === defaultCountryCode,
                   )}
                   options={countryCodes}
-                  disabled={disabled || readOnly || disableDropdown}
+                  isDisabled={disabled || readOnly || disableDropdown}
                   backgroundColor={backgroundColor}
                   inputHasLabel={!!label}
                   size={size}

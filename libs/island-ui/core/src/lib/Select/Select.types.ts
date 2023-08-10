@@ -1,30 +1,7 @@
-import {
-  GroupBase,
-  ActionMeta,
-  createFilter,
-  Props,
-  SingleValue as SingleValueType,
-} from 'react-select'
+import { createFilter, GroupBase } from 'react-select'
 
-import { InputBackgroundColor } from '../Input/types'
 import { Icon as IconTypes } from '../IconRC/iconMap'
-import { CountryCodeSelectPropsWithOptions } from '../PhoneInput/PhoneInput.types'
-
-declare module 'react-select/dist/declarations/src/Select' {
-  export interface Props<
-    Option,
-    IsMulti extends boolean,
-    Group extends GroupBase<Option>
-  > {
-    icon: SelectPropsWithOptions['icon']
-    hasError?: SelectPropsWithOptions['hasError']
-    size?: SelectPropsWithOptions['size']
-    dataTestId?: string
-    ariaError?: SelectPropsWithOptions['ariaError']
-    label?: SelectPropsWithOptions['label']
-    inputHasLabel?: CountryCodeSelectPropsWithOptions['inputHasLabel']
-  }
-}
+import { InputBackgroundColor } from '../Input/types'
 
 type ArgumentTypes<F extends () => unknown> = F extends (
   ...args: infer A
@@ -39,9 +16,35 @@ export interface AriaError {
   'aria-describedby': string
 }
 
-export type OptionValue = string | number
+declare module 'react-select/dist/declarations/src/Select' {
+  export interface Props<
+    Option,
+    IsMulti extends boolean,
+    Group extends GroupBase<Option>
+  > {
+    // Common custom props added for our custom Select
+    backgroundColor?: InputBackgroundColor
+    errorMessage?: string
+    filterConfig?: FilterConfig
+    hasError?: boolean
+    icon?: IconTypes
+    isCreatable?: boolean
+    label?: string
+    size?: 'xs' | 'sm' | 'md'
 
-export type Option<Value extends OptionValue = string> = {
+    // Added as prop to forward to custom Input component
+    ariaError?: AriaError
+
+    // Added for CountryCodeSelect to forward prop to custom IndicatorsContainer component
+    inputHasLabel?: boolean
+
+    // Added for test support
+    dataTestId?: string
+  }
+}
+
+// The Option type needs to be generic as the react-select library is generic.
+export type Option<Value> = {
   label: string
   value: Value
   description?: string
@@ -49,40 +52,5 @@ export type Option<Value extends OptionValue = string> = {
   disabled?: boolean
 }
 
-export type ReactSelectProps = Props<Option>
-
-export interface SelectProps<Opt extends Option, Value extends OptionValue> {
-  name: string
-  options: Option<Value>[]
-  id?: string
-  disabled?: boolean
-  onChange?(
-    newValue: Option<Value>,
-    actionMeta: ActionMeta<Option<Value>>,
-  ): void
-  value?: SingleValueType<Opt>
-  placeholder?: string
-  defaultValue?: Opt
-  isSearchable?: boolean
-  size?: 'xs' | 'sm' | 'md'
-  isCreatable?: boolean
-  backgroundColor?: InputBackgroundColor
-  ariaError?: AriaError
-  isClearable?: boolean
-  hasError?: boolean
-  errorMessage?: string
-  noOptionsMessage?: string
-  label?: string
-  icon?: IconTypes
-  required?: boolean
-  formatGroupLabel?: ReactSelectProps['formatGroupLabel']
-  filterConfig?: FilterConfig
-}
-
-export type SelectPropsWithOptions<
-  Value extends OptionValue = string
-> = SelectProps<Option, Value>
-
-export type SelectOnChange<
-  Value extends OptionValue = string
-> = SelectPropsWithOptions<Value>['onChange']
+// Utility option types
+export type StringOption = Option<string>

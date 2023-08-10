@@ -16,19 +16,27 @@ import {
 } from 'react-select'
 
 import { Icon } from '../../IconRC/Icon'
-import { Option as ReactSelectOption } from '../Select.types'
+import { Option as OptionType } from '../Select.types'
 import * as styles from '../Select.css'
 
-export const Menu = (
-  props: MenuProps<ReactSelectOption, boolean, GroupBase<ReactSelectOption>>,
+export const Menu = <
+  Value,
+  IsMulti extends boolean,
+  Group extends GroupBase<OptionType<Value>>
+>(
+  props: MenuProps<OptionType<Value>, IsMulti, Group>,
 ) => (
   <components.Menu className={styles.menu} {...props}>
     {props.children}
   </components.Menu>
 )
 
-export const Option = (
-  props: OptionProps<ReactSelectOption, boolean, GroupBase<ReactSelectOption>>,
+export const Option = <
+  Value,
+  IsMulti extends boolean,
+  Group extends GroupBase<OptionType<Value>>
+>(
+  props: OptionProps<OptionType<Value>, IsMulti, Group>,
 ) => {
   const { size = 'md' } = props.selectProps
   const description = props.data?.description
@@ -60,12 +68,12 @@ export const Option = (
   )
 }
 
-export const IndicatorsContainer = (
-  props: IndicatorsContainerProps<
-    ReactSelectOption,
-    boolean,
-    GroupBase<ReactSelectOption>
-  >,
+export const IndicatorsContainer = <
+  Value,
+  IsMulti extends boolean,
+  Group extends GroupBase<OptionType<Value>>
+>(
+  props: IndicatorsContainerProps<OptionType<Value>, IsMulti, Group>,
 ) => {
   const { icon, size = 'md' } = props.selectProps
   return (
@@ -81,12 +89,12 @@ export const IndicatorsContainer = (
   )
 }
 
-export const DropdownIndicator = (
-  props: DropdownIndicatorProps<
-    ReactSelectOption,
-    boolean,
-    GroupBase<ReactSelectOption>
-  >,
+export const DropdownIndicator = <
+  Value,
+  IsMulti extends boolean,
+  Group extends GroupBase<OptionType<Value>>
+>(
+  props: DropdownIndicatorProps<OptionType<Value>, IsMulti, Group>,
 ) => {
   const { icon = 'chevronDown', hasError, size = 'md' } = props.selectProps
 
@@ -107,12 +115,12 @@ export const DropdownIndicator = (
   )
 }
 
-export const SingleValue = (
-  props: SingleValueProps<
-    ReactSelectOption,
-    boolean,
-    GroupBase<ReactSelectOption>
-  >,
+export const SingleValue = <
+  Value,
+  IsMulti extends boolean,
+  Group extends GroupBase<OptionType<Value>>
+>(
+  props: SingleValueProps<OptionType<Value>, IsMulti, Group>,
 ) => {
   const { size = 'md' } = props.selectProps
   return (
@@ -125,24 +133,24 @@ export const SingleValue = (
   )
 }
 
-export const ValueContainer = (
-  props: ValueContainerProps<
-    ReactSelectOption,
-    boolean,
-    GroupBase<ReactSelectOption>
-  >,
+export const ValueContainer = <
+  Value,
+  IsMulti extends boolean,
+  Group extends GroupBase<OptionType<Value>>
+>(
+  props: ValueContainerProps<OptionType<Value>, IsMulti, Group>,
 ) => (
   <components.ValueContainer className={styles.valueContainer} {...props}>
     {props.children}
   </components.ValueContainer>
 )
 
-export const Placeholder = (
-  props: PlaceholderProps<
-    ReactSelectOption,
-    boolean,
-    GroupBase<ReactSelectOption>
-  >,
+export const Placeholder = <
+  Value,
+  IsMulti extends boolean,
+  Group extends GroupBase<OptionType<Value>>
+>(
+  props: PlaceholderProps<OptionType<Value>, IsMulti, Group>,
 ) => {
   const { size = 'md' } = props.selectProps
   return (
@@ -159,8 +167,12 @@ export const Placeholder = (
   )
 }
 
-export const Input = (
-  props: InputProps<ReactSelectOption, boolean, GroupBase<ReactSelectOption>>,
+export const Input = <
+  Value,
+  IsMulti extends boolean,
+  Group extends GroupBase<OptionType<Value>>
+>(
+  props: InputProps<OptionType<Value>, IsMulti, Group>,
 ) => {
   const { size = 'md', ariaError } = props.selectProps
   return (
@@ -174,8 +186,12 @@ export const Input = (
     />
   )
 }
-export const Control = (
-  props: ControlProps<ReactSelectOption, boolean, GroupBase<ReactSelectOption>>,
+export const Control = <
+  Value,
+  IsMulti extends boolean,
+  Group extends GroupBase<OptionType<Value>>
+>(
+  props: ControlProps<OptionType<Value>, IsMulti, Group>,
 ) => {
   const { size = 'md' } = props.selectProps
   const label = (
@@ -219,15 +235,15 @@ export const Control = (
   }
 }
 
-export const customStyles: StylesConfig<
-  ReactSelectOption,
-  boolean,
-  GroupBase<ReactSelectOption>
-> = {
+export const customStyles = <
+  Value,
+  IsMulti extends boolean,
+  Group extends GroupBase<OptionType<Value>>
+>(): StylesConfig<OptionType<Value>, IsMulti, Group> => ({
   indicatorSeparator: () => ({}),
   control: (provided, state) => ({
     ...provided,
     background: 'transparent',
     opacity: state.isDisabled ? '0.5' : '1',
   }),
-}
+})

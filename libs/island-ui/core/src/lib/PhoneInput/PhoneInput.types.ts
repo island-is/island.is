@@ -1,11 +1,13 @@
-import { Option, OptionValue, SelectProps } from '../Select/Select.types'
+import { GroupBase, Props } from 'react-select'
 
-type PropsFromSelectProps<Opt extends Option, Value extends OptionValue> = Pick<
-  SelectProps<Opt, Value>,
+import { Option as OptionType } from '../Select/Select.types'
+
+type PropsFromSelectProps<Value> = Pick<
+  Props<OptionType<Value>, false, GroupBase<OptionType<Value>>>,
   | 'name'
   | 'options'
   | 'id'
-  | 'disabled'
+  | 'isDisabled'
   | 'onChange'
   | 'value'
   | 'placeholder'
@@ -16,20 +18,14 @@ type PropsFromSelectProps<Opt extends Option, Value extends OptionValue> = Pick<
   | 'backgroundColor'
   | 'ariaError'
   | 'isClearable'
+  | 'dataTestId'
 >
 
-export type CountryCodeSelectPropsWithOptions<
-  Value extends OptionValue = string
-> = CountryCodeSelectProps<Option, Value>
-
-export type CountryCodeSelectProps<
-  Opt extends Option,
-  Value extends OptionValue
-> = PropsFromSelectProps<Opt, Value> & {
+export type CountryCodeSelectProps = PropsFromSelectProps<string> & {
   inputHasFocus?: boolean
   inputHasLabel?: boolean
-  onFocus?: () => void
-  onBlur?: () => void
-  onMenuOpen?: () => void
-  onMenuClose?: () => void
+  onFocus?(): void
+  onBlur?(): void
+  onMenuOpen?(): void
+  onMenuClose?(): void
 }

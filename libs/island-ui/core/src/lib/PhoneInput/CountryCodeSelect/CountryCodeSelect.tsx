@@ -1,17 +1,12 @@
 import React from 'react'
 import cn from 'classnames'
-import ReactSelect from 'react-select'
+import ReactSelect, { GroupBase } from 'react-select'
 
-import { TestSupport } from '@island.is/island-ui/utils'
-import {
-  Option as OptionType,
-  OptionValue,
-  ReactSelectProps,
-} from '../../Select/Select.types'
+import { Option as OptionType } from '@island.is/island-ui/core'
+
 import { CountryCodeSelectProps } from '../PhoneInput.types'
-import * as styles from './CountryCodeSelect.css'
 import {
-  Option as OptionComponent,
+  Option,
   Menu,
   IndicatorsContainer,
   Control,
@@ -23,13 +18,12 @@ import {
   customStyles,
 } from './Components'
 
-export const CountryCodeSelect = <
-  Opt extends OptionType,
-  Value extends OptionValue
->({
+import * as styles from './CountryCodeSelect.css'
+
+export const CountryCodeSelect = ({
   name,
   id = name,
-  disabled,
+  isDisabled,
   options,
   value,
   placeholder = '',
@@ -43,30 +37,27 @@ export const CountryCodeSelect = <
   onBlur,
   onMenuOpen,
   onMenuClose,
-}: CountryCodeSelectProps<Opt, Value> & TestSupport) => {
+}: CountryCodeSelectProps) => {
   return (
     <div
       className={cn(styles.wrapper, {
-        [styles.wrapperColor[backgroundColor]]: !disabled,
-        [styles.containerDisabled]: disabled,
+        [styles.wrapperColor[backgroundColor]]: !isDisabled,
+        [styles.containerDisabled]: isDisabled,
       })}
       data-testid={`country-code-select-${name}`}
     >
-      <ReactSelect
+      <ReactSelect<OptionType<string>, false, GroupBase<OptionType<string>>>
         instanceId={id}
         aria-labelledby={id}
         id={id}
         name={name}
-        isDisabled={disabled}
-        isMulti={false}
-        // We need to cast the onChange and options to the correct type
-        // because we are not using multi select and that is a part of the onChange and options type
-        onChange={onChange as ReactSelectProps['onChange']}
-        options={options as ReactSelectProps['options']}
+        isDisabled={isDisabled}
+        onChange={onChange}
+        options={options}
         value={value}
         icon="chevronDown"
         classNamePrefix="country-code-select"
-        styles={customStyles}
+        styles={customStyles()}
         onFocus={onFocus}
         onBlur={onBlur}
         onMenuOpen={onMenuOpen}
@@ -87,7 +78,7 @@ export const CountryCodeSelect = <
           DropdownIndicator,
           IndicatorsContainer,
           Menu,
-          Option: OptionComponent,
+          Option,
         }}
       />
     </div>
