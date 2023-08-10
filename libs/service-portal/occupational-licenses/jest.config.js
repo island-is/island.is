@@ -1,15 +1,16 @@
-module.exports = {
-  displayName: 'service-portal-occupational-licenses',
+/* eslint-disable */
+export default {
   preset: './jest.preset.js',
   rootDir: '../../..',
   roots: [__dirname],
   transform: {
     '^.+\\.[tj]sx?$': [
-      'babel-jest',
-      { cwd: __dirname, configFile: `${__dirname}/babel-jest.config.json` },
+      'ts-jest',
+      { tsconfig: `${__dirname}/tsconfig.spec.json` },
     ],
   },
-  moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
-  coverageDirectory:
-    '../../../coverage/libs/service-portal/occupational-licenses',
+  moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'html'],
+  coverageDirectory: '<rootDir>/coverage/libs/service-portal/occupational-licenses',
+  globals: {},
+  displayName: 'service-portal-occupational-licenses',
 }

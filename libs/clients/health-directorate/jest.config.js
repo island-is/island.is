@@ -1,15 +1,18 @@
-module.exports = {
+/* eslint-disable */
+export default {
   displayName: 'clients-health-directorate',
-  preset: '../../../jest.preset.js',
-  globals: {
-    'ts-jest': {
-      tsconfig: '<rootDir>/tsconfig.spec.json',
-    },
-  },
-  testEnvironment: 'node',
+  preset: './jest.preset.js',
+  rootDir: '../../..',
+  roots: [__dirname],
+  globals: {},
   transform: {
-    '^.+\\.[tj]s$': 'ts-jest',
+    '^.+\\.[tj]sx?$': [
+      'ts-jest',
+      {
+        tsconfig: `${__dirname}/tsconfig.spec.json`,
+      },
+    ],
   },
-  moduleFileExtensions: ['ts', 'js', 'html'],
-  coverageDirectory: '../../../coverage/libs/clients/health-directorate',
+  moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
+  coverageDirectory: '<rootDir>/coverage/libs/clients/health-directorate',
 }
