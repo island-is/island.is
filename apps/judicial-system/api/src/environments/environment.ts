@@ -7,6 +7,17 @@ const devConfig = {
     jwtSecret: 'jwt-secret',
     secretToken: 'secret-backend-api-token',
   },
+  idsAuth: {
+    id: 'judicial-system.local',
+    name: 'Iceland authentication service',
+    scope: 'openid profile',
+    clientId: '@rettarvorslugatt.island.is/web',
+    domain: process.env.identityServerDomain ?? '',
+    clientSecret: process.env.identityServerSecret ?? '',
+    protection: 'pkce',
+    redirectUri: 'http://localhost:4200/api/auth/callback/identity-server',
+  },
+
   auditTrail: {
     useGenericLogger: true,
   },
@@ -47,6 +58,16 @@ const prodConfig = {
     allowAuthBypass: process.env.ALLOW_AUTH_BYPASS === 'true',
     jwtSecret: process.env.AUTH_JWT_SECRET ?? '',
     secretToken: process.env.BACKEND_ACCESS_TOKEN ?? '',
+  },
+  idsAuth: {
+    id: 'judicial-system.local',
+    name: 'Iceland authentication service',
+    scope: 'openid profile',
+    clientId: '@rettarvorslugatt.island.is/web',
+    domain: process.env.identityServerDomain ?? '',
+    clientSecret: process.env.identityServerSecret ?? '',
+    protection: 'pkce',
+    redirectUri: 'http://localhost:4200/api/auth/callback/identity-server',
   },
   auditTrail: {
     useGenericLogger: process.env.AUDIT_TRAIL_USE_GENERIC_LOGGER === 'true',
