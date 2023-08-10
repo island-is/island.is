@@ -39,6 +39,9 @@ jobs:
       - name: Select secret envs to check
         id: select_envs
         run: |
+          echo "github.event.pull_request.head.ref: ${{ github.event.pull_request.head.ref }}"
+          echo "github.event_name: ${{ github.event_name }}"
+
           GIT_BRANCH="${GITHUB_HEAD_REF:-${GITHUB_REF/refs\/heads\//}}"
           # ENVS=("dev" "staging")
           ENVS=("dev" "staging" "prod")
@@ -56,14 +59,14 @@ jobs:
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v3
-        # if: ${{ github.event_name == 'pull_request' }}
+        if: ${{ github.event_name == 'pull_request' }}
         with:
           ref: ${{ github.event.pull_request.head.ref }}
           sparse-checkout: |
             .github
             infra
-      # - uses: actions/checkout@v3
-      #   if: ${{ github.ref == 'ref/heads/main' }}
+      - uses: actions/checkout@v3
+        if: ${{ github.ref == 'ref/heads/main' }}
 
       - uses: actions/setup-node@v3
         with:
