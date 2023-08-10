@@ -14,7 +14,7 @@ import TextWithTooltip from '../TextWithTooltip/TextWithTooltip'
 import { m } from '../../forms/messages'
 import { FileUploadController } from '@island.is/application/ui-components'
 
-const StatusAndChildren: FC<ReviewFieldProps> = ({
+const StatusAndChildren: FC<React.PropsWithChildren<ReviewFieldProps>> = ({
   application,
   isEditable,
   field,

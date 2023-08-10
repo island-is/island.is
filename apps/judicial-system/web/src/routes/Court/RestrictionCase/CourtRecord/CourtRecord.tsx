@@ -51,7 +51,7 @@ import { isCourtRecordStepValidRC } from '../../../../utils/validate'
 import { formatCustodyRestrictions } from '../../../../utils/restrictions'
 import AppealSections from '../../components/AppealSections/AppealSections'
 
-export const CourtRecord: React.FC = () => {
+export const CourtRecord: React.FC<React.PropsWithChildren<unknown>> = () => {
   const {
     workingCase,
     setWorkingCase,

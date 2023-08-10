@@ -24,20 +24,16 @@ const recyclingRequestModel = ({
   updatedAt: new Date('2021-10-05T14:48:00.000Z'),
 } as unknown) as RecyclingRequestModel
 
-const getAllVehilceResp: AxiosResponse = {
+const getAllVehicleResp = {
   data: MockData.allVehiclesForPersidnoResponse,
   status: 200,
   statusText: 'OK',
-  headers: {},
-  config: {},
-}
-const getBasicVehicleResp: AxiosResponse = {
+} as AxiosResponse
+const getBasicVehicleResp = {
   data: MockData.basicVehicleInformationResponse,
   status: 200,
   statusText: 'OK',
-  headers: {},
-  config: {},
-}
+} as AxiosResponse
 
 describe('skilavottordApiTest', () => {
   describe('getUserVehiclesInformationTest', () => {
@@ -76,7 +72,7 @@ describe('skilavottordApiTest', () => {
         const kennitala = '1234567890'
         jest
           .spyOn(httpService, 'post')
-          .mockImplementationOnce(() => of(getAllVehilceResp))
+          .mockImplementationOnce(() => of(getAllVehicleResp))
           .mockImplementationOnce(() => of(getBasicVehicleResp))
         jest
           .spyOn(

@@ -4,7 +4,7 @@ import { Localization } from '../../entities/common/Localization'
 import { Environment } from '../../entities/common/Environment'
 import { EnvironmentUtils } from './../../utils/environment.utils'
 
-const ShowEnvironment: React.FC = () => {
+const ShowEnvironment: React.FC<React.PropsWithChildren<unknown>> = () => {
   const [localization] = useState<Localization>(
     LocalizationUtils.getLocalization(),
   )

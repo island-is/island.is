@@ -54,7 +54,9 @@ interface Props {
   policeCaseNumberImmutable: boolean
 }
 
-export const PoliceCaseInfo: React.FC<Props> = (props) => {
+export const PoliceCaseInfo: React.FC<React.PropsWithChildren<Props>> = (
+  props,
+) => {
   const {
     index,
     policeCaseNumbers,

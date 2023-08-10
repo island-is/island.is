@@ -8,7 +8,10 @@ interface Props {
   onClick?: () => void
 }
 
-export const FilterTag: FC<Props> = ({ onClick, title }) => {
+export const FilterTag: FC<React.PropsWithChildren<Props>> = ({
+  onClick,
+  title,
+}) => {
   return (
     <Box className={styles.tag}>
       <Tag onClick={onClick}>

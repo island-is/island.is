@@ -9,11 +9,9 @@ import { complaint, sharedFields } from '../../lib/messages'
 const calcWordCount = (value: string) =>
   value.split(' ').filter((item) => item).length
 
-export const ComplaintDescription: FC<FieldBaseProps> = ({
-  application,
-  field,
-  errors,
-}) => {
+export const ComplaintDescription: FC<
+  React.PropsWithChildren<FieldBaseProps>
+> = ({ application, field, errors }) => {
   const { formatMessage } = useLocale()
   const value = getValueViaPath(application.answers, field.id) as
     | string

@@ -29,7 +29,7 @@ interface Props {
 }
 
 export const ReviewCoOwnerAndOperatorRepeaterItem: FC<
-  Props & FieldBaseProps
+  React.PropsWithChildren<Props & FieldBaseProps>
 > = ({
   id,
   index,

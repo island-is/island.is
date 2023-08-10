@@ -7,7 +7,7 @@ interface Props {
   constantSticky?: boolean
 }
 
-export const Sticky: FC<Props> = ({
+export const Sticky: FC<React.PropsWithChildren<Props>> = ({
   children,
   constantSticky = false,
   top = STICKY_NAV_HEIGHT + theme.spacing[1],

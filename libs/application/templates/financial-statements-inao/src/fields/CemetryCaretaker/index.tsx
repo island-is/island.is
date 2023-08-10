@@ -160,12 +160,9 @@ const CareTakerRepeaterItem = ({
   )
 }
 
-export const CemetryCaretaker: FC<FieldBaseProps<FinancialStatementsInao>> = ({
-  application,
-  field,
-  errors,
-  setBeforeSubmitCallback,
-}) => {
+export const CemetryCaretaker: FC<
+  React.PropsWithChildren<FieldBaseProps<FinancialStatementsInao>>
+> = ({ application, field, errors, setBeforeSubmitCallback }) => {
   const { formatMessage } = useLocale()
   const { id } = field
 
