@@ -4,6 +4,7 @@ import { Person } from './models'
 import {
   ISLBorninMin,
   ISLEinstaklingur,
+  ISLFjolskyldan,
 } from '@island.is/clients/national-registry-v1'
 
 export enum Gender {
@@ -38,13 +39,13 @@ export type PersonV3 = Person & {
   rawData?: EinstaklingurDTOAllt | null
 }
 
+export type V1RawData = ISLEinstaklingur & {
+  children: Array<ISLBorninMin> | null
+}
+
 export type PersonV1 = Person & {
   api: 'v1'
-  rawData?:
-    | (ISLEinstaklingur & {
-        children: Array<ISLBorninMin> | null
-      })
-    | null
+  rawData?: V1RawData
 }
 
 export type SharedPerson = PersonV1 | PersonV3

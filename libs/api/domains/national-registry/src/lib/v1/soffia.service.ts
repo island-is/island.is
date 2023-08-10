@@ -3,14 +3,15 @@ import some from 'lodash/some'
 import { Injectable, ForbiddenException, Inject, } from '@nestjs/common'
 
 import { FamilyMember, FamilyChild, User } from './types'
-import { NationalRegistryApi } from '@island.is/clients/national-registry-v1'
+import { ISLEinstaklingur, NationalRegistryApi } from '@island.is/clients/national-registry-v1'
 import { FamilyCorrectionInput } from './dto/FamilyCorrectionInput.input'
-import { PersonV1 } from '../shared/types'
+import { PersonV1, V1RawData } from '../shared/types'
 import { mapGender, mapMaritalStatus } from '../shared/mapper'
-import { FamilyCorrectionResponse } from '../shared/models'
+import { Birthplace, Citizenship, FamilyCorrectionResponse, Housing, PersonBase, Religion, Spouse } from '../shared/models'
 import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 import { formatFamilyChild } from './types/child.type'
 import { ExcludesFalse } from '../shared/utils'
+import { Name } from '../shared/models/name.model'
 
 @Injectable()
 export class SoffiaService {
@@ -182,8 +183,8 @@ export class SoffiaService {
     }
   }
 
-  async getChildren(nationalId: User['nationalId']): Promise<FamilyChild[]> {
-    const myChildren = await this.nationalRegistryApi.getMyChildren(nationalId)
+  async getChildren(nationalId: User['nationalId'], data?: V1RawData): Promise<FamilyChild[]> {
+    const myChildren = data?.children ?? await this.nationalRegistryApi.getMyChildren(nationalId)
 
     const members = myChildren
       .filter((familyChild) => {
@@ -201,6 +202,124 @@ export class SoffiaService {
       })
 
     return members
+  }
+
+  async getChildCustody(nationalId?: string, data?: V1RawData): Promise<Array<PersonV1> | null> {
+    if (nationalId || data) {
+      //just some nationalId fallback which won't ever get used
+      const children = await this.getChildren(nationalId ?? '0', data)
+      const childrenData : Array<PersonV1>= await Promise.all(children.map(c => this.getPerson(c.nationalId)))
+      return childrenData
+    }
+
+    return null
+  }
+
+  async getParents(nationalId?: string, data?: V1RawData): Promise<Array<PersonBase> | null> {
+    if (nationalId || data) {
+      //just some nationalId fallback which won't ever get used
+      const children = await this.getChildren(nationalId ?? '0', data)
+      const child = children.find(c => c?.nationalId === nationalId) ?? null
+
+      if (!child) {
+        return null
+      }
+
+      return [
+        child.parent1 && child.nameParent1 &&
+        {
+          nationalId: child.parent1,
+          fullName: child.nameParent1,
+        },
+        child.parent2 && child.nameParent2 &&
+        {
+          nationalId: child.parent2,
+          fullName: child.nameParent2,
+        }
+      ].filter(Boolean as unknown as ExcludesFalse)
+    }
+    return null
+  }
+
+  async getCustodians(nationalId: string, data?: V1RawData): Promise<Array<PersonBase> | null> {
+    const children = await this.getChildren(nationalId, data)
+      const child = children.find(c => c?.nationalId === nationalId) ?? null
+
+      if (!child) {
+        return null
+      }
+
+      return [
+        child.custody1 && child.nameCustody1 &&
+        {
+          nationalId: child.custody1,
+          fullName: child.nameCustody1,
+          text: child.custodyText1,
+        },
+        child.custody2 && child.nameCustody2 && {
+          nationalId: child.custody2,
+          fullName: child.nameCustody2,
+          text: child.custodyText2,
+        }
+      ].filter(Boolean as unknown as ExcludesFalse)
+  }
+
+  async getBirthplace(nationalId: string, data?: V1RawData): Promise<Birthplace| null> {
+    const birthplace = data ? data as ISLEinstaklingur : (await this.getPerson(nationalId)).rawData
+
+    return birthplace ? {
+      location: birthplace.Faedingarstadur,
+      municipalityText: birthplace.FaedSveit,
+      dateOfBirth: new Date(birthplace.Faedingardagur)
+    } : null
+  }
+
+  async getCitizenship(nationalId: string, data?: V1RawData): Promise<Citizenship| null> {
+    const citizenship = data ? data as ISLEinstaklingur : (await this.getPerson(nationalId)).rawData
+
+    return citizenship ?  {
+      code: citizenship.Rikisfang ?? null,
+      name: citizenship.RikisfangLand ?? null,
+    } : null
+  }
+
+  async getName(nationalId: string, data?: V1RawData): Promise<Name | null> {
+    const name = data ? data as ISLEinstaklingur : (await this.getPerson(nationalId)).rawData
+
+    return name ?  {
+      firstName: name.Eiginnafn,
+      middleName: name.Millinafn,
+      lastName: name.Kenninafn
+    } : null
+  }
+
+  async getSpouse(nationalId: string, data?: V1RawData): Promise<Spouse| null> {
+    const spouse = data ? data as ISLEinstaklingur : (await this.getPerson(nationalId)).rawData
+
+    return spouse ?  {
+      fullName: spouse.nafnmaka,
+      name: spouse.nafnmaka,
+      nationalId: spouse.MakiKt,
+      maritalStatus: mapMaritalStatus(spouse.hju),
+      cohabitant: spouse.Sambudarmaki,
+    } : null
+  }
+
+  async getHousing(nationalId: string, data?: V1RawData): Promise<Housing |  null> {
+    const family = await this.getFamily(nationalId)
+    const person = data ? data as ISLEinstaklingur : (await this.getPerson(nationalId)).rawData
+
+    return person && family ? {
+      domicileId: person.Fjolsknr,
+      address: {
+        code: person.LoghHusk,
+        lastUpdated: person.LoghHuskBreytt,
+        streetAddress: person.Logheimili,
+        city: person.LogheimiliSveitarfelag,
+        postalCode: person.Postnr,
+      },
+      domicileInhabitants: family
+    } : null
   }
 
   async postUserCorrection(
