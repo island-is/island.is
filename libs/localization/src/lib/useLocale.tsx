@@ -17,10 +17,10 @@ export function useLocale() {
 
   const formatMessage = ((
     descriptor: MessageDescriptor | string | undefined,
-    values?: FormatMessageValues | FormatMessageValuesWReact,
+    values?: any, // FormatMessageValues | FormatMessageValuesWReact,
   ): string | ReactNode | undefined => {
     if (!descriptor || typeof descriptor === 'string') {
-      return descriptor
+      return descriptor as string
     }
     return intl.formatMessage(descriptor, values)
   }) as FormatMessage

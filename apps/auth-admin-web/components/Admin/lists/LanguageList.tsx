@@ -8,7 +8,7 @@ import { TranslationService } from './../../../services/TranslationService'
 import LocalizationUtils from '../../../utils/localization.utils'
 import { ListControl } from '../../../entities/common/Localization'
 
-const LanguageList: React.FC = () => {
+const LanguageList: React.FC<React.PropsWithChildren<unknown>> = () => {
   const [languages, setLanguages] = useState<Language[]>([])
   const [page, setPage] = useState(1)
   const [lastPage, setLastPage] = useState(1)
@@ -76,14 +76,13 @@ const LanguageList: React.FC = () => {
             <h1>{localization.title}</h1>
             <div className="language-list__container__options">
               <div className="language-list__container__options__button">
-                <Link href={'/admin/language'}>
-                  <a
-                    className="language-list__button__new"
-                    title={localization.buttons['new'].helpText}
-                  >
-                    <i className="icon__new"></i>
-                    {localization.buttons['new'].text}
-                  </a>
+                <Link
+                  href={'/admin/language'}
+                  className="language-list__button__new"
+                  title={localization.buttons['new'].helpText}
+                >
+                  <i className="icon__new"></i>
+                  {localization.buttons['new'].text}
                 </Link>
               </div>
             </div>
@@ -111,6 +110,7 @@ const LanguageList: React.FC = () => {
                             href={`admin/language/${encodeURIComponent(
                               language.isoKey,
                             )}`}
+                            legacyBehavior
                           >
                             <button
                               type="button"

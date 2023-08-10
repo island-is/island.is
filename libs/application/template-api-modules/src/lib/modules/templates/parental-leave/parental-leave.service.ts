@@ -866,7 +866,12 @@ export class ParentalLeaveService extends BaseTemplateApiService {
         periodLength = Math.round(fullLength * (Number(period.ratio) / 100))
       } else {
         const getPeriodLength = await this.parentalLeaveApi.parentalLeaveGetPeriodLength(
-          { nationalRegistryId, startDate, endDate, percentage: period.ratio },
+          {
+            nationalRegistryId,
+            startDate,
+            endDate,
+            percentage: period.ratio,
+          },
         )
 
         if (getPeriodLength.periodLength === undefined) {

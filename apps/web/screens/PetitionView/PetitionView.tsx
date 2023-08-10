@@ -142,6 +142,7 @@ const PetitionView: Screen<PetitionViewProps> = ({ namespace }) => {
                 <NextLink
                   {...linkResolver(typename as LinkType, slug)}
                   passHref
+                  legacyBehavior
                 >
                   {link}
                 </NextLink>

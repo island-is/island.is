@@ -4,7 +4,9 @@ interface BackgroundImageProps {
   children?: ReactElement
 }
 
-const BackgroundImage: FC<BackgroundImageProps> = ({ children }) => (
+const BackgroundImage: FC<React.PropsWithChildren<BackgroundImageProps>> = ({
+  children,
+}) => (
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 451 510" width="50%">
     <g fill="#ccdfff">
       <circle cx="311.385" cy="122.243" r="2" />

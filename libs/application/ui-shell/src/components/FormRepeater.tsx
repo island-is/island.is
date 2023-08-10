@@ -14,17 +14,19 @@ import { FetchResult } from '@apollo/client'
 
 type RepeaterItems = unknown[]
 
-const FormRepeater: FC<{
-  application: Application
-  repeater: RepeaterScreen
-  errors: RecordObject
-  setBeforeSubmitCallback: SetBeforeSubmitCallback
-  setFieldLoadingState: SetFieldLoadingState
-  expandRepeater: () => void
-  onUpdateRepeater: (
-    newRepeaterItems: RepeaterItems,
-  ) => Promise<{ errors?: FetchResult['errors'] }>
-}> = ({
+const FormRepeater: FC<
+  React.PropsWithChildren<{
+    application: Application
+    repeater: RepeaterScreen
+    errors: RecordObject
+    setBeforeSubmitCallback: SetBeforeSubmitCallback
+    setFieldLoadingState: SetFieldLoadingState
+    expandRepeater: () => void
+    onUpdateRepeater: (
+      newRepeaterItems: RepeaterItems,
+    ) => Promise<{ errors?: FetchResult['errors'] }>
+  }>
+> = ({
   application,
   errors,
   setBeforeSubmitCallback,
@@ -73,7 +75,7 @@ const FormRepeater: FC<{
     setFieldLoadingState,
   }
   const Component = allFields[repeater.component] as
-    | FC<RepeaterProps>
+    | FC<React.PropsWithChildren<RepeaterProps>>
     | undefined
   if (!Component) {
     return <p>We have not implemented this repeater yet {repeater.type}</p>

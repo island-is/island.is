@@ -10,7 +10,9 @@ interface Props {
   explanation: string
 }
 
-const CaseResentExplanation: React.FC<Props> = (props) => {
+const CaseResentExplanation: React.FC<React.PropsWithChildren<Props>> = (
+  props,
+) => {
   const { explanation } = props
   const { formatMessage } = useIntl()
 

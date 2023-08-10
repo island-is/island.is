@@ -21,7 +21,9 @@ interface MultipleValueListProps {
   ) => void
 }
 
-const MultipleValueList: React.FC<MultipleValueListProps> = ({
+const MultipleValueList: React.FC<
+  React.PropsWithChildren<MultipleValueListProps>
+> = ({
   children,
   onAddValue,
   inputLabel,

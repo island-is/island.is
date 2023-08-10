@@ -157,7 +157,7 @@ const getModificationSuccessText = (
   })
 }
 
-const ModifyDatesModal: React.FC<Props> = ({
+const ModifyDatesModal: React.FC<React.PropsWithChildren<Props>> = ({
   workingCase,
   onSubmit,
   isSendingNotification,

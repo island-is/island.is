@@ -6,7 +6,9 @@ import { FieldBaseProps } from '@island.is/application/types'
 
 import { m } from '../../../forms/messages'
 
-const RejectionScreen: FC<FieldBaseProps> = ({ application }) => {
+const RejectionScreen: FC<React.PropsWithChildren<FieldBaseProps>> = ({
+  application,
+}) => {
   const { formatMessage } = useLocale()
   return (
     <Box marginBottom={8}>

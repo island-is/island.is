@@ -20,7 +20,10 @@ export const createProviderMutation = gql`
   }
 `
 
-const ProdEnvironment: FC<FieldBaseProps> = ({ error, application }) => {
+const ProdEnvironment: FC<React.PropsWithChildren<FieldBaseProps>> = ({
+  error,
+  application,
+}) => {
   const { lang: locale, formatMessage } = useLocale()
 
   interface Key {

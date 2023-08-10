@@ -14,7 +14,7 @@ interface Props {
   onRemove?: () => void
 }
 
-export const ComplaineeTable: FC<Props> = ({
+export const ComplaineeTable: FC<React.PropsWithChildren<Props>> = ({
   name,
   address,
   nationalId,

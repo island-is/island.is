@@ -6,32 +6,30 @@ import {
 import { Localhost } from '../localhost-runtime'
 import { EXCLUDED_ENVIRONMENT_NAMES } from '../../cli/render-env-vars'
 import { readFile, writeFile } from 'fs/promises'
+import { globSync } from 'glob'
 import { join } from 'path'
 import { rootDir } from '../consts'
 
 const mapServiceToNXname = async (serviceName: string) => {
   const projectRootPath = join(__dirname, '..', '..', '..', '..')
-  const fileContent = await readFile(join(projectRootPath, 'workspace.json'), {
-    encoding: 'utf-8',
+  const projects = globSync(['apps/*/project.json', 'apps/*/*/project.json'], {
+    cwd: projectRootPath,
   })
-  const workspace: { projects: { [name: string]: string } } = JSON.parse(
-    fileContent,
-  )
   const nxName = (
     await Promise.all(
-      Object.entries(workspace.projects)
-        .filter((space) => space[1].startsWith('apps/'))
-        .map(async (space) => {
-          const project: { targets: { [name: string]: any } } = JSON.parse(
-            await readFile(join(projectRootPath, space[1], 'project.json'), {
-              encoding: 'utf-8',
-            }),
-          )
-          return typeof project.targets[`service-${serviceName}`] !==
-            'undefined'
-            ? space[0]
-            : null
-        }),
+      projects.map(async (path) => {
+        const project: {
+          name: string
+          targets: { [name: string]: any }
+        } = JSON.parse(
+          await readFile(join(projectRootPath, path), {
+            encoding: 'utf-8',
+          }),
+        )
+        return typeof project.targets[`service-${serviceName}`] !== 'undefined'
+          ? project.name
+          : null
+      }),
     )
   ).filter((name) => name !== null) as string[]
 

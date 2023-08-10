@@ -4,7 +4,7 @@ import { PaymentPending as Payment } from '@island.is/application/ui-components'
 import { Passport } from '../../lib/constants'
 import { hasSecondGuardian } from '../../lib/utils'
 
-export const PaymentPending: FC<FieldBaseProps> = ({
+export const PaymentPending: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   application,
   refetch,
 }) => {

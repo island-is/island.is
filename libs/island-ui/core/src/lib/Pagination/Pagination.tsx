@@ -34,7 +34,7 @@ export interface PaginationProps {
   ) => ReactNode
 }
 
-export const Pagination: FC<PaginationProps> = ({
+export const Pagination: FC<React.PropsWithChildren<PaginationProps>> = ({
   page,
   totalPages = 0,
   totalItems,

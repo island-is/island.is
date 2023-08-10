@@ -9,9 +9,9 @@ import { Defendant, isIndictmentCase } from '@island.is/judicial-system/types'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
 
-const PoliceCaseNumbersTags: React.FC<{ policeCaseNumbers: string[] }> = ({
-  policeCaseNumbers,
-}) => (
+const PoliceCaseNumbersTags: React.FC<
+  React.PropsWithChildren<{ policeCaseNumbers: string[] }>
+> = ({ policeCaseNumbers }) => (
   <Box display="flex" flexWrap="wrap">
     {policeCaseNumbers.map((policeCaseNumber, index) => (
       <Box marginTop={1} marginRight={1} key={`${policeCaseNumber}-${index}`}>
@@ -21,10 +21,9 @@ const PoliceCaseNumbersTags: React.FC<{ policeCaseNumbers: string[] }> = ({
   </Box>
 )
 
-const Entry: React.FC<{ label: string; value: string }> = ({
-  label,
-  value,
-}) => {
+const Entry: React.FC<
+  React.PropsWithChildren<{ label: string; value: string }>
+> = ({ label, value }) => {
   return (
     <Text color="dark400" fontWeight="semiBold" paddingTop={'smallGutter'}>
       {`${label}: ${value}`}
@@ -56,7 +55,9 @@ interface Props {
   workingCase: Case
 }
 
-const Defendants: React.FC<Props> = ({ workingCase }) => {
+const Defendants: React.FC<React.PropsWithChildren<Props>> = ({
+  workingCase,
+}) => {
   const { defendants, type } = workingCase
   const { formatMessage } = useIntl()
 
@@ -73,10 +74,9 @@ const Defendants: React.FC<Props> = ({ workingCase }) => {
   )
 }
 
-export const ProsecutorCaseInfo: React.FC<Props & { hideCourt?: boolean }> = ({
-  workingCase,
-  hideCourt = false,
-}) => {
+export const ProsecutorCaseInfo: React.FC<
+  React.PropsWithChildren<Props & { hideCourt?: boolean }>
+> = ({ workingCase, hideCourt = false }) => {
   const { policeCaseNumbers, court } = workingCase
   const { formatMessage } = useIntl()
 
@@ -93,7 +93,9 @@ export const ProsecutorCaseInfo: React.FC<Props & { hideCourt?: boolean }> = ({
   )
 }
 
-export const CourtCaseInfo: React.FC<Props> = ({ workingCase }) => {
+export const CourtCaseInfo: React.FC<React.PropsWithChildren<Props>> = ({
+  workingCase,
+}) => {
   const { courtCaseNumber, prosecutor } = workingCase
   const { formatMessage } = useIntl()
 

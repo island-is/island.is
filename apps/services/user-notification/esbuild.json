@@ -27,6 +27,7 @@
     "pg-native",
     "form-data",
     "swagger-ui-dist",
+    "@mikro-orm/core",
     "@protobufjs/aspromise",
     "@protobufjs/base64",
     "@protobufjs/codegen",

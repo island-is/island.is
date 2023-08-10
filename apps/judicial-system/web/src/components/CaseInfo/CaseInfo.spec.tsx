@@ -5,8 +5,10 @@ import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { getDefendantLabel } from './CaseInfo'
 
-const formatMessage = createIntl({ locale: 'is', onError: jest.fn })
-  .formatMessage
+const formatMessage = createIntl({
+  locale: 'is',
+  onError: jest.fn,
+}).formatMessage
 
 describe('getDefendantLabel - Indictment', () => {
   const fn = (defendants: Defendant[]) =>
@@ -39,8 +41,10 @@ describe('getDefendantLabel - Indictment', () => {
 })
 
 describe('getDefendantLabel - RestrictionCase/InvestigationCase', () => {
-  const formatMessage = createIntl({ locale: 'is', onError: jest.fn })
-    .formatMessage
+  const formatMessage = createIntl({
+    locale: 'is',
+    onError: jest.fn,
+  }).formatMessage
 
   const fn = (defendants: Defendant[]) =>
     getDefendantLabel(formatMessage, defendants, CaseType.CUSTODY)

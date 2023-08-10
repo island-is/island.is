@@ -21,7 +21,9 @@ export const Error404 = () => {
             <Bullet>{loc.bulletFour}</Bullet>
           </BulletList>{' '}
           {loc.textAfterBullets}{' '}
-          <Link href="https://island.is/samradsgatt">{loc.linkText}</Link>
+          <Link href="https://island.is/samradsgatt" legacyBehavior>
+            {loc.linkText}
+          </Link>
           <br />
           {loc.textAfterBreak}{' '}
           <LinkV2 href="mailto:samradsgatt@stjornarradid.is">

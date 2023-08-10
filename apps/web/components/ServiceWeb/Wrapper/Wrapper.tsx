@@ -44,7 +44,7 @@ interface WrapperProps {
   showLogoOnMobileDisplays?: boolean
 }
 
-export const Wrapper: FC<WrapperProps> = ({
+export const Wrapper: FC<React.PropsWithChildren<WrapperProps>> = ({
   pageTitle,
   headerTitle,
   institutionSlug,
