@@ -26,7 +26,7 @@
       }
     },
     "schemas/codegen": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "output": "libs/service-portal/assets/src/**/*.generated.ts",
         "command": "graphql-codegen --config libs/service-portal/assets/codegen.yml"
