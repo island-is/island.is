@@ -20,7 +20,10 @@ const IdentityQuery = gql`
   }
 `
 
-const NationalIdWithName: FC<FieldBaseProps> = ({ field, application }) => {
+const NationalIdWithName: FC<React.PropsWithChildren<FieldBaseProps>> = ({
+  field,
+  application,
+}) => {
   const { id } = field
   const { formatMessage } = useLocale()
   const {

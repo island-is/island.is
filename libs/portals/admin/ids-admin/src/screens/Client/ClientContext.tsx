@@ -30,7 +30,9 @@ export type ClientContextType = {
 
 const ClientContext = createContext<ClientContextType | undefined>(undefined)
 
-export const ClientProvider: FC = ({ children }) => {
+export const ClientProvider: FC<React.PropsWithChildren<unknown>> = ({
+  children,
+}) => {
   const clientResult = useLoaderData() as AuthAdminClient
   const actionData = useActionData() as EditClientResult
   const [publishData, setPublishData] = useState<PublishData | null>(null)

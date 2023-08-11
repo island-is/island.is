@@ -7,7 +7,9 @@ interface SliceProps {
   slice: LogoListProps
 }
 
-export const LogoListSlice: React.FC<SliceProps> = ({ slice }) => {
+export const LogoListSlice: React.FC<React.PropsWithChildren<SliceProps>> = ({
+  slice,
+}) => {
   return (
     <section
       key={slice.id}

@@ -273,7 +273,9 @@ export function getLegalArguments(
   })
 }
 
-export const IndictmentCount: React.FC<Props> = (props) => {
+export const IndictmentCount: React.FC<React.PropsWithChildren<Props>> = (
+  props,
+) => {
   const {
     indictmentCount,
     workingCase,

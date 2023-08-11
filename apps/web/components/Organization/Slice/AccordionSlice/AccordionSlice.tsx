@@ -37,7 +37,9 @@ interface SliceProps {
   slice: AccordionSliceSchema
 }
 
-export const AccordionSlice: React.FC<SliceProps> = ({ slice }) => {
+export const AccordionSlice: React.FC<React.PropsWithChildren<SliceProps>> = ({
+  slice,
+}) => {
   const router = useRouter()
   const labelId = 'sliceTitle-' + slice.id
 

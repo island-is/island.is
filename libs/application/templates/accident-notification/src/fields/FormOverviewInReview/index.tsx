@@ -18,7 +18,7 @@ interface FormOverviewInReviewProps {
 }
 
 export const FormOverviewInReview: FC<
-  FormOverviewInReviewProps & FieldBaseProps
+  React.PropsWithChildren<FormOverviewInReviewProps & FieldBaseProps>
 > = ({ application, field, refetch, goToScreen }) => {
   const isAssignee = field?.props?.isAssignee || false
   const { formatMessage } = useLocale()

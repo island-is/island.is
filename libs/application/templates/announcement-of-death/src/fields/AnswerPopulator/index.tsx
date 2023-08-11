@@ -3,7 +3,9 @@ import { FieldBaseProps } from '@island.is/application/types'
 import { EstateRegistrant } from '@island.is/clients/syslumenn'
 import { useFormContext } from 'react-hook-form'
 
-export const AnswerPopulator: FC<FieldBaseProps> = ({ application }) => {
+export const AnswerPopulator: FC<React.PropsWithChildren<FieldBaseProps>> = ({
+  application,
+}) => {
   const { setValue } = useFormContext()
   useEffect(() => {
     const externalData = application.externalData.syslumennOnEntry.data

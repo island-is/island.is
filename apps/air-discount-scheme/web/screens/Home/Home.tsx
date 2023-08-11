@@ -39,9 +39,7 @@ const Home: Screen<PropTypes> = ({ page }) => {
           >
             <Box marginBottom={4}>
               <Breadcrumbs>
-                <Link href={toRoute('home')}>
-                  <a>Ísland.is</a>
-                </Link>
+                <Link href={toRoute('home')}>Ísland.is</Link>
                 <span>Loftbrú</span>
               </Breadcrumbs>
             </Box>

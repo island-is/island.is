@@ -1,11 +1,12 @@
 {
-  "root": "libs/portals/admin/regulations-admin",
+  "name": "portals-admin-regulations-admin",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/portals/admin/regulations-admin/src",
   "projectType": "library",
   "tags": ["lib:portals-admin", "scope:portals-admin"],
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": [
@@ -14,15 +15,17 @@
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/portals/admin/regulations-admin"],
+      "executor": "@nx/jest:jest",
+      "outputs": [
+        "{workspaceRoot}/coverage/libs/portals/admin/regulations-admin"
+      ],
       "options": {
-        "jestConfig": "libs/portals/admin/regulations-admin/jest.config.js",
+        "jestConfig": "libs/portals/admin/regulations-admin/jest.config.ts",
         "passWithNoTests": true
       }
     },
     "extract-strings": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/portals/admin/regulations-admin/src/**/*.{js,ts,tsx}'"
       }

@@ -5,7 +5,9 @@ interface Props {
   description: string
 }
 
-export const FieldDescription: FC<Props> = ({ description }) => {
+export const FieldDescription: FC<React.PropsWithChildren<Props>> = ({
+  description,
+}) => {
   return (
     <Box marginTop={1} marginBottom={1}>
       <Markdown>{description}</Markdown>

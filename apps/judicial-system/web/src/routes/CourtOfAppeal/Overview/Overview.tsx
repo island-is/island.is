@@ -23,7 +23,9 @@ import { core } from '@island.is/judicial-system-web/messages'
 import CaseFilesOverview from '../components/CaseFilesOverview/CaseFilesOverview'
 import CourtOfAppealCaseOverviewHeader from '../components/CaseOverviewHeader/CaseOverviewHeader'
 
-const CourtOfAppealOverview: React.FC = () => {
+const CourtOfAppealOverview: React.FC<
+  React.PropsWithChildren<unknown>
+> = () => {
   const {
     workingCase,
     setWorkingCase,

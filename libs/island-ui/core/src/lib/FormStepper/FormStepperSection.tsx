@@ -19,17 +19,19 @@ function getSubSectionsInSection(
   return (section.children ?? []).filter((child) => child.type === subSection)
 }
 
-export const FormStepperSection: FC<{
-  theme?: types.FormStepperThemes
-  section: types.FormStepperSection
-  subSection: string
-  sectionIndex: number
-  isActive: boolean
-  isComplete: boolean
-  isLastSection: boolean
-  activeSubSection: number
-  showSubSectionIcon?: boolean
-}> = ({
+export const FormStepperSection: FC<
+  React.PropsWithChildren<{
+    theme?: types.FormStepperThemes
+    section: types.FormStepperSection
+    subSection: string
+    sectionIndex: number
+    isActive: boolean
+    isComplete: boolean
+    isLastSection: boolean
+    activeSubSection: number
+    showSubSectionIcon?: boolean
+  }>
+> = ({
   theme = types.FormStepperThemes.PURPLE,
   section,
   subSection,

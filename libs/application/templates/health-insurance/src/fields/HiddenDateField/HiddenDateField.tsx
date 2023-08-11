@@ -5,7 +5,9 @@ import { Input, Box } from '@island.is/island-ui/core'
 import { useFormContext } from 'react-hook-form'
 import { MissingInfoType } from '../../types'
 
-const HiddenDateField: FC<FieldBaseProps> = ({ application }) => {
+const HiddenDateField: FC<React.PropsWithChildren<FieldBaseProps>> = ({
+  application,
+}) => {
   const { register } = useFormContext()
   const missingInfo =
     (getValueViaPath(

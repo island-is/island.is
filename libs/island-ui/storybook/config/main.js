@@ -1,12 +1,9 @@
 const path = require('path')
 const { VanillaExtractPlugin } = require('@vanilla-extract/webpack-plugin')
-
 const rootDir = (dir) => path.resolve(__dirname, dir)
-
 module.exports = {
-  typescript: { reactDocgen: false },
-  core: {
-    builder: 'webpack5',
+  typescript: {
+    reactDocgen: false,
   },
   stories: [
     '../../core/src/**/*.stories.@(tsx|mdx)',
@@ -19,6 +16,7 @@ module.exports = {
     '@storybook/addon-essentials',
     'storybook-addon-designs',
     'storybook-addon-apollo-client',
+    '@storybook/addon-mdx-gfm',
   ],
   babel: async (options) => ({
     ...options,
@@ -32,7 +30,6 @@ module.exports = {
   webpackFinal: (config) => {
     config.plugins.push(new VanillaExtractPlugin())
     config.devtool = false
-
     config.module.rules.push({
       test: /\.stories\.(ts|tsx)$/,
       exclude: path.resolve(__dirname, '../../../../node_modules'),
@@ -40,11 +37,12 @@ module.exports = {
         {
           // needed for docs addon
           loader: '@storybook/source-loader',
-          options: { injectParameters: true },
+          options: {
+            injectParameters: true,
+          },
         },
       ],
     })
-
     config.resolve = {
       ...config.resolve,
       alias: {
@@ -87,7 +85,13 @@ module.exports = {
         '@island.is/feature-flags': rootDir('../../../feature-flags/src'),
       },
     }
-
     return config
+  },
+  framework: {
+    name: '@storybook/react-webpack5',
+    options: {},
+  },
+  docs: {
+    autodocs: true,
   },
 }

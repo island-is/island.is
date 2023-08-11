@@ -23,7 +23,7 @@ export interface LinkProps extends NextLinkProps {
 }
 
 // Next link that can handle external urls
-export const LinkV2: React.FC<LinkProps> = ({
+export const LinkV2: React.FC<React.PropsWithChildren<LinkProps>> = ({
   children,
   href,
   as,
@@ -63,6 +63,7 @@ export const LinkV2: React.FC<LinkProps> = ({
         passHref
         prefetch={prefetch}
         data-testid={dataTestId}
+        legacyBehavior
       >
         {pureChildren ? (
           children

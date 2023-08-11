@@ -33,11 +33,13 @@ import {
 } from '@island.is/shared/problem'
 import { DelegationsScreen } from '../components/DelegationsScreen'
 
-const ApplicationLoader: FC<{
-  applicationId: string
-  nationalRegistryId: string
-  slug: string
-}> = ({ applicationId, nationalRegistryId, slug }) => {
+const ApplicationLoader: FC<
+  React.PropsWithChildren<{
+    applicationId: string
+    nationalRegistryId: string
+    slug: string
+  }>
+> = ({ applicationId, nationalRegistryId, slug }) => {
   const type = getTypeFromSlug(slug)
   const [delegationsChecked, setDelegationsChecked] = useState(
     type ? false : true,
@@ -107,10 +109,12 @@ const ApplicationLoader: FC<{
   )
 }
 
-const ShellWrapper: FC<{
-  application: Application
-  nationalRegistryId: string
-}> = ({ application, nationalRegistryId }) => {
+const ShellWrapper: FC<
+  React.PropsWithChildren<{
+    application: Application
+    nationalRegistryId: string
+  }>
+> = ({ application, nationalRegistryId }) => {
   const [dataSchema, setDataSchema] = useState<Schema>()
   const [form, setForm] = useState<Form>()
   const [, fieldsDispatch] = useFields()
@@ -183,11 +187,13 @@ const ShellWrapper: FC<{
   )
 }
 
-export const ApplicationForm: FC<{
-  applicationId: string
-  nationalRegistryId: string
-  slug: string
-}> = ({ applicationId, nationalRegistryId, slug }) => {
+export const ApplicationForm: FC<
+  React.PropsWithChildren<{
+    applicationId: string
+    nationalRegistryId: string
+    slug: string
+  }>
+> = ({ applicationId, nationalRegistryId, slug }) => {
   return (
     <FieldProvider>
       <ApplicationLoader

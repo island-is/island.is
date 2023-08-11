@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
 
-const InstitutionIllustration: FC = () => {
+const InstitutionIllustration: FC<React.PropsWithChildren<unknown>> = () => {
   return (
     <svg
       width="798"
