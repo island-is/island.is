@@ -17,6 +17,7 @@ interface MobileAppBannerProps {
 }
 
 export const MobileAppBanner = ({ namespace }: MobileAppBannerProps) => {
+  const [isMounted, setIsMounted] = useState(false)
   const COOKIE_NAME = 'island-mobile-app-banner'
 
   const n = useNamespace(namespace)
@@ -41,9 +42,10 @@ export const MobileAppBanner = ({ namespace }: MobileAppBannerProps) => {
 
   useEffect(() => {
     setIsApple(getMobilePlatform() === 'apple')
+    setIsMounted(true)
   }, [])
 
-  return hidden ? null : (
+  return hidden || !isMounted ? null : (
     <Box
       background="blue400"
       display="flex"
