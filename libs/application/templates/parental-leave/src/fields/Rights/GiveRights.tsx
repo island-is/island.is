@@ -10,7 +10,11 @@ import { parentalLeaveFormMessages } from '../../lib/messages'
 import { defaultMonths } from '../../config'
 import { YES, NO } from '../../constants'
 
-const GiveRights: FC<FieldBaseProps> = ({ error, field, application }) => {
+const GiveRights: FC<React.PropsWithChildren<FieldBaseProps>> = ({
+  error,
+  field,
+  application,
+}) => {
   const currentAnswer = getValueViaPath(
     application.answers,
     field.id,

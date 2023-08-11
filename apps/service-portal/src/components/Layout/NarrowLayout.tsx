@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import React, { FC, ReactNode } from 'react'
 import {
   Box,
   Navigation,
@@ -25,6 +25,7 @@ interface NarrowLayoutProps {
   activeParent?: PortalNavigationItem
   pathname: string
   height: number
+  children: ReactNode
 }
 
 export type SubNavItemType = NavigationItem & { enabled?: boolean }

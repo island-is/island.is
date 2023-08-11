@@ -13,7 +13,7 @@ import { MAIN_NAVIGATION } from '../../lib/masterNavigation'
 import FullWidthLayout from './FullWidthLayout'
 import { NarrowLayout } from './NarrowLayout'
 
-export const Layout: FC = ({ children }) => {
+export const Layout: FC<React.PropsWithChildren<unknown>> = ({ children }) => {
   useNamespaces(['service.portal', 'global', 'portals'])
   const activeModule = useActiveModule()
   const { pathname } = useLocation()

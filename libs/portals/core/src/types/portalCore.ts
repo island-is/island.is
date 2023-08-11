@@ -88,7 +88,7 @@ export interface PortalModuleRoutesProps extends PortalModuleProps {
  * A rendered out by the render value of a  portal route
  */
 export type PortalModuleComponent<Props = Record<string, unknown>> = FC<
-  PortalModuleProps & Props
+  React.PropsWithChildren<PortalModuleProps & Props>
 >
 
 /**

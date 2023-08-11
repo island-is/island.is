@@ -21,11 +21,9 @@ interface FooterProps {
   organizationSlug: string
 }
 
-const SjukratryggingarFooter: React.FC<FooterProps> = ({
-  footerItems,
-  namespace,
-  organizationSlug,
-}) => {
+const SjukratryggingarFooter: React.FC<
+  React.PropsWithChildren<FooterProps>
+> = ({ footerItems, namespace, organizationSlug }) => {
   const n = useNamespace(namespace)
   const { isServiceWeb } = useContext(GlobalContext)
   const { linkResolver } = useLinkResolver()

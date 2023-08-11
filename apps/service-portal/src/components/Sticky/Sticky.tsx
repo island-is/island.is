@@ -1,9 +1,17 @@
-import React, { FC, useCallback, useEffect, useRef, useState } from 'react'
+import React, {
+  FC,
+  ReactNode,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react'
 import { theme } from '@island.is/island-ui/theme'
 import { SERVICE_PORTAL_HEADER_HEIGHT_LG } from '@island.is/service-portal/constants'
 interface Props {
   top?: number
   constantSticky?: boolean
+  children?: ReactNode
 }
 
 export const Sticky: FC<Props> = ({

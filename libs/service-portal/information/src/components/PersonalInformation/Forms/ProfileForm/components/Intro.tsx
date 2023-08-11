@@ -9,7 +9,10 @@ interface Props {
   showIntroTitle?: boolean
 }
 
-export const OnboardingIntro: FC<Props> = ({ name, showIntroTitle }) => {
+export const OnboardingIntro: FC<React.PropsWithChildren<Props>> = ({
+  name,
+  showIntroTitle,
+}) => {
   useNamespaces('sp.settings')
   const { formatMessage } = useLocale()
   return (

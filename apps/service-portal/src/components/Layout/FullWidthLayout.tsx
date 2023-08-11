@@ -21,6 +21,7 @@ interface FullWidthLayoutProps {
   activeParent?: PortalNavigationItem
   height: number
   pathname: string
+  children: ReactNode
 }
 
 export const FullWidthLayout: FC<FullWidthLayoutProps> = ({

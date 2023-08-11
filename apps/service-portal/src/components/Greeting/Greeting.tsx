@@ -13,7 +13,7 @@ import { m } from '@island.is/service-portal/core'
 import * as styles from './Greeting.css'
 import GreetingSvg from './GreetingSvg'
 
-const Greeting: FC<{}> = () => {
+const Greeting: FC<React.PropsWithChildren<{}>> = () => {
   const { formatMessage } = useLocale()
   const { userInfo } = useAuth()
   const currentHour = new Date().getHours()

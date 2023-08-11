@@ -31,7 +31,7 @@ interface UseFormProps {
   code: string
 }
 
-export const InputEmail: FC<Props> = ({
+export const InputEmail: FC<React.PropsWithChildren<Props>> = ({
   buttonText,
   email,
   disabled,

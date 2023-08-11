@@ -93,7 +93,7 @@ const defaultDelete = {
   dialogCancelLabel: '',
 } as const
 
-export const ActionCard: React.FC<ActionCardProps> = ({
+export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
   date,
   heading,
   headingVariant = 'h3',

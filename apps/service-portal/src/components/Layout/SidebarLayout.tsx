@@ -10,6 +10,7 @@ import * as styles from './SidebarLayout.css'
 import cn from 'classnames'
 
 interface SidebarLayoutProps {
+  children: ReactNode
   sidebarContent: ReactNode
   isSticky?: boolean
 }

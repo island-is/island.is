@@ -36,7 +36,7 @@ interface Props {
   setFormLoading?: (isLoading: boolean) => void
 }
 
-export const ProfileForm: FC<Props> = ({
+export const ProfileForm: FC<React.PropsWithChildren<Props>> = ({
   onCloseOverlay,
   onCloseDropModal,
   canDrop,

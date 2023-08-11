@@ -17,7 +17,9 @@ interface ReviewScreenProps {
   editable?: boolean
 }
 
-const EditPeriodsReview: FC<ReviewScreenProps> = ({ application }) => {
+const EditPeriodsReview: FC<React.PropsWithChildren<ReviewScreenProps>> = ({
+  application,
+}) => {
   const { formatMessage } = useLocale()
   const dob = getExpectedDateOfBirthOrAdoptionDate(application)
   const dobDate = dob ? new Date(dob) : null

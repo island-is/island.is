@@ -20,7 +20,11 @@ interface Props {
   onItemClick?: () => void
 }
 
-const ModuleNavigation: FC<Props> = ({ nav, onItemClick, badge }) => {
+const ModuleNavigation: FC<React.PropsWithChildren<Props>> = ({
+  nav,
+  onItemClick,
+  badge,
+}) => {
   const [expand, setExpand] = useState(false)
   const { formatMessage } = useLocale()
   const { pathname } = useLocation()

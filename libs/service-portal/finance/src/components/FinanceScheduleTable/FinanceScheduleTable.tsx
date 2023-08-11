@@ -18,7 +18,9 @@ const compare = function (a: any, b: any) {
   if (a < b) return -1
   return 0
 }
-const FinanceScheduleTable: FC<Props> = ({ recordsArray }) => {
+const FinanceScheduleTable: FC<React.PropsWithChildren<Props>> = ({
+  recordsArray,
+}) => {
   useNamespaces('sp.finance-schedule')
 
   const [page, setPage] = useState(1)

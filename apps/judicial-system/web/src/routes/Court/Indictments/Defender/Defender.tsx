@@ -23,7 +23,7 @@ import { core } from '@island.is/judicial-system-web/messages'
 import { defender as m } from './Defender.strings'
 import SelectDefender from './SelectDefender'
 
-const HearingArrangements: React.FC = () => {
+const HearingArrangements: React.FC<React.PropsWithChildren<unknown>> = () => {
   const { workingCase, isLoadingWorkingCase, caseNotFound } = useContext(
     FormContext,
   )

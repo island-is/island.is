@@ -14,7 +14,9 @@ type InfoProps = {
   side: Individual
 }
 
-export const ApplicationOverview: FC<FieldBaseProps> = ({ application }) => {
+export const ApplicationOverview: FC<
+  React.PropsWithChildren<FieldBaseProps>
+> = ({ application }) => {
   const { formatMessage } = useLocale()
   const { answers } = application
   const applicant = answers.applicant as Individual
@@ -22,7 +24,7 @@ export const ApplicationOverview: FC<FieldBaseProps> = ({ application }) => {
   const witness1 = answers.witness1 as Individual
   const witness2 = answers.witness2 as Individual
 
-  const InfoSection: FC<InfoProps> = ({ side }) => {
+  const InfoSection: FC<React.PropsWithChildren<InfoProps>> = ({ side }) => {
     return (
       <Box>
         <Box display="flex" marginBottom={3}>

@@ -15,7 +15,9 @@ interface Props {
   recordsArray: Array<CustomerRecordsDetails>
 }
 
-const FinanceTransactionsTable: FC<Props> = ({ recordsArray }) => {
+const FinanceTransactionsTable: FC<React.PropsWithChildren<Props>> = ({
+  recordsArray,
+}) => {
   const [page, setPage] = useState(1)
   const { formatMessage } = useLocale()
 

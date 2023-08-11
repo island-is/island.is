@@ -27,7 +27,9 @@ interface UseFormProps {
   account: string
 }
 
-export const BankInfoForm: FC<Props> = ({ bankInfo }) => {
+export const BankInfoForm: FC<React.PropsWithChildren<Props>> = ({
+  bankInfo,
+}) => {
   useNamespaces('sp.settings')
   const { formatMessage } = useLocale()
   const {

@@ -182,7 +182,7 @@ interface ButtonContentProps {
   variant?: ButtonVariant
 }
 
-const ButtonContent: FC<ButtonContentProps> = ({
+const ButtonContent: FC<React.PropsWithChildren<ButtonContentProps>> = ({
   leftImage,
   isMenuButton,
   hasLeftContent,
@@ -284,7 +284,7 @@ const ButtonContent: FC<ButtonContentProps> = ({
   )
 }
 
-const IconContainer: FC = ({ children }) => (
+const IconContainer: FC<React.PropsWithChildren<unknown>> = ({ children }) => (
   <Box
     display="inlineBlock"
     textAlign="center"
@@ -298,7 +298,9 @@ const IconContainer: FC = ({ children }) => (
   </Box>
 )
 
-const LeftContentContainer: FC = ({ children }) => {
+const LeftContentContainer: FC<React.PropsWithChildren<unknown>> = ({
+  children,
+}) => {
   return (
     <>
       <Box display="inlineBlock" className={styles.leftSpacer} />

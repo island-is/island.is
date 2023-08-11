@@ -26,7 +26,7 @@ import { useListDocuments } from '@island.is/service-portal/graphql'
 import * as styles from './Dashboard.css'
 import cn from 'classnames'
 
-export const Dashboard: FC<{}> = () => {
+export const Dashboard: FC<React.PropsWithChildren<{}>> = () => {
   const { userInfo } = useAuth()
   const { unreadCounter } = useListDocuments()
   const { formatMessage } = useLocale()

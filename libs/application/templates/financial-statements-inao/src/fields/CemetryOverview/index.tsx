@@ -62,7 +62,7 @@ export const CemetryOverview = ({
 
   const onBackButtonClick = () => {
     if (
-      cemeteryIncome < Number(careTakerLimit) &&
+      Number(cemeteryIncome) < Number(careTakerLimit) &&
       fixedAssetsTotal === '0' &&
       longTermDebt === '0'
     ) {
@@ -340,7 +340,7 @@ export const CemetryOverview = ({
           }}
         />
       </Box>
-      {cemeteryIncome < Number(careTakerLimit) &&
+      {Number(cemeteryIncome) < Number(careTakerLimit) &&
       fixedAssetsTotal === '0' &&
       longTermDebt === '0' ? (
         <Box paddingTop={4}>

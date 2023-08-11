@@ -18,7 +18,7 @@ interface Props {
   appealRulingDecision?: CaseAppealRulingDecision | null
 }
 
-const TagAppealState: React.FC<Props> = ({
+const TagAppealState: React.FC<React.PropsWithChildren<Props>> = ({
   appealRulingDecision,
   appealState,
 }) => {
