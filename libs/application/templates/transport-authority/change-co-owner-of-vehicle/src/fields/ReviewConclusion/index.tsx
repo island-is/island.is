@@ -19,9 +19,9 @@ import { conclusion } from '../../lib/messages'
 import { ReviewScreenProps } from '../../shared'
 import { isLastReviewer } from '../../utils'
 
-export const ReviewConclusion: FC<FieldBaseProps & ReviewScreenProps> = (
-  props,
-) => {
+export const ReviewConclusion: FC<
+  React.PropsWithChildren<FieldBaseProps & ReviewScreenProps>
+> = (props) => {
   const { refetch, reviewerNationalId = '', application } = props
   const { formatMessage } = useLocale()
   const isLast = isLastReviewer(reviewerNationalId, application.answers)

@@ -510,6 +510,7 @@ application-system-api:
   enabled: true
   env:
     APPLICATION_ATTACHMENT_BUCKET: 'island-is-prod-storage-application-system'
+    AUTH_PUBLIC_API_URL: 'https://innskra.island.is/api'
     CLIENT_LOCATION_ORIGIN: 'https://island.is/umsoknir'
     COMPANY_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379"]'
     COMPANY_REGISTRY_XROAD_PROVIDER_ID: 'IS/GOV/5402696029/Skatturinn/ft-v1'

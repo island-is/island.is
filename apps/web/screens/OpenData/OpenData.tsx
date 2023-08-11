@@ -92,7 +92,11 @@ const OpenDataPage: Screen<OpenDataProps> = ({ page, megaMenuData }) => {
                   ]}
                   renderLink={(link) => {
                     return (
-                      <NextLink {...linkResolver('opendatapage')} passHref>
+                      <NextLink
+                        {...linkResolver('opendatapage')}
+                        passHref
+                        legacyBehavior
+                      >
                         {link}
                       </NextLink>
                     )

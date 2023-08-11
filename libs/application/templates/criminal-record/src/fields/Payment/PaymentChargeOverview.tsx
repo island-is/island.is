@@ -7,7 +7,9 @@ import { useLocale } from '@island.is/localization'
 import { formatText } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 
-export const PaymentChargeOverview: FC<FieldBaseProps> = ({ application }) => {
+export const PaymentChargeOverview: FC<
+  React.PropsWithChildren<FieldBaseProps>
+> = ({ application }) => {
   const { externalData } = application
   const { formatMessage } = useLocale()
 

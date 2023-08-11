@@ -5,8 +5,10 @@ import { CaseState, CaseType } from '@island.is/judicial-system/types'
 import { tagCaseState as m } from './TagCaseState.strings'
 import { mapCaseStateToTagVariant } from './TagCaseState'
 
-const formatMessage = createIntl({ locale: 'is-IS', onError: jest.fn })
-  .formatMessage
+const formatMessage = createIntl({
+  locale: 'is-IS',
+  onError: jest.fn,
+}).formatMessage
 
 describe('mapCaseStateToTagVariant', () => {
   const fn = (

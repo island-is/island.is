@@ -73,11 +73,12 @@ describe('Formatters utils', () => {
   describe('replaceTabsOnChange', () => {
     test('should not call replaceTabs if called with a string that does not have a tab character', async () => {
       // Arrange
+      const user = userEvent.setup()
       const spy = jest.spyOn(formatters, 'replaceTabs')
       render(<input onChange={(evt) => formatters.replaceTabsOnChange(evt)} />)
 
       // Act
-      userEvent.type(await screen.findByRole('textbox'), 'Lorem ipsum')
+      await user.type(await screen.findByRole('textbox'), 'Lorem ipsum')
 
       // Assert
       expect(spy).not.toBeCalled()

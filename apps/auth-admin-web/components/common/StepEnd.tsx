@@ -6,7 +6,7 @@ interface Props {
   title: string
 }
 
-const StepEnd: React.FC<Props> = ({
+const StepEnd: React.FC<React.PropsWithChildren<Props>> = ({
   handleButtonFinishedClick,
   buttonText,
   title,

@@ -16,7 +16,9 @@ interface Props {
   identityResource: IdentityResourceDTO
 }
 
-const IdentityResourceCreateForm: React.FC<Props> = (props) => {
+const IdentityResourceCreateForm: React.FC<React.PropsWithChildren<Props>> = (
+  props,
+) => {
   const { register, handleSubmit, formState } = useForm<IdentityResourceDTO>()
   const { isSubmitting, errors } = formState
   const [isEditing, setIsEditing] = useState<boolean>(false)

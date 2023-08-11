@@ -14,12 +14,9 @@ interface SubSectionItemProps {
   children: React.ReactNode
 }
 
-export const SubSectionItem: FC<SubSectionItemProps> = ({
-  currentState,
-  showIcon = false,
-  children,
-  href,
-}) => {
+export const SubSectionItem: FC<
+  React.PropsWithChildren<SubSectionItemProps>
+> = ({ currentState, showIcon = false, children, href }) => {
   const renderChildren = () => (
     <Box className={styles.name}>
       <Text
