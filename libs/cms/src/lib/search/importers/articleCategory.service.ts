@@ -32,7 +32,7 @@ export class ArticleCategorySyncService
           const mapped = mapArticleCategory(entry)
           const content = mapped.description ?? ''
           return {
-            _id: mapped.slug,
+            _id: mapped.id,
             title: mapped.title,
             content,
             contentWordCount: content.split(/\s+/).length,
