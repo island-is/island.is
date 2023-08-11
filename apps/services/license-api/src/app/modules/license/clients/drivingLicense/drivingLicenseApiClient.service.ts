@@ -95,8 +95,8 @@ export class DrivingLicenseApiClientService implements GenericLicenseClient {
       return {
         ok: false,
         error: {
-          code: 14,
-          message: 'Missing license',
+          code: 3,
+          message: 'No license info found for user',
         },
       }
     }
@@ -118,7 +118,7 @@ export class DrivingLicenseApiClientService implements GenericLicenseClient {
     return {
       ok: true,
       data: {
-        valid: true,
+        valid: licenseNationalId === nationalId,
         passIdentity: {
           nationalId: licenseNationalId,
           name,
