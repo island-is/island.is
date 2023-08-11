@@ -1,6 +1,6 @@
 import { uuid } from 'uuidv4'
 import { Transaction } from 'sequelize/types'
-import { InternalServerErrorException } from '@nestjs/common/exceptions'
+import { InternalServerErrorException } from '@nestjs/common'
 
 import { CaseFile } from '../../models/file.model'
 import { UpdateFileDto } from '../../dto/updateFile.dto'

@@ -13,7 +13,7 @@ import StepEnd from '../../../components/common/StepEnd'
 import ResourcesTabsNav from '../../../components/Resource/nav/ResourcesTabsNav'
 import LocalizationUtils from '../../../utils/localization.utils'
 
-const Index: React.FC = () => {
+const Index: React.FC<React.PropsWithChildren<unknown>> = () => {
   const { query } = useRouter()
   const stepQuery = query.step
   const resourceId = query.edit

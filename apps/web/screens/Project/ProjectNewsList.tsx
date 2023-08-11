@@ -163,7 +163,6 @@ const ProjectNewsList: Screen<ProjectNewsListProps> = ({
           monthOptions={monthOptions}
           title={newsTitle}
           newsPerPage={10}
-          newsTags={projectPage.secondaryNewsTags}
         />
       </ProjectWrapper>
       <HeadWithSocialSharing
@@ -195,7 +194,7 @@ const getIntParam = (s: string | string[]) => {
   if (!isNaN(i)) return i
 }
 
-ProjectNewsList.getInitialProps = async ({ apolloClient, query, locale }) => {
+ProjectNewsList.getProps = async ({ apolloClient, query, locale }) => {
   const year = getIntParam(query.y)
   const month = year && getIntParam(query.m)
   const selectedPage = getIntParam(query.page) ?? 1

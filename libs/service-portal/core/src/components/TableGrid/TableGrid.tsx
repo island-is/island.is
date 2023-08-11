@@ -15,7 +15,12 @@ interface Props {
   mt?: boolean
 }
 
-export const TableGrid: FC<Props> = ({ dataArray, title, subtitle, mt }) => {
+export const TableGrid: FC<React.PropsWithChildren<Props>> = ({
+  dataArray,
+  title,
+  subtitle,
+  mt,
+}) => {
   return (
     <T.Table box={mt ? { marginTop: 'containerGutter' } : undefined}>
       <T.Head>

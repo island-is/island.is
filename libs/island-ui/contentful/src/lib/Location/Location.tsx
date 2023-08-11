@@ -18,7 +18,7 @@ export interface LocationProps {
   background: { url: string }
 }
 
-export const Location: FC<LocationProps> = ({
+export const Location: FC<React.PropsWithChildren<LocationProps>> = ({
   title,
   subTitle,
   address,
