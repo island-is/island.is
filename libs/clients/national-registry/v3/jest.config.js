@@ -1,15 +1,16 @@
-module.exports = {
-  displayName: 'clients-national-registry-v3',
-  preset: '../../../../jest.preset.js',
-  globals: {
-    'ts-jest': {
-      tsconfig: '<rootDir>/tsconfig.spec.json',
-    },
-  },
-  testEnvironment: 'node',
+/* eslint-disable */
+export default {
+  preset: './jest.preset.js',
+  rootDir: '../../../..',
+  roots: [__dirname],
+  globals: {},
   transform: {
-    '^.+\\.[tj]s$': 'ts-jest',
+    '^.+\\.[tj]sx?$': [
+      'ts-jest',
+      { tsconfig: `${__dirname}/tsconfig.spec.json` },
+    ],
   },
-  moduleFileExtensions: ['ts', 'js', 'html'],
-  coverageDirectory: '../../../../coverage/libs/clients/national-registry/v3',
+  moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
+  coverageDirectory: '<rootDir>/coverage/libs/clients/national-registry/v3',
+  displayName: 'National-registry-v3',
 }
