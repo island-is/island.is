@@ -99,7 +99,7 @@ const descKey: { [key: string]: MessageDescriptor } = {
     parentalLeaveFormMessages.editFlow.employerApprovesDesc,
 }
 
-const InReviewSteps: FC<FieldBaseProps> = (props) => {
+const InReviewSteps: FC<React.PropsWithChildren<FieldBaseProps>> = (props) => {
   const { application, field, refetch, errors } = props
   const {
     isSelfEmployed,

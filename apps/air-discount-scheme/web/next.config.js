@@ -1,4 +1,4 @@
-const withNx = require('@nrwl/next/plugins/with-nx')
+const { composePlugins, withNx } = require('@nx/next')
 const { createVanillaExtractPlugin } = require('@vanilla-extract/next-plugin')
 
 const {
@@ -14,27 +14,36 @@ const apiPath = '/api'
 const graphqlPath = '/api/graphql'
 const withVanillaExtract = createVanillaExtractPlugin()
 
-module.exports = withNx(
-  withVanillaExtract({
-    webpack: (config, options) => {
-      return config
-    },
-    serverRuntimeConfig: {
-      // Will only be available on the server side
-      apiUrl: `${API_URL}${apiPath}`,
-      graphqlEndpoint: `${API_URL}${graphqlPath}`,
-    },
-    publicRuntimeConfig: {
-      // Will be available on both server and client
-      apiUrl: `${WEB_PUBLIC_URL}/api`,
-      graphqlEndpoint: graphqlPath,
-      ddRumApplicationId: DD_RUM_APPLICATION_ID,
-      ddRumClientToken: DD_RUM_CLIENT_TOKEN,
-      appVersion: APP_VERSION,
-      environment: ENVIRONMENT,
-    },
-    env: {
-      API_MOCKS: process.env.API_MOCKS || '',
-    },
-  }),
-)
+/**
+ * @type {import('@nx/next/plugins/with-nx').WithNxOptions}
+ **/
+const nextConfig = {
+  webpack: (config, options) => {
+    return config
+  },
+  serverRuntimeConfig: {
+    // Will only be available on the server side
+    apiUrl: `${API_URL}${apiPath}`,
+    graphqlEndpoint: `${API_URL}${graphqlPath}`,
+  },
+  publicRuntimeConfig: {
+    // Will be available on both server and client
+    apiUrl: `${WEB_PUBLIC_URL}/api`,
+    graphqlEndpoint: graphqlPath,
+    ddRumApplicationId: DD_RUM_APPLICATION_ID,
+    ddRumClientToken: DD_RUM_CLIENT_TOKEN,
+    appVersion: APP_VERSION,
+    environment: ENVIRONMENT,
+  },
+  env: {
+    API_MOCKS: process.env.API_MOCKS || '',
+  },
+}
+
+const plugins = [
+  // Add more Next.js plugins to this list if needed.
+  withNx,
+  withVanillaExtract,
+]
+
+module.exports = composePlugins(...plugins)(nextConfig)

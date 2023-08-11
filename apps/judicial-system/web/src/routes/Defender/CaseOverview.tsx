@@ -47,7 +47,7 @@ type availableModals =
   | 'ConfirmAppealAfterDeadline'
   | 'ConfirmStatementAfterDeadline'
 
-export const CaseOverview: React.FC = () => {
+export const CaseOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
   const { workingCase, isLoadingWorkingCase, caseNotFound } = useContext(
     FormContext,
   )
@@ -102,11 +102,11 @@ export const CaseOverview: React.FC = () => {
                   <Box>
                     <Text variant="h5">
                       {formatMessage(strings.rulingDate, {
-                        courtEndTime: `${formatDate(
-                          workingCase.courtEndTime,
+                        rulingDate: `${formatDate(
+                          workingCase.rulingDate,
                           'PPP',
                         )} kl. ${formatDate(
-                          workingCase.courtEndTime,
+                          workingCase.rulingDate,
                           constants.TIME_FORMAT,
                         )}`,
                       })}
@@ -294,10 +294,10 @@ export const CaseOverview: React.FC = () => {
                       title={formatMessage(core.pdfButtonRuling)}
                       pdfType={'limitedAccess/ruling'}
                     >
-                      {workingCase.rulingDate ? (
+                      {workingCase.rulingSignatureDate ? (
                         <SignedDocument
                           signatory={workingCase.judge?.name}
-                          signingDate={workingCase.rulingDate}
+                          signingDate={workingCase.rulingSignatureDate}
                         />
                       ) : (
                         <Text>{formatMessage(strings.unsignedRuling)}</Text>

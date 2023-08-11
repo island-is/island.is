@@ -559,3 +559,13 @@ export const IcelandicGovernmentInstitutionVacancies = new XroadConf({
       '/k8s/xroad/client/ICELANDIC_GOVERNMENT_INSTITUTION_VACANCIES_PASSWORD',
   },
 })
+
+export const AircraftRegistry = new XroadConf({
+  env: {
+    XROAD_AIRCRAFT_REGISTRY_PATH: {
+      dev: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Loftfaraskra-V1',
+      staging: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Loftfaraskra-V1',
+      prod: 'IS/GOV/5405131040/Samgongustofa-Protected/Loftfaraskra-V1',
+    },
+  },
+})

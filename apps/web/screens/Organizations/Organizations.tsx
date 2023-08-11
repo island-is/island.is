@@ -192,7 +192,11 @@ const OrganizationPage: Screen<OrganizationProps> = ({
                   ]}
                   renderLink={(link) => {
                     return (
-                      <NextLink {...linkResolver('homepage')} passHref>
+                      <NextLink
+                        {...linkResolver('homepage')}
+                        passHref
+                        legacyBehavior
+                      >
                         {link}
                       </NextLink>
                     )
@@ -303,7 +307,7 @@ const OrganizationPage: Screen<OrganizationProps> = ({
   )
 }
 
-OrganizationPage.getInitialProps = async ({ apolloClient, locale }) => {
+OrganizationPage.getProps = async ({ apolloClient, locale }) => {
   const [
     {
       data: { getOrganizations },

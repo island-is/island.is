@@ -241,6 +241,7 @@ export interface Case {
   isAppealDeadlineExpired?: boolean
   isAppealGracePeriodExpired?: boolean
   rulingDate?: string
+  rulingSignatureDate?: string
   initialRulingDate?: string
   registrar?: User
   judge?: User
@@ -294,6 +295,7 @@ export interface CaseListEntry
     | 'courtDate'
     | 'initialRulingDate'
     | 'rulingDate'
+    | 'rulingSignatureDate'
     | 'courtEndTime'
     | 'prosecutorAppealDecision'
     | 'accusedAppealDecision'
@@ -494,7 +496,7 @@ export function hasCaseBeenAppealed(theCase: Case): boolean {
 
 export function getAppealInfo(theCase: Case): Case {
   const {
-    courtEndTime,
+    rulingDate,
     appealState,
     accusedAppealDecision,
     prosecutorAppealDecision,
@@ -505,11 +507,10 @@ export function getAppealInfo(theCase: Case): Case {
 
   const appealInfo = {} as Case
 
-  if (!courtEndTime) return appealInfo
+  if (!rulingDate) return appealInfo
 
   appealInfo.canBeAppealed = Boolean(
-    courtEndTime &&
-      !appealState &&
+    !appealState &&
       (accusedAppealDecision === CaseAppealDecision.POSTPONE ||
         prosecutorAppealDecision === CaseAppealDecision.POSTPONE),
   )
@@ -527,12 +528,10 @@ export function getAppealInfo(theCase: Case): Case {
       ? prosecutorPostponedAppealDate ?? undefined
       : accusedPostponedAppealDate ?? undefined
 
-  if (courtEndTime) {
-    const courtEndDate = new Date(courtEndTime)
-    appealInfo.appealDeadline = new Date(
-      courtEndDate.setDate(courtEndDate.getDate() + 3),
-    ).toISOString()
-  }
+  const theRulingDate = new Date(rulingDate)
+  appealInfo.appealDeadline = new Date(
+    theRulingDate.setDate(theRulingDate.getDate() + 3),
+  ).toISOString()
 
   if (appealReceivedByCourtDate) {
     appealInfo.statementDeadline = getStatementDeadline(

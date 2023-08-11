@@ -22,7 +22,7 @@ interface SliceProps {
   dropdownMarginBottom?: BoxProps['marginBottom']
 }
 
-export const SliceDropdown: React.FC<SliceProps> = ({
+export const SliceDropdown: React.FC<React.PropsWithChildren<SliceProps>> = ({
   slices,
   sliceExtraText,
   gridSpan = ['9/9', '9/9', '7/9', '7/9', '4/9'],

@@ -75,7 +75,7 @@ export const createIndictment = async (
 
   addGiganticHeading(doc, heading, 'Times-Roman')
   addNormalPlusText(doc, ' ')
-  setLineCap(4)
+  setLineCap(2)
   addNormalPlusText(doc, theCase.indictmentIntroduction || '')
 
   const hasManyCounts =

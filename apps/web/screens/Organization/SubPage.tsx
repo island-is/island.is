@@ -45,6 +45,7 @@ import { scrollTo } from '@island.is/web/hooks/useScrollSpy'
 import { webRichText } from '@island.is/web/utils/richText'
 import { useI18n } from '@island.is/web/i18n'
 import { Locale } from 'locale'
+import { safelyExtractPathnameFromUrl } from '@island.is/web/utils/safelyExtractPathnameFromUrl'
 
 interface SubPageProps {
   organizationPage: Query['getOrganizationPage']
@@ -53,7 +54,10 @@ interface SubPageProps {
   locale: Locale
 }
 
-const TOC: FC<{ slices: Slice[]; title: string }> = ({ slices, title }) => {
+const TOC: FC<React.PropsWithChildren<{ slices: Slice[]; title: string }>> = ({
+  slices,
+  title,
+}) => {
   const navigation = useMemo(
     () =>
       slices
@@ -281,7 +285,9 @@ const renderSlices = (
   }
 }
 
-SubPage.getInitialProps = async ({ apolloClient, locale, query, pathname }) => {
+SubPage.getProps = async ({ apolloClient, locale, query, req }) => {
+  const pathname = safelyExtractPathnameFromUrl(req.url)
+
   const { slug, subSlug } = getSlugAndSubSlug(query, pathname)
   const [
     {

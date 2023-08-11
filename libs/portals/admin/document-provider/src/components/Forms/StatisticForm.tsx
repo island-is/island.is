@@ -34,7 +34,9 @@ interface Props {
   onSubmit: (data: StatisticFormData) => void
 }
 
-export const StatisticForm: FC<Props> = ({ onSubmit }) => {
+export const StatisticForm: FC<React.PropsWithChildren<Props>> = ({
+  onSubmit,
+}) => {
   const { handleSubmit, control } = useForm()
   const { formatMessage } = useLocale()
   return (

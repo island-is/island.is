@@ -12,7 +12,7 @@ import { core } from '@island.is/judicial-system-web/messages'
 
 import { strings } from './CaseFilesOverview.strings'
 
-const CaseFilesOverview: React.FC = () => {
+const CaseFilesOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
   const { workingCase } = useContext(FormContext)
 
   const { formatMessage } = useIntl()
@@ -42,10 +42,10 @@ const CaseFilesOverview: React.FC = () => {
           title={formatMessage(core.pdfButtonRuling)}
           pdfType={'ruling'}
         >
-          {workingCase.rulingDate ? (
+          {workingCase.rulingSignatureDate ? (
             <SignedDocument
               signatory={workingCase.judge?.name}
-              signingDate={workingCase.rulingDate}
+              signingDate={workingCase.rulingSignatureDate}
             />
           ) : (
             <Text>{formatMessage(strings.unsignedDocument)}</Text>

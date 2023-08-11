@@ -20,7 +20,7 @@ type FormData = {
   registrationNumber: string
 }
 
-const Select: FC = () => {
+const Select: FC<React.PropsWithChildren<unknown>> = () => {
   const { user } = useContext(UserContext)
   const {
     t: {

@@ -11,11 +11,15 @@ import { TempCaseListEntry as CaseListEntry } from '@island.is/judicial-system-w
 import { TagCaseState } from '@island.is/judicial-system-web/src/components'
 import { displayCaseType } from '@island.is/judicial-system-web/src/routes/Shared/Cases/utils'
 import { CategoryCard } from '@island.is/judicial-system-web/src/components/Table'
+import format from 'date-fns/format'
+import parseISO from 'date-fns/parseISO'
+import { tables } from '@island.is/judicial-system-web/messages'
 
 interface Props {
   theCase: CaseListEntry
   onClick: () => void
   isCourtRole: boolean
+  children: React.ReactNode
 }
 
 const MobilePastCase: React.FC<Props> = ({
@@ -58,6 +62,17 @@ const MobilePastCase: React.FC<Props> = ({
           ) : (
             <Text>{`+ ${theCase.defendants.length - 1}`}</Text>
           )}
+        </>
+      )}
+      {theCase.created && (
+        <>
+          <br />
+          <Text variant="small" fontWeight={'medium'}>
+            {`${formatMessage(tables.created)} ${format(
+              parseISO(theCase.created),
+              'd.M.y',
+            )}`}
+          </Text>
         </>
       )}
       <Box marginTop={1}>{children}</Box>

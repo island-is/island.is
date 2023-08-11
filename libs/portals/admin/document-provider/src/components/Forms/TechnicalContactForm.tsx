@@ -19,7 +19,7 @@ interface Props {
   organisationId: string
   technicalContact: Contact
 }
-export const TechnicalContactForm: FC<Props> = ({
+export const TechnicalContactForm: FC<React.PropsWithChildren<Props>> = ({
   organisationId,
   technicalContact,
 }) => {

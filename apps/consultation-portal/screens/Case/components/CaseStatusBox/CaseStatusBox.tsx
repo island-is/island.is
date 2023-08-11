@@ -20,7 +20,7 @@ export const CaseStatusBox = ({ status }: Props) => {
       </StackedTitleAndDescription>
       {status == 'Til umsagnar' && (
         <Box paddingTop={2}>
-          <Link href="#write-review" shallow>
+          <Link href="#write-review" shallow legacyBehavior>
             <Button fluid iconType="outline" nowrap as="a">
               {loc[status].buttons.sendAdvice}
             </Button>

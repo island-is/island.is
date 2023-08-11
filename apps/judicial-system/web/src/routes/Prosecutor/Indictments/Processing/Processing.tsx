@@ -28,7 +28,7 @@ import * as constants from '@island.is/judicial-system/consts'
 
 import { ProsecutorSection, SelectCourt } from '../../components'
 
-const Processing: React.FC = () => {
+const Processing: React.FC<React.PropsWithChildren<unknown>> = () => {
   const {
     workingCase,
     setWorkingCase,

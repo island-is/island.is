@@ -23,7 +23,9 @@ import { signedVerdictOverview as m } from '@island.is/judicial-system-web/messa
 import RulingDateLabel from '@island.is/judicial-system-web/src/components/RulingDateLabel/RulingDateLabel'
 import { courtOfAppealCaseOverviewHeader as strings } from './CaseOverviewHeader.strings'
 
-const CourtOfAppealCaseOverviewHeader: React.FC = () => {
+const CourtOfAppealCaseOverviewHeader: React.FC<
+  React.PropsWithChildren<unknown>
+> = () => {
   const { workingCase } = useContext(FormContext)
 
   const { formatMessage } = useIntl()
@@ -46,9 +48,9 @@ const CourtOfAppealCaseOverviewHeader: React.FC = () => {
         <Box>
           <OverviewHeader />
 
-          {workingCase.courtEndTime && (
+          {workingCase.rulingDate && (
             <Box>
-              <RulingDateLabel courtEndTime={workingCase.courtEndTime} />
+              <RulingDateLabel rulingDate={workingCase.rulingDate} />
             </Box>
           )}
           {workingCase.appealedDate && (
