@@ -23,7 +23,7 @@ import {
   PERMANENT_FOSTER_CARE,
 } from '../../constants'
 
-const ChildSelector: FC<FieldBaseProps> = ({
+const ChildSelector: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   application,
   setBeforeSubmitCallback,
 }) => {

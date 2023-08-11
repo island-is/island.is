@@ -14,7 +14,9 @@ interface Props {
   onSubmit: (data: EndpointsFormData) => void
 }
 
-export const EndpointsForm: FC<Props> = ({ onSubmit }) => {
+export const EndpointsForm: FC<React.PropsWithChildren<Props>> = ({
+  onSubmit,
+}) => {
   const { formatMessage } = useLocale()
   const {
     handleSubmit,

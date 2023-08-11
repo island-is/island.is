@@ -92,7 +92,11 @@ const OpenDataPage: Screen<OpenDataProps> = ({ page, megaMenuData }) => {
                   ]}
                   renderLink={(link) => {
                     return (
-                      <NextLink {...linkResolver('opendatapage')} passHref>
+                      <NextLink
+                        {...linkResolver('opendatapage')}
+                        passHref
+                        legacyBehavior
+                      >
                         {link}
                       </NextLink>
                     )
@@ -171,7 +175,7 @@ const OpenDataPage: Screen<OpenDataProps> = ({ page, megaMenuData }) => {
   )
 }
 
-OpenDataPage.getInitialProps = async ({ apolloClient, locale }) => {
+OpenDataPage.getProps = async ({ apolloClient, locale }) => {
   const [
     {
       data: { getOpenDataPage: page },

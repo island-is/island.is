@@ -1,0 +1,6 @@
+mutation LimitedAccessCreatePresignedPost($input: CreatePresignedPostInput!) {
+  limitedAccessCreatePresignedPost(input: $input) {
+    url
+    fields
+  }
+}

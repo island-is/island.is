@@ -31,10 +31,9 @@ const PoliceCaseNumbersTags: React.FC<{ policeCaseNumbers: string[] }> = ({
   </Box>
 )
 
-const Entry: React.FC<{ label: string; value: string }> = ({
-  label,
-  value,
-}) => {
+const Entry: React.FC<
+  React.PropsWithChildren<{ label: string; value: string }>
+> = ({ label, value }) => {
   return (
     <Text color="dark400" fontWeight="semiBold" paddingTop={'smallGutter'}>
       {`${label}: ${value}`}
@@ -66,7 +65,9 @@ interface Props {
   workingCase: Case
 }
 
-const Defendants: React.FC<Props> = ({ workingCase }) => {
+const Defendants: React.FC<React.PropsWithChildren<Props>> = ({
+  workingCase,
+}) => {
   const { defendants, type } = workingCase
   const { formatMessage } = useIntl()
 
@@ -83,10 +84,9 @@ const Defendants: React.FC<Props> = ({ workingCase }) => {
   )
 }
 
-export const ProsecutorCaseInfo: React.FC<Props & { hideCourt?: boolean }> = ({
-  workingCase,
-  hideCourt = false,
-}) => {
+export const ProsecutorCaseInfo: React.FC<
+  React.PropsWithChildren<Props & { hideCourt?: boolean }>
+> = ({ workingCase, hideCourt = false }) => {
   const { policeCaseNumbers, court } = workingCase
   const { formatMessage } = useIntl()
 
@@ -103,7 +103,9 @@ export const ProsecutorCaseInfo: React.FC<Props & { hideCourt?: boolean }> = ({
   )
 }
 
-export const CourtCaseInfo: React.FC<Props> = ({ workingCase }) => {
+export const CourtCaseInfo: React.FC<React.PropsWithChildren<Props>> = ({
+  workingCase,
+}) => {
   const { courtCaseNumber, prosecutor } = workingCase
   const { formatMessage } = useIntl()
 

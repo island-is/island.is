@@ -8,7 +8,7 @@ interface Props {
   activeStep?: IdentityResourceStep
 }
 
-const IdentityResourceStepNav: React.FC<Props> = ({
+const IdentityResourceStepNav: React.FC<React.PropsWithChildren<Props>> = ({
   handleStepChange,
   activeStep,
   children,

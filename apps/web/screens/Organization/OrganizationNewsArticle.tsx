@@ -151,11 +151,7 @@ const OrganizationNewsArticle: Screen<OrganizationNewsArticleProps> = ({
   )
 }
 
-OrganizationNewsArticle.getInitialProps = async ({
-  apolloClient,
-  locale,
-  query,
-}) => {
+OrganizationNewsArticle.getProps = async ({ apolloClient, locale, query }) => {
   const organizationPage = (
     await Promise.resolve(
       apolloClient.query<Query, QueryGetOrganizationPageArgs>({

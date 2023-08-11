@@ -15,7 +15,7 @@ import ReactHtmlParser from 'react-html-parser'
 import * as styles from './LicenseDetail.css'
 import { mapCategory } from '../../utils/dataMapper'
 import LicenseIcon from '../../components/LicenseIcon/LicenseIcon'
-import AnimateHeight from 'react-animate-height'
+import AnimateHeight, { Height } from 'react-animate-height'
 import { GenericLicenseDataField } from '@island.is/api/schema'
 import format from 'date-fns/format'
 import { dateFormat } from '@island.is/shared/constants'
@@ -28,12 +28,17 @@ interface Props {
   description?: string
 }
 
-const ExpandableLine: FC<Props> = ({ data, title, type, description }) => {
+const ExpandableLine: FC<React.PropsWithChildren<Props>> = ({
+  data,
+  title,
+  type,
+  description,
+}) => {
   const [expanded, toggleExpand] = useState<boolean>(false)
   const [closed, setClosed] = useState<boolean>(true)
   const ref = useRef<HTMLDivElement>(null)
 
-  const handleAnimationEnd = useCallback((height) => {
+  const handleAnimationEnd = useCallback((height: Height) => {
     if (height === 0) {
       setClosed(true)
     } else {
@@ -170,9 +175,7 @@ const ExpandableLine: FC<Props> = ({ data, title, type, description }) => {
           className={
             expanded || !isDriversLicense ? styles.animatedContent : undefined
           }
-          onAnimationEnd={(props: { newHeight: number }) =>
-            handleAnimationEnd(props.newHeight)
-          }
+          onHeightAnimationEnd={(newHeight) => handleAnimationEnd(newHeight)}
           duration={300}
           height={expanded || !isDriversLicense ? 'auto' : 0}
         >

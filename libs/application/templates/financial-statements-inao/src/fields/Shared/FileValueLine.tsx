@@ -7,7 +7,9 @@ interface FileValueLineProps {
   label?: string
 }
 
-export const FileValueLine: FC<FileValueLineProps> = ({ label = '' }) => {
+export const FileValueLine: FC<React.PropsWithChildren<FileValueLineProps>> = ({
+  label = '',
+}) => {
   const { formatMessage } = useLocale()
 
   return (

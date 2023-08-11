@@ -20,10 +20,9 @@ interface OpinberNyskopunFooterProps {
   namespace: Record<string, string>
 }
 
-export const OpinberNyskopunFooter: React.FC<OpinberNyskopunFooterProps> = ({
-  footerItems,
-  namespace,
-}) => {
+export const OpinberNyskopunFooter: React.FC<
+  React.PropsWithChildren<OpinberNyskopunFooterProps>
+> = ({ footerItems, namespace }) => {
   const n = useNamespace(namespace)
   return (
     <footer className={styles.container}>

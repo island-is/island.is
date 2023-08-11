@@ -5,7 +5,7 @@ import { m, DynamicWrapper } from '@island.is/service-portal/core'
 
 import DocumentScreen from '../../components/DocumentScreen/DocumentScreen'
 
-const LocalTax: FC = () => {
+const LocalTax: FC<React.PropsWithChildren<unknown>> = () => {
   useNamespaces('sp.local-tax')
   const { formatMessage } = useLocale()
 

@@ -16,7 +16,7 @@ interface ArrowLinkProps {
 // ArrowLink has the "arrow" icon and a permanent custom underline.
 // If there's not 'href' provided it will render a Box. Useful for when the ArrowLink is inside a clickable card.
 
-export const ArrowLink: React.FC<ArrowLinkProps> = ({
+export const ArrowLink: React.FC<React.PropsWithChildren<ArrowLinkProps>> = ({
   href,
   as,
   children,

@@ -25,7 +25,7 @@ interface Props {
   className?: string
 }
 
-export const TwoColumnUserInfoLine: FC<Props> = ({
+export const TwoColumnUserInfoLine: FC<React.PropsWithChildren<Props>> = ({
   label,
   loading,
   title,

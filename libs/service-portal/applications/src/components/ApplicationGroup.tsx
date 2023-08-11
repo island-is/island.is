@@ -13,7 +13,7 @@ interface Props {
   focus?: boolean
 }
 
-export const ApplicationGroup: FC<Props> = ({
+export const ApplicationGroup: FC<React.PropsWithChildren<Props>> = ({
   applications,
   label,
   organizations,

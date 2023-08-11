@@ -17,7 +17,12 @@ interface Props {
   linkText: string
 }
 
-const AidsTable: FC<Props> = ({ data, footnote, link, linkText }) => {
+const AidsTable: FC<React.PropsWithChildren<Props>> = ({
+  data,
+  footnote,
+  link,
+  linkText,
+}) => {
   useNamespaces('sp.health')
   const { formatMessage } = useLocale()
 

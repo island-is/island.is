@@ -1,22 +1,23 @@
 {
-  "root": "libs/auth-api-lib",
+  "name": "auth-api-lib",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/auth-api-lib/src",
   "projectType": "library",
   "generators": {},
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": ["libs/auth-api-lib/**/*.{ts,tsx,js,jsx}"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/auth-api-lib/jest.config.js",
+        "jestConfig": "libs/auth-api-lib/jest.config.ts",
         "passWithNoTests": true
       },
-      "outputs": ["coverage/libs/auth-api-lib"]
+      "outputs": ["{workspaceRoot}/coverage/libs/auth-api-lib"]
     }
   },
   "tags": ["lib:auth-api", "scope:auth-api"]

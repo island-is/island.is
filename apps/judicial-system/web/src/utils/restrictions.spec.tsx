@@ -14,7 +14,7 @@ interface Props {
   getMessage: (formatMessage: IntlFormatters['formatMessage']) => string
 }
 
-const Message: React.FC<Props> = (props) => {
+const Message: React.FC<React.PropsWithChildren<Props>> = (props) => {
   const { formatMessage } = useIntl()
   const messageFormatted = props.getMessage(formatMessage)
   return <span>{messageFormatted}</span>
@@ -172,8 +172,10 @@ describe('formatRequestedCustodyRestrictions', () => {
 })
 
 describe('formatCustodyRestrictions', () => {
-  const formatMessage = createIntl({ locale: 'is', onError: jest.fn() })
-    .formatMessage
+  const formatMessage = createIntl({
+    locale: 'is',
+    onError: jest.fn(),
+  }).formatMessage
 
   it('should return empty string if no custody restrictions', () => {
     const caseType = CaseType.CUSTODY

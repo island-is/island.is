@@ -32,30 +32,29 @@ const ApplicationSideNavItems = ({ roles, applicationFilters }: Props) => {
         return (
           <div key={'NavigationLinks-' + index}>
             {item.group && <p className={styles.group}>{item.group}</p>}
-            <Link href={item.link}>
-              <a
-                aria-label={item.label}
-                className={cn({
-                  [`${styles.link}`]: true,
-                  [`${styles.activeLink}`]: router.pathname === item.link,
-                  [`${styles.linkHoverEffect}`]: router.pathname !== item.link,
-                })}
-              >
-                <Box display="flex" justifyContent="spaceBetween">
-                  <Text fontWeight="semiBold">{item.label}</Text>
-                  <Text fontWeight="semiBold" color="dark300">
-                    {item.applicationState
-                      .map((state: ApplicationFiltersEnum) => {
-                        if (applicationFilters) {
-                          return applicationFilters[state]
-                        }
-                      })
-                      .reduce((a?: number, b?: number) => {
-                        return (a || 0) + (b || 0)
-                      })}
-                  </Text>
-                </Box>
-              </a>
+            <Link
+              href={item.link}
+              aria-label={item.label}
+              className={cn({
+                [`${styles.link}`]: true,
+                [`${styles.activeLink}`]: router.pathname === item.link,
+                [`${styles.linkHoverEffect}`]: router.pathname !== item.link,
+              })}
+            >
+              <Box display="flex" justifyContent="spaceBetween">
+                <Text fontWeight="semiBold">{item.label}</Text>
+                <Text fontWeight="semiBold" color="dark300">
+                  {item.applicationState
+                    .map((state: ApplicationFiltersEnum) => {
+                      if (applicationFilters) {
+                        return applicationFilters[state]
+                      }
+                    })
+                    .reduce((a?: number, b?: number) => {
+                      return (a || 0) + (b || 0)
+                    })}
+                </Text>
+              </Box>
             </Link>
           </div>
         )
