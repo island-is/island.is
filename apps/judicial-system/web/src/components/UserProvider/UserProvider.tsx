@@ -22,7 +22,7 @@ interface Props {
   authenticated?: boolean
 }
 
-export const UserProvider: React.FC<Props> = ({
+export const UserProvider: React.FC<React.PropsWithChildren<Props>> = ({
   children,
   authenticated = false,
 }) => {

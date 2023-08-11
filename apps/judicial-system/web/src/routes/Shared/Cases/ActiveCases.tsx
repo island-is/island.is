@@ -51,7 +51,7 @@ interface Props {
   onDeleteCase?: (caseToDelete: CaseListEntry) => Promise<void>
 }
 
-const ActiveCases: React.FC<Props> = (props) => {
+const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
   const { cases, onRowClick, isDeletingCase, onDeleteCase } = props
 
   const controls = useAnimation()

@@ -51,7 +51,9 @@ export class DirectorateOfLabourRepository {
     applicationId: string,
   ): Promise<ApplicationInformation | null> {
     const applicationInfo = await this.applicationInfo.applicationGetApplicationInformation(
-      { applicationId },
+      {
+        applicationId,
+      },
     )
 
     if (applicationInfo) {

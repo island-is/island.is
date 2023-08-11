@@ -13,7 +13,6 @@ import { getTranslatedValue } from '@island.is/portals/core'
 
 import { m } from '../../lib/messages'
 import { ClientType } from '../../components/ClientType'
-import { StickyLayout } from '../../components/StickyLayout/StickyLayout'
 import { AdvancedSettings } from './components/AdvancedSettings'
 import { BasicInfo } from './components/BasicInfo'
 import ClientsUrl from './components/ClientsUrl'
@@ -25,9 +24,11 @@ import { RevokeSecrets } from './components/RevokeSecrets/RevokeSecrets'
 import Translations from './components/Translations'
 import { useSuperAdmin } from '../../hooks/useSuperAdmin'
 import { EnvironmentHeader } from '../../components/EnvironmentHeader/EnvironmentHeader'
-import * as styles from './Client.css'
+import { StickyLayout } from '../../components/StickyLayout/StickyLayout'
 import { EnvironmentProvider } from '../../context/EnvironmentContext'
 import { useClient } from './ClientContext'
+
+import * as styles from './Client.css'
 
 const IssuerUrls = {
   [AuthAdminEnvironment.Development]:

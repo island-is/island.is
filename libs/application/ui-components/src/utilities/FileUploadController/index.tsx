@@ -75,7 +75,9 @@ interface FileUploadControllerProps {
   readonly forImageUpload?: boolean
 }
 
-export const FileUploadController: FC<FileUploadControllerProps> = ({
+export const FileUploadController: FC<
+  React.PropsWithChildren<FileUploadControllerProps>
+> = ({
   id,
   error,
   application,

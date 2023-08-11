@@ -9,7 +9,7 @@ interface ChevronProps {
   onChevronClick?: () => void
 }
 
-const Chevron: FC<ChevronProps> = ({
+const Chevron: FC<React.PropsWithChildren<ChevronProps>> = ({
   expanded,
   enabled,
   active,

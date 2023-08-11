@@ -1,7 +1,7 @@
 import { BrowserRouter } from 'react-router-dom'
 import { ReactNode, FC } from 'react'
 import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client'
-import { renderHook } from '@testing-library/react-hooks'
+import { renderHook } from '@testing-library/react'
 import { IntlProvider } from 'react-intl'
 import { MockedAuthProvider } from '@island.is/auth/react'
 import { defaultLanguage } from '@island.is/shared/constants'
@@ -20,11 +20,13 @@ import { PortalContext, PortalMeta } from '../components/PortalProvider'
 const user = { profile: { name: 'Peter' } }
 const userInfo = createMockUser(user)
 
-const MockedPortalProvider: FC<{
-  meta: PortalMeta
-  modules: PortalModule[]
-  routes: PortalRoute[]
-}> = ({ modules, meta, routes, children }) => (
+const MockedPortalProvider: FC<
+  React.PropsWithChildren<{
+    meta: PortalMeta
+    modules: PortalModule[]
+    routes: PortalRoute[]
+  }>
+> = ({ modules, meta, routes, children }) => (
   <PortalContext.Provider
     value={{
       meta,

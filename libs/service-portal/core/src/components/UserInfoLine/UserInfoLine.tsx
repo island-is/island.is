@@ -48,7 +48,7 @@ interface Props {
   printable?: boolean
 }
 
-export const UserInfoLine: FC<Props> = ({
+export const UserInfoLine: FC<React.PropsWithChildren<Props>> = ({
   label,
   content,
   renderContent,

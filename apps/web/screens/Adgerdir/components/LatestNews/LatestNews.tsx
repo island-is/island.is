@@ -16,7 +16,10 @@ export interface LatestNewsProps {
   news: LatestNewsItem[]
 }
 
-export const LatestNews: FC<LatestNewsProps> = ({ title, news }) => {
+export const LatestNews: FC<React.PropsWithChildren<LatestNewsProps>> = ({
+  title,
+  news,
+}) => {
   const [first, ...rest] = news
 
   return (

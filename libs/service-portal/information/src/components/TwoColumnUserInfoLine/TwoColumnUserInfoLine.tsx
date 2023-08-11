@@ -27,7 +27,7 @@ interface Props {
   printable?: boolean
 }
 
-export const TwoColumnUserInfoLine: FC<Props> = ({
+export const TwoColumnUserInfoLine: FC<React.PropsWithChildren<Props>> = ({
   label,
   loading,
   title,

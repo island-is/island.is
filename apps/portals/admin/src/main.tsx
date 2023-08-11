@@ -1,7 +1,7 @@
-import { userMonitoring } from '@island.is/user-monitoring'
 import '@island.is/api/mocks'
+import { userMonitoring } from '@island.is/user-monitoring'
 import React, { StrictMode } from 'react'
-import ReactDOM from 'react-dom'
+import { createRoot } from 'react-dom/client'
 
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 
@@ -19,9 +19,15 @@ if (!isRunningOnEnvironment('local')) {
   })
 }
 
-ReactDOM.render(
+const rootEl = document.getElementById('root')
+
+if (!rootEl) {
+  throw new Error('Root element not found')
+}
+
+const root = createRoot(rootEl)
+root.render(
   <StrictMode>
     <App />
   </StrictMode>,
-  document.getElementById('root'),
 )

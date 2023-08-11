@@ -338,7 +338,7 @@ const ApiCatalogue: Screen<HomestayProps> = ({
   )
 }
 
-ApiCatalogue.getInitialProps = async ({ apolloClient, locale }) => {
+ApiCatalogue.getProps = async ({ apolloClient, locale }) => {
   const organizationSlug =
     locale === 'en' ? 'digital-iceland' : 'stafraent-island'
 

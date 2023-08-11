@@ -23,7 +23,9 @@ interface FormOutput {
   apiScope: ApiScopeDTO
 }
 
-const ApiScopeCreateForm: React.FC<Props> = (props) => {
+const ApiScopeCreateForm: React.FC<React.PropsWithChildren<Props>> = (
+  props,
+) => {
   const {
     register,
     handleSubmit,
