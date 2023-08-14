@@ -164,7 +164,10 @@ export class ApplicationTemplateHelper<
 
   getReadableAnswersAndExternalData(
     role: ApplicationRole,
-  ): { answers: FormValue; externalData: ExternalData } {
+  ): {
+    answers: FormValue
+    externalData: ExternalData
+  } {
     const returnValue: { answers: FormValue; externalData: ExternalData } = {
       answers: {},
       externalData: {},

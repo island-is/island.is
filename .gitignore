@@ -90,3 +90,6 @@ _book
 
 # Ignore generated .html files when running `serve`
 apps/**/index.html
+
+# Next.js
+.next

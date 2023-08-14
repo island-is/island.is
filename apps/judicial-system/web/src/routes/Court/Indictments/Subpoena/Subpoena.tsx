@@ -27,7 +27,7 @@ import type { stepValidationsType } from '@island.is/judicial-system-web/src/uti
 
 import { subpoena as strings } from './Subpoena.strings'
 
-const Subpoena: React.FC = () => {
+const Subpoena: React.FC<React.PropsWithChildren<unknown>> = () => {
   const {
     workingCase,
     setWorkingCase,

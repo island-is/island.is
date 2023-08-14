@@ -19,10 +19,9 @@ const IdentityQuery = gql`
   }
 `
 
-export const NationalIdWithName: FC<FieldBaseProps> = ({
-  field,
-  application,
-}) => {
+export const NationalIdWithName: FC<
+  React.PropsWithChildren<FieldBaseProps>
+> = ({ field, application }) => {
   const { id } = field
   const { formatMessage } = useLocale()
   const {

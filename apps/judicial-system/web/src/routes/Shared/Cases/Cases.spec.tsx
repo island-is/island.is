@@ -423,6 +423,7 @@ describe('Cases', () => {
 
   describe('All user types - sorting', () => {
     test('should order the table data by accused name in ascending order when the user clicks the accused name table header', async () => {
+      const user = userEvent.setup()
       render(
         <MockedProvider
           mocks={[...mockCasesQuery, ...mockProsecutorQuery]}
@@ -436,7 +437,7 @@ describe('Cases', () => {
         </MockedProvider>,
       )
 
-      userEvent.click(await screen.findByTestId('accusedNameSortButton'))
+      await user.click(await screen.findByTestId('accusedNameSortButton'))
 
       const tableRows = await screen.findAllByTestId('custody-cases-table-row')
 
@@ -448,6 +449,7 @@ describe('Cases', () => {
     })
 
     test('should order the table data by accused name in descending order when the user clicks the accused name table header twice', async () => {
+      const user = userEvent.setup()
       render(
         <MockedProvider
           mocks={[...mockCasesQuery, ...mockProsecutorQuery]}
@@ -461,7 +463,7 @@ describe('Cases', () => {
         </MockedProvider>,
       )
 
-      userEvent.dblClick(await screen.findByTestId('accusedNameSortButton'))
+      await user.dblClick(await screen.findByTestId('accusedNameSortButton'))
 
       const tableRows = await screen.findAllByTestId('custody-cases-table-row')
 
@@ -473,6 +475,7 @@ describe('Cases', () => {
     })
 
     test('should order the table data by created in ascending order when the user clicks the created table header', async () => {
+      const user = userEvent.setup()
       render(
         <MockedProvider
           mocks={[...mockCasesQuery, ...mockProsecutorQuery]}
@@ -486,7 +489,7 @@ describe('Cases', () => {
         </MockedProvider>,
       )
 
-      userEvent.click(await screen.findByTestId('createdAtSortButton'))
+      await user.click(await screen.findByTestId('createdAtSortButton'))
 
       const tableRows = await screen.findAllByTestId('custody-cases-table-row')
 
@@ -498,6 +501,7 @@ describe('Cases', () => {
     })
 
     test('should order the table data by created in descending order when the user clicks the created table header twice', async () => {
+      const user = userEvent.setup()
       render(
         <MockedProvider
           mocks={[...mockCasesQuery, ...mockProsecutorQuery]}
@@ -511,7 +515,7 @@ describe('Cases', () => {
         </MockedProvider>,
       )
 
-      userEvent.dblClick(await screen.findByTestId('createdAtSortButton'))
+      await user.dblClick(await screen.findByTestId('createdAtSortButton'))
 
       const tableRows = await screen.findAllByTestId('custody-cases-table-row')
 

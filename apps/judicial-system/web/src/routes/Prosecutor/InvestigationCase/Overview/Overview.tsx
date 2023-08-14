@@ -49,7 +49,7 @@ import { createCaseResentExplanation } from '@island.is/judicial-system-web/src/
 
 import * as styles from './Overview.css'
 
-export const Overview: React.FC = () => {
+export const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
   const router = useRouter()
   const {
     workingCase,

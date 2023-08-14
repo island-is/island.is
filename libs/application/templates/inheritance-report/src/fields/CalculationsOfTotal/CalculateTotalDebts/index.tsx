@@ -7,7 +7,9 @@ import { FC, useEffect, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { m } from '../../../lib/messages'
 
-export const CalculateTotalDebts: FC<FieldBaseProps> = ({ application }) => {
+export const CalculateTotalDebts: FC<
+  React.PropsWithChildren<FieldBaseProps>
+> = ({ application }) => {
   const { answers } = application
   const { formatMessage } = useLocale()
   const { setValue } = useFormContext()
