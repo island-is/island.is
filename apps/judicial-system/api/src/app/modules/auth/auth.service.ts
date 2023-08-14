@@ -1,15 +1,21 @@
 import fetch from 'isomorphic-fetch'
 
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
+import { ConfigType } from '@nestjs/config'
 
 import type { User } from '@island.is/judicial-system/types'
 
 import { environment } from '../../../environments'
 
-const { domain, clientId, clientSecret, redirectUri } = environment.idsAuth
+import { authModuleConfig } from './auth.config'
 
 @Injectable()
 export class AuthService {
+  constructor(
+    @Inject(authModuleConfig.KEY)
+    private readonly config: ConfigType<typeof authModuleConfig>,
+  ) {}
+
   async findUser(nationalId: string): Promise<User | undefined> {
     const res = await fetch(
       `${environment.backend.url}/api/user/?nationalId=${nationalId}`,
@@ -42,15 +48,15 @@ export class AuthService {
 
   async fetchToken(code: string, codeVerifier: string) {
     const requestBody = new URLSearchParams({
-      client_id: clientId,
-      client_secret: clientSecret,
+      client_id: this.config.clientId,
+      client_secret: this.config.clientSecret,
       code: code,
-      redirect_uri: redirectUri,
+      redirect_uri: this.config.redirectUri,
       code_verifier: codeVerifier,
       grant_type: 'authorization_code',
     })
 
-    const response = await fetch(`${domain}/connect/token`, {
+    const response = await fetch(`${this.config.domain}/connect/token`, {
       method: 'POST',
       body: requestBody,
     })

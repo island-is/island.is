@@ -82,6 +82,7 @@ judicial-system-api:
       cpu: '100m'
       memory: '128Mi'
   secrets:
+    AUTH_IDS_SECRET: '/k8s/judicial-system/AUTH_IDS_SECRET'
     AUTH_JWT_SECRET: '/k8s/judicial-system/AUTH_JWT_SECRET'
     BACKEND_ACCESS_TOKEN: '/k8s/judicial-system/BACKEND_ACCESS_TOKEN'
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'

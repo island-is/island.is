@@ -1,14 +1,14 @@
-import IslandisLogin from '@island.is/login'
 import { Entropy } from 'entropy-string'
 
 import { CookieOptions, Request, Response } from 'express'
 import { createHash, randomBytes } from 'crypto'
-
 import jwt from 'jsonwebtoken'
 
 import { Controller, Get, Inject, Res, Query, Req } from '@nestjs/common'
+import { ConfigType } from '@nestjs/config'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
+
 import type { Logger } from '@island.is/logging'
 import {
   CSRF_COOKIE_NAME,
@@ -28,8 +28,9 @@ import {
 import { environment } from '../../../environments'
 import { AuthUser, Cookie } from './auth.types'
 import { AuthService } from './auth.service'
+import { authModuleConfig } from './auth.config'
 
-const { domain, clientId, scope, redirectUri } = environment.idsAuth
+//const { domain, clientId, scope, redirectUri } = environment.idsAuth
 
 const REDIRECT_COOKIE_NAME = 'judicial-system.redirect'
 
@@ -73,10 +74,11 @@ export class AuthController {
     private readonly auditTrailService: AuditTrailService,
     private readonly authService: AuthService,
     private readonly sharedAuthService: SharedAuthService,
-    @Inject('IslandisLogin')
-    private readonly loginIS: IslandisLogin,
+
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
+    @Inject(authModuleConfig.KEY)
+    private readonly config: ConfigType<typeof authModuleConfig>,
   ) {}
 
   @Get('login')
@@ -119,14 +121,14 @@ export class AuthController {
 
     const params = new URLSearchParams({
       response_type: 'code',
-      scope: scope,
+      scope: this.config.scope,
       code_challenge: codeChallenge,
       code_challenge_method: 'S256',
-      redirect_uri: redirectUri,
-      client_id: clientId,
+      redirect_uri: this.config.redirectUri,
+      client_id: this.config.clientId,
     })
 
-    const loginUrl = `${domain}/login?ReturnUrl=/connect/authorize/callback?${params}`
+    const loginUrl = `${this.config.domain}/login?ReturnUrl=/connect/authorize/callback?${params}`
 
     return res
       .cookie(name, { redirectRoute }, options)

@@ -20,6 +20,7 @@ import {
   DefendantModule,
   IndictmentCountModule,
   fileModuleConfig,
+  authModuleConfig,
 } from './modules'
 import { ConfigModule } from '@nestjs/config'
 import { CaseListModule } from './modules/caseList/caseList.module'
@@ -59,7 +60,10 @@ const autoSchemaFile = environment.production
     CmsTranslationsModule,
     PoliceModule,
     ProblemModule.forRoot({ logAllErrors: true }),
-    ConfigModule.forRoot({ isGlobal: true, load: [fileModuleConfig] }),
+    ConfigModule.forRoot({
+      isGlobal: true,
+      load: [fileModuleConfig, authModuleConfig],
+    }),
   ],
 })
 export class AppModule {}
