@@ -25,8 +25,10 @@ import { DefendantService } from '../../defendant'
 
 jest.mock('@island.is/judicial-system/message')
 
-const formatMessage = createTestIntl({ onError: jest.fn(), locale: 'is-IS' })
-  .formatMessage
+const formatMessage = createTestIntl({
+  onError: jest.fn(),
+  locale: 'is-IS',
+}).formatMessage
 
 export const createTestingNotificationModule = async () => {
   const notificationModule = await Test.createTestingModule({

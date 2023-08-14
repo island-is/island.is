@@ -27,7 +27,10 @@ import {
 import { MessageDescriptor } from '@formatjs/intl'
 import { Colors } from '@island.is/island-ui/theme'
 
-export const Overview: FC<FieldBaseProps> = ({ application, goToScreen }) => {
+export const Overview: FC<React.PropsWithChildren<FieldBaseProps>> = ({
+  application,
+  goToScreen,
+}) => {
   const answers = application.answers as GeneralFishingLicense
   const [fishingLicensePrice, setFishingLicensePrice] = useState<number>(0)
 

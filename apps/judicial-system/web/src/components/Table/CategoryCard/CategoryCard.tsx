@@ -7,6 +7,7 @@ interface CategoryCardProps {
   heading: string | React.ReactNode
   tags?: React.ReactNode
   onClick: () => void
+  children: React.ReactNode
 }
 
 const CategoryCard: React.FC<CategoryCardProps> = ({

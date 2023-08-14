@@ -82,7 +82,7 @@ const getServerValidationErrors = (error: ApolloError | undefined) => {
   return null
 }
 
-const Screen: FC<ScreenProps> = ({
+const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
   setUpdateForbidden,
   activeScreenIndex,
   addExternalData,

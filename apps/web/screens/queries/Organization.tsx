@@ -222,6 +222,9 @@ export const GET_ORGANIZATION_SUBPAGE_QUERY = gql`
       id
       title
       slug
+      signLanguageVideo {
+        url
+      }
       description {
         ...AllSlices
         ${nestedFields}

@@ -1,10 +1,11 @@
 {
-  "root": "libs/clients/transport-authority/vehicle-operators",
+  "name": "clients-transport-authority-vehicle-operators",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/clients/transport-authority/vehicle-operators/src",
   "projectType": "library",
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": [
@@ -13,17 +14,17 @@
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "outputs": [
-        "coverage/libs/clients/transport-authority/vehicle-operators"
+        "{workspaceRoot}/coverage/libs/clients/transport-authority/vehicle-operators"
       ],
       "options": {
-        "jestConfig": "libs/clients/transport-authority/vehicle-operators/jest.config.js",
+        "jestConfig": "libs/clients/transport-authority/vehicle-operators/jest.config.ts",
         "passWithNoTests": true
       }
     },
     "update-openapi-document": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "commands": [
           "curl -H \"X-Road-Client: $XROAD_CLIENT_ID\" http://localhost:8081/r1/IS-DEV/GOV/10017/Samgongustofa-Protected/getOpenAPI?serviceCode=Vehicle-Operators-V3 -H 'Accept: application/json' > src/clientConfig.json",
@@ -36,7 +37,7 @@
       }
     },
     "schemas/external-openapi-generator": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "commands": [
           "yarn openapi-generator -o libs/clients/transport-authority/vehicle-operators/gen/fetch -i libs/clients/transport-authority/vehicle-operators/src/clientConfig.json"

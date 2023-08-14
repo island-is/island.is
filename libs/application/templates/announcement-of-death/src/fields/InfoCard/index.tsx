@@ -19,10 +19,9 @@ type InfoCardProps = {
   }
 }
 
-export const InfoCard: FC<FieldBaseProps & InfoCardProps> = ({
-  application,
-  field,
-}) => {
+export const InfoCard: FC<
+  React.PropsWithChildren<FieldBaseProps & InfoCardProps>
+> = ({ application, field }) => {
   const { formatMessage } = useLocale()
   return (
     <GridRow>

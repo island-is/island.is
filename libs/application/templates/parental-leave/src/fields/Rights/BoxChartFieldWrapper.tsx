@@ -7,9 +7,9 @@ interface BoxChartFieldWrapperProps extends FieldBaseProps {
     props: BoxChartProps
   }
 }
-const BoxChartFieldWrapper: FC<BoxChartFieldWrapperProps> = ({
-  field,
-}: BoxChartFieldWrapperProps) => {
+const BoxChartFieldWrapper: FC<
+  React.PropsWithChildren<BoxChartFieldWrapperProps>
+> = ({ field }: BoxChartFieldWrapperProps) => {
   return <BoxChart {...field.props} />
 }
 export default BoxChartFieldWrapper

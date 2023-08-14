@@ -15,7 +15,7 @@ type FieldDescriptionProps = FieldBaseProps & {
   }
 }
 
-const FieldDescription: FC<FieldDescriptionProps> = ({
+const FieldDescription: FC<React.PropsWithChildren<FieldDescriptionProps>> = ({
   field,
   application,
 }) => {

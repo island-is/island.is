@@ -13,7 +13,9 @@ interface LifeEventPageListSliceProps {
   anchorPageLinkType?: LinkType
 }
 
-export const LifeEventPageListSlice: React.FC<LifeEventPageListSliceProps> = ({
+export const LifeEventPageListSlice: React.FC<
+  React.PropsWithChildren<LifeEventPageListSliceProps>
+> = ({
   slice,
   namespace,
   renderLifeEventPagesAsProfileCards = false,

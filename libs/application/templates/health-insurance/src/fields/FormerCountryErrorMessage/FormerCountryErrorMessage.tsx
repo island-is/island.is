@@ -6,7 +6,9 @@ import { useLocale } from '@island.is/localization'
 import Markdown from 'markdown-to-jsx'
 import { m } from '../../forms/messages'
 
-const FormerCountryErrorMessage: FC<FieldBaseProps> = ({ application }) => {
+const FormerCountryErrorMessage: FC<
+  React.PropsWithChildren<FieldBaseProps>
+> = ({ application }) => {
   const { formatMessage } = useLocale()
 
   return (

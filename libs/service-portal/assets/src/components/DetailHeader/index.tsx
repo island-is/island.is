@@ -7,7 +7,7 @@ interface Props {
   title?: string
 }
 
-const DetailHeader: FC<Props> = ({ title }) => {
+const DetailHeader: FC<React.PropsWithChildren<Props>> = ({ title }) => {
   const { formatMessage } = useLocale()
   return (
     <Hidden print={true}>

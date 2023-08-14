@@ -102,11 +102,7 @@ const ProjectNewsArticle: Screen<ProjectNewsArticleleProps> = ({
   )
 }
 
-ProjectNewsArticle.getInitialProps = async ({
-  apolloClient,
-  locale,
-  query,
-}) => {
+ProjectNewsArticle.getProps = async ({ apolloClient, locale, query }) => {
   const projectPage = (
     await Promise.resolve(
       apolloClient.query<Query, QueryGetProjectPageArgs>({

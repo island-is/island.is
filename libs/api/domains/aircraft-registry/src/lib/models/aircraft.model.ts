@@ -1,3 +1,4 @@
+import { CacheField } from '@island.is/nest/graphql'
 import { Field, ObjectType } from '@nestjs/graphql'
 
 @ObjectType('AircraftRegistryPerson')
@@ -38,10 +39,10 @@ export class Aircraft {
   @Field(() => Number, { nullable: true })
   maxWeight?: number | null
 
-  @Field(() => Person, { nullable: true })
+  @CacheField(() => Person, { nullable: true })
   operator?: Person | null
 
-  @Field(() => [Person], { nullable: true })
+  @CacheField(() => [Person], { nullable: true })
   owners?: Person[] | null
 
   @Field(() => Number, { nullable: true })
