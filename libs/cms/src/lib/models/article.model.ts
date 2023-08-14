@@ -14,6 +14,7 @@ import { mapDocument, SliceUnion } from '../unions/slice.union'
 import { mapProcessEntry, ProcessEntry } from './processEntry.model'
 import { mapStepper, Stepper } from './stepper.model'
 import { AlertBanner, mapAlertBanner } from './alertBanner.model'
+import { EmbeddedVideo, mapEmbeddedVideo } from './embeddedVideo.model'
 
 @ObjectType()
 export class Article {
@@ -94,6 +95,9 @@ export class Article {
 
   @Field(() => graphqlTypeJson, { nullable: true })
   activeTranslations?: Record<string, boolean>
+
+  @CacheField(() => EmbeddedVideo, { nullable: true })
+  signLanguageVideo?: EmbeddedVideo | null
 }
 
 export const mapArticle = ({
@@ -145,4 +149,7 @@ export const mapArticle = ({
   processEntryButtonText: fields.processEntryButtonText ?? '',
   alertBanner: fields.alertBanner ? mapAlertBanner(fields.alertBanner) : null,
   activeTranslations: fields.activeTranslations ?? { en: true },
+  signLanguageVideo: fields.signLanguageVideo
+    ? mapEmbeddedVideo(fields.signLanguageVideo)
+    : null,
 })
