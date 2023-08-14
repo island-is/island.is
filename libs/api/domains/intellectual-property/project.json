@@ -15,7 +15,7 @@
       "executor": "@nx/jest:jest",
       "outputs": ["coverage/libs/api/domains/intellectual-property"],
       "options": {
-        "jestConfig": "libs/api/domains/intellectual-property/jest.config.js",
+        "jestConfig": "libs/api/domains/intellectual-property/jest.config.ts",
         "passWithNoTests": true
       }
     }
