@@ -12,7 +12,7 @@ interface Props {
   label?: string
 }
 
-export const Modal: FC<Props> = ({
+export const Modal: FC<React.PropsWithChildren<Props>> = ({
   id,
   children,
   toggleClose,

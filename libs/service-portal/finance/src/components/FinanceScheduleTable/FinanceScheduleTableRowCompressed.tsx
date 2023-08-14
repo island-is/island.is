@@ -9,7 +9,9 @@ interface Props {
   paymentSchedule: PaymentSchedule
 }
 
-const FinanceScheduleTableRow: FC<Props> = ({ paymentSchedule }) => {
+const FinanceScheduleTableRow: FC<React.PropsWithChildren<Props>> = ({
+  paymentSchedule,
+}) => {
   useNamespaces('sp.finance-schedule')
   const { formatMessage } = useLocale()
 

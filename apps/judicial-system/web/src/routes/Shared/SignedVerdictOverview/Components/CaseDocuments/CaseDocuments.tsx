@@ -66,7 +66,7 @@ interface Props {
   ) => Promise<FetchResult<RequestRulingSignatureMutation>>
 }
 
-const CaseDocuments: React.FC<Props> = ({
+const CaseDocuments: React.FC<React.PropsWithChildren<Props>> = ({
   isRequestingCourtRecordSignature,
   handleRequestCourtRecordSignature,
   isRequestingRulingSignature,

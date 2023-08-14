@@ -21,14 +21,9 @@ interface Props {
   wasRemoved: boolean
 }
 
-export const OwnerCoOwners: FC<Props & FieldBaseProps> = ({
-  id,
-  index,
-  rowLocation,
-  handleRemove,
-  wasRemoved,
-  ...props
-}) => {
+export const OwnerCoOwners: FC<
+  React.PropsWithChildren<Props & FieldBaseProps>
+> = ({ id, index, rowLocation, handleRemove, wasRemoved, ...props }) => {
   const { setValue } = useFormContext()
   const { formatMessage } = useLocale()
   const { application, errors } = props

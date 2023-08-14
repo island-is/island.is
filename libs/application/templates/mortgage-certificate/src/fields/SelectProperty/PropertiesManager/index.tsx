@@ -6,7 +6,7 @@ import { RegisteredProperties } from '../RegisteredProperties'
 import { SearchProperties } from '../SearchProperties'
 import { PropertyDetail } from '@island.is/api/schema'
 
-export const PropertiesManager: FC<FieldBaseProps> = ({
+export const PropertiesManager: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   application,
   field,
 }) => {

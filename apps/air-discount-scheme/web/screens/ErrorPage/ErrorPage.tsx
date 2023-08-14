@@ -40,7 +40,7 @@ function ErrorPage() {
         <Box marginBottom={9}>
           <Typography variant="intro">{intro}</Typography>
         </Box>
-        <Link href={toRoute('home')}>
+        <Link href={toRoute('home')} legacyBehavior>
           <span>
             <Button>{t.button}</Button>
           </span>

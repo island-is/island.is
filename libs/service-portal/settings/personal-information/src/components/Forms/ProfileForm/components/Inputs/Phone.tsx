@@ -40,7 +40,7 @@ interface UseFormProps {
   code: string
 }
 
-export const InputPhone: FC<Props> = ({
+export const InputPhone: FC<React.PropsWithChildren<Props>> = ({
   buttonText,
   mobile,
   disabled,

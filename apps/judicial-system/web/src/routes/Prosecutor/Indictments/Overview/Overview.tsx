@@ -22,7 +22,7 @@ import * as constants from '@island.is/judicial-system/consts'
 
 import * as strings from './Overview.strings'
 
-const Overview: React.FC = () => {
+const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
   const {
     workingCase,
     setWorkingCase,

@@ -15,7 +15,7 @@ interface Props extends FieldBaseProps {
   field: PhoneField
 }
 
-export const PhoneFormField: FC<Props> = ({
+export const PhoneFormField: FC<React.PropsWithChildren<Props>> = ({
   autoFocus,
   application,
   error,

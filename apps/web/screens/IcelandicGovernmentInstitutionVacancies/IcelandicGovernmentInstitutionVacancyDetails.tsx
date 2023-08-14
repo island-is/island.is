@@ -320,7 +320,7 @@ const IcelandicGovernmentInstitutionVacancyDetails: Screen<IcelandicGovernmentIn
   )
 }
 
-IcelandicGovernmentInstitutionVacancyDetails.getInitialProps = async ({
+IcelandicGovernmentInstitutionVacancyDetails.getProps = async ({
   apolloClient,
   query,
   locale,
