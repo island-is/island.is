@@ -83,6 +83,7 @@ module.exports = {
           '../../../react/feature-flags/src',
         ),
         '@island.is/feature-flags': rootDir('../../../feature-flags/src'),
+        '@island.is/react-spa/shared': rootDir('../../../react-spa/shared/src'),
       },
     }
     return config
