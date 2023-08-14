@@ -78,7 +78,7 @@ const EmployersRatioMonthly: FC<RepeaterProps & FieldBaseProps> = ({
   }
 
   return (
-    <T.Table>
+    <T.Table box={{ paddingTop: 2 }}>
       <T.Head>
         <T.Row>
           <T.HeadData>
@@ -102,6 +102,7 @@ const EmployersRatioMonthly: FC<RepeaterProps & FieldBaseProps> = ({
                 type="number"
                 suffix="%"
                 onChange={(val) => onChange(val.target.value, e.value)}
+                backgroundColor="blue"
               />
             </T.Data>
           </T.Row>
