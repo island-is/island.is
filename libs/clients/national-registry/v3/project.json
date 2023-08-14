@@ -6,16 +6,17 @@
   "targets": {
     "lint": {
       "executor": "@nx/linter:eslint",
-      "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": ["libs/clients/national-registry/v3/**/*.ts"]
+        "lintFilePatterns": [
+          "libs/clients/national-registry/v3/**/*.{ts,tsx,js,jsx}"
+        ]
       }
     },
     "test": {
       "executor": "@nx/jest:jest",
-      "outputs": ["coverage/libs/clients/national-registry/v3"],
+      "outputs": ["{workspaceRoot}/coverage/libs/clients/national-registry/v3"],
       "options": {
-        "jestConfig": "libs/clients/national-registry/v3/jest.config.js",
+        "jestConfig": "libs/clients/national-registry/v3/jest.config.ts",
         "passWithNoTests": true
       }
     },
