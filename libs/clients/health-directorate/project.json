@@ -14,7 +14,7 @@
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/clients/health-directorate"],
       "options": {
-        "jestConfig": "libs/clients/health-directorate/jest.config.js",
+        "jestConfig": "libs/clients/health-directorate/jest.config.ts",
         "passWithNoTests": true
       }
     },
