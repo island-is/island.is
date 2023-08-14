@@ -51,7 +51,7 @@ export const MobileAppBanner = ({ namespace }: MobileAppBannerProps) => {
       display="flex"
       className={style.container}
       alignItems={'center'}
-      style={{ visibility: !isMounted ? 'hidden' : 'visible' }}
+      style={{ visibility: isMounted ? 'visible' : 'hidden' }}
     >
       <button
         className={style.closeBtn}
