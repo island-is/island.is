@@ -2,7 +2,7 @@ import { Field, ObjectType } from '@nestjs/graphql'
 import { PersonBase } from './personBase.model'
 import { MaritalStatus } from '../types'
 
-@ObjectType()
+@ObjectType('NationalRegistrySpouse')
 export class Spouse extends PersonBase {
   @Field(() => MaritalStatus, { nullable: true })
   maritalStatus?: MaritalStatus | null
