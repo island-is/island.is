@@ -19,7 +19,9 @@ interface HeaderProps {
   organizationPage: OrganizationPage
 }
 
-const DefaultHeader: React.FC<HeaderProps> = ({ organizationPage }) => {
+const DefaultHeader: React.FC<React.PropsWithChildren<HeaderProps>> = ({
+  organizationPage,
+}) => {
   const { linkResolver } = useLinkResolver()
 
   const imageProvided = !!organizationPage.defaultHeaderImage?.url

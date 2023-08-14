@@ -19,7 +19,9 @@ interface Props {
   handleChanges?: () => void
 }
 
-const ClientRedirectUriForm: React.FC<Props> = (props: Props) => {
+const ClientRedirectUriForm: React.FC<React.PropsWithChildren<Props>> = (
+  props: Props,
+) => {
   const { register, handleSubmit, formState } = useForm<ClientRedirectUriDTO>()
   const { isSubmitting, errors } = formState
   const [defaultUrl, setDefaultUrl] = useState(

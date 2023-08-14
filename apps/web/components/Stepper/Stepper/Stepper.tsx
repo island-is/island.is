@@ -111,7 +111,7 @@ const getInitialStateAndAnswersByQueryParams = (
 }
 
 const StepperWrapper = (
-  StepperComponent: React.ComponentType<StepperProps>,
+  StepperComponent: React.ComponentType<React.PropsWithChildren<StepperProps>>,
 ) => {
   const Component = (props: StepperProps) => {
     const configErrors = validateStepperConfig(props.stepper)

@@ -33,7 +33,7 @@ const getBackgroundColor = (status: CaseFileStatus): StatusColor => {
   return { background: 'blue100', border: 'blue300' }
 }
 
-const CaseFileList: React.FC<Props> = (props) => {
+const CaseFileList: React.FC<React.PropsWithChildren<Props>> = (props) => {
   const {
     caseId,
     files,

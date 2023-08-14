@@ -215,9 +215,9 @@ export const getThemeConfig = (
     : { themeConfig: { footerVersion } }
 }
 
-export const OrganizationHeader: React.FC<HeaderProps> = ({
-  organizationPage,
-}) => {
+export const OrganizationHeader: React.FC<
+  React.PropsWithChildren<HeaderProps>
+> = ({ organizationPage }) => {
   switch (organizationPage.theme) {
     case 'syslumenn':
       return <SyslumennHeader organizationPage={organizationPage} />
@@ -287,10 +287,9 @@ interface ExternalLinksProps {
   showOnMobile?: boolean
 }
 
-export const OrganizationExternalLinks: React.FC<ExternalLinksProps> = ({
-  organizationPage,
-  showOnMobile = true,
-}) => {
+export const OrganizationExternalLinks: React.FC<
+  React.PropsWithChildren<ExternalLinksProps>
+> = ({ organizationPage, showOnMobile = true }) => {
   if (organizationPage.externalLinks?.length) {
     const mobileDisplay = showOnMobile ? 'flex' : 'none'
     return (
@@ -356,10 +355,9 @@ interface FooterProps {
   force?: boolean
 }
 
-export const OrganizationFooter: React.FC<FooterProps> = ({
-  organizations,
-  force = false,
-}) => {
+export const OrganizationFooter: React.FC<
+  React.PropsWithChildren<FooterProps>
+> = ({ organizations, force = false }) => {
   const organization = force
     ? organizations[0]
     : organizations.find((x) => footerEnabled.includes(x.slug))
@@ -657,7 +655,9 @@ const renderConnectedComponent = (slice) => {
   }
 }
 
-export const OrganizationWrapper: React.FC<WrapperProps> = ({
+export const OrganizationWrapper: React.FC<
+  React.PropsWithChildren<WrapperProps>
+> = ({
   pageTitle,
   pageDescription,
   pageFeaturedImage,
@@ -725,7 +725,9 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
                 activeItemTitle={activeNavigationItemTitle}
                 renderLink={(link, item) => {
                   return item?.href ? (
-                    <NextLink href={item?.href}>{link}</NextLink>
+                    <NextLink href={item?.href} legacyBehavior>
+                      {link}
+                    </NextLink>
                   ) : (
                     link
                   )
@@ -796,7 +798,9 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
                   activeItemTitle={activeNavigationItemTitle}
                   renderLink={(link, item) => {
                     return item?.href ? (
-                      <NextLink href={item?.href}>{link}</NextLink>
+                      <NextLink href={item?.href} legacyBehavior>
+                        {link}
+                      </NextLink>
                     ) : (
                       link
                     )
@@ -813,7 +817,9 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
                     items={secondaryNavList}
                     renderLink={(link, item) => {
                       return item?.href ? (
-                        <NextLink href={item?.href}>{link}</NextLink>
+                        <NextLink href={item?.href} legacyBehavior>
+                          {link}
+                        </NextLink>
                       ) : (
                         link
                       )
@@ -841,7 +847,9 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
                     items={breadcrumbItems ?? []}
                     renderLink={(link, item) => {
                       return item?.href ? (
-                        <NextLink href={item?.href}>{link}</NextLink>
+                        <NextLink href={item?.href} legacyBehavior>
+                          {link}
+                        </NextLink>
                       ) : (
                         link
                       )

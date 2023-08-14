@@ -34,9 +34,9 @@ interface HeaderProps {
   organizationPage: OrganizationPage
 }
 
-const UniversityStudiesHeader: React.FC<HeaderProps> = ({
-  organizationPage,
-}) => {
+const UniversityStudiesHeader: React.FC<
+  React.PropsWithChildren<HeaderProps>
+> = ({ organizationPage }) => {
   const { linkResolver } = useLinkResolver()
   const namespace = useMemo(
     () => JSON.parse(organizationPage.organization?.namespace?.fields ?? '{}'),

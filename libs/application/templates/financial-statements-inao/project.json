@@ -1,11 +1,12 @@
 {
-  "root": "libs/application/templates/financial-statements-inao",
+  "name": "application-templates-financial-statements-inao",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/application/templates/financial-statements-inao/src",
   "projectType": "library",
   "generators": {},
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": [
           "libs/application/templates/financial-statements-inao/**/*.{ts,tsx,js,jsx}"
@@ -13,13 +14,13 @@
       }
     },
     "extract-strings": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract libs/application/templates/financial-statements-inao/src/lib/messages.ts"
       }
     },
     "schemas/codegen": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "command": "graphql-codegen --config libs/application/templates/financial-statements-inao/codegen.yml"
       }
