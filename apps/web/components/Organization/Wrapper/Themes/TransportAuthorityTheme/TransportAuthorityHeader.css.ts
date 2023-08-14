@@ -62,12 +62,14 @@ export const title = style({
   ...themeUtils.responsiveStyle({
     md: {
       marginLeft: -80,
+      width: '50%',
     },
     lg: {
       marginLeft: -108,
+      width: '50%',
     },
     xl: {
-      marginLeft: 0,
+      marginLeft: -150,
     },
   }),
 })

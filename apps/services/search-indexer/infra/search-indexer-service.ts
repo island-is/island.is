@@ -23,6 +23,11 @@ const envs = {
     staging: '40',
     prod: '40',
   },
+  SHOULD_SEARCH_INDEXER_RESOLVE_NESTED_ENTRIES: {
+    dev: 'false',
+    staging: 'true',
+    prod: 'true',
+  },
   AIR_DISCOUNT_SCHEME_FRONTEND_HOSTNAME: {
     dev: 'loftbru.dev01.devland.is',
     staging: 'loftbru.staging01.devland.is',
@@ -63,11 +68,11 @@ export const serviceSetup = (): ServiceBuilder<'search-indexer-service'> =>
           name: 'migrate-elastic',
           resources: {
             requests: {
-              cpu: '100m',
-              memory: '512Mi',
+              cpu: '300m',
+              memory: '1536Mi',
             },
             limits: {
-              cpu: '400m',
+              cpu: '700m',
               memory: '2048Mi',
             },
           },
@@ -103,11 +108,11 @@ export const serviceSetup = (): ServiceBuilder<'search-indexer-service'> =>
     })
     .resources({
       requests: {
-        cpu: '100m',
-        memory: '512Mi',
+        cpu: '400m',
+        memory: '1536Mi',
       },
       limits: {
-        cpu: '400m',
+        cpu: '800m',
         memory: '2048Mi',
       },
     })

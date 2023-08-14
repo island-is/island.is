@@ -14,7 +14,7 @@ import {
   StackRegistry,
   MainBottomTabs,
 } from '../component-registry';
-import {config} from '../config';
+import {bundleId} from '../../config';
 
 const selectTab = (currentTabIndex: number) => {
   // Selected Tab navigation event wont fire for this. Need to manually set in ui store.
@@ -30,7 +30,7 @@ const selectTab = (currentTabIndex: number) => {
 
 export function setupRoutes() {
   // Setup app scheme (is.island.app://)
-  addScheme(`${config.bundleId}://`);
+  addScheme(`${bundleId}://`);
 
   // Routes
   addRoute('/', () => {

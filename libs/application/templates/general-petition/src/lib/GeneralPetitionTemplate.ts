@@ -25,7 +25,6 @@ const GeneralPetitionTemplate: ApplicationTemplate<
   type: ApplicationTypes.GENERAL_PETITION,
   name: m.applicationName,
   dataSchema: GeneralPetitionSchema,
-  readyForProduction: false,
   featureFlag: Features.generalPetition,
   stateMachineConfig: {
     initial: States.PREREQUISITES,
@@ -54,6 +53,14 @@ const GeneralPetitionTemplate: ApplicationTemplate<
               delete: true,
             },
           ],
+          actionCard: {
+            historyLogs: [
+              {
+                logMessage: m.logListInProgress,
+                onEvent: DefaultEvents.SUBMIT,
+              },
+            ],
+          },
         },
         on: {
           [DefaultEvents.SUBMIT]: {
@@ -86,6 +93,14 @@ const GeneralPetitionTemplate: ApplicationTemplate<
               delete: true,
             },
           ],
+          actionCard: {
+            historyLogs: [
+              {
+                logMessage: m.logListCreated,
+                onEvent: DefaultEvents.SUBMIT,
+              },
+            ],
+          },
         },
         on: {
           [DefaultEvents.SUBMIT]: {

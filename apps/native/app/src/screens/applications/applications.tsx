@@ -1,15 +1,8 @@
 import {useQuery} from '@apollo/client';
 import {EmptyList, Heading, ListButton, TopLine} from '@ui';
-import React, {useCallback, useEffect, useRef, useState} from 'react';
+import {useCallback, useEffect, useRef, useState} from 'react';
 import {useIntl} from 'react-intl';
-import {
-  Animated,
-  FlatList,
-  Image,
-  ListRenderItemInfo,
-  RefreshControl,
-  View,
-} from 'react-native';
+import {Animated, FlatList, Image, RefreshControl, View} from 'react-native';
 import {NavigationFunctionComponent} from 'react-native-navigation';
 import illustrationSrc from '../../assets/illustrations/le-company-s3.png';
 import {BottomTabsIndicator} from '../../components/bottom-tabs-indicator/bottom-tabs-indicator';
@@ -20,8 +13,8 @@ import {
   LIST_APPLICATIONS_QUERY,
 } from '../../graphql/queries/list-applications.query';
 import {LIST_SEARCH_QUERY} from '../../graphql/queries/list-search.query';
-import {useActiveTabItemPress} from '../../hooks/use-active-tab-item-press';
 import {createNavigationOptionHooks} from '../../hooks/create-navigation-option-hooks';
+import {useActiveTabItemPress} from '../../hooks/use-active-tab-item-press';
 import {openBrowser} from '../../lib/rn-island';
 import {getRightButtons} from '../../utils/get-main-root';
 import {testIDs} from '../../utils/test-ids';
@@ -120,7 +113,7 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
     }
   }, [res.data, res.loading]);
 
-  const renderItem = useCallback(({item}: ListRenderItemInfo<ListItem>) => {
+  const renderItem = useCallback(({item}) => {
     if (item.type === 'skeleton') {
       return <ListButton title="skeleton" isLoading />;
     }
@@ -133,25 +126,18 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
             description={intl.formatMessage({
               id: 'applications.emptyListDescription',
             })}
-            image={
-              <Image
-                source={illustrationSrc}
-                style={{width: 176, height: 134, resizeMode: 'contain'}}
-              />
-            }
+            image={<Image source={illustrationSrc} height={176} width={134} />}
           />
         </View>
       );
     }
 
-    const searchResult = item as IArticleSearchResults;
-
     return (
       <ListButton
-        key={searchResult.id}
-        title={searchResult.title}
+        key={item.id}
+        title={item.title}
         onPress={() =>
-          openBrowser(`http://island.is/${searchResult.slug}`, componentId)
+          openBrowser(`http://island.is/${item.slug}`, componentId)
         }
       />
     );
@@ -197,7 +183,7 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
         data={isSkeltonView ? skeletonItems : isEmptyView ? emptyItem : items}
         renderItem={renderItem}
         ListHeaderComponent={
-          <>
+          <View style={{flex: 1}}>
             <ApplicationsModule
               applications={applicationsRes.data?.applicationApplications ?? []}
               loading={applicationsRes.loading}
@@ -209,7 +195,7 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
                 {intl.formatMessage({id: 'home.allApplications'})}
               </Heading>
             </View>
-          </>
+          </View>
         }
         refreshControl={
           <RefreshControl

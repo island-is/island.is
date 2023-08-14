@@ -9,6 +9,8 @@ import {
   CaseTransition,
   isIndictmentCase,
   completedCaseStates,
+  isProsecutionRole,
+  isCourtRole,
 } from '@island.is/judicial-system/types'
 import { capitalize } from '@island.is/judicial-system/formatters'
 import * as constants from '@island.is/judicial-system/consts'
@@ -41,9 +43,11 @@ import { FilterOption, useFilter } from './useFilter'
 import { cases as m } from './Cases.strings'
 import * as styles from './Cases.css'
 
-const CreateCaseButton: React.FC<{
-  user: User
-}> = ({ user }) => {
+const CreateCaseButton: React.FC<
+  React.PropsWithChildren<{
+    user: User
+  }>
+> = ({ user }) => {
   const { formatMessage } = useIntl()
 
   const items = useMemo(() => {
@@ -94,13 +98,13 @@ const CreateCaseButton: React.FC<{
 }
 
 // Credit for sorting solution: https://www.smashingmagazine.com/2020/03/sortable-tables-react/
-export const Cases: React.FC = () => {
+export const Cases: React.FC<React.PropsWithChildren<unknown>> = () => {
   const { formatMessage } = useIntl()
   const { user } = useContext(UserContext)
   const [isFiltering, setIsFiltering] = useState<boolean>(false)
 
-  const isProsecutor = user?.role === UserRole.PROSECUTOR
-  const isRepresentative = user?.role === UserRole.REPRESENTATIVE
+  const isProsecutionUser = user && isProsecutionRole(user?.role)
+  const isDistrictCourtUser = user && isCourtRole(user?.role)
 
   const {
     transitionCase,
@@ -141,13 +145,13 @@ export const Cases: React.FC = () => {
     })
 
     return partition(casesWithoutDeleted, (c) => {
-      if (isIndictmentCase(c.type)) {
+      if (isIndictmentCase(c.type) || !isDistrictCourtUser) {
         return !completedCaseStates.includes(c.state)
       } else {
-        return !(completedCaseStates.includes(c.state) && c.rulingDate)
+        return !(completedCaseStates.includes(c.state) && c.rulingSignatureDate)
       }
     })
-  }, [resCases])
+  }, [isDistrictCourtUser, resCases])
 
   const {
     filter,
@@ -180,9 +184,7 @@ export const Cases: React.FC = () => {
       <PageHeader title={formatMessage(titles.shared.cases)} />
       <div className={styles.logoContainer}>
         <Logo />
-        {isProsecutor || isRepresentative ? (
-          <CreateCaseButton user={user} />
-        ) : null}
+        {isProsecutionUser ? <CreateCaseButton user={user} /> : null}
       </div>
 
       <Box marginBottom={[2, 5, 5]} className={styles.filterContainer}>

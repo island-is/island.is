@@ -25,7 +25,6 @@ export class CaseListInterceptor implements NestInterceptor {
           return {
             id: theCase.id,
             created: theCase.created,
-            courtDate: theCase.courtDate,
             policeCaseNumbers: theCase.policeCaseNumbers,
             state: theCase.state,
             type: theCase.type,
@@ -33,8 +32,10 @@ export class CaseListInterceptor implements NestInterceptor {
             courtCaseNumber: theCase.courtCaseNumber,
             decision: theCase.decision,
             validToDate: theCase.validToDate,
+            courtDate: theCase.courtDate,
             initialRulingDate: theCase.initialRulingDate,
             rulingDate: theCase.rulingDate,
+            rulingSignatureDate: theCase.rulingSignatureDate,
             courtEndTime: theCase.courtEndTime,
             prosecutorAppealDecision: theCase.prosecutorAppealDecision,
             accusedAppealDecision: theCase.accusedAppealDecision,

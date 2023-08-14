@@ -73,6 +73,7 @@ const LimitedAccessCaseQuery = gql`
       accusedPostponedAppealDate
       prosecutorPostponedAppealDate
       rulingDate
+      rulingSignatureDate
       registrar {
         id
         name

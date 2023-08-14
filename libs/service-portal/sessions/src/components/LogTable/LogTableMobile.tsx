@@ -23,7 +23,9 @@ const ExpandedDivider = () => (
   </div>
 )
 
-const LogTableMobile: FC<LogTableProps> = ({ sessions }) => {
+const LogTableMobile: FC<React.PropsWithChildren<LogTableProps>> = ({
+  sessions,
+}) => {
   const { userInfo } = useAuth()
   const { formatDate, formatTime } = useIntl()
 

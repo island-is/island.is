@@ -1,34 +1,36 @@
 import {
-  Base,
-  Client,
-  DrivingLicense,
-  HealthInsurance,
-  Labor,
-  Payment,
-  PaymentSchedule,
-  CriminalRecord,
-  DataProtectionComplaint,
-  NationalRegistry,
-  FishingLicense,
-  MunicipalitiesFinancialAid,
-  ChargeFjsV2,
-  Finance,
-  Properties,
-  RskCompanyInfo,
-  VehicleServiceFjsV1,
-  TransportAuthority,
-  Vehicles,
-  Passports,
-  EHIC,
-} from '../../../../infra/src/dsl/xroad'
-import {
+  json,
   ref,
   service,
   ServiceBuilder,
-  json,
 } from '../../../../infra/src/dsl/dsl'
-import { PostgresInfo } from '../../../../infra/src/dsl/types/input-types'
-import { RedisInfo } from '../../../../infra/src/dsl/types/input-types'
+import {
+  PostgresInfo,
+  RedisInfo,
+} from '../../../../infra/src/dsl/types/input-types'
+import {
+  Base,
+  ChargeFjsV2,
+  Client,
+  CriminalRecord,
+  DataProtectionComplaint,
+  DrivingLicense,
+  EHIC,
+  Finance,
+  FishingLicense,
+  HealthInsurance,
+  Labor,
+  MunicipalitiesFinancialAid,
+  NationalRegistry,
+  Passports,
+  Payment,
+  PaymentSchedule,
+  Properties,
+  RskCompanyInfo,
+  TransportAuthority,
+  Vehicles,
+  VehicleServiceFjsV1,
+} from '../../../../infra/src/dsl/xroad'
 
 const postgresInfo: PostgresInfo = {
   passwordSecret: '/k8s/application-system/api/DB_PASSWORD',
@@ -214,6 +216,16 @@ export const serviceSetup = (services: {
         dev: 'IS-DEV/GOV/10019/Domstolasyslan/JusticePortal-v1',
         staging: 'IS-DEV/GOV/10019/Domstolasyslan/JusticePortal-v1',
         prod: 'IS/GOV/4707171140/Domstolasyslan/JusticePortal-v1',
+      },
+      NOVA_ACCEPT_UNAUTHORIZED: {
+        dev: 'true',
+        staging: 'false',
+        prod: 'false',
+      },
+      AUTH_PUBLIC_API_URL: {
+        dev: 'https://identity-server.dev01.devland.is/api',
+        staging: 'https://identity-server.staging01.devland.is/api',
+        prod: 'https://innskra.island.is/api',
       },
     })
     .xroad(

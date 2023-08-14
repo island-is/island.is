@@ -83,10 +83,8 @@ import ReopenModal from './Components/ReopenModal/ReopenModal'
 import CaseDocuments from './Components/CaseDocuments/CaseDocuments'
 import ShareCase from './Components/ShareCase/ShareCase'
 
-import {
-  useCourtRecordSignatureConfirmationLazyQuery,
-  useRequestCourtRecordSignatureMutation,
-} from './CourtRecordSignature.generated'
+import { useGetCourtRecordSignatureConfirmationLazyQuery } from './getCourtRecordSignatureConfirmation.generated'
+import { useRequestCourtRecordSignatureMutation } from './requestCourtRecordSignature.generated'
 import { strings } from './SignedVerdictOverview.strings'
 
 interface ModalControls {
@@ -257,8 +255,9 @@ export const SignedVerdictOverview: React.FC = () => {
 
   const [
     getCourtRecordSignatureConfirmation,
-  ] = useCourtRecordSignatureConfirmationLazyQuery({
+  ] = useGetCourtRecordSignatureConfirmationLazyQuery({
     fetchPolicy: 'no-cache',
+    errorPolicy: 'all',
     onCompleted: (courtRecordSignatureConfirmationData) => {
       if (
         courtRecordSignatureConfirmationData?.courtRecordSignatureConfirmation
@@ -521,9 +520,9 @@ export const SignedVerdictOverview: React.FC = () => {
             <Box display="flex" justifyContent="spaceBetween" marginBottom={3}>
               <Box>
                 <OverviewHeader />
-                {workingCase.courtEndTime && (
+                {workingCase.rulingDate && (
                   <Box>
-                    <RulingDateLabel courtEndTime={workingCase.courtEndTime} />
+                    <RulingDateLabel rulingDate={workingCase.rulingDate} />
                   </Box>
                 )}
               </Box>
@@ -741,8 +740,7 @@ export const SignedVerdictOverview: React.FC = () => {
           {user?.role === UserRole.PROSECUTOR &&
             user.institution?.id ===
               workingCase.creatingProsecutor?.institution?.id &&
-            isRestrictionCase(workingCase.type) &&
-            !workingCase.appealState && (
+            isRestrictionCase(workingCase.type) && (
               <ShareCase
                 selectedSharingInstitutionId={selectedSharingInstitutionId}
                 setSelectedSharingInstitutionId={

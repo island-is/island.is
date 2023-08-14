@@ -1,22 +1,23 @@
 {
-  "root": "libs/cms-translations",
+  "name": "cms-translations",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/cms-translations/src",
   "projectType": "library",
   "generators": {},
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": ["libs/cms-translations/**/*.{ts,tsx,js,jsx}"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/cms-translations/jest.config.js",
+        "jestConfig": "libs/cms-translations/jest.config.ts",
         "passWithNoTests": true
       },
-      "outputs": ["coverage/libs/cms-translations"]
+      "outputs": ["{workspaceRoot}/coverage/libs/cms-translations"]
     }
   },
   "tags": ["lib:nest", "scope:nest"]

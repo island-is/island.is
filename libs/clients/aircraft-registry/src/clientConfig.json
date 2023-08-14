@@ -1,0 +1,522 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "SGS - Aircraft Registry API",
+    "description": "Vefþjónusta fyrir Loftfaraskrá",
+    "contact": {
+      "name": "Samgöngustofa",
+      "url": "https://www.samgongustofa.is/",
+      "email": "tolvuhjalp@samgongustofa.is"
+    },
+    "version": "v1"
+  },
+  "servers": [{ "url": "/aviation/AircraftRegistry" }],
+  "paths": {
+    "/GetAllAircrafts": {
+      "get": {
+        "tags": ["AircraftRegistry"],
+        "parameters": [
+          {
+            "name": "searchTerm",
+            "in": "query",
+            "schema": { "type": "string", "default": "" }
+          },
+          {
+            "name": "pageNumber",
+            "in": "query",
+            "schema": { "type": "integer", "format": "int32", "default": 1 }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "schema": { "type": "integer", "format": "int32", "default": 10 }
+          },
+          {
+            "name": "includeInactive",
+            "in": "query",
+            "schema": { "type": "boolean", "default": false }
+          },
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "schema": { "type": "string", "default": "1.0" }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "The requested API version",
+            "schema": { "type": "string", "default": "1.0" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AircraftsPaginationGetResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "500": { "description": "Server Error" }
+        }
+      }
+    },
+    "/GetAircraft/{registrationNumber}": {
+      "get": {
+        "tags": ["AircraftRegistry"],
+        "parameters": [
+          {
+            "name": "registrationNumber",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "format": "int32" }
+          },
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "schema": { "type": "string", "default": "1.0" }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "The requested API version",
+            "schema": { "type": "string", "default": "1.0" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AircraftGetResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "500": { "description": "Server Error" }
+        }
+      }
+    },
+    "/GetAircraftBySerialNumber/{serialNumber}": {
+      "get": {
+        "tags": ["AircraftRegistry"],
+        "parameters": [
+          {
+            "name": "serialNumber",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "schema": { "type": "string", "default": "1.0" }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "The requested API version",
+            "schema": { "type": "string", "default": "1.0" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AircraftGetResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "500": { "description": "Server Error" }
+        }
+      }
+    },
+    "/GetAircraftByLetters/{letters}": {
+      "get": {
+        "tags": ["AircraftRegistry"],
+        "parameters": [
+          {
+            "name": "letters",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "schema": { "type": "string", "default": "1.0" }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "The requested API version",
+            "schema": { "type": "string", "default": "1.0" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AircraftGetResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "500": { "description": "Server Error" }
+        }
+      }
+    },
+    "/GetAircraftsByType/{type}": {
+      "get": {
+        "tags": ["AircraftRegistry"],
+        "parameters": [
+          {
+            "name": "type",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "includeInactive",
+            "in": "query",
+            "schema": { "type": "boolean" }
+          },
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "schema": { "type": "string", "default": "1.0" }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "The requested API version",
+            "schema": { "type": "string", "default": "1.0" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AircraftsGetResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "500": { "description": "Server Error" }
+        }
+      }
+    },
+    "/GetOwnerWithAircraftsBySSN/{ssn}": {
+      "get": {
+        "tags": ["AircraftRegistry"],
+        "parameters": [
+          {
+            "name": "ssn",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "includeInactive",
+            "in": "query",
+            "schema": { "type": "boolean", "default": false }
+          },
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "schema": { "type": "string", "default": "1.0" }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "The requested API version",
+            "schema": { "type": "string", "default": "1.0" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OwnerWithAircraftsGetResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "500": { "description": "Server Error" }
+        }
+      }
+    },
+    "/GetOperatorWithAircraftsBySSN/{ssn}": {
+      "get": {
+        "tags": ["AircraftRegistry"],
+        "parameters": [
+          {
+            "name": "ssn",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "includeInactive",
+            "in": "query",
+            "schema": { "type": "boolean", "default": false }
+          },
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "schema": { "type": "string", "default": "1.0" }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "The requested API version",
+            "schema": { "type": "string", "default": "1.0" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AircraftsGetResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "500": { "description": "Server Error" }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AircraftDto": {
+        "type": "object",
+        "properties": {
+          "identifiers": { "type": "string", "nullable": true },
+          "registrationNumber": { "type": "integer", "format": "int32" },
+          "type": { "type": "string", "nullable": true },
+          "productionYear": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "serialNumber": { "type": "string", "nullable": true },
+          "maxWeight": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "unregistered": { "type": "boolean", "nullable": true },
+          "unregisteredDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "owners": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/OwnerDto" },
+            "nullable": true
+          },
+          "operator": { "$ref": "#/components/schemas/OperatorDto" }
+        },
+        "additionalProperties": false
+      },
+      "AircraftGetResponseDto": {
+        "type": "object",
+        "properties": {
+          "data": { "$ref": "#/components/schemas/AircraftDto" }
+        },
+        "additionalProperties": false
+      },
+      "AircraftWithoutOwnerAndOperatorDto": {
+        "type": "object",
+        "properties": {
+          "identifiers": { "type": "string", "nullable": true },
+          "registrationNumber": { "type": "integer", "format": "int32" },
+          "type": { "type": "string", "nullable": true },
+          "productionYear": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "serialNumber": { "type": "string", "nullable": true },
+          "maxWeight": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "unregistered": { "type": "boolean", "nullable": true },
+          "unregisteredDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AircraftsGetResponseDto": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/AircraftDto" },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AircraftsPaginationGetResponseDto": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/AircraftDto" },
+            "nullable": true
+          },
+          "totalCount": { "type": "integer", "format": "int32" },
+          "pageNumber": { "type": "integer", "format": "int32" },
+          "pageSize": { "type": "integer", "format": "int32" }
+        },
+        "additionalProperties": false
+      },
+      "OperatorDto": {
+        "type": "object",
+        "properties": {
+          "ssn": { "type": "number", "format": "double", "nullable": true },
+          "name": { "type": "string", "nullable": true },
+          "address": { "type": "string", "nullable": true },
+          "city": { "type": "string", "nullable": true },
+          "country": { "type": "string", "nullable": true },
+          "postcode": { "type": "string", "nullable": true },
+          "phone": { "type": "string", "nullable": true },
+          "email": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "OwnerDto": {
+        "type": "object",
+        "properties": {
+          "ssn": { "type": "number", "format": "double", "nullable": true },
+          "name": { "type": "string", "nullable": true },
+          "address": { "type": "string", "nullable": true },
+          "city": { "type": "string", "nullable": true },
+          "country": { "type": "string", "nullable": true },
+          "postcode": { "type": "string", "nullable": true },
+          "phone": { "type": "string", "nullable": true },
+          "email": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "OwnerWithAircraftsDto": {
+        "type": "object",
+        "properties": {
+          "owner": { "$ref": "#/components/schemas/OwnerDto" },
+          "aircrafts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AircraftWithoutOwnerAndOperatorDto"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "OwnerWithAircraftsGetResponseDto": {
+        "type": "object",
+        "properties": {
+          "data": { "$ref": "#/components/schemas/OwnerWithAircraftsDto" }
+        },
+        "additionalProperties": false
+      },
+      "ProblemDetails": {
+        "type": "object",
+        "properties": {
+          "type": { "type": "string", "nullable": true },
+          "title": { "type": "string", "nullable": true },
+          "status": { "type": "integer", "format": "int32", "nullable": true },
+          "detail": { "type": "string", "nullable": true },
+          "instance": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "ValidationProblemDetails": { "additionalProperties": false }
+    }
+  }
+}

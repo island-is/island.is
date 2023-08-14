@@ -195,7 +195,11 @@ const NewsListNew: Screen<NewsListProps> = ({
         title={navTitle}
         items={navItems}
         renderLink={(link, { href }) => {
-          return <NextLink href={href}>{link}</NextLink>
+          return (
+            <NextLink href={href} legacyBehavior>
+              {link}
+            </NextLink>
+          )
         }}
       />
     </Stack>
@@ -297,7 +301,7 @@ const NewsListNew: Screen<NewsListProps> = ({
                 : linkResolver(typename as LinkType, slug)
 
               return (
-                <NextLink {...linkProps} passHref>
+                <NextLink {...linkProps} passHref legacyBehavior>
                   {link}
                 </NextLink>
               )
@@ -341,7 +345,11 @@ const NewsListNew: Screen<NewsListProps> = ({
             title={navTitleMobile}
             items={navItems}
             renderLink={(link, { href }) => {
-              return <NextLink href={href}>{link}</NextLink>
+              return (
+                <NextLink href={href} legacyBehavior>
+                  {link}
+                </NextLink>
+              )
             }}
             isMenuDialog
           />
@@ -420,7 +428,7 @@ const getIntParam = (s: string | string[]) => {
   if (!isNaN(i)) return i
 }
 
-NewsListNew.getInitialProps = async ({ apolloClient, locale, query }) => {
+NewsListNew.getProps = async ({ apolloClient, locale, query }) => {
   const slug = query.slug as string
   const year = getIntParam(query.y)
   const month = year && getIntParam(query.m)
@@ -440,7 +448,7 @@ NewsListNew.getInitialProps = async ({ apolloClient, locale, query }) => {
       variables: {
         input: {
           lang: locale as ContentLanguage,
-          tag,
+          tags: [tag],
         },
       },
     }),
@@ -499,9 +507,21 @@ NewsListNew.getInitialProps = async ({ apolloClient, locale, query }) => {
     throw new CustomNextError(404, 'News not found')
   }
 
+  const filterOutFrontpageTag = (tag: GenericTag) =>
+    tag?.slug !== FRONTPAGE_NEWS_TAG_ID
+
   return {
-    newsList,
-    newsItem,
+    newsList: newsList.map((item) => ({
+      ...item,
+      genericTags: item?.genericTags?.filter(filterOutFrontpageTag) ?? [],
+    })),
+    newsItem: newsItem
+      ? {
+          ...newsItem,
+          genericTags:
+            newsItem?.genericTags?.filter(filterOutFrontpageTag) ?? [],
+        }
+      : newsItem,
     total,
     selectedYear,
     selectedMonth,

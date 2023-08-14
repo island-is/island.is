@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import cn from 'classnames'
-import { Control, FieldValues, FormProvider, useForm } from 'react-hook-form'
+import { Control, FormProvider, useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
 import { defineMessage } from 'react-intl'
 import * as kennitala from 'kennitala'

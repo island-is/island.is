@@ -142,6 +142,7 @@ const PetitionView: Screen<PetitionViewProps> = ({ namespace }) => {
                 <NextLink
                   {...linkResolver(typename as LinkType, slug)}
                   passHref
+                  legacyBehavior
                 >
                   {link}
                 </NextLink>
@@ -160,7 +161,7 @@ const PetitionView: Screen<PetitionViewProps> = ({ namespace }) => {
               </Text>
             </Stack>
             <GridRow>
-              <GridColumn span="4/12">
+              <GridColumn span={['12/12', '4/12']}>
                 <Text variant="h4" marginBottom={0}>
                   {n('listOpenFromTil', 'Gildistímabil lista:')}
                 </Text>
@@ -170,12 +171,14 @@ const PetitionView: Screen<PetitionViewProps> = ({ namespace }) => {
                     formatDate(list.closedDate)}
                 </Text>
               </GridColumn>
-              <GridColumn span="4/12">
-                <Text variant="h4">{n('listOwner', 'Ábyrgðarmaður:')}</Text>
+              <GridColumn span={['12/12', '4/12']}>
+                <Text variant="h4" marginTop={[2, 0]}>
+                  {n('listOwner', 'Ábyrgðarmaður:')}
+                </Text>
                 <Text variant="default">{list.ownerName}</Text>
               </GridColumn>
-              <GridColumn span="4/12">
-                <Text variant="h4">
+              <GridColumn span={['12/12', '4/12']}>
+                <Text variant="h4" marginTop={[2, 0]}>
                   {n('signedPetitions', 'Fjöldi undirskrifta:')}
                 </Text>
                 <Text variant="default">{listEndorsements.totalCount}</Text>
@@ -205,7 +208,7 @@ const PetitionView: Screen<PetitionViewProps> = ({ namespace }) => {
                   return (
                     <T.Row key={petition.id}>
                       <T.Data text={{ variant: 'medium' }}>
-                        {formatDate(list.created)}
+                        {formatDate(petition.created)}
                       </T.Data>
                       <T.Data text={{ variant: 'medium' }}>
                         {petition.meta.fullName
@@ -259,7 +262,7 @@ const PetitionView: Screen<PetitionViewProps> = ({ namespace }) => {
   )
 }
 
-PetitionView.getInitialProps = async ({ apolloClient, locale }) => {
+PetitionView.getProps = async ({ apolloClient, locale }) => {
   const [namespace] = await Promise.all([
     apolloClient
       .query<GetNamespaceQuery, QueryGetNamespaceArgs>({

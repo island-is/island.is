@@ -22,7 +22,9 @@ interface SliceProps {
   slice: TwoColumnText
 }
 
-export const TwoColumnTextSlice: React.FC<SliceProps> = ({ slice }) => {
+export const TwoColumnTextSlice: React.FC<
+  React.PropsWithChildren<SliceProps>
+> = ({ slice }) => {
   const labelId = 'sliceTitle-' + slice.id
   const boxProps: BoxProps = slice.dividerOnTop
     ? { borderTopWidth: 'standard', borderColor: 'standard', paddingTop: 4 }

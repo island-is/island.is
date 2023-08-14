@@ -27,7 +27,10 @@ type Props = {
   }
 }
 
-export const Cards: FC<FieldBaseProps & Props> = ({ application, field }) => {
+export const Cards: FC<React.PropsWithChildren<FieldBaseProps & Props>> = ({
+  application,
+  field,
+}) => {
   const { formatMessage } = useLocale()
   return (
     <GridRow>

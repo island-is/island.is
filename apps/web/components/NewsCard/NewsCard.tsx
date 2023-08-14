@@ -24,7 +24,7 @@ interface NewsCardProps {
   mini?: boolean
 }
 
-export const NewsCard: React.FC<NewsCardProps> = ({
+export const NewsCard: React.FC<React.PropsWithChildren<NewsCardProps>> = ({
   title,
   introduction,
   image,

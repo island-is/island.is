@@ -299,6 +299,7 @@ api:
     SYSLUMENN_TIMEOUT: '40000'
     TELL_US_A_STORY_EMAIL: 'sogur@island.is'
     XROAD_ADR_MACHINE_LICENSE_PATH: 'IS/GOV/4201810439/Vinnueftirlitid-Protected/rettindi-token-v1'
+    XROAD_AIRCRAFT_REGISTRY_PATH: 'IS/GOV/5405131040/Samgongustofa-Protected/Loftfaraskra-V1'
     XROAD_BASE_PATH: 'http://securityserver.island.is'
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.island.is/r1/IS'
     XROAD_CHARGE_FJS_V2_PATH: 'IS/GOV/5402697509/FJS-Public/chargeFJS_v2'
@@ -333,6 +334,9 @@ api:
     XROAD_PAYMENT_SCHEDULE_PATH: 'IS/GOV/5402697509/FJS-Public/paymentSchedule_v1'
     XROAD_PROPERTIES_SERVICE_V2_PATH: 'IS/GOV/5812191480/Husnaeds-og-mannvirkjastofnun-Protected/Fasteignir-v1'
     XROAD_PROPERTIES_TIMEOUT: '35000'
+    XROAD_RSK_PROCURING_PATH: 'IS/GOV/5402696029/Skatturinn/relationships-v1'
+    XROAD_RSK_PROCURING_REDIS_NODES: '["clustercfg.general-redis-cluster-group.dnugi2.euw1.cache.amazonaws.com:6379"]'
+    XROAD_RSK_PROCURING_SCOPE: '["@rsk.is/prokura","@rsk.is/prokura:admin"]'
     XROAD_TJODSKRA_API_PATH: '/SKRA-Protected/Einstaklingar-v1'
     XROAD_TJODSKRA_MEMBER_CODE: '6503760649'
     XROAD_TLS_BASE_PATH: 'https://securityserver.island.is'
@@ -349,6 +353,7 @@ api:
     XROAD_VEHICLE_SERVICE_FJS_V1_PATH: 'IS/GOV/5402697509/FJS-Public/VehicleServiceFJS_v1'
     XROAD_VMST_API_PATH: '/VMST-ParentalLeave-Protected/ParentalLeaveApplication-v1'
     XROAD_VMST_MEMBER_CODE: '7005942039'
+    XROAD_WORK_MACHINE_LICENSE_PATH: 'IS/GOV/4201810439/Vinnueftirlitid-Protected/vinnuvelar-token'
     ZENDESK_CONTACT_FORM_SUBDOMAIN: 'digitaliceland'
   files:
     - 'islyklar.p12'
@@ -467,6 +472,8 @@ api:
     REGULATIONS_FILE_UPLOAD_KEY_PRESIGNED: '/k8s/api/REGULATIONS_FILE_UPLOAD_KEY_PRESIGNED'
     REGULATIONS_FILE_UPLOAD_KEY_PUBLISH: '/k8s/api/REGULATIONS_FILE_UPLOAD_KEY_PUBLISH'
     RLS_PKPASS_API_KEY: '/k8s/api/RLS_PKPASS_API_KEY'
+    RSK_PASSWORD: '/k8s/xroad/client/RSK/PASSWORD'
+    RSK_USERNAME: '/k8s/xroad/client/RSK/USERNAME'
     SMART_SOLUTIONS_API_URL: '/k8s/api/SMART_SOLUTIONS_API_URL'
     SOFFIA_HOST_URL: '/k8s/api/SOFFIA_HOST_URL'
     SOFFIA_PASS: '/k8s/service-portal/SOFFIA_PASS'
@@ -503,6 +510,7 @@ application-system-api:
   enabled: true
   env:
     APPLICATION_ATTACHMENT_BUCKET: 'island-is-prod-storage-application-system'
+    AUTH_PUBLIC_API_URL: 'https://innskra.island.is/api'
     CLIENT_LOCATION_ORIGIN: 'https://island.is/umsoknir'
     COMPANY_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379"]'
     COMPANY_REGISTRY_XROAD_PROVIDER_ID: 'IS/GOV/5402696029/Skatturinn/ft-v1'
@@ -533,6 +541,7 @@ application-system-api:
     LOGIN_SERVICE_APPLICATION_RECIPIENT_EMAIL_ADDRESS: 'island@island.is'
     LOGIN_SERVICE_APPLICATION_RECIPIENT_NAME: 'Stafrænt Ísland'
     NODE_OPTIONS: '--max-old-space-size=976'
+    NOVA_ACCEPT_UNAUTHORIZED: 'false'
     NOVA_USERNAME: 'IslandIs_User_Production'
     NO_UPDATE_NOTIFIER: 'true'
     REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379"]'
@@ -1001,6 +1010,7 @@ download-service:
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.island.is/r1/IS'
     XROAD_UNIVERSITY_OF_ICELAND_PATH: 'IS/EDU/6001692039/HI-Protected/brautskraning-v1'
     XROAD_VEHICLES_PATH: 'IS/GOV/5405131040/Samgongustofa-Protected/Mitt-Svaedi-V1'
+    XROAD_WORK_MACHINE_LICENSE_PATH: 'IS/GOV/4201810439/Vinnueftirlitid-Protected/vinnuvelar-token'
   grantNamespaces:
     - 'islandis'
     - 'nginx-ingress-external'
@@ -1590,6 +1600,7 @@ search-indexer-service:
     ELASTIC_NODE: 'https://vpc-search-mw4w5c2m2g5edjrtvwbpzhkw24.eu-west-1.es.amazonaws.com'
     NODE_OPTIONS: '--max-old-space-size=2000'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
+    SHOULD_SEARCH_INDEXER_RESOLVE_NESTED_ENTRIES: 'true'
   grantNamespaces: []
   grantNamespacesEnabled: false
   healthCheck:
@@ -1641,11 +1652,11 @@ search-indexer-service:
         name: 'migrate-elastic'
         resources:
           limits:
-            cpu: '400m'
+            cpu: '700m'
             memory: '2048Mi'
           requests:
-            cpu: '100m'
-            memory: '512Mi'
+            cpu: '300m'
+            memory: '1536Mi'
       - args:
           - '/webapp/migrateKibana.js'
         command:
@@ -1671,6 +1682,7 @@ search-indexer-service:
       NODE_OPTIONS: '--max-old-space-size=2048'
       S3_BUCKET: 'prod-es-custom-packages'
       SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
+      SHOULD_SEARCH_INDEXER_RESOLVE_NESTED_ENTRIES: 'true'
     secrets:
       CONTENTFUL_ACCESS_TOKEN: '/k8s/search-indexer/CONTENTFUL_ACCESS_TOKEN'
   namespace: 'search-indexer'
@@ -1684,11 +1696,11 @@ search-indexer-service:
     min: 1
   resources:
     limits:
-      cpu: '400m'
+      cpu: '800m'
       memory: '2048Mi'
     requests:
-      cpu: '100m'
-      memory: '512Mi'
+      cpu: '400m'
+      memory: '1536Mi'
   secrets:
     API_CMS_DELETION_TOKEN: '/k8s/search-indexer/API_CMS_DELETION_TOKEN'
     API_CMS_SYNC_TOKEN: '/k8s/search-indexer/API_CMS_SYNC_TOKEN'
@@ -1781,6 +1793,7 @@ service-portal-api:
     EMAIL_REGION: 'eu-west-1'
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
     NODE_OPTIONS: '--max-old-space-size=976'
+    NOVA_ACCEPT_UNAUTHORIZED: 'false'
     NO_UPDATE_NOTIFIER: 'true'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     SERVICE_PORTAL_BASE_URL: 'https://island.is/minarsidur'

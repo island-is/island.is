@@ -26,12 +26,9 @@ interface IContinueConf {
   action: ACTION
 }
 
-export const LinkExistingApplication: FC<FieldBaseProps> = ({
-  application,
-  field,
-  refetch,
-  goToScreen,
-}) => {
+export const LinkExistingApplication: FC<
+  React.PropsWithChildren<FieldBaseProps>
+> = ({ application, field, refetch, goToScreen }) => {
   const { locale, formatMessage } = useLocale()
   const { description } = field
   const navigate = useNavigate()
@@ -48,30 +45,33 @@ export const LinkExistingApplication: FC<FieldBaseProps> = ({
     if (goToScreen) goToScreen(screen)
   }
 
-  const assignEstateToAnswers = useCallback(async (estate) => {
-    if (estate) {
-      const res = await updateApplication({
-        variables: {
-          input: {
-            id: application.id,
-            answers: {
-              ...application.answers,
-              ...{
-                ...estate,
-                assets: { assets: estate.assets },
-                estateMembers: { members: estate.estateMembers },
-                vehicles: { vehicles: estate.vehicles },
+  const assignEstateToAnswers = useCallback(
+    async (estate: EstateRegistrant | undefined) => {
+      if (estate) {
+        const res = await updateApplication({
+          variables: {
+            input: {
+              id: application.id,
+              answers: {
+                ...application.answers,
+                ...{
+                  ...estate,
+                  assets: { assets: estate.assets },
+                  estateMembers: { members: estate.estateMembers },
+                  vehicles: { vehicles: estate.vehicles },
+                },
               },
             },
+            locale,
           },
-          locale,
-        },
-      })
-      if (!res.data && refetch) {
-        refetch()
+        })
+        if (!res.data && refetch) {
+          refetch()
+        }
       }
-    }
-  }, [])
+    },
+    [],
+  )
 
   const getNewEstateFromUrl = (url: string) => {
     const caseNumber = url.split('/').pop()

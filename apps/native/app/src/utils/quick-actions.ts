@@ -1,6 +1,6 @@
 import QuickActions from 'react-native-quick-actions';
 import {navigateTo} from '../lib/deep-linking';
-import {config} from './config';
+import {bundleId} from '../config';
 
 const shortcutItems = [
   {
@@ -9,7 +9,7 @@ const shortcutItems = [
     subtitle: 'See all your licenses',
     icon: 'Bookmark',
     userInfo: {
-      url: `${config.bundleId}://wallet`,
+      url: `${bundleId}://wallet`,
     },
   },
   {
@@ -18,7 +18,7 @@ const shortcutItems = [
     subtitle: 'Get access to documents',
     icon: 'Mail',
     userInfo: {
-      url: `${config.bundleId}://inbox`,
+      url: `${bundleId}://inbox`,
     },
   },
   {
@@ -27,7 +27,7 @@ const shortcutItems = [
     subtitle: 'See your user profile',
     icon: 'Contact',
     userInfo: {
-      url: `${config.bundleId}://user`,
+      url: `${bundleId}://user`,
     },
   },
 ];
@@ -44,6 +44,6 @@ export function setupQuickActions() {
 export function handleQuickAction({type}: any) {
   const shortcut = shortcutItems.find(s => s.type === type);
   if (shortcut) {
-    navigateTo(shortcut.userInfo.url.replace(`${config.bundleId}:/`, ''));
+    navigateTo(shortcut.userInfo.url.replace(`${bundleId}:/`, ''));
   }
 }

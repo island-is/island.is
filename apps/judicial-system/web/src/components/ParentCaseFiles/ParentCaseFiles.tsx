@@ -15,7 +15,9 @@ interface Props {
   files?: CaseFile[]
 }
 
-const ParentCaseFiles: React.FC<Props> = ({ files }) => {
+const ParentCaseFiles: React.FC<React.PropsWithChildren<Props>> = ({
+  files,
+}) => {
   const { formatMessage } = useIntl()
 
   if (!files || files.length < 1) {

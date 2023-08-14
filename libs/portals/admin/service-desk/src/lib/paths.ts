@@ -1,3 +1,4 @@
 export enum ServiceDeskPaths {
-  Root = '/tjonustubord',
+  Root = '/thjonustubord',
+  Procurers = '/thjonustubord/:nationalId',
 }
