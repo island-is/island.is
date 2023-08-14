@@ -15,7 +15,6 @@ import { mapGender, mapMaritalStatus } from '../shared/mapper'
 import {
   Address,
   Person,
-  Religion,
   Spouse,
   PersonBase,
   Birthplace,
@@ -86,19 +85,6 @@ export function formatPerson(
     address: individual.heimilisfang
       ? formatAddress(individual.heimilisfang)
       : null,
-  }
-}
-
-export function formatReligion(
-  religion: EinstaklingurDTOTru | null | undefined,
-): Religion | null {
-  if (!religion) {
-    return null
-  }
-
-  return {
-    name: religion.trufelagHeiti ?? null,
-    code: religion.trufelagKodi ?? null,
   }
 }
 

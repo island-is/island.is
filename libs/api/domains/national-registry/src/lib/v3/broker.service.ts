@@ -12,7 +12,6 @@ import {
   formatSpouse,
   formatCitizenship,
   formatBirthplace,
-  formatReligion,
   formatHousing,
   formatName,
 } from './mapper'
@@ -25,7 +24,6 @@ import {
   Spouse,
   Citizenship,
   Birthplace,
-  Religion,
   Housing,
   Person,
 } from '../shared/models'
@@ -191,17 +189,6 @@ export class BrokerService {
       rawData?.faedingarstadur ??
       (await this.nationalRegistryV3.getBirthplace(nationalId))
     return data && formatBirthplace(data)
-  }
-
-  async getReligion(
-    nationalId: string,
-    rawData?: EinstaklingurDTOAllt | null,
-  ): Promise<Religion | null> {
-    const data =
-      rawData?.trufelag ??
-      (await this.nationalRegistryV3.getReligion(nationalId))
-
-    return data && formatReligion(data)
   }
 
   async getName(

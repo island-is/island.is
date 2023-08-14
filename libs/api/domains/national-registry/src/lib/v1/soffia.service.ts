@@ -7,7 +7,7 @@ import { ISLEinstaklingur, NationalRegistryApi } from '@island.is/clients/nation
 import { FamilyCorrectionInput } from './dto/FamilyCorrectionInput.input'
 import { PersonV1, V1RawData } from '../shared/types'
 import { mapGender, mapMaritalStatus } from '../shared/mapper'
-import { Birthplace, Citizenship, FamilyCorrectionResponse, Housing, PersonBase, Religion, Spouse } from '../shared/models'
+import { Birthplace, Citizenship, FamilyCorrectionResponse, Housing, PersonBase,Spouse } from '../shared/models'
 import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 import { formatFamilyChild } from './types/child.type'
 import { ExcludesFalse } from '../shared/utils'
