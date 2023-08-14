@@ -10,7 +10,8 @@ export default {
     ],
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'html'],
-  coverageDirectory: '<rootDir>/coverage/libs/service-portal/occupational-licenses',
+  coverageDirectory:
+    '<rootDir>/coverage/libs/service-portal/occupational-licenses',
   globals: {},
   displayName: 'service-portal-occupational-licenses',
 }

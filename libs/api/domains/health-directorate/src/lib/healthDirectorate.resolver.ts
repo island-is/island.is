@@ -2,8 +2,8 @@ import {
   CurrentUser,
   IdsAuthGuard,
   IdsUserGuard,
-  type User,
 } from '@island.is/auth-nest-tools'
+import type { User } from '@island.is/auth-nest-tools'
 import { Audit } from '@island.is/nest/audit'
 import { HealthDirectorateClientService } from '@island.is/clients/health-directorate'
 import { UseGuards } from '@nestjs/common'
