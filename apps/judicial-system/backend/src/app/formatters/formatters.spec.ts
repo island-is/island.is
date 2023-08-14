@@ -157,8 +157,10 @@ describe('formatLegalProvisions', () => {
 describe('formatHeadsUpSmsNotification', () => {
   let formatMessage: FormatMessage
   beforeAll(() => {
-    formatMessage = createTestIntl({ locale: 'is', onError: jest.fn() })
-      .formatMessage
+    formatMessage = createTestIntl({
+      locale: 'is',
+      onError: jest.fn(),
+    }).formatMessage
   })
 
   test('should format heads up notification', () => {
@@ -290,8 +292,10 @@ describe('formatHeadsUpSmsNotification', () => {
 describe('formatReadyForCourtSmsNotification', () => {
   let formatMessage: FormatMessage
   beforeAll(() => {
-    formatMessage = createTestIntl({ locale: 'is', onError: jest.fn() })
-      .formatMessage
+    formatMessage = createTestIntl({
+      locale: 'is',
+      onError: jest.fn(),
+    }).formatMessage
   })
 
   test('should format ready for court SMS notification', () => {
@@ -415,8 +419,10 @@ describe('formatReadyForCourtSmsNotification', () => {
 describe('formatReadyForCourtSmsNotification', () => {
   let formatMessage: FormatMessage
   beforeAll(() => {
-    formatMessage = createTestIntl({ locale: 'is', onError: jest.fn() })
-      .formatMessage
+    formatMessage = createTestIntl({
+      locale: 'is',
+      onError: jest.fn(),
+    }).formatMessage
   })
 
   test('should format ready for court SMS notification', () => {
@@ -439,8 +445,10 @@ describe('formatReadyForCourtSmsNotification', () => {
 describe('formatProsecutorReadyForCourtEmailNotification', () => {
   let formatMessage: FormatMessage
   beforeAll(() => {
-    formatMessage = createTestIntl({ locale: 'is', onError: jest.fn() })
-      .formatMessage
+    formatMessage = createTestIntl({
+      locale: 'is',
+      onError: jest.fn(),
+    }).formatMessage
   })
 
   const fn = (
@@ -499,8 +507,10 @@ describe('formatProsecutorReadyForCourtEmailNotification', () => {
 describe('formatProsecutorReceivedByCourtSmsNotification', () => {
   let formatMessage: FormatMessage
   beforeAll(() => {
-    formatMessage = createTestIntl({ locale: 'is', onError: jest.fn() })
-      .formatMessage
+    formatMessage = createTestIntl({
+      locale: 'is',
+      onError: jest.fn(),
+    }).formatMessage
   })
 
   test('should format received by court notification for custody', () => {
@@ -627,8 +637,10 @@ describe('formatProsecutorReceivedByCourtSmsNotification', () => {
 describe('formatProsecutorCourtDateEmailNotification', () => {
   let formatMessage: FormatMessage
   beforeAll(() => {
-    formatMessage = createTestIntl({ locale: 'is', onError: jest.fn() })
-      .formatMessage
+    formatMessage = createTestIntl({
+      locale: 'is',
+      onError: jest.fn(),
+    }).formatMessage
   })
 
   const fn = (
@@ -931,8 +943,10 @@ describe('formatProsecutorCourtDateEmailNotification', () => {
 describe('formatPrisonCourtDateEmailNotification', () => {
   let formatMessage: FormatMessage
   beforeAll(() => {
-    formatMessage = createTestIntl({ locale: 'is', onError: jest.fn() })
-      .formatMessage
+    formatMessage = createTestIntl({
+      locale: 'is',
+      onError: jest.fn(),
+    }).formatMessage
   })
 
   test('should format court date notification', () => {
@@ -1191,8 +1205,10 @@ describe('formatPrisonCourtDateEmailNotification', () => {
 describe('formatDefenderCourtDateEmailNotification', () => {
   let formatMessage: FormatMessage
   beforeAll(() => {
-    formatMessage = createTestIntl({ locale: 'is', onError: jest.fn() })
-      .formatMessage
+    formatMessage = createTestIntl({
+      locale: 'is',
+      onError: jest.fn(),
+    }).formatMessage
   })
 
   test('should format defender court date notification', () => {
@@ -1353,8 +1369,10 @@ describe('formatDefenderCourtDateEmailNotification', () => {
 describe('formatDefenderCourtDateLinkEmailNotification', () => {
   let formatMessage: FormatMessage
   beforeAll(() => {
-    formatMessage = createTestIntl({ locale: 'is', onError: jest.fn() })
-      .formatMessage
+    formatMessage = createTestIntl({
+      locale: 'is',
+      onError: jest.fn(),
+    }).formatMessage
   })
 
   test('should format defender court date link notification with RVG link', () => {
@@ -1381,8 +1399,10 @@ describe('formatDefenderCourtDateLinkEmailNotification', () => {
 describe('formatCourtRevokedSmsNotification', () => {
   let formatMessage: FormatMessage
   beforeAll(() => {
-    formatMessage = createTestIntl({ locale: 'is', onError: jest.fn() })
-      .formatMessage
+    formatMessage = createTestIntl({
+      locale: 'is',
+      onError: jest.fn(),
+    }).formatMessage
   })
 
   test('should format revoked sms with court date', () => {
@@ -1493,8 +1513,10 @@ describe('formatCourtRevokedSmsNotification', () => {
 describe('formatPrisonRevokedEmailNotification', () => {
   let formatMessage: FormatMessage
   beforeAll(() => {
-    formatMessage = createTestIntl({ locale: 'is', onError: jest.fn() })
-      .formatMessage
+    formatMessage = createTestIntl({
+      locale: 'is',
+      onError: jest.fn(),
+    }).formatMessage
   })
 
   test('should format revoked notification for custody', () => {
@@ -1557,8 +1579,10 @@ describe('formatPrisonRevokedEmailNotification', () => {
 describe('formatDefenderRevokedEmailNotification', () => {
   let formatMessage: FormatMessage
   beforeAll(() => {
-    formatMessage = createTestIntl({ locale: 'is', onError: jest.fn() })
-      .formatMessage
+    formatMessage = createTestIntl({
+      locale: 'is',
+      onError: jest.fn(),
+    }).formatMessage
   })
 
   test('should format revoked notification', () => {
@@ -1745,8 +1769,10 @@ describe('stripHtmlTags', () => {
 })
 
 describe('formatCustodyRestrictions', () => {
-  const formatMessage = createTestIntl({ locale: 'is', onError: jest.fn() })
-    .formatMessage
+  const formatMessage = createTestIntl({
+    locale: 'is',
+    onError: jest.fn(),
+  }).formatMessage
 
   const format = (
     caseType: CaseType,
@@ -1857,8 +1883,10 @@ describe('formatCustodyRestrictions', () => {
 })
 
 describe('formatPrisonAdministrationRulingNotification', () => {
-  const formatMessage = createTestIntl({ locale: 'is', onError: jest.fn() })
-    .formatMessage
+  const formatMessage = createTestIntl({
+    locale: 'is',
+    onError: jest.fn(),
+  }).formatMessage
   const fn = (
     courtCaseNumber: string | undefined,
     courtName: string | undefined,
@@ -1889,8 +1917,10 @@ describe('formatDefenderResubmittedToCourtEmailNotification', () => {
   let formatMessage: FormatMessage
 
   beforeAll(() => {
-    formatMessage = createTestIntl({ locale: 'is', onError: jest.fn() })
-      .formatMessage
+    formatMessage = createTestIntl({
+      locale: 'is',
+      onError: jest.fn(),
+    }).formatMessage
   })
 
   it('should format email', () => {

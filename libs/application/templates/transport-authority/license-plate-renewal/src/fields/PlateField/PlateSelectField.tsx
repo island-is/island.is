@@ -19,10 +19,9 @@ interface PlateSearchFieldProps {
   myPlateOwnershipList: PlateOwnership[]
 }
 
-export const PlateSelectField: FC<PlateSearchFieldProps & FieldBaseProps> = ({
-  myPlateOwnershipList,
-  application,
-}) => {
+export const PlateSelectField: FC<
+  React.PropsWithChildren<PlateSearchFieldProps & FieldBaseProps>
+> = ({ myPlateOwnershipList, application }) => {
   const { formatMessage, formatDateFns } = useLocale()
   const { setValue } = useFormContext()
 

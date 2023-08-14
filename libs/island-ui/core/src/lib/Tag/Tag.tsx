@@ -33,7 +33,7 @@ export interface TagProps {
   truncate?: boolean
   hyphenate?: boolean
   textLeft?: boolean
-  CustomLink?: FC
+  CustomLink?: FC<React.PropsWithChildren<unknown>>
 }
 
 export const Tag = forwardRef<HTMLButtonElement & HTMLAnchorElement, TagProps>(

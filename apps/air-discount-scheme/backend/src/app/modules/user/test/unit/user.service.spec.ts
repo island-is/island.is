@@ -6,7 +6,7 @@ import { FlightService } from '../../../flight'
 import { NationalRegistryService } from '../../../nationalRegistry'
 import { AirDiscountSchemeScope } from '@island.is/auth/scopes'
 import type { User as AuthUser } from '@island.is/auth-nest-tools'
-import { CACHE_MANAGER } from '@nestjs/common'
+import { CACHE_MANAGER } from '@nestjs/cache-manager'
 import kennitala from 'kennitala'
 import { createTestUser } from '../../../../../../test/createTestUser'
 

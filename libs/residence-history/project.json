@@ -1,19 +1,20 @@
 {
-  "root": "libs/residence-history",
+  "name": "residence-history",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/residence-history/src",
   "projectType": "library",
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": ["libs/residence-history/**/*.{ts,tsx,js,jsx}"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/residence-history"],
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/libs/residence-history"],
       "options": {
-        "jestConfig": "libs/residence-history/jest.config.js",
+        "jestConfig": "libs/residence-history/jest.config.ts",
         "passWithNoTests": true
       }
     }

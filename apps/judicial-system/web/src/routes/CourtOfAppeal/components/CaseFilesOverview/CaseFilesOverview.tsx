@@ -12,7 +12,7 @@ import { core } from '@island.is/judicial-system-web/messages'
 
 import { strings } from './CaseFilesOverview.strings'
 
-const CaseFilesOverview: React.FC = () => {
+const CaseFilesOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
   const { workingCase } = useContext(FormContext)
 
   const { formatMessage } = useIntl()

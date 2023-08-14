@@ -8,7 +8,9 @@ import { getValueViaPath } from '@island.is/application/core'
 import { institutionApplicationMessages as m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 
-const ReviewScreen: FC<FieldBaseProps> = ({ application }) => {
+const ReviewScreen: FC<React.PropsWithChildren<FieldBaseProps>> = ({
+  application,
+}) => {
   const { formatMessage } = useLocale()
   const secondaryContactName = getValueViaPath(
     application.answers,

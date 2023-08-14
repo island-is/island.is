@@ -136,11 +136,13 @@ const createArticleNavigation = (
   return nav
 }
 
-const RelatedContent: FC<{
-  title: string
-  articles: Array<{ title: string; slug: string }>
-  otherContent: Array<{ text: string; url: string }>
-}> = ({ title, articles, otherContent }) => {
+const RelatedContent: FC<
+  React.PropsWithChildren<{
+    title: string
+    articles: Array<{ title: string; slug: string }>
+    otherContent: Array<{ text: string; url: string }>
+  }>
+> = ({ title, articles, otherContent }) => {
   const { linkResolver } = useLinkResolver()
 
   if (articles.length < 1 && otherContent.length < 1) return null
@@ -175,10 +177,12 @@ const RelatedContent: FC<{
   )
 }
 
-const TOC: FC<{
-  body: SubArticle['body']
-  title: string
-}> = ({ body, title }) => {
+const TOC: FC<
+  React.PropsWithChildren<{
+    body: SubArticle['body']
+    title: string
+  }>
+> = ({ body, title }) => {
   const navigation = useMemo(() => {
     return createSubArticleNavigation(body ?? [])
   }, [body])
@@ -200,7 +204,7 @@ const TOC: FC<{
 }
 
 const ArticleNavigation: FC<
-  ArticleSidebarProps & { isMenuDialog?: boolean }
+  React.PropsWithChildren<ArticleSidebarProps & { isMenuDialog?: boolean }>
 > = ({ article, activeSlug, n, isMenuDialog }) => {
   const { linkResolver } = useLinkResolver()
   return (
@@ -218,7 +222,11 @@ const ArticleNavigation: FC<
         isMenuDialog={isMenuDialog}
         renderLink={(link, { typename, slug }) => {
           return (
-            <NextLink {...linkResolver(typename as LinkType, slug)} passHref>
+            <NextLink
+              {...linkResolver(typename as LinkType, slug)}
+              passHref
+              legacyBehavior
+            >
               {link}
             </NextLink>
           )
@@ -247,7 +255,7 @@ interface ArticleSidebarProps {
   n: (s: string) => string
 }
 
-const ArticleSidebar: FC<ArticleSidebarProps> = ({
+const ArticleSidebar: FC<React.PropsWithChildren<ArticleSidebarProps>> = ({
   article,
   activeSlug,
   n,
@@ -550,6 +558,7 @@ const ArticleScreen: Screen<ArticleProps> = ({
                   <NextLink
                     {...linkResolver(typename as LinkType, slug)}
                     passHref
+                    legacyBehavior
                   >
                     {link}
                   </NextLink>
@@ -710,7 +719,7 @@ const ArticleScreen: Screen<ArticleProps> = ({
   )
 }
 
-ArticleScreen.getInitialProps = async ({ apolloClient, query, locale }) => {
+ArticleScreen.getProps = async ({ apolloClient, query, locale }) => {
   const slug = query.slug as string
 
   const [article, namespace, stepperNamespace] = await Promise.all([

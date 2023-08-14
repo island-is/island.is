@@ -5,9 +5,9 @@ import { useLocale } from '@island.is/localization'
 import React, { FC } from 'react'
 import { informationToComplainer } from '../../lib/messages'
 
-export const InformationToComplainer: FC<FieldBaseProps> = ({
-  application,
-}) => {
+export const InformationToComplainer: FC<
+  React.PropsWithChildren<FieldBaseProps>
+> = ({ application }) => {
   const { formatMessage } = useLocale()
 
   return (

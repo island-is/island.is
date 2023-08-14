@@ -22,11 +22,9 @@ interface UseFormProps {
   organisationNationalId: string
 }
 
-export const DocumentProviderAdministrativeContactForm: FC<Props> = ({
-  administrativeContact,
-  organisationId,
-  organisationNationalId,
-}) => {
+export const DocumentProviderAdministrativeContactForm: FC<
+  React.PropsWithChildren<Props>
+> = ({ administrativeContact, organisationId, organisationNationalId }) => {
   const { formatMessage } = useLocale()
   const {
     handleSubmit,

@@ -27,6 +27,7 @@ import {
 import { GET_REGULATION_QUERY } from '../queries'
 import { Text } from '@island.is/island-ui/core'
 import { HeadWithSocialSharing } from '@island.is/web/components'
+import { safelyExtractPathnameFromUrl } from '@island.is/web/utils/safelyExtractPathnameFromUrl'
 
 // ---------------------------------------------------------------------------
 
@@ -168,13 +169,9 @@ const assertEarlierDate = (
 
 // ---------------------------------------------------------------------------
 
-RegulationPage.getInitialProps = async ({
-  apolloClient,
-  locale,
-  query,
-  res,
-  asPath,
-}) => {
+RegulationPage.getProps = async ({ apolloClient, locale, query, res, req }) => {
+  const asPath = safelyExtractPathnameFromUrl(req.url)
+
   const params = query.params as Partial<Array<string>>
   const isPdf = params[params.length - 1] === 'pdf'
   if (isPdf) {

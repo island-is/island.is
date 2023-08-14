@@ -17,7 +17,9 @@ import { ApplicationConfigurations } from '@island.is/application/types'
 import { MessageWithLinkButtonFormField } from '@island.is/application/ui-fields'
 import { coreMessages } from '@island.is/application/core'
 
-export const Conclusion: FC<FieldBaseProps> = (props) => {
+export const Conclusion: FC<React.PropsWithChildren<FieldBaseProps>> = (
+  props,
+) => {
   const { application } = props
   const { formatMessage } = useLocale()
 

@@ -44,7 +44,7 @@ export const CreateSkilavottordRecyclingPartnerMutation = gql`
   }
 `
 
-const RecyclingCompanyCreate: FC = () => {
+const RecyclingCompanyCreate: FC<React.PropsWithChildren<unknown>> = () => {
   const { user } = useContext(UserContext)
   const router = useRouter()
   const [createSkilavottordRecyclingPartner] = useMutation(
@@ -131,7 +131,9 @@ const RecyclingCompanyCreate: FC = () => {
           ]}
           renderLink={(link, item) => {
             return item?.href ? (
-              <NextLink href={item?.href}>{link}</NextLink>
+              <NextLink href={item?.href} legacyBehavior>
+                {link}
+              </NextLink>
             ) : (
               link
             )
