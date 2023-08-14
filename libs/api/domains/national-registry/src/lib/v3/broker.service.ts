@@ -1,4 +1,4 @@
-import { Inject, Injectable} from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import {
   EinstaklingurDTOAllt,
   EinstaklingurDTOHeimili,
@@ -27,7 +27,8 @@ import {
   Housing,
   Person,
 } from '../shared/models'
-import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
 import { Name } from '../shared/models/name.model'
 
 @Injectable()
@@ -169,13 +170,11 @@ export class BrokerService {
           child.barnKennitala,
         )
 
-
         if (!childData) {
           return null
         }
 
         return formatPersonDiscriminated(childData)
-
       }),
     )
     return childDetails.filter((child): child is PersonV3 => child != null)
@@ -196,8 +195,7 @@ export class BrokerService {
     rawData?: EinstaklingurDTOAllt | null,
   ): Promise<Name | null> {
     const data =
-      rawData?.fulltNafn ??
-      (await this.nationalRegistryV3.getName(nationalId))
+      rawData?.fulltNafn ?? (await this.nationalRegistryV3.getName(nationalId))
 
     return data && formatName(data)
   }
@@ -209,9 +207,13 @@ export class BrokerService {
     const data: [
       EinstaklingurDTOItarAuka | null,
       EinstaklingurDTOLoghTengsl | null,
-      EinstaklingurDTOHeimili | null
+      EinstaklingurDTOHeimili | null,
     ] = rawData
-      ? [rawData?.itarupplysingar ?? null, rawData?.logheimilistengsl ?? null, rawData.heimilisfang ?? null]
+      ? [
+          rawData?.itarupplysingar ?? null,
+          rawData?.logheimilistengsl ?? null,
+          rawData.heimilisfang ?? null,
+        ]
       : await Promise.all([
           this.nationalRegistryV3.getHousing(nationalId),
           this.nationalRegistryV3.getDomicileData(nationalId),

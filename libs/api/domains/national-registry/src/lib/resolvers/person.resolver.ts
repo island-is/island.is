@@ -28,9 +28,9 @@ import {
 import { NationalRegistryService } from '../nationalRegistry.service'
 import type { SharedPerson } from '../shared/types'
 import { Housing } from '../shared/models/housing.model'
-import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
 import { Name } from '../shared/models/name.model'
-
 
 @UseGuards(IdsAuthGuard, IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.meDetails)
@@ -45,7 +45,7 @@ export class PersonResolver {
   @UseGuards(IdsUserGuard, ScopesGuard)
   @Scopes(ApiScope.meDetails)
   @Query(() => Person, {
-    nullable: true
+    nullable: true,
   })
   @Audit({ namespace: '@island.is/api/national-registry' })
   async nationalRegistryPerson(
@@ -64,7 +64,11 @@ export class PersonResolver {
     @Context('req') { user }: { user: User },
     @Parent() person: SharedPerson,
   ): Promise<Array<Custodian> | null> {
-    return this.service.getCustodians(person.nationalId, person, user.nationalId)
+    return this.service.getCustodians(
+      person.nationalId,
+      person,
+      user.nationalId,
+    )
   }
 
   @ResolveField('birthParents', () => [PersonBase], {
@@ -131,7 +135,7 @@ export class PersonResolver {
 
   @ResolveField('name', () => Name, { nullable: true })
   @Audit()
-  async resolveName(@Parent() person: SharedPerson): Promise<Name| null> {
+  async resolveName(@Parent() person: SharedPerson): Promise<Name | null> {
     return this.service.getName(person.nationalId, person)
   }
 }
