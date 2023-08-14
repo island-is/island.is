@@ -1,16 +1,18 @@
 {
-  "root": "libs/api/domains/intellectual-property",
+  "name": "api-domains-intellectual-property",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/api/domains/intellectual-property/src",
+  "projectType": "library",
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": ["libs/api/domains/intellectual-property/**/*.ts"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "outputs": ["coverage/libs/api/domains/intellectual-property"],
       "options": {
         "jestConfig": "libs/api/domains/intellectual-property/jest.config.js",

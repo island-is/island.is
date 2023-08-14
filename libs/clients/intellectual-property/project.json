@@ -1,16 +1,17 @@
 {
-  "root": "libs/clients/intellectual-property",
+  "name": "clients-intellectual-property",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/clients/intellectual-property/src",
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": ["libs/clients/intellectual-property/**/*.ts"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "outputs": ["coverage/libs/clients/intellectual-property"],
       "options": {
         "jestConfig": "libs/clients/intellectual-property/jest.config.js",
@@ -18,7 +19,7 @@
       }
     },
     "update-openapi-document": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "commands": [
           "curl https://webapi.hugverk.is/apiv3/swagger/v3/swagger.json > src/clientConfig.json",
@@ -30,7 +31,7 @@
       }
     },
     "schemas/external-openapi-generator": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "command": "yarn openapi-generator -o libs/clients/intellectual-property/gen/fetch -i libs/clients/intellectual-property/src/clientConfig.json"
       }
