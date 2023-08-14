@@ -10,7 +10,9 @@ import { useFormContext, Controller } from 'react-hook-form'
 import { Box, Text, Checkbox } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 
-const TestPhaseInfoScreen: FC<FieldBaseProps> = ({ application }) => {
+const TestPhaseInfoScreen: FC<React.PropsWithChildren<FieldBaseProps>> = ({
+  application,
+}) => {
   const { formatMessage } = useLocale()
   const { answers: formValue } = application
 

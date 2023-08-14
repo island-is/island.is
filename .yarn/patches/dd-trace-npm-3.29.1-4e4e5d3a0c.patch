@@ -1,0 +1,14 @@
+diff --git a/packages/dd-trace/src/plugins/util/test.js b/packages/dd-trace/src/plugins/util/test.js
+index 6e7abb3935822ba31d5c22419d2abaa9873c6bf0..9d5085ef8080cfceb2497048765719b382fb1a77 100644
+--- a/packages/dd-trace/src/plugins/util/test.js
++++ b/packages/dd-trace/src/plugins/util/test.js
+@@ -201,7 +201,8 @@ function getTestParametersString (parametersByTestName, testName) {
+   }
+   try {
+     // test is invoked with each parameter set sequencially
+-    const testParameters = parametersByTestName[testName].shift()
++    const testParameters = parametersByTestName[testName][0]
++    parametersByTestName[testName] = parametersByTestName[testName].filter((e, index) => index !== 0)
+     return JSON.stringify({ arguments: testParameters, metadata: {} })
+   } catch (e) {
+     // We can't afford to interrupt the test if `testParameters` is not serializable to JSON,

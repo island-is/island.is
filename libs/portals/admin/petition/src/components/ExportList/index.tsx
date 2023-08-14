@@ -40,7 +40,7 @@ export const getCSV = async (data: any[], fileName: string) => {
   await downloadCSV(name, ['Dagsetning', 'Nafn', 'Sveitarfélag'], dataArray)
 }
 
-export const ExportList: FC<Props> = ({
+export const ExportList: FC<React.PropsWithChildren<Props>> = ({
   petition,
   petitionSigners,
   petitionId,

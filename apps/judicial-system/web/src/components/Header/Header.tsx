@@ -35,7 +35,7 @@ import * as styles from './Header.css'
 
 const supportEmail = getConfig()?.publicRuntimeConfig?.supportEmail ?? ''
 
-const LogoIcon: React.FC = () => (
+const LogoIcon: React.FC<React.PropsWithChildren<unknown>> = () => (
   <>
     <Hidden above="sm">
       <Logo width={40} iconOnly />
@@ -46,7 +46,9 @@ const LogoIcon: React.FC = () => (
   </>
 )
 
-const Container: React.FC = ({ children }) => {
+const Container: React.FC<React.PropsWithChildren<unknown>> = ({
+  children,
+}) => {
   return (
     <Box paddingX={[3, 3, 4]}>
       <GridContainer className={styles.gridContainer}>
@@ -67,7 +69,7 @@ const Container: React.FC = ({ children }) => {
   )
 }
 
-const HeaderContainer: React.FC = () => {
+const HeaderContainer: React.FC<React.PropsWithChildren<unknown>> = () => {
   const { formatMessage } = useIntl()
   const { isAuthenticated, user } = useContext(UserContext)
 
@@ -92,34 +94,32 @@ const HeaderContainer: React.FC = () => {
 
   return (
     <Container>
-      <Link href={logoHref}>
-        <a href={logoHref} tabIndex={0}>
-          <Inline alignY="center">
-            <LogoIcon />
-            <Box
-              display="flex"
-              className={styles.infoContainer}
-              alignItems="center"
-              height="full"
-              marginLeft={[1, 1, 2, 4]}
-              marginRight="auto"
-            >
-              <Box marginLeft={[1, 1, 2, 4]}>
-                <Text variant="eyebrow">{'Dómsmálaráðuneytið'}</Text>
-                <Hidden above="sm">
-                  <Text fontWeight="light" variant={'eyebrow'}>
-                    {'Réttarvörslugátt'}
-                  </Text>
-                </Hidden>
-                <Hidden below="md">
-                  <Text fontWeight="light" variant={'default'}>
-                    {'Réttarvörslugátt'}
-                  </Text>
-                </Hidden>
-              </Box>
+      <Link href={logoHref} tabIndex={0}>
+        <Inline alignY="center">
+          <LogoIcon />
+          <Box
+            display="flex"
+            className={styles.infoContainer}
+            alignItems="center"
+            height="full"
+            marginLeft={[1, 1, 2, 4]}
+            marginRight="auto"
+          >
+            <Box marginLeft={[1, 1, 2, 4]}>
+              <Text variant="eyebrow">{'Dómsmálaráðuneytið'}</Text>
+              <Hidden above="sm">
+                <Text fontWeight="light" variant={'eyebrow'}>
+                  {'Réttarvörslugátt'}
+                </Text>
+              </Hidden>
+              <Hidden below="md">
+                <Text fontWeight="light" variant={'default'}>
+                  {'Réttarvörslugátt'}
+                </Text>
+              </Hidden>
             </Box>
-          </Inline>
-        </a>
+          </Box>
+        </Inline>
       </Link>
       <Inline alignY="center" space={2}>
         {user && (

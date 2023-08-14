@@ -10,6 +10,7 @@ export class DelegationDTOMapper {
       toName: dto.toName,
       validTo: dto.validTo,
       types: [dto.type],
+      scopes: dto.scopes,
     }
   }
 }

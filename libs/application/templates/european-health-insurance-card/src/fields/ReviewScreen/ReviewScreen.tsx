@@ -8,7 +8,9 @@ import { formatText } from '@island.is/application/core'
 import { getFullName } from '../../lib/helpers/applicantHelper'
 import { useLocale } from '@island.is/localization'
 
-const ReviewScreen: FC<FieldBaseProps> = ({ application }) => {
+const ReviewScreen: FC<React.PropsWithChildren<FieldBaseProps>> = ({
+  application,
+}) => {
   const { formatMessage } = useLocale()
 
   const nationalRegistryData = application.externalData.nationalRegistry

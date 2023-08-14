@@ -25,7 +25,9 @@ interface AccessControlModalProps
   // partnerIdRequired?: boolean
 }
 
-export const AccessControlModal: FC<AccessControlModalProps> = ({
+export const AccessControlModal: FC<
+  React.PropsWithChildren<AccessControlModalProps>
+> = ({
   title,
   text,
   show,

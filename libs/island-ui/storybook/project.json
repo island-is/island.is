@@ -1,23 +1,21 @@
 {
-  "root": "libs/island-ui/storybook",
+  "name": "island-ui-storybook",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/island-ui/storybook/src",
   "projectType": "library",
   "generators": {},
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": ["libs/island-ui/storybook/**/*.{ts,tsx,js,jsx}"]
       }
     },
     "serve": {
-      "executor": "@nrwl/storybook:storybook",
+      "executor": "@nx/storybook:storybook",
       "options": {
-        "uiFramework": "@storybook/react",
         "port": 4400,
-        "config": {
-          "configFolder": "libs/island-ui/storybook/config"
-        }
+        "configDir": "libs/island-ui/storybook/config"
       },
       "configurations": {
         "ci": {
@@ -26,13 +24,10 @@
       }
     },
     "build": {
-      "executor": "@nrwl/storybook:build",
+      "executor": "@nx/storybook:build",
       "options": {
-        "uiFramework": "@storybook/react",
-        "outputPath": "dist/storybook/island-ui",
-        "config": {
-          "configFolder": "libs/island-ui/storybook/config"
-        }
+        "configDir": "libs/island-ui/storybook/config",
+        "outputDir": "dist/storybook/island-ui"
       },
       "configurations": {
         "ci": {
@@ -44,7 +39,7 @@
           "inspect": false
         }
       },
-      "outputs": ["{options.outputPath}"]
+      "outputs": ["{options.outputDir}"]
     },
     "docker-static": {}
   },
