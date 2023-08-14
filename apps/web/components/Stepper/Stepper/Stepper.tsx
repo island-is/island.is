@@ -249,7 +249,7 @@ const Stepper = ({
     questionsAndAnswers: QuestionAndAnswer[],
     urlWithoutQueryParams: string,
   ) => {
-    const accumulatedAnswers = []
+    const accumulatedAnswers: string[] = []
 
     return questionsAndAnswers.map(({ question, answer, slug }, i) => {
       const previouslyAccumulatedAnswers = [...accumulatedAnswers]
@@ -424,7 +424,7 @@ const Stepper = ({
         <QuestionTitle containerClassName={webReaderClassName} />
       )}
       {showWebReader && (
-        <Webreader readId={null} readClass={webReaderClassName} />
+        <Webreader readId={undefined} readClass={webReaderClassName} />
       )}
       {currentStepType === STEP_TYPES.ANSWER && (
         <QuestionTitle containerClassName={webReaderClassName} />

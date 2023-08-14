@@ -81,7 +81,7 @@ interface StateMeta {
   stepSlug: string
 }
 
-const getStepBySlug = (stepper: Stepper, slug: string): Step => {
+const getStepBySlug = (stepper: Stepper, slug: string): Step | undefined => {
   return stepper.steps?.find((step) => step.slug === slug)
 }
 
@@ -103,7 +103,7 @@ const getStateMeta = (state: StepperState): StateMeta => {
   return mergeMeta(state.meta) as StateMeta
 }
 
-const getCurrentStep = (stepper: Stepper, currentState: StepperState): Step => {
+const getCurrentStep = (stepper: Stepper, currentState: StepperState): Step | undefined => {
   return getStepBySlug(stepper, getStateMeta(currentState).stepSlug)
 }
 
@@ -171,20 +171,18 @@ const validateStepperConfig = (stepper: Stepper) => {
   const stateNames = Object.keys(machine.states)
 
   for (const stateName of stateNames) {
-    const state = machine.states[stateName]
-    for (const transition of Object.keys(state?.config?.on ?? '{}')) {
-      let transitionStateName
-      try {
-        transitionStateName = state.config.on[transition]
-      } catch (error) {
-        continue
-      }
+    const state = machine.states[stateName];
+    const transitionsConfig = state?.config?.on as Record<string, string> || {};
+  
+    for (const transition of Object.keys(transitionsConfig)) {
+      const transitionStateName = transitionsConfig[transition];
+  
       if (!stateNames.includes(transitionStateName)) {
-        errors.add(`State with name: "${transitionStateName}" does not exist`)
+        errors.add(`State with name: "${transitionStateName}" does not exist`);
       }
     }
   }
-
+  
   return errors
 }
 
@@ -213,7 +211,7 @@ const validateStepConfig = (step: Step) => {
   }
 
   if (stepConfig.optionsFromSource) {
-    const expectedFields = [
+    const expectedFields: (keyof StepOptionsFromSourceCMS)[] = [
       'labelFieldEN',
       'labelFieldIS',
       'sourceNamespace',
@@ -234,7 +232,7 @@ const validateStepConfig = (step: Step) => {
     }
   } else if (stepConfig.options) {
     for (const option of stepConfig.options) {
-      const expectedFields = ['labelEN', 'labelIS', 'transition', 'optionSlug']
+      const expectedFields: (keyof StepOptionCMS)[] = ['labelEN', 'labelIS', 'transition', 'optionSlug']
       for (const field of expectedFields)
         if (!option[field])
           errors.add(`Not all options have a "${field}" field`)
@@ -246,7 +244,7 @@ const validateStepConfig = (step: Step) => {
 
 const getStepperMachine = (stepper: Stepper): StepperMachine => {
   const stepperConfig: StepperConfig = JSON.parse(
-    stepper.config,
+    stepper.config? stepper.config: '',
   ) as StepperConfig
   return Machine(stepperConfig.xStateFSM)
 }
@@ -257,8 +255,8 @@ const STEP_TYPES = {
   ANSWER: 'answer',
 }
 
-const resolveStepType = (step: Step): string => {
-  if (!step) return null
+const resolveStepType = (step: Step| undefined): string => {
+  if (!step) return ''
 
   if (
     step.stepType &&
@@ -277,7 +275,7 @@ const resolveStepType = (step: Step): string => {
   if (step.stepType && step.stepType.toLowerCase().includes('answer')) {
     return STEP_TYPES.ANSWER
   }
-  return null
+  return ''
 }
 
 const getStepOptions = (
@@ -287,12 +285,12 @@ const getStepOptions = (
     slug: string
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     data: Record<string, any>[]
-  }[] = null,
+  }[] = [],
 ): StepOption[] => {
   if (!step || step.config === '') return []
-  const stepConfig: StepConfig = JSON.parse(step.config) as StepConfig
+  const stepConfig: StepConfig = JSON.parse(step.config? step.config: '') as StepConfig
 
-  if (stepConfig.optionsFromSource && optionsFromNamespace) {
+  if (typeof stepConfig.optionsFromSource === "object" && stepConfig.optionsFromSource !== null && stepConfig.optionsFromSource !== undefined && optionsFromNamespace) {
     const stepOptions = optionsFromNamespace.find(
       (value) => value.slug === step.slug,
     )
@@ -307,7 +305,7 @@ const getStepOptions = (
       const label = lang === 'en' ? o[labelFieldEN] : o[labelFieldIS]
       let stepTransition = ''
 
-      transitions.sort((a, b) => {
+      transitions.sort((a: StepOptionsFromSourceTransitionCMS, b: StepOptionsFromSourceTransitionCMS) => {
         if (!a.priority && !b.priority) return 0
         if (!a.priority) return 1
         if (!b.priority) return -1
@@ -361,7 +359,7 @@ const getStepOptions = (
 
 const getStepOptionsSourceNamespace = (step: Step): string => {
   if (!step || step.config === '') return ''
-  const stepConfig: StepConfig = JSON.parse(step.config) as StepConfig
+  const stepConfig: StepConfig = JSON.parse(step.config? step.config: '') as StepConfig
   if (stepConfig.optionsFromSource)
     return stepConfig.optionsFromSource.sourceNamespace
   return ''
@@ -411,7 +409,7 @@ const getStepOptionsFromUIConfiguration = async (
       })
       .then((content) => {
         // map data here to reduce data processing in component
-        return JSON.parse(content.data.getNamespace.fields)
+        return content.data.getNamespace? JSON.parse(content.data.getNamespace.fields): ''
       })
   })
 

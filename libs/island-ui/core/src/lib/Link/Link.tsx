@@ -12,6 +12,7 @@ export type UnderlineVisibility = 'always' | 'hover'
 export type UnderlineVariants = 'normal' | 'small'
 
 export interface LinkProps extends NextLinkProps {
+  children: React.ReactNode
   color?: LinkColor
   dataTestId?: string
   className?: string
