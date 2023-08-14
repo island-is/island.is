@@ -68,6 +68,7 @@ export type Icon =
   | 'share'
   | 'QRCode'
   | 'globe'
+  | 'signLanguage'
 
 export default {
   filled: {
@@ -139,6 +140,7 @@ export default {
     share: 'Share',
     QRCode: 'QRCodeOutline',
     globe: 'Globe',
+    signLanguage: 'SignLanguage',
   },
   outline: {
     accessibility: 'AccessibilityOutline',
@@ -209,5 +211,6 @@ export default {
     share: 'ShareOutline',
     QRCode: 'QRCodeOutline',
     globe: 'Globe',
+    signLanguage: 'SignLanguage',
   },
 }

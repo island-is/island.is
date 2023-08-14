@@ -42,7 +42,11 @@ const Texts = ({ termsUrl = '#' }) => ({
   },
 })
 
-const EmbeddedVideo: FC<EmbeddedVideoProps> = ({ title, url, locale }) => {
+export const EmbeddedVideo: FC<EmbeddedVideoProps> = ({
+  title,
+  url,
+  locale,
+}) => {
   const [allowed, setAllowed] = useState<boolean>(false)
   const [embedUrl, setEmbedUrl] = useState<string | null>(null)
   const [termsUrl, setTermsUrl] = useState<string>(null)

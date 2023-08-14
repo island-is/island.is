@@ -21,7 +21,7 @@ import useFilterCases, { Filters } from './hooks/useFilterCases'
 import { defenderCases as m } from './Cases.strings'
 import * as styles from './Cases.css'
 
-export const Cases: React.FC = () => {
+export const Cases: React.FC<React.PropsWithChildren<unknown>> = () => {
   const { formatMessage } = useIntl()
 
   const availableTabs = ['active', 'completed']

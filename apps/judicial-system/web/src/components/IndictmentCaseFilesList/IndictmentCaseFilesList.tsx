@@ -33,7 +33,9 @@ interface RenderFilesProps {
   onOpenFile: (fileId: string) => void
 }
 
-const RenderFiles: React.FC<Props & RenderFilesProps> = (props) => {
+const RenderFiles: React.FC<
+  React.PropsWithChildren<Props & RenderFilesProps>
+> = (props) => {
   const { caseFiles, onOpenFile, workingCase } = props
 
   return (
@@ -57,7 +59,9 @@ const RenderFiles: React.FC<Props & RenderFilesProps> = (props) => {
   )
 }
 
-const IndictmentCaseFilesList: React.FC<Props> = (props) => {
+const IndictmentCaseFilesList: React.FC<React.PropsWithChildren<Props>> = (
+  props,
+) => {
   const { workingCase } = props
   const { formatMessage } = useIntl()
   const { user, limitedAccess } = useContext(UserContext)

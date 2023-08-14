@@ -66,9 +66,9 @@ const featureFlagClient = configcat.getClient(
   },
 );
 
-export const FeatureFlagProvider: FC<FeatureFlagContextProviderProps> = ({
-  children,
-}) => {
+export const FeatureFlagProvider: FC<
+  React.PropsWithChildren<FeatureFlagContextProviderProps>
+> = ({children}) => {
   const {userInfo} = useAuthStore();
   const [time, setTime] = useState(Date.now());
 

@@ -31,11 +31,9 @@ import { m } from '../../lib/messages'
 import { EstateRegistrant } from '@island.is/clients/syslumenn'
 import { getValueViaPath, hasYes } from '@island.is/application/core'
 
-export const EstateMemberRepeater: FC<FieldBaseProps<Answers>> = ({
-  application,
-  field,
-  errors,
-}) => {
+export const EstateMemberRepeater: FC<
+  React.PropsWithChildren<FieldBaseProps<Answers>>
+> = ({ application, field, errors }) => {
   const error = (errors as any)?.estateMembers?.members
   const externalData = application.externalData.syslumennOnEntry?.data as {
     relationOptions: string[]

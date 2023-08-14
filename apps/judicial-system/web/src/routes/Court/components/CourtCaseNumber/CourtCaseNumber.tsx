@@ -29,7 +29,7 @@ interface Props {
   isCreatingCourtCase: boolean
 }
 
-const CourtCaseNumber: React.FC<Props> = (props) => {
+const CourtCaseNumber: React.FC<React.PropsWithChildren<Props>> = (props) => {
   const {
     workingCase,
     setWorkingCase,

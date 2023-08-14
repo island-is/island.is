@@ -18,7 +18,9 @@ import { getCountryByCode, Country } from '@island.is/shared/utils'
 interface LogTableProps {
   data: SessionsSession[]
 }
-const LogTable: React.FC<LogTableProps> = ({ data }) => {
+const LogTable: React.FC<React.PropsWithChildren<LogTableProps>> = ({
+  data,
+}) => {
   const { userInfo } = useAuth()
   const { formatMessage } = useLocale()
   const { formatDate, formatTime } = useIntl()

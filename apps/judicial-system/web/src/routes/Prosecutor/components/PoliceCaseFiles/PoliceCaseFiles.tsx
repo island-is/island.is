@@ -26,7 +26,9 @@ export interface PoliceCaseFileCheck extends PoliceCaseFile {
   checked: boolean
 }
 
-const CheckboxListItem: React.FC = ({ children }) => (
+const CheckboxListItem: React.FC<React.PropsWithChildren<unknown>> = ({
+  children,
+}) => (
   <motion.li
     layout
     className={styles.policeCaseFile}
@@ -50,7 +52,7 @@ interface ListItemProps {
   onCheck: (event: React.ChangeEvent<HTMLInputElement>) => void
 }
 
-const CheckboxList: React.FC<ListItemProps> = ({
+const CheckboxList: React.FC<React.PropsWithChildren<ListItemProps>> = ({
   files,
   isUploading,
   onCheck,
@@ -92,7 +94,7 @@ interface Props {
   policeCaseFiles?: PoliceCaseFilesData
 }
 
-const PoliceCaseFiles: React.FC<Props> = ({
+const PoliceCaseFiles: React.FC<React.PropsWithChildren<Props>> = ({
   onUpload,
   isUploading,
   policeCaseFileList,

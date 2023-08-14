@@ -284,7 +284,7 @@ const ProjectPage: Screen<PageProps> = ({
   )
 }
 
-ProjectPage.getInitialProps = async ({ apolloClient, locale, query }) => {
+ProjectPage.getProps = async ({ apolloClient, locale, query }) => {
   const [
     {
       data: { getProjectPage },
