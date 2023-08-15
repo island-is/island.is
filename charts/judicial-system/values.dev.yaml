@@ -26,8 +26,6 @@ judicial-system-api:
     AUTH_AUDIENCE: 'judicial-system.dev01.devland.is'
     AUTH_IDS_CLIENT_ID: '@rettarvorslugatt.island.is/web'
     AUTH_IDS_DOMAIN: 'https://identity-server.dev01.devland.is'
-    AUTH_IDS_ID: 'judicial-system.dev'
-    AUTH_IDS_NAME: 'Iceland authentication service'
     AUTH_IDS_REDIRECT_URI: 'https://judicial-system.dev01.devland.is/api/auth/callback/identity-server'
     AUTH_IDS_SCOPE: 'openid profile'
     AUTH_JWKS_ENDPOINT: '.well-known/openid-configuration/jwks'
