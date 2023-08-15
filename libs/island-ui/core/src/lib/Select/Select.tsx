@@ -1,6 +1,6 @@
 import React from 'react'
 import cn from 'classnames'
-import ReactSelect, { createFilter, GroupBase, Props } from 'react-select'
+import ReactSelect, { createFilter, GroupBase } from 'react-select'
 import CreatableReactSelect from 'react-select/creatable'
 
 import {
@@ -15,7 +15,7 @@ import {
   ValueContainer,
   customStyles,
 } from './Components'
-import { Option as OptionType } from './Select.types'
+import { Option as OptionType, SelectProps } from './Select.types'
 
 import * as styles from './Select.css'
 
@@ -46,7 +46,7 @@ export const Select = <
   isClearable,
   dataTestId,
   filterConfig,
-}: Props<OptionType<Value>, IsMulti, Group>) => {
+}: SelectProps<OptionType<Value>, IsMulti, Group>) => {
   const errorId = `${id}-error`
   const ariaError = hasError
     ? {

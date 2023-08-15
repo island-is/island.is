@@ -1,4 +1,4 @@
-import { createFilter, GroupBase } from 'react-select'
+import { createFilter, GroupBase, Props } from 'react-select'
 
 import { Icon as IconTypes } from '../IconRC/iconMap'
 import { InputBackgroundColor } from '../Input/types'
@@ -41,6 +41,16 @@ declare module 'react-select/dist/declarations/src/Select' {
     // Added for test support
     dataTestId?: string
   }
+}
+
+// The typescript declaration customizations above do not allow to change existing props signature.
+// So we create our own Prop type to overwrite props.
+export type SelectProps<
+  Option,
+  IsMulti extends boolean = false,
+  Group extends GroupBase<Option> = GroupBase<Option>
+> = Omit<Props<Option, IsMulti, Group>, 'noOptionsMessage'> & {
+  noOptionsMessage?: string
 }
 
 // The Option type needs to be generic as the react-select library is generic.
