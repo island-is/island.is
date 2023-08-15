@@ -13,7 +13,7 @@ export type UnderlineVisibility = 'always' | 'hover'
 export type UnderlineVariants = 'normal' | 'small'
 
 export interface LinkProps extends NextLinkProps {
-  children?: ReactNode
+  children: React.ReactNode
   color?: LinkColor
   dataTestId?: string
   className?: string
@@ -26,7 +26,7 @@ export interface LinkProps extends NextLinkProps {
 }
 
 // Next link that can handle external urls
-export const Link: React.FC<LinkProps> = ({
+export const Link: React.FC<React.PropsWithChildren<LinkProps>> = ({
   children,
   href,
   as,
@@ -77,6 +77,7 @@ export const Link: React.FC<LinkProps> = ({
         passHref
         prefetch={prefetch}
         data-testid={dataTestId}
+        legacyBehavior
       >
         {pureChildren ? (
           children

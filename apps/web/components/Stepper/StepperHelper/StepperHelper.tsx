@@ -60,7 +60,7 @@ interface FieldProps {
   symbolOnRight?: boolean
 }
 
-const Field: FC<FieldProps> = ({
+const Field: FC<React.PropsWithChildren<FieldProps>> = ({
   name,
   value,
   symbol,
@@ -180,7 +180,9 @@ interface StepperHelperProps {
   optionsFromNamespace: { slug: string; data: Record<string, any>[] }[]
 }
 
-export const StepperHelper: React.FC<StepperHelperProps> = ({
+export const StepperHelper: React.FC<
+  React.PropsWithChildren<StepperHelperProps>
+> = ({
   stepper,
   currentState,
   stepperMachine,
@@ -198,12 +200,12 @@ export const StepperHelper: React.FC<StepperHelperProps> = ({
 
   const { activeLocale } = useI18n()
   const currentStepOptions = getStepOptions(
-    currentStep,
+    currentStep, //TOOD: currentStep might be undefined: Stefna
     activeLocale,
     optionsFromNamespace,
   )
-  const currentStateStepSlug = getStateMeta(currentState)?.stepSlug
-  const allStateStepSlugs = getAllStateStepSlugs(stepperMachine)
+  const currentStateStepSlug = getStateMeta(currentState)?.stepSlug //TOOD: currentState might be undefined: Stefna
+  const allStateStepSlugs = getAllStateStepSlugs(stepperMachine) //TOOD: stepperMachine might be undefined: Stefna
 
   const currentStateStepSlugSymbol = getStepBySlug(
     stepper,

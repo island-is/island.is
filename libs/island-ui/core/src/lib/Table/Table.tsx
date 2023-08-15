@@ -49,11 +49,18 @@ interface HeadProps {
   sticky?: boolean
 }
 
+<<<<<<< HEAD
 interface TProps {
   children?: ReactNode
 }
 
 export const Head: FC<HeadProps> = ({ children, sticky }) => (
+=======
+export const Head: FC<React.PropsWithChildren<HeadProps>> = ({
+  children,
+  sticky,
+}) => (
+>>>>>>> 4be5593cc52459a4a5bd48e19735e254c81b7c0b
   <thead
     {...(sticky && {
       className: styles.stickyHead,
@@ -63,13 +70,18 @@ export const Head: FC<HeadProps> = ({ children, sticky }) => (
   </thead>
 )
 
-export const Body: FC<TProps> = ({ children }) => <tbody>{children}</tbody> // TODO hmmmmmmm....
-
-export const Foot: FC<TProps> = ({ children }) => <tfoot>{children}</tfoot>
-
-export const Row: FC<TestSupport> = ({ children, dataTestId }) => (
-  <tr data-testid={dataTestId}>{children}</tr>
+export const Body: FC<React.PropsWithChildren<unknown>> = ({ children }) => (
+  <tbody>{children}</tbody>
 )
+
+export const Foot: FC<React.PropsWithChildren<unknown>> = ({ children }) => (
+  <tfoot>{children}</tfoot>
+)
+
+export const Row: FC<React.PropsWithChildren<TestSupport>> = ({
+  children,
+  dataTestId,
+}) => <tr data-testid={dataTestId}>{children}</tr>
 
 export const Data = ({
   children,

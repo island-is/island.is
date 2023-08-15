@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { ReactNode } from 'react'
 import cn from 'classnames'
 import { Box, Stack, Text, Hyphen } from '@island.is/island-ui/core'
 import { BackgroundImage } from '@island.is/web/components'
@@ -79,7 +79,7 @@ export const StatisticsCard = ({
   return <FrameWrapper>{items}</FrameWrapper>
 }
 
-const FrameWrapper = ({ children }) => {
+const FrameWrapper = ({ children }: { children: ReactNode }) => {
   return (
     <Box
       className={cn(styles.card)}

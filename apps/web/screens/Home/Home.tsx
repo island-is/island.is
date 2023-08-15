@@ -135,7 +135,7 @@ const Home: Screen<HomeProps> = ({ categories, news, page, locale }) => {
   )
 }
 
-Home.getInitialProps = async ({ apolloClient, locale }) => {
+Home.getProps = async ({ apolloClient, locale }) => {
   const [
     {
       data: { getArticleCategories },

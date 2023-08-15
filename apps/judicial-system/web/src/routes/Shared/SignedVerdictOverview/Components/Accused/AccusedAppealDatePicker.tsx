@@ -16,7 +16,9 @@ interface Props {
   isInitialMount: boolean
 }
 
-const AccusedAppealDatePicker: React.FC<Props> = (props) => {
+const AccusedAppealDatePicker: React.FC<React.PropsWithChildren<Props>> = (
+  props,
+) => {
   const { workingCase, setAccusedAppealDate, isInitialMount } = props
   const { formatMessage } = useIntl()
   const [appealDate, setAppealDate] = useState<Date>()

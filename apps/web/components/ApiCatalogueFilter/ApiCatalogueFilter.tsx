@@ -43,7 +43,9 @@ interface ApiCatalogueFilterProps {
 }
 
 export const ApiCatalogueFilter: React.FC<
-  ApiCatalogueFilterProps & Pick<FilterProps, 'variant' | 'align'>
+  React.PropsWithChildren<
+    ApiCatalogueFilterProps & Pick<FilterProps, 'variant' | 'align'>
+  >
 > = ({
   labelClearAll,
   labelClear,

@@ -32,9 +32,10 @@ type Entry = IconBulletType | NumberBulletGroup
 export interface BulletListProps extends React.PropsWithChildren {
   bullets: Entry[]
 }
-// export const BulletList: FC<{ bullets: [IconBulletType], children: ReactNode }> = ({ bullets, children }) => (
-// TODO  poke more at this .............
-export const BulletList: FC<BulletListProps> = ({ bullets }) => (
+
+export const BulletList: FC<React.PropsWithChildren<BulletListProps>> = ({
+  bullets,
+}) => (
   <div>
     {bullets.map((bullet, index) => {
       return bullet.type === 'IconBulletType' ? (
@@ -63,7 +64,14 @@ export const BulletList: FC<BulletListProps> = ({ bullets }) => (
   </div>
 )
 
+<<<<<<< HEAD
 const Row: FC<{ left: ReactNode, children: ReactNode }> = ({ left, children }) => (
+=======
+const Row: FC<React.PropsWithChildren<{ left: ReactNode }>> = ({
+  left,
+  children,
+}) => (
+>>>>>>> 4be5593cc52459a4a5bd48e19735e254c81b7c0b
   <Box
     alignItems="stretch"
     display="flex"

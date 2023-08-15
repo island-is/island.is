@@ -15,7 +15,7 @@ type Breakpoint = keyof typeof theme['breakpoints']
 type position = 'relative' | 'fixed' | 'absolute' | 'static'
 
 export interface GridColumnProps {
-  children?: ReactNode
+  children: ReactNode
   span?: styles.SpanType
   offset?: styles.SpanType
   order?: ResponsiveProp<styles.Order>
@@ -27,7 +27,7 @@ export interface GridColumnProps {
   position?: position | 'none'
 }
 
-export const GridColumn: FC<GridColumnProps> = ({
+export const GridColumn: FC<React.PropsWithChildren<GridColumnProps>> = ({
   children,
   span,
   offset,

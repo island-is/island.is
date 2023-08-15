@@ -1,22 +1,23 @@
 {
-  "root": "libs/api/domains/education",
+  "name": "api-domains-education",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/api/domains/education/src",
   "projectType": "library",
   "generators": {},
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": ["libs/api/domains/education/**/*.{ts,tsx,js,jsx}"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/api/domains/education/jest.config.js",
+        "jestConfig": "libs/api/domains/education/jest.config.ts",
         "passWithNoTests": true
       },
-      "outputs": ["coverage/libs/api/domains/education"]
+      "outputs": ["{workspaceRoot}/coverage/libs/api/domains/education"]
     }
   },
   "tags": ["lib:api", "scope:api"]

@@ -1,3 +1,4 @@
+import { CacheField } from '@island.is/nest/graphql'
 import { Field, ObjectType } from '@nestjs/graphql'
 
 @ObjectType()
@@ -69,46 +70,46 @@ class FiskistofaExtendedCatchQuotaCategory extends FiskistofaCatchQuotaCategory 
 
 @ObjectType()
 class FiskistofaShipStatusInformation {
-  @Field(() => FiskistofaShip, { nullable: true })
+  @CacheField(() => FiskistofaShip, { nullable: true })
   shipInformation?: FiskistofaShip
 
-  @Field(() => [FiskistofaCatchQuotaCategory], { nullable: true })
+  @CacheField(() => [FiskistofaCatchQuotaCategory], { nullable: true })
   catchQuotaCategories?: FiskistofaCatchQuotaCategory[]
 }
 
 @ObjectType()
 export class FiskistofaShipStatusInformationResponse {
-  @Field(() => FiskistofaShipStatusInformation, { nullable: true })
+  @CacheField(() => FiskistofaShipStatusInformation, { nullable: true })
   fiskistofaShipStatus?: FiskistofaShipStatusInformation | null
 }
 
 @ObjectType()
 class FiskistofaExtendedShipStatusInformation {
-  @Field(() => FiskistofaShip, { nullable: true })
+  @CacheField(() => FiskistofaShip, { nullable: true })
   shipInformation?: FiskistofaShip
 
-  @Field(() => [FiskistofaExtendedCatchQuotaCategory], { nullable: true })
+  @CacheField(() => [FiskistofaExtendedCatchQuotaCategory], { nullable: true })
   catchQuotaCategories?: FiskistofaExtendedCatchQuotaCategory[]
 }
 
 @ObjectType()
 export class FiskistofaExtendedShipStatusInformationResponse {
-  @Field(() => FiskistofaExtendedShipStatusInformation, { nullable: true })
+  @CacheField(() => FiskistofaExtendedShipStatusInformation, { nullable: true })
   fiskistofaShipStatus?: FiskistofaExtendedShipStatusInformation | null
 }
 
 @ObjectType()
 class FiskistofaExtendedShipStatusInformationUpdate {
-  @Field(() => FiskistofaShip, { nullable: true })
+  @CacheField(() => FiskistofaShip, { nullable: true })
   shipInformation?: FiskistofaShip
 
-  @Field(() => [FiskistofaCatchQuotaCategory], { nullable: true })
+  @CacheField(() => [FiskistofaCatchQuotaCategory], { nullable: true })
   catchQuotaCategories?: FiskistofaCatchQuotaCategory[]
 }
 
 @ObjectType()
 export class FiskistofaExtendedShipStatusInformationUpdateResponse {
-  @Field(() => FiskistofaExtendedShipStatusInformationUpdate, {
+  @CacheField(() => FiskistofaExtendedShipStatusInformationUpdate, {
     nullable: true,
   })
   fiskistofaShipStatus?: FiskistofaExtendedShipStatusInformationUpdate | null

@@ -1,11 +1,13 @@
 import path from 'path'
 import exportFinder from './exportFinder/exportFinder'
 import memoize from 'lodash/memoize'
+import { workspaceRoot } from '@nx/devkit'
 
 const exportFinderCached = memoize(exportFinder)
 
 const defaultMainPath = (libName: string) =>
   path.resolve(
+    workspaceRoot,
     'libs',
     ...libName.replace('@island.is/', '').split('/'),
     'src',

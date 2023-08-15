@@ -10,7 +10,7 @@ interface Props {
   marginBottom?: ResponsiveProp<Space | 'auto'>
 }
 
-const SectionHeading: React.FC<Props> = ({
+const SectionHeading: React.FC<React.PropsWithChildren<Props>> = ({
   title,
   required,
   tooltip,

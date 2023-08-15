@@ -11,7 +11,7 @@ export interface IconBulletProps {
   onClick?: (e: MouseEvent) => void
 }
 
-export const IconBullet: FC<IconBulletProps> = ({
+export const IconBullet: FC<React.PropsWithChildren<IconBulletProps>> = ({
   variant = 'blue',
   size = 'large',
   image,

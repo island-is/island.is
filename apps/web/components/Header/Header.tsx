@@ -32,7 +32,7 @@ interface HeaderProps {
 
 const marginLeft = [1, 1, 1, 2] as ResponsiveSpace
 
-export const Header: FC<HeaderProps> = ({
+export const Header: FC<React.PropsWithChildren<HeaderProps>> = ({
   showSearchInHeader = true,
   buttonColorScheme = 'default',
   megaMenuData,

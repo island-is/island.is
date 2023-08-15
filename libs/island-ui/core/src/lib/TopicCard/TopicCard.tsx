@@ -34,7 +34,7 @@ const colorSchemes = {
   },
 } as const
 
-export const TopicCard: React.FC<TopicCardProps> = ({
+export const TopicCard: React.FC<React.PropsWithChildren<TopicCardProps>> = ({
   children,
   colorScheme = 'blue',
   href,

@@ -88,7 +88,7 @@ const getInitialStateAndAnswersByQueryParams = (
 
     if (stepType === STEP_TYPES.ANSWER) break
 
-    const options = getStepOptions(step, activeLocale, optionsFromNamespace)
+    const options = getStepOptions(step, activeLocale, optionsFromNamespace) //TOOD: step might be undefined: Stefna
     const selectedOption = options.find((o) => o.value === answer)
     if (!selectedOption) break
 
@@ -97,7 +97,7 @@ const getInitialStateAndAnswersByQueryParams = (
       selectedOption.transition,
     )
 
-    const stepQuestion = getStepQuestion(step)
+    const stepQuestion = getStepQuestion(step) //TOOD: step might be undefined: Stefna
     if (stepQuestion) {
       questionsAndAnswers.push({
         question: stepQuestion,
@@ -111,7 +111,7 @@ const getInitialStateAndAnswersByQueryParams = (
 }
 
 const StepperWrapper = (
-  StepperComponent: React.ComponentType<StepperProps>,
+  StepperComponent: React.ComponentType<React.PropsWithChildren<StepperProps>>,
 ) => {
   const Component = (props: StepperProps) => {
     const configErrors = validateStepperConfig(props.stepper)
@@ -122,7 +122,7 @@ const StepperWrapper = (
 
     const stepConfigErrors = steps.map((step) => ({
       step,
-      errors: validateStepConfig(step),
+      errors: validateStepConfig(step), //TOOD: step might be undefined: Stefna
     }))
 
     if (
@@ -133,7 +133,7 @@ const StepperWrapper = (
         ? renderStepperAndStepConfigErrors(
             props.stepper,
             configErrors,
-            stepConfigErrors,
+            stepConfigErrors, //TOOD: Argument of type '{ step: Step | undefined; errors: Set<string>; }[]' is not assignable to parameter of type '{ step: Step; errors: Set<string>; }[]': Stefna
           )
         : null
     }
@@ -202,7 +202,7 @@ const Stepper = ({
   const isOnFirstStep = stepperMachine.initialState.value === currentState.value
   const [selectedOption, setSelectedOption] = useState<StepOption | null>(null)
   const stepOptions = useMemo(
-    () => getStepOptions(currentStep, activeLocale, optionsFromNamespace),
+    () => getStepOptions(currentStep, activeLocale, optionsFromNamespace), //TOOD: currentStep might be undefined: Stefna
     [activeLocale, currentStep, optionsFromNamespace],
   )
 
@@ -249,7 +249,7 @@ const Stepper = ({
     questionsAndAnswers: QuestionAndAnswer[],
     urlWithoutQueryParams: string,
   ) => {
-    const accumulatedAnswers = []
+    const accumulatedAnswers: string[] = []
 
     return questionsAndAnswers.map(({ question, answer, slug }, i) => {
       const previouslyAccumulatedAnswers = [...accumulatedAnswers]
@@ -373,6 +373,7 @@ const Stepper = ({
           setCounter((c) => c + 1)
         }
       }}
+      //TOOD: currentStep might be undefined: Stefna
     >
       {webRichText(currentStep.subtitle as SliceType[])}
     </Box>
@@ -424,7 +425,7 @@ const Stepper = ({
         <QuestionTitle containerClassName={webReaderClassName} />
       )}
       {showWebReader && (
-        <Webreader readId={null} readClass={webReaderClassName} />
+        <Webreader readId={undefined} readClass={webReaderClassName} />
       )}
       {currentStepType === STEP_TYPES.ANSWER && (
         <QuestionTitle containerClassName={webReaderClassName} />

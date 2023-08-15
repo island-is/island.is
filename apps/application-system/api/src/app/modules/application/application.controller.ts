@@ -575,7 +575,9 @@ export class ApplicationController {
     const existingApplication = await this.applicationAccessService.findOneByIdAndNationalId(
       id,
       user,
-      { shouldThrowIfPruned: true },
+      {
+        shouldThrowIfPruned: true,
+      },
     )
     const namespaces = await getApplicationTranslationNamespaces(
       existingApplication as BaseApplication,
@@ -733,7 +735,9 @@ export class ApplicationController {
     const existingApplication = await this.applicationAccessService.findOneByIdAndNationalId(
       id,
       user,
-      { shouldThrowIfPruned: true },
+      {
+        shouldThrowIfPruned: true,
+      },
     )
     const templateId = existingApplication.typeId as ApplicationTypes
     const template = await getApplicationTemplateByTypeId(templateId)

@@ -5,13 +5,14 @@ import * as styles from './GridContainer.css'
 
 type position = 'relative' | 'fixed' | 'absolute'
 interface Props {
-  children?: ReactNode
+  children: ReactNode
   className?: string
   id?: string
   position?: position | 'none'
 }
 
-export const GridContainer: FC<Props> = ({
+export const GridContainer: FC<React.PropsWithChildren<Props>> = ({
+  children,
   className,
   id,
   position = 'relative',

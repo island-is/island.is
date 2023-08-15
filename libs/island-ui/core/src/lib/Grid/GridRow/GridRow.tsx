@@ -7,7 +7,7 @@ import { ResponsiveProp } from '../../../utils/responsiveProp'
 import { flexDirection, justifyContent } from '../../Box/useBoxStyles.css'
 
 interface Props {
-  children?: ReactNode
+  children: ReactNode
   className?: string
   direction?: ResponsiveProp<keyof typeof flexDirection>
   align?: ResponsiveProp<keyof typeof justifyContent>
@@ -17,7 +17,7 @@ interface Props {
   rowGap?: BoxProps['rowGap']
 }
 
-export const GridRow: FC<Props> = ({
+export const GridRow: FC<React.PropsWithChildren<Props>> = ({
   children,
   className,
   direction = 'row',

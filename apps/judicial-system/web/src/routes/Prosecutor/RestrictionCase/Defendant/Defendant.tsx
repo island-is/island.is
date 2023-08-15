@@ -40,7 +40,7 @@ import {
   usePoliceCaseNumbers,
 } from '../../components'
 
-export const Defendant: React.FC = () => {
+export const Defendant: React.FC<React.PropsWithChildren<unknown>> = () => {
   const {
     workingCase,
     setWorkingCase,

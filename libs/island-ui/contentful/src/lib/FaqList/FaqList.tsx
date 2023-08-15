@@ -18,7 +18,7 @@ export interface FaqListProps {
   showTitle?: boolean
 }
 
-export const FaqList: FC<FaqListProps> = ({
+export const FaqList: FC<React.PropsWithChildren<FaqListProps>> = ({
   title,
   questions,
   showTitle = true,

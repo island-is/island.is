@@ -6,7 +6,9 @@ import { useLocale } from '@island.is/localization'
 import { information } from '../../../lib/messages'
 import { ReviewGroup } from '@island.is/application/ui-components'
 
-export const VehicleSection: FC<FieldBaseProps> = ({ application }) => {
+export const VehicleSection: FC<React.PropsWithChildren<FieldBaseProps>> = ({
+  application,
+}) => {
   const { formatMessage } = useLocale()
   const { answers } = application
 

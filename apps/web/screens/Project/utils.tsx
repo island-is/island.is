@@ -128,7 +128,13 @@ export const getSidebarNavigationComponent = (
       activeItemTitle={activeNavigationItemTitle}
       title={navigationTitle}
       renderLink={(link, item) => {
-        return item?.href ? <Link href={item?.href}>{link}</Link> : link
+        return item?.href ? (
+          <Link href={item?.href} legacyBehavior>
+            {link}
+          </Link>
+        ) : (
+          link
+        )
       }}
     />
   )
