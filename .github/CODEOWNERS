@@ -212,6 +212,8 @@
 /libs/api/domains/watson-assistant-chat/                                                                 @island-is/stefna
 /libs/clients/icelandic-government-institution-vacancies/                                                @island-is/stefna
 /libs/api/domains/icelandic-government-institution-vacancies/                                            @island-is/stefna
+/libs/clients/aircraft-registry/                                                                         @island-is/stefna
+/libs/api/domains/aircraft-registry/                                                                     @island-is/stefna
 
 /libs/island-ui/                                                                                         @island-is/island-ui
 

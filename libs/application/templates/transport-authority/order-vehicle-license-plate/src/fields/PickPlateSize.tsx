@@ -15,7 +15,9 @@ import { PlateType, VehiclesCurrentVehicle } from '../shared'
 import { information } from '../lib/messages'
 import { getSelectedVehicle } from '../utils'
 
-export const PickPlateSize: FC<FieldBaseProps> = (props) => {
+export const PickPlateSize: FC<React.PropsWithChildren<FieldBaseProps>> = (
+  props,
+) => {
   const { formatMessage } = useLocale()
   const { application, errors, setFieldLoadingState } = props
 

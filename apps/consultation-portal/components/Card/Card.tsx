@@ -62,7 +62,7 @@ const Card = ({
         >
           <Tag variant={getTagVariants(card.tag)}>{cardTag}</Tag>
           <Text as="p" variant="eyebrow" color="purple400">
-            {`${loc.tagText} ${card.caseNumber}`}
+            {`${loc.tagText} S-${card.caseNumber}`}
           </Text>
         </Box>
         <Eyebrows

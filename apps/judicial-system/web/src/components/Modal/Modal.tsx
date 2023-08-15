@@ -22,7 +22,7 @@ interface ModalProps {
   invertButtonColors?: boolean
 }
 
-const Modal: React.FC<ModalProps> = ({
+const Modal: React.FC<React.PropsWithChildren<ModalProps>> = ({
   title,
   text,
   primaryButtonText,

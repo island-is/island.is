@@ -27,7 +27,7 @@ import {
 } from '../../healthInsuranceUtils'
 import { FileUploadController } from '@island.is/application/ui-components'
 
-const FormerInsurance: FC<ReviewFieldProps> = ({
+const FormerInsurance: FC<React.PropsWithChildren<ReviewFieldProps>> = ({
   application,
   isEditable,
   field,

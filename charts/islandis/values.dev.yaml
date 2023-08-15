@@ -520,6 +520,7 @@ application-system-api:
   enabled: true
   env:
     APPLICATION_ATTACHMENT_BUCKET: 'island-is-dev-storage-application-system'
+    AUTH_PUBLIC_API_URL: 'https://identity-server.dev01.devland.is/api'
     CLIENT_LOCATION_ORIGIN: 'https://beta.dev01.devland.is/umsoknir'
     COMPANY_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
     COMPANY_REGISTRY_XROAD_PROVIDER_ID: 'IS-DEV/GOV/10006/Skatturinn/ft-v1'
@@ -1852,6 +1853,7 @@ search-indexer-service:
     ELASTIC_NODE: 'https://vpc-search-njkekqydiegezhr4vqpkfnw5la.eu-west-1.es.amazonaws.com'
     NODE_OPTIONS: '--max-old-space-size=2000'
     SERVERSIDE_FEATURES_ON: ''
+    SHOULD_SEARCH_INDEXER_RESOLVE_NESTED_ENTRIES: 'false'
   grantNamespaces: []
   grantNamespacesEnabled: false
   healthCheck:
@@ -1903,11 +1905,11 @@ search-indexer-service:
         name: 'migrate-elastic'
         resources:
           limits:
-            cpu: '400m'
+            cpu: '700m'
             memory: '2048Mi'
           requests:
-            cpu: '100m'
-            memory: '512Mi'
+            cpu: '300m'
+            memory: '1536Mi'
       - args:
           - '/webapp/migrateKibana.js'
         command:
@@ -1933,6 +1935,7 @@ search-indexer-service:
       NODE_OPTIONS: '--max-old-space-size=2048'
       S3_BUCKET: 'dev-es-custom-packages'
       SERVERSIDE_FEATURES_ON: ''
+      SHOULD_SEARCH_INDEXER_RESOLVE_NESTED_ENTRIES: 'false'
     secrets:
       CONTENTFUL_ACCESS_TOKEN: '/k8s/search-indexer/CONTENTFUL_ACCESS_TOKEN'
   namespace: 'search-indexer'
@@ -1946,11 +1949,11 @@ search-indexer-service:
     min: 1
   resources:
     limits:
-      cpu: '400m'
+      cpu: '800m'
       memory: '2048Mi'
     requests:
-      cpu: '100m'
-      memory: '512Mi'
+      cpu: '400m'
+      memory: '1536Mi'
   secrets:
     API_CMS_DELETION_TOKEN: '/k8s/search-indexer/API_CMS_DELETION_TOKEN'
     API_CMS_SYNC_TOKEN: '/k8s/search-indexer/API_CMS_SYNC_TOKEN'

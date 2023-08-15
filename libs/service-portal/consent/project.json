@@ -1,34 +1,35 @@
 {
-  "root": "libs/service-portal/consent",
+  "name": "service-portal-consent",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/service-portal/consent/src",
   "projectType": "library",
   "tags": ["lib:portals-mypages", "scope:portals-mypages"],
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": ["libs/service-portal/consent/**/*.{ts,tsx,js,jsx}"]
       }
     },
     "extract-strings": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/service-portal/consent/src/**/*.{ts,tsx}'"
       }
     },
     "schemas/codegen": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "output": "libs/service-portal/consent/src/**/*.generated.ts",
         "command": "graphql-codegen --config libs/service-portal/consent/codegen.yml"
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/service-portal/consent"],
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/libs/service-portal/consent"],
       "options": {
-        "jestConfig": "libs/service-portal/consent/jest.config.js",
+        "jestConfig": "libs/service-portal/consent/jest.config.ts",
         "passWithNoTests": true
       }
     }

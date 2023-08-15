@@ -1,6 +1,9 @@
 import { useContext } from 'react'
 import { useIntl } from 'react-intl'
+import { FetchResult, MutationFunctionOptions } from '@apollo/client'
+import { Exact } from '@island.is/api/schema'
 
+import { Box, Button, Text } from '@island.is/island-ui/core'
 import {
   CaseDecision,
   CaseState,
@@ -21,12 +24,10 @@ import {
   core,
   signedVerdictOverview as m,
 } from '@island.is/judicial-system-web/messages'
-import { Box, Button, Text } from '@island.is/island-ui/core'
-import { FetchResult, MutationFunctionOptions } from '@apollo/client'
-import { RequestRulingSignatureMutation } from '@island.is/judicial-system-web/src/components/SigningModal/RulingSignature.generated'
-import { Exact } from '@island.is/api/schema'
+import { RequestRulingSignatureMutation } from '@island.is/judicial-system-web/src/components/SigningModal/requestRulingSignature.generated'
 import { RequestSignatureInput } from '@island.is/judicial-system-web/src/graphql/schema'
-import { RequestCourtRecordSignatureMutation } from '../../CourtRecordSignature.generated'
+
+import { RequestCourtRecordSignatureMutation } from '../../requestCourtRecordSignature.generated'
 
 function showCustodyNotice(
   type: CaseType,
@@ -65,7 +66,7 @@ interface Props {
   ) => Promise<FetchResult<RequestRulingSignatureMutation>>
 }
 
-const CaseDocuments: React.FC<Props> = ({
+const CaseDocuments: React.FC<React.PropsWithChildren<Props>> = ({
   isRequestingCourtRecordSignature,
   handleRequestCourtRecordSignature,
   isRequestingRulingSignature,

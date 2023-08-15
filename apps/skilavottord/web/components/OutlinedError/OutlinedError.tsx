@@ -13,7 +13,7 @@ interface Button {
   action: () => void
 }
 
-export const OutlinedError: FC<OutlinedErrorProps> = ({
+export const OutlinedError: FC<React.PropsWithChildren<OutlinedErrorProps>> = ({
   title,
   message,
   primaryButton,

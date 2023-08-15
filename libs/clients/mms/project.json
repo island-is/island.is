@@ -1,19 +1,20 @@
 {
-  "root": "libs/clients/mms",
+  "name": "clients-mms",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/clients/mms/src",
   "projectType": "library",
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": ["libs/clients/mms/**/*.{ts,tsx,js,jsx}"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/clients/mms"],
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/libs/clients/mms"],
       "options": {
-        "jestConfig": "libs/clients/mms/jest.config.js",
+        "jestConfig": "libs/clients/mms/jest.config.ts",
         "passWithNoTests": true
       }
     }

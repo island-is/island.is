@@ -9,7 +9,9 @@ import { LoadingDots } from '@island.is/island-ui/core'
 import { hasDisabilityLicense } from '../../lib/queries'
 import { Markdown } from '@island.is/shared/components'
 
-export const NoDisabilityRecordInfo: FC<FieldBaseProps> = () => {
+export const NoDisabilityRecordInfo: FC<
+  React.PropsWithChildren<FieldBaseProps>
+> = () => {
   const { data, loading, error, refetch } = useQuery(
     gql(hasDisabilityLicense),
     {

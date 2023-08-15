@@ -23,7 +23,9 @@ interface Props {
   errorMessage?: string
 }
 
-export const NationalIdWithName: FC<Props & FieldBaseProps> = ({
+export const NationalIdWithName: FC<
+  React.PropsWithChildren<Props & FieldBaseProps>
+> = ({
   customId = '',
   customNationalIdLabel = '',
   customNameLabel = '',

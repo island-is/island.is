@@ -46,6 +46,7 @@ export enum Features {
 
   // Application delegation flags
   transportAuthorityLicensePlateRenewalDelegations = 'applicationTransportAuthorityLicensePlateRenewalDelegations',
+  isFishingLicenceCustomDelegationEnabled = 'isFishingLicenceCustomDelegationEnabled',
 
   //Application system
   applicationSystemHistory = 'applicationSystemHistory',

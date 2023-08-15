@@ -18,9 +18,9 @@ export const yesNoValueLabelMapper = {
   [NO]: sharedFields.no,
 }
 
-export const SectionHeading: FC<{ title: string | MessageDescriptor }> = ({
-  title,
-}) => {
+export const SectionHeading: FC<
+  React.PropsWithChildren<{ title: string | MessageDescriptor }>
+> = ({ title }) => {
   const { formatMessage } = useLocale()
 
   return (
@@ -30,10 +30,12 @@ export const SectionHeading: FC<{ title: string | MessageDescriptor }> = ({
   )
 }
 
-export const ValueLine: FC<{
-  label: string | MessageDescriptor
-  value: string | MessageDescriptor
-}> = ({ label, value }) => {
+export const ValueLine: FC<
+  React.PropsWithChildren<{
+    label: string | MessageDescriptor
+    value: string | MessageDescriptor
+  }>
+> = ({ label, value }) => {
   const { formatMessage } = useLocale()
 
   return (
@@ -47,10 +49,12 @@ export const ValueLine: FC<{
   )
 }
 
-export const ValueList: FC<{
-  label: string | MessageDescriptor
-  list: string[]
-}> = ({ label, list }) => {
+export const ValueList: FC<
+  React.PropsWithChildren<{
+    label: string | MessageDescriptor
+    list: string[]
+  }>
+> = ({ label, list }) => {
   const { formatMessage } = useLocale()
 
   return (

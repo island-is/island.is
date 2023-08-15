@@ -14,7 +14,9 @@ interface Props {
   debtStatusData: any
 }
 
-const FinanceDebtStatus: FC<Props> = ({ debtStatusData }) => {
+const FinanceDebtStatus: FC<React.PropsWithChildren<Props>> = ({
+  debtStatusData,
+}) => {
   const { formatMessage } = useLocale()
   useNamespaces('sp.finance-schedule')
 

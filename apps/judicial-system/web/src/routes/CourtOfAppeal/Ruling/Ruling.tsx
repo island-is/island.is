@@ -48,7 +48,7 @@ import { appealRuling } from '@island.is/judicial-system-web/messages/Core/appea
 
 import { courtOfAppealRuling as strings } from './Ruling.strings'
 
-const CourtOfAppealRuling: React.FC = () => {
+const CourtOfAppealRuling: React.FC<React.PropsWithChildren<unknown>> = () => {
   const {
     workingCase,
     setWorkingCase,

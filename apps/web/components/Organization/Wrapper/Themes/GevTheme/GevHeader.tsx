@@ -30,7 +30,9 @@ interface HeaderProps {
   organizationPage: OrganizationPage
 }
 
-const GevHeader: React.FC<HeaderProps> = ({ organizationPage }) => {
+const GevHeader: React.FC<React.PropsWithChildren<HeaderProps>> = ({
+  organizationPage,
+}) => {
   const { linkResolver } = useLinkResolver()
   const namespace = useMemo(
     () => JSON.parse(organizationPage.organization.namespace?.fields ?? '{}'),
