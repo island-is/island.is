@@ -17,12 +17,6 @@ export const serviceSetup = (services: {
         staging: ref((h) => `judicial-system.${h.env.domain}`),
         prod: 'rettarvorslugatt.island.is',
       },
-      AUTH_IDS_ID: {
-        dev: 'judicial-system.dev',
-        staging: 'judicial-system.staging',
-        prod: 'rettarvorslugatt.prod',
-      },
-      AUTH_IDS_NAME: 'Iceland authentication service',
       AUTH_IDS_SCOPE: 'openid profile',
       AUTH_IDS_CLIENT_ID: '@rettarvorslugatt.island.is/web',
       AUTH_IDS_DOMAIN: {
