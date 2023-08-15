@@ -8,12 +8,7 @@ import { INestApplication, Type } from '@nestjs/common'
 
 import { testServer } from '@island.is/infra-nest-server'
 import { IntlService } from '@island.is/cms-translations'
-import {
-  NotificationType,
-  CaseType,
-  UserRole,
-  CaseOrigin,
-} from '@island.is/judicial-system/types'
+import { UserRole } from '@island.is/judicial-system/types'
 import type {
   User as TUser,
   Institution as TInstitution,
@@ -25,8 +20,6 @@ import { environment } from '../src/environments'
 import { AppModule } from '../src/app/app.module'
 import { Institution } from '../src/app/modules/institution'
 import { User } from '../src/app/modules/user'
-import { Case } from '../src/app/modules/case'
-import { Notification } from '../src/app/modules/notification'
 import { MessageService } from '@island.is/judicial-system/message'
 
 interface CUser extends TUser {
@@ -37,7 +30,6 @@ let app: INestApplication
 let sequelize: Sequelize
 const prosecutorNationalId = '0000000009'
 let prosecutor: CUser
-let prosecutorAuthCookie: string
 const judgeNationalId = '0000002229'
 const adminNationalId = '3333333333'
 let admin: CUser
@@ -79,7 +71,6 @@ beforeAll(async () => {
       .get(`/api/user/?nationalId=${prosecutorNationalId}`)
       .set('authorization', `Bearer ${environment.auth.secretToken}`)
   ).body
-  prosecutorAuthCookie = sharedAuthService.signJwt(prosecutor)
 
   admin = (
     await request(app.getHttpServer())
@@ -304,50 +295,6 @@ describe('User', () => {
       })
       .then((response) => {
         expectUsersToMatch(response.body, dbUser)
-      })
-  })
-})
-
-function dbNotificationToNotification(dbNotification: Notification) {
-  const notification = dbNotification.toJSON() as Notification
-
-  return ({
-    ...notification,
-    created: notification.created && notification.created.toISOString(),
-  } as unknown) as Notification
-}
-
-describe('Notification', () => {
-  it('GET /api/case/:id/notifications should get all notifications by case id', async () => {
-    let dbCase: Case
-    let dbNotification: Notification
-
-    await Case.create({
-      origin: CaseOrigin.RVG,
-      type: CaseType.CUSTODY,
-      policeCaseNumbers: ['Case Number'],
-    })
-      .then((value) => {
-        dbCase = value
-
-        return Notification.create({
-          caseId: dbCase.id,
-          type: NotificationType.READY_FOR_COURT,
-        })
-      })
-      .then((value) => {
-        dbNotification = value
-
-        return request(app.getHttpServer())
-          .get(`/api/case/${dbCase.id}/notifications`)
-          .set('Cookie', `${ACCESS_TOKEN_COOKIE_NAME}=${prosecutorAuthCookie}`)
-          .expect(200)
-      })
-      .then((response) => {
-        // Check the response
-        expect(response.body).toStrictEqual([
-          dbNotificationToNotification(dbNotification),
-        ])
       })
   })
 })
