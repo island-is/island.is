@@ -16,7 +16,10 @@ import {
 import { YES } from '../../constants'
 import { useEffectOnce } from 'react-use'
 
-const GiveDaysSlider: FC<FieldBaseProps> = ({ field, application }) => {
+const GiveDaysSlider: FC<React.PropsWithChildren<FieldBaseProps>> = ({
+  field,
+  application,
+}) => {
   const { id } = field
   const { formatMessage } = useLocale()
   const { setValue } = useFormContext()

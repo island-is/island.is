@@ -16,10 +16,9 @@ import {
 } from '../../utils/fields'
 import { FishingLicenseListOptions } from '../../types/schema'
 
-export const AreaWithDateSelection: FC<FieldBaseProps> = ({
-  application,
-  errors,
-}) => {
+export const AreaWithDateSelection: FC<
+  React.PropsWithChildren<FieldBaseProps>
+> = ({ application, errors }) => {
   const { setValue } = useFormContext()
   const { formatMessage, lang } = useLocale()
 

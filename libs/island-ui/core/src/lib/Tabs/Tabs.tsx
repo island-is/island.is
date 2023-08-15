@@ -32,7 +32,7 @@ interface TabInterface {
   onlyRenderSelectedTab?: boolean
 }
 
-export const Tabs: FC<TabInterface> = ({
+export const Tabs: FC<React.PropsWithChildren<TabInterface>> = ({
   label,
   selected = '0',
   tabs,

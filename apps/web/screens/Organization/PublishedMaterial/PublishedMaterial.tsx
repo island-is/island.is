@@ -473,7 +473,7 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
   )
 }
 
-PublishedMaterial.getInitialProps = async ({ apolloClient, locale, query }) => {
+PublishedMaterial.getProps = async ({ apolloClient, locale, query }) => {
   const [
     {
       data: { getOrganizationPage },

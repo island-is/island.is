@@ -16,13 +16,15 @@ type FormState = {
 
 // This component should be generalized a bit more and moved into @web/components
 
-export const RenderForm: React.FC<{
-  namespace: GetNamespaceQuery['getNamespace']
-  heading?: string
-  text?: string
-  submitButtonText?: string
-  inputLabel?: string
-}> = ({
+export const RenderForm: React.FC<
+  React.PropsWithChildren<{
+    namespace: GetNamespaceQuery['getNamespace']
+    heading?: string
+    text?: string
+    submitButtonText?: string
+    inputLabel?: string
+  }>
+> = ({
   namespace,
   heading = 'Default heading',
   text = 'Default text',

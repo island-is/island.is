@@ -6,7 +6,11 @@ export interface AssetLinkProps {
   url: string
 }
 
-export const AssetLink: FC<AssetLinkProps> = ({ title, url, children }) => {
+export const AssetLink: FC<React.PropsWithChildren<AssetLinkProps>> = ({
+  title,
+  url,
+  children,
+}) => {
   const parts = url.split('.')
   const extension = parts[parts.length - 1].toUpperCase()
 

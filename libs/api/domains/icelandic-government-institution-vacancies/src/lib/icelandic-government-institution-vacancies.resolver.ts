@@ -34,7 +34,7 @@ export class IcelandicGovernmentInstitutionVacanciesResolver {
     private readonly cmsElasticService: CmsElasticsearchService,
   ) {}
 
-  @CacheControl(defaultCache)
+  @CacheControl({ maxAge: 600 })
   @Query(() => IcelandicGovernmentInstitutionVacanciesResponse)
   async icelandicGovernmentInstitutionVacancies(
     @Args('input') input: IcelandicGovernmentInstitutionVacanciesInput,

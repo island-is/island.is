@@ -17,7 +17,7 @@ interface Props {
   onChange: (court: Institution) => boolean
 }
 
-const SelectCourt: React.FC<Props> = (props) => {
+const SelectCourt: React.FC<React.PropsWithChildren<Props>> = (props) => {
   const { workingCase, courts, onChange } = props
 
   const { formatMessage } = useIntl()

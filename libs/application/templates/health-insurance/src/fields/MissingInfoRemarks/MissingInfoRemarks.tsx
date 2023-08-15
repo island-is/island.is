@@ -6,7 +6,7 @@ import { useFormContext } from 'react-hook-form'
 import { m } from '../../forms/messages'
 import { MissingInfoType, ReviewFieldProps } from '../../types'
 
-const MissingInfoRemarks: FC<ReviewFieldProps> = ({
+const MissingInfoRemarks: FC<React.PropsWithChildren<ReviewFieldProps>> = ({
   application,
   isEditable = true,
   index = 0,

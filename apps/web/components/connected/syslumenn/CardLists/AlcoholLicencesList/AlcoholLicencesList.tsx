@@ -37,7 +37,9 @@ interface AlcoholLicencesListProps {
 
 type ListState = 'loading' | 'loaded' | 'error'
 
-const AlcoholLicencesList: FC<AlcoholLicencesListProps> = ({ slice }) => {
+const AlcoholLicencesList: FC<
+  React.PropsWithChildren<AlcoholLicencesListProps>
+> = ({ slice }) => {
   const n = useNamespace(slice.json ?? {})
   const { format } = useDateUtils()
   const PAGE_SIZE = slice?.configJson?.pageSize ?? DEFAULT_PAGE_SIZE

@@ -91,7 +91,9 @@ export interface TellUsAStoryFormProps {
   onSubmit: (formState: TellUsAStoryFormState) => Promise<void>
 }
 
-export const TellUsAStoryForm: React.FC<TellUsAStoryFormProps> = ({
+export const TellUsAStoryForm: React.FC<
+  React.PropsWithChildren<TellUsAStoryFormProps>
+> = ({
   introTitle,
   introImage,
   introDescription,

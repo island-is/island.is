@@ -23,7 +23,7 @@ interface Props {
   ) => void
 }
 
-const ShareCase: React.FC<Props> = ({
+const ShareCase: React.FC<React.PropsWithChildren<Props>> = ({
   selectedSharingInstitutionId,
   setSelectedSharingInstitutionId,
   shareCaseWithAnotherInstitution,

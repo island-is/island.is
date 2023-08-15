@@ -9,7 +9,9 @@ interface HeaderProps {
   organizationPage: OrganizationPage
 }
 
-const SAkHeader: React.FC<HeaderProps> = ({ organizationPage }) => {
+const SAkHeader: React.FC<React.PropsWithChildren<HeaderProps>> = ({
+  organizationPage,
+}) => {
   const { linkResolver } = useLinkResolver()
 
   return (

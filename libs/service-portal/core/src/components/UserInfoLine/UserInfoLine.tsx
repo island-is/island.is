@@ -46,7 +46,7 @@ interface Props {
   translateLabel?: 'yes' | 'no'
 }
 
-export const UserInfoLine: FC<Props> = ({
+export const UserInfoLine: FC<React.PropsWithChildren<Props>> = ({
   label,
   content,
   renderContent,

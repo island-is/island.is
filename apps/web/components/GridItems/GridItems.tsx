@@ -17,7 +17,7 @@ type GridItemsProps = {
   half?: boolean
 }
 
-export const GridItems: FC<GridItemsProps> = ({
+export const GridItems: FC<React.PropsWithChildren<GridItemsProps>> = ({
   marginTop = 0,
   marginBottom = 0,
   paddingTop = 0,
@@ -76,7 +76,10 @@ type WrapperProps = {
   children: JSX.Element
 }
 
-const Wrapper: FC<WrapperProps> = ({ show = false, children }) =>
+const Wrapper: FC<React.PropsWithChildren<WrapperProps>> = ({
+  show = false,
+  children,
+}) =>
   show ? (
     <GridContainer className={styles.gridContainer}>{children}</GridContainer>
   ) : (
