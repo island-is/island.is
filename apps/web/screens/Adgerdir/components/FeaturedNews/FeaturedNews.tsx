@@ -21,7 +21,9 @@ interface FeaturedNewsProps {
   items: Array<News>
 }
 
-export const FeaturedNews: FC<FeaturedNewsProps> = ({ items }) => {
+export const FeaturedNews: FC<React.PropsWithChildren<FeaturedNewsProps>> = ({
+  items,
+}) => {
   const { linkResolver } = useLinkResolver()
 
   if (!items.length) {

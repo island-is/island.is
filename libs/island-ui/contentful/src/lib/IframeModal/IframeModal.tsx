@@ -41,7 +41,7 @@ export const IframeModalDiv = forwardRef(
   },
 )
 
-export const IframeModal: FC<IframeModalProps> = ({
+export const IframeModal: FC<React.PropsWithChildren<IframeModalProps>> = ({
   title,
   label,
   closeWindowLabel = 'Loka glugga',

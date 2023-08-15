@@ -9,7 +9,9 @@ import { isRemovingOperatorOnly } from '../../utils'
 import { ReviewConclusion } from '../ReviewConclusion'
 import { useAuth } from '@island.is/auth/react'
 
-export const PaymentPendingField: FC<FieldBaseProps> = (props) => {
+export const PaymentPendingField: FC<
+  React.PropsWithChildren<FieldBaseProps>
+> = (props) => {
   const { application, refetch } = props
   const { userInfo } = useAuth()
 

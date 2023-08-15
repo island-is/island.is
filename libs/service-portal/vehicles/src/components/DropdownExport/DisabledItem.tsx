@@ -7,7 +7,10 @@ interface Props {
   loading?: boolean
 }
 
-const DisabledDropdownItem: FC<Props> = ({ title, loading }) => {
+const DisabledDropdownItem: FC<React.PropsWithChildren<Props>> = ({
+  title,
+  loading,
+}) => {
   return (
     <div className={styles.disabledItem}>
       <span>{title}</span>

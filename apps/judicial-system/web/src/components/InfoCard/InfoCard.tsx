@@ -26,7 +26,9 @@ interface Props {
   defenders?: Defender[]
 }
 
-const UniqueDefenders: React.FC<UniqueDefendersProps> = (props) => {
+const UniqueDefenders: React.FC<
+  React.PropsWithChildren<UniqueDefendersProps>
+> = (props) => {
   const { defenders } = props
   const uniqueDefenders = defenders?.filter(
     (defender, index, self) =>
@@ -58,7 +60,7 @@ const UniqueDefenders: React.FC<UniqueDefendersProps> = (props) => {
   )
 }
 
-const InfoCard: React.FC<Props> = (props) => {
+const InfoCard: React.FC<React.PropsWithChildren<Props>> = (props) => {
   const { data, defendants, defenders, courtOfAppealData } = props
 
   return (

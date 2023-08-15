@@ -25,7 +25,7 @@ import {
   ROENET_FIELD_ID,
 } from '../../utils/fields'
 
-export const FishingLicense: FC<FieldBaseProps> = ({
+export const FishingLicense: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   application,
   field,
   errors,

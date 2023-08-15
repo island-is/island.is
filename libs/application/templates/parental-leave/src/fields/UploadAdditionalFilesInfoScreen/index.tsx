@@ -24,12 +24,9 @@ type FieldProps = FieldBaseProps & {
 }
 type ScreenProps = RepeaterProps & FieldProps
 
-const UploadAdditionalFilesInfoScreen: FC<ScreenProps> = ({
-  field,
-  application,
-  setRepeaterItems,
-  setFieldLoadingState,
-}) => {
+const UploadAdditionalFilesInfoScreen: FC<
+  React.PropsWithChildren<ScreenProps>
+> = ({ field, application, setRepeaterItems, setFieldLoadingState }) => {
   const { formatMessage } = useLocale()
   const rights = getAvailableRightsInDays(application)
   const { periods } = getApplicationAnswers(application.answers)
