@@ -1,10 +1,11 @@
 {
-  "root": "libs/api/domains/directorate-of-immigration",
+  "name": "api-domains-directorate-of-immigration",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/api/domains/directorate-of-immigration/src",
   "projectType": "library",
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": [
@@ -13,10 +14,12 @@
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/api/domains/directorate-of-immigration"],
+      "executor": "@nx/jest:jest",
+      "outputs": [
+        "{workspaceRoot}/coverage/libs/api/domains/directorate-of-immigration"
+      ],
       "options": {
-        "jestConfig": "libs/api/domains/directorate-of-immigration/jest.config.js",
+        "jestConfig": "libs/api/domains/directorate-of-immigration/jest.config.ts",
         "passWithNoTests": true
       }
     }
