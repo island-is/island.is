@@ -21,24 +21,16 @@ import { Option as OptionType } from '../../../Select/Select.types'
 
 import * as styles from '../CountryCodeSelect.css'
 
-export const Menu = <
-  Value,
-  IsMulti extends boolean,
-  Group extends GroupBase<OptionType<Value>>
->(
-  props: MenuProps<OptionType<Value>, IsMulti, Group>,
+export const Menu = (
+  props: MenuProps<OptionType<string>, false, GroupBase<OptionType<string>>>,
 ) => (
   <components.Menu className={styles.menu} {...props}>
     {props.children}
   </components.Menu>
 )
 
-export const Option = <
-  Value,
-  IsMulti extends boolean,
-  Group extends GroupBase<OptionType<Value>>
->(
-  props: OptionProps<OptionType<Value>, IsMulti, Group>,
+export const Option = (
+  props: OptionProps<OptionType<string>, false, GroupBase<OptionType<string>>>,
 ) => {
   const { size = 'md' } = props.selectProps
   const description = props.data?.description // Flag in this case
@@ -56,12 +48,12 @@ export const Option = <
   )
 }
 
-export const IndicatorsContainer = <
-  Value,
-  IsMulti extends boolean,
-  Group extends GroupBase<OptionType<Value>>
->(
-  props: IndicatorsContainerProps<OptionType<Value>, IsMulti, Group>,
+export const IndicatorsContainer = (
+  props: IndicatorsContainerProps<
+    OptionType<string>,
+    false,
+    GroupBase<OptionType<string>>
+  >,
 ) => {
   const {
     icon,
@@ -85,12 +77,12 @@ export const IndicatorsContainer = <
   )
 }
 
-export const DropdownIndicator = <
-  Value,
-  IsMulti extends boolean,
-  Group extends GroupBase<OptionType<Value>>
->(
-  props: DropdownIndicatorProps<OptionType<Value>, IsMulti, Group>,
+export const DropdownIndicator = (
+  props: DropdownIndicatorProps<
+    OptionType<string>,
+    false,
+    GroupBase<OptionType<string>>
+  >,
 ) => {
   const { icon = 'chevronDown', hasError, size = 'md' } = props.selectProps
 
@@ -111,12 +103,12 @@ export const DropdownIndicator = <
   )
 }
 
-export const SingleValue = <
-  Value,
-  IsMulti extends boolean,
-  Group extends GroupBase<OptionType<Value>>
->(
-  props: SingleValueProps<OptionType<Value>, IsMulti, Group>,
+export const SingleValue = (
+  props: SingleValueProps<
+    OptionType<string>,
+    false,
+    GroupBase<OptionType<string>>
+  >,
 ) => {
   const { size = 'md' } = props.selectProps
   const value = props.hasValue ? props.getValue() : null
@@ -130,12 +122,12 @@ export const SingleValue = <
   )
 }
 
-export const ValueContainer = <
-  Value,
-  IsMulti extends boolean,
-  Group extends GroupBase<OptionType<Value>>
->(
-  props: ValueContainerProps<OptionType<Value>, IsMulti, Group>,
+export const ValueContainer = (
+  props: ValueContainerProps<
+    OptionType<string>,
+    false,
+    GroupBase<OptionType<string>>
+  >,
 ) => {
   const { inputHasLabel, size } = props.selectProps
   return (
@@ -151,12 +143,12 @@ export const ValueContainer = <
   )
 }
 
-export const Placeholder = <
-  Value,
-  IsMulti extends boolean,
-  Group extends GroupBase<OptionType<Value>>
->(
-  props: PlaceholderProps<OptionType<Value>, IsMulti, Group>,
+export const Placeholder = (
+  props: PlaceholderProps<
+    OptionType<string>,
+    false,
+    GroupBase<OptionType<string>>
+  >,
 ) => {
   const { size = 'md' } = props.selectProps
   return (
@@ -173,12 +165,8 @@ export const Placeholder = <
   )
 }
 
-export const Input = <
-  Value,
-  IsMulti extends boolean,
-  Group extends GroupBase<OptionType<Value>>
->(
-  props: InputProps<OptionType<Value>, IsMulti, Group>,
+export const Input = (
+  props: InputProps<OptionType<string>, false, GroupBase<OptionType<string>>>,
 ) => {
   const { ariaError } = props.selectProps
   return (
@@ -193,12 +181,8 @@ export const Input = <
     />
   )
 }
-export const Control = <
-  Value,
-  IsMulti extends boolean,
-  Group extends GroupBase<OptionType<Value>>
->(
-  props: ControlProps<OptionType<Value>, IsMulti, Group>,
+export const Control = (
+  props: ControlProps<OptionType<string>, false, GroupBase<OptionType<string>>>,
 ) => {
   const { size = 'md' } = props.selectProps
   return (
@@ -214,11 +198,11 @@ export const Control = <
   )
 }
 
-export const customStyles = <
-  Value,
-  IsMulti extends boolean,
-  Group extends GroupBase<OptionType<Value>>
->(): StylesConfig<OptionType<Value>, IsMulti, Group> => ({
+export const customStyles = (): StylesConfig<
+  OptionType<string>,
+  false,
+  GroupBase<OptionType<string>>
+> => ({
   indicatorSeparator: () => ({}),
   container: (provided) => ({
     ...provided,
