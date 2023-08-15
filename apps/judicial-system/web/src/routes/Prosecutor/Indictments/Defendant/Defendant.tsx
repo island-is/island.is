@@ -217,7 +217,7 @@ const Defendant: React.FC<React.PropsWithChildren<unknown>> = () => {
     )
   }
 
-  const handleUpdatePoliceCases = (
+  const handleUpdatePoliceCase = (
     index?: number,
     update?: {
       policeCaseNumber?: string
@@ -407,7 +407,7 @@ const Defendant: React.FC<React.PropsWithChildren<unknown>> = () => {
             />
           )}
           <AnimatePresence>
-            {policeCases.map((policeCase, index) => (
+            {policeCases.map((_policeCase, index) => (
               <motion.div
                 key={index}
                 initial={{ opacity: 0, y: 10 }}
@@ -437,9 +437,9 @@ const Defendant: React.FC<React.PropsWithChildren<unknown>> = () => {
                         ? handleDeletePoliceCase
                         : undefined
                     }
-                    updatePoliceCases={handleUpdatePoliceCases}
+                    updatePoliceCase={handleUpdatePoliceCase}
                     policeCaseNumberImmutable={
-                      workingCase.origin === CaseOrigin.LOKE
+                      workingCase.origin === CaseOrigin.LOKE && index === 0
                     }
                   />
                 </Box>
