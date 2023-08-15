@@ -3,10 +3,6 @@
   "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/application/templates/general-petition/src",
   "projectType": "library",
-  "implicitDependencies": [
-    "services-endorsements-api",
-    "application-template-api-modules"
-  ],
   "generators": {},
   "targets": {
     "lint": {
