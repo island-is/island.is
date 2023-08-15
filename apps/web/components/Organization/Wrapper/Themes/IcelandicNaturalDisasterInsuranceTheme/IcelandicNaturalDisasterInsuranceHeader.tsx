@@ -13,7 +13,7 @@ import * as styles from './IcelandicNaturalDisasterInsuranceHeader.css'
 const treeImageUrl =
   'https://images.ctfassets.net/8k0h54kbe6bj/52r9AXIIGj5d3VxfQA2yQL/ff654c88c6309ad799ccc5668754371d/nti-trees.svg'
 const townImageUrl =
-  'https://images.ctfassets.net/8k0h54kbe6bj/7ryH2zTpjxid0iakBnSgKV/37daf02f0c0051b9ddb1327b0a83ec59/nti-town.svg'
+  'https://images.ctfassets.net/8k0h54kbe6bj/eXqcbclteE88H5iQ6J3lo/bbc1d0c9d3abee93d34ec0aa718c833b/Group__1_.svg'
 
 const getDefaultStyle = (width: number): CSSProperties => {
   if (width > theme.breakpoints.xl) {
