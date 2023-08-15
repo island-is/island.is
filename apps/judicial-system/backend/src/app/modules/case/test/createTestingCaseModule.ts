@@ -160,6 +160,8 @@ export const createTestingCaseModule = async () => {
     LimitedAccessCaseController,
   )
 
+  caseModule.close()
+
   return {
     messageService,
     courtService,
