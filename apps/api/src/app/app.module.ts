@@ -31,6 +31,7 @@ import { EndorsementSystemModule } from '@island.is/api/domains/endorsement-syst
 import { FileUploadModule } from '@island.is/api/domains/file-upload'
 import { FinanceModule } from '@island.is/api/domains/finance'
 import { FiskistofaModule } from '@island.is/api/domains/fiskistofa'
+import { HousingBenefitCalculatorModule } from '@island.is/api/domains/housing-benefit-calculator'
 import { HealthInsuranceModule } from '@island.is/api/domains/health-insurance'
 import { IcelandicNamesModule } from '@island.is/api/domains/icelandic-names-registry'
 import {
@@ -236,6 +237,7 @@ const environment = getConfig
     DisabilityLicenseModule,
     ElectronicRegistrationsModule,
     FiskistofaModule,
+    HousingBenefitCalculatorModule,
     WatsonAssistantChatModule,
     IcelandicGovernmentInstitutionVacanciesModule,
     AircraftRegistryModule,
