@@ -19,7 +19,7 @@ export type TagVariant =
   | 'mint'
   | 'disabled'
 
-interface ChildrenProps{
+interface ChildrenProps {
   children?: ReactNode
 }
 export interface TagProps {

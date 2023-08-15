@@ -33,7 +33,9 @@ export const MixedChart = ({ graphData }: GraphProps) => {
   const { data, datakeys } = graphData
   const parsedData = JSON.parse(data)
   const parsedDatakeys = JSON.parse(datakeys)[0]
-  const stackIds = parsedDatakeys.bars.map((e:{stackId:string}) => e.stackId) // string or other ? simple inference fix
+  const stackIds = parsedDatakeys.bars.map(
+    (e: { stackId: string }) => e.stackId,
+  ) // string or other ? simple inference fix
   const shouldStack = new Set(stackIds).size !== stackIds.length
   const rightPadding = parsedDatakeys.yAxis?.right ? 70 : 0
   return (

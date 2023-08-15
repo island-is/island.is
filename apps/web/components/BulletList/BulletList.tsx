@@ -16,7 +16,7 @@ type IconBulletType = {
 }
 
 type NumberBullet = {
-  type: 'NumberBullet',
+  type: 'NumberBullet'
   title: string
   body: string
 }
@@ -41,7 +41,7 @@ export const BulletList: FC<React.PropsWithChildren<BulletListProps>> = ({
       return bullet.type === 'IconBulletType' ? (
         <Row
           key={index}
-          left={<IconBullet variant="blue" size="large" image={bullet.icon}  />}
+          left={<IconBullet variant="blue" size="large" image={bullet.icon} />}
         >
           <Stack space={1}>
             <Text variant="h3" as="h3">
@@ -49,7 +49,7 @@ export const BulletList: FC<React.PropsWithChildren<BulletListProps>> = ({
             </Text>
             <Text>{bullet.body}</Text>
             {bullet.url && bullet.linkText && (
-              <Link href={bullet.url} >
+              <Link href={bullet.url}>
                 <Button as="span" variant="text" icon="arrowForward">
                   {bullet.linkText}
                 </Button>
@@ -64,14 +64,10 @@ export const BulletList: FC<React.PropsWithChildren<BulletListProps>> = ({
   </div>
 )
 
-<<<<<<< HEAD
-const Row: FC<{ left: ReactNode, children: ReactNode }> = ({ left, children }) => (
-=======
 const Row: FC<React.PropsWithChildren<{ left: ReactNode }>> = ({
   left,
   children,
 }) => (
->>>>>>> 4be5593cc52459a4a5bd48e19735e254c81b7c0b
   <Box
     alignItems="stretch"
     display="flex"

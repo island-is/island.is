@@ -1,4 +1,4 @@
-import  { ReactNode } from 'react'
+import { ReactNode } from 'react'
 
 /**
  * React properties interface to easily add to components consistent test ID support for Cypress tests

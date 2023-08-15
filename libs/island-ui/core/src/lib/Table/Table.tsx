@@ -49,18 +49,10 @@ interface HeadProps {
   sticky?: boolean
 }
 
-<<<<<<< HEAD
-interface TProps {
-  children?: ReactNode
-}
-
-export const Head: FC<HeadProps> = ({ children, sticky }) => (
-=======
 export const Head: FC<React.PropsWithChildren<HeadProps>> = ({
   children,
   sticky,
 }) => (
->>>>>>> 4be5593cc52459a4a5bd48e19735e254c81b7c0b
   <thead
     {...(sticky && {
       className: styles.stickyHead,

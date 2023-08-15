@@ -49,7 +49,7 @@ export const BackdropDiv = forwardRef(
 
 export type ModalBaseProps = {
   // children?: ReactNode // TODO this makes menu.tsx flip out
-  
+
   /**
    * Element that opens the dialog.
    * It will be forwarded necessary props for a11y and event handling.

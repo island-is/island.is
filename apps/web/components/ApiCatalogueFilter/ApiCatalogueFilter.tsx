@@ -67,7 +67,6 @@ export const ApiCatalogueFilter: React.FC<
 }) => {
   return (
     <Filter
-    
       labelClearAll={labelClearAll}
       labelClear={labelClear}
       labelOpen={labelOpen}
