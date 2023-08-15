@@ -6,12 +6,14 @@ import { shouldLinkOpenInNewWindow } from '@island.is/shared/utils'
 
 import { useDeprecatedComponent } from '../private/useDeprecatedComponent'
 import * as styles from './Link.css'
+import { ReactNode } from 'react'
 
 export type LinkColor = 'white' | 'blue400' | 'blue600'
 export type UnderlineVisibility = 'always' | 'hover'
 export type UnderlineVariants = 'normal' | 'small'
 
 export interface LinkProps extends NextLinkProps {
+  children?: ReactNode
   color?: LinkColor
   dataTestId?: string
   className?: string

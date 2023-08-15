@@ -6,8 +6,8 @@ import { Stack, Box, Text, Icon, Button, Link } from '@island.is/island-ui/core'
 
 import * as styles from './BulletList.css'
 
-type IconBullet = {
-  type: 'IconBullet'
+type IconBulletType = {
+  type: 'IconBulletType'
   title: string
   body: string
   icon: string
@@ -16,6 +16,7 @@ type IconBullet = {
 }
 
 type NumberBullet = {
+  type: 'NumberBullet',
   title: string
   body: string
 }
@@ -26,19 +27,20 @@ type NumberBulletGroup = {
   bullets: NumberBullet[]
 }
 
-type Entry = IconBullet | NumberBulletGroup
+type Entry = IconBulletType | NumberBulletGroup
 
-export interface BulletListProps {
+export interface BulletListProps extends React.PropsWithChildren {
   bullets: Entry[]
 }
-
+// export const BulletList: FC<{ bullets: [IconBulletType], children: ReactNode }> = ({ bullets, children }) => (
+// TODO  poke more at this .............
 export const BulletList: FC<BulletListProps> = ({ bullets }) => (
   <div>
     {bullets.map((bullet, index) => {
-      return bullet.type === 'IconBullet' ? (
+      return bullet.type === 'IconBulletType' ? (
         <Row
           key={index}
-          left={<IconBullet variant="blue" size="large" image={bullet.icon} />}
+          left={<IconBullet variant="blue" size="large" image={bullet.icon}  />}
         >
           <Stack space={1}>
             <Text variant="h3" as="h3">
@@ -46,7 +48,7 @@ export const BulletList: FC<BulletListProps> = ({ bullets }) => (
             </Text>
             <Text>{bullet.body}</Text>
             {bullet.url && bullet.linkText && (
-              <Link href={bullet.url}>
+              <Link href={bullet.url} >
                 <Button as="span" variant="text" icon="arrowForward">
                   {bullet.linkText}
                 </Button>
@@ -61,7 +63,7 @@ export const BulletList: FC<BulletListProps> = ({ bullets }) => (
   </div>
 )
 
-const Row: FC<{ left: ReactNode }> = ({ left, children }) => (
+const Row: FC<{ left: ReactNode, children: ReactNode }> = ({ left, children }) => (
   <Box
     alignItems="stretch"
     display="flex"

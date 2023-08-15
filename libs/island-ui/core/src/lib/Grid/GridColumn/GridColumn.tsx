@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import React, { FC, ReactNode } from 'react'
 import cn from 'classnames'
 import { theme } from '@island.is/island-ui/theme'
 
@@ -15,6 +15,7 @@ type Breakpoint = keyof typeof theme['breakpoints']
 type position = 'relative' | 'fixed' | 'absolute' | 'static'
 
 export interface GridColumnProps {
+  children?: ReactNode
   span?: styles.SpanType
   offset?: styles.SpanType
   order?: ResponsiveProp<styles.Order>

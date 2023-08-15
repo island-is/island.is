@@ -1,8 +1,9 @@
-import React, { FC, MouseEvent } from 'react'
+import React, { FC, MouseEvent, ReactNode } from 'react'
 import cn from 'classnames'
 import * as styles from './IconBullet.css'
 
 export interface IconBulletProps {
+  children?: ReactNode
   variant?: 'red' | 'blue' | 'gradient'
   size?: 'small' | 'large'
   center?: boolean

@@ -9,6 +9,7 @@ import { Text } from '../Text/Text'
 import * as styles from './Filter.css'
 
 export interface FilterProps {
+  children?: ReactNode
   /** Label for the clear all button. Should be used for localization. */
   labelClearAll: string
 

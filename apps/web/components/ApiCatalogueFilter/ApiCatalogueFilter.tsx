@@ -5,7 +5,7 @@ import {
   FilterMultiChoiceProps,
   FilterProps,
 } from '@island.is/island-ui/core'
-import React from 'react'
+import React, { ReactNode } from 'react'
 
 type FilterCategory = {
   /** Id for the category. */
@@ -24,6 +24,7 @@ type FilterItem = {
 }
 
 interface ApiCatalogueFilterProps {
+  children?: ReactNode
   labelClearAll: string
   labelClear: string
   labelOpen: string
@@ -64,6 +65,7 @@ export const ApiCatalogueFilter: React.FC<
 }) => {
   return (
     <Filter
+    
       labelClearAll={labelClearAll}
       labelClear={labelClear}
       labelOpen={labelOpen}

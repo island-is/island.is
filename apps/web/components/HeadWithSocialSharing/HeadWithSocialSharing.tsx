@@ -1,7 +1,8 @@
-import React, { FC } from 'react'
+import React, { FC, ReactNode } from 'react'
 import Head from 'next/head'
 
 interface HeadWithSocialSharingProps {
+  children?: ReactNode
   title: string
   description?: string
   imageUrl?: string

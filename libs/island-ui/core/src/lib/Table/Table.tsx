@@ -45,7 +45,12 @@ export const Table = ({
 )
 
 interface HeadProps {
+  children?: ReactNode
   sticky?: boolean
+}
+
+interface TProps {
+  children?: ReactNode
 }
 
 export const Head: FC<HeadProps> = ({ children, sticky }) => (
@@ -58,9 +63,9 @@ export const Head: FC<HeadProps> = ({ children, sticky }) => (
   </thead>
 )
 
-export const Body: FC = ({ children }) => <tbody>{children}</tbody>
+export const Body: FC<TProps> = ({ children }) => <tbody>{children}</tbody> // TODO hmmmmmmm....
 
-export const Foot: FC = ({ children }) => <tfoot>{children}</tfoot>
+export const Foot: FC<TProps> = ({ children }) => <tfoot>{children}</tfoot>
 
 export const Row: FC<TestSupport> = ({ children, dataTestId }) => (
   <tr data-testid={dataTestId}>{children}</tr>

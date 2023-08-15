@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useEffect, useRef, useState } from 'react'
+import React, { FC, ReactNode, useCallback, useEffect, useRef, useState } from 'react'
 import cn from 'classnames'
 import { theme } from '@island.is/island-ui/theme'
 
@@ -6,7 +6,10 @@ import * as styles from './Swiper.css'
 
 const FALLBACK_WIDTH = 316
 
-export const Swiper: FC = ({ children }) => {
+interface props {
+  children?: ReactNode
+}
+export const Swiper: FC<props> = ({ children }) => {
   const [width, setWidth] = useState<number>(FALLBACK_WIDTH)
   const ref = useRef<HTMLDivElement>(null)
 

@@ -17,12 +17,13 @@ import { FixedNav, SearchInput } from '@island.is/web/components'
 import { LoginButton } from './LoginButton'
 import { useI18n } from '@island.is/web/i18n'
 import { LayoutProps } from '@island.is/web/layouts/main'
-import React, { FC, useContext } from 'react'
+import React, { FC, ReactNode, useContext } from 'react'
 import { LanguageToggler } from '../LanguageToggler'
 import { Menu } from '../Menu/Menu'
 import { webMenuButtonClicked } from '@island.is/plausible'
 
 interface HeaderProps {
+  children?: ReactNode
   showSearchInHeader?: boolean
   buttonColorScheme?: ButtonTypes['colorScheme']
   languageToggleQueryParams?: LayoutProps['languageToggleQueryParams']

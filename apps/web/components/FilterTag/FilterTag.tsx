@@ -1,8 +1,9 @@
 import { Tag, Box } from '@island.is/island-ui/core'
-import React from 'react'
+import React, { ReactNode } from 'react'
 import * as styles from './FilterTag.css'
 
 interface FilterTagProps {
+  children?: ReactNode
   onClick?: () => void
 }
 

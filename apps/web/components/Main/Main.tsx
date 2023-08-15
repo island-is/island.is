@@ -1,7 +1,11 @@
-import React, { useRef } from 'react'
+import React, { ReactNode, useRef } from 'react'
 import { Box, BoxProps } from '@island.is/island-ui/core'
 
-export const Main: React.FC = ({ children }) => {
+interface props {
+  children?: ReactNode
+}
+
+export const Main: React.FC<props> = ({ children }) => {
   const mainRef = useRef<HTMLDivElement>(null)
   const shouldAddLandmark = !mainRef?.current?.querySelectorAll('#main-content')
     .length

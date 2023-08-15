@@ -19,6 +19,9 @@ export type TagVariant =
   | 'mint'
   | 'disabled'
 
+interface ChildrenProps{
+  children?: ReactNode
+}
 export interface TagProps {
   onClick?: () => void
   variant?: TagVariant
@@ -33,7 +36,7 @@ export interface TagProps {
   truncate?: boolean
   hyphenate?: boolean
   textLeft?: boolean
-  CustomLink?: FC
+  CustomLink?: FC<ChildrenProps>
 }
 
 export const Tag = forwardRef<HTMLButtonElement & HTMLAnchorElement, TagProps>(
