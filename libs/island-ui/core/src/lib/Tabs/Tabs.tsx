@@ -91,8 +91,8 @@ export const Tabs: FC<TabInterface> = ({
               name={label}
               label={label}
               onChange={(opt) => {
-                tab.setCurrentId(opt.value)
-                tab.move(opt.value)
+                tab.setCurrentId(opt?.value)
+                tab.move(opt?.value ?? null)
               }}
               options={selectOptions}
               defaultValue={

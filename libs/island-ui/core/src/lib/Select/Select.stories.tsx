@@ -1,7 +1,9 @@
 import React from 'react'
+import { Props } from 'react-select'
 
 import { withFigma } from '../../utils/withFigma'
 import { Select } from './Select'
+import { Option } from './Select.types'
 
 export default {
   title: 'Form/Select',
@@ -79,8 +81,8 @@ Disabled.args = {
   disabled: true,
 }
 
-export const WithCreatableOption = Template.bind({})
-WithCreatableOption.args = {
+export const Creatable = Template.bind({})
+Creatable.args = {
   name: 'creatableSelect',
   label: 'Color',
   placeholder: 'Choose a color',
@@ -104,6 +106,34 @@ WithCreatableOption.args = {
     },
   ],
 }
+
+export const Clearable = Template.bind({})
+Clearable.args = {
+  name: 'clearableSelect',
+  label: 'Color',
+  placeholder: 'Choose a color',
+  isClearable: true,
+  onChange: (option) =>
+    console.log(`Selected value changed: ${option}`, { option }),
+  options: [
+    {
+      label: 'Yellow',
+      value: 'yellow',
+    },
+    {
+      label: 'Red',
+      value: 'red',
+    },
+    {
+      label: 'Green',
+      value: 'green',
+    },
+    {
+      label: 'Blue',
+      value: 'blue',
+    },
+  ],
+} as Props<Option<string>, false>
 
 export const TempTest = () => (
   <div style={{ height: 900 }}>
