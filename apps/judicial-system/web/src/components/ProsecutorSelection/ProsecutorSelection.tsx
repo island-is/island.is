@@ -1,7 +1,6 @@
 import React, { useContext, useMemo } from 'react'
 import { useIntl } from 'react-intl'
 import { useQuery } from '@apollo/client'
-import { OptionsType, ValueType } from 'react-select'
 
 import { Select, Option } from '@island.is/island-ui/core'
 import { isIndictmentCase } from '@island.is/judicial-system/types'
@@ -10,7 +9,6 @@ import {
   FormContext,
 } from '@island.is/judicial-system-web/src/components'
 import { ProsecutorSelectionUsersQuery } from './prosecutorSelectionUsersGql'
-import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 import {
   User,
   UserRole,
@@ -42,7 +40,7 @@ const ProsecutorSelection: React.FC<Props> = (props) => {
     errorPolicy: 'all',
   })
 
-  const availableProsecutors: OptionsType<Option> = useMemo(() => {
+  const availableProsecutors: Option<string>[] = useMemo(() => {
     return data?.users
       .filter(
         (aUser: User) =>
@@ -70,13 +68,13 @@ const ProsecutorSelection: React.FC<Props> = (props) => {
       })}
       value={selectedProsecutor}
       options={availableProsecutors}
-      onChange={(value: ValueType<Option>) => {
-        const id = (value as ReactSelectOption).value
+      onChange={(value) => {
+        const id = value?.value
         if (id && typeof id === 'string') {
           onChange(id)
         }
       }}
-      disabled={loading}
+      isDisabled={loading}
       required
     />
   )

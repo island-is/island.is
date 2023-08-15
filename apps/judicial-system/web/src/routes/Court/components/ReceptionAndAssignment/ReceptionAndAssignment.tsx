@@ -2,7 +2,6 @@ import React, { useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 import { useQuery } from '@apollo/client'
-import { ValueType } from 'react-select'
 
 import {
   FormContentContainer,
@@ -149,11 +148,11 @@ const ReceptionAndAssignment = () => {
         <Box component="section" marginBottom={10}>
           <SelectCourtOfficials
             workingCase={workingCase}
-            handleJudgeChange={(selectedOption: ValueType<ReactSelectOption>) =>
+            handleJudgeChange={(selectedOption) =>
               setJudge((selectedOption as JudgeSelectOption).judge)
             }
             handleRegistrarChange={(
-              selectedOption: ValueType<ReactSelectOption>,
+              selectedOption,
             ) =>
               setRegistrar((selectedOption as RegistrarSelectOption)?.registrar)
             }

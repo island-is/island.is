@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import InputMask from 'react-input-mask'
 import { useIntl } from 'react-intl'
-import { ValueType } from 'react-select'
 
 import {
   Defendant,
@@ -9,7 +8,10 @@ import {
   isIndictmentCase,
   UpdateDefendant,
 } from '@island.is/judicial-system/types'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
+import {
+  ReactSelectOption,
+  TempCase as Case,
+} from '@island.is/judicial-system-web/src/types'
 import { BlueBox } from '@island.is/judicial-system-web/src/components'
 import {
   Box,
@@ -27,7 +29,6 @@ import {
   removeErrorMessageIfValid,
   validateAndSetErrorMessage,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
-import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 import useNationalRegistry from '@island.is/judicial-system-web/src/utils/hooks/useNationalRegistry'
 import { isBusiness } from '@island.is/judicial-system-web/src/utils/stepHelper'
 
@@ -349,12 +350,12 @@ const DefendantInfo: React.FC<Props> = (props) => {
                   (option) => option.value === defendant.gender,
                 ) ?? null
               }
-              onChange={(selectedOption: ValueType<ReactSelectOption>) =>
+              onChange={(selectedOption) =>
                 onChange(defendant.id, {
-                  gender: (selectedOption as ReactSelectOption).value as Gender,
+                  gender: selectedOption?.value as Gender,
                 })
               }
-              disabled={isGenderAndCitizenshipDisabled}
+              isDisabled={isGenderAndCitizenshipDisabled}
               required
             />
           </GridColumn>

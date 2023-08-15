@@ -1,7 +1,6 @@
 import React, { useCallback, useContext, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import { useIntl } from 'react-intl'
-import { ValueType } from 'react-select/src/types'
 import { AnimatePresence, motion } from 'framer-motion'
 import { uuid } from 'uuidv4'
 
@@ -277,16 +276,13 @@ const Defendant = () => {
               <Box marginBottom={3}>
                 <Select
                   name="type"
-                  options={
-                    constants.InvestigationCaseTypes as ReactSelectOption[]
-                  }
+                  options={constants.InvestigationCaseTypes}
                   label={formatMessage(m.sections.investigationType.type.label)}
                   placeholder={formatMessage(
                     m.sections.investigationType.type.placeholder,
                   )}
-                  onChange={(selectedOption: ValueType<ReactSelectOption>) => {
-                    const type = (selectedOption as ReactSelectOption)
-                      .value as CaseType
+                  onChange={(selectedOption) => {
+                    const type = selectedOption?.value
 
                     setCaseType(type)
                     setAndSendCaseToServer(
@@ -303,9 +299,7 @@ const Defendant = () => {
                   value={
                     workingCase.id
                       ? {
-                          value: Object.keys(CaseType).indexOf(
-                            workingCase.type,
-                          ),
+                          value: workingCase.type,
                           label: capitalize(caseTypes[workingCase.type]),
                         }
                       : undefined

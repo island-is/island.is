@@ -3,7 +3,6 @@ import { useIntl } from 'react-intl'
 import cn from 'classnames'
 import { useQuery } from '@apollo/client'
 import { useRouter } from 'next/router'
-import { ValueType } from 'react-select'
 
 import {
   AlertMessage,
@@ -18,7 +17,6 @@ import {
   UsersQuery,
 } from '@island.is/judicial-system-web/src/utils/mutations'
 import { formatNationalId } from '@island.is/judicial-system/formatters'
-import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 import { titles, errors } from '@island.is/judicial-system-web/messages'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import {
@@ -112,11 +110,9 @@ export const Users: React.FC = () => {
               }) || []
             }
             placeholder="Veldu stofnun"
-            disabled={loadingInstitutions}
-            onChange={(selectedOption: ValueType<ReactSelectOption>) =>
-              setSelectedInstitution(
-                (selectedOption as ReactSelectOption).value.toString(),
-              )
+            isDisabled={loadingInstitutions}
+            onChange={(selectedOption) =>
+              setSelectedInstitution(selectedOption?.value)
             }
           />
         </Box>

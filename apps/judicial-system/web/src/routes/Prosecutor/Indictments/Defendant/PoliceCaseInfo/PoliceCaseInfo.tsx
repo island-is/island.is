@@ -1,6 +1,5 @@
 import React, { useContext, useEffect, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { ValueType } from 'react-select'
 import InputMask from 'react-input-mask'
 
 import {
@@ -16,7 +15,6 @@ import {
   capitalize,
   indictmentSubtypes,
 } from '@island.is/judicial-system/formatters'
-import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 import {
   BlueBox,
   DateTime,
@@ -190,9 +188,8 @@ export const PoliceCaseInfo: React.FC<Props> = (props) => {
           options={options}
           label={formatMessage(policeCaseInfo.indictmentTypeLabel)}
           placeholder={formatMessage(policeCaseInfo.indictmentTypePlaceholder)}
-          onChange={(selectedOption: ValueType<ReactSelectOption>) => {
-            const indictmentSubtype = (selectedOption as ReactSelectOption)
-              .value as IndictmentSubtype
+          onChange={(selectedOption) => {
+            const indictmentSubtype = selectedOption?.value as IndictmentSubtype
             updatePoliceCases(index, {
               subtypes: [...(subtypes || []), indictmentSubtype],
             })

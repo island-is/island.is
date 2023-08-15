@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import InputMask from 'react-input-mask'
-import { ValueType } from 'react-select/src/types'
 
 import {
   Box,
@@ -294,7 +293,7 @@ export const UserForm: React.FC<Props> = (props) => {
             label="Veldu stofnun"
             value={usersInstitution}
             options={selectInstitutions}
-            onChange={(selectedOption: ValueType<ReactSelectOption>) =>
+            onChange={(selectedOption) =>
               setUser({
                 ...user,
                 institution: (selectedOption as ExtendedOption).institution,

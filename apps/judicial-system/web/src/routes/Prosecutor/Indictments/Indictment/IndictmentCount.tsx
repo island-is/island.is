@@ -1,6 +1,5 @@
 import React, { useCallback, useMemo, useState } from 'react'
 import { IntlShape, useIntl } from 'react-intl'
-import { ValueType } from 'react-select'
 import InputMask from 'react-input-mask'
 
 import {
@@ -12,7 +11,6 @@ import {
   Icon,
 } from '@island.is/island-ui/core'
 import {
-  ReactSelectOption,
   TempCase as Case,
   TempIndictmentCount as TIndictmentCount,
 } from '@island.is/judicial-system-web/src/types'
@@ -430,8 +428,8 @@ export const IndictmentCount: React.FC<Props> = (props) => {
           }))}
           label={formatMessage(strings.policeCaseNumberLabel)}
           placeholder={formatMessage(strings.policeCaseNumberPlaceholder)}
-          onChange={async (so: ValueType<ReactSelectOption>) => {
-            const policeCaseNumber = (so as ReactSelectOption).value as string
+          onChange={async (so) => {
+            const policeCaseNumber = so?.value
 
             handleIndictmentCountChanges({ policeCaseNumber })
           }}
@@ -514,9 +512,8 @@ export const IndictmentCount: React.FC<Props> = (props) => {
           options={offensesOptions}
           label={formatMessage(strings.incidentLabel)}
           placeholder={formatMessage(strings.incidentPlaceholder)}
-          onChange={(so: ValueType<ReactSelectOption>) => {
-            const selectedOffense = (so as ReactSelectOption)
-              .value as IndictmentCountOffense
+          onChange={(so) => {
+            const selectedOffense = so?.value as IndictmentCountOffense
             const offenses = [
               ...(indictmentCount.offenses ?? []),
               selectedOffense,
@@ -655,7 +652,7 @@ export const IndictmentCount: React.FC<Props> = (props) => {
           label={formatMessage(strings.lawsBrokenLabel)}
           placeholder={formatMessage(strings.lawsBrokenPlaceholder)}
           value={null}
-          onChange={(selectedOption: ValueType<ReactSelectOption>) => {
+          onChange={(selectedOption) => {
             const law = (selectedOption as LawsBrokenOption).law
             const lawsBroken = [
               ...(indictmentCount.lawsBroken ?? []),
