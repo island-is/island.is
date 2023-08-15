@@ -1,5 +1,8 @@
-import { Application, ApplicationStatus } from '@island.is/application/types'
-import { Option } from '@island.is/island-ui/core'
+import {
+  Application,
+  ApplicationStatus,
+  InstitutionOption,
+} from '@island.is/application/types'
 import { institutionMapper } from '@island.is/application/types'
 import { Organization } from '@island.is/shared/types'
 import { ServicePortalPath } from '@island.is/service-portal/core'
@@ -41,9 +44,9 @@ export const sortApplicationsStatus = (
 export const sortApplicationsOrganizations = (
   applications: Application[],
   organizations?: Organization[],
-): Option[] | undefined => {
+): InstitutionOption[] | undefined => {
   const apps: Application[] = applications
-  let institutions: Option[] = []
+  let institutions: InstitutionOption[] = []
   if (!organizations) {
     return
   }
@@ -108,10 +111,10 @@ export const getFilteredApplicationsByStatus = (
 }
 
 export const getInstitutions = (
-  defaultInstitution: { value: string; label: string },
+  defaultInstitution: InstitutionOption,
   applications: Application[],
   organizations: any,
-) => {
+): InstitutionOption[] => {
   if (!applications || !organizations) {
     return [defaultInstitution]
   }

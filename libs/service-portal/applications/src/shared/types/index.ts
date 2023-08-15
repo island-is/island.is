@@ -1,4 +1,4 @@
-import { Option } from '@island.is/island-ui/core'
+import { InstitutionOption } from '@island.is/application/types'
 
 export enum ApplicationOverViewStatus {
   incomplete = 'draft',
@@ -10,6 +10,6 @@ export enum ApplicationOverViewStatus {
 }
 
 export type FilterValues = {
-  activeInstitution: Option
+  activeInstitution: InstitutionOption
   searchQuery: string
 }
