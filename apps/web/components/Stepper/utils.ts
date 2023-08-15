@@ -311,7 +311,7 @@ const getStepOptions = (
       (value) => value.slug === step.slug,
     )
     if (!stepOptions || !stepOptions.data) return []
-    
+
     const {
       labelFieldEN,
       labelFieldIS,
