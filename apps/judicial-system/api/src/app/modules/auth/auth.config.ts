@@ -14,7 +14,7 @@ export const authModuleConfig = defineConfig({
       'AUTH_IDS_DOMAIN',
       'https://identity-server.dev01.devland.is',
     ),
-    clientSecret: env.required('AUTH_IDS_SECRET', '') ?? '',
+    clientSecret: env.optional('AUTH_IDS_SECRET', '') ?? '',
     redirectUri: env.required(
       'AUTH_IDS_REDIRECT_URI',
       'http://localhost:4200/api/auth/callback/identity-server',
