@@ -55,7 +55,9 @@ const CourtDocuments: FC<React.PropsWithChildren<Props>> = (props) => {
     },
   ]
 
-  const DropdownIndicator = (props: DropdownIndicatorProps<ReactSelectOption>) => {
+  const DropdownIndicator = (
+    props: DropdownIndicatorProps<ReactSelectOption>,
+  ) => {
     return (
       <components.DropdownIndicator {...props}>
         <Icon icon="chevronDown" size="small" color="blue400" />

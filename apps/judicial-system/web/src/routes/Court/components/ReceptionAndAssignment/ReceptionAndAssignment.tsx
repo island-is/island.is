@@ -151,9 +151,7 @@ const ReceptionAndAssignment = () => {
             handleJudgeChange={(selectedOption) =>
               setJudge((selectedOption as JudgeSelectOption).judge)
             }
-            handleRegistrarChange={(
-              selectedOption,
-            ) =>
+            handleRegistrarChange={(selectedOption) =>
               setRegistrar((selectedOption as RegistrarSelectOption)?.registrar)
             }
             users={userData?.users}
