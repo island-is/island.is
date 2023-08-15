@@ -1,10 +1,12 @@
-import { NextPageContext } from 'next'
+import type { ScreenContext } from '../types'
 
 export interface ClientOptions {
   bypassCache?: string
 }
 
-export function optionsFromContext(ctx?: NextPageContext): ClientOptions {
+export function optionsFromContext(
+  ctx?: Partial<ScreenContext>,
+): ClientOptions {
   return {
     bypassCache: ctx?.query?.['bypass-cache']?.toString(),
   }
