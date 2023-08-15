@@ -1,9 +1,10 @@
 import { Module } from '@nestjs/common'
 import { ApiConfig } from './api.config'
 import { exportedApis } from './providers'
+import { IntellectualPropertyClientService } from './intellectualPropertyClient.service'
 
 @Module({
-  providers: [ApiConfig, ...exportedApis],
-  exports: exportedApis,
+  providers: [ApiConfig, ...exportedApis, IntellectualPropertyClientService],
+  exports: [IntellectualPropertyClientService],
 })
 export class IntellectualPropertyClientModule {}

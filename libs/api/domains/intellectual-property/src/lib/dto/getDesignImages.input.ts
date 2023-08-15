@@ -1,12 +1,12 @@
 import { Allow, IsString } from 'class-validator'
 import { Field, InputType } from '@nestjs/graphql'
 
-@InputType('IntellectualPropertyDesignImageInput')
-export class GetIntellectualPropertyDesignImageInput {
+@InputType('IntellectualPropertyDesignImagesInput')
+export class GetIntellectualPropertyDesignImagesInput {
   @Allow()
   @Field()
   @IsString()
-  hId!: string
+  designId!: string
 
   @Allow()
   @Field()

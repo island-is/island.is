@@ -1,15 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
-import {
-  TrademarksApi,
-  PatentSearchApi,
-  DesignSearchApi,
-} from '@island.is/clients/intellectual-property'
-import { TrademarkCollectionEntry } from './models/getTrademarkCollection.model'
+import { IntellectualPropertyClientService } from '@island.is/clients/intellectual-property'
 import type { User } from '@island.is/auth-nest-tools'
-import { DesignCollectionEntry } from './models/getDesignCollection.model'
-import { PatentCollectionEntry } from './models/getPatentCollection.model'
 import { Patent } from './models/getPatent.model'
 import {
   Trademark,
@@ -18,9 +11,8 @@ import {
 } from './models/getTrademark.model'
 import { Design } from './models/getDesign.model'
 import { Image } from './models/getDesignImage.model'
-import { IntellectualProperties } from './models/getIntellectualProperties.model'
-import ParseDate from 'date-fns/parse'
 import addMonths from 'date-fns/addMonths'
+import { parseDate } from './utils'
 
 type ExcludesFalse = <T>(x: T | null | undefined | false | '') => x is T
 
@@ -28,37 +20,11 @@ type ExcludesFalse = <T>(x: T | null | undefined | false | '') => x is T
 export class IntellectualPropertyService {
   constructor(
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
-    private readonly trademarksApi: TrademarksApi,
-    private readonly patentSearchApi: PatentSearchApi,
-    private readonly designSearchApi: DesignSearchApi,
+    private readonly ipService: IntellectualPropertyClientService,
   ) {}
 
-  async getIntellectualProperties(
-    user: User,
-  ): Promise<IntellectualProperties | null> {
-    const data = await Promise.all([
-      this.getPatents(user),
-      this.getTrademarks(user),
-      this.getDesigns(user),
-    ])
-
-    if (data.every((d) => !d)) {
-      return null
-    }
-
-    return {
-      patents: data[0],
-      trademarks: data[1],
-      designs: data[2],
-    }
-  }
-
-  async getTrademarks(
-    user: User,
-  ): Promise<Array<TrademarkCollectionEntry> | null> {
-    const trademarks = await this.trademarksApi.trademarksGetTrademarksBySSNGet(
-      { ssn: '6102050890' },
-    )
+  async getTrademarks(user: User): Promise<Array<Trademark> | null> {
+    const trademarks = await this.ipService.getTrademarks(user)
 
     return trademarks.map((t) => ({
       ...t,
@@ -66,13 +32,14 @@ export class IntellectualPropertyService {
       applicationDate: t.applicationDate
         ? new Date(t.applicationDate)
         : undefined,
-    }))
+    })) as Array<Trademark>
   }
 
-  async getTrademarkByVmId(vmId: string): Promise<Trademark | null> {
-    const trademark = await this.trademarksApi.trademarksGetByIdGet({
-      key: vmId,
-    })
+  async getTrademarkByVmId(
+    user: User,
+    trademarkId: string,
+  ): Promise<Trademark | null> {
+    const trademark = await this.ipService.getTrademarkByVmId(user, trademarkId)
 
     const subType = trademark.isFelagamerki
       ? TrademarkSubType.COLLECTIVE_MARK
@@ -96,48 +63,46 @@ export class IntellectualPropertyService {
       type,
       subType,
       applicationDate: trademark.applicationDate
-        ? this.parseDate(trademark.applicationDate)
+        ? parseDate(trademark.applicationDate)
         : undefined,
       dateRegistration: trademark.dateRegistration
-        ? this.parseDate(trademark.dateRegistration)
+        ? parseDate(trademark.dateRegistration)
         : undefined,
       dateUnRegistered: trademark.dateUnRegistered
-        ? this.parseDate(trademark.dateUnRegistered)
+        ? parseDate(trademark.dateUnRegistered)
         : undefined,
       dateExpires: trademark.dateExpires
-        ? this.parseDate(trademark.dateExpires)
+        ? parseDate(trademark.dateExpires)
         : undefined,
       dateRenewed: trademark.dateRenewed
-        ? this.parseDate(trademark.dateRenewed)
+        ? parseDate(trademark.dateRenewed)
         : undefined,
       dateInternationalRegistration: trademark.dateInternationalRegistration
-        ? this.parseDate(trademark.dateInternationalRegistration)
+        ? parseDate(trademark.dateInternationalRegistration)
         : undefined,
       dateModified: trademark.dateModified
-        ? this.parseDate(trademark.dateModified)
+        ? parseDate(trademark.dateModified)
         : undefined,
       datePublished: trademark.datePublished
-        ? this.parseDate(trademark.datePublished)
+        ? parseDate(trademark.datePublished)
         : undefined,
       maxValidObjectionDate: trademark.datePublished
-        ? addMonths(this.parseDate(trademark.datePublished), 2)
+        ? addMonths(parseDate(trademark.datePublished), 2)
         : undefined,
       vmId: trademark.vmid,
       acquiredDistinctiveness: trademark.skradVegnaMarkadsfestu,
     }
   }
 
-  async getPatents(user: User): Promise<Array<PatentCollectionEntry> | null> {
-    const patents = await this.patentSearchApi.apiPatentSearchPatentsBySSNGet({
-      ssn: '6102050890',
-    })
-
-    return patents as Array<PatentCollectionEntry>
+  async getPatents(user: User): Promise<Array<Patent> | null> {
+    const patents = await this.ipService.getPatents(user)
+    return patents as Array<Patent>
   }
-  async getPatentByApplicationNumber(appId: string): Promise<Patent | null> {
-    const response = await this.patentSearchApi.apiPatentSearchSearchGet({
-      applicationNr: appId,
-    })
+  async getPatentById(user: User, patentId: string): Promise<Patent | null> {
+    const response = await this.ipService.getPatentByApplicationNumber(
+      user,
+      patentId,
+    )
 
     const patent = response[0]
 
@@ -149,13 +114,11 @@ export class IntellectualPropertyService {
     }
   }
 
-  getDesigns = (user: User): Promise<Array<DesignCollectionEntry> | null> =>
-    this.designSearchApi.designSearchGetDesignBySSNGet({ ssn: '5411911789' })
+  getDesigns = async (user: User): Promise<Array<Design> | null> =>
+    (await this.ipService.getDesigns(user)) as Array<Design>
 
-  async getDesignByHID(hId: string): Promise<Design | null> {
-    const response = await this.designSearchApi.designSearchGetByHIDGet({
-      hid: hId,
-    })
+  async getDesignById(user: User, designId: string): Promise<Design | null> {
+    const response = await this.ipService.getDesignByHID(user, designId)
 
     return {
       ...response,
@@ -164,10 +127,11 @@ export class IntellectualPropertyService {
     }
   }
 
-  async getDesignImages(hId: string): Promise<Array<Image> | null> {
-    const response = await this.designSearchApi.designSearchGetDesignsGet({
-      hid: hId,
-    })
+  async getDesignImages(
+    user: User,
+    designId: string,
+  ): Promise<Array<Image> | null> {
+    const response = await this.ipService.getDesignImages(user, designId)
 
     //shady stuff
     const designImages = response
@@ -187,19 +151,18 @@ export class IntellectualPropertyService {
   }
 
   getDesignImage(
-    hId: string,
+    user: User,
+    designId: string,
     designNumber: string,
     imageNumber: string,
     size?: string,
   ) {
-    return this.designSearchApi.designSearchGetDesignImageGet({
-      hid: hId,
+    return this.ipService.getDesignImage(
+      user,
+      designId,
       designNumber,
       imageNumber,
       size,
-    })
+    )
   }
-
-  private parseDate = (date: string) =>
-    ParseDate(date, 'dd.MM.yyyy HH:mm:ss', new Date())
 }
