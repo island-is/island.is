@@ -75,7 +75,7 @@ export const SliceDropdown: React.FC<SliceProps> = ({
               name="select1"
               options={options}
               value={options.find((x) => x.value === selectedId)}
-              onChange={({ value }: Option) => {
+              onChange={({ value }) => {
                 const slug = options.find((x) => x.value === value).slug
                 setSelectedId(String(value))
                 Router.push(

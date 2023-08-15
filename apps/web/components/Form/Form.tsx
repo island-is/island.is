@@ -11,7 +11,6 @@ import {
   Stack,
   Checkbox,
   Button,
-  Option,
   InputFileUpload,
   UploadFile,
 } from '@island.is/island-ui/core'
@@ -121,7 +120,7 @@ export const FormField = ({
           value={
             options.find((o) => o.value === value) ?? { label: value, value }
           }
-          onChange={({ value }: Option) => onChange(slug, value as string)}
+          onChange={({ value }) => onChange(slug, value)}
           hasError={!!error}
           errorMessage={error}
         />

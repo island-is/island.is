@@ -545,9 +545,9 @@ export const StandardForm = ({
               isSearchable
               label={fn('malaflokkur', 'label', 'Málaflokkur')}
               name="malaflokkur"
-              onChange={({ label, value }: Option) => {
-                setCategoryLabel(label as string)
-                setCategoryId(value as string)
+              onChange={({ label, value }) => {
+                setCategoryLabel(label)
+                setCategoryId(value)
               }}
               options={categoryOptions}
               placeholder={fn('malaflokkur', 'placeholder', 'Veldu flokk')}
@@ -700,7 +700,7 @@ export const StandardForm = ({
                           isSearchable
                           label={fn('rikisadili', 'label', 'Ríkisaðili')}
                           name="rikisadili"
-                          onChange={({ label }: Option) => {
+                          onChange={({ label }) => {
                             onChange(label)
                           }}
                           hasError={errors?.rikisadili !== undefined}
@@ -881,9 +881,9 @@ export const StandardForm = ({
                                 'Þinn sýslumaður',
                               )}
                               name="syslumadur"
-                              onChange={({ label, value }: Option) => {
+                              onChange={({ label, value }) => {
                                 onChange(label)
-                                setSyslumadurId(value as string)
+                                setSyslumadurId(value)
                               }}
                               hasError={errors?.syslumadur !== undefined}
                               errorMessage={

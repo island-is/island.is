@@ -21,7 +21,6 @@ import {
   Input,
   AlertMessage,
   Select,
-  Option,
   GridContainer,
   GridRow,
   GridColumn,
@@ -209,7 +208,7 @@ const TemporaryEventLicencesList: FC<TemporaryEventLicencesListProps> = ({
                       value: x,
                     }))
                     .find((x) => x.value === filterLicenceSubType)}
-                  onChange={({ value }: Option) => {
+                  onChange={({ value }) => {
                     setFilterLicenceSubType(String(value))
                   }}
                 />
@@ -235,7 +234,7 @@ const TemporaryEventLicencesList: FC<TemporaryEventLicencesListProps> = ({
                       value: x,
                     }))
                     .find((x) => x.value === filterOffice)}
-                  onChange={({ value }: Option) => {
+                  onChange={({ value }) => {
                     setFilterOffice(String(value))
                   }}
                 />

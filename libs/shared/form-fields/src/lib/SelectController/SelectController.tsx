@@ -1,6 +1,10 @@
 import React, { FC } from 'react'
 import { Controller, useFormContext, RegisterOptions } from 'react-hook-form'
-import { Select, Option, InputBackgroundColor } from '@island.is/island-ui/core'
+import {
+  Select,
+  StringOption as Option,
+  InputBackgroundColor,
+} from '@island.is/island-ui/core'
 import { TestSupport } from '@island.is/island-ui/utils'
 
 interface Props {
@@ -46,7 +50,7 @@ export const SelectController: FC<Props & TestSupport> = ({
           required={required}
           backgroundColor={backgroundColor}
           hasError={error !== undefined}
-          disabled={disabled}
+          isDisabled={disabled}
           id={id}
           errorMessage={error}
           name={name}
