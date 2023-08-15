@@ -33,5 +33,7 @@ export const createTestingCourtModule = async () => {
 
   const courtService = courtModule.get<CourtService>(CourtService)
 
+  courtModule.close()
+
   return { courtClientService, courtService }
 }

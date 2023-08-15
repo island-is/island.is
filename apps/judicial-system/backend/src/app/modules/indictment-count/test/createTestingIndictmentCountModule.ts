@@ -59,6 +59,8 @@ export const createTestingIndictmentCountModule = async () => {
     IndictmentCountController,
   )
 
+  indictmentCountModule.close()
+
   return {
     indictmentCountModel,
     indictmentCountService,

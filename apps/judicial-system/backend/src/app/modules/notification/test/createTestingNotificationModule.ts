@@ -103,7 +103,7 @@ export const createTestingNotificationModule = async () => {
     })
     .compile()
 
-  return {
+  const context = {
     messageService: notificationModule.get<MessageService>(MessageService),
     defendantService: notificationModule.get<DefendantService>(
       DefendantService,
@@ -124,4 +124,8 @@ export const createTestingNotificationModule = async () => {
       InternalNotificationController,
     ),
   }
+
+  notificationModule.close()
+
+  return context
 }
