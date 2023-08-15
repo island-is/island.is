@@ -8,7 +8,7 @@ import * as styles from './ReviewSection.css'
 import { m } from '../../../lib/messages'
 import { ReviewSectionProps, ReviewSectionState } from '../../../lib/constants'
 
-const ReviewSection: FC<ReviewSectionProps> = ({
+const ReviewSection: FC<React.PropsWithChildren<ReviewSectionProps>> = ({
   step: { state, description, title },
 }) => {
   const { formatMessage } = useLocale()

@@ -10,7 +10,7 @@ export interface Props extends FieldBaseProps {
   description?: string
 }
 
-const TextWithTooltip: FC<Props> = ({
+const TextWithTooltip: FC<React.PropsWithChildren<Props>> = ({
   application,
   field,
   title = '',

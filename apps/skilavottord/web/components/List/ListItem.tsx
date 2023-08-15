@@ -14,7 +14,7 @@ interface Content {
   href?: string
 }
 
-export const ListItem: FC<CompanyProps> = ({
+export const ListItem: FC<React.PropsWithChildren<CompanyProps>> = ({
   title,
   content,
   buttons,

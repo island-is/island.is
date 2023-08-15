@@ -30,7 +30,7 @@ interface TableListProps {
   setNameToDelete: (currentName: IcelandicNameType) => void
 }
 
-const TableList: FC<TableListProps> = ({
+const TableList: FC<React.PropsWithChildren<TableListProps>> = ({
   q,
   setCurrentName,
   setNameToDelete,

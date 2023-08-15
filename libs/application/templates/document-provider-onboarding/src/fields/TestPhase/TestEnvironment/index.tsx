@@ -21,7 +21,10 @@ export const createTestProviderMutation = gql`
   }
 `
 
-const TestEnvironment: FC<FieldBaseProps> = ({ application, error }) => {
+const TestEnvironment: FC<React.PropsWithChildren<FieldBaseProps>> = ({
+  application,
+  error,
+}) => {
   const { lang: locale, formatMessage } = useLocale()
   interface Key {
     name: string

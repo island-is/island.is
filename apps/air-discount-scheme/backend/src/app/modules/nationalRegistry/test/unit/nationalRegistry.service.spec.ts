@@ -1,5 +1,5 @@
 import { Test } from '@nestjs/testing'
-import { CACHE_MANAGER } from '@nestjs/common'
+import { CACHE_MANAGER } from '@nestjs/cache-manager'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { NationalRegistryService } from '../../nationalRegistry.service'

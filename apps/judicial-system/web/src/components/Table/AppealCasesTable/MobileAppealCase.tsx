@@ -14,6 +14,7 @@ import { TagAppealState } from '@island.is/judicial-system-web/src/components'
 import { CategoryCard } from '@island.is/judicial-system-web/src/components/Table'
 
 interface Props {
+  children: React.ReactNode
   theCase: CaseListEntry
   onClick: () => void
 }

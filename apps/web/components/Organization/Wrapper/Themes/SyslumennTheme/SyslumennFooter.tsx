@@ -29,7 +29,7 @@ interface FooterProps {
   namespace: Record<string, string>
 }
 
-const SyslumennFooter: React.FC<FooterProps> = ({
+const SyslumennFooter: React.FC<React.PropsWithChildren<FooterProps>> = ({
   title,
   logo,
   footerItems,
@@ -157,7 +157,7 @@ interface HeaderLink {
   slug: string
 }
 
-const HeaderLink: FC<HeaderLink> = ({
+const HeaderLink: FC<React.PropsWithChildren<HeaderLink>> = ({
   linkType,
   slug,
   children,

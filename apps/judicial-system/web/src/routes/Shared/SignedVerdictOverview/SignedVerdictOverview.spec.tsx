@@ -92,8 +92,10 @@ describe('shouldHideNextButton', () => {
 })
 
 describe('getExtensionInfoText', () => {
-  const formatMessage = createIntl({ locale: 'is', onError: jest.fn })
-    .formatMessage
+  const formatMessage = createIntl({
+    locale: 'is',
+    onError: jest.fn,
+  }).formatMessage
 
   const prosecutor = { role: UserRole.PROSECUTOR } as User
 

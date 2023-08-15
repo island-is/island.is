@@ -106,6 +106,7 @@ export interface LayoutProps {
   footerVersion?: 'default' | 'organization'
   respOrigin
   megaMenuData
+  children?: React.ReactNode
 }
 
 if (

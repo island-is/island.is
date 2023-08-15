@@ -19,7 +19,9 @@ interface Props {
   rules?: RegisterOptions
 }
 
-export const SelectController: FC<Props & TestSupport> = ({
+export const SelectController: FC<
+  React.PropsWithChildren<Props & TestSupport>
+> = ({
   error,
   defaultValue,
   disabled = false,

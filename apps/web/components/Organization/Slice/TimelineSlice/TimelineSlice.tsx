@@ -128,7 +128,10 @@ interface SliceProps {
   namespace: Record<string, string>
 }
 
-export const TimelineSlice: React.FC<SliceProps> = ({ slice, namespace }) => {
+export const TimelineSlice: React.FC<React.PropsWithChildren<SliceProps>> = ({
+  slice,
+  namespace,
+}) => {
   const { getMonthByIndex } = useDateUtils()
   const n = useNamespace(namespace)
 
@@ -379,10 +382,9 @@ interface ArrowButtonShadowProps {
   type: 'prev' | 'next'
 }
 
-const ArrowButtonShadow: React.FC<ArrowButtonShadowProps> = ({
-  children,
-  type,
-}) => {
+const ArrowButtonShadow: React.FC<
+  React.PropsWithChildren<ArrowButtonShadowProps>
+> = ({ children, type }) => {
   return (
     <div className={timelineStyles.arrowButtonShadow[type]}>{children}</div>
   )
@@ -626,7 +628,7 @@ const EventModal = ({
           {Boolean(event.body) &&
             renderSlices([(event.body as unknown) as SliceType])}
           {event.link && (
-            <Link href={event.link}>
+            <Link href={event.link} legacyBehavior>
               <Button variant="text" icon="arrowForward">
                 {seeMoreText}
               </Button>

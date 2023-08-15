@@ -136,7 +136,7 @@ export const AirDiscountOverview = () => {
 
             <Text variant="default" paddingTop={2}>
               {formatMessage(m.introLink, {
-                link: (str) => (
+                link: (str: any) => (
                   <a
                     href="https://island.is/loftbru/notendaskilmalar-vegagerdarinnar-fyrir-loftbru"
                     target="_blank"

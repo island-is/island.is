@@ -24,7 +24,7 @@ import * as styles from './PropertyRepeater.css'
 import { formatText, getValueViaPath } from '@island.is/application/core'
 import { error as errorMsg } from '../../lib/error'
 
-export const PropertyRepeater: FC<FieldBaseProps> = ({
+export const PropertyRepeater: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   field,
   application,
   errors,

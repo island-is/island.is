@@ -7,7 +7,7 @@ interface LabelProps {
   marginBottom?: ResponsiveProp<Space | 'auto'>
 }
 
-export const Label: FC<LabelProps> = ({
+export const Label: FC<React.PropsWithChildren<LabelProps>> = ({
   children,
   marginTop,
   marginBottom,

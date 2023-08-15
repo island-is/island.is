@@ -6,9 +6,9 @@ import { Box } from '@island.is/island-ui/core'
 import { FAFieldBaseProps } from '../../lib/types'
 import * as styles from './Logo.css'
 
-const withLogo = (Component: React.ComponentType<FAFieldBaseProps>) => (
-  props: FAFieldBaseProps,
-) => {
+const withLogo = (
+  Component: React.ComponentType<React.PropsWithChildren<FAFieldBaseProps>>,
+) => (props: FAFieldBaseProps) => {
   const [logo, setLogo] = useState<string>()
   const municipality = props.application.externalData.municipality.data
 
