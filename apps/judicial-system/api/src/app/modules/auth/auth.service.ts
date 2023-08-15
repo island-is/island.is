@@ -1,12 +1,12 @@
 import fetch from 'isomorphic-fetch'
+import jwksClient from 'jwks-rsa'
+import jwt from 'jsonwebtoken'
 
 import { Inject, Injectable } from '@nestjs/common'
 import { ConfigType } from '@nestjs/config'
-
 import type { User } from '@island.is/judicial-system/types'
 
 import { environment } from '../../../environments'
-
 import { authModuleConfig } from './auth.config'
 
 @Injectable()
@@ -46,7 +46,7 @@ export class AuthService {
     return await res.json()
   }
 
-  async fetchToken(code: string, codeVerifier: string) {
+  async fetchIdsToken(code: string, codeVerifier: string) {
     const requestBody = new URLSearchParams({
       client_id: this.config.clientId,
       client_secret: this.config.clientSecret,
@@ -68,6 +68,32 @@ export class AuthService {
         `Request failed with status ${response.status} - ${response.statusText}`,
       )
     }
+  }
+
+  async verifyIdsToken(token: string) {
+    const secretClient = jwksClient({
+      cache: true,
+      rateLimit: true,
+      jwksUri: `${this.config.domain}/${this.config.jwksEndpoint}`,
+    })
+
+    const signingKeys = await secretClient.getSigningKeys()
+
+    const successKey = signingKeys.find((sk) => {
+      try {
+        const publicKey = sk.getPublicKey()
+        jwt.verify(token, publicKey)
+        return publicKey
+      } catch (e) {
+        throw new Error(`Failed to verify token: ${e.message}`)
+      }
+    })
+
+    if (successKey) {
+      return true
+    }
+
+    return false
   }
 
   validateUser(user: User): boolean {

@@ -23,8 +23,8 @@ export const serviceSetup = (services: {
         prod: 'rettarvorslugatt.prod',
       },
       AUTH_IDS_NAME: 'Iceland authentication service',
-      IDS_SCOPE: 'openid profile',
-      IDS_CLIENT_ID: '@rettarvorslugatt.island.is/web',
+      AUTH_IDS_SCOPE: 'openid profile',
+      AUTH_IDS_CLIENT_ID: '@rettarvorslugatt.island.is/web',
       AUTH_IDS_DOMAIN: {
         dev: 'https://identity-server.dev01.devland.is',
         staging: 'https://identity-server.staging01.devland.is',
@@ -38,6 +38,7 @@ export const serviceSetup = (services: {
         prod:
           'https://rettarvorslugatt.island.is/api/auth/callback/identity-server',
       },
+      AUTH_JWKS_ENDPOINT: '.well-known/openid-configuration/jwks',
       ALLOW_AUTH_BYPASS: { dev: 'true', staging: 'true', prod: 'false' },
       BACKEND_URL: ref((h) => `http://${h.svc(services.backend)}`),
       AUDIT_TRAIL_USE_GENERIC_LOGGER: 'false',

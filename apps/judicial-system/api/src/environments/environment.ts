@@ -3,7 +3,6 @@ const devConfig = {
   auth: {
     samlEntryPoint: 'https://innskraning.island.is/?id=judicial-system.local',
     audience: 'localhost:4200',
-    allowAuthBypass: true,
     jwtSecret: 'jwt-secret',
     secretToken: 'secret-backend-api-token',
   },
@@ -43,7 +42,6 @@ const prodConfig = {
   auth: {
     samlEntryPoint: process.env.SAML_ENTRY_POINT,
     audience: process.env.AUTH_AUDIENCE,
-    allowAuthBypass: process.env.ALLOW_AUTH_BYPASS === 'true',
     jwtSecret: process.env.AUTH_JWT_SECRET ?? '',
     secretToken: process.env.BACKEND_ACCESS_TOKEN ?? '',
   },

@@ -1,5 +1,4 @@
 import { Entropy } from 'entropy-string'
-
 import { CookieOptions, Request, Response } from 'express'
 import { createHash, randomBytes } from 'crypto'
 import jwt from 'jsonwebtoken'
@@ -8,10 +7,10 @@ import { Controller, Get, Inject, Res, Query, Req } from '@nestjs/common'
 import { ConfigType } from '@nestjs/config'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
-
 import type { Logger } from '@island.is/logging'
 import {
   CSRF_COOKIE_NAME,
+  CODE_VERIFIER_COOKIE_NAME,
   ACCESS_TOKEN_COOKIE_NAME,
   EXPIRES_IN_MILLISECONDS,
   CASES_ROUTE,
@@ -29,8 +28,6 @@ import { environment } from '../../../environments'
 import { AuthUser, Cookie } from './auth.types'
 import { AuthService } from './auth.service'
 import { authModuleConfig } from './auth.config'
-
-//const { domain, clientId, scope, redirectUri } = environment.idsAuth
 
 const REDIRECT_COOKIE_NAME = 'judicial-system.redirect'
 
@@ -54,7 +51,7 @@ const ACCESS_TOKEN_COOKIE: Cookie = {
 }
 
 const CODE_VERIFIER_COOKIE: Cookie = {
-  name: 'judicial-system.code_verifier',
+  name: CODE_VERIFIER_COOKIE_NAME,
   options: {
     ...defaultCookieOptions,
     httpOnly: true,
@@ -94,7 +91,7 @@ export class AuthController {
     res.clearCookie(name, options)
 
     // Local development
-    if (environment.auth.allowAuthBypass && nationalId) {
+    if (this.config.allowAuthBypass && nationalId) {
       this.logger.debug(`Logging in using development mode`)
 
       return this.redirectAuthenticatedUser(
@@ -147,14 +144,11 @@ export class AuthController {
     @Req() req: Request,
   ) {
     this.logger.debug('Received callback request')
-
-    this.logger.debug('code' + code)
-    this.logger.debug('verifier' + req.cookies[CODE_VERIFIER_COOKIE.name])
+    const { redirectRoute } = req.cookies[REDIRECT_COOKIE_NAME] ?? {}
 
     let accessToken
-
     try {
-      accessToken = await this.authService.fetchToken(
+      accessToken = await this.authService.fetchIdsToken(
         code,
         req.cookies[CODE_VERIFIER_COOKIE.name],
       )
@@ -163,24 +157,35 @@ export class AuthController {
       return res.redirect('/?villa=innskraning-ogild')
     }
 
-    const { redirectRoute } = req.cookies[REDIRECT_COOKIE_NAME] ?? {}
-
     if (accessToken) {
-      const token = jwt.decode(accessToken.id_token) as {
-        nationalId: string
-      }
-
-      if (token) {
-        return this.redirectAuthenticatedUser(
-          {
-            nationalId: token.nationalId,
-          },
-          res,
-          redirectRoute,
-          new Entropy({ bits: 128 }).string(),
+      try {
+        const verifiedToken = await this.authService.verifyIdsToken(
+          accessToken.access_token,
         )
+
+        if (verifiedToken) {
+          this.logger.debug('Token verification successful')
+          const token = jwt.decode(accessToken.id_token) as {
+            nationalId: string
+          }
+
+          return this.redirectAuthenticatedUser(
+            {
+              nationalId: token.nationalId,
+            },
+            res,
+            redirectRoute,
+            new Entropy({ bits: 128 }).string(),
+          )
+        }
+        if (!verifiedToken) {
+          this.logger.debug('Token verification unsuccessful')
+        }
+      } catch (error) {
+        this.logger.debug('Token verification failed')
       }
     }
+    return res.redirect('/?villa=innskraning-ogild')
   }
 
   @Get('logout')

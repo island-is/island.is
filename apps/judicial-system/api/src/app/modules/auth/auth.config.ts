@@ -5,8 +5,11 @@ export const authModuleConfig = defineConfig({
   load: (env) => ({
     id: env.optional('AUTH_IDS_ID', 'judicial-system.local'),
     name: env.optional('AUTH_IDS_NAME', 'Iceland authentication service'),
-    scope: env.required('IDS_SCOPE', 'openid profile'),
-    clientId: env.required('IDS_CLIENT_ID', '@rettarvorslugatt.island.is/web'),
+    scope: env.required('AUTH_IDS_SCOPE', 'openid profile'),
+    clientId: env.required(
+      'AUTH_IDS_CLIENT_ID',
+      '@rettarvorslugatt.island.is/web',
+    ),
     domain: env.required(
       'AUTH_IDS_DOMAIN',
       'https://identity-server.dev01.devland.is',
@@ -16,5 +19,10 @@ export const authModuleConfig = defineConfig({
       'AUTH_IDS_REDIRECT_URI',
       'http://localhost:4200/api/auth/callback/identity-server',
     ),
+    jwksEndpoint: env.required(
+      'AUTH_JWKS_ENDPOINT',
+      '.well-known/openid-configuration/jwks',
+    ),
+    allowAuthBypass: env.required('ALLOW_AUTH_BYPASS', 'true') === 'true',
   }),
 })
