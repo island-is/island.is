@@ -29,8 +29,12 @@ import * as constants from '@island.is/judicial-system/consts'
 import { ProsecutorSection, SelectCourt } from '../../components'
 
 const Processing: React.FC<React.PropsWithChildren<unknown>> = () => {
-  const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
-    useContext(FormContext)
+  const {
+    workingCase,
+    setWorkingCase,
+    isLoadingWorkingCase,
+    caseNotFound,
+  } = useContext(FormContext)
   const { setAndSendCaseToServer, transitionCase } = useCase()
   const { formatMessage } = useIntl()
   const { courts } = useInstitution()
