@@ -1,6 +1,5 @@
 default_platform(:android)
 
-
 platform :android do
   desc "Upload a new AAB to the Google Play store"
   lane :play_store_upload do |options|
@@ -20,6 +19,26 @@ platform :android do
     )
   end
 
+  lane :promote do |options|
+    from = options[:from] || 'internal'
+    to = options[:to] || 'alpha'
+    apps = options[:apps] || 'dev,prod'
+    apps.split(',').each do |app|
+      upload_to_play_store(
+        track: from,
+        track_promote_to: to,
+        json_key: 'service-account.json',
+        package_name: app == 'prod' ? 'is.island.app' : 'is.island.app.dev',
+        skip_upload_apk: true,
+        skip_upload_aab: true,
+        skip_upload_metadata: true,
+        skip_upload_changelogs: true,
+        skip_upload_images: true,
+        skip_upload_screenshots: true
+      )
+    end
+  end
+
   lane :increment_version do
     increment_version_name(gradle_file_path: "app/build.gradle")
   end
@@ -30,25 +49,19 @@ platform :android do
 
   desc "Submit a new Beta Build"
   lane :beta do |options|
-    variants = options[:variants] || 'dev,prod'
+    apps = options[:apps] || 'dev,prod'
     # Increment build version
     increment_build
     # Build app variants
     gradle(
-      task: variants.split(',').map { |variant| "bundle#{variant.capitalize}Release" }.join(' '),
+      task: apps.split(',').map { |app| "bundle#{app.capitalize}Release" }.join(' '),
       print_command_output: false
     )
     # Upload variants
-    if (variants.include? 'dev')
+    apps.split(',').each do |app|
       play_store_upload(
         track: 'internal',
-        app: 'dev'
-      )
-    end
-    if (variants.include? 'prod')
-      play_store_upload(
-        track: 'internal',
-        app: 'prod'
+        app: app
       )
     end
   end

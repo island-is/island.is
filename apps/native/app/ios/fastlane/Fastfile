@@ -4,26 +4,27 @@ platform :ios do
   desc "Push a new beta build to TestFlight"
 
   lane :increment_version do
+    increment_version_number(xcodeproj: "IslandApp.xcodeproj")
+  end
+
+  lane :increment_build do
     increment_build_number(xcodeproj: "IslandApp.xcodeproj")
   end
 
-  lane :beta_dev do
-    increment_version
-    build_app(
-      workspace: "IslandApp.xcworkspace",
-      scheme: "Ísland.dev",
-      suppress_xcode_output: true
-    )
-    upload_to_testflight
-  end
-
-  lane :beta_prod do
-    increment_version
-    build_app(
-      workspace: "IslandApp.xcworkspace",
-      scheme: "Ísland.is",
-      output_directory: "./build"
-    )
-    upload_to_testflight
+  lane :beta do |options|
+    apps = options[:apps] || 'dev,prod'
+    # Increment build version
+    increment_build
+    # Build and upload to TestFlight
+    apps.split(',').each do |app|
+      build_app(
+        workspace: "IslandApp.xcworkspace",
+        scheme: app == 'dev' ? "Ísland.dev" : "Ísland.is",
+        suppress_xcode_output: true
+      )
+      upload_to_testflight(
+        skip_waiting_for_build_processing: true
+      )
+    end
   end
 end

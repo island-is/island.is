@@ -23,6 +23,14 @@ For _fastlane_ installation instructions, see [Installing _fastlane_](https://do
 
 Upload a new AAB to the Google Play store
 
+### android promote_alpha
+
+```sh
+[bundle exec] fastlane android promote_alpha
+```
+
+
+
 ### android increment_version
 
 ```sh

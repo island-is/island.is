@@ -98,16 +98,14 @@ const LightButton = (props: any) => {
       style={{
         borderColor: props.disabled
           ? 'rgba(128,128,128,0.25)'
-          : Platform.select<any>({
-              ios: DynamicColorIOS({
-                dark: theme.shades.dark.shade300,
-                light: theme.color.blue200,
-              }),
-              android:
-                theme.colorScheme === 'dark'
-                  ? theme.shades.dark.shade300
-                  : theme.color.blue200,
-            }),
+          : Platform.OS === 'ios'
+          ? DynamicColorIOS({
+              dark: theme.shades.dark.shade300,
+              light: theme.color.blue200,
+            })
+          : theme.colorScheme === 'dark'
+          ? theme.shades.dark.shade300
+          : theme.color.blue200,
         paddingTop: 8,
         paddingBottom: 8,
         minWidth: 0,
@@ -123,16 +121,14 @@ const LightButton = (props: any) => {
         fontWeight: '500',
         color: props.disabled
           ? '#999'
-          : Platform.select<any>({
-              ios: DynamicColorIOS({
-                dark: theme.shades.dark.foreground,
-                light: theme.shades.light.foreground,
-              }),
-              android:
-                theme.colorScheme === 'dark'
-                  ? theme.shades.dark.foreground
-                  : theme.shades.light.foreground,
-            }),
+          : Platform.OS === 'ios'
+          ? DynamicColorIOS({
+              dark: theme.shades.dark.foreground,
+              light: theme.shades.light.foreground,
+            })
+          : theme.colorScheme === 'dark'
+          ? theme.shades.dark.foreground
+          : theme.shades.light.foreground,
         ...props.textStyle,
       }}
     />

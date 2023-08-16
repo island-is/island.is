@@ -15,6 +15,7 @@ import financeIcon from '../../assets/icons/finance.png';
 import {useIntl} from 'react-intl';
 import {formatNationalId} from './personal-info-content';
 import {getRightButtons} from '../../utils/get-main-root';
+import {useFeatureFlag} from '../../contexts/feature-flag-provider';
 
 const Row = styled.View`
   margin-top: 16px;
@@ -65,6 +66,7 @@ const {
 export const MoreScreen: NavigationFunctionComponent = ({componentId}) => {
   const authStore = useAuthStore();
   const intl = useIntl();
+  const showFinances = useFeatureFlag('isFinancesEnabled', false);
   useNavigationOptions(componentId);
   return (
     <>
@@ -115,17 +117,19 @@ export const MoreScreen: NavigationFunctionComponent = ({componentId}) => {
               />
             }
           />
-          <ListButton
-            title={intl.formatMessage({id: 'profile.finance'})}
-            onPress={() => navigateTo(`/finance`)}
-            icon={
-              <Image
-                source={financeIcon as any}
-                style={{width: 24, height: 24}}
-                resizeMode="contain"
-              />
-            }
-          />
+          {showFinances && (
+            <ListButton
+              title={intl.formatMessage({id: 'profile.finance'})}
+              onPress={() => navigateTo(`/finance`)}
+              icon={
+                <Image
+                  source={financeIcon as any}
+                  style={{width: 24, height: 24}}
+                  resizeMode="contain"
+                />
+              }
+            />
+          )}
         </Row>
       </ScrollView>
       <BottomTabsIndicator index={4} total={5} />

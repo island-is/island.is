@@ -15,7 +15,7 @@ const Header = styled.View`
   padding-bottom: ${({theme}) => theme.spacing[1]}px;
   flex-direction: row;
   justify-content: space-between;
-  align-items: start;
+  align-items: flex-start;
 `;
 
 const HeaderTitle = styled.Text`

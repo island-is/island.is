@@ -112,7 +112,7 @@ export function FinanceStatusCard({
         },
         shadowOpacity: open ? 0.08 : 0,
         shadowRadius: 16,
-        elevation: 16,
+        elevation: 1,
         shadowColor: 'rgb(0, 32, 128)',
       }}
     >
