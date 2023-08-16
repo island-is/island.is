@@ -1,9 +1,12 @@
+import { numberFormat } from '@island.is/service-portal/core'
+
 export const displayWithUnit = (
   value: string | undefined | null,
-  unit: 'kg' | 'cc' | 'hö' | 'mm' | 'g/km',
+  unit: 'kg' | 'cc' | 'hö' | 'mm' | 'g/km' | 'km',
+  formatNumber?: boolean,
 ) => {
   if (value) {
-    return `${value} ${unit}`
+    return `${formatNumber ? numberFormat(+value) : value} ${unit}`
   }
   return ''
 }
