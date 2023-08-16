@@ -99,7 +99,7 @@ const AdminCreateDiscount = () => {
                     label="Tímalengd"
                     required
                     onChange={(opt) => {
-                      setLength(opt.value)
+                      setLength(opt?.value ?? '')
                     }}
                     options={[
                       {

@@ -2,7 +2,7 @@ import { getHolidays } from 'fridagar'
 import { ISODate, toISODate } from '@island.is/regulations'
 import { startOfDay, addDays } from 'date-fns/esm'
 
-import { Option } from '@island.is/island-ui/core'
+import { StringOption as Option } from '@island.is/island-ui/core'
 
 // ---------------------------------------------------------------------------
 
