@@ -679,7 +679,9 @@ export const OrganizationWrapper: React.FC<
 
   usePlausiblePageview(organizationPage.organization?.trackingDomain)
 
-  useEffect(() => setIsMobile(width < theme.breakpoints.md), [width])
+  useEffect(() => {
+    setIsMobile(width < theme.breakpoints.md)
+  }, [width])
 
   const secondaryNavList: NavigationItem[] =
     organizationPage.secondaryMenu?.childrenLinks.map(({ text, url }) => ({
