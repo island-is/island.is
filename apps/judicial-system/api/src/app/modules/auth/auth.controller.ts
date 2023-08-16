@@ -54,7 +54,6 @@ const CODE_VERIFIER_COOKIE: Cookie = {
   name: CODE_VERIFIER_COOKIE_NAME,
   options: {
     ...defaultCookieOptions,
-    httpOnly: true,
   },
 }
 const CSRF_COOKIE: Cookie = {
@@ -89,6 +88,7 @@ export class AuthController {
     const { name, options } = REDIRECT_COOKIE
 
     res.clearCookie(name, options)
+    res.clearCookie(CODE_VERIFIER_COOKIE.name, CODE_VERIFIER_COOKIE.options)
 
     // Local development
     if (this.config.allowAuthBypass && nationalId) {
@@ -145,13 +145,13 @@ export class AuthController {
   ) {
     this.logger.debug('Received callback request')
     const { redirectRoute } = req.cookies[REDIRECT_COOKIE_NAME] ?? {}
+    const codeVerifier = req.cookies[CODE_VERIFIER_COOKIE.name]
+
+    res.clearCookie(CODE_VERIFIER_COOKIE.name, CODE_VERIFIER_COOKIE.options)
 
     let accessToken
     try {
-      accessToken = await this.authService.fetchIdsToken(
-        code,
-        req.cookies[CODE_VERIFIER_COOKIE.name],
-      )
+      accessToken = await this.authService.fetchIdsToken(code, codeVerifier)
     } catch (err) {
       this.logger.error(err)
       return res.redirect('/?villa=innskraning-ogild')
@@ -194,6 +194,7 @@ export class AuthController {
 
     res.clearCookie(ACCESS_TOKEN_COOKIE.name, ACCESS_TOKEN_COOKIE.options)
     res.clearCookie(CSRF_COOKIE.name, CSRF_COOKIE.options)
+    res.clearCookie(CODE_VERIFIER_COOKIE.name, CODE_VERIFIER_COOKIE.options)
 
     return res.json({ logout: true })
   }
