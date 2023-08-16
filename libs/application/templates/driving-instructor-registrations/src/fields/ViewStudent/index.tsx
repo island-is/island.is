@@ -70,16 +70,13 @@ const ViewStudent = ({
   const [registerLesson, { loading: loadingRegistration }] = useMutation(
     RegisterDrivingLesson,
   )
-  const [deleteLesson, { loading: loadingDeletion }] = useMutation(
-    DeleteDrivingLesson,
-  )
-  const [editLesson, { loading: loadingEdition }] = useMutation(
-    EditDrivingLesson,
-  )
+  const [deleteLesson, { loading: loadingDeletion }] =
+    useMutation(DeleteDrivingLesson)
+  const [editLesson, { loading: loadingEdition }] =
+    useMutation(EditDrivingLesson)
 
-  const [allowDriving, { loading: loadingAllow }] = useMutation(
-    AllowPracticeDriving,
-  )
+  const [allowDriving, { loading: loadingAllow }] =
+    useMutation(AllowPracticeDriving)
 
   const [minutesInputActive, setMinutesInputActive] = useState(false)
   const [minutes, setMinutes] = useState<number>(0)
@@ -100,9 +97,11 @@ const ViewStudent = ({
     [],
   )
 
-  const userNationalId = (application.externalData.nationalRegistry?.data as {
-    nationalId?: string
-  })?.nationalId
+  const userNationalId = (
+    application.externalData.nationalRegistry?.data as {
+      nationalId?: string
+    }
+  )?.nationalId
 
   const studentRegistrations = student?.book
     ?.teachersAndLessons as Array<DrivingBookLesson>

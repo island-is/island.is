@@ -148,12 +148,13 @@ const AccessControlCompany: FC<React.PropsWithChildren<unknown>> = () => {
   //   error: accessControlsError,
   //   loading: accessControlsLoading,
   // } = useQuery<Query>(SkilavottordAccessControlsQuery, { ssr: false })
-  const { data: accessControlsData, error, loading } = useQuery<Query>(
-    SkilavottordAccessControlsByRecyclingPartnerQuery,
-    {
-      ssr: false,
-    },
-  )
+  const {
+    data: accessControlsData,
+    error,
+    loading,
+  } = useQuery<Query>(SkilavottordAccessControlsByRecyclingPartnerQuery, {
+    ssr: false,
+  })
 
   const [createSkilavottordAccessControl] = useMutation(
     CreateSkilavottordAccessControlMutation,

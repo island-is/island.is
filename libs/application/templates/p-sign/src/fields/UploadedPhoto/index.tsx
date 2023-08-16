@@ -21,11 +21,12 @@ export const PresignedUrlQuery = gql`
 const UploadedPhoto = ({ application }: UploadedPhotoProps) => {
   const { formatMessage } = useLocale()
 
-  const attachmentKey = ((application.answers.photo as Photo)
-    ?.attachments as Array<{
-    key: string
-    name: string
-  }>)[0]?.key
+  const attachmentKey = (
+    (application.answers.photo as Photo)?.attachments as Array<{
+      key: string
+      name: string
+    }>
+  )[0]?.key
 
   const { data: presignedUrl } = useQuery(PresignedUrlQuery, {
     variables: {

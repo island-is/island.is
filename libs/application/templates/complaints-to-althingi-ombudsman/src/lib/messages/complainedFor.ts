@@ -8,8 +8,7 @@ export const complainedFor = {
       description: 'Title about whom is complained for',
     },
     complainedForInformationConnection: {
-      id:
-        'ctao.application:complainee.general.complainedForInformationConnection',
+      id: 'ctao.application:complainee.general.complainedForInformationConnection',
       defaultMessage: 'Hver eru tengsl við þann aðila',
       description:
         'Title about how the user is connected to the person being complained for',

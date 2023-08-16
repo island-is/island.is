@@ -17,9 +17,11 @@ export const isGovernmentComplainee = (answers: Answer) => {
 }
 
 export const getComplaintType = (answers: Answer) => {
-  return (answers as {
-    complaintType: OmbudsmanComplaintTypeEnum
-  })?.complaintType
+  return (
+    answers as {
+      complaintType: OmbudsmanComplaintTypeEnum
+    }
+  )?.complaintType
 }
 
 const getDateAYearBack = () => {
@@ -32,9 +34,11 @@ const getDateAYearBack = () => {
 export const isDecisionDateOlderThanYear = (answers: Answer) => {
   // Checks if date exists and if it's older than a year
   const aYearBack = getDateAYearBack()
-  const date = (answers as {
-    complaintDescription: { decisionDate: string }
-  }).complaintDescription?.decisionDate
+  const date = (
+    answers as {
+      complaintDescription: { decisionDate: string }
+    }
+  ).complaintDescription?.decisionDate
 
   return !!date && new Date(date).getTime() < aYearBack.getTime()
 }

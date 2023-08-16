@@ -28,9 +28,8 @@ const Estimation = ({
   usePersonalTaxCredit,
   familyStatus,
 }: Props) => {
-  const { municipality, nationalRegistryData, myApplication } = useContext(
-    AppContext,
-  )
+  const { municipality, nationalRegistryData, myApplication } =
+    useContext(AppContext)
 
   const getAidType = () => {
     switch (true) {
