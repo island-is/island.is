@@ -32,12 +32,8 @@ describe('CaseController - Create', () => {
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const {
-      defendantService,
-      sequelize,
-      caseModel,
-      caseController,
-    } = await createTestingCaseModule()
+    const { defendantService, sequelize, caseModel, caseController } =
+      await createTestingCaseModule()
 
     mockDefendantService = defendantService
     mockCaseModel = caseModel
@@ -234,7 +230,8 @@ describe('CaseController - Create', () => {
     beforeEach(async () => {
       const mockCreate = mockCaseModel.create as jest.Mock
       mockCreate.mockResolvedValueOnce(createdCase)
-      const mockDefendantCreate = mockDefendantService.createForNewCase as jest.Mock
+      const mockDefendantCreate =
+        mockDefendantService.createForNewCase as jest.Mock
       mockDefendantCreate.mockRejectedValueOnce(new Error('Some error'))
 
       then = await givenWhenThen(user, caseToCreate)

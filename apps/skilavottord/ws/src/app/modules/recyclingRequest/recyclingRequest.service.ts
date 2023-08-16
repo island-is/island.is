@@ -36,12 +36,8 @@ export class RecyclingRequestService {
 
   async deRegisterVehicle(vehiclePermno: string, disposalStation: string) {
     try {
-      const {
-        restAuthUrl,
-        restDeRegUrl,
-        restUsername,
-        restPassword,
-      } = environment.samgongustofa
+      const { restAuthUrl, restDeRegUrl, restUsername, restPassword } =
+        environment.samgongustofa
 
       const jsonObj = {
         username: restUsername,

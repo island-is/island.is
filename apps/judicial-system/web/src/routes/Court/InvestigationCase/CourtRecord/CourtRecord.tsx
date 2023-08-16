@@ -98,10 +98,8 @@ const CourtRecord = () => {
   } = useContext(FormContext)
 
   const [courtLocationEM, setCourtLocationEM] = useState<string>('')
-  const [
-    sessionBookingsErrorMessage,
-    setSessionBookingsMessage,
-  ] = useState<string>('')
+  const [sessionBookingsErrorMessage, setSessionBookingsMessage] =
+    useState<string>('')
 
   useDeb(workingCase, [
     'courtAttendees',

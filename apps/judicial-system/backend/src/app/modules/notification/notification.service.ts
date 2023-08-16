@@ -402,14 +402,12 @@ export class NotificationService {
   private sendReadyForCourtEmailNotificationToCourt(
     theCase: Case,
   ): Promise<Recipient> {
-    const {
-      subject,
-      body,
-    } = formatCourtIndictmentReadyForCourtEmailNotification(
-      this.formatMessage,
-      theCase,
-      `${this.config.clientUrl}${INDICTMENTS_COURT_OVERVIEW_ROUTE}/${theCase.id}`,
-    )
+    const { subject, body } =
+      formatCourtIndictmentReadyForCourtEmailNotification(
+        this.formatMessage,
+        theCase,
+        `${this.config.clientUrl}${INDICTMENTS_COURT_OVERVIEW_ROUTE}/${theCase.id}`,
+      )
 
     return this.sendEmail(
       subject,
@@ -706,9 +704,8 @@ export class NotificationService {
       )
     }
 
-    const shouldSendNotificationToPrison = await this.shouldSendNotificationToPrison(
-      theCase,
-    )
+    const shouldSendNotificationToPrison =
+      await this.shouldSendNotificationToPrison(theCase)
 
     if (shouldSendNotificationToPrison) {
       promises.push(this.sendCourtDateEmailNotificationToPrison(theCase))
@@ -917,9 +914,8 @@ export class NotificationService {
       theCase.decision === CaseDecision.ACCEPTING ||
       theCase.decision === CaseDecision.ACCEPTING_PARTIALLY
     ) {
-      const shouldSendNotificationToPrison = await this.shouldSendNotificationToPrison(
-        theCase,
-      )
+      const shouldSendNotificationToPrison =
+        await this.shouldSendNotificationToPrison(theCase)
 
       if (shouldSendNotificationToPrison) {
         promises.push(this.sendRulingEmailNotificationToPrison(theCase))
@@ -991,9 +987,8 @@ export class NotificationService {
       ),
     ]
 
-    const shouldSendNotificationToPrison = await this.shouldSendNotificationToPrison(
-      theCase,
-    )
+    const shouldSendNotificationToPrison =
+      await this.shouldSendNotificationToPrison(theCase)
 
     if (shouldSendNotificationToPrison) {
       promises.push(
@@ -1692,9 +1687,8 @@ export class NotificationService {
       theCase.decision === CaseDecision.ACCEPTING ||
       theCase.decision === CaseDecision.ACCEPTING_PARTIALLY
     ) {
-      const shouldSendNotificationToPrison = await this.shouldSendNotificationToPrison(
-        theCase,
-      )
+      const shouldSendNotificationToPrison =
+        await this.shouldSendNotificationToPrison(theCase)
 
       if (shouldSendNotificationToPrison) {
         promises.push(

@@ -26,15 +26,13 @@ export const strings = defineMessages({
       'Notaður sem texti í "viltu skrá annan saksóknara á málið" tilkynningaglugganum á óskir um fyrirtöku skrefi.',
   },
   accessModalPrimaryButtonText: {
-    id:
-      'judicial.system.core:prosecutor_section.access_modal.primary_button_text',
+    id: 'judicial.system.core:prosecutor_section.access_modal.primary_button_text',
     defaultMessage: 'Já, halda áfram',
     description:
       'Notaður sem texti í "halda áfram" takkanum í tilkynningaglugganum á óskir um fyrirtöku skrefi.',
   },
   accessModalSecondaryButtonText: {
-    id:
-      'judicial.system.core:prosecutor_section.access_modal.secondary_button_text',
+    id: 'judicial.system.core:prosecutor_section.access_modal.secondary_button_text',
     defaultMessage: 'Nei, hætta við',
     description:
       'Notaður sem texti í "hætta við" takkanum í tilkynningaglugganum á óskir um fyrirtöku skrefi.',

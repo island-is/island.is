@@ -158,9 +158,8 @@ const options = (type) => ({
       )
     },
     [BLOCKS.EMBEDDED_ENTRY]: (node) => {
-      const embeddedNode = embeddedNodes()[
-        node.data.target?.sys?.contentType?.sys?.id
-      ]
+      const embeddedNode =
+        embeddedNodes()[node.data.target?.sys?.contentType?.sys?.id]
 
       if (!embeddedNode) return null
 

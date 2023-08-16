@@ -105,9 +105,8 @@ export const createTestingNotificationModule = async () => {
 
   return {
     messageService: notificationModule.get<MessageService>(MessageService),
-    defendantService: notificationModule.get<DefendantService>(
-      DefendantService,
-    ),
+    defendantService:
+      notificationModule.get<DefendantService>(DefendantService),
     emailService: notificationModule.get<EmailService>(EmailService),
     smsService: notificationModule.get<SmsService>(SmsService),
     courtService: notificationModule.get<CourtService>(CourtService),
@@ -120,8 +119,9 @@ export const createTestingNotificationModule = async () => {
     notificationController: notificationModule.get<NotificationController>(
       NotificationController,
     ),
-    internalNotificationController: notificationModule.get<InternalNotificationController>(
-      InternalNotificationController,
-    ),
+    internalNotificationController:
+      notificationModule.get<InternalNotificationController>(
+        InternalNotificationController,
+      ),
   }
 }

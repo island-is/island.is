@@ -135,8 +135,10 @@ export const useCourtUpload = (
               (error as ApolloError).graphQLErrors[0].extensions?.code,
             detail:
               (error instanceof ApolloError &&
-                ((error as ApolloError).graphQLErrors[0].extensions
-                  ?.problem as { detail: string })?.detail) ||
+                (
+                  (error as ApolloError).graphQLErrors[0].extensions
+                    ?.problem as { detail: string }
+                )?.detail) ||
               '',
           }
 

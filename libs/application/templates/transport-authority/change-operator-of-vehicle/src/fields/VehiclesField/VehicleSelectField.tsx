@@ -39,21 +39,19 @@ export const VehicleSelectField: FC<
   const currentVehicle = currentVehicleList[parseInt(vehicleValue, 10)]
 
   const [isLoading, setIsLoading] = useState<boolean>(false)
-  const [
-    selectedVehicle,
-    setSelectedVehicle,
-  ] = useState<VehiclesCurrentVehicleWithOperatorChangeChecks | null>(
-    currentVehicle && currentVehicle.permno
-      ? {
-          permno: currentVehicle.permno,
-          make: currentVehicle?.make || '',
-          color: currentVehicle?.color || '',
-          role: currentVehicle?.role,
-          isDebtLess: true,
-          validationErrorMessages: [],
-        }
-      : null,
-  )
+  const [selectedVehicle, setSelectedVehicle] =
+    useState<VehiclesCurrentVehicleWithOperatorChangeChecks | null>(
+      currentVehicle && currentVehicle.permno
+        ? {
+            permno: currentVehicle.permno,
+            make: currentVehicle?.make || '',
+            color: currentVehicle?.color || '',
+            role: currentVehicle?.role,
+            isDebtLess: true,
+            validationErrorMessages: [],
+          }
+        : null,
+    )
   const [plate, setPlate] = useState<string>(
     getValueViaPath(application.answers, 'pickVehicle.plate', '') as string,
   )

@@ -98,8 +98,7 @@ const StudentAssessmentTable = () => {
         <IntroHeader
           title={data?.educationExamResult.fullName}
           intro={{
-            id:
-              'sp.education-student-assessment:education-student-assessment-intro',
+            id: 'sp.education-student-assessment:education-student-assessment-intro',
             defaultMessage:
               'Hér birtast einkunnir þínar og barna þinna úr samræmdum prófum frá árinu 2020 sem sóttar eru til Menntamálastofnunar. Unnið er að því að því að koma öllum einkunnum úr menntakerfi Íslands á einn stað.',
           }}

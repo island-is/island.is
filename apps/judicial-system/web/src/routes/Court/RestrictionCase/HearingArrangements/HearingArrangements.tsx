@@ -46,11 +46,8 @@ export const HearingArrangements: React.FC<
 
   const [navigateTo, setNavigateTo] = useState<keyof stepValidationsType>()
 
-  const {
-    setAndSendCaseToServer,
-    sendNotification,
-    isSendingNotification,
-  } = useCase()
+  const { setAndSendCaseToServer, sendNotification, isSendingNotification } =
+    useCase()
   const { formatMessage } = useIntl()
   const {
     courtDate,

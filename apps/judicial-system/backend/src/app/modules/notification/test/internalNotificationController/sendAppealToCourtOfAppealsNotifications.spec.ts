@@ -39,10 +39,8 @@ describe('InternalNotificationController - Send appeal to court of appeals notif
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const {
-      emailService,
-      internalNotificationController,
-    } = await createTestingNotificationModule()
+    const { emailService, internalNotificationController } =
+      await createTestingNotificationModule()
 
     mockEmailService = emailService
 

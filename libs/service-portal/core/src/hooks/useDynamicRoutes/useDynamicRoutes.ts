@@ -35,10 +35,8 @@ export const GET_DRIVING_LICENSE_BOOK_QUERY = gql`
 export const useDynamicRoutes = () => {
   const [activeDynamicRoutes, setActiveDynamicRoutes] = useState<string[]>([])
   const featureFlagClient: FeatureFlagClient = useFeatureFlagClient()
-  const [
-    educationGraduationFlagEnabled,
-    setEducationGraduationFlagEnabled,
-  ] = useState<boolean>(false)
+  const [educationGraduationFlagEnabled, setEducationGraduationFlagEnabled] =
+    useState<boolean>(false)
   useEffect(() => {
     const isFlagEnabled = async () => {
       const eduFfEnabled = await featureFlagClient.getValue(

@@ -164,7 +164,7 @@ export default function CreatePermission() {
                     <InputError
                       id="environments"
                       errorMessage={formatErrorMessage(
-                        (actionData?.errors?.environments as unknown) as string,
+                        actionData?.errors?.environments as unknown as string,
                       )}
                     />
                   </GridColumn>

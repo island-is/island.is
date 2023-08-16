@@ -229,19 +229,18 @@ export const defaultRenderComponent = (
   }
 }
 
-const typography = (
-  variant: TextProps['variant'],
-  as: TextProps['as'],
-  withId = false,
-) => (_: Block | Inline, children: ReactNode) => (
-  <Text
-    id={withId ? slugify(String(children)) : undefined}
-    variant={variant}
-    as={as}
-  >
-    {children}
-  </Text>
-)
+const typography =
+  (variant: TextProps['variant'], as: TextProps['as'], withId = false) =>
+  (_: Block | Inline, children: ReactNode) =>
+    (
+      <Text
+        id={withId ? slugify(String(children)) : undefined}
+        variant={variant}
+        as={as}
+      >
+        {children}
+      </Text>
+    )
 
 export const defaultRenderNode: Readonly<RenderNode> = {
   [BLOCKS.HEADING_1]: typography('h1', 'h1', true),
@@ -261,7 +260,7 @@ export const defaultRenderNode: Readonly<RenderNode> = {
     node: Block | Inline,
     children: ReactNode,
   ): ReactNode => {
-    const asset = (node.data.target as unknown) as Asset
+    const asset = node.data.target as unknown as Asset
     return asset.fields.file?.url ? (
       <Hyperlink href={asset.fields.file.url}>{children}</Hyperlink>
     ) : null

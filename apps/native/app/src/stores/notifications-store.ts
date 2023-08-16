@@ -41,8 +41,7 @@ const firstNotification: Notification = {
   id: 'FIRST_NOTIFICATION',
   title: 'Stafrænt Ísland',
   body: 'Fyrsta útgáfa af Ísland.is appinu',
-  copy:
-    'Í þessari fyrstu útgáfu af Ísland.is appinu getur þú nálgast rafræn skjöl og skírteini frá hinu opinbera, fengið tilkynningar og séð stöðu umsókna.',
+  copy: 'Í þessari fyrstu útgáfu af Ísland.is appinu getur þú nálgast rafræn skjöl og skírteini frá hinu opinbera, fengið tilkynningar og séð stöðu umsókna.',
   date: new Date().getTime(),
   data: {},
   read: true,

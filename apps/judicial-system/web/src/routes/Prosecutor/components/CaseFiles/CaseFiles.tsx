@@ -69,12 +69,8 @@ export const mapPoliceCaseFileToPoliceCaseFileCheck = (
 })
 
 export const CaseFiles: React.FC<React.PropsWithChildren<unknown>> = () => {
-  const {
-    workingCase,
-    setWorkingCase,
-    isLoadingWorkingCase,
-    caseNotFound,
-  } = useContext(FormContext)
+  const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
+    useContext(FormContext)
   const {
     data: policeData,
     loading: policeDataLoading,
