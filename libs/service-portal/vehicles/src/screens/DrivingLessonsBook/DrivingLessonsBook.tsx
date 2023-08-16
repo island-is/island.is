@@ -87,7 +87,6 @@ const DrivingLessonsBook = () => {
         <IntroHeader
           title={formatMessage(messages.vehicleDrivingLessonsTitle)}
           intro={formatMessage(messages.vehicleDrivingLessonsText)}
-          img="./assets/images/drivingLessons.svg"
         />
       </Box>
       {loading && (
