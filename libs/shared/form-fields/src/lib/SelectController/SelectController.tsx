@@ -1,31 +1,25 @@
 import React, { FC } from 'react'
 import { Controller, useFormContext, RegisterOptions } from 'react-hook-form'
-import {
-  Select,
-  StringOption as Option,
-  InputBackgroundColor,
-} from '@island.is/island-ui/core'
+import { Select, Option, InputBackgroundColor } from '@island.is/island-ui/core'
 import { TestSupport } from '@island.is/island-ui/utils'
 
-interface Props {
+interface Props<Value> {
   error?: string
   id: string
-  defaultValue?: unknown
+  defaultValue?: Value
   disabled?: boolean
   name?: string
   label: string
-  options?: Option[]
+  options?: Option<Value>[]
   placeholder?: string
-  onSelect?: (s: Option, onChange: (t: unknown) => void) => void
+  onSelect?: (s: Option<Value>, onChange: (t: unknown) => void) => void
   backgroundColor?: InputBackgroundColor
   isSearchable?: boolean
   required?: boolean
   rules?: RegisterOptions
 }
 
-export const SelectController: FC<
-  React.PropsWithChildren<Props & TestSupport>
-> = ({
+export const SelectController = <Value,>({
   error,
   defaultValue,
   disabled = false,
@@ -40,7 +34,7 @@ export const SelectController: FC<
   dataTestId,
   required = false,
   rules,
-}) => {
+}: Props<Value> & TestSupport) => {
   const { clearErrors } = useFormContext()
   return (
     <Controller
@@ -64,9 +58,10 @@ export const SelectController: FC<
           isSearchable={isSearchable}
           onChange={(newVal) => {
             clearErrors(id)
-            onChange((newVal as Option).value)
-            if (onSelect) {
-              onSelect(newVal as Option, onChange)
+
+            onChange(newVal?.value)
+            if (onSelect && newVal) {
+              onSelect(newVal, onChange)
             }
           }}
         />
