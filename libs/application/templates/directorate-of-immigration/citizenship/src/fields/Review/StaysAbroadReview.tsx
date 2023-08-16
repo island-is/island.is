@@ -45,15 +45,10 @@ export const StaysAbroadReview: FC<Props> = ({
           answers?.staysAbroad?.selectedAbroadCountries &&
           answers?.staysAbroad?.selectedAbroadCountries?.length > 0 ? (
             answers?.staysAbroad?.selectedAbroadCountries?.map((country) => {
-              return (
-                <GridColumn span="1/2">
-                  {
-                    countryOptions.filter(
-                      (z) => z.id === parseInt(country.countryId),
-                    )[0]
-                  }
-                </GridColumn>
-              )
+              const countryInfo = countryOptions.filter(
+                (z) => z.id === parseInt(country.countryId),
+              )[0]
+              return <GridColumn span="1/2">{countryInfo.name}</GridColumn>
             })
           ) : (
             <GridColumn>

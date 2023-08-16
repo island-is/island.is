@@ -38,7 +38,9 @@ export const SelectChildren = ({ field, application, error }: any) => {
             {showForeignDomicileTag && (
               <div style={{ paddingRight: 15 }}>
                 <Tag disabled variant="red">
-                  {selectChildren.checkboxes.tagLegalDomicileNotIceland}
+                  {formatMessage(
+                    selectChildren.checkboxes.tagLegalDomicileNotIceland,
+                  )}
                 </Tag>
               </div>
             )}
