@@ -47,12 +47,12 @@ const SearchAndFilter = ({
   const sortedPolicyAreas = sortLocale({
     list: PolicyAreas,
     sortOption: 'label',
-  }) // as Options<Option>
+  })
 
   const sortedInstitutions = sortLocale({
     list: Institutions,
     sortOption: 'label',
-  }) //as Options<Option>
+  })
 
   return (
     <GridContainer>
@@ -83,7 +83,7 @@ const SearchAndFilter = ({
                 filters?.policyAreas.length === 1 &&
                 [...PolicyAreas].filter(
                   (item) => parseInt(item.value) === filters?.policyAreas[0],
-                )[0]
+                )?.[0]
               }
             />
           </GridColumn>
@@ -102,7 +102,7 @@ const SearchAndFilter = ({
                 filters?.institutions.length === 1 &&
                 [...Institutions].filter(
                   (item) => parseInt(item.value) === filters?.institutions[0],
-                )[0]
+                )?.[0]
               }
               isClearable
             />
