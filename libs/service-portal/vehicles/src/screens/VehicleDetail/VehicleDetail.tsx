@@ -101,6 +101,7 @@ export const GET_USERS_VEHICLE_DETAIL = gql`
         type
         date
         result
+        odometer
         nextInspectionDate
         lastInspectionDate
         insuranceStatus

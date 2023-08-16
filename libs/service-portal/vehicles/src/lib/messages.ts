@@ -218,6 +218,10 @@ export const messages = defineMessages({
     id: 'sp.vehicles:result',
     defaultMessage: 'Niðurstaða',
   },
+  odometer: {
+    id: 'sp.vehicles:odometer',
+    defaultMessage: 'Kílómetrastaða',
+  },
   plateStatus: {
     id: 'sp.vehicles:plate-status',
     defaultMessage: 'Staða plötu',
