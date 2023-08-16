@@ -114,18 +114,12 @@ const DrivingLessonsBook = () => {
             <Divider />
             <UserInfoLine
               label={formatMessage(messages.vehicleDrivingLessonsTeacher)}
-              content={
-                <Box>
-                  <div>{book?.teacherName}</div>
-                  <LinkResolver
-                    href={formatMessage(urls.instructorApplication)}
-                  >
-                    <Button variant="text" size="small" type="button">
-                      {formatMessage(messages.changeInstructor)}
-                    </Button>
-                  </LinkResolver>
-                </Box>
-              }
+              editLink={{
+                title: messages.changeInstructor,
+                url: formatMessage(urls.instructorApplication),
+                external: true,
+              }}
+              content={book?.teacherName ?? ''}
               loading={loading}
               // Removed until application is ready
               // editLink={{
