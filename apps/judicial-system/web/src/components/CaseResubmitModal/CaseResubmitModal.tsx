@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
-import type { IntlShape } from 'react-intl';
-import { useIntl } from 'react-intl'
+import { useIntl, type IntlShape } from 'react-intl'
 
 import { Input, Box } from '@island.is/island-ui/core'
 import type { TempCase as Case } from '@island.is/judicial-system-web/src/types'

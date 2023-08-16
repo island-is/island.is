@@ -1,6 +1,5 @@
 import React from 'react'
-import type { IntlShape} from 'react-intl';
-import { useIntl } from 'react-intl'
+import { useIntl, type IntlShape } from 'react-intl'
 import flatMap from 'lodash/flatMap'
 
 import { Box, Tag, Text } from '@island.is/island-ui/core'
@@ -9,11 +8,10 @@ import {
   enumerate,
   formatDate,
 } from '@island.is/judicial-system/formatters'
-import type {
-  Defendant} from '@island.is/judicial-system/types';
 import {
   completedCaseStates,
   isIndictmentCase,
+  type Defendant,
 } from '@island.is/judicial-system/types'
 import { core } from '@island.is/judicial-system-web/messages'
 import type { TempCase as Case } from '@island.is/judicial-system-web/src/types'
