@@ -159,7 +159,7 @@ const inspectionInfoArray = (
         },
         data.odometer && {
           title: formatMessage(messages.odometer),
-          value: displayWithUnit(data.odometer, 'km'),
+          value: displayWithUnit(data.odometer, 'km', true),
         },
         data.date && {
           title: formatMessage(messages.date),
