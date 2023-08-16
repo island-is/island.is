@@ -142,6 +142,7 @@ const PetitionView: Screen<PetitionViewProps> = ({ namespace }) => {
                 <NextLink
                   {...linkResolver(typename as LinkType, slug)}
                   passHref
+                  legacyBehavior
                 >
                   {link}
                 </NextLink>
@@ -261,7 +262,7 @@ const PetitionView: Screen<PetitionViewProps> = ({ namespace }) => {
   )
 }
 
-PetitionView.getInitialProps = async ({ apolloClient, locale }) => {
+PetitionView.getProps = async ({ apolloClient, locale }) => {
   const [namespace] = await Promise.all([
     apolloClient
       .query<GetNamespaceQuery, QueryGetNamespaceArgs>({

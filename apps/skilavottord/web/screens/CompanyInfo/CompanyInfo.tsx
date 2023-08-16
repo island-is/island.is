@@ -41,7 +41,7 @@ const SkilavottordAllActiveRecyclingPartnersQuery = gql`
   }
 `
 
-const CompanyInfo: FC = () => {
+const CompanyInfo: FC<React.PropsWithChildren<unknown>> = () => {
   const { user } = useContext(UserContext)
   const { data } = useQuery<Query>(SkilavottordAllActiveRecyclingPartnersQuery)
 

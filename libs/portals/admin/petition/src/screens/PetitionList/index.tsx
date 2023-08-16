@@ -91,7 +91,7 @@ const PetitionList = () => {
                 <AlertMessage
                   type="error"
                   title={formatMessage(m.listIsLocked)}
-                  message={formatMessage(m.intro)}
+                  message={formatMessage(m.listIsLockedMessage)}
                 />
               </Box>
             )}

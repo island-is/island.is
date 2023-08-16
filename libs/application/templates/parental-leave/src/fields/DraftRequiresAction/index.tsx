@@ -12,7 +12,10 @@ import { handleServerError } from '@island.is/application/ui-components'
 import { parentalLeaveFormMessages } from '../../lib/messages'
 import { States as ApplicationStates } from '../../constants'
 
-const DraftRequireAction: FC<FieldBaseProps> = ({ application, refetch }) => {
+const DraftRequireAction: FC<React.PropsWithChildren<FieldBaseProps>> = ({
+  application,
+  refetch,
+}) => {
   const [submitApplication, { loading: loadingSubmit }] = useMutation(
     SUBMIT_APPLICATION,
     {

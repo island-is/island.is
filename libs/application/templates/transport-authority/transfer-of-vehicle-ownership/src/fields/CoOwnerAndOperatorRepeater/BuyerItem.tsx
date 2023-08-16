@@ -14,7 +14,7 @@ interface Props {
   setBuyer: Dispatch<SetStateAction<UserInformation>>
 }
 
-export const BuyerItem: FC<Props & FieldBaseProps> = ({
+export const BuyerItem: FC<React.PropsWithChildren<Props & FieldBaseProps>> = ({
   id,
   buyer,
   setBuyer,

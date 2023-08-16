@@ -33,7 +33,9 @@ const Sidebar = ({ children }: SidebarProps) => {
   useEffect(() => {
     onResize()
     window.addEventListener('resize', onResize, { passive: true })
-    return () => window.removeEventListener('resize', onResize)
+    return () => {
+      window.removeEventListener('resize', onResize)
+    }
   }, [onResize])
 
   return (

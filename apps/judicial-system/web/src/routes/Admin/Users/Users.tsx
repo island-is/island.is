@@ -37,7 +37,7 @@ interface InstitutionData {
   institutions: Institution[]
 }
 
-export const Users: React.FC = () => {
+export const Users: React.FC<React.PropsWithChildren<unknown>> = () => {
   const router = useRouter()
   const [selectedInstitution, setSelectedInstitution] = useState<string>()
   const { formatMessage } = useIntl()

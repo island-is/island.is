@@ -1,4 +1,4 @@
-// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
+// eslint-disable-next-line @nx/enforce-module-boundaries
 import { TemplateApiError } from '@island.is/nest/problem'
 
 export type PerformActionResult =

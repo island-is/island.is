@@ -95,11 +95,13 @@ const Table = <T extends object>(
     )
   }
 
-  const ButtonRow: FC<{
-    label: string
-    onClick: () => void
-    style?: React.CSSProperties
-  }> = ({ label, onClick, style }) => {
+  const ButtonRow: FC<
+    React.PropsWithChildren<{
+      label: string
+      onClick: () => void
+      style?: React.CSSProperties
+    }>
+  > = ({ label, onClick, style }) => {
     return (
       <tr>
         <td colSpan={columns.length} style={{ textAlign: 'left', ...style }}>

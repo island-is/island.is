@@ -23,7 +23,7 @@ import { useAppealAlertBanner } from '@island.is/judicial-system-web/src/utils/h
 import CaseFilesOverview from '../components/CaseFilesOverview/CaseFilesOverview'
 import CourtOfAppealCaseOverviewHeader from '../components/CaseOverviewHeader/CaseOverviewHeader'
 
-const CourtOfAppealResult: React.FC = () => {
+const CourtOfAppealResult: React.FC<React.PropsWithChildren<unknown>> = () => {
   const {
     workingCase,
     setWorkingCase,

@@ -59,6 +59,9 @@ export class CaseListEntry {
   readonly rulingDate?: string
 
   @Field({ nullable: true })
+  readonly rulingSignatureDate?: string
+
+  @Field({ nullable: true })
   readonly courtEndTime?: string
 
   @Field(() => CaseAppealDecision, { nullable: true })

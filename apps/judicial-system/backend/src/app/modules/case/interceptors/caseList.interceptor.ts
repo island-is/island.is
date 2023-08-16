@@ -35,6 +35,7 @@ export class CaseListInterceptor implements NestInterceptor {
             courtDate: theCase.courtDate,
             initialRulingDate: theCase.initialRulingDate,
             rulingDate: theCase.rulingDate,
+            rulingSignatureDate: theCase.rulingSignatureDate,
             courtEndTime: theCase.courtEndTime,
             prosecutorAppealDecision: theCase.prosecutorAppealDecision,
             accusedAppealDecision: theCase.accusedAppealDecision,

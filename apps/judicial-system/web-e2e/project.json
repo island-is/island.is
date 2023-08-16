@@ -1,13 +1,13 @@
 {
-  "root": "apps/judicial-system/web-e2e",
+  "name": "judicial-system-web-e2e",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/judicial-system/web-e2e/src",
   "projectType": "application",
   "targets": {
     "e2e": {
-      "executor": "@nrwl/cypress:cypress",
+      "executor": "@nx/cypress:cypress",
       "options": {
         "cypressConfig": "apps/judicial-system/web-e2e/cypress.config.ts",
-        "tsConfig": "apps/judicial-system/web-e2e/tsconfig.e2e.json",
         "devServerTarget": "",
         "baseUrl": "http://localhost:4200"
       },
@@ -18,14 +18,14 @@
       }
     },
     "e2e-ci": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "cypressConfig": "apps/judicial-system/web-e2e/cypress.config.ts",
         "command": "yarn e2e-ci -n judicial-system-web-e2e -c -d dist/apps/judicial-system/web"
       }
     },
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": [
           "apps/judicial-system/web-e2e/**/*.{ts,tsx,js,jsx}"

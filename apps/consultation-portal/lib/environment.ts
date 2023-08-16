@@ -8,7 +8,8 @@ const devConfig = {
   identityServerDomain: process.env.IDENTITY_SERVER_ISSUER_DOMAIN,
   identityServerLogoutURL: 'https://beta.dev01.devland.is/samradsgatt',
   identityServerSecret: process.env.IDENTITY_SERVER_SECRET,
-  identityServerScope: 'openid profile offline_access @island.is/samradsgatt',
+  identityServerScope:
+    'openid profile offline_access @samradsgatt.island.is/samradsgatt',
   identityServerName: 'Samradsgatt',
   idsTokenCookieName: 'next-auth.session-token',
   csrfCookieName: 'next-auth.csrf-token',
@@ -23,7 +24,8 @@ const prodConfig = {
   identityServerLogoutURL: 'https://island.is/samradsgatt',
   identityServerDomain: process.env.IDENTITY_SERVER_ISSUER_DOMAIN,
   identityServerSecret: process.env.IDENTITY_SERVER_SECRET,
-  identityServerScope: 'openid profile offline_access @island.is/samradsgatt',
+  identityServerScope:
+    'openid profile offline_access @samradsgatt.island.is/samradsgatt',
   identityServerName: 'Samradsgatt',
   idsTokenCookieName: '__Secure-next-auth.session-token',
   csrfCookieName: '__Host-next-auth.csrf-token',

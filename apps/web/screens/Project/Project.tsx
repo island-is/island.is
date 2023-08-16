@@ -279,12 +279,12 @@ const ProjectPage: Screen<PageProps> = ({
           />
         )
       })}
-      <ProjectFooter projectPage={projectPage} />
+      <ProjectFooter projectPage={projectPage} namespace={projectNamespace} />
     </>
   )
 }
 
-ProjectPage.getInitialProps = async ({ apolloClient, locale, query }) => {
+ProjectPage.getProps = async ({ apolloClient, locale, query }) => {
   const [
     {
       data: { getProjectPage },

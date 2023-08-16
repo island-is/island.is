@@ -9,10 +9,9 @@ import { ReviewGroup } from '../../ReviewGroup'
 import kennitala from 'kennitala'
 import { formatPhoneNumber } from '../../../utils'
 
-export const CoOwnersSection: FC<FieldBaseProps & ReviewScreenProps> = ({
-  coOwnersAndOperators = [],
-  reviewerNationalId = '',
-}) => {
+export const CoOwnersSection: FC<
+  React.PropsWithChildren<FieldBaseProps & ReviewScreenProps>
+> = ({ coOwnersAndOperators = [], reviewerNationalId = '' }) => {
   const { formatMessage } = useLocale()
   const coOwners = coOwnersAndOperators.filter((x) => x.type === 'coOwner')
 

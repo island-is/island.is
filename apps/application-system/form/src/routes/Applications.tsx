@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useEffect, useState } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 
 import { useParams, useLocation, useNavigate } from 'react-router-dom'
 import { useMutation } from '@apollo/client'
@@ -41,7 +41,7 @@ type UseParams = {
   slug: string
 }
 
-export const Applications: FC = () => {
+export const Applications: FC<React.PropsWithChildren<unknown>> = () => {
   const { slug } = useParams() as UseParams
   const navigate = useNavigate()
   const { formatMessage } = useLocale()
@@ -62,9 +62,6 @@ export const Applications: FC = () => {
       >
     | undefined
   >(undefined)
-  const checkDelegation = useCallback(() => {
-    setDelegationsChecked((d) => !d)
-  }, [])
 
   useApplicationNamespaces(type)
 
@@ -148,7 +145,7 @@ export const Applications: FC = () => {
         <DelegationsScreen
           slug={slug}
           alternativeSubjects={foundError.alternativeSubjects}
-          checkDelegation={checkDelegation}
+          checkDelegation={setDelegationsChecked}
         />
       )
     }
@@ -168,7 +165,9 @@ export const Applications: FC = () => {
   }
 
   if (!delegationsChecked && type && slug) {
-    return <DelegationsScreen checkDelegation={checkDelegation} slug={slug} />
+    return (
+      <DelegationsScreen checkDelegation={setDelegationsChecked} slug={slug} />
+    )
   }
 
   const numberOfApplicationsInDraft = data?.applicationApplications.filter(
