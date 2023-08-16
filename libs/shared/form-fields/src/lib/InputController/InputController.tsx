@@ -2,7 +2,7 @@ import React, { forwardRef } from 'react'
 import { Input, Icon, InputBackgroundColor } from '@island.is/island-ui/core'
 import { Controller, Control, RegisterOptions } from 'react-hook-form'
 import NumberFormat, { FormatInputValueFunction } from 'react-number-format'
-import type { TestSupport } from '@island.is/island-ui/utils'
+import { TestSupport } from '@island.is/island-ui/utils'
 
 interface Props {
   autoFocus?: boolean

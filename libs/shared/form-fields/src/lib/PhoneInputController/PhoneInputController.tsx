@@ -1,7 +1,7 @@
 import React, { forwardRef } from 'react'
 import { InputBackgroundColor, PhoneInput } from '@island.is/island-ui/core'
 import { Controller, Control, RegisterOptions } from 'react-hook-form'
-import type { TestSupport } from '@island.is/island-ui/utils'
+import { TestSupport } from '@island.is/island-ui/utils'
 
 interface Props {
   autoFocus?: boolean

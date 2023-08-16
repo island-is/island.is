@@ -9,7 +9,7 @@ import {
   InputBackgroundColor,
   TagVariant,
 } from '@island.is/island-ui/core'
-import type { TestSupport } from '@island.is/island-ui/utils'
+import { TestSupport } from '@island.is/island-ui/utils'
 
 interface Option extends TestSupport {
   value: string
