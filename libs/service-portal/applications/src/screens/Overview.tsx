@@ -10,7 +10,6 @@ import {
   GridColumn,
   Input,
   Select,
-  Option,
 } from '@island.is/island-ui/core'
 import {
   useApplications,
@@ -25,9 +24,13 @@ import {
   getInstitutions,
   mapLinkToStatus,
 } from '../shared/utils'
-import { ApplicationOverViewStatus, FilterValues } from '../shared/types'
+import {
+  ApplicationOverViewStatus,
+  FilterValues,
+  InstitutionOption,
+} from '../shared/types'
 import { ApplicationGroup } from '../components/ApplicationGroup'
-import { Application, InstitutionOption } from '@island.is/application/types'
+import { Application } from '@island.is/application/types'
 import { ErrorScreen } from '@island.is/service-portal/core'
 
 const defaultInstitution: InstitutionOption = {

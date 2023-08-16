@@ -1,12 +1,12 @@
-import {
-  Application,
-  ApplicationStatus,
-  InstitutionOption,
-} from '@island.is/application/types'
+import { Application, ApplicationStatus } from '@island.is/application/types'
 import { institutionMapper } from '@island.is/application/types'
 import { Organization } from '@island.is/shared/types'
 import { ServicePortalPath } from '@island.is/service-portal/core'
-import { ApplicationOverViewStatus, FilterValues } from '../types'
+import {
+  ApplicationOverViewStatus,
+  FilterValues,
+  InstitutionOption,
+} from '../types'
 
 interface SortedApplication {
   incomplete: Application[]
