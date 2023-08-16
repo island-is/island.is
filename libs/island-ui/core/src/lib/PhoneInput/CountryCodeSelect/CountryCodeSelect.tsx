@@ -2,8 +2,7 @@ import React from 'react'
 import cn from 'classnames'
 import ReactSelect, { GroupBase } from 'react-select'
 
-import { Option as OptionType } from '@island.is/island-ui/core'
-
+import { Option as OptionType } from '../../Select/Select.types'
 import { CountryCodeSelectProps } from '../PhoneInput.types'
 import {
   Option,
