@@ -19,14 +19,16 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import { titles } from '@island.is/judicial-system-web/messages'
+import type {
+  UploadFile} from '@island.is/island-ui/core';
 import {
   Box,
   InputFileUpload,
-  Text,
-  UploadFile,
+  Text
 } from '@island.is/island-ui/core'
+import type {
+  TUploadFile} from '@island.is/judicial-system-web/src/utils/hooks';
 import {
-  TUploadFile,
   useS3Upload,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { CaseFileCategory } from '@island.is/judicial-system/types'

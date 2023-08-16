@@ -20,15 +20,17 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import { core, errors, titles } from '@island.is/judicial-system-web/messages'
+import type {
+  UploadFile} from '@island.is/island-ui/core';
 import {
   AlertMessage,
   Box,
   InputFileUpload,
-  toast,
-  UploadFile,
+  toast
 } from '@island.is/island-ui/core'
+import type {
+  TUploadFile} from '@island.is/judicial-system-web/src/utils/hooks';
 import {
-  TUploadFile,
   useCase,
   useS3Upload,
 } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -36,9 +38,10 @@ import {
   CaseFileCategory,
   CaseTransition,
 } from '@island.is/judicial-system/types'
+import type {
+  stepValidationsType} from '@island.is/judicial-system-web/src/utils/formHelper';
 import {
-  mapCaseFileToUploadFile,
-  stepValidationsType,
+  mapCaseFileToUploadFile
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import * as constants from '@island.is/judicial-system/consts'
 

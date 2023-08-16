@@ -20,9 +20,10 @@ import {
   useCase,
   useInstitution,
 } from '@island.is/judicial-system-web/src/utils/hooks'
+import type {
+  stepValidationsType} from '@island.is/judicial-system-web/src/utils/formHelper';
 import {
   removeTabsValidateAndSet,
-  stepValidationsType,
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
@@ -34,7 +35,7 @@ import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader
 import { Box, Input, Text, toast } from '@island.is/island-ui/core'
 import { isHearingArrangementsStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
-import { Institution } from '@island.is/judicial-system-web/src/graphql/schema'
+import type { Institution } from '@island.is/judicial-system-web/src/graphql/schema'
 import * as constants from '@island.is/judicial-system/consts'
 
 import {

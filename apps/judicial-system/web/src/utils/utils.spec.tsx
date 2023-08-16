@@ -5,8 +5,8 @@ import userEvent from '@testing-library/user-event'
 
 import {
   Gender,
-  Notification,
   NotificationType,
+  type Notification,
 } from '@island.is/judicial-system/types'
 
 import {

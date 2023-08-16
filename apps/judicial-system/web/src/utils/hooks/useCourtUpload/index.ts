@@ -2,14 +2,14 @@ import { useCallback, useEffect, useState } from 'react'
 import { ApolloError, useMutation } from '@apollo/client'
 
 import {
-  CaseFile as TCaseFile,
   CaseFileState,
+  type CaseFile as TCaseFile,
 } from '@island.is/judicial-system/types'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
+import type { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import {
   UploadFileToCourtDocument,
-  UploadFileToCourtMutation,
-  UploadFileToCourtMutationVariables,
+  type UploadFileToCourtMutation,
+  type UploadFileToCourtMutationVariables,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 export enum UploadState {
@@ -135,8 +135,10 @@ export const useCourtUpload = (
               (error as ApolloError).graphQLErrors[0].extensions?.code,
             detail:
               (error instanceof ApolloError &&
-                ((error as ApolloError).graphQLErrors[0].extensions
-                  ?.problem as { detail: string })?.detail) ||
+                (
+                  (error as ApolloError).graphQLErrors[0].extensions
+                    ?.problem as { detail: string }
+                )?.detail) ||
               '',
           }
 

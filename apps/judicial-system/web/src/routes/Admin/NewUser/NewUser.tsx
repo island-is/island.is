@@ -4,8 +4,9 @@ import { useMutation } from '@apollo/client'
 import { useRouter } from 'next/router'
 
 import { Skeleton } from '@island.is/judicial-system-web/src/components'
+import type {
+  User} from '@island.is/judicial-system-web/src/graphql/schema';
 import {
-  User,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { CreateUserMutation } from '@island.is/judicial-system-web/src/utils/mutations'

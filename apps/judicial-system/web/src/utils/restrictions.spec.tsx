@@ -1,6 +1,6 @@
 import React from 'react'
 import { formatCustodyRestrictions } from './restrictions'
-import { IntlFormatters, useIntl, createIntl } from 'react-intl'
+import {  useIntl, createIntl, type IntlFormatters, } from 'react-intl'
 import { MockedProvider } from '@apollo/client/testing'
 import { render, screen, getDefaultNormalizer } from '@testing-library/react'
 

@@ -18,7 +18,7 @@ import {
 } from '@island.is/judicial-system-web/messages'
 import { TIME_FORMAT } from '@island.is/judicial-system/consts'
 import { formatRequestedCustodyRestrictions } from '@island.is/judicial-system-web/src/utils/restrictions'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
+import type { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 import AccordionListItem from '../../AccordionListItem/AccordionListItem'
 import * as styles from './PoliceRequestAccordionItem.css'

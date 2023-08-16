@@ -1,6 +1,7 @@
 import React, { useCallback, useMemo, useState } from 'react'
-import { IntlShape, useIntl } from 'react-intl'
-import { ValueType } from 'react-select'
+import type { IntlShape} from 'react-intl';
+import { useIntl } from 'react-intl'
+import type { ValueType } from 'react-select'
 import InputMask from 'react-input-mask'
 
 import {
@@ -11,21 +12,22 @@ import {
   Tag,
   Icon,
 } from '@island.is/island-ui/core'
-import {
+import type {
   ReactSelectOption,
   TempCase as Case,
   TempIndictmentCount as TIndictmentCount,
 } from '@island.is/judicial-system-web/src/types'
-import {
-  offenseSubstances,
+import type {
   Substance,
-  SubstanceMap,
+  SubstanceMap} from '@island.is/judicial-system/types';
+import {
+  offenseSubstances
 } from '@island.is/judicial-system/types'
 import {
   BlueBox,
   IndictmentInfo,
 } from '@island.is/judicial-system-web/src/components'
-import { UpdateIndictmentCount } from '@island.is/judicial-system-web/src/utils/hooks/useIndictmentCounts'
+import type { UpdateIndictmentCount } from '@island.is/judicial-system-web/src/utils/hooks/useIndictmentCounts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   removeErrorMessageIfValid,

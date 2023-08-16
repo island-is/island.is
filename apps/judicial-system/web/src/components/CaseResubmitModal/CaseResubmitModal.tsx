@@ -1,8 +1,9 @@
 import React, { useState } from 'react'
-import { useIntl, IntlShape } from 'react-intl'
+import type { IntlShape } from 'react-intl';
+import { useIntl } from 'react-intl'
 
 import { Input, Box } from '@island.is/island-ui/core'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
+import type { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import { caseResubmitModal as m } from '@island.is/judicial-system-web/messages'
 
 import { Modal } from '..'

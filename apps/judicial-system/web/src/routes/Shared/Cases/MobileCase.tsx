@@ -7,7 +7,7 @@ import {
   displayFirstPlusRemaining,
   formatDOB,
 } from '@island.is/judicial-system/formatters'
-import { TempCaseListEntry as CaseListEntry } from '@island.is/judicial-system-web/src/types'
+import type { TempCaseListEntry as CaseListEntry } from '@island.is/judicial-system-web/src/types'
 import TagCaseState from '@island.is/judicial-system-web/src/components/TagCaseState/TagCaseState'
 
 import { displayCaseType } from './utils'

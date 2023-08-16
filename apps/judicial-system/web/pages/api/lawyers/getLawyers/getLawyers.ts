@@ -1,4 +1,4 @@
-import { NextApiRequest, NextApiResponse } from 'next'
+import type { NextApiRequest, NextApiResponse } from 'next'
 
 import type { Lawyer } from '@island.is/judicial-system-web/src/types'
 

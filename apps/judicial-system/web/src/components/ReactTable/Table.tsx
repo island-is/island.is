@@ -1,5 +1,7 @@
-import React, { FC, PropsWithChildren, ReactElement, useState } from 'react'
-import { Row, useSortBy, useTable } from 'react-table'
+import type { FC, PropsWithChildren, ReactElement} from 'react';
+import React, { useState } from 'react'
+import type { Row} from 'react-table';
+import { useSortBy, useTable } from 'react-table'
 import cn from 'classnames'
 
 import { Box, Icon, Text } from '@island.is/island-ui/core'

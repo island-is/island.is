@@ -15,9 +15,10 @@ import {
   PageLayout,
   FormContext,
 } from '@island.is/judicial-system-web/src/components'
+import type {
+  stepValidationsType} from '@island.is/judicial-system-web/src/utils/formHelper';
 import {
   removeTabsValidateAndSet,
-  stepValidationsType,
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { Box, Input, Text, toast } from '@island.is/island-ui/core'
@@ -33,7 +34,7 @@ import {
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 import { isHearingArrangementsStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
-import { Institution } from '@island.is/judicial-system-web/src/graphql/schema'
+import type { Institution } from '@island.is/judicial-system-web/src/graphql/schema'
 import * as constants from '@island.is/judicial-system/consts'
 
 import ArrestDate from './ArrestDate'

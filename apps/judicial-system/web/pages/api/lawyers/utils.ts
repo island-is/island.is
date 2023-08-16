@@ -1,4 +1,4 @@
-import { Lawyer } from '@island.is/judicial-system-web/src/types'
+import type { Lawyer } from '@island.is/judicial-system-web/src/types'
 
 type LawyerFull = {
   Id: number

@@ -1,4 +1,4 @@
-import { CaseListEntry } from '@island.is/judicial-system-web/src/graphql/schema'
+import type { CaseListEntry } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { useState, useMemo } from 'react'
 

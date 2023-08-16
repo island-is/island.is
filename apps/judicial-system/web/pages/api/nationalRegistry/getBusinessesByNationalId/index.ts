@@ -1,6 +1,6 @@
-import { NextApiRequest, NextApiResponse } from 'next'
+import type { NextApiRequest, NextApiResponse } from 'next'
 
-import { NationalRegistryResponseBusiness } from '@island.is/judicial-system-web/src/types'
+import type { NationalRegistryResponseBusiness } from '@island.is/judicial-system-web/src/types'
 
 async function getBusinessesByNationalId(
   nationalId: string,

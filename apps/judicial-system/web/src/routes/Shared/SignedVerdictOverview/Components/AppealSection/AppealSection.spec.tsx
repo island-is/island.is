@@ -6,7 +6,7 @@ import { MockedProvider } from '@apollo/client/testing'
 import {
   CaseAppealDecision,
   CaseState,
-  Defendant,
+  type Defendant,
 } from '@island.is/judicial-system/types'
 import {
   CaseType,

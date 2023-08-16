@@ -1,6 +1,6 @@
 import { ApolloError } from '@apollo/client'
 
-import { GetRulingSignatureConfirmationQuery } from './getRulingSignatureConfirmation.generated'
+import type { GetRulingSignatureConfirmationQuery } from './getRulingSignatureConfirmation.generated'
 import { getSigningProgress } from './SigningModal'
 
 type SignatureConfirmation = GetRulingSignatureConfirmationQuery['rulingSignatureConfirmation']

@@ -11,7 +11,7 @@ import {
 import { useInstitution } from '@island.is/judicial-system-web/src/utils/hooks'
 import { titles } from '@island.is/judicial-system-web/messages'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import { User } from '@island.is/judicial-system-web/src/graphql/schema'
+import type { User } from '@island.is/judicial-system-web/src/graphql/schema'
 import { AlertBanner, Box } from '@island.is/island-ui/core'
 import { Skeleton } from '@island.is/judicial-system-web/src/components'
 import * as constants from '@island.is/judicial-system/consts'

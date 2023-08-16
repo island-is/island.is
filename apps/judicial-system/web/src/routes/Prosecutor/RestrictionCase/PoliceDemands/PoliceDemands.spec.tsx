@@ -1,13 +1,15 @@
 import { createIntl } from 'react-intl'
 
+import type {
+  Defendant} from '@island.is/judicial-system/types';
 import {
-  Defendant,
   CaseCustodyRestrictions,
   CaseDecision,
 } from '@island.is/judicial-system/types'
 import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
 
-import { DemandsAutofillProps, getDemandsAutofill } from './PoliceDemands'
+import type { DemandsAutofillProps} from './PoliceDemands';
+import { getDemandsAutofill } from './PoliceDemands'
 
 const intl = createIntl({ locale: 'is', onError: () => jest.fn() })
 describe('getDemandsAutofill', () => {

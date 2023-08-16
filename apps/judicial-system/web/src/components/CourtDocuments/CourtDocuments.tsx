@@ -1,19 +1,21 @@
-import React, { useState, Dispatch, FC } from 'react'
+import type { Dispatch, FC } from 'react';
+import React, { useState } from 'react'
 import cn from 'classnames'
 import { useIntl } from 'react-intl'
-import Select, {
-  components,
+import type {
   ControlProps,
   IndicatorProps,
   MenuProps,
   OptionProps,
   PlaceholderProps,
-  ValueContainerProps,
+  ValueContainerProps} from 'react-select';
+import Select, {
+  components
 } from 'react-select'
 
 import { Box, Icon, Tag, Text } from '@island.is/island-ui/core'
 import { core, courtDocuments } from '@island.is/judicial-system-web/messages'
-import {
+import type {
   TempCase as Case,
   ReactSelectOption,
   CourtDocument,

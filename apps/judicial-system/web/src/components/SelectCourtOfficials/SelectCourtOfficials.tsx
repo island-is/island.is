@@ -1,17 +1,19 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
-import { ValueType } from 'react-select'
+import type { ValueType } from 'react-select'
 
-import { Box, Select, Option, Tooltip } from '@island.is/island-ui/core'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
+import type { Option} from '@island.is/island-ui/core';
+import { Box, Select, Tooltip } from '@island.is/island-ui/core'
+import type { TempCase as Case } from '@island.is/judicial-system-web/src/types'
+import type {
+  User} from '@island.is/judicial-system-web/src/graphql/schema';
 import {
-  User,
   UserRole,
   CaseType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { selectCourtOfficials as strings } from './SelectCourtOfficials.strings'
-import { ReactSelectOption } from '../../types'
+import type { ReactSelectOption } from '../../types'
 import BlueBox from '../BlueBox/BlueBox'
 import SectionHeading from '../SectionHeading/SectionHeading'
 

@@ -1,11 +1,14 @@
 import React from 'react'
-import { IntlShape, useIntl } from 'react-intl'
+import type { IntlShape} from 'react-intl';
+import { useIntl } from 'react-intl'
 
-import { Tag, TagVariant } from '@island.is/island-ui/core'
+import type { TagVariant } from '@island.is/island-ui/core';
+import { Tag } from '@island.is/island-ui/core'
 
+import type {
+  CaseType} from '@island.is/judicial-system/types';
 import {
   CaseState,
-  CaseType,
   isIndictmentCase,
   isInvestigationCase,
 } from '@island.is/judicial-system/types'

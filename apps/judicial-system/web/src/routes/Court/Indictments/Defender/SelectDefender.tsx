@@ -10,7 +10,7 @@ import {
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import { core } from '@island.is/judicial-system-web/messages'
 import { capitalize } from '@island.is/judicial-system/formatters'
-import { Defendant, UpdateDefendant } from '@island.is/judicial-system/types'
+import type { Defendant, UpdateDefendant } from '@island.is/judicial-system/types'
 import useDefendants from '@island.is/judicial-system-web/src/utils/hooks/useDefendants'
 
 import { defender as m } from './Defender.strings'

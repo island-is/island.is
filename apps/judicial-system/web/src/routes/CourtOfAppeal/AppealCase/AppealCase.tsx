@@ -2,9 +2,10 @@ import { useQuery } from '@apollo/client'
 import { useRouter } from 'next/router'
 import { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { ValueType } from 'react-select'
+import type { ValueType } from 'react-select'
 
-import { Box, Input, Option, Select } from '@island.is/island-ui/core'
+import type { Option} from '@island.is/island-ui/core';
+import { Box, Input, Select } from '@island.is/island-ui/core'
 import {
   BlueBox,
   FormContentContainer,
@@ -15,8 +16,9 @@ import {
   PageTitle,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
+import type {
+  User} from '@island.is/judicial-system-web/src/graphql/schema';
 import {
-  User,
   UserRole,
   InstitutionType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -25,7 +27,7 @@ import {
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import * as constants from '@island.is/judicial-system/consts'
-import {
+import type {
   UserData,
   ReactSelectOption,
 } from '@island.is/judicial-system-web/src/types'

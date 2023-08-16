@@ -26,20 +26,22 @@ import {
 import { TableSkeleton } from '@island.is/judicial-system-web/src/components/Table'
 import { CasesQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import { TempCaseListEntry as CaseListEntry } from '@island.is/judicial-system-web/src/types'
+import type { TempCaseListEntry as CaseListEntry } from '@island.is/judicial-system-web/src/types'
 import {
   core,
   tables,
   titles,
   errors,
 } from '@island.is/judicial-system-web/messages'
+import type {
+  User} from '@island.is/judicial-system-web/src/graphql/schema';
 import {
-  User,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import ActiveCases from './ActiveCases'
-import { FilterOption, useFilter } from './useFilter'
+import type { FilterOption} from './useFilter';
+import { useFilter } from './useFilter'
 import { cases as m } from './Cases.strings'
 import * as styles from './Cases.css'
 

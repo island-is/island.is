@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Box, RadioButton } from '@island.is/island-ui/core'
 import { CaseDecision } from '@island.is/judicial-system/types'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
+import type { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { BlueBox } from '..'

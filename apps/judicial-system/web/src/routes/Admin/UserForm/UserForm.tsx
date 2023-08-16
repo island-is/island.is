@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import InputMask from 'react-input-mask'
-import { ValueType } from 'react-select/src/types'
+import type { ValueType } from 'react-select/src/types'
 
 import {
   Box,
@@ -14,19 +14,21 @@ import {
   FormContentContainer,
   FormFooter,
 } from '@island.is/judicial-system-web/src/components'
-import {
+import type {
   Institution,
+  User} from '@island.is/judicial-system-web/src/graphql/schema';
+import {
   InstitutionType,
-  User,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import * as constants from '@island.is/judicial-system/consts'
 
-import { ReactSelectOption } from '../../../types'
+import type { ReactSelectOption } from '../../../types'
+import type {
+  Validation} from '../../../utils/validate';
 import {
   isAdminUserFormValid,
-  validate,
-  Validation,
+  validate
 } from '../../../utils/validate'
 import * as styles from './UserForm.css'
 import {

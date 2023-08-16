@@ -4,7 +4,7 @@ import { Box, Text } from '@island.is/island-ui/core'
 import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
 import { DateTime } from '@island.is/judicial-system-web/src/components'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
+import type { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 
 interface Props {

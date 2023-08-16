@@ -23,7 +23,7 @@ import {
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 
-import {
+import type {
   directionType,
   sortableTableColumn,
   SortConfig,

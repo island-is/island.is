@@ -1,11 +1,15 @@
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
+import type { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import {
-  User,
   UserRole,
   CaseType,
+  type User,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
-import { filterCases, FilterOption, filterOptionsForUser } from './useFilter'
+import {
+  filterCases,
+  filterOptionsForUser,
+  type FilterOption,
+} from './useFilter'
 
 describe('useFilter - filterOptionsForUser', () => {
   test.each([UserRole.ASSISTANT, UserRole.REPRESENTATIVE])(

@@ -7,7 +7,7 @@ import {
 } from '@island.is/judicial-system/types'
 import { getRestrictionTagVariant } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import { getShortRestrictionByValue } from '@island.is/judicial-system/formatters'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
+import type { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
 
 interface Props {

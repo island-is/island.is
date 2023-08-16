@@ -17,13 +17,14 @@ import {
   PageLayout,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
+import type {
+  UploadFile} from '@island.is/island-ui/core';
 import {
   Box,
   Input,
   InputFileUpload,
   RadioButton,
-  Text,
-  UploadFile,
+  Text
 } from '@island.is/island-ui/core'
 
 import { core } from '@island.is/judicial-system-web/messages'
@@ -32,8 +33,9 @@ import {
   CaseTransition,
 } from '@island.is/judicial-system/types'
 import { CaseAppealRulingDecision } from '@island.is/judicial-system-web/src/graphql/schema'
+import type {
+  TUploadFile} from '@island.is/judicial-system-web/src/utils/hooks';
 import {
-  TUploadFile,
   useCase,
   useS3Upload,
 } from '@island.is/judicial-system-web/src/utils/hooks'

@@ -3,8 +3,9 @@ import { useIntl } from 'react-intl'
 import { AnimatePresence, LayoutGroup, motion } from 'framer-motion'
 import cn from 'classnames'
 
+import type {
+  PoliceCaseFile} from '@island.is/judicial-system/types';
 import {
-  PoliceCaseFile,
   isIndictmentCase,
 } from '@island.is/judicial-system/types'
 import {
@@ -19,7 +20,7 @@ import { CaseOrigin } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { policeCaseFiles as m } from './PoliceCaseFiles.strings'
 import PoliceCaseFilesMessageBox from '../PoliceCaseFilesMessageBox/PoliceCaseFilesMessageBox'
-import { PoliceCaseFilesData } from '../CaseFiles/CaseFiles'
+import type { PoliceCaseFilesData } from '../CaseFiles/CaseFiles'
 import * as styles from './PoliceCaseFiles.css'
 
 export interface PoliceCaseFileCheck extends PoliceCaseFile {

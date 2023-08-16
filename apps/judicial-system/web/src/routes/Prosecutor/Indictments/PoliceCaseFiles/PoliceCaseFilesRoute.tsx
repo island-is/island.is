@@ -10,13 +10,15 @@ import router from 'next/router'
 import { useIntl } from 'react-intl'
 import _isEqual from 'lodash/isEqual'
 
-import { Box, InputFileUpload, UploadFile } from '@island.is/island-ui/core'
-import {
+import type { UploadFile } from '@island.is/island-ui/core';
+import { Box, InputFileUpload } from '@island.is/island-ui/core'
+import type {
   CaseFile,
-  CaseFileCategory,
-  CaseFileState,
   CrimeSceneMap,
-  IndictmentSubtypeMap,
+  IndictmentSubtypeMap} from '@island.is/judicial-system/types';
+import {
+  CaseFileCategory,
+  CaseFileState
 } from '@island.is/judicial-system/types'
 import * as constants from '@island.is/judicial-system/consts'
 import {
@@ -39,11 +41,12 @@ import { useS3Upload } from '@island.is/judicial-system-web/src/utils/hooks'
 import { mapCaseFileToUploadFile } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { CaseOrigin } from '@island.is/judicial-system-web/src/graphql/schema'
 
-import {
+import type {
   PoliceCaseFileCheck,
+  PoliceCaseFilesData} from '../../components';
+import {
   PoliceCaseFiles,
-  mapPoliceCaseFileToPoliceCaseFileCheck,
-  PoliceCaseFilesData,
+  mapPoliceCaseFileToPoliceCaseFileCheck
 } from '../../components'
 import { policeCaseFiles as m } from './PoliceCaseFilesRoute.strings'
 import { useGetIndictmentPoliceCaseFilesQuery } from './getIndictmentPoliceCaseFiles.generated'

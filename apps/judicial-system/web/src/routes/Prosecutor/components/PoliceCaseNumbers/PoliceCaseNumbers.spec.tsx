@@ -2,7 +2,7 @@ import React from 'react'
 import faker from 'faker'
 import { render, screen } from '@testing-library/react'
 
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
+import type { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import {
   CaseType,
   CaseOrigin,

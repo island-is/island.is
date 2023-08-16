@@ -1,4 +1,5 @@
-import React, { ReactNode, useContext, useEffect } from 'react'
+import type { ReactNode} from 'react';
+import React, { useContext, useEffect } from 'react'
 import { useIntl } from 'react-intl'
 import cn from 'classnames'
 
@@ -15,14 +16,15 @@ import {
   LinkV2,
 } from '@island.is/island-ui/core'
 import { isIndictmentCase } from '@island.is/judicial-system/types'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
+import type { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import {
   sections as formStepperSections,
   pageLayout,
 } from '@island.is/judicial-system-web/messages'
+import type {
+  User} from '@island.is/judicial-system-web/src/graphql/schema';
 import {
   InstitutionType,
-  User,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import * as constants from '@island.is/judicial-system/consts'
@@ -32,7 +34,7 @@ import Logo from '../Logo/Logo'
 import Skeleton from '../Skeleton/Skeleton'
 import useSections from '../../utils/hooks/useSections'
 import * as styles from './PageLayout.css'
-import { stepValidationsType } from '../../utils/formHelper'
+import type { stepValidationsType } from '../../utils/formHelper'
 
 export interface RouteSection {
   name: string

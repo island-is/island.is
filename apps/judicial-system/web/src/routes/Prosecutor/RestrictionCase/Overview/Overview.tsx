@@ -10,11 +10,12 @@ import {
   AccordionItem,
   AlertMessage,
 } from '@island.is/island-ui/core'
+import type {
+  CaseLegalProvisions} from '@island.is/judicial-system/types';
 import {
   NotificationType,
   CaseState,
-  CaseTransition,
-  CaseLegalProvisions,
+  CaseTransition
 } from '@island.is/judicial-system/types'
 import * as constants from '@island.is/judicial-system/consts'
 import { formatDate, capitalize } from '@island.is/judicial-system/formatters'

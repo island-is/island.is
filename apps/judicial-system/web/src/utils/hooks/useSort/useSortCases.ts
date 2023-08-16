@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react'
-import { CaseListEntry } from '@island.is/judicial-system/types'
-import { sortableTableColumn } from '@island.is/judicial-system-web/src/types'
+import type { CaseListEntry } from '@island.is/judicial-system/types'
+import type { sortableTableColumn } from '@island.is/judicial-system-web/src/types'
 
 const useSortCases = (
   defaultColumn: string,

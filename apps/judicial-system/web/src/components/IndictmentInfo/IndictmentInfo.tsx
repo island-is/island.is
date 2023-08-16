@@ -2,7 +2,7 @@ import React from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box, Text } from '@island.is/island-ui/core'
-import {
+import type {
   CrimeSceneMap,
   IndictmentSubtypeMap,
 } from '@island.is/judicial-system/types'

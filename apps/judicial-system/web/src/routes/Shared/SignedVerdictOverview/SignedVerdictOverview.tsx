@@ -1,9 +1,9 @@
-import React, { ReactNode, useCallback, useContext, useState } from 'react'
+import React, { type ReactNode, useCallback, useContext, useState } from 'react'
 import { AnimatePresence } from 'framer-motion'
 import { useRouter } from 'next/router'
-import { ValueType } from 'react-select/src/types'
-import { IntlShape, useIntl } from 'react-intl'
 import formatISO from 'date-fns/formatISO'
+import type { ValueType } from 'react-select/src/types'
+import { useIntl, type IntlShape } from 'react-intl'
 
 import {
   Box,
@@ -19,14 +19,14 @@ import {
   CaseState,
   isInvestigationCase,
   isRestrictionCase,
-  RequestSignatureResponse,
-  SignatureConfirmationResponse,
   CaseAppealDecision,
   isCourtRole,
   Feature,
   isProsecutionRole,
   CaseTransition,
   CaseAppealState,
+  type RequestSignatureResponse,
+  type SignatureConfirmationResponse,
 } from '@island.is/judicial-system/types'
 import * as constants from '@island.is/judicial-system/consts'
 import {
@@ -60,7 +60,7 @@ import {
   useCase,
   useAppealAlertBanner,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import {
+import type {
   ReactSelectOption,
   TempCase as Case,
   TempUpdateCase as UpdateCase,
@@ -73,8 +73,8 @@ import {
 } from '@island.is/judicial-system-web/messages'
 import {
   InstitutionType,
-  User,
   UserRole,
+  type User,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import AppealSection from './Components/AppealSection/AppealSection'
@@ -191,10 +191,8 @@ export const SignedVerdictOverview: React.FC = () => {
   const [isReopeningCase, setIsReopeningCase] = useState<boolean>(false)
   const [modalVisible, setModalVisible] = useState<availableModals>('NoModal')
 
-  const [
-    selectedSharingInstitutionId,
-    setSelectedSharingInstitutionId,
-  ] = useState<ValueType<ReactSelectOption>>()
+  const [selectedSharingInstitutionId, setSelectedSharingInstitutionId] =
+    useState<ValueType<ReactSelectOption>>()
 
   const [
     requestCourtRecordSignatureResponse,
@@ -253,27 +251,26 @@ export const SignedVerdictOverview: React.FC = () => {
     )
   }, [workingCase.type, user])
 
-  const [
-    getCourtRecordSignatureConfirmation,
-  ] = useGetCourtRecordSignatureConfirmationLazyQuery({
-    fetchPolicy: 'no-cache',
-    errorPolicy: 'all',
-    onCompleted: (courtRecordSignatureConfirmationData) => {
-      if (
-        courtRecordSignatureConfirmationData?.courtRecordSignatureConfirmation
-      ) {
-        setCourtRecordSignatureConfirmationResponse(
-          courtRecordSignatureConfirmationData.courtRecordSignatureConfirmation as SignatureConfirmationResponse,
-        )
-        refreshCase()
-      } else {
+  const [getCourtRecordSignatureConfirmation] =
+    useGetCourtRecordSignatureConfirmationLazyQuery({
+      fetchPolicy: 'no-cache',
+      errorPolicy: 'all',
+      onCompleted: (courtRecordSignatureConfirmationData) => {
+        if (
+          courtRecordSignatureConfirmationData?.courtRecordSignatureConfirmation
+        ) {
+          setCourtRecordSignatureConfirmationResponse(
+            courtRecordSignatureConfirmationData.courtRecordSignatureConfirmation as SignatureConfirmationResponse,
+          )
+          refreshCase()
+        } else {
+          setCourtRecordSignatureConfirmationResponse({ documentSigned: false })
+        }
+      },
+      onError: () => {
         setCourtRecordSignatureConfirmationResponse({ documentSigned: false })
-      }
-    },
-    onError: () => {
-      setCourtRecordSignatureConfirmationResponse({ documentSigned: false })
-    },
-  })
+      },
+    })
 
   const [
     handleRequestCourtRecordSignature,
@@ -378,7 +375,7 @@ export const SignedVerdictOverview: React.FC = () => {
       })
 
       updateCase(workingCase.id, {
-        accusedPostponedAppealDate: (null as unknown) as string,
+        accusedPostponedAppealDate: null as unknown as string,
       })
     }
   }
@@ -391,7 +388,7 @@ export const SignedVerdictOverview: React.FC = () => {
       })
 
       updateCase(workingCase.id, {
-        prosecutorPostponedAppealDate: (null as unknown) as string,
+        prosecutorPostponedAppealDate: null as unknown as string,
       })
     }
   }
@@ -422,7 +419,7 @@ export const SignedVerdictOverview: React.FC = () => {
         setSelectedSharingInstitutionId(null)
 
         updateCase(workingCase.id, {
-          sharedWithProsecutorsOfficeId: (null as unknown) as string,
+          sharedWithProsecutorsOfficeId: null as unknown as string,
         })
       } else {
         setSharedCaseModal({

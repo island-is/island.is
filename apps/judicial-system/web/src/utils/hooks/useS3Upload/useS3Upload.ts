@@ -2,35 +2,35 @@ import { useCallback, useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { uuid } from 'uuidv4'
 
-import { toast, UploadFile } from '@island.is/island-ui/core'
-import { CaseFileCategory } from '@island.is/judicial-system/types'
+import { toast, type UploadFile } from '@island.is/island-ui/core'
 import { errors } from '@island.is/judicial-system-web/messages'
 import { UserContext } from '@island.is/judicial-system-web/src/components'
-import { PresignedPost } from '@island.is/judicial-system-web/src/graphql/schema'
+import type { PresignedPost } from '@island.is/judicial-system-web/src/graphql/schema'
+import type{ CaseFileCategory } from '@island.is/judicial-system/types'
 
 import {
-  CreatePresignedPostMutation,
   useCreatePresignedPostMutation,
+  type CreatePresignedPostMutation,
 } from './createPresignedPost.generated'
 import {
-  LimitedAccessCreatePresignedPostMutation,
   useLimitedAccessCreatePresignedPostMutation,
+  type LimitedAccessCreatePresignedPostMutation,
 } from './limitedAccessCreatePresignedPost.generated'
 import {
-  CreateFileMutation,
   useCreateFileMutation,
+  type CreateFileMutation,
 } from './createFile.generated'
 import {
-  LimitedAccessCreateFileMutation,
   useLimitedAccessCreateFileMutation,
+  type LimitedAccessCreateFileMutation,
 } from './limitedAccessCreateFile.generated'
 import {
-  DeleteFileMutation,
   useDeleteFileMutation,
+  type DeleteFileMutation,
 } from './deleteFile.generated'
 import {
-  LimitedAccessDeleteFileMutation,
   useLimitedAccessDeleteFileMutation,
+  type  LimitedAccessDeleteFileMutation,
 } from './limitedAccessDeleteFile.generated'
 import { useUploadPoliceCaseFileMutation } from './uploadPoliceCaseFile.generated'
 

@@ -1,5 +1,6 @@
 import React, { useCallback, useContext, useState } from 'react'
-import { useIntl, IntlShape } from 'react-intl'
+import type { IntlShape } from 'react-intl';
+import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 import formatISO from 'date-fns/formatISO'
 
@@ -26,12 +27,13 @@ import {
   FormContext,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
+import type {
+  Defendant} from '@island.is/judicial-system/types';
 import {
   CaseDecision,
-  Defendant,
   isAcceptingCaseDecision,
 } from '@island.is/judicial-system/types'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
+import type { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import { isRulingValidRC } from '@island.is/judicial-system-web/src/utils/validate'
 import {
   removeTabsValidateAndSet,

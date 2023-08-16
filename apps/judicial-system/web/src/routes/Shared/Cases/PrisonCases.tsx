@@ -14,7 +14,7 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import { CasesQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import { TempCaseListEntry as CaseListEntry } from '@island.is/judicial-system-web/src/types'
+import type { TempCaseListEntry as CaseListEntry } from '@island.is/judicial-system-web/src/types'
 import { titles, errors } from '@island.is/judicial-system-web/messages'
 import { InstitutionType } from '@island.is/judicial-system-web/src/graphql/schema'
 

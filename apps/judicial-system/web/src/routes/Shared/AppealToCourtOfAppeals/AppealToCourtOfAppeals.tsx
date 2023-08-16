@@ -18,12 +18,13 @@ import {
   SectionHeading,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
+import type {
+  UploadFile} from '@island.is/island-ui/core';
 import {
   Box,
   Button,
   InputFileUpload,
-  Text,
-  UploadFile,
+  Text
 } from '@island.is/island-ui/core'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import RulingDateLabel from '@island.is/judicial-system-web/src/components/RulingDateLabel/RulingDateLabel'
@@ -32,8 +33,9 @@ import {
   CaseTransition,
   isProsecutionRole,
 } from '@island.is/judicial-system/types'
+import type {
+  TUploadFile} from '@island.is/judicial-system-web/src/utils/hooks';
 import {
-  TUploadFile,
   useS3Upload,
   useCase,
 } from '@island.is/judicial-system-web/src/utils/hooks'

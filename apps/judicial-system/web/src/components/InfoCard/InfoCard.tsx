@@ -1,7 +1,7 @@
 import React from 'react'
 
 import { Box, Text } from '@island.is/island-ui/core'
-import { Defendant } from '@island.is/judicial-system/types'
+import type { Defendant } from '@island.is/judicial-system/types'
 import { formatDOB } from '@island.is/judicial-system/formatters'
 
 import { SessionArrangements } from '@island.is/judicial-system-web/src/graphql/schema'

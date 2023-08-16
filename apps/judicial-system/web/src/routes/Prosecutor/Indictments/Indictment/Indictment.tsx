@@ -17,7 +17,7 @@ import {
   PdfButton,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
-import { TempIndictmentCount as TIndictmentCount } from '@island.is/judicial-system-web/src/types'
+import type { TempIndictmentCount as TIndictmentCount } from '@island.is/judicial-system-web/src/types'
 import { titles } from '@island.is/judicial-system-web/messages'
 import {
   removeTabsValidateAndSet,
@@ -31,9 +31,10 @@ import {
 import * as constants from '@island.is/judicial-system/consts'
 import { formatNationalId } from '@island.is/judicial-system/formatters'
 import { isTrafficViolationStepValidIndictments } from '@island.is/judicial-system-web/src/utils/validate'
-import useIndictmentCounts, {
+import type {
   UpdateIndictmentCount,
-} from '@island.is/judicial-system-web/src/utils/hooks/useIndictmentCounts'
+} from '@island.is/judicial-system-web/src/utils/hooks/useIndictmentCounts';
+import useIndictmentCounts from '@island.is/judicial-system-web/src/utils/hooks/useIndictmentCounts'
 import { IndictmentCountOffense } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { IndictmentCount } from './IndictmentCount'

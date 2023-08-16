@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from 'react'
 import InputMask from 'react-input-mask'
 import { useIntl } from 'react-intl'
-import { ValueType } from 'react-select'
+import type { ValueType } from 'react-select'
 
-import {
+import type {
   Defendant,
+  UpdateDefendant} from '@island.is/judicial-system/types';
+import {
   Gender,
-  isIndictmentCase,
-  UpdateDefendant,
+  isIndictmentCase
 } from '@island.is/judicial-system/types'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
+import type { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import { BlueBox } from '@island.is/judicial-system-web/src/components'
 import {
   Box,
@@ -27,7 +28,7 @@ import {
   removeErrorMessageIfValid,
   validateAndSetErrorMessage,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
-import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
+import type { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 import useNationalRegistry from '@island.is/judicial-system-web/src/utils/hooks/useNationalRegistry'
 import { isBusiness } from '@island.is/judicial-system-web/src/utils/stepHelper'
 
@@ -159,7 +160,7 @@ const DefendantInfo: React.FC<React.PropsWithChildren<Props>> = (props) => {
       )}
       <Box marginBottom={2}>
         <Checkbox
-          name={`noNationalId-${Math.random()}`}
+          name={`noNationalId-${defendant.id}`}
           label={formatMessage(
             strings.defendantInfo.doesNotHaveIcelandicNationalId,
             {

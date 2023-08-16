@@ -22,7 +22,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import CommentsInput from '@island.is/judicial-system-web/src/components/CommentsInput/CommentsInput'
 import { isProcessingStepValidIndictments } from '@island.is/judicial-system-web/src/utils/validate'
-import { Institution } from '@island.is/judicial-system-web/src/graphql/schema'
+import type { Institution } from '@island.is/judicial-system-web/src/graphql/schema'
 import { isTrafficViolationCase } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import * as constants from '@island.is/judicial-system/consts'
 

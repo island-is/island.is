@@ -2,10 +2,11 @@ import faker from 'faker'
 
 import { CaseFileState } from '@island.is/judicial-system/types'
 
+import type {
+  ReorderableItem} from './IndictmentsCaseFilesAccordionItem';
 import {
   getFilePlacement,
   getFilesBelowInChapter,
-  ReorderableItem,
   sortedFilesInChapter,
 } from './IndictmentsCaseFilesAccordionItem'
 

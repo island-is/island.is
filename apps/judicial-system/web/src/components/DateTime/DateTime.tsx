@@ -3,9 +3,10 @@ import { DatePicker, Input } from '@island.is/island-ui/core'
 import { TimeInputField, BlueBox } from '../../components'
 import * as styles from './DateTime.css'
 
+import type {
+  Validation} from '@island.is/judicial-system-web/src/utils/validate';
 import {
-  validate,
-  Validation,
+  validate
 } from '@island.is/judicial-system-web/src/utils/validate'
 
 interface Props {

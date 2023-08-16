@@ -26,29 +26,32 @@ import {
   useDeb,
   useS3Upload,
 } from '@island.is/judicial-system-web/src/utils/hooks'
+import type {
+  UploadFile} from '@island.is/island-ui/core';
 import {
   Box,
   ContentBlock,
   Input,
   InputFileUpload,
   Text,
-  Tooltip,
-  UploadFile,
+  Tooltip
 } from '@island.is/island-ui/core'
 import {
   mapCaseFileToUploadFile,
   removeTabsValidateAndSet,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
+import type {
+  PoliceCaseFile} from '@island.is/judicial-system/types';
 import {
   CaseFileState,
-  isRestrictionCase,
-  PoliceCaseFile,
+  isRestrictionCase
 } from '@island.is/judicial-system/types'
 import { CaseOrigin } from '@island.is/judicial-system-web/src/graphql/schema'
 import { fileExtensionWhitelist } from '@island.is/island-ui/core/types'
 import * as constants from '@island.is/judicial-system/consts'
 
-import { PoliceCaseFileCheck, PoliceCaseFiles } from '../../components'
+import type { PoliceCaseFileCheck} from '../../components';
+import { PoliceCaseFiles } from '../../components'
 import { useGetPoliceCaseFilesQuery } from './getPoliceCaseFiles.generated'
 import { caseFiles as strings } from './CaseFiles.strings'
 

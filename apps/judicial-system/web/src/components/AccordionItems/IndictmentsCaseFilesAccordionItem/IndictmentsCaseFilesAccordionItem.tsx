@@ -4,11 +4,12 @@ import { uuid } from 'uuidv4'
 import InputMask from 'react-input-mask'
 import isValid from 'date-fns/isValid'
 import parseISO from 'date-fns/parseISO'
+import type {
+  MotionValue} from 'framer-motion';
 import {
   animate,
   AnimatePresence,
   motion,
-  MotionValue,
   Reorder,
   useDragControls,
   useMotionValue,
@@ -25,7 +26,7 @@ import {
   Input,
   toast,
 } from '@island.is/island-ui/core'
-import {
+import type {
   CaseFile as TCaseFile,
   CrimeSceneMap,
   IndictmentSubtypeMap,

@@ -1,5 +1,6 @@
 import React, { useCallback, useContext, useState } from 'react'
-import { IntlShape, useIntl } from 'react-intl'
+import type { IntlShape} from 'react-intl';
+import { useIntl } from 'react-intl'
 import router from 'next/router'
 
 import {
@@ -14,7 +15,7 @@ import {
   CourtDocuments,
   FormContext,
 } from '@island.is/judicial-system-web/src/components'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
+import type { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import {
   useCase,
   useDeb,

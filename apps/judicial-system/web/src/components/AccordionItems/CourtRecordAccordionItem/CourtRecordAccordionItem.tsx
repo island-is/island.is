@@ -12,7 +12,7 @@ import {
 import { isRestrictionCase } from '@island.is/judicial-system/types'
 import { closedCourt, core } from '@island.is/judicial-system-web/messages'
 import { TIME_FORMAT } from '@island.is/judicial-system/consts'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
+import type { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import { SessionArrangements } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import AccordionListItem from '../../AccordionListItem/AccordionListItem'

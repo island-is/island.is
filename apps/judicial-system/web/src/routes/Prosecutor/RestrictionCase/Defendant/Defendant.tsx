@@ -25,8 +25,8 @@ import {
   validateAndSendToServer,
   validateAndSet,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
-import { UpdateDefendant } from '@island.is/judicial-system/types'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
+import type { UpdateDefendant } from '@island.is/judicial-system/types'
+import type { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import { isDefendantStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
 import {
   CaseType,

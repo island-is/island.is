@@ -4,8 +4,9 @@ import partition from 'lodash/partition'
 import { useQuery } from '@apollo/client'
 
 import { AlertMessage, Box, Tabs, Text } from '@island.is/island-ui/core'
+import type {
+  CaseListEntry} from '@island.is/judicial-system/types';
 import {
-  CaseListEntry,
   completedCaseStates,
   isIndictmentCase,
 } from '@island.is/judicial-system/types'
@@ -17,7 +18,8 @@ import SharedPageLayout from '@island.is/judicial-system-web/src/components/Shar
 
 import DefenderCasesTable from './components/DefenderCasesTable'
 import FilterCheckboxes from './components/FilterCheckboxes'
-import useFilterCases, { Filters } from './hooks/useFilterCases'
+import type { Filters } from './hooks/useFilterCases';
+import useFilterCases from './hooks/useFilterCases'
 
 import { defenderCases as m } from './Cases.strings'
 import * as styles from './Cases.css'

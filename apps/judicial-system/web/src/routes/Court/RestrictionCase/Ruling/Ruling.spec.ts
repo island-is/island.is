@@ -1,7 +1,8 @@
 import { createIntl } from 'react-intl'
 
-import { CaseDecision, Defendant } from '@island.is/judicial-system/types'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
+import type { Defendant } from '@island.is/judicial-system/types';
+import { CaseDecision } from '@island.is/judicial-system/types'
+import type { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { getConclusionAutofill } from './Ruling'

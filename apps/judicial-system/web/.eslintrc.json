@@ -22,7 +22,8 @@
       {
         "ignoreNonDOM": true
       }
-    ]
+    ],
+    "@typescript-eslint/consistent-type-imports": "error"
   },
   "plugins": ["jsx-a11y"],
   "overrides": [

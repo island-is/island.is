@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from 'react'
+import type {
+  CaseListEntry} from '@island.is/judicial-system/types';
 import {
-  CaseListEntry,
   isIndictmentCase,
 } from '@island.is/judicial-system/types'
 

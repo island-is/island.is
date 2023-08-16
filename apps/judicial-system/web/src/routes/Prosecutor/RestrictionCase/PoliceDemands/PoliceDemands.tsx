@@ -1,5 +1,6 @@
 import React, { useCallback, useContext, useState } from 'react'
-import { IntlShape, useIntl } from 'react-intl'
+import type { IntlShape} from 'react-intl';
+import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
 import {
@@ -24,10 +25,11 @@ import {
   titles,
 } from '@island.is/judicial-system-web/messages'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
+import type {
+  CaseDecision,
+  Defendant} from '@island.is/judicial-system/types';
 import {
   CaseCustodyRestrictions,
-  CaseDecision,
-  Defendant,
   Gender,
   isAcceptingCaseDecision,
 } from '@island.is/judicial-system/types'
@@ -39,8 +41,9 @@ import {
   toggleInArray,
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
+import type {
+  autofillEntry} from '@island.is/judicial-system-web/src/utils/hooks/useCase';
 import {
-  autofillEntry,
   formatDateForServer,
 } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 import { formatDate, formatDOB } from '@island.is/judicial-system/formatters'
