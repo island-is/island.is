@@ -21,6 +21,7 @@ type props = {
   s3FileKey?: FormText
   link?: string
   buttonText?: MessageDescriptor
+  sectionTitle?: MessageDescriptor
 }
 
 /**
@@ -35,11 +36,14 @@ type props = {
  * @param  s3FileKey The key of file in s3.
  * @param  link Link that user can click on.
  * @param  buttonText The text of the button that links to a url
+ * @param  secitonTitle The title for the section
  */
 export const buildFormConclusionSection = (props: props) =>
   buildSection({
     id: 'uiForms.conclusionSection',
-    title: conclusion.information.sectionTitle,
+    title: props.sectionTitle
+      ? props.sectionTitle
+      : conclusion.information.sectionTitle,
     children: [
       buildMultiField({
         id: 'uiForms.conclusionMultifield',

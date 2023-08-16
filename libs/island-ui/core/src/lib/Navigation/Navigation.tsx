@@ -129,7 +129,7 @@ const defaultLinkRender: NavigationTreeProps['renderLink'] = (link) => link
 const toggleId = (arr: Array<string> = [], id: string, single = false) =>
   arr.includes(id) ? arr.filter((i) => i !== id) : [...(single ? [] : arr), id]
 
-export const Navigation: FC<NavigationProps> = ({
+export const Navigation: FC<React.PropsWithChildren<NavigationProps>> = ({
   title = 'Efnisyfirlit',
   titleLink,
   activeItemTitle,
@@ -176,29 +176,25 @@ export const Navigation: FC<NavigationProps> = ({
         className={styles.link}
         {...basePadding}
       >
-        {({
-          isFocused,
-          isHovered,
-        }: {
-          isFocused: boolean
-          isHovered: boolean
-        }) => {
+        {({ isFocused, isHovered }) => {
           const textColor =
             titleLink?.active || isFocused || isHovered ? activeColor : color
 
           return (
-            <Text as="span" variant="h4" color={textColor}>
-              {title}
-            </Text>
+            <>
+              <Text as="span" variant="h4" color={textColor}>
+                {title}
+              </Text>
+              <Text
+                as="span"
+                variant="h4"
+                color={titleLink?.active ? activeColor : color}
+              >
+                {title}
+              </Text>
+            </>
           )
         }}
-        <Text
-          as="span"
-          variant="h4"
-          color={titleLink?.active ? activeColor : color}
-        >
-          {title}
-        </Text>
       </FocusableBox>,
       titleProps,
     )
@@ -384,7 +380,9 @@ const MobileButton = ({ title, colorScheme }: MobileButtonProps) => {
   )
 }
 
-export const NavigationTree: FC<NavigationTreeProps> = ({
+export const NavigationTree: FC<
+  React.PropsWithChildren<NavigationTreeProps>
+> = ({
   items,
   level = 1,
   colorScheme = 'blue',
@@ -456,13 +454,7 @@ export const NavigationTree: FC<NavigationTreeProps> = ({
                     className={styles.link}
                     onClick={linkOnClick}
                   >
-                    {({
-                      isFocused,
-                      isHovered,
-                    }: {
-                      isFocused: boolean
-                      isHovered: boolean
-                    }) => {
+                    {({ isFocused, isHovered }) => {
                       const textColor =
                         active || isFocused || isHovered
                           ? colorSchemeColors[colorScheme]['activeColor']

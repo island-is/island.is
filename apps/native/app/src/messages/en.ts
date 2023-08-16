@@ -307,18 +307,19 @@ export const en: TranslatedMessages = {
 
   // finance
   'finance.screenTitle': 'Finance',
-  "finance.statusCard.status": "Status",
-  "finance.statusCard.paymentBase": "Payment base",
-  "finance.statusCard.deadline": "Final due date",
-  "finance.statusCard.amount": "Amount",
-  "finance.statusCard.total": "Total",
-  "finance.statusCard.organization": "Contact information",
-  "finance.statusCard.organizationWebsite": "Website",
-  "finance.statusCard.organizationEmail": "Email",
-  "finance.statusCard.organizationPhone": "Phone",
-  "finance.statusCard.schedulePaymentPlan": "Make a payment schedule",
-  "finance.heading.title": "Financial standing with the government",
-  "finance.heading.subtitle": "Here you can see an overview of your debt and/or credit balance with the government.",
+  'finance.statusCard.status': 'Status',
+  'finance.statusCard.paymentBase': 'Payment base',
+  'finance.statusCard.deadline': 'Final due date',
+  'finance.statusCard.amount': 'Amount',
+  'finance.statusCard.total': 'Total',
+  'finance.statusCard.organization': 'Contact information',
+  'finance.statusCard.organizationWebsite': 'Website',
+  'finance.statusCard.organizationEmail': 'Email',
+  'finance.statusCard.organizationPhone': 'Phone',
+  'finance.statusCard.schedulePaymentPlan': 'Make a payment schedule',
+  'finance.heading.title': 'Financial standing with the government',
+  'finance.heading.subtitle':
+    'Here you can see an overview of your debt and/or credit balance with the government.',
 
   // finance detail
   'financeDetail.title': 'Detailed information',

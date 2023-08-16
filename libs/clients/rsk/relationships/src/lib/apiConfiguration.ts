@@ -38,15 +38,18 @@ export const RskRelationshipsConfigurationProvider = {
                 shared: false,
                 overrideCacheControl: buildCacheControl({ maxAge: 60 * 10 }),
               },
-        autoAuth: !idsClientConfig.isConfigured
-          ? undefined
-          : {
+        autoAuth: idsClientConfig.isConfigured
+          ? {
               mode: 'tokenExchange',
               issuer: idsClientConfig.issuer,
               clientId: idsClientConfig.clientId,
               clientSecret: idsClientConfig.clientSecret,
               scope: config.tokenExchangeScope,
-            },
+              tokenExchange: {
+                requestActorToken: config.requestActorToken,
+              },
+            }
+          : undefined,
       }),
       basePath: `${xRoadConfig.xRoadBasePath}/r1/${config.xRoadServicePath}`,
       headers: {

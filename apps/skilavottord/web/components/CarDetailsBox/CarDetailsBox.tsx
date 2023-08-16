@@ -9,7 +9,7 @@ interface BoxProps {
   vehicleOwner?: string | null
 }
 
-export const CarDetailsBox: FC<BoxProps> = ({
+export const CarDetailsBox: FC<React.PropsWithChildren<BoxProps>> = ({
   vehicleId,
   vehicleType,
   modelYear,

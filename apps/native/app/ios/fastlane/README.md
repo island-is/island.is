@@ -1,5 +1,4 @@
-fastlane documentation
-----
+## fastlane documentation
 
 # Installation
 
@@ -28,18 +27,14 @@ Push a new beta build to TestFlight
 ```sh
 [bundle exec] fastlane ios increment_build
 ```
-
-
-
 ### ios beta
+### ios beta_prod
 
 ```sh
 [bundle exec] fastlane ios beta
 ```
 
-
-
-----
+---
 
 This README.md is auto-generated and will be re-generated every time [_fastlane_](https://fastlane.tools) is run.
 

@@ -375,7 +375,7 @@ const Search: Screen<CategoryProps> = ({
 
   useEffect(() => {
     if (state.searchLocked) {
-      return null
+      return
     }
 
     const newQuery = {
@@ -469,7 +469,11 @@ const Search: Screen<CategoryProps> = ({
                 ]}
                 renderLink={(link) => {
                   return (
-                    <NextLink {...linkResolver('homepage')} passHref>
+                    <NextLink
+                      {...linkResolver('homepage')}
+                      passHref
+                      legacyBehavior
+                    >
                       {link}
                     </NextLink>
                   )
@@ -695,7 +699,7 @@ const Search: Screen<CategoryProps> = ({
 
 const single = <T,>(x: T | T[]): T => (Array.isArray(x) ? x[0] : x)
 
-Search.getInitialProps = async ({ apolloClient, locale, query }) => {
+Search.getProps = async ({ apolloClient, locale, query }) => {
   const queryString = single(query.q) || ''
   const page = Number(single(query.page)) || 1
   const category = query.category ?? ''
@@ -844,7 +848,9 @@ interface EnglishResultsLinkProps {
   q: string
 }
 
-const EnglishResultsLink: FC<EnglishResultsLinkProps> = ({ q }) => {
+const EnglishResultsLink: FC<
+  React.PropsWithChildren<EnglishResultsLinkProps>
+> = ({ q }) => {
   const { linkResolver } = useLinkResolver()
   const [getCount, { data }] = useLazyQuery<
     GetSearchResultsTotalQuery,

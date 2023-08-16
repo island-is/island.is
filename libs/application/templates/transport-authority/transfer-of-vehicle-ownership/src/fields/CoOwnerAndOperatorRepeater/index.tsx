@@ -13,7 +13,9 @@ import { UPDATE_APPLICATION } from '@island.is/application/graphql'
 
 const emailRegex = /^[\w!#$%&'*+/=?`{|}~^-]+(?:\.[\w!#$%&'*+/=?`{|}~^-]+)*@(?:[A-Z0-9-]+\.)+[A-Z]{2,6}$/i
 
-export const CoOwnerAndOperatorRepeater: FC<FieldBaseProps> = (props) => {
+export const CoOwnerAndOperatorRepeater: FC<
+  React.PropsWithChildren<FieldBaseProps>
+> = (props) => {
   const { locale, formatMessage } = useLocale()
   const { application, setBeforeSubmitCallback } = props
   const [updateApplication] = useMutation(UPDATE_APPLICATION)

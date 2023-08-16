@@ -52,9 +52,11 @@ interface SectionProps {
   activeSubSection?: number
 }
 
-const SubsectionChild: React.FC<{
-  isActive: boolean
-}> = ({ isActive, children }) => (
+const SubsectionChild: React.FC<
+  React.PropsWithChildren<{
+    isActive: boolean
+  }>
+> = ({ isActive, children }) => (
   <Box className={styles.name}>
     <Text as="div" lineHeight="lg" fontWeight={isActive ? 'semiBold' : 'light'}>
       {children}
@@ -62,7 +64,9 @@ const SubsectionChild: React.FC<{
   </Box>
 )
 
-const DisplaySection: React.FC<SectionProps> = (props) => {
+const DisplaySection: React.FC<React.PropsWithChildren<SectionProps>> = (
+  props,
+) => {
   const { section, index, activeSection, activeSubSection } = props
 
   return (
@@ -116,7 +120,7 @@ interface SidePanelProps {
   isValid?: boolean
 }
 
-const SidePanel: React.FC<SidePanelProps> = ({
+const SidePanel: React.FC<React.PropsWithChildren<SidePanelProps>> = ({
   user,
   isValid,
   onNavigationTo,
@@ -176,7 +180,7 @@ interface PageProps {
   isValid?: boolean
 }
 
-const PageLayout: React.FC<PageProps> = ({
+const PageLayout: React.FC<React.PropsWithChildren<PageProps>> = ({
   workingCase,
   children,
   isLoading,

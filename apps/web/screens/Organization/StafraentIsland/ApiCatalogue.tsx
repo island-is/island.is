@@ -82,7 +82,8 @@ const ApiCatalogue: Screen<HomestayProps> = ({
 
   useEffect(() => {
     if (width < theme.breakpoints.md) {
-      return setIsMobile(true)
+      setIsMobile(true)
+      return
     }
     setIsMobile(false)
   }, [width])
@@ -338,7 +339,7 @@ const ApiCatalogue: Screen<HomestayProps> = ({
   )
 }
 
-ApiCatalogue.getInitialProps = async ({ apolloClient, locale }) => {
+ApiCatalogue.getProps = async ({ apolloClient, locale }) => {
   const organizationSlug =
     locale === 'en' ? 'digital-iceland' : 'stafraent-island'
 

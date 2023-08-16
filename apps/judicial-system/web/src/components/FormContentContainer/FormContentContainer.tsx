@@ -7,7 +7,9 @@ interface Props {
   isFooter?: boolean
 }
 
-const FormContentContainer: React.FC<Props> = (props) => {
+const FormContentContainer: React.FC<React.PropsWithChildren<Props>> = (
+  props,
+) => {
   const renderContainer = () => (
     <Box paddingX={[3, 3, 3, 6, 14]}>{props.children}</Box>
   )

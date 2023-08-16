@@ -10,7 +10,7 @@ interface Props {
   patternText?: string
 }
 
-const HintBox: React.FC<Props> = (props: Props) => {
+const HintBox: React.FC<React.PropsWithChildren<Props>> = (props: Props) => {
   const [show, setShow] = useState<boolean>(false)
 
   useEffect(() => {

@@ -1,3 +1,4 @@
+export { EinstaklingsupplysingarToJSON } from '../gen/fetch'
 export { NationalRegistryClientModule } from './lib/nationalRegistryClient.module'
 export { NationalRegistryClientConfig } from './lib/nationalRegistryClient.config'
 export { NationalRegistryClientService } from './lib/nationalRegistryClient.service'

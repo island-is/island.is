@@ -9,7 +9,10 @@ import { formatText } from '@island.is/application/core'
 import { institutionApplicationMessages as m } from '../../lib/messages'
 import { useFormContext } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
-const SecondaryContact: FC<FieldBaseProps> = ({ field, application }) => {
+const SecondaryContact: FC<React.PropsWithChildren<FieldBaseProps>> = ({
+  field,
+  application,
+}) => {
   const { setValue, getValues } = useFormContext()
   const { formatMessage } = useLocale()
   const { id, title } = field

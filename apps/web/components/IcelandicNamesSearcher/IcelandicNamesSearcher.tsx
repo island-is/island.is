@@ -59,7 +59,8 @@ export const IcelandicNamesSearcher = () => {
 
   useEffect(() => {
     if (width < theme.breakpoints.md) {
-      return setIsMobile(true)
+      setIsMobile(true)
+      return
     }
     setIsMobile(false)
   }, [width])

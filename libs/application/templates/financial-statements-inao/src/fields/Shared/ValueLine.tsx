@@ -8,7 +8,7 @@ interface ValueLineProps {
   isTotal?: boolean
 }
 
-export const ValueLine: FC<ValueLineProps> = ({
+export const ValueLine: FC<React.PropsWithChildren<ValueLineProps>> = ({
   label,
   value = '-',
   isTotal = false,
@@ -26,7 +26,7 @@ export const ValueLine: FC<ValueLineProps> = ({
         as="p"
         fontWeight={isTotal ? 'semiBold' : 'regular'}
       >
-        {value}
+        {formatMessage(value)}
       </Text>
     </Box>
   )
