@@ -8,7 +8,7 @@ import type { BoxProps } from '@island.is/island-ui/core/types'
 import { Field, RecordObject, SubmitField } from './Fields'
 import { Condition } from './Condition'
 import { Application, FormValue } from './Application'
-import { TestSupport } from '@island.is/island-ui/utils'
+import type { TestSupport } from '@island.is/island-ui/utils'
 
 export type BeforeSubmitCallback = () => Promise<[true, null] | [false, string]>
 

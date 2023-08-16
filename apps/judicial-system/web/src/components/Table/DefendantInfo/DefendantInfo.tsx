@@ -2,7 +2,7 @@ import React from 'react'
 
 import { Box, Text } from '@island.is/island-ui/core'
 import { formatDOB } from '@island.is/judicial-system/formatters'
-import { Defendant } from '@island.is/judicial-system/types'
+import type { Defendant } from '@island.is/judicial-system/types'
 
 import * as styles from './DefendantInfo.css'
 

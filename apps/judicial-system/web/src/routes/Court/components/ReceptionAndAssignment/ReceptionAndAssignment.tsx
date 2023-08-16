@@ -2,7 +2,7 @@ import React, { useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 import { useQuery } from '@apollo/client'
-import { ValueType } from 'react-select'
+import type { ValueType } from 'react-select'
 
 import {
   FormContentContainer,
@@ -11,7 +11,7 @@ import {
   PageLayout,
   SelectCourtOfficials,
 } from '@island.is/judicial-system-web/src/components'
-import {
+import type {
   ReactSelectOption,
   UserData,
 } from '@island.is/judicial-system-web/src/types'
@@ -20,14 +20,14 @@ import {
   isInvestigationCase,
   isRestrictionCase,
 } from '@island.is/judicial-system/types'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
+import type { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import { UsersQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import { AlertMessage, Box, Text } from '@island.is/island-ui/core'
 import { titles } from '@island.is/judicial-system-web/messages'
 import { isReceptionAndAssignmentStepValid } from '@island.is/judicial-system-web/src/utils/validate'
-import { User } from '@island.is/judicial-system-web/src/graphql/schema'
+import type { User } from '@island.is/judicial-system-web/src/graphql/schema'
 import * as constants from '@island.is/judicial-system/consts'
 
 import { receptionAndAssignment as strings } from './ReceptionAndAssignment.strings'
@@ -41,22 +41,14 @@ const ReceptionAndAssignment = () => {
   const id = router.query.id
   const { formatMessage } = useIntl()
   const [courtCaseNumberEM, setCourtCaseNumberEM] = useState('')
-  const [createCourtCaseSuccess, setCreateCourtCaseSuccess] = useState<boolean>(
-    false,
-  )
+  const [createCourtCaseSuccess, setCreateCourtCaseSuccess] =
+    useState<boolean>(false)
 
-  const {
-    workingCase,
-    setWorkingCase,
-    isLoadingWorkingCase,
-    caseNotFound,
-  } = useContext(FormContext)
+  const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
+    useContext(FormContext)
 
-  const {
-    createCourtCase,
-    isCreatingCourtCase,
-    setAndSendCaseToServer,
-  } = useCase()
+  const { createCourtCase, isCreatingCourtCase, setAndSendCaseToServer } =
+    useCase()
 
   const { data: userData, loading: userLoading } = useQuery<UserData>(
     UsersQuery,

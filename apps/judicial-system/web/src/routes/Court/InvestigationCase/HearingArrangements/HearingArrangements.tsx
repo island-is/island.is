@@ -26,7 +26,7 @@ import { titles } from '@island.is/judicial-system-web/messages'
 import { AlertMessage, RadioButton, Box, Text } from '@island.is/island-ui/core'
 import { isCourtHearingArrangementsStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
-import { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
+import type { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { hasSentNotification } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import * as constants from '@island.is/judicial-system/consts'
 
@@ -41,11 +41,8 @@ const HearingArrangements = () => {
     isCaseUpToDate,
   } = useContext(FormContext)
   const { formatMessage } = useIntl()
-  const {
-    setAndSendCaseToServer,
-    sendNotification,
-    isSendingNotification,
-  } = useCase()
+  const { setAndSendCaseToServer, sendNotification, isSendingNotification } =
+    useCase()
   const {
     courtDate,
     setCourtDate,

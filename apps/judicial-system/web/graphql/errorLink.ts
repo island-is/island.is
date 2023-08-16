@@ -1,4 +1,4 @@
-import { onError, ErrorResponse } from '@apollo/client/link/error'
+import { onError, type ErrorResponse } from '@apollo/client/link/error'
 
 import { api } from '@island.is/judicial-system-web/src/services'
 

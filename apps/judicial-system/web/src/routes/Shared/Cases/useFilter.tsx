@@ -1,14 +1,14 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { IntlShape, useIntl } from 'react-intl'
+import { type IntlShape, useIntl } from 'react-intl'
 
 import {
   isIndictmentCase,
   isInvestigationCase,
   isRestrictionCase,
 } from '@island.is/judicial-system/types'
-import { TempCaseListEntry as CaseListEntry } from '@island.is/judicial-system-web/src/types'
+import type { TempCaseListEntry as CaseListEntry } from '@island.is/judicial-system-web/src/types'
 import {
-  User,
+  type User,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
@@ -130,10 +130,7 @@ export const useFilter = (
     [setFilter],
   )
 
-  const [activeCases, pastCases]: [
-    CaseListEntry[],
-    CaseListEntry[],
-  ] = useMemo(
+  const [activeCases, pastCases]: [CaseListEntry[], CaseListEntry[]] = useMemo(
     () => [
       filterCases(filter.value, allActiveCases, user),
       filterCases(filter.value, allPastCases, user),

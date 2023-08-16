@@ -5,7 +5,7 @@ import { useIntl } from 'react-intl'
 
 import { tables } from '@island.is/judicial-system-web/messages'
 
-import { CaseDecision, CaseType } from '@island.is/judicial-system/types'
+import type { CaseDecision, CaseType } from '@island.is/judicial-system/types'
 import { displayCaseType } from '@island.is/judicial-system-web/src/routes/Shared/Cases/utils'
 
 interface Props {

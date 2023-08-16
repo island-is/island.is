@@ -1,5 +1,10 @@
-import React, { FC, PropsWithChildren, ReactElement, useState } from 'react'
-import { Row, useSortBy, useTable } from 'react-table'
+import React, {
+  type FC,
+  type PropsWithChildren,
+  type ReactElement,
+  useState,
+} from 'react'
+import { type Row, useSortBy, useTable } from 'react-table'
 import cn from 'classnames'
 
 import { Box, Icon, Text } from '@island.is/island-ui/core'
@@ -55,13 +60,8 @@ const Table = <T extends object>(
     },
     useSortBy,
   )
-  const {
-    getTableProps,
-    getTableBodyProps,
-    headerGroups,
-    rows,
-    prepareRow,
-  } = tableInstance
+  const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
+    tableInstance
   const enoughRowsToTruncate = rows.length > 4
   const lastIndex = rows.length - 1
   const lastRow = rows[lastIndex]

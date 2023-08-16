@@ -23,7 +23,7 @@ import {
   Button,
   InputFileUpload,
   Text,
-  UploadFile,
+  type UploadFile,
 } from '@island.is/island-ui/core'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import RulingDateLabel from '@island.is/judicial-system-web/src/components/RulingDateLabel/RulingDateLabel'
@@ -33,7 +33,7 @@ import {
   isProsecutionRole,
 } from '@island.is/judicial-system/types'
 import {
-  TUploadFile,
+  type TUploadFile,
   useS3Upload,
   useCase,
 } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -49,12 +49,8 @@ const AppealToCourtOfAppeals = () => {
   const router = useRouter()
   const [displayFiles, setDisplayFiles] = useState<TUploadFile[]>([])
   const [visibleModal, setVisibleModal] = useState<'APPEAL_SENT'>()
-  const {
-    handleChange,
-    handleRemove,
-    handleRetry,
-    generateSingleFileUpdate,
-  } = useS3Upload(workingCase.id)
+  const { handleChange, handleRemove, handleRetry, generateSingleFileUpdate } =
+    useS3Upload(workingCase.id)
   const { transitionCase } = useCase()
   const { id } = router.query
   const appealBriefType = isProsecutionRole(user?.role)

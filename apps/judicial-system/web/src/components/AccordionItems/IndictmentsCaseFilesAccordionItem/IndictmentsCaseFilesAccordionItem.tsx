@@ -8,7 +8,7 @@ import {
   animate,
   AnimatePresence,
   motion,
-  MotionValue,
+  type MotionValue,
   Reorder,
   useDragControls,
   useMotionValue,
@@ -25,7 +25,7 @@ import {
   Input,
   toast,
 } from '@island.is/island-ui/core'
-import {
+import type {
   CaseFile as TCaseFile,
   CrimeSceneMap,
   IndictmentSubtypeMap,
@@ -409,9 +409,8 @@ const IndictmentsCaseFilesAccordionItem: React.FC<
     crimeScenes,
   } = props
   const { formatMessage } = useIntl()
-  const [updateFilesMutation] = useMutation<UpdateFilesMutationResponse>(
-    UpdateFileMutation,
-  )
+  const [updateFilesMutation] =
+    useMutation<UpdateFilesMutationResponse>(UpdateFileMutation)
 
   const { onOpen, fileNotFound, dismissFileNotFound } = useFileList({ caseId })
   const { remove } = useS3Upload(caseId)
@@ -550,9 +549,8 @@ const IndictmentsCaseFilesAccordionItem: React.FC<
 
     setReorderableItems((prev) => {
       const newReorderableItems = [...prev]
-      newReorderableItems[
-        fileInReorderableItems
-      ].userGeneratedFilename = newName
+      newReorderableItems[fileInReorderableItems].userGeneratedFilename =
+        newName
       newReorderableItems[fileInReorderableItems].displayDate = newDate
         ? newDate.toISOString()
         : newReorderableItems[fileInReorderableItems].displayDate

@@ -1,19 +1,19 @@
-import React, { useState, Dispatch, FC } from 'react'
+import React, { useState, type Dispatch, type FC } from 'react'
 import cn from 'classnames'
 import { useIntl } from 'react-intl'
 import Select, {
   components,
-  ControlProps,
-  IndicatorProps,
-  MenuProps,
-  OptionProps,
-  PlaceholderProps,
-  ValueContainerProps,
+  type ControlProps,
+  type IndicatorProps,
+  type MenuProps,
+  type OptionProps,
+  type PlaceholderProps,
+  type ValueContainerProps,
 } from 'react-select'
 
 import { Box, Icon, Tag, Text } from '@island.is/island-ui/core'
 import { core, courtDocuments } from '@island.is/judicial-system-web/messages'
-import {
+import type {
   TempCase as Case,
   ReactSelectOption,
   CourtDocument,
@@ -35,9 +35,8 @@ const CourtDocuments: FC<React.PropsWithChildren<Props>> = (props) => {
   const { workingCase, setWorkingCase } = props
   const { formatMessage } = useIntl()
   const { setAndSendCaseToServer } = useCase()
-  const [submittedByMenuIsOpen, setSubmittedByMenuIsOpen] = useState<boolean>(
-    false,
-  )
+  const [submittedByMenuIsOpen, setSubmittedByMenuIsOpen] =
+    useState<boolean>(false)
 
   const whoFiledOptions = [
     {

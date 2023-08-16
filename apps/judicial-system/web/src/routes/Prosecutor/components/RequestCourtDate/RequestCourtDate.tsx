@@ -4,7 +4,7 @@ import { useIntl } from 'react-intl'
 import { Box, Text, Tooltip } from '@island.is/island-ui/core'
 import { requestCourtDate as m } from '@island.is/judicial-system-web/messages'
 import { DateTime } from '@island.is/judicial-system-web/src/components'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
+import type { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 interface Props {
   workingCase: Case

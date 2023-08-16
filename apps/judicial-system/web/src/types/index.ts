@@ -1,4 +1,4 @@
-import {
+import type {
   CaseType,
   Institution,
   User,
@@ -9,7 +9,7 @@ import {
   CaseAppealState,
   CaseAppealRulingDecision,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import {
+import type {
   Case,
   CaseListEntry,
   CreateCase,

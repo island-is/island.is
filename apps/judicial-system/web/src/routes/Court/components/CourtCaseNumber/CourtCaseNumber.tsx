@@ -2,7 +2,7 @@ import React from 'react'
 import { useIntl } from 'react-intl'
 
 import { CaseState, isIndictmentCase } from '@island.is/judicial-system/types'
-import {
+import type {
   TempCase as Case,
   TempUpdateCase as UpdateCase,
 } from '@island.is/judicial-system-web/src/types'

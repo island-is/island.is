@@ -1,4 +1,4 @@
-import {
+import type {
   TempCase as Case,
   TempUpdateCase as UpdateCase,
 } from '@island.is/judicial-system-web/src/types'

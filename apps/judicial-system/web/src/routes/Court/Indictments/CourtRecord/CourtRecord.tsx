@@ -25,10 +25,10 @@ import {
   Box,
   InputFileUpload,
   toast,
-  UploadFile,
+  type UploadFile,
 } from '@island.is/island-ui/core'
 import {
-  TUploadFile,
+  type TUploadFile,
   useCase,
   useS3Upload,
 } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -38,28 +38,23 @@ import {
 } from '@island.is/judicial-system/types'
 import {
   mapCaseFileToUploadFile,
-  stepValidationsType,
+  type stepValidationsType,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import * as constants from '@island.is/judicial-system/consts'
 
 import { courtRecord as m } from './CourtRecord.strings'
 
 const CourtRecord: React.FC<React.PropsWithChildren<unknown>> = () => {
-  const { workingCase, isLoadingWorkingCase, caseNotFound } = useContext(
-    FormContext,
-  )
+  const { workingCase, isLoadingWorkingCase, caseNotFound } =
+    useContext(FormContext)
   const [navigateTo, setNavigateTo] = useState<keyof stepValidationsType>()
   const [displayFiles, setDisplayFiles] = useState<TUploadFile[]>([])
 
   const { formatMessage } = useIntl()
   const { transitionCase } = useCase()
 
-  const {
-    handleChange,
-    handleRemove,
-    handleRetry,
-    generateSingleFileUpdate,
-  } = useS3Upload(workingCase.id)
+  const { handleChange, handleRemove, handleRetry, generateSingleFileUpdate } =
+    useS3Upload(workingCase.id)
 
   useEffect(() => {
     if (workingCase.caseFiles) {

@@ -1,4 +1,4 @@
-import React, { PropsWithChildren } from 'react'
+import React, { type PropsWithChildren } from 'react'
 import InputMask from 'react-input-mask'
 
 interface Props {

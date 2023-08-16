@@ -3,9 +3,9 @@ import { render, screen } from '@testing-library/react'
 import { IntlProvider } from 'react-intl'
 
 import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
+import type { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
-import CaseDates, { Props } from './CaseDates'
+import CaseDates, { type Props } from './CaseDates'
 
 const renderCaseDates = (theCase: Case, button?: Props['button']) =>
   render(

@@ -1,5 +1,5 @@
 import React from 'react'
-import { TestSupport } from '@island.is/island-ui/utils'
+import type { TestSupport } from '@island.is/island-ui/utils'
 import ReactSelect from 'react-select'
 import cn from 'classnames'
 import { CountryCodeSelectProps } from '../PhoneInput.types'

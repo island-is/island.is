@@ -4,7 +4,7 @@ import { useIntl } from 'react-intl'
 import { Box, Input, RadioButton, Text } from '@island.is/island-ui/core'
 import { capitalize } from '@island.is/judicial-system/formatters'
 import { CaseAppealDecision } from '@island.is/judicial-system/types'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
+import type { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import { core } from '@island.is/judicial-system-web/messages'
 import { BlueBox } from '@island.is/judicial-system-web/src/components'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -26,14 +26,10 @@ const AppealSections: React.FC<React.PropsWithChildren<Props>> = (props) => {
   const { workingCase, setWorkingCase } = props
   const { formatMessage } = useIntl()
   const { setAndSendCaseToServer, updateCase } = useCase()
-  const [
-    checkedAccusedRadio,
-    setCheckedAccusedRadio,
-  ] = useState<CaseAppealDecision>()
-  const [
-    checkedProsecutorRadio,
-    setCheckedProsecutorRadio,
-  ] = useState<CaseAppealDecision>()
+  const [checkedAccusedRadio, setCheckedAccusedRadio] =
+    useState<CaseAppealDecision>()
+  const [checkedProsecutorRadio, setCheckedProsecutorRadio] =
+    useState<CaseAppealDecision>()
 
   return (
     <>

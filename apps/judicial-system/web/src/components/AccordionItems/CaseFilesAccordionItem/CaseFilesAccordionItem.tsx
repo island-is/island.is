@@ -12,10 +12,10 @@ import {
   completedCaseStates,
   isCourtRole,
 } from '@island.is/judicial-system/types'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
+import type { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import { caseFilesAccordion as m } from '@island.is/judicial-system-web/messages'
 import {
-  User,
+  type User,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 

@@ -6,7 +6,7 @@ import { Tooltip } from '../Tooltip/Tooltip'
 import { Box } from '../Box/Box'
 import { InputBackgroundColor } from '../Input/types'
 import * as styles from './Checkbox.css'
-import { TestSupport } from '@island.is/island-ui/utils'
+import type { TestSupport } from '@island.is/island-ui/utils'
 
 export interface CheckboxProps {
   name?: string

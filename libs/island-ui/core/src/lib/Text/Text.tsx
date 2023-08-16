@@ -18,7 +18,7 @@ import {
   whiteSpace as whiteSpaceStyle,
   capitalizeFirstLetter as capitalizeFirstLetterStyle,
 } from './Text.css'
-import { TestSupport } from '@island.is/island-ui/utils'
+import type { TestSupport } from '@island.is/island-ui/utils'
 
 type TextElements =
   | 'h1'

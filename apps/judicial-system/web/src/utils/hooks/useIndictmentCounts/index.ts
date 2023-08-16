@@ -1,11 +1,12 @@
-import React, { useCallback } from 'react'
+import type React from 'react'
+import { useCallback } from 'react'
 import { useIntl } from 'react-intl'
 
 import { toast } from '@island.is/island-ui/core'
-import { SubstanceMap } from '@island.is/judicial-system/types'
+import type { SubstanceMap } from '@island.is/judicial-system/types'
 import { errors } from '@island.is/judicial-system-web/messages'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
-import { UpdateIndictmentCountInput } from '@island.is/judicial-system-web/src/graphql/schema'
+import type { TempCase as Case } from '@island.is/judicial-system-web/src/types'
+import type { UpdateIndictmentCountInput } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { useCreateIndictmentCountMutation } from './createIndictmentCount.generated'
 import { useUpdateIndictmentCountMutation } from './updateIndictmentCount.generated'

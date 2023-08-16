@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import InputMask from 'react-input-mask'
-import { ValueType } from 'react-select/src/types'
+import type { ValueType } from 'react-select/src/types'
 
 import {
   Box,
@@ -15,18 +15,17 @@ import {
   FormFooter,
 } from '@island.is/judicial-system-web/src/components'
 import {
-  Institution,
-  InstitutionType,
-  User,
+  type Institution,
+  type User,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import * as constants from '@island.is/judicial-system/consts'
 
-import { ReactSelectOption } from '../../../types'
+import type { ReactSelectOption } from '../../../types'
 import {
   isAdminUserFormValid,
   validate,
-  Validation,
+  type Validation,
 } from '../../../utils/validate'
 import * as styles from './UserForm.css'
 import {
@@ -55,10 +54,8 @@ export const UserForm: React.FC<React.PropsWithChildren<Props>> = (props) => {
   const [nationalIdErrorMessage, setNationalIdErrorMessage] = useState<string>()
 
   const [titleErrorMessage, setTitleErrorMessage] = useState<string>()
-  const [
-    mobileNumberErrorMessage,
-    setMobileNumberErrorMessage,
-  ] = useState<string>()
+  const [mobileNumberErrorMessage, setMobileNumberErrorMessage] =
+    useState<string>()
   const [emailErrorMessage, setEmailErrorMessage] = useState<string>()
 
   const setName = useCallback(
@@ -85,13 +82,14 @@ export const UserForm: React.FC<React.PropsWithChildren<Props>> = (props) => {
     }
   }, [personData, personError, setName])
 
-  const selectInstitutions = (isProsecutionRole(user.role)
-    ? props.prosecutorsOffices
-    : isExtendedCourtRole(user.role)
-    ? props.allCourts
-    : user.role === UserRole.STAFF
-    ? props.prisonInstitutions
-    : []
+  const selectInstitutions = (
+    isProsecutionRole(user.role)
+      ? props.prosecutorsOffices
+      : isExtendedCourtRole(user.role)
+      ? props.allCourts
+      : user.role === UserRole.STAFF
+      ? props.prisonInstitutions
+      : []
   ).map((institution) => ({
     label: institution.name,
     value: institution.id,

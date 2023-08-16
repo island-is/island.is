@@ -2,34 +2,34 @@ import { useCallback, useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { uuid } from 'uuidv4'
 
-import { toast, UploadFile } from '@island.is/island-ui/core'
-import { CaseFileCategory } from '@island.is/judicial-system/types'
+import { toast, type UploadFile } from '@island.is/island-ui/core'
+import type { CaseFileCategory } from '@island.is/judicial-system/types'
 import { errors } from '@island.is/judicial-system-web/messages'
 import { UserContext } from '@island.is/judicial-system-web/src/components'
-import { PresignedPost } from '@island.is/judicial-system-web/src/graphql/schema'
+import type { PresignedPost } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import {
-  CreatePresignedPostMutation,
+  type CreatePresignedPostMutation,
   useCreatePresignedPostMutation,
 } from './createPresignedPost.generated'
 import {
-  LimitedAccessCreatePresignedPostMutation,
+  type LimitedAccessCreatePresignedPostMutation,
   useLimitedAccessCreatePresignedPostMutation,
 } from './limitedAccessCreatePresignedPost.generated'
 import {
-  CreateFileMutation,
+  type CreateFileMutation,
   useCreateFileMutation,
 } from './createFile.generated'
 import {
-  LimitedAccessCreateFileMutation,
+  type LimitedAccessCreateFileMutation,
   useLimitedAccessCreateFileMutation,
 } from './limitedAccessCreateFile.generated'
 import {
-  DeleteFileMutation,
+  type DeleteFileMutation,
   useDeleteFileMutation,
 } from './deleteFile.generated'
 import {
-  LimitedAccessDeleteFileMutation,
+  type LimitedAccessDeleteFileMutation,
   useLimitedAccessDeleteFileMutation,
 } from './limitedAccessDeleteFile.generated'
 import { useUploadPoliceCaseFileMutation } from './uploadPoliceCaseFile.generated'
@@ -91,9 +91,8 @@ export const useS3Upload = (caseId: string) => {
   const { formatMessage } = useIntl()
 
   const [createPresignedPost] = useCreatePresignedPostMutation()
-  const [
-    limitedAccessCreatePresignedPost,
-  ] = useLimitedAccessCreatePresignedPostMutation()
+  const [limitedAccessCreatePresignedPost] =
+    useLimitedAccessCreatePresignedPostMutation()
   const [createFile] = useCreateFileMutation()
   const [limitedAccessCreateFile] = useLimitedAccessCreateFileMutation()
   const [deleteFile] = useDeleteFileMutation()

@@ -10,13 +10,17 @@ import router from 'next/router'
 import { useIntl } from 'react-intl'
 import _isEqual from 'lodash/isEqual'
 
-import { Box, InputFileUpload, UploadFile } from '@island.is/island-ui/core'
 import {
-  CaseFile,
+  Box,
+  InputFileUpload,
+  type UploadFile,
+} from '@island.is/island-ui/core'
+import {
+  type CaseFile,
   CaseFileCategory,
   CaseFileState,
-  CrimeSceneMap,
-  IndictmentSubtypeMap,
+  type CrimeSceneMap,
+  type IndictmentSubtypeMap,
 } from '@island.is/judicial-system/types'
 import * as constants from '@island.is/judicial-system/consts'
 import {
@@ -40,10 +44,10 @@ import { mapCaseFileToUploadFile } from '@island.is/judicial-system-web/src/util
 import { CaseOrigin } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import {
-  PoliceCaseFileCheck,
+  type PoliceCaseFileCheck,
   PoliceCaseFiles,
   mapPoliceCaseFileToPoliceCaseFileCheck,
-  PoliceCaseFilesData,
+  type PoliceCaseFilesData,
 } from '../../components'
 import { policeCaseFiles as m } from './PoliceCaseFilesRoute.strings'
 import { useGetIndictmentPoliceCaseFilesQuery } from './getIndictmentPoliceCaseFiles.generated'
@@ -335,9 +339,8 @@ const PoliceUploadListMemo: React.FC<
 
 const PoliceCaseFilesRoute = () => {
   const { formatMessage } = useIntl()
-  const { workingCase, isLoadingWorkingCase, caseNotFound } = useContext(
-    FormContext,
-  )
+  const { workingCase, isLoadingWorkingCase, caseNotFound } =
+    useContext(FormContext)
 
   const [allUploaded, setAllUploaded] = useState<AllUploadedState>(
     workingCase.policeCaseNumbers.reduce(

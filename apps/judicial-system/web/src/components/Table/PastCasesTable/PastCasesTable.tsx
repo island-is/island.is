@@ -6,7 +6,7 @@ import { Box, Text } from '@island.is/island-ui/core'
 import { useIntl } from 'react-intl'
 import { capitalize } from '@island.is/judicial-system/formatters'
 import {
-  CaseListEntry,
+  type CaseListEntry,
   isExtendedCourtRole,
 } from '@island.is/judicial-system/types'
 import { tables, core } from '@island.is/judicial-system-web/messages'
@@ -48,12 +48,8 @@ const PastCasesTable: React.FC<React.PropsWithChildren<Props>> = (props) => {
   const { formatMessage } = useIntl()
   const { user } = useContext(UserContext)
 
-  const {
-    sortedData,
-    requestSort,
-    getClassNamesFor,
-    isActiveColumn,
-  } = useSortCases('createdAt', 'descending', cases)
+  const { sortedData, requestSort, getClassNamesFor, isActiveColumn } =
+    useSortCases('createdAt', 'descending', cases)
 
   const pastCasesData = useMemo(
     () =>

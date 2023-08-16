@@ -2,7 +2,7 @@ import React from 'react'
 import { useIntl } from 'react-intl'
 
 import { Input } from '@island.is/island-ui/core'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
+import type { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import { ruling as m } from '@island.is/judicial-system-web/messages'
 
 import { useCase } from '../../utils/hooks'

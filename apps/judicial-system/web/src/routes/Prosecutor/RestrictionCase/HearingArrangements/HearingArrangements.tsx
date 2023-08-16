@@ -17,7 +17,7 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import {
   removeTabsValidateAndSet,
-  stepValidationsType,
+  type stepValidationsType,
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { Box, Input, Text, toast } from '@island.is/island-ui/core'
@@ -33,7 +33,7 @@ import {
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 import { isHearingArrangementsStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
-import { Institution } from '@island.is/judicial-system-web/src/graphql/schema'
+import type { Institution } from '@island.is/judicial-system-web/src/graphql/schema'
 import * as constants from '@island.is/judicial-system/consts'
 
 import ArrestDate from './ArrestDate'
@@ -48,12 +48,8 @@ export const HearingArrangements: React.FC<
 > = () => {
   const router = useRouter()
   const { formatMessage } = useIntl()
-  const {
-    workingCase,
-    setWorkingCase,
-    isLoadingWorkingCase,
-    caseNotFound,
-  } = useContext(FormContext)
+  const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
+    useContext(FormContext)
   const [navigateTo, setNavigateTo] = useState<keyof stepValidationsType>()
 
   const {

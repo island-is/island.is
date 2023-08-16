@@ -8,7 +8,7 @@ import { Box } from '../Box/Box'
 import * as styles from './Button.css'
 import { Icon } from '../IconRC/Icon'
 import { Icon as IconType, Type } from '../IconRC/iconMap'
-import { TestSupport } from '@island.is/island-ui/utils'
+import type { TestSupport } from '@island.is/island-ui/utils'
 
 // TODO: refine types, ex. if circle is true there should be no children. and filter variants with conditional types
 

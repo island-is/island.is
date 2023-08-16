@@ -4,7 +4,7 @@
     "plugin:jsx-a11y/strict",
     "../../../.eslintrc.json"
   ],
-  "ignorePatterns": ["!**/*", "/src/graphql/schema.tsx"],
+  "ignorePatterns": ["!**/*", "/src/graphql/schema.tsx", "/.next/**/*"],
   "rules": {
     "@nx/enforce-module-boundaries": [
       "error",
@@ -22,7 +22,8 @@
       {
         "ignoreNonDOM": true
       }
-    ]
+    ],
+    "@typescript-eslint/consistent-type-imports": "error"
   },
   "plugins": ["jsx-a11y"],
   "overrides": [

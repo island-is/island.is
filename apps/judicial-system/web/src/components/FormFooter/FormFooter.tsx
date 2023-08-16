@@ -6,8 +6,8 @@ import { useIntl } from 'react-intl'
 import {
   Box,
   Button,
-  ButtonTypes,
-  IconMapIcon,
+  type ButtonTypes,
+  type IconMapIcon,
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { core } from '@island.is/judicial-system-web/messages'

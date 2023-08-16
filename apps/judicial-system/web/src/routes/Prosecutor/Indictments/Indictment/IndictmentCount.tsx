@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo, useState } from 'react'
-import { IntlShape, useIntl } from 'react-intl'
-import { ValueType } from 'react-select'
+import { type IntlShape, useIntl } from 'react-intl'
+import type { ValueType } from 'react-select'
 import InputMask from 'react-input-mask'
 
 import {
@@ -11,21 +11,21 @@ import {
   Tag,
   Icon,
 } from '@island.is/island-ui/core'
-import {
+import type {
   ReactSelectOption,
   TempCase as Case,
   TempIndictmentCount as TIndictmentCount,
 } from '@island.is/judicial-system-web/src/types'
 import {
   offenseSubstances,
-  Substance,
-  SubstanceMap,
+  type Substance,
+  type SubstanceMap,
 } from '@island.is/judicial-system/types'
 import {
   BlueBox,
   IndictmentInfo,
 } from '@island.is/judicial-system-web/src/components'
-import { UpdateIndictmentCount } from '@island.is/judicial-system-web/src/utils/hooks/useIndictmentCounts'
+import type { UpdateIndictmentCount } from '@island.is/judicial-system-web/src/utils/hooks/useIndictmentCounts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   removeErrorMessageIfValid,
@@ -290,18 +290,12 @@ export const IndictmentCount: React.FC<React.PropsWithChildren<Props>> = (
     vehicleRegistrationNumberErrorMessage,
     setVehicleRegistrationNumberErrorMessage,
   ] = useState<string>('')
-  const [
-    incidentDescriptionErrorMessage,
-    setIncidentDescriptionErrorMessage,
-  ] = useState<string>('')
-  const [
-    bloodAlcoholContentErrorMessage,
-    setBloodAlcoholContentErrorMessage,
-  ] = useState<string>('')
-  const [
-    legalArgumentsErrorMessage,
-    setLegalArgumentsErrorMessage,
-  ] = useState<string>('')
+  const [incidentDescriptionErrorMessage, setIncidentDescriptionErrorMessage] =
+    useState<string>('')
+  const [bloodAlcoholContentErrorMessage, setBloodAlcoholContentErrorMessage] =
+    useState<string>('')
+  const [legalArgumentsErrorMessage, setLegalArgumentsErrorMessage] =
+    useState<string>('')
 
   const lawTag = useCallback(
     (law: number[]) =>

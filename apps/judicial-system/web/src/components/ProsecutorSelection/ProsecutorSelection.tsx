@@ -1,18 +1,18 @@
 import React, { useContext, useMemo } from 'react'
 import { useIntl } from 'react-intl'
 import { useQuery } from '@apollo/client'
-import { OptionsType, ValueType } from 'react-select'
+import type { OptionsType, ValueType } from 'react-select'
 
-import { Select, Option } from '@island.is/island-ui/core'
+import { Select, type Option } from '@island.is/island-ui/core'
 import { isIndictmentCase } from '@island.is/judicial-system/types'
 import {
   UserContext,
   FormContext,
 } from '@island.is/judicial-system-web/src/components'
 import { ProsecutorSelectionUsersQuery } from './prosecutorSelectionUsersGql'
-import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
+import type { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 import {
-  User,
+  type User,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 

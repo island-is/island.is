@@ -1,14 +1,14 @@
 import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
-import { ValueType } from 'react-select'
+import type { ValueType } from 'react-select'
 
 import { Box, Select, Text } from '@island.is/island-ui/core'
-import {
+import type {
   TempCase as Case,
   ReactSelectOption,
 } from '@island.is/judicial-system-web/src/types'
 import { selectCourt as m } from '@island.is/judicial-system-web/messages'
-import { Institution } from '@island.is/judicial-system-web/src/graphql/schema'
+import type { Institution } from '@island.is/judicial-system-web/src/graphql/schema'
 
 type CourtSelectOption = ReactSelectOption & { court: Institution }
 

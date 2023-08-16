@@ -23,10 +23,10 @@ import {
   Box,
   InputFileUpload,
   Text,
-  UploadFile,
+  type UploadFile,
 } from '@island.is/island-ui/core'
 import {
-  TUploadFile,
+  type TUploadFile,
   useS3Upload,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { CaseFileCategory } from '@island.is/judicial-system/types'
@@ -38,17 +38,12 @@ import * as constants from '@island.is/judicial-system/consts'
 import * as strings from './CaseFiles.strings'
 
 const CaseFiles: React.FC<React.PropsWithChildren<unknown>> = () => {
-  const { workingCase, isLoadingWorkingCase, caseNotFound } = useContext(
-    FormContext,
-  )
+  const { workingCase, isLoadingWorkingCase, caseNotFound } =
+    useContext(FormContext)
   const [displayFiles, setDisplayFiles] = useState<TUploadFile[]>([])
   const { formatMessage } = useIntl()
-  const {
-    handleChange,
-    handleRemove,
-    handleRetry,
-    generateSingleFileUpdate,
-  } = useS3Upload(workingCase.id)
+  const { handleChange, handleRemove, handleRetry, generateSingleFileUpdate } =
+    useS3Upload(workingCase.id)
 
   const isTrafficViolationCaseCheck = isTrafficViolationCase(workingCase)
 

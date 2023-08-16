@@ -9,10 +9,10 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { FormContext } from '@island.is/judicial-system-web/src/components'
-import { PoliceCaseInfo } from '@island.is/judicial-system-web/src/graphql/schema'
+import type { PoliceCaseInfo } from '@island.is/judicial-system-web/src/graphql/schema'
 import { PoliceCaseFilesMessageBox } from '@island.is/judicial-system-web/src/routes/Prosecutor/components'
 
-import { PoliceCase } from '../Defendant'
+import type { PoliceCase } from '../Defendant'
 import { useGetPoliceCaseInfoQuery } from './getPoliceCaseInfo.generated'
 import { lokeNumberList as strings } from './LokeNumberList.strings'
 

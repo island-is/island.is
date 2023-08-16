@@ -1,11 +1,12 @@
-import React, { SetStateAction, useCallback } from 'react'
+import type React from 'react'
+import { type SetStateAction, useCallback } from 'react'
 import { useMutation } from '@apollo/client'
 import { useIntl } from 'react-intl'
 
 import { toast } from '@island.is/island-ui/core'
 import { errors } from '@island.is/judicial-system-web/messages'
-import { UpdateDefendant } from '@island.is/judicial-system/types'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
+import type { UpdateDefendant } from '@island.is/judicial-system/types'
+import type { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 import { CreateDefendantMutation } from './createDefendantGql'
 import { DeleteDefendantMutation } from './deleteDefendantGql'
@@ -32,16 +33,12 @@ export interface UpdateDefendantMutationResponse {
 const useDefendants = () => {
   const { formatMessage } = useIntl()
 
-  const [
-    createDefendantMutation,
-    { loading: isCreatingDefendant },
-  ] = useMutation<CreateDefendantMutationResponse>(CreateDefendantMutation)
-  const [
-    deleteDefendantMutation,
-  ] = useMutation<DeleteDefendantMutationResponse>(DeleteDefendantMutation)
-  const [
-    updateDefendantMutation,
-  ] = useMutation<UpdateDefendantMutationResponse>(UpdateDefendantMutation)
+  const [createDefendantMutation, { loading: isCreatingDefendant }] =
+    useMutation<CreateDefendantMutationResponse>(CreateDefendantMutation)
+  const [deleteDefendantMutation] =
+    useMutation<DeleteDefendantMutationResponse>(DeleteDefendantMutation)
+  const [updateDefendantMutation] =
+    useMutation<UpdateDefendantMutationResponse>(UpdateDefendantMutation)
 
   const createDefendant = useCallback(
     async (caseId: string, defendant: UpdateDefendant) => {

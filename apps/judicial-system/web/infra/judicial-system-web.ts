@@ -1,4 +1,8 @@
-import { ref, service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
+import {
+  ref,
+  service,
+  type ServiceBuilder,
+} from '../../../../infra/src/dsl/dsl'
 
 export const serviceSetup = (services: {
   api: ServiceBuilder<'judicial-system-api'>

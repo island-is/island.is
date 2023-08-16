@@ -1,6 +1,6 @@
 import { createIntl } from 'react-intl'
 
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
+import type { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 import { getCaseResubmittedText } from './CaseResubmitModal'
 

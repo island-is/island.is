@@ -1,7 +1,7 @@
 import React, { useCallback, useContext, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import { useIntl } from 'react-intl'
-import { ValueType } from 'react-select/src/types'
+import type { ValueType } from 'react-select/src/types'
 import { AnimatePresence, motion } from 'framer-motion'
 import { uuid } from 'uuidv4'
 
@@ -14,7 +14,7 @@ import {
   PageLayout,
 } from '@island.is/judicial-system-web/src/components'
 import useDefendants from '@island.is/judicial-system-web/src/utils/hooks/useDefendants'
-import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
+import type { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import {
@@ -23,11 +23,11 @@ import {
   defendant as m,
   errors,
 } from '@island.is/judicial-system-web/messages'
-import {
+import type {
   Defendant as TDefendant,
   UpdateDefendant,
 } from '@island.is/judicial-system/types'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
+import type { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import {
   Box,
   Button,
@@ -56,12 +56,8 @@ const Defendant = () => {
   const router = useRouter()
   const { updateDefendant, createDefendant, deleteDefendant } = useDefendants()
 
-  const {
-    workingCase,
-    setWorkingCase,
-    isLoadingWorkingCase,
-    caseNotFound,
-  } = useContext(FormContext)
+  const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
+    useContext(FormContext)
   const { createCase, isCreatingCase, setAndSendCaseToServer } = useCase()
   const { formatMessage } = useIntl()
   // This state is needed because type is initially set to OHTER on the
@@ -75,9 +71,8 @@ const Defendant = () => {
     }
   }, [workingCase.id, workingCase.type])
 
-  const { clientPoliceNumbers, setClientPoliceNumbers } = usePoliceCaseNumbers(
-    workingCase,
-  )
+  const { clientPoliceNumbers, setClientPoliceNumbers } =
+    usePoliceCaseNumbers(workingCase)
 
   const handleNavigationTo = useCallback(
     async (destination: string) => {

@@ -8,7 +8,7 @@ import {
   formatDOB,
 } from '@island.is/judicial-system/formatters'
 
-import { CaseListEntry } from '@island.is/judicial-system-web/src/graphql/schema'
+import type { CaseListEntry } from '@island.is/judicial-system-web/src/graphql/schema'
 import { displayCaseType } from '@island.is/judicial-system-web/src/routes/Shared/Cases/utils'
 import { TagAppealState } from '@island.is/judicial-system-web/src/components'
 import { CategoryCard } from '@island.is/judicial-system-web/src/components/Table'

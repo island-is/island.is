@@ -1,7 +1,7 @@
 import React from 'react'
 import cn from 'classnames'
 
-import { TestSupport } from '@island.is/island-ui/utils'
+import type { TestSupport } from '@island.is/island-ui/utils'
 
 import * as styles from './BlueBox.css'
 

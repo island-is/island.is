@@ -2,9 +2,9 @@ import { useQuery } from '@apollo/client'
 import { useRouter } from 'next/router'
 import { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { ValueType } from 'react-select'
+import type { ValueType } from 'react-select'
 
-import { Box, Input, Option, Select } from '@island.is/island-ui/core'
+import { Box, Input, type Option, Select } from '@island.is/island-ui/core'
 import {
   BlueBox,
   FormContentContainer,
@@ -16,7 +16,7 @@ import {
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
 import {
-  User,
+  type User,
   UserRole,
   InstitutionType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -25,7 +25,7 @@ import {
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import * as constants from '@island.is/judicial-system/consts'
-import {
+import type {
   UserData,
   ReactSelectOption,
 } from '@island.is/judicial-system-web/src/types'
@@ -47,10 +47,8 @@ const AppealCase = () => {
   const router = useRouter()
   const { id } = router.query
 
-  const [
-    appealCaseNumberErrorMessage,
-    setAppealCaseNumberErrorMessage,
-  ] = useState<string>('')
+  const [appealCaseNumberErrorMessage, setAppealCaseNumberErrorMessage] =
+    useState<string>('')
 
   const { data: userData } = useQuery<UserData>(UsersQuery, {
     fetchPolicy: 'no-cache',

@@ -1,4 +1,4 @@
-import { IntlFormatters } from 'react-intl'
+import type { IntlFormatters } from 'react-intl'
 
 import {
   CaseDecision,
@@ -7,7 +7,7 @@ import {
   isInvestigationCase,
 } from '@island.is/judicial-system/types'
 import { sections as m } from '@island.is/judicial-system-web/messages'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
+import type { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
 
 export const caseResult = (

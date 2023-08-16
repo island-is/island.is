@@ -23,7 +23,7 @@ import {
   InputFileUpload,
   RadioButton,
   Text,
-  UploadFile,
+  type UploadFile,
 } from '@island.is/island-ui/core'
 
 import { core } from '@island.is/judicial-system-web/messages'
@@ -33,7 +33,7 @@ import {
 } from '@island.is/judicial-system/types'
 import { CaseAppealRulingDecision } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
-  TUploadFile,
+  type TUploadFile,
   useCase,
   useS3Upload,
 } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -49,12 +49,8 @@ import { appealRuling } from '@island.is/judicial-system-web/messages/Core/appea
 import { courtOfAppealRuling as strings } from './Ruling.strings'
 
 const CourtOfAppealRuling: React.FC<React.PropsWithChildren<unknown>> = () => {
-  const {
-    workingCase,
-    setWorkingCase,
-    isLoadingWorkingCase,
-    caseNotFound,
-  } = useContext(FormContext)
+  const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
+    useContext(FormContext)
 
   useEffect(() => {
     if (workingCase.caseFiles) {
@@ -62,12 +58,8 @@ const CourtOfAppealRuling: React.FC<React.PropsWithChildren<unknown>> = () => {
     }
   }, [workingCase.caseFiles])
 
-  const {
-    handleChange,
-    handleRemove,
-    handleRetry,
-    generateSingleFileUpdate,
-  } = useS3Upload(workingCase.id)
+  const { handleChange, handleRemove, handleRetry, generateSingleFileUpdate } =
+    useS3Upload(workingCase.id)
 
   const { updateCase, transitionCase, setAndSendCaseToServer } = useCase()
   const { formatMessage } = useIntl()
@@ -76,10 +68,8 @@ const CourtOfAppealRuling: React.FC<React.PropsWithChildren<unknown>> = () => {
   const [displayFiles, setDisplayFiles] = useState<TUploadFile[]>([])
   const [visibleModal, setVisibleModal] = useState(false)
 
-  const [
-    appealConclusionErrorMessage,
-    setAppealConclusionErrorMessage,
-  ] = useState<string>('')
+  const [appealConclusionErrorMessage, setAppealConclusionErrorMessage] =
+    useState<string>('')
 
   const allFilesUploaded = useMemo(() => {
     return displayFiles.every(

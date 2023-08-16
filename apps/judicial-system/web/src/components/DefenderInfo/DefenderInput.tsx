@@ -1,5 +1,5 @@
 import React, {
-  SetStateAction,
+  type SetStateAction,
   useCallback,
   useContext,
   useMemo,
@@ -7,15 +7,15 @@ import React, {
 } from 'react'
 import InputMask from 'react-input-mask'
 import { useIntl } from 'react-intl'
-import { ValueType } from 'react-select'
+import type { ValueType } from 'react-select'
 
 import { Box, Input, Select } from '@island.is/island-ui/core'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
+import type { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 import { FormContext } from '../FormProvider/FormProvider'
 import { useCase, useGetLawyers } from '../../utils/hooks'
 import { defenderInput as m } from './DefenderInput.strings'
-import { Lawyer, ReactSelectOption } from '../../types'
+import type { Lawyer, ReactSelectOption } from '../../types'
 import {
   removeErrorMessageIfValid,
   removeTabsValidateAndSet,
@@ -23,7 +23,7 @@ import {
   validateAndSetErrorMessage,
 } from '../../utils/formHelper'
 import useDefendants from '../../utils/hooks/useDefendants'
-import { Validation } from '../../utils/validate'
+import type { Validation } from '../../utils/validate'
 import { replaceTabs } from '../../utils/formatters'
 
 interface Props {
@@ -51,16 +51,11 @@ const DefenderInput: React.FC<React.PropsWithChildren<Props>> = ({
   const { formatMessage } = useIntl()
   const lawyers = useGetLawyers()
   const { updateCase, setAndSendCaseToServer } = useCase()
-  const {
-    updateDefendant,
-    updateDefendantState,
-    setAndSendDefendantToServer,
-  } = useDefendants()
+  const { updateDefendant, updateDefendantState, setAndSendDefendantToServer } =
+    useDefendants()
   const [emailErrorMessage, setEmailErrorMessage] = useState<string>('')
-  const [
-    phoneNumberErrorMessage,
-    setPhoneNumberErrorMessage,
-  ] = useState<string>('')
+  const [phoneNumberErrorMessage, setPhoneNumberErrorMessage] =
+    useState<string>('')
 
   const defendantInDefendants = workingCase.defendants?.find(
     (defendant) => defendant.id === defendantId,

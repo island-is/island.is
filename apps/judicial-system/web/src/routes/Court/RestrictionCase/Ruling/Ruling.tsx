@@ -1,5 +1,5 @@
 import React, { useCallback, useContext, useState } from 'react'
-import { useIntl, IntlShape } from 'react-intl'
+import { useIntl, type IntlShape } from 'react-intl'
 import { useRouter } from 'next/router'
 import formatISO from 'date-fns/formatISO'
 
@@ -28,10 +28,10 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import {
   CaseDecision,
-  Defendant,
+  type Defendant,
   isAcceptingCaseDecision,
 } from '@island.is/judicial-system/types'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
+import type { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import { isRulingValidRC } from '@island.is/judicial-system-web/src/utils/validate'
 import {
   removeTabsValidateAndSet,
@@ -123,22 +123,14 @@ export const Ruling: React.FC<React.PropsWithChildren<unknown>> = () => {
     isCaseUpToDate,
   } = useContext(FormContext)
 
-  const [
-    introductionErrorMessage,
-    setIntroductionErrorMessage,
-  ] = useState<string>('')
-  const [
-    courtCaseFactsErrorMessage,
-    setCourtCaseFactsErrorMessage,
-  ] = useState<string>('')
-  const [
-    courtLegalArgumentsErrorMessage,
-    setCourtLegalArgumentsErrorMessage,
-  ] = useState<string>('')
-  const [
-    prosecutorDemandsErrorMessage,
-    setProsecutorDemandsMessage,
-  ] = useState<string>('')
+  const [introductionErrorMessage, setIntroductionErrorMessage] =
+    useState<string>('')
+  const [courtCaseFactsErrorMessage, setCourtCaseFactsErrorMessage] =
+    useState<string>('')
+  const [courtLegalArgumentsErrorMessage, setCourtLegalArgumentsErrorMessage] =
+    useState<string>('')
+  const [prosecutorDemandsErrorMessage, setProsecutorDemandsMessage] =
+    useState<string>('')
 
   const router = useRouter()
 

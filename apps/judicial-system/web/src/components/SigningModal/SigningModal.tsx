@@ -1,6 +1,6 @@
 import React from 'react'
 import { useRouter } from 'next/router'
-import {
+import type {
   ApolloError,
   FetchResult,
   MutationFunctionOptions,
@@ -9,26 +9,26 @@ import { useIntl } from 'react-intl'
 
 import {
   CaseType,
-  Exact,
-  RequestSignatureInput,
+  type Exact,
+  type RequestSignatureInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { Box, Text, toast } from '@island.is/island-ui/core'
 import {
   core,
   errors as errorMessages,
 } from '@island.is/judicial-system-web/messages'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
+import type { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import * as constants from '@island.is/judicial-system/consts'
 
 import { Modal } from '..'
 import MarkdownWrapper from '../MarkdownWrapper/MarkdownWrapper'
 import {
-  RequestRulingSignatureMutation,
+  type RequestRulingSignatureMutation,
   useRequestRulingSignatureMutation,
 } from './requestRulingSignature.generated'
 import {
   useGetRulingSignatureConfirmationQuery,
-  GetRulingSignatureConfirmationQuery,
+  type GetRulingSignatureConfirmationQuery,
 } from './getRulingSignatureConfirmation.generated'
 import { signingModal as m } from './SigningModal.strings'
 

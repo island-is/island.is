@@ -14,7 +14,7 @@ import { titles, tables } from '@island.is/judicial-system-web/messages'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   CaseAppealState,
-  CaseListEntry,
+  type CaseListEntry,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { AppealedCasesQuery } from '@island.is/judicial-system-web/src/utils/mutations'

@@ -10,8 +10,8 @@ import { signedVerdictOverview as m } from '@island.is/judicial-system-web/messa
 import { Box, Button, Select, Text, Tooltip } from '@island.is/island-ui/core'
 
 import { useInstitution } from '@island.is/judicial-system-web/src/utils/hooks'
-import { ValueType } from 'react-select'
-import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
+import type { ValueType } from 'react-select'
+import type { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 
 interface Props {
   selectedSharingInstitutionId: ValueType<ReactSelectOption>

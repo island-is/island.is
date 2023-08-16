@@ -4,7 +4,7 @@ import React, { createContext, useEffect, useState } from 'react'
 import { CSRF_COOKIE_NAME } from '@island.is/judicial-system/consts'
 
 import {
-  User,
+  type User,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useGetCurrentUserQuery } from './getCurrentUser.generated'

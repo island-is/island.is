@@ -33,7 +33,7 @@ import {
   InputFileUpload,
   Text,
   Tooltip,
-  UploadFile,
+  type UploadFile,
 } from '@island.is/island-ui/core'
 import {
   mapCaseFileToUploadFile,
@@ -42,13 +42,13 @@ import {
 import {
   CaseFileState,
   isRestrictionCase,
-  PoliceCaseFile,
+  type PoliceCaseFile,
 } from '@island.is/judicial-system/types'
 import { CaseOrigin } from '@island.is/judicial-system-web/src/graphql/schema'
 import { fileExtensionWhitelist } from '@island.is/island-ui/core/types'
 import * as constants from '@island.is/judicial-system/consts'
 
-import { PoliceCaseFileCheck, PoliceCaseFiles } from '../../components'
+import { type PoliceCaseFileCheck, PoliceCaseFiles } from '../../components'
 import { useGetPoliceCaseFilesQuery } from './getPoliceCaseFiles.generated'
 import { caseFiles as strings } from './CaseFiles.strings'
 
@@ -69,12 +69,8 @@ export const mapPoliceCaseFileToPoliceCaseFileCheck = (
 })
 
 export const CaseFiles: React.FC<React.PropsWithChildren<unknown>> = () => {
-  const {
-    workingCase,
-    setWorkingCase,
-    isLoadingWorkingCase,
-    caseNotFound,
-  } = useContext(FormContext)
+  const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
+    useContext(FormContext)
   const {
     data: policeData,
     loading: policeDataLoading,

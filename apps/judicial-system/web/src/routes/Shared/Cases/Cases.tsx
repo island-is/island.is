@@ -26,7 +26,7 @@ import {
 import { TableSkeleton } from '@island.is/judicial-system-web/src/components/Table'
 import { CasesQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import { TempCaseListEntry as CaseListEntry } from '@island.is/judicial-system-web/src/types'
+import type { TempCaseListEntry as CaseListEntry } from '@island.is/judicial-system-web/src/types'
 import {
   core,
   tables,
@@ -34,12 +34,12 @@ import {
   errors,
 } from '@island.is/judicial-system-web/messages'
 import {
-  User,
+  type User,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import ActiveCases from './ActiveCases'
-import { FilterOption, useFilter } from './useFilter'
+import { type FilterOption, useFilter } from './useFilter'
 import { cases as m } from './Cases.strings'
 import * as styles from './Cases.css'
 
@@ -132,26 +132,26 @@ export const Cases: React.FC<React.PropsWithChildren<unknown>> = () => {
 
   const resCases = data?.cases
 
-  const [allActiveCases, allPastCases]: [
-    CaseListEntry[],
-    CaseListEntry[],
-  ] = useMemo(() => {
-    if (!resCases) {
-      return [[], []]
-    }
-
-    const casesWithoutDeleted = resCases.filter((c: CaseListEntry) => {
-      return c.state !== CaseState.DELETED
-    })
-
-    return partition(casesWithoutDeleted, (c) => {
-      if (isIndictmentCase(c.type) || !isDistrictCourtUser) {
-        return !completedCaseStates.includes(c.state)
-      } else {
-        return !(completedCaseStates.includes(c.state) && c.rulingSignatureDate)
+  const [allActiveCases, allPastCases]: [CaseListEntry[], CaseListEntry[]] =
+    useMemo(() => {
+      if (!resCases) {
+        return [[], []]
       }
-    })
-  }, [isDistrictCourtUser, resCases])
+
+      const casesWithoutDeleted = resCases.filter((c: CaseListEntry) => {
+        return c.state !== CaseState.DELETED
+      })
+
+      return partition(casesWithoutDeleted, (c) => {
+        if (isIndictmentCase(c.type) || !isDistrictCourtUser) {
+          return !completedCaseStates.includes(c.state)
+        } else {
+          return !(
+            completedCaseStates.includes(c.state) && c.rulingSignatureDate
+          )
+        }
+      })
+    }, [isDistrictCourtUser, resCases])
 
   const {
     filter,

@@ -5,7 +5,7 @@ import { CaseFileState } from '@island.is/judicial-system/types'
 import {
   getFilePlacement,
   getFilesBelowInChapter,
-  ReorderableItem,
+  type ReorderableItem,
   sortedFilesInChapter,
 } from './IndictmentsCaseFilesAccordionItem'
 

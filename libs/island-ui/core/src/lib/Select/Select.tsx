@@ -24,7 +24,7 @@ import {
 } from './Components'
 import { InputBackgroundColor } from '../Input/types'
 import * as styles from './Select.css'
-import { TestSupport } from '@island.is/island-ui/utils'
+import type { TestSupport } from '@island.is/island-ui/utils'
 
 interface AriaError {
   'aria-invalid': boolean

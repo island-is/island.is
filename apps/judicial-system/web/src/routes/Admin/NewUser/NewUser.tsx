@@ -5,7 +5,7 @@ import { useRouter } from 'next/router'
 
 import { Skeleton } from '@island.is/judicial-system-web/src/components'
 import {
-  User,
+  type User,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { CreateUserMutation } from '@island.is/judicial-system-web/src/utils/mutations'
@@ -44,9 +44,8 @@ export const NewUser: React.FC<React.PropsWithChildren<unknown>> = () => {
   } = useInstitution()
   const { formatMessage } = useIntl()
 
-  const [createUserMutation, { loading: createLoading }] = useMutation(
-    CreateUserMutation,
-  )
+  const [createUserMutation, { loading: createLoading }] =
+    useMutation(CreateUserMutation)
 
   const createUser = async (user: User): Promise<void> => {
     if (createLoading === false && user) {

@@ -1,5 +1,5 @@
 import React, { useCallback, useContext, useState } from 'react'
-import { IntlShape, useIntl } from 'react-intl'
+import { type IntlShape, useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
 import {
@@ -26,8 +26,8 @@ import {
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import {
   CaseCustodyRestrictions,
-  CaseDecision,
-  Defendant,
+  type CaseDecision,
+  type Defendant,
   Gender,
   isAcceptingCaseDecision,
 } from '@island.is/judicial-system/types'
@@ -40,7 +40,7 @@ import {
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
-  autofillEntry,
+  type autofillEntry,
   formatDateForServer,
 } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 import { formatDate, formatDOB } from '@island.is/judicial-system/formatters'
@@ -102,9 +102,8 @@ export const PoliceDemands: React.FC<React.PropsWithChildren<unknown>> = () => {
   } = useContext(FormContext)
   const router = useRouter()
   const { formatMessage } = useIntl()
-  const [lawsBrokenErrorMessage, setLawsBrokenErrorMessage] = useState<string>(
-    '',
-  )
+  const [lawsBrokenErrorMessage, setLawsBrokenErrorMessage] =
+    useState<string>('')
   const { updateCase, setAndSendCaseToServer } = useCase()
   useDeb(workingCase, [
     'lawsBroken',
@@ -260,7 +259,8 @@ export const PoliceDemands: React.FC<React.PropsWithChildren<unknown>> = () => {
                     )
                     onDemandsChange(
                       {
-                        requestedCustodyRestrictions: nextRequestedCustodyRestrictions,
+                        requestedCustodyRestrictions:
+                          nextRequestedCustodyRestrictions,
                         force: true,
                       },
                       workingCase.type,

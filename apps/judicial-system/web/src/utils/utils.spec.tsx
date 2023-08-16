@@ -5,7 +5,7 @@ import userEvent from '@testing-library/user-event'
 
 import {
   Gender,
-  Notification,
+  type Notification,
   NotificationType,
 } from '@island.is/judicial-system/types'
 
@@ -214,7 +214,7 @@ describe('Step helper', () => {
       // Arrange
 
       // Act
-      const res = formatters.replaceTabs((undefined as unknown) as string)
+      const res = formatters.replaceTabs(undefined as unknown as string)
 
       // Assert
       expect(res).toBeUndefined()

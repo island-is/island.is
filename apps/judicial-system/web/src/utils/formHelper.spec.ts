@@ -1,5 +1,5 @@
 import * as constants from '@island.is/judicial-system/consts'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
+import type { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 import {
   findFirstInvalidStep,

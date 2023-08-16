@@ -1,8 +1,8 @@
 import { useContext } from 'react'
-import { IntlShape, useIntl } from 'react-intl'
+import { type IntlShape, useIntl } from 'react-intl'
 import router from 'next/router'
 
-import { TempCase } from '@island.is/judicial-system-web/src/types'
+import type { TempCase } from '@island.is/judicial-system-web/src/types'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import { UserContext } from '@island.is/judicial-system-web/src/components'
 import { Button, Text } from '@island.is/island-ui/core'

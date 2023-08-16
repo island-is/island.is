@@ -1,6 +1,6 @@
-import { NextApiRequest, NextApiResponse } from 'next'
+import type { NextApiRequest, NextApiResponse } from 'next'
 
-import { NationalRegistryResponsePerson } from '@island.is/judicial-system-web/src/types'
+import type { NationalRegistryResponsePerson } from '@island.is/judicial-system-web/src/types'
 
 async function getPersonByNationalId(
   nationalId: string,

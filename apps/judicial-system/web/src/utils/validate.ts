@@ -1,12 +1,12 @@
 // TODO: Add tests
 import { isIndictmentCase } from '@island.is/judicial-system/types'
 import {
-  User,
+  type User,
   CaseType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { isBusiness } from './stepHelper'
-import { TempCase as Case } from '../types'
+import type { TempCase as Case } from '../types'
 
 export type Validation =
   | 'empty'

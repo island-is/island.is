@@ -4,7 +4,7 @@ import { AnimatePresence, LayoutGroup, motion } from 'framer-motion'
 import cn from 'classnames'
 
 import {
-  PoliceCaseFile,
+  type PoliceCaseFile,
   isIndictmentCase,
 } from '@island.is/judicial-system/types'
 import {
@@ -19,7 +19,7 @@ import { CaseOrigin } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { policeCaseFiles as m } from './PoliceCaseFiles.strings'
 import PoliceCaseFilesMessageBox from '../PoliceCaseFilesMessageBox/PoliceCaseFilesMessageBox'
-import { PoliceCaseFilesData } from '../CaseFiles/CaseFiles'
+import type { PoliceCaseFilesData } from '../CaseFiles/CaseFiles'
 import * as styles from './PoliceCaseFiles.css'
 
 export interface PoliceCaseFileCheck extends PoliceCaseFile {
@@ -122,8 +122,8 @@ const PoliceCaseFiles: React.FC<React.PropsWithChildren<Props>> = ({
         }),
       )
     } else {
-      newPoliceCaseFileList[target].checked = !newPoliceCaseFileList[target]
-        .checked
+      newPoliceCaseFileList[target].checked =
+        !newPoliceCaseFileList[target].checked
       setPoliceCaseFileList(newPoliceCaseFileList)
     }
   }

@@ -1,6 +1,6 @@
 import React, {
   createContext,
-  ReactNode,
+  type ReactNode,
   useContext,
   useEffect,
   useState,
@@ -8,14 +8,14 @@ import React, {
 import { useLazyQuery } from '@apollo/client'
 import { useRouter } from 'next/router'
 
-import { CaseState, Defendant } from '@island.is/judicial-system/types'
+import { CaseState, type Defendant } from '@island.is/judicial-system/types'
 import { USERS_ROUTE } from '@island.is/judicial-system/consts'
 import {
   CaseType,
   CaseOrigin,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
-import { TempCase as Case } from '../../types'
+import type { TempCase as Case } from '../../types'
 import { UserContext } from '../UserProvider/UserProvider'
 import LimitedAccessCaseQuery from './limitedAccessCaseGql'
 import CaseQuery from './caseGql'

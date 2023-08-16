@@ -4,12 +4,12 @@ import { AnimatePresence } from 'framer-motion'
 
 import {
   Box,
-  StatusColor,
+  type StatusColor,
   Text,
   UploadedFile,
-  UploadFile,
+  type UploadFile,
 } from '@island.is/island-ui/core'
-import { CaseFile as TCaseFile } from '@island.is/judicial-system/types'
+import type { CaseFile as TCaseFile } from '@island.is/judicial-system/types'
 import { caseFiles as m } from '@island.is/judicial-system-web/messages'
 
 import { FileNotFoundModal } from '@island.is/judicial-system-web/src/components'

@@ -14,7 +14,7 @@ import InfoBox from '@island.is/judicial-system-web/src/components/InfoBox/InfoB
 import { formatDate } from '@island.is/judicial-system/formatters'
 import { signedVerdictOverview } from '@island.is/judicial-system-web/messages'
 import { InstitutionType } from '@island.is/judicial-system-web/src/graphql/schema'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
+import type { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 import AccusedAppealInfo from '../Accused/AccusedAppealInfo'
 import ProsecutorAppealInfo from '../Prosecutor/ProsecutorAppealInfo'

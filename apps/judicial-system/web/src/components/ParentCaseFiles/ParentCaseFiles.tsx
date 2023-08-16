@@ -7,7 +7,7 @@ import {
   UploadedFile,
   Accordion,
 } from '@island.is/island-ui/core'
-import { CaseFile } from '@island.is/judicial-system/types'
+import type { CaseFile } from '@island.is/judicial-system/types'
 
 import { parentCaseFiles as m } from './ParentCaseFiles.strings'
 

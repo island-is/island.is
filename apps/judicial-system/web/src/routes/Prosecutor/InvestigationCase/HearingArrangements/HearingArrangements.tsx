@@ -22,7 +22,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   removeTabsValidateAndSet,
-  stepValidationsType,
+  type stepValidationsType,
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
@@ -34,7 +34,7 @@ import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader
 import { Box, Input, Text, toast } from '@island.is/island-ui/core'
 import { isHearingArrangementsStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
-import { Institution } from '@island.is/judicial-system-web/src/graphql/schema'
+import type { Institution } from '@island.is/judicial-system-web/src/graphql/schema'
 import * as constants from '@island.is/judicial-system/consts'
 
 import {
@@ -45,12 +45,8 @@ import {
 
 const HearingArrangements = () => {
   const router = useRouter()
-  const {
-    workingCase,
-    setWorkingCase,
-    isLoadingWorkingCase,
-    caseNotFound,
-  } = useContext(FormContext)
+  const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
+    useContext(FormContext)
   const { user } = useContext(UserContext)
   const { courts } = useInstitution()
   const { formatMessage } = useIntl()

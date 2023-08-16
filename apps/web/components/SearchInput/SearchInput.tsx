@@ -35,7 +35,7 @@ import {
 } from '@island.is/web/graphql/schema'
 
 import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
-import { TestSupport } from '@island.is/island-ui/utils'
+import type { TestSupport } from '@island.is/island-ui/utils'
 import { trackSearchQuery } from '@island.is/plausible'
 
 import * as styles from './SearchInput.css'

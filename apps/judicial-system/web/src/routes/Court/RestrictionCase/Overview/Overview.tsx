@@ -11,7 +11,7 @@ import {
   AlertMessage,
 } from '@island.is/island-ui/core'
 import {
-  CaseLegalProvisions,
+  type CaseLegalProvisions,
   isAcceptingCaseDecision,
 } from '@island.is/judicial-system/types'
 import * as constants from '@island.is/judicial-system/consts'
