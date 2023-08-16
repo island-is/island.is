@@ -411,16 +411,19 @@ const NewsListNew: Screen<NewsListProps> = ({
   )
 }
 
-const createDatesMap = (datesList) => {
-  return datesList.reduce((datesMap, date) => {
-    const [year, month] = date.split('-')
-    if (datesMap[year]) {
-      datesMap[year].push(parseInt(month)) // we can assume each month only appears once
-    } else {
-      datesMap[year] = [parseInt(month)]
-    }
-    return datesMap
-  }, {})
+const createDatesMap = (datesList: string[]) => {
+  return datesList.reduce(
+    (datesMap: Record<string, number[]>, date: string) => {
+      const [year, month] = date.split('-')
+      if (datesMap[year]) {
+        datesMap[year].push(parseInt(month)) // we can assume each month only appears once
+      } else {
+        datesMap[year] = [parseInt(month)]
+      }
+      return datesMap
+    },
+    {},
+  )
 }
 
 const getIntParam = (s: string | string[]) => {

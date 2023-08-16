@@ -87,6 +87,16 @@ export const RenderLegend = (props: CustomLegendProps) => {
   )
 }
 
+// Define the type for the destructured props
+type CustomLabelProps = {
+  cx: number
+  cy: number
+  midAngle: number
+  outerRadius: number
+  innerRadius: number
+  percent: number
+}
+
 const RADIAN = Math.PI / 180
 export const renderCustomizedLabel = ({
   cx,
@@ -95,7 +105,7 @@ export const renderCustomizedLabel = ({
   outerRadius,
   innerRadius,
   percent,
-}) => {
+}: CustomLabelProps) => {
   const radius = innerRadius + (outerRadius - innerRadius) * 1.2
   const x = cx + radius * Math.cos(-midAngle * RADIAN)
   const y = cy + radius * Math.sin(-midAngle * RADIAN)

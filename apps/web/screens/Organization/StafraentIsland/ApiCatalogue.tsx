@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import { useEffect, useState } from 'react'
+import { ReactNode, useEffect, useState } from 'react'
 import {
   ArrowLink,
   Box,
@@ -255,7 +255,7 @@ const ApiCatalogue: Screen<HomestayProps> = ({
         </Box>
         {webRichText(subpage.description as SliceType[], {
           renderNode: {
-            [INLINES.HYPERLINK]: (node, children) => (
+            [INLINES.HYPERLINK]: (node, children: ReactNode) => (
               <ArrowLink href={node.data.uri}>{children}</ArrowLink>
             ),
           },

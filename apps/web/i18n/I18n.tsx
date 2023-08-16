@@ -40,7 +40,15 @@ interface I18nContextType {
 
 export const I18nContext = createContext<I18nContextType | null>(null)
 
-export default function I18n({ children, locale, translations }) {
+export default function I18n({
+  children,
+  locale,
+  translations,
+}: {
+  children: any
+  locale: string
+  translations: any
+}) {
   const [activeDict, setActiveDict] = useState(() => translations)
   const activeLocaleRef = useRef(locale || defaultLanguage)
   const [, setTick] = useState(0)

@@ -255,7 +255,7 @@ export const Form = ({ form, namespace }: FormProps) => {
     CREATE_UPLOAD_URL,
   )
 
-  const onChange = (field, value) => {
+  const onChange = (field: string, value: string) => {
     setData({ ...data, [field]: String(value) })
   }
 
@@ -351,7 +351,7 @@ export const Form = ({ form, namespace }: FormProps) => {
     return !err.length
   }
 
-  const formatBody = (data) => {
+  const formatBody = (data: Record<string, string>) => {
     return `Sendandi: ${data['name']} <${data['email']}>\n\n`.concat(
       form.fields
         .filter((field) => field.type !== FormFieldType.INFORMATION)

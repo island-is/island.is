@@ -14,6 +14,7 @@ import { FooterItem } from '@island.is/web/graphql/schema'
 import { webRichText } from '@island.is/web/utils/richText'
 import { useNamespace } from '@island.is/web/hooks'
 import * as styles from './OpinberNyskopunFooter.css'
+import { ReactNode } from 'react'
 
 interface OpinberNyskopunFooterProps {
   footerItems: FooterItem[]
@@ -54,7 +55,10 @@ export const OpinberNyskopunFooter: React.FC<
                   </Text>
                   {webRichText(item.content as SliceType[], {
                     renderNode: {
-                      [BLOCKS.PARAGRAPH]: (_node, children) => (
+                      [BLOCKS.PARAGRAPH]: (
+                        _node: never,
+                        children: ReactNode,
+                      ) => (
                         <Text color="white" variant="medium" marginBottom={2}>
                           {children}
                         </Text>

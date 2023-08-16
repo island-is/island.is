@@ -139,7 +139,7 @@ export const LanguageToggler = ({
     setShowDialog(true)
   }
 
-  const goToOtherLanguagePage = (path) => {
+  const goToOtherLanguagePage = (path: string) => {
     locale(t.otherLanguageCode)
     Router.push(path)
   }
