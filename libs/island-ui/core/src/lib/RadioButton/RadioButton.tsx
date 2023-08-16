@@ -8,7 +8,7 @@ import { InputBackgroundColor } from '../Input/types'
 import { Box } from '../Box/Box'
 import { BoxProps } from '../Box/types'
 import { Tag, TagVariant } from '../Tag/Tag'
-import type { TestSupport } from '@island.is/island-ui/utils'
+import { TestSupport } from '@island.is/island-ui/utils'
 
 export interface RadioButtonProps {
   name?: string

@@ -8,7 +8,7 @@ import React, {
 import cn from 'classnames'
 import AnimateHeight, { Height } from 'react-animate-height'
 
-import type { TestSupport } from '@island.is/island-ui/utils'
+import { TestSupport } from '@island.is/island-ui/utils'
 import { Colors } from '@island.is/island-ui/theme'
 
 import { Box } from '../../Box/Box'

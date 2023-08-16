@@ -21,7 +21,7 @@ import { ErrorMessage } from '../Input/ErrorMessage'
 import { Icon } from '../IconRC/Icon'
 import { Item } from './shared/Item/Item'
 import { Label } from './shared/Label/Label'
-import type { TestSupport } from '@island.is/island-ui/utils'
+import { TestSupport } from '@island.is/island-ui/utils'
 import cn from 'classnames'
 import { helperStyles } from '@island.is/island-ui/theme'
 
