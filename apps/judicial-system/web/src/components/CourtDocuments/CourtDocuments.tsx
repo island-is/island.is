@@ -1,5 +1,4 @@
-import type { Dispatch, FC } from 'react'
-import React, { useState } from 'react'
+import React, { useState, type Dispatch, type FC } from 'react'
 import cn from 'classnames'
 import { useIntl } from 'react-intl'
 import Select, {
