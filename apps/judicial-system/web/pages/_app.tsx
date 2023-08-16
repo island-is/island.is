@@ -1,5 +1,5 @@
 import React from 'react'
-import type { AppContext, AppProps } from 'next/app';
+import type { AppContext, AppProps } from 'next/app'
 import App from 'next/app'
 import Head from 'next/head'
 import { ApolloProvider } from '@apollo/client'

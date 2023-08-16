@@ -155,9 +155,8 @@ export const createTestingCaseModule = async () => {
     InternalCaseController,
   )
 
-  const limitedAccessCaseController = caseModule.get<LimitedAccessCaseController>(
-    LimitedAccessCaseController,
-  )
+  const limitedAccessCaseController =
+    caseModule.get<LimitedAccessCaseController>(LimitedAccessCaseController)
 
   return {
     messageService,

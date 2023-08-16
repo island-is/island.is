@@ -2,11 +2,10 @@ import React from 'react'
 import { useIntl } from 'react-intl'
 import type { ValueType } from 'react-select'
 
-import type { Option} from '@island.is/island-ui/core';
+import type { Option } from '@island.is/island-ui/core'
 import { Box, Select, Tooltip } from '@island.is/island-ui/core'
 import type { TempCase as Case } from '@island.is/judicial-system-web/src/types'
-import type {
-  User} from '@island.is/judicial-system-web/src/graphql/schema';
+import type { User } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   UserRole,
   CaseType,

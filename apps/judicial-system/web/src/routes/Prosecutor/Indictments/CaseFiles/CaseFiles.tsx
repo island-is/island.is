@@ -19,18 +19,10 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import { titles } from '@island.is/judicial-system-web/messages'
-import type {
-  UploadFile} from '@island.is/island-ui/core';
-import {
-  Box,
-  InputFileUpload,
-  Text
-} from '@island.is/island-ui/core'
-import type {
-  TUploadFile} from '@island.is/judicial-system-web/src/utils/hooks';
-import {
-  useS3Upload,
-} from '@island.is/judicial-system-web/src/utils/hooks'
+import type { UploadFile } from '@island.is/island-ui/core'
+import { Box, InputFileUpload, Text } from '@island.is/island-ui/core'
+import type { TUploadFile } from '@island.is/judicial-system-web/src/utils/hooks'
+import { useS3Upload } from '@island.is/judicial-system-web/src/utils/hooks'
 import { CaseFileCategory } from '@island.is/judicial-system/types'
 import { mapCaseFileToUploadFile } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { fileExtensionWhitelist } from '@island.is/island-ui/core/types'
@@ -40,17 +32,12 @@ import * as constants from '@island.is/judicial-system/consts'
 import * as strings from './CaseFiles.strings'
 
 const CaseFiles: React.FC<React.PropsWithChildren<unknown>> = () => {
-  const { workingCase, isLoadingWorkingCase, caseNotFound } = useContext(
-    FormContext,
-  )
+  const { workingCase, isLoadingWorkingCase, caseNotFound } =
+    useContext(FormContext)
   const [displayFiles, setDisplayFiles] = useState<TUploadFile[]>([])
   const { formatMessage } = useIntl()
-  const {
-    handleChange,
-    handleRemove,
-    handleRetry,
-    generateSingleFileUpdate,
-  } = useS3Upload(workingCase.id)
+  const { handleChange, handleRemove, handleRetry, generateSingleFileUpdate } =
+    useS3Upload(workingCase.id)
 
   const isTrafficViolationCaseCheck = isTrafficViolationCase(workingCase)
 

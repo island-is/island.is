@@ -1,4 +1,4 @@
-import type { ReactNode} from 'react';
+import type { ReactNode } from 'react'
 import React, { useContext, useEffect } from 'react'
 import { useIntl } from 'react-intl'
 import cn from 'classnames'
@@ -21,8 +21,7 @@ import {
   sections as formStepperSections,
   pageLayout,
 } from '@island.is/judicial-system-web/messages'
-import type {
-  User} from '@island.is/judicial-system-web/src/graphql/schema';
+import type { User } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   InstitutionType,
   UserRole,

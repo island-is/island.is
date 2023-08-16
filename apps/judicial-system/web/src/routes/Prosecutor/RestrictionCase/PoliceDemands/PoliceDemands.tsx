@@ -1,5 +1,5 @@
 import React, { useCallback, useContext, useState } from 'react'
-import type { IntlShape} from 'react-intl';
+import type { IntlShape } from 'react-intl'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
@@ -25,9 +25,7 @@ import {
   titles,
 } from '@island.is/judicial-system-web/messages'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import type {
-  CaseDecision,
-  Defendant} from '@island.is/judicial-system/types';
+import type { CaseDecision, Defendant } from '@island.is/judicial-system/types'
 import {
   CaseCustodyRestrictions,
   Gender,
@@ -41,11 +39,8 @@ import {
   toggleInArray,
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
-import type {
-  autofillEntry} from '@island.is/judicial-system-web/src/utils/hooks/useCase';
-import {
-  formatDateForServer,
-} from '@island.is/judicial-system-web/src/utils/hooks/useCase'
+import type { autofillEntry } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
+import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 import { formatDate, formatDOB } from '@island.is/judicial-system/formatters'
 import {
   restrictionsCheckboxes,
@@ -105,9 +100,8 @@ export const PoliceDemands: React.FC<React.PropsWithChildren<unknown>> = () => {
   } = useContext(FormContext)
   const router = useRouter()
   const { formatMessage } = useIntl()
-  const [lawsBrokenErrorMessage, setLawsBrokenErrorMessage] = useState<string>(
-    '',
-  )
+  const [lawsBrokenErrorMessage, setLawsBrokenErrorMessage] =
+    useState<string>('')
   const { updateCase, setAndSendCaseToServer } = useCase()
   useDeb(workingCase, [
     'lawsBroken',
@@ -263,7 +257,8 @@ export const PoliceDemands: React.FC<React.PropsWithChildren<unknown>> = () => {
                     )
                     onDemandsChange(
                       {
-                        requestedCustodyRestrictions: nextRequestedCustodyRestrictions,
+                        requestedCustodyRestrictions:
+                          nextRequestedCustodyRestrictions,
                         force: true,
                       },
                       workingCase.type,

@@ -51,12 +51,8 @@ import * as styles from './Overview.css'
 
 export const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
   const router = useRouter()
-  const {
-    workingCase,
-    setWorkingCase,
-    isLoadingWorkingCase,
-    caseNotFound,
-  } = useContext(FormContext)
+  const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
+    useContext(FormContext)
   const {
     transitionCase,
     isTransitioningCase,

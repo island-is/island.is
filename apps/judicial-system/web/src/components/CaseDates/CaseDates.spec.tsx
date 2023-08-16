@@ -5,7 +5,7 @@ import { IntlProvider } from 'react-intl'
 import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
 import type { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
-import type { Props } from './CaseDates';
+import type { Props } from './CaseDates'
 import CaseDates from './CaseDates'
 
 const renderCaseDates = (theCase: Case, button?: Props['button']) =>

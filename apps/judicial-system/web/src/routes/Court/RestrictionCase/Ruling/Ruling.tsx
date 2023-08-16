@@ -1,5 +1,5 @@
 import React, { useCallback, useContext, useState } from 'react'
-import type { IntlShape } from 'react-intl';
+import type { IntlShape } from 'react-intl'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 import formatISO from 'date-fns/formatISO'
@@ -27,8 +27,7 @@ import {
   FormContext,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import type {
-  Defendant} from '@island.is/judicial-system/types';
+import type { Defendant } from '@island.is/judicial-system/types'
 import {
   CaseDecision,
   isAcceptingCaseDecision,
@@ -125,22 +124,14 @@ export const Ruling: React.FC<React.PropsWithChildren<unknown>> = () => {
     isCaseUpToDate,
   } = useContext(FormContext)
 
-  const [
-    introductionErrorMessage,
-    setIntroductionErrorMessage,
-  ] = useState<string>('')
-  const [
-    courtCaseFactsErrorMessage,
-    setCourtCaseFactsErrorMessage,
-  ] = useState<string>('')
-  const [
-    courtLegalArgumentsErrorMessage,
-    setCourtLegalArgumentsErrorMessage,
-  ] = useState<string>('')
-  const [
-    prosecutorDemandsErrorMessage,
-    setProsecutorDemandsMessage,
-  ] = useState<string>('')
+  const [introductionErrorMessage, setIntroductionErrorMessage] =
+    useState<string>('')
+  const [courtCaseFactsErrorMessage, setCourtCaseFactsErrorMessage] =
+    useState<string>('')
+  const [courtLegalArgumentsErrorMessage, setCourtLegalArgumentsErrorMessage] =
+    useState<string>('')
+  const [prosecutorDemandsErrorMessage, setProsecutorDemandsMessage] =
+    useState<string>('')
 
   const router = useRouter()
 

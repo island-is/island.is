@@ -16,7 +16,8 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import type {
   Institution,
-  User} from '@island.is/judicial-system-web/src/graphql/schema';
+  User,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   InstitutionType,
   UserRole,
@@ -24,12 +25,8 @@ import {
 import * as constants from '@island.is/judicial-system/consts'
 
 import type { ReactSelectOption } from '../../../types'
-import type {
-  Validation} from '../../../utils/validate';
-import {
-  isAdminUserFormValid,
-  validate
-} from '../../../utils/validate'
+import type { Validation } from '../../../utils/validate'
+import { isAdminUserFormValid, validate } from '../../../utils/validate'
 import * as styles from './UserForm.css'
 import {
   isExtendedCourtRole,
@@ -57,10 +54,8 @@ export const UserForm: React.FC<React.PropsWithChildren<Props>> = (props) => {
   const [nationalIdErrorMessage, setNationalIdErrorMessage] = useState<string>()
 
   const [titleErrorMessage, setTitleErrorMessage] = useState<string>()
-  const [
-    mobileNumberErrorMessage,
-    setMobileNumberErrorMessage,
-  ] = useState<string>()
+  const [mobileNumberErrorMessage, setMobileNumberErrorMessage] =
+    useState<string>()
   const [emailErrorMessage, setEmailErrorMessage] = useState<string>()
 
   const setName = useCallback(
@@ -87,13 +82,14 @@ export const UserForm: React.FC<React.PropsWithChildren<Props>> = (props) => {
     }
   }, [personData, personError, setName])
 
-  const selectInstitutions = (isProsecutionRole(user.role)
-    ? props.prosecutorsOffices
-    : isExtendedCourtRole(user.role)
-    ? props.allCourts
-    : user.role === UserRole.STAFF
-    ? props.prisonInstitutions
-    : []
+  const selectInstitutions = (
+    isProsecutionRole(user.role)
+      ? props.prosecutorsOffices
+      : isExtendedCourtRole(user.role)
+      ? props.allCourts
+      : user.role === UserRole.STAFF
+      ? props.prisonInstitutions
+      : []
   ).map((institution) => ({
     label: institution.name,
     value: institution.id,

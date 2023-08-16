@@ -10,12 +10,11 @@ import {
   AccordionItem,
   AlertMessage,
 } from '@island.is/island-ui/core'
-import type {
-  CaseLegalProvisions} from '@island.is/judicial-system/types';
+import type { CaseLegalProvisions } from '@island.is/judicial-system/types'
 import {
   NotificationType,
   CaseState,
-  CaseTransition
+  CaseTransition,
 } from '@island.is/judicial-system/types'
 import * as constants from '@island.is/judicial-system/consts'
 import { formatDate, capitalize } from '@island.is/judicial-system/formatters'
@@ -55,12 +54,8 @@ export const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
     'noModal' | 'caseResubmitModal' | 'caseSubmittedModal'
   >('noModal')
   const [modalText, setModalText] = useState('')
-  const {
-    workingCase,
-    setWorkingCase,
-    isLoadingWorkingCase,
-    caseNotFound,
-  } = useContext(FormContext)
+  const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
+    useContext(FormContext)
 
   const router = useRouter()
   const {

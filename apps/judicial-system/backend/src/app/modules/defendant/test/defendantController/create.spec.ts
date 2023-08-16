@@ -32,11 +32,8 @@ describe('DefendantController - Create', () => {
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const {
-      messageService,
-      defendantModel,
-      defendantController,
-    } = await createTestingDefendantModule()
+    const { messageService, defendantModel, defendantController } =
+      await createTestingDefendantModule()
 
     mockMessageService = messageService
     mockDefendantModel = defendantModel

@@ -1,5 +1,5 @@
 import React, { useCallback, useContext, useState } from 'react'
-import type { IntlShape} from 'react-intl';
+import type { IntlShape } from 'react-intl'
 import { useIntl } from 'react-intl'
 import router from 'next/router'
 
@@ -99,10 +99,8 @@ const CourtRecord = () => {
   } = useContext(FormContext)
 
   const [courtLocationEM, setCourtLocationEM] = useState<string>('')
-  const [
-    sessionBookingsErrorMessage,
-    setSessionBookingsMessage,
-  ] = useState<string>('')
+  const [sessionBookingsErrorMessage, setSessionBookingsMessage] =
+    useState<string>('')
 
   useDeb(workingCase, [
     'courtAttendees',

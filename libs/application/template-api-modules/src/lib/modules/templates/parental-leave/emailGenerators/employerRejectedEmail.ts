@@ -59,15 +59,13 @@ export const generateEmployerRejected: EmployerRejectedEmail = (props) => {
         {
           component: 'Copy',
           context: {
-            copy:
-              'Vinnuveitandi hefur hafnað beiðni þinni um samþykki fæðingarorlofs. Þú þarft því að breyta umsókn þinni.',
+            copy: 'Vinnuveitandi hefur hafnað beiðni þinni um samþykki fæðingarorlofs. Þú þarft því að breyta umsókn þinni.',
           },
         },
         {
           component: 'Copy',
           context: {
-            copy:
-              'Your employer has denied your request. You therefore need to modify your application.',
+            copy: 'Your employer has denied your request. You therefore need to modify your application.',
           },
         },
         {

@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import type { ReactNode } from 'react'
 import React from 'react'
 import ReactDOM from 'react-dom'
 import FocusLock from 'react-focus-lock'

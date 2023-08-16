@@ -23,10 +23,9 @@ import { titles, errors } from '@island.is/judicial-system-web/messages'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import type {
   Institution,
-  User} from '@island.is/judicial-system-web/src/graphql/schema';
-import {
-  UserRole,
+  User,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { UserRole } from '@island.is/judicial-system-web/src/graphql/schema'
 import * as constants from '@island.is/judicial-system/consts'
 
 import * as styles from './Users.css'
@@ -47,13 +46,11 @@ export const Users: React.FC<React.PropsWithChildren<unknown>> = () => {
     errorPolicy: 'all',
   })
 
-  const {
-    data: rawInstitutions,
-    loading: loadingInstitutions,
-  } = useQuery<InstitutionData>(InstitutionsQuery, {
-    fetchPolicy: 'no-cache',
-    errorPolicy: 'all',
-  })
+  const { data: rawInstitutions, loading: loadingInstitutions } =
+    useQuery<InstitutionData>(InstitutionsQuery, {
+      fetchPolicy: 'no-cache',
+      errorPolicy: 'all',
+    })
 
   const users = data?.users.filter((u) => {
     return selectedInstitution

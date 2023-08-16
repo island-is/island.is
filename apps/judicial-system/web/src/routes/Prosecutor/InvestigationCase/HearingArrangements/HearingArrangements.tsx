@@ -20,8 +20,7 @@ import {
   useCase,
   useInstitution,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import type {
-  stepValidationsType} from '@island.is/judicial-system-web/src/utils/formHelper';
+import type { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
   removeTabsValidateAndSet,
   validateAndSendToServer,
@@ -46,12 +45,8 @@ import {
 
 const HearingArrangements = () => {
   const router = useRouter()
-  const {
-    workingCase,
-    setWorkingCase,
-    isLoadingWorkingCase,
-    caseNotFound,
-  } = useContext(FormContext)
+  const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
+    useContext(FormContext)
   const { user } = useContext(UserContext)
   const { courts } = useInstitution()
   const { formatMessage } = useIntl()

@@ -4,11 +4,8 @@ import { useMutation } from '@apollo/client'
 import { useRouter } from 'next/router'
 
 import { Skeleton } from '@island.is/judicial-system-web/src/components'
-import type {
-  User} from '@island.is/judicial-system-web/src/graphql/schema';
-import {
-  UserRole,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+import type { User } from '@island.is/judicial-system-web/src/graphql/schema'
+import { UserRole } from '@island.is/judicial-system-web/src/graphql/schema'
 import { CreateUserMutation } from '@island.is/judicial-system-web/src/utils/mutations'
 import { useInstitution } from '@island.is/judicial-system-web/src/utils/hooks'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
@@ -45,9 +42,8 @@ export const NewUser: React.FC<React.PropsWithChildren<unknown>> = () => {
   } = useInstitution()
   const { formatMessage } = useIntl()
 
-  const [createUserMutation, { loading: createLoading }] = useMutation(
-    CreateUserMutation,
-  )
+  const [createUserMutation, { loading: createLoading }] =
+    useMutation(CreateUserMutation)
 
   const createUser = async (user: User): Promise<void> => {
     if (createLoading === false && user) {

@@ -1,6 +1,6 @@
 import React from 'react'
 
-import type { ResponsiveProp, Space} from '@island.is/island-ui/core';
+import type { ResponsiveProp, Space } from '@island.is/island-ui/core'
 import { Box, Text } from '@island.is/island-ui/core'
 
 interface Props {

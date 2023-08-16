@@ -4,7 +4,7 @@ import { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import type { ValueType } from 'react-select'
 
-import type { Option} from '@island.is/island-ui/core';
+import type { Option } from '@island.is/island-ui/core'
 import { Box, Input, Select } from '@island.is/island-ui/core'
 import {
   BlueBox,
@@ -16,8 +16,7 @@ import {
   PageTitle,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
-import type {
-  User} from '@island.is/judicial-system-web/src/graphql/schema';
+import type { User } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   UserRole,
   InstitutionType,
@@ -49,10 +48,8 @@ const AppealCase = () => {
   const router = useRouter()
   const { id } = router.query
 
-  const [
-    appealCaseNumberErrorMessage,
-    setAppealCaseNumberErrorMessage,
-  ] = useState<string>('')
+  const [appealCaseNumberErrorMessage, setAppealCaseNumberErrorMessage] =
+    useState<string>('')
 
   const { data: userData } = useQuery<UserData>(UsersQuery, {
     fetchPolicy: 'no-cache',

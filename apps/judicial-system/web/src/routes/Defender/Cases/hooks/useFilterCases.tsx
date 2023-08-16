@@ -1,9 +1,6 @@
 import { useState, useEffect, useMemo } from 'react'
-import type {
-  CaseListEntry} from '@island.is/judicial-system/types';
-import {
-  isIndictmentCase,
-} from '@island.is/judicial-system/types'
+import type { CaseListEntry } from '@island.is/judicial-system/types'
+import { isIndictmentCase } from '@island.is/judicial-system/types'
 
 export interface Filters {
   indictmentCaseFilter: boolean

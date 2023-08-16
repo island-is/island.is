@@ -96,9 +96,10 @@ export const mapOrganization = ({
     serviceWebFeaturedImage: fields.serviceWebFeaturedImage
       ? mapImage(fields.serviceWebFeaturedImage)
       : null,
-    publishedMaterialSearchFilterGenericTags: fields.publishedMaterialSearchFilterGenericTags
-      ? fields.publishedMaterialSearchFilterGenericTags.map(mapGenericTag)
-      : [],
+    publishedMaterialSearchFilterGenericTags:
+      fields.publishedMaterialSearchFilterGenericTags
+        ? fields.publishedMaterialSearchFilterGenericTags.map(mapGenericTag)
+        : [],
     showsUpOnTheOrganizationsPage: fields.showsUpOnTheOrganizationsPage ?? true,
     hasALandingPage: fields.hasALandingPage ?? true,
     trackingDomain: fields.trackingDomain ?? '',

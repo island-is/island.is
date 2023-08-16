@@ -18,14 +18,8 @@ import {
   SectionHeading,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import type {
-  UploadFile} from '@island.is/island-ui/core';
-import {
-  Box,
-  Button,
-  InputFileUpload,
-  Text
-} from '@island.is/island-ui/core'
+import type { UploadFile } from '@island.is/island-ui/core'
+import { Box, Button, InputFileUpload, Text } from '@island.is/island-ui/core'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import RulingDateLabel from '@island.is/judicial-system-web/src/components/RulingDateLabel/RulingDateLabel'
 import {
@@ -33,8 +27,7 @@ import {
   CaseTransition,
   isProsecutionRole,
 } from '@island.is/judicial-system/types'
-import type {
-  TUploadFile} from '@island.is/judicial-system-web/src/utils/hooks';
+import type { TUploadFile } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   useS3Upload,
   useCase,
@@ -51,12 +44,8 @@ const AppealToCourtOfAppeals = () => {
   const router = useRouter()
   const [displayFiles, setDisplayFiles] = useState<TUploadFile[]>([])
   const [visibleModal, setVisibleModal] = useState<'APPEAL_SENT'>()
-  const {
-    handleChange,
-    handleRemove,
-    handleRetry,
-    generateSingleFileUpdate,
-  } = useS3Upload(workingCase.id)
+  const { handleChange, handleRemove, handleRetry, generateSingleFileUpdate } =
+    useS3Upload(workingCase.id)
   const { transitionCase } = useCase()
   const { id } = router.query
   const appealBriefType = isProsecutionRole(user?.role)

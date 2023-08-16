@@ -13,14 +13,12 @@ import {useIntl} from 'react-intl';
 import {testIDs} from '../../utils/test-ids';
 import {useUpdateUserProfile} from './profile-queries';
 
-const {
-  getNavigationOptions,
-  useNavigationOptions,
-} = createNavigationOptionHooks(() => ({
-  topBar: {
-    visible: false,
-  },
-}));
+const {getNavigationOptions, useNavigationOptions} =
+  createNavigationOptionHooks(() => ({
+    topBar: {
+      visible: false,
+    },
+  }));
 
 export const EditConfirmScreen: NavigationFunctionComponent<any> = ({
   componentId,

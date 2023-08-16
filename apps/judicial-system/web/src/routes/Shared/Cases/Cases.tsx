@@ -33,14 +33,11 @@ import {
   titles,
   errors,
 } from '@island.is/judicial-system-web/messages'
-import type {
-  User} from '@island.is/judicial-system-web/src/graphql/schema';
-import {
-  UserRole,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+import type { User } from '@island.is/judicial-system-web/src/graphql/schema'
+import { UserRole } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import ActiveCases from './ActiveCases'
-import type { FilterOption} from './useFilter';
+import type { FilterOption } from './useFilter'
 import { useFilter } from './useFilter'
 import { cases as m } from './Cases.strings'
 import * as styles from './Cases.css'
@@ -134,26 +131,26 @@ export const Cases: React.FC<React.PropsWithChildren<unknown>> = () => {
 
   const resCases = data?.cases
 
-  const [allActiveCases, allPastCases]: [
-    CaseListEntry[],
-    CaseListEntry[],
-  ] = useMemo(() => {
-    if (!resCases) {
-      return [[], []]
-    }
-
-    const casesWithoutDeleted = resCases.filter((c: CaseListEntry) => {
-      return c.state !== CaseState.DELETED
-    })
-
-    return partition(casesWithoutDeleted, (c) => {
-      if (isIndictmentCase(c.type) || !isDistrictCourtUser) {
-        return !completedCaseStates.includes(c.state)
-      } else {
-        return !(completedCaseStates.includes(c.state) && c.rulingSignatureDate)
+  const [allActiveCases, allPastCases]: [CaseListEntry[], CaseListEntry[]] =
+    useMemo(() => {
+      if (!resCases) {
+        return [[], []]
       }
-    })
-  }, [isDistrictCourtUser, resCases])
+
+      const casesWithoutDeleted = resCases.filter((c: CaseListEntry) => {
+        return c.state !== CaseState.DELETED
+      })
+
+      return partition(casesWithoutDeleted, (c) => {
+        if (isIndictmentCase(c.type) || !isDistrictCourtUser) {
+          return !completedCaseStates.includes(c.state)
+        } else {
+          return !(
+            completedCaseStates.includes(c.state) && c.rulingSignatureDate
+          )
+        }
+      })
+    }, [isDistrictCourtUser, resCases])
 
   const {
     filter,

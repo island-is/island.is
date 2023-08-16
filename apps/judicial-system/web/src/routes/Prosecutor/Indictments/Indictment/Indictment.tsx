@@ -31,9 +31,7 @@ import {
 import * as constants from '@island.is/judicial-system/consts'
 import { formatNationalId } from '@island.is/judicial-system/formatters'
 import { isTrafficViolationStepValidIndictments } from '@island.is/judicial-system-web/src/utils/validate'
-import type {
-  UpdateIndictmentCount,
-} from '@island.is/judicial-system-web/src/utils/hooks/useIndictmentCounts';
+import type { UpdateIndictmentCount } from '@island.is/judicial-system-web/src/utils/hooks/useIndictmentCounts'
 import useIndictmentCounts from '@island.is/judicial-system-web/src/utils/hooks/useIndictmentCounts'
 import { IndictmentCountOffense } from '@island.is/judicial-system-web/src/graphql/schema'
 
@@ -360,7 +358,8 @@ const Indictment: React.FC<React.PropsWithChildren<unknown>> = () => {
                   setAndSendCaseToServer(
                     [
                       {
-                        requestDriversLicenseSuspension: !workingCase.requestDriversLicenseSuspension,
+                        requestDriversLicenseSuspension:
+                          !workingCase.requestDriversLicenseSuspension,
                         demands: !workingCase.requestDriversLicenseSuspension
                           ? formatMessage(strings.demandsAutofillWithSuspension)
                           : formatMessage(strings.demandsAutofill),

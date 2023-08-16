@@ -1,7 +1,7 @@
 import { createIntl } from 'react-intl'
 
 import { IndictmentCountOffense as offense } from '@island.is/judicial-system-web/src/graphql/schema'
-import type { SubstanceMap } from '@island.is/judicial-system/types';
+import type { SubstanceMap } from '@island.is/judicial-system/types'
 import { Substance } from '@island.is/judicial-system/types'
 
 import {

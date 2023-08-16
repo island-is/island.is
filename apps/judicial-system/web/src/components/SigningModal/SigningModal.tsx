@@ -9,10 +9,9 @@ import { useIntl } from 'react-intl'
 
 import type {
   Exact,
-  RequestSignatureInput} from '@island.is/judicial-system-web/src/graphql/schema';
-import {
-  CaseType
+  RequestSignatureInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
 import { Box, Text, toast } from '@island.is/island-ui/core'
 import {
   core,
@@ -23,16 +22,10 @@ import * as constants from '@island.is/judicial-system/consts'
 
 import { Modal } from '..'
 import MarkdownWrapper from '../MarkdownWrapper/MarkdownWrapper'
-import type {
-  RequestRulingSignatureMutation} from './requestRulingSignature.generated';
-import {
-  useRequestRulingSignatureMutation,
-} from './requestRulingSignature.generated'
-import type {
-  GetRulingSignatureConfirmationQuery} from './getRulingSignatureConfirmation.generated';
-import {
-  useGetRulingSignatureConfirmationQuery
-} from './getRulingSignatureConfirmation.generated'
+import type { RequestRulingSignatureMutation } from './requestRulingSignature.generated'
+import { useRequestRulingSignatureMutation } from './requestRulingSignature.generated'
+import type { GetRulingSignatureConfirmationQuery } from './getRulingSignatureConfirmation.generated'
+import { useGetRulingSignatureConfirmationQuery } from './getRulingSignatureConfirmation.generated'
 import { signingModal as m } from './SigningModal.strings'
 
 const ControlCode: React.FC<

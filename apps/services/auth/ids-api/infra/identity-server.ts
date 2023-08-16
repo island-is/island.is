@@ -41,12 +41,10 @@ export const serviceSetup = (services: {
         prod: '11211',
       },
       CacheSettings__Redis__Address: {
-        dev:
-          'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com',
+        dev: 'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com',
         staging:
           'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com',
-        prod:
-          'clustercfg.general-redis-cluster-group.dnugi2.euw1.cache.amazonaws.com',
+        prod: 'clustercfg.general-redis-cluster-group.dnugi2.euw1.cache.amazonaws.com',
       },
       CacheSettings__Redis__Port: {
         dev: '6379',

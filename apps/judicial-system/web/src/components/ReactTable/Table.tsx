@@ -1,6 +1,6 @@
-import type { FC, PropsWithChildren, ReactElement} from 'react';
+import type { FC, PropsWithChildren, ReactElement } from 'react'
 import React, { useState } from 'react'
-import type { Row} from 'react-table';
+import type { Row } from 'react-table'
 import { useSortBy, useTable } from 'react-table'
 import cn from 'classnames'
 
@@ -57,13 +57,8 @@ const Table = <T extends object>(
     },
     useSortBy,
   )
-  const {
-    getTableProps,
-    getTableBodyProps,
-    headerGroups,
-    rows,
-    prepareRow,
-  } = tableInstance
+  const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
+    tableInstance
   const enoughRowsToTruncate = rows.length > 4
   const lastIndex = rows.length - 1
   const lastRow = rows[lastIndex]

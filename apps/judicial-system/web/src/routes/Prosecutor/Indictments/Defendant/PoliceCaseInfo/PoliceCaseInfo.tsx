@@ -11,7 +11,7 @@ import {
   Select,
   Tag,
 } from '@island.is/island-ui/core'
-import type { CrimeScene} from '@island.is/judicial-system/types';
+import type { CrimeScene } from '@island.is/judicial-system/types'
 import { IndictmentSubtype } from '@island.is/judicial-system/types'
 import {
   capitalize,
@@ -79,10 +79,8 @@ export const PoliceCaseInfo: React.FC<React.PropsWithChildren<Props>> = (
   const [policeCaseNumberInput, setPoliceCaseNumberInput] = useState(
     policeCaseNumbers[index],
   )
-  const [
-    policeCaseNumberErrorMessage,
-    setPoliceCaseNumberErrorMessage,
-  ] = useState<string>('')
+  const [policeCaseNumberErrorMessage, setPoliceCaseNumberErrorMessage] =
+    useState<string>('')
 
   useEffect(() => {
     if (policeCaseNumbers[index] !== originalPoliceCaseNumber) {

@@ -9,7 +9,7 @@ import localeIS from 'date-fns/locale/is'
 import { Box, Text } from '@island.is/island-ui/core'
 
 import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
-import type { CaseType} from '@island.is/judicial-system/types';
+import type { CaseType } from '@island.is/judicial-system/types'
 import { isIndictmentCase } from '@island.is/judicial-system/types'
 
 import type { TempCaseListEntry as CaseListEntry } from '@island.is/judicial-system-web/src/types'
@@ -45,12 +45,8 @@ export const DefenderCasesTable: React.FC<React.PropsWithChildren<Props>> = (
 ) => {
   const { formatMessage } = useIntl()
   const { cases, showingCompletedCases, loading } = props
-  const {
-    sortedData,
-    requestSort,
-    getClassNamesFor,
-    isActiveColumn,
-  } = useSortCases('createdAt', 'descending', cases)
+  const { sortedData, requestSort, getClassNamesFor, isActiveColumn } =
+    useSortCases('createdAt', 'descending', cases)
 
   const handleRowClick = (id: string, type: CaseType) => {
     isIndictmentCase(type)

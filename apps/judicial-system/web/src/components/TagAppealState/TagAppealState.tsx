@@ -4,7 +4,7 @@ import { useIntl } from 'react-intl'
 import { Feature } from '@island.is/judicial-system/types'
 
 import { appealRuling } from '@island.is/judicial-system-web/messages/Core/appealRuling'
-import type { TagVariant } from '@island.is/island-ui/core';
+import type { TagVariant } from '@island.is/island-ui/core'
 import { Tag } from '@island.is/island-ui/core'
 import { tables } from '@island.is/judicial-system-web/messages'
 import {

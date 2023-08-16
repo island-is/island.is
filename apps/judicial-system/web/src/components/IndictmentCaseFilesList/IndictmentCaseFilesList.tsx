@@ -2,8 +2,7 @@ import React, { useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'framer-motion'
 
-import type {
-  CaseFile} from '@island.is/judicial-system/types';
+import type { CaseFile } from '@island.is/judicial-system/types'
 import {
   CaseFileCategory,
   completedCaseStates,

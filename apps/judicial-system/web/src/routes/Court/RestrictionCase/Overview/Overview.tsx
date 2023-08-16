@@ -10,11 +10,8 @@ import {
   Button,
   AlertMessage,
 } from '@island.is/island-ui/core'
-import type {
-  CaseLegalProvisions} from '@island.is/judicial-system/types';
-import {
-  isAcceptingCaseDecision,
-} from '@island.is/judicial-system/types'
+import type { CaseLegalProvisions } from '@island.is/judicial-system/types'
+import { isAcceptingCaseDecision } from '@island.is/judicial-system/types'
 import * as constants from '@island.is/judicial-system/consts'
 import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
 import {

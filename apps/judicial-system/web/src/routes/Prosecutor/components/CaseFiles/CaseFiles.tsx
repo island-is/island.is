@@ -26,31 +26,29 @@ import {
   useDeb,
   useS3Upload,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import type {
-  UploadFile} from '@island.is/island-ui/core';
+import type { UploadFile } from '@island.is/island-ui/core'
 import {
   Box,
   ContentBlock,
   Input,
   InputFileUpload,
   Text,
-  Tooltip
+  Tooltip,
 } from '@island.is/island-ui/core'
 import {
   mapCaseFileToUploadFile,
   removeTabsValidateAndSet,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
-import type {
-  PoliceCaseFile} from '@island.is/judicial-system/types';
+import type { PoliceCaseFile } from '@island.is/judicial-system/types'
 import {
   CaseFileState,
-  isRestrictionCase
+  isRestrictionCase,
 } from '@island.is/judicial-system/types'
 import { CaseOrigin } from '@island.is/judicial-system-web/src/graphql/schema'
 import { fileExtensionWhitelist } from '@island.is/island-ui/core/types'
 import * as constants from '@island.is/judicial-system/consts'
 
-import type { PoliceCaseFileCheck} from '../../components';
+import type { PoliceCaseFileCheck } from '../../components'
 import { PoliceCaseFiles } from '../../components'
 import { useGetPoliceCaseFilesQuery } from './getPoliceCaseFiles.generated'
 import { caseFiles as strings } from './CaseFiles.strings'
@@ -72,12 +70,8 @@ export const mapPoliceCaseFileToPoliceCaseFileCheck = (
 })
 
 export const CaseFiles: React.FC<React.PropsWithChildren<unknown>> = () => {
-  const {
-    workingCase,
-    setWorkingCase,
-    isLoadingWorkingCase,
-    caseNotFound,
-  } = useContext(FormContext)
+  const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
+    useContext(FormContext)
   const {
     data: policeData,
     loading: policeDataLoading,

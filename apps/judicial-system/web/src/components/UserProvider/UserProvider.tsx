@@ -3,11 +3,8 @@ import React, { createContext, useEffect, useState } from 'react'
 
 import { CSRF_COOKIE_NAME } from '@island.is/judicial-system/consts'
 
-import type {
-  User} from '@island.is/judicial-system-web/src/graphql/schema';
-import {
-  UserRole,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+import type { User } from '@island.is/judicial-system-web/src/graphql/schema'
+import { UserRole } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useGetCurrentUserQuery } from './getCurrentUser.generated'
 
 interface UserProvider {

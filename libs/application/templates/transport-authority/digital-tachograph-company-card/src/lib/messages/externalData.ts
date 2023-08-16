@@ -28,8 +28,7 @@ export const externalData = {
       description: 'Was able to get data',
     },
     getDataSuccessDescription: {
-      id:
-        'ta.dtcc.application:externalData.dataProvider.getDataSuccessDescription',
+      id: 'ta.dtcc.application:externalData.dataProvider.getDataSuccessDescription',
       defaultMessage: 'Með gagnaöflun tókst að sækja eftirfarandi gögn:',
       description: 'Was able to get data description',
     },

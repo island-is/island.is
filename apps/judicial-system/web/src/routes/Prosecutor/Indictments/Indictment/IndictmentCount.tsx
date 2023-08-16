@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, useState } from 'react'
-import type { IntlShape} from 'react-intl';
+import type { IntlShape } from 'react-intl'
 import { useIntl } from 'react-intl'
 import type { ValueType } from 'react-select'
 import InputMask from 'react-input-mask'
@@ -17,12 +17,8 @@ import type {
   TempCase as Case,
   TempIndictmentCount as TIndictmentCount,
 } from '@island.is/judicial-system-web/src/types'
-import type {
-  Substance,
-  SubstanceMap} from '@island.is/judicial-system/types';
-import {
-  offenseSubstances
-} from '@island.is/judicial-system/types'
+import type { Substance, SubstanceMap } from '@island.is/judicial-system/types'
+import { offenseSubstances } from '@island.is/judicial-system/types'
 import {
   BlueBox,
   IndictmentInfo,
@@ -292,18 +288,12 @@ export const IndictmentCount: React.FC<React.PropsWithChildren<Props>> = (
     vehicleRegistrationNumberErrorMessage,
     setVehicleRegistrationNumberErrorMessage,
   ] = useState<string>('')
-  const [
-    incidentDescriptionErrorMessage,
-    setIncidentDescriptionErrorMessage,
-  ] = useState<string>('')
-  const [
-    bloodAlcoholContentErrorMessage,
-    setBloodAlcoholContentErrorMessage,
-  ] = useState<string>('')
-  const [
-    legalArgumentsErrorMessage,
-    setLegalArgumentsErrorMessage,
-  ] = useState<string>('')
+  const [incidentDescriptionErrorMessage, setIncidentDescriptionErrorMessage] =
+    useState<string>('')
+  const [bloodAlcoholContentErrorMessage, setBloodAlcoholContentErrorMessage] =
+    useState<string>('')
+  const [legalArgumentsErrorMessage, setLegalArgumentsErrorMessage] =
+    useState<string>('')
 
   const lawTag = useCallback(
     (law: number[]) =>

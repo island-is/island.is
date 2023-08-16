@@ -1,6 +1,6 @@
 import React from 'react'
 
-import type { IconMapIcon } from '@island.is/island-ui/core';
+import type { IconMapIcon } from '@island.is/island-ui/core'
 import { Box, Icon, Text } from '@island.is/island-ui/core'
 import type { Colors } from '@island.is/island-ui/theme'
 

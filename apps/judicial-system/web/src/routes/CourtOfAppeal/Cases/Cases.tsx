@@ -12,11 +12,8 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import { titles, tables } from '@island.is/judicial-system-web/messages'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import type {
-  CaseListEntry} from '@island.is/judicial-system-web/src/graphql/schema';
-import {
-  CaseAppealState
-} from '@island.is/judicial-system-web/src/graphql/schema'
+import type { CaseListEntry } from '@island.is/judicial-system-web/src/graphql/schema'
+import { CaseAppealState } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { AppealedCasesQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 

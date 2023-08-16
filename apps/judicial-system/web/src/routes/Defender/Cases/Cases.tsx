@@ -4,8 +4,7 @@ import partition from 'lodash/partition'
 import { useQuery } from '@apollo/client'
 
 import { AlertMessage, Box, Tabs, Text } from '@island.is/island-ui/core'
-import type {
-  CaseListEntry} from '@island.is/judicial-system/types';
+import type { CaseListEntry } from '@island.is/judicial-system/types'
 import {
   completedCaseStates,
   isIndictmentCase,
@@ -18,7 +17,7 @@ import SharedPageLayout from '@island.is/judicial-system-web/src/components/Shar
 
 import DefenderCasesTable from './components/DefenderCasesTable'
 import FilterCheckboxes from './components/FilterCheckboxes'
-import type { Filters } from './hooks/useFilterCases';
+import type { Filters } from './hooks/useFilterCases'
 import useFilterCases from './hooks/useFilterCases'
 
 import { defenderCases as m } from './Cases.strings'
@@ -48,16 +47,14 @@ export const Cases: React.FC<React.PropsWithChildren<unknown>> = () => {
 
   const cases = data?.cases
 
-  const [activeCases, completedCases]: [
-    CaseListEntry[],
-    CaseListEntry[],
-  ] = useMemo(() => {
-    if (!cases) {
-      return [[], []]
-    }
+  const [activeCases, completedCases]: [CaseListEntry[], CaseListEntry[]] =
+    useMemo(() => {
+      if (!cases) {
+        return [[], []]
+      }
 
-    return partition(cases, (c) => !completedCaseStates.includes(c.state))
-  }, [cases])
+      return partition(cases, (c) => !completedCaseStates.includes(c.state))
+    }, [cases])
 
   const {
     filteredCases: activeFilteredCases,

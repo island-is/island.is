@@ -3,11 +3,8 @@ import { useIntl } from 'react-intl'
 import { AnimatePresence, LayoutGroup, motion } from 'framer-motion'
 import cn from 'classnames'
 
-import type {
-  PoliceCaseFile} from '@island.is/judicial-system/types';
-import {
-  isIndictmentCase,
-} from '@island.is/judicial-system/types'
+import type { PoliceCaseFile } from '@island.is/judicial-system/types'
+import { isIndictmentCase } from '@island.is/judicial-system/types'
 import {
   AlertMessage,
   Box,
@@ -123,8 +120,8 @@ const PoliceCaseFiles: React.FC<React.PropsWithChildren<Props>> = ({
         }),
       )
     } else {
-      newPoliceCaseFileList[target].checked = !newPoliceCaseFileList[target]
-        .checked
+      newPoliceCaseFileList[target].checked =
+        !newPoliceCaseFileList[target].checked
       setPoliceCaseFileList(newPoliceCaseFileList)
     }
   }

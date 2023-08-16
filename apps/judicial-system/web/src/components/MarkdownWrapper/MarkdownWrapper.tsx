@@ -1,15 +1,14 @@
-import type { ReactNode } from 'react';
+import type { ReactNode } from 'react'
 import React from 'react'
 import Markdown from 'markdown-to-jsx'
 
-import type {
-  TextProps} from '@island.is/island-ui/core';
+import type { TextProps } from '@island.is/island-ui/core'
 import {
   Box,
   Text,
   BulletList,
   Bullet,
-  LinkV2
+  LinkV2,
 } from '@island.is/island-ui/core'
 
 import * as styles from './MarkdownWrapper.css'

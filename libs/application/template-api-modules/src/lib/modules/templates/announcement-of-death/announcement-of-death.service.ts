@@ -77,9 +77,8 @@ export class AnnouncementOfDeathService extends BaseTemplateApiService {
         ...estates[estate].ships,
         ...estates[estate].flyers,
       ].map(baseMapper)
-      estates[estate].estateMembers = estates[estate].estateMembers.map(
-        baseMapper,
-      )
+      estates[estate].estateMembers =
+        estates[estate].estateMembers.map(baseMapper)
       // TODO: remove once empty array diff problem is resolved
       //       in the application system (property dropped before deepmerge)
       estates[estate].assets.unshift(dummyAsset as EstateAsset)
@@ -177,7 +176,7 @@ export class AnnouncementOfDeathService extends BaseTemplateApiService {
       const uploadDataName = 'andlatstilkynning1.0 '
       const uploadDataId = 'andlatstilkynning1.0 '
 
-      const answers = (application.answers as unknown) as aodAnswers
+      const answers = application.answers as unknown as aodAnswers
 
       const otherProperties = answers?.otherProperties ?? []
 
@@ -220,15 +219,17 @@ export class AnnouncementOfDeathService extends BaseTemplateApiService {
         )
           ? 'true'
           : 'false',
-        districtCommissionerHasWill: answers.districtCommissionerHasWill.toString(),
+        districtCommissionerHasWill:
+          answers.districtCommissionerHasWill.toString(),
         prenuptialAgreement: answers.marriageSettlement.toString(),
         certificateOfDeathAnnouncement: answers.certificateOfDeathAnnouncement,
         authorizationForFuneralExpenses: answers.authorizationForFuneralExpenses
           ? answers.authorizationForFuneralExpenses.toString()
           : 'false',
-        financesDataCollectionPermission: answers.financesDataCollectionPermission
-          ? answers.financesDataCollectionPermission.toString()
-          : 'false',
+        financesDataCollectionPermission:
+          answers.financesDataCollectionPermission
+            ? answers.financesDataCollectionPermission.toString()
+            : 'false',
         additionalInfo: answers.additionalInfo,
       }
 

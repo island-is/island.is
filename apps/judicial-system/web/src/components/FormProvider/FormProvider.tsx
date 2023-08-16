@@ -1,15 +1,9 @@
-import type {
-  ReactNode} from 'react';
-import React, {
-  createContext,
-  useContext,
-  useEffect,
-  useState,
-} from 'react'
+import type { ReactNode } from 'react'
+import React, { createContext, useContext, useEffect, useState } from 'react'
 import { useLazyQuery } from '@apollo/client'
 import { useRouter } from 'next/router'
 
-import type { Defendant } from '@island.is/judicial-system/types';
+import type { Defendant } from '@island.is/judicial-system/types'
 import { CaseState } from '@island.is/judicial-system/types'
 import { USERS_ROUTE } from '@island.is/judicial-system/consts'
 import {

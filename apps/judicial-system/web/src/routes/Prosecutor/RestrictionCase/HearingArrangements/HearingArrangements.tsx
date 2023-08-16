@@ -15,8 +15,7 @@ import {
   PageLayout,
   FormContext,
 } from '@island.is/judicial-system-web/src/components'
-import type {
-  stepValidationsType} from '@island.is/judicial-system-web/src/utils/formHelper';
+import type { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
   removeTabsValidateAndSet,
   validateAndSendToServer,
@@ -49,12 +48,8 @@ export const HearingArrangements: React.FC<
 > = () => {
   const router = useRouter()
   const { formatMessage } = useIntl()
-  const {
-    workingCase,
-    setWorkingCase,
-    isLoadingWorkingCase,
-    caseNotFound,
-  } = useContext(FormContext)
+  const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
+    useContext(FormContext)
   const [navigateTo, setNavigateTo] = useState<keyof stepValidationsType>()
 
   const {

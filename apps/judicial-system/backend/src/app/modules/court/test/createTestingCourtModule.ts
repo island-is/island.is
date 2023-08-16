@@ -27,9 +27,8 @@ export const createTestingCourtModule = async () => {
     })
     .compile()
 
-  const courtClientService = courtModule.get<CourtClientService>(
-    CourtClientService,
-  )
+  const courtClientService =
+    courtModule.get<CourtClientService>(CourtClientService)
 
   const courtService = courtModule.get<CourtService>(CourtService)
 

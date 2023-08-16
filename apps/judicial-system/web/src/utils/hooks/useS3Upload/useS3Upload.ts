@@ -6,7 +6,7 @@ import { toast, type UploadFile } from '@island.is/island-ui/core'
 import { errors } from '@island.is/judicial-system-web/messages'
 import { UserContext } from '@island.is/judicial-system-web/src/components'
 import type { PresignedPost } from '@island.is/judicial-system-web/src/graphql/schema'
-import type{ CaseFileCategory } from '@island.is/judicial-system/types'
+import type { CaseFileCategory } from '@island.is/judicial-system/types'
 
 import {
   useCreatePresignedPostMutation,
@@ -30,7 +30,7 @@ import {
 } from './deleteFile.generated'
 import {
   useLimitedAccessDeleteFileMutation,
-  type  LimitedAccessDeleteFileMutation,
+  type LimitedAccessDeleteFileMutation,
 } from './limitedAccessDeleteFile.generated'
 import { useUploadPoliceCaseFileMutation } from './uploadPoliceCaseFile.generated'
 
@@ -91,9 +91,8 @@ export const useS3Upload = (caseId: string) => {
   const { formatMessage } = useIntl()
 
   const [createPresignedPost] = useCreatePresignedPostMutation()
-  const [
-    limitedAccessCreatePresignedPost,
-  ] = useLimitedAccessCreatePresignedPostMutation()
+  const [limitedAccessCreatePresignedPost] =
+    useLimitedAccessCreatePresignedPostMutation()
   const [createFile] = useCreateFileMutation()
   const [limitedAccessCreateFile] = useLimitedAccessCreateFileMutation()
   const [deleteFile] = useDeleteFileMutation()

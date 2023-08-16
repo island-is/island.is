@@ -5,11 +5,8 @@ import { theme } from '@island.is/island-ui/theme'
 import { Box, Text } from '@island.is/island-ui/core'
 import { useIntl } from 'react-intl'
 import { capitalize } from '@island.is/judicial-system/formatters'
-import type {
-  CaseListEntry} from '@island.is/judicial-system/types';
-import {
-  isExtendedCourtRole,
-} from '@island.is/judicial-system/types'
+import type { CaseListEntry } from '@island.is/judicial-system/types'
+import { isExtendedCourtRole } from '@island.is/judicial-system/types'
 import { tables, core } from '@island.is/judicial-system-web/messages'
 import {
   useSortCases,
@@ -49,12 +46,8 @@ const PastCasesTable: React.FC<React.PropsWithChildren<Props>> = (props) => {
   const { formatMessage } = useIntl()
   const { user } = useContext(UserContext)
 
-  const {
-    sortedData,
-    requestSort,
-    getClassNamesFor,
-    isActiveColumn,
-  } = useSortCases('createdAt', 'descending', cases)
+  const { sortedData, requestSort, getClassNamesFor, isActiveColumn } =
+    useSortCases('createdAt', 'descending', cases)
 
   const pastCasesData = useMemo(
     () =>

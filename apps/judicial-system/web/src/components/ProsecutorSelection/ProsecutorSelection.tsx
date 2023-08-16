@@ -3,7 +3,7 @@ import { useIntl } from 'react-intl'
 import { useQuery } from '@apollo/client'
 import type { OptionsType, ValueType } from 'react-select'
 
-import type { Option } from '@island.is/island-ui/core';
+import type { Option } from '@island.is/island-ui/core'
 import { Select } from '@island.is/island-ui/core'
 import { isIndictmentCase } from '@island.is/judicial-system/types'
 import {
@@ -12,11 +12,8 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import { ProsecutorSelectionUsersQuery } from './prosecutorSelectionUsersGql'
 import type { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
-import type {
-  User} from '@island.is/judicial-system-web/src/graphql/schema';
-import {
-  UserRole,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+import type { User } from '@island.is/judicial-system-web/src/graphql/schema'
+import { UserRole } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { strings } from './ProsecutorSelection.strings'
 

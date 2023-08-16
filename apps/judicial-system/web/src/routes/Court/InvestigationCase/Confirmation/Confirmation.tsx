@@ -35,12 +35,8 @@ import { confirmation as strings } from './Confirmation.strings'
 type VisibleModal = 'none' | 'rulingModifiedModal' | 'signingModal'
 
 const Confirmation = () => {
-  const {
-    workingCase,
-    setWorkingCase,
-    isLoadingWorkingCase,
-    caseNotFound,
-  } = useContext(FormContext)
+  const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
+    useContext(FormContext)
   const { formatMessage } = useIntl()
   const [modalVisible, setModalVisible] = useState<VisibleModal>('none')
 

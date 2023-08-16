@@ -338,11 +338,8 @@ export class ContentfulService {
       chunkSize,
     )
 
-    const {
-      indexableEntries,
-      newNextSyncToken,
-      deletedEntryIds,
-    } = populatedSyncEntriesResult
+    const { indexableEntries, newNextSyncToken, deletedEntryIds } =
+      populatedSyncEntriesResult
     let { nestedEntryIds } = populatedSyncEntriesResult
 
     const isDeltaUpdate = syncType !== 'full'
