@@ -1,15 +1,15 @@
 import React from 'react'
 import { useMenuState, Menu, MenuItem, MenuButton } from 'reakit/Menu'
-import type {
-  ButtonProps} from '@island.is/island-ui/core';
+
 import {
   Button,
   getTextStyles,
   useBoxStyles,
+  type ButtonProps,
 } from '@island.is/island-ui/core'
+import type { TestSupport } from '@island.is/island-ui/utils'
 
 import * as styles from './DropdownMenu.css'
-import type { TestSupport } from '@island.is/island-ui/utils'
 
 export interface DropdownMenuProps {
   /**

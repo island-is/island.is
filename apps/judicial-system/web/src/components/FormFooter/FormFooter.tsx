@@ -3,12 +3,11 @@ import { useRouter } from 'next/router'
 import { useWindowSize } from 'react-use'
 import { useIntl } from 'react-intl'
 
-import type {
-  ButtonTypes,
-  IconMapIcon} from '@island.is/island-ui/core';
 import {
   Box,
-  Button
+  Button,
+  type ButtonTypes,
+  type IconMapIcon,
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { core } from '@island.is/judicial-system-web/messages'
