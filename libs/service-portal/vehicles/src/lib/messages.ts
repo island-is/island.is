@@ -526,6 +526,10 @@ export const messages = defineMessages({
     id: 'sp.vehicles:vehicle-driving-lessons-label',
     defaultMessage: 'Grunnupplýsingar ökunáms',
   },
+  vehicleDrivingLessonsPracticeDriving: {
+    id: 'sp.vehicles:vehicle-driving-lessons-practice-driving',
+    defaultMessage: 'Æfingaakstur',
+  },
   vehicleDrivingLessonsStartDate: {
     id: 'sp.vehicles:vehicle-driving-lessons-start-date',
     defaultMessage: 'Ökunám hófst',

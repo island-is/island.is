@@ -34,6 +34,7 @@ export const GET_STUDENT_BOOK = gql`
         teacherName
         statusName
         totalLessonTime
+        practiceDriving
         totalLessonCount
         teachersAndLessons {
           registerDate
@@ -99,6 +100,18 @@ const DrivingLessonsBook = () => {
           <Stack space={2}>
             <UserInfoLine
               title={formatMessage(messages.vehicleDrivingLessonsLabel)}
+              label={formatMessage(
+                messages.vehicleDrivingLessonsPracticeDriving,
+              )}
+              content={
+                book?.practiceDriving
+                  ? formatMessage(messages.yes)
+                  : formatMessage(messages.no)
+              }
+              loading={loading}
+            />
+            <Divider />
+            <UserInfoLine
               label={formatMessage(messages.vehicleDrivingLessonsStartDate)}
               content={book?.createdOn && formatDate(book?.createdOn)}
               loading={loading}
