@@ -1,15 +1,14 @@
 import React from 'react'
-import type { MessageDescriptor } from 'react-intl';
-import { useIntl } from 'react-intl'
-import type {
-  ResponsiveProp,
-  GridColumns} from '@island.is/island-ui/core';
+import { useIntl, type MessageDescriptor } from 'react-intl'
+
 import {
   Box,
   GridContainer,
   GridRow,
   GridColumn,
-  Checkbox
+  Checkbox,
+  type ResponsiveProp,
+  type GridColumns,
 } from '@island.is/island-ui/core'
 
 export interface CheckboxInfo {

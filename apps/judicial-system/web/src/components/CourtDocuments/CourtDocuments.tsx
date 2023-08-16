@@ -1,16 +1,15 @@
-import type { Dispatch, FC } from 'react';
+import type { Dispatch, FC } from 'react'
 import React, { useState } from 'react'
 import cn from 'classnames'
 import { useIntl } from 'react-intl'
-import type {
-  ControlProps,
-  IndicatorProps,
-  MenuProps,
-  OptionProps,
-  PlaceholderProps,
-  ValueContainerProps} from 'react-select';
 import Select, {
-  components
+  components,
+  type ControlProps,
+  type IndicatorProps,
+  type MenuProps,
+  type OptionProps,
+  type PlaceholderProps,
+  type ValueContainerProps,
 } from 'react-select'
 
 import { Box, Icon, Tag, Text } from '@island.is/island-ui/core'
@@ -37,9 +36,8 @@ const CourtDocuments: FC<React.PropsWithChildren<Props>> = (props) => {
   const { workingCase, setWorkingCase } = props
   const { formatMessage } = useIntl()
   const { setAndSendCaseToServer } = useCase()
-  const [submittedByMenuIsOpen, setSubmittedByMenuIsOpen] = useState<boolean>(
-    false,
-  )
+  const [submittedByMenuIsOpen, setSubmittedByMenuIsOpen] =
+    useState<boolean>(false)
 
   const whoFiledOptions = [
     {
