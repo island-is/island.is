@@ -4,8 +4,6 @@ import { uuid } from 'uuidv4'
 import InputMask from 'react-input-mask'
 import isValid from 'date-fns/isValid'
 import parseISO from 'date-fns/parseISO'
-import type {
-  MotionValue} from 'framer-motion';
 import {
   animate,
   AnimatePresence,
@@ -13,6 +11,7 @@ import {
   Reorder,
   useDragControls,
   useMotionValue,
+  type MotionValue,
 } from 'framer-motion'
 import { useMutation } from '@apollo/client'
 import { useMeasure } from 'react-use'
@@ -410,9 +409,8 @@ const IndictmentsCaseFilesAccordionItem: React.FC<
     crimeScenes,
   } = props
   const { formatMessage } = useIntl()
-  const [updateFilesMutation] = useMutation<UpdateFilesMutationResponse>(
-    UpdateFileMutation,
-  )
+  const [updateFilesMutation] =
+    useMutation<UpdateFilesMutationResponse>(UpdateFileMutation)
 
   const { onOpen, fileNotFound, dismissFileNotFound } = useFileList({ caseId })
   const { remove } = useS3Upload(caseId)
@@ -551,9 +549,8 @@ const IndictmentsCaseFilesAccordionItem: React.FC<
 
     setReorderableItems((prev) => {
       const newReorderableItems = [...prev]
-      newReorderableItems[
-        fileInReorderableItems
-      ].userGeneratedFilename = newName
+      newReorderableItems[fileInReorderableItems].userGeneratedFilename =
+        newName
       newReorderableItems[fileInReorderableItems].displayDate = newDate
         ? newDate.toISOString()
         : newReorderableItems[fileInReorderableItems].displayDate
