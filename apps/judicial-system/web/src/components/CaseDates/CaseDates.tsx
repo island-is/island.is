@@ -3,8 +3,7 @@ import { useIntl } from 'react-intl'
 
 import { CaseDecision } from '@island.is/judicial-system/types'
 import { formatDate } from '@island.is/judicial-system/formatters'
-import type { IconMapIcon} from '@island.is/island-ui/core';
-import { Box, Button, Text } from '@island.is/island-ui/core'
+import { Box, Button, Text, type IconMapIcon } from '@island.is/island-ui/core'
 import { TIME_FORMAT } from '@island.is/judicial-system/consts'
 import { caseDates } from '@island.is/judicial-system-web/messages'
 import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
