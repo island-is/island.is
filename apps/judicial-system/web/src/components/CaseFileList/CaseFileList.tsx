@@ -2,13 +2,12 @@ import React from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'framer-motion'
 
-import type {
-  StatusColor,
-  UploadFile} from '@island.is/island-ui/core';
 import {
   Box,
   Text,
-  UploadedFile
+  UploadedFile,
+  type StatusColor,
+  type UploadFile,
 } from '@island.is/island-ui/core'
 import type { CaseFile as TCaseFile } from '@island.is/judicial-system/types'
 import { caseFiles as m } from '@island.is/judicial-system-web/messages'
