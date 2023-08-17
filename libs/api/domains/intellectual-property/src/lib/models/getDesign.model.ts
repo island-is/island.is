@@ -142,6 +142,9 @@ export class Specification {
 
 @ObjectType('IntellectualPropertyDesign')
 export class Design {
+  @Field(() => String, { nullable: true })
+  applicationNumber?: string | null
+
   @Field(() => Date, { nullable: true })
   applicationDate?: Date
 

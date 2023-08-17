@@ -1,25 +1,33 @@
-query GetPatents {
+query GetIntellectualProperties {
   intellectualProperties {
-    patents {
-      applicationNumber
-      registrationNumber
-      patentName
-      patentNameInOrgLanguage
-      statusText
-      applicationDate
-    }
-    trademarks {
-      text
-      type
-      status
-      applicationDate
-      vmId
-    }
-    designs {
-      applicationNumber
-      hId
-      status
-      specification
+    count
+    items {
+      ... on IntellectualPropertyPatent {
+        __typename
+        applicationNumber
+        registrationNumber
+        patentName
+        patentNameInOrgLanguage
+        statusText
+        applicationDate
+      }
+      ... on IntellectualPropertyTrademark {
+        __typename
+        text
+        type
+        status
+        applicationDate
+        vmId
+      }
+      ... on IntellectualPropertyDesign {
+        __typename
+        applicationNumber
+        hId
+        status
+        specification {
+          description
+        }
+      }
     }
   }
 }

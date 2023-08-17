@@ -16,12 +16,40 @@ import { Image } from './models/getDesignImage.model'
 import { GetIntellectualPropertyInput } from './dto/getPatent.input'
 import { Trademark } from './models/getTrademark.model'
 import { GetIntellectualPropertyDesignImagesInput } from './dto/getDesignImages.input'
+import { ExcludesFalse } from './utils'
+import { ImageList } from './models/designImageList.model'
+import { IntellectualPropertyList } from './models/intellectualPropertyList.model'
 
 @Resolver()
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Audit({ namespace: '@island.is/api/intellectual-property' })
 export class IntellectualPropertyResolver {
   constructor(private readonly ipService: IntellectualPropertyService) {}
+
+  @Scopes(ApiScope.internal)
+  @Query(() => IntellectualPropertyList, {
+    name: 'intellectualProperties',
+    nullable: true,
+  })
+  @Audit()
+  async getIntellectualProperties(
+    @CurrentUser() user: User,
+  ): Promise<IntellectualPropertyList | null> {
+    const data = await Promise.all([
+      this.ipService.getPatents(user),
+      this.ipService.getDesigns(user),
+      this.ipService.getTrademarks(user),
+    ])
+
+    const flattenedData = data
+      .filter((Boolean as unknown) as ExcludesFalse)
+      .flat()
+
+    return {
+      count: flattenedData.length,
+      items: flattenedData,
+    }
+  }
 
   @Scopes(ApiScope.internal)
   @Query(() => Patent, {
@@ -52,18 +80,24 @@ export class IntellectualPropertyResolver {
   }
 
   @Scopes(ApiScope.internal)
-  @Query(() => [Image], {
-    name: 'intellectualPropertyDesignImageCollection',
+  @Query(() => ImageList, {
+    name: 'intellectualPropertyDesignImageList',
     nullable: true,
   })
   @Audit()
-  async getIntellectualPropertyDesignImageCollectionById(
+  async getIntellectualPropertyDesignImageList(
     @CurrentUser() user: User,
     @Args('input', { type: () => GetIntellectualPropertyInput })
     input: GetIntellectualPropertyInput,
-  ) {
+  ): Promise<ImageList | null> {
+    const images = await this.ipService.getDesignImages(user, input.key)
+    if (!images) {
+      return null
+    }
+
     return {
-      images: await this.ipService.getDesignImages(user, input.key),
+      images,
+      count: images.length,
     }
   }
 
@@ -85,6 +119,16 @@ export class IntellectualPropertyResolver {
       input.imageNumber,
       input.size,
     )
+  }
+
+  @Scopes(ApiScope.internal)
+  @Query(() => [Trademark], {
+    name: 'intellectualPropertyTrademarks',
+    nullable: true,
+  })
+  @Audit()
+  getIntellectualPropertyTrademarks(@CurrentUser() user: User) {
+    return this.ipService.getTrademarks(user)
   }
 
   @Scopes(ApiScope.internal)

@@ -13,6 +13,7 @@ import { Design } from './models/getDesign.model'
 import { Image } from './models/getDesignImage.model'
 import addMonths from 'date-fns/addMonths'
 import { parseDate } from './utils'
+import { mapTrademarkSubtype, mapTrademarkType } from './mapper'
 
 type ExcludesFalse = <T>(x: T | null | undefined | false | '') => x is T
 
@@ -20,7 +21,8 @@ type ExcludesFalse = <T>(x: T | null | undefined | false | '') => x is T
 export class IntellectualPropertyService {
   constructor(
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
-    private readonly ipService: IntellectualPropertyClientService,
+    @Inject(IntellectualPropertyClientService)
+    private ipService: IntellectualPropertyClientService,
   ) {}
 
   async getTrademarks(user: User): Promise<Array<Trademark> | null> {
@@ -28,6 +30,8 @@ export class IntellectualPropertyService {
 
     return trademarks.map((t) => ({
       ...t,
+      type: mapTrademarkType(t.type) ?? undefined,
+      subType: mapTrademarkSubtype(t) ?? undefined,
       vmId: t.vmid,
       applicationDate: t.applicationDate
         ? new Date(t.applicationDate)
@@ -41,27 +45,10 @@ export class IntellectualPropertyService {
   ): Promise<Trademark | null> {
     const trademark = await this.ipService.getTrademarkByVmId(user, trademarkId)
 
-    const subType = trademark.isFelagamerki
-      ? TrademarkSubType.COLLECTIVE_MARK
-      : trademark.certificationMark
-      ? TrademarkSubType.CERTIFICATION_MARK
-      : TrademarkSubType.TRADEMARK
-
-    const type =
-      trademark.type === 'margmiðlunarmerki'
-        ? TrademarkType.MULTIMEDIA
-        : trademark.type === 'hreyfimerki'
-        ? TrademarkType.ANIMATION
-        : trademark.type === 'hljóðmerki'
-        ? TrademarkType.AUDIO
-        : trademark.type === 'orðmerki'
-        ? TrademarkType.TEXT
-        : undefined
-
     return {
       ...trademark,
-      type,
-      subType,
+      type: mapTrademarkType(trademark.type) ?? undefined,
+      subType: mapTrademarkSubtype(trademark) ?? undefined,
       applicationDate: trademark.applicationDate
         ? parseDate(trademark.applicationDate)
         : undefined,
@@ -95,6 +82,7 @@ export class IntellectualPropertyService {
   }
 
   async getPatents(user: User): Promise<Array<Patent> | null> {
+    this.logger.debug(this.ipService)
     const patents = await this.ipService.getPatents(user)
     return patents as Array<Patent>
   }

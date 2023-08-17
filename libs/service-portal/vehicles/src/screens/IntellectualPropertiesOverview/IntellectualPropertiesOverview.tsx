@@ -5,19 +5,20 @@ import {
   CardLoader,
   EmptyState,
   ErrorScreen,
+  ExcludesFalse,
   ServicePortalPath,
   m,
 } from '@island.is/service-portal/core'
 import { Box } from '@island.is/island-ui/core'
 import { IntroHeader } from '@island.is/portals/core'
 import { ipMessages as messages } from '../../lib/messages'
-import { useGetPatentsQuery } from './IntellectualPropertiesOverview.generated'
+import { useGetIntellectualPropertiesQuery } from './IntellectualPropertiesOverview.generated'
 
 const IntellectualPropertiesOverview = () => {
   useNamespaces('sp.intellectual-property')
   const { formatMessage } = useLocale()
 
-  const { loading, data, error } = useGetPatentsQuery({})
+  const { loading, data, error } = useGetIntellectualPropertiesQuery()
 
   const generateActionCard = (
     index: number,
@@ -65,66 +66,64 @@ const IntellectualPropertiesOverview = () => {
         title={formatMessage(messages.title)}
         intro={formatMessage(messages.description)}
       />
-
       {loading && (
         <Box marginBottom={2}>
           <CardLoader />
         </Box>
       )}
-
-      {!loading && !data?.intellectualProperties?.patents?.length && (
+      {!loading && (data?.intellectualProperties?.count ?? 0) < 1 && (
         <Box width="full" marginTop={4} display="flex" justifyContent="center">
           <Box marginTop={8}>
             <EmptyState />
           </Box>
         </Box>
       )}
-
       {!loading &&
         !error &&
-        data?.intellectualProperties?.trademarks?.map((ip, index) =>
-          generateActionCard(
-            index,
-            ip.text,
-            ip.vmId,
-            ip.type,
-            ServicePortalPath.AssetsIntellectualPropertiesTrademark.replace(
-              ':id',
-              ip.vmId ?? '',
-            ),
-            ip.status,
-          ),
-        )}
-      {!loading &&
-        !error &&
-        data?.intellectualProperties?.designs?.map((ip, index) =>
-          generateActionCard(
-            index,
-            ip.specification,
-            'H0002611',
-            undefined,
-            ServicePortalPath.AssetsIntellectualPropertiesDesign.replace(
-              ':id',
-              'H0002611',
-            ),
-            ip.status,
-          ),
-        )}
-      {!loading &&
-        !error &&
-        data?.intellectualProperties?.patents?.map((ip, index) =>
-          generateActionCard(
-            index,
-            ip.patentName || 'TEMP NAME',
-            ip.applicationNumber,
-            undefined,
-            ServicePortalPath.AssetsIntellectualPropertiesPatent.replace(
-              ':id',
-              ip.applicationNumber ?? '',
-            ),
-            ip.statusText,
-          ),
-        )}
+        data?.intellectualProperties?.items
+          ?.map((ip, index) => {
+            switch (ip.__typename) {
+              case 'IntellectualPropertyDesign':
+                return generateActionCard(
+                  index,
+                  ip.specification?.description,
+                  'H0002611',
+                  undefined,
+                  ServicePortalPath.AssetsIntellectualPropertiesDesign.replace(
+                    ':id',
+                    'H0002611',
+                  ),
+                  ip.status,
+                )
+              case 'IntellectualPropertyPatent':
+                return generateActionCard(
+                  index,
+                  ip.patentName || 'TEMP NAME',
+                  ip.applicationNumber,
+                  undefined,
+                  ServicePortalPath.AssetsIntellectualPropertiesPatent.replace(
+                    ':id',
+                    ip.applicationNumber ?? '',
+                  ),
+                  ip.statusText,
+                )
+              case 'IntellectualPropertyTrademark':
+                return generateActionCard(
+                  index,
+                  ip.text,
+                  ip.vmId,
+                  ip.type,
+                  ServicePortalPath.AssetsIntellectualPropertiesTrademark.replace(
+                    ':id',
+                    ip.vmId ?? '',
+                  ),
+                  ip.status,
+                )
+              default:
+                return null
+            }
+          })
+          .filter((Boolean as unknown) as ExcludesFalse)}
     </Box>
   )
 }

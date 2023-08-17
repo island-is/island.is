@@ -5,6 +5,6 @@ import { IntellectualPropertyService } from './intellectualProperty.service'
 
 @Module({
   imports: [IntellectualPropertyClientModule],
-  providers: [IntellectualPropertyResolver, IntellectualPropertyService],
+  providers: [IntellectualPropertyService, IntellectualPropertyResolver],
 })
 export class IntellectualPropertyModule {}

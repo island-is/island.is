@@ -1,5 +1,4 @@
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import type { Logger } from '@island.is/logging'
 import {
   TrademarksApi,
   PatentSearchApi,
@@ -14,9 +13,8 @@ export const exportedApis = [
   DesignSearchApi,
 ].map((Api) => ({
   provide: Api,
-  useFactory: (configuration: Configuration, logger: Logger) => {
-    logger.debug(typeof Api)
+  useFactory: (configuration: Configuration) => {
     return new Api(configuration)
   },
-  inject: [ApiConfig.provide, LOGGER_PROVIDER],
+  inject: [ApiConfig.provide],
 }))

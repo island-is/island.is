@@ -24,24 +24,6 @@ export class IntellectualPropertyClientService {
   private designSearchApiWithAuth = (user: User) =>
     this.designSearchApi.withMiddleware(new AuthMiddleware(user as Auth))
 
-  async getIntellectualProperties(user: User) {
-    const data = await Promise.all([
-      this.getPatents(user),
-      this.getTrademarks(user),
-      this.getDesigns(user),
-    ])
-
-    if (data.every((d) => !d)) {
-      return null
-    }
-
-    return {
-      patents: data[0],
-      trademarks: data[1],
-      designs: data[2],
-    }
-  }
-
   getTrademarks(user: User) {
     return this.trademarksApiWithAuth(user).trademarksGetTrademarksBySSNGet({
       ssn: '6102050890',

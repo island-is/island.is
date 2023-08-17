@@ -107,7 +107,7 @@ const IntellectualPropertiesDesignDetail = () => {
         </Box>
         <MultiImage
           loading={loading}
-          images={data?.intellectualPropertyDesignImageCollection?.images ?? []}
+          images={data?.intellectualPropertyDesignImageList?.images ?? []}
           title="Design images"
         />
         <Stack space="p2">

@@ -5,6 +5,6 @@ import { IntellectualPropertyClientService } from './intellectualPropertyClient.
 
 @Module({
   providers: [ApiConfig, ...exportedApis, IntellectualPropertyClientService],
-  exports: [IntellectualPropertyClientService],
+  exports: [IntellectualPropertyClientService, ...exportedApis],
 })
 export class IntellectualPropertyClientModule {}
