@@ -342,7 +342,7 @@ ProjectPage.getProps = async ({ apolloClient, locale, query }) => {
     throw new CustomNextError(404, 'Project page not found')
   }
 
-  let stepOptionsFromNamespace : any = []
+  let stepOptionsFromNamespace: any = []
 
   if (getProjectPage.stepper) {
     stepOptionsFromNamespace = await stepperUtils.getStepOptionsFromUIConfiguration(
