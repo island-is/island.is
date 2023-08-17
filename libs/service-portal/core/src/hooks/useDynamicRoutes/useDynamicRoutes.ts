@@ -70,14 +70,6 @@ export const useDynamicRoutes = () => {
       dynamicPathArray.push(ServicePortalPath.AssetsVehiclesDrivingLessons)
     }
 
-    /**
-     * service-portal/education
-     * Tabs control for education graduation (brautskráning)
-     */
-
-    dynamicPathArray.push(ServicePortalPath.EducationHaskoliGraduation)
-    dynamicPathArray.push(ServicePortalPath.EducationHaskoliGraduationDetail)
-
     // Combine routes, no duplicates.
     setActiveDynamicRoutes(uniq([...activeDynamicRoutes, ...dynamicPathArray]))
   }, [data, licenseBook])
