@@ -8,8 +8,8 @@ export const authModuleConfig = defineConfig({
       'AUTH_IDS_CLIENT_ID',
       '@rettarvorslugatt.island.is/web',
     ),
-    domain: env.required(
-      'AUTH_IDS_DOMAIN',
+    issuer: env.required(
+      'AUTH_IDS_ISSUER',
       'https://identity-server.dev01.devland.is',
     ),
     clientSecret: env.required('AUTH_IDS_SECRET', ''),
@@ -17,7 +17,11 @@ export const authModuleConfig = defineConfig({
       'AUTH_IDS_REDIRECT_URI',
       'http://localhost:4200/api/auth/callback/identity-server',
     ),
-
     allowAuthBypass: env.required('ALLOW_AUTH_BYPASS', 'true') === 'true',
+    backendUrl: env.required('BACKEND_URL', 'http://localhost:3344'),
+    secretToken: env.required(
+      'BACKEND_ACCESS_TOKEN',
+      'secret-backend-api-token',
+    ),
   }),
 })

@@ -6,7 +6,6 @@ import { Inject, Injectable } from '@nestjs/common'
 import { ConfigType } from '@nestjs/config'
 import type { User } from '@island.is/judicial-system/types'
 
-import { environment } from '../../../environments'
 import { authModuleConfig } from './auth.config'
 
 @Injectable()
@@ -18,9 +17,9 @@ export class AuthService {
 
   async findUser(nationalId: string): Promise<User | undefined> {
     const res = await fetch(
-      `${environment.backend.url}/api/user/?nationalId=${nationalId}`,
+      `${this.config.backendUrl}/api/user/?nationalId=${nationalId}`,
       {
-        headers: { authorization: `Bearer ${environment.auth.secretToken}` },
+        headers: { authorization: `Bearer ${this.config.secretToken}` },
       },
     )
 
@@ -33,9 +32,9 @@ export class AuthService {
 
   async findDefender(nationalId: string): Promise<User | undefined> {
     const res = await fetch(
-      `${environment.backend.url}/api/cases/limitedAccess/defender?nationalId=${nationalId}`,
+      `${this.config.backendUrl}/api/cases/limitedAccess/defender?nationalId=${nationalId}`,
       {
-        headers: { authorization: `Bearer ${environment.auth.secretToken}` },
+        headers: { authorization: `Bearer ${this.config.secretToken}` },
       },
     )
 
@@ -56,7 +55,7 @@ export class AuthService {
       grant_type: 'authorization_code',
     })
 
-    const response = await fetch(`${this.config.domain}/connect/token`, {
+    const response = await fetch(`${this.config.issuer}/connect/token`, {
       method: 'POST',
       body: requestBody,
     })
@@ -74,7 +73,7 @@ export class AuthService {
     const secretClient = jwksClient({
       cache: true,
       rateLimit: true,
-      jwksUri: `${this.config.domain}/.well-known/openid-configuration/jwks`,
+      jwksUri: `${this.config.issuer}/.well-known/openid-configuration/jwks`,
     })
 
     const signingKeys = await secretClient.getSigningKeys()
