@@ -774,7 +774,7 @@ ArticleScreen.getProps = async ({ apolloClient, query, locale }) => {
   }
 
   // The stepper in the subArticle can have steps that need data from a namespace (UI configuration)
-  let stepOptionsFromNamespace = []
+  let stepOptionsFromNamespace: any = []
 
   if (article.stepper)
     stepOptionsFromNamespace = await stepperUtils.getStepOptionsFromUIConfiguration(
