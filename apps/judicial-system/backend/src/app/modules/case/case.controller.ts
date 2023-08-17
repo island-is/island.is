@@ -84,6 +84,7 @@ import { SignatureConfirmationResponse } from './models/signatureConfirmation.re
 import { CaseListInterceptor } from './interceptors/caseList.interceptor'
 import { transitionCase } from './state/case.state'
 import { CaseService, UpdateCase } from './case.service'
+import { strings } from './case.strings'
 
 @Controller('api')
 @ApiTags('cases')
@@ -227,6 +228,11 @@ export class CaseController {
         : ''
       const today = capitalize(formatDate(nowFactory(), 'PPPPp'))
       update.rulingModifiedHistory = `${history}${today} - ${user.name} ${user.title}\n\n${update.rulingModifiedHistory}`
+    }
+
+    if (update.caseResentExplanation) {
+      update.courtCaseFacts = `${strings.resentCourtCaseFacts} ${theCase.caseFacts}`
+      update.courtLegalArguments = `${strings.resentCourtCaseFacts} ${theCase.legalArguments}`
     }
 
     if (update.prosecutorStatementDate) {
