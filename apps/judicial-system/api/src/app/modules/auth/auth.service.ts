@@ -74,7 +74,7 @@ export class AuthService {
     const secretClient = jwksClient({
       cache: true,
       rateLimit: true,
-      jwksUri: `${this.config.domain}/${this.config.jwksEndpoint}`,
+      jwksUri: `${this.config.domain}/.well-known/openid-configuration/jwks`,
     })
 
     const signingKeys = await secretClient.getSigningKeys()

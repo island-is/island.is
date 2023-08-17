@@ -27,7 +27,6 @@ judicial-system-api:
     AUTH_IDS_DOMAIN: 'https://identity-server.dev01.devland.is'
     AUTH_IDS_REDIRECT_URI: 'https://judicial-system.dev01.devland.is/api/auth/callback/identity-server'
     AUTH_IDS_SCOPE: 'openid profile'
-    AUTH_JWKS_ENDPOINT: '.well-known/openid-configuration/jwks'
     BACKEND_URL: 'http://web-judicial-system-backend'
     CONTENTFUL_ENVIRONMENT: 'test'
     CONTENTFUL_HOST: 'preview.contentful.com'

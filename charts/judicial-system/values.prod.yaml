@@ -27,7 +27,6 @@ judicial-system-api:
     AUTH_IDS_DOMAIN: 'https://innskra.island.is'
     AUTH_IDS_REDIRECT_URI: 'https://rettarvorslugatt.island.is/api/auth/callback/identity-server'
     AUTH_IDS_SCOPE: 'openid profile'
-    AUTH_JWKS_ENDPOINT: '.well-known/openid-configuration/jwks'
     BACKEND_URL: 'http://web-judicial-system-backend'
     CONTENTFUL_ENVIRONMENT: 'master'
     CONTENTFUL_HOST: 'cdn.contentful.com'

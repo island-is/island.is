@@ -17,10 +17,7 @@ export const authModuleConfig = defineConfig({
       'AUTH_IDS_REDIRECT_URI',
       'http://localhost:4200/api/auth/callback/identity-server',
     ),
-    jwksEndpoint: env.required(
-      'AUTH_JWKS_ENDPOINT',
-      '.well-known/openid-configuration/jwks',
-    ),
+
     allowAuthBypass: env.required('ALLOW_AUTH_BYPASS', 'true') === 'true',
   }),
 })

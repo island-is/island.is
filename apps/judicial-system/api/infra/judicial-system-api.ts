@@ -22,7 +22,6 @@ export const serviceSetup = (services: {
         prod:
           'https://rettarvorslugatt.island.is/api/auth/callback/identity-server',
       },
-      AUTH_JWKS_ENDPOINT: '.well-known/openid-configuration/jwks',
       ALLOW_AUTH_BYPASS: { dev: 'true', staging: 'true', prod: 'false' },
       BACKEND_URL: ref((h) => `http://${h.svc(services.backend)}`),
       AUDIT_TRAIL_USE_GENERIC_LOGGER: 'false',
