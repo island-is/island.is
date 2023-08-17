@@ -1,4 +1,3 @@
-
 # Auth IDS API Client
 
 ## About
