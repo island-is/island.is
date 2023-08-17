@@ -162,7 +162,7 @@ const VehiclesOverview = () => {
       {!loading && !error && filteredVehicles.length > 0 && (
         <Box marginBottom={3} display="flex" flexWrap="wrap">
           {!loading && ownershipPdf && (
-            <Box marginRight={2} marginBottom={[1, 1, 1, 0]}>
+            <Box marginRight={2} marginBottom={[1, 1, 1, 1]}>
               <DropdownExport
                 onGetPDF={() => formSubmit(`${ownershipPdf}`)}
                 onGetExcel={() =>
@@ -176,7 +176,25 @@ const VehiclesOverview = () => {
               />
             </Box>
           )}
-          <Box marginRight={2} marginBottom={[1, 1, 1, 0]}>
+          <Box paddingRight={2} marginBottom={[1, 1, 1, 1]}>
+            <a
+              href={formatMessage(urls.ownerChange)}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Button
+                colorScheme="default"
+                icon="open"
+                iconType="outline"
+                size="default"
+                type="button"
+                variant="utility"
+              >
+                {formatMessage(messages.changeOfOwnership)}
+              </Button>
+            </a>
+          </Box>
+          <Box marginRight={2} marginBottom={[1, 1, 1, 1]}>
             <a
               href="/app/skilavottord/my-cars"
               target="_blank"
@@ -192,7 +210,7 @@ const VehiclesOverview = () => {
               </Button>
             </a>
           </Box>
-          <Box marginBottom={[1, 1, 1, 0]}>
+          <Box marginBottom={[1, 1, 1, 1]}>
             <a
               href={formatMessage(urls.hideName)}
               target="_blank"

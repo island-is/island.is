@@ -1380,6 +1380,7 @@ describe('formatDefenderCourtDateLinkEmailNotification', () => {
     const court = 'Héraðsdómur Norðurlands'
     const courtCaseNumber = 'R-77/2021'
     const overviewUrl = 'https://example.com/overview'
+    const sendRequestToDefender = true
 
     // Act
     const res = formatDefenderCourtDateLinkEmailNotification(
@@ -1387,11 +1388,34 @@ describe('formatDefenderCourtDateLinkEmailNotification', () => {
       overviewUrl,
       court,
       courtCaseNumber,
+      sendRequestToDefender,
     )
 
     // Assert
     expect(res).toBe(
       'Sækjandi hefur valið að deila kröfu með þér sem verjanda sakbornings í máli R-77/2021.<br /><br />Þú getur nálgast gögn málsins í <a href="https://example.com/overview">Réttarvörslugátt</a> með rafrænum skilríkjum.',
+    )
+  })
+
+  test('should format defender court date no request link notification with RVG link', () => {
+    // Arrange
+    const court = 'Héraðsdómur Norðurlands'
+    const courtCaseNumber = 'R-77/2021'
+    const overviewUrl = 'https://example.com/overview'
+    const sendRequestToDefender = false
+
+    // Act
+    const res = formatDefenderCourtDateLinkEmailNotification(
+      formatMessage,
+      overviewUrl,
+      court,
+      courtCaseNumber,
+      sendRequestToDefender,
+    )
+
+    // Assert
+    expect(res).toBe(
+      'Héraðsdómur Norðurlands hefur skráð þig sem verjanda/talsmann sakbornings í máli R-77/2021.<br /><br />Þú getur nálgast yfirlit málsins í <a href="https://example.com/overview">Réttarvörslugátt</a> með rafrænum skilríkjum.',
     )
   })
 })
