@@ -10,7 +10,6 @@ import { m } from '../../lib/messages'
 import { gql, useQuery } from '@apollo/client'
 import { Locale } from '@island.is/shared/types'
 import {
-  GenericLicenseType,
   GenericUserLicenseFetchStatus,
   useChildrenPassport,
   useUserProfile,
@@ -18,8 +17,6 @@ import {
 import { Query } from '@island.is/api/schema'
 import { Box, Tabs } from '@island.is/island-ui/core'
 
-import { useFeatureFlagClient } from '@island.is/react/feature-flags'
-import { FeatureFlagClient } from '@island.is/feature-flags'
 import { usePassport } from '@island.is/service-portal/graphql'
 import UserLicenses from './UserLicenses'
 import ChildrenLicenses from './ChildrenLicenses'
@@ -85,45 +82,10 @@ export const LicensesOverview = () => {
   const { formatMessage } = useLocale()
   const { data: userProfile } = useUserProfile()
   const locale = (userProfile?.locale as Locale) ?? 'is'
-  /**
-   * Get all licenses is feature flagged
-   * If off, all licenses fetched, if on only driver's license is fetched
-   * Please remove all code when fully released.
-   */
-  const featureFlagClient: FeatureFlagClient = useFeatureFlagClient()
-  const [licenseTypes, setLicenseTypes] = useState<Array<GenericLicenseType>>([
-    GenericLicenseType.DriversLicense,
-    GenericLicenseType.AdrLicense,
-    GenericLicenseType.MachineLicense,
-    GenericLicenseType.FirearmLicense,
-  ])
-
-  /* Flag to hide disability license */
-  useEffect(() => {
-    const isFlagEnabled = async () => {
-      const ffEnabled = await featureFlagClient.getValue(
-        `isServicePortalDisabilityLicenseEnabled`,
-        false,
-      )
-      if (ffEnabled) {
-        setLicenseTypes([
-          GenericLicenseType.DriversLicense,
-          GenericLicenseType.AdrLicense,
-          GenericLicenseType.MachineLicense,
-          GenericLicenseType.FirearmLicense,
-          GenericLicenseType.DisabilityLicense,
-        ])
-      }
-    }
-    isFlagEnabled()
-  }, [])
 
   const { data, loading, error } = useQuery<Query>(GenericLicensesQuery, {
     variables: {
       locale,
-      input: {
-        includedTypes: licenseTypes,
-      },
     },
   })
   const { genericLicenses = [] } = data ?? {}
