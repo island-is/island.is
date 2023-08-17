@@ -1,8 +1,6 @@
 const devConfig = {
   production: false,
   auth: {
-    samlEntryPoint: 'https://innskraning.island.is/?id=judicial-system.local',
-    audience: 'localhost:4200',
     jwtSecret: 'jwt-secret',
     secretToken: 'secret-backend-api-token',
   },
@@ -40,8 +38,6 @@ if (process.env.NODE_ENV === 'production') {
 const prodConfig = {
   production: true,
   auth: {
-    samlEntryPoint: process.env.SAML_ENTRY_POINT,
-    audience: process.env.AUTH_AUDIENCE,
     jwtSecret: process.env.AUTH_JWT_SECRET ?? '',
     secretToken: process.env.BACKEND_ACCESS_TOKEN ?? '',
   },

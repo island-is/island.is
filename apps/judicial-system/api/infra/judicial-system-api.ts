@@ -7,16 +7,6 @@ export const serviceSetup = (services: {
     .namespace('judicial-system')
     .serviceAccount('judicial-system-api')
     .env({
-      SAML_ENTRY_POINT: {
-        dev: 'https://innskraning.island.is/?id=judicial-system.dev',
-        staging: 'https://innskraning.island.is/?id=judicial-system.staging',
-        prod: 'https://innskraning.island.is/?id=rettarvorslugatt.prod',
-      },
-      AUTH_AUDIENCE: {
-        dev: ref((h) => `judicial-system.${h.env.domain}`),
-        staging: ref((h) => `judicial-system.${h.env.domain}`),
-        prod: 'rettarvorslugatt.island.is',
-      },
       AUTH_IDS_SCOPE: 'openid profile',
       AUTH_IDS_CLIENT_ID: '@rettarvorslugatt.island.is/web',
       AUTH_IDS_DOMAIN: {
