@@ -422,17 +422,25 @@ export function formatDefenderCourtDateLinkEmailNotification(
   overviewUrl?: string,
   court?: string,
   courtCaseNumber?: string,
+  requestSharedWithDefender?: boolean,
 ): string {
   const cf = notifications.defenderCourtDateEmail
-  const body = formatMessage(cf.linkBody, {
-    courtCaseNumber,
-  })
-  const link = formatMessage(cf.link, {
-    defenderHasAccessToRvg: Boolean(overviewUrl),
-    courtName: court?.replace('dómur', 'dómi'),
-    linkStart: `<a href="${overviewUrl}">`,
-    linkEnd: '</a>',
-  })
+  const body = requestSharedWithDefender
+    ? formatMessage(cf.linkBody, { courtCaseNumber })
+    : formatMessage(cf.linkNoRequestBody, { courtName: court, courtCaseNumber })
+  const link = requestSharedWithDefender
+    ? formatMessage(cf.link, {
+        defenderHasAccessToRvg: Boolean(overviewUrl),
+        courtName: court?.replace('dómur', 'dómi'),
+        linkStart: `<a href="${overviewUrl}">`,
+        linkEnd: '</a>',
+      })
+    : formatMessage(cf.linkNoRequest, {
+        defenderHasAccessToRvg: Boolean(overviewUrl),
+        courtName: court?.replace('dómur', 'dómi'),
+        linkStart: `<a href="${overviewUrl}">`,
+        linkEnd: '</a>',
+      })
 
   return `${body}${link}`
 }
