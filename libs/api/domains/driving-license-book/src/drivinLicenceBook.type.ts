@@ -40,6 +40,8 @@ export interface DrivingSchoolExam {
   schoolTypeName: string
   schoolTypeCode: string
   comments: string
+  status: number
+  statusName: string
 }
 
 export interface DrivingLicenceTestResult {
