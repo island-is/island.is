@@ -1,5 +1,3 @@
-<!-- gitbook-navigation: "RSK" -->
-
 # RSK Clients
 
 Currently there are clients for two APIs from Skatturinn:

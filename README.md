@@ -6,10 +6,6 @@ These solutions are [FOSS](https://en.wikipedia.org/wiki/Free_and_open-source_so
 
 The repository is a [monorepo](../technical-overview/monorepo.md) that has multiple apps (something that can be built and run) and libraries (which other apps and libraries can depend on). All custom-written services are also stored there.
 
-## GitBook
-
-The apps and libraries documentation and our handbook are hosted on [GitBook](https://www.gitbook.com) and is publicly available at [docs.devland.is](https://docs.devland.is).
-
 ## Storybook
 
 The Ísland.is design system is developed and showcased using [Storybook](https://storybook.js.org) and is publicly available at [ui.devland.is](https://ui.devland.is).

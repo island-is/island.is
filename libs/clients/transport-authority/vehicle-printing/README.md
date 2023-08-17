@@ -1,5 +1,3 @@
-<!-- gitbook-ignore -->
-
 # clients-transport-authority-vehicle-printing
 
 This library was generated with [Nx](https://nx.dev).
