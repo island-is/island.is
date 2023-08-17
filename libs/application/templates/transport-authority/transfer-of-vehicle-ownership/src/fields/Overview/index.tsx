@@ -1,4 +1,8 @@
-import { DefaultEvents, FieldBaseProps } from '@island.is/application/types'
+import {
+  DefaultEvents,
+  FieldBaseProps,
+  FormValue,
+} from '@island.is/application/types'
 import { FC, useState } from 'react'
 import {
   Box,
@@ -82,8 +86,10 @@ export const Overview: FC<
     (getValueViaPath(answers, 'buyer.nationalId', '') as string) ===
     reviewerNationalId
 
-  const doApproveApplication = async () => {
-    const currentApplication = await getApplicationInfo({
+  const doApproveAndSubmit = async () => {
+    // need to get updated application, in case buyer has changed co-owner
+    // or any other reviewer has approved
+    const applicationInfo = await getApplicationInfo({
       variables: {
         input: {
           id: application.id,
@@ -92,36 +98,74 @@ export const Overview: FC<
       },
       fetchPolicy: 'no-cache',
     })
+    const updatedApplication = applicationInfo?.data?.applicationApplication
 
-    if (currentApplication?.data?.applicationApplication) {
-      const oldAnswers =
-        currentApplication?.data?.applicationApplication.answers
+    if (updatedApplication) {
+      const oldAnswers = updatedApplication.answers
       const newAnswers = getApproveAnswers(reviewerNationalId, oldAnswers)
 
+      const isLast = isLastReviewer(
+        reviewerNationalId,
+        oldAnswers,
+        coOwnersAndOperators,
+      )
+
+      // submit application, event may differ depending if this is the last reviewer
+      // then we need to use event=SUBMIT to make application change state
       const res = await submitApplication({
         variables: {
           input: {
             id: application.id,
-            event: isLastReviewer(
-              reviewerNationalId,
-              oldAnswers,
-              coOwnersAndOperators,
-            )
-              ? DefaultEvents.SUBMIT
-              : DefaultEvents.APPROVE,
+            event: isLast ? DefaultEvents.SUBMIT : DefaultEvents.APPROVE,
             answers: newAnswers,
           },
         },
       })
 
-      if (res?.data) {
-        setLoading(false)
-        setStep && setStep('conclusion')
-      }
+      setLoading(false)
+      setStep && setStep('conclusion')
+
+      // if (res?.data?.submitApplication) {
+      //   const isStillLast = isLastReviewer(
+      //     reviewerNationalId,
+      //     res.data.submitApplication.answers,
+      //     coOwnersAndOperators,
+      //   )
+
+      //   // extra check if we need to re-submit (with event=SUBMIT) to make sure application changes state
+      //   if (
+      //     res.data.submitApplication.state !== States.COMPLETED &&
+      //     isStillLast
+      //   ) {
+      //     await doSubmit(res.data.submitApplication.answer)
+      //   } else {
+      //     setLoading(false)
+      //     setStep && setStep('conclusion')
+      //   }
+      // }
     }
   }
 
-  const [validateVehicleThenApproveApplication, { data }] = useLazyQuery<
+  // const doSubmit = async (oldAnswers: FormValue) => {
+  //   const newAnswers = getApproveAnswers(reviewerNationalId, oldAnswers)
+
+  //   const res = await submitApplication({
+  //     variables: {
+  //       input: {
+  //         id: application.id,
+  //         event: DefaultEvents.SUBMIT,
+  //         answers: newAnswers,
+  //       },
+  //     },
+  //   })
+
+  //   if (res?.data) {
+  //     setLoading(false)
+  //     setStep && setStep('conclusion')
+  //   }
+  // }
+
+  const [validateVehicleThenApproveAndSubmit, { data }] = useLazyQuery<
     any,
     { answers: OwnerChangeAnswers }
   >(
@@ -131,7 +175,7 @@ export const Overview: FC<
     {
       onCompleted: async (data) => {
         if (!data?.vehicleOwnerChangeValidation?.hasError) {
-          await doApproveApplication()
+          await doApproveAndSubmit()
         }
       },
     },
@@ -153,7 +197,8 @@ export const Overview: FC<
       setLoading(true)
 
       if (isBuyer) {
-        const currentApplication = await getApplicationInfo({
+        // need to get updated application, in case buyer has changed co-owner
+        const applicationInfo = await getApplicationInfo({
           variables: {
             input: {
               id: application.id,
@@ -162,12 +207,12 @@ export const Overview: FC<
           },
           fetchPolicy: 'no-cache',
         })
+        const updatedApplication = applicationInfo?.data?.applicationApplication
 
-        if (currentApplication?.data?.applicationApplication) {
-          const oldAnswers: OwnerChangeAnswers =
-            currentApplication?.data?.applicationApplication?.answers
+        if (updatedApplication) {
+          const oldAnswers: OwnerChangeAnswers = updatedApplication.answers
 
-          validateVehicleThenApproveApplication({
+          validateVehicleThenApproveAndSubmit({
             variables: {
               answers: {
                 pickVehicle: {
@@ -204,7 +249,7 @@ export const Overview: FC<
           })
         }
       } else {
-        await doApproveApplication()
+        await doApproveAndSubmit()
       }
     }
   }

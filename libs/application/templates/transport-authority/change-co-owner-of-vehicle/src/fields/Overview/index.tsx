@@ -47,6 +47,7 @@ export const Overview: FC<
     setRejectModalVisibility(true)
   }
 
+  //TODOx use newest answers
   const onApproveButtonClick = async () => {
     setLoading(true)
     const res = await submitApplication({
