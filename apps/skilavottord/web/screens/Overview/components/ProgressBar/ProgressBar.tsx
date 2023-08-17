@@ -6,7 +6,7 @@ interface Props {
   progress: number
 }
 
-const ProgressBar: FC<Props> = ({ progress }) => {
+const ProgressBar: FC<React.PropsWithChildren<Props>> = ({ progress }) => {
   return (
     <Box
       background={progress === 100 ? 'mint100' : 'roseTinted100'}

@@ -21,7 +21,7 @@ export const withApollo = (Component) => {
     const clientLocale = getLocaleFromPath(
       safelyExtractPathnameFromUrl(ctx.req?.url),
     )
-    const apolloClient = initApollo({}, clientLocale)
+    const apolloClient = initApollo({}, clientLocale, ctx)
     const newContext = { ...ctx, apolloClient }
     const props = Component.getProps ? await Component.getProps(newContext) : {}
     const cache = apolloClient.cache.extract()

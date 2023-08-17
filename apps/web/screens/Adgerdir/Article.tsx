@@ -121,6 +121,7 @@ const AdgerdirArticle: Screen<AdgerdirArticleProps> = ({
                 <NextLink
                   {...linkResolver(typename as LinkType, slug)}
                   passHref
+                  legacyBehavior
                 >
                   {link}
                 </NextLink>

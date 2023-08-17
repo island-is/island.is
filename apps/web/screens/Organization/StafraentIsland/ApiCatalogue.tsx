@@ -82,7 +82,8 @@ const ApiCatalogue: Screen<HomestayProps> = ({
 
   useEffect(() => {
     if (width < theme.breakpoints.md) {
-      return setIsMobile(true)
+      setIsMobile(true)
+      return
     }
     setIsMobile(false)
   }, [width])

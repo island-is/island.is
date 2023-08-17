@@ -68,7 +68,7 @@ See the following example for the `web` project:
 
 ```json
 "e2e": {
-  "executor": "@nrwl/cypress:cypress",
+  "executor": "@nx/cypress:cypress",
   "options": {
     "cypressConfig": "apps/web-e2e/cypress.config.ts",
     "tsConfig": "apps/web-e2e/tsconfig.e2e.json",
@@ -92,7 +92,7 @@ of the corrensponding `e2e` project.
 
 ```json
 "e2e-ci": {
-  "executor": "@nrwl/workspace:run-commands",
+  "executor": "@nx/workspace:run-commands",
   "options": {
     "command": "yarn e2e-ci -n web-e2e -d dist/apps/web"
   }
@@ -103,7 +103,7 @@ of the corrensponding `e2e` project.
 
 ```json
 "e2e-ci": {
-  "executor": "@nrwl/workspace:run-commands",
+  "executor": "@nx/workspace:run-commands",
   "options": {
     "command": "yarn e2e-ci -n service-portal-e2e -t react -f dist/apps/service-portal -b /minarsidur"
   }

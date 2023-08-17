@@ -14,10 +14,9 @@ import { NO, NO_UNEMPLOYED_BENEFITS, YES } from '../../constants'
 import { parentalLeaveFormMessages } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 
-export const UnEmploymentBenefits: FC<FieldBaseProps> = ({
-  application,
-  field,
-}) => {
+export const UnEmploymentBenefits: FC<
+  React.PropsWithChildren<FieldBaseProps>
+> = ({ application, field }) => {
   const {
     formState: { errors },
     setValue,

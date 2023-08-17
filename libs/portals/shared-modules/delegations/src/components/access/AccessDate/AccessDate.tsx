@@ -2,7 +2,7 @@ import { VisuallyHidden } from 'reakit/VisuallyHidden'
 import { Text, useBreakpoint } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { accessMessages, formatDelegationDate } from '../access.utils'
-import * as styles from './AccessDate.css'
+import * as styles from '../access.css'
 
 type AccessDateProps = {
   validTo: string

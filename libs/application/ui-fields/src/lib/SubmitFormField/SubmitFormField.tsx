@@ -10,7 +10,11 @@ interface Props extends FieldBaseProps {
   field: SubmitField
 }
 
-export const SubmitFormField: FC<Props> = ({ application, field, error }) => {
+export const SubmitFormField: FC<React.PropsWithChildren<Props>> = ({
+  application,
+  field,
+  error,
+}) => {
   const { id, title, actions, placement } = field
   const { formatMessage } = useLocale()
   const actionsAsOptions = useMemo(() => {

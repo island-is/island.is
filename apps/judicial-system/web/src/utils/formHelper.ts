@@ -215,9 +215,6 @@ export type stepValidationsType = {
   [constants.RESTRICTION_CASE_RULING_ROUTE]: (theCase: Case) => boolean
   [constants.RESTRICTION_CASE_COURT_RECORD_ROUTE]: (theCase: Case) => boolean
   [constants.RESTRICTION_CASE_CONFIRMATION_ROUTE]: () => boolean
-  [constants.INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE]: (
-    theCase: Case,
-  ) => boolean
   [constants.INVESTIGATION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE]: (
     theCase: Case,
   ) => boolean
@@ -300,8 +297,6 @@ export const stepValidations = (): stepValidationsType => {
     [constants.RESTRICTION_CASE_COURT_RECORD_ROUTE]: (theCase: Case) =>
       validations.isCourtRecordStepValidRC(theCase),
     [constants.RESTRICTION_CASE_CONFIRMATION_ROUTE]: () => true,
-    [constants.INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE]: (theCase: Case) =>
-      validations.isReceptionAndAssignmentStepValid(theCase),
     [constants.INVESTIGATION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE]: (
       theCase: Case,
     ) => validations.isReceptionAndAssignmentStepValid(theCase),

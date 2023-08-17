@@ -12,7 +12,7 @@ interface Props {
   administrativeContact: Contact
 }
 
-export const ResponsibleContactForm: FC<Props> = ({
+export const ResponsibleContactForm: FC<React.PropsWithChildren<Props>> = ({
   organisationId,
   administrativeContact,
 }) => {

@@ -9,6 +9,7 @@ import { useLocale } from '@island.is/localization'
 
 import CopyToClipboardInput from '../../DocumentProvicerApplication/Components/CopyToClipboardInput/Index'
 import { m } from '../../../forms/messages'
+import { ErrorMessage } from '@hookform/error-message'
 
 export const updateTestEndpointMutation = gql`
   mutation UpdateTestEndpoint($input: UpdateEndpointInput!) {
@@ -19,7 +20,9 @@ export const updateTestEndpointMutation = gql`
   }
 `
 
-const TestEndPoint: FC<FieldBaseProps> = ({ application }) => {
+const TestEndPoint: FC<React.PropsWithChildren<FieldBaseProps>> = ({
+  application,
+}) => {
   const { formatMessage } = useLocale()
 
   interface Variable {
@@ -177,7 +180,11 @@ const TestEndPoint: FC<FieldBaseProps> = ({ application }) => {
         {errors['endPointObject.endPointExists'] && (
           <Box color="red600" paddingY={2} display="flex">
             <Text fontWeight="semiBold" color="red600">
-              {errors['endPointObject.endPointExists']}
+              <ErrorMessage
+                as="span"
+                errors={errors}
+                name="endPointObject.endPointExists"
+              />
             </Text>
           </Box>
         )}

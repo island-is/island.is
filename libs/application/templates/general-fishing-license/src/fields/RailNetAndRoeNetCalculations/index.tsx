@@ -12,11 +12,9 @@ import {
 } from '../../utils/licenses'
 import { RAILNET_FIELD_ID, ROENET_FIELD_ID } from '../../utils/fields'
 
-export const RailNetAndRoeNetCalculations: FC<FieldBaseProps> = ({
-  application,
-  field,
-  errors,
-}) => {
+export const RailNetAndRoeNetCalculations: FC<
+  React.PropsWithChildren<FieldBaseProps>
+> = ({ application, field, errors }) => {
   const { formatMessage } = useLocale()
   const initialRoeNet = getValueViaPath(
     application.answers,

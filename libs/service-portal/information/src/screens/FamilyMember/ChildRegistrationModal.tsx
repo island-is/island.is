@@ -48,7 +48,9 @@ export const NATIONAL_REGISTRY_CHILDREN_CORRECTION = gql`
   }
 `
 
-export const ChildRegistrationModal: FC<Props> = ({ data }) => {
+export const ChildRegistrationModal: FC<React.PropsWithChildren<Props>> = ({
+  data,
+}) => {
   useNamespaces('sp.family')
   const [isModalOpen, setIsModalOpen] = useState(false)
   const {
