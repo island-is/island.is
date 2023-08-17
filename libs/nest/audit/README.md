@@ -15,6 +15,7 @@ There are a few different ways to log an action depending on what you're doing, 
 - `action` - The action performed by the user. Should be camelCase and start with a verb.
 - `resources` - **Optional**: One or more resource ids affected by the action.
 - `meta` - **Optional**: An object of extra information specific to the action.
+- `alsoLog` - **Optional**: Logs the audit entry to the console. Useful for Datadog logs for example.
 
 ## Setup
 
@@ -78,6 +79,7 @@ this.auditService.audit({
   action: 'findAll',
   resources: stuff.map((s) => s.id),
   meta: { count: stuff.length },
+  alsoLog: true,
 })
 ```
 
@@ -88,6 +90,7 @@ return this.auditService.auditPromise(
   {
     auth: user,
     action: 'findAll',
+    alsoLog: true,
     resources: (stuff) => stuff.map((s) => s.id),
     meta: (stuff) => ({ count: stuff.length }),
   },
@@ -110,7 +113,7 @@ class MyController {
 }
 ```
 
-By default it will use the defaultNamespace, and the handler name as the action. You can override all of the audit entry fields at both the controller level and the handler level:
+By default, it will use the defaultNamespace, and the handler name as the action. You can override all the audit entry fields at both the controller level and the handler level:
 
 ```typescript
 import { Audit } from '@island.is/nest/audit'
