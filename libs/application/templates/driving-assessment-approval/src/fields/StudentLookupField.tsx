@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import { FC } from 'react'
 import { useQuery, gql } from '@apollo/client'
 import { useWatch } from 'react-hook-form'
 import { formatText } from '@island.is/application/core'
@@ -27,7 +27,9 @@ interface ExpectedStudent {
   nationalId?: string
 }
 
-export const StudentLookupField: FC<Props> = ({ application }) => {
+export const StudentLookupField: FC<React.PropsWithChildren<Props>> = ({
+  application,
+}) => {
   const student = (application.answers.student as unknown) as ExpectedStudent
   const studentNationalId = useWatch({
     name: 'student.nationalId',
@@ -70,10 +72,8 @@ export const StudentLookupField: FC<Props> = ({ application }) => {
       <Text>{result?.student.name}</Text>
     </Box>
   ) : (
-    <Box color="red400" padding={2}>
-      <Text color="red400">
-        {formatText(m.errorOrNoTemporaryLicense, application, formatMessage)}
-      </Text>
-    </Box>
+    <Text color="red400">
+      {formatText(m.errorOrNoTemporaryLicense, application, formatMessage)}
+    </Text>
   )
 }

@@ -1,20 +1,23 @@
 {
-  "root": "libs/api/domains/university-of-iceland",
+  "name": "api-domains-university-of-iceland",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/api/domains/university-of-iceland/src",
   "projectType": "library",
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": ["libs/api/domains/university-of-iceland/**/*.ts"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/api/domains/university-of-iceland"],
+      "executor": "@nx/jest:jest",
+      "outputs": [
+        "{workspaceRoot}/coverage/libs/api/domains/university-of-iceland"
+      ],
       "options": {
-        "jestConfig": "libs/api/domains/university-of-iceland/jest.config.js",
+        "jestConfig": "libs/api/domains/university-of-iceland/jest.config.ts",
         "passWithNoTests": true
       }
     }

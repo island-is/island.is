@@ -1,19 +1,20 @@
 {
-  "root": "libs/nest/aws",
+  "name": "nest-aws",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/nest/aws/src",
   "projectType": "library",
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": ["libs/nest/aws/**/*.{ts,tsx,js,jsx}"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/nest/aws"],
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/libs/nest/aws"],
       "options": {
-        "jestConfig": "libs/nest/aws/jest.config.js",
+        "jestConfig": "libs/nest/aws/jest.config.ts",
         "passWithNoTests": true
       }
     }

@@ -106,6 +106,7 @@ const CaseQuery = gql`
       accusedPostponedAppealDate
       prosecutorPostponedAppealDate
       rulingDate
+      rulingSignatureDate
       judge {
         id
         name

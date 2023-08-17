@@ -49,7 +49,7 @@ interface OrganizationNewsListProps {
   selectedYear: number
   selectedMonth: number
   selectedPage: number
-  selectedTag: string
+  selectedTag: string | string[]
   namespace: GetNamespaceQuery['getNamespace']
   locale: Locale
 }
@@ -211,11 +211,7 @@ const getIntParam = (s: string | string[]) => {
   if (!isNaN(i)) return i
 }
 
-OrganizationNewsList.getInitialProps = async ({
-  apolloClient,
-  query,
-  locale,
-}) => {
+OrganizationNewsList.getProps = async ({ apolloClient, query, locale }) => {
   const year = getIntParam(query.y)
   const month = year && getIntParam(query.m)
   const selectedPage = getIntParam(query.page) ?? 1
@@ -241,7 +237,12 @@ OrganizationNewsList.getInitialProps = async ({
     )
   }
 
-  const tag = (query.tag as string) ?? organizationPage?.newsTag?.slug ?? ''
+  const newsTags = query.tag
+    ? Array.isArray(query.tag)
+      ? query.tag
+      : [query.tag]
+    : []
+  const organizationSlug = organizationPage.organization?.slug
 
   const [
     {
@@ -260,7 +261,8 @@ OrganizationNewsList.getInitialProps = async ({
       variables: {
         input: {
           lang: locale as Locale,
-          tag,
+          tags: newsTags,
+          organization: organizationSlug,
         },
       },
     }),
@@ -273,7 +275,8 @@ OrganizationNewsList.getInitialProps = async ({
           page: selectedPage,
           year,
           month,
-          tags: [tag],
+          tags: newsTags,
+          organization: organizationSlug,
         },
       },
     }),
@@ -340,11 +343,11 @@ OrganizationNewsList.getInitialProps = async ({
 
   return {
     organizationPage,
-    newsList: organizationPage?.newsTag ? newsList : [],
+    newsList: newsList ?? [],
     total,
     selectedYear: year,
     selectedMonth: month,
-    selectedTag: tag,
+    selectedTag: newsTags,
     datesMap: createDatesMap(newsDatesList),
     selectedPage,
     namespace,

@@ -10,11 +10,9 @@ interface AgreementDescriptionBulletProps {
   linkName: MessageDescriptor | string
 }
 
-export const AgreementDescriptionBullet: FC<AgreementDescriptionBulletProps> = ({
-  summary,
-  link,
-  linkName,
-}) => {
+export const AgreementDescriptionBullet: FC<
+  React.PropsWithChildren<AgreementDescriptionBulletProps>
+> = ({ summary, link, linkName }) => {
   const { formatMessage } = useLocale()
 
   return (

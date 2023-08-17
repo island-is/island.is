@@ -1161,6 +1161,18 @@ const useSections = (
             name: formatMessage(sections.courtOfAppealSection.ruling),
             isActive: routeIndex === 2,
             href: `${constants.COURT_OF_APPEAL_RULING_ROUTE}/${workingCase.id}`,
+            onClick:
+              validateFormStepper(
+                isValid,
+                [
+                  constants.COURT_OF_APPEAL_OVERVIEW_ROUTE,
+                  constants.COURT_OF_APPEAL_CASE_ROUTE,
+                ],
+                workingCase,
+              ) && onNavigationTo
+                ? async () =>
+                    await onNavigationTo(constants.COURT_OF_APPEAL_RULING_ROUTE)
+                : undefined,
           },
         ],
       },

@@ -34,7 +34,7 @@ import { confirmation as strings } from './Confirmation.strings'
 
 type VisibleModal = 'none' | 'rulingModifiedModal' | 'signingModal'
 
-export const Confirmation: React.FC = () => {
+export const Confirmation: React.FC<React.PropsWithChildren<unknown>> = () => {
   const {
     workingCase,
     setWorkingCase,

@@ -1,4 +1,8 @@
-import { getValueViaPath } from '@island.is/application/core'
+import {
+  coreHistoryMessages,
+  corePendingActionMessages,
+  getValueViaPath,
+} from '@island.is/application/core'
 import {
   Application,
   ApplicationContext,
@@ -55,7 +59,6 @@ const PassportTemplate: ApplicationTemplate<
         meta: {
           name: m.formName.defaultMessage,
           status: 'draft',
-          progress: 0.33,
           lifecycle: pruneAfter(twoDays),
           onExit: defineTemplateApi({
             action: ApiActions.checkForDiscount,
@@ -90,6 +93,14 @@ const PassportTemplate: ApplicationTemplate<
               ],
             },
           ],
+          actionCard: {
+            historyLogs: [
+              {
+                logMessage: coreHistoryMessages.applicationStarted,
+                onEvent: DefaultEvents.PAYMENT,
+              },
+            ],
+          },
         },
         on: {
           [DefaultEvents.SUBMIT]: { target: States.DRAFT },
@@ -100,10 +111,6 @@ const PassportTemplate: ApplicationTemplate<
         meta: {
           name: 'Payment state',
           status: 'inprogress',
-          actionCard: {
-            description: m.payment,
-          },
-          progress: 0.7,
           lifecycle: pruneAfter(sixtyDays),
           onEntry: defineTemplateApi({
             action: ApiActions.createCharge,
@@ -123,6 +130,23 @@ const PassportTemplate: ApplicationTemplate<
               delete: true,
             },
           ],
+          actionCard: {
+            historyLogs: [
+              {
+                logMessage: coreHistoryMessages.paymentAccepted,
+                onEvent: DefaultEvents.SUBMIT,
+              },
+              {
+                logMessage: coreHistoryMessages.paymentAccepted,
+                onEvent: DefaultEvents.ASSIGN,
+              },
+            ],
+            pendingAction: {
+              title: corePendingActionMessages.paymentPendingTitle,
+              content: corePendingActionMessages.paymentPendingDescription,
+              displayStatus: 'warning',
+            },
+          },
         },
         on: {
           [DefaultEvents.ASSIGN]: { target: States.PARENT_B_CONFIRM },
@@ -134,7 +158,6 @@ const PassportTemplate: ApplicationTemplate<
         meta: {
           name: 'ParentB',
           status: 'inprogress',
-          progress: 0.9,
           lifecycle: pruneAfter(sevenDays),
           onEntry: defineTemplateApi({
             action: ApiActions.assignParentB,
@@ -170,6 +193,19 @@ const PassportTemplate: ApplicationTemplate<
               ],
             },
           ],
+          actionCard: {
+            historyLogs: [
+              {
+                logMessage: m.confirmedByParentB,
+                onEvent: DefaultEvents.SUBMIT,
+              },
+            ],
+            pendingAction: {
+              title: m.waitingForConfirmationFromParentBTitle,
+              content: m.waitingForConfirmationFromParentBDescription,
+              displayStatus: 'warning',
+            },
+          },
         },
         on: {
           [DefaultEvents.SUBMIT]: { target: States.DONE },
@@ -179,13 +215,7 @@ const PassportTemplate: ApplicationTemplate<
         meta: {
           name: 'Done',
           status: 'completed',
-          progress: 1,
           lifecycle: pruneAfter(sixtyDays),
-          actionCard: {
-            tag: {
-              label: m.actionCardDoneTag,
-            },
-          },
           onEntry: defineTemplateApi({
             action: ApiActions.submitPassportApplication,
           }),
@@ -218,6 +248,13 @@ const PassportTemplate: ApplicationTemplate<
               },
             },
           ],
+          actionCard: {
+            pendingAction: {
+              title: coreHistoryMessages.applicationReceived,
+              content: '',
+              displayStatus: 'success',
+            },
+          },
         },
       },
     },

@@ -1,3 +1,4 @@
+import { IBasicFilter } from 'powerbi-models'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { EventHandler, PowerBIEmbed } from 'powerbi-client-react'
 import { Embed, models, Report, VisualDescriptor } from 'powerbi-client'
@@ -151,7 +152,7 @@ export const PowerBiSlice = ({ slice }: PowerBiSliceProps) => {
             operator: 'In',
             requireSingleSelection: false,
             target: fiskistofaShipSearchTarget,
-            ...slicerState.filters?.[0],
+            ...(slicerState.filters?.[0] as IBasicFilter),
             values: [convertShipNameToSlicerDropdownValue(ship.name, nr)],
           },
         ],
