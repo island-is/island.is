@@ -299,7 +299,7 @@ Home.getProps = async ({ apolloClient, locale, query }) => {
         },
       })
       .then((variables) =>
-        variables.data.getNamespace.fields
+        variables.data.getNamespace?.fields
           ? JSON.parse(variables.data.getNamespace.fields)
           : {},
       ),

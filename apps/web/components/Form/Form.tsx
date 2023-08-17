@@ -477,7 +477,7 @@ export const Form = ({ form, namespace }: FormProps) => {
                             response.data.createUploadUrl,
                             slugify(field.title),
                           ).then(() =>
-                            resolve(response.data.createUploadUrl.fields.key),
+                            resolve(response.data?.createUploadUrl.fields.key),
                           ),
                         )
                         .catch(() => reject())

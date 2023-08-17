@@ -67,7 +67,7 @@ const Homestay: Screen<HomestayProps> = ({
   homestays,
   namespace,
 }) => {
-  useContentfulId(organizationPage.id, subpage.id)
+  useContentfulId(organizationPage?.id, subpage?.id)
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
 
@@ -75,7 +75,7 @@ const Homestay: Screen<HomestayProps> = ({
 
   const pageUrl = Router.pathname
 
-  const navList: NavigationItem[] = organizationPage.menuLinks.map(
+  const navList: NavigationItem[] = organizationPage?.menuLinks.map(
     ({ primaryLink, childrenLinks }) => ({
       title: primaryLink?.text,
       href: primaryLink?.url,
@@ -151,18 +151,19 @@ const Homestay: Screen<HomestayProps> = ({
 
   return (
     <OrganizationWrapper
-      pageTitle={subpage.title}
+      pageTitle={subpage?.title ?? ''}
       organizationPage={organizationPage}
       showReadSpeaker={false}
-      pageFeaturedImage={subpage.featuredImage}
+      pageFeaturedImage={subpage?.featuredImage}
       breadcrumbItems={[
         {
           title: 'Ísland.is',
           href: linkResolver('homepage').href,
         },
         {
-          title: organizationPage.title,
-          href: linkResolver('organizationpage', [organizationPage.slug]).href,
+          title: organizationPage?.title || '',
+          href: linkResolver('organizationpage', [organizationPage?.slug ?? ''])
+            .href,
         },
       ]}
       navigationData={{
@@ -172,11 +173,11 @@ const Homestay: Screen<HomestayProps> = ({
     >
       <Box paddingBottom={0}>
         <Text variant="h1" as="h2">
-          {subpage.title}
+          {subpage?.title}
         </Text>
         <Webreader readId={null} readClass="rs_read" />
       </Box>
-      {webRichText(subpage.description as SliceType[])}
+      {webRichText(subpage?.description as SliceType[])}
       <Box marginTop={4} marginBottom={6}>
         <Input
           name="homestaySearchInput"
@@ -349,7 +350,7 @@ Homestay.getProps = async ({ apolloClient, locale, req }) => {
         },
       })
       .then((variables) =>
-        variables.data.getNamespace.fields
+        variables.data.getNamespace?.fields
           ? JSON.parse(variables.data.getNamespace.fields)
           : {},
       ),

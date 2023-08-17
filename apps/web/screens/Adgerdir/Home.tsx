@@ -307,7 +307,11 @@ Home.getProps = async ({ apolloClient, locale }) => {
           },
         },
       })
-      .then((variables) => JSON.parse(variables.data.getNamespace.fields)),
+      .then((variables) =>
+        variables.data.getNamespace?.fields
+          ? JSON.parse(variables.data.getNamespace.fields)
+          : {},
+      ),
     apolloClient
       .query<GetGroupedMenuQuery, QueryGetGroupedMenuArgs>({
         query: GET_GROUPED_MENU_QUERY,

@@ -592,7 +592,11 @@ Category.getProps = async ({ apolloClient, locale, query }) => {
           },
         },
       })
-      .then((res) => JSON.parse(res.data.getNamespace.fields)),
+      .then((res) =>
+        res.data.getNamespace?.fields
+          ? JSON.parse(res.data.getNamespace.fields)
+          : {},
+      ),
   ])
 
   const categoryExists = getArticleCategories.some(
