@@ -221,7 +221,7 @@ export const PoliceCaseInfo: React.FC<React.PropsWithChildren<Props>> = (
           {subtypes.map((subtype) => (
             <Box
               display="inlineBlock"
-              key={`${policeCaseNumbers[index]}-${subtype}`}
+              key={subtype}
               component="span"
               marginBottom={1}
               marginRight={1}
