@@ -101,7 +101,7 @@ export const AdgerdirArticles: FC<
   }
 
   const onFilterStringChange = useCallback(() => {
-    const arr = []
+    const arr: number[] = []
 
     visibleItems.forEach(({ title, description }, index) => {
       const str = `${title} ${description}`.trim()
@@ -118,7 +118,7 @@ export const AdgerdirArticles: FC<
   }, [visibleItems, filterString])
 
   const onFilterTagChange = useCallback(() => {
-    const arr = []
+    const arr: number[] = []
 
     visibleItems.forEach(({ tags }, index) => {
       const ids = tags.map((x) => x.id)

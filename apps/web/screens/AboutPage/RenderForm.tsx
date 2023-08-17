@@ -82,7 +82,7 @@ export const RenderForm: React.FC<
         {
           param: 'c',
         },
-        (err, data) => {
+        (err: string, data: { result: string; msg: string }) => {
           if (err) {
             setStatus({
               type: 'error',
