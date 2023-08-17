@@ -101,7 +101,7 @@ type RichText = (
         renderMark: Options['renderMark']
         renderComponent: {
           [slice in keyof typeof defaultRenderComponentObject]: (
-            SliceType,
+            SliceType, // tjekka á brian
           ) => ReactNode
         }
       }

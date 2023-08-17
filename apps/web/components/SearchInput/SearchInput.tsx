@@ -78,6 +78,8 @@ const searchReducer = (state, action): SearchState => {
     case 'reset': {
       return initialSearchState
     }
+    default:
+      return initialSearchState
   }
 }
 

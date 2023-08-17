@@ -29,6 +29,7 @@ import { isValidEmail } from '@island.is/web/utils/isValidEmail'
 import { isValidNationalId } from '@island.is/web/utils/isValidNationalId'
 import { fileExtensionWhitelist } from '@island.is/island-ui/core/types'
 import * as styles from './Form.css'
+import { List } from 'lodash'
 
 const CREATE_UPLOAD_URL = gql`
   mutation CreateUploadUrl($filename: String!) {
@@ -515,7 +516,7 @@ export const Form = ({ form, namespace }: FormProps) => {
               name: data['name'],
               email: data['email'],
               message: formatBody(_data),
-              files: files.map((f) => f[1]).flat(),
+              files: files.map((f) => f[1]).flat(), // too hard ... ask owner
               recipientFormFieldDeciderValue: getRecipientFormFieldDeciderValue(),
             },
           },

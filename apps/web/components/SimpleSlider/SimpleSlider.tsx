@@ -134,6 +134,7 @@ export const SimpleSlider: FC<React.PropsWithChildren<SimpleSliderProps>> = ({
         }
         break
       default:
+        current = 0
         break
     }
 

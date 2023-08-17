@@ -8,6 +8,7 @@ import {
 import { linkResolver, LinkType } from '../hooks/useLinkResolver'
 
 export const formatMegaMenuLinks = (
+  // too complex - ask stefan
   locale: Locale,
   menuLinks: (MenuLinkWithChildren | MenuLink)[],
 ) => {

@@ -104,7 +104,7 @@ export interface LayoutProps {
   articleAlertBannerContent?: GetAlertBannerQuery['getAlertBanner']
   languageToggleQueryParams?: Record<Locale, Record<string, string>>
   footerVersion?: 'default' | 'organization'
-  respOrigin
+  respOrigin: string
   megaMenuData
   children?: React.ReactNode
 }

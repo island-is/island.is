@@ -7,5 +7,5 @@
     "tsBuildInfoFile": "../../tmp/buildcache/apps/web/server",
     "types": ["node"]
   },
-  "include": ["server.ts","**/*.js", "**/*.ts", "**/*.tsx", "next-env.d.ts"]
+  "include": ["server.ts", "**/*.js", "**/*.ts", "**/*.tsx", "next-env.d.ts"]
 }

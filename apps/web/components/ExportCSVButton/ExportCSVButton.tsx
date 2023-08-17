@@ -6,6 +6,7 @@ const isIterableObject = (val) => {
 }
 
 const forAll = function* (obj, keyPrefix = '') {
+  // too complex exlude or contact owner
   const filteredKeys = Object.entries(obj).filter(([k]) => k !== '__typename')
   for (const [key, val] of filteredKeys) {
     const newKey = keyPrefix + key
