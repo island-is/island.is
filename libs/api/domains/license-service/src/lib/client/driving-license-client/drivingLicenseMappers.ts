@@ -18,25 +18,45 @@ type ExcludesFalse = <T>(x: T | null | undefined | false | '') => x is T
 
 export const formatNationalId = (nationalId: string) => formatSsn(nationalId)
 
+const mapRemarks = (
+  license?: DriversLicense,
+  remarks?: Array<RemarkCode> | null,
+) => {
+  const comments = license?.comments
+  if (!comments || !remarks) {
+    return
+  }
+  const commentString = comments.reduce<string>(
+    (acc, curr) => `${acc} ${mapCommentToRemark(curr.nr ?? null, remarks)}`,
+    '',
+  )
+
+  return commentString
+}
+
+const mapCommentToRemark = (
+  commentId: string | null,
+  remarks: Array<RemarkCode>,
+) => {
+  const remark = remarks.find((r) => r.index === commentId)
+  return remark?.name ? `${commentId} - ${remark.name}\n` : undefined
+}
+
 const mapCategoryToRight = (
   category: CategoryDto,
   remarks?: Array<RemarkCode> | null,
 ) => {
-  let right = `
-  Réttindaflokkur ${category.nr}, ${category.categoryName}\n  - Gildir til ${
+  let right = `Réttindaflokkur ${category.nr}, ${
+    category.categoryName
+  }\n  - Gildir til ${
     category.dateTo ? format(category.dateTo, 'dd-MM-yyyy') : ''
   }\n`
 
   if (category.comment) {
-    right += `  - Tákntala: ${category.comment}`
-
-    if (remarks?.length) {
-      const commentName = remarks.find((r) => r.index === '78')?.name
-
-      right += commentName ? ` - ${commentName ?? ''}` : ''
-    }
-
-    right += '\n'
+    const mappedRemark = remarks?.find((r) => r.index === category.comment)
+    right +=
+      `  - Tákntala: ${category.comment}` +
+      `${mappedRemark ? ' - ' + mappedRemark : ''}\n`
   }
 
   return right
@@ -51,7 +71,7 @@ const formatRights = (
   }
 
   const rights = categories.reduce<string>(
-    (acc, curr) => `${acc} ${mapCategoryToRight(curr, remarks)}`,
+    (acc, curr) => `${acc} ${mapCategoryToRight(curr, remarks)}\n`,
     '',
   )
 
@@ -112,9 +132,7 @@ export const createPkPassDataInput = (
     },
     {
       identifier: 'athugasemdir',
-      value: license.comments
-        ? license.comments.map((c) => c.comment).join(' ')
-        : '',
+      value: license.comments ? mapRemarks(license, remarks) : '',
     },
   ]
 }

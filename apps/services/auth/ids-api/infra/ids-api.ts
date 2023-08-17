@@ -68,6 +68,11 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-ids-api'> => {
         dev: '10001',
         staging: '6503760649',
       },
+      NOVA_ACCEPT_UNAUTHORIZED: {
+        dev: 'true',
+        staging: 'false',
+        prod: 'false',
+      },
     })
     .secrets({
       IDENTITY_SERVER_CLIENT_SECRET:
@@ -97,11 +102,11 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-ids-api'> => {
     .resources({
       limits: {
         cpu: '800m',
-        memory: '512Mi',
+        memory: '768Mi',
       },
       requests: {
-        cpu: '100m',
-        memory: '256Mi',
+        cpu: '400m',
+        memory: '512Mi',
       },
     })
     .replicaCount({

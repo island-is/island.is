@@ -7,4 +7,6 @@ export { default as TableContainer } from './TableContainer/TableContainer'
 export { default as TableHeaderText } from './TableHeaderText/TableHeaderText'
 export { default as TableSkeleton } from './TableSkeleton/TableSkeleton'
 export { default as DurationDate } from './DurationDate/DurationDate'
+export { default as CreatedDate } from './CreatedDate/CreatedDate'
+
 export { getDurationDate } from './DurationDate/DurationDate'

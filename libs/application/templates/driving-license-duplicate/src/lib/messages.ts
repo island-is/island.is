@@ -49,7 +49,7 @@ export const m = defineMessages({
     description: 'Info from drivers license subtitle',
   },
   dataCollectionUserProfileTitle: {
-    id: 'cr.application:dataCollectionUserProfileTitle',
+    id: 'dld.application:dataCollectionUserProfileTitle',
     defaultMessage: 'Mínar síður á Ísland.is/stillingar',
     description: 'Your user profile information',
   },
@@ -179,6 +179,11 @@ export const m = defineMessages({
       '**Vinsamlegast tilgreinið ástæðu umsóknarinnar.**\n\nAthugið: Saknæmt er að gefa rangar eða ósannar upplýsingar um að ökuskírteini hafi skemmst eða glatast. Finnist glataða skírteinið skal skila því inn til sýslumanns eða lögreglu. Afhenda skal lögreglu eða sýslumanni ökuskírteini sem eru skemmd, af eldri gerð eða EES gerð þegar óskað er eftir samriti.',
     description: 'Description for reason section',
   },
+  confirmReason: {
+    id: 'dld.application:confirmReason',
+    defaultMessage: 'Ég staðfesti að ökuskírteinið hafi skemmst eða glatast',
+    description: 'Confirm reason text',
+  },
   reasonLostOption: {
     id: 'dld.application:reasonLostOption',
     defaultMessage: 'Glatað ökuskírteini',
@@ -236,7 +241,7 @@ export const m = defineMessages({
     description: 'Title for delivery method section',
   },
   deliveryMethodDescription: {
-    id: 'dld.application:deliveryMethodDescription',
+    id: 'dld.application:deliveryMethodDescription#markdown',
     defaultMessage:
       'Fljótlegast er að sækja samrit hjá Þjóðskrá Íslands í Borgartúni 21, 105 Reykjavík. Á öðrum afhendingarstöðum getur afhending tekið allt að 6 til 10 daga. Sjá afgreiðslutíma.',
     description: 'Description for delivery method section',
@@ -377,7 +382,7 @@ export const m = defineMessages({
     description: 'Validation error for attachment',
   },
   missingDistrictValidationError: {
-    id: 'dld.application:error.missingAttachment',
+    id: 'dld.application:error.missingAttachmentDistrict',
     defaultMessage: 'Vinsamlegast veldu embætti',
     description: 'Validation error for district',
   },
@@ -402,5 +407,12 @@ export const m = defineMessages({
     id: 'dld.application:temporaryLicense',
     defaultMessage: 'Bráðabirgðaskírteini',
     description: 'text for temporary license',
+  },
+
+  /* Application log */
+  pendingActionApplicationCompletedTitle: {
+    id: 'dld.application:pendingActionApplicationCompletedTitle',
+    defaultMessage: 'Umsókn þín hefur verið móttekin og skírteini pantað',
+    description: 'text for pending action application completed title',
   },
 })

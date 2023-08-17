@@ -7,13 +7,14 @@ DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
 # shellcheck disable=SC1091
 source "$DIR"/_common.sh
 
-APP_HOME=$(jq ".projects[\"$APP\"]" -r <"$PROJECT_ROOT"/workspace.json)
-APP_DIST_HOME=$(jq ".targets.build.options.outputPath" -r <"$PROJECT_ROOT"/"$APP_HOME"/project.json)
+APP_HOME=$(yarn nx show project $APP | jq ".root" -r)
+APP_DIST_HOME=$(yarn nx show project $APP | jq ".targets.build.options | .outputPath // .outputDir" -r)
 DOCKERFILE=${1:-Dockerfile}
 TARGET=${TARGET:-${2:-'<You need to set a target (e.g. output-local, output-jest)>'}}
 ACTION=${3:-docker_build}
 PLAYWRIGHT_VERSION="$(yarn info --json @playwright/test | jq -r '.children.Version')"
 CONTAINER_BUILDER=${CONTAINER_BUILDER:-docker}
+DOCKER_LOCAL_CACHE="${DOCKER_LOCAL_CACHE:-true}"
 
 BUILD_ARGS=()
 
@@ -33,7 +34,7 @@ mkargs() {
   for extra_arg in ${EXTRA_DOCKER_BUILD_ARGS:-}; do
     BUILD_ARGS+=("$extra_arg")
   done
-  if [[ "${local_cache}" =~ local-cache=(yes|y|true) ]]; then
+  if [[ "${local_cache}" =~ local-cache=(yes|y|true) ]] && [[ "${DOCKER_LOCAL_CACHE}" == true ]]; then
     BUILD_ARGS+=(--cache-from="type=local,src=$PROJECT_ROOT/cache")
     BUILD_ARGS+=(--cache-from="type=local,src=$PROJECT_ROOT/cache_output")
   fi

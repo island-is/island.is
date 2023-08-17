@@ -1,7 +1,12 @@
 import { FC, useEffect } from 'react'
 import { useFormContext } from 'react-hook-form'
 import * as nationalId from 'kennitala'
-import { Box, GridColumn, GridRow } from '@island.is/island-ui/core'
+import {
+  AlertMessage,
+  Box,
+  GridColumn,
+  GridRow,
+} from '@island.is/island-ui/core'
 import { InputController } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
@@ -13,13 +18,17 @@ type LookupProps = {
   field: {
     id: string
     props?: {
-      requiredNationalId: boolean
+      requiredNationalId?: boolean
+      alertWhenUnder18?: boolean
     }
   }
   error: Record<string, string> | any
 }
 
-export const LookupPerson: FC<LookupProps> = ({ field, error }) => {
+export const LookupPerson: FC<React.PropsWithChildren<LookupProps>> = ({
+  field,
+  error,
+}) => {
   const { formatMessage } = useLocale()
   const { id, props } = field
   const { setValue, watch, clearErrors } = useFormContext()
@@ -60,6 +69,14 @@ export const LookupPerson: FC<LookupProps> = ({ field, error }) => {
   return (
     <Box>
       <GridRow>
+        {props?.alertWhenUnder18 && nationalId.info(personNationalId).age < 18 && (
+          <GridColumn span={['1/1']} paddingBottom={3}>
+            <AlertMessage
+              type="warning"
+              message={formatMessage(m.inheritanceUnder18Error)}
+            />
+          </GridColumn>
+        )}
         <GridColumn span="6/12">
           <InputController
             id={`${id}.nationalId`}

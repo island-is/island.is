@@ -277,7 +277,8 @@ export class DefendantService {
     if (
       defendant.noNationalId ||
       !defendant.nationalId ||
-      defendant.nationalId.replace('-', '').length !== 10
+      defendant.nationalId.replace('-', '').length !== 10 ||
+      defendant.nationalId.endsWith('5') // Temporary national id from the police system
     ) {
       await this.messageService.sendMessagesToQueue([
         this.getMessageForSendDefendantsNotUpdatedAtCourtNotification(

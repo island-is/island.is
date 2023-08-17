@@ -14,10 +14,9 @@ import { useLocale } from '@island.is/localization'
 import { NO, YES, NO_PRIVATE_PENSION_FUND } from '../../constants'
 import { parentalLeaveFormMessages } from '../../lib/messages'
 
-export const UsePrivatePensionFund: FC<FieldBaseProps> = ({
-  application,
-  field,
-}) => {
+export const UsePrivatePensionFund: FC<
+  React.PropsWithChildren<FieldBaseProps>
+> = ({ application, field }) => {
   const {
     formState: { errors },
     setValue,

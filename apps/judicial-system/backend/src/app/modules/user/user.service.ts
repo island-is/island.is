@@ -6,6 +6,7 @@ import type { Logger } from '@island.is/logging'
 import { UserRole } from '@island.is/judicial-system/types'
 
 import { environment } from '../../../environments'
+import { nowFactory } from '../../factories'
 import { Institution } from '../institution'
 import { CreateUserDto } from './dto/createUser.dto'
 import { UpdateUserDto } from './dto/updateUser.dto'
@@ -52,17 +53,24 @@ export class UserService {
   async findByNationalId(nationalId: string): Promise<User> {
     // First check if the user is an admin
     try {
-      const admin = (JSON.parse(environment.admin.users) as User[]).find(
-        (user) => user.nationalId === nationalId,
+      const admin = JSON.parse(environment.admin.users).find(
+        (user: { nationalId: string }) => user.nationalId === nationalId,
       )
 
       if (admin) {
+        // Default values are necessary because most of the fields are required
+        // all the way up to the client. Consider refactoring this.
         return {
-          ...admin,
+          id: '',
+          created: nowFactory(),
+          modified: nowFactory(),
+          name: '',
+          title: '',
           mobileNumber: '',
           email: '',
           role: UserRole.ADMIN,
           active: true,
+          ...admin,
         } as User
       }
     } catch (error) {

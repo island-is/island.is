@@ -35,6 +35,12 @@ export interface Teacher {
   name: string
 }
 
+export interface TeacherV4 {
+  name: string
+  nationalId: string
+  driverLicenseId: number | null | undefined
+}
+
 export interface Juristiction {
   id: number
   name: string

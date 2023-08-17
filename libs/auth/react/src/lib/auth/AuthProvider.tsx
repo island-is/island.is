@@ -7,15 +7,17 @@ import React, {
   useState,
 } from 'react'
 import type { User } from 'oidc-client-ts'
-import { useEffectOnce } from 'react-use'
+
+import { useEffectOnce } from '@island.is/react-spa/shared'
+import { isDefined } from '@island.is/shared/utils'
+import { LoadingScreen } from '@island.is/react/components'
+
 import { getAuthSettings, getUserManager } from '../userManager'
 import { ActionType, initialState, reducer } from './Auth.state'
 import { AuthSettings } from '../AuthSettings'
 import { AuthContext } from './AuthContext'
 import { AuthErrorScreen } from './AuthErrorScreen'
 import { CheckIdpSession } from './CheckIdpSession'
-import { isDefined } from '@island.is/shared/utils'
-import { LoadingScreen } from '@island.is/react/components'
 
 interface AuthProviderProps {
   /**

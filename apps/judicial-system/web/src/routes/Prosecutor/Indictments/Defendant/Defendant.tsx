@@ -32,9 +32,10 @@ import * as constants from '@island.is/judicial-system/consts'
 
 import { DefendantInfo } from '../../components'
 import { defendant } from './Defendant.strings'
-import { PoliceCaseInfo } from './PoliceCaseInfo'
+import { LokeNumberList } from './LokeNumberList/LokeNumberList'
+import { PoliceCaseInfo } from './PoliceCaseInfo/PoliceCaseInfo'
 
-interface PoliceCase {
+export interface PoliceCase {
   number: string
   subtypes?: IndictmentSubtype[]
   place?: string
@@ -91,7 +92,7 @@ const getPoliceCasesForUpdate = (
     [[], {}, {}],
   )
 
-const Defendant: React.FC = () => {
+const Defendant: React.FC<React.PropsWithChildren<unknown>> = () => {
   const {
     workingCase,
     setWorkingCase,
@@ -114,15 +115,14 @@ const Defendant: React.FC = () => {
     setPoliceCases(getPoliceCases(workingCase))
   }, [workingCase])
 
-  const handleCreatePoliceCase = async () => {
+  const handleCreatePoliceCase = async (policeCaseInfo?: PoliceCase) => {
+    const newPoliceCase = policeCaseInfo ?? { number: '' }
+
     const [
       policeCaseNumbers,
       indictmentSubtypes,
       crimeScenes,
-    ] = getPoliceCasesForUpdate([
-      ...getPoliceCases(workingCase),
-      { number: '' },
-    ])
+    ] = getPoliceCasesForUpdate([...getPoliceCases(workingCase), newPoliceCase])
 
     setAndSendCaseToServer(
       [
@@ -130,6 +130,38 @@ const Defendant: React.FC = () => {
           policeCaseNumbers,
           indictmentSubtypes,
           crimeScenes,
+          force: true,
+        },
+      ],
+      workingCase,
+      setWorkingCase,
+    )
+  }
+
+  const handleCreatePoliceCases = (policeCases: PoliceCase[]) => {
+    const cases = getPoliceCases(workingCase)
+    const allCases = [...cases, ...policeCases]
+
+    setAndSendCaseToServer(
+      [
+        {
+          policeCaseNumbers: [
+            ...allCases.map((policeCase) => policeCase.number),
+          ],
+          indictmentSubtypes: allCases.reduce<IndictmentSubtypeMap>(
+            (acc, policeCase) => ({ ...acc, [policeCase.number]: [] }),
+            {},
+          ),
+          crimeScenes: allCases.reduce<CrimeSceneMap>(
+            (acc, policeCase) => ({
+              ...acc,
+              [policeCase.number]: {
+                place: policeCase.place,
+                date: policeCase.date,
+              },
+            }),
+            {},
+          ),
           force: true,
         },
       ],
@@ -162,6 +194,7 @@ const Defendant: React.FC = () => {
 
   const handleDeletePoliceCase = (index: number) => {
     const policeCases = getPoliceCases(workingCase)
+
     const [
       policeCaseNumbers,
       indictmentSubtypes,
@@ -184,7 +217,7 @@ const Defendant: React.FC = () => {
     )
   }
 
-  const handleUpdatePoliceCases = (
+  const handleUpdatePoliceCase = (
     index?: number,
     update?: {
       policeCaseNumber?: string
@@ -362,9 +395,19 @@ const Defendant: React.FC = () => {
         <Box component="section" marginBottom={5}>
           <SectionHeading
             title={formatMessage(defendant.policeCaseNumbersHeading)}
+            description={
+              workingCase.origin === CaseOrigin.LOKE &&
+              formatMessage(defendant.policeCaseNumbersDescription)
+            }
           />
+          {workingCase.origin === CaseOrigin.LOKE && (
+            <LokeNumberList
+              caseId={workingCase.id}
+              addPoliceCaseNumbers={handleCreatePoliceCases}
+            />
+          )}
           <AnimatePresence>
-            {policeCases.map((policeCase, index) => (
+            {policeCases.map((_policeCase, index) => (
               <motion.div
                 key={index}
                 initial={{ opacity: 0, y: 10 }}
@@ -394,7 +437,7 @@ const Defendant: React.FC = () => {
                         ? handleDeletePoliceCase
                         : undefined
                     }
-                    updatePoliceCases={handleUpdatePoliceCases}
+                    updatePoliceCase={handleUpdatePoliceCase}
                     policeCaseNumberImmutable={
                       workingCase.origin === CaseOrigin.LOKE && index === 0
                     }
@@ -408,7 +451,9 @@ const Defendant: React.FC = () => {
               data-testid="addPoliceCaseInfoButton"
               variant="ghost"
               icon="add"
-              onClick={handleCreatePoliceCase}
+              onClick={() => {
+                handleCreatePoliceCase()
+              }}
               disabled={policeCases.some(
                 (policeCase) =>
                   !policeCase.number ||

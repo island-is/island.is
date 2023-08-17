@@ -1,5 +1,5 @@
 import { BrowserContext, expect, test } from '@playwright/test'
-import { icelandicAndNoPopupUrl, urls } from '../../../../support/urls'
+import { env, icelandicAndNoPopupUrl, urls } from '../../../../support/urls'
 import { session } from '../../../../support/session'
 
 const homeUrl = `${urls.islandisBaseUrl}/stjornbord`
@@ -7,6 +7,8 @@ test.use({ baseURL: urls.islandisBaseUrl })
 
 test.describe('Admin portal (Endorsements)', () => {
   let contextGranter: BrowserContext
+  const testCompanyName =
+    env === 'staging' ? 'Prófunarfélag GG og HEB' : 'ARTIC ehf.'
 
   test.beforeAll(async ({ browser }) => {
     contextGranter = await session({
@@ -14,7 +16,7 @@ test.describe('Admin portal (Endorsements)', () => {
       storageState: 'service-portal-faereyjar.json',
       homeUrl,
       phoneNumber: '0102399',
-      delegation: '65° ARTIC ehf.',
+      delegation: testCompanyName,
     })
   })
 

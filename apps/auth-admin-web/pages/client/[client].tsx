@@ -20,7 +20,7 @@ import { ClientService } from './../../services/ClientService'
 import LocalizationUtils from '../../utils/localization.utils'
 import { LoadingScreen } from '../../components/common/LoadingScreen'
 
-const Index: React.FC = () => {
+const Index: React.FC<React.PropsWithChildren<unknown>> = () => {
   const { query } = useRouter()
   const clientId = query.client
   const stepQuery = query.step

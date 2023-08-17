@@ -114,3 +114,5 @@ export const PublishClient = () => {
     />
   )
 }
+
+export default PublishClient

@@ -32,12 +32,9 @@ import {
   Steps,
 } from './StatusStep/types'
 
-export const ApplicationStatus: FC<ApplicationStatusProps & FieldBaseProps> = ({
-  goToScreen,
-  application,
-  refetch,
-  field,
-}) => {
+export const ApplicationStatus: FC<
+  React.PropsWithChildren<ApplicationStatusProps & FieldBaseProps>
+> = ({ goToScreen, application, refetch, field }) => {
   const isAssignee = field?.props?.isAssignee || false
   const subAppData = application.externalData
     .submitApplication as SubmittedApplicationData
@@ -130,30 +127,33 @@ export const ApplicationStatus: FC<ApplicationStatusProps & FieldBaseProps> = ({
   )
 
   // assign to answers and refresh if accidentStatus answers are stale
-  const assignValueToAnswersAndRefetch = useCallback(async (accidentStatus) => {
-    if (accidentStatus) {
-      setValue('accidentStatus', accidentStatus)
-      const res = await updateApplication({
-        variables: {
-          input: {
-            id: application.id,
-            answers: {
-              ...application.answers,
-              accidentStatus,
+  const assignValueToAnswersAndRefetch = useCallback(
+    async (accidentStatus: AccidentNotificationStatus) => {
+      if (accidentStatus) {
+        setValue('accidentStatus', accidentStatus)
+        const res = await updateApplication({
+          variables: {
+            input: {
+              id: application.id,
+              answers: {
+                ...application.answers,
+                accidentStatus,
+              },
             },
+            locale,
           },
-          locale,
-        },
-      })
-      if (
-        res.data &&
-        refetch &&
-        hasAccidentStatusChanged(accidentStatus, currentAccidentStatus)
-      ) {
-        refetch()
+        })
+        if (
+          res.data &&
+          refetch &&
+          hasAccidentStatusChanged(accidentStatus, currentAccidentStatus)
+        ) {
+          refetch()
+        }
       }
-    }
-  }, [])
+    },
+    [],
+  )
 
   // monitor data and if changes assign to answers
   useEffect(() => {

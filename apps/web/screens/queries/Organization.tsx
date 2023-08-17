@@ -185,7 +185,7 @@ export const GET_ORGANIZATION_PAGE_QUERY = gql`
       bottomSlices {
         ...AllSlices
       }
-      newsTag {
+      secondaryNewsTags {
         id
         title
         slug
@@ -222,6 +222,9 @@ export const GET_ORGANIZATION_SUBPAGE_QUERY = gql`
       id
       title
       slug
+      signLanguageVideo {
+        url
+      }
       description {
         ...AllSlices
         ${nestedFields}

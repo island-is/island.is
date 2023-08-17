@@ -8,7 +8,7 @@ interface ReviewGroupProps {
   handleClick?: () => void
 }
 
-export const ReviewGroup: FC<ReviewGroupProps> = ({
+export const ReviewGroup: FC<React.PropsWithChildren<ReviewGroupProps>> = ({
   children,
   isLast,
   editMessage,

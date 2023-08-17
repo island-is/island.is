@@ -26,13 +26,9 @@ interface RecyclingCompanyForm {
   editView?: boolean
 }
 
-const RecyclingCompanyForm: FC<RecyclingCompanyForm> = ({
-  onSubmit,
-  onCancel,
-  control,
-  errors,
-  editView = false,
-}) => {
+const RecyclingCompanyForm: FC<
+  React.PropsWithChildren<RecyclingCompanyForm>
+> = ({ onSubmit, onCancel, control, errors, editView = false }) => {
   const {
     t: { recyclingCompanies: t },
   } = useI18n()
@@ -274,7 +270,6 @@ const RecyclingCompanyForm: FC<RecyclingCompanyForm> = ({
           </GridRow>
         </Stack>
       </GridContainer>
-
       <Box display="flex" justifyContent="spaceBetween" marginTop={7}>
         {editView ? (
           <Button variant="ghost" onClick={onCancel} preTextIcon="arrowBack">

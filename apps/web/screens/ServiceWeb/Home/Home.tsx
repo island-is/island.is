@@ -124,6 +124,7 @@ const Home: Screen<HomeProps> = ({
       )}
       showLogoTitle={!institutionSlugBelongsToMannaudstorg}
       indexableBySearchEngine={institutionSlugBelongsToMannaudstorg}
+      showLogoOnMobileDisplays={!institutionSlugBelongsToMannaudstorg}
     >
       {hasContent && (
         <ServiceWebContext.Consumer>
@@ -270,7 +271,7 @@ const Home: Screen<HomeProps> = ({
   )
 }
 
-Home.getInitialProps = async ({ apolloClient, locale, query }) => {
+Home.getProps = async ({ apolloClient, locale, query }) => {
   const defaultSlug = locale === 'en' ? 'digital-iceland' : 'stafraent-island'
   const slug = query.slug ? (query.slug as string) : defaultSlug
 

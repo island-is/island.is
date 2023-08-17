@@ -12,6 +12,7 @@ import { Application } from '@island.is/application/types'
 import { format as formatNationalId } from 'kennitala'
 import {
   DistrictCommissionerAgencies,
+  Juristiction,
   NationalRegistryUser,
 } from '@island.is/api/schema'
 import { m } from '../../lib/messages'
@@ -159,12 +160,15 @@ export const sectionOverview = buildSection({
           value: ({ answers: { district }, externalData }) => {
             const districts = getValueViaPath(
               externalData,
-              'districtCommissioners.data',
-            ) as DistrictCommissionerAgencies[]
-            const selectedDistrict = districts.find((d) => d.id === district)
-            const districtName = selectedDistrict?.name ?? ''
-            const districtPlace = selectedDistrict?.place ?? ''
-            return `${districtName}, ${districtPlace}`
+              'juristictions.data',
+            ) as Juristiction[]
+            const selectedDistrict = districts.find(
+              (d) => d.id.toString() === district,
+            )
+            const districtPlace = `${
+              selectedDistrict?.zip ? selectedDistrict.zip + ' ' : ''
+            }${selectedDistrict?.name ?? ''}`
+            return districtPlace
           },
         }),
         buildDividerField({}),

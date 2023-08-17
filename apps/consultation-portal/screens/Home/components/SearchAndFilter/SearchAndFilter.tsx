@@ -4,11 +4,14 @@ import {
   GridColumn,
   GridContainer,
   GridRow,
+  Option,
   Select,
 } from '@island.is/island-ui/core'
 import { DebouncedSearch } from '../../../../components'
 import { FILTERS_FRONT_PAGE_KEY } from '../../../../utils/consts/consts'
 import localization from '../../Home.json'
+import { sortLocale } from '../../../../utils/helpers'
+import { OptionsType } from 'react-select'
 
 interface ArrOfValueAndLabel {
   value: string
@@ -47,6 +50,16 @@ const SearchAndFilter = ({
     setFilters(filtersCopy)
   }
 
+  const sortedPolicyAreas = sortLocale({
+    list: PolicyAreas,
+    sortOption: 'label',
+  }) as OptionsType<Option>
+
+  const sortedInstitutions = sortLocale({
+    list: Institutions,
+    sortOption: 'label',
+  }) as OptionsType<Option>
+
   return (
     <GridContainer>
       <Box paddingY={4}>
@@ -68,9 +81,7 @@ const SearchAndFilter = ({
               label={loc.policyAreaSelect.label}
               name="policyAreas"
               noOptionsMessage={loc.policyAreaSelect.noOptions}
-              options={[...PolicyAreas].sort((a, b) =>
-                a.label.localeCompare(b.label),
-              )}
+              options={sortedPolicyAreas}
               placeholder={loc.policyAreaSelect.placeholder}
               onChange={(e) => onChange(e, false)}
               isClearable
@@ -90,9 +101,7 @@ const SearchAndFilter = ({
               label={loc.institutionSelect.label}
               name="institutions"
               noOptionsMessage={loc.institutionSelect.noOptions}
-              options={[...Institutions].sort((a, b) =>
-                a.label.localeCompare(b.label),
-              )}
+              options={sortedInstitutions}
               placeholder={loc.institutionSelect.placeholder}
               onChange={(e) => onChange(e, true)}
               value={

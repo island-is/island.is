@@ -187,6 +187,9 @@ export const en: TranslatedMessages = {
   'walletPassport.issuingDate': 'Date issued',
   'walletPassport.expirationDate': 'Expiration date',
   'walletPassport.mrzName': 'Machine-readable name',
+  'walletPassport.children': 'Childrens passport',
+  'walletPassport.noPassport': 'No passport.',
+  'walletPassport.noPassportLink': 'Read more at island.is/vegabref',
 
   // license scanner
   'licenseScanner.title': 'Scan barcode',
@@ -277,6 +280,8 @@ export const en: TranslatedMessages = {
     'Permissible maximum towable mass of trailer (unbraked)',
   'vehicleDetail.nedc': 'Exhaust emissions value (NEDC)',
   'vehicleDetail.vehicleWeight': 'Vehicle weight',
+  'vehicleDetail.totalWeight': 'Maximum weight',
+  'vehicleDetail.capacityWeight': 'Road train weight',
 
   // assets overview
   'assetsOvervies.screenTitle': 'Assets',

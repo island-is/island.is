@@ -25,12 +25,16 @@ import MarkdownWrapper from '../MarkdownWrapper/MarkdownWrapper'
 import {
   RequestRulingSignatureMutation,
   useRequestRulingSignatureMutation,
-  useRulingSignatureConfirmationQuery,
-  RulingSignatureConfirmationQuery,
-} from './RulingSignature.generated'
+} from './requestRulingSignature.generated'
+import {
+  useGetRulingSignatureConfirmationQuery,
+  GetRulingSignatureConfirmationQuery,
+} from './getRulingSignatureConfirmation.generated'
 import { signingModal as m } from './SigningModal.strings'
 
-const ControlCode: React.FC<{ controlCode?: string }> = ({ controlCode }) => {
+const ControlCode: React.FC<
+  React.PropsWithChildren<{ controlCode?: string }>
+> = ({ controlCode }) => {
   const { formatMessage } = useIntl()
 
   return (
@@ -98,7 +102,7 @@ type signingProgress = 'inProgress' | 'success' | 'error' | 'canceled'
 
 export const getSigningProgress = (
   rulingSignatureConfirmation:
-    | RulingSignatureConfirmationQuery['rulingSignatureConfirmation']
+    | GetRulingSignatureConfirmationQuery['rulingSignatureConfirmation']
     | undefined,
   error: ApolloError | undefined,
 ): signingProgress => {
@@ -111,7 +115,9 @@ export const getSigningProgress = (
   return 'error'
 }
 
-export const SigningModal: React.FC<SigningModalProps> = ({
+export const SigningModal: React.FC<
+  React.PropsWithChildren<SigningModalProps>
+> = ({
   workingCase,
   requestRulingSignature,
   requestRulingSignatureResponse,
@@ -121,15 +127,16 @@ export const SigningModal: React.FC<SigningModalProps> = ({
   const router = useRouter()
   const { formatMessage } = useIntl()
 
-  const { data, error } = useRulingSignatureConfirmationQuery({
+  const { data, error } = useGetRulingSignatureConfirmationQuery({
     variables: {
       input: {
         documentToken: requestRulingSignatureResponse?.documentToken || '',
         caseId: workingCase.id,
       },
     },
-    fetchPolicy: 'no-cache',
     skip: !requestRulingSignatureResponse,
+    fetchPolicy: 'no-cache',
+    errorPolicy: 'all',
   })
 
   const signingProgress = getSigningProgress(

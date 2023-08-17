@@ -43,7 +43,9 @@ import {
   ProsecutorSectionHeightenedSecurity,
 } from '../../components'
 
-export const HearingArrangements: React.FC = () => {
+export const HearingArrangements: React.FC<
+  React.PropsWithChildren<unknown>
+> = () => {
   const router = useRouter()
   const { formatMessage } = useIntl()
   const {

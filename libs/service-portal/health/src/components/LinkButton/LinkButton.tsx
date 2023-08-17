@@ -7,7 +7,11 @@ interface Props {
   skipIcon?: boolean
 }
 
-const LinkButton: FC<Props> = ({ to, text, skipIcon = false }) => (
+const LinkButton: FC<React.PropsWithChildren<Props>> = ({
+  to,
+  text,
+  skipIcon = false,
+}) => (
   <a href={to} target="_blank" rel="noreferrer">
     {skipIcon ? (
       <Button size="small" variant="text">

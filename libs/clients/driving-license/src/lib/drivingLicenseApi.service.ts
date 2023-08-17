@@ -250,6 +250,19 @@ export class DrivingLicenseApi {
     }))
   }
 
+  public async getTeachersV4() {
+    const teachers = await this.v4.apiDrivinglicenseV4DrivinginstructorsGet({
+      apiVersion: v4.DRIVING_LICENSE_API_VERSION_V4,
+      apiVersion2: v4.DRIVING_LICENSE_API_VERSION_V4,
+    })
+
+    return teachers.map((teacher) => ({
+      name: teacher?.name ?? '',
+      nationalId: teacher?.ssn ?? '',
+      driverLicenseId: teacher?.driverLicenseId,
+    }))
+  }
+
   public async getDeprivation(input: {
     nationalId: string
     token?: string
@@ -490,16 +503,18 @@ export class DrivingLicenseApi {
   }
 
   async postApplicationNewCollaborative(params: {
-    ssn: string
+    token: string
     districtId: number
+    stolenOrLost: boolean
   }): Promise<number> {
-    const { districtId, ssn } = params
+    const { districtId, token, stolenOrLost } = params
     return await this.v5.apiDrivinglicenseV5ApplicationsNewCollaborativePost({
       apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
       apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
+      jwttoken: token.replace('Bearer ', ''),
       postNewCollaborative: {
         districtId,
-        ssn,
+        licenseStolenOrLost: stolenOrLost,
         userId: v5.DRIVING_LICENSE_API_USER_ID,
       },
     })

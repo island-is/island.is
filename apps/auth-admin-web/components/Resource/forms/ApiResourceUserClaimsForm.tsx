@@ -15,7 +15,9 @@ interface Props {
   handleNewClaimsAdded: () => void
 }
 
-const ApiResourceUserClaimsForm: React.FC<Props> = (props: Props) => {
+const ApiResourceUserClaimsForm: React.FC<React.PropsWithChildren<Props>> = (
+  props: Props,
+) => {
   const [claims, setClaims] = useState<string[]>([])
   const [localization] = useState<FormControl>(
     LocalizationUtils.getFormControl('ApiResourceUserClaimsForm'),

@@ -34,7 +34,7 @@ import { fakeDataSection } from './fakeDataSection'
 export const getApplication = ({ allowFakeData = false }): Form => {
   return buildForm({
     id: 'OperatingLicenseApplicationDraftForm',
-    title: m.formName,
+    title: '',
     mode: FormModes.DRAFT,
     renderLastScreenButton: true,
     renderLastScreenBackButton: true,
@@ -105,7 +105,7 @@ export const getApplication = ({ allowFakeData = false }): Form => {
               buildDescriptionField({
                 id: 'overview.attachments.three',
                 title: attachmentNames.three,
-                titleVariant: 'h3',
+                titleVariant: 'h4',
                 space: 'gutter',
               }),
               buildFileUploadField({
@@ -119,8 +119,8 @@ export const getApplication = ({ allowFakeData = false }): Form => {
               buildDescriptionField({
                 id: 'overview.attachments.one',
                 title: attachmentNames.one,
-                titleVariant: 'h3',
-                space: 'gutter',
+                titleVariant: 'h4',
+                space: 'containerGutter',
               }),
               buildFileUploadField({
                 id: 'attachments.healthLicense.file',
@@ -133,8 +133,8 @@ export const getApplication = ({ allowFakeData = false }): Form => {
               buildDescriptionField({
                 id: 'overview.attachments.two',
                 title: attachmentNames.two,
-                titleVariant: 'h3',
-                space: 'gutter',
+                titleVariant: 'h4',
+                space: 'containerGutter',
               }),
               buildFileUploadField({
                 id: 'attachments.formerLicenseHolderConfirmation.file',
@@ -147,8 +147,8 @@ export const getApplication = ({ allowFakeData = false }): Form => {
               buildDescriptionField({
                 id: 'overview.attachments.four',
                 title: attachmentNames.four,
-                titleVariant: 'h3',
-                space: 'gutter',
+                titleVariant: 'h4',
+                space: 'containerGutter',
               }),
               buildFileUploadField({
                 id: 'attachments.outsideBlueprints.file',
@@ -161,8 +161,8 @@ export const getApplication = ({ allowFakeData = false }): Form => {
               buildDescriptionField({
                 id: 'overview.attachments.five',
                 title: attachmentNames.five,
-                titleVariant: 'h3',
-                space: 'gutter',
+                titleVariant: 'h4',
+                space: 'containerGutter',
               }),
               buildFileUploadField({
                 id: 'attachments.otherFiles.file',

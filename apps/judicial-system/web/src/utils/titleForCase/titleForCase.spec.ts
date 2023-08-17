@@ -7,8 +7,10 @@ import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
 import { titleForCase } from './titleForCase'
 
 describe('titleForCase', () => {
-  const formatMessage = createIntl({ locale: 'is', onError: jest.fn })
-    .formatMessage
+  const formatMessage = createIntl({
+    locale: 'is',
+    onError: jest.fn,
+  }).formatMessage
   const fn = (theCase: Case) => titleForCase(formatMessage, theCase)
 
   test('should handle rejected investigation case', () => {
