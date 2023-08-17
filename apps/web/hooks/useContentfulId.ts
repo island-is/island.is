@@ -12,7 +12,9 @@ export const useContentfulId = (
     if (pageId) {
       setContentfulIds([pageId, subpageId, subSubPageId])
     }
-    return () => setContentfulIds([])
+    return () => {
+      setContentfulIds([])
+    }
   }, [pageId, subpageId, subSubPageId])
 }
 
