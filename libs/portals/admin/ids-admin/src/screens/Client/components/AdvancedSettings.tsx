@@ -183,7 +183,9 @@ export const AdvancedSettings = ({
               (actionData?.errors?.customClaims as unknown) as string,
             )}
           />
-          <Text variant="small">{formatMessage(m.callBackUrlDescription)}</Text>
+          <Text variant="small">
+            {formatMessage(m.customClaimsDescription)}
+          </Text>
         </Stack>
       </Stack>
     </FormCard>
