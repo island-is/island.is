@@ -23,7 +23,6 @@ judicial-system-api:
     AUDIT_TRAIL_GROUP_NAME: 'k8s/judicial-system/audit-log'
     AUDIT_TRAIL_REGION: 'eu-west-1'
     AUDIT_TRAIL_USE_GENERIC_LOGGER: 'false'
-    AUTH_AUDIENCE: 'judicial-system.dev01.devland.is'
     AUTH_IDS_CLIENT_ID: '@rettarvorslugatt.island.is/web'
     AUTH_IDS_DOMAIN: 'https://identity-server.dev01.devland.is'
     AUTH_IDS_REDIRECT_URI: 'https://judicial-system.dev01.devland.is/api/auth/callback/identity-server'
@@ -34,7 +33,6 @@ judicial-system-api:
     CONTENTFUL_HOST: 'preview.contentful.com'
     HIDDEN_FEATURES: ''
     NODE_OPTIONS: '--max-old-space-size=208'
-    SAML_ENTRY_POINT: 'https://innskraning.island.is/?id=judicial-system.dev'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
     - 'nginx-ingress-external'
