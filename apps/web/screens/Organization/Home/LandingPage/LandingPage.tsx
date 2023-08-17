@@ -33,12 +33,12 @@ import { LandingPageFooter } from './index'
 const ARTICLES_PAGE_SIZE = 10
 
 const parseOrganizationLinkHref = (organization: Query['getOrganization']) => {
-  let link = organization.link
-  if (link.includes('://')) {
+  let link = organization?.link
+  if (link?.includes('://')) {
     link = link.split('://')[1]
   }
   if (link[link.length - 1] === '/') {
-    link = link.slice(0, link.length - 1)
+    link = link?.slice(0, link.length - 1)
   }
   return link
 }
@@ -74,7 +74,7 @@ const LandingPage = ({ organization, namespace }: LandingPageProps) => {
       variables: {
         input: {
           lang: activeLocale,
-          organization: organization.slug,
+          organization: organization?.slug,
           sort: SortField.Popular,
           size: ARTICLES_PAGE_SIZE + 1,
         },
@@ -85,8 +85,8 @@ const LandingPage = ({ organization, namespace }: LandingPageProps) => {
   return (
     <>
       <HeadWithSocialSharing
-        title={organization.title}
-        description={organization.description}
+        title={organization?.title ?? ''}
+        description={organization?.description}
       />
       <Box marginBottom={5}>
         <GridContainer>
@@ -123,7 +123,7 @@ const LandingPage = ({ organization, namespace }: LandingPageProps) => {
               </Box>
               <Box marginBottom={5}>
                 <Inline space={1} alignY="center">
-                  {organization.logo?.url && (
+                  {organization?.logo?.url && (
                     <img
                       width={70}
                       height={70}
@@ -132,12 +132,12 @@ const LandingPage = ({ organization, namespace }: LandingPageProps) => {
                     />
                   )}
                   <Text variant="h1" color="blueberry600">
-                    {organization.title}
+                    {organization?.title}
                   </Text>
                 </Inline>
               </Box>
 
-              {linkTitle && organization.link && (
+              {linkTitle && organization?.link && (
                 <Box marginBottom={8}>
                   <IconTitleCard
                     heading={linkTitle}
@@ -151,7 +151,7 @@ const LandingPage = ({ organization, namespace }: LandingPageProps) => {
                 </Box>
               )}
 
-              {organization.description && (
+              {organization?.description && (
                 <Box
                   paddingY={4}
                   borderTopWidth="standard"
@@ -165,7 +165,7 @@ const LandingPage = ({ organization, namespace }: LandingPageProps) => {
                 <FeaturedArticlesSlice
                   slice={{
                     articles: [],
-                    id: `featured-articles-${organization.slug}`,
+                    id: `featured-articles-${organization?.slug}`,
                     resolvedArticles: articleResponse.data.getArticles.slice(
                       0,
                       ARTICLES_PAGE_SIZE,
@@ -183,14 +183,14 @@ const LandingPage = ({ organization, namespace }: LandingPageProps) => {
                       ARTICLES_PAGE_SIZE
                         ? {
                             date: new Date().toISOString(),
-                            id: `featured-articles-${organization.slug}-link`,
+                            id: `featured-articles-${organization?.slug}-link`,
                             text: n(
                               'landingPageSeeMoreArticles',
                               'Sjá allt efni',
                             ),
                             url: `${
                               linkResolver('search').href
-                            }?q=*&organization=${organization.slug}`,
+                            }?q=*&organization=${organization?.slug}`,
                           }
                         : null,
                   }}

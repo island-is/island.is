@@ -226,7 +226,11 @@ AdgerdirArticle.getProps = async ({ apolloClient, query, locale }) => {
           },
         },
       })
-      .then((content) => JSON.parse(content.data.getNamespace.fields)),
+      .then((content) => {
+        if (content.data.getNamespace) {
+          return JSON.parse(content.data.getNamespace.fields)
+        }
+      }),
   ])
 
   // we assume 404 if no article is found

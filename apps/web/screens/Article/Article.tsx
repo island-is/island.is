@@ -447,11 +447,11 @@ const ArticleScreen: Screen<ArticleProps> = ({
                   <Box marginY={3} printHidden className="rs_read">
                     <ProcessEntry
                       buttonText={n(
-                        article.processEntryButtonText || 'application',
+                        article?.processEntryButtonText || 'application',
                         '',
                       )}
                       processLink={asPath.split('?')[0].concat('?stepper=true')}
-                      processTitle={article.stepper.title}
+                      processTitle={article?.stepper?.title ?? ''}
                       newTab={false}
                     />
                   </Box>

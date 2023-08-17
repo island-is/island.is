@@ -428,7 +428,7 @@ SubPage.getProps = async ({ apolloClient, locale, query, res }) => {
         },
       })
       .then((variables) =>
-        variables.data.getNamespace.fields
+        variables.data.getNamespace?.fields
           ? JSON.parse(variables.data.getNamespace.fields)
           : {},
       ),

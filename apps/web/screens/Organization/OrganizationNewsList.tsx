@@ -307,10 +307,11 @@ OrganizationNewsList.getProps = async ({ apolloClient, query, locale }) => {
           },
         },
       })
-      .then((variables) => {
-        // map data here to reduce data processing in component
-        return JSON.parse(variables.data.getNamespace.fields)
-      }),
+      .then((variables) =>
+        variables.data.getNamespace?.fields
+          ? JSON.parse(variables.data.getNamespace.fields)
+          : {},
+      ),
   ])
 
   const genericTag = genericTagResponse?.data?.getGenericTagBySlug

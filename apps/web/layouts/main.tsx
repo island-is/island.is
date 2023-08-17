@@ -488,10 +488,11 @@ Layout.getProps = async ({ apolloClient, locale, req }) => {
           },
         },
       })
-      .then((res) => {
-        // map data here to reduce data processing in component
-        return JSON.parse(res.data.getNamespace.fields)
-      }),
+      .then((res) =>
+        res.data.getNamespace?.fields
+          ? JSON.parse(res.data.getNamespace.fields)
+          : {},
+      ),
     apolloClient
       .query<GetGroupedMenuQuery, QueryGetGroupedMenuArgs>({
         query: GET_GROUPED_MENU_QUERY,

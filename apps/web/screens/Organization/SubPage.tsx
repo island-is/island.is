@@ -98,11 +98,11 @@ const SubPage: Screen<SubPageProps> = ({
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
 
-  useContentfulId(organizationPage.id, subpage.id)
+  useContentfulId(organizationPage?.id, subpage?.id)
 
   const pathWithoutHash = router.asPath.split('#')[0]
 
-  const navList: NavigationItem[] = organizationPage.menuLinks.map(
+  const navList: NavigationItem[] = organizationPage?.menuLinks.map(
     ({ primaryLink, childrenLinks }) => ({
       title: primaryLink?.text,
       href: primaryLink?.url,
@@ -119,7 +119,7 @@ const SubPage: Screen<SubPageProps> = ({
 
   const content = (
     <>
-      {subpage.showTableOfContents && (
+      {subpage?.showTableOfContents && (
         <TOC
           slices={subpage.slices}
           title={n('navigationTitle', 'Efnisyfirlit')}
@@ -127,10 +127,10 @@ const SubPage: Screen<SubPageProps> = ({
       )}
       <GridRow className="rs_read">
         <GridColumn
-          span={['12/12', '12/12', subpage.links.length ? '7/12' : '12/12']}
+          span={['12/12', '12/12', subpage?.links?.length ? '7/12' : '12/12']}
         >
           {webRichText(
-            subpage.description as SliceType[],
+            subpage?.description as SliceType[],
             {
               renderComponent: {
                 Form: (slice) => <Form form={slice} namespace={namespace} />,
@@ -145,7 +145,7 @@ const SubPage: Screen<SubPageProps> = ({
             offset={[null, null, '1/12']}
           >
             <Stack space={2}>
-              {subpage.links.map((link) => (
+              {subpage?.links?.map((link) => (
                 <Link href={link.url} underline="small">
                   <Text fontWeight="light" color="blue400">
                     {link.text}
@@ -163,11 +163,11 @@ const SubPage: Screen<SubPageProps> = ({
     <OrganizationWrapper
       showExternalLinks={true}
       showReadSpeaker={false}
-      pageTitle={subpage.title}
+      pageTitle={subpage?.title ?? ''}
       organizationPage={organizationPage}
       fullWidthContent={true}
       pageFeaturedImage={
-        subpage.featuredImage ?? organizationPage.featuredImage
+        subpage?.featuredImage ?? organizationPage?.featuredImage
       }
       breadcrumbItems={[
         {
@@ -175,10 +175,10 @@ const SubPage: Screen<SubPageProps> = ({
           href: linkResolver('homepage', [], locale).href,
         },
         {
-          title: organizationPage.title,
+          title: organizationPage?.title ?? '',
           href: linkResolver(
             'organizationpage',
-            [organizationPage.slug],
+            [organizationPage?.slug ?? ''],
             locale,
           ).href,
         },
@@ -198,12 +198,12 @@ const SubPage: Screen<SubPageProps> = ({
                     span={[
                       '12/12',
                       '12/12',
-                      subpage.links.length ? '7/12' : '12/12',
+                      subpage?.links?.length ? '7/12' : '12/12',
                     ]}
                   >
                     <Box className="rs_read" marginBottom={2}>
                       <Text variant="h1" as="h1">
-                        {subpage.title}
+                        {subpage?.title}
                       </Text>
                     </Box>
                     <Box
@@ -220,7 +220,7 @@ const SubPage: Screen<SubPageProps> = ({
                         readId={null}
                         readClass="rs_read"
                       />
-                      {subpage.signLanguageVideo?.url && (
+                      {subpage?.signLanguageVideo?.url && (
                         <SignLanguageButton
                           videoUrl={subpage.signLanguageVideo.url}
                           content={
@@ -234,7 +234,7 @@ const SubPage: Screen<SubPageProps> = ({
                                 subpage.sliceCustomRenderer,
                                 subpage.sliceExtraText,
                                 namespace,
-                                organizationPage.slug,
+                                organizationPage?.slug,
                                 organizationPage,
                               )}
                             </>
@@ -360,7 +360,7 @@ SubPage.getProps = async ({ apolloClient, locale, query, req }) => {
         },
       })
       .then((variables) =>
-        variables.data.getNamespace.fields
+        variables.data.getNamespace?.fields
           ? JSON.parse(variables.data.getNamespace.fields)
           : {},
       ),

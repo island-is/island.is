@@ -111,7 +111,7 @@ const OrganizationPage: Screen<OrganizationProps> = ({
   }, [organizations, selectedTitleSortOption])
 
   const tagsItems = useMemo(
-    () => tags.items.filter((x) => x.title).sort(sortAlpha('title')),
+    () => tags?.items.filter((x) => x.title).sort(sortAlpha('title')),
     [tags],
   )
 
@@ -344,7 +344,11 @@ OrganizationPage.getProps = async ({ apolloClient, locale }) => {
           },
         },
       })
-      .then((content) => JSON.parse(content.data.getNamespace.fields)),
+      .then((content) =>
+        content.data.getNamespace?.fields
+          ? JSON.parse(content.data.getNamespace.fields)
+          : {},
+      ),
   ])
 
   // we assume 404 if no Organization is found

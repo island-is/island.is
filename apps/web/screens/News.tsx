@@ -497,10 +497,12 @@ NewsListNew.getProps = async ({ apolloClient, locale, query }) => {
           },
         },
       })
-      .then((variables) => {
-        // map data here to reduce data processing in component
-        return JSON.parse(variables.data.getNamespace.fields)
-      }),
+      // map data here to reduce data processing in component
+      .then((variables) =>
+        variables.data.getNamespace?.fields
+          ? JSON.parse(variables.data.getNamespace.fields)
+          : {},
+      ),
   ])
 
   const newsItem = getSingleNewsResult?.data?.getSingleNews ?? null

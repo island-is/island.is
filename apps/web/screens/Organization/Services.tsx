@@ -72,7 +72,7 @@ const ServicesPage: Screen<ServicesPageProps> = ({
   useContentfulId(organizationPage.id)
   useLocalLinkTypeResolver()
 
-  const navList: NavigationItem[] = organizationPage.menuLinks.map(
+  const navList: NavigationItem[] = organizationPage?.menuLinks.map(
     ({ primaryLink, childrenLinks }) => ({
       title: primaryLink?.text,
       href: primaryLink?.url,
@@ -127,7 +127,7 @@ const ServicesPage: Screen<ServicesPageProps> = ({
     <OrganizationWrapper
       pageTitle={n('services', 'Þjónusta')}
       organizationPage={organizationPage}
-      pageFeaturedImage={organizationPage.featuredImage}
+      pageFeaturedImage={organizationPage?.featuredImage}
       fullWidthContent={false}
       stickySidebar={false}
       showReadSpeaker={false}
@@ -137,8 +137,9 @@ const ServicesPage: Screen<ServicesPageProps> = ({
           href: linkResolver('homepage').href,
         },
         {
-          title: organizationPage.title,
-          href: linkResolver('organizationpage', [organizationPage.slug]).href,
+          title: organizationPage?.title ?? '',
+          href: linkResolver('organizationpage', [organizationPage?.slug ?? ''])
+            .href,
         },
       ]}
       navigationData={{
@@ -281,7 +282,7 @@ ServicesPage.getProps = async ({ apolloClient, locale, query }) => {
         },
       })
       .then((variables) =>
-        variables.data.getNamespace.fields
+        variables.data.getNamespace?.fields
           ? JSON.parse(variables.data.getNamespace.fields)
           : {},
       ),
