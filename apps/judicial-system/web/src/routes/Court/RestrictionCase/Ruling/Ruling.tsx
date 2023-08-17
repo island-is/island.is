@@ -208,6 +208,8 @@ export const Ruling: React.FC<React.PropsWithChildren<unknown>> = () => {
     [router, workingCase.id],
   )
   const stepIsValid = isRulingValidRC(workingCase)
+  const caseFiles =
+    workingCase.caseFiles?.filter((file) => !file.category) ?? []
 
   return (
     <PageLayout
@@ -230,12 +232,12 @@ export const Ruling: React.FC<React.PropsWithChildren<unknown>> = () => {
             <PoliceRequestAccordionItem workingCase={workingCase} />
             <AccordionItem
               id="caseFileList"
-              label={`Rannsóknargögn (${workingCase.caseFiles?.length ?? 0})`}
+              label={`Rannsóknargögn (${caseFiles.length})`}
               labelVariant="h3"
             >
               <CaseFileList
                 caseId={workingCase.id}
-                files={workingCase.caseFiles ?? []}
+                files={caseFiles}
                 canOpenFiles={
                   user &&
                   (user.id === workingCase.judge?.id ||

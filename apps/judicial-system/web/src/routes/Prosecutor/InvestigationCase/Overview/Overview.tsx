@@ -111,6 +111,9 @@ export const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
     setModal('caseSubmittedModal')
   }
 
+  const caseFiles =
+    workingCase.caseFiles?.filter((file) => !file.category) ?? []
+
   return (
     <PageLayout
       workingCase={workingCase}
@@ -306,16 +309,11 @@ export const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
             </AccordionItem>
             <AccordionItem
               id="id_6"
-              label={`Rannsóknargögn ${`(${
-                workingCase.caseFiles ? workingCase.caseFiles.length : 0
-              })`}`}
+              label={`Rannsóknargögn ${`(${caseFiles.length})`}`}
               labelVariant="h3"
             >
               <Box marginY={3}>
-                <CaseFileList
-                  caseId={workingCase.id}
-                  files={workingCase.caseFiles ?? []}
-                />
+                <CaseFileList caseId={workingCase.id} files={caseFiles} />
               </Box>
             </AccordionItem>
             {(workingCase.comments ||
