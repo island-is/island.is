@@ -118,7 +118,7 @@ const ServiceSearch: Screen<ServiceSearchProps> = ({
   const breadcrumbItems = [
     institutionSlugBelongsToMannaudstorg
       ? {
-          title: organization.title,
+          title: organization?.title,
           typename: 'serviceweb',
           href: linkResolver('serviceweb', [institutionSlug]).href,
         }

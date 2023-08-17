@@ -375,7 +375,7 @@ const Stepper = ({
       }}
       //TOOD: currentStep might be undefined: Stefna
     >
-      {webRichText(currentStep.subtitle as SliceType[])}
+      {webRichText(currentStep?.subtitle as SliceType[])}
     </Box>
   )
 

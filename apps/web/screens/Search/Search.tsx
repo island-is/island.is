@@ -595,13 +595,13 @@ const Search: Screen<CategoryProps> = ({
                     )}{' '}
                     <strong>{q}</strong>
                     {!!(
-                      state.query.organization.length ||
-                      state.query.category.length
+                      state.query.organization?.length ||
+                      state.query.category?.length
                     ) && ` ${n('withChosenFilters', 'með völdum síum')}. `}
                   </Text>
                   {!!(
-                    state.query.organization.length ||
-                    state.query.category.length
+                    state.query.organization?.length ||
+                    state.query.category?.length
                   ) && (
                     <Button
                       variant="text"

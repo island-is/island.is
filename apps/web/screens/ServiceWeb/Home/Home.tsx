@@ -75,7 +75,7 @@ const Home: Screen<HomeProps> = ({
   const o = useNamespace(organizationNamespace)
   const { linkResolver } = useLinkResolver()
 
-  useContentfulId(organization.id)
+  useContentfulId(organization?.id)
   useLocalLinkTypeResolver()
 
   const institutionSlug = getSlugPart(Router.asPath, locale === 'is' ? 2 : 3)
@@ -209,8 +209,10 @@ const Home: Screen<HomeProps> = ({
                                       <TopicCard
                                         href={
                                           linkResolver('supportqna', [
-                                            organization.slug,
-                                            category.slug,
+                                            organization?.slug
+                                              ? organization.slug
+                                              : '',
+                                            category?.slug ? category.slug : '',
                                             slug,
                                           ]).href
                                         }

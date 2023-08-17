@@ -82,13 +82,13 @@ const SubPage: Screen<SubPageProps> = ({
   const o = useNamespace(organizationNamespace)
   const { linkResolver } = useLinkResolver()
   useContentfulId(
-    organization.id,
+    organization?.id,
     singleSupportCategory?.id,
     singleSupportQNA?.id,
   )
   useLocalLinkTypeResolver()
 
-  const organizationSlug = organization.slug
+  const organizationSlug = organization?.slug
   const question = singleSupportQNA
 
   const institutionSlug = getSlugPart(Router.asPath, locale === 'is' ? 2 : 3)
@@ -130,7 +130,7 @@ const SubPage: Screen<SubPageProps> = ({
       href: linkResolver('serviceweb').href,
     },
     {
-      title: organization.title,
+      title: organization?.title,
       typename: 'serviceweb',
       href: linkResolver('serviceweborganization', [organizationSlug]).href,
     },
@@ -279,7 +279,7 @@ const SubPage: Screen<SubPageProps> = ({
                               }
                             >
                               <OrganizationContactBanner
-                                organizationLogoUrl={organization.logo?.url}
+                                organizationLogoUrl={organization?.logo?.url}
                                 contactLink={question.contactLink}
                                 headerText={o(
                                   'serviceWebOrganizationContactBannerHeaderTitle',

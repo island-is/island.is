@@ -325,9 +325,11 @@ export const TimelineSlice: React.FC<React.PropsWithChildren<SliceProps>> = ({
                   type="next"
                   onClick={() => moveTimeline('right')}
                   disabled={
-                    frameRef.current?.scrollWidth -
-                      frameRef.current?.offsetWidth ===
-                    position
+                    frameRef.current?.scrollWidth === undefined ||
+                    frameRef.current?.offsetWidth === undefined ||
+                    frameRef.current.scrollWidth -
+                      frameRef.current.offsetWidth ===
+                      position
                   }
                 />
               </ArrowButtonShadow>
@@ -341,7 +343,7 @@ export const TimelineSlice: React.FC<React.PropsWithChildren<SliceProps>> = ({
             <div
               className={timelineStyles.timelineContainer}
               style={{
-                height: 140 + monthEvents.length * 104,
+                height: 140 + (monthEvents?.length || 0) * 104,
               }}
             >
               <ArrowButtonShadow type="prev">
@@ -367,12 +369,12 @@ export const TimelineSlice: React.FC<React.PropsWithChildren<SliceProps>> = ({
                 </Text>
               </div>
               <div className={timelineStyles.mobileContainer}>
-                {monthEvents.map((event) => (
+                {monthEvents?.map((event) => (
                   <TimelineItem
                     event={event}
                     offset={0}
                     index={0}
-                    detailed={!!event.body}
+                    detailed={event.body ? 'true' : 'false'}
                     mobile={true}
                     seeMoreText={n('timelineSeeMoreText', 'Lesa meira')}
                   />

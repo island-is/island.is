@@ -305,7 +305,7 @@ const ApiCatalogue: Screen<HomestayProps> = ({
                 categories={filterCategories}
               />
             </Box>
-            {(error || data?.getApiCatalogue?.services.length < 1) && (
+            {(error || (data?.getApiCatalogue?.services?.length ?? 0) < 1) && (
               <GridContainer>
                 {error ? (
                   <Text>{sn('errorHeading')}</Text>
@@ -316,7 +316,7 @@ const ApiCatalogue: Screen<HomestayProps> = ({
                 )}
               </GridContainer>
             )}
-            {data?.getApiCatalogue?.services.length > 0 && (
+            {(data?.getApiCatalogue?.services.length || 0) > 0 && (
               <GridContainer>
                 <ServiceList
                   baseUrl={linkResolver('apicataloguepage').href + '/'}
