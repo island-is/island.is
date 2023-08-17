@@ -127,7 +127,13 @@ export class AuditService {
   }
 
   audit(message: AuditMessage) {
-    this.auditLog?.info(this.formatMessage(message))
+    const formattedMessage = this.formatMessage(message)
+    this.auditLog?.info(formattedMessage)
+
+    // Also log to the console if alsoLog is set.
+    if (message.alsoLog) {
+      this.logger.info(formattedMessage)
+    }
   }
 
   auditPromise<T>(template: AuditTemplate<T>, promise: Promise<T>): Promise<T> {
@@ -137,6 +143,7 @@ export class AuditService {
         namespace: template.namespace,
         resources: this.unwrap(template.resources, result),
         meta: this.unwrap(template.meta, result),
+        alsoLog: template.alsoLog ?? undefined,
       }
 
       if (isDefaultAuditTemplate(template)) {
