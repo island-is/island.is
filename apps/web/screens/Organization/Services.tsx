@@ -90,7 +90,8 @@ const ServicesPage: Screen<ServicesPageProps> = ({
     groups: [],
   })
 
-  const filterItemComparator = (a, b) => a.label.localeCompare(b.label)
+  const filterItemComparator = (a: FilterItem, b: FilterItem) =>
+    a.label.localeCompare(b.label)
 
   categories.sort(filterItemComparator)
   groups.sort(filterItemComparator)

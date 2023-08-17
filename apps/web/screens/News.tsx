@@ -4,7 +4,11 @@ import cn from 'classnames'
 import { useRouter } from 'next/router'
 import NextLink from 'next/link'
 import { Screen } from '../types'
-import { Image, Slice as SliceType } from '@island.is/island-ui/contentful'
+import {
+  Image,
+  ImageProps,
+  Slice as SliceType,
+} from '@island.is/island-ui/contentful'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import {
   Box,
@@ -55,6 +59,7 @@ import useContentfulId from '../hooks/useContentfulId'
 import { webRichText } from '../utils/richText'
 
 import * as styles from './News.css'
+import { JSX, ReactNode } from 'react'
 
 const PERPAGE = 10
 
@@ -247,7 +252,10 @@ const NewsListNew: Screen<NewsListProps> = ({
         {webRichText(newsItem.content as SliceType[], {
           renderComponent: {
             // Make sure that images in the content are full width
-            Image: (slice) => (
+            Image: (
+              slice: JSX.IntrinsicAttributes &
+                ImageProps & { children?: ReactNode },
+            ) => (
               <Box className={styles.clearBoth}>
                 <Image {...slice} thumbnail={slice.url + '?w=50'} />
               </Box>
@@ -514,7 +522,7 @@ NewsListNew.getProps = async ({ apolloClient, locale, query }) => {
     tag?.slug !== FRONTPAGE_NEWS_TAG_ID
 
   return {
-    newsList: newsList.map((item) => ({
+    newsList: newsList.map((item: { genericTags: any[] }) => ({
       ...item,
       genericTags: item?.genericTags?.filter(filterOutFrontpageTag) ?? [],
     })),

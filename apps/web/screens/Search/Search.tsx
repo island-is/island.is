@@ -355,7 +355,10 @@ const Search: Screen<CategoryProps> = ({
     }),
   )
 
-  const noUncategorized = (item) => {
+  const noUncategorized = (item: {
+    category: string
+    categorySlug: string
+  }) => {
     if (!item.category && filters.category === 'uncategorized') {
       return true
     }

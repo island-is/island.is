@@ -460,7 +460,7 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<IcelandicGovernmentIns
                       setParameters((prevParameters) => ({
                         ...prevParameters,
                         [category]: (prevParameters[category] ?? []).filter(
-                          (prevValue) => prevValue !== value,
+                          (prevValue: string) => prevValue !== value,
                         ),
                       }))
                     }}

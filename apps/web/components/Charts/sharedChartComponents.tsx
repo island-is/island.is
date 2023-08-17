@@ -4,6 +4,13 @@ import cn from 'classnames'
 import { LegendProps, TooltipProps } from 'recharts'
 import { Box, Text } from '@island.is/island-ui/core'
 
+interface AxisTickProps {
+  x: number
+  y: number
+  className: string
+  payload: { value: string }
+}
+
 export const CustomTooltip = ({
   payload,
   active,
@@ -31,8 +38,12 @@ export const CustomTooltip = ({
   return null
 }
 
-export const CustomizedAxisTick = (props) => {
-  const { x, y, className, payload } = props
+export const CustomizedAxisTick = ({
+  x,
+  y,
+  className,
+  payload,
+}: AxisTickProps) => {
   const xAxis = className.includes('xAxis')
   return (
     <g transform={`translate(${x},${y})`}>
@@ -49,8 +60,7 @@ export const CustomizedAxisTick = (props) => {
   )
 }
 
-export const CustomizedRightAxisTick = (props) => {
-  const { x, y, payload } = props
+export const CustomizedRightAxisTick = ({ x, y, payload }: AxisTickProps) => {
   return (
     <g transform={`translate(${x + 10},${y - 10})`}>
       <text dy={16} textAnchor="start" fill="#00003C">
