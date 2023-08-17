@@ -92,7 +92,7 @@ const getPoliceCasesForUpdate = (
     [[], {}, {}],
   )
 
-const Defendant: React.FC = () => {
+const Defendant: React.FC<React.PropsWithChildren<unknown>> = () => {
   const {
     workingCase,
     setWorkingCase,
@@ -130,6 +130,38 @@ const Defendant: React.FC = () => {
           policeCaseNumbers,
           indictmentSubtypes,
           crimeScenes,
+          force: true,
+        },
+      ],
+      workingCase,
+      setWorkingCase,
+    )
+  }
+
+  const handleCreatePoliceCases = (policeCases: PoliceCase[]) => {
+    const cases = getPoliceCases(workingCase)
+    const allCases = [...cases, ...policeCases]
+
+    setAndSendCaseToServer(
+      [
+        {
+          policeCaseNumbers: [
+            ...allCases.map((policeCase) => policeCase.number),
+          ],
+          indictmentSubtypes: allCases.reduce<IndictmentSubtypeMap>(
+            (acc, policeCase) => ({ ...acc, [policeCase.number]: [] }),
+            {},
+          ),
+          crimeScenes: allCases.reduce<CrimeSceneMap>(
+            (acc, policeCase) => ({
+              ...acc,
+              [policeCase.number]: {
+                place: policeCase.place,
+                date: policeCase.date,
+              },
+            }),
+            {},
+          ),
           force: true,
         },
       ],
@@ -185,7 +217,7 @@ const Defendant: React.FC = () => {
     )
   }
 
-  const handleUpdatePoliceCases = (
+  const handleUpdatePoliceCase = (
     index?: number,
     update?: {
       policeCaseNumber?: string
@@ -371,12 +403,11 @@ const Defendant: React.FC = () => {
           {workingCase.origin === CaseOrigin.LOKE && (
             <LokeNumberList
               caseId={workingCase.id}
-              onAddPoliceCaseNumber={handleCreatePoliceCase}
-              onRemovePoliceCaseNumber={handleDeletePoliceCase}
+              addPoliceCaseNumbers={handleCreatePoliceCases}
             />
           )}
           <AnimatePresence>
-            {policeCases.map((policeCase, index) => (
+            {policeCases.map((_policeCase, index) => (
               <motion.div
                 key={index}
                 initial={{ opacity: 0, y: 10 }}
@@ -406,9 +437,9 @@ const Defendant: React.FC = () => {
                         ? handleDeletePoliceCase
                         : undefined
                     }
-                    updatePoliceCases={handleUpdatePoliceCases}
+                    updatePoliceCase={handleUpdatePoliceCase}
                     policeCaseNumberImmutable={
-                      workingCase.origin === CaseOrigin.LOKE
+                      workingCase.origin === CaseOrigin.LOKE && index === 0
                     }
                   />
                 </Box>

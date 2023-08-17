@@ -11,7 +11,9 @@ import { OwnerCoOwners } from './OwnerCoOwners'
 import { useMutation } from '@apollo/client'
 import { UPDATE_APPLICATION } from '@island.is/application/graphql'
 
-export const CoOwnerRepeater: FC<FieldBaseProps> = (props) => {
+export const CoOwnerRepeater: FC<React.PropsWithChildren<FieldBaseProps>> = (
+  props,
+) => {
   const { application, setBeforeSubmitCallback } = props
   const { locale, formatMessage } = useLocale()
   const { setValue } = useFormContext()

@@ -25,8 +25,8 @@ const envs = {
   },
   SHOULD_SEARCH_INDEXER_RESOLVE_NESTED_ENTRIES: {
     dev: 'false',
-    staging: 'false',
-    prod: 'false',
+    staging: 'true',
+    prod: 'true',
   },
   AIR_DISCOUNT_SCHEME_FRONTEND_HOSTNAME: {
     dev: 'loftbru.dev01.devland.is',

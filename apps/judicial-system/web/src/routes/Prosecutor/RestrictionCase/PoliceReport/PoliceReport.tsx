@@ -22,7 +22,7 @@ import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader
 import CommentsInput from '@island.is/judicial-system-web/src/components/CommentsInput/CommentsInput'
 import * as constants from '@island.is/judicial-system/consts'
 
-export const PoliceReport: React.FC = () => {
+export const PoliceReport: React.FC<React.PropsWithChildren<unknown>> = () => {
   const {
     workingCase,
     setWorkingCase,

@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import APIResponse from './../../entities/common/APIResponse'
 import { BehaviorSubject } from 'rxjs'
 
-const StatusBar: React.FC = () => {
+const StatusBar: React.FC<React.PropsWithChildren<unknown>> = () => {
   const status$ = React.useRef(new BehaviorSubject(null))
   const [state, setState] = useState(new APIResponse())
 

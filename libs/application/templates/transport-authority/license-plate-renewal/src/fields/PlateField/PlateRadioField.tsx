@@ -25,10 +25,9 @@ interface PlateSearchFieldProps {
   myPlateOwnershipList: PlateOwnership[]
 }
 
-export const PlateRadioField: FC<PlateSearchFieldProps & FieldBaseProps> = ({
-  myPlateOwnershipList,
-  application,
-}) => {
+export const PlateRadioField: FC<
+  React.PropsWithChildren<PlateSearchFieldProps & FieldBaseProps>
+> = ({ myPlateOwnershipList, application }) => {
   const { formatMessage, formatDateFns } = useLocale()
   const { setValue } = useFormContext()
   const [regno, setRegno] = useState<string>(

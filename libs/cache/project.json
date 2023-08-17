@@ -1,22 +1,23 @@
 {
-  "root": "libs/cache",
+  "name": "cache",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/cache/src",
   "projectType": "library",
   "generators": {},
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": ["libs/cache/**/*.{ts,tsx,js,jsx}"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/cache/jest.config.js",
+        "jestConfig": "libs/cache/jest.config.ts",
         "passWithNoTests": true
       },
-      "outputs": ["coverage/libs/cache"]
+      "outputs": ["{workspaceRoot}/coverage/libs/cache"]
     }
   },
   "tags": ["lib:node", "scope:node"]

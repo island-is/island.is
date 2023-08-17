@@ -7,7 +7,8 @@ export const useLogIn = () => {
 
   const LogIn = async () => {
     if (typeof window !== 'undefined') {
-      signIn('identity-server', { callbackUrl: path })
+      history.pushState({}, '', path)
+      signIn('identity-server', { callbackUrl: path, redirect: false })
     }
   }
 

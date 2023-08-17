@@ -30,7 +30,7 @@ interface Props {
   downloadURL: string
 }
 
-const FinanceStatusDetailTable: FC<Props> = ({
+const FinanceStatusDetailTable: FC<React.PropsWithChildren<Props>> = ({
   organization,
   financeStatusDetails,
   downloadURL,

@@ -196,9 +196,9 @@ export const notifications = {
     },
     body: {
       id:
-        'judicial.system.backend:notifications.prosecutor_court_date_email.body_v2',
+        'judicial.system.backend:notifications.prosecutor_court_date_email.body_v3',
       defaultMessage:
-        '{scheduledCaseText}<br /><br />{courtDateText}<br /><br />{courtRoomText}<br /><br />{judgeText}{registrarText, select, NONE {} other {<br /><br />{registrarText}}}{sessionArrangements, select, PROSECUTOR_PRESENT {} NONE_PRESENT {<br /><br /> <strong> Krafan verður tekin fyrir án boðunar í þinghald. </strong>} other {<br /><br />{defenderText}.}}',
+        '{sessionArrangements, select, NONE_PRESENT {Krafan verður tekin fyrir án boðunar í þinghald.<br /><br />} other {}}{scheduledCaseText}<br /><br />{courtDateText}<br /><br />{courtRoomText}<br /><br />{judgeText}{registrarText, select, NONE {} other {<br /><br />{registrarText}}}{sessionArrangements, select, PROSECUTOR_PRESENT {} NONE_PRESENT {} other {<br /><br />{defenderText}.}}',
       description:
         'Notaður fyrir beinagrind á pósti til sækjanda þegar fyrirtökutími er staðfestur',
     },
@@ -472,6 +472,22 @@ export const notifications = {
         '<br /><br />{defenderHasAccessToRvg, select, false {Þú getur nálgast gögn málsins hjá {courtName} ef þau hafa ekki þegar verið afhent} other {Þú getur nálgast gögn málsins í {linkStart}Réttarvörslugátt{linkEnd} með rafrænum skilríkjum}}.',
       description:
         'Notaður sem vísun í gögn málsins í pósti til verjanda/talsmanns þegar dómstóll boðar í fyrirtöku',
+    },
+    linkNoRequestBody: {
+      id:
+        'judicial.system.backend:notifications.defender_court_date_email.link_no_request_body',
+      defaultMessage:
+        '{courtName} hefur skráð þig sem verjanda/talsmann sakbornings í máli {courtCaseNumber}.',
+      description:
+        'Notaður sem beinagrind á pósti til verjanda/talsmanns þegar dómstóll boðar í fyrirtöku',
+    },
+    linkNoRequest: {
+      id:
+        'judicial.system.backend:notifications.defender_court_date_email.link_no_request',
+      defaultMessage:
+        '<br /><br />{defenderHasAccessToRvg, select, false {Þú getur nálgast yfirlit málsins hjá {courtName} ef það hefur ekki þegar verið afhent} other {Þú getur nálgast yfirlit málsins í {linkStart}Réttarvörslugátt{linkEnd} með rafrænum skilríkjum}}.',
+      description:
+        'Notaður sem vísun í yfirlit málsins í pósti til verjanda/talsmanns þegar dómstóll boðar í fyrirtöku',
     },
   }),
   defenderRevokedEmail: defineMessages({

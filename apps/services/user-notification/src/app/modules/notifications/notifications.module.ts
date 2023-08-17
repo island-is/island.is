@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common'
 import * as firebaseAdmin from 'firebase-admin'
-import { CacheModule } from '@island.is/cache'
+import { CacheModule } from '@nestjs/cache-manager'
 import { LoggingModule } from '@island.is/logging'
 import { CmsTranslationsModule } from '@island.is/cms-translations'
 import { environment } from '../../../environments/environment'

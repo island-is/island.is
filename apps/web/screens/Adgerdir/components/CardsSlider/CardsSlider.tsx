@@ -37,7 +37,10 @@ const initialSlideState = {
   isNextSlideDisabled: false,
 } as EventObject
 
-export const CardsSlider: FC<CardsSliderProps> = ({ items, variant }) => {
+export const CardsSlider: FC<React.PropsWithChildren<CardsSliderProps>> = ({
+  items,
+  variant,
+}) => {
   const { linkResolver } = useLinkResolver()
   const { colorScheme } = useContext(ColorSchemeContext)
 
@@ -83,7 +86,9 @@ export const CardsSlider: FC<CardsSliderProps> = ({ items, variant }) => {
       setTimeout(handleResize, 0)
     }
 
-    return () => window.removeEventListener('resize', handleResize)
+    return () => {
+      window.removeEventListener('resize', handleResize)
+    }
   }, [handleResize])
 
   const slideNext = () => {

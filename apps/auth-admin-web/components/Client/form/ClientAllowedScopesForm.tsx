@@ -18,7 +18,9 @@ interface Props {
   handleChanges?: () => void
 }
 
-const ClientAllowedScopesForm: React.FC<Props> = (props: Props) => {
+const ClientAllowedScopesForm: React.FC<React.PropsWithChildren<Props>> = (
+  props: Props,
+) => {
   const { register, handleSubmit, formState } = useForm<ClientAllowedScopeDTO>()
   const { isSubmitting, errors } = formState
   const [scopes, setScopes] = useState<ApiScope[]>([])
