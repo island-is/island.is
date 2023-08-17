@@ -23,6 +23,7 @@ export const petitionListLoader: WrappedLoaderFn = ({ client }) => {
       variables: {
         input: {
           listId: params.listId,
+          limit: 1000,
         },
       },
     })
@@ -41,6 +42,7 @@ export const petitionListLoader: WrappedLoaderFn = ({ client }) => {
       variables: {
         input: {
           listId: params.listId,
+          limit: 1000,
         },
       },
     })
