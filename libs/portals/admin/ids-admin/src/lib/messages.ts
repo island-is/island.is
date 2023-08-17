@@ -290,6 +290,11 @@ export const m = defineMessages({
     defaultMessage:
       'After the user authenticates we will only call back to one of these URLs, which should receive and handle the authentication. You can specify multiple valid URLs in different lines. The URLs should include the protocol, i.e. "https://" for websites. You can use the star symbol as a wildcard for subdomains (*.island.is) on development and staging.',
   },
+  customClaimsDescription: {
+    id: 'ap.ids-admin:custom-claims-description',
+    defaultMessage:
+      'Configure custom claims (hard-coded) in access tokens created for this application. Each line should have the form claimName=value. Claim names automatically prefixed with "client_" to avoid collisions. Claim values are always stored as strings.',
+  },
   logoutUrl: {
     id: 'ap.ids-admin:logout-url',
     defaultMessage: 'Logout URL',
@@ -484,11 +489,6 @@ export const m = defineMessages({
     id: 'ap.ids-admin:require-consent-description',
     defaultMessage:
       'When true, the application requires user consent for third party permissions as well as standard scopes like email and phone.',
-  },
-  customClaimsDescription: {
-    id: 'ap.ids-admin:custom-claims-description',
-    defaultMessage:
-      'Configure custom claims (hard-coded) in access tokens created for this application. Each line should have the form claimName=value. Claim names are automatically prefixed with "client_" to avoid collisions. Claim values are always stored as strings.',
   },
   errorInvalidClaims: {
     id: 'ap.ids-admin:error-invalid-claims',

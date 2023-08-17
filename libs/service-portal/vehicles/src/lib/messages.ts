@@ -218,6 +218,10 @@ export const messages = defineMessages({
     id: 'sp.vehicles:result',
     defaultMessage: 'Niðurstaða',
   },
+  odometer: {
+    id: 'sp.vehicles:odometer',
+    defaultMessage: 'Kílómetrastaða',
+  },
   plateStatus: {
     id: 'sp.vehicles:plate-status',
     defaultMessage: 'Staða plötu',
@@ -521,6 +525,10 @@ export const messages = defineMessages({
   vehicleDrivingLessonsLabel: {
     id: 'sp.vehicles:vehicle-driving-lessons-label',
     defaultMessage: 'Grunnupplýsingar ökunáms',
+  },
+  vehicleDrivingLessonsPracticeDriving: {
+    id: 'sp.vehicles:vehicle-driving-lessons-practice-driving',
+    defaultMessage: 'Æfingaakstur',
   },
   vehicleDrivingLessonsStartDate: {
     id: 'sp.vehicles:vehicle-driving-lessons-start-date',
