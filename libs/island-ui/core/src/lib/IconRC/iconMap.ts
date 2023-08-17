@@ -31,6 +31,7 @@ export type Icon =
   | 'ellipse'
   | 'ellipsisHorizontal'
   | 'ellipsisVertical'
+  | 'expand'
   | 'eye'
   | 'eyeOff'
   | 'facebook'
@@ -50,6 +51,8 @@ export type Icon =
   | 'people'
   | 'person'
   | 'playCircle'
+  | 'pause'
+  | 'pauseCircle'
   | 'print'
   | 'reader'
   | 'receipt'
@@ -59,6 +62,8 @@ export type Icon =
   | 'settings'
   | 'time'
   | 'trash'
+  | 'volumeHigh'
+  | 'volumeMute'
   | 'wallet'
   | 'warning'
   | 'reload'
@@ -105,6 +110,7 @@ export default {
     ellipsisVertical: 'EllipsisVertical',
     eye: 'Eye',
     eyeOff: 'EyeOff',
+    expand: 'Expand',
     facebook: 'Facebook',
     fileTrayFull: 'FileTrayFull',
     filter: 'Filter',
@@ -118,6 +124,8 @@ export default {
     menu: 'Menu',
     notifications: 'Notifications',
     open: 'Open',
+    pause: 'Pause',
+    pauseCircle: 'PauseCircle',
     pencil: 'Pencil',
     people: 'People',
     person: 'Person',
@@ -130,6 +138,8 @@ export default {
     search: 'Search',
     settings: 'Settings',
     trash: 'Trash',
+    volumeHigh: 'VolumeHigh',
+    volumeMute: 'VolumeMute',
     wallet: 'Wallet',
     warning: 'Warning',
     reload: 'Reload',
@@ -176,6 +186,7 @@ export default {
     ellipsisVertical: 'EllipsisVerticalOutline',
     eye: 'EyeOutline',
     eyeOff: 'EyeOffOutline',
+    expand: 'Expand',
     facebook: 'Facebook',
     fileTrayFull: 'FileTrayFullOutline',
     filter: 'FilterOutline',
@@ -189,6 +200,8 @@ export default {
     menu: 'MenuOutline',
     notifications: 'NotificationsOutline',
     open: 'OpenOutline',
+    pause: 'Pause',
+    pauseCircle: 'PauseCircle',
     pencil: 'PencilOutline',
     people: 'PeopleOutline',
     person: 'PersonOutline',
@@ -201,6 +214,8 @@ export default {
     search: 'SearchOutline',
     settings: 'SettingsOutline',
     trash: 'TrashOutline',
+    volumeHigh: 'VolumeHigh',
+    volumeMute: 'VolumeMute',
     wallet: 'WalletOutline',
     warning: 'WarningOutline',
     reload: 'ReloadOutline',
