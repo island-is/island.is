@@ -77,7 +77,7 @@ export const SideMenu = ({
     [ref, isVisible, handleClose],
   )
 
-  const onKeyDown = useCallback((event, index) => {
+  const onKeyDown = useCallback((event, index: number) => {
     switch (event.key.toLowerCase()) {
       case 'arrowleft':
         if (index > 0) {
@@ -184,7 +184,7 @@ export const SideMenu = ({
             </Hidden>
 
             <ul className={styles.tabBar} role="tablist">
-              {tabList.map((tab, index) => (
+              {tabList.map((tab, index: number) => (
                 <li
                   key={index}
                   className={cn(styles.tabContainer, {
@@ -217,7 +217,7 @@ export const SideMenu = ({
                 </li>
               ))}
             </ul>
-            {tabList.map((tab, index) => {
+            {tabList.map((tab, index: number) => {
               const hasExternalLinks =
                 tab.externalLinks && tab.externalLinks.length
               return (
@@ -230,7 +230,7 @@ export const SideMenu = ({
                   hidden={activeTab !== index}
                 >
                   <div className={styles.linksContent}>
-                    {tab.links.map((link, index) => {
+                    {tab.links.map((link, index: number) => {
                       const props = {
                         ...(link.href && { href: link.href }),
                         ...(link.as && { as: link.as }),
@@ -271,7 +271,7 @@ export const SideMenu = ({
                         {tab.externalLinksHeading}
                       </Text>
                       <div className={styles.linksContent}>
-                        {tab.externalLinks.map((link, index) => (
+                        {tab.externalLinks.map((link, index: number) => (
                           <Text
                             key={index}
                             fontWeight="medium"

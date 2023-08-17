@@ -96,7 +96,24 @@ export const GenericOverview: Screen<GenericOverviewProps> = ({
       </Stack>
       <Stack space={6}>
         {overviewLinks.map(
-          ({ title, linkTitle, link, image, leftImage, intro }, index) => {
+          (
+            {
+              title,
+              linkTitle,
+              link,
+              image,
+              leftImage,
+              intro,
+            }: {
+              title: string
+              linkTitle: string
+              link: any
+              image: string
+              leftImage: string
+              intro: string
+            },
+            index: number,
+          ) => {
             return (
               <GridRow key={index} direction={leftImage ? 'row' : 'rowReverse'}>
                 <GridColumn span={['8/8', '3/8', '4/8', '3/8']}>

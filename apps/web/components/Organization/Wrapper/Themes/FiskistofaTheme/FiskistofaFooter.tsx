@@ -17,6 +17,7 @@ import { webRichText } from '@island.is/web/utils/richText'
 import { useNamespace } from '@island.is/web/hooks'
 
 import * as styles from './FiskistofaFooter.css'
+import { ReactNode } from 'react'
 
 interface FiskistofaFooterProps {
   footerItems: FooterItem[]
@@ -56,7 +57,10 @@ const FiskistofaFooter = ({
                   </Text>
                   {webRichText(item.content as SliceType[], {
                     renderNode: {
-                      [BLOCKS.PARAGRAPH]: (_node, children) => (
+                      [BLOCKS.PARAGRAPH]: (
+                        _node: never,
+                        children: ReactNode,
+                      ) => (
                         <Text
                           variant={'medium'}
                           marginBottom={1}
@@ -77,7 +81,10 @@ const FiskistofaFooter = ({
                 >
                   {webRichText(footerItems[3].content as SliceType[], {
                     renderNode: {
-                      [BLOCKS.PARAGRAPH]: (_node, children) => (
+                      [BLOCKS.PARAGRAPH]: (
+                        _node: never,
+                        children: ReactNode,
+                      ) => (
                         <Text variant={'eyebrow'} fontWeight={'medium'}>
                           {children}
                         </Text>

@@ -1,4 +1,11 @@
-import React, { useRef, useState, useEffect, useMemo, Fragment } from 'react'
+import React, {
+  useRef,
+  useState,
+  useEffect,
+  useMemo,
+  Fragment,
+  ReactNode,
+} from 'react'
 import Link from 'next/link'
 import ReactDOM from 'react-dom'
 import flatten from 'lodash/flatten'
@@ -25,6 +32,7 @@ import { useNamespace } from '@island.is/web/hooks'
 
 import * as timelineStyles from './TimelineSlice.css'
 import * as eventStyles from './Event.css'
+import { TimelineEvent } from '@island.is/api/schema'
 
 const BUTTON_SCROLL_AMOUNT = 500
 
@@ -69,7 +77,7 @@ const getTimeline = (
 
   let currentMonth = 0
 
-  const items = []
+  const items: ReactNode[] = []
 
   const today = new Date()
   today.setMonth(today.getMonth() - 1)
@@ -426,6 +434,13 @@ const TimelineItem = ({
   detailed,
   mobile = false,
   seeMoreText = 'Lesa meira',
+}: {
+  event: TimelineEvent
+  offset: number
+  index: number
+  detailed: string
+  mobile: boolean
+  seeMoreText: string
 }) => {
   const positionStyles = [
     { bottom: 136 },
@@ -533,7 +548,15 @@ const BulletLine = ({
   )
 }
 
-const MonthItem = ({ month, offset, year = '' }) => {
+const MonthItem = ({
+  month,
+  offset,
+  year = '',
+}: {
+  month: string
+  offset: string
+  year: string
+}) => {
   return (
     <div className={timelineStyles.monthItem} style={{ left: offset }}>
       <Text color="blue600" variant="eyebrow">

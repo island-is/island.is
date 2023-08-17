@@ -45,7 +45,9 @@ export const BoostChatPanel: React.FC<
         )
         window.boostEndpoint = endpoint
 
-        const onConversationIdChanged = (e) => {
+        const onConversationIdChanged = (e: {
+          detail: { conversationId: string }
+        }) => {
           window.sessionStorage.setItem(
             boostChatPanelEndpoints[endpoint].conversationKey,
             e.detail.conversationId,

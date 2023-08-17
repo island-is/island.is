@@ -17,7 +17,10 @@ const getUserID = () => {
   return String(stringHash(storage.getItem('IBM_WAC_DEVICE_ID') ?? email))
 }
 
-const getUserInformation = async (instance, callback) => {
+const getUserInformation = async (
+  instance,
+  callback: (userInfo: { name: string; email: string }) => void,
+) => {
   const storedName = storage.getItem(nameInputId)
   const storedEmail = storage.getItem(emailInputId)
 

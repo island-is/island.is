@@ -61,7 +61,7 @@ const initialSearchState: Readonly<SearchState> = {
   isLoading: false,
 }
 
-const searchReducer = (state, action): SearchState => {
+const searchReducer = (state: any, action: any): SearchState => {
   switch (action.type) {
     case 'startLoading': {
       return { ...state, isLoading: true }
@@ -81,6 +81,7 @@ const searchReducer = (state, action): SearchState => {
     default:
       return initialSearchState
   }
+  return initialSearchState
 }
 
 const useSearch = (
@@ -446,7 +447,7 @@ const Results = ({
                   <Link
                     key={item.id}
                     {...itemProps}
-                    onClick={(e) => {
+                    onClick={(e: any) => {
                       trackSearchQuery(search.term, 'Web Suggestion')
                       onClick(e)
                       onRouting?.()

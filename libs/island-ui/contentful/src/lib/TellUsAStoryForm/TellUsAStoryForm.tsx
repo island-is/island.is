@@ -165,7 +165,7 @@ export const TellUsAStoryForm: React.FC<
 
   const options =
     !error && !loading && data?.getOrganizations?.items?.length
-      ? data.getOrganizations.items.map((x) => ({
+      ? data.getOrganizations.items.map((x: { title: string }) => ({
           label: x.title,
           value: x.title,
         }))
