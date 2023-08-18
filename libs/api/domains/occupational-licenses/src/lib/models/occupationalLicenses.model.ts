@@ -1,6 +1,6 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
 
-@ObjectType('HealthDirectorateOccupationalLicense')
+@ObjectType('OccupationalLicense')
 export class OccupationalLicense {
   @Field(() => ID)
   legalEntityId!: string

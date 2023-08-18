@@ -13,6 +13,7 @@ import {
 import { Organization } from '@island.is/shared/types'
 import { getOrganizationLogoUrl } from '@island.is/shared/utils'
 import { defineMessage } from 'react-intl'
+import { OccupationalLicensesPaths } from '../../lib/paths'
 
 const OccupationalLicensesOverview = () => {
   const {
@@ -23,7 +24,7 @@ const OccupationalLicensesOverview = () => {
 
   const { formatDateFns, formatMessage } = useLocale()
 
-  const licenses = data?.healthDirectorateOccupationalLicenses ?? [
+  const otherLicenses = [
     {
       legalEntityId: '1111111111',
       nationalId: '1111111111',
@@ -56,7 +57,7 @@ const OccupationalLicensesOverview = () => {
         intro={formatMessage(m.occupationalLicensesDescription)}
       />
       {loading && !error && <CardLoader />}
-      {!loading && !error && licenses?.length === 0 && (
+      {!loading && !error && otherLicenses?.length === 0 && (
         <Box marginTop={8}>
           <EmptyState
             title={defineMessage({
@@ -67,8 +68,9 @@ const OccupationalLicensesOverview = () => {
         </Box>
       )}
       <Stack space={2}>
-        {(licenses?.length ?? 0) > 0 &&
-          licenses?.map((item, index) => {
+        {!loading &&
+          (otherLicenses?.length ?? 0) > 0 &&
+          otherLicenses?.map((item, index) => {
             const today = new Date()
             const validLicense =
               item?.validFrom &&
@@ -95,7 +97,10 @@ const OccupationalLicensesOverview = () => {
                     defaultMessage: 'Skoða nánar',
                   }).defaultMessage,
                   variant: 'text',
-                  url: '',
+                  url: OccupationalLicensesPaths.OccupationalLicensesDetail.replace(
+                    ':id',
+                    item.licenseNumber,
+                  ),
                 }}
                 image={{
                   type: 'image',
@@ -108,6 +113,37 @@ const OccupationalLicensesOverview = () => {
               />
             )
           })}
+        {data?.educationLicense?.map((item, index) => {
+          const today = new Date()
+          const isValid = item.date && new Date(item.date) < today
+          return (
+            <ActionCard
+              key={`educational-licence-${index}`}
+              heading={item.school}
+              text={`Útgáfudagur: ${formatDateFns(item.date, 'dd. MMMM yyyy')}`}
+              tag={{
+                label: isValid ? 'Í gildi' : 'Útrunnið',
+                variant: isValid ? 'blue' : 'red',
+                outlined: false,
+              }}
+              cta={{
+                label: defineMessage({
+                  id: 'sp.education-graduation:details',
+                  defaultMessage: 'Skoða nánar',
+                }).defaultMessage,
+                variant: 'text',
+                url: OccupationalLicensesPaths.OccupationalLicensesDetail.replace(
+                  ':id',
+                  item.id,
+                ),
+              }}
+              image={{
+                type: 'image',
+                url: getOrganizationLogoUrl(item.school, organizations, 120),
+              }}
+            />
+          )
+        })}
       </Stack>
     </Box>
   )

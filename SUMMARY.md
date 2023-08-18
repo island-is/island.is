@@ -194,7 +194,7 @@
   - [Finance](libs/clients/finance/README.md)
   - [Firearm License](libs/clients/firearm-license/README.md)
   - [Clients Fishing License](libs/clients/fishing-license/README.md)
-  - [Clients Health Directorate](libs/clients/health-directorate/README.md)
+  - [Clients Occupational Licenses](libs/clients/occupational-licenses/README.md)
   - [Icelandic Health Insurance](libs/clients/icelandic-health-insurance/README.md)
     - [Health Insurance](libs/clients/icelandic-health-insurance/health-insurance/README.md)
     - [Rights Portal](libs/clients/icelandic-health-insurance/rights-portal/README.md)

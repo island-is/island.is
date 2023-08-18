@@ -1,6 +1,6 @@
 /* eslint-disable */
 export default {
-  displayName: 'clients-health-directorate',
+  displayName: 'clients-occupational-licenses',
   preset: './jest.preset.js',
   rootDir: '../../..',
   roots: [__dirname],
@@ -14,5 +14,5 @@ export default {
     ],
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
-  coverageDirectory: '<rootDir>/coverage/libs/clients/health-directorate',
+  coverageDirectory: '<rootDir>/coverage/libs/clients/occupational-licenses',
 }

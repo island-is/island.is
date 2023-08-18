@@ -3,7 +3,7 @@ import { MinarSidur, StarfsleyfiAMinumSidumApi } from '../../gen/fetch'
 import { Injectable } from '@nestjs/common'
 
 @Injectable()
-export class HealthDirectorateClientService {
+export class OccupationalLicensesClientService {
   constructor(private readonly api: StarfsleyfiAMinumSidumApi) {}
 
   private apiWithAuth = (user: User) =>

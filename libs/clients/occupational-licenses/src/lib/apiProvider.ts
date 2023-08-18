@@ -7,20 +7,20 @@ import {
 } from '@island.is/nest/config'
 import { Provider } from '@nestjs/common'
 import { Configuration, StarfsleyfiAMinumSidumApi } from '../../gen/fetch'
-import { HealthDirectorateClientConfig } from './client.config'
+import { OccupationalLicensesClientConfig } from './client.config'
 
-export const HealthDirectorateApiProvider: Provider<StarfsleyfiAMinumSidumApi> = {
+export const OccupationalLicensesApiProvider: Provider<StarfsleyfiAMinumSidumApi> = {
   provide: StarfsleyfiAMinumSidumApi,
   scope: LazyDuringDevScope,
   useFactory: (
     xroadConfig: ConfigType<typeof XRoadConfig>,
-    config: ConfigType<typeof HealthDirectorateClientConfig>,
+    config: ConfigType<typeof OccupationalLicensesClientConfig>,
     idsClientConfig: ConfigType<typeof IdsClientConfig>,
   ) =>
     new StarfsleyfiAMinumSidumApi(
       new Configuration({
         fetchApi: createEnhancedFetch({
-          name: 'clients-health-directorate',
+          name: 'clients-occupational-licenses',
           autoAuth: idsClientConfig.isConfigured
             ? {
                 mode: 'tokenExchange',
@@ -40,7 +40,7 @@ export const HealthDirectorateApiProvider: Provider<StarfsleyfiAMinumSidumApi> =
     ),
   inject: [
     XRoadConfig.KEY,
-    HealthDirectorateClientConfig.KEY,
+    OccupationalLicensesClientConfig.KEY,
     IdsClientConfig.KEY,
   ],
 }

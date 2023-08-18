@@ -119,9 +119,6 @@
       "@island.is/api/domains/fiskistofa": [
         "libs/api/domains/fiskistofa/src/index.ts"
       ],
-      "@island.is/api/domains/health-directorate": [
-        "libs/api/domains/health-directorate/src/index.ts"
-      ],
       "@island.is/api/domains/health-insurance": [
         "libs/api/domains/health-insurance/src/index.ts"
       ],
@@ -154,6 +151,9 @@
       ],
       "@island.is/api/domains/national-registry-x-road": [
         "libs/api/domains/national-registry-x-road/src/index.ts"
+      ],
+      "@island.is/api/domains/occupational-licenses": [
+        "libs/api/domains/occupational-licenses/src/index.ts"
       ],
       "@island.is/api/domains/passport": [
         "libs/api/domains/passport/src/index.ts"
@@ -497,8 +497,8 @@
         "libs/clients/fishing-license/src/index.ts"
       ],
       "@island.is/clients/fiskistofa": ["libs/clients/fiskistofa/src/index.ts"],
-      "@island.is/clients/health-directorate": [
-        "libs/clients/health-directorate/src/index.ts"
+      "@island.is/clients/occupational-licenses": [
+        "libs/clients/occupational-licenses/src/index.ts"
       ],
       "@island.is/clients/icelandic-government-institution-vacancies": [
         "libs/clients/icelandic-government-institution-vacancies/src/index.ts"

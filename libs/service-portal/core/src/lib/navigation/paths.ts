@@ -92,6 +92,7 @@ export enum ServicePortalPath {
 
   // Occupational Licenses
   OccupationalLicenses = '/starfsleyfi',
+  OccupationalLicensesDetail = '/starfsleyfi/:id',
 
   // Assets
   AssetsRoot = '/fasteignir',

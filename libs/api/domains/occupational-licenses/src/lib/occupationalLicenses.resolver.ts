@@ -5,24 +5,24 @@ import {
 } from '@island.is/auth-nest-tools'
 import type { User } from '@island.is/auth-nest-tools'
 import { Audit } from '@island.is/nest/audit'
-import { HealthDirectorateClientService } from '@island.is/clients/health-directorate'
+import { OccupationalLicensesClientService } from '@island.is/clients/occupational-licenses'
 import { UseGuards } from '@nestjs/common'
 import { Query, Resolver } from '@nestjs/graphql'
-import { OccupationalLicense } from './models/occupationalLicense.model'
+import { OccupationalLicense } from './models/occupationalLicenses.model'
 
 @UseGuards(IdsUserGuard, IdsAuthGuard)
 @Resolver()
-export class HealthDirectorateResolver {
+export class OccupationalLicensesResolver {
   constructor(
-    private readonly healthDirectorateApi: HealthDirectorateClientService,
+    private readonly occupationalLicensesApi: OccupationalLicensesClientService,
   ) {}
 
   @Query(() => [OccupationalLicense], {
-    name: 'healthDirectorateOccupationalLicenses',
+    name: 'occupationalLicenses',
     nullable: true,
   })
   @Audit()
   async occupationalLicenses(@CurrentUser() user: User) {
-    return await this.healthDirectorateApi.getOccupationalLicense(user)
+    return await this.occupationalLicensesApi.getOccupationalLicense(user)
   }
 }

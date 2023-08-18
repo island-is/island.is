@@ -266,7 +266,7 @@ export const JudicialAdministration = new XroadConf({
   },
 })
 
-export const HealthDirectorate = new XroadConf({
+export const OccupationalLicenses = new XroadConf({
   env: {
     XROAD_HEALTH_DIRECTORATE_PATH: {
       dev: 'IS-DEV/GOV/10015/EmbaettiLandlaeknis-Protected/landlaeknir',

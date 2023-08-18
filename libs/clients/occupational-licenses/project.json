@@ -1,20 +1,22 @@
 {
-  "name": "clients-health-directorate",
+  "name": "clients-occupational-licenses",
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "libs/clients/health-directorate/src",
+  "sourceRoot": "libs/clients/occupational-licenses/src",
   "targets": {
     "lint": {
       "executor": "@nx/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": ["libs/clients/health-directorate/**/*.ts"]
+        "lintFilePatterns": ["libs/clients/occupational-licenses/**/*.ts"]
       }
     },
     "test": {
       "executor": "@nx/jest:jest",
-      "outputs": ["{workspaceRoot}/coverage/libs/clients/health-directorate"],
+      "outputs": [
+        "{workspaceRoot}/coverage/libs/clients/occupational-licenses"
+      ],
       "options": {
-        "jestConfig": "libs/clients/health-directorate/jest.config.ts",
+        "jestConfig": "libs/clients/occupational-licenses/jest.config.ts",
         "passWithNoTests": true
       }
     },
@@ -26,13 +28,13 @@
           "prettier --write src/clientConfig.json"
         ],
         "parallel": false,
-        "cwd": "libs/clients/health-directorate"
+        "cwd": "libs/clients/occupational-licenses"
       }
     },
     "schemas/external-openapi-generator": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "yarn openapi-generator -o libs/clients/health-directorate/gen/fetch -i libs/clients/health-directorate/src/clientConfig.json"
+        "command": "yarn openapi-generator -o libs/clients/occupational-licenses/gen/fetch -i libs/clients/occupational-licenses/src/clientConfig.json"
       }
     }
   },

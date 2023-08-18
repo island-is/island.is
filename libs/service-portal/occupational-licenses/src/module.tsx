@@ -2,8 +2,12 @@ import { lazy } from 'react'
 import { PortalModule } from '@island.is/portals/core'
 import { OccupationalLicensesPaths } from './lib/paths'
 
-const OccupationalLicensesOverview = lazy(() =>
+const OccupationalLicensesOverviewScreen = lazy(() =>
   import('./screens/OccupationalLicensesOverview/OccupationalLicensesOverview'),
+)
+
+const OccupationalLicensesDetailScreen = lazy(() =>
+  import('./screens/OccupationalLicenceDetail/OccupationalLicenceDetail'),
 )
 
 export const occupationalLicensesModule: PortalModule = {
@@ -14,7 +18,13 @@ export const occupationalLicensesModule: PortalModule = {
       name: 'Starfsleyfi',
       path: OccupationalLicensesPaths.OccupationalLicensesRoot,
       enabled: true,
-      element: <OccupationalLicensesOverview />,
+      element: <OccupationalLicensesOverviewScreen />,
+    },
+    {
+      name: 'Stakt starfsleyfi',
+      path: OccupationalLicensesPaths.OccupationalLicensesDetail,
+      enabled: true,
+      element: <OccupationalLicensesDetailScreen />,
     },
   ],
 }
