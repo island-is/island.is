@@ -125,7 +125,7 @@ export const Overview: FC<
         )
 
         // Then check if user is the last approver (using newer updated application answers), if so we
-        // need to submit the application (event=SUBMIT) to change to state COMPLETED
+        // need to submit the application (event=SUBMIT) to change the state to COMPLETED
         if (isLast) {
           const approveAnswers2 = getApproveAnswers(
             reviewerNationalId,
