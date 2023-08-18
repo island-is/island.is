@@ -84,7 +84,6 @@ import { SignatureConfirmationResponse } from './models/signatureConfirmation.re
 import { CaseListInterceptor } from './interceptors/caseList.interceptor'
 import { transitionCase } from './state/case.state'
 import { CaseService, UpdateCase } from './case.service'
-import { strings } from './case.strings'
 
 @Controller('api')
 @ApiTags('cases')
@@ -231,8 +230,8 @@ export class CaseController {
     }
 
     if (update.caseResentExplanation) {
-      update.courtCaseFacts = `${strings.resentCourtCaseFacts} ${theCase.caseFacts}`
-      update.courtLegalArguments = `${strings.resentCourtCaseFacts} ${theCase.legalArguments}`
+      update.courtCaseFacts = `Í greinargerð sóknaraðila er atvikum lýst svo: ${theCase.caseFacts}`
+      update.courtLegalArguments = `Í greinargerð er krafa sóknaraðila rökstudd þannig: ${theCase.legalArguments}`
     }
 
     if (update.prosecutorStatementDate) {
