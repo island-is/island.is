@@ -3,7 +3,6 @@ import { Box, DropdownMenu, Button } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import * as styles from '../styles.css'
 import { m } from '../../../lib/messages'
-import { downloadCSV } from './downloadCSV'
 import copyToClipboard from 'copy-to-clipboard'
 import { toast } from 'react-toastify'
 import { usePDF } from '@react-pdf/renderer'
@@ -11,9 +10,7 @@ import MyPdfDocument from './DownloadPdf'
 import {
   EndorsementList,
   PaginatedEndorsementResponse,
-  Endorsement
 } from '@island.is/api/schema'
-import { formatDate } from '../../../lib/utils'
 import cn from 'classnames'
 
 interface Props {
@@ -31,20 +28,6 @@ interface Props {
       className: string,
     ) => ReactElement
   }[]
-}
-
-export const getCSV = async (
-  signers: PaginatedEndorsementResponse,
-  fileName: string,
-) => {
-  const name = `${fileName}`
-  const dataArray = signers.data.map((item: Endorsement) => [
-    formatDate(item.created) ?? '',
-    item.meta.fullName ?? '',
-    item.meta.locality ?? '',
-  ])
-
-  await downloadCSV(name, ['Dagsetning', 'Nafn', 'Sveitarfélag'], dataArray)
 }
 
 const baseUrl = `${document.location.origin}/undirskriftalistar/`

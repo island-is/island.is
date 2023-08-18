@@ -3,15 +3,12 @@ import { Box, DropdownMenu } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import * as styles from './styles.css'
 import { m } from '../../lib/messages'
-import { downloadCSV } from './downloadCSV'
 import {
   EndorsementList,
   PaginatedEndorsementResponse,
-  Endorsement
 } from '@island.is/api/schema'
 import MyPdfDocument from './MyPdfDocument'
 import { usePDF } from '@react-pdf/renderer'
-import { formatDate } from '../../lib/utils/utils'
 
 interface Props {
   petition: EndorsementList
@@ -28,20 +25,6 @@ interface Props {
       className: string,
     ) => ReactElement
   }[]
-}
-
-export const getCSV = async (
-  signers: PaginatedEndorsementResponse,
-  fileName: string,
-) => {
-  const name = `${fileName}`
-  const dataArray = signers.data.map((item: Endorsement) => [
-    formatDate(item.created) ?? '',
-    item.meta.fullName ?? '',
-    item.meta.locality ?? '',
-  ])
-
-  await downloadCSV(name, ['Dagsetning', 'Nafn', 'Sveitarfélag'], dataArray)
 }
 
 export const ExportList: FC<React.PropsWithChildren<Props>> = ({

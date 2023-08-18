@@ -1,4 +1,23 @@
 import CSVStringify from 'csv-stringify'
+import {
+  Endorsement,
+  PaginatedEndorsementResponse,
+} from '@island.is/api/schema'
+import { formatDate } from '../../lib/utils/utils'
+
+export const getCSV = async (
+  signers: PaginatedEndorsementResponse,
+  fileName: string,
+) => {
+  const name = `${fileName}`
+  const dataArray = signers.data.map((item: Endorsement) => [
+    formatDate(item.created) ?? '',
+    item.meta.fullName ?? '',
+    item.meta.locality ?? '',
+  ])
+
+  await downloadCSV(name, ['Dagsetning', 'Nafn', 'Sveitarfélag'], dataArray)
+}
 
 export const downloadCSV = async (
   name: string,

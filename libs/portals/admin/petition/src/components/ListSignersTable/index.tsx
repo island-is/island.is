@@ -9,12 +9,13 @@ import {
 import { useLocale } from '@island.is/localization'
 import { formatDate, pages, PAGE_SIZE, paginate } from '../../lib/utils/utils'
 import { m } from '../../lib/messages'
-import { ExportList, getCSV } from '../ExportList'
+import { ExportList } from '../ExportList'
 import {
   Endorsement,
   EndorsementList,
   PaginatedEndorsementResponse,
 } from '@island.is/api/schema'
+import { getCSV } from '../ExportList/downloadCSV'
 
 const ListSignersTable = (data: {
   listId: string
