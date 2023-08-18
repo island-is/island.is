@@ -87,7 +87,7 @@ describe('InternalNotificationController - Send appeal received by court notific
             },
           ],
           subject: `Upplýsingar vegna kæru í máli ${courtCaseNumber}`,
-          html: `Kæra í máli ${courtCaseNumber} hefur borist Landsrétti. Hægt er að nálgast gögn málsins í <a href="http://localhost:4200/landsrettur/yfirlit/${caseId}">Réttarvörslugátt</a> með rafrænum skilríkjum.`,
+          html: `Kæra í máli ${courtCaseNumber} hefur borist Landsrétti. Hægt er að nálgast gögn málsins á <a href="http://localhost:4200/landsrettur/yfirlit/${caseId}">yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
         }),
       )
       expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
@@ -97,7 +97,7 @@ describe('InternalNotificationController - Send appeal received by court notific
           html: `Kæra í máli ${courtCaseNumber} hefur borist Landsrétti. Frestur til að skila greinargerð er til ${formatDate(
             getStatementDeadline(receivedDate),
             'PPPp',
-          )}. Hægt er að skila greinargerð og nálgast gögn málsins í <a href="http://localhost:4200/krafa/yfirlit/${caseId}">Réttarvörslugátt</a> með rafrænum skilríkjum.`,
+          )}. Hægt er að skila greinargerð og nálgast gögn málsins á <a href="http://localhost:4200/krafa/yfirlit/${caseId}">yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
         }),
       )
       expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
@@ -107,7 +107,7 @@ describe('InternalNotificationController - Send appeal received by court notific
           html: `Kæra í máli ${courtCaseNumber} hefur borist Landsrétti. Frestur til að skila greinargerð er til ${formatDate(
             getStatementDeadline(receivedDate),
             'PPPp',
-          )}. Hægt er að skila greinargerð og nálgast gögn málsins í <a href="http://localhost:4200/verjandi/krafa/${caseId}">Réttarvörslugátt</a> með rafrænum skilríkjum.`,
+          )}. Hægt er að skila greinargerð og nálgast gögn málsins á <a href="http://localhost:4200/verjandi/krafa/${caseId}">yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
         }),
       )
       expect(then.result).toEqual({ delivered: true })
@@ -129,7 +129,7 @@ describe('InternalNotificationController - Send appeal received by court notific
           html: `Kæra í máli ${courtCaseNumber} hefur borist Landsrétti. Frestur til að skila greinargerð er til ${formatDate(
             getStatementDeadline(receivedDate),
             'PPPp',
-          )}. Hægt er að skila greinargerð og nálgast gögn málsins í <a href="http://localhost:4200/krafa/yfirlit/${caseId}">Réttarvörslugátt</a> með rafrænum skilríkjum.`,
+          )}. Hægt er að skila greinargerð og nálgast gögn málsins á <a href="http://localhost:4200/krafa/yfirlit/${caseId}">yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
         }),
       )
       expect(mockEmailService.sendEmail).toHaveBeenCalledWith(

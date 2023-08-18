@@ -148,9 +148,9 @@ export const notifications = {
     },
     link: {
       id:
-        'judicial.system.backend:notifications.defender_resubmitted_to_court.link_v2',
+        'judicial.system.backend:notifications.defender_resubmitted_to_court.link_v3',
       defaultMessage:
-        '<br /><br />{defenderHasAccessToRvg, select, false {Þú getur nálgast gögn málsins hjá {courtName} ef þau hafa ekki þegar verið afhent} other {Þú getur nálgast gögn málsins á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}}.',
+        '<br /><br />{defenderHasAccessToRvg, select, false {Þú getur nálgast gögn málsins hjá {courtName} ef þau hafa ekki þegar verið afhent} other {Þú getur nálgast gögn málsins á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}}}.',
       description:
         'Notaður sem vísun í gögn málsins í pósti til verjanda/talsmanns þegar sækjandi breytir kröfunni og sendir aftur á héraðsdómstól',
     },
