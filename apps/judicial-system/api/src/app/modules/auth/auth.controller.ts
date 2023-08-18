@@ -179,10 +179,10 @@ export class AuthController {
           )
         }
         if (!verifiedToken) {
-          this.logger.debug('Token verification unsuccessful')
+          this.logger.error('Token verification unsuccessful')
         }
       } catch (error) {
-        this.logger.debug('Token verification failed')
+        this.logger.error('Token verification failed', { error })
       }
     }
     return res.redirect('/?villa=innskraning-ogild')
