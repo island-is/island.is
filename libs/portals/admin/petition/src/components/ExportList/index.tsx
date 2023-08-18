@@ -7,6 +7,7 @@ import { downloadCSV } from './downloadCSV'
 import {
   EndorsementList,
   PaginatedEndorsementResponse,
+  Endorsement
 } from '@island.is/api/schema'
 import MyPdfDocument from './MyPdfDocument'
 import { usePDF } from '@react-pdf/renderer'
@@ -29,9 +30,12 @@ interface Props {
   }[]
 }
 
-export const getCSV = async (data: any[], fileName: string) => {
+export const getCSV = async (
+  signers: PaginatedEndorsementResponse,
+  fileName: string,
+) => {
   const name = `${fileName}`
-  const dataArray = data.map((item: any) => [
+  const dataArray = signers.data.map((item: Endorsement) => [
     formatDate(item.created) ?? '',
     item.meta.fullName ?? '',
     item.meta.locality ?? '',

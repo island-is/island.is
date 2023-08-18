@@ -51,7 +51,7 @@ const PetitionsTable = (data: {
               petition={data.petition}
               petitionSigners={data.petitionSigners}
               petitionId={data.listId}
-              onGetCSV={() => getCSV(petitionSigners, 'Undirskriftalisti')}
+              onGetCSV={() => getCSV(data.petitionSigners, 'Undirskriftalisti')}
             />
           )}
         </Box>
