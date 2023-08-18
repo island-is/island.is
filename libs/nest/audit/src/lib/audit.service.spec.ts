@@ -247,11 +247,33 @@ describe('AuditService against Cloudwatch', () => {
       system: true,
     })
   })
+
+  it('should support logging to console when not in development mode', () => {
+    // Arrange
+    const action = 'some_action'
+
+    // Act
+    service.audit({
+      auth,
+      action,
+      alsoLog: true,
+    })
+
+    // Assert
+    expect(spy).toHaveBeenCalledWith(
+      expect.objectContaining({
+        alsoLog: true,
+      }),
+    )
+  })
 })
 
 describe('AuditService in development', () => {
   const genericLogger = mock<Logger>()
   let service: AuditService
+  let spy: SpyInstance<Logger> = jest.spyOn(auditLog, 'info')
+  const namespace = '@test.is/namespace'
+  const action = 'viewDetails'
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -269,15 +291,12 @@ describe('AuditService in development', () => {
         AuditService,
       ],
     }).compile()
-
+    spy = jest.spyOn(genericLogger, 'info')
     service = module.get<AuditService>(AuditService)
   })
 
   it('should use generic logger', () => {
     // Arrange
-    const spy = jest.spyOn(genericLogger, 'info')
-    const namespace = '@test.is/namespace'
-    const action = 'viewDetails'
     const resources = ['some-id']
     const meta = { test: true }
 
@@ -302,6 +321,20 @@ describe('AuditService in development', () => {
       ip: auth.ip,
       userAgent: auth.userAgent,
       appVersion,
+    })
+  })
+
+  it('should not support logging to console in development mode', () => {
+    // Act
+    service.audit({
+      auth,
+      action,
+      alsoLog: true,
+    })
+
+    // Assert
+    expect(spy).not.toHaveBeenCalledWith({
+      alsoLog: true,
     })
   })
 })

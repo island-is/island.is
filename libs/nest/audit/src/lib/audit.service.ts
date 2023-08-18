@@ -100,6 +100,7 @@ export class AuditService {
       resources: isString(resources) ? [resources] : resources,
       meta,
       appVersion: process.env.APP_VERSION,
+      ...(message.alsoLog && { alsoLog: message.alsoLog }),
       ...(this.useDevLogger && { message: 'Audit record' }),
     }
 
@@ -130,8 +131,8 @@ export class AuditService {
     const formattedMessage = this.formatMessage(message)
     this.auditLog?.info(formattedMessage)
 
-    // Also log to the console if alsoLog is set.
-    if (message.alsoLog) {
+    // Log to the console if the message has the alsoLog flag set and is not in dev mode.
+    if (message.alsoLog && !this.useDevLogger) {
       this.logger.info(formattedMessage)
     }
   }
