@@ -16,11 +16,13 @@ jest.mock('@island.is/logging', () => {
   }
 })
 const auditLog = mock<Logger>()
+
 jest.mock('winston', () => {
   return {
     createLogger: () => auditLog,
   }
 })
+
 jest.mock('winston-cloudwatch', () => {
   return class WinstonCloudWatch {}
 })
@@ -255,9 +257,28 @@ describe('AuditService against Cloudwatch', () => {
     // Act
     service.audit({
       auth,
-      action,
+      action: 'some_action',
       alsoLog: true,
     })
+
+    // Assert
+    expect(spy).toHaveBeenCalledWith(
+      expect.objectContaining({
+        alsoLog: true,
+      }),
+    )
+  })
+
+  it('supports log to console in auditing promises with audit templates when not in development mode', async () => {
+    // Act
+    await service.auditPromise(
+      {
+        auth,
+        action: 'some_action',
+        alsoLog: true,
+      },
+      Promise.resolve(),
+    )
 
     // Assert
     expect(spy).toHaveBeenCalledWith(

@@ -144,7 +144,7 @@ export class AuditService {
         namespace: template.namespace,
         resources: this.unwrap(template.resources, result),
         meta: this.unwrap(template.meta, result),
-        alsoLog: template.alsoLog ?? undefined,
+        ...(template.alsoLog && { alsoLog: template.alsoLog }),
       }
 
       if (isDefaultAuditTemplate(template)) {
