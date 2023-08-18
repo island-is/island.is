@@ -1,4 +1,5 @@
 import { useQuery } from '@apollo/client'
+import isEqual from 'lodash/isEqual'
 import {
   Box,
   Button,
@@ -57,7 +58,6 @@ import {
   getInitialParameters,
 } from './utils'
 import * as styles from './PublishedMaterial.css'
-import { isEqual } from 'lodash'
 
 const ASSETS_PER_PAGE = 20
 const DEBOUNCE_TIME_IN_MS = 300
