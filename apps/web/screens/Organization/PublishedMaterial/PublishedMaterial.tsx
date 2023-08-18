@@ -57,6 +57,7 @@ import {
   getInitialParameters,
 } from './utils'
 import * as styles from './PublishedMaterial.css'
+import { isEqual } from 'lodash'
 
 const ASSETS_PER_PAGE = 20
 const DEBOUNCE_TIME_IN_MS = 300
@@ -296,14 +297,16 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
 
       filterValuesHaveBeenInitialized.current = true
 
-      router.replace(
-        {
-          pathname: router.pathname,
-          query: updatedQueryParams,
-        },
-        undefined,
-        { scroll: false, shallow: true },
-      )
+      if (!isEqual(router.query, updatedQueryParams)) {
+        router.replace(
+          {
+            pathname: router.pathname,
+            query: updatedQueryParams,
+          },
+          undefined,
+          { scroll: false, shallow: true },
+        )
+      }
     },
     DEBOUNCE_TIME_IN_MS,
     [parameters, activeLocale, searchValue, selectedOrderOption],
