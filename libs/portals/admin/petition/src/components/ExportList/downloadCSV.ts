@@ -1,9 +1,9 @@
 import CSVStringify from 'csv-stringify'
+import { formatDate } from '../../lib/utils/utils'
 import {
   Endorsement,
   PaginatedEndorsementResponse,
 } from '@island.is/api/schema'
-import { formatDate } from '../../lib/utils/utils'
 
 export const getCSV = async (
   signers: PaginatedEndorsementResponse,
