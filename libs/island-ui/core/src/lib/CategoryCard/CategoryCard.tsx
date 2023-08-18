@@ -322,7 +322,32 @@ const Component = forwardRef<
                   onChange={sidePanelConfig.onCheck}
                 />
               </Box>
-              <Box>{renderCTA()}</Box>
+              <Box>
+                <Box
+                  paddingTop="gutter"
+                  display="flex"
+                  justifyContent={['flexStart', 'flexEnd']}
+                  flexDirection="row"
+                >
+                  <Box>
+                    {renderCTA()}
+                    {/* <Button>button</Button>
+                    {/* <Button
+                      {...(sidePanelConfig?.cta?.buttonType ?? {
+                        variant: sidePanelConfig?.cta?.variant,
+                      })}
+                      size={sidePanelConfig?.cta?.size}
+                      onClick={sidePanelConfig?.cta?.onClick}
+                      disabled={sidePanelConfig?.cta?.disabled}
+                      icon={sidePanelConfig?.cta?.icon}
+                      iconType={sidePanelConfig?.cta?.iconType}
+                      nowrap
+                    >
+                      {sidePanelConfig?.cta?.label}
+                    </Button> */}
+                  </Box>
+                </Box>
+              </Box>
             </Box>
           )}
         </Box>
