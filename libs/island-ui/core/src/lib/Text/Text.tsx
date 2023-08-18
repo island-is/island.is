@@ -118,7 +118,7 @@ export const Text = forwardRef<HTMLElement, TextProps & TestSupport>(
       whiteSpace,
       dataTestId,
       capitalizeFirstLetter,
-      translate = 'yes',
+      translate,
     },
     ref,
   ) => {
