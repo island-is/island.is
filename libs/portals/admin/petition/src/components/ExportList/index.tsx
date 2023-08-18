@@ -7,7 +7,7 @@ import { downloadCSV } from './downloadCSV'
 import {
   EndorsementList,
   PaginatedEndorsementResponse,
-  Endorsement
+  Endorsement,
 } from '@island.is/api/schema'
 import MyPdfDocument from './MyPdfDocument'
 import { usePDF } from '@react-pdf/renderer'

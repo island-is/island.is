@@ -11,7 +11,7 @@ import MyPdfDocument from './DownloadPdf'
 import {
   EndorsementList,
   PaginatedEndorsementResponse,
-  Endorsement
+  Endorsement,
 } from '@island.is/api/schema'
 import { formatDate } from '../../../lib/utils'
 import cn from 'classnames'
