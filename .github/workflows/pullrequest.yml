@@ -70,6 +70,12 @@ jobs:
           path: event.json
           retention-days: 60
 
+      - name: NX extra arguments
+        id: nx-extra-args
+        run: |
+          NX_EXTRA_ARGS=$(echo '${{ toJson(github.event.pull_request.labels) }}' | jq '.[] | select(.name == "skip-nx-cache")? | any' | grep -q true && echo "--skip-nx-cache" || echo "")
+          echo "NX_EXTRA_ARGS=$NX_EXTRA_ARGS" >> $GITHUB_ENV
+
       - name: Calculate cache key for node_modules
         id: calculate_node_modules_hash
         run: |
@@ -454,7 +460,7 @@ jobs:
         run: tar zxvf generated_files.tar.gz
 
       - name: Linting
-        run: ./scripts/ci/run-in-parallel-native.sh lint
+        run: ./scripts/ci/run-in-parallel-native.sh lint $NX_EXTRA_ARGS
 
   build:
     needs:
@@ -503,7 +509,7 @@ jobs:
         run: tar zxvf generated_files.tar.gz
 
       - name: Building
-        run: ./scripts/ci/run-in-parallel-native.sh build
+        run: ./scripts/ci/run-in-parallel-native.sh build $NX_EXTRA_ARGS
 
   success:
     runs-on: ec2-runners
