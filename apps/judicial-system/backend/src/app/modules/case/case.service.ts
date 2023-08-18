@@ -184,15 +184,24 @@ export const include: Includeable[] = [
     as: 'courtRecordSignatory',
     include: [{ model: Institution, as: 'institution' }],
   },
-  { model: Case, as: 'parentCase' },
+  {
+    model: Case,
+    as: 'parentCase',
+    include: [
+      {
+        model: CaseFile,
+        as: 'caseFiles',
+        required: false,
+        where: { state: { [Op.not]: CaseFileState.DELETED }, category: null },
+      },
+    ],
+  },
   { model: Case, as: 'childCase' },
   {
     model: CaseFile,
     as: 'caseFiles',
     required: false,
-    where: {
-      state: { [Op.not]: CaseFileState.DELETED },
-    },
+    where: { state: { [Op.not]: CaseFileState.DELETED } },
   },
   {
     model: User,
