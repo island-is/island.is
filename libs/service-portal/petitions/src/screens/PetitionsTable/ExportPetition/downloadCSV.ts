@@ -1,7 +1,7 @@
 import CSVStringify from 'csv-stringify'
 import {
   PaginatedEndorsementResponse,
-  Endorsement
+  Endorsement,
 } from '@island.is/api/schema'
 import { formatDate } from '../../../lib/utils'
 
