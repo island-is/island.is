@@ -287,7 +287,52 @@ export class CitizenshipService extends BaseTemplateApiService {
     const spouseDetails = application.externalData.spouseDetails.data as
       | SpouseIndividual
       | undefined
+    const childrenCustodyInformation = application.externalData
+      .childrenCustodyInformation.data as
+      | ApplicantChildCustodyInformation[]
+      | undefined
     const applicantPassport = answers.passport
+    const filteredCountriesOfResidence =
+      answers.countriesOfResidence?.hasLivedAbroad &&
+      answers.countriesOfResidence?.selectedAbroadCountries
+        ?.filter((c) => !c.wasRemoved)
+        ?.map((c) => ({
+          countryId: parseInt(c.countryId),
+        }))
+    const filteredStaysAbroad =
+      answers.staysAbroad?.hasStayedAbroad &&
+      answers.staysAbroad?.selectedAbroadCountries
+        ?.filter((s) => !s.wasRemoved)
+        ?.map((s) => ({
+          countryId: parseInt(s.countryId),
+          dateFrom: s.dateFrom ? new Date(s.dateFrom) : undefined,
+          dateTo: s.dateTo ? new Date(s.dateTo) : undefined,
+          purpose: s.purpose,
+        }))
+    const filteredParents =
+      answers.parentInformation?.hasValidParents &&
+      answers.parentInformation?.parents
+        ?.filter((p) => p.nationalId && !p.wasRemoved)
+        ?.map((p) => ({
+          nationalId: p.nationalId!,
+          givenName: p.givenName,
+          familyName: p.familyName,
+        }))
+    const criminalRecordListFlattened = []
+    const criminalRecordList =
+      answers.supportingDocuments?.criminalRecordList || []
+    for (let i = 0; i < criminalRecordList.length; i++) {
+      const countryId = criminalRecordList[i].countryId
+      if (countryId) {
+        const fileList = criminalRecordList[i].file || []
+        for (let j = 0; j < fileList.length; j++) {
+          criminalRecordListFlattened.push({
+            countryId: parseInt(countryId),
+            base64: fileList[j],
+          })
+        }
+      }
+    }
 
     if (!applicantPassport) {
       throw new Error('Ekki er búið að skrá upplýsingar um vegabréf umsækjanda')
@@ -321,27 +366,9 @@ export class CitizenshipService extends BaseTemplateApiService {
             reasonDifferentAddress: answers.maritalStatus?.explanation,
           }
         : undefined,
-      parents:
-        answers.parentInformation?.parents
-          ?.filter((p) => p.nationalId)
-          ?.map((p) => ({
-            nationalId: p.nationalId!,
-            givenName: p.givenName,
-            familyName: p.familyName,
-          })) || [],
-      //TODO: Á ekki eftir að remove-a items með wasRemoved = true?
-      countriesOfResidence:
-        answers.countriesOfResidence?.selectedAbroadCountries?.map((c) => ({
-          countryId: parseInt(c.countryId),
-        })) || [],
-      //TODO: Á ekki eftir að remove-a items með wasRemoved = true?
-      staysAbroad:
-        answers.staysAbroad?.selectedAbroadCountries?.map((s) => ({
-          countryId: parseInt(s.countryId),
-          dateFrom: s.dateFrom ? new Date(s.dateFrom) : undefined,
-          dateTo: s.dateTo ? new Date(s.dateTo) : undefined,
-          purpose: s.purpose,
-        })) || [],
+      parents: filteredParents || [],
+      countriesOfResidence: filteredCountriesOfResidence || [],
+      staysAbroad: filteredStaysAbroad || [],
       passport: {
         dateOfIssue: new Date(applicantPassport.publishDate),
         dateOfExpiry: new Date(applicantPassport.expirationDate),
@@ -351,13 +378,34 @@ export class CitizenshipService extends BaseTemplateApiService {
       },
       //TODOx missing in answers:
       supportingDocuments: {
-        birthCertificate: { base64: '' },
-        subsistenceCertificate: { base64: '' },
-        subsistenceCertificateForTown: { base64: '' },
-        certificateOfLegalResidenceHistory: { base64: '' },
-        icelandicTestCertificate: { base64: '' },
-        criminalRecordList: [{ countryId: 1, base64: '' }],
+        birthCertificate: answers.supportingDocuments?.birthCertificate?.map(
+          (file) => ({ base64: file }),
+        ),
+        subsistenceCertificate:
+          answers.supportingDocuments?.subsistenceCertificate?.map((file) => ({
+            base64: file,
+          })) || [],
+        subsistenceCertificateForTown:
+          answers.supportingDocuments?.subsistenceCertificateForTown?.map(
+            (file) => ({ base64: file }),
+          ) || [],
+        certificateOfLegalResidenceHistory:
+          answers.supportingDocuments?.certificateOfLegalResidenceHistory?.map(
+            (file) => ({ base64: file }),
+          ) || [],
+        icelandicTestCertificate:
+          answers.supportingDocuments?.icelandicTestCertificate?.map(
+            (file) => ({
+              base64: file,
+            }),
+          ) || [],
+        criminalRecordList: criminalRecordListFlattened,
       },
+      children:
+        childrenCustodyInformation?.map((c) => ({
+          nationalId: c.nationalId,
+          fullName: c.fullName,
+        })) || [],
       //TODOx missing in answers:
       childrenPassport: [
         {

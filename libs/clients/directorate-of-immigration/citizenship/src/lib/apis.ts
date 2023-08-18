@@ -1,4 +1,5 @@
 import {
+  ApplicantApi,
   ApplicantResidenceConditionApi,
   ApplicationApi,
   ChildrenApi,
@@ -13,15 +14,16 @@ import {
 import { ApiConfiguration } from './apiConfiguration'
 
 export const exportedApis = [
+  ApplicantApi,
+  ApplicantResidenceConditionApi,
   ApplicationApi,
   ChildrenApi,
-  SpouseApi,
-  ParentApi,
   CountryOfResidenceApi,
-  ResidenceAbroadApi,
-  TravelDocumentApi,
-  ApplicantResidenceConditionApi,
   OptionSetApi,
+  ParentApi,
+  ResidenceAbroadApi,
+  SpouseApi,
+  TravelDocumentApi,
 ].map((Api) => ({
   provide: Api,
   useFactory: (configuration: Configuration) => {

@@ -196,7 +196,7 @@ export class ResidencePermitClient {
     try {
       const res = await this.residenceAbroadApiWithAuth(
         auth,
-      ).apiResidenceAbroadGetAllGet()
+      ).apiResidenceAbroadGetAllApplicationIdGet({ applicationId: '' }) //TODOx þarf applicationId?
 
       return res.map((item) => ({
         countryId: item.countryId!,
@@ -242,13 +242,14 @@ export class ResidencePermitClient {
     try {
       const res = await this.studyApiWithAuth(auth).apiStudyGetAllGet()
 
-      //TODOx veljum bara fyrsta???
-      const firstRes = res[0]
+      //TODOx Select the most recent entry
+      const newestItem = res[0]
+      // Select the most recent entry
 
       return (
-        firstRes && {
-          schoolNationalId: firstRes.icelandicIDNO!,
-          schoolName: firstRes.school!,
+        newestItem && {
+          schoolNationalId: newestItem.icelandicIDNO!,
+          schoolName: newestItem.school!,
         }
       )
     } catch (error) {
@@ -267,21 +268,23 @@ export class ResidencePermitClient {
     try {
       const res = await this.travelDocumentApiWithAuth(
         auth,
-      ).apiTravelDocumentGetAllGet()
+      ).apiTravelDocumentGetAllApplicationIdGet({ applicationId: '' }) //TODOx þarf applicationId?
 
-      //TODOx veljum bara fyrsta þangað til við fáum nýjan endapunkt sem skilar nýjasta/núverandi vegabréfi
-      const firstRes = res[0]
+      // Select the most recent entry
+      const newestItem = res.sort(
+        (a, b) => (b.createdOn?.getTime() || 0) - (a.createdOn?.getTime() || 0),
+      )[0]
 
       return (
-        firstRes && {
-          dateOfIssue: firstRes.dateOfIssue,
-          dateOfExpiry: firstRes.dateOfExpiry,
-          name: firstRes.name,
-          passportNo: firstRes.travelDocumentNo,
-          passportTypeId: firstRes.travelDocumentTypeId,
-          passportTypeName: firstRes.travelDocumentTypeName,
-          issuingCountryId: firstRes.issuingCountryId,
-          issuingCountryName: firstRes.issuingCountryName,
+        newestItem && {
+          dateOfIssue: newestItem.dateOfIssue,
+          dateOfExpiry: newestItem.dateOfExpiry,
+          name: newestItem.name,
+          passportNo: newestItem.travelDocumentNo,
+          passportTypeId: newestItem.travelDocumentTypeId,
+          passportTypeName: newestItem.travelDocumentTypeName,
+          issuingCountryId: newestItem.issuingCountryId,
+          issuingCountryName: newestItem.issuingCountryName,
         }
       )
     } catch (error) {

@@ -11,6 +11,7 @@ import {
 } from './citizenshipClient.types'
 import { Inject, Injectable, Logger } from '@nestjs/common'
 import {
+  ApplicantApi,
   ApplicantResidenceConditionApi,
   ApplicationApi,
   ChildrenApi,
@@ -28,19 +29,30 @@ import { child } from 'winston'
 @Injectable()
 export class CitizenshipClient {
   constructor(
+    private applicantApi: ApplicantApi,
+    private applicantResidenceConditionApi: ApplicantResidenceConditionApi,
     private applicationApi: ApplicationApi,
     private childrenApi: ChildrenApi,
-    private spouseApi: SpouseApi,
-    private parentApi: ParentApi,
     private countryOfResidenceApi: CountryOfResidenceApi,
-    private residenceAbroadApi: ResidenceAbroadApi,
-    private travelDocumentApi: TravelDocumentApi,
-    private applicantResidenceConditionApi: ApplicantResidenceConditionApi,
     private optionSetApi: OptionSetApi,
+    private parentApi: ParentApi,
+    private residenceAbroadApi: ResidenceAbroadApi,
+    private spouseApi: SpouseApi,
+    private travelDocumentApi: TravelDocumentApi,
 
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
   ) {}
+
+  private applicantApiWithAuth(auth: Auth) {
+    return this.applicantApi.withMiddleware(new AuthMiddleware(auth))
+  }
+
+  private applicantResidenceConditionApiWithAuth(auth: Auth) {
+    return this.applicantResidenceConditionApi.withMiddleware(
+      new AuthMiddleware(auth),
+    )
+  }
 
   private applicationApiWithAuth(auth: Auth) {
     return this.applicationApi.withMiddleware(new AuthMiddleware(auth))
@@ -50,30 +62,24 @@ export class CitizenshipClient {
     return this.childrenApi.withMiddleware(new AuthMiddleware(auth))
   }
 
-  private spouseApiWithAuth(auth: Auth) {
-    return this.spouseApi.withMiddleware(new AuthMiddleware(auth))
+  private countryOfResidenceApiWithAuth(auth: Auth) {
+    return this.countryOfResidenceApi.withMiddleware(new AuthMiddleware(auth))
   }
 
   private parentApiWithAuth(auth: Auth) {
     return this.parentApi.withMiddleware(new AuthMiddleware(auth))
   }
 
-  private countryOfResidenceApiWithAuth(auth: Auth) {
-    return this.countryOfResidenceApi.withMiddleware(new AuthMiddleware(auth))
-  }
-
   private residenceAbroadApiWithAuth(auth: Auth) {
     return this.residenceAbroadApi.withMiddleware(new AuthMiddleware(auth))
   }
 
-  private travelDocumentApiWithAuth(auth: Auth) {
-    return this.travelDocumentApi.withMiddleware(new AuthMiddleware(auth))
+  private spouseApiWithAuth(auth: Auth) {
+    return this.spouseApi.withMiddleware(new AuthMiddleware(auth))
   }
 
-  private applicantResidenceConditionApiWithAuth(auth: Auth) {
-    return this.applicantResidenceConditionApi.withMiddleware(
-      new AuthMiddleware(auth),
-    )
+  private travelDocumentApiWithAuth(auth: Auth) {
+    return this.travelDocumentApi.withMiddleware(new AuthMiddleware(auth))
   }
 
   async getCountries(): Promise<Country[]> {
@@ -156,17 +162,19 @@ export class CitizenshipClient {
 
   async getOldStayAbroadList(auth: Auth): Promise<StayAbroad[]> {
     try {
-      const res = await this.residenceAbroadApiWithAuth(
-        auth,
-      ).apiResidenceAbroadGetAllGet()
+      //TODOx disabled while this endpoint is (unecessarily?) requiring applicationId
+      // const res = await this.residenceAbroadApiWithAuth(
+      //   auth,
+      // ).apiResidenceAbroadGetAllApplicationIdGet({ applicationId: '' })
 
-      return res.map((item) => ({
-        countryId: item.countryId!,
-        countryName: item.countryName!,
-        dateFrom: item.dateFrom,
-        dateTo: item.dateTo,
-        purposeOfStay: item.purposeOfStay,
-      }))
+      // return res.map((item) => ({
+      //   countryId: item.countryId!,
+      //   countryName: item.countryName!,
+      //   dateFrom: item.dateFrom,
+      //   dateTo: item.dateTo,
+      //   purposeOfStay: item.purposeOfStay,
+      // }))
+      return []
     } catch (error) {
       this.logger.error(
         'Error when trying to get old stay abroad info from UTL',
@@ -178,25 +186,29 @@ export class CitizenshipClient {
 
   async getOldPassportItem(auth: Auth): Promise<Passport | undefined> {
     try {
-      const res = await this.travelDocumentApiWithAuth(
-        auth,
-      ).apiTravelDocumentGetAllGet()
+      //TODOx disabled while this endpoint is (unecessarily?) requiring applicationId
+      // const res = await this.travelDocumentApiWithAuth(
+      //   auth,
+      // ).apiTravelDocumentGetAllApplicationIdGet({ applicationId: '' })
 
-      //TODOx veljum bara fyrsta þangað til við fáum nýjan endapunkt sem skilar nýjasta/núverandi vegabréfi
-      const firstRes = res[0]
+      // // Select the most recent entry
+      // const newestItem = res.sort(
+      //   (a, b) => (b.createdOn?.getTime() || 0) - (a.createdOn?.getTime() || 0),
+      // )[0]
 
-      return (
-        firstRes && {
-          dateOfIssue: firstRes.dateOfIssue,
-          dateOfExpiry: firstRes.dateOfExpiry,
-          name: firstRes.name,
-          passportNo: firstRes.travelDocumentNo,
-          passportTypeId: firstRes.travelDocumentTypeId,
-          passportTypeName: firstRes.travelDocumentTypeName,
-          issuingCountryId: firstRes.issuingCountryId,
-          issuingCountryName: firstRes.issuingCountryName,
-        }
-      )
+      // return (
+      //   newestItem && {
+      //     dateOfIssue: newestItem.dateOfIssue,
+      //     dateOfExpiry: newestItem.dateOfExpiry,
+      //     name: newestItem.name,
+      //     passportNo: newestItem.travelDocumentNo,
+      //     passportTypeId: newestItem.travelDocumentTypeId,
+      //     passportTypeName: newestItem.travelDocumentTypeName,
+      //     issuingCountryId: newestItem.issuingCountryId,
+      //     issuingCountryName: newestItem.issuingCountryName,
+      //   }
+      // )
+      return undefined
     } catch (error) {
       this.logger.error(
         'Error when trying to get passport info from UTL',
@@ -211,7 +223,7 @@ export class CitizenshipClient {
   async getOldForeignCriminalRecordFileList(
     auth: Auth,
   ): Promise<ForeignCriminalRecordFile[]> {
-    return [] // TODOx missing endpoint in API
+    return [] // TODOx missing endpoint for GET foreign criminal record
   }
 
   async submitApplicationForCitizenship(
@@ -221,35 +233,30 @@ export class CitizenshipClient {
     // create application for applicant
     const applicationId = await this.applicationApiWithAuth(
       auth,
-    ).apiApplicationPost({
-      applicationNewModel: {
-        caseTypeId: 30020,
-        classificationId: null,
-        classificationTypeId: null,
-        classificationDetailId: null,
-        // TODOx isFormerIcelandicCitizen: application.isFormerIcelandicCitizen,
-      },
-    })
+    ).apiApplicationCitizenshipPost()
 
     // submit basic information about applicant
-    // TODOx missing endpoint
-    // await this.applicationApiWithAuth(auth).post({
-    //   givenName: application.givenName,
-    //   surName: application.familyName,
-    //   address: application.address,
-    //   postalCode: application.postalCode,
-    //   email: application.email,
-    //   phone: application.phone,
-    //   citizenshipCode: application.citizenshipCode,
-    //   residenceInIcelandLastChangeDate:
-    //     application.residenceInIcelandLastChangeDate,
-    //   birthCountry: application.birthCountry,
-    // })
+    // TODOx missing fields in POST applicant endpoint
+    await this.applicantApiWithAuth(auth).applicantPost({
+      applicantNewModel: {
+        icelandicIDNO: auth.nationalId,
+        givenName: application.givenName,
+        surName: application.familyName,
+        emailAddress: application.email,
+        telephone: application.phone,
+        // address: application.address,
+        // postalCode: application.postalCode,
+        // citizenshipCode: application.citizenshipCode,
+        // residenceInIcelandLastChangeDate: application.residenceInIcelandLastChangeDate,
+        // birthCountry: application.birthCountry,
+        // isFormerIcelandicCitizen: application.isFormerIcelandicCitizen,
+      },
+    })
 
     // submit information about spouse
     await this.spouseApiWithAuth(auth).apiSpousePost({
       spouseNewModel: {
-        maritalStatusId: 1, //TODOx er hægt að fá ID application.maritalStatusCode,
+        maritalStatusId: 1, //TODOx should receive string not int (use application.maritalStatusCode)
         dateOfMarriage: application.dateOfMaritalStatus,
         icelandicidIDNO: application.spouse?.nationalId,
         givenName: application.spouse?.givenName,
@@ -257,7 +264,7 @@ export class CitizenshipClient {
         applicantAddress: application.address,
         spouseAddress: application.spouse?.address,
         explanation: application.spouse?.reasonDifferentAddress,
-        nationalityId: 1, //TODOx application.spouseCitizenshipCode,
+        nationalityId: 1, //TODOx should receive string not int (use application.spouseCitizenshipCode?)
       },
     })
 
@@ -286,7 +293,10 @@ export class CitizenshipClient {
     // submit information about stays abroad
     const staysAbroad = application.staysAbroad
     for (let i = 0; i < staysAbroad.length; i++) {
-      await this.residenceAbroadApiWithAuth(auth).apiResidenceAbroadPost({
+      await this.residenceAbroadApiWithAuth(
+        auth,
+      ).apiResidenceAbroadApplicationIdPost({
+        applicationId: applicationId,
         residenceAbroadNewModel: {
           countryId: staysAbroad[i].countryId,
           dateFrom: staysAbroad[i].dateFrom,
@@ -297,7 +307,10 @@ export class CitizenshipClient {
     }
 
     // submit information about travel document (passport) for applicant
-    await this.travelDocumentApiWithAuth(auth).apiTravelDocumentPost({
+    await this.travelDocumentApiWithAuth(
+      auth,
+    ).apiTravelDocumentApplicationIdPost({
+      applicationId: applicationId,
       travelDocumentNewModel: {
         dateOfExpiry: application.passport.dateOfExpiry,
         dateOfIssue: application.passport.dateOfIssue,
@@ -309,7 +322,7 @@ export class CitizenshipClient {
     })
 
     // submit all other supporting documents for applicant
-    //TODOx missing endpoint
+    //TODOx missing endpoint for supporting documents (applicant)
     // await this.supportingDocumentsApiWithAuth(auth).post({
     //   birthCertificate:
     //     application.supportingDocuments.birthCertificate?.base64,
@@ -328,7 +341,6 @@ export class CitizenshipClient {
     // })
 
     // create application and submit information for selected children
-    // TODOx missing endpoints for children
     // const selectedChildren = application.selectedChildren
     // for (let i = 0; i < selectedChildren.length; i++) {
     //   const childNationalId = selectedChildren[i]
@@ -339,14 +351,8 @@ export class CitizenshipClient {
     //   // create application for child
     //   const childApplicationId = await this.applicationApiWithAuth(
     //     auth,
-    //   ).apiApplicationPost({
-    //     applicationNewModel: {
-    //       // TODOx childNationalId: childNationalId
-    //       caseTypeId: 30020,
-    //       classificationId: null,
-    //       classificationTypeId: null,
-    //       classificationDetailId: null,
-    //     },
+    //   ).apiApplicationCitizenshipSsnrPost({
+    //     ssnr: childNationalId,
     //   })
 
     //   // submit information about travel document (passport) for child
@@ -354,26 +360,28 @@ export class CitizenshipClient {
     //     (c) => c.nationalId === childNationalId,
     //   )
     //   if (childPassport)
-    //     await this.travelDocumentApiWithAuth(auth).apiTravelDocumentPost({
+    //     await this.travelDocumentApiWithAuth(
+    //       auth,
+    //     ).apiTravelDocumentApplicationIdPost({
+    //       applicationId: childApplicationId,
     //       travelDocumentNewModel: {
-    //         // TODOx childNationalId: childNationalId
     //         dateOfExpiry: childPassport.dateOfExpiry,
     //         dateOfIssue: childPassport.dateOfIssue,
     //         issuingCountryId: childPassport.countryIdOfIssuer,
-    //         name: child?.name,
+    //         name: child?.fullName,
     //         travelDocumentNo: childPassport.passportNumber,
     //         travelDocumentTypeId: childPassport.passportTypeId,
     //       },
     //     })
 
     //   // submit all other supporting documents for child
-    //   //TODOx missing endpoint
+    //   //TODOx missing endpoint for supporting documents (child)
     //   const childSupportingDocuments = application.childrenSupportingDocuments.find(
     //     (c) => c.nationalId === childNationalId,
     //   )
     //   if (childSupportingDocuments)
     //     await this.supportingDocumentsApiWithAuth(auth).post({
-    //       // TODOx childNationalId: childNationalId
+    //       applicationId: childApplicationId,
     //       birthCertificate: childSupportingDocuments.birthCertificate.base64,
     //       writtenConsentFromChild:
     //         childSupportingDocuments.writtenConsentFromChild?.base64,

@@ -7,7 +7,9 @@
   "paths": {
     "/Applicant/Get": {
       "get": {
-        "tags": ["Applicant"],
+        "tags": [
+          "Applicant"
+        ],
         "responses": {
           "200": {
             "description": "Success",
@@ -32,9 +34,107 @@
         }
       }
     },
+    "/Applicant": {
+      "post": {
+        "tags": [
+          "Applicant"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApplicantNewModel"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApplicantNewModel"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApplicantNewModel"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Applicant/NewChild": {
+      "post": {
+        "tags": [
+          "Applicant"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApplicantNewModel"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApplicantNewModel"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApplicantNewModel"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/ApplicantResidenceCondition/GetAll": {
       "get": {
-        "tags": ["ApplicantResidenceCondition"],
+        "tags": [
+          "ApplicantResidenceCondition"
+        ],
         "responses": {
           "200": {
             "description": "Success",
@@ -60,6 +160,124 @@
                   "type": "array",
                   "items": {
                     "$ref": "#/components/schemas/ApplicantResidenceConditionViewModel"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Application/Citizenship": {
+      "post": {
+        "tags": [
+          "Application"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Application/Citizenship/{ssnr}": {
+      "post": {
+        "tags": [
+          "Application"
+        ],
+        "parameters": [
+          {
+            "name": "ssnr",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Application/GetAll/{ssnr}": {
+      "get": {
+        "tags": [
+          "Application"
+        ],
+        "parameters": [
+          {
+            "name": "ssnr",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ApplicationViewModel"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ApplicationViewModel"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ApplicationViewModel"
                   }
                 }
               }
@@ -70,7 +288,9 @@
     },
     "/api/Application": {
       "post": {
-        "tags": ["Application"],
+        "tags": [
+          "Application"
+        ],
         "requestBody": {
           "content": {
             "application/json": {
@@ -116,7 +336,9 @@
     },
     "/api/Application/GetAll": {
       "get": {
-        "tags": ["Application"],
+        "tags": [
+          "Application"
+        ],
         "responses": {
           "200": {
             "description": "Success",
@@ -152,7 +374,9 @@
     },
     "/api/Children": {
       "post": {
-        "tags": ["Children"],
+        "tags": [
+          "Children"
+        ],
         "requestBody": {
           "content": {
             "application/json": {
@@ -198,7 +422,9 @@
     },
     "/api/Children/GetAll": {
       "get": {
-        "tags": ["Children"],
+        "tags": [
+          "Children"
+        ],
         "responses": {
           "200": {
             "description": "Success",
@@ -234,7 +460,9 @@
     },
     "/api/CountryOfResidence": {
       "post": {
-        "tags": ["CountryOfResidence"],
+        "tags": [
+          "CountryOfResidence"
+        ],
         "requestBody": {
           "content": {
             "application/json": {
@@ -280,7 +508,9 @@
     },
     "/api/CountryOfResidence/GetAll": {
       "get": {
-        "tags": ["CountryOfResidence"],
+        "tags": [
+          "CountryOfResidence"
+        ],
         "responses": {
           "200": {
             "description": "Success",
@@ -316,7 +546,9 @@
     },
     "/api/CriminalRecord": {
       "post": {
-        "tags": ["CriminalRecord"],
+        "tags": [
+          "CriminalRecord"
+        ],
         "requestBody": {
           "content": {
             "application/json": {
@@ -362,7 +594,9 @@
     },
     "/api/CriminalRecord/GetAll": {
       "get": {
-        "tags": ["CriminalRecord"],
+        "tags": [
+          "CriminalRecord"
+        ],
         "responses": {
           "200": {
             "description": "Success",
@@ -398,7 +632,9 @@
     },
     "/api/Employer/GetAll/{applicationId}": {
       "get": {
-        "tags": ["Employer"],
+        "tags": [
+          "Employer"
+        ],
         "parameters": [
           {
             "name": "applicationId",
@@ -445,7 +681,9 @@
     },
     "/api/Employer/{applicationId}": {
       "post": {
-        "tags": ["Employer"],
+        "tags": [
+          "Employer"
+        ],
         "parameters": [
           {
             "name": "applicationId",
@@ -502,7 +740,9 @@
     },
     "/api/OptionSet/{lookupType}": {
       "get": {
-        "tags": ["OptionSet"],
+        "tags": [
+          "OptionSet"
+        ],
         "parameters": [
           {
             "name": "lookupType",
@@ -549,7 +789,9 @@
     },
     "/api/OptionSet/GetSingle/{lookupType}/{id}": {
       "get": {
-        "tags": ["OptionSet"],
+        "tags": [
+          "OptionSet"
+        ],
         "parameters": [
           {
             "name": "lookupType",
@@ -596,7 +838,9 @@
     },
     "/api/Parent": {
       "post": {
-        "tags": ["Parent"],
+        "tags": [
+          "Parent"
+        ],
         "requestBody": {
           "content": {
             "application/json": {
@@ -642,7 +886,9 @@
     },
     "/api/Parent/GetAll": {
       "get": {
-        "tags": ["Parent"],
+        "tags": [
+          "Parent"
+        ],
         "responses": {
           "200": {
             "description": "Success",
@@ -676,9 +922,71 @@
         }
       }
     },
-    "/api/ResidenceAbroad": {
+    "/api/ResidenceAbroad/GetAll/{applicationId}": {
+      "get": {
+        "tags": [
+          "ResidenceAbroad"
+        ],
+        "parameters": [
+          {
+            "name": "applicationId",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ResidenceAbroadViewModel"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ResidenceAbroadViewModel"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ResidenceAbroadViewModel"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/ResidenceAbroad/{applicationId}": {
       "post": {
-        "tags": ["ResidenceAbroad"],
+        "tags": [
+          "ResidenceAbroad"
+        ],
+        "parameters": [
+          {
+            "name": "applicationId",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "requestBody": {
           "content": {
             "application/json": {
@@ -722,45 +1030,11 @@
         }
       }
     },
-    "/api/ResidenceAbroad/GetAll": {
-      "get": {
-        "tags": ["ResidenceAbroad"],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ResidenceAbroadViewModel"
-                  }
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ResidenceAbroadViewModel"
-                  }
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ResidenceAbroadViewModel"
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/api/ResidencePermitClassification": {
       "get": {
-        "tags": ["ResidencePermitClassification"],
+        "tags": [
+          "ResidencePermitClassification"
+        ],
         "responses": {
           "200": {
             "description": "Success",
@@ -796,7 +1070,9 @@
     },
     "/api/ResidencePermitClassification/ClassificationType/{classificationId}": {
       "get": {
-        "tags": ["ResidencePermitClassification"],
+        "tags": [
+          "ResidencePermitClassification"
+        ],
         "parameters": [
           {
             "name": "classificationId",
@@ -843,7 +1119,9 @@
     },
     "/api/ResidencePermitClassification/ClassificationDetail/{classificationTypeId}": {
       "get": {
-        "tags": ["ResidencePermitClassification"],
+        "tags": [
+          "ResidencePermitClassification"
+        ],
         "parameters": [
           {
             "name": "classificationTypeId",
@@ -890,7 +1168,9 @@
     },
     "/api/Spouse": {
       "post": {
-        "tags": ["Spouse"],
+        "tags": [
+          "Spouse"
+        ],
         "requestBody": {
           "content": {
             "application/json": {
@@ -936,7 +1216,9 @@
     },
     "/api/Spouse/GetAll": {
       "get": {
-        "tags": ["Spouse"],
+        "tags": [
+          "Spouse"
+        ],
         "responses": {
           "200": {
             "description": "Success",
@@ -972,7 +1254,9 @@
     },
     "/api/Study": {
       "post": {
-        "tags": ["Study"],
+        "tags": [
+          "Study"
+        ],
         "requestBody": {
           "content": {
             "application/json": {
@@ -1018,7 +1302,9 @@
     },
     "/api/Study/GetAll": {
       "get": {
-        "tags": ["Study"],
+        "tags": [
+          "Study"
+        ],
         "responses": {
           "200": {
             "description": "Success",
@@ -1052,9 +1338,71 @@
         }
       }
     },
-    "/api/TravelDocument": {
+    "/api/TravelDocument/GetAll/{applicationId}": {
+      "get": {
+        "tags": [
+          "TravelDocument"
+        ],
+        "parameters": [
+          {
+            "name": "applicationId",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TravelDocumentViewModel"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TravelDocumentViewModel"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TravelDocumentViewModel"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/TravelDocument/{applicationId}": {
       "post": {
-        "tags": ["TravelDocument"],
+        "tags": [
+          "TravelDocument"
+        ],
+        "parameters": [
+          {
+            "name": "applicationId",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "requestBody": {
           "content": {
             "application/json": {
@@ -1097,46 +1445,40 @@
           }
         }
       }
-    },
-    "/api/TravelDocument/GetAll": {
-      "get": {
-        "tags": ["TravelDocument"],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/TravelDocumentViewModel"
-                  }
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/TravelDocumentViewModel"
-                  }
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/TravelDocumentViewModel"
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
     }
   },
   "components": {
     "schemas": {
+      "ApplicantNewModel": {
+        "type": "object",
+        "properties": {
+          "icelandicIDNO": {
+            "type": "string",
+            "nullable": true
+          },
+          "givenName": {
+            "type": "string",
+            "nullable": true
+          },
+          "surName": {
+            "type": "string",
+            "nullable": true
+          },
+          "emailAddress": {
+            "type": "string",
+            "nullable": true
+          },
+          "telephone": {
+            "type": "string",
+            "nullable": true
+          },
+          "addressCity": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "ApplicantResidenceConditionViewModel": {
         "type": "object",
         "properties": {
@@ -1171,7 +1513,8 @@
           },
           "dateOfBirth": {
             "type": "string",
-            "format": "date-time"
+            "format": "date-time",
+            "nullable": true
           },
           "nationalityId": {
             "type": "integer",
@@ -1197,7 +1540,8 @@
           },
           "residenceConditionId": {
             "type": "integer",
-            "format": "int32"
+            "format": "int32",
+            "nullable": true
           },
           "residenceConditionName": {
             "type": "string",
@@ -1213,6 +1557,20 @@
           },
           "applicantId": {
             "type": "string",
+            "nullable": true
+          },
+          "children": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ApplicantViewModel"
+            },
+            "nullable": true
+          },
+          "applications": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ApplicationViewModel"
+            },
             "nullable": true
           }
         },
@@ -1283,6 +1641,11 @@
           "createdOn": {
             "type": "string",
             "format": "date-time"
+          },
+          "permitValidTo": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -1292,7 +1655,8 @@
         "properties": {
           "nationalityId": {
             "type": "integer",
-            "format": "int32"
+            "format": "int32",
+            "nullable": true
           },
           "givenName": {
             "type": "string",
@@ -1310,7 +1674,8 @@
         "properties": {
           "nationalityId": {
             "type": "integer",
-            "format": "int32"
+            "format": "int32",
+            "nullable": true
           },
           "givenName": {
             "type": "string",
@@ -1457,10 +1822,6 @@
       "EmployerNewModel": {
         "type": "object",
         "properties": {
-          "applicationid": {
-            "type": "string",
-            "nullable": true
-          },
           "companyName": {
             "type": "string",
             "nullable": true
@@ -1678,7 +2039,8 @@
           },
           "nationalityId": {
             "type": "integer",
-            "format": "int32"
+            "format": "int32",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -1721,7 +2083,8 @@
           },
           "nationalityId": {
             "type": "integer",
-            "format": "int32"
+            "format": "int32",
+            "nullable": true
           },
           "spouseId": {
             "type": "string",
@@ -1758,6 +2121,10 @@
           "school": {
             "type": "string",
             "nullable": true
+          },
+          "createdOn": {
+            "type": "string",
+            "format": "date-time"
           }
         },
         "additionalProperties": false
@@ -1834,6 +2201,10 @@
           "travelDocumentTypeName": {
             "type": "string",
             "nullable": true
+          },
+          "createdOn": {
+            "type": "string",
+            "format": "date-time"
           }
         },
         "additionalProperties": false
@@ -1849,7 +2220,7 @@
   },
   "security": [
     {
-      "bearerAuth": []
+      "bearerAuth": [ ]
     }
   ]
 }

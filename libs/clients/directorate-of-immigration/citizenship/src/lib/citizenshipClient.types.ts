@@ -90,13 +90,17 @@ export interface CitizenshipApplication {
     countryOfIssuerId: number
   }
   supportingDocuments: {
-    birthCertificate?: { base64: string }
-    subsistenceCertificate: { base64: string }
-    subsistenceCertificateForTown: { base64: string }
-    certificateOfLegalResidenceHistory: { base64: string }
-    icelandicTestCertificate: { base64: string }
-    criminalRecordList: [{ countryId: number; base64: string }]
+    birthCertificate?: { base64: string }[]
+    subsistenceCertificate: { base64: string }[]
+    subsistenceCertificateForTown: { base64: string }[]
+    certificateOfLegalResidenceHistory: { base64: string }[]
+    icelandicTestCertificate: { base64: string }[]
+    criminalRecordList: { countryId: number; base64: string }[]
   }
+  children: {
+    nationalId: string
+    fullName: string
+  }[]
   childrenPassport: {
     nationalId: string
     dateOfIssue: Date
