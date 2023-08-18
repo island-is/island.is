@@ -473,6 +473,22 @@ export const notifications = {
       description:
         'Notaður sem vísun í gögn málsins í pósti til verjanda/talsmanns þegar dómstóll boðar í fyrirtöku',
     },
+    linkNoRequestBody: {
+      id:
+        'judicial.system.backend:notifications.defender_court_date_email.link_no_request_body',
+      defaultMessage:
+        '{courtName} hefur skráð þig sem verjanda/talsmann sakbornings í máli {courtCaseNumber}.',
+      description:
+        'Notaður sem beinagrind á pósti til verjanda/talsmanns þegar dómstóll boðar í fyrirtöku',
+    },
+    linkNoRequest: {
+      id:
+        'judicial.system.backend:notifications.defender_court_date_email.link_no_request',
+      defaultMessage:
+        '<br /><br />{defenderHasAccessToRvg, select, false {Þú getur nálgast yfirlit málsins hjá {courtName} ef það hefur ekki þegar verið afhent} other {Þú getur nálgast yfirlit málsins í {linkStart}Réttarvörslugátt{linkEnd} með rafrænum skilríkjum}}.',
+      description:
+        'Notaður sem vísun í yfirlit málsins í pósti til verjanda/talsmanns þegar dómstóll boðar í fyrirtöku',
+    },
   }),
   defenderRevokedEmail: defineMessages({
     court: {
