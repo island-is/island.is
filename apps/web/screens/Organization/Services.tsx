@@ -69,7 +69,7 @@ const ServicesPage: Screen<ServicesPageProps> = ({
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
 
-  useContentfulId(organizationPage.id)
+  useContentfulId(organizationPage?.id)
   useLocalLinkTypeResolver()
 
   const navList: NavigationItem[] = organizationPage?.menuLinks.map(

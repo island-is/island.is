@@ -471,15 +471,21 @@ export const Form = ({ form, namespace }: FormProps) => {
                           filename: file.name,
                         },
                       })
-                        .then((response) =>
-                          uploadFile(
-                            file,
-                            response.data.createUploadUrl,
-                            slugify(field.title),
-                          ).then(() =>
-                            resolve(response.data?.createUploadUrl.fields.key),
-                          ),
-                        )
+                        .then((response) => {
+                          if (response.data) {
+                            uploadFile(
+                              file,
+                              response.data.createUploadUrl,
+                              slugify(field.title),
+                            ).then(() =>
+                              resolve(
+                                response.data?.createUploadUrl.fields.key,
+                              ),
+                            )
+                          } else {
+                            reject() // Reject in case response.data is null or undefined
+                          }
+                        })
                         .catch(() => reject())
                     })
                   }),

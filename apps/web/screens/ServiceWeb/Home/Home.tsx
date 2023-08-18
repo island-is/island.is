@@ -166,7 +166,7 @@ const Home: Screen<HomeProps> = ({
                             link={
                               {
                                 href: linkResolver('supportcategory', [
-                                  organization.slug,
+                                  organization?.slug ?? '',
                                   slug,
                                 ]).href,
                               } as LinkResolverResponse

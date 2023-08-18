@@ -37,7 +37,7 @@ const parseOrganizationLinkHref = (organization: Query['getOrganization']) => {
   if (link?.includes('://')) {
     link = link.split('://')[1]
   }
-  if (link[link.length - 1] === '/') {
+  if (link && link[link.length - 1] === '/') {
     link = link?.slice(0, link.length - 1)
   }
   return link
@@ -57,7 +57,7 @@ const LandingPage = ({ organization, namespace }: LandingPageProps) => {
   }, [organization?.namespace?.fields])
 
   const o = useNamespace(organizationNamespace)
-  useContentfulId(organization.id)
+  useContentfulId(organization?.id)
   useLocalLinkTypeResolver()
 
   const { linkResolver } = useLinkResolver()

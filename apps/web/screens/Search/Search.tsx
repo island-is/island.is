@@ -67,6 +67,7 @@ import {
 } from '../queries'
 
 import { FilterMenu, CategoriesProps, FilterLabels } from './FilterMenu'
+import { countReset } from 'console'
 
 const PERPAGE = 10
 
@@ -267,6 +268,11 @@ const Search: Screen<CategoryProps> = ({
   const pathname = linkResolver('search').href
 
   const tagsList = useMemo((): TagsList[] => {
+    // Check if countResults.typesCount is not defined
+    if (!countResults.typesCount) {
+      // If it's not defined, return an empty array
+      return []
+    }
     return [
       ...countResults.typesCount
         .filter((x) => x.key in tagTitles)
@@ -417,9 +423,9 @@ const Search: Screen<CategoryProps> = ({
     {
       id: 'category',
       label: n('categories', 'Þjónustuflokkar'),
-      selected: state.query.category,
+      selected: state.query.category ?? [],
       singleOption: true,
-      filters: countResults.tagCounts
+      filters: (countResults?.tagCounts ?? [])
         .filter((x) => x.value.trim() && x.type === 'category')
         .map(({ key, value }) => ({
           label: value,
@@ -429,9 +435,9 @@ const Search: Screen<CategoryProps> = ({
     {
       id: 'organization',
       label: n('organizations', 'Opinberir aðilar'),
-      selected: state.query.organization,
+      selected: state.query.organization ?? [],
       singleOption: true,
-      filters: countResults.tagCounts
+      filters: (countResults?.tagCounts ?? [])
         .filter((x) => x.value.trim() && x.type === 'organization')
         .map(({ key, value }) => ({
           label: value,
@@ -541,26 +547,27 @@ const Search: Screen<CategoryProps> = ({
                           {title}
                         </Tag>
                       ))}
-                    {countResults.processEntryCount > 0 && (
-                      <Tag
-                        variant="blue"
-                        active={query?.processentry === 'true'}
-                        onClick={() => {
-                          dispatch({
-                            type: ActionType.SET_PARAMS,
-                            payload: {
-                              query: {
-                                processentry: true,
-                                ...getSearchParams('webArticle'),
+                    {countResults.processEntryCount &&
+                      countResults?.processEntryCount > 0 && (
+                        <Tag
+                          variant="blue"
+                          active={query?.processentry === 'true'}
+                          onClick={() => {
+                            dispatch({
+                              type: ActionType.SET_PARAMS,
+                              payload: {
+                                query: {
+                                  processentry: true,
+                                  ...getSearchParams('webArticle'),
+                                },
+                                searchLocked: false,
                               },
-                              searchLocked: false,
-                            },
-                          })
-                        }}
-                      >
-                        {n('processEntry', 'Umsóknir')}
-                      </Tag>
-                    )}
+                            })
+                          }}
+                        >
+                          {n('processEntry', 'Umsóknir')}
+                        </Tag>
+                      )}
                   </Inline>
                   <FilterMenu
                     {...filterLabels}

@@ -332,7 +332,7 @@ Home.getProps = async ({ apolloClient, locale }) => {
       .then((res) => res.data.getArticleCategories),
   ])
 
-  const [asideTopLinksData, asideBottomLinksData] = megaMenuData.menus
+  const [asideTopLinksData, asideBottomLinksData] = megaMenuData?.menus ?? []
 
   return {
     frontpage: getAdgerdirFrontpage,

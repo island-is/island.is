@@ -512,13 +512,17 @@ Layout.getProps = async ({ apolloClient, locale, req }) => {
   ])
 
   const alertBannerId = `alert-${stringHash(JSON.stringify(alertBanner))}`
-  const [asideTopLinksData, asideBottomLinksData] = megaMenuData.menus
+  const [asideTopLinksData, asideBottomLinksData] = megaMenuData?.menus ?? []
 
   const mapLinks = (item: Menu) =>
     item.menuLinks.map((x) => {
+      // Create an array of link parameters. If x.link is defined, use x.link.slug; otherwise, use an empty array.
+      const linkParams = x.link ? [x.link.slug] : []
+
+      // Get the href using LinkResolver with the modified linkParams array.
       const href = LinkResolver(
         x.link?.type as LinkType,
-        [x.link.slug],
+        linkParams,
         lang as Locale,
       ).href.trim()
 

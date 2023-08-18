@@ -139,7 +139,7 @@ const SubPage: Screen<SubPageProps> = ({
             activeLocale,
           )}
         </GridColumn>
-        {subpage.links.length > 0 && (
+        {subpage?.links && subpage.links.length > 0 && (
           <GridColumn
             span={['12/12', '12/12', '4/12']}
             offset={[null, null, '1/12']}
@@ -288,7 +288,7 @@ const renderSlices = (
               params={{
                 renderLifeEventPagesAsProfileCards: true,
                 anchorPageLinkType:
-                  organizationPage.theme === 'digital_iceland'
+                  organizationPage?.theme === 'digital_iceland'
                     ? digitalIcelandDetailPageLinkType
                     : undefined,
                 latestNewsSliceBackground: 'white',

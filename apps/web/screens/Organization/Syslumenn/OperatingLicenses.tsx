@@ -527,24 +527,26 @@ const OperatingLicenses: Screen<OperatingLicensesProps> = ({
                   : {operatingLicense.alcoholWeekendOutdoorLicense}
                 </Text>
               )}
-              {operatingLicense.maximumNumberOfGuests > 0 && (
-                <Text paddingBottom={0}>
-                  {n(
-                    'operatingLicensesMaximumNumberOfAccommodationGuests',
-                    'Hámarksfjöldi gesta í gistingu',
-                  )}
-                  : {operatingLicense.maximumNumberOfGuests}
-                </Text>
-              )}
-              {operatingLicense?.numberOfDiningGuests > 0 && (
-                <Text paddingBottom={0}>
-                  {n(
-                    'operatingLicensesMaximumNumberOfDiningGuests',
-                    'Hámarksfjöldi gesta í veitingum',
-                  )}
-                  : {operatingLicense.numberOfDiningGuests}
-                </Text>
-              )}
+              {operatingLicense.maximumNumberOfGuests &&
+                operatingLicense.maximumNumberOfGuests > 0 && (
+                  <Text paddingBottom={0}>
+                    {n(
+                      'operatingLicensesMaximumNumberOfAccommodationGuests',
+                      'Hámarksfjöldi gesta í gistingu',
+                    )}
+                    : {operatingLicense.maximumNumberOfGuests}
+                  </Text>
+                )}
+              {operatingLicense.numberOfDiningGuests &&
+                operatingLicense?.numberOfDiningGuests > 0 && (
+                  <Text paddingBottom={0}>
+                    {n(
+                      'operatingLicensesMaximumNumberOfDiningGuests',
+                      'Hámarksfjöldi gesta í veitingum',
+                    )}
+                    : {operatingLicense.numberOfDiningGuests}
+                  </Text>
+                )}
             </Box>
           </Box>
         )

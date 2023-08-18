@@ -95,14 +95,14 @@ const ServiceSearch: Screen<ServiceSearchProps> = ({
       description: item.organization?.description,
       link: {
         href: linkResolver('supportqna', [
-          item.organization.slug,
-          item.category.slug,
+          item.organization?.slug || '',
+          item.category?.slug || '',
           item.slug,
         ]).href,
       },
-      categorySlug: item.category.slug,
-      category: item.category.title,
-      labels: [item.category.title],
+      categorySlug: item.category?.slug,
+      category: item.category?.title,
+      labels: [item.category?.title],
     }))
 
   const headerTitle = n('assistanceForIslandIs', 'Aðstoð fyrir Ísland.is')

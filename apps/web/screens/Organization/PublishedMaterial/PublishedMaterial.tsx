@@ -113,7 +113,7 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
     orderByOptions?.[0],
   )
 
-  useContentfulId(organizationPage.id)
+  useContentfulId(organizationPage?.id)
   useLocalLinkTypeResolver()
   const { activeLocale } = useI18n()
 
