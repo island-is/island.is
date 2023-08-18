@@ -302,7 +302,7 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
           query: updatedQueryParams,
         },
         undefined,
-        { scroll: false },
+        { scroll: false, shallow: true },
       )
     },
     DEBOUNCE_TIME_IN_MS,
