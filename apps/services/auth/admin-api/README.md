@@ -1,5 +1,3 @@
-<!-- gitbook-navigation: "Admin API" -->
-
 # Auth Admin API
 
 ## About

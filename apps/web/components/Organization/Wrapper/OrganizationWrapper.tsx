@@ -55,6 +55,7 @@ import {
   UtlendingastofnunFooter,
   UtlendingastofnunHeader,
 } from './Themes/UtlendingastofnunTheme'
+import { IcelandicRadiationSafetyAuthorityHeader } from './Themes/IcelandicRadiationSafetyAuthority'
 import { FiskistofaHeader } from './Themes/FiskistofaTheme'
 import { FiskistofaFooter } from './Themes/FiskistofaTheme'
 import { LandskjorstjornFooter } from './Themes/LandkjorstjornTheme'
@@ -277,6 +278,12 @@ export const OrganizationHeader: React.FC<
       )
     case 'samgongustofa':
       return <TransportAuthorityHeader organizationPage={organizationPage} />
+    case 'geislavarnir-rikisins':
+      return (
+        <IcelandicRadiationSafetyAuthorityHeader
+          organizationPage={organizationPage}
+        />
+      )
     default:
       return <DefaultHeader organizationPage={organizationPage} />
   }
