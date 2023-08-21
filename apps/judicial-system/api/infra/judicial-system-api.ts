@@ -15,10 +15,14 @@ export const serviceSetup = (services: {
         prod: 'https://innskra.island.is',
       },
       AUTH_IDS_REDIRECT_URI: {
-        dev:
-          'https://judicial-system.dev01.devland.is/api/auth/callback/identity-server',
-        staging:
-          'https://judicial-system.staging01.devland.is/api/auth/callback/identity-server',
+        dev: ref(
+          (h) =>
+            `https://judicial-system.${h.env.domain}/api/auth/callback/identity-server`,
+        ),
+        staging: ref(
+          (h) =>
+            `https://judicial-system.${h.env.domain}/api/auth/callback/identity-server`,
+        ),
         prod:
           'https://rettarvorslugatt.island.is/api/auth/callback/identity-server',
       },
