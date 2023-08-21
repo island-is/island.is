@@ -491,7 +491,7 @@ const VehicleDetail = () => {
       {operators &&
         operators.length > 0 &&
         operators.map((operator: VehiclesOperator, index) => {
-          const operatorArr = operatorInfoArray(operator, formatMessage)
+          const operatorArr = operatorInfoArray(operator, formatMessage, locale)
           return (
             <TableGrid
               key={`vehicle-operator-${index}`}
