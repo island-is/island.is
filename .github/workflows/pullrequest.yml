@@ -76,8 +76,8 @@ jobs:
         run: |
           LABELS=$(echo '${{ toJson(github.event.pull_request.labels) }}')
           FLAGS=()
-          FLAGS+=("$(./_check_label_and_set_flag.sh "$LABELS" "skip-nx-cache" "--skip-nx-cache")")
-          FLAGS+=("$(./_check_label_and_set_flag.sh "$LABELS" "nx-verbose" "--verbose")")
+          FLAGS+=("$(./scripts/ci/_check_label_and_set_flag.sh "$LABELS" "skip-nx-cache" "--skip-nx-cache")")
+          FLAGS+=("$(./scripts/ci/_check_label_and_set_flag.sh "$LABELS" "nx-verbose" "--verbose")")
           NX_EXTRA_ARGS="${FLAGS[*]}"
           echo "::set-output name=nx_args::$NX_EXTRA_ARGS"
 
