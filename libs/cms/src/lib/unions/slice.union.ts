@@ -38,6 +38,7 @@ import {
   IEmailSignup,
   IFeaturedSupportQnAs,
   ISliceDropdown,
+  ISectionWithVideo,
 } from '../generated/contentfulTypes'
 import { Image, mapImage } from '../models/image.model'
 import { Asset, mapAsset } from '../models/asset.model'
@@ -104,6 +105,10 @@ import {
   mapFeaturedSupportQNAs,
 } from '../models/featuredSupportQNAs.model'
 import { mapSliceDropdown, SliceDropdown } from '../models/sliceDropdown.model'
+import {
+  SectionWithVideo,
+  mapSectionWithVideo,
+} from '../models/sectionWithVideo.model'
 
 type SliceTypes =
   | ITimeline
@@ -119,6 +124,7 @@ type SliceTypes =
   | ISliceConnectedComponent
   | IEmbeddedVideo
   | ISectionWithImage
+  | ISectionWithVideo
   | ITabSection
   | ITeamList
   | IContactUs
@@ -158,6 +164,7 @@ export const SliceUnion = createUnionType({
     ConnectedComponent,
     EmbeddedVideo,
     SectionWithImage,
+    SectionWithVideo,
     TabSection,
     TeamList,
     ContactUs,
@@ -216,6 +223,8 @@ export const mapSliceUnion = (slice: SliceTypes): typeof SliceUnion => {
       return mapEmbeddedVideo(slice as IEmbeddedVideo)
     case 'sectionWithImage':
       return mapSectionWithImage(slice as ISectionWithImage)
+    case 'sectionWithVideo':
+      return mapSectionWithVideo(slice as ISectionWithVideo)
     case 'tabSection':
       return mapTabSection(slice as ITabSection)
     case 'teamList':

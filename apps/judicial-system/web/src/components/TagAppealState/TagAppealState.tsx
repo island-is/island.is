@@ -99,7 +99,7 @@ const TagAppealState: React.FC<React.PropsWithChildren<Props>> = ({
   if (!tagVariantRuling) return null
 
   return (
-    <Tag variant={tagVariantRuling?.color} outlined disabled>
+    <Tag variant={tagVariantRuling?.color} outlined disabled truncate>
       {tagVariantRuling.text}
     </Tag>
   )
