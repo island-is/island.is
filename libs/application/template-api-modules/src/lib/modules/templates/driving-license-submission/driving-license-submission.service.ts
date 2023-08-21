@@ -7,7 +7,7 @@ import {
 import { SharedTemplateApiService } from '../../shared'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { coreErrorMessages, getValueViaPath } from '@island.is/application/core'
-import { ApplicationTypes, FormValue } from '@island.is/application/types'
+import { ApplicationTypes, FormValue, InstitutionNationalIds } from '@island.is/application/types'
 import {
   generateDrivingLicenseSubmittedEmail,
   generateDrivingAssessmentApprovalEmail,
@@ -36,8 +36,6 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
     application: { id, answers },
     auth,
   }: TemplateApiModuleActionProps) {
-    const SYSLUMADUR_NATIONAL_ID = '6509142520'
-
     const applicationFor = getValueViaPath<'B-full' | 'B-temp'>(
       answers,
       'applicationFor',
@@ -49,7 +47,7 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
     const response = await this.sharedTemplateAPIService.createCharge(
       auth,
       id,
-      SYSLUMADUR_NATIONAL_ID,
+      InstitutionNationalIds.SYSLUMENN,
       [chargeItemCode],
     )
 
