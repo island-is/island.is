@@ -44,7 +44,10 @@ const IcelandicNaturalDisasterInsuranceHeader: React.FC<HeaderProps> = ({
 
   return (
     <div
-      style={n(`ntiHeader-${screenWidth}`, getDefaultStyle(width))}
+      style={n(
+        `geislavarnirRikisinsHeader-${screenWidth}`,
+        getDefaultStyle(width),
+      )}
       className={styles.headerBg}
     >
       <div className={styles.headerWrapper}>
