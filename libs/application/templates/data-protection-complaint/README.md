@@ -1,5 +1,3 @@
-<!-- gitbook-ignore -->
-
 # Application Templates Data Protection Complaint
 
 This library was generated with [Nx](https://nx.dev).
