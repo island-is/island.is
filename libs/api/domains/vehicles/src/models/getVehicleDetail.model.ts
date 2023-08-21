@@ -179,6 +179,9 @@ export class VehiclesInspectionInfo {
   @Field(() => String, { nullable: true })
   result?: string | null
 
+  @Field(() => String, { nullable: true })
+  odometer?: string | null
+
   @Field(() => Date, { nullable: true })
   nextInspectionDate?: Date | null
 

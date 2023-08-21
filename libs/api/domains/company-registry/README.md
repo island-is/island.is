@@ -1,5 +1,3 @@
-<!-- gitbook-ignore -->
-
 # API Domains Company registry
 
 This domain implements RSK endpoints defined in the RSK client library.
