@@ -172,6 +172,7 @@ jobs:
     defaults:
       run:
         working-directory: ${{ github.workspace }}
+        shell: bash
     if: needs.prepare.outputs.affected > 0
     steps:
       - uses: actions/checkout@v3
@@ -227,6 +228,7 @@ jobs:
     defaults:
       run:
         working-directory: ${{ github.workspace }}
+        shell: bash
     if: needs.prepare.outputs.affected > 0
     steps:
       - uses: actions/checkout@v3
