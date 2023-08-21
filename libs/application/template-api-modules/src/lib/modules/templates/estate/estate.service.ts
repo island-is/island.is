@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 
 import { TemplateApiModuleActionProps } from '../../../types'
 import { NationalRegistry, UploadData } from './types'
@@ -30,13 +30,17 @@ import AmazonS3Uri from 'amazon-s3-uri'
 import { S3 } from 'aws-sdk'
 import kennitala from 'kennitala'
 import { EstateTypes } from './consts'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
 
 type EstateSchema = zinfer<typeof estateSchema>
 
 @Injectable()
 export class EstateTemplateService extends BaseTemplateApiService {
   s3: S3
-  constructor(private readonly syslumennService: SyslumennService) {
+  constructor(
+    @Inject(LOGGER_PROVIDER) private logger: Logger,
+    private readonly syslumennService: SyslumennService) {
     super(ApplicationTypes.ESTATE)
     this.s3 = new S3()
   }
@@ -74,6 +78,7 @@ export class EstateTemplateService extends BaseTemplateApiService {
         ) {
           return true
         }
+        this.logger.warn('[estate]: Heir under 18 without advocate')
         throw new TemplateApiError(
           {
             title:
@@ -375,6 +380,7 @@ export class EstateTemplateService extends BaseTemplateApiService {
       })
 
     if (!result.success) {
+      this.logger.error('[estate]: Failed to upload data - ', result.message)
       throw new Error('Application submission failed on syslumadur upload data')
     }
     return { sucess: result.success, id: result.caseNumber }
@@ -393,6 +399,7 @@ export class EstateTemplateService extends BaseTemplateApiService {
       const fileContent = file.Body as Buffer
       return fileContent?.toString('base64') || ''
     } catch (e) {
+      this.logger.warn('[estate]: Failed to get file content - ', e)
       return 'err'
     }
   }
