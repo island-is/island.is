@@ -1414,7 +1414,7 @@ describe('formatDefenderCourtDateLinkEmailNotification', () => {
 
     // Assert
     expect(res).toBe(
-      'Sækjandi hefur valið að deila kröfu með þér sem verjanda sakbornings í máli R-77/2021.<br /><br />Þú getur nálgast gögn málsins í <a href="https://example.com/overview">Réttarvörslugátt</a> með rafrænum skilríkjum.',
+      'Sækjandi hefur valið að deila kröfu með þér sem verjanda sakbornings í máli R-77/2021.<br /><br />Þú getur nálgast gögn málsins á <a href="https://example.com/overview">yfirlitssíðu málsins í Réttarvörslugátt</a>.',
     )
   })
 
@@ -1436,7 +1436,7 @@ describe('formatDefenderCourtDateLinkEmailNotification', () => {
 
     // Assert
     expect(res).toBe(
-      'Héraðsdómur Norðurlands hefur skráð þig sem verjanda/talsmann sakbornings í máli R-77/2021.<br /><br />Þú getur nálgast yfirlit málsins í <a href="https://example.com/overview">Réttarvörslugátt</a> með rafrænum skilríkjum.',
+      'Héraðsdómur Norðurlands hefur skráð þig sem verjanda/talsmann sakbornings í máli R-77/2021.<br /><br />Þú getur nálgast yfirlit málsins á <a href="https://example.com/overview">yfirlitssíðu málsins í Réttarvörslugátt</a>.',
     )
   })
 })
@@ -1933,23 +1933,31 @@ describe('formatPrisonAdministrationRulingNotification', () => {
     onError: jest.fn(),
   }).formatMessage
   const fn = (
-    courtCaseNumber: string | undefined,
-    courtName: string | undefined,
+    isModifyingRuling: boolean,
     overviewUrl: string,
+    courtCaseNumber?: string,
+    courtName?: string,
   ) =>
     formatPrisonAdministrationRulingNotification(
       formatMessage,
+      isModifyingRuling,
+      overviewUrl,
       courtCaseNumber,
       courtName,
-      overviewUrl,
     )
 
   it('should format prison adminstration ruling notification', () => {
+    const isModifyingRuling = false
     const courtCaseNumber = '007-2022-06546'
     const courtName = 'Héraðsdómur'
     const overviewUrl = 'some url'
 
-    const result = fn(courtCaseNumber, courtName, overviewUrl)
+    const result = fn(
+      isModifyingRuling,
+      overviewUrl,
+      courtCaseNumber,
+      courtName,
+    )
 
     expect(result.subject).toBe('Úrskurður í máli 007-2022-06546')
     expect(result.body).toBe(
@@ -1981,7 +1989,7 @@ describe('formatDefenderResubmittedToCourtEmailNotification', () => {
     )
 
     expect(result.body).toEqual(
-      'Sækjandi í máli R-2022/999 hjá Héraðsdómi Reykjavíkur hefur breytt kröfunni og sent hana aftur á dóminn.<br /><br />Þú getur nálgast gögn málsins í <a href="https://rettarvorslugatt.island.is/overviewUrl">Réttarvörslugátt</a> með rafrænum skilríkjum.',
+      'Sækjandi í máli R-2022/999 hjá Héraðsdómi Reykjavíkur hefur breytt kröfunni og sent hana aftur á dóminn.<br /><br />Þú getur nálgast gögn málsins á <a href="https://rettarvorslugatt.island.is/overviewUrl">yfirlitssíðu málsins í Réttarvörslugátt</a>.',
     )
     expect(result.subject).toEqual('Gögn í máli R-2022/999')
   })
