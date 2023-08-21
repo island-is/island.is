@@ -3,6 +3,7 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import { Box, Table as T, Text } from '@island.is/island-ui/core'
 import { VehiclesOwners } from '@island.is/api/schema'
 import { messages } from '../../lib/messages'
+import { dateFormat } from '@island.is/shared/constants'
 
 interface PropTypes {
   data: VehiclesOwners[]
@@ -11,7 +12,7 @@ interface PropTypes {
 
 const OwnersTable = ({ data, title }: PropTypes) => {
   useNamespaces('sp.vehicles')
-  const { formatMessage } = useLocale()
+  const { formatMessage, lang } = useLocale()
   return (
     <Box marginBottom={4} marginTop="containerGutter">
       <Text variant="h4" fontWeight="semiBold" paddingBottom={2}>
@@ -59,7 +60,7 @@ const OwnersTable = ({ data, title }: PropTypes) => {
                   <Text variant="medium">
                     {owner?.dateOfPurchase &&
                       new Date(owner.dateOfPurchase).toLocaleDateString(
-                        'is-IS',
+                        lang === 'en' ? 'en-US' : 'is-IS',
                       )}
                   </Text>
                 </T.Data>

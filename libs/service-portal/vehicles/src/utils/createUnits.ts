@@ -19,7 +19,8 @@ import {
 
 import { displayWithUnit } from './displayWithUnit'
 import isValid from 'date-fns/isValid/index.js'
-const locale = 'is-IS'
+
+type LocaleLang = 'en-US' | 'is-IS'
 
 const basicInfoArray = (
   data: VehiclesBasicInfo,
@@ -143,6 +144,7 @@ const feeInfoArray = (
 const inspectionInfoArray = (
   data: VehiclesInspectionInfo,
   formatMessage: FormatMessage,
+  locale: LocaleLang,
 ) => {
   return {
     header: {
@@ -179,6 +181,7 @@ const inspectionInfoArray = (
 const operatorInfoArray = (
   data: VehiclesOperator,
   formatMessage: FormatMessage,
+  locale: LocaleLang,
 ) => {
   return {
     header: {
@@ -209,6 +212,7 @@ const operatorInfoArray = (
 const ownerInfoArray = (
   data: VehiclesCurrentOwnerInfo,
   formatMessage: FormatMessage,
+  locale: LocaleLang,
 ) => {
   return {
     header: {
@@ -239,6 +243,7 @@ const ownerInfoArray = (
 const registrationInfoArray = (
   data: VehiclesRegistrationInfo,
   formatMessage: FormatMessage,
+  locale: LocaleLang,
 ) => {
   return {
     header: {
