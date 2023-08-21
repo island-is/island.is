@@ -1,5 +1,3 @@
-<!-- gitbook-ignore -->
-
 # Clients Transport Authority Digital Tachograph Drivers Card
 
 This library was generated with [Nx](https://nx.dev).
