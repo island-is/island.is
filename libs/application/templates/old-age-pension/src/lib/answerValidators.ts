@@ -8,6 +8,7 @@ import { employment } from './answerValidationSections/employment'
 import { validateLastestEmployer } from './answerValidationSections/validateLastestEmployer'
 import { fileUploadChildPension } from './answerValidationSections/fileUploadChildPension'
 import { paymentInfo } from './answerValidationSections/paymentInfo'
+import { validateLastestChild } from './answerValidationSections/validateLastestChild'
 
 const {
   PERIOD,
@@ -17,6 +18,7 @@ const {
   VALIDATE_LATEST_EMPLOYER,
   FILEUPLOADCHILDPENSION,
   PAYMENTINFO,
+  VALIDATE_LATEST_CHILD,
 } = AnswerValidationConstants
 
 export const answerValidators: Record<string, AnswerValidator> = {
@@ -27,4 +29,5 @@ export const answerValidators: Record<string, AnswerValidator> = {
   [FILEUPLOADHOUSEHOLDSUPPLEMENT]: fileUploadHouseholdSupplement,
   [FILEUPLOADCHILDPENSION]: fileUploadChildPension,
   [PAYMENTINFO]: paymentInfo,
+  [VALIDATE_LATEST_CHILD]: validateLastestChild,
 }
