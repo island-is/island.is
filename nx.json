@@ -21,7 +21,7 @@
         "parallel": 1
       }
     },
-    "cloud": {
+    "nx-cloud": {
       "runner": "nx-cloud",
       "options": {
         "cacheableOperations": [
