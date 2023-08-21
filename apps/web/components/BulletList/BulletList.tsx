@@ -6,8 +6,8 @@ import { Stack, Box, Text, Icon, Button, Link } from '@island.is/island-ui/core'
 
 import * as styles from './BulletList.css'
 
-type IconBulletType = {
-  type: 'IconBulletType'
+type IconBullet = {
+  type: 'IconBullet'
   title: string
   body: string
   icon: string
@@ -16,7 +16,6 @@ type IconBulletType = {
 }
 
 type NumberBullet = {
-  type: 'NumberBullet'
   title: string
   body: string
 }
@@ -27,9 +26,9 @@ type NumberBulletGroup = {
   bullets: NumberBullet[]
 }
 
-type Entry = IconBulletType | NumberBulletGroup
+type Entry = IconBullet | NumberBulletGroup
 
-export interface BulletListProps extends React.PropsWithChildren {
+export interface BulletListProps {
   bullets: Entry[]
 }
 
@@ -38,7 +37,7 @@ export const BulletList: FC<React.PropsWithChildren<BulletListProps>> = ({
 }) => (
   <div>
     {bullets.map((bullet, index) => {
-      return bullet.type === 'IconBulletType' ? (
+      return bullet.type === 'IconBullet' ? (
         <Row
           key={index}
           left={<IconBullet variant="blue" size="large" image={bullet.icon} />}

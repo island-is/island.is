@@ -104,7 +104,7 @@ export interface LayoutProps {
   articleAlertBannerContent?: GetAlertBannerQuery['getAlertBanner']
   languageToggleQueryParams?: Record<Locale, Record<string, string>>
   footerVersion?: 'default' | 'organization'
-  respOrigin: string
+  respOrigin
   megaMenuData
   children?: React.ReactNode
 }
@@ -488,11 +488,10 @@ Layout.getProps = async ({ apolloClient, locale, req }) => {
           },
         },
       })
-      .then((res) =>
-        res.data.getNamespace?.fields
-          ? JSON.parse(res.data.getNamespace.fields)
-          : {},
-      ),
+      .then((res) => {
+        // map data here to reduce data processing in component
+        return JSON.parse(res.data.getNamespace.fields)
+      }),
     apolloClient
       .query<GetGroupedMenuQuery, QueryGetGroupedMenuArgs>({
         query: GET_GROUPED_MENU_QUERY,
@@ -512,17 +511,13 @@ Layout.getProps = async ({ apolloClient, locale, req }) => {
   ])
 
   const alertBannerId = `alert-${stringHash(JSON.stringify(alertBanner))}`
-  const [asideTopLinksData, asideBottomLinksData] = megaMenuData?.menus ?? []
+  const [asideTopLinksData, asideBottomLinksData] = megaMenuData.menus
 
   const mapLinks = (item: Menu) =>
     item.menuLinks.map((x) => {
-      // Create an array of link parameters. If x.link is defined, use x.link.slug; otherwise, use an empty array.
-      const linkParams = x.link ? [x.link.slug] : []
-
-      // Get the href using LinkResolver with the modified linkParams array.
       const href = LinkResolver(
-        x.link?.type as LinkType,
-        linkParams,
+        x.link.type as LinkType,
+        [x.link.slug],
         lang as Locale,
       ).href.trim()
 
@@ -542,7 +537,7 @@ Layout.getProps = async ({ apolloClient, locale, req }) => {
     footerMiddleMenu: [],
   }
 
-  const footerMenu = footerMenuData?.menus.reduce((menus, menu, idx) => {
+  const footerMenu = footerMenuData.menus.reduce((menus, menu, idx) => {
     if (IS_MOCK) {
       const key = Object.keys(menus)[idx]
       if (key) {
@@ -584,7 +579,7 @@ Layout.getProps = async ({ apolloClient, locale, req }) => {
     alertBannerContent: {
       ...alertBanner,
       showAlertBanner:
-        alertBanner?.showAlertBanner &&
+        alertBanner.showAlertBanner &&
         (!req?.headers.cookie ||
           req.headers.cookie?.indexOf(alertBannerId) === -1),
     },

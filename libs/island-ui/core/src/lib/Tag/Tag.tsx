@@ -19,9 +19,6 @@ export type TagVariant =
   | 'mint'
   | 'disabled'
 
-interface ChildrenProps {
-  children?: ReactNode
-}
 export interface TagProps {
   onClick?: () => void
   variant?: TagVariant

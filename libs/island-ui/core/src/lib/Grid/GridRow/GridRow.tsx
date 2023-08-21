@@ -1,4 +1,4 @@
-import React, { FC, ReactNode } from 'react'
+import React, { FC } from 'react'
 import cn from 'classnames'
 import { Box } from '../../Box/Box'
 import { BoxProps } from '../../Box/types'
@@ -7,7 +7,6 @@ import { ResponsiveProp } from '../../../utils/responsiveProp'
 import { flexDirection, justifyContent } from '../../Box/useBoxStyles.css'
 
 interface Props {
-  children: ReactNode
   className?: string
   direction?: ResponsiveProp<keyof typeof flexDirection>
   align?: ResponsiveProp<keyof typeof justifyContent>

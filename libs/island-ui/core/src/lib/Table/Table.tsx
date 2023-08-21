@@ -45,7 +45,6 @@ export const Table = ({
 )
 
 interface HeadProps {
-  children?: ReactNode
   sticky?: boolean
 }
 
