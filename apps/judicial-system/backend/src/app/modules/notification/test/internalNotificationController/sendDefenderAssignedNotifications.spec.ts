@@ -118,7 +118,7 @@ describe('InternalNotificationController - Send defender assigned notifications'
         attachments: undefined,
         subject: 'Héraðsdómur Reykjavíkur - aðgangur að málsgögnum',
         text: expect.anything(), // same as hmtl but stripped hmtl tags
-        html: `Héraðsdómur Reykjavíkur hefur skipað þig verjanda í máli ${theCase.courtCaseNumber}.<br /><br />Gögn málsins eru aðgengileg í <a href="${mockConfig.clientUrl}${DEFENDER_INDICTMENT_ROUTE}/${caseId}">Réttarvörslugátt</a> með rafrænum skilríkjum.`,
+        html: `Héraðsdómur Reykjavíkur hefur skráð þig verjanda í máli ${theCase.courtCaseNumber}.<br /><br />Gögn málsins eru aðgengileg á <a href="${mockConfig.clientUrl}${DEFENDER_INDICTMENT_ROUTE}/${caseId}">yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
       })
     })
   })
@@ -332,7 +332,7 @@ describe('InternalNotificationController - Send defender assigned notifications'
         attachments: undefined,
         subject: 'Héraðsdómur Reykjavíkur - aðgangur að málsgögnum',
         text: expect.anything(), // same as hmtl but stripped hmtl tags
-        html: `Héraðsdómur Reykjavíkur hefur skipað þig verjanda í máli ${theCase.courtCaseNumber}.<br /><br />Gögn málsins eru aðgengileg í <a href="${mockConfig.clientUrl}${DEFENDER_INDICTMENT_ROUTE}/${caseId}">Réttarvörslugátt</a> með rafrænum skilríkjum.`,
+        html: `Héraðsdómur Reykjavíkur hefur skráð þig verjanda í máli ${theCase.courtCaseNumber}.<br /><br />Gögn málsins eru aðgengileg á <a href="${mockConfig.clientUrl}${DEFENDER_INDICTMENT_ROUTE}/${caseId}">yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
       })
       expect(then.result).toEqual(expect.objectContaining({ delivered: true }))
     })
