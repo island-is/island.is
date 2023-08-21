@@ -17,12 +17,12 @@ export const serviceSetup = (services: {
       AUTH_IDS_REDIRECT_URI: {
         dev: ref(
           (ctx) =>
-            `${
+            `https://${
               ctx.featureDeploymentName ? `${ctx.featureDeploymentName}-` : ''
-            }judicial-system.dev01.devland.is`,
+            }judicial-system.dev01.devland.is/api/auth/callback/identity-server`,
         ),
         staging:
-          'https://identity-server.staging01.devland.is/api/auth/callback/identity-server',
+          'https://judicial-system.staging01.devland.is/api/auth/callback/identity-server',
         prod:
           'https://rettarvorslugatt.island.is/api/auth/callback/identity-server',
       },
