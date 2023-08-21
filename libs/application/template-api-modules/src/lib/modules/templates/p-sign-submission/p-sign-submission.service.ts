@@ -23,7 +23,6 @@ import { TemplateApiError } from '@island.is/nest/problem'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 
-
 export const QUALITY_PHOTO = `
 query HasQualityPhoto {
   drivingLicenseQualityPhoto {

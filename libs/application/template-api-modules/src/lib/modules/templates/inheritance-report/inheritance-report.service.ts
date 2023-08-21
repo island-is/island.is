@@ -170,7 +170,10 @@ export class InheritanceReportService extends BaseTemplateApiService {
       })
 
     if (!result.success) {
-      this.logger.error('[inheritance-report]: Failed to upload data - ', result.message)
+      this.logger.error(
+        '[inheritance-report]: Failed to upload data - ',
+        result.message,
+      )
       throw new Error(
         `Application submission failed on syslumadur upload data: ${result.message}`,
       )

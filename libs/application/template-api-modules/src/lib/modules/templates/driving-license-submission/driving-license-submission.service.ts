@@ -7,7 +7,11 @@ import {
 import { SharedTemplateApiService } from '../../shared'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { coreErrorMessages, getValueViaPath } from '@island.is/application/core'
-import { ApplicationTypes, FormValue, InstitutionNationalIds } from '@island.is/application/types'
+import {
+  ApplicationTypes,
+  FormValue,
+  InstitutionNationalIds,
+} from '@island.is/application/types'
 import {
   generateDrivingLicenseSubmittedEmail,
   generateDrivingAssessmentApprovalEmail,

@@ -40,7 +40,8 @@ export class EstateTemplateService extends BaseTemplateApiService {
   s3: S3
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
-    private readonly syslumennService: SyslumennService) {
+    private readonly syslumennService: SyslumennService,
+  ) {
     super(ApplicationTypes.ESTATE)
     this.s3 = new S3()
   }
