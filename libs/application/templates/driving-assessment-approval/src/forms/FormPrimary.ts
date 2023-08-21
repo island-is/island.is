@@ -116,7 +116,11 @@ export const FormPrimary: Form = buildForm({
               title: m.submitConfirmation,
               refetchApplicationAfterSubmit: true,
               actions: [
-                { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
+                {
+                  event: 'SUBMIT',
+                  name: m.submit.defaultMessage,
+                  type: 'primary',
+                },
               ],
             }),
           ],
