@@ -1,5 +1,3 @@
-<!-- gitbook-navigation: "React Components" -->
-
 # React Components
 
 This is a library for common React components that can be used in any React application, i.e. not framework specific.

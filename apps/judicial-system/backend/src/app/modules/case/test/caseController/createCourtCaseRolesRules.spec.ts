@@ -14,9 +14,6 @@ describe('CaseController - Create court case rules', () => {
 
   it('should give permission to three role', () => {
     expect(rules).toHaveLength(3)
-  })
-
-  it('should give permission to judges, registrars and assistants', () => {
     expect(rules).toContain(judgeRule)
     expect(rules).toContain(registrarRule)
     expect(rules).toContain(assistantRule)

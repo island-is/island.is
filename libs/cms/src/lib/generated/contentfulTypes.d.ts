@@ -213,6 +213,9 @@ export interface IArticleFields {
 
   /** Active Translations */
   activeTranslations?: Record<string, any> | undefined
+
+  /** Sign language video */
+  signLanguageVideo?: IEmbeddedVideo | undefined
 }
 
 export interface IArticle extends Entry<IArticleFields> {
@@ -2242,6 +2245,9 @@ export interface IOrganizationFields {
 
   /** Name In Vacancy List */
   nameInVacancyList?: string | undefined
+
+  /** Reference Identifier */
+  referenceIdentifier?: string | undefined
 }
 
 export interface IOrganization extends Entry<IOrganizationFields> {
@@ -2297,6 +2303,7 @@ export interface IOrganizationPageFields {
         | ITabSection
         | ITimeline
         | ITwoColumnText
+        | ISectionWithVideo
       )[]
     | undefined
 
@@ -2449,6 +2456,9 @@ export interface IOrganizationSubpageFields {
 
   /** Featured Image */
   featuredImage?: Asset | undefined
+
+  /** Sign Language Video */
+  signLanguageVideo?: IEmbeddedVideo | undefined
 }
 
 export interface IOrganizationSubpage
@@ -2923,6 +2933,39 @@ export interface ISectionWithImage extends Entry<ISectionWithImageFields> {
   }
 }
 
+export interface ISectionWithVideoFields {
+  /** Title */
+  title: string
+
+  /** Content */
+  content: Document
+
+  /** Video */
+  video: IEmbeddedVideo
+
+  /** Link */
+  link?: ILink | undefined
+}
+
+/** A section containing a video on the left and text on the right (which wraps below the video on smaller screens) */
+
+export interface ISectionWithVideo extends Entry<ISectionWithVideoFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'sectionWithVideo'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface ISidebarCardFields {
   /** Type */
   type?:
@@ -2992,6 +3035,8 @@ export interface ISliceConnectedComponentFields {
     | 'Verðbréfamiðlarar/Brokers'
     | 'PublicVehicleSearch'
     | 'PlateAvailableSearch'
+    | 'AircraftSearch'
+    | 'DrivingInstructorList'
     | undefined
 
   /** Localized JSON */
@@ -3288,6 +3333,9 @@ export interface ISubArticleFields {
 
   /** Show Table Of Contents */
   showTableOfContents?: boolean | undefined
+
+  /** Sign Language Video */
+  signLanguageVideo?: IEmbeddedVideo | undefined
 }
 
 /** A sub article that's a part of another main article */
@@ -4235,6 +4283,7 @@ export type CONTENT_TYPE =
   | 'questionAndAnswer'
   | 'sectionHeading'
   | 'sectionWithImage'
+  | 'sectionWithVideo'
   | 'sidebarCard'
   | 'sliceConnectedComponent'
   | 'sliceDropdown'

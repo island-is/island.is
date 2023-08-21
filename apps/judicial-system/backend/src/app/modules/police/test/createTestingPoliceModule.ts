@@ -52,5 +52,7 @@ export const createTestingPoliceModule = async () => {
 
   const policeController = policeModule.get<PoliceController>(PoliceController)
 
+  policeModule.close()
+
   return { config, awsS3Service, policeService, policeController }
 }

@@ -182,10 +182,17 @@ export function formatProsecutorReadyForCourtEmailNotification(
   courtName?: string,
   overviewUrl?: string,
 ): SubjectAndBody {
-  const subject = formatMessage(notifications.readyForCourt.subject, {
-    isIndictmentCase: isIndictmentCase(caseType),
-    caseType: caseTypes[caseType],
-  })
+  const subject = isInvestigationCase(caseType)
+    ? formatMessage(
+        notifications.readyForCourt.investigationCaseReadyForCourtSubject,
+        {
+          caseType: caseTypes[caseType],
+        },
+      )
+    : formatMessage(notifications.readyForCourt.subject, {
+        isIndictmentCase: isIndictmentCase(caseType),
+        caseType: caseTypes[caseType],
+      })
 
   const body = formatMessage(notifications.readyForCourt.prosecutorHtml, {
     isIndictmentCase: isIndictmentCase(caseType),
@@ -422,31 +429,42 @@ export function formatDefenderCourtDateLinkEmailNotification(
   overviewUrl?: string,
   court?: string,
   courtCaseNumber?: string,
+  requestSharedWithDefender?: boolean,
 ): string {
   const cf = notifications.defenderCourtDateEmail
-  const body = formatMessage(cf.linkBody, {
-    courtCaseNumber,
-  })
-  const link = formatMessage(cf.link, {
-    defenderHasAccessToRvg: Boolean(overviewUrl),
-    courtName: court?.replace('dómur', 'dómi'),
-    linkStart: `<a href="${overviewUrl}">`,
-    linkEnd: '</a>',
-  })
+  const body = requestSharedWithDefender
+    ? formatMessage(cf.linkBody, { courtCaseNumber })
+    : formatMessage(cf.linkNoRequestBody, { courtName: court, courtCaseNumber })
+  const link = requestSharedWithDefender
+    ? formatMessage(cf.link, {
+        defenderHasAccessToRvg: Boolean(overviewUrl),
+        courtName: court?.replace('dómur', 'dómi'),
+        linkStart: `<a href="${overviewUrl}">`,
+        linkEnd: '</a>',
+      })
+    : formatMessage(cf.linkNoRequest, {
+        defenderHasAccessToRvg: Boolean(overviewUrl),
+        courtName: court?.replace('dómur', 'dómi'),
+        linkStart: `<a href="${overviewUrl}">`,
+        linkEnd: '</a>',
+      })
 
   return `${body}${link}`
 }
 
 export function formatPrisonAdministrationRulingNotification(
   formatMessage: FormatMessage,
-  courtCaseNumber: string | undefined,
-  courtName: string | undefined,
+  isModifyingRuling: boolean,
   overviewUrl: string,
+  courtCaseNumber?: string | undefined,
+  courtName?: string | undefined,
 ): SubjectAndBody {
   const subject = formatMessage(notifications.signedRuling.subject, {
+    isModifyingRuling,
     courtCaseNumber,
   })
   const body = formatMessage(notifications.signedRuling.prisonAdminBody, {
+    isModifyingRuling,
     courtCaseNumber: courtCaseNumber ?? '',
     courtName: courtName?.replace('dómur', 'dómi') ?? '',
     linkStart: `<a href="${overviewUrl}">`,

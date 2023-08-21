@@ -102,6 +102,7 @@ export const GET_USERS_VEHICLE_DETAIL = gql`
         type
         date
         result
+        odometer
         nextInspectionDate
         lastInspectionDate
         insuranceStatus
@@ -301,24 +302,6 @@ const VehicleDetail = () => {
                   >
                     {formatMessage(messages.vehicleHistoryReport)}
                   </Button>
-                </Box>
-                <Box paddingRight={2} marginBottom={[1, 1, 1, 0]}>
-                  <a
-                    href={formatMessage(urls.ownerChange)}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <Button
-                      colorScheme="default"
-                      icon="open"
-                      iconType="outline"
-                      size="default"
-                      type="button"
-                      variant="utility"
-                    >
-                      {formatMessage(messages.changeOfOwnership)}
-                    </Button>
-                  </a>
                 </Box>
                 <Box paddingRight={2}>
                   <Dropdown dropdownItems={dropdownArray} />

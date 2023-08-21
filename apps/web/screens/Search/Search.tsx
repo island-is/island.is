@@ -375,7 +375,7 @@ const Search: Screen<CategoryProps> = ({
 
   useEffect(() => {
     if (state.searchLocked) {
-      return null
+      return
     }
 
     const newQuery = {
