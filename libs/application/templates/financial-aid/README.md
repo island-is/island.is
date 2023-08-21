@@ -1,5 +1,3 @@
-<!-- gitbook-ignore -->
-
 # Application Templates Financial Aid
 
 This library was generated with [Nx](https://nx.dev).
