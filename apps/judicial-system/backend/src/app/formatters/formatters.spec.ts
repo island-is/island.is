@@ -465,7 +465,7 @@ describe('formatProsecutorReadyForCourtEmailNotification', () => {
       overviewUrl,
     )
 
-  test.each([...restrictionCases, ...investigationCases])(
+  test.each([...restrictionCases])(
     'should format ready for court email for %s',
     (type) => {
       // Arrange
@@ -478,6 +478,27 @@ describe('formatProsecutorReadyForCourtEmailNotification', () => {
 
       // Assert
       expect(res.subject).toBe(`Krafa um ${caseTypes[type]} send`)
+      expect(res.body).toBe(
+        `Þú hefur sent kröfu á Héraðsdóm Reykjavíkur vegna LÖKE máls 007-2022-01. Skjalið er aðgengilegt undir <a href="https://rettarvorslugatt.island.is/test/overview">málinu í Réttarvörslugátt</a>.`,
+      )
+    },
+  )
+
+  test.each(investigationCases)(
+    'should format ready for court email for %s',
+    (type) => {
+      // Arrange
+      const court = 'Héraðsdómur Reykjavíkur'
+      const policeCaseNumbers = ['007-2022-01']
+      const overviewUrl = 'https://rettarvorslugatt.island.is/test/overview'
+
+      // Act
+      const res = fn(policeCaseNumbers, type, court, overviewUrl)
+
+      // Assert
+      expect(res.subject).toBe(
+        `Krafa um rannsóknarheimild send (${caseTypes[type]})`,
+      )
       expect(res.body).toBe(
         `Þú hefur sent kröfu á Héraðsdóm Reykjavíkur vegna LÖKE máls 007-2022-01. Skjalið er aðgengilegt undir <a href="https://rettarvorslugatt.island.is/test/overview">málinu í Réttarvörslugátt</a>.`,
       )

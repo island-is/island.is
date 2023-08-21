@@ -41,6 +41,13 @@ export const notifications = {
         '{isIndictmentCase, select, true {Ákæra} other {Krafa um {caseType}}} send',
       description: 'Titill í pósti til ákæranda þegar krafa er send',
     },
+    investigationCaseReadyForCourtSubject: {
+      id:
+        'judicial.system.backend:notifications.ready_for_court.investigation_case_ready_for_court',
+      defaultMessage: 'Krafa um rannsóknarheimild send ({caseType})',
+      description:
+        'Titill í pósti til ákæranda þegar rannsóknarheimild er send',
+    },
     prosecutorHtml: {
       id:
         'judicial.system.backend:notifications.ready_for_court.prosecutor_html_v3',
