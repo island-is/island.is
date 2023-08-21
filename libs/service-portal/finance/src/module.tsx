@@ -48,7 +48,7 @@ export const financeModule: PortalModule = {
       element: <FinanceTransactions />,
       enabled: userInfo.scopes.includes(ApiScope.financeOverview),
       dynamic: true,
-      loader: financeRoutesLoader({ userInfo, client }),
+      loader: financeRoutesLoader({ client }),
     },
     {
       name: m.financeEmployeeClaims,
@@ -56,7 +56,7 @@ export const financeModule: PortalModule = {
       element: <FinanceEmployeeClaims />,
       enabled: userInfo.scopes.includes(ApiScope.financeSalary),
       dynamic: true,
-      loader: financeRoutesLoader({ userInfo, client }),
+      loader: financeRoutesLoader({ client }),
     },
     {
       name: m.financeLocalTax,
@@ -64,7 +64,7 @@ export const financeModule: PortalModule = {
       element: <FinanceLocalTax />,
       enabled: userInfo.scopes.includes(ApiScope.financeOverview),
       dynamic: true,
-      loader: financeRoutesLoader({ userInfo, client }),
+      loader: financeRoutesLoader({ client }),
     },
     {
       name: m.financeSchedules,
@@ -72,7 +72,7 @@ export const financeModule: PortalModule = {
       enabled: userInfo.scopes.includes(ApiScope.financeSchedule),
       element: <FinanceSchedule />,
       dynamic: true,
-      loader: financeRoutesLoader({ userInfo, client }),
+      loader: financeRoutesLoader({ client }),
     },
   ],
 }
