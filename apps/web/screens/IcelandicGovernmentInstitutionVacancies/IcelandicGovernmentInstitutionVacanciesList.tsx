@@ -46,6 +46,8 @@ const ITEMS_PER_PAGE = 8
 export const VACANCY_INTRO_MAX_LENGTH = 80
 
 export const shortenText = (text: string, maxLength: number) => {
+  if (!text) return text
+
   if (text.length <= maxLength) {
     return text
   }
