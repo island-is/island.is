@@ -150,7 +150,7 @@ jobs:
         run: '[[ "${{ steps.generated-files-cache.outputs.success }}" != "false" ]] || exit 1'
 
       - name: Generate schemas
-        if: steps.generated-files-cache.outputs.cache-hit != 'true'
+        if: steps.generated-files-cache.outputs.cache-hit != 'true' || contains(toJson(github.event.pull_request.labels.*.name), 'skip-nx-cache')
         run: |
           node --version
           tar zcvf generated_files.tar.gz $(./scripts/ci/get-files-touched-by.sh yarn schemas --skip-cache | xargs realpath --relative-to $(pwd))
