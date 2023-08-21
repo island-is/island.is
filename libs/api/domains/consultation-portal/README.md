@@ -1,5 +1,3 @@
-<!-- gitbook-ignore -->
-
 # Consultation Portal
 
 This service utilizes the ConsultationPortalApi

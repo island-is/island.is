@@ -344,22 +344,26 @@ const ViewStudent = ({
                   <Text variant="h4">
                     {formatMessage(m.viewStudentExamsComplete)}
                   </Text>
-                  {student.book?.testResults.length > 0 ? (
-                    student.book?.testResults.map((test, key) => {
-                      const textStr = getExamString({
-                        name: test.testTypeName,
-                        examDate: test.examDate,
+                  {student.book?.testResults.filter(
+                    (result) => result.hasPassed,
+                  ).length > 0 ? (
+                    student.book?.testResults
+                      .filter((result) => result.hasPassed)
+                      .map((test, key) => {
+                        const textStr = getExamString({
+                          name: test.testTypeName,
+                          examDate: test.examDate,
+                        })
+                        return (
+                          <BulletList type="ul" color="dark300">
+                            <Bullet>
+                              <Text key={key} variant="default">
+                                {textStr}
+                              </Text>
+                            </Bullet>
+                          </BulletList>
+                        )
                       })
-                      return (
-                        <BulletList type="ul" color="dark300">
-                          <Bullet>
-                            <Text key={key} variant="default">
-                              {textStr}
-                            </Text>
-                          </Bullet>
-                        </BulletList>
-                      )
-                    })
                   ) : (
                     <BulletList type="ul" color="dark300">
                       <Bullet>
