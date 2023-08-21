@@ -1,5 +1,3 @@
-<!-- gitbook-ignore -->
-
 # portals-admin-service-desk
 
 This library was generated with [Nx](https://nx.dev).

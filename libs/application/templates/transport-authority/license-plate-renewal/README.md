@@ -1,5 +1,3 @@
-<!-- gitbook-ignore -->
-
 # application-templates-transport-authority-license-plate-renewal
 
 This library was generated with [Nx](https://nx.dev).

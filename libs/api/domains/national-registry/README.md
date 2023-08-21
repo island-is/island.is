@@ -1,5 +1,3 @@
-<!-- gitbook-ignore -->
-
 # api-domains-national-registry
 
 This library was generated with [Nx](https://nx.dev).

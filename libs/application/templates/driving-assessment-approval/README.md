@@ -1,5 +1,3 @@
-<!-- gitbook-ignore -->
-
 # Driver's License Approval
 
 This is an application that a teacher submits indicating that a student

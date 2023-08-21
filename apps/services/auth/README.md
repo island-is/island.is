@@ -1,5 +1,3 @@
-<!-- gitbook-navigation: "Auth" -->
-
 # Authentication Services
 
 The following services contain APIs for our Authentication Platform. They have a shared database and are hosted separately from all other island.is services.
