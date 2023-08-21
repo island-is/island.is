@@ -15,7 +15,6 @@ export const GET_TAPS_QUERY = gql`
 
 export const financeRoutesLoader: WrappedLoaderFn = ({
   client,
-  userInfo,
 }) => async () => {
   try {
     const { data } = await client.query<Query>({
