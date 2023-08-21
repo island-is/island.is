@@ -3,7 +3,6 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import { Box, Table as T, Text } from '@island.is/island-ui/core'
 import { VehiclesOwners } from '@island.is/api/schema'
 import { messages } from '../../lib/messages'
-import { dateFormat } from '@island.is/shared/constants'
 
 interface PropTypes {
   data: VehiclesOwners[]
