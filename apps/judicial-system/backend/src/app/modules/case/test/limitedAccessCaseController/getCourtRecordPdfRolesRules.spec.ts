@@ -14,9 +14,6 @@ describe('LimitedAccessCaseController - Get court record pdf rules', () => {
 
   it('should give permission to one role', () => {
     expect(rules).toHaveLength(1)
-  })
-
-  it('should give permission to staff', () => {
     expect(rules).toContain(defenderRule)
   })
 })
