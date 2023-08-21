@@ -1,7 +1,7 @@
 import React, { FC } from 'react'
 import { Box, Hidden, SkeletonLoader } from '@island.is/island-ui/core'
 
-export const CardLoader: FC = () => {
+export const CardLoader: FC<React.PropsWithChildren<unknown>> = () => {
   return (
     <Box
       display="flex"

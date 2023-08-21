@@ -61,7 +61,7 @@ export const mapCaseStateToTagVariant = (
   }
 }
 
-const TagCaseState: React.FC<Props> = (Props) => {
+const TagCaseState: React.FC<React.PropsWithChildren<Props>> = (Props) => {
   const { formatMessage } = useIntl()
   const {
     caseState,

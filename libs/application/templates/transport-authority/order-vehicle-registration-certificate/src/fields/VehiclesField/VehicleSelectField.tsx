@@ -13,7 +13,7 @@ interface VehicleSearchFieldProps {
 }
 
 export const VehicleSelectField: FC<
-  VehicleSearchFieldProps & FieldBaseProps
+  React.PropsWithChildren<VehicleSearchFieldProps & FieldBaseProps>
 > = ({ currentVehicleList, application }) => {
   const { formatMessage } = useLocale()
   const { setValue } = useFormContext()

@@ -211,11 +211,7 @@ const getIntParam = (s: string | string[]) => {
   if (!isNaN(i)) return i
 }
 
-OrganizationNewsList.getInitialProps = async ({
-  apolloClient,
-  query,
-  locale,
-}) => {
+OrganizationNewsList.getProps = async ({ apolloClient, query, locale }) => {
   const year = getIntParam(query.y)
   const month = year && getIntParam(query.m)
   const selectedPage = getIntParam(query.page) ?? 1

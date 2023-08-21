@@ -114,7 +114,7 @@ export function getConclusionAutofill(
       })
 }
 
-export const Ruling: React.FC = () => {
+export const Ruling: React.FC<React.PropsWithChildren<unknown>> = () => {
   const {
     workingCase,
     setWorkingCase,
@@ -208,6 +208,8 @@ export const Ruling: React.FC = () => {
     [router, workingCase.id],
   )
   const stepIsValid = isRulingValidRC(workingCase)
+  const caseFiles =
+    workingCase.caseFiles?.filter((file) => !file.category) ?? []
 
   return (
     <PageLayout
@@ -230,12 +232,12 @@ export const Ruling: React.FC = () => {
             <PoliceRequestAccordionItem workingCase={workingCase} />
             <AccordionItem
               id="caseFileList"
-              label={`Rannsóknargögn (${workingCase.caseFiles?.length ?? 0})`}
+              label={`Rannsóknargögn (${caseFiles.length})`}
               labelVariant="h3"
             >
               <CaseFileList
                 caseId={workingCase.id}
-                files={workingCase.caseFiles ?? []}
+                files={caseFiles}
                 canOpenFiles={
                   user &&
                   (user.id === workingCase.judge?.id ||

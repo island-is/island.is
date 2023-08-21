@@ -51,7 +51,9 @@ export class NotificationDispatchService {
     messageId: string
   }): Promise<void> {
     const deviceTokensResponse = await this.userProfileApi.userTokenControllerGetDeviceTokens(
-      { nationalId },
+      {
+        nationalId,
+      },
     )
 
     const tokens = deviceTokensResponse.map((token) => token.deviceToken)

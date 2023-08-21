@@ -68,7 +68,7 @@ export const mapPoliceCaseFileToPoliceCaseFileCheck = (
   checked: false,
 })
 
-export const CaseFiles: React.FC = () => {
+export const CaseFiles: React.FC<React.PropsWithChildren<unknown>> = () => {
   const {
     workingCase,
     setWorkingCase,
@@ -141,28 +141,25 @@ export const CaseFiles: React.FC = () => {
           ?.code as string,
       })
     }
-  }, [
-    policeData,
-    policeDataError,
-    policeDataLoading,
-    setPoliceCaseFiles,
-    workingCase.origin,
-    workingCase.caseFiles,
-  ])
+  }, [policeData, policeDataError, policeDataLoading, workingCase.origin])
 
   useEffect(() => {
     setPoliceCaseFileList(
       policeCaseFiles?.files
         .filter(
-          (f) =>
+          (policeFile) =>
             !workingCase.caseFiles?.some(
-              (caseFile) => caseFile.name === f.name,
+              (file) => !file.category && file.name === policeFile.name,
             ),
         )
         .map(mapPoliceCaseFileToPoliceCaseFileCheck) || [],
     )
 
-    setFilesInRVG(workingCase.caseFiles?.map(mapCaseFileToUploadFile) || [])
+    setFilesInRVG(
+      workingCase.caseFiles
+        ?.filter((file) => !file.category)
+        .map(mapCaseFileToUploadFile) || [],
+    )
   }, [policeCaseFiles, workingCase.caseFiles])
 
   const uploadErrorMessage = useMemo(() => {

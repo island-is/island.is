@@ -1,4 +1,5 @@
 import { useQuery } from '@apollo/client'
+import isEqual from 'lodash/isEqual'
 import {
   Box,
   Button,
@@ -296,14 +297,16 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
 
       filterValuesHaveBeenInitialized.current = true
 
-      router.replace(
-        {
-          pathname: router.pathname,
-          query: updatedQueryParams,
-        },
-        undefined,
-        { scroll: false },
-      )
+      if (!isEqual(router.query, updatedQueryParams)) {
+        router.replace(
+          {
+            pathname: router.pathname,
+            query: updatedQueryParams,
+          },
+          undefined,
+          { scroll: false, shallow: true },
+        )
+      }
     },
     DEBOUNCE_TIME_IN_MS,
     [parameters, activeLocale, searchValue, selectedOrderOption],
@@ -473,7 +476,7 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
   )
 }
 
-PublishedMaterial.getInitialProps = async ({ apolloClient, locale, query }) => {
+PublishedMaterial.getProps = async ({ apolloClient, locale, query }) => {
   const [
     {
       data: { getOrganizationPage },

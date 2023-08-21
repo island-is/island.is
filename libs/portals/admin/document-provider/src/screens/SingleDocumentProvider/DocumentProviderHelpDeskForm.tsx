@@ -25,11 +25,9 @@ interface UseFormProps {
   organisationNationalId: string
 }
 
-export const DocumentProviderHelpDeskForm: FC<Props> = ({
-  helpDesk,
-  organisationId,
-  organisationNationalId,
-}) => {
+export const DocumentProviderHelpDeskForm: FC<
+  React.PropsWithChildren<Props>
+> = ({ helpDesk, organisationId, organisationNationalId }) => {
   const { formatMessage } = useLocale()
   const {
     handleSubmit,

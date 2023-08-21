@@ -14,8 +14,8 @@ import {
   ForbiddenException,
   Inject,
   forwardRef,
-  CACHE_MANAGER,
 } from '@nestjs/common'
+import { CACHE_MANAGER } from '@nestjs/cache-manager'
 import {
   ApiOkResponse,
   ApiBearerAuth,

@@ -194,7 +194,7 @@ const renderChapter = (chapter: number, name: string) => (
   </Box>
 )
 
-const CaseFile: React.FC<CaseFileProps> = (props) => {
+const CaseFile: React.FC<React.PropsWithChildren<CaseFileProps>> = (props) => {
   const { caseFile, onReorder, onOpen, onRename, onDelete } = props
   const { formatMessage } = useIntl()
   const y = useMotionValue(0)
@@ -397,7 +397,9 @@ const CaseFile: React.FC<CaseFileProps> = (props) => {
   )
 }
 
-const IndictmentsCaseFilesAccordionItem: React.FC<Props> = (props) => {
+const IndictmentsCaseFilesAccordionItem: React.FC<
+  React.PropsWithChildren<Props>
+> = (props) => {
   const {
     policeCaseNumber,
     caseFiles,

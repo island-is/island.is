@@ -6,7 +6,7 @@ import { useRouter } from 'next/router'
 import ResourcesTabsNav from '../../../components/Resource/nav/ResourcesTabsNav'
 import LocalizationUtils from '../../../utils/localization.utils'
 
-const Index: React.FC = () => {
+const Index: React.FC<React.PropsWithChildren<unknown>> = () => {
   const router = useRouter()
 
   useEffect(() => {

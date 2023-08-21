@@ -17,11 +17,9 @@ import { getValueViaPath } from '@island.is/application/core'
 import { InputController } from '@island.is/shared/form-fields'
 import { format as formatNationalId } from 'kennitala'
 
-export const EstateMembersRepeater: FC<FieldBaseProps<Answers>> = ({
-  application,
-  field,
-  errors,
-}) => {
+export const EstateMembersRepeater: FC<
+  React.PropsWithChildren<FieldBaseProps<Answers>>
+> = ({ application, field, errors }) => {
   const { id } = field
   const { formatMessage } = useLocale()
   const { fields, append, remove, update } = useFieldArray({

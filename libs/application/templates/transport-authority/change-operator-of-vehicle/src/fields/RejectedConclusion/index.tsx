@@ -16,7 +16,9 @@ import { conclusion } from '../../lib/messages'
 import { Rejecter } from '../../shared'
 import kennitala from 'kennitala'
 
-export const RejectedConclusion: FC<FieldBaseProps> = (props) => {
+export const RejectedConclusion: FC<React.PropsWithChildren<FieldBaseProps>> = (
+  props,
+) => {
   const { application } = props
   const { formatMessage } = useLocale()
 

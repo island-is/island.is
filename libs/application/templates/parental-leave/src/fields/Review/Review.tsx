@@ -43,7 +43,7 @@ interface ReviewScreenProps {
   editable?: boolean
 }
 
-export const Review: FC<ReviewScreenProps> = ({
+export const Review: FC<React.PropsWithChildren<ReviewScreenProps>> = ({
   application,
   field,
   goToScreen,

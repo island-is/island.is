@@ -1,24 +1,25 @@
 {
-  "root": "libs/clients/inna",
+  "name": "clients-inna",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/clients/inna/src",
+  "projectType": "library",
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
-      "outputs": ["{options.outputFile}"],
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": ["libs/clients/inna/**/*.ts"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/clients/inna"],
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/libs/clients/inna"],
       "options": {
-        "jestConfig": "libs/clients/inna/jest.config.js",
+        "jestConfig": "libs/clients/inna/jest.config.ts",
         "passWithNoTests": true
       }
     },
     "schemas/external-openapi-generator": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "commands": [
           "yarn openapi-generator -o libs/clients/inna/gen/fetch -i libs/clients/inna/src/clientConfig.json"

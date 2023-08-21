@@ -200,7 +200,11 @@ type Props = {
   wrapper?: ReactNode
 }
 
-export const Content: React.FC<Props> = ({ document, wrapper, type }) => {
+export const Content: React.FC<React.PropsWithChildren<Props>> = ({
+  document,
+  wrapper,
+  type,
+}) => {
   const parsed = useMemo(() => {
     if (typeof document === 'object') {
       return document

@@ -84,9 +84,12 @@ fragmentTypes.json
 *.suo
 /.vs
 
-# Gitbook/Honkit
+# Honkit
 _book
 .vscode/settings.json
 
 # Ignore generated .html files when running `serve`
 apps/**/index.html
+
+# Next.js
+.next
