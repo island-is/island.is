@@ -1,5 +1,3 @@
-<!-- gitbook-ignore -->
-
 # application-templates-transport-authority-change-operator-of-vehicle
 
 This library was generated with [Nx](https://nx.dev).
