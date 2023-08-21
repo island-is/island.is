@@ -58,7 +58,9 @@ const OwnersTable = ({ data, title }: PropTypes) => {
                 <T.Data>
                   <Text variant="medium">
                     {owner?.dateOfPurchase &&
-                      new Date(owner.dateOfPurchase).toLocaleDateString()}
+                      new Date(owner.dateOfPurchase).toLocaleDateString(
+                        'is-IS',
+                      )}
                   </Text>
                 </T.Data>
               </T.Row>

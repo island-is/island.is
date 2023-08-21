@@ -19,6 +19,7 @@ import {
 
 import { displayWithUnit } from './displayWithUnit'
 import isValid from 'date-fns/isValid/index.js'
+const locale = 'is-IS'
 
 const basicInfoArray = (
   data: VehiclesBasicInfo,
@@ -160,13 +161,13 @@ const inspectionInfoArray = (
         data.date && {
           title: formatMessage(messages.date),
           value: isValid(new Date(data.date))
-            ? new Date(data.date).toLocaleDateString()
+            ? new Date(data.date).toLocaleDateString(locale)
             : '',
         },
         data.nextInspectionDate && {
           title: formatMessage(messages.nextInspection),
           value: isValid(new Date(data.nextInspectionDate))
-            ? new Date(data.nextInspectionDate).toLocaleDateString()
+            ? new Date(data.nextInspectionDate).toLocaleDateString(locale)
             : '',
         },
       ].filter((Boolean as unknown) as ExcludesFalse),
@@ -196,7 +197,7 @@ const operatorInfoArray = (
         data.startDate && {
           title: formatMessage(messages.dateFrom),
           value: isValid(new Date(data.startDate))
-            ? new Date(data.startDate).toLocaleDateString()
+            ? new Date(data.startDate).toLocaleDateString(locale)
             : '',
         },
       ].filter((Boolean as unknown) as ExcludesFalse),
@@ -226,7 +227,7 @@ const ownerInfoArray = (
         data.dateOfPurchase && {
           title: formatMessage(messages.purchaseDate),
           value: isValid(new Date(data.dateOfPurchase))
-            ? new Date(data.dateOfPurchase).toLocaleDateString()
+            ? new Date(data.dateOfPurchase).toLocaleDateString(locale)
             : '',
         },
       ].filter((Boolean as unknown) as ExcludesFalse),
@@ -248,19 +249,19 @@ const registrationInfoArray = (
         data.firstRegistrationDate && {
           title: formatMessage(messages.firstReg),
           value: isValid(new Date(data.firstRegistrationDate))
-            ? new Date(data.firstRegistrationDate).toLocaleDateString()
+            ? new Date(data.firstRegistrationDate).toLocaleDateString(locale)
             : '',
         },
         data.preRegistrationDate && {
           title: formatMessage(messages.preReg),
           value: isValid(new Date(data.preRegistrationDate))
-            ? new Date(data.preRegistrationDate).toLocaleDateString()
+            ? new Date(data.preRegistrationDate).toLocaleDateString(locale)
             : '',
         },
         data.newRegistrationDate && {
           title: formatMessage(messages.newReg),
           value: isValid(new Date(data.newRegistrationDate))
-            ? new Date(data.newRegistrationDate).toLocaleDateString()
+            ? new Date(data.newRegistrationDate).toLocaleDateString(locale)
             : '',
         },
         data.vehicleGroup && {
