@@ -82,7 +82,6 @@ export class IntellectualPropertyService {
   }
 
   async getPatents(user: User): Promise<Array<Patent> | null> {
-    this.logger.debug(this.ipService)
     const patents = await this.ipService.getPatents(user)
     return patents as Array<Patent>
   }
