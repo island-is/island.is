@@ -16,13 +16,13 @@ export const serviceSetup = (services: {
       },
       AUTH_IDS_REDIRECT_URI: {
         dev: ref(
-          (h) =>
-            `https://judicial-system.${h.env.domain}/api/auth/callback/identity-server`,
+          (ctx) =>
+            `${
+              ctx.featureDeploymentName ? `${ctx.featureDeploymentName}-` : ''
+            }judicial-system.dev01.devland.is`,
         ),
-        staging: ref(
-          (h) =>
-            `https://judicial-system.${h.env.domain}/api/auth/callback/identity-server`,
-        ),
+        staging:
+          'https://identity-server.staging01.devland.is/api/auth/callback/identity-server',
         prod:
           'https://rettarvorslugatt.island.is/api/auth/callback/identity-server',
       },
