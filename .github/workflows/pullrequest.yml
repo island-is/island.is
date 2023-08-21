@@ -34,6 +34,7 @@ jobs:
       BUILD_MAP: ${{ steps.build_map.outputs.BUILD_MAP }}
       node-modules-hash: ${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}
       generated-files-cache-key: ${{ steps.calculate_generated_files_cache_key.outputs.generated-files-cache-key }}
+      nx_args: ${{ steps.nx-extra-args.outputs.nx_args }}
     steps:
       - uses: actions/checkout@v3
         with:
@@ -75,7 +76,7 @@ jobs:
         run: |
           NX_EXTRA_ARGS=$(echo '${{ toJson(github.event.pull_request.labels) }}' | jq '.[] | select(.name == "skip-nx-cache")? | any' | grep -q true && echo "--skip-nx-cache" || echo "")
           echo "setting NX_EXTRA_ARGS: $NX_EXTRA_ARGS"
-          echo "NX_EXTRA_ARGS=$NX_EXTRA_ARGS" >> $GITHUB_ENV
+          echo "::set-output name=nx_args::$NX_EXTRA_ARGS"
 
       - name: Calculate cache key for node_modules
         id: calculate_node_modules_hash
@@ -461,7 +462,7 @@ jobs:
         run: tar zxvf generated_files.tar.gz
 
       - name: Linting
-        run: ./scripts/ci/run-in-parallel-native.sh lint $NX_EXTRA_ARGS
+        run: ./scripts/ci/run-in-parallel-native.sh lint ${{ needs.prepare.outputs.nx_args }}
 
   build:
     needs:
@@ -510,7 +511,7 @@ jobs:
         run: tar zxvf generated_files.tar.gz
 
       - name: Building
-        run: ./scripts/ci/run-in-parallel-native.sh build $NX_EXTRA_ARGS
+        run: ./scripts/ci/run-in-parallel-native.sh build ${{ needs.prepare.outputs.nx_args }}
 
   success:
     runs-on: ec2-runners
