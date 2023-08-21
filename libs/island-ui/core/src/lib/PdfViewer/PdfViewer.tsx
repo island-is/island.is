@@ -12,6 +12,7 @@ export interface PdfViewerProps {
   renderMode?: 'svg' | 'canvas'
   showAllPages?: boolean
   scale?: number
+  autoWidth?: boolean
 }
 interface PdfProps {
   numPages: number
@@ -30,6 +31,7 @@ export const PdfViewer: FC<React.PropsWithChildren<PdfViewerProps>> = ({
   renderMode = 'svg',
   showAllPages = false,
   scale = 1,
+  autoWidth = true,
 }) => {
   const [numPages, setNumPages] = useState(0)
   const [pageNumber, setPageNumber] = useState(1)
@@ -75,7 +77,7 @@ export const PdfViewer: FC<React.PropsWithChildren<PdfViewerProps>> = ({
           file={file}
           onLoadSuccess={onDocumentLoadSuccess}
           renderMode={renderMode}
-          className={styles.pdfViewer}
+          className={cn(styles.pdfViewer, { [styles.pdfSvgPage]: autoWidth })}
           loading={() => loadingView()}
         >
           {showAllPages ? (

@@ -1,13 +1,25 @@
 import { style } from '@vanilla-extract/css'
 import { theme, themeUtils } from '@island.is/island-ui/theme'
 
+const dark50 = '#F8F8FA'
+
+export const wrapper = style({
+  width: '100%',
+})
+
+export const docline = style({
+  paddingTop: theme.spacing.smallGutter * 3,
+  paddingBottom: theme.spacing.smallGutter * 3,
+})
+
 export const active = style({
-  backgroundColor: theme.color.white,
+  backgroundColor: theme.color.blue100,
 })
 
 export const unread = style({
-  backgroundColor: theme.color.blue100,
+  backgroundColor: dark50,
 })
+
 export const unopenedWrapper = style({
   backgroundColor: 'unset',
   ...themeUtils.responsiveStyle({
@@ -40,9 +52,18 @@ export const sender = style({
 })
 
 export const image = style({
-  width: 34,
-  height: 34,
-  // margin: theme.spacing[2],
+  width: 28,
+  height: 28,
+})
+
+export const fakeBorder = style({
+  height: '100%',
+  width: 3,
+  background: theme.color.blue400,
+  position: 'absolute',
+  left: 0,
+  top: 0,
+  margin: 'auto',
 })
 
 export const icon = style({
@@ -50,10 +71,10 @@ export const icon = style({
 })
 
 export const imageContainer = style({
-  minWidth: 66,
-  minHeight: 66,
-  maxHeight: 66,
-  maxWidth: 66,
+  minWidth: 48,
+  minHeight: 48,
+  maxHeight: 48,
+  maxWidth: 48,
 })
 
 export const linkWrapper = style({

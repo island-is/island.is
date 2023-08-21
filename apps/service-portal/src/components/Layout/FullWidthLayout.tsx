@@ -16,6 +16,7 @@ import { PortalNavigationItem } from '@island.is/portals/core'
 import { IntroHeader } from '@island.is/service-portal/core'
 import { Link, matchPath, useLocation, useNavigate } from 'react-router-dom'
 import { ServicePortalPaths } from '../../lib/paths'
+import { DocumentsPaths } from '@island.is/service-portal/documents'
 
 interface FullWidthLayoutProps {
   activeParent?: PortalNavigationItem
@@ -40,7 +41,13 @@ export const FullWidthLayout: FC<FullWidthLayoutProps> = ({
     )
   }, [activeParent?.children])
 
+  // Dashboard has a special "no top navigation view"
   const isDashboard = Object.values(ServicePortalPaths).find((route) =>
+    matchPath(route, pathname),
+  )
+
+  // Documents has a special "split screen view"
+  const isDocuments = Object.values(DocumentsPaths).find((route) =>
     matchPath(route, pathname),
   )
 
@@ -51,9 +58,14 @@ export const FullWidthLayout: FC<FullWidthLayoutProps> = ({
   }
 
   return (
-    <Box as="main" component="main" style={{ marginTop: height }}>
+    <Box
+      as="main"
+      component="main"
+      className={isDocuments ? styles.fullWidthSplit : undefined}
+      style={{ marginTop: height }}
+    >
       <Box>
-        {!isDashboard && (
+        {!isDashboard && !isDocuments && (
           <>
             <Box
               paddingBottom={[3, 4]}
@@ -129,11 +141,7 @@ export const FullWidthLayout: FC<FullWidthLayoutProps> = ({
             </GridContainer>
           </Box>
         ) : (
-          <GridContainer position="none">
-            <GridRow>
-              <GridColumn span="12/12">{children}</GridColumn>
-            </GridRow>
-          </GridContainer>
+          children
         )}
       </Box>
     </Box>
@@ -143,9 +151,7 @@ export const FullWidthLayout: FC<FullWidthLayoutProps> = ({
 const FullWidthLayoutWrapper: FC<FullWidthLayoutProps> = (props) => {
   return (
     <FullWidthLayout {...props}>
-      <Box paddingTop={4} width="full">
-        <ModuleAlertBannerSection />
-      </Box>
+      <ModuleAlertBannerSection />
       {props.children}
     </FullWidthLayout>
   )

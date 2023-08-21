@@ -8,11 +8,12 @@ export const NoPDF = () => {
   const { formatMessage } = useLocale()
   return (
     <Box
-      paddingTop={[0, 8]}
+      paddingTop={[0, 10]}
       display="flex"
       flexDirection="column"
       alignItems="center"
       height="full"
+      width="full"
     >
       <Box width="full" display="flex" justifyContent="center" marginBottom={3}>
         <EmptyImageSmall style={{ maxHeight: 140 }} />

@@ -19,7 +19,7 @@ export const ModuleAlertBannerSection = () => {
     return false
   })
 
-  return (
+  return currentBanners.length ? (
     <Stack space={2}>
       {currentBanners.map((banner) => (
         <AlertMessage
@@ -45,5 +45,5 @@ export const ModuleAlertBannerSection = () => {
         />
       ))}
     </Stack>
-  )
+  ) : null
 }

@@ -13,6 +13,8 @@ import {
   Button,
   Tooltip,
   Hidden,
+  Columns,
+  Column,
 } from '@island.is/island-ui/core'
 import {
   useListDocuments,
@@ -49,6 +51,7 @@ import {
 import * as styles from './Overview.css'
 import { AuthDelegationType } from '@island.is/shared/types'
 import NewDocumentLine from '../../components/DocumentLine/NewDocumentLine'
+import AvatarImage from '../../components/DocumentLine/AvatarImage'
 import NoPDF from '../../components/NoPDF/NoPDF'
 import { SERVICE_PORTAL_HEADER_HEIGHT_LG } from '@island.is/service-portal/constants'
 import { useUserInfo } from '@island.is/auth/react'
@@ -60,6 +63,7 @@ export type ActiveDocumentType = {
   date: string
   sender: string
   downloadUrl: string
+  img?: string
 }
 
 const GET_DOCUMENT_CATEGORIES = gql`
@@ -344,14 +348,19 @@ export const ServicePortalDocuments = () => {
   const PDF = () => {
     return (
       <>
-        <Box display="flex" flexDirection="row" paddingBottom={2}>
+        <Box
+          className={styles.pdfControls}
+          display="flex"
+          flexDirection="row"
+          paddingBottom={2}
+        >
           <Tooltip placement="top" as="span" text={formatMessage(m.zoomOut)}>
             <Button
               circle
               icon="remove"
               variant="ghost"
               size="small"
-              onClick={() => setScalePDF(scalePDF - 0.1)}
+              onClick={() => setScalePDF(0.6 > scalePDF ? 0.5 : scalePDF - 0.1)}
             />
           </Tooltip>
           <Box
@@ -368,7 +377,7 @@ export const ServicePortalDocuments = () => {
               icon="add"
               variant="ghost"
               size="small"
-              onClick={() => setScalePDF(scalePDF + 0.1)}
+              onClick={() => setScalePDF(scalePDF > 3.9 ? 4 : scalePDF + 0.1)}
             />
           </Tooltip>
           <Box paddingLeft={2}>
@@ -394,21 +403,26 @@ export const ServicePortalDocuments = () => {
             </Tooltip>
           </Box>
         </Box>
-        <Box overflow="auto" boxShadow="subtle">
+        <Box
+          className={styles.pdfPage}
+          height="full"
+          overflow="auto"
+          boxShadow="subtle"
+        >
           <PdfViewer
             file={`data:application/pdf;base64,${activeDocument?.document.content}`}
-            renderMode="canvas"
             showAllPages
             scale={scalePDF}
+            autoWidth={false}
           />
         </Box>
       </>
     )
   }
 
-  const goBack = () => {
+  const GoBack = () => {
     return (
-      <Box printHidden marginY={3}>
+      <Box marginBottom={1} className={styles.btn} printHidden marginY={3}>
         <Button
           preTextIcon="arrowBack"
           preTextIconType="filled"
@@ -438,147 +452,151 @@ export const ServicePortalDocuments = () => {
     )
   }
 
-  if (isEmpty) {
-    return (
+  // if (isEmpty) {
+  //   return (
+  //     <GridContainer>
+  //       <GridRow>
+  //         {goBack()}
+  //         <GridColumn span="12/12">
+  //           <Box marginBottom={[4, 4, 6, 10]}>
+  //             <NoDataScreen
+  //               tag={formatMessage(m.documents)}
+  //               title={formatMessage(m.noData)}
+  //               children={formatMessage(m.noDataFoundDetail)}
+  //               figure="./assets/images/empty.svg"
+  //             />
+  //           </Box>
+  //         </GridColumn>
+  //       </GridRow>
+  //     </GridContainer>
+  //   )
+  // }
+
+  return (
+    <>
       <GridContainer>
+        <Hidden above="md">
+          <GridRow>
+            <GridColumn span="12/12" position="relative">
+              <Box>
+                {activeDocument?.document.content && <Box>{PDF()}</Box>}
+              </Box>
+            </GridColumn>
+          </GridRow>
+        </Hidden>
         <GridRow>
-          {goBack()}
-          <GridColumn span="12/12">
-            <Box marginBottom={[4, 4, 6, 10]}>
-              <NoDataScreen
-                tag={formatMessage(m.documents)}
-                title={formatMessage(m.noData)}
-                children={formatMessage(m.noDataFoundDetail)}
-                figure="./assets/images/empty.svg"
-              />
+          <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+            <GoBack />
+            <DocumentsFilter
+              filterValue={filterValue}
+              categories={categoriesAvailable}
+              senders={sendersAvailable}
+              debounceChange={debouncedResults}
+              clearCategories={() =>
+                setFilterValue((oldFilter) => ({
+                  ...oldFilter,
+                  activeCategories: [],
+                }))
+              }
+              clearSenders={() =>
+                setFilterValue((oldFilter) => ({
+                  ...oldFilter,
+                  activeSenders: [],
+                }))
+              }
+              handleCategoriesChange={handleCategoriesChange}
+              handleSendersChange={handleSendersChange}
+              handleDateFromChange={handleDateFromInput}
+              handleDateToChange={handleDateToInput}
+              handleShowUnread={handleShowUnread}
+              handleClearFilters={handleClearFilters}
+              documentsLength={totalCount}
+            />
+            <Box borderColor="blue200" borderTopWidth="standard" marginTop={4}>
+              {loading && <CardLoader />}
+              <Stack space={0}>
+                {filteredDocuments.map((doc, index) => (
+                  <Box key={doc.id} ref={index === 0 ? scrollToRef : null}>
+                    <NewDocumentLine
+                      img={getOrganizationLogoUrl(
+                        doc.senderName,
+                        organizations,
+                      )}
+                      documentLine={doc}
+                      documentCategories={categoriesAvailable}
+                      userInfo={userInfo}
+                      onClick={setActiveDocument}
+                      active={doc.id === activeDocument?.id}
+                    />
+                  </Box>
+                ))}
+              </Stack>
             </Box>
+          </GridColumn>
+          <GridColumn span="7/12" position="relative">
+            {activeDocument?.document.content ? (
+              <Hidden below="lg">
+                <Box
+                  marginLeft={8}
+                  marginTop={3}
+                  padding={5}
+                  borderRadius="large"
+                  background="white"
+                >
+                  <Box display="flex">
+                    <AvatarImage
+                      img={activeDocument?.img}
+                      background="blue100"
+                    />
+                    <Box
+                      display="flex"
+                      flexDirection="column"
+                      justifyContent="spaceBetween"
+                      marginBottom={4}
+                      marginLeft={2}
+                    >
+                      <Text variant="h5">{activeDocument?.sender}</Text>
+                      <Text variant="medium">{activeDocument?.date}</Text>
+                    </Box>
+                  </Box>
+                  <Box>{PDF()}</Box>
+                </Box>
+              </Hidden>
+            ) : (
+              <Box
+                position="sticky"
+                style={{ top: SERVICE_PORTAL_HEADER_HEIGHT_LG + 50 }}
+                paddingLeft={8}
+              >
+                <Hidden below="lg">
+                  <NoPDF />
+                </Hidden>
+              </Box>
+            )}
+          </GridColumn>
+        </GridRow>
+        <GridRow>
+          <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+            {filteredDocuments && (
+              <Box paddingBottom={4} marginTop={4}>
+                <Pagination
+                  page={page}
+                  totalPages={pagedDocuments.totalPages}
+                  renderLink={(page, className, children) => (
+                    <button
+                      className={className}
+                      onClick={handlePageChange.bind(null, page)}
+                    >
+                      {children}
+                    </button>
+                  )}
+                />
+              </Box>
+            )}
           </GridColumn>
         </GridRow>
       </GridContainer>
-    )
-  }
-
-  console.log('active', activeDocument)
-  return (
-    <GridContainer>
-      <GridRow>
-        <GridColumn span="5/12">{goBack()}</GridColumn>
-      </GridRow>
-      <GridRow>
-        <GridColumn
-          span={['12/12', '12/12', '12/12', '5/12']}
-          paddingBottom={3}
-        >
-          <DocumentsFilter
-            filterValue={filterValue}
-            categories={categoriesAvailable}
-            senders={sendersAvailable}
-            debounceChange={debouncedResults}
-            clearCategories={() =>
-              setFilterValue((oldFilter) => ({
-                ...oldFilter,
-                activeCategories: [],
-              }))
-            }
-            clearSenders={() =>
-              setFilterValue((oldFilter) => ({
-                ...oldFilter,
-                activeSenders: [],
-              }))
-            }
-            handleCategoriesChange={handleCategoriesChange}
-            handleSendersChange={handleSendersChange}
-            handleDateFromChange={handleDateFromInput}
-            handleDateToChange={handleDateToInput}
-            handleShowUnread={handleShowUnread}
-            handleClearFilters={handleClearFilters}
-            documentsLength={totalCount}
-          />
-        </GridColumn>
-        <GridColumn span="7/12">
-          <Hidden below="md">
-            {activeDocument?.document && (
-              <Box paddingLeft={8}>
-                <Text variant="h5" paddingBottom={1}>
-                  {activeDocument.subject}
-                </Text>
-                <Box
-                  display="flex"
-                  flexDirection="row"
-                  justifyContent="spaceBetween"
-                >
-                  <Text variant="medium">{activeDocument.sender}</Text>
-                  <Text variant="medium">{activeDocument.date}</Text>
-                </Box>
-              </Box>
-            )}
-          </Hidden>
-        </GridColumn>
-      </GridRow>
-      <Hidden above="md">
-        <GridRow>
-          <GridColumn span="12/12" position="relative">
-            <Box>{activeDocument?.document.content && <Box>{PDF()}</Box>}</Box>
-          </GridColumn>
-        </GridRow>
-      </Hidden>
-      <GridRow>
-        <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
-          <Box marginTop={[2, 0]}>
-            {loading && <CardLoader />}
-            <Stack space={2}>
-              {filteredDocuments.map((doc, index) => (
-                <Box key={doc.id} ref={index === 0 ? scrollToRef : null}>
-                  <NewDocumentLine
-                    img={getOrganizationLogoUrl(doc.senderName, organizations)}
-                    documentLine={doc}
-                    documentCategories={categoriesAvailable}
-                    userInfo={userInfo}
-                    onClick={setActiveDocument}
-                    active={doc.id === activeDocument?.id}
-                  />
-                </Box>
-              ))}
-            </Stack>
-          </Box>
-        </GridColumn>
-        <GridColumn span="7/12" position="relative">
-          <Box
-            position="sticky"
-            style={{ top: SERVICE_PORTAL_HEADER_HEIGHT_LG }}
-            paddingLeft={8}
-          >
-            <Hidden below="md">
-              {activeDocument?.document.content ? (
-                <Box>{PDF()}</Box>
-              ) : (
-                <NoPDF />
-              )}
-            </Hidden>
-          </Box>
-        </GridColumn>
-      </GridRow>
-      <GridRow>
-        <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
-          {filteredDocuments && (
-            <Box marginTop={4}>
-              <Pagination
-                page={page}
-                totalPages={pagedDocuments.totalPages}
-                renderLink={(page, className, children) => (
-                  <button
-                    className={className}
-                    onClick={handlePageChange.bind(null, page)}
-                  >
-                    {children}
-                  </button>
-                )}
-              />
-            </Box>
-          )}
-        </GridColumn>
-      </GridRow>
-    </GridContainer>
+    </>
   )
 }
 

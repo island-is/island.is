@@ -30,6 +30,7 @@ import { gql, useLazyQuery } from '@apollo/client'
 import { useLocale } from '@island.is/localization'
 import { messages as m } from '../../utils/messages'
 import { ActiveDocumentType } from '../../screens/Overview/NewOverview'
+import AvatarImage from './AvatarImage'
 
 interface Props {
   documentLine: Document
@@ -64,20 +65,22 @@ const NewDocumentLine: FC<Props> = ({
   const { formatMessage } = useLocale()
   const date = format(new Date(documentLine.date), dateFormat.is)
 
-  const displayPdf = () => {
+  const displayPdf = (docContent?: DocumentDetails) => {
     onClick({
-      document: singleDocument,
+      document: docContent || (getFileByIdData?.getDocument as DocumentDetails),
       id: documentLine.id,
       subject: documentLine.subject,
       sender: documentLine.senderName,
-      date: date,
       downloadUrl: documentLine.url,
+      date: date,
+      img,
     })
     window.scrollTo({
       top: 0,
       behavior: 'smooth',
     })
   }
+
   const [
     getDocument,
     { data: getFileByIdData, loading: fileLoading, error, refetch, called },
@@ -88,12 +91,11 @@ const NewDocumentLine: FC<Props> = ({
       },
     },
     fetchPolicy: 'no-cache',
-    onCompleted: () => {
-      displayPdf()
+    onCompleted: (data) => {
+      displayPdf(data?.getDocument)
     },
   })
 
-  const singleDocument = getFileByIdData?.getDocument || ({} as DocumentDetails)
   const isLink = documentLine.fileType === 'url' && documentLine.url
 
   const displayError = () => {
@@ -113,65 +115,81 @@ const NewDocumentLine: FC<Props> = ({
     return <CardLoader />
   }
 
+  const unread = !documentLine.opened
+
   return (
     <>
       {fileLoading && <LoadModal />}
 
-      <FocusableBox
-        display="flex"
-        borderRadius="standard"
-        border={'standard'}
-        borderColor={active ? 'blue400' : 'blue200'}
-        paddingX={4}
-        paddingY={3}
-        href={isLink ? documentLine.url : undefined}
-        className={cn(
-          active && styles.active,
-          !documentLine.opened && styles.unread,
-        )}
+      <button
+        className={styles.wrapper}
         onClick={
           !isLink
             ? async () => {
                 getFileByIdData
                   ? displayPdf()
-                  : getDocument({
+                  : await getDocument({
                       variables: { input: { id: documentLine.id } },
                     })
               }
             : undefined
         }
       >
-        {!isMobile && (
+        <Box
+          display="flex"
+          position="relative"
+          borderColor="blue200"
+          borderBottomWidth="standard"
+          paddingX={2}
+          width="full"
+          href={isLink ? documentLine.url : undefined}
+          className={cn(styles.docline, {
+            [styles.active]: active,
+            [styles.unread]: unread,
+          })}
+        >
+          {!isMobile && (
+            <AvatarImage
+              img={img}
+              background={documentLine.opened ? 'blue100' : 'white'}
+            />
+          )}
           <Box
+            width="full"
             display="flex"
-            alignItems="center"
-            justifyContent="center"
-            background={documentLine.opened ? 'blue100' : 'white'}
-            borderRadius="circle"
-            className={styles.imageContainer}
+            flexDirection="column"
+            paddingLeft={3}
+            minWidth={0}
           >
-            <img className={styles.image} src={img} alt="document" />
-          </Box>
-        )}
-        <Box display="flex" flexDirection="column" width="full" paddingLeft={3}>
-          <Box position="relative">
-            <Text
-              fontWeight="semiBold"
-              paddingBottom={1}
-              color={active || !documentLine.opened ? 'blue400' : undefined}
+            {active && <div className={styles.fakeBorder} />}
+            <Box
+              display="flex"
+              flexDirection="row"
+              justifyContent="spaceBetween"
             >
-              {documentLine.subject}
-              {!documentLine.opened && (
+              <Text variant="small">{documentLine.senderName}</Text>
+              <Text variant="small">{date}</Text>
+            </Box>
+            <Box
+              // className={styles.title}
+              width="full"
+              textAlign="left"
+              position="relative"
+            >
+              <Text
+                fontWeight={unread ? 'semiBold' : 'regular'}
+                color="blue400"
+                truncate
+              >
+                {documentLine.subject}
+                {/* {unread && (
                 <Box borderRadius="circle" className={cn(styles.badge)}></Box>
-              )}
-            </Text>
-          </Box>
-          <Box display="flex" flexDirection="row" justifyContent="spaceBetween">
-            <Text variant="medium">{documentLine.senderName}</Text>
-            <Text variant="medium">{date}</Text>
+              )} */}
+              </Text>
+            </Box>
           </Box>
         </Box>
-      </FocusableBox>
+      </button>
       {error && displayError()}
     </>
   )

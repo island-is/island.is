@@ -24,3 +24,12 @@ export const btn = style({})
 globalStyle(`${btn} > span`, {
   boxShadow: 'none',
 })
+
+export const fullWidthSplit = style({
+  '@media': {
+    [`screen and (min-width: ${theme.breakpoints.lg}px)`]: {
+      background:
+        'linear-gradient( to right, white 0%, white 45%, #F8F8FA 45%, #F8F8FA 100% );',
+    },
+  },
+})
