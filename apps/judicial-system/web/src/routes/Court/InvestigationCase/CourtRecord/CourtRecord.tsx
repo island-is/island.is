@@ -40,7 +40,10 @@ import {
   removeTabsValidateAndSet,
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
-import { isCourtRecordStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
+import {
+  Validation,
+  isCourtRecordStepValidIC,
+} from '@island.is/judicial-system-web/src/utils/validate'
 import {
   CaseType,
   SessionArrangements,
@@ -207,6 +210,10 @@ const CourtRecord = () => {
   useOnceOn(isCaseUpToDate, initialize)
 
   const stepIsValid = isCourtRecordStepValidIC(workingCase)
+  const sessionBookingValidation: Validation[] =
+    workingCase.sessionArrangements === SessionArrangements.NONE_PRESENT
+      ? []
+      : ['empty']
   const handleNavigationTo = useCallback(
     (destination: string) => router.push(`${destination}/${workingCase.id}`),
     [workingCase.id],
@@ -365,7 +372,7 @@ const CourtRecord = () => {
                 removeTabsValidateAndSet(
                   'sessionBookings',
                   event.target.value,
-                  [],
+                  sessionBookingValidation,
                   workingCase,
                   setWorkingCase,
                   sessionBookingsErrorMessage,
@@ -376,7 +383,7 @@ const CourtRecord = () => {
                 validateAndSendToServer(
                   'sessionBookings',
                   event.target.value,
-                  [],
+                  sessionBookingValidation,
                   workingCase,
                   updateCase,
                   setSessionBookingsMessage,
@@ -387,6 +394,7 @@ const CourtRecord = () => {
               textarea
               rows={16}
               autoExpand={{ on: true, maxHeight: 600 }}
+              required={sessionBookingValidation.length > 0}
             />
           </Box>
         </Box>
