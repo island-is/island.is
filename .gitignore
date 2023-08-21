@@ -85,7 +85,7 @@ fragmentTypes.json
 *.suo
 /.vs
 
-# Gitbook/Honkit
+# Honkit
 _book
 .vscode/settings.json
 

@@ -423,7 +423,7 @@ export class AdminClientsService {
       )
     }
 
-    if (data.customClaims && data.customClaims.length > 0) {
+    if (data.customClaims) {
       await this.updateCustomClaims(
         data.clientId,
         data.customClaims,

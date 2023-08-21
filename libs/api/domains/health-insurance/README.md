@@ -1,5 +1,3 @@
-<!-- gitbook-ignore -->
-
 # API Domains Health Insurance
 
 This library was generated with [Nx](https://nx.dev).
