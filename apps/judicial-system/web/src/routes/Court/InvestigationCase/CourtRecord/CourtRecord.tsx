@@ -365,7 +365,7 @@ const CourtRecord = () => {
                 removeTabsValidateAndSet(
                   'sessionBookings',
                   event.target.value,
-                  ['empty'],
+                  [],
                   workingCase,
                   setWorkingCase,
                   sessionBookingsErrorMessage,
@@ -376,7 +376,7 @@ const CourtRecord = () => {
                 validateAndSendToServer(
                   'sessionBookings',
                   event.target.value,
-                  ['empty'],
+                  [],
                   workingCase,
                   updateCase,
                   setSessionBookingsMessage,
@@ -387,7 +387,6 @@ const CourtRecord = () => {
               textarea
               rows={16}
               autoExpand={{ on: true, maxHeight: 600 }}
-              required
             />
           </Box>
         </Box>
