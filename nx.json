@@ -21,6 +21,23 @@
         "parallel": 1
       }
     },
+    "cloud": {
+      "runner": "nx-cloud",
+      "options": {
+        "cacheableOperations": [
+          "build",
+          "lint",
+          "test",
+          "e2e",
+          "schemas/build-openapi",
+          "schemas/openapi-generator",
+          "schemas/build-graphql-schema",
+          "schemas/codegen"
+        ],
+        "cacheDirectory": ".cache/nx",
+        "parallel": 1
+      }
+    },
     "docker-test": {
       "runner": "@nx/workspace/tasks-runners/default",
       "options": {
