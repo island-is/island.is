@@ -197,14 +197,16 @@ parse_run_args() {
       '#'* | '') continue ;;
       esac
       local evalue
-      evalue="$(
-        eval "$secret" >&2
+      if ! evalue="$(
+        eval "$secret"
         debug "Key: '$key'"
         debug "Value: '$value'"
         debug "indirect value: $key=${!key}"
         echo "${!key}"
-      )" || debug "Failed setting secret: $secret"
-      [[ $? -ne 0 ]] && continue
+      )" >/dev/null; then
+        debug "Failed setting secret: $secret"
+        continue
+      fi
       debug "Evalued value: $evalue"
       echo "${key}=${evalue}" >>"$secrets_out_file"
     done <"$secrets_file"
