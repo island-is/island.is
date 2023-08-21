@@ -74,8 +74,11 @@ jobs:
       - name: NX extra arguments
         id: nx-extra-args
         run: |
-          NX_EXTRA_ARGS=$(echo '${{ toJson(github.event.pull_request.labels) }}' | jq '.[] | select(.name == "skip-nx-cache")? | any' | grep -q true && echo "--skip-nx-cache" || echo "")
-          echo "setting NX_EXTRA_ARGS: $NX_EXTRA_ARGS"
+          LABELS=$(echo '${{ toJson(github.event.pull_request.labels) }}')
+          FLAGS=()
+          FLAGS+=("$(./check_label_and_set_flag.sh "$LABELS" "skip-nx-cache" "--skip-nx-cache")")
+          FLAGS+=("$(./check_label_and_set_flag.sh "$LABELS" "nx-verbose" "--verbose")")
+          NX_EXTRA_ARGS="${FLAGS[*]}"
           echo "::set-output name=nx_args::$NX_EXTRA_ARGS"
 
       - name: Calculate cache key for node_modules
