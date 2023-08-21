@@ -182,10 +182,17 @@ export function formatProsecutorReadyForCourtEmailNotification(
   courtName?: string,
   overviewUrl?: string,
 ): SubjectAndBody {
-  const subject = formatMessage(notifications.readyForCourt.subject, {
-    isIndictmentCase: isIndictmentCase(caseType),
-    caseType: caseTypes[caseType],
-  })
+  const subject = isInvestigationCase(caseType)
+    ? formatMessage(
+        notifications.readyForCourt.investigationCaseReadyForCourtSubject,
+        {
+          caseType: caseTypes[caseType],
+        },
+      )
+    : formatMessage(notifications.readyForCourt.subject, {
+        isIndictmentCase: isIndictmentCase(caseType),
+        caseType: caseTypes[caseType],
+      })
 
   const body = formatMessage(notifications.readyForCourt.prosecutorHtml, {
     isIndictmentCase: isIndictmentCase(caseType),
