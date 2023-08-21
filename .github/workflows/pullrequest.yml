@@ -456,8 +456,8 @@ jobs:
       - name: Linting
         run: |
           LABELS=$(echo '${{ toJson(github.event.pull_request.labels) }}')
-          NX_SKIP_NX_CACHE=$(./scripts/cicheck_label_and_set_flag.sh "$LABELS" "skip-nx-cache" "true")
-          NX_VERBOSE_LOGGING=$(./scripts/ci/check_label_and_set_flag.sh "$LABELS" "nx-verbose" "true")
+          NX_SKIP_NX_CACHE=$(./scripts/ci/_check_label_and_set_flag.sh "$LABELS" "skip-nx-cache" "true")
+          NX_VERBOSE_LOGGING=$(./scripts/ci/_check_label_and_set_flag.sh "$LABELS" "nx-verbose" "true")
 
           ./scripts/ci/run-in-parallel-native.sh lint
 
@@ -510,8 +510,8 @@ jobs:
       - name: Building
         run: |
           LABELS=$(echo '${{ toJson(github.event.pull_request.labels) }}')
-          NX_SKIP_NX_CACHE=$(./scripts/cicheck_label_and_set_flag.sh "$LABELS" "skip-nx-cache" "true")
-          NX_VERBOSE_LOGGING=$(./scripts/ci/check_label_and_set_flag.sh "$LABELS" "nx-verbose" "true")
+          NX_SKIP_NX_CACHE=$(./scripts/ci/_check_label_and_set_flag.sh "$LABELS" "skip-nx-cache" "true")
+          NX_VERBOSE_LOGGING=$(./scripts/ci/_check_label_and_set_flag.sh "$LABELS" "nx-verbose" "true")
           ./scripts/ci/run-in-parallel-native.sh build
 
   success:
