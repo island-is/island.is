@@ -74,6 +74,7 @@ jobs:
         id: nx-extra-args
         run: |
           NX_EXTRA_ARGS=$(echo '${{ toJson(github.event.pull_request.labels) }}' | jq '.[] | select(.name == "skip-nx-cache")? | any' | grep -q true && echo "--skip-nx-cache" || echo "")
+          echo "setting NX_EXTRA_ARGS: $NX_EXTRA_ARGS"
           echo "NX_EXTRA_ARGS=$NX_EXTRA_ARGS" >> $GITHUB_ENV
 
       - name: Calculate cache key for node_modules
