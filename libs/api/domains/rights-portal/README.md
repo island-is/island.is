@@ -1,5 +1,3 @@
-<!-- gitbook-ignore -->
-
 # api-domains-rights-portal
 
 This library was generated with [Nx](https://nx.dev).

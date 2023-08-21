@@ -1,5 +1,3 @@
-<!-- gitbook-ignore -->
-
 # application-templates-transport-authority-digital-tachograph-company-card
 
 This library was generated with [Nx](https://nx.dev).
