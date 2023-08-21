@@ -137,7 +137,6 @@ export class SmartSolutionsApi {
     if (apiRes) {
       if (apiRes.errors) {
         const resError = apiRes.errors[0]
-        this.logger.debug(JSON.stringify(resError))
         const code = mapErrorMessageToActionStatusCode(resError.message)
         const error = {
           code,
