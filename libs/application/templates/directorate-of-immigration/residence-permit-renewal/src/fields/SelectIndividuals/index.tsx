@@ -78,7 +78,7 @@ export const SelectIndividuals = ({ field, application, error }: any) => {
 
       return {
         value: child.nationalId,
-        label: child.fullName,
+        label: child.fullName, //TODO ekki fullName
         subLabel: child.otherParent
           ? `${applicantMessage.labels.pickApplicant.checkboxSubLabel.defaultMessage} ${child.otherParent?.fullName}` //TODO ekki nota defaultMessage, þá þýðist ekki
           : '',

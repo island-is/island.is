@@ -218,8 +218,7 @@ export class CitizenshipService extends BaseTemplateApiService {
         nationalId: cohabitationInfo.spouseNationalId,
         name: cohabitationInfo.spouseName,
         maritalStatus: cohabitationInfo.cohabitationCode,
-        lastModified:
-          cohabitationInfo.lastModified && cohabitationInfo.lastModified,
+        lastModified: cohabitationInfo.lastModified,
         spouseBirthplace: spouseBirthplace,
         spouse: await this.getIndividualDetails(
           cohabitationInfo.spouseNationalId,
