@@ -1,5 +1,7 @@
-import { PaymentCatalogApi } from '@island.is/application/types'
-import { SYSLUMADUR_NATIONAL_ID } from '../lib/constants'
+import {
+  InstitutionNationalIds,
+  PaymentCatalogApi,
+} from '@island.is/application/types'
 export {
   NationalRegistryUserApi,
   HasTeachingRightsApi,
@@ -13,7 +15,7 @@ export {
 
 export const SyslumadurPaymentCatalogApi = PaymentCatalogApi.configure({
   params: {
-    organizationId: SYSLUMADUR_NATIONAL_ID,
+    organizationId: InstitutionNationalIds.SYSLUMENN,
   },
   externalDataId: 'payment',
 })
