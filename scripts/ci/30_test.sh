@@ -6,7 +6,7 @@ set -euxo pipefail
 : "${DD_ENV:=ci}"
 # DD_SERVICE is never used as-is, but initializes the variable, and makes easy
 # debugging for when the environment variable isn't successfully set in earlier CI steps
-: "${DD_SERVICE:=Unit testing}"
+: "${DD_SERVICE:=${APP:-"unit-test"}}"
 : "${DD_API_KEY:='<set-api-key>'}"
 : "${NODE_OPTIONS:=}"
 
