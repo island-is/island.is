@@ -49,7 +49,7 @@ export const Footer = ({ imageUrl, heading, columns }: FooterProps) => {
                     span={isMobileScreenWidth ? '1/1' : undefined}
                     paddingBottom={3}
                   >
-                    <Box marginRight={3}>
+                    <Box marginRight={5}>
                       {column.title && (
                         <Text fontWeight="semiBold" marginBottom={1}>
                           <Hyphen>{column.title}</Hyphen>
