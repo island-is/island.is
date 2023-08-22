@@ -49,7 +49,7 @@ import { formatRequestedCustodyRestrictions } from '@island.is/judicial-system-w
 
 import * as styles from './Overview.css'
 
-export const Overview: React.FC = () => {
+export const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
   const [modal, setModal] = useState<
     'noModal' | 'caseResubmitModal' | 'caseSubmittedModal'
   >('noModal')
@@ -110,6 +110,9 @@ export const Overview: React.FC = () => {
 
     setModal('caseSubmittedModal')
   }
+
+  const caseFiles =
+    workingCase.caseFiles?.filter((file) => !file.category) ?? []
 
   return (
     <PageLayout
@@ -348,16 +351,11 @@ export const Overview: React.FC = () => {
             </AccordionItem>
             <AccordionItem
               id="id_6"
-              label={`Rannsóknargögn ${`(${
-                workingCase.caseFiles ? workingCase.caseFiles.length : 0
-              })`}`}
+              label={`Rannsóknargögn ${`(${caseFiles.length})`}`}
               labelVariant="h3"
             >
               <Box marginY={3}>
-                <CaseFileList
-                  caseId={workingCase.id}
-                  files={workingCase.caseFiles ?? []}
-                />
+                <CaseFileList caseId={workingCase.id} files={caseFiles} />
               </Box>
             </AccordionItem>
             {(workingCase.comments ||

@@ -34,7 +34,9 @@ interface CheckboxControllerProps {
   backgroundColor?: InputBackgroundColor
   onSelect?: (s: string[]) => void
 }
-export const CheckboxController: FC<CheckboxControllerProps> = ({
+export const CheckboxController: FC<
+  React.PropsWithChildren<CheckboxControllerProps>
+> = ({
   defaultValue = [],
   disabled = false,
   labelVariant,

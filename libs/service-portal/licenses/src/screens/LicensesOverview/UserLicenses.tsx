@@ -33,7 +33,7 @@ interface Props {
   hasTab?: boolean
 }
 
-export const UserLicenses: FC<Props> = ({
+export const UserLicenses: FC<React.PropsWithChildren<Props>> = ({
   isLoading,
   hasData,
   hasError,

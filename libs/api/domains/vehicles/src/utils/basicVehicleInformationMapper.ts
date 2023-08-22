@@ -102,6 +102,7 @@ export const basicVehicleInformationMapper = (
       type: newestInspection?.type,
       date: newestInspection?.date,
       result: newestInspection?.result,
+      odometer: newestInspection?.odometer,
       nextInspectionDate: data.nextinspectiondate,
       lastInspectionDate: data.inspections?.[0]?.date ?? null,
       insuranceStatus: data.insurancestatus,

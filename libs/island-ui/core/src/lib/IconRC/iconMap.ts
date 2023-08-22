@@ -31,6 +31,7 @@ export type Icon =
   | 'ellipse'
   | 'ellipsisHorizontal'
   | 'ellipsisVertical'
+  | 'expand'
   | 'eye'
   | 'eyeOff'
   | 'facebook'
@@ -50,6 +51,8 @@ export type Icon =
   | 'people'
   | 'person'
   | 'playCircle'
+  | 'pause'
+  | 'pauseCircle'
   | 'print'
   | 'reader'
   | 'receipt'
@@ -59,6 +62,8 @@ export type Icon =
   | 'settings'
   | 'time'
   | 'trash'
+  | 'volumeHigh'
+  | 'volumeMute'
   | 'wallet'
   | 'warning'
   | 'reload'
@@ -68,8 +73,7 @@ export type Icon =
   | 'share'
   | 'QRCode'
   | 'globe'
-  | 'gridView'
-  | 'listView'
+  | 'signLanguage'
 
 export default {
   filled: {
@@ -106,6 +110,7 @@ export default {
     ellipsisVertical: 'EllipsisVertical',
     eye: 'Eye',
     eyeOff: 'EyeOff',
+    expand: 'Expand',
     facebook: 'Facebook',
     fileTrayFull: 'FileTrayFull',
     filter: 'Filter',
@@ -119,6 +124,8 @@ export default {
     menu: 'Menu',
     notifications: 'Notifications',
     open: 'Open',
+    pause: 'Pause',
+    pauseCircle: 'PauseCircle',
     pencil: 'Pencil',
     people: 'People',
     person: 'Person',
@@ -131,6 +138,8 @@ export default {
     search: 'Search',
     settings: 'Settings',
     trash: 'Trash',
+    volumeHigh: 'VolumeHigh',
+    volumeMute: 'VolumeMute',
     wallet: 'Wallet',
     warning: 'Warning',
     reload: 'Reload',
@@ -141,8 +150,7 @@ export default {
     share: 'Share',
     QRCode: 'QRCodeOutline',
     globe: 'Globe',
-    gridView: 'GridView',
-    listView: 'ListView',
+    signLanguage: 'SignLanguage',
   },
   outline: {
     accessibility: 'AccessibilityOutline',
@@ -178,6 +186,7 @@ export default {
     ellipsisVertical: 'EllipsisVerticalOutline',
     eye: 'EyeOutline',
     eyeOff: 'EyeOffOutline',
+    expand: 'ExpandOutline',
     facebook: 'Facebook',
     fileTrayFull: 'FileTrayFullOutline',
     filter: 'FilterOutline',
@@ -191,6 +200,8 @@ export default {
     menu: 'MenuOutline',
     notifications: 'NotificationsOutline',
     open: 'OpenOutline',
+    pause: 'PauseOutline',
+    pauseCircle: 'PauseCircleOutline',
     pencil: 'PencilOutline',
     people: 'PeopleOutline',
     person: 'PersonOutline',
@@ -203,6 +214,8 @@ export default {
     search: 'SearchOutline',
     settings: 'SettingsOutline',
     trash: 'TrashOutline',
+    volumeHigh: 'VolumeHighOutline',
+    volumeMute: 'VolumeMuteOutline',
     wallet: 'WalletOutline',
     warning: 'WarningOutline',
     reload: 'ReloadOutline',
@@ -213,7 +226,6 @@ export default {
     share: 'ShareOutline',
     QRCode: 'QRCodeOutline',
     globe: 'Globe',
-    gridView: 'GridView',
-    listView: 'ListView',
+    signLanguage: 'SignLanguage',
   },
 }

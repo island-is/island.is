@@ -33,8 +33,7 @@ export interface TagProps {
   truncate?: boolean
   hyphenate?: boolean
   textLeft?: boolean
-  CustomLink?: FC
-  customClassName?: Parameters<typeof cn>[0]
+  CustomLink?: FC<React.PropsWithChildren<unknown>>
 }
 
 export const Tag = forwardRef<HTMLButtonElement & HTMLAnchorElement, TagProps>(
@@ -57,21 +56,15 @@ export const Tag = forwardRef<HTMLButtonElement & HTMLAnchorElement, TagProps>(
     }: TagProps,
     ref,
   ) => {
-    const className = cn(
-      styles.container,
-      styles.variants[variant],
-      {
-        [styles.active]: active,
-        [styles.outlined]: outlined,
-        [styles.attention]: attention,
-        [styles.focusable]: !disabled,
-        [styles.truncate]: truncate,
-        [styles.hyphenate]: hyphenate,
-        [styles.textLeft]: textLeft,
-        [styles.disabled]: disabled,
-      },
-      customClassName,
-    )
+    const className = cn(styles.container, styles.variants[variant], {
+      [styles.active]: active,
+      [styles.outlined]: outlined,
+      [styles.attention]: attention,
+      [styles.focusable]: !disabled,
+      [styles.hyphenate]: hyphenate,
+      [styles.textLeft]: textLeft,
+      [styles.disabled]: disabled,
+    })
 
     const isExternal = href && shouldLinkOpenInNewWindow(href)
 

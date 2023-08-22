@@ -1,25 +1,26 @@
 {
-  "root": "libs/api-catalogue/services",
+  "name": "api-catalogue-services",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/api-catalogue/services/src",
   "projectType": "library",
   "generators": {},
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": ["libs/api-catalogue/services/**/*.{ts,tsx,js,jsx}"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/api-catalogue/services/jest.config.js",
+        "jestConfig": "libs/api-catalogue/services/jest.config.ts",
         "passWithNoTests": true
       },
-      "outputs": ["coverage/libs/api-catalogue/services"]
+      "outputs": ["{workspaceRoot}/coverage/libs/api-catalogue/services"]
     },
     "schemas/openapi-generator": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "parallel": false,
         "commands": [

@@ -25,6 +25,7 @@ import {
   Slice as SliceType,
   richText,
 } from '@island.is/island-ui/contentful'
+import { safelyExtractPathnameFromUrl } from '@island.is/web/utils/safelyExtractPathnameFromUrl'
 
 interface GenericOverviewProps {
   genericOverviewPage: GetGenericOverviewPageQuery['getGenericOverviewPage']
@@ -157,11 +158,8 @@ export const GenericOverview: Screen<GenericOverviewProps> = ({
   )
 }
 
-GenericOverview.getInitialProps = async ({
-  apolloClient,
-  locale,
-  pathname,
-}) => {
+GenericOverview.getProps = async ({ apolloClient, locale, req }) => {
+  const pathname = safelyExtractPathnameFromUrl(req.url)
   const [
     {
       data: { getGenericOverviewPage: genericOverviewPage },

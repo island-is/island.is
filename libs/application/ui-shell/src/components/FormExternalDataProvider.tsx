@@ -36,12 +36,13 @@ import { verifyExternalData } from '../utils'
 import { handleServerError } from '@island.is/application/ui-components'
 import { ProviderErrorReason } from '@island.is/shared/problem'
 
-const ItemHeader: React.FC<{
-  title: FormText
-  subTitle?: FormText
-  pageTitle?: FormText
-  application: Application
-}> = ({ title, subTitle, pageTitle, application }) => {
+const ItemHeader: React.FC<
+  React.PropsWithChildren<{
+    title: FormText
+    subTitle?: FormText
+    application: Application
+  }>
+> = ({ title, subTitle, application }) => {
   const { formatMessage } = useLocale()
 
   return (
@@ -82,12 +83,14 @@ const ItemHeader: React.FC<{
   )
 }
 
-const ProviderItem: FC<{
-  dataProviderResult: DataProviderResult
-  provider: DataProviderItem
-  suppressProviderError: boolean
-  application: Application
-}> = ({ dataProviderResult, provider, suppressProviderError, application }) => {
+const ProviderItem: FC<
+  React.PropsWithChildren<{
+    dataProviderResult: DataProviderResult
+    provider: DataProviderItem
+    suppressProviderError: boolean
+    application: Application
+  }>
+> = ({ dataProviderResult, provider, suppressProviderError, application }) => {
   const [reasons, setReasons] = useState<ProviderErrorReason[]>([])
   const { title, subTitle, pageTitle } = provider
   const { formatMessage } = useLocale()
@@ -139,11 +142,13 @@ const ProviderItem: FC<{
   )
 }
 
-const PermissionItem: FC<{
-  permission: DataProviderPermissionItem
-  application: Application
-}> = ({ permission, application }) => {
-  const { title, subTitle, pageTitle } = permission
+const PermissionItem: FC<
+  React.PropsWithChildren<{
+    permission: DataProviderPermissionItem
+    application: Application
+  }>
+> = ({ permission, application }) => {
+  const { title, subTitle } = permission
 
   return (
     <Box marginBottom={3}>
@@ -168,16 +173,18 @@ const getExternalDataFromResponse = (
   responseData: UpdateApplicationExternalDataResponse,
 ) => responseData?.updateApplicationExternalData?.externalData
 
-const FormExternalDataProvider: FC<{
-  application: Application
-  applicationId: string
-  addExternalData(data: ExternalData): void
-  setBeforeSubmitCallback: SetBeforeSubmitCallback
-  externalData: ExternalData
-  externalDataProvider: ExternalDataProviderScreen
-  formValue: FormValue
-  errors: RecordObject
-}> = ({
+const FormExternalDataProvider: FC<
+  React.PropsWithChildren<{
+    application: Application
+    applicationId: string
+    addExternalData(data: ExternalData): void
+    setBeforeSubmitCallback: SetBeforeSubmitCallback
+    externalData: ExternalData
+    externalDataProvider: ExternalDataProviderScreen
+    formValue: FormValue
+    errors: RecordObject
+  }>
+> = ({
   addExternalData,
   setBeforeSubmitCallback,
   application,

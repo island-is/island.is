@@ -65,7 +65,7 @@ export const EditImpacts = () => {
     setChooseType('change')
   }
 
-  const escClick = useCallback((e) => {
+  const escClick = useCallback((e: KeyboardEvent) => {
     if (e.key === 'Escape') {
       setChooseType(undefined)
     }

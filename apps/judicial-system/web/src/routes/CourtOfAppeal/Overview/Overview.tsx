@@ -23,7 +23,9 @@ import { core } from '@island.is/judicial-system-web/messages'
 import CaseFilesOverview from '../components/CaseFilesOverview/CaseFilesOverview'
 import CourtOfAppealCaseOverviewHeader from '../components/CaseOverviewHeader/CaseOverviewHeader'
 
-const CourtOfAppealOverview: React.FC = () => {
+const CourtOfAppealOverview: React.FC<
+  React.PropsWithChildren<unknown>
+> = () => {
   const {
     workingCase,
     setWorkingCase,
@@ -46,6 +48,7 @@ const CourtOfAppealOverview: React.FC = () => {
         workingCase={workingCase}
         isLoading={isLoadingWorkingCase}
         notFound={caseNotFound}
+        onNavigationTo={handleNavigationTo}
       >
         <PageHeader title={titleForCase(formatMessage, workingCase)} />
         <FormContentContainer>

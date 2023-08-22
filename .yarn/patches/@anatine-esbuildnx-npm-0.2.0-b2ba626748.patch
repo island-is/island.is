@@ -42,7 +42,8 @@ index 2f7a2134f6b5cf174d1bbf6a4214c42c1c056177..6ea1bc89626e7d0d38edd86ed161ced4
              if (!(0, fs_extra_1.existsSync)(packagePath))
                  return;
              const pkg = (yield (0, fs_extra_1.readJson)(packagePath).catch((err) => console.error(err))) || {};
-             const allDeps = Object.keys(Object.assign({}, pkg.dependencies || {}, pkg.optionalDependencies || {}));
+-            const allDeps = Object.keys(Object.assign({}, pkg.dependencies || {}, pkg.optionalDependencies || {}));
++            const allDeps = Object.keys(Object.assign({}, pkg.dependencies || {}, pkg.peerDependencies || {}, pkg.optionalDependencies || {}));
 +            const currentEmbeddedDirs = yield readNodeModules(path);
 +            embeddedDirs = embeddedDirs.concat(currentEmbeddedDirs);
              for (let i = 0; i < allDeps.length; i++) {

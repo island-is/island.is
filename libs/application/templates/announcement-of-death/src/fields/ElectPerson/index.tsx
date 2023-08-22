@@ -24,7 +24,9 @@ const fieldNames = {
   electedPersonName: `${prefix}.electedPersonName`,
 }
 
-export const ElectPerson: FC<ElectPersonFieldBaseProps> = ({ application }) => {
+export const ElectPerson: FC<
+  React.PropsWithChildren<ElectPersonFieldBaseProps>
+> = ({ application }) => {
   const { formatMessage } = useLocale()
   const {
     setValue,

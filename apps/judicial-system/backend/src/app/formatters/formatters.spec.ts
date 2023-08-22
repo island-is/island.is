@@ -157,8 +157,10 @@ describe('formatLegalProvisions', () => {
 describe('formatHeadsUpSmsNotification', () => {
   let formatMessage: FormatMessage
   beforeAll(() => {
-    formatMessage = createTestIntl({ locale: 'is', onError: jest.fn() })
-      .formatMessage
+    formatMessage = createTestIntl({
+      locale: 'is',
+      onError: jest.fn(),
+    }).formatMessage
   })
 
   test('should format heads up notification', () => {
@@ -290,8 +292,10 @@ describe('formatHeadsUpSmsNotification', () => {
 describe('formatReadyForCourtSmsNotification', () => {
   let formatMessage: FormatMessage
   beforeAll(() => {
-    formatMessage = createTestIntl({ locale: 'is', onError: jest.fn() })
-      .formatMessage
+    formatMessage = createTestIntl({
+      locale: 'is',
+      onError: jest.fn(),
+    }).formatMessage
   })
 
   test('should format ready for court SMS notification', () => {
@@ -415,8 +419,10 @@ describe('formatReadyForCourtSmsNotification', () => {
 describe('formatReadyForCourtSmsNotification', () => {
   let formatMessage: FormatMessage
   beforeAll(() => {
-    formatMessage = createTestIntl({ locale: 'is', onError: jest.fn() })
-      .formatMessage
+    formatMessage = createTestIntl({
+      locale: 'is',
+      onError: jest.fn(),
+    }).formatMessage
   })
 
   test('should format ready for court SMS notification', () => {
@@ -439,8 +445,10 @@ describe('formatReadyForCourtSmsNotification', () => {
 describe('formatProsecutorReadyForCourtEmailNotification', () => {
   let formatMessage: FormatMessage
   beforeAll(() => {
-    formatMessage = createTestIntl({ locale: 'is', onError: jest.fn() })
-      .formatMessage
+    formatMessage = createTestIntl({
+      locale: 'is',
+      onError: jest.fn(),
+    }).formatMessage
   })
 
   const fn = (
@@ -457,7 +465,7 @@ describe('formatProsecutorReadyForCourtEmailNotification', () => {
       overviewUrl,
     )
 
-  test.each([...restrictionCases, ...investigationCases])(
+  test.each([...restrictionCases])(
     'should format ready for court email for %s',
     (type) => {
       // Arrange
@@ -470,6 +478,27 @@ describe('formatProsecutorReadyForCourtEmailNotification', () => {
 
       // Assert
       expect(res.subject).toBe(`Krafa um ${caseTypes[type]} send`)
+      expect(res.body).toBe(
+        `Þú hefur sent kröfu á Héraðsdóm Reykjavíkur vegna LÖKE máls 007-2022-01. Skjalið er aðgengilegt undir <a href="https://rettarvorslugatt.island.is/test/overview">málinu í Réttarvörslugátt</a>.`,
+      )
+    },
+  )
+
+  test.each(investigationCases)(
+    'should format ready for court email for %s',
+    (type) => {
+      // Arrange
+      const court = 'Héraðsdómur Reykjavíkur'
+      const policeCaseNumbers = ['007-2022-01']
+      const overviewUrl = 'https://rettarvorslugatt.island.is/test/overview'
+
+      // Act
+      const res = fn(policeCaseNumbers, type, court, overviewUrl)
+
+      // Assert
+      expect(res.subject).toBe(
+        `Krafa um rannsóknarheimild send (${caseTypes[type]})`,
+      )
       expect(res.body).toBe(
         `Þú hefur sent kröfu á Héraðsdóm Reykjavíkur vegna LÖKE máls 007-2022-01. Skjalið er aðgengilegt undir <a href="https://rettarvorslugatt.island.is/test/overview">málinu í Réttarvörslugátt</a>.`,
       )
@@ -499,8 +528,10 @@ describe('formatProsecutorReadyForCourtEmailNotification', () => {
 describe('formatProsecutorReceivedByCourtSmsNotification', () => {
   let formatMessage: FormatMessage
   beforeAll(() => {
-    formatMessage = createTestIntl({ locale: 'is', onError: jest.fn() })
-      .formatMessage
+    formatMessage = createTestIntl({
+      locale: 'is',
+      onError: jest.fn(),
+    }).formatMessage
   })
 
   test('should format received by court notification for custody', () => {
@@ -627,8 +658,10 @@ describe('formatProsecutorReceivedByCourtSmsNotification', () => {
 describe('formatProsecutorCourtDateEmailNotification', () => {
   let formatMessage: FormatMessage
   beforeAll(() => {
-    formatMessage = createTestIntl({ locale: 'is', onError: jest.fn() })
-      .formatMessage
+    formatMessage = createTestIntl({
+      locale: 'is',
+      onError: jest.fn(),
+    }).formatMessage
   })
 
   const fn = (
@@ -931,8 +964,10 @@ describe('formatProsecutorCourtDateEmailNotification', () => {
 describe('formatPrisonCourtDateEmailNotification', () => {
   let formatMessage: FormatMessage
   beforeAll(() => {
-    formatMessage = createTestIntl({ locale: 'is', onError: jest.fn() })
-      .formatMessage
+    formatMessage = createTestIntl({
+      locale: 'is',
+      onError: jest.fn(),
+    }).formatMessage
   })
 
   test('should format court date notification', () => {
@@ -1191,8 +1226,10 @@ describe('formatPrisonCourtDateEmailNotification', () => {
 describe('formatDefenderCourtDateEmailNotification', () => {
   let formatMessage: FormatMessage
   beforeAll(() => {
-    formatMessage = createTestIntl({ locale: 'is', onError: jest.fn() })
-      .formatMessage
+    formatMessage = createTestIntl({
+      locale: 'is',
+      onError: jest.fn(),
+    }).formatMessage
   })
 
   test('should format defender court date notification', () => {
@@ -1353,8 +1390,10 @@ describe('formatDefenderCourtDateEmailNotification', () => {
 describe('formatDefenderCourtDateLinkEmailNotification', () => {
   let formatMessage: FormatMessage
   beforeAll(() => {
-    formatMessage = createTestIntl({ locale: 'is', onError: jest.fn() })
-      .formatMessage
+    formatMessage = createTestIntl({
+      locale: 'is',
+      onError: jest.fn(),
+    }).formatMessage
   })
 
   test('should format defender court date link notification with RVG link', () => {
@@ -1362,6 +1401,7 @@ describe('formatDefenderCourtDateLinkEmailNotification', () => {
     const court = 'Héraðsdómur Norðurlands'
     const courtCaseNumber = 'R-77/2021'
     const overviewUrl = 'https://example.com/overview'
+    const sendRequestToDefender = true
 
     // Act
     const res = formatDefenderCourtDateLinkEmailNotification(
@@ -1369,11 +1409,34 @@ describe('formatDefenderCourtDateLinkEmailNotification', () => {
       overviewUrl,
       court,
       courtCaseNumber,
+      sendRequestToDefender,
     )
 
     // Assert
     expect(res).toBe(
-      'Sækjandi hefur valið að deila kröfu með þér sem verjanda sakbornings í máli R-77/2021.<br /><br />Þú getur nálgast gögn málsins í <a href="https://example.com/overview">Réttarvörslugátt</a> með rafrænum skilríkjum.',
+      'Sækjandi hefur valið að deila kröfu með þér sem verjanda sakbornings í máli R-77/2021.<br /><br />Þú getur nálgast gögn málsins á <a href="https://example.com/overview">yfirlitssíðu málsins í Réttarvörslugátt</a>.',
+    )
+  })
+
+  test('should format defender court date no request link notification with RVG link', () => {
+    // Arrange
+    const court = 'Héraðsdómur Norðurlands'
+    const courtCaseNumber = 'R-77/2021'
+    const overviewUrl = 'https://example.com/overview'
+    const sendRequestToDefender = false
+
+    // Act
+    const res = formatDefenderCourtDateLinkEmailNotification(
+      formatMessage,
+      overviewUrl,
+      court,
+      courtCaseNumber,
+      sendRequestToDefender,
+    )
+
+    // Assert
+    expect(res).toBe(
+      'Héraðsdómur Norðurlands hefur skráð þig sem verjanda/talsmann sakbornings í máli R-77/2021.<br /><br />Þú getur nálgast yfirlit málsins á <a href="https://example.com/overview">yfirlitssíðu málsins í Réttarvörslugátt</a>.',
     )
   })
 })
@@ -1381,8 +1444,10 @@ describe('formatDefenderCourtDateLinkEmailNotification', () => {
 describe('formatCourtRevokedSmsNotification', () => {
   let formatMessage: FormatMessage
   beforeAll(() => {
-    formatMessage = createTestIntl({ locale: 'is', onError: jest.fn() })
-      .formatMessage
+    formatMessage = createTestIntl({
+      locale: 'is',
+      onError: jest.fn(),
+    }).formatMessage
   })
 
   test('should format revoked sms with court date', () => {
@@ -1493,8 +1558,10 @@ describe('formatCourtRevokedSmsNotification', () => {
 describe('formatPrisonRevokedEmailNotification', () => {
   let formatMessage: FormatMessage
   beforeAll(() => {
-    formatMessage = createTestIntl({ locale: 'is', onError: jest.fn() })
-      .formatMessage
+    formatMessage = createTestIntl({
+      locale: 'is',
+      onError: jest.fn(),
+    }).formatMessage
   })
 
   test('should format revoked notification for custody', () => {
@@ -1557,8 +1624,10 @@ describe('formatPrisonRevokedEmailNotification', () => {
 describe('formatDefenderRevokedEmailNotification', () => {
   let formatMessage: FormatMessage
   beforeAll(() => {
-    formatMessage = createTestIntl({ locale: 'is', onError: jest.fn() })
-      .formatMessage
+    formatMessage = createTestIntl({
+      locale: 'is',
+      onError: jest.fn(),
+    }).formatMessage
   })
 
   test('should format revoked notification', () => {
@@ -1745,8 +1814,10 @@ describe('stripHtmlTags', () => {
 })
 
 describe('formatCustodyRestrictions', () => {
-  const formatMessage = createTestIntl({ locale: 'is', onError: jest.fn() })
-    .formatMessage
+  const formatMessage = createTestIntl({
+    locale: 'is',
+    onError: jest.fn(),
+  }).formatMessage
 
   const format = (
     caseType: CaseType,
@@ -1857,26 +1928,36 @@ describe('formatCustodyRestrictions', () => {
 })
 
 describe('formatPrisonAdministrationRulingNotification', () => {
-  const formatMessage = createTestIntl({ locale: 'is', onError: jest.fn() })
-    .formatMessage
+  const formatMessage = createTestIntl({
+    locale: 'is',
+    onError: jest.fn(),
+  }).formatMessage
   const fn = (
-    courtCaseNumber: string | undefined,
-    courtName: string | undefined,
+    isModifyingRuling: boolean,
     overviewUrl: string,
+    courtCaseNumber?: string,
+    courtName?: string,
   ) =>
     formatPrisonAdministrationRulingNotification(
       formatMessage,
+      isModifyingRuling,
+      overviewUrl,
       courtCaseNumber,
       courtName,
-      overviewUrl,
     )
 
   it('should format prison adminstration ruling notification', () => {
+    const isModifyingRuling = false
     const courtCaseNumber = '007-2022-06546'
     const courtName = 'Héraðsdómur'
     const overviewUrl = 'some url'
 
-    const result = fn(courtCaseNumber, courtName, overviewUrl)
+    const result = fn(
+      isModifyingRuling,
+      overviewUrl,
+      courtCaseNumber,
+      courtName,
+    )
 
     expect(result.subject).toBe('Úrskurður í máli 007-2022-06546')
     expect(result.body).toBe(
@@ -1889,8 +1970,10 @@ describe('formatDefenderResubmittedToCourtEmailNotification', () => {
   let formatMessage: FormatMessage
 
   beforeAll(() => {
-    formatMessage = createTestIntl({ locale: 'is', onError: jest.fn() })
-      .formatMessage
+    formatMessage = createTestIntl({
+      locale: 'is',
+      onError: jest.fn(),
+    }).formatMessage
   })
 
   it('should format email', () => {
@@ -1906,7 +1989,7 @@ describe('formatDefenderResubmittedToCourtEmailNotification', () => {
     )
 
     expect(result.body).toEqual(
-      'Sækjandi í máli R-2022/999 hjá Héraðsdómi Reykjavíkur hefur breytt kröfunni og sent hana aftur á dóminn.<br /><br />Þú getur nálgast gögn málsins í <a href="https://rettarvorslugatt.island.is/overviewUrl">Réttarvörslugátt</a> með rafrænum skilríkjum.',
+      'Sækjandi í máli R-2022/999 hjá Héraðsdómi Reykjavíkur hefur breytt kröfunni og sent hana aftur á dóminn.<br /><br />Þú getur nálgast gögn málsins á <a href="https://rettarvorslugatt.island.is/overviewUrl">yfirlitssíðu málsins í Réttarvörslugátt</a>.',
     )
     expect(result.subject).toEqual('Gögn í máli R-2022/999')
   })

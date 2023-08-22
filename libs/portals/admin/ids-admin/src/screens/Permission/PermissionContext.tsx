@@ -36,7 +36,9 @@ const PermissionContext = createContext<PermissionContextProps | undefined>(
   undefined,
 )
 
-export const PermissionProvider: FC = ({ children }) => {
+export const PermissionProvider: FC<React.PropsWithChildren<unknown>> = ({
+  children,
+}) => {
   const permissionResult = useLoaderData() as PermissionLoaderResult
   const actionData = useActionData() as EditPermissionResult
   const [publishData, setPublishData] = useState<PublishData | null>(null)

@@ -18,10 +18,9 @@ interface SliceProps {
   namespace?: Record<string, string>
 }
 
-export const FeaturedArticlesSlice: React.FC<SliceProps> = ({
-  slice,
-  namespace,
-}) => {
+export const FeaturedArticlesSlice: React.FC<
+  React.PropsWithChildren<SliceProps>
+> = ({ slice, namespace }) => {
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
   const labelId = 'sliceTitle-' + slice.id

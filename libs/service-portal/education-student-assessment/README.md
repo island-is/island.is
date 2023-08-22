@@ -1,5 +1,3 @@
-<!-- gitbook-ignore -->
-
 # Service Portal Education Student Assessment
 
 This library was generated with [Nx](https://nx.dev).

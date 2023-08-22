@@ -7,7 +7,7 @@ interface Props {
   smallText?: string
 }
 
-const BigTextSmallText: React.FC<Props> = (props) => {
+const BigTextSmallText: React.FC<React.PropsWithChildren<Props>> = (props) => {
   const { bigText, smallText } = props
 
   return (

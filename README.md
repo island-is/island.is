@@ -6,10 +6,6 @@ These solutions are [FOSS](https://en.wikipedia.org/wiki/Free_and_open-source_so
 
 The repository is a [monorepo](../technical-overview/monorepo.md) that has multiple apps (something that can be built and run) and libraries (which other apps and libraries can depend on). All custom-written services are also stored there.
 
-## GitBook
-
-The apps and libraries documentation and our handbook are hosted on [GitBook](https://www.gitbook.com) and is publicly available at [docs.devland.is](https://docs.devland.is).
-
 ## Storybook
 
 The Ísland.is design system is developed and showcased using [Storybook](https://storybook.js.org) and is publicly available at [ui.devland.is](https://ui.devland.is).
@@ -28,7 +24,6 @@ If you want to contribute to the repository, please make sure to follow [this gu
 - You have [Docker](https://docs.docker.com/desktop/) installed.
 - You have [direnv](https://direnv.net/) installed.
 - You have [Java](https://www.java.com/en/download/manual.jsp) `>= 1.8` installed (for schema generation).
-- Run `yarn` to install the dependencies.
 
 {% hint style="info" %}
 If you are running on Windows we recommend using [Docker and WSL2](https://docs.docker.com/desktop/windows/wsl/)
@@ -44,6 +39,21 @@ If you are running on Windows we recommend using [Docker and WSL2](https://docs.
 ## Usage
 
 There are many projects that can be built and run. [Click here to see the full list](https://github.com/island-is/island.is/blob/main/nx.json).
+
+### Fresh start/changing branches
+
+Run on whenever you check out a branch:
+
+```bash
+yarn install
+yarn schemas
+```
+
+When you clone the repo for the first time, and whenever you change branches, you need to update your dependencies to match your current branch using `yarn install`.
+In addition, schemas change frequently, so you will also need to update the generated schemas and clients using `yarn schemas`.
+
+If you you want schemas to be generated on every install you can set the environment variable `GENERATE_SCHEMAS_ON_INSTALL=true`.
+Note that this will generate the schemas when rebuilding the workspace in the post-install phase, with no output, so the `install` script seems to hang.
 
 ### Development server
 

@@ -24,7 +24,7 @@ interface Props {
   onChevronClick?: () => void
 }
 
-const NavItemContent: FC<Props> = ({
+const NavItemContent: FC<React.PropsWithChildren<Props>> = ({
   icon,
   active,
   enabled,
@@ -128,7 +128,7 @@ const NavItemContent: FC<Props> = ({
   )
 }
 
-const NavItem: FC<Props> = (props) => {
+const NavItem: FC<React.PropsWithChildren<Props>> = (props) => {
   return props.external ? (
     <a
       href={props.path}

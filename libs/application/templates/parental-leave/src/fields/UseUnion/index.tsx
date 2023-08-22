@@ -14,7 +14,10 @@ import { useLocale } from '@island.is/localization'
 import { NO, YES, NO_UNION } from '../../constants'
 import { parentalLeaveFormMessages } from '../../lib/messages'
 
-export const UseUnion: FC<FieldBaseProps> = ({ application, field }) => {
+export const UseUnion: FC<React.PropsWithChildren<FieldBaseProps>> = ({
+  application,
+  field,
+}) => {
   const {
     formState: { errors },
     setValue,

@@ -3,7 +3,6 @@ import { getSession, Provider } from 'next-auth/client'
 import { AppContext } from 'next/app'
 import { AppLayout, PageLoader, AuthProvider } from '../components'
 import initApollo from '../graphql/client'
-import { isAuthenticated } from '../utils/helpers'
 
 const ConsultationPortalApplication: any = ({ Component, pageProps }) => {
   return (
@@ -41,7 +40,6 @@ ConsultationPortalApplication.getInitialProps = async (
   return {
     pageProps: {
       session: session,
-      isAuthenticated: isAuthenticated(customContext),
       apolloState: apolloState,
     },
   }

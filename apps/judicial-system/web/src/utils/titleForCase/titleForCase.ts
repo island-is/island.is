@@ -1,4 +1,4 @@
-import { FormattedMessage, IntlShape } from 'react-intl'
+import { IntlShape } from 'react-intl'
 
 import {
   CaseDecision,
