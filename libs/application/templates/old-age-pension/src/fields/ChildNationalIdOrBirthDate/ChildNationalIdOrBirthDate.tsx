@@ -65,12 +65,13 @@ const ChildNationalIdOrBirthDate: FC<FieldBaseProps> = ({
     setValue(id, undefined)
     setHasError(undefined)
     setValue(nameFieldId, '')
+    setIdentityFound(true)
   }, [watchChildDoesNotHaveNationalIdField, id, setValue, nameFieldId])
 
-  const [getIdentity, { loading: queryLoading }] = useLazyQuery<
-    Query,
-    { input: IdentityInput }
-  >(IDENTITY_QUERY, {
+  const [
+    getIdentity,
+    { loading: queryLoading, error: queryError },
+  ] = useLazyQuery<Query, { input: IdentityInput }>(IDENTITY_QUERY, {
     onCompleted: (data) => {
       setValue(nameFieldId, data.identity?.name ?? '')
       setHasError(undefined)
@@ -182,21 +183,21 @@ const ChildNationalIdOrBirthDate: FC<FieldBaseProps> = ({
               disabled: true,
             }}
           />
-        </Box>
-      )}
-      {!identityFound && !queryLoading && (
-        <Box paddingTop={2}>
-          <AlertMessage
-            type="warning"
-            title={formatMessage(
-              oldAgePensionFormMessage.connectedApplications
-                .childPensionNameAlertTitle,
-            )}
-            message={formatMessage(
-              oldAgePensionFormMessage.connectedApplications
-                .childPensionNameAlertMessage,
-            )}
-          />
+          {((!identityFound && !queryLoading) || queryError) && (
+            <Box paddingTop={2}>
+              <AlertMessage
+                type="warning"
+                title={formatMessage(
+                  oldAgePensionFormMessage.connectedApplications
+                    .childPensionNameAlertTitle,
+                )}
+                message={formatMessage(
+                  oldAgePensionFormMessage.connectedApplications
+                    .childPensionNameAlertMessage,
+                )}
+              />
+            </Box>
+          )}
         </Box>
       )}
     </>

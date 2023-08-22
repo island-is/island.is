@@ -1,3 +1,4 @@
+import { Application } from '@island.is/application/types'
 import { validatorErrorMessages } from '../messages'
 import { AnswerValidationConstants } from '../constants'
 import { buildError } from './utils'
@@ -5,10 +6,18 @@ import { ChildPensionRow } from '../../types'
 import * as kennitala from 'kennitala'
 import subYears from 'date-fns/subYears'
 import startOfYear from 'date-fns/startOfYear'
+import { getApplicationExternalData } from '../oldAgePensionUtils'
 
-export const validateLastestChild = (newAnswer: unknown) => {
+export const validateLastestChild = (
+  newAnswer: unknown,
+  application: Application,
+) => {
   const rawChildPensionRow = newAnswer as ChildPensionRow[] | undefined
   const { VALIDATE_LATEST_CHILD } = AnswerValidationConstants
+
+  const { custodyInformation } = getApplicationExternalData(
+    application.externalData,
+  )
 
   if (!Array.isArray(rawChildPensionRow)) {
     return buildError(
@@ -56,6 +65,17 @@ export const validateLastestChild = (newAnswer: unknown) => {
       rawChildPensionRow.findIndex(
         (item) => item.nationalIdOrBirthDate === child.nationalIdOrBirthDate,
       ) !== i
+    ) {
+      return buildError(
+        validatorErrorMessages.childNationalIdDuplicate,
+        `${VALIDATE_LATEST_CHILD}[${i}].nationalIdOrBirthDate`,
+      )
+    }
+    if (
+      custodyInformation.findIndex(
+        (item) =>
+          kennitala.format(item.nationalId) === child.nationalIdOrBirthDate,
+      ) !== -1
     ) {
       return buildError(
         validatorErrorMessages.childNationalIdDuplicate,
