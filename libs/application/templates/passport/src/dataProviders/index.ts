@@ -3,8 +3,8 @@ import {
   PaymentCatalogApi,
   UserProfileApi,
   NationalRegistryUserApi,
+  InstitutionNationalIds,
 } from '@island.is/application/types'
-import { SYSLUMADUR_NATIONAL_ID } from '../lib/constants'
 import { error } from '../lib/error'
 export { MockProviderApi } from '@island.is/application/types'
 
@@ -31,7 +31,7 @@ export const NationalRegistryUser = NationalRegistryUserApi.configure({
 
 export const SyslumadurPaymentCatalogApi = PaymentCatalogApi.configure({
   params: {
-    organizationId: SYSLUMADUR_NATIONAL_ID,
+    organizationId: InstitutionNationalIds.SYSLUMENN,
   },
   externalDataId: 'payment',
 })
