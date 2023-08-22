@@ -1,24 +1,24 @@
 import {
-  assistantRule,
   judgeRule,
   prosecutorRule,
   registrarRule,
   representativeRule,
+  assistantRule,
 } from '../../../../guards'
-import { FileController } from '../../file.controller'
+import { NotificationController } from '../../notification.controller'
 
-describe('FileController - Create case file rules', () => {
+describe('NotificationController - Get all case notifications rules', () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let rules: any[]
 
   beforeEach(() => {
     rules = Reflect.getMetadata(
       'roles-rules',
-      FileController.prototype.createCaseFile,
+      NotificationController.prototype.getAllCaseNotifications,
     )
   })
 
-  it('should give permission to five role', () => {
+  it('should give permission to five roles', () => {
     expect(rules).toHaveLength(5)
     expect(rules).toContain(prosecutorRule)
     expect(rules).toContain(representativeRule)

@@ -44,6 +44,7 @@ import {
 import { displayWithUnit } from '../../utils/displayWithUnit'
 import AxleTable from '../../components/DetailTable/AxleTable'
 import Dropdown from '../../components/Dropdown/Dropdown'
+import { getDateLocale } from '../../utils/constants'
 
 export const GET_USERS_VEHICLE_DETAIL = gql`
   query GetUsersVehiclesDetail($input: GetVehicleDetailInput!) {
@@ -167,7 +168,7 @@ type UseParams = {
 
 const VehicleDetail = () => {
   useNamespaces('sp.vehicles')
-  const { formatMessage } = useLocale()
+  const { formatMessage, lang } = useLocale()
   const { id } = useParams() as UseParams
 
   const { data, loading, error } = useQuery<Query>(GET_USERS_VEHICLE_DETAIL, {
@@ -214,14 +215,16 @@ const VehicleDetail = () => {
     return <NotFound title={formatMessage(messages.notFound)} />
   }
 
+  const locale = getDateLocale(lang)
   const basicArr = basicInfo && basicInfoArray(basicInfo, formatMessage)
   const feeArr = inspectionInfo && feeInfoArray(inspectionInfo, formatMessage)
   const inspectionArr =
-    inspectionInfo && inspectionInfoArray(inspectionInfo, formatMessage)
+    inspectionInfo && inspectionInfoArray(inspectionInfo, formatMessage, locale)
   const currentOwnerArr =
-    currentOwnerInfo && ownerInfoArray(currentOwnerInfo, formatMessage)
+    currentOwnerInfo && ownerInfoArray(currentOwnerInfo, formatMessage, locale)
   const registrationArr =
-    registrationInfo && registrationInfoArray(registrationInfo, formatMessage)
+    registrationInfo &&
+    registrationInfoArray(registrationInfo, formatMessage, locale)
   const technicalArr =
     technicalInfo && technicalInfoArray(technicalInfo, formatMessage)
 
@@ -471,7 +474,7 @@ const VehicleDetail = () => {
       {operators &&
         operators.length > 0 &&
         operators.map((operator: VehiclesOperator, index) => {
-          const operatorArr = operatorInfoArray(operator, formatMessage)
+          const operatorArr = operatorInfoArray(operator, formatMessage, locale)
           return (
             <TableGrid
               key={`vehicle-operator-${index}`}
