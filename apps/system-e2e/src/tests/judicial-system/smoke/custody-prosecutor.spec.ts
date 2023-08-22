@@ -50,5 +50,35 @@ test.describe('Custody Prosecutor', () => {
     await expect(page).toHaveURL(/.*\/krafa\/fyrirtaka\/.*/)
 
     // Court date request
+    const today = new Date().toLocaleDateString('is-IS')
+    await page.locator('input[id=arrestDate]').fill(today)
+    await page.keyboard.press('Escape')
+    await page.locator('input[id=arrestDate-time]').fill('00:00')
+    await page.locator('input[id=reqCourtDate]').fill(today)
+    await page.keyboard.press('Escape')
+    await page.locator('input[id=reqCourtDate-time]').fill('15:00')
+    await page.getByRole('button', { name: 'Halda áfram' }).click()
+    await page.getByRole('button', { name: 'Senda tilkynningu' }).click()
+    await expect(page).toHaveURL(/.*\/krafa\/domkrofur-og-lagaakvaedi\/.*/)
+
+    // Prosecutor demands
+    await page.locator('input[id=reqValidToDate]').fill(today)
+    await page.keyboard.press('Escape')
+    await page.locator('input[id=reqValidToDate-time]').fill('16:00')
+    await page.locator('textarea[name=lawsBroken]').click()
+    await page.keyboard.type('Lög voru bortin')
+    await page.getByTestId('checkbox').first().click()
+    await page.getByRole('button', { name: 'Halda áfram' }).click()
+    await expect(page).toHaveURL(/.*\/krafa\/greinargerd\/.*/)
+
+    // Prosecutor statement
+    await page.locator('textarea[name=caseFacts]').click()
+    await page.keyboard.type('Eitthvað gerðist')
+    await page.locator('textarea[name=legalArguments]').click()
+    await page.keyboard.type('Þetta er ekki löglegt')
+    await page.locator('textarea[name=comments]').click()
+    await page.keyboard.type('Sakborningur er hættulegur')
+    await page.getByRole('button', { name: 'Halda áfram' }).click()
+    await expect(page).toHaveURL(/.*\/krafa\/rannsoknargogn\/.*/)
   })
 })
