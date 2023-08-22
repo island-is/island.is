@@ -485,10 +485,11 @@ export function formatCourtRevokedSmsNotification(
         time: formatDate(requestedCourtDate, 'p'),
       })
     : undefined
-  const courtRevokedText = formatMessage(
-    notifications.courtRevoked.caseTypeRevoked,
-    { caseType: type },
-  )
+  const courtRevokedText = isInvestigationCase(type)
+    ? formatMessage(notifications.courtRevoked.investigationCaseRevoked)
+    : formatMessage(notifications.courtRevoked.caseTypeRevoked, {
+        caseType: type,
+      })
 
   return [courtRevokedText, prosecutorText, courtDateText]
     .filter(Boolean)
