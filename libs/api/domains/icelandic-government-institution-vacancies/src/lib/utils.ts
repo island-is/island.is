@@ -46,6 +46,7 @@ export interface DefaultApiVacanciesListItem {
   starfssvid?: string
   stettarfelagHeiti?: string
   stofnunHeiti?: string
+  stofnunNr?: string
   tengilidir?:
     | {
         tengilidur?: DefaultApiVacancyContact
@@ -238,6 +239,7 @@ export const mapIcelandicGovernmentInstitutionVacancyByIdResponseFromExternalSys
     intro,
     fieldOfWork: item.starfssvid,
     institutionName: item.stofnunHeiti,
+    institutionReferenceIdentifier: item.stofnunNr,
     logoUrl: item.logoURL,
     locations,
     contacts,
@@ -283,6 +285,7 @@ export const mapIcelandicGovernmentInstitutionVacancyByIdResponseFromCms = (
     applicationDeadlineTo: mapDate(vacancy.applicationDeadlineTo),
     fieldOfWork: vacancy.fieldOfWork,
     institutionName: vacancy.organization?.nameInVacancyList,
+    institutionReferenceIdentifier: vacancy.organization?.referenceIdentifier,
     logoUrl: vacancy.organization?.logo?.url,
     locations,
     contacts,

@@ -71,6 +71,9 @@ export class Organization {
 
   @Field({ nullable: true })
   nameInVacancyList?: string
+
+  @Field({ nullable: true })
+  referenceIdentifier?: string
 }
 
 export const mapOrganization = ({
@@ -103,5 +106,6 @@ export const mapOrganization = ({
     hasALandingPage: fields.hasALandingPage ?? true,
     trackingDomain: fields.trackingDomain ?? '',
     nameInVacancyList: fields.nameInVacancyList,
+    referenceIdentifier: fields.referenceIdentifier,
   }
 }
