@@ -30,43 +30,20 @@ export const Footer = ({ imageUrl, heading, columns }: FooterProps) => {
 
   const isMobileScreenWidth = width < theme.breakpoints.sm
 
-  // TODO: figure out heading padding and why it's not aligning with first column
-
   return (
     <footer className={styles.footer}>
       <Box paddingTop={3} paddingBottom={5}>
         <GridContainer>
-          <GridColumn offset={isMobileScreenWidth ? '2/12' : undefined}>
-            <Box
-              columnGap={IMAGE_MARGIN_RIGHT}
-              display="flex"
-              alignItems="center"
-              marginBottom={3}
-            >
-              {imageUrl && (
-                <Hidden below="sm">
-                  <img width={IMAGE_WIDTH} src={imageUrl} alt="" />
-                </Hidden>
-              )}
-              <GridColumn>
-                <Text variant="h2">{heading}</Text>
-              </GridColumn>
-            </Box>
-            <GridRow className={styles.noWrap}>
-              {imageUrl && !isMobileScreenWidth && (
+          <GridRow>
+            <GridColumn hiddenBelow="sm">
+              <img width={IMAGE_WIDTH} src={imageUrl} alt="" />
+            </GridColumn>
+            <GridColumn offset={isMobileScreenWidth ? '2/12' : undefined}>
+              <GridRow marginBottom={3} marginTop={2}>
                 <GridColumn>
-                  <Box marginRight={IMAGE_MARGIN_RIGHT}>
-                    <img
-                      style={{
-                        visibility: 'hidden',
-                      }}
-                      src={imageUrl}
-                      width={IMAGE_WIDTH}
-                      alt=""
-                    />
-                  </Box>
+                  <Text variant="h2">{heading}</Text>
                 </GridColumn>
-              )}
+              </GridRow>
               <GridRow>
                 {columns.map((column, index) => (
                   <GridColumn
@@ -95,8 +72,8 @@ export const Footer = ({ imageUrl, heading, columns }: FooterProps) => {
                   </GridColumn>
                 ))}
               </GridRow>
-            </GridRow>
-          </GridColumn>
+            </GridColumn>
+          </GridRow>
         </GridContainer>
       </Box>
     </footer>
