@@ -1,4 +1,4 @@
-# name: Monorepo pipeline - pull request
+# name: Monorepo pipeline - pull request (nx-cloud disabled)
 
 # on:
 #   pull_request: {}
@@ -24,9 +24,7 @@
 #     steps:
 #       - name: check if nx-cloud label is set
 #         id: check
-#         run: |
-#           USE_NX_CLOUD=$(echo '${{ toJson(github.event.pull_request.labels) }}' | jq '.[] | select(.name == "nx-cloud")? | any' | grep -q true && echo "false" || echo "true")
-#           echo "should-run=$USE_NX_CLOUD" >> $GITHUB_OUTPUT
+#         run: echo "should-run=$USE_NX_CLOUD" >> $GITHUB_OUTPUT
 
 #   prepare:
 #     runs-on: ec2-runners
