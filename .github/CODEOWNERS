@@ -21,7 +21,6 @@
 
 /*                                                                                                       @island-is/core
 /.github/                                                                                                @island-is/core
-/handbook/                                                                                               @island-is/core
 /libs/api/domains/identity/                                                                              @island-is/core
 /libs/testing/                                                                                           @island-is/core
 /libs/nest/swagger/                                                                                      @island-is/core
