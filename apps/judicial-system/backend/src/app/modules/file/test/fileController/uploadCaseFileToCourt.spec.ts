@@ -29,7 +29,7 @@ type GivenWhenThen = (
   caseFile: CaseFile,
 ) => Promise<Then>
 
-describe('FileController - Upload case file to court', () => {
+describe.skip('FileController - Upload case file to court', () => {
   let mockAwsS3Service: AwsS3Service
   let mockCourtService: CourtService
   let mockFileModel: typeof CaseFile

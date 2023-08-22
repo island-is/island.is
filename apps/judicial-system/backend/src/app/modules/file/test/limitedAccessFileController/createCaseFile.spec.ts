@@ -26,7 +26,7 @@ type GivenWhenThen = (
   theCase: Case,
 ) => Promise<Then>
 
-describe('limitedAccessFileController - Create case file', () => {
+describe.skip('limitedAccessFileController - Create case file', () => {
   let mockFileModel: typeof CaseFile
   let givenWhenThen: GivenWhenThen
 

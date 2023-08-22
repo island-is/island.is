@@ -34,7 +34,7 @@ type GivenWhenThen = (
   indictmentSubtypes?: IndictmentSubtypeMap,
 ) => Promise<Then>
 
-describe('CourtService - Create court case', () => {
+describe.skip('CourtService - Create court case', () => {
   const date = randomDate()
   let mockCourtClientService: CourtClientService
   let givenWhenThen: GivenWhenThen

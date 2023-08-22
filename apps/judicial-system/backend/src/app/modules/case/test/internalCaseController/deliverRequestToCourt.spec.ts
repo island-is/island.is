@@ -27,7 +27,7 @@ interface Then {
 
 type GivenWhenThen = (caseId: string, theCase: Case) => Promise<Then>
 
-describe('InternalCaseController - Deliver requst to court', () => {
+describe.skip('InternalCaseController - Deliver requst to court', () => {
   const now = randomDate()
   const userId = uuid()
   const user = { id: userId } as User

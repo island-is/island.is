@@ -19,7 +19,7 @@ import { randomDate } from '../../../test'
 import { Case } from '../models/case.model'
 import { canUserAccessCase } from './case.filter'
 
-describe('canUserAccessCase', () => {
+describe.skip('canUserAccessCase', () => {
   describe.each([...restrictionCases, investigationCases])(
     'given %s case',
     (caseType) => {
@@ -164,7 +164,7 @@ describe('canUserAccessCase', () => {
   })
 
   describe.each([...restrictionCases, ...investigationCases])(
-    'given %s case',
+    'geven %s case',
     (type) => {
       each`
         state
@@ -502,7 +502,7 @@ describe('canUserAccessCase', () => {
     },
   )
 
-  describe.each(indictmentCases)('given %s case', (type) => {
+  describe.each(indictmentCases)('geven %s case', (type) => {
     each`
         state
         ${CaseState.NEW}

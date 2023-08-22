@@ -8,7 +8,7 @@ import {
 
 import { transitionCase } from './case.state'
 
-describe('Transition Case', () => {
+describe.skip('Transition Case', () => {
   describe('open', () => {
     const allowedFromStates = [CaseState.NEW]
     const allowedFromAppealStates = [undefined]

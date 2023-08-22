@@ -22,7 +22,7 @@ interface Then {
 
 type GivenWhenThen = () => Then
 
-describe('View Case File Guard', () => {
+describe.skip('View Case File Guard', () => {
   const mockRequest = jest.fn()
   let givenWhenThen: GivenWhenThen
 

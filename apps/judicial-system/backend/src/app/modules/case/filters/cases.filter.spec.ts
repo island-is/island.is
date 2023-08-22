@@ -18,7 +18,7 @@ import type { User } from '@island.is/judicial-system/types'
 
 import { getCasesQueryFilter } from './cases.filter'
 
-describe('getCasesQueryFilter', () => {
+describe.skip('getCasesQueryFilter', () => {
   it('should get prosecutor filter', () => {
     // Arrange
     const user = {

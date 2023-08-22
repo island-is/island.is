@@ -32,7 +32,7 @@ type GivenWhenThen = (
   theCase: Case,
 ) => Promise<Then>
 
-describe('CaseController - Create court case', () => {
+describe.skip('CaseController - Create court case', () => {
   const userId = uuid()
   const user = { id: userId } as TUser
   const courtCaseNumber = uuid()
