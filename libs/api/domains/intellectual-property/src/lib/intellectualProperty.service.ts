@@ -4,15 +4,11 @@ import type { Logger } from '@island.is/logging'
 import { IntellectualPropertyClientService } from '@island.is/clients/intellectual-property'
 import type { User } from '@island.is/auth-nest-tools'
 import { Patent } from './models/getPatent.model'
-import {
-  Trademark,
-  TrademarkSubType,
-  TrademarkType,
-} from './models/getTrademark.model'
+import { Trademark } from './models/getTrademark.model'
 import { Design } from './models/getDesign.model'
 import { Image } from './models/getDesignImage.model'
 import addMonths from 'date-fns/addMonths'
-import { parseDate } from './utils'
+import { isValidDate, parseDate } from './utils'
 import { mapTrademarkSubtype, mapTrademarkType } from './mapper'
 
 type ExcludesFalse = <T>(x: T | null | undefined | false | '') => x is T
@@ -33,9 +29,10 @@ export class IntellectualPropertyService {
       type: mapTrademarkType(t.type) ?? undefined,
       subType: mapTrademarkSubtype(t) ?? undefined,
       vmId: t.vmid,
-      applicationDate: t.applicationDate
-        ? new Date(t.applicationDate)
-        : undefined,
+      applicationDate:
+        t.applicationDate && isValidDate(t.applicationDate)
+          ? new Date(t.applicationDate)
+          : undefined,
     })) as Array<Trademark>
   }
 
@@ -49,33 +46,43 @@ export class IntellectualPropertyService {
       ...trademark,
       type: mapTrademarkType(trademark.type) ?? undefined,
       subType: mapTrademarkSubtype(trademark) ?? undefined,
-      applicationDate: trademark.applicationDate
-        ? parseDate(trademark.applicationDate)
-        : undefined,
-      dateRegistration: trademark.dateRegistration
-        ? parseDate(trademark.dateRegistration)
-        : undefined,
-      dateUnRegistered: trademark.dateUnRegistered
-        ? parseDate(trademark.dateUnRegistered)
-        : undefined,
-      dateExpires: trademark.dateExpires
-        ? parseDate(trademark.dateExpires)
-        : undefined,
-      dateRenewed: trademark.dateRenewed
-        ? parseDate(trademark.dateRenewed)
-        : undefined,
-      dateInternationalRegistration: trademark.dateInternationalRegistration
-        ? parseDate(trademark.dateInternationalRegistration)
-        : undefined,
-      dateModified: trademark.dateModified
-        ? parseDate(trademark.dateModified)
-        : undefined,
-      datePublished: trademark.datePublished
-        ? parseDate(trademark.datePublished)
-        : undefined,
-      maxValidObjectionDate: trademark.datePublished
-        ? addMonths(parseDate(trademark.datePublished), 2)
-        : undefined,
+      applicationDate:
+        trademark.applicationDate && isValidDate(trademark.applicationDate)
+          ? parseDate(trademark.applicationDate)
+          : undefined,
+      dateRegistration:
+        trademark.dateRegistration && isValidDate(trademark.dateRegistration)
+          ? parseDate(trademark.dateRegistration)
+          : undefined,
+      dateUnRegistered:
+        trademark.dateUnRegistered && isValidDate(trademark.dateUnRegistered)
+          ? parseDate(trademark.dateUnRegistered)
+          : undefined,
+      dateExpires:
+        trademark.dateExpires && isValidDate(trademark.dateExpires)
+          ? parseDate(trademark.dateExpires)
+          : undefined,
+      dateRenewed:
+        trademark.dateRenewed && isValidDate(trademark.dateRenewed)
+          ? parseDate(trademark.dateRenewed)
+          : undefined,
+      dateInternationalRegistration:
+        trademark.dateInternationalRegistration &&
+        isValidDate(trademark.dateInternationalRegistration)
+          ? parseDate(trademark.dateInternationalRegistration)
+          : undefined,
+      dateModified:
+        trademark.dateModified && isValidDate(trademark.dateModified)
+          ? parseDate(trademark.dateModified)
+          : undefined,
+      datePublished:
+        trademark.datePublished && isValidDate(trademark.datePublished)
+          ? parseDate(trademark.datePublished)
+          : undefined,
+      maxValidObjectionDate:
+        trademark.datePublished && isValidDate(trademark.datePublished)
+          ? addMonths(parseDate(trademark.datePublished), 2)
+          : undefined,
       vmId: trademark.vmid,
       acquiredDistinctiveness: trademark.skradVegnaMarkadsfestu,
     }
