@@ -32,7 +32,7 @@ export const Footer = ({ imageUrl, heading, columns }: FooterProps) => {
     <footer className={styles.footer}>
       <Box paddingTop={3} paddingBottom={5}>
         <GridContainer>
-          <GridRow>
+          <GridRow className={styles.noWrap}>
             <GridColumn hiddenBelow="sm">
               <img width={IMAGE_WIDTH} src={imageUrl} alt="" />
             </GridColumn>
