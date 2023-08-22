@@ -32,13 +32,15 @@ type SubmitResponse = {
   title: string
 } | null
 
-const getInitialValues = (formFields: EmailSignupSchema['formFields']) => {
+const getInitialValues = (
+  formFields: EmailSignupSchema['formFields'],
+): Record<string, string> => {
   return formFields?.reduce((acc: Record<string, unknown>, curr) => {
     if (curr?.name) {
       acc[curr.name] = ''
     }
     return acc
-  }, {})
+  }, {}) as Record<string, string>
 }
 
 interface EmailSignupProps {
