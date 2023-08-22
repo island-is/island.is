@@ -1,0 +1,5 @@
+export { InnaClientModule } from './lib/innaModule'
+export { InnaService } from './lib/inna.service'
+export { ApiConfig } from './lib/apiConfig'
+export { InnaClientConfig } from './lib/innaClient.config'
+export * from '../gen/fetch'

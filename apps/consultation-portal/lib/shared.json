@@ -16,8 +16,12 @@
       "text": "Upplýsingalög gilda, sjá nánar í",
       "link": {
         "label": "um samráðsgáttina.",
-        "href": "/um"
+        "href": "/samradsgatt/um"
       }
     }
+  },
+  "mapInProcess": {
+    "pre": "Í vinnslu frá",
+    "post": "Í vinnslu"
   }
 }

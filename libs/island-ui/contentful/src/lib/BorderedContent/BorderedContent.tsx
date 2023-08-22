@@ -8,10 +8,9 @@ export interface BorderedContentProps {
   bottomContent: ReactNode
 }
 
-export const BorderedContent: FC<BorderedContentProps> = ({
-  topContent,
-  bottomContent,
-}) => {
+export const BorderedContent: FC<
+  React.PropsWithChildren<BorderedContentProps>
+> = ({ topContent, bottomContent }) => {
   return (
     <div className={styles.container}>
       <Box width="full">

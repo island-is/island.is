@@ -5,7 +5,6 @@ import * as mixins from '../Input/Input.mixins'
 export const root = style({
   position: 'relative',
   minWidth: '250px',
-  zIndex: 3,
 })
 
 export const backgroundBlue = style({

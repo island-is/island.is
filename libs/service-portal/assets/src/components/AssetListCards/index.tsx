@@ -11,7 +11,10 @@ interface Props {
   paginateCallback?: () => void
 }
 
-const AssetListCards: FC<Props> = ({ assets, paginateCallback }) => {
+const AssetListCards: FC<React.PropsWithChildren<Props>> = ({
+  assets,
+  paginateCallback,
+}) => {
   const { formatMessage } = useLocale()
   const getMoreItems = () => {
     if (paginateCallback) {

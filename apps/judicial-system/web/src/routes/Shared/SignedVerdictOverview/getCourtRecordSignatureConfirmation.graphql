@@ -1,0 +1,9 @@
+query GetCourtRecordSignatureConfirmation(
+  $input: SignatureConfirmationQueryInput!
+) {
+  courtRecordSignatureConfirmation(input: $input) {
+    documentSigned
+    code
+    message
+  }
+}

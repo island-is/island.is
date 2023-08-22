@@ -721,20 +721,6 @@ export class CmsContentfulService {
     return (result.items as types.IFrontpage[]).map(mapFrontpage)[0]
   }
 
-  async getTellUsAStory({ lang }: { lang: string }): Promise<TellUsAStory> {
-    const params = {
-      ['content_type']: 'tellUsAStory',
-      include: 10,
-      order: '-sys.createdAt',
-    }
-
-    const result = await this.contentfulRepository
-      .getLocalizedEntries<types.ITellUsAStoryFields>(lang, params)
-      .catch(errorHandler('getTellUsAStory'))
-
-    return (result.items as types.ITellUsAStory[]).map(mapTellUsAStory)[0]
-  }
-
   async getSubpageHeader({
     lang,
     id,

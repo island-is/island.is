@@ -23,6 +23,7 @@ import {
   DrivingAssessment,
   DrivingLicenseApi,
   Teacher,
+  TeacherV4,
 } from '@island.is/clients/driving-license'
 import {
   BLACKLISTED_JURISTICTION,
@@ -139,6 +140,12 @@ export class DrivingLicenseService {
 
   async getTeachers(): Promise<Teacher[]> {
     const teachers = await this.drivingLicenseApi.getTeachers()
+
+    return teachers.sort(sortTeachers)
+  }
+
+  async getTeachersV4(): Promise<TeacherV4[]> {
+    const teachers = await this.drivingLicenseApi.getTeachersV4()
 
     return teachers.sort(sortTeachers)
   }
@@ -354,12 +361,14 @@ export class DrivingLicenseService {
 
   async drivingLicenseDuplicateSubmission(params: {
     districtId: number
-    ssn: string
+    token: string
+    stolenOrLost: boolean
   }): Promise<number> {
-    const { districtId, ssn } = params
+    const { districtId, token, stolenOrLost } = params
     return await this.drivingLicenseApi.postApplicationNewCollaborative({
       districtId,
-      ssn,
+      stolenOrLost,
+      token,
     })
   }
 

@@ -8,7 +8,10 @@ import FormerInsurance from './FormerInsurance'
 import StatusAndChildren from './StatusAndChildren'
 import ContactInfo from './ContactInfo'
 
-const Review: FC<FieldBaseProps> = ({ field, application }) => {
+const Review: FC<React.PropsWithChildren<FieldBaseProps>> = ({
+  field,
+  application,
+}) => {
   const { formatMessage } = useLocale()
 
   const isEditable = field.id !== 'submittedData'

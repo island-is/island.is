@@ -1,22 +1,23 @@
 {
-  "root": "libs/plausible",
+  "name": "plausible",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/plausible/src",
   "projectType": "library",
   "generators": {},
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": ["libs/plausible/**/*.{ts,tsx,js,jsx}"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/plausible/jest.config.js",
+        "jestConfig": "libs/plausible/jest.config.ts",
         "passWithNoTests": true
       },
-      "outputs": ["coverage/libs/plausible"]
+      "outputs": ["{workspaceRoot}/coverage/libs/plausible"]
     }
   },
   "tags": ["lib:dom", "scope:dom"]

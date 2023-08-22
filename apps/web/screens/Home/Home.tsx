@@ -135,7 +135,7 @@ const Home: Screen<HomeProps> = ({ categories, news, page, locale }) => {
   )
 }
 
-Home.getInitialProps = async ({ apolloClient, locale }) => {
+Home.getProps = async ({ apolloClient, locale }) => {
   const [
     {
       data: { getArticleCategories },
@@ -182,7 +182,14 @@ Home.getInitialProps = async ({ apolloClient, locale }) => {
   ])
 
   return {
-    news,
+    news:
+      news?.map((item) => ({
+        ...item,
+        genericTags:
+          item?.genericTags?.filter(
+            (tag) => tag.slug !== FRONTPAGE_NEWS_TAG_ID,
+          ) ?? [],
+      })) ?? [],
     categories: getArticleCategories,
     page: getFrontpage,
     showSearchInHeader: false,

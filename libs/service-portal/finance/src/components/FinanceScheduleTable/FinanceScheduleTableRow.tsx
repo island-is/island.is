@@ -31,7 +31,9 @@ interface Props {
   paymentSchedule: PaymentSchedule
 }
 
-const FinanceScheduleTableRow: FC<Props> = ({ paymentSchedule }) => {
+const FinanceScheduleTableRow: FC<React.PropsWithChildren<Props>> = ({
+  paymentSchedule,
+}) => {
   const [
     getPaymentScheduleById,
     { loading, error, ...detailsQuery },

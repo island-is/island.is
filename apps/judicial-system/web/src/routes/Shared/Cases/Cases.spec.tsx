@@ -59,7 +59,7 @@ const mockCasesQuery = [
             defendants: [{ nationalId: '012345-6789', name: 'Mikki Refur' }],
             validToDate: '2020-11-11T12:31:00.000Z',
             accusedAppealDecision: CaseAppealDecision.APPEAL,
-            rulingDate: '2020-09-16T19:51:39.466Z',
+            rulingSignatureDate: '2020-09-16T19:51:39.466Z',
           },
           {
             id: 'test_id_4',
@@ -145,7 +145,7 @@ const mockCourtCasesQuery = [
             defendants: [{ nationalId: '012345-6789', name: 'Mikki Refur' }],
             validToDate: '2020-11-11T12:31:00.000Z',
             accusedAppealDecision: CaseAppealDecision.APPEAL,
-            rulingDate: '2020-09-16T19:51:39.466Z',
+            rulingSignatureDate: '2020-09-16T19:51:39.466Z',
           },
           {
             id: 'test_id_5',
@@ -199,7 +199,7 @@ const mockPrisonUserCasesQuery = [
             policeCaseNumbers: ['008-2020-X'],
             defendants: [{ nationalId: '012345-6789', name: 'Mikki Refur' }],
             isValidToDateInThePast: true,
-            rulingDate: '2020-09-16T19:51:39.466Z',
+            rulingSignatureDate: '2020-09-16T19:51:39.466Z',
           },
           {
             id: 'test_id_2',
@@ -210,7 +210,7 @@ const mockPrisonUserCasesQuery = [
             policeCaseNumbers: ['008-2020-X'],
             defendants: [{ nationalId: '012345-6789', name: 'Mikki Refur' }],
             isValidToDateInThePast: false,
-            rulingDate: '2020-09-16T19:51:39.466Z',
+            rulingSignatureDate: '2020-09-16T19:51:39.466Z',
           },
         ],
       },
@@ -423,6 +423,7 @@ describe('Cases', () => {
 
   describe('All user types - sorting', () => {
     test('should order the table data by accused name in ascending order when the user clicks the accused name table header', async () => {
+      const user = userEvent.setup()
       render(
         <MockedProvider
           mocks={[...mockCasesQuery, ...mockProsecutorQuery]}
@@ -436,7 +437,7 @@ describe('Cases', () => {
         </MockedProvider>,
       )
 
-      userEvent.click(await screen.findByTestId('accusedNameSortButton'))
+      await user.click(await screen.findByTestId('accusedNameSortButton'))
 
       const tableRows = await screen.findAllByTestId('custody-cases-table-row')
 
@@ -448,6 +449,7 @@ describe('Cases', () => {
     })
 
     test('should order the table data by accused name in descending order when the user clicks the accused name table header twice', async () => {
+      const user = userEvent.setup()
       render(
         <MockedProvider
           mocks={[...mockCasesQuery, ...mockProsecutorQuery]}
@@ -461,7 +463,7 @@ describe('Cases', () => {
         </MockedProvider>,
       )
 
-      userEvent.dblClick(await screen.findByTestId('accusedNameSortButton'))
+      await user.dblClick(await screen.findByTestId('accusedNameSortButton'))
 
       const tableRows = await screen.findAllByTestId('custody-cases-table-row')
 
@@ -473,6 +475,7 @@ describe('Cases', () => {
     })
 
     test('should order the table data by created in ascending order when the user clicks the created table header', async () => {
+      const user = userEvent.setup()
       render(
         <MockedProvider
           mocks={[...mockCasesQuery, ...mockProsecutorQuery]}
@@ -486,7 +489,7 @@ describe('Cases', () => {
         </MockedProvider>,
       )
 
-      userEvent.click(await screen.findByText('Stofnað/Fyrirtaka'))
+      await user.click(await screen.findByTestId('createdAtSortButton'))
 
       const tableRows = await screen.findAllByTestId('custody-cases-table-row')
 
@@ -498,6 +501,7 @@ describe('Cases', () => {
     })
 
     test('should order the table data by created in descending order when the user clicks the created table header twice', async () => {
+      const user = userEvent.setup()
       render(
         <MockedProvider
           mocks={[...mockCasesQuery, ...mockProsecutorQuery]}
@@ -511,7 +515,7 @@ describe('Cases', () => {
         </MockedProvider>,
       )
 
-      userEvent.dblClick(await screen.findByText('Stofnað/Fyrirtaka'))
+      await user.dblClick(await screen.findByTestId('createdAtSortButton'))
 
       const tableRows = await screen.findAllByTestId('custody-cases-table-row')
 

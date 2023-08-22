@@ -17,7 +17,9 @@ import { useMutation } from '@apollo/client'
 import { UPDATE_APPLICATION } from '@island.is/application/graphql'
 import { OldOperatorItem } from './OldOperatorItem'
 
-export const OperatorRepeater: FC<FieldBaseProps> = (props) => {
+export const OperatorRepeater: FC<React.PropsWithChildren<FieldBaseProps>> = (
+  props,
+) => {
   const { application, setFieldLoadingState, setBeforeSubmitCallback } = props
   const { locale, formatMessage } = useLocale()
   const { setValue } = useFormContext()

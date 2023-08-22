@@ -1,4 +1,5 @@
-import { CACHE_MANAGER, CacheModule, Inject, Module } from '@nestjs/common'
+import { Inject, Module } from '@nestjs/common'
+import { CacheModule, CACHE_MANAGER } from '@nestjs/cache-manager'
 import { ConfigType, XRoadConfig } from '@island.is/nest/config'
 import { OldGenericDrivingLicenseConfig } from './oldGenericDrivingLicense.config'
 import { OldGenericDrivingLicenseApi } from './oldGenericDrivingLicense.service'

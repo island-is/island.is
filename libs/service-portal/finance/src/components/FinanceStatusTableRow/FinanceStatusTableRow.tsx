@@ -22,7 +22,7 @@ interface Props {
   downloadURL: string
 }
 
-const FinanceStatusTableRow: FC<Props> = ({
+const FinanceStatusTableRow: FC<React.PropsWithChildren<Props>> = ({
   organization,
   chargeType,
   downloadURL,

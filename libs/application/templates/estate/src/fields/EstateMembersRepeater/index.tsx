@@ -10,18 +10,16 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
-import { EstateRegistrant } from '@island.is/clients/syslumenn'
-import { Answers, EstateMember } from '../../types'
+import { EstateRegistrant, EstateMember } from '@island.is/clients/syslumenn'
+import { Answers } from '../../types'
 import { AdditionalEstateMember } from './AdditionalEstateMember'
 import { getValueViaPath } from '@island.is/application/core'
 import { InputController } from '@island.is/shared/form-fields'
 import { format as formatNationalId } from 'kennitala'
 
-export const EstateMembersRepeater: FC<FieldBaseProps<Answers>> = ({
-  application,
-  field,
-  errors,
-}) => {
+export const EstateMembersRepeater: FC<
+  React.PropsWithChildren<FieldBaseProps<Answers>>
+> = ({ application, field, errors }) => {
   const { id } = field
   const { formatMessage } = useLocale()
   const { fields, append, remove, update } = useFieldArray({
@@ -70,11 +68,9 @@ export const EstateMembersRepeater: FC<FieldBaseProps<Answers>> = ({
         }
         return [
           ...acc,
-          <Box marginTop={index > 0 ? 3 : 0} key={index}>
-            <Box display="flex" justifyContent="spaceBetween">
-              <Text variant="h4" paddingBottom={2}>
-                {formatMessage(m.estateMember)}
-              </Text>
+          <Box marginTop={index > 0 ? 7 : 0} key={index}>
+            <Box display="flex" justifyContent="spaceBetween" marginBottom={3}>
+              <Text variant="h4">{formatMessage(m.estateMember)}</Text>
               <Box>
                 <Button
                   variant="text"
@@ -94,7 +90,6 @@ export const EstateMembersRepeater: FC<FieldBaseProps<Answers>> = ({
                 </Button>
               </Box>
             </Box>
-
             <GridRow>
               <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
                 <InputController
@@ -106,6 +101,7 @@ export const EstateMembersRepeater: FC<FieldBaseProps<Answers>> = ({
                   backgroundColor="white"
                   disabled={!member.enabled}
                   format={'######-####'}
+                  error={error && error[index] && error[index].nationalId}
                 />
               </GridColumn>
               <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
@@ -154,6 +150,81 @@ export const EstateMembersRepeater: FC<FieldBaseProps<Answers>> = ({
                 />
               </GridColumn>
             </GridRow>
+
+            {/* ADVOCATE */}
+            {member.advocate && (
+              <Box
+                marginTop={2}
+                paddingY={5}
+                paddingX={7}
+                borderRadius="large"
+                border="standard"
+              >
+                <GridRow>
+                  <GridColumn span={['1/1']} paddingBottom={2}>
+                    <Text variant="h4">
+                      {formatMessage(m.inheritanceAdvocateLabel)}
+                    </Text>
+                  </GridColumn>
+                  <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
+                    <InputController
+                      id={`${id}[${index}].advocate.nationalId`}
+                      name={`${id}[${index}].advocate.nationalId`}
+                      label={formatMessage(m.inheritanceKtLabel)}
+                      readOnly
+                      defaultValue={formatNationalId(
+                        member.advocate?.nationalId || '',
+                      )}
+                      backgroundColor="white"
+                      disabled={!member.enabled}
+                      format={'######-####'}
+                      size="sm"
+                    />
+                  </GridColumn>
+                  <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
+                    <InputController
+                      id={`${id}[${index}].advocate.name`}
+                      name={`${id}[${index}].advocate.name`}
+                      label={formatMessage(m.inheritanceNameLabel)}
+                      readOnly
+                      defaultValue={member.advocate?.name || ''}
+                      backgroundColor="white"
+                      disabled={!member.enabled}
+                      size="sm"
+                    />
+                  </GridColumn>
+                  <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
+                    <InputController
+                      id={`${id}[${index}].advocate.phone`}
+                      name={`${id}[${index}].advocate.phone`}
+                      label={m.phone.defaultMessage}
+                      backgroundColor="blue"
+                      disabled={!member.enabled}
+                      format="###-####"
+                      defaultValue={member.advocate?.phone || ''}
+                      error={
+                        error && error[index] && error[index].advocate.phone
+                      }
+                      size="sm"
+                    />
+                  </GridColumn>
+                  <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
+                    <InputController
+                      id={`${id}[${index}].advocate.email`}
+                      name={`${id}[${index}].advocate.email`}
+                      label={m.email.defaultMessage}
+                      backgroundColor="blue"
+                      disabled={!member.enabled}
+                      defaultValue={member.advocate?.email || ''}
+                      error={
+                        error && error[index] && error[index].advocate.email
+                      }
+                      size="sm"
+                    />
+                  </GridColumn>
+                </GridRow>
+              </Box>
+            )}
           </Box>,
         ]
       }, [] as JSX.Element[])}

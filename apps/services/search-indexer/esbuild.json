@@ -26,6 +26,7 @@
     "logform",
     "pg-native",
     "form-data",
+    "@mikro-orm/core",
     "@protobufjs/aspromise",
     "@protobufjs/base64",
     "@protobufjs/codegen",

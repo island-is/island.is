@@ -1,35 +1,38 @@
 import { useCallback, useContext } from 'react'
-import { useMutation } from '@apollo/client'
 import { useIntl } from 'react-intl'
 import { uuid } from 'uuidv4'
 
 import { toast, UploadFile } from '@island.is/island-ui/core'
 import { CaseFileCategory } from '@island.is/judicial-system/types'
-import {
-  CreateFileDocument,
-  CreateFileMutation,
-  CreateFileMutationVariables,
-  CreatePresignedPostDocument,
-  CreatePresignedPostMutation,
-  CreatePresignedPostMutationVariables,
-  DeleteFileDocument,
-  DeleteFileMutation,
-  DeleteFileMutationVariables,
-  LimitedAccessCreateFileDocument,
-  LimitedAccessCreateFileMutation,
-  LimitedAccessCreateFileMutationVariables,
-  LimitedAccessCreatePresignedPostDocument,
-  LimitedAccessCreatePresignedPostMutation,
-  LimitedAccessCreatePresignedPostMutationVariables,
-  LimitedAccessDeleteFileDocument,
-  LimitedAccessDeleteFileMutation,
-  LimitedAccessDeleteFileMutationVariables,
-  PresignedPost,
-  UploadPoliceCaseFileDocument,
-  UploadPoliceCaseFileMutation,
-} from '@island.is/judicial-system-web/src/graphql/schema'
 import { errors } from '@island.is/judicial-system-web/messages'
 import { UserContext } from '@island.is/judicial-system-web/src/components'
+import { PresignedPost } from '@island.is/judicial-system-web/src/graphql/schema'
+
+import {
+  CreatePresignedPostMutation,
+  useCreatePresignedPostMutation,
+} from './createPresignedPost.generated'
+import {
+  LimitedAccessCreatePresignedPostMutation,
+  useLimitedAccessCreatePresignedPostMutation,
+} from './limitedAccessCreatePresignedPost.generated'
+import {
+  CreateFileMutation,
+  useCreateFileMutation,
+} from './createFile.generated'
+import {
+  LimitedAccessCreateFileMutation,
+  useLimitedAccessCreateFileMutation,
+} from './limitedAccessCreateFile.generated'
+import {
+  DeleteFileMutation,
+  useDeleteFileMutation,
+} from './deleteFile.generated'
+import {
+  LimitedAccessDeleteFileMutation,
+  useLimitedAccessDeleteFileMutation,
+} from './limitedAccessDeleteFile.generated'
+import { useUploadPoliceCaseFileMutation } from './uploadPoliceCaseFile.generated'
 
 export interface TUploadFile extends UploadFile {
   category?: CaseFileCategory
@@ -87,33 +90,15 @@ export const useS3Upload = (caseId: string) => {
   const { limitedAccess } = useContext(UserContext)
   const { formatMessage } = useIntl()
 
-  const [createPresignedPostMutation] = useMutation<
-    CreatePresignedPostMutation,
-    CreatePresignedPostMutationVariables
-  >(CreatePresignedPostDocument)
-  const [limitedAccessCreatePresignedPostMutation] = useMutation<
-    LimitedAccessCreatePresignedPostMutation,
-    LimitedAccessCreatePresignedPostMutationVariables
-  >(LimitedAccessCreatePresignedPostDocument)
-  const [createFileMutation] = useMutation<
-    CreateFileMutation,
-    CreateFileMutationVariables
-  >(CreateFileDocument)
-  const [limitedAccessCreateFileMutation] = useMutation<
-    LimitedAccessCreateFileMutation,
-    LimitedAccessCreateFileMutationVariables
-  >(LimitedAccessCreateFileDocument)
-  const [deleteFileMutation] = useMutation<
-    DeleteFileMutation,
-    DeleteFileMutationVariables
-  >(DeleteFileDocument)
-  const [limitedAccessDeleteFileMutation] = useMutation<
-    LimitedAccessDeleteFileMutation,
-    LimitedAccessDeleteFileMutationVariables
-  >(LimitedAccessDeleteFileDocument)
+  const [createPresignedPost] = useCreatePresignedPostMutation()
   const [
-    uploadPoliceCaseFileMutation,
-  ] = useMutation<UploadPoliceCaseFileMutation>(UploadPoliceCaseFileDocument)
+    limitedAccessCreatePresignedPost,
+  ] = useLimitedAccessCreatePresignedPostMutation()
+  const [createFile] = useCreateFileMutation()
+  const [limitedAccessCreateFile] = useLimitedAccessCreateFileMutation()
+  const [deleteFile] = useDeleteFileMutation()
+  const [limitedAccessDeleteFile] = useLimitedAccessDeleteFileMutation()
+  const [uploadPoliceCaseFile] = useUploadPoliceCaseFileMutation()
 
   const upload = useCallback(
     async (
@@ -123,10 +108,10 @@ export const useS3Upload = (caseId: string) => {
       policeCaseNumber?: string,
     ) => {
       const mutation = limitedAccess
-        ? limitedAccessCreatePresignedPostMutation
-        : createPresignedPostMutation
+        ? limitedAccessCreatePresignedPost
+        : createPresignedPost
 
-      const createPresignedPost = async (file: File) => {
+      const getPresignedPost = async (file: File) => {
         const { data } = await mutation({
           variables: {
             input: {
@@ -155,9 +140,7 @@ export const useS3Upload = (caseId: string) => {
         category?: CaseFileCategory,
         policeCaseNumber?: string,
       ) => {
-        const mutation = limitedAccess
-          ? limitedAccessCreateFileMutation
-          : createFileMutation
+        const mutation = limitedAccess ? limitedAccessCreateFile : createFile
 
         const { data } = await mutation({
           variables: {
@@ -185,7 +168,7 @@ export const useS3Upload = (caseId: string) => {
 
       files.forEach(async ([file, id]) => {
         try {
-          const presignedPost = await createPresignedPost(file)
+          const presignedPost = await getPresignedPost(file)
 
           await uploadToS3(file, presignedPost, (percent) => {
             handleUIUpdate({
@@ -236,11 +219,11 @@ export const useS3Upload = (caseId: string) => {
     },
     [
       limitedAccess,
-      limitedAccessCreatePresignedPostMutation,
-      createPresignedPostMutation,
+      limitedAccessCreatePresignedPost,
+      createPresignedPost,
       caseId,
-      limitedAccessCreateFileMutation,
-      createFileMutation,
+      limitedAccessCreateFile,
+      createFile,
     ],
   )
 
@@ -278,19 +261,17 @@ export const useS3Upload = (caseId: string) => {
     [upload],
   )
 
-  const uploadPoliceCaseFile = useCallback(
+  const uploadFromPolice = useCallback(
     async (
       file: TUploadFile,
       cb: (file: TUploadFile, newId?: string) => void,
     ) => {
       try {
-        const {
-          data: uploadPoliceCaseFileData,
-        } = await uploadPoliceCaseFileMutation({
+        const { data: uploadPoliceCaseFileData } = await uploadPoliceCaseFile({
           variables: {
             input: {
               caseId,
-              id: file.id,
+              id: file.id ?? '',
               name: file.name,
             },
           },
@@ -303,7 +284,7 @@ export const useS3Upload = (caseId: string) => {
           throw Error('failed to upload police case file')
         }
 
-        const data2 = await createFileMutation({
+        const data2 = await createFile({
           variables: {
             input: {
               caseId,
@@ -339,7 +320,7 @@ export const useS3Upload = (caseId: string) => {
         toast.error(formatMessage(errors.failedUploadFile))
       }
     },
-    [createFileMutation, caseId, formatMessage, uploadPoliceCaseFileMutation],
+    [createFile, caseId, formatMessage, uploadPoliceCaseFile],
   )
 
   const remove = useCallback(
@@ -356,21 +337,16 @@ export const useS3Upload = (caseId: string) => {
       }
 
       return limitedAccess
-        ? limitedAccessDeleteFileMutation({
+        ? limitedAccessDeleteFile({
             variables,
             optimisticResponse: { limitedAccessDeleteFile: resopnse },
           })
-        : deleteFileMutation({
+        : deleteFile({
             variables,
             optimisticResponse: { deleteFile: resopnse },
           })
     },
-    [
-      caseId,
-      limitedAccess,
-      limitedAccessDeleteFileMutation,
-      deleteFileMutation,
-    ],
+    [caseId, limitedAccess, limitedAccessDeleteFile, deleteFile],
   )
 
   const handleRetry = useCallback(
@@ -455,7 +431,7 @@ export const useS3Upload = (caseId: string) => {
 
   return {
     upload,
-    uploadPoliceCaseFile,
+    uploadFromPolice,
     remove,
     handleRetry,
     handleRemove,

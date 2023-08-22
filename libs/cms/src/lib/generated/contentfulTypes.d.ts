@@ -213,6 +213,9 @@ export interface IArticleFields {
 
   /** Active Translations */
   activeTranslations?: Record<string, any> | undefined
+
+  /** Sign language video */
+  signLanguageVideo?: IEmbeddedVideo | undefined
 }
 
 export interface IArticle extends Entry<IArticleFields> {
@@ -1440,6 +1443,9 @@ export interface ILatestNewsSliceFields {
   /** News tag */
   newsTag?: IGenericTag | undefined
 
+  /** Organization */
+  organization?: IOrganization | undefined
+
   /** Read more text */
   readMoreText?: string | undefined
 
@@ -1929,6 +1935,9 @@ export interface INamespace extends Entry<INamespaceFields> {
 }
 
 export interface INewsFields {
+  /** Organization */
+  organization: IOrganization
+
   /** Content status */
   contentStatus?: 'Undefined' | 'Needs work' | 'In review' | 'Done' | undefined
 
@@ -2332,8 +2341,11 @@ export interface IOrganizationPageFields {
   /** Organization */
   organization: IOrganization
 
-  /** News tag */
+  /** Primary news tag */
   newsTag?: IGenericTag | undefined
+
+  /** Secondary news tags */
+  secondaryNewsTags?: IGenericTag[] | undefined
 
   /** Slug */
   slug: string
@@ -2440,6 +2452,9 @@ export interface IOrganizationSubpageFields {
 
   /** Featured Image */
   featuredImage?: Asset | undefined
+
+  /** Sign Language Video */
+  signLanguageVideo?: IEmbeddedVideo | undefined
 }
 
 export interface IOrganizationSubpage
@@ -2711,8 +2726,11 @@ export interface IProjectPageFields {
       )[]
     | undefined
 
-  /** News Tag */
+  /** Primary news tag */
   newsTag?: IGenericTag | undefined
+
+  /** Secondary news tags */
+  secondaryNewsTags?: IGenericTag[] | undefined
 
   /** Project Subpages */
   projectSubpages?: IProjectSubpage[] | undefined
@@ -2978,6 +2996,8 @@ export interface ISliceConnectedComponentFields {
     | 'Tækifærisleyfi/TemporaryEventLicences'
     | 'OrganizationSearchBox'
     | 'Verðbréfamiðlarar/Brokers'
+    | 'PublicVehicleSearch'
+    | 'PlateAvailableSearch'
     | undefined
 
   /** Localized JSON */
@@ -3274,6 +3294,9 @@ export interface ISubArticleFields {
 
   /** Show Table Of Contents */
   showTableOfContents?: boolean | undefined
+
+  /** Sign Language Video */
+  signLanguageVideo?: IEmbeddedVideo | undefined
 }
 
 /** A sub article that's a part of another main article */
@@ -3893,20 +3916,38 @@ export interface IVacancyFields {
   /** Intro */
   intro?: Document | undefined
 
-  /** Application Deadline From */
+  /** Job Listed */
   applicationDeadlineFrom: string
 
-  /** Application Deadline To */
+  /** Application Deadline */
   applicationDeadlineTo: string
 
-  /** Field Of Work */
-  fieldOfWork?: string | undefined
+  /** Category */
+  fieldOfWork:
+    | 'Stjórnunarstörf'
+    | 'Sérfræðistörf'
+    | 'Kennsla og rannsóknir'
+    | 'Heilbrigðisþjónusta'
+    | 'Löggæslustörf'
+    | 'Tæknistörf'
+    | 'Önnur störf'
+    | 'Skrifstofustörf'
+    | 'Sumarstörf'
 
   /** Organization */
-  organization?: IOrganization | undefined
+  organization: IOrganization
 
   /** Locations */
-  locations?: string[] | undefined
+  locations: (
+    | 'Án staðsetningar'
+    | 'Höfuðborgarsvæðið'
+    | 'Norðurland'
+    | 'Vesturland'
+    | 'Austurland'
+    | 'Suðurland'
+    | 'Vestfirðir'
+    | 'Suðurnes'
+  )[]
 
   /** Job Percentage */
   jobPercentage?: string | undefined
@@ -3914,10 +3955,10 @@ export interface IVacancyFields {
   /** Application Link Url */
   applicationHref?: string | undefined
 
-  /** Qualification Requirements */
+  /** Requirements */
   qualificationRequirements?: Document | undefined
 
-  /** Tasks And Responsibilities */
+  /** Responsibilities */
   tasksAndResponsibilities?: Document | undefined
 
   /** Description */

@@ -110,6 +110,11 @@ export const m = defineMessages({
     defaultMessage: 'Sem CSV',
     description: '',
   },
+  linkToList: {
+    id: 'sp.petitions:linkToList',
+    defaultMessage: 'Hlekk á lista',
+    description: '',
+  },
   copyLinkToList: {
     id: 'sp.petitions:copyLinkToList',
     defaultMessage: 'Afrita hlekk á lista',
@@ -121,7 +126,7 @@ export const m = defineMessages({
     description: '',
   },
   copyLinkError: {
-    id: 'sp.petitions:copyLinkSuccess',
+    id: 'sp.petitions:copyLinkError',
     defaultMessage: 'Ekki tókst að afrita hlekk',
     description: '',
   },

@@ -50,7 +50,7 @@ export const ImpactList = (props: ImpactListProps) => {
     DELETE_DRAFT_REGULATION_CHANGE,
   )
 
-  const escClick = useCallback((e) => {
+  const escClick = useCallback((e: KeyboardEvent) => {
     if (e.key === 'Escape') {
       setChooseType(undefined)
     }

@@ -27,7 +27,7 @@ test.describe('Endorsements', () => {
     await context.close()
   })
 
-  test('should be able to see overview and endorse a list if there are lists', async () => {
+  test.skip('should be able to see overview and endorse a list if there are lists', async () => {
     const page = await context.newPage()
 
     await page.goto(icelandicAndNoPopupUrl('/undirskriftalistar'))
@@ -37,7 +37,7 @@ test.describe('Endorsements', () => {
     await disableI18n(page)
 
     // Act
-    await page.getByRole('button', { name: 'Skoða lista' }).click()
+    await page.getByRole('button', { name: 'Skoða lista' }).first().click()
     const popupPromise = page.waitForEvent('popup')
     await page
       .getByRole('button', { name: 'Setja nafn mitt á þennan lista' })

@@ -12,7 +12,7 @@ import {
   QualityPhotoApi,
   NationalRegistryUserApi,
   UserProfileApi,
-  DistrictsApi,
+  JuristictionApi,
 } from '@island.is/application/types'
 import { Events, States, Roles } from './constants'
 import { dataSchema } from './dataSchema'
@@ -24,6 +24,10 @@ import {
   getApplicationFeatureFlags,
 } from './getApplicationFeatureFlags'
 import { SyslumadurPaymentCatalogApi } from '../dataProviders'
+import {
+  coreHistoryMessages,
+  corePendingActionMessages,
+} from '@island.is/application/core'
 
 const oneDay = 24 * 3600 * 1000
 const thirtyDays = 24 * 3600 * 1000 * 30
@@ -52,11 +56,20 @@ const DrivingLicenseDuplicateTemplate: ApplicationTemplate<
         meta: {
           name: 'Draft',
           status: 'draft',
-          actionCard: {
-            title: m.applicationTitle,
-          },
           progress: 0.33,
           lifecycle: pruneAfter(oneDay),
+          actionCard: {
+            historyLogs: [
+              {
+                logMessage: coreHistoryMessages.applicationStarted,
+                onEvent: DefaultEvents.PAYMENT,
+              },
+              {
+                onEvent: DefaultEvents.REJECT,
+                logMessage: coreHistoryMessages.applicationRejected,
+              },
+            ],
+          },
           roles: [
             {
               id: Roles.APPLICANT,
@@ -85,7 +98,7 @@ const DrivingLicenseDuplicateTemplate: ApplicationTemplate<
               ],
               api: [
                 CurrentLicenseApi,
-                DistrictsApi,
+                JuristictionApi,
                 NationalRegistryUserApi,
                 SyslumadurPaymentCatalogApi,
                 QualitySignatureApi,
@@ -107,7 +120,15 @@ const DrivingLicenseDuplicateTemplate: ApplicationTemplate<
           name: 'Payment state',
           status: 'inprogress',
           actionCard: {
-            description: m.payment,
+            pendingAction: {
+              title: corePendingActionMessages.paymentPendingTitle,
+              content: corePendingActionMessages.paymentPendingDescription,
+              displayStatus: 'warning',
+            },
+            historyLogs: {
+              onEvent: DefaultEvents.SUBMIT,
+              logMessage: coreHistoryMessages.paymentAccepted,
+            },
           },
           progress: 0.9,
           lifecycle: pruneAfter(thirtyDays),
@@ -136,6 +157,12 @@ const DrivingLicenseDuplicateTemplate: ApplicationTemplate<
         meta: {
           name: 'Done',
           status: 'completed',
+          actionCard: {
+            pendingAction: {
+              title: m.pendingActionApplicationCompletedTitle,
+              displayStatus: 'success',
+            },
+          },
           progress: 1,
           lifecycle: pruneAfter(thirtyDays),
           onEntry: defineTemplateApi({

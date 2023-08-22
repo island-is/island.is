@@ -8,7 +8,7 @@ interface Props {
   activeStep?: ClientStep
 }
 
-const ClientStepNav: React.FC<Props> = ({
+const ClientStepNav: React.FC<React.PropsWithChildren<Props>> = ({
   handleStepChange,
   activeStep,
   children,
