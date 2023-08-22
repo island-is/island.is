@@ -1,5 +1,4 @@
 /* eslint-env node */
-
 module.exports = {
   development: {
     username: 'dev_db',
@@ -7,6 +6,7 @@ module.exports = {
     database: 'dev_db',
     host: 'localhost',
     dialect: 'postgres',
+    port: 5438,
   },
   test: {
     username: 'test_db',

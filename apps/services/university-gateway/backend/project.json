@@ -18,6 +18,11 @@
             "output": "./migrations"
           },
           {
+            "glob": "*",
+            "input": "apps/services/university-gateway/backend/seeders",
+            "output": "./seeders"
+          },
+          {
             "glob": ".sequelizerc",
             "input": "apps/services/university-gateway/backend",
             "output": "./"
@@ -53,15 +58,6 @@
           "apps/services/university-gateway/backend/**/*.{ts,tsx,js,jsx}"
         ]
       }
-    },
-    "test": {
-      "executor": "@nrwl/jest:jest",
-      "options": {
-        "jestConfig": "apps/services/university-gateway/backend/jest.config.js",
-        "runInBand": true,
-        "passWithNoTests": true
-      },
-      "outputs": ["coverage/apps/services/university-gateway/backend"]
     },
     "dev-services": {
       "executor": "@nrwl/workspace:run-commands",
@@ -101,7 +97,7 @@
     "seed": {
       "executor": "@nrwl/workspace:run-commands",
       "options": {
-        "command": "../../../node_modules/.bin/sequelize-cli db:seed:all",
+        "command": "sequelize-cli db:seed:all",
         "cwd": "apps/services/university-gateway/backend"
       }
     },

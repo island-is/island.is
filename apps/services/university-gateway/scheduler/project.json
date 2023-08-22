@@ -2,7 +2,7 @@
   "root": "apps/services/university-gateway/scheduler",
   "sourceRoot": "apps/services/university-gateway/scheduler/src",
   "projectType": "application",
-  "prefix": "university-gateway-scheduler",
+  "prefix": "services-university-gateway-scheduler",
   "targets": {
     "build": {
       "executor": "./tools/executors/node:build",
@@ -24,7 +24,7 @@
     "serve": {
       "executor": "@nrwl/node:node",
       "options": {
-        "buildTarget": "university-gateway-scheduler:build"
+        "buildTarget": "services-university-gateway-scheduler:build"
       }
     },
     "lint": {

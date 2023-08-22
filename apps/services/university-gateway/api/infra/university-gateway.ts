@@ -1,8 +1,10 @@
 import { service, ServiceBuilder } from '../../../../../infra/src/dsl/dsl'
 
-export const serviceSetup = (): ServiceBuilder<'university-gateway-backend'> =>
-  service('university-gateway-backend')
-    .namespace('university-gateway-backend')
+export const serviceSetup = (services: {
+  backend: ServiceBuilder<'university-gateway-backend'>
+}): ServiceBuilder<'university-gateway-api'> =>
+  service('university-gateway-api')
+    .namespace('university-gateway')
     .resources({
       limits: { cpu: '150m', memory: '384Mi' },
       requests: { cpu: '15m', memory: '256Mi' },

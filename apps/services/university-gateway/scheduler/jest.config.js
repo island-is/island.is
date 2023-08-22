@@ -1,5 +1,5 @@
 module.exports = {
-  displayName: 'university-gateway-scheduler',
+  displayName: 'services-university-gateway-scheduler',
   preset: './jest.preset.js',
   rootDir: '../../../..',
   roots: [__dirname],
