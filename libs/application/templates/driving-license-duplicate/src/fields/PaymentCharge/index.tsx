@@ -19,7 +19,7 @@ export const PaymentCharge: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   const { setValue } = useFormContext()
 
   // AY110: Ökuskírteini / Driving License
-  let chargeCode = 'AY110'
+  let chargeCode = 'AY116'
   // Change price based on temporary license
   const licenseData = getValueViaPath<DriversLicense>(
     application.externalData,
