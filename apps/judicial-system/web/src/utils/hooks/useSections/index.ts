@@ -582,7 +582,7 @@ const useSections = (
         !completedCaseStates.includes(workingCase.state) &&
         !parentCase,
       children:
-        user?.institution?.type !== InstitutionType.COURT
+        user?.institution?.type !== InstitutionType.DISTRICT_COURT
           ? []
           : [
               {
@@ -715,7 +715,7 @@ const useSections = (
         !completedCaseStates.includes(workingCase.state) &&
         !parentCase,
       children:
-        user?.institution?.type !== InstitutionType.COURT
+        user?.institution?.type !== InstitutionType.DISTRICT_COURT
           ? []
           : [
               {
@@ -1128,14 +1128,14 @@ const useSections = (
       {
         name: formatMessage(sections.courtOfAppealSection.appealed),
         isActive:
-          user?.institution?.type !== InstitutionType.HIGH_COURT &&
+          user?.institution?.type !== InstitutionType.COURT_OF_APPEALS &&
           workingCase.appealState === CaseAppealState.RECEIVED,
         children: [],
       },
       {
         name: formatMessage(sections.courtOfAppealSection.result),
         isActive:
-          user?.institution?.type === InstitutionType.HIGH_COURT &&
+          user?.institution?.type === InstitutionType.COURT_OF_APPEALS &&
           routeIndex !== 3,
         children: [
           {

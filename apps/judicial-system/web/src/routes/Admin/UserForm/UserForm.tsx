@@ -111,8 +111,8 @@ export const UserForm: React.FC<React.PropsWithChildren<Props>> = (props) => {
     return isProsecutionRole(user.role)
       ? user.institution?.type === InstitutionType.PROSECUTORS_OFFICE
       : isExtendedCourtRole(user.role)
-      ? user.institution?.type === InstitutionType.COURT ||
-        user.institution?.type === InstitutionType.HIGH_COURT
+      ? user.institution?.type === InstitutionType.DISTRICT_COURT ||
+        user.institution?.type === InstitutionType.COURT_OF_APPEALS
       : user.role === UserRole.STAFF
       ? user.institution?.type === InstitutionType.PRISON ||
         user.institution?.type === InstitutionType.PRISON_ADMIN
