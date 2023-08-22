@@ -15,7 +15,8 @@
           "schemas/openapi-generator",
           "schemas/build-graphql-schema",
           "schemas/codegen",
-          "generateDevIndexHTML"
+          "generateDevIndexHTML",
+          "build-custom-server"
         ],
         "cacheDirectory": ".cache/nx",
         "parallel": 1
