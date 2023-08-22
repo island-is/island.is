@@ -34,7 +34,7 @@ describe('CaseController - Get by id', () => {
     const theCase = { id: caseId } as Case
     let then: Then
 
-    beforeEach(async () => {
+    beforeEach(() => {
       then = givenWhenThen(caseId, theCase)
     })
 
