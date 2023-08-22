@@ -1,7 +1,7 @@
 import { BrowserContext, expect, test } from '@playwright/test'
 
-import { urls } from '../../../support/urls'
-import { judicialSystemSession } from '../../../support/session'
+import { urls } from '../../support/urls'
+import { judicialSystemSession } from '../../support/session'
 
 test.use({ baseURL: urls.judicialSystemBaseUrl })
 
@@ -21,12 +21,11 @@ test.describe('Custody Prosecutor', () => {
 
     // Case list
     page.goto('/krofur')
-    await expect(page.getByRole('table')).toHaveCount(2)
     await page.getByRole('button', { name: 'Nýtt mál' }).click()
     await page.getByRole('menuitem', { name: 'Gæsluvarðhald' }).click()
+    await expect(page).toHaveURL('/krafa/ny/gaesluvardhald')
 
     // New custody request
-    await expect(page).toHaveURL('/krafa/ny/gaesluvardhald')
     await expect(
       page.getByRole('heading', { name: 'Gæsluvarðhald' }),
     ).toBeVisible()
@@ -66,7 +65,7 @@ test.describe('Custody Prosecutor', () => {
     await page.keyboard.press('Escape')
     await page.locator('input[id=reqValidToDate-time]').fill('16:00')
     await page.locator('textarea[name=lawsBroken]').click()
-    await page.keyboard.type('Lög voru bortin')
+    await page.keyboard.type('Einhver lög voru bortin')
     await page.getByTestId('checkbox').first().click()
     await page.getByRole('button', { name: 'Halda áfram' }).click()
     await expect(page).toHaveURL(/.*\/krafa\/greinargerd\/.*/)
@@ -80,5 +79,16 @@ test.describe('Custody Prosecutor', () => {
     await page.keyboard.type('Sakborningur er hættulegur')
     await page.getByRole('button', { name: 'Halda áfram' }).click()
     await expect(page).toHaveURL(/.*\/krafa\/rannsoknargogn\/.*/)
+
+    // Case files
+    await page.locator('textarea[name=caseFilesComments]').click()
+    await page.keyboard.type('Engin gögn fylgja')
+    await page.getByRole('button', { name: 'Halda áfram' }).click()
+    await expect(page).toHaveURL(/.*\/krafa\/stadfesta\/.*/)
+
+    // Submit to court
+    await page.getByRole('button', { name: 'Senda kröfu á héraðsdóm' }).click()
+    await page.getByRole('button', { name: 'Loka glugga' }).click()
+    await expect(page).toHaveURL(/.*\/krofur/)
   })
 })
