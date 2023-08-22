@@ -164,7 +164,7 @@ describe('canUserAccessCase', () => {
   })
 
   describe.each([...restrictionCases, ...investigationCases])(
-    'geven %s case',
+    'given %s case',
     (type) => {
       each`
         state
@@ -502,7 +502,7 @@ describe('canUserAccessCase', () => {
     },
   )
 
-  describe.each(indictmentCases)('geven %s case', (type) => {
+  describe.each(indictmentCases)('given %s case', (type) => {
     each`
         state
         ${CaseState.NEW}
