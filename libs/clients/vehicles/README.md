@@ -1,5 +1,3 @@
-<!-- gitbook-navigation: "Driving License" -->
-
 # Vehicles Client
 
 ## About
