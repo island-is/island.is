@@ -182,10 +182,17 @@ export function formatProsecutorReadyForCourtEmailNotification(
   courtName?: string,
   overviewUrl?: string,
 ): SubjectAndBody {
-  const subject = formatMessage(notifications.readyForCourt.subject, {
-    isIndictmentCase: isIndictmentCase(caseType),
-    caseType: caseTypes[caseType],
-  })
+  const subject = isInvestigationCase(caseType)
+    ? formatMessage(
+        notifications.readyForCourt.investigationCaseReadyForCourtSubject,
+        {
+          caseType: caseTypes[caseType],
+        },
+      )
+    : formatMessage(notifications.readyForCourt.subject, {
+        isIndictmentCase: isIndictmentCase(caseType),
+        caseType: caseTypes[caseType],
+      })
 
   const body = formatMessage(notifications.readyForCourt.prosecutorHtml, {
     isIndictmentCase: isIndictmentCase(caseType),
@@ -488,10 +495,11 @@ export function formatCourtRevokedSmsNotification(
         time: formatDate(requestedCourtDate, 'p'),
       })
     : undefined
-  const courtRevokedText = formatMessage(
-    notifications.courtRevoked.caseTypeRevoked,
-    { caseType: type },
-  )
+  const courtRevokedText = isInvestigationCase(type)
+    ? formatMessage(notifications.courtRevoked.investigationCaseRevoked)
+    : formatMessage(notifications.courtRevoked.caseTypeRevoked, {
+        caseType: type,
+      })
 
   return [courtRevokedText, prosecutorText, courtDateText]
     .filter(Boolean)

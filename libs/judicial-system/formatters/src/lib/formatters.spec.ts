@@ -19,6 +19,7 @@ import {
   splitStringByComma,
   readableIndictmentSubtypes,
   indictmentSubtypes,
+  sanitize,
 } from './formatters'
 
 describe('formatDate', () => {
@@ -350,5 +351,18 @@ describe('readableIndictmentSubtypes', () => {
       indictmentSubtypes[IndictmentSubtype.RAPE],
       indictmentSubtypes[IndictmentSubtype.THEFT],
     ])
+  })
+})
+
+describe('sanitize', () => {
+  test('should return empty string if text is empty', () => {
+    // Arrange
+    const text = `bla"bla.pdf`
+
+    // Act
+    const r = sanitize(text)
+
+    // Assert
+    expect(r).toBe('blabla.pdf')
   })
 })

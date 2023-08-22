@@ -12,7 +12,7 @@ import {
 import { dataSchema } from './dataSchema'
 import { Roles, States, Events, ApiActions } from './constants'
 import { m } from './messages'
-import { FeatureFlagClient, Features } from '@island.is/feature-flags'
+import { FeatureFlagClient } from '@island.is/feature-flags'
 import {
   getApplicationFeatureFlags,
   OperatingLicenseFeatureFlags,
@@ -48,7 +48,6 @@ const OperatingLicenseTemplate: ApplicationTemplate<
   type: ApplicationTypes.OPERATING_LCENSE,
   name: m.formName.defaultMessage,
   institution: m.institution,
-  featureFlag: Features.operatingLicense,
   allowedDelegations: [{ type: AuthDelegationType.ProcurationHolder }],
   dataSchema,
   stateMachineConfig: {

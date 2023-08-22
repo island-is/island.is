@@ -465,7 +465,7 @@ describe('formatProsecutorReadyForCourtEmailNotification', () => {
       overviewUrl,
     )
 
-  test.each([...restrictionCases, ...investigationCases])(
+  test.each([...restrictionCases])(
     'should format ready for court email for %s',
     (type) => {
       // Arrange
@@ -478,6 +478,27 @@ describe('formatProsecutorReadyForCourtEmailNotification', () => {
 
       // Assert
       expect(res.subject).toBe(`Krafa um ${caseTypes[type]} send`)
+      expect(res.body).toBe(
+        `Þú hefur sent kröfu á Héraðsdóm Reykjavíkur vegna LÖKE máls 007-2022-01. Skjalið er aðgengilegt undir <a href="https://rettarvorslugatt.island.is/test/overview">málinu í Réttarvörslugátt</a>.`,
+      )
+    },
+  )
+
+  test.each(investigationCases)(
+    'should format ready for court email for %s',
+    (type) => {
+      // Arrange
+      const court = 'Héraðsdómur Reykjavíkur'
+      const policeCaseNumbers = ['007-2022-01']
+      const overviewUrl = 'https://rettarvorslugatt.island.is/test/overview'
+
+      // Act
+      const res = fn(policeCaseNumbers, type, court, overviewUrl)
+
+      // Assert
+      expect(res.subject).toBe(
+        `Krafa um rannsóknarheimild send (${caseTypes[type]})`,
+      )
       expect(res.body).toBe(
         `Þú hefur sent kröfu á Héraðsdóm Reykjavíkur vegna LÖKE máls 007-2022-01. Skjalið er aðgengilegt undir <a href="https://rettarvorslugatt.island.is/test/overview">málinu í Réttarvörslugátt</a>.`,
       )
@@ -1530,6 +1551,28 @@ describe('formatCourtRevokedSmsNotification', () => {
     // Assert
     expect(res).toBe(
       'Krafa um vistun á viðeigandi stofnun afturkölluð. Sækjandi: Kiddi Kærari. Fyrirtökutími: 20.12.2021, kl. 11:30.',
+    )
+  })
+
+  test('should format revoked sms for investigation cases', () => {
+    // Arrange
+    const type = CaseType.BODY_SEARCH
+    const prosecutorName = 'Kiddi Kærari'
+    const requestedCourtDate = new Date('2021-01-20T11:10')
+    const courtDate = new Date('2021-12-20T11:30')
+
+    // Act
+    const res = formatCourtRevokedSmsNotification(
+      formatMessage,
+      type,
+      prosecutorName,
+      requestedCourtDate,
+      courtDate,
+    )
+
+    // Assert
+    expect(res).toBe(
+      'Rannsóknarheimild afturkölluð. Sækjandi: Kiddi Kærari. Fyrirtökutími: 20.12.2021, kl. 11:30.',
     )
   })
 })

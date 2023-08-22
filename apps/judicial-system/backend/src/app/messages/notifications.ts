@@ -41,6 +41,13 @@ export const notifications = {
         '{isIndictmentCase, select, true {Ákæra} other {Krafa um {caseType}}} send',
       description: 'Titill í pósti til ákæranda þegar krafa er send',
     },
+    investigationCaseReadyForCourtSubject: {
+      id:
+        'judicial.system.backend:notifications.ready_for_court.investigation_case_ready_for_court',
+      defaultMessage: 'Krafa um rannsóknarheimild send ({caseType})',
+      description:
+        'Titill í pósti til ákæranda þegar rannsóknarheimild er send',
+    },
     prosecutorHtml: {
       id:
         'judicial.system.backend:notifications.ready_for_court.prosecutor_html_v3',
@@ -58,6 +65,12 @@ export const notifications = {
         '{caseType, select, TRAVEL_BAN {Farbannskrafa} ADMISSION_TO_FACILITY {Krafa um vistun á viðeigandi stofnun} other {Gæsluvarðhaldskrafa}} afturkölluð.',
       description:
         'Notaður sem texti í sms-i til dómstóla þegar krafa er afturkölluð',
+    },
+    investigationCaseRevoked: {
+      id: 'judicial.system.backend:notifications.court_revoked.case_revoked',
+      defaultMessage: 'Rannsóknarheimild afturkölluð.',
+      description:
+        'Notaður sem texti í sms-i til dómstóla þegar rannsóknarheimild er afturkölluð',
     },
     courtDate: {
       id: 'judicial.system.backend:notifications.court_revoked.court_date',
