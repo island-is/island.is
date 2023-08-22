@@ -12,7 +12,7 @@ export interface CheckboxProps {
   name?: string
   id?: string
   label?: React.ReactNode
-  checked?: boolean
+  checked?: boolean | null
   disabled?: boolean
   onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void
   tooltip?: React.ReactNode

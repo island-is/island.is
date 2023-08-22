@@ -27,7 +27,6 @@ import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader
 import {
   CaseCustodyRestrictions,
   CaseDecision,
-  Defendant,
   isAcceptingCaseDecision,
 } from '@island.is/judicial-system/types'
 import { isPoliceDemandsStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
@@ -53,6 +52,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/laws'
 import {
   CaseType,
+  Defendant,
   Gender,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import * as constants from '@island.is/judicial-system/consts'

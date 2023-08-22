@@ -1,9 +1,9 @@
 import { createIntl } from 'react-intl'
 
-import { Defendant } from '@island.is/judicial-system/types'
 import {
   CaseType,
   Gender,
+  Defendant,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { getDefendantLabel } from './CaseInfo'

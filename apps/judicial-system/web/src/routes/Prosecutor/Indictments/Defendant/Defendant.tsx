@@ -16,7 +16,6 @@ import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader
 import { titles, core, errors } from '@island.is/judicial-system-web/messages'
 import { Box, Button, toast } from '@island.is/island-ui/core'
 import {
-  Defendant as TDefendant,
   UpdateDefendant,
   IndictmentSubtypeMap,
   CrimeSceneMap,
@@ -27,7 +26,10 @@ import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import useDefendants from '@island.is/judicial-system-web/src/utils/hooks/useDefendants'
 import { isDefendantStepValidIndictments } from '@island.is/judicial-system-web/src/utils/validate'
-import { CaseOrigin } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  CaseOrigin,
+  Defendant as TDefendant,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import * as constants from '@island.is/judicial-system/consts'
 
 import { DefendantInfo } from '../../components'
@@ -93,12 +95,8 @@ const getPoliceCasesForUpdate = (
   )
 
 const Defendant: React.FC<React.PropsWithChildren<unknown>> = () => {
-  const {
-    workingCase,
-    setWorkingCase,
-    isLoadingWorkingCase,
-    caseNotFound,
-  } = useContext(FormContext)
+  const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
+    useContext(FormContext)
   const { formatMessage } = useIntl()
   const { createCase, isCreatingCase, setAndSendCaseToServer } = useCase()
   const {
@@ -118,11 +116,8 @@ const Defendant: React.FC<React.PropsWithChildren<unknown>> = () => {
   const handleCreatePoliceCase = async (policeCaseInfo?: PoliceCase) => {
     const newPoliceCase = policeCaseInfo ?? { number: '' }
 
-    const [
-      policeCaseNumbers,
-      indictmentSubtypes,
-      crimeScenes,
-    ] = getPoliceCasesForUpdate([...getPoliceCases(workingCase), newPoliceCase])
+    const [policeCaseNumbers, indictmentSubtypes, crimeScenes] =
+      getPoliceCasesForUpdate([...getPoliceCases(workingCase), newPoliceCase])
 
     setAndSendCaseToServer(
       [
@@ -178,11 +173,8 @@ const Defendant: React.FC<React.PropsWithChildren<unknown>> = () => {
       crimeScene?: CrimeScene
     },
   ) => {
-    const [
-      policeCaseNumbers,
-      indictmentSubtypes,
-      crimeScenes,
-    ] = getPoliceCasesForUpdate(getPoliceCases(workingCase), index, update)
+    const [policeCaseNumbers, indictmentSubtypes, crimeScenes] =
+      getPoliceCasesForUpdate(getPoliceCases(workingCase), index, update)
 
     setWorkingCase((theCase) => ({
       ...theCase,
@@ -195,13 +187,10 @@ const Defendant: React.FC<React.PropsWithChildren<unknown>> = () => {
   const handleDeletePoliceCase = (index: number) => {
     const policeCases = getPoliceCases(workingCase)
 
-    const [
-      policeCaseNumbers,
-      indictmentSubtypes,
-      crimeScenes,
-    ] = getPoliceCasesForUpdate(
-      policeCases.slice(0, index).concat(policeCases.slice(index + 1)),
-    )
+    const [policeCaseNumbers, indictmentSubtypes, crimeScenes] =
+      getPoliceCasesForUpdate(
+        policeCases.slice(0, index).concat(policeCases.slice(index + 1)),
+      )
 
     setAndSendCaseToServer(
       [
@@ -225,11 +214,8 @@ const Defendant: React.FC<React.PropsWithChildren<unknown>> = () => {
       crimeScene?: CrimeScene
     },
   ) => {
-    const [
-      policeCaseNumbers,
-      indictmentSubtypes,
-      crimeScenes,
-    ] = getPoliceCasesForUpdate(getPoliceCases(workingCase), index, update)
+    const [policeCaseNumbers, indictmentSubtypes, crimeScenes] =
+      getPoliceCasesForUpdate(getPoliceCases(workingCase), index, update)
 
     setAndSendCaseToServer(
       [
@@ -278,7 +264,7 @@ const Defendant: React.FC<React.PropsWithChildren<unknown>> = () => {
                   nationalId: defendant.nationalId,
                   noNationalId: defendant.noNationalId,
                   citizenship: defendant.citizenship,
-                },
+                } as UpdateDefendant,
               )
             } else {
               await createDefendant(createdCase.id, {
@@ -288,7 +274,7 @@ const Defendant: React.FC<React.PropsWithChildren<unknown>> = () => {
                 nationalId: defendant.nationalId,
                 noNationalId: defendant.noNationalId,
                 citizenship: defendant.citizenship,
-              })
+              } as UpdateDefendant)
             }
           })
           router.push(`${destination}/${createdCase.id}`)

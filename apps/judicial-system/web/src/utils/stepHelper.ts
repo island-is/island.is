@@ -66,7 +66,7 @@ export const getAppealEndDate = (rulingDate: string) => {
   return formatDate(appealEndDate, 'PPPp')
 }
 
-export const isBusiness = (nationalId?: string) => {
+export const isBusiness = (nationalId?: string | null) => {
   if (!nationalId) {
     return false
   }

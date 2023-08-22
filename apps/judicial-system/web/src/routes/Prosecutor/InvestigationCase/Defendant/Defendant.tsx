@@ -23,10 +23,7 @@ import {
   defendant as m,
   errors,
 } from '@island.is/judicial-system-web/messages'
-import {
-  Defendant as TDefendant,
-  UpdateDefendant,
-} from '@island.is/judicial-system/types'
+import { UpdateDefendant } from '@island.is/judicial-system/types'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import {
   Box,
@@ -43,6 +40,7 @@ import { isBusiness } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import {
   CaseType,
   CaseOrigin,
+  Defendant as TDefendant,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import * as constants from '@island.is/judicial-system/consts'
 
@@ -56,12 +54,8 @@ const Defendant = () => {
   const router = useRouter()
   const { updateDefendant, createDefendant, deleteDefendant } = useDefendants()
 
-  const {
-    workingCase,
-    setWorkingCase,
-    isLoadingWorkingCase,
-    caseNotFound,
-  } = useContext(FormContext)
+  const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
+    useContext(FormContext)
   const { createCase, isCreatingCase, setAndSendCaseToServer } = useCase()
   const { formatMessage } = useIntl()
   // This state is needed because type is initially set to OHTER on the
@@ -75,9 +69,8 @@ const Defendant = () => {
     }
   }, [workingCase.id, workingCase.type])
 
-  const { clientPoliceNumbers, setClientPoliceNumbers } = usePoliceCaseNumbers(
-    workingCase,
-  )
+  const { clientPoliceNumbers, setClientPoliceNumbers } =
+    usePoliceCaseNumbers(workingCase)
 
   const handleNavigationTo = useCallback(
     async (destination: string) => {
@@ -101,7 +94,7 @@ const Defendant = () => {
                   nationalId: defendant.nationalId,
                   noNationalId: defendant.noNationalId,
                   citizenship: defendant.citizenship,
-                },
+                } as UpdateDefendant,
               )
             } else {
               await createDefendant(createdCase.id, {
@@ -111,7 +104,7 @@ const Defendant = () => {
                 nationalId: defendant.nationalId,
                 noNationalId: defendant.noNationalId,
                 citizenship: defendant.citizenship,
-              })
+              } as UpdateDefendant)
             }
           })
           router.push(`${destination}/${createdCase.id}`)

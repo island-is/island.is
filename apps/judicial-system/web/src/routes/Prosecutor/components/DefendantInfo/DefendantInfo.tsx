@@ -4,7 +4,6 @@ import { useIntl } from 'react-intl'
 import { ValueType } from 'react-select'
 
 import {
-  Defendant,
   isIndictmentCase,
   UpdateDefendant,
 } from '@island.is/judicial-system/types'
@@ -29,7 +28,10 @@ import {
 import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 import useNationalRegistry from '@island.is/judicial-system-web/src/utils/hooks/useNationalRegistry'
 import { isBusiness } from '@island.is/judicial-system-web/src/utils/stepHelper'
-import { Gender } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  Gender,
+  Defendant,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 
 import * as strings from './DefendantInfo.strings'
 
