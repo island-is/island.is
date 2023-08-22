@@ -82,7 +82,7 @@ export class PaymentService {
   }
 
   async getStatus(user: User, applicationId: string): Promise<PaymentStatus> {
-    // TODOx remove, only to skipt payment on feature-deploy
+    // TODOx remove, only to skip payment on feature-deploy
     return { fulfilled: true, paymentUrl: '', paymentId: '' }
   }
 
