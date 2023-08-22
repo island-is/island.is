@@ -9,7 +9,7 @@ export const authModuleConfig = defineConfig({
       '@rettarvorslugatt.island.is/web',
     ),
     issuer: env.required(
-      'AUTH_IDS_ISSUER',
+      'IDENTITY_SERVER_ISSUER_URL',
       'https://identity-server.dev01.devland.is',
     ),
     clientSecret: env.required('AUTH_IDS_SECRET', ''),
