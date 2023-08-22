@@ -11,7 +11,7 @@ interface PropTypes {
 
 const OwnersTable = ({ data, title }: PropTypes) => {
   useNamespaces('sp.vehicles')
-  const { formatMessage } = useLocale()
+  const { formatMessage, lang } = useLocale()
   return (
     <Box marginBottom={4} marginTop="containerGutter">
       <Text variant="h4" fontWeight="semiBold" paddingBottom={2}>
@@ -58,7 +58,9 @@ const OwnersTable = ({ data, title }: PropTypes) => {
                 <T.Data>
                   <Text variant="medium">
                     {owner?.dateOfPurchase &&
-                      new Date(owner.dateOfPurchase).toLocaleDateString()}
+                      new Date(owner.dateOfPurchase).toLocaleDateString(
+                        lang === 'en' ? 'en-US' : 'is-IS',
+                      )}
                   </Text>
                 </T.Data>
               </T.Row>

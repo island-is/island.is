@@ -22,6 +22,7 @@ import {
 import {
   ApplicationTypes,
   ApplicationWithAttachments,
+  InstitutionNationalIds,
   YES,
 } from '@island.is/application/types'
 import { Info, BankruptcyHistoryResult } from './types/application'
@@ -186,8 +187,6 @@ export class OperatingLicenseService extends BaseTemplateApiService {
     application: { id, answers },
     auth,
   }: TemplateApiModuleActionProps) {
-    const SYSLUMADUR_NATIONAL_ID = '6509142520'
-
     const chargeItemCode = getValueViaPath<string>(answers, 'chargeItemCode')
     if (!chargeItemCode) {
       throw new Error('chargeItemCode missing in request')
@@ -196,7 +195,7 @@ export class OperatingLicenseService extends BaseTemplateApiService {
     const response = await this.sharedTemplateAPIService.createCharge(
       auth,
       id,
-      SYSLUMADUR_NATIONAL_ID,
+      InstitutionNationalIds.SYSLUMENN,
       [chargeItemCode],
     )
     // last chance to validate before the user receives a dummy
