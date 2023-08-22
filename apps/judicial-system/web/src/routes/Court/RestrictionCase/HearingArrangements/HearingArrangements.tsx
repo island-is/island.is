@@ -2,7 +2,7 @@ import React, { useContext, useState, useCallback } from 'react'
 import { useIntl } from 'react-intl'
 import router from 'next/router'
 
-import { Box, Text, AlertMessage, toast } from '@island.is/island-ui/core'
+import { Box, Text, AlertMessage } from '@island.is/island-ui/core'
 import {
   FormFooter,
   PageLayout,
