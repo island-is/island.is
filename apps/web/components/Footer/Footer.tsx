@@ -5,7 +5,6 @@ import {
   GridColumn,
   GridContainer,
   GridRow,
-  Hidden,
   Hyphen,
   Text,
 } from '@island.is/island-ui/core'
@@ -17,7 +16,6 @@ import { webRichText } from '@island.is/web/utils/richText'
 import * as styles from './Footer.css'
 
 const IMAGE_WIDTH = 75
-const IMAGE_MARGIN_RIGHT = 3
 
 interface FooterProps {
   imageUrl?: string
