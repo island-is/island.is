@@ -1,4 +1,4 @@
-name: Monorepo pipeline - NX cloud
+name: Monorepo pipeline - pull request (nx-cloud enabled)
 
 on:
   pull_request:
@@ -11,10 +11,6 @@ on:
 defaults:
   run:
     shell: bash
-
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
 
 permissions:
   contents: read
