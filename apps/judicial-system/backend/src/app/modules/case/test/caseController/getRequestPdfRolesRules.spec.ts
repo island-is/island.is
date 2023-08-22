@@ -14,17 +14,8 @@ describe('CaseController - Get request pdf rules', () => {
 
   it('should give permission to three roles', () => {
     expect(rules).toHaveLength(3)
-  })
-
-  it('should give permission to prosecutors', () => {
     expect(rules).toContain(prosecutorRule)
-  })
-
-  it('should give permission to judges', () => {
     expect(rules).toContain(judgeRule)
-  })
-
-  it('should give permission to registrars', () => {
     expect(rules).toContain(registrarRule)
   })
 })

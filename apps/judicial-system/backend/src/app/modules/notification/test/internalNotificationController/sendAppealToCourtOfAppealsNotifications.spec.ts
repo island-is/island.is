@@ -86,21 +86,21 @@ describe('InternalNotificationController - Send appeal to court of appeals notif
         expect.objectContaining({
           to: [{ name: judgeName, address: judgeEmail }],
           subject: `Kæra í máli ${courtCaseNumber}`,
-          html: `Úrskurður hefur verið kærður í máli ${courtCaseNumber}. Hægt er að nálgast gögn málsins í <a href="http://localhost:4200/krafa/yfirlit/${caseId}">Réttarvörslugátt</a> með rafrænum skilríkjum.`,
+          html: `Úrskurður hefur verið kærður í máli ${courtCaseNumber}. Hægt er að nálgast gögn málsins á <a href="http://localhost:4200/krafa/yfirlit/${caseId}">yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
         }),
       )
       expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
         expect.objectContaining({
           to: [{ name: registrarName, address: registrarEmail }],
           subject: `Kæra í máli ${courtCaseNumber}`,
-          html: `Úrskurður hefur verið kærður í máli ${courtCaseNumber}. Hægt er að nálgast gögn málsins í <a href="http://localhost:4200/krafa/yfirlit/${caseId}">Réttarvörslugátt</a> með rafrænum skilríkjum.`,
+          html: `Úrskurður hefur verið kærður í máli ${courtCaseNumber}. Hægt er að nálgast gögn málsins á <a href="http://localhost:4200/krafa/yfirlit/${caseId}">yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
         }),
       )
       expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
         expect.objectContaining({
           to: [{ name: defenderName, address: defenderEmail }],
           subject: `Kæra í máli ${courtCaseNumber}`,
-          html: `Úrskurður hefur verið kærður í máli ${courtCaseNumber}. Hægt er að nálgast gögn málsins í <a href="http://localhost:4200/verjandi/krafa/${caseId}">Réttarvörslugátt</a> með rafrænum skilríkjum.`,
+          html: `Úrskurður hefur verið kærður í máli ${courtCaseNumber}. Hægt er að nálgast gögn málsins á <a href="http://localhost:4200/verjandi/krafa/${caseId}">yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
         }),
       )
       expect(then.result).toEqual({ delivered: true })
@@ -119,7 +119,7 @@ describe('InternalNotificationController - Send appeal to court of appeals notif
         expect.objectContaining({
           to: [{ name: judgeName, address: judgeEmail }],
           subject: `Kæra í máli ${courtCaseNumber}`,
-          html: `Úrskurður hefur verið kærður í máli ${courtCaseNumber}. Hægt er að nálgast gögn málsins í <a href="http://localhost:4200/krafa/yfirlit/${caseId}">Réttarvörslugátt</a> með rafrænum skilríkjum.`,
+          html: `Úrskurður hefur verið kærður í máli ${courtCaseNumber}. Hægt er að nálgast gögn málsins á <a href="http://localhost:4200/krafa/yfirlit/${caseId}">yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
         }),
       )
       expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
@@ -145,14 +145,14 @@ describe('InternalNotificationController - Send appeal to court of appeals notif
         expect.objectContaining({
           to: [{ name: judgeName, address: judgeEmail }],
           subject: `Kæra í máli ${courtCaseNumber}`,
-          html: `Úrskurður hefur verið kærður í máli ${courtCaseNumber}. Hægt er að nálgast gögn málsins í <a href="http://localhost:4200/krafa/yfirlit/${caseId}">Réttarvörslugátt</a> með rafrænum skilríkjum.`,
+          html: `Úrskurður hefur verið kærður í máli ${courtCaseNumber}. Hægt er að nálgast gögn málsins á <a href="http://localhost:4200/krafa/yfirlit/${caseId}">yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
         }),
       )
       expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
         expect.objectContaining({
           to: [{ name: prosecutorName, address: prosecutorEmail }],
           subject: `Kæra í máli ${courtCaseNumber}`,
-          html: `Úrskurður hefur verið kærður í máli ${courtCaseNumber}. Hægt er að nálgast gögn málsins í <a href="http://localhost:4200/krafa/yfirlit/${caseId}">Réttarvörslugátt</a> með rafrænum skilríkjum.`,
+          html: `Úrskurður hefur verið kærður í máli ${courtCaseNumber}. Hægt er að nálgast gögn málsins á <a href="http://localhost:4200/krafa/yfirlit/${caseId}">yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
         }),
       )
       expect(then.result).toEqual({ delivered: true })

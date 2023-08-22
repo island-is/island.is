@@ -29,7 +29,6 @@ export enum Features {
 
   // Service portal modules
   servicePortalPetitionsModule = 'isServicePortalPetitionsModuleEnabled',
-  sessionHistory = 'sessionHistory',
   servicePortalConsentModule = 'isServicePortalConsentModuleEnabled',
   servicePortalHealthRightsModule = 'isServicePortalHealthRightsModuleEnabled',
   servicePortalSecondaryEducationPages = 'isServicePortalSecondaryEducationPageEnabled',

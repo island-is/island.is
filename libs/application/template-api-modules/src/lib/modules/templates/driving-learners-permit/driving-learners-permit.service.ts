@@ -36,7 +36,7 @@ export class DrivingLearnersPermitService extends BaseTemplateApiService {
       })
       .catch(() => {
         this.logger.warn(
-          '[driving-learners-permit-service]: Submission rejected by driving license api',
+          '[driving-learners-permit-service]: error in response from driving license api',
         )
         throw new TemplateApiError(
           {

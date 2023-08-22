@@ -271,12 +271,11 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<IcelandicGovernmentIns
   useEffect(() => {
     const updatedQuery = { ...query }
 
-    let shouldScroll = false
+    const shouldScroll = updatedQuery.page !== selectedPage.toString()
 
     if (selectedPage === 1) {
       if ('page' in updatedQuery) delete updatedQuery['page']
     } else {
-      shouldScroll = updatedQuery.page !== selectedPage.toString()
       updatedQuery.page = selectedPage.toString()
     }
 
