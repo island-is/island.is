@@ -5,6 +5,7 @@ import {
   GridColumn,
   GridContainer,
   GridRow,
+  Hidden,
   Hyphen,
   Text,
 } from '@island.is/island-ui/core'
@@ -35,67 +36,67 @@ export const Footer = ({ imageUrl, heading, columns }: FooterProps) => {
     <footer className={styles.footer}>
       <Box paddingTop={3} paddingBottom={5}>
         <GridContainer>
-          <GridRow alignItems="center" marginBottom={3}>
-            {imageUrl && (
-              <GridColumn hiddenBelow="sm">
-                <Box marginRight={IMAGE_MARGIN_RIGHT}>
+          <GridColumn offset={isMobileScreenWidth ? '2/12' : undefined}>
+            <Box
+              columnGap={IMAGE_MARGIN_RIGHT}
+              display="flex"
+              alignItems="center"
+              marginBottom={3}
+            >
+              {imageUrl && (
+                <Hidden below="sm">
                   <img width={IMAGE_WIDTH} src={imageUrl} alt="" />
-                </Box>
-              </GridColumn>
-            )}
-            <GridColumn offset={isMobileScreenWidth ? '2/12' : undefined}>
-              <Text variant="h2">{heading}</Text>
-            </GridColumn>
-          </GridRow>
-          <GridRow className={styles.noWrap}>
-            {imageUrl && !isMobileScreenWidth && (
+                </Hidden>
+              )}
               <GridColumn>
-                <Box marginRight={IMAGE_MARGIN_RIGHT}>
-                  <img
-                    style={{
-                      visibility: 'hidden',
-                    }}
-                    src={imageUrl}
-                    width={IMAGE_WIDTH}
-                    alt=""
-                  />
-                </Box>
+                <Text variant="h2">{heading}</Text>
               </GridColumn>
-            )}
-            <GridRow>
-              {columns.map((column, index) => (
-                <GridColumn
-                  key={index}
-                  span={isMobileScreenWidth ? '1/1' : undefined}
-                  paddingBottom={3}
-                  offset={isMobileScreenWidth ? '2/12' : undefined}
-                >
-                  <Box marginRight={3}>
-                    {column.title && (
-                      <Text fontWeight="semiBold" marginBottom={1}>
-                        <Hyphen>{column.title}</Hyphen>
-                      </Text>
-                    )}
-                    {webRichText((column?.content ?? []) as SliceType[], {
-                      renderNode: {
-                        [BLOCKS.PARAGRAPH]: (_node, children) => {
-                          return (
-                            <Text
-                              variant="medium"
-                              marginBottom={1}
-                              lineHeight="lg"
-                            >
-                              {children}
-                            </Text>
-                          )
-                        },
-                      },
-                    })}
+            </Box>
+            <GridRow className={styles.noWrap}>
+              {imageUrl && !isMobileScreenWidth && (
+                <GridColumn>
+                  <Box marginRight={IMAGE_MARGIN_RIGHT}>
+                    <img
+                      style={{
+                        visibility: 'hidden',
+                      }}
+                      src={imageUrl}
+                      width={IMAGE_WIDTH}
+                      alt=""
+                    />
                   </Box>
                 </GridColumn>
-              ))}
+              )}
+              <GridRow>
+                {columns.map((column, index) => (
+                  <GridColumn
+                    key={index}
+                    span={isMobileScreenWidth ? '1/1' : undefined}
+                    paddingBottom={3}
+                  >
+                    <Box marginRight={3}>
+                      {column.title && (
+                        <Text fontWeight="semiBold" marginBottom={1}>
+                          <Hyphen>{column.title}</Hyphen>
+                        </Text>
+                      )}
+                      {webRichText((column?.content ?? []) as SliceType[], {
+                        renderNode: {
+                          [BLOCKS.PARAGRAPH]: (_node, children) => {
+                            return (
+                              <Text variant="medium" marginBottom={1}>
+                                {children}
+                              </Text>
+                            )
+                          },
+                        },
+                      })}
+                    </Box>
+                  </GridColumn>
+                ))}
+              </GridRow>
             </GridRow>
-          </GridRow>
+          </GridColumn>
         </GridContainer>
       </Box>
     </footer>
