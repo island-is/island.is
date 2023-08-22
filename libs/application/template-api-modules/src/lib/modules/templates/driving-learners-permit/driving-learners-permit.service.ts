@@ -1,18 +1,19 @@
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 
-import { SharedTemplateApiService } from '../../shared'
 import { TemplateApiModuleActionProps } from '../../../types'
+import type { Logger } from '@island.is/logging'
 
 import { DrivingLicenseApi } from '@island.is/clients/driving-license'
 import { ApplicationTypes } from '@island.is/application/types'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { getValueViaPath } from '@island.is/application/core'
 import { TemplateApiError } from '@island.is/nest/problem'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 
 @Injectable()
 export class DrivingLearnersPermitService extends BaseTemplateApiService {
   constructor(
-    private readonly sharedTemplateAPIService: SharedTemplateApiService,
+    @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly drivingLicenseService: DrivingLicenseApi,
   ) {
     super(ApplicationTypes.DRIVING_LEARNERS_PERMIT)
@@ -34,6 +35,9 @@ export class DrivingLearnersPermitService extends BaseTemplateApiService {
         studentSSN,
       })
       .catch(() => {
+        this.logger.warn(
+          '[driving-learners-permit-service]: error in response from driving license api',
+        )
         throw new TemplateApiError(
           {
             summary: 'Umsókn hafnað af ökuskírteinaskrá',
@@ -44,6 +48,9 @@ export class DrivingLearnersPermitService extends BaseTemplateApiService {
       })
 
     if (!practicePermitApplication.isOk) {
+      this.logger.warn(
+        '[driving-learners-permit-service]: Submission rejected by driving license api (not isOK)',
+      )
       throw new TemplateApiError(
         {
           summary: 'Umsókn hafnað af ökuskírteinaskrá',
