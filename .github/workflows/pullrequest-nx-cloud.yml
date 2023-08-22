@@ -28,7 +28,6 @@ env:
   MAX_AGENTS: 15
   BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
   NX_BRANCH: ${{ github.head_ref || github.ref_name }}
-  NX_TARGETS: 'lint build'
   NX_VERBOSE_LOGGING: true
   NX_CLOUD_DISTRIBUTED_EXECUTION_STOP_AGENTS_ON_FAILURE: true
 
