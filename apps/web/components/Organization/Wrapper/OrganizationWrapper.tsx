@@ -32,6 +32,7 @@ import {
   SidebarShipSearchInput,
   Webreader,
   SearchBox,
+  Footer as WebFooter,
 } from '@island.is/web/components'
 import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
 import { usePlausiblePageview } from '@island.is/web/hooks'
@@ -178,6 +179,9 @@ export const footerEnabled = [
 
   'samgongustofa',
   'transport-authority',
+
+  'geislavarnir-rikisins',
+  'icelandic-radiation-safety-authority',
 ]
 
 export const getThemeConfig = (
@@ -551,6 +555,16 @@ export const OrganizationFooter: React.FC<
           title={organization.title}
           footerItems={organization.footerItems}
           logo={organization.logo?.url}
+        />
+      )
+      break
+    case 'geislavarnir-rikisins':
+    case 'icelandic-radiation-safety-authority':
+      OrganizationFooterComponent = (
+        <WebFooter
+          imageUrl={organization.logo?.url}
+          heading={organization.title}
+          columns={organization.footerItems}
         />
       )
       break
