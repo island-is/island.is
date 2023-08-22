@@ -7,13 +7,15 @@ import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   CaseCustodyRestrictions,
   CaseFileCategory,
-  Gender,
   IndictmentSubtype,
   Notification,
   NotificationType,
 } from '@island.is/judicial-system/types'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
-import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  CaseType,
+  Gender,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 
 export const getShortGender = (gender?: Gender): string => {
   switch (gender) {
