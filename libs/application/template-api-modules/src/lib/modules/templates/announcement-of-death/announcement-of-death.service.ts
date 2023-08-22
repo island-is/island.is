@@ -248,6 +248,10 @@ export class AnnouncementOfDeathService extends BaseTemplateApiService {
         })
 
       if (!result.success) {
+        this.logger.warn(
+          '[announcement-of-death]: Failed to upload data - ',
+          result.message,
+        )
         throw new Error(
           'Application submission failed on syslumadur upload data',
         )

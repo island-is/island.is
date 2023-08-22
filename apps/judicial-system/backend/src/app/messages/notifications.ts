@@ -66,6 +66,12 @@ export const notifications = {
       description:
         'Notaður sem texti í sms-i til dómstóla þegar krafa er afturkölluð',
     },
+    investigationCaseRevoked: {
+      id: 'judicial.system.backend:notifications.court_revoked.case_revoked',
+      defaultMessage: 'Rannsóknarheimild afturkölluð.',
+      description:
+        'Notaður sem texti í sms-i til dómstóla þegar rannsóknarheimild er afturkölluð',
+    },
     courtDate: {
       id: 'judicial.system.backend:notifications.court_revoked.court_date',
       defaultMessage: 'Fyrirtökutími: {date}, kl. {time}.',
