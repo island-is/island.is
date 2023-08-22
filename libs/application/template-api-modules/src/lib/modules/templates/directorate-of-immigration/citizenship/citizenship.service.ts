@@ -346,6 +346,7 @@ export class CitizenshipService extends BaseTemplateApiService {
       fullName: individual?.fullName,
       address: individual?.address?.streetAddress,
       postalCode: individual?.address?.postalCode,
+      city: individual?.address?.city,
       email: answers.userInformation?.email,
       phone: answers.userInformation?.phone,
       citizenshipCode: individual?.citizenship?.code,

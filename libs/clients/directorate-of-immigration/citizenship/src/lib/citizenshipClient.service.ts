@@ -246,6 +246,7 @@ export class CitizenshipClient {
         telephone: application.phone,
         // address: application.address,
         // postalCode: application.postalCode,
+        addressCity: application.city,
         // citizenshipCode: application.citizenshipCode,
         // residenceInIcelandLastChangeDate: application.residenceInIcelandLastChangeDate,
         // birthCountry: application.birthCountry,

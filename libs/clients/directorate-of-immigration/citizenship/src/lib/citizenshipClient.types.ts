@@ -52,6 +52,7 @@ export interface CitizenshipApplication {
   fullName?: string
   address?: string | null
   postalCode?: string | null
+  city?: string | null
   email: string
   phone: string
   citizenshipCode?: string | null
