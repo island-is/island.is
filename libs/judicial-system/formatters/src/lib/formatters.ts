@@ -336,3 +336,7 @@ export const readableIndictmentSubtypes = (
 
   return _uniq(returnValue)
 }
+
+export const sanitize = (str: string) => {
+  return str.replace('"', '')
+}
