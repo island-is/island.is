@@ -43,16 +43,23 @@ import {
 } from '../../components'
 
 export const Defendant: React.FC<React.PropsWithChildren<unknown>> = () => {
-  const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
-    useContext(FormContext)
-  const [leadInvestigatorErrorMessage, setLeadInvestigatorErrorMessage] =
-    useState<string>('')
+  const {
+    workingCase,
+    setWorkingCase,
+    isLoadingWorkingCase,
+    caseNotFound,
+  } = useContext(FormContext)
+  const [
+    leadInvestigatorErrorMessage,
+    setLeadInvestigatorErrorMessage,
+  ] = useState<string>('')
   const { createCase, isCreatingCase, updateCase } = useCase()
   const { updateDefendant } = useDefendants()
   const { loading: institutionLoading } = useInstitution()
   const { formatMessage } = useIntl()
-  const { clientPoliceNumbers, setClientPoliceNumbers } =
-    usePoliceCaseNumbers(workingCase)
+  const { clientPoliceNumbers, setClientPoliceNumbers } = usePoliceCaseNumbers(
+    workingCase,
+  )
   const router = useRouter()
 
   const updateDefendantState = useCallback(
