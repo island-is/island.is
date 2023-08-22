@@ -35,19 +35,7 @@ export const LifeEventsSection = ({
           .filter((x: { slug: string; title: string }) => x.slug && x.title)
           .map(
             (
-              {
-                __typename: typename,
-                title,
-                shortTitle,
-                slug,
-                tinyThumbnail,
-              }: {
-                __typename: string
-                title: string
-                shortTitle?: string
-                slug: string
-                tinyThumbnail: { url: string; title: string }
-              },
+              { __typename: typename, title, shortTitle, slug, tinyThumbnail },
               index: number,
             ) => {
               return (

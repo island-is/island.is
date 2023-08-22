@@ -374,7 +374,7 @@ export const TimelineSlice: React.FC<React.PropsWithChildren<SliceProps>> = ({
                     event={event}
                     offset={0}
                     index={0}
-                    detailed={event.body ? 'true' : 'false'}
+                    detailed={event.body ? true : false}
                     mobile={true}
                     seeMoreText={n('timelineSeeMoreText', 'Lesa meira')}
                   />
@@ -440,8 +440,8 @@ const TimelineItem = ({
   event: TimelineEvent
   offset: number
   index: number
-  detailed: string
-  mobile: boolean
+  detailed: boolean
+  mobile?: boolean
   seeMoreText: string
 }) => {
   const positionStyles = [
@@ -556,7 +556,7 @@ const MonthItem = ({
   year = '',
 }: {
   month: string
-  offset: string
+  offset: number
   year: string
 }) => {
   return (

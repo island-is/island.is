@@ -4,11 +4,7 @@ import cn from 'classnames'
 import { useRouter } from 'next/router'
 import NextLink from 'next/link'
 import { Screen } from '../types'
-import {
-  Image,
-  ImageProps,
-  Slice as SliceType,
-} from '@island.is/island-ui/contentful'
+import { Image, Slice as SliceType } from '@island.is/island-ui/contentful'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import {
   Box,
@@ -59,7 +55,6 @@ import useContentfulId from '../hooks/useContentfulId'
 import { webRichText } from '../utils/richText'
 
 import * as styles from './News.css'
-import { JSX, ReactNode } from 'react'
 
 const PERPAGE = 10
 
@@ -252,10 +247,7 @@ const NewsListNew: Screen<NewsListProps> = ({
         {webRichText(newsItem.content as SliceType[], {
           renderComponent: {
             // Make sure that images in the content are full width
-            Image: (
-              slice: JSX.IntrinsicAttributes &
-                ImageProps & { children?: ReactNode },
-            ) => (
+            Image: (slice) => (
               <Box className={styles.clearBoth}>
                 <Image {...slice} thumbnail={slice.url + '?w=50'} />
               </Box>
@@ -498,11 +490,10 @@ NewsListNew.getProps = async ({ apolloClient, locale, query }) => {
         },
       })
       // map data here to reduce data processing in component
-      .then((variables) =>
-        variables.data.getNamespace?.fields
-          ? JSON.parse(variables.data.getNamespace.fields)
-          : {},
-      ),
+      .then((variables) => {
+        // map data here to reduce data processing in component
+        return JSON.parse(variables.data.getNamespace.fields)
+      }),
   ])
 
   const newsItem = getSingleNewsResult?.data?.getSingleNews ?? null
@@ -524,7 +515,7 @@ NewsListNew.getProps = async ({ apolloClient, locale, query }) => {
     tag?.slug !== FRONTPAGE_NEWS_TAG_ID
 
   return {
-    newsList: newsList.map((item: { genericTags: any[] }) => ({
+    newsList: newsList.map((item) => ({
       ...item,
       genericTags: item?.genericTags?.filter(filterOutFrontpageTag) ?? [],
     })),

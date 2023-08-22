@@ -5,10 +5,10 @@ import { LegendProps, TooltipProps } from 'recharts'
 import { Box, Text } from '@island.is/island-ui/core'
 
 interface AxisTickProps {
-  x: number
-  y: number
-  className: string
-  payload: { value: string }
+  x?: number
+  y?: number
+  className?: string
+  payload?: { value: string }
 }
 
 export const CustomTooltip = ({

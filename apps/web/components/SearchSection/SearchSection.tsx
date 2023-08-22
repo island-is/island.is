@@ -158,7 +158,7 @@ export const SearchSection = ({
                   <Video
                     name="desktop"
                     title={imageAlternativeText}
-                    sources={videos.map((url: string, contentType: string) => {
+                    sources={videos.map(({ url, contentType }) => {
                       return {
                         src: url,
                         type: contentType,
@@ -197,7 +197,7 @@ export const SearchSection = ({
               name="mobile"
               title={imageAlternativeText}
               dataTestId="home-banner"
-              sources={videosMobile.map((url: string, contentType: string) => {
+              sources={videosMobile.map(({ url, contentType }) => {
                 return {
                   src: url,
                   type: contentType,
