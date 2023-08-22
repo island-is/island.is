@@ -1,5 +1,3 @@
-<!-- gitbook-navigation: "University of Iceland" -->
-
 # Clients University of Iceland
 
 This library was generated with [Nx](https://nx.dev).
