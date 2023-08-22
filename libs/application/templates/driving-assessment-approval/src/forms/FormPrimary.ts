@@ -1,7 +1,5 @@
-import get from 'lodash/get'
 import {
   buildForm,
-  buildDescriptionField,
   buildMultiField,
   buildSection,
   buildSubmitField,
@@ -11,7 +9,8 @@ import {
   buildTextField,
   buildDataProviderItem,
   buildCustomField,
-  buildDividerField,
+  getValueViaPath,
+  buildDescriptionField,
 } from '@island.is/application/core'
 import {
   Form,
@@ -25,6 +24,8 @@ export const FormPrimary: Form = buildForm({
   id: 'PrerequisitesDraft',
   title: m.prereqTitle,
   mode: FormModes.DRAFT,
+  renderLastScreenButton: true,
+  renderLastScreenBackButton: true,
   children: [
     buildSection({
       id: 'conditions',
@@ -54,11 +55,10 @@ export const FormPrimary: Form = buildForm({
           title: m.infoTitle,
           description: m.infoDescription,
           children: [
-            buildTextField({
-              id: 'student.nationalId',
-              title: m.studentNationalId,
-              width: 'half',
-              backgroundColor: 'blue',
+            buildCustomField({
+              id: 'student',
+              title: m.studentLookup,
+              component: 'StudentLookupField',
             }),
             buildTextField({
               id: 'student.email',
@@ -66,15 +66,6 @@ export const FormPrimary: Form = buildForm({
               width: 'half',
               backgroundColor: 'blue',
               variant: 'email',
-            }),
-            buildDividerField({
-              title: 'nemandi',
-              color: 'transparent',
-            }),
-            buildCustomField({
-              id: 'studentLookup',
-              title: m.studentLookup,
-              component: 'StudentLookupField',
             }),
           ],
         }),
@@ -88,39 +79,24 @@ export const FormPrimary: Form = buildForm({
           id: 'drivingAssessmentConfirmation',
           title: m.drivingAssessmentConfirmation,
           children: [
-            buildSubmitField({
-              id: 'submit',
-              placement: 'footer',
-              title: m.submitConfirmation,
-              refetchApplicationAfterSubmit: true,
-              actions: [
-                { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
-              ],
-            }),
-            buildCustomField({
-              id: 'studentLookupToShow',
-              title: m.studentLookupToShow,
-              component: 'StudentLookupField',
-              width: 'half',
-            }),
             buildKeyValueField({
               label: m.studentNationalId,
               width: 'half',
               value: ({ answers }) =>
                 formatKennitala(
-                  get(answers, 'student.nationalId', '') as string,
+                  getValueViaPath(answers, 'student.nationalId') as string,
                 ),
             }),
             buildKeyValueField({
               label: m.studentEmail,
               width: 'half',
               value: ({ answers }) =>
-                get(answers, 'student.email', '') as string,
+                getValueViaPath(answers, 'student.email') as string,
             }),
-            buildDividerField({
-              // if you don't include a title, there's a line that shows up
-              title: '-',
-              color: 'transparent',
+            buildDescriptionField({
+              id: 'space',
+              space: 'containerGutter',
+              title: '',
             }),
             buildCheckboxField({
               title: '',
@@ -134,12 +110,20 @@ export const FormPrimary: Form = buildForm({
                 },
               ],
             }),
+            buildSubmitField({
+              id: 'submit',
+              placement: 'footer',
+              title: m.submitConfirmation,
+              refetchApplicationAfterSubmit: true,
+              actions: [
+                {
+                  event: 'SUBMIT',
+                  name: m.submit.defaultMessage,
+                  type: 'primary',
+                },
+              ],
+            }),
           ],
-        }),
-        buildDescriptionField({
-          id: 'final',
-          title: '',
-          description: '',
         }),
       ],
     }),

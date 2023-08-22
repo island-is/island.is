@@ -7,7 +7,7 @@ import { User } from '../user.model'
 import { UserService } from '../user.service'
 
 export const createTestingUserModule = async () => {
-  const defendantModule = await Test.createTestingModule({
+  const userModule = await Test.createTestingModule({
     providers: [
       {
         provide: LOGGER_PROVIDER,
@@ -32,11 +32,11 @@ export const createTestingUserModule = async () => {
     ],
   }).compile()
 
-  const userModel = await defendantModule.resolve<typeof User>(
-    getModelToken(User),
-  )
+  const userModel = await userModule.resolve<typeof User>(getModelToken(User))
 
-  const userService = defendantModule.get<UserService>(UserService)
+  const userService = userModule.get<UserService>(UserService)
+
+  userModule.close()
 
   return {
     userModel,
