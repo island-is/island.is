@@ -3,11 +3,11 @@ import InputMask from 'react-input-mask'
 import { useIntl } from 'react-intl'
 import { ValueType } from 'react-select'
 
+import { isIndictmentCase } from '@island.is/judicial-system/types'
 import {
-  isIndictmentCase,
-  UpdateDefendant,
-} from '@island.is/judicial-system/types'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
+  TempCase as Case,
+  TempUpdateDefendant as UpdateDefendant,
+} from '@island.is/judicial-system-web/src/types'
 import { BlueBox } from '@island.is/judicial-system-web/src/components'
 import {
   Box,
