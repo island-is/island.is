@@ -3,7 +3,7 @@ set -euxo pipefail
 
 : "${DD_CIVISIBILITY_AGENTLESS_ENABLED:=true}"
 : "${DD_SITE:=datadoghq.eu}"
-: "${DD_ENV:=dev}"
+: "${DD_ENV:=ci}"
 # DD_SERVICE is never used as-is, but initializes the variable, and makes easy
 # debugging for when the environment variable isn't successfully set in earlier CI steps
 : "${DD_SERVICE:=unit-test-action}"
