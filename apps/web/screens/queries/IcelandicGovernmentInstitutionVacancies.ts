@@ -13,7 +13,6 @@ export const GET_ICELANDIC_GOVERNMENT_INSTITUTION_VACANCIES = gql`
         applicationDeadlineFrom
         applicationDeadlineTo
         institutionName
-        institutionReferenceIdentifier
         logoUrl
         locations {
           title
