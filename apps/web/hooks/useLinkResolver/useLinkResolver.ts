@@ -210,6 +210,18 @@ export const routesTemplate = {
     is: '/starfatorg/[id]',
     en: '',
   },
+  universitySearch: {
+    is: '/haskolanam',
+    en: '',
+  },
+  universitySearchDetails: {
+    is: '/haskolanam/[id]',
+    en: '',
+  },
+  universitySearchComparison: {
+    is: '/haskolanam/samanburdur',
+    en: '',
+  },
 }
 
 // This considers one block ("[someVar]") to be one variable and ignores the path variables name

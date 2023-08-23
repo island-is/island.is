@@ -27,3 +27,14 @@ export const tagNotActive = style({
     color: `${theme.color.white} !important`,
   },
 })
+
+export const icon = style({
+  minWidth: 30,
+  width: 40,
+  height: 40,
+  ...themeUtils.responsiveStyle({
+    md: {
+      minWidth: 40,
+    },
+  }),
+})

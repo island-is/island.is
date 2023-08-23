@@ -46,6 +46,8 @@ type SidePanelItems = {
 
 type SidePanelConfigProps = {
   onCheck?: (e: any) => void
+  isChecked?: boolean
+  checkboxId?: string
   buttonLabel?: string
   checkboxLabel?: string
   items?: Array<SidePanelItems>
@@ -320,6 +322,8 @@ const Component = forwardRef<
                   label="Setja í samanburð"
                   labelVariant="small"
                   onChange={sidePanelConfig.onCheck}
+                  checked={sidePanelConfig.isChecked}
+                  id={sidePanelConfig.checkboxId}
                 />
               </Box>
               <Box>
