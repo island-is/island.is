@@ -120,24 +120,25 @@ export class CitizenshipClient {
   }
 
   async getResidenceConditions(auth: Auth): Promise<ResidenceCondition[]> {
-    // try {
-    //   const res = await this.applicantResidenceConditionApiWithAuth(
-    //     auth,
-    //   ).apiApplicantResidenceConditionGetAllGet()
+    try {
+      const res = await this.applicantResidenceConditionApiWithAuth(
+        auth,
+      ).apiApplicantResidenceConditionGetAllGet()
 
-    //   return res.map((item) => ({
-    //     conditionId: item.residenceConditionId!,
-    //     conditionName: item.residenceConditionName!,
-    //     isTypeMaritalStatus: item.isTypeMarried || false,
-    //   }))
-    // } catch (error) {
-    //   this.logger.error(
-    //     'Error when trying to get citizenship residence conditions',
-    //     error,
-    //   )
-    //   throw new Error('Error when trying to get citizenship residence conditions')
-    // }
-    return []
+      return res.map((item) => ({
+        conditionId: item.residenceConditionId!,
+        conditionName: item.residenceConditionName!,
+        isTypeMaritalStatus: item.isTypeMarried || false,
+      }))
+    } catch (error) {
+      this.logger.error(
+        'Error when trying to get citizenship residence conditions',
+        error,
+      )
+      throw new Error(
+        'Error when trying to get citizenship residence conditions',
+      )
+    }
   }
 
   async getOldCountryOfResidenceList(
