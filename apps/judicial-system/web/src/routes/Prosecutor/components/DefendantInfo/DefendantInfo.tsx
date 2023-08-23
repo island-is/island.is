@@ -57,8 +57,12 @@ const DefendantInfo: React.FC<React.PropsWithChildren<Props>> = (props) => {
     nationalIdImmutable = false,
   } = props
   const { formatMessage } = useIntl()
-  const { personData, businessData, personError, businessError } =
-    useNationalRegistry(defendant.nationalId)
+  const {
+    personData,
+    businessData,
+    personError,
+    businessError,
+  } = useNationalRegistry(defendant.nationalId)
 
   const genderOptions: ReactSelectOption[] = [
     { label: formatMessage(core.male), value: Gender.MALE },
@@ -66,20 +70,27 @@ const DefendantInfo: React.FC<React.PropsWithChildren<Props>> = (props) => {
     { label: formatMessage(core.otherGender), value: Gender.OTHER },
   ]
 
-  const [nationalIdErrorMessage, setNationalIdErrorMessage] =
-    useState<string>('')
+  const [nationalIdErrorMessage, setNationalIdErrorMessage] = useState<string>(
+    '',
+  )
   const [nationalIdNotFound, setNationalIdNotFound] = useState<boolean>(false)
 
-  const [accusedNameErrorMessage, setAccusedNameErrorMessage] =
-    useState<string>('')
+  const [
+    accusedNameErrorMessage,
+    setAccusedNameErrorMessage,
+  ] = useState<string>('')
 
-  const [accusedAddressErrorMessage, setAccusedAddressErrorMessage] =
-    useState<string>('')
+  const [
+    accusedAddressErrorMessage,
+    setAccusedAddressErrorMessage,
+  ] = useState<string>('')
 
-  const [isGenderAndCitizenshipDisabled, setIsGenderAndCitizenshipDisabled] =
-    useState<boolean>(
-      !!defendant.nationalId && isBusiness(defendant.nationalId),
-    )
+  const [
+    isGenderAndCitizenshipDisabled,
+    setIsGenderAndCitizenshipDisabled,
+  ] = useState<boolean>(
+    !!defendant.nationalId && isBusiness(defendant.nationalId),
+  )
 
   const mapNationalRegistryGenderToGender = (gender: string) => {
     return gender === 'male'
