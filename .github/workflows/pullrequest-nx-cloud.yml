@@ -22,9 +22,9 @@ env:
   COMPOSE_HTTP_TIMEOUT: 180
   GITHUB_ACTIONS_CACHE_URL: https://cache.dev01.devland.is/
   NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
-  MAX_JOBS: 3
-  MAX_TASKS_PER_AGENT: 3
-  PARALLEL_TASKS: 3
+  MAX_JOBS: 8
+  MAX_TASKS_PER_AGENT: 8
+  PARALLEL_TASKS: 8
   MAX_AGENTS: 15
   BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
   NX_BRANCH: ${{ github.head_ref || github.ref_name }}
@@ -43,6 +43,9 @@ jobs:
       - name: check if nx-cloud label is set
         id: check
         run: |
+          echo github.head_ref: ${{ github.head_ref }}
+          echo github.ref_name: ${{ github.ref_name }}
+          echo NX_BRANCH: ${NX_BRANCH}
           USE_NX_CLOUD=$(echo '${{ toJson(github.event.pull_request.labels) }}' | jq '.[] | select(.name == "nx-cloud")? | any' | grep -q true && echo "true" || echo "false")
           echo "should-run=$USE_NX_CLOUD" >> $GITHUB_OUTPUT
 
