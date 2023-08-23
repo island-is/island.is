@@ -40,4 +40,3 @@ const SvgLockOpenedOutline = ({
 }
 
 export default SvgLockOpenedOutline
-
