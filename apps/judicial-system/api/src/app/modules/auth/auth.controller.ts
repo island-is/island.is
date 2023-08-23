@@ -16,6 +16,7 @@ import {
   CASES_ROUTE,
   USERS_ROUTE,
   COURT_OF_APPEAL_CASES_ROUTE,
+  IDS_ID_TOKEN,
 } from '@island.is/judicial-system/consts'
 import { InstitutionType, UserRole } from '@island.is/judicial-system/types'
 import { SharedAuthService } from '@island.is/judicial-system/auth'
@@ -52,9 +53,7 @@ const ACCESS_TOKEN_COOKIE: Cookie = {
 
 const CODE_VERIFIER_COOKIE: Cookie = {
   name: CODE_VERIFIER_COOKIE_NAME,
-  options: {
-    ...defaultCookieOptions,
-  },
+  options: defaultCookieOptions,
 }
 const CSRF_COOKIE: Cookie = {
   name: CSRF_COOKIE_NAME,
@@ -62,6 +61,11 @@ const CSRF_COOKIE: Cookie = {
     ...defaultCookieOptions,
     httpOnly: false,
   },
+}
+
+const ID_TOKEN: Cookie = {
+  name: IDS_ID_TOKEN,
+  options: defaultCookieOptions,
 }
 
 @Controller('api/auth')
@@ -88,7 +92,6 @@ export class AuthController {
     const { name, options } = REDIRECT_COOKIE
 
     res.clearCookie(name, options)
-    res.clearCookie(CODE_VERIFIER_COOKIE.name, CODE_VERIFIER_COOKIE.options)
 
     // Local development
     if (this.config.allowAuthBypass && nationalId) {
@@ -175,6 +178,7 @@ export class AuthController {
             },
             res,
             redirectRoute,
+            accessToken.id_token,
             new Entropy({ bits: 128 }).string(),
           )
         }
@@ -189,14 +193,24 @@ export class AuthController {
   }
 
   @Get('logout')
-  logout(@Res() res: Response) {
+  logout(@Res() res: Response, @Req() req: Request) {
     this.logger.debug('Received logout request')
+
+    const idToken = req.cookies[ID_TOKEN.name]
 
     res.clearCookie(ACCESS_TOKEN_COOKIE.name, ACCESS_TOKEN_COOKIE.options)
     res.clearCookie(CSRF_COOKIE.name, CSRF_COOKIE.options)
     res.clearCookie(CODE_VERIFIER_COOKIE.name, CODE_VERIFIER_COOKIE.options)
+    res.clearCookie(ID_TOKEN.name, ID_TOKEN.options)
 
-    return res.json({ logout: true })
+    this.logger.debug('!!Redirecting to identity server logout')
+    if (idToken) {
+      return res.redirect(
+        `${this.config.issuer}/connect/endsession?id_token_hint=${idToken}&post_logout_redirect_uri=${this.config.logoutRedirectUri}`,
+      )
+    }
+
+    return res.redirect(this.config.logoutRedirectUri)
   }
 
   private async authorizeUser(
@@ -237,6 +251,7 @@ export class AuthController {
     authUser: AuthUser,
     res: Response,
     requestedRedirectRoute: string,
+    idToken?: string,
     csrfToken?: string,
   ) {
     const authorization = await this.authorizeUser(
@@ -267,6 +282,10 @@ export class AuthController {
         )
         .cookie(ACCESS_TOKEN_COOKIE.name, jwtToken, {
           ...ACCESS_TOKEN_COOKIE.options,
+          maxAge: EXPIRES_IN_MILLISECONDS,
+        })
+        .cookie(ID_TOKEN.name, idToken, {
+          ...ID_TOKEN.options,
           maxAge: EXPIRES_IN_MILLISECONDS,
         })
         .redirect(redirectRoute),
