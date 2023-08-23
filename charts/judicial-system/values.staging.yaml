@@ -24,6 +24,7 @@ judicial-system-api:
     AUDIT_TRAIL_REGION: 'eu-west-1'
     AUDIT_TRAIL_USE_GENERIC_LOGGER: 'false'
     AUTH_IDS_CLIENT_ID: '@rettarvorslugatt.island.is/web'
+    AUTH_IDS_LOGOUT_REDIRECT_URI: 'https://judicial-system.staging01.devland.is'
     AUTH_IDS_REDIRECT_URI: 'https://judicial-system.staging01.devland.is/api/auth/callback/identity-server'
     AUTH_IDS_SCOPE: 'openid profile'
     BACKEND_URL: 'http://web-judicial-system-backend'
