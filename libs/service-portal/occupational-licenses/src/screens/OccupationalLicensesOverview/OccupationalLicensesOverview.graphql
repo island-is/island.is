@@ -1,4 +1,4 @@
-query getOccupationaLicenses {
+query getOccupationalLicenses {
   getOrganizations {
     items {
       id
@@ -11,20 +11,25 @@ query getOccupationaLicenses {
       }
     }
   }
-  educationLicense {
-    id
-    school
-    programme
-    date
-  }
   occupationalLicenses {
-    legalEntityId
-    nationalId
-    name
-    profession
-    license
-    licenseNumber
-    validFrom
-    validTo
+    count
+    items {
+      ... on OccupationalLicenseEducationalLicense {
+        id
+        school
+        programme
+        date
+      }
+      ... on OccupationalLicenseHealthDirectorateLicense {
+        legalEntityId
+        nationalId
+        name
+        profession
+        license
+        licenseNumber
+        validFrom
+        validTo
+      }
+    }
   }
 }

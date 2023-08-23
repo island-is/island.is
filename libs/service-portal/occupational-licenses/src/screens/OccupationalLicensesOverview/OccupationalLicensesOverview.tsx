@@ -1,12 +1,10 @@
-import { useGetHealthDirectorateOccupationaLicensesQuery } from './OccupationalLicensesOverview.generated'
+import { useGetOccupationalLicensesQuery } from './OccupationalLicensesOverview.generated'
 import { Box, Stack } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
   ActionCard,
   EmptyState,
   CardLoader,
-  ServicePortalPath,
-  formatDate,
   IntroHeader,
   m,
 } from '@island.is/service-portal/core'
@@ -14,38 +12,85 @@ import { Organization } from '@island.is/shared/types'
 import { getOrganizationLogoUrl } from '@island.is/shared/utils'
 import { defineMessage } from 'react-intl'
 import { OccupationalLicensesPaths } from '../../lib/paths'
+import {
+  OccupationalLicenseEducationalLicense,
+  OccupationalLicenseHealthDirectorateLicense,
+} from '@island.is/api/schema'
 
+const EducationActionCard: React.FC<
+  OccupationalLicenseEducationalLicense & { orgImage: string }
+> = (props) => {
+  const isValid = new Date(props.date) < new Date()
+  const { formatDateFns } = useLocale()
+
+  return (
+    <ActionCard
+      heading={props.school}
+      text={`Útgáfudagur: ${formatDateFns(props.date, 'dd. MMMM yyyy')}`}
+      tag={{
+        label: isValid ? 'Í gildi' : 'Útrunnið',
+        variant: isValid ? 'blue' : 'red',
+        outlined: false,
+      }}
+      cta={{
+        label: defineMessage({
+          id: 'sp.education-graduation:details',
+          defaultMessage: 'Skoða nánar',
+        }).defaultMessage,
+        variant: 'text',
+        url: OccupationalLicensesPaths.OccupationalLicensesEducationDetail.replace(
+          ':id',
+          props.id,
+        ),
+      }}
+      image={{
+        type: 'image',
+        url: props.orgImage,
+      }}
+    />
+  )
+}
+
+const HealthDirectorateActionCard: React.FC<
+  OccupationalLicenseHealthDirectorateLicense & { orgImage: string }
+> = (props) => {
+  const today = new Date()
+  const { formatDateFns } = useLocale()
+  const validLicense =
+    props.validTo === null
+      ? new Date(props.validFrom) < today
+      : new Date(props.validFrom) < today && new Date(props.validTo) > today
+  if (!props.licenseNumber) return null
+  return (
+    <ActionCard
+      heading={props.name ?? ''}
+      text={`Útgáfudagur: ${formatDateFns(props.validFrom, 'dd. MMMM yyyy')}`}
+      tag={{
+        label: validLicense ? 'Í gildi' : 'Útrunnið',
+        variant: validLicense ? 'blue' : 'red',
+        outlined: false,
+      }}
+      cta={{
+        label: defineMessage({
+          id: 'sp.education-graduation:details',
+          defaultMessage: 'Skoða nánar',
+        }).defaultMessage,
+        variant: 'text',
+        url: OccupationalLicensesPaths.OccupationalLicensesHealthDirectorateDetail.replace(
+          ':id',
+          props.licenseNumber,
+        ),
+      }}
+      image={{
+        type: 'image',
+        url: props.orgImage,
+      }}
+    />
+  )
+}
 const OccupationalLicensesOverview = () => {
-  const {
-    data,
-    loading,
-    error,
-  } = useGetHealthDirectorateOccupationaLicensesQuery({})
-
-  const { formatDateFns, formatMessage } = useLocale()
-
-  const otherLicenses = [
-    {
-      legalEntityId: '1111111111',
-      nationalId: '1111111111',
-      name: 'Starfsleyfi prófara',
-      profession: 'Prófari',
-      license: 'Prófaraskírteini',
-      licenseNumber: '0110',
-      validFrom: new Date(1, 11, 11),
-      validTo: new Date(2999, 12, 12),
-    },
-    {
-      legalEntityId: '23456789',
-      nationalId: '0123456789',
-      name: 'Prófarapróf',
-      profession: 'Prófarapróf',
-      license: 'Prófaraskírteini',
-      licenseNumber: '45678',
-      validFrom: new Date(2000, 1, 1),
-      validTo: new Date(2000, 2, 2),
-    },
-  ]
+  const { data, loading, error } = useGetOccupationalLicensesQuery({})
+  const { formatMessage } = useLocale()
 
   const organizations =
     (data?.getOrganizations?.items as Array<Organization>) ?? []
@@ -56,95 +101,47 @@ const OccupationalLicensesOverview = () => {
         title={m.occupationaLicenses}
         intro={formatMessage(m.occupationalLicensesDescription)}
       />
-      {loading && !error && <CardLoader />}
-      {!loading && !error && otherLicenses?.length === 0 && (
-        <Box marginTop={8}>
-          <EmptyState
-            title={defineMessage({
-              id: 'sp.education-graduation:education-no-data',
-              defaultMessage: 'Engin gögn fundust',
-            })}
-          />
-        </Box>
-      )}
-      <Stack space={2}>
+      <Box marginTop={6}>
+        {loading && !error && <CardLoader />}
         {!loading &&
-          (otherLicenses?.length ?? 0) > 0 &&
-          otherLicenses?.map((item, index) => {
-            const today = new Date()
-            const validLicense =
-              item?.validFrom &&
-              item?.validTo &&
-              item?.validFrom < today &&
-              item.validTo > today
-            return (
-              <ActionCard
-                key={`occupational-license-${index}`}
-                heading={item.name ?? ''}
-                text={`Útgáfudagur: ${
-                  item.validFrom
-                    ? formatDateFns(item.validFrom, 'dd. MMMM yyyy')
-                    : ''
-                }`}
-                tag={{
-                  label: validLicense ? 'Í gildi' : 'Útrunnið',
-                  variant: validLicense ? 'blue' : 'red',
-                  outlined: false,
-                }}
-                cta={{
-                  label: defineMessage({
-                    id: 'sp.education-graduation:details',
-                    defaultMessage: 'Skoða nánar',
-                  }).defaultMessage,
-                  variant: 'text',
-                  url: OccupationalLicensesPaths.OccupationalLicensesDetail.replace(
-                    ':id',
-                    item.licenseNumber,
-                  ),
-                }}
-                image={{
-                  type: 'image',
-                  url: getOrganizationLogoUrl(
-                    'just some default',
-                    organizations,
-                    120,
-                  ),
-                }}
-              />
-            )
-          })}
-        {data?.educationLicense?.map((item, index) => {
-          const today = new Date()
-          const isValid = item.date && new Date(item.date) < today
-          return (
-            <ActionCard
-              key={`educational-licence-${index}`}
-              heading={item.school}
-              text={`Útgáfudagur: ${formatDateFns(item.date, 'dd. MMMM yyyy')}`}
-              tag={{
-                label: isValid ? 'Í gildi' : 'Útrunnið',
-                variant: isValid ? 'blue' : 'red',
-                outlined: false,
-              }}
-              cta={{
-                label: defineMessage({
-                  id: 'sp.education-graduation:details',
-                  defaultMessage: 'Skoða nánar',
-                }).defaultMessage,
-                variant: 'text',
-                url: OccupationalLicensesPaths.OccupationalLicensesDetail.replace(
-                  ':id',
-                  item.id,
-                ),
-              }}
-              image={{
-                type: 'image',
-                url: getOrganizationLogoUrl(item.school, organizations, 120),
-              }}
+          !error &&
+          data &&
+          data?.occupationalLicenses &&
+          data.occupationalLicenses.count === 0 && (
+            <EmptyState
+              title={defineMessage({
+                id: 'sp.education-graduation:education-no-data',
+                defaultMessage: 'Engin gögn fundust',
+              })}
             />
-          )
-        })}
-      </Stack>
+          )}
+        <Stack space={2}>
+          {data?.occupationalLicenses?.items.map((license, index) =>
+            license.__typename === 'OccupationalLicenseEducationalLicense' ? (
+              <EducationActionCard
+                {...license}
+                key={index}
+                orgImage={getOrganizationLogoUrl(
+                  license.school,
+                  organizations,
+                  120,
+                )}
+              />
+            ) : license.__typename ===
+              'OccupationalLicenseHealthDirectorateLicense' ? (
+              <HealthDirectorateActionCard
+                key={index}
+                {...license}
+                orgImage={getOrganizationLogoUrl(
+                  license.name ?? '',
+                  organizations,
+                  120,
+                )}
+              />
+            ) : null,
+          )}
+        </Stack>
+      </Box>
     </Box>
   )
 }

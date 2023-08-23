@@ -1,7 +1,7 @@
 schema:
   - apps/api/src/api.graphql
 documents:
-  - libs/service-portal/occupational-licenses/src/**/*.graphql
+  - libs/service-portal/occupational-licenses/src/screens/**/*.graphql
 generates:
   libs/service-portal/occupational-licenses/src/:
     preset: 'near-operation-file'

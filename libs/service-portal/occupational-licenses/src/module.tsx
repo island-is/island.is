@@ -6,8 +6,12 @@ const OccupationalLicensesOverviewScreen = lazy(() =>
   import('./screens/OccupationalLicensesOverview/OccupationalLicensesOverview'),
 )
 
-const OccupationalLicensesDetailScreen = lazy(() =>
-  import('./screens/OccupationalLicenceDetail/OccupationalLicenceDetail'),
+const EducationalDetailScreen = lazy(() =>
+  import('./screens/EducationalDetail/EducationalDetail'),
+)
+
+const HealthDirectorateDetailScreen = lazy(() =>
+  import('./screens/HealthDirectorateDetail/HealthDirectorateDetail'),
 )
 
 export const occupationalLicensesModule: PortalModule = {
@@ -21,10 +25,17 @@ export const occupationalLicensesModule: PortalModule = {
       element: <OccupationalLicensesOverviewScreen />,
     },
     {
-      name: 'Stakt starfsleyfi',
-      path: OccupationalLicensesPaths.OccupationalLicensesDetail,
+      name: 'Stakt heilbrigðis starfsleyfi',
+      path:
+        OccupationalLicensesPaths.OccupationalLicensesHealthDirectorateDetail,
       enabled: true,
-      element: <OccupationalLicensesDetailScreen />,
+      element: <HealthDirectorateDetailScreen />,
+    },
+    {
+      name: 'Stakt menntunar starfsleyfi',
+      path: OccupationalLicensesPaths.OccupationalLicensesEducationDetail,
+      enabled: true,
+      element: <EducationalDetailScreen />,
     },
   ],
 }

@@ -5,24 +5,56 @@ import {
 } from '@island.is/auth-nest-tools'
 import type { User } from '@island.is/auth-nest-tools'
 import { Audit } from '@island.is/nest/audit'
-import { OccupationalLicensesClientService } from '@island.is/clients/occupational-licenses'
 import { UseGuards } from '@nestjs/common'
-import { Query, Resolver } from '@nestjs/graphql'
-import { OccupationalLicense } from './models/occupationalLicenses.model'
-
+import { Args, Query, Resolver } from '@nestjs/graphql'
+import { OccupationalLicenseList } from './models/occupationalLicenseList.model'
+import { OccupationalLicensesService } from './occupationalLicenses.service'
+import { handle404 } from '@island.is/clients/middlewares'
+import { HealthDirectorateLicense } from './models/healthDirectorateLicense.model'
+import { EducationalLicense } from './models/educationalLicense.model'
 @UseGuards(IdsUserGuard, IdsAuthGuard)
 @Resolver()
 export class OccupationalLicensesResolver {
   constructor(
-    private readonly occupationalLicensesApi: OccupationalLicensesClientService,
+    private readonly occupationalLicensesApi: OccupationalLicensesService,
   ) {}
 
-  @Query(() => [OccupationalLicense], {
+  @Query(() => OccupationalLicenseList, {
     name: 'occupationalLicenses',
     nullable: true,
   })
   @Audit()
   async occupationalLicenses(@CurrentUser() user: User) {
-    return await this.occupationalLicensesApi.getOccupationalLicense(user)
+    return await this.occupationalLicensesApi
+      .getOccupationalLicenses(user)
+      .catch(handle404)
+  }
+
+  @Query(() => HealthDirectorateLicense, {
+    name: 'occupationalLicenseHealthDirectorateLicense',
+    nullable: true,
+  })
+  @Audit()
+  async getHealthDirectorateLicenseById(
+    @CurrentUser() user: User,
+    @Args('id', { type: () => String }) id: string,
+  ) {
+    return await this.occupationalLicensesApi
+      .getHealthDirectorateLicenseById(user, id)
+      .catch(handle404)
+  }
+
+  @Query(() => EducationalLicense, {
+    name: 'occupationalLicenseEducationalLicense',
+    nullable: true,
+  })
+  @Audit()
+  async getEdicationalLicenseById(
+    @CurrentUser() user: User,
+    @Args('id', { type: () => String }) id: string,
+  ) {
+    return await this.occupationalLicensesApi
+      .getEducationalLicensesById(user, id)
+      .catch(handle404)
   }
 }

@@ -107,9 +107,9 @@ import { UniversityOfIcelandClientConfig } from '@island.is/clients/university-o
 import { InnaClientConfig } from '@island.is/clients/inna'
 import { VehiclesClientConfig } from '@island.is/clients/vehicles'
 import {
-  OccupationalLicensesClientConfig,
-  OccupationalLicensesClientModule,
-} from '@island.is/clients/occupational-licenses'
+  HealthDirectorateClientConfig,
+  HealthDirectorateClientModule,
+} from '@island.is/clients/health-directorate'
 import { CmsModule, PowerBiConfig } from '@island.is/cms'
 import { CmsTranslationsModule } from '@island.is/cms-translations'
 import { FileStorageConfig } from '@island.is/file-storage'
@@ -131,6 +131,7 @@ import { GraphqlOptionsFactory } from './graphql-options.factory'
 import { HealthController } from './health.controller'
 import { GraphQLConfig } from './graphql.config'
 import { RskRelationshipsClientConfig } from '@island.is/clients-rsk-relationships'
+import { MMSClientConfig } from '@island.is/clients/mms'
 
 const environment = getConfig
 
@@ -239,7 +240,7 @@ const environment = getConfig
     AuthModule.register(environment.auth as AuthConfig),
     SyslumennModule,
     OccupationalLicensesModule,
-    OccupationalLicensesClientModule,
+    HealthDirectorateClientModule,
     DisabilityLicenseModule,
     ElectronicRegistrationsModule,
     FiskistofaModule,
@@ -328,7 +329,7 @@ const environment = getConfig
         PaymentScheduleClientConfig,
         JudicialAdministrationClientConfig,
         CommunicationsConfig,
-        OccupationalLicensesClientConfig,
+        HealthDirectorateClientConfig,
         UniversityOfIcelandClientConfig,
         InnaClientConfig,
         SessionsApiClientConfig,
@@ -339,6 +340,7 @@ const environment = getConfig
         IcelandicGovernmentInstitutionVacanciesClientConfig,
         RskRelationshipsClientConfig,
         AircraftRegistryClientConfig,
+        MMSClientConfig,
       ],
     }),
   ],

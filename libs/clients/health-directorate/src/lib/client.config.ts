@@ -5,10 +5,10 @@ const schema = z.object({
   xRoadServicePath: z.string(),
 })
 
-export const OccupationalLicensesClientConfig = defineConfig<
+export const HealthDirectorateClientConfig = defineConfig<
   z.infer<typeof schema>
 >({
-  name: 'OccupationalLicensesClientConfig',
+  name: 'HealthDirectorateClientConfig',
   schema,
   load: (env) => ({
     xRoadServicePath: env.required(

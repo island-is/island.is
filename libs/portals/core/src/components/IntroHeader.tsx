@@ -4,9 +4,11 @@ import { MessageDescriptor } from 'react-intl'
 import {
   Box,
   BoxProps,
+  Button,
   GridColumn,
   GridRow,
   Hidden,
+  Link,
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
@@ -18,6 +20,9 @@ export interface IntroHeaderProps {
   hideImgPrint?: boolean
   marginBottom?: BoxProps['marginBottom']
   children?: React.ReactNode
+  onClick?: () => void
+  buttonText?: MessageDescriptor | string
+  buttonType?: 'button' | 'text'
 }
 
 export const IntroHeader = ({
@@ -27,6 +32,9 @@ export const IntroHeader = ({
   hideImgPrint = false,
   marginBottom = 6,
   children,
+  onClick,
+  buttonText,
+  buttonType = 'button',
 }: IntroHeaderProps) => {
   const { formatMessage } = useLocale()
 
@@ -40,6 +48,18 @@ export const IntroHeader = ({
           <Text variant="default" paddingTop={2}>
             {formatMessage(intro)}
           </Text>
+        )}
+        {onClick && buttonText && (
+          <Box paddingTop={2}>
+            <Button
+              variant={buttonType === 'button' ? 'utility' : 'text'}
+              icon="download"
+              iconType="outline"
+              onClick={onClick}
+            >
+              {formatMessage(buttonText)}
+            </Button>
+          </Box>
         )}
       </GridColumn>
       {img && (

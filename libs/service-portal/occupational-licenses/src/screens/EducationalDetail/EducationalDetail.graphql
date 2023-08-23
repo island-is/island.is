@@ -1,0 +1,20 @@
+query getEducationalLicenseById($id: String!) {
+  getOrganizations {
+    items {
+      id
+      title
+      slug
+      logo {
+        id
+        url
+        title
+      }
+    }
+  }
+  occupationalLicenseEducationalLicense(id: $id) {
+    id
+    school
+    programme
+    date
+  }
+}
