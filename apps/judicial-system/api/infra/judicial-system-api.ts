@@ -26,6 +26,11 @@ export const serviceSetup = (services: {
         prod:
           'https://rettarvorslugatt.island.is/api/auth/callback/identity-server',
       },
+      AUTH_IDS_LOGOUT_REDIRECT_URI: {
+        dev: 'https://judicial-system.dev01.devland.is',
+        staging: 'https://judicial-system.staging01.devland.is',
+        prod: 'https://rettarvorslugatt.island.is',
+      },
       ALLOW_AUTH_BYPASS: { dev: 'true', staging: 'true', prod: 'false' },
       BACKEND_URL: ref((h) => `http://${h.svc(services.backend)}`),
       AUDIT_TRAIL_USE_GENERIC_LOGGER: 'false',
