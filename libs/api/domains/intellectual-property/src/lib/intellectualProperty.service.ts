@@ -8,8 +8,8 @@ import { Trademark } from './models/getTrademark.model'
 import { Design } from './models/getDesign.model'
 import { Image } from './models/getDesignImage.model'
 import addMonths from 'date-fns/addMonths'
-import { isValidDate, parseDate } from './utils'
 import { mapTrademarkSubtype, mapTrademarkType } from './mapper'
+import { parseDateIfValid } from './utils'
 
 type ExcludesFalse = <T>(x: T | null | undefined | false | '') => x is T
 
@@ -29,10 +29,9 @@ export class IntellectualPropertyService {
       type: mapTrademarkType(t.type) ?? undefined,
       subType: mapTrademarkSubtype(t) ?? undefined,
       vmId: t.vmid,
-      applicationDate:
-        t.applicationDate && isValidDate(t.applicationDate)
-          ? new Date(t.applicationDate)
-          : undefined,
+      applicationDate: t.applicationDate
+        ? parseDateIfValid(t.applicationDate)
+        : undefined,
     })) as Array<Trademark>
   }
 
@@ -42,47 +41,44 @@ export class IntellectualPropertyService {
   ): Promise<Trademark | null> {
     const trademark = await this.ipService.getTrademarkByVmId(user, trademarkId)
 
+    const formatDate = (date: string) =>
+      parseDateIfValid(date, 'dd.MM.yyyy HH:mm:ss')
+
+    const objectionDate = trademark.datePublished
+      ? formatDate(trademark?.datePublished)
+      : undefined
+
     return {
       ...trademark,
       type: mapTrademarkType(trademark.type) ?? undefined,
       subType: mapTrademarkSubtype(trademark) ?? undefined,
-      applicationDate:
-        trademark.applicationDate && isValidDate(trademark.applicationDate)
-          ? parseDate(trademark.applicationDate)
-          : undefined,
-      dateRegistration:
-        trademark.dateRegistration && isValidDate(trademark.dateRegistration)
-          ? parseDate(trademark.dateRegistration)
-          : undefined,
-      dateUnRegistered:
-        trademark.dateUnRegistered && isValidDate(trademark.dateUnRegistered)
-          ? parseDate(trademark.dateUnRegistered)
-          : undefined,
-      dateExpires:
-        trademark.dateExpires && isValidDate(trademark.dateExpires)
-          ? parseDate(trademark.dateExpires)
-          : undefined,
-      dateRenewed:
-        trademark.dateRenewed && isValidDate(trademark.dateRenewed)
-          ? parseDate(trademark.dateRenewed)
-          : undefined,
-      dateInternationalRegistration:
-        trademark.dateInternationalRegistration &&
-        isValidDate(trademark.dateInternationalRegistration)
-          ? parseDate(trademark.dateInternationalRegistration)
-          : undefined,
-      dateModified:
-        trademark.dateModified && isValidDate(trademark.dateModified)
-          ? parseDate(trademark.dateModified)
-          : undefined,
-      datePublished:
-        trademark.datePublished && isValidDate(trademark.datePublished)
-          ? parseDate(trademark.datePublished)
-          : undefined,
-      maxValidObjectionDate:
-        trademark.datePublished && isValidDate(trademark.datePublished)
-          ? addMonths(parseDate(trademark.datePublished), 2)
-          : undefined,
+      applicationDate: trademark.applicationDate
+        ? formatDate(trademark.applicationDate)
+        : undefined,
+      dateRegistration: trademark.dateRegistration
+        ? formatDate(trademark.dateRegistration)
+        : undefined,
+      dateUnRegistered: trademark.dateUnRegistered
+        ? formatDate(trademark.dateUnRegistered)
+        : undefined,
+      dateExpires: trademark.dateExpires
+        ? formatDate(trademark.dateExpires)
+        : undefined,
+      dateRenewed: trademark.dateRenewed
+        ? formatDate(trademark.dateRenewed)
+        : undefined,
+      dateInternationalRegistration: trademark.dateInternationalRegistration
+        ? formatDate(trademark.dateInternationalRegistration)
+        : undefined,
+      dateModified: trademark.dateModified
+        ? formatDate(trademark.dateModified)
+        : undefined,
+      datePublished: trademark.datePublished
+        ? formatDate(trademark.datePublished)
+        : undefined,
+      maxValidObjectionDate: objectionDate
+        ? addMonths(objectionDate, 2)
+        : undefined,
       vmId: trademark.vmid,
       acquiredDistinctiveness: trademark.skradVegnaMarkadsfestu,
     }
@@ -108,17 +104,90 @@ export class IntellectualPropertyService {
     }
   }
 
-  getDesigns = async (user: User): Promise<Array<Design> | null> =>
-    (await this.ipService.getDesigns(user)) as Array<Design>
+  async getDesigns(user: User): Promise<Array<Design> | null> {
+    const designs = await this.ipService.getDesigns(user)
+    return designs.map((design) => ({
+      ...design,
+      applicationDate: design.applicationDate
+        ? parseDateIfValid(design.applicationDate)
+        : undefined,
+    })) as Array<Trademark>
+  }
 
   async getDesignById(user: User, designId: string): Promise<Design | null> {
     const response = await this.ipService.getDesignByHID(user, designId)
 
-    return {
+    const object: Design = {
       ...response,
-      expiryDate: response?.validTo,
+      hId: designId,
+      applicationDate: response.applicationDate
+        ? parseDateIfValid(response.applicationDate)
+        : undefined,
+      applicationDateAvailable: response.applicationDateAvailable
+        ? parseDateIfValid(response.applicationDateAvailable)
+        : undefined,
+      applicationDatePublishedAsAvailable: response.applicationDatePublishedAsAvailable
+        ? parseDateIfValid(response.applicationDatePublishedAsAvailable)
+        : undefined,
+      applicationDeadlineDate: response.applicationDeadlineDate
+        ? parseDateIfValid(response.applicationDeadlineDate)
+        : undefined,
+      internationalRegistrationDate: response.internationalRegistrationDate
+        ? parseDateIfValid(response.internationalRegistrationDate)
+        : undefined,
+      announcementDate: response.announcementDate
+        ? parseDateIfValid(response.announcementDate)
+        : undefined,
+      registrationDate: response.registrationDate
+        ? parseDateIfValid(response.registrationDate)
+        : undefined,
+      publishDate: response.publishDate
+        ? parseDateIfValid(response.publishDate)
+        : undefined,
+      createDate: response.createDate
+        ? parseDateIfValid(response.createDate)
+        : undefined,
+      lastModified: response.lastModified
+        ? parseDateIfValid(response.lastModified)
+        : undefined,
+      expiryDate: response.validTo
+        ? parseDateIfValid(response.validTo)
+        : undefined,
       classification: response.classification?.category,
+      objections: response.objections?.map((o) => {
+        return {
+          ...o,
+          dateReceived: o.dateReceived
+            ? parseDateIfValid(o.dateReceived)
+            : undefined,
+          dateConclusion: o.dateConclusion
+            ? parseDateIfValid(o.dateConclusion)
+            : undefined,
+        }
+      }),
+      appeals: response.appeals?.map((o) => {
+        return {
+          ...o,
+          dateReceived: o.dateReceived
+            ? parseDateIfValid(o.dateReceived)
+            : undefined,
+          dateConclusion: o.dateConclusion
+            ? parseDateIfValid(o.dateConclusion)
+            : undefined,
+        }
+      }),
+      licenses: response.licenses?.map((license) => {
+        return {
+          ...license,
+          date: license.date ? parseDateIfValid(license.date) : undefined,
+          expires: license.expires
+            ? parseDateIfValid(license.expires)
+            : undefined,
+        }
+      }),
     }
+
+    return object
   }
 
   async getDesignImages(

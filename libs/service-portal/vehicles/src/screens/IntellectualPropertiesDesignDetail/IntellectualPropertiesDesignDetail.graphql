@@ -4,11 +4,11 @@ query getIntellectualPropertyDesign($input: IntellectualPropertyInput!) {
       description
       specificationText
     }
-    hId
     status
     canRenew
     publishDate
     applicationDate
+    applicationNumber
     registrationDate
     internationalRegistrationDate
     expiryDate

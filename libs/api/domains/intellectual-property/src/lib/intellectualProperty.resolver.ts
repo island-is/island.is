@@ -1,4 +1,4 @@
-import { UseGuards } from '@nestjs/common'
+import { Inject, UseGuards } from '@nestjs/common'
 import { Args, Query, Resolver } from '@nestjs/graphql'
 import { Audit } from '@island.is/nest/audit'
 import {
@@ -19,12 +19,17 @@ import { GetIntellectualPropertyDesignImagesInput } from './dto/getDesignImages.
 import { ExcludesFalse } from './utils'
 import { ImageList } from './models/designImageList.model'
 import { IntellectualPropertyList } from './models/intellectualPropertyList.model'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
 
 @Resolver()
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Audit({ namespace: '@island.is/api/intellectual-property' })
 export class IntellectualPropertyResolver {
-  constructor(private readonly ipService: IntellectualPropertyService) {}
+  constructor(
+    private readonly ipService: IntellectualPropertyService,
+    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
+  ) {}
 
   @Scopes(ApiScope.internal)
   @Query(() => IntellectualPropertyList, {
@@ -71,7 +76,7 @@ export class IntellectualPropertyResolver {
     nullable: true,
   })
   @Audit()
-  getIntellectualPropertyDesignById(
+  async getIntellectualPropertyDesignById(
     @CurrentUser() user: User,
     @Args('input', { type: () => GetIntellectualPropertyInput })
     input: GetIntellectualPropertyInput,

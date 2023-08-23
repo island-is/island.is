@@ -151,14 +151,6 @@ const IntellectualPropertiesDesignDetail = () => {
                 </Stack>,
                 <Stack space="smallGutter">
                   <Text variant="h5">
-                    {ip?.publishDate
-                      ? formatDate(ip.publishDate, 'dd.MM.yy')
-                      : ''}
-                  </Text>
-                  <Text>{formatMessage(ipMessages.publish)}</Text>
-                </Stack>,
-                <Stack space="smallGutter">
-                  <Text variant="h5">
                     {ip?.expiryDate
                       ? formatDate(ip.expiryDate, 'dd.MM.yy')
                       : ''}
@@ -181,13 +173,7 @@ const IntellectualPropertiesDesignDetail = () => {
                   },
                   {
                     title: 'Umsóknarnúmer',
-                    value: ip?.hId ?? '',
-                  },
-                  {
-                    title: 'Birtingardagur',
-                    value: ip?.publishDate
-                      ? formatDate(ip.publishDate, 'dd.MM.yy')
-                      : '',
+                    value: ip?.applicationNumber ?? '',
                   },
                   {
                     title: 'Flokkun',
