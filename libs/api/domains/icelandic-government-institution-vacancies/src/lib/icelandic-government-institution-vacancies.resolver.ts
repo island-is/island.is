@@ -74,7 +74,7 @@ export class IcelandicGovernmentInstitutionVacanciesResolver {
       if (organization?.logo?.url && organization?.referenceIdentifier) {
         organizationMap.set(organization.referenceIdentifier, {
           logoUrl: organization.logo.url,
-          title: organization.title,
+          title: organization.shortTitle || organization.title,
         })
       }
     }
@@ -175,7 +175,7 @@ export class IcelandicGovernmentInstitutionVacanciesResolver {
         vacancy.logoUrl = undefined
       }
       if (organization?.title) {
-        vacancy.institutionName = organization.title
+        vacancy.institutionName = organization.shortTitle || organization.title
       }
     } else {
       // In case the institution/organization does not exist in the cms we don't use the logo from the xroad service
