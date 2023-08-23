@@ -93,7 +93,7 @@ export class IcelandicGovernmentInstitutionVacanciesResolver {
           vacancy.institutionName = organization.title
         }
       } else {
-        // In case the institution/organization does not exist in the cms we don't use the logo from the xroad service
+        // In case the institution/organization does not exist in the cms we don't use the logo from the external service
         vacancy.logoUrl = undefined
       }
     }
@@ -158,7 +158,7 @@ export class IcelandicGovernmentInstitutionVacanciesResolver {
       item,
     )
 
-    // If we have a reference identifier we use that to get the organization title and logo from cms
+    // If we have a reference identifier we use that to get the institution/organization title and logo from cms
     if (vacancy?.institutionReferenceIdentifier) {
       const organizationResponse = await this.cmsContentfulService.getOrganizations(
         {
@@ -178,7 +178,7 @@ export class IcelandicGovernmentInstitutionVacanciesResolver {
         vacancy.institutionName = organization.shortTitle || organization.title
       }
     } else {
-      // In case the institution/organization does not exist in the cms we don't use the logo from the xroad service
+      // In case the institution/organization does not exist in the cms we don't use the logo from the external service
       if (vacancy?.logoUrl) vacancy.logoUrl = undefined
     }
 
