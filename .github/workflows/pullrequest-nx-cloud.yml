@@ -153,8 +153,8 @@ jobs:
     needs:
       - prepare
     env:
-      NX_BASE: ${{ needs.prepare.outputs.nx-base }}
-      NX_HEAD: ${{ needs.prepare.outputs.nx-head }}
+      BASE: ${{ needs.prepare.outputs.nx-base }}
+      HEAD: ${{ needs.prepare.outputs.nx-head }}
     runs-on: ec2-runners
     container:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
@@ -213,8 +213,8 @@ jobs:
     needs:
       - prepare
     env:
-      NX_BASE: ${{ needs.prepare.outputs.nx-base }}
-      NX_HEAD: ${{ needs.prepare.outputs.nx-head }}
+      BASE: ${{ needs.prepare.outputs.nx-base }}
+      HEAD: ${{ needs.prepare.outputs.nx-head }}
     runs-on: ec2-runners
     container:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
