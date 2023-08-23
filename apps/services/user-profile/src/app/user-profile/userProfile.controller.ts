@@ -12,7 +12,6 @@ import {
   Body,
   Controller,
   Get,
-  NotFoundException,
   Param,
   Post,
   ConflictException,
@@ -22,8 +21,8 @@ import {
   HttpCode,
   Delete,
   Patch,
-  Query,
 } from '@nestjs/common'
+import { NoContentException } from '@island.is/nest/problem'
 import {
   ApiCreatedResponse,
   ApiExcludeEndpoint,
@@ -86,25 +85,16 @@ export class UserProfileController {
     nationalId: string,
     @CurrentUser()
     user: User,
-    @Query('actorRequest') actorRequest?: boolean,
   ): Promise<UserProfile> {
-    if (actorRequest) {
-      if (nationalId != user.actor.nationalId) {
-        throw new ForbiddenException()
-      }
-    } else {
-      if (nationalId != user.nationalId) {
-        throw new ForbiddenException()
-      }
+    if (nationalId != user.nationalId) {
+      throw new ForbiddenException()
     }
 
     const userProfile = await this.userProfileService.findByNationalId(
       nationalId,
     )
     if (!userProfile) {
-      throw new NotFoundException(
-        `A user profile with nationalId ${nationalId} does not exist`,
-      )
+      throw new NoContentException()
     }
 
     return userProfile
@@ -122,9 +112,7 @@ export class UserProfileController {
       actor.nationalId,
     )
     if (!userProfile) {
-      throw new NotFoundException(
-        `A user profile with nationalId ${actor.nationalId} does not exist`,
-      )
+      throw new NoContentException()
     }
 
     return {
@@ -304,9 +292,7 @@ export class UserProfileController {
       updatedUserProfile,
     } = await this.userProfileService.update(nationalId, userProfileToUpdate)
     if (numberOfAffectedRows === 0) {
-      throw new NotFoundException(
-        `A user profile with nationalId ${nationalId} does not exist`,
-      )
+      throw new NoContentException()
     }
     this.auditService.audit({
       auth: user,
