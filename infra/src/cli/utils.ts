@@ -1,5 +1,5 @@
 import { execSync } from 'child_process'
-import { existsSync, readFileSync, writeFileSync } from 'fs'
+import { appendFileSync, existsSync, readFileSync, writeFileSync } from 'fs'
 import { resolve } from 'path'
 import { EnvDifferences, EnvObject, EnvMappingType } from './types'
 import { renderSecretsCommand } from './render-secrets'
@@ -21,6 +21,7 @@ const envToFileMapping: Record<string, EnvMappingType> = {
 export const escapeValue = (value: string): string => {
   return value.replace(/\s+/g, ' ').replace(/'/g, "'\\''")
 }
+
 const parseEnvFile = (filePath: string): EnvObject => {
   try {
     const absPath = resolve(projectRoot, filePath)
@@ -81,6 +82,7 @@ export const resetAllMappedFiles = async (): Promise<void> => {
     }
   }
 }
+
 export const updateSecretFiles = async (services: string[]): Promise<void> => {
   for (const service of services) {
     const secrets = await renderSecretsCommand(service)
@@ -109,7 +111,7 @@ export const updateSecretFiles = async (services: string[]): Promise<void> => {
       const fileEnvs = parseEnvFile(filePath)
       const differences = compareEnvs(fileEnvs, envsForFile)
 
-      // Merging existing, added and updated envs
+      // Merging existing, added, and updated envs
       const mergedEnvs = {
         ...fileEnvs,
         ...Object.fromEntries(differences.added),
@@ -120,30 +122,49 @@ export const updateSecretFiles = async (services: string[]): Promise<void> => {
       const sortedKeys = Object.keys(mergedEnvs).sort((a, b) =>
         a.localeCompare(b),
       )
-      const sortedEnvs = sortedKeys.map((key) => [key, mergedEnvs[key]])
+      const sortedEnvs: [string, string][] = sortedKeys.map((key: string) => [
+        key,
+        mergedEnvs[key],
+      ])
 
-      const updatedFileContent = sortedEnvs.reduce(
-        (content, [envName, value]) => {
-          const line = mapping.isBashEnv
-            ? `export ${envName}='${value}'`
-            : `${envName}='${value}'`
-
-          if (differences.added.some(([addedName]) => addedName === envName)) {
-            console.log(`Added ${line}`)
-          } else if (
-            differences.changed.some(([changedName]) => changedName === envName)
-          ) {
-            console.log(
-              `Updated ${envName} from '${fileEnvs[envName]}' to '${value}'`,
-            )
-          }
-
-          return `${content}\n${line}`
-        },
-        '',
+      const updatedFileContent = generateUpdatedFileContent(
+        sortedEnvs,
+        differences,
+        mapping,
+        fileEnvs,
       )
 
       writeFileSync(absPath, updatedFileContent.trim() + '\n')
     }
   }
+}
+
+const generateUpdatedFileContent = (
+  sortedEnvs: [string, string][],
+  differences: EnvDifferences,
+  mapping: EnvMappingType,
+  fileEnvs: Record<string, string>,
+): string => {
+  return sortedEnvs.reduce((content, [envName, value]) => {
+    const line = mapping.isBashEnv
+      ? `export ${envName}='${value}'`
+      : `${envName}='${value}'`
+
+    if (differences.added.some(([addedName]) => addedName === envName)) {
+      appendToEnvLog(`Added ${line}`)
+    } else if (
+      differences.changed.some(([changedName]) => changedName === envName)
+    ) {
+      appendToEnvLog(
+        `Updated ${envName} from '${fileEnvs[envName]}' to '${value}'`,
+      )
+    }
+
+    return `${content}\n${line}`
+  }, '')
+}
+
+const appendToEnvLog = (message: string): void => {
+  const logFilePath = resolve(projectRoot, '.env.log')
+  appendFileSync(logFilePath, `${message}\n`)
 }
