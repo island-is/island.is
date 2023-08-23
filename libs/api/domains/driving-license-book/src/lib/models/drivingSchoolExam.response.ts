@@ -31,4 +31,10 @@ export class DrivingSchoolExam {
 
   @Field()
   comments!: string
+
+  @Field()
+  status!: number
+
+  @Field()
+  statusName!: string
 }

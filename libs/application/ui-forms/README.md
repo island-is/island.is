@@ -1,5 +1,3 @@
-<!-- gitbook-navigation: "UI Forms" -->
-
 # Application UI Forms
 
 This library includes reusable form builder components for the application system

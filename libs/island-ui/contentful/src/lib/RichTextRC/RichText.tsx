@@ -13,6 +13,7 @@ import { AssetLinkProps } from '../AssetLink/AssetLink'
 import { ProcessEntryProps } from '../ProcessEntry/ProcessEntry'
 import { EmbeddedVideoProps } from '../EmbeddedVideo/EmbeddedVideo'
 import { SectionWithImageProps } from '../SectionWithImage/SectionWithImage'
+import { SectionWithVideoProps } from '../SectionWithVideo/SectionWithVideo'
 import { TeamListProps } from '../TeamList/TeamList'
 import { ContactUsProps } from '../ContactUs/ContactUs'
 import { LocationProps } from '../Location/Location'
@@ -62,6 +63,10 @@ type SectionWithImageSlice = {
   __typename: 'SectionWithImage'
   id: string
 } & SectionWithImageProps
+type SectionWithVideoSlice = {
+  __typename: 'SectionWithVideo'
+  id: string
+} & SectionWithVideoProps
 
 export type SliceType =
   | HtmlSlice
@@ -77,6 +82,7 @@ export type SliceType =
   | LocationSlice
   | TellUsAStorySlice
   | SectionWithImageSlice
+  | SectionWithVideoSlice
   | {
       // TODO: these are used on the about page - we need to move their rendering
       // to here to make them re-usable by other page types
