@@ -499,7 +499,5 @@ export class CitizenshipClient {
     //     }
     //   }
     // }
-
-    throw new Error('asdf')
   }
 }
