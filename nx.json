@@ -19,7 +19,7 @@
           "build-custom-server"
         ],
         "cacheDirectory": ".cache/nx",
-        "parallel": 1
+        "parallel": 5
       }
     },
     "docker-test": {
