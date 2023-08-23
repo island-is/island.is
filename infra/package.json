@@ -1,10 +1,9 @@
 {
-  "name": "infra",
+  "name": "@island.is/infra",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
     "test": "jest",
-    "charts": "scripts/generate-chart-values.sh",
     "cli": "node -r esbuild-register src/cli/cli.ts"
   },
   "license": "MIT",
@@ -27,6 +26,9 @@
     "js-yaml": "4.0.0",
     "lodash": "4.17.21",
     "yargs": "17.2.1"
+  },
+  "installConfig": {
+    "hoistingLimits": "workspaces"
   },
   "volta": {
     "node": "18.12.1"
