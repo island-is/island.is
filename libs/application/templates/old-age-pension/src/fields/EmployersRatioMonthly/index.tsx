@@ -45,7 +45,7 @@ const EmployersRatioMonthly: FC<RepeaterProps & FieldBaseProps> = ({
   const calculateYearly = () => {
     let total = 0
     for (const k in ratiosObj) {
-      const ratio = ratiosObj[k].replace('%', '')
+      const ratio = ratiosObj[k]?.replace('%', '')
       if (!isNaN(+ratio)) {
         total += +ratio
       }
