@@ -109,7 +109,7 @@ export class PublicDebtPaymentPlanTemplateService extends BaseTemplateApiService
       })
     } catch (error) {
       this.logger.error(
-        'Failed to send public debt payment plan application',
+        '[public-debt-payment-plan]: Failed to send public debt payment plan application',
         error,
       )
       throw error

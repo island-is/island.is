@@ -809,7 +809,11 @@ export class CaseService {
   ): Promise<void> {
     if (updatedCase.state !== theCase.state) {
       // New case state
-      if (updatedCase.state === CaseState.RECEIVED) {
+      if (
+        updatedCase.state === CaseState.RECEIVED &&
+        theCase.state === CaseState.SUBMITTED
+      ) {
+        // Only send messages if the case was in a SUBMITTED state - not when reopening a case
         await this.addMessagesForReceivedCaseToQueue(updatedCase, user)
       } else if (updatedCase.state === CaseState.DELETED) {
         await this.addMessagesForDeletedCaseToQueue(
