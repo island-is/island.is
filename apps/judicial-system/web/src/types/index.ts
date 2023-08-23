@@ -16,7 +16,6 @@ import {
   CreateCase,
   SubstanceMap,
   UpdateCase,
-  UpdateDefendant,
 } from '@island.is/judicial-system/types'
 
 export enum AppealDecisionRole {
@@ -252,11 +251,6 @@ export interface TempCase
   appealState?: CaseAppealState
   appealedByRole?: UserRole
   appealRulingDecision?: CaseAppealRulingDecision
-  defendants?: Defendant[]
-}
-
-export interface TempUpdateDefendant
-  extends Omit<UpdateDefendant, 'defendants'> {
   defendants?: Defendant[]
 }
 

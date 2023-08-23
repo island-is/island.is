@@ -10,7 +10,6 @@ import {
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import { core } from '@island.is/judicial-system-web/messages'
 import { capitalize } from '@island.is/judicial-system/formatters'
-import { TempUpdateDefendant as UpdateDefendant } from '@island.is/judicial-system-web/src/types'
 import { Defendant } from '@island.is/judicial-system-web/src/graphql/schema'
 import useDefendants from '@island.is/judicial-system-web/src/utils/hooks/useDefendants'
 
@@ -36,6 +35,8 @@ const SelectDefender: React.FC<React.PropsWithChildren<Props>> = (props) => {
       defendantWaivesRightToCounsel: boolean,
     ) => {
       const updateDefendantInput = {
+        caseId,
+        defendantId: defendant.id,
         defenderNationalId: defendantWaivesRightToCounsel
           ? ''
           : defendant.defenderNationalId,
@@ -49,7 +50,7 @@ const SelectDefender: React.FC<React.PropsWithChildren<Props>> = (props) => {
           ? ''
           : defendant.defenderPhoneNumber,
         defendantWaivesRightToCounsel,
-      } as UpdateDefendant
+      }
 
       setAndSendDefendantToServer(
         caseId,
