@@ -4,7 +4,8 @@
   "main": "index.js",
   "scripts": {
     "test": "jest",
-    "cli": "node -r esbuild-register src/cli/cli.ts"
+    "cli": "node -r esbuild-register src/cli/cli.ts",
+    "build": "echo NOT_IMPLEMENTED"
   },
   "license": "MIT",
   "devDependencies": {

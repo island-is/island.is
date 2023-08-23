@@ -19,9 +19,22 @@
         "command": "./scripts/generate-chart-values.sh"
       }
     },
+    "build": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "infra",
+        "command": "yarn build"
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "options": {
+        "jestConfig": "infra/jest.config.ts",
+        "passWithNoTests": true
+      },
+      "outputs": ["{workspaceRoot}/coverage/infra"]
+    },
     "serve": {},
-    "build": {},
-    "test": {},
     "lint": {
       "executor": "@nx/linter:eslint",
       "options": {
