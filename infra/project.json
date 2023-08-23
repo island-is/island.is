@@ -1,0 +1,35 @@
+{
+  "name": "infra",
+  "$schema": "../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "infra/src",
+  "projectType": "application",
+  "generators": {},
+  "targets": {
+    "cli": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "infra",
+        "command": "yarn cli"
+      }
+    },
+    "charts": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "infra",
+        "command": "./scripts/generate-chart-values.sh"
+      }
+    },
+    "serve": {},
+    "build": {},
+    "test": {},
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "options": {
+        "lintFilePatterns": ["infra/**/*.{ts,tsx,js,jsx}"]
+      }
+    },
+    "schemas/codegen": {},
+    "docker-native": {}
+  },
+  "tags": ["scope:infra"]
+}
