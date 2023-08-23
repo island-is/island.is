@@ -1,4 +1,4 @@
-export * from './drivingLicenseBook.resolver'
-export * from './drivingLicenseBook.module'
-export * from './drivingLicenseBook.service'
-export { Organization } from './drivinLicenceBook.type'
+export * from './lib/drivingLicenseBook.resolver'
+export * from './lib/drivingLicenseBook.module'
+export * from './lib/drivingLicenseBook.service'
+export { Organization } from './lib/drivingLicenceBook.type'

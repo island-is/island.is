@@ -95,8 +95,12 @@ const getPoliceCasesForUpdate = (
   )
 
 const Defendant: React.FC<React.PropsWithChildren<unknown>> = () => {
-  const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
-    useContext(FormContext)
+  const {
+    workingCase,
+    setWorkingCase,
+    isLoadingWorkingCase,
+    caseNotFound,
+  } = useContext(FormContext)
   const { formatMessage } = useIntl()
   const { createCase, isCreatingCase, setAndSendCaseToServer } = useCase()
   const {
@@ -116,8 +120,11 @@ const Defendant: React.FC<React.PropsWithChildren<unknown>> = () => {
   const handleCreatePoliceCase = async (policeCaseInfo?: PoliceCase) => {
     const newPoliceCase = policeCaseInfo ?? { number: '' }
 
-    const [policeCaseNumbers, indictmentSubtypes, crimeScenes] =
-      getPoliceCasesForUpdate([...getPoliceCases(workingCase), newPoliceCase])
+    const [
+      policeCaseNumbers,
+      indictmentSubtypes,
+      crimeScenes,
+    ] = getPoliceCasesForUpdate([...getPoliceCases(workingCase), newPoliceCase])
 
     setAndSendCaseToServer(
       [
@@ -173,8 +180,11 @@ const Defendant: React.FC<React.PropsWithChildren<unknown>> = () => {
       crimeScene?: CrimeScene
     },
   ) => {
-    const [policeCaseNumbers, indictmentSubtypes, crimeScenes] =
-      getPoliceCasesForUpdate(getPoliceCases(workingCase), index, update)
+    const [
+      policeCaseNumbers,
+      indictmentSubtypes,
+      crimeScenes,
+    ] = getPoliceCasesForUpdate(getPoliceCases(workingCase), index, update)
 
     setWorkingCase((theCase) => ({
       ...theCase,
@@ -187,10 +197,13 @@ const Defendant: React.FC<React.PropsWithChildren<unknown>> = () => {
   const handleDeletePoliceCase = (index: number) => {
     const policeCases = getPoliceCases(workingCase)
 
-    const [policeCaseNumbers, indictmentSubtypes, crimeScenes] =
-      getPoliceCasesForUpdate(
-        policeCases.slice(0, index).concat(policeCases.slice(index + 1)),
-      )
+    const [
+      policeCaseNumbers,
+      indictmentSubtypes,
+      crimeScenes,
+    ] = getPoliceCasesForUpdate(
+      policeCases.slice(0, index).concat(policeCases.slice(index + 1)),
+    )
 
     setAndSendCaseToServer(
       [
@@ -214,8 +227,11 @@ const Defendant: React.FC<React.PropsWithChildren<unknown>> = () => {
       crimeScene?: CrimeScene
     },
   ) => {
-    const [policeCaseNumbers, indictmentSubtypes, crimeScenes] =
-      getPoliceCasesForUpdate(getPoliceCases(workingCase), index, update)
+    const [
+      policeCaseNumbers,
+      indictmentSubtypes,
+      crimeScenes,
+    ] = getPoliceCasesForUpdate(getPoliceCases(workingCase), index, update)
 
     setAndSendCaseToServer(
       [

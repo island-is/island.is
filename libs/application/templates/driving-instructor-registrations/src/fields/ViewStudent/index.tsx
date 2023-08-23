@@ -253,11 +253,15 @@ const ViewStudent = ({
   const getExamString = ({
     name,
     examDate,
+    status,
   }: {
     name: string
     examDate?: string
+    status?: string
   }) =>
-    `${name}${examDate ? ` - ${format(new Date(examDate), 'dd.MM.yyyy')}` : ''}`
+    `${name}${
+      examDate ? ` - ${format(new Date(examDate), 'dd.MM.yyyy')}` : ''
+    }${status ? ` - ${status}` : ''}`
 
   return (
     <GridContainer>
@@ -318,6 +322,7 @@ const ViewStudent = ({
                       const textStr = getExamString({
                         name: school.schoolTypeName,
                         examDate: school.examDate,
+                        status: school.statusName,
                       })
                       return (
                         <BulletList type="ul" color="dark300">
