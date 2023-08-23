@@ -184,6 +184,7 @@ export const mapIcelandicGovernmentInstitutionVacanciesFromExternalSystem = asyn
       intro: '',
       fieldOfWork: item.starfssvid,
       institutionName: item.stofnunHeiti,
+      institutionReferenceIdentifier: item.stofnunNr,
       logoUrl: item.logoURL,
       locations,
     })
@@ -315,7 +316,7 @@ export const mapVacancyListItemFromCms = (
     applicationDeadlineFrom: mapDate(vacancy.applicationDeadlineFrom),
     applicationDeadlineTo: mapDate(vacancy.applicationDeadlineTo),
     fieldOfWork: vacancy.fieldOfWork,
-    institutionName: vacancy.organization?.nameInVacancyList,
+    institutionName: vacancy.organization?.title,
     intro: vacancy.intro?.document
       ? documentToPlainTextString(vacancy.intro?.document)
       : undefined,

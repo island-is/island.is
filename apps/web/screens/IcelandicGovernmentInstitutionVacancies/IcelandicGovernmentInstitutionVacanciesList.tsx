@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useRouter } from 'next/router'
+import isEqual from 'lodash/isEqual'
 import {
   Text,
   FocusableBox,
@@ -25,12 +26,10 @@ import {
   GetNamespaceQuery,
   GetNamespaceQueryVariables,
   IcelandicGovernmentInstitutionVacanciesResponse,
-  Query,
-  QueryGetOrganizationsArgs,
 } from '@island.is/web/graphql/schema'
 import { useLinkResolver, useNamespace } from '@island.is/web/hooks'
 import { GET_ICELANDIC_GOVERNMENT_INSTITUTION_VACANCIES } from '../queries/IcelandicGovernmentInstitutionVacancies'
-import { GET_NAMESPACE_QUERY, GET_ORGANIZATIONS_QUERY } from '../queries'
+import { GET_NAMESPACE_QUERY } from '../queries'
 import { useWindowSize } from '@island.is/web/hooks/useViewport'
 import { theme } from '@island.is/island-ui/theme'
 import { FilterTag, HeadWithSocialSharing } from '@island.is/web/components'
@@ -112,12 +111,10 @@ const mapVacanciesField = (
 interface IcelandicGovernmentInstitutionVacanciesListProps {
   vacancies: Vacancy[]
   namespace: Record<string, string>
-  organizationLogoMap: Record<string, string>
 }
 
 const IcelandicGovernmentInstitutionVacanciesList: Screen<IcelandicGovernmentInstitutionVacanciesListProps> = ({
   vacancies,
-  organizationLogoMap,
   namespace,
 }) => {
   const { query, replace, isReady } = useRouter()
@@ -302,15 +299,16 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<IcelandicGovernmentIns
     } else {
       updatedQuery.location = parameters.location
     }
-
-    replace(
-      {
-        pathname,
-        query: updatedQuery,
-      },
-      undefined,
-      { shallow: true, scroll: shouldScroll },
-    )
+    if (!isEqual(query, updatedQuery)) {
+      replace(
+        {
+          pathname,
+          query: updatedQuery,
+        },
+        undefined,
+        { shallow: true, scroll: shouldScroll },
+      )
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [parameters, searchTerm, selectedPage])
 
@@ -484,7 +482,12 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<IcelandicGovernmentIns
                 ITEMS_PER_PAGE * selectedPage,
               )
               .map((vacancy) => {
-                const logoUrl = organizationLogoMap[vacancy.institutionName]
+                const logoUrl =
+                  vacancy.logoUrl ||
+                  n(
+                    'fallbackLogoUrl',
+                    'https://images.ctfassets.net/8k0h54kbe6bj/6XhCz5Ss17OVLxpXNVDxAO/d3d6716bdb9ecdc5041e6baf68b92ba6/coat_of_arms.svg',
+                  )
                 return (
                   <GridColumn
                     key={vacancy.id}
@@ -503,73 +506,75 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<IcelandicGovernmentIns
                       padding={[3, 3, 'containerGutter']}
                       overflow="hidden"
                     >
-                      <Inline
-                        collapseBelow="lg"
-                        space={[2, 2, 2, 5]}
-                        flexWrap="nowrap"
-                        alignY="center"
-                        justifyContent="spaceBetween"
-                      >
-                        <Stack space={2}>
-                          <Text variant="eyebrow">{vacancy.fieldOfWork}</Text>
-                          <Text color="blue400" variant="h3">
-                            {vacancy.title}
-                          </Text>
-                          <Text>
-                            {shortenText(
-                              vacancy.intro,
-                              VACANCY_INTRO_MAX_LENGTH,
-                            )}
-                          </Text>
-                          <Inline space={1}>
-                            {vacancy.institutionName && (
-                              <Tag outlined={true} disabled={true}>
-                                {vacancy.institutionName}
+                      <Box width="full">
+                        <Inline
+                          collapseBelow="lg"
+                          space={[2, 2, 2, 5]}
+                          flexWrap="nowrap"
+                          alignY="center"
+                          justifyContent="spaceBetween"
+                        >
+                          <Stack space={2}>
+                            <Text variant="eyebrow">{vacancy.fieldOfWork}</Text>
+                            <Text color="blue400" variant="h3">
+                              {vacancy.title}
+                            </Text>
+                            <Text>
+                              {shortenText(
+                                vacancy.intro,
+                                VACANCY_INTRO_MAX_LENGTH,
+                              )}
+                            </Text>
+                            <Inline space={1}>
+                              {vacancy.institutionName && (
+                                <Tag outlined={true} disabled={true}>
+                                  {vacancy.institutionName}
+                                </Tag>
+                              )}
+                              {vacancy.locations &&
+                                vacancy.locations
+                                  .filter((location) => location.title)
+                                  .map((location, index) => (
+                                    <Tag key={index} outlined={true} disabled>
+                                      {location.title}
+                                    </Tag>
+                                  ))}
+                            </Inline>
+                            {vacancy.applicationDeadlineTo && (
+                              <Tag outlined={true} disabled variant="purple">
+                                {n('applicationDeadlineTo', 'Umsóknarfrestur')}{' '}
+                                {vacancy.applicationDeadlineTo}
                               </Tag>
                             )}
-                            {vacancy.locations &&
-                              vacancy.locations
-                                .filter((location) => location.title)
-                                .map((location, index) => (
-                                  <Tag key={index} outlined={true} disabled>
-                                    {location.title}
-                                  </Tag>
-                                ))}
-                          </Inline>
-                          {vacancy.applicationDeadlineTo && (
-                            <Tag outlined={true} disabled variant="purple">
-                              {n('applicationDeadlineTo', 'Umsóknarfrestur')}{' '}
-                              {vacancy.applicationDeadlineTo}
-                            </Tag>
-                          )}
-                        </Stack>
-                        <Box>
-                          {logoUrl && (
-                            <>
-                              <Hidden below="lg">
-                                <img
-                                  className={styles.logo}
-                                  src={logoUrl}
-                                  alt=""
-                                />
-                              </Hidden>
-                              <Hidden above="md">
-                                <Box
-                                  display="flex"
-                                  justifyContent="center"
-                                  width="full"
-                                >
+                          </Stack>
+                          <Box width="full">
+                            {logoUrl && (
+                              <>
+                                <Hidden below="lg">
                                   <img
                                     className={styles.logo}
                                     src={logoUrl}
                                     alt=""
                                   />
-                                </Box>
-                              </Hidden>
-                            </>
-                          )}
-                        </Box>
-                      </Inline>
+                                </Hidden>
+                                <Hidden above="md">
+                                  <Box
+                                    display="flex"
+                                    justifyContent="center"
+                                    width="full"
+                                  >
+                                    <img
+                                      className={styles.logo}
+                                      src={logoUrl}
+                                      alt=""
+                                    />
+                                  </Box>
+                                </Hidden>
+                              </>
+                            )}
+                          </Box>
+                        </Inline>
+                      </Box>
                     </FocusableBox>
                   </GridColumn>
                 )
@@ -639,35 +644,9 @@ IcelandicGovernmentInstitutionVacanciesList.getProps = async ({
   const vacancies =
     vacanciesResponse.data.icelandicGovernmentInstitutionVacancies.vacancies
 
-  const institutionNames = mapVacanciesField(vacancies, 'institutionName').map(
-    ({ label }) => label,
-  )
-
-  const organizationsResponse = await apolloClient.query<
-    Query,
-    QueryGetOrganizationsArgs
-  >({
-    query: GET_ORGANIZATIONS_QUERY,
-    variables: {
-      input: {
-        lang: locale,
-        organizationTitles: institutionNames,
-      },
-    },
-  })
-
-  const organizationLogoMap = new Map<string, string>()
-
-  for (const organization of organizationsResponse?.data?.getOrganizations
-    ?.items ?? []) {
-    if (organization?.logo?.url)
-      organizationLogoMap.set(organization.title, organization.logo.url)
-  }
-
   return {
     vacancies,
     namespace,
-    organizationLogoMap: Object.fromEntries(organizationLogoMap),
   }
 }
 
