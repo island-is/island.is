@@ -3,18 +3,12 @@ import { FieldErrors, FieldValues, useFormContext } from 'react-hook-form'
 
 import { Table as T } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import {
-  RepeaterProps,
-  FieldBaseProps,
-  FieldTypes,
-  FieldComponents,
-} from '@island.is/application/types'
+import { RepeaterProps, FieldBaseProps } from '@island.is/application/types'
 
 import { oldAgePensionFormMessage } from '../../lib/messages'
 import { getApplicationAnswers } from '../../lib/oldAgePensionUtils'
 import { MONTHS } from '../../lib/constants'
 import { InputController } from '@island.is/shared/form-fields'
-import { TextFormField } from '@island.is/application/ui-fields'
 import { getErrorViaPath } from '@island.is/application/core'
 
 interface MonthObject {
@@ -32,11 +26,8 @@ const EmployersRatioMonthly: FC<RepeaterProps & FieldBaseProps> = ({
   const [yearly, setYearly] = useState('0')
   const { rawEmployers } = getApplicationAnswers(application.answers)
   const { setValue } = useFormContext()
-  const fieldId = 'ratioMonthlyAvg'
-  const error = getErrorViaPath(
-    errors as FieldErrors<FieldValues>,
-    `employers[${rawEmployers.length - 1}].${fieldId}`,
-  )
+  const fieldId = `employers[${rawEmployers.length - 1}].ratioMonthlyAvg`
+  const error = getErrorViaPath(errors as FieldErrors<FieldValues>, fieldId)
 
   useEffect(() => {
     const currentEmployer = rawEmployers[rawEmployers.length - 1]
@@ -48,11 +39,8 @@ const EmployersRatioMonthly: FC<RepeaterProps & FieldBaseProps> = ({
   }, [rawEmployers])
 
   useEffect(() => {
-    setValue(
-      `employers[${rawEmployers.length - 1}].${fieldId}`,
-      yearly.toString(),
-    )
-  }, [yearly, setValue, rawEmployers])
+    setValue(fieldId, yearly.toString())
+  }, [yearly, setValue, fieldId])
 
   const calculateYearly = () => {
     let total = 0
@@ -114,20 +102,15 @@ const EmployersRatioMonthly: FC<RepeaterProps & FieldBaseProps> = ({
             )}
           </T.Data>
           <T.Data>
-            <TextFormField
-              application={application}
+            <InputController
+              id={fieldId}
+              label={formatMessage(
+                oldAgePensionFormMessage.employer.totalRatio,
+              )}
+              type="number"
+              suffix="%"
+              disabled={true}
               error={error}
-              field={{
-                type: FieldTypes.TEXT,
-                title: '',
-                id: fieldId,
-                placeholder: `${yearly}%`,
-                children: undefined,
-                component: FieldComponents.TEXT,
-                variant: 'number',
-                suffix: '%',
-                disabled: true,
-              }}
             />
           </T.Data>
         </T.Row>

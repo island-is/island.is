@@ -1087,6 +1087,11 @@ export const oldAgePensionFormMessage: MessageDir = {
       defaultMessage: 'Starfshlutfall',
       description: 'Employment ratio',
     },
+    totalRatio: {
+      id: 'oap.application:employer.total.ratio',
+      defaultMessage: 'Heildar starfshlutfall',
+      description: 'Total employment ratio',
+    },
     ratioMonthly: {
       id: 'oap.application:employer.ratio.monthly',
       defaultMessage: 'Starfshlutfall á mánuði',
@@ -1201,7 +1206,7 @@ export const validatorErrorMessages = defineMessages({
   },
   employersRatioMoreThan50: {
     id: 'oap.application:employers.ratio.more.than.50',
-    defaultMessage: 'Starfhlutfall má ekki vera meira en 50%',
+    defaultMessage: 'Starfshlutfall má ekki vera meira en 50%',
     description: 'Employment rate must be less than or equal 50%',
   },
   employersUnexpectedError: {
@@ -1211,7 +1216,7 @@ export const validatorErrorMessages = defineMessages({
   },
   totalEmployersRatioMoreThan50: {
     id: 'oap.application:total.employers.ratio.more.than.50',
-    defaultMessage: 'Suma Starfhlutfals má ekki vera meira en 50%',
+    defaultMessage: 'Summa starfshlutfalls má ekki vera meira en 50%',
     description: 'Sumary of Employment rate must be less than or equal 50%',
   },
   employersCouldNotContinue: {
@@ -1222,12 +1227,12 @@ export const validatorErrorMessages = defineMessages({
   },
   employersRatioLessThan0: {
     id: 'oap.application:employers.ratio.less.than.0',
-    defaultMessage: 'Starfhlutfall má ekki vera minni en 1%',
+    defaultMessage: 'Starfshlutfall má ekki vera minni en 1%',
     description: 'Employment rate must be more than 0%',
   },
   employerRatioMissing: {
     id: 'oap.application:employer.ratio.missing',
-    defaultMessage: 'Starfhlutfall vantar',
+    defaultMessage: 'Starfshlutfall vantar',
     description: 'Employer rate missing',
   },
   employersPhoneNumberInvalid: {
