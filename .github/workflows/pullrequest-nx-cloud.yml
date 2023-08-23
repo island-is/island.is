@@ -262,6 +262,8 @@ jobs:
 
       - name: Run NX targets
         run: |
+          source ./scripts/ci/_common.sh
+          export NX_BASE=$BASE NX_HEAD=$HEAD
           pids=()
           NX_CLOUD_DISTRIBUTED_EXECUTION=false npx nx-cloud record -- npx nx format:check & pids+=($!)
 
