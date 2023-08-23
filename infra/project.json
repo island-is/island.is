@@ -29,7 +29,7 @@
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "infra/jest.config.ts",
+        "jestConfig": "infra/jest.config.js",
         "passWithNoTests": true
       },
       "outputs": ["{workspaceRoot}/coverage/infra"]
