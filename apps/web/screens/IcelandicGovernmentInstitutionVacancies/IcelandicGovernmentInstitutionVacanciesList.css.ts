@@ -19,10 +19,17 @@ export const logo = style({
   objectFit: 'contain',
   ...themeUtils.responsiveStyle({
     xs: {
-      width: 60,
+      minWidth: 60,
+      maxWidth: 60,
     },
     lg: {
-      width: 80,
+      minWidth: 80,
+      maxWidth: 80,
     },
   }),
+})
+
+export const noWrap = style({
+  display: 'flex',
+  flexWrap: 'nowrap',
 })

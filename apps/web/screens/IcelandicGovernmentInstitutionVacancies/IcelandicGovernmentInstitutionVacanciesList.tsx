@@ -507,73 +507,83 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<IcelandicGovernmentIns
                       overflow="hidden"
                     >
                       <Box width="full">
-                        <Inline
-                          collapseBelow="lg"
-                          space={[2, 2, 2, 5]}
-                          flexWrap="nowrap"
-                          alignY="center"
-                          justifyContent="spaceBetween"
+                        <GridRow
+                          rowGap={[2, 2, 2, 5]}
+                          direction={['column', 'column', 'column', 'row']}
+                          alignItems={[null, null, null, 'center']}
+                          align="spaceBetween"
+                          className={styles.noWrap}
                         >
-                          <Stack space={2}>
-                            <Text variant="eyebrow">{vacancy.fieldOfWork}</Text>
-                            <Text color="blue400" variant="h3">
-                              {vacancy.title}
-                            </Text>
-                            <Text>
-                              {shortenText(
-                                vacancy.intro,
-                                VACANCY_INTRO_MAX_LENGTH,
-                              )}
-                            </Text>
-                            <Inline space={1}>
-                              {vacancy.institutionName && (
-                                <Tag outlined={true} disabled={true}>
-                                  {vacancy.institutionName}
+                          <GridColumn>
+                            <Stack space={2}>
+                              <Text variant="eyebrow">
+                                {vacancy.fieldOfWork}
+                              </Text>
+                              <Text color="blue400" variant="h3">
+                                {vacancy.title}
+                              </Text>
+                              <Text>
+                                {shortenText(
+                                  vacancy.intro,
+                                  VACANCY_INTRO_MAX_LENGTH,
+                                )}
+                              </Text>
+                              <Inline space={1}>
+                                {vacancy.institutionName && (
+                                  <Tag outlined={true} disabled={true}>
+                                    {vacancy.institutionName}
+                                  </Tag>
+                                )}
+                                {vacancy.locations &&
+                                  vacancy.locations
+                                    .filter((location) => location.title)
+                                    .map((location, index) => (
+                                      <Tag key={index} outlined={true} disabled>
+                                        {location.title}
+                                      </Tag>
+                                    ))}
+                              </Inline>
+                              {vacancy.applicationDeadlineTo && (
+                                <Tag outlined={true} disabled variant="purple">
+                                  {n(
+                                    'applicationDeadlineTo',
+                                    'Umsóknarfrestur',
+                                  )}{' '}
+                                  {vacancy.applicationDeadlineTo}
                                 </Tag>
                               )}
-                              {vacancy.locations &&
-                                vacancy.locations
-                                  .filter((location) => location.title)
-                                  .map((location, index) => (
-                                    <Tag key={index} outlined={true} disabled>
-                                      {location.title}
-                                    </Tag>
-                                  ))}
-                            </Inline>
-                            {vacancy.applicationDeadlineTo && (
-                              <Tag outlined={true} disabled variant="purple">
-                                {n('applicationDeadlineTo', 'Umsóknarfrestur')}{' '}
-                                {vacancy.applicationDeadlineTo}
-                              </Tag>
-                            )}
-                          </Stack>
-                          <Box width="full">
-                            {logoUrl && (
-                              <>
-                                <Hidden below="lg">
-                                  <img
-                                    className={styles.logo}
-                                    src={logoUrl}
-                                    alt=""
-                                  />
-                                </Hidden>
-                                <Hidden above="md">
-                                  <Box
-                                    display="flex"
-                                    justifyContent="center"
-                                    width="full"
-                                  >
+                            </Stack>
+                          </GridColumn>
+
+                          <GridColumn>
+                            <Box width="full">
+                              {logoUrl && (
+                                <>
+                                  <Hidden below="lg">
                                     <img
                                       className={styles.logo}
                                       src={logoUrl}
                                       alt=""
                                     />
-                                  </Box>
-                                </Hidden>
-                              </>
-                            )}
-                          </Box>
-                        </Inline>
+                                  </Hidden>
+                                  <Hidden above="md">
+                                    <Box
+                                      display="flex"
+                                      justifyContent="center"
+                                      width="full"
+                                    >
+                                      <img
+                                        className={styles.logo}
+                                        src={logoUrl}
+                                        alt=""
+                                      />
+                                    </Box>
+                                  </Hidden>
+                                </>
+                              )}
+                            </Box>
+                          </GridColumn>
+                        </GridRow>
                       </Box>
                     </FocusableBox>
                   </GridColumn>
