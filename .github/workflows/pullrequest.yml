@@ -1,4 +1,4 @@
-# name: Monorepo pipeline - pull request (nx-cloud disabled)
+# name: Pull request (nx-cloud disabled)
 
 # on:
 #   pull_request: {}

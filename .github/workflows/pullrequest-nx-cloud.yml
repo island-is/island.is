@@ -1,4 +1,4 @@
-name: Monorepo pipeline - pull request (nx-cloud enabled)
+name: Pull request (nx-cloud enabled)
 
 on:
   pull_request:
