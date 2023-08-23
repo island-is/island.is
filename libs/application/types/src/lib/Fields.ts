@@ -3,6 +3,7 @@ import type {
   DatePickerBackgroundColor,
   IconProps,
   InputBackgroundColor,
+  ResponsiveProp,
   SpanType,
 } from '@island.is/island-ui/core/types'
 import { FormItem, FormText, FormTextArray, StaticText } from './Form'
@@ -10,11 +11,13 @@ import { FormItem, FormText, FormTextArray, StaticText } from './Form'
 import { ApolloClient } from '@apollo/client'
 import { Application } from './Application'
 import { CallToAction } from './StateMachine'
-import { Colors } from '@island.is/island-ui/theme'
+import { Colors, theme } from '@island.is/island-ui/theme'
 import { Condition } from './Condition'
 import { FormatInputValueFunction } from 'react-number-format'
 import React from 'react'
 import { TestSupport } from '@island.is/island-ui/utils'
+
+type Space = keyof typeof theme.spacing
 
 export type RecordObject<T = unknown> = Record<string, T>
 export type MaybeWithApplicationAndField<T> =
@@ -315,11 +318,14 @@ export interface ExpandableDescriptionField extends BaseField {
   startExpanded?: boolean
 }
 
+// type Space = keyof typeof theme.spacing
 export interface AlertMessageField extends BaseField {
   readonly type: FieldTypes.ALERT_MESSAGE
   component: FieldComponents.ALERT_MESSAGE
   alertType?: 'default' | 'warning' | 'error' | 'info' | 'success'
   message?: FormText
+  marginTop?: ResponsiveProp<Space>
+  marginBottom?: ResponsiveProp<Space>
 }
 
 export interface LinkField extends BaseField {
