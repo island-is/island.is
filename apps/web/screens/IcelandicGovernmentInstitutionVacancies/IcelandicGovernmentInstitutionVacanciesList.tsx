@@ -46,6 +46,8 @@ const ITEMS_PER_PAGE = 8
 export const VACANCY_INTRO_MAX_LENGTH = 80
 
 export const shortenText = (text: string, maxLength: number) => {
+  if (!text) return text
+
   if (text.length <= maxLength) {
     return text
   }
@@ -269,12 +271,11 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<IcelandicGovernmentIns
   useEffect(() => {
     const updatedQuery = { ...query }
 
-    let shouldScroll = false
+    const shouldScroll = updatedQuery.page !== selectedPage.toString()
 
     if (selectedPage === 1) {
       if ('page' in updatedQuery) delete updatedQuery['page']
     } else {
-      shouldScroll = updatedQuery.page !== selectedPage.toString()
       updatedQuery.page = selectedPage.toString()
     }
 
