@@ -78,17 +78,22 @@ export class AuthService {
 
     const signingKeys = await secretClient.getSigningKeys()
 
-    const successKey = signingKeys.find((sk) => {
+    const verificationResult = signingKeys.find((sk) => {
       try {
         const publicKey = sk.getPublicKey()
-        jwt.verify(token, publicKey)
-        return publicKey
+        const decodedToken = jwt.verify(token, publicKey, {
+          issuer: this.config.issuer,
+          clockTimestamp: Date.now() / 1000,
+          ignoreNotBefore: false,
+        })
+
+        return decodedToken
       } catch (e) {
         throw new Error(`Failed to verify token: ${e.message}`)
       }
     })
 
-    if (successKey) {
+    if (verificationResult) {
       return true
     }
 
