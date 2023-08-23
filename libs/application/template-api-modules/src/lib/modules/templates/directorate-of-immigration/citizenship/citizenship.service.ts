@@ -292,16 +292,16 @@ export class CitizenshipService extends BaseTemplateApiService {
       | undefined
     const applicantPassport = answers.passport
     const filteredCountriesOfResidence =
-      answers.countriesOfResidence?.hasLivedAbroad &&
+      answers.countriesOfResidence?.hasLivedAbroad == YES &&
       answers.countriesOfResidence?.selectedAbroadCountries
-        ?.filter((c) => !c.wasRemoved)
+        ?.filter((c) => c.wasRemoved !== 'true')
         ?.map((c) => ({
           countryId: parseInt(c.countryId),
         }))
     const filteredStaysAbroad =
-      answers.staysAbroad?.hasStayedAbroad &&
+      answers.staysAbroad?.hasStayedAbroad == YES &&
       answers.staysAbroad?.selectedAbroadCountries
-        ?.filter((s) => !s.wasRemoved)
+        ?.filter((s) => s.wasRemoved !== 'true')
         ?.map((s) => ({
           countryId: parseInt(s.countryId),
           dateFrom: s.dateFrom ? new Date(s.dateFrom) : undefined,
@@ -309,9 +309,9 @@ export class CitizenshipService extends BaseTemplateApiService {
           purpose: s.purpose,
         }))
     const filteredParents =
-      answers.parentInformation?.hasValidParents &&
+      answers.parentInformation?.hasValidParents == YES &&
       answers.parentInformation?.parents
-        ?.filter((p) => p.nationalId && !p.wasRemoved)
+        ?.filter((p) => p.nationalId && p.wasRemoved !== 'true')
         ?.map((p) => ({
           nationalId: p.nationalId!,
           givenName: p.givenName,

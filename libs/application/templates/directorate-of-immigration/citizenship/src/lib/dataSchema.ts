@@ -1,6 +1,6 @@
 import { z } from 'zod'
 import * as kennitala from 'kennitala'
-import { YES } from '@island.is/application/core'
+import { NO, YES } from '@island.is/application/core'
 
 const UserSchemaBase = z.object({
   nationalId: z
@@ -94,7 +94,7 @@ export const RemoveableStayAbroadSchema = z
   )
 
 const StaysAbroadSchema = z.object({
-  hasStayedAbroad: z.string().min(1),
+  hasStayedAbroad: z.enum([YES, NO]),
   selectedAbroadCountries: z.array(RemoveableStayAbroadSchema).optional(),
 })
 
@@ -113,7 +113,7 @@ export const RemoveableCountrySchema = z
   )
 
 const CountriesOfResidenceSchema = z.object({
-  hasLivedAbroad: z.string().min(1),
+  hasLivedAbroad: z.enum([YES, NO]),
   selectedAbroadCountries: z.array(RemoveableCountrySchema).optional(),
 })
 
@@ -143,7 +143,7 @@ export const ParentInformationSchema = z
   )
 
 const ParentsSchema = z.object({
-  hasValidParents: z.string().min(1),
+  hasValidParents: z.enum([YES, NO]),
   parents: z.array(ParentInformationSchema).optional(),
 })
 
