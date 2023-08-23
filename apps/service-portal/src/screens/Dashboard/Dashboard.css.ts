@@ -13,7 +13,7 @@ export const badge = styleVariants({
     backgroundColor: theme.color.red400,
     ...themeUtils.responsiveStyle({
       md: {
-        left: 42,
+        left: 47,
       },
     }),
   },
