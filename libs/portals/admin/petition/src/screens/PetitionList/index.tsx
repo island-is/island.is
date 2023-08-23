@@ -166,7 +166,7 @@ const PetitionList = () => {
                 ) : (
                   <>
                     <Button
-                      icon="reload"
+                      icon="lockOpened"
                       iconType="outline"
                       onClick={() => setIsUnlockListModalVisible(true)}
                     >
