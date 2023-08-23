@@ -12,15 +12,11 @@ interface Props {
 
 export const useIndictmentsLawsBroken = (workingCase: Case) => {
   const { lawTag } = useIndictmentCounts()
-  const lawsBroken = new Set<React.JSX.Element | null | undefined>()
+  const lawsBroken = new Set<string>()
 
   workingCase.indictmentCounts?.map((indictmentCount) =>
     indictmentCount.lawsBroken?.map((lawBroken) =>
-      lawsBroken.add(
-        <div>
-          <Text>{lawTag(lawBroken)}</Text>
-        </div>,
-      ),
+      lawsBroken.add(lawTag(lawBroken)),
     ),
   )
 
@@ -39,7 +35,11 @@ const IndictmentsLawsBrokenAccordionItem: React.FC<Props> = (props) => {
         id="lawsBrokenAccordionItem"
         label={formatMessage(lawsBrokenAccordion.heading)}
       >
-        {lawsBroken}
+        {[...lawsBroken.keys()].map((law) => (
+          <div key={law}>
+            <Text>{law}</Text>
+          </div>
+        ))}
       </AccordionItem>
     </Accordion>
   )
