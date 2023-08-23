@@ -114,11 +114,15 @@ export const ChildrenPassportSubSection = (index: number) =>
           }),
           buildFileUploadField({
             id: `${Routes.CHILDRENPASSPORT}[${index}].attachment`,
-            title: '',
+            title: supportingDocuments.labels.passport.uploadTitlePlaceholder,
             introduction: '',
             maxSize: FILE_SIZE_LIMIT,
             uploadHeader:
               supportingDocuments.labels.passport.uploadTitlePlaceholder,
+            uploadDescription:
+              supportingDocuments.labels.otherDocuments.acceptedFileTypes,
+            uploadButtonLabel:
+              supportingDocuments.labels.otherDocuments.buttonText,
           }),
         ],
       }),

@@ -48,6 +48,13 @@ export const personal = {
         description:
           'User information residence in Iceland last change date label',
       },
+      residenceInIcelandLastChangeDateShorter: {
+        id:
+          'doi.cs.application:personal.labels.userInformation.residenceInIcelandLastChangeDateShorter',
+        defaultMessage: 'Dags. lögheimilisskráningar',
+        description:
+          'User information residence in Iceland last change date shorter label',
+      },
       name: {
         id: 'doi.cs.application:personal.labels.userInformation.name',
         defaultMessage: 'Nafn',
