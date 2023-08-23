@@ -29,7 +29,12 @@ export const logo = style({
   }),
 })
 
-export const noWrap = style({
+export const vacancyCard = style({
   display: 'flex',
   flexWrap: 'nowrap',
+  height: '100%',
+})
+
+export const vacancyCardText = style({
+  alignSelf: 'flex-start',
 })

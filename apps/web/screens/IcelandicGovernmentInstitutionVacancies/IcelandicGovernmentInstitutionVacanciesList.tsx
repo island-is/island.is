@@ -512,9 +512,9 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<IcelandicGovernmentIns
                           direction={['column', 'column', 'column', 'row']}
                           alignItems={[null, null, null, 'center']}
                           align="spaceBetween"
-                          className={styles.noWrap}
+                          className={styles.vacancyCard}
                         >
-                          <GridColumn>
+                          <GridColumn className={styles.vacancyCardText}>
                             <Stack space={2}>
                               <Text variant="eyebrow">
                                 {vacancy.fieldOfWork}
