@@ -209,9 +209,6 @@ jobs:
         env:
           NX_AGENT_NAME: ${{matrix.agent}}
 
-      # - name: fix hanging post job
-      #   run: git config --local --get remote.origin.url
-
   nx-cloud-main:
     needs:
       - prepare
@@ -260,17 +257,31 @@ jobs:
       - name: Untar generated files
         run: tar zxvf generated_files.tar.gz
 
+      - name: Start NX ci run
+        run: npx nx-cloud start-ci-run
+
       - name: Run NX targets
         run: |
-          npx nx-cloud start-ci-run
-          ./scripts/ci/run-nx-affected.sh lint build
+          pids=()
+          NX_CLOUD_DISTRIBUTED_EXECUTION=false npx nx-cloud record -- npx nx format:check & pids+=($!)
+
+          npx nx affected -t lint --parallel=$MAX_JOBS &
+          pids+=($!)
+
+          npx nx affected -t build --parallel=$MAX_JOBS &
+          pids+=($!)
+
+          for pid in ${pids[*]}; do
+            if ! wait $pid; then
+              exit 1
+            fi
+          done
+
+          exit 0
 
       - name: Stop all running agents for this CI run
         if: ${{ always() }}
         run: npx nx-cloud stop-all-agents
-
-      # - name: fix hanging post job
-      #   run: git config --local --get remote.origin.url
 
   # check-matrix:
   #   runs-on: ec2-runners
