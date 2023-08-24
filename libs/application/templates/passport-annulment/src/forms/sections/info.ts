@@ -5,9 +5,7 @@ import {
   buildRadioField,
 } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
-
 import { m } from '../../lib/messages'
-import { Passport } from '../../lib/constants'
 
 export const info = buildMultiField({
   id: 'personalInfo',

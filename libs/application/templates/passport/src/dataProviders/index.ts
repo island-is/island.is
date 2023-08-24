@@ -2,18 +2,12 @@ import {
   defineTemplateApi,
   PaymentCatalogApi,
   UserProfileApi,
-  MockProviderApi,
-  DistrictsApi,
-  PassportsApi,
   NationalRegistryUserApi,
   InstitutionNationalIds,
 } from '@island.is/application/types'
 import { error } from '../lib/error'
 export { MockProviderApi } from '@island.is/application/types'
 
-// export const IdentityDocumentApi = defineTemplateApi({
-//   action: 'identityDocument',
-// })
 export const IdentityDocumentApi = defineTemplateApi({
   action: 'identityDocument',
 })
