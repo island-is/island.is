@@ -10,9 +10,9 @@ const rootName = defineMessage({
   defaultMessage: 'Pósthólf',
 })
 
-const Overview = lazy(() => import('./screens/Overview/Overview'))
+// const Overview = lazy(() => import('./screens/Overview/Overview'))
 
-// const Overview = lazy(() => import('./screens/Overview/NewOverview'))
+const Overview = lazy(() => import('./screens/Overview/NewOverview'))
 
 export const documentsModule: PortalModule = {
   name: rootName,
