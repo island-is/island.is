@@ -14,9 +14,6 @@ describe('FileController - Update case file to court rules', () => {
 
   it('should give permission to two role', () => {
     expect(rules).toHaveLength(2)
-  })
-
-  it('should give permission to prosecutors and representatives', () => {
     expect(rules).toContain(prosecutorRule)
     expect(rules).toContain(representativeRule)
   })

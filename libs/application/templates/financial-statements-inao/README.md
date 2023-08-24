@@ -1,5 +1,3 @@
-<!-- gitbook-ignore -->
-
 # Application Template Financial Statements
 
 This library was generated with [Nx](https://nx.dev).

@@ -1,5 +1,3 @@
-<!-- gitbook-ignore -->
-
 # Clients Icelandic Government Institution Vacancies
 
 This library was generated with [Nx](https://nx.dev).
