@@ -218,7 +218,7 @@ export const Menu = ({
       )
     })
   return (
-    <ModalBase // TODO modalbase.tsx
+    <ModalBase
       baseId={baseId}
       className={styles.container}
       disclosure={menuButton}
