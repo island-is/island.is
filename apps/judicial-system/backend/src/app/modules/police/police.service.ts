@@ -2,6 +2,7 @@ import { uuid } from 'uuidv4'
 import { Base64 } from 'js-base64'
 import { Agent } from 'https'
 import fetch from 'isomorphic-fetch'
+import { z } from 'zod'
 
 import {
   BadGatewayException,
@@ -172,6 +173,17 @@ export class PoliceService {
         if (res.ok) {
           if (this.config.policeCaseApiV2Available) {
             const response = await res.json()
+            const a = z.object({
+              rvMalSkjolMals_ID: z.string(),
+              heitiSkjals: z.string(),
+              malsnumer: z.string(),
+            })
+
+            const aa = z.object({
+              skjol: z.array(a),
+            })
+
+            aa.parse(response)
 
             return (
               response.skjol?.map(
