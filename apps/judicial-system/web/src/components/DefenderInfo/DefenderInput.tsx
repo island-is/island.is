@@ -25,7 +25,7 @@ import {
 import useDefendants from '../../utils/hooks/useDefendants'
 import { Validation } from '../../utils/validate'
 import { replaceTabs } from '../../utils/formatters'
-import { UpdateDefendantInput } from '../../graphql/schema'
+import { UpdateCaseInput, UpdateDefendantInput } from '../../graphql/schema'
 
 interface Props {
   onDefenderNotFound: (defenderNotFound: boolean) => void
@@ -80,8 +80,6 @@ const DefenderInput: React.FC<React.PropsWithChildren<Props>> = ({
   const handleLawyerChange = useCallback(
     (selectedOption: ValueType<ReactSelectOption>) => {
       let updatedLawyer = {
-        caseId: workingCase.id,
-        defendantId: defendantId ?? '',
         defenderName: '',
         defenderNationalId: '',
         defenderEmail: '',
@@ -102,8 +100,6 @@ const DefenderInput: React.FC<React.PropsWithChildren<Props>> = ({
         )
 
         updatedLawyer = {
-          caseId: workingCase.id,
-          defendantId: defendantId ?? '',
           defenderName: lawyer ? lawyer.name : label,
           defenderNationalId: lawyer ? lawyer.nationalId : '',
           defenderEmail: lawyer ? lawyer.email : '',
@@ -115,7 +111,7 @@ const DefenderInput: React.FC<React.PropsWithChildren<Props>> = ({
         setAndSendDefendantToServer(
           workingCase.id,
           defendantId,
-          updatedLawyer,
+          { ...updatedLawyer, caseId: workingCase.id, defendantId },
           setWorkingCase,
         )
       } else {
@@ -161,22 +157,15 @@ const DefenderInput: React.FC<React.PropsWithChildren<Props>> = ({
     [emailErrorMessage, phoneNumberErrorMessage],
   )
 
-  const formatUpdate = useCallback(
-    (property: InputType, value: string): UpdateDefendantInput => {
-      return property === 'defenderEmail'
-        ? {
-            caseId: workingCase.id,
-            defendantId: defendantId ?? '',
-            defenderEmail: value,
-          }
-        : {
-            caseId: workingCase.id,
-            defendantId: defendantId ?? '',
-            defenderPhoneNumber: value,
-          }
-    },
-    [defendantId, workingCase.id],
-  )
+  const formatUpdate = useCallback((property: InputType, value: string) => {
+    return property === 'defenderEmail'
+      ? {
+          defenderEmail: value,
+        }
+      : {
+          defenderPhoneNumber: value,
+        }
+  }, [])
 
   const handleLawyerPropertyChange = useCallback(
     (
@@ -200,9 +189,12 @@ const DefenderInput: React.FC<React.PropsWithChildren<Props>> = ({
         propertyValidation.errorMessageHandler.setErrorMessage,
       )
 
-      updateDefendantState(update, setWorkingCase)
+      updateDefendantState(
+        { ...update, caseId: workingCase.id, defendantId },
+        setWorkingCase,
+      )
     },
-    [formatUpdate, propertyValidations, updateDefendantState],
+    [formatUpdate, propertyValidations, updateDefendantState, workingCase.id],
   )
 
   const handleLawyerPropertyBlur = useCallback(
@@ -221,9 +213,9 @@ const DefenderInput: React.FC<React.PropsWithChildren<Props>> = ({
         propertyValidation.errorMessageHandler.setErrorMessage,
       )
 
-      updateDefendant(update)
+      updateDefendant({ ...update, caseId: workingCase.id, defendantId })
     },
-    [formatUpdate, propertyValidations, updateDefendant],
+    [formatUpdate, propertyValidations, updateDefendant, workingCase.id],
   )
 
   return (
