@@ -17,9 +17,8 @@ import {
   FormModes,
   PassportsApi,
 } from '@island.is/application/types'
-import {
-  // IdentityDocumentApi,
-} from '@island.is/application/types'
+import // IdentityDocumentApi,
+'@island.is/application/types'
 import {
   DeliveryAddressApi,
   SyslumadurPaymentCatalogApi,
