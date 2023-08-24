@@ -3,5 +3,6 @@ module.exports = {
     '^.+\\.[tj]sx?$': 'esbuild-jest',
   },
   moduleFileExtensions: ['ts', 'tsx', 'js'],
+  coverageDirectory: '../coverage/infra',
   displayName: 'Config DSL',
 }
