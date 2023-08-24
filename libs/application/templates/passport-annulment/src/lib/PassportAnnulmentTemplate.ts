@@ -37,7 +37,7 @@ const PassportAnnulmentTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.PASSPORT_ANNULMENT,
   name: m.formName.defaultMessage,
-  featureFlag: Features.passportApplication,
+  featureFlag: Features.passportAnnulmentApplication,
   dataSchema,
   stateMachineConfig: {
     initial: States.DRAFT,
