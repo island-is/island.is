@@ -3,7 +3,6 @@ import { Injectable } from '@nestjs/common'
 import type { User } from '@island.is/auth-nest-tools'
 import {
   CreateClientType,
-  MeClientsControllerCreateRequest,
   MeClientsControllerUpdateRequest,
 } from '@island.is/clients/auth/admin-api'
 import { Environment } from '@island.is/shared/types'
@@ -124,21 +123,27 @@ export class ClientsService extends MultiEnvironmentService {
     user: User,
     input: CreateClientInput,
   ): Promise<CreateClientResponse[]> {
-    const applicationRequest: MeClientsControllerCreateRequest = {
-      tenantId: input.tenantId,
-      adminCreateClientDto: {
-        clientId: input.clientId,
-        clientType: (input.clientType as string) as CreateClientType,
-        clientName: input.displayName,
-      },
-    }
-
     const settledPromises = await Promise.allSettled(
       input.environments.map(async (environment) => {
+        const tenant = await this.adminApiByEnvironmentWithAuth(
+          environment,
+          user,
+        )?.meTenantsControllerFindById({
+          tenantId: input.tenantId,
+        })
+
         return this.adminApiByEnvironmentWithAuth(
           environment,
           user,
-        )?.meClientsControllerCreate(applicationRequest)
+        )?.meClientsControllerCreate({
+          tenantId: input.tenantId,
+          adminCreateClientDto: {
+            clientId: input.clientId,
+            clientType: (input.clientType as string) as CreateClientType,
+            clientName: input.displayName,
+            contactEmail: tenant?.contactEmail,
+          },
+        })
       }),
     )
 
