@@ -19,7 +19,7 @@
 /libs/portals/admin/                                                                                     @island-is/aranja
 /libs/portals/core/                                                                                      @island-is/aranja @island-is/hugsmidjan
 
-/*                                                                                                       @island-is/core
+# /*                                                                                                       @island-is/core
 /.github/                                                                                                @island-is/core
 /libs/api/domains/identity/                                                                              @island-is/core
 /libs/testing/                                                                                           @island-is/core
