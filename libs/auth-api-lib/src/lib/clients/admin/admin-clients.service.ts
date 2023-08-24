@@ -180,6 +180,7 @@ export class AdminClientsService {
             domainName: tenantId,
             nationalId: tenant.nationalId,
             clientName: clientDto.clientName,
+            contactEmail: clientDto.contactEmail,
             ...this.defaultClientAttributes(clientDto.clientType),
           },
           { transaction },
