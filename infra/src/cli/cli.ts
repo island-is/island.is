@@ -76,15 +76,32 @@ yargs(process.argv.slice(2))
     'Fetch secret environment variables',
     (yargs) => {
       return yargs
-        .option('services', { demandOption: true, array: true })
-        .option('reset', { type: 'boolean', default: false })
+        .option('services', {
+          array: true,
+          default: [],
+          desc: 'Services to fetch secrets for',
+        })
+        .alias('service', 'services')
+        .option('reset', {
+          type: 'boolean',
+          default: false,
+          desc: 'Discard your old secrets files',
+        })
+        .alias('fresh', 'reset')
         .option('help', { type: 'boolean' })
+        .demandCommand(0)
     },
     async (argv) => {
+      for (const arg of argv._.slice(1).map((s) => s.toString()))
+        argv.services.push(arg)
       if (argv.reset) {
         resetAllMappedFiles()
       }
-      await updateSecretFiles(argv.services)
+      console.log('argv:', argv)
+      const args = argv._.slice(1)
+      console.log('args:', args)
+      return
+      // await updateSecretFiles(argv.services || [])
     },
   )
   .demandCommand(1)
