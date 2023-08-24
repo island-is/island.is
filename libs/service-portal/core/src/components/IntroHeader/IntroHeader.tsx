@@ -44,7 +44,7 @@ export const IntroHeader = (props: IntroHeaderProps & Props) => {
   }, [loading, pathname])
 
   return (
-    <GridRow marginBottom={marginBottom}>
+    <GridRow marginBottom={marginBottom ?? 4}>
       <GridColumn span={isMobile ? '8/8' : props.narrow ? '4/8' : '5/8'}>
         <Text variant="h3" as="h1">
           {formatMessage(props.title)}
