@@ -35,15 +35,14 @@ export const info = buildMultiField({
       title: m.infoText,
       titleVariant: 'h3',
       description: m.infoTextDescription,
-      space: 'gutter',
+      space: 'containerGutter',
     }),
-
     buildRadioField({
       id: 'status',
       title: m.statusTitle,
-      width: 'full',
-      space: 'gutter',
+      width: 'half',
       largeButtons: false,
+      space: 'containerGutter',
       options: () => [
         {
           value: 'lost',
@@ -61,6 +60,7 @@ export const info = buildMultiField({
       variant: 'textarea',
       doesNotRequireAnswer: true,
       placeholder: m.commentPlaceholder,
+      rows: 7,
     }),
   ],
 })

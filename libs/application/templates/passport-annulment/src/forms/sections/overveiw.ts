@@ -19,7 +19,6 @@ export const overview = buildMultiField({
       id: 'overviewPI.infoTitle',
       title: m.infoTitle,
       titleVariant: 'h3',
-      description: '',
       space: 'gutter',
       marginBottom: 'gutter',
     }),
@@ -41,9 +40,8 @@ export const overview = buildMultiField({
     }),
 
     buildDescriptionField({
-      id: 'overview.space2',
+      id: 'overview.space',
       title: '',
-      description: '',
       space: 'gutter',
     }),
     buildKeyValueField({
@@ -55,9 +53,8 @@ export const overview = buildMultiField({
           : m.statusStolen,
     }),
     buildDescriptionField({
-      id: 'overview.space3',
+      id: 'overview.space2',
       title: '',
-      description: '',
       space: 'gutter',
     }),
     buildKeyValueField({
@@ -71,7 +68,6 @@ export const overview = buildMultiField({
     buildDescriptionField({
       id: 'overview.space3',
       title: '',
-      description: '',
       space: 'gutter',
     }),
     buildSubmitField({

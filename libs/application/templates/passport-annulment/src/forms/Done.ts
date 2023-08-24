@@ -32,7 +32,6 @@ export const Done: Form = buildForm({
             (application.answers.passport as Passport)?.userPassport !== ''
               ? m.applicationCompleteNextStepsDescriptionPersonalApplication
               : m.applicationCompleteNextStepsDescription,
-          space: 'containerGutter',
         }),
       ],
     }),

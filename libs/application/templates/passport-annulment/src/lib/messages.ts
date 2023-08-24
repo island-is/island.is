@@ -236,7 +236,7 @@ export const m = defineMessages({
   },
   applicationCompleteNextStepsDescription: {
     id: 'paa.application:complete.nextSteps.description#markdown',
-    defaultMessage: `* Fara í myndatöku á næsta afgreiðslustað sýslumanns.\\n\\n * Þú færð senda tilkynningu á Mínar síður þegar vegabréfið er tilbúið og hægt er að sækja það á þann afhendingarstað sem þú valdir.`,
+    defaultMessage: `* Fara í myndatöku á næsta afgreiðslustað sýslumanns.`,
     description: 'Some description',
   },
   applicationCompleteNextStepsDescriptionParentA: {
