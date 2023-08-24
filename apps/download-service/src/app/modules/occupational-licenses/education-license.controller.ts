@@ -1,12 +1,4 @@
-import {
-  Body,
-  Controller,
-  Header,
-  Post,
-  Res,
-  Param,
-  UseGuards,
-} from '@nestjs/common'
+import { Controller, Header, Post, Res, Param, UseGuards } from '@nestjs/common'
 import { ApiOkResponse } from '@nestjs/swagger'
 import { Response } from 'express'
 import { ApiScope } from '@island.is/auth/scopes'

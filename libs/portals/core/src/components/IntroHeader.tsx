@@ -8,7 +8,7 @@ import {
   GridColumn,
   GridRow,
   Hidden,
-  Link,
+  LinkV2,
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
@@ -20,7 +20,7 @@ export interface IntroHeaderProps {
   hideImgPrint?: boolean
   marginBottom?: BoxProps['marginBottom']
   children?: React.ReactNode
-  onClick?: () => void
+  buttonUrl?: string
   buttonText?: MessageDescriptor | string
   buttonType?: 'button' | 'text'
 }
@@ -32,7 +32,7 @@ export const IntroHeader = ({
   hideImgPrint = false,
   marginBottom = 6,
   children,
-  onClick,
+  buttonUrl,
   buttonText,
   buttonType = 'button',
 }: IntroHeaderProps) => {
@@ -49,15 +49,14 @@ export const IntroHeader = ({
             {formatMessage(intro)}
           </Text>
         )}
-        {onClick && buttonText && (
+        {buttonUrl && buttonText && (
           <Box paddingTop={2}>
             <Button
               variant={buttonType === 'button' ? 'utility' : 'text'}
               icon="download"
               iconType="outline"
-              onClick={onClick}
             >
-              {formatMessage(buttonText)}
+              <LinkV2 href={buttonUrl}>{formatMessage(buttonText)}</LinkV2>
             </Button>
           </Box>
         )}

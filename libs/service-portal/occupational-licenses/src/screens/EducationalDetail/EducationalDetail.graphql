@@ -16,5 +16,6 @@ query getEducationalLicenseById($id: String!) {
     school
     programme
     date
+    url
   }
 }

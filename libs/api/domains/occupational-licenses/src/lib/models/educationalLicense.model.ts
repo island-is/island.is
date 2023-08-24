@@ -13,4 +13,6 @@ export class EducationalLicense {
 
   @Field(() => String)
   date!: string
+  @Field(() => String)
+  url?: string
 }

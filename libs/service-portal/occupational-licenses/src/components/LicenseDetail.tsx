@@ -6,7 +6,7 @@ type LicenseDetailProps = {
   title: string
   intro: string
   img: string
-  onClick?: () => void
+  url?: string
   buttonText?: string
   name: string
   dateOfBirth: string
@@ -21,7 +21,7 @@ export const LicenseDetail: React.FC<LicenseDetailProps> = ({
   title,
   intro,
   img,
-  onClick,
+  url,
   buttonText,
   name,
   dateOfBirth,
@@ -37,7 +37,7 @@ export const LicenseDetail: React.FC<LicenseDetailProps> = ({
         title={title}
         intro={intro}
         img={img}
-        onClick={onClick ? onClick : undefined}
+        buttonUrl={url ? url : undefined}
         buttonText={buttonText ? buttonText : undefined}
         buttonType="button"
       />

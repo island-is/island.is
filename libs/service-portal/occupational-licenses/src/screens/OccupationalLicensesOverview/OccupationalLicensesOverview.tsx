@@ -18,7 +18,7 @@ import {
 } from '@island.is/api/schema'
 
 const EducationActionCard: React.FC<
-  OccupationalLicenseEducationalLicense & { orgImage: string }
+  Omit<OccupationalLicenseEducationalLicense, 'url'> & { orgImage: string }
 > = (props) => {
   const isValid = new Date(props.date) < new Date()
   const { formatDateFns } = useLocale()

@@ -28,10 +28,6 @@ export const EducationDetail = () => {
 
   const license = { ...data?.occupationalLicenseEducationalLicense }
 
-  const handleDownloadLicense = () => {
-    console.log('should down pdf license')
-  }
-
   if (loading)
     return (
       <Box paddingTop="p1">
@@ -68,7 +64,7 @@ export const EducationDetail = () => {
       title={programme}
       intro="Hér birtast leyfisbréf kennara sem hafa verið útskrifaðir frá 1988. Bréfin eru sótt til Menntamálastofnunar."
       img={organizationImage}
-      onClick={handleDownloadLicense}
+      url={license.url}
       buttonText="Sækja leyfisbréf"
       name={user.profile.name}
       dateOfBirth={formatDateFns(birthday, 'dd.mm.yyyy')}
