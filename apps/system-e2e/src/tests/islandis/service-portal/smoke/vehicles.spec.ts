@@ -47,7 +47,7 @@ test.describe('MS - Vehicles', () => {
         .locator(`role=button[name="${label(messages.vehicleNameSecret)}"]`)
         .first()
       const ownershipLink = page
-        .locator(`role=button[name="${label(messages.changeOfOwnership)}"]`)
+        .getByRole('button', { name: label(messages.changeOfOwnership) })
         .first()
 
       const viewLink = page.getByText(label(messages.seeInfo)).first()
