@@ -262,12 +262,14 @@ export interface TempUpdateCase
     | 'sessionArrangements'
     | 'appealState'
     | 'appealRulingDecision'
+    | 'defendants'
   > {
   courtDocuments?: CourtDocument[]
   type?: CaseType
   sessionArrangements?: SessionArrangements
   appealState?: CaseAppealState
   appealRulingDecision?: CaseAppealRulingDecision
+  defendants?: Defendant[]
 }
 
 export interface TempCreateCase extends Omit<CreateCase, 'type'> {
