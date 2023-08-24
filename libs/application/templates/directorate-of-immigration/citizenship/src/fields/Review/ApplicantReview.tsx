@@ -61,7 +61,7 @@ export const ApplicantReview: FC<Props> = ({
             <Text>
               {`${formatMessage(
                 personal.labels.userInformation
-                  .residenceInIcelandLastChangeDate,
+                  .residenceInIcelandLastChangeDateShorter,
               )}: ${
                 answers?.userInformation?.residenceInIcelandLastChangeDate
               }`}
