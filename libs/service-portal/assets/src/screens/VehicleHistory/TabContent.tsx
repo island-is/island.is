@@ -12,7 +12,7 @@ interface Props {
 
 export const TabContent: FC<React.PropsWithChildren<Props>> = ({ data }) => {
   useNamespaces('sp.vehicles')
-  const { formatMessage } = useLocale()
+  const { formatMessage, lang } = useLocale()
   const [page, setPage] = useState(1)
 
   const pageSize = 15
@@ -65,7 +65,7 @@ export const TabContent: FC<React.PropsWithChildren<Props>> = ({ data }) => {
           <HistoryTableHeader labels={headerLabels} />
 
           {data.slice(pagedInfo.from, pagedInfo.to).map((item, index) => {
-            return <HistoryTableData key={index} vehicle={item} />
+            return <HistoryTableData key={index} vehicle={item} locale={lang} />
           })}
         </T.Table>
       </Box>

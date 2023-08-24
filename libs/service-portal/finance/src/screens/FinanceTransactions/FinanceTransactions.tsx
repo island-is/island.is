@@ -58,8 +58,8 @@ const FinanceTransactions = () => {
     loading: chargeTypeDataLoading,
     error: chargeTypeDataError,
   } = useQuery<Query>(GET_CUSTOMER_CHARGETYPE, {
-    onCompleted: () => {
-      if (customerChartypeData?.getCustomerChargeType?.chargeType) {
+    onCompleted: (data) => {
+      if (data?.getCustomerChargeType?.chargeType) {
         setEmptyChargeTypes()
       } else {
         setChargeTypesEmpty(true)

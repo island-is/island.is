@@ -36,6 +36,7 @@ export default {
     'questionAndAnswer',
     'sectionHeading',
     'sectionWithImage',
+    'sectionWithVideo',
     'url',
     'articleGroup',
     'articleSubgroup',

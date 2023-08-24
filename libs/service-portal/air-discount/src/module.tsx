@@ -3,7 +3,6 @@ import { defineMessage } from 'react-intl'
 import { ApiScope } from '@island.is/auth/scopes'
 import { m } from '@island.is/service-portal/core'
 import { PortalModule } from '@island.is/portals/core'
-import { Features } from '@island.is/feature-flags'
 import { AirDiscountPaths } from './lib/paths'
 
 const AirDiscountOverview = lazy(() =>
@@ -15,7 +14,6 @@ export const airDiscountModule: PortalModule = {
     id: 'sp.air-discount',
     defaultMessage: 'Loftbrú',
   }),
-  featureFlag: Features.servicePortalAirDiscountModule,
   enabled: ({ isCompany }) => !isCompany,
   routes: ({ userInfo }) => [
     {

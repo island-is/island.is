@@ -42,7 +42,7 @@ const Texts = ({ termsUrl = '#' }) => ({
   },
 })
 
-const EmbeddedVideo: FC<React.PropsWithChildren<EmbeddedVideoProps>> = ({
+export const EmbeddedVideo: FC<EmbeddedVideoProps> = ({
   title,
   url,
   locale,

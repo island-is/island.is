@@ -781,6 +781,14 @@ export const vehicleMessage = defineMessages({
     id: 'sp.vehicles:signup-to-driving-school',
     defaultMessage: 'Skrá mig í ökunám',
   },
+  vehicleDrivingLessonsPracticeDriving: {
+    id: 'sp.vehicles:vehicle-driving-lessons-practice-driving',
+    defaultMessage: 'Æfingaakstur',
+  },
+  odometer: {
+    id: 'sp.vehicles:odometer',
+    defaultMessage: 'Kílómetrastaða',
+  },
 })
 
 export const urls = defineMessages({

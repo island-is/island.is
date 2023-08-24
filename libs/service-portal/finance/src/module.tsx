@@ -4,6 +4,7 @@ import { m } from '@island.is/service-portal/core'
 import { PortalModule } from '@island.is/portals/core'
 import { FinancePaths } from './lib/paths'
 import { Navigate } from 'react-router-dom'
+import { financeRoutesLoader } from './screens/FinanceRoutes.loader'
 
 const FinanceStatus = lazy(() => import('./screens/FinanceStatus'))
 const FinanceBills = lazy(() => import('./screens/FinanceBills'))
@@ -17,7 +18,7 @@ const FinanceSchedule = lazy(() => import('./screens/FinanceSchedule'))
 export const financeModule: PortalModule = {
   name: 'Fjármál',
   layout: 'full',
-  routes: ({ userInfo }) => [
+  routes: ({ userInfo, client }) => [
     {
       name: m.finance,
       path: FinancePaths.FinanceRoot,
@@ -46,6 +47,7 @@ export const financeModule: PortalModule = {
       element: <FinanceTransactions />,
       enabled: userInfo.scopes.includes(ApiScope.financeOverview),
       dynamic: true,
+      loader: financeRoutesLoader({ userInfo, client }),
     },
     {
       name: m.financeEmployeeClaims,
@@ -53,6 +55,7 @@ export const financeModule: PortalModule = {
       element: <FinanceEmployeeClaims />,
       enabled: userInfo.scopes.includes(ApiScope.financeSalary),
       dynamic: true,
+      loader: financeRoutesLoader({ userInfo, client }),
     },
     {
       name: m.financeLocalTax,
@@ -60,6 +63,7 @@ export const financeModule: PortalModule = {
       element: <FinanceLocalTax />,
       enabled: userInfo.scopes.includes(ApiScope.financeOverview),
       dynamic: true,
+      loader: financeRoutesLoader({ userInfo, client }),
     },
     {
       name: m.financeSchedules,
@@ -67,6 +71,7 @@ export const financeModule: PortalModule = {
       enabled: userInfo.scopes.includes(ApiScope.financeSchedule),
       element: <FinanceSchedule />,
       dynamic: true,
+      loader: financeRoutesLoader({ userInfo, client }),
     },
   ],
 }
