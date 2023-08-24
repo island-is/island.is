@@ -499,7 +499,7 @@ export const m = defineMessages({
   },
   occupationalLicenses: {
     id: 'service.portal:occupationalLicenses',
-    defaultMessage: 'Starfsleyfi',
+    defaultMessage: 'Mín starfsleyfi',
   },
   occupationalLicensesDescription: {
     id: 'service.portal:occupationalLicensesDescription',

@@ -1,5 +1,5 @@
 export enum OccupationalLicensesPaths {
   OccupationalLicensesRoot = '/starfsleyfi',
-  OccupationalLicensesHealthDirectorateDetail = '/starfsleyfi/landlaeknir/:id',
-  OccupationalLicensesEducationDetail = '/starfsleyfi/mms/:id',
+  OccupationalLicensesHealthDirectorateDetail = '/starfsleyfi/landlaeknir/:type/:id',
+  OccupationalLicensesEducationDetail = '/starfsleyfi/mms/:type/:id',
 }

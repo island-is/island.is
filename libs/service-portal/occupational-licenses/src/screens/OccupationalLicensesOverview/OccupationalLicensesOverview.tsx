@@ -41,6 +41,9 @@ const EducationActionCard: React.FC<
         url: OccupationalLicensesPaths.OccupationalLicensesEducationDetail.replace(
           ':id',
           props.id,
+        ).replace(
+          ':type',
+          props.programme.charAt(0).toUpperCase() + props.programme.slice(1),
         ),
       }}
       image={{
@@ -79,7 +82,7 @@ const HealthDirectorateActionCard: React.FC<
         url: OccupationalLicensesPaths.OccupationalLicensesHealthDirectorateDetail.replace(
           ':id',
           props.licenseNumber,
-        ),
+        ).replace(':type', props.license ?? ''),
       }}
       image={{
         type: 'image',

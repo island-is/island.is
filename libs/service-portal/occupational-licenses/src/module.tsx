@@ -19,7 +19,7 @@ export const occupationalLicensesModule: PortalModule = {
   enabled: ({ isCompany }) => !isCompany,
   routes: ({ userInfo }) => [
     {
-      name: 'Starfsleyfi',
+      name: 'Mín starfsleyfi',
       path: OccupationalLicensesPaths.OccupationalLicensesRoot,
       enabled: true,
       element: <OccupationalLicensesOverviewScreen />,

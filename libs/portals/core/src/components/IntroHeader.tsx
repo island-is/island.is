@@ -4,11 +4,9 @@ import { MessageDescriptor } from 'react-intl'
 import {
   Box,
   BoxProps,
-  Button,
   GridColumn,
   GridRow,
   Hidden,
-  LinkV2,
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
