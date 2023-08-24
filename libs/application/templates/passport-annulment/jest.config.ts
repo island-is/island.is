@@ -10,6 +10,7 @@ export default {
     ],
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
-  coverageDirectory: '<rootDir>/coverage/libs/application/templates/passport-annulment',
+  coverageDirectory:
+    '<rootDir>/coverage/libs/application/templates/passport-annulment',
   displayName: 'application-templates-passport-annulment',
 }
