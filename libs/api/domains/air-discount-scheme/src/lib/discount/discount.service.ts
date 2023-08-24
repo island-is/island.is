@@ -120,7 +120,7 @@ export class DiscountService {
         return null
       })
 
-    return discountResponse
+    return discountResponse && null
   }
 
   private async createDiscount(
