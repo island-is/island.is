@@ -8,7 +8,7 @@ const SvgLockClosed = ({
 }: React.SVGProps<SVGSVGElement> & SVGRProps) => {
   return (
     <svg
-      className="lock-closed_svg__ionicon"
+      className="lock-opened_svg__ionicon"
       viewBox="0 0 512 512"
       aria-labelledby={titleId}
       {...props}
