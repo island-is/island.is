@@ -42,6 +42,7 @@ export type Icon =
   | 'informationCircle'
   | 'link'
   | 'lockClosed'
+  | 'lockOpened'
   | 'logOut'
   | 'mail'
   | 'menu'
@@ -119,6 +120,7 @@ export default {
     informationCircle: 'InformationCircle',
     link: 'Link',
     lockClosed: 'LockClosed',
+    lockOpened: 'LockOpened',
     logOut: 'LogOut',
     mail: 'Mail',
     menu: 'Menu',
@@ -195,6 +197,7 @@ export default {
     informationCircle: 'InformationCircleOutline',
     link: 'LinkOutline',
     lockClosed: 'LockClosedOutline',
+    lockOpened: 'LockOpenedOutline',
     logOut: 'LogOutOutline',
     mail: 'MailOutline',
     menu: 'MenuOutline',
