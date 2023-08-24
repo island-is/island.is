@@ -19,9 +19,6 @@ describe('FileController - Delete case file rules', () => {
 
   it('should give permission to four role', () => {
     expect(rules).toHaveLength(4)
-  })
-
-  it('should give permission to prosecutors and representatives', () => {
     expect(rules).toContain(prosecutorRule)
     expect(rules).toContain(representativeRule)
     expect(rules).toContain(judgeRule)

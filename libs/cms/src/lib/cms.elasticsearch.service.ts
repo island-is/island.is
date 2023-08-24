@@ -280,6 +280,7 @@ export class CmsElasticsearchService {
       index,
       {
         types: ['webVacancy'],
+        size: 1000,
       },
     )
     return vacanciesResponse.hits.hits

@@ -1,5 +1,3 @@
-<!-- gitbook-ignore -->
-
 ## Development
 
 1.  Make sure you have Docker, then run:

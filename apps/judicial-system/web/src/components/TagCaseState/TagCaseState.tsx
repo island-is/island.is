@@ -83,7 +83,7 @@ const TagCaseState: React.FC<React.PropsWithChildren<Props>> = (Props) => {
   if (!tagVariant) return null
 
   return (
-    <Tag variant={tagVariant?.color} outlined disabled>
+    <Tag variant={tagVariant?.color} outlined disabled truncate>
       {tagVariant.text}
     </Tag>
   )

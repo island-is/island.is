@@ -1,5 +1,3 @@
-<!-- gitbook-ignore -->
-
 # Clients Electronic Registrations
 
 This library was generated with [Nx](https://nx.dev).

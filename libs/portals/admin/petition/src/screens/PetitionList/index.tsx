@@ -91,7 +91,7 @@ const PetitionList = () => {
                 <AlertMessage
                   type="error"
                   title={formatMessage(m.listIsLocked)}
-                  message={formatMessage(m.intro)}
+                  message={formatMessage(m.listIsLockedMessage)}
                 />
               </Box>
             )}
@@ -166,7 +166,7 @@ const PetitionList = () => {
                 ) : (
                   <>
                     <Button
-                      icon="reload"
+                      icon="lockOpened"
                       iconType="outline"
                       onClick={() => setIsUnlockListModalVisible(true)}
                     >

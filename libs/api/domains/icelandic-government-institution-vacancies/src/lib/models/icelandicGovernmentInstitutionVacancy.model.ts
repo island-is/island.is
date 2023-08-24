@@ -1,6 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 import { Document } from '@contentful/rich-text-types'
 import graphqlTypeJson from 'graphql-type-json'
+import { CacheField } from '@island.is/nest/graphql'
 
 type Html = { __typename: string; document?: Document }
 
@@ -33,7 +34,10 @@ class IcelandicGovernmentInstitutionVacancyListItemBase {
   @Field({ nullable: true })
   institutionName?: string
 
-  @Field(() => [IcelandicGovernmentInstitutionVacancyLocation], {
+  @Field({ nullable: true })
+  institutionReferenceIdentifier?: string
+
+  @CacheField(() => [IcelandicGovernmentInstitutionVacancyLocation], {
     nullable: true,
   })
   locations?: IcelandicGovernmentInstitutionVacancyLocation[]
@@ -65,7 +69,7 @@ export class IcelandicGovernmentInstitutionVacancy extends IcelandicGovernmentIn
   @Field({ nullable: true })
   jobPercentage?: string
 
-  @Field(() => [IcelandicGovernmentInstitutionVacancyContact], {
+  @CacheField(() => [IcelandicGovernmentInstitutionVacancyContact], {
     nullable: true,
   })
   contacts?: IcelandicGovernmentInstitutionVacancyContact[]
@@ -73,19 +77,19 @@ export class IcelandicGovernmentInstitutionVacancy extends IcelandicGovernmentIn
   @Field({ nullable: true })
   applicationHref?: string
 
-  @Field(() => graphqlTypeJson, { nullable: true })
+  @CacheField(() => graphqlTypeJson, { nullable: true })
   intro?: Html | null
 
-  @Field(() => graphqlTypeJson, { nullable: true })
+  @CacheField(() => graphqlTypeJson, { nullable: true })
   qualificationRequirements?: Html | null
 
-  @Field(() => graphqlTypeJson, { nullable: true })
+  @CacheField(() => graphqlTypeJson, { nullable: true })
   tasksAndResponsibilities?: Html | null
 
-  @Field(() => graphqlTypeJson, { nullable: true })
+  @CacheField(() => graphqlTypeJson, { nullable: true })
   description?: Html | null
 
-  @Field(() => graphqlTypeJson, { nullable: true })
+  @CacheField(() => graphqlTypeJson, { nullable: true })
   salaryTerms?: Html | null
 
   @Field({ nullable: true })

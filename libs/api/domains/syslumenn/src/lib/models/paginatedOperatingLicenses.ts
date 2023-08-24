@@ -1,15 +1,16 @@
 import { Field, ObjectType } from '@nestjs/graphql'
+import { CacheField } from '@island.is/nest/graphql'
 import { OperatingLicense } from './operatingLicense'
 import { PaginationInfo } from './paginationInfo'
 
 @ObjectType()
 export class PaginatedOperatingLicenses {
-  @Field({ nullable: true })
+  @CacheField({ nullable: true })
   paginationInfo?: PaginationInfo
 
   @Field({ nullable: true })
   searchQuery?: string
 
-  @Field(() => [OperatingLicense])
+  @CacheField(() => [OperatingLicense])
   results?: OperatingLicense[]
 }
