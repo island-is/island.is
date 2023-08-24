@@ -34,6 +34,9 @@ class IcelandicGovernmentInstitutionVacancyListItemBase {
   @Field({ nullable: true })
   institutionName?: string
 
+  @Field({ nullable: true })
+  institutionReferenceIdentifier?: string
+
   @CacheField(() => [IcelandicGovernmentInstitutionVacancyLocation], {
     nullable: true,
   })
