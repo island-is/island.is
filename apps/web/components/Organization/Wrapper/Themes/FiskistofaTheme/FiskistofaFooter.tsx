@@ -1,3 +1,4 @@
+import { ReactNode } from 'react'
 import cn from 'classnames'
 import { BLOCKS } from '@contentful/rich-text-types'
 
@@ -17,7 +18,6 @@ import { webRichText } from '@island.is/web/utils/richText'
 import { useNamespace } from '@island.is/web/hooks'
 
 import * as styles from './FiskistofaFooter.css'
-import { ReactNode } from 'react'
 
 interface FiskistofaFooterProps {
   footerItems: FooterItem[]

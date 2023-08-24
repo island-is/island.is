@@ -138,15 +138,16 @@ const useSearch = (
         })
 
       // the api only completes single terms get only single terms
-      const indexOfLastSpace = term?.lastIndexOf(' ')
-      const hasSpace = indexOfLastSpace !== -1
-      const prefix = hasSpace ? term?.slice(0, indexOfLastSpace) : ''
-      const queryString = hasSpace ? term?.slice(indexOfLastSpace) : term
-      dispatch({
-        type: 'searchString',
-        term,
-        prefix,
-      })
+      if (term) {
+        const indexOfLastSpace = term.lastIndexOf(' ')
+        const hasSpace = indexOfLastSpace !== -1
+        const prefix = hasSpace ? term.slice(0, indexOfLastSpace) : ''
+        dispatch({
+          type: 'searchString',
+          term,
+          prefix,
+        })
+      }
     }, DEBOUNCE_TIMER))
 
     return () => clearTimeout(thisTimerId)

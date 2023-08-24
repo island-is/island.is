@@ -42,31 +42,44 @@ export const NewsArticle: React.FC<
           {newsItem?.intro}
         </Text>
       </Box>
-      {Boolean(newsItem?.image) && (
+      {newsItem && newsItem?.image && (
         <Box
           paddingY={2}
           className={cn({
-            [styles.floatedImage]: newsItem?.fullWidthImageInContent === false,
+            [styles.floatedImage]: newsItem.fullWidthImageInContent === false,
           })}
         >
           <Image
-            {...newsItem?.image}
-            url={newsItem?.image?.url + '?w=774&fm=webp&q=80'}
-            thumbnail={newsItem?.image?.url + '?w=50&fm=webp&q=80'}
+            {...newsItem.image}
+            url={
+              newsItem.image?.url
+                ? newsItem.image?.url + '?w=774&fm=webp&q=80'
+                : ''
+            }
+            thumbnail={
+              newsItem.image?.url
+                ? newsItem.image?.url + '?w=50&fm=webp&q=80'
+                : ''
+            }
           />
         </Box>
       )}
       <Box className="rs_read" paddingBottom={4} width="full">
-        {webRichText(newsItem?.content as SliceType[], {
-          renderComponent: {
-            // Make sure that images in the content are full width
-            Image: (slice) => (
-              <Box className={styles.clearBoth}>
-                <Image {...slice} thumbnail={slice.url + '?w=50'} />
-              </Box>
-            ),
+        {webRichText(
+          newsItem?.content
+            ? (newsItem?.content as SliceType[])
+            : ([] as SliceType[]),
+          {
+            renderComponent: {
+              // Make sure that images in the content are full width
+              Image: (slice) => (
+                <Box className={styles.clearBoth}>
+                  <Image {...slice} thumbnail={slice.url + '?w=50'} />
+                </Box>
+              ),
+            },
           },
-        })}
+        )}
       </Box>
     </Box>
   )
