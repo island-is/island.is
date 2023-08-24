@@ -16,8 +16,6 @@ import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader
 import { titles, core, errors } from '@island.is/judicial-system-web/messages'
 import { Box, Button, toast } from '@island.is/island-ui/core'
 import {
-  Defendant as TDefendant,
-  UpdateDefendant,
   IndictmentSubtypeMap,
   CrimeSceneMap,
   IndictmentSubtype,
@@ -27,7 +25,11 @@ import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import useDefendants from '@island.is/judicial-system-web/src/utils/hooks/useDefendants'
 import { isDefendantStepValidIndictments } from '@island.is/judicial-system-web/src/utils/validate'
-import { CaseOrigin } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  CaseOrigin,
+  Defendant as TDefendant,
+  UpdateDefendantInput,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import * as constants from '@island.is/judicial-system/consts'
 
 import { DefendantInfo } from '../../components'
@@ -246,11 +248,11 @@ const Defendant: React.FC<React.PropsWithChildren<unknown>> = () => {
   }
 
   const handleUpdateDefendant = useCallback(
-    (defendantId: string, updatedDefendant: UpdateDefendant) => {
-      updateDefendantState(defendantId, updatedDefendant, setWorkingCase)
+    (updatedDefendant: UpdateDefendantInput) => {
+      updateDefendantState(updatedDefendant, setWorkingCase)
 
       if (workingCase.id) {
-        updateDefendant(workingCase.id, defendantId, updatedDefendant)
+        updateDefendant(updatedDefendant)
       }
     },
     [updateDefendantState, setWorkingCase, workingCase.id, updateDefendant],
@@ -263,32 +265,25 @@ const Defendant: React.FC<React.PropsWithChildren<unknown>> = () => {
 
         if (createdCase) {
           workingCase.defendants?.forEach(async (defendant, index) => {
+            const updatedDefendant = {
+              caseId: createdCase.id,
+              defendantId: defendant.id,
+              gender: defendant.gender,
+              name: defendant.name,
+              address: defendant.address,
+              nationalId: defendant.nationalId,
+              noNationalId: defendant.noNationalId,
+              citizenship: defendant.citizenship,
+            }
+
             if (
               index === 0 &&
               createdCase.defendants &&
               createdCase.defendants.length > 0
             ) {
-              await updateDefendant(
-                createdCase.id,
-                createdCase.defendants[0].id,
-                {
-                  gender: defendant.gender,
-                  name: defendant.name,
-                  address: defendant.address,
-                  nationalId: defendant.nationalId,
-                  noNationalId: defendant.noNationalId,
-                  citizenship: defendant.citizenship,
-                },
-              )
+              await updateDefendant(updatedDefendant)
             } else {
-              await createDefendant(createdCase.id, {
-                gender: defendant.gender,
-                name: defendant.name,
-                address: defendant.address,
-                nationalId: defendant.nationalId,
-                noNationalId: defendant.noNationalId,
-                citizenship: defendant.citizenship,
-              })
+              await createDefendant(updatedDefendant)
             }
           })
           router.push(`${destination}/${createdCase.id}`)
@@ -342,7 +337,8 @@ const Defendant: React.FC<React.PropsWithChildren<unknown>> = () => {
 
   const handleCreateDefendantClick = async () => {
     if (workingCase.id) {
-      const defendantId = await createDefendant(workingCase.id, {
+      const defendantId = await createDefendant({
+        caseId: workingCase.id,
         gender: undefined,
         name: '',
         address: '',
