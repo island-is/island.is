@@ -18,8 +18,8 @@ const SHARED_ENVIRONMENT_NAMES: Record<string, string> = {
   NX_CLOUD_ACCESS_TOKEN: '/local/NX_CLOUD_ACCESS_TOKEN',
 }
 
-export const renderSecretsCommand = async (service: string) => {
-  return await renderSecrets(service).catch((error) => {
+export const renderSecretsCommand = (service: string) => {
+  return renderSecrets(service).catch((error) => {
     if (error.name === 'CredentialsProviderError') {
       console.error(
         'Could not load AWS credentials from any providers. Did you forget to configure environment variables, aws profile or run `aws sso login`?',
