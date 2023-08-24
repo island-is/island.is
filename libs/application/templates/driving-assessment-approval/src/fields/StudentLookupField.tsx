@@ -1,15 +1,14 @@
-import React, { FC } from 'react'
-import { useQuery, gql } from '@apollo/client'
-import { useWatch } from 'react-hook-form'
-import { formatText } from '@island.is/application/core'
-import { CustomField, FieldBaseProps } from '@island.is/application/types'
-import { Box, Text } from '@island.is/island-ui/core'
+import { FC, useEffect } from 'react'
+import { useFormContext } from 'react-hook-form'
+import * as nationalId from 'kennitala'
+import { GridColumn, GridRow } from '@island.is/island-ui/core'
+import { InputController } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
-import * as kennitala from 'kennitala'
 import { m } from '../lib/messages'
+import { gql, useLazyQuery } from '@apollo/client'
 import { StudentInformationResult } from '@island.is/api/schema'
 
-const QUERY = gql`
+export const QUERY = gql`
   query studentInfo($nationalId: String!) {
     drivingLicenseStudentInformation(nationalId: $nationalId) {
       student {
@@ -19,61 +18,75 @@ const QUERY = gql`
   }
 `
 
-interface Props extends FieldBaseProps {
-  field: CustomField
+type LookupProps = {
+  field: {
+    id: string
+  }
+  error: Record<string, string> | any
 }
 
-interface ExpectedStudent {
-  nationalId?: string
-}
-
-export const StudentLookupField: FC<Props> = ({ application }) => {
-  const student = (application.answers.student as unknown) as ExpectedStudent
-  const studentNationalId = useWatch({
-    name: 'student.nationalId',
-    // FYI the watch value is not queried unless the value changes after rendering.
-    // see react hook form's docs for useWatch for further info.
-    defaultValue: student?.nationalId,
-  })
-
+export const StudentLookupField: FC<React.PropsWithChildren<LookupProps>> = ({
+  field,
+  error,
+}) => {
   const { formatMessage } = useLocale()
+  const { id } = field
+  const { setValue, watch, clearErrors } = useFormContext()
 
-  const { data, error: queryError, loading } = useQuery<{
+  const personNationalId: string = watch(`${id}.nationalId`)
+  const personName: string = watch(`${id}.name`)
+
+  const [getStudent, { loading: queryLoading }] = useLazyQuery<{
     drivingLicenseStudentInformation: StudentInformationResult
   }>(QUERY, {
-    skip:
-      !studentNationalId || !kennitala.isPerson(studentNationalId as string),
-    variables: {
-      nationalId: studentNationalId,
+    onCompleted: (data) => {
+      setValue(
+        `${id}.name`,
+        data.drivingLicenseStudentInformation?.student?.name ?? '',
+      )
+      clearErrors(`${id}.name`)
     },
+    fetchPolicy: 'network-only',
   })
 
-  if (queryError) {
-    return <Text>Villa kom upp við að sækja upplýsingar um nemanda</Text>
-  }
+  useEffect(() => {
+    if (personNationalId?.length === 10) {
+      const isValidSSN = nationalId.isPerson(personNationalId)
+      if (isValidSSN) {
+        getStudent({
+          variables: {
+            nationalId: personNationalId,
+          },
+        })
+      }
+    } else if (personNationalId?.length === 0) {
+      clearErrors(`${id}.name`)
+      clearErrors(`${id}.nationalId`)
+      setValue(`${id}.name`, '')
+    }
+  }, [personName, personNationalId, getStudent, setValue, clearErrors, id])
 
-  if (loading) {
-    return <Text>Sæki upplýsingar um nemanda... </Text>
-  }
-
-  if (!data?.drivingLicenseStudentInformation) {
-    return null
-  }
-
-  const result = data.drivingLicenseStudentInformation
-
-  return result.student ? (
-    <Box marginBottom={2}>
-      <Text variant="h4">
-        {formatText(m.student, application, formatMessage)}
-      </Text>
-      <Text>{result?.student.name}</Text>
-    </Box>
-  ) : (
-    <Box color="red400" padding={2}>
-      <Text color="red400">
-        {formatText(m.errorOrNoTemporaryLicense, application, formatMessage)}
-      </Text>
-    </Box>
+  return (
+    <GridRow>
+      <GridColumn span="6/12">
+        <InputController
+          id={`${id}.nationalId`}
+          name={`${id}.nationalId`}
+          label={formatMessage(m.nationalId)}
+          format="######-####"
+          backgroundColor="blue"
+          loading={queryLoading}
+          error={error?.name}
+        />
+      </GridColumn>
+      <GridColumn span="6/12">
+        <InputController
+          id={`${id}.name`}
+          name={`${id}.name`}
+          label={formatMessage(m.personName)}
+          readOnly
+        />
+      </GridColumn>
+    </GridRow>
   )
 }

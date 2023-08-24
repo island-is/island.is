@@ -11,7 +11,7 @@ describe(RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE, () => {
 
   before(() => {
     cy.intercept('POST', '**/api/graphql', (req) => {
-      if (req.body.query.includes('ProsecutorSelectionUsersQuery')) {
+      if (req.body.query.includes('ProsecutorSelectionUsers')) {
         req.alias = 'gqlProsecutorSelectionUsersQuery'
       }
     })

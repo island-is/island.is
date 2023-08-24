@@ -7,7 +7,7 @@ export const HealthInsuranceSchema = z.object({
   status: z.object({
     type: z.enum(['employed', 'student', 'pensioner', 'other']),
   }),
-  applicant: applicantInformationSchema,
+  applicant: applicantInformationSchema(),
   citizenship: z.string().optional(),
   formerInsurance: z.object({
     registration: z.enum([YES, NO]),

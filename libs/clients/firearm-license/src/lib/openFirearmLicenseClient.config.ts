@@ -9,7 +9,7 @@ const schema = z.object({
 export const OpenFirearmLicenseClientConfig = defineConfig<
   z.infer<typeof schema>
 >({
-  name: 'FirearmLicenseClient',
+  name: 'OpenFirearmLicenseClientConfig',
   schema,
   load: (env) => ({
     xRoadServicePath: env.required(

@@ -1,4 +1,5 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
+import { CacheField } from '@island.is/nest/graphql'
 import { IGenericOverviewPage } from '../generated/contentfulTypes'
 import { Html, mapHtml } from './html.model'
 import { Menu, mapMenu } from './menu.model'
@@ -15,13 +16,13 @@ export class GenericOverviewPage {
   @Field()
   pageIdentifier!: string
 
-  @Field(() => Html, { nullable: true })
+  @CacheField(() => Html, { nullable: true })
   intro?: Html | null
 
-  @Field(() => Menu)
+  @CacheField(() => Menu)
   navigation!: Menu | null
 
-  @Field(() => [IntroLinkImage])
+  @CacheField(() => [IntroLinkImage])
   overviewLinks?: IntroLinkImage[]
 }
 

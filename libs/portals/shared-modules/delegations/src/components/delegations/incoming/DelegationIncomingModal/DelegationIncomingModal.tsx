@@ -4,7 +4,7 @@ import { Box } from '@island.is/island-ui/core'
 
 import { useLocale } from '@island.is/localization'
 import { formatNationalId } from '@island.is/portals/core'
-import { Modal, ModalProps } from '../../../Modal/Modal'
+import { Modal, ModalProps } from '@island.is/react/components'
 import { IdentityCard } from '../../../IdentityCard/IdentityCard'
 import { AccessListContainer } from '../../../access/AccessList/AccessListContainer/AccessListContainer'
 import { useAuthScopeTreeLazyQuery } from '../../../access/AccessList/AccessListContainer/AccessListContainer.generated'
@@ -49,10 +49,12 @@ export const DelegationIncomingModal = ({
   return (
     <Modal
       id={`delegation-incoming-view-modal-${delegation?.id}`}
-      label={formatMessage(m.accessControl)}
+      eyebrow={formatMessage(m.accessControl)}
       title={formatMessage(m.accessControlAccess)}
+      label={formatMessage(m.accessControlAccess)}
       {...rest}
       onClose={onClose}
+      closeButtonLabel={formatMessage(m.closeModal)}
     >
       <Box
         marginTop={[4, 4, 8]}

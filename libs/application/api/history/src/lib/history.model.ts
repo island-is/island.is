@@ -53,4 +53,18 @@ export class History extends Model {
   })
   @ApiProperty()
   stateKey!: string
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
+  exitEvent?: string
+
+  @ApiProperty()
+  @Column({
+    type: DataType.UUID,
+    allowNull: true,
+  })
+  previousState!: string
 }

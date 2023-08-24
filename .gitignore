@@ -9,8 +9,6 @@ infra/mountebank-imposter-config.json
 # Contentful extensions
 libs/contentful-extensions/translation/build
 libs/contentful-extensions/translation/.cache
-libs/contentful-extensions/parent-slug/build
-libs/contentful-extensions/parent-slug/.cache
 
 # dependencies
 node_modules/
@@ -33,6 +31,7 @@ TODO
 *.todo
 .env
 .env.*
+.envrc.*
 .nvmrc
 .node-version
 # IDE - VSCode
@@ -86,9 +85,12 @@ fragmentTypes.json
 *.suo
 /.vs
 
-# Gitbook/Honkit
+# Honkit
 _book
 .vscode/settings.json
 
 # Ignore generated .html files when running `serve`
 apps/**/index.html
+
+# Next.js
+.next

@@ -3,6 +3,7 @@ import { isIndictmentCase } from '@island.is/judicial-system/types'
 import {
   User,
   CaseType,
+  SessionArrangements,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { isBusiness } from './stepHelper'
@@ -20,6 +21,7 @@ export type Validation =
   | 'R-case-number'
   | 'S-case-number'
   | 'vehicle-registration-number'
+  | 'appeal-case-number-format'
 
 type ValidateItem = 'valid' | [string | undefined, Validation[]]
 type IsValid = { isValid: boolean; errorMessage: string }
@@ -86,6 +88,12 @@ const getRegexByValidation = (validation: Validation) => {
       return {
         regex: new RegExp(/^[A-Z]{2}-[A-Z]{1}[0-9]{2}|[0-9]{3}$/),
         errorMessage: 'Dæmi: AB-123',
+      }
+    }
+    case 'appeal-case-number-format': {
+      return {
+        regex: new RegExp(/^[0-9]{1,4}\/[0-9]{4}$/),
+        errorMessage: `Dæmi: 1234/${new Date().getFullYear()}`,
       }
     }
   }
@@ -161,7 +169,7 @@ export const isDefendantStepValidRC = (
       ),
       [workingCase.defenderEmail, ['email-format']],
       [workingCase.defenderPhoneNumber, ['phonenumber']],
-      workingCase.type === CaseType.TravelBan
+      workingCase.type === CaseType.TRAVEL_BAN
         ? 'valid'
         : [workingCase.leadInvestigator, ['empty']],
     ]).isValid
@@ -216,7 +224,7 @@ export const isHearingArrangementsStepValidRC = (
       workingCase.court &&
       validate([
         [workingCase.requestedCourtDate, ['empty', 'date-format']],
-        workingCase.type !== CaseType.TravelBan && !workingCase.parentCase
+        workingCase.type !== CaseType.TRAVEL_BAN && !workingCase.parentCase
           ? [workingCase.arrestDate, ['empty', 'date-format']]
           : 'valid',
       ]).isValid) ||
@@ -365,18 +373,23 @@ export const isCourtRecordStepValidRC = (workingCase: Case): boolean => {
 }
 
 export const isCourtRecordStepValidIC = (workingCase: Case): boolean => {
+  const validations = [
+    [workingCase.courtStartDate, ['empty', 'date-format']],
+    [workingCase.courtLocation, ['empty']],
+    [workingCase.courtEndTime, ['empty', 'date-format']],
+    [workingCase.decision, ['empty']],
+    [workingCase.conclusion, ['empty']],
+    [workingCase.ruling, ['empty']],
+  ] as ValidateItem[]
+
+  if (workingCase.sessionArrangements !== SessionArrangements.NONE_PRESENT) {
+    validations.push([workingCase.sessionBookings, ['empty']])
+  }
+
   return (
     (workingCase.accusedAppealDecision &&
       workingCase.prosecutorAppealDecision &&
-      validate([
-        [workingCase.courtStartDate, ['empty', 'date-format']],
-        [workingCase.courtLocation, ['empty']],
-        [workingCase.sessionBookings, ['empty']],
-        [workingCase.courtEndTime, ['empty', 'date-format']],
-        [workingCase.decision, ['empty']],
-        [workingCase.conclusion, ['empty']],
-        [workingCase.ruling, ['empty']],
-      ]).isValid) ||
+      validate(validations).isValid) ||
     false
   )
 }
@@ -387,16 +400,10 @@ export const isSubpoenaStepValid = (
 ): boolean => {
   const date = courtDate || workingCase.courtDate
 
-  return (
-    (workingCase.subpoenaType &&
-      validate([[date, ['empty', 'date-format']]]).isValid) ||
-    false
-  )
+  return validate([[date, ['empty', 'date-format']]]).isValid || false
 }
 
-export const isProsecutorAndDefenderStepValid = (
-  workingCase: Case,
-): boolean => {
+export const isDefenderStepValid = (workingCase: Case): boolean => {
   const defendantsAreValid = () =>
     workingCase.defendants?.every((defendant) => {
       return (
@@ -422,6 +429,29 @@ export const isAdminUserFormValid = (user: User): boolean => {
         [user.mobileNumber, ['empty']],
         [user.email, ['empty', 'email-format']],
       ]).isValid) ||
+    false
+  )
+}
+
+export const isCourtOfAppealCaseStepValid = (workingCase: Case): boolean => {
+  return (
+    (workingCase.appealJudge1 &&
+      workingCase.appealJudge2 &&
+      workingCase.appealJudge3 &&
+      workingCase.appealAssistant &&
+      validate([
+        [workingCase.appealCaseNumber, ['empty', 'appeal-case-number-format']],
+      ]).isValid) ||
+    false
+  )
+}
+
+export const isCourtOfAppealRulingStepValid = (workingCase: Case): boolean => {
+  const { appealRulingDecision, appealConclusion } = workingCase
+
+  return (
+    (appealRulingDecision !== null &&
+      validate([[appealConclusion, ['empty']]]).isValid) ||
     false
   )
 }

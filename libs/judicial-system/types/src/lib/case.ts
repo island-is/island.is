@@ -1,7 +1,7 @@
 import type { Defendant } from './defendant'
 import type { Institution } from './institution'
 import type { Notification } from './notification'
-import { CaseFile, CaseFileCategory } from './file'
+import { CaseFile } from './file'
 import { User, UserRole } from './user'
 import type { CourtDocument } from './courtDocument'
 
@@ -155,15 +155,20 @@ export enum CaseDecision {
   DISMISSING = 'DISMISSING',
 }
 
+export enum CaseAppealRulingDecision {
+  ACCEPTING = 'ACCEPTING',
+  REPEAL = 'REPEAL',
+  CHANGED = 'CHANGED',
+  DISMISSED_FROM_COURT_OF_APPEAL = 'DISMISSED_FROM_COURT_OF_APPEAL',
+  DISMISSED_FROM_COURT = 'DISMISSED_FROM_COURT',
+  REMAND = 'REMAND',
+}
+
 export enum SessionArrangements {
   ALL_PRESENT = 'ALL_PRESENT',
   ALL_PRESENT_SPOKESPERSON = 'ALL_PRESENT_SPOKESPERSON',
   PROSECUTOR_PRESENT = 'PROSECUTOR_PRESENT',
-}
-
-export enum SubpoenaType {
-  ARREST_SUMMONS = 'ARREST_SUMMONS',
-  ABSENCE_SUMMONS = 'ABSENCE_SUMMONS',
+  NONE_PRESENT = 'NONE_PRESENT',
 }
 
 export interface Case {
@@ -236,6 +241,7 @@ export interface Case {
   isAppealDeadlineExpired?: boolean
   isAppealGracePeriodExpired?: boolean
   rulingDate?: string
+  rulingSignatureDate?: string
   initialRulingDate?: string
   registrar?: User
   judge?: User
@@ -248,8 +254,7 @@ export interface Case {
   caseModifiedExplanation?: string
   rulingModifiedHistory?: string
   caseResentExplanation?: string
-  seenByDefender?: string
-  subpoenaType?: SubpoenaType
+  openedByDefender?: string
   defendantWaivesRightToCounsel?: boolean
   crimeScenes?: CrimeSceneMap
   indictmentIntroduction?: string
@@ -263,7 +268,15 @@ export interface Case {
   appealedDate?: string
   statementDeadline?: string
   prosecutorStatementDate?: string
-  defenderStatementDate?: string
+  defendantStatementDate?: string
+  appealCaseNumber?: string
+  appealAssistant?: User
+  appealJudge1?: User
+  appealJudge2?: User
+  appealJudge3?: User
+  appealReceivedByCourtDate?: string
+  appealConclusion?: string
+  appealRulingDecision?: CaseAppealRulingDecision
 }
 
 export interface CaseListEntry
@@ -282,6 +295,7 @@ export interface CaseListEntry
     | 'courtDate'
     | 'initialRulingDate'
     | 'rulingDate'
+    | 'rulingSignatureDate'
     | 'courtEndTime'
     | 'prosecutorAppealDecision'
     | 'accusedAppealDecision'
@@ -291,6 +305,10 @@ export interface CaseListEntry
     | 'prosecutor'
     | 'registrar'
     | 'creatingProsecutor'
+    | 'appealState'
+    | 'appealedDate'
+    | 'appealCaseNumber'
+    | 'appealRulingDecision'
   > {
   parentCaseId?: string
 }
@@ -369,13 +387,17 @@ export interface UpdateCase
     | 'caseModifiedExplanation'
     | 'rulingModifiedHistory'
     | 'caseResentExplanation'
-    | 'seenByDefender'
-    | 'subpoenaType'
+    | 'openedByDefender'
     | 'defendantWaivesRightToCounsel'
     | 'crimeScenes'
     | 'indictmentIntroduction'
     | 'requestDriversLicenseSuspension'
     | 'appealState'
+    | 'prosecutorStatementDate'
+    | 'defendantStatementDate'
+    | 'appealCaseNumber'
+    | 'appealConclusion'
+    | 'appealRulingDecision'
   > {
   type?: CaseType
   policeCaseNumbers?: string[]
@@ -384,6 +406,10 @@ export interface UpdateCase
   sharedWithProsecutorsOfficeId?: string | null
   registrarId?: string | null
   judgeId?: string
+  appealAssistantId?: string
+  appealJudge1Id?: string
+  appealJudge2Id?: string
+  appealJudge3Id?: string
 }
 
 export interface TransitionCase {
@@ -470,29 +496,26 @@ export function hasCaseBeenAppealed(theCase: Case): boolean {
 
 export function getAppealInfo(theCase: Case): Case {
   const {
-    courtEndTime,
+    rulingDate,
     appealState,
     accusedAppealDecision,
     prosecutorAppealDecision,
     prosecutorPostponedAppealDate,
     accusedPostponedAppealDate,
-    caseFiles,
+    appealReceivedByCourtDate,
   } = theCase
 
   const appealInfo = {} as Case
 
-  if (!courtEndTime) return appealInfo
+  if (!rulingDate) return appealInfo
 
   appealInfo.canBeAppealed = Boolean(
-    courtEndTime &&
-      !appealState &&
+    !appealState &&
       (accusedAppealDecision === CaseAppealDecision.POSTPONE ||
         prosecutorAppealDecision === CaseAppealDecision.POSTPONE),
   )
 
-  appealInfo.hasBeenAppealed = Boolean(
-    appealState && appealState === CaseAppealState.APPEALED,
-  )
+  appealInfo.hasBeenAppealed = Boolean(appealState)
 
   appealInfo.appealedByRole = prosecutorPostponedAppealDate
     ? UserRole.PROSECUTOR
@@ -505,30 +528,29 @@ export function getAppealInfo(theCase: Case): Case {
       ? prosecutorPostponedAppealDate ?? undefined
       : accusedPostponedAppealDate ?? undefined
 
-  if (courtEndTime) {
-    const courtEndDate = new Date(courtEndTime)
-    appealInfo.appealDeadline = new Date(
-      courtEndDate.setDate(courtEndDate.getDate() + 3),
-    ).toISOString()
+  const theRulingDate = new Date(rulingDate)
+  appealInfo.appealDeadline = new Date(
+    theRulingDate.setDate(theRulingDate.getDate() + 3),
+  ).toISOString()
+
+  if (appealReceivedByCourtDate) {
+    appealInfo.statementDeadline = getStatementDeadline(
+      new Date(appealReceivedByCourtDate),
+    )
   }
-  //TODO: This date should be set differently but we haven't implemented
-  //the statement deadline notifiction yet
-  if (appealInfo.appealedDate) {
-    const appealedDate = new Date(appealInfo.appealedDate)
-    appealInfo.statementDeadline = new Date(
-      appealedDate.setDate(appealedDate.getDate() + 1),
-    ).toISOString()
-  }
-  //TODO: These dates should likely be set differently but we haven't
-  //implemented the ability to record when the statement was sent
-  //also this doesn't work for defenders yet because they don't have
-  //file access
-  appealInfo.defenderStatementDate = caseFiles?.find(
-    (cf) => cf.category === CaseFileCategory.DEFENDANT_APPEAL_STATEMENT,
-  )?.created
-  appealInfo.prosecutorStatementDate = caseFiles?.find(
-    (cf) => cf.category === CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT,
-  )?.created
 
   return appealInfo
+}
+
+export function getStatementDeadline(appealReceived: Date) {
+  return new Date(
+    new Date(appealReceived).setDate(appealReceived.getDate() + 1),
+  ).toISOString()
+}
+
+export function getAppealedDate(
+  prosecutorPostponedAppealDate?: string,
+  accusedPostponedAppealDate?: string,
+): string | undefined {
+  return prosecutorPostponedAppealDate ?? accusedPostponedAppealDate
 }

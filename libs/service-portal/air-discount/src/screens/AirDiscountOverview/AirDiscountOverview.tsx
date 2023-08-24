@@ -24,7 +24,6 @@ import {
 } from '@island.is/island-ui/core'
 import { messages as m } from '../../lib/messages'
 import copyToClipboard from 'copy-to-clipboard'
-import { ModuleAlertBannerSection } from '@island.is/service-portal/core'
 import UsageTable from '../../components/UsageTable'
 import { formatDateWithTime } from '@island.is/service-portal/core'
 import { AirDiscountSchemeDiscount } from '@island.is/service-portal/graphql'
@@ -137,7 +136,7 @@ export const AirDiscountOverview = () => {
 
             <Text variant="default" paddingTop={2}>
               {formatMessage(m.introLink, {
-                link: (str) => (
+                link: (str: any) => (
                   <a
                     href="https://island.is/loftbru/notendaskilmalar-vegagerdarinnar-fyrir-loftbru"
                     target="_blank"
@@ -154,9 +153,6 @@ export const AirDiscountOverview = () => {
               <Bullet>{formatMessage(m.discountTextFirst)}</Bullet>
               <Bullet>{formatMessage(m.discountTextSecond)}</Bullet>
             </BulletList>
-          </GridColumn>
-          <GridColumn span={['12/12', '12/12', '6/8']} order={3} paddingTop={4}>
-            <ModuleAlertBannerSection />
           </GridColumn>
         </GridRow>
 

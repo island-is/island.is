@@ -35,7 +35,7 @@ import {
 } from '@island.is/web/components'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { SliceType } from '@island.is/island-ui/contentful'
-import { useFeatureFlag, useNamespace } from '@island.is/web/hooks'
+import { useNamespace } from '@island.is/web/hooks'
 import {
   GetApiCatalogueInput,
   QueryGetApiCatalogueArgs,
@@ -71,10 +71,6 @@ const ApiCatalogue: Screen<HomestayProps> = ({
   filterContent,
   navigationLinks,
 }) => {
-  const { value: isWebReaderEnabledForOrganizationPages } = useFeatureFlag(
-    'isWebReaderEnabledForOrganizationPages',
-    false,
-  )
   const { width } = useWindowSize()
   const [isMobile, setIsMobile] = useState(false)
   const Router = useRouter()
@@ -86,7 +82,8 @@ const ApiCatalogue: Screen<HomestayProps> = ({
 
   useEffect(() => {
     if (width < theme.breakpoints.md) {
-      return setIsMobile(true)
+      setIsMobile(true)
+      return
     }
     setIsMobile(false)
   }, [width])
@@ -250,13 +247,11 @@ const ApiCatalogue: Screen<HomestayProps> = ({
         }}
         showSecondaryMenu={false}
       >
-        <Box paddingBottom={isWebReaderEnabledForOrganizationPages ? 0 : 4}>
+        <Box paddingBottom={0}>
           <Text variant="h1" as="h2">
             {subpage.title}
           </Text>
-          {isWebReaderEnabledForOrganizationPages && (
-            <Webreader readId={null} readClass="rs_read" />
-          )}
+          <Webreader readId={null} readClass="rs_read" />
         </Box>
         {webRichText(subpage.description as SliceType[], {
           renderNode: {
@@ -344,7 +339,7 @@ const ApiCatalogue: Screen<HomestayProps> = ({
   )
 }
 
-ApiCatalogue.getInitialProps = async ({ apolloClient, locale }) => {
+ApiCatalogue.getProps = async ({ apolloClient, locale }) => {
   const organizationSlug =
     locale === 'en' ? 'digital-iceland' : 'stafraent-island'
 

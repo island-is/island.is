@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from 'react'
+import React, { FC } from 'react'
 import { defineMessage } from 'react-intl'
 import { ApolloError } from '@apollo/client/errors'
 import { useLocale, useNamespaces } from '@island.is/localization'
@@ -28,9 +28,7 @@ import { TwoColumnUserInfoLine } from '../TwoColumnUserInfoLine/TwoColumnUserInf
 import ChildRegistrationModal from '../../screens/FamilyMember/ChildRegistrationModal'
 import * as styles from './ChildView.css'
 import { formatNameBreaks } from '../../helpers/formatting'
-import { spmm } from '../../lib/messages'
-import { FeatureFlagClient } from '@island.is/feature-flags'
-import { useFeatureFlagClient } from '@island.is/react/feature-flags'
+import { spmm, urls } from '../../lib/messages'
 
 const dataNotFoundMessage = defineMessage({
   id: 'sp.family:data-not-found',
@@ -65,7 +63,7 @@ interface Props {
   guardianship?: NationalRegistryXRoadChildGuardianship | null
 }
 
-const ChildView: FC<Props> = ({
+const ChildView: FC<React.PropsWithChildren<Props>> = ({
   nationalId,
   error,
   loading,
@@ -78,8 +76,6 @@ const ChildView: FC<Props> = ({
 }) => {
   useNamespaces('sp.family')
   const { formatMessage } = useLocale()
-  const [showTooltip, setShowTooltip] = useState(false)
-  const featureFlagClient: FeatureFlagClient = useFeatureFlagClient()
 
   const livingArrangment = (
     livingArrangementParents: Array<string> | undefined,
@@ -89,20 +85,6 @@ const ChildView: FC<Props> = ({
       ? formatMessage(m.yes)
       : formatMessage(m.no)
   }
-
-  /* Should show name breakdown tooltip? */
-  useEffect(() => {
-    const isFlagEnabled = async () => {
-      const ffEnabled = await featureFlagClient.getValue(
-        `isServicePortalNameBreakdownEnabled`,
-        false,
-      )
-      if (ffEnabled) {
-        setShowTooltip(ffEnabled as boolean)
-      }
-    }
-    isFlagEnabled()
-  }, [])
 
   if (!nationalId || error || (!loading && !person))
     return (
@@ -178,24 +160,21 @@ const ChildView: FC<Props> = ({
           <UserInfoLine
             title={formatMessage(m.myRegistration)}
             label={formatMessage(m.fullName)}
+            translate="no"
             content={person?.fullName || '...'}
-            tooltip={
-              showTooltip
-                ? formatNameBreaks(person ?? undefined, {
-                    givenName: formatMessage(spmm.givenName),
-                    middleName: formatMessage(spmm.middleName),
-                    lastName: formatMessage(spmm.lastName),
-                  })
-                : undefined
-            }
+            tooltip={formatNameBreaks(person ?? undefined, {
+              givenName: formatMessage(spmm.givenName),
+              middleName: formatMessage(spmm.middleName),
+              lastName: formatMessage(spmm.lastName),
+            })}
             loading={loading}
             editLink={
               !isChild
                 ? {
                     title: editLink,
                     external: true,
-                    url:
-                      'https://www.skra.is/umsoknir/eydublod-umsoknir-og-vottord/stok-vara/?productid=703760ac-686f-11e6-943e-005056851dd2',
+                    url: formatMessage(urls.editChild),
+                    skipOutboundTrack: true,
                   }
                 : undefined
             }
@@ -223,7 +202,8 @@ const ChildView: FC<Props> = ({
                 ? {
                     title: editLink,
                     external: true,
-                    url: 'https://skra.is/folk/flutningur/flutningur-barna/',
+                    url: formatMessage(urls.editResidenceChild),
+                    skipOutboundTrack: true,
                   }
                 : undefined
             }
@@ -263,8 +243,8 @@ const ChildView: FC<Props> = ({
                 ? {
                     title: editLink,
                     external: true,
-                    url:
-                      'https://www.skra.is/umsoknir/rafraen-skil/tru-eda-lifsskodunarfelag-barna-15-ara-og-yngri/',
+                    url: formatMessage(urls.editChildReligion),
+                    skipOutboundTrack: true,
                   }
                 : undefined
             }

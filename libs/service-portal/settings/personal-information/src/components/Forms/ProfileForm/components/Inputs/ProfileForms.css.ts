@@ -1,5 +1,5 @@
 import { theme, themeUtils } from '@island.is/island-ui/theme'
-import { style } from '@vanilla-extract/css'
+import { globalStyle, style } from '@vanilla-extract/css'
 
 export const bank = style({
   marginRight: theme.spacing['1'],
@@ -72,4 +72,8 @@ export const countryCodeInput = style({
       maxWidth: '120px',
     },
   }),
+})
+
+globalStyle(`${hb} input, ${bank} input`, {
+  paddingRight: 0,
 })

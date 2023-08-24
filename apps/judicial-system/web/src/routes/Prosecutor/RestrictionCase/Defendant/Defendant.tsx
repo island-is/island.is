@@ -40,7 +40,7 @@ import {
   usePoliceCaseNumbers,
 } from '../../components'
 
-export const Defendant: React.FC = () => {
+export const Defendant: React.FC<React.PropsWithChildren<unknown>> = () => {
   const {
     workingCase,
     setWorkingCase,
@@ -167,7 +167,7 @@ export const Defendant: React.FC = () => {
                   setWorkingCase={setWorkingCase}
                   onChange={handleUpdateDefendant}
                   updateDefendantState={updateDefendantState}
-                  nationalIdImmutable={workingCase.origin === CaseOrigin.Loke}
+                  nationalIdImmutable={workingCase.origin === CaseOrigin.LOKE}
                 />
               </Box>
             )}
@@ -177,7 +177,7 @@ export const Defendant: React.FC = () => {
                 setWorkingCase={setWorkingCase}
               />
             </Box>
-            {workingCase.type !== CaseType.TravelBan && (
+            {workingCase.type !== CaseType.TRAVEL_BAN && (
               <Box component="section" marginBottom={10}>
                 <Box
                   display="flex"

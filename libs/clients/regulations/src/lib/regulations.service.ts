@@ -162,6 +162,35 @@ export class RegulationsService extends RESTDataSource {
     return response
   }
 
+  async getRegulationsOptionSearch(
+    q?: string,
+    rn?: string,
+    year?: Year,
+    yearTo?: Year,
+    ch?: string,
+    iA?: boolean,
+    iR?: boolean,
+    page?: number,
+  ): Promise<RegulationOptionList | null> {
+    const searchRes = await this.getRegulationsSearch(
+      q,
+      rn,
+      year,
+      yearTo,
+      ch,
+      iA,
+      iR,
+      page,
+    )
+
+    const searchNames = searchRes?.data?.map((item) => item.name)
+    if (searchNames && searchNames?.length > 0) {
+      return await this.getRegulationOptionList(searchNames)
+    }
+
+    return null
+  }
+
   async getRegulationsSearch(
     q?: string,
     rn?: string,
@@ -171,8 +200,8 @@ export class RegulationsService extends RESTDataSource {
     iA?: boolean,
     iR?: boolean,
     page?: number,
-  ): Promise<RegulationListItem[] | null> {
-    const response = await this.get<RegulationListItem[] | null>(
+  ): Promise<RegulationSearchResults | null> {
+    const response = await this.get<RegulationSearchResults | null>(
       `search`,
       // Strip away empty params
       // Object.fromEntries(Object.entries({ q, rn, year, yearTo, ch, iA, iR, page }).filter((val) => val))

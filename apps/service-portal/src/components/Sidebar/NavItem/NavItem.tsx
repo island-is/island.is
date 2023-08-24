@@ -24,7 +24,7 @@ interface Props {
   onChevronClick?: () => void
 }
 
-const NavItemContent: FC<Props> = ({
+const NavItemContent: FC<React.PropsWithChildren<Props>> = ({
   icon,
   active,
   enabled,
@@ -45,9 +45,11 @@ const NavItemContent: FC<Props> = ({
 
   const badgeActive: keyof typeof styles.badge = badge ? 'active' : 'inactive'
 
-  const animatedIcon = icon
+  const animatedIconSource = icon
     ? `./assets/icons/sidebar/${icon.icon}.svg`
     : undefined
+
+  const iconSvg = icon ? iconTypeToSVG(icon.icon ?? '', 'navid') : undefined
 
   return (
     <Box
@@ -85,29 +87,29 @@ const NavItemContent: FC<Props> = ({
             alignItems="center"
             justifyContent={isDashboard ? 'center' : 'spaceBetween'}
             marginRight={1}
-            className={animatedIcon && styles.animatedIcon}
+            className={animatedIconSource && styles.animatedIcon}
           >
             <Box
               borderRadius="circle"
               className={cn(styles.badge[badgeActive])}
             ></Box>
 
-            {!isDashboard && !isMobile ? (
+            {!isDashboard && !isMobile && !!iconSvg ? (
               <Box
                 className={styles.animatedIcon}
                 display="flex"
                 justifyContent="center"
               >
-                {iconTypeToSVG(icon.icon ?? '', 'navid')}
+                {iconSvg}
               </Box>
             ) : (
-              <Icon
-                type={active ? 'filled' : 'outline'}
-                icon={icon.icon}
-                color={active ? 'blue400' : 'blue600'}
-                size="medium"
-                className={styles.icon}
-              />
+              <Box
+                className={styles.animatedIcon}
+                display="flex"
+                justifyContent="center"
+              >
+                <Icon type={'outline'} icon={icon.icon} />
+              </Box>
             )}
           </Box>
         ) : null}
@@ -126,7 +128,7 @@ const NavItemContent: FC<Props> = ({
   )
 }
 
-const NavItem: FC<Props> = (props) => {
+const NavItem: FC<React.PropsWithChildren<Props>> = (props) => {
   return props.external ? (
     <a
       href={props.path}

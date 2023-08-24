@@ -1,5 +1,3 @@
-<!-- gitbook-ignore -->
-
 # Service Portal Vehicles
 
 This library was generated with [Nx](https://nx.dev).

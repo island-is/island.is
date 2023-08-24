@@ -44,7 +44,7 @@ import * as constants from '@island.is/judicial-system/consts'
 
 import { courtRecord as m } from './CourtRecord.strings'
 
-const CourtRecord: React.FC = () => {
+const CourtRecord: React.FC<React.PropsWithChildren<unknown>> = () => {
   const { workingCase, isLoadingWorkingCase, caseNotFound } = useContext(
     FormContext,
   )
@@ -143,7 +143,9 @@ const CourtRecord: React.FC = () => {
               )
             }}
             onRemove={(file) => handleRemove(file, removeFileCB)}
-            onRetry={(file) => handleRetry(file, handleUIUpdate)}
+            onRetry={(file) =>
+              handleRetry(file, handleUIUpdate, CaseFileCategory.COURT_RECORD)
+            }
           />
         </Box>
         <Box component="section" marginBottom={10}>
@@ -167,14 +169,16 @@ const CourtRecord: React.FC = () => {
               )
             }
             onRemove={(file) => handleRemove(file, removeFileCB)}
-            onRetry={(file) => handleRetry(file, handleUIUpdate)}
+            onRetry={(file) =>
+              handleRetry(file, handleUIUpdate, CaseFileCategory.RULING)
+            }
           />
         </Box>
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
           nextButtonIcon="arrowForward"
-          previousUrl={`${constants.INDICTMENTS_PROSECUTOR_AND_DEFENDER_ROUTE}/${workingCase.id}`}
+          previousUrl={`${constants.INDICTMENTS_DEFENDER_ROUTE}/${workingCase.id}`}
           onNextButtonClick={() =>
             handleNavigationTo(constants.CLOSED_INDICTMENT_OVERVIEW_ROUTE)
           }

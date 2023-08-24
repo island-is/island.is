@@ -50,7 +50,7 @@ export const getInitialParameters = (filterCategories: FilterCategory[]) => {
   return parameters
 }
 
-export const getFilterTags = (filterCategories: FilterCategory[]) => {
+export const extractFilterTags = (filterCategories: FilterCategory[]) => {
   const filterTags: FilterTag[] = []
 
   filterCategories.forEach((filterCategory) =>

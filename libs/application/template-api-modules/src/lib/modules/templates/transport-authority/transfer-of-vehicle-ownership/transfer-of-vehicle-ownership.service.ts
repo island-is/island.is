@@ -28,7 +28,7 @@ import {
 } from './transfer-of-vehicle-ownership.utils'
 import {
   ChargeFjsV2ClientService,
-  getChargeId,
+  getPaymentIdFromExternalData,
 } from '@island.is/clients/charge-fjs-v2'
 import {
   OwnerChangeValidation,
@@ -45,6 +45,7 @@ import { applicationCheck } from '@island.is/application/templates/transport-aut
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
+import { coreErrorMessages } from '@island.is/application/core'
 
 @Injectable()
 export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
@@ -77,6 +78,17 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
       showCoowned: false,
       showOperated: false,
     })
+
+    // Validate that user has at least 1 vehicle
+    if (!result || !result.length) {
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.vehiclesEmptyListOwner,
+          summary: coreErrorMessages.vehiclesEmptyListOwner,
+        },
+        400,
+      )
+    }
 
     return await Promise.all(
       result?.map(async (vehicle) => {
@@ -330,10 +342,10 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
         })
         const emailChanged = oldEntry
           ? oldEntry.email !== buyerCoOwners[i].email
-          : false
+          : true
         const phoneChanged = oldEntry
           ? oldEntry.phone !== buyerCoOwners[i].phone
-          : false
+          : true
         if (!oldEntry || emailChanged || phoneChanged) {
           newlyAddedRecipientList.push({
             ssn: buyerCoOwners[i].nationalId!,
@@ -358,10 +370,10 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
         })
         const emailChanged = oldEntry
           ? oldEntry.email !== buyerOperators[i].email
-          : false
+          : true
         const phoneChanged = oldEntry
           ? oldEntry.phone !== buyerOperators[i].phone
-          : false
+          : true
         if (!oldEntry || emailChanged || phoneChanged) {
           newlyAddedRecipientList.push({
             ssn: buyerOperators[i].nationalId!,
@@ -414,16 +426,9 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
     auth,
   }: TemplateApiModuleActionProps): Promise<void> {
     // 1. Delete charge so that the seller gets reimburshed
-    const chargeId = getChargeId(application)
+    const chargeId = getPaymentIdFromExternalData(application)
     if (chargeId) {
-      const status = await this.chargeFjsV2ClientService.getChargeStatus(
-        chargeId,
-      )
-
-      // Make sure charge has not been deleted yet (will otherwise end in error here and wont continue)
-      if (status !== 'cancelled') {
-        await this.chargeFjsV2ClientService.deleteCharge(chargeId)
-      }
+      await this.chargeFjsV2ClientService.deleteCharge(chargeId)
     }
 
     // 2. Notify everyone in the process that the application has been withdrawn

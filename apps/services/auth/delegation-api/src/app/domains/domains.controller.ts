@@ -3,10 +3,10 @@ import { ApiSecurity, ApiTags } from '@nestjs/swagger'
 
 import {
   ApiScopeListDTO,
-  ApiScopeTreeDTO,
   DelegationDirection,
   DelegationResourcesService,
   DomainDTO,
+  ScopeTreeDTO,
 } from '@island.is/auth-api-lib'
 import {
   CurrentUser,
@@ -18,6 +18,7 @@ import {
 import { delegationScopes } from '@island.is/auth/scopes'
 import { Audit } from '@island.is/nest/audit'
 import { Documentation } from '@island.is/nest/swagger'
+
 import type {
   DocumentationParamOptions,
   DocumentationQueryOptions,
@@ -146,9 +147,9 @@ export class DomainsController {
         direction,
       },
     },
-    response: { status: 200, type: [ApiScopeTreeDTO] },
+    response: { status: 200, type: [ScopeTreeDTO] },
   })
-  @Audit<ApiScopeTreeDTO[]>({
+  @Audit<ScopeTreeDTO[]>({
     resources: (scopeTree) => scopeTree.map((node) => node.name),
   })
   findScopeTree(
@@ -156,7 +157,7 @@ export class DomainsController {
     @Param('domainName') domainName: string,
     @Query('lang') language?: string,
     @Query('direction') direction?: DelegationDirection,
-  ): Promise<ApiScopeTreeDTO[]> {
+  ): Promise<ScopeTreeDTO[]> {
     return this.resourceService.findScopeTree(
       user,
       domainName,

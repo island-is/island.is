@@ -23,8 +23,8 @@ import {
   QueryGetNamespaceArgs,
   ContentLanguage,
   QueryGetOrganizationTagsArgs,
-  QueryGetOrganizationArgs,
-} from '@island.is/api/schema'
+  QueryGetOrganizationsArgs,
+} from '@island.is/web/graphql/schema'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { HeadWithSocialSharing } from '@island.is/web/components'
 import { useNamespace } from '@island.is/web/hooks'
@@ -72,7 +72,8 @@ const OrganizationPage: Screen<OrganizationProps> = ({
   const { width } = useWindowSize()
   useEffect(() => {
     if (width < theme.breakpoints.md) {
-      return setIsMobile(true)
+      setIsMobile(true)
+      return
     }
     setIsMobile(false)
   }, [width])
@@ -192,7 +193,11 @@ const OrganizationPage: Screen<OrganizationProps> = ({
                   ]}
                   renderLink={(link) => {
                     return (
-                      <NextLink {...linkResolver('homepage')} passHref>
+                      <NextLink
+                        {...linkResolver('homepage')}
+                        passHref
+                        legacyBehavior
+                      >
                         {link}
                       </NextLink>
                     )
@@ -303,7 +308,7 @@ const OrganizationPage: Screen<OrganizationProps> = ({
   )
 }
 
-OrganizationPage.getInitialProps = async ({ apolloClient, locale }) => {
+OrganizationPage.getProps = async ({ apolloClient, locale }) => {
   const [
     {
       data: { getOrganizations },
@@ -313,7 +318,7 @@ OrganizationPage.getInitialProps = async ({ apolloClient, locale }) => {
     },
     namespace,
   ] = await Promise.all([
-    apolloClient.query<Query, QueryGetOrganizationArgs>({
+    apolloClient.query<Query, QueryGetOrganizationsArgs>({
       query: GET_ORGANIZATIONS_QUERY,
       variables: {
         input: {

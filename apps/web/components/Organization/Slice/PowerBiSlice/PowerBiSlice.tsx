@@ -1,4 +1,5 @@
-import { useEffect, useMemo, useState } from 'react'
+import { IBasicFilter } from 'powerbi-models'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { EventHandler, PowerBIEmbed } from 'powerbi-client-react'
 import { Embed, models, Report, VisualDescriptor } from 'powerbi-client'
 import { useApolloClient, useQuery } from '@apollo/client'
@@ -6,18 +7,13 @@ import { useRouter } from 'next/router'
 import {
   GetNamespaceQuery,
   GetNamespaceQueryVariables,
-  PowerBiEmbedTokenQuery,
-  PowerBiEmbedTokenQueryVariables,
   PowerBiSlice as PowerBiSliceSchema,
 } from '@island.is/web/graphql/schema'
-import { POWERBI_EMBED_TOKEN_QUERY } from '@island.is/web/screens/queries/PowerBi'
-import { AlertMessage, Box } from '@island.is/island-ui/core'
-import { GET_SINGLE_SHIP } from '@island.is/web/screens/queries/Fiskistofa'
 import { GET_NAMESPACE_QUERY } from '@island.is/web/screens/queries'
 import { useI18n } from '@island.is/web/i18n'
 import { useNamespace } from '@island.is/web/hooks'
-
-import * as styles from './PowerBiSlice.css'
+import { GET_SINGLE_SHIP } from '@island.is/web/screens/queries/Fiskistofa'
+import { theme } from '@island.is/island-ui/theme'
 
 type EventType =
   | 'loaded'
@@ -68,17 +64,21 @@ interface PowerBiSliceProps {
 }
 
 export const PowerBiSlice = ({ slice }: PowerBiSliceProps) => {
-  const [embedPropsFromServer, setEmbedPropsFromServer] = useState<{
-    accessToken: string
-    embedUrl: string
-    tokenType: models.TokenType
-    pageName?: string
-  } | null>(null)
-  const [shouldRender, setShouldRender] = useState(false)
   const router = useRouter()
   const [embeddedReport, setEmbeddedReport] = useState<Report | null>(null)
-  const [errorOccurred, setErrorOccurred] = useState(false)
   const { activeLocale } = useI18n()
+  const width = useMemo(() => {
+    return (
+      window.innerWidth ||
+      document.documentElement.clientWidth ||
+      document.body.clientWidth
+    )
+  }, [])
+  const embedRef = useRef<Embed | null>(null)
+
+  const layoutShouldBeMobilePortrait =
+    slice?.powerBiEmbedProps?.displayMobilePortraitLayoutOnSmallScreens &&
+    width < theme.breakpoints.lg
 
   const namespaceResponse = useQuery<
     GetNamespaceQuery,
@@ -152,7 +152,7 @@ export const PowerBiSlice = ({ slice }: PowerBiSliceProps) => {
             operator: 'In',
             requireSingleSelection: false,
             target: fiskistofaShipSearchTarget,
-            ...slicerState.filters?.[0],
+            ...(slicerState.filters?.[0] as IBasicFilter),
             values: [convertShipNameToSlicerDropdownValue(ship.name, nr)],
           },
         ],
@@ -191,6 +191,27 @@ export const PowerBiSlice = ({ slice }: PowerBiSliceProps) => {
         const pageName = event.detail?.newPage?.name
 
         if (pageName) {
+          if (layoutShouldBeMobilePortrait && embedRef.current) {
+            embedRef.current.element.style.height = '100%'
+
+            const pageElementStyle =
+              slice?.powerBiEmbedProps?.style?.pages?.[pageName]?.element ?? {}
+            for (const key of Object.keys(pageElementStyle)) {
+              const value = pageElementStyle?.[key]
+              if (value) {
+                embedRef.current.element.style[key] = value
+              }
+            }
+            const pageIframeStyle =
+              slice?.powerBiEmbedProps?.style?.pages?.[pageName]?.iframe ?? {}
+            for (const key of Object.keys(pageIframeStyle)) {
+              const value = pageIframeStyle?.[key]
+              if (value) {
+                embedRef.current.iframe.style[key] = value
+              }
+            }
+          }
+
           const params = new URLSearchParams(window.location.search)
 
           const query = {}
@@ -267,51 +288,6 @@ export const PowerBiSlice = ({ slice }: PowerBiSliceProps) => {
 
   const apolloClient = useApolloClient()
 
-  useEffect(() => {
-    const sliceNeedsEmbedParams =
-      !!slice.owner && !!slice.reportId && !!slice.workspaceId
-
-    if (!sliceNeedsEmbedParams) {
-      setShouldRender(true)
-      return
-    }
-
-    const getEmbedPropsFromServer = async () => {
-      setShouldRender(false)
-      const response = await apolloClient.query<
-        PowerBiEmbedTokenQuery,
-        PowerBiEmbedTokenQueryVariables
-      >({
-        query: POWERBI_EMBED_TOKEN_QUERY,
-        variables: {
-          input: {
-            reportId: slice.reportId,
-            owner: slice.owner,
-            workspaceId: slice.workspaceId,
-          },
-        },
-      })
-      if (
-        response?.data?.powerbiEmbedToken?.token &&
-        response?.data?.powerbiEmbedToken?.embedUrl
-      ) {
-        setEmbedPropsFromServer({
-          accessToken: response.data.powerbiEmbedToken.token,
-          embedUrl: response.data.powerbiEmbedToken.embedUrl,
-          tokenType: models.TokenType.Embed,
-          pageName: router.query?.pageName as string,
-        })
-        setShouldRender(true)
-        setErrorOccurred(false)
-      } else {
-        setErrorOccurred(true)
-      }
-    }
-
-    getEmbedPropsFromServer()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [slice.owner, slice.reportId, slice.workspaceId])
-
   // If the report is owned by Fiskistofa then make sure to update the report if the 'nr' query param is set
   useEffect(() => {
     if (
@@ -331,6 +307,8 @@ export const PowerBiSlice = ({ slice }: PowerBiSliceProps) => {
     // Default styles
     embed.element.style.height = '600px'
     embed.iframe.style.border = 'none'
+
+    embedRef.current = embed
 
     // Apply styles to containing element from CMS
     const elementStyle = slice?.powerBiEmbedProps?.style?.element
@@ -355,18 +333,6 @@ export const PowerBiSlice = ({ slice }: PowerBiSliceProps) => {
     }
   }
 
-  if (!shouldRender) return <Box className={styles.blankContainer} />
-
-  if (errorOccurred) {
-    return (
-      <AlertMessage
-        title={n('errorTitle', 'Villa kom upp')}
-        message={n('errorMessage', 'Ekki tókst að hlaða upp Power Bi skýrslu')}
-        type="error"
-      />
-    )
-  }
-
   const embedProps = slice?.powerBiEmbedProps?.embedProps ?? {}
 
   return (
@@ -374,7 +340,16 @@ export const PowerBiSlice = ({ slice }: PowerBiSliceProps) => {
       embedConfig={{
         type: 'report',
         ...embedProps,
-        ...embedPropsFromServer,
+        ...(layoutShouldBeMobilePortrait && {
+          settings: {
+            ...embedProps?.settings,
+            layoutType: models.LayoutType.MobilePortrait,
+          },
+        }),
+        ...(slice?.powerBiEmbedPropsFromServer && {
+          ...slice.powerBiEmbedPropsFromServer,
+          tokenType: models.TokenType.Embed,
+        }),
       }}
       getEmbeddedComponent={getEmbeddedComponent}
       eventHandlers={eventHandlers}

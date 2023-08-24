@@ -13,7 +13,12 @@ interface Props {
   disabled?: boolean
 }
 
-const Card: FC<Props> = ({ title, description, tags, disabled }) => {
+const Card: FC<React.PropsWithChildren<Props>> = ({
+  title,
+  description,
+  tags,
+  disabled,
+}) => {
   const { formatMessage } = useLocale()
 
   return disabled ? (

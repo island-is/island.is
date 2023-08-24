@@ -39,15 +39,11 @@ import {
   Organization,
   QueryGetOrganizationArgs,
   Query,
-  SearchableTags,
 } from '../../../graphql/schema'
 import { useLinkResolver, usePlausible } from '@island.is/web/hooks'
 import ContactBanner from '../ContactBanner/ContactBanner'
-import {
-  ServiceWebSearchInput,
-  ServiceWebModifySearchTerms,
-} from '@island.is/web/components'
-import { getSlugPart } from '../utils'
+import { ServiceWebSearchInput } from '@island.is/web/components'
+import { getServiceWebSearchTagQuery, getSlugPart } from '../utils'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import useLocalLinkTypeResolver from '@island.is/web/hooks/useLocalLinkTypeResolver'
 import { Locale } from 'locale'
@@ -164,7 +160,7 @@ const ServiceSearch: Screen<ServiceSearchProps> = ({
                     items={breadcrumbItems}
                     renderLink={(link, { href }) => {
                       return (
-                        <NextLink href={href} passHref>
+                        <NextLink href={href} passHref legacyBehavior>
                           {link}
                         </NextLink>
                       )
@@ -341,7 +337,7 @@ const ServiceSearch: Screen<ServiceSearchProps> = ({
 
 const single = <T,>(x: T | T[]): T => (Array.isArray(x) ? x[0] : x)
 
-ServiceSearch.getInitialProps = async ({ apolloClient, locale, query }) => {
+ServiceSearch.getProps = async ({ apolloClient, locale, query }) => {
   const defaultSlug = locale === 'is' ? 'stafraent-island' : 'digital-iceland'
 
   const q = single(query.q) || ''
@@ -351,11 +347,6 @@ ServiceSearch.getInitialProps = async ({ apolloClient, locale, query }) => {
   const types = ['webQNA' as SearchableContentTypes]
 
   const queryString = q
-
-  const institutionSlugBelongsToMannaudstorg = slug.includes('mannaudstorg')
-  const mannaudstorgTag = [
-    { key: 'mannaudstorg', type: SearchableTags.Organization },
-  ]
 
   const [
     organization,
@@ -381,12 +372,10 @@ ServiceSearch.getInitialProps = async ({ apolloClient, locale, query }) => {
           language: locale as ContentLanguage,
           queryString,
           types,
-          [institutionSlugBelongsToMannaudstorg
-            ? 'tags'
-            : 'excludedTags']: mannaudstorgTag,
           size: PERPAGE,
           page,
           highlightResults: true,
+          ...getServiceWebSearchTagQuery(slug),
         },
       },
     }),

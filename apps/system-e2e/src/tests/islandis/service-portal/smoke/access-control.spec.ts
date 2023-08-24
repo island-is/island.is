@@ -1,48 +1,68 @@
-import { BrowserContext, expect, test } from '@playwright/test'
-import { urls } from '../../../../support/urls'
+import { BrowserContext, expect, Page, test } from '@playwright/test'
+import { icelandicAndNoPopupUrl, urls } from '../../../../support/urls'
 import { session } from '../../../../support/session'
-import { helpers } from '../../../../support/locator-helpers'
+import { switchUser } from '../../../../support/login'
 
-const homeUrl = `${urls.islandisBaseUrl}/minarsidur`
+const homeUrl = `${urls.islandisBaseUrl}/minarsidur/`
 test.use({ baseURL: urls.islandisBaseUrl })
 
 test.describe('Service portal, in access control', () => {
-  let context: BrowserContext
+  let contextGranter: BrowserContext
+  let contextReceiver: BrowserContext
 
   test.beforeAll(async ({ browser }) => {
-    context = await session({
-      browser: browser,
-      storageState: 'service-portal-faereyjar.json',
-      homeUrl,
-      phoneNumber: '0102399',
-      idsLoginOn: true,
-    })
+    ;[contextGranter, contextReceiver] = await Promise.all([
+      session({
+        browser: browser,
+        storageState: 'service-portal-faereyjar.json',
+        homeUrl,
+        phoneNumber: '0102399',
+        idsLoginOn: true,
+      }),
+      session({
+        browser,
+        storageState: 'service-portal-amerika.json',
+        homeUrl,
+        phoneNumber: '0102989',
+        idsLoginOn: true,
+      }),
+    ])
   })
 
   test.afterAll(async () => {
-    await context.close()
+    await contextGranter.close()
+    await contextReceiver.close()
   })
 
-  test('can remove, create and use custom delegations', async ({ browser }) => {
-    const page = await context.newPage()
+  // Smoke test: Aðgangsstýring - eyða umboði
+  // Smoke test: Aðgangsstýring - kanna að bara ákv. umboð sjáist
+  // Smoke test: Aðgangsstýring - kanna að notandi missi umboð þegar það er tekið af honum
+  // Smoke test: Aðgangsstýring - Veita öll umboð
+  // Smoke test: Aðgangstýring - kanna að öll umboð sjáist
+  // Smoke test: Aðgangstýring - Gefa umboð sem einstaklingur
+  // Smoke test: Innskráning umboð gefið af öðrum
+  test('can remove, create and use custom delegations', async () => {
+    // Arrange
+    const granterPage = await contextGranter.newPage()
+    await granterPage.goto(
+      icelandicAndNoPopupUrl('/minarsidur/adgangsstyring/umbod'),
+    )
+    await expect(
+      granterPage.locator(
+        '[data-testid="access-card"], [data-testid="delegations-empty-state"]',
+      ),
+    ).not.toHaveCount(0, { timeout: 20000 })
+
+    const receiverPage = await contextReceiver.newPage()
+    await receiverPage.goto(icelandicAndNoPopupUrl('/minarsidur/'))
 
     await test.step('Remove delegations', async () => {
-      // Arrange
-      await page.goto(
-        '/minarsidur/adgangsstyring/umbod?locale=is&hide_onboarding_modal=true',
-      )
-      await expect(
-        page.locator(
-          '[data-testid="access-card"], [data-testid="delegations-empty-state"]',
-        ),
-      ).not.toHaveCount(0)
-
       // Act
-      const delegations = page
+      const delegations = granterPage
         .locator('data-testid=access-card')
         .filter({ hasText: 'Gervimaður Ameríku' })
       const deleteButton = delegations.first().locator('role=button[name=Eyða]')
-      const confirmButton = page.locator(
+      const confirmButton = granterPage.locator(
         '[data-dialog-ref="access-delete-modal"] >> role=button[name*=Eyða]',
       )
       const count = await delegations.count()
@@ -54,83 +74,113 @@ test.describe('Service portal, in access control', () => {
       }
 
       // Assert
-      expect(delegations).toHaveCount(0)
+      await expect(delegations).toHaveCount(0)
+    })
+
+    await test.step('Verify removed delegation', async () => {
+      // Act
+      await switchUser(receiverPage, homeUrl)
+      await expect(
+        receiverPage.locator('role=button[name*="Gervimaður Ameríku"]'),
+      ).toBeVisible()
+      await expect(
+        receiverPage.locator('role=button[name*="Gervimaður Færeyjar"]'),
+      ).not.toBeVisible()
+      await receiverPage
+        .locator('role=button[name*="Gervimaður Ameríku"]')
+        .click()
+      await receiverPage.waitForURL(new RegExp(homeUrl), {
+        waitUntil: 'domcontentloaded',
+      })
     })
 
     await test.step('Create delegation', async () => {
-      // Arrange
-      const page = await context.newPage()
-      await page.goto(
-        '/minarsidur/adgangsstyring/umbod?locale=is&hide_onboarding_modal=true',
-      )
-
       // Act
-      await page.locator('role=button[name="Nýtt umboð"]').click()
-      await page.locator('role=textbox[name*="Kennitala"]').click()
+      await granterPage.locator('role=button[name="Skrá nýtt umboð"]').click()
       // eslint-disable-next-line local-rules/disallow-kennitalas
-      await page.locator('role=textbox[name*="Kennitala"]').fill('010130-2989')
+      await granterPage
+        .getByRole('textbox', { name: 'Kennitala' })
+        .fill('010130-2989')
 
-      await page.locator('data-testid=proceed').click()
+      await granterPage.locator('data-testid=proceed').click()
 
-      const access = page.locator('input[type=checkbox][id*=scope]')
+      const access = granterPage.locator('input[type=checkbox][id*=scope]')
       await expect(access).not.toHaveCount(0)
       const accessCount = await access.count()
       for (let i = 0; i < accessCount; i++) {
         await access.nth(i).setChecked(true)
       }
-      await page.locator('data-testid=proceed >> visible=true').click()
-      await page.locator('role=button[name=Staðfesta]').click()
+      await granterPage.locator('data-testid=proceed >> visible=true').click()
+      await granterPage.locator('role=button[name=Staðfesta]').click()
 
       // Assert
-      const delegation = page
+      const delegation = granterPage
         .locator('data-testid=access-card')
         .filter({ hasText: 'Gervimaður Ameríku' })
       await expect(delegation).toBeVisible()
     })
 
-    await test.step('Sign in with new custom delegation', async () => {
-      // Arrange
-      const context2 = await session({
-        browser,
-        storageState: 'service-portal-amerika.json',
-        homeUrl,
-        phoneNumber: '0102989',
-        idsLoginOn: true,
-      })
-      const page = await context2.newPage()
-      const { findByRole } = helpers(page)
-      await page.goto('/minarsidur?locale=is&hide_onboarding_modal=true')
-
+    await test.step('Verify new delegation', async () => {
       // Act
-      await page.locator('data-testid=user-menu >> visible=true').click()
-      await page.locator('role=button[name="Skipta um notanda"]').click()
-      await page.locator('role=button[name*="Gervimaður Færeyjar"]').click()
-      await page.waitForURL(new RegExp(homeUrl), {
-        waitUntil: 'domcontentloaded',
-      })
+      await switchUser(receiverPage, homeUrl, 'Gervimaður Færeyjar')
+      await expect(
+        receiverPage.getByRole('heading', { name: 'Gervimaður Færeyjar' }),
+      ).toBeVisible()
 
       // Assert
-      await expect(findByRole('heading', 'Gervimaður Færeyjar')).toBeVisible()
+      await receiverPage.getByRole('link', { name: 'Pósthólf' }).click()
+      await expect(
+        receiverPage.getByRole('heading', { name: 'Pósthólf' }),
+      ).toBeVisible()
 
-      await context2.close()
+      await receiverPage.getByRole('link', { name: 'Ökutæki' }).click()
+      await expect(
+        receiverPage.getByRole('heading', { name: 'Ökutæki' }),
+      ).toBeVisible()
+    })
+
+    await test.step('Edit delegation', async () => {
+      // Assert
+      await granterPage
+        .locator('data-testid=access-card')
+        .filter({ hasText: 'Gervimaður Ameríku' })
+        .locator('role=button[name=Breyta]')
+        .click()
+
+      const access = granterPage.locator('input[type=checkbox][id*=scope]')
+      await expect(access).not.toHaveCount(0)
+      const accessCount = await access.count()
+      for (let i = 0; i < accessCount; i++) {
+        await access.nth(i).setChecked(false)
+      }
+      await granterPage.getByLabel('Pósthólf').setChecked(true)
+      await granterPage.locator('data-testid=proceed >> visible=true').click()
+      await granterPage.locator('role=button[name=Staðfesta]').click()
+
+      // Assert
+      const updatedDelegation = granterPage
+        .locator('data-testid=access-card')
+        .filter({ hasText: 'Gervimaður Ameríku' })
+      await expect(updatedDelegation).toBeVisible()
+    })
+
+    await test.step('Verify edited delegation', async () => {
+      // Act
+      await switchUser(receiverPage, homeUrl, 'Gervimaður Færeyjar')
+      await expect(
+        receiverPage.getByRole('heading', { name: 'Gervimaður Færeyjar' }),
+      ).toBeVisible()
+
+      // Assert
+      await receiverPage.getByRole('link', { name: 'Pósthólf' }).click()
+      await expect(
+        receiverPage.getByRole('heading', { name: 'Pósthólf' }),
+      ).toBeVisible()
+
+      await receiverPage.getByRole('link', { name: 'Ökutæki' }).click()
+      await expect(
+        receiverPage.getByRole('heading', { name: 'Umboð vantar' }),
+      ).toBeVisible()
     })
   })
-})
-
-test.describe.skip('Aðgangsstýring', () => {
-  for (const { testCase, home } of [
-    { testCase: 'Aðgangsstýring - kanna að notandi missi umboð', home: '/en' },
-    {
-      testCase: 'Aðgangsstýring - kanna að bara ákv. umboð sjáist',
-      home: '/en',
-    },
-    { testCase: 'Aðgangsstýring - Veita eitt umboð', home: '/en' },
-    { testCase: 'Aðgangstýring - kanna að öll umboð sjáist', home: '/en' },
-    { testCase: 'Aðgansttýring - eyða umboði', home: '/en' },
-    { testCase: 'Aðgangsstýring - Veita öll umboð', home: '/en' },
-  ]) {
-    test(testCase, () => {
-      return
-    })
-  }
 })

@@ -29,7 +29,7 @@ import {
   GET_OPERATING_LICENSES_CSV_QUERY,
 } from '../../queries'
 import { Screen } from '../../../types'
-import { useFeatureFlag, useNamespace } from '@island.is/web/hooks'
+import { useNamespace } from '@island.is/web/hooks'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import {
   OrganizationWrapper,
@@ -43,6 +43,7 @@ import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import { SliceType } from '@island.is/island-ui/contentful'
 import { webRichText } from '@island.is/web/utils/richText'
 import { ApolloClient } from '@apollo/client'
+import { safelyExtractPathnameFromUrl } from '@island.is/web/utils/safelyExtractPathnameFromUrl'
 
 const DEBOUNCE_TIMER = 400
 const PAGE_SIZE = 10
@@ -240,10 +241,6 @@ const OperatingLicenses: Screen<OperatingLicensesProps> = ({
   subpage,
   namespace,
 }) => {
-  const { value: isWebReaderEnabledForOrganizationPages } = useFeatureFlag(
-    'isWebReaderEnabledForOrganizationPages',
-    false,
-  )
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
   const Router = useRouter()
@@ -367,13 +364,11 @@ const OperatingLicenses: Screen<OperatingLicensesProps> = ({
         items: navList,
       }}
     >
-      <Box paddingBottom={isWebReaderEnabledForOrganizationPages ? 0 : 2}>
+      <Box paddingBottom={0}>
         <Text variant="h1" as="h2">
           {subpage.title}
         </Text>
-        {isWebReaderEnabledForOrganizationPages && (
-          <Webreader readId={null} readClass="rs_read" />
-        )}
+        <Webreader readId={null} readClass="rs_read" />
       </Box>
       {webRichText(subpage.description as SliceType[])}
       <Box marginBottom={3}>
@@ -595,11 +590,8 @@ const OperatingLicenses: Screen<OperatingLicensesProps> = ({
   )
 }
 
-OperatingLicenses.getInitialProps = async ({
-  apolloClient,
-  locale,
-  pathname,
-}) => {
+OperatingLicenses.getProps = async ({ apolloClient, locale, req }) => {
+  const pathname = safelyExtractPathnameFromUrl(req.url)
   const path = pathname?.split('/') ?? []
   const slug = path?.[path.length - 2] ?? 'syslumenn'
   const subSlug = path.pop() ?? 'rekstrarleyfi'

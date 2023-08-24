@@ -31,7 +31,10 @@ export class ClientSecretsService {
     this.encryptionKey = environment.clientSecretEncryptionKey
   }
 
-  async find(tenantId: string, clientId: string): Promise<ClientSecretDto[]> {
+  async findAll(
+    tenantId: string,
+    clientId: string,
+  ): Promise<ClientSecretDto[]> {
     const secrets = await this.clientSecretModel.findAll({
       where: {
         clientId,
@@ -42,9 +45,11 @@ export class ClientSecretsService {
           model: Client,
           where: { domainName: tenantId },
           required: true,
-          attributes: ['clientId'],
+          attributes: [],
         },
       ],
+      // The secret considered active is the one with the latest created date if there are two or more of the new version (contain encrypted value)
+      order: [['created', 'DESC']],
     })
 
     return secrets.map((secret) => this.formatSecret(secret))
@@ -125,7 +130,7 @@ export class ClientSecretsService {
       '0123456789' +
       'abcdefghijklmnopqrstuvwxyz' +
       'ABCDEFGHIJKLMNOPQRSTUVWXYZ' +
-      ',.-{}+!"#$%/()=?'
+      '.-+!#$%'
 
     for (let i = 0; i < length; i++) {
       generatedSecret += validChars[randomInt(0, validChars.length)]

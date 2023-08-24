@@ -37,11 +37,14 @@ import {
   SearchableTags,
   SupportQna,
 } from '@island.is/web/graphql/schema'
-import orderBy from 'lodash/orderBy'
 import { useNamespace } from '@island.is/web/hooks'
 import slugify from '@sindresorhus/slugify'
 import { FormNamespace } from '../../types'
 import { useI18n } from '@island.is/web/i18n'
+import { CategoryId, SyslumennCategories } from './types'
+import { SjukratryggingarCategories } from '@island.is/web/screens/ServiceWeb/Forms/utils'
+import { getServiceWebSearchTagQuery } from '@island.is/web/screens/ServiceWeb/utils'
+import { sortAlpha } from '@island.is/shared/utils'
 
 type FormState = {
   message: string
@@ -63,52 +66,6 @@ interface StandardFormProps {
   stateEntities: string[]
   formNamespace: FormNamespace
 }
-
-type CategoryId =
-  /**
-   * Fjölskyldumál
-   */
-  | '4vQ4htPOAZvzcXBcjx06SH'
-  /**
-   * Skírteini
-   */
-  | '7nWhQCER920RakQ7BZpEmV'
-  /**
-   * Andlát og dánarbú
-   */
-  | '2TkJynZlamqTHdjUziXDG0'
-  /**
-   * Þinglýsingar, staðfestingar og skráningar
-   */
-  | '6K9stHLAB2mEyGqtqjnXxf'
-  /**
-   * Gjöld og innheimta
-   */
-  | '5u2M09Kw3p1Spva1GSuAzB'
-  /**
-   * Löggildingar
-   */
-  | 'WrQIftmx61sHJMoIr1QRW'
-  /**
-   * Vottorð
-   */
-  | '76Expbwtudon1Gz5lrKOit'
-  /**
-   * Lögráðamál
-   */
-  | '4tvRkPgKP3kerbyRJDvaWF'
-  /**
-   * Önnur þjónusta sýslumanna
-   */
-  | '4LNbNB3GvH3RcoIGpuZKhG'
-  /**
-   * Leyfi
-   */
-  | '7HbSNTUHJReJ2GPeT1ni1C'
-  /**
-   * Fullnustugerðir
-   */
-  | '7LkzuYSzqwM7k8fJyeRbm6'
 
 const mannaudstorgTag = [
   { key: 'mannaudstorg', type: SearchableTags.Organization },
@@ -134,6 +91,8 @@ const labels: Record<string, string> = {
   vidfangsefni: 'Viðfangsefni',
   starfsheiti: 'Starfsheiti',
   rikisadili: 'Ríkisaðili',
+  kennitala: 'Kennitala',
+  malsnumer_ef_til_stadar: 'Málsnúmer (ef til staðar)',
 }
 
 // these should be skipped in the message itself
@@ -229,7 +188,6 @@ export const StandardForm = ({
     () => supportCategories.find((c) => c.id === categoryId)?.description ?? '',
     [categoryId, supportCategories],
   )
-  console.log(errors)
 
   const stateEntityOptions = useMemo(() => {
     const options = [...stateEntities]
@@ -276,9 +234,7 @@ export const StandardForm = ({
                 queryString,
                 size: 10,
                 types: [SearchableContentTypes['WebQna']],
-                [institutionSlugBelongsToMannaudstorg
-                  ? 'tags'
-                  : 'excludedTags']: mannaudstorgTag,
+                ...getServiceWebSearchTagQuery(institutionSlug),
               },
             },
           })
@@ -306,7 +262,7 @@ export const StandardForm = ({
     let fields = null
 
     switch (categoryId as CategoryId) {
-      case '6K9stHLAB2mEyGqtqjnXxf':
+      case SyslumennCategories.THINGLYSINGAR:
         fields = (
           <>
             <GridColumn span={['12/12', '12/12', '4/12']} paddingBottom={3}>
@@ -339,7 +295,7 @@ export const StandardForm = ({
           </>
         )
         break
-      case '7HbSNTUHJReJ2GPeT1ni1C':
+      case SyslumennCategories.LEYFI:
         fields = (
           <>
             <GridColumn span="12/12" paddingBottom={3}>
@@ -368,8 +324,8 @@ export const StandardForm = ({
           </>
         )
         break
-      case '5u2M09Kw3p1Spva1GSuAzB':
-      case '7nWhQCER920RakQ7BZpEmV':
+      case SyslumennCategories.GJOLD_OG_INNHEIMTA:
+      case SyslumennCategories.SKIRTEINI:
         fields = (
           <GridColumn span={['12/12', '6/12']} paddingBottom={3}>
             <BasicInput
@@ -381,9 +337,9 @@ export const StandardForm = ({
           </GridColumn>
         )
         break
-      case '7LkzuYSzqwM7k8fJyeRbm6':
-      case '4tvRkPgKP3kerbyRJDvaWF':
-      case '4vQ4htPOAZvzcXBcjx06SH':
+      case SyslumennCategories.FULLNUSTUGERDIR:
+      case SyslumennCategories.LOGRADAMAL:
+      case SyslumennCategories.FJOLSKYLDUMAL:
         fields = (
           <>
             <GridColumn span="12/12" paddingBottom={3}>
@@ -417,7 +373,7 @@ export const StandardForm = ({
           </>
         )
         break
-      case '2TkJynZlamqTHdjUziXDG0':
+      case SyslumennCategories.ANDLAT_OG_DANARBU:
         fields = (
           <>
             <GridColumn span="12/12" paddingBottom={3}>
@@ -454,6 +410,56 @@ export const StandardForm = ({
           </>
         )
         break
+      case SjukratryggingarCategories.FERDAKOSTNADUR:
+      case SjukratryggingarCategories.HEILBRIGDISSTARFSFOLK:
+      case SjukratryggingarCategories.HEILBRIGDISTHJONUSTA:
+      case SjukratryggingarCategories.RETTINDI_MILLI_LANDA:
+      case SjukratryggingarCategories.SJUKRADAGPENINGAR:
+      case SjukratryggingarCategories.SLYS_OG_SJUKLINGATRYGGING:
+      case SjukratryggingarCategories.SJUKLINGATRYGGING:
+      case SjukratryggingarCategories.SLYSATRYGGING:
+      case SjukratryggingarCategories.TANNLAEKNINGAR:
+      case SjukratryggingarCategories.VEFGATTIR:
+      case SjukratryggingarCategories.THJALFUN:
+      case SjukratryggingarCategories.ONNUR_THJONUSTA_SJUKRATRYGGINGA:
+      case SjukratryggingarCategories.HJUKRUNARHEIMILI:
+      case SjukratryggingarCategories.TULKATHJONUSTA:
+        fields = (
+          <GridColumn span="12/12" paddingBottom={3}>
+            <BasicInput
+              name="kennitala"
+              format="######-####"
+              label={fn('kennitala', 'label', 'Kennitala')}
+            />
+          </GridColumn>
+        )
+        break
+      case SjukratryggingarCategories.HJALPARTAEKI:
+      case SjukratryggingarCategories.HJALPARTAEKI_OG_NAERING:
+      case SjukratryggingarCategories.NAERING:
+      case SjukratryggingarCategories.LYF_OG_LYFJAKOSTNADUR:
+        fields = (
+          <>
+            <GridColumn paddingBottom={3}>
+              <BasicInput
+                name="kennitala"
+                format="######-####"
+                label={fn('kennitala', 'label', 'Kennitala')}
+              />
+            </GridColumn>
+            <GridColumn span="12/12" paddingBottom={3}>
+              <BasicInput
+                name="malsnumer"
+                label={fn(
+                  'malsnumer_ef_til_stadar',
+                  'label',
+                  'Málsnúmer (ef til staðar)',
+                )}
+              />
+            </GridColumn>
+          </>
+        )
+        break
       default:
         break
     }
@@ -461,7 +467,11 @@ export const StandardForm = ({
     if (institutionSlugBelongsToMannaudstorg) {
       fields = (
         <GridColumn span="12/12">
-          <BasicInput name="starfsheiti" requiredMessage="Starfsheiti vantar" />
+          <BasicInput
+            label={fn('starfsheiti', 'label', 'Starfsheiti')}
+            name="starfsheiti"
+            requiredMessage={n('jobTitleMissing', 'Starfsheiti vantar')}
+          />
         </GridColumn>
       )
     }
@@ -517,6 +527,13 @@ export const StandardForm = ({
 
   const isBusy = loadingSuggestions || isChangingSubject
 
+  const categoryOptions = supportCategories
+    .map((x) => ({
+      label: x.title?.trim(),
+      value: x.id,
+    }))
+    .sort(sortAlpha('label'))
+
   return (
     <>
       <GridContainer>
@@ -532,10 +549,7 @@ export const StandardForm = ({
                 setCategoryLabel(label as string)
                 setCategoryId(value as string)
               }}
-              options={orderBy(supportCategories, 'title', 'asc').map((x) => ({
-                label: x.title,
-                value: x.id,
-              }))}
+              options={categoryOptions}
               placeholder={fn('malaflokkur', 'placeholder', 'Veldu flokk')}
               size="md"
             />

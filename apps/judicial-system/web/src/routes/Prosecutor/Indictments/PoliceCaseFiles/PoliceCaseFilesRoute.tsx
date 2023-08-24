@@ -9,8 +9,16 @@ import React, {
 import router from 'next/router'
 import { useIntl } from 'react-intl'
 import _isEqual from 'lodash/isEqual'
-import { useQuery } from '@apollo/client'
 
+import { Box, InputFileUpload, UploadFile } from '@island.is/island-ui/core'
+import {
+  CaseFile,
+  CaseFileCategory,
+  CaseFileState,
+  CrimeSceneMap,
+  IndictmentSubtypeMap,
+} from '@island.is/judicial-system/types'
+import * as constants from '@island.is/judicial-system/consts'
 import {
   FormContentContainer,
   FormContext,
@@ -27,53 +35,45 @@ import {
   titles,
   errors as errorMessages,
 } from '@island.is/judicial-system-web/messages'
-import { Box, InputFileUpload, UploadFile } from '@island.is/island-ui/core'
-import {
-  CaseFile,
-  CaseFileCategory,
-  CaseFileState,
-  CrimeSceneMap,
-  IndictmentSubtypeMap,
-} from '@island.is/judicial-system/types'
 import { useS3Upload } from '@island.is/judicial-system-web/src/utils/hooks'
 import { mapCaseFileToUploadFile } from '@island.is/judicial-system-web/src/utils/formHelper'
-import {
-  GetPoliceCaseFilesQuery,
-  CaseOrigin,
-} from '@island.is/judicial-system-web/src/graphql/schema'
-import { PoliceCaseFilesQuery } from '@island.is/judicial-system-web/graphql'
-import * as constants from '@island.is/judicial-system/consts'
+import { CaseOrigin } from '@island.is/judicial-system-web/src/graphql/schema'
 
-import { PoliceCaseFileCheck, PoliceCaseFiles } from '../../components'
 import {
+  PoliceCaseFileCheck,
+  PoliceCaseFiles,
   mapPoliceCaseFileToPoliceCaseFileCheck,
   PoliceCaseFilesData,
-} from '../../components/CaseFiles/CaseFiles'
+} from '../../components'
 import { policeCaseFiles as m } from './PoliceCaseFilesRoute.strings'
+import { useGetIndictmentPoliceCaseFilesQuery } from './getIndictmentPoliceCaseFiles.generated'
 
-const UploadFilesToPoliceCase: React.FC<{
-  caseId: string
-  policeCaseNumber: string
-  setAllUploaded: (allUploaded: boolean) => void
-  caseFiles: CaseFile[]
-  caseOrigin: CaseOrigin
-}> = ({ caseId, policeCaseNumber, setAllUploaded, caseFiles, caseOrigin }) => {
+const UploadFilesToPoliceCase: React.FC<
+  React.PropsWithChildren<{
+    caseId: string
+    policeCaseNumber: string
+    setAllUploaded: (allUploaded: boolean) => void
+    caseFiles: CaseFile[]
+    caseOrigin: CaseOrigin
+  }>
+> = ({ caseId, policeCaseNumber, setAllUploaded, caseFiles, caseOrigin }) => {
   const { formatMessage } = useIntl()
   const {
     handleChange,
     handleRemove,
     handleRetry,
-    uploadPoliceCaseFile,
+    uploadFromPolice,
     generateSingleFileUpdate,
   } = useS3Upload(caseId)
   const {
     data: policeData,
     loading: policeDataLoading,
     error: policeDataError,
-  } = useQuery<GetPoliceCaseFilesQuery>(PoliceCaseFilesQuery, {
+  } = useGetIndictmentPoliceCaseFilesQuery({
     variables: { input: { caseId } },
+    skip: caseOrigin !== CaseOrigin.LOKE,
     fetchPolicy: 'no-cache',
-    skip: caseOrigin !== CaseOrigin.Loke,
+    errorPolicy: 'all',
   })
 
   const [displayFiles, setDisplayFiles] = useState<UploadFile[]>(
@@ -106,7 +106,7 @@ const UploadFilesToPoliceCase: React.FC<{
   }, [setAllUploaded, displayFiles])
 
   useEffect(() => {
-    if (caseOrigin !== CaseOrigin.Loke) {
+    if (caseOrigin !== CaseOrigin.LOKE) {
       setPoliceCaseFiles({
         files: [],
         isLoading: false,
@@ -217,7 +217,7 @@ const UploadFilesToPoliceCase: React.FC<{
         category: CaseFileCategory.CASE_FILE,
       } as UploadFile
 
-      await uploadPoliceCaseFile(fileToUpload, uploadPoliceCaseFileCallback)
+      await uploadFromPolice(fileToUpload, uploadPoliceCaseFileCallback)
 
       setPoliceCaseFileList((previous) => previous.filter((p) => p.id !== f.id))
 
@@ -225,7 +225,7 @@ const UploadFilesToPoliceCase: React.FC<{
         setIsUploading(false)
       }
     })
-  }, [policeCaseFileList, uploadPoliceCaseFile, uploadPoliceCaseFileCallback])
+  }, [policeCaseFileList, uploadFromPolice, uploadPoliceCaseFileCallback])
 
   return (
     <>
@@ -253,7 +253,14 @@ const UploadFilesToPoliceCase: React.FC<{
           )
         }
         onRemove={(file) => handleRemove(file, removeFileCB)}
-        onRetry={(file) => handleRetry(file, handleUIUpdate)}
+        onRetry={(file) =>
+          handleRetry(
+            file,
+            handleUIUpdate,
+            CaseFileCategory.CASE_FILE,
+            policeCaseNumber,
+          )
+        }
         errorMessage={errorMessage}
         disabled={isUploading}
         showFileSize
@@ -270,15 +277,17 @@ type AllUploadedState = {
  * Since we passing `setAllUploaded` to the children and they are calling it within a useEffect
  * causing a endless rendering loop.
  */
-const PoliceUploadListMemo: React.FC<{
-  caseId: string
-  policeCaseNumbers: string[]
-  subtypes?: IndictmentSubtypeMap
-  crimeScenes?: CrimeSceneMap
-  caseFiles?: CaseFile[]
-  setAllUploaded: (policeCaseNumber: string) => (value: boolean) => void
-  caseOrigin: CaseOrigin
-}> = memo(
+const PoliceUploadListMemo: React.FC<
+  React.PropsWithChildren<{
+    caseId: string
+    policeCaseNumbers: string[]
+    subtypes?: IndictmentSubtypeMap
+    crimeScenes?: CrimeSceneMap
+    caseFiles?: CaseFile[]
+    setAllUploaded: (policeCaseNumber: string) => (value: boolean) => void
+    caseOrigin: CaseOrigin
+  }>
+> = memo(
   ({
     caseId,
     policeCaseNumbers,

@@ -202,4 +202,8 @@ export const m = defineMessages({
     id: 'sp.access-control-delegations:choose-access-rights',
     defaultMessage: 'Velja réttindi',
   },
+  closeModal: {
+    id: 'sp.access-control-delegations:close-modal',
+    defaultMessage: 'Loka glugga',
+  },
 })

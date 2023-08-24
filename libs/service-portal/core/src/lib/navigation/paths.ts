@@ -40,11 +40,12 @@ export enum ServicePortalPath {
   SettingsIslykill = '/stillingar/islykill',
 
   // Family
-  Child = '/min-gogn/barn/:nationalId',
-  FamilyMember = '/min-gogn/:nationalId',
-  Spouse = '/min-gogn/maki/:nationalId',
+  Child = '/min-gogn/yfirlit/barn/:nationalId',
+  FamilyMember = '/min-gogn/yfirlit/:nationalId',
+  Spouse = '/min-gogn/yfirlit/maki/:nationalId',
   MyInfoRoot = '/min-gogn',
-  UserInfo = '/min-gogn/minar-upplysingar',
+  MyInfoRootOverview = '/min-gogn/yfirlit',
+  UserInfo = '/min-gogn/yfirlit/minar-upplysingar',
   Company = '/fyrirtaeki',
 
   // General Petitions
@@ -74,6 +75,8 @@ export enum ServicePortalPath {
 
   // Heilsa
   HealthRoot = '/heilsa',
+  HealthTherapies = '/heilsa/thjalfun',
+  HealthAidsAndNutrition = '/heilsa/hjalpartaeki-og-naering',
 
   // Education
   EducationRoot = '/menntun',
@@ -96,6 +99,8 @@ export enum ServicePortalPath {
   AssetsVehiclesLookup = '/okutaeki/leit',
   AssetsVehiclesHistory = '/okutaeki/okutaekjaferill',
   AssetsVehiclesDrivingLessons = '/okutaeki/okunam',
+  AssetsWorkMachines = '/okutaeki/vinnuvelar',
+  AssetsWorkMachinesDetail = '/okutaeki/vinnuvelar/:regNumber/:id',
 
   // Messages
   MessagesRoot = '/skilabod',

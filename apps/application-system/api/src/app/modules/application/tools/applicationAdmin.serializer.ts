@@ -118,6 +118,7 @@ export class ApplicationAdminSerializer
           application,
           userRole,
           intl.formatMessage,
+          nationalId,
         )
       : undefined
 

@@ -81,7 +81,7 @@ export const PaymentPlanForm: Form = buildForm({
     buildSection({
       id: 'info',
       title: section.info,
-      children: [applicantInformationMultiField],
+      children: [applicantInformationMultiField()],
     }),
     buildSection({
       id: 'employer',

@@ -1,4 +1,7 @@
-import { DefaultStateLifeCycle } from '@island.is/application/core'
+import {
+  coreHistoryMessages,
+  DefaultStateLifeCycle,
+} from '@island.is/application/core'
 import {
   ApplicationTemplate,
   ApplicationTypes,
@@ -38,7 +41,6 @@ const HealthInsuranceTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.HEALTH_INSURANCE,
   name: applicationName,
-  readyForProduction: true,
   dataSchema: HealthInsuranceSchema,
   allowMultipleApplicationsInDraft: false,
   stateMachineConfig: {
@@ -54,6 +56,12 @@ const HealthInsuranceTemplate: ApplicationTemplate<
             shouldBePruned: true,
             // If application stays in this state for 24 hours it will be pruned automatically
             whenToPrune: 24 * 3600 * 1000,
+          },
+          actionCard: {
+            historyLogs: {
+              logMessage: coreHistoryMessages.applicationStarted,
+              onEvent: DefaultEvents.SUBMIT,
+            },
           },
           roles: [
             {
@@ -89,6 +97,12 @@ const HealthInsuranceTemplate: ApplicationTemplate<
           name: applicationName,
           progress: 0.25,
           lifecycle: DefaultStateLifeCycle,
+          actionCard: {
+            historyLogs: {
+              logMessage: coreHistoryMessages.applicationSent,
+              onEvent: DefaultEvents.SUBMIT,
+            },
+          },
           roles: [
             {
               id: Roles.APPLICANT,
@@ -120,7 +134,15 @@ const HealthInsuranceTemplate: ApplicationTemplate<
           name: applicationName,
           onEntry: defineTemplateApi({
             action: API_MODULE.sendApplyHealthInsuranceApplication,
+            throwOnError: false,
           }),
+          actionCard: {
+            pendingAction: {
+              title: coreHistoryMessages.applicationReceived,
+              content: m.actionCardSuccessFullSubmissionDescription,
+              displayStatus: 'success',
+            },
+          },
           progress: 1,
           lifecycle: DefaultStateLifeCycle,
           roles: [

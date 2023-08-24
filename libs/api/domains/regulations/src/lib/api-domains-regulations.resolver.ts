@@ -66,8 +66,22 @@ export class RegulationsResolver {
   @Query(() => graphqlTypeJson)
   getRegulationsSearch(
     @Args('input') input: GetRegulationsSearchInput,
-  ): Promise<RegulationListItem[] | null> {
+  ): Promise<RegulationSearchResults | null> {
     return this.regulationsService.getRegulationsSearch(
+      input.q,
+      input.rn,
+      input.year,
+      input.yearTo,
+      input.ch,
+      input.iA,
+      input.iR,
+      input.page,
+    )
+  }
+
+  @Query(() => graphqlTypeJson)
+  getRegulationsOptionSearch(@Args('input') input: GetRegulationsSearchInput) {
+    return this.regulationsService.getRegulationsOptionSearch(
       input.q,
       input.rn,
       input.year,

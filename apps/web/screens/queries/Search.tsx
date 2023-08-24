@@ -9,93 +9,22 @@ export const GET_SEARCH_RESULTS_QUERY = gql`
           id
           title
           slug
-          intro
-          processEntry {
-            id
-          }
-          group {
-            title
-          }
-          category {
-            id
-            slug
-            title
-          }
-          organization {
-            id
-            title
-            description
-            slug
-          }
-          relatedArticles {
-            title
-            slug
-          }
-          processEntry {
-            id
-            processTitle
-          }
-          subArticles {
-            title
-            slug
-            parent {
-              id
-              title
-              intro
-            }
-          }
         }
-
         ... on LifeEventPage {
           id
           title
           slug
-          intro
-          category {
-            id
-            slug
-            title
-          }
-          image {
-            id
-            url
-            title
-            contentType
-            width
-            height
-          }
-          thumbnail {
-            id
-            url
-            title
-            contentType
-            width
-            height
-          }
         }
-
         ... on News {
           id
-          intro
           title
           slug
         }
-
         ... on SubArticle {
           id
           title
           slug
-          parent {
-            id
-            title
-            category {
-              id
-              slug
-              title
-            }
-          }
         }
-
         ... on ProjectPage {
           id
           title
@@ -110,9 +39,11 @@ export const GET_SEARCH_RESULTS_QUERY = gql`
           id
           title
           slug
+          organizationPage {
+            slug
+          }
         }
       }
-      processEntryCount
     }
   }
 `
@@ -200,11 +131,6 @@ export const GET_SEARCH_RESULTS_QUERY_DETAILED = gql`
             id
             title
             description
-            slug
-          }
-          relatedArticles {
-            id
-            title
             slug
           }
           subArticles {

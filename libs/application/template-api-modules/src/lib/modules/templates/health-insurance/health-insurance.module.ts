@@ -9,7 +9,7 @@ import { BaseTemplateAPIModuleConfig } from '../../../types'
 
 // Here you import your module service
 import { HealthInsuranceService } from './health-insurance.service'
-import { HealthInsuranceV2Client } from '@island.is/clients/health-insurance-v2'
+import { HealthInsuranceV2Client } from '@island.is/clients/icelandic-health-insurance/health-insurance'
 import { BucketService } from './bucket/bucket.service'
 
 export class HealthInsuranceModule {

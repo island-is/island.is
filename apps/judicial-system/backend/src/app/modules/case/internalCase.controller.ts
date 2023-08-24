@@ -111,6 +111,33 @@ export class InternalCaseController {
     )
   }
 
+  @UseGuards(CaseExistsGuard, new CaseTypeGuard(indictmentCases))
+  @Post('case/:caseId/archiveCaseFilesRecord/:policeCaseNumber')
+  @ApiOkResponse({
+    type: DeliverResponse,
+    description: 'Archives a case files record',
+  })
+  async archiveCaseFilesRecord(
+    @Param('caseId') caseId: string,
+    @Param('policeCaseNumber') policeCaseNumber: string,
+    @CurrentCase() theCase: Case,
+  ): Promise<DeliverResponse> {
+    this.logger.debug(
+      `Archiving the case files record for case ${caseId} and police case ${policeCaseNumber}`,
+    )
+
+    if (!theCase.policeCaseNumbers.includes(policeCaseNumber)) {
+      throw new BadRequestException(
+        `Case ${caseId} does not include police case number ${policeCaseNumber}`,
+      )
+    }
+
+    return this.internalCaseService.archiveCaseFilesRecord(
+      theCase,
+      policeCaseNumber,
+    )
+  }
+
   @UseGuards(
     CaseExistsGuard,
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),

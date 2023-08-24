@@ -23,13 +23,16 @@ judicial-system-api:
     AUDIT_TRAIL_GROUP_NAME: 'k8s/judicial-system/audit-log'
     AUDIT_TRAIL_REGION: 'eu-west-1'
     AUDIT_TRAIL_USE_GENERIC_LOGGER: 'false'
-    AUTH_AUDIENCE: 'judicial-system.dev01.devland.is'
+    AUTH_IDS_CLIENT_ID: '@rettarvorslugatt.island.is/web'
+    AUTH_IDS_LOGOUT_REDIRECT_URI: 'https://judicial-system.dev01.devland.is'
+    AUTH_IDS_REDIRECT_URI: 'https://judicial-system.dev01.devland.is/api/auth/callback/identity-server'
+    AUTH_IDS_SCOPE: 'openid profile'
     BACKEND_URL: 'http://web-judicial-system-backend'
     CONTENTFUL_ENVIRONMENT: 'test'
     CONTENTFUL_HOST: 'preview.contentful.com'
     HIDDEN_FEATURES: ''
+    IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     NODE_OPTIONS: '--max-old-space-size=208'
-    SAML_ENTRY_POINT: 'https://innskraning.island.is/?id=judicial-system.dev'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
     - 'nginx-ingress-external'
@@ -82,6 +85,7 @@ judicial-system-api:
       cpu: '100m'
       memory: '128Mi'
   secrets:
+    AUTH_IDS_SECRET: '/k8s/judicial-system/AUTH_IDS_SECRET'
     AUTH_JWT_SECRET: '/k8s/judicial-system/AUTH_JWT_SECRET'
     BACKEND_ACCESS_TOKEN: '/k8s/judicial-system/BACKEND_ACCESS_TOKEN'
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
@@ -99,6 +103,7 @@ judicial-system-backend:
   env:
     BLOCKED_API_INTEGRATION: ''
     CLIENT_URL: 'https://judicial-system.dev01.devland.is'
+    CONTENTFUL_ENVIRONMENT: 'test'
     CONTENTFUL_HOST: 'preview.contentful.com'
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'judicial_system'
@@ -106,7 +111,8 @@ judicial-system-backend:
     DB_USER: 'judicial_system'
     DOKOBIT_URL: 'https://developers.dokobit.com'
     EMAIL_REGION: 'eu-west-1'
-    NODE_OPTIONS: '--max-old-space-size=464'
+    NODE_OPTIONS: '--max-old-space-size=976'
+    NOVA_ACCEPT_UNAUTHORIZED: 'true'
     NO_UPDATE_NOTIFIER: 'true'
     S3_BUCKET: 'island-is-dev-upload-judicial-system'
     S3_REGION: 'eu-west-1'
@@ -181,10 +187,10 @@ judicial-system-backend:
   resources:
     limits:
       cpu: '400m'
-      memory: '512Mi'
+      memory: '1024Mi'
     requests:
       cpu: '100m'
-      memory: '256Mi'
+      memory: '512Mi'
   secrets:
     ADMIN_USERS: '/k8s/judicial-system/ADMIN_USERS'
     ARCHIVE_ENCRYPTION_KEY: '/k8s/judicial-system/ARCHIVE_ENCRYPTION_KEY'
@@ -192,6 +198,7 @@ judicial-system-backend:
     BACKEND_ACCESS_TOKEN: '/k8s/judicial-system/BACKEND_ACCESS_TOKEN'
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     CONTENTFUL_ACCESS_TOKEN: '/k8s/judicial-system/CONTENTFUL_ACCESS_TOKEN'
+    COURTS_EMAILS: '/k8s/judicial-system/COURTS_EMAILS'
     COURTS_MOBILE_NUMBERS: '/k8s/judicial-system/COURTS_MOBILE_NUMBERS'
     DB_PASS: '/k8s/judicial-system/DB_PASSWORD'
     DOKOBIT_ACCESS_TOKEN: '/k8s/judicial-system/DOKOBIT_ACCESS_TOKEN'

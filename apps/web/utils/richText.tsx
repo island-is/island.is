@@ -26,12 +26,18 @@ import {
   AlcoholLicencesList,
   TemporaryEventLicencesList,
   BrokersList,
+  SliceDropdown,
+  PublicVehicleSearch,
+  AircraftSearch,
+  DrivingInstructorList,
+  PlateAvailableSearch,
 } from '@island.is/web/components'
 import {
   PowerBiSlice as PowerBiSliceSchema,
   Slice,
   AccordionSlice as AccordionSliceSchema,
   FeaturedSupportQnAs as FeaturedSupportQNAsSchema,
+  SliceDropdown as SliceDropdownSchema,
 } from '@island.is/web/graphql/schema'
 import { Locale } from '@island.is/shared/types'
 import { MonthlyStatistics } from '../components/connected/electronicRegistrationStatistics'
@@ -61,6 +67,14 @@ export const webRenderConnectedComponent = (slice) => {
       return <TemporaryEventLicencesList slice={slice} />
     case 'Verðbréfamiðlarar/Brokers':
       return <BrokersList slice={slice} />
+    case 'PublicVehicleSearch':
+      return <PublicVehicleSearch slice={slice} />
+    case 'AircraftSearch':
+      return <AircraftSearch slice={slice} />
+    case 'DrivingInstructorList':
+      return <DrivingInstructorList slice={slice} />
+    case 'PlateAvailableSearch':
+      return <PlateAvailableSearch slice={slice} />
     default:
       break
   }
@@ -80,6 +94,16 @@ const defaultRenderComponent = {
   FaqList: (slice: FaqListProps) => slice?.questions && <FaqList {...slice} />,
   FeaturedSupportQNAs: (slice: FeaturedSupportQNAsSchema) => (
     <FeaturedSupportQNAs slice={slice} />
+  ),
+  SliceDropdown: (slice: SliceDropdownSchema) => (
+    <SliceDropdown
+      slices={slice.slices}
+      sliceExtraText={slice.dropdownLabel}
+      gridSpan="1/1"
+      gridOffset="0"
+      slicesAreFullWidth={true}
+      dropdownMarginBottom={5}
+    />
   ),
 }
 

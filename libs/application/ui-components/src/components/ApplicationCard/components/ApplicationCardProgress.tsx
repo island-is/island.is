@@ -99,14 +99,9 @@ export const ApplicationCardProgress = ({
   forceDefault = false,
   ...props
 }: Props) => {
-  const { value: isDraftProgressBarEnabledForApplication } = useFeatureFlag(
-    'isDraftProgressBarEnabledForApplication',
-    false,
-  )
-
-  return isDraftProgressBarEnabledForApplication && !forceDefault ? (
-    <DraftProgressMeter {...props} />
-  ) : (
+  return forceDefault ? (
     <DefaultProgressMeter {...props} />
+  ) : (
+    <DraftProgressMeter {...props} />
   )
 }

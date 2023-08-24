@@ -1,5 +1,3 @@
-<!-- gitbook-navigation: "Public API" -->
-
 # Auth Public API Client
 
 ## About

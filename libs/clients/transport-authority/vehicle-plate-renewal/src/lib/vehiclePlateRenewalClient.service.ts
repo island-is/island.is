@@ -1,31 +1,40 @@
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { Injectable } from '@nestjs/common'
-import { ReturnTypeMessage } from '../../gen/fetch'
-import { PlateRenewalApi } from '../../gen/fetch/apis'
+import { PlateOwnershipApi } from '../../gen/fetch/apis'
 import {
   PlateOwnership,
   PlateOwnershipValidation,
 } from './vehiclePlateRenewalClient.types'
+import { PlateOwnershipApiWithoutIdsAuth } from './apiConfiguration'
+
+interface ReturnTypeMessage {
+  warnSever?: string | null
+  errorMess?: string | null
+  warningSerialNumber?: number | null
+}
 
 @Injectable()
 export class VehiclePlateRenewalClient {
-  constructor(private readonly plateRenewalApi: PlateRenewalApi) {}
+  constructor(
+    private readonly plateOwnershipApi: PlateOwnershipApi,
+    private readonly plateOwnershipApiWithoutIdsAuth: PlateOwnershipApiWithoutIdsAuth,
+  ) {}
 
-  private plateRenewalApiWithAuth(auth: Auth) {
-    return this.plateRenewalApi.withMiddleware(new AuthMiddleware(auth))
+  private plateOwnershipApiWithAuth(auth: Auth) {
+    return this.plateOwnershipApi.withMiddleware(new AuthMiddleware(auth))
   }
 
   public async getMyPlateOwnerships(
     auth: User,
   ): Promise<Array<PlateOwnership>> {
-    const result = await this.plateRenewalApiWithAuth(auth).plateownershipGet({
-      apiVersion: '1.0',
-      apiVersion2: '1.0',
-      getRegnoOwnershipForPersonModel: {
+    const result = await this.plateOwnershipApiWithAuth(auth).plateownershipGet(
+      {
+        apiVersion: '1.0',
+        apiVersion2: '1.0',
         persidno: auth.nationalId,
         showExpired: false,
       },
-    })
+    )
 
     return result.map((item) => ({
       regno: item.regno || '',
@@ -33,7 +42,6 @@ export class VehiclePlateRenewalClient {
       endDate: item.endDate || new Date(),
       nationalId: item.persidNo || '',
       name: item.personName || '',
-      permno: item.permno || '',
     }))
   }
 
@@ -44,7 +52,7 @@ export class VehiclePlateRenewalClient {
     let errorList: ReturnTypeMessage[] | undefined
 
     try {
-      await this.plateRenewalApiWithAuth(auth).renewplateownershipPost({
+      await this.plateOwnershipApiWithAuth(auth).renewplateownershipPost({
         apiVersion: '1.0',
         apiVersion2: '1.0',
         postRenewPlateOwnershipModel: {
@@ -84,7 +92,7 @@ export class VehiclePlateRenewalClient {
   }
 
   public async renewPlateOwnership(auth: User, regno: string): Promise<void> {
-    await this.plateRenewalApiWithAuth(auth).renewplateownershipPost({
+    await this.plateOwnershipApiWithAuth(auth).renewplateownershipPost({
       apiVersion: '1.0',
       apiVersion2: '1.0',
       postRenewPlateOwnershipModel: {
@@ -92,6 +100,12 @@ export class VehiclePlateRenewalClient {
         persidno: auth.nationalId,
         check: false,
       },
+    })
+  }
+
+  public async getPlateAvailability(regno: string) {
+    return this.plateOwnershipApiWithoutIdsAuth.plateavailableGet({
+      regno,
     })
   }
 }

@@ -58,8 +58,8 @@ export class ClientsController {
     }
 
     return clients.map((client) => {
-      // Todo: This is a temporary solution until we have linked clients to domains
-      const domainName = client.clientId.split('/')[0]
+      // While we have clients without the domainName property set we have a fallback to parse it from the clientId
+      const domainName = client.domainName || client.clientId.split('/')[0]
 
       return {
         clientId: client.clientId,

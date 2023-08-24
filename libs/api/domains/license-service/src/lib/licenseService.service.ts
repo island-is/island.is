@@ -1,4 +1,5 @@
-import { Inject, Injectable, CACHE_MANAGER } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
+import { CACHE_MANAGER } from '@nestjs/cache-manager'
 import { Cache as CacheManager } from 'cache-manager'
 import add from 'date-fns/add'
 import compareAsc from 'date-fns/compareAsc'
@@ -6,6 +7,7 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { User } from '@island.is/auth-nest-tools'
 import { CmsContentfulService } from '@island.is/cms'
+import { DriversLicenseClientTypes } from './licenceService.type'
 import {
   GenericUserLicense,
   GenericLicenseTypeType,
@@ -43,7 +45,8 @@ export class LicenseServiceService {
     @Inject(GENERIC_LICENSE_FACTORY)
     private genericLicenseFactory: (
       type: GenericLicenseType,
-      cacheManager: CacheManager,
+      user: User,
+      forceSpecificDriversLicenseClient?: DriversLicenseClientTypes,
     ) => Promise<GenericLicenseClient<unknown> | null>,
     @Inject(CACHE_MANAGER) private cacheManager: CacheManager,
     @Inject(LOGGER_PROVIDER) private logger: Logger,
@@ -131,9 +134,11 @@ export class LicenseServiceService {
     }
 
     try {
-      await this.cacheManager.set(cacheKey, JSON.stringify(dataWithFetch), {
-        ttl,
-      })
+      await this.cacheManager.set(
+        cacheKey,
+        JSON.stringify(dataWithFetch),
+        ttl * 1000,
+      )
     } catch (e) {
       this.logger.warn('Unable to cache data for license', {
         license,
@@ -196,7 +201,7 @@ export class LicenseServiceService {
       if (!onlyList) {
         const licenseService = await this.genericLicenseFactory(
           license.type,
-          this.cacheManager,
+          user,
         )
 
         if (!licenseService) {
@@ -270,10 +275,7 @@ export class LicenseServiceService {
     let licenseUserdata: GenericLicenseUserdataExternal | null = null
 
     const license = AVAILABLE_LICENSES.find((i) => i.type === licenseType)
-    const licenseService = await this.genericLicenseFactory(
-      licenseType,
-      this.cacheManager,
-    )
+    const licenseService = await this.genericLicenseFactory(licenseType, user)
 
     const licenseLabels = await this.getLicenseLabels(locale)
 
@@ -319,10 +321,7 @@ export class LicenseServiceService {
   ) {
     let pkpassUrl: string | null = null
 
-    const licenseService = await this.genericLicenseFactory(
-      licenseType,
-      this.cacheManager,
-    )
+    const licenseService = await this.genericLicenseFactory(licenseType, user)
 
     if (licenseService) {
       pkpassUrl = await licenseService.getPkPassUrl(user, licenseType, locale)
@@ -346,10 +345,7 @@ export class LicenseServiceService {
   ) {
     let pkpassQRCode: string | null = null
 
-    const licenseService = await this.genericLicenseFactory(
-      licenseType,
-      this.cacheManager,
-    )
+    const licenseService = await this.genericLicenseFactory(licenseType, user)
 
     if (licenseService) {
       pkpassQRCode = await licenseService.getPkPassQRCode(
@@ -386,7 +382,7 @@ export class LicenseServiceService {
       throw new Error(`Missing input data`)
     }
 
-    const { passTemplateId } = JSON.parse(data)
+    const { passTemplateId }: { passTemplateId?: string } = JSON.parse(data)
 
     /*
      * PkPass barcodes provide a PassTemplateId that we can use to
@@ -407,13 +403,27 @@ export class LicenseServiceService {
       throw new Error(`Invalid pass template id: ${passTemplateId}`)
     }
 
+    // Temporariy flag until every user has the new digital driving license
+    // We have to make the driving license client decision dependant on the barcode
+    // being scanned. The simplest way for that is to add a force flag so we can make the
+    // decision based on input rather than the authenticated user's license
+
+    let forceDriversLicenseClient:
+      | DriversLicenseClientTypes
+      | undefined = undefined
+
+    if (licenseType === GenericLicenseType.DriversLicense) {
+      forceDriversLicenseClient = passTemplateId ? 'new' : 'old'
+    }
+
     const licenseService = await this.genericLicenseFactory(
       licenseType,
-      this.cacheManager,
+      user,
+      forceDriversLicenseClient,
     )
 
     if (licenseService) {
-      verification = await licenseService.verifyPkPass(data, passTemplateId)
+      verification = await licenseService.verifyPkPass(data)
     } else {
       this.logger.warn('Invalid license type for pkpass verifcation', {
         category: LOG_CATEGORY,
@@ -439,8 +449,12 @@ export class LicenseServiceService {
         // firearmLicense => FirearmLicense
         const keyAsEnumKey = key.slice(0, 1).toUpperCase() + key.slice(1)
 
+        //temporariy fix for the drivers licenses
+        //pr currently under review that fixes this
         const valueFromEnum: GenericLicenseType | undefined =
-          GenericLicenseType[keyAsEnumKey as GenericLicenseTypeType]
+          keyAsEnumKey === 'DrivingLicense'
+            ? GenericLicenseType.DriversLicense
+            : GenericLicenseType[keyAsEnumKey as GenericLicenseTypeType]
 
         if (!valueFromEnum) {
           this.logger.warn('Invalid license type in verication input', {

@@ -1,19 +1,20 @@
 {
-  "root": "libs/clients/documents",
+  "name": "clients-documents",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/clients/documents/src",
   "projectType": "library",
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": ["libs/clients/documents/**/*.{ts,tsx,js,jsx}"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/clients/documents"],
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/libs/clients/documents"],
       "options": {
-        "jestConfig": "libs/clients/documents/jest.config.js",
+        "jestConfig": "libs/clients/documents/jest.config.ts",
         "passWithNoTests": true
       }
     }

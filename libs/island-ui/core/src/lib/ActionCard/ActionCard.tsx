@@ -1,4 +1,7 @@
 import * as React from 'react'
+
+import type { Colors } from '@island.is/island-ui/theme'
+
 import { Box } from '../Box/Box'
 import { Button, ButtonSizes, ButtonTypes } from '../Button/Button'
 import { Tag, TagVariant } from '../Tag/Tag'
@@ -26,9 +29,13 @@ type ActionCardProps = {
   }
   cta: {
     label: string
+    /** Allows for simple variant configuration of the button. If buttonType is defined it will supersede this property. */
     variant?: ButtonTypes['variant']
+    /** Allows for full buttonType control. Supersedes the variant property when both are defined. */
+    buttonType?: ButtonTypes
     size?: ButtonSizes
     icon?: IconType
+    iconType?: 'filled' | 'outline'
     onClick?: () => void
     disabled?: boolean
   }
@@ -86,7 +93,7 @@ const defaultDelete = {
   dialogCancelLabel: '',
 } as const
 
-export const ActionCard: React.FC<ActionCardProps> = ({
+export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
   date,
   heading,
   headingVariant = 'h3',
@@ -105,12 +112,18 @@ export const ActionCard: React.FC<ActionCardProps> = ({
   const tag = { ...defaultTag, ..._tag }
   const unavailable = { ...defaultUnavailable, ..._unavailable }
   const deleteButton = { ...defaultDelete, ..._delete }
-  const bgr =
-    backgroundColor === 'white'
-      ? 'white'
-      : backgroundColor === 'red'
-      ? 'red100'
-      : 'blue100'
+  const backgroundMap: Record<typeof backgroundColor, Colors> = {
+    blue: 'blue100',
+    red: 'red100',
+    white: 'white',
+  }
+  const colorMap: Record<typeof backgroundColor, Colors> = {
+    blue: 'blue600',
+    red: 'red600',
+    white: 'currentColor',
+  }
+  const bgr = backgroundMap[backgroundColor]
+  const color = colorMap[backgroundColor]
 
   const renderAvatar = () => {
     if (!avatar) {
@@ -276,11 +289,12 @@ export const ActionCard: React.FC<ActionCardProps> = ({
           )}
           <Box marginLeft={[0, 3]}>
             <Button
-              variant={cta.variant}
+              {...(cta.buttonType ?? { variant: cta.variant })}
               size="small"
               onClick={cta.onClick}
               disabled={cta.disabled}
               icon={cta.icon}
+              iconType={cta.iconType}
             >
               {cta.label}
             </Button>
@@ -326,10 +340,7 @@ export const ActionCard: React.FC<ActionCardProps> = ({
               justifyContent="spaceBetween"
               alignItems={['flexStart', 'flexStart', 'flexEnd']}
             >
-              <Text
-                variant={headingVariant}
-                color={backgroundColor === 'blue' ? 'blue600' : 'currentColor'}
-              >
+              <Text variant={headingVariant} color={color}>
                 {heading}
               </Text>
               <Hidden above="xs">
@@ -338,14 +349,19 @@ export const ActionCard: React.FC<ActionCardProps> = ({
             </Box>
           )}
 
-          {text && <Text paddingTop={heading ? 1 : 0}>{text}</Text>}
+          {text && (
+            <Text color={color} paddingTop={heading ? 1 : 0}>
+              {text}
+            </Text>
+          )}
         </Box>
         <Box
           display="flex"
           alignItems={['flexStart', 'flexEnd']}
           flexDirection="column"
           flexShrink={0}
-          marginTop={[1, 0]}
+          marginTop={[1, 'auto']}
+          marginBottom={[0, 'auto']}
           marginLeft={[0, 'auto']}
           className={styles.button}
         >

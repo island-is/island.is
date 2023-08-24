@@ -11,6 +11,8 @@ import {
 } from '@island.is/application/types'
 import {
   EphemeralStateLifeCycle,
+  coreHistoryMessages,
+  corePendingActionMessages,
   pruneAfterDays,
 } from '@island.is/application/core'
 import { Events, States, Roles, MCEvents } from './constants'
@@ -27,7 +29,6 @@ import {
   UserProfileApi,
   SyslumadurPaymentCatalogApi,
 } from '../dataProviders'
-import { Features } from '@island.is/feature-flags'
 import { AuthDelegationType } from '@island.is/shared/types'
 
 const MortgageCertificateSchema = z.object({
@@ -48,7 +49,6 @@ const template: ApplicationTemplate<
   type: ApplicationTypes.MORTGAGE_CERTIFICATE,
   name: m.name,
   institution: m.institutionName,
-  readyForProduction: true,
   translationNamespaces: [
     ApplicationConfigurations.MortgageCertificate.translation,
   ],
@@ -56,7 +56,6 @@ const template: ApplicationTemplate<
   allowedDelegations: [
     {
       type: AuthDelegationType.ProcurationHolder,
-      featureFlag: Features.mortgageCertificateDelegations,
     },
   ],
   stateMachineConfig: {
@@ -71,6 +70,12 @@ const template: ApplicationTemplate<
               label: m.actionCardDraft,
               variant: 'blue',
             },
+            historyLogs: [
+              {
+                logMessage: coreHistoryMessages.applicationStarted,
+                onEvent: DefaultEvents.SUBMIT,
+              },
+            ],
           },
           progress: 0.25,
           lifecycle: EphemeralStateLifeCycle,
@@ -127,6 +132,18 @@ const template: ApplicationTemplate<
               label: m.actionCardDraft,
               variant: 'blue',
             },
+            pendingAction: {
+              title: m.pendingActionTryingToSubmitRequestToSyslumennTitle,
+              content:
+                m.pendingActionTryingToSubmitRequestToSyslumennDescription,
+              displayStatus: 'info',
+            },
+            historyLogs: [
+              {
+                logMessage: m.historyLogSubmittedRequestToSyslumenn,
+                onEvent: MCEvents.PENDING_REJECTED_TRY_AGAIN,
+              },
+            ],
           },
           progress: 0.25,
           lifecycle: pruneAfterDays(3 * 30),
@@ -162,6 +179,18 @@ const template: ApplicationTemplate<
               label: m.actionCardDraft,
               variant: 'blue',
             },
+            pendingAction: {
+              title: m.pendingActionCheckIfSyslumennHasFixedKMarkingTitle,
+              content:
+                m.pendingActionCheckIfSyslumennHasFixedKMarkingDescription,
+              displayStatus: 'warning',
+            },
+            historyLogs: [
+              {
+                logMessage: m.historyLogSyslumennHasFixedKMarking,
+                onEvent: DefaultEvents.SUBMIT,
+              },
+            ],
           },
           progress: 0.25,
           lifecycle: pruneAfterDays(3 * 30),
@@ -224,7 +253,6 @@ const template: ApplicationTemplate<
           ],
         },
         on: {
-          [DefaultEvents.PAYMENT]: { target: States.PAYMENT },
           [DefaultEvents.SUBMIT]: { target: States.PAYMENT },
         },
       },
@@ -237,6 +265,21 @@ const template: ApplicationTemplate<
               label: m.actionCardPayment,
               variant: 'red',
             },
+            pendingAction: {
+              title: corePendingActionMessages.paymentPendingTitle,
+              content: corePendingActionMessages.paymentPendingDescription,
+              displayStatus: 'warning',
+            },
+            historyLogs: [
+              {
+                logMessage: coreHistoryMessages.paymentAccepted,
+                onEvent: DefaultEvents.SUBMIT,
+              },
+              {
+                logMessage: coreHistoryMessages.paymentCancelled,
+                onEvent: DefaultEvents.ABORT,
+              },
+            ],
           },
           progress: 0.8,
           lifecycle: pruneAfterDays(1 / 24),
@@ -260,8 +303,8 @@ const template: ApplicationTemplate<
           ],
         },
         on: {
-          [DefaultEvents.PAYMENT]: { target: States.DRAFT },
           [DefaultEvents.SUBMIT]: { target: States.COMPLETED },
+          [DefaultEvents.ABORT]: { target: States.DRAFT },
         },
       },
       [States.COMPLETED]: {
@@ -274,6 +317,10 @@ const template: ApplicationTemplate<
             tag: {
               label: m.actionCardDone,
               variant: 'blueberry',
+            },
+            pendingAction: {
+              title: m.pendingActionApplicationCompletedTitle,
+              displayStatus: 'success',
             },
           },
           onEntry: defineTemplateApi({

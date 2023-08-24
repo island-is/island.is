@@ -9,4 +9,4 @@ export const identityServerConfig = {
 }
 
 export const signOutUrl = (window: Window, idToken: string) =>
-  `${window.location.origin}/api/auth/logout?id_token=${idToken}`
+  `${window.location.origin}/samradsgatt/api/auth/logout?id_token=${idToken}`

@@ -56,7 +56,7 @@ export const Header = ({
       {({ institutionSlug }) => (
         <Hidden print={true}>
           <header>
-            <GridContainer>
+            <GridContainer className={styles.gridContainer}>
               <GridRow>
                 <GridColumn span="12/12" paddingTop={4} paddingBottom={4}>
                   <Columns alignY="center" space={2}>
@@ -106,22 +106,19 @@ export const Header = ({
                                       ]).href
                                     : linkResolver('serviceweb').href
                                 }
+                                className={cn(
+                                  getTextStyles({
+                                    variant: 'h4',
+                                    color: dark
+                                      ? 'dark400'
+                                      : textMode === 'blueberry'
+                                      ? 'blueberry600'
+                                      : 'white',
+                                  }),
+                                  styles.headingLink,
+                                )}
                               >
-                                <a
-                                  className={cn(
-                                    getTextStyles({
-                                      variant: 'h4',
-                                      color: dark
-                                        ? 'dark400'
-                                        : textMode === 'blueberry'
-                                        ? 'blueberry600'
-                                        : 'white',
-                                    }),
-                                    styles.headingLink,
-                                  )}
-                                >
-                                  {title}
-                                </a>
+                                {title}
                               </NextLink>
                             </div>
                           </Hidden>

@@ -21,6 +21,11 @@ import { ClientsInput } from './dto/clients.input'
 import { CreateClientResponse } from './dto/create-client.response'
 import { CreateClientInput } from './dto/create-client.input'
 import { PatchClientInput } from './dto/patch-client.input'
+import { PublishClientInput } from './dto/publish-client.input'
+import { RevokeSecretsInput } from './dto/revoke-secrets.input'
+import { RotateSecretInput } from './dto/rotate-secret.input'
+import { ClientSecret } from './models/client-secret.model'
+import { DeleteClientInput } from './dto/delete-client.input'
 
 @UseGuards(IdsUserGuard)
 @Resolver(() => Client)
@@ -35,15 +40,16 @@ export class ClientsResolver {
     return this.clientsService.getClients(user, input.tenantId)
   }
 
-  @Query(() => Client, { name: 'authAdminClient' })
+  @Query(() => Client, { name: 'authAdminClient', nullable: true })
   getClientById(
     @CurrentUser() user: User,
     @Args('input') input: ClientInput,
-  ): Promise<Client> {
+  ): Promise<Client | null> {
     return this.clientsService.getClientById(
       user,
       input.tenantId,
       input.clientId,
+      input.includeArchived,
     )
   }
 
@@ -58,6 +64,17 @@ export class ClientsResolver {
     return this.clientsService.createClient(user, input)
   }
 
+  @Mutation(() => ClientEnvironment, {
+    name: 'publishAuthAdminClient',
+  })
+  publishClient(
+    @CurrentUser() user: User,
+    @Args('input', { type: () => PublishClientInput })
+    input: PublishClientInput,
+  ) {
+    return this.clientsService.publishClient(user, input)
+  }
+
   @Mutation(() => [ClientEnvironment], {
     name: 'patchAuthAdminClient',
   })
@@ -68,6 +85,31 @@ export class ClientsResolver {
     return this.clientsService.patchClient(user, input)
   }
 
+  @Mutation(() => ClientSecret, { name: 'rotateAuthAdminClientSecret' })
+  rotateSecret(
+    @CurrentUser() user: User,
+    @Args('input', { type: () => RotateSecretInput }) input: RotateSecretInput,
+  ): Promise<ClientSecret> {
+    return this.clientsService.rotateSecret(user, input)
+  }
+
+  @Mutation(() => Boolean, { name: 'deleteAuthAdminClient' })
+  deleteClient(
+    @CurrentUser() user: User,
+    @Args('input', { type: () => DeleteClientInput }) input: DeleteClientInput,
+  ): Promise<boolean> {
+    return this.clientsService.deleteClient(user, input)
+  }
+
+  @Mutation(() => Boolean, { name: 'revokeAuthAdminClientSecrets' })
+  revokeSecret(
+    @CurrentUser() user: User,
+    @Args('input', { type: () => RevokeSecretsInput })
+    input: RevokeSecretsInput,
+  ): Promise<boolean> {
+    return this.clientsService.revokeSecret(user, input)
+  }
+
   @ResolveField('defaultEnvironment', () => ClientEnvironment)
   resolveDefaultEnvironment(@Parent() client: Client): ClientEnvironment {
     if (client.environments.length === 0) {
@@ -75,7 +117,7 @@ export class ClientsResolver {
     }
 
     // Depends on the priority order being decided in the service
-    return client.environments[0]
+    return client.environments[client.environments.length - 1]
   }
 
   @ResolveField('availableEnvironments', () => [Environment])

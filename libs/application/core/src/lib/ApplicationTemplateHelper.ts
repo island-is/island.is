@@ -164,7 +164,10 @@ export class ApplicationTemplateHelper<
 
   getReadableAnswersAndExternalData(
     role: ApplicationRole,
-  ): { answers: FormValue; externalData: ExternalData } {
+  ): {
+    answers: FormValue
+    externalData: ExternalData
+  } {
     const returnValue: { answers: FormValue; externalData: ExternalData } = {
       answers: {},
       externalData: {},
@@ -264,6 +267,7 @@ export class ApplicationTemplateHelper<
     application: Application,
     currentRole: ApplicationRole,
     formatMessage: FormatMessage,
+    nationalId: string,
     stateKey: string = this.application.state,
   ): PendingAction {
     const stateInfo = this.getApplicationStateInformation(stateKey)
@@ -277,7 +281,7 @@ export class ApplicationTemplateHelper<
     }
 
     if (typeof pendingAction === 'function') {
-      const action = pendingAction(application, currentRole)
+      const action = pendingAction(application, currentRole, nationalId)
       return {
         displayStatus: action.displayStatus,
         content: action.content ? formatMessage(action.content) : undefined,
@@ -295,14 +299,21 @@ export class ApplicationTemplateHelper<
     }
   }
 
-  getHistoryLog(
-    transition: 'exit' | 'entry',
+  getHistoryLogs(
     stateKey: string = this.application.state,
+    event: Event<TEvents>,
   ): StaticText | undefined {
     const stateInfo = this.getApplicationStateInformation(stateKey)
 
-    return transition === 'entry'
-      ? stateInfo?.actionCard?.onEntryHistoryLog
-      : stateInfo?.actionCard?.onExitHistoryLog
+    const historyLogs = stateInfo?.actionCard?.historyLogs
+
+    if (Array.isArray(historyLogs)) {
+      return historyLogs?.find((historyLog) => historyLog.onEvent === event)
+        ?.logMessage
+    } else {
+      return historyLogs?.onEvent === event
+        ? historyLogs?.logMessage
+        : undefined
+    }
   }
 }

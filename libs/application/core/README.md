@@ -1,5 +1,3 @@
-<!-- gitbook-navigation: "Core" -->
-
 # Application Core
 
 ## About
@@ -323,7 +321,9 @@ You can pass a function that uses the application answers and the user's role to
 
 ### Application History
 
-You can display a history log for each state that the application passes through, both on entry and exit. The logs will be ordered below the current [Pending Action](###-Pending-Action) (if present) with the most recent entries at the top.
+You can display a history log for each event that can be triggered within each state. The logs will be ordered below the current [Pending Action](###-Pending-Action) (if present) with the most recent entries at the top.
+
+The events are stored and recorded in db seperately so the log messages can be added later or updated.
 
 ```ts
 [States.inReview]: {
@@ -332,13 +332,17 @@ You can display a history log for each state that the application passes through
     ...
     actionCard: {
       ...
-	    onEntryHistoryLog: 'Review started',
-			onExitHistoryLog: 'Review finished'
+      historyLogs: [
+        {
+          onEvent: DefaultEvents.SUBMIT,
+          logMessage: application.applicationSubmitted,
+        }
+      ],
       ...
     },
 ```
 
-An display example of a history log (with no [Pending Action](###-Pending-Action) present)
+An example of a history log (with no [Pending Action](###-Pending-Action) present)
 ![image](../../../handbook/misc/assets/application-history.jpeg)
 
 ### Delete Application

@@ -2,18 +2,52 @@ import { getValueViaPath } from '@island.is/application/core'
 import { FormValue } from '@island.is/application/types'
 import { CoOwnerAndOperator } from '../shared'
 
+export type ApproveAnswersProps = {
+  buyer: {
+    nationalId: string
+    name: string
+    email: string
+    phone: string
+    approved: boolean
+  }
+  buyerCoOwnerAndOperator: {
+    nationalId: string
+    name: string
+    email: string
+    phone: string
+    type: string
+    wasRemoved: string
+    approved: boolean
+  }[]
+  sellerCoOwner: {
+    nationalId: string
+    name: string
+    email: string
+    phone: string
+    type: string
+    approved: boolean
+  }[]
+}
+
 export const getApproveAnswers = (
   reviewerNationalId: string,
   answers: FormValue,
 ) => {
   const returnAnswers = {}
   // If reviewer is buyer
+  const buyerNationalId = getValueViaPath(
+    answers,
+    'buyer.nationalId',
+    '',
+  ) as string
+  const buyerApproved = getValueViaPath(
+    answers,
+    'buyer.approved',
+    undefined,
+  ) as boolean | undefined
   if (
-    (getValueViaPath(answers, 'buyer.nationalId', '') as string) ===
-      reviewerNationalId &&
-    (getValueViaPath(answers, 'buyer.approved', undefined) as
-      | boolean
-      | undefined) === undefined
+    buyerNationalId === reviewerNationalId &&
+    (buyerApproved === undefined || buyerApproved === false)
   ) {
     Object.assign(returnAnswers, {
       buyer: {
@@ -40,7 +74,8 @@ export const getApproveAnswers = (
     )
   if (
     buyerCoOwnerAndOperator &&
-    buyerCoOwnerAndOperator.approved === undefined
+    (buyerCoOwnerAndOperator.approved === undefined ||
+      buyerCoOwnerAndOperator.approved === false)
   ) {
     Object.assign(returnAnswers, {
       buyerCoOwnerAndOperator: buyerCoOwnersAndOperators.map(
@@ -71,7 +106,10 @@ export const getApproveAnswers = (
   const sellerCoOwner = sellerCoOwners.find(
     (coOwner) => coOwner.nationalId === reviewerNationalId,
   )
-  if (sellerCoOwner && sellerCoOwner.approved === undefined) {
+  if (
+    sellerCoOwner &&
+    (sellerCoOwner.approved === undefined || sellerCoOwner.approved === false)
+  ) {
     Object.assign(returnAnswers, {
       sellerCoOwner: sellerCoOwners.map((coOwner) => {
         return {

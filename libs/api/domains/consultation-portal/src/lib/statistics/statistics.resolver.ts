@@ -7,10 +7,12 @@ import { UseGuards } from '@nestjs/common'
 import { Query, Resolver } from '@nestjs/graphql'
 import { StatisticsResult } from '../models/statisticsResult.model'
 import { StatisticsService } from './statistics.service'
+import { Audit } from '@island.is/nest/audit'
 
 @Resolver()
 @UseGuards(FeatureFlagGuard)
 @FeatureFlag(Features.consultationPortalApplication)
+@Audit({ namespace: '@island.is/samradsgatt' })
 export class StatisticsResolver {
   constructor(private statisticsResultService: StatisticsService) {}
 

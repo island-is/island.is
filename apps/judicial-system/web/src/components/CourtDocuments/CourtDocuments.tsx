@@ -31,7 +31,7 @@ interface Props {
   setWorkingCase: Dispatch<React.SetStateAction<Case>>
 }
 
-const CourtDocuments: FC<Props> = (props) => {
+const CourtDocuments: FC<React.PropsWithChildren<Props>> = (props) => {
   const { workingCase, setWorkingCase } = props
   const { formatMessage } = useIntl()
   const { setAndSendCaseToServer } = useCase()
@@ -41,15 +41,15 @@ const CourtDocuments: FC<Props> = (props) => {
 
   const whoFiledOptions = [
     {
-      value: UserRole.Prosecutor,
+      value: UserRole.PROSECUTOR,
       label: formatMessage(courtDocuments.whoFiled.prosecutor),
     },
     {
-      value: UserRole.Defender,
+      value: UserRole.DEFENDER,
       label: formatMessage(courtDocuments.whoFiled.defendant),
     },
     {
-      value: UserRole.Judge,
+      value: UserRole.JUDGE,
       label: formatMessage(courtDocuments.whoFiled.court),
     },
   ]

@@ -9,7 +9,7 @@ import { Session } from '../sessions/session.model'
 import { SessionsService } from './sessions.service'
 
 const mockSession = {
-  id: '1',
+  sessionId: '1',
   actorNationalId: createNationalId(),
   subjectNationalId: createNationalId(),
   clientId: 'clientId',

@@ -8,6 +8,7 @@ import uaParser from 'ua-parser-js'
 import { User } from '@island.is/auth-nest-tools'
 import { paginate } from '@island.is/nest/pagination'
 
+import { CreateSessionDto } from './create-session.dto'
 import { Session } from './session.model'
 import { SessionsQueryDto } from './sessions-query.dto'
 import { SessionsResultDto } from './sessions-result.dto'
@@ -84,9 +85,19 @@ export class SessionsService {
     })
   }
 
-  create(session: Session): Promise<Session> {
+  create(session: CreateSessionDto): Promise<Session> {
+    const { id, sessionId, ...rest } = session
+
+    // Todo: Remove this when we have migrated IDS to use sessionId
+    const sid = sessionId || id
+
+    if (!sid) {
+      throw new Error('Missing sessionId.')
+    }
+
     return this.sessionModel.create({
-      ...session,
+      ...rest,
+      sessionId: sid,
       device: this.formatUserAgent(session.userAgent),
       ipLocation: this.formatIp(session.ip),
     })

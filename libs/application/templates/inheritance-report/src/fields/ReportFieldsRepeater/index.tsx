@@ -33,8 +33,19 @@ type RepeaterProps = {
   }
 }
 
+function setIfValueIsNotNan(
+  setValue: (id: string, value: string | number) => void,
+  fieldId: string,
+  value: string | number,
+) {
+  if (typeof value === 'number' && isNaN(value)) {
+    return
+  }
+  setValue(fieldId, value)
+}
+
 export const ReportFieldsRepeater: FC<
-  FieldBaseProps<Answers> & RepeaterProps
+  React.PropsWithChildren<FieldBaseProps<Answers> & RepeaterProps>
 > = ({ application, field, errors }) => {
   const { answers, externalData } = application
   const { id, props } = field
@@ -132,21 +143,35 @@ export const ReportFieldsRepeater: FC<
 
   /* ------ Set heirs calculations ------ */
   useEffect(() => {
-    setTaxFreeInheritance(taxFreeLimit * percentage)
+    setTaxFreeInheritance(Math.round(taxFreeLimit * percentage))
     setInheritance(
-      (Number(getValueViaPath(answers, 'assets.assetsTotal')) -
-        Number(getValueViaPath(answers, 'debts.debtsTotal')) +
-        Number(getValueViaPath(answers, 'business.businessTotal')) -
-        Number(getValueViaPath(answers, 'totalDeduction'))) *
-        percentage,
+      Math.round(
+        (Number(getValueViaPath(answers, 'assets.assetsTotal')) -
+          Number(getValueViaPath(answers, 'debts.debtsTotal')) +
+          Number(getValueViaPath(answers, 'business.businessTotal')) -
+          Number(getValueViaPath(answers, 'totalDeduction'))) *
+          percentage,
+      ),
     )
-    setTaxableInheritance(inheritance - taxFreeInheritance)
-    setInheritanceTax(Math.round(taxableInheritance * 0.01))
+    setTaxableInheritance(Math.round(inheritance - taxFreeInheritance))
+    setInheritanceTax(Math.round(taxableInheritance * 0.1))
 
-    setValue(`${index}.taxFreeInheritance`, taxFreeInheritance)
-    setValue(`${index}.inheritance`, inheritance)
-    setValue(`${index}.inheritanceTax`, Math.round(taxableInheritance * 0.01))
-    setValue(`${index}.taxableInheritance`, taxableInheritance)
+    setIfValueIsNotNan(
+      setValue,
+      `${index}.taxFreeInheritance`,
+      taxFreeInheritance,
+    )
+    setIfValueIsNotNan(setValue, `${index}.inheritance`, inheritance)
+    setIfValueIsNotNan(
+      setValue,
+      `${index}.inheritanceTax`,
+      Math.round(taxableInheritance * 0.01),
+    )
+    setIfValueIsNotNan(
+      setValue,
+      `${index}.taxableInheritance`,
+      taxableInheritance,
+    )
   }, [
     index,
     percentage,
@@ -207,7 +232,7 @@ export const ReportFieldsRepeater: FC<
           <Box position="relative" key={repeaterField.id} marginTop={4}>
             <Box>
               <Text variant="h4" marginBottom={2}>
-                {props.repeaterHeaderText + ' ' + (index + 1)}
+                {props.repeaterHeaderText}
               </Text>
               <Box position="absolute" className={styles.removeFieldButton}>
                 <Button

@@ -27,7 +27,9 @@ interface ProjectWrapperProps {
   sidebarNavigationTitle: string
 }
 
-export const ProjectWrapper: React.FC<ProjectWrapperProps> = ({
+export const ProjectWrapper: React.FC<
+  React.PropsWithChildren<ProjectWrapperProps>
+> = ({
   withSidebar = false,
   sidebarContent,
   projectPage,
@@ -48,12 +50,27 @@ export const ProjectWrapper: React.FC<ProjectWrapperProps> = ({
     [projectPage, baseRouterPath, sidebarNavigationTitle],
   )
 
+  const showBackLink = projectPage.backLink?.url && projectPage.backLink?.text
+
   const aboveChildren = (
     <>
       {withSidebar && (
         <Hidden above="sm">
-          <Box>
-            <Box marginY={2}>{projectPageSidebarNavigationComponent(true)}</Box>
+          <Box marginY={2}>
+            {showBackLink && (
+              <Box marginBottom={3}>
+                <Link
+                  href={projectPage.backLink.url}
+                  underlineVisibility="always"
+                  underline="normal"
+                  color="blue400"
+                >
+                  <Icon size="small" icon="arrowBack" />
+                  {projectPage.backLink.text}
+                </Link>
+              </Box>
+            )}
+            {projectPageSidebarNavigationComponent(true)}
           </Box>
         </Hidden>
       )}
@@ -65,9 +82,6 @@ export const ProjectWrapper: React.FC<ProjectWrapperProps> = ({
     </>
   )
 
-  const showBackLink =
-    !withSidebar && projectPage.backLink?.url && projectPage.backLink?.text
-
   return (
     <>
       <ProjectChatPanel projectPage={projectPage} />
@@ -77,6 +91,19 @@ export const ProjectWrapper: React.FC<ProjectWrapperProps> = ({
           isSticky={true}
           sidebarContent={
             <>
+              {showBackLink && (
+                <Box marginBottom={3}>
+                  <Link
+                    href={projectPage.backLink.url}
+                    underlineVisibility="always"
+                    underline="normal"
+                    color="blue400"
+                  >
+                    <Icon size="small" icon="arrowBack" />
+                    {projectPage.backLink.text}
+                  </Link>
+                </Box>
+              )}
               {projectPage.sidebarLinks?.length > 0 &&
                 projectPageSidebarNavigationComponent()}
               {sidebarContent}

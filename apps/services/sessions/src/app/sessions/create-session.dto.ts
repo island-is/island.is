@@ -1,10 +1,22 @@
-import { ApiProperty } from '@nestjs/swagger'
-import { IsDateString, IsString } from 'class-validator'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
+import { IsDateString, IsOptional, IsString } from 'class-validator'
 
 export class CreateSessionDto {
   @IsString()
-  @ApiProperty()
-  id!: string
+  @IsOptional()
+  @ApiPropertyOptional({
+    description: 'The IDS session ID. Deprecated, use sessionId instead.',
+    deprecated: true,
+  })
+  // Todo: Remove when we have migrated IDS to use sessionId
+  id?: string
+
+  @IsString()
+  @IsOptional()
+  @ApiPropertyOptional({
+    description: 'The IDS session ID',
+  })
+  sessionId!: string
 
   @IsString()
   @ApiProperty()

@@ -4,7 +4,7 @@ import {
   ReviewApprovalEnum,
   utils,
 } from '@island.is/application/templates/accident-notification'
-import { DocumentApi } from '@island.is/clients/health-insurance-v2'
+import { DocumentApi } from '@island.is/clients/icelandic-health-insurance/health-insurance'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { Inject, Injectable } from '@nestjs/common'

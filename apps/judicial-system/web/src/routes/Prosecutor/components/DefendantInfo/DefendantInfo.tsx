@@ -47,7 +47,7 @@ interface Props {
   nationalIdImmutable: boolean
 }
 
-const DefendantInfo: React.FC<Props> = (props) => {
+const DefendantInfo: React.FC<React.PropsWithChildren<Props>> = (props) => {
   const {
     defendant,
     workingCase,
@@ -159,7 +159,7 @@ const DefendantInfo: React.FC<Props> = (props) => {
       )}
       <Box marginBottom={2}>
         <Checkbox
-          name={`noNationalId-${Math.random()}`}
+          name={`noNationalId-${defendant.id}`}
           label={formatMessage(
             strings.defendantInfo.doesNotHaveIcelandicNationalId,
             {

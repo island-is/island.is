@@ -25,7 +25,7 @@ interface Props {
   setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
 }
 
-const DefenderInfo: React.FC<Props> = (props) => {
+const DefenderInfo: React.FC<React.PropsWithChildren<Props>> = (props) => {
   const { workingCase, setWorkingCase } = props
   const { formatMessage } = useIntl()
   const { setAndSendCaseToServer } = useCase()
@@ -35,13 +35,13 @@ const DefenderInfo: React.FC<Props> = (props) => {
 
   const getSectionTitle = () => {
     if (isRestrictionCase(workingCase.type)) {
-      if (user?.role === UserRole.Prosecutor) {
+      if (user?.role === UserRole.PROSECUTOR) {
         return defenderInfo.restrictionCases.sections.defender.heading
       } else {
         return defenderInfo.restrictionCases.sections.defender.title
       }
     } else {
-      if (user?.role === UserRole.Prosecutor) {
+      if (user?.role === UserRole.PROSECUTOR) {
         return defenderInfo.investigationCases.sections.defender.heading
       } else {
         return defenderInfo.investigationCases.sections.defender.title
@@ -90,7 +90,7 @@ const DefenderInfo: React.FC<Props> = (props) => {
         title={formatMessage(getSectionTitle(), {
           defenderType:
             workingCase.sessionArrangements ===
-            SessionArrangements.AllPresentSpokesperson
+            SessionArrangements.ALL_PRESENT_SPOKESPERSON
               ? 'Talsmaður'
               : 'Verjandi',
         })}
@@ -99,27 +99,29 @@ const DefenderInfo: React.FC<Props> = (props) => {
       {defenderNotFound && <DefenderNotFound />}
       <BlueBox>
         <DefenderInput onDefenderNotFound={setDefenderNotFound} />
-        {user?.role === UserRole.Prosecutor && (
+        {user?.role === UserRole.PROSECUTOR && (
           <Box marginTop={2}>
             <Checkbox
               name="sendRequestToDefender"
               label={formatMessage(
                 isRestrictionCase(workingCase.type)
-                  ? defenderInfo.restrictionCases.sections.sendRequest.label
-                  : defenderInfo.investigationCases.sections.sendRequest.label,
+                  ? defenderInfo.restrictionCases.sections.defenderRequestAccess
+                      .label
+                  : defenderInfo.investigationCases.sections
+                      .defenderRequestAccess.label,
               )}
               tooltip={
                 isRestrictionCase(workingCase.type)
                   ? formatMessage(
-                      defenderInfo.restrictionCases.sections.sendRequest
-                        .tooltip,
+                      defenderInfo.restrictionCases.sections
+                        .defenderRequestAccess.tooltip,
                       {
                         caseType: workingCase.type,
                       },
                     )
                   : formatMessage(
-                      defenderInfo.investigationCases.sections.sendRequest
-                        .tooltip,
+                      defenderInfo.investigationCases.sections
+                        .defenderRequestAccess.tooltip,
                     )
               }
               checked={workingCase.sendRequestToDefender}

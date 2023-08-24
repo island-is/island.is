@@ -55,7 +55,7 @@ export const PaymentPlansSchema = z.object({
 
 export const PublicDebtPaymentPlanSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
-  applicant: applicantInformationSchema,
+  applicant: applicantInformationSchema(),
   employer: z.object({
     isCorrectInfo: z.enum([YES, NO]),
   }),

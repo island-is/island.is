@@ -53,7 +53,9 @@ describe('Init-container definitions', () => {
       secrets: {
         S1: '/as/dfadf',
       },
-      postgres: {},
+      postgres: {
+        extensions: ['foo', 'bar'],
+      },
     })
     const result = (await generateOutputOne({
       outputFormat: renderers.helm,
@@ -91,6 +93,7 @@ describe('Init-container definitions', () => {
       env: {
         A: 'B',
         B: 'b',
+        DB_EXTENSIONS: 'foo,bar',
         DB_USER: 'api',
         DB_NAME: 'api',
         DB_HOST: 'a',

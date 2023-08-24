@@ -7,18 +7,13 @@ import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   CaseCustodyRestrictions,
   CaseFileCategory,
-  Feature,
   Gender,
   IndictmentSubtype,
-  isCourtRole,
   Notification,
   NotificationType,
 } from '@island.is/judicial-system/types'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
-import {
-  CaseType,
-  User,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
 
 export const getShortGender = (gender?: Gender): string => {
   switch (gender) {
@@ -64,9 +59,8 @@ export const kb = (bytes?: number) => {
   return bytes ? Math.ceil(bytes / 1024) : ''
 }
 
-export const getAppealEndDate = (courtEndTime: string) => {
-  const courtEndTimeToDate = parseISO(courtEndTime)
-  const appealEndDate = addDays(courtEndTimeToDate, 3)
+export const getAppealEndDate = (rulingDate: string) => {
+  const appealEndDate = addDays(parseISO(rulingDate), 3)
   return formatDate(appealEndDate, 'PPPp')
 }
 
@@ -91,14 +85,10 @@ export const createCaseResentExplanation = (
   }Krafa endursend ${formatDate(now, 'PPPp')} - ${explanation}`
 }
 
-export const isTrafficViolationCase = (
-  workingCase: Case,
-  features: Feature[],
-  user?: User,
-): boolean => {
+export const isTrafficViolationCase = (workingCase: Case): boolean => {
   if (
     !workingCase.indictmentSubtypes ||
-    workingCase.type !== CaseType.Indictment
+    workingCase.type !== CaseType.INDICTMENT
   ) {
     return false
   }
@@ -108,17 +98,12 @@ export const isTrafficViolationCase = (
   )
 
   return Boolean(
-    (features.includes(Feature.INDICTMENT_ROUTE) ||
-      user?.institution?.id === '26136a67-c3d6-4b73-82e2-3265669a36d3' || // Lögreglustjórinn á Suðurlandi
-      user?.institution?.id === '53581d7b-0591-45e5-9cbe-c96b2f82da85' || // Lögreglustjórinn á höfuðborgarsvæðinu
-      user?.name === 'Ásmundur Jónsson' ||
-      (user && isCourtRole(user.role))) &&
-      !(
-        workingCase.caseFiles &&
-        workingCase.caseFiles.find(
-          (file) => file.category === CaseFileCategory.INDICTMENT,
-        )
-      ) &&
+    !(
+      workingCase.caseFiles &&
+      workingCase.caseFiles.find(
+        (file) => file.category === CaseFileCategory.INDICTMENT,
+      )
+    ) &&
       flatIndictmentSubtypes.length > 0 &&
       flatIndictmentSubtypes.every(
         (val) => val === IndictmentSubtype.TRAFFIC_VIOLATION,

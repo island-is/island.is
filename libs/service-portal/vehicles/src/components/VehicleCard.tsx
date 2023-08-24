@@ -11,7 +11,9 @@ interface Props {
   vehicle: VehiclesVehicle
 }
 
-export const VehicleCard: FC<Props> = ({ vehicle }) => {
+export const VehicleCard: FC<React.PropsWithChildren<Props>> = ({
+  vehicle,
+}) => {
   const { formatMessage } = useLocale()
   if (!vehicle) {
     return null
@@ -44,10 +46,7 @@ export const VehicleCard: FC<Props> = ({ vehicle }) => {
           : undefined
       }
       cta={{
-        label: formatMessage({
-          id: 'sp.vehicles:see-info',
-          defaultMessage: 'Skoða nánar',
-        }),
+        label: formatMessage(messages.seeInfo),
         variant: 'text',
         url: vehicle.permno
           ? ServicePortalPath.AssetsVehiclesDetail.replace(

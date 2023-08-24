@@ -58,6 +58,7 @@ export interface TextProps {
     | 'preLine'
     | 'breakSpaces'
   capitalizeFirstLetter?: boolean
+  translate?: 'yes' | 'no'
 }
 
 type GetTextStylesProps = Pick<
@@ -117,6 +118,7 @@ export const Text = forwardRef<HTMLElement, TextProps & TestSupport>(
       whiteSpace,
       dataTestId,
       capitalizeFirstLetter,
+      translate,
     },
     ref,
   ) => {
@@ -144,6 +146,7 @@ export const Text = forwardRef<HTMLElement, TextProps & TestSupport>(
         })}
         ref={ref}
         title={title}
+        translate={translate}
       >
         {React.Children.map<React.ReactNode, React.ReactNode>(
           children,

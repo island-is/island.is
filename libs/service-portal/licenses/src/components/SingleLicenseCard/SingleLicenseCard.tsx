@@ -32,6 +32,8 @@ export const SingleLicenseCard = ({
   additionalLinkText,
   background,
   linkText,
+  dataTestId,
+  translateTitle = 'yes',
 }: {
   title: string
   subtitle: string
@@ -43,6 +45,8 @@ export const SingleLicenseCard = ({
   additionalLinkText?: string
   background?: BoxProps['background']
   secondaryTag?: tag
+  dataTestId?: string
+  translateTitle?: 'yes' | 'no'
 }) => {
   useNamespaces('sp.license')
   const { formatMessage } = useLocale()
@@ -55,6 +59,7 @@ export const SingleLicenseCard = ({
       display="flex"
       flexDirection="row"
       background={background}
+      dataTestId={dataTestId}
     >
       <Hidden below="sm">
         <img className={styles.image} src={img} alt={title} />
@@ -71,7 +76,7 @@ export const SingleLicenseCard = ({
           justifyContent="spaceBetween"
           alignItems="flexStart"
         >
-          <Text variant="h4" as="h2">
+          <Text translate={translateTitle} variant="h4" as="h2">
             {title}
           </Text>
           <Box

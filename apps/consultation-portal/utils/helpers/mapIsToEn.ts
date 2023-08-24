@@ -1,7 +1,7 @@
 export const mapIsToEn = {
-  Mál: 'caseIds',
-  Stofnanir: 'institutionIds',
-  Málefnasvið: 'policyAreaIds',
+  Mál: 'cases',
+  Stofnanir: 'institutions',
+  Málefnasvið: 'policyAreas',
 }
 
 export default mapIsToEn

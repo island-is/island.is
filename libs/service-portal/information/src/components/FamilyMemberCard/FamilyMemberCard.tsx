@@ -1,11 +1,9 @@
 import { useLocale, useNamespaces } from '@island.is/localization'
-import {
-  formatNationalId,
-  ServicePortalPath,
-  m,
-} from '@island.is/service-portal/core'
+import { formatNationalId, m } from '@island.is/service-portal/core'
 import React, { FC, useEffect, useState } from 'react'
 import { ActionCard } from '@island.is/service-portal/core'
+import { spmm } from '../../lib/messages'
+import { InformationPaths } from '../../lib/paths'
 
 interface Props {
   title: string
@@ -14,7 +12,7 @@ interface Props {
   currentUser?: boolean
 }
 
-export const FamilyMemberCard: FC<Props> = ({
+export const FamilyMemberCard: FC<React.PropsWithChildren<Props>> = ({
   title,
   nationalId,
   currentUser,
@@ -40,7 +38,7 @@ export const FamilyMemberCard: FC<Props> = ({
             id: 'sp.family:child',
             defaultMessage: 'Barn',
           }),
-          path: ServicePortalPath.Child.replace(':nationalId', nationalId),
+          path: InformationPaths.Child.replace(':nationalId', nationalId),
         }
       case 'spouse':
         return {
@@ -48,7 +46,7 @@ export const FamilyMemberCard: FC<Props> = ({
             id: 'sp.family:spouse',
             defaultMessage: 'Maki',
           }),
-          path: ServicePortalPath.Spouse.replace(':nationalId', nationalId),
+          path: InformationPaths.Spouse.replace(':nationalId', nationalId),
         }
       case 'child2':
         return {
@@ -56,7 +54,7 @@ export const FamilyMemberCard: FC<Props> = ({
             id: 'sp.family:child',
             defaultMessage: 'Barn',
           }),
-          path: ServicePortalPath.FamilyMember.replace(
+          path: InformationPaths.FamilyMember.replace(
             ':nationalId',
             nationalId,
           ),
@@ -67,7 +65,7 @@ export const FamilyMemberCard: FC<Props> = ({
             id: 'sp.family:family-member',
             defaultMessage: 'Fjölskyldumeðlimur',
           }),
-          path: ServicePortalPath.FamilyMember.replace(
+          path: InformationPaths.FamilyMember.replace(
             ':nationalId',
             nationalId,
           ),
@@ -77,14 +75,15 @@ export const FamilyMemberCard: FC<Props> = ({
 
   const getUrl = () => {
     return currentUser
-      ? ServicePortalPath.UserInfo
+      ? InformationPaths.UserInfo
       : nationalId
       ? familyRelationData?.path
-      : ServicePortalPath.UserInfo
+      : InformationPaths.UserInfo
   }
   return (
     <ActionCard
       image={{ type: 'avatar' }}
+      translateLabel="no"
       heading={title}
       text={
         nationalId &&
@@ -99,10 +98,7 @@ export const FamilyMemberCard: FC<Props> = ({
             }
       }
       cta={{
-        label: formatMessage({
-          id: 'sp.family:see-info',
-          defaultMessage: 'Skoða nánar',
-        }),
+        label: formatMessage(spmm.seeInfo),
         variant: 'text',
         url: getUrl(),
       }}

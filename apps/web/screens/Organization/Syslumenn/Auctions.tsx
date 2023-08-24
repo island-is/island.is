@@ -33,7 +33,7 @@ import {
   GET_SYSLUMENN_AUCTIONS_QUERY,
 } from '../../queries'
 import { Screen } from '../../../types'
-import { useFeatureFlag, useNamespace } from '@island.is/web/hooks'
+import { useNamespace } from '@island.is/web/hooks'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import { OrganizationWrapper, Webreader } from '@island.is/web/components'
 import { useQuery } from '@apollo/client'
@@ -41,6 +41,7 @@ import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import { useRouter } from 'next/router'
 import { theme } from '@island.is/island-ui/theme'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
+import { safelyExtractPathnameFromUrl } from '@island.is/web/utils/safelyExtractPathnameFromUrl'
 
 interface AuctionsProps {
   organizationPage: Query['getOrganizationPage']
@@ -397,17 +398,13 @@ const Auctions: Screen<AuctionsProps> = ({
   namespace,
   subpage,
 }) => {
-  const { value: isWebReaderEnabledForOrganizationPages } = useFeatureFlag(
-    'isWebReaderEnabledForOrganizationPages',
-    false,
-  )
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
   const { format } = useDateUtils()
   const Router = useRouter()
   const auctionDataFetched = new Date()
 
-  useContentfulId(organizationPage.id, subpage.id)
+  useContentfulId(organizationPage.id, subpage?.id)
 
   const pageUrl = Router.pathname
 
@@ -662,9 +659,7 @@ const Auctions: Screen<AuctionsProps> = ({
         <Text variant="h1" as="h2">
           {subpage?.title ?? n('auctions', 'Uppboð')}
         </Text>
-        {isWebReaderEnabledForOrganizationPages && (
-          <Webreader readId={null} readClass="rs_read" />
-        )}
+        <Webreader readId={null} readClass="rs_read" />
       </Box>
       <GridContainer>
         <GridRow>
@@ -981,7 +976,8 @@ const LotLink = ({
   </LinkContext.Provider>
 )
 
-Auctions.getInitialProps = async ({ apolloClient, locale, pathname }) => {
+Auctions.getProps = async ({ apolloClient, locale, req }) => {
+  const pathname = safelyExtractPathnameFromUrl(req.url)
   const path = pathname?.split('/') ?? []
   const slug = path?.[path.length - 2] ?? 'syslumenn'
   const subSlug = path.pop() ?? 'uppbod'

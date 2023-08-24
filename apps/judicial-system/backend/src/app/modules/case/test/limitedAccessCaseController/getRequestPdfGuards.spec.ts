@@ -7,9 +7,10 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { CaseExistsGuard } from '../../guards/caseExists.guard'
-import { CaseScheduledGuard } from '../../guards/caseScheduled.guard'
+import { LimitedAccessCaseReceivedGuard } from '../../guards/limitedAccessCaseReceived.guard'
 import { CaseDefenderGuard } from '../../guards/caseDefender.guard'
 import { CaseTypeGuard } from '../../guards/caseType.guard'
+import { RequestSharedWithDefenderGuard } from '../../guards/requestSharedWithDefender.guard'
 import { LimitedAccessCaseController } from '../../limitedAccessCase.controller'
 
 describe('LimitedAccessCaseController - Get request pdf guards', () => {
@@ -23,8 +24,8 @@ describe('LimitedAccessCaseController - Get request pdf guards', () => {
     )
   })
 
-  it('should have six guards', () => {
-    expect(guards).toHaveLength(6)
+  it('should have seven guards', () => {
+    expect(guards).toHaveLength(7)
   })
 
   describe('JwtAuthGuard', () => {
@@ -34,7 +35,7 @@ describe('LimitedAccessCaseController - Get request pdf guards', () => {
       guard = new guards[0]()
     })
 
-    it('should have JwtAuthGuard as quard 1', () => {
+    it('should have JwtAuthGuard as guard 1', () => {
       expect(guard).toBeInstanceOf(JwtAuthGuard)
     })
   })
@@ -46,7 +47,7 @@ describe('LimitedAccessCaseController - Get request pdf guards', () => {
       guard = new guards[1]()
     })
 
-    it('should have RolesGuard as quard 2', () => {
+    it('should have RolesGuard as guard 2', () => {
       expect(guard).toBeInstanceOf(RolesGuard)
     })
   })
@@ -58,7 +59,7 @@ describe('LimitedAccessCaseController - Get request pdf guards', () => {
       guard = new guards[2]()
     })
 
-    it('should have CaseExistsGuard as quard 3', () => {
+    it('should have CaseExistsGuard as guard 3', () => {
       expect(guard).toBeInstanceOf(CaseExistsGuard)
     })
   })
@@ -70,7 +71,7 @@ describe('LimitedAccessCaseController - Get request pdf guards', () => {
       guard = guards[3]
     })
 
-    it('should have CaseTypeGuard as quard 4', () => {
+    it('should have CaseTypeGuard as guard 4', () => {
       expect(guard).toBeInstanceOf(CaseTypeGuard)
       expect(guard).toEqual({
         allowedCaseTypes: [...restrictionCases, ...investigationCases],
@@ -78,15 +79,27 @@ describe('LimitedAccessCaseController - Get request pdf guards', () => {
     })
   })
 
-  describe('CaseScheduledGuard', () => {
+  describe('LimitedAccessCaseReceivedGuard', () => {
     let guard: CanActivate
 
     beforeEach(() => {
       guard = new guards[4]()
     })
 
-    it('should have CaseScheduledGuard as quard 5', () => {
-      expect(guard).toBeInstanceOf(CaseScheduledGuard)
+    it('should have LimitedAccessCaseReceivedGuard as guard 5', () => {
+      expect(guard).toBeInstanceOf(LimitedAccessCaseReceivedGuard)
+    })
+  })
+
+  describe('RequestSharedWithDefenderGuard', () => {
+    let guard: CanActivate
+
+    beforeEach(() => {
+      guard = new guards[5]()
+    })
+
+    it('should have RequestSharedWithDefenderGuard as guard 6', () => {
+      expect(guard).toBeInstanceOf(RequestSharedWithDefenderGuard)
     })
   })
 
@@ -94,10 +107,10 @@ describe('LimitedAccessCaseController - Get request pdf guards', () => {
     let guard: CanActivate
 
     beforeEach(() => {
-      guard = new guards[5]()
+      guard = new guards[6]()
     })
 
-    it('should have CaseDefenderGuard as quard 6', () => {
+    it('should have CaseDefenderGuard as guard 7', () => {
       expect(guard).toBeInstanceOf(CaseDefenderGuard)
     })
   })

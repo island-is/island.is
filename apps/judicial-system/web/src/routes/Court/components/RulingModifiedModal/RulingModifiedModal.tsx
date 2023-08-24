@@ -16,7 +16,10 @@ interface Props {
   onContinue: () => void
 }
 
-const RulingModifiedModal: React.FC<Props> = ({ onCancel, onContinue }) => {
+const RulingModifiedModal: React.FC<React.PropsWithChildren<Props>> = ({
+  onCancel,
+  onContinue,
+}) => {
   const { formatMessage } = useIntl()
   const { workingCase } = useContext(FormContext)
   const { updateCase } = useCase()

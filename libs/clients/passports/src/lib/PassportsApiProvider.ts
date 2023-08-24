@@ -8,6 +8,7 @@ import {
 
 import {
   Configuration,
+  DeliveryAddressApi,
   IdentityDocumentApi,
   PreregistrationApi,
   DocumentLossApi,
@@ -50,6 +51,7 @@ export const PassportsApis = [
   IdentityDocumentApi,
   PreregistrationApi,
   DocumentLossApi,
+  DeliveryAddressApi,
 ].map((Api) => ({
   provide: Api,
   scope: LazyDuringDevScope,

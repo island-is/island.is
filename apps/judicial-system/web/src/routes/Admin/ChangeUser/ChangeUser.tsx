@@ -28,7 +28,7 @@ interface SaveData {
   user: User
 }
 
-export const ChangeUser: React.FC = () => {
+export const ChangeUser: React.FC<React.PropsWithChildren<unknown>> = () => {
   const router = useRouter()
   const id = router.query.id
   const { formatMessage } = useIntl()
@@ -42,7 +42,6 @@ export const ChangeUser: React.FC = () => {
   )
 
   const {
-    courts,
     allCourts,
     prosecutorsOffices,
     prisonInstitutions,
@@ -90,7 +89,6 @@ export const ChangeUser: React.FC = () => {
         <PageHeader title={formatMessage(titles.admin.changeUser)} />
         <UserForm
           user={userData?.user}
-          courts={courts}
           allCourts={allCourts}
           prosecutorsOffices={prosecutorsOffices}
           prisonInstitutions={prisonInstitutions}

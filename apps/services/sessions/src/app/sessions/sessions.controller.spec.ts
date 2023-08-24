@@ -1,9 +1,11 @@
 import { getQueueToken } from '@nestjs/bull'
+import assert from 'assert'
 import faker from 'faker'
 import sortBy from 'lodash/sortBy'
 import request from 'supertest'
 
 import { ApiScope, SessionsScope } from '@island.is/auth/scopes'
+import type { User } from '@island.is/auth-nest-tools'
 import { AuthDelegationType } from '@island.is/shared/types'
 import { createCurrentUser } from '@island.is/testing/fixtures'
 import {
@@ -21,6 +23,16 @@ import {
 } from '../../../test/setup'
 import { sessionsQueueName } from '../sessions.config'
 import { Session } from './session.model'
+
+const filterRelatedSession = (user: User, otherUser?: string) => {
+  const nationalId = user.nationalId
+
+  return (session: Session) =>
+    (session.actorNationalId === nationalId &&
+      (!otherUser || session.subjectNationalId === otherUser)) ||
+    (session.subjectNationalId === nationalId &&
+      (!otherUser || session.actorNationalId === otherUser))
+}
 
 describe('SessionsController', () => {
   describe('with the authenticated user', () => {
@@ -46,7 +58,7 @@ describe('SessionsController', () => {
         const sessionsQueue = app.get(getQueueToken(sessionsQueueName))
         sessionsQueueAddSpy = jest
           .spyOn(sessionsQueue, 'add')
-          .mockImplementation(() => Promise.resolve())
+          .mockImplementation(() => Promise.resolve({ id: 1 }))
 
         server = request(app.getHttpServer())
       })
@@ -65,23 +77,13 @@ describe('SessionsController', () => {
 
         // Assert
         expect(res.status).toEqual(200)
-        expect(
-          res.body.data.every(
-            (session: Session) =>
-              session.actorNationalId === user.nationalId ||
-              session.subjectNationalId == user.nationalId,
-          ),
-        )
+        expect(res.body.data.every(filterRelatedSession(user)))
         expect(res.body.data).toMatchObject(
           sortBy(sessions, 'timestamp')
             .reverse()
-            .filter(
-              (session) =>
-                session.actorNationalId === user.nationalId ||
-                session.subjectNationalId == user.nationalId,
-            )
+            .filter(filterRelatedSession(user))
             .map((session) => ({
-              id: session.id,
+              sessionId: session.sessionId,
               actorNationalId: session.actorNationalId,
               subjectNationalId: session.subjectNationalId,
               clientId: session.clientId,
@@ -92,11 +94,7 @@ describe('SessionsController', () => {
             .slice(0, 10),
         )
         expect(res.body.totalCount).toEqual(
-          sessions.filter(
-            (session) =>
-              session.actorNationalId === user.nationalId ||
-              session.subjectNationalId == user.nationalId,
-          ).length,
+          sessions.filter(filterRelatedSession(user)).length,
         )
       })
 
@@ -110,21 +108,11 @@ describe('SessionsController', () => {
         // Assert
         expect(res1.status).toEqual(200)
         expect(res2.status).toEqual(200)
-        expect(
-          res2.body.data.every(
-            (session: Session) =>
-              session.actorNationalId === user.nationalId ||
-              session.subjectNationalId == user.nationalId,
-          ),
-        )
+        expect(res2.body.data.every(filterRelatedSession(user)))
         expect(res2.body.data).toMatchObject(
           sortBy(sessions, 'timestamp')
             .reverse()
-            .filter(
-              (session) =>
-                session.actorNationalId === user.nationalId ||
-                session.subjectNationalId == user.nationalId,
-            )
+            .filter(filterRelatedSession(user))
             .map((session) => ({ id: session.id }))
             .slice(10, 20),
         )
@@ -152,11 +140,7 @@ describe('SessionsController', () => {
         expect(res3.body.data).toMatchObject(
           sortBy(sessions, 'timestamp')
             .reverse()
-            .filter(
-              (session) =>
-                session.actorNationalId === user.nationalId ||
-                session.subjectNationalId == user.nationalId,
-            )
+            .filter(filterRelatedSession(user))
             .map((session) => ({ id: session.id }))
             .slice(0, 10),
         )
@@ -180,11 +164,7 @@ describe('SessionsController', () => {
         expect(res2.body.data).toMatchObject(
           sortBy(sessions, 'timestamp')
             .reverse()
-            .filter(
-              (session) =>
-                session.actorNationalId === user.nationalId ||
-                session.subjectNationalId == user.nationalId,
-            )
+            .filter(filterRelatedSession(user))
             .map((session) => ({ id: session.id }))
             .slice(10, 15),
         )
@@ -208,11 +188,7 @@ describe('SessionsController', () => {
         expect(res2.body.data).toMatchObject(
           sortBy(sessions, 'timestamp')
             .reverse()
-            .filter(
-              (session) =>
-                session.actorNationalId === user.nationalId ||
-                session.subjectNationalId == user.nationalId,
-            )
+            .filter(filterRelatedSession(user))
             .map((session) => ({ id: session.id }))
             .slice(10, 110),
         )
@@ -224,39 +200,26 @@ describe('SessionsController', () => {
 
         // Assert
         expect(res.status).toEqual(200)
-        expect(
-          res.body.data.every(
-            (session: Session) =>
-              session.actorNationalId === user.nationalId ||
-              session.subjectNationalId == user.nationalId,
-          ),
-        )
+        expect(res.body.data.every(filterRelatedSession(user)))
         expect(res.body.data).toMatchObject(
           sortBy(sessions, 'timestamp')
-            .filter(
-              (session) =>
-                session.actorNationalId === user.nationalId ||
-                session.subjectNationalId == user.nationalId,
-            )
+            .filter(filterRelatedSession(user))
             .map((session) => ({ id: session.id }))
             .slice(0, 10),
         )
         expect(res.body.totalCount).toEqual(
-          sessions.filter(
-            (session) =>
-              session.actorNationalId === user.nationalId ||
-              session.subjectNationalId == user.nationalId,
-          ).length,
+          sessions.filter(filterRelatedSession(user)).length,
         )
       })
 
       it('GET /v1/me/sessions should support otheruser parameter', async () => {
         // Arrange
-        const otherUser = sessions.filter(
+        const otherUser = sessions.find(
           (session) =>
             session.actorNationalId === user.nationalId &&
             session.subjectNationalId !== user.nationalId,
-        )[0].subjectNationalId
+        )?.subjectNationalId
+        assert(otherUser)
 
         // Act
         const res = await server
@@ -265,22 +228,10 @@ describe('SessionsController', () => {
 
         // Assert
         expect(res.status).toEqual(200)
-        expect(
-          res.body.data.every(
-            (session: Session) =>
-              session.actorNationalId === user.nationalId ||
-              session.subjectNationalId === user.nationalId,
-          ),
-        )
+        expect(res.body.data.every(filterRelatedSession(user)))
         expect(res.body.data).toMatchObject(
           sortBy(sessions, 'timestamp')
-            .filter(
-              (session) =>
-                (session.actorNationalId === user.nationalId &&
-                  session.subjectNationalId == otherUser) ||
-                (session.actorNationalId == otherUser &&
-                  session.subjectNationalId === user.nationalId),
-            )
+            .filter(filterRelatedSession(user, otherUser))
             .map((session) => ({ id: session.id }))
             .slice(0, 10),
         )
@@ -288,8 +239,8 @@ describe('SessionsController', () => {
           sessions.filter(
             (session) =>
               (session.actorNationalId === user.nationalId &&
-                session.subjectNationalId == otherUser) ||
-              (session.actorNationalId == otherUser &&
+                session.subjectNationalId === otherUser) ||
+              (session.actorNationalId === otherUser &&
                 session.subjectNationalId === user.nationalId),
           ).length,
         )
@@ -454,7 +405,7 @@ describe('SessionsController', () => {
       )
       expect(res.body.totalCount).toEqual(
         sessions.filter(
-          (session) => session.subjectNationalId == user.nationalId,
+          (session) => session.subjectNationalId === user.nationalId,
         ).length,
       )
     })
@@ -471,10 +422,9 @@ describe('SessionsController', () => {
         // Arrange
         const app = await setupWithoutAuth()
         const server = request(app.getHttpServer())
-        const url = endpoint
 
         // Act
-        const res = await getRequestMethod(server, method)(url)
+        const res = await getRequestMethod(server, method)(endpoint)
 
         // Assert
         expect(res.status).toEqual(401)
@@ -499,10 +449,9 @@ describe('SessionsController', () => {
         // Arrange
         const app = await setupWithoutPermission()
         const server = request(app.getHttpServer())
-        const url = endpoint
 
         // Act
-        const res = await getRequestMethod(server, method)(url)
+        const res = await getRequestMethod(server, method)(endpoint)
 
         // Assert
         expect(res.status).toEqual(403)

@@ -3,6 +3,7 @@ import { ApiScope } from '@island.is/auth/scopes'
 import { m } from '@island.is/service-portal/core'
 import { PortalModule } from '@island.is/portals/core'
 import { VehiclePaths } from './lib/paths'
+import { translationLoader } from './screens/Translation.loader'
 
 const Overview = lazy(() => import('./screens/Overview/Overview'))
 const VehicleDetail = lazy(() =>
@@ -15,10 +16,16 @@ const DrivingLessonsBook = lazy(() =>
   import('./screens/DrivingLessonsBook/DrivingLessonsBook'),
 )
 const Lookup = lazy(() => import('./screens/Lookup/Lookup'))
+const WorkMachinesOverview = lazy(() =>
+  import('./screens/WorkMachinesOverview/WorkMachinesOverview'),
+)
+const WorkMachinesDetail = lazy(() =>
+  import('./screens/WorkMachinesDetail/WorkMachinesDetail'),
+)
 
 export const vehiclesModule: PortalModule = {
   name: 'Ökutæki',
-  routes: ({ userInfo }) => [
+  routes: ({ userInfo, client }) => [
     {
       name: m.yourVehicles,
       path: VehiclePaths.AssetsVehicles,
@@ -29,6 +36,7 @@ export const vehiclesModule: PortalModule = {
       name: m.yourVehicles,
       path: VehiclePaths.AssetsMyVehicles,
       enabled: userInfo.scopes.includes(ApiScope.vehicles),
+      loader: translationLoader({ userInfo, client }),
       element: <Overview />,
     },
     {
@@ -56,8 +64,21 @@ export const vehiclesModule: PortalModule = {
       enabled:
         userInfo.scopes.includes(ApiScope.internal) ||
         userInfo.scopes.includes(ApiScope.internalProcuring),
-      key: 'VehicleLookup',
       element: <Lookup />,
+    },
+    {
+      name: m.workMachines,
+      path: VehiclePaths.AssetsWorkMachines,
+      enabled: userInfo.scopes.includes(ApiScope.workMachines),
+      key: 'WorkMachines',
+      element: <WorkMachinesOverview />,
+    },
+    {
+      name: m.workMachines,
+      path: VehiclePaths.AssetsWorkMachinesDetail,
+      enabled: userInfo.scopes.includes(ApiScope.workMachines),
+      key: 'WorkMachines',
+      element: <WorkMachinesDetail />,
     },
   ],
 }

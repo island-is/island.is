@@ -10,7 +10,8 @@ const devConfig = {
     issuer: 'https://identity-server.dev01.devland.is',
   },
   port: 6333,
-  clientSecretEncryptionKey: 'secret',
+  clientSecretEncryptionKey:
+    process.env.CLIENT_SECRET_ENCRYPTION_KEY ?? 'secret',
 }
 
 const prodConfig = {

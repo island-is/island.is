@@ -14,7 +14,9 @@ import { PropertyDetail } from '@island.is/api/schema'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 
-export const PendingRejected: FC<FieldBaseProps> = ({ application }) => {
+export const PendingRejected: FC<React.PropsWithChildren<FieldBaseProps>> = ({
+  application,
+}) => {
   const { externalData } = application
   const { formatMessage } = useLocale()
 
@@ -60,7 +62,7 @@ export const PendingRejected: FC<FieldBaseProps> = ({ application }) => {
   return (
     <Box>
       <Text variant="h2" marginBottom={4}>
-        Upplýsingar um eign
+        {formatMessage(m.selectRealEstateTitle)}
       </Text>
 
       <Box
@@ -70,7 +72,7 @@ export const PendingRejected: FC<FieldBaseProps> = ({ application }) => {
         paddingY={1}
         marginBottom={5}
       >
-        <Text fontWeight="semiBold">Valin fasteign</Text>
+        <Text fontWeight="semiBold">{formatMessage(m.selectedProperty)}</Text>
         <Text>
           {propertyDetails?.propertyNumber}
           {' - '}

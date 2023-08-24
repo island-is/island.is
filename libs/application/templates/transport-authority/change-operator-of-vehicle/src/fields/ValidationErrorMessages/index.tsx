@@ -9,7 +9,9 @@ import { ChangeOperatorOfVehicleAnswers } from '../..'
 import { VALIDATE_VEHICLE_OPERATOR_CHANGE } from '../../graphql/queries'
 import { applicationCheck } from '../../lib/messages'
 
-export const ValidationErrorMessages: FC<FieldBaseProps> = (props) => {
+export const ValidationErrorMessages: FC<
+  React.PropsWithChildren<FieldBaseProps>
+> = (props) => {
   const { application, setFieldLoadingState } = props
 
   const { formatMessage } = useLocale()

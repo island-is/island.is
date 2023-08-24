@@ -85,6 +85,11 @@ export const GET_PROJECT_PAGE_QUERY = gql`
           ...NestedOneColumnTextFields
           ${nestedFields}
         }
+        bottomSlices {
+          ...AllSlices
+          ...NestedOneColumnTextFields
+          ${nestedFields}
+        }
       }
       featuredImage {
         url

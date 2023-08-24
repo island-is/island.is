@@ -52,9 +52,11 @@ interface SectionProps {
   activeSubSection?: number
 }
 
-const SubsectionChild: React.FC<{
-  isActive: boolean
-}> = ({ isActive, children }) => (
+const SubsectionChild: React.FC<
+  React.PropsWithChildren<{
+    isActive: boolean
+  }>
+> = ({ isActive, children }) => (
   <Box className={styles.name}>
     <Text as="div" lineHeight="lg" fontWeight={isActive ? 'semiBold' : 'light'}>
       {children}
@@ -62,7 +64,9 @@ const SubsectionChild: React.FC<{
   </Box>
 )
 
-const DisplaySection: React.FC<SectionProps> = (props) => {
+const DisplaySection: React.FC<React.PropsWithChildren<SectionProps>> = (
+  props,
+) => {
   const { section, index, activeSection, activeSubSection } = props
 
   return (
@@ -116,7 +120,7 @@ interface SidePanelProps {
   isValid?: boolean
 }
 
-const SidePanel: React.FC<SidePanelProps> = ({
+const SidePanel: React.FC<React.PropsWithChildren<SidePanelProps>> = ({
   user,
   isValid,
   onNavigationTo,
@@ -140,7 +144,7 @@ const SidePanel: React.FC<SidePanelProps> = ({
           <Box marginBottom={6}>
             <Text variant="h3" as="h3">
               {formatMessage(
-                user?.institution?.type === InstitutionType.HighCourt
+                user?.institution?.type === InstitutionType.HIGH_COURT
                   ? formStepperSections.appealedCaseTitle
                   : isIndictmentCase(workingCase.type)
                   ? formStepperSections.indictmentTitle
@@ -176,7 +180,7 @@ interface PageProps {
   isValid?: boolean
 }
 
-const PageLayout: React.FC<PageProps> = ({
+const PageLayout: React.FC<React.PropsWithChildren<PageProps>> = ({
   workingCase,
   children,
   isLoading,
@@ -196,19 +200,22 @@ const PageLayout: React.FC<PageProps> = ({
   ) : notFound ? (
     <AlertBanner
       title={
-        user?.role === UserRole.Defender
+        user?.role === UserRole.DEFENDER
           ? formatMessage(pageLayout.defenderRole.alertTitle)
           : formatMessage(pageLayout.otherRoles.alertTitle)
       }
       description={
-        user?.role === UserRole.Defender
+        user?.role === UserRole.DEFENDER
           ? formatMessage(pageLayout.defenderRole.alertMessage)
           : formatMessage(pageLayout.otherRoles.alertMessage)
       }
       variant="error"
       link={
-        user?.role === UserRole.Defender
-          ? undefined
+        user?.role === UserRole.DEFENDER
+          ? {
+              href: constants.DEFENDER_CASES_ROUTE,
+              title: 'Fara á yfirlitssíðu',
+            }
           : {
               href: constants.CASES_ROUTE,
               title: 'Fara á yfirlitssíðu',

@@ -1,22 +1,34 @@
 {
-  "root": "libs/clients/regulations-admin",
+  "name": "clients-regulations-admin",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/clients/regulations-admin/src",
   "projectType": "library",
   "generators": {},
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": ["libs/clients/regulations-admin/**/*.ts"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/clients/regulations-admin/jest.config.js",
+        "jestConfig": "libs/clients/regulations-admin/jest.config.ts",
         "passWithNoTests": true
       },
-      "outputs": ["coverage/libs/clients/regulations-admin"]
+      "outputs": ["{workspaceRoot}/coverage/libs/clients/regulations-admin"]
+    },
+    "schemas/openapi-generator": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "nx run regulations-admin-backend:schemas/build-openapi $NX_OPTIONS",
+          "yarn openapi-generator -o libs/clients/regulations-admin/gen/fetch -i apps/services/regulations-admin-backend/src/openapi.yaml"
+        ],
+        "parallel": false
+      },
+      "outputs": ["{workspaceRoot}/libs/clients/regulations-admin/gen"]
     }
   },
   "tags": ["lib:client", "scope:client"]

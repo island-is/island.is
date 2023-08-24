@@ -22,6 +22,7 @@ import { checkDelegation } from '@island.is/shared/utils'
 
 import FinanceScheduleTable from '../../components/FinanceScheduleTable/FinanceScheduleTable'
 import { useUserInfo } from '@island.is/auth/react'
+import { m } from '../../lib/messages'
 
 export const GET_FINANCE_PAYMENT_SCHEDULES = gql`
   query getPaymentSchedulesQuery {
@@ -63,10 +64,7 @@ const FinanceSchedule = () => {
     paymentSchedulesData?.getPaymentSchedule?.myPaymentSchedule
       ?.paymentSchedules || []
 
-  const applicationButtonText = formatMessage({
-    id: 'sp.finance-schedule:finance-schedule-application',
-    defaultMessage: 'Gera greiðsluáætlun',
-  })
+  const applicationButtonText = formatMessage(m.scheduleApplication)
 
   if (paymentSchedulesError && !paymentSchedulesLoading) {
     return (

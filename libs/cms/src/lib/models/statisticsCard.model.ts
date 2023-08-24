@@ -1,4 +1,5 @@
 import { Field, ObjectType } from '@nestjs/graphql'
+import { CacheField } from '@island.is/nest/graphql'
 import { IStatisticsCard } from '../generated/contentfulTypes'
 import { Image, mapImage } from './image.model'
 
@@ -10,7 +11,7 @@ export class StatisticsCard {
   @Field()
   statistic!: string
 
-  @Field(() => Image, { nullable: true })
+  @CacheField(() => Image, { nullable: true })
   image?: Image | null
 }
 

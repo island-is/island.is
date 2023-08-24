@@ -1,9 +1,6 @@
 import { Module } from '@nestjs/common'
-import { SequelizeModule } from '@nestjs/sequelize'
 
 import {
-  Client,
-  ClientSecret,
   ClientsModule as ClientsLibModule,
   ResourcesModule as ResourcesLibModule,
 } from '@island.is/auth-api-lib'
@@ -12,11 +9,7 @@ import { ClientSecretsService } from './client-secrets.service'
 import { MeClientSecretsController } from './me-client-secrets.controller'
 
 @Module({
-  imports: [
-    SequelizeModule.forFeature([ClientSecret, Client]),
-    ClientsLibModule,
-    ResourcesLibModule,
-  ],
+  imports: [ClientsLibModule, ResourcesLibModule],
   controllers: [MeClientSecretsController],
   providers: [ClientSecretsService],
 })

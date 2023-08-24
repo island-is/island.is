@@ -29,7 +29,7 @@ interface Props {
   isCreatingCourtCase: boolean
 }
 
-const CourtCaseNumber: React.FC<Props> = (props) => {
+const CourtCaseNumber: React.FC<React.PropsWithChildren<Props>> = (props) => {
   const {
     workingCase,
     setWorkingCase,
@@ -103,6 +103,7 @@ const CourtCaseNumber: React.FC<Props> = (props) => {
                 label={formatMessage(courtCaseNumber.label)}
                 placeholder={formatMessage(courtCaseNumber.placeholder, {
                   isIndictment: isIndictmentCase(workingCase.type),
+                  year: new Date().getFullYear(),
                 })}
                 autoComplete="off"
                 size="sm"

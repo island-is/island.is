@@ -9,12 +9,18 @@ import {
   AlertMessage,
   Box,
 } from '@island.is/island-ui/core'
+import { Text } from '@island.is/island-ui/core'
+import {
+  formatDate,
+  caseTypes,
+  capitalize,
+} from '@island.is/judicial-system/formatters'
 import {
   NotificationType,
   CaseState,
   CaseTransition,
-  completedCaseStates,
 } from '@island.is/judicial-system/types'
+import * as constants from '@island.is/judicial-system/consts'
 import {
   AccordionListItem,
   CaseFileList,
@@ -29,28 +35,21 @@ import {
   CaseResubmitModal,
   FormContext,
   UserContext,
+  PageHeader,
 } from '@island.is/judicial-system-web/src/components'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   core,
+  errors,
   icOverview as m,
   requestCourtDate,
   titles,
 } from '@island.is/judicial-system-web/messages'
 import { createCaseResentExplanation } from '@island.is/judicial-system-web/src/utils/stepHelper'
-import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import {
-  formatDate,
-  caseTypes,
-  capitalize,
-} from '@island.is/judicial-system/formatters'
-import { Text } from '@island.is/island-ui/core'
-import * as constants from '@island.is/judicial-system/consts'
 
 import * as styles from './Overview.css'
-import { CopyLinkForDefenderButton } from '../../components'
 
-export const Overview: React.FC = () => {
+export const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
   const router = useRouter()
   const {
     workingCase,
@@ -60,8 +59,10 @@ export const Overview: React.FC = () => {
   } = useContext(FormContext)
   const {
     transitionCase,
+    isTransitioningCase,
     sendNotification,
     isSendingNotification,
+    sendNotificationError,
     updateCase,
   } = useCase()
   const { formatMessage } = useIntl()
@@ -110,6 +111,9 @@ export const Overview: React.FC = () => {
     setModal('caseSubmittedModal')
   }
 
+  const caseFiles =
+    workingCase.caseFiles?.filter((file) => !file.category) ?? []
+
   return (
     <PageLayout
       workingCase={workingCase}
@@ -122,7 +126,7 @@ export const Overview: React.FC = () => {
       <FormContentContainer>
         {workingCase.state === CaseState.RECEIVED && (
           <Box
-            marginBottom={workingCase.seenByDefender ? 3 : 5}
+            marginBottom={workingCase.openedByDefender ? 3 : 5}
             data-testid="ic-overview-info-panel"
           >
             <AlertMessage
@@ -132,15 +136,15 @@ export const Overview: React.FC = () => {
             />
           </Box>
         )}
-        {workingCase.seenByDefender && (
+        {workingCase.openedByDefender && (
           <Box marginBottom={5}>
             <AlertMessage
-              title={formatMessage(m.seenByDefenderAlert.title)}
-              message={formatMessage(m.seenByDefenderAlert.text, {
-                when: formatDate(workingCase.seenByDefender, 'PPPp'),
+              title={formatMessage(m.openedByDefenderAlert.title)}
+              message={formatMessage(m.openedByDefenderAlert.text, {
+                when: formatDate(workingCase.openedByDefender, 'PPPp'),
               })}
               type="info"
-              testid="alertMessageSeenByDefender"
+              testid="alertMessageOpenedByDefender"
             />
           </Box>
         )}
@@ -305,19 +309,11 @@ export const Overview: React.FC = () => {
             </AccordionItem>
             <AccordionItem
               id="id_6"
-              label={`Rannsóknargögn ${`(${
-                workingCase.caseFiles ? workingCase.caseFiles.length : 0
-              })`}`}
+              label={`Rannsóknargögn ${`(${caseFiles.length})`}`}
               labelVariant="h3"
             >
               <Box marginY={3}>
-                <CaseFileList
-                  caseId={workingCase.id}
-                  files={workingCase.caseFiles ?? []}
-                  isCaseCompleted={completedCaseStates.includes(
-                    workingCase.state,
-                  )}
-                />
+                <CaseFileList caseId={workingCase.id} files={caseFiles} />
               </Box>
             </AccordionItem>
             {(workingCase.comments ||
@@ -340,26 +336,13 @@ export const Overview: React.FC = () => {
             title={formatMessage(core.pdfButtonRequest)}
             pdfType="request"
           />
-          {workingCase.defenderNationalId && (
-            <Box marginTop={3}>
-              <CopyLinkForDefenderButton
-                caseId={workingCase.id}
-                type={workingCase.type}
-                disabled={
-                  workingCase.state !== CaseState.RECEIVED ||
-                  !workingCase.courtDate
-                }
-              >
-                {formatMessage(m.sections.copyLinkForDefenderButton)}
-              </CopyLinkForDefenderButton>
-            </Box>
-          )}
         </Box>
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
           nextButtonIcon="arrowForward"
           previousUrl={`${constants.INVESTIGATION_CASE_CASE_FILES_ROUTE}/${workingCase.id}`}
+          nextIsDisabled={workingCase.state === CaseState.NEW}
           nextButtonText={
             workingCase.state === CaseState.NEW ||
             workingCase.state === CaseState.DRAFT
@@ -368,7 +351,7 @@ export const Overview: React.FC = () => {
           }
           nextIsLoading={
             workingCase.state !== CaseState.RECEIVED &&
-            (isLoadingWorkingCase || isSendingNotification)
+            (isTransitioningCase || isSendingNotification)
           }
           onNextButtonClick={
             workingCase.state === CaseState.RECEIVED
@@ -385,7 +368,7 @@ export const Overview: React.FC = () => {
             workingCase={workingCase}
             isLoading={isSendingNotification}
             onClose={() => setModal('noModal')}
-            onContinue={(explaination) => handleNextButtonClick(explaination)}
+            onContinue={(explanation) => handleNextButtonClick(explanation)}
           />
         )}
       </AnimatePresence>
@@ -398,6 +381,11 @@ export const Overview: React.FC = () => {
             onSecondaryButtonClick={() => {
               router.push(constants.CASES_ROUTE)
             }}
+            errorMessage={
+              sendNotificationError
+                ? formatMessage(errors.sendNotification)
+                : undefined
+            }
             secondaryButtonText={formatMessage(core.closeModal)}
           />
         )}

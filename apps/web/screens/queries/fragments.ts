@@ -77,6 +77,7 @@ export const slices = gql`
       genericTags {
         id
         title
+        slug
       }
     }
     readMoreText
@@ -208,6 +209,22 @@ export const slices = gql`
     }
     html {
       ...HtmlFields
+    }
+  }
+
+  fragment SectionWithVideoFields on SectionWithVideo {
+    __typename
+    id
+    title
+    video {
+      ...EmbeddedVideoFields
+    }
+    html {
+      ...HtmlFields
+    }
+    link {
+      text
+      url
     }
   }
 
@@ -589,6 +606,10 @@ export const slices = gql`
     workspaceId
     reportId
     owner
+    powerBiEmbedPropsFromServer {
+      accessToken
+      embedUrl
+    }
   }
 
   fragment TableSliceFields on TableSlice {
@@ -614,6 +635,15 @@ export const slices = gql`
       informationText
     }
     translations
+  }
+
+  fragment SliceDropdownFields on SliceDropdown {
+    __typename
+    id
+    dropdownLabel
+    slices {
+      ...OneColumnTextFields
+    }
   }
 
   fragment FeaturedSupportQNAsFields on FeaturedSupportQNAs {
@@ -687,6 +717,7 @@ export const slices = gql`
     ...AssetFields
     ...EmbeddedVideoFields
     ...SectionWithImageFields
+    ...SectionWithVideoFields
     ...TabSectionFields
     ...TeamListFields
     ...ContactUsFields
@@ -708,6 +739,7 @@ export const slices = gql`
     ...PowerBiSliceFields
     ...TableSliceFields
     ...EmailSignupFields
+    ...SliceDropdownFields
   }
 
   fragment AllSlices on Slice {
@@ -759,6 +791,17 @@ const nestedContainerFields = `
       }
       body {
         ...AllSlices
+      }
+    }
+  }
+  ... on SliceDropdown {
+    ...SliceDropdownFields
+    slices {
+      ... on OneColumnText {
+        ...OneColumnTextFields
+        content {
+          ...AllSlices
+        }
       }
     }
   }

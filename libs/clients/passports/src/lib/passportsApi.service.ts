@@ -3,6 +3,7 @@ import { XRoadConfig } from '@island.is/nest/config'
 import type { ConfigType } from '@island.is/nest/config'
 import { Injectable, Inject } from '@nestjs/common'
 import {
+  DeliveryAddressApi,
   IdentityDocumentApi,
   IdentityDocumentResponse,
   PreregistrationApi,
@@ -14,6 +15,7 @@ import {
   IdentityDocument,
   IdentityDocumentChild,
   Passport,
+  DeliveryAddress,
   PreregisterResponse,
   PreregistrationInput,
 } from './passportsApi.types'
@@ -39,6 +41,7 @@ export class PassportsService {
     private identityDocumentApi: IdentityDocumentApi,
     private preregistrationApi: PreregistrationApi,
     private documentLossApi: DocumentLossApi,
+    private deliveryAddressApi: DeliveryAddressApi,
   ) {}
 
   handleError(error: any, detail?: string): ApolloError | null {
@@ -155,6 +158,15 @@ export class PassportsService {
     }
   }
 
+  async getDeliveryAddress(user: User): Promise<DeliveryAddress[]> {
+    const response = await this.deliveryAddressApi
+      .withMiddleware(new AuthMiddleware(user))
+      .deliveryAddressGetLookupTables({
+        xRoadClient: this.xroadConfig.xRoadClient,
+      })
+    return response as DeliveryAddress[]
+  }
+
   async preregisterIdentityDocument(
     user: User,
     input: PreregistrationInput,
@@ -178,8 +190,9 @@ export class PassportsService {
     input: PreregistrationInput,
   ): Promise<PreregisterResponse> {
     try {
-      const { appliedForPersonId, approvalA, approvalB } = input
+      const { appliedForPersonId, approvalA, approvalB, guid } = input
       const pdfBuffer = await this.createDocumentBuffer({
+        guid,
         appliedForPersonId,
         approvalA,
         approvalB,
@@ -213,8 +226,16 @@ export class PassportsService {
     const userPassports = await this.getIdentityDocument(user)
     const childPassports = await this.getIdentityDocumentChildren(user)
 
+    const userPassport = userPassports
+      ? userPassports.sort((a, b) =>
+          a?.expirationDate && b?.expirationDate
+            ? Number(b.expirationDate) - Number(a.expirationDate)
+            : 0,
+        )[0]
+      : undefined
+
     return {
-      userPassport: userPassports ? userPassports[0] : undefined,
+      userPassport,
       childPassports: childPassports,
     }
   }
@@ -237,12 +258,13 @@ export class PassportsService {
   }
 
   async createDocumentBuffer({
+    guid,
     appliedForPersonId,
     approvalA,
     approvalB,
   }: Pick<
     PreregistrationInput,
-    'appliedForPersonId' | 'approvalA' | 'approvalB'
+    'guid' | 'appliedForPersonId' | 'approvalA' | 'approvalB'
   >) {
     // build pdf
     const doc = new PDFDocument()
@@ -254,8 +276,22 @@ export class PassportsService {
 
     doc
       .fontSize(big)
-      .text('Umsókn um vegabréf með samþykki forsjáraðila fyrir hönd: ')
-      .text(appliedForPersonId ? formatNationalId(appliedForPersonId) : '')
+      .text(
+        'Rafrænt samþykki vegna útgáfu vegabréfs fyrir einstakling undir 18 ára aldri ',
+      )
+      .moveDown()
+
+      .fontSize(regular)
+      .font(fontBold)
+      .text('Sótt er um fyrir: ')
+      .moveDown()
+
+      .font(fontRegular)
+      .text(
+        `Kenntiala: ${
+          appliedForPersonId ? formatNationalId(appliedForPersonId) : ''
+        }`,
+      )
       .moveDown()
 
       .fontSize(regular)
@@ -266,7 +302,7 @@ export class PassportsService {
       .moveDown()
 
       .font(fontBold)
-      .text('Forsjáraðila A: ')
+      .text('Forsjáraðili: ')
       .font(fontRegular)
       .text(`Nafn: ${approvalA?.name}`)
       .text(
@@ -276,7 +312,7 @@ export class PassportsService {
       .moveDown()
 
       .font(fontBold)
-      .text('Forsjáraðila B: ')
+      .text('Forsjáraðili: ')
       .font(fontRegular)
       .text(`Nafn: ${approvalB?.name}`)
       .text(
@@ -285,14 +321,15 @@ export class PassportsService {
       .text(`Dagsetning: ${approvalB?.approved}`)
       .moveDown()
 
-      .font(fontRegular)
-      .text('Með kveðju frá island.is')
-
       .moveDown()
       .text(
-        'Þetta skjal var framkallað sjálfvirkt þann: ' +
+        'Þetta skjal var framkallað með sjálfvirkum hætti á island.is þann:' +
           new Date().toLocaleDateString(locale),
       )
+
+      .moveDown()
+      .text('guId: ' + guid)
+
     doc.end()
     return await getStream.buffer(doc)
   }

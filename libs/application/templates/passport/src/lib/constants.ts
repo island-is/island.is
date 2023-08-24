@@ -39,8 +39,6 @@ export enum ApiActions {
 export const YES = 'yes'
 export const NO = 'no'
 
-export const SYSLUMADUR_NATIONAL_ID = '6509142520'
-
 export type Service = {
   type: Services
   dropLocation: string
@@ -51,7 +49,7 @@ export type DistrictCommissionerAgencies = {
   name: string
   place: string
   address: string
-  id: string
+  key: string
 }
 
 export type SubmitResponse = {

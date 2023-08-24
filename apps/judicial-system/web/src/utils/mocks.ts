@@ -6,29 +6,29 @@ import {
   UserRole,
   CaseType,
   CaseOrigin,
-  CurrentUserQueryDocument,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { GetCurrentUserDocument } from '@island.is/judicial-system-web/src/components/UserProvider/getCurrentUser.generated'
 
 export const mockCourt = {
   id: 'court_id',
-  type: InstitutionType.Court,
+  type: InstitutionType.COURT,
   name: 'Héraðsdómur Reykjavíkur',
 }
 
 export const mockHighCourt = {
   id: 'high_court_id',
-  type: InstitutionType.HighCourt,
+  type: InstitutionType.HIGH_COURT,
   name: 'Landsréttur',
 }
 
 export const mockPrison = {
   id: 'prison_id',
-  type: InstitutionType.Prison,
+  type: InstitutionType.PRISON,
   name: 'Stóra Hraun',
 }
 
 export const mockProsecutor = {
-  role: UserRole.Prosecutor,
+  role: UserRole.PROSECUTOR,
   name: 'Batman Robinson',
   title: 'saksóknari',
   institution: {
@@ -39,7 +39,7 @@ export const mockProsecutor = {
 
 export const mockJudge = {
   id: 'judge_1',
-  role: UserRole.Judge,
+  role: UserRole.JUDGE,
   name: 'Wonder Woman',
   title: 'héraðsdómari',
   institution: mockCourt,
@@ -47,7 +47,7 @@ export const mockJudge = {
 
 export const mockHighCourtUser = {
   id: 'hc_1',
-  role: UserRole.Judge,
+  role: UserRole.JUDGE,
   name: 'Lalli Landsréttardómari',
   title: 'dómari',
   institution: mockHighCourt,
@@ -55,7 +55,7 @@ export const mockHighCourtUser = {
 
 export const mockPrisonUser = {
   id: 'hc_1',
-  role: UserRole.Staff,
+  role: UserRole.STAFF,
   name: 'Finnur fangavörður',
   title: 'fangavörður',
   institution: mockPrison,
@@ -64,7 +64,7 @@ export const mockPrisonUser = {
 export const mockJudgeQuery = [
   {
     request: {
-      query: CurrentUserQueryDocument,
+      query: GetCurrentUserDocument,
     },
     result: {
       data: {
@@ -77,7 +77,7 @@ export const mockJudgeQuery = [
 export const mockHighCourtQuery = [
   {
     request: {
-      query: CurrentUserQueryDocument,
+      query: GetCurrentUserDocument,
     },
     result: {
       data: {
@@ -90,7 +90,7 @@ export const mockHighCourtQuery = [
 export const mockPrisonUserQuery = [
   {
     request: {
-      query: CurrentUserQueryDocument,
+      query: GetCurrentUserDocument,
     },
     result: {
       data: {
@@ -103,7 +103,7 @@ export const mockPrisonUserQuery = [
 export const mockProsecutorQuery = [
   {
     request: {
-      query: CurrentUserQueryDocument,
+      query: GetCurrentUserDocument,
     },
     result: {
       data: {
@@ -119,7 +119,7 @@ export const mockCase = (caseType: CaseType): Case => {
     created: '2020-09-16T19:50:08.033Z',
     modified: '2020-09-16T19:51:39.466Z',
     state: CaseState.DRAFT,
-    origin: CaseOrigin.Rvg,
+    origin: CaseOrigin.RVG,
     type: caseType,
     policeCaseNumbers: ['007-2021-202000'],
     defendants: [

@@ -30,7 +30,7 @@ import {
 } from '@island.is/service-portal/core'
 
 import OwnersTable from '../../components/DetailTable/OwnersTable'
-import { messages } from '../../lib/messages'
+import { messages, urls } from '../../lib/messages'
 import {
   basicInfoArray,
   coOwnerInfoArray,
@@ -44,12 +44,7 @@ import {
 import { displayWithUnit } from '../../utils/displayWithUnit'
 import AxleTable from '../../components/DetailTable/AxleTable'
 import Dropdown from '../../components/Dropdown/Dropdown'
-import {
-  CO_OWNER_LINK,
-  OPERATOR_LINK,
-  REGISTRATION_NUMBER_LINK,
-  SAMGONGUSTOFA_LINK,
-} from '../../utils/constants'
+import { getDateLocale } from '../../utils/constants'
 
 export const GET_USERS_VEHICLE_DETAIL = gql`
   query GetUsersVehiclesDetail($input: GetVehicleDetailInput!) {
@@ -107,6 +102,7 @@ export const GET_USERS_VEHICLE_DETAIL = gql`
         type
         date
         result
+        odometer
         nextInspectionDate
         lastInspectionDate
         insuranceStatus
@@ -172,7 +168,7 @@ type UseParams = {
 
 const VehicleDetail = () => {
   useNamespaces('sp.vehicles')
-  const { formatMessage } = useLocale()
+  const { formatMessage, lang } = useLocale()
   const { id } = useParams() as UseParams
 
   const { data, loading, error } = useQuery<Query>(GET_USERS_VEHICLE_DETAIL, {
@@ -219,39 +215,41 @@ const VehicleDetail = () => {
     return <NotFound title={formatMessage(messages.notFound)} />
   }
 
+  const locale = getDateLocale(lang)
   const basicArr = basicInfo && basicInfoArray(basicInfo, formatMessage)
   const feeArr = inspectionInfo && feeInfoArray(inspectionInfo, formatMessage)
   const inspectionArr =
-    inspectionInfo && inspectionInfoArray(inspectionInfo, formatMessage)
+    inspectionInfo && inspectionInfoArray(inspectionInfo, formatMessage, locale)
   const currentOwnerArr =
-    currentOwnerInfo && ownerInfoArray(currentOwnerInfo, formatMessage)
+    currentOwnerInfo && ownerInfoArray(currentOwnerInfo, formatMessage, locale)
   const registrationArr =
-    registrationInfo && registrationInfoArray(registrationInfo, formatMessage)
+    registrationInfo &&
+    registrationInfoArray(registrationInfo, formatMessage, locale)
   const technicalArr =
     technicalInfo && technicalInfoArray(technicalInfo, formatMessage)
 
   const dropdownArray = [
     {
       title: formatMessage(messages.orderRegistrationNumber),
-      href: REGISTRATION_NUMBER_LINK,
+      href: formatMessage(urls.regNumber),
     },
     {
       title: formatMessage(messages.orderRegistrationLicense),
-      href: REGISTRATION_NUMBER_LINK,
+      href: formatMessage(urls.regCert),
     },
     {
       title: formatMessage(messages.addCoOwner),
-      href: CO_OWNER_LINK,
+      href: formatMessage(urls.coOwnerChange),
     },
     {
       title: formatMessage(messages.addOperator),
-      href: OPERATOR_LINK,
+      href: formatMessage(urls.operator),
     },
   ]
   if (basicInfo?.permno !== basicInfo?.regno) {
     dropdownArray.push({
       title: formatMessage(messages.renewPrivateRegistration),
-      href: OPERATOR_LINK,
+      href: formatMessage(urls.operator),
     })
   }
   return (
@@ -305,24 +303,6 @@ const VehicleDetail = () => {
                     {formatMessage(messages.vehicleHistoryReport)}
                   </Button>
                 </Box>
-                <Box paddingRight={2} marginBottom={[1, 1, 1, 0]}>
-                  <a
-                    href={SAMGONGUSTOFA_LINK}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <Button
-                      colorScheme="default"
-                      icon="open"
-                      iconType="outline"
-                      size="default"
-                      type="button"
-                      variant="utility"
-                    >
-                      {formatMessage(messages.changeOfOwnership)}
-                    </Button>
-                  </a>
-                </Box>
                 <Box paddingRight={2}>
                   <Dropdown dropdownItems={dropdownArray} />
                 </Box>
@@ -337,7 +317,7 @@ const VehicleDetail = () => {
           content={mainInfo?.regno ?? ''}
           editLink={{
             title: messages.orderRegistrationNumber,
-            url: REGISTRATION_NUMBER_LINK,
+            url: formatMessage(urls.regNumber),
             external: true,
           }}
           loading={loading}
@@ -494,7 +474,7 @@ const VehicleDetail = () => {
       {operators &&
         operators.length > 0 &&
         operators.map((operator: VehiclesOperator, index) => {
-          const operatorArr = operatorInfoArray(operator, formatMessage)
+          const operatorArr = operatorInfoArray(operator, formatMessage, locale)
           return (
             <TableGrid
               key={`vehicle-operator-${index}`}

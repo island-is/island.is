@@ -108,7 +108,7 @@ describe('Basic serialization', () => {
     })
   })
 
-  it('secretes', () => {
+  it('secrets', () => {
     expect(result.serviceDef[0].secrets).toEqual({
       SECRET: '/path',
       DB_PASS: '/k8s/api/DB_PASSWORD',

@@ -4,7 +4,14 @@ import * as kennitala from 'kennitala'
 const UserSchemaBase = z.object({
   nationalId: z
     .string()
-    .refine((x) => x && x.length !== 0 && kennitala.isValid(x)),
+    .refine(
+      (nationalId) =>
+        nationalId &&
+        nationalId.length !== 0 &&
+        kennitala.isValid(nationalId) &&
+        (kennitala.isCompany(nationalId) ||
+          kennitala.info(nationalId).age >= 18),
+    ),
   name: z.string().min(1),
   email: z.string().min(1),
   phone: z.string().min(1),
@@ -22,7 +29,11 @@ const RemovableUserSchemaBase = z
     ({ nationalId, wasRemoved }) => {
       return (
         wasRemoved === 'true' ||
-        (nationalId && nationalId.length > 0 && kennitala.isValid(nationalId))
+        (nationalId &&
+          nationalId.length > 0 &&
+          kennitala.isValid(nationalId) &&
+          (kennitala.isCompany(nationalId) ||
+            kennitala.info(nationalId).age >= 18))
       )
     },
     { path: ['nationalId'] },

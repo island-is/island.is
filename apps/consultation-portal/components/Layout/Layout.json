@@ -1,0 +1,35 @@
+{
+  "footer": {
+    "text": "Viltu hjálpa okkur að bæta samráðsgáttina? Ábendingar eru vel þegnar.",
+    "arrowLinkText": "Senda ábendingu"
+  },
+  "menu": {
+    "menu": {
+      "buttonLabel": "Innskráning"
+    },
+    "menuItems": [
+      {
+        "label": "Öll mál",
+        "href": "/"
+      },
+      {
+        "label": "Áskriftir",
+        "href": "/askriftir"
+      },
+      {
+        "label": "Mínar umsagnir",
+        "href": "/umsagnir"
+      }
+    ],
+    "menuModal": {
+      "buttonLabel": "Valmynd",
+      "closeButtonLabel": "Loka",
+      "loginButtonLabel": "Innskráning",
+      "logoutButtonLabel": "Útskrá"
+    }
+  },
+  "seo": {
+    "title": "Samráðsgátt",
+    "keywords": "Opinbert samráð, lagasetning, frumvarp, reglugerð, stefna, umsögn, umsagnir"
+  }
+}

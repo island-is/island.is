@@ -383,7 +383,7 @@ const Defendant = () => {
                           workingCase.defendants &&
                           workingCase.defendants.length > 1 &&
                           !(
-                            workingCase.origin === CaseOrigin.Loke &&
+                            workingCase.origin === CaseOrigin.LOKE &&
                             index === 0
                           )
                             ? handleDeleteDefendant
@@ -392,7 +392,7 @@ const Defendant = () => {
                         onChange={handleUpdateDefendant}
                         updateDefendantState={updateDefendantState}
                         nationalIdImmutable={
-                          workingCase.origin === CaseOrigin.Loke && index === 0
+                          workingCase.origin === CaseOrigin.LOKE && index === 0
                         }
                       />
                     </Box>
@@ -419,12 +419,12 @@ const Defendant = () => {
           </Box>
           <AnimatePresence>
             {[
-              CaseType.ElectronicDataDiscoveryInvestigation,
-              CaseType.ExpulsionFromHome,
-              CaseType.PsychiatricExamination,
-              CaseType.RestrainingOrder,
-              CaseType.RestrainingOrderAndExpulsionFromHome,
-              CaseType.Other,
+              CaseType.ELECTRONIC_DATA_DISCOVERY_INVESTIGATION,
+              CaseType.EXPULSION_FROM_HOME,
+              CaseType.PSYCHIATRIC_EXAMINATION,
+              CaseType.RESTRAINING_ORDER,
+              CaseType.RESTRAINING_ORDER_AND_EXPULSION_FROM_HOME,
+              CaseType.OTHER,
             ].includes(workingCase.type) && (
               <motion.section
                 initial={{ opacity: 0, y: 10 }}

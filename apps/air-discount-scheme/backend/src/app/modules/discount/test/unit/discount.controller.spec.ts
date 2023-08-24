@@ -16,7 +16,7 @@ import {
   NationalRegistryClientConfig,
   NationalRegistryClientModule,
 } from '@island.is/clients/national-registry-v2'
-import { CACHE_MANAGER } from '@nestjs/common'
+import { CACHE_MANAGER } from '@nestjs/cache-manager'
 import { ConfigModule, XRoadConfig } from '@island.is/nest/config'
 import { AirlineUser } from '../../../user/user.model'
 import { createTestUser } from '../../../../../../test/createTestUser'
@@ -108,7 +108,9 @@ describe('DiscountController', () => {
         .mockImplementation(() => Promise.resolve(discount))
 
       const result = await privateDiscountController.getCurrentDiscountByNationalId(
-        { nationalId },
+        {
+          nationalId,
+        },
       )
 
       expect(getDiscountByNationalIdSpy).toHaveBeenCalledWith(nationalId)
@@ -221,6 +223,7 @@ describe('DiscountController', () => {
       const discountCode = 'ABCDEFG'
       const postalcode = 600
       const comment = 'This is a comment'
+      const numberOfDaysUntilExpiration = 1
       const discount = new Discount(
         createTestUser(),
         discountCode,
@@ -237,6 +240,7 @@ describe('DiscountController', () => {
           comment,
           nationalId,
           postalcode,
+          numberOfDaysUntilExpiration,
         },
         auth,
       )
@@ -247,6 +251,7 @@ describe('DiscountController', () => {
         postalcode,
         auth.nationalId,
         comment,
+        numberOfDaysUntilExpiration,
         [],
       )
       expect(result).toEqual(discount)

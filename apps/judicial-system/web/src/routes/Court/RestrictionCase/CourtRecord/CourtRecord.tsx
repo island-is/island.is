@@ -51,7 +51,7 @@ import { isCourtRecordStepValidRC } from '../../../../utils/validate'
 import { formatCustodyRestrictions } from '../../../../utils/restrictions'
 import AppealSections from '../../components/AppealSections/AppealSections'
 
-export const CourtRecord: React.FC = () => {
+export const CourtRecord: React.FC<React.PropsWithChildren<unknown>> = () => {
   const {
     workingCase,
     setWorkingCase,
@@ -141,8 +141,8 @@ export const CourtRecord: React.FC = () => {
     )
 
     if (
-      workingCase.type === CaseType.Custody ||
-      workingCase.type === CaseType.AdmissionToFacility
+      workingCase.type === CaseType.CUSTODY ||
+      workingCase.type === CaseType.ADMISSION_TO_FACILITY
     ) {
       autofillSessionBookings.push(
         `\n\n${formatMessage(
@@ -172,12 +172,12 @@ export const CourtRecord: React.FC = () => {
             caseType:
               workingCase.decision ===
               CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-                ? CaseType.TravelBan
+                ? CaseType.TRAVEL_BAN
                 : workingCase.type,
           }),
         )
       }
-    } else if (workingCase.type === CaseType.TravelBan) {
+    } else if (workingCase.type === CaseType.TRAVEL_BAN) {
       autofillSessionBookings.push(
         `\n\n${formatMessage(
           m.sections.sessionBookings.autofillPresentationsTravelBan,

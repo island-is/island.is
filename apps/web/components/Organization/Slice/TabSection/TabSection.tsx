@@ -25,11 +25,17 @@ interface SliceProps {
   slice: TabSection
   contentColumnProps?: GridColumnProps
   contentPaddingTop?: ResponsiveSpace
+  contentPaddingBottom?: ResponsiveSpace
+  containerPaddingTop?: ResponsiveSpace
+  containerPaddingBottom?: ResponsiveSpace
 }
 
-export const TabSectionSlice: React.FC<SliceProps> = ({
+export const TabSectionSlice: React.FC<React.PropsWithChildren<SliceProps>> = ({
   slice,
   contentPaddingTop = [0, 4, 6],
+  contentPaddingBottom = [8, 0, 6],
+  containerPaddingBottom = [0, 4, 4],
+  containerPaddingTop = 2,
 }) => {
   const [tabSection, setTabSection] = useState(slice)
   const router = useRouter()
@@ -66,7 +72,10 @@ export const TabSectionSlice: React.FC<SliceProps> = ({
       id={tabSection.id}
       aria-labelledby={'sliceTitle-' + tabSection.id}
     >
-      <Box paddingTop={2} paddingBottom={[0, 4, 4]}>
+      <Box
+        paddingTop={containerPaddingTop}
+        paddingBottom={containerPaddingBottom}
+      >
         <Tabs
           selected={selected}
           onChange={(id) => {
@@ -87,7 +96,10 @@ export const TabSectionSlice: React.FC<SliceProps> = ({
           tabs={tabSection.tabs?.map((tab) => ({
             label: tab?.tabTitle,
             content: (
-              <Box paddingTop={contentPaddingTop} paddingBottom={[8, 0, 6]}>
+              <Box
+                paddingTop={contentPaddingTop}
+                paddingBottom={contentPaddingBottom}
+              >
                 {tab?.image?.url && (
                   <img
                     src={tab.image.url}

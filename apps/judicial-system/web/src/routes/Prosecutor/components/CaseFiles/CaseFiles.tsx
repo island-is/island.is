@@ -8,7 +8,6 @@ import React, {
 import { useIntl } from 'react-intl'
 import { uuid } from 'uuidv4'
 import { useRouter } from 'next/router'
-import { useQuery } from '@apollo/client'
 
 import {
   ProsecutorCaseInfo,
@@ -45,15 +44,12 @@ import {
   isRestrictionCase,
   PoliceCaseFile,
 } from '@island.is/judicial-system/types'
-import { PoliceCaseFilesQuery } from '@island.is/judicial-system-web/graphql'
-import {
-  GetPoliceCaseFilesQuery,
-  CaseOrigin,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+import { CaseOrigin } from '@island.is/judicial-system-web/src/graphql/schema'
 import { fileExtensionWhitelist } from '@island.is/island-ui/core/types'
 import * as constants from '@island.is/judicial-system/consts'
 
 import { PoliceCaseFileCheck, PoliceCaseFiles } from '../../components'
+import { useGetPoliceCaseFilesQuery } from './getPoliceCaseFiles.generated'
 import { caseFiles as strings } from './CaseFiles.strings'
 
 export interface PoliceCaseFilesData {
@@ -72,7 +68,7 @@ export const mapPoliceCaseFileToPoliceCaseFileCheck = (
   checked: false,
 })
 
-export const CaseFiles: React.FC = () => {
+export const CaseFiles: React.FC<React.PropsWithChildren<unknown>> = () => {
   const {
     workingCase,
     setWorkingCase,
@@ -83,10 +79,11 @@ export const CaseFiles: React.FC = () => {
     data: policeData,
     loading: policeDataLoading,
     error: policeDataError,
-  } = useQuery<GetPoliceCaseFilesQuery>(PoliceCaseFilesQuery, {
+  } = useGetPoliceCaseFilesQuery({
     variables: { input: { caseId: workingCase.id } },
+    skip: workingCase.origin !== CaseOrigin.LOKE,
     fetchPolicy: 'no-cache',
-    skip: workingCase.origin !== CaseOrigin.Loke,
+    errorPolicy: 'all',
   })
   const router = useRouter()
   const { formatMessage } = useIntl()
@@ -101,7 +98,7 @@ export const CaseFiles: React.FC = () => {
 
   const {
     upload,
-    uploadPoliceCaseFile,
+    uploadFromPolice,
     handleRemove,
     handleRetry,
     generateSingleFileUpdate,
@@ -111,7 +108,7 @@ export const CaseFiles: React.FC = () => {
   useDeb(workingCase, 'caseFilesComments')
 
   useEffect(() => {
-    if (workingCase.origin !== CaseOrigin.Loke) {
+    if (workingCase.origin !== CaseOrigin.LOKE) {
       setPoliceCaseFiles({
         files: [],
         isLoading: false,
@@ -144,28 +141,25 @@ export const CaseFiles: React.FC = () => {
           ?.code as string,
       })
     }
-  }, [
-    policeData,
-    policeDataError,
-    policeDataLoading,
-    setPoliceCaseFiles,
-    workingCase.origin,
-    workingCase.caseFiles,
-  ])
+  }, [policeData, policeDataError, policeDataLoading, workingCase.origin])
 
   useEffect(() => {
     setPoliceCaseFileList(
       policeCaseFiles?.files
         .filter(
-          (f) =>
+          (policeFile) =>
             !workingCase.caseFiles?.some(
-              (caseFile) => caseFile.name === f.name,
+              (file) => !file.category && file.name === policeFile.name,
             ),
         )
         .map(mapPoliceCaseFileToPoliceCaseFileCheck) || [],
     )
 
-    setFilesInRVG(workingCase.caseFiles?.map(mapCaseFileToUploadFile) || [])
+    setFilesInRVG(
+      workingCase.caseFiles
+        ?.filter((file) => !file.category)
+        .map(mapCaseFileToUploadFile) || [],
+    )
   }, [policeCaseFiles, workingCase.caseFiles])
 
   const uploadErrorMessage = useMemo(() => {
@@ -211,7 +205,7 @@ export const CaseFiles: React.FC = () => {
             status: 'uploading',
             percent: 1,
             name: file.name,
-            id: id,
+            id,
             type: file.type,
           }),
         ),
@@ -239,7 +233,7 @@ export const CaseFiles: React.FC = () => {
         state: CaseFileState.STORED_IN_RVG,
       } as UploadFile
 
-      await uploadPoliceCaseFile(fileToUpload, uploadPoliceCaseFileCallback)
+      await uploadFromPolice(fileToUpload, uploadPoliceCaseFileCallback)
 
       setPoliceCaseFileList((previous) => previous.filter((p) => p.id !== f.id))
 
@@ -247,7 +241,7 @@ export const CaseFiles: React.FC = () => {
         setIsUploading(false)
       }
     })
-  }, [policeCaseFileList, uploadPoliceCaseFile, uploadPoliceCaseFileCallback])
+  }, [policeCaseFileList, uploadFromPolice, uploadPoliceCaseFileCallback])
 
   const removeFileCB = useCallback(
     (file: UploadFile) => {

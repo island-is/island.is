@@ -1,4 +1,4 @@
-export { default as CopyLinkForDefenderButton } from './CopyLinkForDefenderButton/CopyLinkForDefenderButton'
+export { mapPoliceCaseFileToPoliceCaseFileCheck } from './CaseFiles/CaseFiles'
 export { default as DefendantInfo } from './DefendantInfo/DefendantInfo'
 export { default as PoliceCaseFiles } from './PoliceCaseFiles/PoliceCaseFiles'
 export { default as PoliceCaseFilesMessageBox } from './PoliceCaseFilesMessageBox/PoliceCaseFilesMessageBox'
@@ -11,4 +11,5 @@ export { default as ProsecutorSectionHeightenedSecurity } from './ProsecutorSect
 export { default as RequestCourtDate } from './RequestCourtDate/RequestCourtDate'
 export { default as SelectCourt } from './SelectCourt/SelectCourt'
 
+export type { PoliceCaseFilesData } from './CaseFiles/CaseFiles'
 export type { PoliceCaseFileCheck } from './PoliceCaseFiles/PoliceCaseFiles'

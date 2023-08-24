@@ -72,7 +72,7 @@ export interface AlertBannerProps {
   description?: string
 }
 
-export const AlertBanner: FC<AlertBannerProps> = ({
+export const AlertBanner: FC<React.PropsWithChildren<AlertBannerProps>> = ({
   variant: variantKey = 'default',
   dismissable,
   title,
@@ -115,7 +115,11 @@ export const AlertBanner: FC<AlertBannerProps> = ({
           <Text variant="h4">{title}</Text>
         </Box>
       )}
-      {description && <Text>{description}</Text>}
+      {description && (
+        <Box marginRight={2}>
+          <Text>{description}</Text>
+        </Box>
+      )}
       {children && (
         <Box
           display="flex"

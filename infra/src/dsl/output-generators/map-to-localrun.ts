@@ -18,6 +18,7 @@ import {
   serializeEnvironmentVariables,
 } from './serialization-helpers'
 import { getSsmParams } from '../adapters/get-ssm-params'
+import { getPostgresExtensions } from './map-to-helm-values'
 
 /**
  * Transforms our definition of a service to a definition for a local running serivce
@@ -154,6 +155,11 @@ function serializePostgres(
   const errors: string[] = []
   env['DB_USER'] = 'testdb'
   env['DB_NAME'] = postgres.name ?? postgresIdentifier(serviceDef.name)
+  if (serviceDef.initContainers?.postgres?.extensions) {
+    env['DB_EXTENSIONS'] = getPostgresExtensions(
+      serviceDef.initContainers.postgres.extensions,
+    )
+  }
   try {
     const { reader, writer } = resolveDbHost()
     env['DB_HOST'] = writer

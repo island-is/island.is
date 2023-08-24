@@ -1,0 +1,33 @@
+{
+  "name": "auth-shared",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/auth/shared/src",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/libs/auth/shared",
+        "main": "libs/auth/shared/src/index.ts",
+        "tsConfig": "libs/auth/shared/tsconfig.lib.json",
+        "assets": ["libs/auth/shared/*.md"]
+      }
+    },
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["libs/auth/shared/**/*.ts"]
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/libs/auth/shared"],
+      "options": {
+        "jestConfig": "libs/auth/shared/jest.config.ts",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": ["lib:js", "scope:js"]
+}

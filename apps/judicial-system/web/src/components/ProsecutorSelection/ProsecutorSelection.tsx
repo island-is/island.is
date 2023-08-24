@@ -22,7 +22,9 @@ interface Props {
   onChange: (prosecutorId: string) => boolean
 }
 
-const ProsecutorSelection: React.FC<Props> = (props) => {
+const ProsecutorSelection: React.FC<React.PropsWithChildren<Props>> = (
+  props,
+) => {
   const { onChange } = props
   const { formatMessage } = useIntl()
   const { user } = useContext(UserContext)
@@ -46,7 +48,7 @@ const ProsecutorSelection: React.FC<Props> = (props) => {
     return data?.users
       .filter(
         (aUser: User) =>
-          aUser.role === UserRole.Prosecutor &&
+          aUser.role === UserRole.PROSECUTOR &&
           ((!workingCase.creatingProsecutor &&
             aUser.institution?.id === user?.institution?.id) ||
             (workingCase.creatingProsecutor &&

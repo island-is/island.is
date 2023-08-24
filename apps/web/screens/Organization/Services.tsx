@@ -32,7 +32,7 @@ import {
   GET_ORGANIZATION_SERVICES_QUERY,
 } from '../queries'
 import { Screen } from '../../types'
-import { useFeatureFlag, useNamespace } from '@island.is/web/hooks'
+import { useNamespace } from '@island.is/web/hooks'
 import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import {
   getThemeConfig,
@@ -66,10 +66,6 @@ const ServicesPage: Screen<ServicesPageProps> = ({
   namespace,
 }) => {
   const router = useRouter()
-  const { value: isWebReaderEnabledForOrganizationPages } = useFeatureFlag(
-    'isWebReaderEnabledForOrganizationPages',
-    false,
-  )
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
 
@@ -152,17 +148,10 @@ const ServicesPage: Screen<ServicesPageProps> = ({
       <GridContainer>
         <GridRow>
           <GridColumn span={['12/12', '12/12', '6/12', '6/12', '8/12']}>
-            <Text
-              variant="h1"
-              as="h1"
-              marginBottom={isWebReaderEnabledForOrganizationPages ? 0 : 4}
-              marginTop={1}
-            >
+            <Text variant="h1" as="h1" marginBottom={0} marginTop={1}>
               {n('allServices', 'Öll þjónusta')}
             </Text>
-            {isWebReaderEnabledForOrganizationPages && (
-              <Webreader marginBottom={4} readId={null} readClass="rs_read" />
-            )}
+            <Webreader marginBottom={4} readId={null} readClass="rs_read" />
           </GridColumn>
         </GridRow>
         <GridRow marginBottom={4}>
@@ -264,7 +253,7 @@ const ServicesPage: Screen<ServicesPageProps> = ({
   )
 }
 
-ServicesPage.getInitialProps = async ({ apolloClient, locale, query }) => {
+ServicesPage.getProps = async ({ apolloClient, locale, query }) => {
   const [
     {
       data: { getOrganizationPage },

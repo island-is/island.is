@@ -22,7 +22,6 @@ import {
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   isAcceptingCaseDecision,
-  completedCaseStates,
   CaseDecision,
 } from '@island.is/judicial-system/types'
 import { formatDate } from '@island.is/judicial-system/formatters'
@@ -113,6 +112,8 @@ const Ruling = () => {
     [workingCase.id],
   )
   const stepIsValid = isRulingValidIC(workingCase)
+  const caseFiles =
+    workingCase.caseFiles?.filter((file) => !file.category) ?? []
 
   return (
     <PageLayout
@@ -137,21 +138,18 @@ const Ruling = () => {
             <PoliceRequestAccordionItem workingCase={workingCase} />
             <AccordionItem
               id="caseFileList"
-              label={`Rannsóknargögn (${workingCase.caseFiles?.length ?? 0})`}
+              label={`Rannsóknargögn (${caseFiles.length})`}
               labelVariant="h3"
             >
               <CaseFileList
                 caseId={workingCase.id}
-                files={workingCase.caseFiles ?? []}
+                files={caseFiles}
                 canOpenFiles={
                   (workingCase.judge !== null &&
                     workingCase.judge?.id === user?.id) ||
                   (workingCase.registrar !== null &&
                     workingCase.registrar?.id === user?.id)
                 }
-                isCaseCompleted={completedCaseStates.includes(
-                  workingCase.state,
-                )}
               />
             </AccordionItem>
           </Accordion>

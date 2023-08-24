@@ -20,7 +20,13 @@ import {
   ShipRegistryApi,
   IdentityApi,
 } from '../dataProviders'
-import { DefaultStateLifeCycle } from '@island.is/application/core'
+import {
+  coreHistoryMessages,
+  corePendingActionMessages,
+  DefaultStateLifeCycle,
+} from '@island.is/application/core'
+import { gflPendingActionMessages } from './messages/actionCards'
+import { Features } from '@island.is/feature-flags'
 
 const pruneAtMidnight = () => {
   const date = new Date()
@@ -43,12 +49,18 @@ const GeneralFishingLicenseTemplate: ApplicationTemplate<
   type: ApplicationTypes.GENERAL_FISHING_LICENSE,
   name: application.general.name,
   institution: application.general.institutionName,
-  readyForProduction: true,
   translationNamespaces: [
     ApplicationConfigurations.GeneralFishingLicense.translation,
   ],
   dataSchema: GeneralFishingLicenseSchema,
-  allowedDelegations: [{ type: AuthDelegationType.ProcurationHolder }],
+  allowedDelegations: [
+    { type: AuthDelegationType.ProcurationHolder },
+    {
+      type: AuthDelegationType.Custom,
+      featureFlag: Features.isFishingLicenceCustomDelegationEnabled,
+    },
+  ],
+  requiredScopes: ['@island.is/fishing-license'],
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {
@@ -99,6 +111,14 @@ const GeneralFishingLicenseTemplate: ApplicationTemplate<
           status: 'draft',
           progress: 0.3,
           lifecycle: pruneAtMidnight(),
+          actionCard: {
+            historyLogs: [
+              {
+                logMessage: coreHistoryMessages.paymentStarted,
+                onEvent: DefaultEvents.PAYMENT,
+              },
+            ],
+          },
           roles: [
             {
               id: Roles.APPLICANT,
@@ -131,7 +151,21 @@ const GeneralFishingLicenseTemplate: ApplicationTemplate<
           name: 'Payment state',
           status: 'inprogress',
           actionCard: {
-            description: application.labels.actionCardPayment,
+            pendingAction: {
+              title: corePendingActionMessages.paymentPendingTitle,
+              content: corePendingActionMessages.paymentPendingDescription,
+              displayStatus: 'warning',
+            },
+            historyLogs: [
+              {
+                logMessage: coreHistoryMessages.paymentAccepted,
+                onEvent: DefaultEvents.SUBMIT,
+              },
+              {
+                logMessage: coreHistoryMessages.paymentCancelled,
+                onEvent: DefaultEvents.ABORT,
+              },
+            ],
           },
           progress: 0.9,
           lifecycle: {
@@ -174,6 +208,13 @@ const GeneralFishingLicenseTemplate: ApplicationTemplate<
           status: 'completed',
           progress: 1,
           lifecycle: DefaultStateLifeCycle,
+          actionCard: {
+            pendingAction: {
+              title: gflPendingActionMessages.applicationrReceivedTitle,
+              content: gflPendingActionMessages.applicationrReceivedContent,
+              displayStatus: 'success',
+            },
+          },
           onEntry: defineTemplateApi({
             action: ApiActions.submitApplication,
           }),

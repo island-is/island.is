@@ -8,7 +8,10 @@ export interface StatisticsProps {
   statistics: StatisticProps[]
 }
 
-export const Statistics: FC<StatisticsProps> = ({ statistics, ...props }) => {
+export const Statistics: FC<React.PropsWithChildren<StatisticsProps>> = ({
+  statistics,
+  ...props
+}) => {
   return (
     <Background backgroundPattern="dotted" paddingY={10}>
       <div className={styles.container}>

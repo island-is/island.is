@@ -22,7 +22,7 @@ interface Props {
   setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
 }
 
-const AppealSections: React.FC<Props> = (props) => {
+const AppealSections: React.FC<React.PropsWithChildren<Props>> = (props) => {
   const { workingCase, setWorkingCase } = props
   const { formatMessage } = useIntl()
   const { setAndSendCaseToServer, updateCase } = useCase()
@@ -87,7 +87,7 @@ const AppealSections: React.FC<Props> = (props) => {
                       {
                         accusedAppealAnnouncement:
                           workingCase.sessionArrangements ===
-                          SessionArrangements.AllPresentSpokesperson
+                          SessionArrangements.ALL_PRESENT_SPOKESPERSON
                             ? formatMessage(
                                 m.defendantAnnouncementAutofillSpokespersonAppealV2,
                               )

@@ -722,6 +722,28 @@
               "application/json": { "schema": { "type": "string" } },
               "text/json": { "schema": { "type": "string" } }
             }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": { "schema": { "type": "string" } },
+              "application/json": { "schema": { "type": "string" } },
+              "text/json": { "schema": { "type": "string" } }
+            }
+          },
+          "default": {
+            "description": "Error",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
           }
         }
       }
@@ -1826,7 +1848,7 @@
             "description": "Magn fisktegundar sem er ónotuð eftir útreikninga á tímabilinu.",
             "format": "int32"
           },
-          "heildarAflaMark": {
+          "heildarAflamark": {
             "type": "integer",
             "description": "Magn heildaraflamarks tiltekinnar fsktegundar á tímabilinu.",
             "format": "int32"
@@ -2248,6 +2270,27 @@
         },
         "additionalProperties": false
       },
+      "LondunarKorDTO": {
+        "type": "object",
+        "properties": {
+          "einingarthyngd": {
+            "type": "integer",
+            "description": "Þyngd hvers kars.",
+            "format": "int32"
+          },
+          "fjoldi": {
+            "type": "integer",
+            "description": "Fjöldi af körum.",
+            "format": "int32"
+          },
+          "magn": {
+            "type": "integer",
+            "description": "Magn frádráttar; magn = eining * fjoldi.",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
       "LondunarKvotaAfliDTO": {
         "type": "object",
         "properties": {
@@ -2287,6 +2330,12 @@
             "type": "array",
             "items": { "$ref": "#/components/schemas/LondunarKvotaAfliDTO" },
             "description": "Listi af kvótaafla löndunar.",
+            "nullable": true
+          },
+          "londunarKor": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/LondunarKorDTO" },
+            "description": "Listi af körum löndunar.",
             "nullable": true
           },
           "londunHefst": {

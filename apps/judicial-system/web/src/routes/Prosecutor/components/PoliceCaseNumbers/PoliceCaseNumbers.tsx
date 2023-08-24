@@ -35,7 +35,9 @@ export const usePoliceCaseNumbers = (workingCase: Case) => {
   return { clientPoliceNumbers, setClientPoliceNumbers }
 }
 
-export const PoliceCaseNumbers: React.FC<Props> = (props) => {
+export const PoliceCaseNumbers: React.FC<React.PropsWithChildren<Props>> = (
+  props,
+) => {
   const {
     workingCase,
     setWorkingCase,
@@ -45,7 +47,7 @@ export const PoliceCaseNumbers: React.FC<Props> = (props) => {
   const { user } = useContext(UserContext)
   const { setAndSendCaseToServer } = useCase()
   const { formatMessage } = useIntl()
-  const isLOKECase = workingCase.origin === CaseOrigin.Loke
+  const isLOKECase = workingCase.origin === CaseOrigin.LOKE
 
   const [hasError, setHasError] = useState(false)
   const updatePoliceNumbers = useCallback(
@@ -81,7 +83,7 @@ export const PoliceCaseNumbers: React.FC<Props> = (props) => {
   )
 
   const onRemove = useCallback(
-    (value) => () => {
+    (value: string) => () => {
       const newPoliceCaseNumbers = clientPoliceNumbers.filter(
         (number) => number !== value,
       )

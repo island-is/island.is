@@ -1,0 +1,45 @@
+{
+  "name": "native-app",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/native/app/src",
+  "projectType": "application",
+  "generators": {},
+  "targets": {
+    "serve": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "apps/native/app",
+        "command": "yarn start"
+      }
+    },
+    "build": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "apps/native/app",
+        "command": "yarn build-mock"
+      }
+    },
+    "test": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "apps/native/app",
+        "command": "yarn test-mock"
+      }
+    },
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "options": {
+        "lintFilePatterns": ["apps/native/app/**/*.{ts,tsx,js,jsx}"]
+      }
+    },
+    "schemas/codegen": {
+      "executor": "nx:run-commands",
+      "options": {
+        "parallel": false,
+        "command": "graphql-codegen --config apps/native/app/codegen.yml"
+      }
+    },
+    "docker-native": {}
+  },
+  "tags": ["scope:js"]
+}

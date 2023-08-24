@@ -3,6 +3,8 @@ import { Transaction } from 'sequelize'
 
 import {
   CaseAppealState,
+  CaseFileCategory,
+  CaseFileState,
   CaseState,
   CaseTransition,
 } from '@island.is/judicial-system/types'
@@ -27,6 +29,29 @@ describe('LimitedAccessCaseController - Transition', () => {
   const date = randomDate()
   const user = { id: uuid() } as User
   const caseId = uuid()
+  const defenderAppealBriefId = uuid()
+  const defenderAppealBriefCaseFileId1 = uuid()
+  const defenderAppealBriefCaseFileId2 = uuid()
+  const caseFiles = [
+    {
+      id: defenderAppealBriefId,
+      key: uuid(),
+      state: CaseFileState.STORED_IN_RVG,
+      category: CaseFileCategory.DEFENDANT_APPEAL_BRIEF,
+    },
+    {
+      id: defenderAppealBriefCaseFileId1,
+      key: uuid(),
+      state: CaseFileState.STORED_IN_RVG,
+      category: CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE,
+    },
+    {
+      id: defenderAppealBriefCaseFileId2,
+      key: uuid(),
+      state: CaseFileState.STORED_IN_RVG,
+      category: CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE,
+    },
+  ]
 
   let transaction: Transaction
   let mockMessageService: MessageService
@@ -62,7 +87,7 @@ describe('LimitedAccessCaseController - Transition', () => {
         then.result = await limitedAccessCaseController.transition(
           caseId,
           user,
-          { id: caseId, state } as Case,
+          { id: caseId, state, caseFiles } as Case,
           { transition: CaseTransition.APPEAL },
         )
       } catch (error) {
@@ -79,6 +104,7 @@ describe('LimitedAccessCaseController - Transition', () => {
       const updatedCase = {
         id: caseId,
         state,
+        caseFiles,
         appealState: CaseAppealState.APPEALED,
         accusedPostponedAppealDate: date,
       } as Case
@@ -103,6 +129,24 @@ describe('LimitedAccessCaseController - Transition', () => {
 
       it('should queue a notification message', () => {
         expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
+          {
+            type: MessageType.DELIVER_CASE_FILE_TO_COURT,
+            user,
+            caseId,
+            caseFileId: defenderAppealBriefId,
+          },
+          {
+            type: MessageType.DELIVER_CASE_FILE_TO_COURT,
+            user,
+            caseId,
+            caseFileId: defenderAppealBriefCaseFileId1,
+          },
+          {
+            type: MessageType.DELIVER_CASE_FILE_TO_COURT,
+            user,
+            caseId,
+            caseFileId: defenderAppealBriefCaseFileId2,
+          },
           {
             type: MessageType.SEND_APPEAL_TO_COURT_OF_APPEALS_NOTIFICATION,
             user,

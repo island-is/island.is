@@ -68,14 +68,17 @@ const AppealToCourtOfAppeals = () => {
       ? constants.DEFENDER_ROUTE
       : constants.SIGNED_VERDICT_OVERVIEW_ROUTE
   }/${id}`
+
   const allFilesUploaded = useMemo(() => {
     return displayFiles.every(
       (file) => file.status === 'done' || file.status === 'error',
     )
   }, [displayFiles])
+
   const isStepValid =
-    displayFiles.some((file) => file.category === appealBriefType) &&
-    allFilesUploaded
+    displayFiles.some(
+      (file) => file.category === appealBriefType && file.status === 'done',
+    ) && allFilesUploaded
 
   const removeFileCB = useCallback((file: UploadFile) => {
     setDisplayFiles((previous) =>
@@ -116,74 +119,75 @@ const AppealToCourtOfAppeals = () => {
             {formatMessage(strings.title)}
           </Text>
         </Box>
-        {workingCase.courtEndTime && (
+        {workingCase.rulingDate && (
           <Box marginBottom={7}>
-            <RulingDateLabel courtEndTime={workingCase.courtEndTime} />
+            <RulingDateLabel rulingDate={workingCase.rulingDate} />
           </Box>
         )}
-        {user && (
-          <>
-            <Box component="section" marginBottom={5}>
-              <SectionHeading
-                title={formatMessage(strings.appealBriefTitle)}
-                required
-              />
-              <InputFileUpload
-                fileList={displayFiles.filter(
-                  (file) => file.category === appealBriefType,
-                )}
-                accept={'application/pdf'}
-                header={formatMessage(core.uploadBoxTitle)}
-                description={formatMessage(core.uploadBoxDescription, {
-                  fileEndings: '.pdf',
-                })}
-                buttonLabel={formatMessage(core.uploadBoxButtonLabel)}
-                multiple={false}
-                onChange={(files) =>
-                  handleChange(
-                    files,
-                    appealBriefType,
-                    setDisplayFiles,
-                    handleUIUpdate,
-                  )
-                }
-                onRemove={(file) => handleRemove(file, removeFileCB)}
-                onRetry={(file) => handleRetry(file, handleUIUpdate)}
-              />
-            </Box>
-            <Box component="section" marginBottom={10}>
-              <SectionHeading
-                title={formatMessage(strings.appealCaseFilesTitle)}
-                marginBottom={1}
-              />
-              <Text marginBottom={3}>
-                {formatMessage(strings.appealCaseFilesSubtitle)}
-              </Text>
-              <InputFileUpload
-                fileList={displayFiles.filter(
-                  (file) => file.category === appealCaseFilesType,
-                )}
-                accept={'application/pdf'}
-                header={formatMessage(core.uploadBoxTitle)}
-                description={formatMessage(core.uploadBoxDescription, {
-                  fileEndings: '.pdf',
-                })}
-                buttonLabel={formatMessage(core.uploadBoxButtonLabel)}
-                multiple={false}
-                onChange={(files) =>
-                  handleChange(
-                    files,
-                    appealCaseFilesType,
-                    setDisplayFiles,
-                    handleUIUpdate,
-                  )
-                }
-                onRemove={(file) => handleRemove(file, removeFileCB)}
-                onRetry={(file) => handleRetry(file, handleUIUpdate)}
-              />
-            </Box>
-          </>
-        )}
+
+        <>
+          <Box component="section" marginBottom={5}>
+            <SectionHeading
+              title={formatMessage(strings.appealBriefTitle)}
+              required
+            />
+            <InputFileUpload
+              fileList={displayFiles.filter(
+                (file) => file.category === appealBriefType,
+              )}
+              accept={'application/pdf'}
+              header={formatMessage(core.uploadBoxTitle)}
+              description={formatMessage(core.uploadBoxDescription, {
+                fileEndings: '.pdf',
+              })}
+              buttonLabel={formatMessage(core.uploadBoxButtonLabel)}
+              onChange={(files) =>
+                handleChange(
+                  files,
+                  appealBriefType,
+                  setDisplayFiles,
+                  handleUIUpdate,
+                )
+              }
+              onRemove={(file) => handleRemove(file, removeFileCB)}
+              onRetry={(file) =>
+                handleRetry(file, handleUIUpdate, appealBriefType)
+              }
+            />
+          </Box>
+          <Box component="section" marginBottom={10}>
+            <SectionHeading
+              title={formatMessage(strings.appealCaseFilesTitle)}
+              marginBottom={1}
+            />
+            <Text marginBottom={3}>
+              {formatMessage(strings.appealCaseFilesSubtitle)}
+            </Text>
+            <InputFileUpload
+              fileList={displayFiles.filter(
+                (file) => file.category === appealCaseFilesType,
+              )}
+              accept={'application/pdf'}
+              header={formatMessage(core.uploadBoxTitle)}
+              description={formatMessage(core.uploadBoxDescription, {
+                fileEndings: '.pdf',
+              })}
+              buttonLabel={formatMessage(core.uploadBoxButtonLabel)}
+              onChange={(files) =>
+                handleChange(
+                  files,
+                  appealCaseFilesType,
+                  setDisplayFiles,
+                  handleUIUpdate,
+                )
+              }
+              onRemove={(file) => handleRemove(file, removeFileCB)}
+              onRetry={(file) =>
+                handleRetry(file, handleUIUpdate, appealCaseFilesType)
+              }
+            />
+          </Box>
+        </>
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter

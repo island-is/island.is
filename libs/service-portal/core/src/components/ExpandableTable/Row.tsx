@@ -1,7 +1,7 @@
 import React, { useState, useCallback, FC } from 'react'
 import { useLocale } from '@island.is/localization'
 import { ApolloError } from '@apollo/client'
-import AnimateHeight from 'react-animate-height'
+import AnimateHeight, { Height } from 'react-animate-height'
 import {
   Box,
   Text,
@@ -22,16 +22,18 @@ interface Props {
   last?: boolean
   loading?: boolean
   error?: ApolloError
-  backgroundColor?: 'white' | 'default'
+  backgroundColor?: 'white' | 'default' | 'yellow'
+  forceBackgroundColor?: boolean
   extraChildrenPadding?: boolean
   showLine?: boolean
   onExpandCallback?: () => void
 }
 
-const ExpandableLine: FC<Props> = ({
+const ExpandableLine: FC<React.PropsWithChildren<Props>> = ({
   data,
   onExpandCallback,
   backgroundColor = 'default',
+  forceBackgroundColor = false,
   children,
   last,
   loading,
@@ -43,7 +45,7 @@ const ExpandableLine: FC<Props> = ({
   const [expanded, toggleExpand] = useState<boolean>(false)
   const [closed, setClosed] = useState<boolean>(true)
 
-  const handleAnimationEnd = useCallback((height) => {
+  const handleAnimationEnd = useCallback((height: Height) => {
     if (height === 0) {
       setClosed(true)
     } else {
@@ -58,13 +60,18 @@ const ExpandableLine: FC<Props> = ({
     toggleExpand(!expanded)
   }
 
-  const fullClose = closed && !expanded
-  const color =
-    fullClose || loading
-      ? 'transparent'
-      : backgroundColor === 'default'
+  const getColor =
+    backgroundColor === 'default'
       ? 'blue100'
+      : backgroundColor === 'yellow'
+      ? 'yellow300'
       : 'transparent'
+  const fullClose = closed && !expanded
+  const color = forceBackgroundColor
+    ? getColor
+    : fullClose || loading
+    ? 'transparent'
+    : getColor
 
   const borderColor =
     fullClose || loading
@@ -104,7 +111,7 @@ const ExpandableLine: FC<Props> = ({
                 onClick={onExpandButton}
                 preTextIconType="filled"
                 size="small"
-                title="Sundurliðun"
+                title={formatMessage(m.financeBreakdown)}
                 type="button"
                 variant="primary"
               />
@@ -168,9 +175,7 @@ const ExpandableLine: FC<Props> = ({
           colSpan={data.length + 1}
         >
           <AnimateHeight
-            onAnimationEnd={(props: { newHeight: number }) =>
-              handleAnimationEnd(props.newHeight)
-            }
+            onHeightAnimationEnd={(newHeight) => handleAnimationEnd(newHeight)}
             duration={300}
             height={children && expanded ? 'auto' : 0}
           >

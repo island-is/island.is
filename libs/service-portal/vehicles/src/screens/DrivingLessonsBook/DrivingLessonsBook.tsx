@@ -20,7 +20,7 @@ import {
   LinkResolver,
 } from '@island.is/service-portal/core'
 
-import { messages } from '../../lib/messages'
+import { messages, urls } from '../../lib/messages'
 import PhysicalLessons from '../../components/DrivingLessonsTables/PhysicalLessons'
 import DrivingLessonsSchools from '../../components/DrivingLessonsTables/DrivingLessonsSchools'
 import Exams from '../../components/DrivingLessonsTables/Exams'
@@ -34,6 +34,7 @@ export const GET_STUDENT_BOOK = gql`
         teacherName
         statusName
         totalLessonTime
+        practiceDriving
         totalLessonCount
         teachersAndLessons {
           registerDate
@@ -87,7 +88,6 @@ const DrivingLessonsBook = () => {
         <IntroHeader
           title={formatMessage(messages.vehicleDrivingLessonsTitle)}
           intro={formatMessage(messages.vehicleDrivingLessonsText)}
-          img="./assets/images/drivingLessons.svg"
         />
       </Box>
       {loading && (
@@ -100,6 +100,18 @@ const DrivingLessonsBook = () => {
           <Stack space={2}>
             <UserInfoLine
               title={formatMessage(messages.vehicleDrivingLessonsLabel)}
+              label={formatMessage(
+                messages.vehicleDrivingLessonsPracticeDriving,
+              )}
+              content={
+                book?.practiceDriving
+                  ? formatMessage(messages.yes)
+                  : formatMessage(messages.no)
+              }
+              loading={loading}
+            />
+            <Divider />
+            <UserInfoLine
               label={formatMessage(messages.vehicleDrivingLessonsStartDate)}
               content={book?.createdOn && formatDate(book?.createdOn)}
               loading={loading}
@@ -115,16 +127,12 @@ const DrivingLessonsBook = () => {
             <Divider />
             <UserInfoLine
               label={formatMessage(messages.vehicleDrivingLessonsTeacher)}
-              content={
-                <Box>
-                  <div>{book?.teacherName}</div>
-                  <LinkResolver href="https://island.is/umsoknir/okunam-okukennari">
-                    <Button variant="text" size="small" type="button">
-                      {formatMessage(messages.changeInstructor)}
-                    </Button>
-                  </LinkResolver>
-                </Box>
-              }
+              editLink={{
+                title: messages.changeInstructor,
+                url: formatMessage(urls.instructorApplication),
+                external: true,
+              }}
+              content={book?.teacherName ?? ''}
               loading={loading}
               // Removed until application is ready
               // editLink={{
@@ -193,7 +201,7 @@ const DrivingLessonsBook = () => {
         <Box marginTop={8}>
           <EmptyState />
           <Box display="flex" alignItems="center" justifyContent="center">
-            <LinkResolver href="https://island.is/umsoknir/okuskirteini">
+            <LinkResolver href={formatMessage(urls.licenseApplication)}>
               <Button type="button">
                 {formatMessage(messages.signupToDrivingSchool)}
               </Button>

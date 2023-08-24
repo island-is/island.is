@@ -27,16 +27,15 @@ const user: User = {
   title: '',
   mobileNumber: '',
   email: '',
-  role: UserRole.Prosecutor,
+  role: UserRole.PROSECUTOR,
   institution: undefined,
   active: true,
 }
 
-export const NewUser: React.FC = () => {
+export const NewUser: React.FC<React.PropsWithChildren<unknown>> = () => {
   const router = useRouter()
 
   const {
-    courts,
     allCourts,
     prosecutorsOffices,
     prisonInstitutions,
@@ -78,7 +77,6 @@ export const NewUser: React.FC = () => {
         <PageHeader title={formatMessage(titles.admin.newUser)} />
         <UserForm
           user={user}
-          courts={courts}
           allCourts={allCourts}
           prosecutorsOffices={prosecutorsOffices}
           prisonInstitutions={prisonInstitutions}

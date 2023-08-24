@@ -9,11 +9,14 @@ import {
   Stack,
   Box,
   Text,
+  Select,
+  Option,
 } from '@island.is/island-ui/core'
 import { PortalNavigation } from '@island.is/portals/core'
 import { useCreateExplicitDiscountCodeMutation } from './CreateDiscount.generated'
 import Modal from '../../components/Modal/Modal'
 import { airDiscountSchemeNavigation } from '../../lib/navigation'
+import { ValueType } from 'react-select'
 
 const AdminCreateDiscount = () => {
   const [createExplicitDiscountCode] = useCreateExplicitDiscountCodeMutation()
@@ -21,11 +24,16 @@ const AdminCreateDiscount = () => {
   const [nationalId, setNationalId] = useState('')
   const [postalcode, setPostalcode] = useState('')
   const [comment, setComment] = useState('')
+  const [length, setLength] = useState('')
 
   const [discountCode, setDiscountCode] = useState('')
 
   const [showModal, setShowModal] = useState(false)
 
+  const onSelect = (option: ValueType<Option>) => {
+    const selectOption = option as Option
+    setLength(selectOption?.value as string)
+  }
   return (
     <>
       <GridContainer>
@@ -95,6 +103,22 @@ const AdminCreateDiscount = () => {
                       setComment(e.target.value)
                     }}
                   />
+                  <Select
+                    name="length"
+                    label="Tímalengd"
+                    required
+                    onChange={onSelect}
+                    options={[
+                      {
+                        label: '24 tímar',
+                        value: '1',
+                      },
+                      {
+                        label: '14 dagar',
+                        value: '14',
+                      },
+                    ]}
+                  />
 
                   <Button
                     disabled={[nationalId, postalcode, comment].some(
@@ -122,6 +146,7 @@ const AdminCreateDiscount = () => {
                 nationalId: nationalId.replace('-', ''),
                 postalcode: parseInt(postalcode, 10),
                 comment,
+                numberOfDaysUntilExpiration: parseInt(length, 10),
               },
             },
           }).then((data) => {

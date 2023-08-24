@@ -26,7 +26,7 @@ import {
   GET_ORGANIZATION_SUBPAGE_QUERY,
 } from '../../queries'
 import { Screen } from '../../../types'
-import { useFeatureFlag, useNamespace } from '@island.is/web/hooks'
+import { useNamespace } from '@island.is/web/hooks'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import {
   OrganizationWrapper,
@@ -39,6 +39,7 @@ import { SliceType } from '@island.is/island-ui/contentful'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import { useRouter } from 'next/router'
 import { webRichText } from '@island.is/web/utils/richText'
+import { safelyExtractPathnameFromUrl } from '@island.is/web/utils/safelyExtractPathnameFromUrl'
 
 const PAGE_SIZE = 10
 const CSV_COLUMN_SEPARATOR = ','
@@ -66,10 +67,6 @@ const Homestay: Screen<HomestayProps> = ({
   homestays,
   namespace,
 }) => {
-  const { value: isWebReaderEnabledForOrganizationPages } = useFeatureFlag(
-    'isWebReaderEnabledForOrganizationPages',
-    false,
-  )
   useContentfulId(organizationPage.id, subpage.id)
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
@@ -173,13 +170,11 @@ const Homestay: Screen<HomestayProps> = ({
         items: navList,
       }}
     >
-      <Box paddingBottom={isWebReaderEnabledForOrganizationPages ? 0 : 4}>
+      <Box paddingBottom={0}>
         <Text variant="h1" as="h2">
           {subpage.title}
         </Text>
-        {isWebReaderEnabledForOrganizationPages && (
-          <Webreader readId={null} readClass="rs_read" />
-        )}
+        <Webreader readId={null} readClass="rs_read" />
       </Box>
       {webRichText(subpage.description as SliceType[])}
       <Box marginTop={4} marginBottom={6}>
@@ -300,7 +295,8 @@ const Homestay: Screen<HomestayProps> = ({
   )
 }
 
-Homestay.getInitialProps = async ({ apolloClient, locale, pathname }) => {
+Homestay.getProps = async ({ apolloClient, locale, req }) => {
+  const pathname = safelyExtractPathnameFromUrl(req.url)
   const path = pathname?.split('/') ?? []
   const slug = path?.[path.length - 2] ?? 'syslumenn'
   const subSlug = path.pop() ?? 'heimagisting'

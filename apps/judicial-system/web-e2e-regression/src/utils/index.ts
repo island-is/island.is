@@ -63,7 +63,7 @@ export const transitionCase = (caseId: string, transition: CaseTransition) => {
   return cy.wrap(
     client.mutate({
       mutation: gql`
-        mutation TransitionCaseMutation($input: TransitionCaseInput!) {
+        mutation TransitionCase($input: TransitionCaseInput!) {
           transitionCase(input: $input) {
             state
           }
@@ -84,7 +84,7 @@ export const updateCase = (caseId: string, update: UpdateCase) => {
   return cy.wrap(
     client.mutate({
       mutation: gql`
-        mutation UpdateCaseMutation($input: UpdateCaseInput!) {
+        mutation UpdateCase($input: UpdateCaseInput!) {
           updateCase(input: $input) {
             id
           }
@@ -104,7 +104,7 @@ export const updateCase = (caseId: string, update: UpdateCase) => {
 export const deleteCase = (caseId: string) => {
   client.mutate({
     mutation: gql`
-      mutation TransitionCaseMutation($input: TransitionCaseInput!) {
+      mutation TransitionCase($input: TransitionCaseInput!) {
         transitionCase(input: $input) {
           state
         }

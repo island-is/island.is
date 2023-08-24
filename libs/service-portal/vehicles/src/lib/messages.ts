@@ -38,6 +38,10 @@ export const messages = defineMessages({
     defaultMessage:
       'Samgöngustofa hefur umsjón með ökutækjaskrá. Í skránni er að finna upplýsingar um ökutæki sem þú er skráð/ur eigandi, meðeigandi og umráðamaður að.',
   },
+  category: {
+    id: 'sp.vehicles:category',
+    defaultMessage: 'flokkur',
+  },
   type: {
     id: 'sp.vehicles:type',
     defaultMessage: 'Tegund',
@@ -213,6 +217,10 @@ export const messages = defineMessages({
   result: {
     id: 'sp.vehicles:result',
     defaultMessage: 'Niðurstaða',
+  },
+  odometer: {
+    id: 'sp.vehicles:odometer',
+    defaultMessage: 'Kílómetrastaða',
   },
   plateStatus: {
     id: 'sp.vehicles:plate-status',
@@ -518,6 +526,10 @@ export const messages = defineMessages({
     id: 'sp.vehicles:vehicle-driving-lessons-label',
     defaultMessage: 'Grunnupplýsingar ökunáms',
   },
+  vehicleDrivingLessonsPracticeDriving: {
+    id: 'sp.vehicles:vehicle-driving-lessons-practice-driving',
+    defaultMessage: 'Æfingaakstur',
+  },
   vehicleDrivingLessonsStartDate: {
     id: 'sp.vehicles:vehicle-driving-lessons-start-date',
     defaultMessage: 'Ökunám hófst',
@@ -621,5 +633,77 @@ export const messages = defineMessages({
   signupToDrivingSchool: {
     id: 'sp.vehicles:signup-to-driving-school',
     defaultMessage: 'Skrá mig í ökunám',
+  },
+  seeInfo: {
+    id: 'sp.vehicles:see-info',
+    defaultMessage: 'Skoða nánar',
+  },
+  workMachinesTitle: {
+    id: 'sp.work-machines:title',
+    defaultMessage: 'Vinnuvélar',
+  },
+  workMachinesDescription: {
+    id: 'sp.work-machines:description',
+    defaultMessage:
+      'Hér finnur þú upplýsingar um þínar vinnuvélar úr skrá Vinnueftirlit ríkisins. Einnig er hægt að sjá yfirlit yfir eigendaskipti.',
+  },
+  baseInfoWorkMachineTitle: {
+    id: 'sp.work-machines:base-info',
+    defaultMessage: 'Grunnupplýsingar tækis',
+  },
+  showDeregisteredWorkMachines: {
+    id: 'sp.work-machines:show-deregistered',
+    defaultMessage: 'Sýna afskráð tæki',
+  },
+  showOwnerChangingWorkMachines: {
+    id: 'sp.work-machines:show-owner-change',
+    defaultMessage: 'Í eigendaskiptum',
+  },
+  showOwnerSupervisorRegisteredWorkMachines: {
+    id: 'sp.work-machines:show-supervisor',
+    defaultMessage: 'Með skráðan umráðamann',
+  },
+  workMachinesSearchPlaceholder: {
+    id: 'sp.work-machines:search-placeholder',
+    defaultMessage: 'Leita',
+  },
+})
+
+export const urls = defineMessages({
+  ownerChange: {
+    id: 'sp.vehicles:url-owner-change',
+    defaultMessage: 'https://island.is/umsoknir/eigendaskipti-okutaekis',
+  },
+  coOwnerChange: {
+    id: 'sp.vehicles:url-co-owner-change',
+    defaultMessage: 'https://island.is/umsoknir/medeigandi-okutaekis',
+  },
+  operator: {
+    id: 'sp.vehicles:url-operator',
+    defaultMessage: 'https://island.is/umsoknir/umradamadur-okutaekis',
+  },
+  regNumber: {
+    id: 'sp.vehicles:url-registration-number',
+    defaultMessage: 'https://island.is/umsoknir/panta-numeraplotu',
+  },
+  regCert: {
+    id: 'sp.vehicles:url-registration-cert',
+    defaultMessage: 'https://island.is/umsoknir/panta-skraningarskirteini',
+  },
+  renewPrivate: {
+    id: 'sp.vehicles:url-renew-private',
+    defaultMessage: 'https://island.is/endurnyjun-a-einkamerki',
+  },
+  hideName: {
+    id: 'sp.vehicles:url-hide-private-name',
+    defaultMessage: 'https://island.is/umsoknir/nafnleynd-i-okutaekjaskra',
+  },
+  instructorApplication: {
+    id: 'sp.vehicles:url-instructor-application',
+    defaultMessage: 'https://island.is/umsoknir/okunam-okukennari',
+  },
+  licenseApplication: {
+    id: 'sp.vehicles:url-license-application',
+    defaultMessage: 'https://island.is/umsoknir/okuskirteini',
   },
 })

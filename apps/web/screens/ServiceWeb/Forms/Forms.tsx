@@ -46,6 +46,7 @@ import { Screen } from '../../../types'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import useLocalLinkTypeResolver from '@island.is/web/hooks/useLocalLinkTypeResolver'
 import { Locale } from 'locale'
+import { filterSupportCategories } from './utils'
 
 type FormNamespace = Record<
   string,
@@ -189,7 +190,7 @@ const ServiceWebFormsPage: Screen<ServiceWebFormsPageProps> = ({
                         items={breadcrumbItems}
                         renderLink={(link, { href }) => {
                           return (
-                            <NextLink href={href} passHref>
+                            <NextLink href={href} passHref legacyBehavior>
                               {link}
                             </NextLink>
                           )
@@ -298,11 +299,7 @@ const ServiceWebFormsPage: Screen<ServiceWebFormsPageProps> = ({
   )
 }
 
-ServiceWebFormsPage.getInitialProps = async ({
-  apolloClient,
-  locale,
-  query,
-}) => {
+ServiceWebFormsPage.getProps = async ({ apolloClient, locale, query }) => {
   const defaultSlug = locale === 'is' ? 'stafraent-island' : 'digital-iceland'
   const slug = query.slug ? (query.slug as string) : defaultSlug
 
@@ -385,6 +382,14 @@ ServiceWebFormsPage.getInitialProps = async ({
       ),
   ])
 
+  const filteredSupportCategories = filterSupportCategories(
+    supportCategories?.data?.getSupportCategoriesInOrganization,
+    slug,
+    organization?.data?.getOrganization,
+    locale,
+    namespace,
+  )
+
   return {
     syslumenn: organizations?.data?.getOrganizations?.items?.filter(
       (x) =>
@@ -392,8 +397,7 @@ ServiceWebFormsPage.getInitialProps = async ({
         x.slug.startsWith('district-commissioner-of'),
     ),
     organization: organization?.data?.getOrganization,
-    supportCategories:
-      supportCategories?.data?.getSupportCategoriesInOrganization,
+    supportCategories: filteredSupportCategories,
     institutionSlug: slug,
     namespace,
     stateEntities,

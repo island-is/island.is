@@ -36,7 +36,7 @@ import { EndorsementListByIdPipe } from '../endorsementList/pipes/endorsementLis
 import { EndorsementDto } from './dto/endorsement.dto'
 import { Endorsement } from './models/endorsement.model'
 import { EndorsementService } from './endorsement.service'
-import { EndorsementsScope } from '@island.is/auth/scopes'
+import { AdminPortalScope, EndorsementsScope } from '@island.is/auth/scopes'
 import type { User } from '@island.is/auth-nest-tools'
 import { PaginationDto } from '@island.is/nest/pagination'
 import { PaginatedEndorsementDto } from './dto/paginatedEndorsement.dto'
@@ -61,7 +61,7 @@ export class EndorsementController {
 
   @ApiOperation({ summary: 'Finds all endorsements in a given list' })
   @ApiParam({ name: 'listId', type: String })
-  @Scopes(EndorsementsScope.main)
+  @Scopes(EndorsementsScope.main, AdminPortalScope.petitionsAdmin)
   @Get()
   @Audit<PaginatedEndorsementDto>({
     resources: ({ data: endorsement }) => endorsement.map((e) => e.id),
@@ -98,7 +98,7 @@ export class EndorsementController {
   @ApiOkResponse({ type: PaginatedEndorsementDto })
   @UseInterceptors(PaginatedEndorsementInterceptor)
   @ApiResponse({ status: 200 })
-  @BypassAuth()
+  @BypassAuth() // NOTE you cant use @Audit() and @BypassAuth() together
   async find(
     @Param(
       'listId',
@@ -125,7 +125,7 @@ export class EndorsementController {
     type: ExistsEndorsementResponse,
   })
   @ApiParam({ name: 'listId', type: String })
-  @Scopes(EndorsementsScope.main)
+  @Scopes(EndorsementsScope.main, AdminPortalScope.petitionsAdmin)
   @Get('/exists')
   async findByAuth(
     @Param(
@@ -154,7 +154,7 @@ export class EndorsementController {
   @UseInterceptors(EndorsementInterceptor)
   @ApiParam({ name: 'listId', type: String })
   @ApiBody({ type: EndorsementDto })
-  @Scopes(EndorsementsScope.main)
+  @Scopes(EndorsementsScope.main, AdminPortalScope.petitionsAdmin)
   @Post()
   @Audit<Endorsement>({
     resources: (endorsement) => endorsement.id,
@@ -185,7 +185,7 @@ export class EndorsementController {
       'Uses the authenticated users national id to remove endorsement form a given list',
   })
   @ApiParam({ name: 'listId', type: String })
-  @Scopes(EndorsementsScope.main)
+  @Scopes(EndorsementsScope.main, AdminPortalScope.petitionsAdmin)
   @Delete()
   @HttpCode(204)
   async delete(

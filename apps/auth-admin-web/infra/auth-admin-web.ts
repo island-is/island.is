@@ -64,7 +64,7 @@ export const serviceSetup = (): ServiceBuilder<'auth-admin-web'> => {
       },
       requests: {
         cpu: '200m',
-        memory: '128Mi',
+        memory: '192Mi',
       },
     })
     .readiness('/liveness')

@@ -1,32 +1,44 @@
 import { SEOProps } from '../../types/interfaces'
 import React, { FC } from 'react'
-import Footer from '../Footer/Footer'
-import Menu from '../Menu/Menu'
-import SEO from '../SEO/SEO'
+import { Footer, SEO, Menu } from './components'
 import { Box, Divider, ToastContainer } from '@island.is/island-ui/core'
 import * as styles from './Layout.css'
 
 type LayoutProps = {
   isFrontPage?: boolean
   seo?: SEOProps
+  justifyContent?: 'spaceBetween' | 'flexStart'
 }
-export const Layout: FC<LayoutProps> = ({ children, isFrontPage, seo }) => {
+
+const Layout: FC<React.PropsWithChildren<LayoutProps>> = ({
+  children,
+  isFrontPage,
+  seo,
+  justifyContent = 'spaceBetween',
+}) => {
   return (
     <Box
       flexDirection="column"
-      justifyContent="spaceBetween"
+      justifyContent={justifyContent}
       display="flex"
       className={styles.processContainer}
     >
-      <SEO title={seo.title} url={seo.url} image={seo.image} />
       <Box>
+        <SEO
+          title={seo.title}
+          url={seo.url}
+          image={seo.image}
+          description={seo.description}
+          keywords={seo.keywords}
+        />
         <Menu isFrontPage={isFrontPage} />
         <Divider />
+        <ToastContainer />
+        {children}
       </Box>
-      <ToastContainer />
-
-      {children}
-      <Footer />
+      <Box>
+        <Footer />
+      </Box>
     </Box>
   )
 }

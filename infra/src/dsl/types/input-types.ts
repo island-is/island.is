@@ -23,12 +23,14 @@ export type PostgresInfo = {
   name?: string
   username?: string
   passwordSecret?: string
+  extensions?: string[]
 }
 export type PostgresInfoForEnv = {
   host?: string
   name?: string
   username?: string
   passwordSecret?: string
+  extensions?: string[]
 }
 
 export type RedisInfo = {

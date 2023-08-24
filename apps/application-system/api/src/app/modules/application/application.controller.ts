@@ -178,6 +178,13 @@ export class ApplicationController {
     description:
       'To filter applications by status. Comma-separated for multiple values.',
   })
+  @ApiQuery({
+    name: 'scopeCheck',
+    required: false,
+    type: 'boolean',
+    description:
+      'To check if the user has access to the application. Used for service portal not applications. Defaults to false.',
+  })
   @ApiOkResponse({ type: ApplicationResponseDto, isArray: true })
   @UseInterceptors(ApplicationSerializer)
   @Audit<ApplicationResponseDto[]>({
@@ -188,21 +195,49 @@ export class ApplicationController {
     @CurrentUser() user: User,
     @Query('typeId') typeId?: string,
     @Query('status') status?: string,
+    @Query('scopeCheck') scopeCheck?: boolean,
   ): Promise<ApplicationResponseDto[]> {
-    if (nationalId !== user.nationalId) {
-      this.logger.debug('User is not authorized to get applications')
-      throw new UnauthorizedException()
-    }
-
-    this.logger.debug(`Getting applications with status ${status}`)
-    const applications = await this.applicationService.findAllByNationalIdAndFilters(
+    this.verifyUserAccess(nationalId, user)
+    const applications = await this.fetchApplications(
       nationalId,
       typeId,
       status,
       user.actor?.nationalId,
     )
+    return this.filterApplicationsByAccess(
+      applications,
+      user,
+      scopeCheck ?? false,
+    )
+  }
 
-    // keep all templates that have been fetched in order to avoid fetching them again
+  private verifyUserAccess(nationalId: string, user: User): void {
+    if (nationalId !== user.nationalId) {
+      this.logger.debug('User is not authorized to get applications')
+      throw new UnauthorizedException()
+    }
+  }
+
+  private async fetchApplications(
+    nationalId: string,
+    typeId?: string,
+    status?: string,
+    actorNationalId?: string,
+  ): Promise<Application[]> {
+    this.logger.debug(`Getting applications with status ${status}`)
+    return this.applicationService.findAllByNationalIdAndFilters(
+      nationalId,
+      typeId,
+      status,
+      actorNationalId,
+    )
+  }
+
+  private async filterApplicationsByAccess(
+    applications: Application[],
+    user: User,
+    scopeCheck: boolean,
+  ): Promise<ApplicationResponseDto[]> {
     const templates: Partial<
       Record<
         ApplicationTypes,
@@ -213,63 +248,91 @@ export class ApplicationController {
         >
       >
     > = {}
-    const templateTypeToIsReady: Partial<Record<ApplicationTypes, boolean>> = {}
+    const hasAccessCache: Record<string, boolean> = {}
+
     const filteredApplications: Application[] = []
+
     for (const application of applications) {
-      const typeId = application.typeId
-      const isTemplateTypeReady = templateTypeToIsReady[typeId]
-      // We've already checked an application with this type and it is ready
-      // now we just need to check if it should be displayed for the user
+      const template = await this.getOrFetchTemplate(
+        application.typeId,
+        templates,
+      )
+      const hasAccess = await this.hasUserAccessToApplication(
+        application as BaseApplication,
+        template,
+        user,
+        scopeCheck,
+        hasAccessCache,
+      )
+
       if (
-        isTemplateTypeReady &&
-        templates[typeId] !== undefined &&
-        (await this.applicationAccessService.shouldShowApplicationOnOverview(
+        hasAccess &&
+        this.applicationAccessService.evaluateIfRoleShouldBeListed(
           application as BaseApplication,
           user,
-          templates[typeId],
-        ))
+          template,
+        )
       ) {
         filteredApplications.push(application)
-        continue
-      } else if (isTemplateTypeReady === false) {
-        // We've already checked an application with this type
-        // and it is NOT ready so we will skip it
-        continue
       }
+    }
 
+    return filteredApplications
+  }
+
+  private async getOrFetchTemplate(
+    typeId: ApplicationTypes,
+    cache: Record<
+      string,
+      ApplicationTemplate<
+        ApplicationContext,
+        ApplicationStateSchema<EventObject>,
+        EventObject
+      >
+    >,
+  ): Promise<
+    ApplicationTemplate<
+      ApplicationContext,
+      ApplicationStateSchema<EventObject>,
+      EventObject
+    >
+  > {
+    if (!cache[typeId]) {
       try {
-        const applicationTemplate = await getApplicationTemplateByTypeId(typeId)
-        // Add template to avoid fetching it again for the same types
-        templates[typeId] = applicationTemplate
-
-        if (
-          await this.validationService.isTemplateReady(
-            applicationTemplate,
-            user,
-          )
-        ) {
-          templateTypeToIsReady[typeId] = true
-          if (
-            await this.applicationAccessService.shouldShowApplicationOnOverview(
-              application as BaseApplication,
-              user,
-              applicationTemplate,
-            )
-          ) {
-            filteredApplications.push(application)
-          }
-        } else {
-          templateTypeToIsReady[typeId] = false
-        }
+        cache[typeId] = await getApplicationTemplateByTypeId(typeId)
       } catch (e) {
-        this.logger.error(
+        this.logger.info(
           `Could not get application template for type ${typeId}`,
           e,
         )
       }
     }
+    return cache[typeId]
+  }
 
-    return filteredApplications
+  private async hasUserAccessToApplication(
+    application: BaseApplication,
+    template: ApplicationTemplate<
+      ApplicationContext,
+      ApplicationStateSchema<EventObject>,
+      EventObject
+    >,
+    user: User,
+    scopeCheck: boolean,
+    cache: Record<string, boolean>,
+  ): Promise<boolean> {
+    if (cache[application.typeId] !== undefined) {
+      return cache[application.typeId]
+    }
+
+    const hasAccess = await this.applicationAccessService.hasAccessToTemplate(
+      template,
+      user,
+      scopeCheck,
+    )
+    cache[application.typeId] = hasAccess
+
+    return hasAccess
   }
 
   @Scopes(ApplicationScope.write)
@@ -291,8 +354,6 @@ export class ApplicationController {
         `No application template exists for type: ${typeId}`,
       )
     }
-
-    // TODO: verify template is ready from https://github.com/island-is/island.is/pull/3297
 
     // TODO: initial state should be required
     const initialState =
@@ -514,7 +575,9 @@ export class ApplicationController {
     const existingApplication = await this.applicationAccessService.findOneByIdAndNationalId(
       id,
       user,
-      { shouldThrowIfPruned: true },
+      {
+        shouldThrowIfPruned: true,
+      },
     )
     const namespaces = await getApplicationTranslationNamespaces(
       existingApplication as BaseApplication,
@@ -672,7 +735,9 @@ export class ApplicationController {
     const existingApplication = await this.applicationAccessService.findOneByIdAndNationalId(
       id,
       user,
-      { shouldThrowIfPruned: true },
+      {
+        shouldThrowIfPruned: true,
+      },
     )
     const templateId = existingApplication.typeId as ApplicationTypes
     const template = await getApplicationTemplateByTypeId(templateId)
@@ -911,7 +976,11 @@ export class ApplicationController {
       )
 
       updatedApplication = update.updatedApplication as BaseApplication
-      await this.historyService.saveStateTransition(application.id, newState)
+      await this.historyService.saveStateTransition(
+        application.id,
+        newState,
+        event,
+      )
     } catch (e) {
       this.logger.error(e)
       return {

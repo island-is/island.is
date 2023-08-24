@@ -25,7 +25,7 @@ describe('NotificationController - Send case notification guards', () => {
       guard = new guards[0]()
     })
 
-    it('should have CaseWriteGuard as quard 1', () => {
+    it('should have CaseWriteGuard as guard 1', () => {
       expect(guard).toBeInstanceOf(CaseWriteGuard)
     })
   })

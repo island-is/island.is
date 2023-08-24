@@ -15,20 +15,17 @@ export function transformCase(theCase: Case): Case {
     isValidToDateInThePast: theCase.validToDate
       ? Date.now() > new Date(theCase.validToDate).getTime()
       : theCase.isValidToDateInThePast,
-    // TODO: Use appealInfo.appealDeadline
-    isAppealDeadlineExpired: theCase.courtEndTime
-      ? Date.now() >= new Date(theCase.courtEndTime).getTime() + getDays(3)
+
+    // TODO: Move remaining appeal fields to appealInfo
+    isAppealDeadlineExpired: appealInfo.appealDeadline
+      ? Date.now() >= new Date(appealInfo.appealDeadline).getTime()
       : false,
-    isAppealGracePeriodExpired: theCase.courtEndTime
-      ? Date.now() >= new Date(theCase.courtEndTime).getTime() + getDays(31)
+    isAppealGracePeriodExpired: theCase.rulingDate
+      ? Date.now() >= new Date(theCase.rulingDate).getTime() + getDays(31)
       : false,
-    // TODO: Use appealInfo.statementDeadline
-    isStatementDeadlineExpired: theCase.prosecutorPostponedAppealDate
+    isStatementDeadlineExpired: theCase.appealReceivedByCourtDate
       ? Date.now() >=
-        new Date(theCase.prosecutorPostponedAppealDate).getTime() + getDays(1)
-      : theCase.accusedPostponedAppealDate
-      ? Date.now() >=
-        new Date(theCase.accusedPostponedAppealDate).getTime() + getDays(1)
+        new Date(theCase.appealReceivedByCourtDate).getTime() + getDays(1)
       : false,
     ...appealInfo,
   }

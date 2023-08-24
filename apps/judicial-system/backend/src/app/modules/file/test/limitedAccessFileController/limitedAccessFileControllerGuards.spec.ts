@@ -28,7 +28,7 @@ describe('LimitedAccessFileController - guards', () => {
       guard = new guards[0]()
     })
 
-    it('should have JwtAuthGuard as quard 1', () => {
+    it('should have JwtAuthGuard as guard 1', () => {
       expect(guard).toBeInstanceOf(JwtAuthGuard)
     })
   })
@@ -40,7 +40,7 @@ describe('LimitedAccessFileController - guards', () => {
       guard = new guards[1]()
     })
 
-    it('should have RolesGuard as quard 2', () => {
+    it('should have RolesGuard as guard 2', () => {
       expect(guard).toBeInstanceOf(RolesGuard)
     })
   })
@@ -52,7 +52,7 @@ describe('LimitedAccessFileController - guards', () => {
       guard = new guards[2]()
     })
 
-    it('should have LimitedAccessCaseExistsGuard as quard 3', () => {
+    it('should have LimitedAccessCaseExistsGuard as guard 3', () => {
       expect(guard).toBeInstanceOf(LimitedAccessCaseExistsGuard)
     })
   })
@@ -64,7 +64,7 @@ describe('LimitedAccessFileController - guards', () => {
       guard = new guards[3]()
     })
 
-    it('should have CaseCompletedGuard as quard 4', () => {
+    it('should have CaseCompletedGuard as guard 4', () => {
       expect(guard).toBeInstanceOf(CaseCompletedGuard)
     })
   })
@@ -76,7 +76,7 @@ describe('LimitedAccessFileController - guards', () => {
       guard = new guards[4]()
     })
 
-    it('should have CaseDefenderGuard as quard 5', () => {
+    it('should have CaseDefenderGuard as guard 5', () => {
       expect(guard).toBeInstanceOf(CaseDefenderGuard)
     })
   })

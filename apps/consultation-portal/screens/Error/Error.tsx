@@ -5,12 +5,14 @@ import {
   Box,
   Text,
 } from '@island.is/island-ui/core'
+import { ReactNode } from 'react'
 
 interface ErrorProps {
   statusCode: number
   title: string
-  children
+  children: ReactNode
 }
+
 export const ErrorScreen = ({ statusCode, title, children }: ErrorProps) => {
   return (
     <GridContainer>

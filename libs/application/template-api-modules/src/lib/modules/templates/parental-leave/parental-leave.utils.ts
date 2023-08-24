@@ -390,11 +390,17 @@ export const transformApplicationToParentalLeaveDTO = (
     applicant: application.applicant,
     otherParentId: getOtherParentId(application),
     expectedDateOfBirth: isFosterCareOrAdoption
-      ? ''
+      ? isDateInTheFuture(selectedChild.dateOfBirth!)
+        ? selectedChild.dateOfBirth!
+        : ''
       : selectedChild.expectedDateOfBirth,
     // TODO: get true date of birth, not expected
     // will get it from a new Þjóðskrá API (returns children in custody of a national registry id)
-    dateOfBirth: isFosterCareOrAdoption ? selectedChild.dateOfBirth! : '',
+    dateOfBirth: isFosterCareOrAdoption
+      ? isDateInTheFuture(selectedChild.dateOfBirth!)
+        ? ''
+        : selectedChild.dateOfBirth!
+      : '',
     adoptionDate: isFosterCareOrAdoption ? selectedChild.adoptionDate : '',
     email,
     phoneNumber,
@@ -466,4 +472,10 @@ export const createAssignTokenWithoutNonce = (
   )
 
   return token
+}
+
+export const isDateInTheFuture = (date: string) => {
+  const now = new Date().toISOString()
+  if (date > now) return true
+  return false
 }

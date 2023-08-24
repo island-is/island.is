@@ -32,6 +32,9 @@ const Schema = z.object({
     nationalId: z.string().refine((n) => n && kennitala.isValid(n), {
       params: m.dataSchemeNationalId,
     }),
+    name: z.string().refine((n) => n, {
+      params: m.errorOrNoTemporaryLicense,
+    }),
     email: z.string().email(),
   }),
   drivingAssessmentConfirmationCheck: z
@@ -48,7 +51,6 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.DRIVING_ASSESSMENT_APPROVAL,
   name: m.name,
-  readyForProduction: true,
   translationNamespaces: [
     ApplicationConfigurations[ApplicationTypes.DRIVING_ASSESSMENT_APPROVAL]
       .translation,

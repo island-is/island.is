@@ -1,7 +1,4 @@
-import {
-  RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE,
-  SIGNED_VERDICT_OVERVIEW_ROUTE,
-} from '@island.is/judicial-system/consts'
+import { SIGNED_VERDICT_OVERVIEW_ROUTE } from '@island.is/judicial-system/consts'
 import {
   Case,
   CaseState,

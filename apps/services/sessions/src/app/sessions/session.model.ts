@@ -24,10 +24,18 @@ export class Session extends Model<
   @ApiProperty()
   @PrimaryKey
   @Column({
+    type: DataType.UUIDV4,
+    allowNull: false,
+    defaultValue: DataType.UUIDV4,
+  })
+  id!: CreationOptional<string>
+
+  @ApiProperty()
+  @Column({
     type: DataType.STRING,
     allowNull: false,
   })
-  id!: string
+  sessionId!: string
 
   @ApiProperty()
   @Column({

@@ -3,7 +3,10 @@ import { useIntl } from 'react-intl'
 import { AnimatePresence, LayoutGroup, motion } from 'framer-motion'
 import cn from 'classnames'
 
-import { PoliceCaseFile } from '@island.is/judicial-system/types'
+import {
+  PoliceCaseFile,
+  isIndictmentCase,
+} from '@island.is/judicial-system/types'
 import {
   AlertMessage,
   Box,
@@ -23,7 +26,9 @@ export interface PoliceCaseFileCheck extends PoliceCaseFile {
   checked: boolean
 }
 
-const CheckboxListItem: React.FC = ({ children }) => (
+const CheckboxListItem: React.FC<React.PropsWithChildren<unknown>> = ({
+  children,
+}) => (
   <motion.li
     layout
     className={styles.policeCaseFile}
@@ -47,7 +52,7 @@ interface ListItemProps {
   onCheck: (event: React.ChangeEvent<HTMLInputElement>) => void
 }
 
-const CheckboxList: React.FC<ListItemProps> = ({
+const CheckboxList: React.FC<React.PropsWithChildren<ListItemProps>> = ({
   files,
   isUploading,
   onCheck,
@@ -89,7 +94,7 @@ interface Props {
   policeCaseFiles?: PoliceCaseFilesData
 }
 
-const PoliceCaseFiles: React.FC<Props> = ({
+const PoliceCaseFiles: React.FC<React.PropsWithChildren<Props>> = ({
   onUpload,
   isUploading,
   policeCaseFileList,
@@ -113,12 +118,7 @@ const PoliceCaseFiles: React.FC<Props> = ({
       setCheckAllChecked(!checkAllChecked)
       setPoliceCaseFileList(
         policeCaseFileList.map((l) => {
-          return {
-            id: l.id,
-            name: l.name,
-            policeCaseNumber: l.policeCaseNumber,
-            checked: evt.target.checked,
-          }
+          return { ...l, checked: evt.target.checked }
         }),
       )
     } else {
@@ -130,7 +130,7 @@ const PoliceCaseFiles: React.FC<Props> = ({
 
   return (
     <Box marginBottom={5}>
-      {workingCase.origin === CaseOrigin.Loke && (
+      {workingCase.origin === CaseOrigin.LOKE && (
         <LayoutGroup>
           <motion.div layout className={styles.policeCaseFilesContainer}>
             <motion.ul layout>
@@ -208,11 +208,15 @@ const PoliceCaseFiles: React.FC<Props> = ({
           </motion.div>
         </LayoutGroup>
       )}
-      {workingCase.origin !== CaseOrigin.Loke && (
+      {workingCase.origin !== CaseOrigin.LOKE && (
         <AlertMessage
           type="info"
-          title={formatMessage(m.originNotLokeTitle)}
-          message={formatMessage(m.originNotLokeMessage)}
+          title={formatMessage(m.originNotLokeTitle, {
+            isIndictmentCase: isIndictmentCase(workingCase.type),
+          })}
+          message={formatMessage(m.originNotLokeMessage, {
+            isIndictmentCase: isIndictmentCase(workingCase.type),
+          })}
         ></AlertMessage>
       )}
     </Box>

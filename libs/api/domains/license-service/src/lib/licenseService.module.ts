@@ -1,6 +1,6 @@
-import { Cache as CacheManager } from 'cache-manager'
-import { Module, CacheModule } from '@nestjs/common'
-import { ConfigType, XRoadConfig } from '@island.is/nest/config'
+import { Module } from '@nestjs/common'
+import { CacheModule } from '@nestjs/cache-manager'
+import { ConfigType } from '@island.is/nest/config'
 import { logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { CmsModule } from '@island.is/cms'
 import { LicenseServiceService } from './licenseService.service'
@@ -32,7 +32,7 @@ import {
 } from './client/machine-license-client'
 
 import {
-  GenericDrivingLicenseApi,
+  GenericDrivingLicenseService,
   GenericDrivingLicenseConfig,
 } from './client/driving-license-client'
 import {
@@ -40,6 +40,16 @@ import {
   GenericDisabilityLicenseConfig,
   GenericDisabilityLicenseService,
 } from './client/disability-license-client'
+import { GenericDrivingLicenseModule } from './client/driving-license-client/genericDrivingLicense.module'
+import { OldGenericDrivingLicenseModule } from './client/old-driving-license-client/oldGenericDrivingLicense.module'
+import { OldGenericDrivingLicenseApi } from './client/old-driving-license-client'
+import { DriversLicenseClientTypes } from './licenceService.type'
+import {
+  FeatureFlagModule,
+  FeatureFlagService,
+  Features,
+} from '@island.is/nest/feature-flags'
+import { User } from '@island.is/auth-nest-tools'
 
 export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
   {
@@ -96,10 +106,13 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
 @Module({
   imports: [
     CacheModule.register(),
+    GenericDrivingLicenseModule,
+    OldGenericDrivingLicenseModule,
     GenericFirearmLicenseModule,
     GenericAdrLicenseModule,
     GenericMachineLicenseModule,
     GenericDisabilityLicenseModule,
+    FeatureFlagModule,
     CmsModule,
   ],
   providers: [
@@ -116,12 +129,14 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
         adrConfig: ConfigType<typeof GenericAdrLicenseConfig>,
         machineConfig: ConfigType<typeof GenericMachineLicenseConfig>,
         disabilityConfig: ConfigType<typeof GenericDisabilityLicenseConfig>,
+        drivingConfig: ConfigType<typeof GenericDrivingLicenseConfig>,
       ) => {
         const ids: PassTemplateIds = {
           firearmLicense: firearmConfig.passTemplateId,
           adrLicense: adrConfig.passTemplateId,
           machineLicense: machineConfig.passTemplateId,
           disabilityLicense: disabilityConfig.passTemplateId,
+          drivingLicense: drivingConfig.passTemplateId,
         }
         return ids
       },
@@ -130,6 +145,7 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
         GenericAdrLicenseConfig.KEY,
         GenericMachineLicenseConfig.KEY,
         GenericDisabilityLicenseConfig.KEY,
+        GenericDrivingLicenseConfig.KEY,
       ],
     },
     {
@@ -139,20 +155,32 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
         genericAdrService: GenericAdrLicenseService,
         genericMachineService: GenericMachineLicenseService,
         genericDisabilityService: GenericDisabilityLicenseService,
-        drivingLicenseConfig: ConfigType<typeof GenericDrivingLicenseConfig>,
-        xRoadConfig: ConfigType<typeof XRoadConfig>,
+        genericDrivingService: GenericDrivingLicenseService,
+        oldGenericDrivingLicenseApi: OldGenericDrivingLicenseApi,
+        featureFlagService: FeatureFlagService,
       ) => async (
         type: GenericLicenseType,
-        cacheManager: CacheManager,
+        user: User,
+        forceSpecificDriversLicenseClient?: DriversLicenseClientTypes,
       ): Promise<GenericLicenseClient<unknown> | null> => {
+        //option for forcing a client since verify is a big pain
+        if (forceSpecificDriversLicenseClient) {
+          return forceSpecificDriversLicenseClient === 'old'
+            ? oldGenericDrivingLicenseApi
+            : genericDrivingService
+        }
+
+        const isNewDriversLicenseEnabled = await featureFlagService.getValue(
+          Features.licenseServiceDrivingLicenseClient,
+          false,
+          user,
+        )
+
         switch (type) {
           case GenericLicenseType.DriversLicense:
-            return new GenericDrivingLicenseApi(
-              logger,
-              xRoadConfig,
-              drivingLicenseConfig,
-              cacheManager,
-            )
+            return isNewDriversLicenseEnabled
+              ? genericDrivingService
+              : oldGenericDrivingLicenseApi
           case GenericLicenseType.AdrLicense:
             return genericAdrService
           case GenericLicenseType.MachineLicense:
@@ -161,6 +189,7 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
             return genericFirearmService
           case GenericLicenseType.DisabilityLicense:
             return genericDisabilityService
+
           default:
             return null
         }
@@ -170,8 +199,9 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
         GenericAdrLicenseService,
         GenericMachineLicenseService,
         GenericDisabilityLicenseService,
-        GenericDrivingLicenseConfig.KEY,
-        XRoadConfig.KEY,
+        GenericDrivingLicenseService,
+        OldGenericDrivingLicenseApi,
+        FeatureFlagService,
       ],
     },
   ],

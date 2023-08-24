@@ -10,7 +10,9 @@ interface PropertyTableRowProps {
 }
 
 export const PropertyTableRow: FC<
-  FieldBaseProps & PropertyTableRowProps & PropertyDetail
+  React.PropsWithChildren<
+    FieldBaseProps & PropertyTableRowProps & PropertyDetail
+  >
 > = ({ selectHandler, propertyInfo, selectedPropertyNumber }) => {
   const unitOfUse = (propertyInfo?.unitsOfUse?.unitsOfUse || [])[0]
 

@@ -22,6 +22,7 @@ import { UsersModule } from './modules/users/users.module'
 import { ClientsModule as ClientsV2Module } from './v2/clients/clients.module'
 import { ClientSecretsModule } from './v2/secrets/client-secrets.module'
 import { TenantsModule } from './v2/tenants/tenants.module'
+import { ScopesModule } from './v2/scopes/scopes.module'
 
 @Module({
   imports: [
@@ -42,6 +43,7 @@ import { TenantsModule } from './v2/tenants/tenants.module'
     ClientsV2Module,
     ClientSecretsModule,
     ProblemModule,
+    ScopesModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [DelegationConfig],

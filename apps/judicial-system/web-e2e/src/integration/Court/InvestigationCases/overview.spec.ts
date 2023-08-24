@@ -53,8 +53,8 @@ describe(`${INVESTIGATION_CASE_OVERVIEW_ROUTE}/:id`, () => {
       requestedCourtDate: '2020-09-20T19:50:08.033Z',
       state: CaseState.RECEIVED,
       sessionArrangements: SessionArrangements.ALL_PRESENT,
-      caseFiles: [makeCaseFile()],
-      seenByDefender: '2020-09-20T19:50:08.033Z',
+      caseFiles: [{ ...makeCaseFile(), category: undefined }],
+      openedByDefender: '2020-09-20T19:50:08.033Z',
     }
 
     cy.stubAPIResponses()
@@ -63,7 +63,7 @@ describe(`${INVESTIGATION_CASE_OVERVIEW_ROUTE}/:id`, () => {
   })
 
   it('should let the user know if the assigned defender has viewed the case', () => {
-    cy.getByTestid('alertMessageSeenByDefender').should('not.match', ':empty')
+    cy.getByTestid('alertMessageOpenedByDefender').should('not.match', ':empty')
   })
 
   it('should display information about the case in an info card', () => {

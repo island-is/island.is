@@ -19,10 +19,9 @@ export const validateCertificateQuery = gql`
   ${VALIDATE_MORTGAGE_CERTIFICATE_QUERY}
 `
 
-export const PendingRejectedTryAgain: FC<FieldBaseProps> = ({
-  application,
-  refetch,
-}) => {
+export const PendingRejectedTryAgain: FC<
+  React.PropsWithChildren<FieldBaseProps>
+> = ({ application, refetch }) => {
   const { externalData } = application
   const { formatMessage } = useLocale()
   const [showErrorMsg, setShowErrorMsg] = useState<boolean>(false)
@@ -115,7 +114,7 @@ export const PendingRejectedTryAgain: FC<FieldBaseProps> = ({
         paddingY={1}
         marginBottom={5}
       >
-        <Text fontWeight="semiBold">Valin fasteign</Text>
+        <Text fontWeight="semiBold">{formatMessage(m.selectedProperty)}</Text>
         <Text>
           {propertyDetails?.propertyNumber}
           {' - '}

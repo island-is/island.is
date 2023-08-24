@@ -1,12 +1,12 @@
 import { configure, configureMock } from '@island.is/auth/react'
 import {
+  ApiScope,
   ApplicationScope,
   AuthScope,
-  UserProfileScope,
-  NationalRegistryScope,
-  EndorsementsScope,
   DocumentsScope,
-  ApiScope,
+  EndorsementsScope,
+  NationalRegistryScope,
+  UserProfileScope,
 } from '@island.is/auth/scopes'
 
 import { environment } from './environments'
@@ -21,6 +21,7 @@ const SERVICE_PORTAL_SCOPES = [
   UserProfileScope.write,
   AuthScope.actorDelegations,
   AuthScope.delegations,
+  AuthScope.consents,
   NationalRegistryScope.individuals,
   DocumentsScope.main,
   EndorsementsScope.main,
@@ -38,6 +39,8 @@ const SERVICE_PORTAL_SCOPES = [
   ApiScope.licensesVerify,
   ApiScope.company,
   ApiScope.vehicles,
+  ApiScope.health,
+  ApiScope.workMachines,
 ]
 
 const userMocked = process.env.API_MOCKS === 'true'

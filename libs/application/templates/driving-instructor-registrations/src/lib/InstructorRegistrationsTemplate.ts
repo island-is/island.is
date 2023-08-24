@@ -14,7 +14,6 @@ import { Events, States, Roles } from './constants'
 import { dataSchema } from './dataSchema'
 import { m } from './messages'
 import { ApiActions } from './constants'
-import { Features } from '@island.is/feature-flags'
 
 const InstructorRegistrationsTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -24,8 +23,6 @@ const InstructorRegistrationsTemplate: ApplicationTemplate<
   type: ApplicationTypes.DRIVING_INSTRUCTOR_REGISTRATIONS,
   name: m.applicationTitle,
   dataSchema: dataSchema,
-  readyForProduction: false,
-  featureFlag: Features.drivingInstructorRegistrations,
   stateMachineConfig: {
     initial: States.REGISTRY,
     states: {

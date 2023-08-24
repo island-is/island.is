@@ -235,7 +235,7 @@ describe('InternalNotificationController - Send ready for court notifications fo
           },
           to: [{ name: 'Saul Goodman', address: 'saul@dummy.is' }],
           subject: `Gögn í máli ${courtCaseNumber}`,
-          html: `Sækjandi í máli ${courtCaseNumber} hjá Héraðsdómi Reykjavíkur hefur breytt kröfunni og sent hana aftur á dóminn.<br /><br />Þú getur nálgast gögn málsins í <a href="${mockNotificationConfig.clientUrl}${DEFENDER_ROUTE}/${caseId}">Réttarvörslugátt</a> með rafrænum skilríkjum.`,
+          html: `Sækjandi í máli ${courtCaseNumber} hjá Héraðsdómi Reykjavíkur hefur breytt kröfunni og sent hana aftur á dóminn.<br /><br />Þú getur nálgast gögn málsins á <a href="${mockNotificationConfig.clientUrl}${DEFENDER_ROUTE}/${caseId}">yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
           attachments: undefined,
         }),
       )
@@ -245,6 +245,8 @@ describe('InternalNotificationController - Send ready for court notifications fo
 
 describe('InternalNotificationController - Send ready for court notifications for indictment cases', () => {
   const userId = uuid()
+  const courtId = uuid()
+  const courtEmail = uuid()
   const notificationDto = {
     user: { id: userId } as User,
     type: NotificationType.READY_FOR_COURT,
@@ -256,6 +258,8 @@ describe('InternalNotificationController - Send ready for court notifications fo
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
+    process.env.COURTS_EMAILS = `{"${courtId}": "${courtEmail}"}`
+
     const {
       emailService,
       notificationConfig,
@@ -283,8 +287,8 @@ describe('InternalNotificationController - Send ready for court notifications fo
     const caseId = uuid()
     const policeCaseNumbers = [uuid()]
     const court = {
+      id: courtId,
       name: 'Héraðsdómur Reykjavíkur',
-      notificationEmail: 'domur@domur.is',
     } as Institution
     const prosecutor = {
       institution: { name: 'Lögreglan á höfuðborgarsvæðinu' },
@@ -298,6 +302,7 @@ describe('InternalNotificationController - Send ready for court notifications fo
       indictmentSubtypes: {
         [policeCaseNumbers[0]]: [IndictmentSubtype.MURDER],
       },
+      courtId,
       court,
       prosecutor,
     } as unknown) as Case
@@ -312,7 +317,7 @@ describe('InternalNotificationController - Send ready for court notifications fo
           to: [
             {
               name: 'Héraðsdómur Reykjavíkur',
-              address: court.notificationEmail,
+              address: courtEmail,
             },
           ],
           subject: 'Ákæra tilbúin til afgreiðslu',
@@ -322,9 +327,7 @@ describe('InternalNotificationController - Send ready for court notifications fo
       expect(mockNotificationModel.create).toHaveBeenCalledWith({
         caseId,
         type: NotificationType.READY_FOR_COURT,
-        recipients: [
-          { success: true, address: court.notificationEmail },
-        ] as Recipient[],
+        recipients: [{ success: true, address: courtEmail }] as Recipient[],
       })
     })
   })
@@ -333,8 +336,8 @@ describe('InternalNotificationController - Send ready for court notifications fo
     const caseId = uuid()
     const policeCaseNumbers = [uuid(), uuid()]
     const court = {
+      id: courtId,
       name: 'Héraðsdómur Reykjavíkur',
-      notificationEmail: 'domur@domur.is',
     } as Institution
     const prosecutor = {
       institution: { name: 'Lögreglan á höfuðborgarsvæðinu' },
@@ -355,6 +358,7 @@ describe('InternalNotificationController - Send ready for court notifications fo
           IndictmentSubtype.THEFT,
         ],
       },
+      courtId,
       court,
       prosecutor,
     } as unknown) as Case
@@ -369,7 +373,7 @@ describe('InternalNotificationController - Send ready for court notifications fo
           to: [
             {
               name: 'Héraðsdómur Reykjavíkur',
-              address: court.notificationEmail,
+              address: courtEmail,
             },
           ],
           subject: 'Ákæra tilbúin til afgreiðslu',
@@ -379,9 +383,7 @@ describe('InternalNotificationController - Send ready for court notifications fo
       expect(mockNotificationModel.create).toHaveBeenCalledWith({
         caseId,
         type: NotificationType.READY_FOR_COURT,
-        recipients: [
-          { success: true, address: court.notificationEmail },
-        ] as Recipient[],
+        recipients: [{ success: true, address: courtEmail }] as Recipient[],
       })
     })
   })

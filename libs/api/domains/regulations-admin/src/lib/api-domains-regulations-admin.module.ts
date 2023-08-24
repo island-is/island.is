@@ -1,5 +1,4 @@
-import { DynamicModule, Module } from '@nestjs/common'
-import { RegulationsAdminApi } from './client'
+import { Module } from '@nestjs/common'
 import { RegulationsAdminResolver } from './graphql/regulationsAdmin.resolver'
 import { RegulationsService } from '@island.is/clients/regulations'
 import {
@@ -12,13 +11,8 @@ import {
   providers: [
     RegulationsAdminResolver,
     RegulationsAdminClientService,
-    RegulationsAdminApi,
     RegulationsService,
   ],
-  exports: [
-    RegulationsService,
-    RegulationsAdminApi,
-    RegulationsAdminClientService,
-  ],
+  exports: [RegulationsService, RegulationsAdminClientService],
 })
 export class RegulationsAdminModule {}

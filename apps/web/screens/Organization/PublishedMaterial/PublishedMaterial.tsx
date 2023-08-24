@@ -1,4 +1,5 @@
 import { useQuery } from '@apollo/client'
+import isEqual from 'lodash/isEqual'
 import {
   Box,
   Button,
@@ -20,6 +21,7 @@ import {
   getThemeConfig,
   OrganizationWrapper,
   Webreader,
+  FilterTag,
 } from '@island.is/web/components'
 import {
   ContentLanguage,
@@ -31,11 +33,7 @@ import {
   QueryGetOrganizationPageArgs,
   QueryGetPublishedMaterialArgs,
 } from '@island.is/web/graphql/schema'
-import {
-  linkResolver,
-  useFeatureFlag,
-  useNamespace,
-} from '@island.is/web/hooks'
+import { linkResolver, useNamespace } from '@island.is/web/hooks'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import useLocalLinkTypeResolver from '@island.is/web/hooks/useLocalLinkTypeResolver'
 import { useWindowSize } from '@island.is/web/hooks/useViewport'
@@ -43,7 +41,7 @@ import { useI18n } from '@island.is/web/i18n'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { useRouter } from 'next/router'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useDebounce } from 'react-use'
 import { Screen } from '../../../types'
 import {
@@ -52,15 +50,13 @@ import {
   GET_ORGANIZATION_QUERY,
 } from '../../queries'
 import { GET_PUBLISHED_MATERIAL_QUERY } from '../../queries/PublishedMaterial'
-import FilterTag from './components/FilterTag/FilterTag'
 import { PublishedMaterialItem } from './components/PublishedMaterialItem'
 import {
   getFilterCategories,
-  getFilterTags,
+  extractFilterTags,
   getGenericTagGroupHierarchy,
   getInitialParameters,
 } from './utils'
-import { ValueType } from 'react-select'
 import * as styles from './PublishedMaterial.css'
 
 const ASSETS_PER_PAGE = 20
@@ -77,13 +73,11 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
   genericTagFilters,
   namespace,
 }) => {
-  const { value: isWebReaderEnabledForOrganizationPages } = useFeatureFlag(
-    'isWebReaderEnabledForOrganizationPages',
-    false,
-  )
   const router = useRouter()
   const { width } = useWindowSize()
   const [searchValue, setSearchValue] = useState('')
+  const filterValuesHaveBeenInitialized = useRef(false)
+  const initialFilterParametersValueHasBeenSet = useRef(false)
 
   const n = useNamespace(namespace)
 
@@ -116,9 +110,9 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
     ]
   }, [])
 
-  const [selectedOrderOption, setSelectedOrderOption] = useState<
-    ValueType<Option>
-  >(orderByOptions?.[0])
+  const [selectedOrderOption, setSelectedOrderOption] = useState<Option>(
+    orderByOptions?.[0],
+  )
 
   useContentfulId(organizationPage.id)
   useLocalLinkTypeResolver()
@@ -186,7 +180,9 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
   }))
 
   useEffect(() => {
-    setParameters(getInitialParameters(initialFilterCategories))
+    if (!initialFilterParametersValueHasBeenSet.current) {
+      setParameters(getInitialParameters(initialFilterCategories))
+    }
   }, [initialFilterCategories])
 
   const loadMore = () => {
@@ -245,6 +241,72 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
         },
       })
       setIsTyping(false)
+
+      const updatedQueryParams = { ...router.query }
+
+      // Update search input state and query params
+      if (!searchValue) {
+        if (filterValuesHaveBeenInitialized.current) {
+          delete updatedQueryParams['q']
+        } else if (updatedQueryParams['q']) {
+          setSearchValue(updatedQueryParams['q'] as string)
+        }
+      } else {
+        updatedQueryParams['q'] = searchValue
+      }
+
+      // Update order dropdown state and query params
+      if (!filterValuesHaveBeenInitialized.current) {
+        if (updatedQueryParams.order) {
+          const newOrder = orderByOptions.find(
+            (o) => o.value === updatedQueryParams.order,
+          )
+          if (newOrder) setSelectedOrderOption(newOrder)
+        }
+      } else {
+        if (
+          !(
+            selectedOrderOption?.value === orderByOptions[0].value &&
+            !updatedQueryParams.order
+          )
+        ) {
+          updatedQueryParams.order = selectedOrderOption.value as string
+        }
+      }
+
+      // Update filter categories state and query params
+      if (!filterValuesHaveBeenInitialized.current) {
+        if (updatedQueryParams.filters) {
+          try {
+            const updatedFilters = JSON.parse(
+              updatedQueryParams.filters as string,
+            )
+            setParameters(updatedFilters)
+            initialFilterParametersValueHasBeenSet.current = true
+          } catch (_) {
+            delete updatedQueryParams.filters
+          }
+        }
+      } else {
+        if (Object.values(parameters).every((value) => !value?.length)) {
+          delete updatedQueryParams.filters
+        } else {
+          updatedQueryParams.filters = JSON.stringify(parameters)
+        }
+      }
+
+      filterValuesHaveBeenInitialized.current = true
+
+      if (!isEqual(router.query, updatedQueryParams)) {
+        router.replace(
+          {
+            pathname: router.pathname,
+            query: updatedQueryParams,
+          },
+          undefined,
+          { scroll: false, shallow: true },
+        )
+      }
     },
     DEBOUNCE_TIME_IN_MS,
     [parameters, activeLocale, searchValue, selectedOrderOption],
@@ -258,7 +320,7 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
     (publishedMaterial?.total ?? page * ASSETS_PER_PAGE) -
     page * ASSETS_PER_PAGE
 
-  const selectedFilters = getFilterTags(filterCategories)
+  const selectedFilters = extractFilterTags(filterCategories)
 
   return (
     <OrganizationWrapper
@@ -284,17 +346,10 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
         <GridColumn span="12/12">
           <GridRow>
             <GridColumn span={['12/12', '12/12', '6/12', '6/12', '8/12']}>
-              <Text
-                variant="h1"
-                as="h1"
-                marginBottom={isWebReaderEnabledForOrganizationPages ? 0 : 4}
-                marginTop={1}
-              >
+              <Text variant="h1" as="h1" marginBottom={0} marginTop={1}>
                 {pageTitle}
               </Text>
-              {isWebReaderEnabledForOrganizationPages && (
-                <Webreader readId={null} readClass="rs_read" />
-              )}
+              <Webreader readId={null} readClass="rs_read" />
             </GridColumn>
           </GridRow>
           <GridRow>
@@ -358,7 +413,7 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
                 options={orderByOptions}
                 value={selectedOrderOption}
                 onChange={(option) => {
-                  setSelectedOrderOption(option)
+                  setSelectedOrderOption(option as Option)
                 }}
               />
             </Box>
@@ -421,7 +476,7 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
   )
 }
 
-PublishedMaterial.getInitialProps = async ({ apolloClient, locale, query }) => {
+PublishedMaterial.getProps = async ({ apolloClient, locale, query }) => {
   const [
     {
       data: { getOrganizationPage },

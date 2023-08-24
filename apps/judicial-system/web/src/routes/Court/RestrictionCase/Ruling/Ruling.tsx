@@ -28,7 +28,6 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import {
   CaseDecision,
-  completedCaseStates,
   Defendant,
   isAcceptingCaseDecision,
 } from '@island.is/judicial-system/types'
@@ -102,7 +101,7 @@ export function getConclusionAutofill(
           decision !== CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN,
         caseType:
           decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-            ? CaseType.TravelBan
+            ? CaseType.TRAVEL_BAN
             : workingCase.type,
         validToDate: `${formatDate(validToDate, 'PPPPp')
           ?.replace('dagur,', 'dagsins')
@@ -115,7 +114,7 @@ export function getConclusionAutofill(
       })
 }
 
-export const Ruling: React.FC = () => {
+export const Ruling: React.FC<React.PropsWithChildren<unknown>> = () => {
   const {
     workingCase,
     setWorkingCase,
@@ -209,6 +208,8 @@ export const Ruling: React.FC = () => {
     [router, workingCase.id],
   )
   const stepIsValid = isRulingValidRC(workingCase)
+  const caseFiles =
+    workingCase.caseFiles?.filter((file) => !file.category) ?? []
 
   return (
     <PageLayout
@@ -231,20 +232,17 @@ export const Ruling: React.FC = () => {
             <PoliceRequestAccordionItem workingCase={workingCase} />
             <AccordionItem
               id="caseFileList"
-              label={`Rannsóknargögn (${workingCase.caseFiles?.length ?? 0})`}
+              label={`Rannsóknargögn (${caseFiles.length})`}
               labelVariant="h3"
             >
               <CaseFileList
                 caseId={workingCase.id}
-                files={workingCase.caseFiles ?? []}
+                files={caseFiles}
                 canOpenFiles={
                   user &&
                   (user.id === workingCase.judge?.id ||
                     user.id === workingCase.registrar?.id)
                 }
-                isCaseCompleted={completedCaseStates.includes(
-                  workingCase.state,
-                )}
               />
             </AccordionItem>
           </Accordion>
@@ -546,7 +544,7 @@ export const Ruling: React.FC = () => {
                         caseType:
                           workingCase.decision ===
                           CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-                            ? CaseType.TravelBan
+                            ? CaseType.TRAVEL_BAN
                             : workingCase.type,
                       },
                     ),
@@ -565,7 +563,7 @@ export const Ruling: React.FC = () => {
                           caseType:
                             workingCase.decision ===
                             CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-                              ? CaseType.TravelBan
+                              ? CaseType.TRAVEL_BAN
                               : workingCase.type,
                         },
                       ),
@@ -623,8 +621,8 @@ export const Ruling: React.FC = () => {
               />
             </Box>
           )}
-        {(workingCase.type === CaseType.Custody ||
-          workingCase.type === CaseType.AdmissionToFacility) &&
+        {(workingCase.type === CaseType.CUSTODY ||
+          workingCase.type === CaseType.ADMISSION_TO_FACILITY) &&
           isAcceptingCaseDecision(workingCase.decision) && (
             <Box component="section" marginBottom={5}>
               <Box marginBottom={2}>

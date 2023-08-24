@@ -1,3 +1,4 @@
+import { Cache as CacheManager } from 'cache-manager'
 import {
   Get,
   HttpCode,
@@ -13,8 +14,8 @@ import {
   ForbiddenException,
   Inject,
   forwardRef,
-  CACHE_MANAGER,
 } from '@nestjs/common'
+import { CACHE_MANAGER } from '@nestjs/cache-manager'
 import {
   ApiOkResponse,
   ApiBearerAuth,
@@ -76,7 +77,6 @@ export class PublicFlightController {
     flightLegs: FlightLeg[],
   ): Promise<string> {
     const flightLegCount = flightLegs.length
-
     const connectionDiscountCode = this.discountService.filterConnectionDiscountCodes(
       discount.connectionDiscountCodes,
       discountCode,
@@ -202,7 +202,6 @@ export class PublicFlightController {
     const discount = await this.discountService.getDiscountByDiscountCode(
       params.discountCode,
     )
-
     if (!discount) {
       throw new BadRequestException('Discount code is invalid')
     }

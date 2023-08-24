@@ -13,12 +13,14 @@ import type { User } from '@island.is/judicial-system/types'
 
 import { nowFactory } from '../../factories'
 import { EventService } from '../event'
+import { sanitize } from '@island.is/judicial-system/formatters'
 
 export enum CourtDocumentFolder {
   REQUEST_DOCUMENTS = 'Krafa og greinargerð',
   INDICTMENT_DOCUMENTS = 'Ákæra og greinargerð',
   CASE_DOCUMENTS = 'Gögn málsins',
   COURT_DOCUMENTS = 'Dómar, úrskurðir og Þingbók',
+  APPEAL_DOCUMENTS = 'Kæra til Landsréttar',
 }
 
 export type Subtype = Exclude<CaseType, CaseType.INDICTMENT> | IndictmentSubtype
@@ -168,16 +170,18 @@ export class CourtService {
     fileType: string,
     content: Buffer,
   ): Promise<string> {
+    const sanitizedFileName = sanitize(fileName)
+
     return this.courtClientService
       .uploadStream(courtId, {
         value: content,
-        options: { filename: fileName, contentType: fileType },
+        options: { filename: sanitizedFileName, contentType: fileType },
       })
       .then((streamId) =>
         this.courtClientService.createDocument(courtId, {
           caseNumber: courtCaseNumber,
           subject,
-          fileName,
+          fileName: sanitizedFileName,
           streamID: streamId,
           caseFolder,
         }),
@@ -197,7 +201,7 @@ export class CourtService {
             courtId,
             courtCaseNumber,
             subject: this.mask(subject),
-            fileName: this.mask(fileName),
+            fileName: this.mask(sanitize(fileName)),
             fileType,
             caseFolder,
           },
@@ -275,7 +279,7 @@ export class CourtService {
 
       const isIndictment = isIndictmentCase(type)
 
-      return this.courtClientService.createCase(courtId, {
+      return await this.courtClientService.createCase(courtId, {
         caseType: isIndictment ? 'S - Ákærumál' : 'R - Rannsóknarmál',
         subtype: courtSubtype as string,
         status: 'Skráð',
@@ -287,7 +291,7 @@ export class CourtService {
     } catch (reason) {
       if (reason instanceof ServiceUnavailableException) {
         // Act as if the court case was created successfully
-        return 'R-9999/9999'
+        return isIndictmentCase(type) ? 'S-9999/9999' : 'R-9999/9999'
       }
 
       this.eventService.postErrorEvent(

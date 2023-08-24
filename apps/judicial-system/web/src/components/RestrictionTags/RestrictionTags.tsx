@@ -14,7 +14,7 @@ interface Props {
   workingCase: Case
 }
 
-const RestrictionTags: React.FC<Props> = (props) => {
+const RestrictionTags: React.FC<React.PropsWithChildren<Props>> = (props) => {
   const { workingCase } = props
 
   return (
@@ -35,8 +35,8 @@ const RestrictionTags: React.FC<Props> = (props) => {
         )}
       {
         // Custody restrictions
-        (workingCase.type === CaseType.Custody ||
-          workingCase.type === CaseType.AdmissionToFacility) &&
+        (workingCase.type === CaseType.CUSTODY ||
+          workingCase.type === CaseType.ADMISSION_TO_FACILITY) &&
           isAcceptingCaseDecision(workingCase.decision) &&
           workingCase.requestedCustodyRestrictions
             ?.filter((restriction) =>
@@ -62,7 +62,7 @@ const RestrictionTags: React.FC<Props> = (props) => {
       }
       {
         // Travel ban restrictions
-        workingCase.type === CaseType.TravelBan &&
+        workingCase.type === CaseType.TRAVEL_BAN &&
           isAcceptingCaseDecision(workingCase.decision) &&
           workingCase.requestedCustodyRestrictions
             ?.filter(

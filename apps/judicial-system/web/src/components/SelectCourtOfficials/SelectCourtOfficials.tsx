@@ -22,16 +22,18 @@ interface Props {
   users?: User[]
 }
 
-const SelectCourtOfficials: React.FC<Props> = (props) => {
+const SelectCourtOfficials: React.FC<React.PropsWithChildren<Props>> = (
+  props,
+) => {
   const { workingCase, handleJudgeChange, handleRegistrarChange, users } = props
   const { formatMessage } = useIntl()
 
   const judges = (users ?? [])
     .filter(
       (user: User) =>
-        (user.role === UserRole.Judge ||
-          (workingCase.type === CaseType.Indictment &&
-            user.role === UserRole.Assistant)) &&
+        (user.role === UserRole.JUDGE ||
+          (workingCase.type === CaseType.INDICTMENT &&
+            user.role === UserRole.ASSISTANT)) &&
         user.institution?.id === workingCase.court?.id,
     )
     .map((judge: User) => {
@@ -41,7 +43,7 @@ const SelectCourtOfficials: React.FC<Props> = (props) => {
   const registrars = (users ?? [])
     .filter(
       (user: User) =>
-        user.role === UserRole.Registrar &&
+        user.role === UserRole.REGISTRAR &&
         user.institution?.id === workingCase.court?.id,
     )
     .map((registrar: User) => {

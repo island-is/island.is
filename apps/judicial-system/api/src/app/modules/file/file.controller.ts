@@ -51,9 +51,9 @@ export class FileController {
     )
   }
 
-  @Get('caseFiles/:policeCaseNumber')
+  @Get('caseFilesRecord/:policeCaseNumber')
   @Header('Content-Type', 'application/pdf')
-  async getCaseFilesPdf(
+  async getCaseFilesRecordPdf(
     @Param('id') id: string,
     @Param('policeCaseNumber') policeCaseNumber: string,
     @CurrentHttpUser() user: User,
@@ -64,9 +64,9 @@ export class FileController {
 
     return this.fileService.tryGetPdf(
       user.id,
-      AuditedAction.GET_REQUEST_PDF,
+      AuditedAction.GET_CASE_FILES_PDF,
       id,
-      `caseFiles/${policeCaseNumber}`,
+      `caseFilesRecord/${policeCaseNumber}`,
       req,
       res,
     )

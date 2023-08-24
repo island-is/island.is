@@ -25,12 +25,24 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-public-api'> => {
       },
       XROAD_TJODSKRA_API_PATH: '/SKRA-Protected/Einstaklingar-v1',
       XROAD_NATIONAL_REGISTRY_ACTOR_TOKEN: 'true',
+      XROAD_RSK_PROCURING_ACTOR_TOKEN: 'true',
       XROAD_NATIONAL_REGISTRY_SERVICE_PATH: {
         dev: 'IS-DEV/GOV/10001/SKRA-Protected/Einstaklingar-v1',
         staging: 'IS-TEST/GOV/6503760649/SKRA-Protected/Einstaklingar-v1',
         prod: 'IS/GOV/6503760649/SKRA-Protected/Einstaklingar-v1',
       },
       XROAD_NATIONAL_REGISTRY_REDIS_NODES: {
+        dev: json([
+          'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379',
+        ]),
+        staging: json([
+          'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379',
+        ]),
+        prod: json([
+          'clustercfg.general-redis-cluster-group.dnugi2.euw1.cache.amazonaws.com:6379',
+        ]),
+      },
+      XROAD_RSK_PROCURING_REDIS_NODES: {
         dev: json([
           'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379',
         ]),
@@ -95,11 +107,11 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-public-api'> => {
     .resources({
       limits: {
         cpu: '400m',
-        memory: '256Mi',
+        memory: '384Mi',
       },
       requests: {
         cpu: '100m',
-        memory: '128Mi',
+        memory: '256Mi',
       },
     })
 }

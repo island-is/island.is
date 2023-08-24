@@ -32,9 +32,10 @@ import {
   SidebarShipSearchInput,
   Webreader,
   SearchBox,
+  Footer as WebFooter,
 } from '@island.is/web/components'
 import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
-import { useFeatureFlag } from '@island.is/web/hooks'
+import { usePlausiblePageview } from '@island.is/web/hooks'
 import { useI18n } from '@island.is/web/i18n'
 import { WatsonChatPanel } from '@island.is/web/components'
 
@@ -55,6 +56,7 @@ import {
   UtlendingastofnunFooter,
   UtlendingastofnunHeader,
 } from './Themes/UtlendingastofnunTheme'
+import { IcelandicRadiationSafetyAuthorityHeader } from './Themes/IcelandicRadiationSafetyAuthority'
 import { FiskistofaHeader } from './Themes/FiskistofaTheme'
 import { FiskistofaFooter } from './Themes/FiskistofaTheme'
 import { LandskjorstjornFooter } from './Themes/LandkjorstjornTheme'
@@ -73,8 +75,22 @@ import {
   TryggingastofnunHeader,
 } from './Themes/TryggingastofnunTheme'
 import { SAkFooter, SAkHeader } from './Themes/SAkTheme'
-import { GevHeader } from './Themes/GevTheme'
+import { GevFooter, GevHeader } from './Themes/GevTheme'
 import { HveHeader, HveFooter } from './Themes/HveTheme'
+import { ShhFooter, ShhHeader } from './Themes/SHHTheme'
+import {
+  HeilbrigdisstofnunAusturlandsFooter,
+  HeilbrigdisstofnunAusturlandsHeader,
+} from './Themes/HeilbrigdisstofnunAusturlandsTheme'
+import { UniversityStudiesHeader } from './Themes/UniversityStudiesTheme'
+import {
+  IcelandicNaturalDisasterInsuranceHeader,
+  IcelandicNaturalDisasterInsuranceFooter,
+} from './Themes/IcelandicNaturalDisasterInsuranceTheme'
+import {
+  TransportAuthorityFooter,
+  TransportAuthorityHeader,
+} from './Themes/TransportAuthorityTheme'
 
 import * as styles from './OrganizationWrapper.css'
 
@@ -112,7 +128,10 @@ export const lightThemes = [
   'landing_page',
   'tryggingastofnun',
   'hve',
-  'hsu',
+  'hsa',
+  'haskolanam',
+  'nti',
+  'samgongustofa',
 ]
 export const footerEnabled = [
   'syslumenn',
@@ -149,6 +168,20 @@ export const footerEnabled = [
 
   'tryggingastofnun',
   'insurance-administration',
+
+  'gev',
+
+  'shh',
+
+  'hsa',
+
+  'nti',
+
+  'samgongustofa',
+  'transport-authority',
+
+  'geislavarnir-rikisins',
+  'icelandic-radiation-safety-authority',
 ]
 
 export const getThemeConfig = (
@@ -164,7 +197,8 @@ export const getThemeConfig = (
   if (
     theme === 'sjukratryggingar' ||
     theme === 'rikislogmadur' ||
-    theme === 'tryggingastofnun'
+    theme === 'tryggingastofnun' ||
+    theme === 'nti'
   )
     return {
       themeConfig: {
@@ -186,9 +220,9 @@ export const getThemeConfig = (
     : { themeConfig: { footerVersion } }
 }
 
-export const OrganizationHeader: React.FC<HeaderProps> = ({
-  organizationPage,
-}) => {
+export const OrganizationHeader: React.FC<
+  React.PropsWithChildren<HeaderProps>
+> = ({ organizationPage }) => {
   switch (organizationPage.theme) {
     case 'syslumenn':
       return <SyslumennHeader organizationPage={organizationPage} />
@@ -230,6 +264,30 @@ export const OrganizationHeader: React.FC<HeaderProps> = ({
       return <GevHeader organizationPage={organizationPage} />
     case 'hve':
       return <HveHeader organizationPage={organizationPage} />
+    case 'shh':
+      return <ShhHeader organizationPage={organizationPage} />
+    case 'hsa':
+      return (
+        <HeilbrigdisstofnunAusturlandsHeader
+          organizationPage={organizationPage}
+        />
+      )
+    case 'haskolanam':
+      return <UniversityStudiesHeader organizationPage={organizationPage} />
+    case 'nti':
+      return (
+        <IcelandicNaturalDisasterInsuranceHeader
+          organizationPage={organizationPage}
+        />
+      )
+    case 'samgongustofa':
+      return <TransportAuthorityHeader organizationPage={organizationPage} />
+    case 'geislavarnir-rikisins':
+      return (
+        <IcelandicRadiationSafetyAuthorityHeader
+          organizationPage={organizationPage}
+        />
+      )
     default:
       return <DefaultHeader organizationPage={organizationPage} />
   }
@@ -237,19 +295,30 @@ export const OrganizationHeader: React.FC<HeaderProps> = ({
 
 interface ExternalLinksProps {
   organizationPage: OrganizationPage
+  showOnMobile?: boolean
 }
 
-export const OrganizationExternalLinks: React.FC<ExternalLinksProps> = ({
-  organizationPage,
-}) => {
+export const OrganizationExternalLinks: React.FC<
+  React.PropsWithChildren<ExternalLinksProps>
+> = ({ organizationPage, showOnMobile = true }) => {
   if (organizationPage.externalLinks?.length) {
+    const mobileDisplay = showOnMobile ? 'flex' : 'none'
     return (
       <Box
-        display={['none', 'none', 'flex', 'flex']}
-        justifyContent="flexEnd"
+        display={[mobileDisplay, mobileDisplay, 'flex', 'flex']}
+        justifyContent={[
+          'center',
+          showOnMobile ? 'flexEnd' : 'center',
+          'flexEnd',
+        ]}
         marginBottom={4}
       >
-        <Inline space={2}>
+        <Inline
+          flexWrap={
+            organizationPage.externalLinks?.length === 2 ? 'nowrap' : 'wrap'
+          }
+          space={2}
+        >
           {organizationPage.externalLinks.map((link, index) => {
             // Sjukratryggingar's external links have custom styled buttons
             const isSjukratryggingar =
@@ -277,7 +346,7 @@ export const OrganizationExternalLinks: React.FC<ExternalLinksProps> = ({
                   iconType="outline"
                   size="medium"
                 >
-                  <Box paddingY={2} paddingLeft={2}>
+                  <Box paddingY={[0, 2]} paddingLeft={[0, 2]}>
                     {link.text}
                   </Box>
                 </Button>
@@ -296,10 +365,9 @@ interface FooterProps {
   force?: boolean
 }
 
-export const OrganizationFooter: React.FC<FooterProps> = ({
-  organizations,
-  force = false,
-}) => {
+export const OrganizationFooter: React.FC<
+  React.PropsWithChildren<FooterProps>
+> = ({ organizations, force = false }) => {
   const organization = force
     ? organizations[0]
     : organizations.find((x) => footerEnabled.includes(x.slug))
@@ -329,6 +397,7 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
         <SjukratryggingarFooter
           footerItems={organization.footerItems}
           namespace={namespace}
+          organizationSlug={organization.slug}
         />
       )
       break
@@ -418,9 +487,8 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
     case 'the-financial-management-authority':
       OrganizationFooterComponent = (
         <FjarsyslaRikisinsFooter
-          footerItems={organization.footerItems}
-          logo={organization.logo?.url}
           namespace={namespace}
+          title={organization.title}
         />
       )
       break
@@ -440,6 +508,63 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
         <TryggingastofnunFooter
           footerItems={organization.footerItems}
           namespace={namespace}
+        />
+      )
+      break
+    case 'gev':
+      OrganizationFooterComponent = (
+        <GevFooter
+          title={organization.title}
+          namespace={namespace}
+          footerItems={organization.footerItems}
+        />
+      )
+      break
+    case 'shh':
+    case 'samskiptamidstoed-heyrnarlausra-og-heyrnarskertra':
+    case 'the-communication-center-for-the-deaf-and-hearing-impaired':
+      OrganizationFooterComponent = (
+        <ShhFooter
+          title={organization.title}
+          namespace={namespace}
+          footerItems={organization.footerItems}
+        />
+      )
+      break
+    case 'hsa':
+      OrganizationFooterComponent = (
+        <HeilbrigdisstofnunAusturlandsFooter
+          title={organization.title}
+          namespace={namespace}
+          footerItems={organization.footerItems}
+        />
+      )
+      break
+    case 'nti':
+      OrganizationFooterComponent = (
+        <IcelandicNaturalDisasterInsuranceFooter
+          footerItems={organization.footerItems}
+          namespace={namespace}
+        />
+      )
+      break
+    case 'samgongustofa':
+    case 'transport-authority':
+      OrganizationFooterComponent = (
+        <TransportAuthorityFooter
+          title={organization.title}
+          footerItems={organization.footerItems}
+          logo={organization.logo?.url}
+        />
+      )
+      break
+    case 'geislavarnir-rikisins':
+    case 'icelandic-radiation-safety-authority':
+      OrganizationFooterComponent = (
+        <WebFooter
+          imageUrl={organization.logo?.url}
+          heading={organization.title}
+          columns={organization.footerItems}
         />
       )
       break
@@ -550,7 +675,9 @@ const renderConnectedComponent = (slice) => {
   }
 }
 
-export const OrganizationWrapper: React.FC<WrapperProps> = ({
+export const OrganizationWrapper: React.FC<
+  React.PropsWithChildren<WrapperProps>
+> = ({
   pageTitle,
   pageDescription,
   pageFeaturedImage,
@@ -571,12 +698,11 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
   const { width } = useWindowSize()
   const [isMobile, setIsMobile] = useState<boolean | undefined>()
 
-  const { value: isWebReaderEnabledForOrganizationPages } = useFeatureFlag(
-    'isWebReaderEnabledForOrganizationPages',
-    false,
-  )
+  usePlausiblePageview(organizationPage.organization?.trackingDomain)
 
-  useEffect(() => setIsMobile(width < theme.breakpoints.md), [width])
+  useEffect(() => {
+    setIsMobile(width < theme.breakpoints.md)
+  }, [width])
 
   const secondaryNavList: NavigationItem[] =
     organizationPage.secondaryMenu?.childrenLinks.map(({ text, url }) => ({
@@ -621,7 +747,9 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
                 activeItemTitle={activeNavigationItemTitle}
                 renderLink={(link, item) => {
                   return item?.href ? (
-                    <NextLink href={item?.href}>{link}</NextLink>
+                    <NextLink href={item?.href} legacyBehavior>
+                      {link}
+                    </NextLink>
                   ) : (
                     link
                   )
@@ -677,6 +805,12 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
         >
           {isMobile && (
             <Box className={styles.menuStyle}>
+              {showExternalLinks && (
+                <OrganizationExternalLinks
+                  organizationPage={organizationPage}
+                  showOnMobile={true}
+                />
+              )}
               <Box marginY={2}>
                 <Navigation
                   baseId="pageNavMobile"
@@ -686,7 +820,9 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
                   activeItemTitle={activeNavigationItemTitle}
                   renderLink={(link, item) => {
                     return item?.href ? (
-                      <NextLink href={item?.href}>{link}</NextLink>
+                      <NextLink href={item?.href} legacyBehavior>
+                        {link}
+                      </NextLink>
                     ) : (
                       link
                     )
@@ -703,7 +839,9 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
                     items={secondaryNavList}
                     renderLink={(link, item) => {
                       return item?.href ? (
-                        <NextLink href={item?.href}>{link}</NextLink>
+                        <NextLink href={item?.href} legacyBehavior>
+                          {link}
+                        </NextLink>
                       ) : (
                         link
                       )
@@ -723,6 +861,7 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
                 {showExternalLinks && (
                   <OrganizationExternalLinks
                     organizationPage={organizationPage}
+                    showOnMobile={false}
                   />
                 )}
                 {breadcrumbItems && (
@@ -730,7 +869,9 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
                     items={breadcrumbItems ?? []}
                     renderLink={(link, item) => {
                       return item?.href ? (
-                        <NextLink href={item?.href}>{link}</NextLink>
+                        <NextLink href={item?.href} legacyBehavior>
+                          {link}
+                        </NextLink>
                       ) : (
                         link
                       )
@@ -738,7 +879,7 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
                   />
                 )}
 
-                {showReadSpeaker && isWebReaderEnabledForOrganizationPages && (
+                {showReadSpeaker && (
                   <Webreader
                     marginTop={breadcrumbItems?.length ? 3 : 0}
                     marginBottom={breadcrumbItems?.length ? 0 : 3}

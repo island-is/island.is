@@ -8,16 +8,18 @@ import {
   Application,
   DefaultEvents,
   defineTemplateApi,
+  PendingAction,
 } from '@island.is/application/types'
 import {
   EphemeralStateLifeCycle,
+  coreHistoryMessages,
+  corePendingActionMessages,
   getValueViaPath,
   pruneAfterDays,
 } from '@island.is/application/core'
 import { Events, States, Roles } from './constants'
 import { ApiActions } from '../shared'
 import { AuthDelegationType } from '@island.is/shared/types'
-import { Features } from '@island.is/feature-flags'
 import { TransferOfVehicleOwnershipSchema } from './dataSchema'
 import { application as applicationMessage } from './messages'
 import { CoOwnerAndOperator, UserInformation } from '../shared'
@@ -30,6 +32,7 @@ import {
   CurrentVehiclesApi,
   InsuranceCompaniesApi,
 } from '../dataProviders'
+import { hasReviewerApproved } from '../utils'
 
 const pruneInDaysAtMidnight = (application: Application, days: number) => {
   const date = new Date(application.created)
@@ -51,6 +54,26 @@ const determineMessageFromApplicationAnswers = (application: Application) => {
   }
 }
 
+const reviewStatePendingAction = (
+  application: Application,
+  role: string,
+  nationalId: string,
+): PendingAction => {
+  if (nationalId && !hasReviewerApproved(nationalId, application.answers)) {
+    return {
+      title: corePendingActionMessages.waitingForReviewTitle,
+      content: corePendingActionMessages.youNeedToReviewDescription,
+      displayStatus: 'warning',
+    }
+  } else {
+    return {
+      title: corePendingActionMessages.waitingForReviewTitle,
+      content: corePendingActionMessages.waitingForReviewDescription,
+      displayStatus: 'info',
+    }
+  }
+}
+
 const template: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<Events>,
@@ -66,11 +89,8 @@ const template: ApplicationTemplate<
   allowedDelegations: [
     {
       type: AuthDelegationType.ProcurationHolder,
-      featureFlag:
-        Features.transportAuthorityTransferOfVehicleOwnershipDelegations,
     },
   ],
-  featureFlag: Features.transportAuthorityTransferOfVehicleOwnership,
   stateMachineConfig: {
     initial: States.DRAFT,
     states: {
@@ -83,6 +103,12 @@ const template: ApplicationTemplate<
               label: applicationMessage.actionCardDraft,
               variant: 'blue',
             },
+            historyLogs: [
+              {
+                logMessage: coreHistoryMessages.paymentStarted,
+                onEvent: DefaultEvents.SUBMIT,
+              },
+            ],
           },
           progress: 0.25,
           lifecycle: EphemeralStateLifeCycle,
@@ -130,6 +156,21 @@ const template: ApplicationTemplate<
               label: applicationMessage.actionCardPayment,
               variant: 'red',
             },
+            historyLogs: [
+              {
+                logMessage: coreHistoryMessages.paymentAccepted,
+                onEvent: DefaultEvents.SUBMIT,
+              },
+              {
+                logMessage: coreHistoryMessages.paymentCancelled,
+                onEvent: DefaultEvents.ABORT,
+              },
+            ],
+            pendingAction: {
+              title: corePendingActionMessages.paymentPendingTitle,
+              content: corePendingActionMessages.paymentPendingDescription,
+              displayStatus: 'warning',
+            },
           },
           progress: 0.4,
           lifecycle: pruneAfterDays(1 / 24),
@@ -167,6 +208,21 @@ const template: ApplicationTemplate<
               label: applicationMessage.actionCardDraft,
               variant: 'blue',
             },
+            historyLogs: [
+              {
+                onEvent: DefaultEvents.APPROVE,
+                logMessage: applicationMessage.historyLogApprovedByReviewer,
+              },
+              {
+                onEvent: DefaultEvents.REJECT,
+                logMessage: coreHistoryMessages.applicationRejected,
+              },
+              {
+                onEvent: DefaultEvents.SUBMIT,
+                logMessage: coreHistoryMessages.applicationApproved,
+              },
+            ],
+            pendingAction: reviewStatePendingAction,
           },
           progress: 0.65,
           lifecycle: {
@@ -193,10 +249,10 @@ const template: ApplicationTemplate<
               write: {
                 answers: [
                   'sellerCoOwner',
-                  'buyerCoOwnerAndOperator',
-                  'rejecter',
-                  'insurance',
                   'buyer',
+                  'buyerCoOwnerAndOperator',
+                  'insurance',
+                  'rejecter',
                 ],
               },
               read: 'all',
@@ -210,11 +266,12 @@ const template: ApplicationTemplate<
                 ),
               write: {
                 answers: [
-                  'buyerCoOwnerAndOperator',
-                  'insurance',
+                  'sellerCoOwner',
                   'buyer',
-                  'rejecter',
+                  'buyerCoOwnerAndOperator',
                   'buyerMainOperator',
+                  'insurance',
+                  'rejecter',
                 ],
               },
               read: 'all',
@@ -298,6 +355,10 @@ const template: ApplicationTemplate<
             tag: {
               label: applicationMessage.actionCardDone,
               variant: 'blueberry',
+            },
+            pendingAction: {
+              title: corePendingActionMessages.applicationReceivedTitle,
+              displayStatus: 'success',
             },
           },
           roles: [

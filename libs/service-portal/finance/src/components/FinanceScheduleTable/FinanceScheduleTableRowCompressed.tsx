@@ -3,22 +3,22 @@ import { formSubmit, amountFormat } from '@island.is/service-portal/core'
 import { PaymentSchedule } from '@island.is/api/schema'
 import { Box, Table as T, Text, Button } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
+import { m } from '../../lib/messages'
 
 interface Props {
   paymentSchedule: PaymentSchedule
 }
 
-const FinanceScheduleTableRow: FC<Props> = ({ paymentSchedule }) => {
+const FinanceScheduleTableRow: FC<React.PropsWithChildren<Props>> = ({
+  paymentSchedule,
+}) => {
   useNamespaces('sp.finance-schedule')
   const { formatMessage } = useLocale()
 
   const getType = (type: string) => {
     switch (type) {
       case 'S':
-        return formatMessage({
-          id: 'sp.finance-schedule:status-valid',
-          defaultMessage: 'Í gildi',
-        })
+        return formatMessage(m.financeStatusValid)
       case 'E':
         return formatMessage({
           id: 'sp.finance-schedule:status-invalid',
