@@ -149,6 +149,10 @@ export class OccupationalLicensesService {
         ...(healthDirectorateLicenses ?? []),
         ...(educationalLicenses ?? []),
       ].filter((Boolean as unknown) as ExcludesFalse),
+      error: {
+        hasError:
+          healthDirectorateLicenses === null || educationalLicenses === null,
+      },
     }
   }
 }

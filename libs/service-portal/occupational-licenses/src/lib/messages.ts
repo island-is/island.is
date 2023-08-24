@@ -62,4 +62,9 @@ export const olMessage = defineMessage({
     id: 'sp.occupational-licenses:license-status',
     defaultMessage: 'Staða',
   },
+  fetchOverviewErrorMessage: {
+    id: 'sp.occupational-licenses:fetch-overview-error',
+    defaultMessage:
+      'Einhverjar tengingar virðast hafa rofnað svo ekki tókst að sækja öll gögn. Verið er að vinna í að lagfæra tenginuna.',
+  },
 })
