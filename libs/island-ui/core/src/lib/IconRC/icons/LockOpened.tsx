@@ -1,7 +1,7 @@
 import * as React from 'react'
 import type { SvgProps as SVGRProps } from '../types'
 
-const SvgLockClosed = ({
+const SvgLockOpened = ({
   title,
   titleId,
   ...props
@@ -19,4 +19,4 @@ const SvgLockClosed = ({
   )
 }
 
-export default SvgLockClosed
+export default SvgLockOpened
