@@ -42,6 +42,7 @@ import {
 import { Locale } from '@island.is/shared/types'
 import { MonthlyStatistics } from '../components/connected/electronicRegistrationStatistics'
 import FeaturedSupportQNAs from '../components/FeaturedSupportQNAs/FeaturedSupportQNAs'
+import HousingBenefitCalculator from '../components/connected/HousingBenefitCalculator/HousingBenefitCalculator'
 
 export const webRenderConnectedComponent = (slice) => {
   const data = slice.json ?? {}
@@ -75,6 +76,8 @@ export const webRenderConnectedComponent = (slice) => {
       return <DrivingInstructorList slice={slice} />
     case 'PlateAvailableSearch':
       return <PlateAvailableSearch slice={slice} />
+    case 'HousingBenefitCalculator':
+      return <HousingBenefitCalculator slice={slice} />
     default:
       break
   }
