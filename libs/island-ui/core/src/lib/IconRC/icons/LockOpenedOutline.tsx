@@ -15,7 +15,7 @@ const SvgLockOpenedOutline = ({
     >
       {title ? <title id={titleId}>{title}</title> : null}
       <path
-        d="M336 208v-95a80 80 0 00-160 0v95"
+        d="M336 112a80 80 0 00-160 0v96"
         fill="none"
         stroke="currentColor"
         strokeLinecap="round"
