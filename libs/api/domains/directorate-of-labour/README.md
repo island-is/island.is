@@ -1,5 +1,3 @@
-<!-- gitbook-ignore -->
-
 # api-domains-directorate-of-labour
 
 This library was generated with [Nx](https://nx.dev).

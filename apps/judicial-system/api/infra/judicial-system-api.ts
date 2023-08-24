@@ -27,12 +27,7 @@ export const serviceSetup = (services: {
           'https://rettarvorslugatt.island.is/api/auth/callback/identity-server',
       },
       AUTH_IDS_LOGOUT_REDIRECT_URI: {
-        dev: ref(
-          (ctx) =>
-            `https://${
-              ctx.featureDeploymentName ? `${ctx.featureDeploymentName}-` : ''
-            }judicial-system.dev01.devland.is`,
-        ),
+        dev: 'https://judicial-system.dev01.devland.is',
         staging: 'https://judicial-system.staging01.devland.is',
         prod: 'https://rettarvorslugatt.island.is',
       },

@@ -92,6 +92,7 @@ export class AuthController {
     const { name, options } = REDIRECT_COOKIE
 
     res.clearCookie(name, options)
+    res.clearCookie(CODE_VERIFIER_COOKIE.name, CODE_VERIFIER_COOKIE.options)
 
     // Local development
     if (this.config.allowAuthBypass && nationalId) {
