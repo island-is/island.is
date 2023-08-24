@@ -7,6 +7,8 @@ import { useUserInfo } from '@island.is/auth/react'
 import { getOrganizationLogoUrl } from '@island.is/shared/utils'
 import { Organization } from '@island.is/shared/types'
 import { LicenseDetail } from '../../components/LicenseDetail'
+import { olMessage as om } from '../../lib/messages'
+import { m } from '@island.is/service-portal/core'
 
 type UseParams = {
   id: string
@@ -18,7 +20,7 @@ export const EducationDetail = () => {
   const user = useUserInfo()
   const birthday = user.profile.dateOfBirth ?? null
 
-  const { formatDateFns } = useLocale()
+  const { formatDateFns, formatMessage } = useLocale()
 
   const { data, loading, error } = useGetHealthDirectorateLicenseByIdQuery({
     variables: {
@@ -46,7 +48,12 @@ export const EducationDetail = () => {
     !license.validFrom ||
     !birthday
   )
-    return <ErrorScreen title="Ekki tókst að sækja leyfi" tag="Villa" />
+    return (
+      <ErrorScreen
+        title={formatMessage(om.errorFetchLicense)}
+        tag={formatMessage(m.errorFetch)}
+      />
+    )
 
   const programme = license.profession
   const today = new Date()
@@ -67,13 +74,13 @@ export const EducationDetail = () => {
   return (
     <LicenseDetail
       title={programme}
-      intro="Starfsleyfi útgefið af Landlæknisembættinu."
+      intro={formatMessage(om.educationIntro)}
       img={organizationImage}
       name={user.profile.name}
       dateOfBirth={formatDateFns(birthday, 'dd.mm.yyyy')}
       profession={license.profession}
       licenseType={license.license}
-      publisher={'Embætti Landlæknis'}
+      publisher={formatMessage(om.theDirectorateOfHealth)}
       dateOfIssue={formatDateFns(license.validFrom, 'dd.mm.yyyy')}
       isValid={isValid}
     />

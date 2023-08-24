@@ -504,8 +504,9 @@ export const m = defineMessages({
   occupationalLicensesDescription: {
     id: 'service.portal:occupationalLicensesDescription',
     defaultMessage:
-      'Hér er markmiðið að þú getir fundið yfirlit yfir leyfisbréf og vottorð til starfsréttinda. Unnið er að því að koma öllum leyfisbréfum og vottorðum um starfsréttindi á einn stað. Núna birtast leyfisbréf kennara sem hafa verið útskrifaðir frá 1988 sem sótt eru til Menntamálastofnunar.',
+      'Hér er markmiðið að þú getir fundið yfirlit yfir leyfisbréf og vottorð til starfsréttinda. Unnið er að því að koma öllum leyfisbréfum og vottorðum um starfsréttindi á einn stað.',
   },
+
   finance: {
     id: 'service.portal:finance',
     defaultMessage: 'Fjármál',

@@ -1,6 +1,8 @@
 import { Stack, Box } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
 import { IntroHeader } from '@island.is/portals/core'
 import { UserInfoLine } from '@island.is/service-portal/core'
+import { olMessage as om } from '../lib/messages'
 
 type LicenseDetailProps = {
   title: string
@@ -29,6 +31,8 @@ export const LicenseDetail: React.FC<LicenseDetailProps> = ({
   dateOfIssue,
   isValid,
 }) => {
+  const { formatMessage } = useLocale()
+
   return (
     <Box paddingTop="p1" borderBottomWidth="standard" borderColor="blue200">
       <IntroHeader
@@ -39,43 +43,43 @@ export const LicenseDetail: React.FC<LicenseDetailProps> = ({
       />
       <Stack dividers space="auto">
         <UserInfoLine
-          label="Nafn einstaklings"
+          label={formatMessage(om.nameOfIndividual)}
           content={name}
           labelColumnSpan={['6/12']}
           valueColumnSpan={['6/12']}
         />
         <UserInfoLine
-          label="Fæðingardagur"
+          label={formatMessage(om.dateOfBirth)}
           content={dateOfBirth}
           labelColumnSpan={['6/12']}
           valueColumnSpan={['6/12']}
         />
         <UserInfoLine
-          label="Starfstétt"
+          label={formatMessage(om.profession)}
           content={profession}
           labelColumnSpan={['6/12']}
           valueColumnSpan={['6/12']}
         />
         <UserInfoLine
-          label="Tegund leyfis"
+          label={formatMessage(om.typeofLicense)}
           content={licenseType}
           labelColumnSpan={['6/12']}
           valueColumnSpan={['6/12']}
         />
         <UserInfoLine
-          label="Úttgefið af"
+          label={formatMessage(om.publisher)}
           content={publisher}
           labelColumnSpan={['6/12']}
           valueColumnSpan={['6/12']}
         />
         <UserInfoLine
-          label="Útgáfudagur"
+          label={formatMessage(om.dateOfIssue)}
           content={dateOfIssue}
           labelColumnSpan={['6/12']}
           valueColumnSpan={['6/12']}
         />
         <UserInfoLine
-          label="Staða"
+          label={formatMessage(om.licenseStatus)}
           content={isValid ? 'Í gildi' : 'Útrunnið'}
           labelColumnSpan={['6/12']}
           valueColumnSpan={['6/12']}

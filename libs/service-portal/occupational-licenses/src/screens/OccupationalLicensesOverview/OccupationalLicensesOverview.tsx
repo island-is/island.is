@@ -10,33 +10,36 @@ import {
 } from '@island.is/service-portal/core'
 import { Organization } from '@island.is/shared/types'
 import { getOrganizationLogoUrl } from '@island.is/shared/utils'
-import { defineMessage } from 'react-intl'
 import { OccupationalLicensesPaths } from '../../lib/paths'
 import {
   OccupationalLicenseEducationalLicense,
   OccupationalLicenseHealthDirectorateLicense,
 } from '@island.is/api/schema'
 
+import { olMessage as ol } from '../../lib/messages'
+
 const EducationActionCard: React.FC<
   Omit<OccupationalLicenseEducationalLicense, 'url'> & { orgImage: string }
 > = (props) => {
   const isValid = new Date(props.date) < new Date()
-  const { formatDateFns } = useLocale()
+  const { formatDateFns, formatMessage } = useLocale()
 
   return (
     <ActionCard
       heading={props.school}
-      text={`Útgáfudagur: ${formatDateFns(props.date, 'dd. MMMM yyyy')}`}
+      text={`${formatMessage(ol.dayOfPublication)}: ${formatDateFns(
+        props.date,
+        'dd. MMMM yyyy',
+      )}`}
       tag={{
-        label: isValid ? 'Í gildi' : 'Útrunnið',
+        label: isValid
+          ? formatMessage(ol.validLicense)
+          : formatMessage(ol.invalidLicense),
         variant: isValid ? 'blue' : 'red',
         outlined: false,
       }}
       cta={{
-        label: defineMessage({
-          id: 'sp.education-graduation:details',
-          defaultMessage: 'Skoða nánar',
-        }).defaultMessage,
+        label: formatMessage(m.viewDetail),
         variant: 'text',
         url: OccupationalLicensesPaths.OccupationalLicensesEducationDetail.replace(
           ':id',
@@ -58,8 +61,8 @@ const HealthDirectorateActionCard: React.FC<
   OccupationalLicenseHealthDirectorateLicense & { orgImage: string }
 > = (props) => {
   const today = new Date()
-  const { formatDateFns } = useLocale()
-  const validLicense =
+  const { formatDateFns, formatMessage } = useLocale()
+  const isValid =
     props.validTo === null
       ? new Date(props.validFrom) < today
       : new Date(props.validFrom) < today && new Date(props.validTo) > today
@@ -67,17 +70,19 @@ const HealthDirectorateActionCard: React.FC<
   return (
     <ActionCard
       heading={props.name ?? ''}
-      text={`Útgáfudagur: ${formatDateFns(props.validFrom, 'dd. MMMM yyyy')}`}
+      text={`${formatMessage(ol.dayOfPublication)}: ${formatDateFns(
+        props.validFrom,
+        'dd. MMMM yyyy',
+      )}`}
       tag={{
-        label: validLicense ? 'Í gildi' : 'Útrunnið',
-        variant: validLicense ? 'blue' : 'red',
+        label: isValid
+          ? formatMessage(ol.validLicense)
+          : formatMessage(ol.invalidLicense),
+        variant: isValid ? 'blue' : 'red',
         outlined: false,
       }}
       cta={{
-        label: defineMessage({
-          id: 'sp.education-graduation:details',
-          defaultMessage: 'Skoða nánar',
-        }).defaultMessage,
+        label: formatMessage(m.viewDetail),
         variant: 'text',
         url: OccupationalLicensesPaths.OccupationalLicensesHealthDirectorateDetail.replace(
           ':id',
@@ -111,12 +116,7 @@ const OccupationalLicensesOverview = () => {
           data &&
           data?.occupationalLicenses &&
           data.occupationalLicenses.count === 0 && (
-            <EmptyState
-              title={defineMessage({
-                id: 'sp.education-graduation:education-no-data',
-                defaultMessage: 'Engin gögn fundust',
-              })}
-            />
+            <EmptyState title={m.noDataFound} />
           )}
         <Stack space={2}>
           {data?.occupationalLicenses?.items.map((license, index) =>

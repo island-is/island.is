@@ -12,6 +12,8 @@ import { getOrganizationLogoUrl } from '@island.is/shared/utils'
 import { Organization } from '@island.is/shared/types'
 import { LicenseDetail } from '../../components/LicenseDetail'
 import { useEffect, useState } from 'react'
+import { m } from '@island.is/service-portal/core'
+import { olMessage as om } from '../../lib/messages'
 
 type UseParams = {
   id: string
@@ -23,7 +25,7 @@ export const EducationDetail = () => {
   const user = useUserInfo()
   const birthday = user.profile.dateOfBirth ?? null
 
-  const { formatDateFns } = useLocale()
+  const { formatDateFns, formatMessage } = useLocale()
 
   const [shouldDownload, setShouldDownload] = useState(false)
 
@@ -57,7 +59,12 @@ export const EducationDetail = () => {
     !license.id ||
     !birthday
   )
-    return <ErrorScreen title="Ekki tókst að sækja leyfi" tag="Villa" />
+    return (
+      <ErrorScreen
+        title={formatMessage(om.errorFetchLicense)}
+        tag={formatMessage(m.somethingWrong)}
+      />
+    )
 
   const programme =
     license.programme.charAt(0).toUpperCase() + license.programme.slice(1)
@@ -76,21 +83,19 @@ export const EducationDetail = () => {
   return (
     <LicenseDetail
       title={programme}
-      intro="Hér birtast leyfisbréf kennara sem hafa verið útskrifaðir frá 1988. Bréfin eru sótt til Menntamálastofnunar."
+      intro={formatMessage(om.educationIntro)}
       img={organizationImage}
       buttonGroup={
         license.url ? (
-          <>
-            <Box paddingTop="p2">
-              <Button
-                variant="utility"
-                onClick={() => setShouldDownload(true)}
-                icon="download"
-              >
-                Sækja skírteini
-              </Button>
-            </Box>
-          </>
+          <Box paddingTop="p2">
+            <Button
+              variant="utility"
+              onClick={() => setShouldDownload(true)}
+              icon="download"
+            >
+              {formatMessage(om.fetchLicense)}
+            </Button>
+          </Box>
         ) : undefined
       }
       name={user.profile.name}
