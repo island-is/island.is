@@ -276,8 +276,8 @@
 /.github/workflows/                                                                                      @island-is/devops
 /apps/reference-backend/                                                                                 @island-is/devops
 /apps/github-actions-cache/                                                                              @island-is/devops
-/infra/                                                                                                  @island-is/devops
 **/infra/                                                                                                @island-is/devops @island-is/core
+/infra/                                                                                                  @island-is/devops
 /libs/logging/                                                                                           @island-is/devops
 /scripts/                                                                                                @island-is/devops
 /scripts/postinstall.js                                                                                  @island-is/devops @island-is/core
