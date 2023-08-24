@@ -331,8 +331,6 @@ services-auth-delegation-api:
     DB_PASS: '/k8s/services-auth/api/DB_PASSWORD'
     IDENTITY_SERVER_CLIENT_SECRET: '/k8s/services-auth/IDENTITY_SERVER_CLIENT_SECRET'
     NATIONAL_REGISTRY_IDS_CLIENT_SECRET: '/k8s/xroad/client/NATIONAL-REGISTRY/IDENTITYSERVER_SECRET'
-    RSK_PASSWORD: '/k8s/xroad/client/RSK/PASSWORD'
-    RSK_USERNAME: '/k8s/xroad/client/RSK/USERNAME'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
@@ -441,8 +439,6 @@ services-auth-ids-api:
     NOVA_PASSWORD: '/k8s/services-auth/NOVA_PASSWORD'
     NOVA_URL: '/k8s/services-auth/NOVA_URL'
     NOVA_USERNAME: '/k8s/services-auth/NOVA_USERNAME'
-    RSK_PASSWORD: '/k8s/xroad/client/RSK/PASSWORD'
-    RSK_USERNAME: '/k8s/xroad/client/RSK/USERNAME'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
@@ -647,8 +643,6 @@ services-auth-public-api:
     DB_PASS: '/k8s/services-auth/api/DB_PASSWORD'
     IDENTITY_SERVER_CLIENT_SECRET: '/k8s/services-auth/IDENTITY_SERVER_CLIENT_SECRET'
     NATIONAL_REGISTRY_IDS_CLIENT_SECRET: '/k8s/xroad/client/NATIONAL-REGISTRY/IDENTITYSERVER_SECRET'
-    RSK_PASSWORD: '/k8s/xroad/client/RSK/PASSWORD'
-    RSK_USERNAME: '/k8s/xroad/client/RSK/USERNAME'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
