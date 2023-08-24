@@ -54,7 +54,7 @@ export const PaymentCharge: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   }
   if (age >= 65) {
     // AY113: Skírteini fyrir 65 ára og eldri / License for 65 years and over
-    chargeCode = 'AY113'
+    chargeCode = 'AY137'
   }
 
   const chargeItems = getValueViaPath(
