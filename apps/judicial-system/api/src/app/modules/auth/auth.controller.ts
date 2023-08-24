@@ -1,23 +1,16 @@
-import IslandisLogin, { VerifyResult } from '@island.is/login'
 import { Entropy } from 'entropy-string'
-import { uuid } from 'uuidv4'
 import { CookieOptions, Request, Response } from 'express'
+import { createHash, randomBytes } from 'crypto'
+import jwt from 'jsonwebtoken'
 
-import {
-  Body,
-  Controller,
-  Get,
-  Inject,
-  Post,
-  Res,
-  Query,
-  Req,
-} from '@nestjs/common'
+import { Controller, Get, Inject, Res, Query, Req } from '@nestjs/common'
+import { ConfigType } from '@nestjs/config'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import {
   CSRF_COOKIE_NAME,
+  CODE_VERIFIER_COOKIE_NAME,
   ACCESS_TOKEN_COOKIE_NAME,
   EXPIRES_IN_MILLISECONDS,
   CASES_ROUTE,
@@ -34,8 +27,7 @@ import {
 import { environment } from '../../../environments'
 import { AuthUser, Cookie } from './auth.types'
 import { AuthService } from './auth.service'
-
-const { samlEntryPoint } = environment.auth
+import { authModuleConfig } from './auth.config'
 
 const REDIRECT_COOKIE_NAME = 'judicial-system.redirect'
 
@@ -43,19 +35,6 @@ const defaultCookieOptions: CookieOptions = {
   secure: environment.production,
   httpOnly: true,
   sameSite: 'lax',
-}
-
-const CSRF_COOKIE: Cookie = {
-  name: CSRF_COOKIE_NAME,
-  options: {
-    ...defaultCookieOptions,
-    httpOnly: false,
-  },
-}
-
-const ACCESS_TOKEN_COOKIE: Cookie = {
-  name: ACCESS_TOKEN_COOKIE_NAME,
-  options: defaultCookieOptions,
 }
 
 const REDIRECT_COOKIE: Cookie = {
@@ -66,60 +45,37 @@ const REDIRECT_COOKIE: Cookie = {
   },
 }
 
+const ACCESS_TOKEN_COOKIE: Cookie = {
+  name: ACCESS_TOKEN_COOKIE_NAME,
+  options: defaultCookieOptions,
+}
+
+const CODE_VERIFIER_COOKIE: Cookie = {
+  name: CODE_VERIFIER_COOKIE_NAME,
+  options: {
+    ...defaultCookieOptions,
+  },
+}
+const CSRF_COOKIE: Cookie = {
+  name: CSRF_COOKIE_NAME,
+  options: {
+    ...defaultCookieOptions,
+    httpOnly: false,
+  },
+}
+
 @Controller('api/auth')
 export class AuthController {
   constructor(
     private readonly auditTrailService: AuditTrailService,
     private readonly authService: AuthService,
     private readonly sharedAuthService: SharedAuthService,
-    @Inject('IslandisLogin')
-    private readonly loginIS: IslandisLogin,
+
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
+    @Inject(authModuleConfig.KEY)
+    private readonly config: ConfigType<typeof authModuleConfig>,
   ) {}
-
-  @Post('callback')
-  async callback(
-    @Body('token') token: string,
-    @Res() res: Response,
-    @Req() req: Request,
-  ) {
-    this.logger.debug('Received callback request')
-
-    let verifyResult: VerifyResult
-    try {
-      verifyResult = await this.loginIS.verify(token)
-    } catch (err) {
-      this.logger.error(err)
-
-      return res.redirect('/?villa=innskraning-ogild')
-    }
-
-    const { authId, redirectRoute } = req.cookies[REDIRECT_COOKIE_NAME] ?? {}
-
-    const { user } = verifyResult
-    if (!user || (authId && user.authId !== authId)) {
-      this.logger.error('Could not verify user authenticity', {
-        extra: {
-          authId,
-          userAuthId: user?.authId,
-        },
-      })
-
-      return res.redirect('/?villa=innskraning-ogild')
-    }
-
-    return this.redirectAuthenticatedUser(
-      {
-        nationalId: user.kennitala,
-        name: user.fullname,
-        mobile: user.mobile,
-      },
-      res,
-      redirectRoute,
-      new Entropy({ bits: 128 }).string(),
-    )
-  }
 
   @Get('login')
   login(
@@ -132,9 +88,10 @@ export class AuthController {
     const { name, options } = REDIRECT_COOKIE
 
     res.clearCookie(name, options)
+    res.clearCookie(CODE_VERIFIER_COOKIE.name, CODE_VERIFIER_COOKIE.options)
 
     // Local development
-    if (environment.auth.allowAuthBypass && nationalId) {
+    if (this.config.allowAuthBypass && nationalId) {
       this.logger.debug(`Logging in using development mode`)
 
       return this.redirectAuthenticatedUser(
@@ -146,12 +103,89 @@ export class AuthController {
       )
     }
 
-    const authId = uuid()
-    const electronicIdOnly = '&qaa=4'
+    const codeVerifier = randomBytes(32)
+      .toString('base64')
+      .replace(/\+/g, '-')
+      .replace(/\//g, '_')
+      .replace(/=/g, '')
+
+    const codeChallenge = createHash('sha256')
+      .update(codeVerifier)
+      .digest('base64')
+      .replace(/=/g, '')
+      .replace(/\+/g, '-')
+      .replace(/\//g, '_')
+
+    const params = new URLSearchParams({
+      response_type: 'code',
+      scope: this.config.scope,
+      code_challenge: codeChallenge,
+      code_challenge_method: 'S256',
+      redirect_uri: this.config.redirectUri,
+      client_id: this.config.clientId,
+    })
+
+    const loginUrl = `${this.config.issuer}/login?ReturnUrl=/connect/authorize/callback?${params}`
 
     return res
-      .cookie(name, { authId, redirectRoute }, options)
-      .redirect(`${samlEntryPoint}&authId=${authId}${electronicIdOnly}`)
+      .cookie(name, { redirectRoute }, options)
+      .cookie(
+        CODE_VERIFIER_COOKIE.name,
+        codeVerifier,
+        CODE_VERIFIER_COOKIE.options,
+      )
+      .redirect(loginUrl)
+  }
+
+  @Get('callback/identity-server')
+  async callback(
+    @Query('code') code: string,
+    @Res() res: Response,
+    @Req() req: Request,
+  ) {
+    this.logger.debug('Received callback request')
+    const { redirectRoute } = req.cookies[REDIRECT_COOKIE_NAME] ?? {}
+    const codeVerifier = req.cookies[CODE_VERIFIER_COOKIE.name]
+
+    res.clearCookie(CODE_VERIFIER_COOKIE.name, CODE_VERIFIER_COOKIE.options)
+
+    let accessToken
+    try {
+      accessToken = await this.authService.fetchIdsToken(code, codeVerifier)
+    } catch (err) {
+      this.logger.error(err)
+      return res.redirect('/?villa=innskraning-ogild')
+    }
+
+    if (accessToken) {
+      try {
+        const verifiedToken = await this.authService.verifyIdsToken(
+          accessToken.access_token,
+        )
+
+        if (verifiedToken) {
+          this.logger.debug('Token verification successful')
+          const token = jwt.decode(accessToken.id_token) as {
+            nationalId: string
+          }
+
+          return this.redirectAuthenticatedUser(
+            {
+              nationalId: token.nationalId,
+            },
+            res,
+            redirectRoute,
+            new Entropy({ bits: 128 }).string(),
+          )
+        }
+        if (!verifiedToken) {
+          this.logger.error('Token verification unsuccessful')
+        }
+      } catch (error) {
+        this.logger.error('Token verification failed', { error })
+      }
+    }
+    return res.redirect('/?villa=innskraning-ogild')
   }
 
   @Get('logout')
@@ -160,6 +194,7 @@ export class AuthController {
 
     res.clearCookie(ACCESS_TOKEN_COOKIE.name, ACCESS_TOKEN_COOKIE.options)
     res.clearCookie(CSRF_COOKIE.name, CSRF_COOKIE.options)
+    res.clearCookie(CODE_VERIFIER_COOKIE.name, CODE_VERIFIER_COOKIE.options)
 
     return res.json({ logout: true })
   }
