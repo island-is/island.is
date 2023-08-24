@@ -5,7 +5,7 @@ import { FileUploadController } from '@island.is/application/ui-components'
 import { supportingDocuments } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import { getValueViaPath } from '@island.is/application/core'
-import { Country } from '@island.is/clients/directorate-of-immigration/citizenship'
+import { Country } from '@island.is/clients/directorate-of-immigration'
 
 export const CriminalRecords = ({ field, application, error }: any) => {
   const answers = application.answers as Citizenship

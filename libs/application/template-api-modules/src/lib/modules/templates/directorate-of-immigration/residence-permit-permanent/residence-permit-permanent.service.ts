@@ -10,13 +10,13 @@ import {
   getChargeItemCodes,
   ResidencePermitPermanentAnswers,
 } from '@island.is/application/templates/directorate-of-immigration/residence-permit-permanent'
-import { ResidencePermitClient } from '@island.is/clients/directorate-of-immigration/residence-permit'
+import { DirectorateOfImmigrationClient } from '@island.is/clients/directorate-of-immigration'
 
 @Injectable()
 export class ResidencePermitPermanentService extends BaseTemplateApiService {
   constructor(
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
-    private readonly vesidencePermitClient: ResidencePermitClient,
+    private readonly directorateOfImmigrationClient: DirectorateOfImmigrationClient,
   ) {
     super(ApplicationTypes.RESIDENCE_PERMIT_PERMANENT)
   }
@@ -52,12 +52,8 @@ export class ResidencePermitPermanentService extends BaseTemplateApiService {
       )
     }
 
-    const isPayment:
-      | { fulfilled: boolean }
-      | undefined = await this.sharedTemplateAPIService.getPaymentStatus(
-      auth,
-      application.id,
-    )
+    const isPayment: { fulfilled: boolean } | undefined =
+      await this.sharedTemplateAPIService.getPaymentStatus(auth, application.id)
 
     if (!isPayment?.fulfilled) {
       throw new Error(
@@ -68,6 +64,8 @@ export class ResidencePermitPermanentService extends BaseTemplateApiService {
     const answers = application.answers as ResidencePermitPermanentAnswers
 
     // Submit the application
-    await this.vesidencePermitClient.submitApplicationForPermanent(auth)
+    await this.directorateOfImmigrationClient.submitApplicationForResidencePermitPermanent(
+      auth,
+    )
   }
 }

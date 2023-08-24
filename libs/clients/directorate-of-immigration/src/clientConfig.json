@@ -7,7 +7,9 @@
   "paths": {
     "/Applicant/Get": {
       "get": {
-        "tags": ["Applicant"],
+        "tags": [
+          "Applicant"
+        ],
         "responses": {
           "200": {
             "description": "Success",
@@ -34,7 +36,9 @@
     },
     "/Applicant": {
       "post": {
-        "tags": ["Applicant"],
+        "tags": [
+          "Applicant"
+        ],
         "requestBody": {
           "content": {
             "application/json": {
@@ -76,11 +80,59 @@
             }
           }
         }
+      },
+      "patch": {
+        "tags": [
+          "Applicant"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApplicantEditModel"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApplicantEditModel"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApplicantEditModel"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/Applicant/NewChild": {
       "post": {
-        "tags": ["Applicant"],
+        "tags": [
+          "Applicant"
+        ],
         "requestBody": {
           "content": {
             "application/json": {
@@ -126,7 +178,9 @@
     },
     "/api/ApplicantResidenceCondition/GetAll": {
       "get": {
-        "tags": ["ApplicantResidenceCondition"],
+        "tags": [
+          "ApplicantResidenceCondition"
+        ],
         "responses": {
           "200": {
             "description": "Success",
@@ -162,7 +216,9 @@
     },
     "/api/Application/Citizenship": {
       "post": {
-        "tags": ["Application"],
+        "tags": [
+          "Application"
+        ],
         "responses": {
           "200": {
             "description": "Success",
@@ -189,7 +245,9 @@
     },
     "/api/Application/Citizenship/{ssnr}": {
       "post": {
-        "tags": ["Application"],
+        "tags": [
+          "Application"
+        ],
         "parameters": [
           {
             "name": "ssnr",
@@ -227,7 +285,9 @@
     },
     "/api/Application/GetAll/{ssnr}": {
       "get": {
-        "tags": ["Application"],
+        "tags": [
+          "Application"
+        ],
         "parameters": [
           {
             "name": "ssnr",
@@ -274,7 +334,9 @@
     },
     "/api/Application": {
       "post": {
-        "tags": ["Application"],
+        "tags": [
+          "Application"
+        ],
         "requestBody": {
           "content": {
             "application/json": {
@@ -320,7 +382,9 @@
     },
     "/api/Application/GetAll": {
       "get": {
-        "tags": ["Application"],
+        "tags": [
+          "Application"
+        ],
         "responses": {
           "200": {
             "description": "Success",
@@ -356,7 +420,9 @@
     },
     "/api/Children": {
       "post": {
-        "tags": ["Children"],
+        "tags": [
+          "Children"
+        ],
         "requestBody": {
           "content": {
             "application/json": {
@@ -402,7 +468,9 @@
     },
     "/api/Children/GetAll": {
       "get": {
-        "tags": ["Children"],
+        "tags": [
+          "Children"
+        ],
         "responses": {
           "200": {
             "description": "Success",
@@ -438,7 +506,9 @@
     },
     "/api/CountryOfResidence": {
       "post": {
-        "tags": ["CountryOfResidence"],
+        "tags": [
+          "CountryOfResidence"
+        ],
         "requestBody": {
           "content": {
             "application/json": {
@@ -484,7 +554,9 @@
     },
     "/api/CountryOfResidence/GetAll": {
       "get": {
-        "tags": ["CountryOfResidence"],
+        "tags": [
+          "CountryOfResidence"
+        ],
         "responses": {
           "200": {
             "description": "Success",
@@ -520,7 +592,9 @@
     },
     "/api/CriminalRecord": {
       "post": {
-        "tags": ["CriminalRecord"],
+        "tags": [
+          "CriminalRecord"
+        ],
         "requestBody": {
           "content": {
             "application/json": {
@@ -566,7 +640,9 @@
     },
     "/api/CriminalRecord/GetAll": {
       "get": {
-        "tags": ["CriminalRecord"],
+        "tags": [
+          "CriminalRecord"
+        ],
         "responses": {
           "200": {
             "description": "Success",
@@ -602,7 +678,9 @@
     },
     "/api/Employer/GetAll/{applicationId}": {
       "get": {
-        "tags": ["Employer"],
+        "tags": [
+          "Employer"
+        ],
         "parameters": [
           {
             "name": "applicationId",
@@ -649,7 +727,9 @@
     },
     "/api/Employer/{applicationId}": {
       "post": {
-        "tags": ["Employer"],
+        "tags": [
+          "Employer"
+        ],
         "parameters": [
           {
             "name": "applicationId",
@@ -706,7 +786,9 @@
     },
     "/api/OptionSet/{lookupType}": {
       "get": {
-        "tags": ["OptionSet"],
+        "tags": [
+          "OptionSet"
+        ],
         "parameters": [
           {
             "name": "lookupType",
@@ -753,7 +835,9 @@
     },
     "/api/OptionSet/GetSingle/{lookupType}/{id}": {
       "get": {
-        "tags": ["OptionSet"],
+        "tags": [
+          "OptionSet"
+        ],
         "parameters": [
           {
             "name": "lookupType",
@@ -800,7 +884,9 @@
     },
     "/api/Parent": {
       "post": {
-        "tags": ["Parent"],
+        "tags": [
+          "Parent"
+        ],
         "requestBody": {
           "content": {
             "application/json": {
@@ -846,7 +932,9 @@
     },
     "/api/Parent/GetAll": {
       "get": {
-        "tags": ["Parent"],
+        "tags": [
+          "Parent"
+        ],
         "responses": {
           "200": {
             "description": "Success",
@@ -882,7 +970,9 @@
     },
     "/api/ResidenceAbroad/GetAll/{applicationId}": {
       "get": {
-        "tags": ["ResidenceAbroad"],
+        "tags": [
+          "ResidenceAbroad"
+        ],
         "parameters": [
           {
             "name": "applicationId",
@@ -929,7 +1019,9 @@
     },
     "/api/ResidenceAbroad/{applicationId}": {
       "post": {
-        "tags": ["ResidenceAbroad"],
+        "tags": [
+          "ResidenceAbroad"
+        ],
         "parameters": [
           {
             "name": "applicationId",
@@ -986,7 +1078,9 @@
     },
     "/api/ResidencePermitClassification": {
       "get": {
-        "tags": ["ResidencePermitClassification"],
+        "tags": [
+          "ResidencePermitClassification"
+        ],
         "responses": {
           "200": {
             "description": "Success",
@@ -1022,7 +1116,9 @@
     },
     "/api/ResidencePermitClassification/ClassificationType/{classificationId}": {
       "get": {
-        "tags": ["ResidencePermitClassification"],
+        "tags": [
+          "ResidencePermitClassification"
+        ],
         "parameters": [
           {
             "name": "classificationId",
@@ -1069,7 +1165,9 @@
     },
     "/api/ResidencePermitClassification/ClassificationDetail/{classificationTypeId}": {
       "get": {
-        "tags": ["ResidencePermitClassification"],
+        "tags": [
+          "ResidencePermitClassification"
+        ],
         "parameters": [
           {
             "name": "classificationTypeId",
@@ -1116,7 +1214,9 @@
     },
     "/api/Spouse": {
       "post": {
-        "tags": ["Spouse"],
+        "tags": [
+          "Spouse"
+        ],
         "requestBody": {
           "content": {
             "application/json": {
@@ -1162,7 +1262,9 @@
     },
     "/api/Spouse/GetAll": {
       "get": {
-        "tags": ["Spouse"],
+        "tags": [
+          "Spouse"
+        ],
         "responses": {
           "200": {
             "description": "Success",
@@ -1198,7 +1300,9 @@
     },
     "/api/Study": {
       "post": {
-        "tags": ["Study"],
+        "tags": [
+          "Study"
+        ],
         "requestBody": {
           "content": {
             "application/json": {
@@ -1244,7 +1348,9 @@
     },
     "/api/Study/GetAll": {
       "get": {
-        "tags": ["Study"],
+        "tags": [
+          "Study"
+        ],
         "responses": {
           "200": {
             "description": "Success",
@@ -1280,7 +1386,9 @@
     },
     "/api/TravelDocument/GetAll/{applicationId}": {
       "get": {
-        "tags": ["TravelDocument"],
+        "tags": [
+          "TravelDocument"
+        ],
         "parameters": [
           {
             "name": "applicationId",
@@ -1327,7 +1435,9 @@
     },
     "/api/TravelDocument/{applicationId}": {
       "post": {
-        "tags": ["TravelDocument"],
+        "tags": [
+          "TravelDocument"
+        ],
         "parameters": [
           {
             "name": "applicationId",
@@ -1385,6 +1495,20 @@
   },
   "components": {
     "schemas": {
+      "ApplicantEditModel": {
+        "type": "object",
+        "properties": {
+          "emailAddress": {
+            "type": "string",
+            "nullable": true
+          },
+          "telephone": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "ApplicantNewModel": {
         "type": "object",
         "properties": {
@@ -1480,6 +1604,15 @@
             "nullable": true
           },
           "residenceConditionName": {
+            "type": "string",
+            "nullable": true
+          },
+          "maritalStatus": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "maritalStatusName": {
             "type": "string",
             "nullable": true
           },
@@ -2156,7 +2289,7 @@
   },
   "security": [
     {
-      "bearerAuth": []
+      "bearerAuth": [ ]
     }
   ]
 }

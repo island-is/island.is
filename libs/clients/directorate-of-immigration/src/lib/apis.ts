@@ -1,19 +1,31 @@
 import {
   ApplicantApi,
+  ApplicantResidenceConditionApi,
+  ApplicationApi,
+  ChildrenApi,
   Configuration,
+  CountryOfResidenceApi,
   CriminalRecordApi,
   OptionSetApi,
+  ParentApi,
   ResidenceAbroadApi,
+  SpouseApi,
   StudyApi,
   TravelDocumentApi,
 } from '../../gen/fetch'
 import { ApiConfiguration } from './apiConfiguration'
 
 export const exportedApis = [
-  OptionSetApi,
   ApplicantApi,
-  ResidenceAbroadApi,
+  ApplicantResidenceConditionApi,
+  ApplicationApi,
+  ChildrenApi,
+  CountryOfResidenceApi,
   CriminalRecordApi,
+  OptionSetApi,
+  ParentApi,
+  ResidenceAbroadApi,
+  SpouseApi,
   StudyApi,
   TravelDocumentApi,
 ].map((Api) => ({

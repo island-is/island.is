@@ -1,17 +1,17 @@
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
 import { ConfigType, IdsClientConfig } from '@island.is/nest/config'
 import { Configuration } from '../../gen/fetch'
-import { ResidencePermitClientConfig } from './residencePermitClient.config'
+import { DirectorateOfImmigrationClientConfig } from './directorateOfImmigrationClient.config'
 
 export const ApiConfiguration = {
-  provide: 'ResidencePermitClientApiConfiguration',
+  provide: 'DirectorateOfImmigrationClientApiConfiguration',
   useFactory: (
-    config: ConfigType<typeof ResidencePermitClientConfig>,
+    config: ConfigType<typeof DirectorateOfImmigrationClientConfig>,
     idsClientConfig: ConfigType<typeof IdsClientConfig>,
   ) => {
     return new Configuration({
       fetchApi: createEnhancedFetch({
-        name: 'clients-directorate-of-immigration-residence-permit',
+        name: 'clients-directorate-of-immigration',
         logErrorResponseBody: true,
         autoAuth: idsClientConfig.isConfigured
           ? {
@@ -29,5 +29,5 @@ export const ApiConfiguration = {
       },
     })
   },
-  inject: [ResidencePermitClientConfig.KEY, IdsClientConfig.KEY],
+  inject: [DirectorateOfImmigrationClientConfig.KEY, IdsClientConfig.KEY],
 }

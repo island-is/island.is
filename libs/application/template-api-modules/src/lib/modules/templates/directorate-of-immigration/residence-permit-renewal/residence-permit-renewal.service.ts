@@ -17,19 +17,19 @@ import {
   CriminalRecord,
   CurrentResidencePermit,
   CurrentResidencePermitType,
+  DirectorateOfImmigrationClient,
   Passport,
-  ResidencePermitClient,
   StayAbroad,
   Study,
   TravelDocumentType,
-} from '@island.is/clients/directorate-of-immigration/residence-permit'
+} from '@island.is/clients/directorate-of-immigration'
 import { TemplateApiError } from '@island.is/nest/problem'
 
 @Injectable()
 export class ResidencePermitRenewalService extends BaseTemplateApiService {
   constructor(
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
-    private readonly residencePermitClient: ResidencePermitClient,
+    private readonly directorateOfImmigrationClient: DirectorateOfImmigrationClient,
   ) {
     super(ApplicationTypes.RESIDENCE_PERMIT_RENEWAL)
   }
@@ -53,23 +53,25 @@ export class ResidencePermitRenewalService extends BaseTemplateApiService {
   }
 
   async getCountries(): Promise<Country[]> {
-    return this.residencePermitClient.getCountries()
+    return this.directorateOfImmigrationClient.getCountries()
   }
 
   async getTravelDocumentTypes(): Promise<TravelDocumentType[]> {
-    return this.residencePermitClient.getTravelDocumentTypes()
+    return this.directorateOfImmigrationClient.getTravelDocumentTypes()
   }
 
   async getApplicantCurrentResidencePermit({
     auth,
   }: TemplateApiModuleActionProps): Promise<CurrentResidencePermit> {
-    const applicant = await this.residencePermitClient.getApplicantCurrentResidencePermit(
-      auth,
-    )
+    const applicant =
+      await this.directorateOfImmigrationClient.getApplicantCurrentResidencePermit(
+        auth,
+      )
 
-    const children = await this.residencePermitClient.getChildrenCurrentResidencePermit(
-      auth,
-    )
+    const children =
+      await this.directorateOfImmigrationClient.getChildrenCurrentResidencePermit(
+        auth,
+      )
 
     const canAtLeastOneApplyPermanent = !![applicant, ...children].find(
       (x) => x.canApplyRenewal,
@@ -90,7 +92,7 @@ export class ResidencePermitRenewalService extends BaseTemplateApiService {
   async getChildrenCurrentResidencePermit({
     auth,
   }: TemplateApiModuleActionProps): Promise<CurrentResidencePermit[]> {
-    return await this.residencePermitClient.getChildrenCurrentResidencePermit(
+    return await this.directorateOfImmigrationClient.getChildrenCurrentResidencePermit(
       auth,
     )
   }
@@ -98,7 +100,7 @@ export class ResidencePermitRenewalService extends BaseTemplateApiService {
   async getApplicantCurrentResidencePermitType({
     auth,
   }: TemplateApiModuleActionProps): Promise<CurrentResidencePermitType> {
-    return await this.residencePermitClient.getApplicantCurrentResidencePermitType(
+    return await this.directorateOfImmigrationClient.getApplicantCurrentResidencePermitType(
       auth,
     )
   }
@@ -106,31 +108,31 @@ export class ResidencePermitRenewalService extends BaseTemplateApiService {
   async getOldStayAbroadList({
     auth,
   }: TemplateApiModuleActionProps): Promise<StayAbroad[]> {
-    return this.residencePermitClient.getOldStayAbroadList(auth)
+    return this.directorateOfImmigrationClient.getOldStayAbroadList(auth)
   }
 
   async getOldCriminalRecordList({
     auth,
   }: TemplateApiModuleActionProps): Promise<CriminalRecord[]> {
-    return this.residencePermitClient.getOldCriminalRecordList(auth)
+    return this.directorateOfImmigrationClient.getOldCriminalRecordList(auth)
   }
 
   async getOldStudyItem({
     auth,
   }: TemplateApiModuleActionProps): Promise<Study | undefined> {
-    return this.residencePermitClient.getOldStudyItem(auth)
+    return this.directorateOfImmigrationClient.getOldStudyItem(auth)
   }
 
   async getOldPassportItem({
     auth,
   }: TemplateApiModuleActionProps): Promise<Passport | undefined> {
-    return this.residencePermitClient.getOldPassportItem(auth)
+    return this.directorateOfImmigrationClient.getOldPassportItem(auth)
   }
 
   async getOldAgentItem({
     auth,
   }: TemplateApiModuleActionProps): Promise<Agent | undefined> {
-    return this.residencePermitClient.getOldAgentItem(auth)
+    return this.directorateOfImmigrationClient.getOldAgentItem(auth)
   }
 
   async submitApplication({
@@ -146,12 +148,8 @@ export class ResidencePermitRenewalService extends BaseTemplateApiService {
       )
     }
 
-    const isPayment:
-      | { fulfilled: boolean }
-      | undefined = await this.sharedTemplateAPIService.getPaymentStatus(
-      auth,
-      application.id,
-    )
+    const isPayment: { fulfilled: boolean } | undefined =
+      await this.sharedTemplateAPIService.getPaymentStatus(auth, application.id)
 
     if (!isPayment?.fulfilled) {
       throw new Error(
@@ -162,6 +160,8 @@ export class ResidencePermitRenewalService extends BaseTemplateApiService {
     const answers = application.answers as ResidencePermitRenewalAnswers
 
     // Submit the application
-    await this.residencePermitClient.submitApplicationForRenewal(auth)
+    await this.directorateOfImmigrationClient.submitApplicationForResidencePermitRenewal(
+      auth,
+    )
   }
 }

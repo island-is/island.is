@@ -4,11 +4,10 @@ import { SharedTemplateAPIModule } from '../../../shared'
 import { BaseTemplateAPIModuleConfig } from '../../../../types'
 import { CitizenshipService } from './citizenship.service'
 import { NationalRegistryClientModule } from '@island.is/clients/national-registry-v2'
-
 import {
-  CitizenshipClientModule,
-  CitizenshipClientConfig,
-} from '@island.is/clients/directorate-of-immigration/citizenship'
+  DirectorateOfImmigrationClientModule,
+  DirectorateOfImmigrationClientConfig,
+} from '@island.is/clients/directorate-of-immigration'
 
 export class CitizenshipModule {
   static register(baseConfig: BaseTemplateAPIModuleConfig): DynamicModule {
@@ -16,11 +15,11 @@ export class CitizenshipModule {
       module: CitizenshipModule,
       imports: [
         SharedTemplateAPIModule.register(baseConfig),
-        CitizenshipClientModule,
+        DirectorateOfImmigrationClientModule,
         NationalRegistryClientModule,
         ConfigModule.forRoot({
           isGlobal: true,
-          load: [CitizenshipClientConfig],
+          load: [DirectorateOfImmigrationClientConfig],
         }),
       ],
       providers: [CitizenshipService],

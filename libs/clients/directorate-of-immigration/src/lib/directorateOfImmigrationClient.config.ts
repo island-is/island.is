@@ -6,8 +6,8 @@ const schema = z.object({
   scope: z.array(z.string()),
 })
 
-export const CitizenshipClientConfig = defineConfig({
-  name: 'CitizenshipApi',
+export const DirectorateOfImmigrationClientConfig = defineConfig({
+  name: 'DirectorateOfImmigrationApi',
   schema,
   load(env) {
     return {

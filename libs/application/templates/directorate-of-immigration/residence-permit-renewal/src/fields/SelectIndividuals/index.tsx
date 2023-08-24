@@ -8,7 +8,7 @@ import {
   NationalRegistryIndividual,
 } from '@island.is/application/types'
 import { getValueViaPath } from '@island.is/application/core'
-import { CurrentResidencePermit } from '@island.is/clients/directorate-of-immigration/residence-permit'
+import { CurrentResidencePermit } from '@island.is/clients/directorate-of-immigration'
 import { formatDate } from '../../utils'
 import { useLocale } from '@island.is/localization'
 
@@ -32,8 +32,8 @@ export const SelectIndividuals = ({ field, application, error }: any) => {
     'applicantCurrentResidencePermit.data',
   ) as CurrentResidencePermit
 
-  const canApplyRenewal = !!applicantCurrentResidencePermit?.canApplyRenewal
-    ?.canApply
+  const canApplyRenewal =
+    !!applicantCurrentResidencePermit?.canApplyRenewal?.canApply
 
   const applicantCheckbox = {
     value: applicant?.nationalId || '',
@@ -59,7 +59,8 @@ export const SelectIndividuals = ({ field, application, error }: any) => {
     disabled: !canApplyRenewal,
   }
 
-  const children = childrenCustodyInformation.data as ApplicantChildCustodyInformation[]
+  const children =
+    childrenCustodyInformation.data as ApplicantChildCustodyInformation[]
 
   const childrenCurrentResidencePermit = getValueViaPath(
     application.externalData,
@@ -73,8 +74,8 @@ export const SelectIndividuals = ({ field, application, error }: any) => {
         (x) => x.nationalId === child.nationalId,
       )
 
-      const canApplyRenewal = !!childCurrentResidencePermit?.canApplyRenewal
-        ?.canApply
+      const canApplyRenewal =
+        !!childCurrentResidencePermit?.canApplyRenewal?.canApply
 
       return {
         value: child.nationalId,

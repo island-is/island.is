@@ -7,7 +7,7 @@ import { Citizenship } from '../../lib/dataSchema'
 import { useLocale } from '@island.is/localization'
 import { Routes } from '../../lib/constants'
 import SummaryBlock from '../../components/SummaryBlock'
-import { Country } from '@island.is/clients/directorate-of-immigration/citizenship'
+import { Country } from '@island.is/clients/directorate-of-immigration'
 import { YES, getValueViaPath } from '@island.is/application/core'
 
 interface Props extends FieldBaseProps {

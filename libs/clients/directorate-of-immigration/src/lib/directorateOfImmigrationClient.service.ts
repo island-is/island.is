@@ -1,14 +1,19 @@
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import {
+  Agent,
   CitizenshipApplication,
   Country,
   CountryOfResidence,
+  CriminalRecord,
+  CurrentResidencePermit,
+  CurrentResidencePermitType,
   ForeignCriminalRecordFile,
   Passport,
   ResidenceCondition,
   StayAbroad,
+  Study,
   TravelDocumentType,
-} from './citizenshipClient.types'
+} from './directorateOfImmigrationClient.types'
 import { Inject, Injectable, Logger } from '@nestjs/common'
 import {
   ApplicantApi,
@@ -16,28 +21,33 @@ import {
   ApplicationApi,
   ChildrenApi,
   CountryOfResidenceApi,
+  CriminalRecordApi,
   LookupType,
   OptionSetApi,
   ParentApi,
   ResidenceAbroadApi,
   SpouseApi,
+  StudyApi,
   TravelDocumentApi,
 } from '../../gen/fetch'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { child } from 'winston'
 
+export
 @Injectable()
-export class CitizenshipClient {
+class DirectorateOfImmigrationClient {
   constructor(
     private applicantApi: ApplicantApi,
     private applicantResidenceConditionApi: ApplicantResidenceConditionApi,
     private applicationApi: ApplicationApi,
     private childrenApi: ChildrenApi,
     private countryOfResidenceApi: CountryOfResidenceApi,
+    private criminalRecordApi: CriminalRecordApi,
     private optionSetApi: OptionSetApi,
     private parentApi: ParentApi,
     private residenceAbroadApi: ResidenceAbroadApi,
     private spouseApi: SpouseApi,
+    private studyApi: StudyApi,
     private travelDocumentApi: TravelDocumentApi,
 
     @Inject(LOGGER_PROVIDER)
@@ -66,6 +76,10 @@ export class CitizenshipClient {
     return this.countryOfResidenceApi.withMiddleware(new AuthMiddleware(auth))
   }
 
+  private criminalRecordApiWithAuth(auth: Auth) {
+    return this.criminalRecordApi.withMiddleware(new AuthMiddleware(auth))
+  }
+
   private parentApiWithAuth(auth: Auth) {
     return this.parentApi.withMiddleware(new AuthMiddleware(auth))
   }
@@ -78,9 +92,15 @@ export class CitizenshipClient {
     return this.spouseApi.withMiddleware(new AuthMiddleware(auth))
   }
 
+  private studyApiWithAuth(auth: Auth) {
+    return this.studyApi.withMiddleware(new AuthMiddleware(auth))
+  }
+
   private travelDocumentApiWithAuth(auth: Auth) {
     return this.travelDocumentApi.withMiddleware(new AuthMiddleware(auth))
   }
+
+  // Common:
 
   async getCountries(): Promise<Country[]> {
     try {
@@ -93,8 +113,8 @@ export class CitizenshipClient {
         name: item.name!,
       }))
     } catch (error) {
-      this.logger.error('Error when trying to get citizenship countries', error)
-      throw new Error('Error when trying to get citizenship countries')
+      this.logger.error('Error when trying to get countries from UTL', error)
+      throw new Error('Error when trying to get countries from UTL')
     }
   }
 
@@ -110,36 +130,14 @@ export class CitizenshipClient {
       }))
     } catch (error) {
       this.logger.error(
-        'Error when trying to get citizenship travel document types',
+        'Error when trying to get travel document types from UTL',
         error,
       )
-      throw new Error(
-        'Error when trying to get citizenship travel document types',
-      )
+      throw new Error('Error when trying to get travel document types from UTL')
     }
   }
 
-  async getResidenceConditions(auth: Auth): Promise<ResidenceCondition[]> {
-    try {
-      const res = await this.applicantResidenceConditionApiWithAuth(
-        auth,
-      ).apiApplicantResidenceConditionGetAllGet()
-
-      return res.map((item) => ({
-        conditionId: item.residenceConditionId!,
-        conditionName: item.residenceConditionName!,
-        isTypeMaritalStatus: item.isTypeMarried || false,
-      }))
-    } catch (error) {
-      this.logger.error(
-        'Error when trying to get citizenship residence conditions',
-        error,
-      )
-      throw new Error(
-        'Error when trying to get citizenship residence conditions',
-      )
-    }
-  }
+  // Citizenship:
 
   async getOldCountryOfResidenceList(
     auth: Auth,
@@ -155,12 +153,10 @@ export class CitizenshipClient {
       }))
     } catch (error) {
       this.logger.error(
-        'Error when trying to get citizenship country of residence',
+        'Error when trying to get country of residence from UTL',
         error,
       )
-      throw new Error(
-        'Error when trying to get citizenship country of residence',
-      )
+      throw new Error('Error when trying to get country of residence from UTL')
     }
   }
 
@@ -181,10 +177,10 @@ export class CitizenshipClient {
       return []
     } catch (error) {
       this.logger.error(
-        'Error when trying to get citizenship residence abroad',
+        'Error when trying to get residence abroad from UTL',
         error,
       )
-      throw new Error('Error when trying to get citizenship residence abroad')
+      throw new Error('Error when trying to get residence abroad from UTL')
     }
   }
 
@@ -215,12 +211,10 @@ export class CitizenshipClient {
       return undefined
     } catch (error) {
       this.logger.error(
-        'Error when trying to get passport info from UTL',
+        'Error when trying to get users travel document from UTL',
         error,
       )
-      throw new Error(
-        'Villa kom upp þegar reynt var að sækja tegund vegabréfs.',
-      )
+      throw new Error('Error when trying to get users travel document from UTL')
     }
   }
 
@@ -228,6 +222,30 @@ export class CitizenshipClient {
     auth: Auth,
   ): Promise<ForeignCriminalRecordFile[]> {
     return [] // TODOx missing endpoint for GET foreign criminal record
+  }
+
+  async getCitizenshipResidenceConditions(
+    auth: Auth,
+  ): Promise<ResidenceCondition[]> {
+    try {
+      const res = await this.applicantResidenceConditionApiWithAuth(
+        auth,
+      ).apiApplicantResidenceConditionGetAllGet()
+
+      return res.map((item) => ({
+        conditionId: item.residenceConditionId!,
+        conditionName: item.residenceConditionName!,
+        isTypeMaritalStatus: item.isTypeMarried || false,
+      }))
+    } catch (error) {
+      this.logger.error(
+        'Error when trying to get citizenship residence conditions from UTL',
+        error,
+      )
+      throw new Error(
+        'Error when trying to get citizenship residence conditions from UTL',
+      )
+    }
   }
 
   async submitApplicationForCitizenship(
@@ -246,10 +264,12 @@ export class CitizenshipClient {
       applicationId = applicationId.replace(/\"/g, '')
     } catch (error) {
       this.logger.error(
-        'Error when trying to post citizenship application',
+        'Error when trying to post citizenship application to UTL',
         error,
       )
-      throw new Error('Error when trying to post citizenship application')
+      throw new Error(
+        'Error when trying to post citizenship application to UTL',
+      )
     }
 
     // submit basic information about applicant
@@ -273,10 +293,10 @@ export class CitizenshipClient {
       })
     } catch (error) {
       this.logger.error(
-        'Error when trying to post citizenship applicant',
+        'Error when trying to post citizenship applicant to UTL',
         error,
       )
-      throw new Error('Error when trying to post citizenship applicant')
+      throw new Error('Error when trying to post citizenship applicant to UTL')
     }
 
     // submit information about spouse
@@ -296,8 +316,11 @@ export class CitizenshipClient {
           },
         })
       } catch (error) {
-        this.logger.error('Error when trying to post citizenship spouse', error)
-        throw new Error('Error when trying to post citizenship spouse')
+        this.logger.error(
+          'Error when trying to post citizenship spouse to UTL',
+          error,
+        )
+        throw new Error('Error when trying to post citizenship spouse to UTL')
       }
     }
 
@@ -313,8 +336,11 @@ export class CitizenshipClient {
           },
         })
       } catch (error) {
-        this.logger.error('Error when trying to post citizenship parent', error)
-        throw new Error('Error when trying to post citizenship parent')
+        this.logger.error(
+          'Error when trying to post citizenship parent to UTL',
+          error,
+        )
+        throw new Error('Error when trying to post citizenship parent to UTL')
       }
     }
 
@@ -331,11 +357,11 @@ export class CitizenshipClient {
         })
       } catch (error) {
         this.logger.error(
-          'Error when trying to post citizenship country of residence',
+          'Error when trying to post citizenship country of residence to UTL',
           error,
         )
         throw new Error(
-          'Error when trying to post citizenship country of residence',
+          'Error when trying to post citizenship country of residence to UTL',
         )
       }
     }
@@ -357,11 +383,11 @@ export class CitizenshipClient {
         })
       } catch (error) {
         this.logger.error(
-          'Error when trying to post citizenship residence abroad',
+          'Error when trying to post citizenship residence abroad to UTL',
           error,
         )
         throw new Error(
-          'Error when trying to post citizenship residence abroad',
+          'Error when trying to post citizenship residence abroad to UTL',
         )
       }
     }
@@ -383,10 +409,12 @@ export class CitizenshipClient {
       })
     } catch (error) {
       this.logger.error(
-        'Error when trying to post citizenship travel document',
+        'Error when trying to post citizenship travel document to UTL',
         error,
       )
-      throw new Error('Error when trying to post citizenship travel document')
+      throw new Error(
+        'Error when trying to post citizenship travel document to UTL',
+      )
     }
 
     // submit all other supporting documents for applicant
@@ -410,11 +438,11 @@ export class CitizenshipClient {
     //   })
     // } catch (error) {
     //   this.logger.error(
-    //     'Error when trying to post citizenship supporting document',
+    //     'Error when trying to post citizenship supporting document to UTL',
     //     error,
     //   )
     //   throw new Error(
-    //     'Error when trying to post citizenship supporting document',
+    //     'Error when trying to post citizenship supporting document to UTL',
     //   )
     // }
 
@@ -435,11 +463,11 @@ export class CitizenshipClient {
     //     })
     //   } catch (error) {
     //     this.logger.error(
-    //       'Error when trying to post citizenship child application',
+    //       'Error when trying to post citizenship child application to UTL',
     //       error,
     //     )
     //     throw new Error(
-    //       'Error when trying to post citizenship child application',
+    //       'Error when trying to post citizenship child application to UTL',
     //     )
     //   }
 
@@ -464,11 +492,11 @@ export class CitizenshipClient {
     //       })
     //     } catch (error) {
     //       this.logger.error(
-    //         'Error when trying to post citizenship child passport',
+    //         'Error when trying to post citizenship child passport to UTL',
     //         error,
     //       )
     //       throw new Error(
-    //         'Error when trying to post citizenship child passport',
+    //         'Error when trying to post citizenship child passport to UTL',
     //       )
     //     }
     //   }
@@ -491,14 +519,188 @@ export class CitizenshipClient {
     //       })
     //     } catch (error) {
     //       this.logger.error(
-    //         'Error when trying to post citizenship child supporting document',
+    //         'Error when trying to post citizenship child supporting document to UTL',
     //         error,
     //       )
     //       throw new Error(
-    //         'Error when trying to post citizenship child supporting document',
+    //         'Error when trying to post citizenship child supporting document to UTL',
     //       )
     //     }
     //   }
     // }
+  }
+
+  // Residence permit renewal:
+
+  // TODO call endpoint (that does not yet exist) and not hardcode values
+  async getApplicantCurrentResidencePermitType(
+    auth: Auth,
+  ): Promise<CurrentResidencePermitType> {
+    try {
+      // const res = await this.applicantApiWithAuth(auth).applicantGetGet()
+
+      return {
+        isPermitTypeFamily: true,
+        isPermitTypeStudy: false,
+        isPermitTypeEmployment: false,
+        isWorkPermitTypeEmploymentServiceAgreement: false,
+        isWorkPermitTypeEmploymentOther: false,
+        isWorkPermitTypeSpecial: false,
+      }
+    } catch (error) {
+      this.logger.error(
+        'Error when trying to get current residence permit info from UTL',
+        error,
+      )
+      throw new Error(
+        'Villa kom upp þegar reynt var að sækja upplýsingar um núverandi dvalarleyfi þitt.',
+      )
+    }
+  }
+
+  // TODO call endpoint (that does not yet exist) and not hardcode values
+  async getApplicantCurrentResidencePermit(
+    auth: Auth,
+  ): Promise<CurrentResidencePermit> {
+    try {
+      // const res = await this.applicantApiWithAuth(auth).applicantGetGet()
+
+      return {
+        nationalId: auth.nationalId!,
+        permitTypeId: 123,
+        permitTypeName: 'Tímabundið dvalarleyfi vegna fjölskyldusameiningar',
+        permitValidTo: new Date(),
+        canApplyRenewal: {
+          canApply: true,
+          reason: null,
+        },
+        canApplyPermanent: {
+          canApply: false,
+        },
+      }
+    } catch (error) {
+      this.logger.error(
+        'Error when trying to get current residence permit info from UTL',
+        error,
+      )
+      throw new Error(
+        'Villa kom upp þegar reynt var að sækja upplýsingar um núverandi dvalarleyfi þitt.',
+      )
+    }
+  }
+
+  // TODO call endpoint (that does not yet exist) and not hardcode values
+  async getChildrenCurrentResidencePermit(
+    auth: Auth,
+  ): Promise<CurrentResidencePermit[]> {
+    try {
+      // const res = await this.applicantApiWithAuth(auth).applicantGetGet()
+
+      return [
+        {
+          nationalId: '0703111430',
+          permitTypeId: 456,
+          permitTypeName: 'Tímabundið dvalarleyfi vegna fjölskyldusameiningar',
+          permitValidTo: new Date(),
+          canApplyRenewal: {
+            canApply: true,
+            reason: null,
+          },
+          canApplyPermanent: {
+            canApply: false,
+          },
+        },
+        {
+          nationalId: '1012061490',
+          permitTypeId: 456,
+          permitTypeName: 'Tímabundið dvalarleyfi vegna fjölskyldusameiningar',
+          permitValidTo: new Date(),
+          canApplyRenewal: {
+            canApply: false,
+            reason: 'Íslenskur ríkisborgari',
+          },
+          canApplyPermanent: {
+            canApply: false,
+          },
+        },
+      ]
+    } catch (error) {
+      this.logger.error(
+        'Error when trying to get current residence permit info from UTL',
+        error,
+      )
+      throw new Error(
+        'Villa kom upp þegar reynt var að sækja upplýsingar um núverandi dvalarleyfi þitt.',
+      )
+    }
+  }
+
+  // TODO need to add possibility to select for children as well
+  async getOldCriminalRecordList(auth: Auth): Promise<CriminalRecord[]> {
+    try {
+      const res = await this.criminalRecordApiWithAuth(
+        auth,
+      ).apiCriminalRecordGetAllGet()
+
+      return res.map((item) => ({
+        countryId: item.countryId!,
+        countryName: item.countryName!,
+        date: item.when ? new Date(item.when) : null,
+        offenceDescription: item.offence,
+        punishmentDescription: item.punishment,
+      }))
+    } catch (error) {
+      this.logger.error(
+        'Error when trying to get old criminal record info from UTL',
+        error,
+      )
+      throw new Error('Villa kom upp þegar reynt var að sækja sakaferill.')
+    }
+  }
+
+  // TODO need to add possibility to select for children as well
+  async getOldStudyItem(auth: Auth): Promise<Study | undefined> {
+    try {
+      const res = await this.studyApiWithAuth(auth).apiStudyGetAllGet()
+
+      // Select the most recent entry
+      const newestItem = res.sort(
+        (a, b) => (b.createdOn?.getTime() || 0) - (a.createdOn?.getTime() || 0),
+      )[0]
+
+      return (
+        newestItem && {
+          schoolNationalId: newestItem.icelandicIDNO!,
+          schoolName: newestItem.school!,
+        }
+      )
+    } catch (error) {
+      this.logger.error(
+        'Error when trying to get old study info from UTL',
+        error,
+      )
+      throw new Error(
+        'Villa kom upp þegar reynt var að sækja tegund vegabréfs.',
+      )
+    }
+  }
+
+  // TODO call endpoint (that does not yet exist)
+  async getOldAgentItem(auth: Auth): Promise<Agent | undefined> {
+    throw new Error('404')
+  }
+
+  // TODO call endpoint (that does not yet exist)
+  async submitApplicationForResidencePermitRenewal(auth: User): Promise<void> {
+    throw new Error('404')
+  }
+
+  // Residence permit permanent:
+
+  // TODO call endpoint (that does not yet exist)
+  async submitApplicationForResidencePermitPermanent(
+    auth: User,
+  ): Promise<void> {
+    throw new Error('404')
   }
 }

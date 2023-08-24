@@ -8,7 +8,7 @@ import { useLocale } from '@island.is/localization'
 import { Routes } from '../../lib/constants'
 import SummaryBlock from '../../components/SummaryBlock'
 import { YES, getValueViaPath } from '@island.is/application/core'
-import { Country } from '@island.is/clients/directorate-of-immigration/citizenship'
+import { Country } from '@island.is/clients/directorate-of-immigration'
 
 interface Props extends FieldBaseProps {
   goToScreen?: (id: string) => void
