@@ -31587,6 +31587,7 @@ __metadata:
     yargs: 15.4.1
     zod: ^3.21.2
     zod-form-data: ^2.0.0
+    zustand: 4.4.1
   languageName: unknown
   linkType: soft
 
@@ -49713,7 +49714,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"use-sync-external-store@npm:^1.0.0, use-sync-external-store@npm:^1.2.0":
+"use-sync-external-store@npm:1.2.0, use-sync-external-store@npm:^1.0.0, use-sync-external-store@npm:^1.2.0":
   version: 1.2.0
   resolution: "use-sync-external-store@npm:1.2.0"
   peerDependencies:
@@ -51513,6 +51514,26 @@ __metadata:
     react:
       optional: true
   checksum: e249840ddd3e957e10d31c540520e57055de2b7ca32631332febe6d1e6afed13f34f241e0e1c57ebdab31dd9ed7fd415412e1b19342e812b39eba60d7291e991
+  languageName: node
+  linkType: hard
+
+"zustand@npm:4.4.1":
+  version: 4.4.1
+  resolution: "zustand@npm:4.4.1"
+  dependencies:
+    use-sync-external-store: 1.2.0
+  peerDependencies:
+    "@types/react": ">=16.8"
+    immer: ">=9.0"
+    react: ">=16.8"
+  peerDependenciesMeta:
+    "@types/react":
+      optional: true
+    immer:
+      optional: true
+    react:
+      optional: true
+  checksum: 80acd0fbf633782996642802c8692bbb80ae5c80a8dff4c501b88250acd5ccd468fbc6398bdce198475a25e3839c91385b81da921274f33ffb5c2d08c3eab400
   languageName: node
   linkType: hard
 

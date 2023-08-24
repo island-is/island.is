@@ -18,7 +18,7 @@ import {
   InputController,
   SelectController,
 } from '@island.is/shared/form-fields'
-import { IntroHeader } from '@island.is/portals/core'
+import { ErrorBox, IntroHeader } from '@island.is/portals/core'
 import { formatNationalId, m as coreMessages } from '@island.is/portals/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { useUserInfo } from '@island.is/auth/react'
@@ -59,12 +59,17 @@ const GrantAccess = () => {
     toast.error(formatMessage(m.grantIdentityError))
   }
 
-  const [getIdentity, { data, loading: queryLoading }] = useIdentityLazyQuery({
-    onError: noUserFoundToast,
+  const [
+    getIdentity,
+    { data, loading: queryLoading, error },
+  ] = useIdentityLazyQuery({
     onCompleted: (data) => {
       if (!data.identity) {
         noUserFoundToast()
       }
+    },
+    context: {
+      skipToastError: true,
     },
   })
 
@@ -156,6 +161,14 @@ const GrantAccess = () => {
         <FormProvider {...methods}>
           <form onSubmit={onSubmit}>
             <Box display="flex" flexDirection="column" rowGap={[5, 6]}>
+              {error && (
+                <ErrorBox
+                  error={error}
+                  message={
+                    error ? undefined : formatMessage(m.grantIdentityError)
+                  }
+                />
+              )}
               <IdentityCard
                 label={formatMessage(m.accessOwner)}
                 title={userInfo.profile.name}

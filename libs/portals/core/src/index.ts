@@ -1,6 +1,7 @@
 // libs
 export * from './lib/paths'
 export * from './lib/messages'
+export * from './lib/store/serviceErrorStore'
 
 // types
 export * from './types/portalCore'
@@ -25,9 +26,11 @@ export * from './utils/getTranslatedValue'
 export * from './utils/router/prepareRouterData'
 export * from './utils/router/wrappers'
 export * from './utils/getTranslatedValue'
+export * from './utils/getOrganizationSlugFromError'
 
 // components
 export * from './components/ApplicationErrorBoundary/ApplicationErrorBoundary'
+export * from './components/ErrorBox'
 export * from './components/PortalNavigation/PortalNavigation'
 export * from './components/PortalProvider'
 export * from './components/IntroHeader'

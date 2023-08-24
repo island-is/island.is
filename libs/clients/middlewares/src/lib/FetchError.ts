@@ -21,19 +21,31 @@ export class FetchError extends Error {
     this.response = response
   }
 
-  static async build(response: Response, includeBody = false) {
+  static async build(
+    response: Response,
+    includeBody = false,
+    organizationSlug?: string,
+  ) {
     const error = new FetchError(response)
-
     const contentType = response.headers.get('content-type') || ''
     const isJson = contentType.startsWith('application/json')
     const isProblem = contentType.startsWith('application/problem+json')
     const shouldIncludeBody = includeBody && (isJson || isProblem)
+
     if (isProblem || shouldIncludeBody) {
       const body = await response.clone().json()
+
       if (shouldIncludeBody) {
         error.body = body
       }
-      if (isProblem) {
+
+      // TODO set 500 instead of 400
+      if (organizationSlug && body.status >= 400) {
+        error.problem = {
+          ...body,
+          organizationSlug,
+        }
+      } else if (isProblem) {
         error.problem = body
       }
     } else if (includeBody) {

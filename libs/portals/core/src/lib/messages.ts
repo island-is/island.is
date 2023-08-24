@@ -92,6 +92,10 @@ export const m = defineMessages({
     defaultMessage: 'Eitthvað fór úrskeiðis',
     id: 'portals:something-went-wrong',
   },
+  organizationServiceError: {
+    defaultMessage: 'Þjónustuvefsvilla í {service}',
+    id: 'portals:organization-service-error',
+  },
   view: {
     defaultMessage: 'Skoða',
     id: 'portals:view',
