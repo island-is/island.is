@@ -46,6 +46,7 @@ export interface DefaultApiVacanciesListItem {
   starfssvid?: string
   stettarfelagHeiti?: string
   stofnunHeiti?: string
+  stofnunNr?: string
   tengilidir?:
     | {
         tengilidur?: DefaultApiVacancyContact
@@ -183,6 +184,7 @@ export const mapIcelandicGovernmentInstitutionVacanciesFromExternalSystem = asyn
       intro: '',
       fieldOfWork: item.starfssvid,
       institutionName: item.stofnunHeiti,
+      institutionReferenceIdentifier: item.stofnunNr,
       logoUrl: item.logoURL,
       locations,
     })
@@ -238,6 +240,7 @@ export const mapIcelandicGovernmentInstitutionVacancyByIdResponseFromExternalSys
     intro,
     fieldOfWork: item.starfssvid,
     institutionName: item.stofnunHeiti,
+    institutionReferenceIdentifier: item.stofnunNr,
     logoUrl: item.logoURL,
     locations,
     contacts,
@@ -282,7 +285,9 @@ export const mapIcelandicGovernmentInstitutionVacancyByIdResponseFromCms = (
     applicationDeadlineFrom: mapDate(vacancy.applicationDeadlineFrom),
     applicationDeadlineTo: mapDate(vacancy.applicationDeadlineTo),
     fieldOfWork: vacancy.fieldOfWork,
-    institutionName: vacancy.organization?.nameInVacancyList,
+    institutionName:
+      vacancy.organization?.shortTitle || vacancy.organization?.title,
+    institutionReferenceIdentifier: vacancy.organization?.referenceIdentifier,
     logoUrl: vacancy.organization?.logo?.url,
     locations,
     contacts,
@@ -312,7 +317,7 @@ export const mapVacancyListItemFromCms = (
     applicationDeadlineFrom: mapDate(vacancy.applicationDeadlineFrom),
     applicationDeadlineTo: mapDate(vacancy.applicationDeadlineTo),
     fieldOfWork: vacancy.fieldOfWork,
-    institutionName: vacancy.organization?.nameInVacancyList,
+    institutionName: vacancy.organization?.title,
     intro: vacancy.intro?.document
       ? documentToPlainTextString(vacancy.intro?.document)
       : undefined,
