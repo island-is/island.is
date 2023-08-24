@@ -110,6 +110,7 @@ import { CmsTranslationsModule } from '@island.is/cms-translations'
 import { FileStorageConfig } from '@island.is/file-storage'
 import { WorkMachinesClientConfig } from '@island.is/clients/work-machines'
 import { WorkMachinesModule } from '@island.is/api/domains/work-machines'
+import { HousingBenefitCalculatorModule } from '@island.is/api/domains/housing-benefit-calculator'
 import { AuditModule } from '@island.is/nest/audit'
 import {
   ConfigModule,
@@ -274,6 +275,7 @@ const environment = getConfig
     WorkMachinesModule,
     SessionsModule,
     AuthAdminModule,
+    HousingBenefitCalculatorModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [

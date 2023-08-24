@@ -125,6 +125,9 @@
       "@island.is/api/domains/hello-world": [
         "libs/api/domains/hello-world/src/index.ts"
       ],
+      "@island.is/api/domains/housing-benefit-calculator": [
+        "libs/api/domains/housing-benefit-calculator/src/index.ts"
+      ],
       "@island.is/api/domains/icelandic-government-institution-vacancies": [
         "libs/api/domains/icelandic-government-institution-vacancies/src/index.ts"
       ],
