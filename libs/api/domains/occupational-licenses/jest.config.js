@@ -9,7 +9,8 @@ module.exports = {
     '^.+\\.[tj]sx?$': 'ts-jest',
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
-  coverageDirectory: '<rootDir>/coverage/libs/api/domains/occupational-licenses',
+  coverageDirectory:
+    '<rootDir>/coverage/libs/api/domains/occupational-licenses',
   displayName: 'api-domains-occupational-licenses',
   testEnvironment: 'node',
 }
