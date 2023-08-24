@@ -20,21 +20,17 @@ export interface IntroHeaderProps {
   hideImgPrint?: boolean
   marginBottom?: BoxProps['marginBottom']
   children?: React.ReactNode
-  buttonUrl?: string
-  buttonText?: MessageDescriptor | string
-  buttonType?: 'button' | 'text'
+  buttonGroup?: React.ReactNode
 }
 
 export const IntroHeader = ({
   title,
   intro,
   img,
+  buttonGroup,
   hideImgPrint = false,
   marginBottom = 6,
   children,
-  buttonUrl,
-  buttonText,
-  buttonType = 'button',
 }: IntroHeaderProps) => {
   const { formatMessage } = useLocale()
 
@@ -49,17 +45,7 @@ export const IntroHeader = ({
             {formatMessage(intro)}
           </Text>
         )}
-        {buttonUrl && buttonText && (
-          <Box paddingTop={2}>
-            <Button
-              variant={buttonType === 'button' ? 'utility' : 'text'}
-              icon="download"
-              iconType="outline"
-            >
-              <LinkV2 href={buttonUrl}>{formatMessage(buttonText)}</LinkV2>
-            </Button>
-          </Box>
-        )}
+        {buttonGroup && buttonGroup}
       </GridColumn>
       {img && (
         <GridColumn span={['8/8', '3/8']}>

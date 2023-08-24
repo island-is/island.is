@@ -1,12 +1,17 @@
 import { useParams } from 'react-router-dom'
 import { useGetEducationalLicenseByIdQuery } from './EducationalDetail.generated'
-import { Box } from '@island.is/island-ui/core'
-import { CardLoader, ErrorScreen } from '@island.is/service-portal/core'
+import { Box, Button } from '@island.is/island-ui/core'
+import {
+  CardLoader,
+  ErrorScreen,
+  formSubmit,
+} from '@island.is/service-portal/core'
 import { useLocale } from '@island.is/localization'
 import { useUserInfo } from '@island.is/auth/react'
 import { getOrganizationLogoUrl } from '@island.is/shared/utils'
 import { Organization } from '@island.is/shared/types'
 import { LicenseDetail } from '../../components/LicenseDetail'
+import { useEffect, useState } from 'react'
 
 type UseParams = {
   id: string
@@ -20,6 +25,8 @@ export const EducationDetail = () => {
 
   const { formatDateFns } = useLocale()
 
+  const [shouldDownload, setShouldDownload] = useState(false)
+
   const { data, loading, error } = useGetEducationalLicenseByIdQuery({
     variables: {
       id: id,
@@ -27,6 +34,13 @@ export const EducationDetail = () => {
   })
 
   const license = { ...data?.occupationalLicenseEducationalLicense }
+
+  useEffect(() => {
+    if (shouldDownload && license.url) {
+      formSubmit(license.url)
+      setShouldDownload(false)
+    }
+  }, [shouldDownload, license.url])
 
   if (loading)
     return (
@@ -64,8 +78,21 @@ export const EducationDetail = () => {
       title={programme}
       intro="Hér birtast leyfisbréf kennara sem hafa verið útskrifaðir frá 1988. Bréfin eru sótt til Menntamálastofnunar."
       img={organizationImage}
-      url={license.url}
-      buttonText="Sækja leyfisbréf"
+      buttonGroup={
+        license.url ? (
+          <>
+            <Box paddingTop="p2">
+              <Button
+                variant="utility"
+                onClick={() => setShouldDownload(true)}
+                icon="download"
+              >
+                Sækja skírteini
+              </Button>
+            </Box>
+          </>
+        ) : undefined
+      }
       name={user.profile.name}
       dateOfBirth={formatDateFns(birthday, 'dd.mm.yyyy')}
       profession={programme}

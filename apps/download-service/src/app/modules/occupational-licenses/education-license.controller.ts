@@ -14,14 +14,14 @@ import { MMSApi } from '@island.is/clients/mms'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.education)
-@Controller('occupational-licenses/education')
+@Controller('occupational-licenses')
 export class OccupationalLicensesEducationController {
   constructor(
     private readonly mmsApi: MMSApi,
     private readonly auditService: AuditService,
   ) {}
 
-  @Post('/occupation/:id')
+  @Post('/education')
   @Header('Content-Type', 'application/pdf')
   @ApiOkResponse({
     content: { 'application/pdf': {} },

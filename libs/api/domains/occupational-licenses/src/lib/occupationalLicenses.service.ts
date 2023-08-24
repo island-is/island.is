@@ -48,7 +48,7 @@ export class OccupationalLicensesService {
             }
           })
           .filter((Boolean as unknown) as ExcludesFalse)
-          .find((license) => license.legalEntityId === id) ?? undefined
+          .find((license) => license.licenseNumber === id) ?? undefined
       )
     } catch (e) {
       this.logger.error(`Error getting health directorate license by id`, {

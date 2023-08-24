@@ -6,8 +6,6 @@ type LicenseDetailProps = {
   title: string
   intro: string
   img: string
-  url?: string
-  buttonText?: string
   name: string
   dateOfBirth: string
   profession: string
@@ -15,14 +13,14 @@ type LicenseDetailProps = {
   publisher: string
   dateOfIssue: string
   isValid: boolean
+  buttonGroup?: React.ReactNode
 }
 
 export const LicenseDetail: React.FC<LicenseDetailProps> = ({
   title,
   intro,
   img,
-  url,
-  buttonText,
+  buttonGroup,
   name,
   dateOfBirth,
   profession,
@@ -37,9 +35,7 @@ export const LicenseDetail: React.FC<LicenseDetailProps> = ({
         title={title}
         intro={intro}
         img={img}
-        buttonUrl={url ? url : undefined}
-        buttonText={buttonText ? buttonText : undefined}
-        buttonType="button"
+        buttonGroup={buttonGroup}
       />
       <Stack dividers space="auto">
         <UserInfoLine
