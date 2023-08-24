@@ -25,7 +25,6 @@ import {
 import useDefendants from '../../utils/hooks/useDefendants'
 import { Validation } from '../../utils/validate'
 import { replaceTabs } from '../../utils/formatters'
-import { UpdateCaseInput, UpdateDefendantInput } from '../../graphql/schema'
 
 interface Props {
   onDefenderNotFound: (defenderNotFound: boolean) => void
