@@ -48,7 +48,7 @@ HAS_NO --> RET_NULL[Return null]
 
 ## `getUserProfileLocale`
 
-`getUserProfile` is served to return the userprofile along with islyklar data from the current logged in user. `getUserProfileLocale` can be used to _only_ fetch the User profile locale. It will only call the userprofile controller `userProfileControllerFindOneByNationalId` of the current logged in user, but if the user is logged in as a delegated user, it will fetch the actor's locale instead of the delegated user.
+`getUserProfile` is served to return the userprofile along with islyklar data from the current logged in user. `getUserProfileLocale` can be used to _only_ fetch the User profile locale. It will only call the userprofile controller `getActorLocale` of the current logged in user, but if the user is logged in as a delegated user, it will fetch the actor's locale instead of the delegated user.
 
 ## `getIslykillProfile`
 
