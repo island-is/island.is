@@ -76,7 +76,7 @@ export const AccessConfirmModal = ({
       scrollType="inside"
       closeButtonLabel={formatMessage(m.closeModal)}
     >
-      <Box marginY={[4, 4, 8]} display="flex" flexDirection="column" rowGap={3}>
+      <Box marginY={[4, 4, 6]} display="flex" flexDirection="column" rowGap={3}>
         {error && (
           <Box paddingBottom={3}>
             <AlertBanner
