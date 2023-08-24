@@ -10,7 +10,8 @@ import { createTerms, extractStringsFromObject } from './utils'
 
 @Injectable()
 export class LifeEventsPageSyncService
-  implements CmsSyncProvider<ILifeEventPage> {
+  implements CmsSyncProvider<ILifeEventPage>
+{
   processSyncData(entries: processSyncDataInput<ILifeEventPage>) {
     logger.info('Processing sync data for life event pages')
 

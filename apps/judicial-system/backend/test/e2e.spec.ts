@@ -88,21 +88,21 @@ afterAll(async () => {
 })
 
 function institutionToTInstitution(institution: Institution) {
-  return ({
+  return {
     ...institution,
     created: institution.created && institution.created.toISOString(),
     modified: institution.modified && institution.modified.toISOString(),
-  } as unknown) as TInstitution
+  } as unknown as TInstitution
 }
 
 function userToCUser(user: User) {
-  return ({
+  return {
     ...user,
     created: user.created && user.created.toISOString(),
     modified: user.modified && user.modified.toISOString(),
     institution:
       user.institution && institutionToTInstitution(user.institution),
-  } as unknown) as CUser
+  } as unknown as CUser
 }
 
 function expectInstitutionsToMatch(

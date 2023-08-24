@@ -10,14 +10,12 @@ import {useUserProfile} from './profile-queries';
 import {client} from '../../graphql/client';
 import {CREATE_EMAIL_VERIFICATION} from '../../graphql/queries/create-email-verification.mutation';
 
-const {
-  getNavigationOptions,
-  useNavigationOptions,
-} = createNavigationOptionHooks(() => ({
-  topBar: {
-    visible: false,
-  },
-}));
+const {getNavigationOptions, useNavigationOptions} =
+  createNavigationOptionHooks(() => ({
+    topBar: {
+      visible: false,
+    },
+  }));
 
 export const EditEmailScreen: NavigationFunctionComponent<{
   email?: string;

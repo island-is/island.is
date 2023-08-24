@@ -57,8 +57,7 @@ export const generateConfirmationEmail: ConfirmationEmail = (
         {
           component: 'Copy',
           context: {
-            copy:
-              'Umboðsmaður Alþingis verður í sambandi við þig ef frekari upplýsingar vantar.',
+            copy: 'Umboðsmaður Alþingis verður í sambandi við þig ef frekari upplýsingar vantar.',
           },
         },
       ],
