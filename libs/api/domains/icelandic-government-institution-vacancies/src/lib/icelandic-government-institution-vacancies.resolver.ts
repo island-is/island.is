@@ -45,25 +45,29 @@ export class IcelandicGovernmentInstitutionVacanciesResolver {
       stofnun: input.institution,
     })) as DefaultApiVacanciesListItem[]
 
-    const mappedVacancies = await mapIcelandicGovernmentInstitutionVacanciesFromExternalSystem(
-      vacancies,
-    )
+    const mappedVacancies =
+      await mapIcelandicGovernmentInstitutionVacanciesFromExternalSystem(
+        vacancies,
+      )
 
     // Extract institution/organization reference identifiers from the vacancies
     const referenceIdentifierSet = new Set<string>()
     for (const vacancy of mappedVacancies) {
       if (vacancy.institutionReferenceIdentifier) {
         referenceIdentifierSet.add(vacancy.institutionReferenceIdentifier)
+      } else {
+        // In case there is no institutionReferenceIdentifier we don't indicate what institution is behind this vacancy
+        vacancy.logoUrl = undefined
+        vacancy.institutionName = undefined
       }
     }
 
     // Fetch organizations from cms that have the given reference identifiers so we can use their title and logo
-    const organizationsResponse = await this.cmsContentfulService.getOrganizations(
-      {
+    const organizationsResponse =
+      await this.cmsContentfulService.getOrganizations({
         lang: defaultLang,
         referenceIdentifiers: Array.from(referenceIdentifierSet),
-      },
-    )
+      })
 
     // Create a mapping for reference identifier -> organization data
     const organizationMap = new Map<
@@ -113,9 +117,8 @@ export class IcelandicGovernmentInstitutionVacanciesResolver {
   async icelandicGovernmentInstitutionVacancies(
     @Args('input') input: IcelandicGovernmentInstitutionVacanciesInput,
   ): Promise<IcelandicGovernmentInstitutionVacanciesResponse> {
-    const vacanciesFromExternalSystem = await this.getVacanciesFromExternalSystem(
-      input,
-    )
+    const vacanciesFromExternalSystem =
+      await this.getVacanciesFromExternalSystem(input)
     const vacanciesFromCms = await this.getVacanciesFromCms()
 
     const allVacancies = vacanciesFromExternalSystem.concat(vacanciesFromCms)
@@ -135,9 +138,8 @@ export class IcelandicGovernmentInstitutionVacanciesResolver {
       return { vacancy: null }
     }
     return {
-      vacancy: mapIcelandicGovernmentInstitutionVacancyByIdResponseFromCms(
-        item,
-      ),
+      vacancy:
+        mapIcelandicGovernmentInstitutionVacancyByIdResponseFromCms(item),
     }
   }
 
@@ -154,18 +156,18 @@ export class IcelandicGovernmentInstitutionVacanciesResolver {
       return { vacancy: null }
     }
 
-    const vacancy = await mapIcelandicGovernmentInstitutionVacancyByIdResponseFromExternalSystem(
-      item,
-    )
+    const vacancy =
+      await mapIcelandicGovernmentInstitutionVacancyByIdResponseFromExternalSystem(
+        item,
+      )
 
     // If we have a reference identifier we use that to get the institution/organization title and logo from cms
     if (vacancy?.institutionReferenceIdentifier) {
-      const organizationResponse = await this.cmsContentfulService.getOrganizations(
-        {
+      const organizationResponse =
+        await this.cmsContentfulService.getOrganizations({
           lang: defaultLang,
           referenceIdentifiers: [vacancy.institutionReferenceIdentifier],
-        },
-      )
+        })
 
       const organization = organizationResponse?.items?.[0]
 
