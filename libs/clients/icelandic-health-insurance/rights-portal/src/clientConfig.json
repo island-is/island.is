@@ -12,9 +12,7 @@
   "paths": {
     "/v1/aidsandnutrition": {
       "get": {
-        "tags": [
-          "aidsandnutrition"
-        ],
+        "tags": ["aidsandnutrition"],
         "operationId": "aidsandnutrition",
         "responses": {
           "200": {
@@ -51,9 +49,7 @@
     },
     "/v1/dentists/current": {
       "get": {
-        "tags": [
-          "dentist"
-        ],
+        "tags": ["dentist"],
         "operationId": "dentists/current",
         "responses": {
           "200": {
@@ -90,9 +86,7 @@
     },
     "/v1/dentists": {
       "get": {
-        "tags": [
-          "dentist"
-        ],
+        "tags": ["dentist"],
         "operationId": "dentists",
         "parameters": [
           {
@@ -165,9 +159,7 @@
     },
     "/v1/dentists/{id}/register": {
       "get": {
-        "tags": [
-          "dentist"
-        ],
+        "tags": ["dentist"],
         "operationId": "dentists/register",
         "parameters": [
           {
@@ -209,9 +201,7 @@
     },
     "/v1/dentists/bills": {
       "get": {
-        "tags": [
-          "dentist"
-        ],
+        "tags": ["dentist"],
         "operationId": "dentists/bills",
         "parameters": [
           {
@@ -271,9 +261,7 @@
     },
     "/v1/drugs/paymentPeriods/{paymentPeriodId}": {
       "get": {
-        "tags": [
-          "drug"
-        ],
+        "tags": ["drug"],
         "operationId": "drugs/paymentPeriods",
         "parameters": [
           {
@@ -325,9 +313,7 @@
     },
     "/v1/drugs/bills/{paymentPeriodId}": {
       "get": {
-        "tags": [
-          "drug"
-        ],
+        "tags": ["drug"],
         "operationId": "drugs/bills",
         "parameters": [
           {
@@ -379,9 +365,7 @@
     },
     "/v1/healthcenters": {
       "get": {
-        "tags": [
-          "healthcenter"
-        ],
+        "tags": ["healthcenter"],
         "operationId": "healthcenters",
         "parameters": [
           {
@@ -445,9 +429,7 @@
     },
     "/v1/healthcenters/current": {
       "get": {
-        "tags": [
-          "healthcenter"
-        ],
+        "tags": ["healthcenter"],
         "operationId": "healthcenters/current",
         "responses": {
           "200": {
@@ -484,9 +466,7 @@
     },
     "/v1/healthcenters/{id}/register": {
       "get": {
-        "tags": [
-          "healthcenter"
-        ],
+        "tags": ["healthcenter"],
         "operationId": "healthcenters/register",
         "parameters": [
           {
@@ -527,9 +507,7 @@
     },
     "/v1/healthcenters/history": {
       "get": {
-        "tags": [
-          "healthcenter"
-        ],
+        "tags": ["healthcenter"],
         "operationId": "healthcenters/history",
         "parameters": [
           {
@@ -589,9 +567,7 @@
     },
     "/v1/therapies": {
       "get": {
-        "tags": [
-          "therapy"
-        ],
+        "tags": ["therapy"],
         "operationId": "therapies",
         "responses": {
           "200": {
