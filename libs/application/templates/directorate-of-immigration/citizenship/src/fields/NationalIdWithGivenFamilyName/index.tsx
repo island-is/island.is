@@ -1,5 +1,5 @@
 import { FC, useEffect, useState } from 'react'
-import { Box, GridRow, GridColumn } from '@island.is/island-ui/core'
+import { Box, GridRow, GridColumn, Input } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { FieldBaseProps, GenericFormField } from '@island.is/application/types'
 import { gql, useLazyQuery } from '@apollo/client'
@@ -48,6 +48,7 @@ export const NationalIdWithGivenFamilyName: FC<Props & FieldBaseProps> = ({
 
   const givenNameField = `${usedId}.givenName`
   const familyNameField = `${usedId}.familyName`
+  const currentNameField = `${usedId}.currentName`
   const nationaIdField = `${usedId}.nationalId`
   const wasRemovedField = `${usedId}.wasRemoved`
 
@@ -111,8 +112,9 @@ export const NationalIdWithGivenFamilyName: FC<Props & FieldBaseProps> = ({
           />
         </GridColumn>
         <GridColumn span={['1/1', '1/1', '1/2']} paddingTop={2}>
-          <InputController
-            id={givenNameField}
+          <Input
+            name={currentNameField}
+            value={currentName}
             label={formatMessage(personal.labels.userInformation.name)}
             disabled
           />

@@ -197,9 +197,6 @@ export class CitizenshipService extends BaseTemplateApiService {
       }
     }
 
-    //TODOx remove, need to check if this is reliable information
-    if (!lastChangeDate) return new Date()
-
     return lastChangeDate
   }
 
