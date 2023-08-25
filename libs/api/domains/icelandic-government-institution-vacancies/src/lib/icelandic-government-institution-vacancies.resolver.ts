@@ -54,6 +54,10 @@ export class IcelandicGovernmentInstitutionVacanciesResolver {
     for (const vacancy of mappedVacancies) {
       if (vacancy.institutionReferenceIdentifier) {
         referenceIdentifierSet.add(vacancy.institutionReferenceIdentifier)
+      } else {
+        // In case there is no institutionReferenceIdentifier we don't indicate what institution is behind this vacancy
+        vacancy.logoUrl = undefined
+        vacancy.institutionName = undefined
       }
     }
 
