@@ -324,7 +324,6 @@ export interface ExpandableDescriptionField extends BaseField {
   startExpanded?: boolean
 }
 
-// type Space = keyof typeof theme.spacing
 export interface AlertMessageField extends BaseField {
   readonly type: FieldTypes.ALERT_MESSAGE
   component: FieldComponents.ALERT_MESSAGE
