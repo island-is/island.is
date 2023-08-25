@@ -1,7 +1,6 @@
 import { Entropy } from 'entropy-string'
 import { CookieOptions, Request, Response } from 'express'
 import { createHash, randomBytes } from 'crypto'
-import jwt from 'jsonwebtoken'
 
 import { Controller, Get, Inject, Res, Query, Req } from '@nestjs/common'
 import { ConfigType } from '@nestjs/config'
