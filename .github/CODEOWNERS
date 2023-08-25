@@ -13,7 +13,7 @@
 /                                                                                                        @island-is/core
 
 /apps/application-system/                                                                                @island-is/norda-applications
-/apps/web*/                                                                                              @island-is/juni @island-is/stefna
+/apps/web/                                                                                              @island-is/juni @island-is/stefna
 /libs/application/                                                                                       @island-is/norda-applications
 /libs/contentful-extensions/                                                                             @island-is/juni @island-is/stefna
 /libs/service-portal/                                                                                    @island-is/hugsmidjan
