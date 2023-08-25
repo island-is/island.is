@@ -827,12 +827,12 @@ globalStyle(
   {
     width: '3rem',
     lineHeight: '3rem',
-    // '@media': {
-    //   "(max-width: '400px), (max-height: '550px)": {
-    //     width: '2rem',
-    //     lineHeight: '2rem',
-    //   },
-    // },
+    '@media': {
+      "(max-width: '400px), (max-height: '550px)": {
+        width: '2rem',
+        lineHeight: '2rem',
+      },
+    },
   },
 )
 
