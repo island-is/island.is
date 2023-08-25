@@ -5,8 +5,6 @@
 
 # Organisation name is @island-is, not @island.is
 
-# Fallback. If there is no owner, assign to core maintainers.
-*                                                                                                        @island-is/core
 
 # Top level project ownership. When a project contains, for example, templates or modules
 # that are developed by others teams, we first list down the team working on the core and
@@ -19,11 +17,27 @@
 /libs/portals/admin/                                                                                     @island-is/aranja
 /libs/portals/core/                                                                                      @island-is/aranja @island-is/hugsmidjan
 
-# /*                                                                                                       @island-is/core
+# All files in project root but not dirs
+/*                                                                                                       @island-is/core
+
+/.yarn/                                                                                                  @island-is/core
+/.githooks/                                                                                              @island-is/core
+/.vscode/                                                                                                @island-is/core
+
+
+
+# All files in /app but not dirs
+/apps/*                                                                                                  @island-is/core
+/apps/services/*                                                                                         @island-is/core
+
+/apps/reference-next-app/                                                                                @island-is/core
+/apps/api/                                                                                               @island-is/core
 /.github/                                                                                                @island-is/core
 /libs/api/domains/identity/                                                                              @island-is/core
 /libs/testing/                                                                                           @island-is/core
 /libs/nest/swagger/                                                                                      @island-is/core
+/libs/api/mocks/                                                                                         @island-is/core
+/libs/api/schema/                                                                                        @island-is/core
 
 /apps/services/endorsements/                                                                             @island-is/juni
 /apps/icelandic-names-registry*/                                                                         @island-is/juni
@@ -82,8 +96,9 @@
 /libs/api/domains/disability-license                                                                     @island-is/juni
 /libs/portals/admin/petition                                                                             @island-is/juni
 
-/apps/portals/admin/                                                                                     @island-is/aranja
+/apps/portals/                                                                                           @island-is/aranja
 /libs/api/domains/auth-admin/                                                                            @island-is/aranja
+/libs/api/domains/auth/                                                                                  @island-is/aranja
 /libs/api/domains/sessions/                                                                              @island-is/aranja
 /libs/clients/auth/                                                                                      @island-is/aranja
 /libs/clients/middlewares/                                                                               @island-is/aranja
@@ -92,7 +107,8 @@
 /libs/portals/admin/ids-admin                                                                            @island-is/aranja
 /libs/service-portal/consent                                                                             @island-is/aranja
 /libs/service-portal/sessions                                                                            @island-is/aranja
-/apps/native/app/                                                                                        @island-is/aranja-enum-app
+/libs/api-catalogue/                                                                                     @island-is/aranja
+/apps/native/                                                                                            @island-is/aranja-enum-app
 
 /apps/judicial-system/                                                                                   @island-is/kolibri-justice-league
 /libs/judicial-system/                                                                                   @island-is/kolibri-justice-league
@@ -122,6 +138,7 @@
 /libs/api/domains/license-service/                                                                       @island-is/hugsmidjan
 /libs/api/domains/work-machines/                                                                         @island-is/hugsmidjan
 /libs/api/domains/national-registry/                                                                     @island-is/hugsmidjan
+/libs/api/domains/national-registry-xroad/                                                               @island-is/hugsmidjan
 /libs/api/domains/user-profile/                                                                          @island-is/hugsmidjan @island-is/juni
 /libs/api/domains/passport/                                                                              @island-is/hugsmidjan
 /libs/api/domains/vehicles/                                                                              @island-is/hugsmidjan
@@ -234,16 +251,20 @@
 /apps/auth-admin-web/                                                                                    @island-is/fuglar @island-is/aranja
 /libs/auth-api-lib/                                                                                      @island-is/fuglar @island-is/aranja
 /libs/auth-nest-tools/                                                                                   @island-is/fuglar @island-is/aranja
+/libs/auth/                                                                                              @island-is/fuglar @island-is/aranja
 /libs/application/templates/european-health-insurance-card/                                              @island-is/fuglar
 /libs/application/template-api-modules/src/lib/modules/templates/european-health-insurance-card/         @island-is/fuglar
 /libs/clients/ehic-client-v1                                                                             @island-is/fuglar
 
 /apps/services/auth/personal-representative/                                                             @island-is/programm @island-is/aranja
 /apps/services/auth/personal-representative-public/                                                      @island-is/programm @island-is/aranja
+/apps/services/documents/                                                                                @island-is/programm
 /libs/api/domains/financial-statements-inao/                                                             @island-is/programm
+/libs/api/domains/document-provider/                                                                     @island-is/programm
 /libs/clients/financial-statements-inao                                                                  @island-is/programm
 /libs/application/templates/financial-statements-inao/                                                   @island-is/programm
 /libs/application/template-api-modules/src/lib/modules/templates/financial-statements-inao               @island-is/programm
+
 
 /libs/application/templates/criminal-record/                                                             @island-is/origo
 /libs/application/template-api-modules/src/lib/modules/templates/criminal-record-submission              @island-is/origo
@@ -266,7 +287,7 @@
 /libs/clients/transport-authority/                                                                       @island-is/origo
 
 /libs/application/templates/driving-license-book-update-instructor/                                      @island-is/origo
-/libs/application/template-api-modules/src/lib/modules/templates/driving-license-book-update-instructor  @island-is/origo
+/libs/application/template-api-modules/src/lib/modules/templates/driving-license-book-update-instructor/ @island-is/origo
 
 # Temporary assignment while the QA bootstrap project is in progress
 /apps/system-e2e/                                                                                        @island-is/qa
@@ -275,7 +296,9 @@
 /.github/actions/                                                                                        @island-is/devops
 /.github/workflows/                                                                                      @island-is/devops
 /apps/reference-backend/                                                                                 @island-is/devops
+/apps/external-contracts-tests/                                                                          @island-is/devops
 /apps/github-actions-cache/                                                                              @island-is/devops
+/apps/services/xroad-collector/                                                                          @island-is/devops
 **/infra/                                                                                                @island-is/devops @island-is/core
 /infra/                                                                                                  @island-is/devops
 /libs/logging/                                                                                           @island-is/devops
