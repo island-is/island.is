@@ -22,10 +22,10 @@ const InfoCardClosedIndictment: React.FC<
   const defenders = workingCase.defendants?.map((defendant) => {
     return {
       name: defendant.defenderName || '',
-      defenderNationalId: defendant.defenderNationalId,
+      defenderNationalId: defendant.defenderNationalId || '',
       sessionArrangement: undefined,
-      email: defendant.defenderEmail,
-      phoneNumber: defendant.defenderPhoneNumber,
+      email: defendant.defenderEmail || '',
+      phoneNumber: defendant.defenderPhoneNumber || '',
     }
   })
 

@@ -23,10 +23,6 @@ import {
   defendant as m,
   errors,
 } from '@island.is/judicial-system-web/messages'
-import {
-  Defendant as TDefendant,
-  UpdateDefendant,
-} from '@island.is/judicial-system/types'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import {
   Box,
@@ -43,6 +39,8 @@ import { isBusiness } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import {
   CaseType,
   CaseOrigin,
+  Defendant as TDefendant,
+  UpdateDefendantInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import * as constants from '@island.is/judicial-system/consts'
 
@@ -91,20 +89,19 @@ const Defendant = () => {
               createdCase.defendants &&
               createdCase.defendants.length > 0
             ) {
-              await updateDefendant(
-                createdCase.id,
-                createdCase.defendants[0].id,
-                {
-                  gender: defendant.gender,
-                  name: defendant.name,
-                  address: defendant.address,
-                  nationalId: defendant.nationalId,
-                  noNationalId: defendant.noNationalId,
-                  citizenship: defendant.citizenship,
-                },
-              )
+              await updateDefendant({
+                caseId: createdCase.id,
+                defendantId: createdCase.defendants[0].id,
+                gender: defendant.gender,
+                name: defendant.name,
+                address: defendant.address,
+                nationalId: defendant.nationalId,
+                noNationalId: defendant.noNationalId,
+                citizenship: defendant.citizenship,
+              })
             } else {
-              await createDefendant(createdCase.id, {
+              await createDefendant({
+                caseId: createdCase.id,
                 gender: defendant.gender,
                 name: defendant.name,
                 address: defendant.address,
@@ -133,14 +130,14 @@ const Defendant = () => {
   )
 
   const updateDefendantState = useCallback(
-    (defendantId: string, update: UpdateDefendant) => {
+    (update: UpdateDefendantInput) => {
       setWorkingCase((theCase: Case) => {
         if (!theCase.defendants) {
           return theCase
         }
 
         const indexOfDefendantToUpdate = theCase.defendants.findIndex(
-          (defendant) => defendant.id === defendantId,
+          (defendant) => defendant.id === update.defendantId,
         )
 
         const newDefendants = [...theCase.defendants]
@@ -148,7 +145,7 @@ const Defendant = () => {
         newDefendants[indexOfDefendantToUpdate] = {
           ...newDefendants[indexOfDefendantToUpdate],
           ...update,
-        }
+        } as TDefendant
         return { ...theCase, defendants: newDefendants }
       })
     },
@@ -156,11 +153,11 @@ const Defendant = () => {
   )
 
   const handleUpdateDefendant = useCallback(
-    async (defendantId: string, updatedDefendant: UpdateDefendant) => {
-      updateDefendantState(defendantId, updatedDefendant)
+    async (updatedDefendant: UpdateDefendantInput) => {
+      updateDefendantState(updatedDefendant)
 
       if (workingCase.id) {
-        updateDefendant(workingCase.id, defendantId, updatedDefendant)
+        updateDefendant(updatedDefendant)
       }
     },
     [updateDefendantState, workingCase.id, updateDefendant],
@@ -198,7 +195,8 @@ const Defendant = () => {
 
   const handleCreateDefendantClick = async () => {
     if (workingCase.id) {
-      const defendantId = await createDefendant(workingCase.id, {
+      const defendantId = await createDefendant({
+        caseId: workingCase.id,
         gender: undefined,
         name: '',
         address: '',

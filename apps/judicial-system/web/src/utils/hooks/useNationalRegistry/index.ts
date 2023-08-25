@@ -12,7 +12,7 @@ import { errors } from '@island.is/judicial-system-web/messages'
 import { validate } from '../../validate'
 import { isBusiness } from '../../stepHelper'
 
-const useNationalRegistry = (nationalId?: string) => {
+const useNationalRegistry = (nationalId?: string | null) => {
   const { formatMessage } = useIntl()
   const [shouldFetch, setShouldFetch] = useState<boolean>(false)
 

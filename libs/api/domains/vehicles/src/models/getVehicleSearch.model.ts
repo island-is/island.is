@@ -27,7 +27,7 @@ export class VehiclesVehicleSearch {
   color?: string
 
   @Field({ nullable: true })
-  firstregdate?: string
+  firstregdate?: Date
 
   @Field({ nullable: true })
   latestregistration?: string
