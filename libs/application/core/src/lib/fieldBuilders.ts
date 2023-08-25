@@ -504,6 +504,7 @@ export function buildAlertMessageField(
     condition,
     marginTop,
     marginBottom,
+    links,
   } = data
   return {
     children: undefined,
@@ -516,6 +517,7 @@ export function buildAlertMessageField(
     component: FieldComponents.ALERT_MESSAGE,
     marginTop,
     marginBottom,
+    links,
   }
 }
 

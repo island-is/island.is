@@ -16,6 +16,7 @@ import { Condition } from './Condition'
 import { FormatInputValueFunction } from 'react-number-format'
 import React from 'react'
 import { TestSupport } from '@island.is/island-ui/utils'
+import { MessageDescriptor } from 'react-intl'
 
 type Space = keyof typeof theme.spacing
 
@@ -51,6 +52,11 @@ export type TagVariant =
   | 'mint'
   | 'disabled'
 
+export type AlertMessageLink = {
+  title: MessageDescriptor | string
+  url: MessageDescriptor | string
+  isExternal: boolean
+}
 export interface Option extends TestSupport {
   value: string
   label: FormText
@@ -326,6 +332,7 @@ export interface AlertMessageField extends BaseField {
   message?: FormText
   marginTop?: ResponsiveProp<Space>
   marginBottom?: ResponsiveProp<Space>
+  links?: AlertMessageLink[]
 }
 
 export interface LinkField extends BaseField {
