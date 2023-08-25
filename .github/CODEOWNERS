@@ -13,7 +13,7 @@
 /                                                                                                        @island-is/core
 
 /apps/application-system/                                                                                @island-is/norda-applications
-/apps/web/                                                                                              @island-is/juni @island-is/stefna
+/apps/web/                                                                                               @island-is/juni @island-is/stefna
 /libs/application/                                                                                       @island-is/norda-applications
 /libs/contentful-extensions/                                                                             @island-is/juni @island-is/stefna
 /libs/service-portal/                                                                                    @island-is/hugsmidjan
@@ -138,7 +138,7 @@
 /libs/api/domains/license-service/                                                                       @island-is/hugsmidjan
 /libs/api/domains/work-machines/                                                                         @island-is/hugsmidjan
 /libs/api/domains/national-registry/                                                                     @island-is/hugsmidjan
-/libs/api/domains/national-registry-x-road/                                                               @island-is/hugsmidjan
+/libs/api/domains/national-registry-x-road/                                                              @island-is/hugsmidjan
 /libs/api/domains/user-profile/                                                                          @island-is/hugsmidjan @island-is/juni
 /libs/api/domains/passport/                                                                              @island-is/hugsmidjan
 /libs/api/domains/vehicles/                                                                              @island-is/hugsmidjan
