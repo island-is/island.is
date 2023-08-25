@@ -30,6 +30,7 @@ env:
   NX_BRANCH: ${{ github.head_ref || github.ref_name }}
   NX_VERBOSE_LOGGING: true
   NX_CLOUD_DISTRIBUTED_EXECUTION_STOP_AGENTS_ON_FAILURE: true
+  SKIP_NODEJS_CACHE: ${{ contains(github.event.pull_request.labels.*.name, 'skip-nodejs-cache') }}
 
 jobs:
   pre-checks:
@@ -127,7 +128,7 @@ jobs:
         run: '[[ "${{ steps.generated-files-cache.outputs.success }}" != "false" ]] || exit 1'
 
       - name: Building NodeJS dependencies
-        if: steps.node-modules.outputs.cache-hit != 'true'
+        if: steps.node-modules.outputs.cache-hit != 'true' || env.SKIP_NODEJS_CACHE == 'true'
         run: ./scripts/ci/10_prepare-host-deps.sh
 
       - name: Generate schemas
