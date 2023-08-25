@@ -10,7 +10,7 @@ import {
 import { useLocale } from '@island.is/localization'
 import { MessageDescriptor } from 'react-intl'
 
-import { getOrganizationSlugFromError } from '../utils/getOrganizationSlugFromError'
+import { getOrganizationSlugFromError } from '../../utils/getOrganizationSlugFromError'
 
 type ErrorBoxBaseProps = {
   children?: ReactNode
