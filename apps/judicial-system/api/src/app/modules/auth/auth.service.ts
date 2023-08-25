@@ -2,7 +2,7 @@ import fetch from 'isomorphic-fetch'
 import jwksClient from 'jwks-rsa'
 import jwt from 'jsonwebtoken'
 
-import { Inject, Injectable } from '@nestjs/common'
+import { Inject, Injectable, UnauthorizedException } from '@nestjs/common'
 import { ConfigType } from '@nestjs/config'
 import type { User } from '@island.is/judicial-system/types'
 
@@ -63,41 +63,50 @@ export class AuthService {
     if (response.ok) {
       return await response.json()
     } else {
-      throw new Error(
-        `Request failed with status ${response.status} - ${response.statusText}`,
+      throw new UnauthorizedException(
+        `Authorization request failed with status ${response.status} - ${response.statusText}`,
       )
     }
   }
 
   async verifyIdsToken(token: string) {
-    const secretClient = jwksClient({
-      cache: true,
-      rateLimit: true,
-      jwksUri: `${this.config.issuer}/.well-known/openid-configuration/jwks`,
-    })
+    try {
+      const secretClient = jwksClient({
+        cache: true,
+        rateLimit: true,
+        jwksUri: `${this.config.issuer}/.well-known/openid-configuration/jwks`,
+      })
 
-    const signingKeys = await secretClient.getSigningKeys()
+      const decodedToken = jwt.decode(token, { complete: true })
+      const tokenHeader = decodedToken?.header
 
-    const verificationResult = signingKeys.find((sk) => {
-      try {
-        const publicKey = sk.getPublicKey()
-        const decodedToken = jwt.verify(token, publicKey, {
-          issuer: this.config.issuer,
-          clockTimestamp: Date.now() / 1000,
-          ignoreNotBefore: false,
-        })
-
-        return decodedToken
-      } catch (e) {
-        throw new Error(`Failed to verify token: ${e.message}`)
+      if (!tokenHeader) {
+        throw new Error('Invalid access token header')
       }
-    })
 
-    if (verificationResult) {
-      return true
+      const signingKeys = await secretClient.getSigningKeys()
+      const matchingKey = signingKeys.find((sk) => sk.kid === tokenHeader.kid)
+
+      if (!matchingKey) {
+        throw new Error(`No matching key found for kid ${tokenHeader.kid}`)
+      }
+
+      const publicKey = matchingKey.getPublicKey()
+
+      const verifiedToken = jwt.verify(token, publicKey, {
+        issuer: this.config.issuer,
+        clockTimestamp: Date.now() / 1000,
+        ignoreNotBefore: false,
+        audience: this.config.clientId,
+      })
+
+      return verifiedToken as {
+        nationalId: string
+      }
+    } catch (error) {
+      console.error('Token verification failed:', error)
+      throw error
     }
-
-    return false
   }
 
   validateUser(user: User): boolean {
