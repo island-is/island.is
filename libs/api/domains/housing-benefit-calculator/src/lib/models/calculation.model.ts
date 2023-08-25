@@ -3,10 +3,10 @@ import { Field, ObjectType } from '@nestjs/graphql'
 @ObjectType('HousingBenefitCalculationModel')
 export class Calculation {
   @Field(() => Number)
-  maxBenefitPerMonth!: number
+  maximumHousingBenefits!: number
 
   @Field(() => Number)
-  reductionsDueToIncome!: number
+  reductions!: number
 
   @Field(() => Number)
   estimatedHousingBenefits!: number
