@@ -20,9 +20,6 @@ describe('DefendantController - Update rules', () => {
 
   it('should give permission to five roles', () => {
     expect(rules).toHaveLength(5)
-  })
-
-  it('should give permission to prosecutors, representatives, judges, registrars and assistants', () => {
     expect(rules).toContain(prosecutorRule)
     expect(rules).toContain(representativeRule)
     expect(rules).toContain(judgeRule)

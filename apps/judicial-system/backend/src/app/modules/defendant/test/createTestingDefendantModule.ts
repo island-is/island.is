@@ -78,6 +78,8 @@ export const createTestingDefendantModule = async () => {
     InternalDefendantController,
   )
 
+  defendantModule.close()
+
   return {
     messageService,
     userService,

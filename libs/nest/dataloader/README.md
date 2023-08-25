@@ -1,5 +1,3 @@
-<!-- gitbook-navigation: "Dataloader" -->
-
 # NestJS Dataloader
 
 > NOTE: This library is forked from [nestjs-dataloader](https://github.com/krislefeber/nestjs-dataloader) to address two issues:

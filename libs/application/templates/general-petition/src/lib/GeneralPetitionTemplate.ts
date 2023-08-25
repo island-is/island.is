@@ -10,7 +10,6 @@ import {
   NationalRegistryUserApi,
   UserProfileApi,
 } from '@island.is/application/types'
-import { Features } from '@island.is/feature-flags'
 import { ApiModuleActions, States, Roles } from '../constants'
 import { GeneralPetitionSchema } from './dataSchema'
 import { m } from './messages'
@@ -25,7 +24,6 @@ const GeneralPetitionTemplate: ApplicationTemplate<
   type: ApplicationTypes.GENERAL_PETITION,
   name: m.applicationName,
   dataSchema: GeneralPetitionSchema,
-  featureFlag: Features.generalPetition,
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {

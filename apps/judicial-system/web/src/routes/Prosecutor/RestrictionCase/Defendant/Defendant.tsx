@@ -25,12 +25,13 @@ import {
   validateAndSendToServer,
   validateAndSet,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
-import { UpdateDefendant } from '@island.is/judicial-system/types'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import { isDefendantStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
 import {
   CaseType,
   CaseOrigin,
+  UpdateDefendantInput,
+  Defendant as TDefendant,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import * as constants from '@island.is/judicial-system/consts'
 
@@ -61,13 +62,13 @@ export const Defendant: React.FC<React.PropsWithChildren<unknown>> = () => {
   const router = useRouter()
 
   const updateDefendantState = useCallback(
-    (defendantId: string, update: UpdateDefendant) => {
+    (update: UpdateDefendantInput) => {
       setWorkingCase((theCase: Case) => {
         if (!theCase.defendants) {
           return theCase
         }
         const indexOfDefendantToUpdate = theCase.defendants.findIndex(
-          (defendant) => defendant.id === defendantId,
+          (defendant) => defendant.id === update.defendantId,
         )
 
         const newDefendants = [...theCase.defendants]
@@ -75,7 +76,7 @@ export const Defendant: React.FC<React.PropsWithChildren<unknown>> = () => {
         newDefendants[indexOfDefendantToUpdate] = {
           ...newDefendants[indexOfDefendantToUpdate],
           ...update,
-        }
+        } as TDefendant
 
         return { ...theCase, defendants: newDefendants }
       })
@@ -84,14 +85,14 @@ export const Defendant: React.FC<React.PropsWithChildren<unknown>> = () => {
   )
 
   const handleUpdateDefendant = useCallback(
-    async (defendantId: string, updatedDefendant: UpdateDefendant) => {
-      updateDefendantState(defendantId, updatedDefendant)
+    async (updatedDefendant: UpdateDefendantInput) => {
+      updateDefendantState(updatedDefendant)
 
-      if (defendantId) {
-        updateDefendant(workingCase.id, defendantId, updatedDefendant)
+      if (updatedDefendant.defendantId) {
+        updateDefendant(updatedDefendant)
       }
     },
-    [workingCase.id, updateDefendantState, updateDefendant],
+    [updateDefendantState, updateDefendant],
   )
 
   const handleNavigationTo = useCallback(
@@ -106,7 +107,9 @@ export const Defendant: React.FC<React.PropsWithChildren<unknown>> = () => {
           workingCase.defendants &&
           workingCase.defendants.length > 0
         ) {
-          await updateDefendant(createdCase.id, createdCase.defendants[0].id, {
+          await updateDefendant({
+            caseId: createdCase.id,
+            defendantId: createdCase.defendants[0].id,
             gender: workingCase.defendants[0].gender,
             name: workingCase.defendants[0].name,
             address: workingCase.defendants[0].address,

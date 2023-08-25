@@ -7,7 +7,6 @@ import { AlertMessage, Box, Tabs, Text } from '@island.is/island-ui/core'
 import {
   CaseListEntry,
   completedCaseStates,
-  isIndictmentCase,
 } from '@island.is/judicial-system/types'
 
 import { PageHeader } from '@island.is/judicial-system-web/src/components'
