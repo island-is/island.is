@@ -29,9 +29,7 @@ export class IntellectualPropertyService {
       type: mapTrademarkType(t.type) ?? undefined,
       subType: mapTrademarkSubtype(t) ?? undefined,
       vmId: t.vmid,
-      applicationDate: t.applicationDate
-        ? parseDateIfValid(t.applicationDate)
-        : undefined,
+      applicationDate: parseDateIfValid(t.applicationDate),
     })) as Array<Trademark>
   }
 
@@ -41,7 +39,7 @@ export class IntellectualPropertyService {
   ): Promise<Trademark | null> {
     const trademark = await this.ipService.getTrademarkByVmId(user, trademarkId)
 
-    const formatDate = (date: string) =>
+    const formatDate = (date: string | undefined | null) =>
       parseDateIfValid(date, 'dd.MM.yyyy HH:mm:ss')
 
     const objectionDate = trademark.datePublished
@@ -52,30 +50,16 @@ export class IntellectualPropertyService {
       ...trademark,
       type: mapTrademarkType(trademark.type) ?? undefined,
       subType: mapTrademarkSubtype(trademark) ?? undefined,
-      applicationDate: trademark.applicationDate
-        ? formatDate(trademark.applicationDate)
-        : undefined,
-      dateRegistration: trademark.dateRegistration
-        ? formatDate(trademark.dateRegistration)
-        : undefined,
-      dateUnRegistered: trademark.dateUnRegistered
-        ? formatDate(trademark.dateUnRegistered)
-        : undefined,
-      dateExpires: trademark.dateExpires
-        ? formatDate(trademark.dateExpires)
-        : undefined,
-      dateRenewed: trademark.dateRenewed
-        ? formatDate(trademark.dateRenewed)
-        : undefined,
-      dateInternationalRegistration: trademark.dateInternationalRegistration
-        ? formatDate(trademark.dateInternationalRegistration)
-        : undefined,
-      dateModified: trademark.dateModified
-        ? formatDate(trademark.dateModified)
-        : undefined,
-      datePublished: trademark.datePublished
-        ? formatDate(trademark.datePublished)
-        : undefined,
+      applicationDate: formatDate(trademark.applicationDate),
+      dateRegistration: formatDate(trademark.dateRegistration),
+      dateUnRegistered: formatDate(trademark.dateUnRegistered),
+      dateExpires: formatDate(trademark.dateExpires),
+      dateRenewed: formatDate(trademark.dateRenewed),
+      dateInternationalRegistration: formatDate(
+        trademark.dateInternationalRegistration,
+      ),
+      dateModified: formatDate(trademark.dateModified),
+      datePublished: formatDate(trademark.datePublished),
       maxValidObjectionDate: objectionDate
         ? addMonths(objectionDate, 2)
         : undefined,
@@ -86,7 +70,10 @@ export class IntellectualPropertyService {
 
   async getPatents(user: User): Promise<Array<Patent> | null> {
     const patents = await this.ipService.getPatents(user)
-    return patents as Array<Patent>
+    return patents.map((patent) => ({
+      ...patents,
+      applicationDate: parseDateIfValid(patent.applicationDate),
+    }))
   }
   async getPatentById(user: User, patentId: string): Promise<Patent | null> {
     const response = await this.ipService.getPatentByApplicationNumber(
@@ -108,10 +95,9 @@ export class IntellectualPropertyService {
     const designs = await this.ipService.getDesigns(user)
     return designs.map((design) => ({
       ...design,
-      applicationDate: design.applicationDate
-        ? parseDateIfValid(design.applicationDate)
-        : undefined,
-    })) as Array<Trademark>
+      specification: design.specification,
+      applicationDate: parseDateIfValid(design.applicationDate),
+    })) as Array<Design>
   }
 
   async getDesignById(user: User, designId: string): Promise<Design | null> {
@@ -120,69 +106,45 @@ export class IntellectualPropertyService {
     const object: Design = {
       ...response,
       hId: designId,
-      applicationDate: response.applicationDate
-        ? parseDateIfValid(response.applicationDate)
-        : undefined,
-      applicationDateAvailable: response.applicationDateAvailable
-        ? parseDateIfValid(response.applicationDateAvailable)
-        : undefined,
-      applicationDatePublishedAsAvailable: response.applicationDatePublishedAsAvailable
-        ? parseDateIfValid(response.applicationDatePublishedAsAvailable)
-        : undefined,
-      applicationDeadlineDate: response.applicationDeadlineDate
-        ? parseDateIfValid(response.applicationDeadlineDate)
-        : undefined,
-      internationalRegistrationDate: response.internationalRegistrationDate
-        ? parseDateIfValid(response.internationalRegistrationDate)
-        : undefined,
-      announcementDate: response.announcementDate
-        ? parseDateIfValid(response.announcementDate)
-        : undefined,
-      registrationDate: response.registrationDate
-        ? parseDateIfValid(response.registrationDate)
-        : undefined,
-      publishDate: response.publishDate
-        ? parseDateIfValid(response.publishDate)
-        : undefined,
-      createDate: response.createDate
-        ? parseDateIfValid(response.createDate)
-        : undefined,
-      lastModified: response.lastModified
-        ? parseDateIfValid(response.lastModified)
-        : undefined,
-      expiryDate: response.validTo
-        ? parseDateIfValid(response.validTo)
-        : undefined,
+      applicationDate: parseDateIfValid(response.applicationDate),
+      applicationDateAvailable: parseDateIfValid(
+        response.applicationDateAvailable,
+      ),
+      applicationDatePublishedAsAvailable: parseDateIfValid(
+        response.applicationDatePublishedAsAvailable,
+      ),
+      applicationDeadlineDate: parseDateIfValid(
+        response.applicationDeadlineDate,
+      ),
+      internationalRegistrationDate: parseDateIfValid(
+        response.internationalRegistrationDate,
+      ),
+      announcementDate: parseDateIfValid(response.announcementDate),
+      registrationDate: parseDateIfValid(response.registrationDate),
+      publishDate: parseDateIfValid(response.publishDate),
+      createDate: parseDateIfValid(response.createDate),
+      lastModified: parseDateIfValid(response.lastModified),
+      expiryDate: parseDateIfValid(response.validTo),
       classification: response.classification?.category,
       objections: response.objections?.map((o) => {
         return {
           ...o,
-          dateReceived: o.dateReceived
-            ? parseDateIfValid(o.dateReceived)
-            : undefined,
-          dateConclusion: o.dateConclusion
-            ? parseDateIfValid(o.dateConclusion)
-            : undefined,
+          dateReceived: parseDateIfValid(o.dateReceived),
+          dateConclusion: parseDateIfValid(o.dateConclusion),
         }
       }),
       appeals: response.appeals?.map((o) => {
         return {
           ...o,
-          dateReceived: o.dateReceived
-            ? parseDateIfValid(o.dateReceived)
-            : undefined,
-          dateConclusion: o.dateConclusion
-            ? parseDateIfValid(o.dateConclusion)
-            : undefined,
+          dateReceived: parseDateIfValid(o.dateReceived),
+          dateConclusion: parseDateIfValid(o.dateConclusion),
         }
       }),
       licenses: response.licenses?.map((license) => {
         return {
           ...license,
-          date: license.date ? parseDateIfValid(license.date) : undefined,
-          expires: license.expires
-            ? parseDateIfValid(license.expires)
-            : undefined,
+          date: parseDateIfValid(license.date),
+          expires: parseDateIfValid(license.expires),
         }
       }),
     }

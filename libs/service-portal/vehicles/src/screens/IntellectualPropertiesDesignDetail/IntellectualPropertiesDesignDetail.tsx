@@ -138,26 +138,22 @@ const IntellectualPropertiesDesignDetail = () => {
               maxDate={ip?.expiryDate}
               minDate={ip?.internationalRegistrationDate}
             >
-              {[
-                <Stack space="smallGutter">
-                  <Text variant="h5">
-                    {ip?.internationalRegistrationDate
-                      ? formatDate(ip.internationalRegistrationDate, 'dd.MM.yy')
-                      : ''}
-                  </Text>
-                  <Text>
-                    {formatMessage(ipMessages.internationalRegistration)}
-                  </Text>
-                </Stack>,
-                <Stack space="smallGutter">
-                  <Text variant="h5">
-                    {ip?.expiryDate
-                      ? formatDate(ip.expiryDate, 'dd.MM.yy')
-                      : ''}
-                  </Text>
-                  <Text>{formatMessage(ipMessages.expires)}</Text>
-                </Stack>,
-              ]}
+              <Stack space="smallGutter">
+                <Text variant="h5">
+                  {ip?.internationalRegistrationDate
+                    ? formatDate(ip.internationalRegistrationDate, 'dd.MM.yy')
+                    : ''}
+                </Text>
+                <Text>
+                  {formatMessage(ipMessages.internationalRegistration)}
+                </Text>
+              </Stack>
+              <Stack space="smallGutter">
+                <Text variant="h5">
+                  {ip?.expiryDate ? formatDate(ip.expiryDate, 'dd.MM.yy') : ''}
+                </Text>
+                <Text>{formatMessage(ipMessages.expires)}</Text>
+              </Stack>
             </Timeline>
             <TableGrid
               title={'Aðrar upplýsingar'}
@@ -189,7 +185,7 @@ const IntellectualPropertiesDesignDetail = () => {
                     title: 'Flokkun',
                     value: ip?.status ?? '',
                   },
-                ].filter((Boolean as unknown) as ExcludesFalse),
+                ].filter(Boolean as unknown as ExcludesFalse),
                 2,
               )}
             />

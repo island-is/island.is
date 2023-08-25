@@ -1,10 +1,11 @@
 import ParseDate from 'date-fns/parse'
 import ParseISO from 'date-fns/parseISO'
+import type { Logger } from '@island.is/logging'
 
 export type ExcludesFalse = <T>(x: T | null | undefined | false | '') => x is T
 
 export function parseDateIfValid(
-  date: Date | string | undefined,
+  date: Date | string | undefined | null,
   formatIfString?: string,
 ): Date | undefined {
   if (!date) {

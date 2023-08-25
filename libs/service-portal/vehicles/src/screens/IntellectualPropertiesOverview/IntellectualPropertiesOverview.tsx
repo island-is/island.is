@@ -84,14 +84,17 @@ const IntellectualPropertiesOverview = () => {
           ?.map((ip, index) => {
             switch (ip.__typename) {
               case 'IntellectualPropertyDesign':
+                if (!ip.hId) {
+                  return null
+                }
                 return generateActionCard(
                   index,
                   ip.specification?.description,
-                  'H0002611',
+                  ip.hId,
                   undefined,
                   ServicePortalPath.AssetsIntellectualPropertiesDesign.replace(
                     ':id',
-                    'H0002611',
+                    ip.hId,
                   ),
                   ip.status,
                 )

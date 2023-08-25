@@ -47,7 +47,7 @@ export class IntellectualPropertyResolver {
     ])
 
     const flattenedData = data
-      .filter((Boolean as unknown) as ExcludesFalse)
+      .filter(Boolean as unknown as ExcludesFalse)
       .flat()
 
     return {

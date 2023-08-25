@@ -5,9 +5,7 @@ query GetIntellectualProperties {
       ... on IntellectualPropertyPatent {
         __typename
         applicationNumber
-        registrationNumber
         patentName
-        patentNameInOrgLanguage
         statusText
         applicationDate
       }
@@ -16,7 +14,6 @@ query GetIntellectualProperties {
         text
         type
         status
-        applicationDate
         vmId
       }
       ... on IntellectualPropertyDesign {
