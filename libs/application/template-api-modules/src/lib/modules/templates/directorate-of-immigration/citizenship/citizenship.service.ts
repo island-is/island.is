@@ -107,8 +107,9 @@ export class CitizenshipService extends BaseTemplateApiService {
   }: TemplateApiModuleActionProps): Promise<CitizenIndividual | null> {
     const individual = await this.getIndividualDetails(auth.nationalId)
     if (individual)
-      individual.residenceInIcelandLastChangeDate =
-        await this.getResidenceInIcelandLastChangeDate(auth.nationalId)
+      individual.residenceInIcelandLastChangeDate = await this.getResidenceInIcelandLastChangeDate(
+        auth.nationalId,
+      )
     return individual
   }
 
@@ -269,8 +270,12 @@ export class CitizenshipService extends BaseTemplateApiService {
       )
     }
 
-    const isPayment: { fulfilled: boolean } | undefined =
-      await this.sharedTemplateAPIService.getPaymentStatus(auth, application.id)
+    const isPayment:
+      | { fulfilled: boolean }
+      | undefined = await this.sharedTemplateAPIService.getPaymentStatus(
+      auth,
+      application.id,
+    )
 
     if (!isPayment?.fulfilled) {
       throw new Error(
