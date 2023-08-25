@@ -1,5 +1,5 @@
 query getDentists($input: DentistBillsInput) {
-  rightsPortalDentists(input: $input) {
+  rightsPortalUserDentist(input: $input) {
     currentDentistName
     billHistory {
       number

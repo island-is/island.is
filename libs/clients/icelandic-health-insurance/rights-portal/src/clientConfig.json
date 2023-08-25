@@ -12,7 +12,9 @@
   "paths": {
     "/v1/aidsandnutrition": {
       "get": {
-        "tags": ["aidsandnutrition"],
+        "tags": [
+          "aidsandnutrition"
+        ],
         "operationId": "aidsandnutrition",
         "responses": {
           "200": {
@@ -49,7 +51,9 @@
     },
     "/v1/dentists/current": {
       "get": {
-        "tags": ["dentist"],
+        "tags": [
+          "dentist"
+        ],
         "operationId": "dentists/current",
         "responses": {
           "200": {
@@ -57,7 +61,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/DentistDTO"
+                  "$ref": "#/components/schemas/CurrentDentistDTO"
                 }
               }
             }
@@ -84,9 +88,130 @@
         }
       }
     },
+    "/v1/dentists": {
+      "get": {
+        "tags": [
+          "dentist"
+        ],
+        "operationId": "dentists",
+        "parameters": [
+          {
+            "name": "contractType",
+            "in": "query",
+            "required": true,
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "style": "form",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "before",
+            "in": "query",
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "after",
+            "in": "query",
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetDentistsResponseDTO"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/v1/dentists/{id}/register": {
+      "get": {
+        "tags": [
+          "dentist"
+        ],
+        "operationId": "dentists/register",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
     "/v1/dentists/bills": {
       "get": {
-        "tags": ["dentist"],
+        "tags": [
+          "dentist"
+        ],
         "operationId": "dentists/bills",
         "parameters": [
           {
@@ -144,17 +269,34 @@
         }
       }
     },
-    "/v1/healthcenters/current": {
+    "/v1/drugs/paymentPeriods/{paymentPeriodId}": {
       "get": {
-        "tags": ["healthcenter"],
-        "operationId": "healthcenters/current",
+        "tags": [
+          "drug"
+        ],
+        "operationId": "drugs/paymentPeriods",
+        "parameters": [
+          {
+            "name": "paymentPeriodId",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/HealthCenterDTO"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DrugPaymentPeriodDTO"
+                  }
                 }
               }
             }
@@ -181,9 +323,213 @@
         }
       }
     },
+    "/v1/drugs/bills/{paymentPeriodId}": {
+      "get": {
+        "tags": [
+          "drug"
+        ],
+        "operationId": "drugs/bills",
+        "parameters": [
+          {
+            "name": "paymentPeriodId",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DrugBillDTO"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/v1/healthcenters": {
+      "get": {
+        "tags": [
+          "healthcenter"
+        ],
+        "operationId": "healthcenters",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "style": "form",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "before",
+            "in": "query",
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "after",
+            "in": "query",
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetHealthCentersResponseDTO"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/v1/healthcenters/current": {
+      "get": {
+        "tags": [
+          "healthcenter"
+        ],
+        "operationId": "healthcenters/current",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthCenterRegistrationDTO"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/v1/healthcenters/{id}/register": {
+      "get": {
+        "tags": [
+          "healthcenter"
+        ],
+        "operationId": "healthcenters/register",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
     "/v1/healthcenters/history": {
       "get": {
-        "tags": ["healthcenter"],
+        "tags": [
+          "healthcenter"
+        ],
         "operationId": "healthcenters/history",
         "parameters": [
           {
@@ -243,7 +589,9 @@
     },
     "/v1/therapies": {
       "get": {
-        "tags": ["therapy"],
+        "tags": [
+          "therapy"
+        ],
         "operationId": "therapies",
         "responses": {
           "200": {
@@ -374,6 +722,21 @@
         },
         "additionalProperties": false
       },
+      "CurrentDentistDTO": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "DentistBillDTO": {
         "type": "object",
         "properties": {
@@ -407,8 +770,170 @@
       "DentistDTO": {
         "type": "object",
         "properties": {
+          "lineNumber": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "id": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "nationalId": {
+            "type": "string",
+            "nullable": true
+          },
           "name": {
             "type": "string",
+            "nullable": true
+          },
+          "practice": {
+            "type": "string",
+            "nullable": true
+          },
+          "region": {
+            "type": "string",
+            "nullable": true
+          },
+          "postcode": {
+            "type": "string",
+            "nullable": true
+          },
+          "address": {
+            "type": "string",
+            "nullable": true
+          },
+          "phone": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "DrugBillDTO": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "date": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "copaymentAmount": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "individualAmount": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "insuranceAmount": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "calculatedForPaymentStepAmount": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "DrugPaymentPeriodDTO": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "dateFrom": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "dateTo": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "active": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "paidAmount": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "paymentStatus": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "numberOfBills": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "levelNumber": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "levelPercentage": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "GetDentistsResponseDTO": {
+        "type": "object",
+        "properties": {
+          "dentists": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DentistDTO"
+            },
+            "nullable": true
+          },
+          "pageInfo": {
+            "$ref": "#/components/schemas/PageInfoDTO"
+          },
+          "totalCount": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "GetHealthCentersResponseDTO": {
+        "type": "object",
+        "properties": {
+          "healthCenters": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/HealthCenterDTO"
+            },
+            "nullable": true
+          },
+          "pageInfo": {
+            "$ref": "#/components/schemas/PageInfoDTO"
+          },
+          "totalCount": {
+            "type": "integer",
+            "format": "int32",
             "nullable": true
           }
         },
@@ -417,12 +942,29 @@
       "HealthCenterDTO": {
         "type": "object",
         "properties": {
-          "healthCenter": {
+          "id": {
             "type": "string",
             "nullable": true
           },
-          "doctor": {
+          "name": {
             "type": "string",
+            "nullable": true
+          },
+          "url": {
+            "type": "string",
+            "nullable": true
+          },
+          "region": {
+            "type": "string",
+            "nullable": true
+          },
+          "waitlistRegistration": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "dateFrom": {
+            "type": "string",
+            "format": "date",
             "nullable": true
           }
         },
@@ -442,7 +984,46 @@
             "nullable": true
           },
           "healthCenter": {
-            "$ref": "#/components/schemas/HealthCenterDTO"
+            "$ref": "#/components/schemas/HealthCenterRegistrationDTO"
+          }
+        },
+        "additionalProperties": false
+      },
+      "HealthCenterRegistrationDTO": {
+        "type": "object",
+        "properties": {
+          "healthCenter": {
+            "type": "string",
+            "nullable": true
+          },
+          "url": {
+            "type": "string",
+            "nullable": true
+          },
+          "doctor": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "PageInfoDTO": {
+        "type": "object",
+        "properties": {
+          "hasPreviousPage": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "hasNextPage": {
+            "type": "boolean"
+          },
+          "startCursor": {
+            "type": "string",
+            "nullable": true
+          },
+          "endCursor": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
