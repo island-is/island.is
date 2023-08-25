@@ -1,22 +1,24 @@
 import { BrowserContext, expect, test } from '@playwright/test'
-import { icelandicAndNoPopupUrl } from '../../../../support/urls'
+import { icelandicAndNoPopupUrl, urls } from '../../../../support/urls'
 import { session } from '../../../../support/session'
 
 test.describe('Consultation portal authenticated', () => {
   let context: BrowserContext
-  const homeUrl = '/samradsgatt'
+  test.use({ baseURL: urls.islandisBaseUrl })
 
   test.beforeAll(async ({ browser }) => {
     context = await session({
       browser: browser,
       storageState: 'consultation-auth.json',
-      idsLoginOn: { nextAuth: { nextAuthRoot: 'samradsgatt' } },
-      phoneNumber: '0103019',
-      homeUrl,
+      idsLoginOn: {
+        nextAuth: { nextAuthRoot: `${urls.islandisBaseUrl}/samradsgatt` },
+      },
+      phoneNumber: '0102989',
+      homeUrl: `${urls.islandisBaseUrl}/samradsgatt`,
       authTrigger: async (page) => {
-        await page.goto(homeUrl)
+        await page.goto('/samradsgatt')
         await page.getByTestId('menu-login-btn').click()
-        return page.url()
+        return `${urls.islandisBaseUrl}/samradsgatt`
       },
     })
   })
@@ -30,7 +32,7 @@ test.describe('Consultation portal authenticated', () => {
     await page.goto(icelandicAndNoPopupUrl('/samradsgatt'))
 
     await expect(
-      page.getByRole('button', { name: 'Gervimaður Afríka' }),
+      page.getByRole('button', { name: 'Gervimaður Ameríku' }),
     ).toBeVisible()
     await expect(page.getByTestId('menu-login-btn')).not.toBeVisible()
 
@@ -78,7 +80,7 @@ test.describe('Consultation portal authenticated', () => {
     const page = await context.newPage()
     await page.goto(icelandicAndNoPopupUrl('/samradsgatt'))
 
-    await page.getByRole('button', { name: 'Gervimaður Afríka' }).click()
+    await page.getByRole('button', { name: 'Gervimaður Ameríku' }).click()
     await expect(page.getByRole('button', { name: 'Útskrá' })).toBeVisible()
 
     await page.close()

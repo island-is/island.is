@@ -4,7 +4,6 @@ import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
 import {
-  Gender,
   Notification,
   NotificationType,
 } from '@island.is/judicial-system/types'
@@ -14,6 +13,7 @@ import {
   getShortGender,
   hasSentNotification,
 } from './stepHelper'
+import { Gender } from '../graphql/schema'
 import * as formatters from './formatters'
 
 describe('Formatters utils', () => {

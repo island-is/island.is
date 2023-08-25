@@ -6,7 +6,6 @@ import { Box, Text } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
 import {
-  Defendant,
   isRestrictionCase,
   CaseDecision as TCaseDecision,
 } from '@island.is/judicial-system/types'
@@ -16,7 +15,10 @@ import {
   useSortAppealCases,
   useViewport,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { CaseListEntry } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  CaseListEntry,
+  Defendant,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import { TagAppealState } from '@island.is/judicial-system-web/src/components'
 import {
   ColumnCaseType,
