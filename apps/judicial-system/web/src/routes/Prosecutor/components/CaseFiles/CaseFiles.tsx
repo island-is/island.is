@@ -66,6 +66,7 @@ export const mapPoliceCaseFileToPoliceCaseFileCheck = (
   name: file.name,
   policeCaseNumber: file.policeCaseNumber,
   checked: false,
+  date: file.date,
 })
 
 export const CaseFiles: React.FC<React.PropsWithChildren<unknown>> = () => {
