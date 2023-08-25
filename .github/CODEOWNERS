@@ -9,6 +9,9 @@
 # Top level project ownership. When a project contains, for example, templates or modules
 # that are developed by others teams, we first list down the team working on the core and
 # further below the other team working on other part of the project.
+# All files in project root but not dirs
+/                                                                                                        @island-is/core
+
 /apps/application-system/                                                                                @island-is/norda-applications
 /apps/web*/                                                                                              @island-is/juni @island-is/stefna
 /libs/application/                                                                                       @island-is/norda-applications
@@ -17,9 +20,6 @@
 /libs/portals/admin/                                                                                     @island-is/aranja
 /libs/portals/core/                                                                                      @island-is/aranja @island-is/hugsmidjan
 
-# All files in project root but not dirs
-/*                                                                                                       @island-is/core
-
 /.yarn/                                                                                                  @island-is/core
 /.githooks/                                                                                              @island-is/core
 /.vscode/                                                                                                @island-is/core
@@ -27,7 +27,7 @@
 
 
 # All files in /app but not dirs
-/apps/*                                                                                                  @island-is/core
+/apps/                                                                                                   @island-is/core
 /apps/services/*                                                                                         @island-is/core
 
 /apps/reference-next-app/                                                                                @island-is/core
@@ -138,7 +138,7 @@
 /libs/api/domains/license-service/                                                                       @island-is/hugsmidjan
 /libs/api/domains/work-machines/                                                                         @island-is/hugsmidjan
 /libs/api/domains/national-registry/                                                                     @island-is/hugsmidjan
-/libs/api/domains/national-registry-xroad/                                                               @island-is/hugsmidjan
+/libs/api/domains/national-registry-x-road/                                                               @island-is/hugsmidjan
 /libs/api/domains/user-profile/                                                                          @island-is/hugsmidjan @island-is/juni
 /libs/api/domains/passport/                                                                              @island-is/hugsmidjan
 /libs/api/domains/vehicles/                                                                              @island-is/hugsmidjan
