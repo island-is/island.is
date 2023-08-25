@@ -96,7 +96,7 @@ export const AudioPlayer: FC<Props> = ({ url, title }) => {
                     hasEnded
                       ? 'reload'
                       : isPlaying
-                      ? 'removeCircle'
+                      ? 'pauseCircle'
                       : 'playCircle'
                   }
                   size="large"
@@ -126,7 +126,7 @@ export const AudioPlayer: FC<Props> = ({ url, title }) => {
               onClick={() => setIsMuted(!isMuted)}
             >
               <Icon
-                icon={isMuted ? 'lockClosed' : 'cellular'}
+                icon={isMuted ? 'volumeMute' : 'volumeHigh'}
                 size="large"
                 color="blue400"
               />

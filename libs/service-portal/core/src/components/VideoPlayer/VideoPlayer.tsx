@@ -124,7 +124,7 @@ export const VideoPlayer: FC<Props> = ({ url, title }) => {
                         hasEnded
                           ? 'reload'
                           : isPlaying
-                          ? 'removeCircle'
+                          ? 'pauseCircle'
                           : 'playCircle'
                       }
                       size="large"
@@ -154,7 +154,7 @@ export const VideoPlayer: FC<Props> = ({ url, title }) => {
                   onClick={() => setIsMuted(!isMuted)}
                 >
                   <Icon
-                    icon={isMuted ? 'lockClosed' : 'cellular'}
+                    icon={isMuted ? 'volumeMute' : 'volumeHigh'}
                     size="large"
                     color="blue400"
                   />
@@ -167,10 +167,7 @@ export const VideoPlayer: FC<Props> = ({ url, title }) => {
                   title={isFullscreen ? 'Close fullscreen' : 'Open fullscreen'}
                   onClick={toggleFullscreen}
                 >
-                  <Icon
-                    icon={isFullscreen ? 'fileTrayFull' : 'filter'}
-                    color="blue400"
-                  />
+                  <Icon icon="expand" color="blue400" />
                 </button>
               </Box>
             </GridColumn>
