@@ -261,7 +261,7 @@ class DirectorateOfImmigrationClient {
       ).apiApplicationCitizenshipPost()
 
       // clean applicationId and remove double quotes that is added by the openapi generator
-      applicationId = applicationId.replace(/\"/g, '')
+      applicationId = applicationId.replace('"', '').replace('"', '')
     } catch (error) {
       this.logger.error(
         'Error when trying to post citizenship application to UTL',
