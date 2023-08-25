@@ -89,6 +89,7 @@ export interface CitizenshipApplication {
     passportNumber: string
     passportTypeId: number
     countryOfIssuerId: number
+    file: { base64: string }[]
   }
   supportingDocuments: {
     birthCertificate?: { base64: string }[]
@@ -109,13 +110,14 @@ export interface CitizenshipApplication {
     passportNumber: string
     passportTypeId: number
     countryIdOfIssuer: number
+    file: { base64: string }[]
   }[]
   childrenSupportingDocuments: {
     nationalId: string
-    birthCertificate: { base64: string }
-    writtenConsentFromChild?: { base64: string }
-    writtenConsentFromOtherParent?: { base64: string }
-    custodyDocuments: { base64: string }
+    birthCertificate: { base64: string }[]
+    writtenConsentFromChild?: { base64: string }[]
+    writtenConsentFromOtherParent?: { base64: string }[]
+    custodyDocuments: { base64: string }[]
   }[]
 }
 

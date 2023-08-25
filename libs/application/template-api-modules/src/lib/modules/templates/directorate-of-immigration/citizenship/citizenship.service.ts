@@ -378,8 +378,8 @@ export class CitizenshipService extends BaseTemplateApiService {
           passportNumber: applicantPassport.passportNumber,
           passportTypeId: parseInt(applicantPassport.passportTypeId),
           countryOfIssuerId: parseInt(applicantPassport.countryOfIssuerId),
+          file: applicantPassport.file?.map((file) => ({ base64: file })) || [],
         },
-        //TODOx missing in answers:
         supportingDocuments: {
           birthCertificate: answers.supportingDocuments?.birthCertificate?.map(
             (file) => ({ base64: file }),
@@ -411,27 +411,36 @@ export class CitizenshipService extends BaseTemplateApiService {
             nationalId: c.nationalId,
             fullName: c.fullName,
           })) || [],
-        //TODOx missing in answers:
-        childrenPassport: [
-          {
-            nationalId: '',
-            dateOfIssue: new Date(),
-            dateOfExpiry: new Date(),
-            passportNumber: '',
-            passportTypeId: 1,
-            countryIdOfIssuer: 1,
-          },
-        ],
-        //TODOx missing in answers:
-        childrenSupportingDocuments: [
-          {
-            nationalId: '',
-            birthCertificate: { base64: '' },
-            writtenConsentFromChild: { base64: '' },
-            writtenConsentFromOtherParent: { base64: '' },
-            custodyDocuments: { base64: '' },
-          },
-        ],
+        childrenPassport:
+          answers.childrenPassport?.map((p) => ({
+            nationalId: p.nationalId,
+            dateOfIssue: new Date(p.publishDate),
+            dateOfExpiry: new Date(p.expirationDate),
+            passportNumber: p.passportNumber,
+            passportTypeId: parseInt(p.passportTypeId),
+            countryIdOfIssuer: parseInt(p.countryOfIssuerId),
+            file: p.file?.map((file) => ({ base64: file })) || [],
+          })) || [],
+        childrenSupportingDocuments:
+          answers.childrenSupportingDocuments?.map((d) => ({
+            nationalId: d.nationalId,
+            birthCertificate:
+              d.birthCertificate?.map((file) => ({
+                base64: file,
+              })) || [],
+            writtenConsentFromChild:
+              d.writtenConsentFromChild?.map((file) => ({
+                base64: file,
+              })) || [],
+            writtenConsentFromOtherParent:
+              d.writtenConsentFromOtherParent?.map((file) => ({
+                base64: file,
+              })) || [],
+            custodyDocuments:
+              d.custodyDocuments?.map((file) => ({
+                base64: file,
+              })) || [],
+          })) || [],
       },
     )
   }

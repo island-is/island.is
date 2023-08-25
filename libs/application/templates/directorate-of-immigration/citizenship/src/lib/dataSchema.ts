@@ -191,7 +191,7 @@ const SupportingDocumentsSchema = z.object({
 })
 
 const ChildrenSupportingDocumentsSchema = z.object({
-  nationalId: z.string().min(1).optional(),
+  nationalId: z.string().min(1),
   birthCertificate: z.array(z.string()).optional(),
   writtenConsentFromChild: z.array(z.string()).optional(),
   writtenConsentFromOtherParent: z.array(z.string()).optional(),
