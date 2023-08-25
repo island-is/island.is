@@ -144,47 +144,33 @@ export class AuthController {
     @Req() req: Request,
   ) {
     this.logger.debug('Received callback request')
+
     const { redirectRoute } = req.cookies[REDIRECT_COOKIE_NAME] ?? {}
     const codeVerifier = req.cookies[CODE_VERIFIER_COOKIE.name]
-
     res.clearCookie(CODE_VERIFIER_COOKIE.name, CODE_VERIFIER_COOKIE.options)
 
-    let accessToken
     try {
-      accessToken = await this.authService.fetchIdsToken(code, codeVerifier)
-    } catch (err) {
-      this.logger.error(err)
-      return res.redirect('/?villa=innskraning-ogild')
-    }
+      const idsTokens = await this.authService.fetchIdsToken(code, codeVerifier)
+      const verifiedUserToken = await this.authService.verifyIdsToken(
+        idsTokens.id_token,
+      )
 
-    if (accessToken) {
-      try {
-        const verifiedToken = await this.authService.verifyIdsToken(
-          accessToken.access_token,
+      if (verifiedUserToken) {
+        this.logger.debug('Token verification successful')
+
+        return this.redirectAuthenticatedUser(
+          {
+            nationalId: verifiedUserToken.nationalId,
+          },
+          res,
+          redirectRoute,
+          new Entropy({ bits: 128 }).string(),
         )
-
-        if (verifiedToken) {
-          this.logger.debug('Token verification successful')
-          const token = jwt.decode(accessToken.id_token) as {
-            nationalId: string
-          }
-
-          return this.redirectAuthenticatedUser(
-            {
-              nationalId: token.nationalId,
-            },
-            res,
-            redirectRoute,
-            new Entropy({ bits: 128 }).string(),
-          )
-        }
-        if (!verifiedToken) {
-          this.logger.error('Token verification unsuccessful')
-        }
-      } catch (error) {
-        this.logger.error('Token verification failed', { error })
       }
+    } catch (error) {
+      this.logger.error('Authentication callback failed:', { error })
     }
+
     return res.redirect('/?villa=innskraning-ogild')
   }
 
