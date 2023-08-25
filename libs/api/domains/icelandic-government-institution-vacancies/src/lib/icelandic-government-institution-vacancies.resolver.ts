@@ -87,7 +87,7 @@ export class IcelandicGovernmentInstitutionVacanciesResolver {
     for (const vacancy of mappedVacancies) {
       if (
         vacancy.institutionReferenceIdentifier &&
-        referenceIdentifierSet.has(vacancy.institutionReferenceIdentifier)
+        organizationMap.has(vacancy.institutionReferenceIdentifier)
       ) {
         const organization = organizationMap.get(
           vacancy.institutionReferenceIdentifier,
@@ -97,8 +97,9 @@ export class IcelandicGovernmentInstitutionVacanciesResolver {
           vacancy.institutionName = organization.title
         }
       } else {
-        // In case the institution/organization does not exist in the cms we don't use the logo from the external service
+        // In case the institution/organization does not exist in the cms we don't use the logo or the name from the external service
         vacancy.logoUrl = undefined
+        vacancy.institutionName = undefined
       }
     }
 
