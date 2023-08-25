@@ -6,7 +6,6 @@ import {
   CaseState,
   completedCaseStates,
   Feature,
-  Gender,
   isCourtRole,
   isExtendedCourtRole,
   isIndictmentCase,
@@ -21,6 +20,7 @@ import { FeatureContext } from '@island.is/judicial-system-web/src/components/Fe
 
 import {
   CaseType,
+  Gender,
   InstitutionType,
   User,
   UserRole,
