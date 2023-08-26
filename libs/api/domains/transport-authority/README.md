@@ -1,5 +1,3 @@
-<!-- gitbook-ignore -->
-
 # api-domains-transport-authority
 
 This library was generated with [Nx](https://nx.dev).

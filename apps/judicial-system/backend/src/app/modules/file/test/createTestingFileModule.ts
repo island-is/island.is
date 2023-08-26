@@ -101,6 +101,8 @@ export const createTestingFileModule = async () => {
 
   const sequelize = fileModule.get<Sequelize>(Sequelize)
 
+  fileModule.close()
+
   return {
     sequelize,
     awsS3Service,

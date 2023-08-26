@@ -110,7 +110,7 @@ const DefenderInput: React.FC<React.PropsWithChildren<Props>> = ({
         setAndSendDefendantToServer(
           workingCase.id,
           defendantId,
-          updatedLawyer,
+          { ...updatedLawyer, caseId: workingCase.id, defendantId },
           setWorkingCase,
         )
       } else {
@@ -156,11 +156,15 @@ const DefenderInput: React.FC<React.PropsWithChildren<Props>> = ({
     [emailErrorMessage, phoneNumberErrorMessage],
   )
 
-  const formatUpdate = (property: InputType, value: string) => {
+  const formatUpdate = useCallback((property: InputType, value: string) => {
     return property === 'defenderEmail'
-      ? { defenderEmail: value }
-      : { defenderPhoneNumber: value }
-  }
+      ? {
+          defenderEmail: value,
+        }
+      : {
+          defenderPhoneNumber: value,
+        }
+  }, [])
 
   const handleLawyerPropertyChange = useCallback(
     (
@@ -184,9 +188,12 @@ const DefenderInput: React.FC<React.PropsWithChildren<Props>> = ({
         propertyValidation.errorMessageHandler.setErrorMessage,
       )
 
-      updateDefendantState(defendantId, update, setWorkingCase)
+      updateDefendantState(
+        { ...update, caseId: workingCase.id, defendantId },
+        setWorkingCase,
+      )
     },
-    [propertyValidations, updateDefendantState],
+    [formatUpdate, propertyValidations, updateDefendantState, workingCase.id],
   )
 
   const handleLawyerPropertyBlur = useCallback(
@@ -205,9 +212,9 @@ const DefenderInput: React.FC<React.PropsWithChildren<Props>> = ({
         propertyValidation.errorMessageHandler.setErrorMessage,
       )
 
-      updateDefendant(caseId, defendantId, update)
+      updateDefendant({ ...update, caseId: workingCase.id, defendantId })
     },
-    [propertyValidations, updateDefendant],
+    [formatUpdate, propertyValidations, updateDefendant, workingCase.id],
   )
 
   return (
@@ -254,7 +261,7 @@ const DefenderInput: React.FC<React.PropsWithChildren<Props>> = ({
           placeholder={formatMessage(m.emailPlaceholder)}
           value={
             defendantId
-              ? defendantInDefendants?.defenderEmail
+              ? defendantInDefendants?.defenderEmail || ''
               : workingCase.defenderEmail || ''
           }
           errorMessage={emailErrorMessage}
@@ -306,7 +313,7 @@ const DefenderInput: React.FC<React.PropsWithChildren<Props>> = ({
         maskPlaceholder={null}
         value={
           defendantId
-            ? defendantInDefendants?.defenderPhoneNumber
+            ? defendantInDefendants?.defenderPhoneNumber || ''
             : workingCase.defenderPhoneNumber || ''
         }
         disabled={disabled}
