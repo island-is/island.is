@@ -82,11 +82,12 @@ export class IntellectualPropertyService {
     )
 
     const patent = response[0]
+    const registeredDate = parseDateIfValid(patent.registeredDate)
 
     return {
       ...patent,
-      maxValidObjectionDate: patent.registeredDate
-        ? addMonths(new Date(patent.registeredDate), 9)
+      maxValidObjectionDate: registeredDate
+        ? addMonths(registeredDate, 9)
         : undefined,
     }
   }
@@ -170,7 +171,7 @@ export class IntellectualPropertyService {
             } as Image),
         ),
       )
-      .filter((Boolean as unknown) as ExcludesFalse)
+      .filter(Boolean as unknown as ExcludesFalse)
 
     return designImages
   }

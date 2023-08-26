@@ -26,4 +26,11 @@ query getIntellectualPropertyDesign($input: IntellectualPropertyInput!) {
       address
     }
   }
+  intellectualPropertyDesignImageList(input: $input) {
+    images {
+      designNumber
+      imageNumber
+      image
+    }
+  }
 }
