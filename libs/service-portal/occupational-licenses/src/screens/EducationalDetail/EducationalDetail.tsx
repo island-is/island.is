@@ -81,7 +81,7 @@ export const EducationDetail = () => {
       img={organizationImage}
       buttonGroup={
         license.url ? (
-          <Box paddingTop="p2">
+          <Box paddingTop={3}>
             <Button
               variant="utility"
               onClick={() => setShouldDownload(true)}

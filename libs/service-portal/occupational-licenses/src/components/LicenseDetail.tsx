@@ -44,6 +44,7 @@ export const LicenseDetail: React.FC<LicenseDetailProps> = ({
       <Stack dividers space="auto">
         {name && (
           <UserInfoLine
+            paddingY={3}
             label={formatMessage(om.nameOfIndividual)}
             content={name}
             labelColumnSpan={['6/12']}
@@ -52,6 +53,7 @@ export const LicenseDetail: React.FC<LicenseDetailProps> = ({
         )}
         {dateOfBirth && (
           <UserInfoLine
+            paddingY={3}
             label={formatMessage(om.dateOfBirth)}
             content={dateOfBirth}
             labelColumnSpan={['6/12']}
@@ -60,6 +62,7 @@ export const LicenseDetail: React.FC<LicenseDetailProps> = ({
         )}
         {profession && (
           <UserInfoLine
+            paddingY={3}
             label={formatMessage(om.profession)}
             content={profession}
             labelColumnSpan={['6/12']}
@@ -68,6 +71,7 @@ export const LicenseDetail: React.FC<LicenseDetailProps> = ({
         )}
         {licenseType && (
           <UserInfoLine
+            paddingY={3}
             label={formatMessage(om.typeofLicense)}
             content={licenseType}
             labelColumnSpan={['6/12']}
@@ -76,6 +80,7 @@ export const LicenseDetail: React.FC<LicenseDetailProps> = ({
         )}
         {publisher && (
           <UserInfoLine
+            paddingY={3}
             label={formatMessage(om.publisher)}
             content={publisher}
             labelColumnSpan={['6/12']}
@@ -84,6 +89,7 @@ export const LicenseDetail: React.FC<LicenseDetailProps> = ({
         )}
         {dateOfIssue && (
           <UserInfoLine
+            paddingY={3}
             label={formatMessage(om.dateOfIssue)}
             content={dateOfIssue}
             labelColumnSpan={['6/12']}
@@ -92,6 +98,7 @@ export const LicenseDetail: React.FC<LicenseDetailProps> = ({
         )}
         {isValid && (
           <UserInfoLine
+            paddingY={3}
             label={formatMessage(om.licenseStatus)}
             content={
               <Box
