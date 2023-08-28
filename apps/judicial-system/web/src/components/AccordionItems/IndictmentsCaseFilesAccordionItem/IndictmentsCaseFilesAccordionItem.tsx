@@ -229,8 +229,6 @@ const CaseFile: React.FC<React.PropsWithChildren<CaseFileProps>> = (props) => {
     return formatDate(caseFile.displayDate ?? caseFile.created, DDMMYYYY)
   }, [caseFile.displayDate, caseFile.created])
 
-  console.log(caseFile)
-
   return (
     <Reorder.Item
       value={caseFile}
@@ -421,8 +419,6 @@ const IndictmentsCaseFilesAccordionItem: React.FC<
   const [reorderableItems, setReorderableItems] = useState<ReorderableItem[]>(
     [],
   )
-
-  console.log(caseFiles)
 
   useEffect(() => {
     setReorderableItems([
