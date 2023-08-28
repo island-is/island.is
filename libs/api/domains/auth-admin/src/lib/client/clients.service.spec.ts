@@ -87,6 +87,11 @@ const createMockAdminApi = () => ({
     { ...secretResponse, secretId: '2' },
   ]),
   meClientSecretsControllerDelete: jest.fn(),
+  meTenantsControllerFindById: jest.fn().mockResolvedValue({
+    id: 'test-tenant-id',
+    name: 'Test tenant',
+    contactEmail: '',
+  }),
 })
 
 const mockAdminDevApi = createMockAdminApi()
