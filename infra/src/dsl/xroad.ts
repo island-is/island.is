@@ -163,23 +163,11 @@ export const HealthInsurance = new XroadConf({
 
 export const RskProcuring = new XroadConf({
   env: {
-    XROAD_RSK_PROCURING_REDIS_NODES: {
-      dev:
-        '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]',
-      staging:
-        '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]',
-      prod:
-        '["clustercfg.general-redis-cluster-group.dnugi2.euw1.cache.amazonaws.com:6379"]',
-    },
     XROAD_RSK_PROCURING_PATH: {
       dev: 'IS-DEV/GOV/10006/Skatturinn/relationships-v1',
       staging: 'IS-TEST/GOV/5402696029/Skatturinn/relationships-v1',
       prod: 'IS/GOV/5402696029/Skatturinn/relationships-v1',
     },
-  },
-  secrets: {
-    RSK_USERNAME: '/k8s/xroad/client/RSK/USERNAME',
-    RSK_PASSWORD: '/k8s/xroad/client/RSK/PASSWORD',
   },
 })
 
