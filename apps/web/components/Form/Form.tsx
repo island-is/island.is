@@ -521,7 +521,7 @@ export const Form = ({ form, namespace }: FormProps) => {
               name: data['name'],
               email: data['email'],
               message: formatBody(_data),
-              files: files.map((f) => f[1]).flat(), // too hard ... ask owner
+              files: files.map((f) => f[1]).flat(),
               recipientFormFieldDeciderValue: getRecipientFormFieldDeciderValue(),
             },
           },
