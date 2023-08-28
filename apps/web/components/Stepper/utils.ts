@@ -383,7 +383,7 @@ const getStepOptions = (
 const getStepOptionsSourceNamespace = (step: Step): string => {
   if (!step || step.config === '') return ''
   const stepConfig: StepConfig = JSON.parse(
-    step.config ? step.config : '',
+    step.config ? step.config : '{}',
   ) as StepConfig
   if (stepConfig.optionsFromSource)
     return stepConfig.optionsFromSource.sourceNamespace
