@@ -200,12 +200,12 @@ export const StepperHelper: React.FC<
 
   const { activeLocale } = useI18n()
   const currentStepOptions = getStepOptions(
-    currentStep, //TOOD: currentStep might be undefined: Stefna
+    currentStep, // TODO: currentStep might be undefined: Stefna
     activeLocale,
     optionsFromNamespace,
   )
-  const currentStateStepSlug = getStateMeta(currentState)?.stepSlug //TOOD: currentState might be undefined: Stefna
-  const allStateStepSlugs = getAllStateStepSlugs(stepperMachine) //TOOD: stepperMachine might be undefined: Stefna
+  const currentStateStepSlug = getStateMeta(currentState)?.stepSlug // TODO: currentState might be undefined: Stefna
+  const allStateStepSlugs = getAllStateStepSlugs(stepperMachine) // TODO: stepperMachine might be undefined: Stefna
 
   const currentStateStepSlugSymbol = getStepBySlug(
     stepper,
