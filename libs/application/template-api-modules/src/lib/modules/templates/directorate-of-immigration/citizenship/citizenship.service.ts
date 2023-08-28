@@ -15,6 +15,7 @@ import {
   CitizenshipAnswers,
   SpouseIndividual,
   CitizenIndividual,
+  error as errorMessages,
 } from '@island.is/application/templates/directorate-of-immigration/citizenship'
 import {
   Country,
@@ -124,6 +125,18 @@ export class CitizenshipService extends BaseTemplateApiService {
       nationalId,
     )
 
+    // dont allow user to continue if already has icelandic citizenship
+    const citizenshipIceland = 'IS'
+    if (citizenship?.countryCode === citizenshipIceland) {
+      throw new TemplateApiError(
+        {
+          title: errorMessages.alreadyIcelandicCitizen,
+          summary: errorMessages.alreadyIcelandicCitizen,
+        },
+        404,
+      )
+    }
+
     // get marital title
     const cohabitationInfo = await this.nationalRegistryApi.getCohabitationInfo(
       nationalId,
@@ -197,6 +210,16 @@ export class CitizenshipService extends BaseTemplateApiService {
       }
     }
 
+    if (!lastChangeDate) {
+      throw new TemplateApiError(
+        {
+          title: errorMessages.residenceInIcelandLastChangeDateMissing,
+          summary: errorMessages.residenceInIcelandLastChangeDateMissing,
+        },
+        404,
+      )
+    }
+
     return lastChangeDate
   }
 
@@ -252,6 +275,33 @@ export class CitizenshipService extends BaseTemplateApiService {
         municipalityCode: birthplace.municipalityNumber,
       }
     )
+  }
+
+  async validateApplication({
+    application,
+    auth,
+  }: TemplateApiModuleActionProps) {
+    const answers = application.answers as CitizenshipAnswers
+
+    const residenceConditionList = await this.directorateOfImmigrationClient.getCitizenshipResidenceConditions(
+      auth,
+    )
+
+    // throw error in case the residence condition list changed since prerequisite step and
+    // user does not fulfill any other condition
+    if (
+      residenceConditionList.length === 0 &&
+      answers.parentInformation?.hasValidParents !== YES &&
+      answers.formerIcelander !== YES
+    ) {
+      throw new TemplateApiError(
+        {
+          title: errorMessages.noResidenceConditionPossible,
+          summary: errorMessages.noResidenceConditionPossible,
+        },
+        400,
+      )
+    }
   }
 
   async submitApplication({

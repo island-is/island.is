@@ -34,6 +34,7 @@ export const CriminalRecords = ({ field, application, error }: any) => {
               id={`${field.id}.${x.countryId}`}
               header={`Sakavottorð - ${
                 countryOptions.filter((z) => z.id === parseInt(x.countryId))[0]
+                  ?.name
               }`}
               description={formatMessage(
                 supportingDocuments.labels.otherDocuments.acceptedFileTypes,

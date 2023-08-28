@@ -10,5 +10,6 @@ export * from './utils'
 export * from './shared/types'
 
 export * from './lib/messages/externalData'
+export * from './lib/messages/error'
 
 export default template
