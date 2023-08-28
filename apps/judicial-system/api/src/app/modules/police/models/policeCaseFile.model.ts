@@ -14,5 +14,5 @@ export class PoliceCaseFile implements TPoliceCaseFile {
   readonly policeCaseNumber!: string
 
   @Field()
-  readonly date!: string
+  readonly displayDate!: string
 }

@@ -186,7 +186,7 @@ export class PoliceService {
                     ? file.heitiSkjals
                     : `${file.heitiSkjals}.pdf`,
                   policeCaseNumber: file.malsnumer,
-                  date: file.dagsStofnad,
+                  displayDate: file.dagsStofnad,
                 }),
               ) ?? []
             )
@@ -205,7 +205,7 @@ export class PoliceService {
                   ? file.heitiSkjals
                   : `${file.heitiSkjals}.pdf`,
                 policeCaseNumber: file.malsnumer,
-                date: file.dagsStofnad,
+                displayDate: file.dagsStofnad,
               }),
             )
           }

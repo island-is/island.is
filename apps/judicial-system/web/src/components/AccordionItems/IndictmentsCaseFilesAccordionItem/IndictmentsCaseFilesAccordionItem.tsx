@@ -229,6 +229,8 @@ const CaseFile: React.FC<React.PropsWithChildren<CaseFileProps>> = (props) => {
     return formatDate(caseFile.displayDate ?? caseFile.created, DDMMYYYY)
   }, [caseFile.displayDate, caseFile.created])
 
+  console.log(caseFile)
+
   return (
     <Reorder.Item
       value={caseFile}
@@ -420,6 +422,8 @@ const IndictmentsCaseFilesAccordionItem: React.FC<
     [],
   )
 
+  console.log(caseFiles)
+
   useEffect(() => {
     setReorderableItems([
       ...sortedFilesInChapter(0, caseFiles),
@@ -478,6 +482,7 @@ const IndictmentsCaseFilesAccordionItem: React.FC<
             userGeneratedFilename: caseFile.userGeneratedFilename,
             isDivider: false,
             canOpen: Boolean(caseFile.key),
+            displayDate: caseFile.displayDate,
           }
         }),
     ])
