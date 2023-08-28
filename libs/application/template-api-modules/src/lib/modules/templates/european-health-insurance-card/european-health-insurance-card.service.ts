@@ -64,7 +64,7 @@ export class EuropeanHealthInsuranceCardService extends BaseTemplateApiService {
     }
 
     if (applyType === FormApplyType.APPLYING_FOR_PLASTIC) {
-      const ans = (application.answers as unknown) as Answer
+      const ans = application.answers as unknown as Answer
       return ans.delimitations.applyForPlastic?.filter(this.onlyUnique)
     }
 

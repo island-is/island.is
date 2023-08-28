@@ -110,8 +110,8 @@ const Lifetime = ({
             onChange={setLifeTimeLength}
             label={formatMessage(m.absoluteLifetime)}
             errorMessage={formatErrorMessage(
-              (actionData?.errors
-                ?.absoluteRefreshTokenLifetime as unknown) as string,
+              actionData?.errors
+                ?.absoluteRefreshTokenLifetime as unknown as string,
             )}
           />
           <Text variant={'small'}>
@@ -148,8 +148,8 @@ const Lifetime = ({
               onChange={setLifeTimeLength}
               label={formatMessage(m.inactivityLifetime)}
               errorMessage={formatErrorMessage(
-                (actionData?.errors
-                  ?.slidingRefreshTokenLifetime as unknown) as string,
+                actionData?.errors
+                  ?.slidingRefreshTokenLifetime as unknown as string,
               )}
             />
             <Text variant={'small'}>

@@ -92,9 +92,8 @@ export const useS3Upload = (caseId: string) => {
   const { formatMessage } = useIntl()
 
   const [createPresignedPost] = useCreatePresignedPostMutation()
-  const [
-    limitedAccessCreatePresignedPost,
-  ] = useLimitedAccessCreatePresignedPostMutation()
+  const [limitedAccessCreatePresignedPost] =
+    useLimitedAccessCreatePresignedPostMutation()
   const [createFile] = useCreateFileMutation()
   const [limitedAccessCreateFile] = useLimitedAccessCreateFileMutation()
   const [deleteFile] = useDeleteFileMutation()

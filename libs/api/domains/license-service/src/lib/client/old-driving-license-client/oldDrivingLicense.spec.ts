@@ -9,9 +9,8 @@ describe('license-service/client/driving-license', () => {
     it('should be unknown for empty license', async () => {
       const license: OldGenericDrivingLicenseResponse = {}
 
-      const result = OldGenericDrivingLicenseApi.licenseIsValidForPkpass(
-        license,
-      )
+      const result =
+        OldGenericDrivingLicenseApi.licenseIsValidForPkpass(license)
 
       expect(result).toBe(GenericUserLicensePkPassStatus.Unknown)
     })
@@ -24,9 +23,8 @@ describe('license-service/client/driving-license', () => {
         },
       }
 
-      const result = OldGenericDrivingLicenseApi.licenseIsValidForPkpass(
-        license,
-      )
+      const result =
+        OldGenericDrivingLicenseApi.licenseIsValidForPkpass(license)
 
       expect(result).toBe(GenericUserLicensePkPassStatus.Available)
     })

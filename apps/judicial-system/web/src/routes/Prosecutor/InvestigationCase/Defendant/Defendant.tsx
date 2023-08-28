@@ -54,12 +54,8 @@ const Defendant = () => {
   const router = useRouter()
   const { updateDefendant, createDefendant, deleteDefendant } = useDefendants()
 
-  const {
-    workingCase,
-    setWorkingCase,
-    isLoadingWorkingCase,
-    caseNotFound,
-  } = useContext(FormContext)
+  const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
+    useContext(FormContext)
   const { createCase, isCreatingCase, setAndSendCaseToServer } = useCase()
   const { formatMessage } = useIntl()
   // This state is needed because type is initially set to OHTER on the
@@ -73,9 +69,8 @@ const Defendant = () => {
     }
   }, [workingCase.id, workingCase.type])
 
-  const { clientPoliceNumbers, setClientPoliceNumbers } = usePoliceCaseNumbers(
-    workingCase,
-  )
+  const { clientPoliceNumbers, setClientPoliceNumbers } =
+    usePoliceCaseNumbers(workingCase)
 
   const handleNavigationTo = useCallback(
     async (destination: string) => {

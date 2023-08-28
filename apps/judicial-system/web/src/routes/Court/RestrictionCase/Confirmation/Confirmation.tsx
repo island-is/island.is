@@ -35,12 +35,8 @@ import { confirmation as strings } from './Confirmation.strings'
 type VisibleModal = 'none' | 'rulingModifiedModal' | 'signingModal'
 
 export const Confirmation: React.FC<React.PropsWithChildren<unknown>> = () => {
-  const {
-    workingCase,
-    setWorkingCase,
-    isLoadingWorkingCase,
-    caseNotFound,
-  } = useContext(FormContext)
+  const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
+    useContext(FormContext)
   const [modalVisible, setModalVisible] = useState<VisibleModal>('none')
 
   const { user } = useContext(UserContext)

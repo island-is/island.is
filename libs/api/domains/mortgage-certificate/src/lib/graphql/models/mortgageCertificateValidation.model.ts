@@ -3,7 +3,8 @@ import { MortgageCertificateValidation } from '@island.is/clients/syslumenn'
 
 @ObjectType()
 export class MortgageCertificateValidationModel
-  implements MortgageCertificateValidation {
+  implements MortgageCertificateValidation
+{
   @Field()
   propertyNumber!: string
 

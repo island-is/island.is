@@ -74,28 +74,26 @@ const Spacer = styled.View`
   height: 150px;
 `;
 
-const {
-  useNavigationOptions,
-  getNavigationOptions,
-} = createNavigationOptionHooks(
-  (theme, intl) => ({
-    topBar: {
-      title: {
-        text: intl.formatMessage({id: 'walletPass.screenTitle'}),
+const {useNavigationOptions, getNavigationOptions} =
+  createNavigationOptionHooks(
+    (theme, intl) => ({
+      topBar: {
+        title: {
+          text: intl.formatMessage({id: 'walletPass.screenTitle'}),
+        },
+        noBorder: true,
       },
-      noBorder: true,
+    }),
+    {
+      topBar: {
+        rightButtons: [],
+      },
+      bottomTabs: {
+        visible: false,
+        drawBehind: true,
+      },
     },
-  }),
-  {
-    topBar: {
-      rightButtons: [],
-    },
-    bottomTabs: {
-      visible: false,
-      drawBehind: true,
-    },
-  },
-);
+  );
 
 const FieldRender = ({data, level = 1, licenseType}: any) => {
   return (
@@ -157,8 +155,7 @@ const FieldRender = ({data, level = 1, licenseType}: any) => {
                   code={name}
                   title={label}
                   type={licenseType}
-                  hasFields={!!fields}
-                >
+                  hasFields={!!fields}>
                   <FieldRow>
                     {FieldRender({
                       data: fields,
@@ -323,8 +320,7 @@ export const WalletPassScreen: NavigationFunctionComponent<{
           left: 0,
           right: 0,
           zIndex: 100,
-        }}
-      >
+        }}>
         <LicenceCard
           nativeID={`license-${data?.license?.type}_destination`}
           type={data?.license?.type as LicenseCardType}
@@ -345,8 +341,7 @@ export const WalletPassScreen: NavigationFunctionComponent<{
             right: 0,
             marginHorizontal: 16,
             zIndex: 100,
-          }}
-        >
+          }}>
           {Platform.OS === 'ios' ? (
             <AddPassButton
               style={{height: 52}}

@@ -47,10 +47,8 @@ const AppealCase = () => {
   const router = useRouter()
   const { id } = router.query
 
-  const [
-    appealCaseNumberErrorMessage,
-    setAppealCaseNumberErrorMessage,
-  ] = useState<string>('')
+  const [appealCaseNumberErrorMessage, setAppealCaseNumberErrorMessage] =
+    useState<string>('')
 
   const { data: userData } = useQuery<UserData>(UsersQuery, {
     fetchPolicy: 'no-cache',
