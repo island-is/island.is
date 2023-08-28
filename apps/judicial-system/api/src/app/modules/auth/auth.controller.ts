@@ -189,7 +189,6 @@ export class AuthController {
     res.clearCookie(CODE_VERIFIER_COOKIE.name, CODE_VERIFIER_COOKIE.options)
     res.clearCookie(ID_TOKEN.name, ID_TOKEN.options)
 
-    this.logger.debug('!!Redirecting to identity server logout')
     if (idToken) {
       return res.redirect(
         `${this.config.issuer}/connect/endsession?id_token_hint=${idToken}&post_logout_redirect_uri=${this.config.logoutRedirectUri}`,
