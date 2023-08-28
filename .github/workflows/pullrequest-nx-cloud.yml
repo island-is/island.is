@@ -21,15 +21,16 @@ env:
   NODE_OPTIONS: --max-old-space-size=8192
   COMPOSE_HTTP_TIMEOUT: 180
   GITHUB_ACTIONS_CACHE_URL: https://cache.dev01.devland.is/
-  NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
   MAX_JOBS: 8
   MAX_TASKS_PER_AGENT: 20
   MAX_AGENTS: 15
   BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
   NX_BRANCH: ${{ github.head_ref || github.ref_name }}
   NX_VERBOSE_LOGGING: true
-  NX_CLOUD_DISTRIBUTED_EXECUTION_STOP_AGENTS_ON_FAILURE: true
   SKIP_NODEJS_CACHE: ${{ contains(github.event.pull_request.labels.*.name, 'skip-nodejs-cache') }}
+  NX_CLOUD_DISTRIBUTED_EXECUTION: true
+  NX_CLOUD_DISTRIBUTED_EXECUTION_STOP_AGENTS_ON_FAILURE: true
+  NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
 
 jobs:
   pre-checks:
@@ -76,14 +77,19 @@ jobs:
           name: pr-event
           path: event.json
           retention-days: 60
-      - uses: nrwl/nx-set-shas@v3
-      - name: Set NX sha variables
-        id: git-sha
+      - name: Checking out relevant branches
         run: |
-          echo "BASE=$NX_BASE" >> $GITHUB_ENV
-          echo "HEAD=$NX_HEAD" >> $GITHUB_ENV
-          echo "nx-base=$NX_BASE" >> $GITHUB_OUTPUT
-          echo "nx-head=$NX_HEAD" >> $GITHUB_OUTPUT
+          git checkout $GITHUB_HEAD_REF
+          git checkout $GITHUB_BASE_REF
+          git checkout $GITHUB_SHA
+          git config --global user.email "ci@island.is"
+          git config --global user.name "CI Bot"
+
+          BASE_SHA=$(git merge-base HEAD $GITHUB_BASE_REF)
+          HEAD_SHA=$(git merge-base HEAD $GITHUB_HEAD_REF)
+          echo Current base SHA is $BASE_SHA and head SHA is $HEAD_SHA
+          echo "{\"base_sha\": \"$BASE_SHA\", \"head_sha\":\"$HEAD_SHA\"}" > event.json
+
       - uses: actions/setup-node@v3
         with:
           node-version: '18.8.0'
@@ -130,6 +136,27 @@ jobs:
         if: steps.node-modules.outputs.cache-hit != 'true' || env.SKIP_NODEJS_CACHE == 'true'
         run: ./scripts/ci/10_prepare-host-deps.sh
 
+      - name: Preparing HEAD and BASE tags
+        id: git-sha
+        run: |
+          echo "HEAD=$GITHUB_SHA" >> $GITHUB_ENV
+          echo "nx-head=$GITHUB_SHA" >> $GITHUB_OUTPUT
+
+          export HEAD_REF="$GITHUB_HEAD_REF"
+          export BASE_REF="$GITHUB_BASE_REF"
+          export PR_REF=$GITHUB_SHA
+          export SHELL=/usr/bin/bash
+          export WORKFLOW_ID=pullrequest
+          source ./scripts/ci/00_prepare-base-tags.sh $(git merge-base HEAD $GITHUB_BASE_REF)
+          git checkout $GITHUB_SHA
+          echo "BASE=$BASE" >> $GITHUB_ENV
+          echo "nx-base=$BASE" >> $GITHUB_OUTPUT
+
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          HTML_URL: ${{ github.event.pull_request.html_url }}
+          ISSUE_REPORTING_SLACK_WEBHOOK_URL: ${{ secrets.SLACK_BUILD_ISSUES_REPORTING_WEBHOOK_URL }}
+
       - name: Generate schemas
         if: steps.generated-files-cache.outputs.cache-hit != 'true'
         run: |
@@ -142,7 +169,7 @@ jobs:
         # Turn the number-of-agents input into a JSON structure which is compatible with a Github job matrix strategy
         run: |
           NX_AFFECTED_PROJECTS_COUNT=$(npx nx print-affected --base=$BASE --head=$HEAD --select=projects | tr ',' ' ' | wc -w)
-          AGENTS_COUNT=$(node ./scripts/ci/_num_agents.js $NX_AFFECTED_PROJECTS_COUNT $MAX_AGENTS $MAX_TASKS_PER_AGENT | jq -r '.chunksCount')
+          AGENTS_COUNT=$(node ./scripts/ci/_num_agents.js $NX_AFFECTED_PROJECTS_COUNT $MAX_AGENTS ${MAX_TASKS_PER_AGENT:-$MAX_JOBS} | jq -r '.chunksCount')
           AGENTS_JSON_ARRAY=$(node -e "console.log(JSON.stringify(Array.from(new Array($AGENTS_COUNT)).map((_, i) => i + 1)));")
 
           echo "affected projects count: $NX_AFFECTED_PROJECTS_COUNT"
@@ -210,8 +237,8 @@ jobs:
     needs:
       - prepare
     env:
-      BASE: ${{ needs.prepare.outputs.nx-base }}
-      HEAD: ${{ needs.prepare.outputs.nx-head }}
+      NX_BASE: ${{ needs.prepare.outputs.nx-base }}
+      NX_HEAD: ${{ needs.prepare.outputs.nx-head }}
     runs-on: ec2-runners
     container:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
@@ -226,7 +253,6 @@ jobs:
         name: Checkout [Pull Request]
         if: ${{ github.event_name == 'pull_request' }}
         with:
-          ref: ${{ github.event.pull_request.head.sha }}
           fetch-depth: 0
 
       - name: Setup yarn
@@ -263,7 +289,6 @@ jobs:
       - name: Run NX targets
         run: |
           source ./scripts/ci/_common.sh
-          export NX_BASE=$BASE NX_HEAD=$HEAD
           pids=()
           NX_CLOUD_DISTRIBUTED_EXECUTION=false npx nx-cloud record -- npx nx format:check & pids+=($!)
 
