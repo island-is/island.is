@@ -7,7 +7,7 @@ import type { User } from '@island.is/auth-nest-tools'
 import { Audit } from '@island.is/nest/audit'
 import { Inject, UseGuards } from '@nestjs/common'
 import { Args, Query, Resolver } from '@nestjs/graphql'
-import { OccupationalLicenseList } from './models/occupationalLicenseList.model'
+import { OccupationalLicensesList } from './models/OccupationalLicensesList.model'
 import { OccupationalLicensesService } from './occupationalLicenses.service'
 import { handle404 } from '@island.is/clients/middlewares'
 import { HealthDirectorateLicense } from './models/healthDirectorateLicense.model'
@@ -24,7 +24,7 @@ export class OccupationalLicensesResolver {
     private readonly downloadService: ConfigType<typeof DownloadServiceConfig>,
   ) {}
 
-  @Query(() => OccupationalLicenseList, {
+  @Query(() => OccupationalLicensesList, {
     name: 'occupationalLicenses',
     nullable: true,
   })
@@ -36,7 +36,7 @@ export class OccupationalLicensesResolver {
   }
 
   @Query(() => HealthDirectorateLicense, {
-    name: 'occupationalLicenseHealthDirectorateLicense',
+    name: 'OccupationalLicensesHealthDirectorateLicense',
     nullable: true,
   })
   @Audit()
@@ -50,11 +50,11 @@ export class OccupationalLicensesResolver {
   }
 
   @Query(() => EducationalLicense, {
-    name: 'occupationalLicenseEducationalLicense',
+    name: 'OccupationalLicensesEducationalLicense',
     nullable: true,
   })
   @Audit()
-  async getEdicationalLicenseById(
+  async getEducationalLicenseById(
     @CurrentUser() user: User,
     @Args('id', { type: () => String }) id: string,
   ) {

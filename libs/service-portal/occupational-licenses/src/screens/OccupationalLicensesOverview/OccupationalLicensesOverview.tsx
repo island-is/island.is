@@ -56,7 +56,7 @@ const OccupationalLicensesOverview = () => {
           )}
         <Stack space={2}>
           {data?.occupationalLicenses?.items.map((license, index) =>
-            license.__typename === 'OccupationalLicenseEducationalLicense' ? (
+            license.__typename === 'OccupationalLicensesEducationalLicense' ? (
               <EducationActionCard
                 {...license}
                 key={index}
@@ -67,7 +67,7 @@ const OccupationalLicensesOverview = () => {
                 )}
               />
             ) : license.__typename ===
-              'OccupationalLicenseHealthDirectorateLicense' ? (
+              'OccupationalLicensesHealthDirectorateLicense' ? (
               <HealthDirectorateActionCard
                 key={index}
                 {...license}

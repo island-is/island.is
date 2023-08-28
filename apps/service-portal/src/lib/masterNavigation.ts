@@ -42,7 +42,6 @@ export const MAIN_NAVIGATION: PortalNavigationItem = {
     companyNavigation,
     licenseNavigation,
     occupationalLicensesNavigation,
-    //educationLicenseNavigation,
     educationNavigation,
     assetsNavigation,
     financeNavigation,

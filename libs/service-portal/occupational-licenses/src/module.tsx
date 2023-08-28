@@ -1,6 +1,7 @@
 import { lazy } from 'react'
 import { PortalModule } from '@island.is/portals/core'
 import { OccupationalLicensesPaths } from './lib/paths'
+import { olMessage as ol } from './lib/messages'
 
 const OccupationalLicensesOverviewScreen = lazy(() =>
   import('./screens/OccupationalLicensesOverview/OccupationalLicensesOverview'),
@@ -15,24 +16,24 @@ const HealthDirectorateDetailScreen = lazy(() =>
 )
 
 export const occupationalLicensesModule: PortalModule = {
-  name: 'Starfsleyfi',
+  name: ol.occupationalLicense,
   enabled: ({ isCompany }) => !isCompany,
-  routes: ({ userInfo }) => [
+  routes: () => [
     {
-      name: 'Mín starfsleyfi',
+      name: ol.myLicenses,
       path: OccupationalLicensesPaths.OccupationalLicensesRoot,
       enabled: true,
       element: <OccupationalLicensesOverviewScreen />,
     },
     {
-      name: 'Stakt heilbrigðis starfsleyfi',
+      name: ol.singleHealthLicense,
       path:
         OccupationalLicensesPaths.OccupationalLicensesHealthDirectorateDetail,
       enabled: true,
       element: <HealthDirectorateDetailScreen />,
     },
     {
-      name: 'Stakt menntunar starfsleyfi',
+      name: ol.singleEducationLicense,
       path: OccupationalLicensesPaths.OccupationalLicensesEducationDetail,
       enabled: true,
       element: <EducationalDetailScreen />,

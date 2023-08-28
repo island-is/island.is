@@ -28,9 +28,7 @@ export const EducationDetail = () => {
     },
   })
 
-  const license = { ...data?.occupationalLicenseHealthDirectorateLicense }
-
-  console.log(license)
+  const license = { ...data?.OccupationalLicensesHealthDirectorateLicense }
 
   if (loading)
     return (
@@ -39,15 +37,7 @@ export const EducationDetail = () => {
       </Box>
     )
 
-  if (
-    error ||
-    !license.name ||
-    !license.profession ||
-    !license.license ||
-    !license.licenseNumber ||
-    !license.validFrom ||
-    !birthday
-  )
+  if (error)
     return (
       <ErrorScreen
         title={formatMessage(om.errorFetchLicense)}
@@ -56,12 +46,6 @@ export const EducationDetail = () => {
     )
 
   const programme = license.profession
-  const today = new Date()
-  const isValid =
-    license.validTo === null || license.validTo === undefined
-      ? new Date(license.validFrom) < today
-      : new Date(license.validFrom) < today && new Date(license.validTo) > today
-
   const organizations =
     (data?.getOrganizations?.items as Array<Organization>) ?? []
 
@@ -74,7 +58,7 @@ export const EducationDetail = () => {
   return (
     <LicenseDetail
       title={programme}
-      intro={formatMessage(om.educationIntro)}
+      intro={formatMessage(om.healthDirectorateIntro)}
       img={organizationImage}
       name={user.profile.name}
       dateOfBirth={formatDateFns(birthday, 'dd.mm.yyyy')}
@@ -82,7 +66,7 @@ export const EducationDetail = () => {
       licenseType={license.license}
       publisher={formatMessage(om.theDirectorateOfHealth)}
       dateOfIssue={formatDateFns(license.validFrom, 'dd.mm.yyyy')}
-      isValid={isValid}
+      isValid={license.isValid}
     />
   )
 }

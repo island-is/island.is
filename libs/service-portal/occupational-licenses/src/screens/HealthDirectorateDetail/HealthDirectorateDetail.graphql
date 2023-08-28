@@ -11,7 +11,7 @@ query getHealthDirectorateLicenseById($id: String!) {
       }
     }
   }
-  occupationalLicenseHealthDirectorateLicense(id: $id) {
+  OccupationalLicensesHealthDirectorateLicense(id: $id) {
     legalEntityId
     nationalId
     name
@@ -20,5 +20,6 @@ query getHealthDirectorateLicenseById($id: String!) {
     licenseNumber
     validFrom
     validTo
+    isValid
   }
 }

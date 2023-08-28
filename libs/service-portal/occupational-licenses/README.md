@@ -1,5 +1,3 @@
-<!-- gitbook-ignore -->
-
 # Service portal occupational licenses
 
 This library was generated with [Nx](https://nx.dev).

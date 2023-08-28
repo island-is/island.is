@@ -14,13 +14,14 @@ query getOccupationalLicenses {
   occupationalLicenses {
     count
     items {
-      ... on OccupationalLicenseEducationalLicense {
+      ... on OccupationalLicensesEducationalLicense {
         id
         school
         programme
         date
+        isValid
       }
-      ... on OccupationalLicenseHealthDirectorateLicense {
+      ... on OccupationalLicensesHealthDirectorateLicense {
         legalEntityId
         nationalId
         name
@@ -29,6 +30,7 @@ query getOccupationalLicenses {
         licenseNumber
         validFrom
         validTo
+        isValid
       }
     }
     error {

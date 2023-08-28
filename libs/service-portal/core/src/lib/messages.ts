@@ -498,11 +498,11 @@ export const m = defineMessages({
     defaultMessage: 'Upplýsingar um skírteini og réttindi sem þeim fylgja',
   },
   occupationalLicenses: {
-    id: 'service.portal:occupationalLicenses',
+    id: 'service.portal:occupational-licenses',
     defaultMessage: 'Mín starfsleyfi',
   },
   occupationalLicensesDescription: {
-    id: 'service.portal:occupationalLicensesDescription',
+    id: 'service.portal:occupational-licenses-description',
     defaultMessage:
       'Hér er markmiðið að þú getir fundið yfirlit yfir leyfisbréf og vottorð til starfsréttinda. Unnið er að því að koma öllum leyfisbréfum og vottorðum um starfsréttindi á einn stað.',
   },

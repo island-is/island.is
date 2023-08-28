@@ -1,6 +1,23 @@
 import { defineMessage } from 'react-intl'
 
 export const olMessage = defineMessage({
+  occupationalLicense: {
+    id: 'sp.occupational-licenses:occupational-license',
+    defaultMessage: 'Starfsleyfi',
+  },
+
+  myLicenses: {
+    id: 'sp.occupational-licenses:my-licenses',
+    defaultMessage: 'Mín starfsleyfi',
+  },
+  singleEducationLicense: {
+    id: 'sp.occupational-licenses:single-education-license',
+    defaultMessage: 'Stakt leyfisbréf kennara',
+  },
+  singleHealthLicense: {
+    id: 'sp.occupational-licenses:single-health-license',
+    defaultMessage: 'Stakt starfsleyfi heilbrigðisstarfsmanns',
+  },
   educationIntro: {
     id: 'sp.occupational-licenses:education-intro',
     defaultMessage:
@@ -65,6 +82,6 @@ export const olMessage = defineMessage({
   fetchOverviewErrorMessage: {
     id: 'sp.occupational-licenses:fetch-overview-error',
     defaultMessage:
-      'Einhverjar tengingar virðast hafa rofnað svo ekki tókst að sækja öll gögn. Verið er að vinna í að lagfæra tenginuna.',
+      'Einhverjar tengingar virðast hafa rofnað svo ekki tókst að sækja öll gögn. Verið er að vinna í að lagfæra tenginguna.',
   },
 })

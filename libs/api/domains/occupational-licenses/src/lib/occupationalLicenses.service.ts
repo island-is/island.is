@@ -4,20 +4,17 @@ import { HealthDirectorateClientService } from '@island.is/clients/health-direct
 import type { User } from '@island.is/auth-nest-tools'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
-import { OccupationalLicenseList } from './models/occupationalLicenseList.model'
+import { OccupationalLicensesList } from './models/OccupationalLicensesList.model'
 import { HealthDirectorateLicense } from './models/healthDirectorateLicense.model'
 import { EducationalLicense } from './models/educationalLicense.model'
 
 type ExcludesFalse = <T>(x: T | null | undefined | false | '') => x is T
 
-// TODO: Replace undefined for error handling
-
 @Injectable()
 export class OccupationalLicensesService {
   constructor(
-    @Inject(HealthDirectorateClientService)
     private healthDirectorateApi: HealthDirectorateClientService,
-    @Inject(MMSApi) private mmsApi: MMSApi,
+    private mmsApi: MMSApi,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
   ) {}
@@ -31,9 +28,17 @@ export class OccupationalLicensesService {
         (await this.healthDirectorateApi.getHealthDirectorateLicense(user)) ??
         []
 
+      const today = new Date()
+
       return (
         licenses
           .map((license) => {
+            const isValid =
+              license.gildirTIl && license.gildirFra
+                ? today >= license.gildirFra && today <= license.gildirTIl
+                : license.gildirFra && !license.gildirTIl
+                ? today >= license.gildirFra
+                : false
             if (!license.logadiliID || !license.kennitala || !license.nafn)
               return undefined
             return {
@@ -45,6 +50,7 @@ export class OccupationalLicensesService {
               licenseNumber: license.leyfisnumer,
               validFrom: license.gildirFra,
               validTo: license.gildirTIl,
+              isValid: isValid,
             }
           })
           .filter((Boolean as unknown) as ExcludesFalse)
@@ -65,8 +71,16 @@ export class OccupationalLicensesService {
         (await this.healthDirectorateApi.getHealthDirectorateLicense(user)) ??
         []
 
+      const today = new Date()
+
       return licenses
         .map((license) => {
+          const isValid =
+            license.gildirTIl && license.gildirFra
+              ? today >= license.gildirFra && today <= license.gildirTIl
+              : license.gildirFra && !license.gildirTIl
+              ? today >= license.gildirFra
+              : false
           if (!license.logadiliID || !license.kennitala || !license.nafn)
             return null
           return {
@@ -78,6 +92,7 @@ export class OccupationalLicensesService {
             licenseNumber: license.leyfisnumer,
             validFrom: license.gildirFra,
             validTo: license.gildirTIl,
+            isValid: isValid,
           }
         })
         .filter((Boolean as unknown) as ExcludesFalse)
@@ -103,6 +118,7 @@ export class OccupationalLicensesService {
             school: license.issuer,
             programme: license.type,
             date: license.issued,
+            isValid: new Date(license.issued) >= new Date(),
           }))
           .find((license) => license.id === id) ?? null
       )
@@ -125,6 +141,7 @@ export class OccupationalLicensesService {
         school: license.issuer,
         programme: license.type,
         date: license.issued,
+        isValid: new Date(license.issued) >= new Date(),
       }))
     } catch (e) {
       this.logger.error(`Error getting educational license`, {
@@ -134,7 +151,7 @@ export class OccupationalLicensesService {
     }
   }
 
-  async getOccupationalLicenses(user: User): Promise<OccupationalLicenseList> {
+  async getOccupationalLicenses(user: User): Promise<OccupationalLicensesList> {
     const healthDirectorateLicenses = await this.getHealthDirectorateLicense(
       user,
     )

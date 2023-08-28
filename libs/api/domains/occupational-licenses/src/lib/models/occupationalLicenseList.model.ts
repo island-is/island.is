@@ -1,15 +1,15 @@
 import { ObjectType, Field, Int } from '@nestjs/graphql'
 import { OccupationalLicense } from './occupationalLicense.model'
-import { OccupationalLicenseError } from './occupationalLicenseError.model'
+import { OccupationalLicensesError } from './OccupationalLicensesError.model'
 
-@ObjectType('OccupationalLicenseList')
-export class OccupationalLicenseList {
+@ObjectType('OccupationalLicensesList')
+export class OccupationalLicensesList {
   @Field(() => Int)
   count!: number
 
-  @Field(() => [OccupationalLicense, { nullable: true }])
-  items?: Array<typeof OccupationalLicense> | null
+  @Field(() => [OccupationalLicense])
+  items?: Array<typeof OccupationalLicense>
 
-  @Field(() => OccupationalLicenseError)
-  error!: OccupationalLicenseError
+  @Field(() => OccupationalLicensesError)
+  error!: OccupationalLicensesError
 }

@@ -1,23 +1,20 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
 
-@ObjectType('OccupationalLicenseHealthDirectorateLicense')
+@ObjectType('OccupationalLicensesHealthDirectorateLicense')
 export class HealthDirectorateLicense {
   @Field(() => ID)
   legalEntityId!: string
 
   @Field(() => String)
-  nationalId!: string
-
-  @Field(() => String, { nullable: true })
   name?: string
 
-  @Field(() => String, { nullable: true })
+  @Field(() => String)
   profession?: string | null
 
-  @Field(() => String, { nullable: true })
+  @Field(() => String)
   license?: string | null
 
-  @Field(() => String, { nullable: true })
+  @Field(() => String)
   licenseNumber?: string | null
 
   @Field(() => Date, { nullable: true })
@@ -25,4 +22,7 @@ export class HealthDirectorateLicense {
 
   @Field(() => Date, { nullable: true })
   validTo?: Date | null
+
+  @Field(() => Boolean, { nullable: true })
+  isValid!: boolean | null
 }

@@ -1,6 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 
-@ObjectType('OccupationalLicenseEducationalLicense')
+@ObjectType('OccupationalLicensesEducationalLicense')
 export class EducationalLicense {
   @Field(() => String)
   id!: string
@@ -15,4 +15,7 @@ export class EducationalLicense {
   date!: string
   @Field(() => String)
   url?: string
+
+  @Field(() => Boolean)
+  isValid!: boolean
 }

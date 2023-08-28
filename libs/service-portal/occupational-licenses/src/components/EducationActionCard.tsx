@@ -1,4 +1,4 @@
-import { OccupationalLicenseEducationalLicense } from '@island.is/api/schema'
+import { OccupationalLicensesEducationalLicense } from '@island.is/api/schema'
 import { ActionCard } from '@island.is/service-portal/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '@island.is/service-portal/core'
@@ -6,9 +6,8 @@ import { OccupationalLicensesPaths } from '../lib/paths'
 import { olMessage as ol } from '../lib/messages'
 
 export const EducationActionCard: React.FC<
-  Omit<OccupationalLicenseEducationalLicense, 'url'> & { orgImage: string }
+  Omit<OccupationalLicensesEducationalLicense, 'url'> & { orgImage: string }
 > = (props) => {
-  const isValid = new Date(props.date) < new Date()
   const { formatDateFns, formatMessage } = useLocale()
 
   return (
@@ -19,10 +18,10 @@ export const EducationActionCard: React.FC<
         'dd. MMMM yyyy',
       )}`}
       tag={{
-        label: isValid
+        label: props.isValid
           ? formatMessage(ol.validLicense)
           : formatMessage(ol.invalidLicense),
-        variant: isValid ? 'blue' : 'red',
+        variant: props.isValid ? 'blue' : 'red',
         outlined: false,
       }}
       cta={{

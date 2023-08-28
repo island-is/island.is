@@ -11,11 +11,12 @@ query getEducationalLicenseById($id: String!) {
       }
     }
   }
-  occupationalLicenseEducationalLicense(id: $id) {
+  OccupationalLicensesEducationalLicense(id: $id) {
     id
     school
     programme
     date
     url
+    isValid
   }
 }

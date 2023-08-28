@@ -1,7 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 
-@ObjectType('OccupationalLicenseError')
-export class OccupationalLicenseError {
+@ObjectType('OccupationalLicensesError')
+export class OccupationalLicensesError {
   @Field(() => Boolean)
   hasError!: boolean
 }

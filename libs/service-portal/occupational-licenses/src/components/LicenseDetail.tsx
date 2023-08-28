@@ -80,7 +80,7 @@ export const LicenseDetail: React.FC<LicenseDetailProps> = ({
         />
         <UserInfoLine
           label={formatMessage(om.licenseStatus)}
-          content={isValid ? 'Í gildi' : 'Útrunnið'}
+          content={formatMessage(isValid ? om.validLicense : om.invalidLicense)}
           labelColumnSpan={['6/12']}
           valueColumnSpan={['6/12']}
         />

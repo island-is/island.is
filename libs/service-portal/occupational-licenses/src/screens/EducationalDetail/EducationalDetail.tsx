@@ -35,7 +35,7 @@ export const EducationDetail = () => {
     },
   })
 
-  const license = { ...data?.occupationalLicenseEducationalLicense }
+  const license = { ...data?.OccupationalLicensesEducationalLicense }
 
   useEffect(() => {
     if (shouldDownload && license.url) {
@@ -51,14 +51,7 @@ export const EducationDetail = () => {
       </Box>
     )
 
-  if (
-    error ||
-    !license.date ||
-    !license.programme ||
-    !license.school ||
-    !license.id ||
-    !birthday
-  )
+  if (error)
     return (
       <ErrorScreen
         title={formatMessage(om.errorFetchLicense)}
@@ -68,8 +61,6 @@ export const EducationDetail = () => {
 
   const programme =
     license.programme.charAt(0).toUpperCase() + license.programme.slice(1)
-
-  const isValid = new Date(license.date) < new Date()
 
   const organizations =
     (data?.getOrganizations?.items as Array<Organization>) ?? []
@@ -104,7 +95,7 @@ export const EducationDetail = () => {
       licenseType={programme}
       publisher={license.school}
       dateOfIssue={formatDateFns(license.date, 'dd.mm.yyyy')}
-      isValid={isValid}
+      isValid={license.isValid ?? false}
     />
   )
 }
