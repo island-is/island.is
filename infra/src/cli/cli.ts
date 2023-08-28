@@ -100,8 +100,7 @@ yargs(process.argv.slice(2))
       console.log('argv:', argv)
       const args = argv._.slice(1)
       console.log('args:', args)
-      return
-      // await updateSecretFiles(argv.services || [])
+      await updateSecretFiles(argv.services || [])
     },
   )
   .demandCommand(1)
