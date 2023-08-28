@@ -151,9 +151,9 @@ const AppealCasesTable: React.FC<Props> = (props) => {
                   {isRestrictionCase(column.type)
                     ? getDurationDate(
                         column.state as CaseState,
-                        column.validToDate as string,
-                        column.initialRulingDate as string,
-                        column.rulingDate as string,
+                        column.validToDate,
+                        column.initialRulingDate,
+                        column.rulingDate,
                       )
                     : ''}
                 </Text>
