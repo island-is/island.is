@@ -215,6 +215,7 @@ const UploadFilesToPoliceCase: React.FC<
         state: CaseFileState.STORED_IN_RVG,
         policeCaseNumber: f.policeCaseNumber,
         category: CaseFileCategory.CASE_FILE,
+        displayDate: f.displayDate,
       } as UploadFile
 
       await uploadFromPolice(fileToUpload, uploadPoliceCaseFileCallback)
