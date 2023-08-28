@@ -7,11 +7,13 @@ import { msg } from '../../../../../lib/messages'
 interface Props {
   name: string
   showIntroTitle?: boolean
+  showIntroText?: boolean
 }
 
 export const OnboardingIntro: FC<React.PropsWithChildren<Props>> = ({
   name,
   showIntroTitle,
+  showIntroText = true,
 }) => {
   useNamespaces('sp.settings')
   const { formatMessage } = useLocale()
@@ -32,7 +34,9 @@ export const OnboardingIntro: FC<React.PropsWithChildren<Props>> = ({
           </Text>
         </>
       )}
-      <Text marginBottom={4}>{formatMessage(msg.overlayIntro)}</Text>
+      {showIntroText && (
+        <Text marginBottom={4}>{formatMessage(msg.overlayIntro)}</Text>
+      )}
       <Divider />
     </Box>
   )

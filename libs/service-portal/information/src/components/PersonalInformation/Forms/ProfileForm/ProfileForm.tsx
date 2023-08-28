@@ -33,6 +33,7 @@ interface Props {
   title: string
   showDetails?: boolean
   showIntroTitle?: boolean
+  showIntroText?: boolean
   setFormLoading?: (isLoading: boolean) => void
 }
 
@@ -44,6 +45,7 @@ export const ProfileForm: FC<React.PropsWithChildren<Props>> = ({
   showDetails,
   setFormLoading,
   showIntroTitle,
+  showIntroText = true,
 }) => {
   useNamespaces('sp.settings')
   const [telDirty, setTelDirty] = useState(true)
@@ -198,7 +200,11 @@ export const ProfileForm: FC<React.PropsWithChildren<Props>> = ({
     <GridContainer>
       <GridRow marginBottom={10}>
         <GridColumn span={['12/12', '12/12', '12/12', '9/12']}>
-          <OnboardingIntro name={title || ''} showIntroTitle={showIntroTitle} />
+          <OnboardingIntro
+            name={title || ''}
+            showIntroTitle={showIntroTitle}
+            showIntroText={showIntroText}
+          />
           <InputSection
             title={formatMessage(m.email)}
             text={formatMessage(msg.editEmailText)}

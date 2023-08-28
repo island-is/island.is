@@ -1062,6 +1062,10 @@ export const m = defineMessages({
     defaultMessage:
       'Þjóðskrá Íslands hefur umsjón með gögnum um þig og fjölskyldu þína.',
   },
+  userProfileTooltip: {
+    id: 'service.portal:userprofile-tooltip',
+    defaultMessage: 'Ísland.is hefur umsjón með gögnum á þínum stillingum.',
+  },
   consent: {
     id: 'service.portal:consent',
     defaultMessage: 'Gagnaöflun',

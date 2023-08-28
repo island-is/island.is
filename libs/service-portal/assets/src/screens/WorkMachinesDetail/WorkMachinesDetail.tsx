@@ -11,6 +11,7 @@ import {
   UserInfoLine,
   formatDate,
   m,
+  VINNUEFTIRLITID_ID,
 } from '@island.is/service-portal/core'
 import { messages, vehicleMessage } from '../../lib/messages'
 import {
@@ -142,7 +143,10 @@ const WorkMachinesDetail = () => {
   return (
     <>
       <Box marginBottom={[1, 1, 3]}>
-        <IntroHeader title={workMachine?.type ?? ''} />
+        <IntroHeader
+          serviceProviderID={VINNUEFTIRLITID_ID}
+          title={workMachine?.type ?? ''}
+        />
       </Box>
       <GridRow marginBottom={2}>
         <GridColumn span="12/12">

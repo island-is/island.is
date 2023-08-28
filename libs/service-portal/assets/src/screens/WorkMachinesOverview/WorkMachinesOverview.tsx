@@ -11,8 +11,9 @@ import {
   CardLoader,
   ActionCard,
   formSubmit,
+  IntroHeader,
+  VINNUEFTIRLITID_ID,
 } from '@island.is/service-portal/core'
-import { IntroHeader } from '@island.is/portals/core'
 import {
   Box,
   Checkbox,
@@ -145,6 +146,7 @@ const WorkMachinesOverview = () => {
       <IntroHeader
         title={formatMessage(messages.workMachinesTitle)}
         intro={formatMessage(messages.workMachinesDescription)}
+        serviceProviderID={VINNUEFTIRLITID_ID}
       />
       <GridRow marginTop={[2, 2, 6]}>
         <GridColumn span="12/12">
