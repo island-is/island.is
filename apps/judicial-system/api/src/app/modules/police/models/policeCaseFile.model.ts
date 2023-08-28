@@ -12,4 +12,7 @@ export class PoliceCaseFile implements TPoliceCaseFile {
 
   @Field()
   readonly policeCaseNumber!: string
+
+  @Field({ nullable: true })
+  readonly chapter?: number
 }

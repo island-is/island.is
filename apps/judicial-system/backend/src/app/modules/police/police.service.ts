@@ -33,6 +33,29 @@ import { UploadPoliceCaseFileResponse } from './models/uploadPoliceCaseFile.resp
 import { policeModuleConfig } from './police.config'
 import { PoliceCaseInfo } from './models/policeCaseInfo.model'
 
+function getChapter(category?: string): number | undefined {
+  if (!category || category.length < 2) {
+    return undefined
+  }
+
+  switch (category.substring(0, 2)) {
+    case '1.':
+      return 0
+    case '2.':
+      return 1
+    case '3.':
+      return 2
+    case '4.':
+      return 3
+    case '5.':
+      return 4
+    case '6.':
+      return 5
+    default:
+      return undefined
+  }
+}
+
 @Injectable()
 export class PoliceService {
   private xRoadPath: string
@@ -96,9 +119,15 @@ export class PoliceService {
       this.logger.info('Previous upload failed', { reason })
     })
 
-    const pdf = await this.fetchPoliceDocumentApi(
-      `${this.xRoadPath}/GetPDFDocumentByID/${uploadPoliceCaseFile.id}`,
-    )
+    const promise = this.config.policeCaseApiV2Available
+      ? this.fetchPoliceDocumentApi(
+          `${this.xRoadPath}/V2/GetPDFDocumentByID/${uploadPoliceCaseFile.id}`,
+        )
+      : this.fetchPoliceDocumentApi(
+          `${this.xRoadPath}/GetPDFDocumentByID/${uploadPoliceCaseFile.id}`,
+        )
+
+    const pdf = await promise
       .then(async (res) => {
         if (res.ok) {
           const response = await res.json()
@@ -159,52 +188,30 @@ export class PoliceService {
     caseId: string,
     user: User,
   ): Promise<PoliceCaseFile[]> {
-    const promise = this.config.policeCaseApiV2Available
-      ? this.fetchPoliceDocumentApi(
-          `${this.xRoadPath}/V2/GetDocumentListById/${caseId}`,
-        )
-      : this.fetchPoliceDocumentApi(
-          `${this.xRoadPath}/GetDocumentListById/${caseId}`,
-        )
-
-    return promise
+    return this.fetchPoliceDocumentApi(
+      `${this.xRoadPath}/V2/GetDocumentListById/${caseId}`,
+    )
       .then(async (res: Response) => {
         if (res.ok) {
-          if (this.config.policeCaseApiV2Available) {
-            const response = await res.json()
+          const response = await res.json()
 
-            return (
-              response.skjol?.map(
-                (file: {
-                  rvMalSkjolMals_ID: string
-                  heitiSkjals: string
-                  malsnumer: string
-                }) => ({
-                  id: file.rvMalSkjolMals_ID,
-                  name: file.heitiSkjals.endsWith('.pdf')
-                    ? file.heitiSkjals
-                    : `${file.heitiSkjals}.pdf`,
-                  policeCaseNumber: file.malsnumer,
-                }),
-              ) ?? []
-            )
-          } else {
-            const response = await res.json()
-
-            return response.map(
+          return (
+            response.skjol?.map(
               (file: {
                 rvMalSkjolMals_ID: string
                 heitiSkjals: string
                 malsnumer: string
+                domsSkjalsFlokkun: string
               }) => ({
                 id: file.rvMalSkjolMals_ID,
                 name: file.heitiSkjals.endsWith('.pdf')
                   ? file.heitiSkjals
                   : `${file.heitiSkjals}.pdf`,
                 policeCaseNumber: file.malsnumer,
+                chapter: getChapter(file.domsSkjalsFlokkun),
               }),
-            )
-          }
+            ) ?? []
+          )
         }
 
         const reason = await res.text()

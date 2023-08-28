@@ -84,12 +84,14 @@ export interface CreateFile {
   key: string
   size: number
   policeCaseNumber?: string
+  chapter?: number
+  orderWithinChapter?: number
 }
 
 export interface UpdateFile {
   id: string
-  userGeneratedFilename?: string | null
-  chapter?: number | null
-  orderWithinChapter?: number | null
-  displayDate?: string | null
+  userGeneratedFilename?: string
+  chapter?: number
+  orderWithinChapter?: number
+  displayDate?: string
 }
