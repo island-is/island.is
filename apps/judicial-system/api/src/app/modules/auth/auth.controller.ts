@@ -128,7 +128,7 @@ export class AuthController {
       client_id: this.config.clientId,
     })
 
-    const loginUrl = `${this.config.issuer}/login?ReturnUrl=/connect/authorize/callback?${params}`
+    const loginUrl = `${this.config.issuer}/connect/authorize?${params}`
 
     return res
       .cookie(name, { redirectRoute }, options)
