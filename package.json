@@ -44,7 +44,7 @@
     "security-audit": "bash -c 'yarn audit --level high ; [[ \"$?\" -lt  \"8\" ]]'",
     "license-audit": "license-checker --failOn 'GPL; AGPL; UNLICENSED' --summary",
     "generate": "nx generate",
-    "get-secrets": "nx run --skip-nx-cache infra:cli get-secrets",
+    "get-secrets": "nx run --skip-nx-cache infra:cli -- get-secrets",
     "create-secret": "./scripts/create-secret.sh",
     "format": "nx format:write",
     "format:check": "nx format:check",
@@ -58,8 +58,8 @@
     "schemas": "node ./scripts/schemas.js",
     "postinstall": "node -e 'process.exit(process.env.CI || process.env.SKIP_POSTINSTALL ? 0 : 1);' || node ./scripts/postinstall.js",
     "check-tags": "yarn ts scripts/check-tags.ts",
-    "charts": "nx run --skip-nx-cache infra:charts",
-    "infra": "nx run --skip-nx-cache infra:cli"
+    "charts": "nx run --skip-nx-cache infra:charts --",
+    "infra": "nx run --skip-nx-cache infra:cli --"
   },
   "dependencies": {
     "@apollo/client": "3.7.15",
