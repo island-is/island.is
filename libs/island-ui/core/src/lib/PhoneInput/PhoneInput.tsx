@@ -265,7 +265,7 @@ export const PhoneInput = forwardRef(
                       }
                     }
                   }}
-                  value={selectedCountryCode as StringOption}
+                  value={selectedCountryCode}
                   defaultValue={countryCodes.find(
                     (x) => x.value === defaultCountryCode,
                   )}

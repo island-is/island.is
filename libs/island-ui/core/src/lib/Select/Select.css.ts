@@ -147,11 +147,7 @@ export const label = style({
 export const labelDisabled = style({
   opacity: 0.5,
 })
-export const labelSizes = styleVariants({
-  xs: inputMixins.labelSizes.xs,
-  sm: inputMixins.labelSizes.sm,
-  md: inputMixins.labelSizes.md,
-})
+export const labelSizes = styleVariants(inputMixins.labelSizes)
 export const singleValue = style(
   {
     marginLeft: 0,

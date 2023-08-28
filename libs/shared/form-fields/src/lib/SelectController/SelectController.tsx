@@ -1,9 +1,10 @@
-import React, { FC } from 'react'
+import React from 'react'
 import { Controller, useFormContext, RegisterOptions } from 'react-hook-form'
+
 import { Select, Option, InputBackgroundColor } from '@island.is/island-ui/core'
 import { TestSupport } from '@island.is/island-ui/utils'
 
-interface Props<Value> {
+interface SelectControllerProps<Value> {
   error?: string
   id: string
   defaultValue?: Value
@@ -34,7 +35,7 @@ export const SelectController = <Value,>({
   dataTestId,
   required = false,
   rules,
-}: Props<Value> & TestSupport) => {
+}: SelectControllerProps<Value> & TestSupport) => {
   const { clearErrors } = useFormContext()
   return (
     <Controller

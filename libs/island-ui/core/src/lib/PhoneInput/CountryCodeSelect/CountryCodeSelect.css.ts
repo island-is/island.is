@@ -66,11 +66,7 @@ export const input = style(
   {
     ...inputMixins.input,
     ':focus': inputMixins.inputFocus,
-    ...themeUtils.responsiveStyle({
-      xs: inputMixins.inputSizes.xs,
-      sm: inputMixins.inputSizes.sm,
-      md: inputMixins.inputSizes.md,
-    }),
+    ...themeUtils.responsiveStyle(inputMixins.inputSizes),
   },
   'input',
 )
