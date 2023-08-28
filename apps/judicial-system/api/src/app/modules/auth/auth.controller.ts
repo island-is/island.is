@@ -167,7 +167,7 @@ export class AuthController {
           },
           res,
           redirectRoute,
-          accessToken.id_token,
+          idsTokens.id_token,
           new Entropy({ bits: 128 }).string(),
         )
       }
