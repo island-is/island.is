@@ -1,4 +1,5 @@
 import cn from 'classnames'
+import { ReactNode } from 'react'
 import { INLINES } from '@contentful/rich-text-types'
 import { Box, GridContainer, Link, Text } from '@island.is/island-ui/core'
 import { FooterItem } from '@island.is/web/graphql/schema'
@@ -6,7 +7,6 @@ import { SliceType } from '@island.is/island-ui/contentful'
 import { webRichText } from '@island.is/web/utils/richText'
 
 import * as styles from './LandingPageFooter.css'
-import { ReactNode } from 'react'
 
 interface LandingPageFooterProps {
   footerItems?: FooterItem[]
