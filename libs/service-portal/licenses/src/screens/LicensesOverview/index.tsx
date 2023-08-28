@@ -1,4 +1,3 @@
-import React, { useEffect, useState } from 'react'
 import { defineMessage } from 'react-intl'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
@@ -13,6 +12,7 @@ import {
   GenericUserLicenseFetchStatus,
   useChildrenPassport,
   useUserProfile,
+  GenericLicenseType,
 } from '@island.is/service-portal/graphql'
 import { Query } from '@island.is/api/schema'
 import { Box, Tabs } from '@island.is/island-ui/core'
@@ -86,6 +86,15 @@ export const LicensesOverview = () => {
   const { data, loading, error } = useQuery<Query>(GenericLicensesQuery, {
     variables: {
       locale,
+      input: {
+        includedTypes: [
+          GenericLicenseType.DriversLicense,
+          GenericLicenseType.AdrLicense,
+          GenericLicenseType.MachineLicense,
+          GenericLicenseType.FirearmLicense,
+          GenericLicenseType.DisabilityLicense,
+        ],
+      },
     },
   })
   const { genericLicenses = [] } = data ?? {}

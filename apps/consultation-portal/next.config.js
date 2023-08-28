@@ -36,7 +36,6 @@ module.exports = withNx(
       graphqlEndpoint: `${API_URL}${graphqlPath}`,
     },
     basePath: `${BASE_PATH}`,
-    presets: ['next/babel'],
     env: {
       NEXTAUTH_URL: process.env.NEXTAUTH_URL,
       IDENTITY_SERVER_SECRET: process.env.IDENTITY_SERVER_SECRET,
