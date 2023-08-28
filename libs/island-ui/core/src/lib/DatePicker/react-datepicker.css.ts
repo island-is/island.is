@@ -822,14 +822,13 @@ globalStyle(`${root} .react-datepicker__portal`, {
   display: 'flex',
   zIndex: '2147483647',
 })
-
 globalStyle(
   `${root} .react-datepicker__portal .react-datepicker__day-name, ${root} .react-datepicker__portal .react-datepicker__day, ${root} .react-datepicker__portal .react-datepicker__time-name`,
   {
     width: '3rem',
     lineHeight: '3rem',
     '@media': {
-      "screen and (max-width: 400px), (max-height: 550px)": {
+      "(max-width: 400px), (max-height: 550px)": {
         width: '2rem',
         lineHeight: '2rem',
       },
