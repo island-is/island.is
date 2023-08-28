@@ -67,7 +67,6 @@ import {
 } from '../queries'
 
 import { FilterMenu, CategoriesProps, FilterLabels } from './FilterMenu'
-import { countReset } from 'console'
 
 const PERPAGE = 10
 

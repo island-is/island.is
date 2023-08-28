@@ -371,7 +371,7 @@ const OperatingLicenses: Screen<OperatingLicensesProps> = ({
         </Text>
         <Webreader readId={null} readClass="rs_read" />
       </Box>
-      {webRichText(subpage?.description as SliceType[])}
+      {webRichText((subpage?.description ?? []) as SliceType[])}
       <Box marginBottom={3}>
         <Input
           name="operatingLicenseSearchInput"
