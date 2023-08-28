@@ -2,9 +2,7 @@ import React, { useEffect, useState } from 'react'
 import InputMask from 'react-input-mask'
 import { useIntl } from 'react-intl'
 
-import {
-  isIndictmentCase,
-} from '@island.is/judicial-system/types'
+import { isIndictmentCase, Gender } from '@island.is/judicial-system/types'
 import {
   ReactSelectOption,
   TempCase as Case,
@@ -29,7 +27,6 @@ import {
 import useNationalRegistry from '@island.is/judicial-system-web/src/utils/hooks/useNationalRegistry'
 import { isBusiness } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import {
-  Gender,
   Defendant,
   UpdateDefendantInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
