@@ -14,7 +14,8 @@ interface DefaultApiVacancyContact {
   '@nr'?: number
   nafn?: string
   netfang?: string
-  simi?: string
+  simi?: string | number
+  starfsheiti?: string
 }
 
 interface DefaultApiVacancyLocation {
@@ -46,7 +47,7 @@ export interface DefaultApiVacanciesListItem {
   starfssvid?: string
   stettarfelagHeiti?: string
   stofnunHeiti?: string
-  stofnunNr?: string
+  stofnunNr?: string | number
   tengilidir?:
     | {
         tengilidur?: DefaultApiVacancyContact
@@ -54,7 +55,7 @@ export interface DefaultApiVacanciesListItem {
     | DefaultApiVacancyContact[]
   umsoknarfrestur_fra?: string
   umsoknarfrestur_til?: string
-  undirtexti?: null
+  undirtexti?: string | null
   verkefni?: string
   vinnutimaskipulag?: string
   weblink?: { url?: string; text?: string }
@@ -121,7 +122,10 @@ const mapContacts = (item: DefaultApiVacanciesListItem) => {
       contacts.push({
         email: contact?.netfang,
         name: contact?.nafn,
-        phone: contact?.simi,
+        phone:
+          typeof contact?.simi === 'number'
+            ? String(contact?.simi)
+            : contact?.simi,
       })
     }
   } else {
@@ -131,7 +135,10 @@ const mapContacts = (item: DefaultApiVacanciesListItem) => {
         contacts.push({
           email: contact?.netfang,
           name: contact?.nafn,
-          phone: contact?.simi,
+          phone:
+            typeof contact?.simi === 'number'
+              ? String(contact?.simi)
+              : contact?.simi,
         })
       }
     }
@@ -184,7 +191,10 @@ export const mapIcelandicGovernmentInstitutionVacanciesFromExternalSystem = asyn
       intro: '',
       fieldOfWork: item.starfssvid,
       institutionName: item.stofnunHeiti,
-      institutionReferenceIdentifier: item.stofnunNr,
+      institutionReferenceIdentifier:
+        typeof item.stofnunNr === 'number'
+          ? String(item.stofnunNr)
+          : item.stofnunNr,
       logoUrl: item.logoURL,
       locations,
     })
@@ -240,7 +250,10 @@ export const mapIcelandicGovernmentInstitutionVacancyByIdResponseFromExternalSys
     intro,
     fieldOfWork: item.starfssvid,
     institutionName: item.stofnunHeiti,
-    institutionReferenceIdentifier: item.stofnunNr,
+    institutionReferenceIdentifier:
+      typeof item.stofnunNr === 'number'
+        ? String(item.stofnunNr)
+        : item.stofnunNr,
     logoUrl: item.logoURL,
     locations,
     contacts,
