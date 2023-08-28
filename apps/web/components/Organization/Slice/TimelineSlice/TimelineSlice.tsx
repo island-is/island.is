@@ -25,11 +25,13 @@ import {
   Tag,
   Text,
 } from '@island.is/island-ui/core'
-import { TimelineSlice as Timeline } from '@island.is/web/graphql/schema'
+import {
+  TimelineSlice as Timeline,
+  TimelineEvent,
+} from '@island.is/web/graphql/schema'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import { renderSlices, SliceType } from '@island.is/island-ui/contentful'
 import { useNamespace } from '@island.is/web/hooks'
-import { TimelineEvent } from '../../../../graphql/schema'
 
 import * as timelineStyles from './TimelineSlice.css'
 import * as eventStyles from './Event.css'
