@@ -33,7 +33,7 @@ const Petitions = () => {
       new Date() <= new Date(list.endorsementList?.closedDate)
     )
   }) as Endorsement[]
-  const openOwnedLists = ((ownedLists as unknown) as OwnedLists)?.data?.filter(
+  const openOwnedLists = (ownedLists as unknown as OwnedLists)?.data?.filter(
     (list) => {
       return (
         new Date(list.openedDate) <= new Date() &&
@@ -48,7 +48,7 @@ const Petitions = () => {
       return new Date() >= new Date(list.endorsementList?.closedDate)
     },
   ) as Endorsement[]
-  const closedOwnedLists = ((ownedLists as unknown) as OwnedLists)?.data?.filter(
+  const closedOwnedLists = (ownedLists as unknown as OwnedLists)?.data?.filter(
     (list) => {
       return new Date() >= new Date(list?.closedDate)
     },

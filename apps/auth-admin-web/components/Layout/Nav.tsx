@@ -26,7 +26,7 @@ const Nav: React.FC<React.PropsWithChildren<unknown>> = () => {
     resolveRoles()
   }, [])
 
-  if (!isLoggedIn((session as unknown) as SessionInfo, loading)) {
+  if (!isLoggedIn(session as unknown as SessionInfo, loading)) {
     return <div className="nav-logged-out"></div>
   }
 

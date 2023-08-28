@@ -65,10 +65,8 @@ export class ApplicationAccessService {
       const actorNationalId = user.actor
         ? user.actor.nationalId
         : user.nationalId
-      const actorApplication = await this.applicationService.findByApplicantActor(
-        id,
-        actorNationalId,
-      )
+      const actorApplication =
+        await this.applicationService.findByApplicantActor(id, actorNationalId)
       if (actorApplication) {
         throw new BadSubject([{ nationalId: actorApplication.applicant }])
       }

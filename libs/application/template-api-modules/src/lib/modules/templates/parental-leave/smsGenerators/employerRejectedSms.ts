@@ -7,16 +7,14 @@ export type EmployerRejectedGenerator = (
   link: string,
 ) => SmsMessage
 
-export const generateEmployerRejectedApplicationSms: EmployerRejectedGenerator = (
-  application,
-  link,
-) => {
-  const { applicantPhoneNumber } = getApplicationAnswers(application.answers)
+export const generateEmployerRejectedApplicationSms: EmployerRejectedGenerator =
+  (application, link) => {
+    const { applicantPhoneNumber } = getApplicationAnswers(application.answers)
 
-  return {
-    phoneNumber: applicantPhoneNumber,
-    message: `Vinnuveitandi hefur hafnað beiðni þinni um samþykki fæðingarorlofs. Þú þarft því að breyta umsókn þinni.
+    return {
+      phoneNumber: applicantPhoneNumber,
+      message: `Vinnuveitandi hefur hafnað beiðni þinni um samþykki fæðingarorlofs. Þú þarft því að breyta umsókn þinni.
     Your employer has denied your request. You therefore need to modify your application.
     ${link}`,
+    }
   }
-}

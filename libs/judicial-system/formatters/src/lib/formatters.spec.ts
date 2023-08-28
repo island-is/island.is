@@ -87,7 +87,7 @@ describe('formatPhoneNumber', () => {
 describe('capitalize', () => {
   test('should return empty string if text is empty', () => {
     // Arrange
-    const text = (undefined as unknown) as string
+    const text = undefined as unknown as string
 
     // Act
     const r = capitalize(text)

@@ -14,8 +14,7 @@ export const newResidence = {
       description: 'New legal residence page title',
     },
     description: {
-      id:
-        'crc.application:section.arrangement.newResidence.description#markdown',
+      id: 'crc.application:section.arrangement.newResidence.description#markdown',
       defaultMessage:
         'Sem foreldrar með sameiginlega forsjá getið þið óskað eftir því að lögheimili barns færist frá þér til hins foreldrisins, eða öfugt.\\n\\nVinsamlegast staðfestu að lögheimilisflutningur sé eins og fram kemur hér fyrir neðan:',
       description: 'New legal residence page description',
@@ -23,14 +22,12 @@ export const newResidence = {
   }),
   information: defineMessages({
     currentResidenceLabel: {
-      id:
-        'crc.application:section.arrangement.newResidence.information.currentResidenceLabel',
+      id: 'crc.application:section.arrangement.newResidence.information.currentResidenceLabel',
       defaultMessage: 'Núverandi lögheimili barna:',
       description: 'Label for current residence',
     },
     newResidenceLabel: {
-      id:
-        'crc.application:section.arrangement.newResidence.information.newResidenceLabel',
+      id: 'crc.application:section.arrangement.newResidence.information.newResidenceLabel',
       defaultMessage: 'Nýtt lögheimili barna:',
       description: 'Label for new residence',
     },
