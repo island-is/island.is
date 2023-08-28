@@ -48,6 +48,7 @@ import { createCaseResentExplanation } from '@island.is/judicial-system-web/src/
 import { formatRequestedCustodyRestrictions } from '@island.is/judicial-system-web/src/utils/restrictions'
 
 import * as styles from './Overview.css'
+import { lawsBrokenAccordion } from '@island.is/judicial-system-web/messages/Core/lawsBrokenAccordion'
 
 export const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
   const [modal, setModal] = useState<
@@ -288,7 +289,7 @@ export const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
             <AccordionItem
               labelVariant="h3"
               id="id_1"
-              label="Lagaákvæði sem brot varða við"
+              label={formatMessage(lawsBrokenAccordion.heading)}
             >
               <Text whiteSpace="breakSpaces">{workingCase.lawsBroken}</Text>
             </AccordionItem>

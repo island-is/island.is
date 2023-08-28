@@ -29,6 +29,7 @@ import {
   DefendantInfo,
   CreatedDate,
   SortButton,
+  getDurationDate,
 } from '@island.is/judicial-system-web/src/components/Table'
 
 import * as styles from './DefenderCasesTable.css'
@@ -165,12 +166,12 @@ export const DefenderCasesTable: React.FC<React.PropsWithChildren<Props>> = (
                 {showingCompletedCases ? (
                   <td className={styles.td}>
                     <Text>
-                      {c.validToDate &&
-                        c.rulingDate &&
-                        `${formatDate(c.rulingDate, 'd.M.y')} - ${formatDate(
-                          c.validToDate,
-                          'd.M.y',
-                        )}`}
+                      {getDurationDate(
+                        c.state,
+                        c.validToDate,
+                        c.initialRulingDate,
+                        c.rulingDate,
+                      )}
                     </Text>
                   </td>
                 ) : (

@@ -10,12 +10,18 @@ import { handle404 } from '@island.is/clients/middlewares'
 import {
   HealthCenterHistory,
   HealthCenterHistoryEntry,
-} from './models/getHealthCenter.model'
-import { Dentists, DentistBill } from './models/getDentists.model'
+} from './models/healthCenter.model'
+import { DentistBill, UserDentist } from './models/userDentist.model'
 import subYears from 'date-fns/subYears'
-
-/** Category to attach each log message to */
-const LOG_CATEGORY = 'rights-portal-service'
+import {
+  AidOrNutrition,
+  PaginatedAidsAndNutritionResponse,
+} from './models/aidsOrNutrition.model'
+import {
+  AidOrNutritionType,
+  ExcludesFalse,
+  generateAidOrNutrition,
+} from './rightsPortal.types'
 
 @Injectable()
 export class RightsPortalService {
@@ -31,17 +37,44 @@ export class RightsPortalService {
       .therapies()
       .catch(handle404)
 
-  getAidsAndNutrition = (user: User) =>
-    this.aidsAndNutritionApi
-      .withMiddleware(new AuthMiddleware(user as Auth))
-      .aidsandnutrition()
-      .catch(handle404)
+  async getAidsAndNutrition(
+    user: User,
+  ): Promise<PaginatedAidsAndNutritionResponse | null> {
+    try {
+      const res = await this.aidsAndNutritionApi
+        .withMiddleware(new AuthMiddleware(user as Auth))
+        .aidsandnutrition()
+
+      if (!res) {
+        return null
+      }
+      const nutrition: Array<AidOrNutrition> | null =
+        res.nutrition
+          ?.map((c) => generateAidOrNutrition(c, AidOrNutritionType.NUTRITION))
+          .filter((Boolean as unknown) as ExcludesFalse) ?? []
+
+      const aids: Array<AidOrNutrition> | null =
+        res.aids
+          ?.map((c) => generateAidOrNutrition(c, AidOrNutritionType.AID))
+          .filter((Boolean as unknown) as ExcludesFalse) ?? []
+
+      return {
+        data: [...aids, ...nutrition],
+        totalCount: aids?.length,
+        pageInfo: {
+          hasNextPage: false,
+        },
+      }
+    } catch (e) {
+      return handle404(e)
+    }
+  }
 
   async getDentists(
     user: User,
     dateFrom?: Date,
     dateTo?: Date,
-  ): Promise<Dentists | null> {
+  ): Promise<UserDentist | null> {
     const api = this.dentistApi.withMiddleware(new AuthMiddleware(user as Auth))
     try {
       const res = await Promise.all([
