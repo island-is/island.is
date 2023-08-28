@@ -202,6 +202,7 @@ export class PoliceService {
                 heitiSkjals: string
                 malsnumer: string
                 domsSkjalsFlokkun: string
+                dagsStofnad: string
               }) => ({
                 id: file.rvMalSkjolMals_ID,
                 name: file.heitiSkjals.endsWith('.pdf')
@@ -209,6 +210,7 @@ export class PoliceService {
                   : `${file.heitiSkjals}.pdf`,
                 policeCaseNumber: file.malsnumer,
                 chapter: getChapter(file.domsSkjalsFlokkun),
+                displayDate: file.dagsStofnad,
               }),
             ) ?? []
           )

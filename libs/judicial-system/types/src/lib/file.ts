@@ -86,6 +86,7 @@ export interface CreateFile {
   policeCaseNumber?: string
   chapter?: number
   orderWithinChapter?: number
+  displayDate?: string
 }
 
 export interface UpdateFile {

@@ -25,7 +25,9 @@ import {
   BlueBox,
   IndictmentInfo,
 } from '@island.is/judicial-system-web/src/components'
-import { UpdateIndictmentCount } from '@island.is/judicial-system-web/src/utils/hooks/useIndictmentCounts'
+import useIndictmentCounts, {
+  UpdateIndictmentCount,
+} from '@island.is/judicial-system-web/src/utils/hooks/useIndictmentCounts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   removeErrorMessageIfValid,
@@ -285,6 +287,7 @@ export const IndictmentCount: React.FC<React.PropsWithChildren<Props>> = (
     setWorkingCase,
   } = props
   const { formatMessage } = useIntl()
+  const { lawTag } = useIndictmentCounts()
 
   const [
     vehicleRegistrationNumberErrorMessage,
@@ -302,15 +305,6 @@ export const IndictmentCount: React.FC<React.PropsWithChildren<Props>> = (
     legalArgumentsErrorMessage,
     setLegalArgumentsErrorMessage,
   ] = useState<string>('')
-
-  const lawTag = useCallback(
-    (law: number[]) =>
-      formatMessage(strings.lawsBrokenTag, {
-        paragraph: law[1],
-        article: law[0],
-      }),
-    [formatMessage],
-  )
 
   const offensesOptions = useMemo(
     () =>

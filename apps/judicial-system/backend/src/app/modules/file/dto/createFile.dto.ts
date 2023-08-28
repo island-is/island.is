@@ -35,4 +35,9 @@ export class CreateFileDto {
   @IsNumber()
   @ApiPropertyOptional()
   readonly orderWithinChapter?: number
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly displayDate?: string
 }

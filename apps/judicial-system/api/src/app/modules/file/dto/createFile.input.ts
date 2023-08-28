@@ -53,4 +53,8 @@ export class CreateFileInput implements CreateFile {
   @IsNumber()
   @Min(0)
   readonly orderWithinChapter?: number
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly displayDate?: string
 }

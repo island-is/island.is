@@ -478,6 +478,7 @@ const IndictmentsCaseFilesAccordionItem: React.FC<
             userGeneratedFilename: caseFile.userGeneratedFilename,
             isDivider: false,
             canOpen: Boolean(caseFile.key),
+            displayDate: caseFile.displayDate,
           }
         }),
     ])

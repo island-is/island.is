@@ -4,5 +4,6 @@ query GetIndictmentPoliceCaseFiles($input: PoliceCaseFilesQueryInput!) {
     name
     policeCaseNumber
     chapter
+    displayDate
   }
 }
