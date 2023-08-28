@@ -44,9 +44,11 @@ export class OccupationalLicensesResolver {
     @CurrentUser() user: User,
     @Args('id', { type: () => String }) id: string,
   ) {
-    return await this.occupationalLicensesApi
+    const license = await this.occupationalLicensesApi
       .getHealthDirectorateLicenseById(user, id)
       .catch(handle404)
+
+    return license ? license : null
   }
 
   @Query(() => EducationalLicense, {
@@ -63,9 +65,11 @@ export class OccupationalLicensesResolver {
       .getEducationalLicensesById(user, id)
       .catch(handle404)
 
-    return {
-      ...license,
-      url: documentUrl,
-    }
+    return license
+      ? {
+          ...license,
+          url: documentUrl,
+        }
+      : null
   }
 }
