@@ -5,8 +5,6 @@ import {
   GetIcelandicGovernmentInstitutionVacancyDetailsQueryVariables,
   GetNamespaceQuery,
   GetNamespaceQueryVariables,
-  GetOrganizationByTitleQuery,
-  GetOrganizationByTitleQueryVariables,
   IcelandicGovernmentInstitutionVacancyByIdResponse,
 } from '@island.is/web/graphql/schema'
 import { GET_ICELANDIC_GOVERNMENT_INSTITUTION_VACANCY_DETAILS } from '../queries/IcelandicGovernmentInstitutionVacancies'
@@ -28,10 +26,7 @@ import {
   InstitutionPanel,
 } from '@island.is/web/components'
 import { useI18n } from '@island.is/web/i18n'
-import {
-  GET_NAMESPACE_QUERY,
-  GET_ORGANIZATION_BY_TITLE_QUERY,
-} from '../queries'
+import { GET_NAMESPACE_QUERY } from '../queries'
 import { webRichText } from '@island.is/web/utils/richText'
 import { SliceType } from '@island.is/island-ui/contentful'
 import {
@@ -43,22 +38,17 @@ type Vacancy = IcelandicGovernmentInstitutionVacancyByIdResponse['vacancy']
 
 interface InformationPanelProps {
   vacancy: Vacancy
-  organizationLogo?: string
   namespace: Record<string, string>
 }
 
-const InformationPanel = ({
-  vacancy,
-  organizationLogo,
-  namespace,
-}: InformationPanelProps) => {
+const InformationPanel = ({ vacancy, namespace }: InformationPanelProps) => {
   const { activeLocale } = useI18n()
   const n = useNamespace(namespace)
   return (
     <Stack space={3}>
       {vacancy?.institutionName && (
         <InstitutionPanel
-          img={organizationLogo}
+          img={vacancy.logoUrl}
           institutionTitle={n('institutionCardTitle', 'Þjónustuaðili')}
           institution={vacancy.institutionName}
           locale={activeLocale}
@@ -121,13 +111,11 @@ const InformationPanel = ({
 
 interface IcelandicGovernmentInstitutionVacancyDetailsProps {
   vacancy: Vacancy
-  organizationLogo?: string
   namespace: Record<string, string>
 }
 
 const IcelandicGovernmentInstitutionVacancyDetails: Screen<IcelandicGovernmentInstitutionVacancyDetailsProps> = ({
   vacancy,
-  organizationLogo,
   namespace,
 }) => {
   const { linkResolver } = useLinkResolver()
@@ -162,11 +150,7 @@ const IcelandicGovernmentInstitutionVacancyDetails: Screen<IcelandicGovernmentIn
                 {n('goBack', 'Til baka')}
               </Button>
             </LinkV2>
-            <InformationPanel
-              namespace={namespace}
-              organizationLogo={organizationLogo}
-              vacancy={vacancy}
-            />
+            <InformationPanel namespace={namespace} vacancy={vacancy} />
           </Stack>
         }
       >
@@ -357,25 +341,6 @@ IcelandicGovernmentInstitutionVacancyDetails.getProps = async ({
     throw new CustomNextError(404, 'Vacancy was not found')
   }
 
-  const organizationResponse = vacancy.institutionName
-    ? await apolloClient.query<
-        GetOrganizationByTitleQuery,
-        GetOrganizationByTitleQueryVariables
-      >({
-        query: GET_ORGANIZATION_BY_TITLE_QUERY,
-        variables: {
-          input: {
-            lang: locale,
-            title: vacancy.institutionName,
-          },
-        },
-      })
-    : null
-
-  const organizationLogo =
-    organizationResponse?.data?.getOrganizationByTitle?.logo?.url ??
-    vacancy.logoUrl
-
   const namespace = JSON.parse(
     namespaceResponse?.data?.getNamespace?.fields || '{}',
   ) as Record<string, string>
@@ -386,7 +351,6 @@ IcelandicGovernmentInstitutionVacancyDetails.getProps = async ({
 
   return {
     vacancy,
-    organizationLogo,
     namespace,
   }
 }
