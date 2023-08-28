@@ -30,7 +30,6 @@ import {
   ApiOkResponse,
   ApiOperation,
   ApiParam,
-  ApiQuery,
   ApiSecurity,
   ApiTags,
 } from '@nestjs/swagger'
@@ -69,12 +68,6 @@ export class UserProfileController {
     required: true,
     description: 'The nationalId of the application to update.',
     allowEmptyValue: false,
-  })
-  @ApiQuery({
-    name: 'actorRequest',
-    required: false,
-    type: 'boolean',
-    description: 'Is the user requesting the actor information?',
   })
   @ApiOkResponse({ type: UserProfile })
   @Audit<UserProfile>({
