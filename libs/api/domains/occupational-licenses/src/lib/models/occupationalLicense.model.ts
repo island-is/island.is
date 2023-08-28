@@ -1,4 +1,4 @@
-import { Field, Int, ObjectType, createUnionType } from '@nestjs/graphql'
+import { createUnionType } from '@nestjs/graphql'
 import { EducationalLicense } from './educationalLicense.model'
 import { HealthDirectorateLicense } from './healthDirectorateLicense.model'
 

@@ -1,7 +1,11 @@
 import { useParams } from 'react-router-dom'
 import { useGetHealthDirectorateLicenseByIdQuery } from './HealthDirectorateDetail.generated'
 import { Box } from '@island.is/island-ui/core'
-import { CardLoader, ErrorScreen } from '@island.is/service-portal/core'
+import {
+  CardLoader,
+  EmptyState,
+  ErrorScreen,
+} from '@island.is/service-portal/core'
 import { useLocale } from '@island.is/localization'
 import { useUserInfo } from '@island.is/auth/react'
 import { getOrganizationLogoUrl } from '@island.is/shared/utils'
@@ -18,8 +22,7 @@ export const EducationDetail = () => {
   const { id } = useParams() as UseParams
 
   const user = useUserInfo()
-  const birthday = user.profile.dateOfBirth ?? null
-
+  const birthday = user.profile.dateOfBirth
   const { formatDateFns, formatMessage } = useLocale()
 
   const { data, loading, error } = useGetHealthDirectorateLicenseByIdQuery({
@@ -28,7 +31,7 @@ export const EducationDetail = () => {
     },
   })
 
-  const license = { ...data?.OccupationalLicensesHealthDirectorateLicense }
+  const license = data?.OccupationalLicensesHealthDirectorateLicense
 
   if (loading)
     return (
@@ -45,12 +48,14 @@ export const EducationDetail = () => {
       />
     )
 
+  if (!license) return <EmptyState />
+
   const programme = license.profession
   const organizations =
     (data?.getOrganizations?.items as Array<Organization>) ?? []
 
   const organizationImage = getOrganizationLogoUrl(
-    license.name,
+    license.name ?? '',
     organizations,
     120,
   )
@@ -61,11 +66,15 @@ export const EducationDetail = () => {
       intro={formatMessage(om.healthDirectorateIntro)}
       img={organizationImage}
       name={user.profile.name}
-      dateOfBirth={formatDateFns(birthday, 'dd.mm.yyyy')}
+      dateOfBirth={birthday ? formatDateFns(birthday, 'dd.mm.yyyy') : undefined}
       profession={license.profession}
       licenseType={license.license}
       publisher={formatMessage(om.theDirectorateOfHealth)}
-      dateOfIssue={formatDateFns(license.validFrom, 'dd.mm.yyyy')}
+      dateOfIssue={
+        license.validFrom
+          ? formatDateFns(license.validFrom, 'dd.mm.yyyy')
+          : undefined
+      }
       isValid={license.isValid}
     />
   )

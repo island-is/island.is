@@ -3,6 +3,7 @@ import { useGetEducationalLicenseByIdQuery } from './EducationalDetail.generated
 import { Box, Button } from '@island.is/island-ui/core'
 import {
   CardLoader,
+  EmptyState,
   ErrorScreen,
   formSubmit,
 } from '@island.is/service-portal/core'
@@ -23,7 +24,7 @@ export const EducationDetail = () => {
   const { id } = useParams() as UseParams
 
   const user = useUserInfo()
-  const birthday = user.profile.dateOfBirth ?? null
+  const birthday = user.profile.dateOfBirth
 
   const { formatDateFns, formatMessage } = useLocale()
 
@@ -35,14 +36,14 @@ export const EducationDetail = () => {
     },
   })
 
-  const license = { ...data?.OccupationalLicensesEducationalLicense }
+  const license = data?.OccupationalLicensesEducationalLicense
 
   useEffect(() => {
-    if (shouldDownload && license.url) {
+    if (shouldDownload && license) {
       formSubmit(license.url)
       setShouldDownload(false)
     }
-  }, [shouldDownload, license.url])
+  }, [shouldDownload, license])
 
   if (loading)
     return (
@@ -58,6 +59,8 @@ export const EducationDetail = () => {
         tag={formatMessage(m.somethingWrong)}
       />
     )
+
+  if (!license) return <EmptyState />
 
   const programme =
     license.programme.charAt(0).toUpperCase() + license.programme.slice(1)
@@ -90,7 +93,7 @@ export const EducationDetail = () => {
         ) : undefined
       }
       name={user.profile.name}
-      dateOfBirth={formatDateFns(birthday, 'dd.mm.yyyy')}
+      dateOfBirth={birthday ? formatDateFns(birthday, 'dd.mm.yyyy') : undefined}
       profession={programme}
       licenseType={programme}
       publisher={license.school}

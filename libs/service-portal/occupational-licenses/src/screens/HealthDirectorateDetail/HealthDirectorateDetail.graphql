@@ -13,7 +13,6 @@ query getHealthDirectorateLicenseById($id: String!) {
   }
   OccupationalLicensesHealthDirectorateLicense(id: $id) {
     legalEntityId
-    nationalId
     name
     profession
     license

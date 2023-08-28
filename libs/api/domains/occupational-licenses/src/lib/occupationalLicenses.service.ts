@@ -4,7 +4,7 @@ import { HealthDirectorateClientService } from '@island.is/clients/health-direct
 import type { User } from '@island.is/auth-nest-tools'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
-import { OccupationalLicensesList } from './models/OccupationalLicensesList.model'
+import { OccupationalLicensesList } from './models/occupationalLicenseList.model'
 import { HealthDirectorateLicense } from './models/healthDirectorateLicense.model'
 import { EducationalLicense } from './models/educationalLicense.model'
 
@@ -141,7 +141,7 @@ export class OccupationalLicensesService {
         school: license.issuer,
         programme: license.type,
         date: license.issued,
-        isValid: new Date(license.issued) >= new Date(),
+        isValid: new Date(license.issued) < new Date(),
       }))
     } catch (e) {
       this.logger.error(`Error getting educational license`, {
