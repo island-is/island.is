@@ -1,4 +1,4 @@
-import { Stack, Box } from '@island.is/island-ui/core'
+import { Stack, Box, Icon } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { IntroHeader } from '@island.is/portals/core'
 import { UserInfoLine } from '@island.is/service-portal/core'
@@ -93,9 +93,21 @@ export const LicenseDetail: React.FC<LicenseDetailProps> = ({
         {isValid && (
           <UserInfoLine
             label={formatMessage(om.licenseStatus)}
-            content={formatMessage(
-              isValid ? om.validLicense : om.invalidLicense,
-            )}
+            content={
+              <Box
+                display="flex"
+                justifyContent="center"
+                alignItems="center"
+                columnGap="p1"
+              >
+                {formatMessage(isValid ? om.validLicense : om.invalidLicense)}
+                <Icon
+                  icon={isValid ? 'checkmarkCircle' : 'closeCircle'}
+                  color={isValid ? 'mint600' : 'red600'}
+                  type="filled"
+                />
+              </Box>
+            }
             labelColumnSpan={['6/12']}
             valueColumnSpan={['6/12']}
           />

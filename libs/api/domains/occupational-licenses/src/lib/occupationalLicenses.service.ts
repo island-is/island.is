@@ -118,7 +118,7 @@ export class OccupationalLicensesService {
             school: license.issuer,
             programme: license.type,
             date: license.issued,
-            isValid: new Date(license.issued) >= new Date(),
+            isValid: new Date(license.issued) < new Date(),
           }))
           .find((license) => license.id === id) ?? null
       )

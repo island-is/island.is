@@ -98,7 +98,7 @@ export const EducationDetail = () => {
       licenseType={programme}
       publisher={license.school}
       dateOfIssue={formatDateFns(license.date, 'dd.mm.yyyy')}
-      isValid={license.isValid ?? false}
+      isValid={license.isValid}
     />
   )
 }
