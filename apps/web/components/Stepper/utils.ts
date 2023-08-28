@@ -298,7 +298,7 @@ const getStepOptions = (
 ): StepOption[] => {
   if (!step || step.config === '') return []
   const stepConfig: StepConfig = JSON.parse(
-    step.config ? step.config : '',
+    step.config ? step.config : '{}',
   ) as StepConfig
 
   if (
@@ -436,7 +436,7 @@ const getStepOptionsFromUIConfiguration = async (
         // map data here to reduce data processing in component
         return content.data.getNamespace
           ? JSON.parse(content.data.getNamespace.fields)
-          : ''
+          : {}
       })
   })
 
