@@ -28,19 +28,19 @@ const parseEnvFile = (filePath: string): EnvObject => {
     const content = readFileSync(absPath, 'utf-8')
     const isBash = envToFileMapping[filePath]?.isBashEnv
 
-    const pattern = isBash
-      ? /^export (\w+)='(.*?)'$/
-      : /^(\w+)=['"]?(.*?)['"]?$/
+    const pattern = /^(?:export )?(?<key>\w+)=(?<quotation>['"]?)(?<value>.*)\k<quotation>$/
     const envObj: EnvObject = {}
 
     content.split('\n').forEach((line) => {
       const trimmedLine = line.trim()
       if (!trimmedLine) return // Skip empty lines
+      const noExport = trimmedLine.split('export ').pop() // Can only be undefined if line is empty
+      if (!noExport) return // Skip empty lines, again? Mr. TypeScript?!
 
       const match = trimmedLine.match(pattern)
-      if (match) {
-        const key = match[1]
-        const value = match[2]
+      if (match && match.groups?.key && match.groups?.value != undefined) {
+        const key = match.groups.key
+        const value = match.groups.value
         envObj[key] = value
       } else {
         console.log(`Failed to parse line: ${trimmedLine}`)
