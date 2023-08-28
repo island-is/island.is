@@ -4,8 +4,12 @@ import { useIntl } from 'react-intl'
 
 import { toast } from '@island.is/island-ui/core'
 import { errors } from '@island.is/judicial-system-web/messages'
-import { UpdateDefendant } from '@island.is/judicial-system/types'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
+import {
+  CreateDefendantInput,
+  Defendant,
+  UpdateDefendantInput,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { CreateDefendantMutation } from './createDefendantGql'
 import { DeleteDefendantMutation } from './deleteDefendantGql'
@@ -44,20 +48,12 @@ const useDefendants = () => {
   ] = useMutation<UpdateDefendantMutationResponse>(UpdateDefendantMutation)
 
   const createDefendant = useCallback(
-    async (caseId: string, defendant: UpdateDefendant) => {
+    async (defendant: CreateDefendantInput) => {
       try {
         if (!isCreatingDefendant) {
           const { data } = await createDefendantMutation({
             variables: {
-              input: {
-                caseId,
-                name: defendant.name,
-                address: defendant.address,
-                nationalId: defendant.nationalId?.replace('-', ''),
-                gender: defendant.gender,
-                citizenship: defendant.citizenship,
-                noNationalId: defendant.noNationalId,
-              },
+              input: defendant,
             },
           })
 
@@ -92,19 +88,11 @@ const useDefendants = () => {
   )
 
   const updateDefendant = useCallback(
-    async (
-      caseId: string,
-      defendantId: string,
-      updateDefendant: UpdateDefendant,
-    ) => {
+    async (updateDefendant: UpdateDefendantInput) => {
       try {
         const { data } = await updateDefendantMutation({
           variables: {
-            input: {
-              caseId,
-              defendantId,
-              ...updateDefendant,
-            },
+            input: updateDefendant,
           },
         })
 
@@ -122,8 +110,7 @@ const useDefendants = () => {
 
   const updateDefendantState = useCallback(
     (
-      defendantId: string,
-      update: UpdateDefendant,
+      update: UpdateDefendantInput,
       setWorkingCase: React.Dispatch<React.SetStateAction<Case>>,
     ) => {
       setWorkingCase((theCase: Case) => {
@@ -131,7 +118,7 @@ const useDefendants = () => {
           return theCase
         }
         const indexOfDefendantToUpdate = theCase.defendants.findIndex(
-          (defendant) => defendant.id === defendantId,
+          (defendant) => defendant.id === update.defendantId,
         )
 
         const newDefendants = [...theCase.defendants]
@@ -139,7 +126,7 @@ const useDefendants = () => {
         newDefendants[indexOfDefendantToUpdate] = {
           ...newDefendants[indexOfDefendantToUpdate],
           ...update,
-        }
+        } as Defendant
 
         return { ...theCase, defendants: newDefendants }
       })
@@ -151,11 +138,11 @@ const useDefendants = () => {
     (
       caseId: string,
       defendantId: string,
-      update: UpdateDefendant,
+      update: UpdateDefendantInput,
       setWorkingCase: React.Dispatch<SetStateAction<Case>>,
     ) => {
-      updateDefendantState(defendantId, update, setWorkingCase)
-      updateDefendant(caseId, defendantId, update)
+      updateDefendantState(update, setWorkingCase)
+      updateDefendant(update)
     },
     [updateDefendant, updateDefendantState],
   )
