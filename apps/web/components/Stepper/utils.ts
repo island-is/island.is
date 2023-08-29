@@ -312,12 +312,8 @@ const getStepOptions = (
     )
     if (!stepOptions || !stepOptions.data) return []
 
-    const {
-      labelFieldEN,
-      labelFieldIS,
-      optionSlugField,
-      transitions,
-    } = stepConfig.optionsFromSource
+    const { labelFieldEN, labelFieldIS, optionSlugField, transitions } =
+      stepConfig.optionsFromSource
 
     const parsedOptions = stepOptions.data.map((o) => {
       const label = lang === 'en' ? o[labelFieldEN] : o[labelFieldIS]
