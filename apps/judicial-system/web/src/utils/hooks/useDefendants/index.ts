@@ -26,7 +26,6 @@ const useDefendants = () => {
 
   const createDefendant = useCallback(
     async (defendant: CreateDefendantInput) => {
-      console.log('in createDefendant')
       try {
         if (!isCreatingDefendant) {
           const { data } = await createDefendantMutation({
@@ -48,7 +47,6 @@ const useDefendants = () => {
 
   const deleteDefendant = useCallback(
     async (caseId: string, defendantId: string) => {
-      console.log('in deleteDefendant')
       try {
         const { data } = await deleteDefendantMutation({
           variables: { input: { caseId, defendantId } },
