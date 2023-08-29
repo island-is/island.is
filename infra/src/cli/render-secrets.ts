@@ -34,12 +34,12 @@ export const renderSecretsCommand = (service: string) => {
 export const renderSecrets = async (
   service: string,
 ): Promise<[string, string][]> => {
+  // TODO: Notify or fail if the requested service doesn't exist
   const services = await Promise.all(
     Object.values(Charts).map(
       async (chart) =>
-        (
-          await renderHelmServices(Envs.dev01, chart.dev, chart.dev, 'no-mocks')
-        ).services,
+        (await renderHelmServices(Envs.dev01, chart.dev, chart.dev, 'no-mocks'))
+          .services,
     ),
   )
 
