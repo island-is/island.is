@@ -42,6 +42,17 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-public-api'> => {
           'clustercfg.general-redis-cluster-group.dnugi2.euw1.cache.amazonaws.com:6379',
         ]),
       },
+      XROAD_RSK_PROCURING_REDIS_NODES: {
+        dev: json([
+          'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379',
+        ]),
+        staging: json([
+          'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379',
+        ]),
+        prod: json([
+          'clustercfg.general-redis-cluster-group.dnugi2.euw1.cache.amazonaws.com:6379',
+        ]),
+      },
       XROAD_TJODSKRA_MEMBER_CODE: {
         prod: '6503760649',
         dev: '10001',

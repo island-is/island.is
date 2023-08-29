@@ -32,11 +32,11 @@ export const LifeEventsSection = ({
         insideGridContainer
       >
         {items
-          .filter((x) => x.slug && x.title)
+          .filter((x: { slug: string; title: string }) => x.slug && x.title)
           .map(
             (
               { __typename: typename, title, shortTitle, slug, tinyThumbnail },
-              index,
+              index: number,
             ) => {
               return (
                 <IconTitleCard

@@ -81,11 +81,10 @@ export class PowerBiService {
 
     const clientApplication = new ConfidentialClientApplication(msalConfig)
 
-    const tokenResponse = await clientApplication.acquireTokenByClientCredential(
-      {
+    const tokenResponse =
+      await clientApplication.acquireTokenByClientCredential({
         scopes: ['https://analysis.windows.net/powerbi/api/.default'],
-      },
-    )
+      })
     return tokenResponse?.accessToken as string
   }
 

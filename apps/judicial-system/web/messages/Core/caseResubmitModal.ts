@@ -20,8 +20,7 @@ export const caseResubmitModal = {
       'Notaður sem texti í "Endursenda kröfu" takka í modal sem kemur þegar krafa er endursend',
   }),
   secondaryButtonText: defineMessage({
-    id:
-      'judicial.system.core:overview.case_resubmit_modal.secondary_button_text',
+    id: 'judicial.system.core:overview.case_resubmit_modal.secondary_button_text',
     defaultMessage: 'Hætta við',
     description:
       'Notaður sem texti í "Hætta við" takka í modal sem kemur þegar krafa er endursend',

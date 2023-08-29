@@ -30,10 +30,8 @@ describe('InternalNotificationController - Send court date notification', () => 
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const {
-      emailService,
-      internalNotificationController,
-    } = await createTestingNotificationModule()
+    const { emailService, internalNotificationController } =
+      await createTestingNotificationModule()
 
     mockEmailService = emailService
 
@@ -71,8 +69,7 @@ describe('InternalNotificationController - Send court date notification', () => 
         expect.objectContaining({
           to: [{ name: prosecutorName, address: prosecutorEmail }],
           subject: `Fyrirtaka í máli: ${courtCaseNumber}`,
-          html:
-            'Héraðsdómur Reykjavíkur hefur staðfest fyrirtökutíma fyrir kröfu um gæsluvarðhald.<br /><br />Fyrirtaka mun fara fram á ótilgreindum tíma.<br /><br />Dómsalur hefur ekki verið skráður.<br /><br />Dómari hefur ekki verið skráður.<br /><br />Verjandi sakbornings hefur ekki verið skráður.',
+          html: 'Héraðsdómur Reykjavíkur hefur staðfest fyrirtökutíma fyrir kröfu um gæsluvarðhald.<br /><br />Fyrirtaka mun fara fram á ótilgreindum tíma.<br /><br />Dómsalur hefur ekki verið skráður.<br /><br />Dómari hefur ekki verið skráður.<br /><br />Verjandi sakbornings hefur ekki verið skráður.',
         }),
       )
       expect(then.result).toEqual({ delivered: true })

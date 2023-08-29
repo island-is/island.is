@@ -41,11 +41,8 @@ describe('InternalNotificationController - Send defendants not updated at court 
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const {
-      emailService,
-      notificationModel,
-      internalNotificationController,
-    } = await createTestingNotificationModule()
+    const { emailService, notificationModel, internalNotificationController } =
+      await createTestingNotificationModule()
 
     mockEmailService = emailService
     mockNotificationModel = notificationModel

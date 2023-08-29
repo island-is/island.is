@@ -97,11 +97,14 @@ const Card = ({
       </Box>
       <Inline space={1} justifyContent="spaceBetween" alignY="center">
         {showAttachment && <Box>{dropdown}</Box>}
-        <Box>
+        {frontPage ? (
+          <ArrowLink as="span">{loc.arrowLink.text}</ArrowLink>
+        ) : (
           <ArrowLink href={`${loc.arrowLink.href}/${card.id}`}>
             {loc.arrowLink.text}
           </ArrowLink>
-        </Box>
+        )}
+
         {showPublished && (
           <Text variant="eyebrow" color="purple400">{`${
             loc.publishedText

@@ -95,9 +95,8 @@ export const createTestingFileModule = async () => {
     InternalFileController,
   )
 
-  const limitedAccessFileController = fileModule.get<LimitedAccessFileController>(
-    LimitedAccessFileController,
-  )
+  const limitedAccessFileController =
+    fileModule.get<LimitedAccessFileController>(LimitedAccessFileController)
 
   const sequelize = fileModule.get<Sequelize>(Sequelize)
 

@@ -34,16 +34,14 @@ describe('LimitedAccessCaseController - Find defender by national id', () => {
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const {
-      defendantService,
-      caseModel,
-      limitedAccessCaseController,
-    } = await createTestingCaseModule()
+    const { defendantService, caseModel, limitedAccessCaseController } =
+      await createTestingCaseModule()
 
     mockDefendantService = defendantService
     mockCaseModel = caseModel
 
-    const mockFindLatestDefendantByDefenderNationalId = mockDefendantService.findLatestDefendantByDefenderNationalId as jest.Mock
+    const mockFindLatestDefendantByDefenderNationalId =
+      mockDefendantService.findLatestDefendantByDefenderNationalId as jest.Mock
     mockFindLatestDefendantByDefenderNationalId.mockResolvedValue(null)
     const mockFindOne = mockCaseModel.findOne as jest.Mock
     mockFindOne.mockResolvedValue(null)
@@ -56,9 +54,8 @@ describe('LimitedAccessCaseController - Find defender by national id', () => {
       const then = {} as Then
 
       try {
-        then.result = await limitedAccessCaseController.findDefenderByNationalId(
-          nationalId,
-        )
+        then.result =
+          await limitedAccessCaseController.findDefenderByNationalId(nationalId)
       } catch (error) {
         then.error = error as Error
       }
@@ -128,7 +125,8 @@ describe('LimitedAccessCaseController - Find defender by national id', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockFindLatestDefendantByDefenderNationalId = mockDefendantService.findLatestDefendantByDefenderNationalId as jest.Mock
+      const mockFindLatestDefendantByDefenderNationalId =
+        mockDefendantService.findLatestDefendantByDefenderNationalId as jest.Mock
       mockFindLatestDefendantByDefenderNationalId.mockResolvedValueOnce({
         defenderNationalId,
         defenderName,

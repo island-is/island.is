@@ -121,10 +121,12 @@ export const richText: RichText = (
   locale = 'is',
 ) => {
   const options = {
-    renderText: (text) => {
-      return text.split('\n').reduce((children, textSegment, index) => {
-        return [...children, index > 0 && <br key={index} />, textSegment]
-      }, [])
+    renderText: (text: string) => {
+      return text
+        .split('\n')
+        .reduce((children: string[], textSegment: string, index: number) => {
+          return [...children, index > 0 && <br key={index} />, textSegment]
+        }, [])
     },
     renderNode: { ...defaultRenderNodeObject, ...opt.renderNode },
     renderMark: { ...defaultRenderMarkObject, ...opt.renderMark },

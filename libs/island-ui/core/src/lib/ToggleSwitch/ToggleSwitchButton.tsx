@@ -6,15 +6,16 @@ import {
   ToggleSwitchBaseProps,
 } from './_ToggleSwitch.utils'
 
-export type ToggleSwitchButtonProps = ToggleSwitchBaseProps<HTMLButtonElement> & {
-  /** By default the button is flagged as a simple `aria-pressed="true|fase"` toggle button.
-   *
-   * If `expander={true}` is used the button changes to use `aria-expanded="true|false"` instead.
-   */
-  expander?: boolean
+export type ToggleSwitchButtonProps =
+  ToggleSwitchBaseProps<HTMLButtonElement> & {
+    /** By default the button is flagged as a simple `aria-pressed="true|fase"` toggle button.
+     *
+     * If `expander={true}` is used the button changes to use `aria-expanded="true|false"` instead.
+     */
+    expander?: boolean
 
-  'aria-controls'?: string
-}
+    'aria-controls'?: string
+  }
 
 export const ToggleSwitchButton = (props: ToggleSwitchButtonProps) => {
   const { checked } = props

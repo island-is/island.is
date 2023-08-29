@@ -39,7 +39,8 @@ import { CustomNextError } from '@island.is/web/units/errors'
 
 import * as styles from './IcelandicGovernmentInstitutionVacanciesList.css'
 
-type Vacancy = IcelandicGovernmentInstitutionVacanciesResponse['vacancies'][number]
+type Vacancy =
+  IcelandicGovernmentInstitutionVacanciesResponse['vacancies'][number]
 
 const ITEMS_PER_PAGE = 8
 export const VACANCY_INTRO_MAX_LENGTH = 80
@@ -113,10 +114,9 @@ interface IcelandicGovernmentInstitutionVacanciesListProps {
   namespace: Record<string, string>
 }
 
-const IcelandicGovernmentInstitutionVacanciesList: Screen<IcelandicGovernmentInstitutionVacanciesListProps> = ({
-  vacancies,
-  namespace,
-}) => {
+const IcelandicGovernmentInstitutionVacanciesList: Screen<
+  IcelandicGovernmentInstitutionVacanciesListProps
+> = ({ vacancies, namespace }) => {
   const { query, replace, isReady } = useRouter()
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
@@ -158,22 +158,30 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<IcelandicGovernmentIns
     let shouldBeShown = searchTermMatches
 
     if (parameters.fieldOfWork.length > 0) {
-      shouldBeShown =
-        shouldBeShown && parameters.fieldOfWork.includes(vacancy.fieldOfWork)
+      shouldBeShown = Boolean(
+        shouldBeShown &&
+          vacancy.fieldOfWork &&
+          parameters.fieldOfWork.includes(vacancy.fieldOfWork),
+      )
     }
 
     if (parameters.location.length > 0) {
       shouldBeShown =
         shouldBeShown &&
-        vacancy.locations.some((location) =>
-          parameters.location.includes(location?.title),
+        Boolean(
+          vacancy.locations?.some(
+            (location) =>
+              location?.title && parameters.location.includes(location?.title),
+          ),
         )
     }
 
     if (parameters.institution.length > 0) {
-      shouldBeShown =
+      shouldBeShown = Boolean(
         shouldBeShown &&
-        parameters.institution.includes(vacancy.institutionName)
+          vacancy.institutionName &&
+          parameters.institution.includes(vacancy.institutionName),
+      )
     }
 
     return shouldBeShown
@@ -451,7 +459,7 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<IcelandicGovernmentIns
                       setParameters((prevParameters) => ({
                         ...prevParameters,
                         [category]: (prevParameters[category] ?? []).filter(
-                          (prevValue) => prevValue !== value,
+                          (prevValue: string) => prevValue !== value,
                         ),
                       }))
                     }}

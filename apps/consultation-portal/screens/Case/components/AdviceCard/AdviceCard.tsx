@@ -57,7 +57,7 @@ const RenderAdvice = ({ advice, loc, isOpen = false }: RenderAdviceProps) => {
     return retComp
   }
   const content = advice?.content
-  return isOpen ? <div className={styles.divStyle}>{content}</div> : content
+  return isOpen ? <span className={styles.divStyle}>{content}</span> : content
 }
 
 export const AdviceCard = ({ advice }: Props) => {
@@ -106,8 +106,8 @@ export const AdviceCard = ({ advice }: Props) => {
           !advice?.isHidden &&
           advice?.adviceDocuments &&
           advice?.adviceDocuments.length > 0 &&
-          advice?.adviceDocuments.map((doc, index) => {
-            return <DocFileName doc={doc} key={index} isAdvice />
+          advice?.adviceDocuments.map((doc) => {
+            return <DocFileName doc={doc} key={doc.id} isAdvice />
           })}
       </Stack>
     </CardSkeleton>
