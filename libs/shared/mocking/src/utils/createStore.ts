@@ -24,25 +24,30 @@ export const createStore = <T extends {}>(
     },
   }
 
-  const propertyHandler = <Handler extends PropertyHandlerName>(
-    handler: Handler,
-  ) => (target: Internal<T>, property: string, ...args: unknown[]) => {
-    if (String(property).startsWith('$')) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      return (Reflect[handler] as any).call(Reflect, target, property, ...args)
-    } else {
-      if (!internal.$current) {
-        internal.$current = initializerFn()
+  const propertyHandler =
+    <Handler extends PropertyHandlerName>(handler: Handler) =>
+    (target: Internal<T>, property: string, ...args: unknown[]) => {
+      if (String(property).startsWith('$')) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        return (Reflect[handler] as any).call(
+          Reflect,
+          target,
+          property,
+          ...args,
+        )
+      } else {
+        if (!internal.$current) {
+          internal.$current = initializerFn()
+        }
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        return (Reflect[handler] as any).call(
+          Reflect,
+          internal.$current,
+          property,
+          ...args,
+        )
       }
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      return (Reflect[handler] as any).call(
-        Reflect,
-        internal.$current,
-        property,
-        ...args,
-      )
     }
-  }
 
   return new Proxy(internal, {
     get: propertyHandler('get'),

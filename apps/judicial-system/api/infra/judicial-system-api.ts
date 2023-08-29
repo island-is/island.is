@@ -23,8 +23,7 @@ export const serviceSetup = (services: {
         ),
         staging:
           'https://judicial-system.staging01.devland.is/api/auth/callback/identity-server',
-        prod:
-          'https://rettarvorslugatt.island.is/api/auth/callback/identity-server',
+        prod: 'https://rettarvorslugatt.island.is/api/auth/callback/identity-server',
       },
       AUTH_IDS_LOGOUT_REDIRECT_URI: {
         dev: 'https://judicial-system.dev01.devland.is',
