@@ -97,9 +97,6 @@ yargs(process.argv.slice(2))
       if (argv.reset) {
         resetAllMappedFiles()
       }
-      console.log('argv:', argv)
-      const args = argv._.slice(1)
-      console.log('args:', args)
       await updateSecretFiles(argv.services || [])
     },
   )
