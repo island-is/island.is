@@ -212,7 +212,11 @@ const UploadFilesToPoliceCase: React.FC<
     let currentOrderWithinChapter: number | undefined | null
 
     filesToUpload.forEach(async (f, index) => {
-      if (f.chapter && f.chapter !== currentChapter) {
+      if (
+        f.chapter !== undefined &&
+        f.chapter !== null &&
+        f.chapter !== currentChapter
+      ) {
         currentChapter = f.chapter
         currentOrderWithinChapter = Math.max(
           -1,
@@ -231,9 +235,11 @@ const UploadFilesToPoliceCase: React.FC<
         policeCaseNumber: f.policeCaseNumber,
         category: CaseFileCategory.CASE_FILE,
         chapter: f.chapter,
-        orderWithinChapter: currentOrderWithinChapter
-          ? ++currentOrderWithinChapter
-          : undefined,
+        orderWithinChapter:
+          currentOrderWithinChapter !== undefined &&
+          currentOrderWithinChapter !== null
+            ? ++currentOrderWithinChapter
+            : undefined,
         displayDate: f.displayDate,
       } as UploadFile
 
