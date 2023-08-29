@@ -81,7 +81,7 @@ export const SimpleSlider: FC<React.PropsWithChildren<SimpleSliderProps>> = ({
     const key = current.length && current[current.length - 1]
     const breakpointOption = slideState.breakpoints[key] ?? {}
 
-    const containerWidth = containerRef.current.offsetWidth
+    const containerWidth = containerRef.current?.offsetWidth
 
     const newSlideCount = breakpointOption.slideCount ?? slideCount
     const newGutterWidth = breakpointOption.gutterWidth ?? gutterWidth
@@ -134,6 +134,7 @@ export const SimpleSlider: FC<React.PropsWithChildren<SimpleSliderProps>> = ({
         }
         break
       default:
+        current = 0
         break
     }
 

@@ -75,7 +75,7 @@ const Home: Screen<HomeProps> = ({
   const o = useNamespace(organizationNamespace)
   const { linkResolver } = useLinkResolver()
 
-  useContentfulId(organization.id)
+  useContentfulId(organization?.id)
   useLocalLinkTypeResolver()
 
   const institutionSlug = getSlugPart(Router.asPath, locale === 'is' ? 2 : 3)
@@ -165,7 +165,7 @@ const Home: Screen<HomeProps> = ({
                             link={
                               {
                                 href: linkResolver('supportcategory', [
-                                  organization.slug,
+                                  organization?.slug ?? '',
                                   slug,
                                 ]).href,
                               } as LinkResolverResponse
@@ -208,8 +208,10 @@ const Home: Screen<HomeProps> = ({
                                       <TopicCard
                                         href={
                                           linkResolver('supportqna', [
-                                            organization.slug,
-                                            category.slug,
+                                            organization?.slug
+                                              ? organization.slug
+                                              : '',
+                                            category?.slug ? category.slug : '',
                                             slug,
                                           ]).href
                                         }
@@ -296,7 +298,7 @@ Home.getProps = async ({ apolloClient, locale, query }) => {
         },
       })
       .then((variables) =>
-        variables.data.getNamespace.fields
+        variables.data.getNamespace?.fields
           ? JSON.parse(variables.data.getNamespace.fields)
           : {},
       ),
