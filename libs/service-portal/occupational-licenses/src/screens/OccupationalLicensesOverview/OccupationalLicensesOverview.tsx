@@ -14,6 +14,8 @@ import { getOrganizationLogoUrl } from '@island.is/shared/utils'
 import { EducationActionCard } from '../../components/EducationActionCard'
 import { HealthDirectorateActionCard } from '../../components/HealthDirectorateActionCard'
 import { olMessage as om } from '../../lib/messages'
+import LicenceActionCard from '../../components/LicenceActionCard'
+import { OccupationalLicensesPaths } from '../../lib/paths'
 
 const OccupationalLicensesOverview = () => {
   const { data, loading, error } = useGetOccupationalLicensesQuery({})
@@ -57,14 +59,23 @@ const OccupationalLicensesOverview = () => {
         <Stack space={2}>
           {data?.occupationalLicenses?.items.map((license, index) =>
             license.__typename === 'OccupationalLicensesEducationalLicense' ? (
-              <EducationActionCard
-                {...license}
-                key={index}
-                orgImage={getOrganizationLogoUrl(
-                  license.school,
+              <LicenceActionCard
+                title={license.school}
+                date={license.date}
+                url={OccupationalLicensesPaths.OccupationalLicensesEducationDetail.replace(
+                  ':id',
+                  license.id,
+                ).replace(
+                  ':type',
+                  license.programme.charAt(0).toUpperCase() +
+                    license.programme.slice(1),
+                )}
+                image={getOrganizationLogoUrl(
+                  license.school ?? '',
                   organizations,
                   120,
                 )}
+                isValid={license.isValid}
               />
             ) : license.__typename ===
               'OccupationalLicensesHealthDirectorateLicense' ? (
