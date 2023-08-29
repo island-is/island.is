@@ -46,7 +46,8 @@ export const defaultScopes: Scopes = {
 }
 
 class MockNationalRegistryClientService
-  implements Partial<NationalRegistryClientService> {
+  implements Partial<NationalRegistryClientService>
+{
   getIndividual = jest.fn().mockResolvedValue({})
   getCustodyChildren = jest.fn().mockResolvedValue([])
 }
