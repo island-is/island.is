@@ -30,7 +30,8 @@ const parseEnvFile = (filePath: string): EnvObject => {
     const isBash = envToFileMapping[filePath]?.isBashEnv
 
     // Do we want to require 'export' in bash-envs (custom local-files)?
-    const pattern = /^(?:export )?(?<key>\w+)=(?<quotation>['"]?)(?<value>.*)\k<quotation>$/
+    const pattern =
+      /^(?:export )?(?<key>\w+)=(?<quotation>['"]?)(?<value>.*)\k<quotation>$/
     const envObj: EnvObject = {}
 
     content.split('\n').forEach((line) => {
