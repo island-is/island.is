@@ -126,7 +126,7 @@ export const Card: FC<React.PropsWithChildren<CardProps>> = ({
         })}
       >
         <BackgroundImage
-        // @ts-ignore make web strict
+          // @ts-ignore make web strict
           positionX={!stackImage ? 'right' : null}
           background="transparent"
           backgroundSize="contain"

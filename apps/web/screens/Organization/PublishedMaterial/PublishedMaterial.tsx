@@ -171,7 +171,7 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
 
   useEffect(() => {
     if (data?.getPublishedMaterial)
-    // @ts-ignore make web strict
+      // @ts-ignore make web strict
       setPublishedMaterial(data.getPublishedMaterial)
   }, [data?.getPublishedMaterial])
 
@@ -353,9 +353,11 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
               <Text variant="h1" as="h1" marginBottom={0} marginTop={1}>
                 {pageTitle}
               </Text>
-              <Webreader 
-              // @ts-ignore make web strict
-              readId={null} readClass="rs_read" />
+              <Webreader
+                // @ts-ignore make web strict
+                readId={null}
+                readClass="rs_read"
+              />
             </GridColumn>
           </GridRow>
           <GridRow>

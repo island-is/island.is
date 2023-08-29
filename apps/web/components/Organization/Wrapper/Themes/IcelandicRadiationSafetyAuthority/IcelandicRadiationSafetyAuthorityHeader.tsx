@@ -64,7 +64,7 @@ const IcelandicNaturalDisasterInsuranceHeader: React.FC<HeaderProps> = ({
                 className={styles.iconCircle}
               >
                 <img
-                // @ts-ignore make web strict
+                  // @ts-ignore make web strict
                   src={organizationPage.organization.logo.url}
                   className={styles.headerLogo}
                   alt="nti-logo"
@@ -74,24 +74,26 @@ const IcelandicNaturalDisasterInsuranceHeader: React.FC<HeaderProps> = ({
           }
         >
           {
-          // @ts-ignore make web strict
-          !!organizationPage.organization.logo && (
-            <Hidden above="sm">
-              <Link
-                href={
-                  linkResolver('organizationpage', [organizationPage.slug]).href
-                }
-                className={styles.iconCircle}
-              >
-                <img
-                  // @ts-ignore make web strict
-                  src={organizationPage.organization.logo.url}
-                  className={styles.headerLogo}
-                  alt=""
-                />
-              </Link>
-            </Hidden>
-          )}
+            // @ts-ignore make web strict
+            !!organizationPage.organization.logo && (
+              <Hidden above="sm">
+                <Link
+                  href={
+                    linkResolver('organizationpage', [organizationPage.slug])
+                      .href
+                  }
+                  className={styles.iconCircle}
+                >
+                  <img
+                    // @ts-ignore make web strict
+                    src={organizationPage.organization.logo.url}
+                    className={styles.headerLogo}
+                    alt=""
+                  />
+                </Link>
+              </Hidden>
+            )
+          }
           <Box
             marginTop={[2, 2, 6]}
             textAlign={['center', 'center', 'left']}

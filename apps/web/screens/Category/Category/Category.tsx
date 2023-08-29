@@ -272,7 +272,7 @@ const Category: Screen<CategoryProps> = ({
   const sortedGroups = Object.values(groups).sort(
     // @ts-ignore make web strict
     (a: ArticleGroup, b: ArticleGroup) =>
-    // @ts-ignore make web strict
+      // @ts-ignore make web strict
       a.importance > b.importance
         ? -1
         : a.importance === b.importance && sortAlpha('title')(a, b),
@@ -499,14 +499,16 @@ const Category: Screen<CategoryProps> = ({
           </Text>
         </Box>
         <Stack space={2}>
-          {// @ts-ignore make web strict
-          sortedGroups.map(({ groupSlug }, index) => (
-            <ArticleGroupComponent
-              groupSlug={groupSlug}
-              index={index}
-              key={index}
-            />
-          ))}
+          {
+            // @ts-ignore make web strict
+            sortedGroups.map(({ groupSlug }, index) => (
+              <ArticleGroupComponent
+                groupSlug={groupSlug}
+                index={index}
+                key={index}
+              />
+            ))
+          }
           {lifeEvents.map(
             (
               { __typename: typename, title, slug, intro, thumbnail, image },

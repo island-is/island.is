@@ -180,8 +180,9 @@ export const SliceMachine = ({
           }
         >
           {
-          // @ts-ignore make web strict
-          renderSlice(slice, namespace, slug, params)}
+            // @ts-ignore make web strict
+            renderSlice(slice, namespace, slug, params)
+          }
         </GridColumn>
       </GridRow>
     </GridContainer>
@@ -190,13 +191,15 @@ export const SliceMachine = ({
       {wrapWithGridContainer && (
         <GridContainer>
           {
-          // @ts-ignore make web strict
-          renderSlice(slice, namespace, slug, params)}
+            // @ts-ignore make web strict
+            renderSlice(slice, namespace, slug, params)
+          }
         </GridContainer>
       )}
       {
-      // @ts-ignore make web strict
-      !wrapWithGridContainer && renderSlice(slice, namespace, slug, params)}
+        // @ts-ignore make web strict
+        !wrapWithGridContainer && renderSlice(slice, namespace, slug, params)
+      }
     </Box>
   )
 }

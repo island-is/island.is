@@ -49,9 +49,10 @@ const Sidebar = ({ children }: SidebarProps) => {
       role="menu"
       aria-orientation="vertical"
     >
-      <div 
-      // @ts-ignore make web strict
-      style={divStyles}>
+      <div
+        // @ts-ignore make web strict
+        style={divStyles}
+      >
         <div className={styles.sticky}>
           <div className={styles.stickyInner}>
             <Box position="relative">{children}</Box>

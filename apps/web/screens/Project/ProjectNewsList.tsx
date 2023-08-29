@@ -68,7 +68,7 @@ const ProjectNewsList: Screen<ProjectNewsListProps> = ({
   const { getMonthByIndex } = useDateUtils()
   useContentfulId(projectPage.id)
   useLocalLinkTypeResolver()
-// @ts-ignore make web strict
+  // @ts-ignore make web strict
   const n = useNamespace(namespace)
 
   const newsOverviewUrl = linkResolver(
@@ -150,7 +150,7 @@ const ProjectNewsList: Screen<ProjectNewsListProps> = ({
         }
       >
         <NewsList
-        // @ts-ignore make web strict
+          // @ts-ignore make web strict
           namespace={namespace}
           newsItemLinkType="projectnews"
           newsOverviewUrl={newsOverviewUrl}

@@ -102,7 +102,7 @@ const SubPage: Screen<SubPageProps> = ({
   useContentfulId(organizationPage?.id, subpage?.id)
 
   const pathWithoutHash = router.asPath.split('#')[0]
-// @ts-ignore make web strict
+  // @ts-ignore make web strict
   const navList: NavigationItem[] = organizationPage?.menuLinks.map(
     ({ primaryLink, childrenLinks }) => ({
       title: primaryLink?.text,
@@ -122,7 +122,7 @@ const SubPage: Screen<SubPageProps> = ({
     <>
       {subpage?.showTableOfContents && (
         <TOC
-        // @ts-ignore make web strict
+          // @ts-ignore make web strict
           slices={subpage.slices}
           title={n('navigationTitle', 'Efnisyfirlit')}
         />

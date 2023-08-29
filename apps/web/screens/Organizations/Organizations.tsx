@@ -256,7 +256,7 @@ const OrganizationPage: Screen<OrganizationProps> = ({
                     paddingBottom={verticalSpacing}
                   >
                     <CategoryCard
-                    // @ts-ignore make web strict
+                      // @ts-ignore make web strict
                       href={getOrganizationLink(organization, activeLocale)}
                       key={index}
                       // @ts-ignore make web strict

@@ -58,7 +58,7 @@ const ProjectNewsArticle: Screen<ProjectNewsArticleleProps> = ({
   const currentNavItem = projectPage.sidebarLinks.find(
     ({ primaryLink }) => primaryLink?.url === overviewPath,
   )
-// @ts-ignore make web strict
+  // @ts-ignore make web strict
   const newsOverviewTitle: string = currentNavItem
     ? currentNavItem.primaryLink?.text
     : n('newsTitle', 'Fréttir og tilkynningar')

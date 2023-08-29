@@ -180,7 +180,7 @@ const ServiceWebFormsPage: Screen<ServiceWebFormsPageProps> = ({
         <GridContainer>
           <GridRow>
             <GridColumn
-            // @ts-ignore make web strict
+              // @ts-ignore make web strict
               offset={[null, null, null, '1/12']}
               span={['12/12', '12/12', '12/12', '10/12']}
             >
@@ -189,13 +189,16 @@ const ServiceWebFormsPage: Screen<ServiceWebFormsPageProps> = ({
                   <GridColumn span="12/12" paddingBottom={[2, 2, 4]}>
                     <Box display={['none', 'none', 'block']} printHidden>
                       <Breadcrumbs
-                      // @ts-ignore make web strict
+                        // @ts-ignore make web strict
                         items={breadcrumbItems}
                         renderLink={(link, { href }) => {
                           return (
-                            <NextLink 
-                            // @ts-ignore make web strict
-                            href={href} passHref legacyBehavior>
+                            <NextLink
+                              // @ts-ignore make web strict
+                              href={href}
+                              passHref
+                              legacyBehavior
+                            >
                               {link}
                             </NextLink>
                           )

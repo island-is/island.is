@@ -121,7 +121,7 @@ const ServicesPage: Screen<ServicesPageProps> = ({
 
   groups = groups.filter((x) =>
     services
-    // @ts-ignore make web strict
+      // @ts-ignore make web strict
       .filter((x) => parameters.categories.includes(x.category?.slug))
       .map((x) => x.group?.slug)
       .includes(x.value),
@@ -159,9 +159,12 @@ const ServicesPage: Screen<ServicesPageProps> = ({
             <Text variant="h1" as="h1" marginBottom={0} marginTop={1}>
               {n('allServices', 'Öll þjónusta')}
             </Text>
-            <Webreader marginBottom={4} 
-            // @ts-ignore make web strict
-            readId={null} readClass="rs_read" />
+            <Webreader
+              marginBottom={4}
+              // @ts-ignore make web strict
+              readId={null}
+              readClass="rs_read"
+            />
           </GridColumn>
         </GridRow>
         <GridRow marginBottom={4}>

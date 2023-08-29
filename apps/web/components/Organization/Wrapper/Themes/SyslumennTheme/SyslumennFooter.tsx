@@ -182,9 +182,14 @@ const HeaderLink: FC<React.PropsWithChildren<HeaderLink>> = ({
       }}
     >
       <Text fontWeight="semiBold" color="white">
-        <a href={linkType ? 
-          // @ts-ignore make web strict
-          linkResolver(linkType, slug && [slug]).href : slug}>
+        <a
+          href={
+            linkType
+              ? // @ts-ignore make web strict
+                linkResolver(linkType, slug && [slug]).href
+              : slug
+          }
+        >
           {typeof children === 'string' ? (
             <Hyphen>{children}</Hyphen>
           ) : (

@@ -50,8 +50,8 @@ export const ErrorScreen: React.FC<ErrorProps> = ({ statusCode, errPage }) => {
     ? {
         ...errPage,
       }
-      // @ts-ignore make web strict
-    : fallbackMessage[statusCode]
+    : // @ts-ignore make web strict
+      fallbackMessage[statusCode]
 
   return (
     <GridContainer>
@@ -79,8 +79,8 @@ export const ErrorScreen: React.FC<ErrorProps> = ({ statusCode, errPage }) => {
                 <Text variant="intro" as="div">
                   {errorMessages.description
                     ? richText([errorMessages.description] as SliceType[])
-                    // @ts-ignore make web strict
-                    : formatBody(errorMessages.body, asPath)}
+                    : // @ts-ignore make web strict
+                      formatBody(errorMessages.body, asPath)}
                 </Text>
               </>
             )}

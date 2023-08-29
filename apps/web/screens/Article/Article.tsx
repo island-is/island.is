@@ -361,8 +361,8 @@ const ArticleScreen: Screen<ArticleProps> = ({
 
       const elementPosition =
         processEntryRef && processEntryRef.current
-        // @ts-ignore make web strict
-          ? processEntryRef?.current.getBoundingClientRect().bottom +
+          ? // @ts-ignore make web strict
+            processEntryRef?.current.getBoundingClientRect().bottom +
             (px - currPos.y)
           : 0
 
@@ -481,63 +481,72 @@ const ArticleScreen: Screen<ArticleProps> = ({
         marginTop={7}
         printHidden
       >
-        {processEntry?.processLink && <
-          // @ts-ignore make web strict
-          ProcessEntry {...processEntry} />}
-      </Box>
-      {// @ts-ignore make web strict
-      article.organization.length > 0 && (
-        <Box
-          marginTop={[3, 3, 3, 10, 20]}
-          marginBottom={[3, 3, 3, 10, 20]}
-          printHidden
-        >
-          <InstitutionsPanel
-          // @ts-ignore make web strict
-            img={article.organization[0].logo?.url ?? ''}
-            institution={{
-              // @ts-ignore make web strict
-              title: article.organization[0].title,
-              label: n('organization'),
-              // @ts-ignore make web strict
-              href: getOrganizationLink(article.organization[0], activeLocale),
-            }}
-            // @ts-ignore make web strict
-            responsibleParty={article.responsibleParty.map(
-              (responsibleParty) => ({
-                title: responsibleParty.title,
-                label: n('responsibleParty'),
-                href: responsibleParty.link,
-              }),
-            )}
-            // @ts-ignore make web strict
-            relatedInstitution={article.relatedOrganization.map(
-              (relatedOrganization) => ({
-                title: relatedOrganization.title,
-                label: n('relatedOrganization'),
-                // @ts-ignore make web strict
-                href: getOrganizationLink(relatedOrganization, activeLocale),
-              }),
-            )}
-            locale={activeLocale}
-            contactText="Hafa samband"
-          />
-        </Box>
-      )}
-      <Box display={['block', 'block', 'none']} printHidden>
-        {
-        // @ts-ignore make web strict
-        (article.relatedArticles.length > 0 ||
-          // @ts-ignore make web strict
-          article.relatedContent.length > 0) && (
-          <RelatedContent
-            title={n('relatedMaterial')}
-            // @ts-ignore make web strict
-            articles={article.relatedArticles}
-            // @ts-ignore make web strict
-            otherContent={article.relatedContent}
+        {processEntry?.processLink && (
+          <// @ts-ignore make web strict
+          ProcessEntry
+            {...processEntry}
           />
         )}
+      </Box>
+      {
+        // @ts-ignore make web strict
+        article.organization.length > 0 && (
+          <Box
+            marginTop={[3, 3, 3, 10, 20]}
+            marginBottom={[3, 3, 3, 10, 20]}
+            printHidden
+          >
+            <InstitutionsPanel
+              // @ts-ignore make web strict
+              img={article.organization[0].logo?.url ?? ''}
+              institution={{
+                // @ts-ignore make web strict
+                title: article.organization[0].title,
+                label: n('organization'),
+                // @ts-ignore make web strict
+                href: getOrganizationLink(
+                  article.organization[0],
+                  activeLocale,
+                ),
+              }}
+              // @ts-ignore make web strict
+              responsibleParty={article.responsibleParty.map(
+                (responsibleParty) => ({
+                  title: responsibleParty.title,
+                  label: n('responsibleParty'),
+                  href: responsibleParty.link,
+                }),
+              )}
+              // @ts-ignore make web strict
+              relatedInstitution={article.relatedOrganization.map(
+                (relatedOrganization) => ({
+                  title: relatedOrganization.title,
+                  label: n('relatedOrganization'),
+                  // @ts-ignore make web strict
+                  href: getOrganizationLink(relatedOrganization, activeLocale),
+                }),
+              )}
+              locale={activeLocale}
+              contactText="Hafa samband"
+            />
+          </Box>
+        )
+      }
+      <Box display={['block', 'block', 'none']} printHidden>
+        {
+          // @ts-ignore make web strict
+          (article.relatedArticles.length > 0 ||
+            // @ts-ignore make web strict
+            article.relatedContent.length > 0) && (
+            <RelatedContent
+              title={n('relatedMaterial')}
+              // @ts-ignore make web strict
+              articles={article.relatedArticles}
+              // @ts-ignore make web strict
+              otherContent={article.relatedContent}
+            />
+          )
+        }
       </Box>
     </Box>
   )
@@ -577,7 +586,7 @@ const ArticleScreen: Screen<ArticleProps> = ({
 
           {!inStepperView && (
             <Breadcrumbs
-            // @ts-ignore make web strict
+              // @ts-ignore make web strict
               items={breadcrumbItems}
               renderLink={(link, { typename, slug }) => {
                 return (
@@ -658,28 +667,32 @@ const ArticleScreen: Screen<ArticleProps> = ({
               flexWrap="wrap"
             >
               {!inStepperView && (
-                <Webreader 
-                // @ts-ignore make web strict
-                readId={null} readClass="rs_read" />
+                <Webreader
+                  // @ts-ignore make web strict
+                  readId={null}
+                  readClass="rs_read"
+                />
               )}
               {(subArticle
                 ? subArticle.signLanguageVideo?.url
-                // @ts-ignore make web strict
-                : article.signLanguageVideo?.url) && (
+                : // @ts-ignore make web strict
+                  article.signLanguageVideo?.url) && (
                 <SignLanguageButton
-                // @ts-ignore make web strict
+                  // @ts-ignore make web strict
                   videoUrl={(subArticle ?? article).signLanguageVideo.url}
                   content={
                     <>
                       {!inStepperView && (
                         <Text variant="h2">
                           <span
-                          // @ts-ignore make web strict
+                            // @ts-ignore make web strict
                             id={slugify((subArticle ?? article).title)}
                             className="rs_read"
                           >
-                            {// @ts-ignore make web strict
-                            (subArticle ?? article).title}
+                            {
+                              // @ts-ignore make web strict
+                              (subArticle ?? article).title
+                            }
                           </span>
                         </Text>
                       )}
@@ -706,18 +719,20 @@ const ArticleScreen: Screen<ArticleProps> = ({
               printHidden
               className="rs_read"
             >
-              <
-              // @ts-ignore make web strict
-              ProcessEntry {...processEntry} />
+              <// @ts-ignore make web strict
+              ProcessEntry
+                {...processEntry}
+              />
             </Box>
           )}
           {(subArticle
             ? subArticle.showTableOfContents
             : article?.showTableOfContents) && (
             <GridRow>
-              <GridColumn 
-              // @ts-ignore make web strict
-              span={[null, '4/7', '5/7', '4/7', '3/7']}>
+              <GridColumn
+                // @ts-ignore make web strict
+                span={[null, '4/7', '5/7', '4/7', '3/7']}
+              >
                 <TOC
                   title={n('tableOfContentTitle')}
                   body={subArticle ? subArticle.body : article?.body}
@@ -739,9 +754,11 @@ const ArticleScreen: Screen<ArticleProps> = ({
           isVisible &&
           createPortal(
             <Box marginTop={5} display={['block', 'block', 'none']} printHidden>
-              <
-              // @ts-ignore make web strict
-              ProcessEntry fixed {...processEntry} />
+              <// @ts-ignore make web strict
+              ProcessEntry
+                fixed
+                {...processEntry}
+              />
             </Box>,
             // @ts-ignore make web strict
             portalRef.current,

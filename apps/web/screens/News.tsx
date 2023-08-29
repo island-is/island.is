@@ -226,9 +226,12 @@ const NewsListNew: Screen<NewsListProps> = ({
         {newsItem.title}
       </Text>
 
-      <Webreader marginTop={0} 
-      // @ts-ignore make web strict
-      readId={null} readClass="rs_read" />
+      <Webreader
+        marginTop={0}
+        // @ts-ignore make web strict
+        readId={null}
+        readClass="rs_read"
+      />
 
       <Text variant="intro" as="p" paddingBottom={2}>
         {newsItem.intro}
@@ -240,8 +243,7 @@ const NewsListNew: Screen<NewsListProps> = ({
             [styles.floatedImage]: newsItem.fullWidthImageInContent === false,
           })}
         >
-          <
-          // @ts-ignore make web strict
+          <// @ts-ignore make web strict
           Image
             {...newsItem.image}
             url={newsItem.image?.url + '?w=774&fm=webp&q=80'}
@@ -278,8 +280,7 @@ const NewsListNew: Screen<NewsListProps> = ({
 
   return (
     <>
-      <
-      // @ts-ignore make web strict
+      <// @ts-ignore make web strict
       HeadWithSocialSharing
         title={metaTitle}
         {...(newsItemMeta && { ...newsItemMeta })}
@@ -369,9 +370,13 @@ const NewsListNew: Screen<NewsListProps> = ({
             {n('newsListEmptyMonth', 'Engar fréttir fundust í þessum mánuði.')}
           </Text>
         )}
-        {!newsItemContent && <Webreader 
-        // @ts-ignore make web strict
-        readId={null} readClass="rs_read" />}
+        {!newsItemContent && (
+          <Webreader
+            // @ts-ignore make web strict
+            readId={null}
+            readClass="rs_read"
+          />
+        )}
         {newsItemContent && (
           <Box className="rs_read" width="full">
             {newsItemContent}

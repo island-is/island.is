@@ -215,7 +215,7 @@ const AlcoholLicencesList: FC<
                       value: x,
                     }))
                     .find((x) => x.value === filterLicenceType)}
-                    // @ts-ignore make web strict
+                  // @ts-ignore make web strict
                   onChange={({ value }: Option) => {
                     setFilterLicenceType(String(value))
                   }}
@@ -242,7 +242,7 @@ const AlcoholLicencesList: FC<
                       value: x,
                     }))
                     .find((x) => x.value === filterOffice)}
-                    // @ts-ignore make web strict
+                  // @ts-ignore make web strict
                   onChange={({ value }: Option) => {
                     setFilterOffice(String(value))
                   }}

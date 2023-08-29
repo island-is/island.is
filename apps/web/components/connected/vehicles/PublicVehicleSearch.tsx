@@ -82,7 +82,7 @@ const PublicVehicleSearch = ({ slice }: PublicVehicleSearchProps) => {
           'do MMMM yyyy',
         )
       : ''
-// @ts-ignore make web strict
+  // @ts-ignore make web strict
   const formattedVehicleType = formatVehicleType(vehicleInformation)
 
   return (

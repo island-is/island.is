@@ -14,7 +14,7 @@ export let fetch = undefined
 if (process.env.RUNTIME_ENV === 'server') {
   import('@island.is/clients/middlewares').then(
     ({ createEnhancedFetch }) =>
-    // @ts-ignore make web strict
+      // @ts-ignore make web strict
       (fetch = createEnhancedFetch({
         name: 'islandis-api',
         timeout: false,

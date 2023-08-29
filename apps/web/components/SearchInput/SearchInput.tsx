@@ -108,49 +108,49 @@ const useSearch = (
     }
 
     dispatch({ type: 'startLoading' })
-    const thisTimerId = (
+    const thisTimerId =
       // @ts-ignore make web strict
-      timer.current = setTimeout(async () => {
-      client
-        .query<GetSearchResultsQuery, QuerySearchResultsArgs>({
-          query: GET_SEARCH_RESULTS_QUERY,
-          variables: {
-            query: {
-              queryString: term?.trim() ?? '',
-              language: locale as ContentLanguage,
-              types: [
-                // RÁ suggestions has only been searching particular types for some time - SYNC SUGGESTIONS SCOPE WITH DEFAULT - keep it in sync
-                SearchableContentTypes['WebArticle'],
-                SearchableContentTypes['WebSubArticle'],
-                SearchableContentTypes['WebProjectPage'],
-                SearchableContentTypes['WebOrganizationPage'],
-                SearchableContentTypes['WebOrganizationSubpage'],
-                SearchableContentTypes['WebDigitalIcelandService'],
-              ],
-              highlightResults: true,
-              useQuery: 'suggestions',
+      (timer.current = setTimeout(async () => {
+        client
+          .query<GetSearchResultsQuery, QuerySearchResultsArgs>({
+            query: GET_SEARCH_RESULTS_QUERY,
+            variables: {
+              query: {
+                queryString: term?.trim() ?? '',
+                language: locale as ContentLanguage,
+                types: [
+                  // RÁ suggestions has only been searching particular types for some time - SYNC SUGGESTIONS SCOPE WITH DEFAULT - keep it in sync
+                  SearchableContentTypes['WebArticle'],
+                  SearchableContentTypes['WebSubArticle'],
+                  SearchableContentTypes['WebProjectPage'],
+                  SearchableContentTypes['WebOrganizationPage'],
+                  SearchableContentTypes['WebOrganizationSubpage'],
+                  SearchableContentTypes['WebDigitalIcelandService'],
+                ],
+                highlightResults: true,
+                useQuery: 'suggestions',
+              },
             },
-          },
-        })
-        .then(({ data: { searchResults: results } }) => {
-          dispatch({
-            type: 'searchResults',
-            results,
           })
-        })
+          .then(({ data: { searchResults: results } }) => {
+            dispatch({
+              type: 'searchResults',
+              results,
+            })
+          })
 
-      // the api only completes single terms get only single terms
-      if (term) {
-        const indexOfLastSpace = term.lastIndexOf(' ')
-        const hasSpace = indexOfLastSpace !== -1
-        const prefix = hasSpace ? term.slice(0, indexOfLastSpace) : ''
-        dispatch({
-          type: 'searchString',
-          term,
-          prefix,
-        })
-      }
-    }, DEBOUNCE_TIMER))
+        // the api only completes single terms get only single terms
+        if (term) {
+          const indexOfLastSpace = term.lastIndexOf(' ')
+          const hasSpace = indexOfLastSpace !== -1
+          const prefix = hasSpace ? term.slice(0, indexOfLastSpace) : ''
+          dispatch({
+            type: 'searchString',
+            term,
+            prefix,
+          })
+        }
+      }, DEBOUNCE_TIMER))
 
     return () => clearTimeout(thisTimerId)
     // eslint-disable-next-line react-hooks/exhaustive-deps

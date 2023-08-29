@@ -93,7 +93,7 @@ export const ChartsCard: React.FC<
               )}
               <Text variant="h3" color="dark400">
                 {/*
-                // @ts-ignore make web strict */ }
+                // @ts-ignore make web strict */}
                 <Hyphen>{graphTitle}</Hyphen>
               </Text>
               {graphDescription && (
@@ -102,11 +102,12 @@ export const ChartsCard: React.FC<
             </Box>
             {subPage && (
               <Box padding={[2, 2, 4]}>
-                <ExportCSVButton 
-                // @ts-ignore make web strict
-                data={data} 
-                // @ts-ignore make web strict
-                title={graphTitle} />
+                <ExportCSVButton
+                  // @ts-ignore make web strict
+                  data={data}
+                  // @ts-ignore make web strict
+                  title={graphTitle}
+                />
               </Box>
             )}
           </Box>

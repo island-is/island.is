@@ -152,7 +152,7 @@ const OrganizationNewsList: Screen<OrganizationNewsListProps> = ({
 
   return (
     <OrganizationWrapper
-    // @ts-ignore make web strict
+      // @ts-ignore make web strict
       pageTitle={newsTitle}
       organizationPage={organizationPage}
       showReadSpeaker={false}
@@ -178,7 +178,7 @@ const OrganizationNewsList: Screen<OrganizationNewsListProps> = ({
       }
     >
       <NewsList
-      // @ts-ignore make web strict
+        // @ts-ignore make web strict
         namespace={namespace}
         newsItemLinkType="organizationnews"
         newsOverviewUrl={newsOverviewUrl}

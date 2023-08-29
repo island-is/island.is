@@ -257,9 +257,11 @@ const ApiCatalogue: Screen<HomestayProps> = ({
           <Text variant="h1" as="h2">
             {subpage?.title}
           </Text>
-          <Webreader 
-          // @ts-ignore make web strict
-          readId={null} readClass="rs_read" />
+          <Webreader
+            // @ts-ignore make web strict
+            readId={null}
+            readClass="rs_read"
+          />
         </Box>
         {webRichText(subpage?.description as SliceType[], {
           renderNode: {

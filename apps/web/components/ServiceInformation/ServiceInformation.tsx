@@ -135,9 +135,10 @@ export const ServiceInformation = ({
               'flexEnd',
             ]}
           >
-            <Link 
-            // @ts-ignore make web strict
-            href={serviceDetail.links.bugReport}>
+            <Link
+              // @ts-ignore make web strict
+              href={serviceDetail.links.bugReport}
+            >
               <Button
                 disabled={!serviceDetail.links.bugReport}
                 colorScheme="light"
@@ -151,9 +152,10 @@ export const ServiceInformation = ({
               </Button>
             </Link>
             <Box marginLeft={[3, 3, 3, 3, 2]}>
-              <Link 
-              // @ts-ignore make web strict
-              href={serviceDetail.links.featureRequest}>
+              <Link
+                // @ts-ignore make web strict
+                href={serviceDetail.links.featureRequest}
+              >
                 <Button
                   disabled={!serviceDetail.links.featureRequest}
                   colorScheme="light"

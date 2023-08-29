@@ -180,9 +180,11 @@ const Homestay: Screen<HomestayProps> = ({
         <Text variant="h1" as="h2">
           {subpage?.title}
         </Text>
-        <Webreader 
-        // @ts-ignore make web strict
-        readId={null} readClass="rs_read" />
+        <Webreader
+          // @ts-ignore make web strict
+          readId={null}
+          readClass="rs_read"
+        />
       </Box>
       {webRichText(subpage?.description as SliceType[])}
       <Box marginTop={4} marginBottom={6}>
@@ -269,9 +271,11 @@ const Homestay: Screen<HomestayProps> = ({
                           'realEstateRegistryLinkTemplate',
                           'https://fasteignaskra.is/default.aspx?pageid=d5db1b6d-0650-11e6-943c-005056851dd2&selector=streetname&streetname={{ID}}&submitbutton=Leita',
                         ) as string
-                      ).replace('{{ID}}', 
-                      // @ts-ignore make web strict
-                      homestay.propertyId)}
+                      ).replace(
+                        '{{ID}}',
+                        // @ts-ignore make web strict
+                        homestay.propertyId,
+                      )}
                     >
                       {homestay.propertyId}
                     </a>

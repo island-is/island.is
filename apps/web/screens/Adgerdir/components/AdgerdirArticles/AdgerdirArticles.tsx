@@ -225,8 +225,10 @@ export const AdgerdirArticles: FC<
                     active={tagIds.includes(id)}
                     bordered
                   >
-                    {// @ts-ignore make web strict
-                    dividerRenames[title] ?? title}
+                    {
+                      // @ts-ignore make web strict
+                      dividerRenames[title] ?? title
+                    }
                   </Tag>
                 )
               })}

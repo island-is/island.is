@@ -86,7 +86,7 @@ const defaultRenderComponent = {
   PowerBiSlice: (slice: PowerBiSliceSchema) => <PowerBiSlice slice={slice} />,
   AccordionSlice: (slice: AccordionSliceSchema) =>
     slice.accordionItems && <AccordionSlice slice={slice} />,
-    // @ts-ignore make web strict
+  // @ts-ignore make web strict
   ConnectedComponent: (slice) => webRenderConnectedComponent(slice),
   // @ts-ignore make web strict
   GraphCard: (chart) => <ChartsCard chart={chart} />,
