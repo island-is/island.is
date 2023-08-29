@@ -6,6 +6,7 @@ import { renderSecretsCommand } from './render-secrets'
 
 const DEFAULT_FILE = '.env.secret'
 const projectRoot = execSync('git rev-parse --show-toplevel').toString().trim()
+const envLogFilePath = resolve(projectRoot, '.env.log')
 
 const envToFileMapping: Record<string, EnvMappingType> = {
   [DEFAULT_FILE]: {
@@ -86,6 +87,7 @@ export const resetAllMappedFiles = async (): Promise<void> => {
 }
 
 export const updateSecretFiles = async (services: string[]): Promise<void> => {
+  const changes = { changed: 0, added: 0 }
   for (const service of services) {
     const secrets = await renderSecretsCommand(service)
     const ssmEnvs = Object.fromEntries(secrets)
@@ -150,9 +152,17 @@ export const updateSecretFiles = async (services: string[]): Promise<void> => {
         fileEnvs,
       )
 
+      const n_changed = Object.keys(changed).length
+      const n_added = Object.keys(added).length
+      // console.debug({ n_changed, n_added })
+      changes.changed += n_changed
+      changes.added += n_added
+
       writeFileSync(absPath, updatedFileContent.trim() + '\n')
     }
   }
+  console.log(`Updated ${changes.changed} envs, added ${changes.added}.`)
+  console.log(`See ${envLogFilePath} for more details.`)
 }
 
 const generateUpdatedFileContent = (
@@ -187,6 +197,5 @@ const generateUpdatedFileContent = (
 }
 
 const appendToEnvLog = (message: string): void => {
-  const logFilePath = resolve(projectRoot, '.env.log')
-  appendFileSync(logFilePath, `${message}\n`)
+  appendFileSync(envLogFilePath, `${message}\n`)
 }
