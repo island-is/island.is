@@ -37,13 +37,8 @@ export const AdvicesScreen = () => {
     })
   }
 
-  const {
-    advices,
-    total,
-    getAdvicesLoading,
-    filters,
-    setFilters,
-  } = useAdviceFilters({ isAuthenticated: isAuthenticated })
+  const { advices, total, getAdvicesLoading, filters, setFilters } =
+    useAdviceFilters({ isAuthenticated: isAuthenticated })
 
   const renderCards = () => {
     if (userLoading || getAdvicesLoading) {

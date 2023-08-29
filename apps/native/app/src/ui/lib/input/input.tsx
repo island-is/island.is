@@ -91,8 +91,7 @@ export function Input({
             {copy && (
               <TouchableOpacity
                 onPress={() => Clipboard.setString(value ?? '')}
-                style={{marginLeft: 4}}
-              >
+                style={{marginLeft: 4}}>
                 <Image
                   source={CopyIcon}
                   style={{width: 24, height: 24}}

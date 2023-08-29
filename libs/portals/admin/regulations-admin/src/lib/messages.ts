@@ -618,27 +618,25 @@ export const ministryMessages = defineMessages({
   },
 })
 
-export const statusMsgs: Record<
-  DraftingStatus,
-  MessageDescriptor
-> = defineMessages({
-  draft: {
-    id: 'ap.regulations-admin:status-draft',
-    defaultMessage: 'Drög',
-  },
-  proposal: {
-    id: 'ap.regulations-admin:status-proposal',
-    defaultMessage: 'Tilbúið í yfirlestur',
-  },
-  shipped: {
-    id: 'ap.regulations-admin:status-shipped',
-    defaultMessage: 'Bíður birtingar',
-  },
-  published: {
-    id: 'ap.regulations-admin:status-published',
-    defaultMessage: 'Birt',
-  },
-})
+export const statusMsgs: Record<DraftingStatus, MessageDescriptor> =
+  defineMessages({
+    draft: {
+      id: 'ap.regulations-admin:status-draft',
+      defaultMessage: 'Drög',
+    },
+    proposal: {
+      id: 'ap.regulations-admin:status-proposal',
+      defaultMessage: 'Tilbúið í yfirlestur',
+    },
+    shipped: {
+      id: 'ap.regulations-admin:status-shipped',
+      defaultMessage: 'Bíður birtingar',
+    },
+    published: {
+      id: 'ap.regulations-admin:status-published',
+      defaultMessage: 'Birt',
+    },
+  })
 
 export const buttonsMsgs = defineMessages({
   continue: {

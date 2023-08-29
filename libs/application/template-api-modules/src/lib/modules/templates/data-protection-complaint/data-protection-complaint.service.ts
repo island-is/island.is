@@ -31,15 +31,17 @@ export class DataProtectionComplaintService extends BaseTemplateApiService {
   }
 
   async sendApplication({ application }: TemplateApiModuleActionProps) {
-    const complaintAttachedFiles = await this.applicationAttachmentProvider.getFiles(
-      ['complaint.documents'],
-      application,
-    )
+    const complaintAttachedFiles =
+      await this.applicationAttachmentProvider.getFiles(
+        ['complaint.documents'],
+        application,
+      )
 
-    const commissionsAttachedFiles = await this.applicationAttachmentProvider.getFiles(
-      ['commissions.documents'],
-      application,
-    )
+    const commissionsAttachedFiles =
+      await this.applicationAttachmentProvider.getFiles(
+        ['commissions.documents'],
+        application,
+      )
 
     const attachedFiles = complaintAttachedFiles.concat(
       commissionsAttachedFiles,

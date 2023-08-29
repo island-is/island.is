@@ -4,7 +4,7 @@ import { EmailTemplateGenerator } from '../../../../types'
 import { DistrictCommissionerLogo, fontStyles } from './consts'
 
 export const transferRequestedEmail: EmailTemplateGenerator = (props) => {
-  const application = (props.application as unknown) as CRCApplication
+  const application = props.application as unknown as CRCApplication
   const {
     options: { clientLocationOrigin, email },
   } = props

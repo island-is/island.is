@@ -227,11 +227,10 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
         return null
       }
     }
-    const hasQualitySignature = await this.drivingLicenseService.getHasQualitySignature(
-      {
+    const hasQualitySignature =
+      await this.drivingLicenseService.getHasQualitySignature({
         nationalId: auth.nationalId,
-      },
-    )
+      })
     return {
       hasQualitySignature,
     }
@@ -254,11 +253,10 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
 
     let teacherName: string | null
     if (assessment.nationalIdTeacher) {
-      const teacherLicense = await this.drivingLicenseService.legacyGetCurrentLicense(
-        {
+      const teacherLicense =
+        await this.drivingLicenseService.legacyGetCurrentLicense({
           nationalId: assessment.nationalIdTeacher,
-        },
-      )
+        })
       teacherName = teacherLicense?.name || null
     } else {
       teacherName = null

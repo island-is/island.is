@@ -66,7 +66,7 @@ describe('CaseController - Get custody pdf', () => {
       type: CaseType.CUSTODY,
       state: CaseState.ACCEPTED,
     } as Case
-    const res = ({ end: jest.fn() } as unknown) as Response
+    const res = { end: jest.fn() } as unknown as Response
     const pdf = {}
 
     beforeEach(async () => {
@@ -88,7 +88,7 @@ describe('CaseController - Get custody pdf', () => {
       type: CaseType.ADMISSION_TO_FACILITY,
       state: CaseState.ACCEPTED,
     } as Case
-    const res = ({ end: jest.fn() } as unknown) as Response
+    const res = { end: jest.fn() } as unknown as Response
     const pdf = {}
 
     beforeEach(async () => {

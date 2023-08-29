@@ -53,8 +53,7 @@ export const information = {
         description: 'Pick vehicle has an error title',
       },
       isNotDebtLessTag: {
-        id:
-          'ta.tvo.application:information.labels.pickVehicle.isNotDebtLessTag',
+        id: 'ta.tvo.application:information.labels.pickVehicle.isNotDebtLessTag',
         defaultMessage: 'Ógreidd bifreiðagjöld',
         description: 'Pick vehicle is not debt less tag',
       },
@@ -291,15 +290,13 @@ export const information = {
         description: 'Coowners and operators title',
       },
       description: {
-        id:
-          'ta.tvo.application:information.labels.coOwnersAndOperators.description',
+        id: 'ta.tvo.application:information.labels.coOwnersAndOperators.description',
         defaultMessage:
           'Et sed ut est aliquam proin elit sed. Nunc tellus lacus sed eu pulvinar. ',
         description: 'Coowners and operators description',
       },
       approveButton: {
-        id:
-          'ta.tvo.application:information.labels.coOwnersAndOperators.approveButton',
+        id: 'ta.tvo.application:information.labels.coOwnersAndOperators.approveButton',
         defaultMessage: 'Staðfesta',
         description: 'Approve button for coOwners and operators',
       },
@@ -322,8 +319,7 @@ export const information = {
         description: 'Main operator description',
       },
       radioFieldLabel: {
-        id:
-          'ta.tvo.application:information.labels.mainOperator.radioFieldLabel',
+        id: 'ta.tvo.application:information.labels.mainOperator.radioFieldLabel',
         defaultMessage: 'Skráðir umráðamenn',
         description: 'Main operator radio field label',
       },

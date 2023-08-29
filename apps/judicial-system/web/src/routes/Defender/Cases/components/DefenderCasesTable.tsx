@@ -45,12 +45,8 @@ export const DefenderCasesTable: React.FC<React.PropsWithChildren<Props>> = (
 ) => {
   const { formatMessage } = useIntl()
   const { cases, showingCompletedCases, loading } = props
-  const {
-    sortedData,
-    requestSort,
-    getClassNamesFor,
-    isActiveColumn,
-  } = useSortCases('createdAt', 'descending', cases)
+  const { sortedData, requestSort, getClassNamesFor, isActiveColumn } =
+    useSortCases('createdAt', 'descending', cases)
 
   const handleRowClick = (id: string, type: CaseType) => {
     isIndictmentCase(type)

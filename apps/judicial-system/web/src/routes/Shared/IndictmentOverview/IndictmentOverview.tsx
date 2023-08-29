@@ -28,9 +28,8 @@ import { strings } from './IndictmentOverview.strings'
 const IndictmentOverview = () => {
   const router = useRouter()
   const { limitedAccess } = useContext(UserContext)
-  const { workingCase, isLoadingWorkingCase, caseNotFound } = useContext(
-    FormContext,
-  )
+  const { workingCase, isLoadingWorkingCase, caseNotFound } =
+    useContext(FormContext)
   const { formatMessage } = useIntl()
   const lawsBroken = useIndictmentsLawsBroken(workingCase)
 
