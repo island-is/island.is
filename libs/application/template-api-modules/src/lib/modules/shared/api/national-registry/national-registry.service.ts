@@ -113,6 +113,8 @@ export class NationalRegistryService extends BaseTemplateApiService {
     return (
       person && {
         nationalId: person.nationalId,
+        givenName: person.givenName,
+        familyName: person.familyName,
         fullName: person.name,
         age: this.getAgeFromDateOfBirth(person.birthdate),
         citizenship: citizenship && {
@@ -194,6 +196,8 @@ export class NationalRegistryService extends BaseTemplateApiService {
 
           return {
             nationalId: child.nationalId,
+          givenName: child.givenName,
+          familyName: child.familyName,
             fullName: child.fullName,
             genderCode: child.genderCode,
             livesWithApplicant,

@@ -34,6 +34,12 @@ export class NationalRegistryUser {
   @Field(() => String, { nullable: true })
   middleName?: string
 
+  @Field(() => String, { nullable: true })
+  givenName?: string
+
+  @Field(() => String, { nullable: true })
+  familyName?: string
+
   @Field(() => Gender, { nullable: true })
   gender?: Gender
 
