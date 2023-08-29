@@ -28,6 +28,7 @@ const parseEnvFile = (filePath: string): EnvObject => {
     const content = readFileSync(absPath, 'utf-8')
     const isBash = envToFileMapping[filePath]?.isBashEnv
 
+    // Do we want to require 'export' in bash-envs (custom local-files)?
     const pattern = /^(?:export )?(?<key>\w+)=(?<quotation>['"]?)(?<value>.*)\k<quotation>$/
     const envObj: EnvObject = {}
 
@@ -56,15 +57,15 @@ const parseEnvFile = (filePath: string): EnvObject => {
 const compareEnvs = (
   fileEnvs: Record<string, string>,
   ssmEnvs: Record<string, string>,
-): EnvDifferences => {
-  const added: [string, string][] = []
-  const changed: [string, string][] = []
+) => {
+  const added: Record<string, string> = {}
+  const changed: Record<string, string> = {}
 
   for (const [key, value] of Object.entries(ssmEnvs)) {
     if (!fileEnvs[key]) {
-      added.push([key, value])
+      added[key] = value
     } else if (escapeValue(fileEnvs[key]) !== ssmEnvs[key]) {
-      changed.push([key, ssmEnvs[key]])
+      changed[key] = ssmEnvs[key]
     }
   }
 
@@ -110,12 +111,26 @@ export const updateSecretFiles = async (services: string[]): Promise<void> => {
       if (!Object.keys(envsForFile).length) continue
       const fileEnvs = parseEnvFile(filePath)
       const differences = compareEnvs(fileEnvs, envsForFile)
+      const { added, changed } = differences
+      for (const [env, dict] of Object.entries({
+        [filePath]: fileEnvs,
+        added,
+        changed,
+      })) {
+        for (const [key, value] of Object.entries(dict)) {
+          if (value == "'") {
+            console.error(
+              `Secret ${key} in environment ${env} is literally an apostrophe (')`,
+            )
+          }
+        }
+      }
 
       // Merging existing, added, and updated envs
       const mergedEnvs = {
         ...fileEnvs,
-        ...Object.fromEntries(differences.added),
-        ...Object.fromEntries(differences.changed),
+        ...added,
+        ...changed,
       }
 
       // Sorting combined envs alphabetically
@@ -150,10 +165,16 @@ const generateUpdatedFileContent = (
       ? `export ${envName}='${value}'`
       : `${envName}='${value}'`
 
-    if (differences.added.some(([addedName]) => addedName === envName)) {
+    if (
+      Object.keys(differences.added).some(
+        ([addedName]) => addedName === envName,
+      )
+    ) {
       appendToEnvLog(`Added ${line}`)
     } else if (
-      differences.changed.some(([changedName]) => changedName === envName)
+      Object.keys(differences.changed).some(
+        ([changedName]) => changedName === envName,
+      )
     ) {
       appendToEnvLog(
         `Updated ${envName} from '${fileEnvs[envName]}' to '${value}'`,

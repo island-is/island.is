@@ -35,8 +35,8 @@ export interface GetSecretsArgs {
 export type EnvObject = Record<string, string>
 
 export type EnvDifferences = {
-  added: [string, string][]
-  changed: [string, string][]
+  added: EnvObject
+  changed: EnvObject
 }
 
 export type EnvMappingType = {
