@@ -1,0 +1,316 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Xroad vefþjónustur",
+    "description": "Vefþjónustulag fyrir tengingi Xroad við HMS.",
+    "version": "v1"
+  },
+  "paths": {
+    "/api/v{version}/Authenticate/token": {
+      "post": {
+        "tags": ["Authenticate"],
+        "parameters": [
+          {
+            "name": "version",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/LoginModel" }
+            },
+            "text/json": {
+              "schema": { "$ref": "#/components/schemas/LoginModel" }
+            },
+            "application/*+json": {
+              "schema": { "$ref": "#/components/schemas/LoginModel" }
+            }
+          }
+        },
+        "responses": { "200": { "description": "Success" } }
+      }
+    },
+    "/api/v{version}/Libra/eydublod": {
+      "post": {
+        "tags": ["Libra"],
+        "parameters": [
+          {
+            "name": "kennitala",
+            "in": "query",
+            "style": "form",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "version",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/EydublodReturnModel"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/EydublodReturnModel"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/EydublodReturnModel"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v{version}/Reiknivel/reiknivel": {
+      "post": {
+        "tags": ["Reiknivel"],
+        "parameters": [
+          {
+            "name": "version",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "required": [
+                  "heildarEignir",
+                  "heildarTekjur",
+                  "husnaedisKostnadur"
+                ],
+                "type": "object",
+                "properties": {
+                  "fjoldiHeimilismanna": {
+                    "maximum": 4,
+                    "minimum": 1,
+                    "type": "integer",
+                    "format": "int32"
+                  },
+                  "heildarTekjur": {
+                    "pattern": "^[0-9]+$",
+                    "type": "integer",
+                    "format": "int32"
+                  },
+                  "heildarEignir": {
+                    "pattern": "^[0-9]+$",
+                    "type": "integer",
+                    "format": "int32"
+                  },
+                  "husnaedisKostnadur": {
+                    "pattern": "^[0-9]+$",
+                    "type": "integer",
+                    "format": "int32"
+                  }
+                }
+              },
+              "encoding": {
+                "fjoldiHeimilismanna": { "style": "form" },
+                "heildarTekjur": { "style": "form" },
+                "heildarEignir": { "style": "form" },
+                "husnaedisKostnadur": { "style": "form" }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReiknivelReturnModel"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReiknivelReturnModel"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReiknivelReturnModel"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "EydublodReturnModel": {
+        "type": "object",
+        "properties": {
+          "masterloanid": { "type": "integer", "format": "int32" },
+          "nafn": { "type": "string", "nullable": true },
+          "heimili": { "type": "string", "nullable": true },
+          "postnumer": { "type": "number", "format": "double" },
+          "poststod": { "type": "string", "nullable": true },
+          "fyrstiVaxtadagur": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "fyrstiGjalddagi": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "fjoldiGjalddaga": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "fjoldiGjalddagaAAri": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "greidslujofnun": { "type": "string", "nullable": true },
+          "uppGrAkvaedi": { "type": "string", "nullable": true },
+          "frysting": { "type": "string", "nullable": true },
+          "timabFrysting": { "type": "string", "nullable": true },
+          "breytilegir": { "type": "string", "nullable": true },
+          "hlutdeildarlan": { "type": "integer", "format": "int32" },
+          "tegVisitolu": { "type": "string", "nullable": true },
+          "grunnVisitala": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "vextir": { "type": "number", "format": "double", "nullable": true },
+          "upphaflegFjarhaed": { "type": "number", "format": "double" },
+          "naestiGjalddagi": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "sidastiGjalddagi": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "elstiOgreiddiGjalddagi": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "fjoldiGjalddagaEftir": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "stadaJofnun": { "type": "number", "format": "double" },
+          "sidastaGreidsla": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "vanskilAlls": { "type": "number", "format": "double" },
+          "nafnverdOgjaldfallid": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "afallnirVxtVb": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "eftirstodvarMVSkil": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "uppgreidslugjald": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "uppgreidsluverdmaeti": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "stadaLans": { "type": "string", "nullable": true },
+          "kennitala": { "type": "string", "nullable": true },
+          "fastanumer": { "type": "string", "nullable": true },
+          "vedstadurHeiti": { "type": "string", "nullable": true },
+          "vedstadurSVfelag": { "type": "string", "nullable": true },
+          "epilog": { "type": "string", "nullable": true },
+          "svFelagsNumer": { "type": "string", "nullable": true },
+          "lanaFlokkur": { "type": "string", "nullable": true },
+          "leggur": { "type": "integer", "format": "int32" },
+          "nafnMedgreidandi": { "type": "string", "nullable": true },
+          "medGreidandi": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "LoginModel": {
+        "required": ["password", "username"],
+        "type": "object",
+        "properties": {
+          "username": { "minLength": 1, "type": "string" },
+          "password": { "minLength": 1, "type": "string" }
+        },
+        "additionalProperties": false
+      },
+      "ReiknivelReturnModel": {
+        "type": "object",
+        "properties": {
+          "manadarlegarHusnaedisbaetur": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "manadarlegTekjuSkerding": { "type": "number", "format": "double" },
+          "manadarlegEignaSkerding": { "type": "number", "format": "double" },
+          "manadarlegarHamarksBaetur": { "type": "number", "format": "double" },
+          "manadarlegHusnaedisKostnadarSkerding": {
+            "type": "number",
+            "format": "double"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "securitySchemes": {
+      "Bearer": {
+        "type": "apiKey",
+        "description": "JWT Authorization header using the Bearer scheme. \r\n\r\n Enter 'Bearer' [space] and then your token in the text input below.\r\n\r\nExample: \"Bearer 1safsfsdfdfd\"",
+        "name": "Authorization",
+        "in": "header"
+      }
+    }
+  },
+  "security": [{ "Bearer": [] }]
+}
