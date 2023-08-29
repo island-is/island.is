@@ -34,7 +34,7 @@ export const OpenApiView = ({ strings, openApiInput }: OpenApiViewProps) => {
   })
 
   useEffect(() => {
-    const onCompleted = (data) => {
+    const onCompleted = (data: { getOpenApi: { spec: string } }) => {
       const converted = YamlParser.load(data.getOpenApi.spec)
 
       setDocumentation(converted as OpenApi)

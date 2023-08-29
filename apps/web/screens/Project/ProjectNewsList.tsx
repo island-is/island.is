@@ -177,16 +177,19 @@ const ProjectNewsList: Screen<ProjectNewsListProps> = ({
   )
 }
 
-const createDatesMap = (datesList) => {
-  return datesList.reduce((datesMap, date) => {
-    const [year, month] = date.split('-')
-    if (datesMap[year]) {
-      datesMap[year].push(parseInt(month)) // we can assume each month only appears once
-    } else {
-      datesMap[year] = [parseInt(month)]
-    }
-    return datesMap
-  }, {})
+const createDatesMap = (datesList: string[]) => {
+  return datesList.reduce(
+    (datesMap: Record<string, number[]>, date: string) => {
+      const [year, month] = date.split('-')
+      if (datesMap[year]) {
+        datesMap[year].push(parseInt(month)) // we can assume each month only appears once
+      } else {
+        datesMap[year] = [parseInt(month)]
+      }
+      return datesMap
+    },
+    {},
+  )
 }
 
 const getIntParam = (s: string | string[]) => {
@@ -282,10 +285,12 @@ ProjectNewsList.getProps = async ({ apolloClient, query, locale }) => {
           },
         },
       })
-      .then((variables) => {
-        // map data here to reduce data processing in component
-        return JSON.parse(variables.data.getNamespace.fields)
-      }),
+      // map data here to reduce data processing in component
+      .then((variables) =>
+        variables.data.getNamespace?.fields
+          ? JSON.parse(variables.data.getNamespace.fields)
+          : {},
+      ),
   ])
 
   const genericTag = genericTagResponse?.data?.getGenericTagBySlug
