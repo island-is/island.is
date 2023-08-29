@@ -19,10 +19,10 @@ import { TIME_FORMAT } from '@island.is/judicial-system/consts'
 import { formatRequestedCustodyRestrictions } from '@island.is/judicial-system-web/src/utils/restrictions'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import { lawsBrokenAccordion } from '@island.is/judicial-system-web/messages/Core/lawsBrokenAccordion'
+import { CaseLegalProvisions } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import AccordionListItem from '../../AccordionListItem/AccordionListItem'
 import * as styles from './PoliceRequestAccordionItem.css'
-import { CaseLegalProvisions } from '@island.is/judicial-system-web/src/graphql/schema'
 
 interface Props {
   workingCase: Case
