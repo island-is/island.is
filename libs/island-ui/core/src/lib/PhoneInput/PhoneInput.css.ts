@@ -73,9 +73,10 @@ const makeInputBackground = (breakpoint: keyof Theme['breakpoints']) =>
       themeUtils.responsiveStyle({
         [breakpoint]: {
           selectors: {
-            '&:-webkit-autofill, &:-webkit-autofill:focus, &:-webkit-autofill:hover': {
-              boxShadow: `0 0 0px 1000px ${color} inset`,
-            },
+            '&:-webkit-autofill, &:-webkit-autofill:focus, &:-webkit-autofill:hover':
+              {
+                boxShadow: `0 0 0px 1000px ${color} inset`,
+              },
           },
         },
       }),
@@ -97,6 +98,7 @@ export const errorMessage = style(inputMixins.errorMessage)
 
 export const hasError = style({
   ...inputMixins.inputErrorState,
+  ...inputMixins.inputErrorStateWithBefore,
 })
 
 export const label = style({

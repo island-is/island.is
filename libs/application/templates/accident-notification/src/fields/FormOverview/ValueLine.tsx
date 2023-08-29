@@ -12,7 +12,11 @@ interface ValueLineProps {
   color?: Colors
 }
 
-export const ValueLine: FC<ValueLineProps> = ({ label, value, color }) => {
+export const ValueLine: FC<React.PropsWithChildren<ValueLineProps>> = ({
+  label,
+  value,
+  color,
+}) => {
   const { formatMessage } = useLocale()
 
   return (
@@ -28,7 +32,10 @@ interface FileValueLineProps {
   files: MessageDescriptor[] | undefined
 }
 
-export const FileValueLine: FC<FileValueLineProps> = ({ label, files }) => {
+export const FileValueLine: FC<React.PropsWithChildren<FileValueLineProps>> = ({
+  label,
+  files,
+}) => {
   const { formatMessage } = useLocale()
 
   return (

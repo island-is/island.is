@@ -8,6 +8,7 @@ import {
   CaseOrigin,
   CaseAppealState,
   CaseAppealRulingDecision,
+  Defendant,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   Case,
@@ -43,7 +44,7 @@ export enum LoginErrorCodes {
 }
 
 export type directionType = 'ascending' | 'descending'
-export type sortableTableColumn = 'defendant' | 'createdAt'
+export type sortableTableColumn = 'defendant' | 'createdAt' | 'courtDate'
 
 export interface SortConfig {
   column: sortableTableColumn
@@ -236,6 +237,7 @@ export interface TempCase
     | 'appealState'
     | 'appealedByRole'
     | 'appealRulingDecision'
+    | 'defendants'
   > {
   origin: CaseOrigin
   sharedWithProsecutorsOffice?: Institution
@@ -249,6 +251,7 @@ export interface TempCase
   appealState?: CaseAppealState
   appealedByRole?: UserRole
   appealRulingDecision?: CaseAppealRulingDecision
+  defendants?: Defendant[]
 }
 
 export interface TempUpdateCase
@@ -259,12 +262,14 @@ export interface TempUpdateCase
     | 'sessionArrangements'
     | 'appealState'
     | 'appealRulingDecision'
+    | 'defendants'
   > {
   courtDocuments?: CourtDocument[]
   type?: CaseType
   sessionArrangements?: SessionArrangements
   appealState?: CaseAppealState
   appealRulingDecision?: CaseAppealRulingDecision
+  defendants?: Defendant[]
 }
 
 export interface TempCreateCase extends Omit<CreateCase, 'type'> {

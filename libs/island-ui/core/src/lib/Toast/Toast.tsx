@@ -48,7 +48,7 @@ const RenderMessage = ({
   )
 }
 
-export const ToastContainer: React.FC<ToastProps> = ({
+export const ToastContainer: React.FC<React.PropsWithChildren<ToastProps>> = ({
   hideProgressBar = false,
   timeout = 5000,
   closeButton = false,

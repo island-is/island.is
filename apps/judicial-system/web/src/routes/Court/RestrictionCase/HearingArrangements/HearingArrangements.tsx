@@ -23,7 +23,7 @@ import {
   useCase,
   useOnceOn,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { titles } from '@island.is/judicial-system-web/messages'
+import { errors, titles } from '@island.is/judicial-system-web/messages'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -33,7 +33,9 @@ import * as constants from '@island.is/judicial-system/consts'
 
 import { rcHearingArrangements as m } from './HearingArrangements.strings'
 
-export const HearingArrangements: React.FC = () => {
+export const HearingArrangements: React.FC<
+  React.PropsWithChildren<unknown>
+> = () => {
   const {
     workingCase,
     setWorkingCase,
@@ -48,6 +50,7 @@ export const HearingArrangements: React.FC = () => {
     setAndSendCaseToServer,
     sendNotification,
     isSendingNotification,
+    sendNotificationError,
   } = useCase()
   const { formatMessage } = useIntl()
   const {
@@ -238,6 +241,11 @@ export const HearingArrangements: React.FC = () => {
               courtDateHasChanged,
             },
           )}
+          errorMessage={
+            sendNotificationError
+              ? formatMessage(errors.sendNotification)
+              : undefined
+          }
         />
       )}
     </PageLayout>

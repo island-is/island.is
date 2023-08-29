@@ -60,7 +60,7 @@ interface FieldProps {
   symbolOnRight?: boolean
 }
 
-const Field: FC<FieldProps> = ({
+const Field: FC<React.PropsWithChildren<FieldProps>> = ({
   name,
   value,
   symbol,
@@ -180,7 +180,9 @@ interface StepperHelperProps {
   optionsFromNamespace: { slug: string; data: Record<string, any>[] }[]
 }
 
-export const StepperHelper: React.FC<StepperHelperProps> = ({
+export const StepperHelper: React.FC<
+  React.PropsWithChildren<StepperHelperProps>
+> = ({
   stepper,
   currentState,
   stepperMachine,

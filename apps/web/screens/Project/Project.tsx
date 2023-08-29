@@ -284,7 +284,7 @@ const ProjectPage: Screen<PageProps> = ({
   )
 }
 
-ProjectPage.getInitialProps = async ({ apolloClient, locale, query }) => {
+ProjectPage.getProps = async ({ apolloClient, locale, query }) => {
   const [
     {
       data: { getProjectPage },
@@ -344,10 +344,11 @@ ProjectPage.getInitialProps = async ({ apolloClient, locale, query }) => {
   let stepOptionsFromNamespace = []
 
   if (getProjectPage.stepper) {
-    stepOptionsFromNamespace = await stepperUtils.getStepOptionsFromUIConfiguration(
-      getProjectPage.stepper as StepperSchema,
-      apolloClient,
-    )
+    stepOptionsFromNamespace =
+      await stepperUtils.getStepOptionsFromUIConfiguration(
+        getProjectPage.stepper as StepperSchema,
+        apolloClient,
+      )
   }
 
   const projectNamespace = JSON.parse(getProjectPage.namespace?.fields ?? '{}')

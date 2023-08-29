@@ -61,7 +61,7 @@ export const mapCaseStateToTagVariant = (
   }
 }
 
-const TagCaseState: React.FC<Props> = (Props) => {
+const TagCaseState: React.FC<React.PropsWithChildren<Props>> = (Props) => {
   const { formatMessage } = useIntl()
   const {
     caseState,
@@ -83,7 +83,7 @@ const TagCaseState: React.FC<Props> = (Props) => {
   if (!tagVariant) return null
 
   return (
-    <Tag variant={tagVariant?.color} outlined disabled>
+    <Tag variant={tagVariant?.color} outlined disabled truncate>
       {tagVariant.text}
     </Tag>
   )

@@ -53,10 +53,8 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
   const nfc = useNamespace(filterContent)
   const noa = useNamespace(openApiContent)
   const { linkResolver } = useLinkResolver()
-  const [
-    selectedServiceDetail,
-    setselectedServiceDetail,
-  ] = useState<ServiceDetail>(service.environments[0].details[0])
+  const [selectedServiceDetail, setselectedServiceDetail] =
+    useState<ServiceDetail>(service.environments[0].details[0])
 
   useLocalLinkTypeResolver()
 
@@ -66,12 +64,10 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
     return identifier
   }
 
-  const [
-    selectedGetOpenApiInput,
-    setSelectedGetOpenApiInput,
-  ] = useState<GetOpenApiInput>(
-    xroadIdentifierToOpenApiInput(selectedServiceDetail.xroadIdentifier),
-  )
+  const [selectedGetOpenApiInput, setSelectedGetOpenApiInput] =
+    useState<GetOpenApiInput>(
+      xroadIdentifierToOpenApiInput(selectedServiceDetail.xroadIdentifier),
+    )
 
   const setApiContent = (serviceDetail: ServiceDetail) => {
     setselectedServiceDetail(serviceDetail)
@@ -167,7 +163,7 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
   )
 }
 
-ServiceDetails.getInitialProps = async ({ apolloClient, locale, query }) => {
+ServiceDetails.getProps = async ({ apolloClient, locale, query }) => {
   const serviceId = String(query.slug)
 
   const [

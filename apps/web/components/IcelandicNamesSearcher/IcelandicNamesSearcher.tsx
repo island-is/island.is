@@ -59,7 +59,8 @@ export const IcelandicNamesSearcher = () => {
 
   useEffect(() => {
     if (width < theme.breakpoints.md) {
-      return setIsMobile(true)
+      setIsMobile(true)
+      return
     }
     setIsMobile(false)
   }, [width])
@@ -84,9 +85,8 @@ export const IcelandicNamesSearcher = () => {
     GetIcelandicNameByInitialLetterQueryVariables
   >(GET_ICELANDIC_NAME_BY_INITIAL_LETTER)
 
-  const [filteredNamesList, setFilteredNamesList] = useState<NameType[]>(
-    tableData,
-  )
+  const [filteredNamesList, setFilteredNamesList] =
+    useState<NameType[]>(tableData)
 
   useMemo(() => {
     if (searchData?.getIcelandicNameBySearch) {

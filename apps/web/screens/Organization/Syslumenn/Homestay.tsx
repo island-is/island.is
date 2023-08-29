@@ -39,6 +39,7 @@ import { SliceType } from '@island.is/island-ui/contentful'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import { useRouter } from 'next/router'
 import { webRichText } from '@island.is/web/utils/richText'
+import { safelyExtractPathnameFromUrl } from '@island.is/web/utils/safelyExtractPathnameFromUrl'
 
 const PAGE_SIZE = 10
 const CSV_COLUMN_SEPARATOR = ','
@@ -255,10 +256,12 @@ const Homestay: Screen<HomestayProps> = ({
                   <Text>
                     {n('homestayRealEstateNumberPrefix', 'Fasteign nr.')}{' '}
                     <a
-                      href={(n(
-                        'realEstateRegistryLinkTemplate',
-                        'https://fasteignaskra.is/default.aspx?pageid=d5db1b6d-0650-11e6-943c-005056851dd2&selector=streetname&streetname={{ID}}&submitbutton=Leita',
-                      ) as string).replace('{{ID}}', homestay.propertyId)}
+                      href={(
+                        n(
+                          'realEstateRegistryLinkTemplate',
+                          'https://fasteignaskra.is/default.aspx?pageid=d5db1b6d-0650-11e6-943c-005056851dd2&selector=streetname&streetname={{ID}}&submitbutton=Leita',
+                        ) as string
+                      ).replace('{{ID}}', homestay.propertyId)}
                     >
                       {homestay.propertyId}
                     </a>
@@ -294,7 +297,8 @@ const Homestay: Screen<HomestayProps> = ({
   )
 }
 
-Homestay.getInitialProps = async ({ apolloClient, locale, pathname }) => {
+Homestay.getProps = async ({ apolloClient, locale, req }) => {
+  const pathname = safelyExtractPathnameFromUrl(req.url)
   const path = pathname?.split('/') ?? []
   const slug = path?.[path.length - 2] ?? 'syslumenn'
   const subSlug = path.pop() ?? 'heimagisting'

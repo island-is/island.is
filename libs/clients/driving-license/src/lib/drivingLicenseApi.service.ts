@@ -250,6 +250,19 @@ export class DrivingLicenseApi {
     }))
   }
 
+  public async getTeachersV4() {
+    const teachers = await this.v4.apiDrivinglicenseV4DrivinginstructorsGet({
+      apiVersion: v4.DRIVING_LICENSE_API_VERSION_V4,
+      apiVersion2: v4.DRIVING_LICENSE_API_VERSION_V4,
+    })
+
+    return teachers.map((teacher) => ({
+      name: teacher?.name ?? '',
+      nationalId: teacher?.ssn ?? '',
+      driverLicenseId: teacher?.driverLicenseId,
+    }))
+  }
+
   public async getDeprivation(input: {
     nationalId: string
     token?: string
@@ -262,11 +275,10 @@ export class DrivingLicenseApi {
   }
 
   public async getIsTeacher(params: { nationalId: string }) {
-    const statusStr = ((await this.v1.apiOkuskirteiniHasteachingrightsKennitalaGet(
-      {
+    const statusStr =
+      (await this.v1.apiOkuskirteiniHasteachingrightsKennitalaGet({
         kennitala: params.nationalId,
-      },
-    )) as unknown) as string
+      })) as unknown as string
 
     // API says number, type says number, but deserialization happens with a text
     // deserializer (runtime.TextApiResponse).
@@ -326,13 +338,12 @@ export class DrivingLicenseApi {
     category: string
     nationalId: string
   }): Promise<CanApplyForCategoryResult<CanApplyErrorCodeBFull>> {
-    const response = await this.v2.apiOkuskirteiniKennitalaCanapplyforCategoryFullGet(
-      {
+    const response =
+      await this.v2.apiOkuskirteiniKennitalaCanapplyforCategoryFullGet({
         apiVersion: v2.DRIVING_LICENSE_API_VERSION_V2,
         kennitala: params.nationalId,
         category: params.category,
-      },
-    )
+      })
 
     return {
       result: !!response.result,
@@ -345,11 +356,10 @@ export class DrivingLicenseApi {
   public async getCanApplyForCategoryTemporary(params: {
     nationalId: string
   }): Promise<CanApplyForCategoryResult<CanApplyErrorCodeBTemporary>> {
-    const response = await this.v1.apiOkuskirteiniKennitalaCanapplyforTemporaryGet(
-      {
+    const response =
+      await this.v1.apiOkuskirteiniKennitalaCanapplyforTemporaryGet({
         kennitala: params.nationalId,
-      },
-    )
+      })
     return {
       result: !!response.result,
       errorCode: response.errorCode
@@ -383,8 +393,8 @@ export class DrivingLicenseApi {
     phone: string
   }) {
     try {
-      const response = await this.v2.apiOkuskirteiniApplicationsNewTemporaryPost(
-        {
+      const response =
+        await this.v2.apiOkuskirteiniApplicationsNewTemporaryPost({
           apiVersion: v2.DRIVING_LICENSE_API_VERSION_V2,
           postTemporaryLicenseV2: {
             kemurMedLaeknisvottord: params.willBringHealthCertificate,
@@ -396,8 +406,7 @@ export class DrivingLicenseApi {
             netfang: params.email,
             farsimaNumer: params.phone,
           },
-        },
-      )
+        })
       if (!response.result) {
         throw new Error(
           `POST apiOkuskirteiniApplicationsNewTemporaryPost was not successful, response was: ${response.errorCode}`,

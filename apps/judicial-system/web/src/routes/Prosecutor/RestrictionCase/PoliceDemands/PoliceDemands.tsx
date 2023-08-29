@@ -27,8 +27,6 @@ import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader
 import {
   CaseCustodyRestrictions,
   CaseDecision,
-  Defendant,
-  Gender,
   isAcceptingCaseDecision,
 } from '@island.is/judicial-system/types'
 import { isPoliceDemandsStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
@@ -52,7 +50,11 @@ import {
   legalProvisions,
   travelBanProvisions,
 } from '@island.is/judicial-system-web/src/utils/laws'
-import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  CaseType,
+  Defendant,
+  Gender,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import * as constants from '@island.is/judicial-system/consts'
 
 import * as styles from './PoliceDemands.css'
@@ -92,7 +94,7 @@ export const getDemandsAutofill = (
   })
 }
 
-export const PoliceDemands: React.FC = () => {
+export const PoliceDemands: React.FC<React.PropsWithChildren<unknown>> = () => {
   const {
     workingCase,
     setWorkingCase,
@@ -102,9 +104,8 @@ export const PoliceDemands: React.FC = () => {
   } = useContext(FormContext)
   const router = useRouter()
   const { formatMessage } = useIntl()
-  const [lawsBrokenErrorMessage, setLawsBrokenErrorMessage] = useState<string>(
-    '',
-  )
+  const [lawsBrokenErrorMessage, setLawsBrokenErrorMessage] =
+    useState<string>('')
   const { updateCase, setAndSendCaseToServer } = useCase()
   useDeb(workingCase, [
     'lawsBroken',
@@ -260,7 +261,8 @@ export const PoliceDemands: React.FC = () => {
                     )
                     onDemandsChange(
                       {
-                        requestedCustodyRestrictions: nextRequestedCustodyRestrictions,
+                        requestedCustodyRestrictions:
+                          nextRequestedCustodyRestrictions,
                         force: true,
                       },
                       workingCase.type,

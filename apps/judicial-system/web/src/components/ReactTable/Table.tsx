@@ -55,13 +55,8 @@ const Table = <T extends object>(
     },
     useSortBy,
   )
-  const {
-    getTableProps,
-    getTableBodyProps,
-    headerGroups,
-    rows,
-    prepareRow,
-  } = tableInstance
+  const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
+    tableInstance
   const enoughRowsToTruncate = rows.length > 4
   const lastIndex = rows.length - 1
   const lastRow = rows[lastIndex]
@@ -95,11 +90,13 @@ const Table = <T extends object>(
     )
   }
 
-  const ButtonRow: FC<{
-    label: string
-    onClick: () => void
-    style?: React.CSSProperties
-  }> = ({ label, onClick, style }) => {
+  const ButtonRow: FC<
+    React.PropsWithChildren<{
+      label: string
+      onClick: () => void
+      style?: React.CSSProperties
+    }>
+  > = ({ label, onClick, style }) => {
     return (
       <tr>
         <td colSpan={columns.length} style={{ textAlign: 'left', ...style }}>

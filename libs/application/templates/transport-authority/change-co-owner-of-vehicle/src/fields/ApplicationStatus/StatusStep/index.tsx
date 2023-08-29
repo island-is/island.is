@@ -4,7 +4,9 @@ import { FC } from 'react'
 import { review } from '../../../lib/messages'
 import { ReviewScreenProps, ReviewSectionProps } from '../../../shared'
 
-export const StatusStep: FC<ReviewSectionProps & ReviewScreenProps> = ({
+export const StatusStep: FC<
+  React.PropsWithChildren<ReviewSectionProps & ReviewScreenProps>
+> = ({
   title,
   description,
   tagVariant = 'blue',

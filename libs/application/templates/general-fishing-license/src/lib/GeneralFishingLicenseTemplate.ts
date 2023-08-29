@@ -26,6 +26,7 @@ import {
   DefaultStateLifeCycle,
 } from '@island.is/application/core'
 import { gflPendingActionMessages } from './messages/actionCards'
+import { Features } from '@island.is/feature-flags'
 
 const pruneAtMidnight = () => {
   const date = new Date()
@@ -52,7 +53,14 @@ const GeneralFishingLicenseTemplate: ApplicationTemplate<
     ApplicationConfigurations.GeneralFishingLicense.translation,
   ],
   dataSchema: GeneralFishingLicenseSchema,
-  allowedDelegations: [{ type: AuthDelegationType.ProcurationHolder }],
+  allowedDelegations: [
+    { type: AuthDelegationType.ProcurationHolder },
+    {
+      type: AuthDelegationType.Custom,
+      featureFlag: Features.isFishingLicenceCustomDelegationEnabled,
+    },
+  ],
+  requiredScopes: ['@island.is/fishing-license'],
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {
@@ -115,9 +123,9 @@ const GeneralFishingLicenseTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: async () =>
-                await import(
-                  '../forms/GeneralFishingLicenseForm/index'
-                ).then((val) => Promise.resolve(val.GeneralFishingLicenseForm)),
+                await import('../forms/GeneralFishingLicenseForm/index').then(
+                  (val) => Promise.resolve(val.GeneralFishingLicenseForm),
+                ),
               actions: [
                 {
                   event: DefaultEvents.PAYMENT,
@@ -214,10 +222,9 @@ const GeneralFishingLicenseTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import(
-                  '../forms/GeneralFishingLicenseSubmittedForm'
-                ).then((val) =>
-                  Promise.resolve(val.GeneralFishingLicenseSubmittedForm),
+                import('../forms/GeneralFishingLicenseSubmittedForm').then(
+                  (val) =>
+                    Promise.resolve(val.GeneralFishingLicenseSubmittedForm),
                 ),
             },
           ],

@@ -111,9 +111,8 @@ const ServiceSearch: Screen<ServiceSearchProps> = ({
 
   const pageTitle = `${n('search', 'Leit')} | ${headerTitle}`
 
-  const institutionSlugBelongsToMannaudstorg = institutionSlug.includes(
-    'mannaudstorg',
-  )
+  const institutionSlugBelongsToMannaudstorg =
+    institutionSlug.includes('mannaudstorg')
 
   const breadcrumbItems = [
     institutionSlugBelongsToMannaudstorg
@@ -160,7 +159,7 @@ const ServiceSearch: Screen<ServiceSearchProps> = ({
                     items={breadcrumbItems}
                     renderLink={(link, { href }) => {
                       return (
-                        <NextLink href={href} passHref>
+                        <NextLink href={href} passHref legacyBehavior>
                           {link}
                         </NextLink>
                       )
@@ -337,7 +336,7 @@ const ServiceSearch: Screen<ServiceSearchProps> = ({
 
 const single = <T,>(x: T | T[]): T => (Array.isArray(x) ? x[0] : x)
 
-ServiceSearch.getInitialProps = async ({ apolloClient, locale, query }) => {
+ServiceSearch.getProps = async ({ apolloClient, locale, query }) => {
   const defaultSlug = locale === 'is' ? 'stafraent-island' : 'digital-iceland'
 
   const q = single(query.q) || ''

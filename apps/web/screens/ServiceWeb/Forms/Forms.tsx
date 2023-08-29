@@ -131,9 +131,8 @@ const ServiceWebFormsPage: Screen<ServiceWebFormsPageProps> = ({
       : ''
   }${headerTitle}`
 
-  const institutionSlugBelongsToMannaudstorg = institutionSlug.includes(
-    'mannaudstorg',
-  )
+  const institutionSlugBelongsToMannaudstorg =
+    institutionSlug.includes('mannaudstorg')
 
   const breadcrumbItems = useMemo(() => {
     const items = []
@@ -190,7 +189,7 @@ const ServiceWebFormsPage: Screen<ServiceWebFormsPageProps> = ({
                         items={breadcrumbItems}
                         renderLink={(link, { href }) => {
                           return (
-                            <NextLink href={href} passHref>
+                            <NextLink href={href} passHref legacyBehavior>
                               {link}
                             </NextLink>
                           )
@@ -299,11 +298,7 @@ const ServiceWebFormsPage: Screen<ServiceWebFormsPageProps> = ({
   )
 }
 
-ServiceWebFormsPage.getInitialProps = async ({
-  apolloClient,
-  locale,
-  query,
-}) => {
+ServiceWebFormsPage.getProps = async ({ apolloClient, locale, query }) => {
   const defaultSlug = locale === 'is' ? 'stafraent-island' : 'digital-iceland'
   const slug = query.slug ? (query.slug as string) : defaultSlug
 

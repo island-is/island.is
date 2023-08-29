@@ -25,7 +25,9 @@ import {
   BlueBox,
   IndictmentInfo,
 } from '@island.is/judicial-system-web/src/components'
-import { UpdateIndictmentCount } from '@island.is/judicial-system-web/src/utils/hooks/useIndictmentCounts'
+import useIndictmentCounts, {
+  UpdateIndictmentCount,
+} from '@island.is/judicial-system-web/src/utils/hooks/useIndictmentCounts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   removeErrorMessageIfValid,
@@ -168,8 +170,9 @@ export function getIncidentDescriptionReason(
 ) {
   let reason = offenses.reduce((acc, offense, index) => {
     if (
-      offenses.length > 1 &&
-      (index === offenses.length - 1 ||
+      (offenses.length > 1 && index === offenses.length - 1) ||
+      (offenses.length > 2 &&
+        index === offenses.length - 2 &&
         offense === IndictmentCountOffense.ILLEGAL_DRUGS_DRIVING)
     ) {
       acc += ' og '
@@ -272,7 +275,9 @@ export function getLegalArguments(
   })
 }
 
-export const IndictmentCount: React.FC<Props> = (props) => {
+export const IndictmentCount: React.FC<React.PropsWithChildren<Props>> = (
+  props,
+) => {
   const {
     indictmentCount,
     workingCase,
@@ -282,32 +287,18 @@ export const IndictmentCount: React.FC<Props> = (props) => {
     setWorkingCase,
   } = props
   const { formatMessage } = useIntl()
+  const { lawTag } = useIndictmentCounts()
 
   const [
     vehicleRegistrationNumberErrorMessage,
     setVehicleRegistrationNumberErrorMessage,
   ] = useState<string>('')
-  const [
-    incidentDescriptionErrorMessage,
-    setIncidentDescriptionErrorMessage,
-  ] = useState<string>('')
-  const [
-    bloodAlcoholContentErrorMessage,
-    setBloodAlcoholContentErrorMessage,
-  ] = useState<string>('')
-  const [
-    legalArgumentsErrorMessage,
-    setLegalArgumentsErrorMessage,
-  ] = useState<string>('')
-
-  const lawTag = useCallback(
-    (law: number[]) =>
-      formatMessage(strings.lawsBrokenTag, {
-        paragraph: law[1],
-        article: law[0],
-      }),
-    [formatMessage],
-  )
+  const [incidentDescriptionErrorMessage, setIncidentDescriptionErrorMessage] =
+    useState<string>('')
+  const [bloodAlcoholContentErrorMessage, setBloodAlcoholContentErrorMessage] =
+    useState<string>('')
+  const [legalArgumentsErrorMessage, setLegalArgumentsErrorMessage] =
+    useState<string>('')
 
   const offensesOptions = useMemo(
     () =>

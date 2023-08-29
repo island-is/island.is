@@ -6,7 +6,7 @@ import { Box, Text } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
 import {
-  Defendant,
+  CaseState,
   isRestrictionCase,
   CaseDecision as TCaseDecision,
 } from '@island.is/judicial-system/types'
@@ -16,7 +16,10 @@ import {
   useSortAppealCases,
   useViewport,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { CaseListEntry } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  CaseListEntry,
+  Defendant,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import { TagAppealState } from '@island.is/judicial-system-web/src/components'
 import {
   ColumnCaseType,
@@ -25,6 +28,7 @@ import {
   SortButton,
   TableContainer,
   TableHeaderText,
+  getDurationDate,
 } from '@island.is/judicial-system-web/src/components/Table'
 
 import * as styles from '../Table.css'
@@ -40,11 +44,8 @@ interface Props {
 const AppealCasesTable: React.FC<Props> = (props) => {
   const { cases, onRowClick, loading, showingCompletedCases } = props
   const { formatMessage } = useIntl()
-  const { sortedData, requestSort, getClassNamesFor } = useSortAppealCases(
-    'appealedDate',
-    'descending',
-    cases,
-  )
+  const { sortedData, requestSort, getClassNamesFor, isActiveColumn } =
+    useSortAppealCases('appealedDate', 'descending', cases)
   const activeCasesData = useMemo(
     () =>
       cases.sort((a: CaseListEntry, b: CaseListEntry) =>
@@ -66,7 +67,7 @@ const AppealCasesTable: React.FC<Props> = (props) => {
             {showingCompletedCases && (
               <Text fontWeight={'medium'} variant="small">
                 {isRestrictionCase(theCase.type)
-                  ? `${formatDate(theCase.courtEndTime ?? '', 'd.M.y')} -
+                  ? `${formatDate(theCase.rulingDate ?? '', 'd.M.y')} -
                       ${formatDate(theCase.validToDate ?? '', 'd.M.y')}`
                   : ''}
               </Text>
@@ -87,9 +88,11 @@ const AppealCasesTable: React.FC<Props> = (props) => {
               onClick={() => requestSort('defendant')}
               sortAsc={getClassNamesFor('defendant') === 'ascending'}
               sortDes={getClassNamesFor('defendant') === 'descending'}
+              isActive={isActiveColumn('defendant')}
             />
           </th>
           <TableHeaderText title={formatMessage(tables.type)} />
+
           <TableHeaderText title={formatMessage(tables.state)} />
           {showingCompletedCases ? (
             <TableHeaderText title={formatMessage(tables.duration)} />
@@ -100,6 +103,7 @@ const AppealCasesTable: React.FC<Props> = (props) => {
                 onClick={() => requestSort('appealedDate')}
                 sortAsc={getClassNamesFor('appealedDate') === 'ascending'}
                 sortDes={getClassNamesFor('appealedDate') === 'descending'}
+                isActive={isActiveColumn('appealedDate')}
               />
             </th>
           )}
@@ -130,6 +134,7 @@ const AppealCasesTable: React.FC<Props> = (props) => {
                 parentCaseId={column.parentCaseId ?? ''}
               />
             </td>
+
             <td>
               <TagAppealState
                 appealState={column.appealState}
@@ -140,8 +145,12 @@ const AppealCasesTable: React.FC<Props> = (props) => {
               {showingCompletedCases ? (
                 <Text>
                   {isRestrictionCase(column.type)
-                    ? `${formatDate(column.courtEndTime ?? '', 'd.M.y')} -
-                      ${formatDate(column.validToDate ?? '', 'd.M.y')}`
+                    ? getDurationDate(
+                        column.state as CaseState,
+                        column.validToDate,
+                        column.initialRulingDate,
+                        column.rulingDate,
+                      )
                     : ''}
                 </Text>
               ) : (

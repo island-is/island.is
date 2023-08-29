@@ -466,6 +466,7 @@ export class InternalCaseService {
               name: caseToCreate.accusedName,
               gender: caseToCreate.accusedGender,
               address: caseToCreate.accusedAddress,
+              citizenship: caseToCreate.citizenship,
             },
             transaction,
           ),
@@ -522,13 +523,8 @@ export class InternalCaseService {
 
       const defendantsArchive = []
       for (const defendant of theCase.defendants ?? []) {
-        const [
-          clearedDefendantProperties,
-          defendantArchive,
-        ] = collectEncryptionProperties(
-          defendantEncryptionProperties,
-          defendant,
-        )
+        const [clearedDefendantProperties, defendantArchive] =
+          collectEncryptionProperties(defendantEncryptionProperties, defendant)
         defendantsArchive.push(defendantArchive)
 
         await this.defendantService.updateForArcive(
@@ -541,10 +537,8 @@ export class InternalCaseService {
 
       const caseFilesArchive = []
       for (const caseFile of theCase.caseFiles ?? []) {
-        const [
-          clearedCaseFileProperties,
-          caseFileArchive,
-        ] = collectEncryptionProperties(caseFileEncryptionProperties, caseFile)
+        const [clearedCaseFileProperties, caseFileArchive] =
+          collectEncryptionProperties(caseFileEncryptionProperties, caseFile)
         caseFilesArchive.push(caseFileArchive)
 
         await this.fileService.updateCaseFile(
@@ -557,13 +551,11 @@ export class InternalCaseService {
 
       const indictmentCountsArchive = []
       for (const count of theCase.indictmentCounts ?? []) {
-        const [
-          clearedIndictmentCountProperties,
-          indictmentCountArchive,
-        ] = collectEncryptionProperties(
-          indictmentCountEncryptionProperties,
-          count,
-        )
+        const [clearedIndictmentCountProperties, indictmentCountArchive] =
+          collectEncryptionProperties(
+            indictmentCountEncryptionProperties,
+            count,
+          )
         indictmentCountsArchive.push(indictmentCountArchive)
 
         await this.indictmentCountService.update(

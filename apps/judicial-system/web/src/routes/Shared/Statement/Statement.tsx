@@ -53,12 +53,8 @@ const Statement = () => {
   const [displayFiles, setDisplayFiles] = useState<TUploadFile[]>([])
   const [visibleModal, setVisibleModal] = useState<'STATEMENT_SENT'>()
   const { id } = router.query
-  const {
-    handleChange,
-    handleRemove,
-    handleRetry,
-    generateSingleFileUpdate,
-  } = useS3Upload(workingCase.id)
+  const { handleChange, handleRemove, handleRetry, generateSingleFileUpdate } =
+    useS3Upload(workingCase.id)
 
   const appealStatementType = isProsecutionRole(user?.role)
     ? CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT
@@ -125,8 +121,8 @@ const Statement = () => {
           </Text>
         </Box>
         <Box marginBottom={7}>
-          {workingCase.courtEndTime && (
-            <RulingDateLabel courtEndTime={workingCase.courtEndTime} />
+          {workingCase.rulingDate && (
+            <RulingDateLabel rulingDate={workingCase.rulingDate} />
           )}
           {(workingCase.prosecutorPostponedAppealDate ||
             workingCase.accusedPostponedAppealDate) && (

@@ -18,7 +18,7 @@ interface Props {
   appealRulingDecision?: CaseAppealRulingDecision | null
 }
 
-const TagAppealState: React.FC<Props> = ({
+const TagAppealState: React.FC<React.PropsWithChildren<Props>> = ({
   appealRulingDecision,
   appealState,
 }) => {
@@ -99,7 +99,7 @@ const TagAppealState: React.FC<Props> = ({
   if (!tagVariantRuling) return null
 
   return (
-    <Tag variant={tagVariantRuling?.color} outlined disabled>
+    <Tag variant={tagVariantRuling?.color} outlined disabled truncate>
       {tagVariantRuling.text}
     </Tag>
   )

@@ -27,7 +27,6 @@ import {
 } from '@island.is/dokobit-signing'
 import {
   CaseAppealDecision,
-  CaseAppealState,
   CaseState,
   CaseTransition,
   CaseType,
@@ -35,6 +34,7 @@ import {
   InstitutionType,
   investigationCases,
   isCourtRole,
+  isIndictmentCase,
   restrictionCases,
   UserRole,
 } from '@island.is/judicial-system/types'
@@ -229,6 +229,11 @@ export class CaseController {
       update.rulingModifiedHistory = `${history}${today} - ${user.name} ${user.title}\n\n${update.rulingModifiedHistory}`
     }
 
+    if (update.caseResentExplanation) {
+      update.courtCaseFacts = `Í greinargerð sóknaraðila er atvikum lýst svo: ${theCase.caseFacts}`
+      update.courtLegalArguments = `Í greinargerð er krafa sóknaraðila rökstudd þannig: ${theCase.legalArguments}`
+    }
+
     if (update.prosecutorStatementDate) {
       update.prosecutorStatementDate = nowFactory()
     }
@@ -265,50 +270,55 @@ export class CaseController {
 
     let update: UpdateCase = states
 
-    if (transition.transition === CaseTransition.DELETE) {
-      update.parentCaseId = null
-    }
+    switch (transition.transition) {
+      case CaseTransition.DELETE:
+        update.parentCaseId = null
+        break
+      case CaseTransition.ACCEPT:
+      case CaseTransition.REJECT:
+      case CaseTransition.DISMISS:
+        update.rulingDate = isIndictmentCase(theCase.type)
+          ? nowFactory()
+          : theCase.courtEndTime
 
-    if (transition.transition === CaseTransition.REOPEN) {
-      update.rulingDate = null
-      update.courtRecordSignatoryId = null
-      update.courtRecordSignatureDate = null
-    }
+        // Handle appealed in court
+        if (
+          !theCase.appealState && // don't appeal twice
+          (theCase.prosecutorAppealDecision === CaseAppealDecision.APPEAL ||
+            theCase.accusedAppealDecision === CaseAppealDecision.APPEAL)
+        ) {
+          if (theCase.prosecutorAppealDecision === CaseAppealDecision.APPEAL) {
+            update.prosecutorPostponedAppealDate = nowFactory()
+          } else {
+            update.accusedPostponedAppealDate = nowFactory()
+          }
 
-    // TODO: Consider changing the names of the postponed appeal date variables
-    // as they are now also used when the case is appealed in court
-    if (states.appealState === CaseAppealState.APPEALED) {
-      // The only roles that can appeal a case here are prosecutor roles
-      update.prosecutorPostponedAppealDate = nowFactory()
-    } else if (
-      // Handle appealed in court
-      !theCase.appealState &&
-      [
-        CaseTransition.ACCEPT,
-        CaseTransition.REJECT,
-        CaseTransition.DISMISS,
-      ].includes(transition.transition) &&
-      (theCase.prosecutorAppealDecision === CaseAppealDecision.APPEAL ||
-        theCase.accusedAppealDecision === CaseAppealDecision.APPEAL)
-    ) {
-      if (theCase.prosecutorAppealDecision === CaseAppealDecision.APPEAL) {
+          update = {
+            ...update,
+            ...transitionCase(
+              CaseTransition.APPEAL,
+              states.state ?? theCase.state,
+              states.appealState ?? theCase.appealState,
+            ),
+          }
+        }
+
+        break
+      case CaseTransition.REOPEN:
+        update.rulingDate = null
+        update.rulingSignatureDate = null
+        update.courtRecordSignatoryId = null
+        update.courtRecordSignatureDate = null
+        break
+      // TODO: Consider changing the names of the postponed appeal date variables
+      // as they are now also used when the case is appealed in court
+      case CaseTransition.APPEAL:
+        // The only roles that can appeal a case here are prosecutor roles
         update.prosecutorPostponedAppealDate = nowFactory()
-      } else {
-        update.accusedPostponedAppealDate = nowFactory()
-      }
-
-      update = {
-        ...update,
-        ...transitionCase(
-          CaseTransition.APPEAL,
-          states.state ?? theCase.state,
-          states.appealState ?? theCase.appealState,
-        ),
-      }
-    }
-
-    if (states.appealState === CaseAppealState.RECEIVED) {
-      update.appealReceivedByCourtDate = nowFactory()
+        break
+      case CaseTransition.RECEIVE_APPEAL:
+        update.appealReceivedByCourtDate = nowFactory()
+        break
     }
 
     const updatedCase = await this.caseService.update(
@@ -320,7 +330,7 @@ export class CaseController {
 
     // No need to wait
     this.eventService.postEvent(
-      (transition.transition as unknown) as CaseEvent,
+      transition.transition as unknown as CaseEvent,
       updatedCase ?? theCase,
     )
 

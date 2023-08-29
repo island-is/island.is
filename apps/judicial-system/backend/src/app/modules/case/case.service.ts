@@ -147,6 +147,7 @@ export interface UpdateCase
   policeCaseNumbers?: string[]
   defendantWaivesRightToCounsel?: boolean
   rulingDate?: Date | null
+  rulingSignatureDate?: Date | null
   rulingModifiedHistory?: string
   courtRecordSignatoryId?: string | null
   courtRecordSignatureDate?: Date | null
@@ -183,15 +184,24 @@ export const include: Includeable[] = [
     as: 'courtRecordSignatory',
     include: [{ model: Institution, as: 'institution' }],
   },
-  { model: Case, as: 'parentCase' },
+  {
+    model: Case,
+    as: 'parentCase',
+    include: [
+      {
+        model: CaseFile,
+        as: 'caseFiles',
+        required: false,
+        where: { state: { [Op.not]: CaseFileState.DELETED }, category: null },
+      },
+    ],
+  },
   { model: Case, as: 'childCase' },
   {
     model: CaseFile,
     as: 'caseFiles',
     required: false,
-    where: {
-      state: { [Op.not]: CaseFileState.DELETED },
-    },
+    where: { state: { [Op.not]: CaseFileState.DELETED } },
   },
   {
     model: User,
@@ -532,14 +542,13 @@ export class CaseService {
     theCase: Case,
     user: TUser,
   ): Promise<void> {
-    const deliverCaseFilesRecordToCourtMessages = theCase.policeCaseNumbers.map<CaseMessage>(
-      (policeCaseNumber) => ({
+    const deliverCaseFilesRecordToCourtMessages =
+      theCase.policeCaseNumbers.map<CaseMessage>((policeCaseNumber) => ({
         type: MessageType.DELIVER_CASE_FILES_RECORD_TO_COURT,
         user,
         caseId: theCase.id,
         policeCaseNumber,
-      }),
-    )
+      }))
 
     const deliverCaseFileToCourtMessages =
       theCase.caseFiles
@@ -799,7 +808,11 @@ export class CaseService {
   ): Promise<void> {
     if (updatedCase.state !== theCase.state) {
       // New case state
-      if (updatedCase.state === CaseState.RECEIVED) {
+      if (
+        updatedCase.state === CaseState.RECEIVED &&
+        theCase.state === CaseState.SUBMITTED
+      ) {
+        // Only send messages if the case was in a SUBMITTED state - not when reopening a case
         await this.addMessagesForReceivedCaseToQueue(updatedCase, user)
       } else if (updatedCase.state === CaseState.DELETED) {
         await this.addMessagesForDeletedCaseToQueue(
@@ -1073,7 +1086,7 @@ export class CaseService {
   }
 
   async getRulingPdf(theCase: Case): Promise<Buffer> {
-    if (theCase.rulingDate) {
+    if (theCase.rulingSignatureDate) {
       try {
         return await this.awsS3Service.getObject(
           `generated/${theCase.id}/ruling.pdf`,
@@ -1247,7 +1260,12 @@ export class CaseService {
         return { documentSigned: false, message: 'Failed to upload to S3' }
       }
 
-      await this.update(theCase, { rulingDate: nowFactory() }, user, false)
+      await this.update(
+        theCase,
+        { rulingSignatureDate: nowFactory() },
+        user,
+        false,
+      )
 
       await this.addMessagesForCompletedCaseToQueue(theCase, user)
 

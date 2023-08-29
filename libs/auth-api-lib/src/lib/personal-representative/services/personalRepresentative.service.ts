@@ -115,8 +115,8 @@ export class PersonalRepresentativeService {
       whereClauseRights['validTo'] = validToClause
     }
 
-    const personalRepresentatives = await this.personalRepresentativeModel.findAll(
-      {
+    const personalRepresentatives =
+      await this.personalRepresentativeModel.findAll({
         where: whereClause,
         include: [
           {
@@ -131,8 +131,7 @@ export class PersonalRepresentativeService {
             ],
           },
         ],
-      },
-    )
+      })
 
     return personalRepresentatives.map((pr) => pr.toDTO())
   }
@@ -159,8 +158,8 @@ export class PersonalRepresentativeService {
       whereClauseRights['validFrom'] = validFromClause
       whereClauseRights['validTo'] = validToClause
     }
-    const personalRepresentatives = await this.personalRepresentativeModel.findAll(
-      {
+    const personalRepresentatives =
+      await this.personalRepresentativeModel.findAll({
         where: whereClause,
         include: [
           {
@@ -175,8 +174,7 @@ export class PersonalRepresentativeService {
             ],
           },
         ],
-      },
-    )
+      })
     if (personalRepresentatives.length === 0) {
       return null
     }
@@ -198,9 +196,8 @@ export class PersonalRepresentativeService {
     this.logger.debug(
       `Finding personal representative right type for id - "${id}"`,
     )
-    const personalRepresentative = await this.personalRepresentativeModel.findByPk(
-      id,
-      {
+    const personalRepresentative =
+      await this.personalRepresentativeModel.findByPk(id, {
         include: [
           {
             model: PersonalRepresentativeRight,
@@ -208,8 +205,7 @@ export class PersonalRepresentativeService {
             include: [PersonalRepresentativeRightType],
           },
         ],
-      },
-    )
+      })
     return personalRepresentative ? personalRepresentative.toDTO() : null
   }
 
@@ -241,11 +237,10 @@ export class PersonalRepresentativeService {
 
         /** To tackle replication we need to generate new object without selecting it from database */
         const result = newPr.toDTO()
-        const rightTypes = await this.personalRepresentativeRightTypeModel.findAll(
-          {
+        const rightTypes =
+          await this.personalRepresentativeRightTypeModel.findAll({
             where: { code: rightCodes.map((rc) => rc.rightTypeCode) },
-          },
-        )
+          })
         result.rights = rightTypes.map((rt) => rt.toDTO())
         return result
       })

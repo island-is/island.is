@@ -60,7 +60,7 @@ auth-admin-web:
       memory: '256Mi'
     requests:
       cpu: '200m'
-      memory: '128Mi'
+      memory: '192Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     IDENTITYSERVER_SECRET: '/k8s/auth-admin-web/IDENTITYSERVER_SECRET'
@@ -206,7 +206,7 @@ services-auth-admin-api:
     DB_USER: 'servicesauth'
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
     IDENTITY_SERVER_ISSUER_URL_LIST: '["https://innskra.island.is"]'
-    NODE_OPTIONS: '--max-old-space-size=336'
+    NODE_OPTIONS: '--max-old-space-size=720'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces:
     - 'nginx-ingress-external'
@@ -250,10 +250,10 @@ services-auth-admin-api:
   resources:
     limits:
       cpu: '400m'
-      memory: '384Mi'
+      memory: '768Mi'
     requests:
       cpu: '100m'
-      memory: '256Mi'
+      memory: '512Mi'
   secrets:
     CLIENT_SECRET_ENCRYPTION_KEY: '/k8s/services-auth/admin-api/CLIENT_SECRET_ENCRYPTION_KEY'
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
@@ -332,8 +332,6 @@ services-auth-delegation-api:
     DB_PASS: '/k8s/services-auth/api/DB_PASSWORD'
     IDENTITY_SERVER_CLIENT_SECRET: '/k8s/services-auth/IDENTITY_SERVER_CLIENT_SECRET'
     NATIONAL_REGISTRY_IDS_CLIENT_SECRET: '/k8s/xroad/client/NATIONAL-REGISTRY/IDENTITYSERVER_SECRET'
-    RSK_PASSWORD: '/k8s/xroad/client/RSK/PASSWORD'
-    RSK_USERNAME: '/k8s/xroad/client/RSK/USERNAME'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
@@ -349,7 +347,7 @@ services-auth-ids-api:
     DB_USER: 'servicesauth'
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/auth-api'
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
-    NODE_OPTIONS: '--max-old-space-size=464'
+    NODE_OPTIONS: '--max-old-space-size=720'
     NOVA_ACCEPT_UNAUTHORIZED: 'false'
     PUBLIC_URL: 'https://innskra.island.is/api'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
@@ -432,10 +430,10 @@ services-auth-ids-api:
   resources:
     limits:
       cpu: '800m'
-      memory: '512Mi'
+      memory: '768Mi'
     requests:
-      cpu: '100m'
-      memory: '256Mi'
+      cpu: '400m'
+      memory: '512Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     DB_PASS: '/k8s/services-auth/api/DB_PASSWORD'
@@ -443,8 +441,6 @@ services-auth-ids-api:
     NOVA_PASSWORD: '/k8s/services-auth/NOVA_PASSWORD'
     NOVA_URL: '/k8s/services-auth/NOVA_URL'
     NOVA_USERNAME: '/k8s/services-auth/NOVA_USERNAME'
-    RSK_PASSWORD: '/k8s/xroad/client/RSK/PASSWORD'
-    RSK_USERNAME: '/k8s/xroad/client/RSK/USERNAME'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
@@ -650,8 +646,6 @@ services-auth-public-api:
     DB_PASS: '/k8s/services-auth/api/DB_PASSWORD'
     IDENTITY_SERVER_CLIENT_SECRET: '/k8s/services-auth/IDENTITY_SERVER_CLIENT_SECRET'
     NATIONAL_REGISTRY_IDS_CLIENT_SECRET: '/k8s/xroad/client/NATIONAL-REGISTRY/IDENTITYSERVER_SECRET'
-    RSK_PASSWORD: '/k8s/xroad/client/RSK/PASSWORD'
-    RSK_USERNAME: '/k8s/xroad/client/RSK/USERNAME'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false

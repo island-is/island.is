@@ -29,7 +29,7 @@ interface Props {
   rules?: ControllerRules
 }
 
-export const DocumentProviderInput: FC<Props> = ({
+export const DocumentProviderInput: FC<React.PropsWithChildren<Props>> = ({
   control,
   name,
   defaultValue,

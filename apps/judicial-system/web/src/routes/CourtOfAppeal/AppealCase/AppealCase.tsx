@@ -47,10 +47,8 @@ const AppealCase = () => {
   const router = useRouter()
   const { id } = router.query
 
-  const [
-    appealCaseNumberErrorMessage,
-    setAppealCaseNumberErrorMessage,
-  ] = useState<string>('')
+  const [appealCaseNumberErrorMessage, setAppealCaseNumberErrorMessage] =
+    useState<string>('')
 
   const { data: userData } = useQuery<UserData>(UsersQuery, {
     fetchPolicy: 'no-cache',
@@ -95,7 +93,12 @@ const AppealCase = () => {
     router.push(`${destination}/${workingCase.id}`)
 
   return (
-    <PageLayout workingCase={workingCase} isLoading={false} notFound={false}>
+    <PageLayout
+      workingCase={workingCase}
+      isLoading={false}
+      notFound={false}
+      onNavigationTo={handleNavigationTo}
+    >
       <PageHeader title={formatMessage(strings.title)} />
       <FormContentContainer>
         <PageTitle>{formatMessage(strings.title)}</PageTitle>

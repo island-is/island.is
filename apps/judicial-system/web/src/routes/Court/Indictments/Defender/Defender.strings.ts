@@ -15,14 +15,12 @@ export const defender = defineMessages({
       'Notaður sem texti í alert banner á málflytjendurskjá í ákærum.',
   },
   selectDefenderHeading: {
-    id:
-      'judicial.system.core:court_indictments.defender.select_defender_heading_v1',
+    id: 'judicial.system.core:court_indictments.defender.select_defender_heading_v1',
     defaultMessage: 'Verjandi',
     description: 'Notaður sem texti fyrir val á skipaðan verjanda í ákærum.',
   },
   defendantWaivesRightToCounsel: {
-    id:
-      'judicial.system.core:court_indictments.defender.defendant_waives_right_to_counsel',
+    id: 'judicial.system.core:court_indictments.defender.defendant_waives_right_to_counsel',
     defaultMessage: '{accused} óskar ekki eftir að sér sé skipaður verjandi',
     description:
       'Notaður sem texti fyrir takka þegar ákærðu óska ekki eftir verjanda í dómaraflæði í ákærum. ',

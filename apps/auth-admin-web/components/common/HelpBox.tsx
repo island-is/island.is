@@ -7,7 +7,7 @@ interface Props {
   helpLinkText?: string
 }
 
-const HelpBox: React.FC<Props> = (props: Props) => {
+const HelpBox: React.FC<React.PropsWithChildren<Props>> = (props: Props) => {
   const [show, setShow] = useState<boolean>(false)
 
   useEffect(() => {

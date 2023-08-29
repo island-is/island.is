@@ -83,10 +83,8 @@ import ReopenModal from './Components/ReopenModal/ReopenModal'
 import CaseDocuments from './Components/CaseDocuments/CaseDocuments'
 import ShareCase from './Components/ShareCase/ShareCase'
 
-import {
-  useCourtRecordSignatureConfirmationLazyQuery,
-  useRequestCourtRecordSignatureMutation,
-} from './CourtRecordSignature.generated'
+import { useGetCourtRecordSignatureConfirmationLazyQuery } from './getCourtRecordSignatureConfirmation.generated'
+import { useRequestCourtRecordSignatureMutation } from './requestCourtRecordSignature.generated'
 import { strings } from './SignedVerdictOverview.strings'
 
 interface ModalControls {
@@ -193,10 +191,8 @@ export const SignedVerdictOverview: React.FC = () => {
   const [isReopeningCase, setIsReopeningCase] = useState<boolean>(false)
   const [modalVisible, setModalVisible] = useState<availableModals>('NoModal')
 
-  const [
-    selectedSharingInstitutionId,
-    setSelectedSharingInstitutionId,
-  ] = useState<ValueType<ReactSelectOption>>()
+  const [selectedSharingInstitutionId, setSelectedSharingInstitutionId] =
+    useState<ValueType<ReactSelectOption>>()
 
   const [
     requestCourtRecordSignatureResponse,
@@ -255,26 +251,26 @@ export const SignedVerdictOverview: React.FC = () => {
     )
   }, [workingCase.type, user])
 
-  const [
-    getCourtRecordSignatureConfirmation,
-  ] = useCourtRecordSignatureConfirmationLazyQuery({
-    fetchPolicy: 'no-cache',
-    onCompleted: (courtRecordSignatureConfirmationData) => {
-      if (
-        courtRecordSignatureConfirmationData?.courtRecordSignatureConfirmation
-      ) {
-        setCourtRecordSignatureConfirmationResponse(
-          courtRecordSignatureConfirmationData.courtRecordSignatureConfirmation as SignatureConfirmationResponse,
-        )
-        refreshCase()
-      } else {
+  const [getCourtRecordSignatureConfirmation] =
+    useGetCourtRecordSignatureConfirmationLazyQuery({
+      fetchPolicy: 'no-cache',
+      errorPolicy: 'all',
+      onCompleted: (courtRecordSignatureConfirmationData) => {
+        if (
+          courtRecordSignatureConfirmationData?.courtRecordSignatureConfirmation
+        ) {
+          setCourtRecordSignatureConfirmationResponse(
+            courtRecordSignatureConfirmationData.courtRecordSignatureConfirmation as SignatureConfirmationResponse,
+          )
+          refreshCase()
+        } else {
+          setCourtRecordSignatureConfirmationResponse({ documentSigned: false })
+        }
+      },
+      onError: () => {
         setCourtRecordSignatureConfirmationResponse({ documentSigned: false })
-      }
-    },
-    onError: () => {
-      setCourtRecordSignatureConfirmationResponse({ documentSigned: false })
-    },
-  })
+      },
+    })
 
   const [
     handleRequestCourtRecordSignature,
@@ -379,7 +375,7 @@ export const SignedVerdictOverview: React.FC = () => {
       })
 
       updateCase(workingCase.id, {
-        accusedPostponedAppealDate: (null as unknown) as string,
+        accusedPostponedAppealDate: null as unknown as string,
       })
     }
   }
@@ -392,7 +388,7 @@ export const SignedVerdictOverview: React.FC = () => {
       })
 
       updateCase(workingCase.id, {
-        prosecutorPostponedAppealDate: (null as unknown) as string,
+        prosecutorPostponedAppealDate: null as unknown as string,
       })
     }
   }
@@ -423,7 +419,7 @@ export const SignedVerdictOverview: React.FC = () => {
         setSelectedSharingInstitutionId(null)
 
         updateCase(workingCase.id, {
-          sharedWithProsecutorsOfficeId: (null as unknown) as string,
+          sharedWithProsecutorsOfficeId: null as unknown as string,
         })
       } else {
         setSharedCaseModal({
@@ -521,9 +517,9 @@ export const SignedVerdictOverview: React.FC = () => {
             <Box display="flex" justifyContent="spaceBetween" marginBottom={3}>
               <Box>
                 <OverviewHeader />
-                {workingCase.courtEndTime && (
+                {workingCase.rulingDate && (
                   <Box>
-                    <RulingDateLabel courtEndTime={workingCase.courtEndTime} />
+                    <RulingDateLabel rulingDate={workingCase.rulingDate} />
                   </Box>
                 )}
               </Box>

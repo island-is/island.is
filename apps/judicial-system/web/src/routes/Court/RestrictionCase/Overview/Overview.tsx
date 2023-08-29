@@ -47,10 +47,11 @@ import {
   restrictionsV2,
 } from '@island.is/judicial-system-web/messages'
 import { formatRequestedCustodyRestrictions } from '@island.is/judicial-system-web/src/utils/restrictions'
+import { lawsBrokenAccordion } from '@island.is/judicial-system-web/messages/Core/lawsBrokenAccordion'
 
 import { DraftConclusionModal } from '../../components'
 
-export const JudgeOverview: React.FC = () => {
+export const JudgeOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
   const {
     workingCase,
     setWorkingCase,
@@ -219,7 +220,7 @@ export const JudgeOverview: React.FC = () => {
               <AccordionItem
                 labelVariant="h3"
                 id="id_1"
-                label="Lagaákvæði sem brot varða við"
+                label={formatMessage(lawsBrokenAccordion.heading)}
               >
                 <Text whiteSpace="breakSpaces">{workingCase.lawsBroken}</Text>
               </AccordionItem>

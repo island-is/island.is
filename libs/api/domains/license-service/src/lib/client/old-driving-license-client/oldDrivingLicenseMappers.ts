@@ -86,7 +86,7 @@ export const parseDrivingLicensePayload = (
             label: getLabel('comment', locale, label),
             value: field.aths,
           },
-        ].filter((Boolean as unknown) as ExcludesFalse),
+        ].filter(Boolean as unknown as ExcludesFalse),
       })),
     },
   ]

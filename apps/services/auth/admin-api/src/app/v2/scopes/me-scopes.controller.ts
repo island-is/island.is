@@ -81,6 +81,7 @@ export class MeScopesController {
   })
   @Audit<AdminScopeDTO>({
     resources: (scope) => scope.name,
+    alsoLog: true,
   })
   create(
     @Param('tenantId') tenantId: string,
@@ -106,6 +107,7 @@ export class MeScopesController {
         auth: user,
         action: 'update',
         resources: (scope) => scope.name,
+        alsoLog: true,
         meta: {
           fields: Object.keys(input),
         },
@@ -114,6 +116,7 @@ export class MeScopesController {
         tenantId,
         scopeName,
         input,
+        user,
       }),
     )
   }

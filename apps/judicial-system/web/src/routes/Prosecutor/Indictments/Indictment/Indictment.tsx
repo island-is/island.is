@@ -39,7 +39,7 @@ import { IndictmentCountOffense } from '@island.is/judicial-system-web/src/graph
 import { IndictmentCount } from './IndictmentCount'
 import { indictment as strings } from './Indictment.strings'
 
-const Indictment: React.FC = () => {
+const Indictment: React.FC<React.PropsWithChildren<unknown>> = () => {
   const {
     workingCase,
     setWorkingCase,
@@ -213,18 +213,20 @@ const Indictment: React.FC = () => {
         `\n\n${formatMessage(strings.indictmentIntroductionAutofillCourt, {
           court: workingCase.court?.name?.replace('dómur', 'dómi'),
         })}`,
-        `\n\n\n          ${formatMessage(
-          strings.indictmentIntroductionAutofillDefendant,
-          {
-            defendantName: workingCase.defendants[0].name
-              ? applyCase('þgf', workingCase.defendants[0].name)
-              : 'Ekki skráð',
-            defendantNationalId: workingCase.defendants[0].nationalId
-              ? formatNationalId(workingCase.defendants[0].nationalId)
-              : 'Ekki skráð',
-          },
-        )}`,
-        `\n          ${workingCase.defendants[0].address}`,
+        `\n\n${workingCase.defendants.map((defendant) => {
+          return `\n          ${formatMessage(
+            strings.indictmentIntroductionAutofillDefendant,
+            {
+              defendantName: defendant.name
+                ? applyCase('þgf', defendant.name)
+                : 'Ekki skráð',
+              defendantNationalId: defendant.nationalId
+                ? formatNationalId(defendant.nationalId)
+                : 'Ekki skráð',
+            },
+          )}\n          ${defendant.address}`
+        })}
+        `,
       ]
     }
 
@@ -357,7 +359,8 @@ const Indictment: React.FC = () => {
                   setAndSendCaseToServer(
                     [
                       {
-                        requestDriversLicenseSuspension: !workingCase.requestDriversLicenseSuspension,
+                        requestDriversLicenseSuspension:
+                          !workingCase.requestDriversLicenseSuspension,
                         demands: !workingCase.requestDriversLicenseSuspension
                           ? formatMessage(strings.demandsAutofillWithSuspension)
                           : formatMessage(strings.demandsAutofill),

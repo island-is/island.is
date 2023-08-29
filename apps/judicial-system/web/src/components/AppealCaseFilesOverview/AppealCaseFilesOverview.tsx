@@ -21,7 +21,9 @@ import { CaseAppealState } from '@island.is/judicial-system-web/src/graphql/sche
 
 import { strings } from './AppealCaseFilesOverview.strings'
 
-const AppealCaseFilesOverview: React.FC = () => {
+const AppealCaseFilesOverview: React.FC<
+  React.PropsWithChildren<unknown>
+> = () => {
   const { workingCase } = useContext(FormContext)
 
   const { onOpen, fileNotFound, dismissFileNotFound } = useFileList({
@@ -66,7 +68,7 @@ const AppealCaseFilesOverview: React.FC = () => {
   const allFiles =
     user?.role === UserRole.STAFF
       ? appealRulingFiles
-      : appealCaseFiles?.concat(appealRulingFiles ? appealRulingFiles : [])
+      : appealCaseFiles?.concat(appealRulingFiles ?? [])
 
   return completedCaseStates.includes(workingCase.state) &&
     allFiles &&

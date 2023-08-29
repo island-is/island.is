@@ -75,12 +75,13 @@ const PublicVehicleSearch = ({ slice }: PublicVehicleSearchProps) => {
   const formattedRegistrationDate = vehicleInformation?.newRegDate
     ? format(new Date(vehicleInformation.newRegDate), 'do MMMM yyyy')
     : ''
-  const formattedNextVehicleMainInspectionDate = vehicleInformation?.nextVehicleMainInspection
-    ? format(
-        new Date(vehicleInformation.nextVehicleMainInspection),
-        'do MMMM yyyy',
-      )
-    : ''
+  const formattedNextVehicleMainInspectionDate =
+    vehicleInformation?.nextVehicleMainInspection
+      ? format(
+          new Date(vehicleInformation.nextVehicleMainInspection),
+          'do MMMM yyyy',
+        )
+      : ''
 
   const formattedVehicleType = formatVehicleType(vehicleInformation)
 

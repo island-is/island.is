@@ -157,7 +157,7 @@ const getModificationSuccessText = (
   })
 }
 
-const ModifyDatesModal: React.FC<Props> = ({
+const ModifyDatesModal: React.FC<React.PropsWithChildren<Props>> = ({
   workingCase,
   onSubmit,
   isSendingNotification,
@@ -165,14 +165,10 @@ const ModifyDatesModal: React.FC<Props> = ({
   setIsModifyingDates,
 }) => {
   const [modifiedValidToDate, setModifiedValidToDate] = useState<DateTime>()
-  const [
-    modifiedIsolationToDate,
-    setModifiedIsolationToDate,
-  ] = useState<DateTime>()
-  const [
-    caseModifiedExplanation,
-    setCaseModifiedExplanation,
-  ] = useState<string>()
+  const [modifiedIsolationToDate, setModifiedIsolationToDate] =
+    useState<DateTime>()
+  const [caseModifiedExplanation, setCaseModifiedExplanation] =
+    useState<string>()
 
   const { formatMessage } = useIntl()
   const { user } = useContext(UserContext)

@@ -37,7 +37,7 @@ interface InstitutionData {
   institutions: Institution[]
 }
 
-export const Users: React.FC = () => {
+export const Users: React.FC<React.PropsWithChildren<unknown>> = () => {
   const router = useRouter()
   const [selectedInstitution, setSelectedInstitution] = useState<string>()
   const { formatMessage } = useIntl()
@@ -46,13 +46,11 @@ export const Users: React.FC = () => {
     errorPolicy: 'all',
   })
 
-  const {
-    data: rawInstitutions,
-    loading: loadingInstitutions,
-  } = useQuery<InstitutionData>(InstitutionsQuery, {
-    fetchPolicy: 'no-cache',
-    errorPolicy: 'all',
-  })
+  const { data: rawInstitutions, loading: loadingInstitutions } =
+    useQuery<InstitutionData>(InstitutionsQuery, {
+      fetchPolicy: 'no-cache',
+      errorPolicy: 'all',
+    })
 
   const users = data?.users.filter((u) => {
     return selectedInstitution

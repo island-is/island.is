@@ -10,7 +10,7 @@ interface Props {
   tooltip?: string
 }
 
-const HideableText: React.FC<Props> = (props) => {
+const HideableText: React.FC<React.PropsWithChildren<Props>> = (props) => {
   const { text, onToggleVisibility, tooltip, isHidden } = props
 
   const renderVisibilityButton = () => (

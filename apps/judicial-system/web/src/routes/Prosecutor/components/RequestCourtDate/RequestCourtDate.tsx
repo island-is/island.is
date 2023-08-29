@@ -11,7 +11,7 @@ interface Props {
   onChange: (date: Date | undefined, valid: boolean) => void
 }
 
-const RequestCourtDate: React.FC<Props> = (props) => {
+const RequestCourtDate: React.FC<React.PropsWithChildren<Props>> = (props) => {
   const { workingCase, onChange } = props
   const { formatMessage } = useIntl()
 

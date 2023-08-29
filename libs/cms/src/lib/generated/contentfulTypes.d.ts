@@ -213,6 +213,9 @@ export interface IArticleFields {
 
   /** Active Translations */
   activeTranslations?: Record<string, any> | undefined
+
+  /** Sign language video */
+  signLanguageVideo?: IEmbeddedVideo | undefined
 }
 
 export interface IArticle extends Entry<IArticleFields> {
@@ -1440,6 +1443,9 @@ export interface ILatestNewsSliceFields {
   /** News tag */
   newsTag?: IGenericTag | undefined
 
+  /** Organization */
+  organization?: IOrganization | undefined
+
   /** Read more text */
   readMoreText?: string | undefined
 
@@ -1929,6 +1935,9 @@ export interface INamespace extends Entry<INamespaceFields> {
 }
 
 export interface INewsFields {
+  /** Organization */
+  organization: IOrganization
+
   /** Content status */
   contentStatus?: 'Undefined' | 'Needs work' | 'In review' | 'Done' | undefined
 
@@ -2236,6 +2245,9 @@ export interface IOrganizationFields {
 
   /** Name In Vacancy List */
   nameInVacancyList?: string | undefined
+
+  /** Reference Identifier */
+  referenceIdentifier?: string | undefined
 }
 
 export interface IOrganization extends Entry<IOrganizationFields> {
@@ -2291,6 +2303,7 @@ export interface IOrganizationPageFields {
         | ITabSection
         | ITimeline
         | ITwoColumnText
+        | ISectionWithVideo
       )[]
     | undefined
 
@@ -2443,6 +2456,9 @@ export interface IOrganizationSubpageFields {
 
   /** Featured Image */
   featuredImage?: Asset | undefined
+
+  /** Sign Language Video */
+  signLanguageVideo?: IEmbeddedVideo | undefined
 }
 
 export interface IOrganizationSubpage
@@ -2917,6 +2933,39 @@ export interface ISectionWithImage extends Entry<ISectionWithImageFields> {
   }
 }
 
+export interface ISectionWithVideoFields {
+  /** Title */
+  title: string
+
+  /** Content */
+  content: Document
+
+  /** Video */
+  video: IEmbeddedVideo
+
+  /** Link */
+  link?: ILink | undefined
+}
+
+/** A section containing a video on the left and text on the right (which wraps below the video on smaller screens) */
+
+export interface ISectionWithVideo extends Entry<ISectionWithVideoFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'sectionWithVideo'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface ISidebarCardFields {
   /** Type */
   type?:
@@ -2984,6 +3033,10 @@ export interface ISliceConnectedComponentFields {
     | 'Tækifærisleyfi/TemporaryEventLicences'
     | 'OrganizationSearchBox'
     | 'Verðbréfamiðlarar/Brokers'
+    | 'PublicVehicleSearch'
+    | 'PlateAvailableSearch'
+    | 'AircraftSearch'
+    | 'DrivingInstructorList'
     | undefined
 
   /** Localized JSON */
@@ -3280,6 +3333,9 @@ export interface ISubArticleFields {
 
   /** Show Table Of Contents */
   showTableOfContents?: boolean | undefined
+
+  /** Sign Language Video */
+  signLanguageVideo?: IEmbeddedVideo | undefined
 }
 
 /** A sub article that's a part of another main article */
@@ -3906,13 +3962,31 @@ export interface IVacancyFields {
   applicationDeadlineTo: string
 
   /** Category */
-  fieldOfWork: string
+  fieldOfWork:
+    | 'Stjórnunarstörf'
+    | 'Sérfræðistörf'
+    | 'Kennsla og rannsóknir'
+    | 'Heilbrigðisþjónusta'
+    | 'Löggæslustörf'
+    | 'Tæknistörf'
+    | 'Önnur störf'
+    | 'Skrifstofustörf'
+    | 'Sumarstörf'
 
   /** Organization */
   organization: IOrganization
 
   /** Locations */
-  locations: string[]
+  locations: (
+    | 'Án staðsetningar'
+    | 'Höfuðborgarsvæðið'
+    | 'Norðurland'
+    | 'Vesturland'
+    | 'Austurland'
+    | 'Suðurland'
+    | 'Vestfirðir'
+    | 'Suðurnes'
+  )[]
 
   /** Job Percentage */
   jobPercentage?: string | undefined
@@ -4209,6 +4283,7 @@ export type CONTENT_TYPE =
   | 'questionAndAnswer'
   | 'sectionHeading'
   | 'sectionWithImage'
+  | 'sectionWithVideo'
   | 'sidebarCard'
   | 'sliceConnectedComponent'
   | 'sliceDropdown'

@@ -50,9 +50,10 @@ export class DirectorateOfLabourRepository {
   async getApplicationInfo(
     applicationId: string,
   ): Promise<ApplicationInformation | null> {
-    const applicationInfo = await this.applicationInfo.applicationGetApplicationInformation(
-      { applicationId },
-    )
+    const applicationInfo =
+      await this.applicationInfo.applicationGetApplicationInformation({
+        applicationId,
+      })
 
     if (applicationInfo) {
       return applicationInfo
@@ -163,11 +164,10 @@ export class DirectorateOfLabourRepository {
     }
 
     try {
-      const results = await this.parentalLeaveApi.parentalLeaveGetParentalLeaves(
-        {
+      const results =
+        await this.parentalLeaveApi.parentalLeaveGetParentalLeaves({
           nationalRegistryId: nationalId,
-        },
-      )
+        })
 
       return results.parentalLeaves ?? []
     } catch (e) {
@@ -307,11 +307,10 @@ export class DirectorateOfLabourRepository {
     }
 
     try {
-      const pregnancyStatus = await this.pregnancyApi.pregnancyGetPregnancyStatus(
-        {
+      const pregnancyStatus =
+        await this.pregnancyApi.pregnancyGetPregnancyStatus({
           nationalRegistryId: nationalId,
-        },
-      )
+        })
 
       if (pregnancyStatus.hasError) {
         throw new Error(

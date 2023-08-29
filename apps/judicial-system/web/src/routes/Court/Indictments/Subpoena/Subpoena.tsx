@@ -27,20 +27,13 @@ import type { stepValidationsType } from '@island.is/judicial-system-web/src/uti
 
 import { subpoena as strings } from './Subpoena.strings'
 
-const Subpoena: React.FC = () => {
-  const {
-    workingCase,
-    setWorkingCase,
-    isLoadingWorkingCase,
-    caseNotFound,
-  } = useContext(FormContext)
+const Subpoena: React.FC<React.PropsWithChildren<unknown>> = () => {
+  const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
+    useContext(FormContext)
   const [navigateTo, setNavigateTo] = useState<keyof stepValidationsType>()
   const { formatMessage } = useIntl()
-  const {
-    courtDate,
-    handleCourtDateChange,
-    courtDateHasChanged,
-  } = useCourtArrangements(workingCase)
+  const { courtDate, handleCourtDateChange, courtDateHasChanged } =
+    useCourtArrangements(workingCase)
   const { setAndSendCaseToServer, sendNotification } = useCase()
 
   const handleNavigationTo = useCallback(

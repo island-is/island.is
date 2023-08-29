@@ -44,7 +44,7 @@ export const formatInstitutionName = (name: string | undefined) => {
   return ''
 }
 
-const PoliceDemands: React.FC = () => {
+const PoliceDemands: React.FC<React.PropsWithChildren<unknown>> = () => {
   const {
     workingCase,
     setWorkingCase,
@@ -104,9 +104,8 @@ const PoliceDemands: React.FC = () => {
         format: { court: true, institution: true, accused: true },
       },
       [CaseType.ELECTRONIC_DATA_DISCOVERY_INVESTIGATION]: {
-        text:
-          icDemands.sections.demands.prefill
-            .electronicDataDiscoveryInvestigation,
+        text: icDemands.sections.demands.prefill
+          .electronicDataDiscoveryInvestigation,
         format: {
           court: true,
           institution: true,

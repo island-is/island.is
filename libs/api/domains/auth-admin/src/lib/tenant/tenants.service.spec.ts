@@ -304,12 +304,11 @@ describe('TenantsService', () => {
         error: jest.fn(),
       }
 
-      const authAdminClientConfig: ConfigType<
-        typeof AuthAdminApiClientConfig
-      > = {
-        basePaths: {},
-        isConfigured: true,
-      }
+      const authAdminClientConfig: ConfigType<typeof AuthAdminApiClientConfig> =
+        {
+          basePaths: {},
+          isConfigured: true,
+        }
 
       // Act
       await testServer({

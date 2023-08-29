@@ -52,26 +52,19 @@ export const CaseEmailBox = ({ caseId, caseNumber }: Props) => {
   const [inputValue, setInputValue] = useState('')
 
   const { postEmailMutation, postEmailLoading } = usePostEmail()
-  const {
-    postCaseSubscriptionMutation,
-    postCaseSubscriptionLoading,
-  } = usePostCaseSubscription()
+  const { postCaseSubscriptionMutation, postCaseSubscriptionLoading } =
+    usePostCaseSubscription()
   const { email, emailVerified, getUserEmailLoading } = useFetchEmail({
     isAuthenticated: isAuthenticated,
   })
-  const {
-    deleteCaseSubscriptionMutation,
-    deleteCaseSubscriptionLoading,
-  } = useDeleteCaseSubscription()
+  const { deleteCaseSubscriptionMutation, deleteCaseSubscriptionLoading } =
+    useDeleteCaseSubscription()
 
-  const {
-    caseSubscription,
-    caseSubscriptionLoading,
-    refetchCaseSubscription,
-  } = useFetchCaseSubscription({
-    isAuthenticated: isAuthenticated,
-    caseId: caseId,
-  })
+  const { caseSubscription, caseSubscriptionLoading, refetchCaseSubscription } =
+    useFetchCaseSubscription({
+      isAuthenticated: isAuthenticated,
+      caseId: caseId,
+    })
 
   useEffect(() => {
     if (!getUserEmailLoading) {
@@ -111,12 +104,12 @@ export const CaseEmailBox = ({ caseId, caseNumber }: Props) => {
       .then(() => {
         refetchCaseSubscription()
         toast.success(
-          `${loc.postSubscriptionMutationToasts.success} ${caseNumber}.`,
+          `${loc.postSubscriptionMutationToasts.success} S-${caseNumber}.`,
         )
       })
       .catch(() =>
         toast.error(
-          `${loc.postSubscriptionMutationToasts.failure} ${caseNumber}.`,
+          `${loc.postSubscriptionMutationToasts.failure} S-${caseNumber}.`,
         ),
       )
   }
@@ -132,12 +125,12 @@ export const CaseEmailBox = ({ caseId, caseNumber }: Props) => {
       .then(() => {
         refetchCaseSubscription()
         toast.success(
-          `${loc.deleteCaseSubscriptionMutation.successBegin} ${caseNumber} ${loc.deleteCaseSubscriptionMutation.successEnd}`,
+          `${loc.deleteCaseSubscriptionMutation.successBegin} S-${caseNumber} ${loc.deleteCaseSubscriptionMutation.successEnd}`,
         )
       })
       .catch(() =>
         toast.error(
-          `${loc.deleteCaseSubscriptionMutation.failure} ${caseNumber}`,
+          `${loc.deleteCaseSubscriptionMutation.failure} S-${caseNumber}`,
         ),
       )
   }

@@ -5,6 +5,7 @@ set -euo pipefail
 : "${TEST_ENVIRONMENT:=local}"
 : "${TEST_TYPE:=smoke}"
 : "${TEST_PROJECT:=everything}"
+: "${TEST_RESULTS_S3:=}"
 
 if [[ "$*" =~ --project ]]; then
   TEST_PROJECT="$(echo "$*" | grep -oP -- '--project[= ](\S+)')"

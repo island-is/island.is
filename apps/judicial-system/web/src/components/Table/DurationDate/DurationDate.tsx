@@ -8,9 +8,9 @@ import { formatDate } from '@island.is/judicial-system/formatters'
 
 export function getDurationDate(
   state: CaseState,
-  validToDate?: string,
-  initialRulingDate?: string,
-  courtEndTime?: string,
+  validToDate?: string | null,
+  initialRulingDate?: string | null,
+  rulingDate?: string | null,
 ): string | null {
   if (
     [CaseState.REJECTED, CaseState.DISMISSED].includes(state) ||
@@ -22,8 +22,8 @@ export function getDurationDate(
       parseISO(validToDate),
       'd.M.y',
     )}`
-  } else if (courtEndTime) {
-    return `${formatDate(parseISO(courtEndTime), 'd.M.y')} - ${formatDate(
+  } else if (rulingDate) {
+    return `${formatDate(parseISO(rulingDate), 'd.M.y')} - ${formatDate(
       parseISO(validToDate),
       'd.M.y',
     )}`

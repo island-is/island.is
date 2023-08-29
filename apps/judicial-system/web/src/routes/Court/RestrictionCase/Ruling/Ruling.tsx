@@ -28,7 +28,6 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import {
   CaseDecision,
-  Defendant,
   isAcceptingCaseDecision,
 } from '@island.is/judicial-system/types'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
@@ -50,7 +49,10 @@ import {
 } from '@island.is/judicial-system/formatters'
 import useDeb from '@island.is/judicial-system-web/src/utils/hooks/useDeb'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  CaseType,
+  Defendant,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import * as constants from '@island.is/judicial-system/consts'
 
 import { rcRuling as m } from './Ruling.strings'
@@ -114,7 +116,7 @@ export function getConclusionAutofill(
       })
 }
 
-export const Ruling: React.FC = () => {
+export const Ruling: React.FC<React.PropsWithChildren<unknown>> = () => {
   const {
     workingCase,
     setWorkingCase,
@@ -123,22 +125,14 @@ export const Ruling: React.FC = () => {
     isCaseUpToDate,
   } = useContext(FormContext)
 
-  const [
-    introductionErrorMessage,
-    setIntroductionErrorMessage,
-  ] = useState<string>('')
-  const [
-    courtCaseFactsErrorMessage,
-    setCourtCaseFactsErrorMessage,
-  ] = useState<string>('')
-  const [
-    courtLegalArgumentsErrorMessage,
-    setCourtLegalArgumentsErrorMessage,
-  ] = useState<string>('')
-  const [
-    prosecutorDemandsErrorMessage,
-    setProsecutorDemandsMessage,
-  ] = useState<string>('')
+  const [introductionErrorMessage, setIntroductionErrorMessage] =
+    useState<string>('')
+  const [courtCaseFactsErrorMessage, setCourtCaseFactsErrorMessage] =
+    useState<string>('')
+  const [courtLegalArgumentsErrorMessage, setCourtLegalArgumentsErrorMessage] =
+    useState<string>('')
+  const [prosecutorDemandsErrorMessage, setProsecutorDemandsMessage] =
+    useState<string>('')
 
   const router = useRouter()
 
@@ -208,6 +202,8 @@ export const Ruling: React.FC = () => {
     [router, workingCase.id],
   )
   const stepIsValid = isRulingValidRC(workingCase)
+  const caseFiles =
+    workingCase.caseFiles?.filter((file) => !file.category) ?? []
 
   return (
     <PageLayout
@@ -230,12 +226,12 @@ export const Ruling: React.FC = () => {
             <PoliceRequestAccordionItem workingCase={workingCase} />
             <AccordionItem
               id="caseFileList"
-              label={`Rannsóknargögn (${workingCase.caseFiles?.length ?? 0})`}
+              label={`Rannsóknargögn (${caseFiles.length})`}
               labelVariant="h3"
             >
               <CaseFileList
                 caseId={workingCase.id}
-                files={workingCase.caseFiles ?? []}
+                files={caseFiles}
                 canOpenFiles={
                   user &&
                   (user.id === workingCase.judge?.id ||

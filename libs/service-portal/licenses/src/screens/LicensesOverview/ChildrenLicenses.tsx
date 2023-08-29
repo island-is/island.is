@@ -16,7 +16,10 @@ interface Props {
   data?: IdentityDocumentModelChild[] | null
 }
 
-export const ChildrenLicenses: FC<Props> = ({ data, loading }) => {
+export const ChildrenLicenses: FC<React.PropsWithChildren<Props>> = ({
+  data,
+  loading,
+}) => {
   useNamespaces('sp.license')
 
   return (

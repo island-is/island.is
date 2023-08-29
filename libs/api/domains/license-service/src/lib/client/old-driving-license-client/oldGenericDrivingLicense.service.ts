@@ -3,9 +3,10 @@ import fetch, { Response } from 'node-fetch'
 import * as kennitala from 'kennitala'
 import format from 'date-fns/format'
 import { Cache as CacheManager } from 'cache-manager'
-import { Injectable, Inject, CACHE_MANAGER } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
+import { CACHE_MANAGER } from '@nestjs/cache-manager'
 import type { Logger } from '@island.is/logging'
-import { logger, LOGGER_PROVIDER } from '@island.is/logging'
+import { logger } from '@island.is/logging'
 import { User } from '@island.is/auth-nest-tools'
 
 import { OldGenericDrivingLicenseResponse } from './oldGenericDrivingLicense.type'
@@ -46,7 +47,8 @@ const dateToPkpassDate = (date: string): string => {
 
 @Injectable()
 export class OldGenericDrivingLicenseApi
-  implements GenericLicenseClient<OldGenericDrivingLicenseResponse> {
+  implements GenericLicenseClient<OldGenericDrivingLicenseResponse>
+{
   private readonly xroadApiUrl: string
   private readonly xroadClientId: string
   private readonly xroadPath: string
