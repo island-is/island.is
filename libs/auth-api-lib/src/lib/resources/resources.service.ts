@@ -946,6 +946,7 @@ export class ResourcesService {
     domain: DomainDTO,
     name: string,
   ): Promise<[number, Domain[]]> {
+    console.log('test123')
     return this.domainModel.update(
       { ...domain },
       { where: { name: name }, returning: true },
