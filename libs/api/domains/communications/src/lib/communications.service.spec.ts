@@ -77,9 +77,8 @@ describe('communicationsService', () => {
   describe('getEmailTemplate', () => {
     it('should generate different templates', () => {
       // we know these two inputs should generate different templates
-      const contactUsTemplate = communicationsService.getEmailTemplate(
-        fakeContactUsInput,
-      )
+      const contactUsTemplate =
+        communicationsService.getEmailTemplate(fakeContactUsInput)
       const tellUsAStoryTemplate = communicationsService.getEmailTemplate(
         fakeTellUsAStoryInput,
       )
@@ -89,10 +88,11 @@ describe('communicationsService', () => {
 
   describe('getInputWithInstitutionEmail', () => {
     it('should get service web input with institution email', async () => {
-      const inputWithInstitutionEmail: ServiceWebFormsInputWithInstitutionEmail = {
-        ...fakeServiceWebInput,
-        institutionEmail: 'test@email.com',
-      }
+      const inputWithInstitutionEmail: ServiceWebFormsInputWithInstitutionEmail =
+        {
+          ...fakeServiceWebInput,
+          institutionEmail: 'test@email.com',
+        }
 
       jest
         .spyOn(communicationsService, 'getInputWithInstitutionEmail')

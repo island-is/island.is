@@ -2,7 +2,8 @@ import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { MessageDescriptor } from '@formatjs/intl'
 import { z } from 'zod'
 
-const emailRegex = /^[\w!#$%&'*+/=?`{|}~^-]+(?:\.[\w!#$%&'*+/=?`{|}~^-]+)*@(?:[A-Z0-9-]+\.)+[A-Z]{2,6}$/i
+const emailRegex =
+  /^[\w!#$%&'*+/=?`{|}~^-]+(?:\.[\w!#$%&'*+/=?`{|}~^-]+)*@(?:[A-Z0-9-]+\.)+[A-Z]{2,6}$/i
 const isValidEmail = (value: string) => emailRegex.test(value)
 
 const isValidPhoneNumber = (phoneNumber: string) => {

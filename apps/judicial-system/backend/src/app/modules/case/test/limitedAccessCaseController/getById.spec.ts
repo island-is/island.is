@@ -25,10 +25,8 @@ describe('LimitedAccessCaseController - Get by id', () => {
   let mockCaseModel: typeof Case
 
   beforeEach(async () => {
-    const {
-      caseModel,
-      limitedAccessCaseController,
-    } = await createTestingCaseModule()
+    const { caseModel, limitedAccessCaseController } =
+      await createTestingCaseModule()
 
     const updatedCase = {
       id: caseId,

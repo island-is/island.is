@@ -106,9 +106,8 @@ export const FileUploadController: FC<
       (f: UploadFile) => f.key && f.status === 'done',
     )
 
-    const uploadAnswer: UploadFileAnswer[] = onlyUploadedFiles.map(
-      transformToAnswer,
-    )
+    const uploadAnswer: UploadFileAnswer[] =
+      onlyUploadedFiles.map(transformToAnswer)
 
     setValue(id, uploadAnswer)
   }, [state, id, setValue])

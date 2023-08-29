@@ -174,8 +174,7 @@ export function ListItem({
                 <Button
                   key={action.id}
                   underlayColor={theme.color.blue600}
-                  onPress={() => action.onPress(action)}
-                >
+                  onPress={() => action.onPress(action)}>
                   <ButtonText>{action.text}</ButtonText>
                 </Button>
               ))}

@@ -366,10 +366,11 @@ export class CmsResolver {
   async getSingleArticle(
     @Args('input') { lang, slug }: GetSingleArticleInput,
   ): Promise<(Partial<Article> & { lang: Locale }) | null> {
-    const article: Article | null = await this.cmsElasticsearchService.getSingleDocumentTypeBySlug<Article>(
-      getElasticsearchIndex(lang),
-      { type: 'webArticle', slug },
-    )
+    const article: Article | null =
+      await this.cmsElasticsearchService.getSingleDocumentTypeBySlug<Article>(
+        getElasticsearchIndex(lang),
+        { type: 'webArticle', slug },
+      )
 
     if (!article) return null
 

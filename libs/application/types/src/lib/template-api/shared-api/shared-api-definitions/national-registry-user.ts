@@ -13,10 +13,9 @@ export interface ChildrenCustodyInformationParameters {
   validateHasJointCustody?: boolean
 }
 
-export const NationalRegistryUserApi = defineTemplateApi<NationalRegistryParameters>(
-  {
+export const NationalRegistryUserApi =
+  defineTemplateApi<NationalRegistryParameters>({
     action: 'nationalRegistry',
     namespace: 'NationalRegistry',
     externalDataId: 'nationalRegistry',
-  },
-)
+  })

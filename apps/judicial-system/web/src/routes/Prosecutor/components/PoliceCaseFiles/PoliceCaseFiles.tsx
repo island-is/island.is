@@ -139,8 +139,8 @@ const PoliceCaseFiles: React.FC<React.PropsWithChildren<Props>> = ({
         }),
       )
     } else {
-      newPoliceCaseFileList[target].checked = !newPoliceCaseFileList[target]
-        .checked
+      newPoliceCaseFileList[target].checked =
+        !newPoliceCaseFileList[target].checked
       setPoliceCaseFileList(newPoliceCaseFileList)
     }
   }

@@ -80,9 +80,8 @@ const Home: Screen<HomeProps> = ({
 
   const institutionSlug = getSlugPart(Router.asPath, locale === 'is' ? 2 : 3)
 
-  const institutionSlugBelongsToMannaudstorg = institutionSlug.includes(
-    'mannaudstorg',
-  )
+  const institutionSlugBelongsToMannaudstorg =
+    institutionSlug.includes('mannaudstorg')
 
   const organizationTitle = (organization && organization.title) || 'Ísland.is'
   const headerTitle = o(

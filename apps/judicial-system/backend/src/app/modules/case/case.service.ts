@@ -542,14 +542,13 @@ export class CaseService {
     theCase: Case,
     user: TUser,
   ): Promise<void> {
-    const deliverCaseFilesRecordToCourtMessages = theCase.policeCaseNumbers.map<CaseMessage>(
-      (policeCaseNumber) => ({
+    const deliverCaseFilesRecordToCourtMessages =
+      theCase.policeCaseNumbers.map<CaseMessage>((policeCaseNumber) => ({
         type: MessageType.DELIVER_CASE_FILES_RECORD_TO_COURT,
         user,
         caseId: theCase.id,
         policeCaseNumber,
-      }),
-    )
+      }))
 
     const deliverCaseFileToCourtMessages =
       theCase.caseFiles

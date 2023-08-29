@@ -21,14 +21,12 @@ export const information = {
         description: 'Anonymity status page title',
       },
       checkboxTitle: {
-        id:
-          'ta.avr.application:information.labels.anonymityStatus.checkboxTitle',
+        id: 'ta.avr.application:information.labels.anonymityStatus.checkboxTitle',
         defaultMessage: 'Nafnleynd í ökutækjaskrá',
         description: 'Anonymity status checkbox title',
       },
       checkboxSubTitle: {
-        id:
-          'ta.avr.application:information.labels.anonymityStatus.checkboxSubTitle',
+        id: 'ta.avr.application:information.labels.anonymityStatus.checkboxSubTitle',
         defaultMessage:
           'Nafnleynd í ökutækjaskrá nær einungis til þeirra upplýsinga sem veittar eru hjá Samgöngustofu.',
         description: 'Anonymity status checkbox sub title',
