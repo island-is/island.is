@@ -214,16 +214,14 @@ export class PoliceService {
             > = await res.json()
             this.responseStructure.parse(response)
 
-            return (
-              response.skjol?.map((file) => ({
-                id: file.rvMalSkjolMals_ID.toString(),
-                name: file.heitiSkjals.endsWith('.pdf')
-                  ? file.heitiSkjals
-                  : `${file.heitiSkjals}.pdf`,
-                policeCaseNumber: file.malsnumer,
-                displayDate: file.dagsStofnad,
-              })) ?? []
-            )
+            return response.skjol?.map((file) => ({
+              id: file.rvMalSkjolMals_ID.toString(),
+              name: file.heitiSkjals.endsWith('.pdf')
+                ? file.heitiSkjals
+                : `${file.heitiSkjals}.pdf`,
+              policeCaseNumber: file.malsnumer,
+              displayDate: file.dagsStofnad,
+            }))
           } else {
             const response: z.infer<
               typeof this.policeCaseFileStructure
