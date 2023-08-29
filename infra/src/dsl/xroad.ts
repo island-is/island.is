@@ -341,12 +341,10 @@ export const NationalRegistryB2C = new XroadConf({
       prod: '2304d7ca-7ed3-4188-8b6d-e1b7e0e3df7f',
     },
     NATIONAL_REGISTRY_B2C_ENDPOINT: {
-      dev:
-        'https://skraidentitydev.b2clogin.com/skraidentitydev.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token',
+      dev: 'https://skraidentitydev.b2clogin.com/skraidentitydev.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token',
       staging:
         'https://skraidentitydev.b2clogin.com/skraidentitystaging.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token',
-      prod:
-        'https://skraidentity.b2clogin.com/skraidentity.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token',
+      prod: 'https://skraidentity.b2clogin.com/skraidentity.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token',
     },
     NATIONAL_REGISTRY_B2C_SCOPE: {
       dev: 'https://skraidentitydev.onmicrosoft.com/midlun/.default',

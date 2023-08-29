@@ -210,7 +210,7 @@ export class SoffiaService {
         return isNotUser && isUnderEighteen
       })
       .map((familyChild) => formatFamilyChild(familyChild))
-      .filter((Boolean as unknown) as ExcludesFalse)
+      .filter(Boolean as unknown as ExcludesFalse)
       .sort((a, b) => {
         return (
           kennitala.info(b.nationalId).age - kennitala.info(a.nationalId).age
@@ -260,7 +260,7 @@ export class SoffiaService {
             nationalId: child.parent2,
             fullName: child.nameParent2,
           },
-      ].filter((Boolean as unknown) as ExcludesFalse)
+      ].filter(Boolean as unknown as ExcludesFalse)
     }
     return null
   }
@@ -289,7 +289,7 @@ export class SoffiaService {
           fullName: child.nameCustody2,
           text: child.custodyText2,
         },
-    ].filter((Boolean as unknown) as ExcludesFalse)
+    ].filter(Boolean as unknown as ExcludesFalse)
   }
 
   async getBirthplace(
@@ -406,9 +406,8 @@ export class SoffiaService {
       nationalId: nationalId,
     }
 
-    const userCorrectionResponse = await this.nationalRegistryApi.postUserCorrection(
-      correctionInput,
-    )
+    const userCorrectionResponse =
+      await this.nationalRegistryApi.postUserCorrection(correctionInput)
 
     return userCorrectionResponse
   }

@@ -193,8 +193,7 @@ const Child = () => {
                     title: editLink,
                     external: true,
                     skipOutboundTrack: true,
-                    url:
-                      'https://www.skra.is/umsoknir/eydublod-umsoknir-og-vottord/stok-vara/?productid=703760ac-686f-11e6-943e-005056851dd2',
+                    url: 'https://www.skra.is/umsoknir/eydublod-umsoknir-og-vottord/stok-vara/?productid=703760ac-686f-11e6-943e-005056851dd2',
                   }
                 : undefined
             }
@@ -261,8 +260,7 @@ const Child = () => {
                     title: editLink,
                     external: true,
                     skipOutboundTrack: true,
-                    url:
-                      'https://www.skra.is/umsoknir/rafraen-skil/tru-eda-lifsskodunarfelag-barna-15-ara-og-yngri/',
+                    url: 'https://www.skra.is/umsoknir/rafraen-skil/tru-eda-lifsskodunarfelag-barna-15-ara-og-yngri/',
                   }
                 : undefined
             }

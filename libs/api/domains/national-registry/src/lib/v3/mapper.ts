@@ -117,7 +117,7 @@ export function formatHousing(
           fullName: f.nafn,
         }
       })
-      .filter((Boolean as unknown) as ExcludesFalse),
+      .filter(Boolean as unknown as ExcludesFalse),
     residence: housing?.adsetur ? formatAddress(housing?.adsetur) : null,
     address: addressData ? formatAddress(addressData) : null,
   }

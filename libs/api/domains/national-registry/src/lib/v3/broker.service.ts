@@ -87,7 +87,7 @@ export class BrokerService {
           fullName: l.logForeldriNafn,
         }
       })
-      .filter((Boolean as unknown) as ExcludesFalse)
+      .filter(Boolean as unknown as ExcludesFalse)
   }
 
   async getCustodians(
@@ -118,7 +118,7 @@ export class BrokerService {
             ) ?? null,
         } as Custodian
       })
-      .filter((Boolean as unknown) as ExcludesFalse)
+      .filter(Boolean as unknown as ExcludesFalse)
 
     return custodians ?? null
   }

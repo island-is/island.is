@@ -47,15 +47,13 @@ export class NationalRegistryV3ClientService {
   async getCustodians(
     nationalId: string,
   ): Promise<Array<EinstaklingurDTOForsjaItem> | null> {
-    const child = await this.individualApi.midlunV02EinstaklingarNationalIdForsjaGet(
-      {
+    const child =
+      await this.individualApi.midlunV02EinstaklingarNationalIdForsjaGet({
         nationalId,
-      },
-    )
+      })
 
     return (
-      child?.forsjaradilar?.filter((Boolean as unknown) as ExcludesFalse) ??
-      null
+      child?.forsjaradilar?.filter(Boolean as unknown as ExcludesFalse) ?? null
     )
   }
 
