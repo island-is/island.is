@@ -41,9 +41,9 @@ export const Spouse: Form = buildForm({
     }),
     buildSection({
       condition: (_, externalData) =>
-        ((externalData as unknown) as ExternalData)?.taxDataSpouse?.data
+        (externalData as unknown as ExternalData)?.taxDataSpouse?.data
           ?.municipalitiesDirectTaxPayments?.success === false ||
-        ((externalData as unknown) as ExternalData)?.taxDataSpouse?.data
+        (externalData as unknown as ExternalData)?.taxDataSpouse?.data
           ?.municipalitiesPersonalTaxReturn?.personalTaxReturn == null,
       id: Routes.SPOUSETAXRETURNFILES,
       title: m.taxReturnForm.general.sectionTitle,

@@ -191,12 +191,14 @@ export class PoliceService {
                   rvMalSkjolMals_ID: string
                   heitiSkjals: string
                   malsnumer: string
+                  dagsStofnad: string
                 }) => ({
                   id: file.rvMalSkjolMals_ID,
                   name: file.heitiSkjals.endsWith('.pdf')
                     ? file.heitiSkjals
                     : `${file.heitiSkjals}.pdf`,
                   policeCaseNumber: file.malsnumer,
+                  displayDate: file.dagsStofnad,
                 }),
               ) ?? []
             )
@@ -208,12 +210,14 @@ export class PoliceService {
                 rvMalSkjolMals_ID: string
                 heitiSkjals: string
                 malsnumer: string
+                dagsStofnad: string
               }) => ({
                 id: file.rvMalSkjolMals_ID,
                 name: file.heitiSkjals.endsWith('.pdf')
                   ? file.heitiSkjals
                   : `${file.heitiSkjals}.pdf`,
                 policeCaseNumber: file.malsnumer,
+                displayDate: file.dagsStofnad,
               }),
             )
           }

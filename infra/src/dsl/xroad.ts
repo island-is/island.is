@@ -31,9 +31,8 @@ export class XroadConf<I extends XroadSectionConfig> implements XroadConfig {
   }
 }
 
-export type XRoadEnvs<
-  T extends XroadSectionConfig
-> = T extends XroadSectionConfig ? keyof T['env'] : never
+export type XRoadEnvs<T extends XroadSectionConfig> =
+  T extends XroadSectionConfig ? keyof T['env'] : never
 
 export const Base = new XroadConf({
   env: {
@@ -163,23 +162,11 @@ export const HealthInsurance = new XroadConf({
 
 export const RskProcuring = new XroadConf({
   env: {
-    XROAD_RSK_PROCURING_REDIS_NODES: {
-      dev:
-        '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]',
-      staging:
-        '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]',
-      prod:
-        '["clustercfg.general-redis-cluster-group.dnugi2.euw1.cache.amazonaws.com:6379"]',
-    },
     XROAD_RSK_PROCURING_PATH: {
       dev: 'IS-DEV/GOV/10006/Skatturinn/relationships-v1',
       staging: 'IS-TEST/GOV/5402696029/Skatturinn/relationships-v1',
       prod: 'IS/GOV/5402696029/Skatturinn/relationships-v1',
     },
-  },
-  secrets: {
-    RSK_USERNAME: '/k8s/xroad/client/RSK/USERNAME',
-    RSK_PASSWORD: '/k8s/xroad/client/RSK/PASSWORD',
   },
 })
 
@@ -191,11 +178,9 @@ export const Payment = new XroadConf({
       prod: 'IS/GOV/5402697509/FJS-Public',
     },
     XROAD_PAYMENT_BASE_CALLBACK_URL: {
-      dev:
-        'XROAD:/IS-DEV/GOV/10000/island-is/application-callback-v2/application-payment/',
+      dev: 'XROAD:/IS-DEV/GOV/10000/island-is/application-callback-v2/application-payment/',
       staging: 'XROAD:',
-      prod:
-        'XROAD:/IS/GOV/5501692829/island-is/application-callback-v2/application-payment/',
+      prod: 'XROAD:/IS/GOV/5501692829/island-is/application-callback-v2/application-payment/',
     },
     XROAD_PAYMENT_ADDITION_CALLBACK_URL: '/',
   },
@@ -220,8 +205,7 @@ export const Properties = new XroadConf({
     XROAD_PROPERTIES_SERVICE_V2_PATH: {
       dev: 'IS-DEV/GOV/10033/HMS-Protected/Fasteignir-v1',
       staging: 'IS-TEST/GOV/5812191480/HMS-Protected/Fasteignir-v1',
-      prod:
-        'IS/GOV/5812191480/Husnaeds-og-mannvirkjastofnun-Protected/Fasteignir-v1',
+      prod: 'IS/GOV/5812191480/Husnaeds-og-mannvirkjastofnun-Protected/Fasteignir-v1',
     },
   },
   secrets: {
@@ -521,15 +505,13 @@ export const TransportAuthority = new XroadConf({
       dev: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-PlateOrdering-V1',
       staging:
         'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-PlateOrdering-V1',
-      prod:
-        'IS/GOV/5405131040/Samgongustofa-Protected/Vehicle-PlateOrdering-V1',
+      prod: 'IS/GOV/5405131040/Samgongustofa-Protected/Vehicle-PlateOrdering-V1',
     },
     XROAD_VEHICLE_PLATE_RENEWAL_PATH: {
       dev: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-PlateOwnership-V1',
       staging:
         'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-PlateOwnership-V1',
-      prod:
-        'IS/GOV/5405131040/Samgongustofa-Protected/Vehicle-PlateOwnership-V1',
+      prod: 'IS/GOV/5405131040/Samgongustofa-Protected/Vehicle-PlateOwnership-V1',
     },
     XROAD_VEHICLE_PRINTING_PATH: {
       dev: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Printing-V1',

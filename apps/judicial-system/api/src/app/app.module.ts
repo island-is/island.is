@@ -23,6 +23,7 @@ import {
   DefendantModule,
   IndictmentCountModule,
   fileModuleConfig,
+  authModuleConfig,
   featureModuleConfig,
 } from './modules'
 import { ConfigModule } from '@nestjs/config'
@@ -65,7 +66,12 @@ const autoSchemaFile = environment.production
     ProblemModule.forRoot({ logAllErrors: true }),
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [fileModuleConfig, auditTrailModuleConfig, featureModuleConfig],
+      load: [
+        fileModuleConfig,
+        auditTrailModuleConfig,
+        featureModuleConfig,
+        authModuleConfig,
+      ],
     }),
   ],
 })
