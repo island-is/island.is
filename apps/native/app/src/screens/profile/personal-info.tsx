@@ -7,14 +7,12 @@ import {useIntl} from 'react-intl';
 import {testIDs} from '../../utils/test-ids';
 import {TabPersonalInfo} from './tab-personal-info';
 
-const {
-  getNavigationOptions,
-  useNavigationOptions,
-} = createNavigationOptionHooks(() => ({
-  topBar: {
-    visible: false,
-  },
-}));
+const {getNavigationOptions, useNavigationOptions} =
+  createNavigationOptionHooks(() => ({
+    topBar: {
+      visible: false,
+    },
+  }));
 
 export const PersonalInfoScreen: NavigationFunctionComponent = ({
   componentId,

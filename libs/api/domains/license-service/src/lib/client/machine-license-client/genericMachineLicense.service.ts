@@ -32,7 +32,8 @@ const LOG_CATEGORY = 'machinelicense-service'
 
 @Injectable()
 export class GenericMachineLicenseService
-  implements GenericLicenseClient<VinnuvelaDto> {
+  implements GenericLicenseClient<VinnuvelaDto>
+{
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private machineApi: VinnuvelaApi,

@@ -24,7 +24,8 @@ export class ApiScopeService {
       domainName: input.domain,
       lang: input.lang,
       // If we fix our openApi generation to support enumName to alias the enum type we can fix this.
-      direction: (input.direction as unknown) as DomainsControllerFindScopesDirectionEnum,
+      direction:
+        input.direction as unknown as DomainsControllerFindScopesDirectionEnum,
     })
   }
 

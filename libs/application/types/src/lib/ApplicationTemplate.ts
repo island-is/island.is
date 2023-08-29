@@ -16,7 +16,7 @@ import { AllowedDelegation } from './ApplicationAllowedDelegations'
 export interface ApplicationTemplate<
   TContext extends ApplicationContext,
   TStateSchema extends ApplicationStateSchema<TEvents>,
-  TEvents extends EventObject
+  TEvents extends EventObject,
 > {
   /**
    * @deprecated Use featureFlag instead.

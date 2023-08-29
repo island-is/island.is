@@ -653,7 +653,7 @@ const EventModal = ({
             </Inline>
           )}
           {Boolean(event.body) &&
-            renderSlices([(event.body as unknown) as SliceType])}
+            renderSlices([event.body as unknown as SliceType])}
           {event.link && (
             <Link href={event.link} legacyBehavior>
               <Button variant="text" icon="arrowForward">

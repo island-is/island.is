@@ -90,9 +90,8 @@ const AircraftSearch = ({ slice }: AircraftSearchProps) => {
 
   const [selectedPage, setSelectedPage] = useState(1)
   const pageSize = Number(slice?.configJson?.pageSize ?? DEFAULT_PAGE_SIZE)
-  const [latestAircraftListResponse, setLatestAircraftListResponse] = useState<
-    typeof data.aircraftRegistryAllAircrafts
-  >(null)
+  const [latestAircraftListResponse, setLatestAircraftListResponse] =
+    useState<typeof data.aircraftRegistryAllAircrafts>(null)
   const [errorOccurred, setErrorOccurred] = useState(false)
 
   const [search, { data, loading, called }] = useLazyQuery<

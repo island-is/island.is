@@ -779,10 +779,11 @@ ArticleScreen.getProps = async ({ apolloClient, query, locale }) => {
   let stepOptionsFromNamespace: any = []
 
   if (article.stepper)
-    stepOptionsFromNamespace = await stepperUtils.getStepOptionsFromUIConfiguration(
-      article.stepper as StepperSchema,
-      apolloClient,
-    )
+    stepOptionsFromNamespace =
+      await stepperUtils.getStepOptionsFromUIConfiguration(
+        article.stepper as StepperSchema,
+        apolloClient,
+      )
 
   return {
     article,

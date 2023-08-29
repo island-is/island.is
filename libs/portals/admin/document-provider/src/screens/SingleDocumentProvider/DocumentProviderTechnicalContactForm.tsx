@@ -36,14 +36,10 @@ export const DocumentProviderTechnicalContactForm: FC<
     formState: { errors },
   } = useForm<UseFormProps>()
 
-  const {
-    updateTechnicalContact,
-    loading: loadingUpdate,
-  } = useUpdateTechnicalContact(organisationId)
-  const {
-    createTechnicalContact,
-    loading: loadingCreate,
-  } = useCreateTechnicalContact(organisationId, organisationNationalId)
+  const { updateTechnicalContact, loading: loadingUpdate } =
+    useUpdateTechnicalContact(organisationId)
+  const { createTechnicalContact, loading: loadingCreate } =
+    useCreateTechnicalContact(organisationId, organisationNationalId)
 
   const onSubmit = (data: { technicalContact: Contact }) => {
     if (data?.technicalContact && technicalContact) {

@@ -261,18 +261,12 @@ const Category: Screen<CategoryProps> = ({
       return a.localeCompare(b)
     })
 
-  const sortedGroups = Object.values<ArticleGroup & { groupSlug: string }>(
-    groups,
-  ).sort((a, b) => {
-    if (!a.importance || !b.importance) {
-      return a.importance ? -1 : b.importance ? 1 : sortAlpha('title')(a, b)
-    }
-    return a.importance > b.importance
-      ? -1
-      : a.importance === b.importance
-      ? sortAlpha('title')(a, b)
-      : 1
-  })
+  const sortedGroups = Object.values(groups).sort(
+    (a: ArticleGroup, b: ArticleGroup) =>
+      a.importance > b.importance
+        ? -1
+        : a.importance === b.importance && sortAlpha('title')(a, b),
+  )
 
   const ArticleGroupComponent = ({
     groupSlug,

@@ -13,15 +13,15 @@ export const GET_TAPS_QUERY = gql`
   }
 `
 
-export const financeRoutesLoader: WrappedLoaderFn = ({
-  client,
-}) => async () => {
-  try {
-    const { data } = await client.query<Query>({
-      query: GET_TAPS_QUERY,
-    })
-    return data?.getCustomerTapControl
-  } catch {
-    return null
+export const financeRoutesLoader: WrappedLoaderFn =
+  ({ client }) =>
+  async () => {
+    try {
+      const { data } = await client.query<Query>({
+        query: GET_TAPS_QUERY,
+      })
+      return data?.getCustomerTapControl
+    } catch {
+      return null
+    }
   }
-}
