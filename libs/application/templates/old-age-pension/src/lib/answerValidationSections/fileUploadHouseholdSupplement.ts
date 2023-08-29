@@ -18,10 +18,8 @@ export const fileUploadHouseholdSupplement = (
   const obj = newAnswer as Record<string, Answer>
   const { FILEUPLOADHOUSEHOLDSUPPLEMENT } = AnswerValidationConstants
 
-  const {
-    householdSupplementChildren,
-    householdSupplementHousing,
-  } = getApplicationAnswers(application.answers)
+  const { householdSupplementChildren, householdSupplementHousing } =
+    getApplicationAnswers(application.answers)
   if (householdSupplementChildren === YES && obj.schoolConfirmation) {
     if (
       isEmpty((obj as { schoolConfirmation: unknown[] }).schoolConfirmation)

@@ -49,12 +49,8 @@ export const Review: FC<ReviewScreenProps> = ({
 }) => {
   const editable = field.props?.editable ?? false
   const { formatMessage } = useLocale()
-  const {
-    employmentStatus,
-    applicationType,
-    connectedApplications,
-    comment,
-  } = getApplicationAnswers(application.answers)
+  const { employmentStatus, applicationType, connectedApplications, comment } =
+    getApplicationAnswers(application.answers)
   const { state } = application
 
   const hasError = (id: string) => get(errors, id) as string

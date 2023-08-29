@@ -365,8 +365,7 @@ export const oldAgePensionFormMessage: MessageDir = {
       description: 'Children in your care',
     },
     childPensionTableDescription: {
-      id:
-        'oap.application:connected.applications.childPension.table.description',
+      id: 'oap.application:connected.applications.childPension.table.description',
       defaultMessage:
         'Samkvæmt uppflettingu í þjóðskrá hefur þú forsjá með eftirfarandi barni/börnum. Ef barn er ekki með sama lögheimili og þú verður þú að skila inn meðlagssamningi. ATH ef eftirfarandi upplýsingar eru ekki réttar þá þarf að breyta þeim í Þjóðskrá og koma svo aftur til að klára umsóknina.',
       description: 'translation..',
@@ -377,8 +376,7 @@ export const oldAgePensionFormMessage: MessageDir = {
       description: 'Children',
     },
     noChildPensionFoundTableDescription: {
-      id:
-        'oap.application:connected.applications.no.childPension.table.description',
+      id: 'oap.application:connected.applications.no.childPension.table.description',
       defaultMessage:
         'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
       description: 'translation..',
@@ -389,14 +387,12 @@ export const oldAgePensionFormMessage: MessageDir = {
       description: 'Add child',
     },
     childPensionTableHeaderName: {
-      id:
-        'oap.application:connected.applications.child.pension.table.header.name',
+      id: 'oap.application:connected.applications.child.pension.table.header.name',
       defaultMessage: 'Nafn',
       description: 'Name',
     },
     childPensionTableHeaderId: {
-      id:
-        'oap.application:connected.applications.child.pension.table.header.id',
+      id: 'oap.application:connected.applications.child.pension.table.header.id',
       defaultMessage: 'Kennitala / fæðingardagur',
       description: 'National ID',
     },
@@ -422,8 +418,7 @@ export const oldAgePensionFormMessage: MessageDir = {
       description: 'Registration of a child',
     },
     householdSupplementDescription: {
-      id:
-        'oap.application:connected.applications.household.supplement.description',
+      id: 'oap.application:connected.applications.household.supplement.description',
       defaultMessage:
         'Til að eiga rétt á heimilisuppbót verður umsækjandi að vera einhleypur og búa einn. Einnig er heimilt að greiða heimilisuppbót til lífeyrisþega ef maki dvelur á stofnun fyrir aldraða. Tvær undantekningar eru á þessu: býr með barni/börnum yngri en 18 ára eða 18-25 ára ungmenni/um  sem er í námi eða ef ungmenni yngra en 25 ára er með tímabundið aðsetur fjarri lögheimili vegna náms.',
       description:
@@ -435,34 +430,29 @@ export const oldAgePensionFormMessage: MessageDir = {
       description: 'Where do you live?',
     },
     householdSupplementHousingOwner: {
-      id:
-        'oap.application:connected.applications.household.supplement.housing.owner',
+      id: 'oap.application:connected.applications.household.supplement.housing.owner',
       defaultMessage: 'í eigin húsnæði',
       description: 'Live in own place',
     },
     householdSupplementHousingRenter: {
-      id:
-        'oap.application:connected.applications.household.supplement.housing.renter',
+      id: 'oap.application:connected.applications.household.supplement.housing.renter',
       defaultMessage: 'í leiguhúsnæði',
       description: 'Live in a rented place',
     },
     householdSupplementChildrenBetween18And25: {
-      id:
-        'oap.application:connected.applications.household.supplement.children.betweem18And25',
+      id: 'oap.application:connected.applications.household.supplement.children.betweem18And25',
       defaultMessage:
         'Býr ungmenni á aldrinum 18-25 ára á heimilinu sem er í námi?',
       description:
         'Does a young person aged 18-25 live in the household who is studying?',
     },
     householdSupplementAlertTitle: {
-      id:
-        'oap.application:connected.applications.household.supplement.alert.title',
+      id: 'oap.application:connected.applications.household.supplement.alert.title',
       defaultMessage: 'Athuga',
       description: 'Attention',
     },
     householdSupplementAlertDescription: {
-      id:
-        'oap.application:connected.applications.household.supplement.alert.description',
+      id: 'oap.application:connected.applications.household.supplement.alert.description',
       defaultMessage:
         'Samkvæmt uppflettingu í Þjóðskrá býr einstaklingur eldri en 25 ára á sama lögheimili og þú. Ef þú telur þetta vera vitlaust skaltu hafa samband við Þjóðskrá til að laga þetta. Þegar þú ert búinn að gera viðeigandi breytingar hjá Þjóðskrá getur þú haldið áfram með umsóknina og skila inn skjali því til staðfestingar hér aftar í ferlinu.',
       description:
@@ -677,8 +667,7 @@ export const oldAgePensionFormMessage: MessageDir = {
       description: 'Early retirement attachment',
     },
     periodAttachmentForEarlyRetirementDescription: {
-      id:
-        'oap.application:period.attachedment.for.early.retirement.description',
+      id: 'oap.application:period.attachedment.for.early.retirement.description',
       defaultMessage:
         'Hér getur þú skilað yfirliti úr lífeyrisgátt sem þú hefur áunnið þér réttindi í. Athugaðu að skjalið þarf að vera á .pdf formi.',
       description:
@@ -950,14 +939,12 @@ export const oldAgePensionFormMessage: MessageDir = {
         "Here you can upload a certificate of a young person's school attendance. Note that the document must be in .pdf format.",
     },
     childPensionTitle: {
-      id:
-        'oap.application:fileUpload.child.pension.not.lives.with.applicant.title',
+      id: 'oap.application:fileUpload.child.pension.not.lives.with.applicant.title',
       defaultMessage: 'Fylgiskjöl barnalífeyris',
       description: 'Child pension agreement',
     },
     childPensionNotLivesWithApplicantDescription: {
-      id:
-        'oap.application:fileUpload.child.pension.not.lives.with.applicant.description',
+      id: 'oap.application:fileUpload.child.pension.not.lives.with.applicant.description',
       defaultMessage:
         'Hér getur þú skilað meðlagsúrskurði eða samningi frá sýslumanni vegna barns/barna sem er ekki með lögheimili hjá þér. Athugaðu að skjalið þarf að vera á .pdf formi.',
       description: 'english translation',

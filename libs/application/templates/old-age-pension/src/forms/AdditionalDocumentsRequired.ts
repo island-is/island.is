@@ -59,9 +59,8 @@ export const AdditionalDocumentsRequired: Form = buildForm({
               refetchApplicationAfterSubmit: true,
               actions: [
                 {
-                  name:
-                    oldAgePensionFormMessage.fileUpload
-                      .additionalDocumentsEditSubmit,
+                  name: oldAgePensionFormMessage.fileUpload
+                    .additionalDocumentsEditSubmit,
                   type: 'primary',
                   event: 'APPROVE',
                 },

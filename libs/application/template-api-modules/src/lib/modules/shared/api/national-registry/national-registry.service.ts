@@ -278,11 +278,8 @@ export class NationalRegistryService extends BaseTemplateApiService {
   }: TemplateApiModuleActionProps): Promise<
     NationalRegistryResidenceHistory[] | null
   > {
-    const residenceHistory:
-      | NationalRegistryResidenceHistory[]
-      | null = await this.nationalRegistryApi.getResidenceHistory(
-      auth.nationalId,
-    )
+    const residenceHistory: NationalRegistryResidenceHistory[] | null =
+      await this.nationalRegistryApi.getResidenceHistory(auth.nationalId)
 
     if (!residenceHistory) {
       throw new TemplateApiError(
@@ -300,9 +297,8 @@ export class NationalRegistryService extends BaseTemplateApiService {
   async getCohabitants({
     auth,
   }: TemplateApiModuleActionProps): Promise<string[] | null> {
-    const cohabitants:
-      | string[]
-      | null = await this.nationalRegistryApi.getCohabitants(auth.nationalId)
+    const cohabitants: string[] | null =
+      await this.nationalRegistryApi.getCohabitants(auth.nationalId)
 
     if (!cohabitants) {
       throw new TemplateApiError(

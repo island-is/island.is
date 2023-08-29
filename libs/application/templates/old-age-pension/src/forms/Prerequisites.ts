@@ -172,9 +172,8 @@ export const PrerequisitesForm: Form = buildForm({
                       oldAgePensionFormMessage.pre.pensionFundAlertDescription,
                     doesNotRequireAnswer: true,
                     condition: (answers) => {
-                      const { pensionFundQuestion } = getApplicationAnswers(
-                        answers,
-                      )
+                      const { pensionFundQuestion } =
+                        getApplicationAnswers(answers)
 
                       return pensionFundQuestion === NO
                     },
@@ -191,9 +190,8 @@ export const PrerequisitesForm: Form = buildForm({
                       name: oldAgePensionFormMessage.pre.startApplication,
                       type: 'primary',
                       condition: (answers) => {
-                        const { pensionFundQuestion } = getApplicationAnswers(
-                          answers,
-                        )
+                        const { pensionFundQuestion } =
+                          getApplicationAnswers(answers)
 
                         return pensionFundQuestion !== NO
                       },
