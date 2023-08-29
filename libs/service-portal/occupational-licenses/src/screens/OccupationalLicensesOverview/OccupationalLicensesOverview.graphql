@@ -15,20 +15,20 @@ query getOccupationalLicenses {
     count
     items {
       ... on OccupationalLicensesEducationalLicense {
-        id
-        school
-        programme
-        date
+        __typename
+        type
+        profession
+        validFrom
         isValid
+        id
       }
       ... on OccupationalLicensesHealthDirectorateLicense {
-        legalEntityId
-        name
+        __typename
+        holderName
+        number
+        type
         profession
-        license
-        licenseNumber
         validFrom
-        validTo
         isValid
       }
     }

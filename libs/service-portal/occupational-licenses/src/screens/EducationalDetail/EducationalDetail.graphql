@@ -13,10 +13,10 @@ query getEducationalLicenseById($id: String!) {
   }
   OccupationalLicensesEducationalLicense(id: $id) {
     id
-    school
-    programme
-    date
-    url
+    type
+    profession
+    validFrom
+    downloadUrl
     isValid
   }
 }

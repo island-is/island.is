@@ -1,27 +1,27 @@
-import { Field, ID, ObjectType } from '@nestjs/graphql'
+import { Field, ObjectType } from '@nestjs/graphql'
+import { OccupationalLicense } from './occupationalLicense.model'
 
-@ObjectType('OccupationalLicensesHealthDirectorateLicense')
-export class HealthDirectorateLicense {
-  @Field(() => ID)
+@ObjectType('OccupationalLicensesHealthDirectorateLicense', {
+  implements: () => OccupationalLicense,
+})
+export class HealthDirectorateLicense implements OccupationalLicense {
+  @Field(() => String)
   legalEntityId!: string
 
   @Field(() => String, { nullable: true })
-  name?: string
+  holderName?: string
+
+  @Field(() => String)
+  profession!: string
+
+  @Field(() => String)
+  type!: string
 
   @Field(() => String, { nullable: true })
-  profession?: string | null
+  number?: string | null
 
-  @Field(() => String, { nullable: true })
-  license?: string | null
-
-  @Field(() => String, { nullable: true })
-  licenseNumber?: string | null
-
-  @Field(() => Date, { nullable: true })
-  validFrom?: Date | null
-
-  @Field(() => Date, { nullable: true })
-  validTo?: Date | null
+  @Field(() => String)
+  validFrom!: string
 
   @Field(() => Boolean)
   isValid!: boolean

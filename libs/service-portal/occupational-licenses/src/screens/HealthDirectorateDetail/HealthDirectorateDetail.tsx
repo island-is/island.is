@@ -55,7 +55,7 @@ export const EducationDetail = () => {
     (data?.getOrganizations?.items as Array<Organization>) ?? []
 
   const organizationImage = getOrganizationLogoUrl(
-    license.name ?? '',
+    license.type ?? '',
     organizations,
     120,
   )
@@ -68,7 +68,7 @@ export const EducationDetail = () => {
       name={user.profile.name}
       dateOfBirth={birthday ? formatDateFns(birthday, 'dd.mm.yyyy') : undefined}
       profession={license.profession}
-      licenseType={license.license}
+      licenseType={license.type}
       publisher={formatMessage(om.theDirectorateOfHealth)}
       dateOfIssue={
         license.validFrom

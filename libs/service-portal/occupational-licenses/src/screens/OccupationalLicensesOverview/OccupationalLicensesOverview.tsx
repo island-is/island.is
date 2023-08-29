@@ -11,11 +11,32 @@ import {
 import { Organization } from '@island.is/shared/types'
 import { getOrganizationLogoUrl } from '@island.is/shared/utils'
 
-import { EducationActionCard } from '../../components/EducationActionCard'
-import { HealthDirectorateActionCard } from '../../components/HealthDirectorateActionCard'
 import { olMessage as om } from '../../lib/messages'
 import LicenceActionCard from '../../components/LicenceActionCard'
 import { OccupationalLicensesPaths } from '../../lib/paths'
+import { OccupationalLicense } from '@island.is/api/schema'
+
+// const createLicenseUrl = (license: OccupationalLicense) => {
+//   switch (license.__typename) {
+//     case 'OccupationalLicensesEducationalLicense':
+//       return OccupationalLicensesPaths.OccupationalLicensesEducationDetail.replace(
+//         ':id',
+//         license.id,
+//       ).replace(
+//         ':type',
+//         license.profession.charAt(0).toUpperCase() +
+//           license.profession.slice(1),
+//       )
+//     case 'OccupationalLicensesHealthDirectorateLicense':
+//       if (!license.number || !license.profession) return undefined
+//       return OccupationalLicensesPaths.OccupationalLicensesHealthDirectorateDetail.replace(
+//         ':id',
+//         license.number,
+//       ).replace(':type', license.profession)
+//     default:
+//       return undefined
+//   }
+// }
 
 const OccupationalLicensesOverview = () => {
   const { data, loading, error } = useGetOccupationalLicensesQuery({})
@@ -57,39 +78,23 @@ const OccupationalLicensesOverview = () => {
             <EmptyState title={m.noDataFound} />
           )}
         <Stack space={2}>
-          {data?.occupationalLicenses?.items.map((license, index) =>
-            license.__typename === 'OccupationalLicensesEducationalLicense' ? (
+          {data?.occupationalLicenses?.items.map((license, index) => {
+            // const url = createLicenseUrl(license as OccupationalLicense)
+            return (
               <LicenceActionCard
-                title={license.school}
-                date={license.date}
-                url={OccupationalLicensesPaths.OccupationalLicensesEducationDetail.replace(
-                  ':id',
-                  license.id,
-                ).replace(
-                  ':type',
-                  license.programme.charAt(0).toUpperCase() +
-                    license.programme.slice(1),
-                )}
+                key={index}
+                type={license.type ?? undefined}
+                validFrom={license.validFrom ?? undefined}
+                // url={url}
                 image={getOrganizationLogoUrl(
-                  license.school ?? '',
+                  license.type ?? '',
                   organizations,
                   120,
                 )}
                 isValid={license.isValid}
               />
-            ) : license.__typename ===
-              'OccupationalLicensesHealthDirectorateLicense' ? (
-              <HealthDirectorateActionCard
-                key={index}
-                {...license}
-                orgImage={getOrganizationLogoUrl(
-                  license.name ?? '',
-                  organizations,
-                  120,
-                )}
-              />
-            ) : null,
-          )}
+            )
+          })}
         </Stack>
       </Box>
     </Box>

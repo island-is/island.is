@@ -4,16 +4,16 @@ import { olMessage as ol } from '../lib/messages'
 import { m } from '@island.is/service-portal/core'
 
 type LicenseActionCardProps = {
-  title: string
-  date: string
-  url: string
-  image: string
+  type?: string
+  validFrom?: string | Date
+  url?: string
+  image?: string
   isValid: boolean
 }
 
 export const LicenceActionCard: React.FC<LicenseActionCardProps> = ({
-  title,
-  date,
+  type,
+  validFrom,
   url,
   image,
   isValid,
@@ -21,8 +21,8 @@ export const LicenceActionCard: React.FC<LicenseActionCardProps> = ({
   const { formatMessage } = useLocale()
   return (
     <ActionCard
-      heading={title}
-      text={`${formatMessage(ol.dayOfPublication)}: ${date}`}
+      heading={type}
+      text={`${formatMessage(ol.dayOfPublication)}: ${validFrom}`}
       tag={{
         label: isValid
           ? formatMessage(ol.validLicense)

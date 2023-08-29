@@ -1,18 +1,25 @@
-import { createUnionType } from '@nestjs/graphql'
-import { EducationalLicense } from './educationalLicense.model'
+import { Field, InterfaceType } from '@nestjs/graphql'
 import { HealthDirectorateLicense } from './healthDirectorateLicense.model'
+import { EducationalLicense } from './educationalLicense.model'
 
-export const OccupationalLicense = createUnionType({
-  name: 'OccupationalLicense',
-  types: () => [HealthDirectorateLicense, EducationalLicense] as const,
-  resolveType(value) {
-    if ('legalEntityId' in value) {
+@InterfaceType({
+  resolveType(license) {
+    if (license.legalEntityId) {
       return HealthDirectorateLicense
     }
-    if ('id' in value) {
-      return EducationalLicense
-    }
-
-    return null
+    return EducationalLicense
   },
 })
+export abstract class OccupationalLicense {
+  @Field(() => String)
+  type!: string
+
+  @Field(() => String)
+  profession!: string
+
+  @Field(() => Boolean)
+  isValid!: boolean
+
+  @Field(() => String)
+  validFrom!: string
+}

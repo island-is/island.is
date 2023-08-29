@@ -40,7 +40,7 @@ export const EducationDetail = () => {
 
   useEffect(() => {
     if (shouldDownload && license) {
-      formSubmit(license.url)
+      formSubmit(license.downloadUrl)
       setShouldDownload(false)
     }
   }, [shouldDownload, license])
@@ -63,13 +63,13 @@ export const EducationDetail = () => {
   if (!license) return <EmptyState />
 
   const programme =
-    license.programme.charAt(0).toUpperCase() + license.programme.slice(1)
+    license.profession.charAt(0).toUpperCase() + license.profession.slice(1)
 
   const organizations =
     (data?.getOrganizations?.items as Array<Organization>) ?? []
 
   const organizationImage = getOrganizationLogoUrl(
-    license.school,
+    license.type,
     organizations,
     120,
   )
@@ -80,7 +80,7 @@ export const EducationDetail = () => {
       intro={formatMessage(om.educationIntro)}
       img={organizationImage}
       buttonGroup={
-        license.url ? (
+        license.downloadUrl ? (
           <Box paddingTop={3}>
             <Button
               variant="utility"
@@ -96,10 +96,10 @@ export const EducationDetail = () => {
       dateOfBirth={birthday ? formatDateFns(birthday, 'dd.mm.yyyy') : undefined}
       profession={programme}
       licenseType={programme}
-      publisher={license.school}
+      publisher={license.type}
       dateOfIssue={
-        !Number.isNaN(Date.parse(license.date))
-          ? formatDateFns(license.date, 'dd.mm.yyyy')
+        !Number.isNaN(Date.parse(license.validFrom))
+          ? formatDateFns(license.validFrom, 'dd.mm.yyyy')
           : undefined
       }
       isValid={license.isValid}

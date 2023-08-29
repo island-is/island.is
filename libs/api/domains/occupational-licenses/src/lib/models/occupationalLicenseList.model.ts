@@ -8,7 +8,7 @@ export class OccupationalLicensesList {
   count!: number
 
   @Field(() => [OccupationalLicense])
-  items!: Array<typeof OccupationalLicense>
+  items!: Array<OccupationalLicense>
 
   @Field(() => OccupationalLicensesError)
   error!: OccupationalLicensesError

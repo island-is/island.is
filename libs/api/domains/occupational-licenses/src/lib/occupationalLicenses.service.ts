@@ -33,6 +33,8 @@ export class OccupationalLicensesService {
       return (
         licenses
           .map((license) => {
+            if (!license.leyfi || !license.starfsstett || !license.gildirFra)
+              return null
             const isValid =
               license.gildirTIl && license.gildirFra
                 ? today >= license.gildirFra && today <= license.gildirTIl
@@ -43,18 +45,16 @@ export class OccupationalLicensesService {
               return undefined
             return {
               legalEntityId: license.logadiliID,
-              name: license.nafn,
-              nationalId: license.kennitala,
+              holderName: license.nafn,
               profession: license.starfsstett,
-              license: license.leyfi,
-              licenseNumber: license.leyfisnumer,
-              validFrom: license.gildirFra,
-              validTo: license.gildirTIl,
+              type: license.leyfi,
+              number: license.leyfisnumer,
+              validFrom: license.gildirFra?.toString(),
               isValid: isValid,
             }
           })
           .filter((Boolean as unknown) as ExcludesFalse)
-          .find((license) => license.licenseNumber === id) ?? undefined
+          .find((license) => license.number === id) ?? undefined
       )
     } catch (e) {
       this.logger.error(`Error getting health directorate license by id`, {
@@ -75,6 +75,8 @@ export class OccupationalLicensesService {
 
       return licenses
         .map((license) => {
+          if (!license.leyfi || !license.starfsstett || !license.gildirFra)
+            return null
           const isValid =
             license.gildirTIl && license.gildirFra
               ? today >= license.gildirFra && today <= license.gildirTIl
@@ -85,13 +87,11 @@ export class OccupationalLicensesService {
             return null
           return {
             legalEntityId: license.logadiliID,
-            name: license.nafn,
-            nationalId: license.kennitala,
+            holderName: license.nafn,
             profession: license.starfsstett,
-            license: license.leyfi,
-            licenseNumber: license.leyfisnumer,
-            validFrom: license.gildirFra,
-            validTo: license.gildirTIl,
+            type: license.leyfi,
+            number: license.leyfisnumer,
+            validFrom: license.gildirFra?.toString(),
             isValid: isValid,
           }
         })
@@ -115,9 +115,9 @@ export class OccupationalLicensesService {
         licenses
           .map((license) => ({
             id: license.id,
-            school: license.issuer,
-            programme: license.type,
-            date: license.issued,
+            type: license.issuer,
+            profession: license.type,
+            validFrom: license.issued,
             isValid: new Date(license.issued) < new Date(),
           }))
           .find((license) => license.id === id) ?? null
@@ -138,9 +138,9 @@ export class OccupationalLicensesService {
 
       return licenses.map((license) => ({
         id: license.id,
-        school: license.issuer,
-        programme: license.type,
-        date: license.issued,
+        type: license.issuer,
+        profession: license.type,
+        validFrom: license.issued,
         isValid: new Date(license.issued) < new Date(),
       }))
     } catch (e) {
