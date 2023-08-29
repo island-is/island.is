@@ -19,6 +19,7 @@ import {
 import { TIME_FORMAT } from '@island.is/judicial-system/consts'
 import { formatRequestedCustodyRestrictions } from '@island.is/judicial-system-web/src/utils/restrictions'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
+import { lawsBrokenAccordion } from '@island.is/judicial-system-web/messages/Core/lawsBrokenAccordion'
 
 import AccordionListItem from '../../AccordionListItem/AccordionListItem'
 import * as styles from './PoliceRequestAccordionItem.css'
@@ -101,7 +102,10 @@ const PoliceRequestAccordionItem: React.FC<React.PropsWithChildren<Props>> = ({
       <AccordionListItem title="Dómkröfur">
         <Text>{workingCase.demands}</Text>
       </AccordionListItem>
-      <AccordionListItem title="Lagaákvæði sem brot varða við" breakSpaces>
+      <AccordionListItem
+        title={formatMessage(lawsBrokenAccordion.heading)}
+        breakSpaces
+      >
         <Text>{workingCase.lawsBroken}</Text>
       </AccordionListItem>
       <AccordionListItem title="Lagaákvæði sem krafan er byggð á" breakSpaces>

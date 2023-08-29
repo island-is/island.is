@@ -24,10 +24,8 @@ export const SelfEmployed: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   const { setValue, register } = useFormContext()
   const { formatMessage } = useLocale()
   const { id, title, description } = field
-  const {
-    isSelfEmployed,
-    isReceivingUnemploymentBenefits,
-  } = getApplicationAnswers(application.answers)
+  const { isSelfEmployed, isReceivingUnemploymentBenefits } =
+    getApplicationAnswers(application.answers)
 
   const [defaultValue, setHiddenSelfEmployed] = useState(isSelfEmployed ?? NO)
   const hiddenReceivingUnemploymentbenefits =

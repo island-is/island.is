@@ -19,16 +19,19 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import { titles, core } from '@island.is/judicial-system-web/messages'
 import IndictmentCaseFilesList from '@island.is/judicial-system-web/src/components/IndictmentCaseFilesList/IndictmentCaseFilesList'
+import IndictmentsLawsBrokenAccordionItem, {
+  useIndictmentsLawsBroken,
+} from '@island.is/judicial-system-web/src/components/AccordionItems/IndictmentsLawsBrokenAccordionItem/IndictmentsLawsBrokenAccordionItem'
 
 import { strings } from './IndictmentOverview.strings'
 
 const IndictmentOverview = () => {
   const router = useRouter()
   const { limitedAccess } = useContext(UserContext)
-  const { workingCase, isLoadingWorkingCase, caseNotFound } = useContext(
-    FormContext,
-  )
+  const { workingCase, isLoadingWorkingCase, caseNotFound } =
+    useContext(FormContext)
   const { formatMessage } = useIntl()
+  const lawsBroken = useIndictmentsLawsBroken(workingCase)
 
   const caseIsClosed = completedCaseStates.includes(workingCase.state)
 
@@ -68,6 +71,11 @@ const IndictmentOverview = () => {
             <InfoCardActiveIndictment />
           )}
         </Box>
+        {lawsBroken.size > 0 && (
+          <Box marginBottom={5}>
+            <IndictmentsLawsBrokenAccordionItem workingCase={workingCase} />
+          </Box>
+        )}
         {workingCase.caseFiles && (
           <Box component="section" marginBottom={10}>
             <IndictmentCaseFilesList workingCase={workingCase} />

@@ -1753,8 +1753,7 @@ export const parentalLeaveFormMessages: MessageDir = {
         'The other parent will need to approve the extra days you’ve requested.',
     },
     otherParentDescRequestingPersonalDiscount: {
-      id:
-        'pl.application:review.otherParent.otherParentDescRequestingPersonalDiscount',
+      id: 'pl.application:review.otherParent.otherParentDescRequestingPersonalDiscount',
       defaultMessage:
         'Hitt foreldrið þarf að samþykkja notkun persónuafsláttar síns.',
       description:
@@ -2054,8 +2053,7 @@ export const parentalLeaveFormMessages: MessageDir = {
       description: 'Confirmation',
     },
     parentWithoutBirthParentDescription: {
-      id:
-        'pl.application:attachmentscreen.parent.without.birth.parent.description',
+      id: 'pl.application:attachmentscreen.parent.without.birth.parent.description',
       defaultMessage:
         'Vottorð um áætlaðan fæðingardag þarf að berast frá viðkomandi landi. Eftir að barn er fætt þarf að berast fæðingarvottorð þess ásamt staðfestingu á faðerni ef foreldrar eru ekki gift eða í sambúð. Ef foreldrar eru gift eða í sambúð má senda afrit af staðfestingu þess lútandi með vottorði um áætlaðan fæðingardag. Athugaðu að skjalið þarf að vera á .pdf formi',
       description: 'father without mother description',
@@ -2418,16 +2416,14 @@ export const errorMessages = defineMessages({
     description: 'Could not fetch child data',
   },
   periodsFirstPeriodStartDateDefinitionMissing: {
-    id:
-      'pl.application:answerValidators.periodsFirstPeriodStartDateDefinitionMissing',
+    id: 'pl.application:answerValidators.periodsFirstPeriodStartDateDefinitionMissing',
     defaultMessage:
       'Ekki er búið að skilgreina hvernig á að hefja fyrsta tímabil.',
     description:
       'Copy for when user has not chosen how to start the first period (expected dob, dob, specific date)',
   },
   periodsFirstPeriodStartDateDefinitionInvalid: {
-    id:
-      'pl.application:answerValidators.periodsFirstPeriodStartDateDefinitionInvalid',
+    id: 'pl.application:answerValidators.periodsFirstPeriodStartDateDefinitionInvalid',
     defaultMessage: 'Skilgreining á upphafi fyrsta tímabils ógild.',
     description:
       'Copy for when user has chosen how to start the period but it is invalid',
@@ -2651,8 +2647,7 @@ export const errorMessages = defineMessages({
     description: 'Unable to request days!',
   },
   notAllowedToGiveRightsOtherParentNotAllowed: {
-    id:
-      'pl.application:errors.not.allowed.to.give.rights.other.parent.not.allowed',
+    id: 'pl.application:errors.not.allowed.to.give.rights.other.parent.not.allowed',
     defaultMessage:
       'Ekki er hægt að færa daga ef forsjárlausa foreldrið hefur ekki samþykki fyrir umgengni í þessu fæðingarorlofi. Vinsamlegast veljið annan möguleika.',
     description: 'Unable to transfer days!',

@@ -322,8 +322,7 @@ export default function School() {
                 ],
               },
             },
-            s:
-              'MDLA1MmJjNjNhNCUliNmIzYTJiKNWFhUmIwYWZRUNjM3Yjc3NzBE3MTZkNjNhNPWFhYjNhNmE0VYjVhYWIwYWYS2MzdiVTcyNmWQ2M2FhYjVhNPk5iM0VhMmI1QYWFPYjBhZmIE0NjM3YjcyNmOQ2M2E3YWFhZQGFkNjM3YjcyTNmQ2M2EyYWRIiNWE2YjNhZmHEyYjVhNjYzRPjdiYTdhMmFkNYjRhNjZkWTYGzYjRiMWE2YTSZhNTYzSjdiNTzJiZQ|',
+            s: 'MDLA1MmJjNjNhNCUliNmIzYTJiKNWFhUmIwYWZRUNjM3Yjc3NzBE3MTZkNjNhNPWFhYjNhNmE0VYjVhYWIwYWYS2MzdiVTcyNmWQ2M2FhYjVhNPk5iM0VhMmI1QYWFPYjBhZmIE0NjM3YjcyNmOQ2M2E3YWFhZQGFkNjM3YjcyTNmQ2M2EyYWRIiNWE2YjNhZmHEyYjVhNjYzRPjdiYTdhMmFkNYjRhNjZkWTYGzYjRiMWE2YTSZhNTYzSjdiNTzJiZQ|',
           },
         ],
         options:
