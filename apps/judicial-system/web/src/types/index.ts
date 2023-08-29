@@ -9,6 +9,7 @@ import {
   CaseAppealState,
   CaseAppealRulingDecision,
   Defendant,
+  CaseCustodyRestrictions,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   Case,
@@ -238,6 +239,7 @@ export interface TempCase
     | 'appealedByRole'
     | 'appealRulingDecision'
     | 'defendants'
+    | 'CaseCustodyRestrictions'
   > {
   origin: CaseOrigin
   sharedWithProsecutorsOffice?: Institution
@@ -252,6 +254,7 @@ export interface TempCase
   appealedByRole?: UserRole
   appealRulingDecision?: CaseAppealRulingDecision
   defendants?: Defendant[]
+  custodyRestrictions: CaseCustodyRestrictions[]
 }
 
 export interface TempUpdateCase

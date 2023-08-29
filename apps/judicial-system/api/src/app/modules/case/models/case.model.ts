@@ -34,6 +34,7 @@ registerEnumType(CaseAppealState, { name: 'CaseAppealState' })
 registerEnumType(CaseOrigin, { name: 'CaseOrigin' })
 registerEnumType(UserRole, { name: 'UserRole' })
 registerEnumType(CaseAppealRulingDecision, { name: 'CaseAppealRulingDecision' })
+registerEnumType(CaseCustodyRestrictions, { name: 'CaseCustodyRestrictions' })
 
 @ObjectType()
 export class Case implements TCase {
@@ -115,7 +116,7 @@ export class Case implements TCase {
   @Field(() => [String], { nullable: true })
   readonly legalProvisions?: CaseLegalProvisions[]
 
-  @Field(() => [String], { nullable: true })
+  @Field(() => [CaseCustodyRestrictions], { nullable: true })
   readonly requestedCustodyRestrictions?: CaseCustodyRestrictions[]
 
   @Field({ nullable: true })

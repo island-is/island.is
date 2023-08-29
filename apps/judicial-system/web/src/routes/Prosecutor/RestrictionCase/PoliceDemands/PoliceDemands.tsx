@@ -25,7 +25,6 @@ import {
 } from '@island.is/judicial-system-web/messages'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import {
-  CaseCustodyRestrictions,
   CaseDecision,
   isAcceptingCaseDecision,
 } from '@island.is/judicial-system/types'
@@ -51,6 +50,7 @@ import {
   travelBanProvisions,
 } from '@island.is/judicial-system-web/src/utils/laws'
 import {
+  CaseCustodyRestrictions,
   CaseType,
   Defendant,
   Gender,
@@ -104,8 +104,9 @@ export const PoliceDemands: React.FC<React.PropsWithChildren<unknown>> = () => {
   } = useContext(FormContext)
   const router = useRouter()
   const { formatMessage } = useIntl()
-  const [lawsBrokenErrorMessage, setLawsBrokenErrorMessage] =
-    useState<string>('')
+  const [lawsBrokenErrorMessage, setLawsBrokenErrorMessage] = useState<string>(
+    '',
+  )
   const { updateCase, setAndSendCaseToServer } = useCase()
   useDeb(workingCase, [
     'lawsBroken',
@@ -261,8 +262,7 @@ export const PoliceDemands: React.FC<React.PropsWithChildren<unknown>> = () => {
                     )
                     onDemandsChange(
                       {
-                        requestedCustodyRestrictions:
-                          nextRequestedCustodyRestrictions,
+                        requestedCustodyRestrictions: nextRequestedCustodyRestrictions,
                         force: true,
                       },
                       workingCase.type,
