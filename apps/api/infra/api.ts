@@ -31,6 +31,7 @@ import {
   IcelandicGovernmentInstitutionVacancies,
   RskProcuring,
   AircraftRegistry,
+  HousingBenefitCalculator,
 } from '../../../infra/src/dsl/xroad'
 
 export const serviceSetup = (services: {
@@ -359,6 +360,7 @@ export const serviceSetup = (services: {
       IcelandicGovernmentInstitutionVacancies,
       RskProcuring,
       AircraftRegistry,
+      HousingBenefitCalculator,
     )
     .files({ filename: 'islyklar.p12', env: 'ISLYKILL_CERT' })
     .ingress({
