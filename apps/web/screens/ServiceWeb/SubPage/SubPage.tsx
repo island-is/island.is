@@ -78,6 +78,7 @@ const SubPage: Screen<SubPageProps> = ({
   locale,
 }) => {
   const Router = useRouter()
+  // @ts-ignore make web strict
   const n = useNamespace(namespace)
   const o = useNamespace(organizationNamespace)
   const { linkResolver } = useLinkResolver()
@@ -131,6 +132,7 @@ const SubPage: Screen<SubPageProps> = ({
     {
       title: organization?.title,
       typename: 'serviceweb',
+      // @ts-ignore make web strict
       href: linkResolver('serviceweborganization', [organizationSlug]).href,
     },
     {
@@ -138,6 +140,7 @@ const SubPage: Screen<SubPageProps> = ({
       typename: 'serviceweb',
       isTag: true,
       ...(questionSlug && {
+        // @ts-ignore make web strict
         href: linkResolver('supportcategory', [organizationSlug, categorySlug])
           .href,
       }),
@@ -153,6 +156,7 @@ const SubPage: Screen<SubPageProps> = ({
         n('assistanceForIslandIs', 'Aðstoð fyrir Ísland.is'),
       )}
       institutionSlug={institutionSlug}
+      // @ts-ignore make web strict
       organization={organization}
       organizationTitle={organizationTitle}
       smallBackground
@@ -165,6 +169,7 @@ const SubPage: Screen<SubPageProps> = ({
         <GridContainer>
           <GridRow>
             <GridColumn
+            // @ts-ignore make web strict
               offset={[null, null, null, '1/12']}
               span={['12/12', '12/12', '12/12', '10/12']}
             >
@@ -173,12 +178,15 @@ const SubPage: Screen<SubPageProps> = ({
                   <GridColumn span="12/12" paddingBottom={[2, 2, 4]}>
                     <Box display={['none', 'none', 'block']} printHidden>
                       <Breadcrumbs
+                      // @ts-ignore make web strict
                         items={breadcrumbItems.slice(
                           institutionSlugBelongsToMannaudstorg ? 1 : 0,
                         )}
                         renderLink={(link, { href }) => {
                           return (
-                            <NextLink href={href} passHref legacyBehavior>
+                            <NextLink 
+                            // @ts-ignore make web strict
+                            href={href} passHref legacyBehavior>
                               {link}
                             </NextLink>
                           )
@@ -326,7 +334,9 @@ const SubPage: Screen<SubPageProps> = ({
                                             <TopicCard
                                               href={
                                                 linkResolver('supportqna', [
+                                                  // @ts-ignore make web strict
                                                   organizationSlug,
+                                                  // @ts-ignore make web strict
                                                   categorySlug,
                                                   slug,
                                                 ]).href
@@ -391,6 +401,7 @@ SubPage.getProps = async ({ apolloClient, locale, query, res }) => {
       res.writeHead(302, {
         Location: linkResolver(
           'supportqna',
+          // @ts-ignore make web strict
           [organizationSlug, categorySlug, single(query.q)],
           locale as Locale,
         ).href,
@@ -461,16 +472,21 @@ SubPage.getProps = async ({ apolloClient, locale, query, res }) => {
   ])
 
   const organizationNamespace = JSON.parse(
+    // @ts-ignore make web strict
     organization?.data?.getOrganization?.namespace?.fields ?? '{}',
   )
 
   return {
     namespace,
     organizationNamespace,
+    // @ts-ignore make web strict
     organization: organization?.data?.getOrganization,
+    // @ts-ignore make web strict
     supportQNAs: supportQNAs?.data?.getSupportQNAsInCategory,
+    // @ts-ignore make web strict
     singleSupportQNA: singleSupportQNA?.data?.getSingleSupportQNA,
     questionSlug,
+    // @ts-ignore make web strict
     singleSupportCategory: singleSupportCategory?.data?.getSupportCategory,
     locale: locale as Locale,
   }
@@ -489,7 +505,9 @@ const getSortedSupportSubCategoryTitles = (
     if (subCategoryB.length === 0) return -1
 
     return (
+      // @ts-ignore make web strict
       subCategoryB[0].subCategory?.importance -
+      // @ts-ignore make web strict
       subCategoryA[0].subCategory?.importance
     )
   })

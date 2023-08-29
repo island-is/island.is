@@ -4,6 +4,7 @@ import { IcelandicGovernmentInstitutionVacancyDetails } from '@island.is/web/scr
 import { getServerSidePropsWrapper } from '@island.is/web/utils/getServerSidePropsWrapper'
 
 const Screen = withApollo(
+  // @ts-ignore make web strict
   withLocale('is')(IcelandicGovernmentInstitutionVacancyDetails),
 )
 

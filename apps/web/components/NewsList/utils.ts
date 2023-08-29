@@ -7,6 +7,7 @@ export const makeHref = (
   const params = { y, m, tag: selectedTag }
   const query = Object.entries(params).reduce((queryObject, [key, value]) => {
     if (value) {
+      // @ts-ignore make web strict
       queryObject[key] = value
     }
     return queryObject

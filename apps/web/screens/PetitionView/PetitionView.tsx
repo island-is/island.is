@@ -63,7 +63,7 @@ const PetitionView: Screen<PetitionViewProps> = ({ namespace }) => {
 
     return `${baseUrl}/umsoknir/undirskriftalisti`
   }
-
+// @ts-ignore make web strict
   const handlePagination = (page, petitions) => {
     setPage(page)
     setTotalPages(pages(petitions?.length))
@@ -204,7 +204,9 @@ const PetitionView: Screen<PetitionViewProps> = ({ namespace }) => {
                 </T.Row>
               </T.Head>
               <T.Body>
-                {pagePetitions?.map((petition) => {
+                
+                {// @ts-ignore make web strict
+                pagePetitions?.map((petition) => {
                   return (
                     <T.Row key={petition.id}>
                       <T.Data text={{ variant: 'medium' }}>

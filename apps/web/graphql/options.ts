@@ -14,6 +14,7 @@ export function optionsFromContext(
 
 export function optionsFromWindow(): ClientOptions {
   return {
+    // @ts-ignore make web strict
     bypassCache: new URLSearchParams(window.location.search).get(
       'bypass-cache',
     ),

@@ -42,7 +42,7 @@ import {
 import { Locale } from '@island.is/shared/types'
 import { MonthlyStatistics } from '../components/connected/electronicRegistrationStatistics'
 import FeaturedSupportQNAs from '../components/FeaturedSupportQNAs/FeaturedSupportQNAs'
-
+// @ts-ignore make web strict
 export const webRenderConnectedComponent = (slice) => {
   const data = slice.json ?? {}
 
@@ -86,10 +86,15 @@ const defaultRenderComponent = {
   PowerBiSlice: (slice: PowerBiSliceSchema) => <PowerBiSlice slice={slice} />,
   AccordionSlice: (slice: AccordionSliceSchema) =>
     slice.accordionItems && <AccordionSlice slice={slice} />,
+    // @ts-ignore make web strict
   ConnectedComponent: (slice) => webRenderConnectedComponent(slice),
+  // @ts-ignore make web strict
   GraphCard: (chart) => <ChartsCard chart={chart} />,
+  // @ts-ignore make web strict
   OneColumnText: (slice) => <OneColumnTextSlice slice={slice} />,
+  // @ts-ignore make web strict
   TwoColumnText: (slice) => <TwoColumnTextSlice slice={slice} />,
+  // @ts-ignore make web strict
   EmailSignup: (slice) => <EmailSignup slice={slice} />,
   FaqList: (slice: FaqListProps) => slice?.questions && <FaqList {...slice} />,
   FeaturedSupportQNAs: (slice: FeaturedSupportQNAsSchema) => (
@@ -98,6 +103,7 @@ const defaultRenderComponent = {
   SliceDropdown: (slice: SliceDropdownSchema) => (
     <SliceDropdown
       slices={slice.slices}
+      // @ts-ignore make web strict
       sliceExtraText={slice.dropdownLabel}
       gridSpan="1/1"
       gridOffset="0"

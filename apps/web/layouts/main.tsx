@@ -66,7 +66,7 @@ const { publicRuntimeConfig = {} } = getConfig() ?? {}
 
 const IS_MOCK =
   process.env.NODE_ENV !== 'production' && process.env.API_MOCKS === 'true'
-
+// @ts-ignore make web strict
 const absoluteUrl = (req, setLocalhost) => {
   let protocol = 'https:'
   let host = req
@@ -104,7 +104,9 @@ export interface LayoutProps {
   articleAlertBannerContent?: GetAlertBannerQuery['getAlertBanner']
   languageToggleQueryParams?: Record<Locale, Record<string, string>>
   footerVersion?: 'default' | 'organization'
+  // @ts-ignore make web strict
   respOrigin
+  // @ts-ignore make web strict
   megaMenuData
   children?: React.ReactNode
 }
@@ -122,7 +124,7 @@ if (
     version: publicRuntimeConfig.appVersion || 'local',
   })
 }
-
+// @ts-ignore make web strict
 const Layout: Screen<LayoutProps> = ({
   showSearchInHeader = true,
   wrapContent = true,
@@ -175,7 +177,9 @@ const Layout: Screen<LayoutProps> = ({
   const [alertBanners, setAlertBanners] = useState([])
 
   useEffect(() => {
+    
     setAlertBanners(
+      // @ts-ignore make web strict
       [
         {
           bannerId: `alert-${stringHash(
@@ -312,23 +316,37 @@ const Layout: Screen<LayoutProps> = ({
         />
         {alertBanners.map((banner) => (
           <AlertBanner
+          // @ts-ignore make web strict
             key={banner.bannerId}
+            // @ts-ignore make web strict
             title={banner.title}
+            // @ts-ignore make web strict
             description={banner.description}
+            // @ts-ignore make web strict
             link={{
+              // @ts-ignore make web strict
               ...(!!banner.link &&
+                // @ts-ignore make web strict
                 !!banner.linkTitle && {
+                  // @ts-ignore make web strict
                   href: linkResolver(banner.link.type as LinkType, [
+                    // @ts-ignore make web strict
                     banner.link.slug,
                   ]).href,
+                  // @ts-ignore make web strict
                   title: banner.linkTitle,
                 }),
             }}
+            // @ts-ignore make web strict
             variant={banner.bannerVariant as AlertBannerVariants}
+            // @ts-ignore make web strict
             dismissable={banner.isDismissable}
             onDismiss={() => {
+              // @ts-ignore make web strict
               if (banner.dismissedForDays !== 0) {
+                // @ts-ignore make web strict
                 Cookies.set(banner.bannerId, 'hide', {
+                  // @ts-ignore make web strict
                   expires: banner.dismissedForDays,
                 })
               }
@@ -346,6 +364,7 @@ const Layout: Screen<LayoutProps> = ({
         >
           {showHeader && (
             <ColorSchemeContext.Provider
+            // @ts-ignore make web strict
               value={{ colorScheme: headerColorScheme }}
             >
               <Header
@@ -447,7 +466,7 @@ const Layout: Screen<LayoutProps> = ({
     </GlobalContextProvider>
   )
 }
-
+// @ts-ignore make web strict
 Layout.getProps = async ({ apolloClient, locale, req }) => {
   const lang = locale ?? 'is' // Defaulting to is when locale is undefined
 
@@ -485,6 +504,7 @@ Layout.getProps = async ({ apolloClient, locale, req }) => {
         })
         .then((res) => {
           // map data here to reduce data processing in component
+          // @ts-ignore make web strict
           return JSON.parse(res.data.getNamespace.fields)
         }),
       apolloClient
@@ -506,12 +526,15 @@ Layout.getProps = async ({ apolloClient, locale, req }) => {
     ])
 
   const alertBannerId = `alert-${stringHash(JSON.stringify(alertBanner))}`
+  // @ts-ignore make web strict
   const [asideTopLinksData, asideBottomLinksData] = megaMenuData.menus
 
   const mapLinks = (item: Menu) =>
     item.menuLinks.map((x) => {
       const href = LinkResolver(
+        // @ts-ignore make web strict
         x.link.type as LinkType,
+        // @ts-ignore make web strict
         [x.link.slug],
         lang as Locale,
       ).href.trim()
@@ -531,11 +554,12 @@ Layout.getProps = async ({ apolloClient, locale, req }) => {
     footerTagsMenu: [],
     footerMiddleMenu: [],
   }
-
+  // @ts-ignore make web strict
   const footerMenu = footerMenuData.menus.reduce((menus, menu, idx) => {
     if (IS_MOCK) {
       const key = Object.keys(menus)[idx]
       if (key) {
+        // @ts-ignore make web strict
         menus[key] = mapLinks(menu as Menu)
       }
       return menus
@@ -544,22 +568,27 @@ Layout.getProps = async ({ apolloClient, locale, req }) => {
     switch (menu.id) {
       // Footer lower
       case '6vTuiadpCKOBhAlSjYY8td':
+        // @ts-ignore make web strict
         menus.footerLowerMenu = mapLinks(menu as Menu)
         break
       // Footer middle
       case '7hSbSQm5F5EBc0KxPTFVAS':
+        // @ts-ignore make web strict
         menus.footerMiddleMenu = mapLinks(menu as Menu)
         break
       // Footer tags
       case '6oGQDyWos4xcKX9BdMHd5R':
+        // @ts-ignore make web strict
         menus.footerTagsMenu = mapLinks(menu as Menu)
         break
       // Footer upper
       case '62Zh6hUc3bi0JwNRnqV8Nm':
+        // @ts-ignore make web strict
         menus.footerUpperInfo = mapLinks(menu as Menu)
         break
       // Footer upper contact
       case '5yUCZ4U6aZ8rZ9Jigme7GI':
+        // @ts-ignore make web strict
         menus.footerUpperContact = mapLinks(menu as Menu)
         break
       default:
@@ -574,6 +603,7 @@ Layout.getProps = async ({ apolloClient, locale, req }) => {
     alertBannerContent: {
       ...alertBanner,
       showAlertBanner:
+      // @ts-ignore make web strict
         alertBanner.showAlertBanner &&
         (!req?.headers.cookie ||
           req.headers.cookie?.indexOf(alertBannerId) === -1),
@@ -615,7 +645,9 @@ export const withMainLayout = <T,>(
   }) => {
     return (
       <Layout {...layoutProps}>
-        <Component {...componentProps} />
+        <
+        // @ts-ignore make web strict
+        Component {...componentProps} />
       </Layout>
     )
   }

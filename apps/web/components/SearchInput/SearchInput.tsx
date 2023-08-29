@@ -108,7 +108,9 @@ const useSearch = (
     }
 
     dispatch({ type: 'startLoading' })
-    const thisTimerId = (timer.current = setTimeout(async () => {
+    const thisTimerId = (
+      // @ts-ignore make web strict
+      timer.current = setTimeout(async () => {
       client
         .query<GetSearchResultsQuery, QuerySearchResultsArgs>({
           query: GET_SEARCH_RESULTS_QUERY,
@@ -353,6 +355,7 @@ export const SearchInput = forwardRef<
               <Results
                 quickContentLabel={quickContentLabel}
                 search={search}
+                // @ts-ignore make web strict
                 highlightedIndex={highlightedIndex}
                 getItemProps={getItemProps}
                 autosuggest={autosuggest}
@@ -427,6 +430,7 @@ const Results = ({
             </Text>
             {search.results.items
               .slice(0, 5)
+              // @ts-ignore make web strict
               .map((item: SearchResultItem, i) => {
                 const typename = item.__typename?.toLowerCase() as LinkType
                 let variables = item.slug?.split('/')

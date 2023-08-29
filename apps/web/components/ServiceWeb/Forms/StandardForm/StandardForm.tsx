@@ -547,10 +547,12 @@ export const StandardForm = ({
               isSearchable
               label={fn('malaflokkur', 'label', 'Málaflokkur')}
               name="malaflokkur"
+              // @ts-ignore make web strict
               onChange={({ label, value }: Option) => {
                 setCategoryLabel(label as string)
                 setCategoryId(value as string)
               }}
+              // @ts-ignore make web strict
               options={categoryOptions}
               placeholder={fn('malaflokkur', 'placeholder', 'Veldu flokk')}
               size="md"
@@ -637,7 +639,9 @@ export const StandardForm = ({
                           <a
                             href={
                               linkResolver('supportqna', [
+                                // @ts-ignore make web strict
                                 organizationSlug,
+                                // @ts-ignore make web strict
                                 categorySlug,
                                 slug,
                               ]).href
@@ -702,6 +706,7 @@ export const StandardForm = ({
                           isSearchable
                           label={fn('rikisadili', 'label', 'Ríkisaðili')}
                           name="rikisadili"
+                          // @ts-ignore make web strict
                           onChange={({ label }: Option) => {
                             onChange(label)
                           }}
@@ -883,6 +888,7 @@ export const StandardForm = ({
                                 'Þinn sýslumaður',
                               )}
                               name="syslumadur"
+                              // @ts-ignore make web strict
                               onChange={({ label, value }: Option) => {
                                 onChange(label)
                                 setSyslumadurId(value as string)

@@ -9,7 +9,9 @@ const activateWidget = (license: number, version: string) => {
   w.__lc = w.__lc || {}
   w.__lc.license = license
   const widget = (function (n: any, t, c) {
+    // @ts-ignore make web strict
     function i(n) {
+      // @ts-ignore make web strict
       return e._h ? e._h.apply(null, n) : e._q.push(n)
     }
     var e = {

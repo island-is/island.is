@@ -106,6 +106,7 @@ export const SimpleStackedSlider: FC<
                     })}
                     onClick={() => {
                       setActiveDot(index)
+                      // @ts-ignore make web strict
                       scrollRef.current.scrollTo({
                         left: index * (itemWidth + 12),
                         behavior: 'smooth',

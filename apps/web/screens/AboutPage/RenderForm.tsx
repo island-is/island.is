@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { useFormik } from 'formik'
+// @ts-ignore make web strict
 import toQueryString from 'to-querystring'
+// @ts-ignore make web strict
 import jsonp from 'jsonp'
 import { GetNamespaceQuery } from '@island.is/web/graphql/schema'
 import { useNamespace } from '@island.is/web/hooks'
@@ -31,6 +33,7 @@ export const RenderForm: React.FC<
   submitButtonText = 'Submit',
   inputLabel = 'Email',
 }) => {
+  // @ts-ignore make web strict
   const n = useNamespace(namespace)
   const [status, setStatus] = useState<FormState>({
     type: '',
@@ -146,6 +149,7 @@ export const RenderForm: React.FC<
         variant="blue"
         buttonText={submitButtonText}
         onChange={formik.handleChange}
+        // @ts-ignore make web strict
         onSubmit={formik.handleSubmit}
         value={formik.values.email}
         successTitle={n('formThankYou', 'Skráning tókst. Takk fyrir.')}
@@ -153,6 +157,7 @@ export const RenderForm: React.FC<
           'formCheckYourEmail',
           'Þú þarft að fara í pósthólfið þitt og samþykkja umsóknina',
         )}
+        // @ts-ignore make web strict
         errorMessage={formatMessage(status.message)}
         state={status.type || 'default'}
       />

@@ -50,6 +50,7 @@ export const FeaturedNews: FC<React.PropsWithChildren<FeaturedNewsProps>> = ({
           <GridRow>
             <GridColumn
               span={['12/12', '12/12', '12/12', '12/12', '10/12']}
+              // @ts-ignore make web strict
               offset={[null, null, null, null, '1/12']}
             >
               <Box marginBottom={[3, 3, 5]}>
@@ -62,6 +63,7 @@ export const FeaturedNews: FC<React.PropsWithChildren<FeaturedNewsProps>> = ({
                   <AdgerdirHeading
                     subtitle={first.dateFormatted}
                     title={first.title}
+                    // @ts-ignore make web strict
                     intro={first.intro}
                   />
                   <Link {...linkResolver('news', [first.slug])} pureChildren>
@@ -82,6 +84,7 @@ export const FeaturedNews: FC<React.PropsWithChildren<FeaturedNewsProps>> = ({
               <GridRow>
                 <GridColumn
                   span={['12/12', '12/12', '12/12', '12/12', '10/12']}
+                  // @ts-ignore make web strict
                   offset={[null, null, null, null, '1/12']}
                 >
                   <Box className={styles.topBorder}></Box>
@@ -89,6 +92,7 @@ export const FeaturedNews: FC<React.PropsWithChildren<FeaturedNewsProps>> = ({
                 {second ? (
                   <GridColumn
                     span={['12/12', '12/12', '12/12', '5/12', '4/12']}
+                    // @ts-ignore make web strict
                     offset={[null, null, null, null, '1/12']}
                   >
                     <Box marginY={[3, 3, 5]}>
@@ -97,6 +101,7 @@ export const FeaturedNews: FC<React.PropsWithChildren<FeaturedNewsProps>> = ({
                           main={false}
                           subtitle={second.dateFormatted}
                           title={second.title}
+                          // @ts-ignore make web strict
                           intro={second.intro}
                           variant="h3"
                           as="h3"
@@ -116,6 +121,7 @@ export const FeaturedNews: FC<React.PropsWithChildren<FeaturedNewsProps>> = ({
                 {third ? (
                   <GridColumn
                     span={['12/12', '12/12', '12/12', '5/12', '4/12']}
+                    // @ts-ignore make web strict
                     offset={[null, null, null, '2/12', '2/12']}
                   >
                     <Box marginY={[3, 3, 5]}>
@@ -124,6 +130,7 @@ export const FeaturedNews: FC<React.PropsWithChildren<FeaturedNewsProps>> = ({
                           main={false}
                           subtitle={third.dateFormatted}
                           title={third.title}
+                          // @ts-ignore make web strict
                           intro={third.intro}
                           variant="h3"
                           as="h3"

@@ -39,6 +39,7 @@ const getSortedAndFilteredDrivingInstructors = (
   const startsWithFullSearchString = (
     instructor: DrivingInstructor,
   ): boolean => {
+    // @ts-ignore make web strict
     return (
       instructor.name?.trim().toLowerCase().startsWith(fullSearchString) ||
       instructor.nationalId?.trim().startsWith(fullSearchString) ||

@@ -121,6 +121,7 @@ export const FormField = ({
           value={
             options.find((o) => o.value === value) ?? { label: value, value }
           }
+          // @ts-ignore make web strict
           onChange={({ value }: Option) => onChange(slug, value as string)}
           hasError={!!error}
           errorMessage={error}
@@ -345,7 +346,7 @@ export const Form = ({ form, namespace }: FormProps) => {
         return null
       })
       .filter((x) => !!x)
-
+    // @ts-ignore make web strict
     setErrors(err)
 
     return !err.length
@@ -521,6 +522,7 @@ export const Form = ({ form, namespace }: FormProps) => {
               name: data['name'],
               email: data['email'],
               message: formatBody(_data),
+              // @ts-ignore make web strict
               files: files.map((f) => f[1]).flat(),
               recipientFormFieldDeciderValue:
                 getRecipientFormFieldDeciderValue(),

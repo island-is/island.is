@@ -48,6 +48,7 @@ const InformationPanel = ({ vacancy, namespace }: InformationPanelProps) => {
     <Stack space={3}>
       {vacancy?.institutionName && (
         <InstitutionPanel
+        // @ts-ignore make web strict
           img={vacancy.logoUrl}
           institutionTitle={n('institutionCardTitle', 'Þjónustuaðili')}
           institution={vacancy.institutionName}

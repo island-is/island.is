@@ -20,6 +20,7 @@ const wrapTranslations = <T extends { [key: string]: string }>(
         }
         if (!(p in warnedKeys)) {
           console.warn(`Missing translation for ${p}`)
+          // @ts-ignore make web strict
           warnedKeys[p] = true
         }
         return p
@@ -39,7 +40,7 @@ interface I18nContextType {
 }
 
 export const I18nContext = createContext<I18nContextType | null>(null)
-
+// @ts-ignore make web strict
 export default function I18n({ children, locale, translations }) {
   const [activeDict, setActiveDict] = useState(() => translations)
   const activeLocaleRef = useRef(locale || defaultLanguage)
@@ -66,6 +67,7 @@ export default function I18n({ children, locale, translations }) {
   const i18nWrapper = {
     activeLocale: activeLocaleRef.current,
     t: wrapTranslations(translations),
+    // @ts-ignore make web strict
     locale: (l: string, dict) => {
       i18n.locale(l)
       activeLocaleRef.current = l

@@ -61,6 +61,7 @@ export const NewsListSidebar = ({
             onChange={(e) => {
               const selectedValue =
                 e.target.value !== allYearsString ? e.target.value : null
+              // @ts-ignore make web strict
               router.push(makeHref(selectedTag, newsOverviewUrl, selectedValue))
             }}
             color="purple400"

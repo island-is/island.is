@@ -115,14 +115,16 @@ class ErrorPage extends React.Component<ErrorPageProps> {
     if (res) {
       res.statusCode = statusCode
     }
-
+    // @ts-ignore make web strict
     let layoutProps: LayoutProps = null
     let pageProps: ErrorPageQuery['getErrorPage'] = null
 
     try {
       const [layoutPropsResponse, pagePropsResponse] = await Promise.all([
+        // @ts-ignore make web strict
         Layout.getProps({
           ...props,
+          // @ts-ignore make web strict
           res: props.res,
           req: props.req as unknown as GetServerSidePropsContext['req'],
           locale,

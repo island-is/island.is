@@ -66,7 +66,7 @@ export const Wrapper: FC<React.PropsWithChildren<WrapperProps>> = ({
   })
   const [textMode, setTextMode] = useState<TextModes>('light')
   const showSearchSection = searchTitle && organizationTitle
-
+  // @ts-ignore make web strict
   usePlausiblePageview(organization?.trackingDomain)
 
   useEffect(() => {

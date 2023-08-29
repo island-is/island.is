@@ -72,7 +72,7 @@ interface NewsListProps {
 
 const spacing: ResponsiveSpace = [3, 3, 4]
 const spacingMini: ResponsiveSpace = [0, 0, 4]
-
+// @ts-ignore make web strict
 const NewsListNew: Screen<NewsListProps> = ({
   newsItem,
   newsList,
@@ -87,6 +87,7 @@ const NewsListNew: Screen<NewsListProps> = ({
   const Router = useRouter()
   const { linkResolver } = useLinkResolver()
   const { format, getMonthByIndex } = useDateUtils()
+  // @ts-ignore make web strict
   const n = useNamespace(namespace)
   useContentfulId(newsItem?.id)
 
@@ -148,7 +149,7 @@ const NewsListNew: Screen<NewsListProps> = ({
       href: '/',
     },
   ]
-
+  // @ts-ignore make web strict
   const breadCrumbTags: BreadCrumbItem | BreadCrumbItem[] = newsItem
     ?.genericTags?.length
     ? newsItem.genericTags
@@ -194,6 +195,7 @@ const NewsListNew: Screen<NewsListProps> = ({
         baseId="newsNav"
         title={navTitle}
         items={navItems}
+        // @ts-ignore make web strict
         renderLink={(link, { href }) => {
           return (
             <NextLink href={href} legacyBehavior>
@@ -224,7 +226,9 @@ const NewsListNew: Screen<NewsListProps> = ({
         {newsItem.title}
       </Text>
 
-      <Webreader marginTop={0} readId={null} readClass="rs_read" />
+      <Webreader marginTop={0} 
+      // @ts-ignore make web strict
+      readId={null} readClass="rs_read" />
 
       <Text variant="intro" as="p" paddingBottom={2}>
         {newsItem.intro}
@@ -236,7 +240,9 @@ const NewsListNew: Screen<NewsListProps> = ({
             [styles.floatedImage]: newsItem.fullWidthImageInContent === false,
           })}
         >
-          <Image
+          <
+          // @ts-ignore make web strict
+          Image
             {...newsItem.image}
             url={newsItem.image?.url + '?w=774&fm=webp&q=80'}
             thumbnail={newsItem.image?.url + '?w=50&fm=webp&q=80'}
@@ -247,6 +253,7 @@ const NewsListNew: Screen<NewsListProps> = ({
         {webRichText(newsItem.content as SliceType[], {
           renderComponent: {
             // Make sure that images in the content are full width
+            // @ts-ignore make web strict
             Image: (slice) => (
               <Box className={styles.clearBoth}>
                 <Image {...slice} thumbnail={slice.url + '?w=50'} />
@@ -271,7 +278,9 @@ const NewsListNew: Screen<NewsListProps> = ({
 
   return (
     <>
-      <HeadWithSocialSharing
+      <
+      // @ts-ignore make web strict
+      HeadWithSocialSharing
         title={metaTitle}
         {...(newsItemMeta && { ...newsItemMeta })}
       />
@@ -344,6 +353,7 @@ const NewsListNew: Screen<NewsListProps> = ({
             baseId="newsNav"
             title={navTitleMobile}
             items={navItems}
+            // @ts-ignore make web strict
             renderLink={(link, { href }) => {
               return (
                 <NextLink href={href} legacyBehavior>
@@ -359,7 +369,9 @@ const NewsListNew: Screen<NewsListProps> = ({
             {n('newsListEmptyMonth', 'Engar fréttir fundust í þessum mánuði.')}
           </Text>
         )}
-        {!newsItemContent && <Webreader readId={null} readClass="rs_read" />}
+        {!newsItemContent && <Webreader 
+        // @ts-ignore make web strict
+        readId={null} readClass="rs_read" />}
         {newsItemContent && (
           <Box className="rs_read" width="full">
             {newsItemContent}
@@ -375,7 +387,9 @@ const NewsListNew: Screen<NewsListProps> = ({
                   <NewsCard
                     key={index}
                     title={title}
+                    // @ts-ignore make web strict
                     introduction={intro}
+                    // @ts-ignore make web strict
                     image={image}
                     titleAs="h2"
                     href={linkResolver('news', [slug]).href}
@@ -430,11 +444,14 @@ const getIntParam = (s: string | string[]) => {
   const i = parseInt(Array.isArray(s) ? s[0] : s, 10)
   if (!isNaN(i)) return i
 }
-
+// @ts-ignore make web strict
 NewsListNew.getProps = async ({ apolloClient, locale, query }) => {
   const slug = query.slug as string
+  // @ts-ignore make web strict
   const year = getIntParam(query.y)
+  // @ts-ignore make web strict
   const month = year && getIntParam(query.m)
+  // @ts-ignore make web strict
   const selectedPage = getIntParam(query.page) ?? 1
   const tag = (query.tag as string) ?? FRONTPAGE_NEWS_TAG_ID
 
@@ -492,12 +509,16 @@ NewsListNew.getProps = async ({ apolloClient, locale, query }) => {
       // map data here to reduce data processing in component
       .then((variables) => {
         // map data here to reduce data processing in component
+        // @ts-ignore make web strict
         return JSON.parse(variables.data.getNamespace.fields)
       }),
   ])
 
+  // @ts-ignore make web strict
   const newsItem = getSingleNewsResult?.data?.getSingleNews ?? null
+  // @ts-ignore make web strict
   const newsList = getNewsResults?.data?.getNews?.items ?? []
+  // @ts-ignore make web strict
   const total = getNewsResults?.data?.getNews?.total ?? 0
 
   const selectedYear = newsItem?.date
@@ -515,6 +536,7 @@ NewsListNew.getProps = async ({ apolloClient, locale, query }) => {
     tag?.slug !== FRONTPAGE_NEWS_TAG_ID
 
   return {
+    // @ts-ignore make web strict
     newsList: newsList.map((item) => ({
       ...item,
       genericTags: item?.genericTags?.filter(filterOutFrontpageTag) ?? [],

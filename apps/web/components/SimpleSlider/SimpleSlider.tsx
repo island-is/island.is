@@ -79,6 +79,7 @@ export const SimpleSlider: FC<React.PropsWithChildren<SimpleSliderProps>> = ({
     )
 
     const key = current.length && current[current.length - 1]
+    // @ts-ignore make web strict
     const breakpointOption = slideState.breakpoints[key] ?? {}
 
     const containerWidth = containerRef.current?.offsetWidth
@@ -150,9 +151,11 @@ export const SimpleSlider: FC<React.PropsWithChildren<SimpleSliderProps>> = ({
 
   const handleTouchEnd: TouchEventHandler<HTMLDivElement> = () => {
     switch (touchDirection.current) {
+      // @ts-ignore make web strict
       case 'right':
         traverse('next')
         break
+      // @ts-ignore make web strict
       case 'left':
         traverse('prev')
         break
@@ -165,6 +168,7 @@ export const SimpleSlider: FC<React.PropsWithChildren<SimpleSliderProps>> = ({
     const diff = Math.abs(start.current - e.targetTouches[0].pageX)
 
     if (diff > 10) {
+      // @ts-ignore make web strict
       touchDirection.current =
         start.current < e.targetTouches[0].pageX ? 'left' : 'right'
     }

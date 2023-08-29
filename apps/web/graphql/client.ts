@@ -47,6 +47,7 @@ export default function initApollo(
 
   // Create new instance if client is changing language
   if (currentClientLocale !== clientLocale) {
+    // @ts-ignore make web strict
     currentClientLocale = clientLocale
     apolloClient = create(initialState)
   }

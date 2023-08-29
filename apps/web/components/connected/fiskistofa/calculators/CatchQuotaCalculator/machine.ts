@@ -247,6 +247,7 @@ export const machine = createMachine<Context, Event, State>(
         },
       },
       'getting data': {
+        // @ts-ignore make web strict
         invoke: {
           src: 'getData',
           onDone: {
@@ -263,6 +264,7 @@ export const machine = createMachine<Context, Event, State>(
         },
       },
       'updating general data': {
+        // @ts-ignore make web strict
         invoke: {
           src: 'updateGeneralData',
           onDone: {
@@ -279,6 +281,7 @@ export const machine = createMachine<Context, Event, State>(
         },
       },
       'updating quota data': {
+        // @ts-ignore make web strict
         invoke: {
           src: 'updateQuotaData',
           onDone: {
@@ -307,6 +310,7 @@ export const machine = createMachine<Context, Event, State>(
   },
   {
     services: {
+      // @ts-ignore make web strict
       getData: async (context: Context, event: GetDataEvent) => {
         const [
           fiskistofaGetShipStatusForTimePeriodResponse,
@@ -375,6 +379,7 @@ export const machine = createMachine<Context, Event, State>(
           quotaData,
         }
       },
+      // @ts-ignore make web strict
       updateGeneralData: async (
         context: Context,
         event: UpdateGeneralDataEvent,
@@ -422,6 +427,7 @@ export const machine = createMachine<Context, Event, State>(
           },
         }
       },
+      // @ts-ignore make web strict
       updateQuotaData: async (
         context: Context,
         event: UpdateQuotaDataEvent,

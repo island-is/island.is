@@ -33,6 +33,7 @@ export const ServiceInformation = ({
   strings,
   onSelectChange,
 }: ServiceInformationProps) => {
+  // @ts-ignore make web strict
   const n = useNamespace(strings)
 
   // TODO When environment is chosen set the version options, default is set to newest version.
@@ -62,12 +63,14 @@ export const ServiceInformation = ({
   )
 
   const onSelectVersion = (versionOption: Option) => {
+    // @ts-ignore make web strict
     const tempServiceDetail = service.environments
       .find((e) => e.environment === selectedEnviromentOption.value)
       .details.find((e) => e.version === versionOption.value)
-
+    // @ts-ignore make web strict
     setServiceDetail(tempServiceDetail)
     setSelectedVersionOption(versionOption)
+    // @ts-ignore make web strict
     onSelectChange(tempServiceDetail)
   }
 
@@ -82,6 +85,7 @@ export const ServiceInformation = ({
                 <ServiceTag
                   category="pricing"
                   item={service.pricing[0]}
+                  // @ts-ignore make web strict
                   namespace={strings}
                 />
               </Box>
@@ -110,6 +114,7 @@ export const ServiceInformation = ({
             isSearchable={false}
             defaultValue={selectedVersionOption}
             options={versionOptions}
+            // @ts-ignore make web strict
             onChange={onSelectVersion}
           />
         </GridColumn>
@@ -130,7 +135,9 @@ export const ServiceInformation = ({
               'flexEnd',
             ]}
           >
-            <Link href={serviceDetail.links.bugReport}>
+            <Link 
+            // @ts-ignore make web strict
+            href={serviceDetail.links.bugReport}>
               <Button
                 disabled={!serviceDetail.links.bugReport}
                 colorScheme="light"
@@ -144,7 +151,9 @@ export const ServiceInformation = ({
               </Button>
             </Link>
             <Box marginLeft={[3, 3, 3, 3, 2]}>
-              <Link href={serviceDetail.links.featureRequest}>
+              <Link 
+              // @ts-ignore make web strict
+              href={serviceDetail.links.featureRequest}>
                 <Button
                   disabled={!serviceDetail.links.featureRequest}
                   colorScheme="light"
@@ -222,6 +231,7 @@ export const ServiceInformation = ({
           data={serviceDetail.data}
           type={serviceDetail.type}
           access={service.access}
+          // @ts-ignore make web strict
           namespace={strings}
         />
       </Box>

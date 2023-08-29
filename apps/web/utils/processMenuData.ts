@@ -6,7 +6,7 @@ import {
   MenuLink,
 } from '../graphql/schema'
 import { linkResolver, LinkType } from '../hooks/useLinkResolver'
-
+// @ts-ignore make web strict
 export const formatMegaMenuLinks = (
   locale: Locale,
   menuLinks: (MenuLinkWithChildren | MenuLink)[],

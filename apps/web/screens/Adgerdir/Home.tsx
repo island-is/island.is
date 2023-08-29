@@ -64,6 +64,7 @@ interface HomeProps {
   pages: Query['getAdgerdirPages']
   tags: Query['getAdgerdirTags']
   namespace: Query['getNamespace']
+  // @ts-ignore make web strict
   megaMenuData
 }
 
@@ -75,6 +76,7 @@ const Home: Screen<HomeProps> = ({
   megaMenuData,
 }) => {
   const { activeLocale } = useI18n()
+  // @ts-ignore make web strict
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
 
@@ -83,6 +85,7 @@ const Home: Screen<HomeProps> = ({
   }
 
   const { items: pagesItems } = pages
+  // @ts-ignore make web strict
   const { items: tagsItems } = tags
 
   let groupSliceCount = 0
@@ -187,6 +190,7 @@ const Home: Screen<HomeProps> = ({
                 <AdgerdirArticles
                   tags={tagsItems}
                   items={pagesItems}
+                  // @ts-ignore make web strict
                   namespace={namespace}
                 />
               </ContentBlock>

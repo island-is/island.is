@@ -10,6 +10,7 @@ export const useContentfulId = (
 
   useEffect(() => {
     if (pageId) {
+      // @ts-ignore make web strict
       setContentfulIds([pageId, subpageId, subSubPageId])
     }
     return () => {

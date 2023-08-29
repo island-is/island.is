@@ -68,6 +68,7 @@ const Homestay: Screen<HomestayProps> = ({
   namespace,
 }) => {
   useContentfulId(organizationPage?.id, subpage?.id)
+  // @ts-ignore make web strict
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
 
@@ -75,6 +76,7 @@ const Homestay: Screen<HomestayProps> = ({
 
   const pageUrl = Router.pathname
 
+  // @ts-ignore make web strict
   const navList: NavigationItem[] = organizationPage?.menuLinks.map(
     ({ primaryLink, childrenLinks }) => ({
       title: primaryLink?.text,
@@ -126,6 +128,7 @@ const Homestay: Screen<HomestayProps> = ({
             homestay.year?.toString(),
             homestay.guests?.toString(),
             homestay.rooms?.toString(),
+            // @ts-ignore make web strict
           ].map((x) => csvColumnSeparatorSafeValue(x))
           rows.push(columnValues.join(CSV_COLUMN_SEPARATOR))
         }
@@ -152,8 +155,10 @@ const Homestay: Screen<HomestayProps> = ({
   return (
     <OrganizationWrapper
       pageTitle={subpage?.title ?? ''}
+      // @ts-ignore make web strict
       organizationPage={organizationPage}
       showReadSpeaker={false}
+      // @ts-ignore make web strict
       pageFeaturedImage={subpage?.featuredImage}
       breadcrumbItems={[
         {
@@ -175,7 +180,9 @@ const Homestay: Screen<HomestayProps> = ({
         <Text variant="h1" as="h2">
           {subpage?.title}
         </Text>
-        <Webreader readId={null} readClass="rs_read" />
+        <Webreader 
+        // @ts-ignore make web strict
+        readId={null} readClass="rs_read" />
       </Box>
       {webRichText(subpage?.description as SliceType[])}
       <Box marginTop={4} marginBottom={6}>
@@ -262,7 +269,9 @@ const Homestay: Screen<HomestayProps> = ({
                           'realEstateRegistryLinkTemplate',
                           'https://fasteignaskra.is/default.aspx?pageid=d5db1b6d-0650-11e6-943c-005056851dd2&selector=streetname&streetname={{ID}}&submitbutton=Leita',
                         ) as string
-                      ).replace('{{ID}}', homestay.propertyId)}
+                      ).replace('{{ID}}', 
+                      // @ts-ignore make web strict
+                      homestay.propertyId)}
                     >
                       {homestay.propertyId}
                     </a>

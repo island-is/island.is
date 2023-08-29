@@ -78,6 +78,7 @@ export const MonthlyStatistics = ({ slice }: MonthlyStatisticsProps) => {
     } else {
       // Make sure to keep the reference intact since we're renewing the list
       setSelectedRegistrationTypeOption(
+        // @ts-ignore make web strict
         typeOptions.find(
           (type) => type.value === selectedRegistrationTypeOption.value,
         ),

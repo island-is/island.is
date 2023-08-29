@@ -57,6 +57,7 @@ export const Footer = ({ imageUrl, heading, columns }: FooterProps) => {
                       )}
                       {webRichText((column?.content ?? []) as SliceType[], {
                         renderNode: {
+                          // @ts-ignore make web strict
                           [BLOCKS.PARAGRAPH]: (_node, children) => {
                             return (
                               <Text variant="medium" marginBottom={1}>

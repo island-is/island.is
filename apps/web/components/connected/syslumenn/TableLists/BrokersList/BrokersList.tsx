@@ -34,6 +34,7 @@ const getSortedAndFilteredBrokers = (
   const brokersContainingAllTerm: Query['getBrokers'] = []
 
   const startsWithFullSearchString = (broker: Broker): boolean => {
+    // @ts-ignore make web strict
     return (
       broker.name?.trim().toLowerCase().startsWith(fullSearchString) ||
       broker.nationalId?.trim().toLowerCase().startsWith(fullSearchString)

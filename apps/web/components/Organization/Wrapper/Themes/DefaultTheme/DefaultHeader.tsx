@@ -58,6 +58,7 @@ const DefaultHeader: React.FC<React.PropsWithChildren<HeaderProps>> = ({
         <div
           className={styles.textContainer}
           style={{
+            // @ts-ignore make web strict
             background: getBackgroundStyle(organizationPage),
           }}
         >

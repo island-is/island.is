@@ -32,7 +32,9 @@ export const getHashString = (hashArray: string[]): string => {
 export const getHashArr = (hashString: string): string[] => {
   if (!!hashString && hashString.length > 0) {
     hashString = hashString.replace('#', '')
+    // @ts-ignore make web strict
     return hashString.length > 0 ? hashString.split(',') : null
   }
+  // @ts-ignore make web strict
   return null
 }

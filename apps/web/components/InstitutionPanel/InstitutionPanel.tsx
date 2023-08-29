@@ -27,7 +27,9 @@ export const InstitutionPanel = ({
   imgContainerDisplay,
 }: InstitutionPanelProps) => {
   return (
-    <Link {...linkProps}>
+    <
+      // @ts-ignore make web strict
+      Link {...linkProps}>
       <Box
         background="purple100"
         borderRadius="large"

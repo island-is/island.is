@@ -5,8 +5,9 @@ import { getLocaleFromPath } from '@island.is/web/i18n/withLocale'
 import initApollo from './client'
 import { ScreenContext } from '../types'
 import { safelyExtractPathnameFromUrl } from '../utils/safelyExtractPathnameFromUrl'
-
+// @ts-ignore make web strict
 export const withApollo = (Component) => {
+  // @ts-ignore make web strict
   const NewComponent = ({ apolloState, pageProps }) => {
     const { asPath } = useRouter()
     const clientLocale = getLocaleFromPath(asPath)

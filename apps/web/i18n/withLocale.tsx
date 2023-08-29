@@ -12,6 +12,7 @@ import { safelyExtractPathnameFromUrl } from '../utils/safelyExtractPathnameFrom
 
 export const getLocaleFromPath = (path = ''): Locale => {
   const maybeLocale = path.split('/').find(Boolean)
+  // @ts-ignore make web strict
   return isLocale(maybeLocale) ? maybeLocale : defaultLanguage
 }
 
@@ -26,19 +27,22 @@ export const withLocale =
   (Component: Screen<Props>): NextComponentType => {
     const getProps = Component.getProps
     if (!getProps) {
+      // @ts-ignore make web strict
       return Component
     }
-
+    // @ts-ignore make web strict
     const NewComponent: Screen<NewComponentProps<Props>> = ({
       pageProps,
       locale,
       translations,
     }) => (
       <I18n locale={locale} translations={translations}>
-        <Component {...pageProps} />
+        <
+        // @ts-ignore make web strict
+        Component {...pageProps} />
       </I18n>
     )
-
+    // @ts-ignore make web strict
     NewComponent.getProps = async (ctx) => {
       const newContext = {
         ...ctx,
@@ -56,7 +60,7 @@ export const withLocale =
         translations,
       }
     }
-
+    // @ts-ignore make web strict
     return NewComponent
   }
 

@@ -146,6 +146,7 @@ export const SearchBox = ({
     }
 
     setOptions(
+      // @ts-ignore make web strict
       newOpts.length
         ? newOpts.concat({
             label: value,

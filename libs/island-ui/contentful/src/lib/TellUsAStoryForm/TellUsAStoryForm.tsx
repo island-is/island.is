@@ -266,6 +266,7 @@ export const TellUsAStoryForm: React.FC<
                         locale={locale as Locale}
                         selected={value}
                         required
+                        // @ts-ignore make web strict
                         errorMessage={
                           errors.dateOfStory
                             ? dateOfStoryInputErrorMessage

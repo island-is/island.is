@@ -49,11 +49,15 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
   service = null,
 }) => {
   const Router = useRouter()
+  // @ts-ignore make web strict
   const n = useNamespace(strings)
+  // @ts-ignore make web strict
   const nfc = useNamespace(filterContent)
+  // @ts-ignore make web strict
   const noa = useNamespace(openApiContent)
   const { linkResolver } = useLinkResolver()
   const [selectedServiceDetail, setselectedServiceDetail] =
+  // @ts-ignore make web strict
     useState<ServiceDetail>(service.environments[0].details[0])
 
   useLocalLinkTypeResolver()
@@ -80,7 +84,7 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
     0,
     Router.asPath.lastIndexOf('/'),
   )
-
+// @ts-ignore make web strict
   const navList: NavigationItem[] = organizationPage?.menuLinks.map(
     ({ primaryLink, childrenLinks }) => ({
       title: primaryLink?.text,
@@ -99,7 +103,9 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
   return (
     <>
       <OrganizationWrapper
+      // @ts-ignore make web strict
         pageTitle={service.title ?? ''}
+        // @ts-ignore make web strict
         organizationPage={organizationPage}
         showReadSpeaker={false}
         breadcrumbItems={[

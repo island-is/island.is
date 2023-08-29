@@ -30,7 +30,9 @@ export const NewsArticle: React.FC<
         </Text>
       </Box>
 
-      <Webreader marginTop={0} readId={null} readClass="rs_read" />
+      <Webreader marginTop={0} 
+      // @ts-ignore make web strict
+      readId={null} readClass="rs_read" />
 
       <Box className="rs_read">
         <Text variant="h4" as="p" paddingBottom={2} color="blue400">
@@ -72,6 +74,7 @@ export const NewsArticle: React.FC<
           {
             renderComponent: {
               // Make sure that images in the content are full width
+              // @ts-ignore make web strict
               Image: (slice) => (
                 <Box className={styles.clearBoth}>
                   <Image {...slice} thumbnail={slice.url + '?w=50'} />

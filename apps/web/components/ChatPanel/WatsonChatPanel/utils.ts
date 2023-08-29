@@ -14,10 +14,12 @@ const storage = storageFactory(() => sessionStorage)
 
 const getUserID = () => {
   const email = storage.getItem(emailInputId)
+  // @ts-ignore make web strict
   return String(stringHash(storage.getItem('IBM_WAC_DEVICE_ID') ?? email))
 }
 
 const getUserInformation = async (
+  // @ts-ignore make web strict
   instance,
   callback: (userInfo: { name: string; email: string }) => void,
 ) => {
@@ -98,12 +100,13 @@ const getUserInformation = async (
     }
   }
 }
-
+// @ts-ignore make web strict
 export const onDirectorateOfImmigrationChatLoad = (instance) => {
   const apolloClient = initApollo({})
 
   instance.on({
     type: 'identityTokenExpired',
+    // @ts-ignore make web strict
     handler: (event) => {
       return new Promise((resolve, reject) => {
         getUserInformation(instance, ({ email, name }) => {

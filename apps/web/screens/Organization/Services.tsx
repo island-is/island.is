@@ -66,12 +66,13 @@ const ServicesPage: Screen<ServicesPageProps> = ({
   namespace,
 }) => {
   const router = useRouter()
+  // @ts-ignore make web strict
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
 
   useContentfulId(organizationPage?.id)
   useLocalLinkTypeResolver()
-
+  // @ts-ignore make web strict
   const navList: NavigationItem[] = organizationPage?.menuLinks.map(
     ({ primaryLink, childrenLinks }) => ({
       title: primaryLink?.text,
@@ -111,13 +112,16 @@ const ServicesPage: Screen<ServicesPageProps> = ({
     (x) =>
       x.title.toLowerCase().includes(parameters.query.toLowerCase()) &&
       (parameters.categories.length === 0 ||
+        // @ts-ignore make web strict
         parameters.categories.includes(x.category?.slug)) &&
       (parameters.groups.length === 0 ||
+        // @ts-ignore make web strict
         parameters.groups.includes(x.group?.slug)),
   )
 
   groups = groups.filter((x) =>
     services
+    // @ts-ignore make web strict
       .filter((x) => parameters.categories.includes(x.category?.slug))
       .map((x) => x.group?.slug)
       .includes(x.value),
@@ -126,7 +130,9 @@ const ServicesPage: Screen<ServicesPageProps> = ({
   return (
     <OrganizationWrapper
       pageTitle={n('services', 'Þjónusta')}
+      // @ts-ignore make web strict
       organizationPage={organizationPage}
+      // @ts-ignore make web strict
       pageFeaturedImage={organizationPage?.featuredImage}
       fullWidthContent={false}
       stickySidebar={false}
@@ -153,7 +159,9 @@ const ServicesPage: Screen<ServicesPageProps> = ({
             <Text variant="h1" as="h1" marginBottom={0} marginTop={1}>
               {n('allServices', 'Öll þjónusta')}
             </Text>
-            <Webreader marginBottom={4} readId={null} readClass="rs_read" />
+            <Webreader marginBottom={4} 
+            // @ts-ignore make web strict
+            readId={null} readClass="rs_read" />
           </GridColumn>
         </GridRow>
         <GridRow marginBottom={4}>
@@ -191,9 +199,11 @@ const ServicesPage: Screen<ServicesPageProps> = ({
                 },
                 ...categories,
               ]}
+              // @ts-ignore make web strict
               onChange={({ value }: Option) => {
                 setParameters({
                   ...parameters,
+                  // @ts-ignore make web strict
                   categories: value ? [value] : [],
                   groups: [],
                 })
@@ -210,10 +220,12 @@ const ServicesPage: Screen<ServicesPageProps> = ({
               <Tag
                 key={x.value}
                 variant="blue"
+                // @ts-ignore make web strict
                 active={parameters.groups.includes(x.value)}
                 onClick={() =>
                   setParameters({
                     ...parameters,
+                    // @ts-ignore make web strict
                     groups: parameters.groups.includes(x.value)
                       ? []
                       : [x.value],
@@ -238,6 +250,7 @@ const ServicesPage: Screen<ServicesPageProps> = ({
               {({ isFocused }) => (
                 <LinkCard
                   isFocused={isFocused}
+                  // @ts-ignore make web strict
                   tag={
                     (!!article.processEntry ||
                       article.processEntryButtonText) &&
@@ -336,6 +349,7 @@ ServicesPage.getProps = async ({ apolloClient, locale, query }) => {
     groups,
     sort: (query.sort as string) ?? 'popular',
     showSearchInHeader: false,
+    // @ts-ignore make web strict
     ...getThemeConfig(getOrganizationPage.theme, getOrganizationPage.slug),
   }
 }

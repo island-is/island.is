@@ -74,8 +74,11 @@ const ApiCatalogue: Screen<HomestayProps> = ({
   const { width } = useWindowSize()
   const [isMobile, setIsMobile] = useState(false)
   const Router = useRouter()
+  // @ts-ignore make web strict
   const sn = useNamespace(staticContent)
+  // @ts-ignore make web strict
   const fn = useNamespace(filterContent)
+  // @ts-ignore make web strict
   const nn = useNamespace(navigationLinks)
   const { linkResolver } = useLinkResolver()
   useContentfulId(organizationPage?.id, subpage?.id)
@@ -207,7 +210,7 @@ const ApiCatalogue: Screen<HomestayProps> = ({
       ],
     },
   ]
-
+  // @ts-ignore make web strict
   const navList: NavigationItem[] = organizationPage?.menuLinks.map(
     ({ primaryLink, childrenLinks }) => ({
       title: primaryLink?.text,
@@ -227,7 +230,9 @@ const ApiCatalogue: Screen<HomestayProps> = ({
     <>
       <OrganizationWrapper
         pageTitle={subpage?.title ?? ''}
+        // @ts-ignore make web strict
         organizationPage={organizationPage}
+        // @ts-ignore make web strict
         pageFeaturedImage={subpage?.featuredImage}
         showReadSpeaker={false}
         breadcrumbItems={[
@@ -252,10 +257,13 @@ const ApiCatalogue: Screen<HomestayProps> = ({
           <Text variant="h1" as="h2">
             {subpage?.title}
           </Text>
-          <Webreader readId={null} readClass="rs_read" />
+          <Webreader 
+          // @ts-ignore make web strict
+          readId={null} readClass="rs_read" />
         </Box>
         {webRichText(subpage?.description as SliceType[], {
           renderNode: {
+            // @ts-ignore make web strict
             [INLINES.HYPERLINK]: (node, children: ReactNode) => (
               <ArrowLink href={node.data.uri}>{children}</ArrowLink>
             ),
@@ -286,6 +294,7 @@ const ApiCatalogue: Screen<HomestayProps> = ({
                   })
                 }
                 inputPlaceholder={fn('search')}
+                // @ts-ignore make web strict
                 inputValue={parameters.query}
                 onInputChange={(value) =>
                   setParameters({ ...parameters, query: value })
@@ -303,6 +312,7 @@ const ApiCatalogue: Screen<HomestayProps> = ({
                     [categoryId]: [],
                   })
                 }
+                // @ts-ignore make web strict
                 categories={filterCategories}
               />
             </Box>
@@ -321,6 +331,7 @@ const ApiCatalogue: Screen<HomestayProps> = ({
               <GridContainer>
                 <ServiceList
                   baseUrl={linkResolver('apicataloguepage').href + '/'}
+                  // @ts-ignore make web strict
                   services={data?.getApiCatalogue?.services}
                   tagDisplayNames={filterContent}
                 />

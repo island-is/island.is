@@ -342,6 +342,7 @@ export const OrganizationExternalLinks: React.FC<
               >
                 <Button
                   as="a"
+                  // @ts-ignore make web strict
                   variant={variant}
                   icon={isSjukratryggingar ? 'lockClosed' : 'open'}
                   iconType="outline"
@@ -555,6 +556,7 @@ export const OrganizationFooter: React.FC<
         <TransportAuthorityFooter
           title={organization.title}
           footerItems={organization.footerItems}
+          // @ts-ignore make web strict
           logo={organization.logo?.url}
         />
       )
@@ -627,6 +629,7 @@ const SecondaryMenu = ({
         {title}
       </Text>
       {items.map((link) => (
+        // @ts-ignore make web strict
         <Link key={link.href} href={link.href} underline="normal">
           <Text
             key={link.href}
@@ -656,7 +659,7 @@ const getActiveNavigationItemTitle = (
     }
   }
 }
-
+// @ts-ignore make web strict
 const renderConnectedComponent = (slice) => {
   if (!slice?.componentType) return null
 
@@ -698,7 +701,7 @@ export const OrganizationWrapper: React.FC<
   const router = useRouter()
   const { width } = useWindowSize()
   const [isMobile, setIsMobile] = useState<boolean | undefined>()
-
+  // @ts-ignore make web strict
   usePlausiblePageview(organizationPage.organization?.trackingDomain)
 
   useEffect(() => {
@@ -781,6 +784,7 @@ export const OrganizationWrapper: React.FC<
                             key={card.id}
                             title={card.title}
                             description={card.contentString}
+                            // @ts-ignore make web strict
                             link={card.link}
                             image={
                               card.image?.url ||
@@ -884,6 +888,7 @@ export const OrganizationWrapper: React.FC<
                   <Webreader
                     marginTop={breadcrumbItems?.length ? 3 : 0}
                     marginBottom={breadcrumbItems?.length ? 0 : 3}
+                    // @ts-ignore make web strict
                     readId={null}
                     readClass="rs_read"
                   />
@@ -927,12 +932,14 @@ export const OrganizationWrapper: React.FC<
       {!minimal && (
         <Box className="rs_read">
           <OrganizationFooter
+            // @ts-ignore make web strict
             organizations={[organizationPage.organization]}
             force={true}
           />
         </Box>
       )}
       <OrganizationChatPanel
+        // @ts-ignore make web strict
         organizationIds={[organizationPage?.organization?.id]}
       />
     </>

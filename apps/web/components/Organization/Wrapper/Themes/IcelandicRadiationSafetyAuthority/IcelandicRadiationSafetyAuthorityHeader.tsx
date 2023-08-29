@@ -34,7 +34,9 @@ const IcelandicNaturalDisasterInsuranceHeader: React.FC<HeaderProps> = ({
 }) => {
   const { linkResolver } = useLinkResolver()
   const namespace = useMemo(
+    // @ts-ignore make web strict
     () => JSON.parse(organizationPage.organization.namespace?.fields ?? '{}'),
+    // @ts-ignore make web strict
     [organizationPage.organization.namespace?.fields],
   )
   const n = useNamespace(namespace)
@@ -53,6 +55,7 @@ const IcelandicNaturalDisasterInsuranceHeader: React.FC<HeaderProps> = ({
       <div className={styles.headerWrapper}>
         <SidebarLayout
           sidebarContent={
+            // @ts-ignore make web strict
             !!organizationPage.organization.logo && (
               <Link
                 href={
@@ -61,6 +64,7 @@ const IcelandicNaturalDisasterInsuranceHeader: React.FC<HeaderProps> = ({
                 className={styles.iconCircle}
               >
                 <img
+                // @ts-ignore make web strict
                   src={organizationPage.organization.logo.url}
                   className={styles.headerLogo}
                   alt="nti-logo"
@@ -69,7 +73,9 @@ const IcelandicNaturalDisasterInsuranceHeader: React.FC<HeaderProps> = ({
             )
           }
         >
-          {!!organizationPage.organization.logo && (
+          {
+          // @ts-ignore make web strict
+          !!organizationPage.organization.logo && (
             <Hidden above="sm">
               <Link
                 href={
@@ -78,6 +84,7 @@ const IcelandicNaturalDisasterInsuranceHeader: React.FC<HeaderProps> = ({
                 className={styles.iconCircle}
               >
                 <img
+                  // @ts-ignore make web strict
                   src={organizationPage.organization.logo.url}
                   className={styles.headerLogo}
                   alt=""

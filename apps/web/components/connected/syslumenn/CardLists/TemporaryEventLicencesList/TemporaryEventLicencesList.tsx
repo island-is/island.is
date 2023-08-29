@@ -123,6 +123,7 @@ const TemporaryEventLicencesList: FC<
   const avaibleOfficesOptions = [
     allOfficesOption,
     ...Array.from(
+      // @ts-ignore make web strict
       new Set<string>(temporaryEventLicences.map((x) => x.issuedBy)).values(),
     ),
   ]
@@ -136,6 +137,7 @@ const TemporaryEventLicencesList: FC<
     allLicenceSubTypeOption,
     ...Array.from(
       new Set<string>(
+        // @ts-ignore make web strict
         temporaryEventLicences.map((x) => x.licenceSubType),
       ).values(),
     ),
@@ -157,10 +159,15 @@ const TemporaryEventLicencesList: FC<
       // Filter by search string
       textSearch(searchTerms, [
         // Fields to search
+        // @ts-ignore make web strict
         temporaryEventLicence.licenceType,
+        // @ts-ignore make web strict
         temporaryEventLicence.licenceSubType,
+        // @ts-ignore make web strict
         temporaryEventLicence.licenseHolder,
+        // @ts-ignore make web strict
         temporaryEventLicence.licenseNumber,
+        // @ts-ignore make web strict
         temporaryEventLicence.licenseResponsible,
       ]),
   )
@@ -210,6 +217,7 @@ const TemporaryEventLicencesList: FC<
                       value: x,
                     }))
                     .find((x) => x.value === filterLicenceSubType)}
+                    // @ts-ignore make web strict
                   onChange={({ value }: Option) => {
                     setFilterLicenceSubType(String(value))
                   }}
@@ -236,6 +244,7 @@ const TemporaryEventLicencesList: FC<
                       value: x,
                     }))
                     .find((x) => x.value === filterOffice)}
+                    // @ts-ignore make web strict
                   onChange={({ value }: Option) => {
                     setFilterOffice(String(value))
                   }}
@@ -333,6 +342,7 @@ const TemporaryEventLicencesList: FC<
                       <Text>
                         {n('validPeriodLabel', 'Gildistími')}:{' '}
                         {getValidPeriodRepresentation(
+                          // @ts-ignore make web strict
                           temporaryEventLicence.validFrom,
                           temporaryEventLicence.validTo,
                           DATE_FORMAT,

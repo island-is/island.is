@@ -34,6 +34,7 @@ export const FixedNav: FC<React.PropsWithChildren<unknown>> = () => {
       setShow(canShow && !goingDown)
     },
     [setShow],
+    // @ts-ignore make web strict
     null,
     false,
     150,

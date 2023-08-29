@@ -105,6 +105,7 @@ const CatchQuotaCalculator = ({ namespace }: CatchQuotaCalculatorProps) => {
 
   const prevChangesRef = useRef<Changes | null>(null)
 
+  // @ts-ignore make web strict
   const [state, send] = useMachine<Context, EventType>(machine)
 
   const quotaStateChangeMetadata = useRef({
@@ -296,6 +297,7 @@ const CatchQuotaCalculator = ({ namespace }: CatchQuotaCalculatorProps) => {
                 val[key] as number,
               )
             } else {
+              // @ts-ignore make web strict
               formattedVal[key] = numberFormatter.format(val[key] as number)
             }
           }
@@ -315,9 +317,11 @@ const CatchQuotaCalculator = ({ namespace }: CatchQuotaCalculatorProps) => {
     category: ExtendedCatchQuotaCategory,
     fieldName: keyof ExtendedCatchQuotaCategory,
   ) => {
+    // @ts-ignore make web strict
     const current = state.context.data?.catchQuotaCategories?.find(
       (c) => c.id === category.id,
     )?.[fieldName]
+    // @ts-ignore make web strict
     const initial = state.context.initialData?.catchQuotaCategories?.find(
       (c) => c.id === category.id,
     )?.[fieldName]

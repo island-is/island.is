@@ -68,7 +68,7 @@ export const CardsSlider: FC<React.PropsWithChildren<CardsSliderProps>> = ({
       paddingLeft: 0,
       paddingRight,
     })
-
+    // @ts-ignore make web strict
     const el = ref && ref.current?.stageComponent?.offsetParent
 
     if (el) {
@@ -76,6 +76,7 @@ export const CardsSlider: FC<React.PropsWithChildren<CardsSliderProps>> = ({
       setHeight(`${el.offsetHeight}px`)
       setSlideState({
         ...initialSlideState,
+        // @ts-ignore make web strict
         itemsInSlide: ref.current.state.items,
       })
     }
@@ -93,10 +94,12 @@ export const CardsSlider: FC<React.PropsWithChildren<CardsSliderProps>> = ({
   }, [handleResize])
 
   const slideNext = () => {
+    // @ts-ignore make web strict
     ref.current.slideNext()
   }
 
   const slidePrev = () => {
+    // @ts-ignore make web strict
     ref.current.slidePrev()
   }
 
@@ -183,6 +186,7 @@ export const CardsSlider: FC<React.PropsWithChildren<CardsSliderProps>> = ({
               <button
                 key={item}
                 onClick={() =>
+                  // @ts-ignore make web strict
                   ref.current.slideTo(index * slideState.itemsInSlide)
                 }
                 className={styles.dot}

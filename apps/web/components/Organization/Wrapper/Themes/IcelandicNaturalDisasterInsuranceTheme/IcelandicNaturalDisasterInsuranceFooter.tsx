@@ -48,6 +48,7 @@ const IcelandicNaturalDisasterInsuranceFooter = ({
               <Box
                 marginTop={index === 0 && shouldWrap ? 3 : 0}
                 marginLeft={shouldWrap ? 7 : undefined}
+                // @ts-ignore make web strict
                 marginRight={shouldWrap ? null : 12}
               >
                 <Box marginBottom={2}>
