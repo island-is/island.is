@@ -9,7 +9,6 @@ import {
   formatNationalId,
 } from '@island.is/judicial-system/formatters'
 import { isRestrictionCase } from '@island.is/judicial-system/types'
-import type { CaseLegalProvisions } from '@island.is/judicial-system/types'
 import {
   requestCourtDate,
   core,
@@ -23,6 +22,7 @@ import { lawsBrokenAccordion } from '@island.is/judicial-system-web/messages/Cor
 
 import AccordionListItem from '../../AccordionListItem/AccordionListItem'
 import * as styles from './PoliceRequestAccordionItem.css'
+import { CaseLegalProvisions } from '@island.is/judicial-system-web/src/graphql/schema'
 
 interface Props {
   workingCase: Case
