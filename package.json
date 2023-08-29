@@ -430,7 +430,7 @@
     "mailparser": "3.5.0",
     "next-secure-headers": "2.1.0",
     "nx": "16.5.0",
-    "prettier": "2.2.1",
+    "prettier": "2.5.0",
     "quicktype": "15.0.258",
     "sequelize-cli": "6.4.1",
     "sort-paths": "1.1.1",
