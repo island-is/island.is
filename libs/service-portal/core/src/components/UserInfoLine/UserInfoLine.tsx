@@ -68,8 +68,11 @@ export const UserInfoLine: FC<React.PropsWithChildren<Props>> = ({
   const { pathname } = useLocation()
   const { formatMessage } = useLocale()
 
-  const trackExternalLinkClick = () => {
-    servicePortalOutboundLink(formatPlausiblePathToParams(pathname))
+  const trackExternalLinkClick = (outboundUrl?: string) => {
+    servicePortalOutboundLink({
+      url: formatPlausiblePathToParams(pathname).url,
+      outboundUrl,
+    })
   }
 
   return (
@@ -147,7 +150,7 @@ export const UserInfoLine: FC<React.PropsWithChildren<Props>> = ({
                   onClick={
                     editLink.skipOutboundTrack
                       ? undefined
-                      : trackExternalLinkClick
+                      : () => trackExternalLinkClick(editLink.url)
                   }
                   target="_blank"
                 >
