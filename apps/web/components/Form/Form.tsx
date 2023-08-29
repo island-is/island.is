@@ -515,7 +515,8 @@ export const Form = ({ form, namespace }: FormProps) => {
               email: data['email'],
               message: formatBody(_data),
               files: files.map((f) => f[1]).flat(),
-              recipientFormFieldDeciderValue: getRecipientFormFieldDeciderValue(),
+              recipientFormFieldDeciderValue:
+                getRecipientFormFieldDeciderValue(),
             },
           },
         }).then(() => {

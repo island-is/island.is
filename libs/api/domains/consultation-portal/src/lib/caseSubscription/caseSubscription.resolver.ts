@@ -61,10 +61,8 @@ export class CaseSubscriptionResolver {
     input: PostCaseSubscriptionTypeInput,
     @CurrentUser() user: User,
   ): Promise<void> {
-    const response = await this.caseSubscriptionService.postCaseSubscriptionType(
-      user,
-      input,
-    )
+    const response =
+      await this.caseSubscriptionService.postCaseSubscriptionType(user, input)
     return response
   }
 }

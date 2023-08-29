@@ -54,10 +54,8 @@ export const UserForm: React.FC<React.PropsWithChildren<Props>> = (props) => {
   const [nationalIdErrorMessage, setNationalIdErrorMessage] = useState<string>()
 
   const [titleErrorMessage, setTitleErrorMessage] = useState<string>()
-  const [
-    mobileNumberErrorMessage,
-    setMobileNumberErrorMessage,
-  ] = useState<string>()
+  const [mobileNumberErrorMessage, setMobileNumberErrorMessage] =
+    useState<string>()
   const [emailErrorMessage, setEmailErrorMessage] = useState<string>()
 
   const setName = useCallback(
@@ -84,13 +82,14 @@ export const UserForm: React.FC<React.PropsWithChildren<Props>> = (props) => {
     }
   }, [personData, personError, setName])
 
-  const selectInstitutions = (isProsecutionRole(user.role)
-    ? props.prosecutorsOffices
-    : isExtendedCourtRole(user.role)
-    ? props.allCourts
-    : user.role === UserRole.STAFF
-    ? props.prisonInstitutions
-    : []
+  const selectInstitutions = (
+    isProsecutionRole(user.role)
+      ? props.prosecutorsOffices
+      : isExtendedCourtRole(user.role)
+      ? props.allCourts
+      : user.role === UserRole.STAFF
+      ? props.prisonInstitutions
+      : []
   ).map((institution) => ({
     label: institution.name,
     value: institution.id,

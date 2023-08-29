@@ -31636,7 +31636,7 @@ __metadata:
     pg-hstore: 2.3.3
     powerbi-client: 2.21.1
     powerbi-client-react: 1.3.5
-    prettier: 2.2.1
+    prettier: 2.5.0
     prom-client: 14.1.0
     pubsub-js: 1.8.0
     quicktype: 15.0.258
@@ -41535,12 +41535,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prettier@npm:2.2.1":
-  version: 2.2.1
-  resolution: "prettier@npm:2.2.1"
+"prettier@npm:2.5.0":
+  version: 2.5.0
+  resolution: "prettier@npm:2.5.0"
   bin:
     prettier: bin-prettier.js
-  checksum: 800de2df3d37067ab24478c7f32c60ca0c57b01742133287829feeb4a70d239a7bf6bccb56196784777af591ad80fb9ba70c1a49b0fcecf9f5622a764d513edb
+  checksum: aad1b35b73e7c14596d389d90977a83dad0db689ba5802a0ef319c357b7867f55b885db197972aa6a56c30f53088c9f8e0d7f7930ae074c275a4e9cbe091d21d
   languageName: node
   linkType: hard
 

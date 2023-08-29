@@ -36,16 +36,12 @@ export interface UpdateDefendantMutationResponse {
 const useDefendants = () => {
   const { formatMessage } = useIntl()
 
-  const [
-    createDefendantMutation,
-    { loading: isCreatingDefendant },
-  ] = useMutation<CreateDefendantMutationResponse>(CreateDefendantMutation)
-  const [
-    deleteDefendantMutation,
-  ] = useMutation<DeleteDefendantMutationResponse>(DeleteDefendantMutation)
-  const [
-    updateDefendantMutation,
-  ] = useMutation<UpdateDefendantMutationResponse>(UpdateDefendantMutation)
+  const [createDefendantMutation, { loading: isCreatingDefendant }] =
+    useMutation<CreateDefendantMutationResponse>(CreateDefendantMutation)
+  const [deleteDefendantMutation] =
+    useMutation<DeleteDefendantMutationResponse>(DeleteDefendantMutation)
+  const [updateDefendantMutation] =
+    useMutation<UpdateDefendantMutationResponse>(UpdateDefendantMutation)
 
   const createDefendant = useCallback(
     async (defendant: CreateDefendantInput) => {

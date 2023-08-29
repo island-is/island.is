@@ -51,16 +51,11 @@ const DefenderInput: React.FC<React.PropsWithChildren<Props>> = ({
   const { formatMessage } = useIntl()
   const lawyers = useGetLawyers()
   const { updateCase, setAndSendCaseToServer } = useCase()
-  const {
-    updateDefendant,
-    updateDefendantState,
-    setAndSendDefendantToServer,
-  } = useDefendants()
+  const { updateDefendant, updateDefendantState, setAndSendDefendantToServer } =
+    useDefendants()
   const [emailErrorMessage, setEmailErrorMessage] = useState<string>('')
-  const [
-    phoneNumberErrorMessage,
-    setPhoneNumberErrorMessage,
-  ] = useState<string>('')
+  const [phoneNumberErrorMessage, setPhoneNumberErrorMessage] =
+    useState<string>('')
 
   const defendantInDefendants = workingCase.defendants?.find(
     (defendant) => defendant.id === defendantId,

@@ -1,4 +1,5 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
+import { PaginatedResponse } from '@island.is/nest/pagination'
 
 @ObjectType('RightsPortalTherapiesState')
 class State {
@@ -30,8 +31,8 @@ class Periods {
   to?: Date
 }
 
-@ObjectType('RightsPortalTherapies')
-export class Therapies {
+@ObjectType('RightsPortalTherapy')
+export class Therapy {
   @Field(() => ID)
   id!: string
 
@@ -47,3 +48,6 @@ export class Therapies {
   @Field(() => State, { nullable: true })
   state?: State
 }
+
+@ObjectType('RightsPortalPaginatedTherapiesResponse')
+export class PaginatedTherapiesResponse extends PaginatedResponse(Therapy) {}

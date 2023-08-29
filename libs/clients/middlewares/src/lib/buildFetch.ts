@@ -18,7 +18,7 @@ export function buildFetch(actualFetch: NodeFetchAPI) {
         // Normalize Request.
         const request = new Request(input as RequestInfo, init as RequestInit)
         const response = firstMiddleware(request)
-        return (response as unknown) as Promise<Response>
+        return response as unknown as Promise<Response>
       }
     },
 

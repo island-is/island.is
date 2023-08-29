@@ -28,13 +28,13 @@ type GivenWhenThen = (message: CaseMessage) => Promise<Then>
 
 describe('MessageHandlerService - Handle message', () => {
   const config = appModuleConfig()
-  const logger = ({ debug: jest.fn() } as unknown) as Logger
+  const logger = { debug: jest.fn() } as unknown as Logger
   const user = { id: uuid() } as User
   const caseId = uuid()
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const mockFetch = (fetch as unknown) as jest.Mock
+    const mockFetch = fetch as unknown as jest.Mock
     mockFetch.mockResolvedValueOnce({
       ok: true,
       json: jest.fn().mockResolvedValueOnce({ delivered: true }),
@@ -42,7 +42,7 @@ describe('MessageHandlerService - Handle message', () => {
 
     givenWhenThen = async (message: CaseMessage) => {
       const messageHandlerService = new MessageHandlerService(
-        (undefined as unknown) as MessageService,
+        undefined as unknown as MessageService,
         new InternalDeliveryService(config, logger),
         config,
         logger,

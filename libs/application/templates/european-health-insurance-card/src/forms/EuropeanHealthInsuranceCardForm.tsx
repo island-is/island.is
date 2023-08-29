@@ -240,7 +240,7 @@ export const EuropeanHealthInsuranceCardForm: Form = buildForm({
                   subLabel: string
                 }[] = []
                 // Are applying for a new plastic card
-                const answers = (application.answers as unknown) as Answer
+                const answers = application.answers as unknown as Answer
                 const ans = answers.delimitations.applyForPlastic
                 for (const i in ans) {
                   applying.push({
