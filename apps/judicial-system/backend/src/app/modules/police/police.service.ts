@@ -38,8 +38,45 @@ import { PoliceCaseInfo } from './models/policeCaseInfo.model'
 export class PoliceService {
   private xRoadPath: string
   private agent: Agent
-
   private throttle = Promise.resolve({} as UploadPoliceCaseFileResponse)
+  private policeCaseFileStructure = z.object({
+    skjalNr: z.string(),
+    dagsStofnad: z.string(),
+    leitarord: z.string(),
+    ath: z.string(),
+    ferill: z.string(),
+    tegundSkjals: z.object({
+      umStodAtridi_ID: z.number(),
+      fkumStodTegund_ID: z.number(),
+      heiti: z.string(),
+      virk: z.boolean(),
+      dags_Fra: z.nullable(z.string()),
+      dags_Til: z.nullable(z.string()),
+      kodi: z.string(),
+    }),
+    domsSkjalsFlokkun: z.string(),
+    fkRMal_ID: z.string().uuid(),
+    rvMalSkjolMals_ID: z.number(),
+    heitiSkjals: z.string(),
+    flokkurSkjals: z.string(),
+    malsnumer: z.string(),
+  })
+
+  private responseStructure = z.object({
+    malsnumer: z.string(),
+    skjol: z.array(this.policeCaseFileStructure),
+    malseinings: z.array(
+      z.object({
+        artalNrGreinLidur: z.string(),
+        lysing: z.string(),
+        nanar: z.string(),
+        vettvangur: z.string(),
+        brotFra: z.string(),
+        brotTil: z.string(),
+        upprunalegtMalsnumer: z.string(),
+      }),
+    ),
+  })
 
   constructor(
     @Inject(policeModuleConfig.KEY)
@@ -172,54 +209,35 @@ export class PoliceService {
       .then(async (res: Response) => {
         if (res.ok) {
           if (this.config.policeCaseApiV2Available) {
-            const response = await res.json()
-            const a = z.object({
-              rvMalSkjolMals_ID: z.string(),
-              heitiSkjals: z.string(),
-              malsnumer: z.string(),
-            })
-
-            const aa = z.object({
-              skjol: z.array(a),
-            })
-
-            aa.parse(response)
+            const response: z.infer<
+              typeof this.responseStructure
+            > = await res.json()
+            this.responseStructure.parse(response)
 
             return (
-              response.skjol?.map(
-                (file: {
-                  rvMalSkjolMals_ID: string
-                  heitiSkjals: string
-                  malsnumer: string
-                  dagsStofnad: string
-                }) => ({
-                  id: file.rvMalSkjolMals_ID,
-                  name: file.heitiSkjals.endsWith('.pdf')
-                    ? file.heitiSkjals
-                    : `${file.heitiSkjals}.pdf`,
-                  policeCaseNumber: file.malsnumer,
-                  displayDate: file.dagsStofnad,
-                }),
-              ) ?? []
-            )
-          } else {
-            const response = await res.json()
-
-            return response.map(
-              (file: {
-                rvMalSkjolMals_ID: string
-                heitiSkjals: string
-                malsnumer: string
-                dagsStofnad: string
-              }) => ({
-                id: file.rvMalSkjolMals_ID,
+              response.skjol?.map((file) => ({
+                id: file.rvMalSkjolMals_ID.toString(),
                 name: file.heitiSkjals.endsWith('.pdf')
                   ? file.heitiSkjals
                   : `${file.heitiSkjals}.pdf`,
                 policeCaseNumber: file.malsnumer,
                 displayDate: file.dagsStofnad,
-              }),
+              })) ?? []
             )
+          } else {
+            const response: z.infer<
+              typeof this.policeCaseFileStructure
+            >[] = await res.json()
+            this.responseStructure.parse(response)
+
+            return response.map((file) => ({
+              id: file.rvMalSkjolMals_ID.toString(),
+              name: file.heitiSkjals.endsWith('.pdf')
+                ? file.heitiSkjals
+                : `${file.heitiSkjals}.pdf`,
+              policeCaseNumber: file.malsnumer,
+              displayDate: file.dagsStofnad,
+            }))
           }
         }
 
@@ -275,7 +293,11 @@ export class PoliceService {
     return promise
       .then(async (res: Response) => {
         if (res.ok) {
-          const response = await res.json()
+          const response: z.infer<
+            typeof this.responseStructure
+          > = await res.json()
+
+          this.responseStructure.parse(response)
 
           const cases: PoliceCaseInfo[] = [
             { policeCaseNumber: response.malsnumer },
@@ -289,7 +311,7 @@ export class PoliceService {
             }
           })
 
-          response.malseinings?.forEach(
+          response.malseinings.forEach(
             (info: {
               upprunalegtMalsnumer: string
               vettvangur: string
