@@ -161,7 +161,8 @@ export const updateSecretFiles = async (services: string[]): Promise<void> => {
     }
   }
   console.log(`Updated ${changes.changed} envs, added ${changes.added}.`)
-  console.log(`See ${envLogFilePath} for more details.`)
+  if (changes.changed + changes.added)
+    console.log(`See ${envLogFilePath} for more details.`)
 }
 
 const generateUpdatedFileContent = (
