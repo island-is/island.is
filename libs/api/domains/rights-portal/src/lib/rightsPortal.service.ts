@@ -51,12 +51,12 @@ export class RightsPortalService {
       const nutrition: Array<AidOrNutrition> | null =
         res.nutrition
           ?.map((c) => generateAidOrNutrition(c, AidOrNutritionType.NUTRITION))
-          .filter(Boolean as unknown as ExcludesFalse) ?? []
+          .filter((Boolean as unknown) as ExcludesFalse) ?? []
 
       const aids: Array<AidOrNutrition> | null =
         res.aids
           ?.map((c) => generateAidOrNutrition(c, AidOrNutritionType.AID))
-          .filter(Boolean as unknown as ExcludesFalse) ?? []
+          .filter((Boolean as unknown) as ExcludesFalse) ?? []
 
       return {
         data: [...aids, ...nutrition],
