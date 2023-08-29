@@ -13,8 +13,7 @@ import {
   Button,
   Tooltip,
   Hidden,
-  Columns,
-  Column,
+  SkeletonLoader,
 } from '@island.is/island-ui/core'
 import {
   useListDocuments,
@@ -438,165 +437,140 @@ export const ServicePortalDocuments = () => {
     )
   }
 
-  if (loading && !error) {
-    return (
-      <Box
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        height="full"
-        className={styles.loadingContainer}
-      >
-        <LoadingDots large />
-      </Box>
-    )
-  }
-
-  // if (isEmpty) {
-  //   return (
-  //     <GridContainer>
-  //       <GridRow>
-  //         {goBack()}
-  //         <GridColumn span="12/12">
-  //           <Box marginBottom={[4, 4, 6, 10]}>
-  //             <NoDataScreen
-  //               tag={formatMessage(m.documents)}
-  //               title={formatMessage(m.noData)}
-  //               children={formatMessage(m.noDataFoundDetail)}
-  //               figure="./assets/images/empty.svg"
-  //             />
-  //           </Box>
-  //         </GridColumn>
-  //       </GridRow>
-  //     </GridContainer>
-  //   )
-  // }
-
   return (
-    <>
-      <GridContainer>
-        <Hidden above="md">
-          <GridRow>
-            <GridColumn span="12/12" position="relative">
-              <Box>
-                {activeDocument?.document.content && <Box>{PDF()}</Box>}
-              </Box>
-            </GridColumn>
-          </GridRow>
-        </Hidden>
+    <GridContainer>
+      <Hidden above="md">
         <GridRow>
-          <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
-            <GoBack />
-            <DocumentsFilter
-              filterValue={filterValue}
-              categories={categoriesAvailable}
-              senders={sendersAvailable}
-              debounceChange={debouncedResults}
-              clearCategories={() =>
-                setFilterValue((oldFilter) => ({
-                  ...oldFilter,
-                  activeCategories: [],
-                }))
-              }
-              clearSenders={() =>
-                setFilterValue((oldFilter) => ({
-                  ...oldFilter,
-                  activeSenders: [],
-                }))
-              }
-              handleCategoriesChange={handleCategoriesChange}
-              handleSendersChange={handleSendersChange}
-              handleDateFromChange={handleDateFromInput}
-              handleDateToChange={handleDateToInput}
-              handleShowUnread={handleShowUnread}
-              handleClearFilters={handleClearFilters}
-              documentsLength={totalCount}
-            />
-            <Box borderColor="blue200" borderTopWidth="standard" marginTop={4}>
-              {loading && <CardLoader />}
-              <Stack space={0}>
-                {filteredDocuments.map((doc, index) => (
-                  <Box key={doc.id} ref={index === 0 ? scrollToRef : null}>
-                    <NewDocumentLine
-                      img={getOrganizationLogoUrl(
-                        doc.senderName,
-                        organizations,
-                      )}
-                      documentLine={doc}
-                      documentCategories={categoriesAvailable}
-                      userInfo={userInfo}
-                      onClick={setActiveDocument}
-                      active={doc.id === activeDocument?.id}
-                    />
-                  </Box>
-                ))}
-              </Stack>
-            </Box>
+          <GridColumn span="12/12" position="relative">
+            <Box>{activeDocument?.document.content && <Box>{PDF()}</Box>}</Box>
           </GridColumn>
-          <GridColumn span="7/12" position="relative">
-            {activeDocument?.document.content ? (
-              <Hidden below="lg">
-                <Box
-                  marginLeft={8}
-                  marginTop={3}
-                  padding={5}
-                  borderRadius="large"
-                  background="white"
-                >
-                  <Box display="flex">
-                    <AvatarImage
-                      img={activeDocument?.img}
-                      background="blue100"
-                    />
-                    <Box
-                      display="flex"
-                      flexDirection="column"
-                      justifyContent="spaceBetween"
-                      marginBottom={4}
-                      marginLeft={2}
-                    >
-                      <Text variant="h5">{activeDocument?.sender}</Text>
-                      <Text variant="medium">{activeDocument?.date}</Text>
-                    </Box>
-                  </Box>
-                  <Box>{PDF()}</Box>
+        </GridRow>
+      </Hidden>
+      <GridRow>
+        <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+          <GoBack />
+          <DocumentsFilter
+            filterValue={filterValue}
+            categories={categoriesAvailable}
+            senders={sendersAvailable}
+            debounceChange={debouncedResults}
+            clearCategories={() =>
+              setFilterValue((oldFilter) => ({
+                ...oldFilter,
+                activeCategories: [],
+              }))
+            }
+            clearSenders={() =>
+              setFilterValue((oldFilter) => ({
+                ...oldFilter,
+                activeSenders: [],
+              }))
+            }
+            handleCategoriesChange={handleCategoriesChange}
+            handleSendersChange={handleSendersChange}
+            handleDateFromChange={handleDateFromInput}
+            handleDateToChange={handleDateToInput}
+            handleShowUnread={handleShowUnread}
+            handleClearFilters={handleClearFilters}
+            documentsLength={totalCount}
+          />
+          <Box borderColor="blue200" borderTopWidth="standard" marginTop={4}>
+            {loading && (
+              <SkeletonLoader
+                space={2}
+                repeat={6}
+                display="block"
+                width="full"
+                height={65}
+              />
+            )}
+            <Stack space={0}>
+              {filteredDocuments.map((doc, index) => (
+                <Box key={doc.id} ref={index === 0 ? scrollToRef : null}>
+                  <NewDocumentLine
+                    img={getOrganizationLogoUrl(doc.senderName, organizations)}
+                    documentLine={doc}
+                    documentCategories={categoriesAvailable}
+                    userInfo={userInfo}
+                    onClick={setActiveDocument}
+                    active={doc.id === activeDocument?.id}
+                  />
                 </Box>
-              </Hidden>
-            ) : (
+              ))}
+            </Stack>
+          </Box>
+        </GridColumn>
+        <GridColumn span="7/12" position="relative">
+          {activeDocument?.document.content ? (
+            <Hidden below="lg">
               <Box
-                position="sticky"
-                style={{ top: SERVICE_PORTAL_HEADER_HEIGHT_LG + 50 }}
-                paddingLeft={8}
+                marginLeft={8}
+                marginTop={3}
+                padding={5}
+                borderRadius="large"
+                background="white"
               >
-                <Hidden below="lg">
+                <Box display="flex">
+                  <AvatarImage img={activeDocument?.img} background="blue100" />
+                  <Box
+                    display="flex"
+                    flexDirection="column"
+                    justifyContent="spaceBetween"
+                    marginBottom={4}
+                    marginLeft={2}
+                  >
+                    <Text variant="h5">{activeDocument?.sender}</Text>
+                    <Text variant="medium">{activeDocument?.date}</Text>
+                  </Box>
+                </Box>
+                <Box>{PDF()}</Box>
+              </Box>
+            </Hidden>
+          ) : (
+            <Box
+              position="sticky"
+              style={{ top: SERVICE_PORTAL_HEADER_HEIGHT_LG + 50 }}
+              paddingLeft={8}
+            >
+              <Hidden below="lg">
+                {loading ? (
+                  <Box
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="center"
+                    paddingTop={6}
+                  >
+                    <LoadingDots />
+                  </Box>
+                ) : (
                   <NoPDF />
-                </Hidden>
-              </Box>
-            )}
-          </GridColumn>
-        </GridRow>
-        <GridRow>
-          <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
-            {filteredDocuments && (
-              <Box paddingBottom={4} marginTop={4}>
-                <Pagination
-                  page={page}
-                  totalPages={pagedDocuments.totalPages}
-                  renderLink={(page, className, children) => (
-                    <button
-                      className={className}
-                      onClick={handlePageChange.bind(null, page)}
-                    >
-                      {children}
-                    </button>
-                  )}
-                />
-              </Box>
-            )}
-          </GridColumn>
-        </GridRow>
-      </GridContainer>
-    </>
+                )}
+              </Hidden>
+            </Box>
+          )}
+        </GridColumn>
+      </GridRow>
+      <GridRow>
+        <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+          {filteredDocuments && (
+            <Box paddingBottom={4} marginTop={4}>
+              <Pagination
+                page={page}
+                totalPages={pagedDocuments.totalPages}
+                renderLink={(page, className, children) => (
+                  <button
+                    className={className}
+                    onClick={handlePageChange.bind(null, page)}
+                  >
+                    {children}
+                  </button>
+                )}
+              />
+            </Box>
+          )}
+        </GridColumn>
+      </GridRow>
+    </GridContainer>
   )
 }
 
