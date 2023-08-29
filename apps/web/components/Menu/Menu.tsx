@@ -83,7 +83,7 @@ export const Menu = ({
         <Link
           href={activeLocale === 'en' ? '/en' : '/'}
           onClick={() => {
-            closeModal()
+            closeModal?.()
           }}
         >
           <div>{logo}</div>

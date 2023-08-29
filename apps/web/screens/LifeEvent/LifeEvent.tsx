@@ -225,10 +225,12 @@ LifeEvent.getProps = async ({ apolloClient, locale, query }) => {
           },
         },
       })
-      .then((content) => {
-        // map data here to reduce data processing in component
-        return JSON.parse(content.data.getNamespace.fields)
-      }),
+      // map data here to reduce data processing in component
+      .then((content) =>
+        content.data.getNamespace?.fields
+          ? JSON.parse(content.data.getNamespace.fields)
+          : {},
+      ),
   ])
 
   if (!lifeEvent) {

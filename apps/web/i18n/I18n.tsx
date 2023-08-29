@@ -66,7 +66,7 @@ export default function I18n({ children, locale, translations }) {
   const i18nWrapper = {
     activeLocale: activeLocaleRef.current,
     t: wrapTranslations(translations),
-    locale: (l, dict) => {
+    locale: (l: string, dict) => {
       i18n.locale(l)
       activeLocaleRef.current = l
       if (dict) {

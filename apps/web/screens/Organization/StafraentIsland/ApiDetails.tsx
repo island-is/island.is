@@ -81,7 +81,7 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
     Router.asPath.lastIndexOf('/'),
   )
 
-  const navList: NavigationItem[] = organizationPage.menuLinks.map(
+  const navList: NavigationItem[] = organizationPage?.menuLinks.map(
     ({ primaryLink, childrenLinks }) => ({
       title: primaryLink?.text,
       href: primaryLink?.url,
@@ -108,9 +108,10 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
             href: linkResolver('homepage').href,
           },
           {
-            title: organizationPage.title,
-            href: linkResolver('organizationpage', [organizationPage.slug])
-              .href,
+            title: organizationPage?.title ?? '',
+            href: linkResolver('organizationpage', [
+              organizationPage?.slug ?? '',
+            ]).href,
           },
           {
             title: n('linkServicesText'),
@@ -194,7 +195,11 @@ ServiceDetails.getProps = async ({ apolloClient, locale, query }) => {
           },
         },
       })
-      .then((res) => JSON.parse(res.data.getNamespace.fields)),
+      .then((res) =>
+        res.data.getNamespace?.fields
+          ? JSON.parse(res.data.getNamespace.fields)
+          : {},
+      ),
     apolloClient
       .query<GetNamespaceQuery, QueryGetNamespaceArgs>({
         query: GET_NAMESPACE_QUERY,
@@ -205,7 +210,11 @@ ServiceDetails.getProps = async ({ apolloClient, locale, query }) => {
           },
         },
       })
-      .then((res) => JSON.parse(res.data.getNamespace.fields)),
+      .then((res) =>
+        res.data.getNamespace?.fields
+          ? JSON.parse(res.data.getNamespace.fields)
+          : {},
+      ),
     apolloClient
       .query<GetNamespaceQuery, QueryGetNamespaceArgs>({
         query: GET_NAMESPACE_QUERY,
@@ -216,7 +225,11 @@ ServiceDetails.getProps = async ({ apolloClient, locale, query }) => {
           },
         },
       })
-      .then((res) => JSON.parse(res.data.getNamespace.fields)),
+      .then((res) =>
+        res.data.getNamespace?.fields
+          ? JSON.parse(res.data.getNamespace.fields)
+          : {},
+      ),
     apolloClient.query<Query, QueryGetApiServiceByIdArgs>({
       query: GET_API_SERVICE_QUERY,
       variables: {

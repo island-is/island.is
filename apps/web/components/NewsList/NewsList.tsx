@@ -80,7 +80,7 @@ export const NewsList = ({
         readClass="rs_read"
       />
 
-      {filteredNewsTags?.length > 0 && (
+      {filteredNewsTags && filteredNewsTags?.length > 0 && (
         <Inline space={1}>
           <LinkV2
             href={
