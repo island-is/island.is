@@ -30,9 +30,10 @@ export const basicVehicleInformationMapper = (
           data.technical.mass[
             `massmaxle${i}` as keyof BasicVehicleInformationTechnicalMassDto
           ],
-        wheelAxle: data.technical.axle[
-          `wheelaxle${i}` as keyof BasicVehicleInformationTechnicalAxleDto
-        ]?.toString(),
+        wheelAxle:
+          data.technical.axle[
+            `wheelaxle${i}` as keyof BasicVehicleInformationTechnicalAxleDto
+          ]?.toString(),
       })
       axleMaxWeight +=
         data.technical.mass[
@@ -102,6 +103,7 @@ export const basicVehicleInformationMapper = (
       type: newestInspection?.type,
       date: newestInspection?.date,
       result: newestInspection?.result,
+      odometer: newestInspection?.odometer,
       nextInspectionDate: data.nextinspectiondate,
       lastInspectionDate: data.inspections?.[0]?.date ?? null,
       insuranceStatus: data.insurancestatus,

@@ -2,8 +2,7 @@ import { defineMessages } from 'react-intl'
 
 export const strings = defineMessages({
   investigationCaseRejectedTitle: {
-    id:
-      'judicial.system.core:overview_header.investigation_case_rejected_title',
+    id: 'judicial.system.core:overview_header.investigation_case_rejected_title',
     defaultMessage: 'Kröfu um rannsóknarheimild hafnað',
     description:
       'Notaður sem titill þegar kröfu um rannsóknarheimild er hafnað.',
@@ -20,8 +19,7 @@ export const strings = defineMessages({
     description: 'Notaður sem titill þegar kröfu er vísað frá.',
   },
   investigationCaseAcceptedTitle: {
-    id:
-      'judicial.system.core:overview_header.investigation_case_accepted_title',
+    id: 'judicial.system.core:overview_header.investigation_case_accepted_title',
     defaultMessage: 'Krafa um rannsóknarheimild samþykkt',
     description:
       'Notaður sem titill þegar krafa um rannsóknarheimild er samþykkt.',
@@ -41,16 +39,14 @@ export const strings = defineMessages({
       'Notaður sem titil þegar krafa um gæslu/vistun/farbann er samþykkt og fallin úr gildi.',
   },
   investigationCaseInProgressTitle: {
-    id:
-      'judicial.system.core:overview_header.investigation_case_in_progress_title',
+    id: 'judicial.system.core:overview_header.investigation_case_in_progress_title',
     defaultMessage:
       'Krafa um {isExtended, select, true {framlengingu á } other {}}rannsóknarheimild',
     description:
       'Notaður sem titill þegar krafa um rannsóknarheimild er í vinnslu.',
   },
   restrictionCaseInProgressTitle: {
-    id:
-      'judicial.system.core:overview_header.restriction_case_in_progress_title',
+    id: 'judicial.system.core:overview_header.restriction_case_in_progress_title',
     defaultMessage:
       'Krafa um {caseType, select, ADMISSION_TO_FACILITY {{isExtended, select, true {framlengingu á } other {}}vistun á viðeigandi stofnun} TRAVEL_BAN {{isExtended, select, true {framlengingu á farbanni} other {farbann}}} other {{isExtended, select, true {framlengingu á gæsluvarðhaldi} other {gæsluvarðhald}}}}',
     description:

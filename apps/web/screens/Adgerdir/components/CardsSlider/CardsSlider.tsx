@@ -86,7 +86,9 @@ export const CardsSlider: FC<React.PropsWithChildren<CardsSliderProps>> = ({
       setTimeout(handleResize, 0)
     }
 
-    return () => window.removeEventListener('resize', handleResize)
+    return () => {
+      window.removeEventListener('resize', handleResize)
+    }
   }, [handleResize])
 
   const slideNext = () => {

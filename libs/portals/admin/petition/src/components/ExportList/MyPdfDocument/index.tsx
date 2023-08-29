@@ -67,10 +67,10 @@ const MyPdfDocument = (data: {
             {petitionSigners?.data?.map((sign: Endorsement) => {
               return (
                 <View key={sign.id} style={pdfStyles.tableRow}>
-                  <Text style={{ width: '20%' }}>
+                  <Text style={{ width: '17%' }}>
                     {formatDate(sign.created)}
                   </Text>
-                  <Text style={{ width: '30%' }}>
+                  <Text style={{ width: '33%' }}>
                     {sign.meta.fullName ? sign.meta.fullName : ''}
                   </Text>
                   <Text style={{ width: '30%' }}>
@@ -91,7 +91,8 @@ const MyPdfDocument = (data: {
 
 export const pdfStyles = StyleSheet.create({
   body: {
-    paddingVertical: 50,
+    paddingTop: 40,
+    paddingBottom: 70,
     paddingHorizontal: 60,
     fontFamily: 'IBM Plex Sans',
     fontSize: 10,
@@ -108,12 +109,12 @@ export const pdfStyles = StyleSheet.create({
   tableHeaderDate: {
     fontWeight: 600,
     marginBottom: 5,
-    width: '20%',
+    width: '17%',
   },
   tableHeader: {
     fontWeight: 600,
     marginBottom: 5,
-    width: '30%',
+    width: '33%',
   },
   row: {
     flexDirection: 'row',
@@ -125,7 +126,7 @@ export const pdfStyles = StyleSheet.create({
     paddingBottom: 30,
   },
   tableView: {
-    paddingTop: 35,
+    paddingTop: 25,
     borderTop: `1px solid ${dark200}`,
   },
   tableRow: {
@@ -134,12 +135,13 @@ export const pdfStyles = StyleSheet.create({
   },
   image: {
     width: 120,
-    marginBottom: 30,
+    marginBottom: 20,
+    marginLeft: -9,
   },
   footerImage: {
     position: 'absolute',
     left: 60,
-    bottom: 50,
+    bottom: 40,
     width: 120,
   },
 })

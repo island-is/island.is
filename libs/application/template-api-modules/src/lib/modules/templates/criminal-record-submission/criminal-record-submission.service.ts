@@ -59,12 +59,8 @@ export class CriminalRecordSubmissionService extends BaseTemplateApiService {
       }
     }
 
-    const isPayment:
-      | { fulfilled: boolean }
-      | undefined = await this.sharedTemplateAPIService.getPaymentStatus(
-      auth,
-      application.id,
-    )
+    const isPayment: { fulfilled: boolean } | undefined =
+      await this.sharedTemplateAPIService.getPaymentStatus(auth, application.id)
 
     if (isPayment?.fulfilled) {
       return {
@@ -144,7 +140,7 @@ export class CriminalRecordSubmissionService extends BaseTemplateApiService {
       .catch(async () => {
         await this.sharedTemplateAPIService.sendEmail(
           generateSyslumennNotifyErrorEmail,
-          (application as unknown) as Application,
+          application as unknown as Application,
         )
         return undefined
       })

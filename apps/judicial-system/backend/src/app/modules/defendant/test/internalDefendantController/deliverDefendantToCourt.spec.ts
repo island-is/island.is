@@ -42,15 +42,13 @@ describe('InternalDefendantController - Deliver defendant to court', () => {
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const {
-      messageService,
-      courtService,
-      internalDefendantController,
-    } = await createTestingDefendantModule()
+    const { messageService, courtService, internalDefendantController } =
+      await createTestingDefendantModule()
 
     mockMessageService = messageService
     mockCourtService = courtService
-    const mockUpdateCaseWithDefendant = mockCourtService.updateCaseWithDefendant as jest.Mock
+    const mockUpdateCaseWithDefendant =
+      mockCourtService.updateCaseWithDefendant as jest.Mock
     mockUpdateCaseWithDefendant.mockRejectedValue(new Error('Some error'))
 
     givenWhenThen = async (defendant: Defendant) => {
@@ -75,7 +73,8 @@ describe('InternalDefendantController - Deliver defendant to court', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockUpdateCaseWithDefendant = mockCourtService.updateCaseWithDefendant as jest.Mock
+      const mockUpdateCaseWithDefendant =
+        mockCourtService.updateCaseWithDefendant as jest.Mock
       mockUpdateCaseWithDefendant.mockResolvedValueOnce(uuid())
 
       then = await givenWhenThen(defendant)

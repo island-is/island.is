@@ -28,10 +28,8 @@ const prepareDomainName = (domainName: string | null) =>
 export const DelegationsOutgoing = () => {
   const { formatMessage, lang = 'is' } = useLocale()
   const [searchValue, setSearchValue] = useState('')
-  const [
-    delegation,
-    setDelegation,
-  ] = useState<AuthCustomDelegationOutgoing | null>(null)
+  const [delegation, setDelegation] =
+    useState<AuthCustomDelegationOutgoing | null>(null)
   const { name: domainName } = useDomains()
 
   const { data, loading, refetch, error } = useAuthDelegationsOutgoingQuery({

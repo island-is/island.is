@@ -78,10 +78,8 @@ export const PoliceCaseInfo: React.FC<React.PropsWithChildren<Props>> = (
   const [policeCaseNumberInput, setPoliceCaseNumberInput] = useState(
     policeCaseNumbers[index],
   )
-  const [
-    policeCaseNumberErrorMessage,
-    setPoliceCaseNumberErrorMessage,
-  ] = useState<string>('')
+  const [policeCaseNumberErrorMessage, setPoliceCaseNumberErrorMessage] =
+    useState<string>('')
 
   useEffect(() => {
     if (policeCaseNumbers[index] !== originalPoliceCaseNumber) {
@@ -221,7 +219,7 @@ export const PoliceCaseInfo: React.FC<React.PropsWithChildren<Props>> = (
           {subtypes.map((subtype) => (
             <Box
               display="inlineBlock"
-              key={`${policeCaseNumbers[index]}-${subtype}`}
+              key={subtype}
               component="span"
               marginBottom={1}
               marginRight={1}

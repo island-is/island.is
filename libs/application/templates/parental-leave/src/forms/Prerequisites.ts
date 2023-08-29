@@ -421,9 +421,8 @@ export const PrerequisitesForm: Form = buildForm({
           id: 'fosterCareOrAdoptionApplication',
           title: parentalLeaveFormMessages.selectChild.screenTitle,
           condition: (answers) => {
-            const { noChildrenFoundTypeOfApplication } = getApplicationAnswers(
-              answers,
-            )
+            const { noChildrenFoundTypeOfApplication } =
+              getApplicationAnswers(answers)
 
             return (
               noChildrenFoundTypeOfApplication === PERMANENT_FOSTER_CARE ||
@@ -478,9 +477,8 @@ export const PrerequisitesForm: Form = buildForm({
           id: 'noPrimaryParent',
           title: parentalLeaveFormMessages.shared.noPrimaryParentTitle,
           condition: (answers) => {
-            const { noChildrenFoundTypeOfApplication } = getApplicationAnswers(
-              answers,
-            )
+            const { noChildrenFoundTypeOfApplication } =
+              getApplicationAnswers(answers)
 
             return noChildrenFoundTypeOfApplication === OTHER_NO_CHILDREN_FOUND
           },

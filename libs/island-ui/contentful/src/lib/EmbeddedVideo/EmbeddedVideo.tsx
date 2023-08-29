@@ -42,7 +42,7 @@ const Texts = ({ termsUrl = '#' }) => ({
   },
 })
 
-const EmbeddedVideo: FC<React.PropsWithChildren<EmbeddedVideoProps>> = ({
+export const EmbeddedVideo: FC<EmbeddedVideoProps> = ({
   title,
   url,
   locale,
@@ -70,7 +70,8 @@ const EmbeddedVideo: FC<React.PropsWithChildren<EmbeddedVideoProps>> = ({
     }
 
     if (item.hostname.match(/(youtube.com|youtu.be)/g)) {
-      const regExp = /^.*((youtu.be|youtube.com\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/
+      const regExp =
+        /^.*((youtu.be|youtube.com\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/
       const match = item.href.match(regExp)
 
       let youtubeId: string | undefined = undefined

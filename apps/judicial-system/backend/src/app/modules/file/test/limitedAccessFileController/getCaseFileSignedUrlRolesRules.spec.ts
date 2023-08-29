@@ -14,9 +14,6 @@ describe('LimitedAccessFileController - Get case file signed url rules', () => {
 
   it('should give permission to one roles', () => {
     expect(rules).toHaveLength(1)
-  })
-
-  it('should give permission to defenders', () => {
     expect(rules).toContain(defenderRule)
   })
 })

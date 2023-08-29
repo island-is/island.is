@@ -32,6 +32,7 @@ import {
   Stepper,
   stepperUtils,
   Form,
+  SignLanguageButton,
 } from '@island.is/web/components'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { GET_ARTICLE_QUERY, GET_NAMESPACE_QUERY } from '../queries'
@@ -433,6 +434,88 @@ const ArticleScreen: Screen<ArticleProps> = ({
     [article.category, article.group, inStepperView],
   )
 
+  const content = (
+    <Box paddingTop={subArticle ? 2 : 4}>
+      {!inStepperView && (
+        <Box className="rs_read">
+          {webRichText(
+            (subArticle ?? article).body as SliceType[],
+            {
+              renderComponent: {
+                Stepper: () => (
+                  <Box marginY={3} printHidden className="rs_read">
+                    <ProcessEntry
+                      buttonText={n(
+                        article.processEntryButtonText || 'application',
+                        '',
+                      )}
+                      processLink={asPath.split('?')[0].concat('?stepper=true')}
+                      processTitle={article.stepper.title}
+                      newTab={false}
+                    />
+                  </Box>
+                ),
+                Form: (form) => <Form form={form} namespace={namespace} />,
+              },
+            },
+            activeLocale,
+          )}
+          <AppendedArticleComponents article={article} />
+        </Box>
+      )}
+
+      <Box
+        id="processRef"
+        display={['block', 'block', 'none']}
+        marginTop={7}
+        printHidden
+      >
+        {processEntry?.processLink && <ProcessEntry {...processEntry} />}
+      </Box>
+      {article.organization.length > 0 && (
+        <Box
+          marginTop={[3, 3, 3, 10, 20]}
+          marginBottom={[3, 3, 3, 10, 20]}
+          printHidden
+        >
+          <InstitutionsPanel
+            img={article.organization[0].logo?.url ?? ''}
+            institution={{
+              title: article.organization[0].title,
+              label: n('organization'),
+              href: getOrganizationLink(article.organization[0], activeLocale),
+            }}
+            responsibleParty={article.responsibleParty.map(
+              (responsibleParty) => ({
+                title: responsibleParty.title,
+                label: n('responsibleParty'),
+                href: responsibleParty.link,
+              }),
+            )}
+            relatedInstitution={article.relatedOrganization.map(
+              (relatedOrganization) => ({
+                title: relatedOrganization.title,
+                label: n('relatedOrganization'),
+                href: getOrganizationLink(relatedOrganization, activeLocale),
+              }),
+            )}
+            locale={activeLocale}
+            contactText="Hafa samband"
+          />
+        </Box>
+      )}
+      <Box display={['block', 'block', 'none']} printHidden>
+        {(article.relatedArticles.length > 0 ||
+          article.relatedContent.length > 0) && (
+          <RelatedContent
+            title={n('relatedMaterial')}
+            articles={article.relatedArticles}
+            otherContent={article.relatedContent}
+          />
+        )}
+      </Box>
+    </Box>
+  )
   return (
     <>
       <HeadWithSocialSharing
@@ -541,7 +624,41 @@ const ArticleScreen: Screen<ArticleProps> = ({
               webReaderClassName="rs_read"
             />
           )}
-          {!inStepperView && <Webreader readId={null} readClass="rs_read" />}
+          {!inStepperView && (
+            <Box
+              display="flex"
+              alignItems="center"
+              columnGap={2}
+              flexWrap="wrap"
+            >
+              {!inStepperView && (
+                <Webreader readId={null} readClass="rs_read" />
+              )}
+              {(subArticle
+                ? subArticle.signLanguageVideo?.url
+                : article.signLanguageVideo?.url) && (
+                <SignLanguageButton
+                  videoUrl={(subArticle ?? article).signLanguageVideo.url}
+                  content={
+                    <>
+                      {!inStepperView && (
+                        <Text variant="h2">
+                          <span
+                            id={slugify((subArticle ?? article).title)}
+                            className="rs_read"
+                          >
+                            {(subArticle ?? article).title}
+                          </span>
+                        </Text>
+                      )}
+                      {content}
+                    </>
+                  }
+                />
+              )}
+            </Box>
+          )}
+
           <Box marginTop={3} display={['block', 'block', 'none']} printHidden>
             <ArticleNavigation
               article={article}
@@ -580,94 +697,7 @@ const ArticleScreen: Screen<ArticleProps> = ({
             </Text>
           )}
         </Box>
-        <Box paddingTop={subArticle ? 2 : 4}>
-          {!inStepperView && (
-            <Box className="rs_read">
-              {webRichText(
-                (subArticle ?? article).body as SliceType[],
-                {
-                  renderComponent: {
-                    Stepper: () => (
-                      <Box marginY={3} printHidden className="rs_read">
-                        <ProcessEntry
-                          buttonText={n(
-                            article.processEntryButtonText || 'application',
-                            '',
-                          )}
-                          processLink={asPath
-                            .split('?')[0]
-                            .concat('?stepper=true')}
-                          processTitle={article.stepper.title}
-                          newTab={false}
-                        />
-                      </Box>
-                    ),
-                    Form: (form) => <Form form={form} namespace={namespace} />,
-                  },
-                },
-                activeLocale,
-              )}
-              <AppendedArticleComponents article={article} />
-            </Box>
-          )}
-
-          <Box
-            id="processRef"
-            display={['block', 'block', 'none']}
-            marginTop={7}
-            printHidden
-          >
-            {processEntry?.processLink && <ProcessEntry {...processEntry} />}
-          </Box>
-          {article.organization.length > 0 && (
-            <Box
-              marginTop={[3, 3, 3, 10, 20]}
-              marginBottom={[3, 3, 3, 10, 20]}
-              printHidden
-            >
-              <InstitutionsPanel
-                img={article.organization[0].logo?.url ?? ''}
-                institution={{
-                  title: article.organization[0].title,
-                  label: n('organization'),
-                  href: getOrganizationLink(
-                    article.organization[0],
-                    activeLocale,
-                  ),
-                }}
-                responsibleParty={article.responsibleParty.map(
-                  (responsibleParty) => ({
-                    title: responsibleParty.title,
-                    label: n('responsibleParty'),
-                    href: responsibleParty.link,
-                  }),
-                )}
-                relatedInstitution={article.relatedOrganization.map(
-                  (relatedOrganization) => ({
-                    title: relatedOrganization.title,
-                    label: n('relatedOrganization'),
-                    href: getOrganizationLink(
-                      relatedOrganization,
-                      activeLocale,
-                    ),
-                  }),
-                )}
-                locale={activeLocale}
-                contactText="Hafa samband"
-              />
-            </Box>
-          )}
-          <Box display={['block', 'block', 'none']} printHidden>
-            {(article.relatedArticles.length > 0 ||
-              article.relatedContent.length > 0) && (
-              <RelatedContent
-                title={n('relatedMaterial')}
-                articles={article.relatedArticles}
-                otherContent={article.relatedContent}
-              />
-            )}
-          </Box>
-        </Box>
+        {content}
         {processEntry?.processLink &&
           mounted &&
           isVisible &&
@@ -746,10 +776,11 @@ ArticleScreen.getProps = async ({ apolloClient, query, locale }) => {
   let stepOptionsFromNamespace = []
 
   if (article.stepper)
-    stepOptionsFromNamespace = await stepperUtils.getStepOptionsFromUIConfiguration(
-      article.stepper as StepperSchema,
-      apolloClient,
-    )
+    stepOptionsFromNamespace =
+      await stepperUtils.getStepOptionsFromUIConfiguration(
+        article.stepper as StepperSchema,
+        apolloClient,
+      )
 
   return {
     article,

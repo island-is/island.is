@@ -124,7 +124,7 @@ class ErrorPage extends React.Component<ErrorPageProps> {
         Layout.getProps({
           ...props,
           res: props.res,
-          req: (props.req as unknown) as GetServerSidePropsContext['req'],
+          req: props.req as unknown as GetServerSidePropsContext['req'],
           locale,
         }),
         props.apolloClient.query<ErrorPageQuery, ErrorPageQueryVariables>({

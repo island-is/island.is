@@ -1,5 +1,3 @@
-<!-- gitbook-navigation: "National Registry" -->
-
 # National Registry Clients
 
 V1 is soap service from national registry

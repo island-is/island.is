@@ -72,7 +72,8 @@ const OrganizationPage: Screen<OrganizationProps> = ({
   const { width } = useWindowSize()
   useEffect(() => {
     if (width < theme.breakpoints.md) {
-      return setIsMobile(true)
+      setIsMobile(true)
+      return
     }
     setIsMobile(false)
   }, [width])
@@ -94,10 +95,8 @@ const OrganizationPage: Screen<OrganizationProps> = ({
     [],
   )
 
-  const [
-    selectedTitleSortOption,
-    setSelectedTitleSortOption,
-  ] = useState<TitleSortOption>(titleSortOptions[0])
+  const [selectedTitleSortOption, setSelectedTitleSortOption] =
+    useState<TitleSortOption>(titleSortOptions[0])
 
   const organizationsItems = useMemo(() => {
     const items = [...organizations.items]

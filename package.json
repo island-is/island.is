@@ -56,7 +56,6 @@
     "openapi-generator": "openapi-generator generate -g typescript-fetch --additional-properties=typescriptThreePlus=true",
     "schemas": "node ./scripts/schemas.js",
     "postinstall": "node -e 'process.exit(process.env.CI || process.env.SKIP_POSTINSTALL ? 0 : 1);' || node ./scripts/postinstall.js",
-    "gitbook": "node ./scripts/gitbook.js",
     "check-tags": "yarn ts scripts/check-tags.ts",
     "charts": "cd ./infra && yarn charts",
     "infra": "cd ./infra && yarn cli"
@@ -431,7 +430,7 @@
     "mailparser": "3.5.0",
     "next-secure-headers": "2.1.0",
     "nx": "16.5.0",
-    "prettier": "2.2.1",
+    "prettier": "2.5.0",
     "quicktype": "15.0.258",
     "sequelize-cli": "6.4.1",
     "sort-paths": "1.1.1",

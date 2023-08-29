@@ -83,8 +83,7 @@ export function NavigationBarSheet({
           <CloseButton
             onPress={onClosePress}
             testID="NAVBAR_SHEET_CLOSE_BUTTON"
-            accessibilityLabel="Close"
-          >
+            accessibilityLabel="Close">
             <CloseIcon
               style={{
                 tintColor: theme.color.blue400,
