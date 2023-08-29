@@ -39,5 +39,5 @@ export class CreateFileDto {
   @IsOptional()
   @IsString()
   @ApiPropertyOptional()
-  readonly displayDate?: string
+  readonly displayDate?: Date
 }

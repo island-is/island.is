@@ -16,6 +16,6 @@ export class PoliceCaseFile implements TPoliceCaseFile {
   @Field({ nullable: true })
   readonly chapter?: number
 
-  @Field()
-  readonly displayDate!: string
+  @Field({ nullable: true })
+  readonly displayDate?: string
 }
