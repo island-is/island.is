@@ -14,7 +14,7 @@ import {
 } from 'sequelize-typescript'
 import { Season } from '../../program/types'
 import { University } from '../../university/model'
-import { PageInfo } from '@island.is/nest/pagination'
+//import { PageInfo } from '@island.is/nest/pagination'
 
 @Table({
   tableName: 'course',
@@ -175,15 +175,15 @@ export class CourseResponse {
   })
   data!: Course[]
 
-  @ApiProperty({
-    description: 'Page information (for pagination)',
-  })
-  pageInfo!: PageInfo
+//  @ApiProperty({
+//    description: 'Page information (for pagination)',
+//  })
+//  pageInfo!: PageInfo
 
-  @ApiProperty({
-    description: 'Total number of items in result (for pagination)',
-  })
-  totalCount!: number
+//  @ApiProperty({
+//    description: 'Total number of items in result (for pagination)',
+//  })
+//  totalCount!: number
 }
 
 export class CourseDetailsResponse {

@@ -1,4 +1,5 @@
-module.exports = {
+/* eslint-disable */
+export default {
   preset: './jest.preset.js',
   rootDir: '../../../..',
   roots: [__dirname],
@@ -7,8 +8,14 @@ module.exports = {
   globalTeardown: `${__dirname}/test/globalTeardown.ts`,
   setupFilesAfterEnv: [`${__dirname}/test/setup.ts`],
   moduleFileExtensions: ['ts', 'js', 'html', 'json'],
-  globals: {
-    'ts-jest': { tsconfig: `${__dirname}/tsconfig.spec.json` },
+  globals: {},
+  transform: {
+    '^.+\\.[tj]s$': [
+      'ts-jest',
+      {
+        tsconfig: `${__dirname}/tsconfig.spec.json`,
+      },
+    ],
   },
   displayName: 'university-gateway-backend',
   testEnvironment: 'node',

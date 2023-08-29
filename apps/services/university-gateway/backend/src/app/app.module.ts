@@ -5,7 +5,7 @@ import { ProgramModule } from './modules/program/program.module'
 import { UniversityModule } from './modules/university/university.module'
 import { ExampleModule } from './modules/example/example.module'
 import { SequelizeModule } from '@nestjs/sequelize'
-import { SequelizeConfigService } from './sequelizeConfig.service'
+import { SequelizeConfigService } from './sequelizeConfig.service'  
 
 @Module({
   imports: [

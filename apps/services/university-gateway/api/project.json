@@ -1,5 +1,5 @@
 {
-  "root": "apps/services/university-gateway/api",
+  "name": "services-university-gateway-api",
   "sourceRoot": "apps/services/university-gateway/api/src",
   "projectType": "application",
   "prefix": "services-university-gateway-api",
@@ -28,16 +28,16 @@
           "inspect": false
         }
       },
-      "outputs": ["{options.outputPath}"]
+      "outputs": [ "{options.outputPath}" ]
     },
     "serve": {
-      "executor": "@nrwl/node:node",
+      "executor": "@nx/js:node",
       "options": {
         "buildTarget": "services-university-gateway-api:build"
       }
     },
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": [
           "apps/services/university-gateway/api/**/*.{ts,tsx,js,jsx}"
@@ -45,21 +45,21 @@
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "options": {
         "jestConfig": "apps/services/university-gateway/api/jest.config.js",
         "passWithNoTests": true
       },
-      "outputs": ["coverage/apps/services/university-gateway/api"]
+      "outputs": [ "coverage/apps/services/university-gateway/api" ]
     },
     "schemas/build-openapi": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "command": "yarn nx run services-university-gateway-api:schemas/build-openapi-internal $NX_OPTIONS"
       }
     },
     "schemas/build-openapi-internal": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "outputPath": "apps/services/university-gateway/api/src/openapi.yaml",
         "command": "cross-env INIT_SCHEMA=true yarn ts-node -P apps/services/university-gateway/api/tsconfig.app.json apps/services/university-gateway/api/src/buildOpenApi.ts"
@@ -68,5 +68,5 @@
     "docker-express": {},
     "service-service-portal-api": {}
   },
-  "tags": ["scope:nest"]
+  "tags": [ "scope:nest" ]
 }

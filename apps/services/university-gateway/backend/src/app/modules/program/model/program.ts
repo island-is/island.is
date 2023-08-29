@@ -15,7 +15,7 @@ import { ProgramTag } from './programTag'
 import { ProgramModeOfDelivery } from './programModeOfDelivery'
 import { University } from '../../university/model'
 import { ProgramCourse } from './programCourse'
-import { PageInfo } from '@island.is/nest/pagination'
+//import { PageInfo } from '@island.is/nest/pagination'
 
 @Table({
   tableName: 'program',
@@ -381,15 +381,15 @@ export class ProgramResponse {
   })
   data!: Program[]
 
-  @ApiProperty({
-    description: 'Page information (for pagination)',
-  })
-  pageInfo!: PageInfo
+//  @ApiProperty({
+//    description: 'Page information (for pagination)',
+//  })
+//  pageInfo!: PageInfo
 
-  @ApiProperty({
-    description: 'Total number of items in result (for pagination)',
-  })
-  totalCount!: number
+//  @ApiProperty({
+//    description: 'Total number of items in result (for pagination)',
+//  })
+//  totalCount!: number
 }
 
 export class ProgramDetailsResponse {

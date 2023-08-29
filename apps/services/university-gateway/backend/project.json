@@ -1,5 +1,5 @@
 {
-  "root": "apps/services/university-gateway/backend",
+  "name": "services-university-gateway-backend",
   "sourceRoot": "apps/services/university-gateway/backend/src",
   "projectType": "application",
   "prefix": "services-university-gateway-backend",
@@ -42,17 +42,17 @@
           "inspect": false
         }
       },
-      "outputs": ["{options.outputPath}"]
+      "outputs": [ "{options.outputPath}" ]
     },
     "serve": {
-      "executor": "@nrwl/node:node",
+      "executor": "@nx/js:node",
       "options": {
         "buildTarget": "services-university-gateway-backend:build",
         "runtimeArgs": [ "--no-experimental-fetch", "--trace-deprecation" ]
       }
     },
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": [
           "apps/services/university-gateway/backend/**/*.{ts,tsx,js,jsx}"
@@ -60,42 +60,42 @@
       }
     },
     "dev-services": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "@nx:run-commands",
       "options": {
         "command": "docker-compose up -d",
         "cwd": "apps/services/university-gateway/backend"
       }
     },
     "schemas/build-openapi": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "@nx:run-commands",
       "options": {
         "outputPath": "apps/services/university-gateway/backend/src/openapi.yaml",
         "command": "cross-env INIT_SCHEMA=true yarn ts-node -P apps/services/university-gateway/backend/tsconfig.app.json apps/services/university-gateway/backend/src/buildOpenApi.ts"
       }
     },
     "migrate": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "@nx:run-commands",
       "options": {
         "command": "sequelize-cli db:migrate",
         "cwd": "apps/services/university-gateway/backend"
       }
     },
     "migrate/undo": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "@nx:run-commands",
       "options": {
         "command": "sequelize-cli db:migrate:undo",
         "cwd": "apps/services/university-gateway/backend"
       }
     },
     "migrate/generate": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "@nx:run-commands",
       "options": {
         "command": "sequelize-cli migration:generate --name $(whoami)",
         "cwd": "apps/services/university-gateway/backend"
       }
     },
     "seed": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "@nx:run-commands",
       "options": {
         "command": "sequelize-cli db:seed:all",
         "cwd": "apps/services/university-gateway/backend"
@@ -103,11 +103,11 @@
     },
     "docker-express": {},
     "extract-strings": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "@nx:run-commands",
       "options": {
         "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'apps/services/university-gateway/backend/src/app/messages/**/*.ts'"
       }
     }
   },
-  "tags": ["scope:services/university-gateway"]
+  "tags": [ "scope:services/university-gateway" ]
 }

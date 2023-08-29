@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common'
-import { ApplicationController } from './application.controller'
-import { ApplicationService } from './application.service'
+import { ApplicationResolver } from './application.resolver'
 import {
   UgReykjavikUniversityClientModule,
   UgReykjavikUniversityClientConfig,
@@ -15,7 +14,6 @@ import { ConfigModule } from '@nestjs/config'
       load: [UgReykjavikUniversityClientConfig],
     }),
   ],
-  controllers: [ApplicationController],
-  providers: [ApplicationService],
+  providers: [ApplicationResolver],
 })
 export class ApplicationModule {}
