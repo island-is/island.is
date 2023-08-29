@@ -46,11 +46,12 @@ export const EmploymentSubSection = (index: number) =>
             title:
               '1. Atvinnuleyfi til sérhæfðra starfsmanna á grundvelli þjónustusamnings',
             condition: (_, externalData) => {
-              const isWorkPermitTypeEmploymentServiceAgreement = getValueViaPath(
-                externalData,
-                'applicantCurrentResidencePermitType.data.isWorkPermitTypeEmploymentServiceAgreement',
-                false,
-              ) as boolean
+              const isWorkPermitTypeEmploymentServiceAgreement =
+                getValueViaPath(
+                  externalData,
+                  'applicantCurrentResidencePermitType.data.isWorkPermitTypeEmploymentServiceAgreement',
+                  false,
+                ) as boolean
 
               return isWorkPermitTypeEmploymentServiceAgreement
             },

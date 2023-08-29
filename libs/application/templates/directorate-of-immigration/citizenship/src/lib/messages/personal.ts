@@ -11,8 +11,7 @@ export const personal = {
   labels: {
     userInformation: defineMessages({
       subSectionTitle: {
-        id:
-          'doi.cs.application:personal.labels.userInformation.subSectionTitle',
+        id: 'doi.cs.application:personal.labels.userInformation.subSectionTitle',
         defaultMessage: 'Notendaupplýsingar',
         description: 'User information sub section title',
       },
@@ -42,15 +41,13 @@ export const personal = {
         description: 'User information birth country label',
       },
       residenceInIcelandLastChangeDate: {
-        id:
-          'doi.cs.application:personal.labels.userInformation.residenceInIcelandLastChangeDate',
+        id: 'doi.cs.application:personal.labels.userInformation.residenceInIcelandLastChangeDate',
         defaultMessage: 'Dagsetning lögheimilisskráningar',
         description:
           'User information residence in Iceland last change date label',
       },
       residenceInIcelandLastChangeDateShorter: {
-        id:
-          'doi.cs.application:personal.labels.userInformation.residenceInIcelandLastChangeDateShorter',
+        id: 'doi.cs.application:personal.labels.userInformation.residenceInIcelandLastChangeDateShorter',
         defaultMessage: 'Dags. lögheimilisskráningar',
         description:
           'User information residence in Iceland last change date shorter label',
@@ -66,8 +63,7 @@ export const personal = {
         description: 'User information address label',
       },
       postalCodeAndCity: {
-        id:
-          'doi.cs.application:personal.labels.userInformation.postalCodeAndCity',
+        id: 'doi.cs.application:personal.labels.userInformation.postalCodeAndCity',
         defaultMessage: 'Sveitarfélag',
         description: 'User information postal code and city label',
       },

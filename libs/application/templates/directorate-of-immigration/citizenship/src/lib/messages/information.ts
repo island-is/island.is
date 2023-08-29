@@ -11,8 +11,7 @@ export const information = {
   labels: {
     formerIcelander: defineMessages({
       subSectionTitle: {
-        id:
-          'doi.cs.application:information.labels.formerIcelander.subSectionTitle',
+        id: 'doi.cs.application:information.labels.formerIcelander.subSectionTitle',
         defaultMessage: 'Fyrrum ísl. ríkisborgari',
         description: 'formerIcelander sub section title',
       },
@@ -33,8 +32,7 @@ export const information = {
         description: 'formerIcelander alert title',
       },
       alertDescription: {
-        id:
-          'doi.cs.application:information.labels.formerIcelander.alertDescription',
+        id: 'doi.cs.application:information.labels.formerIcelander.alertDescription',
         defaultMessage:
           'Þú uppfyllir engin búsetuskliyrði, vinsamlegast hafðu samband við Útlendingastofnun ef þú telur þig hafa rétt á því. Sjá nánar um búsetuskilyrði hér.',
         description: 'formerIcelander alert description',
@@ -59,8 +57,7 @@ export const information = {
     }),
     maritalStatus: defineMessages({
       subSectionTitle: {
-        id:
-          'doi.cs.application:information.labels.maritalStatus.subSectionTitle',
+        id: 'doi.cs.application:information.labels.maritalStatus.subSectionTitle',
         defaultMessage: 'Hjúskaparstaða',
         description: 'Marital status sub section title',
       },
@@ -80,8 +77,7 @@ export const information = {
         description: 'Marital status title spouse',
       },
       marritalStatusDate: {
-        id:
-          'doi.cs.application:information.labels.maritalStatus.marritalStatusDate',
+        id: 'doi.cs.application:information.labels.maritalStatus.marritalStatusDate',
         defaultMessage: 'Dagsetning hjúskapar',
         description: 'Marital status change date spouse',
       },
@@ -101,20 +97,17 @@ export const information = {
         description: 'Marital status name label',
       },
       spouseBirthCountry: {
-        id:
-          'doi.cs.application:information.labels.maritalStatus.spouseBirthCountry',
+        id: 'doi.cs.application:information.labels.maritalStatus.spouseBirthCountry',
         defaultMessage: 'Fæðingarland maka',
         description: 'Spouse birth country label',
       },
       spouseCitizenship: {
-        id:
-          'doi.cs.application:information.labels.maritalStatus.spouseCitizenship',
+        id: 'doi.cs.application:information.labels.maritalStatus.spouseCitizenship',
         defaultMessage: 'Ríkisfang maka',
         description: 'Spouse citizenship label',
       },
       applicantAddress: {
-        id:
-          'doi.cs.application:information.labels.maritalStatus.applicantAddress',
+        id: 'doi.cs.application:information.labels.maritalStatus.applicantAddress',
         defaultMessage: 'Heimilisfang þitt',
         description: 'Applicant address label',
       },
@@ -124,8 +117,7 @@ export const information = {
         description: 'Applicant spouse address label',
       },
       explanationTitle: {
-        id:
-          'doi.cs.application:information.labels.maritalStatus.explanationTitle',
+        id: 'doi.cs.application:information.labels.maritalStatus.explanationTitle',
         defaultMessage:
           'Heimilisfang þitt og maka þíns er ekki sameiginlegt, vinsamlegast tilgreinið ástæðu þess.',
         description: 'Title of explanation field',
@@ -138,39 +130,33 @@ export const information = {
     }),
     countriesOfResidence: defineMessages({
       subSectionTitle: {
-        id:
-          'doi.cs.application:information.labels.countriesOfResidence.subSectionTitle',
+        id: 'doi.cs.application:information.labels.countriesOfResidence.subSectionTitle',
         defaultMessage: 'Búsetulönd',
         description: 'Countries of residence sub section title',
       },
       pageTitle: {
-        id:
-          'doi.cs.application:information.labels.countriesOfResidence.pageTitle',
+        id: 'doi.cs.application:information.labels.countriesOfResidence.pageTitle',
         defaultMessage: 'Búsetulönd',
         description: 'Countries of residence page title',
       },
       questionTitle: {
-        id:
-          'doi.cs.application:information.labels.countriesOfResidence.questionTitle',
+        id: 'doi.cs.application:information.labels.countriesOfResidence.questionTitle',
         defaultMessage:
           'Hefur þú búið í öðru landi en Íslandi eftir 15 ára aldur?',
         description: 'Countries of residence question title',
       },
       countryListTitle: {
-        id:
-          'doi.cs.application:information.labels.countriesOfResidence.countryListTitle',
+        id: 'doi.cs.application:information.labels.countriesOfResidence.countryListTitle',
         defaultMessage: 'Vinsamlegast tilgreindu þau lönd sem við á',
         description: 'Countries of residence list countries title',
       },
       buttonTitle: {
-        id:
-          'doi.cs.application:information.labels.countriesOfResidence.buttonTitle',
+        id: 'doi.cs.application:information.labels.countriesOfResidence.buttonTitle',
         defaultMessage: 'Bæta við fleiri löndum',
         description: 'Add more countries button title',
       },
       deleteButtonTitle: {
-        id:
-          'doi.cs.application:information.labels.countriesOfResidence.deleteButtonTitle',
+        id: 'doi.cs.application:information.labels.countriesOfResidence.deleteButtonTitle',
         defaultMessage: 'Eyða færslu',
         description: 'Add more countries button title',
       },
@@ -229,8 +215,7 @@ export const information = {
         description: 'Add more countries button title',
       },
       deleteButtonTitle: {
-        id:
-          'doi.cs.application:information.labels.staysAbroad.deleteButtonTitle',
+        id: 'doi.cs.application:information.labels.staysAbroad.deleteButtonTitle',
         defaultMessage: 'Eyða færslu',
         description: 'Add more countries button title',
       },

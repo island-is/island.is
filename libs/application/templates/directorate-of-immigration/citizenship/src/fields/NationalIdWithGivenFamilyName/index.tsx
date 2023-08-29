@@ -52,23 +52,21 @@ export const NationalIdWithGivenFamilyName: FC<Props & FieldBaseProps> = ({
   const nationaIdField = `${usedId}.nationalId`
   const wasRemovedField = `${usedId}.wasRemoved`
 
-  const [
-    getIdentity,
-    { data, loading: queryLoading, error: queryError },
-  ] = useLazyQuery<Query, { input: IdentityInput }>(
-    gql`
-      ${IDENTITY_QUERY}
-    `,
-    {
-      onCompleted: (data) => {
-        setValue(givenNameField, data.identity?.givenName ?? undefined)
-        setValue(familyNameField, data.identity?.familyName ?? undefined)
-        setCurrentName(
-          `${data.identity?.givenName} ${data.identity?.familyName}`,
-        )
+  const [getIdentity, { data, loading: queryLoading, error: queryError }] =
+    useLazyQuery<Query, { input: IdentityInput }>(
+      gql`
+        ${IDENTITY_QUERY}
+      `,
+      {
+        onCompleted: (data) => {
+          setValue(givenNameField, data.identity?.givenName ?? undefined)
+          setValue(familyNameField, data.identity?.familyName ?? undefined)
+          setCurrentName(
+            `${data.identity?.givenName} ${data.identity?.familyName}`,
+          )
+        },
       },
-    },
-  )
+    )
 
   useEffect(() => {
     setValue(wasRemovedField, repeaterField.wasRemoved)

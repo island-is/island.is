@@ -17,7 +17,8 @@ export const SelectChildren = ({ field, application, error }: any) => {
     externalData: { childrenCustodyInformation },
     answers,
   } = application
-  const children = childrenCustodyInformation.data as ApplicantChildCustodyInformation[]
+  const children =
+    childrenCustodyInformation.data as ApplicantChildCustodyInformation[]
 
   const childrenCheckboxes = children.map(
     (child: ApplicantChildCustodyInformation) => {

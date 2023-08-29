@@ -62,11 +62,9 @@ export const StaysAbroadRepeaterItem: FC<Props & FieldBaseProps> = ({
       ? true
       : false
 
-  const countryOptions = (getValueViaPath(
-    application.externalData,
-    'countries.data',
-    [],
-  ) as Country[]).map(({ id, name }) => ({
+  const countryOptions = (
+    getValueViaPath(application.externalData, 'countries.data', []) as Country[]
+  ).map(({ id, name }) => ({
     value: id.toString(),
     label: name,
   }))

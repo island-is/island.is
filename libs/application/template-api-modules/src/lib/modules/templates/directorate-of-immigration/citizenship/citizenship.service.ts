@@ -108,9 +108,8 @@ export class CitizenshipService extends BaseTemplateApiService {
   }: TemplateApiModuleActionProps): Promise<CitizenIndividual | null> {
     const individual = await this.getIndividualDetails(auth.nationalId)
     if (individual)
-      individual.residenceInIcelandLastChangeDate = await this.getResidenceInIcelandLastChangeDate(
-        auth.nationalId,
-      )
+      individual.residenceInIcelandLastChangeDate =
+        await this.getResidenceInIcelandLastChangeDate(auth.nationalId)
     return individual
   }
 
@@ -284,9 +283,10 @@ export class CitizenshipService extends BaseTemplateApiService {
   }: TemplateApiModuleActionProps) {
     const answers = application.answers as CitizenshipAnswers
 
-    const residenceConditionList = await this.directorateOfImmigrationClient.getCitizenshipResidenceConditions(
-      auth,
-    )
+    const residenceConditionList =
+      await this.directorateOfImmigrationClient.getCitizenshipResidenceConditions(
+        auth,
+      )
 
     // throw error in case the residence condition list changed since prerequisite step and
     // user does not fulfill any other condition
@@ -318,12 +318,8 @@ export class CitizenshipService extends BaseTemplateApiService {
       )
     }
 
-    const isPayment:
-      | { fulfilled: boolean }
-      | undefined = await this.sharedTemplateAPIService.getPaymentStatus(
-      auth,
-      application.id,
-    )
+    const isPayment: { fulfilled: boolean } | undefined =
+      await this.sharedTemplateAPIService.getPaymentStatus(auth, application.id)
 
     if (!isPayment?.fulfilled) {
       throw new Error(

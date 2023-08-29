@@ -63,13 +63,15 @@ export class ResidencePermitRenewalService extends BaseTemplateApiService {
   async getApplicantCurrentResidencePermit({
     auth,
   }: TemplateApiModuleActionProps): Promise<CurrentResidencePermit> {
-    const applicant = await this.directorateOfImmigrationClient.getApplicantCurrentResidencePermit(
-      auth,
-    )
+    const applicant =
+      await this.directorateOfImmigrationClient.getApplicantCurrentResidencePermit(
+        auth,
+      )
 
-    const children = await this.directorateOfImmigrationClient.getChildrenCurrentResidencePermit(
-      auth,
-    )
+    const children =
+      await this.directorateOfImmigrationClient.getChildrenCurrentResidencePermit(
+        auth,
+      )
 
     const canAtLeastOneApplyPermanent = !![applicant, ...children].find(
       (x) => x.canApplyRenewal,
@@ -146,12 +148,8 @@ export class ResidencePermitRenewalService extends BaseTemplateApiService {
       )
     }
 
-    const isPayment:
-      | { fulfilled: boolean }
-      | undefined = await this.sharedTemplateAPIService.getPaymentStatus(
-      auth,
-      application.id,
-    )
+    const isPayment: { fulfilled: boolean } | undefined =
+      await this.sharedTemplateAPIService.getPaymentStatus(auth, application.id)
 
     if (!isPayment?.fulfilled) {
       throw new Error(

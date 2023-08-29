@@ -11,8 +11,7 @@ export const applicant = {
   labels: {
     pickApplicant: defineMessages({
       subSectionTitle: {
-        id:
-          'doi.rpr.application:applicant.labels.pickApplicant.subSectionTitle',
+        id: 'doi.rpr.application:applicant.labels.pickApplicant.subSectionTitle',
         defaultMessage: 'Fyrir hvern á að sækja um?',
         description: 'Pick applicant sub section title',
       },
@@ -44,8 +43,7 @@ export const applicant = {
         description: 'Pick applicant sub section warning message',
       },
       warningLinkMessage: {
-        id:
-          'doi.rpr.application:applicant.labels.pickApplicant.warningLinkMessage',
+        id: 'doi.rpr.application:applicant.labels.pickApplicant.warningLinkMessage',
         defaultMessage:
           'Ef eftirfarandi upplýsingar eru ekki réttar þá þarf að breyta þeim hjá Útlendingastofnun og koma svo aftur til að klára umsóknina.',
         description: 'Pick applicant sub section warning link message',
@@ -67,8 +65,7 @@ export const applicant = {
         description: 'Pick applicant sub section info message',
       },
       infoLinkMessage: {
-        id:
-          'doi.rpr.application:applicant.labels.pickApplicant.infoLinkMessage',
+        id: 'doi.rpr.application:applicant.labels.pickApplicant.infoLinkMessage',
         defaultMessage: 'Sjá eyðublöð á vefsíðu Útlendingastofnunar.',
         description: 'Pick applicant sub section info link message',
       },
@@ -83,8 +80,7 @@ export const applicant = {
         description: 'Pick applicant checkbox tag: valid to',
       },
       checkboxSubLabel: {
-        id:
-          'doi.rpr.application:applicant.labels.pickApplicant.checkboxSubLabel',
+        id: 'doi.rpr.application:applicant.labels.pickApplicant.checkboxSubLabel',
         defaultMessage: 'Hinn forsjáraðilinn:',
         description:
           'Pick applicant checkbox sublabel: displayed below a childs name',

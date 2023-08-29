@@ -11,8 +11,7 @@ export const personal = {
   labels: {
     userInformation: defineMessages({
       subSectionTitle: {
-        id:
-          'doi.rpr.application:personal.labels.userInformation.subSectionTitle',
+        id: 'doi.rpr.application:personal.labels.userInformation.subSectionTitle',
         defaultMessage: 'Notendaupplýsingar',
         description: 'User information sub section title',
       },
@@ -47,8 +46,7 @@ export const personal = {
         description: 'User information address label',
       },
       postalCodeAndCity: {
-        id:
-          'doi.rpr.application:personal.labels.userInformation.postalCodeAndCity',
+        id: 'doi.rpr.application:personal.labels.userInformation.postalCodeAndCity',
         defaultMessage: 'Staður',
         description: 'User information postal code and city label',
       },
@@ -63,8 +61,7 @@ export const personal = {
         description: 'User information phone number label',
       },
       securityPinTitle: {
-        id:
-          'doi.rpr.application:personal.labels.userInformation.securityPinTitle',
+        id: 'doi.rpr.application:personal.labels.userInformation.securityPinTitle',
         defaultMessage:
           'Vinsamlegast veldu öryggistölu fyrir umsóknina (gildir um alla umsækjendur sem verið er að sækja um fyrir)',
         description: 'User information security pin title',
@@ -75,8 +72,7 @@ export const personal = {
         description: 'User information security pin label',
       },
       securityPinPlaceholder: {
-        id:
-          'doi.rpr.application:personal.labels.userInformation.securityPinPlaceholder',
+        id: 'doi.rpr.application:personal.labels.userInformation.securityPinPlaceholder',
         defaultMessage: '(4 tölustafir)',
         description: 'User information security pin placeholder',
       },
