@@ -187,7 +187,8 @@ export const StandardForm = ({
   const [categoryLabel, setCategoryLabel] = useState<string>('')
   const [addonFields, setAddonFields] = useState<ReactNode | null>()
   const categoryDescription = useMemo(
-    () => supportCategories.find((c) => c.id === categoryId)?.description ?? '',
+    () =>
+      supportCategories?.find((c) => c.id === categoryId)?.description ?? '',
     [categoryId, supportCategories],
   )
 
@@ -528,7 +529,7 @@ export const StandardForm = ({
 
   const isBusy = loadingSuggestions || isChangingSubject
 
-  const categoryOptions = supportCategories
+  const categoryOptions = (supportCategories ?? [])
     .map((x) => ({
       label: x.title?.trim(),
       value: x.id,
@@ -705,7 +706,7 @@ export const StandardForm = ({
                             onChange(label)
                           }}
                           hasError={errors?.rikisadili !== undefined}
-                          errorMessage={errors?.rikisadili?.message.toString()}
+                          errorMessage={errors?.rikisadili?.message?.toString()}
                           options={stateEntityOptions}
                           placeholder={fn(
                             'rikisadili',
@@ -890,7 +891,7 @@ export const StandardForm = ({
                               errorMessage={
                                 errors?.syslumadur?.message as string
                               }
-                              options={syslumenn.map((x) => ({
+                              options={(syslumenn ?? []).map((x) => ({
                                 label: x.title,
                                 value: x.id,
                               }))}

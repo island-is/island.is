@@ -81,7 +81,7 @@ const ServiceWebFormsPage: Screen<ServiceWebFormsPageProps> = ({
     ServiceWebFormsMutationVariables
   >(SERVICE_WEB_FORMS_MUTATION)
 
-  useContentfulId(organization.id)
+  useContentfulId(organization?.id)
   useLocalLinkTypeResolver()
 
   const organizationNamespace = useMemo(
@@ -146,7 +146,7 @@ const ServiceWebFormsPage: Screen<ServiceWebFormsPageProps> = ({
     }
 
     items.push({
-      title: organization.title,
+      title: organization?.title,
       typename: 'serviceweb',
       href: `${linkResolver('serviceweb').href}/${institutionSlug}`,
     })
@@ -159,7 +159,7 @@ const ServiceWebFormsPage: Screen<ServiceWebFormsPageProps> = ({
     })
 
     return items
-  }, [institutionSlug, organization.title, linkResolver])
+  }, [institutionSlug, organization?.title, linkResolver])
 
   return (
     <ServiceWebWrapper
@@ -347,7 +347,7 @@ ServiceWebFormsPage.getProps = async ({ apolloClient, locale, query }) => {
         },
       })
       .then((variables) =>
-        variables.data.getNamespace.fields
+        variables.data.getNamespace?.fields
           ? JSON.parse(variables.data.getNamespace.fields)
           : {},
       ),

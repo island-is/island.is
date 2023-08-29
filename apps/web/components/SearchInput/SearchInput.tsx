@@ -61,7 +61,7 @@ const initialSearchState: Readonly<SearchState> = {
   isLoading: false,
 }
 
-const searchReducer = (state, action): SearchState => {
+const searchReducer = (state: any, action: any): SearchState => {
   switch (action.type) {
     case 'startLoading': {
       return { ...state, isLoading: true }
@@ -78,7 +78,10 @@ const searchReducer = (state, action): SearchState => {
     case 'reset': {
       return initialSearchState
     }
+    default:
+      return initialSearchState
   }
+  return initialSearchState
 }
 
 const useSearch = (
@@ -111,7 +114,7 @@ const useSearch = (
           query: GET_SEARCH_RESULTS_QUERY,
           variables: {
             query: {
-              queryString: term.trim(),
+              queryString: term?.trim() ?? '',
               language: locale as ContentLanguage,
               types: [
                 // RÁ suggestions has only been searching particular types for some time - SYNC SUGGESTIONS SCOPE WITH DEFAULT - keep it in sync
@@ -135,15 +138,16 @@ const useSearch = (
         })
 
       // the api only completes single terms get only single terms
-      const indexOfLastSpace = term.lastIndexOf(' ')
-      const hasSpace = indexOfLastSpace !== -1
-      const prefix = hasSpace ? term.slice(0, indexOfLastSpace) : ''
-      const queryString = hasSpace ? term.slice(indexOfLastSpace) : term
-      dispatch({
-        type: 'searchString',
-        term,
-        prefix,
-      })
+      if (term) {
+        const indexOfLastSpace = term.lastIndexOf(' ')
+        const hasSpace = indexOfLastSpace !== -1
+        const prefix = hasSpace ? term.slice(0, indexOfLastSpace) : ''
+        dispatch({
+          type: 'searchString',
+          term,
+          prefix,
+        })
+      }
     }, DEBOUNCE_TIMER))
 
     return () => clearTimeout(thisTimerId)
@@ -444,10 +448,10 @@ const Results = ({
                   <Link
                     key={item.id}
                     {...itemProps}
-                    onClick={(e) => {
+                    onClick={(e: any) => {
                       trackSearchQuery(search.term, 'Web Suggestion')
                       onClick(e)
-                      onRouting()
+                      onRouting?.()
                     }}
                     color="blue400"
                     underline="normal"
