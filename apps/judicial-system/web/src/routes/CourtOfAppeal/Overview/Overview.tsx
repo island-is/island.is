@@ -26,12 +26,8 @@ import CourtOfAppealCaseOverviewHeader from '../components/CaseOverviewHeader/Ca
 const CourtOfAppealOverview: React.FC<
   React.PropsWithChildren<unknown>
 > = () => {
-  const {
-    workingCase,
-    setWorkingCase,
-    isLoadingWorkingCase,
-    caseNotFound,
-  } = useContext(FormContext)
+  const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
+    useContext(FormContext)
 
   const { title, description } = useAppealAlertBanner(workingCase)
   const { formatMessage } = useIntl()

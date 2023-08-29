@@ -11,7 +11,8 @@ import { CoOwnerAndOperatorRepeaterItem } from './CoOwnerAndOperatorRepeaterItem
 import { useMutation } from '@apollo/client'
 import { UPDATE_APPLICATION } from '@island.is/application/graphql'
 
-const emailRegex = /^[\w!#$%&'*+/=?`{|}~^-]+(?:\.[\w!#$%&'*+/=?`{|}~^-]+)*@(?:[A-Z0-9-]+\.)+[A-Z]{2,6}$/i
+const emailRegex =
+  /^[\w!#$%&'*+/=?`{|}~^-]+(?:\.[\w!#$%&'*+/=?`{|}~^-]+)*@(?:[A-Z0-9-]+\.)+[A-Z]{2,6}$/i
 
 export const CoOwnerAndOperatorRepeater: FC<
   React.PropsWithChildren<FieldBaseProps>

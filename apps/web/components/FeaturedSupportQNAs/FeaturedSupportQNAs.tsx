@@ -53,8 +53,8 @@ const FeaturedSupportQNAs = ({ slice }: FeaturedSupportQNAsProps) => {
               <LinkV2
                 href={
                   linkResolver('supportqna', [
-                    qna.organization.slug,
-                    qna.category.slug,
+                    qna.organization?.slug ?? '',
+                    qna.category?.slug ?? '',
                     qna.slug,
                   ]).href
                 }

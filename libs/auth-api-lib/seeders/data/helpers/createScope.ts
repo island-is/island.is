@@ -69,55 +69,54 @@ const getScopeFields = (options: ScopeOptions): DbScope => ({
   automatic_delegation_grant: false,
 })
 
-export const createScope = (options: ScopeOptions) => async (
-  queryInterface: QueryInterface,
-) => {
-  const scope = getScopeFields(options)
+export const createScope =
+  (options: ScopeOptions) => async (queryInterface: QueryInterface) => {
+    const scope = getScopeFields(options)
 
-  await safeBulkInsert(
-    queryInterface,
-    'api_scope',
-    [scope],
-    () => `creating scope ${scope.name}`,
-  )
-
-  const claims = options.claims ?? ['nationalId']
-  await safeBulkInsert(
-    queryInterface,
-    'api_scope_user_claim',
-    claims.map((claim) => ({
-      api_scope_name: scope.name,
-      claim_name: claim,
-    })),
-    // eslint-disable-next-line @typescript-eslint/naming-convention
-    ({ claim_name }) => `linking scope ${scope.name} to claim ${claim_name}`,
-  )
-
-  await safeBulkInsert(
-    queryInterface,
-    'api_resource_scope',
-    [
-      {
-        api_resource_name: options.addToResource ?? '@island.is',
-        scope_name: scope.name,
-      },
-    ],
-    // eslint-disable-next-line @typescript-eslint/naming-convention
-    ({ api_resource_name }) =>
-      `linking scope ${scope.name} to resource ${api_resource_name}`,
-  )
-
-  if (options.addToClients?.length) {
     await safeBulkInsert(
       queryInterface,
-      'client_allowed_scope',
-      // eslint-disable-next-line @typescript-eslint/naming-convention
-      options.addToClients.map((client_id) => ({
-        client_id,
-        scope_name: scope.name,
+      'api_scope',
+      [scope],
+      () => `creating scope ${scope.name}`,
+    )
+
+    const claims = options.claims ?? ['nationalId']
+    await safeBulkInsert(
+      queryInterface,
+      'api_scope_user_claim',
+      claims.map((claim) => ({
+        api_scope_name: scope.name,
+        claim_name: claim,
       })),
       // eslint-disable-next-line @typescript-eslint/naming-convention
-      ({ client_id }) => `linking scope ${scope.name} to client ${client_id}`,
+      ({ claim_name }) => `linking scope ${scope.name} to claim ${claim_name}`,
     )
+
+    await safeBulkInsert(
+      queryInterface,
+      'api_resource_scope',
+      [
+        {
+          api_resource_name: options.addToResource ?? '@island.is',
+          scope_name: scope.name,
+        },
+      ],
+      // eslint-disable-next-line @typescript-eslint/naming-convention
+      ({ api_resource_name }) =>
+        `linking scope ${scope.name} to resource ${api_resource_name}`,
+    )
+
+    if (options.addToClients?.length) {
+      await safeBulkInsert(
+        queryInterface,
+        'client_allowed_scope',
+        // eslint-disable-next-line @typescript-eslint/naming-convention
+        options.addToClients.map((client_id) => ({
+          client_id,
+          scope_name: scope.name,
+        })),
+        // eslint-disable-next-line @typescript-eslint/naming-convention
+        ({ client_id }) => `linking scope ${scope.name} to client ${client_id}`,
+      )
+    }
   }
-}

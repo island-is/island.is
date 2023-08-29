@@ -46,9 +46,8 @@ export const SearchBox = ({
   const [value, setValue] = useState('')
   const [options, setOptions] = useState([])
   const [isLoading, setIsLoading] = useState(false)
-  const [waitingForNextPageToLoad, setWaitingForNextPageToLoad] = useState(
-    false,
-  )
+  const [waitingForNextPageToLoad, setWaitingForNextPageToLoad] =
+    useState(false)
 
   const [fetch, { data, loading }] = useLazyQuery<Query, QueryGetArticlesArgs>(
     GET_ORGANIZATION_SERVICES_QUERY,
@@ -78,7 +77,7 @@ export const SearchBox = ({
     label: item.title,
     value: item.slug,
     isArticle: true,
-    component: ({ active }) => {
+    component: ({ active }: { active: boolean }) => {
       return (
         <Box
           key={`article-${item.id ?? ''}-${index}`}
@@ -152,7 +151,7 @@ export const SearchBox = ({
             label: value,
             value: '',
             isArticle: false,
-            component: ({ active }) => (
+            component: ({ active }: { active: boolean }) => (
               <Box
                 padding={2}
                 background={active ? 'blue100' : 'white'}

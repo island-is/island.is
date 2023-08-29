@@ -32,11 +32,15 @@ type SubmitResponse = {
   title: string
 } | null
 
-const getInitialValues = (formFields: EmailSignupSchema['formFields']) => {
-  return formFields.reduce((acc, curr) => {
-    acc[curr.name] = ''
+const getInitialValues = (
+  formFields: EmailSignupSchema['formFields'],
+): Record<string, string> => {
+  return formFields?.reduce((acc: Record<string, unknown>, curr) => {
+    if (curr?.name) {
+      acc[curr.name] = ''
+    }
     return acc
-  }, {})
+  }, {}) as Record<string, string>
 }
 
 interface EmailSignupProps {
@@ -72,13 +76,13 @@ const EmailSignup = ({ slice, marginLeft }: EmailSignupProps) => {
 
     for (const [fieldName, value] of Object.entries(values)) {
       const field = formFields.find((f) => f.name === fieldName)
-      if (field.required && !value) {
+      if (field?.required && !value) {
         newErrors[fieldName] = n(
           'fieldIsRequired',
           'Þennan reit þarf að fylla út',
         )
       } else if (
-        field.type === FormFieldType.EMAIL &&
+        field?.type === FormFieldType.EMAIL &&
         !isValidEmail.test(value as string)
       ) {
         newErrors[fieldName] = n(
@@ -86,7 +90,7 @@ const EmailSignup = ({ slice, marginLeft }: EmailSignupProps) => {
           'Vinsamlegast sláðu inn gilt netfang',
         )
       } else if (
-        field.type === FormFieldType.CHECKBOXES &&
+        field?.type === FormFieldType.CHECKBOXES &&
         value &&
         field.required &&
         !Object.values(JSON.parse(value)).some((v) => v === 'true')
@@ -96,8 +100,8 @@ const EmailSignup = ({ slice, marginLeft }: EmailSignupProps) => {
           'Þennan reit þarf að fylla út',
         )
       } else if (
-        field.type === FormFieldType.NATIONAL_ID &&
-        field.required &&
+        field?.type === FormFieldType.NATIONAL_ID &&
+        field?.required &&
         !isValidNationalId(value)
       ) {
         newErrors[fieldName] = n(
@@ -116,9 +120,9 @@ const EmailSignup = ({ slice, marginLeft }: EmailSignupProps) => {
     for (const [fieldName, value] of Object.entries(values)) {
       const field = formFields.find((f) => f.name === fieldName)
       inputFields.push({
-        id: field.id,
+        id: field?.id,
         name: fieldName,
-        type: field.type,
+        type: field?.type,
         value,
       })
     }
@@ -132,7 +136,7 @@ const EmailSignup = ({ slice, marginLeft }: EmailSignupProps) => {
       },
     })
       .then((result) => {
-        if (result?.data.emailSignupSubscription?.subscribed) {
+        if (result?.data?.emailSignupSubscription?.subscribed) {
           setSubmitResponse({
             type: 'success',
             title: n('submitSuccessTitle', 'Skráning tókst') as string,
@@ -174,7 +178,7 @@ const EmailSignup = ({ slice, marginLeft }: EmailSignupProps) => {
     >
       <form onSubmit={handleSubmit}>
         <Box display="flex" alignItems="flexStart">
-          {slice.translations.leftImageSrc && (
+          {slice?.translations?.leftImageSrc && (
             <img
               src={slice.translations.leftImageSrc}
               className={styles.image}
@@ -199,7 +203,7 @@ const EmailSignup = ({ slice, marginLeft }: EmailSignupProps) => {
                   </Box>
                 ) : (
                   <Box width="full" marginTop={5}>
-                    {slice.formFields.map((field) => {
+                    {(slice.formFields ?? []).map((field) => {
                       return (
                         <Box key={field.id} marginBottom={3} width="full">
                           <FormField

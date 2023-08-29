@@ -83,61 +83,44 @@ describe('Tax calculator', () => {
 
   describe('calculatePersonalTaxAllowanceFromAmount', () => {
     test('should return 100% personal tax allowence without spouse', () => {
-      const personalTaxAllowanceFromAmount = calculatePersonalTaxAllowanceFromAmount(
-        Number.MAX_VALUE,
-        100,
-      )
+      const personalTaxAllowanceFromAmount =
+        calculatePersonalTaxAllowanceFromAmount(Number.MAX_VALUE, 100)
       expect(personalTaxAllowanceFromAmount).toEqual(59665)
     })
 
     test('should return 80% personal tax allowence without spouse', () => {
-      const personalTaxAllowanceFromAmount = calculatePersonalTaxAllowanceFromAmount(
-        Number.MAX_VALUE,
-        80,
-      )
+      const personalTaxAllowanceFromAmount =
+        calculatePersonalTaxAllowanceFromAmount(Number.MAX_VALUE, 80)
       expect(personalTaxAllowanceFromAmount).toEqual(47732)
     })
 
     test('should return 30% personal tax allowence without spouse', () => {
-      const personalTaxAllowanceFromAmount = calculatePersonalTaxAllowanceFromAmount(
-        Number.MAX_VALUE,
-        30,
-      )
+      const personalTaxAllowanceFromAmount =
+        calculatePersonalTaxAllowanceFromAmount(Number.MAX_VALUE, 30)
       expect(personalTaxAllowanceFromAmount).toEqual(17899)
     })
 
     test('should return 100% personal tax allowence with 100% spouse allowance', () => {
-      const personalTaxAllowanceFromAmount = calculatePersonalTaxAllowanceFromAmount(
-        Number.MAX_VALUE,
-        100,
-        100,
-      )
+      const personalTaxAllowanceFromAmount =
+        calculatePersonalTaxAllowanceFromAmount(Number.MAX_VALUE, 100, 100)
       expect(personalTaxAllowanceFromAmount).toEqual(119330)
     })
 
     test('should return 80% personal tax allowence with 10% spouse', () => {
-      const personalTaxAllowanceFromAmount = calculatePersonalTaxAllowanceFromAmount(
-        Number.MAX_VALUE,
-        80,
-        10,
-      )
+      const personalTaxAllowanceFromAmount =
+        calculatePersonalTaxAllowanceFromAmount(Number.MAX_VALUE, 80, 10)
       expect(personalTaxAllowanceFromAmount).toEqual(53698)
     })
 
     test('should return 30% personal tax allowence with 50% spouse', () => {
-      const personalTaxAllowanceFromAmount = calculatePersonalTaxAllowanceFromAmount(
-        Number.MAX_VALUE,
-        30,
-        50,
-      )
+      const personalTaxAllowanceFromAmount =
+        calculatePersonalTaxAllowanceFromAmount(Number.MAX_VALUE, 30, 50)
       expect(personalTaxAllowanceFromAmount).toEqual(47731)
     })
 
     test('should return the personal tax allowence as equal to the tax amount arguement', () => {
-      const personalTaxAllowanceFromAmount = calculatePersonalTaxAllowanceFromAmount(
-        20000,
-        100,
-      )
+      const personalTaxAllowanceFromAmount =
+        calculatePersonalTaxAllowanceFromAmount(20000, 100)
       expect(personalTaxAllowanceFromAmount).toEqual(20000)
     })
   })

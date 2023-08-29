@@ -111,6 +111,7 @@ export const Button = forwardRef<
       <Box
         component={ReaButton}
         as={as ? (as as string) : variant === 'text' ? 'span' : 'button'}
+        aria-label={variant === 'text' ? 'button' : undefined}
         ref={ref}
         value={value}
         name={name}

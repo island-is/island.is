@@ -18,11 +18,13 @@ export const hasReviewerApproved = (
   }
 
   // Check if reviewer is buyers coowner or operator and has not approved
-  const filteredBuyerCoOwnersAndOperators = (getValueViaPath(
-    answers,
-    'buyerCoOwnerAndOperator',
-    [],
-  ) as CoOwnerAndOperator[]).filter(({ wasRemoved }) => wasRemoved !== 'true')
+  const filteredBuyerCoOwnersAndOperators = (
+    getValueViaPath(
+      answers,
+      'buyerCoOwnerAndOperator',
+      [],
+    ) as CoOwnerAndOperator[]
+  ).filter(({ wasRemoved }) => wasRemoved !== 'true')
   const buyerCoOwnerAndOperator = filteredBuyerCoOwnersAndOperators.find(
     (coOwnerOrOperator) => coOwnerOrOperator.nationalId === reviewerNationalId,
   )

@@ -15,15 +15,13 @@ export const confirmation = {
       description: 'Confirmation description',
       paragraphs: defineMessages({
         phoneNumber: {
-          id:
-            'crc.application:section.confirmation.description.paragraphs.phoneNumber#markdown',
+          id: 'crc.application:section.confirmation.description.paragraphs.phoneNumber#markdown',
           defaultMessage: 'í SMS síma {phoneNumber}',
           description:
             'Confirmation description phone number paragraph which is used in section.confirmation.description',
         },
         email: {
-          id:
-            'crc.application:section.confirmation.description.paragraphs.email#markdown',
+          id: 'crc.application:section.confirmation.description.paragraphs.email#markdown',
           defaultMessage: 'á netfangið {email}',
           description:
             'Confirmation description email paragraph which is used in section.confirmation.description',
@@ -46,8 +44,7 @@ export const confirmation = {
   }),
   contractOverview: defineMessages({
     accordionTitle: {
-      id:
-        'crc.application:section.confirmation.contractOverview.accordionTitle',
+      id: 'crc.application:section.confirmation.contractOverview.accordionTitle',
       defaultMessage: 'Yfirlit samnings',
       description: 'Confirmation page accordion contract overview title',
     },

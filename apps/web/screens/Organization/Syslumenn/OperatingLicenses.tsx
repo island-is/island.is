@@ -247,11 +247,11 @@ const OperatingLicenses: Screen<OperatingLicensesProps> = ({
   const { format } = useDateUtils()
   const DATE_FORMAT = n('operatingLicenseDateFormat', 'd. MMMM yyyy')
 
-  useContentfulId(organizationPage.id, subpage.id)
+  useContentfulId(organizationPage?.id, subpage?.id)
 
   const pageUrl = Router.pathname
 
-  const navList: NavigationItem[] = organizationPage.menuLinks.map(
+  const navList: NavigationItem[] = organizationPage?.menuLinks.map(
     ({ primaryLink, childrenLinks }) => ({
       title: primaryLink?.text,
       href: primaryLink?.url,
@@ -345,9 +345,9 @@ const OperatingLicenses: Screen<OperatingLicensesProps> = ({
 
   return (
     <OrganizationWrapper
-      pageTitle={subpage.title}
+      pageTitle={subpage?.title ?? ''}
       organizationPage={organizationPage}
-      pageFeaturedImage={subpage.featuredImage}
+      pageFeaturedImage={subpage?.featuredImage}
       showReadSpeaker={false}
       breadcrumbItems={[
         {
@@ -355,8 +355,9 @@ const OperatingLicenses: Screen<OperatingLicensesProps> = ({
           href: linkResolver('homepage').href,
         },
         {
-          title: organizationPage.title,
-          href: linkResolver('organizationpage', [organizationPage.slug]).href,
+          title: organizationPage?.title ?? '',
+          href: linkResolver('organizationpage', [organizationPage?.slug ?? ''])
+            .href,
         },
       ]}
       navigationData={{
@@ -366,11 +367,11 @@ const OperatingLicenses: Screen<OperatingLicensesProps> = ({
     >
       <Box paddingBottom={0}>
         <Text variant="h1" as="h2">
-          {subpage.title}
+          {subpage?.title}
         </Text>
         <Webreader readId={null} readClass="rs_read" />
       </Box>
-      {webRichText(subpage.description as SliceType[])}
+      {webRichText((subpage?.description ?? []) as SliceType[])}
       <Box marginBottom={3}>
         <Input
           name="operatingLicenseSearchInput"
@@ -526,24 +527,26 @@ const OperatingLicenses: Screen<OperatingLicensesProps> = ({
                   : {operatingLicense.alcoholWeekendOutdoorLicense}
                 </Text>
               )}
-              {operatingLicense.maximumNumberOfGuests > 0 && (
-                <Text paddingBottom={0}>
-                  {n(
-                    'operatingLicensesMaximumNumberOfAccommodationGuests',
-                    'Hámarksfjöldi gesta í gistingu',
-                  )}
-                  : {operatingLicense.maximumNumberOfGuests}
-                </Text>
-              )}
-              {operatingLicense.numberOfDiningGuests > 0 && (
-                <Text paddingBottom={0}>
-                  {n(
-                    'operatingLicensesMaximumNumberOfDiningGuests',
-                    'Hámarksfjöldi gesta í veitingum',
-                  )}
-                  : {operatingLicense.numberOfDiningGuests}
-                </Text>
-              )}
+              {operatingLicense.maximumNumberOfGuests &&
+                operatingLicense.maximumNumberOfGuests > 0 && (
+                  <Text paddingBottom={0}>
+                    {n(
+                      'operatingLicensesMaximumNumberOfAccommodationGuests',
+                      'Hámarksfjöldi gesta í gistingu',
+                    )}
+                    : {operatingLicense.maximumNumberOfGuests}
+                  </Text>
+                )}
+              {operatingLicense.numberOfDiningGuests &&
+                operatingLicense?.numberOfDiningGuests > 0 && (
+                  <Text paddingBottom={0}>
+                    {n(
+                      'operatingLicensesMaximumNumberOfDiningGuests',
+                      'Hámarksfjöldi gesta í veitingum',
+                    )}
+                    : {operatingLicense.numberOfDiningGuests}
+                  </Text>
+                )}
             </Box>
           </Box>
         )
@@ -635,7 +638,7 @@ OperatingLicenses.getProps = async ({ apolloClient, locale, req }) => {
         },
       })
       .then((variables) =>
-        variables.data.getNamespace.fields
+        variables.data.getNamespace?.fields
           ? JSON.parse(variables.data.getNamespace.fields)
           : {},
       ),

@@ -1,4 +1,5 @@
 export { AuthModule } from './auth/auth.module'
+export { authModuleConfig } from './auth/auth.config'
 export { InstitutionModule } from './institution/institution.module'
 export { UserModule } from './user/user.module'
 export { CaseModule } from './case/case.module'

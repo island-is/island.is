@@ -62,15 +62,16 @@ const Overview: FC<React.PropsWithChildren<unknown>> = () => {
   } = useI18n()
   const router = useRouter()
 
-  const { data: vehicleData, loading, fetchMore } = useQuery<Query>(
-    SkilavottordRecyclingPartnerVehiclesQuery,
-    {
-      notifyOnNetworkStatusChange: true,
-      variables: {
-        after: '',
-      },
+  const {
+    data: vehicleData,
+    loading,
+    fetchMore,
+  } = useQuery<Query>(SkilavottordRecyclingPartnerVehiclesQuery, {
+    notifyOnNetworkStatusChange: true,
+    variables: {
+      after: '',
     },
-  )
+  })
 
   const { pageInfo, items: vehicles = [] } =
     vehicleData?.skilavottordRecyclingPartnerVehicles ?? {}
