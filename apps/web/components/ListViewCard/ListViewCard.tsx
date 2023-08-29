@@ -25,6 +25,7 @@ type CardProps = {
   iconText?: string
   heading: string
   href: string
+  checkboxId?: string
 }
 
 export const ListViewCard = ({
@@ -32,6 +33,7 @@ export const ListViewCard = ({
   onCheck,
   buttonLabel,
   checkboxLabel,
+  checkboxId,
   cta,
   icon,
   iconText,
@@ -101,6 +103,7 @@ export const ListViewCard = ({
             label="Setja í samanburð"
             labelVariant="small"
             onChange={onCheck}
+            id={checkboxId}
           />
         </Box>
         <Box paddingTop={3} width="full">
