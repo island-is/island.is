@@ -1,12 +1,10 @@
-import { Field, InterfaceType } from '@nestjs/graphql'
-import { HealthDirectorateLicense } from './healthDirectorateLicense.model'
-import { EducationalLicense } from './educationalLicense.model'
+import { ObjectType, Field, ID, InterfaceType } from '@nestjs/graphql'
 
 @InterfaceType({
-  resolveType(license) {
-    if (license.legalEntityId) {
+  resolveType(license: OccupationalLicense) {
+    /*if (license.legalEntityId) {
       return HealthDirectorateLicense
-    }
+    }*/
     return EducationalLicense
   },
 })
@@ -22,4 +20,29 @@ export abstract class OccupationalLicense {
 
   @Field(() => String)
   validFrom!: string
+}
+
+@ObjectType('OccupationalLicensesEducationalLicense', {
+  implements: OccupationalLicense,
+})
+export class EducationalLicense extends OccupationalLicense {
+  @Field(() => ID)
+  id!: string
+
+  @Field(() => String)
+  downloadUrl?: string
+}
+
+@ObjectType('OccupationalLicensesHealthDirectorateLicense', {
+  implements: OccupationalLicense,
+})
+export class HealthDirectorateLicense extends OccupationalLicense {
+  @Field(() => String)
+  legalEntityId!: string
+
+  @Field(() => String, { nullable: true })
+  holderName?: string
+
+  @Field(() => String, { nullable: true })
+  number?: string | null
 }

@@ -10,10 +10,12 @@ import { Args, Query, Resolver } from '@nestjs/graphql'
 import { OccupationalLicensesList } from './models/occupationalLicenseList.model'
 import { OccupationalLicensesService } from './occupationalLicenses.service'
 import { handle404 } from '@island.is/clients/middlewares'
-import { HealthDirectorateLicense } from './models/healthDirectorateLicense.model'
-import { EducationalLicense } from './models/educationalLicense.model'
 import { ConfigType } from '@nestjs/config'
 import { DownloadServiceConfig } from '@island.is/nest/config'
+import {
+  HealthDirectorateLicense,
+  EducationalLicense,
+} from './models/occupationalLicense.model'
 
 @UseGuards(IdsUserGuard, IdsAuthGuard)
 @Resolver()
