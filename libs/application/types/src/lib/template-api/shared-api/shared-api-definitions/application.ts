@@ -5,12 +5,11 @@ export interface ExistingApplicationParameters {
   where: { [key: string]: string }
 }
 
-export const ExistingApplicationApi = defineTemplateApi<ExistingApplicationParameters>(
-  {
+export const ExistingApplicationApi =
+  defineTemplateApi<ExistingApplicationParameters>({
     action: 'existingApplication',
     namespace: 'Application',
-  },
-)
+  })
 
 export const MockProviderApi = defineTemplateApi({
   action: 'mockProvider',

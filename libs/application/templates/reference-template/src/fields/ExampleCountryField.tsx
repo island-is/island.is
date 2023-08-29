@@ -86,7 +86,7 @@ const ExampleCountryField: FC<React.PropsWithChildren<Props>> = ({
                   const selectedOption = options.find(
                     (option) => option.value === selectedValue,
                   )
-                  setSelectedCountry((selectedOption as unknown) as Country)
+                  setSelectedCountry(selectedOption as unknown as Country)
                   onChange(selection === null ? undefined : selection.value)
                 }}
                 onInputValueChange={(newValue) => {

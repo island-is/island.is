@@ -74,7 +74,7 @@ describe('FileService', () => {
   }
 
   const createApplication = (answers?: object, typeId?: string) =>
-    (({
+    ({
       id: applicationId,
       state: 'draft',
       applicant: parentA.nationalId,
@@ -108,7 +108,7 @@ describe('FileService', () => {
           date: new Date().toISOString(),
         },
       },
-    } as unknown) as Application)
+    } as unknown as Application)
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({

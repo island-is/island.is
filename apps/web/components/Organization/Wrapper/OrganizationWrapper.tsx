@@ -32,6 +32,7 @@ import {
   SidebarShipSearchInput,
   Webreader,
   SearchBox,
+  Footer as WebFooter,
 } from '@island.is/web/components'
 import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
 import { usePlausiblePageview } from '@island.is/web/hooks'
@@ -55,6 +56,7 @@ import {
   UtlendingastofnunFooter,
   UtlendingastofnunHeader,
 } from './Themes/UtlendingastofnunTheme'
+import { IcelandicRadiationSafetyAuthorityHeader } from './Themes/IcelandicRadiationSafetyAuthority'
 import { FiskistofaHeader } from './Themes/FiskistofaTheme'
 import { FiskistofaFooter } from './Themes/FiskistofaTheme'
 import { LandskjorstjornFooter } from './Themes/LandkjorstjornTheme'
@@ -177,6 +179,9 @@ export const footerEnabled = [
 
   'samgongustofa',
   'transport-authority',
+
+  'geislavarnir-rikisins',
+  'icelandic-radiation-safety-authority',
 ]
 
 export const getThemeConfig = (
@@ -277,6 +282,12 @@ export const OrganizationHeader: React.FC<
       )
     case 'samgongustofa':
       return <TransportAuthorityHeader organizationPage={organizationPage} />
+    case 'geislavarnir-rikisins':
+      return (
+        <IcelandicRadiationSafetyAuthorityHeader
+          organizationPage={organizationPage}
+        />
+      )
     default:
       return <DefaultHeader organizationPage={organizationPage} />
   }
@@ -544,6 +555,16 @@ export const OrganizationFooter: React.FC<
           title={organization.title}
           footerItems={organization.footerItems}
           logo={organization.logo?.url}
+        />
+      )
+      break
+    case 'geislavarnir-rikisins':
+    case 'icelandic-radiation-safety-authority':
+      OrganizationFooterComponent = (
+        <WebFooter
+          imageUrl={organization.logo?.url}
+          heading={organization.title}
+          columns={organization.footerItems}
         />
       )
       break

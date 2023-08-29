@@ -18,10 +18,12 @@ export const WaitingForParentBConfirmation: Form = buildForm({
       description: (application: Application) => ({
         ...m.waitingForConfirmationDescription,
         values: {
-          childsName: (application.answers
-            .childsPersonalInfo as ChildsPersonalInfo)?.name,
-          guardian2Name: (application.answers
-            .childsPersonalInfo as ChildsPersonalInfo)?.guardian2.name,
+          childsName: (
+            application.answers.childsPersonalInfo as ChildsPersonalInfo
+          )?.name,
+          guardian2Name: (
+            application.answers.childsPersonalInfo as ChildsPersonalInfo
+          )?.guardian2.name,
         },
       }),
       children: [

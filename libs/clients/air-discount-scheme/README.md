@@ -1,5 +1,3 @@
-<!-- gitbook-navigation: "Air Discount Scheme" -->
-
 # Air Discount Scheme Client
 
 This client relies on the Air Discount Scheme Backend.

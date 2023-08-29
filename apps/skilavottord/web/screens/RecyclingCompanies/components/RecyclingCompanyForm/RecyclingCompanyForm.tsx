@@ -136,7 +136,8 @@ const RecyclingCompanyForm: FC<
                       t.recyclingCompany.form.inputs.email.rules?.required,
                   },
                   pattern: {
-                    value: /^[\w!#$%&'*+/=?`{|}~^-]+(?:\.[\w!#$%&'*+/=?`{|}~^-]+)*@(?:[A-Z0-9-]+\.)+[A-Z]{2,6}$/i,
+                    value:
+                      /^[\w!#$%&'*+/=?`{|}~^-]+(?:\.[\w!#$%&'*+/=?`{|}~^-]+)*@(?:[A-Z0-9-]+\.)+[A-Z]{2,6}$/i,
                     message:
                       t.recyclingCompany.form.inputs.email.rules?.validate,
                   },

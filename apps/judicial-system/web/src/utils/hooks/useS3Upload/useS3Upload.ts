@@ -37,6 +37,7 @@ import { useUploadPoliceCaseFileMutation } from './uploadPoliceCaseFile.generate
 export interface TUploadFile extends UploadFile {
   category?: CaseFileCategory
   policeCaseNumber?: string
+  displayDate?: string
 }
 
 const createFormData = (presignedPost: PresignedPost, file: File): FormData => {
@@ -91,9 +92,8 @@ export const useS3Upload = (caseId: string) => {
   const { formatMessage } = useIntl()
 
   const [createPresignedPost] = useCreatePresignedPostMutation()
-  const [
-    limitedAccessCreatePresignedPost,
-  ] = useLimitedAccessCreatePresignedPostMutation()
+  const [limitedAccessCreatePresignedPost] =
+    useLimitedAccessCreatePresignedPostMutation()
   const [createFile] = useCreateFileMutation()
   const [limitedAccessCreateFile] = useLimitedAccessCreateFileMutation()
   const [deleteFile] = useDeleteFileMutation()
@@ -293,6 +293,7 @@ export const useS3Upload = (caseId: string) => {
               size: uploadPoliceCaseFileData.uploadPoliceCaseFile.size,
               policeCaseNumber: file.policeCaseNumber,
               category: file.category,
+              displayDate: file.displayDate,
             },
           },
         })

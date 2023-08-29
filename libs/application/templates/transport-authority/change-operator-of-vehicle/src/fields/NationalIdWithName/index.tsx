@@ -73,20 +73,18 @@ export const NationalIdWithName: FC<
     ? nameDefaultValue
     : getValueViaPath(application.answers, `${usedId}.name`, '')
 
-  const [
-    getIdentity,
-    { data, loading: queryLoading, error: queryError },
-  ] = useLazyQuery<Query, { input: IdentityInput }>(
-    gql`
-      ${IDENTITY_QUERY}
-    `,
-    {
-      onCompleted: (data) => {
-        onNameChange && onNameChange(data.identity?.name ?? '')
-        setValue(nameField, data.identity?.name ?? undefined)
+  const [getIdentity, { data, loading: queryLoading, error: queryError }] =
+    useLazyQuery<Query, { input: IdentityInput }>(
+      gql`
+        ${IDENTITY_QUERY}
+      `,
+      {
+        onCompleted: (data) => {
+          onNameChange && onNameChange(data.identity?.name ?? '')
+          setValue(nameField, data.identity?.name ?? undefined)
+        },
       },
-    },
-  )
+    )
 
   useEffect(() => {
     if (nationalIdInput.length === 10 && kennitala.isValid(nationalIdInput)) {

@@ -60,7 +60,7 @@ export const m = defineMessages({
     description: 'National registry subtitle',
   },
   dataCollectionUserProfileTitle: {
-    id: 'cr.application:dataCollectionUserProfileTitle',
+    id: 'ps.application:dataCollectionUserProfileTitle',
     defaultMessage: 'Mínar síður á Ísland.is/stillingar',
     description: 'Your user profile information',
   },
@@ -322,7 +322,7 @@ export const m = defineMessages({
     description: 'Validation error for attachment',
   },
   missingDistrictValidationError: {
-    id: 'ps.application:error.missingAttachment',
+    id: 'ps.application:error.missingDistrict',
     defaultMessage: 'Vinsamlegast veldu embætti',
     description: 'Validation error for district',
   },

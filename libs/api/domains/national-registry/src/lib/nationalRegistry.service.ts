@@ -199,9 +199,8 @@ export class NationalRegistryService {
       nationalId: nationalId,
     }
 
-    const userCorrectionResponse = await this.nationalRegistryApi.postUserCorrection(
-      correctionInput,
-    )
+    const userCorrectionResponse =
+      await this.nationalRegistryApi.postUserCorrection(correctionInput)
 
     return userCorrectionResponse
   }
