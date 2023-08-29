@@ -30,8 +30,7 @@ import {
 
 import * as styles from './AddPermissions.css'
 
-type AuthAdminScope =
-  GetAvailableScopesQuery['authAdminScopes']['data'][0]['environments'][0]
+type AuthAdminScope = GetAvailableScopesQuery['authAdminScopes']['data'][0]['environments'][0]
 
 interface AddPermissionsProps {
   isVisible: boolean

@@ -6,7 +6,9 @@ import { FormatMessage, useLocale } from '@island.is/localization'
 type InfoCardProps = {
   field: {
     props: {
-      cards: (application: Application) => {
+      cards: (
+        application: Application,
+      ) => {
         title?: string
         description?:
           | string

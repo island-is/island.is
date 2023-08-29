@@ -104,7 +104,8 @@ export function SearchBar(props: SearchBarProps) {
           right: 0,
           width: 46,
           height: 46,
-        }}>
+        }}
+      >
         <SearchIcon source={isEmpty ? searchIcon : closeIcon} />
       </Pressable>
     </View>

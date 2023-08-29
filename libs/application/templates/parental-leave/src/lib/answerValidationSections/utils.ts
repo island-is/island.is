@@ -126,8 +126,9 @@ export const validatePeriod = (
     values?: Record<string, unknown>,
   ) => AnswerValidationError,
 ) => {
-  const expectedDateOfBirthOrAdoptionDate =
-    getExpectedDateOfBirthOrAdoptionDate(application)
+  const expectedDateOfBirthOrAdoptionDate = getExpectedDateOfBirthOrAdoptionDate(
+    application,
+  )
 
   if (!expectedDateOfBirthOrAdoptionDate) {
     return buildError(null, errorMessages.dateOfBirth)
@@ -292,7 +293,7 @@ export const showResidenceGrant = (application: Application) => {
   const { noChildrenFoundTypeOfApplication } = getApplicationAnswers(
     application.answers,
   )
-  const childrenData = children as unknown as ChildInformation[]
+  const childrenData = (children as unknown) as ChildInformation[]
   if (
     childrenData?.length &&
     childrenData[0]?.parentalRelation?.match('primary') &&

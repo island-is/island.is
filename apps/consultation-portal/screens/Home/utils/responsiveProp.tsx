@@ -68,7 +68,7 @@ export const normaliseResponsiveProp = <Keys extends string | number>(
 
 export const mapResponsiveProp = <
   Keys extends string | number,
-  MappedValues extends string,
+  MappedValues extends string
 >(
   value: ResponsiveProp<Keys> | undefined,
   valueMap: Record<Keys, MappedValues>,
@@ -82,8 +82,9 @@ export const mapResponsiveProp = <
     return valueMap[value]
   }
 
-  const [xsValue, smValue, mdValue, lgValue, xlValue] =
-    normaliseResponsiveProp(value)
+  const [xsValue, smValue, mdValue, lgValue, xlValue] = normaliseResponsiveProp(
+    value,
+  )
 
   return [
     valueMap[xsValue],
@@ -106,8 +107,9 @@ export const resolveResponsiveProp = <Keys extends string | number>(
     return xsAtoms[value!]
   }
 
-  const [xsValue, smValue, mdValue, lgValue, xlValue] =
-    normaliseResponsiveProp(value)
+  const [xsValue, smValue, mdValue, lgValue, xlValue] = normaliseResponsiveProp(
+    value,
+  )
 
   return `${xsAtoms[xsValue!]}${
     smValue !== xsValue ? ` ${smAtoms[smValue!]}` : ''

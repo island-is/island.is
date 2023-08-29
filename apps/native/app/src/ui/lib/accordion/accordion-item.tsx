@@ -93,7 +93,8 @@ export function AccordionItem({children, title, icon}: AccordionItemProps) {
             flexDirection: 'row',
             justifyContent: 'space-between',
             margin: isOpen ? -2 : 0,
-          }}>
+          }}
+        >
           <View style={{flexDirection: 'row', alignItems: 'center'}}>
             {icon && <Icon>{icon}</Icon>}
             <Title>{title}</Title>

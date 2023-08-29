@@ -19,14 +19,16 @@ interface EndorsementData {
 }
 
 export const useGetSinglePetitionList = (listId: string) => {
-  const { data: petition, refetch: refetchSinglePetition } =
-    useQuery<SingleList>(GetSingleEndorsementList, {
-      variables: {
-        input: {
-          listId: listId,
-        },
+  const {
+    data: petition,
+    refetch: refetchSinglePetition,
+  } = useQuery<SingleList>(GetSingleEndorsementList, {
+    variables: {
+      input: {
+        listId: listId,
       },
-    })
+    },
+  })
 
   const petitionData = petition?.endorsementSystemGetSingleEndorsementList ?? {}
   return { petitionData, refetchSinglePetition }

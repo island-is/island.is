@@ -19,8 +19,7 @@ import { useState } from 'react'
 
 const DEFAULT_ITEMS_PER_PAGE = 10
 
-type DrivingInstructor =
-  GetDrivingInstructorsQuery['drivingLicenseTeachersV4'][number]
+type DrivingInstructor = GetDrivingInstructorsQuery['drivingLicenseTeachersV4'][number]
 
 const getSortedAndFilteredDrivingInstructors = (
   instructors: DrivingInstructor[],

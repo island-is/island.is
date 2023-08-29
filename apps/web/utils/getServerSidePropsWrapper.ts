@@ -26,7 +26,9 @@ type Component = {
     apolloState: unknown
     pageProps: unknown
   }): JSX.Element
-  getProps(ctx: Partial<ScreenContext>): Promise<{
+  getProps(
+    ctx: Partial<ScreenContext>,
+  ): Promise<{
     pageProps: unknown
     apolloState: NormalizedCacheObject
   }>

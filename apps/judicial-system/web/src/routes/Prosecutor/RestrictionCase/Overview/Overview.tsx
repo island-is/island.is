@@ -54,8 +54,12 @@ export const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
     'noModal' | 'caseResubmitModal' | 'caseSubmittedModal'
   >('noModal')
   const [modalText, setModalText] = useState('')
-  const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
-    useContext(FormContext)
+  const {
+    workingCase,
+    setWorkingCase,
+    isLoadingWorkingCase,
+    caseNotFound,
+  } = useContext(FormContext)
 
   const router = useRouter()
   const {

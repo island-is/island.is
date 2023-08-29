@@ -10,12 +10,14 @@ import {createNavigationOptionHooks} from '../../hooks/create-navigation-option-
 import {testIDs} from '../../utils/test-ids';
 import {formatNationalId} from '../profile/tab-personal-info';
 
-const {getNavigationOptions, useNavigationOptions} =
-  createNavigationOptionHooks(() => ({
-    topBar: {
-      visible: false,
-    },
-  }));
+const {
+  getNavigationOptions,
+  useNavigationOptions,
+} = createNavigationOptionHooks(() => ({
+  topBar: {
+    visible: false,
+  },
+}));
 
 export const FamilyDetailScreen: NavigationFunctionComponent<{
   id: string;
@@ -53,7 +55,8 @@ export const FamilyDetailScreen: NavigationFunctionComponent<{
       <ScrollView style={{flex: 1}}>
         <SafeAreaView>
           <View
-            style={{paddingBottom: 8, paddingTop: 16, paddingHorizontal: 16}}>
+            style={{paddingBottom: 8, paddingTop: 16, paddingHorizontal: 16}}
+          >
             <Typography>
               {intl.formatMessage({id: 'familyDetail.description'})}
             </Typography>

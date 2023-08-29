@@ -41,58 +41,67 @@ class App {
     await elastic.checkAccess() // this throws if there is no connection hence ensuring we don't continue
 
     const results = await Promise.all(
-      locales.map(async (locale): Promise<true | Error> => {
-        const newIndexName = indexManager.getElasticsearchIndex(locale)
-        const newIndexExists = await elastic.checkIfIndexExists(newIndexName)
+      locales.map(
+        async (locale): Promise<true | Error> => {
+          const newIndexName = indexManager.getElasticsearchIndex(locale)
+          const newIndexExists = await elastic.checkIfIndexExists(newIndexName)
 
-        if (!newIndexExists) {
-          logger.info('New index not found, updating elasticsearch config', {
-            locale,
-            newIndexName,
-          })
-
-          try {
-            await elastic.updateIndexTemplate(locale, esPackages)
-            logger.info('updated template', { newIndexName })
-            await elastic.importContentToIndex(locale, newIndexName, 'full')
-
-            const oldIndexName = await elastic.getPreviousIndex(locale)
-            if (oldIndexName) {
-              await elastic.migratePopularityScores(oldIndexName, newIndexName)
-              logger.info('Popularity scores from previous index migrated', {
-                oldIndexName,
-              })
-            } else {
-              logger.info(
-                'No older index found, skipping popularity score migration',
-                { locale },
-              )
-            }
-          } catch (error) {
-            logger.error('Failed to migrate to new index', {
+          if (!newIndexExists) {
+            logger.info('New index not found, updating elasticsearch config', {
               locale,
               newIndexName,
-              error: error.message,
             })
-            // remove the index to make migration run again for this index
-            await elastic.removeIndexIfExists(newIndexName)
-            // resolve the promise instead of throw to let migrations for other indices finish
-            return error
-          }
-        } else {
-          logger.info(
-            'Elasticsearch index version matches code index version, skipping index update',
-            {
+
+            try {
+              await elastic.updateIndexTemplate(locale, esPackages)
+              logger.info('updated template', { newIndexName })
+              await elastic.importContentToIndex(locale, newIndexName, 'full')
+
+              const oldIndexName = await elastic.getPreviousIndex(locale)
+              if (oldIndexName) {
+                await elastic.migratePopularityScores(
+                  oldIndexName,
+                  newIndexName,
+                )
+                logger.info('Popularity scores from previous index migrated', {
+                  oldIndexName,
+                })
+              } else {
+                logger.info(
+                  'No older index found, skipping popularity score migration',
+                  { locale },
+                )
+              }
+            } catch (error) {
+              logger.error('Failed to migrate to new index', {
+                locale,
+                newIndexName,
+                error: error.message,
+              })
+              // remove the index to make migration run again for this index
+              await elastic.removeIndexIfExists(newIndexName)
+              // resolve the promise instead of throw to let migrations for other indices finish
+              return error
+            }
+          } else {
+            logger.info(
+              'Elasticsearch index version matches code index version, skipping index update',
+              {
+                locale,
+                newIndexName,
+              },
+            )
+            logger.info('Initializing elastic data')
+            // index mappers might have new rules so we run a initialize sync to make sure all data is up to date with this new version
+            await elastic.importContentToIndex(
               locale,
               newIndexName,
-            },
-          )
-          logger.info('Initializing elastic data')
-          // index mappers might have new rules so we run a initialize sync to make sure all data is up to date with this new version
-          await elastic.importContentToIndex(locale, newIndexName, 'initialize')
-        }
-        return true
-      }),
+              'initialize',
+            )
+          }
+          return true
+        },
+      ),
     )
 
     // make sure we throw an error to stop deployment of this version if any index migration is faulty

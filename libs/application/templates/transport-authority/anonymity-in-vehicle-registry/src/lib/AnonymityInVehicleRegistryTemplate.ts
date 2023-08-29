@@ -60,9 +60,10 @@ const template: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/AnonymityInVehicleRegistryForm/index').then(
-                  (module) =>
-                    Promise.resolve(module.AnonymityInVehicleRegistryForm),
+                import(
+                  '../forms/AnonymityInVehicleRegistryForm/index'
+                ).then((module) =>
+                  Promise.resolve(module.AnonymityInVehicleRegistryForm),
                 ),
               actions: [
                 {

@@ -12,7 +12,8 @@ const CenterView = ({children}: any) => (
     style={{
       flex: 1,
       width: '100%',
-    }}>
+    }}
+  >
     {children}
   </View>
 );

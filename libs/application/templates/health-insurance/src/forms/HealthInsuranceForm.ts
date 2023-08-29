@@ -180,16 +180,12 @@ export const HealthInsuranceForm: Form = buildForm({
               title: '',
               component: 'FormerCountryErrorMessage',
               condition: (answers: FormValue) => {
-                const formerCountry = (
-                  answers as {
-                    formerInsurance: { country: string }
-                  }
-                )?.formerInsurance?.country
-                const citizenship = (
-                  answers as {
-                    citizenship: string
-                  }
-                )?.citizenship
+                const formerCountry = (answers as {
+                  formerInsurance: { country: string }
+                })?.formerInsurance?.country
+                const citizenship = (answers as {
+                  citizenship: string
+                })?.citizenship
                 return (
                   !!formerCountry &&
                   requireWaitingPeriod(formerCountry, citizenship)
@@ -205,11 +201,9 @@ export const HealthInsuranceForm: Form = buildForm({
               uploadDescription: m.fileUploadDescription,
               uploadButtonLabel: m.fileUploadButton,
               condition: (answers: FormValue) => {
-                const formerCountry = (
-                  answers as {
-                    formerInsurance: { country: string }
-                  }
-                )?.formerInsurance?.country
+                const formerCountry = (answers as {
+                  formerInsurance: { country: string }
+                })?.formerInsurance?.country
                 return requireConfirmationOfResidency(formerCountry)
               },
             }),
@@ -223,16 +217,12 @@ export const HealthInsuranceForm: Form = buildForm({
               description: m.formerInsuranceEntitlement,
               tooltip: m.formerInsuranceEntitlementTooltip,
               condition: (answers: FormValue) => {
-                const formerCountry = (
-                  answers as {
-                    formerInsurance: { country: string }
-                  }
-                )?.formerInsurance?.country
-                const citizenship = (
-                  answers as {
-                    citizenship: string
-                  }
-                )?.citizenship
+                const formerCountry = (answers as {
+                  formerInsurance: { country: string }
+                })?.formerInsurance?.country
+                const citizenship = (answers as {
+                  citizenship: string
+                })?.citizenship
                 return !requireWaitingPeriod(formerCountry, citizenship)
               },
             }),
@@ -246,16 +236,12 @@ export const HealthInsuranceForm: Form = buildForm({
                 { label: m.yesOptionLabel, value: YES },
               ],
               condition: (answers: FormValue) => {
-                const formerCountry = (
-                  answers as {
-                    formerInsurance: { country: string }
-                  }
-                )?.formerInsurance?.country
-                const citizenship = (
-                  answers as {
-                    citizenship: string
-                  }
-                ).citizenship
+                const formerCountry = (answers as {
+                  formerInsurance: { country: string }
+                })?.formerInsurance?.country
+                const citizenship = (answers as {
+                  citizenship: string
+                }).citizenship
                 return !requireWaitingPeriod(formerCountry, citizenship)
               },
             }),
@@ -267,16 +253,12 @@ export const HealthInsuranceForm: Form = buildForm({
               rows: 4,
               backgroundColor: 'blue',
               condition: (answers: FormValue) => {
-                const formerCountry = (
-                  answers as {
-                    formerInsurance: { country: string }
-                  }
-                )?.formerInsurance?.country
-                const citizenship = (
-                  answers as {
-                    citizenship: string
-                  }
-                )?.citizenship
+                const formerCountry = (answers as {
+                  formerInsurance: { country: string }
+                })?.formerInsurance?.country
+                const citizenship = (answers as {
+                  citizenship: string
+                })?.citizenship
                 return !requireWaitingPeriod(formerCountry, citizenship)
               },
             }),

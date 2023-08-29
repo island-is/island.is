@@ -190,9 +190,10 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
             {
               id: Roles.ParentB,
               formLoader: () =>
-                import('../forms/ParentBApplicationConfirmation').then(
-                  (module) =>
-                    Promise.resolve(module.ParentBApplicationConfirmation),
+                import(
+                  '../forms/ParentBApplicationConfirmation'
+                ).then((module) =>
+                  Promise.resolve(module.ParentBApplicationConfirmation),
                 ),
               read: 'all',
             },
@@ -303,8 +304,10 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
     actions: {
       assignToOtherParent: assign((context) => {
         // TODO: fix this..
-        const { externalData, answers } =
-          context.application as unknown as CRCApplication
+        const {
+          externalData,
+          answers,
+        } = (context.application as unknown) as CRCApplication
         const children = externalData.childrenCustodyInformation.data
         const selectedChildren = getSelectedChildrenFromExternalData(
           children,

@@ -91,8 +91,7 @@ const Handover: FC<React.PropsWithChildren<unknown>> = () => {
     },
   })
 
-  const mutationResponse =
-    mutationData?.createSkilavottordRecyclingRequest as RequestErrors
+  const mutationResponse = mutationData?.createSkilavottordRecyclingRequest as RequestErrors
 
   useEffect(() => {
     if (width < theme.breakpoints.md) {

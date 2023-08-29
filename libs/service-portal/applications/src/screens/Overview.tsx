@@ -49,8 +49,9 @@ const Overview = () => {
 
   const { data: orgData, loading: loadingOrg } = useGetOrganizationsQuery()
 
-  const [filterValue, setFilterValue] =
-    useState<FilterValues>(defaultFilterValues)
+  const [filterValue, setFilterValue] = useState<FilterValues>(
+    defaultFilterValues,
+  )
 
   const handleSearchChange = (value: string) => {
     setFilterValue((oldFilter) => ({

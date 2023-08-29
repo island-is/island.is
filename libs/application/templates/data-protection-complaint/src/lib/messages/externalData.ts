@@ -34,7 +34,8 @@ export const externalData = {
       description: 'National Registry Title',
     },
     nationalRegistrySubTitle: {
-      id: 'dpac.application:section.externalData.labels.nationalRegistrySubTitle',
+      id:
+        'dpac.application:section.externalData.labels.nationalRegistrySubTitle',
       defaultMessage: 'Nafn, kennitala og lögheimili.',
       description: 'National Registry Subtitle',
     },

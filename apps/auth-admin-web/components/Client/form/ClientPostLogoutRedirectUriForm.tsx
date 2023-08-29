@@ -21,8 +21,11 @@ interface Props {
 const ClientPostLogoutRedirectUriForm: React.FC<
   React.PropsWithChildren<Props>
 > = (props: Props) => {
-  const { register, handleSubmit, formState } =
-    useForm<ClientPostLogoutRedirectUriDTO>()
+  const {
+    register,
+    handleSubmit,
+    formState,
+  } = useForm<ClientPostLogoutRedirectUriDTO>()
   const { isSubmitting, errors } = formState
   const [defaultUrl, setDefaultUrl] = useState(
     !props.uris || props.uris.length === 0 ? props.defaultUrl : '',

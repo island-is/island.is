@@ -4,8 +4,7 @@ import type { UploadPoliceCaseFileResponse as TUploadPoliceCaseFileResponse } fr
 
 @ObjectType()
 export class UploadPoliceCaseFileResponse
-  implements TUploadPoliceCaseFileResponse
-{
+  implements TUploadPoliceCaseFileResponse {
   @Field()
   key!: string
 

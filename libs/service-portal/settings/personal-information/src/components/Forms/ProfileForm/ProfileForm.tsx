@@ -51,10 +51,14 @@ export const ProfileForm: FC<React.PropsWithChildren<Props>> = ({
   const [internalLoading, setInternalLoading] = useState(false)
   const [showPaperMail, setShowPaperMail] = useState(false)
   const [showDropModal, setShowDropModal] = useState<DropModalType>()
-  const { updateOrCreateUserProfile, loading: updateLoading } =
-    useUpdateOrCreateUserProfile()
-  const { deleteIslykillValue, loading: deleteLoading } =
-    useDeleteIslykillValue()
+  const {
+    updateOrCreateUserProfile,
+    loading: updateLoading,
+  } = useUpdateOrCreateUserProfile()
+  const {
+    deleteIslykillValue,
+    loading: deleteLoading,
+  } = useDeleteIslykillValue()
 
   const { data: userProfile, loading: userLoading, refetch } = useUserProfile()
 

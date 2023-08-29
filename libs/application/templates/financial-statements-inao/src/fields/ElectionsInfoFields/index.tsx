@@ -37,11 +37,10 @@ export const ElectionsInfoFields = ({
 
   const { formatMessage } = useLocale()
 
-  const financialStatementsInaoElections: FinancialStatementsInaoElection[] =
-    useMemo(
-      () => data?.financialStatementsInaoElections,
-      [data?.financialStatementsInaoElections],
-    )
+  const financialStatementsInaoElections: FinancialStatementsInaoElection[] = useMemo(
+    () => data?.financialStatementsInaoElections,
+    [data?.financialStatementsInaoElections],
+  )
 
   const options: Options = useMemo(
     () =>

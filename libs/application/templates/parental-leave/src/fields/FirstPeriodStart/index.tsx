@@ -29,8 +29,9 @@ const FirstPeriodStart: FC<React.PropsWithChildren<FieldBaseProps>> = ({
 }) => {
   const { register, unregister, setValue } = useFormContext()
   const { formatMessage } = useLocale()
-  const expectedDateOfBirthOrAdoptionDate =
-    getExpectedDateOfBirthOrAdoptionDate(application)
+  const expectedDateOfBirthOrAdoptionDate = getExpectedDateOfBirthOrAdoptionDate(
+    application,
+  )
   const { rawPeriods } = getApplicationAnswers(application.answers)
   const currentIndex = extractRepeaterIndexFromField(field)
   const currentPeriod = rawPeriods[currentIndex]

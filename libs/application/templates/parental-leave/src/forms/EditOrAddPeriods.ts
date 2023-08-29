@@ -68,8 +68,9 @@ export const EditOrAddPeriods: Form = buildForm({
                   placeholder: parentalLeaveFormMessages.startDate.placeholder,
                   defaultValue: NO_ANSWER,
                   condition: (answers) => {
-                    const { periods, rawPeriods } =
-                      getApplicationAnswers(answers)
+                    const { periods, rawPeriods } = getApplicationAnswers(
+                      answers,
+                    )
                     const currentPeriod = rawPeriods[rawPeriods.length - 1]
                     const firstPeriodRequestingSpecificStartDate =
                       currentPeriod?.firstPeriodStart ===

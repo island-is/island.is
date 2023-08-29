@@ -10,9 +10,8 @@ export function lookup(
   value: number,
   financialTypes: FinancialType[],
 ): LookupType {
-  const fType = financialTypes?.find(
-    (x) => x.numericValue === lookupValue,
-  )?.financialTypeId
+  const fType = financialTypes?.find((x) => x.numericValue === lookupValue)
+    ?.financialTypeId
 
   const res = {
     star_value: value,

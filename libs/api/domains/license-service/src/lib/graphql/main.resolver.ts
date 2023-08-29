@@ -139,12 +139,13 @@ export class MainResolver {
     locale: Locale = 'is',
     @Args('input') input: GeneratePkPassInput,
   ): Promise<GenericPkPassQrCode> {
-    const { pkpassQRCode } =
-      await this.licenseServiceService.generatePkPassQrCode(
-        user,
-        locale,
-        input.licenseType,
-      )
+    const {
+      pkpassQRCode,
+    } = await this.licenseServiceService.generatePkPassQrCode(
+      user,
+      locale,
+      input.licenseType,
+    )
 
     return { pkpassQRCode }
   }

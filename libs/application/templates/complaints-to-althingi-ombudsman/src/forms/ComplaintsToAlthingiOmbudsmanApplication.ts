@@ -406,7 +406,8 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
                 answers.preexistingComplaint === YES,
             }),
             buildCustomField({
-              id: 'preexistingComplaint.preexistingComplaintAlternativeAlertMessage',
+              id:
+                'preexistingComplaint.preexistingComplaintAlternativeAlertMessage',
               title: preexistingComplaint.alternativeAlertMessage.title,
               component: 'FieldAlertMessage',
               description:

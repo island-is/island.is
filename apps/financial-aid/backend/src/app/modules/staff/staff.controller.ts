@@ -79,8 +79,10 @@ export class StaffController {
     @Param('id') id: string,
     @Body() staffToUpdate: UpdateStaffDto,
   ): Promise<StaffModel> {
-    const { numberOfAffectedRows, updatedStaff } =
-      await this.staffService.update(id, staffToUpdate)
+    const {
+      numberOfAffectedRows,
+      updatedStaff,
+    } = await this.staffService.update(id, staffToUpdate)
 
     if (numberOfAffectedRows === 0) {
       throw new NotFoundException(`Staff ${id} does not exist`)

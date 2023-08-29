@@ -32,8 +32,7 @@ const LOG_CATEGORY = 'disability-license-service'
 
 @Injectable()
 export class GenericDisabilityLicenseService
-  implements GenericLicenseClient<OrorkuSkirteini>
-{
+  implements GenericLicenseClient<OrorkuSkirteini> {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private disabilityLicenseApi: DisabilityLicenseService,
@@ -65,8 +64,9 @@ export class GenericDisabilityLicenseService
     let pkpassStatus = GenericUserLicensePkPassStatus.Unknown
 
     if (payload) {
-      pkpassStatus =
-        GenericDisabilityLicenseService.licenseIsValidForPkpass(licenseData)
+      pkpassStatus = GenericDisabilityLicenseService.licenseIsValidForPkpass(
+        licenseData,
+      )
       return {
         status: GenericUserLicenseStatus.HasLicense,
         payload,

@@ -50,10 +50,11 @@ export class NotificationDispatchService {
     nationalId: string
     messageId: string
   }): Promise<void> {
-    const deviceTokensResponse =
-      await this.userProfileApi.userTokenControllerGetDeviceTokens({
+    const deviceTokensResponse = await this.userProfileApi.userTokenControllerGetDeviceTokens(
+      {
         nationalId,
-      })
+      },
+    )
 
     const tokens = deviceTokensResponse.map((token) => token.deviceToken)
 
@@ -101,9 +102,10 @@ export class NotificationDispatchService {
       ...notification,
     })
 
-    const { responses, successCount } = await this.firebase
-      .messaging()
-      .sendMulticast(multiCastMessage)
+    const {
+      responses,
+      successCount,
+    } = await this.firebase.messaging().sendMulticast(multiCastMessage)
 
     const errors = responses
       .map((r) => r.error)

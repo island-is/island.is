@@ -106,10 +106,12 @@ const VehiclesOverview = () => {
   const userInfo = useUserInfo()
   const { formatMessage, lang } = useLocale()
   const [page, setPage] = useState(1)
-  const [searchInteractionEventSent, setSearchInteractionEventSent] =
-    useState(false)
-  const [filterValue, setFilterValue] =
-    useState<FilterValues>(defaultFilterValues)
+  const [searchInteractionEventSent, setSearchInteractionEventSent] = useState(
+    false,
+  )
+  const [filterValue, setFilterValue] = useState<FilterValues>(
+    defaultFilterValues,
+  )
   const { data, loading, error } = useQuery<Query>(GET_USERS_VEHICLES)
   const ownershipPdf = data?.vehiclesList?.downloadServiceURL
   const vehicles = data?.vehiclesList?.vehicleList || []

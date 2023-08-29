@@ -25,8 +25,13 @@ export const Hidden = ({
   const hiddenOnScreen = Boolean(screen)
   const hiddenOnPrint = Boolean(print)
 
-  const [hiddenOnXs, hiddenOnSm, hiddenOnMd, hiddenOnLg, hiddenOnXl] =
-    resolveResponsiveRangeProps({ above, below })
+  const [
+    hiddenOnXs,
+    hiddenOnSm,
+    hiddenOnMd,
+    hiddenOnLg,
+    hiddenOnXl,
+  ] = resolveResponsiveRangeProps({ above, below })
 
   const display = inline ? 'inline' : 'block'
 

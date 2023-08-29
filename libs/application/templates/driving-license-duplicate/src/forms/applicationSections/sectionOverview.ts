@@ -70,9 +70,8 @@ export const sectionOverview = buildSection({
           },
           {
             cards: ({ externalData }: Application) =>
-              (
-                externalData.currentLicense.data as DriversLicense
-              ).categories.map((category) => {
+              (externalData.currentLicense
+                .data as DriversLicense).categories.map((category) => {
                 const isTemporary = category.validToCode === 8
                 return {
                   title: `${category.nr} - ${

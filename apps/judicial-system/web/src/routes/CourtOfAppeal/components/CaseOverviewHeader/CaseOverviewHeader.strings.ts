@@ -9,7 +9,8 @@ export const courtOfAppealCaseOverviewHeader = defineMessages({
       'Notaður sem texti fyrir "Kært af" á yfirlitsskjá mála hjá Landsrétti.',
   },
   appealedByInCourt: {
-    id: 'judicial.system.core:court_of_appeal.case_overview_header.appealed_by_in_court',
+    id:
+      'judicial.system.core:court_of_appeal.case_overview_header.appealed_by_in_court',
     defaultMessage:
       '{appealedByProsecutor, select, true {Sækjandi} other {Varnaraðili}} kærði í þinghaldi',
     description:

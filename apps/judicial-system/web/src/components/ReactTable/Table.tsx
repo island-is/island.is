@@ -55,8 +55,13 @@ const Table = <T extends object>(
     },
     useSortBy,
   )
-  const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
-    tableInstance
+  const {
+    getTableProps,
+    getTableBodyProps,
+    headerGroups,
+    rows,
+    prepareRow,
+  } = tableInstance
   const enoughRowsToTruncate = rows.length > 4
   const lastIndex = rows.length - 1
   const lastRow = rows[lastIndex]

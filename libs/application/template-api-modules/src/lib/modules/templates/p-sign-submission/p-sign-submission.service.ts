@@ -198,11 +198,9 @@ export class PSignSubmissionService extends BaseTemplateApiService {
     }
 
     const attachmentKey = attachments[0].key
-    const fileName = (
-      application.attachments as {
-        [key: string]: string
-      }
-    )[attachmentKey]
+    const fileName = (application.attachments as {
+      [key: string]: string
+    })[attachmentKey]
 
     const { bucket, key } = AmazonS3URI(fileName)
 

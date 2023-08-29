@@ -22,8 +22,11 @@ describe('FileController - Update case file order', () => {
   let transaction: Transaction
 
   beforeEach(async () => {
-    const { fileModel, fileController, sequelize } =
-      await createTestingFileModule()
+    const {
+      fileModel,
+      fileController,
+      sequelize,
+    } = await createTestingFileModule()
 
     mockFileModel = fileModel
     const mockTransaction = sequelize.transaction as jest.Mock

@@ -25,8 +25,10 @@ describe('InternalCaseController - Archive case files record', () => {
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { awsS3Service, internalCaseController } =
-      await createTestingCaseModule()
+    const {
+      awsS3Service,
+      internalCaseController,
+    } = await createTestingCaseModule()
 
     mockawsS3Service = awsS3Service
     const mockCopyObject = mockawsS3Service.copyObject as jest.Mock

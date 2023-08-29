@@ -23,8 +23,10 @@ export const DeleteClient: FC<Props> = ({ isVisible, onClose }) => {
     client: string
   }
 
-  const [deleteClientMutation, { loading, error: mutationError }] =
-    useDeleteClientMutation()
+  const [
+    deleteClientMutation,
+    { loading, error: mutationError },
+  ] = useDeleteClientMutation()
 
   const handleSubmit = async () => {
     if (loading) {

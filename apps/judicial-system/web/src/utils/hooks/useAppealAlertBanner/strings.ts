@@ -29,7 +29,8 @@ export const strings = defineMessages({
     description: 'Texti í viðvörunarglugga um að úrskurður hafi verið kærður',
   },
   appealedInCourtStatementDescription: {
-    id: 'judicial.system.core:appeal_alert_banner.appealed_in_court_statement_description',
+    id:
+      'judicial.system.core:appeal_alert_banner.appealed_in_court_statement_description',
     defaultMessage:
       '{appealedByProsecutor, select, true {Sækjandi} other {Varnaraðili}} kærði úrskurðinn í þinghaldi',
     description:
@@ -54,7 +55,8 @@ export const strings = defineMessages({
       'Texti í viðvörunarglugga sem birtir upplýsingar um hvenær greinargerð var send',
   },
   appealReceivedNotificationLinkText: {
-    id: 'judicial.system.core:appeal_alert_banner.mark_appeal_received_link_text',
+    id:
+      'judicial.system.core:appeal_alert_banner.mark_appeal_received_link_text',
     defaultMessage: 'Senda tilkynningu um móttöku',
     description:
       'Texti á hlekk í viðvörunarglugga þar sem héraðsdómari getur móttekið kæru',
@@ -84,7 +86,8 @@ export const strings = defineMessages({
       'Niðurstöðu breytt í "Úrskurður" hlutanum á úrskurðar skrefi í Landsrétti.',
   },
   decisionDismissedFromCourtOfAppeal: {
-    id: 'judicial.system.core:appeal_alert_banner.decisionDismissedFromCourtOfAppeal',
+    id:
+      'judicial.system.core:appeal_alert_banner.decisionDismissedFromCourtOfAppeal',
     defaultMessage: 'Frávísun frá Landsrétti',
     description:
       'Frávísun frá Landsrétti í "Úrskurður" hlutanum á úrskurðar skrefi í Landsrétti.',

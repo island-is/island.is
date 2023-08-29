@@ -29,7 +29,8 @@ export const OnboardingModule = React.memo(() => {
             <TouchableOpacity onPress={() => dismiss('onboardingWidget')}>
               <Close />
             </TouchableOpacity>
-          }>
+          }
+        >
           {intl.formatMessage({id: 'home.welcomeText'})}{' '}
           {userInfo?.name?.split(' ').shift()}
         </Heading>

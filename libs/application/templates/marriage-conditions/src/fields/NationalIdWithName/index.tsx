@@ -38,13 +38,15 @@ export const NationalIdWithName: FC<
   const nameFieldErrors = getErrorViaPath(errors, nameField)
   const nationalIdFieldErrors = getErrorViaPath(errors, nationaIdField)
 
-  const [getIdentity, { data, loading: queryLoading, error: queryError }] =
-    useLazyQuery<Query, { input: IdentityInput }>(IdentityQuery, {
-      onCompleted: (data) => {
-        setValue(nameField, data.identity?.name ?? undefined)
-        setName(data.identity?.name ?? '')
-      },
-    })
+  const [
+    getIdentity,
+    { data, loading: queryLoading, error: queryError },
+  ] = useLazyQuery<Query, { input: IdentityInput }>(IdentityQuery, {
+    onCompleted: (data) => {
+      setValue(nameField, data.identity?.name ?? undefined)
+      setName(data.identity?.name ?? '')
+    },
+  })
 
   useEffect(() => {
     if (

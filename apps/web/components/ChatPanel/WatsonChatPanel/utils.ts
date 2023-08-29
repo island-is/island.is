@@ -99,8 +99,7 @@ export const onDirectorateOfImmigrationChatLoad = (instance) => {
         getUserInformation(instance, ({ email, name }) => {
           apolloClient
             .query<Query, QueryWatsonAssistantChatIdentityTokenArgs>({
-              query:
-                GET_DIRECTORATE_OF_IMMIGRATION_WATSON_ASSISTANT_CHAT_IDENTITY_TOKEN,
+              query: GET_DIRECTORATE_OF_IMMIGRATION_WATSON_ASSISTANT_CHAT_IDENTITY_TOKEN,
               variables: {
                 input: {
                   name,
@@ -129,8 +128,7 @@ export const onDirectorateOfImmigrationChatLoad = (instance) => {
       getUserInformation(instance, ({ email, name }) => {
         apolloClient
           .query<Query, QueryWatsonAssistantChatIdentityTokenArgs>({
-            query:
-              GET_DIRECTORATE_OF_IMMIGRATION_WATSON_ASSISTANT_CHAT_IDENTITY_TOKEN,
+            query: GET_DIRECTORATE_OF_IMMIGRATION_WATSON_ASSISTANT_CHAT_IDENTITY_TOKEN,
             variables: {
               input: {
                 name,

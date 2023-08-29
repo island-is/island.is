@@ -21,8 +21,9 @@ import * as constants from '@island.is/judicial-system/consts'
 import { caseFile as m } from './CaseFile.strings'
 
 const CaseFile = () => {
-  const { workingCase, isLoadingWorkingCase, caseNotFound } =
-    useContext(FormContext)
+  const { workingCase, isLoadingWorkingCase, caseNotFound } = useContext(
+    FormContext,
+  )
   const { formatMessage } = useIntl()
   const handleNavigationTo = useCallback(
     (destination: string) => router.push(`${destination}/${workingCase.id}`),

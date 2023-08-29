@@ -153,19 +153,21 @@ const Item = ({
   const { control, setValue } = useFormContext()
   const { formatMessage } = useLocale()
 
-  const [getProperty, { loading: queryLoading, error: _queryError }] =
-    useLazyQuery<Query, { input: SearchForPropertyInput }>(
-      SEARCH_FOR_PROPERTY_QUERY,
-      {
-        onCompleted: (data) => {
-          setValue(
-            addressField,
-            data.searchForProperty?.defaultAddress?.display ?? '',
-          )
-        },
-        fetchPolicy: 'network-only',
+  const [
+    getProperty,
+    { loading: queryLoading, error: _queryError },
+  ] = useLazyQuery<Query, { input: SearchForPropertyInput }>(
+    SEARCH_FOR_PROPERTY_QUERY,
+    {
+      onCompleted: (data) => {
+        setValue(
+          addressField,
+          data.searchForProperty?.defaultAddress?.display ?? '',
+        )
       },
-    )
+      fetchPolicy: 'network-only',
+    },
+  )
 
   useEffect(() => {
     // According to Skra.is:

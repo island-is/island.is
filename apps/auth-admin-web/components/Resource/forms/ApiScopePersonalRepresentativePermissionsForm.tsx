@@ -43,8 +43,7 @@ const ApiScopePersonalRepresentativePermissionsForm = (props: Props) => {
   useEffect(() => {
     // Get list of available permissions
     async function fetchPermissionTypes() {
-      const response =
-        await ResourcesService.getPersonalRepresentativePermissionTypes()
+      const response = await ResourcesService.getPersonalRepresentativePermissionTypes()
       if (response) {
         setPermissionTypes(response.data)
       } else {
@@ -57,10 +56,9 @@ const ApiScopePersonalRepresentativePermissionsForm = (props: Props) => {
   useEffect(() => {
     // Get list of current scope's permissions
     async function fetchScopePermissions() {
-      const response =
-        await ResourcesService.getPersonalRepresentativeScopePermissions(
-          props.apiScopeName,
-        )
+      const response = await ResourcesService.getPersonalRepresentativeScopePermissions(
+        props.apiScopeName,
+      )
       if (response) {
         setScopePermissions(response)
       } else {
@@ -71,10 +69,9 @@ const ApiScopePersonalRepresentativePermissionsForm = (props: Props) => {
   }, [props.apiScopeName])
 
   const getScopePermissions = async () => {
-    const response =
-      await ResourcesService.getPersonalRepresentativeScopePermissions(
-        props.apiScopeName,
-      )
+    const response = await ResourcesService.getPersonalRepresentativeScopePermissions(
+      props.apiScopeName,
+    )
     if (response) {
       setScopePermissions(response)
     } else {

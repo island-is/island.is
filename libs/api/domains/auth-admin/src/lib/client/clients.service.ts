@@ -128,7 +128,7 @@ export class ClientsService extends MultiEnvironmentService {
       tenantId: input.tenantId,
       adminCreateClientDto: {
         clientId: input.clientId,
-        clientType: input.clientType as string as CreateClientType,
+        clientType: (input.clientType as string) as CreateClientType,
         clientName: input.displayName,
       },
     }

@@ -50,8 +50,10 @@ const GrantAccess = () => {
     updateDomain,
   } = useDomains(false)
 
-  const [createAuthDelegation, { loading: mutationLoading }] =
-    useCreateAuthDelegationMutation()
+  const [
+    createAuthDelegation,
+    { loading: mutationLoading },
+  ] = useCreateAuthDelegationMutation()
 
   const noUserFoundToast = () => {
     toast.error(formatMessage(m.grantIdentityError))
@@ -173,7 +175,7 @@ const GrantAccess = () => {
                 )}
                 <Box display={name ? 'none' : 'block'} aria-live="assertive">
                   <InputController
-                    control={control as unknown as Control}
+                    control={(control as unknown) as Control}
                     id="toNationalId"
                     icon={name || queryLoading ? undefined : 'search'}
                     ref={inputRef}

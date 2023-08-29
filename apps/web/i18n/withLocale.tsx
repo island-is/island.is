@@ -21,44 +21,44 @@ interface NewComponentProps<T> {
   translations: { [k: string]: string }
 }
 
-export const withLocale =
-  <Props,>(locale?: Locale) =>
-  (Component: Screen<Props>): NextComponentType => {
-    const getProps = Component.getProps
-    if (!getProps) {
-      return Component
-    }
+export const withLocale = <Props,>(locale?: Locale) => (
+  Component: Screen<Props>,
+): NextComponentType => {
+  const getProps = Component.getProps
+  if (!getProps) {
+    return Component
+  }
 
-    const NewComponent: Screen<NewComponentProps<Props>> = ({
-      pageProps,
+  const NewComponent: Screen<NewComponentProps<Props>> = ({
+    pageProps,
+    locale,
+    translations,
+  }) => (
+    <I18n locale={locale} translations={translations}>
+      <Component {...pageProps} />
+    </I18n>
+  )
+
+  NewComponent.getProps = async (ctx) => {
+    const newContext = {
+      ...ctx,
+      locale:
+        locale ||
+        getLocaleFromPath(safelyExtractPathnameFromUrl(ctx?.req?.url)),
+    } as any
+    const [props, translations] = await Promise.all([
+      getProps(newContext),
+      getGlobalStrings(newContext),
+    ])
+    return {
+      pageProps: props,
       locale,
       translations,
-    }) => (
-      <I18n locale={locale} translations={translations}>
-        <Component {...pageProps} />
-      </I18n>
-    )
-
-    NewComponent.getProps = async (ctx) => {
-      const newContext = {
-        ...ctx,
-        locale:
-          locale ||
-          getLocaleFromPath(safelyExtractPathnameFromUrl(ctx?.req?.url)),
-      } as any
-      const [props, translations] = await Promise.all([
-        getProps(newContext),
-        getGlobalStrings(newContext),
-      ])
-      return {
-        pageProps: props,
-        locale,
-        translations,
-      }
     }
-
-    return NewComponent
   }
+
+  return NewComponent
+}
 
 const getGlobalStrings = async ({
   apolloClient,

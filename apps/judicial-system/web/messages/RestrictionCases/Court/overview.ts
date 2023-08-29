@@ -12,7 +12,8 @@ export const rcCourtOverview = {
     // TODO: REMOVE caseResentExplanation
     caseResentExplanation: defineMessages({
       title: {
-        id: 'judicial.system.restriction_cases:reception_and_assignment.case_resent_explanation.title',
+        id:
+          'judicial.system.restriction_cases:reception_and_assignment.case_resent_explanation.title',
         defaultMessage: 'Athugasemdir vegna endursendingar',
         description:
           'Notaður sem titill fyrir athugasemdir vegna endursendingar hluta á yfirlitssíðu í gæsluvarðhalds- og farbannsmálum.',
@@ -20,13 +21,15 @@ export const rcCourtOverview = {
     }),
     openedByDefenderAlert: defineMessages({
       title: {
-        id: 'judicial.system.restriction_cases:court_overview.sections.opened_by_defender_alert.title',
+        id:
+          'judicial.system.restriction_cases:court_overview.sections.opened_by_defender_alert.title',
         defaultMessage: 'Mál opnað af verjanda',
         description:
           'Notaður sem titill fyrir "Mál opnað af verjanda" hluta á yfirlitssíðu í gæsluvarðhalds- og farbannsmálum.',
       },
       text: {
-        id: 'judicial.system.restriction_cases:court_overview.sections.opened_by_defender_alert.text',
+        id:
+          'judicial.system.restriction_cases:court_overview.sections.opened_by_defender_alert.text',
         defaultMessage: 'Verjandi hefur opnað málið í Réttarvörslugátt {when}.',
         description:
           'Notaður sem titill fyrir "Mál opnað af verjanda" hluta á yfirlitssíðu í gæsluvarðhalds- og farbannsmálum.',

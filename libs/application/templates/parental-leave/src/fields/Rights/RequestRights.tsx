@@ -22,8 +22,9 @@ const RequestRights: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     undefined,
   ) as ValidAnswers
 
-  const [statefulAnswer, setStatefulAnswer] =
-    useState<ValidAnswers>(currentAnswer)
+  const [statefulAnswer, setStatefulAnswer] = useState<ValidAnswers>(
+    currentAnswer,
+  )
 
   const numberOfBoxes = statefulAnswer === NO ? defaultMonths : maxMonths
 

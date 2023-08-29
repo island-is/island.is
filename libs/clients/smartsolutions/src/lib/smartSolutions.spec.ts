@@ -35,7 +35,7 @@ describe('smart-solutions-api', () => {
 
   describe('map Pass to PassDataInput', () => {
     it('should convert the pass to passInputData and no other changes, if the pass has no input values', () => {
-      const pass = ValidPassNoInputValues as unknown as Pass
+      const pass = (ValidPassNoInputValues as unknown) as Pass
 
       const result = mapPassToPassDataInput(pass)
 
@@ -43,9 +43,8 @@ describe('smart-solutions-api', () => {
     })
 
     it('should convert the pass to passInputdata, with the input values', () => {
-      const pass = ValidPass as unknown as Pass
-      const expectedResult =
-        ValidPassDataInput as unknown as Array<PassInputFieldValueDataInput>
+      const pass = (ValidPass as unknown) as Pass
+      const expectedResult = (ValidPassDataInput as unknown) as Array<PassInputFieldValueDataInput>
 
       const result = mapPassToPassDataInput(pass)
 
@@ -55,8 +54,7 @@ describe('smart-solutions-api', () => {
 
   describe('merge input fields', () => {
     it('should only update provided fields', () => {
-      const originalValues =
-        ValidPassDataInput as unknown as Array<PassInputFieldValueDataInput>
+      const originalValues = (ValidPassDataInput as unknown) as Array<PassInputFieldValueDataInput>
       const payload = [
         {
           identifier: 'gildir',
@@ -83,8 +81,7 @@ describe('smart-solutions-api', () => {
       expect(result).toStrictEqual(expectedResult)
     })
     it('should add all extra fields if the updated has more', () => {
-      const originalValues =
-        ValidPassDataInput as unknown as Array<PassInputFieldValueDataInput>
+      const originalValues = (ValidPassDataInput as unknown) as Array<PassInputFieldValueDataInput>
       const payload = [
         {
           identifier: 'gildir',
@@ -148,8 +145,7 @@ describe('smart-solutions-api', () => {
     })
 
     it('should return the original if no payload', () => {
-      const originalValues =
-        ValidPassDataInput as unknown as Array<PassInputFieldValueDataInput>
+      const originalValues = (ValidPassDataInput as unknown) as Array<PassInputFieldValueDataInput>
 
       const result = mergeInputFields(originalValues, [])
 

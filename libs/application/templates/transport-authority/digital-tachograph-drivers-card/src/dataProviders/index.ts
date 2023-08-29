@@ -9,14 +9,15 @@ export { UserProfileApi } from '@island.is/application/types'
 export interface NationalRegistryUserApiParameters {
   legalDomicileIceland?: boolean
 }
-export const NationalRegistryUserApi =
-  defineTemplateApi<NationalRegistryUserApiParameters>({
+export const NationalRegistryUserApi = defineTemplateApi<NationalRegistryUserApiParameters>(
+  {
     action: 'nationalRegistry',
     namespace: 'NationalRegistry',
     params: {
       legalDomicileIceland: true,
     },
-  })
+  },
+)
 
 export const SamgongustofaPaymentCatalogApi = PaymentCatalogApi.configure({
   params: {

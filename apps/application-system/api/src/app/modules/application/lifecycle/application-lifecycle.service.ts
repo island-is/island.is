@@ -46,11 +46,10 @@ export class ApplicationLifeCycleService {
   }
 
   private async fetchApplicationsToBePruned() {
-    const applications =
-      (await this.applicationService.findAllDueToBePruned()) as Pick<
-        Application,
-        'id' | 'attachments' | 'answers' | 'externalData' | 'typeId' | 'state'
-      >[]
+    const applications = (await this.applicationService.findAllDueToBePruned()) as Pick<
+      Application,
+      'id' | 'attachments' | 'answers' | 'externalData' | 'typeId' | 'state'
+    >[]
 
     this.logger.info(`Found ${applications.length} applications to be pruned.`)
 

@@ -32,11 +32,9 @@ export const subSectionOperationInfo = buildSubSection({
           title: m.email,
           width: 'half',
           defaultValue: (application: Application) =>
-            (
-              application.externalData.userProfile?.data as {
-                email?: string
-              }
-            )?.email,
+            (application.externalData.userProfile?.data as {
+              email?: string
+            })?.email,
         }),
         buildTextField({
           id: 'info.phoneNumber',
@@ -46,11 +44,9 @@ export const subSectionOperationInfo = buildSubSection({
           format: '###-####',
           defaultValue: (application: Application) => {
             const phone =
-              (
-                application.externalData.userProfile?.data as {
-                  mobilePhoneNumber?: string
-                }
-              )?.mobilePhoneNumber ?? ''
+              (application.externalData.userProfile?.data as {
+                mobilePhoneNumber?: string
+              })?.mobilePhoneNumber ?? ''
 
             return removeCountryCode(phone)
           },

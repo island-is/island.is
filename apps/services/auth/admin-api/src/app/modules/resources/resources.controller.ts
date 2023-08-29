@@ -284,8 +284,9 @@ export class ResourcesController {
   async getIdentityResourceByName(
     @Param('id') name: string,
   ): Promise<IdentityResource> {
-    const identityResource =
-      await this.resourcesService.getIdentityResourceByName(name)
+    const identityResource = await this.resourcesService.getIdentityResourceByName(
+      name,
+    )
     if (!identityResource) {
       throw new NoContentException()
     }
@@ -798,8 +799,9 @@ export class ResourcesController {
       throw new BadRequestException('scopeName must be provided')
     }
 
-    const apiResourceScope =
-      await this.resourcesService.findApiResourceScopeByScopeName(scopeName)
+    const apiResourceScope = await this.resourcesService.findApiResourceScopeByScopeName(
+      scopeName,
+    )
     if (!apiResourceScope) {
       throw new NoContentException()
     }

@@ -37,8 +37,10 @@ export const AccessDeleteModal = ({
   const { md } = useBreakpoint()
   const [error, setError] = useState(false)
   const [deleteAuthDelegation, { loading }] = useDeleteAuthDelegationMutation()
-  const [getAuthScopeTree, { data: scopeTreeData, loading: scopeTreeLoading }] =
-    useAuthScopeTreeLazyQuery()
+  const [
+    getAuthScopeTree,
+    { data: scopeTreeData, loading: scopeTreeLoading },
+  ] = useAuthScopeTreeLazyQuery()
 
   useEffect(() => {
     if (delegation) {

@@ -141,8 +141,10 @@ export class ApplicationController {
     @Param('id', new ParseUUIDPipe()) id: string,
     @CurrentUser() user: User,
   ): Promise<ApplicationResponseDto> {
-    const existingApplication =
-      await this.applicationAccessService.findOneByIdAndNationalId(id, user)
+    const existingApplication = await this.applicationAccessService.findOneByIdAndNationalId(
+      id,
+      user,
+    )
 
     await this.validationService.validateThatApplicationIsReady(
       existingApplication as BaseApplication,
@@ -391,18 +393,16 @@ export class ApplicationController {
 
     // Make sure the application has the correct lifecycle values persisted to database.
     // Requires an application object that is created in the previous step.
-    const { updatedApplication } =
-      await this.applicationService.updateApplicationState(
-        createdApplication.id,
-        createdApplication.state,
-        createdApplication.answers as FormValue,
-        createdApplication.assignees,
-        createdApplication.status,
-        getApplicationLifecycle(
-          createdApplication as BaseApplication,
-          template,
-        ),
-      )
+    const {
+      updatedApplication,
+    } = await this.applicationService.updateApplicationState(
+      createdApplication.id,
+      createdApplication.state,
+      createdApplication.answers as FormValue,
+      createdApplication.assignees,
+      createdApplication.status,
+      getApplicationLifecycle(createdApplication as BaseApplication, template),
+    )
 
     this.auditService.audit({
       auth: user,
@@ -433,14 +433,15 @@ export class ApplicationController {
     ).getOnEntryStateAPIAction(updatedApplication.state)
 
     if (onEnterStateAction) {
-      const { updatedApplication: withUpdatedExternalData } =
-        await this.performActionOnApplication(
-          actionDto,
-          template,
-          user,
-          onEnterStateAction,
-          locale,
-        )
+      const {
+        updatedApplication: withUpdatedExternalData,
+      } = await this.performActionOnApplication(
+        actionDto,
+        template,
+        user,
+        onEnterStateAction,
+        locale,
+      )
 
       //Programmers responsible for handling failure status
       updatedApplication.externalData = withUpdatedExternalData.externalData
@@ -571,10 +572,13 @@ export class ApplicationController {
     @CurrentUser() user: User,
     @CurrentLocale() locale: Locale,
   ): Promise<ApplicationResponseDto> {
-    const existingApplication =
-      await this.applicationAccessService.findOneByIdAndNationalId(id, user, {
+    const existingApplication = await this.applicationAccessService.findOneByIdAndNationalId(
+      id,
+      user,
+      {
         shouldThrowIfPruned: true,
-      })
+      },
+    )
     const namespaces = await getApplicationTranslationNamespaces(
       existingApplication as BaseApplication,
     )
@@ -638,8 +642,10 @@ export class ApplicationController {
     @CurrentUser() user: User,
     @CurrentLocale() locale: Locale,
   ): Promise<ApplicationResponseDto> {
-    const existingApplication =
-      await this.applicationAccessService.findOneByIdAndNationalId(id, user)
+    const existingApplication = await this.applicationAccessService.findOneByIdAndNationalId(
+      id,
+      user,
+    )
 
     const templateId = existingApplication.typeId as ApplicationTypes
     const template = await getApplicationTemplateByTypeId(templateId)
@@ -726,10 +732,13 @@ export class ApplicationController {
     @CurrentUser() user: User,
     @CurrentLocale() locale: Locale,
   ): Promise<ApplicationResponseDto> {
-    const existingApplication =
-      await this.applicationAccessService.findOneByIdAndNationalId(id, user, {
+    const existingApplication = await this.applicationAccessService.findOneByIdAndNationalId(
+      id,
+      user,
+      {
         shouldThrowIfPruned: true,
-      })
+      },
+    )
     const templateId = existingApplication.typeId as ApplicationTypes
     const template = await getApplicationTemplateByTypeId(templateId)
 
@@ -746,14 +755,13 @@ export class ApplicationController {
     )
     const intl = await this.intlService.useIntl(namespaces, locale)
 
-    const permittedAnswers =
-      await this.validationService.validateIncomingAnswers(
-        existingApplication as BaseApplication,
-        newAnswers,
-        user.nationalId,
-        false,
-        intl.formatMessage,
-      )
+    const permittedAnswers = await this.validationService.validateIncomingAnswers(
+      existingApplication as BaseApplication,
+      newAnswers,
+      user.nationalId,
+      false,
+      intl.formatMessage,
+    )
 
     await this.validationService.validateApplicationSchema(
       existingApplication as BaseApplication,
@@ -901,10 +909,13 @@ export class ApplicationController {
       }
     }
 
-    const [hasChanged, newState, withUpdatedState] =
-      new ApplicationTemplateHelper(updatedApplication, template).changeState(
-        event,
-      )
+    const [
+      hasChanged,
+      newState,
+      withUpdatedState,
+    ] = new ApplicationTemplateHelper(updatedApplication, template).changeState(
+      event,
+    )
     updatedApplication = {
       ...updatedApplication,
       answers: withUpdatedState.answers,
@@ -1005,13 +1016,14 @@ export class ApplicationController {
   ): Promise<ApplicationResponseDto> {
     const { key, url } = input
 
-    const { updatedApplication } =
-      await this.applicationService.updateAttachment(
-        id,
-        user.nationalId,
-        key,
-        url,
-      )
+    const {
+      updatedApplication,
+    } = await this.applicationService.updateAttachment(
+      id,
+      user.nationalId,
+      key,
+      url,
+    )
 
     await this.uploadQueue.add('upload', {
       applicationId: updatedApplication.id,
@@ -1047,8 +1059,10 @@ export class ApplicationController {
     @Body() input: DeleteAttachmentDto,
     @CurrentUser() user: User,
   ): Promise<ApplicationResponseDto> {
-    const existingApplication =
-      await this.applicationAccessService.findOneByIdAndNationalId(id, user)
+    const existingApplication = await this.applicationAccessService.findOneByIdAndNationalId(
+      id,
+      user,
+    )
     const { key } = input
 
     const { updatedApplication } = await this.applicationService.update(
@@ -1085,8 +1099,10 @@ export class ApplicationController {
     @Body() input: GeneratePdfDto,
     @CurrentUser() user: User,
   ): Promise<PresignedUrlResponseDto> {
-    const existingApplication =
-      await this.applicationAccessService.findOneByIdAndNationalId(id, user)
+    const existingApplication = await this.applicationAccessService.findOneByIdAndNationalId(
+      id,
+      user,
+    )
     const url = await this.fileService.generatePdf(
       existingApplication,
       input.type,
@@ -1118,13 +1134,17 @@ export class ApplicationController {
     @Body() input: RequestFileSignatureDto,
     @CurrentUser() user: User,
   ): Promise<RequestFileSignatureResponseDto> {
-    const existingApplication =
-      await this.applicationAccessService.findOneByIdAndNationalId(id, user)
-    const { controlCode, documentToken } =
-      await this.fileService.requestFileSignature(
-        existingApplication,
-        input.type,
-      )
+    const existingApplication = await this.applicationAccessService.findOneByIdAndNationalId(
+      id,
+      user,
+    )
+    const {
+      controlCode,
+      documentToken,
+    } = await this.fileService.requestFileSignature(
+      existingApplication,
+      input.type,
+    )
 
     this.auditService.audit({
       auth: user,
@@ -1151,8 +1171,10 @@ export class ApplicationController {
     @Body() input: UploadSignedFileDto,
     @CurrentUser() user: User,
   ): Promise<UploadSignedFileResponseDto> {
-    const existingApplication =
-      await this.applicationAccessService.findOneByIdAndNationalId(id, user)
+    const existingApplication = await this.applicationAccessService.findOneByIdAndNationalId(
+      id,
+      user,
+    )
 
     await this.fileService.uploadSignedFile(
       existingApplication,
@@ -1187,8 +1209,10 @@ export class ApplicationController {
     @Param('pdfType') type: PdfTypes,
     @CurrentUser() user: User,
   ): Promise<PresignedUrlResponseDto> {
-    const existingApplication =
-      await this.applicationAccessService.findOneByIdAndNationalId(id, user)
+    const existingApplication = await this.applicationAccessService.findOneByIdAndNationalId(
+      id,
+      user,
+    )
     const url = await this.fileService.getPresignedUrl(
       existingApplication,
       type,
@@ -1230,8 +1254,10 @@ export class ApplicationController {
     @Param('attachmentKey') attachmentKey: string,
     @CurrentUser() user: User,
   ): Promise<PresignedUrlResponseDto> {
-    const existingApplication =
-      await this.applicationAccessService.findOneByIdAndNationalId(id, user)
+    const existingApplication = await this.applicationAccessService.findOneByIdAndNationalId(
+      id,
+      user,
+    )
 
     if (!existingApplication.attachments) {
       throw new NotFoundException('Attachments not found')
@@ -1260,11 +1286,10 @@ export class ApplicationController {
     @CurrentUser() user: User,
   ) {
     const { nationalId } = user
-    const existingApplication =
-      (await this.applicationAccessService.findOneByIdAndNationalId(
-        id,
-        user,
-      )) as BaseApplication
+    const existingApplication = (await this.applicationAccessService.findOneByIdAndNationalId(
+      id,
+      user,
+    )) as BaseApplication
     const canDelete = await this.applicationAccessService.canDeleteApplication(
       existingApplication,
       nationalId,

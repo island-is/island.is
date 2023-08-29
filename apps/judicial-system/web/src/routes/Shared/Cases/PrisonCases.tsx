@@ -38,14 +38,16 @@ export const PrisonCases: React.FC = () => {
 
   const resCases = data?.cases
 
-  const [activeCases, pastCases]: [CaseListEntry[], CaseListEntry[]] =
-    useMemo(() => {
-      if (!resCases) {
-        return [[], []]
-      }
+  const [activeCases, pastCases]: [
+    CaseListEntry[],
+    CaseListEntry[],
+  ] = useMemo(() => {
+    if (!resCases) {
+      return [[], []]
+    }
 
-      return partition(resCases, (c) => !c.isValidToDateInThePast)
-    }, [resCases])
+    return partition(resCases, (c) => !c.isValidToDateInThePast)
+  }, [resCases])
 
   const handleRowClick = (id: string) => {
     getCaseToOpen({

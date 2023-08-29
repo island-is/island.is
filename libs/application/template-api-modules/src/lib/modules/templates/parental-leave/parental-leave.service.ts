@@ -183,8 +183,11 @@ export class ParentalLeaveService extends BaseTemplateApiService {
       fosterCareOrAdoptionBirthDate,
     } = getApplicationAnswers(application.answers)
 
-    const { applicantGenderCode, children, existingApplications } =
-      getApplicationExternalData(application.externalData)
+    const {
+      applicantGenderCode,
+      children,
+      existingApplications,
+    } = getApplicationExternalData(application.externalData)
 
     if (noChildrenFoundTypeOfApplication === OTHER_NO_CHILDREN_FOUND) {
       const child: ChildInformation = {
@@ -248,12 +251,11 @@ export class ParentalLeaveService extends BaseTemplateApiService {
         }
     */
     try {
-      const applicationInformation =
-        await this.applicationInformationAPI.applicationGetApplicationInformation(
-          {
-            applicationId: application.id,
-          },
-        )
+      const applicationInformation = await this.applicationInformationAPI.applicationGetApplicationInformation(
+        {
+          applicationId: application.id,
+        },
+      )
       return {
         dateOfBirth: applicationInformation.dateOfBirth,
       }
@@ -435,8 +437,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
       selfEmployedFiles: selfEmployedPdfs,
       studentFiles: studentPdfs,
       singleParentFiles: singleParentPdfs,
-      employmentTerminationCertificateFiles:
-        employmentTerminationCertificatePdfs,
+      employmentTerminationCertificateFiles: employmentTerminationCertificatePdfs,
       additionalDocuments,
       noChildrenFoundTypeOfApplication,
       employerLastSixMonths,
@@ -701,13 +702,14 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     }
     if (period.ratio === '100') {
       const isUsingNumberOfDays = period.daysToUse !== undefined
-      const getPeriodEndDate =
-        await this.parentalLeaveApi.parentalLeaveGetPeriodEndDate({
+      const getPeriodEndDate = await this.parentalLeaveApi.parentalLeaveGetPeriodEndDate(
+        {
           nationalRegistryId,
           startDate: startDate,
           length: String(periodLength),
           percentage: period.ratio,
-        })
+        },
+      )
 
       if (getPeriodEndDate.periodEndDate === undefined) {
         throw new Error(
@@ -776,20 +778,20 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     let vmstRightCodePeriod = null
     if (applicationFundId) {
       try {
-        const VMSTperiods =
-          await this.applicationInformationAPI.applicationGetApplicationInformation(
-            {
-              applicationId: application.id,
-            },
-          )
+        const VMSTperiods = await this.applicationInformationAPI.applicationGetApplicationInformation(
+          {
+            applicationId: application.id,
+          },
+        )
 
         if (VMSTperiods?.periods) {
           /*
            * Sometime applicant uses other right than basic right ( grunnréttindi)
            * Here we make sure we only use/sync amd use basic right ( grunnréttindi ) from VMST
            */
-          const getVMSTRightCodePeriod =
-            VMSTperiods.periods[0].rightsCodePeriod.split(',')[0]
+          const getVMSTRightCodePeriod = VMSTperiods.periods[0].rightsCodePeriod.split(
+            ',',
+          )[0]
           const periodCodeStartCharacters = ['M', 'F']
           if (
             periodCodeStartCharacters.some((c) =>
@@ -810,11 +812,13 @@ export class ParentalLeaveService extends BaseTemplateApiService {
 
     const periods: Period[] = []
     const maximumDaysToSpend = getAvailableRightsInDays(application)
-    const maximumPersonalDaysToSpend =
-      getAvailablePersonalRightsInDays(application)
+    const maximumPersonalDaysToSpend = getAvailablePersonalRightsInDays(
+      application,
+    )
     const maximumMultipleBirthsDaysToSpend = getMultipleBirthsDays(application)
-    const maximumAdditionalSingleParentDaysToSpend =
-      getAdditionalSingleParentRightsInDays(application)
+    const maximumAdditionalSingleParentDaysToSpend = getAdditionalSingleParentRightsInDays(
+      application,
+    )
     const maximumDaysBeforeUsingTransferRights =
       maximumPersonalDaysToSpend + maximumMultipleBirthsDaysToSpend
     const maximumSingleParentDaysBeforeUsingMultipleBirthsRights =
@@ -861,13 +865,14 @@ export class ParentalLeaveService extends BaseTemplateApiService {
         const fullLength = calculatePeriodLength(startDate, endDate)
         periodLength = Math.round(fullLength * (Number(period.ratio) / 100))
       } else {
-        const getPeriodLength =
-          await this.parentalLeaveApi.parentalLeaveGetPeriodLength({
+        const getPeriodLength = await this.parentalLeaveApi.parentalLeaveGetPeriodLength(
+          {
             nationalRegistryId,
             startDate,
             endDate,
             percentage: period.ratio,
-          })
+          },
+        )
 
         if (getPeriodLength.periodLength === undefined) {
           throw new Error(
@@ -1477,11 +1482,12 @@ export class ParentalLeaveService extends BaseTemplateApiService {
         this.checkActionName(application, actionNameFromParams),
       )
 
-      const response =
-        await this.parentalLeaveApi.parentalLeaveSetParentalLeave({
+      const response = await this.parentalLeaveApi.parentalLeaveSetParentalLeave(
+        {
           nationalRegistryId,
           parentalLeave: parentalLeaveDTO,
-        })
+        },
+      )
 
       if (!response.id) {
         throw new Error(

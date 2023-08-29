@@ -12,8 +12,7 @@ import type { User } from '@island.is/auth-nest-tools'
 
 @Injectable()
 export class EndorsementListByIdPipe
-  implements PipeTransform<string, Promise<EndorsementList>>
-{
+  implements PipeTransform<string, Promise<EndorsementList>> {
   constructor(
     @Inject(REQUEST) private request: EndorsementRequest,
     private readonly endorsementListService: EndorsementListService,

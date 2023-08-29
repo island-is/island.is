@@ -36,8 +36,10 @@ describe('InternalNotificationController - Send appeal received by court notific
   beforeEach(async () => {
     process.env.COURTS_EMAILS = `{"4676f08b-aab4-4b4f-a366-697540788088":"${courtOfAppealsEmail}"}`
 
-    const { emailService, internalNotificationController } =
-      await createTestingNotificationModule()
+    const {
+      emailService,
+      internalNotificationController,
+    } = await createTestingNotificationModule()
 
     mockEmailService = emailService
 

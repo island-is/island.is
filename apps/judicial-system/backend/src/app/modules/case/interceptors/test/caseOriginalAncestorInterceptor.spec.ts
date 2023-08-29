@@ -23,17 +23,17 @@ describe('Case Original Ancestor Interceptor', () => {
 
   beforeEach(async () => {
     givenWhenThen = async (): Promise<Then> => {
-      const interceptor = new CaseOriginalAncestorInterceptor({
+      const interceptor = new CaseOriginalAncestorInterceptor(({
         findOriginalAncestor: mockFindOriginalAncestor,
-      } as unknown as CaseService)
+      } as unknown) as CaseService)
       const then = {} as Then
 
       await interceptor
         .intercept(
-          {
+          ({
             switchToHttp: () => ({ getRequest: mockRequest }),
-          } as unknown as ExecutionContext,
-          { handle: mockHandle } as unknown as CallHandler,
+          } as unknown) as ExecutionContext,
+          ({ handle: mockHandle } as unknown) as CallHandler,
         )
         .then((result) => (then.result = result))
         .catch((error) => (then.error = error))

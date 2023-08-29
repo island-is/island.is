@@ -175,8 +175,12 @@ export class CmsSyncService implements ContentSearchImporter<PostSyncOptions> {
     }
 
     // gets all data that needs importing
-    const { items, deletedEntryIds, token, elasticIndex } =
-      await this.contentfulService.getSyncEntries(cmsSyncOptions)
+    const {
+      items,
+      deletedEntryIds,
+      token,
+      elasticIndex,
+    } = await this.contentfulService.getSyncEntries(cmsSyncOptions)
     logger.info('Got sync data')
 
     // import data from all providers

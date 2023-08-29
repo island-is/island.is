@@ -56,11 +56,10 @@ export class RegulationDocumentsController {
     }
 
     try {
-      draftRegulation =
-        await this.regulationsAdminClientService.getDraftRegulation(
-          regulationId,
-          authUser,
-        )
+      draftRegulation = await this.regulationsAdminClientService.getDraftRegulation(
+        regulationId,
+        authUser,
+      )
     } catch (e) {
       console.error('unable to get draft regulation', e)
     }
@@ -78,8 +77,9 @@ export class RegulationDocumentsController {
       publishedDate: draftRegulation.idealPublishDate,
     }
 
-    const documentResponse =
-      await this.regulationService.generateDraftRegulationPdf(input)
+    const documentResponse = await this.regulationService.generateDraftRegulationPdf(
+      input,
+    )
 
     if (
       documentResponse.data &&

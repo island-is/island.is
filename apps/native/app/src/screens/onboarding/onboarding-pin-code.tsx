@@ -127,7 +127,8 @@ export const OnboardingPinCodeScreen: NavigationFunctionComponent<{
         confirmPin
           ? testIDs.SCREEN_ONBOARDING_CONFIRM_PIN
           : testIDs.SCREEN_ONBOARDING_ENTER_PIN
-      }>
+      }
+    >
       <SafeAreaView>
         <View
           style={{
@@ -137,7 +138,8 @@ export const OnboardingPinCodeScreen: NavigationFunctionComponent<{
             paddingBottom: 20,
             maxHeight: 200,
             flex: 1,
-          }}>
+          }}
+        >
           <Image
             source={logo}
             resizeMode="contain"
@@ -169,7 +171,8 @@ export const OnboardingPinCodeScreen: NavigationFunctionComponent<{
               height: 64,
               alignItems: 'flex-end',
               justifyContent: 'center',
-            }}>
+            }}
+          >
             {(confirmPin || replacePin) && (
               <CancelButton
                 title={

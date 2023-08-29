@@ -47,8 +47,11 @@ describe('InternalCaseController - Deliver case files record to court', () => {
     const mockGet = createCaseFilesRecord as jest.Mock
     mockGet.mockRejectedValue(new Error('Some error'))
 
-    const { awsS3Service, courtService, internalCaseController } =
-      await createTestingCaseModule()
+    const {
+      awsS3Service,
+      courtService,
+      internalCaseController,
+    } = await createTestingCaseModule()
 
     mockawsS3Service = awsS3Service
     const mockGetObject = mockawsS3Service.getObject as jest.Mock

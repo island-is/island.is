@@ -48,8 +48,12 @@ export const HearingArrangements: React.FC<
 > = () => {
   const router = useRouter()
   const { formatMessage } = useIntl()
-  const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
-    useContext(FormContext)
+  const {
+    workingCase,
+    setWorkingCase,
+    isLoadingWorkingCase,
+    caseNotFound,
+  } = useContext(FormContext)
   const [navigateTo, setNavigateTo] = useState<keyof stepValidationsType>()
 
   const {

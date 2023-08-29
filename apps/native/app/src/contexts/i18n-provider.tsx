@@ -16,7 +16,8 @@ export const I18nProvider = ({children}: {children: React.ReactNode}) => {
           console.log(err);
         }
       }}
-      timeZone="UTC">
+      timeZone="UTC"
+    >
       {children}
     </IntlProvider>
   );

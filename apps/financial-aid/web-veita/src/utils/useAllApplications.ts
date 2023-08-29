@@ -15,8 +15,10 @@ interface SaveData {
 }
 
 export const useAllApplications = () => {
-  const [updateApplicationMutation, { loading: saveLoading }] =
-    useMutation<SaveData>(UpdateApplicationTableMutation)
+  const [
+    updateApplicationMutation,
+    { loading: saveLoading },
+  ] = useMutation<SaveData>(UpdateApplicationTableMutation)
 
   const { setApplicationFilters } = useContext(ApplicationFiltersContext)
   const { admin } = useContext(AdminContext)

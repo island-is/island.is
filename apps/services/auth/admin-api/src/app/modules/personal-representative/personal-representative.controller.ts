@@ -70,8 +70,9 @@ export class PersonalRepresentativeController {
   async getScopePermissions(
     @Query('apiScopeName') apiScopeName: string,
   ): Promise<PersonalRepresentativeScopePermission[]> {
-    const scopePermissions =
-      this.scopePermissionService.getScopePermissionsAsync(apiScopeName)
+    const scopePermissions = this.scopePermissionService.getScopePermissionsAsync(
+      apiScopeName,
+    )
     return scopePermissions
   }
 

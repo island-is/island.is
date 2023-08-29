@@ -21,10 +21,14 @@ import { AuthCustomDelegationIncoming } from '../../../types/customDelegation'
 
 export const DelegationsIncoming = () => {
   const { formatMessage, lang = 'is' } = useLocale()
-  const [delegationView, setDelegationView] =
-    useState<AuthCustomDelegationIncoming | null>(null)
-  const [delegationDelete, setDelegationDelete] =
-    useState<AuthCustomDelegationIncoming | null>(null)
+  const [
+    delegationView,
+    setDelegationView,
+  ] = useState<AuthCustomDelegationIncoming | null>(null)
+  const [
+    delegationDelete,
+    setDelegationDelete,
+  ] = useState<AuthCustomDelegationIncoming | null>(null)
   const { data, loading, refetch, error } = useAuthDelegationsIncomingQuery({
     variables: {
       input: {

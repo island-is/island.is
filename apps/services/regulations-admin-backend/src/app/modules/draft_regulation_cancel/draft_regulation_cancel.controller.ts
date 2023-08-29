@@ -78,11 +78,13 @@ export class DraftRegulationCancelController {
       throw new NotFoundException(`DraftRegulationCancel ${id} was deleted`)
     }
 
-    const { numberOfAffectedRows, draftRegulationCancel } =
-      await this.draftRegulationCancelService.update(
-        id,
-        draftRegulationCancelToUpdate,
-      )
+    const {
+      numberOfAffectedRows,
+      draftRegulationCancel,
+    } = await this.draftRegulationCancelService.update(
+      id,
+      draftRegulationCancelToUpdate,
+    )
 
     if (numberOfAffectedRows === 0) {
       throw new NotFoundException(`DraftRegulationCancel ${id} does not exist`)

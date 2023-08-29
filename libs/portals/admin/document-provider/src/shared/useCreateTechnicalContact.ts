@@ -25,8 +25,10 @@ export function useCreateTechnicalContact(
   organisationId: string,
   organisationNationalId: string,
 ) {
-  const [createTechnicalContactMutation, { called, loading, error }] =
-    useMutation(CREATE_TECHNICAL_CONTACT_MUTATION)
+  const [
+    createTechnicalContactMutation,
+    { called, loading, error },
+  ] = useMutation(CREATE_TECHNICAL_CONTACT_MUTATION)
 
   const { formatMessage } = useLocale()
   const errorMsg = formatMessage(m.SingleProviderUpdateInformationError)

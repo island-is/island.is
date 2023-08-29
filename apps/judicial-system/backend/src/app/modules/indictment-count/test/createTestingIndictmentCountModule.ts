@@ -51,13 +51,13 @@ export const createTestingIndictmentCountModule = async () => {
     typeof IndictmentCount
   >(getModelToken(IndictmentCount))
 
-  const indictmentCountService =
-    indictmentCountModule.get<IndictmentCountService>(IndictmentCountService)
+  const indictmentCountService = indictmentCountModule.get<IndictmentCountService>(
+    IndictmentCountService,
+  )
 
-  const indictmentCountController =
-    indictmentCountModule.get<IndictmentCountController>(
-      IndictmentCountController,
-    )
+  const indictmentCountController = indictmentCountModule.get<IndictmentCountController>(
+    IndictmentCountController,
+  )
 
   indictmentCountModule.close()
 

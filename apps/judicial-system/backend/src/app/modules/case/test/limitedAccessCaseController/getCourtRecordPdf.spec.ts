@@ -29,8 +29,11 @@ describe('LimitedAccessCaseController - Get court record pdf', () => {
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { awsS3Service, logger, limitedAccessCaseController } =
-      await createTestingCaseModule()
+    const {
+      awsS3Service,
+      logger,
+      limitedAccessCaseController,
+    } = await createTestingCaseModule()
     mockAwsS3Service = awsS3Service
     mockLogger = logger
 
@@ -84,7 +87,7 @@ describe('LimitedAccessCaseController - Get court record pdf', () => {
       id: caseId,
       courtRecordSignatureDate: nowFactory(),
     } as Case
-    const res = { end: jest.fn() } as unknown as Response
+    const res = ({ end: jest.fn() } as unknown) as Response
     const pdf = {}
 
     beforeEach(async () => {
@@ -117,7 +120,9 @@ describe('LimitedAccessCaseController - Get court record pdf', () => {
     })
 
     it('should info log the failure', () => {
-      expect(mockLogger.info).toHaveBeenCalledWith(
+      expect(
+        mockLogger.info,
+      ).toHaveBeenCalledWith(
         `The court record for case ${caseId} was not found in AWS S3`,
         { error },
       )
@@ -156,7 +161,7 @@ describe('LimitedAccessCaseController - Get court record pdf', () => {
       id: caseId,
       courtRecordSignatureDate: nowFactory(),
     } as Case
-    const res = { end: jest.fn() } as unknown as Response
+    const res = ({ end: jest.fn() } as unknown) as Response
     const pdf = {}
 
     beforeEach(async () => {

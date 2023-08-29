@@ -11,28 +11,30 @@ export const formatSelRegOptions = (
   repealedText: string,
   data?: RegulationOptionList,
 ) => {
-  const options = regulationNames.map((name): SelRegOption => {
-    const reg = data?.find((r) => r.name === name)
-    if (reg) {
-      return {
-        type: reg.type,
-        disabled: !!reg.repealed,
-        value: name,
-        label:
-          prettyName(name) +
-          ' – ' +
-          reg.title +
-          (reg.repealed ? ` (${repealedText})` : ''),
-        migrated: reg.migrated,
+  const options = regulationNames.map(
+    (name): SelRegOption => {
+      const reg = data?.find((r) => r.name === name)
+      if (reg) {
+        return {
+          type: reg.type,
+          disabled: !!reg.repealed,
+          value: name,
+          label:
+            prettyName(name) +
+            ' – ' +
+            reg.title +
+            (reg.repealed ? ` (${repealedText})` : ''),
+          migrated: reg.migrated,
+        }
       }
-    }
-    return {
-      type: '',
-      disabled: true,
-      value: '',
-      label: prettyName(name) + ' ' + notFoundText,
-    }
-  })
+      return {
+        type: '',
+        disabled: true,
+        value: '',
+        label: prettyName(name) + ' ' + notFoundText,
+      }
+    },
+  )
 
   return options as SelRegOption[]
 }

@@ -97,10 +97,9 @@ export const getRecipients = (
     })
   }
 
-  const filteredBuyerCoOwnerAndOperator =
-    answers?.buyerCoOwnerAndOperator?.filter(
-      ({ wasRemoved }) => wasRemoved !== 'true',
-    )
+  const filteredBuyerCoOwnerAndOperator = answers?.buyerCoOwnerAndOperator?.filter(
+    ({ wasRemoved }) => wasRemoved !== 'true',
+  )
 
   // Buyer's co-owners
   const buyerCoOwners = filteredBuyerCoOwnerAndOperator?.filter(
@@ -184,10 +183,9 @@ export const getRecipientBySsn = (
     }
   }
 
-  const filteredBuyerCoOwnerAndOperator =
-    answers?.buyerCoOwnerAndOperator?.filter(
-      ({ wasRemoved }) => wasRemoved !== 'true',
-    )
+  const filteredBuyerCoOwnerAndOperator = answers?.buyerCoOwnerAndOperator?.filter(
+    ({ wasRemoved }) => wasRemoved !== 'true',
+  )
 
   // Buyer's co-owners
   const buyerCoOwners = filteredBuyerCoOwnerAndOperator?.filter(

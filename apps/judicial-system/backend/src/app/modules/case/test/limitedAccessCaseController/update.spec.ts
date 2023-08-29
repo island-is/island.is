@@ -58,8 +58,11 @@ describe('LimitedAccessCaseController - Update', () => {
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { messageService, caseModel, limitedAccessCaseController } =
-      await createTestingCaseModule()
+    const {
+      messageService,
+      caseModel,
+      limitedAccessCaseController,
+    } = await createTestingCaseModule()
 
     mockMessageService = messageService
     mockCaseModel = caseModel

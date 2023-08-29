@@ -73,11 +73,9 @@ export class FinancialStatementsInaoTemplateService extends BaseTemplateApiServi
 
     const attachmentKey = attachments[0].key
 
-    const fileName = (
-      application.attachments as {
-        [key: string]: string
-      }
-    )[attachmentKey]
+    const fileName = (application.attachments as {
+      [key: string]: string
+    })[attachmentKey]
 
     if (!fileName) {
       return Promise.reject({})
@@ -123,8 +121,11 @@ export class FinancialStatementsInaoTemplateService extends BaseTemplateApiServi
         'election.incomeLimit',
       ) as string
       const noValueStatement = electionIncomeLimit === LESS ? true : false
-      const values: PersonalElectionFinancialStatementValues | undefined =
-        noValueStatement ? undefined : mapValuesToIndividualtype(answers)
+      const values:
+        | PersonalElectionFinancialStatementValues
+        | undefined = noValueStatement
+        ? undefined
+        : mapValuesToIndividualtype(answers)
 
       const electionId = getValueViaPath(
         answers,
@@ -214,8 +215,9 @@ export class FinancialStatementsInaoTemplateService extends BaseTemplateApiServi
       }
       return { success: result.success }
     } else if (currentUserType === FSIUSERTYPE.PARTY) {
-      const values: PoliticalPartyFinancialStatementValues =
-        mapValuesToPartytype(answers)
+      const values: PoliticalPartyFinancialStatementValues = mapValuesToPartytype(
+        answers,
+      )
       const year = getValueViaPath(
         answers,
         'conditionalAbout.operatingYear',
@@ -282,8 +284,9 @@ export class FinancialStatementsInaoTemplateService extends BaseTemplateApiServi
       }
       return { success: result.success }
     } else if (currentUserType === FSIUSERTYPE.CEMETRY) {
-      const values: CemeteryFinancialStatementValues =
-        mapValuesToCemeterytype(answers)
+      const values: CemeteryFinancialStatementValues = mapValuesToCemeterytype(
+        answers,
+      )
       const year = getValueViaPath(
         answers,
         'conditionalAbout.operatingYear',

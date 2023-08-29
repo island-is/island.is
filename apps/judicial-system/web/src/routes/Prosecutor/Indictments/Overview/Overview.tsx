@@ -23,8 +23,12 @@ import * as constants from '@island.is/judicial-system/consts'
 import * as strings from './Overview.strings'
 
 const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
-  const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
-    useContext(FormContext)
+  const {
+    workingCase,
+    setWorkingCase,
+    isLoadingWorkingCase,
+    caseNotFound,
+  } = useContext(FormContext)
   const [modal, setModal] = useState<'noModal' | 'caseSubmittedModal'>(
     'noModal',
   )

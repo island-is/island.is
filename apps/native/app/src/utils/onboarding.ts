@@ -45,8 +45,7 @@ export async function getOnboardingScreens() {
 
   const hasHardware = await hasHardwareAsync();
   const isEnrolled = await isEnrolledAsync();
-  const supportedAuthenticationTypes =
-    await supportedAuthenticationTypesAsync();
+  const supportedAuthenticationTypes = await supportedAuthenticationTypesAsync();
 
   if (hasHardware) {
     // biometrics screen

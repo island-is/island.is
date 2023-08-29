@@ -160,11 +160,10 @@ export class RegulationsAdminResolver {
       return null
     }
 
-    const draftRegulation =
-      await this.regulationsAdminClientService.getDraftRegulation(
-        input.draftId,
-        user,
-      )
+    const draftRegulation = await this.regulationsAdminClientService.getDraftRegulation(
+      input.draftId,
+      user,
+    )
 
     if (!draftRegulation) {
       return null

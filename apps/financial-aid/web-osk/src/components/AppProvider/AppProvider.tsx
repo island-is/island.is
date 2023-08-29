@@ -57,11 +57,17 @@ const AppProvider = ({ children }: Props) => {
 
   const { isAuthenticated, user, setUser, loadingUser } = useUser()
 
-  const { myApplication, error, loading, updateApplication } =
-    useMyApplication()
+  const {
+    myApplication,
+    error,
+    loading,
+    updateApplication,
+  } = useMyApplication()
 
-  const { nationalRegistryData, setNationalRegistryData } =
-    useNationalRegistry()
+  const {
+    nationalRegistryData,
+    setNationalRegistryData,
+  } = useNationalRegistry()
 
   return (
     <AppContext.Provider

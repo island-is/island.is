@@ -62,8 +62,10 @@ const Overview = ({
 
   const { formatMessage } = useIntl()
 
-  const [requestFileSignature, { data: requestFileSignatureData }] =
-    useMutation(REQUEST_FILE_SIGNATURE)
+  const [
+    requestFileSignature,
+    { data: requestFileSignatureData },
+  ] = useMutation(REQUEST_FILE_SIGNATURE)
 
   const [uploadSignedFile] = useMutation(UPLOAD_SIGNED_FILE)
 

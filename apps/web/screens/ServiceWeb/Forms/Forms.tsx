@@ -131,8 +131,9 @@ const ServiceWebFormsPage: Screen<ServiceWebFormsPageProps> = ({
       : ''
   }${headerTitle}`
 
-  const institutionSlugBelongsToMannaudstorg =
-    institutionSlug.includes('mannaudstorg')
+  const institutionSlugBelongsToMannaudstorg = institutionSlug.includes(
+    'mannaudstorg',
+  )
 
   const breadcrumbItems = useMemo(() => {
     const items = []

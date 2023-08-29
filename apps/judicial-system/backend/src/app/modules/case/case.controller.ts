@@ -330,7 +330,7 @@ export class CaseController {
 
     // No need to wait
     this.eventService.postEvent(
-      transition.transition as unknown as CaseEvent,
+      (transition.transition as unknown) as CaseEvent,
       updatedCase ?? theCase,
     )
 

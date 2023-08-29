@@ -111,10 +111,9 @@ export class PrivateDiscountController {
       throw new NotFoundException(`User<${params.nationalId}> not found`)
     }
 
-    const unConnectedFlights =
-      await this.flightService.findThisYearsConnectableFlightsByNationalId(
-        params.nationalId,
-      )
+    const unConnectedFlights = await this.flightService.findThisYearsConnectableFlightsByNationalId(
+      params.nationalId,
+    )
 
     return this.discountService.createDiscountCode(
       user,
@@ -144,10 +143,9 @@ export class PrivateDiscountAdminController {
     @Body() body: CreateExplicitDiscountCodeParams,
     @CurrentUser() auth: AuthUser,
   ): Promise<Discount> {
-    const unConnectedFlights =
-      await this.flightService.findThisYearsConnectableFlightsByNationalId(
-        body.nationalId,
-      )
+    const unConnectedFlights = await this.flightService.findThisYearsConnectableFlightsByNationalId(
+      body.nationalId,
+    )
 
     const discount = await this.discountService.createExplicitDiscountCode(
       auth,

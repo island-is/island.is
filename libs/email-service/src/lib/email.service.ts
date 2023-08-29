@@ -83,8 +83,10 @@ export class EmailService {
       const transporter = nodemailer.createTransport(transport)
 
       if (message.template) {
-        const { html, attachments } =
-          await this.adapterService.buildCustomTemplate(message.template)
+        const {
+          html,
+          attachments,
+        } = await this.adapterService.buildCustomTemplate(message.template)
 
         message.html = html
         message.attachments = (message.attachments ?? []).concat(attachments)

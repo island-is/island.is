@@ -39,18 +39,20 @@ export const VehicleSelectField: FC<
   const currentVehicle = currentVehicleList[parseInt(vehicleValue, 10)]
 
   const [isLoading, setIsLoading] = useState<boolean>(false)
-  const [selectedVehicle, setSelectedVehicle] =
-    useState<VehiclesCurrentVehicleWithPlateOrderChecks | null>(
-      currentVehicle && currentVehicle.permno
-        ? {
-            permno: currentVehicle.permno,
-            make: currentVehicle?.make || '',
-            color: currentVehicle?.color || '',
-            role: currentVehicle?.role,
-            validationErrorMessages: [],
-          }
-        : null,
-    )
+  const [
+    selectedVehicle,
+    setSelectedVehicle,
+  ] = useState<VehiclesCurrentVehicleWithPlateOrderChecks | null>(
+    currentVehicle && currentVehicle.permno
+      ? {
+          permno: currentVehicle.permno,
+          make: currentVehicle?.make || '',
+          color: currentVehicle?.color || '',
+          role: currentVehicle?.role,
+          validationErrorMessages: [],
+        }
+      : null,
+  )
   const [plate, setPlate] = useState<string>(
     getValueViaPath(application.answers, 'pickVehicle.plate', '') as string,
   )
@@ -84,9 +86,8 @@ export const VehicleSelectField: FC<
                 ?.validationErrorMessages,
           })
 
-          const disabled =
-            !!response?.vehiclePlateOrderChecksByPermno?.validationErrorMessages
-              ?.length
+          const disabled = !!response?.vehiclePlateOrderChecksByPermno
+            ?.validationErrorMessages?.length
           setPlate(disabled ? '' : currentVehicle.permno || '')
           setValue(
             'pickVehicle.plate',

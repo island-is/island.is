@@ -44,8 +44,13 @@ export const GridColumn: FC<React.PropsWithChildren<GridColumnProps>> = ({
     pos.position = position
   }
 
-  const [hiddenOnXs, hiddenOnSm, hiddenOnMd, hiddenOnLg, hiddenOnXl] =
-    resolveResponsiveRangeProps({ above, below })
+  const [
+    hiddenOnXs,
+    hiddenOnSm,
+    hiddenOnMd,
+    hiddenOnLg,
+    hiddenOnXl,
+  ] = resolveResponsiveRangeProps({ above, below })
 
   return (
     <Box

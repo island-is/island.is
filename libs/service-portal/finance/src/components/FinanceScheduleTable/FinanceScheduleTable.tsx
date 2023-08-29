@@ -79,7 +79,8 @@ const FinanceScheduleTable: FC<React.PropsWithChildren<Props>> = ({
                   <Tooltip
                     placement="top"
                     text={formatMessage({
-                      id: 'sp.finance-schedule:amount-left-without-interest-info',
+                      id:
+                        'sp.finance-schedule:amount-left-without-interest-info',
                       defaultMessage:
                         'Eftirstöðvar án vaxta innihalda þó vexti fram að þeim degi sem greiðsluáætlunin er gerð ef gjöld bera vexti.',
                     })}

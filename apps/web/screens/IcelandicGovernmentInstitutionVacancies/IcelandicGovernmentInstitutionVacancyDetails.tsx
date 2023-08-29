@@ -114,9 +114,10 @@ interface IcelandicGovernmentInstitutionVacancyDetailsProps {
   namespace: Record<string, string>
 }
 
-const IcelandicGovernmentInstitutionVacancyDetails: Screen<
-  IcelandicGovernmentInstitutionVacancyDetailsProps
-> = ({ vacancy, namespace }) => {
+const IcelandicGovernmentInstitutionVacancyDetails: Screen<IcelandicGovernmentInstitutionVacancyDetailsProps> = ({
+  vacancy,
+  namespace,
+}) => {
   const { linkResolver } = useLinkResolver()
 
   const n = useNamespace(namespace)

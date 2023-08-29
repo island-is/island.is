@@ -54,10 +54,14 @@ export const InputPhone: FC<React.PropsWithChildren<Props>> = ({
     setValue,
     formState: { errors },
   } = useForm<UseFormProps>()
-  const { updateOrCreateUserProfile, loading: saveLoading } =
-    useUpdateOrCreateUserProfile()
-  const { deleteIslykillValue, loading: deleteLoading } =
-    useDeleteIslykillValue()
+  const {
+    updateOrCreateUserProfile,
+    loading: saveLoading,
+  } = useUpdateOrCreateUserProfile()
+  const {
+    deleteIslykillValue,
+    loading: deleteLoading,
+  } = useDeleteIslykillValue()
   const { formatMessage } = useLocale()
   const { createSmsVerification, createLoading } = useVerifySms()
   const { refetch, loading: fetchLoading } = useUserProfile()

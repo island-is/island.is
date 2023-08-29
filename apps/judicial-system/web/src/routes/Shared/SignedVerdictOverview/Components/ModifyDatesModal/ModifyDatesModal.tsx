@@ -165,10 +165,14 @@ const ModifyDatesModal: React.FC<React.PropsWithChildren<Props>> = ({
   setIsModifyingDates,
 }) => {
   const [modifiedValidToDate, setModifiedValidToDate] = useState<DateTime>()
-  const [modifiedIsolationToDate, setModifiedIsolationToDate] =
-    useState<DateTime>()
-  const [caseModifiedExplanation, setCaseModifiedExplanation] =
-    useState<string>()
+  const [
+    modifiedIsolationToDate,
+    setModifiedIsolationToDate,
+  ] = useState<DateTime>()
+  const [
+    caseModifiedExplanation,
+    setCaseModifiedExplanation,
+  ] = useState<string>()
 
   const { formatMessage } = useIntl()
   const { user } = useContext(UserContext)

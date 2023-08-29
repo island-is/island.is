@@ -13,15 +13,11 @@ const Stepper = () => {
 
   const sections = useNavigationTree()
 
-  const activeSection = findSectionIndex(
-    sections,
-    router.pathname,
-  ).activeSectionIndex
+  const activeSection = findSectionIndex(sections, router.pathname)
+    .activeSectionIndex
 
-  const activeSubSectionIndex = findSectionIndex(
-    sections,
-    router.pathname,
-  ).activeSubSectionIndex
+  const activeSubSectionIndex = findSectionIndex(sections, router.pathname)
+    .activeSubSectionIndex
 
   useEffect(() => {
     if (activeSection !== undefined) {

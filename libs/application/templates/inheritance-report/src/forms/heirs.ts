@@ -300,11 +300,12 @@ export const heirs = buildSection({
               label: m.inheritanceAmount,
               display: 'flex',
               value: ({ answers }) => {
-                const total = (
-                  answers as InheritanceReport
-                )?.heirs?.data?.reduce((sum, heir) => {
-                  return sum + heir.inheritance
-                }, 0)
+                const total = (answers as InheritanceReport)?.heirs?.data?.reduce(
+                  (sum, heir) => {
+                    return sum + heir.inheritance
+                  },
+                  0,
+                )
 
                 return formatCurrency(String(total))
               },
@@ -318,11 +319,12 @@ export const heirs = buildSection({
               label: m.taxFreeInheritance,
               display: 'flex',
               value: ({ answers }) => {
-                const total = (
-                  answers as InheritanceReport
-                )?.heirs?.data?.reduce((sum, heir) => {
-                  return sum + heir.taxFreeInheritance
-                }, 0)
+                const total = (answers as InheritanceReport)?.heirs?.data?.reduce(
+                  (sum, heir) => {
+                    return sum + heir.taxFreeInheritance
+                  },
+                  0,
+                )
 
                 return formatCurrency(String(total))
               },
@@ -336,11 +338,12 @@ export const heirs = buildSection({
               label: m.taxableInheritance,
               display: 'flex',
               value: ({ answers }) => {
-                const total = (
-                  answers as InheritanceReport
-                )?.heirs?.data?.reduce((sum, heir) => {
-                  return sum + heir.taxableInheritance
-                }, 0)
+                const total = (answers as InheritanceReport)?.heirs?.data?.reduce(
+                  (sum, heir) => {
+                    return sum + heir.taxableInheritance
+                  },
+                  0,
+                )
 
                 return formatCurrency(String(total))
               },
@@ -354,11 +357,12 @@ export const heirs = buildSection({
               label: m.inheritanceTax,
               display: 'flex',
               value: ({ answers }) => {
-                const total = (
-                  answers as InheritanceReport
-                )?.heirs?.data?.reduce((sum, heir) => {
-                  return sum + heir.inheritanceTax
-                }, 0)
+                const total = (answers as InheritanceReport)?.heirs?.data?.reduce(
+                  (sum, heir) => {
+                    return sum + heir.inheritanceTax
+                  },
+                  0,
+                )
 
                 return formatCurrency(String(total))
               },

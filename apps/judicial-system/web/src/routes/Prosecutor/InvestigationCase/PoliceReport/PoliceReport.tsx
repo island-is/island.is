@@ -23,8 +23,12 @@ import { useCase, useDeb } from '@island.is/judicial-system-web/src/utils/hooks'
 import * as constants from '@island.is/judicial-system/consts'
 
 const PoliceReport = () => {
-  const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
-    useContext(FormContext)
+  const {
+    workingCase,
+    setWorkingCase,
+    isLoadingWorkingCase,
+    caseNotFound,
+  } = useContext(FormContext)
   const { formatMessage } = useIntl()
   const [caseFactsEM, setCaseFactsEM] = useState<string>('')
   const [legalArgumentsEM, setLegalArgumentsEM] = useState<string>('')

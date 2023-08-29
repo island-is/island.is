@@ -70,13 +70,11 @@ export const PickDeliveryMethod: FC<React.PropsWithChildren<FieldBaseProps>> = (
   )
 
   const refetchTachoNet = () => {
-    const fullNameParts = (
-      getValueViaPath(
-        application.externalData,
-        'nationalRegistry.data.fullName',
-        '',
-      ) as string
-    ).split(' ')
+    const fullNameParts = (getValueViaPath(
+      application.externalData,
+      'nationalRegistry.data.fullName',
+      '',
+    ) as string).split(' ')
     const firstName = fullNameParts[0]
     const lastName =
       fullNameParts.length > 1

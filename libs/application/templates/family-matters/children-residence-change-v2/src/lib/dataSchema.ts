@@ -21,8 +21,12 @@ export enum ApproveContract {
   No = 'no',
 }
 
-const { counterParty, invalidEmail, invalidPhoneNumber, approveTerms } =
-  error.validation
+const {
+  counterParty,
+  invalidEmail,
+  invalidPhoneNumber,
+  approveTerms,
+} = error.validation
 
 const parentContactInfo = validateContactInfo({
   email: invalidEmail,

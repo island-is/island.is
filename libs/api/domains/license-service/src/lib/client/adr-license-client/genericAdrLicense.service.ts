@@ -58,8 +58,9 @@ export class GenericAdrLicenseService implements GenericLicenseClient<AdrDto> {
     let pkpassStatus = GenericUserLicensePkPassStatus.Unknown
 
     if (payload) {
-      pkpassStatus =
-        GenericAdrLicenseService.licenseIsValidForPkpass(licenseData)
+      pkpassStatus = GenericAdrLicenseService.licenseIsValidForPkpass(
+        licenseData,
+      )
     }
 
     return {

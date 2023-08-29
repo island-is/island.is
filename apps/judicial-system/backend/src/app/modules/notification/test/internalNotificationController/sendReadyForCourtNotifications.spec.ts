@@ -294,7 +294,7 @@ describe('InternalNotificationController - Send ready for court notifications fo
       institution: { name: 'Lögreglan á höfuðborgarsvæðinu' },
     } as User
 
-    const theCase = {
+    const theCase = ({
       id: caseId,
       type: CaseType.INDICTMENT,
       state: CaseState.RECEIVED,
@@ -305,7 +305,7 @@ describe('InternalNotificationController - Send ready for court notifications fo
       courtId,
       court,
       prosecutor,
-    } as unknown as Case
+    } as unknown) as Case
 
     beforeEach(async () => {
       await givenWhenThen(caseId, theCase, notificationDto)
@@ -343,7 +343,7 @@ describe('InternalNotificationController - Send ready for court notifications fo
       institution: { name: 'Lögreglan á höfuðborgarsvæðinu' },
     } as User
 
-    const theCase = {
+    const theCase = ({
       id: caseId,
       type: CaseType.INDICTMENT,
       state: CaseState.RECEIVED,
@@ -361,7 +361,7 @@ describe('InternalNotificationController - Send ready for court notifications fo
       courtId,
       court,
       prosecutor,
-    } as unknown as Case
+    } as unknown) as Case
 
     beforeEach(async () => {
       await givenWhenThen(caseId, theCase, notificationDto)

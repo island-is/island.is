@@ -15,8 +15,9 @@ type EstateData = EstateSchema['estate']
 type RepeaterType<T> = T & { initial?: boolean; enabled?: boolean }
 
 // A helper type that extracts values from an ArrayLike
-export type Extract<T extends ArrayLike<any> | Record<any, any>> =
-  T extends ArrayLike<any> ? T[number] : never
+export type Extract<
+  T extends ArrayLike<any> | Record<any, any>
+> = T extends ArrayLike<any> ? T[number] : never
 
 const initialMapper = <T>(element: T) => {
   return {

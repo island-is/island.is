@@ -64,9 +64,10 @@ const FundingGovernmentProjectsTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/FundingGovernmentProjectsForm').then(
-                  (module) =>
-                    Promise.resolve(module.FundingGovernmentProjectsForm),
+                import(
+                  '../forms/FundingGovernmentProjectsForm'
+                ).then((module) =>
+                  Promise.resolve(module.FundingGovernmentProjectsForm),
                 ),
               actions: [
                 { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
@@ -99,11 +100,12 @@ const FundingGovernmentProjectsTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/FundingGovernmentProjectsFormSubmitted').then(
-                  (module) =>
-                    Promise.resolve(
-                      module.FundingGovernmentProjectsFormSubmitted,
-                    ),
+                import(
+                  '../forms/FundingGovernmentProjectsFormSubmitted'
+                ).then((module) =>
+                  Promise.resolve(
+                    module.FundingGovernmentProjectsFormSubmitted,
+                  ),
                 ),
               write: 'all',
             },

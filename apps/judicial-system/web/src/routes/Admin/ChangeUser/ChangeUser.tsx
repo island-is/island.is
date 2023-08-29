@@ -49,8 +49,9 @@ export const ChangeUser: React.FC<React.PropsWithChildren<unknown>> = () => {
     loaded: institutionLoaded,
   } = useInstitution()
 
-  const [updateUserMutation, { loading: saveLoading }] =
-    useMutation<SaveData>(UpdateUserMutation)
+  const [updateUserMutation, { loading: saveLoading }] = useMutation<SaveData>(
+    UpdateUserMutation,
+  )
 
   const saveUser = async (user: User) => {
     if (saveLoading === false && user) {

@@ -70,11 +70,13 @@ export class DraftRegulationChangeService {
   }> {
     this.logger.debug(`Updating DraftRegulationChange ${id}`)
 
-    const [numberOfAffectedRows, [updateData]] =
-      await this.draftRegulationChangeModel.update(update, {
-        where: { id },
-        returning: true,
-      })
+    const [
+      numberOfAffectedRows,
+      [updateData],
+    ] = await this.draftRegulationChangeModel.update(update, {
+      where: { id },
+      returning: true,
+    })
 
     const updatedDraftRegulationChange: DraftRegulationChange = {
       id: updateData.id as DraftRegulationChangeId,

@@ -52,10 +52,11 @@ export class DelegationsIncomingRepresentativeService {
         provider: DelegationProvider.PersonalRepresentativeRegistry,
       })
 
-      const personalRepresentatives =
-        await this.prService.getByPersonalRepresentative({
+      const personalRepresentatives = await this.prService.getByPersonalRepresentative(
+        {
           nationalIdPersonalRepresentative: user.nationalId,
-        })
+        },
+      )
 
       const personPromises = personalRepresentatives.map(
         ({ nationalIdRepresentedPerson }) =>

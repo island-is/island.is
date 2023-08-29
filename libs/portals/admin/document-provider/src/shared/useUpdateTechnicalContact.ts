@@ -29,8 +29,10 @@ export type ContactInput = Pick<
 >
 
 export function useUpdateTechnicalContact(organisationId: string) {
-  const [updateTechnicalContactMutation, { called, loading, error }] =
-    useMutation(UPDATE_TECHNICAL_CONTACT_MUTATION)
+  const [
+    updateTechnicalContactMutation,
+    { called, loading, error },
+  ] = useMutation(UPDATE_TECHNICAL_CONTACT_MUTATION)
 
   const { formatMessage } = useLocale()
   const errorMsg = formatMessage(m.SingleProviderUpdateInformationError)

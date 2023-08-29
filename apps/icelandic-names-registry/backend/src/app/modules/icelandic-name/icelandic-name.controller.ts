@@ -104,8 +104,10 @@ export class IcelandicNameController {
     @Body() body: UpdateIcelandicNameBodyDto,
     @CurrentUser() user: User,
   ): Promise<IcelandicName> {
-    const [affectedRows, [icelandicName]] =
-      await this.icelandicNameService.updateNameById(id, body)
+    const [
+      affectedRows,
+      [icelandicName],
+    ] = await this.icelandicNameService.updateNameById(id, body)
 
     if (!affectedRows) {
       throw new BadRequestException(`Could not update user by id: ${id}`)

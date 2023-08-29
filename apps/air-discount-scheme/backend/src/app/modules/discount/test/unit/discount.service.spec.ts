@@ -272,9 +272,8 @@ describe('DiscountService', () => {
     })
 
     it('should override postalcodes', async () => {
-      jest
-        .spyOn(nationalRegistryService, 'getUser')
-        .mockImplementation((): Promise<NationalRegistryUser> => {
+      jest.spyOn(nationalRegistryService, 'getUser').mockImplementation(
+        (): Promise<NationalRegistryUser> => {
           return Promise.resolve({
             address: '',
             city: '',
@@ -285,7 +284,8 @@ describe('DiscountService', () => {
             nationalId: customerId,
             postalcode: 100, // This shall be overridden
           })
-        })
+        },
+      )
 
       const result = await discountService.createExplicitDiscountCode(
         getAuthUser(employeeId),

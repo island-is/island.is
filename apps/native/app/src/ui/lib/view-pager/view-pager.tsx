@@ -102,7 +102,8 @@ export function ViewPager({children, itemWidth}: ViewPagerProps) {
         snapToAlignment={'start'}
         automaticallyAdjustContentInsets={false}
         contentInsetAdjustmentBehavior="never"
-        decelerationRate={0}>
+        decelerationRate={0}
+      >
         {children}
       </Animated.ScrollView>
       <Dots>
@@ -121,7 +122,8 @@ export function ViewPager({children, itemWidth}: ViewPagerProps) {
                 },
                 {translateX: 16 * 0.5},
               ],
-            }}>
+            }}
+          >
             <DotLeft style={{transform: [{translateX: 4}]}} />
             <DotCenter
               style={{

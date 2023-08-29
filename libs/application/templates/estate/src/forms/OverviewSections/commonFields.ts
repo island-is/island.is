@@ -38,7 +38,7 @@ export const commonOverviewFields = [
     {
       cards: ({ answers }: Application) =>
         (
-          (answers.estate as unknown as EstateInfo).estateMembers?.filter(
+          ((answers.estate as unknown) as EstateInfo).estateMembers?.filter(
             (member) => member.enabled,
           ) ?? []
         ).map((member) => ({

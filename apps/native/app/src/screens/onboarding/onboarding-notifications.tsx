@@ -16,48 +16,47 @@ async function requestUserPermission() {
   );
 }
 
-export const OnboardingNotificationsScreen: NavigationFunctionComponent =
-  () => {
-    const intl = useIntl();
-    const onAllowPress = () => {
-      requestUserPermission().then(() => {
-        preferencesStore.setState(() => ({hasOnboardedNotifications: true}));
-        return nextOnboardingStep();
-      });
-    };
-
-    const onSkipPress = () => {
+export const OnboardingNotificationsScreen: NavigationFunctionComponent = () => {
+  const intl = useIntl();
+  const onAllowPress = () => {
+    requestUserPermission().then(() => {
       preferencesStore.setState(() => ({hasOnboardedNotifications: true}));
       return nextOnboardingStep();
-    };
-
-    return (
-      <Onboarding
-        testID={testIDs.SCREEN_ONBOARDING_NOTIFICATIONS}
-        illustration={<Illustration />}
-        title={<FormattedMessage id="onboarding.notifications.title" />}
-        buttonSubmit={
-          <Button
-            title={intl.formatMessage({
-              id: 'onboarding.notifications.allowNotificationsButtonText',
-            })}
-            onPress={onAllowPress}
-            testID={testIDs.ONBOARDING_NOTIFICATIONS_ALLOW_BUTTON}
-            icon={allow}
-          />
-        }
-        buttonCancel={
-          <CancelButton
-            title={
-              <FormattedMessage id="onboarding.notifications.decideLaterButtonText" />
-            }
-            onPress={onSkipPress}
-            testID={testIDs.ONBOARDING_NOTIFICATIONS_SKIP_BUTTON}
-          />
-        }
-      />
-    );
+    });
   };
+
+  const onSkipPress = () => {
+    preferencesStore.setState(() => ({hasOnboardedNotifications: true}));
+    return nextOnboardingStep();
+  };
+
+  return (
+    <Onboarding
+      testID={testIDs.SCREEN_ONBOARDING_NOTIFICATIONS}
+      illustration={<Illustration />}
+      title={<FormattedMessage id="onboarding.notifications.title" />}
+      buttonSubmit={
+        <Button
+          title={intl.formatMessage({
+            id: 'onboarding.notifications.allowNotificationsButtonText',
+          })}
+          onPress={onAllowPress}
+          testID={testIDs.ONBOARDING_NOTIFICATIONS_ALLOW_BUTTON}
+          icon={allow}
+        />
+      }
+      buttonCancel={
+        <CancelButton
+          title={
+            <FormattedMessage id="onboarding.notifications.decideLaterButtonText" />
+          }
+          onPress={onSkipPress}
+          testID={testIDs.ONBOARDING_NOTIFICATIONS_SKIP_BUTTON}
+        />
+      }
+    />
+  );
+};
 
 OnboardingNotificationsScreen.options = {
   popGesture: false,

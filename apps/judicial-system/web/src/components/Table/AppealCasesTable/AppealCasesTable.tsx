@@ -40,8 +40,12 @@ interface Props {
 const AppealCasesTable: React.FC<Props> = (props) => {
   const { cases, onRowClick, loading, showingCompletedCases } = props
   const { formatMessage } = useIntl()
-  const { sortedData, requestSort, getClassNamesFor, isActiveColumn } =
-    useSortAppealCases('appealedDate', 'descending', cases)
+  const {
+    sortedData,
+    requestSort,
+    getClassNamesFor,
+    isActiveColumn,
+  } = useSortAppealCases('appealedDate', 'descending', cases)
   const activeCasesData = useMemo(
     () =>
       cases.sort((a: CaseListEntry, b: CaseListEntry) =>

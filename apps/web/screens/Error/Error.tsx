@@ -30,11 +30,13 @@ const formatBody = (body: string, path: string): ReactNode =>
 const fallbackMessage = {
   404: {
     title: 'Síða eða skjal fannst ekki',
-    body: 'Ekkert fannst á slóðinni {PATH}. Mögulega hefur síðan verið fjarlægð eða færð til. Þú getur byrjað aftur frá forsíðu eða notað leitina til að finna upplýsingar.',
+    body:
+      'Ekkert fannst á slóðinni {PATH}. Mögulega hefur síðan verið fjarlægð eða færð til. Þú getur byrjað aftur frá forsíðu eða notað leitina til að finna upplýsingar.',
   },
   500: {
     title: 'Afsakið hlé.',
-    body: 'Eitthvað fór úrskeiðis.\nVillan hefur verið skráð og unnið verður að viðgerð eins fljótt og auðið er.',
+    body:
+      'Eitthvað fór úrskeiðis.\nVillan hefur verið skráð og unnið verður að viðgerð eins fljótt og auðið er.',
   },
 }
 

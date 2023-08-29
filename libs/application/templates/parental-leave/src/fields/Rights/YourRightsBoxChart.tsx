@@ -24,8 +24,12 @@ const YourRightsBoxChart: FC<
   React.PropsWithChildren<YourRightsBoxChartProps>
 > = ({ application, showDisclaimer = false }) => {
   const { formatMessage } = useLocale()
-  const { isRequestingRights, requestDays, isGivingRights, giveDays } =
-    useApplicationAnswers(application)
+  const {
+    isRequestingRights,
+    requestDays,
+    isGivingRights,
+    giveDays,
+  } = useApplicationAnswers(application)
   const maxDays = maxDaysToGiveOrReceive
 
   const requestDaysStringKey =

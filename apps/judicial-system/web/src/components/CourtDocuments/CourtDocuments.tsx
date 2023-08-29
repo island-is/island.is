@@ -35,8 +35,9 @@ const CourtDocuments: FC<React.PropsWithChildren<Props>> = (props) => {
   const { workingCase, setWorkingCase } = props
   const { formatMessage } = useIntl()
   const { setAndSendCaseToServer } = useCase()
-  const [submittedByMenuIsOpen, setSubmittedByMenuIsOpen] =
-    useState<boolean>(false)
+  const [submittedByMenuIsOpen, setSubmittedByMenuIsOpen] = useState<boolean>(
+    false,
+  )
 
   const whoFiledOptions = [
     {

@@ -24,8 +24,11 @@ describe('PersonalTaxReturnController - Municipalities Personal Tax Return', () 
   const folderId = uuid()
 
   beforeEach(async () => {
-    const { personalTaxReturnController, fileService, personalTaxReturnApi } =
-      await createTestingPersonalTaxReturnModule()
+    const {
+      personalTaxReturnController,
+      fileService,
+      personalTaxReturnApi,
+    } = await createTestingPersonalTaxReturnModule()
 
     mockFileService = fileService
     mockPersonalTaxReturnApi = personalTaxReturnApi
@@ -49,8 +52,7 @@ describe('PersonalTaxReturnController - Municipalities Personal Tax Return', () 
     let then: Then
 
     beforeEach(async () => {
-      personalTaxReturnInPdf =
-        mockPersonalTaxReturnApi.personalTaxReturnInPdf as jest.Mock
+      personalTaxReturnInPdf = mockPersonalTaxReturnApi.personalTaxReturnInPdf as jest.Mock
       personalTaxReturnInPdf.mockRejectedValueOnce({})
 
       createSignedUrl = mockFileService.createSignedUrl as jest.Mock
@@ -101,8 +103,7 @@ describe('PersonalTaxReturnController - Municipalities Personal Tax Return', () 
     }
 
     beforeEach(async () => {
-      personalTaxReturnInPdf =
-        mockPersonalTaxReturnApi.personalTaxReturnInPdf as jest.Mock
+      personalTaxReturnInPdf = mockPersonalTaxReturnApi.personalTaxReturnInPdf as jest.Mock
       personalTaxReturnInPdf.mockResolvedValueOnce({
         success: true,
         errorText: '',
@@ -173,8 +174,7 @@ describe('PersonalTaxReturnController - Municipalities Personal Tax Return', () 
     }
 
     beforeEach(async () => {
-      personalTaxReturnInPdf =
-        mockPersonalTaxReturnApi.personalTaxReturnInPdf as jest.Mock
+      personalTaxReturnInPdf = mockPersonalTaxReturnApi.personalTaxReturnInPdf as jest.Mock
       personalTaxReturnInPdf.mockResolvedValueOnce({
         success: true,
         errorText: '',

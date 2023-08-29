@@ -111,8 +111,9 @@ const ServiceSearch: Screen<ServiceSearchProps> = ({
 
   const pageTitle = `${n('search', 'Leit')} | ${headerTitle}`
 
-  const institutionSlugBelongsToMannaudstorg =
-    institutionSlug.includes('mannaudstorg')
+  const institutionSlugBelongsToMannaudstorg = institutionSlug.includes(
+    'mannaudstorg',
+  )
 
   const breadcrumbItems = [
     institutionSlugBelongsToMannaudstorg

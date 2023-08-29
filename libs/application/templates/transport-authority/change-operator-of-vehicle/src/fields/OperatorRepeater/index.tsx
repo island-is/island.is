@@ -105,13 +105,11 @@ export const OperatorRepeater: FC<React.PropsWithChildren<FieldBaseProps>> = (
     const existingOldOperators = filteredOldOperators.map(({ nationalId }) => {
       return nationalId
     })
-    const coOwners = (
-      getValueViaPath(
-        application.answers,
-        'ownerCoOwner',
-        [],
-      ) as UserInformation[]
-    )?.map(({ nationalId }) => {
+    const coOwners = (getValueViaPath(
+      application.answers,
+      'ownerCoOwner',
+      [],
+    ) as UserInformation[])?.map(({ nationalId }) => {
       return nationalId
     })
 

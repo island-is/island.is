@@ -109,8 +109,9 @@ export class DrivingLicenseBookClientApiFactory {
     user: User,
   ): Promise<{ success: boolean }> {
     const api = await this.create()
-    const lesson: PracticalDrivingLesson[] =
-      await this.getPracticalDrivingLessons({ bookId, id })
+    const lesson: PracticalDrivingLesson[] = await this.getPracticalDrivingLessons(
+      { bookId, id },
+    )
     if (lesson[0].teacherNationalId === user.nationalId) {
       try {
         await api.apiTeacherUpdatePracticalDrivingLessonIdPut({
@@ -136,8 +137,9 @@ export class DrivingLicenseBookClientApiFactory {
     user: User,
   ) {
     const api = await this.create()
-    const lesson: PracticalDrivingLesson[] =
-      await this.getPracticalDrivingLessons({ bookId, id })
+    const lesson: PracticalDrivingLesson[] = await this.getPracticalDrivingLessons(
+      { bookId, id },
+    )
     if (lesson[0].teacherNationalId === user.nationalId) {
       try {
         await api.apiTeacherDeletePracticalDrivingLessonIdDelete({ id, reason })
@@ -176,11 +178,12 @@ export class DrivingLicenseBookClientApiFactory {
     user: User,
   ): Promise<DrivingLicenseBookStudentForTeacher[]> {
     const api = await this.create()
-    const { data } =
-      await api.apiTeacherGetStudentOverviewForTeacherTeacherSsnGet({
-        teacherSsn: user.nationalId,
-        showExpired: false,
-      })
+    const {
+      data,
+    } = await api.apiTeacherGetStudentOverviewForTeacherTeacherSsnGet({
+      teacherSsn: user.nationalId,
+      showExpired: false,
+    })
     if (!data) {
       this.logger.error(`${LOGTAG} Error fetching students for teacher`)
       throw new NotFoundException(

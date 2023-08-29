@@ -13,8 +13,12 @@ interface PropTypes {
 }
 
 function NoBenefits({ misc }: PropTypes) {
-  const { noRights, noRightsDescription, backToInfoPage, backToInfoPageLink } =
-    JSON.parse(misc)
+  const {
+    noRights,
+    noRightsDescription,
+    backToInfoPage,
+    backToInfoPageLink,
+  } = JSON.parse(misc)
 
   return (
     <>

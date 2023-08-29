@@ -84,8 +84,9 @@ export class PersonalRepresentativesController {
   })
   async get(@Param('id') id: string): Promise<PersonalRepresentativeDTO> {
     console.log(id)
-    const personalRepresentative =
-      await this.prService.getPersonalRepresentative(id)
+    const personalRepresentative = await this.prService.getPersonalRepresentative(
+      id,
+    )
 
     if (!personalRepresentative) {
       throw new NotFoundException(
@@ -157,11 +158,10 @@ export class PersonalRepresentativesController {
     }
 
     // Find current personal representative connection between nationalIds and remove since only one should be active
-    const currentContract =
-      await this.prService.getPersonalRepresentativeByRepresentedPerson(
-        personalRepresentative.nationalIdRepresentedPerson,
-        true,
-      )
+    const currentContract = await this.prService.getPersonalRepresentativeByRepresentedPerson(
+      personalRepresentative.nationalIdRepresentedPerson,
+      true,
+    )
 
     if (currentContract && currentContract.id) {
       await this.auditService.auditPromise(

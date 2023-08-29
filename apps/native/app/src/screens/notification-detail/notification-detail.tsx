@@ -42,16 +42,19 @@ const Action = styled.Button`
   flex: 1;
 `;
 
-const {useNavigationOptions, getNavigationOptions} =
-  createNavigationOptionHooks(() => ({
-    topBar: {
-      visible: false,
-    },
-  }));
+const {
+  useNavigationOptions,
+  getNavigationOptions,
+} = createNavigationOptionHooks(() => ({
+  topBar: {
+    visible: false,
+  },
+}));
 
-export const NotificationDetailScreen: NavigationFunctionComponent<
-  NotificationDetailScreenProps
-> = ({componentId, id}) => {
+export const NotificationDetailScreen: NavigationFunctionComponent<NotificationDetailScreenProps> = ({
+  componentId,
+  id,
+}) => {
   useNavigationOptions(componentId);
   const intl = useIntl();
   const {items} = useNotificationsStore();

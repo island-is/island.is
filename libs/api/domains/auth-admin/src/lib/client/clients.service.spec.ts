@@ -426,11 +426,12 @@ describe('ClientsService', () => {
         error: jest.fn(),
       }
 
-      const authAdminClientConfig: ConfigType<typeof AuthAdminApiClientConfig> =
-        {
-          basePaths: {},
-          isConfigured: true,
-        }
+      const authAdminClientConfig: ConfigType<
+        typeof AuthAdminApiClientConfig
+      > = {
+        basePaths: {},
+        isConfigured: true,
+      }
 
       await testServer({
         appModule: TestModule,

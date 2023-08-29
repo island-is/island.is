@@ -128,7 +128,8 @@ export const TableViewCell = React.memo((props: TableViewCellProps) => {
       <Cell
         border={border}
         disabled={disabled}
-        pointerEvents={disabled ? 'none' : undefined}>
+        pointerEvents={disabled ? 'none' : undefined}
+      >
         {image && <Left>{image}</Left>}
         <Center accessory={!!accessory}>
           {children !== undefined ? (

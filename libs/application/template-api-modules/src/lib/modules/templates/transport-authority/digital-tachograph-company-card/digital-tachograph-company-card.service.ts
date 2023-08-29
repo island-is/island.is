@@ -46,8 +46,12 @@ export class DigitalTachographCompanyCardService extends BaseTemplateApiService 
       )
     }
 
-    const isPayment: { fulfilled: boolean } | undefined =
-      await this.sharedTemplateAPIService.getPaymentStatus(auth, application.id)
+    const isPayment:
+      | { fulfilled: boolean }
+      | undefined = await this.sharedTemplateAPIService.getPaymentStatus(
+      auth,
+      application.id,
+    )
 
     if (!isPayment?.fulfilled) {
       throw new Error(

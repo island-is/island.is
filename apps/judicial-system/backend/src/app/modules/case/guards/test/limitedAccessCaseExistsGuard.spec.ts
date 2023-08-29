@@ -27,8 +27,10 @@ describe('Restricted Case Exists Guard', () => {
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { caseModel, limitedAccessCaseService } =
-      await createTestingCaseModule()
+    const {
+      caseModel,
+      limitedAccessCaseService,
+    } = await createTestingCaseModule()
 
     mockCaseModel = caseModel
 
@@ -37,9 +39,9 @@ describe('Restricted Case Exists Guard', () => {
       const then = {} as Then
 
       try {
-        then.result = await guard.canActivate({
+        then.result = await guard.canActivate(({
           switchToHttp: () => ({ getRequest: mockRequest }),
-        } as unknown as ExecutionContext)
+        } as unknown) as ExecutionContext)
       } catch (error) {
         then.error = error as Error
       }
