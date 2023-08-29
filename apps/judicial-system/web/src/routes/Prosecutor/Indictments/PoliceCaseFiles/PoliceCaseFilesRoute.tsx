@@ -202,11 +202,26 @@ const UploadFilesToPoliceCase: React.FC<
   )
 
   const onPoliceCaseFileUpload = useCallback(async () => {
-    const filesToUpload = policeCaseFileList.filter((p) => p.checked)
+    const filesToUpload = policeCaseFileList
+      .filter((p) => p.checked)
+      .sort((p1, p2) => (p1.chapter ?? -1) - (p2.chapter ?? -1))
 
     setIsUploading(true)
 
+    let currentChapter: number | undefined | null
+    let currentOrderWithinChapter: number | undefined | null
+
     filesToUpload.forEach(async (f, index) => {
+      if (f.chapter && f.chapter !== currentChapter) {
+        currentChapter = f.chapter
+        currentOrderWithinChapter = Math.max(
+          -1,
+          ...caseFiles
+            .filter((p) => p.chapter === currentChapter)
+            .map((p) => p.orderWithinChapter ?? -1),
+        )
+      }
+
       const fileToUpload = {
         id: f.id,
         type: 'application/pdf',
@@ -215,6 +230,10 @@ const UploadFilesToPoliceCase: React.FC<
         state: CaseFileState.STORED_IN_RVG,
         policeCaseNumber: f.policeCaseNumber,
         category: CaseFileCategory.CASE_FILE,
+        chapter: f.chapter,
+        orderWithinChapter: currentOrderWithinChapter
+          ? ++currentOrderWithinChapter
+          : undefined,
         displayDate: f.displayDate,
       } as UploadFile
 
@@ -226,7 +245,12 @@ const UploadFilesToPoliceCase: React.FC<
         setIsUploading(false)
       }
     })
-  }, [policeCaseFileList, uploadFromPolice, uploadPoliceCaseFileCallback])
+  }, [
+    caseFiles,
+    policeCaseFileList,
+    uploadFromPolice,
+    uploadPoliceCaseFileCallback,
+  ])
 
   return (
     <>
