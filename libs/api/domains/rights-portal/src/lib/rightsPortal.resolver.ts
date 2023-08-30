@@ -24,18 +24,13 @@ import {
   PaginatedHealthCentersResponse,
   UserHealthCenterRegistration,
 } from './models/healthCenter.model'
-import { LOGGER_PROVIDER } from '@island.is/logging'
-import type { Logger } from '@island.is/logging'
 
 @Resolver()
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @FeatureFlag(Features.servicePortalHealthRightsModule)
 @Audit({ namespace: '@island.is/api/rights-portal' })
 export class RightsPortalResolver {
-  constructor(
-    private readonly rightsPortalService: RightsPortalService,
-    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
-  ) {}
+  constructor(private readonly rightsPortalService: RightsPortalService) {}
 
   @Scopes(ApiScope.health)
   @Query(() => PaginatedTherapiesResponse, {
@@ -94,7 +89,7 @@ export class RightsPortalResolver {
     nullable: true,
   })
   @Audit()
-  async getRightsPortalHealthCenterRegistration(
+  getRightsPortalHealthCenterRegistration(
     @CurrentUser() user: User,
     @Args({
       name: 'input',
@@ -102,13 +97,11 @@ export class RightsPortalResolver {
     })
     input?: GetHealthCenterHistoryInput,
   ) {
-    const k = await this.rightsPortalService.getUserHealthCenterRegistrations(
+    return this.rightsPortalService.getUserHealthCenterRegistrations(
       user,
       input?.dateFrom,
       input?.dateTo,
     )
-    this.logger.debug(JSON.stringify(k))
-    return k
   }
 
   @FeatureFlag(Features.servicePortalHealthCenterDentistPage)

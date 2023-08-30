@@ -43,8 +43,6 @@ const HealthCenter = () => {
       />
     )
   }
-
-  console.log(healthCenterData)
   return (
     <Box marginBottom={[6, 6, 10]}>
       <IntroHeader
