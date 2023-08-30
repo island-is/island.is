@@ -19,8 +19,8 @@ import {
 import { TempCase as Case, TempCase } from '../../types'
 import { UserContext } from '../UserProvider/UserProvider'
 
-import { useCaseLazyQuery } from './getCase.generated'
-import { useLimitedAccessCaseLazyQuery } from './getLimitedAccessCase.generated'
+import { useCaseLazyQuery } from './case.generated'
+import { useLimitedAccessCaseLazyQuery } from './limitedAccessCase.generated'
 
 import { string } from 'yargs'
 
@@ -141,8 +141,8 @@ const FormProvider = ({ children }: Props) => {
   })
 
   const [getLimitedAccessCase] = useLimitedAccessCaseLazyQuery({
-    variables: { input: { id } },
     fetchPolicy: 'no-cache',
+    variables: { input: { id } },
     errorPolicy: 'all',
     onCompleted: (caseData) => {
       if (caseData && caseData.limitedAccessCase) {
