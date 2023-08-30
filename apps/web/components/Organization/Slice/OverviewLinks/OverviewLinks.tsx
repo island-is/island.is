@@ -57,7 +57,6 @@ export const OverviewLinksSlice: React.FC<
                 index,
               ) => {
                 return (
-                  
                   <GridRow
                     key={index}
                     direction={leftImage ? 'row' : 'rowReverse'}

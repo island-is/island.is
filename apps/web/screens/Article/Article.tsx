@@ -482,7 +482,7 @@ const ArticleScreen: Screen<ArticleProps> = ({
         printHidden
       >
         {/** @ts-ignore make web strict */}
-        {processEntry?.processLink && (<ProcessEntry {...processEntry}/>)}
+        {processEntry?.processLink && <ProcessEntry {...processEntry} />}
       </Box>
       {
         // @ts-ignore make web strict
@@ -710,7 +710,6 @@ const ArticleScreen: Screen<ArticleProps> = ({
             />
           </Box>
           {processEntry?.processLink && (
-            
             <Box
               marginTop={3}
               display={['none', 'none', 'block']}
@@ -718,9 +717,7 @@ const ArticleScreen: Screen<ArticleProps> = ({
               className="rs_read"
             >
               {/** @ts-ignore */}
-              <ProcessEntry
-                {...processEntry}
-              />
+              <ProcessEntry {...processEntry} />
             </Box>
           )}
           {(subArticle
@@ -753,10 +750,7 @@ const ArticleScreen: Screen<ArticleProps> = ({
           createPortal(
             <Box marginTop={5} display={['block', 'block', 'none']} printHidden>
               {/** @ts-ignore make web strict */}
-              <ProcessEntry
-                fixed
-                {...processEntry}
-              />
+              <ProcessEntry fixed {...processEntry} />
             </Box>,
             // @ts-ignore make web strict
             portalRef.current,

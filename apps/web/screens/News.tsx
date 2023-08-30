@@ -213,7 +213,7 @@ const NewsListNew: Screen<NewsListProps> = ({
 
   const newsItemContent = !!newsItem && (
     <>
-    {/** @ts-ignore make web strict */}
+      {/** @ts-ignore make web strict */}
       <Box display={['none', 'none', 'block']} width="full">
         <Divider />
         {/** @ts-ignore make web strict */}
@@ -242,7 +242,6 @@ const NewsListNew: Screen<NewsListProps> = ({
         {newsItem.intro}
       </Text>
       {Boolean(newsItem.image) && (
-        
         <Box
           paddingY={2}
           className={cn({
@@ -286,7 +285,7 @@ const NewsListNew: Screen<NewsListProps> = ({
 
   return (
     <>
-    {/** @ts-ignore make web strict */}
+      {/** @ts-ignore make web strict */}
       <HeadWithSocialSharing
         title={metaTitle}
         {...(newsItemMeta && { ...newsItemMeta })}

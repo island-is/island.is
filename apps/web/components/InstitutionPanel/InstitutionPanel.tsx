@@ -27,7 +27,6 @@ export const InstitutionPanel = ({
   imgContainerDisplay,
 }: InstitutionPanelProps) => {
   return (
-
     <Link {...linkProps}>
       <Box
         background="purple100"

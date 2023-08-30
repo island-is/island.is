@@ -39,9 +39,7 @@ export const withLocale =
     }) => (
       <I18n locale={locale} translations={translations}>
         {/** @ts-ignore make web strict */}
-        <Component
-          {...pageProps}
-        />
+        <Component {...pageProps} />
       </I18n>
     )
     // @ts-ignore make web strict

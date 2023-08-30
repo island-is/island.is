@@ -645,9 +645,7 @@ export const withMainLayout = <T,>(
     return (
       <Layout {...layoutProps}>
         {/** @ts-ignore make web strict */}
-        <Component
-          {...componentProps}
-        />
+        <Component {...componentProps} />
       </Layout>
     )
   }

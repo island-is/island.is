@@ -139,9 +139,7 @@ const AdgerdirArticle: Screen<AdgerdirArticleProps> = ({
           {processEntry?.processLink && (
             <Box marginTop={3} display={['none', 'none', 'block']} printHidden>
               {/** @ts-ignore */}
-              <ProcessEntry
-                {...processEntry}
-              />
+              <ProcessEntry {...processEntry} />
             </Box>
           )}
         </Stack>
@@ -154,17 +152,13 @@ const AdgerdirArticle: Screen<AdgerdirArticleProps> = ({
           {processEntry?.processLink &&
             mounted &&
             createPortal(
-
               <Box
                 marginTop={5}
                 display={['block', 'block', 'none']}
                 printHidden
               >
                 {/** @ts-ignore make web strict */}
-                <ProcessEntry
-                  fixed
-                  {...processEntry}
-                />
+                <ProcessEntry fixed {...processEntry} />
               </Box>,
               // @ts-ignore make web strict
               portalRef.current,
