@@ -46,6 +46,7 @@ describe('Basic serialization', () => {
       },
     })
     .postgres()
+    .shutdownGracePeriodSeconds(60)
   let result: SerializeSuccess<HelmService>
   beforeEach(async () => {
     result = (await generateOutputOne({
@@ -108,6 +109,10 @@ describe('Basic serialization', () => {
     })
   })
 
+  it('Shutdown Grace Period', () => {
+    expect(result.serviceDef[0].shutdownGracePeriodSeconds).toEqual(60)
+  })
+
   it('secrets', () => {
     expect(result.serviceDef[0].secrets).toEqual({
       SECRET: '/path',
@@ -145,6 +150,7 @@ describe('Basic serialization', () => {
     })
   })
 })
+
 
 describe('Env definition defaults', () => {
   const sut = service('api').namespace('islandis').image('test')
