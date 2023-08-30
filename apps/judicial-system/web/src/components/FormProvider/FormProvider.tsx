@@ -16,10 +16,13 @@ import {
   Defendant,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
-import { TempCase as Case } from '../../types'
+import { TempCase as Case, TempCase } from '../../types'
 import { UserContext } from '../UserProvider/UserProvider'
-import LimitedAccessCaseQuery from './limitedAccessCaseGql'
-import CaseQuery from './caseGql'
+
+import { useCaseLazyQuery } from './getCase.generated'
+import { useLimitedAccessCaseLazyQuery } from './getLimitedAccessCase.generated'
+
+import { string } from 'yargs'
 
 type ProviderState =
   | 'fetch'
@@ -77,7 +80,7 @@ const MaybeFormProvider = ({ children }: Props) => {
 const FormProvider = ({ children }: Props) => {
   const { limitedAccess } = useContext(UserContext)
   const router = useRouter()
-  const id = router.query.id
+  const id = router.query.id as string
 
   const caseType = router.pathname.includes('farbann')
     ? CaseType.TRAVEL_BAN
@@ -119,12 +122,13 @@ const FormProvider = ({ children }: Props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router.query.id, router.pathname])
 
-  const [getCase] = useLazyQuery(CaseQuery, {
+  const [getCase] = useCaseLazyQuery({
+    variables: { input: { id } },
     fetchPolicy: 'no-cache',
     errorPolicy: 'all',
     onCompleted: (caseData) => {
       if (caseData && caseData.case) {
-        setWorkingCase(caseData.case)
+        setWorkingCase(caseData.case as TempCase)
 
         // The case has been loaded from the server
         setState('up-to-date')
@@ -136,12 +140,13 @@ const FormProvider = ({ children }: Props) => {
     },
   })
 
-  const [getLimitedAccessCase] = useLazyQuery(LimitedAccessCaseQuery, {
+  const [getLimitedAccessCase] = useLimitedAccessCaseLazyQuery({
+    variables: { input: { id } },
     fetchPolicy: 'no-cache',
     errorPolicy: 'all',
     onCompleted: (caseData) => {
       if (caseData && caseData.limitedAccessCase) {
-        setWorkingCase(caseData.limitedAccessCase)
+        setWorkingCase(caseData.limitedAccessCase as TempCase)
 
         // The case has been loaded from the server
         setState('up-to-date')
@@ -156,9 +161,9 @@ const FormProvider = ({ children }: Props) => {
   useEffect(() => {
     if (state === 'fetch' || state === 'refresh') {
       if (limitedAccess) {
-        getLimitedAccessCase({ variables: { input: { id } } })
+        getLimitedAccessCase()
       } else {
-        getCase({ variables: { input: { id } } })
+        getCase()
       }
     }
   }, [getCase, getLimitedAccessCase, id, limitedAccess, state])
