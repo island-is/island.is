@@ -3,16 +3,13 @@ const audience = ['@island.is']
 const devConfig = {
   production: false,
   port: 3379,
-
   backend: {
     url: 'http://localhost:3380',
   },
-
   auth: {
     audience,
     issuer: 'https://identity-server.dev01.devland.is',
   },
-
   features: {
     hidden: process.env.HIDDEN_FEATURES ?? '',
   },

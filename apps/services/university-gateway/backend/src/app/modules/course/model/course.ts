@@ -14,7 +14,6 @@ import {
 } from 'sequelize-typescript'
 import { Season } from '../../program/types'
 import { University } from '../../university/model'
-//import { PageInfo } from '@island.is/nest/pagination'
 
 @Table({
   tableName: 'course',

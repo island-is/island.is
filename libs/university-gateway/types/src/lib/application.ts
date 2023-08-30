@@ -1,9 +1,5 @@
 import { ModeOfDelivery } from './program'
 
-export function universityGatewayTypes(): string {
-  return 'university-gateway-types'
-}
-
 export enum ApplicationStatus {
   IN_REVIEW = 'IN_REVIEW',
   IN_PROGRESS = 'IN_PROGRESS',

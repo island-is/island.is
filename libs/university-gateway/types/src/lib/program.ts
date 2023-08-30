@@ -1,15 +1,15 @@
-export enum ModeOfDelivery {
-  ON_SITE = 'ON_SITE',
-  ONLINE = 'ONLINE',
-  ONLINE_WITH_SESSION = 'ONLINE_WITH_SESSION',
-}
-
 import { Season } from './season'
 import { DegreeType } from './degreeType'
 import { ProgramExtraApplicationField } from './programExtraApplicationField'
 import { ProgramTag } from './programTag'
 import { ProgramModeOfDelivery } from './programModeOfDelivery'
 import { ProgramCourse } from './programCourse'
+
+export enum ModeOfDelivery {
+  ON_SITE = 'ON_SITE',
+  ONLINE = 'ONLINE',
+  ONLINE_WITH_SESSION = 'ONLINE_WITH_SESSION',
+}
 
 export type Program = {
   id: string

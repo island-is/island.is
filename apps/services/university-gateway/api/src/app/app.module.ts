@@ -1,13 +1,10 @@
 import { Module } from '@nestjs/common'
 import { GraphQLModule } from '@nestjs/graphql'
 import { ApolloDriver } from '@nestjs/apollo'
-
 import { CmsTranslationsModule } from '@island.is/cms-translations'
 import { ProblemModule } from '@island.is/nest/problem'
-
 import { environment } from '../environments'
 import { BackendApi } from './data-sources/backend'
-
 import {
   ApplicationModule,
   CourseModule,

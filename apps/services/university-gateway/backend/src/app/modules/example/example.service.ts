@@ -51,6 +51,7 @@ export class ExampleService {
     return 'Finished adding data to DB'
   }
 
+  //TODOx move into worker
   private async updatePrograms() {
     var majors = await this.ugReykjavikUniversityClient.getMajors()
 

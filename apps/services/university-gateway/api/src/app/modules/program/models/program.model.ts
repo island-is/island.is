@@ -1,14 +1,9 @@
-import { ApiProperty } from '@nestjs/swagger'
-import { GraphQLJSONObject } from 'graphql-type-json'
 import { Field, ObjectType, ID, registerEnumType } from '@nestjs/graphql'
-
 import { Season, DegreeType } from '@island.is/university-gateway-types'
-
 import { ProgramCourse } from './programCourse.model'
 import { ProgramExtraApplicationField } from './programExtraApplicationField.model'
 import { ProgramTag } from './programTag.model'
 import { ProgramModeOfDelivery } from './programModeOfDelivery.model'
-
 import type { Program as TProgram } from '@island.is/university-gateway-types'
 
 registerEnumType(Season, { name: 'Season' })

@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common'
 import { ProgramController } from './program.controller'
 import { ProgramService } from './program.service'
-import { ConfigModule } from '@nestjs/config'
 import { SequelizeModule } from '@nestjs/sequelize'
 import {
   Program,

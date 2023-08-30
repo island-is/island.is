@@ -1,9 +1,5 @@
-import { ApiProperty } from '@nestjs/swagger'
-import { GraphQLJSONObject } from 'graphql-type-json'
 import { Field, ObjectType, ID, registerEnumType } from '@nestjs/graphql'
-
 import { ModeOfDelivery } from '@island.is/university-gateway-types'
-
 import type { ProgramModeOfDelivery as TProgramModeOfDelivery } from '@island.is/university-gateway-types'
 
 registerEnumType(ModeOfDelivery, { name: 'ModeOfDelivery' })

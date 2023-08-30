@@ -1,10 +1,8 @@
 import { Field, ObjectType, ID, registerEnumType } from '@nestjs/graphql'
-
 import {
   ApplicationStatus,
   ModeOfDelivery,
 } from '@island.is/university-gateway-types'
-
 import type { Application as TApplication } from '@island.is/university-gateway-types'
 
 registerEnumType(ApplicationStatus, { name: 'ApplicationStatus' })

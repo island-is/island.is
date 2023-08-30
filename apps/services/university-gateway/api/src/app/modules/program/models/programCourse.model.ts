@@ -1,11 +1,6 @@
-import { ApiProperty } from '@nestjs/swagger'
-import { GraphQLJSONObject } from 'graphql-type-json'
 import { Field, ObjectType, ID, registerEnumType } from '@nestjs/graphql'
-
 import { Requirement } from '@island.is/university-gateway-types'
-
 import { Course } from '../../course/models/course.model'
-
 import type { ProgramCourse as TProgramCourse } from '@island.is/university-gateway-types'
 
 registerEnumType(Requirement, { name: 'Requirement' })

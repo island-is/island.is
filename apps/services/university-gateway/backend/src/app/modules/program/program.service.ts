@@ -10,7 +10,6 @@ import {
   Tag,
   TagResponse,
 } from './model'
-import { UgReykjavikUniversityClient } from '@island.is/clients/university-gateway/reykjavik-university'
 import { DegreeType, PaginateInput, Season } from './types'
 import { InjectModel } from '@nestjs/sequelize'
 import { paginate } from '@island.is/nest/pagination'
