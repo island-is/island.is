@@ -14,6 +14,9 @@ export class SectionWithVideo {
   @Field(() => String)
   title!: string
 
+  @Field(() => Boolean, { nullable: true })
+  showTitle?: boolean
+
   @CacheField(() => EmbeddedVideo, { nullable: true })
   video?: EmbeddedVideo | null
 
@@ -34,6 +37,7 @@ export const mapSectionWithVideo = ({
   typename: 'SectionWithVideo',
   id: sys.id,
   title: fields.title ?? '',
+  showTitle: fields.showTitle ?? true,
   video: fields.video ? mapEmbeddedVideo(fields.video) : null,
   html: fields.content ? mapHtml(fields.content, sys.id + ':content') : null,
   locale: sys.locale === 'is-IS' ? 'is' : sys.locale,

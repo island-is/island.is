@@ -23,6 +23,7 @@ const COLUMN_SPAN: GridColumnProps['span'] = [
 
 export interface SectionWithVideoProps {
   title: string
+  showTitle?: boolean
   html?: { __typename: 'Html'; id: string; document: Document }
   link?: { text: string; url: string }
   video?: { url: string; title: string; locale: string }
@@ -31,6 +32,7 @@ export interface SectionWithVideoProps {
 
 export const SectionWithVideo: FC<SectionWithVideoProps> = ({
   title,
+  showTitle = true,
   html,
   link,
   video,
@@ -48,7 +50,7 @@ export const SectionWithVideo: FC<SectionWithVideoProps> = ({
           span={video?.url ? COLUMN_SPAN : '12/12'}
           paddingTop={video?.url ? [2, 2, 2, 2, 0] : 0}
         >
-          {title && <Text variant="h2">{title}</Text>}
+          {title && showTitle && <Text variant="h2">{title}</Text>}
           {html?.document && richText([html] as SliceType[])}
           {link && link.url && (
             <Box marginTop={3}>

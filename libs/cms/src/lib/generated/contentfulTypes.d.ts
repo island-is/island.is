@@ -2937,6 +2937,9 @@ export interface ISectionWithVideoFields {
   /** Title */
   title: string
 
+  /** Show title */
+  showTitle?: boolean | undefined
+
   /** Content */
   content: Document
 
