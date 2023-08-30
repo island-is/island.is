@@ -35,4 +35,14 @@ export const application = defineMessages({
     description:
       'Description of application state/status when application is processed',
   },
+  radioOptionYes: {
+    id: 'doi.cs.application:information.labels.radioButtons.radioYes',
+    defaultMessage: 'Já',
+    description: 'Yes option on radio button',
+  },
+  radioOptionNo: {
+    id: 'doi.cs.application:information.labels.radioButtons.radioNo',
+    defaultMessage: 'Nei',
+    description: 'No option on radio button',
+  },
 })

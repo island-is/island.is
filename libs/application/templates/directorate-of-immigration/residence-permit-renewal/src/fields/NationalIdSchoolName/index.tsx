@@ -10,7 +10,7 @@ import * as kennitala from 'kennitala'
 import { personal } from '../../lib/messages'
 import debounce from 'lodash/debounce'
 import { IDENTITY_QUERY } from '../../graphql/queries'
-import { ParentsToApplicant } from '../../shared'
+import { ApplicantSchool } from '../../shared'
 import { getErrorViaPath } from '@island.is/application/core'
 
 interface Props {
@@ -19,22 +19,18 @@ interface Props {
   disabled?: boolean
   readOnly?: boolean
   isRequired?: boolean
-  addParentToApplication: (index: number) => void
-  itemNumber: number
-  repeaterField: GenericFormField<ParentsToApplicant>
+  addSchoolToApplication: (ssn: string, name: string) => void
 }
 
-export const NationalIdWithGivenFamilyName: FC<Props & FieldBaseProps> = ({
+export const NationalIdSchoolName: FC<Props & FieldBaseProps> = ({
   customId = '',
   field,
   application,
   // onNameChange,
-  itemNumber,
   readOnly,
   disabled,
-  repeaterField,
   isRequired,
-  addParentToApplication,
+  addSchoolToApplication,
   ...props
 }) => {
   const { id } = field
@@ -46,10 +42,8 @@ export const NationalIdWithGivenFamilyName: FC<Props & FieldBaseProps> = ({
   const [nationalIdInput, setNationalIdInput] = useState('')
   const [currentName, setCurrentName] = useState('')
 
-  const givenNameField = `${usedId}.givenName`
-  const familyNameField = `${usedId}.familyName`
+  const schoolNameField = `${usedId}.schoolName`
   const nationaIdField = `${usedId}.nationalId`
-  const wasRemovedField = `${usedId}.wasRemoved`
 
   const [
     getIdentity,
@@ -62,18 +56,13 @@ export const NationalIdWithGivenFamilyName: FC<Props & FieldBaseProps> = ({
       onCompleted: (data) => {
         console.log('2')
         console.log('data', data)
-        setValue(givenNameField, data.identity?.givenName ?? undefined)
-        setValue(familyNameField, data.identity?.familyName ?? undefined)
+        setValue(schoolNameField, data.identity?.givenName ?? undefined)
         setCurrentName(
           `${data.identity?.givenName} ${data.identity?.familyName}`,
         )
       },
     },
   )
-
-  useEffect(() => {
-    setValue(wasRemovedField, repeaterField.wasRemoved)
-  }, [repeaterField.wasRemoved, setValue])
 
   useEffect(() => {
     console.log('1')
@@ -90,7 +79,7 @@ export const NationalIdWithGivenFamilyName: FC<Props & FieldBaseProps> = ({
 
   useEffect(() => {
     if (currentName !== '') {
-      addParentToApplication(itemNumber)
+      addSchoolToApplication(nationalIdInput, currentName)
     }
   }, [currentName])
 
@@ -115,7 +104,7 @@ export const NationalIdWithGivenFamilyName: FC<Props & FieldBaseProps> = ({
         </GridColumn>
         <GridColumn span={['1/1', '1/1', '1/2']} paddingTop={2}>
           <InputController
-            id={givenNameField}
+            id={schoolNameField}
             label={formatMessage(personal.labels.userInformation.name)}
             disabled
           />

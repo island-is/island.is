@@ -128,7 +128,7 @@ const template: ApplicationTemplate<
               actions: [
                 {
                   event: DefaultEvents.SUBMIT,
-                  name: 'Staðfesta',
+                  name: 'ASDF',
                   type: 'primary',
                 },
               ],

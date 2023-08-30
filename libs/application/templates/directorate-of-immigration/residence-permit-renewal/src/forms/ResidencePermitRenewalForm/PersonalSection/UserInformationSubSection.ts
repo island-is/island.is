@@ -22,6 +22,15 @@ export const UserInformationSubSection = buildSubSection({
           titleVariant: 'h5',
         }),
         buildTextField({
+          id: 'userInformation.name',
+          title: personal.labels.userInformation.name,
+          backgroundColor: 'white',
+          width: 'half',
+          readOnly: true,
+          defaultValue: (application: Application) =>
+            application.externalData?.nationalRegistry?.data?.fullName,
+        }),
+        buildTextField({
           id: 'userInformation.nationalId',
           title: personal.labels.userInformation.nationalId,
           backgroundColor: 'white',
@@ -30,15 +39,6 @@ export const UserInformationSubSection = buildSubSection({
           format: '######-####',
           defaultValue: (application: Application) =>
             application.externalData?.nationalRegistry?.data?.nationalId,
-        }),
-        buildTextField({
-          id: 'userInformation.name',
-          title: personal.labels.userInformation.name,
-          backgroundColor: 'white',
-          width: 'half',
-          readOnly: true,
-          defaultValue: (application: Application) =>
-            application.externalData?.nationalRegistry?.data?.fullName,
         }),
         buildTextField({
           id: 'userInformation.address',

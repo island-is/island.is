@@ -1,4 +1,3 @@
-import { FileUpload } from '../FileUpload'
 import { Citizenship } from '../../lib/dataSchema'
 import { Box } from '@island.is/island-ui/core'
 import { FileUploadController } from '@island.is/application/ui-components'

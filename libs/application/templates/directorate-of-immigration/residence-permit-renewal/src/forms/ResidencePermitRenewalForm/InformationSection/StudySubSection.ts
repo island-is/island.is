@@ -3,6 +3,7 @@ import {
   buildSubSection,
   buildDescriptionField,
   getValueViaPath,
+  buildCustomField,
 } from '@island.is/application/core'
 import { information } from '../../../lib/messages'
 
@@ -19,7 +20,7 @@ export const StudySubSection = (index: number) =>
         false,
       ) as boolean
 
-      return isForApplicant && isPermitTypeStudy
+      return true //TODO: SET RIGHT CONDITION isForApplicant && isPermitTypeStudy
     },
     children: [
       buildMultiField({
@@ -27,10 +28,10 @@ export const StudySubSection = (index: number) =>
         title: information.labels.study.pageTitle,
         description: information.labels.study.description,
         children: [
-          buildDescriptionField({
-            id: 'study.title',
-            title: information.labels.study.title,
-            titleVariant: 'h5',
+          buildCustomField({
+            id: 'study',
+            title: information.labels.study.subSectionTitle,
+            component: 'StudyInformation',
           }),
         ],
       }),

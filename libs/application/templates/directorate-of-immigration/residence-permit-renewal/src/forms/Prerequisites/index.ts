@@ -88,63 +88,63 @@ export const Prerequisites: Form = buildForm({
               title: externalData.userProfile.title,
               subTitle: externalData.userProfile.subTitle,
             }),
-            buildDataProviderItem({
-              title: externalData.directorateOfImmigration.title,
-              subTitle: externalData.directorateOfImmigration.subTitle,
-            }),
+            // buildDataProviderItem({
+            //   title: externalData.directorateOfImmigration.title,
+            //   subTitle: externalData.directorateOfImmigration.subTitle,
+            // }),
             buildDataProviderItem({
               provider: CountriesApi,
               title: '',
             }),
-            buildDataProviderItem({
-              provider: TravelDocumentTypesApi,
-              title: '',
-            }),
-            buildDataProviderItem({
-              provider: ApplicantCurrentResidencePermitApi,
-              title: '',
-            }),
-            buildDataProviderItem({
-              provider: ChildrenCurrentResidencePermitApi,
-              title: '',
-            }),
-            buildDataProviderItem({
-              provider: ApplicantCurrentResidencePermitTypeApi,
-              title: '',
-            }),
-            buildDataProviderItem({
-              provider: OldStayAbroadListApi,
-              title: '',
-            }),
-            buildDataProviderItem({
-              provider: OldCriminalRecordListApi,
-              title: '',
-            }),
-            buildDataProviderItem({
-              provider: OldStudyItemApi,
-              title: '',
-            }),
-            buildDataProviderItem({
-              provider: OldPassportItemApi,
-              title: '',
-            }),
-            buildDataProviderItem({
-              provider: OldAgentItemApi,
-              title: '',
-            }),
-            buildDataProviderItem({
-              provider: UtlendingastofnunPaymentCatalogApi,
-              title: '',
-            }),
+            // buildDataProviderItem({
+            //   provider: TravelDocumentTypesApi,
+            //   title: '',
+            // }),
+            // buildDataProviderItem({
+            //   provider: ApplicantCurrentResidencePermitApi,
+            //   title: '',
+            // }),
+            // buildDataProviderItem({
+            //   provider: ChildrenCurrentResidencePermitApi,
+            //   title: '',
+            // }),
+            // buildDataProviderItem({
+            //   provider: ApplicantCurrentResidencePermitTypeApi,
+            //   title: '',
+            // }),
+            // buildDataProviderItem({
+            //   provider: OldStayAbroadListApi,
+            //   title: '',
+            // }),
+            // buildDataProviderItem({
+            //   provider: OldCriminalRecordListApi,
+            //   title: '',
+            // }),
+            // buildDataProviderItem({
+            //   provider: OldStudyItemApi,
+            //   title: '',
+            // }),
+            // buildDataProviderItem({
+            //   provider: OldPassportItemApi,
+            //   title: '',
+            // }),
+            // buildDataProviderItem({
+            //   provider: OldAgentItemApi,
+            //   title: '',
+            // }),
+            // buildDataProviderItem({
+            //   provider: UtlendingastofnunPaymentCatalogApi,
+            //   title: '',
+            // }),
             buildDataProviderItem({
               pageTitle: externalData.dataProvider.subTitle2,
               title: '',
             }),
-            buildDataProviderItem({
-              id: 'meansOfSupport',
-              title: externalData.icelandRevenueAndCustoms.title,
-              subTitle: externalData.icelandRevenueAndCustoms.subTitle,
-            }),
+            // buildDataProviderItem({
+            //   id: 'meansOfSupport',
+            //   title: externalData.icelandRevenueAndCustoms.title,
+            //   subTitle: externalData.icelandRevenueAndCustoms.subTitle,
+            // }),
           ],
         }),
       ],

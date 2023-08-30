@@ -3,6 +3,7 @@ import {
   buildSubSection,
   buildDescriptionField,
   getValueViaPath,
+  buildCustomField,
 } from '@island.is/application/core'
 import { information } from '../../../lib/messages'
 import * as kennitala from 'kennitala'
@@ -25,12 +26,11 @@ export const CriminalRecordSubSection = (index: number) =>
       buildMultiField({
         id: 'criminalRecordMultiField',
         title: information.labels.criminalRecord.pageTitle,
-        description: information.labels.criminalRecord.description,
         children: [
-          buildDescriptionField({
-            id: 'criminalRecord.title',
-            title: information.labels.criminalRecord.title,
-            titleVariant: 'h5',
+          buildCustomField({
+            id: 'criminalRecord',
+            title: '',
+            component: 'CriminalRecord',
           }),
         ],
       }),

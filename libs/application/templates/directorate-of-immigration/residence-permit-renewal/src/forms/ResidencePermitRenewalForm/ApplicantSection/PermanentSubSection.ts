@@ -3,13 +3,18 @@ import {
   buildSubSection,
   buildDescriptionField,
   getValueViaPath,
+  buildCustomField,
+  buildMessageWithLinkButtonField,
 } from '@island.is/application/core'
 import { CurrentResidencePermit } from '@island.is/clients/directorate-of-immigration/residence-permit'
 import { applicant } from '../../../lib/messages'
+import DescriptionText from '../../../components/DescriptionText'
+import { DescriptionInlineLink } from '../../../fields'
 
 export const PermanentSubSection = buildSubSection({
   id: 'permanent',
   title: applicant.labels.permanent.subSectionTitle,
+
   condition: (_, externalData) => {
     const applicantCurrentResidencePermit = getValueViaPath(
       externalData,
@@ -22,24 +27,50 @@ export const PermanentSubSection = buildSubSection({
       [],
     ) as CurrentResidencePermit[]
 
-    const canAtLeastOneApplyPermanent = !![
-      applicantCurrentResidencePermit,
-      ...childrenCurrentResidencePermit,
-    ].find((x) => x.canApplyPermanent)
+    // const canAtLeastOneApplyPermanent = !![
+    //   applicantCurrentResidencePermit,
+    //   ...childrenCurrentResidencePermit,
+    // ].find((x) => x.canApplyPermanent)
 
-    return canAtLeastOneApplyPermanent
+    // return canAtLeastOneApplyPermanent
+
+    return true
   },
   children: [
     buildMultiField({
       id: 'permanentMultiField',
       title: applicant.labels.permanent.pageTitle,
-      description: applicant.labels.permanent.description,
+      description: '',
       children: [
-        buildDescriptionField({
-          id: 'permanent.title',
-          title: applicant.labels.permanent.title,
-          titleVariant: 'h5',
+        buildCustomField({
+          id: 'permanentMultiFieldDescription',
+          title: '',
+          component: 'DescriptionInlineLink',
         }),
+        buildCustomField({
+          id: 'selectedPermanentIndividuals',
+          title: '',
+          component: 'SelectIndividuals',
+        }),
+        // buildMessageWithLinkButtonField({
+        //   id: 'openpermanent',
+        //   title: applicant.labels.permanent.messageWithLinkTitle,
+        //   url: '/',
+        //   buttonTitle: applicant.labels.permanent.messageWithLinkButtonTitle,
+        //   message: applicant.labels.permanent.messageWithLinkTitle,
+        // }),
+        buildCustomField(
+          {
+            id: 'openpermanent',
+            title: '',
+            component: 'MessageWithLink',
+          },
+          {
+            buttonTitle: applicant.labels.permanent.messageWithLinkButtonTitle,
+            buttonUrl: applicant.labels.permanent.messageWithLinkUrl,
+            title: applicant.labels.permanent.messageWithLinkTitle,
+          },
+        ),
       ],
     }),
   ],

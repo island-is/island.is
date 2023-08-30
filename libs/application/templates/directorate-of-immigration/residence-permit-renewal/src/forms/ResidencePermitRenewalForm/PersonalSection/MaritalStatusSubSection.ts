@@ -24,7 +24,7 @@ export const MaritalStatusSubSection = buildSubSection({
       '',
     ) as string
 
-    return isPermitTypeFamily && !!spouseNationalId
+    return true // TODO: SET RIGHT CONDITION isPermitTypeFamily && !!spouseNationalId
   },
   children: [
     buildMultiField({
@@ -54,6 +54,15 @@ export const MaritalStatusSubSection = buildSubSection({
           space: 3,
         }),
         buildTextField({
+          id: 'maritalStatus.name',
+          title: personal.labels.maritalStatus.name,
+          backgroundColor: 'white',
+          width: 'half',
+          readOnly: true,
+          defaultValue: (application: Application) =>
+            application.externalData?.nationalRegistrySpouse?.data?.name,
+        }),
+        buildTextField({
           id: 'maritalStatus.nationalId',
           title: personal.labels.maritalStatus.nationalId,
           backgroundColor: 'white',
@@ -62,15 +71,6 @@ export const MaritalStatusSubSection = buildSubSection({
           format: '######-####',
           defaultValue: (application: Application) =>
             application.externalData?.nationalRegistrySpouse?.data?.nationalId,
-        }),
-        buildTextField({
-          id: 'maritalStatus.name',
-          title: personal.labels.maritalStatus.name,
-          backgroundColor: 'white',
-          width: 'half',
-          readOnly: true,
-          defaultValue: (application: Application) =>
-            application.externalData?.nationalRegistrySpouse?.data?.name,
         }),
       ],
     }),

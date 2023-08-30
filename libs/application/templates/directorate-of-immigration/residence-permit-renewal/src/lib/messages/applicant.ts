@@ -104,13 +104,30 @@ export const applicant = {
       description: {
         id: 'doi.rpr.application:applicant.labels.permanent.description',
         defaultMessage:
-          'Sed volutpat, metus eu rutrum gravida, odio ante semper arcu, at volutpat lectus ex et lectus.',
+          'Eftirfarandi aðilar/aðili hafa dvalið nógu lengi á Íslandi til þess að geta átt rétt á ótímabundnu dvalarleyfi. Sjá nánar önnur skilyrði á <a href="/">heimasíðu Útlendingastofnunar</a>.  Ef þú vilt geturðu smellt á linkinn hér að neðan til að hefja nýja umsókn fyrir ótímabundið dvalarleyfi (þá fellur þessi umsókn út gildi). Athugið að aðilinn sem réttur er dreginn af þarf að vera komin með ótímabundið eða hafa sótt um það eða vera EES ríkisborgari eða íslenskur ríkisborgari.',
         description: 'Permanent description',
       },
       title: {
         id: 'doi.rpr.application:applicant.labels.permanent.title',
         defaultMessage: 'Test',
         description: 'Permanent sub section title',
+      },
+      messageWithLinkButtonTitle: {
+        id:
+          'doi.rpr.application:applicant.labels.permanent.messageWithLinkButtonTitle',
+        defaultMessage: 'Opna nýja umsókn',
+        description: 'Title for new application button',
+      },
+      messageWithLinkTitle: {
+        id:
+          'doi.rpr.application:applicant.labels.permanent.messageWithLinkTitle',
+        defaultMessage: 'Umsókn um ótímabundið dvalarleyfi',
+        description: 'Message with link title',
+      },
+      messageWithLinkUrl: {
+        id: 'doi.rpr.application:applicant.labels.permanent.messageWithLinkUrl',
+        defaultMessage: '/',
+        description: 'Message with link url',
       },
     }),
   },

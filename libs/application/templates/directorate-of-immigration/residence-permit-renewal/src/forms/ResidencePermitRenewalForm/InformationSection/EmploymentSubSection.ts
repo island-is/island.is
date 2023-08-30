@@ -25,9 +25,11 @@ export const EmploymentSubSection = (index: number) =>
         false,
       ) as boolean
 
-      return (
-        isForApplicant && (isPermitTypeEmployment || isWorkPermitTypeSpecial)
-      )
+      return true
+      // TODO: SET RIGHT CONDITION
+      // (
+      //   isForApplicant && (isPermitTypeEmployment || isWorkPermitTypeSpecial)
+      // )
     },
     children: [
       buildMultiField({

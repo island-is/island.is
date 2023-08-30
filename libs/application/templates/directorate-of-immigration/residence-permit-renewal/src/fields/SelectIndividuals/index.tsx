@@ -32,30 +32,31 @@ export const SelectIndividuals = ({ field, application, error }: any) => {
     'applicantCurrentResidencePermit.data',
   ) as CurrentResidencePermit
 
-  const canApplyRenewal = !!applicantCurrentResidencePermit?.canApplyRenewal
-    ?.canApply
+  const canApplyRenewal = true
+  // !!applicantCurrentResidencePermit?.canApplyRenewal
+  //   ?.canApply
 
   const applicantCheckbox = {
     value: applicant?.nationalId || '',
     label: applicant?.fullName || '',
-    subLabel: applicantCurrentResidencePermit?.permitTypeName,
-    rightContent: (
-      <div style={{ display: 'flex' }}>
-        <Tag
-          outlined={!canApplyRenewal ? false : true}
-          disabled
-          variant={!canApplyRenewal ? 'red' : 'blue'}
-        >
-          {canApplyRenewal
-            ? formatMessage(applicantMessage.labels.pickApplicant.validTo, {
-                date: formatDate(
-                  applicantCurrentResidencePermit?.permitValidTo,
-                ),
-              })
-            : applicantCurrentResidencePermit?.canApplyRenewal?.reason}
-        </Tag>
-      </div>
-    ),
+    subLabel: 'lækjasdf', //applicantCurrentResidencePermit?.permitTypeName,
+    // rightContent: (
+    //   <div style={{ display: 'flex' }}>
+    //     <Tag
+    //       outlined={!canApplyRenewal ? false : true}
+    //       disabled
+    //       variant={!canApplyRenewal ? 'red' : 'blue'}
+    //     >
+    //       {canApplyRenewal
+    //         ? formatMessage(applicantMessage.labels.pickApplicant.validTo, {
+    //             date: formatDate(
+    //               applicantCurrentResidencePermit?.permitValidTo,
+    //             ),
+    //           })
+    //         : applicantCurrentResidencePermit?.canApplyRenewal?.reason}
+    //     </Tag>
+    //   </div>
+    // ),
     disabled: !canApplyRenewal,
   }
 

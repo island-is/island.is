@@ -1,7 +1,7 @@
 import {
   buildMultiField,
   buildSubSection,
-  buildDescriptionField,
+  buildCustomField,
 } from '@island.is/application/core'
 import { information } from '../../../lib/messages'
 
@@ -13,12 +13,11 @@ export const StaysAbroadSubSection = (index: number) =>
       buildMultiField({
         id: 'staysAbroadMultiField',
         title: information.labels.staysAbroad.pageTitle,
-        description: information.labels.staysAbroad.description,
         children: [
-          buildDescriptionField({
-            id: 'staysAbroad.title',
-            title: information.labels.staysAbroad.title,
-            titleVariant: 'h5',
+          buildCustomField({
+            id: 'staysAbroad',
+            title: '',
+            component: 'StaysAbroad',
           }),
         ],
       }),
