@@ -17,6 +17,7 @@ import { withMainLayout } from '@island.is/web/layouts/main'
 import {
   AnchorNavigation,
   BackgroundImage,
+  Form,
   HeadWithSocialSharing,
   Sticky,
   WatsonChatPanel,
@@ -178,7 +179,13 @@ export const LifeEvent: Screen<LifeEventProps> = ({
                   />
                 </Box>
                 <Box className="rs_read" paddingTop={[3, 3, 4]}>
-                  {webRichText(content as SliceType[])}
+                  {webRichText(content as SliceType[], {
+                    renderComponent: {
+                      Form: (form) => (
+                        <Form form={form} namespace={namespace} />
+                      ),
+                    },
+                  })}
                 </Box>
               </GridColumn>
             </GridRow>
