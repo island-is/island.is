@@ -141,7 +141,9 @@ const AdgerdirArticle: Screen<AdgerdirArticleProps> = ({
           </Text>
           {processEntry?.processLink && (
             <Box marginTop={3} display={['none', 'none', 'block']} printHidden>
-              {/** @ts-ignore */}
+              {/** 
+               // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+               // @ts-ignore */}
               <ProcessEntry {...processEntry} />
             </Box>
           )}
