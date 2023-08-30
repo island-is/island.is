@@ -20,7 +20,8 @@ const wrapTranslations = <T extends { [key: string]: string }>(
         }
         if (!(p in warnedKeys)) {
           console.warn(`Missing translation for ${p}`)
-          // @ts-ignore make web strict
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
           warnedKeys[p] = true
         }
         return p
@@ -40,6 +41,7 @@ interface I18nContextType {
 }
 
 export const I18nContext = createContext<I18nContextType | null>(null)
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore make web strict
 export default function I18n({ children, locale, translations }) {
   const [activeDict, setActiveDict] = useState(() => translations)
@@ -67,7 +69,8 @@ export default function I18n({ children, locale, translations }) {
   const i18nWrapper = {
     activeLocale: activeLocaleRef.current,
     t: wrapTranslations(translations),
-    // @ts-ignore make web strict
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
     locale: (l: string, dict) => {
       i18n.locale(l)
       activeLocaleRef.current = l

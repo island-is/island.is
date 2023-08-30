@@ -45,7 +45,8 @@ const ProjectNewsArticle: Screen<ProjectNewsArticleleProps> = ({
 }) => {
   const Router = useRouter()
   const { linkResolver } = useLinkResolver()
-  // @ts-ignore make web strict
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
   const n = useNamespace(namespace)
   useContentfulId(projectPage.id, newsItem?.id)
   useLocalLinkTypeResolver()
@@ -58,7 +59,8 @@ const ProjectNewsArticle: Screen<ProjectNewsArticleleProps> = ({
   const currentNavItem = projectPage.sidebarLinks.find(
     ({ primaryLink }) => primaryLink?.url === overviewPath,
   )
-  // @ts-ignore make web strict
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
   const newsOverviewTitle: string = currentNavItem
     ? currentNavItem.primaryLink?.text
     : n('newsTitle', 'Fréttir og tilkynningar')

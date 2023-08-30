@@ -46,19 +46,26 @@ export const SearchSection = ({
   const { linkResolver } = useLinkResolver()
 
   const {
-    // @ts-ignore make web strict
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
     featured,
-    // @ts-ignore make web strict
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
     heading,
-    // @ts-ignore make web strict
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
     image,
-    // @ts-ignore make web strict
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
     imageAlternativeText,
-    // @ts-ignore make web strict
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
     imageMobile,
-    // @ts-ignore make web strict
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
     videos,
-    // @ts-ignore make web strict
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
     videosMobile,
   } = page
 
@@ -165,7 +172,8 @@ export const SearchSection = ({
                   <Video
                     name="desktop"
                     title={imageAlternativeText}
-                    // @ts-ignore make web strict
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
                     sources={videos.map(({ url, contentType }) => {
                       return {
                         src: url,
@@ -205,7 +213,8 @@ export const SearchSection = ({
               name="mobile"
               title={imageAlternativeText}
               dataTestId="home-banner"
-              // @ts-ignore make web strict
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
               sources={videosMobile.map(({ url, contentType }) => {
                 return {
                   src: url,

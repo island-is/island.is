@@ -66,6 +66,7 @@ const SEARCH_REDUCER_ACTION_TYPES = {
   SEARCH_SUCCESS_NEXT_PAGE: 'SEARCH_SUCCESS_NEXT_PAGE',
   SEARCH_ERROR: 'SEARCH_ERROR',
 }
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore make web strict
 const searchReducer = (state: SearchState, action): SearchState => {
   switch (action.type) {
@@ -173,7 +174,8 @@ const useSearch = (
         currentPageNumber: currentPageNumber,
       })
     }
-    // @ts-ignore make web strict
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
     const thisTimerId = (timer.current = setTimeout(async () => {
       client
         .query<Query, QueryGetOperatingLicensesArgs>({
@@ -241,7 +243,8 @@ const OperatingLicenses: Screen<OperatingLicensesProps> = ({
   subpage,
   namespace,
 }) => {
-  // @ts-ignore make web strict
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
   const Router = useRouter()
@@ -251,7 +254,8 @@ const OperatingLicenses: Screen<OperatingLicensesProps> = ({
   useContentfulId(organizationPage?.id, subpage?.id)
 
   const pageUrl = Router.pathname
-  // @ts-ignore make web strict
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
   const navList: NavigationItem[] = organizationPage?.menuLinks.map(
     ({ primaryLink, childrenLinks }) => ({
       title: primaryLink?.text,
@@ -336,7 +340,8 @@ const OperatingLicenses: Screen<OperatingLicensesProps> = ({
           query: GET_OPERATING_LICENSES_CSV_QUERY,
         })
         .then(({ data: { getOperatingLicensesCSV } }) => {
-          // @ts-ignore make web strict
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
           return resolve(getOperatingLicensesCSV.value)
         })
         .catch(() => {
@@ -348,9 +353,11 @@ const OperatingLicenses: Screen<OperatingLicensesProps> = ({
   return (
     <OrganizationWrapper
       pageTitle={subpage?.title ?? ''}
-      // @ts-ignore make web strict
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
       organizationPage={organizationPage}
-      // @ts-ignore make web strict
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
       pageFeaturedImage={subpage?.featuredImage}
       showReadSpeaker={false}
       breadcrumbItems={[
@@ -374,7 +381,8 @@ const OperatingLicenses: Screen<OperatingLicensesProps> = ({
           {subpage?.title}
         </Text>
         <Webreader
-          // @ts-ignore make web strict
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
           readId={null}
           readClass="rs_read"
         />

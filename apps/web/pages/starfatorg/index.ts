@@ -4,7 +4,8 @@ import { IcelandicGovernmentInstitutionVacanciesList } from '@island.is/web/scre
 import { getServerSidePropsWrapper } from '@island.is/web/utils/getServerSidePropsWrapper'
 
 const Screen = withApollo(
-  // @ts-ignore make web strict
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
   withLocale('is')(IcelandicGovernmentInstitutionVacanciesList),
 )
 

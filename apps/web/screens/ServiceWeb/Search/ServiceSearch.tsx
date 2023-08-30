@@ -70,7 +70,8 @@ const ServiceSearch: Screen<ServiceSearchProps> = ({
   locale,
 }) => {
   const Router = useRouter()
-  // @ts-ignore make web strict
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
   const n = useNamespace(namespace)
   usePlausible('Search Query', {
     query: (q ?? '').trim().toLowerCase(),
@@ -142,7 +143,8 @@ const ServiceSearch: Screen<ServiceSearchProps> = ({
         n('assistanceForIslandIs', 'Aðstoð fyrir Ísland.is'),
       )}
       institutionSlug={institutionSlug}
-      // @ts-ignore make web strict
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
       organization={organization}
       smallBackground
       searchPlaceholder={o(
@@ -154,19 +156,22 @@ const ServiceSearch: Screen<ServiceSearchProps> = ({
         <GridContainer>
           <GridRow marginBottom={3}>
             <GridColumn
-              // @ts-ignore make web strict
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
               offset={[null, null, null, '1/12']}
               span={['12/12', '12/12', '12/12', '10/12', '7/12']}
             >
               <Stack space={[3, 3, 4]}>
                 <Box display={['none', 'none', 'block']} printHidden>
                   <Breadcrumbs
-                    // @ts-ignore make web strict
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
                     items={breadcrumbItems}
                     renderLink={(link, { href }) => {
                       return (
                         <NextLink
-                          // @ts-ignore make web strict
+                          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
                           href={href}
                           passHref
                           legacyBehavior
@@ -256,7 +261,8 @@ const ServiceSearch: Screen<ServiceSearchProps> = ({
 
           <GridRow marginBottom={9}>
             <GridColumn
-              // @ts-ignore make web strict
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
               offset={[null, null, null, '1/12']}
               span={['12/12', '12/12', '12/12', '10/12', '7/12']}
             >
@@ -267,7 +273,8 @@ const ServiceSearch: Screen<ServiceSearchProps> = ({
 
                     labels.forEach((label) => {
                       tags.push({
-                        // @ts-ignore make web strict
+                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
                         title: label,
                         tagProps: {
                           outlined: true,
@@ -293,7 +300,8 @@ const ServiceSearch: Screen<ServiceSearchProps> = ({
           {totalSearchResults > 0 && (
             <GridRow>
               <GridColumn
-                // @ts-ignore make web strict
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
                 offset={[null, null, null, '1/12']}
                 span={['12/12', '12/12', '12/12', '10/12', '7/12']}
               >
@@ -317,7 +325,8 @@ const ServiceSearch: Screen<ServiceSearchProps> = ({
 
           <GridRow>
             <GridColumn
-              // @ts-ignore make web strict
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
               offset={[null, null, null, '1/12']}
               span={['12/12', '12/12', '12/12', '10/12']}
             >
@@ -417,7 +426,8 @@ ServiceSearch.getProps = async ({ apolloClient, locale, query }) => {
     q,
     page,
     namespace,
-    // @ts-ignore make web strict
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
     organization: organization?.data?.getOrganization,
     searchResults,
     locale: locale as Locale,

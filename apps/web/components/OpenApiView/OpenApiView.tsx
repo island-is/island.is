@@ -23,9 +23,11 @@ export interface OpenApiViewProps {
 }
 
 export const OpenApiView = ({ strings, openApiInput }: OpenApiViewProps) => {
-  // @ts-ignore make web strict
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
   const n = useNamespace(strings)
-  // @ts-ignore make web strict
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
   const [documentation, setDocumentation] = useState<OpenApi>(null)
 
   const { data, loading, error } = useQuery(GET_OPEN_API_QUERY, {
@@ -44,7 +46,8 @@ export const OpenApiView = ({ strings, openApiInput }: OpenApiViewProps) => {
       if (onCompleted && !loading && !error) {
         onCompleted(data)
       } else {
-        // @ts-ignore make web strict
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
         setDocumentation(null)
       }
     }

@@ -52,11 +52,13 @@ const OrganizationHomePage: Screen<HomeProps> = ({
   organization,
   namespace,
 }) => {
-  // @ts-ignore make web strict
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
   const n = useNamespace(namespace)
   useContentfulId(organizationPage?.id)
   const { linkResolver } = useLinkResolver()
-  // @ts-ignore make web strict
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
   const navList: NavigationItem[] =
     organizationPage?.menuLinks.map(({ primaryLink, childrenLinks }) => ({
       title: primaryLink?.text,
@@ -87,9 +89,11 @@ const OrganizationHomePage: Screen<HomeProps> = ({
       showExternalLinks={true}
       pageTitle={organizationPage?.title ?? ''}
       pageDescription={organizationPage?.description}
-      // @ts-ignore make web strict
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
       organizationPage={organizationPage}
-      // @ts-ignore make web strict
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
       pageFeaturedImage={organizationPage?.featuredImage}
       fullWidthContent={true}
       minimal={organizationPage?.theme === 'landing_page'}
@@ -146,7 +150,8 @@ const OrganizationHomePage: Screen<HomeProps> = ({
               <Box marginBottom={8}>
                 <IconTitleCard
                   heading={linkTitle}
-                  // @ts-ignore make web strict
+                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
                   href={organization?.link}
                   imgSrc={o(
                     'landingPageTitleCardImageSrc',
@@ -173,7 +178,8 @@ const OrganizationHomePage: Screen<HomeProps> = ({
               <SliceMachine
                 key={slice.id}
                 slice={slice}
-                // @ts-ignore make web strict
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
                 namespace={namespace}
                 slug={organizationPage.slug}
                 fullWidth={organizationPage.theme === 'landing_page'}
@@ -199,7 +205,8 @@ const OrganizationHomePage: Screen<HomeProps> = ({
         <SliceMachine
           key={slice.id}
           slice={slice}
-          // @ts-ignore make web strict
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
           namespace={namespace}
           slug={organizationPage.slug}
           fullWidth={true}
@@ -236,7 +243,8 @@ const Home: Screen<HomeProps> = ({
   if (isLandingPage)
     return (
       <LandingPage
-        // @ts-ignore make web strict
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
         namespace={namespace}
         organization={organization}
       />
@@ -306,7 +314,8 @@ Home.getProps = async ({ apolloClient, locale, query }) => {
     showSearchInHeader: false,
     ...getThemeConfig(
       getOrganizationPage?.theme ?? 'landing_page',
-      // @ts-ignore make web strict
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
       getOrganizationPage?.slug ?? getOrganization?.slug,
     ),
   }

@@ -4,6 +4,7 @@ import { Button, Box } from '@island.is/island-ui/core'
 const isIterableObject = (val: object[]) => {
   return typeof val === 'object' && val !== null && !Array.isArray(val)
 }
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore make web strict
 const forAll = function* (obj: object, keyPrefix = '') {
   const filteredKeys = Object.entries(obj).filter(([k]) => k !== '__typename')

@@ -173,7 +173,8 @@ const OpenDataSubPage: Screen<OpenDataSubpageProps> = ({ page }) => {
                 {graphCards.map((item, index) => (
                   <Box marginBottom={3} key={index}>
                     <ChartsCard
-                      // @ts-ignore make web strict
+                      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
                       chart={item}
                       subPage
                     />

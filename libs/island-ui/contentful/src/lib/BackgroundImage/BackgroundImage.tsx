@@ -46,9 +46,11 @@ export const BackgroundImage: FC<
   },
 }) => {
   const src = `${image?.url ? image.url : ''}?w=${width}`
-  // @ts-ignore make web strict
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
   const thumbnail = image.url + '?w=50'
-  // @ts-ignore make web strict
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
   const alt = image.title ?? ''
   const imageProps = alt
     ? {

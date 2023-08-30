@@ -132,15 +132,18 @@ export const IcelandicNamesSearcher = () => {
     const data = tableData.filter((x) => x.visible)
 
     const kyn: string[] = filter.kyn.reduce((a, b) => {
-      // @ts-ignore make web strict
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
       a.push(...b.split('|'))
       return a
     }, [])
 
     const filterFns: FilterFns = [
-      // @ts-ignore make web strict
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
       (x) => !kyn.length || kyn.includes(x.type),
-      // @ts-ignore make web strict
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
       (x) => !filter.stada.length || filter.stada.includes(x.status),
     ]
 

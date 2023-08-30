@@ -93,11 +93,13 @@ interface SliceMachineProps {
 const fullWidthSlices = ['TimelineSlice', 'LogoListSlice', 'EmailSignup']
 
 const renderSlice = (
-  // @ts-ignore make web strict
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
   slice,
   namespace: Record<string, string>,
   slug: string,
-  // @ts-ignore make web strict
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
   params,
 ) => {
   switch (slice.__typename) {
@@ -169,18 +171,21 @@ export const SliceMachine = ({
         <GridColumn
           paddingTop={paddingTop}
           span={
-            // @ts-ignore make web strict
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
             fullWidthSlices.includes(slice.__typename)
               ? '9/9'
               : ['9/9', '9/9', '7/9']
           }
           offset={
-            // @ts-ignore make web strict
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
             fullWidthSlices.includes(slice.__typename) ? '0' : ['0', '0', '1/9']
           }
         >
           {
-            // @ts-ignore make web strict
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
             renderSlice(slice, namespace, slug, params)
           }
         </GridColumn>
@@ -191,13 +196,15 @@ export const SliceMachine = ({
       {wrapWithGridContainer && (
         <GridContainer>
           {
-            // @ts-ignore make web strict
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
             renderSlice(slice, namespace, slug, params)
           }
         </GridContainer>
       )}
       {
-        // @ts-ignore make web strict
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
         !wrapWithGridContainer && renderSlice(slice, namespace, slug, params)
       }
     </Box>

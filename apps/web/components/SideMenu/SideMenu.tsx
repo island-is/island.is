@@ -70,7 +70,8 @@ export const SideMenu = ({
 
   const handleClickOutside = useCallback(
     (e: { target: any }) => {
-      // @ts-ignore make web strict
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
       if (isVisible && ref.current && !ref.current.contains(e.target)) {
         handleClose()
       }
@@ -98,7 +99,8 @@ export const SideMenu = ({
 
     if (searchBarFocus) {
       if (searchInputRef?.current) {
-        // @ts-ignore make web strict
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
         searchInputRef.current.focus()
       }
     }

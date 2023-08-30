@@ -7,7 +7,8 @@ import { GetFrontpageQuery } from '@island.is/web/graphql/schema'
 interface LifeEventsSectionProps {
   heading: string
   headingId: string
-  // @ts-ignore make web strict
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
   items: GetFrontpageQuery['getFrontpage']['lifeEvents']
 }
 
@@ -36,7 +37,8 @@ export const LifeEventsSection = ({
           .filter((x: { slug: string; title: string }) => x.slug && x.title)
           .map(
             (
-              // @ts-ignore make web strict
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
               { __typename: typename, title, shortTitle, slug, tinyThumbnail },
               index: number,
             ) => {

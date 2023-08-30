@@ -53,6 +53,7 @@ interface OrganizationNewsListProps {
   namespace: GetNamespaceQuery['getNamespace']
   locale: Locale
 }
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore make web strict
 const OrganizationNewsList: Screen<OrganizationNewsListProps> = ({
   organizationPage,
@@ -70,7 +71,8 @@ const OrganizationNewsList: Screen<OrganizationNewsListProps> = ({
   const { getMonthByIndex } = useDateUtils()
   useContentfulId(organizationPage.id)
   useLocalLinkTypeResolver()
-  // @ts-ignore make web strict
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
   const n = useNamespaceStrict(namespace)
 
   const newsOverviewUrl = linkResolver(
@@ -134,7 +136,8 @@ const OrganizationNewsList: Screen<OrganizationNewsListProps> = ({
       value: month,
     })),
   ]
-  // @ts-ignore make web strict
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
   const navList: NavigationItem[] = organizationPage.menuLinks.map(
     ({ primaryLink, childrenLinks }) => ({
       title: primaryLink?.text,
@@ -152,33 +155,38 @@ const OrganizationNewsList: Screen<OrganizationNewsListProps> = ({
 
   return (
     <OrganizationWrapper
-      // @ts-ignore make web strict
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
       pageTitle={newsTitle}
       organizationPage={organizationPage}
       showReadSpeaker={false}
       breadcrumbItems={breadCrumbs}
       navigationData={{
-        // @ts-ignore make web strict
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
         title: n('navigationTitle', 'Efnisyfirlit'),
         items: navList,
       }}
       sidebarContent={
         <NewsListSidebar
           months={months}
-          // @ts-ignore make web strict
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
           namespace={namespace}
           newsOverviewUrl={newsOverviewUrl}
           selectedMonth={selectedMonth}
           selectedTag={selectedTag}
           selectedYear={selectedYear}
-          // @ts-ignore make web strict
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
           title={newsTitle}
           yearOptions={yearOptions}
         />
       }
     >
       <NewsList
-        // @ts-ignore make web strict
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
         namespace={namespace}
         newsItemLinkType="organizationnews"
         newsOverviewUrl={newsOverviewUrl}
@@ -191,10 +199,12 @@ const OrganizationNewsList: Screen<OrganizationNewsListProps> = ({
         total={total}
         yearOptions={yearOptions}
         monthOptions={monthOptions}
-        // @ts-ignore make web strict
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
         title={newsTitle}
         newsPerPage={PERPAGE}
-        // @ts-ignore make web strict
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
         newsTags={organizationPage.secondaryNewsTags}
       />
     </OrganizationWrapper>
@@ -220,13 +230,17 @@ const getIntParam = (s: string | string[]) => {
   const i = parseInt(Array.isArray(s) ? s[0] : s, 10)
   if (!isNaN(i)) return i
 }
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore make web strict
 OrganizationNewsList.getProps = async ({ apolloClient, query, locale }) => {
-  // @ts-ignore make web strict
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
   const year = getIntParam(query.y)
-  // @ts-ignore make web strict
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
   const month = year && getIntParam(query.m)
-  // @ts-ignore make web strict
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
   const selectedPage = getIntParam(query.page) ?? 1
 
   const organizationPage = (
@@ -351,7 +365,8 @@ OrganizationNewsList.getProps = async ({ apolloClient, query, locale }) => {
     }
 
     for (const lang of Object.keys(slugs)) {
-      // @ts-ignore make web strict
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
       languageToggleQueryParams[lang as Locale] = { tag: slugs[lang] }
     }
   }

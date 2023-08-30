@@ -117,7 +117,8 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
   useContentfulId(organizationPage?.id)
   useLocalLinkTypeResolver()
   const { activeLocale } = useI18n()
-  // @ts-ignore make web strict
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
   const navList: NavigationItem[] = organizationPage?.menuLinks.map(
     ({ primaryLink, childrenLinks }) => ({
       title: primaryLink?.text,
@@ -171,7 +172,8 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
 
   useEffect(() => {
     if (data?.getPublishedMaterial)
-      // @ts-ignore make web strict
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
       setPublishedMaterial(data.getPublishedMaterial)
   }, [data?.getPublishedMaterial])
 
@@ -232,7 +234,8 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
           input: {
             lang: activeLocale,
             organizationSlug,
-            // @ts-ignore make web strict
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
             tags: selectedCategories,
             page: 1,
             searchString: searchValue,
@@ -327,7 +330,8 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
   return (
     <OrganizationWrapper
       pageTitle={pageTitle}
-      // @ts-ignore make web strict
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
       organizationPage={organizationPage}
       showReadSpeaker={false}
       breadcrumbItems={[
@@ -354,7 +358,8 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
                 {pageTitle}
               </Text>
               <Webreader
-                // @ts-ignore make web strict
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
                 readId={null}
                 readClass="rs_read"
               />
@@ -463,7 +468,8 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
           {(publishedMaterial?.items ?? []).map((item, index) => {
             return (
               <GridRow
-                // @ts-ignore make web strict
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
                 key={`${item.id}-${index}`}
                 marginTop={2}
                 marginBottom={2}

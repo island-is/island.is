@@ -34,7 +34,8 @@ const LandingPageFooter: React.FC<
                 {item.content?.length &&
                   webRichText(item.content as SliceType[], {
                     renderNode: {
-                      // @ts-ignore make web strict
+                      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
                       [INLINES.HYPERLINK]: (node, children: ReactNode) => (
                         <Link
                           underlineVisibility="always"

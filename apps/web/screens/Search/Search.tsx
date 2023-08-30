@@ -138,11 +138,14 @@ const Search: Screen<CategoryProps> = ({
     ...initialState,
     query: {
       q,
-      // @ts-ignore make web strict
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
       type: stringToArray(query.type) as SearchableContentTypes[],
-      // @ts-ignore make web strict
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
       category: stringToArray(query.category),
-      // @ts-ignore make web strict
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
       organization: stringToArray(query.organization),
     },
   })
@@ -155,7 +158,8 @@ const Search: Screen<CategoryProps> = ({
   const { activeLocale } = useI18n()
   const searchRef = useRef<HTMLInputElement | null>(null)
   const routerReplace = useRouterReplace()
-  // @ts-ignore make web strict
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
 
@@ -209,18 +213,21 @@ const Search: Screen<CategoryProps> = ({
     const labels = []
 
     switch (item.__typename) {
-      // @ts-ignore make web strict
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
       case 'LifeEventPage': {
         if (item.pageType !== AnchorPageType.DIGITAL_ICELAND_SERVICE) {
           labels.push(n('lifeEvent'))
         }
         break
       }
-      // @ts-ignore make web strict
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
       case 'News':
         labels.push(n('newsTitle'))
         break
-      // @ts-ignore make web strict
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
       case 'AdgerdirPage':
         labels.push(n('adgerdirTitle'))
         break
@@ -293,7 +300,8 @@ const Search: Screen<CategoryProps> = ({
           }
 
           return {
-            // @ts-ignore make web strict
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
             title: tagTitles[x.key] as string,
             key: x.key,
             count,
@@ -323,7 +331,8 @@ const Search: Screen<CategoryProps> = ({
     ) {
       return linkResolver('digitalicelandservicesdetailpage', [item.slug])
     }
-    // @ts-ignore make web strict
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
     return linkResolver(item.__typename, item.url ?? item.slug?.split('/'))
   }
 
@@ -367,7 +376,8 @@ const Search: Screen<CategoryProps> = ({
       labels: getLabels(item),
     }),
   )
-  // @ts-ignore make web strict
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
   const noUncategorized = (item) => {
     if (!item.category && filters.category === 'uncategorized') {
       return true
@@ -413,7 +423,8 @@ const Search: Screen<CategoryProps> = ({
       q,
       ...(contentType && {
         type: Object.prototype.hasOwnProperty.call(connectedTypes, contentType)
-          ? // @ts-ignore make web strict
+          ? // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
             connectedTypes[contentType].map((x) => firstLower(x))
           : contentType,
       }),
@@ -471,7 +482,8 @@ const Search: Screen<CategoryProps> = ({
           <GridColumn
             span={['12/12', '12/12', '12/12', '8/12']}
             paddingBottom={6}
-            // @ts-ignore make web strict
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
             offset={[null, null, null, '2/12']}
           >
             <Stack space={[3, 3, 4]}>
@@ -723,7 +735,8 @@ Search.getProps = async ({ apolloClient, locale, query }) => {
   const organization = query.organization ?? ''
   const processentry = query.processentry ?? ''
   const countTag = {}
-  // @ts-ignore make web strict
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
   const tags: TagType[] = [
     ...stringToArray(category).map(
       (key: string): TagType => ({
@@ -746,7 +759,8 @@ Search.getProps = async ({ apolloClient, locale, query }) => {
   ]
 
   const types: SearchableContentTypes[] = stringToArray(type).map(
-    // @ts-ignore make web strict
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
     (x: SearchableContentTypes) => x,
   )
   const allTypes: `${SearchableContentTypes}`[] = [

@@ -50,7 +50,8 @@ interface LifeEventProps {
 }
 
 export const LifeEvent: Screen<LifeEventProps> = ({
-  // @ts-ignore make web strict
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
   lifeEvent: { id, image, title, intro, content, featuredImage },
   namespace,
   locale,
@@ -59,7 +60,8 @@ export const LifeEvent: Screen<LifeEventProps> = ({
   useLocalLinkTypeResolver()
 
   usePlausiblePageview(DIGITAL_ICELAND_PLAUSIBLE_TRACKING_DOMAIN)
-  // @ts-ignore make web strict
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
   const router = useRouter()
@@ -144,7 +146,8 @@ export const LifeEvent: Screen<LifeEventProps> = ({
                     items={breadcrumbItems}
                     renderLink={(link, { href }) => {
                       return (
-                        // @ts-ignore make web strict
+                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
                         <NextLink href={href} passHref legacyBehavior>
                           {link}
                         </NextLink>
@@ -159,7 +162,8 @@ export const LifeEvent: Screen<LifeEventProps> = ({
                 </Text>
 
                 <Webreader
-                  // @ts-ignore make web strict
+                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
                   readId={null}
                   readClass="rs_read"
                 />
@@ -202,7 +206,8 @@ export const LifeEvent: Screen<LifeEventProps> = ({
           </GridColumn>
         </GridRow>
       </GridContainer>
-      {watsonConfig[locale] && ( // @ts-ignore make web strict
+      {watsonConfig[locale] && ( // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
         <WatsonChatPanel {...watsonConfig[locale]} />
       )}
     </Box>

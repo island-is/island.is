@@ -64,7 +64,8 @@ const TOC: FC<React.PropsWithChildren<{ slices: Slice[]; title: string }>> = ({
       slices
         .map((slice) => ({
           id: slice.id,
-          // @ts-ignore make web strict
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
           text: slice['title'] ?? slice['leftTitle'] ?? '',
         }))
         .filter((item) => !!item.text),
@@ -102,7 +103,8 @@ const SubPage: Screen<SubPageProps> = ({
   useContentfulId(organizationPage?.id, subpage?.id)
 
   const pathWithoutHash = router.asPath.split('#')[0]
-  // @ts-ignore make web strict
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
   const navList: NavigationItem[] = organizationPage?.menuLinks.map(
     ({ primaryLink, childrenLinks }) => ({
       title: primaryLink?.text,
@@ -122,7 +124,8 @@ const SubPage: Screen<SubPageProps> = ({
     <>
       {subpage?.showTableOfContents && (
         <TOC
-          // @ts-ignore make web strict
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
           slices={subpage.slices}
           title={n('navigationTitle', 'Efnisyfirlit')}
         />
@@ -135,7 +138,8 @@ const SubPage: Screen<SubPageProps> = ({
             subpage?.description as SliceType[],
             {
               renderComponent: {
-                // @ts-ignore make web strict
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
                 Form: (slice) => <Form form={slice} namespace={namespace} />,
               },
             },
@@ -145,7 +149,8 @@ const SubPage: Screen<SubPageProps> = ({
         {subpage?.links && subpage.links.length > 0 && (
           <GridColumn
             span={['12/12', '12/12', '4/12']}
-            // @ts-ignore make web strict
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
             offset={[null, null, '1/12']}
           >
             <Stack space={2}>
@@ -168,10 +173,12 @@ const SubPage: Screen<SubPageProps> = ({
       showExternalLinks={true}
       showReadSpeaker={false}
       pageTitle={subpage?.title ?? ''}
-      // @ts-ignore make web strict
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
       organizationPage={organizationPage}
       fullWidthContent={true}
-      // @ts-ignore make web strict
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
       pageFeaturedImage={
         subpage?.featuredImage ?? organizationPage?.featuredImage
       }
@@ -223,7 +230,8 @@ const SubPage: Screen<SubPageProps> = ({
                       <Webreader
                         marginTop={0}
                         marginBottom={0}
-                        // @ts-ignore make web strict
+                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
                         readId={null}
                         readClass="rs_read"
                       />
@@ -237,7 +245,8 @@ const SubPage: Screen<SubPageProps> = ({
                               </Box>
                               {content}
                               {renderSlices(
-                                // @ts-ignore make web strict
+                                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
                                 subpage.slices,
                                 subpage.sliceCustomRenderer,
                                 subpage.sliceExtraText,
@@ -259,14 +268,18 @@ const SubPage: Screen<SubPageProps> = ({
         </Box>
       </GridContainer>
       {renderSlices(
-        // @ts-ignore make web strict
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
         subpage.slices,
-        // @ts-ignore make web strict
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
         subpage.sliceCustomRenderer,
-        // @ts-ignore make web strict
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
         subpage.sliceExtraText,
         namespace,
-        // @ts-ignore make web strict
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
         organizationPage.slug,
         organizationPage,
       )}

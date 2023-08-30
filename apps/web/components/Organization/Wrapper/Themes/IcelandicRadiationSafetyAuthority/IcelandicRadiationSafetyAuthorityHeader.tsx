@@ -34,9 +34,11 @@ const IcelandicNaturalDisasterInsuranceHeader: React.FC<HeaderProps> = ({
 }) => {
   const { linkResolver } = useLinkResolver()
   const namespace = useMemo(
-    // @ts-ignore make web strict
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
     () => JSON.parse(organizationPage.organization.namespace?.fields ?? '{}'),
-    // @ts-ignore make web strict
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
     [organizationPage.organization.namespace?.fields],
   )
   const n = useNamespace(namespace)
@@ -55,7 +57,8 @@ const IcelandicNaturalDisasterInsuranceHeader: React.FC<HeaderProps> = ({
       <div className={styles.headerWrapper}>
         <SidebarLayout
           sidebarContent={
-            // @ts-ignore make web strict
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
             !!organizationPage.organization.logo && (
               <Link
                 href={
@@ -64,7 +67,8 @@ const IcelandicNaturalDisasterInsuranceHeader: React.FC<HeaderProps> = ({
                 className={styles.iconCircle}
               >
                 <img
-                  // @ts-ignore make web strict
+                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
                   src={organizationPage.organization.logo.url}
                   className={styles.headerLogo}
                   alt="nti-logo"
@@ -74,7 +78,8 @@ const IcelandicNaturalDisasterInsuranceHeader: React.FC<HeaderProps> = ({
           }
         >
           {
-            // @ts-ignore make web strict
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
             !!organizationPage.organization.logo && (
               <Hidden above="sm">
                 <Link
@@ -85,7 +90,8 @@ const IcelandicNaturalDisasterInsuranceHeader: React.FC<HeaderProps> = ({
                   className={styles.iconCircle}
                 >
                   <img
-                    // @ts-ignore make web strict
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
                     src={organizationPage.organization.logo.url}
                     className={styles.headerLogo}
                     alt=""

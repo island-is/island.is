@@ -238,13 +238,15 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<
     const updatedParameters = {}
 
     if (query.location) {
-      // @ts-ignore make web strict
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
       updatedParameters['location'] =
         typeof query.location === 'string' ? [query.location] : query.location
     }
 
     if (query.fieldOfWork) {
-      // @ts-ignore make web strict
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
       updatedParameters['fieldOfWork'] =
         typeof query.fieldOfWork === 'string'
           ? [query.fieldOfWork]
@@ -252,7 +254,8 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<
     }
 
     if (query.institution) {
-      // @ts-ignore make web strict
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
       updatedParameters['institution'] =
         typeof query.institution === 'string'
           ? [query.institution]
@@ -461,7 +464,8 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<
                     onClick={() => {
                       setParameters((prevParameters) => ({
                         ...prevParameters,
-                        // @ts-ignore make web strict
+                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
                         [category]: (prevParameters[category] ?? []).filter(
                           (prevValue: string) => prevValue !== value,
                         ),
@@ -508,7 +512,8 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<
                     <FocusableBox
                       height="full"
                       href={`${
-                        // @ts-ignore make web strict
+                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
                         linkResolver('vacancydetails', [vacancy.id?.toString()])
                           .href
                       }`}
@@ -523,7 +528,8 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<
                         <GridRow
                           rowGap={[2, 2, 2, 5]}
                           direction={['column', 'column', 'column', 'row']}
-                          // @ts-ignore make web strict
+                          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
                           alignItems={[null, null, null, 'center']}
                           align="spaceBetween"
                           className={styles.vacancyCard}
@@ -538,7 +544,8 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<
                               </Text>
                               <Text>
                                 {shortenText(
-                                  // @ts-ignore make web strict
+                                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
                                   vacancy.intro,
                                   VACANCY_INTRO_MAX_LENGTH,
                                 )}

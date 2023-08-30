@@ -2,6 +2,7 @@
 const FALLBACK_DOMAIN = 'https://island.is'
 
 export const safelyExtractPathnameFromUrl = (url?: string) => {
-  // @ts-ignore make web strict
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
   return new URL(url, FALLBACK_DOMAIN).pathname
 }

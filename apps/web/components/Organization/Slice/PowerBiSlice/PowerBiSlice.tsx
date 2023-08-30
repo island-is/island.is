@@ -44,9 +44,11 @@ const slicerStateContainsExpectedTarget = (
   },
 ) => {
   return (
-    // @ts-ignore make web strict
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
     slicerState?.filters?.[0]?.target?.['column'] === expectedTarget?.column ||
-    // @ts-ignore make web strict
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
     slicerState?.targets?.[0]?.['column'] === expectedTarget?.column
   )
 }
@@ -107,7 +109,8 @@ export const PowerBiSlice = ({ slice }: PowerBiSliceProps) => {
 
   const updateReportStateFromQueryParams = async (report?: Report) => {
     if (!report) {
-      // @ts-ignore make web strict
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
       report = embeddedReport
     }
 
@@ -150,14 +153,18 @@ export const PowerBiSlice = ({ slice }: PowerBiSliceProps) => {
         ...slicerState,
         filters: [
           {
-            // @ts-ignore make web strict
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
             $schema: 'http://powerbi.com/product/schema#basic',
-            // @ts-ignore make web strict
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
             filterType: 1,
-            // @ts-ignore make web strict
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
             operator: 'In',
             requireSingleSelection: false,
-            // @ts-ignore make web strict
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
             target: fiskistofaShipSearchTarget,
             ...(slicerState.filters?.[0] as IBasicFilter),
             values: [convertShipNameToSlicerDropdownValue(ship.name, nr)],
@@ -166,12 +173,14 @@ export const PowerBiSlice = ({ slice }: PowerBiSliceProps) => {
       })
     }
   }
-  // @ts-ignore make web strict
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
   const eventHandlers = new Map<EventType, EventHandler>([
     [
       'loaded',
       async (event) => {
-        // @ts-ignore make web strict
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
         const report = event?.target?.['powerBiEmbed'] as Report
         if (!report) return
         setEmbeddedReport(report)
@@ -207,7 +216,8 @@ export const PowerBiSlice = ({ slice }: PowerBiSliceProps) => {
             for (const key of Object.keys(pageElementStyle)) {
               const value = pageElementStyle?.[key]
               if (value) {
-                // @ts-ignore make web strict
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
                 embedRef.current.element.style[key] = value
               }
             }
@@ -216,7 +226,8 @@ export const PowerBiSlice = ({ slice }: PowerBiSliceProps) => {
             for (const key of Object.keys(pageIframeStyle)) {
               const value = pageIframeStyle?.[key]
               if (value) {
-                // @ts-ignore make web strict
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
                 embedRef.current.iframe.style[key] = value
               }
             }
@@ -227,7 +238,8 @@ export const PowerBiSlice = ({ slice }: PowerBiSliceProps) => {
           const query = {}
 
           for (const [key, value] of params.entries()) {
-            // @ts-ignore make web strict
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
             query[key] = value
           }
 
@@ -253,7 +265,8 @@ export const PowerBiSlice = ({ slice }: PowerBiSliceProps) => {
         const visualName = event?.detail?.visual?.name as string
 
         const report: Report =
-          // @ts-ignore make web strict
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
           event?.target?.['powerBiEmbed'] ?? event?.detail?.report
 
         if (!report || !visualName) return
@@ -276,7 +289,8 @@ export const PowerBiSlice = ({ slice }: PowerBiSliceProps) => {
             fiskistofaShipSearchTarget,
           )
         ) {
-          // @ts-ignore make web strict
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
           const value: string = slicerState.filters?.[0]?.['values']?.[0] ?? ''
           const firstParenthesis = value.indexOf('(')
           const lastParenthesis = value.indexOf(')')
@@ -329,7 +343,8 @@ export const PowerBiSlice = ({ slice }: PowerBiSliceProps) => {
       for (const key of Object.keys(elementStyle)) {
         const value = elementStyle?.[key]
         if (value) {
-          // @ts-ignore make web strict
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
           embed.element.style[key] = value
         }
       }
@@ -341,7 +356,8 @@ export const PowerBiSlice = ({ slice }: PowerBiSliceProps) => {
       for (const key of Object.keys(iframeStyle)) {
         const value = iframeStyle?.[key]
         if (value) {
-          // @ts-ignore make web strict
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
           embed.element.style[key] = value
         }
       }

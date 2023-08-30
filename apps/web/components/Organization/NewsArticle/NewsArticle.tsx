@@ -32,7 +32,8 @@ export const NewsArticle: React.FC<
 
       <Webreader
         marginTop={0}
-        // @ts-ignore make web strict
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
         readId={null}
         readClass="rs_read"
       />
@@ -77,7 +78,8 @@ export const NewsArticle: React.FC<
           {
             renderComponent: {
               // Make sure that images in the content are full width
-              // @ts-ignore make web strict
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
               Image: (slice) => (
                 <Box className={styles.clearBoth}>
                   <Image {...slice} thumbnail={slice.url + '?w=50'} />

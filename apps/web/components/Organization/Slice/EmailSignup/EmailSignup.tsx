@@ -120,10 +120,12 @@ const EmailSignup = ({ slice, marginLeft }: EmailSignupProps) => {
     for (const [fieldName, value] of Object.entries(values)) {
       const field = formFields.find((f) => f.name === fieldName)
       inputFields.push({
-        // @ts-ignore make web strict
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
         id: field?.id,
         name: fieldName,
-        // @ts-ignore make web strict
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
         type: field?.type,
         value,
       })
@@ -210,9 +212,11 @@ const EmailSignup = ({ slice, marginLeft }: EmailSignupProps) => {
                         <Box key={field.id} marginBottom={3} width="full">
                           <FormField
                             field={field}
-                            // @ts-ignore make web strict
+                            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
                             slug={field.name}
-                            // @ts-ignore make web strict
+                            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
                             error={errors[field.name]}
                             onChange={(slug, value) => {
                               if (field.type !== FormFieldType.CHECKBOXES) {
@@ -228,7 +232,8 @@ const EmailSignup = ({ slice, marginLeft }: EmailSignupProps) => {
                               const option = slug
                               return setValues((prevValues) => {
                                 // We store a stringified object behind the field.name key
-                                // @ts-ignore make web strict
+                                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
                                 const prevFieldValues = prevValues[field.name]
                                 if (prevFieldValues) {
                                   const json = JSON.parse(prevFieldValues)
@@ -238,7 +243,8 @@ const EmailSignup = ({ slice, marginLeft }: EmailSignupProps) => {
                                       : 'false'
                                   return {
                                     ...prevValues,
-                                    // @ts-ignore make web strict
+                                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
                                     [field.name]: JSON.stringify(json),
                                   }
                                 }
@@ -246,14 +252,16 @@ const EmailSignup = ({ slice, marginLeft }: EmailSignupProps) => {
                                 // The option always starts off as false so if there is nothing previously stored it's safe to toggle the option on
                                 return {
                                   ...prevValues,
-                                  // @ts-ignore make web strict
+                                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
                                   [field.name]: JSON.stringify({
                                     [option]: 'true',
                                   }),
                                 }
                               })
                             }}
-                            // @ts-ignore make web strict
+                            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
                             value={values[field.name]}
                           />
                         </Box>

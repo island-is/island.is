@@ -55,19 +55,22 @@ const AdgerdirArticle: Screen<AdgerdirArticleProps> = ({
 }) => {
   const portalRef = useRef()
   const [mounted, setMounted] = useState(false)
-  // @ts-ignore make web strict
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
   const n = useNamespace(namespace)
   const { activeLocale } = useI18n()
   const { linkResolver } = useLinkResolver()
 
   useEffect(() => {
-    // @ts-ignore make web strict
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
     portalRef.current = document.querySelector('#__next')
     setMounted(true)
   }, [])
 
   const { items: pagesItems } = pages
-  // @ts-ignore make web strict
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
   const { items: tagsItems } = tags
 
   const processEntry = article?.processEntry
@@ -160,7 +163,8 @@ const AdgerdirArticle: Screen<AdgerdirArticleProps> = ({
                 {/** @ts-ignore make web strict */}
                 <ProcessEntry fixed {...processEntry} />
               </Box>,
-              // @ts-ignore make web strict
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
               portalRef.current,
             )}
         </Box>
@@ -171,9 +175,11 @@ const AdgerdirArticle: Screen<AdgerdirArticleProps> = ({
             <AdgerdirArticles
               tags={tagsItems}
               items={pagesItems}
-              // @ts-ignore make web strict
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
               namespace={namespace}
-              // @ts-ignore make web strict
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
               currentArticle={article}
               showAll
             />

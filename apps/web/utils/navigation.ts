@@ -14,13 +14,16 @@ interface Navigable {
 
 const isNavigable = (slice: Slice) =>
   typeof slice === 'object' &&
-  // @ts-ignore make web strict
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
   slice['id'] &&
-  // @ts-ignore make web strict
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
   slice['title'] &&
   slice.__typename !== 'Image' &&
   // If there's not a showTitle field on the slice or it's set to true we want to show the title
-  // @ts-ignore make web strict
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
   (slice['showTitle'] ?? true)
 
 // hide the implementation rather than have everyone import slugify themselfes

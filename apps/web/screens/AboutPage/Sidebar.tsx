@@ -20,13 +20,17 @@ const Sidebar = ({ children }: SidebarProps) => {
   const onResize = useCallback(() => {
     if (containerRef?.current) {
       setDivStyles({
-        // @ts-ignore make web strict
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
         position: 'absolute',
-        // @ts-ignore make web strict
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
         top: containerRef.current.offsetTop + 'px',
-        // @ts-ignore make web strict
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
         left: containerRef.current.offsetLeft + 'px',
-        // @ts-ignore make web strict
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
         width: containerRef.current.offsetWidth + 'px',
         bottom: theme.spacing[12] + 'px',
         zIndex: 10,
@@ -50,7 +54,8 @@ const Sidebar = ({ children }: SidebarProps) => {
       aria-orientation="vertical"
     >
       <div
-        // @ts-ignore make web strict
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
         style={divStyles}
       >
         <div className={styles.sticky}>

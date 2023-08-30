@@ -13,7 +13,8 @@ import { withMainLayout } from '@island.is/web/layouts/main'
 import { CategoryItems } from '@island.is/web/components'
 
 interface CategoriesProps {
-  // @ts-ignore make web strict
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
   categories
   namespace: Record<string, string>
 }

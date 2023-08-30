@@ -51,6 +51,7 @@ interface ProjectNewsListProps {
   namespace: GetNamespaceQuery['getNamespace']
   locale: Locale
 }
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore make web strict
 const ProjectNewsList: Screen<ProjectNewsListProps> = ({
   projectPage,
@@ -68,7 +69,8 @@ const ProjectNewsList: Screen<ProjectNewsListProps> = ({
   const { getMonthByIndex } = useDateUtils()
   useContentfulId(projectPage.id)
   useLocalLinkTypeResolver()
-  // @ts-ignore make web strict
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
   const n = useNamespace(namespace)
 
   const newsOverviewUrl = linkResolver(
@@ -138,7 +140,8 @@ const ProjectNewsList: Screen<ProjectNewsListProps> = ({
         sidebarContent={
           <NewsListSidebar
             months={months}
-            // @ts-ignore make web strict
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
             namespace={namespace}
             newsOverviewUrl={newsOverviewUrl}
             selectedMonth={selectedMonth}
@@ -150,7 +153,8 @@ const ProjectNewsList: Screen<ProjectNewsListProps> = ({
         }
       >
         <NewsList
-          // @ts-ignore make web strict
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
           namespace={namespace}
           newsItemLinkType="projectnews"
           newsOverviewUrl={newsOverviewUrl}
@@ -198,13 +202,17 @@ const getIntParam = (s: string | string[]) => {
   const i = parseInt(Array.isArray(s) ? s[0] : s, 10)
   if (!isNaN(i)) return i
 }
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore make web strict
 ProjectNewsList.getProps = async ({ apolloClient, query, locale }) => {
-  // @ts-ignore make web strict
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
   const year = getIntParam(query.y)
-  // @ts-ignore make web strict
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
   const month = year && getIntParam(query.m)
-  // @ts-ignore make web strict
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
   const selectedPage = getIntParam(query.page) ?? 1
 
   const projectPage = (
@@ -325,7 +333,8 @@ ProjectNewsList.getProps = async ({ apolloClient, query, locale }) => {
     }
 
     for (const lang of Object.keys(slugs)) {
-      // @ts-ignore make web strict
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
       languageToggleQueryParams[lang as Locale] = { tag: slugs[lang] }
     }
   }

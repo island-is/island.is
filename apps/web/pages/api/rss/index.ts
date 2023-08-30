@@ -15,6 +15,7 @@ const extractTagsFromQuery = (query: Record<string, string | string[]>) => {
   if (query.tags?.length > 0) return query.tags
   return [FRONTPAGE_NEWS_TAG_ID]
 }
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore make web strict
 export default async function handler(req, res) {
   const tags = extractTagsFromQuery(req.query)

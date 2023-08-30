@@ -39,7 +39,8 @@ export const GroupedPages: FC<React.PropsWithChildren<GroupedPagesProps>> = ({
             <GridRow>
               <GridColumn
                 span="10/12"
-                // @ts-ignore make web strict
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
                 offset={[null, null, '1/12']}
               >
                 {topContent}
@@ -52,7 +53,8 @@ export const GroupedPages: FC<React.PropsWithChildren<GroupedPagesProps>> = ({
             <GridRow>
               <GridColumn
                 span="10/12"
-                // @ts-ignore make web strict
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
                 offset={[null, null, '1/12']}
               >
                 {bottomContent}

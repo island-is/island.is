@@ -37,19 +37,23 @@ export const ChartsCard: React.FC<
   let children = null
   switch (type) {
     case 'Mixed':
-      // @ts-ignore make web strict
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
       children = <MixedChart graphData={graphData} />
       break
     case 'Line':
-      // @ts-ignore make web strict
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
       children = <SimpleLineChart graphData={graphData} />
       break
     case 'Bar':
-      // @ts-ignore make web strict
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
       children = <SimpleBarChart graphData={graphData} />
       break
     case 'Pie':
-      // @ts-ignore make web strict
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
       children = <SimplePieChart graphData={graphData} />
       break
     default:
@@ -93,7 +97,8 @@ export const ChartsCard: React.FC<
               )}
               <Text variant="h3" color="dark400">
                 {/*
-                // @ts-ignore make web strict */}
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict */}
                 <Hyphen>{graphTitle}</Hyphen>
               </Text>
               {graphDescription && (
@@ -103,9 +108,11 @@ export const ChartsCard: React.FC<
             {subPage && (
               <Box padding={[2, 2, 4]}>
                 <ExportCSVButton
-                  // @ts-ignore make web strict
+                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
                   data={data}
-                  // @ts-ignore make web strict
+                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
                   title={graphTitle}
                 />
               </Box>

@@ -46,7 +46,8 @@ const SyslumennFooter: React.FC<React.PropsWithChildren<FooterProps>> = ({
     <GridColumn
       key={index}
       span={['12/12', '6/12', '4/12', '1/5']}
-      // @ts-ignore make web strict
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
       className={index === 0 ? styles.footerItemFirst : null}
     >
       <Box marginBottom={5}>
@@ -185,7 +186,8 @@ const HeaderLink: FC<React.PropsWithChildren<HeaderLink>> = ({
         <a
           href={
             linkType
-              ? // @ts-ignore make web strict
+              ? // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
                 linkResolver(linkType, slug && [slug]).href
               : slug
           }

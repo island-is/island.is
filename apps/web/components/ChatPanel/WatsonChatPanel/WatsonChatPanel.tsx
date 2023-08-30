@@ -51,11 +51,13 @@ export const WatsonChatPanel = (props: WatsonChatPanelProps) => {
   useEffect(() => {
     if (Object.keys(namespace).length === 0 || loading) {
       return () => {
-        // @ts-ignore make web strict
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
         watsonInstance?.current?.destroy()
       }
     }
-    // @ts-ignore make web strict
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
     const namespaceValue = namespace?.[namespaceKey] ?? {}
     const { cssVariables, ...languagePack } = namespaceValue
 
@@ -78,7 +80,8 @@ export const WatsonChatPanel = (props: WatsonChatPanelProps) => {
         skipConnectAgentCard: true,
       },
       ...props,
-      // @ts-ignore make web strict
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
       onLoad: (instance) => {
         watsonInstance.current = instance
         if (cssVariables) {
@@ -108,7 +111,8 @@ export const WatsonChatPanel = (props: WatsonChatPanelProps) => {
 
     return () => {
       scriptElement?.remove()
-      // @ts-ignore make web strict
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
       watsonInstance?.current?.destroy()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -120,7 +124,8 @@ export const WatsonChatPanel = (props: WatsonChatPanelProps) => {
     <ChatBubble
       text={n('chatBubbleText', 'Hæ, get ég aðstoðað?')}
       isVisible={isButtonVisible}
-      // @ts-ignore make web strict
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
       onClick={watsonInstance.current?.openWindow}
       pushUp={pushUp}
     />
