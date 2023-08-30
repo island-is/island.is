@@ -171,7 +171,8 @@ export function getAttachments(application: Application) {
   const { applicationReason } = getApplicationAnswers(answers)
   const attachments: Attachments[] = []
 
-  const pensionSupplementAttachments = answers.fileUpload as PensionSupplementAttachments
+  const pensionSupplementAttachments =
+    answers.fileUpload as PensionSupplementAttachments
 
   applicationReason.forEach((reason) => {
     if (reason === ApplicationReason.ASSISTED_CARE_AT_HOME) {

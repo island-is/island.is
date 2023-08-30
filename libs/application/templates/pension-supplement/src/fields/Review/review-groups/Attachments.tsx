@@ -23,7 +23,7 @@ export const Attachments = ({ application }: ReviewGroupProps) => {
                   const fileType = nameArray.pop()?.toUpperCase()
                   const fileName = nameArray.join()
                   return (
-                    <Box key={attachment.key} marginBottom={1}>
+                    <Box key={attachment.key} marginY={1}>
                       <TopicCard tag={fileType || undefined}>
                         {fileName}
                       </TopicCard>
