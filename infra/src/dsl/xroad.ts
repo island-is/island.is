@@ -553,13 +553,12 @@ export const AircraftRegistry = new XroadConf({
 })
 
 // TODO: ask devops to add secrets to param store
-// TODO: get path for prod
 export const HousingBenefitCalculator = new XroadConf({
   env: {
     XROAD_HOUSING_BENEFIT_CALCULATOR_PATH: {
       dev: 'IS-DEV/GOV/10033/HMS-Protected/calc-v1',
-      staging: 'IS-TEST/GOV/5501692829/HMS-Protected/calc',
-      prod: '',
+      staging: 'IS-TEST/GOV/5812191480/HMS-Protected/calc-v1',
+      prod: 'IS/GOV/5812191480/HMS-Protected/calc-v1',
     },
   },
   secrets: {
