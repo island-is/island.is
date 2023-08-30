@@ -336,8 +336,9 @@ const PoliceUploadListMemo: React.FC<
 
 const PoliceCaseFilesRoute = () => {
   const { formatMessage } = useIntl()
-  const { workingCase, isLoadingWorkingCase, caseNotFound } =
-    useContext(FormContext)
+  const { workingCase, isLoadingWorkingCase, caseNotFound } = useContext(
+    FormContext,
+  )
 
   const [allUploaded, setAllUploaded] = useState<AllUploadedState>(
     workingCase.policeCaseNumbers.reduce(
@@ -391,7 +392,7 @@ const PoliceCaseFilesRoute = () => {
         <PageTitle>{formatMessage(m.heading)}</PageTitle>
         <ProsecutorCaseInfo workingCase={workingCase} />
         <Box marginBottom={5}>
-          <InfoBox text={formatMessage(m.infoBox)}></InfoBox>
+          <InfoBox text={formatMessage(m.infoBox)} />
         </Box>
         <PoliceUploadListMemo
           caseId={workingCase.id}
