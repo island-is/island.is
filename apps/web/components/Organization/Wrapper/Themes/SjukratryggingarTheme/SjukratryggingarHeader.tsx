@@ -15,9 +15,9 @@ interface HeaderProps {
   organizationPage: OrganizationPage
 }
 
-const SjukratryggingarHeader: React.FC<HeaderProps> = ({
-  organizationPage,
-}) => {
+const SjukratryggingarHeader: React.FC<
+  React.PropsWithChildren<HeaderProps>
+> = ({ organizationPage }) => {
   const { linkResolver } = useLinkResolver()
 
   return (
@@ -28,7 +28,7 @@ const SjukratryggingarHeader: React.FC<HeaderProps> = ({
         <div className={styles.headerWrapper}>
           <SidebarLayout
             sidebarContent={
-              !!organizationPage.organization.logo && (
+              !!organizationPage.organization?.logo && (
                 <Link
                   href={
                     linkResolver('organizationpage', [organizationPage.slug])
@@ -45,7 +45,7 @@ const SjukratryggingarHeader: React.FC<HeaderProps> = ({
               )
             }
           >
-            {!!organizationPage.organization.logo && (
+            {!!organizationPage.organization?.logo && (
               <Hidden above="sm">
                 <Link
                   href={

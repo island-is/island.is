@@ -23,13 +23,11 @@ import { core } from '@island.is/judicial-system-web/messages'
 import CaseFilesOverview from '../components/CaseFilesOverview/CaseFilesOverview'
 import CourtOfAppealCaseOverviewHeader from '../components/CaseOverviewHeader/CaseOverviewHeader'
 
-const CourtOfAppealOverview: React.FC = () => {
-  const {
-    workingCase,
-    setWorkingCase,
-    isLoadingWorkingCase,
-    caseNotFound,
-  } = useContext(FormContext)
+const CourtOfAppealOverview: React.FC<
+  React.PropsWithChildren<unknown>
+> = () => {
+  const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
+    useContext(FormContext)
 
   const { title, description } = useAppealAlertBanner(workingCase)
   const { formatMessage } = useIntl()

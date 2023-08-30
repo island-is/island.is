@@ -55,22 +55,23 @@ export const SkilavottordRecyclingPartnerVehiclesQuery = gql`
   }
 `
 
-const Overview: FC = () => {
+const Overview: FC<React.PropsWithChildren<unknown>> = () => {
   const { user } = useContext(UserContext)
   const {
     t: { deregisterOverview: t, deregisterSidenav: sidenavText, routes },
   } = useI18n()
   const router = useRouter()
 
-  const { data: vehicleData, loading, fetchMore } = useQuery<Query>(
-    SkilavottordRecyclingPartnerVehiclesQuery,
-    {
-      notifyOnNetworkStatusChange: true,
-      variables: {
-        after: '',
-      },
+  const {
+    data: vehicleData,
+    loading,
+    fetchMore,
+  } = useQuery<Query>(SkilavottordRecyclingPartnerVehiclesQuery, {
+    notifyOnNetworkStatusChange: true,
+    variables: {
+      after: '',
     },
-  )
+  })
 
   const { pageInfo, items: vehicles = [] } =
     vehicleData?.skilavottordRecyclingPartnerVehicles ?? {}

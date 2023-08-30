@@ -229,6 +229,11 @@ export class CaseController {
       update.rulingModifiedHistory = `${history}${today} - ${user.name} ${user.title}\n\n${update.rulingModifiedHistory}`
     }
 
+    if (update.caseResentExplanation) {
+      update.courtCaseFacts = `Í greinargerð sóknaraðila er atvikum lýst svo: ${theCase.caseFacts}`
+      update.courtLegalArguments = `Í greinargerð er krafa sóknaraðila rökstudd þannig: ${theCase.legalArguments}`
+    }
+
     if (update.prosecutorStatementDate) {
       update.prosecutorStatementDate = nowFactory()
     }
@@ -325,7 +330,7 @@ export class CaseController {
 
     // No need to wait
     this.eventService.postEvent(
-      (transition.transition as unknown) as CaseEvent,
+      transition.transition as unknown as CaseEvent,
       updatedCase ?? theCase,
     )
 

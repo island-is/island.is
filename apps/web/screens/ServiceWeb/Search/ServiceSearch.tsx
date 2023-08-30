@@ -95,14 +95,14 @@ const ServiceSearch: Screen<ServiceSearchProps> = ({
       description: item.organization?.description,
       link: {
         href: linkResolver('supportqna', [
-          item.organization.slug,
-          item.category.slug,
+          item.organization?.slug || '',
+          item.category?.slug || '',
           item.slug,
         ]).href,
       },
-      categorySlug: item.category.slug,
-      category: item.category.title,
-      labels: [item.category.title],
+      categorySlug: item.category?.slug,
+      category: item.category?.title,
+      labels: [item.category?.title],
     }))
 
   const headerTitle = n('assistanceForIslandIs', 'Aðstoð fyrir Ísland.is')
@@ -111,14 +111,13 @@ const ServiceSearch: Screen<ServiceSearchProps> = ({
 
   const pageTitle = `${n('search', 'Leit')} | ${headerTitle}`
 
-  const institutionSlugBelongsToMannaudstorg = institutionSlug.includes(
-    'mannaudstorg',
-  )
+  const institutionSlugBelongsToMannaudstorg =
+    institutionSlug.includes('mannaudstorg')
 
   const breadcrumbItems = [
     institutionSlugBelongsToMannaudstorg
       ? {
-          title: organization.title,
+          title: organization?.title,
           typename: 'serviceweb',
           href: linkResolver('serviceweb', [institutionSlug]).href,
         }
@@ -160,7 +159,7 @@ const ServiceSearch: Screen<ServiceSearchProps> = ({
                     items={breadcrumbItems}
                     renderLink={(link, { href }) => {
                       return (
-                        <NextLink href={href} passHref>
+                        <NextLink href={href} passHref legacyBehavior>
                           {link}
                         </NextLink>
                       )
@@ -337,7 +336,7 @@ const ServiceSearch: Screen<ServiceSearchProps> = ({
 
 const single = <T,>(x: T | T[]): T => (Array.isArray(x) ? x[0] : x)
 
-ServiceSearch.getInitialProps = async ({ apolloClient, locale, query }) => {
+ServiceSearch.getProps = async ({ apolloClient, locale, query }) => {
   const defaultSlug = locale === 'is' ? 'stafraent-island' : 'digital-iceland'
 
   const q = single(query.q) || ''

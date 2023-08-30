@@ -1,5 +1,6 @@
 {
-  "root": "apps/services/contentful-entry-tagger",
+  "name": "services-contentful-entry-tagger",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/services/contentful-entry-tagger/src",
   "projectType": "application",
   "prefix": "services-contentful-entry-tagger",
@@ -22,13 +23,13 @@
       }
     },
     "serve": {
-      "executor": "@nrwl/node:node",
+      "executor": "@nx/js:node",
       "options": {
         "buildTarget": "services-contentful-entry-tagger:build"
       }
     },
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": [
           "apps/services/contentful-entry-tagger/**/*.{ts,tsx,js,jsx}"
@@ -36,10 +37,12 @@
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/apps/services/contentful-entry-tagger"],
+      "executor": "@nx/jest:jest",
+      "outputs": [
+        "{workspaceRoot}/coverage/apps/services/contentful-entry-tagger"
+      ],
       "options": {
-        "jestConfig": "apps/services/contentful-entry-tagger/jest.config.js",
+        "jestConfig": "apps/services/contentful-entry-tagger/jest.config.ts",
         "passWithNoTests": true
       }
     },

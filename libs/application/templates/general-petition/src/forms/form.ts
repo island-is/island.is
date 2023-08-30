@@ -122,9 +122,11 @@ export const form: Form = buildForm({
               backgroundColor: 'white',
               defaultValue: (application: Application) => {
                 const phone =
-                  (application.externalData.userProfile?.data as {
-                    mobilePhoneNumber?: string
-                  })?.mobilePhoneNumber ?? ''
+                  (
+                    application.externalData.userProfile?.data as {
+                      mobilePhoneNumber?: string
+                    }
+                  )?.mobilePhoneNumber ?? ''
 
                 return phone
               },
@@ -162,9 +164,11 @@ export const form: Form = buildForm({
             buildKeyValueField({
               label: m.name,
               value: ({ externalData }) =>
-                (externalData.nationalRegistry?.data as {
-                  fullName?: string
-                })?.fullName,
+                (
+                  externalData.nationalRegistry?.data as {
+                    fullName?: string
+                  }
+                )?.fullName,
             }),
             buildKeyValueField({
               label: m.phone,

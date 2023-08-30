@@ -69,10 +69,10 @@ const ServicesPage: Screen<ServicesPageProps> = ({
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
 
-  useContentfulId(organizationPage.id)
+  useContentfulId(organizationPage?.id)
   useLocalLinkTypeResolver()
 
-  const navList: NavigationItem[] = organizationPage.menuLinks.map(
+  const navList: NavigationItem[] = organizationPage?.menuLinks.map(
     ({ primaryLink, childrenLinks }) => ({
       title: primaryLink?.text,
       href: primaryLink?.url,
@@ -90,7 +90,8 @@ const ServicesPage: Screen<ServicesPageProps> = ({
     groups: [],
   })
 
-  const filterItemComparator = (a, b) => a.label.localeCompare(b.label)
+  const filterItemComparator = (a: FilterItem, b: FilterItem) =>
+    a.label.localeCompare(b.label)
 
   categories.sort(filterItemComparator)
   groups.sort(filterItemComparator)
@@ -126,7 +127,7 @@ const ServicesPage: Screen<ServicesPageProps> = ({
     <OrganizationWrapper
       pageTitle={n('services', 'Þjónusta')}
       organizationPage={organizationPage}
-      pageFeaturedImage={organizationPage.featuredImage}
+      pageFeaturedImage={organizationPage?.featuredImage}
       fullWidthContent={false}
       stickySidebar={false}
       showReadSpeaker={false}
@@ -136,8 +137,9 @@ const ServicesPage: Screen<ServicesPageProps> = ({
           href: linkResolver('homepage').href,
         },
         {
-          title: organizationPage.title,
-          href: linkResolver('organizationpage', [organizationPage.slug]).href,
+          title: organizationPage?.title ?? '',
+          href: linkResolver('organizationpage', [organizationPage?.slug ?? ''])
+            .href,
         },
       ]}
       navigationData={{
@@ -253,7 +255,7 @@ const ServicesPage: Screen<ServicesPageProps> = ({
   )
 }
 
-ServicesPage.getInitialProps = async ({ apolloClient, locale, query }) => {
+ServicesPage.getProps = async ({ apolloClient, locale, query }) => {
   const [
     {
       data: { getOrganizationPage },
@@ -280,7 +282,7 @@ ServicesPage.getInitialProps = async ({ apolloClient, locale, query }) => {
         },
       })
       .then((variables) =>
-        variables.data.getNamespace.fields
+        variables.data.getNamespace?.fields
           ? JSON.parse(variables.data.getNamespace.fields)
           : {},
       ),

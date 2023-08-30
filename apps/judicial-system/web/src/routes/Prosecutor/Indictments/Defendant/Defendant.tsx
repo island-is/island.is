@@ -16,8 +16,6 @@ import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader
 import { titles, core, errors } from '@island.is/judicial-system-web/messages'
 import { Box, Button, toast } from '@island.is/island-ui/core'
 import {
-  Defendant as TDefendant,
-  UpdateDefendant,
   IndictmentSubtypeMap,
   CrimeSceneMap,
   IndictmentSubtype,
@@ -27,7 +25,11 @@ import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import useDefendants from '@island.is/judicial-system-web/src/utils/hooks/useDefendants'
 import { isDefendantStepValidIndictments } from '@island.is/judicial-system-web/src/utils/validate'
-import { CaseOrigin } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  CaseOrigin,
+  Defendant as TDefendant,
+  UpdateDefendantInput,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import * as constants from '@island.is/judicial-system/consts'
 
 import { DefendantInfo } from '../../components'
@@ -92,13 +94,9 @@ const getPoliceCasesForUpdate = (
     [[], {}, {}],
   )
 
-const Defendant: React.FC = () => {
-  const {
-    workingCase,
-    setWorkingCase,
-    isLoadingWorkingCase,
-    caseNotFound,
-  } = useContext(FormContext)
+const Defendant: React.FC<React.PropsWithChildren<unknown>> = () => {
+  const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
+    useContext(FormContext)
   const { formatMessage } = useIntl()
   const { createCase, isCreatingCase, setAndSendCaseToServer } = useCase()
   const {
@@ -118,11 +116,8 @@ const Defendant: React.FC = () => {
   const handleCreatePoliceCase = async (policeCaseInfo?: PoliceCase) => {
     const newPoliceCase = policeCaseInfo ?? { number: '' }
 
-    const [
-      policeCaseNumbers,
-      indictmentSubtypes,
-      crimeScenes,
-    ] = getPoliceCasesForUpdate([...getPoliceCases(workingCase), newPoliceCase])
+    const [policeCaseNumbers, indictmentSubtypes, crimeScenes] =
+      getPoliceCasesForUpdate([...getPoliceCases(workingCase), newPoliceCase])
 
     setAndSendCaseToServer(
       [
@@ -130,6 +125,38 @@ const Defendant: React.FC = () => {
           policeCaseNumbers,
           indictmentSubtypes,
           crimeScenes,
+          force: true,
+        },
+      ],
+      workingCase,
+      setWorkingCase,
+    )
+  }
+
+  const handleCreatePoliceCases = (policeCases: PoliceCase[]) => {
+    const cases = getPoliceCases(workingCase)
+    const allCases = [...cases, ...policeCases]
+
+    setAndSendCaseToServer(
+      [
+        {
+          policeCaseNumbers: [
+            ...allCases.map((policeCase) => policeCase.number),
+          ],
+          indictmentSubtypes: allCases.reduce<IndictmentSubtypeMap>(
+            (acc, policeCase) => ({ ...acc, [policeCase.number]: [] }),
+            {},
+          ),
+          crimeScenes: allCases.reduce<CrimeSceneMap>(
+            (acc, policeCase) => ({
+              ...acc,
+              [policeCase.number]: {
+                place: policeCase.place,
+                date: policeCase.date,
+              },
+            }),
+            {},
+          ),
           force: true,
         },
       ],
@@ -146,11 +173,8 @@ const Defendant: React.FC = () => {
       crimeScene?: CrimeScene
     },
   ) => {
-    const [
-      policeCaseNumbers,
-      indictmentSubtypes,
-      crimeScenes,
-    ] = getPoliceCasesForUpdate(getPoliceCases(workingCase), index, update)
+    const [policeCaseNumbers, indictmentSubtypes, crimeScenes] =
+      getPoliceCasesForUpdate(getPoliceCases(workingCase), index, update)
 
     setWorkingCase((theCase) => ({
       ...theCase,
@@ -163,13 +187,10 @@ const Defendant: React.FC = () => {
   const handleDeletePoliceCase = (index: number) => {
     const policeCases = getPoliceCases(workingCase)
 
-    const [
-      policeCaseNumbers,
-      indictmentSubtypes,
-      crimeScenes,
-    ] = getPoliceCasesForUpdate(
-      policeCases.slice(0, index).concat(policeCases.slice(index + 1)),
-    )
+    const [policeCaseNumbers, indictmentSubtypes, crimeScenes] =
+      getPoliceCasesForUpdate(
+        policeCases.slice(0, index).concat(policeCases.slice(index + 1)),
+      )
 
     setAndSendCaseToServer(
       [
@@ -185,7 +206,7 @@ const Defendant: React.FC = () => {
     )
   }
 
-  const handleUpdatePoliceCases = (
+  const handleUpdatePoliceCase = (
     index?: number,
     update?: {
       policeCaseNumber?: string
@@ -193,11 +214,8 @@ const Defendant: React.FC = () => {
       crimeScene?: CrimeScene
     },
   ) => {
-    const [
-      policeCaseNumbers,
-      indictmentSubtypes,
-      crimeScenes,
-    ] = getPoliceCasesForUpdate(getPoliceCases(workingCase), index, update)
+    const [policeCaseNumbers, indictmentSubtypes, crimeScenes] =
+      getPoliceCasesForUpdate(getPoliceCases(workingCase), index, update)
 
     setAndSendCaseToServer(
       [
@@ -214,11 +232,11 @@ const Defendant: React.FC = () => {
   }
 
   const handleUpdateDefendant = useCallback(
-    (defendantId: string, updatedDefendant: UpdateDefendant) => {
-      updateDefendantState(defendantId, updatedDefendant, setWorkingCase)
+    (updatedDefendant: UpdateDefendantInput) => {
+      updateDefendantState(updatedDefendant, setWorkingCase)
 
       if (workingCase.id) {
-        updateDefendant(workingCase.id, defendantId, updatedDefendant)
+        updateDefendant(updatedDefendant)
       }
     },
     [updateDefendantState, setWorkingCase, workingCase.id, updateDefendant],
@@ -231,32 +249,25 @@ const Defendant: React.FC = () => {
 
         if (createdCase) {
           workingCase.defendants?.forEach(async (defendant, index) => {
+            const updatedDefendant = {
+              caseId: createdCase.id,
+              defendantId: defendant.id,
+              gender: defendant.gender,
+              name: defendant.name,
+              address: defendant.address,
+              nationalId: defendant.nationalId,
+              noNationalId: defendant.noNationalId,
+              citizenship: defendant.citizenship,
+            }
+
             if (
               index === 0 &&
               createdCase.defendants &&
               createdCase.defendants.length > 0
             ) {
-              await updateDefendant(
-                createdCase.id,
-                createdCase.defendants[0].id,
-                {
-                  gender: defendant.gender,
-                  name: defendant.name,
-                  address: defendant.address,
-                  nationalId: defendant.nationalId,
-                  noNationalId: defendant.noNationalId,
-                  citizenship: defendant.citizenship,
-                },
-              )
+              await updateDefendant(updatedDefendant)
             } else {
-              await createDefendant(createdCase.id, {
-                gender: defendant.gender,
-                name: defendant.name,
-                address: defendant.address,
-                nationalId: defendant.nationalId,
-                noNationalId: defendant.noNationalId,
-                citizenship: defendant.citizenship,
-              })
+              await createDefendant(updatedDefendant)
             }
           })
           router.push(`${destination}/${createdCase.id}`)
@@ -310,7 +321,8 @@ const Defendant: React.FC = () => {
 
   const handleCreateDefendantClick = async () => {
     if (workingCase.id) {
-      const defendantId = await createDefendant(workingCase.id, {
+      const defendantId = await createDefendant({
+        caseId: workingCase.id,
         gender: undefined,
         name: '',
         address: '',
@@ -371,12 +383,11 @@ const Defendant: React.FC = () => {
           {workingCase.origin === CaseOrigin.LOKE && (
             <LokeNumberList
               caseId={workingCase.id}
-              onAddPoliceCaseNumber={handleCreatePoliceCase}
-              onRemovePoliceCaseNumber={handleDeletePoliceCase}
+              addPoliceCaseNumbers={handleCreatePoliceCases}
             />
           )}
           <AnimatePresence>
-            {policeCases.map((policeCase, index) => (
+            {policeCases.map((_policeCase, index) => (
               <motion.div
                 key={index}
                 initial={{ opacity: 0, y: 10 }}
@@ -406,9 +417,9 @@ const Defendant: React.FC = () => {
                         ? handleDeletePoliceCase
                         : undefined
                     }
-                    updatePoliceCases={handleUpdatePoliceCases}
+                    updatePoliceCase={handleUpdatePoliceCase}
                     policeCaseNumberImmutable={
-                      workingCase.origin === CaseOrigin.LOKE
+                      workingCase.origin === CaseOrigin.LOKE && index === 0
                     }
                   />
                 </Box>

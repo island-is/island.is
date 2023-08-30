@@ -8,7 +8,7 @@ interface Props {
   activeTab?: AdminTab
 }
 
-const AdminTabNav: React.FC<Props> = ({
+const AdminTabNav: React.FC<React.PropsWithChildren<Props>> = ({
   handleTabChange: handleTabChange,
   activeTab: activetab,
   children,

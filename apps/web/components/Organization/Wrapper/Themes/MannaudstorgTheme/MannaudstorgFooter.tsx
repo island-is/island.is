@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import React, { FC, ReactNode } from 'react'
 import {
   Box,
   GridColumn,
@@ -23,7 +23,11 @@ interface Props {
   footerItems: FooterItem[]
 }
 
-const MannaudstorgFooter: FC<Props> = ({ title, logoSrc, footerItems }) => {
+const MannaudstorgFooter: FC<React.PropsWithChildren<Props>> = ({
+  title,
+  logoSrc,
+  footerItems,
+}) => {
   const { activeLocale } = useI18n()
 
   return (
@@ -61,7 +65,10 @@ const MannaudstorgFooter: FC<Props> = ({ title, logoSrc, footerItems }) => {
                   <GridColumn>
                     {webRichText(item.serviceWebContent as SliceType[], {
                       renderNode: {
-                        [BLOCKS.PARAGRAPH]: (_node, children) => (
+                        [BLOCKS.PARAGRAPH]: (
+                          _node: never,
+                          children: ReactNode,
+                        ) => (
                           <Text
                             marginBottom={2}
                             fontWeight="regular"

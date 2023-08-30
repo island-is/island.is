@@ -267,6 +267,11 @@ const Search: Screen<CategoryProps> = ({
   const pathname = linkResolver('search').href
 
   const tagsList = useMemo((): TagsList[] => {
+    // Check if countResults.typesCount is not defined
+    if (!countResults.typesCount) {
+      // If it's not defined, return an empty array
+      return []
+    }
     return [
       ...countResults.typesCount
         .filter((x) => x.key in tagTitles)
@@ -375,7 +380,7 @@ const Search: Screen<CategoryProps> = ({
 
   useEffect(() => {
     if (state.searchLocked) {
-      return null
+      return
     }
 
     const newQuery = {
@@ -414,9 +419,9 @@ const Search: Screen<CategoryProps> = ({
     {
       id: 'category',
       label: n('categories', 'Þjónustuflokkar'),
-      selected: state.query.category,
+      selected: state.query.category ?? [],
       singleOption: true,
-      filters: countResults.tagCounts
+      filters: (countResults?.tagCounts ?? [])
         .filter((x) => x.value.trim() && x.type === 'category')
         .map(({ key, value }) => ({
           label: value,
@@ -426,9 +431,9 @@ const Search: Screen<CategoryProps> = ({
     {
       id: 'organization',
       label: n('organizations', 'Opinberir aðilar'),
-      selected: state.query.organization,
+      selected: state.query.organization ?? [],
       singleOption: true,
-      filters: countResults.tagCounts
+      filters: (countResults?.tagCounts ?? [])
         .filter((x) => x.value.trim() && x.type === 'organization')
         .map(({ key, value }) => ({
           label: value,
@@ -469,7 +474,11 @@ const Search: Screen<CategoryProps> = ({
                 ]}
                 renderLink={(link) => {
                   return (
-                    <NextLink {...linkResolver('homepage')} passHref>
+                    <NextLink
+                      {...linkResolver('homepage')}
+                      passHref
+                      legacyBehavior
+                    >
                       {link}
                     </NextLink>
                   )
@@ -534,26 +543,27 @@ const Search: Screen<CategoryProps> = ({
                           {title}
                         </Tag>
                       ))}
-                    {countResults.processEntryCount > 0 && (
-                      <Tag
-                        variant="blue"
-                        active={query?.processentry === 'true'}
-                        onClick={() => {
-                          dispatch({
-                            type: ActionType.SET_PARAMS,
-                            payload: {
-                              query: {
-                                processentry: true,
-                                ...getSearchParams('webArticle'),
+                    {countResults.processEntryCount &&
+                      countResults?.processEntryCount > 0 && (
+                        <Tag
+                          variant="blue"
+                          active={query?.processentry === 'true'}
+                          onClick={() => {
+                            dispatch({
+                              type: ActionType.SET_PARAMS,
+                              payload: {
+                                query: {
+                                  processentry: true,
+                                  ...getSearchParams('webArticle'),
+                                },
+                                searchLocked: false,
                               },
-                              searchLocked: false,
-                            },
-                          })
-                        }}
-                      >
-                        {n('processEntry', 'Umsóknir')}
-                      </Tag>
-                    )}
+                            })
+                          }}
+                        >
+                          {n('processEntry', 'Umsóknir')}
+                        </Tag>
+                      )}
                   </Inline>
                   <FilterMenu
                     {...filterLabels}
@@ -588,13 +598,13 @@ const Search: Screen<CategoryProps> = ({
                     )}{' '}
                     <strong>{q}</strong>
                     {!!(
-                      state.query.organization.length ||
-                      state.query.category.length
+                      state.query.organization?.length ||
+                      state.query.category?.length
                     ) && ` ${n('withChosenFilters', 'með völdum síum')}. `}
                   </Text>
                   {!!(
-                    state.query.organization.length ||
-                    state.query.category.length
+                    state.query.organization?.length ||
+                    state.query.category?.length
                   ) && (
                     <Button
                       variant="text"
@@ -695,7 +705,7 @@ const Search: Screen<CategoryProps> = ({
 
 const single = <T,>(x: T | T[]): T => (Array.isArray(x) ? x[0] : x)
 
-Search.getInitialProps = async ({ apolloClient, locale, query }) => {
+Search.getProps = async ({ apolloClient, locale, query }) => {
   const queryString = single(query.q) || ''
   const page = Number(single(query.page)) || 1
   const category = query.category ?? ''
@@ -804,10 +814,12 @@ Search.getInitialProps = async ({ apolloClient, locale, query }) => {
           },
         },
       })
-      .then((variables) => {
-        // map data here to reduce data processing in component
-        return JSON.parse(variables.data.getNamespace.fields)
-      }),
+      // map data here to reduce data processing in component
+      .then((variables) =>
+        variables.data.getNamespace?.fields
+          ? JSON.parse(variables.data.getNamespace.fields)
+          : {},
+      ),
   ])
 
   if (searchResults.items.length === 0 && page > 1) {
@@ -844,7 +856,9 @@ interface EnglishResultsLinkProps {
   q: string
 }
 
-const EnglishResultsLink: FC<EnglishResultsLinkProps> = ({ q }) => {
+const EnglishResultsLink: FC<
+  React.PropsWithChildren<EnglishResultsLinkProps>
+> = ({ q }) => {
   const { linkResolver } = useLinkResolver()
   const [getCount, { data }] = useLazyQuery<
     GetSearchResultsTotalQuery,

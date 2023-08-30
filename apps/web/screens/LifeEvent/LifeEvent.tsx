@@ -143,7 +143,7 @@ export const LifeEvent: Screen<LifeEventProps> = ({
                     items={breadcrumbItems}
                     renderLink={(link, { href }) => {
                       return (
-                        <NextLink href={href} passHref>
+                        <NextLink href={href} passHref legacyBehavior>
                           {link}
                         </NextLink>
                       )
@@ -201,7 +201,7 @@ export const LifeEvent: Screen<LifeEventProps> = ({
   )
 }
 
-LifeEvent.getInitialProps = async ({ apolloClient, locale, query }) => {
+LifeEvent.getProps = async ({ apolloClient, locale, query }) => {
   const [
     {
       data: { getLifeEventPage: lifeEvent },
@@ -225,10 +225,12 @@ LifeEvent.getInitialProps = async ({ apolloClient, locale, query }) => {
           },
         },
       })
-      .then((content) => {
-        // map data here to reduce data processing in component
-        return JSON.parse(content.data.getNamespace.fields)
-      }),
+      // map data here to reduce data processing in component
+      .then((content) =>
+        content.data.getNamespace?.fields
+          ? JSON.parse(content.data.getNamespace.fields)
+          : {},
+      ),
   ])
 
   if (!lifeEvent) {

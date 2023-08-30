@@ -48,13 +48,9 @@ import { appealRuling } from '@island.is/judicial-system-web/messages/Core/appea
 
 import { courtOfAppealRuling as strings } from './Ruling.strings'
 
-const CourtOfAppealRuling: React.FC = () => {
-  const {
-    workingCase,
-    setWorkingCase,
-    isLoadingWorkingCase,
-    caseNotFound,
-  } = useContext(FormContext)
+const CourtOfAppealRuling: React.FC<React.PropsWithChildren<unknown>> = () => {
+  const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
+    useContext(FormContext)
 
   useEffect(() => {
     if (workingCase.caseFiles) {
@@ -62,12 +58,8 @@ const CourtOfAppealRuling: React.FC = () => {
     }
   }, [workingCase.caseFiles])
 
-  const {
-    handleChange,
-    handleRemove,
-    handleRetry,
-    generateSingleFileUpdate,
-  } = useS3Upload(workingCase.id)
+  const { handleChange, handleRemove, handleRetry, generateSingleFileUpdate } =
+    useS3Upload(workingCase.id)
 
   const { updateCase, transitionCase, setAndSendCaseToServer } = useCase()
   const { formatMessage } = useIntl()
@@ -76,10 +68,8 @@ const CourtOfAppealRuling: React.FC = () => {
   const [displayFiles, setDisplayFiles] = useState<TUploadFile[]>([])
   const [visibleModal, setVisibleModal] = useState(false)
 
-  const [
-    appealConclusionErrorMessage,
-    setAppealConclusionErrorMessage,
-  ] = useState<string>('')
+  const [appealConclusionErrorMessage, setAppealConclusionErrorMessage] =
+    useState<string>('')
 
   const allFilesUploaded = useMemo(() => {
     return displayFiles.every(

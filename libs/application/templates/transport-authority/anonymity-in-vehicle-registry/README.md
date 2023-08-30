@@ -1,5 +1,3 @@
-<!-- gitbook-ignore -->
-
 # application-templates-transport-authority-anonymity-in-vehicle-registry
 
 This library was generated with [Nx](https://nx.dev).

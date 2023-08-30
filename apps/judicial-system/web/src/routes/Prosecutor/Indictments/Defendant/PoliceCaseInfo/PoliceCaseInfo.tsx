@@ -43,7 +43,7 @@ interface Props {
     },
   ) => void
   deletePoliceCase?: (index: number) => void
-  updatePoliceCases: (
+  updatePoliceCase: (
     index?: number,
     update?: {
       policeCaseNumber?: string
@@ -54,7 +54,9 @@ interface Props {
   policeCaseNumberImmutable: boolean
 }
 
-export const PoliceCaseInfo: React.FC<Props> = (props) => {
+export const PoliceCaseInfo: React.FC<React.PropsWithChildren<Props>> = (
+  props,
+) => {
   const {
     index,
     policeCaseNumbers,
@@ -62,7 +64,7 @@ export const PoliceCaseInfo: React.FC<Props> = (props) => {
     crimeScene,
     setPoliceCase,
     deletePoliceCase,
-    updatePoliceCases,
+    updatePoliceCase,
     policeCaseNumberImmutable = false,
   } = props
 
@@ -70,16 +72,22 @@ export const PoliceCaseInfo: React.FC<Props> = (props) => {
 
   const { user } = useContext(UserContext)
 
-  const [policeCaseNumberInput, setPoliceCaseNumberInput] = useState<string>(
+  const [originalPoliceCaseNumber, setOriginalPoliceCaseNumber] = useState(
     policeCaseNumbers[index],
   )
-  const [
-    policeCaseNumberErrorMessage,
-    setPoliceCaseNumberErrorMessage,
-  ] = useState<string>('')
+  const [policeCaseNumberInput, setPoliceCaseNumberInput] = useState(
+    policeCaseNumbers[index],
+  )
+  const [policeCaseNumberErrorMessage, setPoliceCaseNumberErrorMessage] =
+    useState<string>('')
 
   useEffect(() => {
-    if (policeCaseNumberInput !== policeCaseNumbers[index]) {
+    if (policeCaseNumbers[index] !== originalPoliceCaseNumber) {
+      // This component is now handling a new police case number
+      setPoliceCaseNumberInput(policeCaseNumbers[index])
+      setOriginalPoliceCaseNumber(policeCaseNumbers[index])
+    } else if (policeCaseNumberInput !== policeCaseNumbers[index]) {
+      // The police case number was modified by the user
       if (
         !policeCaseNumbers.some(
           (policeCaseNumber, idx) =>
@@ -92,12 +100,18 @@ export const PoliceCaseInfo: React.FC<Props> = (props) => {
           policeCaseNumberInput,
           setPoliceCaseNumberErrorMessage,
         )
-        updatePoliceCases(index, {
+        updatePoliceCase(index, {
           policeCaseNumber: policeCaseNumberInput,
         })
       }
     }
-  }, [index, policeCaseNumberInput, policeCaseNumbers, updatePoliceCases])
+  }, [
+    index,
+    originalPoliceCaseNumber,
+    policeCaseNumberInput,
+    policeCaseNumbers,
+    updatePoliceCase,
+  ])
 
   const options = useMemo(
     () =>
@@ -120,7 +134,6 @@ export const PoliceCaseInfo: React.FC<Props> = (props) => {
             colorScheme="destructive"
             variant="text"
             size="small"
-            data-testid="deleteDefendantButton"
           >
             {formatMessage(policeCaseInfo.delete)}
           </Button>
@@ -161,7 +174,7 @@ export const PoliceCaseInfo: React.FC<Props> = (props) => {
                 event.target.value,
                 setPoliceCaseNumberErrorMessage,
               )
-              updatePoliceCases()
+              updatePoliceCase()
             }
           }}
           disabled={policeCaseNumberImmutable}
@@ -193,7 +206,7 @@ export const PoliceCaseInfo: React.FC<Props> = (props) => {
           onChange={(selectedOption: ValueType<ReactSelectOption>) => {
             const indictmentSubtype = (selectedOption as ReactSelectOption)
               .value as IndictmentSubtype
-            updatePoliceCases(index, {
+            updatePoliceCase(index, {
               subtypes: [...(subtypes || []), indictmentSubtype],
             })
           }}
@@ -206,7 +219,7 @@ export const PoliceCaseInfo: React.FC<Props> = (props) => {
           {subtypes.map((subtype) => (
             <Box
               display="inlineBlock"
-              key={`${policeCaseNumbers[index]}-${subtype}`}
+              key={subtype}
               component="span"
               marginBottom={1}
               marginRight={1}
@@ -214,7 +227,7 @@ export const PoliceCaseInfo: React.FC<Props> = (props) => {
               <Tag
                 variant="darkerBlue"
                 onClick={() => {
-                  updatePoliceCases(index, {
+                  updatePoliceCase(index, {
                     subtypes: subtypes.filter((s) => s !== subtype),
                   })
                 }}
@@ -244,7 +257,7 @@ export const PoliceCaseInfo: React.FC<Props> = (props) => {
             })
           }}
           onBlur={() => {
-            updatePoliceCases()
+            updatePoliceCase()
           }}
         />
       </Box>
@@ -256,7 +269,7 @@ export const PoliceCaseInfo: React.FC<Props> = (props) => {
         dateOnly={true}
         onChange={(date, valid) => {
           if (date && valid) {
-            updatePoliceCases(index, {
+            updatePoliceCase(index, {
               crimeScene: { ...crimeScene, date: date },
             })
           }

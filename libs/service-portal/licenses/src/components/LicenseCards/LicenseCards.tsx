@@ -15,7 +15,12 @@ interface Props {
   title?: string | null
 }
 
-const LicenseCards: FC<Props> = ({ passportData, name, noPassport, title }) => {
+const LicenseCards: FC<React.PropsWithChildren<Props>> = ({
+  passportData,
+  name,
+  noPassport,
+  title,
+}) => {
   useNamespaces('sp.license')
   const { formatMessage } = useLocale()
   return (

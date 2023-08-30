@@ -2,7 +2,7 @@ import { useEffect, useContext } from 'react'
 import { GlobalContext } from '../context'
 
 export const useContentfulId = (
-  pageId: string,
+  pageId?: string,
   subpageId?: string,
   subSubPageId?: string,
 ) => {
@@ -12,7 +12,9 @@ export const useContentfulId = (
     if (pageId) {
       setContentfulIds([pageId, subpageId, subSubPageId])
     }
-    return () => setContentfulIds([])
+    return () => {
+      setContentfulIds([])
+    }
   }, [pageId, subpageId, subSubPageId])
 }
 

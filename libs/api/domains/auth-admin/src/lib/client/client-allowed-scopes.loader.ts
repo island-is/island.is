@@ -16,7 +16,8 @@ export type ClientAllowedScopesDataLoader = DataLoader<
 
 @Injectable()
 export class ClientAllowedScopesLoader
-  implements NestDataLoader<ClientAllowedScopeInput, ClientAllowedScope[]> {
+  implements NestDataLoader<ClientAllowedScopeInput, ClientAllowedScope[]>
+{
   constructor(private readonly clientsService: ClientsService) {}
 
   keyFn(input: ClientAllowedScopeInput): string {

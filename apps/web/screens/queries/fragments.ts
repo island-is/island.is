@@ -77,6 +77,7 @@ export const slices = gql`
       genericTags {
         id
         title
+        slug
       }
     }
     readMoreText
@@ -208,6 +209,22 @@ export const slices = gql`
     }
     html {
       ...HtmlFields
+    }
+  }
+
+  fragment SectionWithVideoFields on SectionWithVideo {
+    __typename
+    id
+    title
+    video {
+      ...EmbeddedVideoFields
+    }
+    html {
+      ...HtmlFields
+    }
+    link {
+      text
+      url
     }
   }
 
@@ -700,6 +717,7 @@ export const slices = gql`
     ...AssetFields
     ...EmbeddedVideoFields
     ...SectionWithImageFields
+    ...SectionWithVideoFields
     ...TabSectionFields
     ...TeamListFields
     ...ContactUsFields

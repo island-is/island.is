@@ -92,21 +92,17 @@ const ProjectNewsArticle: Screen<ProjectNewsArticleleProps> = ({
         <NewsArticle newsItem={newsItem} />
       </ProjectWrapper>
       <HeadWithSocialSharing
-        title={`${newsItem.title} | ${projectPage.title}`}
-        description={newsItem.intro}
-        imageUrl={newsItem.image?.url}
-        imageWidth={newsItem.image?.width.toString()}
-        imageHeight={newsItem.image?.height.toString()}
+        title={`${newsItem?.title} | ${projectPage.title}`}
+        description={newsItem?.intro || ''}
+        imageUrl={newsItem?.image?.url}
+        imageWidth={newsItem?.image?.width.toString()}
+        imageHeight={newsItem?.image?.height.toString()}
       />
     </>
   )
 }
 
-ProjectNewsArticle.getInitialProps = async ({
-  apolloClient,
-  locale,
-  query,
-}) => {
+ProjectNewsArticle.getProps = async ({ apolloClient, locale, query }) => {
   const projectPage = (
     await Promise.resolve(
       apolloClient.query<Query, QueryGetProjectPageArgs>({
@@ -154,10 +150,12 @@ ProjectNewsArticle.getInitialProps = async ({
           },
         },
       })
-      .then((variables) => {
-        // map data here to reduce data processing in component
-        return JSON.parse(variables.data.getNamespace.fields)
-      }),
+      // map data here to reduce data processing in component
+      .then((variables) =>
+        variables.data.getNamespace?.fields
+          ? JSON.parse(variables.data.getNamespace.fields)
+          : {},
+      ),
   ])
 
   if (!newsItem) {

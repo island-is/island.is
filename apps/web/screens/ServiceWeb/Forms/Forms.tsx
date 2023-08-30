@@ -81,7 +81,7 @@ const ServiceWebFormsPage: Screen<ServiceWebFormsPageProps> = ({
     ServiceWebFormsMutationVariables
   >(SERVICE_WEB_FORMS_MUTATION)
 
-  useContentfulId(organization.id)
+  useContentfulId(organization?.id)
   useLocalLinkTypeResolver()
 
   const organizationNamespace = useMemo(
@@ -131,9 +131,8 @@ const ServiceWebFormsPage: Screen<ServiceWebFormsPageProps> = ({
       : ''
   }${headerTitle}`
 
-  const institutionSlugBelongsToMannaudstorg = institutionSlug.includes(
-    'mannaudstorg',
-  )
+  const institutionSlugBelongsToMannaudstorg =
+    institutionSlug.includes('mannaudstorg')
 
   const breadcrumbItems = useMemo(() => {
     const items = []
@@ -147,7 +146,7 @@ const ServiceWebFormsPage: Screen<ServiceWebFormsPageProps> = ({
     }
 
     items.push({
-      title: organization.title,
+      title: organization?.title,
       typename: 'serviceweb',
       href: `${linkResolver('serviceweb').href}/${institutionSlug}`,
     })
@@ -160,7 +159,7 @@ const ServiceWebFormsPage: Screen<ServiceWebFormsPageProps> = ({
     })
 
     return items
-  }, [institutionSlug, organization.title, linkResolver])
+  }, [institutionSlug, organization?.title, linkResolver])
 
   return (
     <ServiceWebWrapper
@@ -190,7 +189,7 @@ const ServiceWebFormsPage: Screen<ServiceWebFormsPageProps> = ({
                         items={breadcrumbItems}
                         renderLink={(link, { href }) => {
                           return (
-                            <NextLink href={href} passHref>
+                            <NextLink href={href} passHref legacyBehavior>
                               {link}
                             </NextLink>
                           )
@@ -299,11 +298,7 @@ const ServiceWebFormsPage: Screen<ServiceWebFormsPageProps> = ({
   )
 }
 
-ServiceWebFormsPage.getInitialProps = async ({
-  apolloClient,
-  locale,
-  query,
-}) => {
+ServiceWebFormsPage.getProps = async ({ apolloClient, locale, query }) => {
   const defaultSlug = locale === 'is' ? 'stafraent-island' : 'digital-iceland'
   const slug = query.slug ? (query.slug as string) : defaultSlug
 
@@ -352,7 +347,7 @@ ServiceWebFormsPage.getInitialProps = async ({
         },
       })
       .then((variables) =>
-        variables.data.getNamespace.fields
+        variables.data.getNamespace?.fields
           ? JSON.parse(variables.data.getNamespace.fields)
           : {},
       ),

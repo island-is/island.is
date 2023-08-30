@@ -42,14 +42,12 @@ export const CemetryOverview = ({
   const { formatMessage } = useLocale()
   const [approveOverview, setApproveOverview] = useState(false)
 
-  const [
-    submitApplication,
-    { error: submitError, loading },
-  ] = useSubmitApplication({
-    application,
-    refetch,
-    event: DefaultEvents.SUBMIT,
-  })
+  const [submitApplication, { error: submitError, loading }] =
+    useSubmitApplication({
+      application,
+      refetch,
+      event: DefaultEvents.SUBMIT,
+    })
 
   const answers = application.answers as FinancialStatementsInao
   const fileName = answers.attachments?.file?.[0]?.name
@@ -62,7 +60,7 @@ export const CemetryOverview = ({
 
   const onBackButtonClick = () => {
     if (
-      cemeteryIncome < Number(careTakerLimit) &&
+      Number(cemeteryIncome) < Number(careTakerLimit) &&
       fixedAssetsTotal === '0' &&
       longTermDebt === '0'
     ) {
@@ -340,7 +338,7 @@ export const CemetryOverview = ({
           }}
         />
       </Box>
-      {cemeteryIncome < Number(careTakerLimit) &&
+      {Number(cemeteryIncome) < Number(careTakerLimit) &&
       fixedAssetsTotal === '0' &&
       longTermDebt === '0' ? (
         <Box paddingTop={4}>

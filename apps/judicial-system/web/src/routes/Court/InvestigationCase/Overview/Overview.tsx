@@ -47,6 +47,7 @@ import {
   UploadState,
   useCourtUpload,
 } from '@island.is/judicial-system-web/src/utils/hooks'
+import { lawsBrokenAccordion } from '@island.is/judicial-system-web/messages/Core/lawsBrokenAccordion'
 
 import { DraftConclusionModal } from '../../components'
 
@@ -211,7 +212,7 @@ const Overview = () => {
               <AccordionItem
                 labelVariant="h3"
                 id="id_1"
-                label="Lagaákvæði sem brot varða við"
+                label={formatMessage(lawsBrokenAccordion.heading)}
               >
                 <Text whiteSpace="breakSpaces">{workingCase.lawsBroken}</Text>
               </AccordionItem>

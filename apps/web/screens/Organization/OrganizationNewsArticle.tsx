@@ -141,21 +141,17 @@ const OrganizationNewsArticle: Screen<OrganizationNewsArticleProps> = ({
         <NewsArticle newsItem={newsItem} />
       </OrganizationWrapper>
       <HeadWithSocialSharing
-        title={`${newsItem.title} | ${organizationPage.title}`}
-        description={newsItem.intro}
-        imageUrl={newsItem.image?.url}
-        imageWidth={newsItem.image?.width.toString()}
-        imageHeight={newsItem.image?.height.toString()}
+        title={`${newsItem?.title} | ${organizationPage.title}`}
+        description={newsItem?.intro}
+        imageUrl={newsItem?.image?.url}
+        imageWidth={newsItem?.image?.width.toString()}
+        imageHeight={newsItem?.image?.height.toString()}
       />
     </>
   )
 }
 
-OrganizationNewsArticle.getInitialProps = async ({
-  apolloClient,
-  locale,
-  query,
-}) => {
+OrganizationNewsArticle.getProps = async ({ apolloClient, locale, query }) => {
   const organizationPage = (
     await Promise.resolve(
       apolloClient.query<Query, QueryGetOrganizationPageArgs>({
@@ -203,10 +199,12 @@ OrganizationNewsArticle.getInitialProps = async ({
           },
         },
       })
-      .then((variables) => {
-        // map data here to reduce data processing in component
-        return JSON.parse(variables.data.getNamespace.fields)
-      }),
+      // map data here to reduce data processing in component
+      .then((variables) =>
+        variables.data.getNamespace?.fields
+          ? JSON.parse(variables.data.getNamespace.fields)
+          : {},
+      ),
   ])
 
   if (!newsItem) {

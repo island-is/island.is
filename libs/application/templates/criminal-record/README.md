@@ -1,5 +1,3 @@
-<!-- gitbook-ignore -->
-
 # Criminal Record Application
 
 This library was generated with [Nx](https://nx.dev). (yarn generate @nrwl/node:lib application/templates/criminal-record)

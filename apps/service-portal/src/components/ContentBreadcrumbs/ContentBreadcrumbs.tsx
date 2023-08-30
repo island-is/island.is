@@ -42,7 +42,7 @@ const parseNavItemName = (
  * and select the deepest path with an exact path
  * match as the Breadcrumbs to render.
  */
-const ContentBreadcrumbs: FC = () => {
+const ContentBreadcrumbs: FC<React.PropsWithChildren<unknown>> = () => {
   const navigation = useDynamicRoutesWithNavigation(MAIN_NAVIGATION)
   const location = useLocation()
   const { formatMessage } = useLocale()

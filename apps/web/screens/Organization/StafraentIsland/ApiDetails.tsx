@@ -53,10 +53,8 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
   const nfc = useNamespace(filterContent)
   const noa = useNamespace(openApiContent)
   const { linkResolver } = useLinkResolver()
-  const [
-    selectedServiceDetail,
-    setselectedServiceDetail,
-  ] = useState<ServiceDetail>(service.environments[0].details[0])
+  const [selectedServiceDetail, setselectedServiceDetail] =
+    useState<ServiceDetail>(service.environments[0].details[0])
 
   useLocalLinkTypeResolver()
 
@@ -66,12 +64,10 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
     return identifier
   }
 
-  const [
-    selectedGetOpenApiInput,
-    setSelectedGetOpenApiInput,
-  ] = useState<GetOpenApiInput>(
-    xroadIdentifierToOpenApiInput(selectedServiceDetail.xroadIdentifier),
-  )
+  const [selectedGetOpenApiInput, setSelectedGetOpenApiInput] =
+    useState<GetOpenApiInput>(
+      xroadIdentifierToOpenApiInput(selectedServiceDetail.xroadIdentifier),
+    )
 
   const setApiContent = (serviceDetail: ServiceDetail) => {
     setselectedServiceDetail(serviceDetail)
@@ -85,7 +81,7 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
     Router.asPath.lastIndexOf('/'),
   )
 
-  const navList: NavigationItem[] = organizationPage.menuLinks.map(
+  const navList: NavigationItem[] = organizationPage?.menuLinks.map(
     ({ primaryLink, childrenLinks }) => ({
       title: primaryLink?.text,
       href: primaryLink?.url,
@@ -112,9 +108,10 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
             href: linkResolver('homepage').href,
           },
           {
-            title: organizationPage.title,
-            href: linkResolver('organizationpage', [organizationPage.slug])
-              .href,
+            title: organizationPage?.title ?? '',
+            href: linkResolver('organizationpage', [
+              organizationPage?.slug ?? '',
+            ]).href,
           },
           {
             title: n('linkServicesText'),
@@ -167,7 +164,7 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
   )
 }
 
-ServiceDetails.getInitialProps = async ({ apolloClient, locale, query }) => {
+ServiceDetails.getProps = async ({ apolloClient, locale, query }) => {
   const serviceId = String(query.slug)
 
   const [
@@ -198,7 +195,11 @@ ServiceDetails.getInitialProps = async ({ apolloClient, locale, query }) => {
           },
         },
       })
-      .then((res) => JSON.parse(res.data.getNamespace.fields)),
+      .then((res) =>
+        res.data.getNamespace?.fields
+          ? JSON.parse(res.data.getNamespace.fields)
+          : {},
+      ),
     apolloClient
       .query<GetNamespaceQuery, QueryGetNamespaceArgs>({
         query: GET_NAMESPACE_QUERY,
@@ -209,7 +210,11 @@ ServiceDetails.getInitialProps = async ({ apolloClient, locale, query }) => {
           },
         },
       })
-      .then((res) => JSON.parse(res.data.getNamespace.fields)),
+      .then((res) =>
+        res.data.getNamespace?.fields
+          ? JSON.parse(res.data.getNamespace.fields)
+          : {},
+      ),
     apolloClient
       .query<GetNamespaceQuery, QueryGetNamespaceArgs>({
         query: GET_NAMESPACE_QUERY,
@@ -220,7 +225,11 @@ ServiceDetails.getInitialProps = async ({ apolloClient, locale, query }) => {
           },
         },
       })
-      .then((res) => JSON.parse(res.data.getNamespace.fields)),
+      .then((res) =>
+        res.data.getNamespace?.fields
+          ? JSON.parse(res.data.getNamespace.fields)
+          : {},
+      ),
     apolloClient.query<Query, QueryGetApiServiceByIdArgs>({
       query: GET_API_SERVICE_QUERY,
       variables: {

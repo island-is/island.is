@@ -21,7 +21,6 @@
 
 /*                                                                                                       @island-is/core
 /.github/                                                                                                @island-is/core
-/handbook/                                                                                               @island-is/core
 /libs/api/domains/identity/                                                                              @island-is/core
 /libs/testing/                                                                                           @island-is/core
 /libs/nest/swagger/                                                                                      @island-is/core
@@ -212,6 +211,8 @@
 /libs/api/domains/watson-assistant-chat/                                                                 @island-is/stefna
 /libs/clients/icelandic-government-institution-vacancies/                                                @island-is/stefna
 /libs/api/domains/icelandic-government-institution-vacancies/                                            @island-is/stefna
+/libs/clients/aircraft-registry/                                                                         @island-is/stefna
+/libs/api/domains/aircraft-registry/                                                                     @island-is/stefna
 
 /libs/island-ui/                                                                                         @island-is/island-ui
 
@@ -275,10 +276,10 @@
 /.github/workflows/                                                                                      @island-is/devops
 /apps/reference-backend/                                                                                 @island-is/devops
 /apps/github-actions-cache/                                                                              @island-is/devops
-/libs/infra*/                                                                                            @island-is/devops
+/infra/                                                                                                  @island-is/devops
+**/infra/                                                                                                @island-is/devops @island-is/core
 /libs/logging/                                                                                           @island-is/devops
 /scripts/                                                                                                @island-is/devops
 /scripts/postinstall.js                                                                                  @island-is/devops @island-is/core
 /scripts/schemas.js                                                                                      @island-is/devops @island-is/core
-infra/                                                                                                   @island-is/devops
 /charts                                                                                                  @island-is/devops

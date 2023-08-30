@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import { useEffect, useState } from 'react'
+import { ReactNode, useEffect, useState } from 'react'
 import {
   ArrowLink,
   Box,
@@ -78,11 +78,12 @@ const ApiCatalogue: Screen<HomestayProps> = ({
   const fn = useNamespace(filterContent)
   const nn = useNamespace(navigationLinks)
   const { linkResolver } = useLinkResolver()
-  useContentfulId(organizationPage.id, subpage.id)
+  useContentfulId(organizationPage?.id, subpage?.id)
 
   useEffect(() => {
     if (width < theme.breakpoints.md) {
-      return setIsMobile(true)
+      setIsMobile(true)
+      return
     }
     setIsMobile(false)
   }, [width])
@@ -92,7 +93,7 @@ const ApiCatalogue: Screen<HomestayProps> = ({
       return
     }
 
-    const nextCursor = data?.getApiCatalogue?.pageInfo.nextCursor
+    const nextCursor = data?.getApiCatalogue?.pageInfo?.nextCursor
     const param = { ...parameters, cursor: nextCursor }
     fetchMore({
       variables: { input: param },
@@ -207,7 +208,7 @@ const ApiCatalogue: Screen<HomestayProps> = ({
     },
   ]
 
-  const navList: NavigationItem[] = organizationPage.menuLinks.map(
+  const navList: NavigationItem[] = organizationPage?.menuLinks.map(
     ({ primaryLink, childrenLinks }) => ({
       title: primaryLink?.text,
       href: primaryLink?.url,
@@ -225,9 +226,9 @@ const ApiCatalogue: Screen<HomestayProps> = ({
   return (
     <>
       <OrganizationWrapper
-        pageTitle={subpage.title}
+        pageTitle={subpage?.title ?? ''}
         organizationPage={organizationPage}
-        pageFeaturedImage={subpage.featuredImage}
+        pageFeaturedImage={subpage?.featuredImage}
         showReadSpeaker={false}
         breadcrumbItems={[
           {
@@ -235,9 +236,10 @@ const ApiCatalogue: Screen<HomestayProps> = ({
             href: linkResolver('homepage').href,
           },
           {
-            title: organizationPage.title,
-            href: linkResolver('organizationpage', [organizationPage.slug])
-              .href,
+            title: organizationPage?.title ?? '',
+            href: linkResolver('organizationpage', [
+              organizationPage?.slug ?? '',
+            ]).href,
           },
         ]}
         navigationData={{
@@ -248,13 +250,13 @@ const ApiCatalogue: Screen<HomestayProps> = ({
       >
         <Box paddingBottom={0}>
           <Text variant="h1" as="h2">
-            {subpage.title}
+            {subpage?.title}
           </Text>
           <Webreader readId={null} readClass="rs_read" />
         </Box>
-        {webRichText(subpage.description as SliceType[], {
+        {webRichText(subpage?.description as SliceType[], {
           renderNode: {
-            [INLINES.HYPERLINK]: (node, children) => (
+            [INLINES.HYPERLINK]: (node, children: ReactNode) => (
               <ArrowLink href={node.data.uri}>{children}</ArrowLink>
             ),
           },
@@ -304,7 +306,7 @@ const ApiCatalogue: Screen<HomestayProps> = ({
                 categories={filterCategories}
               />
             </Box>
-            {(error || data?.getApiCatalogue?.services.length < 1) && (
+            {(error || (data?.getApiCatalogue?.services?.length ?? 0) < 1) && (
               <GridContainer>
                 {error ? (
                   <Text>{sn('errorHeading')}</Text>
@@ -315,7 +317,7 @@ const ApiCatalogue: Screen<HomestayProps> = ({
                 )}
               </GridContainer>
             )}
-            {data?.getApiCatalogue?.services.length > 0 && (
+            {(data?.getApiCatalogue?.services.length || 0) > 0 && (
               <GridContainer>
                 <ServiceList
                   baseUrl={linkResolver('apicataloguepage').href + '/'}
@@ -338,7 +340,7 @@ const ApiCatalogue: Screen<HomestayProps> = ({
   )
 }
 
-ApiCatalogue.getInitialProps = async ({ apolloClient, locale }) => {
+ApiCatalogue.getProps = async ({ apolloClient, locale }) => {
   const organizationSlug =
     locale === 'en' ? 'digital-iceland' : 'stafraent-island'
 
@@ -382,7 +384,11 @@ ApiCatalogue.getInitialProps = async ({ apolloClient, locale }) => {
           },
         },
       })
-      .then((res) => JSON.parse(res.data.getNamespace.fields)),
+      .then((res) =>
+        res.data.getNamespace?.fields
+          ? JSON.parse(res.data.getNamespace.fields)
+          : {},
+      ),
     apolloClient
       .query<GetNamespaceQuery, QueryGetNamespaceArgs>({
         query: GET_NAMESPACE_QUERY,
@@ -393,7 +399,11 @@ ApiCatalogue.getInitialProps = async ({ apolloClient, locale }) => {
           },
         },
       })
-      .then((res) => JSON.parse(res.data.getNamespace.fields)),
+      .then((res) =>
+        res.data.getNamespace?.fields
+          ? JSON.parse(res.data.getNamespace.fields)
+          : {},
+      ),
     apolloClient
       .query<GetNamespaceQuery, QueryGetNamespaceArgs>({
         query: GET_NAMESPACE_QUERY,
@@ -404,7 +414,11 @@ ApiCatalogue.getInitialProps = async ({ apolloClient, locale }) => {
           },
         },
       })
-      .then((res) => JSON.parse(res.data.getNamespace.fields)),
+      .then((res) =>
+        res.data.getNamespace?.fields
+          ? JSON.parse(res.data.getNamespace.fields)
+          : {},
+      ),
   ])
 
   if (!getOrganizationSubpage) {

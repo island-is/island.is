@@ -1,6 +1,6 @@
 import { Cache as CacheManager } from 'cache-manager'
 import { Test } from '@nestjs/testing'
-import { CACHE_MANAGER } from '@nestjs/common'
+import { CACHE_MANAGER } from '@nestjs/cache-manager'
 
 import { DiscountService, DISCOUNT_CODE_LENGTH } from '../../discount.service'
 import { createTestUser } from '../../../../../../test/createTestUser'
@@ -272,8 +272,9 @@ describe('DiscountService', () => {
     })
 
     it('should override postalcodes', async () => {
-      jest.spyOn(nationalRegistryService, 'getUser').mockImplementation(
-        (): Promise<NationalRegistryUser> => {
+      jest
+        .spyOn(nationalRegistryService, 'getUser')
+        .mockImplementation((): Promise<NationalRegistryUser> => {
           return Promise.resolve({
             address: '',
             city: '',
@@ -284,8 +285,7 @@ describe('DiscountService', () => {
             nationalId: customerId,
             postalcode: 100, // This shall be overridden
           })
-        },
-      )
+        })
 
       const result = await discountService.createExplicitDiscountCode(
         getAuthUser(employeeId),

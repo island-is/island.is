@@ -1,4 +1,4 @@
-import React, { FC, useContext } from 'react'
+import React, { FC, ReactNode, useContext } from 'react'
 import { FooterItem } from '@island.is/web/graphql/schema'
 import {
   Box,
@@ -29,7 +29,7 @@ interface FooterProps {
   namespace: Record<string, string>
 }
 
-const SyslumennFooter: React.FC<FooterProps> = ({
+const SyslumennFooter: React.FC<React.PropsWithChildren<FooterProps>> = ({
   title,
   logo,
   footerItems,
@@ -64,7 +64,7 @@ const SyslumennFooter: React.FC<FooterProps> = ({
           (isServiceWeb ? item.serviceWebContent : item.content) as SliceType[],
           {
             renderNode: {
-              [BLOCKS.PARAGRAPH]: (_node, children) => (
+              [BLOCKS.PARAGRAPH]: (_node: never, children: ReactNode) => (
                 <Text variant="small" color="white">
                   {children}
                 </Text>
@@ -157,7 +157,7 @@ interface HeaderLink {
   slug: string
 }
 
-const HeaderLink: FC<HeaderLink> = ({
+const HeaderLink: FC<React.PropsWithChildren<HeaderLink>> = ({
   linkType,
   slug,
   children,

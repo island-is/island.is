@@ -51,7 +51,7 @@ import { isCourtRecordStepValidRC } from '../../../../utils/validate'
 import { formatCustodyRestrictions } from '../../../../utils/restrictions'
 import AppealSections from '../../components/AppealSections/AppealSections'
 
-export const CourtRecord: React.FC = () => {
+export const CourtRecord: React.FC<React.PropsWithChildren<unknown>> = () => {
   const {
     workingCase,
     setWorkingCase,
@@ -60,13 +60,10 @@ export const CourtRecord: React.FC = () => {
     isCaseUpToDate,
   } = useContext(FormContext)
 
-  const [courtLocationErrorMessage, setCourtLocationMessage] = useState<string>(
-    '',
-  )
-  const [
-    sessionBookingsErrorMessage,
-    setSessionBookingsErrorMessage,
-  ] = useState<string>('')
+  const [courtLocationErrorMessage, setCourtLocationMessage] =
+    useState<string>('')
+  const [sessionBookingsErrorMessage, setSessionBookingsErrorMessage] =
+    useState<string>('')
 
   const router = useRouter()
   const { updateCase, setAndSendCaseToServer } = useCase()

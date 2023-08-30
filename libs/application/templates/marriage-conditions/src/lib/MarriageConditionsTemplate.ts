@@ -16,7 +16,6 @@ import {
   DistrictsApi,
 } from '@island.is/application/types'
 import { assign } from 'xstate'
-import { Features } from '@island.is/feature-flags'
 import { getSpouseNationalId } from './utils'
 import { FeatureFlagClient } from '@island.is/feature-flags'
 import {
@@ -45,7 +44,6 @@ const MarriageConditionsTemplate: ApplicationTemplate<
   type: ApplicationTypes.MARRIAGE_CONDITIONS,
   name: m.applicationTitle,
   dataSchema: dataSchema,
-  featureFlag: Features.marriageConditions,
   stateMachineConfig: {
     initial: States.DRAFT,
     states: {

@@ -13,6 +13,7 @@ import { Hidden } from '@island.is/island-ui/core'
 import { ProcessEntry } from '../ProcessEntry/ProcessEntry'
 import EmbeddedVideo from '../EmbeddedVideo/EmbeddedVideo'
 import { SectionWithImage } from '../SectionWithImage/SectionWithImage'
+import { SectionWithVideo } from '../SectionWithVideo/SectionWithVideo'
 import { TeamList } from '../TeamList/TeamList'
 import { ContactUs } from '../ContactUs/ContactUs'
 import { Location } from '../Location/Location'
@@ -61,13 +62,15 @@ export const defaultRenderComponentObject = {
     </Hidden>
   ),
 
-  EmbeddedVideo: (slice, locale) => (
+  EmbeddedVideo: (slice, locale: string) => (
     <Hidden print={true}>
       <EmbeddedVideo locale={locale} {...slice} />
     </Hidden>
   ),
 
   SectionWithImage: (slice) => <SectionWithImage {...slice} />,
+
+  SectionWithVideo: (slice) => <SectionWithVideo {...slice} />,
 
   TeamList: (slice) => <TeamList {...slice} />,
 

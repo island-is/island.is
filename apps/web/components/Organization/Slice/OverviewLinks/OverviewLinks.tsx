@@ -19,7 +19,9 @@ interface SliceProps {
   slice: OverviewLinks
 }
 
-export const OverviewLinksSlice: React.FC<SliceProps> = ({ slice }) => {
+export const OverviewLinksSlice: React.FC<
+  React.PropsWithChildren<SliceProps>
+> = ({ slice }) => {
   const { linkResolver } = useLinkResolver()
 
   const boxProps: BoxProps = slice.hasBorderAbove
@@ -90,8 +92,8 @@ export const OverviewLinksSlice: React.FC<SliceProps> = ({ slice }) => {
                                 [
                                   {
                                     __typename: 'Html',
-                                    id: intro.id,
-                                    document: intro.document,
+                                    id: intro?.id,
+                                    document: intro?.document,
                                   },
                                 ] as SliceType[],
                                 undefined,

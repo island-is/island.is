@@ -12,10 +12,12 @@ import {
   Select,
   Option,
 } from '@island.is/island-ui/core'
-import { useApplications } from '@island.is/service-portal/graphql'
+import {
+  useApplications,
+  useGetOrganizationsQuery,
+} from '@island.is/service-portal/graphql'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { useLocation } from 'react-router-dom'
-import { useGetOrganizationsQuery } from '../../../graphql/src/schema'
 import { m } from '../lib/messages'
 import { m as coreMessage } from '@island.is/service-portal/core'
 import { ValueType } from 'react-select'
@@ -47,9 +49,8 @@ const Overview = () => {
 
   const { data: orgData, loading: loadingOrg } = useGetOrganizationsQuery()
 
-  const [filterValue, setFilterValue] = useState<FilterValues>(
-    defaultFilterValues,
-  )
+  const [filterValue, setFilterValue] =
+    useState<FilterValues>(defaultFilterValues)
 
   const handleSearchChange = (value: string) => {
     setFilterValue((oldFilter) => ({

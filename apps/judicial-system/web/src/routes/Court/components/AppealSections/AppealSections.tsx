@@ -22,18 +22,14 @@ interface Props {
   setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
 }
 
-const AppealSections: React.FC<Props> = (props) => {
+const AppealSections: React.FC<React.PropsWithChildren<Props>> = (props) => {
   const { workingCase, setWorkingCase } = props
   const { formatMessage } = useIntl()
   const { setAndSendCaseToServer, updateCase } = useCase()
-  const [
-    checkedAccusedRadio,
-    setCheckedAccusedRadio,
-  ] = useState<CaseAppealDecision>()
-  const [
-    checkedProsecutorRadio,
-    setCheckedProsecutorRadio,
-  ] = useState<CaseAppealDecision>()
+  const [checkedAccusedRadio, setCheckedAccusedRadio] =
+    useState<CaseAppealDecision>()
+  const [checkedProsecutorRadio, setCheckedProsecutorRadio] =
+    useState<CaseAppealDecision>()
 
   return (
     <>

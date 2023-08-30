@@ -195,7 +195,11 @@ const NewsListNew: Screen<NewsListProps> = ({
         title={navTitle}
         items={navItems}
         renderLink={(link, { href }) => {
-          return <NextLink href={href}>{link}</NextLink>
+          return (
+            <NextLink href={href} legacyBehavior>
+              {link}
+            </NextLink>
+          )
         }}
       />
     </Stack>
@@ -234,8 +238,8 @@ const NewsListNew: Screen<NewsListProps> = ({
         >
           <Image
             {...newsItem.image}
-            url={newsItem.image.url + '?w=774&fm=webp&q=80'}
-            thumbnail={newsItem.image.url + '?w=50&fm=webp&q=80'}
+            url={newsItem.image?.url + '?w=774&fm=webp&q=80'}
+            thumbnail={newsItem.image?.url + '?w=50&fm=webp&q=80'}
           />
         </Box>
       )}
@@ -297,7 +301,7 @@ const NewsListNew: Screen<NewsListProps> = ({
                 : linkResolver(typename as LinkType, slug)
 
               return (
-                <NextLink {...linkProps} passHref>
+                <NextLink {...linkProps} passHref legacyBehavior>
                   {link}
                 </NextLink>
               )
@@ -341,7 +345,11 @@ const NewsListNew: Screen<NewsListProps> = ({
             title={navTitleMobile}
             items={navItems}
             renderLink={(link, { href }) => {
-              return <NextLink href={href}>{link}</NextLink>
+              return (
+                <NextLink href={href} legacyBehavior>
+                  {link}
+                </NextLink>
+              )
             }}
             isMenuDialog
           />
@@ -403,16 +411,19 @@ const NewsListNew: Screen<NewsListProps> = ({
   )
 }
 
-const createDatesMap = (datesList) => {
-  return datesList.reduce((datesMap, date) => {
-    const [year, month] = date.split('-')
-    if (datesMap[year]) {
-      datesMap[year].push(parseInt(month)) // we can assume each month only appears once
-    } else {
-      datesMap[year] = [parseInt(month)]
-    }
-    return datesMap
-  }, {})
+const createDatesMap = (datesList: string[]) => {
+  return datesList.reduce(
+    (datesMap: Record<string, number[]>, date: string) => {
+      const [year, month] = date.split('-')
+      if (datesMap[year]) {
+        datesMap[year].push(parseInt(month)) // we can assume each month only appears once
+      } else {
+        datesMap[year] = [parseInt(month)]
+      }
+      return datesMap
+    },
+    {},
+  )
 }
 
 const getIntParam = (s: string | string[]) => {
@@ -420,7 +431,7 @@ const getIntParam = (s: string | string[]) => {
   if (!isNaN(i)) return i
 }
 
-NewsListNew.getInitialProps = async ({ apolloClient, locale, query }) => {
+NewsListNew.getProps = async ({ apolloClient, locale, query }) => {
   const slug = query.slug as string
   const year = getIntParam(query.y)
   const month = year && getIntParam(query.m)
@@ -478,6 +489,7 @@ NewsListNew.getInitialProps = async ({ apolloClient, locale, query }) => {
           },
         },
       })
+      // map data here to reduce data processing in component
       .then((variables) => {
         // map data here to reduce data processing in component
         return JSON.parse(variables.data.getNamespace.fields)

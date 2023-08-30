@@ -28,8 +28,7 @@ export const externalData = {
       description: 'Was able to get data',
     },
     getDataSuccessDescription: {
-      id:
-        'ta.tvo.application:externalData.dataProvider.getDataSuccessDescription',
+      id: 'ta.tvo.application:externalData.dataProvider.getDataSuccessDescription',
       defaultMessage: 'Með gagnaöflun tókst að sækja eftirfarandi gögn:',
       description: 'Was able to get data description',
     },

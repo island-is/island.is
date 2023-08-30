@@ -29,6 +29,7 @@ import {
   DefendantInfo,
   CreatedDate,
   SortButton,
+  getDurationDate,
 } from '@island.is/judicial-system-web/src/components/Table'
 
 import * as styles from './DefenderCasesTable.css'
@@ -39,15 +40,13 @@ interface Props {
   loading?: boolean
 }
 
-export const DefenderCasesTable: React.FC<Props> = (props) => {
+export const DefenderCasesTable: React.FC<React.PropsWithChildren<Props>> = (
+  props,
+) => {
   const { formatMessage } = useIntl()
   const { cases, showingCompletedCases, loading } = props
-  const {
-    sortedData,
-    requestSort,
-    getClassNamesFor,
-    isActiveColumn,
-  } = useSortCases('createdAt', 'descending', cases)
+  const { sortedData, requestSort, getClassNamesFor, isActiveColumn } =
+    useSortCases('createdAt', 'descending', cases)
 
   const handleRowClick = (id: string, type: CaseType) => {
     isIndictmentCase(type)
@@ -163,12 +162,12 @@ export const DefenderCasesTable: React.FC<Props> = (props) => {
                 {showingCompletedCases ? (
                   <td className={styles.td}>
                     <Text>
-                      {c.validToDate &&
-                        c.rulingDate &&
-                        `${formatDate(c.rulingDate, 'd.M.y')} - ${formatDate(
-                          c.validToDate,
-                          'd.M.y',
-                        )}`}
+                      {getDurationDate(
+                        c.state,
+                        c.validToDate,
+                        c.initialRulingDate,
+                        c.rulingDate,
+                      )}
                     </Text>
                   </td>
                 ) : (

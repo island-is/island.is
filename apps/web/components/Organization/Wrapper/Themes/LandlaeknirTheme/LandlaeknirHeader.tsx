@@ -43,11 +43,13 @@ interface HeaderProps {
   organizationPage: OrganizationPage
 }
 
-const LandlaeknirHeader: React.FC<HeaderProps> = ({ organizationPage }) => {
+const LandlaeknirHeader: React.FC<React.PropsWithChildren<HeaderProps>> = ({
+  organizationPage,
+}) => {
   const { linkResolver } = useLinkResolver()
   const namespace = useMemo(
-    () => JSON.parse(organizationPage.organization.namespace?.fields ?? '{}'),
-    [organizationPage.organization.namespace?.fields],
+    () => JSON.parse(organizationPage.organization?.namespace?.fields ?? '{}'),
+    [organizationPage.organization?.namespace?.fields],
   )
   const n = useNamespace(namespace)
   const { width } = useWindowSize()
@@ -62,7 +64,7 @@ const LandlaeknirHeader: React.FC<HeaderProps> = ({ organizationPage }) => {
       <div className={styles.headerWrapper}>
         <SidebarLayout
           sidebarContent={
-            !!organizationPage.organization.logo && (
+            !!organizationPage.organization?.logo && (
               <Link
                 href={
                   linkResolver('organizationpage', [organizationPage.slug]).href
@@ -78,7 +80,7 @@ const LandlaeknirHeader: React.FC<HeaderProps> = ({ organizationPage }) => {
             )
           }
         >
-          {!!organizationPage.organization.logo && (
+          {!!organizationPage.organization?.logo && (
             <Hidden above="sm">
               <Link
                 href={

@@ -18,7 +18,9 @@ const compare = function (a: any, b: any) {
   if (a < b) return -1
   return 0
 }
-const FinanceScheduleTable: FC<Props> = ({ recordsArray }) => {
+const FinanceScheduleTable: FC<React.PropsWithChildren<Props>> = ({
+  recordsArray,
+}) => {
   useNamespaces('sp.finance-schedule')
 
   const [page, setPage] = useState(1)
@@ -77,8 +79,7 @@ const FinanceScheduleTable: FC<Props> = ({ recordsArray }) => {
                   <Tooltip
                     placement="top"
                     text={formatMessage({
-                      id:
-                        'sp.finance-schedule:amount-left-without-interest-info',
+                      id: 'sp.finance-schedule:amount-left-without-interest-info',
                       defaultMessage:
                         'Eftirstöðvar án vaxta innihalda þó vexti fram að þeim degi sem greiðsluáætlunin er gerð ef gjöld bera vexti.',
                     })}

@@ -14,16 +14,18 @@ import InfoCard from './InfoCard'
 import { infoCardActiveIndictment as m } from './InfoCard.strings'
 import { FormContext } from '../FormProvider/FormProvider'
 
-const InfoCardClosedIndictment: React.FC = () => {
+const InfoCardClosedIndictment: React.FC<
+  React.PropsWithChildren<unknown>
+> = () => {
   const { workingCase } = useContext(FormContext)
   const { formatMessage } = useIntl()
   const defenders = workingCase.defendants?.map((defendant) => {
     return {
       name: defendant.defenderName || '',
-      defenderNationalId: defendant.defenderNationalId,
+      defenderNationalId: defendant.defenderNationalId || '',
       sessionArrangement: undefined,
-      email: defendant.defenderEmail,
-      phoneNumber: defendant.defenderPhoneNumber,
+      email: defendant.defenderEmail || '',
+      phoneNumber: defendant.defenderPhoneNumber || '',
     }
   })
 

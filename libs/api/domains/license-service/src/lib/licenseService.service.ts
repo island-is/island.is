@@ -1,4 +1,5 @@
-import { Inject, Injectable, CACHE_MANAGER } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
+import { CACHE_MANAGER } from '@nestjs/cache-manager'
 import { Cache as CacheManager } from 'cache-manager'
 import add from 'date-fns/add'
 import compareAsc from 'date-fns/compareAsc'
@@ -407,9 +408,8 @@ export class LicenseServiceService {
     // being scanned. The simplest way for that is to add a force flag so we can make the
     // decision based on input rather than the authenticated user's license
 
-    let forceDriversLicenseClient:
-      | DriversLicenseClientTypes
-      | undefined = undefined
+    let forceDriversLicenseClient: DriversLicenseClientTypes | undefined =
+      undefined
 
     if (licenseType === GenericLicenseType.DriversLicense) {
       forceDriversLicenseClient = passTemplateId ? 'new' : 'old'
