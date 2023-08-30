@@ -85,7 +85,7 @@ export const webRenderConnectedComponent = (slice) => {
   return renderConnectedComponent(slice)
 }
 
-const getDefaultRenderComponentObject = (activeLocale?: Locale) => {
+const getDefaultRenderComponent = (activeLocale?: Locale) => {
   return {
     PowerBiSlice: (slice: PowerBiSliceSchema) => <PowerBiSlice slice={slice} />,
     AccordionSlice: (slice: AccordionSliceSchema) =>
@@ -139,7 +139,7 @@ export const webRichText = (
     {
       renderComponent: {
         ...defaultRenderComponentObject,
-        ...getDefaultRenderComponentObject(activeLocale),
+        ...getDefaultRenderComponent(activeLocale),
         ...options?.renderComponent,
       },
       renderMark: {
