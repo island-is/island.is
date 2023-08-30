@@ -25,7 +25,6 @@ import {
 } from '@island.is/judicial-system-web/messages'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import {
-  CaseCustodyRestrictions,
   CaseDecision,
   isAcceptingCaseDecision,
 } from '@island.is/judicial-system/types'
@@ -51,6 +50,7 @@ import {
   travelBanProvisions,
 } from '@island.is/judicial-system-web/src/utils/laws'
 import {
+  CaseCustodyRestrictions,
   CaseType,
   Defendant,
   Gender,
