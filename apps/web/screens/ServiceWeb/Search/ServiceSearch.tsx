@@ -276,7 +276,6 @@ const ServiceSearch: Screen<ServiceSearchProps> = ({
                     })
 
                     return (
-                      
                       <Card
                         key={index}
                         tags={tags}

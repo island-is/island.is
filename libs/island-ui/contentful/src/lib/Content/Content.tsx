@@ -288,7 +288,6 @@ const embeddedNodes = {
 } as { [key: string]: EmbeddedNode }
 
 const defaultRenderNode = {
-  
   [INLINES.HYPERLINK]: (node: Node, children: ReactNode) => {
     return <Hyperlink href={node.data.uri}>{children}</Hyperlink>
   },

@@ -123,12 +123,14 @@ export const richText: RichText = (
 ) => {
   const options = {
     renderText: (text: string) => {
-      return text
-        .split('\n')
-        // @ts-ignore make web strict
-        .reduce((children: string[], textSegment: string, index: number) => {
-          return [...children, index > 0 && <br key={index} />, textSegment]
-        }, [])
+      return (
+        text
+          .split('\n')
+          // @ts-ignore make web strict
+          .reduce((children: string[], textSegment: string, index: number) => {
+            return [...children, index > 0 && <br key={index} />, textSegment]
+          }, [])
+      )
     },
     renderNode: { ...defaultRenderNodeObject, ...opt.renderNode },
     renderMark: { ...defaultRenderMarkObject, ...opt.renderMark },

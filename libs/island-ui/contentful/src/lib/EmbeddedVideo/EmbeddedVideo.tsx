@@ -116,8 +116,8 @@ export const EmbeddedVideo: FC<EmbeddedVideoProps> = ({
   const TextsData = Texts(textSettings)
   // @ts-ignore make web strict
   const texts = Object.prototype.hasOwnProperty.call(TextsData, locale)
-  // @ts-ignore make web strict
-    ? TextsData[locale]
+    ? // @ts-ignore make web strict
+      TextsData[locale]
     : TextsData['is']
 
   return (

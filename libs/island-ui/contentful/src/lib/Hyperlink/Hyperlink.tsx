@@ -15,7 +15,7 @@ export const Hyperlink: FC<React.PropsWithChildren<HyperlinkProps>> = ({
   children,
 }) => (
   <Link
-  // @ts-ignore make web strict
+    // @ts-ignore make web strict
     href={href}
     color="blue400"
     underline="small"
