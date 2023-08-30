@@ -16,8 +16,7 @@ export const information = {
   labels: {
     staysAbroad: defineMessages({
       subSectionTitle: {
-        id:
-          'doi.rpr.application:information.labels.staysAbroad.subSectionTitle',
+        id: 'doi.rpr.application:information.labels.staysAbroad.subSectionTitle',
         defaultMessage: 'Dvöl erlendis',
         description: 'Stays abroad sub section title',
       },
@@ -87,8 +86,7 @@ export const information = {
     }),
     criminalRecord: defineMessages({
       subSectionTitle: {
-        id:
-          'doi.rpr.application:information.labels.criminalRecord.subSectionTitle',
+        id: 'doi.rpr.application:information.labels.criminalRecord.subSectionTitle',
         defaultMessage: 'Sakaferill',
         description: 'Criminal record sub section title',
       },
@@ -259,8 +257,7 @@ export const information = {
     }),
     otherDocuments: defineMessages({
       subSectionTitle: {
-        id:
-          'doi.rpr.application:information.labels.otherDocuments.subSectionTitle',
+        id: 'doi.rpr.application:information.labels.otherDocuments.subSectionTitle',
         defaultMessage: 'Önnur fylgigögn',
         description: 'Other documents sub section title',
       },

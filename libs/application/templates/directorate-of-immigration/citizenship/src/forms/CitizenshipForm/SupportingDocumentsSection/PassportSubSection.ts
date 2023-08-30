@@ -14,7 +14,7 @@ import { getSelectedIndividualName } from '../../../utils'
 import {
   Country,
   TravelDocumentType,
-} from '@island.is/clients/directorate-of-immigration/citizenship'
+} from '@island.is/clients/directorate-of-immigration'
 import { Routes } from '../../../lib/constants'
 import { CitizenIndividual } from '../../../shared'
 

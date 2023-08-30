@@ -4,7 +4,7 @@ import { FileUploadController } from '@island.is/application/ui-components'
 import { supportingDocuments } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import { getValueViaPath } from '@island.is/application/core'
-import { Country } from '@island.is/clients/directorate-of-immigration/citizenship'
+import { Country } from '@island.is/clients/directorate-of-immigration'
 
 export const CriminalRecords = ({ field, application, error }: any) => {
   const answers = application.answers as Citizenship
@@ -33,6 +33,7 @@ export const CriminalRecords = ({ field, application, error }: any) => {
               id={`${field.id}.${x.countryId}`}
               header={`Sakavottorð - ${
                 countryOptions.filter((z) => z.id === parseInt(x.countryId))[0]
+                  ?.name
               }`}
               description={formatMessage(
                 supportingDocuments.labels.otherDocuments.acceptedFileTypes,

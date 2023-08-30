@@ -7,8 +7,8 @@ import { Citizenship } from '../../lib/dataSchema'
 import { useLocale } from '@island.is/localization'
 import { Routes } from '../../lib/constants'
 import SummaryBlock from '../../components/SummaryBlock'
-import { getValueViaPath } from '@island.is/application/core'
-import { Country } from '@island.is/clients/directorate-of-immigration/citizenship'
+import { YES, getValueViaPath } from '@island.is/application/core'
+import { Country } from '@island.is/clients/directorate-of-immigration'
 
 interface Props extends FieldBaseProps {
   goToScreen?: (id: string) => void
@@ -41,7 +41,7 @@ export const StaysAbroadReview: FC<Props> = ({
           }}
         />
         <GridRow>
-          {answers?.staysAbroad?.hasStayedAbroad &&
+          {answers?.staysAbroad?.hasStayedAbroad === YES &&
           answers?.staysAbroad?.selectedAbroadCountries &&
           answers?.staysAbroad?.selectedAbroadCountries?.length > 0 ? (
             answers?.staysAbroad?.selectedAbroadCountries?.map((country) => {

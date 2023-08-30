@@ -6,7 +6,7 @@ import {
   buildCustomField,
   buildMessageWithLinkButtonField,
 } from '@island.is/application/core'
-import { CurrentResidencePermit } from '@island.is/clients/directorate-of-immigration/residence-permit'
+import { CurrentResidencePermit } from '@island.is/clients/directorate-of-immigration'
 import { applicant } from '../../../lib/messages'
 import DescriptionText from '../../../components/DescriptionText'
 import { DescriptionInlineLink } from '../../../fields'

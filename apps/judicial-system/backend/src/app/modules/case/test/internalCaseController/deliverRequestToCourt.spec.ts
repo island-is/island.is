@@ -41,10 +41,8 @@ describe('InternalCaseController - Deliver requst to court', () => {
     const mockGet = getRequestPdfAsBuffer as jest.Mock
     mockGet.mockRejectedValue(new Error('Some error'))
 
-    const {
-      courtService,
-      internalCaseController,
-    } = await createTestingCaseModule()
+    const { courtService, internalCaseController } =
+      await createTestingCaseModule()
 
     mockCourtService = courtService
     const mockCreateDocument = mockCourtService.createDocument as jest.Mock

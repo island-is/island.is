@@ -21,44 +21,44 @@ interface NewComponentProps<T> {
   translations: { [k: string]: string }
 }
 
-export const withLocale = <Props,>(locale?: Locale) => (
-  Component: Screen<Props>,
-): NextComponentType => {
-  const getProps = Component.getProps
-  if (!getProps) {
-    return Component
-  }
+export const withLocale =
+  <Props,>(locale?: Locale) =>
+  (Component: Screen<Props>): NextComponentType => {
+    const getProps = Component.getProps
+    if (!getProps) {
+      return Component
+    }
 
-  const NewComponent: Screen<NewComponentProps<Props>> = ({
-    pageProps,
-    locale,
-    translations,
-  }) => (
-    <I18n locale={locale} translations={translations}>
-      <Component {...pageProps} />
-    </I18n>
-  )
-
-  NewComponent.getProps = async (ctx) => {
-    const newContext = {
-      ...ctx,
-      locale:
-        locale ||
-        getLocaleFromPath(safelyExtractPathnameFromUrl(ctx?.req?.url)),
-    } as any
-    const [props, translations] = await Promise.all([
-      getProps(newContext),
-      getGlobalStrings(newContext),
-    ])
-    return {
-      pageProps: props,
+    const NewComponent: Screen<NewComponentProps<Props>> = ({
+      pageProps,
       locale,
       translations,
-    }
-  }
+    }) => (
+      <I18n locale={locale} translations={translations}>
+        <Component {...pageProps} />
+      </I18n>
+    )
 
-  return NewComponent
-}
+    NewComponent.getProps = async (ctx) => {
+      const newContext = {
+        ...ctx,
+        locale:
+          locale ||
+          getLocaleFromPath(safelyExtractPathnameFromUrl(ctx?.req?.url)),
+      } as any
+      const [props, translations] = await Promise.all([
+        getProps(newContext),
+        getGlobalStrings(newContext),
+      ])
+      return {
+        pageProps: props,
+        locale,
+        translations,
+      }
+    }
+
+    return NewComponent
+  }
 
 const getGlobalStrings = async ({
   apolloClient,
@@ -78,8 +78,12 @@ const getGlobalStrings = async ({
       },
     })
     .then((content) => {
-      // map data here to reduce data processing in component
-      return JSON.parse(content.data.getNamespace.fields)
+      if (content.data.getNamespace) {
+        // map data here to reduce data processing in component
+        return JSON.parse(content.data.getNamespace.fields)
+      }
+      // Handle the case where content.data.getNamespace is null or undefined
+      return {}
     })
 }
 

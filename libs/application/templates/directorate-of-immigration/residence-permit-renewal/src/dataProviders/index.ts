@@ -8,7 +8,6 @@ import { ApiActions } from '../shared'
 export {
   NationalRegistryUserApi,
   NationalRegistrySpouseApi,
-  NationalRegistryMaritalTitleApi,
   ChildrenCustodyInformationApi,
   UserProfileApi,
 } from '@island.is/application/types'
@@ -68,4 +67,10 @@ export const OldPassportItemApi = defineTemplateApi({
 export const OldAgentItemApi = defineTemplateApi({
   action: ApiActions.getOldAgentItem,
   externalDataId: 'oldAgentItem',
+})
+
+export const NationalRegistryMaritalTitleApi = defineTemplateApi({
+  action: 'getMaritalTitle',
+  externalDataId: 'nationalRegistryMaritalTitle',
+  namespace: 'NationalRegistry',
 })

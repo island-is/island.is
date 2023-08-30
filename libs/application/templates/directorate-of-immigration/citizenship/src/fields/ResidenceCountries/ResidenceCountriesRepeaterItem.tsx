@@ -12,7 +12,7 @@ import { SelectFormField } from '@island.is/application/ui-fields'
 import { CountryOfResidence } from '../../shared'
 import { information } from '../../lib/messages'
 import { getValueViaPath } from '@island.is/application/core'
-import { Country } from '@island.is/clients/directorate-of-immigration/citizenship'
+import { Country } from '@island.is/clients/directorate-of-immigration'
 import { getErrorViaPath } from '@island.is/application/core'
 
 interface Props {
@@ -40,11 +40,9 @@ export const ResidenceCountriesRepeaterItem: FC<Props & FieldBaseProps> = ({
   const countryField = `${fieldIndex}.countryId`
   const wasRemovedField = `${fieldIndex}.wasRemoved`
 
-  const countryOptions = (getValueViaPath(
-    application.externalData,
-    'countries.data',
-    [],
-  ) as Country[]).map(({ id, name }) => ({
+  const countryOptions = (
+    getValueViaPath(application.externalData, 'countries.data', []) as Country[]
+  ).map(({ id, name }) => ({
     value: id.toString(),
     label: name,
   }))

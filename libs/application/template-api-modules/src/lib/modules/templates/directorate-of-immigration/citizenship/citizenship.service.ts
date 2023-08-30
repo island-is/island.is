@@ -15,17 +15,18 @@ import {
   CitizenshipAnswers,
   SpouseIndividual,
   CitizenIndividual,
+  error as errorMessages,
 } from '@island.is/application/templates/directorate-of-immigration/citizenship'
 import {
-  CitizenshipClient,
   Country,
   CountryOfResidence,
+  DirectorateOfImmigrationClient,
   ForeignCriminalRecordFile,
   Passport,
   ResidenceCondition,
   StayAbroad,
   TravelDocumentType,
-} from '@island.is/clients/directorate-of-immigration/citizenship'
+} from '@island.is/clients/directorate-of-immigration'
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
 import { coreErrorMessages, YES } from '@island.is/application/core'
 
@@ -33,7 +34,7 @@ import { coreErrorMessages, YES } from '@island.is/application/core'
 export class CitizenshipService extends BaseTemplateApiService {
   constructor(
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
-    private readonly citizenshipClient: CitizenshipClient,
+    private readonly directorateOfImmigrationClient: DirectorateOfImmigrationClient,
     private readonly nationalRegistryApi: NationalRegistryClientService,
   ) {
     super(ApplicationTypes.CITIZENSHIP)
@@ -60,39 +61,45 @@ export class CitizenshipService extends BaseTemplateApiService {
   async getResidenceConditions({
     auth,
   }: TemplateApiModuleActionProps): Promise<ResidenceCondition[]> {
-    return this.citizenshipClient.getResidenceConditions(auth)
+    return this.directorateOfImmigrationClient.getCitizenshipResidenceConditions(
+      auth,
+    )
   }
 
   async getCountries(): Promise<Country[]> {
-    return this.citizenshipClient.getCountries()
+    return this.directorateOfImmigrationClient.getCountries()
   }
 
   async getTravelDocumentTypes(): Promise<TravelDocumentType[]> {
-    return this.citizenshipClient.getTravelDocumentTypes()
+    return this.directorateOfImmigrationClient.getTravelDocumentTypes()
   }
 
   async getOldCountryOfResidenceList({
     auth,
   }: TemplateApiModuleActionProps): Promise<CountryOfResidence[]> {
-    return this.citizenshipClient.getOldCountryOfResidenceList(auth)
+    return this.directorateOfImmigrationClient.getOldCountryOfResidenceList(
+      auth,
+    )
   }
 
   async getOldStayAbroadList({
     auth,
   }: TemplateApiModuleActionProps): Promise<StayAbroad[]> {
-    return this.citizenshipClient.getOldStayAbroadList(auth)
+    return this.directorateOfImmigrationClient.getOldStayAbroadList(auth)
   }
 
   async getOldPassportItem({
     auth,
   }: TemplateApiModuleActionProps): Promise<Passport | undefined> {
-    return this.citizenshipClient.getOldPassportItem(auth)
+    return this.directorateOfImmigrationClient.getOldPassportItem(auth)
   }
 
   async getOldForeignCriminalRecordFileList({
     auth,
   }: TemplateApiModuleActionProps): Promise<ForeignCriminalRecordFile[]> {
-    return this.citizenshipClient.getOldForeignCriminalRecordFileList(auth)
+    return this.directorateOfImmigrationClient.getOldForeignCriminalRecordFileList(
+      auth,
+    )
   }
 
   async getNationalRegistryIndividual({
@@ -101,9 +108,8 @@ export class CitizenshipService extends BaseTemplateApiService {
   }: TemplateApiModuleActionProps): Promise<CitizenIndividual | null> {
     const individual = await this.getIndividualDetails(auth.nationalId)
     if (individual)
-      individual.residenceInIcelandLastChangeDate = await this.getResidenceInIcelandLastChangeDate(
-        auth.nationalId,
-      )
+      individual.residenceInIcelandLastChangeDate =
+        await this.getResidenceInIcelandLastChangeDate(auth.nationalId)
     return individual
   }
 
@@ -117,6 +123,19 @@ export class CitizenshipService extends BaseTemplateApiService {
     const citizenship = await this.nationalRegistryApi.getCitizenship(
       nationalId,
     )
+
+    // TODOx add back when we have Gervimenn not with IS citizenship
+    // // dont allow user to continue if already has icelandic citizenship
+    // const citizenshipIceland = 'IS'
+    // if (citizenship?.countryCode === citizenshipIceland) {
+    //   throw new TemplateApiError(
+    //     {
+    //       title: errorMessages.alreadyIcelandicCitizen,
+    //       summary: errorMessages.alreadyIcelandicCitizen,
+    //     },
+    //     404,
+    //   )
+    // }
 
     // get marital title
     const cohabitationInfo = await this.nationalRegistryApi.getCohabitationInfo(
@@ -191,8 +210,15 @@ export class CitizenshipService extends BaseTemplateApiService {
       }
     }
 
-    //TODOx remove, need to check if this is reliable information
-    if (!lastChangeDate) return new Date()
+    if (!lastChangeDate) {
+      throw new TemplateApiError(
+        {
+          title: errorMessages.residenceInIcelandLastChangeDateMissing,
+          summary: errorMessages.residenceInIcelandLastChangeDateMissing,
+        },
+        404,
+      )
+    }
 
     return lastChangeDate
   }
@@ -251,6 +277,34 @@ export class CitizenshipService extends BaseTemplateApiService {
     )
   }
 
+  async validateApplication({
+    application,
+    auth,
+  }: TemplateApiModuleActionProps) {
+    const answers = application.answers as CitizenshipAnswers
+
+    const residenceConditionList =
+      await this.directorateOfImmigrationClient.getCitizenshipResidenceConditions(
+        auth,
+      )
+
+    // throw error in case the residence condition list changed since prerequisite step and
+    // user does not fulfill any other condition
+    if (
+      residenceConditionList.length === 0 &&
+      answers.parentInformation?.hasValidParents !== YES &&
+      answers.formerIcelander !== YES
+    ) {
+      throw new TemplateApiError(
+        {
+          title: errorMessages.noResidenceConditionPossible,
+          summary: errorMessages.noResidenceConditionPossible,
+        },
+        400,
+      )
+    }
+  }
+
   async submitApplication({
     application,
     auth,
@@ -264,12 +318,8 @@ export class CitizenshipService extends BaseTemplateApiService {
       )
     }
 
-    const isPayment:
-      | { fulfilled: boolean }
-      | undefined = await this.sharedTemplateAPIService.getPaymentStatus(
-      auth,
-      application.id,
-    )
+    const isPayment: { fulfilled: boolean } | undefined =
+      await this.sharedTemplateAPIService.getPaymentStatus(auth, application.id)
 
     if (!isPayment?.fulfilled) {
       throw new Error(
@@ -292,16 +342,16 @@ export class CitizenshipService extends BaseTemplateApiService {
       | undefined
     const applicantPassport = answers.passport
     const filteredCountriesOfResidence =
-      answers.countriesOfResidence?.hasLivedAbroad &&
+      answers.countriesOfResidence?.hasLivedAbroad == YES &&
       answers.countriesOfResidence?.selectedAbroadCountries
-        ?.filter((c) => !c.wasRemoved)
+        ?.filter((c) => c.wasRemoved !== 'true')
         ?.map((c) => ({
           countryId: parseInt(c.countryId),
         }))
     const filteredStaysAbroad =
-      answers.staysAbroad?.hasStayedAbroad &&
+      answers.staysAbroad?.hasStayedAbroad == YES &&
       answers.staysAbroad?.selectedAbroadCountries
-        ?.filter((s) => !s.wasRemoved)
+        ?.filter((s) => s.wasRemoved !== 'true')
         ?.map((s) => ({
           countryId: parseInt(s.countryId),
           dateFrom: s.dateFrom ? new Date(s.dateFrom) : undefined,
@@ -309,9 +359,9 @@ export class CitizenshipService extends BaseTemplateApiService {
           purpose: s.purpose,
         }))
     const filteredParents =
-      answers.parentInformation?.hasValidParents &&
+      answers.parentInformation?.hasValidParents == YES &&
       answers.parentInformation?.parents
-        ?.filter((p) => p.nationalId && !p.wasRemoved)
+        ?.filter((p) => p.nationalId && p.wasRemoved !== 'true')
         ?.map((p) => ({
           nationalId: p.nationalId!,
           givenName: p.givenName,
@@ -338,95 +388,109 @@ export class CitizenshipService extends BaseTemplateApiService {
     }
 
     // Submit the application
-    await this.citizenshipClient.submitApplicationForCitizenship(auth, {
-      selectedChildren: answers.selectedChildren || [],
-      isFormerIcelandicCitizen: answers.formerIcelander === YES,
-      givenName: individual?.givenName,
-      familyName: individual?.familyName,
-      fullName: individual?.fullName,
-      address: individual?.address?.streetAddress,
-      postalCode: individual?.address?.postalCode,
-      city: individual?.address?.city,
-      email: answers.userInformation?.email,
-      phone: answers.userInformation?.phone,
-      citizenshipCode: individual?.citizenship?.code,
-      residenceInIcelandLastChangeDate:
-        individual?.residenceInIcelandLastChangeDate,
-      birthCountry: nationalRegistryBirthplace?.location,
-      maritalStatusCode: spouseDetails?.maritalStatus,
-      dateOfMaritalStatus: spouseDetails?.lastModified,
-      spouse: spouseDetails?.nationalId
-        ? {
-            nationalId: spouseDetails.nationalId!,
-            givenName: spouseDetails.spouse?.givenName,
-            familyName: spouseDetails.spouse?.familyName,
-            birthCountry: spouseDetails.spouseBirthplace?.location,
-            citizenshipCode: spouseDetails.spouse?.citizenship?.code,
-            address: spouseDetails.spouse?.address?.streetAddress,
-            reasonDifferentAddress: answers.maritalStatus?.explanation,
-          }
-        : undefined,
-      parents: filteredParents || [],
-      countriesOfResidence: filteredCountriesOfResidence || [],
-      staysAbroad: filteredStaysAbroad || [],
-      passport: {
-        dateOfIssue: new Date(applicantPassport.publishDate),
-        dateOfExpiry: new Date(applicantPassport.expirationDate),
-        passportNumber: applicantPassport.passportNumber,
-        passportTypeId: parseInt(applicantPassport.passportTypeId),
-        countryOfIssuerId: parseInt(applicantPassport.countryOfIssuerId),
-      },
-      //TODOx missing in answers:
-      supportingDocuments: {
-        birthCertificate: answers.supportingDocuments?.birthCertificate?.map(
-          (file) => ({ base64: file }),
-        ),
-        subsistenceCertificate:
-          answers.supportingDocuments?.subsistenceCertificate?.map((file) => ({
-            base64: file,
+    await this.directorateOfImmigrationClient.submitApplicationForCitizenship(
+      auth,
+      {
+        selectedChildren: answers.selectedChildren || [],
+        isFormerIcelandicCitizen: answers.formerIcelander === YES,
+        givenName: individual?.givenName,
+        familyName: individual?.familyName,
+        fullName: individual?.fullName,
+        address: individual?.address?.streetAddress,
+        postalCode: individual?.address?.postalCode,
+        city: individual?.address?.city,
+        email: answers.userInformation?.email,
+        phone: answers.userInformation?.phone,
+        citizenshipCode: individual?.citizenship?.code,
+        residenceInIcelandLastChangeDate:
+          individual?.residenceInIcelandLastChangeDate,
+        birthCountry: nationalRegistryBirthplace?.location,
+        maritalStatusCode: spouseDetails?.maritalStatus,
+        dateOfMaritalStatus: spouseDetails?.lastModified,
+        spouse: spouseDetails?.nationalId
+          ? {
+              nationalId: spouseDetails.nationalId!,
+              givenName: spouseDetails.spouse?.givenName,
+              familyName: spouseDetails.spouse?.familyName,
+              birthCountry: spouseDetails.spouseBirthplace?.location,
+              citizenshipCode: spouseDetails.spouse?.citizenship?.code,
+              address: spouseDetails.spouse?.address?.streetAddress,
+              reasonDifferentAddress: answers.maritalStatus?.explanation,
+            }
+          : undefined,
+        parents: filteredParents || [],
+        countriesOfResidence: filteredCountriesOfResidence || [],
+        staysAbroad: filteredStaysAbroad || [],
+        passport: {
+          dateOfIssue: new Date(applicantPassport.publishDate),
+          dateOfExpiry: new Date(applicantPassport.expirationDate),
+          passportNumber: applicantPassport.passportNumber,
+          passportTypeId: parseInt(applicantPassport.passportTypeId),
+          countryOfIssuerId: parseInt(applicantPassport.countryOfIssuerId),
+          file: applicantPassport.file?.map((file) => ({ base64: file })) || [],
+        },
+        supportingDocuments: {
+          birthCertificate: answers.supportingDocuments?.birthCertificate?.map(
+            (file) => ({ base64: file }),
+          ),
+          subsistenceCertificate:
+            answers.supportingDocuments?.subsistenceCertificate?.map(
+              (file) => ({
+                base64: file,
+              }),
+            ) || [],
+          subsistenceCertificateForTown:
+            answers.supportingDocuments?.subsistenceCertificateForTown?.map(
+              (file) => ({ base64: file }),
+            ) || [],
+          certificateOfLegalResidenceHistory:
+            answers.supportingDocuments?.certificateOfLegalResidenceHistory?.map(
+              (file) => ({ base64: file }),
+            ) || [],
+          icelandicTestCertificate:
+            answers.supportingDocuments?.icelandicTestCertificate?.map(
+              (file) => ({
+                base64: file,
+              }),
+            ) || [],
+          criminalRecordList: criminalRecordListFlattened,
+        },
+        children:
+          childrenCustodyInformation?.map((c) => ({
+            nationalId: c.nationalId,
+            fullName: c.fullName,
           })) || [],
-        subsistenceCertificateForTown:
-          answers.supportingDocuments?.subsistenceCertificateForTown?.map(
-            (file) => ({ base64: file }),
-          ) || [],
-        certificateOfLegalResidenceHistory:
-          answers.supportingDocuments?.certificateOfLegalResidenceHistory?.map(
-            (file) => ({ base64: file }),
-          ) || [],
-        icelandicTestCertificate:
-          answers.supportingDocuments?.icelandicTestCertificate?.map(
-            (file) => ({
-              base64: file,
-            }),
-          ) || [],
-        criminalRecordList: criminalRecordListFlattened,
+        childrenPassport:
+          answers.childrenPassport?.map((p) => ({
+            nationalId: p.nationalId,
+            dateOfIssue: new Date(p.publishDate),
+            dateOfExpiry: new Date(p.expirationDate),
+            passportNumber: p.passportNumber,
+            passportTypeId: parseInt(p.passportTypeId),
+            countryIdOfIssuer: parseInt(p.countryOfIssuerId),
+            file: p.file?.map((file) => ({ base64: file })) || [],
+          })) || [],
+        childrenSupportingDocuments:
+          answers.childrenSupportingDocuments?.map((d) => ({
+            nationalId: d.nationalId,
+            birthCertificate:
+              d.birthCertificate?.map((file) => ({
+                base64: file,
+              })) || [],
+            writtenConsentFromChild:
+              d.writtenConsentFromChild?.map((file) => ({
+                base64: file,
+              })) || [],
+            writtenConsentFromOtherParent:
+              d.writtenConsentFromOtherParent?.map((file) => ({
+                base64: file,
+              })) || [],
+            custodyDocuments:
+              d.custodyDocuments?.map((file) => ({
+                base64: file,
+              })) || [],
+          })) || [],
       },
-      children:
-        childrenCustodyInformation?.map((c) => ({
-          nationalId: c.nationalId,
-          fullName: c.fullName,
-        })) || [],
-      //TODOx missing in answers:
-      childrenPassport: [
-        {
-          nationalId: '',
-          dateOfIssue: new Date(),
-          dateOfExpiry: new Date(),
-          passportNumber: '',
-          passportTypeId: 1,
-          countryIdOfIssuer: 1,
-        },
-      ],
-      //TODOx missing in answers:
-      childrenSupportingDocuments: [
-        {
-          nationalId: '',
-          birthCertificate: { base64: '' },
-          writtenConsentFromChild: { base64: '' },
-          writtenConsentFromOtherParent: { base64: '' },
-          custodyDocuments: { base64: '' },
-        },
-      ],
-    })
+    )
   }
 }

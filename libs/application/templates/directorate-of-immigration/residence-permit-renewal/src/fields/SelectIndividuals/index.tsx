@@ -8,7 +8,7 @@ import {
   NationalRegistryIndividual,
 } from '@island.is/application/types'
 import { getValueViaPath } from '@island.is/application/core'
-import { CurrentResidencePermit } from '@island.is/clients/directorate-of-immigration/residence-permit'
+import { CurrentResidencePermit } from '@island.is/clients/directorate-of-immigration'
 import { formatDate } from '../../utils'
 import { useLocale } from '@island.is/localization'
 

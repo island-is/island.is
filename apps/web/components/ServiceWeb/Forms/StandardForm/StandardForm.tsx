@@ -102,13 +102,15 @@ const skippedLabelsInMessage: Array<keyof typeof labels> = [
   'erindi',
 ]
 
-const useFormNamespace = (namespace: FormNamespace) => (
-  key: string,
-  type: 'label' | 'requiredMessage' | 'placeholder' | 'patternMessage',
-  fallback?: string,
-) => {
-  return namespace?.[key]?.[type] ?? fallback
-}
+const useFormNamespace =
+  (namespace: FormNamespace) =>
+  (
+    key: string,
+    type: 'label' | 'requiredMessage' | 'placeholder' | 'patternMessage',
+    fallback?: string,
+  ) => {
+    return namespace?.[key]?.[type] ?? fallback
+  }
 
 interface BasicInputProps {
   name: keyof typeof labels
@@ -147,7 +149,7 @@ const BasicInput = ({
       }}
       // The docs tell us to spread the response of the register function even though it's return type is void
       // https://react-hook-form.com/api/useformcontext/
-      {...((register(name) as unknown) as object)}
+      {...(register(name) as unknown as object)}
     />
   )
 }
@@ -185,7 +187,8 @@ export const StandardForm = ({
   const [categoryLabel, setCategoryLabel] = useState<string>('')
   const [addonFields, setAddonFields] = useState<ReactNode | null>()
   const categoryDescription = useMemo(
-    () => supportCategories.find((c) => c.id === categoryId)?.description ?? '',
+    () =>
+      supportCategories?.find((c) => c.id === categoryId)?.description ?? '',
     [categoryId, supportCategories],
   )
 
@@ -205,9 +208,8 @@ export const StandardForm = ({
     },
   })
 
-  const institutionSlugBelongsToMannaudstorg = institutionSlug.includes(
-    'mannaudstorg',
-  )
+  const institutionSlugBelongsToMannaudstorg =
+    institutionSlug.includes('mannaudstorg')
 
   useDebounce(
     () => {
@@ -527,7 +529,7 @@ export const StandardForm = ({
 
   const isBusy = loadingSuggestions || isChangingSubject
 
-  const categoryOptions = supportCategories
+  const categoryOptions = (supportCategories ?? [])
     .map((x) => ({
       label: x.title?.trim(),
       value: x.id,
@@ -704,7 +706,7 @@ export const StandardForm = ({
                             onChange(label)
                           }}
                           hasError={errors?.rikisadili !== undefined}
-                          errorMessage={errors?.rikisadili?.message.toString()}
+                          errorMessage={errors?.rikisadili?.message?.toString()}
                           options={stateEntityOptions}
                           placeholder={fn(
                             'rikisadili',
@@ -889,7 +891,7 @@ export const StandardForm = ({
                               errorMessage={
                                 errors?.syslumadur?.message as string
                               }
-                              options={syslumenn.map((x) => ({
+                              options={(syslumenn ?? []).map((x) => ({
                                 label: x.title,
                                 value: x.id,
                               }))}

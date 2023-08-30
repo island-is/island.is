@@ -111,8 +111,7 @@ export const externalData = {
       description: 'National commissioner of police title',
     },
     subTitle: {
-      id:
-        'doi.cs.application:externalData.nationalCommissionerOfPolice.subTitle',
+      id: 'doi.cs.application:externalData.nationalCommissionerOfPolice.subTitle',
       defaultMessage:
         'Upplýsingar um sektir, fangelsisrefsingar eða ólokin mál í refsivörslukerfinu.',
       description: 'National commissioner of police sub title',

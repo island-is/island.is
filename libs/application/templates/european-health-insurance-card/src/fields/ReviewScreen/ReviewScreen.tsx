@@ -23,7 +23,7 @@ const ReviewScreen: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     postalCode: nationalRegistryData.address.postalCode,
   }
 
-  const answers = (application.answers as unknown) as Answer
+  const answers = application.answers as unknown as Answer
   const plastic = answers.delimitations.applyForPlastic
   const pdf = application.answers.applyForPDF as Array<string>
   return (

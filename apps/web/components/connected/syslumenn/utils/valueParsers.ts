@@ -32,4 +32,5 @@ export const getValidPeriodRepresentation = (
   if (!validTo) {
     return labelValidPeriodIndefinite
   }
+  return ''
 }

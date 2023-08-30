@@ -82,13 +82,13 @@ const SubPage: Screen<SubPageProps> = ({
   const o = useNamespace(organizationNamespace)
   const { linkResolver } = useLinkResolver()
   useContentfulId(
-    organization.id,
+    organization?.id,
     singleSupportCategory?.id,
     singleSupportQNA?.id,
   )
   useLocalLinkTypeResolver()
 
-  const organizationSlug = organization.slug
+  const organizationSlug = organization?.slug
   const question = singleSupportQNA
 
   const institutionSlug = getSlugPart(Router.asPath, locale === 'is' ? 2 : 3)
@@ -119,9 +119,8 @@ const SubPage: Screen<SubPageProps> = ({
     linkResolver('serviceweb').href
   }/${organizationSlug}${questionSlug ? `/${categorySlug}` : ''}`
 
-  const institutionSlugBelongsToMannaudstorg = institutionSlug.includes(
-    'mannaudstorg',
-  )
+  const institutionSlugBelongsToMannaudstorg =
+    institutionSlug.includes('mannaudstorg')
 
   const breadcrumbItems = [
     {
@@ -130,7 +129,7 @@ const SubPage: Screen<SubPageProps> = ({
       href: linkResolver('serviceweb').href,
     },
     {
-      title: organization.title,
+      title: organization?.title,
       typename: 'serviceweb',
       href: linkResolver('serviceweborganization', [organizationSlug]).href,
     },
@@ -279,7 +278,7 @@ const SubPage: Screen<SubPageProps> = ({
                               }
                             >
                               <OrganizationContactBanner
-                                organizationLogoUrl={organization.logo?.url}
+                                organizationLogoUrl={organization?.logo?.url}
                                 contactLink={question.contactLink}
                                 headerText={o(
                                   'serviceWebOrganizationContactBannerHeaderTitle',
@@ -428,7 +427,7 @@ SubPage.getProps = async ({ apolloClient, locale, query, res }) => {
         },
       })
       .then((variables) =>
-        variables.data.getNamespace.fields
+        variables.data.getNamespace?.fields
           ? JSON.parse(variables.data.getNamespace.fields)
           : {},
       ),

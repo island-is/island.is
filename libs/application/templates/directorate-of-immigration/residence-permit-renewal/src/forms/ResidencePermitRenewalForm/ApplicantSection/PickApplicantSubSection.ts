@@ -5,7 +5,7 @@ import {
   getValueViaPath,
   buildDescriptionField,
 } from '@island.is/application/core'
-import { CurrentResidencePermit } from '@island.is/clients/directorate-of-immigration/residence-permit'
+import { CurrentResidencePermit } from '@island.is/clients/directorate-of-immigration'
 import { applicant } from '../../../lib/messages'
 
 export const PickApplicantSubSection = buildSubSection({

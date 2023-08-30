@@ -7,7 +7,7 @@ import {
 import { information } from '../../../lib/messages'
 import { Answer } from '@island.is/application/types'
 import { Citizenship } from '../../../lib/dataSchema'
-import { ResidenceCondition } from '@island.is/clients/directorate-of-immigration/citizenship'
+import { ResidenceCondition } from '@island.is/clients/directorate-of-immigration'
 import { Routes } from '../../../lib/constants'
 
 export const ParentsSubSection = buildSubSection({

@@ -15,7 +15,7 @@ import { getSelectedIndividualName } from '../../../utils'
 import {
   Country,
   TravelDocumentType,
-} from '@island.is/clients/directorate-of-immigration/citizenship'
+} from '@island.is/clients/directorate-of-immigration'
 import { Routes } from '../../../lib/constants'
 
 const FILE_SIZE_LIMIT = 10000000

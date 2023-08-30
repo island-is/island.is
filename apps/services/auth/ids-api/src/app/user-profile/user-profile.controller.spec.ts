@@ -27,7 +27,7 @@ import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function mocked<T extends (...args: any) => any>(value: T) {
-  return (value as unknown) as jest.Mock<ReturnType<T>, Parameters<T>>
+  return value as unknown as jest.Mock<ReturnType<T>, Parameters<T>>
 }
 
 const mockNationalRegistry = (

@@ -32,4 +32,20 @@ export const error = defineMessages({
     defaultMessage: 'Villa kom upp við að skila inn umsókn',
     description: 'Failed to submit application',
   },
+  alreadyIcelandicCitizen: {
+    id: 'ta.tvo.application:error.alreadyIcelandicCitizen',
+    defaultMessage: 'Innskráður notandi er nú þegar með íslenskt ríkisfang',
+    description: 'Logged in user already has Icelandic citizenship',
+  },
+  residenceInIcelandLastChangeDateMissing: {
+    id: 'ta.tvo.application:error.residenceInIcelandLastChangeDateMissing',
+    defaultMessage:
+      'Náði ekki að sækja dagsetningu fyrstu lögheimilisskráningu',
+    description: 'Not able to fetch residence last change date',
+  },
+  noResidenceConditionPossible: {
+    id: 'ta.tvo.application:error.noResidenceConditionPossible',
+    defaultMessage: 'Notandi uppfyllir ekki nein búsetuskilyrði',
+    description: 'User does not fulfill any residence conditions',
+  },
 })

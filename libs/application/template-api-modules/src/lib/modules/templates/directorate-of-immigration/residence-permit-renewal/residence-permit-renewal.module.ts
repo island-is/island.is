@@ -4,9 +4,9 @@ import { SharedTemplateAPIModule } from '../../../shared'
 import { BaseTemplateAPIModuleConfig } from '../../../../types'
 import { ResidencePermitRenewalService } from './residence-permit-renewal.service'
 import {
-  ResidencePermitClientModule,
-  ResidencePermitClientConfig,
-} from '@island.is/clients/directorate-of-immigration/residence-permit'
+  DirectorateOfImmigrationClientModule,
+  DirectorateOfImmigrationClientConfig,
+} from '@island.is/clients/directorate-of-immigration'
 
 export class ResidencePermitRenewalModule {
   static register(baseConfig: BaseTemplateAPIModuleConfig): DynamicModule {
@@ -14,10 +14,10 @@ export class ResidencePermitRenewalModule {
       module: ResidencePermitRenewalModule,
       imports: [
         SharedTemplateAPIModule.register(baseConfig),
-        ResidencePermitClientModule,
+        DirectorateOfImmigrationClientModule,
         ConfigModule.forRoot({
           isGlobal: true,
-          load: [ResidencePermitClientConfig],
+          load: [DirectorateOfImmigrationClientConfig],
         }),
       ],
       providers: [ResidencePermitRenewalService],

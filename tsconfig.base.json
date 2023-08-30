@@ -476,11 +476,8 @@
       "@island.is/clients/data-protection-complaint": [
         "libs/clients/data-protection-complaint/src/index.ts"
       ],
-      "@island.is/clients/directorate-of-immigration/citizenship": [
-        "libs/clients/directorate-of-immigration/citizenship/src/index.ts"
-      ],
-      "@island.is/clients/directorate-of-immigration/residence-permit": [
-        "libs/clients/directorate-of-immigration/residence-permit/src/index.ts"
+      "@island.is/clients/directorate-of-immigration": [
+        "libs/clients/directorate-of-immigration/src/index.ts"
       ],
       "@island.is/clients/disability-license": [
         "libs/clients/disability-license/src/index.ts"

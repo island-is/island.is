@@ -472,9 +472,10 @@ const utilityIconColor = (
 export const iconPostText = style({
   marginLeft: 15,
   selectors: {
-    [`${variants.utility}:not(${isEmpty}) &, ${variants.text}:not(${isEmpty}) &`]: {
-      marginLeft: 8,
-    },
+    [`${variants.utility}:not(${isEmpty}) &, ${variants.text}:not(${isEmpty}) &`]:
+      {
+        marginLeft: 8,
+      },
     [`${variants.text}${size.textSmall}:not(${isEmpty}) &`]: {
       marginLeft: 4,
     },
@@ -484,9 +485,10 @@ export const iconPostText = style({
 export const iconPreText = style({
   marginRight: 15,
   selectors: {
-    [`${variants.utility}:not(${isEmpty}) &, ${variants.text}:not(${isEmpty}) &`]: {
-      marginRight: 8,
-    },
+    [`${variants.utility}:not(${isEmpty}) &, ${variants.text}:not(${isEmpty}) &`]:
+      {
+        marginRight: 8,
+      },
     [`${variants.text}${size.textSmall}:not(${isEmpty}) &`]: {
       marginRight: 4,
     },

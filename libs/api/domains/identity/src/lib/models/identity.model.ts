@@ -62,6 +62,8 @@ const isExternalUser = ({ context, source }: MiddlewareContext): boolean => {
       'birthday',
       'type',
       'name',
+      'givenName',
+      'familyName',
       'nationalId',
     ],
   },

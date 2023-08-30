@@ -10,8 +10,6 @@ export enum ApiActions {
   getNationalRegistryIndividual = 'getNationalRegistryIndividual',
   getNationalRegistrySpouseDetails = 'getNationalRegistrySpouseDetails',
   submitApplication = 'submitApplication',
-  initReview = 'initReview',
-  addReview = 'addReview',
   validateApplication = 'validateApplication',
 }
 

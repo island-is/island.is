@@ -10,14 +10,12 @@ import {useUserProfile} from './profile-queries';
 import {client} from '../../graphql/client';
 import {CREATE_SMS_VERIFICATION} from '../../graphql/queries/create-sms-verification.mutation';
 
-const {
-  getNavigationOptions,
-  useNavigationOptions,
-} = createNavigationOptionHooks(() => ({
-  topBar: {
-    visible: false,
-  },
-}));
+const {getNavigationOptions, useNavigationOptions} =
+  createNavigationOptionHooks(() => ({
+    topBar: {
+      visible: false,
+    },
+  }));
 
 const parsePhone = (phone: string) => {
   return phone

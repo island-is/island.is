@@ -126,6 +126,9 @@ const template: ApplicationTemplate<
           },
           progress: 0.25,
           lifecycle: pruneAfterDays(1),
+          onExit: defineTemplateApi({
+            action: ApiActions.validateApplication,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -133,13 +136,6 @@ const template: ApplicationTemplate<
                 import('../forms/CitizenshipForm').then((module) =>
                   Promise.resolve(module.CitizenshipForm),
                 ),
-              // actions: [
-              //   {
-              //     event: DefaultEvents.SUBMIT,
-              //     name: 'Staðfesta',
-              //     type: 'primary',
-              //   },
-              // ],
               write: 'all',
               delete: true,
             },

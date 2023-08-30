@@ -10,7 +10,7 @@ import { Application } from '@island.is/api/schema'
 import { Answer } from '@island.is/application/types'
 import { Citizenship } from '../../../lib/dataSchema'
 import { CitizenIndividual, SpouseIndividual } from '../../../shared'
-import { ResidenceCondition } from '@island.is/clients/directorate-of-immigration/citizenship'
+import { ResidenceCondition } from '@island.is/clients/directorate-of-immigration'
 import { formatDate } from '../../../utils'
 import { Routes } from '../../../lib/constants'
 

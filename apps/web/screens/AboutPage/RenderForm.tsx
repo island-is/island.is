@@ -39,7 +39,7 @@ export const RenderForm: React.FC<
     touched: false,
   })
 
-  const formatMessage = (message) => {
+  const formatMessage = (message: string) => {
     // These messages come from Mailchimp's API and contain links and other stuff we don't want.
     if (!message) {
       return
@@ -61,7 +61,7 @@ export const RenderForm: React.FC<
     return ''
   }
 
-  const handleSubmit = ({ email }) => {
+  const handleSubmit = ({ email }: { email: string }) => {
     const validEmail = isValidEmail.test(email)
 
     if (!validEmail) {
@@ -82,7 +82,7 @@ export const RenderForm: React.FC<
         {
           param: 'c',
         },
-        (err, data) => {
+        (err: string, data: { result: string; msg: string }) => {
           if (err) {
             setStatus({
               type: 'error',
