@@ -4,12 +4,16 @@ import { renderers } from '../upstream-dependencies'
 import { EnvironmentConfig } from '../types/charts'
 
 export type Mocks = 'with-mocks' | 'no-mocks'
-export const getHelmValueFile = (
+/**
+ * Monster rendering of the services' required values and secrets
+ *
+ */
+export function getHelmValueFile(
   runtime: Kubernetes,
   services: Services<HelmService>,
   withMocks: Mocks,
   env: EnvironmentConfig,
-): HelmValueFile => {
+): HelmValueFile {
   const outputFormat = renderers.helm
   const helmServices: Services<HelmService> = Object.entries(services).reduce(
     (acc, [name, service]) => {

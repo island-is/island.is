@@ -6,15 +6,19 @@ import {
 import { Localhost } from '../localhost-runtime'
 import { EXCLUDED_ENVIRONMENT_NAMES } from '../../cli/render-env-vars'
 import { readFile, writeFile } from 'fs/promises'
-import { globSync } from 'glob'
+import { sync } from 'glob'
 import { join } from 'path'
 import { rootDir } from '../consts'
 
 const mapServiceToNXname = async (serviceName: string) => {
   const projectRootPath = join(__dirname, '..', '..', '..', '..')
-  const projects = globSync(['apps/*/project.json', 'apps/*/*/project.json'], {
-    cwd: projectRootPath,
-  })
+  const projects = ['apps/*/project.json', 'apps/*/*/project.json']
+    .map((project) =>
+      sync(project, {
+        cwd: projectRootPath,
+      }),
+    )
+    .flat()
   const nxName = (
     await Promise.all(
       projects.map(async (path) => {
