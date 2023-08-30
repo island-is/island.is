@@ -25,7 +25,6 @@ export async function generatePdf<T>(
   // Generate content for the PDF.
   generatePdfBody(template, doc)
 
-  // Waiting for the end event before concatenating buffers
   await new Promise((resolve) => {
     doc.on('end', resolve)
   })

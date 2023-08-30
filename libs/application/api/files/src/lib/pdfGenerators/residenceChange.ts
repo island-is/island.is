@@ -179,6 +179,5 @@ export async function generateResidenceChangePdf(application: CRCApplication) {
     doc.on('end', resolve)
   })
 
-  console.log('generatePdf done')
   return Buffer.concat(buffers)
 }
