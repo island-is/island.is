@@ -1,10 +1,11 @@
 {
-  "root": "libs/clients/university-gateway/reykjavik-university",
+  "name": "clients-university-gateway-reykjavik-university",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/clients/university-gateway/reykjavik-university/src",
   "projectType": "library",
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": [
@@ -13,9 +14,9 @@
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "outputs": [
-        "coverage/libs/clients/university-gateway/reykjavik-university"
+        "{workspaceRoot}/coverage/libs/clients/university-gateway/reykjavik-university"
       ],
       "options": {
         "jestConfig": "libs/clients/university-gateway/reykjavik-university/jest.config.js",
@@ -23,7 +24,7 @@
       }
     },
     "schemas/external-openapi-generator": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "commands": [
           "yarn openapi-generator -o libs/clients/university-gateway/reykjavik-university/gen/fetch -i libs/clients/university-gateway/reykjavik-university/src/clientConfig.json"
