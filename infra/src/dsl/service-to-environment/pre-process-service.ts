@@ -121,6 +121,9 @@ export const prepareServiceForEnv = (
   if (serviceDef.redis) {
     result.redis = getEnvRedis(serviceDef.redis, env)
   }
+  if (serviceDef.shutdownGracePeriodSeconds) {
+    result.shutdownGracePeriodSeconds = service.shutdownGracePeriodSeconds
+  }
   // extra attributes
   if (serviceDef.extraAttributes) {
     const { errors, envs } = getEnvExtraValues(
