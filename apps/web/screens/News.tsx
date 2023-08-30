@@ -188,6 +188,7 @@ const NewsListNew: Screen<NewsListProps> = ({
 
   const sidebar = (
     <Stack space={3}>
+      {/** @ts-ignore make web strict */}
       <Box display={['none', 'none', 'block']} printHidden>
         {backButton}
       </Box>
@@ -212,15 +213,19 @@ const NewsListNew: Screen<NewsListProps> = ({
 
   const newsItemContent = !!newsItem && (
     <>
+    {/** @ts-ignore make web strict */}
       <Box display={['none', 'none', 'block']} width="full">
         <Divider />
+        {/** @ts-ignore make web strict */}
       </Box>
+      {/** @ts-ignore make web strict */}
       <Box
         display={['block', 'block', 'block', 'none']}
         paddingTop={5}
         width="full"
       >
         <Text variant="eyebrow">{newsItemDate}</Text>
+        {/** @ts-ignore make web strict */}
       </Box>
       <Text variant="h1" as="h1" paddingTop={[3, 3, 3, 5]} paddingBottom={2}>
         {newsItem.title}
@@ -237,14 +242,15 @@ const NewsListNew: Screen<NewsListProps> = ({
         {newsItem.intro}
       </Text>
       {Boolean(newsItem.image) && (
+        
         <Box
           paddingY={2}
           className={cn({
             [styles.floatedImage]: newsItem.fullWidthImageInContent === false,
           })}
         >
-          <// @ts-ignore make web strict
-          Image
+          {/** @ts-ignore make web strict */}
+          <Image
             {...newsItem.image}
             url={newsItem.image?.url + '?w=774&fm=webp&q=80'}
             thumbnail={newsItem.image?.url + '?w=50&fm=webp&q=80'}
@@ -280,8 +286,8 @@ const NewsListNew: Screen<NewsListProps> = ({
 
   return (
     <>
-      <// @ts-ignore make web strict
-      HeadWithSocialSharing
+    {/** @ts-ignore make web strict */}
+      <HeadWithSocialSharing
         title={metaTitle}
         {...(newsItemMeta && { ...newsItemMeta })}
       />

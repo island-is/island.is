@@ -481,12 +481,8 @@ const ArticleScreen: Screen<ArticleProps> = ({
         marginTop={7}
         printHidden
       >
-        {processEntry?.processLink && (
-          <// @ts-ignore make web strict
-          ProcessEntry
-            {...processEntry}
-          />
-        )}
+        {/** @ts-ignore make web strict */}
+        {processEntry?.processLink && (<ProcessEntry {...processEntry}/>)}
       </Box>
       {
         // @ts-ignore make web strict
@@ -505,6 +501,7 @@ const ArticleScreen: Screen<ArticleProps> = ({
                 label: n('organization'),
                 // @ts-ignore make web strict
                 href: getOrganizationLink(
+                  // @ts-ignore make web strict
                   article.organization[0],
                   activeLocale,
                 ),
@@ -713,14 +710,15 @@ const ArticleScreen: Screen<ArticleProps> = ({
             />
           </Box>
           {processEntry?.processLink && (
+            
             <Box
               marginTop={3}
               display={['none', 'none', 'block']}
               printHidden
               className="rs_read"
             >
-              <// @ts-ignore make web strict
-              ProcessEntry
+              {/** @ts-ignore */}
+              <ProcessEntry
                 {...processEntry}
               />
             </Box>
@@ -754,8 +752,8 @@ const ArticleScreen: Screen<ArticleProps> = ({
           isVisible &&
           createPortal(
             <Box marginTop={5} display={['block', 'block', 'none']} printHidden>
-              <// @ts-ignore make web strict
-              ProcessEntry
+              {/** @ts-ignore make web strict */}
+              <ProcessEntry
                 fixed
                 {...processEntry}
               />

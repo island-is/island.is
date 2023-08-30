@@ -274,8 +274,8 @@ const ServiceSearch: Screen<ServiceSearchProps> = ({
                     })
 
                     return (
-                      <// @ts-ignore make web strict
-                      Card
+                      
+                      <Card
                         key={index}
                         tags={tags}
                         subTitle={parentTitle}

@@ -20,6 +20,7 @@ const useImageLoader = (url: string): boolean => {
   useEffect(() => {
     const img = new window.Image(100)
     img.onload = img.onerror = () => {
+      // @ts-ignore make web strict
       if (isMounted) {
         setLoaded(true)
       }

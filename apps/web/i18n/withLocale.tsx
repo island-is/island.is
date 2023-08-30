@@ -24,6 +24,7 @@ interface NewComponentProps<T> {
 
 export const withLocale =
   <Props,>(locale?: Locale) =>
+  // @ts-ignore make web strict
   (Component: Screen<Props>): NextComponentType => {
     const getProps = Component.getProps
     if (!getProps) {
@@ -37,8 +38,8 @@ export const withLocale =
       translations,
     }) => (
       <I18n locale={locale} translations={translations}>
-        <// @ts-ignore make web strict
-        Component
+        {/** @ts-ignore make web strict */}
+        <Component
           {...pageProps}
         />
       </I18n>

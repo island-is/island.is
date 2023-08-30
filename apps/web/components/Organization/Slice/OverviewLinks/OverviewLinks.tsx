@@ -57,6 +57,7 @@ export const OverviewLinksSlice: React.FC<
                 index,
               ) => {
                 return (
+                  
                   <GridRow
                     key={index}
                     direction={leftImage ? 'row' : 'rowReverse'}
@@ -68,8 +69,8 @@ export const OverviewLinksSlice: React.FC<
                         paddingLeft={leftImage ? undefined : [0, 0, 0, 0, 6]}
                         paddingRight={leftImage ? [10, 0, 0, 0, 6] : [10, 0]}
                       >
-                        <// @ts-ignore make web strict
-                        Image
+                        {/** @ts-ignore make web strict */}
+                        <Image
                           url={image?.url + '?w=774&fm=webp&q=80'}
                           thumbnail={image?.url + '?w=50&fm=webp&q=80'}
                           {...image}
