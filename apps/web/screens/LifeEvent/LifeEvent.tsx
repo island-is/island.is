@@ -40,6 +40,7 @@ import { useRouter } from 'next/router'
 import { Locale } from 'locale'
 import { useLocalLinkTypeResolver } from '@island.is/web/hooks/useLocalLinkTypeResolver'
 import { webRichText } from '@island.is/web/utils/richText'
+import { useI18n } from '@island.is/web/i18n'
 import { Webreader } from '@island.is/web/components'
 import { DIGITAL_ICELAND_PLAUSIBLE_TRACKING_DOMAIN } from '@island.is/web/constants'
 import { watsonConfig } from './config'
@@ -63,6 +64,7 @@ export const LifeEvent: Screen<LifeEventProps> = ({
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
   const router = useRouter()
+  const { activeLocale } = useI18n()
 
   const navigation = useMemo(() => {
     return createNavigation(content, { title })
@@ -179,13 +181,17 @@ export const LifeEvent: Screen<LifeEventProps> = ({
                   />
                 </Box>
                 <Box className="rs_read" paddingTop={[3, 3, 4]}>
-                  {webRichText(content as SliceType[], {
-                    renderComponent: {
-                      Form: (form) => (
-                        <Form form={form} namespace={namespace} />
-                      ),
+                  {webRichText(
+                    content as SliceType[],
+                    {
+                      renderComponent: {
+                        Form: (form) => (
+                          <Form form={form} namespace={namespace} />
+                        ),
+                      },
                     },
-                  })}
+                    activeLocale,
+                  )}
                 </Box>
               </GridColumn>
             </GridRow>
