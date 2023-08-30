@@ -14,7 +14,6 @@ import {
   NotificationType,
   CaseState,
   CaseTransition,
-  CaseLegalProvisions,
 } from '@island.is/judicial-system/types'
 import * as constants from '@island.is/judicial-system/consts'
 import { formatDate, capitalize } from '@island.is/judicial-system/formatters'
@@ -46,9 +45,10 @@ import {
 } from '@island.is/judicial-system-web/messages'
 import { createCaseResentExplanation } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import { formatRequestedCustodyRestrictions } from '@island.is/judicial-system-web/src/utils/restrictions'
+import { CaseLegalProvisions } from '@island.is/judicial-system-web/src/graphql/schema'
+import { lawsBrokenAccordion } from '@island.is/judicial-system-web/messages/Core/lawsBrokenAccordion'
 
 import * as styles from './Overview.css'
-import { lawsBrokenAccordion } from '@island.is/judicial-system-web/messages/Core/lawsBrokenAccordion'
 
 export const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
   const [modal, setModal] = useState<

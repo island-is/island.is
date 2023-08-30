@@ -67,16 +67,16 @@ export const navigation = style({
 const titleStyles = themeUtils.responsiveStyle({
   md: {
     marginLeft: -48,
-    marginTop: 0,
+    marginTop: 30,
   },
   lg: {
-    width: '50%',
+    width: '60%',
     marginLeft: -80,
-    marginTop: -24,
+    marginTop: 24,
   },
   xl: {
     width: '50%',
-    marginLeft: -128,
+    marginLeft: -145,
     marginTop: 24,
   },
 })
