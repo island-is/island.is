@@ -36,7 +36,7 @@ export const EducationDetail = () => {
     },
   })
 
-  const license = data?.OccupationalLicensesEducationalLicense
+  const license = data?.occupationalLicensesEducationalLicense
 
   useEffect(() => {
     if (shouldDownload && license) {

@@ -5,8 +5,11 @@ import type { User } from '@island.is/auth-nest-tools'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { OccupationalLicensesList } from './models/occupationalLicenseList.model'
-import { HealthDirectorateLicense } from './models/healthDirectorateLicense.model'
-import { EducationalLicense } from './models/educationalLicense.model'
+import {
+  EducationalLicense,
+  HealthDirectorateLicense,
+  OccupationalLicenseType,
+} from './models/occupationalLicense.model'
 
 type ExcludesFalse = <T>(x: T | null | undefined | false | '') => x is T
 
@@ -33,7 +36,12 @@ export class OccupationalLicensesService {
       return (
         licenses
           .map((license) => {
-            if (!license.leyfi || !license.starfsstett || !license.gildirFra)
+            if (
+              !license.leyfi ||
+              !license.starfsstett ||
+              !license.gildirFra ||
+              !license.leyfisnumer
+            )
               return null
             const isValid =
               license.gildirTIl && license.gildirFra
@@ -44,6 +52,8 @@ export class OccupationalLicensesService {
             if (!license.logadiliID || !license.kennitala || !license.nafn)
               return undefined
             return {
+              institution: OccupationalLicenseType.HEALTH,
+              id: license.logadiliID,
               legalEntityId: license.logadiliID,
               holderName: license.nafn,
               profession: license.starfsstett,
@@ -53,8 +63,8 @@ export class OccupationalLicensesService {
               isValid: isValid,
             }
           })
-          .filter(Boolean as unknown as ExcludesFalse)
-          .find((license) => license.number === id) ?? undefined
+          .filter((Boolean as unknown) as ExcludesFalse)
+          .find((license) => license.id === id) ?? undefined
       )
     } catch (e) {
       this.logger.error(`Error getting health directorate license by id`, {
@@ -75,7 +85,12 @@ export class OccupationalLicensesService {
 
       return licenses
         .map((license) => {
-          if (!license.leyfi || !license.starfsstett || !license.gildirFra)
+          if (
+            !license.leyfi ||
+            !license.starfsstett ||
+            !license.gildirFra ||
+            !license.leyfisnumer
+          )
             return null
           const isValid =
             license.gildirTIl && license.gildirFra
@@ -86,6 +101,8 @@ export class OccupationalLicensesService {
           if (!license.logadiliID || !license.kennitala || !license.nafn)
             return null
           return {
+            institution: OccupationalLicenseType.HEALTH,
+            id: license.logadiliID,
             legalEntityId: license.logadiliID,
             holderName: license.nafn,
             profession: license.starfsstett,
@@ -95,7 +112,7 @@ export class OccupationalLicensesService {
             isValid: isValid,
           }
         })
-        .filter(Boolean as unknown as ExcludesFalse)
+        .filter((Boolean as unknown) as ExcludesFalse)
     } catch (e) {
       this.logger.error(`Error getting health directorate license`, {
         ...e,
@@ -114,6 +131,7 @@ export class OccupationalLicensesService {
       return (
         licenses
           .map((license) => ({
+            institution: OccupationalLicenseType.EDUCATION,
             id: license.id,
             type: license.issuer,
             profession: license.type,
@@ -137,6 +155,7 @@ export class OccupationalLicensesService {
       const licenses = await (this.mmsApi.getLicenses(user.nationalId) ?? [])
 
       return licenses.map((license) => ({
+        institution: OccupationalLicenseType.EDUCATION,
         id: license.id,
         type: license.issuer,
         profession: license.type,
@@ -165,7 +184,7 @@ export class OccupationalLicensesService {
       items: [
         ...(healthDirectorateLicenses ?? []),
         ...(educationalLicenses ?? []),
-      ].filter(Boolean as unknown as ExcludesFalse),
+      ].filter((Boolean as unknown) as ExcludesFalse),
       error: {
         hasError:
           healthDirectorateLicenses === null || educationalLicenses === null,

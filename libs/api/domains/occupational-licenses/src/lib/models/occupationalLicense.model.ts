@@ -1,14 +1,34 @@
-import { ObjectType, Field, ID, InterfaceType } from '@nestjs/graphql'
+import {
+  ObjectType,
+  Field,
+  ID,
+  InterfaceType,
+  registerEnumType,
+} from '@nestjs/graphql'
+
+export enum OccupationalLicenseType {
+  EDUCATION = 'EDUCATIONAL',
+  HEALTH = 'HEALTH_DIRECTORATE',
+}
+
+registerEnumType(OccupationalLicenseType, {
+  name: 'OccupationalLicenseType',
+})
 
 @InterfaceType({
   resolveType(license: OccupationalLicense) {
-    /*if (license.legalEntityId) {
+    if (license.institution === 'HEALTH_DIRECTORATE') {
       return HealthDirectorateLicense
-    }*/
+    }
     return EducationalLicense
   },
 })
 export abstract class OccupationalLicense {
+  @Field((type) => OccupationalLicenseType)
+  institution!: OccupationalLicenseType
+
+  @Field(() => ID)
+  id!: string
   @Field(() => String)
   type!: string
 
@@ -26,9 +46,6 @@ export abstract class OccupationalLicense {
   implements: OccupationalLicense,
 })
 export class EducationalLicense extends OccupationalLicense {
-  @Field(() => ID)
-  id!: string
-
   @Field(() => String)
   downloadUrl?: string
 }

@@ -21,6 +21,7 @@ export const LicenceActionCard: React.FC<LicenseActionCardProps> = ({
   const { formatMessage } = useLocale()
   return (
     <ActionCard
+      capitalizeHeading={true}
       heading={type}
       text={`${formatMessage(ol.dayOfPublication)}: ${validFrom}`}
       tag={{

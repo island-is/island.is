@@ -15,8 +15,10 @@ import { DownloadServiceConfig } from '@island.is/nest/config'
 import {
   HealthDirectorateLicense,
   EducationalLicense,
+  OccupationalLicense,
 } from './models/occupationalLicense.model'
-
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
 @UseGuards(IdsUserGuard, IdsAuthGuard)
 @Resolver()
 export class OccupationalLicensesResolver {
@@ -24,6 +26,9 @@ export class OccupationalLicensesResolver {
     private readonly occupationalLicensesApi: OccupationalLicensesService,
     @Inject(DownloadServiceConfig.KEY)
     private readonly downloadService: ConfigType<typeof DownloadServiceConfig>,
+
+    @Inject(LOGGER_PROVIDER)
+    private logger: Logger,
   ) {}
 
   @Query(() => OccupationalLicensesList, {
@@ -38,7 +43,7 @@ export class OccupationalLicensesResolver {
   }
 
   @Query(() => HealthDirectorateLicense, {
-    name: 'OccupationalLicensesHealthDirectorateLicense',
+    name: 'occupationalLicensesHealthDirectorateLicense',
     nullable: true,
   })
   @Audit()
@@ -54,7 +59,7 @@ export class OccupationalLicensesResolver {
   }
 
   @Query(() => EducationalLicense, {
-    name: 'OccupationalLicensesEducationalLicense',
+    name: 'occupationalLicensesEducationalLicense',
     nullable: true,
   })
   @Audit()
@@ -70,8 +75,43 @@ export class OccupationalLicensesResolver {
     return license
       ? {
           ...license,
-          url: documentUrl,
+          downloadUrl: documentUrl,
         }
       : null
+  }
+
+  @Query(() => OccupationalLicense, {
+    name: 'occupationalLicense',
+    nullable: true,
+  })
+  @Audit()
+  async getOccupationalLicense(
+    @CurrentUser() user: User,
+    @Args('id', { type: () => String }) id: string,
+  ) {
+    const isEduLicense = await this.getEducationalLicenseById(user, id)
+    if (isEduLicense !== null) {
+      return {
+        id: isEduLicense.id,
+        isValid: isEduLicense.isValid,
+        profession: isEduLicense.profession,
+        type: isEduLicense.type,
+        validFrom: isEduLicense.validFrom,
+        downloadUrl: isEduLicense.downloadUrl,
+      }
+    }
+
+    const isHealthLicense = await this.getHealthDirectorateLicenseById(user, id)
+    if (isHealthLicense !== null) {
+      return {
+        id: isHealthLicense.id,
+        isValid: isHealthLicense.isValid,
+        profession: isHealthLicense.profession,
+        type: isHealthLicense.type,
+        validFrom: isHealthLicense.validFrom,
+      }
+    }
+
+    return null
   }
 }

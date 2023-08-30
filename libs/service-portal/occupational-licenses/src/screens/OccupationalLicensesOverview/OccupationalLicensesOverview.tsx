@@ -14,33 +14,10 @@ import { getOrganizationLogoUrl } from '@island.is/shared/utils'
 import { olMessage as om } from '../../lib/messages'
 import LicenceActionCard from '../../components/LicenceActionCard'
 import { OccupationalLicensesPaths } from '../../lib/paths'
-import { OccupationalLicense } from '@island.is/api/schema'
-
-// const createLicenseUrl = (license: OccupationalLicense) => {
-//   switch (license.__typename) {
-//     case 'OccupationalLicensesEducationalLicense':
-//       return OccupationalLicensesPaths.OccupationalLicensesEducationDetail.replace(
-//         ':id',
-//         license.id,
-//       ).replace(
-//         ':type',
-//         license.profession.charAt(0).toUpperCase() +
-//           license.profession.slice(1),
-//       )
-//     case 'OccupationalLicensesHealthDirectorateLicense':
-//       if (!license.number || !license.profession) return undefined
-//       return OccupationalLicensesPaths.OccupationalLicensesHealthDirectorateDetail.replace(
-//         ':id',
-//         license.number,
-//       ).replace(':type', license.profession)
-//     default:
-//       return undefined
-//   }
-// }
 
 const OccupationalLicensesOverview = () => {
   const { data, loading, error } = useGetOccupationalLicensesQuery({})
-  const { formatMessage } = useLocale()
+  const { formatMessage, formatDateFns } = useLocale()
 
   const organizations =
     (data?.getOrganizations?.items as Array<Organization>) ?? []
@@ -52,6 +29,11 @@ const OccupationalLicensesOverview = () => {
         tag={formatMessage(m.errorTitle)}
       />
     )
+
+  const generateUrl = (route: string, id: string, type: string) =>
+    route
+      .replace(':id', id)
+      .replace(':type', type.charAt(0).toUpperCase() + type.slice(1))
 
   return (
     <Box marginBottom={[6, 6, 10]}>
@@ -72,20 +54,25 @@ const OccupationalLicensesOverview = () => {
         {loading && !error && <CardLoader />}
         {!loading &&
           !error &&
-          data &&
-          data?.occupationalLicenses &&
-          data.occupationalLicenses.count === 0 && (
+          !data?.occupationalLicenses?.error.hasError &&
+          data?.occupationalLicenses?.count === 0 && (
             <EmptyState title={m.noDataFound} />
           )}
         <Stack space={2}>
           {data?.occupationalLicenses?.items.map((license, index) => {
-            // const url = createLicenseUrl(license as OccupationalLicense)
             return (
               <LicenceActionCard
                 key={index}
-                type={license.type ?? undefined}
-                validFrom={license.validFrom ?? undefined}
-                // url={url}
+                type={license.profession}
+                validFrom={formatDateFns(license.validFrom, 'dd.mm.yyyy')}
+                url={generateUrl(
+                  license.__typename ===
+                    'OccupationalLicensesEducationalLicense'
+                    ? OccupationalLicensesPaths.OccupationalLicensesEducationDetail
+                    : OccupationalLicensesPaths.OccupationalLicensesHealthDirectorateDetail,
+                  license.id,
+                  license.profession,
+                )}
                 image={getOrganizationLogoUrl(
                   license.type ?? '',
                   organizations,

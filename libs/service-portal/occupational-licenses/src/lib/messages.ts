@@ -18,6 +18,10 @@ export const olMessage = defineMessage({
     id: 'sp.occupational-licenses:single-health-license',
     defaultMessage: 'Stakt starfsleyfi heilbrigðisstarfsmanns',
   },
+  singleLicense: {
+    id: 'sp.occupational-licenses:single-license',
+    defaultMessage: 'Stakt starfsleyfi',
+  },
   educationIntro: {
     id: 'sp.occupational-licenses:education-intro',
     defaultMessage:

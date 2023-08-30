@@ -27,7 +27,8 @@ export const occupationalLicensesModule: PortalModule = {
     },
     {
       name: ol.singleHealthLicense,
-      path: OccupationalLicensesPaths.OccupationalLicensesHealthDirectorateDetail,
+      path:
+        OccupationalLicensesPaths.OccupationalLicensesHealthDirectorateDetail,
       enabled: true,
       element: <HealthDirectorateDetailScreen />,
     },

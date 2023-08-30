@@ -31,7 +31,7 @@ export const EducationDetail = () => {
     },
   })
 
-  const license = data?.OccupationalLicensesHealthDirectorateLicense
+  const license = data?.occupationalLicensesHealthDirectorateLicense
 
   if (loading)
     return (
@@ -50,7 +50,6 @@ export const EducationDetail = () => {
 
   if (!license) return <EmptyState />
 
-  const programme = license.profession
   const organizations =
     (data?.getOrganizations?.items as Array<Organization>) ?? []
 
@@ -62,7 +61,7 @@ export const EducationDetail = () => {
 
   return (
     <LicenseDetail
-      title={programme}
+      title={license.profession}
       intro={formatMessage(om.healthDirectorateIntro)}
       img={organizationImage}
       name={user.profile.name}

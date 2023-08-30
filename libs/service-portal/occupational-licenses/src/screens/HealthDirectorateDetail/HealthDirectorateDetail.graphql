@@ -11,7 +11,7 @@ query getHealthDirectorateLicenseById($id: String!) {
       }
     }
   }
-  OccupationalLicensesHealthDirectorateLicense(id: $id) {
+  occupationalLicensesHealthDirectorateLicense(id: $id) {
     holderName
     profession
     type
