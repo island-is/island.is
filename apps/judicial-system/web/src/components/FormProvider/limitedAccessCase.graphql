@@ -1,9 +1,9 @@
 query LimitedAccessCase($input: CaseQueryInput!) {
   limitedAccessCase(input: $input) {
     id
-    origin
     created
     type
+    origin
     indictmentSubtypes
     state
     policeCaseNumbers

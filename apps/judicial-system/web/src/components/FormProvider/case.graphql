@@ -1,9 +1,9 @@
 query Case($input: CaseQueryInput!) {
   case(input: $input) {
     id
-    modified
     created
     type
+    modified
     indictmentSubtypes
     description
     state
