@@ -328,6 +328,7 @@ export const OrganizationExternalLinks: React.FC<
             let variant = undefined
             if (
               isSjukratryggingar &&
+              organizationPage.externalLinks &&
               organizationPage.externalLinks.length === 2
             ) {
               variant = index === 0 ? 'primary' : 'ghost'
@@ -648,7 +649,7 @@ const getActiveNavigationItemTitle = (
     if (clientUrl === item.href) {
       return item.title
     }
-    for (const childItem of item.items) {
+    for (const childItem of item.items ?? []) {
       if (clientUrl === childItem.href) {
         return childItem.title
       }
@@ -773,7 +774,7 @@ export const OrganizationWrapper: React.FC<
                     }
                     className={styles.sidebarCardContainer}
                   >
-                    {organizationPage.sidebarCards.map((card) => {
+                    {(organizationPage.sidebarCards ?? []).map((card) => {
                       if (card.__typename === 'SidebarCard') {
                         return (
                           <ProfileCard

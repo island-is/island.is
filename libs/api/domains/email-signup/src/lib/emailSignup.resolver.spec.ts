@@ -36,12 +36,10 @@ describe('emailSignupResolver', () => {
       ],
     }).compile()
 
-    emailSignupResolver = moduleRef.get<EmailSignupResolver>(
-      EmailSignupResolver,
-    )
-    cmsContentfulService = moduleRef.get<CmsContentfulService>(
-      CmsContentfulService,
-    )
+    emailSignupResolver =
+      moduleRef.get<EmailSignupResolver>(EmailSignupResolver)
+    cmsContentfulService =
+      moduleRef.get<CmsContentfulService>(CmsContentfulService)
   })
 
   describe('subscribeMailchimp', () => {

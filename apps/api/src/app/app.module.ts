@@ -194,10 +194,10 @@ const environment = getConfig
         clientSecret: environment.documentProviderService.prod.clientSecret,
         tokenUrl: environment.documentProviderService.prod.tokenUrl,
       },
-      documentsServiceBasePath: environment.documentProviderService
-        .documentsServiceBasePath!,
-      documentProviderAdmins: environment.documentProviderService
-        .documentProviderAdmins!,
+      documentsServiceBasePath:
+        environment.documentProviderService.documentsServiceBasePath!,
+      documentProviderAdmins:
+        environment.documentProviderService.documentProviderAdmins!,
     }),
     CmsTranslationsModule,
     TerminusModule,
@@ -219,8 +219,8 @@ const environment = getConfig
       },
     }),
     UserProfileModule.register({
-      userProfileServiceBasePath: environment.userProfile
-        .userProfileServiceBasePath!,
+      userProfileServiceBasePath:
+        environment.userProfile.userProfileServiceBasePath!,
       islykill: {
         cert: environment.islykill.cert!,
         passphrase: environment.islykill.passphrase!,

@@ -77,6 +77,7 @@ export const slices = gql`
       genericTags {
         id
         title
+        slug
       }
     }
     readMoreText

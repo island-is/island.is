@@ -13,10 +13,8 @@ const TranslationList: React.FC<React.PropsWithChildren<unknown>> = () => {
   const [translations, setTranslations] = useState<Translation[]>([])
   const [page, setPage] = useState(1)
   const [lastPage, setLastPage] = useState(1)
-  const [
-    translationToRemove,
-    setTranslationToRemove,
-  ] = useState<TranslationDTO>(new TranslationDTO())
+  const [translationToRemove, setTranslationToRemove] =
+    useState<TranslationDTO>(new TranslationDTO())
   const [count, setCount] = useState(0)
   const [modalIsOpen, setIsOpen] = React.useState(false)
   const [searchString, setSearchString] = useState<string>('')

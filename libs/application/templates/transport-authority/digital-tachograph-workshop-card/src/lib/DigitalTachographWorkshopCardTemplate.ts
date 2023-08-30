@@ -64,10 +64,9 @@ const template: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import(
-                  '../forms/DigitalTachographWorkshopCardForm/index'
-                ).then((module) =>
-                  Promise.resolve(module.DigitalTachographWorkshopCardForm),
+                import('../forms/DigitalTachographWorkshopCardForm/index').then(
+                  (module) =>
+                    Promise.resolve(module.DigitalTachographWorkshopCardForm),
                 ),
               actions: [
                 {

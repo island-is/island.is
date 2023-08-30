@@ -87,10 +87,8 @@ const template: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import(
-                  '../forms/LicensePlateRenewalForm/index'
-                ).then((module) =>
-                  Promise.resolve(module.LicensePlateRenewalForm),
+                import('../forms/LicensePlateRenewalForm/index').then(
+                  (module) => Promise.resolve(module.LicensePlateRenewalForm),
                 ),
               actions: [
                 {

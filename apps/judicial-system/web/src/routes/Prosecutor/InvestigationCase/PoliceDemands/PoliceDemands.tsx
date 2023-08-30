@@ -104,9 +104,8 @@ const PoliceDemands: React.FC<React.PropsWithChildren<unknown>> = () => {
         format: { court: true, institution: true, accused: true },
       },
       [CaseType.ELECTRONIC_DATA_DISCOVERY_INVESTIGATION]: {
-        text:
-          icDemands.sections.demands.prefill
-            .electronicDataDiscoveryInvestigation,
+        text: icDemands.sections.demands.prefill
+          .electronicDataDiscoveryInvestigation,
         format: {
           court: true,
           institution: true,
