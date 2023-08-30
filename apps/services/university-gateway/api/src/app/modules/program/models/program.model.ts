@@ -5,9 +5,12 @@ import { Field, ObjectType, ID, registerEnumType } from '@nestjs/graphql'
 import {
   Season,
   DegreeType,
-  ProgramExtraApplicationField,
 } from '@island.is/university-gateway-types'
 
+import { ProgramCourse } from './programCourse.model'
+import { ProgramExtraApplicationField } from './programExtraApplicationField.model'
+import { ProgramTag } from './programTag.model'
+import { ProgramModeOfDelivery } from './programModeOfDelivery.model'
 
 import type {
   Program as TProgram,
@@ -78,8 +81,8 @@ export class Program implements TProgram {
   @Field()
   iscedCode!: string
 
-  //@Field(() => string[])
-  //searchKeywords!: string[]
+  @Field(() => [String])
+  searchKeywords!: string[]
 
   @Field()
   externalUrlIs!: string
@@ -104,6 +107,18 @@ export class Program implements TProgram {
 
   @Field()
   costInformationEn!: string
+
+  @Field(() => [ProgramCourse])
+  courses!: ProgramCourse[]
+
+  @Field(() => ProgramTag)
+  tag!: ProgramTag
+
+  @Field(() => ProgramModeOfDelivery)
+  modeOfDelivery!: ProgramModeOfDelivery
+
+  @Field(() => ProgramExtraApplicationField)
+  extraApplicationField!: ProgramExtraApplicationField
 
   @Field()
   created!: Date
