@@ -151,7 +151,6 @@ describe('Basic serialization', () => {
   })
 })
 
-
 describe('Env definition defaults', () => {
   const sut = service('api').namespace('islandis').image('test')
   let result: SerializeSuccess<HelmService>
