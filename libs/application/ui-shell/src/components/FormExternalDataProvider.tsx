@@ -47,27 +47,6 @@ const ItemHeader: React.FC<
 
   return (
     <>
-      {pageTitle && (
-        <Box
-          display="flex"
-          alignItems="center"
-          justifyContent="flexStart"
-          marginTop={5}
-        >
-          <Box marginRight={1}>
-            <Icon
-              icon="fileTrayFull"
-              size="medium"
-              color="blue400"
-              type="outline"
-            />
-          </Box>
-          <Text variant="h4">
-            {formatText(pageTitle, application, formatMessage)}
-          </Text>
-        </Box>
-      )}
-
       <Text variant="h4" color="blue400">
         {formatText(title, application, formatMessage)}
       </Text>
@@ -92,7 +71,7 @@ const ProviderItem: FC<
   }>
 > = ({ dataProviderResult, provider, suppressProviderError, application }) => {
   const [reasons, setReasons] = useState<ProviderErrorReason[]>([])
-  const { title, subTitle, pageTitle } = provider
+  const { title, subTitle } = provider
   const { formatMessage } = useLocale()
   const showError =
     provider.id &&
@@ -125,12 +104,7 @@ const ProviderItem: FC<
 
   return (
     <Box marginBottom={3}>
-      <ItemHeader
-        application={application}
-        title={title}
-        subTitle={subTitle}
-        pageTitle={pageTitle}
-      />
+      <ItemHeader application={application} title={title} subTitle={subTitle} />
 
       {showError &&
         reasons.map((reason, index) => (
@@ -152,12 +126,7 @@ const PermissionItem: FC<
 
   return (
     <Box marginBottom={3}>
-      <ItemHeader
-        application={application}
-        title={title}
-        subTitle={subTitle}
-        pageTitle={pageTitle}
-      />
+      <ItemHeader application={application} title={title} subTitle={subTitle} />
     </Box>
   )
 }

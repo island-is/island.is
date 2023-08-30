@@ -1,4 +1,4 @@
-import { Hjuskapur, Kodar } from '../../../gen/fetch'
+import { Hjuskapur } from '../../../gen/fetch'
 import { logger } from '@island.is/logging'
 
 export interface CohabitationDto {
@@ -36,24 +36,5 @@ export function formatCohabitationDto(
     spouseNationalId,
     cohabitationCode,
     lastModified: lastModified ? new Date(lastModified) : null,
-  }
-}
-
-export interface CohabitionCodesDto {
-  code: string
-  description?: string | null
-}
-
-export function formatCohabitionCodesDto(
-  cohabitionCode: Kodar | null,
-): CohabitionCodesDto | null {
-  if (cohabitionCode == null) {
-    return null
-  }
-  const { kodi: code, lysing: description } = cohabitionCode
-
-  return {
-    code,
-    description,
   }
 }

@@ -4,27 +4,6 @@
   "sourceRoot": "apps/application-system/api/src",
   "projectType": "application",
   "prefix": "application-system-api",
-  "implicitDependencies": [
-    "air-discount-scheme-backend",
-    "financial-aid-backend",
-    "icelandic-names-registry-backend",
-    "judicial-system-backend",
-    "judicial-system-xrd-api",
-    "license-api",
-    "reference-backend",
-    "regulations-admin-backend",
-    "services-auth-admin-api",
-    "services-auth-delegation-api",
-    "services-auth-ids-api",
-    "services-auth-personal-representative",
-    "services-auth-personal-representative-public",
-    "services-auth-public-api",
-    "services-documents",
-    "services-endorsements-api",
-    "services-sessions",
-    "services-user-notification",
-    "services-user-profile"
-  ],
   "generators": {},
   "targets": {
     "build": {

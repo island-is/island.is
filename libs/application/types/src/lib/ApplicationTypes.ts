@@ -46,9 +46,6 @@ export enum ApplicationTypes {
   DRIVING_LICENSE_BOOK_UPDATE_INSTRUCTOR = 'DrivingLicenseBookUpdateInstructor',
   ALCOHOL_TAX_REDEMPTION = 'AlcoholTaxRedemption',
   EUROPEAN_HEALTH_INSURANCE_CARD = 'EuropeanHealthInsuranceCard',
-  CITIZENSHIP = 'Citizenship',
-  RESIDENCE_PERMIT_PERMANENT = 'ResidencePermitPermanent',
-  RESIDENCE_PERMIT_RENEWAL = 'ResidencePermitRenewal',
 }
 
 export const ApplicationConfigurations = {
@@ -239,17 +236,5 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.EUROPEAN_HEALTH_INSURANCE_CARD]: {
     slug: 'evropska-sjukratryggingakortid',
     translation: 'ehic.application',
-  },
-  [ApplicationTypes.CITIZENSHIP]: {
-    slug: 'rikisborgararettur',
-    translation: 'doi.cs.application',
-  },
-  [ApplicationTypes.RESIDENCE_PERMIT_PERMANENT]: {
-    slug: 'otimabundid-dvalarleyfi',
-    translation: 'doi.rpp.application',
-  },
-  [ApplicationTypes.RESIDENCE_PERMIT_RENEWAL]: {
-    slug: 'endurnyja-dvalarleyfi',
-    translation: 'doi.rpr.application',
   },
 }

@@ -35,7 +35,6 @@ export const SelectFormField: FC<React.PropsWithChildren<Props>> = ({
     backgroundColor,
     required = false,
   } = field
-  console.log('error', error)
   const { formatMessage } = useLocale()
 
   const finalOptions = useMemo(
