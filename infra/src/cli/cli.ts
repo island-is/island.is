@@ -89,6 +89,7 @@ yargs(process.argv.slice(2))
         })
         .alias('fresh', 'reset')
         .option('help', { type: 'boolean' })
+        .alias('h', 'help')
         .demandCommand(0)
     },
     async (argv) => {
@@ -96,6 +97,10 @@ yargs(process.argv.slice(2))
         argv.services.push(arg)
       if (argv.reset) {
         resetAllMappedFiles()
+      }
+      if (!argv.services.length) {
+        console.log('No services specified, nothing to do')
+        return
       }
       await updateSecretFiles(argv.services || [])
     },

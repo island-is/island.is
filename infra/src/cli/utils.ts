@@ -26,12 +26,16 @@ export const escapeValue = (value: string): string => {
 const parseEnvFile = (filePath: string): EnvObject => {
   try {
     const absPath = resolve(projectRoot, filePath)
+    if (!existsSync(absPath)) {
+      console.log(`File ${absPath} does not exist.`)
+      return {}
+    }
     const content = readFileSync(absPath, 'utf-8')
+    // TODO: Remove if unused
     const isBash = envToFileMapping[filePath]?.isBashEnv
 
     // Do we want to require 'export' in bash-envs (custom local-files)?
-    const pattern =
-      /^(?:export )?(?<key>\w+)=(?<quotation>['"]?)(?<value>.*)\k<quotation>$/
+    const pattern = /^(?:export )?(?<key>\w+)=(?<quotation>['"]?)(?<value>.*)\k<quotation>$/
     const envObj: EnvObject = {}
 
     content.split('\n').forEach((line) => {
@@ -154,7 +158,6 @@ export const updateSecretFiles = async (services: string[]): Promise<void> => {
 
       const n_changed = Object.keys(changed).length
       const n_added = Object.keys(added).length
-      // console.debug({ n_changed, n_added })
       changes.changed += n_changed
       changes.added += n_added
 
@@ -178,14 +181,12 @@ const generateUpdatedFileContent = (
       : `${envName}='${value}'`
 
     if (
-      Object.keys(differences.added).some(
-        ([addedName]) => addedName === envName,
-      )
+      Object.keys(differences.added).some((addedName) => addedName === envName)
     ) {
       appendToEnvLog(`Added ${line}`)
     } else if (
       Object.keys(differences.changed).some(
-        ([changedName]) => changedName === envName,
+        (changedName) => changedName === envName,
       )
     ) {
       appendToEnvLog(
@@ -198,5 +199,6 @@ const generateUpdatedFileContent = (
 }
 
 const appendToEnvLog = (message: string): void => {
+  console.log(`Logging to ${envLogFilePath}`)
   appendFileSync(envLogFilePath, `${message}\n`)
 }
