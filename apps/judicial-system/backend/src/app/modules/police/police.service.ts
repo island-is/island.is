@@ -70,9 +70,9 @@ export class PoliceService {
         artalNrGreinLidur: z.string(),
         lysing: z.string(),
         nanar: z.string(),
-        vettvangur: z.string(),
-        brotFra: z.string(),
-        brotTil: z.string(),
+        vettvangur: z.optional(z.string()),
+        brotFra: z.optional(z.string()),
+        brotTil: z.optional(z.string()),
         upprunalegtMalsnumer: z.string(),
       }),
     ),
@@ -209,8 +209,9 @@ export class PoliceService {
       .then(async (res: Response) => {
         if (res.ok) {
           if (this.config.policeCaseApiV2Available) {
-            const response: z.infer<typeof this.responseStructure> =
-              await res.json()
+            const response: z.infer<
+              typeof this.responseStructure
+            > = await res.json()
             this.responseStructure.parse(response)
 
             return response.skjol?.map((file) => ({
@@ -222,8 +223,9 @@ export class PoliceService {
               displayDate: file.dagsStofnad,
             }))
           } else {
-            const response: z.infer<typeof this.policeCaseFileStructure>[] =
-              await res.json()
+            const response: z.infer<
+              typeof this.policeCaseFileStructure
+            >[] = await res.json()
             this.responseStructure.parse(response)
 
             return response.map((file) => ({
@@ -247,6 +249,7 @@ export class PoliceService {
         })
       })
       .catch((reason) => {
+        console.log(reason)
         if (reason instanceof NotFoundException) {
           throw reason
         }
@@ -289,8 +292,9 @@ export class PoliceService {
     return promise
       .then(async (res: Response) => {
         if (res.ok) {
-          const response: z.infer<typeof this.responseStructure> =
-            await res.json()
+          const response: z.infer<
+            typeof this.responseStructure
+          > = await res.json()
 
           this.responseStructure.parse(response)
 
@@ -309,8 +313,8 @@ export class PoliceService {
           response.malseinings.forEach(
             (info: {
               upprunalegtMalsnumer: string
-              vettvangur: string
-              brotFra: string
+              vettvangur?: string
+              brotFra?: string
             }) => {
               const foundCase = cases.find(
                 (item) => item.policeCaseNumber === info.upprunalegtMalsnumer,
@@ -338,6 +342,7 @@ export class PoliceService {
         })
       })
       .catch((reason) => {
+        console.log(reason)
         if (reason instanceof NotFoundException) {
           throw reason
         }
