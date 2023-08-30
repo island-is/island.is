@@ -291,7 +291,9 @@ const NewsListNew: Screen<NewsListProps> = ({
 
   return (
     <>
-      {/** @ts-ignore make web strict */}
+      {/** 
+       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+       // @ts-ignore make web strict */}
       <HeadWithSocialSharing
         title={metaTitle}
         {...(newsItemMeta && { ...newsItemMeta })}

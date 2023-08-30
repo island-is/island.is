@@ -42,7 +42,9 @@ export const withLocale =
       translations,
     }) => (
       <I18n locale={locale} translations={translations}>
-        {/** @ts-ignore make web strict */}
+        {/**
+         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+         // @ts-ignore make web strict */}
         <Component {...pageProps} />
       </I18n>
     )

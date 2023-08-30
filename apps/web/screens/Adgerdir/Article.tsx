@@ -160,7 +160,9 @@ const AdgerdirArticle: Screen<AdgerdirArticleProps> = ({
                 display={['block', 'block', 'none']}
                 printHidden
               >
-                {/** @ts-ignore make web strict */}
+                {/**
+                 // eslint-disable-next-line @typescript-eslint/ban-ts-comment 
+                 // @ts-ignore make web strict */}
                 <ProcessEntry fixed {...processEntry} />
               </Box>,
               // eslint-disable-next-line @typescript-eslint/ban-ts-comment

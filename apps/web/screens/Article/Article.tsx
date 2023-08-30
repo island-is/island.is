@@ -492,7 +492,9 @@ const ArticleScreen: Screen<ArticleProps> = ({
         marginTop={7}
         printHidden
       >
-        {/** @ts-ignore make web strict */}
+        {/**
+         // eslint-disable-next-line @typescript-eslint/ban-ts-comment 
+         // @ts-ignore make web strict */}
         {processEntry?.processLink && <ProcessEntry {...processEntry} />}
       </Box>
       {
@@ -745,7 +747,9 @@ const ArticleScreen: Screen<ArticleProps> = ({
               printHidden
               className="rs_read"
             >
-              {/** @ts-ignore */}
+              {/** 
+               // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+               // @ts-ignore make web strict */}
               <ProcessEntry {...processEntry} />
             </Box>
           )}
@@ -779,7 +783,9 @@ const ArticleScreen: Screen<ArticleProps> = ({
           isVisible &&
           createPortal(
             <Box marginTop={5} display={['block', 'block', 'none']} printHidden>
-              {/** @ts-ignore make web strict */}
+              {/** 
+               // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+               // @ts-ignore make web strict */}
               <ProcessEntry fixed {...processEntry} />
             </Box>,
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
