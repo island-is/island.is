@@ -14,7 +14,6 @@ import {
   Checkbox,
   GridRow,
   GridColumn,
-  Option,
   ToastContainer,
   toast,
 } from '@island.is/island-ui/core'
@@ -243,10 +242,10 @@ export const TellUsAStoryForm: React.FC<
                         }
                         required
                         hasError={errors?.organization !== undefined}
-                        disabled={
+                        isDisabled={
                           Boolean(error || loading) || state === 'submitting'
                         }
-                        onChange={({ value }: Option) => {
+                        onChange={({ value }) => {
                           onChange(value)
                         }}
                       />
