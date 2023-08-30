@@ -20,7 +20,7 @@ declare module 'react-select/dist/declarations/src/Select' {
   export interface Props<
     Option,
     IsMulti extends boolean,
-    Group extends GroupBase<Option>
+    Group extends GroupBase<Option>,
   > {
     // Common custom props added for our custom Select
     backgroundColor?: InputBackgroundColor
@@ -48,7 +48,7 @@ declare module 'react-select/dist/declarations/src/Select' {
 export type SelectProps<
   Option,
   IsMulti extends boolean = false,
-  Group extends GroupBase<Option> = GroupBase<Option>
+  Group extends GroupBase<Option> = GroupBase<Option>,
 > = Omit<Props<Option, IsMulti, Group>, 'noOptionsMessage'> & {
   noOptionsMessage?: string
 }

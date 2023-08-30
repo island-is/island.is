@@ -22,7 +22,7 @@ import * as styles from '../Select.css'
 export const Menu = <
   Value,
   IsMulti extends boolean,
-  Group extends GroupBase<OptionType<Value>>
+  Group extends GroupBase<OptionType<Value>>,
 >(
   props: MenuProps<OptionType<Value>, IsMulti, Group>,
 ) => (
@@ -34,7 +34,7 @@ export const Menu = <
 export const Option = <
   Value,
   IsMulti extends boolean,
-  Group extends GroupBase<OptionType<Value>>
+  Group extends GroupBase<OptionType<Value>>,
 >(
   props: OptionProps<OptionType<Value>, IsMulti, Group>,
 ) => {
@@ -71,7 +71,7 @@ export const Option = <
 export const IndicatorsContainer = <
   Value,
   IsMulti extends boolean,
-  Group extends GroupBase<OptionType<Value>>
+  Group extends GroupBase<OptionType<Value>>,
 >(
   props: IndicatorsContainerProps<OptionType<Value>, IsMulti, Group>,
 ) => {
@@ -92,7 +92,7 @@ export const IndicatorsContainer = <
 export const DropdownIndicator = <
   Value,
   IsMulti extends boolean,
-  Group extends GroupBase<OptionType<Value>>
+  Group extends GroupBase<OptionType<Value>>,
 >(
   props: DropdownIndicatorProps<OptionType<Value>, IsMulti, Group>,
 ) => {
@@ -118,7 +118,7 @@ export const DropdownIndicator = <
 export const SingleValue = <
   Value,
   IsMulti extends boolean,
-  Group extends GroupBase<OptionType<Value>>
+  Group extends GroupBase<OptionType<Value>>,
 >(
   props: SingleValueProps<OptionType<Value>, IsMulti, Group>,
 ) => {
@@ -136,7 +136,7 @@ export const SingleValue = <
 export const ValueContainer = <
   Value,
   IsMulti extends boolean,
-  Group extends GroupBase<OptionType<Value>>
+  Group extends GroupBase<OptionType<Value>>,
 >(
   props: ValueContainerProps<OptionType<Value>, IsMulti, Group>,
 ) => (
@@ -148,7 +148,7 @@ export const ValueContainer = <
 export const Placeholder = <
   Value,
   IsMulti extends boolean,
-  Group extends GroupBase<OptionType<Value>>
+  Group extends GroupBase<OptionType<Value>>,
 >(
   props: PlaceholderProps<OptionType<Value>, IsMulti, Group>,
 ) => {
@@ -170,7 +170,7 @@ export const Placeholder = <
 export const Input = <
   Value,
   IsMulti extends boolean,
-  Group extends GroupBase<OptionType<Value>>
+  Group extends GroupBase<OptionType<Value>>,
 >(
   props: InputProps<OptionType<Value>, IsMulti, Group>,
 ) => {
@@ -189,7 +189,7 @@ export const Input = <
 export const Control = <
   Value,
   IsMulti extends boolean,
-  Group extends GroupBase<OptionType<Value>>
+  Group extends GroupBase<OptionType<Value>>,
 >(
   props: ControlProps<OptionType<Value>, IsMulti, Group>,
 ) => {
@@ -238,7 +238,7 @@ export const Control = <
 export const customStyles = <
   Value,
   IsMulti extends boolean,
-  Group extends GroupBase<OptionType<Value>>
+  Group extends GroupBase<OptionType<Value>>,
 >(): StylesConfig<OptionType<Value>, IsMulti, Group> => ({
   indicatorSeparator: () => ({}),
   control: (provided, state) => ({

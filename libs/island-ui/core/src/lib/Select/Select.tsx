@@ -22,7 +22,7 @@ import * as styles from './Select.css'
 export const Select = <
   Value,
   IsMulti extends boolean = false,
-  Group extends GroupBase<OptionType<Value>> = GroupBase<OptionType<Value>>
+  Group extends GroupBase<OptionType<Value>> = GroupBase<OptionType<Value>>,
 >({
   name,
   id = name,

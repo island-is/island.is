@@ -191,10 +191,8 @@ export const SignedVerdictOverview: React.FC = () => {
   const [isReopeningCase, setIsReopeningCase] = useState<boolean>(false)
   const [modalVisible, setModalVisible] = useState<availableModals>('NoModal')
 
-  const [
-    selectedSharingInstitutionId,
-    setSelectedSharingInstitutionId,
-  ] = useState<SingleValue<ReactSelectOption>>(null)
+  const [selectedSharingInstitutionId, setSelectedSharingInstitutionId] =
+    useState<SingleValue<ReactSelectOption>>(null)
 
   const [
     requestCourtRecordSignatureResponse,
