@@ -78,7 +78,7 @@ const OrganizationPage: Screen<OrganizationProps> = ({
     setIsMobile(false)
   }, [width])
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+  // @ts-ignore make web strict
   const n = useNamespace(namespace)
   const [page, setPage] = useState<number>(1)
   const { linkResolver } = useLinkResolver()
@@ -121,7 +121,7 @@ const OrganizationPage: Screen<OrganizationProps> = ({
       label: n('ministries', 'Ráðuneyti'),
       selected: filter.raduneyti,
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+      // @ts-ignore make web strict
       filters: tagsItems.map((f) => ({
         value: f.title,
         label: f.title,
@@ -259,11 +259,11 @@ const OrganizationPage: Screen<OrganizationProps> = ({
                   >
                     <CategoryCard
                       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+                      // @ts-ignore make web strict
                       href={getOrganizationLink(organization, activeLocale)}
                       key={index}
                       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+                      // @ts-ignore make web strict
                       text={organization?.description}
                       heading={organization?.title}
                       hyphenate

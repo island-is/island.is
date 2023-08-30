@@ -8,7 +8,7 @@ interface LifeEventsSectionProps {
   heading: string
   headingId: string
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+  // @ts-ignore make web strict
   items: GetFrontpageQuery['getFrontpage']['lifeEvents']
 }
 
@@ -38,7 +38,7 @@ export const LifeEventsSection = ({
           .map(
             (
               // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+              // @ts-ignore make web strict
               { __typename: typename, title, shortTitle, slug, tinyThumbnail },
               index: number,
             ) => {

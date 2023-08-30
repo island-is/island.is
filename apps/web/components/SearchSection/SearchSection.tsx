@@ -47,25 +47,25 @@ export const SearchSection = ({
 
   const {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+    // @ts-ignore make web strict
     featured,
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+    // @ts-ignore make web strict
     heading,
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+    // @ts-ignore make web strict
     image,
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+    // @ts-ignore make web strict
     imageAlternativeText,
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+    // @ts-ignore make web strict
     imageMobile,
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+    // @ts-ignore make web strict
     videos,
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+    // @ts-ignore make web strict
     videosMobile,
   } = page
 
@@ -173,7 +173,7 @@ export const SearchSection = ({
                     name="desktop"
                     title={imageAlternativeText}
                     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+                    // @ts-ignore make web strict
                     sources={videos.map(({ url, contentType }) => {
                       return {
                         src: url,
@@ -214,7 +214,7 @@ export const SearchSection = ({
               title={imageAlternativeText}
               dataTestId="home-banner"
               // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+              // @ts-ignore make web strict
               sources={videosMobile.map(({ url, contentType }) => {
                 return {
                   src: url,

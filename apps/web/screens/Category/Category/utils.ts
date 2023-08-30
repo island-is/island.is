@@ -33,10 +33,10 @@ export const getHashArr = (hashString: string): string[] => {
   if (!!hashString && hashString.length > 0) {
     hashString = hashString.replace('#', '')
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+    // @ts-ignore make web strict
     return hashString.length > 0 ? hashString.split(',') : null
   }
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+  // @ts-ignore make web strict
   return null
 }

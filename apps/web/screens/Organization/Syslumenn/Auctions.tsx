@@ -399,7 +399,7 @@ const Auctions: Screen<AuctionsProps> = ({
   subpage,
 }) => {
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+  // @ts-ignore make web strict
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
   const { format } = useDateUtils()
@@ -410,7 +410,7 @@ const Auctions: Screen<AuctionsProps> = ({
 
   const pageUrl = Router.pathname
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+  // @ts-ignore make web strict
   const navList: NavigationItem[] = organizationPage?.menuLinks.map(
     ({ primaryLink, childrenLinks }) => ({
       title: primaryLink?.text,
@@ -507,7 +507,7 @@ const Auctions: Screen<AuctionsProps> = ({
         : true) &&
       // Filter by Date
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+      // @ts-ignore make web strict
       (date ? sameDay(date, auctionDate) : true) &&
       // Filter by search query
       (auction.lotName?.toLowerCase().includes(query) ||
@@ -643,7 +643,7 @@ const Auctions: Screen<AuctionsProps> = ({
     <OrganizationWrapper
       pageTitle={subpage?.title ?? n('auctions', 'Uppboð')}
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+      // @ts-ignore make web strict
       organizationPage={organizationPage}
       showReadSpeaker={false}
       breadcrumbItems={[
@@ -668,7 +668,7 @@ const Auctions: Screen<AuctionsProps> = ({
         </Text>
         <Webreader
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+          // @ts-ignore make web strict
           readId={null}
           readClass="rs_read"
         />
@@ -696,7 +696,7 @@ const Auctions: Screen<AuctionsProps> = ({
                 value: x.slugValue,
               })).find((x) => x.value === officeLocation.slugValue)}
               // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+              // @ts-ignore make web strict
               onChange={({ value }: Option) => {
                 setOfficeLocationBySlugValue(String(value))
                 Router.replace(`#${value}`)
@@ -724,7 +724,7 @@ const Auctions: Screen<AuctionsProps> = ({
                 value: x.value,
               })).find((x) => x.value === lotTypeOption.value)}
               // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+              // @ts-ignore make web strict
               onChange={({ value }: Option) =>
                 setLotTypeOptionByValue(String(value))
               }
@@ -790,7 +790,7 @@ const Auctions: Screen<AuctionsProps> = ({
           !error &&
           filteredAuctions.slice(0, showCount).map((auction, index) => {
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+            // @ts-ignore make web strict
             const auctionDate = new Date(auction.auctionDate)
             const auctionPetitioners = auction.petitioners?.split(',')
             const auctionRespondents = auction.respondent?.split(',')
@@ -905,7 +905,7 @@ const Auctions: Screen<AuctionsProps> = ({
                   {renderRespondents(
                     auction,
                     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+                    // @ts-ignore make web strict
                     auctionRespondents,
                   )}
 
@@ -932,10 +932,10 @@ const Auctions: Screen<AuctionsProps> = ({
                       {auction.lotItems && (
                         <DialogPrompt
                           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+                          // @ts-ignore make web strict
                           baseId={auction.lotId}
                           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+                          // @ts-ignore make web strict
                           title={auction.lotName}
                           description={auction.lotItems
                             .split('|')

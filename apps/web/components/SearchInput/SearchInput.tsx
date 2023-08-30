@@ -110,7 +110,7 @@ const useSearch = (
     dispatch({ type: 'startLoading' })
     const thisTimerId =
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+      // @ts-ignore make web strict
       (timer.current = setTimeout(async () => {
         client
           .query<GetSearchResultsQuery, QuerySearchResultsArgs>({
@@ -357,7 +357,7 @@ export const SearchInput = forwardRef<
                 quickContentLabel={quickContentLabel}
                 search={search}
                 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+                // @ts-ignore make web strict
                 highlightedIndex={highlightedIndex}
                 getItemProps={getItemProps}
                 autosuggest={autosuggest}
@@ -433,7 +433,7 @@ const Results = ({
             {search.results.items
               .slice(0, 5)
               // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+              // @ts-ignore make web strict
               .map((item: SearchResultItem, i) => {
                 const typename = item.__typename?.toLowerCase() as LinkType
                 let variables = item.slug?.split('/')

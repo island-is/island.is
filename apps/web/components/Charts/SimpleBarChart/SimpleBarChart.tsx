@@ -67,7 +67,7 @@ export const SimpleBarChart = ({ graphData }: GraphProps) => {
             iconType="circle"
             align="right"
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+            // @ts-ignore make web strict
             content={RenderLegend}
           />
           {parsedDatakeys.bars.map((item: any, index: number) => (

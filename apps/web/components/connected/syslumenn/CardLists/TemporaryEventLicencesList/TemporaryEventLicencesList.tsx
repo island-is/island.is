@@ -124,7 +124,7 @@ const TemporaryEventLicencesList: FC<
     allOfficesOption,
     ...Array.from(
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+      // @ts-ignore make web strict
       new Set<string>(temporaryEventLicences.map((x) => x.issuedBy)).values(),
     ),
   ]
@@ -139,7 +139,7 @@ const TemporaryEventLicencesList: FC<
     ...Array.from(
       new Set<string>(
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+        // @ts-ignore make web strict
         temporaryEventLicences.map((x) => x.licenceSubType),
       ).values(),
     ),
@@ -162,19 +162,19 @@ const TemporaryEventLicencesList: FC<
       textSearch(searchTerms, [
         // Fields to search
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+        // @ts-ignore make web strict
         temporaryEventLicence.licenceType,
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+        // @ts-ignore make web strict
         temporaryEventLicence.licenceSubType,
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+        // @ts-ignore make web strict
         temporaryEventLicence.licenseHolder,
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+        // @ts-ignore make web strict
         temporaryEventLicence.licenseNumber,
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+        // @ts-ignore make web strict
         temporaryEventLicence.licenseResponsible,
       ]),
   )
@@ -225,7 +225,7 @@ const TemporaryEventLicencesList: FC<
                     }))
                     .find((x) => x.value === filterLicenceSubType)}
                   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+                  // @ts-ignore make web strict
                   onChange={({ value }: Option) => {
                     setFilterLicenceSubType(String(value))
                   }}
@@ -253,7 +253,7 @@ const TemporaryEventLicencesList: FC<
                     }))
                     .find((x) => x.value === filterOffice)}
                   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+                  // @ts-ignore make web strict
                   onChange={({ value }: Option) => {
                     setFilterOffice(String(value))
                   }}
@@ -352,7 +352,7 @@ const TemporaryEventLicencesList: FC<
                         {n('validPeriodLabel', 'Gildistími')}:{' '}
                         {getValidPeriodRepresentation(
                           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+                          // @ts-ignore make web strict
                           temporaryEventLicence.validFrom,
                           temporaryEventLicence.validTo,
                           DATE_FORMAT,

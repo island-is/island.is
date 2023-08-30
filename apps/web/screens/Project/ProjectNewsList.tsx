@@ -70,7 +70,7 @@ const ProjectNewsList: Screen<ProjectNewsListProps> = ({
   useContentfulId(projectPage.id)
   useLocalLinkTypeResolver()
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+  // @ts-ignore make web strict
   const n = useNamespace(namespace)
 
   const newsOverviewUrl = linkResolver(
@@ -141,7 +141,7 @@ const ProjectNewsList: Screen<ProjectNewsListProps> = ({
           <NewsListSidebar
             months={months}
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+            // @ts-ignore make web strict
             namespace={namespace}
             newsOverviewUrl={newsOverviewUrl}
             selectedMonth={selectedMonth}
@@ -154,7 +154,7 @@ const ProjectNewsList: Screen<ProjectNewsListProps> = ({
       >
         <NewsList
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+          // @ts-ignore make web strict
           namespace={namespace}
           newsItemLinkType="projectnews"
           newsOverviewUrl={newsOverviewUrl}
@@ -206,13 +206,13 @@ const getIntParam = (s: string | string[]) => {
 // @ts-ignore make web strict
 ProjectNewsList.getProps = async ({ apolloClient, query, locale }) => {
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+  // @ts-ignore make web strict
   const year = getIntParam(query.y)
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+  // @ts-ignore make web strict
   const month = year && getIntParam(query.m)
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+  // @ts-ignore make web strict
   const selectedPage = getIntParam(query.page) ?? 1
 
   const projectPage = (
@@ -334,7 +334,7 @@ ProjectNewsList.getProps = async ({ apolloClient, query, locale }) => {
 
     for (const lang of Object.keys(slugs)) {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+      // @ts-ignore make web strict
       languageToggleQueryParams[lang as Locale] = { tag: slugs[lang] }
     }
   }

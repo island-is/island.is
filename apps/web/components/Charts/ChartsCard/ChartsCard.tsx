@@ -38,22 +38,22 @@ export const ChartsCard: React.FC<
   switch (type) {
     case 'Mixed':
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+      // @ts-ignore make web strict
       children = <MixedChart graphData={graphData} />
       break
     case 'Line':
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+      // @ts-ignore make web strict
       children = <SimpleLineChart graphData={graphData} />
       break
     case 'Bar':
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+      // @ts-ignore make web strict
       children = <SimpleBarChart graphData={graphData} />
       break
     case 'Pie':
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+      // @ts-ignore make web strict
       children = <SimplePieChart graphData={graphData} />
       break
     default:
@@ -109,10 +109,10 @@ export const ChartsCard: React.FC<
               <Box padding={[2, 2, 4]}>
                 <ExportCSVButton
                   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+                  // @ts-ignore make web strict
                   data={data}
                   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+                  // @ts-ignore make web strict
                   title={graphTitle}
                 />
               </Box>

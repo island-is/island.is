@@ -46,7 +46,7 @@ import cn from 'classnames'
 interface OpenDataProps {
   page: GetOpenDataPageQuery['getOpenDataPage']
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+  // @ts-ignore make web strict
   megaMenuData
 }
 
@@ -141,7 +141,7 @@ const OpenDataPage: Screen<OpenDataProps> = ({ page, megaMenuData }) => {
         <StatisticsCardsSection
           title="Stafrænt Ísland"
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+          // @ts-ignore make web strict
           cards={statisticsCardsSection}
         />
       </Section>
@@ -156,14 +156,14 @@ const OpenDataPage: Screen<OpenDataProps> = ({ page, megaMenuData }) => {
             <GridColumn span={['12/12', '4/12', '4/12']}>
               <ChartsCard
                 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+                // @ts-ignore make web strict
                 chart={graphCards[1]}
               />
             </GridColumn>
             <GridColumn span={['12/12', '8/12', '8/12']}>
               <ChartsCard
                 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+                // @ts-ignore make web strict
                 chart={graphCards[0]}
               />
             </GridColumn>
@@ -179,7 +179,7 @@ const OpenDataPage: Screen<OpenDataProps> = ({ page, megaMenuData }) => {
           title={externalLinkSectionTitle}
           titleId="OpenDataLinksTitle"
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+          // @ts-ignore make web strict
           image={externalLinkSectionImage}
           description={externalLinkSectionDescription}
           cards={externalLinkCardSelection.cards}

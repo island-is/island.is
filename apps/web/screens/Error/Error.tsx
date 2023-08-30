@@ -51,7 +51,7 @@ export const ErrorScreen: React.FC<ErrorProps> = ({ statusCode, errPage }) => {
         ...errPage,
       }
     : // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+      // @ts-ignore make web strict
       fallbackMessage[statusCode]
 
   return (
@@ -81,7 +81,7 @@ export const ErrorScreen: React.FC<ErrorProps> = ({ statusCode, errPage }) => {
                   {errorMessages.description
                     ? richText([errorMessages.description] as SliceType[])
                     : // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+                      // @ts-ignore make web strict
                       formatBody(errorMessages.body, asPath)}
                 </Text>
               </>

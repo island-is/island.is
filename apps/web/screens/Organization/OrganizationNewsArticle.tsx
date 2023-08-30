@@ -46,7 +46,7 @@ const OrganizationNewsArticle: Screen<OrganizationNewsArticleProps> = ({
   const router = useRouter()
   const { linkResolver } = useLinkResolver()
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+  // @ts-ignore make web strict
   const n = useNamespace(namespace)
   useContentfulId(organizationPage.id, newsItem?.id)
   useLocalLinkTypeResolver()
@@ -66,7 +66,7 @@ const OrganizationNewsArticle: Screen<OrganizationNewsArticleProps> = ({
     ({ primaryLink }) => primaryLink?.url === overviewPath,
   )
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+  // @ts-ignore make web strict
   const newsOverviewTitle: string = currentNavItem
     ? currentNavItem.primaryLink?.text
     : n('newsTitle', 'Fréttir og tilkynningar')
@@ -92,7 +92,7 @@ const OrganizationNewsArticle: Screen<OrganizationNewsArticleProps> = ({
       typename: 'organizationpage',
     },
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+    // @ts-ignore make web strict
     ...(newsBelongToOrganization && !isNewsletter
       ? [
           {
@@ -106,7 +106,7 @@ const OrganizationNewsArticle: Screen<OrganizationNewsArticleProps> = ({
         ]
       : []),
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+    // @ts-ignore make web strict
     ...(isNewsletter
       ? [
           {
@@ -121,7 +121,7 @@ const OrganizationNewsArticle: Screen<OrganizationNewsArticleProps> = ({
       : []),
   ]
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+  // @ts-ignore make web strict
   const navList: NavigationItem[] = organizationPage.menuLinks.map(
     ({ primaryLink, childrenLinks }) => ({
       title: primaryLink?.text,
@@ -151,7 +151,7 @@ const OrganizationNewsArticle: Screen<OrganizationNewsArticleProps> = ({
       <HeadWithSocialSharing
         title={`${newsItem?.title} | ${organizationPage.title}`}
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+        // @ts-ignore make web strict
         description={newsItem?.intro}
         imageUrl={newsItem?.image?.url}
         imageWidth={newsItem?.image?.width.toString()}

@@ -122,7 +122,7 @@ export const FormField = ({
             options.find((o) => o.value === value) ?? { label: value, value }
           }
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+          // @ts-ignore make web strict
           onChange={({ value }: Option) => onChange(slug, value as string)}
           hasError={!!error}
           errorMessage={error}
@@ -348,7 +348,7 @@ export const Form = ({ form, namespace }: FormProps) => {
       })
       .filter((x) => !!x)
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+    // @ts-ignore make web strict
     setErrors(err)
 
     return !err.length
@@ -525,7 +525,7 @@ export const Form = ({ form, namespace }: FormProps) => {
               email: data['email'],
               message: formatBody(_data),
               // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+              // @ts-ignore make web strict
               files: files.map((f) => f[1]).flat(),
               recipientFormFieldDeciderValue:
                 getRecipientFormFieldDeciderValue(),

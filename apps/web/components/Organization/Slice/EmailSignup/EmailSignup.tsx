@@ -121,11 +121,11 @@ const EmailSignup = ({ slice, marginLeft }: EmailSignupProps) => {
       const field = formFields.find((f) => f.name === fieldName)
       inputFields.push({
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+        // @ts-ignore make web strict
         id: field?.id,
         name: fieldName,
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+        // @ts-ignore make web strict
         type: field?.type,
         value,
       })
@@ -213,10 +213,10 @@ const EmailSignup = ({ slice, marginLeft }: EmailSignupProps) => {
                           <FormField
                             field={field}
                             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+                            // @ts-ignore make web strict
                             slug={field.name}
                             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+                            // @ts-ignore make web strict
                             error={errors[field.name]}
                             onChange={(slug, value) => {
                               if (field.type !== FormFieldType.CHECKBOXES) {
@@ -233,7 +233,7 @@ const EmailSignup = ({ slice, marginLeft }: EmailSignupProps) => {
                               return setValues((prevValues) => {
                                 // We store a stringified object behind the field.name key
                                 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+                                // @ts-ignore make web strict
                                 const prevFieldValues = prevValues[field.name]
                                 if (prevFieldValues) {
                                   const json = JSON.parse(prevFieldValues)
@@ -244,7 +244,7 @@ const EmailSignup = ({ slice, marginLeft }: EmailSignupProps) => {
                                   return {
                                     ...prevValues,
                                     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+                                    // @ts-ignore make web strict
                                     [field.name]: JSON.stringify(json),
                                   }
                                 }
@@ -253,7 +253,7 @@ const EmailSignup = ({ slice, marginLeft }: EmailSignupProps) => {
                                 return {
                                   ...prevValues,
                                   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+                                  // @ts-ignore make web strict
                                   [field.name]: JSON.stringify({
                                     [option]: 'true',
                                   }),
@@ -261,7 +261,7 @@ const EmailSignup = ({ slice, marginLeft }: EmailSignupProps) => {
                               })
                             }}
                             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+                            // @ts-ignore make web strict
                             value={values[field.name]}
                           />
                         </Box>

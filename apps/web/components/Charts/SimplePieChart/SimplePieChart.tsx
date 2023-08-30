@@ -32,7 +32,7 @@ const CustomTooltip = (props: CustomTooltipProps) => {
           {payload[0].name} (
           {
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+            // @ts-ignore make web strict
             ((payload[0].payload[datakey] / sum) * 100).toFixed(0)
           }
           %)

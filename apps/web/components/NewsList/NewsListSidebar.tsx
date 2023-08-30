@@ -62,7 +62,7 @@ export const NewsListSidebar = ({
               const selectedValue =
                 e.target.value !== allYearsString ? e.target.value : null
               // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+              // @ts-ignore make web strict
               router.push(makeHref(selectedTag, newsOverviewUrl, selectedValue))
             }}
             color="purple400"

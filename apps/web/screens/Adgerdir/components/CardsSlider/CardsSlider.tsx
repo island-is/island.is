@@ -69,7 +69,7 @@ export const CardsSlider: FC<React.PropsWithChildren<CardsSliderProps>> = ({
       paddingRight,
     })
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+    // @ts-ignore make web strict
     const el = ref && ref.current?.stageComponent?.offsetParent
 
     if (el) {
@@ -78,7 +78,7 @@ export const CardsSlider: FC<React.PropsWithChildren<CardsSliderProps>> = ({
       setSlideState({
         ...initialSlideState,
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+        // @ts-ignore make web strict
         itemsInSlide: ref.current.state.items,
       })
     }
@@ -97,13 +97,13 @@ export const CardsSlider: FC<React.PropsWithChildren<CardsSliderProps>> = ({
 
   const slideNext = () => {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+    // @ts-ignore make web strict
     ref.current.slideNext()
   }
 
   const slidePrev = () => {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+    // @ts-ignore make web strict
     ref.current.slidePrev()
   }
 
@@ -191,7 +191,7 @@ export const CardsSlider: FC<React.PropsWithChildren<CardsSliderProps>> = ({
                 key={item}
                 onClick={() =>
                   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+                  // @ts-ignore make web strict
                   ref.current.slideTo(index * slideState.itemsInSlide)
                 }
                 className={styles.dot}

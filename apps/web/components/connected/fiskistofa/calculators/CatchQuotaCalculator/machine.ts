@@ -248,7 +248,7 @@ export const machine = createMachine<Context, Event, State>(
       },
       'getting data': {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+        // @ts-ignore make web strict
         invoke: {
           src: 'getData',
           onDone: {
@@ -266,7 +266,7 @@ export const machine = createMachine<Context, Event, State>(
       },
       'updating general data': {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+        // @ts-ignore make web strict
         invoke: {
           src: 'updateGeneralData',
           onDone: {
@@ -284,7 +284,7 @@ export const machine = createMachine<Context, Event, State>(
       },
       'updating quota data': {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+        // @ts-ignore make web strict
         invoke: {
           src: 'updateQuotaData',
           onDone: {
@@ -314,7 +314,7 @@ export const machine = createMachine<Context, Event, State>(
   {
     services: {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+      // @ts-ignore make web strict
       getData: async (context: Context, event: GetDataEvent) => {
         const [
           fiskistofaGetShipStatusForTimePeriodResponse,
@@ -384,7 +384,7 @@ export const machine = createMachine<Context, Event, State>(
         }
       },
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+      // @ts-ignore make web strict
       updateGeneralData: async (
         context: Context,
         event: UpdateGeneralDataEvent,
@@ -433,7 +433,7 @@ export const machine = createMachine<Context, Event, State>(
         }
       },
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+      // @ts-ignore make web strict
       updateQuotaData: async (
         context: Context,
         event: UpdateQuotaDataEvent,

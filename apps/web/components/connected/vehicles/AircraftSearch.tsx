@@ -92,7 +92,7 @@ const AircraftSearch = ({ slice }: AircraftSearchProps) => {
   const pageSize = Number(slice?.configJson?.pageSize ?? DEFAULT_PAGE_SIZE)
   const [latestAircraftListResponse, setLatestAircraftListResponse] =
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+    // @ts-ignore make web strict
     useState<typeof data.aircraftRegistryAllAircrafts>(null)
   const [errorOccurred, setErrorOccurred] = useState(false)
 
@@ -373,7 +373,7 @@ const AircraftDetails = ({ namespace, aircraft }: AircraftDetailsProps) => {
               <T.Data>
                 <AircraftPerson
                   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+                  // @ts-ignore make web strict
                   person={aircraft?.operator}
                 />
               </T.Data>

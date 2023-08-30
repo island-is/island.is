@@ -49,7 +49,7 @@ export default async function handler(req, res) {
         }</pubDate>
         <description>${item.answer
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+          // @ts-ignore make web strict
           .map((answer) => documentToHtmlString(answer['document']))
           .join('\n')}</description>
       </item>`

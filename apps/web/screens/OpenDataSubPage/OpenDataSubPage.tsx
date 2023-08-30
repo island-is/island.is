@@ -174,7 +174,7 @@ const OpenDataSubPage: Screen<OpenDataSubpageProps> = ({ page }) => {
                   <Box marginBottom={3} key={index}>
                     <ChartsCard
                       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+                      // @ts-ignore make web strict
                       chart={item}
                       subPage
                     />

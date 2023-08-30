@@ -64,7 +64,7 @@ const PetitionView: Screen<PetitionViewProps> = ({ namespace }) => {
     return `${baseUrl}/umsoknir/undirskriftalisti`
   }
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+  // @ts-ignore make web strict
   const handlePagination = (page, petitions) => {
     setPage(page)
     setTotalPages(pages(petitions?.length))
@@ -207,7 +207,7 @@ const PetitionView: Screen<PetitionViewProps> = ({ namespace }) => {
               <T.Body>
                 {
                   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+                  // @ts-ignore make web strict
                   pagePetitions?.map((petition) => {
                     return (
                       <T.Row key={petition.id}>

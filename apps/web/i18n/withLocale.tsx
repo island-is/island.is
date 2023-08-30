@@ -13,7 +13,7 @@ import { safelyExtractPathnameFromUrl } from '../utils/safelyExtractPathnameFrom
 export const getLocaleFromPath = (path = ''): Locale => {
   const maybeLocale = path.split('/').find(Boolean)
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+  // @ts-ignore make web strict
   return isLocale(maybeLocale) ? maybeLocale : defaultLanguage
 }
 
@@ -26,16 +26,16 @@ interface NewComponentProps<T> {
 export const withLocale =
   <Props,>(locale?: Locale) =>
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+  // @ts-ignore make web strict
   (Component: Screen<Props>): NextComponentType => {
     const getProps = Component.getProps
     if (!getProps) {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+      // @ts-ignore make web strict
       return Component
     }
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+    // @ts-ignore make web strict
     const NewComponent: Screen<NewComponentProps<Props>> = ({
       pageProps,
       locale,
@@ -47,7 +47,7 @@ export const withLocale =
       </I18n>
     )
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+    // @ts-ignore make web strict
     NewComponent.getProps = async (ctx) => {
       const newContext = {
         ...ctx,
@@ -66,7 +66,7 @@ export const withLocale =
       }
     }
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+    // @ts-ignore make web strict
     return NewComponent
   }
 

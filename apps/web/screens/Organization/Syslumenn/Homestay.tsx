@@ -69,7 +69,7 @@ const Homestay: Screen<HomestayProps> = ({
 }) => {
   useContentfulId(organizationPage?.id, subpage?.id)
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+  // @ts-ignore make web strict
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
 
@@ -78,7 +78,7 @@ const Homestay: Screen<HomestayProps> = ({
   const pageUrl = Router.pathname
 
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+  // @ts-ignore make web strict
   const navList: NavigationItem[] = organizationPage?.menuLinks.map(
     ({ primaryLink, childrenLinks }) => ({
       title: primaryLink?.text,
@@ -131,7 +131,7 @@ const Homestay: Screen<HomestayProps> = ({
             homestay.guests?.toString(),
             homestay.rooms?.toString(),
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+            // @ts-ignore make web strict
           ].map((x) => csvColumnSeparatorSafeValue(x))
           rows.push(columnValues.join(CSV_COLUMN_SEPARATOR))
         }
@@ -159,11 +159,11 @@ const Homestay: Screen<HomestayProps> = ({
     <OrganizationWrapper
       pageTitle={subpage?.title ?? ''}
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+      // @ts-ignore make web strict
       organizationPage={organizationPage}
       showReadSpeaker={false}
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+      // @ts-ignore make web strict
       pageFeaturedImage={subpage?.featuredImage}
       breadcrumbItems={[
         {
@@ -187,7 +187,7 @@ const Homestay: Screen<HomestayProps> = ({
         </Text>
         <Webreader
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+          // @ts-ignore make web strict
           readId={null}
           readClass="rs_read"
         />
@@ -280,7 +280,7 @@ const Homestay: Screen<HomestayProps> = ({
                       ).replace(
                         '{{ID}}',
                         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+                        // @ts-ignore make web strict
                         homestay.propertyId,
                       )}
                     >

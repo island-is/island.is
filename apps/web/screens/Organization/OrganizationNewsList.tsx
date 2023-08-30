@@ -72,7 +72,7 @@ const OrganizationNewsList: Screen<OrganizationNewsListProps> = ({
   useContentfulId(organizationPage.id)
   useLocalLinkTypeResolver()
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+  // @ts-ignore make web strict
   const n = useNamespaceStrict(namespace)
 
   const newsOverviewUrl = linkResolver(
@@ -137,7 +137,7 @@ const OrganizationNewsList: Screen<OrganizationNewsListProps> = ({
     })),
   ]
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+  // @ts-ignore make web strict
   const navList: NavigationItem[] = organizationPage.menuLinks.map(
     ({ primaryLink, childrenLinks }) => ({
       title: primaryLink?.text,
@@ -156,14 +156,14 @@ const OrganizationNewsList: Screen<OrganizationNewsListProps> = ({
   return (
     <OrganizationWrapper
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+      // @ts-ignore make web strict
       pageTitle={newsTitle}
       organizationPage={organizationPage}
       showReadSpeaker={false}
       breadcrumbItems={breadCrumbs}
       navigationData={{
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+        // @ts-ignore make web strict
         title: n('navigationTitle', 'Efnisyfirlit'),
         items: navList,
       }}
@@ -171,14 +171,14 @@ const OrganizationNewsList: Screen<OrganizationNewsListProps> = ({
         <NewsListSidebar
           months={months}
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+          // @ts-ignore make web strict
           namespace={namespace}
           newsOverviewUrl={newsOverviewUrl}
           selectedMonth={selectedMonth}
           selectedTag={selectedTag}
           selectedYear={selectedYear}
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+          // @ts-ignore make web strict
           title={newsTitle}
           yearOptions={yearOptions}
         />
@@ -186,7 +186,7 @@ const OrganizationNewsList: Screen<OrganizationNewsListProps> = ({
     >
       <NewsList
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+        // @ts-ignore make web strict
         namespace={namespace}
         newsItemLinkType="organizationnews"
         newsOverviewUrl={newsOverviewUrl}
@@ -200,11 +200,11 @@ const OrganizationNewsList: Screen<OrganizationNewsListProps> = ({
         yearOptions={yearOptions}
         monthOptions={monthOptions}
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+        // @ts-ignore make web strict
         title={newsTitle}
         newsPerPage={PERPAGE}
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+        // @ts-ignore make web strict
         newsTags={organizationPage.secondaryNewsTags}
       />
     </OrganizationWrapper>
@@ -234,13 +234,13 @@ const getIntParam = (s: string | string[]) => {
 // @ts-ignore make web strict
 OrganizationNewsList.getProps = async ({ apolloClient, query, locale }) => {
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+  // @ts-ignore make web strict
   const year = getIntParam(query.y)
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+  // @ts-ignore make web strict
   const month = year && getIntParam(query.m)
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+  // @ts-ignore make web strict
   const selectedPage = getIntParam(query.page) ?? 1
 
   const organizationPage = (
@@ -366,7 +366,7 @@ OrganizationNewsList.getProps = async ({ apolloClient, query, locale }) => {
 
     for (const lang of Object.keys(slugs)) {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+      // @ts-ignore make web strict
       languageToggleQueryParams[lang as Locale] = { tag: slugs[lang] }
     }
   }
