@@ -107,6 +107,7 @@ type RichText = (
         renderMark: Options['renderMark']
         renderComponent: {
           [slice in keyof typeof defaultRenderComponentObject]: (
+            // @ts-ignore make web strict
             SliceType,
           ) => ReactNode
         }
@@ -124,6 +125,7 @@ export const richText: RichText = (
     renderText: (text: string) => {
       return text
         .split('\n')
+        // @ts-ignore make web strict
         .reduce((children: string[], textSegment: string, index: number) => {
           return [...children, index > 0 && <br key={index} />, textSegment]
         }, [])
@@ -151,6 +153,7 @@ export const richText: RichText = (
         marginBottom={[5, 5, 5, 6]}
         marginTop={[5, 5, 5, 6]}
       >
+        {/** @ts-ignore make web strict */}
         {renderComponent[slice.__typename]?.(slice, locale)}
       </Box>
     )

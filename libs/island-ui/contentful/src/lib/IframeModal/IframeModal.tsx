@@ -59,6 +59,7 @@ export const IframeModal: FC<React.PropsWithChildren<IframeModalProps>> = ({
 
   useEffect(() => {
     if (dialog.visible && initialFocusedRef.current) {
+      // @ts-ignore make web strict
       initialFocusedRef.current.focus()
     }
   }, [dialog.visible, initialFocusedRef])

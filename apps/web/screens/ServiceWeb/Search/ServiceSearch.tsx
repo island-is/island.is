@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import { useMemo } from 'react'
 import NextLink from 'next/link'
 import { useRouter } from 'next/router'
@@ -274,6 +276,7 @@ const ServiceSearch: Screen<ServiceSearchProps> = ({
                     })
 
                     return (
+                      
                       <Card
                         key={index}
                         tags={tags}

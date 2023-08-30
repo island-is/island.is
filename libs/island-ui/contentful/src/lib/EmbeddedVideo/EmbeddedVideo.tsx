@@ -49,6 +49,7 @@ export const EmbeddedVideo: FC<EmbeddedVideoProps> = ({
 }) => {
   const [allowed, setAllowed] = useState<boolean>(false)
   const [embedUrl, setEmbedUrl] = useState<string | null>(null)
+  // @ts-ignore make web strict
   const [termsUrl, setTermsUrl] = useState<string>(null)
   const [itemKey, setItemKey] = useState<string>('')
   const [type, setType] = useState<'YOUTUBE' | 'VIMEO' | ''>('')
@@ -111,9 +112,11 @@ export const EmbeddedVideo: FC<EmbeddedVideoProps> = ({
 
   const textSettings = { termsUrl }
 
+  // @ts-ignore make web strict
   const TextsData = Texts(textSettings)
-
+  // @ts-ignore make web strict
   const texts = Object.prototype.hasOwnProperty.call(TextsData, locale)
+  // @ts-ignore make web strict
     ? TextsData[locale]
     : TextsData['is']
 

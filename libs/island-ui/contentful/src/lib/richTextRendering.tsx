@@ -146,7 +146,7 @@ export interface RenderConfig {
   padding: Readonly<Array<PaddingConfig>>
   skipGrid?: boolean
 }
-
+// @ts-ignore make web strict
 const renderConnectedComponent = (slice) => {
   const data = slice.json
 
@@ -356,6 +356,7 @@ export const renderSlices = (
   }
 
   const components = slices.map((slice, index) => {
+    // @ts-ignore make web strict
     const comp = config.renderComponent(slice, locale, config)
     if (!comp) {
       return null

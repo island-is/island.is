@@ -17,7 +17,7 @@ import { SectionWithVideo } from '../SectionWithVideo/SectionWithVideo'
 import { TeamList } from '../TeamList/TeamList'
 import { ContactUs } from '../ContactUs/ContactUs'
 import { Location } from '../Location/Location'
-
+// @ts-ignore make web strict
 export const renderConnectedComponent = (slice) => {
   const data = slice.json
 
@@ -48,34 +48,38 @@ export const renderConnectedComponent = (slice) => {
 
 // TODO: add types
 export const defaultRenderComponentObject = {
+  // @ts-ignore make web strict
   ConnectedComponent: (slice) => renderConnectedComponent(slice),
+  // @ts-ignore make web strict
   FaqList: (slice) => <FaqList {...slice} />,
+  // @ts-ignore make web strict
   Statistics: (slice) => <Statistics {...slice} />,
-
+  // @ts-ignore make web strict
   Image: (slice) => <Image {...slice} thumbnail={slice.url + '?w=50'} />,
-
+  // @ts-ignore make web strict
   Asset: (slice) => <AssetLink {...slice} />,
-
+  // @ts-ignore make web strict
   ProcessEntry: (slice) => (
     <Hidden print={true}>
       <ProcessEntry {...slice} />
     </Hidden>
   ),
-
+  // @ts-ignore make web strict
   EmbeddedVideo: (slice, locale: string) => (
     <Hidden print={true}>
       <EmbeddedVideo locale={locale} {...slice} />
     </Hidden>
   ),
-
+  // @ts-ignore make web strict
   SectionWithImage: (slice) => <SectionWithImage {...slice} />,
-
+  // @ts-ignore make web strict
   SectionWithVideo: (slice) => <SectionWithVideo {...slice} />,
-
+  // @ts-ignore make web strict
   TeamList: (slice) => <TeamList {...slice} />,
-
+  // @ts-ignore make web strict
   Location: (slice) => <Location {...slice} />,
   // NB: ContactUs needs to be connected with submit logic higher up
+  // @ts-ignore make web strict
   ContactUs: (slice) => (
     <ContactUs
       {...slice}

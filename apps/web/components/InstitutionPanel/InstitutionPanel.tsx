@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import {
   Box,
   Text,
@@ -26,6 +28,7 @@ export const InstitutionPanel = ({
   linkProps,
   imgContainerDisplay,
 }: InstitutionPanelProps) => {
+  
   return (
     <Link {...linkProps}>
       <Box
