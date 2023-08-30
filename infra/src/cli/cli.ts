@@ -93,6 +93,7 @@ yargs(process.argv.slice(2))
         .demandCommand(0)
     },
     async (argv) => {
+      // TODO: Move all logic here to own function
       for (const arg of argv._.slice(1).map((s) => s.toString()))
         argv.services.push(arg)
       if (argv.reset) {
@@ -100,9 +101,23 @@ yargs(process.argv.slice(2))
       }
       if (!argv.services.length) {
         console.log('No services specified, nothing to do')
-        return
+        process.exit(0)
       }
-      await updateSecretFiles(argv.services || [])
+      const { changes, failedServices } = await updateSecretFiles(
+        argv.services || [],
+      )
+      console.log(
+        `Updated ${changes.changed} and added ${changes.added} secrets`,
+      )
+      if (failedServices.length > 0) {
+        console.log(
+          `Failed to update secrets for ${failedServices
+            .map((s) => `'${s}'`)
+            .join(', ')}`,
+        )
+        process.exit(1)
+      }
+      process.exit(0)
     },
   )
   .demandCommand(1)
