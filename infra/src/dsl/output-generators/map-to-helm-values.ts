@@ -243,8 +243,17 @@ const serializeService: SerializeMethod<HelmService> = async (
   if (typeof serviceDef.redis !== 'undefined') {
     const env: { [name: string]: string } = {}
     env['REDIS_URL_NODE_01'] = serviceDef.redis.host ?? env1.redisHost
-
+    
     mergeObjects(result.env, env)
+  }
+  
+  // shutdownGracePeriod
+  if (serviceDef.shutdownGracePeriodSeconds) {
+    if (serviceDef.shutdownGracePeriodSeconds < 0) {
+      addToErrors(["shutdownGracePeriodSeconds cannot be less than 0"])
+    } else {
+      result.shutdownGracePeriodSeconds = serviceDef.shutdownGracePeriodSeconds
+    }
   }
 
   const allErrors = getErrors()

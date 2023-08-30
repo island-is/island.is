@@ -114,4 +114,5 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-ids-api'> => {
       min: 2,
       max: 15,
     })
+    .shutdownGracePeriodSeconds(60)
 }

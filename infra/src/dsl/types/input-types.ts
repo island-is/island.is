@@ -102,6 +102,7 @@ export type ServiceDefinitionCore = {
     allowPrivilegeEscalation: boolean
   }
   files: MountedFile[]
+  shutdownGracePeriodSeconds?: number
   volumes: PersistentVolumeClaim[]
 }
 /**

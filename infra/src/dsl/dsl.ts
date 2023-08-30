@@ -220,6 +220,11 @@ export class ServiceBuilder<ServiceType> {
     return this
   }
 
+  shutdownGracePeriodSeconds(shutdownGracePeriodSeconds: number) {
+    this.serviceDef.shutdownGracePeriodSeconds = shutdownGracePeriodSeconds ?? undefined
+    return this
+  }
+
   resources(res: Resources) {
     this.serviceDef.resources = res
     return this

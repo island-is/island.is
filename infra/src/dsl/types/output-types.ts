@@ -111,19 +111,22 @@ export interface HelmService {
       memory: string
     }
   }
+
   pvcs?: OutputPersistentVolumeClaim[]
   grantNamespaces: string[]
   grantNamespacesEnabled: boolean
-
   env: ContainerEnvironmentVariables
   secrets: ContainerSecrets
   enabled: boolean
   namespace: string
+
   image: {
     repository: string
   }
+
   extra?: Hash
   files?: string[]
+  shutdownGracePeriodSeconds?: number
 }
 
 export interface LocalrunService {
