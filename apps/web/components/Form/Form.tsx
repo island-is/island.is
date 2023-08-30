@@ -224,24 +224,17 @@ type ErrorData = {
 export const Form = ({ form, namespace }: FormProps) => {
   const n = useNamespace(namespace)
 
-  const showDefaultNameField = form.showDefaultNameField ?? true
-  const showDefaultEmailField = form.showDefaultEmailField ?? true
-
-  const [data, setData] = useState<Record<string, string>>(() => {
-    const fields = form.fields
-      .filter((field) => field.type !== FormFieldType.INFORMATION)
-      .map((field): [string, string] => [slugify(field.title), ''])
-
-    if (showDefaultNameField) {
-      fields.push(['name', ''])
-    }
-
-    if (showDefaultEmailField) {
-      fields.push(['email', ''])
-    }
-
-    return Object.fromEntries(fields)
-  })
+  const [data, setData] = useState<Record<string, string>>(() =>
+    Object.fromEntries(
+      form.fields
+        .filter((field) => field.type !== FormFieldType.INFORMATION)
+        .map((field): [string, string] => [slugify(field.title), ''])
+        .concat([
+          ['name', ''],
+          ['email', ''],
+        ]),
+    ),
+  )
   const [fileList, setFileList] = useState<Record<string, UploadFile[]>>(() =>
     Object.fromEntries(
       form.fields
@@ -271,23 +264,19 @@ export const Form = ({ form, namespace }: FormProps) => {
       .map((slug) => {
         const field = form.fields.find((f) => slugify(f.title) === slug)
 
-        // Handle default name and email field validation
+        // Handle name and email
         if (!field) {
-          if (showDefaultNameField) {
-            if (slug === 'name' && !data['name']) {
-              return {
-                field: slug,
-                error: n('formInvalidName', 'Þennan reit þarf að fylla út.'),
-              }
+          if (slug === 'name' && !data['name']) {
+            return {
+              field: slug,
+              error: n('formInvalidName', 'Þennan reit þarf að fylla út.'),
             }
           }
 
-          if (showDefaultEmailField) {
-            if (slug === 'email' && !isValidEmail.test(data['email'])) {
-              return {
-                field: slug,
-                error: n('formInvalidEmail', 'Þetta er ekki gilt netfang.'),
-              }
+          if (slug === 'email' && !isValidEmail.test(data['email'])) {
+            return {
+              field: slug,
+              error: n('formInvalidEmail', 'Þetta er ekki gilt netfang.'),
             }
           }
 
@@ -589,34 +578,30 @@ export const Form = ({ form, namespace }: FormProps) => {
             {form.aboutYouHeadingText}
           </Text>
           <Stack space={4}>
-            {showDefaultNameField && (
-              <Input
-                placeholder={n('formNamePlaceholder', 'Nafnið þitt')}
-                name="name"
-                label={n('formFullName', 'Fullt nafn')}
-                required={true}
-                value={data['name'] ?? ''}
-                hasError={!!errors.find((error) => error.field === 'name')}
-                errorMessage={
-                  errors.find((error) => error.field === 'name')?.error
-                }
-                onChange={(e) => onChange('name', e.target.value)}
-              />
-            )}
-            {showDefaultEmailField && (
-              <Input
-                placeholder={n('formEmailPlaceholder', 'Netfang')}
-                name="email"
-                label={n('formEmail', 'Netfang')}
-                required={true}
-                value={data['email'] ?? ''}
-                hasError={!!errors.find((error) => error.field === 'email')}
-                errorMessage={
-                  errors.find((error) => error.field === 'email')?.error
-                }
-                onChange={(e) => onChange('email', e.target.value)}
-              />
-            )}
+            <Input
+              placeholder={n('formNamePlaceholder', 'Nafnið þitt')}
+              name="name"
+              label={n('formFullName', 'Fullt nafn')}
+              required={true}
+              value={data['name'] ?? ''}
+              hasError={!!errors.find((error) => error.field === 'name')}
+              errorMessage={
+                errors.find((error) => error.field === 'name')?.error
+              }
+              onChange={(e) => onChange('name', e.target.value)}
+            />
+            <Input
+              placeholder={n('formEmailPlaceholder', 'Netfang')}
+              name="email"
+              label={n('formEmail', 'Netfang')}
+              required={true}
+              value={data['email'] ?? ''}
+              hasError={!!errors.find((error) => error.field === 'email')}
+              errorMessage={
+                errors.find((error) => error.field === 'email')?.error
+              }
+              onChange={(e) => onChange('email', e.target.value)}
+            />
           </Stack>
           <Text variant="h5" color="blue600" marginBottom={2} marginTop={4}>
             {form.questionsHeadingText}

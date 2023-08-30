@@ -32,12 +32,6 @@ export class Form {
 
   @Field(() => [String], { nullable: true })
   recipientList?: string[]
-
-  @Field(() => Boolean, { nullable: true })
-  showDefaultNameField?: boolean
-
-  @Field(() => Boolean, { nullable: true })
-  showDefaultEmailField?: boolean
 }
 
 export const mapForm = ({ sys, fields }: IForm): SystemMetadata<Form> => {
@@ -57,7 +51,5 @@ export const mapForm = ({ sys, fields }: IForm): SystemMetadata<Form> => {
       ? mapFormField(fields.recipientFormFieldDecider)
       : undefined,
     recipientList: recipientList,
-    showDefaultNameField: fields.showDefaultNameField ?? true,
-    showDefaultEmailField: fields.showDefaultEmailField ?? true,
   }
 }
