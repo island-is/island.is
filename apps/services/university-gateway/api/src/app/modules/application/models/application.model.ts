@@ -1,5 +1,3 @@
-import { ApiProperty } from '@nestjs/swagger'
-import { GraphQLJSONObject } from 'graphql-type-json'
 import { Field, ObjectType, ID, registerEnumType } from '@nestjs/graphql'
 
 import {

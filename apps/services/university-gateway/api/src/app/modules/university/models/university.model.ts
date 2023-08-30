@@ -1,11 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger'
-import { GraphQLJSONObject } from 'graphql-type-json'
-import { Field, ObjectType, ID, registerEnumType } from '@nestjs/graphql'
-
-import {
-  Season,
-  DegreeType,
-} from '@island.is/university-gateway-types'
+import { Field, ObjectType, ID } from '@nestjs/graphql'
 
 import type {
   University as TUniversity,
@@ -28,5 +21,3 @@ export class University implements TUniversity {
   @Field()
   modified!: Date
 }
-
-
