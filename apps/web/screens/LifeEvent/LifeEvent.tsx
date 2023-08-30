@@ -157,10 +157,12 @@ export const LifeEvent: Screen<LifeEventProps> = ({
                     {title}
                   </span>
                 </Text>
-                
-                <Webreader 
-                // @ts-ignore make web strict
-                readId={null} readClass="rs_read" />
+
+                <Webreader
+                  // @ts-ignore make web strict
+                  readId={null}
+                  readClass="rs_read"
+                />
 
                 {intro && (
                   <Text variant="intro" as="p" paddingTop={2}>
@@ -200,8 +202,9 @@ export const LifeEvent: Screen<LifeEventProps> = ({
           </GridColumn>
         </GridRow>
       </GridContainer>
-      {watsonConfig[locale] && // @ts-ignore make web strict
-      <WatsonChatPanel {...watsonConfig[locale]} />}
+      {watsonConfig[locale] && ( // @ts-ignore make web strict
+        <WatsonChatPanel {...watsonConfig[locale]} />
+      )}
     </Box>
   )
 }

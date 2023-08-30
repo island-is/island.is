@@ -138,9 +138,10 @@ const AdgerdirArticle: Screen<AdgerdirArticleProps> = ({
           </Text>
           {processEntry?.processLink && (
             <Box marginTop={3} display={['none', 'none', 'block']} printHidden>
-              <
-              // @ts-ignore make web strict
-              ProcessEntry {...processEntry} />
+              <// @ts-ignore make web strict
+              ProcessEntry
+                {...processEntry}
+              />
             </Box>
           )}
         </Stack>
@@ -158,9 +159,11 @@ const AdgerdirArticle: Screen<AdgerdirArticleProps> = ({
                 display={['block', 'block', 'none']}
                 printHidden
               >
-                <
-                // @ts-ignore make web strict
-                ProcessEntry fixed {...processEntry} />
+                <// @ts-ignore make web strict
+                ProcessEntry
+                  fixed
+                  {...processEntry}
+                />
               </Box>,
               // @ts-ignore make web strict
               portalRef.current,

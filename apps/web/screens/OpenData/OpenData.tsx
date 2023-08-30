@@ -152,14 +152,16 @@ const OpenDataPage: Screen<OpenDataProps> = ({ page, megaMenuData }) => {
           </GridRow>
           <GridRow>
             <GridColumn span={['12/12', '4/12', '4/12']}>
-              <ChartsCard 
-              // @ts-ignore make web strict
-              chart={graphCards[1]} />
+              <ChartsCard
+                // @ts-ignore make web strict
+                chart={graphCards[1]}
+              />
             </GridColumn>
             <GridColumn span={['12/12', '8/12', '8/12']}>
-              <ChartsCard 
-              // @ts-ignore make web strict
-              chart={graphCards[0]} />
+              <ChartsCard
+                // @ts-ignore make web strict
+                chart={graphCards[0]}
+              />
             </GridColumn>
           </GridRow>
         </GridContainer>

@@ -63,9 +63,12 @@ export const SimpleBarChart = ({ graphData }: GraphProps) => {
           />
           <YAxis stroke="#CCDFFF" tick={<CustomizedAxisTick />} />
           <Tooltip content={<CustomTooltip />} />
-          <Legend iconType="circle" align="right" 
-          // @ts-ignore make web strict
-          content={RenderLegend} />
+          <Legend
+            iconType="circle"
+            align="right"
+            // @ts-ignore make web strict
+            content={RenderLegend}
+          />
           {parsedDatakeys.bars.map((item: any, index: number) => (
             //TODO: Better way to fix implicit any type?
             <Bar

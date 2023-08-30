@@ -37,9 +37,11 @@ export const GroupedPages: FC<React.PropsWithChildren<GroupedPagesProps>> = ({
         {topContent ? (
           <Box paddingY={[3, 3, 6, 10]} paddingX={[3, 3, 0]}>
             <GridRow>
-              <GridColumn span="10/12" 
-              // @ts-ignore make web strict
-              offset={[null, null, '1/12']}>
+              <GridColumn
+                span="10/12"
+                // @ts-ignore make web strict
+                offset={[null, null, '1/12']}
+              >
                 {topContent}
               </GridColumn>
             </GridRow>
@@ -48,9 +50,11 @@ export const GroupedPages: FC<React.PropsWithChildren<GroupedPagesProps>> = ({
         {bottomContent ? (
           <Box className={styles.bottom} paddingBottom={[3, 3, 6, 10]}>
             <GridRow>
-              <GridColumn span="10/12" 
-              // @ts-ignore make web strict
-              offset={[null, null, '1/12']}>
+              <GridColumn
+                span="10/12"
+                // @ts-ignore make web strict
+                offset={[null, null, '1/12']}
+              >
                 {bottomContent}
               </GridColumn>
             </GridRow>

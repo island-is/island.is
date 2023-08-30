@@ -217,7 +217,7 @@ const TemporaryEventLicencesList: FC<
                       value: x,
                     }))
                     .find((x) => x.value === filterLicenceSubType)}
-                    // @ts-ignore make web strict
+                  // @ts-ignore make web strict
                   onChange={({ value }: Option) => {
                     setFilterLicenceSubType(String(value))
                   }}
@@ -244,7 +244,7 @@ const TemporaryEventLicencesList: FC<
                       value: x,
                     }))
                     .find((x) => x.value === filterOffice)}
-                    // @ts-ignore make web strict
+                  // @ts-ignore make web strict
                   onChange={({ value }: Option) => {
                     setFilterOffice(String(value))
                   }}

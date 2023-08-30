@@ -662,9 +662,11 @@ const Auctions: Screen<AuctionsProps> = ({
         <Text variant="h1" as="h2">
           {subpage?.title ?? n('auctions', 'Uppboð')}
         </Text>
-        <Webreader 
-        // @ts-ignore make web strict
-        readId={null} readClass="rs_read" />
+        <Webreader
+          // @ts-ignore make web strict
+          readId={null}
+          readClass="rs_read"
+        />
       </Box>
       <GridContainer>
         <GridRow>
@@ -892,9 +894,11 @@ const Auctions: Screen<AuctionsProps> = ({
                   )}
 
                   {/* Respondents */}
-                  {renderRespondents(auction, 
+                  {renderRespondents(
+                    auction,
                     // @ts-ignore make web strict
-                    auctionRespondents)}
+                    auctionRespondents,
+                  )}
 
                   {/* Petitioners */}
                   {auctionPetitioners &&
@@ -918,7 +922,7 @@ const Auctions: Screen<AuctionsProps> = ({
                     <Box>
                       {auction.lotItems && (
                         <DialogPrompt
-                        // @ts-ignore make web strict
+                          // @ts-ignore make web strict
                           baseId={auction.lotId}
                           // @ts-ignore make web strict
                           title={auction.lotName}

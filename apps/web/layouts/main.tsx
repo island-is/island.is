@@ -177,7 +177,6 @@ const Layout: Screen<LayoutProps> = ({
   const [alertBanners, setAlertBanners] = useState([])
 
   useEffect(() => {
-    
     setAlertBanners(
       // @ts-ignore make web strict
       [
@@ -316,7 +315,7 @@ const Layout: Screen<LayoutProps> = ({
         />
         {alertBanners.map((banner) => (
           <AlertBanner
-          // @ts-ignore make web strict
+            // @ts-ignore make web strict
             key={banner.bannerId}
             // @ts-ignore make web strict
             title={banner.title}
@@ -364,7 +363,7 @@ const Layout: Screen<LayoutProps> = ({
         >
           {showHeader && (
             <ColorSchemeContext.Provider
-            // @ts-ignore make web strict
+              // @ts-ignore make web strict
               value={{ colorScheme: headerColorScheme }}
             >
               <Header
@@ -603,7 +602,7 @@ Layout.getProps = async ({ apolloClient, locale, req }) => {
     alertBannerContent: {
       ...alertBanner,
       showAlertBanner:
-      // @ts-ignore make web strict
+        // @ts-ignore make web strict
         alertBanner.showAlertBanner &&
         (!req?.headers.cookie ||
           req.headers.cookie?.indexOf(alertBannerId) === -1),
@@ -645,9 +644,10 @@ export const withMainLayout = <T,>(
   }) => {
     return (
       <Layout {...layoutProps}>
-        <
-        // @ts-ignore make web strict
-        Component {...componentProps} />
+        <// @ts-ignore make web strict
+        Component
+          {...componentProps}
+        />
       </Layout>
     )
   }

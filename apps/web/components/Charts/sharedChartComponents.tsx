@@ -66,9 +66,10 @@ export const CustomizedRightAxisTick = ({ x, y, payload }: AxisTickProps) => {
     // @ts-ignore make web strict
     <g transform={`translate(${x + 10},${y - 10})`}>
       <text dy={16} textAnchor="start" fill="#00003C">
-        
-        {// @ts-ignore make web strict
-        payload.value}
+        {
+          // @ts-ignore make web strict
+          payload.value
+        }
       </text>
     </g>
   )

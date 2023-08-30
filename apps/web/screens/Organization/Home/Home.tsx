@@ -234,9 +234,13 @@ const Home: Screen<HomeProps> = ({
   const isLandingPage =
     !organizationPage && !!organization && organization?.hasALandingPage
   if (isLandingPage)
-    return <LandingPage 
-    // @ts-ignore make web strict
-    namespace={namespace} organization={organization} />
+    return (
+      <LandingPage
+        // @ts-ignore make web strict
+        namespace={namespace}
+        organization={organization}
+      />
+    )
   return (
     <OrganizationHomePage
       namespace={namespace}

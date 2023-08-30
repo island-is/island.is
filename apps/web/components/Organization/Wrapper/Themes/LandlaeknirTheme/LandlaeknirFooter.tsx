@@ -73,7 +73,7 @@ const LandLaeknirFooter = ({
                   <Box className={styles.borderTop} />
                 </Hidden>
                 {footerItems?.[0] &&
-                // @ts-ignore make web strict
+                  // @ts-ignore make web strict
                   renderParagraphs(footerItems[0].content, 2, true)}
               </GridColumn>
               <GridColumn span={['12/12', '12/12', '3/12']}>
@@ -95,8 +95,10 @@ const LandLaeknirFooter = ({
                         </Text>
                       )}
                     </Box>
-                    {// @ts-ignore make web strict
-                    renderParagraphs(footerItems[1].content)}
+                    {
+                      // @ts-ignore make web strict
+                      renderParagraphs(footerItems[1].content)
+                    }
                   </Box>
                 )}
               </GridColumn>
@@ -119,8 +121,10 @@ const LandLaeknirFooter = ({
                         </Text>
                       )}
                     </Box>
-                    {// @ts-ignore make web strict
-                    renderParagraphs(footerItems[2].content)}
+                    {
+                      // @ts-ignore make web strict
+                      renderParagraphs(footerItems[2].content)
+                    }
                   </Box>
                 )}
               </GridColumn>
@@ -143,8 +147,10 @@ const LandLaeknirFooter = ({
                         </Text>
                       )}
                     </Box>
-                    {// @ts-ignore make web strict
-                    renderParagraphs(item.content)}
+                    {
+                      // @ts-ignore make web strict
+                      renderParagraphs(item.content)
+                    }
                   </Box>
                 ))}
               </GridColumn>
@@ -157,8 +163,10 @@ const LandLaeknirFooter = ({
                 {footerItems?.[5] && (
                   <Box className={styles.row}>
                     <Box className={styles.noWrap} marginRight={1}>
-                      {// @ts-ignore make web strict
-                      renderParagraphs(footerItems[5].content, 0)}
+                      {
+                        // @ts-ignore make web strict
+                        renderParagraphs(footerItems[5].content, 0)
+                      }
                     </Box>
                     <img
                       src={n(
@@ -171,8 +179,10 @@ const LandLaeknirFooter = ({
                 )}
 
                 <Box marginTop={2}>
-                  {// @ts-ignore make web strict
-                  footerItems?.[6] && renderParagraphs(footerItems[6].content)}
+                  {
+                    // @ts-ignore make web strict
+                    footerItems?.[6] && renderParagraphs(footerItems[6].content)
+                  }
                 </Box>
               </GridColumn>
 
@@ -195,7 +205,7 @@ const LandLaeknirFooter = ({
                     />
                     <Box marginLeft={2}>
                       {footerItems?.[7] &&
-                      // @ts-ignore make web strict
+                        // @ts-ignore make web strict
                         renderParagraphs(footerItems[7].content, 0, true)}
                     </Box>
                   </Box>

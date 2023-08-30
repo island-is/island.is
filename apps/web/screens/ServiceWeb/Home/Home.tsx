@@ -186,7 +186,7 @@ const Home: Screen<HomeProps> = ({
                     <GridContainer>
                       <GridRow>
                         <GridColumn
-                        // @ts-ignore make web strict
+                          // @ts-ignore make web strict
                           offset={[null, null, null, '1/12']}
                           span={['12/12', '12/12', '12/12', '10/12']}
                         >
@@ -239,7 +239,7 @@ const Home: Screen<HomeProps> = ({
                   <GridContainer>
                     <GridRow>
                       <GridColumn
-                      // @ts-ignore make web strict
+                        // @ts-ignore make web strict
                         offset={[null, null, null, '1/12']}
                         span={['12/12', '12/12', '12/12', '10/12']}
                       >
@@ -330,7 +330,7 @@ Home.getProps = async ({ apolloClient, locale, query }) => {
   ])
 
   const popularQuestionCount =
-  // @ts-ignore make web strict
+    // @ts-ignore make web strict
     organization?.data?.getOrganization?.serviceWebPopularQuestionCount
   const featuredQNAs = popularQuestionCount
     ? await apolloClient.query<Query, QueryGetFeaturedSupportQnAsArgs>({

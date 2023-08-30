@@ -82,9 +82,12 @@ export const MixedChart = ({ graphData }: GraphProps) => {
             hide={!parsedDatakeys.yAxis?.showRight}
           />
           <Tooltip content={<CustomTooltip />} />
-          <Legend iconType="circle" align="right" 
-          // @ts-ignore make web strict
-          content={RenderLegend} />
+          <Legend
+            iconType="circle"
+            align="right"
+            // @ts-ignore make web strict
+            content={RenderLegend}
+          />
           {parsedDatakeys.bars.map(
             (
               item: { datakey: any; color: string; stackId: string | number },

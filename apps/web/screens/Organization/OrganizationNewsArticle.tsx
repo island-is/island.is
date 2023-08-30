@@ -102,7 +102,7 @@ const OrganizationNewsArticle: Screen<OrganizationNewsArticleProps> = ({
           },
         ]
       : []),
-      // @ts-ignore make web strict
+    // @ts-ignore make web strict
     ...(isNewsletter
       ? [
           {

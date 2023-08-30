@@ -220,7 +220,7 @@ const Search: Screen<CategoryProps> = ({
       case 'News':
         labels.push(n('newsTitle'))
         break
-        // @ts-ignore make web strict
+      // @ts-ignore make web strict
       case 'AdgerdirPage':
         labels.push(n('adgerdirTitle'))
         break
@@ -367,7 +367,7 @@ const Search: Screen<CategoryProps> = ({
       labels: getLabels(item),
     }),
   )
-// @ts-ignore make web strict
+  // @ts-ignore make web strict
   const noUncategorized = (item) => {
     if (!item.category && filters.category === 'uncategorized') {
       return true
@@ -413,8 +413,8 @@ const Search: Screen<CategoryProps> = ({
       q,
       ...(contentType && {
         type: Object.prototype.hasOwnProperty.call(connectedTypes, contentType)
-        // @ts-ignore make web strict
-          ? connectedTypes[contentType].map((x) => firstLower(x))
+          ? // @ts-ignore make web strict
+            connectedTypes[contentType].map((x) => firstLower(x))
           : contentType,
       }),
       ...(query.category?.length && { category: query.category }),
@@ -723,7 +723,7 @@ Search.getProps = async ({ apolloClient, locale, query }) => {
   const organization = query.organization ?? ''
   const processentry = query.processentry ?? ''
   const countTag = {}
-// @ts-ignore make web strict
+  // @ts-ignore make web strict
   const tags: TagType[] = [
     ...stringToArray(category).map(
       (key: string): TagType => ({
