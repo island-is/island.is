@@ -6,7 +6,6 @@ import {
   GridColumn,
   GridContainer,
   GridRow,
-  Option,
   Select,
 } from '@island.is/island-ui/core'
 import { useRouter } from 'next/router'
@@ -76,7 +75,7 @@ export const SliceDropdown: React.FC<React.PropsWithChildren<SliceProps>> = ({
               options={options}
               value={options.find((x) => x.value === selectedId)}
               onChange={({ value }) => {
-                const slug = options.find((x) => x.value === value).slug
+                const slug = options.find((x) => x.value === value)?.slug
                 setSelectedId(String(value))
                 Router.push(
                   {
