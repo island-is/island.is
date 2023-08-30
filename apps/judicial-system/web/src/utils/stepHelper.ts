@@ -5,7 +5,6 @@ import flatten from 'lodash/flatten'
 import { TagVariant } from '@island.is/island-ui/core'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
-  CaseCustodyRestrictions,
   CaseFileCategory,
   IndictmentSubtype,
   Notification,
@@ -15,6 +14,7 @@ import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import {
   CaseType,
   Gender,
+  CaseCustodyRestrictions,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 export const getShortGender = (gender?: Gender): string => {
