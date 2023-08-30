@@ -861,6 +861,30 @@ export interface IFeaturedSupportQnAs
   }
 }
 
+export interface IFooterFields {
+  /** Title */
+  title?: string | undefined
+}
+
+/** Organization and Project page footer template */
+
+export interface IFooter extends Entry<IFooterFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'footer'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface IFooterItemFields {
   /** Title */
   title: string
@@ -919,6 +943,12 @@ export interface IFormFields {
 
   /** Recipient List */
   recipientList?: string[] | undefined
+
+  /** Show Default Name Field */
+  showDefaultNameField?: boolean | undefined
+
+  /** Show Default Email Field */
+  showDefaultEmailField?: boolean | undefined
 }
 
 export interface IForm extends Entry<IFormFields> {
@@ -2380,6 +2410,7 @@ export interface IOrganizationPageFields {
     | 'haskolanam'
     | 'nti'
     | 'samgongustofa'
+    | 'geislavarnir-rikisins'
 
   /** Theme Properties */
   themeProperties?: Record<string, any> | undefined
@@ -2948,6 +2979,9 @@ export interface ISectionWithVideoFields {
 
   /** Link */
   link?: ILink | undefined
+
+  /** Show divider on top */
+  showDividerOnTop?: boolean | undefined
 }
 
 /** A section containing a video on the left and text on the right (which wraps below the video on smaller screens) */
@@ -3040,6 +3074,7 @@ export interface ISliceConnectedComponentFields {
     | 'PlateAvailableSearch'
     | 'AircraftSearch'
     | 'DrivingInstructorList'
+    | 'HousingBenefitCalculator'
     | undefined
 
   /** Localized JSON */
@@ -4237,6 +4272,7 @@ export type CONTENT_TYPE =
   | 'featured'
   | 'featuredArticles'
   | 'featuredSupportQNAs'
+  | 'footer'
   | 'footerItem'
   | 'form'
   | 'formField'

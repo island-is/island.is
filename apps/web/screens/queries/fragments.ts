@@ -217,6 +217,7 @@ export const slices = gql`
     id
     title
     showTitle
+    showDividerOnTop
     video {
       ...EmbeddedVideoFields
     }
@@ -506,6 +507,8 @@ export const slices = gql`
     id
     title
     intro
+    showDefaultNameField
+    showDefaultEmailField
     fields {
       title
       name

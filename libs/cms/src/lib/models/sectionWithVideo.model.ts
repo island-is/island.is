@@ -28,6 +28,9 @@ export class SectionWithVideo {
 
   @CacheField(() => Link, { nullable: true })
   link?: Link | null
+
+  @Field(() => Boolean, { nullable: true })
+  showDividerOnTop?: boolean
 }
 
 export const mapSectionWithVideo = ({
@@ -42,4 +45,5 @@ export const mapSectionWithVideo = ({
   html: fields.content ? mapHtml(fields.content, sys.id + ':content') : null,
   locale: sys.locale === 'is-IS' ? 'is' : sys.locale,
   link: fields.link ? mapLink(fields.link) : null,
+  showDividerOnTop: fields.showDividerOnTop ?? false,
 })
