@@ -14,7 +14,6 @@ import { Events, States, Roles } from './constants'
 import { dataSchema } from './dataSchema'
 import { m } from './messages'
 import { ApiActions } from './constants'
-import { Features } from '@island.is/feature-flags'
 
 const DrivingSchoolConfirmationTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -24,7 +23,6 @@ const DrivingSchoolConfirmationTemplate: ApplicationTemplate<
   type: ApplicationTypes.DRIVING_SCHOOL_CONFIRMATION,
   name: m.applicationTitle,
   dataSchema: dataSchema,
-  featureFlag: Features.drivingSchoolConfirmations,
   stateMachineConfig: {
     initial: States.CONFIRM,
     states: {

@@ -16,7 +16,7 @@ import {
   Organization,
   SchoolType,
   DrivingLicenseBookStudentOverview,
-} from './drivinLicenceBook.type'
+} from './drivingLicenceBook.type'
 import { CreateDrivingSchoolTestResultInput } from './dto/createDrivingSchoolTestResult.input'
 
 @Injectable()

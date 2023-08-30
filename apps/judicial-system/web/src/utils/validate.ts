@@ -3,6 +3,7 @@ import { isIndictmentCase } from '@island.is/judicial-system/types'
 import {
   User,
   CaseType,
+  SessionArrangements,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { isBusiness } from './stepHelper'
@@ -22,7 +23,7 @@ export type Validation =
   | 'vehicle-registration-number'
   | 'appeal-case-number-format'
 
-type ValidateItem = 'valid' | [string | undefined, Validation[]]
+type ValidateItem = 'valid' | [string | undefined | null, Validation[]]
 type IsValid = { isValid: boolean; errorMessage: string }
 
 const getRegexByValidation = (validation: Validation) => {
@@ -372,18 +373,23 @@ export const isCourtRecordStepValidRC = (workingCase: Case): boolean => {
 }
 
 export const isCourtRecordStepValidIC = (workingCase: Case): boolean => {
+  const validations = [
+    [workingCase.courtStartDate, ['empty', 'date-format']],
+    [workingCase.courtLocation, ['empty']],
+    [workingCase.courtEndTime, ['empty', 'date-format']],
+    [workingCase.decision, ['empty']],
+    [workingCase.conclusion, ['empty']],
+    [workingCase.ruling, ['empty']],
+  ] as ValidateItem[]
+
+  if (workingCase.sessionArrangements !== SessionArrangements.NONE_PRESENT) {
+    validations.push([workingCase.sessionBookings, ['empty']])
+  }
+
   return (
     (workingCase.accusedAppealDecision &&
       workingCase.prosecutorAppealDecision &&
-      validate([
-        [workingCase.courtStartDate, ['empty', 'date-format']],
-        [workingCase.courtLocation, ['empty']],
-        [workingCase.sessionBookings, ['empty']],
-        [workingCase.courtEndTime, ['empty', 'date-format']],
-        [workingCase.decision, ['empty']],
-        [workingCase.conclusion, ['empty']],
-        [workingCase.ruling, ['empty']],
-      ]).isValid) ||
+      validate(validations).isValid) ||
     false
   )
 }

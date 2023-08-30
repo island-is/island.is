@@ -32,6 +32,7 @@ import {
   SidebarShipSearchInput,
   Webreader,
   SearchBox,
+  Footer as WebFooter,
 } from '@island.is/web/components'
 import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
 import { usePlausiblePageview } from '@island.is/web/hooks'
@@ -178,6 +179,9 @@ export const footerEnabled = [
 
   'samgongustofa',
   'transport-authority',
+
+  'geislavarnir-rikisins',
+  'icelandic-radiation-safety-authority',
 ]
 
 export const getThemeConfig = (
@@ -324,6 +328,7 @@ export const OrganizationExternalLinks: React.FC<
             let variant = undefined
             if (
               isSjukratryggingar &&
+              organizationPage.externalLinks &&
               organizationPage.externalLinks.length === 2
             ) {
               variant = index === 0 ? 'primary' : 'ghost'
@@ -554,6 +559,16 @@ export const OrganizationFooter: React.FC<
         />
       )
       break
+    case 'geislavarnir-rikisins':
+    case 'icelandic-radiation-safety-authority':
+      OrganizationFooterComponent = (
+        <WebFooter
+          imageUrl={organization.logo?.url}
+          heading={organization.title}
+          columns={organization.footerItems}
+        />
+      )
+      break
   }
 
   return OrganizationFooterComponent
@@ -634,7 +649,7 @@ const getActiveNavigationItemTitle = (
     if (clientUrl === item.href) {
       return item.title
     }
-    for (const childItem of item.items) {
+    for (const childItem of item.items ?? []) {
       if (clientUrl === childItem.href) {
         return childItem.title
       }
@@ -759,7 +774,7 @@ export const OrganizationWrapper: React.FC<
                     }
                     className={styles.sidebarCardContainer}
                   >
-                    {organizationPage.sidebarCards.map((card) => {
+                    {(organizationPage.sidebarCards ?? []).map((card) => {
                       if (card.__typename === 'SidebarCard') {
                         return (
                           <ProfileCard

@@ -1,11 +1,11 @@
 import { createIntl } from 'react-intl'
 
+import { CaseDecision } from '@island.is/judicial-system/types'
 import {
+  CaseType,
   Defendant,
   CaseCustodyRestrictions,
-  CaseDecision,
-} from '@island.is/judicial-system/types'
-import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
+} from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { DemandsAutofillProps, getDemandsAutofill } from './PoliceDemands'
 
