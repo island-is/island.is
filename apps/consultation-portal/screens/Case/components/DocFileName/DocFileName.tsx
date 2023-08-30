@@ -31,14 +31,14 @@ const DocFileName = ({ doc, isAdvice = false }: Props) => {
 
   return (
     <Tooltip placement="right" as="span" text={name} fullWidth>
-      <span>
-        <LinkV2
-          href={linkHref}
-          color="blue400"
-          underline="normal"
-          underlineVisibility="always"
-          newTab
-        >
+      <LinkV2
+        href={linkHref}
+        color="blue400"
+        underline="normal"
+        underlineVisibility="always"
+        newTab
+      >
+        <>
           {linkDesc}
           <Icon
             size="small"
@@ -47,8 +47,8 @@ const DocFileName = ({ doc, isAdvice = false }: Props) => {
             className={styles.iconStyle}
             title={iconTitle}
           />
-        </LinkV2>
-      </span>
+        </>
+      </LinkV2>
     </Tooltip>
   )
 }

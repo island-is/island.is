@@ -6,6 +6,7 @@ import { Box, Text } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
 import {
+  CaseState,
   isRestrictionCase,
   CaseDecision as TCaseDecision,
 } from '@island.is/judicial-system/types'
@@ -27,6 +28,7 @@ import {
   SortButton,
   TableContainer,
   TableHeaderText,
+  getDurationDate,
 } from '@island.is/judicial-system-web/src/components/Table'
 
 import * as styles from '../Table.css'
@@ -143,8 +145,12 @@ const AppealCasesTable: React.FC<Props> = (props) => {
               {showingCompletedCases ? (
                 <Text>
                   {isRestrictionCase(column.type)
-                    ? `${formatDate(column.rulingDate ?? '', 'd.M.y')} -
-                      ${formatDate(column.validToDate ?? '', 'd.M.y')}`
+                    ? getDurationDate(
+                        column.state as CaseState,
+                        column.validToDate,
+                        column.initialRulingDate,
+                        column.rulingDate,
+                      )
                     : ''}
                 </Text>
               ) : (

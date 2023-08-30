@@ -255,7 +255,7 @@ export const Form = ({ form, namespace }: FormProps) => {
     CREATE_UPLOAD_URL,
   )
 
-  const onChange = (field, value) => {
+  const onChange = (field: string, value: string) => {
     setData({ ...data, [field]: String(value) })
   }
 
@@ -351,7 +351,7 @@ export const Form = ({ form, namespace }: FormProps) => {
     return !err.length
   }
 
-  const formatBody = (data) => {
+  const formatBody = (data: Record<string, string>) => {
     return `Sendandi: ${data['name']} <${data['email']}>\n\n`.concat(
       form.fields
         .filter((field) => field.type !== FormFieldType.INFORMATION)
@@ -470,15 +470,21 @@ export const Form = ({ form, namespace }: FormProps) => {
                           filename: file.name,
                         },
                       })
-                        .then((response) =>
-                          uploadFile(
-                            file,
-                            response.data.createUploadUrl,
-                            slugify(field.title),
-                          ).then(() =>
-                            resolve(response.data.createUploadUrl.fields.key),
-                          ),
-                        )
+                        .then((response) => {
+                          if (response.data) {
+                            uploadFile(
+                              file,
+                              response.data.createUploadUrl,
+                              slugify(field.title),
+                            ).then(() =>
+                              resolve(
+                                response.data?.createUploadUrl.fields.key,
+                              ),
+                            )
+                          } else {
+                            reject() // Reject in case response.data is null or undefined
+                          }
+                        })
                         .catch(() => reject())
                     })
                   }),
@@ -501,7 +507,7 @@ export const Form = ({ form, namespace }: FormProps) => {
                 JSON.stringify(
                   (files as string[][]).find(
                     (file) => file[0] === slugify(field.title),
-                  )[1],
+                  )?.[1],
                 ),
               ]),
           ),

@@ -13,11 +13,11 @@ import { ExportCSVButton } from '@island.is/web/components'
 import * as styles from './ChartsCard.css'
 
 interface ChartCardDataProps {
-  graphTitle: string
+  graphTitle?: string
   graphDescription?: string
   organization?: string
-  data: string
-  datakeys: string
+  data?: string
+  datakeys?: string
   type?: string
 }
 

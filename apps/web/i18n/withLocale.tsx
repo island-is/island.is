@@ -78,8 +78,12 @@ const getGlobalStrings = async ({
       },
     })
     .then((content) => {
-      // map data here to reduce data processing in component
-      return JSON.parse(content.data.getNamespace.fields)
+      if (content.data.getNamespace) {
+        // map data here to reduce data processing in component
+        return JSON.parse(content.data.getNamespace.fields)
+      }
+      // Handle the case where content.data.getNamespace is null or undefined
+      return {}
     })
 }
 

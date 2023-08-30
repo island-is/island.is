@@ -5,6 +5,7 @@ export const EXPIRES_IN_MILLISECONDS = EXPIRES_IN_SECONDS * 1000
 export const CSRF_COOKIE_NAME = 'judicial-system.csrf'
 export const ACCESS_TOKEN_COOKIE_NAME = 'judicial-system.token'
 export const CODE_VERIFIER_COOKIE_NAME = 'judicial-system.code_verifier'
+export const IDS_ID_TOKEN = 'judicial-system.ids.id_token'
 
 export const InvestigationCaseTypes = [
   {
