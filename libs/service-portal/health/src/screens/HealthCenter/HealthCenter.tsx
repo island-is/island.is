@@ -9,14 +9,8 @@ import { useGetHealthCenterQuery } from './HealthCenter.generated'
 import { Box, Divider, SkeletonLoader, Stack } from '@island.is/island-ui/core'
 import { IntroHeader } from '@island.is/portals/core'
 import { messages } from '../../lib/messages'
-import { useState } from 'react'
 import HistoryTable from './HistoryTable'
 import subYears from 'date-fns/subYears'
-
-interface CurrentInfo {
-  healthCenter: string
-  doctor: string
-}
 
 const DEFAULT_DATE_TO = new Date()
 const DEFAULT_DATE_FROM = subYears(DEFAULT_DATE_TO, 10)
@@ -24,8 +18,6 @@ const DEFAULT_DATE_FROM = subYears(DEFAULT_DATE_TO, 10)
 const HealthCenter = () => {
   useNamespaces('sp.health')
   const { formatMessage } = useLocale()
-
-  const [currentInfo, setCurrentInfo] = useState<CurrentInfo>()
 
   const { loading, error, data } = useGetHealthCenterQuery({
     variables: {
@@ -36,14 +28,7 @@ const HealthCenter = () => {
     },
   })
 
-  const healthCenterData = data?.rightsPortalHealthCenterHistory
-
-  if (!currentInfo && healthCenterData?.current) {
-    setCurrentInfo({
-      healthCenter: healthCenterData.current.name ?? '',
-      doctor: healthCenterData.current.doctor ?? '',
-    })
-  }
+  const healthCenterData = data?.rightsPortalUserHealthCenterRegistration
 
   if (error && !loading) {
     return (
@@ -59,6 +44,7 @@ const HealthCenter = () => {
     )
   }
 
+  console.log(healthCenterData)
   return (
     <Box marginBottom={[6, 6, 10]}>
       <IntroHeader
@@ -66,7 +52,7 @@ const HealthCenter = () => {
         intro={formatMessage(messages.healthCenterDescription)}
       />
 
-      {!loading && !currentInfo && (
+      {!loading && !healthCenterData?.current && (
         <Box width="full" marginTop={4} display="flex" justifyContent="center">
           <Box marginTop={8}>
             <EmptyState />
@@ -74,18 +60,18 @@ const HealthCenter = () => {
         </Box>
       )}
 
-      {currentInfo && (
+      {healthCenterData?.current && (
         <Box width="full" marginTop={[1, 1, 4]}>
           <Stack space={2}>
             <UserInfoLine
               title={formatMessage(messages.yourInformation)}
               label={formatMessage(messages.healthCenterTitle)}
-              content={currentInfo.healthCenter ?? ''}
+              content={healthCenterData.current.healthCenterName ?? ''}
             />
             <Divider />
             <UserInfoLine
               label={formatMessage(messages.personalDoctor)}
-              content={currentInfo.doctor ?? ''}
+              content={healthCenterData.current.doctor ?? ''}
             />
             <Divider />
           </Stack>

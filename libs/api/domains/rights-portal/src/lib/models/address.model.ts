@@ -9,5 +9,5 @@ export class Address {
   municipality?: string | null
 
   @Field(() => String, { nullable: true })
-  address?: string | null
+  streetAddress?: string | null
 }

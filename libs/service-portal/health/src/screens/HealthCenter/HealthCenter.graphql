@@ -1,16 +1,14 @@
 query getHealthCenter($input: HealthCenterHistoryInput) {
-  rightsPortalHealthCenterHistory(input: $input) {
+  rightsPortalUserHealthCenterRegistration(input: $input) {
     current {
-      name
+      healthCenterName
       doctor
     }
     history {
       dateFrom
       dateTo
-      healthCenter {
-        name
-        doctor
-      }
+      healthCenterName
+      doctor
     }
   }
 }

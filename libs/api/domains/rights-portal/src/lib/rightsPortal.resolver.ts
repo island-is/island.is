@@ -1,6 +1,6 @@
 import { Args, Query, Resolver } from '@nestjs/graphql'
 import { ApiScope } from '@island.is/auth/scopes'
-import { UseGuards } from '@nestjs/common'
+import { Inject, UseGuards } from '@nestjs/common'
 import { Audit } from '@island.is/nest/audit'
 import {
   IdsUserGuard,
@@ -15,19 +15,27 @@ import {
   FeatureFlag,
   Features,
 } from '@island.is/nest/feature-flags'
-import { HealthCenterHistory } from './models/healthCenter.model'
 import { GetDentistBillsInput } from './dto/getDentistBills.input'
 import { GetHealthCenterHistoryInput } from './dto/getHealthCenterHistory.input'
 import { PaginatedTherapiesResponse } from './models/therapies.model'
-import { UserDentist } from './models/userDentist.model'
 import { PaginatedAidsAndNutritionResponse } from './models/aidsOrNutrition.model'
+import { UserDentistRegistration } from './models/dentist.model'
+import {
+  PaginatedHealthCentersResponse,
+  UserHealthCenterRegistration,
+} from './models/healthCenter.model'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
 
 @Resolver()
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @FeatureFlag(Features.servicePortalHealthRightsModule)
 @Audit({ namespace: '@island.is/api/rights-portal' })
 export class RightsPortalResolver {
-  constructor(private readonly rightsPortalService: RightsPortalService) {}
+  constructor(
+    private readonly rightsPortalService: RightsPortalService,
+    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
+  ) {}
 
   @Scopes(ApiScope.health)
   @Query(() => PaginatedTherapiesResponse, {
@@ -59,8 +67,8 @@ export class RightsPortalResolver {
 
   @FeatureFlag(Features.servicePortalHealthCenterDentistPage)
   @Scopes(ApiScope.health)
-  @Query(() => UserDentist, {
-    name: 'rightsPortalUserDentist',
+  @Query(() => UserDentistRegistration, {
+    name: 'rightsPortalUserDentistRegistration',
     nullable: true,
   })
   @Audit()
@@ -72,7 +80,7 @@ export class RightsPortalResolver {
     })
     input?: GetDentistBillsInput,
   ) {
-    return this.rightsPortalService.getDentists(
+    return this.rightsPortalService.getDentistRegistrations(
       user,
       input?.dateFrom,
       input?.dateTo,
@@ -81,12 +89,12 @@ export class RightsPortalResolver {
 
   @FeatureFlag(Features.servicePortalHealthCenterDentistPage)
   @Scopes(ApiScope.health)
-  @Query(() => HealthCenterHistory, {
-    name: 'rightsPortalHealthCenterHistory',
+  @Query(() => UserHealthCenterRegistration, {
+    name: 'rightsPortalUserHealthCenterRegistration',
     nullable: true,
   })
   @Audit()
-  getRightsPortalHealthCenterHistory(
+  async getRightsPortalHealthCenterRegistration(
     @CurrentUser() user: User,
     @Args({
       name: 'input',
@@ -94,32 +102,34 @@ export class RightsPortalResolver {
     })
     input?: GetHealthCenterHistoryInput,
   ) {
-    return this.rightsPortalService.getHealthCenterHistory(
+    const k = await this.rightsPortalService.getUserHealthCenterRegistrations(
       user,
       input?.dateFrom,
       input?.dateTo,
     )
+    this.logger.debug(JSON.stringify(k))
+    return k
   }
 
   @FeatureFlag(Features.servicePortalHealthCenterDentistPage)
   @Scopes(ApiScope.health)
-  @Query(() => HealthCenterHistory, {
-    name: 'rightsPortalHealthCenterHistory',
+  @Query(() => PaginatedHealthCentersResponse, {
+    name: 'rightsPortalPaginatedHealthCentersResponse',
     nullable: true,
   })
   @Audit()
-  getRightsPortalHealthCenterList(
-    @CurrentUser() user: User,
-    @Args({
-      name: 'input',
-      nullable: true,
-    })
-    input?: GetHealthCenterHistoryInput,
-  ) {
-    return this.rightsPortalService.getHealthCenterHistory(
-      user,
-      input?.dateFrom,
-      input?.dateTo,
-    )
+  getRightsPortalHealthCenterList(@CurrentUser() user: User) {
+    return this.rightsPortalService.getHealthCenters(user)
+  }
+
+  @FeatureFlag(Features.servicePortalHealthCenterDentistPage)
+  @Scopes(ApiScope.health)
+  @Query(() => PaginatedHealthCentersResponse, {
+    name: 'rightsPortalPaginatedHealthCentersResponse',
+    nullable: true,
+  })
+  @Audit()
+  getRightsPortalDentistList(@CurrentUser() user: User) {
+    return this.rightsPortalService.getDentists(user)
   }
 }

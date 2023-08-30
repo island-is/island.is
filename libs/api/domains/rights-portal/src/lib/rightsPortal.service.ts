@@ -7,11 +7,6 @@ import {
 } from '@island.is/clients/icelandic-health-insurance/rights-portal'
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { handle404 } from '@island.is/clients/middlewares'
-import {
-  HealthCenterHistory,
-  HealthCenterHistoryEntry,
-} from './models/healthCenter.model'
-import { DentistBill, UserDentist } from './models/userDentist.model'
 import subYears from 'date-fns/subYears'
 import {
   AidOrNutrition,
@@ -22,6 +17,18 @@ import {
   ExcludesFalse,
   generateAidOrNutrition,
 } from './rightsPortal.types'
+import {
+  Dentist,
+  PaginatedDentistsResponse,
+  UserDentistRegistration,
+} from './models/dentist.model'
+import { Bill } from './models/bill.model'
+import {
+  HealthCenter,
+  HealthCenterRegistration,
+  PaginatedHealthCentersResponse,
+  UserHealthCenterRegistration,
+} from './models/healthCenter.model'
 
 @Injectable()
 export class RightsPortalService {
@@ -70,11 +77,11 @@ export class RightsPortalService {
     }
   }
 
-  async getDentists(
+  async getDentistRegistrations(
     user: User,
     dateFrom?: Date,
     dateTo?: Date,
-  ): Promise<UserDentist | null> {
+  ): Promise<UserDentistRegistration | null> {
     const api = this.dentistApi.withMiddleware(new AuthMiddleware(user as Auth))
     try {
       const res = await Promise.all([
@@ -90,18 +97,98 @@ export class RightsPortalService {
       if (!res) return null
       return {
         currentDentistName: res[0].name,
-        billHistory: res[1] as DentistBill[],
+        billHistory: res[1] as Bill[],
       }
     } catch (e) {
       return handle404(e)
     }
   }
 
-  async getHealthCenterHistory(
+  async getDentists(user: User): Promise<PaginatedDentistsResponse | null> {
+    try {
+      const res = await this.dentistApi
+        .withMiddleware(new AuthMiddleware(user as Auth))
+        .dentists({ contractType: '' })
+
+      if (!res || !res.dentists || !res.totalCount || !res.pageInfo) {
+        return null
+      }
+
+      const dentists: Array<Dentist> = res.dentists
+        .map((d) => {
+          if (!d.id) {
+            return null
+          }
+          return {
+            ...d,
+            id: d.id,
+            address: {
+              postalCode: d.postcode,
+              municipality: d.region,
+              streetAddressdf: d.address,
+            },
+          }
+        })
+        .filter(Boolean as unknown as ExcludesFalse)
+
+      return {
+        data: dentists,
+        totalCount: res.totalCount,
+        pageInfo: {
+          hasNextPage: res.pageInfo.hasNextPage ?? false,
+          hasPreviousPage: res.pageInfo.hasPreviousPage ?? undefined,
+          startCursor: res.pageInfo.startCursor ?? undefined,
+          endCursor: res.pageInfo.endCursor ?? undefined,
+        },
+      }
+    } catch (e) {
+      return handle404(e)
+    }
+  }
+  async getHealthCenters(
+    user: User,
+  ): Promise<PaginatedHealthCentersResponse | null> {
+    try {
+      const res = await this.healthCenterApi
+        .withMiddleware(new AuthMiddleware(user as Auth))
+        .healthcenters({})
+
+      if (!res || !res.healthCenters || !res.totalCount || !res.pageInfo) {
+        return null
+      }
+
+      const healthCenters: Array<HealthCenter> = res.healthCenters
+        .map((hc) => {
+          if (!hc.id) {
+            return null
+          }
+          return {
+            ...hc,
+            id: hc.id,
+          }
+        })
+        .filter(Boolean as unknown as ExcludesFalse)
+
+      return {
+        data: healthCenters,
+        totalCount: res.totalCount,
+        pageInfo: {
+          hasNextPage: res.pageInfo.hasNextPage ?? false,
+          hasPreviousPage: res.pageInfo.hasPreviousPage ?? undefined,
+          startCursor: res.pageInfo.startCursor ?? undefined,
+          endCursor: res.pageInfo.endCursor ?? undefined,
+        },
+      }
+    } catch (e) {
+      return handle404(e)
+    }
+  }
+
+  async getUserHealthCenterRegistrations(
     user: User,
     dateFrom?: Date,
     dateTo?: Date,
-  ): Promise<HealthCenterHistory | null> {
+  ): Promise<UserHealthCenterRegistration | null> {
     const api = this.healthCenterApi.withMiddleware(
       new AuthMiddleware(user as Auth),
     )
@@ -122,11 +209,9 @@ export class RightsPortalService {
             (h) =>
               ({
                 ...h,
-                healthCenter: {
-                  ...h.healthCenter,
-                  name: h.healthCenter?.healthCenter,
-                },
-              } as HealthCenterHistoryEntry),
+                healthCenterName: h.healthCenter?.healthCenter,
+                doctor: h.healthCenter?.doctor,
+              } as HealthCenterRegistration),
           )
         : []
 
@@ -134,7 +219,7 @@ export class RightsPortalService {
       return {
         current: {
           ...res[0],
-          name: res[0].healthCenter,
+          healthCenterName: res[0].healthCenter ?? undefined,
         },
         history,
       }

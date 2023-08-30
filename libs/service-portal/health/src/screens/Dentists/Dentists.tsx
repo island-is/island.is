@@ -41,7 +41,7 @@ const Dentists = () => {
     },
   })
 
-  const dentistData = data?.rightsPortalUserDentist
+  const dentistData = data?.rightsPortalUserDentistRegistration
 
   if (!dentistName && dentistData?.currentDentistName) {
     setDentistName(dentistData.currentDentistName)
@@ -78,6 +78,8 @@ const Dentists = () => {
 
       {dentistName && (
         <Stack space={2}>
+          {' '}
+          d
           <UserInfoLine
             title={formatMessage(messages.yourInformation)}
             label={formatMessage(messages.dentist)}
@@ -101,7 +103,7 @@ const Dentists = () => {
               selected={selectedDateTo}
               handleChange={(e) => setSelectedDateTo(e)}
               minDate={add(selectedDateFrom, { days: 1 })}
-            ></DatePicker>
+            />
           </Inline>
         </Stack>
       )}
