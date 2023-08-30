@@ -32,7 +32,7 @@ export type Program = {
   durationInYears: number
   costPerYear: number
   iscedCode: string
-  //searchKeywords: string[]
+  searchKeywords: string[]
   externalUrlIs: string
   externalUrlEn: string
   admissionRequirementsIs: string
@@ -41,10 +41,10 @@ export type Program = {
   studyRequirementsEn: string
   costInformationIs: string
   costInformationEn: string
-  //courses: ProgramCourse[]
-  //tag: [ProgramTag]
-  //modeOfDelivery: [ProgramModeOfDelivery]
-  //extraApplicationField: [ProgramExtraApplicationField]
+  courses: ProgramCourse[]
+  tag: ProgramTag
+  modeOfDelivery: ProgramModeOfDelivery
+  extraApplicationField: ProgramExtraApplicationField
   created: Date
   modified: Date
 }
