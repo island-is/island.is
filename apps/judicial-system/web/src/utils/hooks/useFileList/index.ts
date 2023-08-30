@@ -6,7 +6,7 @@ import {
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 
-import { useGetSignedUrlLazyQuery } from './getSigendUrl.generated'
+import { useGetSignedUrlLazyQuery } from './getSignedUrl.generated'
 import { useLimitedAccessGetSignedUrlLazyQuery } from './limitedAccessGetSignedUrl.generated'
 
 interface Parameters {
