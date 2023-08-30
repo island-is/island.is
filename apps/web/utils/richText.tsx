@@ -3,8 +3,6 @@ import {
   FaqListProps,
   renderConnectedComponent,
   richText,
-  SectionWithVideo,
-  SectionWithVideoProps,
   SliceType,
 } from '@island.is/island-ui/contentful'
 import {
@@ -33,6 +31,7 @@ import {
   AircraftSearch,
   DrivingInstructorList,
   PlateAvailableSearch,
+  SectionWithVideo,
 } from '@island.is/web/components'
 import {
   PowerBiSlice as PowerBiSliceSchema,
@@ -85,44 +84,32 @@ export const webRenderConnectedComponent = (slice) => {
   return renderConnectedComponent(slice)
 }
 
-const getDefaultRenderComponent = (activeLocale?: Locale) => {
-  return {
-    PowerBiSlice: (slice: PowerBiSliceSchema) => <PowerBiSlice slice={slice} />,
-    AccordionSlice: (slice: AccordionSliceSchema) =>
-      slice.accordionItems && <AccordionSlice slice={slice} />,
-    ConnectedComponent: (slice) => webRenderConnectedComponent(slice),
-    GraphCard: (chart) => <ChartsCard chart={chart} />,
-    OneColumnText: (slice) => <OneColumnTextSlice slice={slice} />,
-    TwoColumnText: (slice) => <TwoColumnTextSlice slice={slice} />,
-    EmailSignup: (slice) => <EmailSignup slice={slice} />,
-    FaqList: (slice: FaqListProps) =>
-      slice?.questions && <FaqList {...slice} />,
-    FeaturedSupportQNAs: (slice: FeaturedSupportQNAsSchema) => (
-      <FeaturedSupportQNAs slice={slice} />
-    ),
-    SliceDropdown: (slice: SliceDropdownSchema) => (
-      <SliceDropdown
-        slices={slice.slices}
-        sliceExtraText={slice.dropdownLabel}
-        gridSpan="1/1"
-        gridOffset="0"
-        slicesAreFullWidth={true}
-        dropdownMarginBottom={5}
-      />
-    ),
-    SectionWithVideo: (slice: SectionWithVideoSchema) => (
-      <SectionWithVideo
-        {...slice}
-        html={slice.html as unknown as SectionWithVideoProps['html']}
-        locale={activeLocale}
-        title={slice.showTitle ? slice.title : ''}
-        video={{
-          ...slice.video,
-          locale: activeLocale,
-        }}
-      />
-    ),
-  }
+const defaultRenderComponent = {
+  PowerBiSlice: (slice: PowerBiSliceSchema) => <PowerBiSlice slice={slice} />,
+  AccordionSlice: (slice: AccordionSliceSchema) =>
+    slice.accordionItems && <AccordionSlice slice={slice} />,
+  ConnectedComponent: (slice) => webRenderConnectedComponent(slice),
+  GraphCard: (chart) => <ChartsCard chart={chart} />,
+  OneColumnText: (slice) => <OneColumnTextSlice slice={slice} />,
+  TwoColumnText: (slice) => <TwoColumnTextSlice slice={slice} />,
+  EmailSignup: (slice) => <EmailSignup slice={slice} />,
+  FaqList: (slice: FaqListProps) => slice?.questions && <FaqList {...slice} />,
+  FeaturedSupportQNAs: (slice: FeaturedSupportQNAsSchema) => (
+    <FeaturedSupportQNAs slice={slice} />
+  ),
+  SliceDropdown: (slice: SliceDropdownSchema) => (
+    <SliceDropdown
+      slices={slice.slices}
+      sliceExtraText={slice.dropdownLabel}
+      gridSpan="1/1"
+      gridOffset="0"
+      slicesAreFullWidth={true}
+      dropdownMarginBottom={5}
+    />
+  ),
+  SectionWithVideo: (slice: SectionWithVideoSchema) => (
+    <SectionWithVideo slice={slice} />
+  ),
 }
 
 export const webRichText = (
@@ -139,7 +126,7 @@ export const webRichText = (
     {
       renderComponent: {
         ...defaultRenderComponentObject,
-        ...getDefaultRenderComponent(activeLocale),
+        ...defaultRenderComponent,
         ...options?.renderComponent,
       },
       renderMark: {
