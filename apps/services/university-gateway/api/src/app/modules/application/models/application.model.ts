@@ -5,9 +5,7 @@ import {
   ModeOfDelivery,
 } from '@island.is/university-gateway-types'
 
-import type {
-  Application as TApplication,
-} from '@island.is/university-gateway-types'
+import type { Application as TApplication } from '@island.is/university-gateway-types'
 
 registerEnumType(ApplicationStatus, { name: 'ApplicationStatus' })
 registerEnumType(ModeOfDelivery, { name: 'ModeOfDelivery' })

@@ -3,7 +3,7 @@ const audience = ['@island.is']
 const devConfig = {
   production: false,
   port: 3379,
-  
+
   backend: {
     url: 'http://localhost:3380',
   },

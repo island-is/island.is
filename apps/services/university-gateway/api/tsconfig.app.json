@@ -3,8 +3,8 @@
   "compilerOptions": {
     "allowJs": true,
     "outDir": "../../../../dist/out-tsc",
-    "types": [ "node" ]
+    "types": ["node"]
   },
-  "exclude": [ "**/*.spec.ts", "**/*.test.ts", "**/test/**" ],
-  "include": [ "**/*.ts" ]
+  "exclude": ["**/*.spec.ts", "**/*.test.ts", "**/test/**"],
+  "include": ["**/*.ts"]
 }

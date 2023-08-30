@@ -4,5 +4,4 @@ import { ProgramResolver } from './program.resolver'
 @Module({
   providers: [ProgramResolver],
 })
-
 export class ProgramModule {}

@@ -42,13 +42,13 @@
           "inspect": false
         }
       },
-      "outputs": [ "{options.outputPath}" ]
+      "outputs": ["{options.outputPath}"]
     },
     "serve": {
       "executor": "@nx/js:node",
       "options": {
         "buildTarget": "services-university-gateway-backend:build",
-        "runtimeArgs": [ "--no-experimental-fetch", "--trace-deprecation" ]
+        "runtimeArgs": ["--no-experimental-fetch", "--trace-deprecation"]
       }
     },
     "lint": {
@@ -109,5 +109,5 @@
       }
     }
   },
-  "tags": [ "scope:services/university-gateway" ]
+  "tags": ["scope:services/university-gateway"]
 }

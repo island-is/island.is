@@ -3,7 +3,8 @@ export default {
   preset: './jest.preset.js',
   rootDir: '../../../..',
   roots: [__dirname],
-  coverageDirectory: '<rootDir>/coverage/apps/services/university-gateway/backend',
+  coverageDirectory:
+    '<rootDir>/coverage/apps/services/university-gateway/backend',
   globalSetup: `${__dirname}/test/globalSetup.ts`,
   globalTeardown: `${__dirname}/test/globalTeardown.ts`,
   setupFilesAfterEnv: [`${__dirname}/test/setup.ts`],

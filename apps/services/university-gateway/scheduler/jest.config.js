@@ -11,7 +11,8 @@ module.exports = {
   },
   moduleFileExtensions: ['ts', 'js', 'html', 'json'],
   testEnvironment: 'node',
-  coverageDirectory: '<rootDir>/coverage/apps/services/university-gateway/scheduler',
+  coverageDirectory:
+    '<rootDir>/coverage/apps/services/university-gateway/scheduler',
   globalSetup: `${__dirname}/test/globalSetup.ts`,
   globalTeardown: `${__dirname}/test/globalTeardown.ts`,
 }

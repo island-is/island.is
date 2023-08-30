@@ -13,7 +13,7 @@ import { DegreeType, Season } from './types'
 @ApiTags('Program')
 @Controller('internal')
 export class InternalProgramController {
-  constructor(private readonly programService: ProgramService) { }
+  constructor(private readonly programService: ProgramService) {}
 
   @Get('programs')
   @ApiQuery({

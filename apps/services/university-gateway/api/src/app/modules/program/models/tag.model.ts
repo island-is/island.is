@@ -2,9 +2,7 @@ import { ApiProperty } from '@nestjs/swagger'
 import { GraphQLJSONObject } from 'graphql-type-json'
 import { Field, ObjectType, ID, registerEnumType } from '@nestjs/graphql'
 
-import type {
-  Tag as TTag,
-} from '@island.is/university-gateway-types'
+import type { Tag as TTag } from '@island.is/university-gateway-types'
 
 @ObjectType()
 export class Tag implements TTag {

@@ -2,19 +2,16 @@ import { ApiProperty } from '@nestjs/swagger'
 import { GraphQLJSONObject } from 'graphql-type-json'
 import { Field, ObjectType, ID, registerEnumType } from '@nestjs/graphql'
 
-import {
-  FieldType,
-} from '@island.is/university-gateway-types'
+import { FieldType } from '@island.is/university-gateway-types'
 
-
-import type {
-  ProgramExtraApplicationField as TProgramExtraApplicationField,
-} from '@island.is/university-gateway-types'
+import type { ProgramExtraApplicationField as TProgramExtraApplicationField } from '@island.is/university-gateway-types'
 
 registerEnumType(FieldType, { name: 'FieldType' })
 
 @ObjectType()
-export class ProgramExtraApplicationField implements TProgramExtraApplicationField {
+export class ProgramExtraApplicationField
+  implements TProgramExtraApplicationField
+{
   @Field(() => ID)
   readonly id!: string
 

@@ -11,4 +11,3 @@ export * from './lib/requirement'
 export * from './lib/season'
 export * from './lib/tag'
 export * from './lib/university'
-

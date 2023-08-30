@@ -1,8 +1,6 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql'
 
-import type {
-  University as TUniversity,
-} from '@island.is/university-gateway-types'
+import type { University as TUniversity } from '@island.is/university-gateway-types'
 
 @ObjectType()
 export class University implements TUniversity {

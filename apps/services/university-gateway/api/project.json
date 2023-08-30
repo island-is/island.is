@@ -28,7 +28,7 @@
           "inspect": false
         }
       },
-      "outputs": [ "{options.outputPath}" ]
+      "outputs": ["{options.outputPath}"]
     },
     "serve": {
       "executor": "@nx/js:node",
@@ -50,7 +50,7 @@
         "jestConfig": "apps/services/university-gateway/api/jest.config.js",
         "passWithNoTests": true
       },
-      "outputs": [ "coverage/apps/services/university-gateway/api" ]
+      "outputs": ["coverage/apps/services/university-gateway/api"]
     },
     "schemas/build-openapi": {
       "executor": "nx:run-commands",
@@ -68,5 +68,5 @@
     "docker-express": {},
     "service-service-portal-api": {}
   },
-  "tags": [ "scope:nest" ]
+  "tags": ["scope:nest"]
 }

@@ -2,13 +2,9 @@ import { ApiProperty } from '@nestjs/swagger'
 import { GraphQLJSONObject } from 'graphql-type-json'
 import { Field, ObjectType, ID, registerEnumType } from '@nestjs/graphql'
 
-import {
-  Season,
-} from '@island.is/university-gateway-types'
+import { Season } from '@island.is/university-gateway-types'
 
-import type {
-  Course as TCourse,
-} from '@island.is/university-gateway-types'
+import type { Course as TCourse } from '@island.is/university-gateway-types'
 
 registerEnumType(Season, { name: 'Season' })
 

@@ -6,7 +6,7 @@
   "targets": {
     "build": {
       "executor": "./tools/executors/node:build",
-      "outputs": [ "{options.outputPath}" ],
+      "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/apps/services/university-gateway/scheduler",
         "main": "apps/services/university-gateway/scheduler/src/main.ts",
@@ -37,7 +37,7 @@
     },
     "test": {
       "executor": "@nx/jest:jest",
-      "outputs": [ "coverage/apps/services/university-gateway/scheduler" ],
+      "outputs": ["coverage/apps/services/university-gateway/scheduler"],
       "options": {
         "jestConfig": "apps/services/university-gateway/scheduler/jest.config.js",
         "passWithNoTests": true
@@ -45,5 +45,5 @@
     },
     "docker-express": {}
   },
-  "tags": [ "scope:university-gateway-api" ]
+  "tags": ["scope:university-gateway-api"]
 }
