@@ -15,10 +15,8 @@ describe('PersonalTaxReturnController - Municipalities direct tax payments', () 
   let mockPersonalTaxReturnApi: PersonalTaxReturnApi
 
   beforeEach(async () => {
-    const {
-      personalTaxReturnController,
-      personalTaxReturnApi,
-    } = await createTestingPersonalTaxReturnModule()
+    const { personalTaxReturnController, personalTaxReturnApi } =
+      await createTestingPersonalTaxReturnModule()
 
     mockPersonalTaxReturnApi = personalTaxReturnApi
 
@@ -40,7 +38,8 @@ describe('PersonalTaxReturnController - Municipalities direct tax payments', () 
     let then: Then
 
     beforeEach(async () => {
-      personalTaxReturnApi = mockPersonalTaxReturnApi.directTaxPayments as jest.Mock
+      personalTaxReturnApi =
+        mockPersonalTaxReturnApi.directTaxPayments as jest.Mock
       personalTaxReturnApi.mockRejectedValueOnce({})
 
       then = await givenWhenThen(user)
@@ -133,7 +132,8 @@ describe('PersonalTaxReturnController - Municipalities direct tax payments', () 
     }
 
     beforeEach(async () => {
-      personalTaxReturn = mockPersonalTaxReturnApi.directTaxPayments as jest.Mock
+      personalTaxReturn =
+        mockPersonalTaxReturnApi.directTaxPayments as jest.Mock
       personalTaxReturn.mockResolvedValueOnce(returnValue)
 
       then = await givenWhenThen(user)

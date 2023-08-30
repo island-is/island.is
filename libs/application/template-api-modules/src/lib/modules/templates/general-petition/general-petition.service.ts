@@ -90,8 +90,8 @@ export class GeneralPetitionService extends BaseTemplateApiService {
 
     // This gets written to externalData under the key createEndorsementList
     return {
-      id:
-        endorsementListResponse.data?.endorsementSystemCreateEndorsementList.id,
+      id: endorsementListResponse.data?.endorsementSystemCreateEndorsementList
+        .id,
     }
   }
 }

@@ -75,7 +75,7 @@ export const getActiveNavigationItemTitle = (
     if (clientUrl === item.href) {
       return item.title
     }
-    for (const childItem of item.items) {
+    for (const childItem of item.items ?? []) {
       if (clientUrl === childItem.href) {
         return childItem.title
       }
@@ -89,7 +89,7 @@ export const assignNavigationActive = (
 ): NavigationItem[] =>
   items.map((item) => {
     let isAnyChildActive = false
-    const childItems = item.items.map((childItem) => {
+    const childItems = item.items?.map((childItem) => {
       const isChildActive = clientUrl === childItem.href
       if (isChildActive) isAnyChildActive = isChildActive
       return {

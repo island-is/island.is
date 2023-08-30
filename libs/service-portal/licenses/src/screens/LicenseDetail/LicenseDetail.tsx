@@ -326,17 +326,18 @@ const LicenseDetail = () => {
   const { type } = useParams() as UseParams
   const licenseType = type ? getTypeFromPath(type) : undefined
 
-  const { data, loading: queryLoading, error } = useQuery<Query>(
-    GenericLicenseQuery,
-    {
-      variables: {
-        locale,
-        input: {
-          licenseType: licenseType,
-        },
+  const {
+    data,
+    loading: queryLoading,
+    error,
+  } = useQuery<Query>(GenericLicenseQuery, {
+    variables: {
+      locale,
+      input: {
+        licenseType: licenseType,
       },
     },
-  )
+  })
 
   const { genericLicense = null } = data ?? {}
 

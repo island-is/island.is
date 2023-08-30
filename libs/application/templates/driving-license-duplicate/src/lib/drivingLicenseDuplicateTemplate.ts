@@ -18,7 +18,7 @@ import { Events, States, Roles } from './constants'
 import { dataSchema } from './dataSchema'
 import { m } from './messages'
 import { ApiActions } from './constants'
-import { FeatureFlagClient, Features } from '@island.is/feature-flags'
+import { FeatureFlagClient } from '@island.is/feature-flags'
 import {
   DrivingLicenseDuplicateFeatureFlags,
   getApplicationFeatureFlags,
@@ -48,7 +48,6 @@ const DrivingLicenseDuplicateTemplate: ApplicationTemplate<
   type: ApplicationTypes.DRIVING_LICENSE_DUPLICATE,
   name: m.applicationTitle,
   dataSchema: dataSchema,
-  featureFlag: Features.drivingLicenseDuplicate,
   stateMachineConfig: {
     initial: States.DRAFT,
     states: {

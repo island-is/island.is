@@ -15,18 +15,18 @@ import {
   FormContext,
 } from '@island.is/judicial-system-web/src/components'
 import { isCourtHearingArrangemenstStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
-import {
-  CaseCustodyRestrictions,
-  NotificationType,
-} from '@island.is/judicial-system/types'
+import { NotificationType } from '@island.is/judicial-system/types'
 import {
   useCase,
   useOnceOn,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { titles } from '@island.is/judicial-system-web/messages'
+import { errors, titles } from '@island.is/judicial-system-web/messages'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
-import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  CaseCustodyRestrictions,
+  CaseType,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import { hasSentNotification } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import type { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
 import * as constants from '@island.is/judicial-system/consts'
@@ -50,6 +50,7 @@ export const HearingArrangements: React.FC<
     setAndSendCaseToServer,
     sendNotification,
     isSendingNotification,
+    sendNotificationError,
   } = useCase()
   const { formatMessage } = useIntl()
   const {
@@ -240,6 +241,11 @@ export const HearingArrangements: React.FC<
               courtDateHasChanged,
             },
           )}
+          errorMessage={
+            sendNotificationError
+              ? formatMessage(errors.sendNotification)
+              : undefined
+          }
         />
       )}
     </PageLayout>

@@ -23,7 +23,7 @@ describe('Judicial system web api endpoints', () => {
       })
 
       // Act
-      await api.logout()
+      api.logout()
 
       // Assert
       expect(cookies.getCookie('judicial-system.csrf')).toEqual(undefined)

@@ -92,7 +92,12 @@ interface SliceMachineProps {
 
 const fullWidthSlices = ['TimelineSlice', 'LogoListSlice', 'EmailSignup']
 
-const renderSlice = (slice, namespace, slug, params) => {
+const renderSlice = (
+  slice,
+  namespace: Record<string, string>,
+  slug: string,
+  params,
+) => {
   switch (slice.__typename) {
     case 'HeadingSlice':
       return <HeadingSlice slice={slice} />

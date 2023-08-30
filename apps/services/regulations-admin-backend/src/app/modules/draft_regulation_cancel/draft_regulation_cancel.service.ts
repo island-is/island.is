@@ -56,9 +56,8 @@ export class DraftRegulationCancelService {
       date: draftRegulationcancelToCreate.date,
     }
 
-    const createdDraftRegulationCancel = await this.draftRegulationCancelModel.create(
-      createData,
-    )
+    const createdDraftRegulationCancel =
+      await this.draftRegulationCancelModel.create(createData)
 
     return await this.transformCancel(createdDraftRegulationCancel)
   }
@@ -72,13 +71,11 @@ export class DraftRegulationCancelService {
   }> {
     this.logger.debug(`Updating DraftRegulationCancel ${id}`)
 
-    const [
-      numberOfAffectedRows,
-      [updatedDraftRegulationCancel],
-    ] = await this.draftRegulationCancelModel.update(update, {
-      where: { id },
-      returning: true,
-    })
+    const [numberOfAffectedRows, [updatedDraftRegulationCancel]] =
+      await this.draftRegulationCancelModel.update(update, {
+        where: { id },
+        returning: true,
+      })
 
     const draftRegulationCancel = await this.transformCancel(
       updatedDraftRegulationCancel,

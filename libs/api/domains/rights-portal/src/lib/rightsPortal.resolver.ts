@@ -9,18 +9,18 @@ import {
   CurrentUser,
 } from '@island.is/auth-nest-tools'
 import type { User } from '@island.is/auth-nest-tools'
-import { RightsPortalService } from './api-domains-rights-portal.service'
-import { Therapies } from './models/getTherapies.model'
-import { AidsAndNutrition } from './models/getAidsAndNutrition.model'
+import { RightsPortalService } from './rightsPortal.service'
 import {
   FeatureFlagGuard,
   FeatureFlag,
   Features,
 } from '@island.is/nest/feature-flags'
-import { HealthCenterHistory } from './models/getHealthCenter.model'
-import { Dentists } from './models/getDentists.model'
+import { HealthCenterHistory } from './models/healthCenter.model'
 import { GetDentistBillsInput } from './dto/getDentistBills.input'
 import { GetHealthCenterHistoryInput } from './dto/getHealthCenterHistory.input'
+import { PaginatedTherapiesResponse } from './models/therapies.model'
+import { UserDentist } from './models/userDentist.model'
+import { PaginatedAidsAndNutritionResponse } from './models/aidsOrNutrition.model'
 
 @Resolver()
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
@@ -30,29 +30,37 @@ export class RightsPortalResolver {
   constructor(private readonly rightsPortalService: RightsPortalService) {}
 
   @Scopes(ApiScope.health)
-  @Query(() => [Therapies], {
-    name: 'rightsPortalTherapies',
+  @Query(() => PaginatedTherapiesResponse, {
+    name: 'rightsPortalPaginatedTherapiesResponse',
     nullable: true,
   })
   @Audit()
-  getRightsPortalTherapies(@CurrentUser() user: User) {
-    return this.rightsPortalService.getTherapies(user)
+  async getRightsPortalTherapies(@CurrentUser() user: User) {
+    const therapies = await this.rightsPortalService.getTherapies(user)
+
+    return {
+      data: therapies,
+      totalCount: therapies?.length ?? 0,
+      pageInfo: {
+        hasNextPage: false, //until pagination is applied
+      },
+    }
   }
 
   @Scopes(ApiScope.health)
-  @Query(() => AidsAndNutrition, {
-    name: 'rightsPortalAidsAndNutrition',
+  @Query(() => PaginatedAidsAndNutritionResponse, {
+    name: 'rightsPortalPaginatedAidsAndNutritionResponse',
     nullable: true,
   })
   @Audit()
-  getRightsPortalAidsAndNutrition(@CurrentUser() user: User) {
+  async getRightsPortalAidsAndNutrition(@CurrentUser() user: User) {
     return this.rightsPortalService.getAidsAndNutrition(user)
   }
 
   @FeatureFlag(Features.servicePortalHealthCenterDentistPage)
   @Scopes(ApiScope.health)
-  @Query(() => Dentists, {
-    name: 'rightsPortalDentists',
+  @Query(() => UserDentist, {
+    name: 'rightsPortalUserDentist',
     nullable: true,
   })
   @Audit()
@@ -79,6 +87,28 @@ export class RightsPortalResolver {
   })
   @Audit()
   getRightsPortalHealthCenterHistory(
+    @CurrentUser() user: User,
+    @Args({
+      name: 'input',
+      nullable: true,
+    })
+    input?: GetHealthCenterHistoryInput,
+  ) {
+    return this.rightsPortalService.getHealthCenterHistory(
+      user,
+      input?.dateFrom,
+      input?.dateTo,
+    )
+  }
+
+  @FeatureFlag(Features.servicePortalHealthCenterDentistPage)
+  @Scopes(ApiScope.health)
+  @Query(() => HealthCenterHistory, {
+    name: 'rightsPortalHealthCenterHistory',
+    nullable: true,
+  })
+  @Audit()
+  getRightsPortalHealthCenterList(
     @CurrentUser() user: User,
     @Args({
       name: 'input',

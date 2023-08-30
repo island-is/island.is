@@ -4,9 +4,11 @@ import { IntlFormatters, useIntl, createIntl } from 'react-intl'
 import { MockedProvider } from '@apollo/client/testing'
 import { render, screen, getDefaultNormalizer } from '@testing-library/react'
 
-import { CaseCustodyRestrictions } from '@island.is/judicial-system/types'
 import { LocaleProvider } from '@island.is/localization'
-import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  CaseType,
+  CaseCustodyRestrictions,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { formatRequestedCustodyRestrictions } from './restrictions'
 
