@@ -100,7 +100,7 @@ export const TransferOfVehicleOwnershipSchema = z.object({
   seller: UserInformationSchema,
   sellerCoOwner: z.array(UserInformationSchema),
   buyer: UserInformationSchema,
-  buyerCoOwnerAndOperator: z.array(CoOwnerAndOperatorSchema).optional(),
+  buyerCoOwnerAndOperator: z.array(CoOwnerAndOperatorSchema),
   buyerMainOperator: z.object({
     nationalId: z.string(),
   }),

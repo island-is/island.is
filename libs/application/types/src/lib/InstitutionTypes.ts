@@ -15,5 +15,4 @@ export enum InstitutionTypes {
   UMBODSMADUR_ALTHINGIS = 'umbodsmadur-althingis',
   VINNUMALASTOFNUN = 'vinnumalastofnun',
   THJODSKRA = 'thjodskra-islands',
-  UTLENDINGASTOFNUN = 'utlendingastofnun',
 }

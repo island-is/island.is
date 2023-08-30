@@ -25,9 +25,8 @@ export interface CheckboxProps {
   large?: boolean
   backgroundColor?: InputBackgroundColor
   labelVariant?: 'default' | 'small' | 'medium'
-  /** subLabel and rightContent can only be used if the 'large' prop set to true */
+  /** subLabel can only be used if the 'large' prop set to true */
   subLabel?: React.ReactNode
-  rightContent?: React.ReactNode
 }
 
 interface AriaError {
@@ -54,7 +53,6 @@ export const Checkbox = ({
   backgroundColor,
   dataTestId,
   filled = false,
-  rightContent,
 }: CheckboxProps & TestSupport) => {
   const errorId = `${id}-error`
   const ariaError = hasError
@@ -152,7 +150,6 @@ export const Checkbox = ({
             </Text>
           )}
         </span>
-        {rightContent && large && <div>{rightContent}</div>}
         {tooltip && (
           <div
             className={cn(styles.tooltipContainer, {
