@@ -224,16 +224,19 @@ type ErrorData = {
 export const Form = ({ form, namespace }: FormProps) => {
   const n = useNamespace(namespace)
 
+  const showDefaultNameField = form.showDefaultNameField ?? true
+  const showDefaultEmailField = form.showDefaultEmailField ?? true
+
   const [data, setData] = useState<Record<string, string>>(() => {
     const fields = form.fields
       .filter((field) => field.type !== FormFieldType.INFORMATION)
       .map((field): [string, string] => [slugify(field.title), ''])
 
-    if (form.showDefaultNameField) {
+    if (showDefaultNameField) {
       fields.push(['name', ''])
     }
 
-    if (form.showDefaultEmailField) {
+    if (showDefaultEmailField) {
       fields.push(['email', ''])
     }
 
@@ -270,7 +273,7 @@ export const Form = ({ form, namespace }: FormProps) => {
 
         // Handle default name and email field validation
         if (!field) {
-          if (form.showDefaultNameField) {
+          if (showDefaultNameField) {
             if (slug === 'name' && !data['name']) {
               return {
                 field: slug,
@@ -279,7 +282,7 @@ export const Form = ({ form, namespace }: FormProps) => {
             }
           }
 
-          if (form.showDefaultEmailField) {
+          if (showDefaultEmailField) {
             if (slug === 'email' && !isValidEmail.test(data['email'])) {
               return {
                 field: slug,
@@ -586,7 +589,7 @@ export const Form = ({ form, namespace }: FormProps) => {
             {form.aboutYouHeadingText}
           </Text>
           <Stack space={4}>
-            {form.showDefaultNameField && (
+            {showDefaultNameField && (
               <Input
                 placeholder={n('formNamePlaceholder', 'Nafnið þitt')}
                 name="name"
@@ -600,7 +603,7 @@ export const Form = ({ form, namespace }: FormProps) => {
                 onChange={(e) => onChange('name', e.target.value)}
               />
             )}
-            {form.showDefaultEmailField && (
+            {showDefaultEmailField && (
               <Input
                 placeholder={n('formEmailPlaceholder', 'Netfang')}
                 name="email"
