@@ -15,7 +15,6 @@ import { CompanyRegistryModule } from '@island.is/api/domains/company-registry'
 import { ConsultationPortalModule } from '@island.is/api/domains/consultation-portal'
 import { ContentSearchModule } from '@island.is/api/domains/content-search'
 import { CriminalRecordModule } from '@island.is/api/domains/criminal-record'
-import { DirectorateOfImmigrationApiModule } from '@island.is/api/domains/directorate-of-immigration'
 import { DirectorateOfLabourModule } from '@island.is/api/domains/directorate-of-labour'
 import { DisabilityLicenseModule } from '@island.is/api/domains/disability-license'
 import { DocumentProviderModule } from '@island.is/api/domains/document-provider'
@@ -195,10 +194,10 @@ const environment = getConfig
         clientSecret: environment.documentProviderService.prod.clientSecret,
         tokenUrl: environment.documentProviderService.prod.tokenUrl,
       },
-      documentsServiceBasePath: environment.documentProviderService
-        .documentsServiceBasePath!,
-      documentProviderAdmins: environment.documentProviderService
-        .documentProviderAdmins!,
+      documentsServiceBasePath:
+        environment.documentProviderService.documentsServiceBasePath!,
+      documentProviderAdmins:
+        environment.documentProviderService.documentProviderAdmins!,
     }),
     CmsTranslationsModule,
     TerminusModule,
@@ -220,8 +219,8 @@ const environment = getConfig
       },
     }),
     UserProfileModule.register({
-      userProfileServiceBasePath: environment.userProfile
-        .userProfileServiceBasePath!,
+      userProfileServiceBasePath:
+        environment.userProfile.userProfileServiceBasePath!,
       islykill: {
         cert: environment.islykill.cert!,
         passphrase: environment.islykill.passphrase!,
@@ -273,7 +272,6 @@ const environment = getConfig
     TransportAuthorityApiModule,
     UniversityOfIcelandModule,
     WorkMachinesModule,
-    DirectorateOfImmigrationApiModule,
     SessionsModule,
     AuthAdminModule,
     ConfigModule.forRoot({
