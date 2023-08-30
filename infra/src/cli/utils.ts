@@ -1,11 +1,10 @@
 import { execSync } from 'child_process'
-import { ChartName, Charts } from '../uber-charts/all-charts'
 import { appendFileSync, existsSync, readFileSync, writeFileSync } from 'fs'
 import { resolve } from 'path'
-import { EnvDifferences, EnvObject, EnvMappingType, OpsEnv } from './types'
-import { renderSecretsCommand } from './render-secrets'
-import { service } from '../dsl/dsl'
 import { EnvironmentServices } from '../dsl/types/charts'
+import { ChartName, Charts } from '../uber-charts/all-charts'
+import { renderSecretsCommand } from './render-secrets'
+import { EnvDifferences, EnvMappingType, EnvObject, OpsEnv } from './types'
 
 const DEFAULT_FILE = '.env.secret'
 const projectRoot = execSync('git rev-parse --show-toplevel').toString().trim()
