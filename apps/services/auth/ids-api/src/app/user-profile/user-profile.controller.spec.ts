@@ -89,6 +89,11 @@ function createUserProfile(): UserProfile {
   }
 }
 
+const user = createCurrentUser({
+  nationalIdType: 'person',
+  scope: ['@identityserver.api/authentication'],
+})
+
 describe('UserProfileController', () => {
   const path = '/user-profile'
 
@@ -101,10 +106,6 @@ describe('UserProfileController', () => {
     let server: request.SuperTest<request.Test>
 
     beforeAll(async () => {
-      const user = createCurrentUser({
-        nationalIdType: 'person',
-        scope: ['@identityserver.api/authentication'],
-      })
       app = await setupWithAuth({ user })
       server = request(app.getHttpServer())
     })
