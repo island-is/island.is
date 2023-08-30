@@ -2,7 +2,7 @@ import { Envs } from '../environments'
 import { Charts } from '../uber-charts/all-charts'
 import { renderHelmServices } from '../dsl/exports/helm'
 import { getSsmParams } from '../dsl/adapters/get-ssm-params'
-import { escapeValue } from './utils'
+import { escapeValue, serviceExists } from './utils'
 
 const EXCLUDED_ENVIRONMENT_NAMES = [
   'DB_PASSWORD',
@@ -18,7 +18,7 @@ const SHARED_ENVIRONMENT_NAMES: Record<string, string> = {
   NX_CLOUD_ACCESS_TOKEN: '/local/NX_CLOUD_ACCESS_TOKEN',
 }
 
-export const renderSecretsCommand = (service: string) => {
+export const renderSecretsCommand = async (service: string) => {
   return renderSecrets(service).catch((error) => {
     if (error.name === 'CredentialsProviderError') {
       console.error(
@@ -34,13 +34,17 @@ export const renderSecretsCommand = (service: string) => {
 export const renderSecrets = async (
   service: string,
 ): Promise<[string, string][]> => {
-  // TODO: Notify or fail if the requested service doesn't exist
+  if (!serviceExists(service, 'islandis', 'dev')) {
+    console.error(
+      `Service ${service} does not exist. Please check your spelling and try again.`,
+    )
+    return []
+  }
   const services = await Promise.all(
     Object.values(Charts).map(
       async (chart) =>
-        (
-          await renderHelmServices(Envs.dev01, chart.dev, chart.dev, 'no-mocks')
-        ).services,
+        (await renderHelmServices(Envs.dev01, chart.dev, chart.dev, 'no-mocks'))
+          .services,
     ),
   )
 
@@ -73,7 +77,7 @@ export const renderSecrets = async (
     finalRequests.map(([_, ssmName]) => ssmName),
   )
   return finalRequests.map(([envName, ssmName]) => {
-    const escapedValue = escapeValue(values[ssmName])
+    const escapedValue = escapeValue(values[ssmName], ssmName)
     return [envName, escapedValue]
   })
 }

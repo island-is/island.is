@@ -1,8 +1,11 @@
 import { execSync } from 'child_process'
+import { ChartName, Charts } from '../uber-charts/all-charts'
 import { appendFileSync, existsSync, readFileSync, writeFileSync } from 'fs'
 import { resolve } from 'path'
-import { EnvDifferences, EnvObject, EnvMappingType } from './types'
+import { EnvDifferences, EnvObject, EnvMappingType, OpsEnv } from './types'
 import { renderSecretsCommand } from './render-secrets'
+import { service } from '../dsl/dsl'
+import { EnvironmentServices } from '../dsl/types/charts'
 
 const DEFAULT_FILE = '.env.secret'
 const projectRoot = execSync('git rev-parse --show-toplevel').toString().trim()
@@ -19,11 +22,19 @@ const envToFileMapping: Record<string, EnvMappingType> = {
   },
 }
 
-export const escapeValue = (value: string): string => {
-  return value.replace(/\s+/g, ' ').replace(/'/g, "'\\''")
+export function escapeValue(value: string, key?: string): string {
+  value = value.replace(/\s+/g, ' ')
+  if (value.match(/'/)) {
+    console.error(`Secret values cannot contain single quotes, discarding:`, {
+      key,
+      value,
+    })
+    return value.replace(/'/g, '')
+  }
+  return value
 }
 
-const parseEnvFile = (filePath: string): EnvObject => {
+function parseEnvFile(filePath: string): EnvObject {
   try {
     const absPath = resolve(projectRoot, filePath)
     if (!existsSync(absPath)) {
@@ -61,17 +72,17 @@ const parseEnvFile = (filePath: string): EnvObject => {
   }
 }
 
-const compareEnvs = (
+function compareEnvs(
   fileEnvs: Record<string, string>,
   ssmEnvs: Record<string, string>,
-) => {
+) {
   const added: Record<string, string> = {}
   const changed: Record<string, string> = {}
 
   for (const [key, value] of Object.entries(ssmEnvs)) {
     if (!fileEnvs[key]) {
       added[key] = value
-    } else if (escapeValue(fileEnvs[key]) !== ssmEnvs[key]) {
+    } else if (escapeValue(fileEnvs[key], key) !== ssmEnvs[key]) {
       changed[key] = ssmEnvs[key]
     }
   }
@@ -91,9 +102,38 @@ export const resetAllMappedFiles = async (): Promise<void> => {
   }
 }
 
-export const updateSecretFiles = async (services: string[]): Promise<void> => {
+export function serviceExists(
+  service: string,
+  chart?: ChartName,
+  env?: OpsEnv,
+): boolean {
+  const charts = chart ? [chart] : (Object.keys(Charts) as ChartName[])
+  for (const chart of charts) {
+    const envServices: EnvironmentServices = Charts[chart]
+    const opsEnvs = env ? [env] : (Object.keys(envServices) as OpsEnv[])
+    for (const opsEnv of opsEnvs) {
+      const services = envServices[opsEnv]
+
+      for (const s of services) {
+        if (s.name() === service) return true
+      }
+    }
+  }
+
+  return false
+}
+
+export const updateSecretFiles = async (services: string[]) => {
   const changes = { changed: 0, added: 0 }
+  const failedServices = []
   for (const service of services) {
+    // Check if service is present in Charts
+    if (!serviceExists(service)) {
+      console.error(`Service '${service}' does not exist.`)
+      failedServices.push(service)
+      continue
+    }
+
     const secrets = await renderSecretsCommand(service)
     const ssmEnvs = Object.fromEntries(secrets)
 
@@ -120,19 +160,6 @@ export const updateSecretFiles = async (services: string[]): Promise<void> => {
       const fileEnvs = parseEnvFile(filePath)
       const differences = compareEnvs(fileEnvs, envsForFile)
       const { added, changed } = differences
-      for (const [env, dict] of Object.entries({
-        [filePath]: fileEnvs,
-        added,
-        changed,
-      })) {
-        for (const [key, value] of Object.entries(dict)) {
-          if (value == "'") {
-            console.error(
-              `Secret ${key} in environment ${env} is literally an apostrophe (')`,
-            )
-          }
-        }
-      }
 
       // Merging existing, added, and updated envs
       const mergedEnvs = {
@@ -165,21 +192,20 @@ export const updateSecretFiles = async (services: string[]): Promise<void> => {
       writeFileSync(absPath, updatedFileContent.trim() + '\n')
     }
   }
-  console.log(`Updated ${changes.changed} envs, added ${changes.added}.`)
-  if (changes.changed + changes.added)
-    console.log(`See ${envLogFilePath} for more details.`)
+  return { changes, failedServices }
 }
 
-const generateUpdatedFileContent = (
+function generateUpdatedFileContent(
   sortedEnvs: [string, string][],
   differences: EnvDifferences,
   mapping: EnvMappingType,
   fileEnvs: Record<string, string>,
-): string => {
+): string {
   return sortedEnvs.reduce((content, [envName, value]) => {
+    const escapedValue = escapeValue(value)
     const line = mapping.isBashEnv
-      ? `export ${envName}='${value}'`
-      : `${envName}='${value}'`
+      ? `export ${envName}='${escapedValue}'`
+      : `${envName}='${escapedValue}'`
 
     if (
       Object.keys(differences.added).some((addedName) => addedName === envName)
@@ -191,7 +217,7 @@ const generateUpdatedFileContent = (
       )
     ) {
       appendToEnvLog(
-        `Updated ${envName} from '${fileEnvs[envName]}' to '${value}'`,
+        `Updated ${envName} from '${fileEnvs[envName]}' to '${escapedValue}'`,
       )
     }
 
@@ -199,7 +225,6 @@ const generateUpdatedFileContent = (
   }, '')
 }
 
-const appendToEnvLog = (message: string): void => {
-  console.log(`Logging to ${envLogFilePath}`)
+function appendToEnvLog(message: string): void {
   appendFileSync(envLogFilePath, `${message}\n`)
 }
