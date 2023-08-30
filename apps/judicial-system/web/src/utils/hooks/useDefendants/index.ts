@@ -17,8 +17,10 @@ import { useUpdateDefendantMutation } from './updateDefendant.generated'
 const useDefendants = () => {
   const { formatMessage } = useIntl()
 
-  const [createDefendantMutation, { loading: isCreatingDefendant }] =
-    useCreateDefendantMutation()
+  const [
+    createDefendantMutation,
+    { loading: isCreatingDefendant },
+  ] = useCreateDefendantMutation()
   const [deleteDefendantMutation] = useDeleteDefendantMutation()
   const [updateDefendantMutation] = useUpdateDefendantMutation()
 
