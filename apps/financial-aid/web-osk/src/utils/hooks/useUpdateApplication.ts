@@ -23,8 +23,9 @@ const useUpdateApplication = () => {
     .concat(form.taxReturnFiles)
     .concat(form.otherFiles)
 
-  const [updateApplicationMutation] =
-    useMutation<{ application: Application }>(ApplicationMutation)
+  const [updateApplicationMutation] = useMutation<{ application: Application }>(
+    ApplicationMutation,
+  )
 
   const updateApplication = async (
     applicationId: string,
