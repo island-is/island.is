@@ -109,14 +109,12 @@ export const applicant = {
         description: 'Permanent sub section title',
       },
       messageWithLinkButtonTitle: {
-        id:
-          'doi.rpr.application:applicant.labels.permanent.messageWithLinkButtonTitle',
+        id: 'doi.rpr.application:applicant.labels.permanent.messageWithLinkButtonTitle',
         defaultMessage: 'Opna nýja umsókn',
         description: 'Title for new application button',
       },
       messageWithLinkTitle: {
-        id:
-          'doi.rpr.application:applicant.labels.permanent.messageWithLinkTitle',
+        id: 'doi.rpr.application:applicant.labels.permanent.messageWithLinkTitle',
         defaultMessage: 'Umsókn um ótímabundið dvalarleyfi',
         description: 'Message with link title',
       },

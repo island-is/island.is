@@ -73,8 +73,7 @@ export const information = {
         description: 'Add more countries button title',
       },
       deleteButtonTitle: {
-        id:
-          'doi.cs.application:information.labels.staysAbroad.deleteButtonTitle',
+        id: 'doi.cs.application:information.labels.staysAbroad.deleteButtonTitle',
         defaultMessage: 'Eyða færslu',
         description: 'Add more countries button title',
       },
@@ -112,8 +111,7 @@ export const information = {
         description: 'Crimintal record item separator title',
       },
       questionTitle: {
-        id:
-          'doi.cs.application:information.labels.criminalRecord.questionTitle',
+        id: 'doi.cs.application:information.labels.criminalRecord.questionTitle',
         defaultMessage:
           'Hefur þú, á gildistíma síðasta dvalarleyfis, sætt sektum, fangelsisrefsingum eða hefur þú stöðu grunaðs manns í lögreglurannsókn?',
         description: 'Criminal record title',
@@ -129,14 +127,12 @@ export const information = {
         description: 'date label',
       },
       punishmentLabel: {
-        id:
-          'doi.cs.application:information.labels.criminalRecord.punishmentLabel',
+        id: 'doi.cs.application:information.labels.criminalRecord.punishmentLabel',
         defaultMessage: 'Hver var refsingin?',
         description: 'punishment label',
       },
       typeOfOffenseLabel: {
-        id:
-          'doi.cs.application:information.labels.criminalRecord.typeOfOffenseLabel',
+        id: 'doi.cs.application:information.labels.criminalRecord.typeOfOffenseLabel',
         defaultMessage: 'Tegund brots',
         description: 'type of offense label',
       },
@@ -146,8 +142,7 @@ export const information = {
         description: 'Add more offenses button title',
       },
       deleteButtonTitle: {
-        id:
-          'doi.cs.application:information.labels.staysAbroad.deleteButtonTitle',
+        id: 'doi.cs.application:information.labels.staysAbroad.deleteButtonTitle',
         defaultMessage: 'Eyða færslu',
         description: 'Add more countries button title',
       },
@@ -175,26 +170,22 @@ export const information = {
         description: 'Study title',
       },
       fileUploadConfirmationLabel: {
-        id:
-          'doi.rpr.application:information.labels.study.fileUploadConfirmationLabel',
+        id: 'doi.rpr.application:information.labels.study.fileUploadConfirmationLabel',
         defaultMessage: 'Staðfesting á námsárangri',
         description: 'File upload of confirmation label',
       },
       fileUploadGraduationLabel: {
-        id:
-          'doi.rpr.application:information.labels.study.fileUploadGraduationLabel',
+        id: 'doi.rpr.application:information.labels.study.fileUploadGraduationLabel',
         defaultMessage: 'Staðfesting á útskrift',
         description: 'Graduation file upload label',
       },
       fileUploadContinuedStudiesLabel: {
-        id:
-          'doi.rpr.application:information.labels.study.fileUploadContinuedStudiesLabel',
+        id: 'doi.rpr.application:information.labels.study.fileUploadContinuedStudiesLabel',
         defaultMessage: 'Staðfesting á skráningu í áframhaldandi fullt nám',
         description: 'Continued education file upload label',
       },
       fileUploadConfirmationDescription: {
-        id:
-          'doi.rpr.application:information.labels.study.fileUploadConfirmationDescription',
+        id: 'doi.rpr.application:information.labels.study.fileUploadConfirmationDescription',
         defaultMessage: 'Ef þú hefur lokið námi',
         description: 'Confirmation upload description',
       },

@@ -45,24 +45,22 @@ export const NationalIdSchoolName: FC<Props & FieldBaseProps> = ({
   const schoolNameField = `${usedId}.schoolName`
   const nationaIdField = `${usedId}.nationalId`
 
-  const [
-    getIdentity,
-    { data, loading: queryLoading, error: queryError },
-  ] = useLazyQuery<Query, { input: IdentityInput }>(
-    gql`
-      ${IDENTITY_QUERY}
-    `,
-    {
-      onCompleted: (data) => {
-        console.log('2')
-        console.log('data', data)
-        setValue(schoolNameField, data.identity?.givenName ?? undefined)
-        setCurrentName(
-          `${data.identity?.givenName} ${data.identity?.familyName}`,
-        )
+  const [getIdentity, { data, loading: queryLoading, error: queryError }] =
+    useLazyQuery<Query, { input: IdentityInput }>(
+      gql`
+        ${IDENTITY_QUERY}
+      `,
+      {
+        onCompleted: (data) => {
+          console.log('2')
+          console.log('data', data)
+          setValue(schoolNameField, data.identity?.givenName ?? undefined)
+          setCurrentName(
+            `${data.identity?.givenName} ${data.identity?.familyName}`,
+          )
+        },
       },
-    },
-  )
+    )
 
   useEffect(() => {
     console.log('1')

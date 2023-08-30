@@ -54,11 +54,9 @@ export const RecordRepeatableItem: FC<Props & FieldBaseProps> = ({
   const typeOfOffenseField = `${fieldIndex}.typeOfOffense`
   const wasRemovedField = `${fieldIndex}.wasRemoved`
 
-  const countryOptions = (getValueViaPath(
-    application.externalData,
-    'countries.data',
-    [],
-  ) as any[]).map(({ id, name }) => ({
+  const countryOptions = (
+    getValueViaPath(application.externalData, 'countries.data', []) as any[]
+  ).map(({ id, name }) => ({
     value: id.toString(),
     label: name,
   }))
