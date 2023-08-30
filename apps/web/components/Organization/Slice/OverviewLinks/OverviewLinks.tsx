@@ -92,8 +92,8 @@ export const OverviewLinksSlice: React.FC<
                                 [
                                   {
                                     __typename: 'Html',
-                                    id: intro.id,
-                                    document: intro.document,
+                                    id: intro?.id,
+                                    document: intro?.document,
                                   },
                                 ] as SliceType[],
                                 undefined,

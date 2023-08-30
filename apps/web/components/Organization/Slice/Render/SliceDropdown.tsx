@@ -53,7 +53,7 @@ export const SliceDropdown: React.FC<React.PropsWithChildren<SliceProps>> = ({
 
     setSelectedId(
       hashString
-        ? options.find((x) => x.slug === hashString).value
+        ? options.find((x) => x.slug === hashString)?.value ?? ''
         : options[0].value,
     )
   }, [Router, options])
