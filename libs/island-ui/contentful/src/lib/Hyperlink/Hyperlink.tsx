@@ -16,7 +16,7 @@ export const Hyperlink: FC<React.PropsWithChildren<HyperlinkProps>> = ({
 }) => (
   <Link
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+    // @ts-ignore make web strict
     href={href}
     color="blue400"
     underline="small"

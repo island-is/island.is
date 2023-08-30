@@ -89,7 +89,7 @@ const NewsListNew: Screen<NewsListProps> = ({
   const { linkResolver } = useLinkResolver()
   const { format, getMonthByIndex } = useDateUtils()
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+  // @ts-ignore make web strict
   const n = useNamespace(namespace)
   useContentfulId(newsItem?.id)
 
@@ -152,7 +152,7 @@ const NewsListNew: Screen<NewsListProps> = ({
     },
   ]
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+  // @ts-ignore make web strict
   const breadCrumbTags: BreadCrumbItem | BreadCrumbItem[] = newsItem
     ?.genericTags?.length
     ? newsItem.genericTags
@@ -200,7 +200,7 @@ const NewsListNew: Screen<NewsListProps> = ({
         title={navTitle}
         items={navItems}
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+        // @ts-ignore make web strict
         renderLink={(link, { href }) => {
           return (
             <NextLink href={href} legacyBehavior>
@@ -238,7 +238,7 @@ const NewsListNew: Screen<NewsListProps> = ({
       <Webreader
         marginTop={0}
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+        // @ts-ignore make web strict
         readId={null}
         readClass="rs_read"
       />
@@ -266,7 +266,7 @@ const NewsListNew: Screen<NewsListProps> = ({
           renderComponent: {
             // Make sure that images in the content are full width
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+            // @ts-ignore make web strict
             Image: (slice) => (
               <Box className={styles.clearBoth}>
                 <Image {...slice} thumbnail={slice.url + '?w=50'} />
@@ -366,7 +366,7 @@ const NewsListNew: Screen<NewsListProps> = ({
             title={navTitleMobile}
             items={navItems}
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+            // @ts-ignore make web strict
             renderLink={(link, { href }) => {
               return (
                 <NextLink href={href} legacyBehavior>
@@ -385,7 +385,7 @@ const NewsListNew: Screen<NewsListProps> = ({
         {!newsItemContent && (
           <Webreader
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+            // @ts-ignore make web strict
             readId={null}
             readClass="rs_read"
           />
@@ -406,10 +406,10 @@ const NewsListNew: Screen<NewsListProps> = ({
                     key={index}
                     title={title}
                     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+                    // @ts-ignore make web strict
                     introduction={intro}
                     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+                    // @ts-ignore make web strict
                     image={image}
                     titleAs="h2"
                     href={linkResolver('news', [slug]).href}
@@ -469,13 +469,13 @@ const getIntParam = (s: string | string[]) => {
 NewsListNew.getProps = async ({ apolloClient, locale, query }) => {
   const slug = query.slug as string
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+  // @ts-ignore make web strict
   const year = getIntParam(query.y)
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+  // @ts-ignore make web strict
   const month = year && getIntParam(query.m)
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+  // @ts-ignore make web strict
   const selectedPage = getIntParam(query.page) ?? 1
   const tag = (query.tag as string) ?? FRONTPAGE_NEWS_TAG_ID
 
@@ -534,19 +534,19 @@ NewsListNew.getProps = async ({ apolloClient, locale, query }) => {
       .then((variables) => {
         // map data here to reduce data processing in component
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+        // @ts-ignore make web strict
         return JSON.parse(variables.data.getNamespace.fields)
       }),
   ])
 
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+  // @ts-ignore make web strict
   const newsItem = getSingleNewsResult?.data?.getSingleNews ?? null
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+  // @ts-ignore make web strict
   const newsList = getNewsResults?.data?.getNews?.items ?? []
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+  // @ts-ignore make web strict
   const total = getNewsResults?.data?.getNews?.total ?? 0
 
   const selectedYear = newsItem?.date
@@ -565,7 +565,7 @@ NewsListNew.getProps = async ({ apolloClient, locale, query }) => {
 
   return {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+    // @ts-ignore make web strict
     newsList: newsList.map((item) => ({
       ...item,
       genericTags: item?.genericTags?.filter(filterOutFrontpageTag) ?? [],

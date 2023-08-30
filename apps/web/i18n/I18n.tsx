@@ -21,7 +21,7 @@ const wrapTranslations = <T extends { [key: string]: string }>(
         if (!(p in warnedKeys)) {
           console.warn(`Missing translation for ${p}`)
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+          // @ts-ignore make web strict
           warnedKeys[p] = true
         }
         return p
@@ -70,7 +70,7 @@ export default function I18n({ children, locale, translations }) {
     activeLocale: activeLocaleRef.current,
     t: wrapTranslations(translations),
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+    // @ts-ignore make web strict
     locale: (l: string, dict) => {
       i18n.locale(l)
       activeLocaleRef.current = l

@@ -36,7 +36,7 @@ export const RenderForm: React.FC<
   inputLabel = 'Email',
 }) => {
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+  // @ts-ignore make web strict
   const n = useNamespace(namespace)
   const [status, setStatus] = useState<FormState>({
     type: '',
@@ -153,7 +153,7 @@ export const RenderForm: React.FC<
         buttonText={submitButtonText}
         onChange={formik.handleChange}
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+        // @ts-ignore make web strict
         onSubmit={formik.handleSubmit}
         value={formik.values.email}
         successTitle={n('formThankYou', 'Skráning tókst. Takk fyrir.')}
@@ -162,7 +162,7 @@ export const RenderForm: React.FC<
           'Þú þarft að fara í pósthólfið þitt og samþykkja umsóknina',
         )}
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+        // @ts-ignore make web strict
         errorMessage={formatMessage(status.message)}
         state={status.type || 'default'}
       />

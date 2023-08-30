@@ -127,7 +127,7 @@ export const Card: FC<React.PropsWithChildren<CardProps>> = ({
       >
         <BackgroundImage
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+          // @ts-ignore make web strict
           positionX={!stackImage ? 'right' : null}
           background="transparent"
           backgroundSize="contain"
@@ -181,7 +181,7 @@ export const Card: FC<React.PropsWithChildren<CardProps>> = ({
               styles.status,
               styles.statusPosition,
               // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+              // @ts-ignore make web strict
               styles.statusType[status],
             )}
           ></span>
@@ -199,7 +199,7 @@ export const Card: FC<React.PropsWithChildren<CardProps>> = ({
             styles.status,
             styles.statusPosition,
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+            // @ts-ignore make web strict
             styles.statusType[status],
           )}
         ></span>

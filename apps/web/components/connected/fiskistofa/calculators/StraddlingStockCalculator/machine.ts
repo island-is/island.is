@@ -199,7 +199,7 @@ export const machine = createMachine<Context, Event, State>(
       },
       'getting data': {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+        // @ts-ignore make web strict
         invoke: {
           src: 'getData',
           onDone: {
@@ -217,7 +217,7 @@ export const machine = createMachine<Context, Event, State>(
       },
       'updating data': {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+        // @ts-ignore make web strict
         invoke: {
           src: 'updateData',
           onDone: {
@@ -244,7 +244,7 @@ export const machine = createMachine<Context, Event, State>(
   {
     services: {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+      // @ts-ignore make web strict
       getData: async (context: Context, event: GetDataEvent) => {
         let fiskistofaGetShipStatusForCalendarYearResponse = null
 
@@ -309,7 +309,7 @@ export const machine = createMachine<Context, Event, State>(
         }
       },
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+      // @ts-ignore make web strict
       updateData: async (context: Context, event: UpdateDataEvent) => {
         const fiskistofaUpdateShipStatusForCalendarYearResponse =
           await context?.apolloClient?.query<{

@@ -74,7 +74,7 @@ const LandLaeknirFooter = ({
                 </Hidden>
                 {footerItems?.[0] &&
                   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+                  // @ts-ignore make web strict
                   renderParagraphs(footerItems[0].content, 2, true)}
               </GridColumn>
               <GridColumn span={['12/12', '12/12', '3/12']}>
@@ -98,7 +98,7 @@ const LandLaeknirFooter = ({
                     </Box>
                     {
                       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+                      // @ts-ignore make web strict
                       renderParagraphs(footerItems[1].content)
                     }
                   </Box>
@@ -125,7 +125,7 @@ const LandLaeknirFooter = ({
                     </Box>
                     {
                       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+                      // @ts-ignore make web strict
                       renderParagraphs(footerItems[2].content)
                     }
                   </Box>
@@ -152,7 +152,7 @@ const LandLaeknirFooter = ({
                     </Box>
                     {
                       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+                      // @ts-ignore make web strict
                       renderParagraphs(item.content)
                     }
                   </Box>
@@ -169,7 +169,7 @@ const LandLaeknirFooter = ({
                     <Box className={styles.noWrap} marginRight={1}>
                       {
                         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+                        // @ts-ignore make web strict
                         renderParagraphs(footerItems[5].content, 0)
                       }
                     </Box>
@@ -186,7 +186,7 @@ const LandLaeknirFooter = ({
                 <Box marginTop={2}>
                   {
                     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+                    // @ts-ignore make web strict
                     footerItems?.[6] && renderParagraphs(footerItems[6].content)
                   }
                 </Box>
@@ -212,7 +212,7 @@ const LandLaeknirFooter = ({
                     <Box marginLeft={2}>
                       {footerItems?.[7] &&
                         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+                        // @ts-ignore make web strict
                         renderParagraphs(footerItems[7].content, 0, true)}
                     </Box>
                   </Box>

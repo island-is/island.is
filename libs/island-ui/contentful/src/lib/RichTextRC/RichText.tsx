@@ -108,7 +108,7 @@ type RichText = (
         renderComponent: {
           [slice in keyof typeof defaultRenderComponentObject]: (
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+            // @ts-ignore make web strict
             SliceType,
           ) => ReactNode
         }
@@ -128,7 +128,7 @@ export const richText: RichText = (
         text
           .split('\n')
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+          // @ts-ignore make web strict
           .reduce((children: string[], textSegment: string, index: number) => {
             return [...children, index > 0 && <br key={index} />, textSegment]
           }, [])

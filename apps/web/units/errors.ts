@@ -5,7 +5,7 @@ export class CustomNextError extends Error {
     super(message ?? title)
     this.statusCode = statusCode
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+    // @ts-ignore make web strict
     this.title = title
   }
 }

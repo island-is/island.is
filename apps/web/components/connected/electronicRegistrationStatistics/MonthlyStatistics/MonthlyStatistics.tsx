@@ -79,7 +79,7 @@ export const MonthlyStatistics = ({ slice }: MonthlyStatisticsProps) => {
       // Make sure to keep the reference intact since we're renewing the list
       setSelectedRegistrationTypeOption(
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+        // @ts-ignore make web strict
         typeOptions.find(
           (type) => type.value === selectedRegistrationTypeOption.value,
         ),

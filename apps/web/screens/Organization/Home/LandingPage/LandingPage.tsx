@@ -87,7 +87,7 @@ const LandingPage = ({ organization, namespace }: LandingPageProps) => {
       <HeadWithSocialSharing
         title={organization?.title ?? ''}
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+        // @ts-ignore make web strict
         description={organization?.description}
       />
       <Box marginBottom={5}>

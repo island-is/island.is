@@ -54,7 +54,7 @@ export const LanguageToggler = ({
 
     if (!contentfulIds?.length) {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+      // @ts-ignore make web strict
       const { type } = typeResolver(pathWithoutQueryParams, true)
       const pagePath = linkResolver(type, [], otherLanguage).href
 
@@ -102,11 +102,11 @@ export const LanguageToggler = ({
       }
       slugs.push(slug)
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+      // @ts-ignore make web strict
       title = res.data?.getContentSlug?.title
       type = res.data?.getContentSlug?.type as LinkType
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+      // @ts-ignore make web strict
       activeTranslations = res.data?.getContentSlug?.activeTranslations
     }
 
@@ -125,7 +125,7 @@ export const LanguageToggler = ({
       slugs.every((s) => s?.[otherLanguage]) &&
       title?.[otherLanguage] &&
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+      // @ts-ignore make web strict
       (otherLanguage === 'is' || (activeTranslations?.[otherLanguage] ?? true))
     ) {
       const queryParamsString = new URLSearchParams(

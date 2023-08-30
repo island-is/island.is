@@ -11,7 +11,7 @@ export const useContentfulId = (
   useEffect(() => {
     if (pageId) {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+      // @ts-ignore make web strict
       setContentfulIds([pageId, subpageId, subSubPageId])
     }
     return () => {

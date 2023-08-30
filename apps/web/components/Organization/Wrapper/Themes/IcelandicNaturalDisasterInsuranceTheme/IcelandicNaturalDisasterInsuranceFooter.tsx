@@ -49,7 +49,7 @@ const IcelandicNaturalDisasterInsuranceFooter = ({
                 marginTop={index === 0 && shouldWrap ? 3 : 0}
                 marginLeft={shouldWrap ? 7 : undefined}
                 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+                // @ts-ignore make web strict
                 marginRight={shouldWrap ? null : 12}
               >
                 <Box marginBottom={2}>

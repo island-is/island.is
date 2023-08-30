@@ -268,7 +268,7 @@ export const TellUsAStoryForm: React.FC<
                         selected={value}
                         required
                         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+                        // @ts-ignore make web strict
                         errorMessage={
                           errors.dateOfStory
                             ? dateOfStoryInputErrorMessage

@@ -106,10 +106,10 @@ export interface LayoutProps {
   languageToggleQueryParams?: Record<Locale, Record<string, string>>
   footerVersion?: 'default' | 'organization'
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+  // @ts-ignore make web strict
   respOrigin
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+  // @ts-ignore make web strict
   megaMenuData
   children?: React.ReactNode
 }
@@ -183,7 +183,7 @@ const Layout: Screen<LayoutProps> = ({
   useEffect(() => {
     setAlertBanners(
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+      // @ts-ignore make web strict
       [
         {
           bannerId: `alert-${stringHash(
@@ -321,50 +321,50 @@ const Layout: Screen<LayoutProps> = ({
         {alertBanners.map((banner) => (
           <AlertBanner
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+            // @ts-ignore make web strict
             key={banner.bannerId}
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+            // @ts-ignore make web strict
             title={banner.title}
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+            // @ts-ignore make web strict
             description={banner.description}
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+            // @ts-ignore make web strict
             link={{
               // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+              // @ts-ignore make web strict
               ...(!!banner.link &&
                 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+                // @ts-ignore make web strict
                 !!banner.linkTitle && {
                   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+                  // @ts-ignore make web strict
                   href: linkResolver(banner.link.type as LinkType, [
                     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+                    // @ts-ignore make web strict
                     banner.link.slug,
                   ]).href,
                   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+                  // @ts-ignore make web strict
                   title: banner.linkTitle,
                 }),
             }}
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+            // @ts-ignore make web strict
             variant={banner.bannerVariant as AlertBannerVariants}
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+            // @ts-ignore make web strict
             dismissable={banner.isDismissable}
             onDismiss={() => {
               // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+              // @ts-ignore make web strict
               if (banner.dismissedForDays !== 0) {
                 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+                // @ts-ignore make web strict
                 Cookies.set(banner.bannerId, 'hide', {
                   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+                  // @ts-ignore make web strict
                   expires: banner.dismissedForDays,
                 })
               }
@@ -383,7 +383,7 @@ const Layout: Screen<LayoutProps> = ({
           {showHeader && (
             <ColorSchemeContext.Provider
               // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+              // @ts-ignore make web strict
               value={{ colorScheme: headerColorScheme }}
             >
               <Header
@@ -525,7 +525,7 @@ Layout.getProps = async ({ apolloClient, locale, req }) => {
         .then((res) => {
           // map data here to reduce data processing in component
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+          // @ts-ignore make web strict
           return JSON.parse(res.data.getNamespace.fields)
         }),
       apolloClient
@@ -548,17 +548,17 @@ Layout.getProps = async ({ apolloClient, locale, req }) => {
 
   const alertBannerId = `alert-${stringHash(JSON.stringify(alertBanner))}`
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+  // @ts-ignore make web strict
   const [asideTopLinksData, asideBottomLinksData] = megaMenuData.menus
 
   const mapLinks = (item: Menu) =>
     item.menuLinks.map((x) => {
       const href = LinkResolver(
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+        // @ts-ignore make web strict
         x.link.type as LinkType,
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+        // @ts-ignore make web strict
         [x.link.slug],
         lang as Locale,
       ).href.trim()
@@ -579,13 +579,13 @@ Layout.getProps = async ({ apolloClient, locale, req }) => {
     footerMiddleMenu: [],
   }
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+  // @ts-ignore make web strict
   const footerMenu = footerMenuData.menus.reduce((menus, menu, idx) => {
     if (IS_MOCK) {
       const key = Object.keys(menus)[idx]
       if (key) {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+        // @ts-ignore make web strict
         menus[key] = mapLinks(menu as Menu)
       }
       return menus
@@ -595,31 +595,31 @@ Layout.getProps = async ({ apolloClient, locale, req }) => {
       // Footer lower
       case '6vTuiadpCKOBhAlSjYY8td':
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+        // @ts-ignore make web strict
         menus.footerLowerMenu = mapLinks(menu as Menu)
         break
       // Footer middle
       case '7hSbSQm5F5EBc0KxPTFVAS':
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+        // @ts-ignore make web strict
         menus.footerMiddleMenu = mapLinks(menu as Menu)
         break
       // Footer tags
       case '6oGQDyWos4xcKX9BdMHd5R':
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+        // @ts-ignore make web strict
         menus.footerTagsMenu = mapLinks(menu as Menu)
         break
       // Footer upper
       case '62Zh6hUc3bi0JwNRnqV8Nm':
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+        // @ts-ignore make web strict
         menus.footerUpperInfo = mapLinks(menu as Menu)
         break
       // Footer upper contact
       case '5yUCZ4U6aZ8rZ9Jigme7GI':
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+        // @ts-ignore make web strict
         menus.footerUpperContact = mapLinks(menu as Menu)
         break
       default:
@@ -635,7 +635,7 @@ Layout.getProps = async ({ apolloClient, locale, req }) => {
       ...alertBanner,
       showAlertBanner:
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+        // @ts-ignore make web strict
         alertBanner.showAlertBanner &&
         (!req?.headers.cookie ||
           req.headers.cookie?.indexOf(alertBannerId) === -1),

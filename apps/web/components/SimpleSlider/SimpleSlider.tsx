@@ -80,7 +80,7 @@ export const SimpleSlider: FC<React.PropsWithChildren<SimpleSliderProps>> = ({
 
     const key = current.length && current[current.length - 1]
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+    // @ts-ignore make web strict
     const breakpointOption = slideState.breakpoints[key] ?? {}
 
     const containerWidth = containerRef.current?.offsetWidth
@@ -153,12 +153,12 @@ export const SimpleSlider: FC<React.PropsWithChildren<SimpleSliderProps>> = ({
   const handleTouchEnd: TouchEventHandler<HTMLDivElement> = () => {
     switch (touchDirection.current) {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+      // @ts-ignore make web strict
       case 'right':
         traverse('next')
         break
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+      // @ts-ignore make web strict
       case 'left':
         traverse('prev')
         break
@@ -172,7 +172,7 @@ export const SimpleSlider: FC<React.PropsWithChildren<SimpleSliderProps>> = ({
 
     if (diff > 10) {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+      // @ts-ignore make web strict
       touchDirection.current =
         start.current < e.targetTouches[0].pageX ? 'left' : 'right'
     }

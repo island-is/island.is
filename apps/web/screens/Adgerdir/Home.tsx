@@ -65,7 +65,7 @@ interface HomeProps {
   tags: Query['getAdgerdirTags']
   namespace: Query['getNamespace']
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+  // @ts-ignore make web strict
   megaMenuData
 }
 
@@ -78,7 +78,7 @@ const Home: Screen<HomeProps> = ({
 }) => {
   const { activeLocale } = useI18n()
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+  // @ts-ignore make web strict
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
 
@@ -88,7 +88,7 @@ const Home: Screen<HomeProps> = ({
 
   const { items: pagesItems } = pages
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+  // @ts-ignore make web strict
   const { items: tagsItems } = tags
 
   let groupSliceCount = 0
@@ -194,7 +194,7 @@ const Home: Screen<HomeProps> = ({
                   tags={tagsItems}
                   items={pagesItems}
                   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+                  // @ts-ignore make web strict
                   namespace={namespace}
                 />
               </ContentBlock>

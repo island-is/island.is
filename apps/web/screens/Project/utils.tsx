@@ -59,7 +59,7 @@ export const convertLinkGroupsToNavigationItems = (
   linkGroups: LinkGroup[],
 ): NavigationItem[] =>
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+  // @ts-ignore make web strict
   linkGroups.map(({ primaryLink, childrenLinks }) => {
     return {
       title: primaryLink?.text,

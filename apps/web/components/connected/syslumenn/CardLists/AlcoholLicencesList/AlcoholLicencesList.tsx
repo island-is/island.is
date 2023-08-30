@@ -71,7 +71,7 @@ const AlcoholLicencesList: FC<
       result += ' - ' + licence.licenceSubType
     }
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+    // @ts-ignore make web strict
     return result
   }
 
@@ -114,7 +114,7 @@ const AlcoholLicencesList: FC<
           ])
         }
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+        // @ts-ignore make web strict
         return resolve(prepareCsvString(headerRow, dataRows))
       }
       reject('Alcohol Licences data has not been loaded.')
@@ -127,7 +127,7 @@ const AlcoholLicencesList: FC<
     allOfficesOption,
     ...Array.from(
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+      // @ts-ignore make web strict
       new Set<string>(alcoholLicences.map((x) => x.office)).values(),
     ),
   ]
@@ -141,7 +141,7 @@ const AlcoholLicencesList: FC<
     allLicenceTypeOption,
     ...Array.from(
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+      // @ts-ignore make web strict
       new Set<string>(alcoholLicences.map((x) => x.licenceType)).values(),
     ),
   ]
@@ -164,16 +164,16 @@ const AlcoholLicencesList: FC<
       textSearch(searchTerms, [
         // Fields to search
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+        // @ts-ignore make web strict
         alcoholLicence.licenceType,
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+        // @ts-ignore make web strict
         alcoholLicence.licenseHolder,
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+        // @ts-ignore make web strict
         alcoholLicence.licenseNumber,
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+        // @ts-ignore make web strict
         alcoholLicence.licenseResponsible,
       ]),
   )
@@ -224,7 +224,7 @@ const AlcoholLicencesList: FC<
                     }))
                     .find((x) => x.value === filterLicenceType)}
                   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+                  // @ts-ignore make web strict
                   onChange={({ value }: Option) => {
                     setFilterLicenceType(String(value))
                   }}
@@ -252,7 +252,7 @@ const AlcoholLicencesList: FC<
                     }))
                     .find((x) => x.value === filterOffice)}
                   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+                  // @ts-ignore make web strict
                   onChange={({ value }: Option) => {
                     setFilterOffice(String(value))
                   }}
@@ -350,7 +350,7 @@ const AlcoholLicencesList: FC<
                         {n('validPeriodLabel', 'Gildistími')}:{' '}
                         {getValidPeriodRepresentation(
                           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+                          // @ts-ignore make web strict
                           alcoholLicence.validFrom,
                           alcoholLicence.validTo,
                           DATE_FORMAT,

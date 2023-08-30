@@ -74,7 +74,7 @@ export const FeaturedArticlesSlice: React.FC<
                   <FocusableBox key={slug} borderRadius="large" href={url.href}>
                     <TopicCard
                       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+                      // @ts-ignore make web strict
                       tag={
                         (!!processEntry || processEntryButtonText) &&
                         n(processEntryButtonText || 'application', 'Umsókn')

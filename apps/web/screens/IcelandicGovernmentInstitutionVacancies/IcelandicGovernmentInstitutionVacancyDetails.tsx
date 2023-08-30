@@ -49,7 +49,7 @@ const InformationPanel = ({ vacancy, namespace }: InformationPanelProps) => {
       {vacancy?.institutionName && (
         <InstitutionPanel
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+          // @ts-ignore make web strict
           img={vacancy.logoUrl}
           institutionTitle={n('institutionCardTitle', 'Þjónustuaðili')}
           institution={vacancy.institutionName}

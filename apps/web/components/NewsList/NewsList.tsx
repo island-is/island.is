@@ -77,7 +77,7 @@ export const NewsList = ({
         marginTop={0}
         marginBottom={0}
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+        // @ts-ignore make web strict
         readId={null}
         readClass="rs_read"
       />
@@ -133,14 +133,14 @@ export const NewsList = ({
           )}
           options={yearOptions}
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+          // @ts-ignore make web strict
           onChange={({ value }: Option) => {
             router.push(
               makeHref(
                 selectedTag,
                 newsOverviewUrl,
                 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+                // @ts-ignore make web strict
                 value === allYearsString ? null : value,
               ),
             )
@@ -156,7 +156,7 @@ export const NewsList = ({
             value={monthOptions.find((o) => o.value === selectedMonth)}
             options={monthOptions}
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+            // @ts-ignore make web strict
             onChange={({ value }: Option) =>
               router.push(
                 makeHref(selectedTag, newsOverviewUrl, selectedYear, value),
@@ -178,10 +178,10 @@ export const NewsList = ({
               key={index}
               title={newsItem.title}
               // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+              // @ts-ignore make web strict
               introduction={newsItem.intro}
               // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+              // @ts-ignore make web strict
               image={newsItem.image}
               titleAs="h2"
               href={

@@ -10,10 +10,10 @@ const activateWidget = (license: number, version: string) => {
   w.__lc.license = license
   const widget = (function (n: any, t, c) {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+    // @ts-ignore make web strict
     function i(n) {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+      // @ts-ignore make web strict
       return e._h ? e._h.apply(null, n) : e._q.push(n)
     }
     var e = {

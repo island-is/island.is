@@ -19,7 +19,7 @@ export const BulletListSlice: React.FC<React.PropsWithChildren<SliceProps>> = ({
       <Box paddingBottom={[8, 5, 10]}>
         <BulletList
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+          // @ts-ignore make web strict
           bullets={slice.bullets.map((bullet) => {
             switch (bullet.__typename) {
               case 'IconBullet':

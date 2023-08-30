@@ -76,7 +76,7 @@ export const SliceDropdown: React.FC<React.PropsWithChildren<SliceProps>> = ({
               options={options}
               value={options.find((x) => x.value === selectedId)}
               // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+              // @ts-ignore make web strict
               onChange={({ value }: Option) => {
                 const slug = options.find((x) => x.value === value)?.slug
                 setSelectedId(String(value))
@@ -98,7 +98,7 @@ export const SliceDropdown: React.FC<React.PropsWithChildren<SliceProps>> = ({
           key={selectedSlice.id}
           slice={selectedSlice}
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+          // @ts-ignore make web strict
           namespace={null}
           fullWidth={slicesAreFullWidth}
         />

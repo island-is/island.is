@@ -88,19 +88,19 @@ const defaultRenderComponent = {
   AccordionSlice: (slice: AccordionSliceSchema) =>
     slice.accordionItems && <AccordionSlice slice={slice} />,
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+  // @ts-ignore make web strict
   ConnectedComponent: (slice) => webRenderConnectedComponent(slice),
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+  // @ts-ignore make web strict
   GraphCard: (chart) => <ChartsCard chart={chart} />,
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+  // @ts-ignore make web strict
   OneColumnText: (slice) => <OneColumnTextSlice slice={slice} />,
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+  // @ts-ignore make web strict
   TwoColumnText: (slice) => <TwoColumnTextSlice slice={slice} />,
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+  // @ts-ignore make web strict
   EmailSignup: (slice) => <EmailSignup slice={slice} />,
   FaqList: (slice: FaqListProps) => slice?.questions && <FaqList {...slice} />,
   FeaturedSupportQNAs: (slice: FeaturedSupportQNAsSchema) => (
@@ -110,7 +110,7 @@ const defaultRenderComponent = {
     <SliceDropdown
       slices={slice.slices}
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+      // @ts-ignore make web strict
       sliceExtraText={slice.dropdownLabel}
       gridSpan="1/1"
       gridOffset="0"

@@ -34,7 +34,7 @@ export const ServiceInformation = ({
   onSelectChange,
 }: ServiceInformationProps) => {
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+  // @ts-ignore make web strict
   const n = useNamespace(strings)
 
   // TODO When environment is chosen set the version options, default is set to newest version.
@@ -65,16 +65,16 @@ export const ServiceInformation = ({
 
   const onSelectVersion = (versionOption: Option) => {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+    // @ts-ignore make web strict
     const tempServiceDetail = service.environments
       .find((e) => e.environment === selectedEnviromentOption.value)
       .details.find((e) => e.version === versionOption.value)
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+    // @ts-ignore make web strict
     setServiceDetail(tempServiceDetail)
     setSelectedVersionOption(versionOption)
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+    // @ts-ignore make web strict
     onSelectChange(tempServiceDetail)
   }
 
@@ -90,7 +90,7 @@ export const ServiceInformation = ({
                   category="pricing"
                   item={service.pricing[0]}
                   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+                  // @ts-ignore make web strict
                   namespace={strings}
                 />
               </Box>
@@ -120,7 +120,7 @@ export const ServiceInformation = ({
             defaultValue={selectedVersionOption}
             options={versionOptions}
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+            // @ts-ignore make web strict
             onChange={onSelectVersion}
           />
         </GridColumn>
@@ -143,7 +143,7 @@ export const ServiceInformation = ({
           >
             <Link
               // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+              // @ts-ignore make web strict
               href={serviceDetail.links.bugReport}
             >
               <Button
@@ -161,7 +161,7 @@ export const ServiceInformation = ({
             <Box marginLeft={[3, 3, 3, 3, 2]}>
               <Link
                 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+                // @ts-ignore make web strict
                 href={serviceDetail.links.featureRequest}
               >
                 <Button
@@ -242,7 +242,7 @@ export const ServiceInformation = ({
           type={serviceDetail.type}
           access={service.access}
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+          // @ts-ignore make web strict
           namespace={strings}
         />
       </Box>

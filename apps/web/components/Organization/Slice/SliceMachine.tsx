@@ -94,12 +94,12 @@ const fullWidthSlices = ['TimelineSlice', 'LogoListSlice', 'EmailSignup']
 
 const renderSlice = (
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+  // @ts-ignore make web strict
   slice,
   namespace: Record<string, string>,
   slug: string,
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+  // @ts-ignore make web strict
   params,
 ) => {
   switch (slice.__typename) {
@@ -172,20 +172,20 @@ export const SliceMachine = ({
           paddingTop={paddingTop}
           span={
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+            // @ts-ignore make web strict
             fullWidthSlices.includes(slice.__typename)
               ? '9/9'
               : ['9/9', '9/9', '7/9']
           }
           offset={
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+            // @ts-ignore make web strict
             fullWidthSlices.includes(slice.__typename) ? '0' : ['0', '0', '1/9']
           }
         >
           {
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+            // @ts-ignore make web strict
             renderSlice(slice, namespace, slug, params)
           }
         </GridColumn>
@@ -197,14 +197,14 @@ export const SliceMachine = ({
         <GridContainer>
           {
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+            // @ts-ignore make web strict
             renderSlice(slice, namespace, slug, params)
           }
         </GridContainer>
       )}
       {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+        // @ts-ignore make web strict
         !wrapWithGridContainer && renderSlice(slice, namespace, slug, params)
       }
     </Box>

@@ -66,7 +66,7 @@ export function LoginButton(props: {
             />
           }
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+          // @ts-ignore make web strict
           items={items}
         />
       </Hidden>
@@ -82,7 +82,7 @@ export function LoginButton(props: {
             </Button>
           }
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+          // @ts-ignore make web strict
           items={items}
           openOnHover
         />

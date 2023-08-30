@@ -132,7 +132,7 @@ const Home: Screen<HomeProps> = ({ categories, news, page, locale }) => {
       </Box>
       {watsonConfig[locale] && (
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+        // @ts-ignore make web strict
         <WatsonChatPanel {...watsonConfig[locale]} />
       )}
     </Box>

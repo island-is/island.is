@@ -110,7 +110,7 @@ export const NewsItems = ({
                 date={date}
                 heading={title}
                 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+                // @ts-ignore make web strict
                 text={intro}
                 colorVariant={colorVariant}
                 href={
@@ -120,7 +120,7 @@ export const NewsItems = ({
                   ]).href
                 }
                 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+                // @ts-ignore make web strict
                 image={image}
                 tags={genericTags
                   .filter((tag) => tag.slug !== FRONTPAGE_NEWS_TAG_ID)

@@ -9,7 +9,7 @@ import { safelyExtractPathnameFromUrl } from '../utils/safelyExtractPathnameFrom
 // @ts-ignore make web strict
 export const withApollo = (Component) => {
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+  // @ts-ignore make web strict
   const NewComponent = ({ apolloState, pageProps }) => {
     const { asPath } = useRouter()
     const clientLocale = getLocaleFromPath(asPath)

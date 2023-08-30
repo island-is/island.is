@@ -175,7 +175,7 @@ const useSearch = (
       })
     }
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+    // @ts-ignore make web strict
     const thisTimerId = (timer.current = setTimeout(async () => {
       client
         .query<Query, QueryGetOperatingLicensesArgs>({
@@ -244,7 +244,7 @@ const OperatingLicenses: Screen<OperatingLicensesProps> = ({
   namespace,
 }) => {
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+  // @ts-ignore make web strict
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
   const Router = useRouter()
@@ -255,7 +255,7 @@ const OperatingLicenses: Screen<OperatingLicensesProps> = ({
 
   const pageUrl = Router.pathname
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+  // @ts-ignore make web strict
   const navList: NavigationItem[] = organizationPage?.menuLinks.map(
     ({ primaryLink, childrenLinks }) => ({
       title: primaryLink?.text,
@@ -341,7 +341,7 @@ const OperatingLicenses: Screen<OperatingLicensesProps> = ({
         })
         .then(({ data: { getOperatingLicensesCSV } }) => {
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+          // @ts-ignore make web strict
           return resolve(getOperatingLicensesCSV.value)
         })
         .catch(() => {
@@ -354,10 +354,10 @@ const OperatingLicenses: Screen<OperatingLicensesProps> = ({
     <OrganizationWrapper
       pageTitle={subpage?.title ?? ''}
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+      // @ts-ignore make web strict
       organizationPage={organizationPage}
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+      // @ts-ignore make web strict
       pageFeaturedImage={subpage?.featuredImage}
       showReadSpeaker={false}
       breadcrumbItems={[
@@ -382,7 +382,7 @@ const OperatingLicenses: Screen<OperatingLicensesProps> = ({
         </Text>
         <Webreader
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+          // @ts-ignore make web strict
           readId={null}
           readClass="rs_read"
         />

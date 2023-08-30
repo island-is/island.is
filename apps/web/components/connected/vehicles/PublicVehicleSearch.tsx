@@ -83,7 +83,7 @@ const PublicVehicleSearch = ({ slice }: PublicVehicleSearchProps) => {
         )
       : ''
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+  // @ts-ignore make web strict
   const formattedVehicleType = formatVehicleType(vehicleInformation)
 
   return (
