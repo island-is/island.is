@@ -249,7 +249,6 @@ export class PoliceService {
         })
       })
       .catch((reason) => {
-        console.log(reason)
         if (reason instanceof NotFoundException) {
           throw reason
         }
@@ -342,7 +341,6 @@ export class PoliceService {
         })
       })
       .catch((reason) => {
-        console.log(reason)
         if (reason instanceof NotFoundException) {
           throw reason
         }
