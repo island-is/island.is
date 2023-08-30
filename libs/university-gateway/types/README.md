@@ -1,5 +1,3 @@
-<!-- gitbook-ignore -->
-
 # university-gateway-types
 
 This library was generated with [Nx](https://nx.dev).

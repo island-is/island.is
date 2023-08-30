@@ -1,5 +1,3 @@
-<!-- gitbook-ignore -->
-
 # clients-university-gateway-reykjavik-university
 
 This library was generated with [Nx](https://nx.dev).
