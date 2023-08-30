@@ -1,0 +1,10 @@
+query getHealthCenter {
+  rightsPortalPaginatedHealthCenters {
+    data {
+      id
+      name
+      region
+    }
+    totalCount
+  }
+}

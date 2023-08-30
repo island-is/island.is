@@ -78,8 +78,6 @@ const Dentists = () => {
 
       {dentistName && (
         <Stack space={2}>
-          {' '}
-          d
           <UserInfoLine
             title={formatMessage(messages.yourInformation)}
             label={formatMessage(messages.dentist)}

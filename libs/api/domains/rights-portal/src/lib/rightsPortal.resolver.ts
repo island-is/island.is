@@ -19,7 +19,10 @@ import { GetDentistBillsInput } from './dto/getDentistBills.input'
 import { GetHealthCenterHistoryInput } from './dto/getHealthCenterHistory.input'
 import { PaginatedTherapiesResponse } from './models/therapies.model'
 import { PaginatedAidsAndNutritionResponse } from './models/aidsOrNutrition.model'
-import { UserDentistRegistration } from './models/dentist.model'
+import {
+  PaginatedDentistsResponse,
+  UserDentistRegistration,
+} from './models/dentist.model'
 import {
   PaginatedHealthCentersResponse,
   UserHealthCenterRegistration,
@@ -34,7 +37,7 @@ export class RightsPortalResolver {
 
   @Scopes(ApiScope.health)
   @Query(() => PaginatedTherapiesResponse, {
-    name: 'rightsPortalPaginatedTherapiesResponse',
+    name: 'rightsPortalPaginatedTherapies',
     nullable: true,
   })
   @Audit()
@@ -52,7 +55,7 @@ export class RightsPortalResolver {
 
   @Scopes(ApiScope.health)
   @Query(() => PaginatedAidsAndNutritionResponse, {
-    name: 'rightsPortalPaginatedAidsAndNutritionResponse',
+    name: 'rightsPortalPaginatedAidsAndNutrition',
     nullable: true,
   })
   @Audit()
@@ -107,7 +110,7 @@ export class RightsPortalResolver {
   @FeatureFlag(Features.servicePortalHealthCenterDentistPage)
   @Scopes(ApiScope.health)
   @Query(() => PaginatedHealthCentersResponse, {
-    name: 'rightsPortalPaginatedHealthCentersResponse',
+    name: 'rightsPortalPaginatedHealthCenters',
     nullable: true,
   })
   @Audit()
@@ -117,8 +120,8 @@ export class RightsPortalResolver {
 
   @FeatureFlag(Features.servicePortalHealthCenterDentistPage)
   @Scopes(ApiScope.health)
-  @Query(() => PaginatedHealthCentersResponse, {
-    name: 'rightsPortalPaginatedHealthCentersResponse',
+  @Query(() => PaginatedDentistsResponse, {
+    name: 'rightsPortalPaginatedDentists',
     nullable: true,
   })
   @Audit()

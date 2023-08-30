@@ -125,7 +125,7 @@ export class RightsPortalService {
             address: {
               postalCode: d.postcode,
               municipality: d.region,
-              streetAddressdf: d.address,
+              streetAddress: d.address,
             },
           }
         })

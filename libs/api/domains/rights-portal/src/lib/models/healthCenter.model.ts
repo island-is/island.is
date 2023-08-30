@@ -44,7 +44,7 @@ export class HealthCenter {
   waitListRegistration?: boolean | null
 }
 
-@ObjectType('RightsPortalPaginatedHealthCentersResponse')
+@ObjectType('RightsPortalPaginatedHealthCenters')
 export class PaginatedHealthCentersResponse extends PaginatedResponse(
   HealthCenter,
 ) {}

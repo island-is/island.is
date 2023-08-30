@@ -30,5 +30,5 @@ export class UserDentistRegistration {
   billHistory?: Array<Bill> | null
 }
 
-@ObjectType('RightsPortalPaginatedDentistsResponse')
+@ObjectType('RightsPortalPaginatedDentists')
 export class PaginatedDentistsResponse extends PaginatedResponse(Dentist) {}
