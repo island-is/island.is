@@ -898,17 +898,15 @@ export const OldAgePensionForm: Form = buildForm({
                       .registerChildTitle,
                   isPartOfRepeater: true,
                   children: [
-                    buildTextField({
-                      id: 'nationalIdOrBirthDate',
-                      title:
-                        oldAgePensionFormMessage.connectedApplications
-                          .childPensionTableHeaderId,
+                    buildCustomField({
+                      id: 'childDoesNotHaveNationalId',
+                      title: '',
+                      component: 'ChildDoesNotHaveNationalIdCheckbox',
                     }),
-                    buildTextField({
-                      id: 'name',
-                      title:
-                        oldAgePensionFormMessage.connectedApplications
-                          .childPensionFullName,
+                    buildCustomField({
+                      id: 'nationalIdOrBirthDate',
+                      title: '',
+                      component: 'ChildNationalIdOrBirthDate',
                     }),
                   ],
                 }),

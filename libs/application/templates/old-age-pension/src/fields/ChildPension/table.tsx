@@ -6,7 +6,7 @@ import { oldAgePensionFormMessage } from '../../lib/messages'
 interface ChildPensionTableProps {
   children: ChildPensionRow[] | undefined
   editable?: boolean
-  onDeleteChild?: (nationalId: string) => void
+  onDeleteChild?: (nationalId: string, name: string) => void
 }
 
 export const ChildPensionTable = ({
@@ -35,11 +35,15 @@ export const ChildPensionTable = ({
         </T.Row>
       </T.Head>
       <T.Body>
-        {children?.map((child) => (
-          <T.Row key={`${child.nationalIdOrBirthDate}`}>
+        {children?.map((child, index) => (
+          <T.Row key={`${child.name}-${child.nationalIdOrBirthDate}-${index}`}>
             {child.editable ? (
               <T.Data>
-                <Box onClick={() => onDeleteChild(child.nationalIdOrBirthDate)}>
+                <Box
+                  onClick={() =>
+                    onDeleteChild(child.nationalIdOrBirthDate, child.name)
+                  }
+                >
                   <Icon
                     color="dark200"
                     icon="removeCircle"
