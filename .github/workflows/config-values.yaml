@@ -87,7 +87,7 @@ jobs:
         run: yarn install --immutable
 
       - name: Run unit tests
-        run: yarn nx run infra:test
+        run: yarn test
 
       - name: Check chart values are up-to-date
         if: ${{ github.ref == 'ref/heads/main' }}
