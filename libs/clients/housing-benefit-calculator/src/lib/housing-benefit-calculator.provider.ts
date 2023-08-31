@@ -28,6 +28,7 @@ export const ApiConfig = {
       },
     })
   },
+  inject: [XRoadConfig.KEY, HousingBenefitCalculatorClientConfig.KEY],
 }
 
 export const ApiProviders = [AuthenticateApi, ReiknivelApi].map((api) => ({
@@ -35,5 +36,5 @@ export const ApiProviders = [AuthenticateApi, ReiknivelApi].map((api) => ({
   useFactory: (config: Configuration) => {
     return new api(config)
   },
-  inject: [config.provide],
+  inject: [ApiConfig.provide],
 }))

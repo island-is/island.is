@@ -10,4 +10,4 @@ import { HousingBenefitCalculatorClientService } from './housing-benefit-calcula
   ],
   exports: [HousingBenefitCalculatorClientService],
 })
-export class HousingBenefitCalculatorModule {}
+export class HousingBenefitCalculatorClientModule {}

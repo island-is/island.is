@@ -2,12 +2,12 @@ import { Field, ObjectType } from '@nestjs/graphql'
 
 @ObjectType('HousingBenefitCalculationModel')
 export class Calculation {
-  @Field(() => Number)
-  maximumHousingBenefits!: number
+  @Field(() => Number, { nullable: true })
+  maximumHousingBenefits?: number | null
 
-  @Field(() => Number)
-  reductions!: number
+  @Field(() => Number, { nullable: true })
+  reductions?: number | null
 
-  @Field(() => Number)
-  estimatedHousingBenefits!: number
+  @Field(() => Number, { nullable: true })
+  estimatedHousingBenefits?: number | null
 }
