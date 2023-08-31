@@ -120,7 +120,6 @@ const FormProvider = ({ children }: Props) => {
   }, [router.query.id, router.pathname])
 
   const [getCase] = useCaseLazyQuery({
-    variables: { input: { id } },
     fetchPolicy: 'no-cache',
     errorPolicy: 'all',
     onCompleted: (caseData) => {
@@ -139,7 +138,6 @@ const FormProvider = ({ children }: Props) => {
 
   const [getLimitedAccessCase] = useLimitedAccessCaseLazyQuery({
     fetchPolicy: 'no-cache',
-    variables: { input: { id } },
     errorPolicy: 'all',
     onCompleted: (caseData) => {
       if (caseData && caseData.limitedAccessCase) {
@@ -158,9 +156,9 @@ const FormProvider = ({ children }: Props) => {
   useEffect(() => {
     if (state === 'fetch' || state === 'refresh') {
       if (limitedAccess) {
-        getLimitedAccessCase()
+        getLimitedAccessCase({ variables: { input: { id } } })
       } else {
-        getCase()
+        getCase({ variables: { input: { id } } })
       }
     }
   }, [getCase, getLimitedAccessCase, id, limitedAccess, state])
