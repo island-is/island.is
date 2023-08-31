@@ -26,6 +26,7 @@ import { answerValidators } from './answerValidators'
 import {
   NationalRegistryResidenceHistoryApi,
   NationalRegistryCohabitantsApi,
+  SocialInsuranceAdministrationTestApi,
 } from '../dataProviders'
 import { getApplicationAnswers } from './oldAgePensionUtils'
 
@@ -40,6 +41,7 @@ const OldAgePensionTemplate: ApplicationTemplate<
   readyForProduction: false, // hafa þett svona atm?
   translationNamespaces: [ApplicationConfigurations.OldAgePension.translation],
   dataSchema,
+  allowMultipleApplicationsInDraft: false,
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {
@@ -72,6 +74,7 @@ const OldAgePensionTemplate: ApplicationTemplate<
                 NationalRegistryResidenceHistoryApi,
                 NationalRegistryCohabitantsApi,
                 ChildrenCustodyInformationApi,
+                SocialInsuranceAdministrationTestApi
               ],
               delete: true,
             },

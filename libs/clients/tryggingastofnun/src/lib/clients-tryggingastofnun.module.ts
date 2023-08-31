@@ -19,7 +19,7 @@ export class ClientsTryggingastofnunModule {
   static register(config: TryggingastofnunModuleConfig): DynamicModule {
     if (!config.apiKey) {
       logger.error(
-        'ClientsTryggingastofnunModule XROAD_VMST_API_KEY not provided.',
+        'ClientsTryggingastofnunModule XROAD_TR_API_KEY not provided.',
       )
     }
 
