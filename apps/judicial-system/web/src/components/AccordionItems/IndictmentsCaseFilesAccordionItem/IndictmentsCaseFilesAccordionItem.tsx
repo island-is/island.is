@@ -41,7 +41,8 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 
 import { indictmentsCaseFilesAccordionItem as m } from './IndictmentsCaseFilesAccordionItem.strings'
-import { UpdateFileMutation } from './UpdateFiles.gql'
+import { useUpdateFilesMutation } from './UpdateFiles.generated'
+
 import * as styles from './IndictmentsCaseFilesAccordionItem.css'
 
 const DDMMYYYY = 'dd.MM.yyyy'
@@ -409,8 +410,7 @@ const IndictmentsCaseFilesAccordionItem: React.FC<
     crimeScenes,
   } = props
   const { formatMessage } = useIntl()
-  const [updateFilesMutation] =
-    useMutation<UpdateFilesMutationResponse>(UpdateFileMutation)
+  const [updateFilesMutation] = useUpdateFilesMutation()
 
   const { onOpen, fileNotFound, dismissFileNotFound } = useFileList({ caseId })
   const { remove } = useS3Upload(caseId)
@@ -550,8 +550,9 @@ const IndictmentsCaseFilesAccordionItem: React.FC<
 
     setReorderableItems((prev) => {
       const newReorderableItems = [...prev]
-      newReorderableItems[fileInReorderableItems].userGeneratedFilename =
-        newName
+      newReorderableItems[
+        fileInReorderableItems
+      ].userGeneratedFilename = newName
       newReorderableItems[fileInReorderableItems].displayDate = newDate
         ? newDate.toISOString()
         : newReorderableItems[fileInReorderableItems].displayDate

@@ -1,0 +1,10 @@
+query ProsecutorSelectionUsers {
+  users {
+    id
+    name
+    role
+    institution {
+      id
+    }
+  }
+}
