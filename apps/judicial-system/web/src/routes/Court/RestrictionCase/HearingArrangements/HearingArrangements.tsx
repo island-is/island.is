@@ -15,10 +15,7 @@ import {
   FormContext,
 } from '@island.is/judicial-system-web/src/components'
 import { isCourtHearingArrangemenstStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
-import {
-  CaseCustodyRestrictions,
-  NotificationType,
-} from '@island.is/judicial-system/types'
+import { NotificationType } from '@island.is/judicial-system/types'
 import {
   useCase,
   useOnceOn,
@@ -26,7 +23,10 @@ import {
 import { errors, titles } from '@island.is/judicial-system-web/messages'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
-import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  CaseCustodyRestrictions,
+  CaseType,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import { hasSentNotification } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import type { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
 import * as constants from '@island.is/judicial-system/consts'

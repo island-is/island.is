@@ -12,7 +12,7 @@ import {
   Inline,
   LoadingDots,
   NavigationItem,
-  Option,
+  StringOption as Option,
   Select,
   Text,
 } from '@island.is/island-ui/core'
