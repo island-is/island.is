@@ -218,6 +218,8 @@ const StraddlingStockCalculator = ({
               name="year-select"
               options={yearOptions}
               value={selectedYear}
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore make web strict
               onChange={(newYear) => {
                 setSelectedYear(newYear as YearOption)
               }}
@@ -231,6 +233,8 @@ const StraddlingStockCalculator = ({
               label={n('addType', 'Bæta við tegund')}
               name="tegund-fiskur-select"
               options={quotaTypes}
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore make web strict
               onChange={(selectedOption) => {
                 send({
                   type: 'ADD_CATEGORY',
