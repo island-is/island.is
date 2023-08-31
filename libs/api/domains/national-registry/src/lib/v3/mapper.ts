@@ -28,7 +28,7 @@ import { Name } from '../shared/models/name.model'
 import * as kennitala from 'kennitala'
 
 export function formatPersonDiscriminated(
-  individual: EinstaklingurDTOAllt | null | undefined,
+  individual?: EinstaklingurDTOAllt | null,
 ): PersonV3 | null {
   const person = formatPerson(individual)
   if (!person) {
@@ -43,9 +43,9 @@ export function formatPersonDiscriminated(
 }
 
 export function formatPerson(
-  individual: EinstaklingurDTOAllt | null | undefined,
+  individual?: EinstaklingurDTOAllt | null,
 ): Person | null {
-  if (individual == null || !individual.kennitala || !individual.nafn) {
+  if (individual === null || !individual?.kennitala || !individual?.nafn) {
     return null
   }
 
@@ -90,9 +90,9 @@ export function formatPerson(
 
 export function formatHousing(
   nationalId: string,
-  housing: EinstaklingurDTOItarAuka | null | undefined,
-  domicileData: EinstaklingurDTOLoghTengsl | null | undefined,
-  address: EinstaklingurDTOHeimili | null | undefined,
+  housing?: EinstaklingurDTOItarAuka | null,
+  domicileData?: EinstaklingurDTOLoghTengsl | null,
+  address?: EinstaklingurDTOHeimili | null,
 ): Housing | null {
   const addressData = housing?.heimilisfang ?? address
 
@@ -124,7 +124,7 @@ export function formatHousing(
 }
 
 export function formatSpouse(
-  spouse: EinstaklingurDTOHju | null | undefined,
+  spouse?: EinstaklingurDTOHju | null,
 ): Spouse | null {
   if (!spouse || !spouse.makiKennitala || !spouse.makiNafn) {
     return null
@@ -138,7 +138,7 @@ export function formatSpouse(
 }
 
 export function formatAddress(
-  address: EinstaklingurDTOHeimili | null | undefined,
+  address?: EinstaklingurDTOHeimili | null,
 ): Address | null {
   if (!address || !address.husHeiti || !address.poststod) {
     return null
@@ -154,7 +154,7 @@ export function formatAddress(
 }
 
 export function formatBirthParent(
-  individual: EinstaklingurDTOLogForeldriItem | null | undefined,
+  individual?: EinstaklingurDTOLogForeldriItem | null,
 ): PersonBase | null {
   if (
     !individual ||
@@ -171,7 +171,7 @@ export function formatBirthParent(
 }
 
 export function formatBirthplace(
-  birthplace: EinstaklingurDTOFaeding | null | undefined,
+  birthplace?: EinstaklingurDTOFaeding | null,
 ): Birthplace | null {
   if (!birthplace || !birthplace.faedingarStadurHeiti) {
     return null
@@ -187,7 +187,7 @@ export function formatBirthplace(
 }
 
 export function formatCitizenship(
-  citizenship: EinstaklingurDTORikisfang | null | undefined,
+  citizenship?: EinstaklingurDTORikisfang | null,
 ): Citizenship | null {
   if (!citizenship || !citizenship.rikisfangLand) {
     return null
@@ -200,7 +200,7 @@ export function formatCitizenship(
 }
 
 export function formatName(
-  name: EinstaklingurDTONafnAllt | null | undefined,
+  name?: EinstaklingurDTONafnAllt | null,
 ): Name | null {
   if (!name) {
     return null
@@ -214,8 +214,8 @@ export function formatName(
 }
 
 export function formatCustodian(
-  custodian: EinstaklingurDTOForsjaItem | null | undefined,
-  childDomicileData: EinstaklingurDTOLoghTengsl | null | undefined,
+  custodian?: EinstaklingurDTOForsjaItem | null,
+  childDomicileData?: EinstaklingurDTOLoghTengsl | null,
 ): Custodian | null {
   if (
     !custodian ||
