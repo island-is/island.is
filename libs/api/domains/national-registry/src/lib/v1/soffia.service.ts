@@ -22,8 +22,8 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import type { Logger } from '@island.is/logging'
 import { formatFamilyChild } from './types/child.type'
-import { ExcludesFalse } from '../shared/utils'
 import { Name } from '../shared/models/name.model'
+import { isDefined } from '@island.is/shared/utils'
 
 @Injectable()
 export class SoffiaService {
@@ -210,7 +210,7 @@ export class SoffiaService {
         return isNotUser && isUnderEighteen
       })
       .map((familyChild) => formatFamilyChild(familyChild))
-      .filter(Boolean as unknown as ExcludesFalse)
+      .filter(isDefined)
       .sort((a, b) => {
         return (
           kennitala.info(b.nationalId).age - kennitala.info(a.nationalId).age
@@ -260,6 +260,7 @@ export class SoffiaService {
             nationalId: child.parent2,
             fullName: child.nameParent2,
           },
+        //temporary, until we remove v1
       ].filter(Boolean as unknown as ExcludesFalse)
     }
     return null
