@@ -4,7 +4,7 @@ import { CalculationInput } from './dto/calculation.input'
 
 @Resolver()
 export class HousingBenefitCalculatorResolver {
-  @Query(() => Calculation, { name: 'HousingBenefitCalculatorCalculation' })
+  @Query(() => Calculation, { name: 'housingBenefitCalculatorCalculation' })
   calculation(@Args('input') input: CalculationInput): Calculation {
     console.log('Calculation endpoint was called with:', input)
     return {

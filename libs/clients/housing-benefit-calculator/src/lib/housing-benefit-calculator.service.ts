@@ -1,8 +1,15 @@
+import { Inject } from '@nestjs/common'
+import type { ConfigType } from '@island.is/nest/config'
 import { AuthHeaderMiddleware } from '@island.is/auth-nest-tools'
 import { AuthenticateApi, ReiknivelApi } from '../../gen/fetch'
+import { HousingBenefitCalculatorClientConfig } from './housing-benefit-calculator.config'
 
 export class HousingBenefitCalculatorClientService {
   constructor(
+    @Inject(HousingBenefitCalculatorClientConfig.KEY)
+    private clientConfig: ConfigType<
+      typeof HousingBenefitCalculatorClientConfig
+    >,
     private readonly authenticationApi: AuthenticateApi,
     private readonly calculationApi: ReiknivelApi,
   ) {}
@@ -12,8 +19,8 @@ export class HousingBenefitCalculatorClientService {
       (await this.authenticationApi.apiVversionAuthenticateTokenPost({
         version: '1',
         loginModel: {
-          password: '',
-          username: '',
+          username: this.clientConfig.username,
+          password: this.clientConfig.password,
         },
         // TODO: Ask HMS to fix their swagger return type
       })) as unknown as { token: string; expiration: string }
