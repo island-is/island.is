@@ -5,7 +5,6 @@ import React, {
   useEffect,
   useState,
 } from 'react'
-import { useLazyQuery } from '@apollo/client'
 import { useRouter } from 'next/router'
 
 import { CaseState } from '@island.is/judicial-system/types'
@@ -21,8 +20,6 @@ import { UserContext } from '../UserProvider/UserProvider'
 
 import { useCaseLazyQuery } from './case.generated'
 import { useLimitedAccessCaseLazyQuery } from './limitedAccessCase.generated'
-
-import { string } from 'yargs'
 
 type ProviderState =
   | 'fetch'
