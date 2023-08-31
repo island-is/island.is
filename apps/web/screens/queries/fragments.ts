@@ -216,6 +216,8 @@ export const slices = gql`
     __typename
     id
     title
+    showTitle
+    showDividerOnTop
     video {
       ...EmbeddedVideoFields
     }

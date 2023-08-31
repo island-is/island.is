@@ -1512,8 +1512,8 @@ export const parentalLeaveFormMessages: MessageDir = {
     },
     attachmentMaxSizeError: {
       id: 'pl.application:selfEmployed.attachment.maxSizeError',
-      defaultMessage: 'Hámark 10 MB á skrá',
-      description: 'Max 10 MB per file',
+      defaultMessage: 'Hámark 2 MB á skrá',
+      description: 'Max 2 MB per file',
     },
   }),
 

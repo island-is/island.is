@@ -1,4 +1,4 @@
-import React, { FC, useContext } from 'react'
+import React, { FC, ReactNode, useContext } from 'react'
 import { FooterItem } from '@island.is/web/graphql/schema'
 import {
   Box,
@@ -64,7 +64,7 @@ const SyslumennFooter: React.FC<React.PropsWithChildren<FooterProps>> = ({
           (isServiceWeb ? item.serviceWebContent : item.content) as SliceType[],
           {
             renderNode: {
-              [BLOCKS.PARAGRAPH]: (_node, children) => (
+              [BLOCKS.PARAGRAPH]: (_node: never, children: ReactNode) => (
                 <Text variant="small" color="white">
                   {children}
                 </Text>

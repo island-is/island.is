@@ -49,7 +49,7 @@ const TransportAuthorityFooter = ({
         />
 
         <GridRow>
-          {footerItems.map((item, index) => {
+          {(footerItems ?? []).map((item, index) => {
             if (!shouldWrap) {
               return (
                 <Box

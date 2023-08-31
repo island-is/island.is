@@ -10,10 +10,7 @@ import {
   Button,
   AlertMessage,
 } from '@island.is/island-ui/core'
-import {
-  CaseLegalProvisions,
-  isAcceptingCaseDecision,
-} from '@island.is/judicial-system/types'
+import { isAcceptingCaseDecision } from '@island.is/judicial-system/types'
 import * as constants from '@island.is/judicial-system/consts'
 import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
 import {
@@ -48,6 +45,7 @@ import {
 } from '@island.is/judicial-system-web/messages'
 import { formatRequestedCustodyRestrictions } from '@island.is/judicial-system-web/src/utils/restrictions'
 import { lawsBrokenAccordion } from '@island.is/judicial-system-web/messages/Core/lawsBrokenAccordion'
+import { CaseLegalProvisions } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { DraftConclusionModal } from '../../components'
 
