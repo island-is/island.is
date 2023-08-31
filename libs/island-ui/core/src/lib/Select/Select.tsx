@@ -1,7 +1,7 @@
 import React from 'react'
 import cn from 'classnames'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-              // @ts-ignore make web strict
+// @ts-ignore make web strict
 import ReactSelect, { createFilter, GroupBase } from 'react-select'
 import CreatableReactSelect from 'react-select/creatable'
 
@@ -62,7 +62,7 @@ export const Select = <
     <div
       className={cn(styles.wrapper, {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-              // @ts-ignore make web strict
+        // @ts-ignore make web strict
         [styles.wrapperColor[backgroundColor]]: !isDisabled,
         [styles.containerDisabled]: isDisabled,
       })}
@@ -124,7 +124,7 @@ export const Select = <
     <div
       className={cn(styles.wrapper, {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-              // @ts-ignore make web strict
+        // @ts-ignore make web strict
         [styles.wrapperColor[backgroundColor]]: !isDisabled,
         [styles.containerDisabled]: isDisabled,
       })}

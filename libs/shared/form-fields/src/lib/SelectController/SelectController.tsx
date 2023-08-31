@@ -58,7 +58,7 @@ export const SelectController = <Value,>({
           value={options.find((option) => option.value === value)}
           isSearchable={isSearchable}
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-              // @ts-ignore make web strict
+          // @ts-ignore make web strict
           onChange={(newVal) => {
             clearErrors(id)
 

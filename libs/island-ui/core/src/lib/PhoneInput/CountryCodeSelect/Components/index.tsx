@@ -177,7 +177,7 @@ export const Placeholder = (
         styles.placeholder,
         styles.placeholderPadding,
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-              // @ts-ignore make web strict
+        // @ts-ignore make web strict
         styles.placeholderSizes[size],
       )}
       {...props}
@@ -189,7 +189,7 @@ export const Placeholder = (
 
 export const Input = (
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-              // @ts-ignore make web strict
+  // @ts-ignore make web strict
   props: InputProps<OptionType<string>, false, GroupBase<OptionType<string>>>,
 ) => {
   const { ariaError } = props.selectProps
@@ -207,7 +207,7 @@ export const Input = (
 }
 export const Control = (
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-              // @ts-ignore make web strict
+  // @ts-ignore make web strict
   props: ControlProps<OptionType<string>, false, GroupBase<OptionType<string>>>,
 ) => {
   const { size = 'md' } = props.selectProps
@@ -224,7 +224,7 @@ export const Control = (
   )
 }
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-              // @ts-ignore make web strict
+// @ts-ignore make web strict
 export const customStyles = (): StylesConfig<
   OptionType<string>,
   false,
@@ -232,7 +232,7 @@ export const customStyles = (): StylesConfig<
 > => ({
   indicatorSeparator: () => ({}),
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-              // @ts-ignore make web strict
+  // @ts-ignore make web strict
   container: (provided) => ({
     ...provided,
     position: 'absolute',
@@ -243,7 +243,7 @@ export const customStyles = (): StylesConfig<
     zIndex: 1,
   }),
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-              // @ts-ignore make web strict
+  // @ts-ignore make web strict
   control: (provided, state) => ({
     ...provided,
     background: 'transparent',
