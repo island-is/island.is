@@ -18,6 +18,7 @@ import {
   coreMessages,
   pruneAfterDays,
   DefaultStateLifeCycle,
+  coreHistoryMessages,
 } from '@island.is/application/core'
 import { ConnectedApplications, Events, Roles, States } from './constants'
 import { dataSchema } from './dataSchema'
@@ -48,6 +49,14 @@ const OldAgePensionTemplate: ApplicationTemplate<
           name: States.PREREQUISITES,
           status: 'draft',
           lifecycle: pruneAfterDays(1),
+          actionCard: {
+            historyLogs: [
+              {
+                logMessage: coreHistoryMessages.applicationStarted,
+                onEvent: DefaultEvents.SUBMIT,
+              },
+            ],
+          },
           progress: 0.25,
           //onExit: defineTemplateApi - kalla á TR
           roles: [
@@ -91,7 +100,7 @@ const OldAgePensionTemplate: ApplicationTemplate<
             description: statesMessages.draftDescription,
             historyLogs: {
               onEvent: DefaultEvents.SUBMIT,
-              logMessage: statesMessages.applicationSent,
+              logMessage: coreHistoryMessages.applicationSent,
             },
           },
           progress: 0.25,
@@ -199,6 +208,8 @@ const OldAgePensionTemplate: ApplicationTemplate<
           ADDITIONALDOCUMENTSREQUIRED: {
             target: States.ADDITIONAL_DOCUMENTS_REQUIRED,
           },
+          PENDING: { target: States.PENDING },
+          // DISMISSED: { target: States.DISMISSED },
         },
       },
       [States.ADDITIONAL_DOCUMENTS_REQUIRED]: {
@@ -236,6 +247,60 @@ const OldAgePensionTemplate: ApplicationTemplate<
           },
         },
       },
+      [States.PENDING]: {
+        meta: {
+          name: States.PENDING,
+          progress: 1,
+          status: 'inprogress',
+          actionCard: {
+            tag: {
+              label: statesMessages.pendingTag,
+            },
+            pendingAction: {
+              title: statesMessages.applicationPending,
+              content: statesMessages.applicationPendingDescription,
+              displayStatus: 'info',
+            },
+          },
+          lifecycle: DefaultStateLifeCycle,
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/InReview').then((val) =>
+                  Promise.resolve(val.InReview),
+                ),
+              read: 'all',
+            },
+          ],
+        },
+      },
+      // // TODO: Not implemented in Smári yet
+      // [States.DISMISSED]: {
+      //   meta: {
+      //     name: States.DISMISSED,
+      //     progress: 1,
+      //     status: 'rejected',
+      //     actionCard: {
+      //       pendingAction: {
+      //         title: statesMessages.applicationDismissed,
+      //         content: statesMessages.applicationDismissedDescription,
+      //         displayStatus: 'error',
+      //       },
+      //     },
+      //     lifecycle: DefaultStateLifeCycle,
+      //     roles: [
+      //       {
+      //         id: Roles.APPLICANT,
+      //         formLoader: () =>
+      //           import('../forms/InReview').then((val) =>
+      //             Promise.resolve(val.InReview),
+      //           ),
+      //         read: 'all',
+      //       },
+      //     ],
+      //   },
+      // },
       [States.APPROVED]: {
         meta: {
           name: States.APPROVED,
@@ -267,6 +332,11 @@ const OldAgePensionTemplate: ApplicationTemplate<
           progress: 1,
           status: 'rejected',
           actionCard: {
+            pendingAction: {
+              title: statesMessages.applicationRejected,
+              content: statesMessages.applicationRejectedDescription,
+              displayStatus: 'error',
+            },
             historyLogs: [
               {
                 // TODO: Þurfum mögulega að breyta þessu þegar við vitum hvernig TR gerir stöðubreytingar

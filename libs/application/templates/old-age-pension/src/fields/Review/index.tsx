@@ -90,12 +90,14 @@ export const Review: FC<ReviewScreenProps> = ({
     }
   }
 
-  // TODO: Hvaða states eiga sjá þetta? Mega öll state sjá nema DRAFT og PREREQUISITES???rt------'hb
+  // TODO: Hvaða states eiga sjá þetta? Mega öll state sjá nema DRAFT og PREREQUISITES? (ekki heldur ADDITIONAL_DOCUMENTS_REQUIRED)
   const canView =
     state === States.TRYGGINGASTOFNUN_SUBMITTED ||
     state === States.TRYGGINGASTOFNUN_IN_REVIEW ||
     state === States.APPROVED ||
-    state === States.REJECTED
+    state === States.REJECTED ||
+    state === States.PENDING ||
+    state === States.DISMISSED
 
   return (
     <>

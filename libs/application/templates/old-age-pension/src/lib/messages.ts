@@ -1313,11 +1313,6 @@ export const statesMessages = defineMessages({
     defaultMessage: 'Þú hefur útbúið drög að umsókn.',
     description: 'Description of the state - draft',
   },
-  applicationSent: {
-    id: 'oap.application:applicationSent',
-    defaultMessage: 'Umsókn send',
-    description: 'History application sent',
-  },
   tryggingastofnunSubmittedTitle: {
     id: 'oap.application:tryggingastofnunSubmittedTitle',
     defaultMessage: 'Umsókn hefur verið send til Tryggingastofnunnar',
@@ -1353,6 +1348,11 @@ export const statesMessages = defineMessages({
     defaultMessage: 'Umsókn hafnað',
     description: 'Application rejected',
   },
+  applicationRejectedDescription: {
+    id: 'oap.application:applicationRejectedDescription',
+    defaultMessage: 'Umsókn vegna ellilífeyris hefur verið hafnað',
+    description: 'The application for old-age pension has been rejected',
+  },
   applicationApproved: {
     id: 'oap.application:applicationApproved',
     defaultMessage: 'Tryggingastofnun hefur samþykkt umsóknina',
@@ -1383,5 +1383,26 @@ export const statesMessages = defineMessages({
     id: 'oap.application:pending.tag',
     defaultMessage: 'Í bið',
     description: 'Pending',
+  },
+
+  applicationPending: {
+    id: 'oap.application:applicationPending',
+    defaultMessage: 'Umsókn í bið hjá Tryggingastofnun',
+    description: 'Application pending at Tryggingastofnun',
+  },
+  applicationPendingDescription: {
+    id: 'oap.application:applicationPendingDescription',
+    defaultMessage: 'Umsókn vegna ellilífeyris hefur verið sett í bið.',
+    description: 'The application for old-age pension has been put on hold.',
+  },
+  applicationDismissed: {
+    id: 'oap.application:applicationDismissed',
+    defaultMessage: 'Umsókn hefur verið vísað frá',
+    description: 'Application has been dismissed',
+  },
+  applicationDismissedDescription: {
+    id: 'oap.application:applicationDismissedDescription',
+    defaultMessage: 'Umsókn vegna ellilífeyris hefur verið vísað frá.',
+    description: 'The application for old-age pension has been dismissed.',
   },
 })
