@@ -93,38 +93,48 @@ export const SearchSection = ({
                   colored
                 />
                 <Inline space={2}>
-                  {featured.map(({ title, attention, thing }) => {
-                    const cardUrl = linkResolver(thing?.type as LinkType, [
-                      thing?.slug,
-                    ])
-                    return cardUrl?.href && cardUrl?.href.length > 0 ? (
-                      <Tag
-                        key={title}
-                        {...(cardUrl.href.startsWith('/')
-                          ? {
-                              CustomLink: ({ children, ...props }) => (
-                                <Link
-                                  key={title}
-                                  {...props}
-                                  {...cardUrl}
-                                  dataTestId="featured-link"
-                                >
-                                  {children}
-                                </Link>
-                              ),
-                            }
-                          : { href: cardUrl.href })}
-                        variant="blue"
-                        attention={attention}
-                      >
-                        {title}
-                      </Tag>
-                    ) : (
-                      <Tag key={title} variant="blue" attention={attention}>
-                        {title}
-                      </Tag>
-                    )
-                  })}
+                  {featured.map(
+                    ({
+                      title,
+                      attention,
+                      thing,
+                    }: {
+                      title: string
+                      attention: boolean
+                      thing: any
+                    }) => {
+                      const cardUrl = linkResolver(thing?.type as LinkType, [
+                        thing?.slug,
+                      ])
+                      return cardUrl?.href && cardUrl?.href.length > 0 ? (
+                        <Tag
+                          key={title}
+                          {...(cardUrl.href.startsWith('/')
+                            ? {
+                                CustomLink: ({ children, ...props }) => (
+                                  <Link
+                                    key={title}
+                                    {...props}
+                                    {...cardUrl}
+                                    dataTestId="featured-link"
+                                  >
+                                    {children}
+                                  </Link>
+                                ),
+                              }
+                            : { href: cardUrl.href })}
+                          variant="blue"
+                          attention={attention}
+                        >
+                          {title}
+                        </Tag>
+                      ) : (
+                        <Tag key={title} variant="blue" attention={attention}>
+                          {title}
+                        </Tag>
+                      )
+                    },
+                  )}
                 </Inline>
               </Stack>
             </Box>
@@ -272,7 +282,7 @@ const Image = ({ spacing, src, alt }: ImageProps) => {
 type ImageOrDefaultProps = {
   url?: string
   imageAlternativeText: string
-  isMobile?: boolean | null
+  isMobile?: boolean
 }
 
 const ImageOrDefault = ({

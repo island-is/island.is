@@ -187,7 +187,8 @@ export const StandardForm = ({
   const [categoryLabel, setCategoryLabel] = useState<string>('')
   const [addonFields, setAddonFields] = useState<ReactNode | null>()
   const categoryDescription = useMemo(
-    () => supportCategories.find((c) => c.id === categoryId)?.description ?? '',
+    () =>
+      supportCategories?.find((c) => c.id === categoryId)?.description ?? '',
     [categoryId, supportCategories],
   )
 
@@ -528,7 +529,7 @@ export const StandardForm = ({
 
   const isBusy = loadingSuggestions || isChangingSubject
 
-  const categoryOptions = supportCategories
+  const categoryOptions = (supportCategories ?? [])
     .map((x) => ({
       label: x.title?.trim(),
       value: x.id,
@@ -546,9 +547,9 @@ export const StandardForm = ({
               isSearchable
               label={fn('malaflokkur', 'label', 'Málaflokkur')}
               name="malaflokkur"
-              onChange={({ label, value }: Option) => {
-                setCategoryLabel(label as string)
-                setCategoryId(value as string)
+              onChange={({ label, value }) => {
+                setCategoryLabel(label)
+                setCategoryId(value)
               }}
               options={categoryOptions}
               placeholder={fn('malaflokkur', 'placeholder', 'Veldu flokk')}
@@ -701,11 +702,11 @@ export const StandardForm = ({
                           isSearchable
                           label={fn('rikisadili', 'label', 'Ríkisaðili')}
                           name="rikisadili"
-                          onChange={({ label }: Option) => {
+                          onChange={({ label }) => {
                             onChange(label)
                           }}
                           hasError={errors?.rikisadili !== undefined}
-                          errorMessage={errors?.rikisadili?.message.toString()}
+                          errorMessage={errors?.rikisadili?.message?.toString()}
                           options={stateEntityOptions}
                           placeholder={fn(
                             'rikisadili',
@@ -882,15 +883,15 @@ export const StandardForm = ({
                                 'Þinn sýslumaður',
                               )}
                               name="syslumadur"
-                              onChange={({ label, value }: Option) => {
+                              onChange={({ label, value }) => {
                                 onChange(label)
-                                setSyslumadurId(value as string)
+                                setSyslumadurId(value)
                               }}
                               hasError={errors?.syslumadur !== undefined}
                               errorMessage={
                                 errors?.syslumadur?.message as string
                               }
-                              options={syslumenn.map((x) => ({
+                              options={(syslumenn ?? []).map((x) => ({
                                 label: x.title,
                                 value: x.id,
                               }))}

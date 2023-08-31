@@ -80,7 +80,7 @@ export const NewsList = ({
         readClass="rs_read"
       />
 
-      {filteredNewsTags?.length > 0 && (
+      {filteredNewsTags && filteredNewsTags?.length > 0 && (
         <Inline space={1}>
           <LinkV2
             href={
@@ -130,7 +130,7 @@ export const NewsList = ({
               (selectedYear ? selectedYear.toString() : allYearsString),
           )}
           options={yearOptions}
-          onChange={({ value }: Option) => {
+          onChange={({ value }) => {
             router.push(
               makeHref(
                 selectedTag,
@@ -149,7 +149,7 @@ export const NewsList = ({
             placeholder={monthString}
             value={monthOptions.find((o) => o.value === selectedMonth)}
             options={monthOptions}
-            onChange={({ value }: Option) =>
+            onChange={({ value }) =>
               router.push(
                 makeHref(selectedTag, newsOverviewUrl, selectedYear, value),
               )

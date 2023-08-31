@@ -74,10 +74,13 @@ export const LanguageToggler = ({
 
     // We need to have a special case for subArticles since they've got a url field instead of a slug field
     if (secondContentSlug?.type === 'subArticle') {
-      const urls = secondContentSlug.url[otherLanguage].split('/')
+      const urls = secondContentSlug?.url?.[otherLanguage].split('/')
 
       // Show dialog when either there is no title or there aren't at least 2 urls (for example, a valid url would be on the format: 'parental-leave/payments')
-      if (!secondContentSlug?.title?.[otherLanguage] || urls.length < 2) {
+      if (
+        !secondContentSlug?.title?.[otherLanguage] ||
+        (urls && urls.length < 2)
+      ) {
         return setShowDialog(true)
       }
       return goToOtherLanguagePage(
@@ -135,7 +138,7 @@ export const LanguageToggler = ({
     setShowDialog(true)
   }
 
-  const goToOtherLanguagePage = (path) => {
+  const goToOtherLanguagePage = (path: string) => {
     locale(t.otherLanguageCode)
     Router.push(path)
   }
