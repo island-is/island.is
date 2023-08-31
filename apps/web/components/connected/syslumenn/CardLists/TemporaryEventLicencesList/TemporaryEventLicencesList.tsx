@@ -3,6 +3,7 @@ import { useQuery } from '@apollo/client/react'
 import { GET_TEMPORARY_EVENT_LICENCES } from './queries'
 import {
   ConnectedComponent,
+  Maybe,
   Query,
   TemporaryEventLicence,
 } from '@island.is/web/graphql/schema'
@@ -21,7 +22,6 @@ import {
   Input,
   AlertMessage,
   Select,
-  Option,
   GridContainer,
   GridRow,
   GridColumn,
@@ -38,9 +38,9 @@ interface TemporaryEventLicencesListProps {
 
 type ListState = 'loading' | 'loaded' | 'error'
 
-const TemporaryEventLicencesList: FC<TemporaryEventLicencesListProps> = ({
-  slice,
-}) => {
+const TemporaryEventLicencesList: FC<
+  React.PropsWithChildren<TemporaryEventLicencesListProps>
+> = ({ slice }) => {
   const n = useNamespace(slice.json ?? {})
   const { format } = useDateUtils()
   const PAGE_SIZE = slice?.configJson?.pageSize ?? DEFAULT_PAGE_SIZE
@@ -63,7 +63,7 @@ const TemporaryEventLicencesList: FC<TemporaryEventLicencesListProps> = ({
 
   const getLicenceTypeRepresentation = (
     licence: TemporaryEventLicence,
-  ): string => {
+  ): Maybe<string> | undefined => {
     let result = licence.licenceType
     if (
       licence.licenceSubType &&
@@ -101,14 +101,14 @@ const TemporaryEventLicencesList: FC<TemporaryEventLicencesListProps> = ({
         const dataRows = []
         for (const temporaryEventLicence of temporaryEventLicences) {
           dataRows.push([
-            temporaryEventLicence.licenceType, // Tegund
-            temporaryEventLicence.licenceSubType, // Tegund leyfis
-            temporaryEventLicence.licenseNumber, // Leyfisnúmer
-            temporaryEventLicence.licenseHolder, // Leyfishafi
-            temporaryEventLicence.licenseResponsible, // Ábyrgðarmaður
-            temporaryEventLicence.validFrom?.toString(), // Gildir frá
-            temporaryEventLicence.validTo?.toString(), // Gildir til
-            temporaryEventLicence.issuedBy, // Útgefið af
+            temporaryEventLicence.licenceType ?? '', // Tegund
+            temporaryEventLicence.licenceSubType ?? '', // Tegund leyfis
+            temporaryEventLicence.licenseNumber ?? '', // Leyfisnúmer
+            temporaryEventLicence.licenseHolder ?? '', // Leyfishafi
+            temporaryEventLicence.licenseResponsible ?? '', // Ábyrgðarmaður
+            temporaryEventLicence.validFrom?.toString() ?? '', // Gildir frá
+            temporaryEventLicence.validTo?.toString() ?? '', // Gildir til
+            temporaryEventLicence.issuedBy ?? '', // Útgefið af
           ])
         }
         return resolve(prepareCsvString(headerRow, dataRows))
@@ -209,7 +209,7 @@ const TemporaryEventLicencesList: FC<TemporaryEventLicencesListProps> = ({
                       value: x,
                     }))
                     .find((x) => x.value === filterLicenceSubType)}
-                  onChange={({ value }: Option) => {
+                  onChange={({ value }) => {
                     setFilterLicenceSubType(String(value))
                   }}
                 />
@@ -235,7 +235,7 @@ const TemporaryEventLicencesList: FC<TemporaryEventLicencesListProps> = ({
                       value: x,
                     }))
                     .find((x) => x.value === filterOffice)}
-                  onChange={({ value }: Option) => {
+                  onChange={({ value }) => {
                     setFilterOffice(String(value))
                   }}
                 />

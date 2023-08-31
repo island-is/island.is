@@ -25,7 +25,10 @@ type LookupProps = {
   error: Record<string, string> | any
 }
 
-export const LookupPerson: FC<LookupProps> = ({ field, error }) => {
+export const LookupPerson: FC<React.PropsWithChildren<LookupProps>> = ({
+  field,
+  error,
+}) => {
   const { formatMessage } = useLocale()
   const { id, props } = field
   const { setValue, watch, clearErrors } = useFormContext()

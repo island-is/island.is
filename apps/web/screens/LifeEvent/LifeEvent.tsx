@@ -17,6 +17,7 @@ import { withMainLayout } from '@island.is/web/layouts/main'
 import {
   AnchorNavigation,
   BackgroundImage,
+  Form,
   HeadWithSocialSharing,
   Sticky,
   WatsonChatPanel,
@@ -39,6 +40,7 @@ import { useRouter } from 'next/router'
 import { Locale } from 'locale'
 import { useLocalLinkTypeResolver } from '@island.is/web/hooks/useLocalLinkTypeResolver'
 import { webRichText } from '@island.is/web/utils/richText'
+import { useI18n } from '@island.is/web/i18n'
 import { Webreader } from '@island.is/web/components'
 import { DIGITAL_ICELAND_PLAUSIBLE_TRACKING_DOMAIN } from '@island.is/web/constants'
 import { watsonConfig } from './config'
@@ -62,6 +64,7 @@ export const LifeEvent: Screen<LifeEventProps> = ({
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
   const router = useRouter()
+  const { activeLocale } = useI18n()
 
   const navigation = useMemo(() => {
     return createNavigation(content, { title })
@@ -143,7 +146,7 @@ export const LifeEvent: Screen<LifeEventProps> = ({
                     items={breadcrumbItems}
                     renderLink={(link, { href }) => {
                       return (
-                        <NextLink href={href} passHref>
+                        <NextLink href={href} passHref legacyBehavior>
                           {link}
                         </NextLink>
                       )
@@ -178,7 +181,17 @@ export const LifeEvent: Screen<LifeEventProps> = ({
                   />
                 </Box>
                 <Box className="rs_read" paddingTop={[3, 3, 4]}>
-                  {webRichText(content as SliceType[])}
+                  {webRichText(
+                    content as SliceType[],
+                    {
+                      renderComponent: {
+                        Form: (form) => (
+                          <Form form={form} namespace={namespace} />
+                        ),
+                      },
+                    },
+                    activeLocale,
+                  )}
                 </Box>
               </GridColumn>
             </GridRow>
@@ -201,7 +214,7 @@ export const LifeEvent: Screen<LifeEventProps> = ({
   )
 }
 
-LifeEvent.getInitialProps = async ({ apolloClient, locale, query }) => {
+LifeEvent.getProps = async ({ apolloClient, locale, query }) => {
   const [
     {
       data: { getLifeEventPage: lifeEvent },
@@ -225,10 +238,12 @@ LifeEvent.getInitialProps = async ({ apolloClient, locale, query }) => {
           },
         },
       })
-      .then((content) => {
-        // map data here to reduce data processing in component
-        return JSON.parse(content.data.getNamespace.fields)
-      }),
+      // map data here to reduce data processing in component
+      .then((content) =>
+        content.data.getNamespace?.fields
+          ? JSON.parse(content.data.getNamespace.fields)
+          : {},
+      ),
   ])
 
   if (!lifeEvent) {

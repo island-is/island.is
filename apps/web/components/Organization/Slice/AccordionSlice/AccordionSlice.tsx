@@ -37,7 +37,9 @@ interface SliceProps {
   slice: AccordionSliceSchema
 }
 
-export const AccordionSlice: React.FC<SliceProps> = ({ slice }) => {
+export const AccordionSlice: React.FC<React.PropsWithChildren<SliceProps>> = ({
+  slice,
+}) => {
   const router = useRouter()
   const labelId = 'sliceTitle-' + slice.id
 
@@ -64,16 +66,16 @@ export const AccordionSlice: React.FC<SliceProps> = ({ slice }) => {
           </Text>
         )}
         {slice.type === 'accordion' &&
-          slice.accordionItems.map((item) => (
+          (slice.accordionItems ?? []).map((item) => (
             <Box paddingY={1} key={item.id}>
               <AccordionCard
                 id={item.id}
                 label={item.title}
                 labelUse={childHeading}
-                startExpanded={slice.accordionItems.length === 1}
+                startExpanded={slice.accordionItems?.length === 1}
               >
                 <Box className={styles.accordionBox}>
-                  {webRichText(item.content)}
+                  {webRichText(item.content ?? [])}
                 </Box>
               </AccordionCard>
             </Box>
@@ -81,13 +83,13 @@ export const AccordionSlice: React.FC<SliceProps> = ({ slice }) => {
         {slice.type === 'accordion_minimal' && (
           <Box paddingTop={4}>
             <Accordion>
-              {slice.accordionItems.map((item) => (
+              {(slice.accordionItems ?? []).map((item) => (
                 <AccordionItem
                   key={item.id}
                   id={item.id}
                   label={item.title}
                   labelUse={childHeading}
-                  startExpanded={slice.accordionItems.length === 1}
+                  startExpanded={slice.accordionItems?.length === 1}
                 >
                   <Text>{webRichText(item.content as SliceType[])}</Text>
                 </AccordionItem>
@@ -96,12 +98,12 @@ export const AccordionSlice: React.FC<SliceProps> = ({ slice }) => {
           </Box>
         )}
         {slice.type === 'CTA' &&
-          slice.accordionItems.map((item, index) => (
+          (slice.accordionItems ?? []).map((item, index) => (
             <Box marginTop={index ? 4 : 0} key={item.id}>
               <ActionCard
                 heading={item.title}
                 text={
-                  (item.content[0] as Html)?.document?.content[0]?.content[0]
+                  (item.content?.[0] as Html)?.document?.content[0]?.content[0]
                     ?.value
                 }
                 cta={{

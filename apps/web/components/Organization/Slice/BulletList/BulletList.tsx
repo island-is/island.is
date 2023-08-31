@@ -7,7 +7,9 @@ interface SliceProps {
   slice: BulletListProps
 }
 
-export const BulletListSlice: React.FC<SliceProps> = ({ slice }) => {
+export const BulletListSlice: React.FC<React.PropsWithChildren<SliceProps>> = ({
+  slice,
+}) => {
   return (
     <section
       key={slice.id}

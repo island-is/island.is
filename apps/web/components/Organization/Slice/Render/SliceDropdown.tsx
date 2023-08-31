@@ -6,7 +6,6 @@ import {
   GridColumn,
   GridContainer,
   GridRow,
-  Option,
   Select,
 } from '@island.is/island-ui/core'
 import { useRouter } from 'next/router'
@@ -22,7 +21,7 @@ interface SliceProps {
   dropdownMarginBottom?: BoxProps['marginBottom']
 }
 
-export const SliceDropdown: React.FC<SliceProps> = ({
+export const SliceDropdown: React.FC<React.PropsWithChildren<SliceProps>> = ({
   slices,
   sliceExtraText,
   gridSpan = ['9/9', '9/9', '7/9', '7/9', '4/9'],
@@ -54,7 +53,7 @@ export const SliceDropdown: React.FC<SliceProps> = ({
 
     setSelectedId(
       hashString
-        ? options.find((x) => x.slug === hashString).value
+        ? options.find((x) => x.slug === hashString)?.value ?? ''
         : options[0].value,
     )
   }, [Router, options])
@@ -75,8 +74,8 @@ export const SliceDropdown: React.FC<SliceProps> = ({
               name="select1"
               options={options}
               value={options.find((x) => x.value === selectedId)}
-              onChange={({ value }: Option) => {
-                const slug = options.find((x) => x.value === value).slug
+              onChange={({ value }) => {
+                const slug = options.find((x) => x.value === value)?.slug
                 setSelectedId(String(value))
                 Router.push(
                   {

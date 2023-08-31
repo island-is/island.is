@@ -47,7 +47,9 @@ interface AdgerdirArticlesProps {
   startingIds?: Array<string>
 }
 
-export const AdgerdirArticles: FC<AdgerdirArticlesProps> = ({
+export const AdgerdirArticles: FC<
+  React.PropsWithChildren<AdgerdirArticlesProps>
+> = ({
   title,
   items,
   tags,
@@ -99,7 +101,7 @@ export const AdgerdirArticles: FC<AdgerdirArticlesProps> = ({
   }
 
   const onFilterStringChange = useCallback(() => {
-    const arr = []
+    const arr: number[] = []
 
     visibleItems.forEach(({ title, description }, index) => {
       const str = `${title} ${description}`.trim()
@@ -116,7 +118,7 @@ export const AdgerdirArticles: FC<AdgerdirArticlesProps> = ({
   }, [visibleItems, filterString])
 
   const onFilterTagChange = useCallback(() => {
-    const arr = []
+    const arr: number[] = []
 
     visibleItems.forEach(({ tags }, index) => {
       const ids = tags.map((x) => x.id)
@@ -163,7 +165,9 @@ export const AdgerdirArticles: FC<AdgerdirArticlesProps> = ({
 
   useEffect(() => {
     onUpdateFilters()
-    return () => clearTimeout(timerRef.current)
+    return () => {
+      clearTimeout(timerRef.current)
+    }
   }, [onUpdateFilters])
 
   const filteredItems = visibleItems.filter((_, index) => {

@@ -14,10 +14,9 @@ import { useLocale } from '@island.is/localization'
 import { NO, YES } from '../../constants'
 import { parentalLeaveFormMessages } from '../../lib/messages'
 
-export const SpouseUseAsMuchAsPossible: FC<FieldBaseProps> = ({
-  application,
-  field,
-}) => {
+export const SpouseUseAsMuchAsPossible: FC<
+  React.PropsWithChildren<FieldBaseProps>
+> = ({ application, field }) => {
   const {
     formState: { errors },
     setValue,

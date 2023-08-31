@@ -16,7 +16,7 @@ import { useLocale } from '@island.is/localization'
 import { YesOrNo } from '../../types'
 import { getApplicationAnswers } from '../../lib/parentalLeaveUtils'
 
-export const SelfEmployed: FC<FieldBaseProps> = ({
+export const SelfEmployed: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   application,
   field,
   error,
@@ -24,10 +24,8 @@ export const SelfEmployed: FC<FieldBaseProps> = ({
   const { setValue, register } = useFormContext()
   const { formatMessage } = useLocale()
   const { id, title, description } = field
-  const {
-    isSelfEmployed,
-    isReceivingUnemploymentBenefits,
-  } = getApplicationAnswers(application.answers)
+  const { isSelfEmployed, isReceivingUnemploymentBenefits } =
+    getApplicationAnswers(application.answers)
 
   const [defaultValue, setHiddenSelfEmployed] = useState(isSelfEmployed ?? NO)
   const hiddenReceivingUnemploymentbenefits =

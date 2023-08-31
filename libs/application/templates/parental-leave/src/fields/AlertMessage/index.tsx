@@ -5,7 +5,7 @@ import { formatText } from '@island.is/application/core'
 import { FieldBaseProps } from '@island.is/application/types'
 import { Box } from '@island.is/island-ui/core'
 
-export const FieldAlertMessage: FC<FieldBaseProps> = ({
+export const FieldAlertMessage: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   application,
   field,
 }) => {

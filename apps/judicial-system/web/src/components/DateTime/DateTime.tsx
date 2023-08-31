@@ -26,7 +26,7 @@ interface Props {
   onChange: (date: Date | undefined, valid: boolean) => void
 }
 
-const DateTime: React.FC<Props> = (props) => {
+const DateTime: React.FC<React.PropsWithChildren<Props>> = (props) => {
   const {
     name,
     datepickerLabel = 'Veldu dagsetningu',
@@ -47,10 +47,10 @@ const DateTime: React.FC<Props> = (props) => {
 
   const getTimeFromDate = (date: Date | undefined): string =>
     date
-      ? `${date
-          .getHours()
+      ? `${date.getHours().toString().padStart(2, '0')}:${date
+          .getMinutes()
           .toString()
-          .padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`
+          .padStart(2, '0')}`
       : ''
 
   const date = (d: Date | string | undefined) => {

@@ -32,7 +32,7 @@ const user: User = {
   active: true,
 }
 
-export const NewUser: React.FC = () => {
+export const NewUser: React.FC<React.PropsWithChildren<unknown>> = () => {
   const router = useRouter()
 
   const {
@@ -44,9 +44,8 @@ export const NewUser: React.FC = () => {
   } = useInstitution()
   const { formatMessage } = useIntl()
 
-  const [createUserMutation, { loading: createLoading }] = useMutation(
-    CreateUserMutation,
-  )
+  const [createUserMutation, { loading: createLoading }] =
+    useMutation(CreateUserMutation)
 
   const createUser = async (user: User): Promise<void> => {
     if (createLoading === false && user) {

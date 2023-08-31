@@ -55,6 +55,8 @@ describe('CaseController - Update', () => {
     policeCaseNumbers,
     caseFiles: [caseFile],
     courtCaseNumber,
+    caseFacts: uuid(),
+    legalArguments: uuid(),
   } as Case
 
   let mockMessageService: MessageService
@@ -200,6 +202,27 @@ describe('CaseController - Update', () => {
         caseFileId,
         { policeCaseNumber: newPoliceCaseNumber },
         transaction,
+      )
+    })
+  })
+
+  describe('case is resent by prosecutor', () => {
+    const caseToUpdate = {
+      caseResentExplanation: 'Endursending',
+    }
+
+    beforeEach(async () => {
+      await givenWhenThen(caseId, user, theCase, caseToUpdate)
+    })
+
+    it('should update court case facts and court legal arguments', () => {
+      expect(mockCaseModel.update).toHaveBeenCalledWith(
+        {
+          caseResentExplanation: 'Endursending',
+          courtCaseFacts: `Í greinargerð sóknaraðila er atvikum lýst svo: ${theCase.caseFacts}`,
+          courtLegalArguments: `Í greinargerð er krafa sóknaraðila rökstudd þannig: ${theCase.legalArguments}`,
+        },
+        { where: { id: caseId }, transaction },
       )
     })
   })

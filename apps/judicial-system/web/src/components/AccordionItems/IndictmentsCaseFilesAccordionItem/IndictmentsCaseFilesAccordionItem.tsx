@@ -194,7 +194,7 @@ const renderChapter = (chapter: number, name: string) => (
   </Box>
 )
 
-const CaseFile: React.FC<CaseFileProps> = (props) => {
+const CaseFile: React.FC<React.PropsWithChildren<CaseFileProps>> = (props) => {
   const { caseFile, onReorder, onOpen, onRename, onDelete } = props
   const { formatMessage } = useIntl()
   const y = useMotionValue(0)
@@ -397,7 +397,9 @@ const CaseFile: React.FC<CaseFileProps> = (props) => {
   )
 }
 
-const IndictmentsCaseFilesAccordionItem: React.FC<Props> = (props) => {
+const IndictmentsCaseFilesAccordionItem: React.FC<
+  React.PropsWithChildren<Props>
+> = (props) => {
   const {
     policeCaseNumber,
     caseFiles,
@@ -407,9 +409,8 @@ const IndictmentsCaseFilesAccordionItem: React.FC<Props> = (props) => {
     crimeScenes,
   } = props
   const { formatMessage } = useIntl()
-  const [updateFilesMutation] = useMutation<UpdateFilesMutationResponse>(
-    UpdateFileMutation,
-  )
+  const [updateFilesMutation] =
+    useMutation<UpdateFilesMutationResponse>(UpdateFileMutation)
 
   const { onOpen, fileNotFound, dismissFileNotFound } = useFileList({ caseId })
   const { remove } = useS3Upload(caseId)
@@ -476,6 +477,7 @@ const IndictmentsCaseFilesAccordionItem: React.FC<Props> = (props) => {
             userGeneratedFilename: caseFile.userGeneratedFilename,
             isDivider: false,
             canOpen: Boolean(caseFile.key),
+            displayDate: caseFile.displayDate,
           }
         }),
     ])
@@ -548,9 +550,8 @@ const IndictmentsCaseFilesAccordionItem: React.FC<Props> = (props) => {
 
     setReorderableItems((prev) => {
       const newReorderableItems = [...prev]
-      newReorderableItems[
-        fileInReorderableItems
-      ].userGeneratedFilename = newName
+      newReorderableItems[fileInReorderableItems].userGeneratedFilename =
+        newName
       newReorderableItems[fileInReorderableItems].displayDate = newDate
         ? newDate.toISOString()
         : newReorderableItems[fileInReorderableItems].displayDate

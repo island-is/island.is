@@ -34,8 +34,7 @@ import { ImpactBaseSelection } from './impacts/ImpactBaseSelection'
 import { ImpactAmendingSelection } from './impacts/ImpactAmendingSelection'
 import { RegulationDraftTypes, StepNames } from '../types'
 
-export type SelRegOption = Option & {
-  value?: DraftImpactName | ''
+export type SelRegOption = Option<DraftImpactName | ''> & {
   type: RegulationType | ''
   migrated?: boolean
 }
@@ -65,7 +64,7 @@ export const EditImpacts = () => {
     setChooseType('change')
   }
 
-  const escClick = useCallback((e) => {
+  const escClick = useCallback((e: KeyboardEvent) => {
     if (e.key === 'Escape') {
       setChooseType(undefined)
     }

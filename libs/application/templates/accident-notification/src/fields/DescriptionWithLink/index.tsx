@@ -17,10 +17,9 @@ type DescriptionLinkProps = {
   }
 }
 
-export const DescriptionWithLink: FC<FieldBaseProps & DescriptionLinkProps> = ({
-  application,
-  field,
-}) => {
+export const DescriptionWithLink: FC<
+  React.PropsWithChildren<FieldBaseProps & DescriptionLinkProps>
+> = ({ application, field }) => {
   const { props } = field
   const { formatMessage } = useLocale()
   const { descriptionFirstPart, descriptionSecondPart, linkName, url } = props

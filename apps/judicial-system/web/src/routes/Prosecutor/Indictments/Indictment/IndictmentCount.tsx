@@ -1,6 +1,5 @@
 import React, { useCallback, useMemo, useState } from 'react'
 import { IntlShape, useIntl } from 'react-intl'
-import { ValueType } from 'react-select'
 import InputMask from 'react-input-mask'
 
 import {
@@ -12,7 +11,6 @@ import {
   Icon,
 } from '@island.is/island-ui/core'
 import {
-  ReactSelectOption,
   TempCase as Case,
   TempIndictmentCount as TIndictmentCount,
 } from '@island.is/judicial-system-web/src/types'
@@ -25,7 +23,9 @@ import {
   BlueBox,
   IndictmentInfo,
 } from '@island.is/judicial-system-web/src/components'
-import { UpdateIndictmentCount } from '@island.is/judicial-system-web/src/utils/hooks/useIndictmentCounts'
+import useIndictmentCounts, {
+  UpdateIndictmentCount,
+} from '@island.is/judicial-system-web/src/utils/hooks/useIndictmentCounts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   removeErrorMessageIfValid,
@@ -273,7 +273,9 @@ export function getLegalArguments(
   })
 }
 
-export const IndictmentCount: React.FC<Props> = (props) => {
+export const IndictmentCount: React.FC<React.PropsWithChildren<Props>> = (
+  props,
+) => {
   const {
     indictmentCount,
     workingCase,
@@ -283,32 +285,18 @@ export const IndictmentCount: React.FC<Props> = (props) => {
     setWorkingCase,
   } = props
   const { formatMessage } = useIntl()
+  const { lawTag } = useIndictmentCounts()
 
   const [
     vehicleRegistrationNumberErrorMessage,
     setVehicleRegistrationNumberErrorMessage,
   ] = useState<string>('')
-  const [
-    incidentDescriptionErrorMessage,
-    setIncidentDescriptionErrorMessage,
-  ] = useState<string>('')
-  const [
-    bloodAlcoholContentErrorMessage,
-    setBloodAlcoholContentErrorMessage,
-  ] = useState<string>('')
-  const [
-    legalArgumentsErrorMessage,
-    setLegalArgumentsErrorMessage,
-  ] = useState<string>('')
-
-  const lawTag = useCallback(
-    (law: number[]) =>
-      formatMessage(strings.lawsBrokenTag, {
-        paragraph: law[1],
-        article: law[0],
-      }),
-    [formatMessage],
-  )
+  const [incidentDescriptionErrorMessage, setIncidentDescriptionErrorMessage] =
+    useState<string>('')
+  const [bloodAlcoholContentErrorMessage, setBloodAlcoholContentErrorMessage] =
+    useState<string>('')
+  const [legalArgumentsErrorMessage, setLegalArgumentsErrorMessage] =
+    useState<string>('')
 
   const offensesOptions = useMemo(
     () =>
@@ -430,8 +418,8 @@ export const IndictmentCount: React.FC<Props> = (props) => {
           }))}
           label={formatMessage(strings.policeCaseNumberLabel)}
           placeholder={formatMessage(strings.policeCaseNumberPlaceholder)}
-          onChange={async (so: ValueType<ReactSelectOption>) => {
-            const policeCaseNumber = (so as ReactSelectOption).value as string
+          onChange={async (so) => {
+            const policeCaseNumber = so?.value
 
             handleIndictmentCountChanges({ policeCaseNumber })
           }}
@@ -514,9 +502,8 @@ export const IndictmentCount: React.FC<Props> = (props) => {
           options={offensesOptions}
           label={formatMessage(strings.incidentLabel)}
           placeholder={formatMessage(strings.incidentPlaceholder)}
-          onChange={(so: ValueType<ReactSelectOption>) => {
-            const selectedOffense = (so as ReactSelectOption)
-              .value as IndictmentCountOffense
+          onChange={(so) => {
+            const selectedOffense = so?.value as IndictmentCountOffense
             const offenses = [
               ...(indictmentCount.offenses ?? []),
               selectedOffense,
@@ -655,7 +642,7 @@ export const IndictmentCount: React.FC<Props> = (props) => {
           label={formatMessage(strings.lawsBrokenLabel)}
           placeholder={formatMessage(strings.lawsBrokenPlaceholder)}
           value={null}
-          onChange={(selectedOption: ValueType<ReactSelectOption>) => {
+          onChange={(selectedOption) => {
             const law = (selectedOption as LawsBrokenOption).law
             const lawsBroken = [
               ...(indictmentCount.lawsBroken ?? []),

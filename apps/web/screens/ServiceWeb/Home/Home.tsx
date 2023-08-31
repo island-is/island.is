@@ -75,14 +75,13 @@ const Home: Screen<HomeProps> = ({
   const o = useNamespace(organizationNamespace)
   const { linkResolver } = useLinkResolver()
 
-  useContentfulId(organization.id)
+  useContentfulId(organization?.id)
   useLocalLinkTypeResolver()
 
   const institutionSlug = getSlugPart(Router.asPath, locale === 'is' ? 2 : 3)
 
-  const institutionSlugBelongsToMannaudstorg = institutionSlug.includes(
-    'mannaudstorg',
-  )
+  const institutionSlugBelongsToMannaudstorg =
+    institutionSlug.includes('mannaudstorg')
 
   const organizationTitle = (organization && organization.title) || 'Ísland.is'
   const headerTitle = o(
@@ -166,7 +165,7 @@ const Home: Screen<HomeProps> = ({
                             link={
                               {
                                 href: linkResolver('supportcategory', [
-                                  organization.slug,
+                                  organization?.slug ?? '',
                                   slug,
                                 ]).href,
                               } as LinkResolverResponse
@@ -209,8 +208,10 @@ const Home: Screen<HomeProps> = ({
                                       <TopicCard
                                         href={
                                           linkResolver('supportqna', [
-                                            organization.slug,
-                                            category.slug,
+                                            organization?.slug
+                                              ? organization.slug
+                                              : '',
+                                            category?.slug ? category.slug : '',
                                             slug,
                                           ]).href
                                         }
@@ -271,7 +272,7 @@ const Home: Screen<HomeProps> = ({
   )
 }
 
-Home.getInitialProps = async ({ apolloClient, locale, query }) => {
+Home.getProps = async ({ apolloClient, locale, query }) => {
   const defaultSlug = locale === 'en' ? 'digital-iceland' : 'stafraent-island'
   const slug = query.slug ? (query.slug as string) : defaultSlug
 
@@ -297,7 +298,7 @@ Home.getInitialProps = async ({ apolloClient, locale, query }) => {
         },
       })
       .then((variables) =>
-        variables.data.getNamespace.fields
+        variables.data.getNamespace?.fields
           ? JSON.parse(variables.data.getNamespace.fields)
           : {},
       ),

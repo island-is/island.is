@@ -2,7 +2,7 @@ import React, { FC, useEffect, useState } from 'react'
 import { getErrorViaPath, getValueViaPath } from '@island.is/application/core'
 import { FieldBaseProps } from '@island.is/application/types'
 import { useLocale } from '@island.is/localization'
-import { Box, Option } from '@island.is/island-ui/core'
+import { Box, StringOption as Option } from '@island.is/island-ui/core'
 import {
   DatePickerController,
   SelectController,
@@ -16,10 +16,9 @@ import {
 } from '../../utils/fields'
 import { FishingLicenseListOptions } from '../../types/schema'
 
-export const AreaWithDateSelection: FC<FieldBaseProps> = ({
-  application,
-  errors,
-}) => {
+export const AreaWithDateSelection: FC<
+  React.PropsWithChildren<FieldBaseProps>
+> = ({ application, errors }) => {
   const { setValue } = useFormContext()
   const { formatMessage, lang } = useLocale()
 

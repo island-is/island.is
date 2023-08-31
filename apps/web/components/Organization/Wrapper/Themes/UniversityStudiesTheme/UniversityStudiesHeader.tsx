@@ -34,13 +34,13 @@ interface HeaderProps {
   organizationPage: OrganizationPage
 }
 
-const UniversityStudiesHeader: React.FC<HeaderProps> = ({
-  organizationPage,
-}) => {
+const UniversityStudiesHeader: React.FC<
+  React.PropsWithChildren<HeaderProps>
+> = ({ organizationPage }) => {
   const { linkResolver } = useLinkResolver()
   const namespace = useMemo(
-    () => JSON.parse(organizationPage.organization.namespace?.fields ?? '{}'),
-    [organizationPage.organization.namespace?.fields],
+    () => JSON.parse(organizationPage.organization?.namespace?.fields ?? '{}'),
+    [organizationPage.organization?.namespace?.fields],
   )
   const n = useNamespace(namespace)
   const { width } = useWindowSize()
@@ -79,7 +79,7 @@ const UniversityStudiesHeader: React.FC<HeaderProps> = ({
       <div className={styles.headerWrapper}>
         <SidebarLayout
           sidebarContent={
-            !!organizationPage.organization.logo && (
+            !!organizationPage.organization?.logo && (
               <Link
                 href={
                   linkResolver('organizationpage', [organizationPage.slug]).href
@@ -98,7 +98,7 @@ const UniversityStudiesHeader: React.FC<HeaderProps> = ({
           <Hidden above="sm">
             <Box
               style={{
-                visibility: organizationPage.organization.logo
+                visibility: organizationPage.organization?.logo
                   ? 'visible'
                   : 'hidden',
               }}
@@ -110,7 +110,7 @@ const UniversityStudiesHeader: React.FC<HeaderProps> = ({
                 className={styles.iconCircle}
               >
                 <img
-                  src={organizationPage.organization.logo?.url}
+                  src={organizationPage.organization?.logo?.url}
                   className={styles.headerLogo}
                   alt=""
                 />

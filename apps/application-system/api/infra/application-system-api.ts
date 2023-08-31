@@ -41,73 +41,75 @@ export const GRAPHQL_API_URL_ENV_VAR_NAME = 'GRAPHQL_API_URL' // This property i
 
 const namespace = 'application-system'
 const serviceAccount = 'application-system-api'
-export const workerSetup = (): ServiceBuilder<'application-system-api-worker'> =>
-  service('application-system-api-worker')
-    .namespace(namespace)
-    .image('application-system-api')
-    .postgres(postgresInfo)
-    .serviceAccount('application-system-api-worker')
-    .redis()
-    .env({
-      IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/application-system',
-      IDENTITY_SERVER_ISSUER_URL: {
-        dev: 'https://identity-server.dev01.devland.is',
-        staging: 'https://identity-server.staging01.devland.is',
-        prod: 'https://innskra.island.is',
-      },
-      XROAD_CHARGE_FJS_V2_PATH: {
-        dev: 'IS-DEV/GOV/10021/FJS-Public/chargeFJS_v2',
-        staging: 'IS-DEV/GOV/10021/FJS-Public/chargeFJS_v2',
-        prod: 'IS/GOV/5402697509/FJS-Public/chargeFJS_v2',
-      },
-      APPLICATION_ATTACHMENT_BUCKET: {
-        dev: 'island-is-dev-storage-application-system',
-        staging: 'island-is-staging-storage-application-system',
-        prod: 'island-is-prod-storage-application-system',
-      },
-      FILE_SERVICE_PRESIGN_BUCKET: {
-        dev: 'island-is-dev-fs-presign-bucket',
-        staging: 'island-is-staging-fs-presign-bucket',
-        prod: 'island-is-prod-fs-presign-bucket',
-      },
-      FILE_STORAGE_UPLOAD_BUCKET: {
-        dev: 'island-is-dev-upload-api',
-        staging: 'island-is-staging-upload-api',
-        prod: 'island-is-prod-upload-api',
-      },
-      CLIENT_LOCATION_ORIGIN: {
-        dev: 'https://beta.dev01.devland.is/umsoknir',
-        staging: 'https://beta.staging01.devland.is/umsoknir',
-        prod: 'https://island.is/umsoknir',
-        local: 'http://localhost:4200/umsoknir',
-      },
-    })
-    .xroad(Base, Client, Payment, EHIC)
-    .secrets({
-      IDENTITY_SERVER_CLIENT_SECRET:
-        '/k8s/application-system/api/IDENTITY_SERVER_CLIENT_SECRET',
-      SYSLUMENN_HOST: '/k8s/application-system-api/SYSLUMENN_HOST',
-      SYSLUMENN_USERNAME: '/k8s/application-system/api/SYSLUMENN_USERNAME',
-      SYSLUMENN_PASSWORD: '/k8s/application-system/api/SYSLUMENN_PASSWORD',
-      DRIVING_LICENSE_BOOK_XROAD_PATH:
-        '/k8s/application-system-api/DRIVING_LICENSE_BOOK_XROAD_PATH',
-      DRIVING_LICENSE_BOOK_USERNAME:
-        '/k8s/application-system-api/DRIVING_LICENSE_BOOK_USERNAME',
-      DRIVING_LICENSE_BOOK_PASSWORD:
-        '/k8s/application-system-api/DRIVING_LICENSE_BOOK_PASSWORD',
-      DOKOBIT_ACCESS_TOKEN: '/k8s/application-system/api/DOKOBIT_ACCESS_TOKEN',
-      DOKOBIT_URL: '/k8s/application-system-api/DOKOBIT_URL',
-      ARK_BASE_URL: '/k8s/application-system-api/ARK_BASE_URL',
-      DOMSYSLA_PASSWORD: '/k8s/application-system-api/DOMSYSLA_PASSWORD',
-      DOMSYSLA_USERNAME: '/k8s/application-system-api/DOMSYSLA_USERNAME',
-    })
-    .args('main.js', '--job', 'worker')
-    .command('node')
-    .extraAttributes({
-      dev: { schedule: '*/30 * * * *' },
-      staging: { schedule: '*/30 * * * *' },
-      prod: { schedule: '*/30 * * * *' },
-    })
+export const workerSetup =
+  (): ServiceBuilder<'application-system-api-worker'> =>
+    service('application-system-api-worker')
+      .namespace(namespace)
+      .image('application-system-api')
+      .postgres(postgresInfo)
+      .serviceAccount('application-system-api-worker')
+      .redis()
+      .env({
+        IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/application-system',
+        IDENTITY_SERVER_ISSUER_URL: {
+          dev: 'https://identity-server.dev01.devland.is',
+          staging: 'https://identity-server.staging01.devland.is',
+          prod: 'https://innskra.island.is',
+        },
+        XROAD_CHARGE_FJS_V2_PATH: {
+          dev: 'IS-DEV/GOV/10021/FJS-Public/chargeFJS_v2',
+          staging: 'IS-DEV/GOV/10021/FJS-Public/chargeFJS_v2',
+          prod: 'IS/GOV/5402697509/FJS-Public/chargeFJS_v2',
+        },
+        APPLICATION_ATTACHMENT_BUCKET: {
+          dev: 'island-is-dev-storage-application-system',
+          staging: 'island-is-staging-storage-application-system',
+          prod: 'island-is-prod-storage-application-system',
+        },
+        FILE_SERVICE_PRESIGN_BUCKET: {
+          dev: 'island-is-dev-fs-presign-bucket',
+          staging: 'island-is-staging-fs-presign-bucket',
+          prod: 'island-is-prod-fs-presign-bucket',
+        },
+        FILE_STORAGE_UPLOAD_BUCKET: {
+          dev: 'island-is-dev-upload-api',
+          staging: 'island-is-staging-upload-api',
+          prod: 'island-is-prod-upload-api',
+        },
+        CLIENT_LOCATION_ORIGIN: {
+          dev: 'https://beta.dev01.devland.is/umsoknir',
+          staging: 'https://beta.staging01.devland.is/umsoknir',
+          prod: 'https://island.is/umsoknir',
+          local: 'http://localhost:4200/umsoknir',
+        },
+      })
+      .xroad(Base, Client, Payment, EHIC)
+      .secrets({
+        IDENTITY_SERVER_CLIENT_SECRET:
+          '/k8s/application-system/api/IDENTITY_SERVER_CLIENT_SECRET',
+        SYSLUMENN_HOST: '/k8s/application-system-api/SYSLUMENN_HOST',
+        SYSLUMENN_USERNAME: '/k8s/application-system/api/SYSLUMENN_USERNAME',
+        SYSLUMENN_PASSWORD: '/k8s/application-system/api/SYSLUMENN_PASSWORD',
+        DRIVING_LICENSE_BOOK_XROAD_PATH:
+          '/k8s/application-system-api/DRIVING_LICENSE_BOOK_XROAD_PATH',
+        DRIVING_LICENSE_BOOK_USERNAME:
+          '/k8s/application-system-api/DRIVING_LICENSE_BOOK_USERNAME',
+        DRIVING_LICENSE_BOOK_PASSWORD:
+          '/k8s/application-system-api/DRIVING_LICENSE_BOOK_PASSWORD',
+        DOKOBIT_ACCESS_TOKEN:
+          '/k8s/application-system/api/DOKOBIT_ACCESS_TOKEN',
+        DOKOBIT_URL: '/k8s/application-system-api/DOKOBIT_URL',
+        ARK_BASE_URL: '/k8s/application-system-api/ARK_BASE_URL',
+        DOMSYSLA_PASSWORD: '/k8s/application-system-api/DOMSYSLA_PASSWORD',
+        DOMSYSLA_USERNAME: '/k8s/application-system-api/DOMSYSLA_USERNAME',
+      })
+      .args('main.js', '--job', 'worker')
+      .command('node')
+      .extraAttributes({
+        dev: { schedule: '*/30 * * * *' },
+        staging: { schedule: '*/30 * * * *' },
+        prod: { schedule: '*/30 * * * *' },
+      })
 
 export const serviceSetup = (services: {
   documentsService: ServiceBuilder<'services-documents'>
@@ -221,6 +223,11 @@ export const serviceSetup = (services: {
         dev: 'true',
         staging: 'false',
         prod: 'false',
+      },
+      AUTH_PUBLIC_API_URL: {
+        dev: 'https://identity-server.dev01.devland.is/api',
+        staging: 'https://identity-server.staging01.devland.is/api',
+        prod: 'https://innskra.island.is/api',
       },
     })
     .xroad(

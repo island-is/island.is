@@ -12,7 +12,10 @@ import { getOtherParentOptions } from '../../lib/parentalLeaveUtils'
 import { SPOUSE, NO, SINGLE } from '../../constants'
 import { useFormContext } from 'react-hook-form'
 
-export const OtherParent: FC<FieldBaseProps> = ({ application, field }) => {
+export const OtherParent: FC<React.PropsWithChildren<FieldBaseProps>> = ({
+  application,
+  field,
+}) => {
   const { id, title } = field
   const {
     formState: { errors },

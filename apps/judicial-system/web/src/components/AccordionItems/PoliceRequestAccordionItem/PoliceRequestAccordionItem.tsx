@@ -9,7 +9,6 @@ import {
   formatNationalId,
 } from '@island.is/judicial-system/formatters'
 import { isRestrictionCase } from '@island.is/judicial-system/types'
-import type { CaseLegalProvisions } from '@island.is/judicial-system/types'
 import {
   requestCourtDate,
   core,
@@ -19,6 +18,8 @@ import {
 import { TIME_FORMAT } from '@island.is/judicial-system/consts'
 import { formatRequestedCustodyRestrictions } from '@island.is/judicial-system-web/src/utils/restrictions'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
+import { lawsBrokenAccordion } from '@island.is/judicial-system-web/messages/Core/lawsBrokenAccordion'
+import { CaseLegalProvisions } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import AccordionListItem from '../../AccordionListItem/AccordionListItem'
 import * as styles from './PoliceRequestAccordionItem.css'
@@ -27,7 +28,7 @@ interface Props {
   workingCase: Case
 }
 
-const PoliceRequestAccordionItem: React.FC<Props> = ({
+const PoliceRequestAccordionItem: React.FC<React.PropsWithChildren<Props>> = ({
   workingCase,
 }: Props) => {
   const { formatMessage } = useIntl()
@@ -101,7 +102,10 @@ const PoliceRequestAccordionItem: React.FC<Props> = ({
       <AccordionListItem title="Dómkröfur">
         <Text>{workingCase.demands}</Text>
       </AccordionListItem>
-      <AccordionListItem title="Lagaákvæði sem brot varða við" breakSpaces>
+      <AccordionListItem
+        title={formatMessage(lawsBrokenAccordion.heading)}
+        breakSpaces
+      >
         <Text>{workingCase.lawsBroken}</Text>
       </AccordionListItem>
       <AccordionListItem title="Lagaákvæði sem krafan er byggð á" breakSpaces>

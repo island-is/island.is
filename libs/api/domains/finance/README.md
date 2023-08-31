@@ -1,5 +1,3 @@
-<!-- gitbook-ignore -->
-
 # API Domains Finance
 
 This api utilises the [financeService](/libs/clients/finance/src/lib/FinanceClientService.ts)

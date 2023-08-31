@@ -1,5 +1,6 @@
 {
-  "root": "apps/application-system/api",
+  "name": "application-system-api",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/application-system/api/src",
   "projectType": "application",
   "prefix": "application-system-api",
@@ -91,63 +92,65 @@
       "outputs": ["{options.outputPath}"]
     },
     "serve": {
-      "executor": "@nrwl/node:node",
+      "executor": "@nx/js:node",
       "options": {
         "buildTarget": "application-system-api:build"
       }
     },
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": ["apps/application-system/api/**/*.{ts,tsx,js,jsx}"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "apps/application-system/api/jest.config.js",
+        "jestConfig": "apps/application-system/api/jest.config.ts",
         "runInBand": true,
         "passWithNoTests": true
       },
-      "outputs": ["coverage/apps/application-system/api"]
+      "outputs": ["{workspaceRoot}/coverage/apps/application-system/api"]
     },
     "worker": {
-      "executor": "@nrwl/node:node",
+      "executor": "@nx/js:node",
       "options": {
         "buildTarget": "application-system-api:build",
         "args": ["--job", "worker"]
       }
     },
     "dev-services": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "command": "docker-compose up -d",
         "cwd": "apps/application-system/api"
       }
     },
     "schemas/build-openapi": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
-        "outputPath": "apps/application-system/api/src/openapi.yaml",
         "command": "cross-env INIT_SCHEMA=true yarn ts-node -P apps/application-system/api/tsconfig.app.json apps/application-system/api/src/buildOpenApi.ts"
-      }
+      },
+      "outputs": [
+        "{workspaceRoot}/apps/application-system/api/src/openapi.yaml"
+      ]
     },
     "migrate": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "command": "sequelize-cli db:migrate",
         "cwd": "apps/application-system/api"
       }
     },
     "migrate/undo": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "command": "sequelize-cli db:migrate:undo --name {args.name}",
         "cwd": "apps/application-system/api"
       }
     },
     "migrate/generate": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "command": "sequelize-cli migration:generate --name {args.name}",
         "cwd": "apps/application-system/api"
@@ -155,7 +158,7 @@
     },
     "docker-express": {},
     "dev-init": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "commands": [
           "yarn get-secrets application-system-api",
@@ -170,14 +173,13 @@
       }
     },
     "dev": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "commands": [
           "yarn nx run api:dev",
           "yarn nx run services-user-profile:dev",
           "yarn start application-system-api",
-          "scripts/run-soffia-proxy.sh",
-          "scripts/run-xroad-proxy.sh"
+          "scripts/run-soffia-proxy.sh"
         ],
         "parallel": true
       }

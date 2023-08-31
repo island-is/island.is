@@ -22,7 +22,9 @@ interface SliceProps {
   slice: TwoColumnText
 }
 
-export const TwoColumnTextSlice: React.FC<SliceProps> = ({ slice }) => {
+export const TwoColumnTextSlice: React.FC<
+  React.PropsWithChildren<SliceProps>
+> = ({ slice }) => {
   const labelId = 'sliceTitle-' + slice.id
   const boxProps: BoxProps = slice.dividerOnTop
     ? { borderTopWidth: 'standard', borderColor: 'standard', paddingTop: 4 }
@@ -33,9 +35,11 @@ export const TwoColumnTextSlice: React.FC<SliceProps> = ({ slice }) => {
         <Box {...boxProps}>
           <GridRow>
             <GridColumn span={columnSpan} paddingBottom={2} hiddenBelow="lg">
-              <Text variant="h2" as="h2" id={labelId}>
-                <Hyphen>{slice.leftTitle}</Hyphen>
-              </Text>
+              {slice.leftTitle && (
+                <Text variant="h2" as="h2" id={labelId}>
+                  <Hyphen>{slice.leftTitle}</Hyphen>
+                </Text>
+              )}
             </GridColumn>
             <GridColumn span={columnSpan} paddingBottom={2} hiddenBelow="lg">
               {slice.rightTitle && (

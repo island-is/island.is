@@ -1,22 +1,23 @@
 {
-  "root": "libs/content-search-toolkit",
+  "name": "content-search-toolkit",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/content-search-toolkit/src",
   "projectType": "library",
   "generators": {},
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": ["libs/content-search-toolkit/**/*.{ts,tsx,js,jsx}"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/content-search-toolkit/jest.config.js",
+        "jestConfig": "libs/content-search-toolkit/jest.config.ts",
         "passWithNoTests": true
       },
-      "outputs": ["coverage/libs/content-search-toolkit"]
+      "outputs": ["{workspaceRoot}/coverage/libs/content-search-toolkit"]
     }
   },
   "tags": ["lib:nest", "scope:nest"]

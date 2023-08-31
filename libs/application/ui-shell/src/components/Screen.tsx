@@ -82,7 +82,7 @@ const getServerValidationErrors = (error: ApolloError | undefined) => {
   return null
 }
 
-const Screen: FC<ScreenProps> = ({
+const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
   setUpdateForbidden,
   activeScreenIndex,
   addExternalData,
@@ -117,23 +117,21 @@ const Screen: FC<ScreenProps> = ({
   const [isSubmitting, setIsSubmitting] = useState(false)
   const refetch = useContext<() => void>(RefetchContext)
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [
-    updateApplication,
-    { loading, error: updateApplicationError },
-  ] = useMutation(UPDATE_APPLICATION, {
-    onError: (e) => {
-      // We handle validation problems separately.
-      const problem = findProblemInApolloError(e)
-      if (problem?.type === ProblemType.HTTP_NOT_FOUND) {
-        setUpdateForbidden(true)
-      }
-      if (problem?.type === ProblemType.VALIDATION_FAILED) {
-        return
-      }
+  const [updateApplication, { loading, error: updateApplicationError }] =
+    useMutation(UPDATE_APPLICATION, {
+      onError: (e) => {
+        // We handle validation problems separately.
+        const problem = findProblemInApolloError(e)
+        if (problem?.type === ProblemType.HTTP_NOT_FOUND) {
+          setUpdateForbidden(true)
+        }
+        if (problem?.type === ProblemType.VALIDATION_FAILED) {
+          return
+        }
 
-      return handleServerError(e, formatMessage)
-    },
-  })
+        return handleServerError(e, formatMessage)
+      },
+    })
   const [submitApplication, { loading: loadingSubmit }] = useMutation(
     SUBMIT_APPLICATION,
     {

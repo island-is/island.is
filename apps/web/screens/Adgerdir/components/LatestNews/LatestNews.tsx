@@ -16,7 +16,10 @@ export interface LatestNewsProps {
   news: LatestNewsItem[]
 }
 
-export const LatestNews: FC<LatestNewsProps> = ({ title, news }) => {
+export const LatestNews: FC<React.PropsWithChildren<LatestNewsProps>> = ({
+  title,
+  news,
+}) => {
   const [first, ...rest] = news
 
   return (
@@ -67,7 +70,7 @@ const BigNewsItem = ({ news }: { news: LatestNewsItem }) => {
 
 const NewsItem = ({ news }: { news: LatestNewsItem }) => (
   <Box boxShadow="subtle" overflow="hidden" borderRadius="large">
-    <img src={news.image.url} alt={news.image.title} />
+    <img src={news.image?.url} alt={news.image?.title ?? ''} />
     <Box paddingX={3} paddingY={4}>
       <Stack space={2}>
         <Text variant="eyebrow">COVID-19???</Text>

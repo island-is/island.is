@@ -90,11 +90,11 @@ const Home: Screen<HomeProps> = ({
   return (
     <>
       <HeadWithSocialSharing
-        title={frontpage.title}
-        description={frontpage.description}
-        imageUrl={frontpage.featuredImage?.url}
-        imageWidth={frontpage.featuredImage?.width?.toString()}
-        imageHeight={frontpage.featuredImage?.height?.toString()}
+        title={frontpage?.title ?? ''}
+        description={frontpage?.description ?? ''}
+        imageUrl={frontpage?.featuredImage?.url}
+        imageWidth={frontpage?.featuredImage?.width?.toString()}
+        imageHeight={frontpage?.featuredImage?.height?.toString()}
       />
       <Box className={covidStyles.frontpageBg} id="main-content">
         <ColorSchemeContext.Provider value={{ colorScheme: 'white' }}>
@@ -132,6 +132,7 @@ const Home: Screen<HomeProps> = ({
                                       slug,
                                     )}
                                     passHref
+                                    legacyBehavior
                                   >
                                     {link}
                                   </NextLink>
@@ -140,14 +141,14 @@ const Home: Screen<HomeProps> = ({
                             />
                           </span>
                           <Text variant="h1" as="h1" color="white">
-                            {frontpage.title}
+                            {frontpage?.title}
                           </Text>
                           <Text variant="intro" as="p" color="white">
-                            {frontpage.description}
+                            {frontpage?.description}
                           </Text>
                           <span className={covidStyles.white}>
                             <RichText
-                              body={frontpage.content as SliceType[]}
+                              body={(frontpage?.content ?? []) as SliceType[]}
                               config={{
                                 defaultPadding: [2, 2, 4],
                                 skipGrid: true,
@@ -194,7 +195,7 @@ const Home: Screen<HomeProps> = ({
         </CovidColorSchemeContext.Provider>
         <Box marginBottom={[6, 6, 15]}>
           <Stack space={[6, 6, 12]}>
-            {frontpage.slices.map((slice, index) => {
+            {frontpage?.slices.map((slice, index) => {
               const colorScheme = groupSliceCount % 2 ? 'blue' : 'green'
 
               switch (slice.__typename) {
@@ -257,7 +258,7 @@ const Home: Screen<HomeProps> = ({
   )
 }
 
-Home.getInitialProps = async ({ apolloClient, locale }) => {
+Home.getProps = async ({ apolloClient, locale }) => {
   const [
     {
       data: { getAdgerdirFrontpage },
@@ -306,7 +307,11 @@ Home.getInitialProps = async ({ apolloClient, locale }) => {
           },
         },
       })
-      .then((variables) => JSON.parse(variables.data.getNamespace.fields)),
+      .then((variables) =>
+        variables.data.getNamespace?.fields
+          ? JSON.parse(variables.data.getNamespace.fields)
+          : {},
+      ),
     apolloClient
       .query<GetGroupedMenuQuery, QueryGetGroupedMenuArgs>({
         query: GET_GROUPED_MENU_QUERY,
@@ -327,7 +332,7 @@ Home.getInitialProps = async ({ apolloClient, locale }) => {
       .then((res) => res.data.getArticleCategories),
   ])
 
-  const [asideTopLinksData, asideBottomLinksData] = megaMenuData.menus
+  const [asideTopLinksData, asideBottomLinksData] = megaMenuData?.menus ?? []
 
   return {
     frontpage: getAdgerdirFrontpage,

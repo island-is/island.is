@@ -30,7 +30,7 @@ const useImageLoader = (url: string): boolean => {
   return loaded
 }
 
-export const Image: FC<ImageProps> = ({
+export const Image: FC<React.PropsWithChildren<ImageProps>> = ({
   url,
   title,
   thumbnail = url + '?w=50',

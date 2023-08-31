@@ -8,7 +8,7 @@ import { TranslationService } from './../../../services/TranslationService'
 import LanguageCreateForm from '../../../components/Admin/form/LanguageCreateForm'
 import LocalizationUtils from '../../../utils/localization.utils'
 
-const Index: React.FC = () => {
+const Index: React.FC<React.PropsWithChildren<unknown>> = () => {
   const { query } = useRouter()
   const isoKey = query.isoKey
   const [language, setLanguage] = useState<Language>()

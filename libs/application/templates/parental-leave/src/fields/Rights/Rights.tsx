@@ -12,7 +12,9 @@ import { defaultMonths, additionalSingleParentMonths } from '../../config'
 import { parentalLeaveFormMessages } from '../../lib/messages'
 import { SINGLE, YES } from '../../constants'
 
-const GiveDaysSlider: FC<FieldBaseProps> = ({ application }) => {
+const GiveDaysSlider: FC<React.PropsWithChildren<FieldBaseProps>> = ({
+  application,
+}) => {
   const { otherParent, hasMultipleBirths } = getApplicationAnswers(
     application.answers,
   )

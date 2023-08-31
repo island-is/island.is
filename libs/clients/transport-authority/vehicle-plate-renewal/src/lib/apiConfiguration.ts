@@ -8,14 +8,14 @@ import { PlateOwnershipApi, Configuration } from '../../gen/fetch'
 import { VehiclePlateRenewalClientConfig } from './vehiclePlateRenewalClient.config'
 
 const configFactory = (
+  basePath: string,
   xRoadConfig: ConfigType<typeof XRoadConfig>,
   config: ConfigType<typeof VehiclePlateRenewalClientConfig>,
-  idsClientConfig: ConfigType<typeof IdsClientConfig>,
-  basePath: string,
+  idsClientConfig?: ConfigType<typeof IdsClientConfig>,
 ) => ({
   fetchApi: createEnhancedFetch({
     name: 'clients-transport-authority-vehicle-plate-renewal',
-    autoAuth: idsClientConfig.isConfigured
+    autoAuth: idsClientConfig?.isConfigured
       ? {
           mode: 'tokenExchange',
           issuer: idsClientConfig.issuer,
@@ -33,6 +33,8 @@ const configFactory = (
   basePath,
 })
 
+export class PlateOwnershipApiWithoutIdsAuth extends PlateOwnershipApi {}
+
 export const exportedApis = [
   {
     provide: PlateOwnershipApi,
@@ -44,10 +46,10 @@ export const exportedApis = [
       return new PlateOwnershipApi(
         new Configuration(
           configFactory(
+            `${xRoadConfig.xRoadBasePath}/r1/${config.xroadPath}`,
             xRoadConfig,
             config,
             idsClientConfig,
-            `${xRoadConfig.xRoadBasePath}/r1/${config.xroadPath}`,
           ),
         ),
       )
@@ -57,5 +59,23 @@ export const exportedApis = [
       VehiclePlateRenewalClientConfig.KEY,
       IdsClientConfig.KEY,
     ],
+  },
+  {
+    provide: PlateOwnershipApiWithoutIdsAuth,
+    useFactory: (
+      xRoadConfig: ConfigType<typeof XRoadConfig>,
+      config: ConfigType<typeof VehiclePlateRenewalClientConfig>,
+    ) => {
+      return new PlateOwnershipApiWithoutIdsAuth(
+        new Configuration(
+          configFactory(
+            `${xRoadConfig.xRoadBasePath}/r1/${config.xroadPath}`,
+            xRoadConfig,
+            config,
+          ),
+        ),
+      )
+    },
+    inject: [XRoadConfig.KEY, VehiclePlateRenewalClientConfig.KEY],
   },
 ]

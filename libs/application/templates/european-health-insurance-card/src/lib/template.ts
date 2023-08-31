@@ -171,10 +171,9 @@ const template: ApplicationTemplate<
               id: Roles.APPLICANT,
 
               formLoader: () =>
-                import(
-                  '../forms/EuropeanHealthInsuranceCardCompleted'
-                ).then((val) =>
-                  Promise.resolve(val.EuropeanHealthInsuranceCardCompleted),
+                import('../forms/EuropeanHealthInsuranceCardCompleted').then(
+                  (val) =>
+                    Promise.resolve(val.EuropeanHealthInsuranceCardCompleted),
                 ),
               actions: [
                 {

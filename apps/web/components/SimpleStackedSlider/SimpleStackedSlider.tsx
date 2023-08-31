@@ -22,12 +22,9 @@ interface SimpleStackedSliderProps {
   itemWidth?: number
 }
 
-export const SimpleStackedSlider: FC<SimpleStackedSliderProps> = ({
-  children,
-  levels = 'auto',
-  itemWidth = 400,
-  span = '4/12',
-}) => {
+export const SimpleStackedSlider: FC<
+  React.PropsWithChildren<SimpleStackedSliderProps>
+> = ({ children, levels = 'auto', itemWidth = 400, span = '4/12' }) => {
   const [activeDot, setActiveDot] = useState(0)
   const scrollRef = useRef(null)
   const itemRef = useRef(null)
@@ -58,7 +55,7 @@ export const SimpleStackedSlider: FC<SimpleStackedSliderProps> = ({
     </GridContainer>
   )
 
-  if (items.length <= levels) {
+  if (items.length <= l) {
     return renderedItems
   }
 

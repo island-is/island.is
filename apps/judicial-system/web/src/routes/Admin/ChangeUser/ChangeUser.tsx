@@ -28,7 +28,7 @@ interface SaveData {
   user: User
 }
 
-export const ChangeUser: React.FC = () => {
+export const ChangeUser: React.FC<React.PropsWithChildren<unknown>> = () => {
   const router = useRouter()
   const id = router.query.id
   const { formatMessage } = useIntl()
@@ -49,9 +49,8 @@ export const ChangeUser: React.FC = () => {
     loaded: institutionLoaded,
   } = useInstitution()
 
-  const [updateUserMutation, { loading: saveLoading }] = useMutation<SaveData>(
-    UpdateUserMutation,
-  )
+  const [updateUserMutation, { loading: saveLoading }] =
+    useMutation<SaveData>(UpdateUserMutation)
 
   const saveUser = async (user: User) => {
     if (saveLoading === false && user) {

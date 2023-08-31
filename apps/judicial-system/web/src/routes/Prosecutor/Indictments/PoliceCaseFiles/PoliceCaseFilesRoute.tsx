@@ -48,13 +48,15 @@ import {
 import { policeCaseFiles as m } from './PoliceCaseFilesRoute.strings'
 import { useGetIndictmentPoliceCaseFilesQuery } from './getIndictmentPoliceCaseFiles.generated'
 
-const UploadFilesToPoliceCase: React.FC<{
-  caseId: string
-  policeCaseNumber: string
-  setAllUploaded: (allUploaded: boolean) => void
-  caseFiles: CaseFile[]
-  caseOrigin: CaseOrigin
-}> = ({ caseId, policeCaseNumber, setAllUploaded, caseFiles, caseOrigin }) => {
+const UploadFilesToPoliceCase: React.FC<
+  React.PropsWithChildren<{
+    caseId: string
+    policeCaseNumber: string
+    setAllUploaded: (allUploaded: boolean) => void
+    caseFiles: CaseFile[]
+    caseOrigin: CaseOrigin
+  }>
+> = ({ caseId, policeCaseNumber, setAllUploaded, caseFiles, caseOrigin }) => {
   const { formatMessage } = useIntl()
   const {
     handleChange,
@@ -213,6 +215,7 @@ const UploadFilesToPoliceCase: React.FC<{
         state: CaseFileState.STORED_IN_RVG,
         policeCaseNumber: f.policeCaseNumber,
         category: CaseFileCategory.CASE_FILE,
+        displayDate: f.displayDate,
       } as UploadFile
 
       await uploadFromPolice(fileToUpload, uploadPoliceCaseFileCallback)
@@ -275,15 +278,17 @@ type AllUploadedState = {
  * Since we passing `setAllUploaded` to the children and they are calling it within a useEffect
  * causing a endless rendering loop.
  */
-const PoliceUploadListMemo: React.FC<{
-  caseId: string
-  policeCaseNumbers: string[]
-  subtypes?: IndictmentSubtypeMap
-  crimeScenes?: CrimeSceneMap
-  caseFiles?: CaseFile[]
-  setAllUploaded: (policeCaseNumber: string) => (value: boolean) => void
-  caseOrigin: CaseOrigin
-}> = memo(
+const PoliceUploadListMemo: React.FC<
+  React.PropsWithChildren<{
+    caseId: string
+    policeCaseNumbers: string[]
+    subtypes?: IndictmentSubtypeMap
+    crimeScenes?: CrimeSceneMap
+    caseFiles?: CaseFile[]
+    setAllUploaded: (policeCaseNumber: string) => (value: boolean) => void
+    caseOrigin: CaseOrigin
+  }>
+> = memo(
   ({
     caseId,
     policeCaseNumbers,
@@ -331,9 +336,8 @@ const PoliceUploadListMemo: React.FC<{
 
 const PoliceCaseFilesRoute = () => {
   const { formatMessage } = useIntl()
-  const { workingCase, isLoadingWorkingCase, caseNotFound } = useContext(
-    FormContext,
-  )
+  const { workingCase, isLoadingWorkingCase, caseNotFound } =
+    useContext(FormContext)
 
   const [allUploaded, setAllUploaded] = useState<AllUploadedState>(
     workingCase.policeCaseNumbers.reduce(

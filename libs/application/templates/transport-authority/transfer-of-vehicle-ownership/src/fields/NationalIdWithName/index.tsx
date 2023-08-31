@@ -24,7 +24,9 @@ interface Props {
   disabled?: boolean
 }
 
-export const NationalIdWithName: FC<Props & FieldBaseProps> = ({
+export const NationalIdWithName: FC<
+  React.PropsWithChildren<Props & FieldBaseProps>
+> = ({
   customId = '',
   customNationalIdLabel = '',
   customNameLabel = '',
@@ -73,20 +75,18 @@ export const NationalIdWithName: FC<Props & FieldBaseProps> = ({
     ? nameDefaultValue
     : getValueViaPath(application.answers, `${usedId}.name`, '')
 
-  const [
-    getIdentity,
-    { data, loading: queryLoading, error: queryError },
-  ] = useLazyQuery<Query, { input: IdentityInput }>(
-    gql`
-      ${IDENTITY_QUERY}
-    `,
-    {
-      onCompleted: (data) => {
-        onNameChange && onNameChange(data.identity?.name ?? '')
-        setValue(nameField, data.identity?.name ?? undefined)
+  const [getIdentity, { data, loading: queryLoading, error: queryError }] =
+    useLazyQuery<Query, { input: IdentityInput }>(
+      gql`
+        ${IDENTITY_QUERY}
+      `,
+      {
+        onCompleted: (data) => {
+          onNameChange && onNameChange(data.identity?.name ?? '')
+          setValue(nameField, data.identity?.name ?? undefined)
+        },
       },
-    },
-  )
+    )
 
   useEffect(() => {
     if (nationalIdInput.length === 10 && kennitala.isValid(nationalIdInput)) {

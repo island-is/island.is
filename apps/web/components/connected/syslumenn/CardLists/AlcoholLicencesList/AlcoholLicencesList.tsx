@@ -21,7 +21,6 @@ import {
   Input,
   AlertMessage,
   Select,
-  Option,
   GridContainer,
   GridRow,
   GridColumn,
@@ -38,7 +37,9 @@ interface AlcoholLicencesListProps {
 
 type ListState = 'loading' | 'loaded' | 'error'
 
-const AlcoholLicencesList: FC<AlcoholLicencesListProps> = ({ slice }) => {
+const AlcoholLicencesList: FC<
+  React.PropsWithChildren<AlcoholLicencesListProps>
+> = ({ slice }) => {
   const n = useNamespace(slice.json ?? {})
   const { format } = useDateUtils()
   const PAGE_SIZE = slice?.configJson?.pageSize ?? DEFAULT_PAGE_SIZE
@@ -205,7 +206,7 @@ const AlcoholLicencesList: FC<AlcoholLicencesListProps> = ({ slice }) => {
                       value: x,
                     }))
                     .find((x) => x.value === filterLicenceType)}
-                  onChange={({ value }: Option) => {
+                  onChange={({ value }) => {
                     setFilterLicenceType(String(value))
                   }}
                 />
@@ -231,7 +232,7 @@ const AlcoholLicencesList: FC<AlcoholLicencesListProps> = ({ slice }) => {
                       value: x,
                     }))
                     .find((x) => x.value === filterOffice)}
-                  onChange={({ value }: Option) => {
+                  onChange={({ value }) => {
                     setFilterOffice(String(value))
                   }}
                 />

@@ -1,10 +1,11 @@
 {
-  "root": "libs/clients/rsk/personal-tax-return",
+  "name": "clients-rsk-personal-tax-return",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/clients/rsk/personal-tax-return/src",
   "projectType": "library",
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": [
           "libs/clients/rsk/personal-tax-return/**/*.{ts,tsx,js,jsx}"
@@ -12,10 +13,12 @@
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/clients/rsk/personal-tax-return"],
+      "executor": "@nx/jest:jest",
+      "outputs": [
+        "{workspaceRoot}/coverage/libs/clients/rsk/personal-tax-return"
+      ],
       "options": {
-        "jestConfig": "libs/clients/rsk/personal-tax-return/jest.config.js",
+        "jestConfig": "libs/clients/rsk/personal-tax-return/jest.config.ts",
         "passWithNoTests": true
       }
     }

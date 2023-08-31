@@ -18,23 +18,23 @@ import { Box, Text } from '@island.is/island-ui/core'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { CaseState, CaseTransition } from '@island.is/judicial-system/types'
 import IndictmentCaseFilesList from '@island.is/judicial-system-web/src/components/IndictmentCaseFilesList/IndictmentCaseFilesList'
+import IndictmentsLawsBrokenAccordionItem, {
+  useIndictmentsLawsBroken,
+} from '@island.is/judicial-system-web/src/components/AccordionItems/IndictmentsLawsBrokenAccordionItem/IndictmentsLawsBrokenAccordionItem'
 import * as constants from '@island.is/judicial-system/consts'
 
 import * as strings from './Overview.strings'
 
-const Overview: React.FC = () => {
-  const {
-    workingCase,
-    setWorkingCase,
-    isLoadingWorkingCase,
-    caseNotFound,
-  } = useContext(FormContext)
+const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
+  const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
+    useContext(FormContext)
   const [modal, setModal] = useState<'noModal' | 'caseSubmittedModal'>(
     'noModal',
   )
-  const { formatMessage } = useIntl()
   const router = useRouter()
+  const { formatMessage } = useIntl()
   const { transitionCase } = useCase()
+  const lawsBroken = useIndictmentsLawsBroken(workingCase)
 
   const isNewIndictment =
     workingCase.state === CaseState.NEW || workingCase.state === CaseState.DRAFT
@@ -72,6 +72,11 @@ const Overview: React.FC = () => {
         <Box component="section" marginBottom={5}>
           <InfoCardActiveIndictment />
         </Box>
+        {lawsBroken.size > 0 && (
+          <Box marginBottom={5}>
+            <IndictmentsLawsBrokenAccordionItem workingCase={workingCase} />
+          </Box>
+        )}
         <IndictmentCaseFilesList workingCase={workingCase} />
       </FormContentContainer>
       <FormContentContainer isFooter>
