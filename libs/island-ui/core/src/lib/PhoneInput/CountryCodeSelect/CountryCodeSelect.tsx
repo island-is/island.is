@@ -1,11 +1,11 @@
 import React from 'react'
-import { TestSupport } from '@island.is/island-ui/utils'
-import ReactSelect from 'react-select'
 import cn from 'classnames'
+import ReactSelect, { GroupBase } from 'react-select'
+
+import { Option as OptionType } from '../../Select/Select.types'
 import { CountryCodeSelectProps } from '../PhoneInput.types'
-import * as styles from './CountryCodeSelect.css'
 import {
-  Option as OptionComponent,
+  Option,
   Menu,
   IndicatorsContainer,
   Control,
@@ -17,10 +17,12 @@ import {
   customStyles,
 } from './Components'
 
+import * as styles from './CountryCodeSelect.css'
+
 export const CountryCodeSelect = ({
   name,
   id = name,
-  disabled,
+  isDisabled,
   options,
   value,
   placeholder = '',
@@ -34,27 +36,27 @@ export const CountryCodeSelect = ({
   onBlur,
   onMenuOpen,
   onMenuClose,
-}: CountryCodeSelectProps & TestSupport) => {
+}: CountryCodeSelectProps) => {
   return (
     <div
       className={cn(styles.wrapper, {
-        [styles.wrapperColor[backgroundColor]]: !disabled,
-        [styles.containerDisabled]: disabled,
+        [styles.wrapperColor[backgroundColor]]: !isDisabled,
+        [styles.containerDisabled]: isDisabled,
       })}
       data-testid={`country-code-select-${name}`}
     >
-      <ReactSelect
+      <ReactSelect<OptionType<string>, false, GroupBase<OptionType<string>>>
         instanceId={id}
         aria-labelledby={id}
         id={id}
         name={name}
-        isDisabled={disabled}
+        isDisabled={isDisabled}
         onChange={onChange}
-        value={value}
         options={options}
+        value={value}
         icon="chevronDown"
         classNamePrefix="country-code-select"
-        styles={customStyles}
+        styles={customStyles()}
         onFocus={onFocus}
         onBlur={onBlur}
         onMenuOpen={onMenuOpen}
@@ -64,6 +66,8 @@ export const CountryCodeSelect = ({
         defaultValue={defaultValue}
         inputHasLabel={inputHasLabel}
         size={size}
+        unstyled
+        menuShouldScrollIntoView={false}
         components={{
           Control,
           Input,
@@ -73,7 +77,7 @@ export const CountryCodeSelect = ({
           DropdownIndicator,
           IndicatorsContainer,
           Menu,
-          Option: OptionComponent,
+          Option,
         }}
       />
     </div>
