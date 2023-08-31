@@ -27,10 +27,10 @@ import { errors } from '@island.is/judicial-system-web/messages'
 import { UserContext } from '@island.is/judicial-system-web/src/components'
 import {
   InstitutionType,
+  useCaseLazyQuery,
   User,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import * as constants from '@island.is/judicial-system/consts'
-import { useCaseLazyQuery } from '@island.is/judicial-system-web/src/components/FormProvider/case.generated'
 
 import { isTrafficViolationCase } from '../../stepHelper'
 import { findFirstInvalidStep } from '../../formHelper'
