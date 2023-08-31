@@ -147,6 +147,7 @@ const WorkMachinesOverview = () => {
         title={formatMessage(messages.workMachinesTitle)}
         intro={formatMessage(messages.workMachinesDescription)}
         serviceProviderID={VINNUEFTIRLITID_ID}
+        serviceProviderTooltip={formatMessage(m.workmachineTooltip)}
       />
       <GridRow marginTop={[2, 2, 6]}>
         <GridColumn span="12/12">

@@ -14,7 +14,6 @@ import {
   Divider,
   GridColumn,
   GridRow,
-  LoadingDots,
   Stack,
   Text,
 } from '@island.is/island-ui/core'
@@ -29,6 +28,7 @@ import {
   m,
   FootNote,
   SAMGONGUSTOFA_ID,
+  IntroHeader,
 } from '@island.is/service-portal/core'
 
 import OwnersTable from '../../components/DetailTable/OwnersTable'
@@ -258,18 +258,16 @@ const VehicleDetail = () => {
     <>
       <Box marginBottom={[2, 2, 6]}>
         <GridRow>
-          <GridColumn span={['9/9', '9/9', '6/8', '6/8']}>
-            <Stack space={2}>
-              <Text variant="h3" as="h1">
-                {loading ? (
-                  <LoadingDots />
-                ) : (
-                  [mainInfo?.model, mainInfo?.subModel, year, color]
-                    .filter(Boolean)
-                    .join(' ')
-                )}
-              </Text>
-            </Stack>
+          <GridColumn span={'9/9'}>
+            <IntroHeader
+              title={[mainInfo?.model, mainInfo?.subModel, year, color]
+                .filter(Boolean)
+                .join(' ')}
+              intro={messages.intro}
+              serviceProviderID={SAMGONGUSTOFA_ID}
+              serviceProviderTooltip={formatMessage(m.vehiclesTooltip)}
+              loading={loading}
+            />
             {inspectionInfo?.inspectionFine &&
             inspectionInfo.inspectionFine > 0 ? (
               <Box marginTop={5}>
@@ -283,7 +281,7 @@ const VehicleDetail = () => {
           </GridColumn>
         </GridRow>
         {!loading && downloadServiceURL && (
-          <GridRow marginTop={6}>
+          <GridRow marginTop={0}>
             <GridColumn span="9/9">
               <Box display="flex" justifyContent="flexStart" printHidden>
                 <Box paddingRight={2} marginBottom={[1, 1, 1, 0]}>

@@ -157,6 +157,7 @@ const VehiclesOverview = () => {
         title={messages.title}
         intro={messages.intro}
         serviceProviderID={SAMGONGUSTOFA_ID}
+        serviceProviderTooltip={formatMessage(m.vehiclesTooltip)}
       />
 
       {!loading && !error && vehicles.length === 0 && (

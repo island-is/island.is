@@ -167,6 +167,7 @@ const Lookup = () => {
           title={messages.vehiclesLookup}
           intro={messages.searchIntro}
           serviceProviderID={SAMGONGUSTOFA_ID}
+          serviceProviderTooltip={formatMessage(m.vehiclesTooltip)}
         />
         <GridRow>
           <GridColumn span="1/1">

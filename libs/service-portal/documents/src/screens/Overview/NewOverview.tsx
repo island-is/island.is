@@ -476,13 +476,15 @@ export const ServicePortalDocuments = () => {
           />
           <Box borderColor="blue200" borderTopWidth="standard" marginTop={4}>
             {loading && (
-              <SkeletonLoader
-                space={2}
-                repeat={6}
-                display="block"
-                width="full"
-                height={65}
-              />
+              <Box marginTop={4}>
+                <SkeletonLoader
+                  space={2}
+                  repeat={6}
+                  display="block"
+                  width="full"
+                  height={65}
+                />
+              </Box>
             )}
             <Stack space={0}>
               {filteredDocuments.map((doc, index) => (

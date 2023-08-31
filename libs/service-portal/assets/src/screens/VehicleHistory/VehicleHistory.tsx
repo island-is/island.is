@@ -160,6 +160,7 @@ const VehiclesHistory = () => {
         title={messages.historyTitle}
         intro={messages.historyIntro}
         serviceProviderID={SAMGONGUSTOFA_ID}
+        serviceProviderTooltip={formatMessage(m.vehiclesTooltip)}
       />
 
       {!loading && !error && vehicles.length === 0 && (

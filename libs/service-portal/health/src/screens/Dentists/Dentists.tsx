@@ -4,6 +4,8 @@ import {
   ErrorScreen,
   EmptyState,
   UserInfoLine,
+  IntroHeader,
+  SJUKRATRYGGINGAR_ID,
 } from '@island.is/service-portal/core'
 import { useGetDentistsQuery } from './Dentists.generated'
 import {
@@ -15,7 +17,6 @@ import {
   Stack,
   Text,
 } from '@island.is/island-ui/core'
-import { IntroHeader } from '@island.is/portals/core'
 import { messages } from '../../lib/messages'
 import { useState } from 'react'
 import BillsTable from './BillsTable'
@@ -66,6 +67,8 @@ const Dentists = () => {
       <IntroHeader
         title={formatMessage(messages.dentistsTitle)}
         intro={formatMessage(messages.dentistsDescription)}
+        serviceProviderID={SJUKRATRYGGINGAR_ID}
+        serviceProviderTooltip={formatMessage(m.healthTooltip)}
       />
 
       {!loading && !data?.rightsPortalDentists && (

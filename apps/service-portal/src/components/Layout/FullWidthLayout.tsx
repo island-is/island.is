@@ -111,6 +111,11 @@ export const FullWidthLayout: FC<FullWidthLayoutProps> = ({
                       title={activeParent?.name || ''}
                       intro={activeParent?.heading}
                       serviceProviderID={activeParent?.serviceProvider}
+                      serviceProviderTooltip={
+                        activeParent?.description
+                          ? formatMessage(activeParent.description)
+                          : undefined
+                      }
                     />
                   </GridColumn>
                 </GridRow>

@@ -1066,6 +1066,46 @@ export const m = defineMessages({
     id: 'service.portal:userprofile-tooltip',
     defaultMessage: 'Ísland.is hefur umsjón með gögnum á þínum stillingum.',
   },
+  healthTooltip: {
+    id: 'service.portal:health-tooltip',
+    defaultMessage:
+      'Sjúkratryggingar Íslands hafa umsjón með gögnum um þína heilsu.',
+  },
+  universityOfIcelandTooltip: {
+    id: 'service.portal:uni-iceland-tooltip',
+    defaultMessage:
+      'Háskóli Íslands hefur umsjón með gögnum um brautskráningar úr Háskóla Íslands.',
+  },
+  airDiscountTooltip: {
+    id: 'service.portal:air-discount-tooltip',
+    defaultMessage: 'Vegagerðin hefur umsjón með gögnum Loftbrúar.',
+  },
+  realEstateTooltip: {
+    id: 'service.portal:real-estate-tooltip',
+    defaultMessage:
+      'Húsnæðis- og mannvirkjastofnun hefur umsjón með gögnum um fasteignir.',
+  },
+  vehiclesTooltip: {
+    id: 'service.portal:vehicles-tooltip',
+    defaultMessage: 'Samgöngustofa hefur umsjón með gögnum um ökutæki.',
+  },
+  mmsTooltip: {
+    id: 'service.portal:mms-tooltip',
+    defaultMessage: 'Menntamálastofnun hefur umsjón með gögnum um grunnskóla.',
+  },
+  occupationalLicenseTooltip: {
+    id: 'service.portal:occupational-license-tooltip',
+    defaultMessage:
+      'Ýmsir þjónustuaðilar sjá um hvert starsleyfi fyrir sig, veldu þitt starsleyfi til að sjá þjónustuaðila þess.',
+  },
+  workmachineTooltip: {
+    id: 'service.portal:workmachine-tooltip',
+    defaultMessage: 'Vinnueftirlitið hefur umsjón með gögnum um vinnuvélar.',
+  },
+  financeTooltip: {
+    id: 'service.portal:finance-tooltip',
+    defaultMessage: 'Fjársýslan hefur umsjón með gögnum um fjármál.',
+  },
   consent: {
     id: 'service.portal:consent',
     defaultMessage: 'Gagnaöflun',

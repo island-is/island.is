@@ -36,5 +36,5 @@ export const financeNavigation: PortalNavigationItem = {
   },
   heading: m.financeHeading,
   serviceProvider: FJARSYSLAN_ID,
-  description: m.financeDescription,
+  description: m.financeTooltip,
 }

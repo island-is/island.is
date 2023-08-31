@@ -4,10 +4,11 @@ import {
   ErrorScreen,
   EmptyState,
   UserInfoLine,
+  IntroHeader,
+  SJUKRATRYGGINGAR_ID,
 } from '@island.is/service-portal/core'
 import { useGetHealthCenterQuery } from './HealthCenter.generated'
 import { Box, Divider, SkeletonLoader, Stack } from '@island.is/island-ui/core'
-import { IntroHeader } from '@island.is/portals/core'
 import { messages } from '../../lib/messages'
 import { useState } from 'react'
 import HistoryTable from './HistoryTable'
@@ -64,6 +65,8 @@ const HealthCenter = () => {
       <IntroHeader
         title={formatMessage(messages.healthCenterTitle)}
         intro={formatMessage(messages.healthCenterDescription)}
+        serviceProviderID={SJUKRATRYGGINGAR_ID}
+        serviceProviderTooltip={formatMessage(m.healthTooltip)}
       />
 
       {!loading && !currentInfo && (

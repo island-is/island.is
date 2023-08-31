@@ -2,13 +2,14 @@ import React from 'react'
 import { defineMessage } from 'react-intl'
 
 import { Box } from '@island.is/island-ui/core'
-import { useNamespaces } from '@island.is/localization'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import { FootNote, IntroHeader, m } from '@island.is/service-portal/core'
 import { CareerCards } from './components/CareerCards'
 import { MENNTAMALASTOFNUN_ID } from '@island.is/service-portal/core'
 
 const EducationCareer = () => {
   useNamespaces('sp.education-career')
+  const { formatMessage } = useLocale()
 
   return (
     <Box marginBottom={[6, 6, 10]}>
@@ -21,6 +22,7 @@ const EducationCareer = () => {
           description: 'education career intro',
         })}
         serviceProviderID={MENNTAMALASTOFNUN_ID}
+        serviceProviderTooltip={formatMessage(m.mmsTooltip)}
       />
       <CareerCards />
       <FootNote serviceProviderID={MENNTAMALASTOFNUN_ID} />

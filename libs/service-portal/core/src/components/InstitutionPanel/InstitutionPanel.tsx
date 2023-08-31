@@ -75,7 +75,7 @@ export const InstitutionPanel = ({
               )}
               {tooltipText && (
                 <div className={styles.tooltip}>
-                  <Tooltip text={tooltipText} />
+                  <Tooltip placement="bottom" text={tooltipText} />
                 </div>
               )}
             </Box>

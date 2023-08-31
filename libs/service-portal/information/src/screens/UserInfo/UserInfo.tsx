@@ -55,6 +55,7 @@ const SubjectInfo = () => {
         title={userInfo.profile.name}
         intro={spmm.userInfoDesc}
         serviceProviderID={THJODSKRA_ID}
+        serviceProviderTooltip={formatMessage(m.tjodskraTooltip)}
       />
       <Stack space={2}>
         <UserInfoLine

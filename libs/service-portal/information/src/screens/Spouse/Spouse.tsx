@@ -79,6 +79,7 @@ const FamilyMember = () => {
           intro={dataInfoSpouse}
           marginBottom={2}
           serviceProviderID={THJODSKRA_ID}
+          serviceProviderTooltip={formatMessage(m.tjodskraTooltip)}
         />
       )}
 

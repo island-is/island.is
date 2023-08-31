@@ -106,6 +106,7 @@ export const AssetsOverview = () => {
             'Hér birtast upplýsingar úr fasteignaskrá um fasteignir þínar, lönd og lóðir sem þú ert þinglýstur eigandi að.',
         }}
         serviceProviderID={HMS_ID}
+        serviceProviderTooltip={formatMessage(m.realEstateTooltip)}
       />
 
       {loading && <AssetCardLoader />}

@@ -2,7 +2,6 @@ import React, { useState } from 'react'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   ErrorScreen,
-  ServicePortalModuleComponent,
   m as coreMessage,
   ActionCard,
   EmptyState,
@@ -137,6 +136,9 @@ export const AirDiscountOverview = () => {
             <IntroHeader
               title={formatMessage(m.introTitle)}
               serviceProviderID={VEGAGERDIN_ID}
+              serviceProviderTooltip={formatMessage(
+                coreMessage.airDiscountTooltip,
+              )}
             >
               <Text variant="default" paddingTop={2}>
                 {formatMessage(m.introLink, {

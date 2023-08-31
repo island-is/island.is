@@ -31,6 +31,7 @@ export const EducationGraduationDetail = () => {
       />
     )
   }
+
   return (
     <Box marginBottom={[6, 6, 10]}>
       <IntroHeader

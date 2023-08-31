@@ -1,13 +1,12 @@
+import React, { useEffect, useState } from 'react'
 import {
   GridColumn,
   GridRow,
-  Hidden,
-  Stack,
   Text,
+  LoadingDots,
 } from '@island.is/island-ui/core'
 import { IntroHeaderProps } from '@island.is/portals/core'
 import InstitutionPanel from '../InstitutionPanel/InstitutionPanel'
-import React, { useEffect, useState } from 'react'
 import {
   Organization,
   useOrganizations,
@@ -21,6 +20,7 @@ interface Props {
   serviceProviderID?: string
   serviceProviderTooltip?: string
   narrow?: boolean
+  loading?: boolean
 }
 export const IntroHeader = (props: IntroHeaderProps & Props) => {
   const { marginBottom } = props
@@ -42,6 +42,10 @@ export const IntroHeader = (props: IntroHeaderProps & Props) => {
       else setCurrentOrganization(undefined)
     }
   }, [loading, pathname])
+
+  if (props.loading) {
+    return <LoadingDots />
+  }
 
   return (
     <GridRow marginBottom={marginBottom ?? 4}>

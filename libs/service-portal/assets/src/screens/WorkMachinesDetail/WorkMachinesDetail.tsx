@@ -144,8 +144,9 @@ const WorkMachinesDetail = () => {
     <>
       <Box marginBottom={[1, 1, 3]}>
         <IntroHeader
-          serviceProviderID={VINNUEFTIRLITID_ID}
           title={workMachine?.type ?? ''}
+          serviceProviderID={VINNUEFTIRLITID_ID}
+          serviceProviderTooltip={formatMessage(m.workmachineTooltip)}
         />
       </Box>
       <GridRow marginBottom={2}>
