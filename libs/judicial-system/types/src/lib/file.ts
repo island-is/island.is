@@ -76,6 +76,7 @@ export interface CaseFile {
   chapter?: number
   orderWithinChapter?: number
   displayDate?: string
+  policeFileId?: string
 }
 
 export interface CreateFile {
@@ -87,6 +88,7 @@ export interface CreateFile {
   chapter?: number
   orderWithinChapter?: number
   displayDate?: string
+  policeFileId?: string
 }
 
 export interface UpdateFile {

@@ -57,8 +57,12 @@ import { useGetPoliceCaseFilesQuery } from './getPoliceCaseFiles.generated'
 import { caseFiles as strings } from './CaseFiles.strings'
 
 export const CaseFiles: React.FC<React.PropsWithChildren<unknown>> = () => {
-  const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
-    useContext(FormContext)
+  const {
+    workingCase,
+    setWorkingCase,
+    isLoadingWorkingCase,
+    caseNotFound,
+  } = useContext(FormContext)
   const {
     data: policeData,
     loading: policeDataLoading,
@@ -133,7 +137,7 @@ export const CaseFiles: React.FC<React.PropsWithChildren<unknown>> = () => {
         .filter(
           (policeFile) =>
             !workingCase.caseFiles?.some(
-              (file) => !file.category && file.name === policeFile.name,
+              (file) => !file.category && file.policeFileId === policeFile.id,
             ),
         )
         .map(mapPoliceCaseFileToPoliceCaseFileCheck) || [],

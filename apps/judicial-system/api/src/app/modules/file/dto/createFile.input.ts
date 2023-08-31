@@ -57,4 +57,8 @@ export class CreateFileInput implements CreateFile {
   @Allow()
   @Field({ nullable: true })
   readonly displayDate?: string
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly policeFileId?: string
 }

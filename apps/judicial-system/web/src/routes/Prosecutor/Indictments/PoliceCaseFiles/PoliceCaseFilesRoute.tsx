@@ -153,7 +153,7 @@ const UploadFilesToPoliceCase: React.FC<
       policeCaseFiles?.files
         .filter(
           (f) =>
-            !caseFiles.some((caseFile) => caseFile.name === f.name) &&
+            !caseFiles.some((caseFile) => caseFile.policeFileId === f.id) &&
             f.policeCaseNumber === policeCaseNumber,
         )
         .map(mapPoliceCaseFileToPoliceCaseFileCheck) || [],
@@ -366,8 +366,9 @@ const PoliceUploadListMemo: React.FC<
 
 const PoliceCaseFilesRoute = () => {
   const { formatMessage } = useIntl()
-  const { workingCase, isLoadingWorkingCase, caseNotFound } =
-    useContext(FormContext)
+  const { workingCase, isLoadingWorkingCase, caseNotFound } = useContext(
+    FormContext,
+  )
 
   const [allUploaded, setAllUploaded] = useState<AllUploadedState>(
     workingCase.policeCaseNumbers.reduce(
