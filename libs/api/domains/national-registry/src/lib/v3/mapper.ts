@@ -22,10 +22,10 @@ import {
   Custodian,
 } from '../shared/models'
 import { PersonV3 } from '../shared/types'
-import { ExcludesFalse } from '../shared/utils'
 import { Housing } from '../shared/models/housing.model'
 import { Name } from '../shared/models/name.model'
 import * as kennitala from 'kennitala'
+import { isDefined } from '@island.is/shared/utils'
 
 export function formatPersonDiscriminated(
   individual?: EinstaklingurDTOAllt | null,
@@ -117,7 +117,7 @@ export function formatHousing(
           fullName: f.nafn,
         }
       })
-      .filter(Boolean as unknown as ExcludesFalse),
+      .filter(isDefined),
     residence: housing?.adsetur ? formatAddress(housing?.adsetur) : null,
     address: addressData ? formatAddress(addressData) : null,
   }

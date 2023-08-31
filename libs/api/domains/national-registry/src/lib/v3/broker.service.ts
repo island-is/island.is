@@ -16,7 +16,6 @@ import {
   formatName,
 } from './mapper'
 import { PersonV3 } from '../shared/types'
-import { ExcludesFalse } from '../shared/utils'
 import {
   Address,
   PersonBase,
@@ -30,6 +29,7 @@ import {
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { Name } from '../shared/models/name.model'
+import { isDefined } from '@island.is/shared/utils'
 
 @Injectable()
 export class BrokerService {
@@ -87,7 +87,7 @@ export class BrokerService {
           fullName: l.logForeldriNafn,
         }
       })
-      .filter(Boolean as unknown as ExcludesFalse)
+      .filter(isDefined)
   }
 
   async getCustodians(
@@ -118,7 +118,7 @@ export class BrokerService {
             ) ?? null,
         } as Custodian
       })
-      .filter(Boolean as unknown as ExcludesFalse)
+      .filter(isDefined)
 
     return custodians ?? null
   }
