@@ -9,6 +9,7 @@ import { readFile, writeFile } from 'fs/promises'
 import { sync } from 'glob'
 import { join } from 'path'
 import { rootDir } from '../consts'
+import { getWorkspaceLayout, workspaceRoot, appRootPath } from '@nx/devkit'
 
 const mapServiceToNXname = async (serviceName: string) => {
   const projectRootPath = join(__dirname, '..', '..', '..', '..')
@@ -148,8 +149,9 @@ export const getLocalrunValueFile = async (
     { ports: [] as number[], configs: [] as any[] },
   )
   const defaultMountebankConfig = 'mountebank-imposter-config.json'
+  const defaultMountebankConfigPath = `${workspaceRoot}/${defaultMountebankConfig}`
   await writeFile(
-    defaultMountebankConfig,
+    defaultMountebankConfigPath,
     JSON.stringify({ imposters: mocksConfigs.configs }),
     { encoding: 'utf-8' },
   )
@@ -158,7 +160,7 @@ export const getLocalrunValueFile = async (
     .map((port) => `-p ${port}:${port}`)
     .join(
       ' ',
-    )} -v ${process.cwd()}/${defaultMountebankConfig}:/app/default.json docker.io/bbyars/mountebank:2.8.1 start --configfile=/app/default.json`
+    )} -v ${defaultMountebankConfigPath}:/app/default.json docker.io/bbyars/mountebank:2.8.1 start --configfile=/app/default.json`
 
   return {
     services: Object.entries(dockerComposeServices).reduce(
