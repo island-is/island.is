@@ -24,6 +24,7 @@ import type { Logger } from '@island.is/logging'
 import { formatFamilyChild } from './types/child.type'
 import { Name } from '../shared/models/name.model'
 import { isDefined } from '@island.is/shared/utils'
+import { ExcludesFalse } from '../utils'
 
 @Injectable()
 export class SoffiaService {
