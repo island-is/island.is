@@ -16,8 +16,8 @@ export const AlertMessageFormField: FC<React.PropsWithChildren<Props>> = ({
   const { formatMessage } = useLocale()
   return (
     <Box
-      marginTop={field.marginTop || 2}
-      marginBottom={field.marginBottom || 2}
+      marginTop={field.marginTop ?? 2}
+      marginBottom={field.marginBottom ?? 2}
     >
       <AlertMessage
         type={field.alertType ?? 'default'}
