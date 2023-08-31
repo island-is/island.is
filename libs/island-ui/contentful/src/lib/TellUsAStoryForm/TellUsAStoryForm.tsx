@@ -238,7 +238,7 @@ export const TellUsAStoryForm: React.FC<
                         placeholder={organizationPlaceholder}
                         options={options}
                         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                        // @ts-nocheck make web strict
+                        // @ts-ignore make web strict
                         errorMessage={
                           errors?.organization
                             ? organizationInputErrorMessage
