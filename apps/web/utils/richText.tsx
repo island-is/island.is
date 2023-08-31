@@ -31,6 +31,7 @@ import {
   AircraftSearch,
   DrivingInstructorList,
   PlateAvailableSearch,
+  SectionWithVideo,
 } from '@island.is/web/components'
 import {
   PowerBiSlice as PowerBiSliceSchema,
@@ -38,6 +39,7 @@ import {
   AccordionSlice as AccordionSliceSchema,
   FeaturedSupportQnAs as FeaturedSupportQNAsSchema,
   SliceDropdown as SliceDropdownSchema,
+  SectionWithVideo as SectionWithVideoSchema,
 } from '@island.is/web/graphql/schema'
 import { Locale } from '@island.is/shared/types'
 import { MonthlyStatistics } from '../components/connected/electronicRegistrationStatistics'
@@ -117,6 +119,9 @@ const defaultRenderComponent = {
       slicesAreFullWidth={true}
       dropdownMarginBottom={5}
     />
+  ),
+  SectionWithVideo: (slice: SectionWithVideoSchema) => (
+    <SectionWithVideo slice={slice} />
   ),
 }
 

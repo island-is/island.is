@@ -3,7 +3,6 @@ import React, { useEffect, useState } from 'react'
 import {
   Box,
   NavigationItem,
-  Option,
   Select,
   Tag,
   Text,

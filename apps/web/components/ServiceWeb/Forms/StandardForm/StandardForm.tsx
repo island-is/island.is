@@ -547,11 +547,17 @@ export const StandardForm = ({
               isSearchable
               label={fn('malaflokkur', 'label', 'Málaflokkur')}
               name="malaflokkur"
+<<<<<<< HEAD
               // eslint-disable-next-line @typescript-eslint/ban-ts-comment
               // @ts-ignore make web strict
               onChange={({ label, value }: Option) => {
                 setCategoryLabel(label as string)
                 setCategoryId(value as string)
+=======
+              onChange={({ label, value }) => {
+                setCategoryLabel(label)
+                setCategoryId(value)
+>>>>>>> 7d8dded7eec841f0a6832df3c58672416ed44aad
               }}
               // eslint-disable-next-line @typescript-eslint/ban-ts-comment
               // @ts-ignore make web strict
@@ -710,9 +716,13 @@ export const StandardForm = ({
                           isSearchable
                           label={fn('rikisadili', 'label', 'Ríkisaðili')}
                           name="rikisadili"
+<<<<<<< HEAD
                           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                           // @ts-ignore make web strict
                           onChange={({ label }: Option) => {
+=======
+                          onChange={({ label }) => {
+>>>>>>> 7d8dded7eec841f0a6832df3c58672416ed44aad
                             onChange(label)
                           }}
                           hasError={errors?.rikisadili !== undefined}
@@ -893,11 +903,15 @@ export const StandardForm = ({
                                 'Þinn sýslumaður',
                               )}
                               name="syslumadur"
+<<<<<<< HEAD
                               // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                               // @ts-ignore make web strict
                               onChange={({ label, value }: Option) => {
+=======
+                              onChange={({ label, value }) => {
+>>>>>>> 7d8dded7eec841f0a6832df3c58672416ed44aad
                                 onChange(label)
-                                setSyslumadurId(value as string)
+                                setSyslumadurId(value)
                               }}
                               hasError={errors?.syslumadur !== undefined}
                               errorMessage={

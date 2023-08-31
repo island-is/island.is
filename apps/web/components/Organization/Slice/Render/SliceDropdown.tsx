@@ -6,7 +6,6 @@ import {
   GridColumn,
   GridContainer,
   GridRow,
-  Option,
   Select,
 } from '@island.is/island-ui/core'
 import { useRouter } from 'next/router'

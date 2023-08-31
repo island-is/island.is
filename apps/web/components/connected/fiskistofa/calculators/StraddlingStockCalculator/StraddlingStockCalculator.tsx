@@ -212,7 +212,7 @@ const StraddlingStockCalculator = ({
         <Inline space={3}>
           <Box className={styles.selectBox}>
             <Select
-              disabled={loading}
+              isDisabled={loading}
               size="sm"
               label={n('year', 'Ár')}
               name="year-select"
@@ -225,7 +225,7 @@ const StraddlingStockCalculator = ({
           </Box>
           <Box className={styles.selectBox} marginBottom={3}>
             <Select
-              disabled={loading}
+              isDisabled={loading}
               value={emptyValue}
               size="sm"
               label={n('addType', 'Bæta við tegund')}

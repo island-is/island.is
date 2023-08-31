@@ -12,7 +12,6 @@ import {
   GridContainer,
   GridRow,
   Select,
-  Option,
   Input,
   Inline,
   Tag,

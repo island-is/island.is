@@ -11,7 +11,6 @@ import {
   Stack,
   Checkbox,
   Button,
-  Option,
   InputFileUpload,
   UploadFile,
 } from '@island.is/island-ui/core'
