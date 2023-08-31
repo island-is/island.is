@@ -6,7 +6,7 @@ export interface CitizenshipDto {
 }
 
 export function formatCitizenshipDto(
-  citizenship: EinstaklingurDTORikisfang | null | undefined,
+  citizenship?: EinstaklingurDTORikisfang | null,
 ): CitizenshipDto | null {
   if (!citizenship || !citizenship.rikisfangLand) {
     return null

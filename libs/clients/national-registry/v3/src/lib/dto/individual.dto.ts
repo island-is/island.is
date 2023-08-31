@@ -10,9 +10,9 @@ export interface IndividualDto {
 }
 
 export function formatIndividualDto(
-  individual: EinstaklingurDTOAllt | null | undefined,
+  individual?: EinstaklingurDTOAllt | null,
 ): IndividualDto | null {
-  if (individual == null || !individual.kennitala || !individual.nafn) {
+  if (individual === null || !individual?.kennitala || !individual?.nafn) {
     return null
   }
   return {

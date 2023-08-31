@@ -14,7 +14,7 @@ import {
   EinstaklingurDTOTru,
   GerviEinstaklingarApi,
 } from '../../gen/fetch'
-import { ExcludesFalse } from './utils'
+import { isDefined } from '@island.is/shared/utils'
 
 @Injectable()
 export class NationalRegistryV3ClientService {
@@ -31,10 +31,9 @@ export class NationalRegistryV3ClientService {
   async getAllDataIndividual(
     nationalId: string,
   ): Promise<EinstaklingurDTOAllt | null> {
-    const data = await this.individualApi.midlunV02EinstaklingarNationalIdGet({
+    return this.individualApi.midlunV02EinstaklingarNationalIdGet({
       nationalId,
     })
-    return data ?? null
   }
 
   getFamily = (
@@ -52,9 +51,7 @@ export class NationalRegistryV3ClientService {
         nationalId,
       })
 
-    return (
-      child?.forsjaradilar?.filter(Boolean as unknown as ExcludesFalse) ?? null
-    )
+    return child?.forsjaradilar?.filter(isDefined) ?? null
   }
 
   getSpouse = (nationalId: string): Promise<EinstaklingurDTOHju | null> =>

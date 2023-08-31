@@ -1,5 +1,3 @@
-<!-- gitbook-navigation: "V3" -->
-
 # National Registry V3 Client
 
 This library was generated with [Nx](https://nx.dev).

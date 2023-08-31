@@ -7,7 +7,7 @@ export interface BirthplaceDto {
 }
 
 export function formatBirthplaceDto(
-  birthplace: EinstaklingurDTOFaeding | null | undefined,
+  birthplace?: EinstaklingurDTOFaeding | null,
 ): BirthplaceDto | null {
   if (!birthplace || !birthplace.faedingarStadurHeiti) {
     return null

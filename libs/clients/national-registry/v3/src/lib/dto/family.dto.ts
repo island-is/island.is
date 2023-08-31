@@ -1,8 +1,3 @@
-import {
-  EinstaklingurDTOLogForeldriItem,
-  EinstaklingurDTOLogforeldrar,
-} from '../../../gen/fetch'
-
 export interface FamilyDto {
   parents: Array<FamilyMember> | null
   children: Array<FamilyMember> | null

@@ -8,7 +8,7 @@ export interface NameDto {
 }
 
 export function formatNameDto(
-  name: EinstaklingurDTONafnAllt | null | undefined,
+  name?: EinstaklingurDTONafnAllt | null,
 ): NameDto | null {
   if (!name) {
     return null

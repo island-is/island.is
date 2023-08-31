@@ -8,7 +8,7 @@ export interface SpouseDto {
 }
 
 export function formatSpouseDto(
-  spouse: EinstaklingurDTOHju | null | undefined,
+  spouse?: EinstaklingurDTOHju | null,
 ): SpouseDto | null {
   if (!spouse || !spouse.makiKennitala || !spouse.makiNafn) {
     return null

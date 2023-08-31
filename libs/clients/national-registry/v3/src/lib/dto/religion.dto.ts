@@ -6,7 +6,7 @@ export interface ReligionDto {
 }
 
 export function formatReligionDto(
-  religion: EinstaklingurDTOTru | null | undefined,
+  religion?: EinstaklingurDTOTru | null,
 ): ReligionDto | null {
   if (!religion) {
     return null

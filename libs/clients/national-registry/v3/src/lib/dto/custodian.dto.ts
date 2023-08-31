@@ -12,8 +12,8 @@ export interface CustodianDto {
 }
 
 export function formatCustodianDto(
-  custodian: EinstaklingurDTOForsjaItem | null | undefined,
-  childDomicileData: EinstaklingurDTOLoghTengsl | null | undefined,
+  custodian?: EinstaklingurDTOForsjaItem | null,
+  childDomicileData?: EinstaklingurDTOLoghTengsl | null,
 ): CustodianDto | null {
   if (
     !custodian ||

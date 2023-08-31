@@ -6,7 +6,7 @@ export interface ChildDto {
 }
 
 export function formatChildDto(
-  child: EinstaklingurDTOLogForeldriItem | null | undefined,
+  child?: EinstaklingurDTOLogForeldriItem | null,
 ): ChildDto | null {
   if (!child) {
     return null

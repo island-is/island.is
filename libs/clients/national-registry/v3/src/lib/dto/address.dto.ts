@@ -10,7 +10,7 @@ export interface AddressDto {
 }
 
 export function formatAddressDto(
-  address: EinstaklingurDTOHeimili | null | undefined,
+  address?: EinstaklingurDTOHeimili | null,
 ): AddressDto | null {
   if (!address || !address.husHeiti) {
     return null
