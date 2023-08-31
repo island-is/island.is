@@ -58,10 +58,8 @@ const HealthCenterRegistration = () => {
   const [hoverId, setHoverId] = useState<string>('')
   const [toggle, setToggle] = useState(false)
   const [filter, setFilter] = useState('')
-  const [
-    selectedHealthCenter,
-    setSelectedHealthCenter,
-  ] = useState<RightsPortalHealthCenter | null>(null)
+  const [selectedHealthCenter, setSelectedHealthCenter] =
+    useState<RightsPortalHealthCenter | null>(null)
 
   const [loadingTransfer, setLoadingTransfer] = useState(false)
   const [errorTransfer, setErrorTransfer] = useState(false)

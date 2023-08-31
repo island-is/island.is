@@ -130,7 +130,7 @@ export class RightsPortalService {
             },
           }
         })
-        .filter((Boolean as unknown) as ExcludesFalse)
+        .filter(Boolean as unknown as ExcludesFalse)
 
       return {
         data: dentists,
@@ -173,7 +173,7 @@ export class RightsPortalService {
             },
           }
         })
-        .filter((Boolean as unknown) as ExcludesFalse)
+        .filter(Boolean as unknown as ExcludesFalse)
 
       return {
         data: healthCenters,

@@ -12,9 +12,7 @@
   "paths": {
     "/v1/aidsandnutrition": {
       "get": {
-        "tags": [
-          "aidsandnutrition"
-        ],
+        "tags": ["aidsandnutrition"],
         "operationId": "aidsandnutrition",
         "responses": {
           "200": {
@@ -51,9 +49,7 @@
     },
     "/v1/dentists": {
       "get": {
-        "tags": [
-          "dentist"
-        ],
+        "tags": ["dentist"],
         "operationId": "dentists",
         "parameters": [
           {
@@ -126,9 +122,7 @@
     },
     "/v1/dentists/current": {
       "get": {
-        "tags": [
-          "dentist"
-        ],
+        "tags": ["dentist"],
         "operationId": "dentists/current",
         "responses": {
           "200": {
@@ -165,9 +159,7 @@
     },
     "/v1/dentists/status": {
       "get": {
-        "tags": [
-          "dentist"
-        ],
+        "tags": ["dentist"],
         "operationId": "dentiststatus",
         "responses": {
           "200": {
@@ -204,9 +196,7 @@
     },
     "/v1/dentists/{id}/register": {
       "get": {
-        "tags": [
-          "dentist"
-        ],
+        "tags": ["dentist"],
         "operationId": "dentists/register",
         "parameters": [
           {
@@ -248,9 +238,7 @@
     },
     "/v1/dentists/bills": {
       "get": {
-        "tags": [
-          "dentist"
-        ],
+        "tags": ["dentist"],
         "operationId": "dentists/bills",
         "parameters": [
           {
@@ -310,9 +298,7 @@
     },
     "/v1/drugs/paymentPeriods": {
       "get": {
-        "tags": [
-          "drug"
-        ],
+        "tags": ["drug"],
         "operationId": "drugs/paymentPeriods",
         "responses": {
           "200": {
@@ -352,9 +338,7 @@
     },
     "/v1/drugs/bills/{paymentPeriodId}": {
       "get": {
-        "tags": [
-          "drug"
-        ],
+        "tags": ["drug"],
         "operationId": "drugs/bills",
         "parameters": [
           {
@@ -406,9 +390,7 @@
     },
     "/v1/healthcenters": {
       "get": {
-        "tags": [
-          "healthcenter"
-        ],
+        "tags": ["healthcenter"],
         "operationId": "healthcenters",
         "parameters": [
           {
@@ -472,9 +454,7 @@
     },
     "/v1/healthcenters/current": {
       "get": {
-        "tags": [
-          "healthcenter"
-        ],
+        "tags": ["healthcenter"],
         "operationId": "healthcenters/current",
         "responses": {
           "200": {
@@ -511,9 +491,7 @@
     },
     "/v1/healthcenters/{id}/register": {
       "get": {
-        "tags": [
-          "healthcenter"
-        ],
+        "tags": ["healthcenter"],
         "operationId": "healthcenters/register",
         "parameters": [
           {
@@ -554,9 +532,7 @@
     },
     "/v1/healthcenters/history": {
       "get": {
-        "tags": [
-          "healthcenter"
-        ],
+        "tags": ["healthcenter"],
         "operationId": "healthcenters/history",
         "parameters": [
           {
@@ -616,9 +592,7 @@
     },
     "/v1/overview/insurance": {
       "get": {
-        "tags": [
-          "overview"
-        ],
+        "tags": ["overview"],
         "operationId": "overview/insurance",
         "responses": {
           "200": {
@@ -655,9 +629,7 @@
     },
     "/v1/payments/copayment/status": {
       "get": {
-        "tags": [
-          "payment"
-        ],
+        "tags": ["payment"],
         "operationId": "payments/copayment/status",
         "responses": {
           "200": {
@@ -694,9 +666,7 @@
     },
     "/v1/payments/copayment/periods": {
       "get": {
-        "tags": [
-          "payment"
-        ],
+        "tags": ["payment"],
         "operationId": "payments/copayment/periods",
         "responses": {
           "200": {
@@ -736,9 +706,7 @@
     },
     "/v1/payments/copayment/bills/{periodId}": {
       "get": {
-        "tags": [
-          "payment"
-        ],
+        "tags": ["payment"],
         "operationId": "payments/copayment/bills",
         "parameters": [
           {
@@ -790,9 +758,7 @@
     },
     "/v1/payments/overview/status": {
       "get": {
-        "tags": [
-          "payment"
-        ],
+        "tags": ["payment"],
         "operationId": "payments/overview/status",
         "responses": {
           "200": {
@@ -829,9 +795,7 @@
     },
     "/v1/payments/overview/bills": {
       "get": {
-        "tags": [
-          "payment"
-        ],
+        "tags": ["payment"],
         "operationId": "payments/overview/bills",
         "responses": {
           "200": {
@@ -871,9 +835,7 @@
     },
     "/v1/payments/overview/documents/{documentId}": {
       "get": {
-        "tags": [
-          "payment"
-        ],
+        "tags": ["payment"],
         "operationId": "payments/overview/documents",
         "parameters": [
           {
@@ -922,9 +884,7 @@
     },
     "/v1/therapies": {
       "get": {
-        "tags": [
-          "therapy"
-        ],
+        "tags": ["therapy"],
         "operationId": "therapies",
         "responses": {
           "200": {
