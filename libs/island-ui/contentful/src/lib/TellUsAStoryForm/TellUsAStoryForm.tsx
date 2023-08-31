@@ -1,5 +1,3 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-nocheck
 import React, { useEffect } from 'react'
 import { useQuery } from '@apollo/client'
 import { Document } from '@contentful/rich-text-types'

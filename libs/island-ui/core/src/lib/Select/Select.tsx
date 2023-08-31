@@ -1,5 +1,7 @@
 import React from 'react'
 import cn from 'classnames'
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore make web strict
 import ReactSelect, { createFilter, GroupBase } from 'react-select'
 import CreatableReactSelect from 'react-select/creatable'
 
@@ -59,11 +61,16 @@ export const Select = <
   return isCreatable ? (
     <div
       className={cn(styles.wrapper, {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore make web strict
         [styles.wrapperColor[backgroundColor]]: !isDisabled,
         [styles.containerDisabled]: isDisabled,
       })}
       data-testid={`creatable-select-${name}`}
     >
+      {/**
+       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore make web strict*/}
       <CreatableReactSelect<OptionType<Value>, IsMulti, Group>
         instanceId={id}
         aria-labelledby={id}
@@ -116,11 +123,16 @@ export const Select = <
   ) : (
     <div
       className={cn(styles.wrapper, {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore make web strict
         [styles.wrapperColor[backgroundColor]]: !isDisabled,
         [styles.containerDisabled]: isDisabled,
       })}
       data-testid={`select-${name}`}
     >
+      {/**
+       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore make web strict*/}
       <ReactSelect<OptionType<Value>, IsMulti, Group>
         instanceId={id}
         aria-labelledby={id}

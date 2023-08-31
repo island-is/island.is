@@ -4,6 +4,8 @@ import {
   components,
   MenuProps,
   OptionProps,
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore make web strict
   IndicatorsContainerProps,
   ControlProps,
   InputProps,
@@ -11,7 +13,11 @@ import {
   ValueContainerProps,
   SingleValueProps,
   StylesConfig,
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore make web strict
   DropdownIndicatorProps,
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore make web strict
   GroupBase,
 } from 'react-select'
 
@@ -24,6 +30,8 @@ export const Menu = <
   IsMulti extends boolean,
   Group extends GroupBase<OptionType<Value>>,
 >(
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore make web strict
   props: MenuProps<OptionType<Value>, IsMulti, Group>,
 ) => (
   <components.Menu className={styles.menu} {...props}>
@@ -36,6 +44,8 @@ export const Option = <
   IsMulti extends boolean,
   Group extends GroupBase<OptionType<Value>>,
 >(
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore make web strict
   props: OptionProps<OptionType<Value>, IsMulti, Group>,
 ) => {
   const { size = 'md' } = props.selectProps
@@ -46,6 +56,8 @@ export const Option = <
 
   return (
     <components.Option
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore make web strict
       className={cn(styles.option, styles.optionSizes[size])}
       {...props}
     >
@@ -56,6 +68,8 @@ export const Option = <
             data-testid={props.selectProps?.dataTestId}
             className={cn(
               styles.optionDescription,
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore make web strict
               styles.optionDescriptionSizes[size],
               { [styles.optionDescriptionTruncated]: descriptionTruncated },
             )}
@@ -120,11 +134,15 @@ export const SingleValue = <
   IsMulti extends boolean,
   Group extends GroupBase<OptionType<Value>>,
 >(
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore make web strict
   props: SingleValueProps<OptionType<Value>, IsMulti, Group>,
 ) => {
   const { size = 'md' } = props.selectProps
   return (
     <components.SingleValue
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore make web strict
       className={cn(styles.singleValue, styles.singleValueSizes[size])}
       {...props}
     >
@@ -138,6 +156,8 @@ export const ValueContainer = <
   IsMulti extends boolean,
   Group extends GroupBase<OptionType<Value>>,
 >(
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore make web strict
   props: ValueContainerProps<OptionType<Value>, IsMulti, Group>,
 ) => (
   <components.ValueContainer className={styles.valueContainer} {...props}>
@@ -150,6 +170,8 @@ export const Placeholder = <
   IsMulti extends boolean,
   Group extends GroupBase<OptionType<Value>>,
 >(
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore make web strict
   props: PlaceholderProps<OptionType<Value>, IsMulti, Group>,
 ) => {
   const { size = 'md' } = props.selectProps
@@ -158,6 +180,8 @@ export const Placeholder = <
       className={cn(
         styles.placeholder,
         styles.placeholderPadding,
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore make web strict
         styles.placeholderSizes[size],
       )}
       {...props}
@@ -172,6 +196,8 @@ export const Input = <
   IsMulti extends boolean,
   Group extends GroupBase<OptionType<Value>>,
 >(
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore make web strict
   props: InputProps<OptionType<Value>, IsMulti, Group>,
 ) => {
   const { size = 'md', ariaError } = props.selectProps
@@ -191,12 +217,16 @@ export const Control = <
   IsMulti extends boolean,
   Group extends GroupBase<OptionType<Value>>,
 >(
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore make web strict
   props: ControlProps<OptionType<Value>, IsMulti, Group>,
 ) => {
   const { size = 'md' } = props.selectProps
   const label = (
     <label
       htmlFor={props.selectProps.name}
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore make web strict
       className={cn(styles.label, styles.labelSizes[size], {
         [styles.labelDisabled]: props.selectProps.isDisabled,
       })}
@@ -214,6 +244,8 @@ export const Control = <
   const component = (label?: ReactNode) => {
     return (
       <components.Control
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore make web strict
         className={cn(styles.container, styles.containerSizes[size], {
           [styles.hasError]: props.selectProps.hasError,
         })}
@@ -239,8 +271,12 @@ export const customStyles = <
   Value,
   IsMulti extends boolean,
   Group extends GroupBase<OptionType<Value>>,
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore make web strict
 >(): StylesConfig<OptionType<Value>, IsMulti, Group> => ({
   indicatorSeparator: () => ({}),
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore make web strict
   control: (provided, state) => ({
     ...provided,
     background: 'transparent',

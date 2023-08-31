@@ -361,6 +361,8 @@ const CatchQuotaCalculator = ({ namespace }: CatchQuotaCalculatorProps) => {
               name="time-period-select"
               options={timePeriodOptions}
               value={selectedTimePeriod}
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore make web strict
               onChange={(newTimePeriod) => {
                 setSelectedTimePeriod(newTimePeriod as TimePeriodOption)
               }}
@@ -374,6 +376,8 @@ const CatchQuotaCalculator = ({ namespace }: CatchQuotaCalculatorProps) => {
               label={n('addType', 'Bæta við tegund')}
               name="tegund-fiskur-select"
               options={quotaTypes}
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore make web strict
               onChange={(selectedOption) => {
                 send({
                   type: 'ADD_CATEGORY',

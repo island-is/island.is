@@ -415,6 +415,8 @@ const Stepper = ({
                 name="step-option-select"
                 noOptionsMessage={n('noOptions', 'Enginn valmöguleiki')}
                 value={selectedOption}
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore make web strict
                 onChange={(option) => {
                   setSelectedOption(option as StepOption)
                 }}

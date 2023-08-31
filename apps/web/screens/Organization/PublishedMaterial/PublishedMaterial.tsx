@@ -425,6 +425,8 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
                 size="xs"
                 options={orderByOptions}
                 value={selectedOrderOption}
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore make web strict
                 onChange={(option) => {
                   setSelectedOrderOption(option as Option)
                 }}

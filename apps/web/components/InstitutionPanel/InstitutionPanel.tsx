@@ -1,6 +1,3 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-nocheck
-
 import {
   Box,
   Text,
@@ -30,6 +27,8 @@ export const InstitutionPanel = ({
   imgContainerDisplay,
 }: InstitutionPanelProps) => {
   return (
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore make web strict
     <Link {...linkProps}>
       <Box
         background="purple100"

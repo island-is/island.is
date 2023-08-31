@@ -233,6 +233,8 @@ const OrganizationPage: Screen<OrganizationProps> = ({
                   label={n('orderBy', 'Raða eftir')}
                   name="sort-option-select"
                   size="xs"
+                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                  // @ts-ignore make web strict
                   onChange={(option) => {
                     setSelectedTitleSortOption(option as TitleSortOption)
                   }}

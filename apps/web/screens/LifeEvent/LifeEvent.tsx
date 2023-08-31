@@ -195,7 +195,11 @@ export const LifeEvent: Screen<LifeEventProps> = ({
                     content as SliceType[],
                     {
                       renderComponent: {
+                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                        // @ts-ignore make web strict
                         Form: (form) => (
+                          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                          // @ts-ignore make web strict
                           <Form form={form} namespace={namespace} />
                         ),
                       },

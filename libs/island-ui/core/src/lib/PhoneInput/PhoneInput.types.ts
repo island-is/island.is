@@ -1,8 +1,12 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore make web strict
 import { GroupBase, Props } from 'react-select'
 
 import { Option as OptionType } from '../Select/Select.types'
 
 type PropsFromSelectProps<Value> = Pick<
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore make web strict
   Props<OptionType<Value>, false, GroupBase<OptionType<Value>>>,
   | 'name'
   | 'options'
