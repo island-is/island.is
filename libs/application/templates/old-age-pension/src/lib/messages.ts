@@ -459,8 +459,7 @@ export const oldAgePensionFormMessage: MessageDir = {
         'According National Register, a person older than 25 lives in the same legal address as yours. If you think this is wrong, contact the National Registry to fix it. When you have made the appropriate changes at the National Register, you can continue with the application and submit the document for confirmation later in the process.',
     },
     childPensionChildDoesNotHaveNationalId: {
-      id:
-        'oap.application:connected.applications.child.pension.child.does.not.have.national.id',
+      id: 'oap.application:connected.applications.child.pension.child.does.not.have.national.id',
       defaultMessage: 'Barn ekki með íslenska kennitölu',
       description: 'Child does not have an Icelandic national ID',
     },
@@ -475,20 +474,17 @@ export const oldAgePensionFormMessage: MessageDir = {
       description: 'Date of birth',
     },
     childPensionBirthDatePlaceholder: {
-      id:
-        'oap.application:connected.applications.child.pension.birth.date.placeholder',
+      id: 'oap.application:connected.applications.child.pension.birth.date.placeholder',
       defaultMessage: 'Veldu fæðingardag',
       description: 'Choose date of birth',
     },
     childPensionNameAlertTitle: {
-      id:
-        'oap.application:connected.applications.child.pension.name.alert.title',
+      id: 'oap.application:connected.applications.child.pension.name.alert.title',
       defaultMessage: 'Athugið',
       description: 'Attention',
     },
     childPensionNameAlertMessage: {
-      id:
-        'oap.application:connected.applications.child.pension.name.alert.message',
+      id: 'oap.application:connected.applications.child.pension.name.alert.message',
       defaultMessage: 'Ekki tókst að sækja nafn útfrá kennitölu.',
       description: 'No name found for national id in national registry',
     },

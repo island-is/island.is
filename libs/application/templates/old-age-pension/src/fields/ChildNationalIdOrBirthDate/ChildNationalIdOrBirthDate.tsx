@@ -34,9 +34,8 @@ const ChildNationalIdOrBirthDate: FC<FieldBaseProps> = ({
   const [hasError, setHasError] = useState(error)
   const [identityFound, setIdentityFound] = useState(true)
   const [repeaterIndex, setRepeaterIndex] = useState<number>(-1)
-  const [childDoesNotHaveNationalId, setChildDoesNotHaveNationalId] = useState(
-    false,
-  )
+  const [childDoesNotHaveNationalId, setChildDoesNotHaveNationalId] =
+    useState(false)
   const personNationalId: string = watch(`${id}`)
   const watchChildDoesNotHaveNationalIdField: boolean = watch(
     `childPensionRepeater[${repeaterIndex}].childDoesNotHaveNationalId`,
@@ -68,17 +67,15 @@ const ChildNationalIdOrBirthDate: FC<FieldBaseProps> = ({
     setIdentityFound(true)
   }, [watchChildDoesNotHaveNationalIdField, id, setValue, nameFieldId])
 
-  const [
-    getIdentity,
-    { loading: queryLoading, error: queryError },
-  ] = useLazyQuery<Query, { input: IdentityInput }>(IDENTITY_QUERY, {
-    onCompleted: (data) => {
-      setValue(nameFieldId, data.identity?.name ?? '')
-      setHasError(undefined)
-      setIdentityFound(Boolean(data.identity?.name))
-    },
-    fetchPolicy: 'network-only',
-  })
+  const [getIdentity, { loading: queryLoading, error: queryError }] =
+    useLazyQuery<Query, { input: IdentityInput }>(IDENTITY_QUERY, {
+      onCompleted: (data) => {
+        setValue(nameFieldId, data.identity?.name ?? '')
+        setHasError(undefined)
+        setIdentityFound(Boolean(data.identity?.name))
+      },
+      fetchPolicy: 'network-only',
+    })
 
   useEffect(() => {
     const personNationalIdNumbers = personNationalId?.replace(/[^0-9]/g, '')
