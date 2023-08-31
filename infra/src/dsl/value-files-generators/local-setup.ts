@@ -149,7 +149,8 @@ export const getLocalrunValueFile = async (
     { ports: [] as number[], configs: [] as any[] },
   )
   const defaultMountebankConfig = 'mountebank-imposter-config.json'
-  const defaultMountebankConfigPath = `${workspaceRoot}/${defaultMountebankConfig}`
+  // TODO: Get project root (/infra/) from nx
+  const defaultMountebankConfigPath = `${workspaceRoot}/infra/${defaultMountebankConfig}`
   await writeFile(
     defaultMountebankConfigPath,
     JSON.stringify({ imposters: mocksConfigs.configs }),
