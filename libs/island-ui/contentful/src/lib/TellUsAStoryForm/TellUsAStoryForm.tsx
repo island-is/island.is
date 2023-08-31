@@ -215,6 +215,8 @@ export const TellUsAStoryForm: React.FC<
         background="blue100"
       >
         {state !== 'success' ? (
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore make web strict
           <form onSubmit={handleSubmit(onSubmit)}>
             <Stack space={5}>
               <GridRow>
@@ -245,6 +247,8 @@ export const TellUsAStoryForm: React.FC<
                         isDisabled={
                           Boolean(error || loading) || state === 'submitting'
                         }
+                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                        // @ts-ignore make web strict
                         onChange={({ value }) => {
                           onChange(value)
                         }}
