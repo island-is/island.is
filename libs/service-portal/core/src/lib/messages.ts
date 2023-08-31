@@ -980,4 +980,8 @@ export const m = defineMessages({
     id: 'service.portal:consent',
     defaultMessage: 'Gagnaöflun',
   },
+  postcode: {
+    id: 'service.portal:postcode',
+    defaultMessage: 'Póstfang',
+  },
 })

@@ -130,6 +130,10 @@ export const messages = defineMessages({
     id: 'sp.health:status',
     defaultMessage: 'Staða',
   },
+  myRegisteration: {
+    id: 'sp.health:my-registeration',
+    defaultMessage: 'Mín skráning',
+  },
   yourInformation: {
     id: 'sp.health:your-information',
     defaultMessage: 'Þín skráning',
@@ -317,5 +321,78 @@ export const messages = defineMessages({
   maxPaidByApplicant: {
     id: 'sp.health:max-paid-by-applicant',
     defaultMessage: 'Fyrst greitt af umsækjanda á mánuði',
+  },
+  healthCenterRegisterationTitle: {
+    id: 'sp.health:health-center-registeration',
+    defaultMessage: 'Skráning á heilsugæslustöð',
+  },
+  healthCenterRegisterationInfo: {
+    id: 'sp.health:health-center-registeration-info',
+    defaultMessage:
+      'Aðeins er hægt að vera skráð/ur á einum stað. Um leið og skráningu er breytt fellur fyrri skráning úr gildi. Ný skráning tekur gildi næsta virka dag. Vinsamlegast hafðu samband við móttöku heilsugæslustöðvar ef þú vilt skrá þig hjá tilteknum lækni innan heilsugæslustöðvarinnar.',
+  },
+  changeRegisteration: {
+    id: 'sp.health:change-registeration',
+    defaultMessage: 'Breyta skráningu',
+  },
+  healthCenterOverviewInfo: {
+    id: 'sp.health:health-center-overview-info',
+    defaultMessage:
+      'Allir sjúkratryggðir á Íslandi eiga að vera skráðir á heilsugæslustöð. Hér fyrir neðan sérð þú á hvaða stöð eða hjá hvaða sjálfstætt starfandi heimilislækni þú ert skráð/ur. Þú getur breytt skráningu þinni að vild og skráð þig á þann stað sem þér hentar.',
+  },
+  healthCenterRegisterationWarning: {
+    id: 'sp.health:health-center-registeration-warning',
+    defaultMessage:
+      'Með því að óska eftir breytingu á heilsugæslustöð er einnig verið að samþykkja að opnað verði fyrir sjúkraskrárupplýsingar þínar á nýrri heilsugæslustöð / sjálfstætt starfandi heimilislækni.',
+  },
+  alert: {
+    id: 'sp.health:alert',
+    defaultMessage: 'Athugið',
+  },
+  healthCenterRegisterationModalTitleStart: {
+    id: 'sp.health:health-center-registeration-modal-title',
+    defaultMessage: 'Vilt þú skrá',
+  },
+  healthCenterRegisterationModalTitleEnd: {
+    id: 'sp.health:health-center-registeration-modal-title-end',
+    defaultMessage: 'sem nýja heilsugæslustöð?',
+  },
+  closeModal: {
+    id: 'sp.health:close-modal',
+    defaultMessage: 'Loka spretti glugga',
+  },
+  healthCenterRegisterationModalInfo: {
+    id: 'sp.health:health-center-registeration-modal-info',
+    defaultMessage:
+      'Við flutning á heilsugæslustöð verða sjúkraskráningar mínar aðgengilegar á valinni heilsugæslustöð / sjáfstætt starfandi heimilislækni.',
+  },
+  healthCenterRegisterationModalButtonAccept: {
+    id: 'sp.health:health-center-registeration-modal-button-accept',
+    defaultMessage: 'Já, ég vil færa mig',
+  },
+  healthCenterRegisterationModalButtonCancel: {
+    id: 'sp.health:health-center-registeration-modal-button-cancel',
+    defaultMessage: 'Nei, ég vil ekki færa mig',
+  },
+  healthCenterListSearchPlaceholder: {
+    id: 'sp.health:health-center-list-search-placeholder',
+    defaultMessage: 'Sláðu inn leitarorð',
+  },
+  healthCenterRegisterationTransferErrorTitle: {
+    id: 'sp.health:health-center-registeration-transfer-error-title',
+    defaultMessage: 'Villa hefur komið upp',
+  },
+  healthCenterRegisterationTransferErrorInfo: {
+    id: 'sp.health:health-center-registeration-transfer-error-info',
+    defaultMessage:
+      'Ekki tókst að flytja heilsugæslustöð. Vinsamlegast reyndu aftur síðar.',
+  },
+  healthCenterRegisterationTransferSuccessTitle: {
+    id: 'sp.health:health-center-registeration-transfer-success-title',
+    defaultMessage: 'Ný heilsugæsla skráð',
+  },
+  healthCenterRegisterationTransferSuccessInfo: {
+    id: 'sp.health:health-center-registeration-transfer-success-info',
+    defaultMessage: 'Þú hefur verið skráður á',
   },
 })

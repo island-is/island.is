@@ -1,4 +1,16 @@
 query getHealthCenter($input: HealthCenterHistoryInput) {
+  getOrganizations {
+    items {
+      id
+      title
+      slug
+      logo {
+        id
+        url
+        title
+      }
+    }
+  }
   rightsPortalUserHealthCenterRegistration(input: $input) {
     current {
       healthCenterName

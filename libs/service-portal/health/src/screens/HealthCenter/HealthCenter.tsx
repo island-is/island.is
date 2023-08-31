@@ -6,14 +6,26 @@ import {
   UserInfoLine,
 } from '@island.is/service-portal/core'
 import { useGetHealthCenterQuery } from './HealthCenter.generated'
-import { Box, Divider, SkeletonLoader, Stack } from '@island.is/island-ui/core'
-import { IntroHeader } from '@island.is/portals/core'
+import {
+  AlertMessage,
+  Box,
+  Divider,
+  SkeletonLoader,
+  Stack,
+  Text,
+} from '@island.is/island-ui/core'
+import { IntroHeader, useQueryParam } from '@island.is/portals/core'
 import { messages } from '../../lib/messages'
 import HistoryTable from './HistoryTable'
 import subYears from 'date-fns/subYears'
+import { HealthPaths } from '../../lib/paths'
+import { messages as hm } from '../../lib/messages'
+import { Organization } from '@island.is/shared/types'
+import { getOrganizationLogoUrl } from '@island.is/shared/utils'
 
 const DEFAULT_DATE_TO = new Date()
 const DEFAULT_DATE_FROM = subYears(DEFAULT_DATE_TO, 10)
+const HEALTH_CENTER_LOGO_PATH = 'Sjúkratryggingar'
 
 const HealthCenter = () => {
   useNamespaces('sp.health')
@@ -29,6 +41,17 @@ const HealthCenter = () => {
   })
 
   const healthCenterData = data?.rightsPortalUserHealthCenterRegistration
+
+  const organizations = (data?.getOrganizations?.items ??
+    []) as Array<Organization>
+
+  const organizationImage = getOrganizationLogoUrl(
+    HEALTH_CENTER_LOGO_PATH,
+    organizations,
+    96,
+  )
+
+  const wasTransfered = useQueryParam('s') === 't'
 
   if (error && !loading) {
     return (
@@ -48,6 +71,7 @@ const HealthCenter = () => {
       <IntroHeader
         title={formatMessage(messages.healthCenterTitle)}
         intro={formatMessage(messages.healthCenterDescription)}
+        img={organizationImage}
       />
 
       {!loading && !healthCenterData?.current && (
@@ -58,13 +82,32 @@ const HealthCenter = () => {
         </Box>
       )}
 
+      {wasTransfered && !loading && (
+        <Box width="full" marginTop={4}>
+          <AlertMessage
+            type="success"
+            title={formatMessage(
+              messages.healthCenterRegisterationTransferSuccessTitle,
+            )}
+            message={`${formatMessage(
+              messages.healthCenterRegisterationTransferSuccessInfo,
+            )} ${healthCenterData?.current?.healthCenterName}`}
+          />
+        </Box>
+      )}
+
       {healthCenterData?.current && (
         <Box width="full" marginTop={[1, 1, 4]}>
           <Stack space={2}>
             <UserInfoLine
-              title={formatMessage(messages.yourInformation)}
+              title={formatMessage(messages.myRegisteration)}
               label={formatMessage(messages.healthCenterTitle)}
               content={healthCenterData.current.healthCenterName ?? ''}
+              editLink={{
+                url: HealthPaths.HealthCenterRegisteration,
+                title: hm.changeRegisteration,
+                icon: 'open',
+              }}
             />
             <Divider />
             <UserInfoLine
@@ -81,6 +124,11 @@ const HealthCenter = () => {
       {!loading && !error && healthCenterData?.history && (
         <HistoryTable history={healthCenterData.history} />
       )}
+      <Box marginTop={6}>
+        <Text fontWeight="regular" variant="small">
+          {formatMessage(hm.healthCenterOverviewInfo)}
+        </Text>
+      </Box>
     </Box>
   )
 }

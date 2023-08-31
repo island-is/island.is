@@ -29,6 +29,7 @@ import {
   PaginatedHealthCentersResponse,
   UserHealthCenterRegistration,
 } from './models/healthCenter.model'
+import { HealthCenterResponse } from './models/healthCenterResponse.model'
 
 @Injectable()
 export class RightsPortalService {
@@ -58,12 +59,12 @@ export class RightsPortalService {
       const nutrition: Array<AidOrNutrition> | null =
         res.nutrition
           ?.map((c) => generateAidOrNutrition(c, AidOrNutritionType.NUTRITION))
-          .filter(Boolean as unknown as ExcludesFalse) ?? []
+          .filter((Boolean as unknown) as ExcludesFalse) ?? []
 
       const aids: Array<AidOrNutrition> | null =
         res.aids
           ?.map((c) => generateAidOrNutrition(c, AidOrNutritionType.AID))
-          .filter(Boolean as unknown as ExcludesFalse) ?? []
+          .filter((Boolean as unknown) as ExcludesFalse) ?? []
 
       return {
         data: [...aids, ...nutrition],
@@ -129,7 +130,7 @@ export class RightsPortalService {
             },
           }
         })
-        .filter(Boolean as unknown as ExcludesFalse)
+        .filter((Boolean as unknown) as ExcludesFalse)
 
       return {
         data: dentists,
@@ -165,9 +166,14 @@ export class RightsPortalService {
           return {
             ...hc,
             id: hc.id,
+            address: {
+              postalCode: hc.postalCode,
+              municipality: hc.city,
+              streetAddress: hc.address,
+            },
           }
         })
-        .filter(Boolean as unknown as ExcludesFalse)
+        .filter((Boolean as unknown) as ExcludesFalse)
 
       return {
         data: healthCenters,
@@ -225,6 +231,28 @@ export class RightsPortalService {
       }
     } catch (e) {
       return handle404(e)
+    }
+  }
+
+  async transferHealthCenter(
+    user: User,
+    id: string,
+  ): Promise<HealthCenterResponse> {
+    try {
+      await this.healthCenterApi
+        .withMiddleware(new AuthMiddleware(user as Auth))
+        .healthcentersRegister({
+          id,
+        })
+      return {
+        success: true,
+      }
+    } catch (e) {
+      if (e.response?.status === 400) handle404(e)
+
+      return {
+        success: false,
+      }
     }
   }
 }

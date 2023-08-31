@@ -9,6 +9,7 @@ import {
   Tooltip,
   ResponsiveSpace,
   SkeletonLoader,
+  ButtonProps,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { MessageDescriptor } from 'react-intl'
@@ -24,6 +25,7 @@ export type EditLink = {
   url: string
   title?: MessageDescriptor
   skipOutboundTrack?: boolean
+  icon?: ButtonProps['icon']
 }
 
 interface Props {
@@ -164,7 +166,12 @@ export const UserInfoLine: FC<React.PropsWithChildren<Props>> = ({
                 </a>
               ) : (
                 <Link to={editLink.url}>
-                  <Button variant="text" size="small">
+                  <Button
+                    variant="text"
+                    size="small"
+                    icon={editLink.icon}
+                    iconType="outline"
+                  >
                     {editLink.title
                       ? formatMessage(editLink.title)
                       : formatMessage(sharedMessages.edit)}

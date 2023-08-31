@@ -1,4 +1,4 @@
-import { Args, Query, Resolver } from '@nestjs/graphql'
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
 import { ApiScope } from '@island.is/auth/scopes'
 import { Inject, UseGuards } from '@nestjs/common'
 import { Audit } from '@island.is/nest/audit'
@@ -27,6 +27,7 @@ import {
   PaginatedHealthCentersResponse,
   UserHealthCenterRegistration,
 } from './models/healthCenter.model'
+import { HealthCenterResponse } from './models/healthCenterResponse.model'
 
 @Resolver()
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
@@ -127,5 +128,14 @@ export class RightsPortalResolver {
   @Audit()
   getRightsPortalDentistList(@CurrentUser() user: User) {
     return this.rightsPortalService.getDentists(user)
+  }
+
+  @Scopes(ApiScope.health)
+  @Mutation(() => HealthCenterResponse, {
+    name: 'rightsPortalTransferHealthCenter',
+  })
+  @Audit()
+  transferHealthCenter(@CurrentUser() user: User, @Args('id') id: string) {
+    return this.rightsPortalService.transferHealthCenter(user, id)
   }
 }

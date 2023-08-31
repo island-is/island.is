@@ -1,6 +1,7 @@
 import { PortalNavigationItem } from '@island.is/portals/core'
 import { m } from '@island.is/service-portal/core'
 import { HealthPaths } from './paths'
+import { messages as hm } from './messages'
 
 export const healthNavigation: PortalNavigationItem = {
   name: m.health,
@@ -24,6 +25,11 @@ export const healthNavigation: PortalNavigationItem = {
     {
       name: m.healthCenter,
       path: HealthPaths.HealthCenter,
+    },
+    {
+      name: hm.healthCenterRegisterationTitle,
+      path: HealthPaths.HealthCenterRegisteration,
+      navHide: true,
     },
   ],
   description: m.healthDescription,
