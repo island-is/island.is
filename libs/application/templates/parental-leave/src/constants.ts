@@ -10,7 +10,7 @@ export const PERMANENT_FOSTER_CARE = 'foster_care'
 export const ADOPTION = 'primary_adoption'
 export const OTHER_NO_CHILDREN_FOUND = 'other'
 
-export const FILE_SIZE_LIMIT = 10000000 // 10MB
+export const FILE_SIZE_LIMIT = 2000000 // 2MB
 
 export const NO_UNION = 'F000'
 export const NO_PRIVATE_PENSION_FUND = 'X000'
