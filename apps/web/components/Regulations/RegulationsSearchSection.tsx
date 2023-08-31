@@ -1,6 +1,7 @@
 import * as s from './RegulationsSearchSection.css'
 
 import React, { useEffect, useMemo, useState } from 'react'
+import { SingleValue } from 'react-select'
 import { useRouter } from 'next/router'
 import {
   Box,
@@ -10,13 +11,12 @@ import {
   GridContainer,
   GridRow,
   Input,
-  Option,
+  StringOption as Option,
   Select,
 } from '@island.is/island-ui/core'
 import { useNamespaceStrict as useNamespace } from '@island.is/web/hooks'
 import { useShortState, LawChapterTree, Ministry } from '@island.is/regulations'
 import { RegulationHomeTexts } from './RegulationTexts.types'
-import { OptionTypeBase, ValueType } from 'react-select'
 import { RegulationSearchFilters, RegulationSearchKey } from './regulationUtils'
 import cn from 'classnames'
 
@@ -26,9 +26,9 @@ import cn from 'classnames'
  *
  * See: https://github.com/DefinitelyTyped/DefinitelyTyped/issues/32553
  */
-const getRSValue = (option: ValueType<OptionTypeBase>) => {
-  const opt: OptionTypeBase | undefined | null = Array.isArray(option)
-    ? (option as Array<OptionTypeBase>)[0]
+const getRSValue = (option: SingleValue<Option>) => {
+  const opt: Option | undefined | null = Array.isArray(option)
+    ? (option as Array<Option>)[0]
     : option
   return opt ? String(opt.value) : undefined
 }

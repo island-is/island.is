@@ -3,7 +3,6 @@ import React, { useEffect, useState } from 'react'
 import {
   Box,
   NavigationItem,
-  Option,
   Select,
   Tag,
   Text,
@@ -404,11 +403,11 @@ const Auctions: Screen<AuctionsProps> = ({
   const Router = useRouter()
   const auctionDataFetched = new Date()
 
-  useContentfulId(organizationPage.id, subpage?.id)
+  useContentfulId(organizationPage?.id, subpage?.id)
 
   const pageUrl = Router.pathname
 
-  const navList: NavigationItem[] = organizationPage.menuLinks.map(
+  const navList: NavigationItem[] = organizationPage?.menuLinks.map(
     ({ primaryLink, childrenLinks }) => ({
       title: primaryLink?.text,
       href: primaryLink?.url,
@@ -483,11 +482,11 @@ const Auctions: Screen<AuctionsProps> = ({
     return (
       // Filter by office
       (officeLocation.office
-        ? auction.office.toLowerCase() === officeLocation.office.toLowerCase()
+        ? auction.office?.toLowerCase() === officeLocation.office.toLowerCase()
         : true) &&
       // Filter by location
       (officeLocation.location
-        ? auction.location.toLowerCase() ===
+        ? auction.location?.toLowerCase() ===
           officeLocation.location.toLowerCase()
         : true) &&
       // Filter by lot type
@@ -535,14 +534,14 @@ const Auctions: Screen<AuctionsProps> = ({
       return (
         keyword &&
         (auction.lotId === keyword ||
-          auction.lotName.includes(keyword) ||
-          auction.lotItems.includes(keyword))
+          auction.lotName?.includes(keyword) ||
+          auction.lotItems?.includes(keyword))
       )
     })
   }
   const auctionAtVaka = (auction: SyslumennAuction) => {
     return (
-      auction.office.toLowerCase() === capitalAreaOffice.toLowerCase() &&
+      auction.office?.toLowerCase() === capitalAreaOffice.toLowerCase() &&
       (auction.lotType === LOT_TYPES.VEHICLE ||
         auctionContainsVakaKeyword(auction))
     )
@@ -645,8 +644,9 @@ const Auctions: Screen<AuctionsProps> = ({
           href: linkResolver('homepage').href,
         },
         {
-          title: organizationPage.title,
-          href: linkResolver('organizationpage', [organizationPage.slug]).href,
+          title: organizationPage?.title || '',
+          href: linkResolver('organizationpage', [organizationPage?.slug ?? ''])
+            .href,
         },
       ]}
       navigationData={{
@@ -682,7 +682,7 @@ const Auctions: Screen<AuctionsProps> = ({
                 label: x.filterLabel,
                 value: x.slugValue,
               })).find((x) => x.value === officeLocation.slugValue)}
-              onChange={({ value }: Option) => {
+              onChange={({ value }) => {
                 setOfficeLocationBySlugValue(String(value))
                 Router.replace(`#${value}`)
               }}
@@ -708,9 +708,7 @@ const Auctions: Screen<AuctionsProps> = ({
                 label: x.filterLabel,
                 value: x.value,
               })).find((x) => x.value === lotTypeOption.value)}
-              onChange={({ value }: Option) =>
-                setLotTypeOptionByValue(String(value))
-              }
+              onChange={({ value }) => setLotTypeOptionByValue(String(value))}
             />
           </GridColumn>
           <GridColumn
@@ -1034,7 +1032,7 @@ Auctions.getProps = async ({ apolloClient, locale, req }) => {
         },
       })
       .then((variables) =>
-        variables.data.getNamespace.fields
+        variables.data.getNamespace?.fields
           ? JSON.parse(variables.data.getNamespace.fields)
           : {},
       ),
