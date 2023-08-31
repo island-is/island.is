@@ -18,8 +18,8 @@ import {
 import { TempCase as Case, TempCase } from '../../types'
 import { UserContext } from '../UserProvider/UserProvider'
 
-import { useCaseLazyQuery } from './case.generated'
-import { useLimitedAccessCaseLazyQuery } from './limitedAccessCase.generated'
+import { useCaseLazyQuery } from './getCase.generated'
+import { useLimitedAccessCaseLazyQuery } from './getLimitedAccessCase.generated'
 
 type ProviderState =
   | 'fetch'

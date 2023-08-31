@@ -6,8 +6,8 @@ import {
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 
-import { useGetSignedUrlLazyQuery } from './getSignedUrl.generated'
-import { useLimitedAccessGetSignedUrlLazyQuery } from './limitedAccessGetSignedUrl.generated'
+import { useGetSignedUrlLazyQuery } from './getSignedUrll.generated'
+import { useLimitedAccessGetSignedUrlLazyQuery } from './limitedAccessGetSignedUrll.generated'
 
 interface Parameters {
   caseId: string
