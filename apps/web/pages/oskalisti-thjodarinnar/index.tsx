@@ -6,17 +6,18 @@ import { getServerSidePropsWrapper } from '@island.is/web/utils/getServerSidePro
 
 function displayFeatureUpvote() {
   function resizeIframe() {
-    const iframe = document.getElementById("my-iframe");
+    const iframe = document.getElementById('my-iframe')
     if (iframe) {
-      iframe.style.height = (iframe as any).contentWindow.document.body.scrollHeight + "px";
+      iframe.style.height =
+        (iframe as any).contentWindow.document.body.scrollHeight + 'px'
     }
   }
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
       <iframe
-        id='my-iframe'
-        scrolling='no'
+        id="my-iframe"
+        scrolling="no"
         src="https://islandis.featureupvote.com/"
         style={{
           marginTop: '0px',
@@ -26,8 +27,7 @@ function displayFeatureUpvote() {
           overflowY: 'scroll',
         }}
         onLoad={() => resizeIframe()}
-      >
-      </iframe>
+      ></iframe>
     </div>
   )
 }
