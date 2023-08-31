@@ -98,7 +98,7 @@ export const DefaultProjectHeader = ({
               maxHeight: !isBelowLarge ? maxImageHeight : undefined,
               objectFit: headerImageObjectFit,
             }}
-            src={projectPage.defaultHeaderImage.url}
+            src={projectPage.defaultHeaderImage?.url}
             alt="header"
           />
         </Box>

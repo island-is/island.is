@@ -72,12 +72,13 @@ export class IcelandicGovernmentInstitutionVacanciesResolver {
     // Create a mapping for reference identifier -> organization data
     const organizationMap = new Map<
       string,
-      { logoUrl: string; title: string }
+      { logoUrl: string | undefined; title: string }
     >()
+
     for (const organization of organizationsResponse?.items ?? []) {
-      if (organization?.logo?.url && organization?.referenceIdentifier) {
+      if (organization?.referenceIdentifier) {
         organizationMap.set(organization.referenceIdentifier, {
-          logoUrl: organization.logo.url,
+          logoUrl: organization.logo?.url,
           title: organization.shortTitle || organization.title,
         })
       }

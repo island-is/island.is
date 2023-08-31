@@ -52,7 +52,8 @@ export const CardsSlider: FC<React.PropsWithChildren<CardsSliderProps>> = ({
   })
   const ref = useRef(null)
 
-  const handleOnDragStart = (e) => e.preventDefault()
+  const handleOnDragStart = (e: { preventDefault: () => any }) =>
+    e.preventDefault()
 
   const handleResize = useCallback(() => {
     let paddingRight = 0
