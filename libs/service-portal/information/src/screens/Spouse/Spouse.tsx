@@ -17,8 +17,11 @@ import {
   NotFound,
   UserInfoLine,
 } from '@island.is/service-portal/core'
-import { useNationalRegistrySpouseQuery } from './Spouse.generated'
 import { natRegMaritalStatusMessageDescriptorRecord } from '../../helpers/localizationHelpers'
+import { FeatureFlagClient } from '@island.is/feature-flags'
+import { useFeatureFlagClient } from '@island.is/react/feature-flags'
+import { useState, useEffect } from 'react'
+import { useNationalRegistryPersonQuery } from '../UserInfo/UserInfo.generated'
 
 const dataNotFoundMessage = defineMessage({
   id: 'sp.family:data-not-found',
@@ -38,9 +41,27 @@ const FamilyMember = () => {
   useNamespaces('sp.family')
   const { formatMessage } = useLocale()
 
-  const { data, loading, error } = useNationalRegistrySpouseQuery({
+  const [useNatRegV3, setUseNatRegV3] = useState(false)
+
+  const featureFlagClient: FeatureFlagClient = useFeatureFlagClient()
+
+  /* Should use v3? */
+  useEffect(() => {
+    const isFlagEnabled = async () => {
+      const ffEnabled = await featureFlagClient.getValue(
+        `isserviceportalnationalregistryv3enabled`,
+        false,
+      )
+      if (ffEnabled) {
+        setUseNatRegV3(ffEnabled as boolean)
+      }
+    }
+    isFlagEnabled()
+  }, [])
+
+  const { data, loading, error } = useNationalRegistryPersonQuery({
     variables: {
-      api: 'v1',
+      api: useNatRegV3 ? 'v3' : undefined,
     },
   })
 

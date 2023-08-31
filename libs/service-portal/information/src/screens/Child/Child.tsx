@@ -41,13 +41,36 @@ const Child = () => {
   useNamespaces('sp.family')
   const { formatMessage } = useLocale()
   const [showTooltip, setShowTooltip] = useState(false)
+  const [useNatRegV3, setUseNatRegV3] = useState(false)
   const featureFlagClient: FeatureFlagClient = useFeatureFlagClient()
   const userInfo = useUserInfo()
   const { nationalId } = useParams() as UseParams
 
+  /* Should show name breakdown tooltip? */
+  useEffect(() => {
+    const isFlagEnabled = async () => {
+      const ffNameBreakdownEnabled = await featureFlagClient.getValue(
+        `isServicePortalNameBreakdownEnabled`,
+        false,
+      )
+      if (ffNameBreakdownEnabled) {
+        setShowTooltip(ffNameBreakdownEnabled as boolean)
+      }
+
+      const ffNatRegV3Enabled = await featureFlagClient.getValue(
+        `isserviceportalnationalregistryv3enabled`,
+        false,
+      )
+      if (ffNatRegV3Enabled) {
+        setUseNatRegV3(ffNatRegV3Enabled as boolean)
+      }
+    }
+    isFlagEnabled()
+  }, [])
+
   const { data, loading, error } = useNationalRegistryChildCustodyQuery({
     variables: {
-      api: 'v1',
+      api: useNatRegV3 ? 'v3' : undefined,
     },
   })
 
@@ -81,21 +104,6 @@ const Child = () => {
   )
 
   const isChildOrChildOfUser = isChild || isChildOfUser
-
-  /* Should show name breakdown tooltip? */
-  useEffect(() => {
-    const isFlagEnabled = async () => {
-      const ffEnabled = await featureFlagClient.getValue(
-        `isServicePortalNameBreakdownEnabled`,
-        false,
-      )
-      if (ffEnabled) {
-        setShowTooltip(ffEnabled as boolean)
-      }
-    }
-    isFlagEnabled()
-  }, [])
-
   if (!nationalId || error || (!loading && !isChildOrChildOfUser))
     return (
       <NotFound
