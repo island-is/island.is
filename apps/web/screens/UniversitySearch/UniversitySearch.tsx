@@ -97,7 +97,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
 
   const [gridView, setGridView] = useState<boolean>(true)
 
-  const totalPages = Math.ceil(mockData.length / ITEMS_PER_PAGE)
+  const totalPages = Math.ceil(data.length / ITEMS_PER_PAGE)
 
   useEffect(() => {
     const comparison = JSON.parse(localStorage.getItem('comparison'))
@@ -240,7 +240,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
             flexDirection="column"
           >
             <Box display="inline" marginBottom={3}>
-              <Text title="Sía niðurstöður" variant="h3">
+              <Text title="Sía niðurstöður" variant="h3" as="h2">
                 Sía leitarniðurstöður
               </Text>
             </Box>
@@ -274,7 +274,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
               <AccordionItem
                 id="mini_accordion1"
                 label="Umsóknir"
-                labelUse="h5"
+                labelUse="p"
                 labelVariant="h5"
                 iconVariant="small"
                 expanded={isOpen[0]}
@@ -313,7 +313,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
               <AccordionItem
                 id="mini_accordion2"
                 label="Námstig"
-                labelUse="h5"
+                labelUse="p"
                 labelVariant="h5"
                 iconVariant="small"
                 expanded={isOpen[1]}
@@ -393,7 +393,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
               <AccordionItem
                 id="mini_accordion3"
                 label="Misseri"
-                labelUse="h5"
+                labelUse="p"
                 labelVariant="h5"
                 iconVariant="small"
                 expanded={isOpen[2]}
@@ -440,7 +440,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
               <AccordionItem
                 id="mini_accordion4"
                 label="Form kennslu"
-                labelUse="h5"
+                labelUse="p"
                 labelVariant="h5"
                 iconVariant="small"
                 expanded={isOpen[3]}
@@ -592,7 +592,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
               marginTop={5}
               marginBottom={5}
             >
-              <Text variant="intro">{`${mockData.length} Leitarniðurstöður`}</Text>
+              <Text variant="intro">{`${data.length} Leitarniðurstöður`}</Text>
               <Box>
                 <button
                   onClick={() => setGridView(true)}
@@ -910,7 +910,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
   )
 }
 
-UniversitySearch.getInitialProps = async ({ apolloClient, locale }) => {
+UniversitySearch.getProps = async ({ apolloClient, locale }) => {
   // const namespaceResponse = await apolloClient.query<
   //   GetNamespaceQuery,
   //   GetNamespaceQueryVariables
@@ -979,7 +979,8 @@ UniversitySearch.getInitialProps = async ({ apolloClient, locale }) => {
     //     message: description,
     //   })
 
-    throw new Error(`${errMsg}:`)
+    console.error('error', errMsg)
+    // throw new Error(`${errMsg}:`)
   }
 
   // if (response.data.results.length > 0) {
@@ -990,27 +991,31 @@ UniversitySearch.getInitialProps = async ({ apolloClient, locale }) => {
   const mockData = [
     {
       id: '1234',
-      heading: 'Viðskiptafræði með lögfræði sem aukagrein',
-      text: 'Enim nulla nunc pharetra nisi libero. Ipsum faucibus tortor bibendum massa. Nisl facilisi varius lacus neque purus consequat. Egestas sed lacinia in aliquet praesent mus diam...',
+      nameIs: 'Viðskiptafræði með lögfræði sem aukagrein',
+      descriptionIs:
+        'Enim nulla nunc pharetra nisi libero. Ipsum faucibus tortor bibendum massa. Nisl facilisi varius lacus neque purus consequat. Egestas sed lacinia in aliquet praesent mus diam...',
       iconSrc: 'https://www.ru.is/media/HR_logo_hringur_hires.jpg',
     },
     {
       id: '235345',
-      heading: 'Viðskiptafræði',
-      text: 'Enim nulla nunc pharetra nisi libero. Ipsum faucibus tortor bibendum massa. Nisl facilisi varius lacus neque purus consequat. Egestas sed lacinia in aliquet praesent mus diam...',
+      nameIs: 'Viðskiptafræði',
+      descriptionIs:
+        'Enim nulla nunc pharetra nisi libero. Ipsum faucibus tortor bibendum massa. Nisl facilisi varius lacus neque purus consequat. Egestas sed lacinia in aliquet praesent mus diam...',
       iconSrc: 'https://www.ru.is/media/HR_logo_hringur_hires.jpg',
     },
     {
       id: '56456',
-      heading: 'Lögfræði',
-      text: 'Enim nulla nunc pharetra nisi libero. Ipsum faucibus tortor bibendum massa. Nisl facilisi varius lacus neque purus consequat. Egestas sed lacinia in aliquet praesent mus diam...',
+      nameIs: 'Lögfræði',
+      descriptionIs:
+        'Enim nulla nunc pharetra nisi libero. Ipsum faucibus tortor bibendum massa. Nisl facilisi varius lacus neque purus consequat. Egestas sed lacinia in aliquet praesent mus diam...',
       iconSrc:
         'https://zeroheight-uploads.s3.eu-west-1.amazonaws.com/6b8ae3f96a2d0e1ae883d0?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3AVNYHQKTB7DNOEL%2F20230719%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20230719T145800Z&X-Amz-Expires=86400&X-Amz-SignedHeaders=host&X-Amz-Signature=774db23aca012063927fe8b62fc9b072d434deec186c37b2cd64621f1ecb08ca',
     },
     {
       id: '678687',
-      heading: 'Tölvunarfræði',
-      text: 'Enim nulla nunc pharetra nisi libero. Ipsum faucibus tortor bibendum massa. Nisl facilisi varius lacus neque purus consequat. Egestas sed lacinia in aliquet praesent mus diam...',
+      nameIs: 'Tölvunarfræði',
+      descriptionIs:
+        'Enim nulla nunc pharetra nisi libero. Ipsum faucibus tortor bibendum massa. Nisl facilisi varius lacus neque purus consequat. Egestas sed lacinia in aliquet praesent mus diam...',
 
       iconSrc:
         'https://zeroheight-uploads.s3.eu-west-1.amazonaws.com/6b8ae3f96a2d0e1ae883d0?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3AVNYHQKTB7DNOEL%2F20230719%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20230719T145800Z&X-Amz-Expires=86400&X-Amz-SignedHeaders=host&X-Amz-Signature=774db23aca012063927fe8b62fc9b072d434deec186c37b2cd64621f1ecb08ca',
