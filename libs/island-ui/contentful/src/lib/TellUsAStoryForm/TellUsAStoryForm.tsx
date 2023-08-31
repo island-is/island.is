@@ -216,7 +216,7 @@ export const TellUsAStoryForm: React.FC<
       >
         {state !== 'success' ? (
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-              // @ts-ignore make web strict
+          // @ts-ignore make web strict
           <form onSubmit={handleSubmit(onSubmit)}>
             <Stack space={5}>
               <GridRow>
