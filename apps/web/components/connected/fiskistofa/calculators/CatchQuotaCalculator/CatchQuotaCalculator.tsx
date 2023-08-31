@@ -347,7 +347,7 @@ const CatchQuotaCalculator = ({ namespace }: CatchQuotaCalculatorProps) => {
         <Inline space={3}>
           <Box className={styles.selectBox}>
             <Select
-              disabled={loading}
+              isDisabled={loading}
               size="sm"
               label={n('timeperiod', 'Tímabil')}
               name="time-period-select"
@@ -360,7 +360,7 @@ const CatchQuotaCalculator = ({ namespace }: CatchQuotaCalculatorProps) => {
           </Box>
           <Box className={styles.selectBox} marginBottom={3}>
             <Select
-              disabled={loading}
+              isDisabled={loading}
               value={emptyValue}
               size="sm"
               label={n('addType', 'Bæta við tegund')}
