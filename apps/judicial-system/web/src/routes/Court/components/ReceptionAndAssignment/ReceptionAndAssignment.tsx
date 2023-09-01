@@ -2,7 +2,6 @@ import React, { useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 import { useQuery } from '@apollo/client'
-import { ValueType } from 'react-select'
 
 import {
   FormContentContainer,
@@ -41,22 +40,14 @@ const ReceptionAndAssignment = () => {
   const id = router.query.id
   const { formatMessage } = useIntl()
   const [courtCaseNumberEM, setCourtCaseNumberEM] = useState('')
-  const [createCourtCaseSuccess, setCreateCourtCaseSuccess] = useState<boolean>(
-    false,
-  )
+  const [createCourtCaseSuccess, setCreateCourtCaseSuccess] =
+    useState<boolean>(false)
 
-  const {
-    workingCase,
-    setWorkingCase,
-    isLoadingWorkingCase,
-    caseNotFound,
-  } = useContext(FormContext)
+  const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
+    useContext(FormContext)
 
-  const {
-    createCourtCase,
-    isCreatingCourtCase,
-    setAndSendCaseToServer,
-  } = useCase()
+  const { createCourtCase, isCreatingCourtCase, setAndSendCaseToServer } =
+    useCase()
 
   const { data: userData, loading: userLoading } = useQuery<UserData>(
     UsersQuery,
@@ -149,12 +140,10 @@ const ReceptionAndAssignment = () => {
         <Box component="section" marginBottom={10}>
           <SelectCourtOfficials
             workingCase={workingCase}
-            handleJudgeChange={(selectedOption: ValueType<ReactSelectOption>) =>
+            handleJudgeChange={(selectedOption) =>
               setJudge((selectedOption as JudgeSelectOption).judge)
             }
-            handleRegistrarChange={(
-              selectedOption: ValueType<ReactSelectOption>,
-            ) =>
+            handleRegistrarChange={(selectedOption) =>
               setRegistrar((selectedOption as RegistrarSelectOption)?.registrar)
             }
             users={userData?.users}

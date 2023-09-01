@@ -39,11 +39,8 @@ describe('InternalCaseController - Deliver case to police', () => {
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const {
-      awsS3Service,
-      policeService,
-      internalCaseController,
-    } = await createTestingCaseModule()
+    const { awsS3Service, policeService, internalCaseController } =
+      await createTestingCaseModule()
 
     mockAwsS3Service = awsS3Service
     mockPoliceService = policeService
@@ -105,7 +102,8 @@ describe('InternalCaseController - Deliver case to police', () => {
       mockGetCustodyNotice.mockResolvedValueOnce(custodyNoticePdf)
       const mockGetObject = mockAwsS3Service.getObject as jest.Mock
       mockGetObject.mockResolvedValueOnce(rulingPdf)
-      const mockUpdatePoliceCase = mockPoliceService.updatePoliceCase as jest.Mock
+      const mockUpdatePoliceCase =
+        mockPoliceService.updatePoliceCase as jest.Mock
       mockUpdatePoliceCase.mockResolvedValueOnce(true)
 
       then = await givenWhenThen(caseId, theCase)

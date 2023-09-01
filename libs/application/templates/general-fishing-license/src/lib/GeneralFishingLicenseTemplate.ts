@@ -123,9 +123,9 @@ const GeneralFishingLicenseTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: async () =>
-                await import(
-                  '../forms/GeneralFishingLicenseForm/index'
-                ).then((val) => Promise.resolve(val.GeneralFishingLicenseForm)),
+                await import('../forms/GeneralFishingLicenseForm/index').then(
+                  (val) => Promise.resolve(val.GeneralFishingLicenseForm),
+                ),
               actions: [
                 {
                   event: DefaultEvents.PAYMENT,
@@ -222,10 +222,9 @@ const GeneralFishingLicenseTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import(
-                  '../forms/GeneralFishingLicenseSubmittedForm'
-                ).then((val) =>
-                  Promise.resolve(val.GeneralFishingLicenseSubmittedForm),
+                import('../forms/GeneralFishingLicenseSubmittedForm').then(
+                  (val) =>
+                    Promise.resolve(val.GeneralFishingLicenseSubmittedForm),
                 ),
             },
           ],

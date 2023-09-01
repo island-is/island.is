@@ -93,16 +93,16 @@ class ErrorPage extends React.Component<ErrorPageProps> {
           if (isBrowser) {
             window.location.href = explicitRedirect
           } else {
-            res.writeHead(302, { Location: explicitRedirect })
-            res.end()
+            res?.writeHead(302, { Location: explicitRedirect })
+            res?.end()
           }
         } else if (page) {
           const url = linkResolver(page.type as LinkType, [page.slug]).href
           if (isBrowser) {
             window.location.href = url
           } else {
-            res.writeHead(302, { Location: url })
-            res.end()
+            res?.writeHead(302, { Location: url })
+            res?.end()
           }
         }
       }
@@ -115,16 +115,21 @@ class ErrorPage extends React.Component<ErrorPageProps> {
     if (res) {
       res.statusCode = statusCode
     }
-
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore make web strict
     let layoutProps: LayoutProps = null
     let pageProps: ErrorPageQuery['getErrorPage'] = null
 
     try {
       const [layoutPropsResponse, pagePropsResponse] = await Promise.all([
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore make web strict
         Layout.getProps({
           ...props,
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore make web strict
           res: props.res,
-          req: (props.req as unknown) as GetServerSidePropsContext['req'],
+          req: props.req as unknown as GetServerSidePropsContext['req'],
           locale,
         }),
         props.apolloClient.query<ErrorPageQuery, ErrorPageQueryVariables>({

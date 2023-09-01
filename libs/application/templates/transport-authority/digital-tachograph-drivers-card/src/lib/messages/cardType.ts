@@ -27,8 +27,7 @@ export const cardType = {
         description: 'Newest card subtitle',
       },
       applicationCreatedAt: {
-        id:
-          'ta.dtdc.application:cardType.labels.newestCard.applicationCreatedAt',
+        id: 'ta.dtdc.application:cardType.labels.newestCard.applicationCreatedAt',
         defaultMessage: 'Dagsetning umsóknar',
         description: 'Newest card application created at',
       },
@@ -68,8 +67,7 @@ export const cardType = {
         description: 'Newest card country of issue',
       },
       countryOfIssueIceland: {
-        id:
-          'ta.dtdc.application:cardType.labels.newestCard.countryOfIssueIceland',
+        id: 'ta.dtdc.application:cardType.labels.newestCard.countryOfIssueIceland',
         defaultMessage: 'Ísland',
         description: 'Newest card country of issue iceland',
       },
@@ -81,14 +79,12 @@ export const cardType = {
         description: 'Card type subtitle',
       },
       firstEditionOptionTitle: {
-        id:
-          'ta.dtdc.application:cardType.labels.cardType.firstEditionOptionTitle',
+        id: 'ta.dtdc.application:cardType.labels.cardType.firstEditionOptionTitle',
         defaultMessage: 'Frumútgáfa',
         description: 'Card type first edition option title',
       },
       firstEditionOptionSubTitle: {
-        id:
-          'ta.dtdc.application:cardType.labels.cardType.firstEditionOptionSubTitle',
+        id: 'ta.dtdc.application:cardType.labels.cardType.firstEditionOptionSubTitle',
         defaultMessage:
           '(á einnig við þegar gefið er út kort í stað erlends korts)',
         description: 'Card type first edition option sub title',
@@ -99,8 +95,7 @@ export const cardType = {
         description: 'Card type reissue option title',
       },
       reissueOptionSubTitle: {
-        id:
-          'ta.dtdc.application:cardType.labels.cardType.reissueOptionSubTitle',
+        id: 'ta.dtdc.application:cardType.labels.cardType.reissueOptionSubTitle',
         defaultMessage: '(Kortið hefur týnst, eyðilagst eða verið stolið)',
         description: 'Card type reissue option sub title',
       },
@@ -110,8 +105,7 @@ export const cardType = {
         description: 'Card type renewal option title',
       },
       renewalOptionSubTitle: {
-        id:
-          'ta.dtdc.application:cardType.labels.cardType.renewalOptionSubTitle',
+        id: 'ta.dtdc.application:cardType.labels.cardType.renewalOptionSubTitle',
         defaultMessage: '(Gildistími korts rennur út)',
         description: 'Card type renewal option title',
       },
@@ -121,8 +115,7 @@ export const cardType = {
         description: 'Card type reprint option title',
       },
       reprintOptionSubTitle: {
-        id:
-          'ta.dtdc.application:cardType.labels.cardType.reprintOptionSubTitle',
+        id: 'ta.dtdc.application:cardType.labels.cardType.reprintOptionSubTitle',
         defaultMessage: '(T.d. vegna nafnabreytingar)',
         description: 'Card type reprint option sub title',
       },

@@ -7,9 +7,7 @@ export const apiUrl = API_URL
 
 export const logout = () => {
   deleteCookie('judicial-system.csrf')
-
-  // No need to wait for the call
-  return fetch('/api/auth/logout')
+  window.location.href = `${apiUrl}/api/auth/logout`
 }
 
 export const getFeature = async (name: string): Promise<boolean> => {

@@ -14,7 +14,8 @@ import { useQuery } from '@apollo/client'
 import { ViewSingleStudentQuery } from '../../graphql/queries'
 import { useFormContext } from 'react-hook-form'
 import kennitala from 'kennitala'
-import { Student } from '../../types'
+import { Student as TStudent } from '../../types'
+import { GetDrivingLicenseBookStudentOverview } from '../../types'
 import format from 'date-fns/format'
 
 const ViewStudent: FC<React.PropsWithChildren<FieldBaseProps>> = ({
@@ -23,14 +24,15 @@ const ViewStudent: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   const { formatMessage } = useLocale()
   const { setValue } = useFormContext()
 
-  const { data, loading, error } = useQuery(ViewSingleStudentQuery, {
-    variables: {
-      input: {
-        nationalId: (application.answers.student as Student).nationalId,
+  const { data, loading, error } =
+    useQuery<GetDrivingLicenseBookStudentOverview>(ViewSingleStudentQuery, {
+      variables: {
+        input: {
+          nationalId: (application.answers.student as TStudent).nationalId,
+        },
       },
-    },
-    notifyOnNetworkStatusChange: true,
-  })
+      notifyOnNetworkStatusChange: true,
+    })
 
   useEffect(() => {
     setValue('studentBookTypes', student?.book?.drivingSchoolExams)
@@ -42,7 +44,7 @@ const ViewStudent: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   //complete schools with no duplicates
   const completeSchools = [
     ...new Map(
-      student?.book?.drivingSchoolExams.map((item: any) => [
+      student?.book?.drivingSchoolExams.map((item) => [
         JSON.stringify(item),
         item,
       ]),
@@ -64,20 +66,22 @@ const ViewStudent: FC<React.PropsWithChildren<FieldBaseProps>> = ({
         <GridColumn span={['12/12', '4/12']} paddingBottom={[3, 0]}>
           <Text variant="h4">{formatMessage(m.confirmationSectionName)}</Text>
           <Text variant="default" dataTestId="student-name">
-            {s.name}
+            {s?.name}
           </Text>
         </GridColumn>
         <GridColumn span={['12/12', '4/12']} paddingBottom={[3, 0]}>
           <Text variant="h4">
             {formatMessage(m.confirmationSectionNationalId)}
           </Text>
-          <Text variant="default">{kennitala.format(s.nationalId)}</Text>
+          <Text variant="default">
+            {s?.nationalId ? kennitala.format(s.nationalId) : ''}
+          </Text>
         </GridColumn>
         <GridColumn span={['12/12', '4/12']} paddingBottom={[3, 0]}>
           <Text variant="h4">
             {formatMessage(m.confirmationSectionCompleteHours)}
           </Text>
-          <Text variant="default">{s.book?.totalLessonCount ?? 0}</Text>
+          <Text variant="default">{s?.book?.totalLessonCount ?? 0}</Text>
         </GridColumn>
       </GridRow>
 
@@ -87,17 +91,20 @@ const ViewStudent: FC<React.PropsWithChildren<FieldBaseProps>> = ({
             {formatMessage(m.confirmationSectionCompleteSchools)}
           </Text>
           {completeSchools.length ? (
-            completeSchools.map((school: any, key: any) => {
-              const textStr = getExamString({
-                name: school.schoolTypeName,
-                examDate: school.examDate,
+            completeSchools
+              .filter((school, _) => school.status === 2)
+              .map((school, key) => {
+                console.log(school.status, key)
+                const textStr = getExamString({
+                  name: school.schoolTypeName,
+                  examDate: school.examDate,
+                })
+                return (
+                  <Text key={key} variant="default">
+                    {textStr}
+                  </Text>
+                )
               })
-              return (
-                <Text key={key} variant="default">
-                  {textStr}
-                </Text>
-              )
-            })
           ) : (
             <Text variant="default">{'-'}</Text>
           )}

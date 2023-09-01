@@ -359,7 +359,8 @@ const Indictment: React.FC<React.PropsWithChildren<unknown>> = () => {
                   setAndSendCaseToServer(
                     [
                       {
-                        requestDriversLicenseSuspension: !workingCase.requestDriversLicenseSuspension,
+                        requestDriversLicenseSuspension:
+                          !workingCase.requestDriversLicenseSuspension,
                         demands: !workingCase.requestDriversLicenseSuspension
                           ? formatMessage(strings.demandsAutofillWithSuspension)
                           : formatMessage(strings.demandsAutofill),

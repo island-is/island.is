@@ -77,6 +77,7 @@ export const slices = gql`
       genericTags {
         id
         title
+        slug
       }
     }
     readMoreText
@@ -215,6 +216,8 @@ export const slices = gql`
     __typename
     id
     title
+    showTitle
+    showDividerOnTop
     video {
       ...EmbeddedVideoFields
     }
@@ -504,6 +507,7 @@ export const slices = gql`
     id
     title
     intro
+    defaultFieldNamespace
     fields {
       title
       name

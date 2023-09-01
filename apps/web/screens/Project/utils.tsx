@@ -58,6 +58,8 @@ export const convertLinksToNavigationItem = (links: LinkSchema[]) =>
 export const convertLinkGroupsToNavigationItems = (
   linkGroups: LinkGroup[],
 ): NavigationItem[] =>
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
   linkGroups.map(({ primaryLink, childrenLinks }) => {
     return {
       title: primaryLink?.text,
@@ -75,7 +77,7 @@ export const getActiveNavigationItemTitle = (
     if (clientUrl === item.href) {
       return item.title
     }
-    for (const childItem of item.items) {
+    for (const childItem of item.items ?? []) {
       if (clientUrl === childItem.href) {
         return childItem.title
       }
@@ -89,7 +91,7 @@ export const assignNavigationActive = (
 ): NavigationItem[] =>
   items.map((item) => {
     let isAnyChildActive = false
-    const childItems = item.items.map((childItem) => {
+    const childItems = item.items?.map((childItem) => {
       const isChildActive = clientUrl === childItem.href
       if (isChildActive) isAnyChildActive = isChildActive
       return {

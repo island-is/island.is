@@ -45,14 +45,10 @@ export const InputEmail: FC<React.PropsWithChildren<Props>> = ({
     setValue,
     formState: { errors },
   } = useForm<UseFormProps>()
-  const {
-    updateOrCreateUserProfile,
-    loading: saveLoading,
-  } = useUpdateOrCreateUserProfile()
-  const {
-    deleteIslykillValue,
-    loading: deleteLoading,
-  } = useDeleteIslykillValue()
+  const { updateOrCreateUserProfile, loading: saveLoading } =
+    useUpdateOrCreateUserProfile()
+  const { deleteIslykillValue, loading: deleteLoading } =
+    useDeleteIslykillValue()
   const { formatMessage } = useLocale()
   const { createEmailVerification, createLoading } = useVerifyEmail()
   const { refetch, loading: fetchLoading } = useUserProfile()

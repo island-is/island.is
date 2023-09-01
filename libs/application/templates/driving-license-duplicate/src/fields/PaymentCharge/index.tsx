@@ -19,7 +19,7 @@ export const PaymentCharge: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   const { setValue } = useFormContext()
 
   // AY110: Ökuskírteini / Driving License
-  let chargeCode = 'AY110'
+  let chargeCode = 'AY116'
   // Change price based on temporary license
   const licenseData = getValueViaPath<DriversLicense>(
     application.externalData,
@@ -54,7 +54,7 @@ export const PaymentCharge: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   }
   if (age >= 65) {
     // AY113: Skírteini fyrir 65 ára og eldri / License for 65 years and over
-    chargeCode = 'AY113'
+    chargeCode = 'AY137'
   }
 
   const chargeItems = getValueViaPath(

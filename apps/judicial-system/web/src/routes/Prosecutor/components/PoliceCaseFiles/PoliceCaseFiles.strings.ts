@@ -24,8 +24,7 @@ export const policeCaseFiles = defineMessages({
       'Notaður sem texti fyrir "Velja allt" valmöguleikann í LÖKE gagnapakkanum á rannsóknargagna skrefi.',
   },
   couldNotGetFromLOKEMessage: {
-    id:
-      'judicial.system.core:police_case_files.could_not_get_from_loke_message',
+    id: 'judicial.system.core:police_case_files.could_not_get_from_loke_message',
     defaultMessage:
       'Ekki tókst að sækja skjalalista í LÖKE. Hægt er að hlaða upp skjölum hér fyrir neðan.',
     description:
