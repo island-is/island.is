@@ -15,6 +15,7 @@ import { SliceType } from '@island.is/island-ui/contentful'
 import { SpanType } from '@island.is/island-ui/core/types'
 import { useNamespace } from '@island.is/web/hooks'
 import * as styles from './HeilbrigdisstofnunNordurlandsFooter.css'
+import { ReactNode } from 'react'
 
 const renderColumn = (
   column: FooterItem[],
@@ -44,7 +45,7 @@ const renderColumn = (
 
           {webRichText(item.content as SliceType[], {
             renderNode: {
-              [BLOCKS.PARAGRAPH]: (_node, children) => (
+              [BLOCKS.PARAGRAPH]: (_node: never, children: ReactNode) => (
                 <Text
                   color="white"
                   variant="eyebrow"

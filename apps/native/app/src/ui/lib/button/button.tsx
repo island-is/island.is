@@ -99,16 +99,14 @@ export function Button({
       }
       isTransparent={isTransparent}
       isOutlined={isOutlined}
-      {...rest}
-    >
+      {...rest}>
       <>
         <Text
           {...textProps}
           isTransparent={isTransparent}
           isOutlined={isOutlined}
           disabled={rest.disabled}
-          style={textStyle}
-        >
+          style={textStyle}>
           {title}
         </Text>
         {icon && (

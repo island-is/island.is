@@ -1,5 +1,3 @@
-<!-- gitbook-ignore -->
-
 # API Domains License Service
 
 A layer that provides a single point of entry for all of a users licenses.

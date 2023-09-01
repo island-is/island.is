@@ -3,14 +3,15 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import { Box, Text, Stack, Divider, Select } from '@island.is/island-ui/core'
 import { messages } from '../../lib/messages'
 import { formatDate, UserInfoLine } from '@island.is/service-portal/core'
-import { RightsPortalTherapies } from '@island.is/api/schema'
+
 import { FootNote } from '../FootNote.tsx/FootNote'
 import * as styles from './TherapiesTabContent.css'
 import { formatNumberToString } from '../../utils/format'
 import { TherapyStatus } from '../../utils/constants'
 import LinkButton from '../LinkButton/LinkButton'
+import { RightsPortalTherapy } from '@island.is/api/schema'
 interface Props {
-  data: RightsPortalTherapies[]
+  data: RightsPortalTherapy[]
   link?: string
   linkText?: string
 }

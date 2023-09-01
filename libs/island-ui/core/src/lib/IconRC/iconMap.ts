@@ -31,6 +31,7 @@ export type Icon =
   | 'ellipse'
   | 'ellipsisHorizontal'
   | 'ellipsisVertical'
+  | 'expand'
   | 'eye'
   | 'eyeOff'
   | 'facebook'
@@ -41,6 +42,7 @@ export type Icon =
   | 'informationCircle'
   | 'link'
   | 'lockClosed'
+  | 'lockOpened'
   | 'logOut'
   | 'mail'
   | 'menu'
@@ -50,6 +52,8 @@ export type Icon =
   | 'people'
   | 'person'
   | 'playCircle'
+  | 'pause'
+  | 'pauseCircle'
   | 'print'
   | 'reader'
   | 'receipt'
@@ -59,6 +63,8 @@ export type Icon =
   | 'settings'
   | 'time'
   | 'trash'
+  | 'volumeHigh'
+  | 'volumeMute'
   | 'wallet'
   | 'warning'
   | 'reload'
@@ -105,6 +111,7 @@ export default {
     ellipsisVertical: 'EllipsisVertical',
     eye: 'Eye',
     eyeOff: 'EyeOff',
+    expand: 'Expand',
     facebook: 'Facebook',
     fileTrayFull: 'FileTrayFull',
     filter: 'Filter',
@@ -113,11 +120,14 @@ export default {
     informationCircle: 'InformationCircle',
     link: 'Link',
     lockClosed: 'LockClosed',
+    lockOpened: 'LockOpened',
     logOut: 'LogOut',
     mail: 'Mail',
     menu: 'Menu',
     notifications: 'Notifications',
     open: 'Open',
+    pause: 'Pause',
+    pauseCircle: 'PauseCircle',
     pencil: 'Pencil',
     people: 'People',
     person: 'Person',
@@ -130,6 +140,8 @@ export default {
     search: 'Search',
     settings: 'Settings',
     trash: 'Trash',
+    volumeHigh: 'VolumeHigh',
+    volumeMute: 'VolumeMute',
     wallet: 'Wallet',
     warning: 'Warning',
     reload: 'Reload',
@@ -176,6 +188,7 @@ export default {
     ellipsisVertical: 'EllipsisVerticalOutline',
     eye: 'EyeOutline',
     eyeOff: 'EyeOffOutline',
+    expand: 'ExpandOutline',
     facebook: 'Facebook',
     fileTrayFull: 'FileTrayFullOutline',
     filter: 'FilterOutline',
@@ -184,11 +197,14 @@ export default {
     informationCircle: 'InformationCircleOutline',
     link: 'LinkOutline',
     lockClosed: 'LockClosedOutline',
+    lockOpened: 'LockOpenedOutline',
     logOut: 'LogOutOutline',
     mail: 'MailOutline',
     menu: 'MenuOutline',
     notifications: 'NotificationsOutline',
     open: 'OpenOutline',
+    pause: 'PauseOutline',
+    pauseCircle: 'PauseCircleOutline',
     pencil: 'PencilOutline',
     people: 'PeopleOutline',
     person: 'PersonOutline',
@@ -201,6 +217,8 @@ export default {
     search: 'SearchOutline',
     settings: 'SettingsOutline',
     trash: 'TrashOutline',
+    volumeHigh: 'VolumeHighOutline',
+    volumeMute: 'VolumeMuteOutline',
     wallet: 'WalletOutline',
     warning: 'WarningOutline',
     reload: 'ReloadOutline',

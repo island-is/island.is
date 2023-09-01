@@ -65,15 +65,17 @@ export const SimpleLineChart = ({ graphData }: SimpleLineChartGraphProps) => {
             iconType="circle"
             content={<RenderLegend title={title ?? graphTitle} />}
           />
-          {parsedDatakeys.lines.map((item, index) => (
-            <Line
-              key={index}
-              dataKey={item.line}
-              stroke={item.color ? item.color : COLORS[index % COLORS.length]}
-              strokeWidth={3}
-              dot={{ r: 6, strokeWidth: 3 }}
-            />
-          ))}
+          {parsedDatakeys.lines.map(
+            (item: { line: string; color: string }, index: number) => (
+              <Line
+                key={index}
+                dataKey={item.line}
+                stroke={item.color ? item.color : COLORS[index % COLORS.length]}
+                strokeWidth={3}
+                dot={{ r: 6, strokeWidth: 3 }}
+              />
+            ),
+          )}
         </LineChart>
       </ResponsiveContainer>
     </Box>

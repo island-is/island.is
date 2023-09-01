@@ -92,6 +92,7 @@ export const createTestingCaseModule = async () => {
           create: jest.fn(),
           findOne: jest.fn(),
           findByPk: jest.fn(),
+          findAll: jest.fn(),
           update: jest.fn(),
         },
       },
@@ -155,9 +156,10 @@ export const createTestingCaseModule = async () => {
     InternalCaseController,
   )
 
-  const limitedAccessCaseController = caseModule.get<LimitedAccessCaseController>(
-    LimitedAccessCaseController,
-  )
+  const limitedAccessCaseController =
+    caseModule.get<LimitedAccessCaseController>(LimitedAccessCaseController)
+
+  caseModule.close()
 
   return {
     messageService,

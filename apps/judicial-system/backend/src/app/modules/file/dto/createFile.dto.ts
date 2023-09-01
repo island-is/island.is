@@ -25,4 +25,9 @@ export class CreateFileDto {
   @IsString()
   @ApiPropertyOptional()
   readonly policeCaseNumber?: string
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly displayDate?: string
 }

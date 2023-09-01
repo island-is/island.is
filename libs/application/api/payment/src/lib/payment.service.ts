@@ -322,11 +322,10 @@ export class PaymentService {
     performingOrganizationID: string,
     targetChargeItemCodes: string[],
   ): Promise<CatalogItem[]> {
-    const {
-      item: allItems,
-    } = await this.chargeFjsV2ClientService.getCatalogByPerformingOrg(
-      performingOrganizationID,
-    )
+    const { item: allItems } =
+      await this.chargeFjsV2ClientService.getCatalogByPerformingOrg(
+        performingOrganizationID,
+      )
 
     // get list of items with catalog info, but make sure to allow duplicates
     const items: CatalogItem[] = []

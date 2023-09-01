@@ -14,7 +14,6 @@ import {
   Checkbox,
   GridRow,
   GridColumn,
-  Option,
   ToastContainer,
   toast,
 } from '@island.is/island-ui/core'
@@ -165,7 +164,7 @@ export const TellUsAStoryForm: React.FC<
 
   const options =
     !error && !loading && data?.getOrganizations?.items?.length
-      ? data.getOrganizations.items.map((x) => ({
+      ? data.getOrganizations.items.map((x: { title: string }) => ({
           label: x.title,
           value: x.title,
         }))
@@ -243,10 +242,10 @@ export const TellUsAStoryForm: React.FC<
                         }
                         required
                         hasError={errors?.organization !== undefined}
-                        disabled={
+                        isDisabled={
                           Boolean(error || loading) || state === 'submitting'
                         }
-                        onChange={({ value }: Option) => {
+                        onChange={({ value }) => {
                           onChange(value)
                         }}
                       />
@@ -325,7 +324,6 @@ export const TellUsAStoryForm: React.FC<
                 <GridColumn span="12/12">
                   <Stack space={3}>
                     <Input
-                      name="subject"
                       label={subjectLabel}
                       placeholder={subjectPlaceholder}
                       defaultValue=""
@@ -335,7 +333,6 @@ export const TellUsAStoryForm: React.FC<
                       })}
                     />
                     <Input
-                      name="message"
                       label={messageLabel}
                       placeholder={messagePlaceholder}
                       defaultValue=""
@@ -359,7 +356,6 @@ export const TellUsAStoryForm: React.FC<
                 </GridColumn>
                 <GridColumn span="12/12" paddingBottom={3}>
                   <Input
-                    name="name"
                     label={nameLabel}
                     placeholder={namePlaceholder}
                     defaultValue=""
@@ -374,7 +370,6 @@ export const TellUsAStoryForm: React.FC<
 
                 <GridColumn span="12/12">
                   <Input
-                    name="email"
                     label={emailLabel}
                     placeholder={emailPlaceholder}
                     defaultValue=""

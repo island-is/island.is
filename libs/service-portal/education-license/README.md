@@ -1,5 +1,3 @@
-<!-- gitbook-ignore -->
-
 # Service Portal Education License
 
 This library was generated with [Nx](https://nx.dev).

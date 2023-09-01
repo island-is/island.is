@@ -56,7 +56,7 @@ describe('CaseController - Get request pdf', () => {
   describe('pdf returned', () => {
     const caseId = uuid()
     const theCase = { id: caseId } as Case
-    const res = ({ end: jest.fn() } as unknown) as Response
+    const res = { end: jest.fn() } as unknown as Response
     const pdf = {}
 
     beforeEach(async () => {

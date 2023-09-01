@@ -4,6 +4,13 @@ import cn from 'classnames'
 import { LegendProps, TooltipProps } from 'recharts'
 import { Box, Text } from '@island.is/island-ui/core'
 
+interface AxisTickProps {
+  x?: number
+  y?: number
+  className?: string
+  payload?: { value: string }
+}
+
 export const CustomTooltip = ({
   payload,
   active,
@@ -31,8 +38,12 @@ export const CustomTooltip = ({
   return null
 }
 
-export const CustomizedAxisTick = (props) => {
-  const { x, y, className, payload } = props
+export const CustomizedAxisTick = ({
+  x,
+  y,
+  className,
+  payload,
+}: AxisTickProps) => {
   const xAxis = className.includes('xAxis')
   return (
     <g transform={`translate(${x},${y})`}>
@@ -49,8 +60,7 @@ export const CustomizedAxisTick = (props) => {
   )
 }
 
-export const CustomizedRightAxisTick = (props) => {
-  const { x, y, payload } = props
+export const CustomizedRightAxisTick = ({ x, y, payload }: AxisTickProps) => {
   return (
     <g transform={`translate(${x + 10},${y - 10})`}>
       <text dy={16} textAnchor="start" fill="#00003C">
@@ -69,20 +79,32 @@ export const RenderLegend = (props: CustomLegendProps) => {
     <div className={cn(styles.wrapper)}>
       <p className={cn(styles.title)}>{title}</p>
       <ul className={cn(styles.listWrapper)}>
-        {payload.map((entry, index) => (
-          <li className={cn(styles.list)} key={`item-${index}`}>
-            <div
-              className={cn(styles.dot)}
-              style={{
-                border: '3px solid ' + entry.color,
-              }}
-            />
-            {entry.value}
-          </li>
-        ))}
+        {payload
+          ? payload.map((entry, index) => (
+              <li className={cn(styles.list)} key={`item-${index}`}>
+                <div
+                  className={cn(styles.dot)}
+                  style={{
+                    border: '3px solid ' + entry.color,
+                  }}
+                />
+                {entry.value}
+              </li>
+            ))
+          : null}
       </ul>
     </div>
   )
+}
+
+// Define the type for the destructured props
+type CustomLabelProps = {
+  cx: number
+  cy: number
+  midAngle: number
+  outerRadius: number
+  innerRadius: number
+  percent: number
 }
 
 const RADIAN = Math.PI / 180
@@ -93,7 +115,7 @@ export const renderCustomizedLabel = ({
   outerRadius,
   innerRadius,
   percent,
-}) => {
+}: CustomLabelProps) => {
   const radius = innerRadius + (outerRadius - innerRadius) * 1.2
   const x = cx + radius * Math.cos(-midAngle * RADIAN)
   const y = cy + radius * Math.sin(-midAngle * RADIAN)

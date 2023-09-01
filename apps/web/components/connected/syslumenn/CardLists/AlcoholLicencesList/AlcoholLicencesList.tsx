@@ -21,7 +21,6 @@ import {
   Input,
   AlertMessage,
   Select,
-  Option,
   GridContainer,
   GridRow,
   GridColumn,
@@ -207,7 +206,7 @@ const AlcoholLicencesList: FC<
                       value: x,
                     }))
                     .find((x) => x.value === filterLicenceType)}
-                  onChange={({ value }: Option) => {
+                  onChange={({ value }) => {
                     setFilterLicenceType(String(value))
                   }}
                 />
@@ -233,7 +232,7 @@ const AlcoholLicencesList: FC<
                       value: x,
                     }))
                     .find((x) => x.value === filterOffice)}
-                  onChange={({ value }: Option) => {
+                  onChange={({ value }) => {
                     setFilterOffice(String(value))
                   }}
                 />

@@ -14,7 +14,7 @@ const Header: React.FC<React.PropsWithChildren<unknown>> = () => {
   )
 
   useEffect(() => {
-    if (!loading && !isLoggedIn((session as unknown) as SessionInfo, loading)) {
+    if (!loading && !isLoggedIn(session as unknown as SessionInfo, loading)) {
       if (router) {
         router.push('/')
       }
@@ -27,21 +27,21 @@ const Header: React.FC<React.PropsWithChildren<unknown>> = () => {
         <h1>{localization.header.title}</h1>
       </div>
       <div className="header__container__options">
-        {isLoggedIn((session as unknown) as SessionInfo, loading) && (
+        {isLoggedIn(session as unknown as SessionInfo, loading) && (
           <div className="header__container__user">
             <div className="header__username">{session?.user.name}</div>
             <div className="header__container__logout">
               <button
                 type="button"
                 className="header__button__logout"
-                onClick={() => logout((session as unknown) as SessionInfo)}
+                onClick={() => logout(session as unknown as SessionInfo)}
               >
                 {localization.header.logoutButton}
               </button>
             </div>
           </div>
         )}
-        {!isLoggedIn((session as unknown) as SessionInfo, loading) && (
+        {!isLoggedIn(session as unknown as SessionInfo, loading) && (
           <div className="header__container__login">
             <button
               type="button"
