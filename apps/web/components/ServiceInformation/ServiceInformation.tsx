@@ -10,7 +10,7 @@ import {
   Select,
   GridRow,
   GridColumn,
-  Option,
+  StringOption as Option,
 } from '@island.is/island-ui/core'
 import {
   Service,
