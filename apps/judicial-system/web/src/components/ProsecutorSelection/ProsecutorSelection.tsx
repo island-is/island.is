@@ -44,12 +44,15 @@ const ProsecutorSelection: React.FC<React.PropsWithChildren<Props>> = (
   })
 
   const eligibleProsecutors: Option<string>[] = useMemo(() => {
-    const users = data?.users as User[]
+    if (!data?.users) {
+      return []
+    }
+
     const institutionId = workingCase.creatingProsecutor
       ? workingCase.creatingProsecutor.institution?.id
       : user?.institution?.id
 
-    return users
+    return data.users
       .filter(
         (user) =>
           user.role === UserRole.PROSECUTOR &&
@@ -59,7 +62,7 @@ const ProsecutorSelection: React.FC<React.PropsWithChildren<Props>> = (
         label: name,
         value: id,
       }))
-  }, [data, user?.institution?.id, workingCase.creatingProsecutor])
+  }, [data?.users, user?.institution?.id, workingCase.creatingProsecutor])
 
   return (
     <Select
