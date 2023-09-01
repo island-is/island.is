@@ -8,7 +8,7 @@ CLEAN_YARN=false
 CLEAN_NODE_MODULES=false
 CLEAN_GENERATED=false
 CLEAN_CACHES_LIST=(.cache dist)
-CLEAN_NODE_MODULES_LIST=(.cache dist)
+CLEAN_NODE_MODULES_LIST=(node_modules infra/node_modules)
 CLEAN_YARN_IGNORES_LIST=(patches releases)
 
 log() {
