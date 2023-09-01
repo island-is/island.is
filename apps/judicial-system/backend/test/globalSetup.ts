@@ -5,6 +5,6 @@ const tsConfig = require(`../${require('../tsconfig.json').extends}`)
 register({ baseUrl: './', paths: tsConfig.compilerOptions.paths })
 // import { startPostgres } from '@island.is/testing/containers'
 
-// export default async () => {
-// await startPostgres()
-// }
+export default async () => {
+  // await startPostgres()
+}
