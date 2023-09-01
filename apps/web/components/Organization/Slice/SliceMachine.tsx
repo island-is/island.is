@@ -7,7 +7,11 @@ import {
   GridRow,
   ResponsiveSpace,
 } from '@island.is/island-ui/core'
-import { RichText, EmailSignup } from '@island.is/web/components'
+import {
+  RichText,
+  EmailSignup,
+  SectionWithVideo,
+} from '@island.is/web/components'
 import { webRenderConnectedComponent } from '@island.is/web/utils/richText'
 import { FeaturedSupportQNAs } from '../../FeaturedSupportQNAs'
 
@@ -146,6 +150,8 @@ const renderSlice = (
       return <FeaturedSupportQNAs slice={slice} />
     case 'PowerBiSlice':
       return <PowerBiSlice slice={slice} />
+    case 'SectionWithVideo':
+      return <SectionWithVideo slice={slice} />
     default:
       return <RichText body={[slice]} />
   }
