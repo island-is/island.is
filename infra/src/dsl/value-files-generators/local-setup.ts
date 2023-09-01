@@ -9,7 +9,7 @@ import { readFile, writeFile } from 'fs/promises'
 import { sync } from 'glob'
 import { join } from 'path'
 import { rootDir } from '../consts'
-import { workspaceRoot } from '@nx/devkit'
+import { existsSync } from 'fs'
 
 const mapServiceToNXname = async (serviceName: string) => {
   const projectRootPath = join(__dirname, '..', '..', '..', '..')
@@ -150,7 +150,10 @@ export const getLocalrunValueFile = async (
   )
   const defaultMountebankConfig = 'mountebank-imposter-config.json'
   // TODO: Get project root (/infra/) from nx
-  const defaultMountebankConfigPath = `${workspaceRoot}/infra/${defaultMountebankConfig}`
+  const infraPath = existsSync(`${process.cwd()}/infra`)
+    ? `${process.cwd()}/infra`
+    : `${process.cwd()}`
+  const defaultMountebankConfigPath = `${infraPath}/${defaultMountebankConfig}`
   await writeFile(
     defaultMountebankConfigPath,
     JSON.stringify({ imposters: mocksConfigs.configs }),
