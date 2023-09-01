@@ -1,5 +1,7 @@
 import React from 'react'
 import cn from 'classnames'
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
 import ReactSelect, { GroupBase } from 'react-select'
 
 import { Option as OptionType } from '../../Select/Select.types'
@@ -40,11 +42,16 @@ export const CountryCodeSelect = ({
   return (
     <div
       className={cn(styles.wrapper, {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore make web strict
         [styles.wrapperColor[backgroundColor]]: !isDisabled,
         [styles.containerDisabled]: isDisabled,
       })}
       data-testid={`country-code-select-${name}`}
     >
+      {/**
+                 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore make web strict*/}
       <ReactSelect<OptionType<string>, false, GroupBase<OptionType<string>>>
         instanceId={id}
         aria-labelledby={id}
