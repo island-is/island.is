@@ -10599,6 +10599,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@nrwl/devkit@npm:16.7.4":
+  version: 16.7.4
+  resolution: "@nrwl/devkit@npm:16.7.4"
+  dependencies:
+    "@nx/devkit": 16.7.4
+  checksum: 0df03913336f5e10045a622466dcf2894cf2950612474577678b30b4aafb9d215256ad47c36840ce00ccc92a23c40e45cd5c7323dbb2f3de9393e6b62aaa6b8e
+  languageName: node
+  linkType: hard
+
 "@nrwl/eslint-plugin-nx@npm:16.5.0":
   version: 16.5.0
   resolution: "@nrwl/eslint-plugin-nx@npm:16.5.0"
@@ -10873,6 +10882,23 @@ __metadata:
   peerDependencies:
     nx: ">= 15 <= 17"
   checksum: 6bfb23824f0ac23f814f787c90c7df7e34376ec12f13a19df82c4c2629dc11668079b37fdbb5cf16436be31e666cc5a0ec9143012955045dac3e5ab80e2b04a6
+  languageName: node
+  linkType: hard
+
+"@nx/devkit@npm:16.7.4":
+  version: 16.7.4
+  resolution: "@nx/devkit@npm:16.7.4"
+  dependencies:
+    "@nrwl/devkit": 16.7.4
+    ejs: ^3.1.7
+    enquirer: ~2.3.6
+    ignore: ^5.0.4
+    semver: 7.5.3
+    tmp: ~0.2.1
+    tslib: ^2.3.0
+  peerDependencies:
+    nx: ">= 15 <= 17"
+  checksum: df1905785855db0c1ff19a8b449579766a9007a19c10a0661ccdaf28af0b1ade8c431d40ac79a4514774a4b180657860f86fba3bd238c75a8ddbd237da216eea
   languageName: node
   linkType: hard
 
@@ -31409,6 +31435,7 @@ __metadata:
     "@nestjs/testing": 10.0.5
     "@nrwl/js": 16.5.0
     "@nx/cypress": 16.5.0
+    "@nx/devkit": 16.7.4
     "@nx/eslint-plugin": 16.5.0
     "@nx/express": 16.5.0
     "@nx/jest": 16.5.0
