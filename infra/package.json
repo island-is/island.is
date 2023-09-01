@@ -9,7 +9,6 @@
   },
   "license": "MIT",
   "devDependencies": {
-    "@nx/devkit": "16.7.4",
     "@types/jest": "26.0.15",
     "@types/js-yaml": "3.12.5",
     "@types/node": "14.14.14",
