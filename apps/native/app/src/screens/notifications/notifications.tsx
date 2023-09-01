@@ -43,7 +43,9 @@ export const NotificationsScreen: NavigationFunctionComponent = ({
   const renderNotificationItem = ({item}: {item: Notification}) => {
     return (
       <TouchableHighlight
-        underlayColor={theme.color.blue100}
+        underlayColor={
+          theme.isDark ? theme.shades.dark.shade100 : theme.color.blue100
+        }
         onPress={() => onNotificationPress(item)}
         testID={testIDs.NOTIFICATION_CARD_BUTTON}>
         <NotificationCard
