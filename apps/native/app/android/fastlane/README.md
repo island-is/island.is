@@ -28,8 +28,6 @@ Upload a new AAB to the Google Play store
 [bundle exec] fastlane android promote_alpha
 ```
 
-
-
 ### android increment_version
 
 ```sh
