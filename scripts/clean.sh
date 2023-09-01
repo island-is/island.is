@@ -6,7 +6,7 @@ CLEAN_DRY=false
 CLEAN_CACHES=false
 CLEAN_YARN=false
 CLEAN_GENERATED=false
-CLEAN_CACHES_LIST=(.cache node_modules dist)
+CLEAN_CACHES_LIST=(.cache node_modules dist infra/node_modules)
 CLEAN_YARN_IGNORES_LIST=(patches releases)
 
 log() {
@@ -16,20 +16,29 @@ log() {
 # Allow never being passed arguments
 # shellcheck disable=SC2120
 dry() {
-  [[ $# -gt 0 ]] && log "$*"
-  if [[ "$CLEAN_DRY" == "true" ]]; then
-    return 0
+  if [[ $# -eq 0 ]]; then
+    if [[ "$CLEAN_DRY" == "true" ]]; then
+      return 0
+    else
+      return 1
+    fi
   fi
-  return 1
+  if [[ "$CLEAN_DRY" == "true" ]]; then
+    log "DRY: $*"
+  else
+    "$@"
+  fi
 }
 
 show_help() {
   cat <<EOF
-Usage:
-  ./scripts/clean.sh [OPTIONS]
-  -f | --force    Force clean
-  -d | --dry      Dry run
-  -h | --help     Show help
+Usage: $(basename "$0") [OPTION]...
+
+    -n, --dry         dry run
+    --generated       clean generated files
+    --yarn            clean yarn files
+    --cache           clean cache files
+    -h, --help        display this help and exit
 EOF
 }
 
@@ -46,7 +55,7 @@ cli() {
     --cache)
       CLEAN_CACHES=true
       ;;
-    -d | --dry)
+    -n | --dry)
       CLEAN_DRY=true
       ;;
     *)
@@ -64,7 +73,7 @@ cli() {
 }
 
 clean_generated() {
-  find . -type f \( -name "openapi.yaml" \
+  dry find . -type f \( -name "openapi.yaml" \
     -o -name "api.graphql" \
     -o -name "schema.d.ts" \
     -o -name "schema.tsx" \
@@ -72,14 +81,14 @@ clean_generated() {
     -o -path "*/gen/graphql.ts" \
     -o -name "possibleTypes.json" \
     -o -name "fragmentTypes.json" \
-    \) "$(dry && echo -print || echo -delete)"
+    \) -delete
 
-  find . -type d \( -path "*/gen/fetch" \
+  dry find . -type d \( -path "*/gen/fetch" \
     \) -exec "$(dry && echo 'echo')" rm -rf '{}' +
 }
 
 clean_caches() {
-  dry || rm -rf "${CLEAN_CACHES_LIST[@]}"
+  dry rm -rf "${CLEAN_CACHES_LIST[@]}"
 }
 
 clean_yarn() {
@@ -94,7 +103,7 @@ clean_yarn() {
     fi
     fname="${f##*.yarn/}"
     if ! [[ "${CLEAN_YARN_IGNORES_LIST[*]}" =~ ${fname} ]]; then
-      dry || rm -rf "$f"
+      dry rm -rf "$f"
     fi
   done
 }
