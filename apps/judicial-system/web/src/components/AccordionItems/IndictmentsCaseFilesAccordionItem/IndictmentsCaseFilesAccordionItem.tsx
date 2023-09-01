@@ -76,10 +76,6 @@ export interface ReorderableItem {
   canOpen?: boolean
 }
 
-interface UpdateFilesMutationResponse {
-  caseFiles: TCaseFile[]
-}
-
 const useRaisedShadow = (value: MotionValue<number>) => {
   const inactiveShadow = '0px 0px 0px rgba(0,0,0,0.8)'
   const boxShadow = useMotionValue(inactiveShadow)
