@@ -26,6 +26,7 @@ const useDefendants = () => {
     async (defendant: CreateDefendantInput) => {
       try {
         if (!isCreatingDefendant) {
+          console.log('test')
           const { data } = await createDefendantMutation({
             variables: {
               input: defendant,
