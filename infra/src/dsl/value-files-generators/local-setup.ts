@@ -9,7 +9,7 @@ import { readFile, writeFile } from 'fs/promises'
 import { sync } from 'glob'
 import { join } from 'path'
 import { rootDir } from '../consts'
-import { getWorkspaceLayout, workspaceRoot, appRootPath } from '@nx/devkit'
+import { workspaceRoot } from '@nx/devkit'
 
 const mapServiceToNXname = async (serviceName: string) => {
   const projectRootPath = join(__dirname, '..', '..', '..', '..')
