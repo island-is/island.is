@@ -114,6 +114,10 @@ clean_yarn() {
   done
 }
 
+clean_node_modules() {
+  dry rm -rf "${CLEAN_NODE_MODULES_LIST[@]}"
+}
+
 clean_all() {
   for job in generated caches yarn node_modules; do
     job_uppercase=$(echo $job | tr '[:lower:]' '[:upper:]')
