@@ -5,8 +5,10 @@ set -euo pipefail
 CLEAN_DRY=false
 CLEAN_CACHES=false
 CLEAN_YARN=false
+CLEAN_NODE_MODULES=false
 CLEAN_GENERATED=false
-CLEAN_CACHES_LIST=(.cache node_modules dist infra/node_modules)
+CLEAN_CACHES_LIST=(.cache dist)
+CLEAN_NODE_MODULES_LIST=(.cache dist)
 CLEAN_YARN_IGNORES_LIST=(patches releases)
 
 log() {
@@ -55,6 +57,9 @@ cli() {
     --cache)
       CLEAN_CACHES=true
       ;;
+    --modules | --node-modules)
+      CLEAN_NODE_MODULES=true
+      ;;
     -n | --dry)
       CLEAN_DRY=true
       ;;
@@ -65,10 +70,11 @@ cli() {
     esac
     shift
   done
-  if [[ "$CLEAN_GENERATED" == "false" && "$CLEAN_YARN" == "false" && "$CLEAN_CACHES" == "false" ]]; then
+  if [[ "$CLEAN_GENERATED" == "false" && "$CLEAN_YARN" == "false" && "$CLEAN_CACHES" == "false" && "$CLEAN_NODE_MODULES" == "false" ]]; then
     CLEAN_GENERATED=true
     CLEAN_YARN=true
     CLEAN_CACHES=true
+    CLEAN_NODE_MODULES=true
   fi
 }
 
@@ -109,7 +115,7 @@ clean_yarn() {
 }
 
 clean_all() {
-  for job in generated caches yarn; do
+  for job in generated caches yarn node_modules; do
     job_uppercase=$(echo $job | tr '[:lower:]' '[:upper:]')
     job_variable="CLEAN_${job_uppercase}"
 
