@@ -902,6 +902,9 @@ export interface IFormFields {
   /** Recipient */
   recipient: string
 
+  /** Default field namespace (In development) */
+  defaultFieldNamespace?: Record<string, any> | undefined
+
   /** Fields */
   fields?: IFormField[] | undefined
 
