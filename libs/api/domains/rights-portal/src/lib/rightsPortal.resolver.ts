@@ -122,4 +122,13 @@ export class RightsPortalResolver {
       input?.dateTo,
     )
   }
+
+  @Scopes(ApiScope.health)
+  @Query(() => HealthCenterHistory, {
+    name: 'rightsPortalDrugsPaymentPeroids',
+  })
+  @Audit()
+  getRightsPortalDrugsPaymentPeroids() {
+    return this.rightsPortalService.getDrugPaymentPeroids()
+  }
 }

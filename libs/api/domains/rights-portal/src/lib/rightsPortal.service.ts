@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common'
 import {
   AidsandnutritionApi,
   DentistApi,
+  DrugApi,
   HealthcenterApi,
   TherapyApi,
 } from '@island.is/clients/icelandic-health-insurance/rights-portal'
@@ -30,6 +31,7 @@ export class RightsPortalService {
     private aidsAndNutritionApi: AidsandnutritionApi,
     private dentistApi: DentistApi,
     private healthCenterApi: HealthcenterApi,
+    private drugsApi: DrugApi,
   ) {}
   getTherapies = (user: User) =>
     this.therapyApi
@@ -51,12 +53,12 @@ export class RightsPortalService {
       const nutrition: Array<AidOrNutrition> | null =
         res.nutrition
           ?.map((c) => generateAidOrNutrition(c, AidOrNutritionType.NUTRITION))
-          .filter(Boolean as unknown as ExcludesFalse) ?? []
+          .filter((Boolean as unknown) as ExcludesFalse) ?? []
 
       const aids: Array<AidOrNutrition> | null =
         res.aids
           ?.map((c) => generateAidOrNutrition(c, AidOrNutritionType.AID))
-          .filter(Boolean as unknown as ExcludesFalse) ?? []
+          .filter((Boolean as unknown) as ExcludesFalse) ?? []
 
       return {
         data: [...aids, ...nutrition],
@@ -138,6 +140,14 @@ export class RightsPortalService {
         },
         history,
       }
+    } catch (e) {
+      return handle404(e)
+    }
+  }
+
+  async getDrugPaymentPeroids() {
+    try {
+      return await this.drugsApi.drugsPaymentPeriods()
     } catch (e) {
       return handle404(e)
     }

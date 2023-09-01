@@ -4,6 +4,7 @@ import {
   AidsandnutritionApi,
   DentistApi,
   HealthcenterApi,
+  DrugApi,
 } from '../../gen/fetch'
 import { SharedApiConfig } from './sharedApiConfig'
 
@@ -12,6 +13,7 @@ export const exportedApis = [
   AidsandnutritionApi,
   DentistApi,
   HealthcenterApi,
+  DrugApi,
 ].map((Api) => ({
   provide: Api,
   useFactory: (configuration: Configuration) => {

@@ -10,4 +10,5 @@ export {
   DentistDTO,
   HealthcenterApi,
   HealthCenterDTO,
+  DrugApi,
 } from '../gen/fetch'

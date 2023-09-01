@@ -322,4 +322,43 @@ export const messages = defineMessages({
     id: 'sp.health:medicine-title',
     defaultMessage: 'Lyf',
   },
+  medicinePurchaseTitle: {
+    id: 'sp.health:medicine-purchase-title',
+    defaultMessage: 'Lyfjakaup þrepstaða',
+  },
+  medicinePurchaseIntroTitle: {
+    id: 'sp.health:medicine-purchase-title',
+    defaultMessage: 'Lyfjakaup þrepstaða',
+  },
+  medicinePurchaseIntroText: {
+    id: 'sp.health:medicine-purchase-intro',
+    defaultMessage:
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore aliqua.',
+  },
+  medicineCalculatorTitle: {
+    id: 'sp.health:medicine-calculator-title',
+    defaultMessage: 'Lyfjareiknivél',
+  },
+  medicineCalculatorIntroTitle: {
+    id: 'sp.health:medicine-calculator-intro-title',
+    defaultMessage: 'Reiknaðu út þinn kostnað við lyfjakaup',
+  },
+  medicineCalculatorIntroText: {
+    id: 'sp.health:medicine-calculator-intro-text',
+    defaultMessage:
+      'Með lyfjareiknivélinni getur þú reiknað lyfjakostnað þinn eða barna þinna út frá nýju lyfjagreiðsluþátttökukerfi sem tók gildi 4. maí 2013.',
+  },
+  medicineLicenseTitle: {
+    id: 'sp.health:medicine-license-title',
+    defaultMessage: 'Lyfjaskírteini',
+  },
+  medicineLicenseIntroTitle: {
+    id: 'sp.health:medicine-license-intro-title',
+    defaultMessage: 'Lyfjaskírteinin mín',
+  },
+  medicineLicenseIntroText: {
+    id: 'sp.health:medicine-license-intro-text',
+    defaultMessage:
+      'Læknir sækir um lyfjaskírteini fyrir einstakling sem gefin eru út af Sjúkratryggingum að uppfylltum ákveðnum skilyrðum samkvæmt vinnureglum.',
+  },
 })
