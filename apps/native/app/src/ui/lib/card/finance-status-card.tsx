@@ -114,16 +114,14 @@ export function FinanceStatusCard({
         shadowRadius: 16,
         elevation: 1,
         shadowColor: 'rgb(0, 32, 128)',
-      }}
-    >
+      }}>
       <Card
         onPress={() => {
           LayoutAnimation.configureNext(toggleAnimation);
           onPress?.();
         }}
         underlayColor={theme.isDark ? theme.shade.shade200 : '#EBEBFA'}
-        open={open}
-      >
+        open={open}>
         <Container>
           <Row style={{marginBottom: 8}}>
             <Title>

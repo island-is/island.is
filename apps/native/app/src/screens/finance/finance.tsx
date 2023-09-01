@@ -189,8 +189,7 @@ function FinanceStatusCardContainer(props: any) {
       onPress={() => {
         setOpen(p => !p);
       }}
-      open={open}
-    >
+      open={open}>
       <View style={{width: '100%', padding: 16}}>
         <Text weight="500" style={{color: blue400, marginBottom: 8}}>
           <FormattedMessage
@@ -271,8 +270,7 @@ function FinanceStatusCardContainer(props: any) {
                     navigateTo(
                       `/finance/status/${org.id}/${chargeType.id}/${index}`,
                     );
-                  }}
-                >
+                  }}>
                   <>
                     <Cell style={{flex: 1}}>
                       <Text>{charge.finalDueDate}</Text>
@@ -347,8 +345,7 @@ function FinanceStatusCardContainer(props: any) {
                   Linking.openURL(
                     `https://${org.email.replace(/https?:\/\//, '')}`,
                   )
-                }
-              >
+                }>
                 <Text style={{paddingTop: 4, color: blue400}}>
                   {org.homepage}
                 </Text>
@@ -389,29 +386,27 @@ function FinanceStatusCardContainer(props: any) {
   );
 }
 
-const {
-  useNavigationOptions,
-  getNavigationOptions,
-} = createNavigationOptionHooks(
-  (theme, intl, initialized) => ({
-    topBar: {
-      title: {
-        text: intl.formatMessage({id: 'finance.screenTitle'}),
+const {useNavigationOptions, getNavigationOptions} =
+  createNavigationOptionHooks(
+    (theme, intl, initialized) => ({
+      topBar: {
+        title: {
+          text: intl.formatMessage({id: 'finance.screenTitle'}),
+        },
+      },
+    }),
+    {
+      topBar: {
+        largeTitle: {
+          visible: true,
+        },
+        scrollEdgeAppearance: {
+          active: true,
+          noBorder: true,
+        },
       },
     },
-  }),
-  {
-    topBar: {
-      largeTitle: {
-        visible: true,
-      },
-      scrollEdgeAppearance: {
-        active: true,
-        noBorder: true,
-      },
-    },
-  },
-);
+  );
 
 export const FinanceScreen: NavigationFunctionComponent = ({componentId}) => {
   useNavigationOptions(componentId);
@@ -530,8 +525,7 @@ export const FinanceScreen: NavigationFunctionComponent = ({componentId}) => {
           marginHorizontal: 16,
           marginBottom: 24,
           alignItems: 'flex-start',
-        }}
-      >
+        }}>
         <LightButton
           title={
             <FormattedMessage

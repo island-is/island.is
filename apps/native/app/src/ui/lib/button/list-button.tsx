@@ -77,8 +77,7 @@ export function ListButton({title, icon, isLoading, ...rest}: ListButtonProps) {
         underlayColor={
           theme.isDark ? theme.shades.dark.shade100 : theme.color.blue100
         }
-        {...rest}
-      >
+        {...rest}>
         <Content>
           {isLoading ? (
             <View style={{width: 230}}>

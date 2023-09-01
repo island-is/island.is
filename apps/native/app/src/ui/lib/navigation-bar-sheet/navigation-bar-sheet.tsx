@@ -91,8 +91,7 @@ export function NavigationBarSheet({
               bottom: 10,
               left: 10,
               right: 10,
-            }}
-          >
+            }}>
             <CloseIcon
               style={{
                 tintColor: theme.color.blue400,
