@@ -318,4 +318,8 @@ export const messages = defineMessages({
     id: 'sp.health:max-paid-by-applicant',
     defaultMessage: 'Fyrst greitt af umsækjanda á mánuði',
   },
+  medicineTitle: {
+    id: 'sp.health:medicine-title',
+    defaultMessage: 'Lyf',
+  },
 })

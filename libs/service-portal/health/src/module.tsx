@@ -15,6 +15,8 @@ const AidsAndNutrition = lazy(() =>
 const Dentists = lazy(() => import('./screens/Dentists/Dentists'))
 const HealthCenter = lazy(() => import('./screens/HealthCenter/HealthCenter'))
 
+const Medicine = lazy(() => import('./screens/Medicine/Medicine'))
+
 export const healthModule: PortalModule = {
   name: 'Heilsa',
   featureFlag: Features.servicePortalHealthRightsModule,
@@ -51,6 +53,12 @@ export const healthModule: PortalModule = {
       key: 'HealthCenter',
       enabled: userInfo.scopes.includes(ApiScope.health),
       element: <HealthCenter />,
+    },
+    {
+      name: 'Lyf',
+      path: HealthPaths.HealthMedicine,
+      enabled: userInfo.scopes.includes(ApiScope.health),
+      element: <Medicine />,
     },
   ],
 }
