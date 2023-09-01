@@ -8,7 +8,7 @@ This library was generated with [Nx](https://nx.dev).
 
 Run `nx test clients-housing-benefit-calculator` to execute the unit tests via [Jest](https://jestjs.io).
 
-### Updating the open api definition (clientConfig.yaml)
+### Updating the open api definition (clientConfig.json)
 
 ```sh
 yarn nx run clients-housing-benefit-calculator:update-openapi-document

@@ -16,8 +16,7 @@ export class HousingBenefitCalculatorClientService {
 
   private async getAuthenticatedCalculationApi() {
     const loginData =
-      (await this.authenticationApi.apiVversionAuthenticateTokenPost({
-        version: '1',
+      (await this.authenticationApi.apiV1AuthenticateTokenPostRaw({
         loginModel: {
           username: this.clientConfig.username,
           password: this.clientConfig.password,
@@ -41,12 +40,11 @@ export class HousingBenefitCalculatorClientService {
       await this.getAuthenticatedCalculationApi()
 
     const calculationData =
-      await authenticatedCalculationApi.apiVversionReiknivelReiknivelPost({
+      await authenticatedCalculationApi.apiV1ReiknivelReiknivelPost({
         fjoldiHeimilismanna: input.numberOfHouseholdMembers,
         heildarTekjur: input.totalMonthlyIncome,
         heildarEignir: input.totalAssets,
         husnaedisKostnadur: input.housingCostsPerMonth,
-        version: '1',
       })
 
     return {
