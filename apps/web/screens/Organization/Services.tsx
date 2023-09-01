@@ -12,7 +12,6 @@ import {
   GridContainer,
   GridRow,
   Select,
-  Option,
   Input,
   Inline,
   Tag,
@@ -191,7 +190,7 @@ const ServicesPage: Screen<ServicesPageProps> = ({
                 },
                 ...categories,
               ]}
-              onChange={({ value }: Option) => {
+              onChange={({ value }) => {
                 setParameters({
                   ...parameters,
                   categories: value ? [value] : [],

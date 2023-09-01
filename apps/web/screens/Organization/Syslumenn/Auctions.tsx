@@ -3,7 +3,6 @@ import React, { useEffect, useState } from 'react'
 import {
   Box,
   NavigationItem,
-  Option,
   Select,
   Tag,
   Text,
@@ -683,7 +682,7 @@ const Auctions: Screen<AuctionsProps> = ({
                 label: x.filterLabel,
                 value: x.slugValue,
               })).find((x) => x.value === officeLocation.slugValue)}
-              onChange={({ value }: Option) => {
+              onChange={({ value }) => {
                 setOfficeLocationBySlugValue(String(value))
                 Router.replace(`#${value}`)
               }}
@@ -709,9 +708,7 @@ const Auctions: Screen<AuctionsProps> = ({
                 label: x.filterLabel,
                 value: x.value,
               })).find((x) => x.value === lotTypeOption.value)}
-              onChange={({ value }: Option) =>
-                setLotTypeOptionByValue(String(value))
-              }
+              onChange={({ value }) => setLotTypeOptionByValue(String(value))}
             />
           </GridColumn>
           <GridColumn
