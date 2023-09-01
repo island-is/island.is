@@ -164,13 +164,13 @@ export const is = {
   'documentDetail.loadingText': 'Sæki skjal',
 
   // profile
-  'profile.screenTitle': 'Mínar upplýsingar',
-  'profile.bottomTabText': 'Ég',
+  'profile.screenTitle': 'Meira',
+  'profile.bottomTabText': 'Meira',
   'profile.seeInfo': 'Nánar',
-  'profile.infoHeading': 'Eignir og fjölskylda',
   'profile.family': 'Fjölskylda',
   'profile.vehicles': 'Ökutæki',
   'profile.assets': 'Fasteignir',
+  'profile.finance': 'Fjármál',
 
   // vehicles
   'vehicles.screenTitle': 'Ökutæki',
@@ -217,6 +217,34 @@ export const is = {
   'assetsDetail.postNumber': 'Póstnúmer',
   'assetsDetail.buildYearDisplay': 'Byggingarár',
 
+  // finance
+  'finance.screenTitle': 'Fjármál',
+  'finance.statusCard.status': 'Staða',
+  'finance.statusCard.paymentBase': 'Gjaldgrunnur',
+  'finance.statusCard.deadline': 'Eindagi',
+  'finance.statusCard.amount': 'Upphæð',
+  'finance.statusCard.total': 'Samtals',
+  'finance.statusCard.organization': 'Þjónustuaðili',
+  'finance.statusCard.organizationWebsite': 'Vefur',
+  'finance.statusCard.organizationEmail': 'Netfang',
+  'finance.statusCard.organizationPhone': 'Sími',
+  'finance.statusCard.schedulePaymentPlan': 'Gera greiðsluáætlun',
+  'finance.heading.title': 'Staða við ríkissjóð og stofnanir',
+  'finance.heading.subtitle':
+    'Hér sérð þú sundurliðun skulda og/eða inneigna hjá ríkissjóði og stofnunum.',
+
+  // finance detail
+  'financeDetail.title': 'Ítarupplýsingar',
+  'financeDetail.paymentBase': 'Gjaldgrunnur',
+  'financeDetail.yearAndPeriod': `Ár og tímabil`,
+  'financeDetail.dueDate': 'Gjalddagi',
+  'financeDetail.finalDueDate': 'Eindagi',
+  'financeDetail.principal': 'Höfuðstóll',
+  'financeDetail.interest': 'Vextir',
+  'financeDetail.costs': 'Kostnaður',
+  'financeDetail.payments': 'Greiðslur',
+  'financeDetail.status': 'Staða',
+
   // family
   'family.screenTitle': 'Fjölskylda',
   'family.emptyListTitle': 'Fjölskyldu upplýsingar',
@@ -254,6 +282,11 @@ export const is = {
   'walletPass.screenTitle': 'Skírteini',
   'walletPass.lastUpdate': 'Síðast uppfært',
   'walletPass.expirationDate': 'Gildir til',
+  'walletPass.errorTitle': 'Villa',
+  'walletPass.errorNotPossibleToAddDriverLicense':
+    'Í augnablikinu er ekki hægt að senda ökuskírteini í síma.',
+  'walletPass.moreInfo': 'Nánari upplýsingar',
+  'walletPass.alertClose': 'Loka',
 
   // wallet passport
   'walletPassport.screenTitle': 'Vegabréf',
