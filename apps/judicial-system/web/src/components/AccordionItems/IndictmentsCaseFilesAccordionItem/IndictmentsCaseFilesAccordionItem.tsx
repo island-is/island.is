@@ -13,7 +13,7 @@ import {
   useDragControls,
   useMotionValue,
 } from 'framer-motion'
-import { useMutation } from '@apollo/client'
+
 import { useMeasure } from 'react-use'
 
 import {
@@ -41,7 +41,7 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 
 import { indictmentsCaseFilesAccordionItem as m } from './IndictmentsCaseFilesAccordionItem.strings'
-import { useUpdateFilesMutation } from './UpdateFiles.generated'
+import { useUpdateFilesMutation } from './updateFiles.generated'
 
 import * as styles from './IndictmentsCaseFilesAccordionItem.css'
 
@@ -550,8 +550,9 @@ const IndictmentsCaseFilesAccordionItem: React.FC<
 
     setReorderableItems((prev) => {
       const newReorderableItems = [...prev]
-      newReorderableItems[fileInReorderableItems].userGeneratedFilename =
-        newName
+      newReorderableItems[
+        fileInReorderableItems
+      ].userGeneratedFilename = newName
       newReorderableItems[fileInReorderableItems].displayDate = newDate
         ? newDate.toISOString()
         : newReorderableItems[fileInReorderableItems].displayDate
