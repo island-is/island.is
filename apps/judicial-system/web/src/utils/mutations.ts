@@ -59,6 +59,8 @@ export const AppealedCasesQuery = gql`
   query AppealedCases($input: CaseListQueryInput) {
     cases(input: $input) {
       appealedDate
+      initialRulingDate
+      rulingDate
       ...CoreCaseListFields
     }
   }
@@ -85,7 +87,7 @@ export const CreateUserMutation = gql`
 `
 
 export const UsersQuery = gql`
-  query Users(role: UserRole) {
+  query Users {
     users {
       id
       name
