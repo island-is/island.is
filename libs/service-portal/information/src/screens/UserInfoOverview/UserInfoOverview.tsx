@@ -11,14 +11,35 @@ import { useUserInfo } from '@island.is/auth/react'
 import { FamilyMemberCard } from '../../components/FamilyMemberCard/FamilyMemberCard'
 import { spmm } from '../../lib/messages'
 import { useUserInfoOverviewQuery } from './UserInfoOverview.generated'
+import { FeatureFlagClient } from '@island.is/feature-flags'
+import { useFeatureFlagClient } from '@island.is/react/feature-flags'
+import { useState, useEffect } from 'react'
 
 const UserInfoOverview = () => {
   useNamespaces('sp.family')
   const userInfo = useUserInfo()
 
+  const [useNatRegV3, setUseNatRegV3] = useState(false)
+
+  const featureFlagClient: FeatureFlagClient = useFeatureFlagClient()
+
+  /* Should use v3? */
+  useEffect(() => {
+    const isFlagEnabled = async () => {
+      const ffEnabled = await featureFlagClient.getValue(
+        `isserviceportalnationalregistryv3enabled`,
+        false,
+      )
+      if (ffEnabled) {
+        setUseNatRegV3(ffEnabled as boolean)
+      }
+    }
+    isFlagEnabled()
+  }, [])
+
   const { data, loading, error } = useUserInfoOverviewQuery({
     variables: {
-      api: 'v1',
+      api: useNatRegV3 ? 'v3' : undefined,
     },
   })
 

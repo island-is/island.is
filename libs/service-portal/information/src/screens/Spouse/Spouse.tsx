@@ -21,7 +21,7 @@ import { natRegMaritalStatusMessageDescriptorRecord } from '../../helpers/locali
 import { FeatureFlagClient } from '@island.is/feature-flags'
 import { useFeatureFlagClient } from '@island.is/react/feature-flags'
 import { useState, useEffect } from 'react'
-import { useNationalRegistryPersonQuery } from '../UserInfo/UserInfo.generated'
+import { useNationalRegistrySpouseQuery } from './Spouse.generated'
 
 const dataNotFoundMessage = defineMessage({
   id: 'sp.family:data-not-found',
@@ -59,7 +59,7 @@ const FamilyMember = () => {
     isFlagEnabled()
   }, [])
 
-  const { data, loading, error } = useNationalRegistryPersonQuery({
+  const { data, loading, error } = useNationalRegistrySpouseQuery({
     variables: {
       api: useNatRegV3 ? 'v3' : undefined,
     },
