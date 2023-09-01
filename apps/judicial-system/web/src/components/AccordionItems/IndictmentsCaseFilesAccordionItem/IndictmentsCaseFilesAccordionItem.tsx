@@ -41,7 +41,7 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 
 import { indictmentsCaseFilesAccordionItem as m } from './IndictmentsCaseFilesAccordionItem.strings'
-import { useUpdateFilesMutation } from './updateFiless.generated'
+import { useUpdateFilesMutation } from './updateFiles.generated'
 
 import * as styles from './IndictmentsCaseFilesAccordionItem.css'
 
