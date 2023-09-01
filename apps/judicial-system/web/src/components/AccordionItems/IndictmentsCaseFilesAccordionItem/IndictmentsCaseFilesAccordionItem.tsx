@@ -41,7 +41,7 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 
 import { indictmentsCaseFilesAccordionItem as m } from './IndictmentsCaseFilesAccordionItem.strings'
-import { useUpdateFilesMutation } from './updateFiles.generated'
+import { useUpdateFilesMutation } from './updateFiless.generated'
 
 import * as styles from './IndictmentsCaseFilesAccordionItem.css'
 
@@ -546,8 +546,9 @@ const IndictmentsCaseFilesAccordionItem: React.FC<
 
     setReorderableItems((prev) => {
       const newReorderableItems = [...prev]
-      newReorderableItems[fileInReorderableItems].userGeneratedFilename =
-        newName
+      newReorderableItems[
+        fileInReorderableItems
+      ].userGeneratedFilename = newName
       newReorderableItems[fileInReorderableItems].displayDate = newDate
         ? newDate.toISOString()
         : newReorderableItems[fileInReorderableItems].displayDate
