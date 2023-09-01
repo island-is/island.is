@@ -22,7 +22,22 @@
             }
           }
         },
-        "responses": { "200": { "description": "Success" } }
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/TokenModel" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/TokenModel" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/TokenModel" }
+              }
+            }
+          }
+        }
       }
     },
     "/api/v1/Reiknivel/reiknivel": {
@@ -124,6 +139,14 @@
             "type": "number",
             "format": "double"
           }
+        },
+        "additionalProperties": false
+      },
+      "TokenModel": {
+        "type": "object",
+        "properties": {
+          "token": { "type": "string", "nullable": true },
+          "expiration": { "type": "string", "format": "date-time" }
         },
         "additionalProperties": false
       }
