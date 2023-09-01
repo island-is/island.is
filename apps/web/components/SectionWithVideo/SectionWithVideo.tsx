@@ -12,6 +12,8 @@ interface SectionWithVideoWrapperProps {
 
 const SectionWithVideoWrapper = ({ slice }: SectionWithVideoWrapperProps) => {
   const { activeLocale } = useI18n()
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
   const boxProps: BoxProps = slice.showDividerOnTop
     ? { borderTopWidth: 'standard', borderColor: 'standard', paddingTop: 4 }
     : {}
@@ -21,7 +23,11 @@ const SectionWithVideoWrapper = ({ slice }: SectionWithVideoWrapperProps) => {
         {...slice}
         html={slice.html as unknown as SectionWithVideoProps['html']}
         locale={activeLocale}
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore make web strict
         title={slice.showTitle ? slice.title : ''}
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore make web strict
         video={{
           ...slice.video,
           locale: activeLocale,
