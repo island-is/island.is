@@ -70,6 +70,8 @@ const mapEvents = (
 
 const getTimeline = (
   eventMap: Map<number, Map<number, Timeline['events']>>,
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
   getMonthByIndex,
   seeMoreText = 'Lesa meira',
 ) => {
@@ -169,6 +171,8 @@ export const TimelineSlice: React.FC<React.PropsWithChildren<SliceProps>> = ({
       setPosition(
         Math.min(
           position + scrollAmount,
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore make web strict
           frameRef.current.scrollWidth - frameRef.current.offsetWidth + 50,
         ),
       )
@@ -179,6 +183,8 @@ export const TimelineSlice: React.FC<React.PropsWithChildren<SliceProps>> = ({
 
   useEffect(() => {
     setPosition(currentMonth - 100)
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore make web strict
     frameRef.current.scrollTo({
       left: currentMonth - 100,
     })
@@ -187,7 +193,8 @@ export const TimelineSlice: React.FC<React.PropsWithChildren<SliceProps>> = ({
   useEffect(() => {
     // used to ignore initial state
     if (position < 0) return
-
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore make web strict
     frameRef.current.scrollTo({
       left: position,
       behavior: 'smooth',
@@ -252,6 +259,8 @@ export const TimelineSlice: React.FC<React.PropsWithChildren<SliceProps>> = ({
         setPosition((position) => {
           let offset = 0
           if (lastMouseMovePosition === null) {
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore make web strict
             offset = lastMouseDownPosition - ev.x
           } else {
             offset = lastMouseMovePosition - ev.x
@@ -261,11 +270,15 @@ export const TimelineSlice: React.FC<React.PropsWithChildren<SliceProps>> = ({
           if (offset > 0) {
             newPosition = Math.min(
               position + offset,
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore make web strict
               frameRef.current.scrollWidth - frameRef.current.offsetWidth + 50,
             )
           } else {
             newPosition = Math.max(position + offset, 0)
           }
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore make web strict
           frameRef.current.scrollTo({
             left: newPosition,
           })
@@ -464,6 +477,8 @@ const TimelineItem = ({
   const portalRef = useRef()
 
   useEffect(() => {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore make web strict
     portalRef.current = document.querySelector('#__next')
   })
 
@@ -496,6 +511,8 @@ const TimelineItem = ({
               seeMoreText={seeMoreText}
             />
           </ModalBase>,
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore make web strict
           portalRef.current,
         )}
     </div>
