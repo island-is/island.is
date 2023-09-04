@@ -13,7 +13,7 @@ export function formatNationalId(str = '') {
   return [str.substr(0, 6), str.substr(6, 4)].join('-');
 }
 
-export function TabPersonalInfo() {
+export function PersonalInfoContent() {
   const intl = useIntl();
   const {dismiss, dismissed} = usePreferencesStore();
   const natRegRes = useQuery(NATION_REGISTRY_USER_QUERY, {

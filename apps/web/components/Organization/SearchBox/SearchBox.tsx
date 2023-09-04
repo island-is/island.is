@@ -146,6 +146,8 @@ export const SearchBox = ({
     }
 
     setOptions(
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
       newOpts.length
         ? newOpts.concat({
             label: value,

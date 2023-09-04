@@ -58,6 +58,8 @@ const DefaultHeader: React.FC<React.PropsWithChildren<HeaderProps>> = ({
         <div
           className={styles.textContainer}
           style={{
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore make web strict
             background: getBackgroundStyle(organizationPage),
           }}
         >
