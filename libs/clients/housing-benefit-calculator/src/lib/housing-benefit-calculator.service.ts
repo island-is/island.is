@@ -4,6 +4,10 @@ import { AuthHeaderMiddleware } from '@island.is/auth-nest-tools'
 import { AuthenticateApi, ReiknivelApi } from '../../gen/fetch'
 import { HousingBenefitCalculatorClientConfig } from './housing-benefit-calculator.config'
 
+const round = (value: number | null | undefined) => {
+  return typeof value === 'number' ? Math.round(value) : value
+}
+
 export class HousingBenefitCalculatorClientService {
   constructor(
     @Inject(HousingBenefitCalculatorClientConfig.KEY)
@@ -46,9 +50,11 @@ export class HousingBenefitCalculatorClientService {
       })
 
     return {
-      maximumHousingBenefits: calculationData.manadarlegarHamarksBaetur,
-      reductions: calculationData.manadarlegHusnaedisKostnadarSkerding,
-      estimatedHousingBenefits: calculationData.manadarlegarHusnaedisbaetur,
+      maximumHousingBenefits: round(calculationData.manadarlegarHamarksBaetur),
+      reductions: round(calculationData.manadarlegHusnaedisKostnadarSkerding),
+      estimatedHousingBenefits: round(
+        calculationData.manadarlegarHusnaedisbaetur,
+      ),
     }
   }
 }
