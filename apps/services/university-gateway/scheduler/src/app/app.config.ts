@@ -7,7 +7,7 @@ export const appModuleConfig = defineConfig({
       'BACKEND_ACCESS_TOKEN',
       'secret-backend-api-token',
     ),
-    backendUrl: env.required('BACKEND_URL', 'http://localhost:3344'),
+    backendUrl: env.required('BACKEND_URL', 'http://localhost:3380'),
     timeToLiveMinutes: env.requiredJSON('TIME_TO_LIVE_MINUTES', 1),
   }),
 })

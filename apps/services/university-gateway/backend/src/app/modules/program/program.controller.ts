@@ -11,7 +11,7 @@ import { ProgramDetailsResponse, ProgramResponse, TagResponse } from './model'
 import { DegreeType, Season } from './types'
 
 @ApiTags('Program')
-@Controller()
+@Controller('api')
 export class ProgramController {
   constructor(private readonly programService: ProgramService) {}
 

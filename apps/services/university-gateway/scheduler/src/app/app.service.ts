@@ -1,10 +1,7 @@
 import fetch from 'node-fetch'
-
 import { Inject, Injectable } from '@nestjs/common'
-
 import type { ConfigType } from '@island.is/nest/config'
 import { logger } from '@island.is/logging'
-
 import { now } from './date.factory'
 import { appModuleConfig } from './app.config'
 
@@ -26,8 +23,9 @@ export class AppService {
     let done = false
 
     do {
+      // Update programs
       done = await fetch(
-        `${this.config.backendUrl}/api/internal/cases/archive`,
+        `${this.config.backendUrl}/api/internal/programs/update`,
         {
           method: 'POST',
           headers: {
@@ -37,19 +35,39 @@ export class AppService {
         },
       )
         .then(async (res) => {
-          const response = await res.json()
-
           if (res.ok) {
-            return !response.caseArchived
+            return true
           }
 
-          logger.error('Failed to archive cases', { response })
-
+          logger.error('Failed to update programs')
           return true
         })
         .catch((reason) => {
-          logger.error('Failed to archive cases', { reason })
+          logger.error('Failed to update programs, reason:', { reason })
+          return true
+        })
 
+      // Update courses
+      done = await fetch(
+        `${this.config.backendUrl}/api/internal/courses/update`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            authorization: `Bearer ${this.config.backendAccessToken}`,
+          },
+        },
+      )
+        .then(async (res) => {
+          if (res.ok) {
+            return true
+          }
+
+          logger.error('Failed to update courses')
+          return true
+        })
+        .catch((reason) => {
+          logger.error('Failed to update courses, reason:', { reason })
           return true
         })
     } while (

@@ -17,7 +17,7 @@ const debug = !environment.production
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
 const autoSchemaFile = environment.production
   ? true
-  : 'apps/university-gateway/api.graphql'
+  : 'apps/services/university-gateway/api.graphql'
 
 @Module({
   imports: [

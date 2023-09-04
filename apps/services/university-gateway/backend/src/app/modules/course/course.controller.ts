@@ -10,7 +10,7 @@ import {
 import { CourseDetailsResponse, CourseResponse } from './model'
 
 @ApiTags('Course')
-@Controller()
+@Controller('api')
 export class CourseController {
   constructor(private readonly courseService: CourseService) {}
 
