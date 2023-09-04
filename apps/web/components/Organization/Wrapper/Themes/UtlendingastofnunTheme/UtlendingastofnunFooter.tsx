@@ -74,8 +74,16 @@ const UtlendingastofnunFooter: React.FC<
                     <Text paddingTop={1} color="white" variant="small">
                       {n(
                         'serviceWebFooterLocation',
-                        'Dalvegur 18, 201 Kópavogi (sjá kort)',
-                      )}
+                        'Dalvegur 18, 201 Kópavogi',
+                      )}{' '}
+                      <LinkV2
+                        href={n(
+                          'serviceWebFooterLocationHref',
+                          'https://www.google.com/maps/place/The+Directorate+of+Immigration/@64.1056594,-21.8728967,17z/data=!4m12!1m6!3m5!1s0x48d674b54a362079:0x311c5c70e363e0cb!2sThe+Directorate+of+Immigration!8m2!3d64.1056865!4d-21.8707371!3m4!1s0x48d674b54a362079:0x311c5c70e363e0cb!8m2!3d64.1056865!4d-21.8707371',
+                        )}
+                      >
+                        {n('serviceWebViewMap', '(sjá kort)')}
+                      </LinkV2>
                     </Text>
                   </Box>
                 </GridColumn>
