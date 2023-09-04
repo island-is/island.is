@@ -342,6 +342,7 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
                     complaintDescription.labels.decisionDatePlaceholder,
                   backgroundColor: 'blue',
                   width: 'half',
+                  maxDate: new Date(),
                   condition: (answers: FormValue) =>
                     getComplaintType(answers) ===
                     OmbudsmanComplaintTypeEnum.DECISION,
