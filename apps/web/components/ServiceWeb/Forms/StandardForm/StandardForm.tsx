@@ -547,10 +547,14 @@ export const StandardForm = ({
               isSearchable
               label={fn('malaflokkur', 'label', 'Málaflokkur')}
               name="malaflokkur"
-              onChange={({ label, value }) => {
-                setCategoryLabel(label)
-                setCategoryId(value)
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore make web strict
+              onChange={({ label, value }: Option) => {
+                setCategoryLabel(label as string)
+                setCategoryId(value as string)
               }}
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore make web strict
               options={categoryOptions}
               placeholder={fn('malaflokkur', 'placeholder', 'Veldu flokk')}
               size="md"
@@ -637,7 +641,11 @@ export const StandardForm = ({
                           <a
                             href={
                               linkResolver('supportqna', [
+                                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                                // @ts-ignore make web strict
                                 organizationSlug,
+                                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                                // @ts-ignore make web strict
                                 categorySlug,
                                 slug,
                               ]).href
@@ -702,7 +710,9 @@ export const StandardForm = ({
                           isSearchable
                           label={fn('rikisadili', 'label', 'Ríkisaðili')}
                           name="rikisadili"
-                          onChange={({ label }) => {
+                          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                          // @ts-ignore make web strict
+                          onChange={({ label }: Option) => {
                             onChange(label)
                           }}
                           hasError={errors?.rikisadili !== undefined}
@@ -883,7 +893,9 @@ export const StandardForm = ({
                                 'Þinn sýslumaður',
                               )}
                               name="syslumadur"
-                              onChange={({ label, value }) => {
+                              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                              // @ts-ignore make web strict
+                              onChange={({ label, value }: Option) => {
                                 onChange(label)
                                 setSyslumadurId(value)
                               }}
