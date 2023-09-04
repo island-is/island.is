@@ -1,3 +1,5 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
 import { createFilter, GroupBase, Props } from 'react-select'
 
 import { Icon as IconTypes } from '../IconRC/iconMap'
@@ -8,14 +10,16 @@ type ArgumentTypes<F extends () => unknown> = F extends (
 ) => unknown
   ? A
   : never
-
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
 type FilterConfig = ArgumentTypes<typeof createFilter>[0]
 
 export interface AriaError {
   'aria-invalid': boolean
   'aria-describedby': string
 }
-
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
 declare module 'react-select/dist/declarations/src/Select' {
   export interface Props<
     Option,
@@ -49,6 +53,8 @@ export type SelectProps<
   Option,
   IsMulti extends boolean = false,
   Group extends GroupBase<Option> = GroupBase<Option>,
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
 > = Omit<Props<Option, IsMulti, Group>, 'noOptionsMessage'> & {
   noOptionsMessage?: string
 }

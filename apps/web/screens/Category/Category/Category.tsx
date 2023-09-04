@@ -74,6 +74,8 @@ const Category: Screen<CategoryProps> = ({
   const [hashArray, setHashArray] = useState<string[]>([])
 
   const Router = useRouter()
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
 
@@ -92,13 +94,18 @@ const Category: Screen<CategoryProps> = ({
         article?.otherCategories &&
         article.otherCategories
           .map((category) => category.title)
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore make web strict
           .includes(getCurrentCategory().title)
       ) {
         content.otherArticles.push(article)
       }
-
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
       if (article?.group?.slug && !content.groups[article?.group?.slug]) {
         // group does not exist create the collection
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore make web strict
         content.groups[article?.group?.slug] = {
           title: article?.group?.title,
           description: article?.group?.description,
@@ -108,9 +115,13 @@ const Category: Screen<CategoryProps> = ({
         }
       } else if (article?.group?.slug) {
         // group should exists push into collection
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore make web strict
         content.groups[article?.group?.slug].articles.push(article)
       } else {
         // this article belongs to no group
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore make web strict
         content.cards.push(article)
       }
       return content
@@ -171,6 +182,8 @@ const Category: Screen<CategoryProps> = ({
 
       return {
         ...result,
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore make web strict
         [key]: [...(result[key] || []), item],
       }
     }, {})
@@ -188,6 +201,8 @@ const Category: Screen<CategoryProps> = ({
       ) {
         return {
           ...result,
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore make web strict
           [key]: [...(result[key] || []), item],
         }
       }
@@ -195,6 +210,8 @@ const Category: Screen<CategoryProps> = ({
       return subgroupsFound.reduce((r, k) => {
         return {
           ...r,
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore make web strict
           [k]: [...r[k], item],
         }
       }, result)
@@ -262,7 +279,11 @@ const Category: Screen<CategoryProps> = ({
     })
 
   const sortedGroups = Object.values(groups).sort(
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore make web strict
     (a: ArticleGroup, b: ArticleGroup) =>
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
       a.importance > b.importance
         ? -1
         : a.importance === b.importance && sortAlpha('title')(a, b),
@@ -275,6 +296,8 @@ const Category: Screen<CategoryProps> = ({
     groupSlug: string
     index: number
   }) => {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore make web strict
     const { title, description, articles } = groups[groupSlug]
 
     const { articlesBySubgroup } = groupArticlesBySubgroup(articles, groupSlug)
@@ -298,6 +321,8 @@ const Category: Screen<CategoryProps> = ({
           <Box paddingTop={2}>
             {sortedSubgroupKeys.map((subgroup, index) => {
               const { sortedArticles } = sortArticles(
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore make web strict
                 articlesBySubgroup[subgroup],
               )
 
@@ -344,6 +369,8 @@ const Category: Screen<CategoryProps> = ({
                                   [slug],
                                 ).href
                               }
+                              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                              // @ts-ignore make web strict
                               tag={
                                 (!!processEntry || processEntryButtonText) &&
                                 n(
@@ -382,6 +409,8 @@ const Category: Screen<CategoryProps> = ({
               colorScheme="purple"
               items={sidebarCategoryLinks}
               title={n('sidebarHeader')}
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore make web strict
               renderLink={(link, { typename, slug }) => {
                 return (
                   <Link
@@ -458,6 +487,8 @@ const Category: Screen<CategoryProps> = ({
             baseId="mobileNav"
             colorScheme="purple"
             isMenuDialog
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore make web strict
             renderLink={(link, { typename, slug }) => {
               return (
                 <Link
@@ -484,13 +515,17 @@ const Category: Screen<CategoryProps> = ({
           </Text>
         </Box>
         <Stack space={2}>
-          {sortedGroups.map(({ groupSlug }, index) => (
-            <ArticleGroupComponent
-              groupSlug={groupSlug}
-              index={index}
-              key={index}
-            />
-          ))}
+          {
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore make web strict
+            sortedGroups.map(({ groupSlug }, index) => (
+              <ArticleGroupComponent
+                groupSlug={groupSlug}
+                index={index}
+                key={index}
+              />
+            ))
+          }
           {lifeEvents.map(
             (
               { __typename: typename, title, slug, intro, thumbnail, image },
@@ -500,6 +535,8 @@ const Category: Screen<CategoryProps> = ({
                 <Card
                   key={index}
                   link={linkResolver(typename as LinkType, [slug])}
+                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                  // @ts-ignore make web strict
                   description={intro}
                   title={title}
                   image={(thumbnail || image) as Image}

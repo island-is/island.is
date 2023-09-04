@@ -45,6 +45,8 @@ import cn from 'classnames'
 
 interface OpenDataProps {
   page: GetOpenDataPageQuery['getOpenDataPage']
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
   megaMenuData
 }
 
@@ -138,6 +140,8 @@ const OpenDataPage: Screen<OpenDataProps> = ({ page, megaMenuData }) => {
       <Section aria-labelledby="factsCardsTitle" paddingBottom={8}>
         <StatisticsCardsSection
           title="Stafrænt Ísland"
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore make web strict
           cards={statisticsCardsSection}
         />
       </Section>
@@ -150,10 +154,18 @@ const OpenDataPage: Screen<OpenDataProps> = ({ page, megaMenuData }) => {
           </GridRow>
           <GridRow>
             <GridColumn span={['12/12', '4/12', '4/12']}>
-              <ChartsCard chart={graphCards[1]} />
+              <ChartsCard
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore make web strict
+                chart={graphCards[1]}
+              />
             </GridColumn>
             <GridColumn span={['12/12', '8/12', '8/12']}>
-              <ChartsCard chart={graphCards[0]} />
+              <ChartsCard
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore make web strict
+                chart={graphCards[0]}
+              />
             </GridColumn>
           </GridRow>
         </GridContainer>
@@ -166,6 +178,8 @@ const OpenDataPage: Screen<OpenDataProps> = ({ page, megaMenuData }) => {
         <DataLinkSection
           title={externalLinkSectionTitle}
           titleId="OpenDataLinksTitle"
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore make web strict
           image={externalLinkSectionImage}
           description={externalLinkSectionDescription}
           cards={externalLinkCardSelection.cards}

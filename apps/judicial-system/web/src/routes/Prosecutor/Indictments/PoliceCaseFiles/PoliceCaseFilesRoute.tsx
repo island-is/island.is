@@ -421,7 +421,7 @@ const PoliceCaseFilesRoute = () => {
         <PageTitle>{formatMessage(m.heading)}</PageTitle>
         <ProsecutorCaseInfo workingCase={workingCase} />
         <Box marginBottom={5}>
-          <InfoBox text={formatMessage(m.infoBox)}></InfoBox>
+          <InfoBox text={formatMessage(m.infoBox)} />
         </Box>
         <PoliceUploadListMemo
           caseId={workingCase.id}

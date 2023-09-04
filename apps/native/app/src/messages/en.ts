@@ -173,6 +173,11 @@ export const en: TranslatedMessages = {
   'walletPass.screenTitle': 'Pass',
   'walletPass.lastUpdate': 'Last updated',
   'walletPass.expirationDate': 'Expiration date',
+  'walletPass.errorTitle': 'Error',
+  'walletPass.errorNotPossibleToAddDriverLicense':
+    'At the moment it is not possible to add driving licenses to the phone.',
+  'walletPass.moreInfo': 'More information',
+  'walletPass.alertClose': 'Cancel',
 
   // wallet passport
   'walletPassport.screenTitle': 'Passport',
@@ -245,13 +250,13 @@ export const en: TranslatedMessages = {
   'documentDetail.loadingText': 'Loading document',
 
   // profile
-  'profile.screenTitle': 'My info',
-  'profile.bottomTabText': 'Me',
+  'profile.screenTitle': 'More',
+  'profile.bottomTabText': 'More',
   'profile.seeInfo': 'See info',
-  'profile.infoHeading': 'Assets and Family',
   'profile.family': 'Family',
   'profile.vehicles': 'Vehicles',
   'profile.assets': 'Assets',
+  'profile.finance': 'Finance',
 
   // vehicles
   'vehicles.screenTitle': 'Vehicles',
@@ -299,6 +304,34 @@ export const en: TranslatedMessages = {
   'assetsDetail.municipality': 'Municipality',
   'assetsDetail.postNumber': 'Post number',
   'assetsDetail.buildYearDisplay': 'Build Year Display',
+
+  // finance
+  'finance.screenTitle': 'Finance',
+  'finance.statusCard.status': 'Status',
+  'finance.statusCard.paymentBase': 'Payment base',
+  'finance.statusCard.deadline': 'Final due date',
+  'finance.statusCard.amount': 'Amount',
+  'finance.statusCard.total': 'Total',
+  'finance.statusCard.organization': 'Contact information',
+  'finance.statusCard.organizationWebsite': 'Website',
+  'finance.statusCard.organizationEmail': 'Email',
+  'finance.statusCard.organizationPhone': 'Phone',
+  'finance.statusCard.schedulePaymentPlan': 'Make a payment schedule',
+  'finance.heading.title': 'Financial standing with the government',
+  'finance.heading.subtitle':
+    'Here you can see an overview of your debt and/or credit balance with the government.',
+
+  // finance detail
+  'financeDetail.title': 'Detailed information',
+  'financeDetail.paymentBase': 'Payment Base',
+  'financeDetail.yearAndPeriod': `Year and period`,
+  'financeDetail.dueDate': 'Due Date',
+  'financeDetail.finalDueDate': 'Final due date',
+  'financeDetail.principal': 'Principal',
+  'financeDetail.interest': 'Interest',
+  'financeDetail.costs': 'Costs',
+  'financeDetail.payments': 'Payments',
+  'financeDetail.status': 'Status',
 
   // family
   'family.screenTitle': 'Family',
