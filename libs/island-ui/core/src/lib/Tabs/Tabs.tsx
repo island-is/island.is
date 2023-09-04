@@ -90,6 +90,8 @@ export const Tabs: FC<React.PropsWithChildren<TabInterface>> = ({
               size={size}
               name={label}
               label={label}
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore make web strict
               onChange={(opt) => {
                 tab.setCurrentId(opt?.value)
                 tab.move(opt?.value ?? null)

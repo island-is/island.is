@@ -97,9 +97,13 @@ interface SliceMachineProps {
 const fullWidthSlices = ['TimelineSlice', 'LogoListSlice', 'EmailSignup']
 
 const renderSlice = (
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
   slice,
   namespace: Record<string, string>,
   slug: string,
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
   params,
 ) => {
   switch (slice.__typename) {
@@ -173,15 +177,23 @@ export const SliceMachine = ({
         <GridColumn
           paddingTop={paddingTop}
           span={
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore make web strict
             fullWidthSlices.includes(slice.__typename)
               ? '9/9'
               : ['9/9', '9/9', '7/9']
           }
           offset={
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore make web strict
             fullWidthSlices.includes(slice.__typename) ? '0' : ['0', '0', '1/9']
           }
         >
-          {renderSlice(slice, namespace, slug, params)}
+          {
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore make web strict
+            renderSlice(slice, namespace, slug, params)
+          }
         </GridColumn>
       </GridRow>
     </GridContainer>
@@ -189,10 +201,18 @@ export const SliceMachine = ({
     <Box marginBottom={marginBottom}>
       {wrapWithGridContainer && (
         <GridContainer>
-          {renderSlice(slice, namespace, slug, params)}
+          {
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore make web strict
+            renderSlice(slice, namespace, slug, params)
+          }
         </GridContainer>
       )}
-      {!wrapWithGridContainer && renderSlice(slice, namespace, slug, params)}
+      {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore make web strict
+        !wrapWithGridContainer && renderSlice(slice, namespace, slug, params)
+      }
     </Box>
   )
 }
