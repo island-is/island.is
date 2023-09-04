@@ -7,8 +7,8 @@ query ProsecutorSelectionUsers {
     nationalId
     mobileNumber
     role
-    title
     email
+    title
     institution {
       id
       type

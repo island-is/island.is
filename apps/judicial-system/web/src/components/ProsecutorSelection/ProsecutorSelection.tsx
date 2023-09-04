@@ -9,10 +9,7 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import { useProsecutorSelectionUsersQuery } from './prosecutorSelectionUsers.generated'
 
-import {
-  User,
-  UserRole,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+import { UserRole } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { strings } from './ProsecutorSelection.strings'
 import { SingleValue } from 'react-select'
