@@ -26,8 +26,7 @@ import {
         config: ConfigType<typeof NationalRegistrySoffiaClientConfig>,
       ) {
         if (config) {
-          const api = NationalRegistryApi.instantiateClass(config)
-          return api
+          return NationalRegistryApi.instantiateClass(config)
         }
       },
       inject: [NationalRegistrySoffiaClientConfig.KEY],

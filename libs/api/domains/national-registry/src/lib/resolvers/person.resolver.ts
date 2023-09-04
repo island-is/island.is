@@ -42,25 +42,22 @@ export class PersonResolver {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  @UseGuards(IdsUserGuard, ScopesGuard)
-  @Scopes(ApiScope.meDetails)
   @Query(() => Person, {
     nullable: true,
   })
-  @Audit({ namespace: '@island.is/api/national-registry' })
-  async nationalRegistryPerson(
+  @Audit()
+  nationalRegistryPerson(
     @CurrentUser() user: AuthUser,
     @Args('api', { nullable: true }) api?: 'v1' | 'v3',
   ): Promise<Person | null> {
-    const person = await this.service.getPerson(user.nationalId, api ?? 'v1')
-    return person
+    return this.service.getPerson(user.nationalId, api ?? 'v1')
   }
 
   @ResolveField('custodians', () => [Custodian], {
     nullable: true,
   })
   @Audit()
-  async resolveCustodians(
+  resolveCustodians(
     @Context('req') { user }: { user: User },
     @Parent() person: SharedPerson,
   ): Promise<Array<Custodian> | null> {
@@ -75,7 +72,7 @@ export class PersonResolver {
     nullable: true,
   })
   @Audit()
-  async resolveBirthParents(
+  resolveBirthParents(
     @Context('req') { user }: { user: User },
     @Parent() person: SharedPerson,
   ): Promise<Array<PersonBase> | null> {
@@ -86,12 +83,13 @@ export class PersonResolver {
     nullable: true,
   })
   @Audit()
-  async resolveChildCustody(
+  resolveChildCustody(
     @Context('req') { user }: { user: User },
     @Parent() person: SharedPerson,
   ): Promise<Array<SharedPerson> | null> {
     if (user.nationalId !== person.nationalId) {
-      return null
+      //might be unnecessary, but better safe than sorry
+      return Promise.reject('User and person being queried do not match')
     }
 
     return this.service.getChildCustody(person.nationalId, person)
@@ -111,9 +109,7 @@ export class PersonResolver {
     nullable: true,
   })
   @Audit()
-  async resolveHousing(
-    @Parent() person: SharedPerson,
-  ): Promise<Housing | null> {
+  resolveHousing(@Parent() person: SharedPerson): Promise<Housing | null> {
     return this.service.getHousing(person.nationalId, person)
   }
 
@@ -121,7 +117,7 @@ export class PersonResolver {
     nullable: true,
   })
   @Audit()
-  async resolveCitizenship(
+  resolveCitizenship(
     @Parent() person: SharedPerson,
   ): Promise<Citizenship | null> {
     return this.service.getCitizenship(person.nationalId, person)
@@ -129,13 +125,13 @@ export class PersonResolver {
 
   @ResolveField('spouse', () => Spouse, { nullable: true })
   @Audit()
-  async resolveSpouse(@Parent() person: SharedPerson): Promise<Spouse | null> {
+  resolveSpouse(@Parent() person: SharedPerson): Promise<Spouse | null> {
     return this.service.getSpouse(person.nationalId, person)
   }
 
   @ResolveField('name', () => Name, { nullable: true })
   @Audit()
-  async resolveName(@Parent() person: SharedPerson): Promise<Name | null> {
+  resolveName(@Parent() person: SharedPerson): Promise<Name | null> {
     return this.service.getName(person.nationalId, person)
   }
 }

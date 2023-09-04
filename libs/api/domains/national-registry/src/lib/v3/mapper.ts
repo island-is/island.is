@@ -1,6 +1,5 @@
 import {
   EinstaklingurDTOAllt,
-  EinstaklingurDTOTru,
   EinstaklingurDTOHju,
   EinstaklingurDTOHeimili,
   EinstaklingurDTOFaeding,
@@ -210,6 +209,7 @@ export function formatName(
     firstName: name.eiginNafn ?? '',
     middleName: name.milliNafn ?? '',
     lastName: name.kenniNafn ?? '',
+    fullName: name.fulltNafn ?? '',
   }
 }
 

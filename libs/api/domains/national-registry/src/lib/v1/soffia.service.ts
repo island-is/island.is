@@ -337,6 +337,7 @@ export class SoffiaService {
           firstName: name.Eiginnafn,
           middleName: name.Millinafn,
           lastName: name.Kenninafn,
+          fullName: name.Fulltnafn,
         }
       : null
   }
@@ -408,9 +409,6 @@ export class SoffiaService {
       nationalId: nationalId,
     }
 
-    const userCorrectionResponse =
-      await this.nationalRegistryApi.postUserCorrection(correctionInput)
-
-    return userCorrectionResponse
+    return this.nationalRegistryApi.postUserCorrection(correctionInput)
   }
 }

@@ -15,19 +15,19 @@ export class NationalRegistryService {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  async getPerson(nationalId: string, api: 'v1' | 'v3') {
+  getPerson(nationalId: string, api: 'v1' | 'v3' = 'v1') {
     return api === 'v3'
-      ? await this.v3.getPerson(nationalId)
-      : await this.v1.getPerson(nationalId)
+      ? this.v3.getPerson(nationalId)
+      : this.v1.getPerson(nationalId)
   }
 
-  async getChildCustody(nationalId: string, data?: SharedPerson) {
+  getChildCustody(nationalId: string, data?: SharedPerson) {
     return data?.api === 'v3'
       ? this.v3.getChildrenCustodyInformation(nationalId, data?.rawData)
       : this.v1.getChildCustody(nationalId, data?.rawData)
   }
 
-  async getCustodians(
+  getCustodians(
     nationalId: string,
     data?: SharedPerson,
     userNationalId?: string,
@@ -37,17 +37,13 @@ export class NationalRegistryService {
       : this.v1.getChildCustody(userNationalId, data?.rawData)
   }
 
-  async getParents(
-    nationalId: string,
-    data?: SharedPerson,
-    userNationalId?: string,
-  ) {
+  getParents(nationalId: string, data?: SharedPerson, userNationalId?: string) {
     return data?.api === 'v3'
       ? this.v3.getParents(nationalId, data?.rawData)
       : this.v1.getParents(userNationalId, data?.rawData)
   }
 
-  async getBirthplace(
+  getBirthplace(
     nationalId: string,
     data?: SharedPerson,
   ): Promise<Birthplace | null> {
@@ -56,7 +52,7 @@ export class NationalRegistryService {
       : this.v1.getBirthplace(nationalId, data?.rawData)
   }
 
-  async getCitizenship(
+  getCitizenship(
     nationalId: string,
     data?: SharedPerson,
   ): Promise<Citizenship | null> {
@@ -86,19 +82,16 @@ export class NationalRegistryService {
         domicileInhabitants: family,
       }
     }
-    return await this.v3.getHousing(nationalId, data?.rawData)
+    return this.v3.getHousing(nationalId, data?.rawData)
   }
 
-  async getName(nationalId: string, data?: SharedPerson): Promise<Name | null> {
+  getName(nationalId: string, data?: SharedPerson): Promise<Name | null> {
     return data?.api === 'v3'
       ? this.v3.getName(nationalId, data?.rawData)
       : this.v1.getName(nationalId, data?.rawData)
   }
 
-  async getSpouse(
-    nationalId: string,
-    data?: SharedPerson,
-  ): Promise<Spouse | null> {
+  getSpouse(nationalId: string, data?: SharedPerson): Promise<Spouse | null> {
     return data?.api === 'v3'
       ? this.v3.getSpouse(nationalId, data?.rawData)
       : this.v1.getSpouse(nationalId, data?.rawData)

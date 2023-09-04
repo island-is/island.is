@@ -10,4 +10,7 @@ export class Name {
 
   @Field(() => String, { nullable: true })
   lastName?: string | null
+
+  @Field(() => String, { nullable: true })
+  fullName?: string | null
 }

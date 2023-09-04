@@ -12,23 +12,20 @@ import {
   EinstaklingurDTONafnAllt,
   EinstaklingurDTORikisfang,
   EinstaklingurDTOTru,
-  GerviEinstaklingarApi,
 } from '../../gen/fetch'
 import { isDefined } from '@island.is/shared/utils'
 
 @Injectable()
 export class NationalRegistryV3ClientService {
-  constructor(
-    private individualApi: EinstaklingarApi,
-    private fakeApi: GerviEinstaklingarApi,
-  ) {}
+  constructor(private individualApi: EinstaklingarApi) {}
 
-  getAddress = (nationalId: string): Promise<EinstaklingurDTOHeimili | null> =>
-    this.individualApi.midlunV02EinstaklingarNationalIdHeimilisfangGet({
+  getAddress(nationalId: string): Promise<EinstaklingurDTOHeimili | null> {
+    return this.individualApi.midlunV02EinstaklingarNationalIdHeimilisfangGet({
       nationalId,
     })
+  }
 
-  async getAllDataIndividual(
+  getAllDataIndividual(
     nationalId: string,
   ): Promise<EinstaklingurDTOAllt | null> {
     return this.individualApi.midlunV02EinstaklingarNationalIdGet({
@@ -36,12 +33,11 @@ export class NationalRegistryV3ClientService {
     })
   }
 
-  getFamily = (
-    nationalId: string,
-  ): Promise<EinstaklingurDTOLogforeldrar | null> =>
-    this.individualApi.midlunV02EinstaklingarNationalIdLogforeldrarGet({
+  getFamily(nationalId: string): Promise<EinstaklingurDTOLogforeldrar | null> {
+    return this.individualApi.midlunV02EinstaklingarNationalIdLogforeldrarGet({
       nationalId,
     })
+  }
 
   async getCustodians(
     nationalId: string,
@@ -54,44 +50,53 @@ export class NationalRegistryV3ClientService {
     return child?.forsjaradilar?.filter(isDefined) ?? null
   }
 
-  getSpouse = (nationalId: string): Promise<EinstaklingurDTOHju | null> =>
-    this.individualApi.midlunV02EinstaklingarNationalIdHjuGet({
+  getSpouse(nationalId: string): Promise<EinstaklingurDTOHju | null> {
+    return this.individualApi.midlunV02EinstaklingarNationalIdHjuGet({
       nationalId,
     })
+  }
 
-  getCitizenship = (
+  getCitizenship(
     nationalId: string,
-  ): Promise<EinstaklingurDTORikisfang | null> =>
-    this.individualApi.midlunV02EinstaklingarNationalIdRikisfangGet({
+  ): Promise<EinstaklingurDTORikisfang | null> {
+    return this.individualApi.midlunV02EinstaklingarNationalIdRikisfangGet({
       nationalId,
     })
+  }
 
-  getBirthplace = (
+  getBirthplace(nationalId: string): Promise<EinstaklingurDTOFaeding | null> {
+    return this.individualApi.midlunV02EinstaklingarNationalIdFaedingarstadurGet(
+      {
+        nationalId,
+      },
+    )
+  }
+
+  getName(nationalId: string): Promise<EinstaklingurDTONafnAllt | null> {
+    return this.individualApi.midlunV02EinstaklingarNationalIdNafnItarGet({
+      nationalId,
+    })
+  }
+
+  getReligion(nationalId: string): Promise<EinstaklingurDTOTru | null> {
+    return this.individualApi.midlunV02EinstaklingarNationalIdTruGet({
+      nationalId,
+    })
+  }
+
+  getHousing(nationalId: string): Promise<EinstaklingurDTOItarAuka | null> {
+    return this.individualApi.midlunV02EinstaklingarNationalIdItarGet({
+      nationalId,
+    })
+  }
+
+  getDomicileData(
     nationalId: string,
-  ): Promise<EinstaklingurDTOFaeding | null> =>
-    this.individualApi.midlunV02EinstaklingarNationalIdFaedingarstadurGet({
-      nationalId,
-    })
-
-  getName = (nationalId: string): Promise<EinstaklingurDTONafnAllt | null> =>
-    this.individualApi.midlunV02EinstaklingarNationalIdNafnItarGet({
-      nationalId,
-    })
-
-  getReligion = (nationalId: string): Promise<EinstaklingurDTOTru | null> =>
-    this.individualApi.midlunV02EinstaklingarNationalIdTruGet({
-      nationalId,
-    })
-
-  getHousing = (nationalId: string): Promise<EinstaklingurDTOItarAuka | null> =>
-    this.individualApi.midlunV02EinstaklingarNationalIdItarGet({
-      nationalId,
-    })
-
-  getDomicileData = (
-    nationalId: string,
-  ): Promise<EinstaklingurDTOLoghTengsl | null> =>
-    this.individualApi.midlunV02EinstaklingarNationalIdLogheimilistengslGet({
-      nationalId,
-    })
+  ): Promise<EinstaklingurDTOLoghTengsl | null> {
+    return this.individualApi.midlunV02EinstaklingarNationalIdLogheimilistengslGet(
+      {
+        nationalId,
+      },
+    )
+  }
 }

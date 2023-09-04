@@ -4,7 +4,6 @@ import { Person } from './models'
 import {
   ISLBorninMin,
   ISLEinstaklingur,
-  ISLFjolskyldan,
 } from '@island.is/clients/national-registry-v1'
 
 export enum Gender {
