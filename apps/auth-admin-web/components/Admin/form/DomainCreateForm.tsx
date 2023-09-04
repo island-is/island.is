@@ -251,7 +251,7 @@ const DomainCreateForm: React.FC<React.PropsWithChildren<Props>> = (
                     {localization.fields['contactEmail'].label}
                   </label>
                   <input
-                    id="organisationLogoKey"
+                    id="contactEmail"
                     type="text"
                     {...register('domain.contactEmail', {
                       required: false,
