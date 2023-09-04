@@ -192,8 +192,7 @@ export const TestingLoginScreen: NavigationFunctionComponent = ({
             justifyContent: 'center',
             paddingTop: 32,
             zIndex: 3,
-          }}
-        >
+          }}>
           <Image
             source={isTestingApp ? testinglogo : logo}
             resizeMode="contain"
@@ -260,16 +259,14 @@ function DebugRow({title, actions, value}: any) {
         width: '100%',
         paddingHorizontal: 32,
         minHeight: 28,
-      }}
-    >
+      }}>
       <Text
         style={{
           ...textStyle,
           fontWeight: 'bold',
           paddingRight: 8,
           minWidth: 64,
-        }}
-      >
+        }}>
         {title}
         {value ? ':' : ''}
       </Text>

@@ -156,7 +156,7 @@ export class ChildrenResidenceChangeServiceV2 extends BaseTemplateApiService {
       .catch(async () => {
         await this.sharedTemplateAPIService.sendEmailWithAttachment(
           generateSyslumennNotificationEmail,
-          (application as unknown) as Application,
+          application as unknown as Application,
           pdf.toString('binary'),
           syslumennData.email,
         )
@@ -172,7 +172,7 @@ export class ChildrenResidenceChangeServiceV2 extends BaseTemplateApiService {
     if (counterParty.email) {
       await this.sharedTemplateAPIService.sendEmail(
         transferRequestedEmail,
-        (application as unknown) as Application,
+        application as unknown as Application,
       )
     }
 
@@ -215,7 +215,7 @@ export class ChildrenResidenceChangeServiceV2 extends BaseTemplateApiService {
           syslumennData.name,
           caseNumber,
         ),
-      (application as unknown) as Application,
+      application as unknown as Application,
     )
 
     await this.sharedTemplateAPIService.sendEmail(
@@ -227,21 +227,21 @@ export class ChildrenResidenceChangeServiceV2 extends BaseTemplateApiService {
           syslumennData.name,
           caseNumber,
         ),
-      (application as unknown) as Application,
+      application as unknown as Application,
     )
   }
 
   async rejectedByCounterParty({ application }: Props) {
     await this.sharedTemplateAPIService.sendEmail(
       applicationRejectedEmail,
-      (application as unknown) as Application,
+      application as unknown as Application,
     )
   }
 
   async rejectedByOrganization({ application }: Props) {
     await this.sharedTemplateAPIService.sendEmail(
       applicationRejectedByOrganizationEmail,
-      (application as unknown) as Application,
+      application as unknown as Application,
     )
   }
 }

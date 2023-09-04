@@ -214,7 +214,7 @@ export function getDefaultValuesForPDFApplicants(
 ) {
   const defaultValues: string[] = []
 
-  const answers = (formValues.answers as unknown) as Answer
+  const answers = formValues.answers as unknown as Answer
   const ans = answers.delimitations.addForPDF
 
   if (ans) {

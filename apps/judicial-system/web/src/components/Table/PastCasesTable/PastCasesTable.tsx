@@ -48,12 +48,8 @@ const PastCasesTable: React.FC<React.PropsWithChildren<Props>> = (props) => {
   const { formatMessage } = useIntl()
   const { user } = useContext(UserContext)
 
-  const {
-    sortedData,
-    requestSort,
-    getClassNamesFor,
-    isActiveColumn,
-  } = useSortCases('createdAt', 'descending', cases)
+  const { sortedData, requestSort, getClassNamesFor, isActiveColumn } =
+    useSortCases('createdAt', 'descending', cases)
 
   const pastCasesData = useMemo(
     () =>

@@ -2,6 +2,7 @@ export interface PoliceCaseFile {
   id: string
   name: string
   policeCaseNumber: string
+  displayDate: string
 }
 
 export interface UploadPoliceCaseFile {
