@@ -73,6 +73,7 @@ const useDefendants = () => {
         })
 
         if (data) {
+          console.log('test')
           return true
         } else {
           return false
