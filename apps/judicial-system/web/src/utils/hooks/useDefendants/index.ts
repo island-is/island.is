@@ -10,9 +10,9 @@ import {
   UpdateDefendantInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
-import { useCreateDefendantMutation } from './createDefendantt.generated'
-import { useDeleteDefendantMutation } from './deleteDefendantt.generated'
-import { useUpdateDefendantMutation } from './updateDefendantt.generated'
+import { useCreateDefendantMutation } from './createDefendant.generated'
+import { useDeleteDefendantMutation } from './deleteDefendant.generated'
+import { useUpdateDefendantMutation } from './updateDefendant.generated'
 
 const useDefendants = () => {
   const { formatMessage } = useIntl()
