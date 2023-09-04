@@ -1,5 +1,4 @@
 import PDFDocument from 'pdfkit'
-import streamBuffers from 'stream-buffers'
 import isSameDay from 'date-fns/isSameDay'
 
 import { FormatMessage } from '@island.is/cms-translations'
@@ -53,7 +52,7 @@ function constructRestrictionCourtRecordPdf(
   theCase: Case,
   formatMessage: FormatMessage,
   user?: User,
-): streamBuffers.WritableStreamBuffer {
+): Promise<Buffer> {
   const doc = new PDFDocument({
     size: 'A4',
     margins: {
@@ -65,7 +64,9 @@ function constructRestrictionCourtRecordPdf(
     bufferPages: true,
   })
 
-  const stream = doc.pipe(new streamBuffers.WritableStreamBuffer())
+  const sinc: Buffer[] = []
+
+  doc.on('data', (chunk) => sinc.push(chunk))
 
   const title = formatMessage(courtRecord.title)
 
@@ -289,14 +290,16 @@ function constructRestrictionCourtRecordPdf(
 
   doc.end()
 
-  return stream
+  return new Promise<Buffer>((resolve) =>
+    doc.on('end', () => resolve(Buffer.concat(sinc))),
+  )
 }
 
 function constructInvestigationCourtRecordPdf(
   theCase: Case,
   formatMessage: FormatMessage,
   user?: User,
-): streamBuffers.WritableStreamBuffer {
+): Promise<Buffer> {
   const doc = new PDFDocument({
     size: 'A4',
     margins: {
@@ -308,7 +311,9 @@ function constructInvestigationCourtRecordPdf(
     bufferPages: true,
   })
 
-  const stream = doc.pipe(new streamBuffers.WritableStreamBuffer())
+  const sinc: Buffer[] = []
+
+  doc.on('data', (chunk) => sinc.push(chunk))
 
   const title = formatMessage(courtRecord.title)
 
@@ -537,14 +542,16 @@ function constructInvestigationCourtRecordPdf(
 
   doc.end()
 
-  return stream
+  return new Promise<Buffer>((resolve) =>
+    doc.on('end', () => resolve(Buffer.concat(sinc))),
+  )
 }
 
 function constructCourtRecordPdf(
   theCase: Case,
   formatMessage: FormatMessage,
   user?: User,
-): streamBuffers.WritableStreamBuffer {
+): Promise<Buffer> {
   return isRestrictionCase(theCase.type)
     ? constructRestrictionCourtRecordPdf(theCase, formatMessage, user)
     : constructInvestigationCourtRecordPdf(theCase, formatMessage, user)
@@ -554,14 +561,9 @@ export function getCourtRecordPdfAsString(
   theCase: Case,
   formatMessage: FormatMessage,
 ): Promise<string> {
-  const stream = constructCourtRecordPdf(theCase, formatMessage)
-
-  // wait for the writing to finish
-  return new Promise<string>(function (resolve) {
-    stream.on('finish', () => {
-      resolve(stream.getContentsAsString('binary') as string)
-    })
-  })
+  return constructCourtRecordPdf(theCase, formatMessage).then((buffer) =>
+    buffer.toString('binary'),
+  )
 }
 
 export function getCourtRecordPdfAsBuffer(
@@ -569,12 +571,5 @@ export function getCourtRecordPdfAsBuffer(
   formatMessage: FormatMessage,
   user?: User,
 ): Promise<Buffer> {
-  const stream = constructCourtRecordPdf(theCase, formatMessage, user)
-
-  // wait for the writing to finish
-  return new Promise<Buffer>(function (resolve) {
-    stream.on('finish', () => {
-      resolve(stream.getContents() as Buffer)
-    })
-  })
+  return constructCourtRecordPdf(theCase, formatMessage, user)
 }
