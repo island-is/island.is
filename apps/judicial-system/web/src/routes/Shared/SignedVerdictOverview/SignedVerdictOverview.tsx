@@ -20,7 +20,6 @@ import {
   isRestrictionCase,
   RequestSignatureResponse,
   SignatureConfirmationResponse,
-  CaseAppealDecision,
   isCourtRole,
   Feature,
   isProsecutionRole,
@@ -71,6 +70,7 @@ import {
   errors,
 } from '@island.is/judicial-system-web/messages'
 import {
+  CaseAppealDecision,
   InstitutionType,
   User,
   UserRole,
