@@ -30,6 +30,7 @@ import {
   UserHealthCenterRegistration,
 } from './models/healthCenter.model'
 import { HealthCenterResponse } from './models/healthCenterResponse.model'
+import { isDefined } from '@island.is/shared/utils'
 
 @Injectable()
 export class RightsPortalService {
@@ -59,12 +60,12 @@ export class RightsPortalService {
       const nutrition: Array<AidOrNutrition> | null =
         res.nutrition
           ?.map((c) => generateAidOrNutrition(c, AidOrNutritionType.NUTRITION))
-          .filter(Boolean as unknown as ExcludesFalse) ?? []
+          .filter(isDefined) ?? []
 
       const aids: Array<AidOrNutrition> | null =
         res.aids
           ?.map((c) => generateAidOrNutrition(c, AidOrNutritionType.AID))
-          .filter(Boolean as unknown as ExcludesFalse) ?? []
+          .filter(isDefined) ?? []
 
       return {
         data: [...aids, ...nutrition],
@@ -130,7 +131,7 @@ export class RightsPortalService {
             },
           }
         })
-        .filter(Boolean as unknown as ExcludesFalse)
+        .filter(isDefined)
 
       return {
         data: dentists,
@@ -173,7 +174,7 @@ export class RightsPortalService {
             },
           }
         })
-        .filter(Boolean as unknown as ExcludesFalse)
+        .filter(isDefined)
 
       return {
         data: healthCenters,

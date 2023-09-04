@@ -27,8 +27,8 @@ export const healthNavigation: PortalNavigationItem = {
       path: HealthPaths.HealthCenter,
     },
     {
-      name: hm.healthCenterRegisterationTitle,
-      path: HealthPaths.HealthCenterRegisteration,
+      name: hm.healthCenterRegistrationTitle,
+      path: HealthPaths.HealthCenterRegistration,
       navHide: true,
     },
   ],

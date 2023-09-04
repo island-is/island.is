@@ -81,10 +81,8 @@ const HealthCenterRegistration = () => {
     }
 
     const res = await transferHealthCenter()
-    console.log(res)
 
     if (res.data?.rightsPortalTransferHealthCenter?.success) {
-      console.log('going to redirect')
       navigate(`${HealthPaths.HealthCenter}?s=t`)
     } else {
       setLoadingTransfer(false)
@@ -152,18 +150,18 @@ const HealthCenterRegistration = () => {
   return (
     <Box marginBottom={[6, 6, 10]}>
       <IntroHeader
-        title={formatMessage(messages.healthCenterRegisterationTitle)}
-        intro={formatMessage(messages.healthCenterRegisterationInfo)}
+        title={formatMessage(messages.healthCenterRegistrationTitle)}
+        intro={formatMessage(messages.healthCenterRegistrationInfo)}
       />
       {errorTransfer && (
         <Box paddingBottom={4}>
           <AlertMessage
             type="error"
             title={formatMessage(
-              messages.healthCenterRegisterationTransferErrorTitle,
+              messages.healthCenterRegistrationTransferErrorTitle,
             )}
             message={formatMessage(
-              messages.healthCenterRegisterationTransferErrorInfo,
+              messages.healthCenterRegistrationTransferErrorInfo,
             )}
           />
         </Box>
@@ -176,7 +174,7 @@ const HealthCenterRegistration = () => {
               <strong className={StrongStyle}>
                 {formatMessage(messages.alert)}
               </strong>
-              {formatMessage(messages.healthCenterRegisterationWarning)}
+              {formatMessage(messages.healthCenterRegistrationWarning)}
             </Text>
           }
         />
@@ -211,13 +209,13 @@ const HealthCenterRegistration = () => {
             <Box className={ModalGridContentStyle}>
               <Text variant="h2">
                 {`${formatMessage(
-                  messages.healthCenterRegisterationModalTitleStart,
+                  messages.healthCenterRegistrationModalTitleStart,
                 )} ${selectedHealthCenter?.name} ${formatMessage(
-                  messages.healthCenterRegisterationModalTitleEnd,
+                  messages.healthCenterRegistrationModalTitleEnd,
                 )}`}
               </Text>
               <Text marginTop={2} marginBottom={3}>
-                {formatMessage(messages.healthCenterRegisterationModalInfo)}
+                {formatMessage(messages.healthCenterRegistrationModalInfo)}
               </Text>
               <Box className={ModalGridButtonGroup}>
                 <Button
@@ -226,7 +224,7 @@ const HealthCenterRegistration = () => {
                   onClick={() => setToggle(false)}
                 >
                   {formatMessage(
-                    messages.healthCenterRegisterationModalButtonCancel,
+                    messages.healthCenterRegistrationModalButtonCancel,
                   )}
                 </Button>
                 <Button
@@ -238,7 +236,7 @@ const HealthCenterRegistration = () => {
                   loading={loadingTransfer}
                 >
                   {formatMessage(
-                    messages.healthCenterRegisterationModalButtonAccept,
+                    messages.healthCenterRegistrationModalButtonAccept,
                   )}
                 </Button>
               </Box>
@@ -309,7 +307,9 @@ const HealthCenterRegistration = () => {
                                   setToggle((p) => !p)
                                 }}
                               >
-                                Vista
+                                {formatMessage(
+                                  messages.healthCenterRegistrationSave,
+                                )}
                               </Button>
                             </Box>
                           </T.Data>

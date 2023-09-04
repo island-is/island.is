@@ -87,10 +87,10 @@ const HealthCenter = () => {
           <AlertMessage
             type="success"
             title={formatMessage(
-              messages.healthCenterRegisterationTransferSuccessTitle,
+              messages.healthCenterRegistrationTransferSuccessTitle,
             )}
             message={`${formatMessage(
-              messages.healthCenterRegisterationTransferSuccessInfo,
+              messages.healthCenterRegistrationTransferSuccessInfo,
             )} ${healthCenterData?.current?.healthCenterName}`}
           />
         </Box>
@@ -100,12 +100,12 @@ const HealthCenter = () => {
         <Box width="full" marginTop={[1, 1, 4]}>
           <Stack space={2}>
             <UserInfoLine
-              title={formatMessage(messages.myRegisteration)}
+              title={formatMessage(messages.myRegistration)}
               label={formatMessage(messages.healthCenterTitle)}
               content={healthCenterData.current.healthCenterName ?? ''}
               editLink={{
-                url: HealthPaths.HealthCenterRegisteration,
-                title: hm.changeRegisteration,
+                url: HealthPaths.HealthCenterRegistration,
+                title: hm.changeRegistration,
                 icon: 'open',
               }}
             />

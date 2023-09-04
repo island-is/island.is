@@ -58,8 +58,8 @@ export const healthModule: PortalModule = {
       element: <HealthCenter />,
     },
     {
-      name: hm.healthCenterRegisterationTitle,
-      path: HealthPaths.HealthCenterRegisteration,
+      name: hm.healthCenterRegistrationTitle,
+      path: HealthPaths.HealthCenterRegistration,
       enabled: userInfo.scopes.includes(ApiScope.health),
       element: <HealthCenterRegistration />,
     },
