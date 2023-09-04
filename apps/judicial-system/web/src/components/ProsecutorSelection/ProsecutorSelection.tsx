@@ -12,7 +12,6 @@ import { useProsecutorSelectionUsersQuery } from './prosecutorSelectionUsers.gen
 import { UserRole } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { strings } from './ProsecutorSelection.strings'
-import { SingleValue } from 'react-select'
 
 interface Props {
   onChange: (prosecutorId: string) => boolean
@@ -72,7 +71,7 @@ const ProsecutorSelection: React.FC<React.PropsWithChildren<Props>> = (
       })}
       value={selectedProsecutor}
       options={eligibleProsecutors}
-      onChange={(value: SingleValue<Option<string>>) => {
+      onChange={(value) => {
         const id = value?.value
         if (id && typeof id === 'string') {
           onChange(id)
