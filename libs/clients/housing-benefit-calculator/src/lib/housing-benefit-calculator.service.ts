@@ -15,14 +15,12 @@ export class HousingBenefitCalculatorClientService {
   ) {}
 
   private async getAuthenticatedCalculationApi() {
-    const loginData =
-      (await this.authenticationApi.apiV1AuthenticateTokenPostRaw({
-        loginModel: {
-          username: this.clientConfig.username,
-          password: this.clientConfig.password,
-        },
-        // TODO: Ask HMS to fix their swagger return type
-      })) as unknown as { token: string; expiration: string }
+    const loginData = await this.authenticationApi.apiV1AuthenticateTokenPost({
+      loginModel: {
+        username: this.clientConfig.username,
+        password: this.clientConfig.password,
+      },
+    })
 
     return this.calculationApi.withMiddleware(
       new AuthHeaderMiddleware(`Bearer ${loginData.token}`),

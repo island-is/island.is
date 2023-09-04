@@ -24,7 +24,6 @@ export const ApiConfig = {
       headers: {
         'X-Road-Client': xroadConfig.xRoadClient,
         Accept: 'application/json',
-        'Content-Type': 'application/json',
       },
     })
   },
