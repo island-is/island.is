@@ -45,7 +45,6 @@ const HousingBenefitCalculator = ({ slice }: HousingBenefitCalculatorProps) => {
     assets: '',
     householdMemberCount: 0,
   })
-
   const updateInputState = (key: keyof InputState, value: string | number) => {
     setInputState((prevState) => ({ ...prevState, [key]: value }))
   }
@@ -59,7 +58,6 @@ const HousingBenefitCalculator = ({ slice }: HousingBenefitCalculatorProps) => {
 
   const calculate = () => {
     const values = getValues() as InputState
-    console.log(values)
     fetchCalculation({
       variables: {
         input: {
@@ -275,7 +273,7 @@ const HousingBenefitCalculator = ({ slice }: HousingBenefitCalculatorProps) => {
 
           {typeof estimatedHousingBenefits === 'number' && (
             <Text variant="medium" fontWeight="light">
-              {n('estimatedHousingBenefits ', 'Áætlaðar húsnæðisbætur eru')}{' '}
+              {n('estimatedHousingBenefits', 'Áætlaðar húsnæðisbætur eru')}{' '}
               <strong>{formatCurrency(estimatedHousingBenefits)}</strong>{' '}
               {n('perMonth', 'á mánuði.')}
             </Text>
