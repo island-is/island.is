@@ -7,6 +7,7 @@ import {
   GetHousingBenefitCalculationQueryVariables,
 } from '@island.is/web/graphql/schema'
 import {
+  AlertMessage,
   Box,
   Button,
   Inline,
@@ -17,7 +18,13 @@ import {
 import { InputController } from '@island.is/shared/form-fields'
 import { GET_HOUSING_BENEFIT_CALCULATION } from '@island.is/web/screens/queries/HousingBenefitCalculator'
 import { useNamespace } from '@island.is/web/hooks'
-import { formatCurrency } from '@island.is/application/ui-components'
+
+const MAX_LENGTH = 15
+
+export const formatCurrency = (answer: number | null | undefined) => {
+  if (!answer) return answer
+  return String(answer).replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ' kr.'
+}
 
 interface InputState {
   income: string
@@ -45,7 +52,7 @@ const HousingBenefitCalculator = ({ slice }: HousingBenefitCalculatorProps) => {
 
   const { control, getValues } = useForm()
 
-  const [fetchCalculation, { data, loading, called }] = useLazyQuery<
+  const [fetchCalculation, { data, loading, called, error }] = useLazyQuery<
     GetHousingBenefitCalculationQuery,
     GetHousingBenefitCalculationQueryVariables
   >(GET_HOUSING_BENEFIT_CALCULATION)
@@ -72,7 +79,7 @@ const HousingBenefitCalculator = ({ slice }: HousingBenefitCalculatorProps) => {
     data?.housingBenefitCalculatorCalculation?.estimatedHousingBenefits
 
   const canSubmit = useMemo(() => {
-    return Object.keys(inputState).every((key: keyof InputState) => {
+    return Object.keys(inputState).every((key) => {
       if (key === 'householdMemberCount') {
         const householdMemberCount = inputState[key]
         return (
@@ -82,7 +89,7 @@ const HousingBenefitCalculator = ({ slice }: HousingBenefitCalculatorProps) => {
           householdMemberCount === 4
         )
       }
-      return Boolean(inputState[key])
+      return Boolean(inputState[key as keyof InputState])
     })
   }, [inputState])
 
@@ -168,6 +175,7 @@ const HousingBenefitCalculator = ({ slice }: HousingBenefitCalculatorProps) => {
               }}
               size="sm"
               required={true}
+              maxLength={MAX_LENGTH}
             />
           </Box>
           <Box>
@@ -191,6 +199,7 @@ const HousingBenefitCalculator = ({ slice }: HousingBenefitCalculatorProps) => {
               }}
               size="sm"
               required={true}
+              maxLength={MAX_LENGTH}
             />
           </Box>
           <Box>
@@ -210,6 +219,7 @@ const HousingBenefitCalculator = ({ slice }: HousingBenefitCalculatorProps) => {
               }}
               size="sm"
               required={true}
+              maxLength={MAX_LENGTH}
             />
           </Box>
           <Text variant="small" lineHeight="lg">
@@ -229,41 +239,56 @@ const HousingBenefitCalculator = ({ slice }: HousingBenefitCalculatorProps) => {
           </Button>
         </Stack>
       </Box>
-      <Box
-        background="blue100"
-        paddingY={[3, 3, 5]}
-        paddingX={[3, 3, 3, 3, 12]}
-        style={{ display: called ? 'block' : 'none' }}
-      >
-        <Text variant="h3">
-          <strong>{n('results', 'Niðurstöður')}</strong>
-        </Text>
-        <Text
-          variant="medium"
-          fontWeight="light"
-          paddingBottom={2}
-          paddingTop={5}
+      {!loading && called && !error && (
+        <Box
+          background="blue100"
+          paddingY={[3, 3, 5]}
+          paddingX={[3, 3, 3, 3, 12]}
         >
-          {n(
-            'maximumHousingBenefits',
-            'Hámarksbætur miðað við fjölda heimilismanna eru',
-          )}{' '}
-          {formatCurrency(String(maximumHousingBenefits))}{' '}
-          {n('perMonth', 'á mánuði.')}
-        </Text>
-        <Text variant="medium" fontWeight="light" paddingBottom={5}>
-          {n(
-            'reductionDueToHousingCosts',
-            'Skerðing vegna húsnæðiskostnaðar eru',
-          )}{' '}
-          {formatCurrency(String(reduction))} {n('perMonth', 'á mánuði.')}
-        </Text>
-        <Text variant="medium" fontWeight="light">
-          {n('estimatedHousingBenefits ', 'Áætlaðar húsnæðisbætur eru ')}{' '}
-          <strong>{formatCurrency(String(estimatedHousingBenefits))}</strong>{' '}
-          {n('perMonth', 'á mánuði.')}
-        </Text>
-      </Box>
+          <Text variant="h3">
+            <strong>{n('results', 'Niðurstöður')}</strong>
+          </Text>
+          {typeof maximumHousingBenefits === 'number' && (
+            <Text
+              variant="medium"
+              fontWeight="light"
+              paddingBottom={2}
+              paddingTop={5}
+            >
+              {n(
+                'maximumHousingBenefits',
+                'Hámarksbætur miðað við fjölda heimilismanna eru',
+              )}{' '}
+              {formatCurrency(maximumHousingBenefits)}{' '}
+              {n('perMonth', 'á mánuði.')}
+            </Text>
+          )}
+          {typeof reduction === 'number' && (
+            <Text variant="medium" fontWeight="light" paddingBottom={5}>
+              {n(
+                'reductionDueToHousingCosts',
+                'Skerðing vegna húsnæðiskostnaðar eru',
+              )}{' '}
+              {formatCurrency(reduction)} {n('perMonth', 'á mánuði.')}
+            </Text>
+          )}
+
+          {typeof estimatedHousingBenefits === 'number' && (
+            <Text variant="medium" fontWeight="light">
+              {n('estimatedHousingBenefits ', 'Áætlaðar húsnæðisbætur eru')}{' '}
+              <strong>{formatCurrency(estimatedHousingBenefits)}</strong>{' '}
+              {n('perMonth', 'á mánuði.')}
+            </Text>
+          )}
+        </Box>
+      )}
+      {!loading && called && error && (
+        <AlertMessage
+          type="error"
+          title={n('errorOccurredTitle', 'Villa kom upp')}
+          message={n('errorOccurredMessage', 'Ekki tókst að sækja niðurstöður')}
+        />
+      )}
     </Box>
   )
 }
