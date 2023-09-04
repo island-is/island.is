@@ -52,4 +52,7 @@ export class CaseFile implements TCaseFile {
 
   @Field({ nullable: true })
   readonly displayDate?: string
+
+  @Field({ nullable: true })
+  readonly policeFileId?: string
 }
