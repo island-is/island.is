@@ -194,7 +194,7 @@ export const SignedVerdictOverview: React.FC = () => {
   const [
     selectedSharingInstitutionId,
     setSelectedSharingInstitutionId,
-  ] = useState<SingleValue<ReactSelectOption>>(null)
+  ] = useState<ValueType<ReactSelectOption>>()
 
   const [
     requestCourtRecordSignatureResponse,
