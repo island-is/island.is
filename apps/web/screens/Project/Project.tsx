@@ -147,13 +147,21 @@ const ProjectPage: Screen<PageProps> = ({
         imageHeight={projectPage?.featuredImage?.height?.toString()}
       />
       <ProjectWrapper
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore make web strict
         projectPage={projectPage}
         breadcrumbItems={breadCrumbs}
         sidebarNavigationTitle={navigationTitle}
         withSidebar={projectPage?.sidebar}
       >
         {!subpage && isWebReaderEnabledForProjectPages && (
-          <Webreader marginTop={0} readId={null} readClass="rs_read" />
+          <Webreader
+            marginTop={0}
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore make web strict
+            readId={null}
+            readClass="rs_read"
+          />
         )}
         {!!subpage && (
           <Box marginBottom={1}>
@@ -161,11 +169,18 @@ const ProjectPage: Screen<PageProps> = ({
               {subpage.title}
             </Text>
             {isWebReaderEnabledForProjectPages && (
-              <Webreader readId={null} readClass="rs_read" />
+              <Webreader
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore make web strict
+                readId={null}
+                readClass="rs_read"
+              />
             )}
             {subpage.content &&
               webRichText(subpage.content as SliceType[], {
                 renderComponent: {
+                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                  // @ts-ignore make web strict
                   Form: (slice) => <Form form={slice} namespace={namespace} />,
                 },
               })}
@@ -202,7 +217,11 @@ const ProjectPage: Screen<PageProps> = ({
         {content &&
           webRichText(content, {
             renderComponent: {
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore make web strict
               Form: (slice) => <Form form={slice} namespace={namespace} />,
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore make web strict
               TabSection: (slice) => (
                 <TabSectionSlice
                   slice={slice}
@@ -223,6 +242,8 @@ const ProjectPage: Screen<PageProps> = ({
           </Box>
         )}
         {!renderSlicesAsTabs &&
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore make web strict
           (subpage ?? projectPage).slices.map((slice) =>
             slice.__typename === 'OneColumnText' ? (
               <Box marginTop={6}>
@@ -280,7 +301,12 @@ const ProjectPage: Screen<PageProps> = ({
           />
         )
       })}
-      <ProjectFooter projectPage={projectPage} namespace={projectNamespace} />
+      <ProjectFooter
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore make web strict
+        projectPage={projectPage}
+        namespace={projectNamespace}
+      />
     </>
   )
 }

@@ -1,7 +1,6 @@
 import React, { FC, useEffect, useState } from 'react'
 import { useMutation } from '@apollo/client'
 import { Controller, useFormContext } from 'react-hook-form'
-import Markdown from 'markdown-to-jsx'
 
 import {
   AlertMessage,
@@ -10,6 +9,7 @@ import {
   Icon,
   Text,
 } from '@island.is/island-ui/core'
+import { Markdown } from '@island.is/shared/components'
 import {
   getValueViaPath,
   coreMessages,
@@ -244,7 +244,11 @@ const FormExternalDataProvider: FC<
               : formatMessage(coreMessages.externalDataTitle)}
           </Text>
         </Box>
-        {description && <Text marginTop={4}>{formatMessage(description)}</Text>}
+        {description && (
+          <Text marginTop={4}>
+            <Markdown>{formatMessage(description)}</Markdown>
+          </Text>
+        )}
       </Box>
       <Box marginBottom={5}>
         {dataProviders.map((provider) => (

@@ -11,7 +11,7 @@ const Host = styled.Text`
 `;
 
 interface TypographyProps {
-  children: string;
+  children: React.ReactNode;
 }
 
 export const Typography = ({children}: TypographyProps) => {
