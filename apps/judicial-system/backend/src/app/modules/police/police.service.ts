@@ -34,26 +34,13 @@ import { policeModuleConfig } from './police.config'
 import { PoliceCaseInfo } from './models/policeCaseInfo.model'
 
 function getChapter(category?: string): number | undefined {
-  if (!category || category.length < 2) {
+  const chapter = /^([0-9]+)\..*$/.exec(category ?? '') // Matches the first number in a string
+
+  if (!chapter || +chapter[1] < 1) {
     return undefined
   }
 
-  switch (category.substring(0, 2)) {
-    case '1.':
-      return 0
-    case '2.':
-      return 1
-    case '3.':
-      return 2
-    case '4.':
-      return 3
-    case '5.':
-      return 4
-    case '6.':
-      return 5
-    default:
-      return undefined
-  }
+  return +chapter[1] - 1
 }
 
 @Injectable()
