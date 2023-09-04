@@ -9,7 +9,7 @@ export const infoBoxContainer = style({
 })
 
 export const fluid = style({
-  maxWidth: '100%',
+  width: '100%',
 })
 
 export const light = style({

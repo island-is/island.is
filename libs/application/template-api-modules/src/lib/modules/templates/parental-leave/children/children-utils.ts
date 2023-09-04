@@ -240,6 +240,20 @@ export const getChildrenAndExistingApplications = (
     }
   }
 
+  // Parent could create new application when they have another child
+  if (children.length > 0) {
+    const filteredApps = existingApplications.filter((child) => {
+      if (children[0].adoptionDate && child.adoptionDate) {
+        return children[0].adoptionDate === child.adoptionDate
+      }
+      return children[0].expectedDateOfBirth === child.expectedDateOfBirth
+    })
+    return {
+      children,
+      existingApplications: filteredApps,
+    }
+  }
+
   return {
     children,
     existingApplications,
