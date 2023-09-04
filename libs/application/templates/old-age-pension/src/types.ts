@@ -36,4 +36,5 @@ export interface ChildPensionRow {
   nationalIdOrBirthDate: string
   name: string
   editable?: boolean
+  childDoesNotHaveNationalId: boolean
 }

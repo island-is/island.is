@@ -164,7 +164,7 @@ export const PowerBiSlice = ({ slice }: PowerBiSliceProps) => {
     [
       'loaded',
       async (event) => {
-        const report = event.target?.['powerBiEmbed'] as Report
+        const report = event?.target?.['powerBiEmbed'] as Report
         if (!report) return
         setEmbeddedReport(report)
 
@@ -188,7 +188,7 @@ export const PowerBiSlice = ({ slice }: PowerBiSliceProps) => {
     [
       'pageChanged',
       async (event) => {
-        const pageName = event.detail?.newPage?.name
+        const pageName = event?.detail?.newPage?.name
 
         if (pageName) {
           if (layoutShouldBeMobilePortrait && embedRef.current) {
@@ -239,10 +239,10 @@ export const PowerBiSlice = ({ slice }: PowerBiSliceProps) => {
     [
       'dataSelected',
       async (event) => {
-        const visualName = event.detail?.visual?.name as string
+        const visualName = event?.detail?.visual?.name as string
 
         const report: Report =
-          event.target?.['powerBiEmbed'] ?? event.detail?.report
+          event?.target?.['powerBiEmbed'] ?? event?.detail?.report
 
         if (!report || !visualName) return
 

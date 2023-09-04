@@ -43,7 +43,7 @@ const IcelandicNaturalDisasterInsuranceFooter = ({
             </Box>
           </GridColumn>
 
-          {footerItems.map((item, index) => (
+          {(footerItems ?? []).map((item, index) => (
             <GridColumn span={shouldWrap ? '1/1' : undefined} key={index}>
               <Box
                 marginTop={index === 0 && shouldWrap ? 3 : 0}

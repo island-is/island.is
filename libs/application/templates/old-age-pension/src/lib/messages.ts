@@ -458,6 +458,36 @@ export const oldAgePensionFormMessage: MessageDir = {
       description:
         'According National Register, a person older than 25 lives in the same legal address as yours. If you think this is wrong, contact the National Registry to fix it. When you have made the appropriate changes at the National Register, you can continue with the application and submit the document for confirmation later in the process.',
     },
+    childPensionChildDoesNotHaveNationalId: {
+      id: 'oap.application:connected.applications.child.pension.child.does.not.have.national.id',
+      defaultMessage: 'Barn ekki með íslenska kennitölu',
+      description: 'Child does not have an Icelandic national ID',
+    },
+    childPensionNationalId: {
+      id: 'oap.application:connected.applications.child.pension.national.id',
+      defaultMessage: 'Kennitala',
+      description: 'National ID',
+    },
+    childPensionBirthDate: {
+      id: 'oap.application:connected.applications.child.pension.birth.date',
+      defaultMessage: 'Fæðingardagur',
+      description: 'Date of birth',
+    },
+    childPensionBirthDatePlaceholder: {
+      id: 'oap.application:connected.applications.child.pension.birth.date.placeholder',
+      defaultMessage: 'Veldu fæðingardag',
+      description: 'Choose date of birth',
+    },
+    childPensionNameAlertTitle: {
+      id: 'oap.application:connected.applications.child.pension.name.alert.title',
+      defaultMessage: 'Athugið',
+      description: 'Attention',
+    },
+    childPensionNameAlertMessage: {
+      id: 'oap.application:connected.applications.child.pension.name.alert.message',
+      defaultMessage: 'Ekki tókst að sækja nafn útfrá kennitölu.',
+      description: 'No name found for national id in national registry',
+    },
   }),
 
   residence: defineMessages({
@@ -1231,6 +1261,41 @@ export const validatorErrorMessages = defineMessages({
     id: 'oap.application:payment.personal.allowance',
     defaultMessage: 'Persónuafsláttur verður að vera milli 1 og 100',
     description: 'Personal allowace has to be between 1 and 100',
+  },
+  childNationalId: {
+    id: 'oap.application:child.nationalId',
+    defaultMessage: 'Vantar kennitölu',
+    description: 'The national id is required',
+  },
+  childNationalIdDuplicate: {
+    id: 'oap.application:child.nationalId.duplicate',
+    defaultMessage: 'Kennitala er þegar skráð.',
+    description: 'National id is already registered.',
+  },
+  childNationalIdMustBeValid: {
+    id: 'oap.application:child.nationalId.must.be.valid',
+    defaultMessage: 'Kennitala þarf að vera gild.',
+    description: 'The national id must be valid.',
+  },
+  childBirthDate: {
+    id: 'oap.application:child.birthDate',
+    defaultMessage: 'Vinsamlegast veldu fæðingardag.',
+    description: 'Please select a date of birth.',
+  },
+  childName: {
+    id: 'oap.application:child.name',
+    defaultMessage: 'Fullt nafn vantar',
+    description: 'Full name missing',
+  },
+  childPensionNotAList: {
+    id: 'oap.application:child.pension.not.a.list',
+    defaultMessage: 'Svar þarf að vera listi af börnum',
+    description: 'Answer must be a list of children',
+  },
+  childPensionChildMustBeUnder18: {
+    id: 'oap.application:child.pension.child.must.be.under.18',
+    defaultMessage: 'Barnið verður að vera yngra en 18 ára.',
+    description: 'The child must be under 18 years of age.',
   },
 })
 

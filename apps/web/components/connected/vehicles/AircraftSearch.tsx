@@ -37,7 +37,7 @@ const getDisplayedOwnerName = (
   const displayedOwnerName = getDisplayedOwner(aircraft)?.name
   if (!displayedOwnerName) return displayedOwnerName
   return `${displayedOwnerName}${
-    aircraft?.owners?.length > 1 ? ` ${pluralPostfix}` : ''
+    (aircraft?.owners?.length ?? -1) > 1 ? ` ${pluralPostfix}` : ''
   }`
 }
 

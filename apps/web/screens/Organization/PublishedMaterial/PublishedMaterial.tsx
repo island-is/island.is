@@ -12,7 +12,7 @@ import {
   Inline,
   LoadingDots,
   NavigationItem,
-  Option,
+  StringOption as Option,
   Select,
   Text,
 } from '@island.is/island-ui/core'
@@ -114,11 +114,11 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
     orderByOptions?.[0],
   )
 
-  useContentfulId(organizationPage.id)
+  useContentfulId(organizationPage?.id)
   useLocalLinkTypeResolver()
   const { activeLocale } = useI18n()
 
-  const navList: NavigationItem[] = organizationPage.menuLinks.map(
+  const navList: NavigationItem[] = organizationPage?.menuLinks.map(
     ({ primaryLink, childrenLinks }) => ({
       title: primaryLink?.text,
       href: primaryLink?.url,
@@ -134,7 +134,7 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
   )
 
   const organizationSlug =
-    organizationPage.organization?.slug ?? (router.query.slug as string) ?? ''
+    organizationPage?.organization?.slug ?? (router.query.slug as string) ?? ''
 
   // The page number is 1-based meaning that page 1 is the first page
   const [page, setPage] = useState(1)
@@ -333,8 +333,9 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
           href: linkResolver('homepage').href,
         },
         {
-          title: organizationPage.title,
-          href: linkResolver('organizationpage', [organizationPage.slug]).href,
+          title: organizationPage?.title ?? '',
+          href: linkResolver('organizationpage', [organizationPage?.slug ?? ''])
+            .href,
         },
       ]}
       navigationData={{

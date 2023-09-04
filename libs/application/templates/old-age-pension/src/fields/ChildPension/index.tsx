@@ -36,24 +36,37 @@ export const ChildCustodyRepeater: FC<RepeaterProps> = ({
     return {
       name: info.fullName,
       nationalIdOrBirthDate: kennitala.format(info.nationalId),
+      childDoesNotHaveNationalId: false,
       editable: false,
     }
   })
 
   // push manually added children to data
   children.forEach((child) => {
+    const nationalIdOrBirthDate = child['childDoesNotHaveNationalId']
+      ? new Date(child['nationalIdOrBirthDate']).toLocaleDateString()
+      : kennitala.format(child['nationalIdOrBirthDate'])
+
     data.push({
       name: child['name'],
-      nationalIdOrBirthDate: child['nationalIdOrBirthDate'],
+      nationalIdOrBirthDate: nationalIdOrBirthDate,
+      childDoesNotHaveNationalId: child['childDoesNotHaveNationalId'],
       editable: true,
     })
 
     editable = true
   })
 
-  const onDeleteChild = async (nationalIdOrBirthDate: string) => {
-    const reducedChildren = children?.filter(
-      (child) => child.nationalIdOrBirthDate !== nationalIdOrBirthDate,
+  const onDeleteChild = async (nationalIdOrBirthDate: string, name: string) => {
+    const reducedChildren = children?.filter((child) =>
+      child.childDoesNotHaveNationalId
+        ? new Date(child.nationalIdOrBirthDate).toLocaleDateString() !==
+            nationalIdOrBirthDate ||
+          (new Date(child.nationalIdOrBirthDate).toLocaleDateString() ===
+            nationalIdOrBirthDate &&
+            child.name !== name)
+        : kennitala.format(child.nationalIdOrBirthDate) !==
+          nationalIdOrBirthDate,
     )
 
     await setRepeaterItems(reducedChildren)
