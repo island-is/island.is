@@ -44,10 +44,10 @@ export class Case implements TCase {
   readonly id!: string
 
   @Field()
-  readonly created!: string
+  readonly modified!: string
 
   @Field()
-  readonly modified!: string
+  readonly created!: string
 
   @Field(() => CaseOrigin)
   readonly origin!: CaseOrigin

@@ -1,9 +1,9 @@
 import React, { ReactNode, useCallback, useContext, useState } from 'react'
 import { AnimatePresence } from 'framer-motion'
 import { useRouter } from 'next/router'
-import { ValueType } from 'react-select/src/types'
 import { IntlShape, useIntl } from 'react-intl'
 import formatISO from 'date-fns/formatISO'
+import { SingleValue } from 'react-select'
 
 import {
   Box,
@@ -194,7 +194,7 @@ export const SignedVerdictOverview: React.FC = () => {
   const [
     selectedSharingInstitutionId,
     setSelectedSharingInstitutionId,
-  ] = useState<ValueType<ReactSelectOption>>()
+  ] = useState<SingleValue<ReactSelectOption>>(null)
 
   const [
     requestCourtRecordSignatureResponse,
@@ -397,7 +397,7 @@ export const SignedVerdictOverview: React.FC = () => {
   }
 
   const shareCaseWithAnotherInstitution = (
-    institution?: ValueType<ReactSelectOption>,
+    institution?: SingleValue<ReactSelectOption>,
   ) => {
     if (workingCase) {
       if (workingCase.sharedWithProsecutorsOffice) {
@@ -433,7 +433,7 @@ export const SignedVerdictOverview: React.FC = () => {
           text: (
             <MarkdownWrapper
               markdown={formatMessage(m.sections.shareCaseModal.openText, {
-                prosecutorsOffice: (institution as ReactSelectOption).label,
+                prosecutorsOffice: institution?.label,
               })}
             />
           ),
@@ -442,8 +442,8 @@ export const SignedVerdictOverview: React.FC = () => {
         setWorkingCase({
           ...workingCase,
           sharedWithProsecutorsOffice: {
-            id: (institution as ReactSelectOption).value as string,
-            name: (institution as ReactSelectOption).label,
+            id: institution?.value as string,
+            name: institution?.label as string,
             type: InstitutionType.PROSECUTORS_OFFICE,
             created: new Date().toString(),
             modified: new Date().toString(),
@@ -455,8 +455,7 @@ export const SignedVerdictOverview: React.FC = () => {
         })
 
         updateCase(workingCase.id, {
-          sharedWithProsecutorsOfficeId: (institution as ReactSelectOption)
-            .value as string,
+          sharedWithProsecutorsOfficeId: institution?.value as string,
           isHeightenedSecurityLevel: workingCase.isHeightenedSecurityLevel
             ? false
             : workingCase.isHeightenedSecurityLevel,
