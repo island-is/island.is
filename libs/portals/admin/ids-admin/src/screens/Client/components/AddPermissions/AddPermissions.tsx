@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import { useFetcher, useParams } from 'react-router-dom'
+import { SingleValue } from 'react-select'
 
 import { AuthAdminClientAllowedScope } from '@island.is/api/schema'
 import {
   Box,
   Button,
   Checkbox,
-  Option,
+  StringOption as Option,
   Select,
   SkeletonLoader,
   Table as T,
@@ -61,7 +62,7 @@ export const AddPermissions = ({
   } = useClient()
   const fetcher = useFetcher()
   const tenants = fetcher.data
-  const [selectedTenant, setSelectedTenant] = useState<Option>()
+  const [selectedTenant, setSelectedTenant] = useState<Option | null>(null)
   const [availableTenants, setAvailableTenants] = useState<AuthTenants>([])
   const [availableScopes, setAvailableScopes] = useState<AuthAdminScope[]>([])
   // Ignored scopes are scopes that the user has already added or the client has already been granted
@@ -162,9 +163,11 @@ export const AddPermissions = ({
     setSelectedScopes(new Map(selectedScopes))
   }
 
-  const handleTenantChange = (opt: Option) => {
+  const handleTenantChange = (opt: SingleValue<Option>) => {
     setSelectedTenant(opt)
-    fetchAvailableScopes(opt.value as string)
+    if (opt) {
+      fetchAvailableScopes(opt.value)
+    }
   }
 
   return (
@@ -190,7 +193,7 @@ export const AddPermissions = ({
           size="sm"
           backgroundColor="blue"
           label={formatMessage(m.tenant)}
-          onChange={(opt) => handleTenantChange(opt as Option)}
+          onChange={(opt) => handleTenantChange(opt)}
           value={selectedTenant}
           options={availableTenants.map((tenant) =>
             formatOption(tenant, locale),

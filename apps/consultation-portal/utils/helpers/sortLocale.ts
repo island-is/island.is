@@ -1,15 +1,5 @@
-import { Document, RelatedCase, Stakeholder } from '../../types/interfaces'
-
-interface ArrOfValueAndLabel {
-  value: string
-  label: string
-}
-
-type ListItem = Stakeholder | RelatedCase | ArrOfValueAndLabel | Document
-type List = Array<ListItem>
-
-interface Props {
-  list: List
+interface Props<ListItem> {
+  list: ListItem[]
   sortOption: 'name' | 'caseNumber' | 'label' | 'fileOrLink'
 }
 
@@ -48,7 +38,10 @@ const IS_ALPHABET = [
   'ö',
 ]
 
-export const sortLocale = ({ list, sortOption }: Props) => {
+export const sortLocale = <ListItem>({
+  list,
+  sortOption,
+}: Props<ListItem>): ListItem[] => {
   const getSortOption = (listItem: ListItem) => {
     if (sortOption !== 'fileOrLink') {
       return listItem[sortOption]
