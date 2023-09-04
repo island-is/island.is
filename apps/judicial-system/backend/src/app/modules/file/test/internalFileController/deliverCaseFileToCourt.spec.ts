@@ -28,7 +28,7 @@ type GivenWhenThen = (
   caseFile: CaseFile,
 ) => Promise<Then>
 
-describe.skip('InternalFileController - Deliver case file to court', () => {
+describe('InternalFileController - Deliver case file to court', () => {
   const userId = uuid()
   const user = { id: userId } as User
 

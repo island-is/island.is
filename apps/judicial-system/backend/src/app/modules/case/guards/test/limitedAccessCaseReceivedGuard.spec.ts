@@ -21,7 +21,7 @@ interface Then {
 
 type GivenWhenThen = () => Then
 
-describe.skip('Limited Access Case Received Guard', () => {
+describe('Limited Access Case Received Guard', () => {
   const mockRequest = jest.fn()
   let givenWhenThen: GivenWhenThen
 

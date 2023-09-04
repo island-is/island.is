@@ -22,7 +22,7 @@ type GivenWhenThen = (
   theCase: Case,
 ) => Promise<Then>
 
-describe.skip('LimitedAccesslimitedAccessFileController - Create presigned post', () => {
+describe('LimitedAccesslimitedAccessFileController - Create presigned post', () => {
   let mockAwsS3Service: AwsS3Service
   let givenWhenThen: GivenWhenThen
 

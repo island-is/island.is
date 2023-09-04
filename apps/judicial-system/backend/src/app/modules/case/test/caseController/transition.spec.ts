@@ -37,7 +37,7 @@ type GivenWhenThen = (
   transition: TransitionCaseDto,
 ) => Promise<Then>
 
-describe.skip('CaseController - Transition', () => {
+describe('CaseController - Transition', () => {
   const date = randomDate()
   const userId = uuid()
   const defaultUser = { id: userId } as User

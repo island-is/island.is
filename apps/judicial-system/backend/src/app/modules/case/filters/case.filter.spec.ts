@@ -19,7 +19,7 @@ import { randomDate } from '../../../test'
 import { Case } from '../models/case.model'
 import { canUserAccessCase } from './case.filter'
 
-describe.skip('canUserAccessCase', () => {
+describe('canUserAccessCase', () => {
   describe.each([...restrictionCases, investigationCases])(
     'given %s case',
     (caseType) => {

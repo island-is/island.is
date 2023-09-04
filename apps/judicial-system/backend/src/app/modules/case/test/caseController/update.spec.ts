@@ -37,7 +37,7 @@ type GivenWhenThen = (
   caseToUpdate: UpdateCaseDto,
 ) => Promise<Then>
 
-describe.skip('CaseController - Update', () => {
+describe('CaseController - Update', () => {
   const date = randomDate()
   const userId = uuid()
   const user = { id: userId } as User
