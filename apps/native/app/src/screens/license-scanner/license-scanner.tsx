@@ -1,4 +1,4 @@
-import {Bubble} from '@ui';
+import {Bubble, Button, theme} from '@ui';
 import {BarCodeEvent, Constants} from 'expo-barcode-scanner';
 import {Camera, FlashMode} from 'expo-camera';
 import {impactAsync, ImpactFeedbackStyle} from 'expo-haptics';
@@ -17,6 +17,7 @@ import styled from 'styled-components/native';
 import flashligth from '../../assets/icons/flashlight.png';
 import {createNavigationOptionHooks} from '../../hooks/create-navigation-option-hooks';
 import {ComponentRegistry} from '../../utils/component-registry';
+import DeviceInfo from 'react-native-device-info';
 
 const BottomRight = styled.View`
   position: absolute;
@@ -39,27 +40,31 @@ const FlashImg = styled.Image`
   width: 32px;
 `;
 
-const {useNavigationOptions, getNavigationOptions} =
-  createNavigationOptionHooks(
-    (theme, intl, initialized) => ({
-      topBar: {
-        title: {
-          text: intl.formatMessage({id: 'licenseScanner.title'}),
-        },
-      },
-    }),
-    {
-      topBar: {
-        visible: true,
-        rightButtons: [
-          {
-            id: 'LICENSE_SCANNER_DONE',
-            systemItem: 'done',
-          },
-        ],
+const {
+  useNavigationOptions,
+  getNavigationOptions,
+} = createNavigationOptionHooks(
+  (theme, intl, initialized) => ({
+    topBar: {
+      title: {
+        text: intl.formatMessage({id: 'licenseScanner.title'}),
       },
     },
-  );
+  }),
+  {
+    topBar: {
+      visible: true,
+      rightButtons: [
+        {
+          id: 'LICENSE_SCANNER_DONE',
+          systemItem: 'done',
+        },
+      ],
+    },
+  },
+);
+
+const isSimulator = Platform.OS === 'ios' && DeviceInfo.isEmulatorSync();
 
 export const LicenseScannerScreen: NavigationFunctionComponent = ({
   componentId,
@@ -79,7 +84,7 @@ export const LicenseScannerScreen: NavigationFunctionComponent = ({
   const intl = useIntl();
 
   useEffect(() => {
-    Camera.requestPermissionsAsync().then(({status}) => {
+    Camera.requestCameraPermissionsAsync().then(({status}) => {
       setHasPermission(status === 'granted');
     });
   }, []);
@@ -175,10 +180,37 @@ export const LicenseScannerScreen: NavigationFunctionComponent = ({
     prepareRatio();
   };
 
+  if (isSimulator) {
+    return (
+      <View
+        style={{
+          flex: 1,
+          backgroundColor: theme.color.blue200,
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <Button
+          title="Paste barcode"
+          onPress={() => {
+            Alert.prompt('Paste barcode', '', text => {
+              console.log('oki', text);
+              void onBarCodeScanned({
+                type: Constants.BarCodeType.pdf417,
+                data: text,
+              } as any);
+            });
+          }}
+        />
+      </View>
+    );
+  }
+
   return (
     <View
       style={{flex: 1, backgroundColor: '#000'}}
-      onLayout={e => setLayout(e.nativeEvent.layout)}>
+      onLayout={e => setLayout(e.nativeEvent.layout)}
+    >
       {hasPermission === true && active && (
         <Camera
           onBarCodeScanned={active ? onBarCodeScanned : undefined}
@@ -203,7 +235,8 @@ export const LicenseScannerScreen: NavigationFunctionComponent = ({
           left: 0,
           right: 0,
           alignItems: 'center',
-        }}>
+        }}
+      >
         <Bubble>
           {typeof hasPermission === 'undefined' || hasPermission === null
             ? intl.formatMessage({id: 'licenseScanner.awaitingPermission'})
