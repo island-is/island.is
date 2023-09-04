@@ -409,6 +409,8 @@ export const OrganizationFooter: React.FC<
           title={organization.title}
           logo={organization.logo?.url}
           footerItems={organization.footerItems}
+          organizationSlug={organization.slug}
+          namespace={namespace}
         />
       )
       break

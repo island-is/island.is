@@ -88,9 +88,7 @@ const UtlendingastofnunFooter: React.FC<
                         underline="small"
                         href={n(
                           'serviceWebFooterWebChatHref',
-                          //TODO: setja inn rétta slóð
-                          linkResolver('servicewebcontact', [organizationSlug])
-                            .href,
+                          '/s/utlendingastofnun?wa_lid=t10',
                         )}
                       >
                         {n('serviceWebFooterWebChatTitle', 'Netspjall')}
@@ -103,7 +101,6 @@ const UtlendingastofnunFooter: React.FC<
                         underline="small"
                         href={n(
                           'serviceWebFooterEmailLinkHref',
-                          //TODO: setja inn rétta slóð
                           linkResolver('servicewebcontact', [organizationSlug])
                             .href,
                         )}
@@ -143,15 +140,15 @@ const UtlendingastofnunFooter: React.FC<
                     <GridColumn
                       key={index}
                       span={
-                        index == 1 || index == 2
+                        index === 1 || index === 2
                           ? ['12/12', '12/12', '3/12']
                           : ['12/12', '12/12', '2/12']
                       }
-                      offset={index == 0 ? ['0', '0', '1/12'] : '0'}
+                      offset={index === 0 ? ['0', '0', '1/12'] : '0'}
                     >
                       <Box
                         marginBottom={5}
-                        paddingRight={index != 3 ? 4 : 0}
+                        paddingRight={index !== 3 ? 4 : 0}
                         className={styles.textContainer}
                       >
                         {richText(item.content as SliceType[], {
