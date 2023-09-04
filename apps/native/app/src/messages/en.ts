@@ -287,6 +287,7 @@ export const en: TranslatedMessages = {
   'vehicleDetail.vehicleWeight': 'Vehicle weight',
   'vehicleDetail.totalWeight': 'Maximum weight',
   'vehicleDetail.capacityWeight': 'Road train weight',
+  'vehicleDetail.odometer': 'Odometer',
 
   // assets overview
   'assetsOvervies.screenTitle': 'Assets',

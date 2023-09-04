@@ -199,6 +199,7 @@ export const is = {
   'vehicleDetail.vehicleWeight': 'Eigin þyngd',
   'vehicleDetail.totalWeight': 'Heildarþyngd',
   'vehicleDetail.capacityWeight': 'Þyngd vagnlestar',
+  'vehicleDetail.odometer': 'Kílómetrastaða',
 
   // assets overview
   'assetsOvervies.screenTitle': 'Fasteignir',
