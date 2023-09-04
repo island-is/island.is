@@ -37,6 +37,8 @@ import { useUploadPoliceCaseFileMutation } from './uploadPoliceCaseFile.generate
 export interface TUploadFile extends UploadFile {
   category?: CaseFileCategory
   policeCaseNumber?: string
+  chapter?: number
+  orderWithinChapter?: number
   displayDate?: string
 }
 
@@ -277,14 +279,11 @@ export const useS3Upload = (caseId: string) => {
           },
         })
 
-        if (
-          !uploadPoliceCaseFileData ||
-          !uploadPoliceCaseFileData.uploadPoliceCaseFile
-        ) {
+        if (!uploadPoliceCaseFileData?.uploadPoliceCaseFile) {
           throw Error('failed to upload police case file')
         }
 
-        const data2 = await createFile({
+        const { data: createFileData } = await createFile({
           variables: {
             input: {
               caseId,
@@ -293,12 +292,14 @@ export const useS3Upload = (caseId: string) => {
               size: uploadPoliceCaseFileData.uploadPoliceCaseFile.size,
               policeCaseNumber: file.policeCaseNumber,
               category: file.category,
+              chapter: file.chapter,
+              orderWithinChapter: file.orderWithinChapter,
               displayDate: file.displayDate,
             },
           },
         })
 
-        if (!data2.data?.createFile.id) {
+        if (!createFileData?.createFile.id) {
           throw Error('failed to add file to case')
         }
 
@@ -311,9 +312,12 @@ export const useS3Upload = (caseId: string) => {
             status: 'done',
             category: file.category,
             policeCaseNumber: file.policeCaseNumber,
+            chapter: file.chapter,
+            orderWithinChapter: file.orderWithinChapter,
+            displayDate: file.displayDate,
           },
           // We need to set the id so we are able to delete the file later
-          data2.data.createFile.id,
+          createFileData.createFile.id,
         )
 
         return uploadPoliceCaseFileData?.uploadPoliceCaseFile

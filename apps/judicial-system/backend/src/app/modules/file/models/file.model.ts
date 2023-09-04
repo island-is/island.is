@@ -126,4 +126,10 @@ export class CaseFile extends Model {
   })
   @ApiProperty()
   displayDate?: Date
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  policeFileId?: string
 }
