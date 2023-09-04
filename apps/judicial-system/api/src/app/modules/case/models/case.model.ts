@@ -44,7 +44,6 @@ export class Case implements TCase {
 
   @Field()
   readonly created!: string
-
   @Field()
   readonly modified!: string
 
