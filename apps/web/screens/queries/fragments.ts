@@ -507,6 +507,7 @@ export const slices = gql`
     id
     title
     intro
+    defaultFieldNamespace
     fields {
       title
       name

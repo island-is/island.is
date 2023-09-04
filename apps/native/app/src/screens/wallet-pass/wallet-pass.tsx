@@ -18,6 +18,7 @@ import {
   ActivityIndicator,
   NativeModules,
   Alert,
+  Linking,
 } from 'react-native';
 import {NavigationFunctionComponent} from 'react-native-navigation';
 import PassKit, {AddPassButton} from 'react-native-passkit-wallet';
@@ -40,6 +41,7 @@ import {
 import {createNavigationOptionHooks} from '../../hooks/create-navigation-option-hooks';
 import {LicenseStatus} from '../../types/license-type';
 import {useState} from 'react';
+import {useIntl} from 'react-intl';
 
 const Information = styled.ScrollView`
   flex: 1;
@@ -182,6 +184,7 @@ export const WalletPassScreen: NavigationFunctionComponent<{
 }> = ({id, item, componentId, cardHeight = 140}) => {
   useNavigationOptions(componentId);
   const theme = useTheme();
+  const intl = useIntl();
   const licenseRes = useQuery<GetLicenseResponse, GetGenericLicenseInput>(
     GET_GENERIC_LICENSE_QUERY,
     {
@@ -277,7 +280,34 @@ export const WalletPassScreen: NavigationFunctionComponent<{
             'You cannot add passes. Please make sure you have Smartwallet installed on your device.',
           );
         } else {
-          Alert.alert('Failed to fetch or add pass');
+          Alert.alert(
+            intl.formatMessage({
+              id: 'walletPass.errorTitle',
+            }),
+            item?.license?.type === 'DriversLicense'
+              ? intl.formatMessage({
+                  id: 'walletPass.errorNotPossibleToAddDriverLicense',
+                })
+              : 'Failed to fetch or add pass',
+            item?.license?.type === 'DriversLicense'
+              ? [
+                  {
+                    text: intl.formatMessage({
+                      id: 'walletPass.moreInfo',
+                    }),
+                    onPress: () =>
+                      Linking.openURL('https://island.is/okuskirteini'),
+                  },
+
+                  {
+                    text: intl.formatMessage({
+                      id: 'walletPass.alertClose',
+                    }),
+                    style: 'cancel',
+                  },
+                ]
+              : [],
+          );
         }
         setAddingToWallet(false);
         console.error(err);

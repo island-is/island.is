@@ -1,4 +1,4 @@
-import {Heading, IconButton, UserCard} from '@ui';
+import {ListButton, UserCard} from '@ui';
 import React from 'react';
 import {Image, SafeAreaView, ScrollView} from 'react-native';
 import {NavigationFunctionComponent} from 'react-native-navigation';
@@ -11,12 +11,17 @@ import {testIDs} from '../../utils/test-ids';
 import familyIcon from '../../assets/icons/family.png';
 import vehicleIcon from '../../assets/icons/vehicle.png';
 import assetsIcon from '../../assets/icons/assets.png';
+import financeIcon from '../../assets/icons/finance.png';
 import {useIntl} from 'react-intl';
-import {formatNationalId} from './tab-personal-info';
+import {formatNationalId} from './personal-info-content';
 import {getRightButtons} from '../../utils/get-main-root';
+import {useFeatureFlag} from '../../contexts/feature-flag-provider';
 
 const Row = styled.View`
-  flex-direction: row;
+  margin-top: 16px;
+  margin-left: -${({theme}) => theme.spacing[2]}px;
+  margin-right: -${({theme}) => theme.spacing[2]}px;
+  flex-direction: column;
 `;
 
 const {useNavigationOptions, getNavigationOptions} =
@@ -56,9 +61,10 @@ const {useNavigationOptions, getNavigationOptions} =
     },
   );
 
-export const ProfileScreen: NavigationFunctionComponent = ({componentId}) => {
+export const MoreScreen: NavigationFunctionComponent = ({componentId}) => {
   const authStore = useAuthStore();
   const intl = useIntl();
+  const showFinances = useFeatureFlag('isFinancesEnabled', false);
   useNavigationOptions(componentId);
   return (
     <>
@@ -74,50 +80,59 @@ export const ProfileScreen: NavigationFunctionComponent = ({componentId}) => {
               },
             ]}
           />
-
-          <Heading>{intl.formatMessage({id: 'profile.infoHeading'})}</Heading>
-          <Row>
-            <IconButton
-              title={intl.formatMessage({id: 'profile.family'})}
-              onPress={() => navigateTo(`/family`)}
-              image={
-                <Image
-                  source={familyIcon as any}
-                  style={{width: 28, height: 20}}
-                  resizeMode="contain"
-                />
-              }
-              style={{marginRight: 8}}
-            />
-            <IconButton
-              title={intl.formatMessage({id: 'profile.vehicles'})}
-              onPress={() => navigateTo(`/vehicles`)}
-              image={
-                <Image
-                  source={vehicleIcon as any}
-                  style={{width: 24, height: 20}}
-                  resizeMode="contain"
-                />
-              }
-              style={{marginRight: 8}}
-            />
-            <IconButton
-              title={intl.formatMessage({id: 'profile.assets'})}
-              onPress={() => navigateTo(`/assets`)}
-              image={
-                <Image
-                  source={assetsIcon as any}
-                  style={{width: 30, height: 28}}
-                  resizeMode="contain"
-                />
-              }
-            />
-          </Row>
         </SafeAreaView>
+        <Row>
+          <ListButton
+            title={intl.formatMessage({id: 'profile.family'})}
+            onPress={() => navigateTo(`/family`)}
+            icon={
+              <Image
+                source={familyIcon as any}
+                style={{width: 24, height: 24}}
+                resizeMode="contain"
+              />
+            }
+          />
+          <ListButton
+            title={intl.formatMessage({id: 'profile.vehicles'})}
+            onPress={() => navigateTo(`/vehicles`)}
+            icon={
+              <Image
+                source={vehicleIcon as any}
+                style={{width: 24, height: 24}}
+                resizeMode="contain"
+              />
+            }
+          />
+          <ListButton
+            title={intl.formatMessage({id: 'profile.assets'})}
+            onPress={() => navigateTo(`/assets`)}
+            icon={
+              <Image
+                source={assetsIcon as any}
+                style={{width: 24, height: 24}}
+                resizeMode="contain"
+              />
+            }
+          />
+          {showFinances && (
+            <ListButton
+              title={intl.formatMessage({id: 'profile.finance'})}
+              onPress={() => navigateTo(`/finance`)}
+              icon={
+                <Image
+                  source={financeIcon as any}
+                  style={{width: 24, height: 24}}
+                  resizeMode="contain"
+                />
+              }
+            />
+          )}
+        </Row>
       </ScrollView>
       <BottomTabsIndicator index={4} total={5} />
     </>
   );
 };
 
-ProfileScreen.options = getNavigationOptions;
+MoreScreen.options = getNavigationOptions;
