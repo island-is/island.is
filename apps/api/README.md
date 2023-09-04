@@ -2,7 +2,7 @@
 
 ## Quickstart
 
-Ensure docker is running, then run the following when running for the first time:
+Ensure docker is running, then run the following when running for the first time: stuff stuff
 
 ```bash
 yarn dev-init api
