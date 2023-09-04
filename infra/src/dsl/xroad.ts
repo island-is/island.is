@@ -255,7 +255,7 @@ export const OccupationalLicenses = new XroadConf({
     XROAD_HEALTH_DIRECTORATE_PATH: {
       dev: 'IS-DEV/GOV/10015/EmbaettiLandlaeknis-Protected/landlaeknir',
       staging: 'IS-DEV/GOV/10015/EmbaettiLandlaeknis-Protected/landlaeknir',
-      prod: 'IS-DEV/GOV/10015/EmbaettiLandlaeknis-Protected/landlaeknir',
+      prod: '/IS/GOV/7101695009/EmbaettiLandlaeknis-Protected/landlaeknir',
     },
   },
 })

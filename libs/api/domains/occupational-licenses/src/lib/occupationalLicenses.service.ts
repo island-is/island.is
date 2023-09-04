@@ -63,7 +63,7 @@ export class OccupationalLicensesService {
               isValid: isValid,
             }
           })
-          .filter(Boolean as unknown as ExcludesFalse)
+          .filter((Boolean as unknown) as ExcludesFalse)
           .find((license) => license.id === id) ?? undefined
       )
     } catch (e) {
@@ -73,6 +73,7 @@ export class OccupationalLicensesService {
       return null
     }
   }
+
   async getHealthDirectorateLicense(
     user: User,
   ): Promise<HealthDirectorateLicense[] | null> {
@@ -112,7 +113,7 @@ export class OccupationalLicensesService {
             isValid: isValid,
           }
         })
-        .filter(Boolean as unknown as ExcludesFalse)
+        .filter((Boolean as unknown) as ExcludesFalse)
     } catch (e) {
       this.logger.error(`Error getting health directorate license`, {
         ...e,
@@ -184,7 +185,7 @@ export class OccupationalLicensesService {
       items: [
         ...(healthDirectorateLicenses ?? []),
         ...(educationalLicenses ?? []),
-      ].filter(Boolean as unknown as ExcludesFalse),
+      ].filter((Boolean as unknown) as ExcludesFalse),
       error: {
         hasError:
           healthDirectorateLicenses === null || educationalLicenses === null,

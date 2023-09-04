@@ -17,10 +17,14 @@ registerEnumType(OccupationalLicenseType, {
 
 @InterfaceType({
   resolveType(license: OccupationalLicense) {
-    if (license.institution === 'HEALTH_DIRECTORATE') {
-      return HealthDirectorateLicense
+    switch (license.institution) {
+      case 'HEALTH_DIRECTORATE':
+        return HealthDirectorateLicense
+      case 'EDUCATIONAL':
+        return EducationalLicense
+      default:
+        throw new Error(`Invalid license type: ${license.institution}`)
     }
-    return EducationalLicense
   },
 })
 export abstract class OccupationalLicense {

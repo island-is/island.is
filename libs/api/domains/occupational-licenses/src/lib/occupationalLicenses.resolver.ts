@@ -79,39 +79,4 @@ export class OccupationalLicensesResolver {
         }
       : null
   }
-
-  @Query(() => OccupationalLicense, {
-    name: 'occupationalLicense',
-    nullable: true,
-  })
-  @Audit()
-  async getOccupationalLicense(
-    @CurrentUser() user: User,
-    @Args('id', { type: () => String }) id: string,
-  ) {
-    const isEduLicense = await this.getEducationalLicenseById(user, id)
-    if (isEduLicense !== null) {
-      return {
-        id: isEduLicense.id,
-        isValid: isEduLicense.isValid,
-        profession: isEduLicense.profession,
-        type: isEduLicense.type,
-        validFrom: isEduLicense.validFrom,
-        downloadUrl: isEduLicense.downloadUrl,
-      }
-    }
-
-    const isHealthLicense = await this.getHealthDirectorateLicenseById(user, id)
-    if (isHealthLicense !== null) {
-      return {
-        id: isHealthLicense.id,
-        isValid: isHealthLicense.isValid,
-        profession: isHealthLicense.profession,
-        type: isHealthLicense.type,
-        validFrom: isHealthLicense.validFrom,
-      }
-    }
-
-    return null
-  }
 }
