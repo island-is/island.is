@@ -12,7 +12,6 @@ export class Defendant implements TDefendant {
 
   @Field()
   readonly created!: string
-
   @Field()
   readonly modified!: string
 

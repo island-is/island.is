@@ -11,7 +11,7 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { useCreateDefendantMutation } from './createDefendant.generated'
-import { useDeleteDefendantMutation } from './deleteDefendant.generated'
+import { useDeleteDefendantMutation } from './deleteDefendantt.generated'
 import { useUpdateDefendantMutation } from './updateDefendant.generated'
 
 const useDefendants = () => {
