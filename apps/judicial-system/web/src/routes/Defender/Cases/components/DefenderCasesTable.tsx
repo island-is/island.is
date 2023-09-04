@@ -30,6 +30,7 @@ import {
   CreatedDate,
   SortButton,
   getDurationDate,
+  ColumnCaseType,
 } from '@island.is/judicial-system-web/src/components/Table'
 
 import * as styles from './DefenderCasesTable.css'
@@ -135,14 +136,15 @@ export const DefenderCasesTable: React.FC<React.PropsWithChildren<Props>> = (
                   <DefendantInfo defendants={c.defendants} />
                 </td>
                 <td className={styles.td}>
-                  <Text as="span">
-                    {displayCaseType(formatMessage, c.type, c.decision)}
-                  </Text>
+                  <ColumnCaseType
+                    type={c.type}
+                    decision={c.decision}
+                    parentCaseId={c.parentCaseId}
+                  />
                 </td>
                 <td className={cn(styles.td)}>
                   <CreatedDate created={c.created} />
                 </td>
-
                 <td className={styles.td} data-testid="tdTag">
                   <Box marginRight={1} marginBottom={1}>
                     <TagCaseState
