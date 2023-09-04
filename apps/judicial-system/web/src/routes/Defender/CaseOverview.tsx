@@ -37,10 +37,10 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import { useAppealAlertBanner } from '@island.is/judicial-system-web/src/utils/hooks'
+import { CaseAppealDecision } from '@island.is/judicial-system-web/src/graphql/schema'
 import * as constants from '@island.is/judicial-system/consts'
 
 import { strings } from './CaseOverview.strings'
-import { CaseAppealDecision } from '../../graphql/schema'
 
 type availableModals =
   | 'NoModal'
@@ -48,8 +48,9 @@ type availableModals =
   | 'ConfirmStatementAfterDeadline'
 
 export const CaseOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
-  const { workingCase, isLoadingWorkingCase, caseNotFound } =
-    useContext(FormContext)
+  const { workingCase, isLoadingWorkingCase, caseNotFound } = useContext(
+    FormContext,
+  )
 
   const { formatMessage } = useIntl()
   const { features } = useContext(FeatureContext)
