@@ -1,7 +1,6 @@
 import React, { useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'framer-motion'
-
 import {
   CaseFile,
   CaseFileCategory,
@@ -18,7 +17,6 @@ import {
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import { useFileList } from '@island.is/judicial-system-web/src/utils/hooks'
-
 import { caseFiles } from '../../routes/Prosecutor/Indictments/CaseFiles/CaseFiles.strings'
 import { courtRecord } from '../../routes/Court/Indictments/CourtRecord/CourtRecord.strings'
 import { indictmentCaseFilesList as strings } from './IndictmentCaseFilesList.strings'

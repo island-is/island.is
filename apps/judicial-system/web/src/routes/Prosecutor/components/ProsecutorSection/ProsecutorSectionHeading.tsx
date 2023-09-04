@@ -1,9 +1,7 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
-
 import { Box, Tooltip } from '@island.is/island-ui/core'
 import { SectionHeading } from '@island.is/judicial-system-web/src/components'
-
 import { strings } from './ProsecutorSectionHeading.strings'
 
 interface Props {

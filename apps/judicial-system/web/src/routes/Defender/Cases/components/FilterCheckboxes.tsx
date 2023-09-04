@@ -1,9 +1,7 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
-
 import { Box, Checkbox } from '@island.is/island-ui/core'
 import { tables } from '@island.is/judicial-system-web/messages'
-
 import * as styles from './FilterCheckboxes.css'
 
 interface Props {

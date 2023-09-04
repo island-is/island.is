@@ -1,6 +1,5 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
-
 import {
   Box,
   AccordionItem,
@@ -8,7 +7,6 @@ import {
   Accordion,
 } from '@island.is/island-ui/core'
 import { CaseFile } from '@island.is/judicial-system/types'
-
 import { parentCaseFiles as m } from './ParentCaseFiles.strings'
 
 interface Props {

@@ -3,7 +3,6 @@ import compareAsc from 'date-fns/compareAsc'
 import formatISO from 'date-fns/formatISO'
 import { useIntl, IntlShape } from 'react-intl'
 import { motion } from 'framer-motion'
-
 import {
   core,
   signedVerdictOverview as m,

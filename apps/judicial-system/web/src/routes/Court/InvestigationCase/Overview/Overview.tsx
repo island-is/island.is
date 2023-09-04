@@ -1,7 +1,6 @@
 import React, { useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import router from 'next/router'
-
 import {
   Accordion,
   AccordionItem,
@@ -48,7 +47,6 @@ import {
   useCourtUpload,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { lawsBrokenAccordion } from '@island.is/judicial-system-web/messages/Core/lawsBrokenAccordion'
-
 import { DraftConclusionModal } from '../../components'
 
 const Overview = () => {

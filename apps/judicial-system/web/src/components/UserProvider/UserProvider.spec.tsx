@@ -1,11 +1,9 @@
 import React from 'react'
 import { render, screen } from '@testing-library/react'
 import { MockedProvider } from '@apollo/client/testing'
-
 import { LocaleProvider } from '@island.is/localization'
 import { mockJudgeQuery } from '@island.is/judicial-system-web/src/utils/mocks'
 import { Header } from '@island.is/judicial-system-web/src/components'
-
 import { UserProvider } from './UserProvider'
 
 describe('UserProvider', () => {

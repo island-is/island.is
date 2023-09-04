@@ -6,7 +6,6 @@ import formatISO from 'date-fns/formatISO'
 import omitBy from 'lodash/omitBy'
 import isUndefined from 'lodash/isUndefined'
 import isNil from 'lodash/isNil'
-
 import {
   NotificationType,
   SendNotificationResponse,
@@ -31,7 +30,6 @@ import {
   User,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import * as constants from '@island.is/judicial-system/consts'
-
 import { isTrafficViolationCase } from '../../stepHelper'
 import { findFirstInvalidStep } from '../../formHelper'
 import {

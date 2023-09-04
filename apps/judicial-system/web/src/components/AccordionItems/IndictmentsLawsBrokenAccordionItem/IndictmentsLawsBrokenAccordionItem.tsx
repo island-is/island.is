@@ -1,6 +1,5 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
-
 import useIndictmentCounts from '@island.is/judicial-system-web/src/utils/hooks/useIndictmentCounts'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import { Accordion, AccordionItem, Text } from '@island.is/island-ui/core'

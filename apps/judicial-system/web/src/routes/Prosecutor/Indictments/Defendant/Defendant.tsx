@@ -3,7 +3,6 @@ import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 import { uuid } from 'uuidv4'
 import { AnimatePresence, motion } from 'framer-motion'
-
 import {
   FormContentContainer,
   FormContext,
@@ -31,7 +30,6 @@ import {
   UpdateDefendantInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import * as constants from '@island.is/judicial-system/consts'
-
 import { DefendantInfo } from '../../components'
 import { defendant } from './Defendant.strings'
 import { LokeNumberList } from './LokeNumberList/LokeNumberList'

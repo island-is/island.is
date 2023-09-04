@@ -1,6 +1,5 @@
 import React, { useContext } from 'react'
 import { useIntl } from 'react-intl'
-
 import { Box, Text } from '@island.is/island-ui/core'
 import {
   FormContext,
@@ -9,7 +8,6 @@ import {
   AppealCaseFilesOverview,
 } from '@island.is/judicial-system-web/src/components'
 import { core } from '@island.is/judicial-system-web/messages'
-
 import { strings } from './CaseFilesOverview.strings'
 
 const CaseFilesOverview: React.FC<React.PropsWithChildren<unknown>> = () => {

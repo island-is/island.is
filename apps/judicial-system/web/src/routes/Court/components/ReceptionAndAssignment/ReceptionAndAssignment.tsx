@@ -2,7 +2,6 @@ import React, { useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 import { useQuery } from '@apollo/client'
-
 import {
   FormContentContainer,
   FormContext,
@@ -28,7 +27,6 @@ import { titles } from '@island.is/judicial-system-web/messages'
 import { isReceptionAndAssignmentStepValid } from '@island.is/judicial-system-web/src/utils/validate'
 import { User } from '@island.is/judicial-system-web/src/graphql/schema'
 import * as constants from '@island.is/judicial-system/consts'
-
 import { receptionAndAssignment as strings } from './ReceptionAndAssignment.strings'
 import CourtCaseNumber from '../CourtCaseNumber/CourtCaseNumber'
 

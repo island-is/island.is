@@ -5,12 +5,9 @@ import router from 'next/router'
 import format from 'date-fns/format'
 import parseISO from 'date-fns/parseISO'
 import localeIS from 'date-fns/locale/is'
-
 import { Box, Text } from '@island.is/island-ui/core'
-
 import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
 import { CaseType, isIndictmentCase } from '@island.is/judicial-system/types'
-
 import { TempCaseListEntry as CaseListEntry } from '@island.is/judicial-system-web/src/types'
 import { core, tables } from '@island.is/judicial-system-web/messages'
 import { displayCaseType } from '@island.is/judicial-system-web/src/routes/Shared/Cases/utils'
@@ -31,7 +28,6 @@ import {
   SortButton,
   getDurationDate,
 } from '@island.is/judicial-system-web/src/components/Table'
-
 import * as styles from './DefenderCasesTable.css'
 
 interface Props {

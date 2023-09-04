@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 import InputMask from 'react-input-mask'
-
 import {
   Box,
   Button,
@@ -24,7 +23,6 @@ import {
   removeErrorMessageIfValid,
   validateAndSetErrorMessage,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
-
 import { policeCaseInfo } from './PoliceCaseInfo.strings'
 
 interface Props {

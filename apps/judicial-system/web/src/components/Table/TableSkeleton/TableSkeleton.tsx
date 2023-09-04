@@ -1,9 +1,7 @@
 import React from 'react'
-
 import { SkeletonLoader, Box } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { useViewport } from '@island.is/judicial-system-web/src/utils/hooks'
-
 import * as styles from '../Table.css'
 
 const TableSkeleton = () => {

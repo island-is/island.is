@@ -2,7 +2,6 @@ import React, { useState, useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 import { AnimatePresence } from 'framer-motion'
-
 import {
   Box,
   Text,
@@ -47,7 +46,6 @@ import { createCaseResentExplanation } from '@island.is/judicial-system-web/src/
 import { formatRequestedCustodyRestrictions } from '@island.is/judicial-system-web/src/utils/restrictions'
 import { CaseLegalProvisions } from '@island.is/judicial-system-web/src/graphql/schema'
 import { lawsBrokenAccordion } from '@island.is/judicial-system-web/messages/Core/lawsBrokenAccordion'
-
 import * as styles from './Overview.css'
 
 export const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {

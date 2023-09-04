@@ -1,15 +1,12 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
-
 import { Box, Text, FocusableBox } from '@island.is/island-ui/core'
-
 import {
   displayFirstPlusRemaining,
   formatDOB,
 } from '@island.is/judicial-system/formatters'
 import { TempCaseListEntry as CaseListEntry } from '@island.is/judicial-system-web/src/types'
 import TagCaseState from '@island.is/judicial-system-web/src/components/TagCaseState/TagCaseState'
-
 import { displayCaseType } from './utils'
 import * as styles from './MobileCase.css'
 import format from 'date-fns/format'

@@ -1,10 +1,8 @@
 import React from 'react'
 import { render, screen } from '@testing-library/react'
 import { MockedProvider } from '@apollo/client/testing'
-
 import { UserProvider } from '../UserProvider/UserProvider'
 import { mockJudgeQuery } from '../../utils/mocks'
-
 import Logo from './Logo'
 
 describe('Logo', () => {

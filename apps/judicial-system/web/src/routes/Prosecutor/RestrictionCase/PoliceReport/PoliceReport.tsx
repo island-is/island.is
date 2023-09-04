@@ -1,7 +1,6 @@
 import React, { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
-
 import { Text, Box, Input, Tooltip } from '@island.is/island-ui/core'
 import { isPoliceReportStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
 import {

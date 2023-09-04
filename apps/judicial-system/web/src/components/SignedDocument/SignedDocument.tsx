@@ -1,10 +1,8 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
-
 import { Icon, Text } from '@island.is/island-ui/core'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import { signedDocument } from '@island.is/judicial-system-web/messages'
-
 import * as styles from './SignedDocument.css'
 
 interface Props {

@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import InputMask from 'react-input-mask'
-
 import {
   Box,
   Checkbox,
@@ -20,7 +19,6 @@ import {
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import * as constants from '@island.is/judicial-system/consts'
-
 import { ReactSelectOption } from '../../../types'
 import {
   isAdminUserFormValid,

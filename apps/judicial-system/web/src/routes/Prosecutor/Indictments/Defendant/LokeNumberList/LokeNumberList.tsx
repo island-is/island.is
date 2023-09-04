@@ -1,6 +1,5 @@
 import React, { useState, useContext, useEffect } from 'react'
 import { useIntl } from 'react-intl'
-
 import {
   Box,
   Button,
@@ -11,7 +10,6 @@ import {
 import { FormContext } from '@island.is/judicial-system-web/src/components'
 import { PoliceCaseInfo } from '@island.is/judicial-system-web/src/graphql/schema'
 import { PoliceCaseFilesMessageBox } from '@island.is/judicial-system-web/src/routes/Prosecutor/components'
-
 import { PoliceCase } from '../Defendant'
 import { useGetPoliceCaseInfoQuery } from './getPoliceCaseInfo.generated'
 import { lokeNumberList as strings } from './LokeNumberList.strings'

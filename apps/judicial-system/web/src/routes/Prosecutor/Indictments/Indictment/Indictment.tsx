@@ -3,9 +3,7 @@ import router from 'next/router'
 import { useIntl } from 'react-intl'
 import { AnimatePresence, motion } from 'framer-motion'
 import { applyCase } from 'beygla'
-
 import { Box, Input, Button, Checkbox } from '@island.is/island-ui/core'
-
 import {
   BlueBox,
   FormContentContainer,
@@ -35,7 +33,6 @@ import useIndictmentCounts, {
   UpdateIndictmentCount,
 } from '@island.is/judicial-system-web/src/utils/hooks/useIndictmentCounts'
 import { IndictmentCountOffense } from '@island.is/judicial-system-web/src/graphql/schema'
-
 import { IndictmentCount } from './IndictmentCount'
 import { indictment as strings } from './Indictment.strings'
 

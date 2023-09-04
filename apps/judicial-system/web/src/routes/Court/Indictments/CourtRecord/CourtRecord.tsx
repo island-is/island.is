@@ -7,7 +7,6 @@ import React, {
 } from 'react'
 import { useIntl } from 'react-intl'
 import router from 'next/router'
-
 import {
   CourtCaseInfo,
   FormContentContainer,
@@ -41,7 +40,6 @@ import {
   stepValidationsType,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import * as constants from '@island.is/judicial-system/consts'
-
 import { courtRecord as m } from './CourtRecord.strings'
 
 const CourtRecord: React.FC<React.PropsWithChildren<unknown>> = () => {

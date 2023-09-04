@@ -1,7 +1,6 @@
 import React, { ReactNode, useContext, useEffect } from 'react'
 import { useIntl } from 'react-intl'
 import cn from 'classnames'
-
 import {
   Box,
   GridContainer,
@@ -26,7 +25,6 @@ import {
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import * as constants from '@island.is/judicial-system/consts'
-
 import { UserContext } from '../UserProvider/UserProvider'
 import Logo from '../Logo/Logo'
 import Skeleton from '../Skeleton/Skeleton'

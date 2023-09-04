@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { IntlShape, useIntl } from 'react-intl'
-
 import {
   isIndictmentCase,
   isInvestigationCase,
@@ -11,7 +10,6 @@ import {
   User,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-
 import { useFilter as m } from './useFilter.strings'
 
 export type Filter = 'ALL_CASES' | 'MY_CASES' | 'INVESTIGATION' | 'INDICTMENT'

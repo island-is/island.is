@@ -3,7 +3,6 @@ import { useIntl } from 'react-intl'
 import cn from 'classnames'
 import { useQuery } from '@apollo/client'
 import { useRouter } from 'next/router'
-
 import {
   AlertMessage,
   Box,
@@ -25,7 +24,6 @@ import {
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import * as constants from '@island.is/judicial-system/consts'
-
 import * as styles from './Users.css'
 
 interface UserData {

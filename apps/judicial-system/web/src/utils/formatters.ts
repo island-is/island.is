@@ -2,7 +2,6 @@ import formatISO from 'date-fns/formatISO'
 import setHours from 'date-fns/setHours'
 import setMinutes from 'date-fns/setMinutes'
 import setSeconds from 'date-fns/setSeconds'
-
 import { validate } from './validate'
 
 export const parseTime = (date: string, time: string) => {

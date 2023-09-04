@@ -1,8 +1,6 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
-
 import { Box, Text } from '@island.is/island-ui/core'
-
 import BlueBox from '../BlueBox/BlueBox'
 import { conclusion as strings } from './Conclusion.strings'
 

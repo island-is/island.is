@@ -1,5 +1,4 @@
 import { IntlFormatters } from 'react-intl'
-
 import {
   CaseDecision,
   CaseState,

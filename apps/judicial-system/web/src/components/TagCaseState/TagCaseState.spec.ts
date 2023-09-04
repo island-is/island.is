@@ -1,5 +1,4 @@
 import { createIntl } from 'react-intl'
-
 import { tables } from '@island.is/judicial-system-web/messages'
 import { CaseState, CaseType } from '@island.is/judicial-system/types'
 import { tagCaseState as m } from './TagCaseState.strings'

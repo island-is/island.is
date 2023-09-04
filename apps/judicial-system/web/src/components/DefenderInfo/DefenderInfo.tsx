@@ -1,6 +1,5 @@
 import React, { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
-
 import { Box, Checkbox, Tooltip } from '@island.is/island-ui/core'
 import {
   isCourtRole,
@@ -12,7 +11,6 @@ import {
   SessionArrangements,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-
 import { defenderInfo } from './DefenderInfo.strings'
 import { BlueBox, SectionHeading } from '..'
 import { useCase } from '../../utils/hooks'

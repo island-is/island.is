@@ -7,7 +7,6 @@ import React, {
 } from 'react'
 import { useIntl } from 'react-intl'
 import router from 'next/router'
-
 import {
   ProsecutorCaseInfo,
   FormContentContainer,
@@ -34,7 +33,6 @@ import { mapCaseFileToUploadFile } from '@island.is/judicial-system-web/src/util
 import { fileExtensionWhitelist } from '@island.is/island-ui/core/types'
 import { isTrafficViolationCase } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import * as constants from '@island.is/judicial-system/consts'
-
 import * as strings from './CaseFiles.strings'
 
 const CaseFiles: React.FC<React.PropsWithChildren<unknown>> = () => {

@@ -1,7 +1,6 @@
 import React, { useContext, useMemo } from 'react'
 import { useIntl } from 'react-intl'
 import { useQuery } from '@apollo/client'
-
 import { Select, Option } from '@island.is/island-ui/core'
 import { isIndictmentCase } from '@island.is/judicial-system/types'
 import {
@@ -13,7 +12,6 @@ import {
   User,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-
 import { strings } from './ProsecutorSelection.strings'
 
 interface Props {

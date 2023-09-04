@@ -1,7 +1,6 @@
 import React, { useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
-
 import {
   Text,
   Accordion,
@@ -46,7 +45,6 @@ import {
 import { formatRequestedCustodyRestrictions } from '@island.is/judicial-system-web/src/utils/restrictions'
 import { lawsBrokenAccordion } from '@island.is/judicial-system-web/messages/Core/lawsBrokenAccordion'
 import { CaseLegalProvisions } from '@island.is/judicial-system-web/src/graphql/schema'
-
 import { DraftConclusionModal } from '../../components'
 
 export const JudgeOverview: React.FC<React.PropsWithChildren<unknown>> = () => {

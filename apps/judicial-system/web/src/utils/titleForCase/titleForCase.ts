@@ -1,12 +1,10 @@
 import { IntlShape } from 'react-intl'
-
 import {
   CaseDecision,
   CaseState,
   CaseType,
   isInvestigationCase,
 } from '@island.is/judicial-system/types'
-
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import { strings } from './titleForCase.strings'
 

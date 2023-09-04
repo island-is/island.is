@@ -1,8 +1,6 @@
 import React from 'react'
 import { IntlShape, useIntl } from 'react-intl'
-
 import { Tag, TagVariant } from '@island.is/island-ui/core'
-
 import {
   CaseState,
   CaseType,
@@ -10,7 +8,6 @@ import {
   isInvestigationCase,
 } from '@island.is/judicial-system/types'
 import { tables } from '@island.is/judicial-system-web/messages'
-
 import { tagCaseState as m } from './TagCaseState.strings'
 
 interface Props {

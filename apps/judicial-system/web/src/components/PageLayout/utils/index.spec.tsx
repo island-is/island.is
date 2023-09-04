@@ -2,12 +2,10 @@ import React from 'react'
 import { IntlFormatters, useIntl } from 'react-intl'
 import { render, screen } from '@testing-library/react'
 import { MockedProvider } from '@apollo/client/testing'
-
 import { LocaleProvider } from '@island.is/localization'
 import { CaseDecision, CaseState } from '@island.is/judicial-system/types'
 import { mockCase } from '@island.is/judicial-system-web/src/utils/mocks'
 import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
-
 import { caseResult } from './'
 
 interface Props {

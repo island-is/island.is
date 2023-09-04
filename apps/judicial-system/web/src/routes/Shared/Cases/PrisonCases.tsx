@@ -2,7 +2,6 @@ import React, { useContext, useMemo } from 'react'
 import { useIntl } from 'react-intl'
 import { useQuery } from '@apollo/client'
 import partition from 'lodash/partition'
-
 import { AlertMessage, Box } from '@island.is/island-ui/core'
 import {
   Logo,
@@ -17,7 +16,6 @@ import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { TempCaseListEntry as CaseListEntry } from '@island.is/judicial-system-web/src/types'
 import { titles, errors } from '@island.is/judicial-system-web/messages'
 import { InstitutionType } from '@island.is/judicial-system-web/src/graphql/schema'
-
 import { cases as m } from './Cases.strings'
 import * as styles from './Cases.css'
 

@@ -1,7 +1,6 @@
 import React from 'react'
 import { IntlShape, useIntl } from 'react-intl'
 import flatMap from 'lodash/flatMap'
-
 import { Box, Tag, Text } from '@island.is/island-ui/core'
 import {
   capitalize,
@@ -18,7 +17,6 @@ import {
   CaseType,
   Defendant,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-
 import { strings } from './CaseInfo.strings'
 
 const PoliceCaseNumbersTags: React.FC<{ policeCaseNumbers: string[] }> = ({

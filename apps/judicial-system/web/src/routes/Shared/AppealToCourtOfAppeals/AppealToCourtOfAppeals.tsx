@@ -7,7 +7,6 @@ import React, {
 } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
-
 import {
   FormContentContainer,
   FormContext,
@@ -39,7 +38,6 @@ import {
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { mapCaseFileToUploadFile } from '@island.is/judicial-system-web/src/utils/formHelper'
 import * as constants from '@island.is/judicial-system/consts'
-
 import { appealToCourtOfAppeals as strings } from './AppealToCourtOfAppeals.strings'
 
 const AppealToCourtOfAppeals = () => {

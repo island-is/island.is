@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react'
 import { DatePicker, Input } from '@island.is/island-ui/core'
 import { TimeInputField, BlueBox } from '../../components'
 import * as styles from './DateTime.css'
-
 import {
   validate,
   Validation,

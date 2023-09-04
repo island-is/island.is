@@ -1,7 +1,6 @@
 import React, { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
-
 import { AlertMessage, Box, Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import {
@@ -39,7 +38,6 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import { useAppealAlertBanner } from '@island.is/judicial-system-web/src/utils/hooks'
-
 import { strings } from './CaseOverview.strings'
 
 type availableModals =

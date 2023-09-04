@@ -9,7 +9,6 @@ import React, {
 import router from 'next/router'
 import { useIntl } from 'react-intl'
 import _isEqual from 'lodash/isEqual'
-
 import { Box, InputFileUpload, UploadFile } from '@island.is/island-ui/core'
 import {
   CaseFile,
@@ -38,7 +37,6 @@ import {
 import { useS3Upload } from '@island.is/judicial-system-web/src/utils/hooks'
 import { mapCaseFileToUploadFile } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { CaseOrigin } from '@island.is/judicial-system-web/src/graphql/schema'
-
 import {
   PoliceCaseFileCheck,
   PoliceCaseFiles,

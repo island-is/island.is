@@ -1,9 +1,7 @@
 import React from 'react'
 import { render, screen } from '@testing-library/react'
 import { MockedProvider } from '@apollo/client/testing'
-
 import { LocaleProvider } from '@island.is/localization'
-
 import InfoCard from './InfoCard'
 import { SessionArrangements } from '@island.is/judicial-system-web/src/graphql/schema'
 

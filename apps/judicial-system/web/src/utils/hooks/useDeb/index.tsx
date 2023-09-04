@@ -1,7 +1,5 @@
 import { useDebounce } from 'react-use'
-
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
-
 import useCase from '../useCase'
 
 const useDeb = (workingCase: Case, keys: Array<keyof Case> | keyof Case) => {

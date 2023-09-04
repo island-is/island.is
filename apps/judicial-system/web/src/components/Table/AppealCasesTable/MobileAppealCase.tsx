@@ -1,13 +1,10 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
-
 import { Box, Text } from '@island.is/island-ui/core'
-
 import {
   displayFirstPlusRemaining,
   formatDOB,
 } from '@island.is/judicial-system/formatters'
-
 import { CaseListEntry } from '@island.is/judicial-system-web/src/graphql/schema'
 import { displayCaseType } from '@island.is/judicial-system-web/src/routes/Shared/Cases/utils'
 import { TagAppealState } from '@island.is/judicial-system-web/src/components'

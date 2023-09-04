@@ -2,7 +2,6 @@ import React, { useContext } from 'react'
 import { useIntl } from 'react-intl'
 import Link from 'next/link'
 import getConfig from 'next/config'
-
 import {
   Text,
   Box,
@@ -26,7 +25,6 @@ import {
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import * as constants from '@island.is/judicial-system/consts'
-
 import { UserContext } from '../UserProvider/UserProvider'
 import MarkdownWrapper from '../MarkdownWrapper/MarkdownWrapper'
 import { useGetLawyer } from '../../utils/hooks'

@@ -1,6 +1,5 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
-
 import { CaseState, isIndictmentCase } from '@island.is/judicial-system/types'
 import {
   TempCase as Case,
@@ -14,7 +13,6 @@ import {
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { validate } from '@island.is/judicial-system-web/src/utils/validate'
-
 import { courtCaseNumber } from './CourtCaseNumber.strings'
 import * as styles from './CourtCaseNumber.css'
 

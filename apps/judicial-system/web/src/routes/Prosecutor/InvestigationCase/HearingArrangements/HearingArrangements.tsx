@@ -1,7 +1,6 @@
 import React, { useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
-
 import {
   ProsecutorCaseInfo,
   FormContentContainer,
@@ -36,7 +35,6 @@ import { isHearingArrangementsStepValidIC } from '@island.is/judicial-system-web
 import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 import { Institution } from '@island.is/judicial-system-web/src/graphql/schema'
 import * as constants from '@island.is/judicial-system/consts'
-
 import {
   RequestCourtDate,
   SelectCourt,

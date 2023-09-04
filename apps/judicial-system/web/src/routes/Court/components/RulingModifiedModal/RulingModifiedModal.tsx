@@ -1,6 +1,5 @@
 import { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
-
 import { Box, Input } from '@island.is/island-ui/core'
 import {
   FormContext,
@@ -8,7 +7,6 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import { validate } from '@island.is/judicial-system-web/src/utils/validate'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-
 import { strings } from './RulingModifiedModal.strings'
 
 interface Props {

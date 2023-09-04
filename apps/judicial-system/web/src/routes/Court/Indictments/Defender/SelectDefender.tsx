@@ -1,6 +1,5 @@
 import React, { useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
-
 import { Box, Checkbox, Text } from '@island.is/island-ui/core'
 import {
   BlueBox,
@@ -12,7 +11,6 @@ import { core } from '@island.is/judicial-system-web/messages'
 import { capitalize } from '@island.is/judicial-system/formatters'
 import { Defendant } from '@island.is/judicial-system-web/src/graphql/schema'
 import useDefendants from '@island.is/judicial-system-web/src/utils/hooks/useDefendants'
-
 import { defender as m } from './Defender.strings'
 
 interface Props {

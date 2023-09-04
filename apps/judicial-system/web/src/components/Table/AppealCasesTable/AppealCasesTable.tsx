@@ -1,7 +1,6 @@
 import React, { useMemo } from 'react'
 import { useIntl } from 'react-intl'
 import cn from 'classnames'
-
 import { Box, Text } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
@@ -30,7 +29,6 @@ import {
   TableHeaderText,
   getDurationDate,
 } from '@island.is/judicial-system-web/src/components/Table'
-
 import * as styles from '../Table.css'
 import MobileAppealCase from './MobileAppealCase'
 

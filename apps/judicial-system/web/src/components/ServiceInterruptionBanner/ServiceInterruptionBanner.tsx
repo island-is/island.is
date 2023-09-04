@@ -1,13 +1,11 @@
 import React, { useContext } from 'react'
 import { useIntl } from 'react-intl'
-
 import { core } from '@island.is/judicial-system-web/messages'
 import { AlertBanner } from '@island.is/island-ui/core'
 import {
   isProsecutionRole,
   isExtendedCourtRole,
 } from '@island.is/judicial-system/types'
-
 import { UserContext } from '../UserProvider/UserProvider'
 
 const ServiceInterruptionBanner: React.FC<

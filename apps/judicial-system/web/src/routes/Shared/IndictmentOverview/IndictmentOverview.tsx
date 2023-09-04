@@ -1,7 +1,6 @@
 import React, { useCallback, useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
-
 import { Box } from '@island.is/island-ui/core'
 import { completedCaseStates } from '@island.is/judicial-system/types'
 import * as constants from '@island.is/judicial-system/consts'
@@ -22,7 +21,6 @@ import IndictmentCaseFilesList from '@island.is/judicial-system-web/src/componen
 import IndictmentsLawsBrokenAccordionItem, {
   useIndictmentsLawsBroken,
 } from '@island.is/judicial-system-web/src/components/AccordionItems/IndictmentsLawsBrokenAccordionItem/IndictmentsLawsBrokenAccordionItem'
-
 import { strings } from './IndictmentOverview.strings'
 
 const IndictmentOverview = () => {

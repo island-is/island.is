@@ -2,7 +2,6 @@ import React, { Fragment, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence, LayoutGroup, motion } from 'framer-motion'
 import cn from 'classnames'
-
 import {
   PoliceCaseFile,
   isIndictmentCase,
@@ -16,7 +15,6 @@ import {
 } from '@island.is/island-ui/core'
 import { FormContext } from '@island.is/judicial-system-web/src/components'
 import { CaseOrigin } from '@island.is/judicial-system-web/src/graphql/schema'
-
 import { policeCaseFiles as m } from './PoliceCaseFiles.strings'
 import PoliceCaseFilesMessageBox from '../PoliceCaseFilesMessageBox/PoliceCaseFilesMessageBox'
 import { PoliceCaseFilesData } from '../CaseFiles/CaseFiles'

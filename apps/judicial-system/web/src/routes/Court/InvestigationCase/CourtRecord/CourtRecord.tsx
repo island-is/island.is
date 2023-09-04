@@ -1,7 +1,6 @@
 import React, { useCallback, useContext, useState } from 'react'
 import { IntlShape, useIntl } from 'react-intl'
 import router from 'next/router'
-
 import {
   BlueBox,
   CourtCaseInfo,
@@ -50,7 +49,6 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 import * as constants from '@island.is/judicial-system/consts'
-
 import AppealSections from '../../components/AppealSections/AppealSections'
 
 const getSessionBookingsAutofill = (

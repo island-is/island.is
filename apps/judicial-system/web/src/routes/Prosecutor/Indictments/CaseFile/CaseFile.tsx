@@ -2,7 +2,6 @@ import React, { useCallback, useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { LayoutGroup } from 'framer-motion'
 import router from 'next/router'
-
 import {
   FormContentContainer,
   FormContext,
@@ -17,7 +16,6 @@ import { Accordion, AlertMessage, Box, Text } from '@island.is/island-ui/core'
 import { titles } from '@island.is/judicial-system-web/messages'
 import { CaseFileCategory } from '@island.is/judicial-system/types'
 import * as constants from '@island.is/judicial-system/consts'
-
 import { caseFile as m } from './CaseFile.strings'
 
 const CaseFile = () => {

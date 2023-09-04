@@ -1,7 +1,6 @@
 import React, { useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
-
 import {
   Box,
   GridColumn,
@@ -46,7 +45,6 @@ import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader
 import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
 import * as constants from '@island.is/judicial-system/consts'
-
 import { isCourtRecordStepValidRC } from '../../../../utils/validate'
 import { formatCustodyRestrictions } from '../../../../utils/restrictions'
 import AppealSections from '../../components/AppealSections/AppealSections'

@@ -1,5 +1,4 @@
 import React, { useMemo, useCallback } from 'react'
-
 import { Box, Text } from '@island.is/island-ui/core'
 import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
 import { DateTime } from '@island.is/judicial-system-web/src/components'

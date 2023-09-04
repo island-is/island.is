@@ -1,7 +1,6 @@
 import React, { useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import router from 'next/router'
-
 import {
   BlueBox,
   CourtArrangements,
@@ -16,7 +15,6 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import { NotificationType } from '@island.is/judicial-system/types'
 import { SessionArrangements } from '@island.is/judicial-system-web/src/graphql/schema'
-
 import {
   useCase,
   useOnceOn,
@@ -29,7 +27,6 @@ import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/ho
 import { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { hasSentNotification } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import * as constants from '@island.is/judicial-system/consts'
-
 import { icHearingArrangements as m } from './HearingArrangements.strings'
 
 const HearingArrangements = () => {

@@ -1,7 +1,6 @@
 import React from 'react'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-
 import DateTime from '@island.is/judicial-system-web/src/components/DateTime/DateTime'
 
 describe('DateTime component', () => {

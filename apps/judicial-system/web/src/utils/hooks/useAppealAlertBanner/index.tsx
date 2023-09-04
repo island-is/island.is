@@ -1,7 +1,6 @@
 import { useContext } from 'react'
 import { IntlShape, useIntl } from 'react-intl'
 import router from 'next/router'
-
 import { TempCase } from '@island.is/judicial-system-web/src/types'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import { UserContext } from '@island.is/judicial-system-web/src/components'
@@ -24,7 +23,6 @@ import {
   InstitutionType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { appealRuling } from '@island.is/judicial-system-web/messages/Core/appealRuling'
-
 import { strings } from './strings'
 
 const renderLinkButton = (text: string, href: string) => {

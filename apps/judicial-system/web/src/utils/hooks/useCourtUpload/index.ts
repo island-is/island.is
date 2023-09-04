@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
 import { ApolloError, useMutation } from '@apollo/client'
-
 import {
   CaseFile as TCaseFile,
   CaseFileState,

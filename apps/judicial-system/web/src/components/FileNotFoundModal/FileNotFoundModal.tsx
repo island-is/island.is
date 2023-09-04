@@ -1,8 +1,6 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
-
 import { Modal } from '@island.is/judicial-system-web/src/components'
-
 import { strings } from './FileNotFoundModal.strings'
 
 interface Props {

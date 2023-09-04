@@ -1,5 +1,4 @@
 import { FC, useState } from 'react'
-
 import { Colors } from '@island.is/island-ui/theme'
 import {
   Box,

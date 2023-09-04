@@ -2,7 +2,6 @@ import React, { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 import { AnimatePresence } from 'framer-motion'
-
 import {
   FormContentContainer,
   FormContext,
@@ -22,7 +21,6 @@ import IndictmentsLawsBrokenAccordionItem, {
   useIndictmentsLawsBroken,
 } from '@island.is/judicial-system-web/src/components/AccordionItems/IndictmentsLawsBrokenAccordionItem/IndictmentsLawsBrokenAccordionItem'
 import * as constants from '@island.is/judicial-system/consts'
-
 import * as strings from './Overview.strings'
 
 const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {

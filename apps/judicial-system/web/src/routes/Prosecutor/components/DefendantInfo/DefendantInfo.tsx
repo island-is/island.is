@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import InputMask from 'react-input-mask'
 import { useIntl } from 'react-intl'
-
 import { isIndictmentCase } from '@island.is/judicial-system/types'
 import {
   ReactSelectOption,
@@ -31,7 +30,6 @@ import {
   Gender,
   UpdateDefendantInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-
 import * as strings from './DefendantInfo.strings'
 
 interface Props {

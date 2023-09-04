@@ -6,7 +6,6 @@ import {
   getTextStyles,
   useBoxStyles,
 } from '@island.is/island-ui/core'
-
 import * as styles from './DropdownMenu.css'
 import { TestSupport } from '@island.is/island-ui/utils'
 

@@ -1,7 +1,6 @@
 import React, { useCallback, useMemo, useState } from 'react'
 import { IntlShape, useIntl } from 'react-intl'
 import InputMask from 'react-input-mask'
-
 import {
   Box,
   Input,
@@ -32,7 +31,6 @@ import {
   validateAndSetErrorMessage,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { IndictmentCountOffense } from '@island.is/judicial-system-web/src/graphql/schema'
-
 import { Substances as SubstanceChoices } from './Substances/Substances'
 import { indictmentCount as strings } from './IndictmentCount.strings'
 import { indictmentCountEnum as enumStrings } from './IndictmentCountEnum.strings'

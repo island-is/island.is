@@ -1,9 +1,7 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
-
 import { useMutation, useQuery } from '@apollo/client'
 import { useRouter } from 'next/router'
-
 import {
   UpdateUserMutation,
   UserQuery,
@@ -17,7 +15,6 @@ import { Skeleton } from '@island.is/judicial-system-web/src/components'
 import * as constants from '@island.is/judicial-system/consts'
 import * as styles from '../Users/Users.css'
 import { adminStrings as strings } from '../Admin.strings'
-
 import UserForm from '../UserForm/UserForm'
 
 interface UserData {

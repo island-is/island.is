@@ -1,14 +1,11 @@
 import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
-
 import { Input } from '@island.is/island-ui/core'
-
 import { Substance as SubstanceEnum } from '@island.is/judicial-system/types'
 import {
   removeErrorMessageIfValid,
   validateAndSetErrorMessage,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
-
 import { substanceEnum } from '../Substances/SubstancesEnum.strings'
 
 interface Props {

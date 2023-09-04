@@ -1,6 +1,5 @@
 import React from 'react'
 import { Box, Text, FocusableBox } from '@island.is/island-ui/core'
-
 import * as styles from './CategoryCard.css'
 
 interface CategoryCardProps {

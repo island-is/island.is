@@ -2,7 +2,6 @@ import React, { useState, useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 import { AnimatePresence } from 'framer-motion'
-
 import {
   Accordion,
   AccordionItem,
@@ -47,7 +46,6 @@ import {
 } from '@island.is/judicial-system-web/messages'
 import { createCaseResentExplanation } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import { lawsBrokenAccordion } from '@island.is/judicial-system-web/messages/Core/lawsBrokenAccordion'
-
 import * as styles from './Overview.css'
 
 export const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {

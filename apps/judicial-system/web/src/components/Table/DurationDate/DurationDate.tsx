@@ -3,7 +3,6 @@ import parseISO from 'date-fns/parseISO'
 import { tables } from '@island.is/judicial-system-web/messages'
 import { Text } from '@island.is/island-ui/core'
 import { CaseState } from '@island.is/judicial-system/types'
-
 import { formatDate } from '@island.is/judicial-system/formatters'
 
 export function getDurationDate(

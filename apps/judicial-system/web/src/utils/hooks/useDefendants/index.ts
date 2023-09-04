@@ -1,6 +1,5 @@
 import React, { SetStateAction, useCallback } from 'react'
 import { useIntl } from 'react-intl'
-
 import { toast } from '@island.is/island-ui/core'
 import { errors } from '@island.is/judicial-system-web/messages'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
@@ -9,7 +8,6 @@ import {
   Defendant,
   UpdateDefendantInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-
 import { useCreateDefendantMutation } from './createDefendantt.generated'
 import { useDeleteDefendantMutation } from './deleteDefendantt.generated'
 import { useUpdateDefendantMutation } from './updateDefendantt.generated'

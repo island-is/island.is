@@ -1,7 +1,6 @@
 import React, { useContext, useState, useCallback } from 'react'
 import { useIntl } from 'react-intl'
 import router from 'next/router'
-
 import { Box, Text, AlertMessage } from '@island.is/island-ui/core'
 import {
   FormFooter,
@@ -30,7 +29,6 @@ import {
 import { hasSentNotification } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import type { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
 import * as constants from '@island.is/judicial-system/consts'
-
 import { rcHearingArrangements as m } from './HearingArrangements.strings'
 
 export const HearingArrangements: React.FC<

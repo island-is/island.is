@@ -1,11 +1,9 @@
 import { createIntl } from 'react-intl'
-
 import {
   CaseType,
   Gender,
   Defendant,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-
 import { getDefendantLabel } from './CaseInfo'
 
 const formatMessage = createIntl({

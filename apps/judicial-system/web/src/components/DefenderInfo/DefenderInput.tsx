@@ -8,10 +8,8 @@ import React, {
 import InputMask from 'react-input-mask'
 import { useIntl } from 'react-intl'
 import { SingleValue } from 'react-select'
-
 import { Box, Input, Select } from '@island.is/island-ui/core'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
-
 import { FormContext } from '../FormProvider/FormProvider'
 import { useCase, useGetLawyers } from '../../utils/hooks'
 import { defenderInput as m } from './DefenderInput.strings'

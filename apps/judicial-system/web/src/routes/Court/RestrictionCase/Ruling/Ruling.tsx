@@ -2,7 +2,6 @@ import React, { useCallback, useContext, useState } from 'react'
 import { useIntl, IntlShape } from 'react-intl'
 import { useRouter } from 'next/router'
 import formatISO from 'date-fns/formatISO'
-
 import {
   Accordion,
   AccordionItem,
@@ -54,7 +53,6 @@ import {
   Defendant,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import * as constants from '@island.is/judicial-system/consts'
-
 import { rcRuling as m } from './Ruling.strings'
 
 export function getConclusionAutofill(

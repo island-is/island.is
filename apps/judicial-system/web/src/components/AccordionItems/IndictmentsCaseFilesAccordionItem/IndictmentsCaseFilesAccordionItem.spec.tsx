@@ -1,7 +1,5 @@
 import faker from 'faker'
-
 import { CaseFileState } from '@island.is/judicial-system/types'
-
 import {
   getFilePlacement,
   getFilesBelowInChapter,

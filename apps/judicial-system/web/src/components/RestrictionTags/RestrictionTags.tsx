@@ -1,5 +1,4 @@
 import React from 'react'
-
 import { Box, Tag } from '@island.is/island-ui/core'
 import { isAcceptingCaseDecision } from '@island.is/judicial-system/types'
 import { getRestrictionTagVariant } from '@island.is/judicial-system-web/src/utils/stepHelper'

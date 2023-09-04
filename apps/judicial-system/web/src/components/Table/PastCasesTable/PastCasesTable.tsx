@@ -1,6 +1,5 @@
 import React, { useContext, useMemo } from 'react'
 import cn from 'classnames'
-
 import { theme } from '@island.is/island-ui/theme'
 import { Box, Text } from '@island.is/island-ui/core'
 import { useIntl } from 'react-intl'
@@ -14,13 +13,11 @@ import {
   useSortCases,
   useViewport,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-
 import {
   UserContext,
   TagAppealState,
   TagCaseState,
 } from '@island.is/judicial-system-web/src/components'
-
 import {
   ColumnCaseType,
   CourtCaseNumber,
@@ -32,7 +29,6 @@ import {
   getDurationDate,
   CreatedDate,
 } from '@island.is/judicial-system-web/src/components/Table'
-
 import MobilePastCase from './MobilePastCase'
 import * as styles from '../Table.css'
 

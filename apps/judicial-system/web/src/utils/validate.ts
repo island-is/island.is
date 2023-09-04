@@ -5,7 +5,6 @@ import {
   CaseType,
   SessionArrangements,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-
 import { isBusiness } from './stepHelper'
 import { TempCase as Case } from '../types'
 

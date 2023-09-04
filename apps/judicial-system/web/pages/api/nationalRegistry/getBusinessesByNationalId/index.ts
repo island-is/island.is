@@ -1,5 +1,4 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-
 import { NationalRegistryResponseBusiness } from '@island.is/judicial-system-web/src/types'
 
 async function getBusinessesByNationalId(

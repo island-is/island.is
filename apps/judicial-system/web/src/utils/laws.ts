@@ -1,5 +1,4 @@
 import { laws } from '@island.is/judicial-system-web/messages'
-
 import type { CheckboxInfo } from '../components/CheckboxList/CheckboxList'
 import { CaseLegalProvisions } from '../graphql/schema'
 

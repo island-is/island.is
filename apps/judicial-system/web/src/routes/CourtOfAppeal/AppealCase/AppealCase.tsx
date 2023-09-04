@@ -2,7 +2,6 @@ import { useQuery } from '@apollo/client'
 import { useRouter } from 'next/router'
 import { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
-
 import { Box, Input, Select } from '@island.is/island-ui/core'
 import {
   BlueBox,
@@ -31,7 +30,6 @@ import {
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { UsersQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import { isCourtOfAppealCaseStepValid } from '@island.is/judicial-system-web/src/utils/validate'
-
 import { appealCase as strings } from './AppealCase.strings'
 import { core } from '@island.is/judicial-system-web/messages'
 

@@ -3,7 +3,6 @@ import cn from 'classnames'
 import { useRouter } from 'next/router'
 import { useWindowSize } from 'react-use'
 import { useIntl } from 'react-intl'
-
 import {
   Box,
   Button,
@@ -12,7 +11,6 @@ import {
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { core } from '@island.is/judicial-system-web/messages'
-
 import InfoBox from '../InfoBox/InfoBox'
 import * as styles from './FormFooter.css'
 

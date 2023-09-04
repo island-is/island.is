@@ -1,7 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-
 import type { Lawyer } from '@island.is/judicial-system-web/src/types'
-
 import { mapToLawyer } from '../utils'
 
 async function getLawyers(): Promise<Lawyer[]> {

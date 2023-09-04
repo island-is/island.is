@@ -10,7 +10,6 @@ import {
   motion,
   useAnimation,
 } from 'framer-motion'
-
 import { theme } from '@island.is/island-ui/theme'
 import { Box, Text, Icon, Button } from '@island.is/island-ui/core'
 import {
@@ -22,7 +21,6 @@ import {
   TagAppealState,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-
 import {
   directionType,
   sortableTableColumn,
@@ -37,7 +35,6 @@ import {
 import { core, tables } from '@island.is/judicial-system-web/messages'
 import { useViewport } from '@island.is/judicial-system-web/src/utils/hooks'
 import TagCaseState from '@island.is/judicial-system-web/src/components/TagCaseState/TagCaseState'
-
 import * as styles from './Cases.css'
 import MobileCase from './MobileCase'
 import { cases as m } from './Cases.strings'

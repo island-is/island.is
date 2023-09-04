@@ -1,7 +1,6 @@
 import { useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
-
 import {
   INVESTIGATION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE,
   RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE,
@@ -15,7 +14,6 @@ import {
   Modal,
 } from '@island.is/judicial-system-web/src/components'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-
 import { strings } from './ReopenModal.strings'
 
 interface Props {

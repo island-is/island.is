@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
-
 import { Box, Input, RadioButton, Text } from '@island.is/island-ui/core'
 import { capitalize } from '@island.is/judicial-system/formatters'
 import { CaseAppealDecision } from '@island.is/judicial-system/types'
@@ -13,7 +12,6 @@ import {
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { SessionArrangements } from '@island.is/judicial-system-web/src/graphql/schema'
-
 import { appealSections as m } from './AppealSections.strings'
 import * as styles from './AppealSections.css'
 

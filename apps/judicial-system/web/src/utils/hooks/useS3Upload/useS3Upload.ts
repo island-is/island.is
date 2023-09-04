@@ -1,13 +1,11 @@
 import { useCallback, useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { uuid } from 'uuidv4'
-
 import { toast, UploadFile } from '@island.is/island-ui/core'
 import { CaseFileCategory } from '@island.is/judicial-system/types'
 import { errors } from '@island.is/judicial-system-web/messages'
 import { UserContext } from '@island.is/judicial-system-web/src/components'
 import { PresignedPost } from '@island.is/judicial-system-web/src/graphql/schema'
-
 import {
   CreatePresignedPostMutation,
   useCreatePresignedPostMutation,

@@ -1,7 +1,6 @@
 import React from 'react'
 import { Text, Box, AccordionItem } from '@island.is/island-ui/core'
 import { useIntl } from 'react-intl'
-
 import {
   capitalize,
   formatDate,
@@ -20,7 +19,6 @@ import { formatRequestedCustodyRestrictions } from '@island.is/judicial-system-w
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import { lawsBrokenAccordion } from '@island.is/judicial-system-web/messages/Core/lawsBrokenAccordion'
 import { CaseLegalProvisions } from '@island.is/judicial-system-web/src/graphql/schema'
-
 import AccordionListItem from '../../AccordionListItem/AccordionListItem'
 import * as styles from './PoliceRequestAccordionItem.css'
 

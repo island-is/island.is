@@ -1,7 +1,6 @@
 import React, { useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import router from 'next/router'
-
 import {
   CaseFileList,
   CourtCaseInfo,
@@ -41,7 +40,6 @@ import {
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { isRulingValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 import * as constants from '@island.is/judicial-system/consts'
-
 import { icRuling as m } from './Ruling.strings'
 
 const Ruling = () => {

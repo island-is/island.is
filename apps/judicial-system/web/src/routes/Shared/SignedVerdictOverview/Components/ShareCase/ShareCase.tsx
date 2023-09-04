@@ -1,7 +1,6 @@
 import { useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { SingleValue } from 'react-select'
-
 import {
   BlueBox,
   FormContext,
@@ -9,7 +8,6 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import { signedVerdictOverview as m } from '@island.is/judicial-system-web/messages'
 import { Box, Button, Select, Text, Tooltip } from '@island.is/island-ui/core'
-
 import { useInstitution } from '@island.is/judicial-system-web/src/utils/hooks'
 import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 

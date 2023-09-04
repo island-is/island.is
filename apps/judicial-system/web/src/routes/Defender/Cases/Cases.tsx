@@ -2,22 +2,18 @@ import React, { useEffect, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 import partition from 'lodash/partition'
 import { useQuery } from '@apollo/client'
-
 import { AlertMessage, Box, Tabs, Text } from '@island.is/island-ui/core'
 import {
   CaseListEntry,
   completedCaseStates,
 } from '@island.is/judicial-system/types'
-
 import { PageHeader } from '@island.is/judicial-system-web/src/components'
 import { titles, errors } from '@island.is/judicial-system-web/messages'
 import { CasesQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import SharedPageLayout from '@island.is/judicial-system-web/src/components/SharedPageLayout/SharedPageLayout'
-
 import DefenderCasesTable from './components/DefenderCasesTable'
 import FilterCheckboxes from './components/FilterCheckboxes'
 import useFilterCases, { Filters } from './hooks/useFilterCases'
-
 import { defenderCases as m } from './Cases.strings'
 import * as styles from './Cases.css'
 

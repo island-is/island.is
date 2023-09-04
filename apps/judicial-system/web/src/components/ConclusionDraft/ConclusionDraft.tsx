@@ -7,9 +7,7 @@ import {
   Decision,
   RulingInput,
 } from '@island.is/judicial-system-web/src/components'
-
 import { ruling as m } from '@island.is/judicial-system-web/messages'
-
 import { useCase } from '../../utils/hooks'
 
 interface Props {

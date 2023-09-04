@@ -1,7 +1,6 @@
 import React, { useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'framer-motion'
-
 import { Box, Text } from '@island.is/island-ui/core'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import * as constants from '@island.is/judicial-system/consts'
@@ -18,7 +17,6 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import { useFileList } from '@island.is/judicial-system-web/src/utils/hooks'
 import { CaseAppealState } from '@island.is/judicial-system-web/src/graphql/schema'
-
 import { strings } from './AppealCaseFilesOverview.strings'
 
 const AppealCaseFilesOverview: React.FC<

@@ -1,5 +1,4 @@
 import { defineMessage, defineMessages } from 'react-intl'
-
 import { CaseCustodyRestrictions } from '@island.is/judicial-system-web/src/graphql/schema'
 
 export const restrictionsV2 = {

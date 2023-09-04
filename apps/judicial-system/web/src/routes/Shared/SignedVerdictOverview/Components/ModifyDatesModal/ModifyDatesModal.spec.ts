@@ -1,5 +1,4 @@
 import { createIntl } from 'react-intl'
-
 import { createCaseModifiedExplanation } from './ModifyDatesModal'
 
 describe('createCaseModifiedExplanation', () => {

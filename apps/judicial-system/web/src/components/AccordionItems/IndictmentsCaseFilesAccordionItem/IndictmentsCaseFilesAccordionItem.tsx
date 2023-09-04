@@ -15,7 +15,6 @@ import {
 } from 'framer-motion'
 import { useMutation } from '@apollo/client'
 import { useMeasure } from 'react-use'
-
 import {
   AccordionItem,
   Text,
@@ -39,7 +38,6 @@ import {
   FileNotFoundModal,
   IndictmentInfo,
 } from '@island.is/judicial-system-web/src/components'
-
 import { indictmentsCaseFilesAccordionItem as m } from './IndictmentsCaseFilesAccordionItem.strings'
 import { UpdateFileMutation } from './UpdateFiles.gql'
 import * as styles from './IndictmentsCaseFilesAccordionItem.css'

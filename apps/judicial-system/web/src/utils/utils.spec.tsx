@@ -2,12 +2,10 @@ import React from 'react'
 import faker from 'faker'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-
 import {
   Notification,
   NotificationType,
 } from '@island.is/judicial-system/types'
-
 import {
   getAppealEndDate,
   getShortGender,

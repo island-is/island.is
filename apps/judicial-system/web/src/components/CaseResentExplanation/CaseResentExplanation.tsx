@@ -1,8 +1,6 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
-
 import { AlertMessage } from '@island.is/island-ui/core'
-
 import MarkdownWrapper from '../MarkdownWrapper/MarkdownWrapper'
 import { caseResentExplanation as strings } from './CaseResentExplanation.strings'
 

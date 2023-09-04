@@ -1,8 +1,6 @@
 import Cookies from 'js-cookie'
 import React, { createContext, useEffect, useState } from 'react'
-
 import { CSRF_COOKIE_NAME } from '@island.is/judicial-system/consts'
-
 import {
   User,
   UserRole,

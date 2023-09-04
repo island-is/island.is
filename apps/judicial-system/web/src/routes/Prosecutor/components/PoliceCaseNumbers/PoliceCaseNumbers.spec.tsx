@@ -1,14 +1,12 @@
 import React from 'react'
 import faker from 'faker'
 import { render, screen } from '@testing-library/react'
-
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import {
   CaseType,
   CaseOrigin,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { CaseState } from '@island.is/judicial-system/types'
-
 import { PoliceCaseNumbers } from './PoliceCaseNumbers'
 import { IntlProvider } from 'react-intl'
 import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client'

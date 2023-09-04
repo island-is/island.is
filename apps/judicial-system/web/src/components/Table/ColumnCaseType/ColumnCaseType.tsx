@@ -1,10 +1,7 @@
 import React from 'react'
-
 import { Box, Text } from '@island.is/island-ui/core'
 import { useIntl } from 'react-intl'
-
 import { tables } from '@island.is/judicial-system-web/messages'
-
 import { CaseDecision, CaseType } from '@island.is/judicial-system/types'
 import { displayCaseType } from '@island.is/judicial-system-web/src/routes/Shared/Cases/utils'
 

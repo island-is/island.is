@@ -1,7 +1,5 @@
 import React from 'react'
-
 import { SkeletonLoader, Box } from '@island.is/island-ui/core'
-
 import * as styles from './Skeleton.css'
 
 const Skeleton = () => {

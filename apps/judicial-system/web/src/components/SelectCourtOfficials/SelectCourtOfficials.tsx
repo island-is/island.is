@@ -1,7 +1,6 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
 import { SingleValue } from 'react-select'
-
 import { Box, Select, Tooltip } from '@island.is/island-ui/core'
 import { ReactSelectOption, TempCase as Case } from '../../types'
 import {
@@ -9,7 +8,6 @@ import {
   UserRole,
   CaseType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-
 import { selectCourtOfficials as strings } from './SelectCourtOfficials.strings'
 import BlueBox from '../BlueBox/BlueBox'
 import SectionHeading from '../SectionHeading/SectionHeading'

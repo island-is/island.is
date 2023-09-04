@@ -6,7 +6,6 @@ import {
   MutationFunctionOptions,
 } from '@apollo/client'
 import { useIntl } from 'react-intl'
-
 import {
   CaseType,
   Exact,
@@ -19,7 +18,6 @@ import {
 } from '@island.is/judicial-system-web/messages'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import * as constants from '@island.is/judicial-system/consts'
-
 import { Modal } from '..'
 import MarkdownWrapper from '../MarkdownWrapper/MarkdownWrapper'
 import {

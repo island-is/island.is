@@ -1,6 +1,5 @@
 import React from 'react'
 import { motion } from 'framer-motion'
-
 import InfoBox from '@island.is/judicial-system-web/src/components/InfoBox/InfoBox'
 import { formatDate } from '@island.is/judicial-system/formatters'
 

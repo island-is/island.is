@@ -1,6 +1,5 @@
 import React, { useMemo } from 'react'
 import { useIntl } from 'react-intl'
-
 import {
   ReactSelectOption,
   TempIndictmentCount as TIndictmentCount,
@@ -12,7 +11,6 @@ import {
 import { UpdateIndictmentCount } from '@island.is/judicial-system-web/src/utils/hooks/useIndictmentCounts'
 import { Box, Select } from '@island.is/island-ui/core'
 import { IndictmentCountOffense } from '@island.is/judicial-system-web/src/graphql/schema'
-
 import { Substance } from '../Substance/Substance'
 import { substanceEnum } from './SubstancesEnum.strings'
 import { substances as strings } from './Substances.strings'

@@ -1,7 +1,6 @@
 import React, { useCallback, useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
-
 import {
   CourtCaseInfo,
   FormContentContainer,
@@ -19,7 +18,6 @@ import { NotificationType } from '@island.is/judicial-system/types'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import * as constants from '@island.is/judicial-system/consts'
 import { core } from '@island.is/judicial-system-web/messages'
-
 import { defender as m } from './Defender.strings'
 import SelectDefender from './SelectDefender'
 

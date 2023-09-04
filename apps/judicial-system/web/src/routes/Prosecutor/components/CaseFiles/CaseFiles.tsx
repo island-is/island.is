@@ -8,7 +8,6 @@ import React, {
 import { useIntl } from 'react-intl'
 import { uuid } from 'uuidv4'
 import { useRouter } from 'next/router'
-
 import {
   ProsecutorCaseInfo,
   FormContentContainer,
@@ -47,7 +46,6 @@ import {
 import { CaseOrigin } from '@island.is/judicial-system-web/src/graphql/schema'
 import { fileExtensionWhitelist } from '@island.is/island-ui/core/types'
 import * as constants from '@island.is/judicial-system/consts'
-
 import { PoliceCaseFileCheck, PoliceCaseFiles } from '../../components'
 import { useGetPoliceCaseFilesQuery } from './getPoliceCaseFiles.generated'
 import { caseFiles as strings } from './CaseFiles.strings'

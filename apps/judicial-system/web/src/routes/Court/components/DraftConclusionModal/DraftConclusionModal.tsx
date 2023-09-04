@@ -1,7 +1,6 @@
 import React from 'react'
 import { AnimatePresence } from 'framer-motion'
 import { useIntl } from 'react-intl'
-
 import {
   ConclusionDraft,
   Modal,

@@ -1,7 +1,6 @@
 import parseISO from 'date-fns/parseISO'
 import addDays from 'date-fns/addDays'
 import flatten from 'lodash/flatten'
-
 import { TagVariant } from '@island.is/island-ui/core'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {

@@ -7,7 +7,6 @@ import React, {
 } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
-
 import {
   FormContentContainer,
   FormContext,
@@ -25,7 +24,6 @@ import {
   Text,
   UploadFile,
 } from '@island.is/island-ui/core'
-
 import { core } from '@island.is/judicial-system-web/messages'
 import {
   CaseFileCategory,
@@ -45,7 +43,6 @@ import {
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { isCourtOfAppealRulingStepValid } from '@island.is/judicial-system-web/src/utils/validate'
 import { appealRuling } from '@island.is/judicial-system-web/messages/Core/appealRuling'
-
 import { courtOfAppealRuling as strings } from './Ruling.strings'
 
 const CourtOfAppealRuling: React.FC<React.PropsWithChildren<unknown>> = () => {

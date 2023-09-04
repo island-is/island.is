@@ -1,5 +1,4 @@
 import { defineMessages } from 'react-intl'
-
 import { CaseLegalProvisions } from '@island.is/judicial-system-web/src/graphql/schema'
 
 export const laws = {

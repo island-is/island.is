@@ -1,5 +1,4 @@
 import React from 'react'
-
 import { Box, ResponsiveProp, Space, Text } from '@island.is/island-ui/core'
 
 interface Props {

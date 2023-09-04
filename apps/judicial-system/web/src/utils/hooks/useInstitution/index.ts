@@ -1,5 +1,4 @@
 import { useQuery } from '@apollo/client'
-
 import { InstitutionsQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import {
   InstitutionType,

@@ -2,9 +2,7 @@ import React, { ReactNode } from 'react'
 import ReactDOM from 'react-dom'
 import FocusLock from 'react-focus-lock'
 import { motion } from 'framer-motion'
-
 import { Box, Button, Icon, Text } from '@island.is/island-ui/core'
-
 import * as styles from './Modal.css'
 
 interface ModalProps {

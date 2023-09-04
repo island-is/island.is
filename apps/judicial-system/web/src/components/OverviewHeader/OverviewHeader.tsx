@@ -1,9 +1,7 @@
 import React, { useContext } from 'react'
 import { useIntl } from 'react-intl'
-
 import { Text, Box } from '@island.is/island-ui/core'
 import { titleForCase } from '@island.is/judicial-system-web/src/utils/titleForCase/titleForCase'
-
 import { FormContext } from '../FormProvider/FormProvider'
 
 interface Props {

@@ -2,7 +2,6 @@ import React, { useContext, useEffect, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useQuery } from '@apollo/client'
 import partition from 'lodash/partition'
-
 import { AlertMessage, Box, Select } from '@island.is/island-ui/core'
 import {
   CaseState,
@@ -37,7 +36,6 @@ import {
   User,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-
 import ActiveCases from './ActiveCases'
 import { FilterOption, useFilter } from './useFilter'
 import { cases as m } from './Cases.strings'

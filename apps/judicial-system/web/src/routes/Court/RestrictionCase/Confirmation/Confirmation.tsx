@@ -1,6 +1,5 @@
 import React, { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
-
 import { Accordion, Box, Text } from '@island.is/island-ui/core'
 import {
   CaseDecision,
@@ -28,7 +27,6 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { core, titles } from '@island.is/judicial-system-web/messages'
-
 import { RulingModifiedModal } from '../../components'
 import { confirmation as strings } from './Confirmation.strings'
 

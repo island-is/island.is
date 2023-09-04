@@ -1,7 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-
 import type { Lawyer } from '@island.is/judicial-system-web/src/types'
-
 import { mapToLawyer } from '../utils'
 import { validate } from '@island.is/judicial-system-web/src/utils/validate'
 

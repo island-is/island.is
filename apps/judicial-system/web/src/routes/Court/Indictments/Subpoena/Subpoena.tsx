@@ -1,7 +1,6 @@
 import React, { useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import router from 'next/router'
-
 import {
   CourtArrangements,
   CourtCaseInfo,
@@ -24,7 +23,6 @@ import { isSubpoenaStepValid } from '@island.is/judicial-system-web/src/utils/va
 import { hasSentNotification } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import * as constants from '@island.is/judicial-system/consts'
 import type { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
-
 import { subpoena as strings } from './Subpoena.strings'
 
 const Subpoena: React.FC<React.PropsWithChildren<unknown>> = () => {

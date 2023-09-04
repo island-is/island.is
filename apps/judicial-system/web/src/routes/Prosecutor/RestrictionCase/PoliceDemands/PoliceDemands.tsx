@@ -1,7 +1,6 @@
 import React, { useCallback, useContext, useState } from 'react'
 import { IntlShape, useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
-
 import {
   BlueBox,
   CheckboxList,
@@ -56,7 +55,6 @@ import {
   Gender,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import * as constants from '@island.is/judicial-system/consts'
-
 import * as styles from './PoliceDemands.css'
 
 export interface DemandsAutofillProps {

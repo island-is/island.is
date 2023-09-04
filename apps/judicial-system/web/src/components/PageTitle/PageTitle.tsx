@@ -1,5 +1,4 @@
 import React from 'react'
-
 import { Box, Text } from '@island.is/island-ui/core'
 
 const PageTitle: React.FC<React.PropsWithChildren<unknown>> = ({

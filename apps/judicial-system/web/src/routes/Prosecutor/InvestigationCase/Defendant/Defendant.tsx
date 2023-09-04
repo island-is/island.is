@@ -3,7 +3,6 @@ import { useRouter } from 'next/router'
 import { useIntl } from 'react-intl'
 import { AnimatePresence, motion } from 'framer-motion'
 import { uuid } from 'uuidv4'
-
 import {
   BlueBox,
   DefenderInfo,
@@ -42,7 +41,6 @@ import {
   UpdateDefendantInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import * as constants from '@island.is/judicial-system/consts'
-
 import {
   DefendantInfo,
   PoliceCaseNumbers,

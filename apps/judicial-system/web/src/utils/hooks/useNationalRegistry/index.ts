@@ -1,14 +1,12 @@
 import { useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import useSWR from 'swr'
-
 import {
   NationalRegistryResponseBusiness,
   NationalRegistryResponsePerson,
 } from '@island.is/judicial-system-web/src/types'
 import { toast } from '@island.is/island-ui/core'
 import { errors } from '@island.is/judicial-system-web/messages'
-
 import { validate } from '../../validate'
 import { isBusiness } from '../../stepHelper'
 

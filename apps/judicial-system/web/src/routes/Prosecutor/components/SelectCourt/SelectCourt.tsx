@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
-
 import { Box, Select, Text } from '@island.is/island-ui/core'
 import {
   ReactSelectOption,

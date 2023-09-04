@@ -1,5 +1,4 @@
 import React, { useContext } from 'react'
-
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { Box } from '@island.is/island-ui/core'
 import {
@@ -7,7 +6,6 @@ import {
   ProsecutorSelection,
 } from '@island.is/judicial-system-web/src/components'
 import { isIndictmentCase } from '@island.is/judicial-system/types'
-
 import ProsecutorSectionHeading from './ProsecutorSectionHeading'
 
 const ProsecutorSection: React.FC<React.PropsWithChildren<unknown>> = () => {

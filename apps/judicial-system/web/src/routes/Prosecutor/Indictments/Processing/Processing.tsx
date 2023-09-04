@@ -1,7 +1,6 @@
 import React, { useCallback, useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
-
 import {
   FormContentContainer,
   FormContext,
@@ -25,7 +24,6 @@ import { isProcessingStepValidIndictments } from '@island.is/judicial-system-web
 import { Institution } from '@island.is/judicial-system-web/src/graphql/schema'
 import { isTrafficViolationCase } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import * as constants from '@island.is/judicial-system/consts'
-
 import { ProsecutorSection, SelectCourt } from '../../components'
 
 const Processing: React.FC<React.PropsWithChildren<unknown>> = () => {

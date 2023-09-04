@@ -1,8 +1,6 @@
 import React, { useState, useRef } from 'react'
 import InputMask from 'react-input-mask'
-
 import { Button, Input } from '@island.is/island-ui/core'
-
 import BlueBox from '../BlueBox/BlueBox'
 import * as styles from './MultipleValueList.css'
 

@@ -1,6 +1,5 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
-
 import { Box, Text, Tooltip } from '@island.is/island-ui/core'
 import { requestCourtDate as m } from '@island.is/judicial-system-web/messages'
 import { DateTime } from '@island.is/judicial-system-web/src/components'

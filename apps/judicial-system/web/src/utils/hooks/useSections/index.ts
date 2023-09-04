@@ -1,6 +1,5 @@
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
-
 import {
   CaseAppealState,
   CaseState,
@@ -17,7 +16,6 @@ import { caseResult } from '@island.is/judicial-system-web/src/components/PageLa
 import { capitalize } from '@island.is/judicial-system/formatters'
 import { RouteSection } from '@island.is/judicial-system-web/src/components/PageLayout/PageLayout'
 import { FeatureContext } from '@island.is/judicial-system-web/src/components/FeatureProvider/FeatureProvider'
-
 import {
   CaseType,
   Gender,
@@ -36,7 +34,6 @@ import {
   prosecutorRestrictionCasesRoutes,
 } from '@island.is/judicial-system/consts'
 import * as constants from '@island.is/judicial-system/consts'
-
 import { stepValidations, stepValidationsType } from '../../formHelper'
 import { isTrafficViolationCase } from '../../stepHelper'
 import { useContext } from 'react'

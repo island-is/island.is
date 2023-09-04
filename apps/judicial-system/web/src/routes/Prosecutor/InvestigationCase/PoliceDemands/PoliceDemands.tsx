@@ -1,7 +1,6 @@
 import React, { useCallback, useContext, useState } from 'react'
 import { MessageDescriptor, useIntl } from 'react-intl'
 import router from 'next/router'
-
 import {
   FormContentContainer,
   FormContext,
@@ -28,7 +27,6 @@ import {
 import { CaseType } from '@island.is/judicial-system/types'
 import { enumerate, formatDOB } from '@island.is/judicial-system/formatters'
 import { isPoliceDemandsStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
-
 import * as constants from '@island.is/judicial-system/consts'
 
 export const formatInstitutionName = (name: string | undefined) => {
