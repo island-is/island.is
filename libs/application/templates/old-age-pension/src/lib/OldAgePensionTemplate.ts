@@ -15,6 +15,7 @@ import {
   UserProfileApi,
   NationalRegistrySpouseApi,
   ChildrenCustodyInformationApi,
+  InstitutionNationalIds,
 } from '@island.is/application/types'
 import {
   coreMessages,
@@ -342,10 +343,10 @@ const OldAgePensionTemplate: ApplicationTemplate<
       }),
       assignOrganization: assign((context) => {
         const { application } = context
-        const TR_ID = process.env.TR_ID ?? ''
+        const TR_ID = InstitutionNationalIds.TRYGGINGASTOFNUN ?? ''
 
         const assignees = application.assignees
-        if (TR_ID && TR_ID !== '') {
+        if (TR_ID) {
           if (Array.isArray(assignees) && !assignees.includes(TR_ID)) {
             assignees.push(TR_ID)
             set(application, 'assignees', assignees)
@@ -373,7 +374,7 @@ const OldAgePensionTemplate: ApplicationTemplate<
       return Roles.APPLICANT
     }
 
-    const TR_ID = process.env.TR_ID
+    const TR_ID = InstitutionNationalIds.TRYGGINGASTOFNUN
     if (id === TR_ID) {
       return Roles.ORGINISATION_REVIEWER
     }
