@@ -552,7 +552,6 @@ export const AircraftRegistry = new XroadConf({
   },
 })
 
-// TODO: ask devops to add secrets to param store
 export const HousingBenefitCalculator = new XroadConf({
   env: {
     XROAD_HOUSING_BENEFIT_CALCULATOR_PATH: {
