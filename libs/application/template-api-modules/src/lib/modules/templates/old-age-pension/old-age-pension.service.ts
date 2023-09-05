@@ -8,10 +8,10 @@ import { TemplateApiError } from '@island.is/nest/problem'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { TemplateApiModuleActionProps } from '@island.is/application/template-api-modules'
 
-import  {HelloOddurApi, SocialInsuranceAdministrationClientService} from '@island.is/clients/social-insurance-administration'
-
-
-
+import {
+  HelloOddurApi,
+  SocialInsuranceAdministrationClientService,
+} from '@island.is/clients/social-insurance-administration'
 
 interface customError {
   type: string
@@ -25,7 +25,7 @@ interface customError {
 export class OldAgePensionService extends BaseTemplateApiService {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
-    private sIAClientService: SocialInsuranceAdministrationClientService,
+    private siaClientService: SocialInsuranceAdministrationClientService,
     private helloOddurApi: HelloOddurApi,
   ) {
     super(ApplicationTypes.OLD_AGE_PENSION)
@@ -42,15 +42,11 @@ export class OldAgePensionService extends BaseTemplateApiService {
   }
 
   async helloWorld({ application, auth }: TemplateApiModuleActionProps) {
+    let response
+
     try {
-      const resp = await this.sIAClientService.getOddur(auth)
-
-      console.log('Computer says OK!!!!', resp)
+      response = await this.siaClientService.getOddur(auth)
     } catch (e) {
-      this.logger.error(
-        'No HELLO!!!!',e
-      )
-
       throw new TemplateApiError(
         {
           title: 'Computer says NO!',
@@ -59,14 +55,12 @@ export class OldAgePensionService extends BaseTemplateApiService {
         500,
       )
     }
+
+    return response
   }
 
   async getStatus({ application, auth }: TemplateApiModuleActionProps) {
-
-
-
     console.log('--------------- AUTH -------------------', auth)
-     
 
     /*
     When applicant creates new application:
@@ -76,13 +70,11 @@ export class OldAgePensionService extends BaseTemplateApiService {
     */
 
     try {
-      const resp = await this.sIAClientService.getStatus(auth)
+      const resp = await this.siaClientService.getStatus(auth)
 
       console.log('Computer says OK!!!!', resp)
     } catch (e) {
-      this.logger.error(
-        'No HELLO!!!!',e
-      )
+      this.logger.error('No HELLO!!!!', e)
 
       throw new TemplateApiError(
         {
@@ -93,12 +85,6 @@ export class OldAgePensionService extends BaseTemplateApiService {
       )
     }
 
-
-     
-    
-    
-    return true;
-
-
+    return true
   }
 }
