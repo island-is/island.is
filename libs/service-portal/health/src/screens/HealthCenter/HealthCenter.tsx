@@ -42,16 +42,9 @@ const HealthCenter = () => {
 
   const healthCenterData = data?.rightsPortalUserHealthCenterRegistration
 
-  const organizations = (data?.getOrganizations?.items ??
-    []) as Array<Organization>
-
-  const organizationImage = getOrganizationLogoUrl(
-    HEALTH_CENTER_LOGO_PATH,
-    organizations,
-    96,
-  )
-
-  const wasTransfered = useQueryParam('s') === 't'
+  // Check if the user was transfered from another health center
+  // if s === t then we display a success message
+  const wasSuccessfulTransfer = useQueryParam('s') === 't'
 
   if (error && !loading) {
     return (
@@ -71,7 +64,11 @@ const HealthCenter = () => {
       <IntroHeader
         title={formatMessage(messages.healthCenterTitle)}
         intro={formatMessage(messages.healthCenterDescription)}
-        img={organizationImage}
+        img={getOrganizationLogoUrl(
+          HEALTH_CENTER_LOGO_PATH,
+          (data?.getOrganizations?.items ?? []) as Array<Organization>,
+          96,
+        )}
       />
 
       {!loading && !healthCenterData?.current && (
@@ -82,7 +79,7 @@ const HealthCenter = () => {
         </Box>
       )}
 
-      {wasTransfered && !loading && (
+      {wasSuccessfulTransfer && !loading && (
         <Box width="full" marginTop={4}>
           <AlertMessage
             type="success"

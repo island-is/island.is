@@ -24,26 +24,16 @@ import {
   useGetHealthCenterQuery,
   useRightsPortalTransferHealthCenterMutation,
 } from './HealthCenterRegistration.generated'
-import {
-  ModalGridButtonGroup,
-  CloseModalButtonStyle,
-  ModalBaseStyle,
-  ModalGridContentStyle,
-  ModalGridImageStyle,
-  ModalGridStyle,
-  SaveButtonWrapperStyle,
-  StrongStyle,
-  TableRowStyle,
-  FilterWrapperStyle,
-} from './HealthRegistration.css'
+import * as styles from './HealthRegistration.css'
 import { m } from '@island.is/service-portal/core'
 import groupBy from 'lodash/groupBy'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { RightsPortalHealthCenter } from '@island.is/api/schema'
 import { useNavigate } from 'react-router-dom'
 import { HealthPaths } from '../../lib/paths'
+import { formatHealthCenterName } from '../../utils/format'
 
-const POSTFIX = '-'
+type SelectedHealthCenter = Pick<RightsPortalHealthCenter, 'id' | 'name'>
 
 export interface Dictionary<T> {
   [index: string]: T
@@ -54,45 +44,52 @@ const HealthCenterRegistration = () => {
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
   const { data, loading, error } = useGetHealthCenterQuery()
+  const totalCount = data?.rightsPortalPaginatedHealthCenters?.totalCount || 0
+  const healthCentersData = data?.rightsPortalPaginatedHealthCenters?.data
+
+  const errorBoxRef = useRef<HTMLDivElement>(null)
 
   const [hoverId, setHoverId] = useState<string>('')
-  const [toggle, setToggle] = useState(false)
   const [filter, setFilter] = useState('')
-  const [selectedHealthCenter, setSelectedHealthCenter] =
-    useState<RightsPortalHealthCenter | null>(null)
-
   const [loadingTransfer, setLoadingTransfer] = useState(false)
   const [errorTransfer, setErrorTransfer] = useState(false)
+  const [selectedHealthCenter, setSelectedHealthCenter] =
+    useState<SelectedHealthCenter | null>(null)
 
   const [transferHealthCenter] = useRightsPortalTransferHealthCenterMutation({
+    onError: (e) => {
+      console.log('error', e)
+      setSelectedHealthCenter(null)
+      setLoadingTransfer(false)
+      setErrorTransfer(true)
+    },
+    onCompleted: (data) => {
+      if (data.rightsPortalTransferHealthCenter.success) {
+        navigate(`${HealthPaths.HealthCenter}?s=t`)
+      } else {
+        setSelectedHealthCenter(null)
+        setLoadingTransfer(false)
+        setErrorTransfer(true)
+      }
+    },
     variables: {
-      id: selectedHealthCenter?.id ?? '',
+      id: selectedHealthCenter?.id || '',
     },
   })
 
-  const handleHealthCenterTransfer = async (
-    hc: RightsPortalHealthCenter | null,
-  ) => {
+  useEffect(() => {
+    if (errorTransfer && errorBoxRef.current) {
+      errorBoxRef.current.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start',
+      })
+    }
+  }, [errorTransfer])
+
+  const handleHealthCenterTransfer = async () => {
     setLoadingTransfer(true)
-    if (!hc) {
-      setLoadingTransfer(false)
-      setToggle(false)
-      setErrorTransfer(true)
-    }
-
-    const res = await transferHealthCenter()
-
-    if (res.data?.rightsPortalTransferHealthCenter?.success) {
-      navigate(`${HealthPaths.HealthCenter}?s=t`)
-    } else {
-      setLoadingTransfer(false)
-      setToggle(false)
-      setErrorTransfer(true)
-    }
+    await transferHealthCenter()
   }
-
-  const healthCenters = data?.rightsPortalPaginatedHealthCenters
-  const healthCentersData = data?.rightsPortalPaginatedHealthCenters?.data
 
   const healthCenterGroups = useMemo(() => {
     return groupBy(healthCentersData, 'region')
@@ -133,8 +130,6 @@ const HealthCenterRegistration = () => {
       <Box paddingY={2}>
         <Stack space={2}>
           <CardLoader />
-          <CardLoader />
-          <CardLoader />
         </Stack>
       </Box>
     )
@@ -154,7 +149,7 @@ const HealthCenterRegistration = () => {
         intro={formatMessage(messages.healthCenterRegistrationInfo)}
       />
       {errorTransfer && (
-        <Box paddingBottom={4}>
+        <Box paddingBottom={4} ref={errorBoxRef}>
           <AlertMessage
             type="error"
             title={formatMessage(
@@ -171,7 +166,7 @@ const HealthCenterRegistration = () => {
           type="warning"
           message={
             <Text variant="small">
-              <strong className={StrongStyle}>
+              <strong className={styles.strongStyle}>
                 {formatMessage(messages.alert)}
               </strong>
               {formatMessage(messages.healthCenterRegistrationWarning)}
@@ -180,7 +175,7 @@ const HealthCenterRegistration = () => {
         />
       </Box>
 
-      {!loading && healthCenters?.totalCount && healthCenters.totalCount <= 0 && (
+      {!loading && totalCount <= 0 && (
         <Box width="full" marginTop={4} display="flex" justifyContent="center">
           <Box marginTop={8}>
             <EmptyState />
@@ -190,38 +185,35 @@ const HealthCenterRegistration = () => {
 
       <ModalBase
         baseId="healthCareDialog"
-        isVisible={toggle}
-        onVisibilityChange={(v) => {
-          if (v !== toggle) setToggle(v)
-        }}
-        className={ModalBaseStyle}
+        isVisible={selectedHealthCenter !== null}
+        className={styles.modalBaseStyle}
       >
         <Box paddingTop={10} paddingBottom={9} paddingX={3} background="white">
-          <Box className={CloseModalButtonStyle}>
+          <Box className={styles.closeModalButtonStyle}>
             <button
               aria-label={formatMessage(messages.closeModal)}
-              onClick={() => setToggle(false)}
+              onClick={() => setSelectedHealthCenter(null)}
             >
               <Icon icon="close" size="large" />
             </button>
           </Box>
-          <Box className={ModalGridStyle}>
-            <Box className={ModalGridContentStyle}>
-              <Text variant="h2">
-                {`${formatMessage(
-                  messages.healthCenterRegistrationModalTitleStart,
-                )} ${selectedHealthCenter?.name} ${formatMessage(
-                  messages.healthCenterRegistrationModalTitleEnd,
-                )}`}
-              </Text>
+          <Box className={styles.modalGridStyle}>
+            <Box className={styles.modalGridContentStyle}>
+              {selectedHealthCenter && selectedHealthCenter.name && (
+                <Text variant="h2">
+                  {formatMessage(messages.healthCenterRegistrationModalTitle, {
+                    healthCenter: selectedHealthCenter.name,
+                  })}
+                </Text>
+              )}
               <Text marginTop={2} marginBottom={3}>
                 {formatMessage(messages.healthCenterRegistrationModalInfo)}
               </Text>
-              <Box className={ModalGridButtonGroup}>
+              <Box className={styles.modalGridButtonGroup}>
                 <Button
                   size="small"
                   variant="primary"
-                  onClick={() => setToggle(false)}
+                  onClick={() => setSelectedHealthCenter(null)}
                 >
                   {formatMessage(
                     messages.healthCenterRegistrationModalButtonCancel,
@@ -231,7 +223,7 @@ const HealthCenterRegistration = () => {
                   size="small"
                   variant="ghost"
                   onClick={() =>
-                    handleHealthCenterTransfer(selectedHealthCenter)
+                    selectedHealthCenter?.id && handleHealthCenterTransfer()
                   }
                   loading={loadingTransfer}
                 >
@@ -241,14 +233,14 @@ const HealthCenterRegistration = () => {
                 </Button>
               </Box>
             </Box>
-            <Box className={ModalGridImageStyle}>
+            <Box className={styles.modalGridImageStyle}>
               <img src="./assets/images/hourglass.svg" alt="" />
             </Box>
           </Box>
         </Box>
       </ModalBase>
 
-      <Box className={FilterWrapperStyle} marginBottom={3}>
+      <Box className={styles.filterWrapperStyle} marginBottom={3}>
         <Input
           size="sm"
           onChange={(e) => setFilter(e.target.value)}
@@ -263,7 +255,7 @@ const HealthCenterRegistration = () => {
       {Object.keys(filteredHealthCenters).length ? (
         <Accordion>
           {Object.keys(filteredHealthCenters).map((region, key) => {
-            const name = `${region.split(POSTFIX)[0]}`
+            const name = formatHealthCenterName(region)
             const group = filteredHealthCenters[region]
             return (
               <AccordionItem id={`${region}-${key}`} key={key} label={name}>
@@ -282,7 +274,7 @@ const HealthCenterRegistration = () => {
                     {group.map((healthCenter, key) => {
                       return (
                         <tr
-                          className={TableRowStyle}
+                          className={styles.tableRowStyle}
                           key={key}
                           onMouseEnter={() => setHoverId(healthCenter.id)}
                           onMouseLeave={() => setHoverId('')}
@@ -294,7 +286,7 @@ const HealthCenterRegistration = () => {
                           <T.Data>{healthCenter.address?.streetAddress}</T.Data>
                           <T.Data>
                             <Box
-                              className={SaveButtonWrapperStyle({
+                              className={styles.saveButtonWrapperStyle({
                                 visible: healthCenter.id === hoverId,
                               })}
                             >
@@ -303,8 +295,10 @@ const HealthCenterRegistration = () => {
                                 variant="text"
                                 icon="pencil"
                                 onClick={() => {
-                                  setSelectedHealthCenter(healthCenter)
-                                  setToggle((p) => !p)
+                                  setSelectedHealthCenter({
+                                    id: healthCenter.id,
+                                    name: healthCenter.name,
+                                  })
                                 }}
                               >
                                 {formatMessage(

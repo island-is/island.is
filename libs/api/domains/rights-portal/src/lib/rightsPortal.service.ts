@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import {
   AidsandnutritionApi,
   DentistApi,
@@ -14,7 +14,6 @@ import {
 } from './models/aidsOrNutrition.model'
 import {
   AidOrNutritionType,
-  ExcludesFalse,
   generateAidOrNutrition,
 } from './rightsPortal.types'
 import {
@@ -31,6 +30,8 @@ import {
 } from './models/healthCenter.model'
 import { HealthCenterResponse } from './models/healthCenterResponse.model'
 import { isDefined } from '@island.is/shared/utils'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
 
 @Injectable()
 export class RightsPortalService {
@@ -39,6 +40,9 @@ export class RightsPortalService {
     private aidsAndNutritionApi: AidsandnutritionApi,
     private dentistApi: DentistApi,
     private healthCenterApi: HealthcenterApi,
+
+    @Inject(LOGGER_PROVIDER)
+    private logger: Logger,
   ) {}
   getTherapies = (user: User) =>
     this.therapyApi
@@ -125,7 +129,7 @@ export class RightsPortalService {
             ...d,
             id: d.id,
             address: {
-              postalCode: d.postcode,
+              postalCode: d.postalCode,
               municipality: d.region,
               streetAddress: d.address,
             },
@@ -250,6 +254,8 @@ export class RightsPortalService {
       }
     } catch (e) {
       if (e.response?.status === 400) handle404(e)
+
+      this.logger.error('Failed to transfer health center', e)
 
       return {
         success: false,

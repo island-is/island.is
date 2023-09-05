@@ -1,6 +1,6 @@
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
 import { ApiScope } from '@island.is/auth/scopes'
-import { Inject, UseGuards } from '@nestjs/common'
+import { UseGuards } from '@nestjs/common'
 import { Audit } from '@island.is/nest/audit'
 import {
   IdsUserGuard,
@@ -134,7 +134,7 @@ export class RightsPortalResolver {
   @Mutation(() => HealthCenterResponse, {
     name: 'rightsPortalTransferHealthCenter',
   })
-  @FeatureFlag(Features.servicePortalTransferHealthCenter)
+  // @FeatureFlag(Features.servicePortalTransferHealthCenter)
   @Audit()
   transferHealthCenter(@CurrentUser() user: User, @Args('id') id: string) {
     return this.rightsPortalService.transferHealthCenter(user, id)

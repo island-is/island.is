@@ -357,9 +357,13 @@ export const messages = defineMessages({
     id: 'sp.health:health-center-registration-modal-title-end',
     defaultMessage: 'sem nýja heilsugæslustöð?',
   },
+  healthCenterRegistrationModalTitle: {
+    id: 'sp.health:health-center-registration-modal-title',
+    defaultMessage: 'Vilt þú skrá {healthCenter} sem nýja heilsugæslustöð?',
+  },
   closeModal: {
     id: 'sp.health:close-modal',
-    defaultMessage: 'Loka spretti glugga',
+    defaultMessage: 'Loka sprettiglugga',
   },
   healthCenterRegistrationModalInfo: {
     id: 'sp.health:health-center-registration-modal-info',

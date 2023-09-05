@@ -2,11 +2,11 @@ import { theme } from '@island.is/island-ui/theme'
 import { style } from '@vanilla-extract/css'
 import { recipe } from '@vanilla-extract/recipes'
 
-export const StrongStyle = style({
+export const strongStyle = style({
   marginRight: '0.5rem',
 })
 
-export const TableRowStyle = style({
+export const tableRowStyle = style({
   selectors: {
     '&:hover': {
       backgroundColor: theme.color.blue100,
@@ -14,7 +14,7 @@ export const TableRowStyle = style({
   },
 })
 
-export const SaveButtonWrapperStyle = recipe({
+export const saveButtonWrapperStyle = recipe({
   base: {
     position: 'relative',
   },
@@ -32,7 +32,7 @@ export const SaveButtonWrapperStyle = recipe({
   },
 })
 
-export const ModalBaseStyle = style({
+export const modalBaseStyle = style({
   maxWidth: '55.5rem',
   position: 'absolute',
   width: 'calc(100% - 2rem)',
@@ -42,33 +42,33 @@ export const ModalBaseStyle = style({
   transform: 'translate(-50%, -50%)',
 })
 
-export const ModalGridStyle = style({
+export const modalGridStyle = style({
   display: 'grid',
   gridTemplateColumns: '1fr 4fr 3fr',
 })
 
-export const ModalGridContentStyle = style({
+export const modalGridContentStyle = style({
   gridColumnStart: 2,
 })
 
-export const ModalGridImageStyle = style({
+export const modalGridImageStyle = style({
   placeSelf: 'center',
 })
 
-export const CloseModalButtonStyle = style({
+export const closeModalButtonStyle = style({
   position: 'absolute',
   top: '1rem',
   right: '1rem',
   cursor: 'pointer',
 })
 
-export const ModalGridButtonGroup = style({
+export const modalGridButtonGroup = style({
   display: 'flex',
   flexDirection: 'row',
   gap: '1.5rem',
 })
 
-export const FilterWrapperStyle = style({
+export const filterWrapperStyle = style({
   width: '100%',
 
   '@media': {
