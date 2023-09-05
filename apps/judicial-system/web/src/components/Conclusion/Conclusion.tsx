@@ -25,7 +25,9 @@ const Conclusion: React.FC<React.PropsWithChildren<Props>> = (props) => {
       </Box>
       <Box marginBottom={3}>
         <Box marginTop={1}>
-          <Text variant="intro">{conclusionText}</Text>
+          <Text variant="intro" textAlign="justify">
+            {conclusionText}
+          </Text>
         </Box>
       </Box>
       {judgeName ? (
