@@ -221,10 +221,14 @@ export class ServiceBuilder<ServiceType> {
   }
 
   shutdownGracePeriod(shutdownGracePeriodSeconds: number) {
+    /**
+     * Sets maximum time allowed for a pod to run after it should start to terminate. The process will sleep for half the time set by the prameter before receiving SIGTERM.
+     * @param shutdownGracePeriodSeconds Maximum time the pod is allowed to run. Pod will sleep for half this duration in seconds
+     */
     this.serviceDef.shutdownGracePeriodSeconds =
       shutdownGracePeriodSeconds ?? undefined
     this.serviceDef.shutdownGracePeriodSleepSeconds =
-      shutdownGracePeriodSeconds + 20 ?? undefined
+    shutdownGracePeriodSeconds / 2 ?? undefined
 
     return this
   }
