@@ -1,9 +1,12 @@
 import { MessageDescriptor } from 'react-intl'
-import { Gender, MaritalStatus } from '@island.is/api/schema'
+import {
+  NationalRegistryGender,
+  NationalRegistryMaritalStatus,
+} from '@island.is/api/schema'
 import { spmm } from '../lib/messages'
 
 export const natRegGenderMessageDescriptorRecord: Record<
-  Gender,
+  NationalRegistryGender,
   MessageDescriptor
 > = {
   FEMALE: spmm.genderFemale,
@@ -16,7 +19,7 @@ export const natRegGenderMessageDescriptorRecord: Record<
 }
 
 export const natRegMaritalStatusMessageDescriptorRecord: Record<
-  MaritalStatus,
+  NationalRegistryMaritalStatus,
   MessageDescriptor
 > = {
   DIVORCED: spmm.maritalStatusDivorced,

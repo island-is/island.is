@@ -87,6 +87,11 @@ const createMockAdminApi = () => ({
     { ...secretResponse, secretId: '2' },
   ]),
   meClientSecretsControllerDelete: jest.fn(),
+  meTenantsControllerFindById: jest.fn().mockResolvedValue({
+    id: 'test-tenant-id',
+    name: 'Test tenant',
+    contactEmail: 'test@test.is',
+  }),
 })
 
 const mockAdminDevApi = createMockAdminApi()
@@ -193,6 +198,17 @@ describe('ClientsService', () => {
       expect(mockAdminDevApi.meClientsControllerCreate).toBeCalledTimes(1)
       expect(mockAdminStagingApi.meClientsControllerCreate).toBeCalledTimes(0)
       expect(mockAdminProdApi.meClientsControllerCreate).toBeCalledTimes(0)
+
+      expect(mockAdminDevApi.meClientsControllerCreate).toBeCalledWith({
+        adminCreateClientDto: {
+          clientId: 'test-application-id',
+          clientType: CreateClientType.web,
+          clientName: 'Test Application',
+          contactEmail: 'test@test.is',
+        },
+        tenantId: 'test-tenant-id',
+      })
+
       expect(response).toEqual([
         {
           environment: Environment.Development,
