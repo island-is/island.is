@@ -10,9 +10,6 @@ import {
   UserRole,
   InstitutionType,
   CaseCustodyRestrictions,
-  investigationCases,
-  restrictionCases,
-  indictmentCases,
 } from '@island.is/judicial-system/types'
 
 import {
@@ -465,64 +462,58 @@ describe('formatProsecutorReadyForCourtEmailNotification', () => {
       overviewUrl,
     )
 
-  test.each([...restrictionCases])(
-    'should format ready for court email for %s',
-    (type) => {
-      // Arrange
-      const court = 'Héraðsdómur Reykjavíkur'
-      const policeCaseNumbers = ['007-2022-01']
-      const overviewUrl = 'https://rettarvorslugatt.island.is/test/overview'
+  test('should format ready for court email for restriction cases', () => {
+    // Arrange
+    const type = CaseType.TRAVEL_BAN
+    const court = 'Héraðsdómur Reykjavíkur'
+    const policeCaseNumbers = ['007-2022-01']
+    const overviewUrl = 'https://rettarvorslugatt.island.is/test/overview'
 
-      // Act
-      const res = fn(policeCaseNumbers, type, court, overviewUrl)
+    // Act
+    const res = fn(policeCaseNumbers, type, court, overviewUrl)
 
-      // Assert
-      expect(res.subject).toBe(`Krafa um ${caseTypes[type]} send`)
-      expect(res.body).toBe(
-        `Þú hefur sent kröfu á Héraðsdóm Reykjavíkur vegna LÖKE máls 007-2022-01. Skjalið er aðgengilegt undir <a href="https://rettarvorslugatt.island.is/test/overview">málinu í Réttarvörslugátt</a>.`,
-      )
-    },
-  )
+    // Assert
+    expect(res.subject).toBe(`Krafa um ${caseTypes[type]} send`)
+    expect(res.body).toBe(
+      `Þú hefur sent kröfu á Héraðsdóm Reykjavíkur vegna LÖKE máls 007-2022-01. Skjalið er aðgengilegt undir <a href="https://rettarvorslugatt.island.is/test/overview">málinu í Réttarvörslugátt</a>.`,
+    )
+  })
 
-  test.each(investigationCases)(
-    'should format ready for court email for %s',
-    (type) => {
-      // Arrange
-      const court = 'Héraðsdómur Reykjavíkur'
-      const policeCaseNumbers = ['007-2022-01']
-      const overviewUrl = 'https://rettarvorslugatt.island.is/test/overview'
+  test('should format ready for court email for investigation cases', () => {
+    // Arrange
+    const type = CaseType.INTERNET_USAGE
+    const court = 'Héraðsdómur Reykjavíkur'
+    const policeCaseNumbers = ['007-2022-01']
+    const overviewUrl = 'https://rettarvorslugatt.island.is/test/overview'
 
-      // Act
-      const res = fn(policeCaseNumbers, type, court, overviewUrl)
+    // Act
+    const res = fn(policeCaseNumbers, type, court, overviewUrl)
 
-      // Assert
-      expect(res.subject).toBe(
-        `Krafa um rannsóknarheimild send (${caseTypes[type]})`,
-      )
-      expect(res.body).toBe(
-        `Þú hefur sent kröfu á Héraðsdóm Reykjavíkur vegna LÖKE máls 007-2022-01. Skjalið er aðgengilegt undir <a href="https://rettarvorslugatt.island.is/test/overview">málinu í Réttarvörslugátt</a>.`,
-      )
-    },
-  )
+    // Assert
+    expect(res.subject).toBe(
+      `Krafa um rannsóknarheimild send (${caseTypes[type]})`,
+    )
+    expect(res.body).toBe(
+      `Þú hefur sent kröfu á Héraðsdóm Reykjavíkur vegna LÖKE máls 007-2022-01. Skjalið er aðgengilegt undir <a href="https://rettarvorslugatt.island.is/test/overview">málinu í Réttarvörslugátt</a>.`,
+    )
+  })
 
-  test.each(indictmentCases)(
-    'should format ready for court email for %s',
-    (type) => {
-      // Arrange
-      const court = 'Héraðsdómur Reykjavíkur'
-      const policeCaseNumbers = ['007-2022-02', '007-2022-01']
-      const overviewUrl = 'https://rettarvorslugatt.island.is/test/overview'
+  test('should format ready for court email for indictment cases', () => {
+    // Arrange
+    const type = CaseType.INDICTMENT
+    const court = 'Héraðsdómur Reykjavíkur'
+    const policeCaseNumbers = ['007-2022-02', '007-2022-01']
+    const overviewUrl = 'https://rettarvorslugatt.island.is/test/overview'
 
-      // Act
-      const res = fn(policeCaseNumbers, type, court, overviewUrl)
+    // Act
+    const res = fn(policeCaseNumbers, type, court, overviewUrl)
 
-      // Assert
-      expect(res.subject).toBe(`Ákæra send`)
-      expect(res.body).toBe(
-        `Þú hefur sent ákæru á Héraðsdóm Reykjavíkur vegna LÖKE mála: 007-2022-02, 007-2022-01. Skjalið er aðgengilegt undir <a href="https://rettarvorslugatt.island.is/test/overview">málinu í Réttarvörslugátt</a>.`,
-      )
-    },
-  )
+    // Assert
+    expect(res.subject).toBe(`Ákæra send`)
+    expect(res.body).toBe(
+      `Þú hefur sent ákæru á Héraðsdóm Reykjavíkur vegna LÖKE mála: 007-2022-02, 007-2022-01. Skjalið er aðgengilegt undir <a href="https://rettarvorslugatt.island.is/test/overview">málinu í Réttarvörslugátt</a>.`,
+    )
+  })
 })
 
 describe('formatProsecutorReceivedByCourtSmsNotification', () => {

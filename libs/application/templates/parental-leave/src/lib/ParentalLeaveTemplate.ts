@@ -304,6 +304,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
       [States.EMPLOYER_WAITING_TO_ASSIGN]: {
+        entry: ['clearEmployerNationalRegistryId'],
         exit: 'setEmployerReviewerNationalRegistryId',
         meta: {
           name: States.EMPLOYER_WAITING_TO_ASSIGN,
@@ -873,6 +874,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
       [States.EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS]: {
+        entry: ['clearEmployerNationalRegistryId'],
         exit: [
           'setEmployerReviewerNationalRegistryId',
           'restorePeriodsFromTemp',
@@ -1212,6 +1214,14 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             set(answers, `employers[${i}].companyNationalRegistryId`, '')
           })
         }
+
+        return context
+      }),
+      clearEmployerNationalRegistryId: assign((context) => {
+        const { application } = context
+        const { answers } = application
+
+        unset(answers, 'employerNationalRegistryId')
 
         return context
       }),
