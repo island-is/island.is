@@ -71,6 +71,8 @@ const Home: Screen<HomeProps> = ({
   locale,
 }) => {
   const Router = useRouter()
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
   const n = useNamespace(namespace)
   const o = useNamespace(organizationNamespace)
   const { linkResolver } = useLinkResolver()
@@ -114,6 +116,8 @@ const Home: Screen<HomeProps> = ({
       headerTitle={headerTitle}
       institutionSlug={institutionSlug}
       logoUrl={logoUrl}
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
       organization={organization}
       organizationTitle={organizationTitle}
       searchTitle={searchTitle}
@@ -160,12 +164,18 @@ const Home: Screen<HomeProps> = ({
                         return (
                           <Card
                             key={index}
+                            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                            // @ts-ignore make web strict
                             title={title}
+                            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                            // @ts-ignore make web strict
                             description={description}
                             link={
                               {
                                 href: linkResolver('supportcategory', [
                                   organization?.slug ?? '',
+                                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                                  // @ts-ignore make web strict
                                   slug,
                                 ]).href,
                               } as LinkResolverResponse
@@ -181,6 +191,8 @@ const Home: Screen<HomeProps> = ({
                     <GridContainer>
                       <GridRow>
                         <GridColumn
+                          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                          // @ts-ignore make web strict
                           offset={[null, null, null, '1/12']}
                           span={['12/12', '12/12', '12/12', '10/12']}
                         >
@@ -233,6 +245,8 @@ const Home: Screen<HomeProps> = ({
                   <GridContainer>
                     <GridRow>
                       <GridColumn
+                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                        // @ts-ignore make web strict
                         offset={[null, null, null, '1/12']}
                         span={['12/12', '12/12', '12/12', '10/12']}
                       >
@@ -323,6 +337,8 @@ Home.getProps = async ({ apolloClient, locale, query }) => {
   ])
 
   const popularQuestionCount =
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore make web strict
     organization?.data?.getOrganization?.serviceWebPopularQuestionCount
   const featuredQNAs = popularQuestionCount
     ? await apolloClient.query<Query, QueryGetFeaturedSupportQnAsArgs>({

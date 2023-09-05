@@ -1,5 +1,4 @@
 import PDFDocument from 'pdfkit'
-import streamBuffers from 'stream-buffers'
 
 import { FormatMessage } from '@island.is/cms-translations'
 import {
@@ -36,7 +35,7 @@ import {
 function constructRestrictionRequestPdf(
   theCase: Case,
   formatMessage: FormatMessage,
-): streamBuffers.WritableStreamBuffer {
+): Promise<Buffer> {
   const doc = new PDFDocument({
     size: 'A4',
     margins: {
@@ -48,7 +47,9 @@ function constructRestrictionRequestPdf(
     bufferPages: true,
   })
 
-  const stream = doc.pipe(new streamBuffers.WritableStreamBuffer())
+  const sinc: Buffer[] = []
+
+  doc.on('data', (chunk) => sinc.push(chunk))
 
   let caseTypeText = ''
   if (theCase.type === CaseType.ADMISSION_TO_FACILITY) {
@@ -206,13 +207,15 @@ function constructRestrictionRequestPdf(
 
   doc.end()
 
-  return stream
+  return new Promise<Buffer>((resolve) =>
+    doc.on('end', () => resolve(Buffer.concat(sinc))),
+  )
 }
 
 function constructInvestigationRequestPdf(
   theCase: Case,
   formatMessage: FormatMessage,
-): streamBuffers.WritableStreamBuffer {
+): Promise<Buffer> {
   const doc = new PDFDocument({
     size: 'A4',
     margins: {
@@ -224,7 +227,9 @@ function constructInvestigationRequestPdf(
     bufferPages: true,
   })
 
-  const stream = doc.pipe(new streamBuffers.WritableStreamBuffer())
+  const sinc: Buffer[] = []
+
+  doc.on('data', (chunk) => sinc.push(chunk))
 
   const title = formatMessage(m.heading, {
     caseType: formatMessage(core.caseType.investigate),
@@ -405,13 +410,15 @@ function constructInvestigationRequestPdf(
 
   doc.end()
 
-  return stream
+  return new Promise<Buffer>((resolve) =>
+    doc.on('end', () => resolve(Buffer.concat(sinc))),
+  )
 }
 
 function constructRequestPdf(
   theCase: Case,
   formatMessage: FormatMessage,
-): streamBuffers.WritableStreamBuffer {
+): Promise<Buffer> {
   return isRestrictionCase(theCase.type)
     ? constructRestrictionRequestPdf(theCase, formatMessage)
     : constructInvestigationRequestPdf(theCase, formatMessage)
@@ -421,26 +428,14 @@ export function getRequestPdfAsString(
   theCase: Case,
   formatMessage: FormatMessage,
 ): Promise<string> {
-  const stream = constructRequestPdf(theCase, formatMessage)
-
-  // wait for the writing to finish
-  return new Promise<string>(function (resolve) {
-    stream.on('finish', () => {
-      resolve(stream.getContentsAsString('binary') as string)
-    })
-  })
+  return constructRequestPdf(theCase, formatMessage).then((buffer) =>
+    buffer.toString('binary'),
+  )
 }
 
 export function getRequestPdfAsBuffer(
   theCase: Case,
   formatMessage: FormatMessage,
 ): Promise<Buffer> {
-  const stream = constructRequestPdf(theCase, formatMessage)
-
-  // wait for the writing to finish
-  return new Promise<Buffer>(function (resolve) {
-    stream.on('finish', () => {
-      resolve(stream.getContents() as Buffer)
-    })
-  })
+  return constructRequestPdf(theCase, formatMessage)
 }
