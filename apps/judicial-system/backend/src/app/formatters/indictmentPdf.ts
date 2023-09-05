@@ -1,5 +1,4 @@
 import PDFDocument from 'pdfkit'
-import streamBuffers from 'stream-buffers'
 
 import { FormatMessage } from '@island.is/cms-translations'
 import {
@@ -66,7 +65,9 @@ export const createIndictment = async (
     bufferPages: true,
   })
 
-  const stream = doc.pipe(new streamBuffers.WritableStreamBuffer())
+  const sinc: Buffer[] = []
+
+  doc.on('data', (chunk) => sinc.push(chunk))
 
   const title = formatMessage(indictment.title)
   const heading = formatMessage(indictment.heading)
@@ -116,9 +117,7 @@ export const createIndictment = async (
 
   doc.end()
 
-  return new Promise<Buffer>(function (resolve) {
-    stream.on('finish', () => {
-      resolve(stream.getContents() as Buffer)
-    })
-  })
+  return new Promise<Buffer>((resolve) =>
+    doc.on('end', () => resolve(Buffer.concat(sinc))),
+  )
 }
