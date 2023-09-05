@@ -228,7 +228,7 @@ export class ServiceBuilder<ServiceType> {
     this.serviceDef.shutdownGracePeriodSeconds =
       shutdownGracePeriodSeconds ?? undefined
     this.serviceDef.shutdownGracePeriodSleepSeconds =
-    shutdownGracePeriodSeconds / 2 ?? undefined
+      shutdownGracePeriodSeconds / 2 ?? undefined
 
     return this
   }
