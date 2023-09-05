@@ -10,7 +10,6 @@ import type {
 export class CaseFile implements TCaseFile {
   @Field(() => ID)
   readonly id!: string
-
   @Field()
   readonly created!: string
 
