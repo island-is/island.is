@@ -2,6 +2,7 @@ import { uuid } from 'uuidv4'
 import { Base64 } from 'js-base64'
 import { Agent } from 'https'
 import fetch from 'isomorphic-fetch'
+import { z } from 'zod'
 
 import {
   BadGatewayException,
@@ -51,8 +52,26 @@ function getChapter(category?: string): number | undefined {
 export class PoliceService {
   private xRoadPath: string
   private agent: Agent
-
   private throttle = Promise.resolve({} as UploadPoliceCaseFileResponse)
+  private policeCaseFileStructure = z.object({
+    rvMalSkjolMals_ID: z.number(),
+    heitiSkjals: z.string(),
+    malsnumer: z.string(),
+    domsSkjalsFlokkun: z.optional(z.string()),
+    dagsStofnad: z.optional(z.string()),
+  })
+
+  private responseStructure = z.object({
+    malsnumer: z.string(),
+    skjol: z.array(this.policeCaseFileStructure),
+    malseinings: z.array(
+      z.object({
+        vettvangur: z.optional(z.string()),
+        brotFra: z.optional(z.string()),
+        upprunalegtMalsnumer: z.string(),
+      }),
+    ),
+  })
 
   constructor(
     @Inject(policeModuleConfig.KEY)
@@ -184,27 +203,20 @@ export class PoliceService {
     )
       .then(async (res: Response) => {
         if (res.ok) {
-          const response = await res.json()
+          const response: z.infer<typeof this.responseStructure> =
+            await res.json()
 
-          return (
-            response.skjol?.map(
-              (file: {
-                rvMalSkjolMals_ID: string
-                heitiSkjals: string
-                malsnumer: string
-                domsSkjalsFlokkun: string
-                dagsStofnad: string
-              }) => ({
-                id: file.rvMalSkjolMals_ID,
-                name: file.heitiSkjals.endsWith('.pdf')
-                  ? file.heitiSkjals
-                  : `${file.heitiSkjals}.pdf`,
-                policeCaseNumber: file.malsnumer,
-                chapter: getChapter(file.domsSkjalsFlokkun),
-                displayDate: file.dagsStofnad,
-              }),
-            ) ?? []
-          )
+          this.responseStructure.parse(response)
+
+          return response.skjol.map((file) => ({
+            id: file.rvMalSkjolMals_ID.toString(),
+            name: file.heitiSkjals.endsWith('.pdf')
+              ? file.heitiSkjals
+              : `${file.heitiSkjals}.pdf`,
+            policeCaseNumber: file.malsnumer,
+            chapter: getChapter(file.domsSkjalsFlokkun),
+            displayDate: file.dagsStofnad,
+          }))
         }
 
         const reason = await res.text()
@@ -259,7 +271,10 @@ export class PoliceService {
     return promise
       .then(async (res: Response) => {
         if (res.ok) {
-          const response = await res.json()
+          const response: z.infer<typeof this.responseStructure> =
+            await res.json()
+
+          this.responseStructure.parse(response)
 
           const cases: PoliceCaseInfo[] = [
             { policeCaseNumber: response.malsnumer },
@@ -273,11 +288,11 @@ export class PoliceService {
             }
           })
 
-          response.malseinings?.forEach(
+          response.malseinings.forEach(
             (info: {
               upprunalegtMalsnumer: string
-              vettvangur: string
-              brotFra: string
+              vettvangur?: string
+              brotFra?: string
             }) => {
               const foundCase = cases.find(
                 (item) => item.policeCaseNumber === info.upprunalegtMalsnumer,
