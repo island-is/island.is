@@ -199,9 +199,8 @@ export class PoliceService {
     )
       .then(async (res: Response) => {
         if (res.ok) {
-          const response: z.infer<
-            typeof this.responseStructure
-          > = await res.json()
+          const response: z.infer<typeof this.responseStructure> =
+            await res.json()
 
           this.responseStructure.parse(response)
 
@@ -268,9 +267,8 @@ export class PoliceService {
     return promise
       .then(async (res: Response) => {
         if (res.ok) {
-          const response: z.infer<
-            typeof this.responseStructure
-          > = await res.json()
+          const response: z.infer<typeof this.responseStructure> =
+            await res.json()
 
           this.responseStructure.parse(response)
 
