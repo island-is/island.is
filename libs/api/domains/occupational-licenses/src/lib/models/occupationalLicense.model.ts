@@ -50,7 +50,7 @@ export abstract class OccupationalLicense {
   implements: OccupationalLicense,
 })
 export class EducationalLicense extends OccupationalLicense {
-  @Field(() => String)
+  @Field(() => String, { nullable: true })
   downloadUrl?: string
 }
 
