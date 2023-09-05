@@ -1,0 +1,20 @@
+query UserInfoOverview($api: String) {
+  nationalRegistryPerson(api: $api) {
+    spouse {
+      nationalId
+      fullName
+    }
+    childCustody {
+      nationalId
+      fullName
+      custodians {
+        fullName
+        nationalId
+      }
+      birthParents {
+        fullName
+        nationalId
+      }
+    }
+  }
+}

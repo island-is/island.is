@@ -18,6 +18,7 @@ import {
   Labor,
   MunicipalitiesFinancialAid,
   NationalRegistry,
+  NationalRegistryB2C,
   Passports,
   Payment,
   PaymentSchedule,
@@ -319,6 +320,8 @@ export const serviceSetup = (services: {
       FISKISTOFA_POWERBI_CLIENT_SECRET:
         '/k8s/api/FISKISTOFA_POWERBI_CLIENT_SECRET',
       FISKISTOFA_POWERBI_TENANT_ID: '/k8s/api/FISKISTOFA_POWERBI_TENANT_ID',
+      NATIONAL_REGISTRY_B2C_CLIENT_SECRET:
+        '/k8s/api/NATIONAL_REGISTRY_B2C_CLIENT_SECRET',
       HSN_WEB_FORM_RESPONSE_URL: '/k8s/api/HSN_WEB_FORM_RESPONSE_URL',
       HSN_WEB_FORM_RESPONSE_SECRET: '/k8s/api/HSN_WEB_FORM_RESPONSE_SECRET',
       DIRECTORATE_OF_IMMIGRATION_WATSON_ASSISTANT_CHAT_PUBLIC_RSA_KEY:
@@ -358,6 +361,7 @@ export const serviceSetup = (services: {
       WorkMachines,
       IcelandicGovernmentInstitutionVacancies,
       RskProcuring,
+      NationalRegistryB2C,
       AircraftRegistry,
     )
     .files({ filename: 'islyklar.p12', env: 'ISLYKILL_CERT' })
