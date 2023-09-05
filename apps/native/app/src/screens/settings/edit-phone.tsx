@@ -9,6 +9,7 @@ import {navigateTo} from '../../lib/deep-linking';
 import {useUserProfile} from './profile-queries';
 import {client} from '../../graphql/client';
 import {CREATE_SMS_VERIFICATION} from '../../graphql/queries/create-sms-verification.mutation';
+import {UPDATE_ISLYKILL_DELETE_INPUT} from '../../graphql/queries/update-islykill-settings.mutation';
 
 const {getNavigationOptions, useNavigationOptions} =
   createNavigationOptionHooks(() => ({
@@ -51,9 +52,9 @@ export const EditPhoneScreen: NavigationFunctionComponent<{
     }
   }, [userProfile]);
 
-  const disabled = parsePhone(text) === originalPhone || text.trim() === '';
+  const isEmpty = text?.trim() === '';
+  const disabled = parsePhone(text) === originalPhone;
 
-  // todo data bind default state
   return (
     <View style={{flex: 1}} testID={testIDs.SCREEN_EDIT_PHONE}>
       <NavigationBarSheet
@@ -80,26 +81,47 @@ export const EditPhoneScreen: NavigationFunctionComponent<{
             />
           </View>
           <Button
-            title={intl.formatMessage({id: 'edit.phone.button'})}
+            title={
+              isEmpty
+                ? intl.formatMessage({id: 'edit.phone.button.empty'})
+                : intl.formatMessage({id: 'edit.phone.button'})
+            }
             onPress={async () => {
               setLoading(true);
               try {
-                const res = await client.mutate({
-                  mutation: CREATE_SMS_VERIFICATION,
-                  variables: {
-                    input: {
-                      mobilePhoneNumber: text.replace(/-/g, ''),
+                if (isEmpty) {
+                  const res = await client.mutate({
+                    mutation: UPDATE_ISLYKILL_DELETE_INPUT,
+                    variables: {
+                      input: {
+                        mobilePhoneNumber: true,
+                      },
                     },
-                  },
-                });
-                if (res.data) {
-                  navigateTo('/editconfirm/phone', {
-                    type: 'phone',
-                    phone: `+354-${text.replace(/-/g, '')}`,
-                    parentComponentId: componentId,
                   });
+                  if (res.data) {
+                    Navigation.dismissModal(componentId);
+                    console.log(res.data, 'Uppfærði tómt símanúmer');
+                  } else {
+                    throw new Error('Failed to delete phone number');
+                  }
                 } else {
-                  throw new Error('Failed to create sms verification');
+                  const res = await client.mutate({
+                    mutation: CREATE_SMS_VERIFICATION,
+                    variables: {
+                      input: {
+                        mobilePhoneNumber: text.replace(/-/g, ''),
+                      },
+                    },
+                  });
+                  if (res.data) {
+                    navigateTo('/editconfirm/phone', {
+                      type: 'phone',
+                      phone: `+354-${text.replace(/-/g, '')}`,
+                      parentComponentId: componentId,
+                    });
+                  } else {
+                    throw new Error('Failed to create sms verification');
+                  }
                 }
               } catch (e) {
                 Alert.alert('Villa', 'Gat ekki sent staðfestingarkóða');

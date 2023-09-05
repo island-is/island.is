@@ -135,7 +135,7 @@ export const is = {
   // home
   'home.screenTitle': 'Yfirlit',
   'home.applicationsStatus': 'Staða umsókna',
-  'home.allApplications': 'Allar stafrænar umsóknir',
+  'home.allApplications': 'Stafrænar umsóknir',
   'home.notifications': 'Tilkynningar',
   'home.welcomeText': 'Hæ',
   'home.onboardingModule.card1':
@@ -386,12 +386,14 @@ export const is = {
   'edit.phone.description': 'Hér getur þú breytt símanúmeri',
   'edit.phone.inputlabel': 'Símanúmer',
   'edit.phone.button': 'Vista',
+  'edit.phone.button.empty': 'Vista tómt',
 
   // edit email
   'edit.email.screenTitle': 'Breyta Netfangi',
   'edit.email.description': 'Hér getur þú breytt netfangi',
   'edit.email.inputlabel': 'Netfang',
   'edit.email.button': 'Vista',
+  'edit.email.button.empty': 'Vista tómt',
 
   // edit bank info
   'edit.bankinfo.screenTitle': 'Breyta banka upplýsingum',
