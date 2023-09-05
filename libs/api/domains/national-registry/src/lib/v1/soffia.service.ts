@@ -269,9 +269,10 @@ export class SoffiaService {
 
   async getCustodians(
     nationalId: string,
+    parentNationalId: string,
     data?: V1RawData,
   ): Promise<Array<PersonBase> | null> {
-    const children = await this.getChildren(nationalId, data)
+    const children = await this.getChildren(parentNationalId ?? '0', data)
     const child = children.find((c) => c?.nationalId === nationalId) ?? null
 
     if (!child) {
