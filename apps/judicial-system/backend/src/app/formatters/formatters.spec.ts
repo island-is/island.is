@@ -10,9 +10,6 @@ import {
   UserRole,
   InstitutionType,
   CaseCustodyRestrictions,
-  investigationCases,
-  restrictionCases,
-  indictmentCases,
 } from '@island.is/judicial-system/types'
 
 import {
