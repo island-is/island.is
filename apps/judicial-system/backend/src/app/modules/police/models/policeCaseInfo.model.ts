@@ -1,10 +1,12 @@
-import { ApiProperty } from '@nestjs/swagger'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
 export class PoliceCaseInfo {
   @ApiProperty()
   policeCaseNumber!: string
-  @ApiProperty()
+
+  @ApiPropertyOptional()
   place?: string
-  @ApiProperty()
+
+  @ApiPropertyOptional()
   date?: Date
 }
