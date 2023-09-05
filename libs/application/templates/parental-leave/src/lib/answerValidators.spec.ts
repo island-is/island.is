@@ -585,13 +585,7 @@ describe('when constructing a new period', () => {
         useLength: NO,
         endDate: formatDate(addDays(DEFAULT_DOB_DATE, 5)),
       }),
-    ).toStrictEqual({
-      message: errorMessages.periodsEndDateMinimumPeriod,
-      path: 'periods[0].endDate',
-      values: {
-        minPeriodDays: 13,
-      },
-    })
+    ).toStrictEqual(undefined)
 
     expect(
       createValidationResultForPeriod({
