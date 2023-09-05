@@ -1,9 +1,8 @@
 import React, { Fragment, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { AnimatePresence, LayoutGroup, motion } from 'framer-motion'
 import cn from 'classnames'
+import { AnimatePresence, LayoutGroup, motion } from 'framer-motion'
 
-import { isIndictmentCase } from '@island.is/judicial-system/types'
 import {
   AlertMessage,
   Box,
@@ -11,6 +10,7 @@ import {
   Checkbox,
   LoadingDots,
 } from '@island.is/island-ui/core'
+import { isIndictmentCase } from '@island.is/judicial-system/types'
 import { FormContext } from '@island.is/judicial-system-web/src/components'
 import {
   CaseOrigin,
@@ -139,8 +139,8 @@ const PoliceCaseFiles: React.FC<React.PropsWithChildren<Props>> = ({
         }),
       )
     } else {
-      newPoliceCaseFileList[target].checked =
-        !newPoliceCaseFileList[target].checked
+      newPoliceCaseFileList[target].checked = !newPoliceCaseFileList[target]
+        .checked
       setPoliceCaseFileList(newPoliceCaseFileList)
     }
   }

@@ -3,36 +3,36 @@ import { useIntl } from 'react-intl'
 import cn from 'classnames'
 
 import {
+  AlertBanner,
   Box,
+  FormStepperV2,
+  GridColumn,
   GridContainer,
   GridRow,
-  GridColumn,
-  FormStepperV2,
-  AlertBanner,
-  Section,
   linkStyles,
-  Text,
   LinkV2,
+  Section,
+  Text,
 } from '@island.is/island-ui/core'
+import * as constants from '@island.is/judicial-system/consts'
 import { isIndictmentCase } from '@island.is/judicial-system/types'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import {
-  sections as formStepperSections,
   pageLayout,
+  sections as formStepperSections,
 } from '@island.is/judicial-system-web/messages'
 import {
   InstitutionType,
   User,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import * as constants from '@island.is/judicial-system/consts'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
-import { UserContext } from '../UserProvider/UserProvider'
+import { stepValidationsType } from '../../utils/formHelper'
+import useSections from '../../utils/hooks/useSections'
 import Logo from '../Logo/Logo'
 import Skeleton from '../Skeleton/Skeleton'
-import useSections from '../../utils/hooks/useSections'
+import { UserContext } from '../UserProvider/UserProvider'
 import * as styles from './PageLayout.css'
-import { stepValidationsType } from '../../utils/formHelper'
 
 export interface RouteSection {
   name: string

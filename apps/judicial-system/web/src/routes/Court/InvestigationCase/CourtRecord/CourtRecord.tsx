@@ -3,53 +3,53 @@ import { IntlShape, useIntl } from 'react-intl'
 import router from 'next/router'
 
 import {
-  BlueBox,
-  CourtCaseInfo,
-  DateTime,
-  FormContentContainer,
-  FormFooter,
-  HideableText,
-  PageLayout,
-  PdfButton,
-  CourtDocuments,
-  FormContext,
-} from '@island.is/judicial-system-web/src/components'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
-import {
-  useCase,
-  useDeb,
-  useOnceOn,
-} from '@island.is/judicial-system-web/src/utils/hooks'
+  Box,
+  GridColumn,
+  GridContainer,
+  GridRow,
+  Input,
+  Text,
+  Tooltip,
+} from '@island.is/island-ui/core'
+import * as constants from '@island.is/judicial-system/consts'
 import {
   closedCourt,
   core,
   icCourtRecord as m,
   titles,
 } from '@island.is/judicial-system-web/messages'
+import {
+  BlueBox,
+  CourtCaseInfo,
+  CourtDocuments,
+  DateTime,
+  FormContentContainer,
+  FormContext,
+  FormFooter,
+  HideableText,
+  PageLayout,
+  PdfButton,
+} from '@island.is/judicial-system-web/src/components'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import {
-  GridRow,
-  GridColumn,
-  GridContainer,
-  Box,
-  Text,
-  Input,
-  Tooltip,
-} from '@island.is/island-ui/core'
+  CaseType,
+  SessionArrangements,
+} from '@island.is/judicial-system-web/src/graphql/schema'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import {
   removeTabsValidateAndSet,
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
-  Validation,
-  isCourtRecordStepValidIC,
-} from '@island.is/judicial-system-web/src/utils/validate'
-import {
-  CaseType,
-  SessionArrangements,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+  useCase,
+  useDeb,
+  useOnceOn,
+} from '@island.is/judicial-system-web/src/utils/hooks'
 import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
-import * as constants from '@island.is/judicial-system/consts'
+import {
+  isCourtRecordStepValidIC,
+  Validation,
+} from '@island.is/judicial-system-web/src/utils/validate'
 
 import AppealSections from '../../components/AppealSections/AppealSections'
 

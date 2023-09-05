@@ -8,16 +8,14 @@ import {
   CaseListEntry,
   completedCaseStates,
 } from '@island.is/judicial-system/types'
-
+import { errors,titles } from '@island.is/judicial-system-web/messages'
 import { PageHeader } from '@island.is/judicial-system-web/src/components'
-import { titles, errors } from '@island.is/judicial-system-web/messages'
-import { CasesQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import SharedPageLayout from '@island.is/judicial-system-web/src/components/SharedPageLayout/SharedPageLayout'
+import { CasesQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 
 import DefenderCasesTable from './components/DefenderCasesTable'
 import FilterCheckboxes from './components/FilterCheckboxes'
 import useFilterCases, { Filters } from './hooks/useFilterCases'
-
 import { defenderCases as m } from './Cases.strings'
 import * as styles from './Cases.css'
 

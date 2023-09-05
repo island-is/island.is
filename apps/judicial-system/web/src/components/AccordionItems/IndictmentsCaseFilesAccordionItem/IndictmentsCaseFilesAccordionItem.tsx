@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useMemo } from 'react'
-import { useIntl } from 'react-intl'
-import { uuid } from 'uuidv4'
+import React, { useEffect, useMemo,useState } from 'react'
 import InputMask from 'react-input-mask'
+import { useIntl } from 'react-intl'
+import { useMeasure } from 'react-use'
 import isValid from 'date-fns/isValid'
 import parseISO from 'date-fns/parseISO'
 import {
@@ -13,35 +13,35 @@ import {
   useDragControls,
   useMotionValue,
 } from 'framer-motion'
+import { uuid } from 'uuidv4'
 import { useMutation } from '@apollo/client'
-import { useMeasure } from 'react-use'
 
 import {
   AccordionItem,
-  Text,
+  AlertMessage,
   Box,
   Icon,
-  AlertMessage,
   Input,
+  Text,
   toast,
 } from '@island.is/island-ui/core'
+import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   CaseFile as TCaseFile,
   CrimeSceneMap,
   IndictmentSubtypeMap,
 } from '@island.is/judicial-system/types'
 import {
-  useFileList,
-  useS3Upload,
-} from '@island.is/judicial-system-web/src/utils/hooks'
-import { formatDate } from '@island.is/judicial-system/formatters'
-import {
   FileNotFoundModal,
   IndictmentInfo,
 } from '@island.is/judicial-system-web/src/components'
+import {
+  useFileList,
+  useS3Upload,
+} from '@island.is/judicial-system-web/src/utils/hooks'
 
-import { indictmentsCaseFilesAccordionItem as m } from './IndictmentsCaseFilesAccordionItem.strings'
 import { UpdateFileMutation } from './UpdateFiles.gql'
+import { indictmentsCaseFilesAccordionItem as m } from './IndictmentsCaseFilesAccordionItem.strings'
 import * as styles from './IndictmentsCaseFilesAccordionItem.css'
 
 const DDMMYYYY = 'dd.MM.yyyy'

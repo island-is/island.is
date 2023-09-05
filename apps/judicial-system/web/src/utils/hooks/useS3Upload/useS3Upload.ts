@@ -9,25 +9,25 @@ import { UserContext } from '@island.is/judicial-system-web/src/components'
 import { PresignedPost } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import {
+  CreateFileMutation,
+  useCreateFileMutation,
+} from './createFile.generated'
+import {
   CreatePresignedPostMutation,
   useCreatePresignedPostMutation,
 } from './createPresignedPost.generated'
 import {
-  LimitedAccessCreatePresignedPostMutation,
-  useLimitedAccessCreatePresignedPostMutation,
-} from './limitedAccessCreatePresignedPost.generated'
-import {
-  CreateFileMutation,
-  useCreateFileMutation,
-} from './createFile.generated'
+  DeleteFileMutation,
+  useDeleteFileMutation,
+} from './deleteFile.generated'
 import {
   LimitedAccessCreateFileMutation,
   useLimitedAccessCreateFileMutation,
 } from './limitedAccessCreateFile.generated'
 import {
-  DeleteFileMutation,
-  useDeleteFileMutation,
-} from './deleteFile.generated'
+  LimitedAccessCreatePresignedPostMutation,
+  useLimitedAccessCreatePresignedPostMutation,
+} from './limitedAccessCreatePresignedPost.generated'
 import {
   LimitedAccessDeleteFileMutation,
   useLimitedAccessDeleteFileMutation,

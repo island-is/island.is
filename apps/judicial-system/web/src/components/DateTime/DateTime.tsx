@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react'
-import { DatePicker, Input } from '@island.is/island-ui/core'
-import { TimeInputField, BlueBox } from '../../components'
-import * as styles from './DateTime.css'
 
+import { DatePicker, Input } from '@island.is/island-ui/core'
 import {
   validate,
   Validation,
 } from '@island.is/judicial-system-web/src/utils/validate'
+
+import { BlueBox,TimeInputField } from '../../components'
+import * as styles from './DateTime.css'
 
 interface Props {
   name: string

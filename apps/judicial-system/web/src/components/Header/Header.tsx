@@ -1,22 +1,22 @@
 import React, { useContext } from 'react'
 import { useIntl } from 'react-intl'
-import Link from 'next/link'
 import getConfig from 'next/config'
+import Link from 'next/link'
 
 import {
-  Text,
   Box,
-  UserMenu,
-  Icon,
+  Button,
+  GridColumn,
   GridContainer,
   GridRow,
-  GridColumn,
-  Button,
   Hidden,
-  Logo,
+  Icon,
   Inline,
+  Logo,
+  Text,
+  UserMenu,
 } from '@island.is/island-ui/core'
-import { api } from '@island.is/judicial-system-web/src/services'
+import * as constants from '@island.is/judicial-system/consts'
 import {
   capitalize,
   formatPhoneNumber,
@@ -25,11 +25,11 @@ import {
   InstitutionType,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import * as constants from '@island.is/judicial-system/consts'
+import { api } from '@island.is/judicial-system-web/src/services'
 
-import { UserContext } from '../UserProvider/UserProvider'
-import MarkdownWrapper from '../MarkdownWrapper/MarkdownWrapper'
 import { useGetLawyer } from '../../utils/hooks'
+import MarkdownWrapper from '../MarkdownWrapper/MarkdownWrapper'
+import { UserContext } from '../UserProvider/UserProvider'
 import { header } from './Header.strings'
 import * as styles from './Header.css'
 
