@@ -25,11 +25,6 @@ globalStyle(`${footerBg} a, ${footerBg} a:hover`, {
   fontSize: '14px',
 })
 
-export const link = style({
-  textDecoration: 'underline',
-  fontSize: '14px',
-})
-
 export const textContainer = style({
   ...themeUtils.responsiveStyle({
     xs: {
