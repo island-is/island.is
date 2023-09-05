@@ -9,12 +9,10 @@ export class HousingBenefitCalculatorResolver {
     private readonly service: HousingBenefitCalculatorClientService,
   ) {}
 
-  // TODO: perhaps cache this endpoint
   @Query(() => Calculation, { name: 'housingBenefitCalculatorCalculation' })
   async calculation(
     @Args('input') input: CalculationInput,
   ): Promise<Calculation> {
-    console.log('Calculation endpoint was called with:', input)
     return this.service.calculate(input)
   }
 }

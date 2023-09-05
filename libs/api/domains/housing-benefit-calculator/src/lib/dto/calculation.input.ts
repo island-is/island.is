@@ -2,7 +2,7 @@ import { Field, InputType } from '@nestjs/graphql'
 
 @InputType('HousingBenefitCalculatorCalculationInput')
 export class CalculationInput {
-  @Field(() => Number) // TODO: perhaps add a min/max validation
+  @Field(() => Number)
   numberOfHouseholdMembers!: number
 
   @Field(() => Number)
