@@ -252,7 +252,10 @@ export const CaseOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
           )}
           {workingCase.appealConclusion && (
             <Box marginBottom={6}>
-              <AppealConclusion conclusionText={workingCase.appealConclusion} />
+              <AppealConclusion
+                conclusionText={workingCase.appealConclusion}
+                judgeName={workingCase.appealJudge1?.name}
+              />
             </Box>
           )}
 

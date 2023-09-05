@@ -8,11 +8,12 @@ import { conclusion as strings } from './Conclusion.strings'
 
 interface Props {
   conclusionText?: string
+  judgeName?: string
 }
 
 const AppealConclusion: React.FC<React.PropsWithChildren<Props>> = (props) => {
   const { formatMessage } = useIntl()
-  const { conclusionText } = props
+  const { conclusionText, judgeName } = props
 
   return conclusionText ? (
     <BlueBox>
@@ -26,6 +27,11 @@ const AppealConclusion: React.FC<React.PropsWithChildren<Props>> = (props) => {
           <Text variant="intro">{conclusionText}</Text>
         </Box>
       </Box>
+      {judgeName ? (
+        <Box marginBottom={1} textAlign="center">
+          <Text variant="h4">{judgeName}</Text>
+        </Box>
+      ) : null}
     </BlueBox>
   ) : null
 }
