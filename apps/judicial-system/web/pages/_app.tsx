@@ -7,7 +7,7 @@ import { QueryGetTranslationsArgs, Query } from '@island.is/api/schema'
 import { LocaleProvider, GET_TRANSLATIONS } from '@island.is/localization'
 import { ToastContainer } from '@island.is/island-ui/core'
 
-import { client } from '../graphql'
+import client from '../graphql/client'
 import {
   UserProvider,
   FeatureProvider,

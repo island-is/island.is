@@ -54,6 +54,8 @@ export const Menu = ({
       myPagesText={t.login}
       renderDisclosure={(
         disclosureDefault,
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore make web strict
         { onClick, ...disclosureProps },
       ) => {
         return (
@@ -125,6 +127,8 @@ export const Menu = ({
         <SearchInput
           id="search_input_menu"
           size="medium"
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore make web strict
           ref={searchInput}
           activeLocale={activeLocale}
           placeholder={t.searchPlaceholder}

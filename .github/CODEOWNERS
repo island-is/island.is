@@ -87,6 +87,7 @@
 /libs/api/domains/sessions/                                                                              @island-is/aranja
 /libs/clients/auth/                                                                                      @island-is/aranja
 /libs/clients/middlewares/                                                                               @island-is/aranja
+libs/clients/rsk/relationships/                                                                          @island-is/aranja
 /libs/clients/sessions                                                                                   @island-is/aranja
 /libs/portals/shared-modules/delegations                                                                 @island-is/aranja
 /libs/portals/admin/ids-admin                                                                            @island-is/aranja
@@ -138,6 +139,7 @@
 /libs/clients/smartsolutions/                                                                            @island-is/hugsmidjan
 /libs/clients/islykill/                                                                                  @island-is/hugsmidjan
 /libs/clients/national-registry/v1/                                                                      @island-is/hugsmidjan
+/libs/clients/national-registry/v3/                                                                      @island-is/hugsmidjan
 /libs/clients/regulations/                                                                               @island-is/hugsmidjan
 /libs/clients/vehicles/                                                                                  @island-is/hugsmidjan
 /libs/clients/passports/                                                                                 @island-is/hugsmidjan
