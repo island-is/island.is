@@ -226,13 +226,7 @@ const HousingBenefitCalculator = ({ slice }: HousingBenefitCalculatorProps) => {
               'Útreikningur húsnæðisbóta samkvæmt reiknivélinni byggir á þeim forsendum sem þú gafst upp og telst ekki bindandi ákvörðun um húsnæðisbætur. Útreikningur miðast við greiðslur húsnæðisbóta fyrir heilt almanaksár.',
             )}
           </Text>
-          <Button
-            loading={loading}
-            onClick={() => {
-              calculate()
-            }}
-            disabled={!canSubmit}
-          >
+          <Button loading={loading} onClick={calculate} disabled={!canSubmit}>
             {n('calculate', 'Reikna')}
           </Button>
         </Stack>
