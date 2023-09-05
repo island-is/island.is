@@ -13,7 +13,7 @@ import {
   useDragControls,
   useMotionValue,
 } from 'framer-motion'
-import { useMutation } from '@apollo/client'
+
 import { useMeasure } from 'react-use'
 
 import {
@@ -41,7 +41,8 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 
 import { indictmentsCaseFilesAccordionItem as m } from './IndictmentsCaseFilesAccordionItem.strings'
-import { UpdateFileMutation } from './UpdateFiles.gql'
+import { useUpdateFilesMutation } from './updateFiles.generated'
+
 import * as styles from './IndictmentsCaseFilesAccordionItem.css'
 
 const DDMMYYYY = 'dd.MM.yyyy'
@@ -74,10 +75,6 @@ export interface ReorderableItem {
   userGeneratedFilename?: string
   displayDate?: string
   canOpen?: boolean
-}
-
-interface UpdateFilesMutationResponse {
-  caseFiles: TCaseFile[]
 }
 
 const useRaisedShadow = (value: MotionValue<number>) => {
@@ -391,8 +388,7 @@ const IndictmentsCaseFilesAccordionItem: React.FC<
     crimeScenes,
   } = props
   const { formatMessage } = useIntl()
-  const [updateFilesMutation] =
-    useMutation<UpdateFilesMutationResponse>(UpdateFileMutation)
+  const [updateFilesMutation] = useUpdateFilesMutation()
 
   const { onOpen, fileNotFound, dismissFileNotFound } = useFileList({ caseId })
   const { remove } = useS3Upload(caseId)

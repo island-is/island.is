@@ -53,7 +53,7 @@ const mockTenants = {
   },
 }
 
-const createMockAdminApi = (tenants: TenantDto[]) => ({
+const createMockAdminApi = (tenants: Omit<TenantDto, 'contactEmail'>[]) => ({
   withMiddleware: jest.fn().mockReturnThis(),
   meTenantsControllerFindAll: jest.fn().mockResolvedValue(tenants),
   meTenantsControllerFindById: jest.fn().mockImplementation(({ tenantId }) => {
