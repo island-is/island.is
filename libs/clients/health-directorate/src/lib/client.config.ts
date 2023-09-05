@@ -3,6 +3,9 @@ import { z } from 'zod'
 
 const schema = z.object({
   xRoadServicePath: z.string(),
+  fetch: z.object({
+    scope: z.array(z.string()),
+  }),
 })
 
 export const HealthDirectorateClientConfig = defineConfig<
@@ -15,5 +18,8 @@ export const HealthDirectorateClientConfig = defineConfig<
       'XROAD_HEALTH_DIRECTORATE_PATH',
       'IS-DEV/GOV/10015/EmbaettiLandlaeknis-Protected/landlaeknir',
     ),
+    fetch: {
+      scope: ['@landlaeknir.is/starfsleyfi'],
+    },
   }),
 })

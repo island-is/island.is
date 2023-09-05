@@ -2,6 +2,7 @@ import {
   CurrentUser,
   IdsAuthGuard,
   IdsUserGuard,
+  Scopes,
 } from '@island.is/auth-nest-tools'
 import type { User } from '@island.is/auth-nest-tools'
 import { Audit } from '@island.is/nest/audit'
@@ -15,11 +16,12 @@ import { DownloadServiceConfig } from '@island.is/nest/config'
 import {
   HealthDirectorateLicense,
   EducationalLicense,
-  OccupationalLicense,
 } from './models/occupationalLicense.model'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
+import { ApiScope } from '@island.is/auth/scopes'
 @UseGuards(IdsUserGuard, IdsAuthGuard)
+@Scopes(ApiScope.internal)
 @Resolver()
 export class OccupationalLicensesResolver {
   constructor(

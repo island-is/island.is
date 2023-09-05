@@ -28,7 +28,7 @@ export const HealthDirectorateApiProvider: Provider<StarfsleyfiAMinumSidumApi> =
                   issuer: idsClientConfig.issuer,
                   clientId: idsClientConfig.clientId,
                   clientSecret: idsClientConfig.clientSecret,
-                  scope: [''],
+                  scope: config.fetch.scope,
                 }
               : undefined,
           }),
