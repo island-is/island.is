@@ -22,7 +22,7 @@ import { useNamespace } from '@island.is/web/hooks'
 const MAX_LENGTH = 15
 
 export const formatCurrency = (answer: number | null | undefined) => {
-  if (!answer) return answer
+  if (typeof answer !== 'number') return answer
   return String(answer).replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ' kr.'
 }
 
