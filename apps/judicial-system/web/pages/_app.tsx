@@ -5,7 +5,12 @@ import { ApolloProvider } from '@apollo/client'
 import { QueryGetTranslationsArgs, Query } from '@island.is/api/schema'
 import { LocaleProvider, GET_TRANSLATIONS } from '@island.is/localization'
 import { ToastContainer } from '@island.is/island-ui/core'
+<<<<<<< HEAD
 import { client } from '../graphql'
+=======
+
+import client from '../graphql/client'
+>>>>>>> b05914c30ecb3445038c442d3befc410a4036865
 import {
   UserProvider,
   FeatureProvider,

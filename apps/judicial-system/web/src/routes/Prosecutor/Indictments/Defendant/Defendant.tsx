@@ -247,25 +247,31 @@ const Defendant: React.FC<React.PropsWithChildren<unknown>> = () => {
 
         if (createdCase) {
           workingCase.defendants?.forEach(async (defendant, index) => {
-            const updatedDefendant = {
-              caseId: createdCase.id,
-              defendantId: defendant.id,
-              gender: defendant.gender,
-              name: defendant.name,
-              address: defendant.address,
-              nationalId: defendant.nationalId,
-              noNationalId: defendant.noNationalId,
-              citizenship: defendant.citizenship,
-            }
-
             if (
               index === 0 &&
               createdCase.defendants &&
               createdCase.defendants.length > 0
             ) {
-              await updateDefendant(updatedDefendant)
+              await updateDefendant({
+                caseId: createdCase.id,
+                defendantId: createdCase.defendants[0].id,
+                gender: defendant.gender,
+                name: defendant.name,
+                address: defendant.address,
+                nationalId: defendant.nationalId,
+                noNationalId: defendant.noNationalId,
+                citizenship: defendant.citizenship,
+              })
             } else {
-              await createDefendant(updatedDefendant)
+              await createDefendant({
+                caseId: createdCase.id,
+                gender: defendant.gender,
+                name: defendant.name,
+                address: defendant.address,
+                nationalId: defendant.nationalId,
+                noNationalId: defendant.noNationalId,
+                citizenship: defendant.citizenship,
+              })
             }
           })
           router.push(`${destination}/${createdCase.id}`)
