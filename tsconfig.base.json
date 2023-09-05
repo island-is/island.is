@@ -570,8 +570,8 @@
       "@island.is/clients/transport-authority/vehicle-printing": [
         "libs/clients/transport-authority/vehicle-printing/src/index.ts"
       ],
-      "@island.is/clients/tryggingastofnun": [
-        "libs/clients/tryggingastofnun/src/index.ts"
+      "@island.is/clients/social-insurance-administration": [
+        "libs/clients/social-insurance-administration/src/index.ts"
       ],
       "@island.is/clients/university-of-iceland": [
         "libs/clients/university-of-iceland/src/index.ts"

@@ -27,6 +27,7 @@ import {
   NationalRegistryResidenceHistoryApi,
   NationalRegistryCohabitantsApi,
   SocialInsuranceAdministrationTestApi,
+  SocialInsuranceAdministrationStatusApi
 } from '../dataProviders'
 import { getApplicationAnswers } from './oldAgePensionUtils'
 
@@ -74,7 +75,8 @@ const OldAgePensionTemplate: ApplicationTemplate<
                 NationalRegistryResidenceHistoryApi,
                 NationalRegistryCohabitantsApi,
                 ChildrenCustodyInformationApi,
-                SocialInsuranceAdministrationTestApi
+                SocialInsuranceAdministrationTestApi,
+                SocialInsuranceAdministrationStatusApi
               ],
               delete: true,
             },

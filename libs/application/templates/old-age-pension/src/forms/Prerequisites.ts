@@ -29,7 +29,8 @@ import {
 import {
   NationalRegistryResidenceHistoryApi,
   NationalRegistryCohabitantsApi,
-  SocialInsuranceAdministrationTestApi
+  SocialInsuranceAdministrationTestApi,
+  SocialInsuranceAdministrationStatusApi
 } from '../dataProviders'
 
 
@@ -109,7 +110,7 @@ export const PrerequisitesForm: Form = buildForm({
                   title: '',
                 }),
                 buildDataProviderItem({
-                  provider: SocialInsuranceAdministrationTestApi,
+                  provider: SocialInsuranceAdministrationStatusApi,
                   title: 'Tryggingarstofun TODO',
                   subTitle: 'Sækir info frá TR TODO'
 

@@ -1,31 +1,38 @@
-import { DynamicModule } from '@nestjs/common'
+import { DynamicModule, Module } from '@nestjs/common'
 import fetch from 'isomorphic-fetch'
 
 import { logger } from '@island.is/logging'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 
-import { Configuration, HelloOddurApi } from '../../gen/fetch'
+import { Configuration, GetStatusApi, HelloOddurApi } from '../../gen/fetch'
 import { createWrappedFetchWithLogging } from './utils'
+import { SocialInsuranceAdministrationClientService } from './socialInsuranceAdministrationClient.service'
 
 const isRunningOnProduction = isRunningOnEnvironment('production')
 
-export interface TryggingastofnunModuleConfig {
+export interface  SocialInsuranceAdministrationModuleConfig {
   apiKey: string
   xRoadPath: string
   xRoadClient: string
 }
 
-export class ClientsTryggingastofnunModule {
-  static register(config: TryggingastofnunModuleConfig): DynamicModule {
+
+
+@Module({
+  providers: [SocialInsuranceAdministrationClientService],
+  exports: [SocialInsuranceAdministrationClientService],
+})
+export class  SocialInsuranceAdministrationClientModule {
+  static register(config: SocialInsuranceAdministrationModuleConfig): DynamicModule {
     if (!config.apiKey) {
       logger.error(
-        'ClientsTryggingastofnunModule XROAD_TR_API_KEY not provided.',
+        'SocialInsuranceAdministrationModule XROAD_TR_API_KEY not provided.',
       )
     }
 
     if (!config.xRoadClient) {
       logger.error(
-        'ClientsTryggingastofnunModule XROAD_CLIENT_ID not provided.',
+        'SocialInsuranceAdministrationModule XROAD_CLIENT_ID not provided.',
       )
     }
 
@@ -40,10 +47,10 @@ export class ClientsTryggingastofnunModule {
       headers,
     })
 
-    const exportedApis = [HelloOddurApi]
+    const exportedApis = [HelloOddurApi, GetStatusApi]
 
     return {
-      module: ClientsTryggingastofnunModule,
+      module: SocialInsuranceAdministrationClientModule,
       providers: exportedApis.map((Api) => ({
         provide: Api,
         useFactory: () => new Api(providerConfiguration),

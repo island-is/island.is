@@ -8,9 +8,10 @@ import { TemplateApiError } from '@island.is/nest/problem'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { TemplateApiModuleActionProps } from '@island.is/application/template-api-modules'
 
+import  {HelloOddurApi, SocialInsuranceAdministrationClientService} from '@island.is/clients/social-insurance-administration'
 
 
-import { HelloOddurApi } from '@island.is/clients/tryggingastofnun'
+
 
 interface customError {
   type: string
@@ -24,6 +25,7 @@ interface customError {
 export class OldAgePensionService extends BaseTemplateApiService {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
+    private sIAClientService: SocialInsuranceAdministrationClientService,
     private helloOddurApi: HelloOddurApi,
   ) {
     super(ApplicationTypes.OLD_AGE_PENSION)
@@ -41,9 +43,9 @@ export class OldAgePensionService extends BaseTemplateApiService {
 
   async helloWorld({ application, auth }: TemplateApiModuleActionProps) {
     try {
-      const resp = await this.helloOddurApi.helloOddur()
+      const resp = await this.sIAClientService.getOddur(auth)
 
-      console.log('resp', resp)
+      console.log('Computer says OK!!!!', resp)
     } catch (e) {
       this.logger.error(
         'No HELLO!!!!',e
@@ -60,6 +62,12 @@ export class OldAgePensionService extends BaseTemplateApiService {
   }
 
   async getStatus({ application, auth }: TemplateApiModuleActionProps) {
+
+
+
+    console.log('--------------- AUTH -------------------', auth)
+     
+
     /*
     When applicant creates new application:
     If no application, create new one
@@ -67,6 +75,23 @@ export class OldAgePensionService extends BaseTemplateApiService {
     If there is application with status ‘TRYGGINGASTOFNUN_IN_REVIEW’ or 'REJECTED’, create new one
     */
 
+    try {
+      const resp = await this.sIAClientService.getStatus(auth)
+
+      console.log('Computer says OK!!!!', resp)
+    } catch (e) {
+      this.logger.error(
+        'No HELLO!!!!',e
+      )
+
+      throw new TemplateApiError(
+        {
+          title: 'Computer says NO!',
+          summary: 'Villa hjá TR',
+        },
+        500,
+      )
+    }
 
 
      
