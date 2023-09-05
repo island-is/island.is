@@ -3,9 +3,10 @@ import { style } from '@vanilla-extract/css'
 
 export const button = style({
   '@media': {
-    [`screen and (max-width: ${theme.breakpoints.lg}px) and (min-width: ${theme.breakpoints.md}px)`]: {
-      width: '100%',
-    },
+    [`screen and (max-width: ${theme.breakpoints.lg}px) and (min-width: ${theme.breakpoints.md}px)`]:
+      {
+        width: '100%',
+      },
   },
 })
 
@@ -13,10 +14,11 @@ export const continueButton = style({
   marginLeft: theme.spacing[2],
 
   '@media': {
-    [`screen and (max-width: ${theme.breakpoints.lg}px) and (min-width: ${theme.breakpoints.md}px)`]: {
-      marginBottom: theme.spacing[2],
-      marginLeft: 0,
-    },
+    [`screen and (max-width: ${theme.breakpoints.lg}px) and (min-width: ${theme.breakpoints.md}px)`]:
+      {
+        marginBottom: theme.spacing[2],
+        marginLeft: 0,
+      },
   },
 })
 
@@ -25,9 +27,10 @@ export const infoBoxContainer = style({
   width: '100%',
 
   '@media': {
-    [`screen and (max-width: ${theme.breakpoints.lg}px) and (min-width: ${theme.breakpoints.md}px)`]: {
-      maxWidth: 'unset',
-    },
+    [`screen and (max-width: ${theme.breakpoints.lg}px) and (min-width: ${theme.breakpoints.md}px)`]:
+      {
+        maxWidth: 'unset',
+      },
     [`screen and (min-width: ${theme.breakpoints.lg}px)`]: {
       maxWidth: '376px',
     },
