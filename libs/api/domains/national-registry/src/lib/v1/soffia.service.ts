@@ -319,7 +319,7 @@ export class SoffiaService {
       ? (data as ISLEinstaklingur)
       : (await this.getPerson(nationalId)).rawData
 
-    return citizenship
+    return citizenship && citizenship.Rikisfang && citizenship.RikisfangLand
       ? {
           code: citizenship.Rikisfang ?? null,
           name: citizenship.RikisfangLand ?? null,
@@ -350,7 +350,7 @@ export class SoffiaService {
       ? (data as ISLEinstaklingur)
       : (await this.getPerson(nationalId)).rawData
 
-    return spouse
+    return spouse && spouse.MakiKt && spouse.nafnmaka
       ? {
           fullName: spouse.nafnmaka,
           name: spouse.nafnmaka,
@@ -370,7 +370,7 @@ export class SoffiaService {
       ? (data as ISLEinstaklingur)
       : (await this.getPerson(nationalId)).rawData
 
-    return person && family
+    return person && family && person.Fjolsknr
       ? {
           domicileId: person.Fjolsknr,
           address: {
