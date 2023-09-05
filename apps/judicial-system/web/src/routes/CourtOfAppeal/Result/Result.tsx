@@ -24,12 +24,8 @@ import CourtOfAppealCaseOverviewHeader from '../components/CaseOverviewHeader/Ca
 import { conclusion } from '@island.is/judicial-system-web/src/components/Conclusion/Conclusion.strings'
 
 const CourtOfAppealResult: React.FC<React.PropsWithChildren<unknown>> = () => {
-  const {
-    workingCase,
-    setWorkingCase,
-    isLoadingWorkingCase,
-    caseNotFound,
-  } = useContext(FormContext)
+  const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
+    useContext(FormContext)
 
   const { formatMessage } = useIntl()
   const { user } = useContext(UserContext)
