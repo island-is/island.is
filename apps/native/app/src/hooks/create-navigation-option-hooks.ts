@@ -89,7 +89,7 @@ const defaultOptions = (
       background: {
         color: theme.shade.background,
       },
-    }
+    };
   }
 
   return options;
