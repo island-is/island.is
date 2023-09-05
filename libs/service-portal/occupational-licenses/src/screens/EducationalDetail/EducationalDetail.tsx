@@ -7,7 +7,7 @@ import {
   ErrorScreen,
   formSubmit,
 } from '@island.is/service-portal/core'
-import { useLocale } from '@island.is/localization'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import { useUserInfo } from '@island.is/auth/react'
 import { getOrganizationLogoUrl } from '@island.is/shared/utils'
 import { Organization } from '@island.is/shared/types'
@@ -22,6 +22,7 @@ type UseParams = {
 
 export const EducationDetail = () => {
   const { id } = useParams() as UseParams
+  useNamespaces('sp.occupational-licenses')
 
   const user = useUserInfo()
   const birthday = user.profile.dateOfBirth
@@ -39,7 +40,7 @@ export const EducationDetail = () => {
   const license = data?.occupationalLicensesEducationalLicense
 
   useEffect(() => {
-    if (shouldDownload && license) {
+    if (shouldDownload && license && license.downloadUrl) {
       formSubmit(license.downloadUrl)
       setShouldDownload(false)
     }

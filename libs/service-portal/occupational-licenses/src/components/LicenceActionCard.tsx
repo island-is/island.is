@@ -1,4 +1,4 @@
-import { useLocale } from '@island.is/localization'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import { ActionCard } from '@island.is/service-portal/core'
 import { olMessage as ol } from '../lib/messages'
 import { m } from '@island.is/service-portal/core'

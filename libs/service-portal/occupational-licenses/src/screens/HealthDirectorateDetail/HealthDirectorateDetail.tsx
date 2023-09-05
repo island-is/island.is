@@ -6,7 +6,7 @@ import {
   EmptyState,
   ErrorScreen,
 } from '@island.is/service-portal/core'
-import { useLocale } from '@island.is/localization'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import { useUserInfo } from '@island.is/auth/react'
 import { getOrganizationLogoUrl } from '@island.is/shared/utils'
 import { Organization } from '@island.is/shared/types'
@@ -20,7 +20,7 @@ type UseParams = {
 
 export const EducationDetail = () => {
   const { id } = useParams() as UseParams
-
+  useNamespaces('sp.occupational-licenses')
   const user = useUserInfo()
   const birthday = user.profile.dateOfBirth
   const { formatDateFns, formatMessage } = useLocale()

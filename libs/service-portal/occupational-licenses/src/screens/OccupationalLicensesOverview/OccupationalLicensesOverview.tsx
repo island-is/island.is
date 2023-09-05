@@ -1,6 +1,6 @@
 import { useGetOccupationalLicensesQuery } from './OccupationalLicensesOverview.generated'
 import { AlertMessage, Box, Stack } from '@island.is/island-ui/core'
-import { useLocale } from '@island.is/localization'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   EmptyState,
   CardLoader,
@@ -18,7 +18,7 @@ import { OccupationalLicensesPaths } from '../../lib/paths'
 const OccupationalLicensesOverview = () => {
   const { data, loading, error } = useGetOccupationalLicensesQuery({})
   const { formatMessage, formatDateFns } = useLocale()
-
+  useNamespaces('sp.occupational-licenses')
   const organizations =
     (data?.getOrganizations?.items as Array<Organization>) ?? []
 
