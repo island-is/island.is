@@ -9,8 +9,7 @@ const UserInfoOverview = lazy(() =>
   import('./screens/UserInfoOverview/UserInfoOverview'),
 )
 const UserInfo = lazy(() => import('./screens/UserInfo/UserInfo'))
-const FamilyMember = lazy(() => import('./screens/FamilyMember/FamilyMember'))
-const FamilyMemberChild = lazy(() => import('./screens/FamilyMember/Child'))
+const FamilyMemberChild = lazy(() => import('./screens/Child/Child'))
 const Spouse = lazy(() => import('./screens/Spouse/Spouse'))
 const CompanyInfo = lazy(() => import('./screens/Company/CompanyInfo'))
 
@@ -34,12 +33,6 @@ export const informationModule: PortalModule = {
       path: InformationPaths.UserInfo,
       enabled: userInfo.scopes.includes(ApiScope.meDetails),
       element: <UserInfo />,
-    },
-    {
-      name: 'Family Member',
-      path: InformationPaths.FamilyMember,
-      enabled: userInfo.scopes.includes(ApiScope.meDetails),
-      element: <FamilyMember />,
     },
     {
       name: 'Child',

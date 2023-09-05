@@ -172,7 +172,12 @@ const OpenDataSubPage: Screen<OpenDataSubpageProps> = ({ page }) => {
               <GridColumn span={'12/12'}>
                 {graphCards.map((item, index) => (
                   <Box marginBottom={3} key={index}>
-                    <ChartsCard chart={item} subPage />
+                    <ChartsCard
+                      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                      // @ts-ignore make web strict
+                      chart={item}
+                      subPage
+                    />
                   </Box>
                 ))}
               </GridColumn>

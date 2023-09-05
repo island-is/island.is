@@ -28,7 +28,6 @@ import {
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import RulingDateLabel from '@island.is/judicial-system-web/src/components/RulingDateLabel/RulingDateLabel'
 import {
-  CaseAppealDecision,
   CaseFileCategory,
   isProsecutionRole,
   UserRole,
@@ -40,6 +39,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { mapCaseFileToUploadFile } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { formatDate } from '@island.is/judicial-system/formatters'
+import { CaseAppealDecision } from '@island.is/judicial-system-web/src/graphql/schema'
 import * as constants from '@island.is/judicial-system/consts'
 
 import { statement as strings } from './Statement.strings'

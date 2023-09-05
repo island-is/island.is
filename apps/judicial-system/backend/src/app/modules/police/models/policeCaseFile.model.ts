@@ -13,5 +13,8 @@ export class PoliceCaseFile implements TPoliceCaseFile {
   policeCaseNumber!: string
 
   @ApiProperty()
-  displayDate!: string
+  chapter?: number
+
+  @ApiProperty()
+  displayDate?: string
 }

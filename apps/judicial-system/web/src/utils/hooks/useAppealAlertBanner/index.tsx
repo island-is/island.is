@@ -13,7 +13,6 @@ import {
   STATEMENT_ROUTE,
 } from '@island.is/judicial-system/consts'
 import {
-  CaseAppealDecision,
   CaseAppealRulingDecision,
   isCourtRole,
   isProsecutionRole,
@@ -22,6 +21,7 @@ import {
   CaseAppealState,
   UserRole,
   InstitutionType,
+  CaseAppealDecision,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { appealRuling } from '@island.is/judicial-system-web/messages/Core/appealRuling'
 
