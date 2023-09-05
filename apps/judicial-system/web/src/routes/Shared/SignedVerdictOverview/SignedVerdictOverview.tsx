@@ -721,10 +721,7 @@ export const SignedVerdictOverview: React.FC = () => {
           </Box>
           {workingCase.appealConclusion && (
             <Box marginBottom={6}>
-              <AppealConclusion
-                conclusionText={workingCase.appealConclusion}
-                judgeName={workingCase.appealJudge1?.name}
-              />
+              <AppealConclusion conclusionText={workingCase.appealConclusion} />
             </Box>
           )}
 
