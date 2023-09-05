@@ -110,7 +110,8 @@ describe('Basic serialization', () => {
   })
 
   it('Shutdown Grace Period', () => {
-    expect(result.serviceDef[0].shutdownGracePeriodSeconds).toEqual(60)
+    expect(result.serviceDef[0].shutdownGracePeriodSeconds).toEqual(120)
+    expect(result.serviceDef[0].shutdownGracePeriodSleepSeconds).toEqual(60)
   })
 
   it('secrets', () => {
