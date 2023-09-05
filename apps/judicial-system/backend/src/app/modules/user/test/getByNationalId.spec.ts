@@ -15,11 +15,10 @@ interface Then {
   error: Error
 }
 
-type GivenWhenThen = () => Promise<Then>
+type GivenWhenThen = (nationalId: string) => Promise<Then>
 
 describe('UserController - Get by national id', () => {
   const date = randomDate()
-  const nationalId = uuid()
   let mockUserModel: typeof User
   let givenWhenThen: GivenWhenThen
 
@@ -29,9 +28,9 @@ describe('UserController - Get by national id', () => {
     mockUserModel = userModel
 
     const mockToday = nowFactory as jest.Mock
-    mockToday.mockReturnValueOnce(date)
+    mockToday.mockReturnValue(date)
 
-    givenWhenThen = async () => {
+    givenWhenThen = async (nationalId: string) => {
       const then = {} as Then
 
       await userController
@@ -47,14 +46,10 @@ describe('UserController - Get by national id', () => {
     let then: Then
 
     beforeEach(async () => {
-      then = await givenWhenThen()
+      then = await givenWhenThen('3333333333')
     })
 
     it('should return the user', () => {
-      expect(mockUserModel.findOne).toHaveBeenCalledWith( {
-        include: [{ model: Institution, as: 'institution' }],
-        { where: { nationalId } },
-      })
       expect(then.result).toEqual({
         id: '8f8f6522-95c8-46dd-98ef-cbc198544871',
         nationalId: '3333333333',
@@ -71,6 +66,7 @@ describe('UserController - Get by national id', () => {
   })
 
   describe('user found', () => {
+    const nationalId = uuid()
     const user = { id: uuid() } as User
     let then: Then
 
@@ -78,16 +74,14 @@ describe('UserController - Get by national id', () => {
       const mockFindOne = mockUserModel.findOne as jest.Mock
       mockFindOne.mockReturnValueOnce(user)
 
-      then = await givenWhenThen()
+      then = await givenWhenThen(nationalId)
     })
 
     it('should return the user', () => {
-      expect(mockUserModel.findOne).toHaveBeenCalledWith(
-        {
-          include: [{ model: Institution, as: 'institution' }],
-        },
-        { where: { nationalId } },
-      )
+      expect(mockUserModel.findOne).toHaveBeenCalledWith({
+        where: { nationalId },
+        include: [{ model: Institution, as: 'institution' }],
+      })
       expect(then.result).toBe(user)
     })
   })
