@@ -21,6 +21,8 @@ export const footerItemFirst = style({
 
 globalStyle(`${footerBg} a, ${footerBg} a:hover`, {
   color: 'white',
+  textDecoration: 'underline',
+  fontSize: '14px',
 })
 
 export const link = style({
