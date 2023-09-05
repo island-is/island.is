@@ -87,7 +87,11 @@ const FormFooter: React.FC<React.PropsWithChildren<Props>> = (props: Props) => {
               {props.nextButtonText ?? formatMessage(core.continue)}
             </Button>
           )}
-          {props.infoBoxText && <InfoBox text={props.infoBoxText} fluid />}
+          {props.infoBoxText && (
+            <div className={styles.infoBoxContainer}>
+              <InfoBox text={props.infoBoxText} />
+            </div>
+          )}
         </Box>
       )}
     </Box>
