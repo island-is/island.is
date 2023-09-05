@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo,useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import InputMask from 'react-input-mask'
 import { useIntl } from 'react-intl'
 import { useMeasure } from 'react-use'
@@ -14,7 +14,6 @@ import {
   useMotionValue,
 } from 'framer-motion'
 import { uuid } from 'uuidv4'
-import { useMutation } from '@apollo/client'
 
 import {
   AccordionItem,
@@ -40,7 +39,7 @@ import {
   useS3Upload,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 
-import { UpdateFileMutation } from './UpdateFiles.gql'
+import { useUpdateFilesMutation } from './updateFiles.generated'
 import { indictmentsCaseFilesAccordionItem as m } from './IndictmentsCaseFilesAccordionItem.strings'
 import * as styles from './IndictmentsCaseFilesAccordionItem.css'
 
@@ -74,10 +73,6 @@ export interface ReorderableItem {
   userGeneratedFilename?: string
   displayDate?: string
   canOpen?: boolean
-}
-
-interface UpdateFilesMutationResponse {
-  caseFiles: TCaseFile[]
 }
 
 const useRaisedShadow = (value: MotionValue<number>) => {
@@ -391,8 +386,7 @@ const IndictmentsCaseFilesAccordionItem: React.FC<
     crimeScenes,
   } = props
   const { formatMessage } = useIntl()
-  const [updateFilesMutation] =
-    useMutation<UpdateFilesMutationResponse>(UpdateFileMutation)
+  const [updateFilesMutation] = useUpdateFilesMutation()
 
   const { onOpen, fileNotFound, dismissFileNotFound } = useFileList({ caseId })
   const { remove } = useS3Upload(caseId)
@@ -529,8 +523,9 @@ const IndictmentsCaseFilesAccordionItem: React.FC<
 
     setReorderableItems((prev) => {
       const newReorderableItems = [...prev]
-      newReorderableItems[fileInReorderableItems].userGeneratedFilename =
-        newName
+      newReorderableItems[
+        fileInReorderableItems
+      ].userGeneratedFilename = newName
       newReorderableItems[fileInReorderableItems].displayDate = newDate
         ? newDate.toISOString()
         : newReorderableItems[fileInReorderableItems].displayDate
