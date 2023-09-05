@@ -55,11 +55,41 @@ describe('PoliceController - Get police case info', () => {
         json: async () => ({
           malsnumer: '007-2021-000001',
           skjol: [
-            { malsnumer: '007-2021-000001' },
-            { malsnumer: '007-2020-000103' },
-            { malsnumer: '007-2020-000057' },
-            { malsnumer: '008-2013-000033' },
-            { malsnumer: '008-2013-000033' },
+            {
+              dagsStofnad: '2020-01-01',
+              domsSkjalsFlokkun: 'dsf1',
+              rvMalSkjolMals_ID: 1,
+              heitiSkjals: 'Name 1.pdf',
+              malsnumer: '007-2021-000001',
+            },
+            {
+              dagsStofnad: '2020-01-01',
+              domsSkjalsFlokkun: 'dsf1',
+              rvMalSkjolMals_ID: 1,
+              heitiSkjals: 'Name 1.pdf',
+              malsnumer: '007-2020-000103',
+            },
+            {
+              dagsStofnad: '2020-01-01',
+              domsSkjalsFlokkun: 'dsf1',
+              rvMalSkjolMals_ID: 1,
+              heitiSkjals: 'Name 1.pdf',
+              malsnumer: '007-2020-000057',
+            },
+            {
+              dagsStofnad: '2020-01-01',
+              domsSkjalsFlokkun: 'dsf1',
+              rvMalSkjolMals_ID: 1,
+              heitiSkjals: 'Name 1.pdf',
+              malsnumer: '008-2013-000033',
+            },
+            {
+              dagsStofnad: '2020-01-01',
+              domsSkjalsFlokkun: 'dsf1',
+              rvMalSkjolMals_ID: 1,
+              heitiSkjals: 'Name 1.pdf',
+              malsnumer: '008-2013-000033',
+            },
           ],
           malseinings: [
             {
