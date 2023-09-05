@@ -447,6 +447,8 @@ services-auth-ids-api:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
+  shutdownGracePeriodSeconds: 60
+  shutdownGracePeriodSleepSeconds: 80
 services-auth-personal-representative:
   enabled: true
   env:
