@@ -4,11 +4,7 @@ import { render, waitFor, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MockedProvider } from '@apollo/client/testing'
 
-import {
-  CaseAppealDecision,
-  CaseState,
-  CaseType,
-} from '@island.is/judicial-system/types'
+import { CaseState, CaseType } from '@island.is/judicial-system/types'
 import {
   mockHighCourtQuery,
   mockJudgeQuery,
@@ -18,6 +14,7 @@ import {
 import { UserProvider } from '@island.is/judicial-system-web/src/components'
 import { CasesQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import { LocaleProvider } from '@island.is/localization'
+import { CaseAppealDecision } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import Cases from './Cases'
 
