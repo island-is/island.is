@@ -231,11 +231,11 @@ export const UserForm: React.FC<React.PropsWithChildren<Props>> = (props) => {
             <Box className={styles.roleColumn}>
               <RadioButton
                 name="role"
-                id="roleRepresentative"
+                id="roleProsecutorRepresentative"
                 label="Fulltrúi"
-                checked={user.role === UserRole.REPRESENTATIVE}
+                checked={user.role === UserRole.PROSECUTOR_REPRESENTATIVE}
                 onChange={() =>
-                  setUser({ ...user, role: UserRole.REPRESENTATIVE })
+                  setUser({ ...user, role: UserRole.PROSECUTOR_REPRESENTATIVE })
                 }
                 large
               />

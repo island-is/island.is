@@ -8,7 +8,7 @@ import {
 import { filterCases, FilterOption, filterOptionsForUser } from './useFilter'
 
 describe('useFilter - filterOptionsForUser', () => {
-  test.each([UserRole.ASSISTANT, UserRole.REPRESENTATIVE])(
+  test.each([UserRole.ASSISTANT, UserRole.PROSECUTOR_REPRESENTATIVE])(
     'should filter out investigation option for %s',
     (role) => {
       const user = { role: role } as User

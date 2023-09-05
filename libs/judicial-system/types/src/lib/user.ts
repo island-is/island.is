@@ -1,14 +1,15 @@
 import { Institution, InstitutionType } from './institution'
 
 export enum UserRole {
-  PROSECUTOR = 'PROSECUTOR',
-  REPRESENTATIVE = 'REPRESENTATIVE',
-  REGISTRAR = 'REGISTRAR',
-  JUDGE = 'JUDGE',
-  ASSISTANT = 'ASSISTANT',
-  ADMIN = 'ADMIN', // Does not exist in the database
-  STAFF = 'STAFF',
-  DEFENDER = 'DEFENDER', // Does not exist in the database
+  PROSECUTOR = 'PROSECUTOR', // sækjandi
+  PROSECUTOR_REPRESENTATIVE = 'PROSECUTOR_REPRESENTATIVE', // fulltrúi
+  REGISTRAR = 'REGISTRAR', // dómritari
+  // COURT_OF_APPEALS_OFFICE_WORKER = 'COURT_OF_APPEALS_OFFICE_WORKER', // skrifsofufólk
+  JUDGE = 'JUDGE', // dómari
+  ASSISTANT = 'ASSISTANT', // aðstoðarmaður dómara
+  ADMIN = 'ADMIN', // Does not exist in the database // notendaumsjón
+  STAFF = 'STAFF', // fangelsismálastarfsmaður
+  DEFENDER = 'DEFENDER', // Does not exist in the database // verjandi
 }
 
 export interface User {
@@ -48,7 +49,7 @@ export interface UpdateUser {
 
 export const prosecutionRoles: string[] = [
   UserRole.PROSECUTOR,
-  UserRole.REPRESENTATIVE,
+  UserRole.PROSECUTOR_REPRESENTATIVE,
 ]
 
 export function isProsecutionRole(role?: string): boolean {
