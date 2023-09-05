@@ -38,6 +38,8 @@ import {
   CommunicationsModule,
 } from '@island.is/api/domains/communications'
 import { IdentityModule } from '@island.is/api/domains/identity'
+import { NationalRegistrySoffiaClientConfig } from '@island.is/clients/national-registry-v1'
+import { NationalRegistryV3ClientConfig } from '@island.is/clients/national-registry-v3'
 import {
   GenericAdrLicenseConfig,
   GenericDisabilityLicenseConfig,
@@ -49,7 +51,6 @@ import {
 } from '@island.is/api/domains/license-service'
 import { MortgageCertificateModule } from '@island.is/api/domains/mortgage-certificate'
 import { MunicipalitiesFinancialAidModule } from '@island.is/api/domains/municipalities-financial-aid'
-import { NationalRegistryModule } from '@island.is/api/domains/national-registry'
 import { NationalRegistryXRoadModule } from '@island.is/api/domains/national-registry-x-road'
 import { PassportModule } from '@island.is/api/domains/passport'
 import { FishingLicenseModule } from '@island.is/api/domains/fishing-license'
@@ -126,6 +127,7 @@ import { GraphqlOptionsFactory } from './graphql-options.factory'
 import { HealthController } from './health.controller'
 import { GraphQLConfig } from './graphql.config'
 import { RskRelationshipsClientConfig } from '@island.is/clients-rsk-relationships'
+import { NationalRegistryModule } from '@island.is/api/domains/national-registry'
 
 const environment = getConfig
 
@@ -201,14 +203,6 @@ const environment = getConfig
     }),
     CmsTranslationsModule,
     TerminusModule,
-    NationalRegistryModule.register({
-      nationalRegistry: {
-        baseSoapUrl: environment.nationalRegistry.baseSoapUrl!,
-        user: environment.nationalRegistry.user!,
-        password: environment.nationalRegistry.password!,
-        host: environment.nationalRegistry.host!,
-      },
-    }),
     HealthInsuranceModule.register({
       clientV2Config: {
         xRoadBaseUrl: environment.healthInsuranceV2.xRoadBaseUrl!,
@@ -231,6 +225,7 @@ const environment = getConfig
     EmailSignupModule,
     ApiCatalogueModule,
     IdentityModule,
+    NationalRegistryModule,
     AuthModule.register(environment.auth as AuthConfig),
     SyslumennModule,
     DisabilityLicenseModule,
@@ -282,6 +277,8 @@ const environment = getConfig
         AirDiscountSchemeClientConfig,
         ConsultationPortalClientConfig,
         AssetsClientConfig,
+        NationalRegistrySoffiaClientConfig,
+        NationalRegistryV3ClientConfig,
         FirearmLicenseClientConfig,
         DisabilityLicenseClientConfig,
         GenericFirearmLicenseConfig,
