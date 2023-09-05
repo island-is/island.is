@@ -45,16 +45,21 @@ const HousingBenefitCalculator = ({ slice }: HousingBenefitCalculatorProps) => {
     assets: '',
     householdMemberCount: 0,
   })
+  const [data, setData] = useState<GetHousingBenefitCalculationQuery>()
   const updateInputState = (key: keyof InputState, value: string | number) => {
     setInputState((prevState) => ({ ...prevState, [key]: value }))
   }
 
   const { control, getValues } = useForm()
 
-  const [fetchCalculation, { data, loading, called, error }] = useLazyQuery<
+  const [fetchCalculation, { loading, called, error }] = useLazyQuery<
     GetHousingBenefitCalculationQuery,
     GetHousingBenefitCalculationQueryVariables
-  >(GET_HOUSING_BENEFIT_CALCULATION)
+  >(GET_HOUSING_BENEFIT_CALCULATION, {
+    onCompleted(data) {
+      setData(data)
+    },
+  })
 
   const calculate = () => {
     const values = getValues() as InputState
@@ -231,7 +236,7 @@ const HousingBenefitCalculator = ({ slice }: HousingBenefitCalculatorProps) => {
           </Button>
         </Stack>
       </Box>
-      {!loading && called && !error && (
+      {called && !error && data && (
         <Box
           background="blue100"
           paddingY={[3, 3, 5]}
