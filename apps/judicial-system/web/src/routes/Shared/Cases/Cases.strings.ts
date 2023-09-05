@@ -172,8 +172,7 @@ export const cases = {
     }),
     courtOfAppealsUsers: defineMessages({
       title: {
-        id:
-          'judicial.system.core:cases.past_requests.court_of_appeals_users.title',
+        id: 'judicial.system.core:cases.past_requests.court_of_appeals_users.title',
         defaultMessage: 'Kærðir úrskurðir',
         description:
           'Notaður sem titill í seinni málalista á heimaskjá landsréttarnotanda.',
