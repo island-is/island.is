@@ -29,7 +29,6 @@ import {
   AppealCaseFilesOverview,
   CaseResentExplanation,
   FeatureContext,
-  AppealConclusion,
   AlertBanner,
   OverviewHeader,
   PdfButton,
@@ -41,6 +40,7 @@ import { CaseAppealDecision } from '@island.is/judicial-system-web/src/graphql/s
 import * as constants from '@island.is/judicial-system/consts'
 
 import { strings } from './CaseOverview.strings'
+import { conclusion } from '../../components/Conclusion/Conclusion.strings'
 
 type availableModals =
   | 'NoModal'
@@ -48,8 +48,9 @@ type availableModals =
   | 'ConfirmStatementAfterDeadline'
 
 export const CaseOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
-  const { workingCase, isLoadingWorkingCase, caseNotFound } =
-    useContext(FormContext)
+  const { workingCase, isLoadingWorkingCase, caseNotFound } = useContext(
+    FormContext,
+  )
 
   const { formatMessage } = useIntl()
   const { features } = useContext(FeatureContext)
@@ -240,6 +241,7 @@ export const CaseOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
           {completedCaseStates.includes(workingCase.state) && (
             <Box marginBottom={6}>
               <Conclusion
+                title={formatMessage(conclusion.title)}
                 conclusionText={workingCase.conclusion}
                 judgeName={workingCase.judge?.name}
               />
@@ -247,15 +249,13 @@ export const CaseOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
           )}
           {workingCase.appealConclusion && (
             <Box marginBottom={6}>
-              <AppealConclusion
+              <Conclusion
+                title={formatMessage(conclusion.appealTitle)}
                 conclusionText={workingCase.appealConclusion}
-                judgeName={workingCase.appealJudge1?.name}
               />
             </Box>
           )}
-
           <AppealCaseFilesOverview />
-
           {(workingCase.sendRequestToDefender ||
             completedCaseStates.includes(workingCase.state)) && (
             <Box marginBottom={10}>

@@ -22,12 +22,17 @@ import { core } from '@island.is/judicial-system-web/messages'
 
 import CaseFilesOverview from '../components/CaseFilesOverview/CaseFilesOverview'
 import CourtOfAppealCaseOverviewHeader from '../components/CaseOverviewHeader/CaseOverviewHeader'
+import { conclusion } from '@island.is/judicial-system-web/src/components/Conclusion/Conclusion.strings'
 
 const CourtOfAppealOverview: React.FC<
   React.PropsWithChildren<unknown>
 > = () => {
-  const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
-    useContext(FormContext)
+  const {
+    workingCase,
+    setWorkingCase,
+    isLoadingWorkingCase,
+    caseNotFound,
+  } = useContext(FormContext)
 
   const { title, description } = useAppealAlertBanner(workingCase)
   const { formatMessage } = useIntl()
@@ -122,6 +127,7 @@ const CourtOfAppealOverview: React.FC<
           ) : null}
           <Box marginBottom={6}>
             <Conclusion
+              title={formatMessage(conclusion.title)}
               conclusionText={workingCase.conclusion}
               judgeName={workingCase.judge?.name}
             />

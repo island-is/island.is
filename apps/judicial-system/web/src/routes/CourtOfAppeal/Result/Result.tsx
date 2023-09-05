@@ -14,7 +14,6 @@ import {
   PageLayout,
   UserContext,
   Conclusion,
-  AppealConclusion,
 } from '@island.is/judicial-system-web/src/components'
 import { core } from '@island.is/judicial-system-web/messages'
 import { titleForCase } from '@island.is/judicial-system-web/src/utils/titleForCase/titleForCase'
@@ -22,10 +21,15 @@ import { useAppealAlertBanner } from '@island.is/judicial-system-web/src/utils/h
 
 import CaseFilesOverview from '../components/CaseFilesOverview/CaseFilesOverview'
 import CourtOfAppealCaseOverviewHeader from '../components/CaseOverviewHeader/CaseOverviewHeader'
+import { conclusion } from '@island.is/judicial-system-web/src/components/Conclusion/Conclusion.strings'
 
 const CourtOfAppealResult: React.FC<React.PropsWithChildren<unknown>> = () => {
-  const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
-    useContext(FormContext)
+  const {
+    workingCase,
+    setWorkingCase,
+    isLoadingWorkingCase,
+    caseNotFound,
+  } = useContext(FormContext)
 
   const { formatMessage } = useIntl()
   const { user } = useContext(UserContext)
@@ -138,14 +142,14 @@ const CourtOfAppealResult: React.FC<React.PropsWithChildren<unknown>> = () => {
           ) : null}
           <Box marginBottom={6}>
             <Conclusion
+              title={formatMessage(conclusion.title)}
               conclusionText={workingCase.conclusion}
-              judgeName={workingCase.judge?.name}
             />
           </Box>
           <Box marginBottom={6}>
-            <AppealConclusion
+            <Conclusion
+              title={formatMessage(conclusion.appealTitle)}
               conclusionText={workingCase.appealConclusion}
-              judgeName={workingCase.appealJudge1?.name}
             />
           </Box>
           <CaseFilesOverview />
