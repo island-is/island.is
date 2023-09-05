@@ -4,7 +4,7 @@ import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger'
 import { UniversityResponse } from './model'
 
 @ApiTags('University')
-@Controller()
+@Controller('api')
 export class UniversityController {
   constructor(private readonly universityService: UniversityService) {}
 

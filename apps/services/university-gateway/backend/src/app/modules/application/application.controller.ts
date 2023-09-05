@@ -12,7 +12,7 @@ import { Application, ApplicationResponse } from './model'
 import { CreateApplicationDto, UpdateApplicationDto } from './dto'
 
 @ApiTags('Application')
-@Controller()
+@Controller('api')
 export class ApplicationController {
   constructor(private readonly applicationService: ApplicationService) {}
 

@@ -1,5 +1,3 @@
-import { ModeOfDelivery } from './program'
-
 export enum ApplicationStatus {
   IN_REVIEW = 'IN_REVIEW',
   IN_PROGRESS = 'IN_PROGRESS',
@@ -10,16 +8,4 @@ export enum ApplicationStatus {
   REJECTED_BY_UNIVERSITY_REASON_INSUFFICIENT = 'REJECTED_BY_UNIVERSITY_REASON_INSUFFICIENT',
   REJECTED_BY_UNIVERSITY_REASON_NO_AVAILABILITY = 'REJECTED_BY_UNIVERSITY_REASON_NO_AVAILABILITY',
   CANCELLED_BY_STUDENT = 'PAYMENT_COMPLETE',
-}
-
-export type Application = {
-  id: string
-  nationalId: string
-  universityId: string
-  programId: string
-  modeOfDelivery: ModeOfDelivery
-  status: ApplicationStatus
-  created: Date
-  modified: Date
-  data: Application
 }

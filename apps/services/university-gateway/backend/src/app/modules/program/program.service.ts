@@ -22,7 +22,7 @@ export class ProgramService {
     private programModel: typeof Program,
 
     @InjectModel(ProgramTag)
-    private programTagModel: typeof ProgramTag,
+    // private programTagModel: typeof ProgramTag,
 
     @InjectModel(Tag)
     private tagModel: typeof Tag,
