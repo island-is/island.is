@@ -10,8 +10,14 @@ import {
   ValueContainerProps,
   SingleValueProps,
   StylesConfig,
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
   IndicatorsContainerProps,
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
   GroupBase,
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
   DropdownIndicatorProps,
 } from 'react-select'
 
@@ -22,6 +28,8 @@ import { Option as OptionType } from '../../../Select/Select.types'
 import * as styles from '../CountryCodeSelect.css'
 
 export const Menu = (
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
   props: MenuProps<OptionType<string>, false, GroupBase<OptionType<string>>>,
 ) => (
   <components.Menu className={styles.menu} {...props}>
@@ -30,6 +38,8 @@ export const Menu = (
 )
 
 export const Option = (
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
   props: OptionProps<OptionType<string>, false, GroupBase<OptionType<string>>>,
 ) => {
   const { size = 'md' } = props.selectProps
@@ -37,6 +47,8 @@ export const Option = (
 
   return (
     <components.Option
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
       className={cn(styles.option, styles.optionSizes[size])}
       {...props}
     >
@@ -104,6 +116,8 @@ export const DropdownIndicator = (
 }
 
 export const SingleValue = (
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
   props: SingleValueProps<
     OptionType<string>,
     false,
@@ -114,6 +128,8 @@ export const SingleValue = (
   const value = props.hasValue ? props.getValue() : null
   return (
     <components.SingleValue
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
       className={cn(styles.singleValue, styles.singleValueSizes[size])}
       {...props}
     >
@@ -123,6 +139,8 @@ export const SingleValue = (
 }
 
 export const ValueContainer = (
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
   props: ValueContainerProps<
     OptionType<string>,
     false,
@@ -144,6 +162,8 @@ export const ValueContainer = (
 }
 
 export const Placeholder = (
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
   props: PlaceholderProps<
     OptionType<string>,
     false,
@@ -156,6 +176,8 @@ export const Placeholder = (
       className={cn(
         styles.placeholder,
         styles.placeholderPadding,
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore make web strict
         styles.placeholderSizes[size],
       )}
       {...props}
@@ -166,6 +188,8 @@ export const Placeholder = (
 }
 
 export const Input = (
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
   props: InputProps<OptionType<string>, false, GroupBase<OptionType<string>>>,
 ) => {
   const { ariaError } = props.selectProps
@@ -182,6 +206,8 @@ export const Input = (
   )
 }
 export const Control = (
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
   props: ControlProps<OptionType<string>, false, GroupBase<OptionType<string>>>,
 ) => {
   const { size = 'md' } = props.selectProps
@@ -197,13 +223,16 @@ export const Control = (
     </components.Control>
   )
 }
-
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
 export const customStyles = (): StylesConfig<
   OptionType<string>,
   false,
   GroupBase<OptionType<string>>
 > => ({
   indicatorSeparator: () => ({}),
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
   container: (provided) => ({
     ...provided,
     position: 'absolute',
@@ -213,6 +242,8 @@ export const customStyles = (): StylesConfig<
     height: '100%',
     zIndex: 1,
   }),
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
   control: (provided, state) => ({
     ...provided,
     background: 'transparent',

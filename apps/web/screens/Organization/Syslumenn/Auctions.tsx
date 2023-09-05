@@ -397,6 +397,8 @@ const Auctions: Screen<AuctionsProps> = ({
   namespace,
   subpage,
 }) => {
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
   const { format } = useDateUtils()
@@ -406,7 +408,8 @@ const Auctions: Screen<AuctionsProps> = ({
   useContentfulId(organizationPage?.id, subpage?.id)
 
   const pageUrl = Router.pathname
-
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
   const navList: NavigationItem[] = organizationPage?.menuLinks.map(
     ({ primaryLink, childrenLinks }) => ({
       title: primaryLink?.text,
@@ -502,6 +505,8 @@ const Auctions: Screen<AuctionsProps> = ({
         ? auction.auctionType !== lotTypeOption.excludeAuctionType
         : true) &&
       // Filter by Date
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
       (date ? sameDay(date, auctionDate) : true) &&
       // Filter by search query
       (auction.lotName?.toLowerCase().includes(query) ||
@@ -636,6 +641,8 @@ const Auctions: Screen<AuctionsProps> = ({
   return (
     <OrganizationWrapper
       pageTitle={subpage?.title ?? n('auctions', 'Uppboð')}
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
       organizationPage={organizationPage}
       showReadSpeaker={false}
       breadcrumbItems={[
@@ -658,7 +665,12 @@ const Auctions: Screen<AuctionsProps> = ({
         <Text variant="h1" as="h2">
           {subpage?.title ?? n('auctions', 'Uppboð')}
         </Text>
-        <Webreader readId={null} readClass="rs_read" />
+        <Webreader
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore make web strict
+          readId={null}
+          readClass="rs_read"
+        />
       </Box>
       <GridContainer>
         <GridRow>
@@ -682,7 +694,9 @@ const Auctions: Screen<AuctionsProps> = ({
                 label: x.filterLabel,
                 value: x.slugValue,
               })).find((x) => x.value === officeLocation.slugValue)}
-              onChange={({ value }) => {
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore make web strict
+              onChange={({ value }: Option) => {
                 setOfficeLocationBySlugValue(String(value))
                 Router.replace(`#${value}`)
               }}
@@ -708,7 +722,11 @@ const Auctions: Screen<AuctionsProps> = ({
                 label: x.filterLabel,
                 value: x.value,
               })).find((x) => x.value === lotTypeOption.value)}
-              onChange={({ value }) => setLotTypeOptionByValue(String(value))}
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore make web strict
+              onChange={({ value }: Option) =>
+                setLotTypeOptionByValue(String(value))
+              }
             />
           </GridColumn>
           <GridColumn
@@ -770,6 +788,8 @@ const Auctions: Screen<AuctionsProps> = ({
         {!loading &&
           !error &&
           filteredAuctions.slice(0, showCount).map((auction, index) => {
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore make web strict
             const auctionDate = new Date(auction.auctionDate)
             const auctionPetitioners = auction.petitioners?.split(',')
             const auctionRespondents = auction.respondent?.split(',')
@@ -881,7 +901,12 @@ const Auctions: Screen<AuctionsProps> = ({
                   )}
 
                   {/* Respondents */}
-                  {renderRespondents(auction, auctionRespondents)}
+                  {renderRespondents(
+                    auction,
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    // @ts-ignore make web strict
+                    auctionRespondents,
+                  )}
 
                   {/* Petitioners */}
                   {auctionPetitioners &&
@@ -905,7 +930,11 @@ const Auctions: Screen<AuctionsProps> = ({
                     <Box>
                       {auction.lotItems && (
                         <DialogPrompt
+                          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                          // @ts-ignore make web strict
                           baseId={auction.lotId}
+                          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                          // @ts-ignore make web strict
                           title={auction.lotName}
                           description={auction.lotItems
                             .split('|')

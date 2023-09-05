@@ -130,7 +130,11 @@ const Home: Screen<HomeProps> = ({ categories, news, page, locale }) => {
           />
         </GridContainer>
       </Box>
-      {watsonConfig[locale] && <WatsonChatPanel {...watsonConfig[locale]} />}
+      {watsonConfig[locale] && (
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore make web strict
+        <WatsonChatPanel {...watsonConfig[locale]} />
+      )}
     </Box>
   )
 }
