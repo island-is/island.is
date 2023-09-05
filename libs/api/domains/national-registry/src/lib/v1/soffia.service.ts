@@ -269,9 +269,10 @@ export class SoffiaService {
 
   async getCustodians(
     nationalId: string,
+    parentNationalId: string,
     data?: V1RawData,
   ): Promise<Array<PersonBase> | null> {
-    const children = await this.getChildren(nationalId, data)
+    const children = await this.getChildren(parentNationalId ?? '0', data)
     const child = children.find((c) => c?.nationalId === nationalId) ?? null
 
     if (!child) {
@@ -319,7 +320,7 @@ export class SoffiaService {
       ? (data as ISLEinstaklingur)
       : (await this.getPerson(nationalId)).rawData
 
-    return citizenship
+    return citizenship && citizenship.Rikisfang && citizenship.RikisfangLand
       ? {
           code: citizenship.Rikisfang ?? null,
           name: citizenship.RikisfangLand ?? null,
@@ -350,7 +351,7 @@ export class SoffiaService {
       ? (data as ISLEinstaklingur)
       : (await this.getPerson(nationalId)).rawData
 
-    return spouse
+    return spouse && spouse.MakiKt && spouse.nafnmaka
       ? {
           fullName: spouse.nafnmaka,
           name: spouse.nafnmaka,
@@ -370,7 +371,7 @@ export class SoffiaService {
       ? (data as ISLEinstaklingur)
       : (await this.getPerson(nationalId)).rawData
 
-    return person && family
+    return person && family && person.Fjolsknr
       ? {
           domicileId: person.Fjolsknr,
           address: {

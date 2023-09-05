@@ -29,12 +29,12 @@ export class NationalRegistryService {
 
   getCustodians(
     nationalId: string,
+    userNationalId: string,
     data?: SharedPerson,
-    userNationalId?: string,
   ) {
     return data?.api === 'v3'
       ? this.v3.getCustodians(nationalId, data?.rawData)
-      : this.v1.getChildCustody(userNationalId, data?.rawData)
+      : this.v1.getCustodians(nationalId, userNationalId, data?.rawData)
   }
 
   getParents(nationalId: string, data?: SharedPerson, userNationalId?: string) {

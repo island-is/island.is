@@ -40,7 +40,6 @@ type UseParams = {
 const Child = () => {
   useNamespaces('sp.family')
   const { formatMessage } = useLocale()
-  const [showTooltip, setShowTooltip] = useState(false)
   const [useNatRegV3, setUseNatRegV3] = useState(false)
   const featureFlagClient: FeatureFlagClient = useFeatureFlagClient()
   const userInfo = useUserInfo()
@@ -49,14 +48,6 @@ const Child = () => {
   /* Should show name breakdown tooltip? */
   useEffect(() => {
     const isFlagEnabled = async () => {
-      const ffNameBreakdownEnabled = await featureFlagClient.getValue(
-        `isServicePortalNameBreakdownEnabled`,
-        false,
-      )
-      if (ffNameBreakdownEnabled) {
-        setShowTooltip(ffNameBreakdownEnabled as boolean)
-      }
-
       const ffNatRegV3Enabled = await featureFlagClient.getValue(
         `isserviceportalnationalregistryv3enabled`,
         false,
@@ -88,8 +79,6 @@ const Child = () => {
     data?.nationalRegistryPerson?.childCustody?.find(
       (x) => x.nationalId === nationalId,
     ) || null
-
-  console.log(JSON.stringify(data?.nationalRegistryPerson))
 
   const parent1 = child?.birthParents ? child.birthParents[0] : undefined
   const parent2 = child?.birthParents ? child.birthParents[1] : undefined
@@ -182,18 +171,14 @@ const Child = () => {
             translate="no"
             printable
             content={child?.fullName || '...'}
-            tooltip={
-              showTooltip
-                ? formatNameBreaks(
-                    (child as NationalRegistryName) ?? undefined,
-                    {
-                      givenName: formatMessage(spmm.givenName),
-                      middleName: formatMessage(spmm.middleName),
-                      lastName: formatMessage(spmm.lastName),
-                    },
-                  )
-                : undefined
-            }
+            tooltip={formatNameBreaks(
+              (child as NationalRegistryName) ?? undefined,
+              {
+                givenName: formatMessage(spmm.givenName),
+                middleName: formatMessage(spmm.middleName),
+                lastName: formatMessage(spmm.lastName),
+              },
+            )}
             loading={loading}
             editLink={
               !isChild
