@@ -63,7 +63,8 @@ interface ServiceWebFormsPageProps {
   formNamespace: FormNamespace
   locale: Locale
 }
-
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
 const ServiceWebFormsPage: Screen<ServiceWebFormsPageProps> = ({
   syslumenn,
   supportCategories,
@@ -75,6 +76,8 @@ const ServiceWebFormsPage: Screen<ServiceWebFormsPageProps> = ({
   locale,
 }) => {
   const { linkResolver } = useLinkResolver()
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
   const n = useNamespace(namespace)
   const [submit, { data, loading, error }] = useMutation<
     ServiceWebFormsMutation,
@@ -166,6 +169,8 @@ const ServiceWebFormsPage: Screen<ServiceWebFormsPageProps> = ({
       pageTitle={pageTitle}
       headerTitle={headerTitle}
       institutionSlug={institutionSlug}
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
       organization={organization}
       organizationTitle={organizationTitle}
       smallBackground
@@ -178,6 +183,8 @@ const ServiceWebFormsPage: Screen<ServiceWebFormsPageProps> = ({
         <GridContainer>
           <GridRow>
             <GridColumn
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore make web strict
               offset={[null, null, null, '1/12']}
               span={['12/12', '12/12', '12/12', '10/12']}
             >
@@ -186,10 +193,18 @@ const ServiceWebFormsPage: Screen<ServiceWebFormsPageProps> = ({
                   <GridColumn span="12/12" paddingBottom={[2, 2, 4]}>
                     <Box display={['none', 'none', 'block']} printHidden>
                       <Breadcrumbs
+                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                        // @ts-ignore make web strict
                         items={breadcrumbItems}
                         renderLink={(link, { href }) => {
                           return (
-                            <NextLink href={href} passHref legacyBehavior>
+                            <NextLink
+                              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                              // @ts-ignore make web strict
+                              href={href}
+                              passHref
+                              legacyBehavior
+                            >
                               {link}
                             </NextLink>
                           )
@@ -297,7 +312,8 @@ const ServiceWebFormsPage: Screen<ServiceWebFormsPageProps> = ({
     </ServiceWebWrapper>
   )
 }
-
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
 ServiceWebFormsPage.getProps = async ({ apolloClient, locale, query }) => {
   const defaultSlug = locale === 'is' ? 'stafraent-island' : 'digital-iceland'
   const slug = query.slug ? (query.slug as string) : defaultSlug
@@ -384,6 +400,8 @@ ServiceWebFormsPage.getProps = async ({ apolloClient, locale, query }) => {
   const filteredSupportCategories = filterSupportCategories(
     supportCategories?.data?.getSupportCategoriesInOrganization,
     slug,
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore make web strict
     organization?.data?.getOrganization,
     locale,
     namespace,

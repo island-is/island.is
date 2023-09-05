@@ -38,7 +38,7 @@ export const GeneralFishingLicenseSchema = z.object({
   }),
   applicant: applicantInformationSchema({ phoneRequired: true }),
   shipSelection: z.object({
-    ship: z.enum(['0', '1', '2', '3', '4', '5']).refine((x) => x, {
+    ship: z.string().refine((x) => x, {
       params: error.requiredRadioField,
     }),
     registrationNumber: z.string(),
