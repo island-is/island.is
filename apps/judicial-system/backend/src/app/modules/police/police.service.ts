@@ -53,8 +53,8 @@ export class PoliceService {
     rvMalSkjolMals_ID: z.number(),
     heitiSkjals: z.string(),
     malsnumer: z.string(),
-    domsSkjalsFlokkun: z.string(),
-    dagsStofnad: z.string(),
+    domsSkjalsFlokkun: z.optional(z.string()),
+    dagsStofnad: z.optional(z.string()),
   })
 
   private responseStructure = z.object({
@@ -199,8 +199,9 @@ export class PoliceService {
     )
       .then(async (res: Response) => {
         if (res.ok) {
-          const response: z.infer<typeof this.responseStructure> =
-            await res.json()
+          const response: z.infer<
+            typeof this.responseStructure
+          > = await res.json()
 
           this.responseStructure.parse(response)
 
@@ -267,8 +268,9 @@ export class PoliceService {
     return promise
       .then(async (res: Response) => {
         if (res.ok) {
-          const response: z.infer<typeof this.responseStructure> =
-            await res.json()
+          const response: z.infer<
+            typeof this.responseStructure
+          > = await res.json()
 
           this.responseStructure.parse(response)
 
