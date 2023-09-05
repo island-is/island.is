@@ -23,7 +23,7 @@
     "extract-strings": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/service-portal/licenses/src/{lib,components,screens}/**/*.{js,ts,tsx}'"
+        "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/service-portal/occupational-licenses/src/{lib,components,screens}/**/*.{js,ts,tsx}'"
       }
     },
     "schemas/codegen": {
