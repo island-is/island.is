@@ -8,7 +8,6 @@ import { User } from '@island.is/judicial-system/types'
 import { Case } from '../../case'
 import { PoliceCaseFile } from '../models/policeCaseFile.model'
 import { createTestingPoliceModule } from './createTestingPoliceModule'
-import { uuidFactory } from '../../../factories'
 
 jest.mock('isomorphic-fetch')
 
@@ -77,44 +76,14 @@ describe('PoliceController - Get all', () => {
           malsnumer: '000-0000-0000',
           skjol: [
             {
-              skjalNr: '1',
               dagsStofnad: '2020-01-01',
-              leitarord: 'leitarord1',
-              ath: 'ath1',
-              ferill: 'ferill1',
-              tegundSkjals: {
-                umStodAtridi_ID: 1,
-                fkumStodTegund_ID: 1,
-                heiti: 'heiti1',
-                virk: true,
-                dags_Fra: null,
-                dags_Til: null,
-                kodi: 'kodi1',
-              },
               domsSkjalsFlokkun: 'dsf1',
-              fkRMal_ID: uuidFactory(),
               rvMalSkjolMals_ID: 1,
               heitiSkjals: 'Name 1.pdf',
-              flokkurSkjals: 'flokkur1',
               malsnumer: 'malsnumer1',
             },
             {
-              skjalNr: '2',
               dagsStofnad: '2020-01-01',
-              leitarord: 'leitarord2',
-              ath: 'ath2',
-              ferill: 'ferill2',
-              tegundSkjals: {
-                umStodAtridi_ID: 2,
-                fkumStodTegund_ID: 2,
-                heiti: 'heiti2',
-                virk: true,
-                dags_Fra: null,
-                dags_Til: null,
-                kodi: 'kodi2',
-              },
-              domsSkjalsFlokkun: 'dsf2',
-              fkRMal_ID: uuidFactory(),
               rvMalSkjolMals_ID: 2,
               heitiSkjals: 'Name 2',
               flokkurSkjals: 'flokkur2',
@@ -123,12 +92,8 @@ describe('PoliceController - Get all', () => {
           ],
           malseinings: [
             {
-              artalNrGreinLidur: '',
-              lysing: '',
-              nanar: '',
               vettvangur: '',
               brotFra: '',
-              brotTil: '',
               upprunalegtMalsnumer: '',
             },
           ],

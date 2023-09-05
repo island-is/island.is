@@ -50,26 +50,11 @@ export class PoliceService {
   private agent: Agent
   private throttle = Promise.resolve({} as UploadPoliceCaseFileResponse)
   private policeCaseFileStructure = z.object({
-    skjalNr: z.string(),
-    dagsStofnad: z.string(),
-    leitarord: z.string(),
-    ath: z.string(),
-    ferill: z.string(),
-    tegundSkjals: z.object({
-      umStodAtridi_ID: z.number(),
-      fkumStodTegund_ID: z.number(),
-      heiti: z.string(),
-      virk: z.boolean(),
-      dags_Fra: z.nullable(z.string()),
-      dags_Til: z.nullable(z.string()),
-      kodi: z.string(),
-    }),
-    domsSkjalsFlokkun: z.string(),
-    fkRMal_ID: z.string().uuid(),
     rvMalSkjolMals_ID: z.number(),
     heitiSkjals: z.string(),
-    flokkurSkjals: z.string(),
     malsnumer: z.string(),
+    domsSkjalsFlokkun: z.string(),
+    dagsStofnad: z.string(),
   })
 
   private responseStructure = z.object({
@@ -77,12 +62,8 @@ export class PoliceService {
     skjol: z.array(this.policeCaseFileStructure),
     malseinings: z.array(
       z.object({
-        artalNrGreinLidur: z.string(),
-        lysing: z.string(),
-        nanar: z.string(),
         vettvangur: z.optional(z.string()),
         brotFra: z.optional(z.string()),
-        brotTil: z.optional(z.string()),
         upprunalegtMalsnumer: z.string(),
       }),
     ),
@@ -221,6 +202,7 @@ export class PoliceService {
           const response: z.infer<
             typeof this.responseStructure
           > = await res.json()
+
           this.responseStructure.parse(response)
 
           return response.skjol.map((file) => ({
