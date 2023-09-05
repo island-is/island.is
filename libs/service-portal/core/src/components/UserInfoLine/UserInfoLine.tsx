@@ -125,7 +125,7 @@ export const UserInfoLine: FC<React.PropsWithChildren<Props>> = ({
               <SkeletonLoader width="70%" height={27} />
             ) : renderContent ? (
               renderContent()
-            ) : (
+            ) : typeof content === 'string' ? (
               <Text
                 translate={translate}
                 color={warning ? 'red600' : undefined}
@@ -133,6 +133,8 @@ export const UserInfoLine: FC<React.PropsWithChildren<Props>> = ({
               >
                 {content}
               </Text>
+            ) : (
+              content
             )}
           </Box>
         </GridColumn>
