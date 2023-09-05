@@ -125,7 +125,8 @@ export const prepareServiceForEnv = (
     result.shutdownGracePeriodSeconds = service.shutdownGracePeriodSeconds
   }
   if (serviceDef.shutdownGracePeriodSleepSeconds) {
-    result.shutdownGracePeriodSleepSeconds = service.shutdownGracePeriodSleepSeconds
+    result.shutdownGracePeriodSleepSeconds =
+      service.shutdownGracePeriodSleepSeconds
   }
   // extra attributes
   if (serviceDef.extraAttributes) {

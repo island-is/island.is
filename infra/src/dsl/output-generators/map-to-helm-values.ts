@@ -260,7 +260,8 @@ const serializeService: SerializeMethod<HelmService> = async (
     if (serviceDef.shutdownGracePeriodSleepSeconds < 0) {
       addToErrors(['shutdownGracePeriodSleepSeconds cannot be less than 0'])
     } else {
-      result.shutdownGracePeriodSleepSeconds = serviceDef.shutdownGracePeriodSleepSeconds
+      result.shutdownGracePeriodSleepSeconds =
+        serviceDef.shutdownGracePeriodSleepSeconds
     }
   }
 
