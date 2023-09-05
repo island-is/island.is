@@ -110,7 +110,7 @@ export const PrerequisitesForm: Form = buildForm({
                   title: '',
                 }),
                 buildDataProviderItem({
-                  provider: SocialInsuranceAdministrationStatusApi,
+                  provider: SocialInsuranceAdministrationTestApi,
                   title: 'Tryggingarstofun TODO',
                   subTitle: 'Sækir info frá TR TODO'
 

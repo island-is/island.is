@@ -59,6 +59,45 @@ export const Period: FC<FieldBaseProps> = ({ application }) => {
   }
 
   return (
-    <></>
+    <Box paddingTop={6} paddingBottom={6}>
+      <Box display={'flex'} className={styles.flexBox}>
+        <Box width="half" marginRight={3} className={styles.yearBox}>
+          <SelectFormField
+            application={application}
+            error={getError('period.year')}
+            field={{
+              type: FieldTypes.SELECT,
+              component: FieldComponents.SELECT,
+              title: oldAgePensionFormMessage.period.periodInputYear,
+              placeholder:
+                oldAgePensionFormMessage.period.periodInputYearDefaultText,
+              id: 'period.year',
+              children: undefined,
+              options: optionsYears,
+              backgroundColor: 'blue',
+              onSelect: onSelectYear,
+            }}
+          />
+        </Box>
+        <Box width="half" marginLeft={3} className={styles.monthBox}>
+          <SelectFormField
+            application={application}
+            error={getError('period.month')}
+            field={{
+              type: FieldTypes.SELECT,
+              component: FieldComponents.SELECT,
+              title: oldAgePensionFormMessage.period.periodInputMonth,
+              placeholder:
+                oldAgePensionFormMessage.period.periodInputMonthDefaultText,
+              id: 'period.month',
+              children: undefined,
+              options: selectedYear ? optionsMonths : [],
+              backgroundColor: 'blue',
+              onSelect: onSelectMonth,
+            }}
+          />
+        </Box>
+      </Box>
+    </Box>
   )
 }
